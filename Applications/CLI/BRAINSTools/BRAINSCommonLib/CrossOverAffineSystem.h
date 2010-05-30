@@ -28,9 +28,9 @@
  */
 
 template <class TCoordinateType,
-  unsigned int NDimensions = 3>
-class ITK_EXPORT CrossOverAffineSystem : public itk::LightProcessObject
-  {
+         unsigned int NDimensions = 3>
+         class ITK_EXPORT CrossOverAffineSystem : public itk::LightProcessObject
+{
 public:
   /** Standard class typedefs. */
   typedef CrossOverAffineSystem         Self;
@@ -50,7 +50,7 @@ public:
 
   /** Type of the scalar representing coordinate and vector elements. */
   typedef  TCoordinateType
-  ScalarType;
+    ScalarType;
 
   typedef vnl_matrix_fixed<TCoordinateType, NDimensions + 1, NDimensions
     + 1> VnlTransformMatrixType44;
@@ -59,9 +59,9 @@ public:
 
   /** Affine conversion type for this class */
   typedef itk::AffineTransform<TCoordinateType,
-    NDimensions>                                         AffineTransformType;
+          NDimensions>                                         AffineTransformType;
   typedef typename AffineTransformType::Pointer
-  AffineTransformPointer;
+    AffineTransformPointer;
   typedef typename AffineTransformType::MatrixType       MatrixType;
   typedef typename AffineTransformType::InputPointType   PointType;
   typedef typename AffineTransformType::OutputVectorType VectorType;
@@ -69,32 +69,32 @@ public:
 
   /** Quaternion conversion types for this class */
   typedef itk::VersorTransform<TCoordinateType>
-  VersorTransformType;
+    VersorTransformType;
   typedef typename VersorTransformType::Pointer
-  VersorTransformPointer;
+    VersorTransformPointer;
   typedef typename VersorTransformType::ParametersType
-  VersorParametersType;
+    VersorParametersType;
 
   typedef itk::VersorRigid3DTransform<TCoordinateType>
-  VersorRigid3DTransformType;
+    VersorRigid3DTransformType;
   typedef typename VersorRigid3DTransformType::Pointer
-  VersorRigid3DTransformPointer;
+    VersorRigid3DTransformPointer;
   typedef typename VersorRigid3DTransformType::ParametersType
-  VersorRigid3DParametersType;
+    VersorRigid3DParametersType;
 
   typedef itk::ScaleVersor3DTransform<TCoordinateType>
-  ScaleVersor3DTransformType;
+    ScaleVersor3DTransformType;
   typedef typename ScaleVersor3DTransformType::Pointer
-  ScaleVersor3DTransformPointer;
+    ScaleVersor3DTransformPointer;
   typedef typename ScaleVersor3DTransformType::ParametersType
-  ScaleVersor3DParametersType;
+    ScaleVersor3DParametersType;
 
   typedef itk::ScaleSkewVersor3DTransform<TCoordinateType>
-  ScaleSkewVersor3DTransformType;
+    ScaleSkewVersor3DTransformType;
   typedef typename ScaleSkewVersor3DTransformType::Pointer
-  ScaleSkewVersor3DTransformPointer;
+    ScaleSkewVersor3DTransformPointer;
   typedef typename ScaleSkewVersor3DTransformType::ParametersType
-  ScaleSkewVersor3DParametersType;
+    ScaleSkewVersor3DParametersType;
 
   /** Get the four coordinated AffineTransform conversions. */
   itkGetMacro( InhaleEncodeConversion, AffineTransformPointer );
@@ -133,7 +133,7 @@ protected:
 private:
   CrossOverAffineSystem(const Self &); // purposely not implemented
   void operator=(const Self &);        // purposely not implemented
-  };
+};
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "CrossOverAffineSystem.txx"

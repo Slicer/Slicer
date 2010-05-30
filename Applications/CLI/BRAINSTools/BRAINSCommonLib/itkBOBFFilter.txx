@@ -61,75 +61,6 @@ BOBFFilter<TInputImage, TOutputImage>
                                  ( this->ProcessObject::GetInput(1) );
 }
 
-#if 0
-template<class TInputImage, class TOutputImage>
-void BOBFFilter<TInputImage, TOutputImage>::GenerateData()
-{
-  OutputImagePointer     OutputPtr = this->GetOutput();
-  InputImageConstPointer InputImage  = this->GetInputImage();
-  InputImageConstPointer InputMask  = this->GetInputMask();
-
-  /*Allocate the output*/
-  OutputPtr->SetRequestedRegion( InputImage->GetRequestedRegion() );
-  OutputPtr->SetBufferedRegion( InputImage->GetBufferedRegion() );
-  OutputPtr->SetLargestPossibleRegion( InputImage->GetLargestPossibleRegion() );
-  OutputPtr->Allocate();
-
-  typedef NeighborhoodConnectedImageFilter<InputImageType, InputImageType>
-  ConnectedFilterType;
-  typename ConnectedFilterType::Pointer Connectedfilter = ConnectedFilterType::
-                                                            New();
-  Connectedfilter->SetLower( m_Lower );
-  Connectedfilter->SetUpper( m_Upper  );
-  Connectedfilter->SetRadius( m_Radius );
-  Connectedfilter->SetSeed( m_Seed );
-  Connectedfilter->SetReplaceValue( m_ReplaceValue );
-  Connectedfilter->SetInput( InputImage );
-
-  try
-    {
-    Connectedfilter->Update();
-    }
-  catch ( itk::ExceptionObject & err )
-    {
-    std::cout << "Exception Object caught: " << std::endl;
-    std::cout << err << std::endl;
-    exit (-1);
-    }
-
-  // OutputPtr=Connectedfilter->GetOutput();
-
-  typedef ImageRegionConstIterator<TInputImage> InputIterator;
-  typedef ImageRegionIterator<TOutputImage>     OutputIterator;
-
-  OutputIterator outItr( OutputPtr, OutputPtr->GetLargestPossibleRegion() );
-
-  InputIterator ImgItr( InputImage, InputImage->GetLargestPossibleRegion() );
-
-  InputIterator MskItr( InputMask, InputMask->GetLargestPossibleRegion() );
-
-  InputIterator NbdItr(
-    Connectedfilter->GetOutput(),
-    Connectedfilter->GetOutput()->GetLargestPossibleRegion() );
-
-  for ( ImgItr.GoToBegin(),
-        MskItr.GoToBegin(), NbdItr.GoToBegin(), outItr.GoToBegin();
-        !ImgItr.IsAtEnd();
-        ++ImgItr, ++MskItr, ++NbdItr, ++outItr )
-    {
-    outItr.Set( NbdItr.Get() );
-    if ( outItr.Get() == 0 )
-      {
-      outItr.Set( ImgItr.Get() );
-      }
-    if ( MskItr.Get() == 0 )
-      {
-      outItr.Set(m_ReplaceValue);
-      }
-    }
-}
-
-#else
 template<class TInputImage, class TOutputImage>
 void BOBFFilter<TInputImage, TOutputImage>::GenerateData()
 {
@@ -168,7 +99,6 @@ void BOBFFilter<TInputImage, TOutputImage>::GenerateData()
     }
 }
 
-#endif
 }   // end namespace itk
 
 #endif // _itkBOBFFilter_txx

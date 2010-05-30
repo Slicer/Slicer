@@ -23,15 +23,15 @@
 #define NumberOfHistogramLevels                                 1024
 
 /** TODO:  Need to document this class
- */
+*/
 class itkSimpleDiffeomorphicRegistration : public itk::Object
-  {
+{
 public:
   typedef itk::Image<float, DIM> TRealImage;
   typedef itk::DemonsPreprocessor<TRealImage,
-    TRealImage> DemonsPreprocessorType;
+          TRealImage> DemonsPreprocessorType;
   typedef itk::DemonsRegistrator<TRealImage, TRealImage,
-    float> DemonsRegistratorType;
+          float> DemonsRegistratorType;
   typedef itk::Image<itk::Vector<float, DIM>, DIM> TDeformationField;
 
   itkSimpleDiffeomorphicRegistration();
@@ -61,6 +61,6 @@ private:
   TRealImage::Pointer             m_MovingImage;
   std::string                     m_DeformedImageName;
   std::string                     m_DeformationFieldName;
-  };
+};
 
 #endif

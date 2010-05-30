@@ -140,6 +140,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetNumberOfLevels( this->m_Parser->GetNumberOfLevels() );
   this->m_Registrator->SetNumberOfIterations(
     this->m_Parser->GetNumberOfIterations() );
+  this->m_Registrator->SetInterpolationMode( this->GetInterpolationMode() );
 
   this->m_Registrator->SetFixedImageShrinkFactors(
     this->m_Parser->GetTheFixedImageShrinkFactors() );

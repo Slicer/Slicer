@@ -1,8 +1,8 @@
 
 ///  BRAINSFitCommonLibWin32Header - manage Windows system differences
-/// 
+///
 /// The BRAINSFitCommonLibWin32Header captures some system differences between Unix
-/// and Windows operating systems. 
+/// and Windows operating systems.
 
 #ifndef __BRAINSFitCommonLibWin32Header_h
 #define __BRAINSFitCommonLibWin32Header_h
@@ -11,9 +11,9 @@
 
 #if defined(WIN32) && !defined(BRAINSFitCommonLib_STATIC)
 #if defined(BRAINSFitCommonLib_EXPORTS)
-#define BRAINSFitCommonLib_EXPORT __declspec( dllexport ) 
+#define BRAINSFitCommonLib_EXPORT __declspec( dllexport )
 #else
-#define BRAINSFitCommonLib_EXPORT __declspec( dllimport ) 
+#define BRAINSFitCommonLib_EXPORT __declspec( dllimport )
 #endif
 #else
 #define BRAINSFitCommonLib_EXPORT

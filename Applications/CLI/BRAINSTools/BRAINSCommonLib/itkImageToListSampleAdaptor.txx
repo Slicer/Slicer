@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -19,7 +19,7 @@
 
 #include "itkImageToListSampleAdaptor.h"
 
-namespace itk { 
+namespace itk {
 namespace Statistics {
 
 template < class TImage>
@@ -33,7 +33,7 @@ ImageToListSampleAdaptor< TImage>
 template < class TImage>
 const typename ImageToListSampleAdaptor< TImage >::MeasurementVectorType&
 ImageToListSampleAdaptor< TImage>
-::GetMeasurementVector(InstanceIdentifier id) const 
+::GetMeasurementVector(InstanceIdentifier id) const
 {
   if( m_Image.IsNull() )
     {
@@ -43,12 +43,12 @@ ImageToListSampleAdaptor< TImage>
   if ( m_UsePixelContainer )
     {
     MeasurementVectorTraits::Assign( m_MeasurementVectorInternal,
-                    (*m_PixelContainer)[id]); 
+                    (*m_PixelContainer)[id]);
     }
   else
     {
     MeasurementVectorTraits::Assign( m_MeasurementVectorInternal,
-                    m_Image->GetPixel( m_Image->ComputeIndex( id ) ) ); 
+                    m_Image->GetPixel( m_Image->ComputeIndex( id ) ) );
     }
 
   return m_MeasurementVectorInternal;
@@ -72,7 +72,7 @@ ImageToListSampleAdaptor< TImage>
 template < class TImage>
 inline typename ImageToListSampleAdaptor< TImage>::AbsoluteFrequencyType
 ImageToListSampleAdaptor< TImage>
-::GetFrequency( InstanceIdentifier ) const 
+::GetFrequency( InstanceIdentifier ) const
 {
   if( m_Image.IsNull() )
     {
@@ -106,9 +106,9 @@ ImageToListSampleAdaptor< TImage>
 template < class TImage>
 void
 ImageToListSampleAdaptor< TImage>
-::SetImage(const TImage* image) 
-{ 
-  m_Image = image; 
+::SetImage(const TImage* image)
+{
+  m_Image = image;
   m_PixelContainer = image->GetPixelContainer();
   this->Modified();
 }
@@ -123,23 +123,23 @@ ImageToListSampleAdaptor< TImage>
     itkExceptionMacro("Image has not been set yet");
     }
 
-  return m_Image.GetPointer(); 
-}  
+  return m_Image.GetPointer();
+}
 
 template < class TImage>
 typename ImageToListSampleAdaptor< TImage>::TotalAbsoluteFrequencyType
 ImageToListSampleAdaptor< TImage>
 ::GetTotalFrequency() const
-{ 
+{
   if( m_Image.IsNull() )
     {
     itkExceptionMacro("Image has not been set yet");
     }
 
-  return this->Size(); 
+  return this->Size();
 }
 
-} // end of namespace Statistics 
+} // end of namespace Statistics
 } // end of namespace itk
 
 #endif

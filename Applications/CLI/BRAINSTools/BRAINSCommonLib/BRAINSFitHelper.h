@@ -28,7 +28,6 @@
 #include "itkMedianImageFilter.h"
 #include "itkHistogramMatchingImageFilter.h"
 
-#include "itkTransformFactory.h"
 #include "itkIO.h"
 
 #include "itkCenteredVersorTransformInitializer.h"
@@ -41,8 +40,6 @@
 #include "itkVector.h"
 #include "itkMultiThreader.h"
 
-#include "itkTransformFileReader.h"
-#include "itkTransformFileWriter.h"
 #include "itkExtractImageFilter.h"
 
 #include "itkResampleImageFilter.h"
@@ -58,32 +55,20 @@
 #include "BRAINSMacro.h"
 
 #include "itkImageMaskSpatialObject.h"
+
+#include "GenericTransformImage.h"
+
 typedef itk::SpatialObject<3>  SpatialObjectType;
 typedef SpatialObjectType::Pointer ImageMaskPointer;
 
-//TODO:  The next two should be hidden in the cxx files again.
-typedef itk::TransformFileReader                    TransformReaderType;
-typedef itk::TransformFileReader::TransformListType TransformListType;
-
-//TODO:  This should really be taken as a typedef from the BSpline class.
-//TODO:  These should be hidden in the BRAINSFit namespace.
-typedef itk::Transform<double,3,3> GenericTransformType;
-
 namespace itk {
-  //Functions for writing out transforms to disk
-  BRAINSCommonLib_EXPORT extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(const GenericTransformType::Pointer & genericTransformToWrite);
-  BRAINSCommonLib_EXPORT extern int WriteBothTransformsToDisk(const GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform, const std::string & strippedOutputTransform);
-  BRAINSCommonLib_EXPORT extern int WriteStrippedRigidTransformToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & strippedOutputTransform);
-  BRAINSCommonLib_EXPORT extern int WriteTransformToDisk(GenericTransformType::Pointer & genericTransformToWrite, const std::string & outputTransform);
-  BRAINSCommonLib_EXPORT extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTransform);
-
   /** Method for verifying that the ordering of the transformTypes is consistent with converting routines. */
   BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
 }
 
 namespace itk
 {
-class BRAINSCommonLib_EXPORT BRAINSFitHelper : public Object
+  class BRAINSCommonLib_EXPORT BRAINSFitHelper : public Object
   {
 public:
   /** Standard class typedefs. */
@@ -113,21 +98,21 @@ public:
 
   /** Set/Get the Moving image. */
   itkSetObjectMacro( MovingVolume, MovingVolumeType)
-  itkGetConstObjectMacro( MovingVolume, MovingVolumeType );
+    itkGetConstObjectMacro( MovingVolume, MovingVolumeType );
 
   /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the algorithm.*/
   itkGetConstObjectMacro( PreprocessedMovingVolume, MovingVolumeType );
 
   typedef MattesMutualInformationImageToImageMetric<FixedVolumeType,
-    MovingVolumeType> MetricType;
+          MovingVolumeType> MetricType;
   typedef MetricType::FixedImageMaskType
-  FixedBinaryVolumeType;
+    FixedBinaryVolumeType;
   typedef FixedBinaryVolumeType::Pointer
-  FixedBinaryVolumePointer;
+    FixedBinaryVolumePointer;
   typedef MetricType::MovingImageMaskType
-  MovingBinaryVolumeType;
+    MovingBinaryVolumeType;
   typedef MovingBinaryVolumeType::Pointer
-  MovingBinaryVolumePointer;
+    MovingBinaryVolumePointer;
 
 
   itkSetObjectMacro ( FixedBinaryVolume, FixedBinaryVolumeType );
@@ -139,7 +124,7 @@ public:
   typedef enum {
     LINEAR_INTERP = 0,
     WINDOWSINC_INTERP = 1,
-    } InterpolationType;
+  } InterpolationType;
 
   // FixedVolumeType::Pointer GetResampledImage(
   //   InterpolationType newInterp) const;
@@ -183,8 +168,6 @@ public:
   itkGetConstMacro( MaskInferiorCutOffFromCenter, double         );
   itkSetMacro(      CurrentGenericTransform,  GenericTransformType::Pointer );
   itkGetConstMacro( CurrentGenericTransform,  GenericTransformType::Pointer );
-  itkSetMacro(      UseWindowedSinc, bool                        );
-  itkGetConstMacro( UseWindowedSinc, bool                        );
   VECTORitkSetMacro( SplineGridSize, std::vector<int>       );
 
   itkGetConstMacro( ActualNumberOfIterations,      unsigned int  );
@@ -203,13 +186,13 @@ public:
   itkGetConstMacro( ObserveIterations,        bool          );
   /** Method to set the Permission to vary by level  */
   void SetPermitParameterVariation(std::vector<int> perms)
-  {
+    {
     m_PermitParameterVariation.resize( perms.size() );
     for ( unsigned int i = 0; i < perms.size(); i++ )
       {
       m_PermitParameterVariation[i] = perms[i];
       }
-  }
+    }
 
   itkSetMacro(     HistogramMatch, bool);
   itkGetConstMacro(HistogramMatch, bool);
@@ -258,7 +241,6 @@ private:
   std::vector<std::string> m_TransformType;
   std::string              m_InitializeTransformMode;
   double                   m_MaskInferiorCutOffFromCenter;
-  bool                     m_UseWindowedSinc;
   std::vector<int>         m_SplineGridSize;
   double                   m_CostFunctionConvergenceFactor;
   double                   m_ProjectedGradientTolerance;
@@ -275,42 +257,5 @@ private:
   }; // end BRAINSFitHelper class
 } // end namespace itk
 
-
-template <class TransformType>
-void WriteTransform(const typename TransformType::Pointer & MyTransform,
-  const std::string & TransformFilename)
-{
-  /*
-   *  Convert the transform to the appropriate assumptions and write it out as requested.
-   */
-    {
-    typedef itk::TransformFileWriter TransformWriterType;
-    TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
-    transformWriter->SetFileName( TransformFilename.c_str() );
-    transformWriter->SetInput( MyTransform );
-    transformWriter->Update();
-    std::cout << "Wrote ITK transform to text file: "
-              << TransformFilename.c_str() << std::endl;
-    }
-}
-
-template <class TransformType>
-void WriteTransformWithBulk(const typename TransformType::Pointer & MyTransform,
-  const std::string & TransformFilename)
-{
-  /*
-   *  Convert the transform to the appropriate assumptions and write it out as requested.
-   */
-    {
-    typedef itk::TransformFileWriter TransformWriterType;
-    TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
-    transformWriter->SetFileName( TransformFilename.c_str() );
-    transformWriter->AddTransform( MyTransform->GetBulkTransform() );
-    transformWriter->AddTransform( MyTransform );
-    transformWriter->Update();
-    std::cout << "Appended ITK transform to text file: "
-              << TransformFilename.c_str() << std::endl;
-    }
-}
 
 #endif  //__BRAINSFITHELPER__

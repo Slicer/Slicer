@@ -7,25 +7,25 @@
 namespace itk
 {
 
-/**
- * \author Hans J. Johnson
- *
- * This filter just computes Histogram Quantile Thresholds.  It does not apply the thresholds.
- *
- */
-template <class TInputImage, class TMaskImage>
-class ITK_EXPORT ComputeHistogramQuantileThresholds :
-  public Object
-{
+  /**
+   * \author Hans J. Johnson
+   *
+   * This filter just computes Histogram Quantile Thresholds.  It does not apply the thresholds.
+   *
+   */
+  template <class TInputImage, class TMaskImage>
+    class ITK_EXPORT ComputeHistogramQuantileThresholds :
+      public Object
+  {
 public:
   /** Extract dimension from input and output image. */
   itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+    TInputImage::ImageDimension);
 
   /** Convenient typedefs for simplifying declarations. */
   typedef TInputImage                                           InputImageType;
   typedef typename InputImageType::ConstPointer                 InputImagePointer;
-  typedef typename InputImageType::RegionType                   InputImageRegionType; 
+  typedef typename InputImageType::RegionType                   InputImageRegionType;
   typedef typename InputImageType::PixelType                    InputPixelType;
 
   typedef ComputeHistogramQuantileThresholds           Self;
@@ -79,7 +79,7 @@ private:
   typename InputImageType::PixelType m_LowerIntensityThresholdValue;
   typename InputImageType::PixelType m_UpperIntensityThresholdValue;
   unsigned int m_NumberOfValidHistogramsEntries;
-};
+  };
 
 } // end namespace itk
 

@@ -90,6 +90,7 @@ macro(PACKAGE_NEEDS_VTKWITHQT LOCAL_CMAKE_BUILD_OPTIONS gen)
       CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
       CVS_MODULE "${vtk_module}"
       CVS_TAG ${vtk_tag}
+      UPDATE_COMMAND ""
       SOURCE_DIR ${proj}
       BINARY_DIR ${proj}-build
       CMAKE_GENERATOR ${gen}
@@ -111,6 +112,68 @@ macro(PACKAGE_NEEDS_VTKWITHQT LOCAL_CMAKE_BUILD_OPTIONS gen)
     set(VTK_CMAKE
        -DVTK_DIR:PATH=${VTK_DIR}
         ${QT_ARGS}
+    )
+  endif()
+endmacro()
+
+macro(PACKAGE_NEEDS_VTK_NOGUI LOCAL_CMAKE_BUILD_OPTIONS gen)
+  set(packageToCheck VTK)
+  OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
+  #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
+  if(OPT_USE_SYSTEM_VTK)
+    find_package(VTK 5.6 REQUIRED)
+    include(${VTK_USE_FILE})
+    set(VTK_DEPEND "") ## Set the external depandancy for ITK
+  else()
+    set(proj vtk-5-6)
+    set(vtk_tag -r VTK-5-6)
+    set(vtk_module VTK)
+
+    set(vtk_WRAP_TCL OFF)
+    set(vtk_WRAP_PYTHON OFF)
+
+    set(vtk_GUI_ARGS
+        -DVTK_USE_GUISUPPORT:BOOL=OFF
+        -DVTK_USE_QVTK:BOOL=OFF
+        -DVTK_USE_QT:BOOL=OFF
+        -DVTK_USE_X:BOOL=OFF
+        -DVTK_USE_CARBON:BOOL=OFF
+        -DVTK_USE_COCOA:BOOL=OFF
+        -DVTK_USE_RENDERING:BOOL=OFF
+    )
+    if(APPLE)
+      # Qt 4.6 binary libs are built with empty OBJCXX_FLAGS for mac Cocoa
+      set(vtk_GUI_ARGS
+        ${vtk_GUI_ARGS}
+        -DVTK_REQUIRED_OBJCXX_FLAGS:STRING=
+        )
+    endif(APPLE)
+
+    ExternalProject_Add(${proj}
+      CVS_REPOSITORY ":pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK"
+      CVS_MODULE "${vtk_module}"
+      CVS_TAG ${vtk_tag}
+      UPDATE_COMMAND ""
+      SOURCE_DIR ${proj}
+      BINARY_DIR ${proj}-build
+      CMAKE_GENERATOR ${gen}
+      CMAKE_ARGS
+        ${LOCAL_CMAKE_BUILD_OPTIONS}
+        -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+        -DVTK_USE_PARALLEL:BOOL=ON
+        -DVTK_DEBUG_LEAKS:BOOL=OFF
+        -DVTK_WRAP_TCL:BOOL=${vtk_WRAP_TCL}
+        -DVTK_WRAP_PYTHON:BOOL=${vtk_WRAP_PYTHON}
+        ${vtk_GUI_ARGS}
+      INSTALL_COMMAND ""
+      #  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+    )
+
+    set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
+    set(VTK_DEPEND ${proj})
+    MESSAGE(STATUS "Setting VTK_DIR to -DVTK_DIR:PATH=${VTK_DIR}")
+    set(VTK_CMAKE
+       -DVTK_DIR:PATH=${VTK_DIR}
     )
   endif()
 endmacro()

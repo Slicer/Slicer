@@ -1,19 +1,19 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile$
-  Language:  C++
-  Date:      $Date: 2007-08-31 11:20:20 -0500 (Fri, 31 Aug 2007) $
-  Version:   $Revision: 10358 $
+Program:   Insight Segmentation & Registration Toolkit
+Module:    $RCSfile$
+Language:  C++
+Date:      $Date: 2007-08-31 11:20:20 -0500 (Fri, 31 Aug 2007) $
+Version:   $Revision: 10358 $
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+Copyright (c) Insight Software Consortium. All rights reserved.
+See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-  This software is distributed WITHOUT ANY WARRANTY; without even
-  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-  PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
-  =========================================================================*/
+=========================================================================*/
 
 /**
  * Hans J. Johnson @ The University of Iowa
@@ -44,10 +44,10 @@ typedef itk::SpatialObject<3>  SOImageMaskType;
  */
 
 template <typename PixelType>
-void
+  void
 BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
-                  VolumeMaskType::Pointer mask,
-                  std::string &fileName)
+  VolumeMaskType::Pointer mask,
+  std::string &fileName)
 {
   typedef typename itk::Image<PixelType,VolumeImageType::ImageDimension> WriteOutImageType;
 
@@ -69,7 +69,7 @@ int main( int argc, char *argv[] )
   if(inputVolume == "")
     {
     std::cerr << argv[0] << ": Missing required --inputVolume parameter"
-             << std::cerr;
+      << std::cerr;
     exit(1);
     }
   VolumeImageType::Pointer ImageInput=

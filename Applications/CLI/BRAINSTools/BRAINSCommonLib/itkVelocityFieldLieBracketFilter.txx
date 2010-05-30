@@ -16,7 +16,7 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
 ::VelocityFieldLieBracketFilter()
 {
   // Setup the number of required inputs
-  this->SetNumberOfRequiredInputs( 2 );  
+  this->SetNumberOfRequiredInputs( 2 );
 
   m_RightGradientCalculator = InputFieldGradientCalculatorType::New();
   m_LeftGradientCalculator  = InputFieldGradientCalculatorType::New();
@@ -46,12 +46,12 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
-  
+
   // get pointers to the input and output
   InputFieldPointer inputPtr0 = const_cast< InputFieldType * >( this->GetInput(0) );
   InputFieldPointer inputPtr1 = const_cast< InputFieldType * >( this->GetInput(1) );
   OutputFieldPointer outputPtr = this->GetOutput();
-  
+
   if ( !inputPtr0 || !inputPtr1 || !outputPtr )
     {
     return;
@@ -60,7 +60,7 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
   // The kernel size is one by default
   //\todo find a way to get the radius from the gradient calculator
   const unsigned long radius = 1;
-  
+
   // get a copy of the input requested region (should equal the output
   // requested region)
   typename TInputImage::RegionType inputRequestedRegion0
@@ -84,7 +84,7 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
 
     // store what we tried to request (prior to trying to crop)
     inputPtr0->SetRequestedRegion( inputRequestedRegion0 );
-    
+
     // build an exception
     InvalidRequestedRegionError e(__FILE__, __LINE__);
     e.SetLocation(ITK_LOCATION);
@@ -93,7 +93,7 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
     throw e;
     }
 
-  
+
   if ( inputRequestedRegion1.Crop(inputPtr1->GetLargestPossibleRegion()) )
     {
     inputPtr1->SetRequestedRegion( inputRequestedRegion1 );
@@ -105,7 +105,7 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
 
     // store what we tried to request (prior to trying to crop)
     inputPtr1->SetRequestedRegion( inputRequestedRegion1 );
-    
+
     // build an exception
     InvalidRequestedRegionError e(__FILE__, __LINE__);
     e.SetLocation(ITK_LOCATION);
@@ -117,7 +117,7 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
 
 
 template <class TInputImage, class TOutputImage>
-void 
+void
 VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
 ::BeforeThreadedGenerateData()
 {
@@ -127,11 +127,11 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
 }
 
 
-/** 
+/**
  * GenerateData()
  */
 template <class TInputImage, class TOutputImage>
-void 
+void
 VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
 ::ThreadedGenerateData( const OutputFieldRegionType &outputRegionForThread,
                         int threadId)
@@ -140,28 +140,28 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
   InputFieldConstPointer leftField = this->GetInput(0);
   InputFieldConstPointer rightField = this->GetInput(1);
   OutputFieldPointer outputPtr = this->GetOutput();
-  
+
   // Progress tracking
   ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
 
   // Input and output iterators/
   typedef ImageRegionConstIterator<InputFieldType>  InputFieldIteratorType;
-  typedef ImageRegionIterator<OutputFieldType>      OutputFieldIteratorType; 
+  typedef ImageRegionIterator<OutputFieldType>      OutputFieldIteratorType;
   InputFieldIteratorType  leftIter(   leftField,  outputRegionForThread );
   InputFieldIteratorType  rightIter(  rightField, outputRegionForThread );
   OutputFieldIteratorType outputIter( outputPtr,  outputRegionForThread );
-  
+
   InputFieldGradientType leftgrad, rightgrad;
 
   while ( ! leftIter.IsAtEnd() )
     {
     leftgrad = m_LeftGradientCalculator->EvaluateAtIndex(leftIter.GetIndex());
     rightgrad = m_RightGradientCalculator->EvaluateAtIndex(rightIter.GetIndex());
-    
+
     const InputFieldPixelType & leftval = leftIter.Value();
     const InputFieldPixelType & rightval = rightIter.Value();
     OutputFieldPixelType & outVal = outputIter.Value();
-    
+
     for (unsigned int d=0; d<InputFieldDimension; d++)
       {
       outVal[d] = ( leftgrad(d,0)*rightval[0]
@@ -172,14 +172,14 @@ VelocityFieldLieBracketFilter<TInputImage,TOutputImage>
                   - rightgrad(d,dd)*leftval[dd] );
         }
       }
-    
+
     ++leftIter;
     ++rightIter;
     ++outputIter;
     progress.CompletedPixel(); // potential exception thrown here
     }
 }
-  
+
 
 } // end namespace itk
 

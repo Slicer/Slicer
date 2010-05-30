@@ -15,9 +15,6 @@
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkWarpImageFilter.h"
 #include "itkImageFileWriter.h"
-#if 0 // Don't need to look at range of data, but rather range of data type
-#include "itkMinimumMaximumImageCalculator.h"
-#endif
 
 namespace itk
 {
@@ -102,19 +99,6 @@ DemonsPreprocessor<TInputImage, TOutputImage>
       {
       std::cout << "Performing Histogram Matching \n";
       }
-#if 0
-    typedef MinimumMaximumImageCalculator<OutputImageType> MinMaxFilterType;
-    typename MinMaxFilterType::Pointer minmaxfilter = MinMaxFilterType::New();
-    minmaxfilter->SetImage(m_UnNormalizedFixedImage);
-    minmaxfilter->ComputeMaximum();
-    minmaxfilter->ComputeMinimum();
-    if ( ( minmaxfilter->GetMaximum() - minmaxfilter->GetMinimum() ) <
-        m_NumberOfHistogramLevels )
-      {
-      std::cout << "The intensity of range is less than Histogram levels!!"
-                << std::endl;
-      }
-#else
     if ( ( vcl_numeric_limits<typename OutputImageType::PixelType>::max()
           - vcl_numeric_limits<typename OutputImageType::PixelType>::min() ) <
         m_NumberOfHistogramLevels )
@@ -122,7 +106,6 @@ DemonsPreprocessor<TInputImage, TOutputImage>
       std::cout << "The intensity of range is less than Histogram levels!!"
                 << std::endl;
       }
-#endif
     histogramfilter->SetInput( m_UnNormalizedMovingImage  );
     histogramfilter->SetReferenceImage( m_UnNormalizedFixedImage);
 
@@ -150,6 +133,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     std::cout << "Writing Histogram equalized image" << std::endl;
     itkUtil::WriteImage<TOutputImage>(m_OutputFixedImage,
                                       "HistogramModifiedFixedImage.nii.gz");
+    std::cout << "Writing UnormalizedMovingImage equalized image" << std::endl;
     itkUtil::WriteImage<TOutputImage>(m_UnNormalizedMovingImage,
                                       "HistogramReferenceMovingImage.nii.gz");
     }
@@ -203,22 +187,6 @@ typename DemonsPreprocessor<TInputImage,
         Mask->GetLargestPossibleRegion().GetSize() )
       || ( m_UnNormalizedFixedImage->GetSpacing() != Mask->GetSpacing() ) )
     {
-      #if 0 // DEBUG:  No need to resample if everyting is done in physical
-            // coordinates.
-    Mask = itkUtil::ResampleImage<TOutputImage, TOutputImage>(
-      Mask,
-      m_UnNormalizedFixedImage
-        ->GetLargestPossibleRegion().GetSize(),
-      m_UnNormalizedFixedImage
-        ->GetSpacing(),
-      m_UnNormalizedFixedImage
-        ->GetOrigin(),
-      m_UnNormalizedFixedImage
-        ->GetDirection(),
-      this->
-        m_DefaultPixelValue
-      );
-      #endif
     if ( this->GetOutDebug() )
       {
       std::cout << "Writing Resampled Output image" << std::endl;

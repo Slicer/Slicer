@@ -7,10 +7,10 @@
 
 namespace itk
 {
-template <class TInputImage, class TMaskImage=itk::Image<unsigned char,3> >
-class ITK_EXPORT FindCenterOfBrainFilter :
-public ImageToImageFilter<TInputImage,TInputImage>
-{
+  template <class TInputImage, class TMaskImage=itk::Image<unsigned char,3> >
+    class ITK_EXPORT FindCenterOfBrainFilter :
+      public ImageToImageFilter<TInputImage,TInputImage>
+  {
 public:
   typedef FindCenterOfBrainFilter  Self;
   typedef ImageToImageFilter<TInputImage,TInputImage>  Superclass;
@@ -29,16 +29,16 @@ public:
   typedef typename ImageType::SpacingType  SpacingType;
   typedef typename ImageType::IndexType    IndexType;
   typedef typename itk::ImageRegionIteratorWithIndex<ImageType>
-                                           ImageIteratorType;
+    ImageIteratorType;
   typedef typename itk::ImageRegionConstIteratorWithIndex<ImageType>
-                                           ImageConstIteratorType;
+    ImageConstIteratorType;
   typedef LargestForegroundFilledMaskImageFilter<ImageType,MaskImageType>
-                                           LFFMaskFilterType;
+    LFFMaskFilterType;
   typedef typename itk::Image<float,3> DistanceImageType;
   typedef typename DistanceImageType::Pointer DistanceImagePointer;
   /** Image related typedefs. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension );
+    TInputImage::ImageDimension );
 
   itkSetMacro(Maximize,bool);
   itkGetConstMacro(Maximize,bool);
@@ -70,13 +70,13 @@ public:
   DistanceImagePointer GetDebugDistanceImage() { return m_DebugDistanceImage; }
   InputImagePointer GetDebugGridImage() { return m_DebugGridImage; }
   MaskImagePointer GetDebugAfterGridComputationsForegroundImage()
-  { return m_DebugAfterGridComputationsForegroundImage; }
+    { return m_DebugAfterGridComputationsForegroundImage; }
   MaskImagePointer GetDebugClippedImageMask()
-  { return m_DebugClippedImageMask; }
+    { return m_DebugClippedImageMask; }
   InputImagePointer GetDebugTrimmedImage()
-  {
+    {
     return m_DebugTrimmedImage;
-  }
+    }
 protected:
   FindCenterOfBrainFilter();
   ~FindCenterOfBrainFilter();
@@ -103,7 +103,7 @@ private:
   MaskImagePointer m_DebugAfterGridComputationsForegroundImage;
   MaskImagePointer m_DebugClippedImageMask;
   InputImagePointer m_DebugTrimmedImage;
-};
+  };
 
 }
 

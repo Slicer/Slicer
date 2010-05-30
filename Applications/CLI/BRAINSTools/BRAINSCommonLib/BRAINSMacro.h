@@ -14,41 +14,41 @@
 #define VECTORitkDebugMacro(s, type, x)
 #else
 #define VECTORitkDebugMacro(s, type, x)                                 \
-  { if (this->GetDebug() && ::itk::Object::GetGlobalWarningDisplay())   \
+{ if (this->GetDebug() && ::itk::Object::GetGlobalWarningDisplay())   \
     { ::itk::OStringStream itkmsg;                                      \
     itkmsg << "Debug: In " __FILE__ ", line " << __LINE__ << "\n"       \
-           << this->GetNameOfClass() << " (" << this << "):"            \
-           << s;                                                        \
+    << this->GetNameOfClass() << " (" << this << "):"            \
+    << s;                                                        \
     for(type::const_iterator it = x.begin();                            \
-        it != x.end(); it++)                                            \
+      it != x.end(); it++)                                            \
       {                                                                 \
       itkmsg << " "                                                     \
-             << *(it);                                                  \
+      << *(it);                                                  \
       }                                                                 \
     itkmsg << "\n\n";                                                   \
     ::itk::OutputWindowDisplayDebugText(itkmsg.str().c_str());}         \
-  }
+}
 #endif
 /** Set built-in type.  Creates member Set"name"() (e.g., SetVisibility()); */
 #define VECTORitkSetMacro(name,type)                             \
   virtual void Set##name (const type _arg)                       \
-  {                                                              \
-    VECTORitkDebugMacro("setting " #name " to ", type, _arg);    \
-    type::const_iterator fromIt = _arg.begin();                  \
-    type::const_iterator toIt = this->m_##name.begin();          \
-      {                                                          \
-      this->m_##name.resize(_arg.size());                        \
-      this->m_##name = _arg;                                     \
-      this->Modified();                                          \
-      }                                                          \
-  }
+{                                                              \
+  VECTORitkDebugMacro("setting " #name " to ", type, _arg);    \
+  type::const_iterator fromIt = _arg.begin();                  \
+  type::const_iterator toIt = this->m_##name.begin();          \
+    {                                                          \
+    this->m_##name.resize(_arg.size());                        \
+    this->m_##name = _arg;                                     \
+    this->Modified();                                          \
+    }                                                          \
+}
 
 /** Get built-in type.  Creates member Get"name"() (e.g., GetVisibility()); */
 #define VECTORitkGetConstMacro(name,type) \
   virtual type Get##name () \
-  { \
-    VECTORitkDebugMacro("returning " << #name " of " , type, this->m_##name ); \
-    return this->m_##name; \
-  }
+{ \
+  VECTORitkDebugMacro("returning " << #name " of " , type, this->m_##name ); \
+  return this->m_##name; \
+}
 
 #endif //__BRAINSMACRO_H__

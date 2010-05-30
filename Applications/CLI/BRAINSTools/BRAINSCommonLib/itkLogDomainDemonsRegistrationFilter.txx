@@ -14,10 +14,10 @@ LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   DemonsRegistrationFunctionPointer drfp = DemonsRegistrationFunctionType::New();
   this->SetDifferenceFunction( static_cast<FiniteDifferenceFunctionType *>(
                                  drfp.GetPointer() ) );
-  
+
   m_Multiplier = MultiplyByConstantType::New();
   m_Multiplier->InPlaceOn();
- 
+
   m_BCHFilter = BCHFilterType::New();
   m_BCHFilter->InPlaceOn();
 
@@ -33,9 +33,9 @@ typename LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 ::DownCastDifferenceFunctionType()
 {
-  DemonsRegistrationFunctionType *drfp = 
+  DemonsRegistrationFunctionType *drfp =
     dynamic_cast<DemonsRegistrationFunctionType *>(this->GetDifferenceFunction().GetPointer());
- 
+
   if( !drfp )
     {
     itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
@@ -52,9 +52,9 @@ const typename LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField
 LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 ::DownCastDifferenceFunctionType() const
 {
-  const DemonsRegistrationFunctionType *drfp = 
+  const DemonsRegistrationFunctionType *drfp =
     dynamic_cast<const DemonsRegistrationFunctionType *>(this->GetDifferenceFunction().GetPointer());
- 
+
   if( !drfp )
     {
     itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
@@ -74,7 +74,7 @@ LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   // update variables in the equation object
   DemonsRegistrationFunctionType *f = this->DownCastDifferenceFunctionType();
   f->SetDeformationField( this->GetDeformationField() );
-  
+
   // call the superclass  implementation ( initializes f )
   Superclass::InitializeIteration();
 }
@@ -105,7 +105,7 @@ LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 template <class TFixedImage, class TMovingImage, class TField>
 void
 LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
-::SetIntensityDifferenceThreshold(double threshold) 
+::SetIntensityDifferenceThreshold(double threshold)
 {
   DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
   drfp->SetIntensityDifferenceThreshold(threshold);
@@ -178,7 +178,7 @@ LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 template <class TFixedImage, class TMovingImage, class TField>
 void
 LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
-::SetUseGradientType(GradientType gtype) 
+::SetUseGradientType(GradientType gtype)
 {
   DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
   drfp->SetUseGradientType(gtype);
@@ -197,7 +197,7 @@ LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
     {
     this->SmoothUpdateField();
     }
-  
+
   // Use time step if necessary. In many cases
   // the time step is one so this will be skipped
   if ( fabs(dt - 1.0)>1.0e-4 )
@@ -229,7 +229,7 @@ LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 
   // Triggers in place update
   m_BCHFilter->Update();
-  
+
   // Region passing stuff
   this->GraftOutput( m_BCHFilter->GetOutput() );
 
@@ -247,7 +247,7 @@ template <class TFixedImage, class TMovingImage, class TField>
 void
 LogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 ::PrintSelf(std::ostream& os, Indent indent) const
-{ 
+{
   Superclass::PrintSelf( os, indent );
 
   os << indent << "Multiplier: " << m_Multiplier << std::endl;

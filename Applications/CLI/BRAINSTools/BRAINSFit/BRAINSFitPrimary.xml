@@ -2,8 +2,8 @@
 <executable>
   <category>Registration</category>
   <title>BRAINSFit</title>
-  <description>Uses the Mattes Mutual Registration algorithm to register a three-dimensional volume to a reference volume.  Home page: http://www.nitrc.org/plugins/mwiki/index.php/multimodereg:MainPage </description>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:BRAINSFit</documentation-url>
+  <description>Uses the Mattes Mutual Registration algorithm to register a three-dimensional volume to a reference volume </description>
+  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/multimodereg:MainPage</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>Hans J. Johnson, hans-johnson -at- uiowa.edu, http://wwww.psychiatry.uiowa.edu</contributor>
   <acknowledgements>Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vincent Magnotta(1,2,3);  Andriy Fedorov(5), fedorov -at- bwh.harvard.edu (Slicer integration); (1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Radiology, 3=University of Iowa Department of Biomedical Engineering, 4=University of Iowa Department of Electrical and Computer Engineering, 5=Surgical Planning Lab, Harvard)  </acknowledgements>
@@ -45,12 +45,19 @@
 
   <parameters advanced="false">
     <label>Output Settings</label>
+    <transform fileExtensions=".mat" type="bspline" reference="movingVolume">
+      <name>bsplineTransform</name>
+      <longflag>bsplineTransform</longflag>
+      <label>Slicer BSpline Transform</label>
+      <description>Filename to which save the (optional) estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS BSpline</description>
+      <channel>output</channel>
+    </transform>
 
-    <transform fileExtensions=".mat">
-      <name>outputTransform</name>
-      <longflag>outputTransform</longflag>
-      <label>Output Transform</label>
-      <description>Filename to which save the (optional) estimated transform. NOTE: You must select either the outputTransform or the outputVolume option.</description>
+    <transform fileExtensions=".mat" type="linear" reference="movingVolume">
+      <name>linearTransform</name>
+      <longflag>linearTransform</longflag>
+      <label>Slicer Linear Transform</label>
+      <description>Filename to which save the (optional) estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS ---NOT--- BSpline</description>
       <channel>output</channel>
     </transform>
 
@@ -66,6 +73,14 @@
   <!-- -->
   <parameters advanced="true">
     <label>Transform Initialization Parameters</label>
+    <transform fileExtensions=".mat" reference="movingVolume">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <label>Output Transform</label>
+      <description>Filename to which save the (optional) estimated transform. NOTE: You must select either the outputTransform or the outputVolume option.</description>
+      <channel>output</channel>
+    </transform>
+
 
     <string-enumeration>
       <name>initializeTransformMode</name>
@@ -172,7 +187,7 @@
   <parameters advanced="true">
     <label>Advanced Output Settings</label>
 
-    <transform fileExtensions=".mat">
+    <transform fileExtensions=".mat" type="linear">
       <name>strippedOutputTransform</name>
       <longflag>strippedOutputTransform</longflag>
       <label>Stripped Output Transform</label>
@@ -219,14 +234,17 @@
       <default>false</default>
     </boolean>
 
-    <boolean>
-      <name>useWindowedSinc</name>
-      <label>useWindowedSinc</label>
-      <longflag>useWindowedSinc</longflag>
-      <description>Use windowedSinc interpolation to create output images.  WARNING: This will add 8 minutes to the interpolation of the final image of size 256x256x256.</description>
-      <default>false</default>
-    </boolean>
-
+    <string-enumeration>
+      <name>interpolationMode</name>
+      <longflag>interpolationMode</longflag>
+      <label>Interpolation Mode</label>
+      <description>Type of interpolation used</description>
+      <default>Linear</default>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>BSpline</element>
+      <element>WindowedSinc</element>
+    </string-enumeration>
   </parameters>
   <!-- -->
   <parameters advanced="true">
@@ -308,7 +326,7 @@
     <boolean>
        <name>histogramMatch</name>
        <flag>e</flag>
-       <longflag alias="use_histogram_matching">histogramMatch</longflag>
+       <longflag deprecatedalias="use_histogram_matching">histogramMatch</longflag>
        <description>Histogram Match the input images.  This is suitable for images of the same modality that may have different absolute scales, but the same overall intensity profile.</description>
        <label>Histogram Match</label>
        <default>false</default>
@@ -422,9 +440,8 @@
       <longflag>projectedGradientTolerance</longflag>
       <description> From itkLBFGSBOptimizer.h: Set/Get the ProjectedGradientTolerance. Algorithm terminates when the project gradient is below the tolerance. Default lbfgsb value is 1e-5, but 1e-4 seems to work well.
       </description>
-      <default>1e-4</default>
+      <default>1e-5</default>
     </double>
-
 
     <boolean>
       <name>UseDebugImageViewer</name>

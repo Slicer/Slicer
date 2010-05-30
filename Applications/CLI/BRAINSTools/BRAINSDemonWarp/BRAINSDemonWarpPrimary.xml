@@ -6,8 +6,8 @@
   <description>
     This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.
   </description>
-  <version>0.1.0.$Revision: 1.4 $(alpha)</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:BRAINSDemonWarp</documentation-url>
+  <version>1.0</version>
+  <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>This tool was developed by Hans Johnson and Greg Harris.</contributor>
 
@@ -46,14 +46,15 @@
       <channel>output</channel>
     </image>
 
-    <image>
+    <transform fileExtensions=".nrrd" type="nonlinear" reference="movingVolume">
       <name>outputDeformationFieldVolume</name>
       <flag>O</flag>
       <longflag alias="output_field">outputDeformationFieldVolume</longflag>
       <description>Required: output deformation field vector image.</description>
       <label>Output Deformation Field Volume</label>
       <channel>output</channel>
-    </image>
+    </transform>
+
   </parameters>
 
   <parameters>
@@ -110,6 +111,22 @@
       <channel>input</channel>
     </string-enumeration>
 
+  <string-enumeration>
+      <name>interpolationMode</name>
+      <longflag>interpolationMode</longflag>
+      <label>Interpolation Mode</label>
+      <description>Type of interpolation used</description>
+      <default>Linear</default>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>BSpline</element>
+      <element>WindowedSinc</element>
+    </string-enumeration>
+  </parameters>
+
+  <parameters advanced="true">
+  <label> Advanced Options </label>
+  <description> Uncommon debugging or other advanced options. </description>
     <string>
       <name>outputDisplacementFieldPrefix</name>
       <longflag>outputDisplacementFieldPrefix</longflag>
@@ -262,13 +279,13 @@
       <channel>input</channel>
     </file>
 
-    <image>
+    <transform fileExtensions=".nrrd" type="nonlinear">
       <name>initializeWithDeformationField</name>
       <longflag>initializeWithDeformationField</longflag>
       <description>Initial deformation field vector image file name</description>
       <label>Initial Deformation Field Volume</label>
       <channel>input</channel>
-    </image>
+    </transform>
 
 
     <file>
@@ -279,13 +296,13 @@
       <channel>input</channel>
     </file>
 
-    <file>
+    <transform fileExtensions=".mat">
       <name>initializeWithTransform</name>
       <longflag>initializeWithTransform</longflag>
       <description>Initial Transform filename</description>
       <label>Initial Transform  Filename</label>
       <channel>input</channel>
-    </file>
+    </transform>
     <integer>
       <name>numberOfHistogramBins</name>
       <longflag>numberOfHistogramBins</longflag>

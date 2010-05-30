@@ -9,27 +9,27 @@
 namespace itk
 {
 
-/**
- * \author Hans J. Johnson
- *
- * This filter 
- *
- */
-template <class TInputImage,class TOutputImage = Image <unsigned short,TInputImage::ImageDimension> >
-class ITK_EXPORT MultiModeHistogramThresholdBinaryImageFilter :
-  public ImageToImageFilter< TInputImage, TOutputImage >
-{
+  /**
+   * \author Hans J. Johnson
+   *
+   * This filter
+   *
+   */
+  template <class TInputImage,class TOutputImage = Image <unsigned short,TInputImage::ImageDimension> >
+    class ITK_EXPORT MultiModeHistogramThresholdBinaryImageFilter :
+      public ImageToImageFilter< TInputImage, TOutputImage >
+  {
 public:
   /** Extract dimension from input and output image. */
   itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+    TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+    TOutputImage::ImageDimension);
 
   /** Convenient typedefs for simplifying declarations. */
   typedef TInputImage                                           InputImageType;
   typedef typename InputImageType::ConstPointer                 InputImagePointer;
-  typedef typename InputImageType::RegionType                   InputImageRegionType; 
+  typedef typename InputImageType::RegionType                   InputImageRegionType;
   typedef typename InputImageType::PixelType                    InputPixelType;
 
   typedef TOutputImage                                          OutputImageType;
@@ -85,7 +85,7 @@ private:
 
   IntegerPixelType m_InsideValue;
   IntegerPixelType m_OutsideValue;
-};
+  };
 
 } // end namespace itk
 

@@ -3,12 +3,11 @@
 ## project to incorporate the testing dashboard.
 ## # The following are required to uses Dart and the Cdash dashboard
 ##   ENABLE_TESTING()
-##   INCLUDE(Dart)
-site_name(SITE)
-set(CTEST_PROJECT_NAME "BRAINSFit")
+##   INCLUDE(CTest)
+set(CTEST_PROJECT_NAME "BRAINSCommonLib")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 EST")
 
 set(CTEST_DROP_METHOD "http")
 set(CTEST_DROP_SITE "testing.psychiatry.uiowa.edu")
-set(CTEST_DROP_LOCATION "/CDash/submit.php?project=BRAINSFit")
+set(CTEST_DROP_LOCATION "/CDash/submit.php?project=BRAINSCommonLib")
 set(CTEST_DROP_SITE_CDASH TRUE)

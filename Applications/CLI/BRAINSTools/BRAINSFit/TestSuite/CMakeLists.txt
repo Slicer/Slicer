@@ -471,6 +471,7 @@ endif()
     --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --transformType Rigid
+    --interpolationMode WindowedSinc
     --initialTransform ${BRAINSCommonLib_DATA_DIRS}/Initializer_0.05_${BRAINSFitTestName}.mat
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.test.nii.gz

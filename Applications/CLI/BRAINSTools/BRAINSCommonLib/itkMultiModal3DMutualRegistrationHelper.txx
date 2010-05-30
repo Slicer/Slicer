@@ -112,16 +112,17 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
                                          // minimized.
 
   metric->SetNumberOfHistogramBins( m_NumberOfHistogramBins );
-#if 0 //This would be nice to dynamically use a percentage of samples based on the mask or image size.
+  /*
+  //This would be nice to dynamically use a percentage of samples based on the mask or image size.
   //It will need quite a bit of testing to make sure that backwards compatibility is maintained.
   if(m_NumberOfSamples <= 0 )
-    {
-    m_NumberOfSamples=256*256*256;
-    metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
-    metric->SetUseAllPixels(true);  //DEBUG -- This was way too slow.
-    }
+  {
+  m_NumberOfSamples=256*256*256;
+  metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
+  metric->SetUseAllPixels(true);  //DEBUG -- This was way too slow.
+  }
   else
-#endif
+  */
     {
     metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
     }
@@ -197,7 +198,16 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     // TODO: There should be no need to convert here, just assign m_Transform
     // from m_InitialTransform.
     //      They should be the same type!
-    AssignRigid::AssignConvertedTransform(m_Transform, m_InitialTransform);
+#if 1
+      {
+      const typename TTransformType::ConstPointer tempInitializerITKTransform=m_InitialTransform.GetPointer();
+      //NOTE By calling AssignConvertedTransform, it also copies the values
+      AssignRigid::AssignConvertedTransform(m_Transform, tempInitializerITKTransform);
+      }
+#else
+    //This may have side effect because now the InitialTransform and the m_Transform are same object.
+    m_Transform=m_InitialTransform;
+#endif
 
     // No need to step on parameters that may not vary; they will remain identical with
     // values from InitialTransform which defaults correctly to SetIdentity().
@@ -325,11 +335,11 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage,
     }
 
   // Create the Command observer and register it with the optimizer.
-  // TODO:  make this output optional. 
+  // TODO:  make this output optional.
   //
   if ( m_ObserveIterations == true )
     {
-    typedef BRAINSFit::CommandIterationUpdate<TOptimizer,TTransformType,TMovingImage> 
+    typedef BRAINSFit::CommandIterationUpdate<TOptimizer,TTransformType,TMovingImage>
       CommandIterationUpdateType;
     typename CommandIterationUpdateType::Pointer observer
       = CommandIterationUpdateType::New();

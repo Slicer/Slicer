@@ -135,11 +135,11 @@ ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
   minVector[0] = minimumValue;
   MeasurementVectorType maxVector(1);
   maxVector[0] = maximumValue;
-  
+
   typedef typename HistogramType::SizeType SizeType;
   SizeType size;
   size.SetElement(0, numberOfBins);
-  
+
   m_Histogram = HistogramType::New();
   m_Histogram->Initialize(size, minVector, maxVector);
   m_HistogramGenerator->SetHistogram( m_Histogram );

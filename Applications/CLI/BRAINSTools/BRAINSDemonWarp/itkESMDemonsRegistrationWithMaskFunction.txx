@@ -259,19 +259,19 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
     if(this->GetMovingImageMask())
     {
        MovingImagePointType mappedPoint;
-     
+
        for( unsigned int j = 0; j < ImageDimension; j++ )
        {
           mappedPoint[j] = fixedPoint[j] + it.GetCenterPixel()[j];
        }
-     
+
        if (  !this->GetMovingImageMask()->IsInside(mappedPoint) )
        {
          update.Fill( 0.0 );
          return update;
-       }     
+       }
     }
-  
+
     if(this->GetFixedImageMask())
     {
         if ( !this->GetFixedImageMask()->IsInside(fixedPoint) )
@@ -281,26 +281,6 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
        }
     }
   }
-
-#if 0
-  if ( this->GetMovingImageMask() && this->GetFixedImageMask() )
-    {
-    MovingImagePointType point;
-//    IndexType            maskIndex;
-    this->m_MovingImageWarper->GetOutput()->TransformIndexToPhysicalPoint(index,
-      point);
-//    this->m_FixedMaskImage->TransformPhysicalPointToIndex(point, maskIndex);
-    MovingPixelType movingMaskPixelValue = m_MaskImageWarper->GetOutput()->GetPixel(index);
-//    FixedPixelType fixedMaskPixelValue = m_FixedMaskImage->GetPixel(maskIndex);
-
-//    if ( ( !this->GetMovingImageMask()->IsInside(point) ) || ( !this->GetFixedImageMask()->IsInside(point)) )
-      if ( ( movingMaskPixelValue == 0 ) || ( !this->GetFixedImageMask()->IsInside(point)) )
-      {
-      update.Fill( 0.0 );
-      return update;
-      }
-    }
-#endif
 
   const double movingValue = static_cast<double>( movingPixValue );
 

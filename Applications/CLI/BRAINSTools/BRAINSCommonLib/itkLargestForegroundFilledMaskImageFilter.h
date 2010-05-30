@@ -8,45 +8,45 @@
 namespace itk
 {
 
-/**
- * \author Hans J. Johnson
- *
- * This filter does a good job of finding a single largest connected
- * mask that separates the foreground object from the background.
- * It assumes that the corner voxels of the image belong to the backgound.
- * This filter was written for the purpose of finding the tissue
- * region of a brain image with no internal holes.
- *
- * The OtsuPercentile Thresholds are used to define the range of values
- * where the percentage of voxels falls beetween
- * (0+OtsuPercentileLowerThreshold) < "Intensities of Interest" < (1-OtsuPercentileUpperThreshold).
- *
- * The ClosingSize specifies how many mm to dilate followed by
- * erode to fill holes that be present in the image.
- *
- * The DilateSize specifies how many mm to dilate
- * as a final step to include a small amount of surface background in addition to the
- * tissue region present in the image.
- *
- * The image that is returned will be a binary image with foreground and background
- * values specified by the user (defaults to 1 and 0 respectively).
- *
- */
-template <class TInputImage,class TOutputImage = TInputImage>
-class ITK_EXPORT LargestForegroundFilledMaskImageFilter :
-  public ImageToImageFilter< TInputImage, TOutputImage >
-{
+  /**
+   * \author Hans J. Johnson
+   *
+   * This filter does a good job of finding a single largest connected
+   * mask that separates the foreground object from the background.
+   * It assumes that the corner voxels of the image belong to the backgound.
+   * This filter was written for the purpose of finding the tissue
+   * region of a brain image with no internal holes.
+   *
+   * The OtsuPercentile Thresholds are used to define the range of values
+   * where the percentage of voxels falls beetween
+   * (0+OtsuPercentileLowerThreshold) < "Intensities of Interest" < (1-OtsuPercentileUpperThreshold).
+   *
+   * The ClosingSize specifies how many mm to dilate followed by
+   * erode to fill holes that be present in the image.
+   *
+   * The DilateSize specifies how many mm to dilate
+   * as a final step to include a small amount of surface background in addition to the
+   * tissue region present in the image.
+   *
+   * The image that is returned will be a binary image with foreground and background
+   * values specified by the user (defaults to 1 and 0 respectively).
+   *
+   */
+  template <class TInputImage,class TOutputImage = TInputImage>
+    class ITK_EXPORT LargestForegroundFilledMaskImageFilter :
+      public ImageToImageFilter< TInputImage, TOutputImage >
+  {
 public:
   /** Extract dimension from input and output image. */
   itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+    TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+    TOutputImage::ImageDimension);
 
   /** Convenient typedefs for simplifying declarations. */
   typedef TInputImage                                           InputImageType;
   typedef typename InputImageType::ConstPointer                 InputImagePointer;
-  typedef typename InputImageType::RegionType                   InputImageRegionType; 
+  typedef typename InputImageType::RegionType                   InputImageRegionType;
   typedef typename InputImageType::PixelType                    InputPixelType;
 
   typedef TOutputImage                                          OutputImageType;
@@ -110,9 +110,9 @@ private:
   /** Returns true if more than two bins of informaiton are found, returns false if only two bins of informaiton are found (i.e. found a binary image).
    * Low and High are set to the ?????? */
   unsigned int SetLowHigh(InputPixelType &low,
-                            InputPixelType &high);
+    InputPixelType &high);
   void ImageMinMax(InputPixelType &min,InputPixelType &max);
-//No longer used  double m_OtsuPercentileThreshold;
+  //No longer used  double m_OtsuPercentileThreshold;
   double m_OtsuPercentileLowerThreshold;
   double m_OtsuPercentileUpperThreshold;
   double m_ThresholdCorrectionFactor;
@@ -120,7 +120,7 @@ private:
   double m_DilateSize;
   IntegerPixelType m_InsideValue;
   IntegerPixelType m_OutsideValue;
-};
+  };
 
 } // end namespace itk
 

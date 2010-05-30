@@ -36,16 +36,16 @@
 
 template <typename TImageType>
 class AirAffineTransform
-  {
+{
 public:
   typedef typename CrossOverAffineSystem<double,
-    3>::AffineTransformType TransformType;
+          3>::AffineTransformType TransformType;
   typedef typename TransformType::Pointer
-  TransformPointer;
+    TransformPointer;
   typedef typename TImageType::RegionType::SizeType
-  SizeType;
+    SizeType;
   typedef typename TImageType::SpacingType
-  SpacingType;
+    SpacingType;
 
   AirAffineTransform()
     {
@@ -65,138 +65,138 @@ public:
     const std::string & StudyId);
 
   int Write (const std::string & xfrmFile)
-  {
+    {
     const std::string dummy("UNKNOWN");
 
     return Write(xfrmFile, dummy, dummy);
-  }
+    }
 
   TransformPointer GetAffineTransformPointer()
-  {
+    {
     return m_AffineTransform;
-  }
+    }
 
   void SetAffineTransformPointer(TransformPointer & xfrm)
-  {
+    {
     m_AffineTransform = xfrm;
-  }
+    }
 
   // Check to make sure that input image
   // and transform characteristics match, but then this needs to be templated.
   bool CheckMovingImageCharacteristics(
     typename TImageType::Pointer & ImageToDeform) const
-  {
+    {
     if ( ( ImageToDeform->GetLargestPossibleRegion().GetSize() !=
-           m_MovingImageSize )
-        || ( ImageToDeform->GetSpacing() != m_MovingImageSpacing )
-         )
+        m_MovingImageSize )
+      || ( ImageToDeform->GetSpacing() != m_MovingImageSpacing )
+    )
       {
       return false;
       }
     return true;
-  }
+    }
 
   SizeType GetFixedImageSize()
-  {
+    {
     return m_FixedImageSize;
-  }
+    }
 
   SpacingType GetFixedImageSpacing()
-  {
+    {
     return m_FixedImageSpacing;
-  }
+    }
 
   // Brains2 XFRM always assume origin is 0,0,0
   typename TImageType::PointType GetFixedImageOrigin()
-  {
+    {
     typename TImageType::PointType tempOrigin;
     tempOrigin[0] = tempOrigin[1] = tempOrigin[2] = 0;
     return tempOrigin;
-  }
+    }
 
   // Brains2 XFRM always assume direction is coronal;
   // REFACTOR:  In general, Air is probably agnostic about orientation.
   typename TImageType::DirectionType GetFixedImageDirection()
-  {
+    {
     typename itk::SpatialOrientationAdapter::DirectionType CORdir
       = itk::SpatialOrientationAdapter().ToDirectionCosines(
-      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP);
+        itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP);
     return CORdir;
-  }
+    }
 
   void SetFixedImageSize(SizeType & size)
-  {
+    {
     m_FixedImageSize = size;
-  }
+    }
 
   void SetFixedImageSpacing(SpacingType & spacing)
-  {
+    {
     m_FixedImageSpacing = spacing;
-  }
+    }
 
   void SetFixedAttributesFromImage(typename TImageType::Pointer & fixedImage)
-  {
+    {
     SizeType size = fixedImage->GetLargestPossibleRegion().GetSize();
 
     this->SetFixedImageSize(size);
     SpacingType spacing = fixedImage->GetSpacing();
     this->SetFixedImageSpacing(spacing);
-  }
+    }
 
   SizeType GetMovingImageSize()
-  {
+    {
     return m_MovingImageSize;
-  }
+    }
 
   SpacingType GetMovingImageSpacing()
-  {
+    {
     return m_MovingImageSpacing;
-  }
+    }
 
   void SetMovingImageSize(SizeType & size)
-  {
+    {
     m_MovingImageSize = size;
-  }
+    }
 
   void SetMovingImageSpacing(SpacingType & spacing)
-  {
+    {
     m_MovingImageSpacing = spacing;
-  }
+    }
 
   void SetMovingAttributesFromImage(typename TImageType::Pointer & movingImage)
-  {
+    {
     SizeType size = movingImage->GetLargestPossibleRegion().GetSize();
 
     this->SetMovingImageSize(size);
     SpacingType spacing = movingImage->GetSpacing();
     this->SetMovingImageSpacing(spacing);
-  }
+    }
 
   typename TImageType::Pointer
-  ApplyTransform(typename TImageType::Pointer & ImageToDeform)
-  {
-    const bool ValidInput = this->CheckMovingImageCharacteristics(ImageToDeform);
-
-    if ( !ValidInput )
+    ApplyTransform(typename TImageType::Pointer & ImageToDeform)
       {
-      return TImageType::New(); // Return a null pointer
-      }
-    typedef typename itk::ResampleImageFilter<TImageType,
-      TImageType> ResampleFilterType;
-    typename ResampleFilterType::Pointer resample = ResampleFilterType::New();
-    resample->SetTransform(m_AffineTransform);
-    resample->SetInput(ImageToDeform);
-    resample->SetSize( this->GetFixedImageSize() );
-    resample->SetOutputOrigin( this->GetFixedImageOrigin() );
-    resample->SetOutputSpacing( this->GetFixedImageSpacing() );
-    resample->SetOutputDirection( this->GetFixedImageDirection() );
+      const bool ValidInput = this->CheckMovingImageCharacteristics(ImageToDeform);
 
-    typename TImageType::PixelType p(
-      static_cast<typename TImageType::PixelType>( 0 ) );
-    resample->SetDefaultPixelValue(p);
-    resample->Update();
-    return resample->GetOutput();
-  }
+      if ( !ValidInput )
+        {
+        return TImageType::New(); // Return a null pointer
+        }
+      typedef typename itk::ResampleImageFilter<TImageType,
+              TImageType> ResampleFilterType;
+      typename ResampleFilterType::Pointer resample = ResampleFilterType::New();
+      resample->SetTransform(m_AffineTransform);
+      resample->SetInput(ImageToDeform);
+      resample->SetSize( this->GetFixedImageSize() );
+      resample->SetOutputOrigin( this->GetFixedImageOrigin() );
+      resample->SetOutputSpacing( this->GetFixedImageSpacing() );
+      resample->SetOutputDirection( this->GetFixedImageDirection() );
+
+      typename TImageType::PixelType p(
+        static_cast<typename TImageType::PixelType>( 0 ) );
+      resample->SetDefaultPixelValue(p);
+      resample->Update();
+      return resample->GetOutput();
+      }
 
 private:
   TransformPointer m_AffineTransform;
@@ -204,14 +204,14 @@ private:
   SpacingType      m_FixedImageSpacing;
   SizeType         m_MovingImageSize;
   SpacingType      m_MovingImageSpacing;
-  };
+};
 
 // HACK:  The following function should be put into the previous class, and all
 // code should be modified to reflect the simplified interface.
 template <typename TImageType>
 int
 AirAffineTransform<TImageType>::
-  Write (const std::string & AirFile,
+Write (const std::string & AirFile,
   const std::string & /* PatientId */,
   const std::string & /* StudyId */)
 {
@@ -220,9 +220,9 @@ AirAffineTransform<TImageType>::
   if ( fp == NULL )
     {
     std::cerr
-   <<
-    "Failed to open air file for writing -- is this a file or directory protection issue?  "
-   << __FILE__ << __LINE__ << std::endl;
+      <<
+      "Failed to open air file for writing -- is this a file or directory protection issue?  "
+      << __FILE__ << __LINE__ << std::endl;
     return -1;
     }
 
@@ -264,29 +264,10 @@ AirAffineTransform<TImageType>::
     for ( int j = 0; j < 4; j++ )
       {
       airBlk.e[j][i] = Q_AIR.get(i, j);   // NOTE:  Need to transpose the "e"
-                                          // air matrix
+      // air matrix
       }
     }
 
-#if 0
-  double pixel_size_s = airBlk.s.x_size;
-  if ( airBlk.s.y_size < pixel_size_s )
-    {
-    pixel_size_s = airBlk.s.y_size;
-    }
-
-  if ( airBlk.s.z_size < pixel_size_s )
-    {
-    pixel_size_s = airBlk.s.z_size;
-    }
-
-  for ( int i = 0; i < 4; i++ )
-    {
-    airBlk.e[0][i] /= (F64)(airBlk.s.x_size / pixel_size_s);
-    airBlk.e[1][i] /= (F64)(airBlk.s.y_size / pixel_size_s);
-    airBlk.e[2][i] /= (F64)(airBlk.s.z_size / pixel_size_s);
-    }
-#endif
 
   // All ipl .air16 files need to be BigEndian.
   //
@@ -302,15 +283,15 @@ AirAffineTransform<TImageType>::
 
 template <typename TImageType>
 int AirAffineTransform<TImageType>::
-  Read (std::string xfrmFile)
+Read (std::string xfrmFile)
 {
   FILE *transformFilePointer = fopen (xfrmFile.c_str(), "rb");
 
   if ( transformFilePointer == NULL )
     {
     std::cerr
-   << "Failed to open Air file for reading -- does your file exist as named?  "
-   << __FILE__ << __LINE__ << std::endl;
+      << "Failed to open Air file for reading -- does your file exist as named?  "
+      << __FILE__ << __LINE__ << std::endl;
     return -1;
     }
   struct AIR_Air16 airBlk;
@@ -321,16 +302,16 @@ int AirAffineTransform<TImageType>::
   else
     {
     std::cerr
-   <<
-    "Failed to read a whole air transform from Air file -- was your file really an Air file?  "
-   << __FILE__ << __LINE__ << std::endl;
+      <<
+      "Failed to read a whole air transform from Air file -- was your file really an Air file?  "
+      << __FILE__ << __LINE__ << std::endl;
     return -1;
     }
 
   // Need to implement byteswapping code here.
   const double F64_UINT_MAX = UINT_MAX;
   if ( airBlk.s.bits > vcl_sqrt(F64_UINT_MAX) )  // copied this test from
-                                                 // scanair source code.
+    // scanair source code.
     {
     swapAir16(&airBlk);
     }
@@ -355,25 +336,6 @@ int AirAffineTransform<TImageType>::
   this->m_MovingImageSpacing[1] = airBlk.r.y_size;
   this->m_MovingImageSpacing[2] = airBlk.r.z_size;
 
-#if 0
-  double pixel_size_s = airBlk.s.x_size;
-  if ( airBlk.s.y_size < pixel_size_s )
-    {
-    pixel_size_s = airBlk.s.y_size;
-    }
-
-  if ( airBlk.s.z_size < pixel_size_s )
-    {
-    pixel_size_s = airBlk.s.z_size;
-    }
-
-  for ( int i = 0; i < 4; i++ )
-    {
-    airBlk.e[0][i] *= ( airBlk.s.x_size / pixel_size_s );
-    airBlk.e[1][i] *= ( airBlk.s.y_size / pixel_size_s );
-    airBlk.e[2][i] *= ( airBlk.s.z_size / pixel_size_s );
-    }
-#endif
 
   // Transfer values from air structures.
   // Transfer to intermediate 4x4 matrix so that it can be checked easily in
@@ -385,7 +347,7 @@ int AirAffineTransform<TImageType>::
     for ( int i = 0; i < 4; i++ )
       {
       Q_AIR.put(i, j, airBlk.e[j][i]);   // NOTE:  Need to transpose the "e"
-                                         // matrix
+      // matrix
       }
     }
 

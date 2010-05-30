@@ -21,8 +21,8 @@ PURPOSE.  See the above copyright notices for more information.
 
 namespace itk
 {
-template <typename PointStorageType, unsigned int Dimension = 3>
-class InverseConsistentLandmarkPoint : public itk::Point<PointStorageType,
+  template <typename PointStorageType, unsigned int Dimension = 3>
+    class InverseConsistentLandmarkPoint : public itk::Point<PointStorageType,
     Dimension>
   {
 public:
@@ -41,45 +41,45 @@ public:
     const PointStorageType t,
     const PointStorageType weighting) :
     _fWeighting(weighting)
-    {
-    ( *this )[0] = x; ( *this )[1] = y; ( *this )[2] = z;
-    m_T = t;
-    }
+  {
+  ( *this )[0] = x; ( *this )[1] = y; ( *this )[2] = z;
+  m_T = t;
+  }
 
   InverseConsistentLandmarkPoint(const InverseConsistentLandmarkPoint & rhs) :
     Superclass(rhs), _fWeighting(rhs._fWeighting)
-               {}
+  {}
 
   PointStorageType GetT() const
-  {
+    {
     return m_T;
-  }
+    }
 
   void SetT(const PointStorageType val)
-  {
+    {
     m_T = val;
-  }
+    }
 
   PointStorageType GetWeighting(void) const
-  {
+    {
     return _fWeighting;
-  }
+    }
 
   void SetWeighting(const PointStorageType val)
-  {
+    {
     _fWeighting = val;
-  }
+    }
 
   virtual ~InverseConsistentLandmarkPoint(void)
-               {}
+    {}
 private:
   PointStorageType m_T;
   PointStorageType _fWeighting;
   };
 
-template <typename PointStorageType, class PointSetType>
-class InverseConsistentLandmarks :
-  public std::map<std::string, InverseConsistentLandmarkPoint<PointStorageType> >
+  template <typename PointStorageType, class PointSetType>
+    class InverseConsistentLandmarks :
+      public std::map<std::string, InverseConsistentLandmarkPoint<PointStorageType> >
   {
 public:
   typedef InverseConsistentLandmarks                       Self;
@@ -96,19 +96,19 @@ public:
     IPL_LANDMARKS, IPL_TALAIRACH_BOUNDS_LANDMARKS,
     IPL_CEREBELLAR_BOUNDS_LANDMARKS,
     UNKNOWN_LANDMARKS
-    }
+  }
   Landmark_File_Format;
   InverseConsistentLandmarks(void);
   InverseConsistentLandmarks( const int XDim, const int YDim,
     const int ZDim, const int TDim = 0 );
   virtual ~InverseConsistentLandmarks(void)
-                 {}
+    {}
 
   InverseConsistentLandmarks & operator=(const InverseConsistentLandmarks & rhs);
 
   typedef typename itk::Image<unsigned char, 3> ImageType;
   PointSetTypePointer GetPointSet(typename ImageType::PointType Origin)
-  {
+    {
     typedef typename PointSetType::PointIdentifier PointIdentifierType;
     typedef typename PointSetType::PointType       PointSetPointType;
     typedef typename Self::const_iterator          local_const_iterator;
@@ -133,7 +133,7 @@ public:
       PointID++;
       }
     return pointSet;
-  }
+    }
 
   bool ReadPointTypes( const std::string lmrkfilename );
 
@@ -313,47 +313,47 @@ public:
    * \return MaxXDim()
    */
   inline unsigned short getXDim(void) const
-  {
+    {
     return ImageDims[0];
-  }
+    }
 
   inline unsigned short getYDim(void) const
-  {
+    {
     return ImageDims[1];
-  }
+    }
 
   inline unsigned short getZDim(void) const
-  {
+    {
     return ImageDims[2];
-  }
+    }
 
   inline unsigned short getTDim(void) const
-  {
+    {
     return ImageDims[3];
-  }
+    }
 
   /**
    * If the image is 256x256, then this should be set to 255 because that is the max pixel number of the image.
    */
   inline void setXDim(const unsigned short newx)
-  {
+    {
     assert(newx > 0); ImageDims[0] = newx;
-  }
+    }
 
   inline void setYDim(const unsigned short newy)
-  {
+    {
     assert(newy > 0); ImageDims[1] = newy;
-  }
+    }
 
   inline void setZDim(const unsigned short newz)
-  {
+    {
     assert(newz > 0); ImageDims[2] = newz;
-  }
+    }
 
   inline void setTDim(const unsigned short newt)
-  {
+    {
     assert(newt > 0); ImageDims[3] = newt;
-  }
+    }
 
   /**
    * This rescales the landmarks to fit a new coordinate system.

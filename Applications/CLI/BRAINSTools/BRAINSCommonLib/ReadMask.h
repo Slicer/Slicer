@@ -6,14 +6,14 @@
 #include "itkIO.h"
 #include "itkImageMaskSpatialObject.h"
 
-inline
+  inline
 void RegisterBrains2MaskFactory()
 {
   itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
 }
 
 template <class MaskType, unsigned Dimension>
-typename MaskType::Pointer
+  typename MaskType::Pointer
 ReadImageMask(const std::string & filename,
   typename itk::ImageBase<Dimension> * referenceImage)
 {
@@ -23,12 +23,12 @@ ReadImageMask(const std::string & filename,
 
   if( itksys::SystemTools::GetFilenameLastExtension(filename) == ".mask" )
     {
-    //HACK:  THIS ASSUMES THAT THE MASK IS A BRAINS2 mask with improper orientation and origin, and then proceeds to 
+    //HACK:  THIS ASSUMES THAT THE MASK IS A BRAINS2 mask with improper orientation and origin, and then proceeds to
     //       force the origin and direction orientation.
     //       The test suite should be re-written so that only if the brains2
     // read in the mask
     OrientedMaskImage = itkUtil::ReadImageAndOrient<MaskImageType>(filename,
-        referenceImage->GetDirection() );
+      referenceImage->GetDirection() );
     OrientedMaskImage->SetOrigin(referenceImage->GetOrigin() );
     //TODO: Should also check that spacing is the same;
     }

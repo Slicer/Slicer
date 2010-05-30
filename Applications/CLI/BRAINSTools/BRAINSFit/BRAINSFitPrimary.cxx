@@ -34,9 +34,7 @@ PURPOSE.  See the above copyright notices for more information.
 #endif
 
 #include "BRAINSFitHelper.h"
-
 #include "BRAINSFitPrimaryCLP.h"
-
 
 // Check that ITK was compiled with correct flags set:
 #ifndef ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE
@@ -64,6 +62,8 @@ PURPOSE.  See the above copyright notices for more information.
 #endif
 #endif
 #endif
+
+#include "GenericTransformImage.h"
 
 typedef float PixelType;
 // Dimension and MaxInputDimension comes from an enum at the start of itkMultiModal3DMutualRegistrationHelper.h
@@ -240,24 +240,16 @@ int BRAINSFitPrimary( int argc, char *argv[] )
 
   //  const bool explicitOriginsFlag(fixedVolumeOriginArg.isSet() &&
   //                                 movingVolumeOriginArg.isSet());
-
-  if ( outputTransform.size() == 0
-    && strippedOutputTransform.size() == 0
-    && outputVolume.size() == 0 )
-    {
-    std::cout << "Error:  user requested neither outputTransform,"
-      << " nor strippedOutputTransform,"
-      << " nor outputVolume." << std::endl;
-    return 2;
-    }
+  //
   std::vector<std::string> localTransformType;
   if(registrationClass.size() != 0)
     {
-    localTransformType.push_back("Rigid");
-    localTransformType.push_back("ScaleVersor3D");
-    localTransformType.push_back("ScaleSkewVersor3D");
-    localTransformType.push_back("Affine");
-    localTransformType.push_back("BSpline");
+    localTransformType.resize(5);
+    localTransformType[0]="Rigid";
+    localTransformType[1]="ScaleVersor3D";
+    localTransformType[2]="ScaleSkewVersor3D";
+    localTransformType[3]="Affine";
+    localTransformType[4]="BSpline";
     //Now truncate at the right level;
     if(registrationClass == "Rigid")                  { localTransformType.resize(1); }
     else if(registrationClass == "ScaleVersor3D")     { localTransformType.resize(2); }
@@ -280,6 +272,48 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     exit(-1);
     }
 
+  //In order to make the Slicer interface work, a few alternate command line options need to available
+  std::string localOutputTransform;
+  if( ( linearTransform.size() > 0 && bsplineTransform.size() > 0 ) ||
+    ( linearTransform.size() > 0 && outputTransform.size() > 0 ) ||
+    ( outputTransform.size() > 0 && bsplineTransform.size() > 0 ) )
+    {
+    std::cout << "Error:  user can only specify one output transform type." << std::endl;
+    exit(-1);
+    }
+  if(linearTransform.size() > 0)
+    {
+    localOutputTransform=linearTransform;
+    if(localTransformType[localTransformType.size() -1 ] == "BSpline" )
+      {
+      std::cout << "Error:  Linear transforms can not be used for BSpline registration!" << std::endl;
+      exit(-1);
+      }
+    }
+  else if(bsplineTransform.size() > 0)
+    {
+    localOutputTransform=bsplineTransform;
+    if(localTransformType[localTransformType.size() -1 ] != "BSpline" )
+      {
+      std::cout << "Error:  BSpline registrations require output transform to be of type BSpline!" << std::endl;
+      exit(-1);
+      }
+    }
+  else if(outputTransform.size() > 0)
+    {
+    localOutputTransform=outputTransform;
+    }
+
+  if ( localOutputTransform.size() == 0
+    && strippedOutputTransform.size() == 0
+    && outputVolume.size() == 0 )
+    {
+    std::cout << "Error:  user requested neither localOutputTransform,"
+      << " nor strippedOutputTransform,"
+      << " nor outputVolume." << std::endl;
+    return 2;
+    }
+
   if(numberOfIterations.size() != localTransformType.size())
     {
     if(numberOfIterations.size() != 1)
@@ -290,10 +324,11 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     else
       {
       // replicate throughout
+      numberOfIterations.resize(localTransformType.size());
       const int numberOf = numberOfIterations[0];
       for (unsigned int i=1; i<localTransformType.size(); i++)
         {
-        numberOfIterations.push_back(numberOf);
+        numberOfIterations[i]=(numberOf);
         }
       }
     }
@@ -510,7 +545,6 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     myHelper->SetInitializeTransformMode(localInitializeTransformMode);
     myHelper->SetMaskInferiorCutOffFromCenter(maskInferiorCutOffFromCenter);
     myHelper->SetCurrentGenericTransform(currentGenericTransform);
-    myHelper->SetUseWindowedSinc(useWindowedSinc);
     myHelper->SetSplineGridSize(splineGridSize);
     myHelper->SetCostFunctionConvergenceFactor(costFunctionConvergenceFactor);
     myHelper->SetProjectedGradientTolerance(projectedGradientTolerance);
@@ -526,46 +560,15 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     currentGenericTransform=myHelper->GetCurrentGenericTransform();
     MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
 
-
       {
-      typedef itk::ResampleImageFilter<FixedVolumeType,MovingVolumeType,double> ResampleFilterType;
-      ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-
-      typedef itk::Transform<double,3,3> GenericTransformType;
-      resampler->SetTransform( currentGenericTransform );
-      resampler->SetInput( preprocessedMovingVolume );
       // Remember:  the Data is Moving's, the shape is Fixed's.
-      resampler->SetOutputParametersFromImage(extractFixedVolume);
-      resampler->SetDefaultPixelValue( backgroundFillValue );
-
-      if ( useWindowedSinc == true )
-        {
-        typedef itk::ConstantBoundaryCondition<MovingVolumeType>
-          BoundaryConditionType;
-        static const unsigned int WindowedSincHammingWindowRadius = 5;
-        typedef itk::Function::HammingWindowFunction<
-          WindowedSincHammingWindowRadius, double, double> WindowFunctionType;
-        typedef itk::WindowedSincInterpolateImageFunction<
-          MovingVolumeType,
-          WindowedSincHammingWindowRadius,
-          WindowFunctionType,
-          BoundaryConditionType,
-          double>    WindowedSincInterpolatorType;
-
-        WindowedSincInterpolatorType::Pointer interpolator
-          = WindowedSincInterpolatorType::New();
-        resampler->SetInterpolator( interpolator );
-        }
-      else     // Default to LINEAR_INTERP
-        {
-        // NOTE: Linear is the default.  resampler->SetInterpolator( interpolator );
-        }
-      resampler->Update();       //  Explicit Update() required here.
-      FixedVolumeType::Pointer ResampledImage = resampler->GetOutput();
-      resampledImage=ResampledImage;
+      resampledImage=TransformResample<MovingVolumeType,FixedVolumeType>(
+        preprocessedMovingVolume,
+        extractFixedVolume,
+        backgroundFillValue,
+        GetInterpolatorFromString<MovingVolumeType>(interpolationMode),
+        currentGenericTransform);
       }
-    //resampledImage=myHelper->GetResampledImage();
-    //HelperType::LINEAR_INTERP);
     actualIterations=myHelper->GetActualNumberOfIterations();
     permittedIterations=myHelper->GetPermittedNumberOfIterations();
     //allLevelsIterations=myHelper->GetAccumulatedNumberOfIterationsForAllLevels();
@@ -677,7 +680,7 @@ int BRAINSFitPrimary( int argc, char *argv[] )
 
   // GREG:  BRAINSFit currently does not determine if the registrations have not converged before reaching their maximum number of iterations.  Currently transforms are always written out, under the assumption that the registraiton converged.  We need to figure out how to determine if the registrations did not converge (i.e. maximum number of iterations were reached), and then not write out the transforms, unless explicitly demanded to write them out from a command line flag.
   // GREG:  We should write a test, and document what the expected behaviors are when a multi-level registration is requested (Rigid,ScaleSkew,Affine), and one of the first types does not converge.
-
+  //HACK  This does not work properly until BSpline reports iterations correctly
   if ( actualIterations + 1 >= permittedIterations )
     {
     if (writeTransformOnFailure == false) // taken right off the command line.
@@ -689,8 +692,8 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     }
 
   /*const int write_status=*/
-  itk::WriteBothTransformsToDisk(currentGenericTransform,
-          outputTransform,strippedOutputTransform);
+  itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
+    localOutputTransform,strippedOutputTransform);
 
   if ( actualIterations + 1 >= permittedIterations )
     {

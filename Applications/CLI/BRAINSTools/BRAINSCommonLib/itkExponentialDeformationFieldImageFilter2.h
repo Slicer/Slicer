@@ -13,42 +13,42 @@
 namespace itk
 {
 
-/** \class ExponentialDeformationFieldImageFilter2
- * \brief Computes a diffeomorphic deformation field as the Lie group
- * exponential of a vector field.
- *
- * ExponentialDeformationFieldImageFilter2 takes a 'smooth' vector field
- * as input and computes the deformation field that is its exponential.
- *
- * Given that both the input and output deformation field are represented as
- * discrete images with pixel type vector, the exponential will be only an
- * estimation and will probably not correspond to a perfect exponential.  The
- * precision of the exponential can be improved at the price of increasing the
- * computation time (number of iterations).
- *
- * The method used for computing the exponential deformation field is
- * an iterative scaling and squaring (cf Arsigny et al., "A
- * Log-Euclidean Framework for Statistics on Diffeomorphisms", MICCAI'06).
- *
- *    \f[
- *      exp(\Phi) = exp( \frac{\Phi}{2^N} )^{2^N}
- *    \f]
- *
- *
- * This filter expects both the input and output images to be of pixel type
- * Vector.
- *
- * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
- *
- * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/510
- *
- * \ingroup ImageToImageFilter
- */
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ExponentialDeformationFieldImageFilter2:
+  /** \class ExponentialDeformationFieldImageFilter2
+   * \brief Computes a diffeomorphic deformation field as the Lie group
+   * exponential of a vector field.
+   *
+   * ExponentialDeformationFieldImageFilter2 takes a 'smooth' vector field
+   * as input and computes the deformation field that is its exponential.
+   *
+   * Given that both the input and output deformation field are represented as
+   * discrete images with pixel type vector, the exponential will be only an
+   * estimation and will probably not correspond to a perfect exponential.  The
+   * precision of the exponential can be improved at the price of increasing the
+   * computation time (number of iterations).
+   *
+   * The method used for computing the exponential deformation field is
+   * an iterative scaling and squaring (cf Arsigny et al., "A
+   * Log-Euclidean Framework for Statistics on Diffeomorphisms", MICCAI'06).
+   *
+   *    \f[
+   *      exp(\Phi) = exp( \frac{\Phi}{2^N} )^{2^N}
+   *    \f]
+   *
+   *
+   * This filter expects both the input and output images to be of pixel type
+   * Vector.
+   *
+   * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+   *
+   * This implementation was taken from the Insight Journal paper:
+   * http://hdl.handle.net/1926/510
+   *
+   * \ingroup ImageToImageFilter
+   */
+  template <class TInputImage, class TOutputImage>
+    class ITK_EXPORT ExponentialDeformationFieldImageFilter2:
       public ImageToImageFilter<TInputImage, TOutputImage>
-{
+  {
 public:
   /** Standard class typedefs. */
   typedef ExponentialDeformationFieldImageFilter2         Self;
@@ -96,26 +96,26 @@ public:
 
   /** Image dimension. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+    TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TInputImage::ImageDimension );
+    TInputImage::ImageDimension );
   itkStaticConstMacro(PixelDimension, unsigned int,
-                      InputPixelType::Dimension );
+    InputPixelType::Dimension );
   itkStaticConstMacro(OutputPixelDimension, unsigned int,
-                      OutputPixelType::Dimension );
+    OutputPixelType::Dimension );
 
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-   /** Begin concept checking */
-   itkConceptMacro(OutputHasNumericTraitsCheck,
-                   (Concept::HasNumericTraits<typename OutputPixelType::ValueType>));
-   itkConceptMacro(SameDimensionCheck1,
-                   (Concept::SameDimension<ImageDimension,OutputImageDimension>));
-   itkConceptMacro(SameDimensionCheck2,
-                   (Concept::SameDimension<ImageDimension,PixelDimension>));
-   itkConceptMacro(SameDimensionCheck3,
-                   (Concept::SameDimension<ImageDimension,OutputPixelDimension>));
-   /** End concept checking */
+  /** Begin concept checking */
+  itkConceptMacro(OutputHasNumericTraitsCheck,
+    (Concept::HasNumericTraits<typename OutputPixelType::ValueType>));
+  itkConceptMacro(SameDimensionCheck1,
+    (Concept::SameDimension<ImageDimension,OutputImageDimension>));
+  itkConceptMacro(SameDimensionCheck2,
+    (Concept::SameDimension<ImageDimension,PixelDimension>));
+  itkConceptMacro(SameDimensionCheck3,
+    (Concept::SameDimension<ImageDimension,OutputPixelDimension>));
+  /** End concept checking */
 #endif
 
 protected:
@@ -172,7 +172,7 @@ private:
   OppositerPointer           m_Oppositer;
   VectorWarperPointer        m_Warper;
   AdderPointer               m_Adder;
-};
+  };
 
 
 } // end namespace itk

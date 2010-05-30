@@ -7,64 +7,64 @@
 
 namespace itk {
 
-/**
- * \class LogDomainDeformableRegistrationFilter
- * \brief Deformably register two images using a PDE-like algorithm
- * where the transformation is represented as the exponential of a velocity field.
- *
- * LogDomainDeformableRegistrationFilter is a base case for filter implementing
- * a PDE-like deformable algorithm that register two images by computing the 
- * velocity field whose exponential will map a moving image onto a fixed image.
- *
- * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
- * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
- * Proc. of MICCAI 2008.
- *
- * Velocity and deformation fields are represented as images whose pixel type are
- * some vector type with at least N elements, where N is the dimension of
- * the fixed image. The vector type must support element access via operator
- * []. It is assumed that the vector elements behave like floating point
- * scalars.
- *
- * This class is templated over the fixed image type, moving image type
- * and the velocity/deformation field type.
- *
- * The input fixed and moving images are set via methods SetFixedImage
- * and SetMovingImage respectively. An initial velocity field maybe set via
- * SetInitialVelocityField or SetInput. If no initial field is set,
- * a zero field is used as the initial condition.
- *
- * The output velocity field can be obtained via methods GetOutput
- * or GetVelocityField.
- *
- * The output deformation field can be obtained via method GetDeformationField.
- *
- * The PDE-like algorithm is run for a user defined number of iterations.
- * Typically the PDE-like algorithm requires period Gaussian smoothing of the
- * velocity field to enforce an elastic-like condition. The amount
- * of smoothing is governed by a set of user defined standard deviations
- * (one for each dimension).
- *
- * In terms of memory, this filter keeps two internal buffers: one for storing
- * the intermediate updates to the field and one for double-buffering when
- * smoothing the velocity field. Both buffers are the same type and size as the
- * output velocity field.
- *
- * This class make use of the finite difference solver hierarchy. Update
- * for each iteration is computed using a PDEDeformableRegistrationFunction.
- *
- * \warning This filter assumes that the fixed image type, moving image type
- * and velocity field type all have the same number of dimensions.
- *
- * \author Florence Dru, INRIA and Tom Vercauteren, MKT
- * 
- * \sa PDEDeformableRegistrationFunction.
- * \ingroup DeformableImageRegistration
- */
-template<class TFixedImage, class TMovingImage, class TField>
-class ITK_EXPORT LogDomainDeformableRegistrationFilter : 
-    public DenseFiniteDifferenceImageFilter<TField,TField>
-{
+  /**
+   * \class LogDomainDeformableRegistrationFilter
+   * \brief Deformably register two images using a PDE-like algorithm
+   * where the transformation is represented as the exponential of a velocity field.
+   *
+   * LogDomainDeformableRegistrationFilter is a base case for filter implementing
+   * a PDE-like deformable algorithm that register two images by computing the
+   * velocity field whose exponential will map a moving image onto a fixed image.
+   *
+   * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
+   * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
+   * Proc. of MICCAI 2008.
+   *
+   * Velocity and deformation fields are represented as images whose pixel type are
+   * some vector type with at least N elements, where N is the dimension of
+   * the fixed image. The vector type must support element access via operator
+   * []. It is assumed that the vector elements behave like floating point
+   * scalars.
+   *
+   * This class is templated over the fixed image type, moving image type
+   * and the velocity/deformation field type.
+   *
+   * The input fixed and moving images are set via methods SetFixedImage
+   * and SetMovingImage respectively. An initial velocity field maybe set via
+   * SetInitialVelocityField or SetInput. If no initial field is set,
+   * a zero field is used as the initial condition.
+   *
+   * The output velocity field can be obtained via methods GetOutput
+   * or GetVelocityField.
+   *
+   * The output deformation field can be obtained via method GetDeformationField.
+   *
+   * The PDE-like algorithm is run for a user defined number of iterations.
+   * Typically the PDE-like algorithm requires period Gaussian smoothing of the
+   * velocity field to enforce an elastic-like condition. The amount
+   * of smoothing is governed by a set of user defined standard deviations
+   * (one for each dimension).
+   *
+   * In terms of memory, this filter keeps two internal buffers: one for storing
+   * the intermediate updates to the field and one for double-buffering when
+   * smoothing the velocity field. Both buffers are the same type and size as the
+   * output velocity field.
+   *
+   * This class make use of the finite difference solver hierarchy. Update
+   * for each iteration is computed using a PDEDeformableRegistrationFunction.
+   *
+   * \warning This filter assumes that the fixed image type, moving image type
+   * and velocity field type all have the same number of dimensions.
+   *
+   * \author Florence Dru, INRIA and Tom Vercauteren, MKT
+   *
+   * \sa PDEDeformableRegistrationFunction.
+   * \ingroup DeformableImageRegistration
+   */
+  template<class TFixedImage, class TMovingImage, class TField>
+    class ITK_EXPORT LogDomainDeformableRegistrationFilter :
+      public DenseFiniteDifferenceImageFilter<TField,TField>
+  {
 public:
   /** Standard class typedefs. */
   typedef LogDomainDeformableRegistrationFilter    Self;
@@ -77,8 +77,8 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( LogDomainDeformableRegistrationFilter, 
-                DenseFiniteDifferenceImageFilter );
+  itkTypeMacro( LogDomainDeformableRegistrationFilter,
+    DenseFiniteDifferenceImageFilter );
 
   /** FixedImage image type. */
   typedef TFixedImage                            FixedImageType;
@@ -89,11 +89,11 @@ public:
   typedef TMovingImage                           MovingImageType;
   typedef typename MovingImageType::Pointer      MovingImagePointer;
   typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
-  
+
   /** Velocity field type. */
   typedef TField                                  VelocityFieldType;
   typedef typename VelocityFieldType::Pointer     VelocityFieldPointer;
-  
+
   /** Deformation field type. */
   typedef TField                                  DeformationFieldType;
   typedef typename DeformationFieldType::Pointer  DeformationFieldPointer;
@@ -103,15 +103,15 @@ public:
 
   /** FiniteDifferenceFunction type. */
   typedef typename Superclass::FiniteDifferenceFunctionType
-     FiniteDifferenceFunctionType;
+    FiniteDifferenceFunctionType;
 
   /** PDEDeformableRegistrationFunction type. */
   typedef PDEDeformableRegistrationFunction<FixedImageType,MovingImageType,
-      DeformationFieldType>                       PDEDeformableRegistrationFunctionType;
+          DeformationFieldType>                       PDEDeformableRegistrationFunctionType;
 
   /** Inherit some enums and typedefs from the superclass. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-                      Superclass::ImageDimension);
+    Superclass::ImageDimension);
 
   /** Set the fixed image. */
   void SetFixedImage( const FixedImageType * ptr );
@@ -127,7 +127,7 @@ public:
 
   /** Set initial velocity field. */
   void SetInitialVelocityField( VelocityFieldType * ptr )
-  { this->SetInput( ptr ); }
+    { this->SetInput( ptr ); }
 
   /** Get output velocity field. */
   VelocityFieldType * GetVelocityField() { return this->GetOutput(); }
@@ -144,7 +144,7 @@ public:
    * initial velocity field, this input is not a required input. */
   virtual std::vector<SmartPointer<DataObject> >::size_type GetNumberOfValidRequiredInputs() const;
 
-  /** Set/Get whether the velocity field is smoothed 
+  /** Set/Get whether the velocity field is smoothed
    * (regularized). Smoothing the velocity yields a solution
    * elastic in nature. If SmoothVelocityField is on, then the
    * velocity field is smoothed with a Gaussian whose standard
@@ -152,7 +152,7 @@ public:
   itkSetMacro( SmoothVelocityField, bool );
   itkGetConstMacro( SmoothVelocityField, bool );
   itkBooleanMacro( SmoothVelocityField );
-  
+
   /** Set the Gaussian smoothing standard deviations for the
    * velocity field. The values are set with respect to pixel
    * coordinates. */
@@ -164,7 +164,7 @@ public:
   const double * GetStandardDeviations(void) const
     { return static_cast<const double*>(m_StandardDeviations); }
 
-  /** Set/Get whether the update field is smoothed 
+  /** Set/Get whether the update field is smoothed
    * (regularized). Smoothing the update field yields a solution
    * viscous in nature. If SmoothUpdateField is on, then the
    * update field is smoothed with a Gaussian whose standard
@@ -172,7 +172,7 @@ public:
   itkSetMacro( SmoothUpdateField, bool );
   itkGetConstMacro( SmoothUpdateField, bool );
   itkBooleanMacro( SmoothUpdateField );
-  
+
   /** Set the Gaussian smoothing standard deviations for the update
    * field. The values are set with respect to pixel coordinates. */
   itkSetVectorMacro( UpdateFieldStandardDeviations, double, ImageDimension );
@@ -182,14 +182,14 @@ public:
    * smoothing the update field. */
   const double * GetUpdateFieldStandardDeviations(void) const
     { return static_cast<const double*>(m_UpdateFieldStandardDeviations); }
-  
-  
+
+
 
   /** Stop the registration after the current iteration. */
   virtual void StopRegistration()
     { m_StopRegistrationFlag = true; }
 
-  /** Set/Get the desired maximum error of the Gaussian kernel approximate. 
+  /** Set/Get the desired maximum error of the Gaussian kernel approximate.
    * \sa GaussianOperator. */
   itkSetMacro( MaximumError, double );
   itkGetConstMacro( MaximumError, double );
@@ -199,13 +199,13 @@ public:
   itkSetMacro( MaximumKernelWidth, unsigned int );
   itkGetConstMacro( MaximumKernelWidth, unsigned int );
 
-  /** Get the metric value. The metric value is the mean square difference 
-   * in intensity between the fixed image and transforming moving image 
-   * computed over the the overlapping region between the two images. 
+  /** Get the metric value. The metric value is the mean square difference
+   * in intensity between the fixed image and transforming moving image
+   * computed over the the overlapping region between the two images.
    * This value is calculated for the current iteration */
   virtual double GetMetric() const {return 0;}
 
-  
+
 
 protected:
   LogDomainDeformableRegistrationFilter();
@@ -213,9 +213,9 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const;
 
   /** Exponential type */
-  typedef ExponentialDeformationFieldImageFilter2< 
+  typedef ExponentialDeformationFieldImageFilter2<
     VelocityFieldType, DeformationFieldType >      FieldExponentiatorType;
-  
+
   typedef typename FieldExponentiatorType::Pointer FieldExponentiatorPointer;
 
   itkSetObjectMacro( Exponentiator, FieldExponentiatorType );
@@ -256,7 +256,7 @@ protected:
    * The amount of smoothing can be specified by setting the
    * StandardDeviations. */
   virtual void SmoothGivenField(VelocityFieldType * field, const double StandardDeviations[ImageDimension]);
-  
+
   /** This method is called after the solution has been generated. In this case,
    * the filter release the memory of the internal buffers. */
   virtual void PostProcessOutput();
@@ -280,7 +280,7 @@ protected:
 private:
   LogDomainDeformableRegistrationFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   /** Standard deviation for Gaussian smoothing */
   double                    m_StandardDeviations[ImageDimension];
   double                    m_UpdateFieldStandardDeviations[ImageDimension];
@@ -288,7 +288,7 @@ private:
   /** Modes to control smoothing of the update and velocity fields */
   bool                      m_SmoothVelocityField;
   bool                      m_SmoothUpdateField;
-  
+
   /** Temporary field used for smoothing the velocity field. */
   VelocityFieldPointer      m_TempField;
 
@@ -303,7 +303,7 @@ private:
 
   FieldExponentiatorPointer m_Exponentiator;
   FieldExponentiatorPointer m_InverseExponentiator;
-};
+  };
 
 
 } // end namespace itk

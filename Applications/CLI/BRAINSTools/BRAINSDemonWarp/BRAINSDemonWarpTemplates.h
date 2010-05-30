@@ -125,6 +125,7 @@ struct BRAINSDemonWarpAppParameters {
   bool makeBOBF;
   typedef itk::Array<float>        WeightFactorsType;
   WeightFactorsType weightFactors;
+  std::string  interpolationMode;
 };
 
 // This function calls the Thirion registration filter setting all the
@@ -547,6 +548,7 @@ void ThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
 
   app->SetNumberOfLevels(command.numberOfLevels);
   app->SetNumberOfIterations(command.numberOfIterations);
+  app->SetInterpolationMode(command.interpolationMode);
 
   if ( ( command.maskProcessingMode == "NOMASK" )
     && ( ( command.fixedBinaryVolume != "" )
@@ -683,7 +685,7 @@ ProcessOutputType (struct BRAINSDemonWarpAppParameters & command)
     }
 }
 
-template <class InPixelType, class OutPixelType>
+  template <class InPixelType, class OutPixelType>
 void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
 {
   const int dims = 3;
@@ -701,24 +703,24 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
   itk::Brains2MaskImageIOFactory::RegisterOneFactory ();
 
   typedef typename itk::VBRAINSDemonWarp
-  <ImageType,
+    <ImageType,
     TRealImage,
     OutputImageType
-  > AppType;
+      > AppType;
   typename  AppType::Pointer app = AppType::New ();
 
   // Set up the demons filter
   typedef typename itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
-    TDeformationField>
-  BaseRegistrationFilterType;
+          TDeformationField>
+            BaseRegistrationFilterType;
   // BaseRegistrationFilterType::Pointer filter =
   //   BaseRegistrationFilterType::New();
   typename BaseRegistrationFilterType::Pointer filter;
   if ( command.outputDebug )
     {
     std::cout << command.registrationFilterType
-              << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-              << std::endl;
+      << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      << std::endl;
     }
 
   if ( command.registrationFilterType == "Demons" )
@@ -726,8 +728,8 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     if ( command.vectorMovingVolume.size() == 1 )
       {
       typedef typename itk::DemonsRegistrationFilter<TRealImage, TRealImage,
-        TDeformationField>
-      ActualRegistrationFilterType;
+              TDeformationField>
+                ActualRegistrationFilterType;
       ActualRegistrationFilterType::Pointer actualfilter
         = ActualRegistrationFilterType::New();
       filter = actualfilter;
@@ -735,7 +737,7 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     else
       {
       std::cout << "Thirion demons does not support multi-input images!"
-                << std::endl;
+        << std::endl;
       exit(-1);
       }
     }
@@ -746,9 +748,9 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     if ( command.vectorMovingVolume.size() == 1 )
       {
       typedef typename itk::DiffeomorphicDemonsRegistrationFilter<TRealImage,
-        TRealImage,
-        TDeformationField>
-      ActualRegistrationFilterType;
+              TRealImage,
+              TDeformationField>
+                ActualRegistrationFilterType;
       typedef  typename ActualRegistrationFilterType::GradientType GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter
         = ActualRegistrationFilterType::New();
@@ -756,14 +758,14 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
       // implementation.
       actualfilter->SetMaximumUpdateStepLength(command.maxStepLength );
       actualfilter->SetUseGradientType( static_cast<GradientType>( command.
-                                                                     gradientType ) );
+          gradientType ) );
       filter = actualfilter;
       }
     else
       {
       typedef typename itk::VectorDiffeomorphicDemonsRegistrationFilter<
         TVectorImage, TVectorImage, TDeformationField>
-      ActualRegistrationFilterType;
+        ActualRegistrationFilterType;
       typedef  typename ActualRegistrationFilterType::GradientType GradientType;
       typename ActualRegistrationFilterType::Pointer VDDfilter
         = ActualRegistrationFilterType::New();
@@ -771,7 +773,7 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
       // implementation.
       VDDfilter->SetMaximumUpdateStepLength(command.maxStepLength );
       VDDfilter->SetUseGradientType( static_cast<GradientType>( command.
-                                                               gradientType ) );
+          gradientType ) );
       if ( command.smoothDeformationFieldSigma > 0.1 )
         {
         if ( command.outputDebug )
@@ -801,8 +803,8 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
       if ( command.outputDebug )
         {
         typename VCommandIterationUpdate<float,
-          3>::Pointer observer
-          = VCommandIterationUpdate<float, 3>::New();
+                 3>::Pointer observer
+                   = VCommandIterationUpdate<float, 3>::New();
         VDDfilter->AddObserver( itk::IterationEvent(), observer );
         }
 
@@ -822,21 +824,21 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
       // TODO:  Review this value setting.
       actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
       actualfilter->SetUseGradientType( static_cast<GradientType>( command.
-                                                                     gradientType ) );
+          gradientType ) );
       filter = actualfilter;
       }
     else
       {
       std::cout
-     << "FastSymmetricForces demons does not support multi-input images!"
-     << std::endl;
+        << "FastSymmetricForces demons does not support multi-input images!"
+        << std::endl;
       exit(-1);
       }
     }
   else
     {
     std::cerr << "Unknown Registration Filter type: "
-              << command.registrationFilterType << std::endl;
+      << command.registrationFilterType << std::endl;
     std::cerr.flush();
     throw;
     }
@@ -874,8 +876,8 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     if ( command.outputDebug )
       {
       typename VCommandIterationUpdate<float,
-        3>::Pointer observer
-        = VCommandIterationUpdate<float, 3>::New();
+               3>::Pointer observer
+                 = VCommandIterationUpdate<float, 3>::New();
       filter->AddObserver( itk::IterationEvent(), observer );
       }
 
@@ -883,9 +885,9 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     }
 
   if ( command.fixedLandmarks != "none"
-       && command.fixedLandmarks != ""
-       && command.movingLandmarks != "none"
-       && command.movingLandmarks != "" )
+    && command.fixedLandmarks != ""
+    && command.movingLandmarks != "none"
+    && command.movingLandmarks != "" )
     {
     app->SetMovingLandmarkFilename(command.movingLandmarks);
     app->SetFixedLandmarkFilename(command.fixedLandmarks);
@@ -910,6 +912,7 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
   app->SetTheFixedImageFilename(fixedImageNames);
   app->SetTheMovingImageFilename(movingImageNames);
   app->SetWarpedImageName ( command.outputVolume.c_str () );
+  app->SetInterpolationMode( command.interpolationMode );
   app->SetMedianFilterSize(command.medianFilterSize);
 
   // Set the other optional arguments if specified by the user.
@@ -928,8 +931,8 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     app->SetCheckerBoardFilename ( command.outputCheckerboardVolume.c_str () );
     unsigned int array[3]
       = { command.checkerboardPatternSubdivisions[0],
-          command.checkerboardPatternSubdivisions[1],
-          command.checkerboardPatternSubdivisions[2]};
+        command.checkerboardPatternSubdivisions[1],
+        command.checkerboardPatternSubdivisions[2]};
     app->SetCheckerBoardPattern (array);
     }
 
@@ -937,7 +940,7 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
   if ( command.outputNormalized )
     {
     std::string normalize = "ON"; // TODO:  SetOutNormalized should be a boolean
-                                  // not a string.
+    // not a string.
     app->SetOutNormalized ( normalize.c_str () );
     }
 
@@ -945,7 +948,7 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     {
     bool debug = true;
     app->SetOutDebug (debug); // TODO:  SetOutDebug should be a boolean not a
-                              // string.
+    // string.
     }
 
   app->SetTheMovingImageShrinkFactors(command.theMovingImageShrinkFactors);
@@ -964,17 +967,19 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
 
   app->SetNumberOfLevels(command.numberOfLevels);
   app->SetNumberOfIterations(command.numberOfIterations);
+  app->SetInterpolationMode(command.interpolationMode);
+
   app->SetWeightFactors(command.weightFactors);
 
   // If making BOBF option is specified Initialize its parameters
   if ( command.makeBOBF )
     {
     if ( ( command.fixedBinaryVolume == "" )
-        || ( command.movingBinaryVolume == "" ) )
+      || ( command.movingBinaryVolume == "" ) )
       {
       std::cout
-                   <<
-      "Error: If BOBF option is set then the fixed mask name and moving mask file name should be specified. \n";
+        <<
+        "Error: If BOBF option is set then the fixed mask name and moving mask file name should be specified. \n";
       exit(-1);
       }
 
@@ -996,7 +1001,7 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
   if ( command.outputDebug )
     {
     std::cout << "Setting Default PixelValue: "
-              << command.backgroundFillValue << "." << std::endl;
+      << command.backgroundFillValue << "." << std::endl;
     }
   app->SetDefaultPixelValue (command.backgroundFillValue);
   if ( command.outputDebug )
@@ -1016,7 +1021,7 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
   catch (... )
     {
     std::cout << "Caught a non-ITK exception " << __FILE__ << " "
-              << __LINE__ << std::endl;
+      << __LINE__ << std::endl;
     }
 
   return;
@@ -1024,14 +1029,14 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template <class InPixelType, class OutPixelType>
+  template <class InPixelType, class OutPixelType>
 void VectorProcessAppType (const struct BRAINSDemonWarpAppParameters & command)
 {
   VectorThirionFunction<InPixelType, OutPixelType>(command);
 }
 
 // This function processes the output data type.
-template <class PixelType> void
+  template <class PixelType> void
 VectorProcssOutputType (struct BRAINSDemonWarpAppParameters & command)
 {
   if ( command.outputPixelType != "" )
@@ -1083,7 +1088,7 @@ VectorProcssOutputType (struct BRAINSDemonWarpAppParameters & command)
     }
 }
 // This function processes the output data type.
-template <class PixelType> void
+  template <class PixelType> void
 VectorProcessOutputType (struct BRAINSDemonWarpAppParameters & command)
 {
   if ( command.outputPixelType != "" )
@@ -1094,34 +1099,34 @@ VectorProcessOutputType (struct BRAINSDemonWarpAppParameters & command)
       VectorProcessAppType<PixelType, unsigned char>(command);
       }
     else if ( CompareNoCase ( command.outputPixelType,
-                std::string ("short") ) == 0 )
+        std::string ("short") ) == 0 )
       {
       VectorProcessAppType<PixelType, short>(command);
       }
     else if ( CompareNoCase ( command.outputPixelType,
-                std::string ("ushort") ) == 0 )
+        std::string ("ushort") ) == 0 )
       {
       VectorProcessAppType<PixelType, unsigned short>(command);
       }
     else if ( CompareNoCase ( command.outputPixelType,
-                std::string ("int") ) == 0 )
+        std::string ("int") ) == 0 )
       {
       VectorProcessAppType<PixelType, int>(command);
       }
     else if ( CompareNoCase ( command.outputPixelType,
-                std::string ("float") ) == 0 )
+        std::string ("float") ) == 0 )
       {
       VectorProcessAppType<PixelType, float>(command);
       }
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-                           // segments in one object file for the intel compiler
+    // segments in one object file for the intel compiler
     else if ( CompareNoCase ( command.outputPixelType,
-                std::string ("uint") ) == 0 )
+        std::string ("uint") ) == 0 )
       {
       VectorProcessAppType<PixelType, unsigned int>(command);
       }
     else if ( CompareNoCase ( command.outputPixelType,
-                std::string ("double") ) == 0 )
+        std::string ("double") ) == 0 )
       {
       VectorProcessAppType<PixelType, double>(command);
       }
@@ -1129,8 +1134,8 @@ VectorProcessOutputType (struct BRAINSDemonWarpAppParameters & command)
     else
       {
       std::cout
-     << "Error. Invalid data type for -outtype!  Use one of these:"
-     << std::endl;
+        << "Error. Invalid data type for -outtype!  Use one of these:"
+        << std::endl;
       PrintDataTypeStrings ();
       exit (-1);
       }

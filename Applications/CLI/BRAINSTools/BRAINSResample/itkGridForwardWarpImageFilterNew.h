@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkGridForwardWarpImageFilterNew.h,v $
-  Language:  C++
-  Date:      $Date: 2009-04-23 03:43:41 $
-  Version:   $Revision: 1.2 $
+Program:   Insight Segmentation & Registration Toolkit
+Module:    $RCSfile: itkGridForwardWarpImageFilterNew.h,v $
+Language:  C++
+Date:      $Date: 2009-04-23 03:43:41 $
+Version:   $Revision: 1.2 $
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+Copyright (c) Insight Software Consortium. All rights reserved.
+See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
@@ -23,41 +23,41 @@
 namespace itk
 {
 
-/** \class GridForwardWarpImageFilterNew
- * \brief Warps a grid using an input deformation field.
- *
- * GridForwardWarpImageFilterNew warps a grid with respect to
- * a given deformation field.
- *
- * A deformation field is represented as a image whose pixel type is some
- * vector type with at least N elements, where N is the dimension of
- * the input image. The vector type must support element access via operator
- * [].
- *
- * The output image is produced by forward mapping.
- *
- * Each vector in the deformation field represent the distance between
- * a geometric point in the input space and a point in the output space such
- * that:
- *
- * \f[ p_{in} = p_{out} + d \f]
- *
- * Typically the mapped position does not correspond to an integer pixel
- * position in the output image. We round it.
- *
- * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
- *
- * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/510
- *
- */
-template <
-  class TDeformationField,
-  class TOutputImage
-  >
-class ITK_EXPORT GridForwardWarpImageFilterNew :
-    public ImageToImageFilter<TDeformationField, TOutputImage>
-{
+  /** \class GridForwardWarpImageFilterNew
+   * \brief Warps a grid using an input deformation field.
+   *
+   * GridForwardWarpImageFilterNew warps a grid with respect to
+   * a given deformation field.
+   *
+   * A deformation field is represented as a image whose pixel type is some
+   * vector type with at least N elements, where N is the dimension of
+   * the input image. The vector type must support element access via operator
+   * [].
+   *
+   * The output image is produced by forward mapping.
+   *
+   * Each vector in the deformation field represent the distance between
+   * a geometric point in the input space and a point in the output space such
+   * that:
+   *
+   * \f[ p_{in} = p_{out} + d \f]
+   *
+   * Typically the mapped position does not correspond to an integer pixel
+   * position in the output image. We round it.
+   *
+   * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+   *
+   * This implementation was taken from the Insight Journal paper:
+   * http://hdl.handle.net/1926/510
+   *
+   */
+  template <
+    class TDeformationField,
+          class TOutputImage
+            >
+            class ITK_EXPORT GridForwardWarpImageFilterNew :
+              public ImageToImageFilter<TDeformationField, TOutputImage>
+  {
 public:
   /** Standard class typedefs. */
   typedef GridForwardWarpImageFilterNew                            Self;
@@ -84,9 +84,9 @@ public:
 
   /** Determine the image dimension. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-                      TOutputImage::ImageDimension );
+    TOutputImage::ImageDimension );
   itkStaticConstMacro(DeformationFieldDimension, unsigned int,
-                      TDeformationField::ImageDimension );
+    TDeformationField::ImageDimension );
 
   /** Deformation field typedef support. */
   typedef TDeformationField                                   DeformationFieldType;
@@ -134,7 +134,7 @@ private:
   PixelType                  m_BackgroundValue;
   PixelType                  m_ForegroundValue;
   typename OutputImageType::SizeType  m_GridPixelSpacing;
-};
+  };
 
 } // end namespace itk
 

@@ -55,10 +55,10 @@ VelocityFieldBCHCompositionFilter<TInputImage,TOutputImage>
   os << indent << "Multiplier: " << m_Multiplier << std::endl;
   os << indent << "Multiplier2: " << m_Multiplier2 << std::endl;
   os << indent << "NumberOfApproximationTerms: " << m_NumberOfApproximationTerms << std::endl;
-} 
+}
 
 
-/** 
+/**
  * GenerateData()
  */
 template <class TInputImage, class TOutputImage>
@@ -72,14 +72,14 @@ VelocityFieldBCHCompositionFilter<TInputImage,TOutputImage>
   // Create a progress accumulator for tracking the progress of minipipeline
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
-  
+
   switch ( m_NumberOfApproximationTerms )
     {
     case 2:
       {
       // lf + rf
       progress->RegisterInternalFilter(m_Adder, 1.0);
-      
+
       m_Adder->SetInput( 0, leftField );
       m_Adder->SetInput( 1, rightField );
       m_Adder->SetInPlace( this->GetInPlace() );
@@ -91,13 +91,13 @@ VelocityFieldBCHCompositionFilter<TInputImage,TOutputImage>
       progress->RegisterInternalFilter(m_LieBracketFilter, 0.5);
       progress->RegisterInternalFilter(m_Multiplier, 0.2);
       progress->RegisterInternalFilter(m_Adder, 0.3);
-      
+
       m_LieBracketFilter->SetInput( 0, leftField );
       m_LieBracketFilter->SetInput( 1, rightField );
-      
+
       m_Multiplier->SetInput( m_LieBracketFilter->GetOutput() );
       // constant set to 0.5 in constructor
-      
+
       m_Adder->SetInput( 0, m_Multiplier->GetOutput() );
       m_Adder->SetInput( 1, leftField );
       m_Adder->SetInput( 2, rightField );
@@ -118,13 +118,13 @@ VelocityFieldBCHCompositionFilter<TInputImage,TOutputImage>
       progress->RegisterInternalFilter(m_LieBracketFilter2, 0.3);
       progress->RegisterInternalFilter(m_Multiplier2, 0.15);
       progress->RegisterInternalFilter(m_Adder, 0.1);
-      
+
       m_LieBracketFilter->SetInput( 0, leftField );
       m_LieBracketFilter->SetInput( 1, rightField );
 
       m_LieBracketFilter2->SetInput( 0, leftField );
       m_LieBracketFilter2->SetInput( 1, m_LieBracketFilter->GetOutput() );
-      
+
       m_Multiplier->SetInput( m_LieBracketFilter->GetOutput() );
       // constant set to 0.5 in constructor
 

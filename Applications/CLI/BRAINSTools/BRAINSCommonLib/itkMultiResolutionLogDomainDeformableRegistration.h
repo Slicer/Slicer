@@ -13,71 +13,71 @@
 
 namespace itk
 {
-/**
- * \class MultiResolutionLogDomainDeformableRegistration
- * \brief Framework for performing multi-resolution log-domain
- * deformable registration.
- *
- * MultiResolutionLogDomainDeformableRegistration provides a generic framework
- * to peform multi-resolution deformable registration.
- *
- * At each resolution level a LogDomainDeformableRegistrationFilter is used
- * to register two images by computing the velocity field whose exponential will 
- * map a moving image onto a fixed image.
- *
- * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
- * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
- * Proc. of MICCAI 2008.
- *
- * Velocity and deformation fields are represented as images whose pixel type is some
- * vector type with at least N elements, where N is the dimension of
- * the fixed image. The vector type must support element access via operator
- * []. It is assumed that the vector elements behave like floating point
- * scalars.
- *
- * The internal LogDomainDeformableRegistrationFilter can be set using
- * SetRegistrationFilter. By default a LogDomainDemonsRegistrationFilter is used.
- *
- * The input fixed and moving images are set via methods SetFixedImage
- * and SetMovingImage respectively. An initial velocity field maybe set via
- * SetInitialVelocityField if is matches the characteristics of the coarsest
- * pyramid level. If no such assumption can be made (e.g. the velocity field
- * has the same characteristics as the input images), an initial velocity
- * field can still be set via SetArbitraryInitialVelocityField or
- * SetInput. The filter will then take care of mathching the coarsest level
- * characteristics. If no initial field is set a zero field is used as the
- * initial condition.
- *
- * MultiResolutionPyramidImageFilters are used to downsample the fixed
- * and moving images. A VectorExpandImageFilter is used to upsample
- * the velocity field as we move from a coarse to fine solution.
- *
- * This class is templated over the fixed image type, the moving image type,
- * and the velocity/deformation Field type.
- *
- * \warning This class assumes that the fixed, moving and
- * field image types all have the same number of dimensions.
- *
- * \author Florence Dru, INRIA and Tom Vercauteren, MKT
- *
- * \sa LogDomainDeformableRegistrationFilter
- * \sa LogDomainDemonsRegistrationFilter
- * \sa MultiResolutionPyramidImageFilter
- * \sa VectorExpandImageFilter
- *
- * The current implementation of this class does not support streaming.
- *
- * \ingroup DeformableImageRegistration
- */
-template <class TFixedImage, class TMovingImage, class TField, class  TRealType = float>
-class ITK_EXPORT MultiResolutionLogDomainDeformableRegistration :
-    public ImageToImageFilter <TField, TField>
-{
+  /**
+   * \class MultiResolutionLogDomainDeformableRegistration
+   * \brief Framework for performing multi-resolution log-domain
+   * deformable registration.
+   *
+   * MultiResolutionLogDomainDeformableRegistration provides a generic framework
+   * to peform multi-resolution deformable registration.
+   *
+   * At each resolution level a LogDomainDeformableRegistrationFilter is used
+   * to register two images by computing the velocity field whose exponential will
+   * map a moving image onto a fixed image.
+   *
+   * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
+   * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
+   * Proc. of MICCAI 2008.
+   *
+   * Velocity and deformation fields are represented as images whose pixel type is some
+   * vector type with at least N elements, where N is the dimension of
+   * the fixed image. The vector type must support element access via operator
+   * []. It is assumed that the vector elements behave like floating point
+   * scalars.
+   *
+   * The internal LogDomainDeformableRegistrationFilter can be set using
+   * SetRegistrationFilter. By default a LogDomainDemonsRegistrationFilter is used.
+   *
+   * The input fixed and moving images are set via methods SetFixedImage
+   * and SetMovingImage respectively. An initial velocity field maybe set via
+   * SetInitialVelocityField if is matches the characteristics of the coarsest
+   * pyramid level. If no such assumption can be made (e.g. the velocity field
+   * has the same characteristics as the input images), an initial velocity
+   * field can still be set via SetArbitraryInitialVelocityField or
+   * SetInput. The filter will then take care of mathching the coarsest level
+   * characteristics. If no initial field is set a zero field is used as the
+   * initial condition.
+   *
+   * MultiResolutionPyramidImageFilters are used to downsample the fixed
+   * and moving images. A VectorExpandImageFilter is used to upsample
+   * the velocity field as we move from a coarse to fine solution.
+   *
+   * This class is templated over the fixed image type, the moving image type,
+   * and the velocity/deformation Field type.
+   *
+   * \warning This class assumes that the fixed, moving and
+   * field image types all have the same number of dimensions.
+   *
+   * \author Florence Dru, INRIA and Tom Vercauteren, MKT
+   *
+   * \sa LogDomainDeformableRegistrationFilter
+   * \sa LogDomainDemonsRegistrationFilter
+   * \sa MultiResolutionPyramidImageFilter
+   * \sa VectorExpandImageFilter
+   *
+   * The current implementation of this class does not support streaming.
+   *
+   * \ingroup DeformableImageRegistration
+   */
+  template <class TFixedImage, class TMovingImage, class TField, class  TRealType = float>
+    class ITK_EXPORT MultiResolutionLogDomainDeformableRegistration :
+      public ImageToImageFilter <TField, TField>
+  {
 public:
   /** Standard class typedefs */
   typedef MultiResolutionLogDomainDeformableRegistration Self;
   typedef ImageToImageFilter<TField, TField>
-                                                   Superclass;
+    Superclass;
   typedef SmartPointer<Self>                       Pointer;
   typedef SmartPointer<const Self>                 ConstPointer;
 
@@ -85,8 +85,8 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( MultiResolutionLogDomainDeformableRegistration, 
-                ImageToImageFilter );
+  itkTypeMacro( MultiResolutionLogDomainDeformableRegistration,
+    ImageToImageFilter );
 
   /** Fixed image type. */
   typedef TFixedImage                            FixedImageType;
@@ -101,21 +101,21 @@ public:
   /** Velocity field type. */
   typedef TField                                 VelocityFieldType;
   typedef typename VelocityFieldType::Pointer    VelocityFieldPointer;
-  
+
   /** Deformation field image type. */
   typedef TField                                 DeformationFieldType;
   typedef typename DeformationFieldType::Pointer DeformationFieldPointer;
 
   /** ImageDimension. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-                      FixedImageType::ImageDimension);
+    FixedImageType::ImageDimension);
 
   /** Internal float image type. */
   typedef Image<TRealType,itkGetStaticConstMacro(ImageDimension)> FloatImageType;
 
   /** The internal registration type. */
   typedef LogDomainDeformableRegistrationFilter<FloatImageType, FloatImageType, VelocityFieldType >
-                                             RegistrationType;
+    RegistrationType;
   typedef typename RegistrationType::Pointer RegistrationPointer;
 
   /** The default registration type. */
@@ -124,17 +124,17 @@ public:
 
   /** The fixed multi-resolution image pyramid type. */
   typedef MultiResolutionPyramidImageFilter<FixedImageType, FloatImageType >
-                                                  FixedImagePyramidType;
+    FixedImagePyramidType;
   typedef typename FixedImagePyramidType::Pointer FixedImagePyramidPointer;
 
   /** The moving multi-resolution image pyramid type. */
   typedef MultiResolutionPyramidImageFilter<MovingImageType, FloatImageType >
-                                                   MovingImagePyramidType;
+    MovingImagePyramidType;
   typedef typename MovingImagePyramidType::Pointer MovingImagePyramidPointer;
-   
+
   /** The velocity field expander type. */
   typedef VectorResampleImageFilter<VelocityFieldType, VelocityFieldType >
-                                               FieldExpanderType;
+    FieldExpanderType;
   typedef typename FieldExpanderType::Pointer  FieldExpanderPointer;
 
   /** Set the fixed image. */
@@ -161,7 +161,7 @@ public:
    *  images characteristics at the coarsest level of the pyramid. */
   virtual void SetArbitraryInitialVelocityField( VelocityFieldType * ptr )
     {
-    this->SetInput( ptr ); 
+    this->SetInput( ptr );
     }
 
   /** Get output velocity field. */
@@ -185,7 +185,7 @@ public:
 
   /** Get the internal registrator. */
   itkGetObjectMacro( RegistrationFilter, RegistrationType );
-  
+
   /** Set the fixed image pyramid. */
   itkSetObjectMacro( FixedImagePyramid, FixedImagePyramidType );
 
@@ -218,7 +218,7 @@ public:
 
   /** Get number of iterations per multi-resolution levels. */
   virtual const unsigned int * GetNumberOfIterations() const
-  { return &(m_NumberOfIterations[0]); }
+    { return &(m_NumberOfIterations[0]); }
 
   /** Stop the registration after the current iteration. */
   virtual void StopRegistration();
@@ -229,9 +229,9 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const;
 
   /** Exponential type */
-  typedef ExponentialDeformationFieldImageFilter2< 
+  typedef ExponentialDeformationFieldImageFilter2<
     VelocityFieldType, DeformationFieldType >      FieldExponentiatorType;
-  
+
   typedef typename FieldExponentiatorType::Pointer FieldExponentiatorPointer;
 
   itkSetObjectMacro( Exponentiator, FieldExponentiatorType );
@@ -264,7 +264,7 @@ protected:
 private:
   MultiResolutionLogDomainDeformableRegistration(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   RegistrationPointer        m_RegistrationFilter;
   FixedImagePyramidPointer   m_FixedImagePyramid;
   MovingImagePyramidPointer  m_MovingImagePyramid;
@@ -279,7 +279,7 @@ private:
   bool                      m_StopRegistrationFlag;
 
   FieldExponentiatorPointer m_Exponentiator;
-};
+  };
 
 
 } // end namespace itk

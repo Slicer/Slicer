@@ -33,7 +33,7 @@ HACK:  Need to update documentation and licensing.
 #include "itkGridImageSource.h"
 
 //A filter to debug the min/max values
-template <class TImage>
+  template <class TImage>
 void PrintImageMinAndMax(TImage * inputImage)
 {
   typedef typename itk::StatisticsImageFilter<TImage> StatisticsFilterType;
@@ -41,7 +41,7 @@ void PrintImageMinAndMax(TImage * inputImage)
   statsFilter->SetInput( inputImage );
   statsFilter->Update();
   std::cerr << "StatisticsFilter gave Minimum of " << statsFilter->GetMinimum()
-            << " and Maximum of " << statsFilter->GetMaximum() << std::endl;
+    << " and Maximum of " << statsFilter->GetMaximum() << std::endl;
 }
 
 /* This does all the work! */
@@ -69,23 +69,13 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
       std::cout << "=====================================================" << std::endl;
       }
 
-    if (useTransformMode.size() > 0)
-      {
-      std::cout
-  << "Scripting 'code rot' note:  "
-  "The useTransformMode parameter will be ignored.  "
-  "Now ResampleTransformOrDeformationField infers the "
-  "warpTransform type from the contents of the .mat file."
-  << std::endl;
-      }
-
     if (useTransform == useDeformationField)
       {
       std::cout
-  << "Choose one of the two possibilities, "
-  "a BRAINSFit transform --or-- a high-dimensional"
-  "deformation field."
-  << std::endl;
+        << "Choose one of the two possibilities, "
+        "an ITK compliant transform (BSpline, Rigid, Versor3D, Affine) --or-- a high-dimensional"
+        "deformation field."
+        << std::endl;
       exit(1);
       }
     }
@@ -149,29 +139,21 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
   // Read optional transform:
 
   // An empty SmartPointer constructor sets up someTransform.IsNull() to represent a not-supplied state:
-  BSplineTransformType::Pointer itkBSplineTransform;
-  AffineTransformType::Pointer ITKAffineTransform;
+  GenericTransformType::Pointer genericTransform;
 
   if ( useTransform )
     {
-    ReadDotMatTransformFile(warpTransform,
-        itkBSplineTransform,
-        ITKAffineTransform,
-        invertTransform);
+    genericTransform=itk::ReadTransformFromDisk(warpTransform);
     }
-
   ImageType::Pointer TransformedImage
-    = GenericTransformImage<ImageType,
-        RefImageType,
-        DeformationFieldType>(
-    PrincipalOperandImage,
-    ReferenceImage,
-    DeformationField,
-    defaultValue,
-    itkBSplineTransform,
-    ITKAffineTransform,
-    interpolationMode,
-    pixelType == "binary");
+    = GenericTransformImage<ImageType, ImageType, DeformationFieldType>(
+      PrincipalOperandImage,
+      ReferenceImage,
+      DeformationField,
+      genericTransform,
+      defaultValue,
+      interpolationMode,
+      pixelType == "binary");
   if(addGrids)
     {
     // find min/max pixels for image
@@ -227,15 +209,13 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     MFilter->Update();
     PrincipalOperandImage = MFilter->GetOutput();
 
-      TransformedImage= GenericTransformImage<ImageType,
-      RefImageType,
+    TransformedImage= GenericTransformImage<ImageType, ImageType,
       DeformationFieldType>(
         PrincipalOperandImage,
         ReferenceImage,
         DeformationField,
+        genericTransform,
         defaultValue,
-        itkBSplineTransform,
-        ITKAffineTransform,
         "Linear",
         pixelType == "binary");
     }
@@ -327,7 +307,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
     castFilter->SetInput( TransformedImage );
     castFilter->Update( );
-;
+    ;
     typedef itk::ImageFileWriter<NewImageType> WriterType;
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );

@@ -20,11 +20,11 @@ template <class TFixedImage, class TMovingImage, class TField>
 LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
 ::LogDomainDeformableRegistrationFilter()
 {
- 
+
   this->SetNumberOfRequiredInputs(2);
 
   this->SetNumberOfIterations(10);
- 
+
   unsigned int j;
   for( j = 0; j < ImageDimension; j++ )
     {
@@ -42,7 +42,7 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
 
   m_Exponentiator = FieldExponentiatorType::New();
   m_Exponentiator->ComputeInverseOff();
-  
+
   m_InverseExponentiator = FieldExponentiatorType::New();
   m_InverseExponentiator->ComputeInverseOn();
 }
@@ -110,7 +110,7 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
     {
     num++;
     }
-  
+
   return num;
 }
 
@@ -224,7 +224,7 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
     }
 
   // update variables in the equation object
-  PDEDeformableRegistrationFunctionType *f = 
+  PDEDeformableRegistrationFunctionType *f =
     dynamic_cast<PDEDeformableRegistrationFunctionType *>
     (this->GetDifferenceFunction().GetPointer());
 
@@ -241,7 +241,7 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
 }
 
 
-/* Override the default implementation for the case when the 
+/* Override the default implementation for the case when the
  * initial velocity is not set.
  * If the initial velocity is not set, the output is
  * fill with zero vectors.*/
@@ -252,7 +252,7 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
 {
 
   typename Superclass::InputImageType::ConstPointer  inputPtr  = this->GetInput();
-  
+
   if( inputPtr )
     {
     this->Superclass::CopyInputToOutput();
@@ -266,7 +266,7 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
       }
 
     typename OutputImageType::Pointer output = this->GetOutput();
-  
+
     ImageRegionIterator<OutputImageType> out(output, output->GetRequestedRegion());
 
     while( ! out.IsAtEnd() )
@@ -295,16 +295,16 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
     }
   else if( this->GetFixedImage() )
     {
-    // Initial deforamtion field is not set. 
+    // Initial deforamtion field is not set.
     // Copy information from the fixed image.
-    for (unsigned int idx = 0; idx < 
+    for (unsigned int idx = 0; idx <
            this->GetNumberOfOutputs(); ++idx )
       {
       output = this->GetOutput(idx);
       if (output)
         {
         output->CopyInformation(this->GetFixedImage());
-        }  
+        }
       }
 
     }
@@ -322,19 +322,19 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
   Superclass::GenerateInputRequestedRegion();
 
   // request the largest possible region for the moving image
-  MovingImagePointer movingPtr = 
+  MovingImagePointer movingPtr =
     const_cast< MovingImageType * >( this->GetMovingImage() );
   if( movingPtr )
     {
     movingPtr->SetRequestedRegionToLargestPossibleRegion();
     }
-  
+
   // just propagate up the output requested region for
   // the fixed image and initial velocity field.
-  VelocityFieldPointer inputPtr = 
+  VelocityFieldPointer inputPtr =
     const_cast< VelocityFieldType * >( this->GetInput() );
   VelocityFieldPointer outputPtr = this->GetOutput();
-  FixedImagePointer fixedPtr = 
+  FixedImagePointer fixedPtr =
     const_cast< FixedImageType *>( this->GetFixedImage() );
 
   if( inputPtr )
@@ -403,13 +403,13 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
   m_TempField->SetOrigin( field->GetOrigin() );
   m_TempField->SetSpacing( field->GetSpacing() );
   m_TempField->SetDirection( field->GetDirection() );
-  m_TempField->SetLargestPossibleRegion( 
+  m_TempField->SetLargestPossibleRegion(
     field->GetLargestPossibleRegion() );
   m_TempField->SetRequestedRegion(
     field->GetRequestedRegion() );
   m_TempField->SetBufferedRegion( field->GetBufferedRegion() );
   m_TempField->Allocate();
-  
+
   typedef typename VelocityFieldType::PixelType       VectorType;
   typedef typename VectorType::ValueType              ScalarType;
   typedef GaussianOperator<ScalarType,ImageDimension> OperatorType;
@@ -420,7 +420,7 @@ LogDomainDeformableRegistrationFilter<TFixedImage,TMovingImage,TField>
   OperatorType * oper = new OperatorType;
   typename SmootherType::Pointer smoother = SmootherType::New();
 
-  typedef typename VelocityFieldType::PixelContainerPointer 
+  typedef typename VelocityFieldType::PixelContainerPointer
     PixelContainerPointer;
   PixelContainerPointer swapPtr;
 

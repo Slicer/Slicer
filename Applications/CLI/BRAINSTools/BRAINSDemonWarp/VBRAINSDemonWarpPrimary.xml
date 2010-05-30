@@ -7,7 +7,7 @@
     This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.
   </description>
   <version>1.0</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:BRAINSDemonWarp</documentation-url>
+  <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>This tool was developed by Hans Johnson, Greg Harris, and YongQaing Zhao.</contributor>
 
@@ -37,7 +37,6 @@
   <parameters>
     <label>Output Files</label>
     <description>Output file in which to store tract lines</description>
-
     <image>
       <name>outputVolume</name>
       <flag>o</flag>
@@ -47,14 +46,15 @@
       <channel>output</channel>
     </image>
 
-    <image>
+    <transform fileExtensions=".nrrd" type="nonlinear" reference="movingVolume">
       <name>outputDeformationFieldVolume</name>
       <flag>O</flag>
       <longflag alias="output_field">outputDeformationFieldVolume</longflag>
       <description>Required: output deformation field vector image.</description>
       <label>Output Deformation Field Volume</label>
       <channel>output</channel>
-    </image>
+    </transform>
+
   </parameters>
 
   <parameters>
@@ -63,11 +63,14 @@
     <string-enumeration>
       <name>registrationFilterType</name>
       <longflag>registrationFilterType</longflag>
-      <description>Registration Filter Type: Demons|FastSymmetricForces|Diffeomorphic</description>
+      <description>Registration Filter Type: Demons|FastSymmetricForces|Diffeomorphic|LogDemons|SymmetricLogDemons</description>
       <label>Registration Filter Type</label>
-      <default>Demons</default>
+      <default>Diffeomorphic</default>
+      <element>Demons</element>
       <element>FastSymmetricForces</element>
-      <element>Diffeomorphic</element>:
+      <element>Diffeomorphic</element>
+      <element>LogDemons</element>
+      <element>SymmetricLogDemons</element>:
     </string-enumeration>
     <double>
       <name>smoothDeformationFieldSigma</name>
@@ -108,6 +111,22 @@
       <channel>input</channel>
     </string-enumeration>
 
+  <string-enumeration>
+      <name>interpolationMode</name>
+      <longflag>interpolationMode</longflag>
+      <label>Interpolation Mode</label>
+      <description>Type of interpolation used</description>
+      <default>Linear</default>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>BSpline</element>
+      <element>WindowedSinc</element>
+    </string-enumeration>
+  </parameters>
+
+  <parameters advanced="true">
+  <label> Advanced Options </label>
+  <description> Uncommon debugging or other advanced options. </description>
     <string>
       <name>outputDisplacementFieldPrefix</name>
       <longflag>outputDisplacementFieldPrefix</longflag>
@@ -174,16 +193,16 @@
     <file>
       <name>fixedBinaryVolume</name>
       <longflag>fixedBinaryVolume</longflag>
-      <description>Required for BOBF: brain mask filename for Fixed (target) image</description>
-      <label>Input BOBF Fixed Mask Filename</label>
+      <description>Mask filename for desired region of interest in the Fixed image.</description>
+      <label>Input Fixed Mask Filename</label>
       <channel>input</channel>
     </file>
 
     <file>
       <name>movingBinaryVolume</name>
       <longflag>movingBinaryVolume</longflag>
-      <description>Required for BOBF: brain mask filename for Moving image</description>
-      <label>Input BOBF Moving Mask Filename</label>
+      <description>Mask filename for desired region of interest in the Moving image.</description>
+      <label>Input Moving Mask Filename</label>
       <channel>input</channel>
     </file>
 
@@ -240,7 +259,7 @@
       <default>0,0,0</default>
       <channel>input</channel>
     </integer-vector>
-    
+
     <float-vector>
       <name>weightFactors</name>
       <flag>w</flag>
@@ -267,13 +286,14 @@
       <channel>input</channel>
     </file>
 
-    <image>
+    <transform fileExtensions=".nrrd" type="nonlinear">
       <name>initializeWithDeformationField</name>
       <longflag>initializeWithDeformationField</longflag>
       <description>Initial deformation field vector image file name</description>
       <label>Initial Deformation Field Volume</label>
       <channel>input</channel>
-    </image>
+    </transform>
+
 
     <file>
       <name>initializeWithFourier</name>
@@ -283,13 +303,13 @@
       <channel>input</channel>
     </file>
 
-    <file>
+    <transform fileExtensions=".mat">
       <name>initializeWithTransform</name>
       <longflag>initializeWithTransform</longflag>
       <description>Initial Transform filename</description>
       <label>Initial Transform  Filename</label>
       <channel>input</channel>
-    </file>
+    </transform>
     <integer>
       <name>numberOfHistogramBins</name>
       <longflag>numberOfHistogramBins</longflag>
@@ -356,7 +376,7 @@
     <double>
        <name>maxStepLength</name>
        <flag>l</flag>
-       <longflag alias="max_step_length">maxStepLength</longflag>
+       <longflag>max_step_length</longflag>
        <description>Maximum length of an update vector (0: no restriction)</description>
        <label>Max Step Length</label>
        <default>2.0</default>
@@ -372,7 +392,7 @@
     <boolean>
        <name>turnOffDiffeomorph</name>
        <flag>a</flag>
-       <longflag alias="use_vanilla_dem">useVanillaDemon</longflag>
+       <longflag>use_vanilla_dem</longflag>
        <description>Run vanilla demons algorithm</description>
        <label>Turn off Diffeomorphism</label>
        <default>false</default>
@@ -384,5 +404,18 @@
       <description>Display intermediate image volumes for debugging</description>
       <default>false</default>
     </boolean>
+    <boolean>
+      <name>PromptAfterImageSend</name>
+      <flag>p</flag>
+      <longflag>promptUser</longflag>
+      <description>Prompt the user to hit enter each time an image is sent to the DebugImageViewer</description>
+      <default>false</default>
+    </boolean>
+    <integer>
+      <name>numberOfBCHApproximationTerms</name>
+      <longflag>numberOfBCHApproximationTerms</longflag>
+      <description>Number of terms in the BCH expansion</description>
+      <default>2</default>
+    </integer>
   </parameters>
 </executable>

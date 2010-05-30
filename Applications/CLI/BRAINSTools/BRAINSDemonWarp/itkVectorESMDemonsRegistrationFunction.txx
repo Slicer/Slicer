@@ -281,12 +281,12 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
   // fixed image buffer. This is done by the external filter.
   std::vector<CovariantVectorType> usedOrientFreeGradientTimes2;
   std::vector<double>              speedValue;
-  
+
   for ( unsigned int i = 0; i < this->GetFixedImage()->GetVectorLength(); ++i )
     {
      const double fixedValue = static_cast<double>(
       this->GetFixedImage()->GetPixel( index).GetElement(i));
-/*    
+/*
    if(index[0]==32 && index[1]==32 && index[2]==32)
     {
     std::cout <<  "FV  at index "<< i  << "is " << fixedValue << std::endl;

@@ -14,7 +14,7 @@ template <class TFixedImage, class TMovingImage, class TField, class TRealType>
 MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,TRealType>
 ::MultiResolutionLogDomainDeformableRegistration()
 {
- 
+
   this->SetNumberOfRequiredInputs(2);
 
   typename DefaultRegistrationType::Pointer registrator =
@@ -122,7 +122,7 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
     {
     num++;
     }
-  
+
   return num;
 }
 
@@ -148,8 +148,8 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
   if( m_FixedImagePyramid && m_FixedImagePyramid->GetNumberOfLevels() != num )
     {
     m_FixedImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
-    }  
-    
+    }
+
 }
 
 
@@ -170,7 +170,7 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
     os << m_NumberOfIterations[ilevel] << ", ";
     }
   os << m_NumberOfIterations[ilevel] << "]" << std::endl;
-  
+
   os << indent << "RegistrationFilter: ";
   os << m_RegistrationFilter.GetPointer() << std::endl;
   os << indent << "MovingImagePyramid: ";
@@ -183,7 +183,7 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
 
   os << indent << "StopRegistrationFlag: ";
   os << m_StopRegistrationFlag << std::endl;
-  
+
   os << indent << "Exponentiator: ";
   os << m_Exponentiator << std::endl;
 
@@ -231,29 +231,29 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
                        << "cunjunction with SetArbitraryInitialVelocityField "
                        << "or SetInput.");
     }
-  
+
   // Create the image pyramids.
   m_MovingImagePyramid->SetInput( movingImage );
   m_MovingImagePyramid->UpdateLargestPossibleRegion();
 
   m_FixedImagePyramid->SetInput( fixedImage );
   m_FixedImagePyramid->UpdateLargestPossibleRegion();
- 
+
   // Initializations
   m_CurrentLevel = 0;
   m_StopRegistrationFlag = false;
 
-  unsigned int movingLevel = vnl_math_min( (int) m_CurrentLevel, 
+  unsigned int movingLevel = vnl_math_min( (int) m_CurrentLevel,
                                            (int) m_MovingImagePyramid->GetNumberOfLevels() );
 
-  unsigned int fixedLevel = vnl_math_min( (int) m_CurrentLevel, 
+  unsigned int fixedLevel = vnl_math_min( (int) m_CurrentLevel,
                                           (int) m_FixedImagePyramid->GetNumberOfLevels() );
 
   VelocityFieldPointer tempField = NULL;
 
   VelocityFieldPointer inputPtr =
     const_cast< VelocityFieldType * >( this->GetInput(0) );
-  
+
   if ( this->m_InitialVelocityField )
     {
     tempField = this->m_InitialVelocityField;
@@ -265,12 +265,12 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
 
     // First smooth it
     tempField = inputPtr;
-      
+
     typedef RecursiveGaussianImageFilter< VelocityFieldType,
       VelocityFieldType> GaussianFilterType;
     typename GaussianFilterType::Pointer smoother
       = GaussianFilterType::New();
-      
+
     for (unsigned int dim=0; dim<VelocityFieldType::ImageDimension; ++dim)
       {
       // sigma accounts for the subsampling of the pyramid
@@ -280,24 +280,24 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
       // but also for a possible discrepancy in the spacing
       sigma *= fixedImage->GetSpacing()[dim]
         / inputPtr->GetSpacing()[dim];
-      
+
       smoother->SetInput( tempField );
       smoother->SetSigma( sigma );
       smoother->SetDirection( dim );
-      
+
       smoother->Update();
-      
+
       tempField = smoother->GetOutput();
       tempField->DisconnectPipeline();
       }
-      
-      
+
+
     // Now resample
     m_FieldExpander->SetInput( tempField );
-    
-    typename FloatImageType::Pointer fi = 
+
+    typename FloatImageType::Pointer fi =
       m_FixedImagePyramid->GetOutput( fixedLevel );
-    m_FieldExpander->SetSize( 
+    m_FieldExpander->SetSize(
       fi->GetLargestPossibleRegion().GetSize() );
     m_FieldExpander->SetOutputStartIndex(
       fi->GetLargestPossibleRegion().GetIndex() );
@@ -315,7 +315,7 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
 
   while ( !this->Halt() )
     {
-   
+
     if( tempField.IsNull() )
       {
       m_RegistrationFilter->SetInitialVelocityField( NULL );
@@ -325,10 +325,10 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
       // Resample the field to be the same size as the fixed image
       // at the current level
       m_FieldExpander->SetInput( tempField );
-      
-      typename FloatImageType::Pointer fi = 
+
+      typename FloatImageType::Pointer fi =
         m_FixedImagePyramid->GetOutput( fixedLevel );
-      m_FieldExpander->SetSize( 
+      m_FieldExpander->SetSize(
         fi->GetLargestPossibleRegion().GetSize() );
       m_FieldExpander->SetOutputStartIndex(
         fi->GetLargestPossibleRegion().GetIndex() );
@@ -345,7 +345,7 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
 
       }
 
-    // setup registration filter and pyramids 
+    // setup registration filter and pyramids
     m_RegistrationFilter->SetMovingImage( m_MovingImagePyramid->GetOutput(movingLevel) );
     m_RegistrationFilter->SetFixedImage( m_FixedImagePyramid->GetOutput(fixedLevel) );
 
@@ -368,11 +368,11 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
     tempField = m_RegistrationFilter->GetOutput();
     tempField->DisconnectPipeline();
 
-    // Increment level counter.  
+    // Increment level counter.
     m_CurrentLevel++;
-    movingLevel = vnl_math_min( (int) m_CurrentLevel, 
+    movingLevel = vnl_math_min( (int) m_CurrentLevel,
                                 (int) m_MovingImagePyramid->GetNumberOfLevels() );
-    fixedLevel = vnl_math_min( (int) m_CurrentLevel, 
+    fixedLevel = vnl_math_min( (int) m_CurrentLevel,
                                (int) m_FixedImagePyramid->GetNumberOfLevels() );
 
     // Invoke an iteration event.
@@ -398,7 +398,7 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
 
     // resample the field to the same size as the fixed image
     m_FieldExpander->SetInput( tempField );
-    m_FieldExpander->SetSize( 
+    m_FieldExpander->SetSize(
       fixedImage->GetLargestPossibleRegion().GetSize() );
     m_FieldExpander->SetOutputStartIndex(
       fixedImage->GetLargestPossibleRegion().GetIndex() );
@@ -456,8 +456,8 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
     return true;
     }
   else
-    { 
-    return false; 
+    {
+    return false;
     }
 
 }
@@ -480,16 +480,16 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
     }
   else if( this->GetFixedImage() )
     {
-    // Initial deforamtion field is not set. 
+    // Initial deforamtion field is not set.
     // Copy information from the fixed image.
-    for (unsigned int idx = 0; idx < 
+    for (unsigned int idx = 0; idx <
            this->GetNumberOfOutputs(); ++idx )
       {
       output = this->GetOutput(idx);
       if (output)
         {
         output->CopyInformation(this->GetFixedImage());
-        }  
+        }
       }
 
     }
@@ -507,19 +507,19 @@ MultiResolutionLogDomainDeformableRegistration<TFixedImage,TMovingImage,TField,T
   Superclass::GenerateInputRequestedRegion();
 
   // request the largest possible region for the moving image
-  MovingImagePointer movingPtr = 
+  MovingImagePointer movingPtr =
     const_cast< MovingImageType * >( this->GetMovingImage() );
   if( movingPtr )
     {
     movingPtr->SetRequestedRegionToLargestPossibleRegion();
     }
-  
+
   // just propagate up the output requested region for
   // the fixed image and initial velocity field.
-  VelocityFieldPointer inputPtr = 
+  VelocityFieldPointer inputPtr =
     const_cast< VelocityFieldType * >( this->GetInput() );
   VelocityFieldPointer outputPtr = this->GetOutput();
-  FixedImagePointer fixedPtr = 
+  FixedImagePointer fixedPtr =
     const_cast< FixedImageType *>( this->GetFixedImage() );
 
   if( inputPtr )

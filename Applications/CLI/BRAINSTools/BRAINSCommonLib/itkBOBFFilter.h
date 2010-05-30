@@ -6,10 +6,10 @@
 
 namespace itk
 {
-// TODO: Need comment here
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT BOBFFilter :
-  public ImageToImageFilter<TInputImage, TOutputImage>
+  // TODO: Need comment here
+  template <class TInputImage, class TOutputImage>
+    class ITK_EXPORT BOBFFilter :
+      public ImageToImageFilter<TInputImage, TOutputImage>
   {
 public:
   /** Standard class typedefs. */
@@ -46,14 +46,14 @@ public:
 
   /** Set/Get the Input image. */
   void SetInputImage( const InputImageType *source )
-  {
+    {
     this->SetInput( source );
-  }
+    }
 
   const InputImageType * GetInputImage(void)
-  {
+    {
     return this->GetInput();
-  }
+    }
 
   /** Set the input mask */
   void SetInputMask( const InputImageType *image );
@@ -112,7 +112,7 @@ private:
 }   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-  #include "itkBOBFFilter.txx"
+#include "itkBOBFFilter.txx"
 #endif
 
 #endif

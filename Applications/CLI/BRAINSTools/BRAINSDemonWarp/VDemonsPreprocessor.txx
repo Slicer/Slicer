@@ -13,11 +13,7 @@
 
 #include "itkMultiResolutionPDEDeformableRegistration.h"
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
-#include "itkWarpImageFilter.h"
 #include "itkImageFileWriter.h"
-#if 0 // Don't need to look at range of data, but rather range of data type
-#include "itkMinimumMaximumImageCalculator.h"
-#endif
 
 namespace itk
 {
@@ -91,7 +87,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
   for ( unsigned int i = 0; i < m_InputFixedImage.size(); ++i )
     {
     // Create UnNormalized...Images
-/*  
+/*
     typename MultiplyByConstantImageType::Pointer multi_FixedImageConstant
       = MultiplyByConstantImageType::New();
     multi_FixedImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
@@ -252,22 +248,6 @@ typename VDemonsPreprocessor<TInputImage,
         Mask->GetLargestPossibleRegion().GetSize() )
       || ( m_UnNormalizedFixedImage[0]->GetSpacing() != Mask->GetSpacing() ) )
     {
-      #if 0 // DEBUG:  No need to resample if everyting is done in physical
-            // coordinates.
-    Mask = itkUtil::ResampleImage<TOutputImage, TOutputImage>(
-      Mask,
-      m_UnNormalizedFixedImage
-        ->GetLargestPossibleRegion().GetSize(),
-      m_UnNormalizedFixedImage
-        ->GetSpacing(),
-      m_UnNormalizedFixedImage
-        ->GetOrigin(),
-      m_UnNormalizedFixedImage
-        ->GetDirection(),
-      this->
-        m_DefaultPixelValue
-      );
-      #endif
     if ( this->GetOutDebug() )
       {
       std::cout << "Writing Resampled Output image" << std::endl;

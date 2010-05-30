@@ -111,8 +111,8 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
     slicer3_set_plugins_output_path(${PROGNAME}Lib)
     target_link_libraries (${PROGNAME}Lib BRAINSCommonLib ${BRAINS_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
 
-    # install each target in the production area (where it would appear in an 
-    # installation) and install each target in the developer area (for running 
+    # install each target in the production area (where it would appear in an
+    # installation) and install each target in the developer area (for running
     # from a build)
     slicer3_set_plugins_output_path(${PROGNAME})
     set(TARGETS ${PROGNAME}Lib ${PROGNAME})
@@ -159,8 +159,8 @@ macro(CONFIGUREBRAINSORSLICERLIBRARY LIBNAME LIBCLI LIBSOURCES EXTRA_LIBS)
 
   if (Slicer3_SOURCE_DIR)
     ### If building as part of the Slicer3_SOURCE_DIR, then only build the shared object, and not the command line program.
-    # install each target in the production area (where it would appear in an 
-    # installation) and install each target in the developer area (for running 
+    # install each target in the production area (where it would appear in an
+    # installation) and install each target in the developer area (for running
     # from a build)
     slicer3_set_plugins_output_path(${LIBNAME})
     set(TARGETS ${LIBNAME})

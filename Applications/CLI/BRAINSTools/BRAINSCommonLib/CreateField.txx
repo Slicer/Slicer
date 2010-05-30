@@ -315,13 +315,6 @@ void FFCreateNewImageFromTemplate(
   const typename InputImageType::Pointer & PreInitializedImage )
 {
   PointerToOutputImage = OutputImageType::New();
-#if 0
-  typename OutputImageType::RegionType region;
-  region.SetSize( PreInitializedImage->GetLargestPossibleRegion().GetSize() );
-  region.SetIndex( PreInitializedImage->GetLargestPossibleRegion().GetIndex() );
-  PointerToOutputImage->SetLargestPossibleRegion( region );
-  PointerToOutputImage->SetBufferedRegion( region );
-#endif
   PointerToOutputImage->SetRegions(
     PreInitializedImage->GetLargestPossibleRegion() );
   PointerToOutputImage->CopyInformation(PreInitializedImage);

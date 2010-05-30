@@ -201,45 +201,48 @@ LargestForegroundFilledMaskImageFilter<TInputImage,TOutputImage>
   LargestFilter->SetUpperThreshold(1);
   LargestFilter->Update();
 
-  typedef BinaryBallStructuringElement<typename IntegerImageType::
-    PixelType,
-    IntegerImageType::ImageDimension>
-    myKernelType;
-
-  myKernelType dilateBall;
-  myKernelType erodeBall;
-  typename myKernelType::SizeType dilateBallSize;
-  typename myKernelType::SizeType erodeBallSize;
-  for ( unsigned int d = 0; d < 3; d++ )
-    {
-    const unsigned int ClosingVoxels=vnl_math_ceil( m_ClosingSize/ ( relabel->GetOutput()->GetSpacing()[d] ) );
-    dilateBallSize[d] = ClosingVoxels;
-    erodeBallSize[d]  = ClosingVoxels;
-    }
-  dilateBall.SetRadius(dilateBallSize);
-  dilateBall.CreateStructuringElement();
-  erodeBall.SetRadius(erodeBallSize);
-  erodeBall.CreateStructuringElement();
-
-  typedef BinaryDilateImageFilter<IntegerImageType, IntegerImageType,
-    myKernelType> DilateFilterType;
-  typename DilateFilterType::Pointer DilateFilter = DilateFilterType::New();
-  // DilateFilter->SetForegroundValue(1);
-  DilateFilter->SetDilateValue(1);
-  DilateFilter->SetBackgroundValue(0);
-  DilateFilter->SetInput( LargestFilter->GetOutput() );
-  DilateFilter->SetKernel( dilateBall );
-  DilateFilter->Update();
+    typedef BinaryBallStructuringElement<typename IntegerImageType::
+      PixelType,
+      IntegerImageType::ImageDimension>
+        myKernelType;
 
   typedef BinaryErodeImageFilter<IntegerImageType, IntegerImageType,
     myKernelType> ErodeFilterType;
   typename ErodeFilterType::Pointer ErodeFilter = ErodeFilterType::New();
-  // ErodeFilter->SetForegroundValue(1);
-  ErodeFilter->SetErodeValue(1);
-  ErodeFilter->SetBackgroundValue(0);
-  ErodeFilter->SetInput( DilateFilter->GetOutput() );
-  ErodeFilter->SetKernel( erodeBall );
-  ErodeFilter->Update();
+    {
+    myKernelType dilateBall;
+    myKernelType erodeBall;
+    typename myKernelType::SizeType dilateBallSize;
+    typename myKernelType::SizeType erodeBallSize;
+    for ( unsigned int d = 0; d < 3; d++ )
+      {
+      const unsigned int ClosingVoxels=vnl_math_ceil( m_ClosingSize/ ( relabel->GetOutput()->GetSpacing()[d] ) );
+      dilateBallSize[d] = ClosingVoxels;
+      erodeBallSize[d]  = ClosingVoxels;
+      }
+    dilateBall.SetRadius(dilateBallSize);
+    dilateBall.CreateStructuringElement();
+    erodeBall.SetRadius(erodeBallSize);
+    erodeBall.CreateStructuringElement();
+
+    typedef BinaryDilateImageFilter<IntegerImageType, IntegerImageType,
+            myKernelType> DilateFilterType;
+    typename DilateFilterType::Pointer DilateFilter = DilateFilterType::New();
+
+    // DilateFilter->SetForegroundValue(1);
+    DilateFilter->SetDilateValue(1);
+    DilateFilter->SetBackgroundValue(0);
+    DilateFilter->SetInput( LargestFilter->GetOutput() );
+    DilateFilter->SetKernel( dilateBall );
+    DilateFilter->Update();
+
+    // ErodeFilter->SetForegroundValue(1);
+    ErodeFilter->SetErodeValue(1);
+    ErodeFilter->SetBackgroundValue(0);
+    ErodeFilter->SetInput( DilateFilter->GetOutput() );
+    ErodeFilter->SetKernel( erodeBall );
+    ErodeFilter->Update();
+    }
 
   const typename IntegerImageType::SizeType ImageSize
     = ErodeFilter->GetOutput()->GetLargestPossibleRegion().GetSize();
@@ -313,7 +316,6 @@ LargestForegroundFilledMaskImageFilter<TInputImage,TOutputImage>
     if(m_DilateSize > 0.0 )
       {
       //Dilate to get some background to better drive BSplineRegistration
-      typedef itk::BinaryBallStructuringElement<typename IntegerImageType::PixelType, IntegerImageType::ImageDimension > myKernelType;
       typedef itk::BinaryDilateImageFilter<IntegerImageType, IntegerImageType,
               myKernelType> DilateType;
 

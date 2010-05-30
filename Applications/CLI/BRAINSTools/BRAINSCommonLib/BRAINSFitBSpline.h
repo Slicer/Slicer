@@ -20,8 +20,8 @@
  */
 
 template < class RegisterImageType, class ImageMaskSpatialObjectType, class BSplineTransformType >
-typename BSplineTransformType::Pointer
-  DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
+  typename BSplineTransformType::Pointer
+DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
   typename RegisterImageType::Pointer m_FixedVolume, typename RegisterImageType::Pointer m_MovingVolume,
   typename ImageMaskSpatialObjectType::Pointer m_FixedMask, typename ImageMaskSpatialObjectType::Pointer m_MovingMask,
   const int m_NumberOfSamples,
@@ -172,13 +172,13 @@ typename BSplineTransformType::Pointer
 
 
   // Create the Command observer and register it with the optimizer.
-  // TODO:  make this output optional. 
+  // TODO:  make this output optional.
   //
 
   const bool ObserveIterations=true;
   if ( ObserveIterations == true )
     {
-    typedef BRAINSFit::CommandIterationUpdate<OptimizerType,BSplineTransformType,RegisterImageType> 
+    typedef BRAINSFit::CommandIterationUpdate<OptimizerType,BSplineTransformType,RegisterImageType>
       CommandIterationUpdateType;
     typename CommandIterationUpdateType::Pointer observer
       = CommandIterationUpdateType::New();

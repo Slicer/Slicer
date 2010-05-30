@@ -19,7 +19,7 @@
 
 #include "itkVectorMultiResolutionPDEDeformableRegistration.h"
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
-#include "itkWarpImageFilter.h"
+#include "GenericTransformImage.h"
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
 #include "itkImageToVectorImageFilter.h"
 #include "itkMultiplyByConstantImageFilter.h"
@@ -143,6 +143,7 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator ()
   m_OutDebug = false;
 
   m_InitialDeformationField = NULL;
+  m_InterpolationMode="Linear";
   }
 
 template<
@@ -164,22 +165,12 @@ template<
   class TFieldValue>
 void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
 {
-  #if 0
-  // Setup the image pyramids
-  m_FixedImagePyramid->SetNumberOfLevels (m_NumberOfLevels);
-  m_FixedImagePyramid->SetStartingShrinkFactors (
-    m_FixedImageShrinkFactors.GetDataPointer () );
-
-  m_MovingImagePyramid->SetNumberOfLevels (m_NumberOfLevels);
-  m_MovingImagePyramid->SetStartingShrinkFactors (
-    m_MovingImageShrinkFactors.GetDataPointer () );
-  #endif
 
   // Setup the registrator
-  
+
     typedef itk::MultiplyByConstantImageFilter<RealImageType, float,
     RealImageType> MultiplyByConstantImageType;
-  
+
 
   if ( m_FixedImage.size() > 1 )
     {
@@ -329,18 +320,6 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
        << "Registering Landmarks as an initializer is not yet implemented"
        << std::endl;
       exit(-1);
-      // Not Yet Implemented
-  #if 0
-      typename TDeformationField::Pointer IntialDeformation
-        = itkUtil::RegisterLandmarksToDeformationField<TDeformationField,
-        RealImageType>
-          (
-        m_MovingImage,
-        m_MovingLandmarkFilename,
-        m_FixedLandmarkFilename,
-        m_FixedImage);
-      m_Registration->SetInitialDeformationField(IntialDeformation);
-  #endif
       }
     // Perform the registration.
     try
@@ -426,44 +405,40 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
   if ( this->m_WarpedImageName != std::string ("none")
       || this->m_CheckerBoardFilename != std::string ("none") )
     {
-    /*Warp the image with the generated deformation field.*/
     typename RealImageType::Pointer DeformedMovingImagePtr(0);
-
-    typedef WarpImageFilter<RealImageType, RealImageType,
-      TDeformationField> WarperType;
-    typename WarperType::Pointer warper = WarperType::New();
-    if ( this->GetUseHistogramMatching() == true )
       {
-      warper->SetInput( m_MovingImage[0] );
+      typename RealImageType::Pointer sourceMovingImage=NULL;
+      if ( this->GetUseHistogramMatching() == true )
+        {
+        sourceMovingImage=m_MovingImage[0];
+        }
+      else
+        {
+        sourceMovingImage=m_UnNormalizedMovingImage[0];
+        }
+      DeformedMovingImagePtr=TransformWarp<RealImageType,RealImageType,TDeformationField>(
+        sourceMovingImage,
+        m_FixedImage[0],
+        0,
+        GetInterpolatorFromString<RealImageType>(this->m_InterpolationMode),
+        m_DeformationField);
       }
-    else
-      {
-      warper->SetInput( m_UnNormalizedMovingImage[0] );
-      }
-
-    warper->SetOutputSpacing( m_FixedImage[0]->GetSpacing() );
-    warper->SetOutputOrigin( m_FixedImage[0]->GetOrigin() );
-    warper->SetOutputDirection( m_FixedImage[0]->GetDirection() );
-    warper->SetDeformationField( m_DeformationField);
-
-    warper->Update();
-    DeformedMovingImagePtr = warper->GetOutput();
 
     if ( this->GetOutDebug() )
       {
       std::cout << "-----Direction of output warped image\n"
-                << DeformedMovingImagePtr->GetDirection()
-                << "\n-----Direction of deformation field\n"
-                << this->m_DeformationField->GetDirection() << std::endl;
+        << DeformedMovingImagePtr->GetDirection()
+        << "\n-----Direction of deformation field\n"
+        << this->m_DeformationField->GetDirection() << std::endl;
       }
     /*Write the output image.*/
     if ( this->m_WarpedImageName != std::string ("none") )
       {
       typename TOutputImage::Pointer CastImageSptr
         = itkUtil::PreserveCast<RealImageType, TOutputImage>(
-        DeformedMovingImagePtr);
+          DeformedMovingImagePtr);
       itkUtil::WriteImage<TOutputImage>(CastImageSptr,
-                                           this->m_WarpedImageName);
+        this->m_WarpedImageName);
 
       if ( this->GetOutDebug() )
         {
@@ -498,7 +473,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
         }
       typename RealImageType::Pointer CheckerImagePtr = checker->GetOutput();
       itkUtil::WriteImage<RealImageType>(CheckerImagePtr,
-                                         this->m_CheckerBoardFilename);
+        this->m_CheckerBoardFilename);
       if ( this->GetOutDebug() )
         {
         std::cout << "---Checker Board Image has been written" << std::endl;

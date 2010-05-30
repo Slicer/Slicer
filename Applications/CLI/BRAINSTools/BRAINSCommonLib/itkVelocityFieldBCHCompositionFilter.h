@@ -9,36 +9,36 @@
 
 namespace itk
 {
-/** \class VelocityFieldBCHCompositionFilter
- * \brief Compute Baker-Campbell-Hausdorff formula on two vector fields.
- *
- * See M. Bossa, M. Hernandez and S.Olmos, "Contributions to 3D diffeomorphic atlas
- * estimation: Application to brain images", Proc. of MICCAI’07
- * and
- * T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
- * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
- * Proc. of MICCAI 2008.
- * 
- * This class is templated over the input field type and the output 
- * field type.
- *
- * Velocity fields are represented as images whose pixel type are vector type
- * with N elements, where N is the dimension of the image. 
- * The vector type must support element access via operator[]. It is assumed 
- * that the vector elements behave like floating point scalars.
- *
- * The number of approximation terms to used in the BCH approximation is set via
- * SetNumberOfApproximationTerms method.
- *
- * \warning This filter assumes that the input field type and velocity field type
- * both have the same number of dimensions.
- *
- * \author Florence Dru, INRIA and Tom Vercauteren, MKT
- */
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT VelocityFieldBCHCompositionFilter :
-   public InPlaceImageFilter<TInputImage,TOutputImage>
-{
+  /** \class VelocityFieldBCHCompositionFilter
+   * \brief Compute Baker-Campbell-Hausdorff formula on two vector fields.
+   *
+   * See M. Bossa, M. Hernandez and S.Olmos, "Contributions to 3D diffeomorphic atlas
+   * estimation: Application to brain images", Proc. of MICCAI’07
+   * and
+   * T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
+   * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
+   * Proc. of MICCAI 2008.
+   *
+   * This class is templated over the input field type and the output
+   * field type.
+   *
+   * Velocity fields are represented as images whose pixel type are vector type
+   * with N elements, where N is the dimension of the image.
+   * The vector type must support element access via operator[]. It is assumed
+   * that the vector elements behave like floating point scalars.
+   *
+   * The number of approximation terms to used in the BCH approximation is set via
+   * SetNumberOfApproximationTerms method.
+   *
+   * \warning This filter assumes that the input field type and velocity field type
+   * both have the same number of dimensions.
+   *
+   * \author Florence Dru, INRIA and Tom Vercauteren, MKT
+   */
+  template <class TInputImage, class TOutputImage>
+    class ITK_EXPORT VelocityFieldBCHCompositionFilter :
+      public InPlaceImageFilter<TInputImage,TOutputImage>
+  {
 public:
   /** Standard class typedefs. */
   typedef VelocityFieldBCHCompositionFilter              Self;
@@ -51,12 +51,12 @@ public:
   typedef typename InputFieldType::PixelType             InputFieldPixelType;
   typedef typename InputFieldType::Pointer               InputFieldPointer;
   typedef typename InputFieldType::ConstPointer          InputFieldConstPointer;
- 
+
   typedef TOutputImage                                   OutputFieldType;
   typedef typename OutputFieldType::PixelType            OutputFieldPixelType;
   typedef typename OutputFieldType::Pointer              OutputFieldPointer;
   typedef typename OutputFieldType::ConstPointer         OutputFieldConstPointer;
- 
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -66,13 +66,13 @@ public:
   /** Set/Get the NumberOfApproximationTerms used in the BCH approximation. */
   itkSetMacro( NumberOfApproximationTerms, unsigned int );
   itkGetConstMacro( NumberOfApproximationTerms, unsigned int );
- 
+
 protected:
-   VelocityFieldBCHCompositionFilter();
+  VelocityFieldBCHCompositionFilter();
   ~VelocityFieldBCHCompositionFilter() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
 
-  /** 
+  /**
    * GenerateData()
    */
   void GenerateData();
@@ -125,7 +125,7 @@ private:
   MultiplierPointer            m_Multiplier2;
   unsigned int                 m_NumberOfApproximationTerms;
 
-};
+  };
 
 } // end namespace itk
 

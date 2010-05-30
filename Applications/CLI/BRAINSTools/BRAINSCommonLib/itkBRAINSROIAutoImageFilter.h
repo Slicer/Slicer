@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkBRAINSROIAutoImageFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2008-10-16 19:33:40 $
-  Version:   $Revision: 1.7 $
+Program:   Insight Segmentation & Registration Toolkit
+Module:    $RCSfile: itkBRAINSROIAutoImageFilter.h,v $
+Language:  C++
+Date:      $Date: 2008-10-16 19:33:40 $
+Version:   $Revision: 1.7 $
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+Copyright (c) Insight Software Consortium. All rights reserved.
+See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 #ifndef __itkBRAINSROIAutoImageFilter_h
@@ -33,25 +33,25 @@ typedef SpatialObjectType::Pointer ImageMaskPointer;
 
 namespace itk
 {
-/** \class BRAINSROIAutoImageFilter
- * \brief This is a class to help with identifying common tissue
- * Regions in an image.
- *
- * \sa Image
- * \sa Neighborhood
- *
- * \ingroup IntensityImageFilters
- */
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT BRAINSROIAutoImageFilter :
-    public ImageToImageFilter< TInputImage, TOutputImage >
-{
+  /** \class BRAINSROIAutoImageFilter
+   * \brief This is a class to help with identifying common tissue
+   * Regions in an image.
+   *
+   * \sa Image
+   * \sa Neighborhood
+   *
+   * \ingroup IntensityImageFilters
+   */
+  template <class TInputImage, class TOutputImage>
+    class ITK_EXPORT BRAINSROIAutoImageFilter :
+      public ImageToImageFilter< TInputImage, TOutputImage >
+  {
 public:
   /** Extract dimension from input and output image. */
   itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+    TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+    TOutputImage::ImageDimension);
 
   /** Convenient typedefs for simplifying declarations. */
   typedef TInputImage  InputImageType;
@@ -112,13 +112,13 @@ public:
       mask->ComputeObjectToWorldTransform();
       m_ResultMaskPointer=dynamic_cast< ImageMaskSpatialObjectType * >( mask.GetPointer() );
       }
-      return m_ResultMaskPointer;
+    return m_ResultMaskPointer;
     }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro(SameDimensionCheck,
-                  (Concept::SameDimension<InputImageDimension, OutputImageDimension>));
+    (Concept::SameDimension<InputImageDimension, OutputImageDimension>));
   /** End concept checking */
 #endif
 
@@ -126,7 +126,7 @@ protected:
   BRAINSROIAutoImageFilter();
   virtual ~BRAINSROIAutoImageFilter() {}
   void PrintSelf(std::ostream& os, Indent indent) const;
-   void GenerateData();
+  void GenerateData();
 
 
 private:
@@ -140,7 +140,7 @@ private:
   ImageMaskPointer m_ResultMaskPointer;
 
 
-};
+  };
 
 } // end namespace itk
 

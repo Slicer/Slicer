@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -42,11 +42,11 @@ MembershipSample< TSample >
 }
 
 template< class TSample >
-inline void 
+inline void
 MembershipSample< TSample >
-::AddInstance(const ClassLabelType &classLabel, const InstanceIdentifier &id) 
-{ 
-  m_ClassLabelHolder[id] = classLabel; 
+::AddInstance(const ClassLabelType &classLabel, const InstanceIdentifier &id)
+{
+  m_ClassLabelHolder[id] = classLabel;
   int classIndex = this->GetInternalClassLabel(classLabel);
   if ( classIndex == -1 )
     {
@@ -58,7 +58,7 @@ MembershipSample< TSample >
 }
 
 template< class TSample >
-inline unsigned int 
+inline unsigned int
 MembershipSample< TSample >
 ::GetClassLabel(const InstanceIdentifier &id) const
 {
@@ -66,7 +66,7 @@ MembershipSample< TSample >
 }
 
 template< class TSample >
-inline int 
+inline int
 MembershipSample< TSample >
 ::GetInternalClassLabel(const ClassLabelType classLabel) const
 {
@@ -99,7 +99,7 @@ MembershipSample< TSample >
     {
     return NULL;
     }
-  return m_ClassSamples[classIndex]; 
+  return m_ClassSamples[classIndex];
 }
 
 template< class TSample >
@@ -107,7 +107,7 @@ inline const typename MembershipSample< TSample >::MeasurementVectorType &
 MembershipSample< TSample >
 ::GetMeasurementVector(const InstanceIdentifier &id) const
 {
-  return m_Sample->GetMeasurementVector(id); 
+  return m_Sample->GetMeasurementVector(id);
 }
 
 template< class TSample >
@@ -115,7 +115,7 @@ inline typename MembershipSample< TSample >::MeasurementType
 MembershipSample< TSample >
 ::GetMeasurement(const InstanceIdentifier &id,
                  const unsigned int &dimension)
-{ 
+{
   return m_Sample->GetMeasurement(id, dimension);
 }
 
@@ -124,9 +124,9 @@ inline typename MembershipSample< TSample >::AbsoluteFrequencyType
 MembershipSample< TSample >
 ::GetFrequency(const InstanceIdentifier &id) const
 {
-  return m_Sample->GetFrequency(id); 
+  return m_Sample->GetFrequency(id);
 }
-  
+
 template< class TSample >
 inline typename MembershipSample< TSample >::TotalAbsoluteFrequencyType
 MembershipSample< TSample >
@@ -142,13 +142,13 @@ MembershipSample< TSample >
 {
   this->Superclass::Graft(thatObject);
 
-  // Most of what follows is really a deep copy, rather than grafting of 
+  // Most of what follows is really a deep copy, rather than grafting of
   // output. Wish it were managed by pointers to bulk data. Sigh !
-  
+
   const Self *thatConst = dynamic_cast< const Self * >(thatObject);
   if (thatConst)
     {
-    Self *that = const_cast< Self * >(thatConst); 
+    Self *that = const_cast< Self * >(thatConst);
     this->m_UniqueClassLabels = that->m_UniqueClassLabels;
     this->m_ClassLabelHolder  = that->m_ClassLabelHolder;
     this->m_ClassSamples      = that->m_ClassSamples;
@@ -168,7 +168,7 @@ MembershipSample< TSample >
 }
 
 
-} // end of namespace Statistics 
+} // end of namespace Statistics
 } // end of namespace itk
 
 #endif

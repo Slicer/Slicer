@@ -4,62 +4,130 @@
 #include <iostream>
 #include "GenericTransformImage.h"
 
-
-
-
-
-template <class TransformType, class InterpolatorType>
-typename ImageType::Pointer
+template <class InputImageType, class OutputImageType>
+typename OutputImageType::Pointer
 TransformResample(
-    typename ImageType::Pointer & inputImage,
-    typename RefImageType::Pointer & ReferenceImage,
-    typename ImageType::PixelType defaultValue,
-    typename TransformType::Pointer & transform)
+    InputImageType const * const inputImage,
+    const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+    typename InputImageType::PixelType defaultValue,
+    typename itk::InterpolateImageFunction<InputImageType, typename itk::NumericTraits<typename InputImageType::PixelType>::RealType >::Pointer interp,
+    typename GenericTransformType::Pointer transform)
 {
-  typename InterpolatorType::Pointer interp = InterpolatorType::New();
-
-  interp->SetInputImage(inputImage);
-
-  typedef typename itk::ResampleImageFilter<ImageType, 
-    ImageType> ResampleImageFilter;
+  typedef typename itk::ResampleImageFilter<InputImageType, OutputImageType> ResampleImageFilter;
   typename ResampleImageFilter::Pointer resample = ResampleImageFilter::New();
   resample->SetInput(inputImage);
   resample->SetTransform(transform);
   resample->SetInterpolator(interp);
 
-  resample->SetOutputParametersFromImage(ReferenceImage);
-  // should happen automatically, but make sure orientation matches input
-  resample->SetOutputDirection( ReferenceImage->GetDirection() );
+    if ( ReferenceImage != NULL )
+      {
+      resample->SetOutputParametersFromImage(ReferenceImage);
+      }
+    else
+      {
+      std::cout << "Alert:  missing Reference Volume information default image size set to inputImage" << std::endl;
+      resample->SetOutputParametersFromImage(inputImage );
+      }
   resample->SetDefaultPixelValue( defaultValue );
   resample->Update();
-  typename ImageType::Pointer returnval = resample->GetOutput();
+  typename OutputImageType::Pointer returnval = resample->GetOutput();
   returnval->DisconnectPipeline();
   return returnval;
 }
 
-
-
-
-
-template <typename ImageType,
-    typename ReferenceImageType,
-    typename DeformationImageType>
-typename ImageType::Pointer GenericTransformImage( 
-    typename ImageType::Pointer OperandImage,
-    typename ReferenceImageType::Pointer ReferenceImage,
-    typename DeformationImageType::Pointer DeformationField,
-    typename ImageType::PixelType defaultValue,
-    typename BSplineTransformType::Pointer itkBSplineTransform,
-    typename AffineTransformType::Pointer ITKAffineTransform,
-    const std::string &interpolationMode,
-    bool binaryFlag)
+template <class InputImageType, class OutputImageType, class DeformationImageType>
+typename OutputImageType::Pointer
+TransformWarp(
+    InputImageType const * const inputImage,
+    const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+    typename InputImageType::PixelType defaultValue,
+    typename itk::InterpolateImageFunction<InputImageType, typename itk::NumericTraits<typename InputImageType::PixelType>::RealType >::Pointer interp,
+    typename DeformationImageType::Pointer deformationField)
 {
+  typedef typename itk::WarpImageFilter<InputImageType, OutputImageType, DeformationImageType> WarpImageFilter;
+  typename WarpImageFilter::Pointer warp = WarpImageFilter::New();
+  warp->SetInput(inputImage);
+  warp->SetDeformationField(deformationField);
+  warp->SetInterpolator(interp);
+
+    if ( ReferenceImage != NULL )
+      {
+      warp->SetOutputParametersFromImage(ReferenceImage);
+      }
+    else
+      {
+      std::cout << "Alert:  missing Reference Volume information default image size set to deformationField" << std::endl;
+      warp->SetOutputParametersFromImage(deformationField);
+      }
+  warp->SetEdgePaddingValue( defaultValue );
+  warp->Update();
+  typename OutputImageType::Pointer returnval = warp->GetOutput();
+  returnval->DisconnectPipeline();
+  return returnval;
+}
+
+template <class InputImageType>
+typename itk::InterpolateImageFunction<InputImageType, typename itk::NumericTraits<typename InputImageType::PixelType>::RealType >::Pointer
+GetInterpolatorFromString(const std::string interpolationMode)
+{
+  typedef typename itk::NumericTraits<typename InputImageType::PixelType>::RealType TInterpolatorPrecisionType;
+  if ( interpolationMode == "NearestNeighbor" )
+    {
+    typedef typename itk::NearestNeighborInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>
+      InterpolatorType;
+    return (InterpolatorType::New()).GetPointer() ;
+    }
+  else if ( interpolationMode == "Linear" )
+    {
+    typedef typename itk::LinearInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>
+      InterpolatorType;
+    return (InterpolatorType::New()).GetPointer();
+    }
+  else if ( interpolationMode == "BSpline" )
+    {
+    typedef typename itk::BSplineInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>
+      InterpolatorType;
+    return (InterpolatorType::New()).GetPointer();
+    }
+  else if ( interpolationMode == "WindowedSinc" )
+    {
+    typedef typename itk::ConstantBoundaryCondition<InputImageType>
+      BoundaryConditionType;
+    static const unsigned int WindowedSincHammingWindowRadius = 5;
+    typedef typename itk::Function::HammingWindowFunction<
+      WindowedSincHammingWindowRadius, TInterpolatorPrecisionType, TInterpolatorPrecisionType> WindowFunctionType;
+    typedef typename itk::WindowedSincInterpolateImageFunction<
+      InputImageType,
+      WindowedSincHammingWindowRadius,
+      WindowFunctionType,
+      BoundaryConditionType,
+      TInterpolatorPrecisionType>   InterpolatorType;
+    return (InterpolatorType::New()).GetPointer();
+    }
+  else
+    {
+    std::cout << "Error: Invalid interpolation mode specified -" << interpolationMode << "- " << std::endl;
+    std::cout << "\tValid modes: NearestNeighbor, Linear, BSpline, WindowedSinc"
+      << std::endl;
+    }
+  return NULL;
+}
 
 
-    // FIRST will need to convert binary image to signed distance in case binaryFlag is true. 
-    
-    typename ImageType::Pointer PrincipalOperandImage;
-     
+template <typename InputImageType, typename OutputImageType, typename DeformationImageType>
+typename OutputImageType::Pointer GenericTransformImage(
+    InputImageType const * const OperandImage,
+    const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+    typename DeformationImageType::Pointer DeformationField,
+    typename GenericTransformType::Pointer genericTransform,
+    typename InputImageType::PixelType suggestedDefaultValue, //NOTE:  This is ignored in the case of binary image!
+    const std::string interpolationMode,
+    const bool binaryFlag)
+{
+    // FIRST will need to convert binary image to signed distance in case binaryFlag is true.
+
+    typename InputImageType::ConstPointer PrincipalOperandImage;
+
     // Splice in a case for dealing with binary images,
     // where signed distance maps are warped and thresholds created.
     if ( binaryFlag )
@@ -77,8 +145,8 @@ typename ImageType::Pointer GenericTransformImage(
         only values of 0 in the image are filled with 0.0 and other values are 1.0
         */
 
-      typedef itk::BinaryThresholdImageFilter<ImageType,
-              ImageType> FloatThresholdFilterType;
+      typedef itk::BinaryThresholdImageFilter<InputImageType,
+              InputImageType> FloatThresholdFilterType;
       typename FloatThresholdFilterType::Pointer initialFilter
         = FloatThresholdFilterType::New();
       initialFilter->SetInput( OperandImage );
@@ -94,8 +162,8 @@ typename ImageType::Pointer GenericTransformImage(
         }
       initialFilter->Update();
         {
-        typedef itk::SignedMaurerDistanceMapImageFilter<ImageType,
-                ImageType> DistanceFilterType;
+        typedef itk::SignedMaurerDistanceMapImageFilter<InputImageType,
+                InputImageType> DistanceFilterType;
         typename DistanceFilterType::Pointer DistanceFilter = DistanceFilterType::New();
         DistanceFilter->SetInput( initialFilter->GetOutput () );
         // DistanceFilter->SetNarrowBandwidth( m_BandWidth );
@@ -107,13 +175,12 @@ typename ImageType::Pointer GenericTransformImage(
         PrincipalOperandImage = DistanceFilter->GetOutput();
         //PrincipalOperandImage->DisconnectPipeline();
         }
-#if 1
-        // Using defaultValue based on the size of the image so that intensity values
+        // Using suggestedDefaultValue based on the size of the image so that intensity values
         // are kept to a reasonable range.  (A costlier way calculates the image min.)
-        const typename ImageType::SizeType size = PrincipalOperandImage->GetLargestPossibleRegion().GetSize();
-        const typename ImageType::SpacingType spacing = PrincipalOperandImage->GetSpacing();
+        const typename InputImageType::SizeType size = PrincipalOperandImage->GetLargestPossibleRegion().GetSize();
+        const typename InputImageType::SpacingType spacing = PrincipalOperandImage->GetSpacing();
         double diagonalLength=0;
-        for(int s=0;s< ImageType::ImageDimension ; s++)
+        for(int s=0;s< InputImageType::ImageDimension ; s++)
           {
           diagonalLength += size[s]*spacing[s];
           }
@@ -121,19 +188,13 @@ typename ImageType::Pointer GenericTransformImage(
         // unlikely to add shapes to the thresholded signed distance image.
         // This is an easy enough proof of a lower bound on the image min, since it
         // works even if the mask is a single voxel in the image field corner.
-        //        defaultValue=vcl_sqrt( diagonalLength );
+        //        suggestedDefaultValue=vcl_sqrt( diagonalLength );
         // In most cases, a heuristic fraction of the diagonal value is an even better
         // lower bound: if the midpoint of the image is inside the mask, 1/2 is a lower
         // bound as well, and the background is unlikely to drive the upper limit of the
         // intensity range when we visualize the intermediate image for debugging.
 
-        defaultValue=-vcl_sqrt( diagonalLength )*0.5; 
-#else
-        // To denote the least possible value, the lowest intensity, must avoid the
-        // pitfall of using the PixelType min();  min() is an epsilon, similar to 
-        // machine precision.  The lowest conceivable PixelType value is -max().
-        defaultValue = -vcl_numeric_limits<PixelType>::max();
-#endif
+        suggestedDefaultValue=-vcl_sqrt( diagonalLength )*0.5;
       }
     else // other than if (pixelType == "binary")
       {
@@ -143,230 +204,36 @@ typename ImageType::Pointer GenericTransformImage(
 
 
   // RESAMPLE with the appropriate transform and interpolator:
-
-  typename ImageType::Pointer TransformedImage;  // One name for the intermediate resampled float image.
+  typename InputImageType::Pointer TransformedImage;  // One name for the intermediate resampled float image.
 
   if ( DeformationField.IsNull() ) // (useTransform)
     {
-      std::cout<< " Deformation Field is Null... " << std::endl; 
-    if ( itkBSplineTransform.IsNotNull() ) // (definitelyBSpline)
-      {    
-        std::cout<<" BSplint Transform is applied...." << std::endl;
-      if ( interpolationMode == "NearestNeighbor" )
-        {
-        typedef typename itk::NearestNeighborInterpolateImageFunction<ImageType, double> 
-                  InterpolatorType;
-
-        TransformedImage = TransformResample<BSplineTransformType,InterpolatorType>(
-          PrincipalOperandImage,
-          ReferenceImage,
-          defaultValue,
-          itkBSplineTransform);
-        }
-      else if ( interpolationMode == "Linear" )
-        {
-        typedef typename itk::LinearInterpolateImageFunction<ImageType, double> 
-                  InterpolatorType;
-
-        TransformedImage = TransformResample<BSplineTransformType,InterpolatorType>(
-          PrincipalOperandImage,
-          ReferenceImage,
-          defaultValue,
-          itkBSplineTransform);
-        }
-      else if ( interpolationMode == "BSpline" )
-        {
-        typedef typename itk::BSplineInterpolateImageFunction<ImageType, double> 
-                  InterpolatorType;
-
-        TransformedImage = TransformResample<BSplineTransformType,InterpolatorType>(
-          PrincipalOperandImage,
-          ReferenceImage,
-          defaultValue,
-          itkBSplineTransform);
-        }
-      else if ( interpolationMode == "WindowedSinc" )
-        {
-        typedef typename itk::ConstantBoundaryCondition<ImageType>
-                  BoundaryConditionType;
-        static const unsigned int WindowedSincHammingWindowRadius = 5;
-        typedef typename itk::Function::HammingWindowFunction<
-          WindowedSincHammingWindowRadius, double, double> WindowFunctionType;
-        typedef typename itk::WindowedSincInterpolateImageFunction<
-          ImageType,
-          WindowedSincHammingWindowRadius,
-          WindowFunctionType,
-          BoundaryConditionType,
-          double>   WindowedSincInterpolatorType;
-
-        TransformedImage = TransformResample<BSplineTransformType,WindowedSincInterpolatorType>(
-          PrincipalOperandImage,
-          ReferenceImage,
-          defaultValue,
-          itkBSplineTransform);
-        }
-      else
-        {
-        std::cout << "Error: Invalid interpolation mode specified" << std::endl;
-        std::cout << "\tValid modes: NearestNeighbor, Linear, BSpline, WindowedSinc"
-          << std::endl;
-        }
-      }
-    else if ( ITKAffineTransform.IsNotNull() )// definitely Linear, and already converted to Affine in ITKAffineTransform:
+    //std::cout<< " Deformation Field is Null... " << std::endl;
+    if ( genericTransform.IsNotNull() ) // (definitelyBSpline)
       {
-      std::cout<<"itk Affine Transform is not Null, Affine Trasnform applied..." << std::endl;
-      if ( interpolationMode == "NearestNeighbor" )
-        {
-        typedef typename itk::NearestNeighborInterpolateImageFunction<ImageType, double> 
-                  InterpolatorType;
-
-        TransformedImage = TransformResample<AffineTransformType,InterpolatorType>(
-          PrincipalOperandImage,
-          ReferenceImage,
-          defaultValue,
-          ITKAffineTransform);
-        }
-      else if ( interpolationMode == "Linear" )
-        {
-        typedef typename itk::LinearInterpolateImageFunction<ImageType, double> 
-                  InterpolatorType;
-
-        TransformedImage = TransformResample<AffineTransformType,InterpolatorType>(
-          PrincipalOperandImage,
-          ReferenceImage,
-          defaultValue,
-          ITKAffineTransform);
-        }
-      else if ( interpolationMode == "BSpline" )
-        {
-        typedef typename itk::BSplineInterpolateImageFunction<ImageType, double> 
-                  InterpolatorType;
-
-        TransformedImage = TransformResample<AffineTransformType,InterpolatorType>(
-          PrincipalOperandImage,
-          ReferenceImage,
-          defaultValue,
-          ITKAffineTransform);
-        }
-      else if ( interpolationMode == "WindowedSinc" )
-        {
-        typedef typename itk::ConstantBoundaryCondition<ImageType>
-                  BoundaryConditionType;
-        static const unsigned int WindowedSincHammingWindowRadius = 5;
-        typedef typename itk::Function::HammingWindowFunction<
-          WindowedSincHammingWindowRadius, double, double> WindowFunctionType;
-        typedef typename itk::WindowedSincInterpolateImageFunction<
-          ImageType,
-          WindowedSincHammingWindowRadius,
-          WindowFunctionType,
-          BoundaryConditionType,
-          double>   WindowedSincInterpolatorType;
-
-        TransformedImage = TransformResample<AffineTransformType,WindowedSincInterpolatorType>(
-          PrincipalOperandImage,
-          ReferenceImage,
-          defaultValue,
-          ITKAffineTransform);
-        }
-      else
-        {
-        std::cout << "Error: Invalid interpolation mode specified" << std::endl;
-        std::cout << "\tValid modes: NearestNeighbor, Linear, BSpline, WindowedSinc"
-          << std::endl;
-        }
+      TransformedImage=TransformResample<InputImageType,OutputImageType>(
+        PrincipalOperandImage,
+        ReferenceImage,
+        suggestedDefaultValue,
+        GetInterpolatorFromString<InputImageType>(interpolationMode),
+        genericTransform);
       }
     }
 
   else if ( DeformationField.IsNotNull() )
     {
     //  std::cout<< "Deformation Field is given, so applied to the image..." << std::endl;
-    typedef typename itk::WarpImageFilter<ImageType,
-            ImageType,
-            DeformationImageType>  FilterType;
-
-    typename FilterType::Pointer warper = FilterType::New();
-
-    if ( interpolationMode == "NearestNeighbor" )
-      {
-      typedef typename itk::NearestNeighborInterpolateImageFunction<ImageType, double> 
-                InterpolatorType;
-      typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
-      warper->SetInterpolator( interpolator );
-      }
-    else if ( interpolationMode == "Linear" )
-      {
-      typedef typename itk::LinearInterpolateImageFunction<ImageType, double>
-                InterpolatorType;
-      typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
-      warper->SetInterpolator( interpolator );
-      }
-    else if ( interpolationMode == "BSpline" )
-      {
-      typedef typename itk::BSplineInterpolateImageFunction<ImageType, double> 
-                InterpolatorType;
-
-      typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
-      warper->SetInterpolator( interpolator );
-      }
-    else if ( interpolationMode == "WindowedSinc" )
-      {
-      typedef typename itk::ConstantBoundaryCondition<ImageType>
-      BoundaryConditionType;
-      static const unsigned int WindowedSincHammingWindowRadius = 5;
-      typedef typename itk::Function::HammingWindowFunction<
-        WindowedSincHammingWindowRadius, double, double> WindowFunctionType;
-      typedef typename itk::WindowedSincInterpolateImageFunction<
-        ImageType,
-        WindowedSincHammingWindowRadius,
-        WindowFunctionType,
-        BoundaryConditionType,
-        double>    WindowedSincInterpolatorType;
-
-      typename WindowedSincInterpolatorType::Pointer interpolator = WindowedSincInterpolatorType::New();
-      warper->SetInterpolator( interpolator );
-      }
-    else
-      {
-      std::cout << "Error: Invalid interpolation mode specified" << std::endl;
-      std::cout << "\tValid modes: NearestNeighbor, Linear, BSpline, WindowedSinc"
-        << std::endl;
-      }
-
-
-    if ( ReferenceImage.IsNotNull() )
-      {
-        /*
-        std::cout<< " Give Reference image's Spacing, Origin and Direction...."<<std::endl;
-        std::cout<< " --- Spacing::   " <<  ReferenceImage->GetSpacing()  << std::endl;
-        std::cout<< " --- Origin::    " <<  ReferenceImage->GetOrigin()   << std::endl;
-        std::cout<< " --- Direction:: " <<  ReferenceImage->GetDirection()<< std::endl;
-      */
-      warper->SetOutputSpacing(    ReferenceImage->GetSpacing() );
-      warper->SetOutputOrigin(     ReferenceImage->GetOrigin() );
-      warper->SetOutputDirection(  ReferenceImage->GetDirection() );
-      }
-    else 
-      {
-      std::cout << "Alert:  missing Reference Volume information defaulted from Deformation Volume " << std::endl;
-
-      warper->SetOutputSpacing(    DeformationField->GetSpacing() );
-      warper->SetOutputOrigin(     DeformationField->GetOrigin() );
-      warper->SetOutputDirection(  DeformationField->GetDirection() );
-      }
-
-    warper->SetDeformationField( DeformationField );
-    warper->SetEdgePaddingValue( static_cast<PixelType>( defaultValue ) );
-    warper->SetInput( PrincipalOperandImage );
-    warper->Update( );
-
-    TransformedImage = warper->GetOutput();
+      TransformedImage=TransformWarp<InputImageType,OutputImageType,DeformationImageType>(
+        PrincipalOperandImage,
+        ReferenceImage,
+        suggestedDefaultValue,
+        GetInterpolatorFromString<InputImageType>(interpolationMode),
+        DeformationField);
     }
 
+    // FINALLY will need to convert signed distance to binary image in case binaryFlag is true.
 
-
-    // FINALLY will need to convert signed distance to binary image in case binaryFlag is true. 
-
-    typename ImageType::Pointer FinalTransformedImage;
+    typename InputImageType::Pointer FinalTransformedImage;
 
     if ( binaryFlag )
       {
@@ -376,7 +243,7 @@ typename ImageType::Pointer GenericTransformImage(
       typedef typename itk::Image<MaskPixelType,  GenericTransformImageNS::SpaceDimension> MaskImageType;
 
       //Now Threshold and write out image
-      typedef typename itk::BinaryThresholdImageFilter<ImageType,
+      typedef typename itk::BinaryThresholdImageFilter<InputImageType,
               MaskImageType> BinaryThresholdFilterType;
       typename BinaryThresholdFilterType::Pointer finalFilter
         = BinaryThresholdFilterType::New();
@@ -389,7 +256,7 @@ typename ImageType::Pointer GenericTransformImage(
       // Signed distance boundary voxels are defined as being included in the
       // structure,  therefore the desired distance threshold is in the middle
       // of the enclosing (negative) voxel ribbon around threshold 0.
-      const typename ImageType::SpacingType Spacing = ReferenceImage->GetSpacing();
+      const typename InputImageType::SpacingType Spacing = ReferenceImage->GetSpacing();
       const PixelType lowerThreshold = -0.5 * 0.333333333333
         * ( Spacing[0] + Spacing[1] + Spacing[2] );
       //  std::cerr << "Lower Threshold == " << lowerThreshold << std::endl;
@@ -400,7 +267,7 @@ typename ImageType::Pointer GenericTransformImage(
 
       finalFilter->Update();
 
-      typedef typename itk::CastImageFilter<MaskImageType, ImageType> CastImageFilter;
+      typedef typename itk::CastImageFilter<MaskImageType, InputImageType> CastImageFilter;
       typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput( finalFilter->GetOutput() );
       castFilter->Update( );

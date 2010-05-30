@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkOtsuHistogramMatchingImageFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2009-05-02 05:43:54 $
-  Version:   $Revision: 1.13 $
+Program:   Insight Segmentation & Registration Toolkit
+Module:    $RCSfile: itkOtsuHistogramMatchingImageFilter.h,v $
+Language:  C++
+Date:      $Date: 2009-05-02 05:43:54 $
+Version:   $Revision: 1.13 $
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+Copyright (c) Insight Software Consortium. All rights reserved.
+See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 #ifndef __itkOtsuHistogramMatchingImageFilter_h
@@ -24,43 +24,43 @@
 namespace itk
 {
 
-/** \class OtsuHistogramMatchingImageFilter
- * \brief Normalize the grayscale values between two image by histogram
- * matching.
- *
- * OtsuHistogramMatchingImageFilter normalizes the grayscale values of a source
- * image based on the grayscale values of a reference image.
- * This filter uses a histogram matching technique where the histograms of the
- * two images are matched only at a specified number of quantile values.
- *
- * This filter was orginally designed to normalize MR images of the same
- * MR protocol and same body part. The algorithm works best if background
- * pixels are excluded from both the source and reference histograms.
- * A simple background exclusion method is to exclude all pixels whose
- * grayscale values are smaller than the mean grayscale value.
- * ThresholdAtMeanIntensityOn() switches on this simple background
- * exclusion method.
- *
- * The source image can be set via either SetInput() or SetSourceImage().
- * The reference image can be set via SetReferenceImage().
- *
- * SetNumberOfHistogramLevels() sets the number of bins used when
- * creating histograms of the source and reference images.
- * SetNumberOfMatchPoints() governs the number of quantile values to be
- * matched.
- *
- * This filter assumes that both the source and reference are of the same
- * type and that the input and output image type have the same number of
- * dimension and have scalar pixel types.
- *
- * \ingroup IntensityImageFilters Multithreaded
- *
- */
+  /** \class OtsuHistogramMatchingImageFilter
+   * \brief Normalize the grayscale values between two image by histogram
+   * matching.
+   *
+   * OtsuHistogramMatchingImageFilter normalizes the grayscale values of a source
+   * image based on the grayscale values of a reference image.
+   * This filter uses a histogram matching technique where the histograms of the
+   * two images are matched only at a specified number of quantile values.
+   *
+   * This filter was orginally designed to normalize MR images of the same
+   * MR protocol and same body part. The algorithm works best if background
+   * pixels are excluded from both the source and reference histograms.
+   * A simple background exclusion method is to exclude all pixels whose
+   * grayscale values are smaller than the mean grayscale value.
+   * ThresholdAtMeanIntensityOn() switches on this simple background
+   * exclusion method.
+   *
+   * The source image can be set via either SetInput() or SetSourceImage().
+   * The reference image can be set via SetReferenceImage().
+   *
+   * SetNumberOfHistogramLevels() sets the number of bins used when
+   * creating histograms of the source and reference images.
+   * SetNumberOfMatchPoints() governs the number of quantile values to be
+   * matched.
+   *
+   * This filter assumes that both the source and reference are of the same
+   * type and that the input and output image type have the same number of
+   * dimension and have scalar pixel types.
+   *
+   * \ingroup IntensityImageFilters Multithreaded
+   *
+   */
   /* THistogramMeasurement -- The precision level for which to do HistogramMeasurmenets */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement=ITK_TYPENAME TInputImage::PixelType>
-class ITK_EXPORT OtsuHistogramMatchingImageFilter:
-    public ImageToImageFilter<TInputImage,TOutputImage>
-{
+  template <class TInputImage, class TOutputImage, class THistogramMeasurement=ITK_TYPENAME TInputImage::PixelType>
+    class ITK_EXPORT OtsuHistogramMatchingImageFilter:
+      public ImageToImageFilter<TInputImage,TOutputImage>
+  {
 public:
   /** Standard class typedefs. */
   typedef OtsuHistogramMatchingImageFilter                  Self;
@@ -76,9 +76,9 @@ public:
 
   /** ImageDimension enumeration. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+    TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+    TOutputImage::ImageDimension);
 
   /** Typedef to describe the output image region type. */
   typedef typename TOutputImage::RegionType OutputImageRegionType;
@@ -171,17 +171,17 @@ protected:
   void BeforeThreadedGenerateData();
   void AfterThreadedGenerateData();
   void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-                            int threadId );
+    int threadId );
 
   /** Compute min, max and mean of an image. */
   void ComputeMinMaxMean( const InputImageType * image,
-                          THistogramMeasurement& minValue, THistogramMeasurement& maxValue, THistogramMeasurement& meanValue );
+    THistogramMeasurement& minValue, THistogramMeasurement& maxValue, THistogramMeasurement& meanValue );
 
   /** Construct a histogram from an image. */
   void ConstructHistogram( const InputImageType * image,
-                           const typename MaskImageType::Pointer mask,
-                           HistogramType * histogram, const THistogramMeasurement minValue,
-                           const THistogramMeasurement maxValue );
+    const typename MaskImageType::Pointer mask,
+    HistogramType * histogram, const THistogramMeasurement minValue,
+    const THistogramMeasurement maxValue );
 
 private:
   OtsuHistogramMatchingImageFilter(const Self&); //purposely not implemented
@@ -220,7 +220,7 @@ private:
   typename MaskImageType::Pointer m_SourceMask;
   typename MaskImageType::Pointer m_ReferenceMask;
 
-};
+  };
 
 
 } // end namespace itk

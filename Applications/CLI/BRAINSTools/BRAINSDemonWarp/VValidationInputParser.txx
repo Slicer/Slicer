@@ -16,7 +16,6 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkWarpImageFilter.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkSpatialOrientation.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
@@ -78,23 +77,9 @@ VValidationInputParser<TImage>
    *************************/
   if ( this->m_ForceCoronalZeroOrigin == true )
     {
-#if 0
-    if ( this->GetOutDebug() )
-      {
-      std::cout << "---Forcing Brains2 Orientation " << std::endl;
-      }
-    for ( unsigned int i = 0; i < m_TheFixedImageFilename.size(); ++i )
-      {
-      m_TheFixedImages.push_back( itkUtil::ReadBrains2Image<TImage>(
-          m_TheFixedImageFilename[i] ) );
-      m_TheMovingImages.push_back( itkUtil::ReadBrains2Image<TImage>(
-          m_TheMovingImageFilename[i] ) );
-      }
-#else
     std::cout << "---Forcing Brains2 Orientation not yet implemented"
               << std::endl;
     exit (-1);
-#endif
     }
   else
     {

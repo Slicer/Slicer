@@ -1,14 +1,14 @@
 /*=========================================================================
 
-  Program:   BRAINSDemonsWarp
-  Module:    $RCSfile: ITKHeader.h,v $
-  Language:  C++
-  Date:      $Date: 2006-04-25 23:20:16 $
-  Version:   $Revision: 1.1 $
+Program:   BRAINSDemonsWarp
+Module:    $RCSfile: ITKHeader.h,v $
+Language:  C++
+Date:      $Date: 2006-04-25 23:20:16 $
+Version:   $Revision: 1.1 $
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
@@ -22,20 +22,20 @@
 #include "itkImageMaskSpatialObject.h"
 
 itkSimpleDiffeomorphicRegistration::itkSimpleDiffeomorphicRegistration()
-  {
+{
   m_DemonsPreprocessor = DemonsPreprocessorType::New();
   m_DemonsRegistrator = DemonsRegistratorType::New();
   m_DeformationField = NULL;
-  }
+}
 
 /*
 void itkSimpleDiffeomorphicRegistration::SetDeformedImageName(std::string name) {
-  m_DeformedImageName = name;
+m_DeformedImageName = name;
 }
 */
 /*
 std::string itkSimpleDiffeomorphicRegistration::GetDeformedImageName(void) {
-  return m_DeformedImageName;
+return m_DeformedImageName;
 }
 */
 
@@ -51,27 +51,27 @@ void itkSimpleDiffeomorphicRegistration::InitializePreprocessor()
 void itkSimpleDiffeomorphicRegistration::Initialization()
 {
   typedef itk::DiffeomorphicDemonsRegistrationWithMaskFilter<TRealImage,
-    TRealImage,
-    TDeformationField>
-  RegistrationFilterType;
+          TRealImage,
+          TDeformationField>
+            RegistrationFilterType;
   RegistrationFilterType::Pointer filter = RegistrationFilterType::New();
   typedef itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage,
-    TDeformationField>
-  BaseRegistrationFilterType;
+          TDeformationField>
+            BaseRegistrationFilterType;
   BaseRegistrationFilterType::Pointer actualfilter;
   // typedef RegistrationFilterType::GradientType TGradientType;
   TRealImage::Pointer movingBinaryVolumeImage;
   TRealImage::Pointer fixedBinaryVolumeImage;
   const double        otsuPercentileThreshold = 0.01;
   const int           closingSize = 7;
-//   fixedBinaryVolumeImage = FindLargestForgroundFilledMask<TRealImage>(
-//     m_FixedImage,
-//     otsuPercentileThreshold,
-//     closingSize);
-//   movingBinaryVolumeImage = FindLargestForgroundFilledMask<TRealImage>(
-//     m_MovingImage,
-//     otsuPercentileThreshold,
-//     closingSize);
+  //   fixedBinaryVolumeImage = FindLargestForgroundFilledMask<TRealImage>(
+  //     m_FixedImage,
+  //     otsuPercentileThreshold,
+  //     closingSize);
+  //   movingBinaryVolumeImage = FindLargestForgroundFilledMask<TRealImage>(
+  //     m_MovingImage,
+  //     otsuPercentileThreshold,
+  //     closingSize);
   typedef itk::LargestForegroundFilledMaskImageFilter<TRealImage> LFFMaskFilterType;
   LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
   LFF->SetInput(m_FixedImage);
@@ -89,10 +89,10 @@ void itkSimpleDiffeomorphicRegistration::Initialization()
   typedef unsigned char                     MaskPixelType;
   typedef itk::Image<MaskPixelType, DIM>   MaskImageType;
   typedef itk::CastImageFilter<TRealImage, MaskImageType> CastImageFilter;
-  
+
   typedef itk::SpatialObject<DIM>  ImageMaskType;
   typedef ImageMaskType::Pointer ImageMaskPointer;
-  
+
   CastImageFilter::Pointer castFixedMaskImage = CastImageFilter::New();
   castFixedMaskImage->SetInput( fixedBinaryVolumeImage );
   castFixedMaskImage->Update( );
@@ -189,7 +189,7 @@ void itkSimpleDiffeomorphicRegistration::Update()
     {
     std::
       cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
-           << std::endl;
+      << std::endl;
     }
 
   m_DeformationField = m_DemonsRegistrator->GetDeformationField();

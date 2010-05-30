@@ -28,46 +28,46 @@
 class CommandIterationUpdate : public itk::Command
 {
 public:
-    typedef  CommandIterationUpdate   Self;
-    typedef  itk::Command             Superclass;
-    typedef  itk::SmartPointer<CommandIterationUpdate>  Pointer;
-    itkNewMacro( CommandIterationUpdate );
+typedef  CommandIterationUpdate   Self;
+typedef  itk::Command             Superclass;
+typedef  itk::SmartPointer<CommandIterationUpdate>  Pointer;
+itkNewMacro( CommandIterationUpdate );
 protected:
-    CommandIterationUpdate() {};
+CommandIterationUpdate() {};
 
-    typedef itk::Image< float, 3 > InternalImageType;
-    typedef itk::Vector< float, 3 >    VectorPixelType;
-    typedef itk::Image<  VectorPixelType, 3 > DeformationFieldType;
+typedef itk::Image< float, 3 > InternalImageType;
+typedef itk::Vector< float, 3 >    VectorPixelType;
+typedef itk::Image<  VectorPixelType, 3 > DeformationFieldType;
 
-    typedef itk::PDEDeformableRegistrationFilter<
-    InternalImageType,
-    InternalImageType,
-    DeformationFieldType>   RegistrationFilterType;
+typedef itk::PDEDeformableRegistrationFilter<
+InternalImageType,
+InternalImageType,
+DeformationFieldType>   RegistrationFilterType;
 
 public:
 
-    void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
-        Execute( (const itk::Object *)caller, event);
-  }
+void Execute(itk::Object *caller, const itk::EventObject & event)
+{
+Execute( (const itk::Object *)caller, event);
+}
 
-    void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
-    const RegistrationFilterType * filter =
-    dynamic_cast< const RegistrationFilterType * >( object );
+void Execute(const itk::Object * object, const itk::EventObject & event)
+{
+const RegistrationFilterType * filter =
+dynamic_cast< const RegistrationFilterType * >( object );
 
-        if( !(itk::IterationEvent().CheckEvent( &event )) )
-    {
-      return;
-    }
-        std::cout <<   filter->GetMetric() << std::endl;
-  }
+if( !(itk::IterationEvent().CheckEvent( &event )) )
+{
+return;
+}
+std::cout <<   filter->GetMetric() << std::endl;
+}
 };
 */
 
 template <class TPixel = float, unsigned int VImageDimension = 3>
 class CommandIterationUpdate : public itk::Command
-  {
+{
 public:
   typedef  CommandIterationUpdate                      Self;
   typedef  itk::Command                                Superclass;
@@ -100,13 +100,13 @@ public:
     DeformationFieldType, TPixel, InternalImageType> JacobianFilterType;
 
   typedef itk::MinimumMaximumImageCalculator<InternalImageType>
-  MinMaxFilterType;
+    MinMaxFilterType;
 
   typedef itk::WarpHarmonicEnergyCalculator<DeformationFieldType>
-  HarmonicEnergyCalculatorType;
+    HarmonicEnergyCalculatorType;
 
   typedef itk::VectorCentralDifferenceImageFunction<DeformationFieldType>
-  WarpGradientCalculatorType;
+    WarpGradientCalculatorType;
 
   typedef typename WarpGradientCalculatorType::OutputType WarpGradientType;
 
@@ -122,22 +122,22 @@ private:
   typename WarpGradientCalculatorType::Pointer m_CompWarpGradientCalculator;
 public:
   void SetTrueField(const DeformationFieldType *truefield)
-  {
+    {
     m_TrueField = truefield;
 
     m_TrueWarpGradientCalculator = WarpGradientCalculatorType::New();
     m_TrueWarpGradientCalculator->SetInputImage( m_TrueField );
 
     m_CompWarpGradientCalculator =  WarpGradientCalculatorType::New();
-  }
+    }
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     Execute( (const itk::Object *)caller, event );
-  }
+    }
 
   void Execute(const itk::Object *object, const itk::EventObject & event)
-  {
+    {
     if ( !( itk::IterationEvent().CheckEvent( &event ) ) )
       {
       return;
@@ -148,37 +148,37 @@ public:
     double       metricbefore = -1.0;
 
     if ( const DiffeomorphicDemonsRegistrationFilterType * filter
-          = dynamic_cast<const DiffeomorphicDemonsRegistrationFilterType *>(
-          object ) )
+      = dynamic_cast<const DiffeomorphicDemonsRegistrationFilterType *>(
+        object ) )
       {
       iter = filter->GetElapsedIterations() - 1;
       metricbefore = filter->GetMetric();
       deffield = const_cast<DiffeomorphicDemonsRegistrationFilterType *>
-                 ( filter )->GetDeformationField();
+        ( filter )->GetDeformationField();
       }
     else if ( const FastSymmetricForcesDemonsRegistrationFilterType * filter
-               = dynamic_cast<const
-                              FastSymmetricForcesDemonsRegistrationFilterType *>(
-               object ) )
+      = dynamic_cast<const
+      FastSymmetricForcesDemonsRegistrationFilterType *>(
+        object ) )
       {
       iter = filter->GetElapsedIterations() - 1;
       metricbefore = filter->GetMetric();
       deffield = const_cast<FastSymmetricForcesDemonsRegistrationFilterType *>
-                 ( filter )->GetDeformationField();
+        ( filter )->GetDeformationField();
       }
     else if ( const DemonsRegistrationFilterType * filter
-               = dynamic_cast<const DemonsRegistrationFilterType *>( object ) )
+      = dynamic_cast<const DemonsRegistrationFilterType *>( object ) )
       {
       iter = filter->GetElapsedIterations() - 1;
       metricbefore = filter->GetMetric();
       deffield = const_cast<DemonsRegistrationFilterType *>
-                 ( filter )->GetDeformationField();
+        ( filter )->GetDeformationField();
       }
     else if ( const MultiResRegistrationFilterType * multiresfilter
-               = dynamic_cast<const MultiResRegistrationFilterType *>( object ) )
+      = dynamic_cast<const MultiResRegistrationFilterType *>( object ) )
       {
       std::cout << "Finished Multi-resolution iteration :"
-                << multiresfilter->GetCurrentLevel() - 1 << std::endl;
+        << multiresfilter->GetCurrentLevel() - 1 << std::endl;
       std::cout << "==============================" << std::endl << std::endl;
       }
     else
@@ -196,7 +196,7 @@ public:
       if ( m_TrueField )
         {
         typedef itk::ImageRegionConstIteratorWithIndex<DeformationFieldType>
-        FieldIteratorType;
+          FieldIteratorType;
         FieldIteratorType currIter(
           deffield, deffield->GetLargestPossibleRegion() );
         FieldIteratorType trueIter(
@@ -207,7 +207,7 @@ public:
         fieldDist = 0.0;
         fieldGradDist = 0.0;
         for ( currIter.GoToBegin(), trueIter.GoToBegin();
-              not currIter.IsAtEnd(); ++currIter, ++trueIter )
+          not currIter.IsAtEnd(); ++currIter, ++trueIter )
           {
           fieldDist += ( currIter.Value() - trueIter.Value() ).GetSquaredNorm();
 
@@ -215,7 +215,7 @@ public:
           tmp = (
             ( m_CompWarpGradientCalculator->EvaluateAtIndex( currIter.GetIndex() )
               - m_TrueWarpGradientCalculator->EvaluateAtIndex( trueIter.
-                  GetIndex() )
+                GetIndex() )
             ).GetVnlMatrix() ).frobenius_norm();
           fieldGradDist += tmp * tmp;
           }
@@ -244,8 +244,8 @@ public:
       m_JacobianFilter->UpdateLargestPossibleRegion();
 
       const unsigned int numPix = m_JacobianFilter->
-                                    GetOutput()->GetLargestPossibleRegion().
-                                    GetNumberOfPixels();
+        GetOutput()->GetLargestPossibleRegion().
+        GetNumberOfPixels();
 
       TPixel *pix_start = m_JacobianFilter->GetOutput()->GetBufferPointer();
       TPixel *pix_end = pix_start + numPix;
@@ -262,7 +262,7 @@ public:
           }
         }
       const double jacBelowZeroPrc = static_cast<double>( jacBelowZero )
-                                     / static_cast<double>( numPix );
+        / static_cast<double>( numPix );
 
       // Get min an max jac
       const double minJac = *( std::min_element (pix_start, pix_end) );
@@ -288,28 +288,28 @@ public:
       const double Q998 = *jac_ptr;
 
       std::cout << "max|Jac| " << maxJac << " - "
-                << "min|Jac| " << minJac << " - "
-                << "ratio(|Jac|<=0) " << jacBelowZeroPrc << std::endl;
+        << "min|Jac| " << minJac << " - "
+        << "ratio(|Jac|<=0) " << jacBelowZeroPrc << std::endl;
 
       if ( this->m_Fid.is_open() )
         {
         if ( not m_headerwritten )
           {
           this->m_Fid << "Iteration"
-                      << ", MSE before"
-                      << ", Harmonic energy"
-                      << ", min|Jac|"
-                      << ", 0.2% |Jac|"
-                      << ", 01% |Jac|"
-                      << ", 99% |Jac|"
-                      << ", 99.8% |Jac|"
-                      << ", max|Jac|"
-                      << ", ratio(|Jac|<=0)";
+            << ", MSE before"
+            << ", Harmonic energy"
+            << ", min|Jac|"
+            << ", 0.2% |Jac|"
+            << ", 01% |Jac|"
+            << ", 99% |Jac|"
+            << ", 99.8% |Jac|"
+            << ", max|Jac|"
+            << ", ratio(|Jac|<=0)";
 
           if ( m_TrueField )
             {
             this->m_Fid << ", dist(warp,true warp)"
-                        << ", dist(Jac,true Jac)";
+              << ", dist(Jac,true Jac)";
             }
 
           this->m_Fid << std::endl;
@@ -318,47 +318,47 @@ public:
           }
 
         this->m_Fid << iter
-                    << ", " << metricbefore
-                    << ", " << harmonicEnergy
-                    << ", " << minJac
-                    << ", " << Q002
-                    << ", " << Q01
-                    << ", " << Q99
-                    << ", " << Q998
-                    << ", " << maxJac
-                    << ", " << jacBelowZeroPrc;
+          << ", " << metricbefore
+          << ", " << harmonicEnergy
+          << ", " << minJac
+          << ", " << Q002
+          << ", " << Q01
+          << ", " << Q99
+          << ", " << Q998
+          << ", " << maxJac
+          << ", " << jacBelowZeroPrc;
 
         if ( m_TrueField )
           {
           this->m_Fid << ", " << fieldDist
-                      << ", " << fieldGradDist;
+            << ", " << fieldGradDist;
           }
 
         this->m_Fid << std::endl;
         }
       }
-  }
+    }
 
 protected:
   CommandIterationUpdate() :
     m_Fid( "metricvalues.csv" ),
     m_headerwritten(false)
-    {
-    m_JacobianFilter = JacobianFilterType::New();
-    m_JacobianFilter->SetUseImageSpacing( true );
-    m_JacobianFilter->ReleaseDataFlagOn();
+  {
+  m_JacobianFilter = JacobianFilterType::New();
+  m_JacobianFilter->SetUseImageSpacing( true );
+  m_JacobianFilter->ReleaseDataFlagOn();
 
-    m_Minmaxfilter = MinMaxFilterType::New();
+  m_Minmaxfilter = MinMaxFilterType::New();
 
-    m_HarmonicEnergyCalculator = HarmonicEnergyCalculatorType::New();
+  m_HarmonicEnergyCalculator = HarmonicEnergyCalculatorType::New();
 
-    m_TrueField = 0;
-    m_TrueWarpGradientCalculator = 0;
-    m_CompWarpGradientCalculator = 0;
-    }
+  m_TrueField = 0;
+  m_TrueWarpGradientCalculator = 0;
+  m_CompWarpGradientCalculator = 0;
+  }
 
   ~CommandIterationUpdate()
     {
     this->m_Fid.close();
     }
-  };
+};

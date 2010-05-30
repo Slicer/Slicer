@@ -145,7 +145,7 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage,TOutputImage>
       << imageMinValue << "," << imageMaxValue << "]" << std::endl;
     std::cout << "DEBUG:LINLOWHIGH:DEBUG: ["
       << thresholdLowerLinearRegion << "," << thresholdUpperLinearRegion << "]" << std::endl;
-    std::cout << "DEBUG:RANGE:DEBUG:  [" 
+    std::cout << "DEBUG:RANGE:DEBUG:  ["
       << intensity_thresholdLowerLinearRegion << "," << intensity_thresholdUpperLinearRegion << "]" << std::endl;
     threshold->SetLowerThreshold(intensity_thresholdLowerLinearRegion);
     threshold->SetUpperThreshold(intensity_thresholdUpperLinearRegion);

@@ -67,6 +67,7 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     command.smoothDeformationFieldSigma = smoothDeformationFieldSigma;
     command.smoothingUp = smoothingUp;
     command.numberOfBCHApproximationTerms = numberOfBCHApproximationTerms;
+    command.interpolationMode=interpolationMode;
 
     for ( int i = 0; i < numberOfPyramidLevels; i++ )
       {
