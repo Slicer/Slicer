@@ -53,6 +53,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.*Utilities.vtkexodus2"
   "VTK.*Utilities.vtklibproj"
   "VTK.*Utilities.vtksqlite"
+  "VTK.*Utilities.VPIC.*cxx"
   "VTK.*warn_unused_result"
   "VTK.*Filtering.*cxx"
   "VTK.*IO.*cxx"
@@ -72,6 +73,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512.*"
+  
 
   # Python suppressions
   # About redefinition of symbols
