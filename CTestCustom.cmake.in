@@ -82,6 +82,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
+  "cmcurl.(transfer|ftp|file|cookie).c.*warning C4244.*possible loss of data"
 
   # Suppressing warnings about duplicate libraries in Darwin
   # At some point this may be addressed by CMake feature request: 

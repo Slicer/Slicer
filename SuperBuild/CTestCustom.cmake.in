@@ -21,6 +21,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # Numpy warnings
   "_configtest.c.*"
+  "numpy.(core|numarray|linalg|random).*warning (C4244|C4028|C4996).*"
   
   # CLAPACK
   "CLAPACK.BLAS.SRC.*"
@@ -62,7 +63,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # http://lists.apple.com/archives/mac-opengl/2009/Dec/msg00081.html
   # That problem could be solved installing a newer version of X11 SDK
   # See http://xquartz.macosforge.org/trac/changeset/343
-  ".*warning: "GL_GLEXT_LEGACY" redefined"
+  ".*warning.*GL_GLEXT_LEGACY.*redefined"
   
   # ITK suppressions
   "[Uu]tilities.gdcm"
@@ -86,6 +87,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl*"
   
+  #Batchmake 
+  "BatchMake.Utilities.Zip.(unzipcmd|zipcmd).*warning C4996.*"
+  
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512.*"
   
@@ -97,6 +101,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
   "cmcurl."warning.*conversion from.*possible loss of data"
+  "cmcurl.(transfer|ftp|file|cookie).c.*warning C4244.*"
   
   # Visual studio spurious warnings...
   "The following environment variables were not found"
