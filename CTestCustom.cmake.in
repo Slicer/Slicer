@@ -42,9 +42,11 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
   
   # itk suppressions
-  "Utilities.gdcm"
-  "Utilities.vxl"
-  "Insight.Code.Common"
+  "[Uu]tilities.gdcm"
+  "[Uu]tilities.vxl"
+  "[Ii]nsight.[Cc]ode.[Cc]ommon"
+  "[Ii]nsight.[Cc]ode.[Nn]umerics"
+  "[Ii]nsight.[Cc]ode.(IO|io)"
 
   # vtk suppressions
   "vtkfreetype"
