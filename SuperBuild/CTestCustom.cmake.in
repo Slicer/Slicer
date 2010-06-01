@@ -20,8 +20,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VC.include."
   
   # Numpy warnings
-  "_configtest.c.*"
+  "_configtest.*"
   "numpy.(core|numarray|linalg|random).*warning (C4244|C4028|C4996).*"
+  "NUMPY.*Warning.*"
   
   # CLAPACK
   "CLAPACK.BLAS.SRC.*"
@@ -115,6 +116,6 @@ SET(CTEST_CUSTOM_ERROR_EXCEPTION
   ${CTEST_CUSTOM_ERROR_EXCEPTION}
   # Numpy errors
   "NUMPY.*Warning.*"
-  ".*configtest.*"
+  "_configtest.*"
   "collect2: ld returned 1 exit status"
   )
