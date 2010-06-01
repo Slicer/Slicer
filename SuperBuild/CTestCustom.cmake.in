@@ -102,7 +102,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
-  "cmcurl."warning.*conversion from.*possible loss of data"
+  "cmcurl.*warning.*conversion from.*possible loss of data"
   "cmcurl.(transfer|ftp|file|cookie).c.*warning C4244.*"
   
   # Visual studio spurious warnings...
