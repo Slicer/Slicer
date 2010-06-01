@@ -153,18 +153,16 @@ if(WIN32)
 elseif(APPLE)
   set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
   set(python_BUILD_IN_SOURCE 1)
-
-  # if building tcl then be sure to have python use the tk that we built.
-  set(python_TCL_ARG "")
-  if(Slicer3_USE_KWWIDGETS)
-    set(python_TCL_ARG "--with-tcl=${tcl_build}")
-  endif()
-
+  
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_configure_step.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake
+    @ONLY)
+    
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_make_step_apple.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/python_make_step_apple.cmake
     @ONLY)
 
-  set(python_CONFIGURE_COMMAND sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
+  set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake)
   set(python_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_make_step_apple.cmake)
   set(python_INSTALL_COMMAND make install)
 
@@ -177,32 +175,15 @@ elseif(APPLE)
     BUILD_COMMAND ${python_BUILD_COMMAND}
     INSTALL_COMMAND ${python_INSTALL_COMMAND}
     )
-#  if { $isDarwin } {
-#            # Special Slicer hack to build and install the .dylib
-#            file mkdir $::Slicer3_LIB/python-build/lib/
-#            file delete -force $::Slicer3_LIB/python-build/lib/libpython2.6.dylib
-#            set fid [open environhack.c w]
-#            puts $fid "char **environ=0;"
-#            close $fid
-#            runcmd gcc -c -o environhack.o environhack.c
-#            runcmd libtool -o $::Slicer3_LIB/python-build/lib/libpython2.6.dylib -dynamic  \
-#                -all_load libpython2.6.a environhack.o -single_module \
-#                -install_name $::Slicer3_LIB/python-build/lib/libpython2.6.dylib \
-#                -compatibility_version 2.6 \
-#                -current_version 2.6 -lSystem -lSystemStubs
-#
-#
 else()
   set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
   set(python_BUILD_IN_SOURCE 1)
-
-  # if building tcl then be sure to have python use the tk that we built.
-  set(python_TCL_ARG "")
-  if(Slicer3_USE_KWWIDGETS)
-    set(python_TCL_ARG "--with-tcl=${tcl_build}")
-  endif()
-
-  set(python_CONFIGURE_COMMAND sh configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python-build ${python_TCL_ARG} --enable-shared)
+  
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_configure_step.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake
+    @ONLY)
+    
+  set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake)
   set(python_BUILD_COMMAND make)
   set(python_INSTALL_COMMAND make install)
 

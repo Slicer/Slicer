@@ -1,0 +1,13 @@
+
+if(UNIX)
+  set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+  set(ENV{LDFLAGS} "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
+  set(ENV{CPPFLAGS} "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")
+  set(ENV{CXX} "@CMAKE_CXX_COMPILER@")
+  
+  EXECUTE_PROCESS( 
+    COMMAND sh configure --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build --enable-shared
+    WORKING_DIRECTORY "@python_base@"
+    RESULT_VARIABLE rv
+    )
+endif()
