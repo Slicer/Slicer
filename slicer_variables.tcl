@@ -586,7 +586,7 @@ switch $::tcl_platform(os) {
         set ::SERIAL_MAKE $::MAKE
 
         set windowsNotXP 0
-        if { $::tcl_platform(os) == "windows" } {
+        if { $::tcl_platform(os) == "Windows NT" } {
           if { [string index $::tcl_platform(osVersion) 0] != "5" } {
             set windowsNotXP 1
           }
