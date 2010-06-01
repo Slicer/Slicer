@@ -20,12 +20,12 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VC.include."
   
   # Numpy warnings
-  "_configtest.*"
-  "numpy.(core|numarray|linalg|random).*warning (C4244|C4028|C4996).*"
-  "NUMPY.*Warning.*"
+  "_configtest"
+  "numpy.(core|numarray|linalg|random).*warning (C4244|C4028|C4996)"
+  "NUMPY.*Warning"
   
   # CLAPACK
-  "CLAPACK.BLAS.SRC.*"
+  "CLAPACK.BLAS.SRC"
   
   # Tcl
   "tcl.tcl.unix.*warning: cast"
@@ -52,12 +52,12 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules._multiprocessing.multiprocessing.*warning C4101"
   
   # Make
-  ".*warning: jobserver unavailable.*"
+  "warning: jobserver unavailable"
   
   # Suppressing warnings about duplicate libraries in Darwin
   # At some point this may be addressed by CMake feature request: 
   # http://public.kitware.com/Bug/view.php?id=10179
-  "ld: warning: duplicate dylib.*"
+  "ld: warning: duplicate dylib"
   
   # Suppressing warnings about GL_GLEXT_LEGACY, the link reported below 
   # report a similar problem with GL_GLEXT_PROTOTYPE.
@@ -87,23 +87,23 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.*Infovis.*cxx"
   
   # Libs/OpenIGTLink
-  "(OpenIGTLink|openigtlink).[Ss]ource.igtl*"
+  "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
   
   #Batchmake 
-  "BatchMake.Utilities.Zip.(unzipcmd|zipcmd).*warning C4996.*"
+  "BatchMake.Utilities.Zip.(unzipcmd|zipcmd).*warning C4996"
   
   # Libs/tclap
-  "tclap.include.tclap.*Arg.h.*warning C4512.*"
+  "tclap.include.tclap.*Arg.h.*warning C4512"
   
   # Python suppressions
   # About redefinition of symbols
-  ".*pyconfig.h.*warning:.*redefined.*"
+  "pyconfig.h.*warning:.*redefined"
   "features.h.*"
 
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
   "cmcurl.*warning.*conversion from.*possible loss of data"
-  "cmcurl.(transfer|ftp|file|cookie).c.*warning C4244.*"
+  "cmcurl.(transfer|ftp|file|cookie).c.*warning C4244"
   
   # Visual studio spurious warnings...
   "The following environment variables were not found"
@@ -115,7 +115,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
 SET(CTEST_CUSTOM_ERROR_EXCEPTION
   ${CTEST_CUSTOM_ERROR_EXCEPTION}
   # Numpy errors
-  "NUMPY.*Warning.*"
-  "_configtest.*"
+  "NUMPY.*Warning"
+  "_configtest.*error"
   "collect2: ld returned 1 exit status"
   )

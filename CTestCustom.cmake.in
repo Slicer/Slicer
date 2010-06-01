@@ -71,15 +71,15 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Qq]t.*h.*warning.*(copy constructor|assignment operator) could not be generated"
 
   # Suppress warning caused when QT 'foreach' loops are combined
-  ".*warning: declaration of '_container_' shadows a previous local"
+  "warning: declaration of '_container_' shadows a previous local"
 
   # Libs/tclap
-  "tclap.include.tclap.*Arg.h.*warning C4512.*"
+  "tclap.include.tclap.*Arg.h.*warning C4512"
   
 
   # Python suppressions
   # About redefinition of symbols
-  ".*pyconfig.h.*warning:.*redefined.*"
+  "pyconfig.h.*warning:.*redefined"
   "features.h.*"
 
   # curl suppressions
@@ -89,10 +89,10 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # Suppressing warnings about duplicate libraries in Darwin
   # At some point this may be addressed by CMake feature request: 
   # http://public.kitware.com/Bug/view.php?id=10179
-  "ld: warning: duplicate dylib.*"
+  "ld: warning: duplicate dylib"
 
   # Libs/OpenIGTLink
-  "(OpenIGTLink|openigtlink).[Ss]ource.igtl*"
+  "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
   
   # Visual studio spurious warnings...
   "The following environment variables were not found"
