@@ -179,14 +179,14 @@ add_test(ValidateDiffeomorphicTest4_nii ${BRAINS_Demon_Warp_TESTS}
 ### Need to add more test to get better code coverage of this test suite.  Need to make sure that all the command line options are tested.
 add_test(ValidateOrientedImagesTest5_nii ${BRAINS_Demon_Warp_TESTS}
  --compare
-    ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    ${BRAINSDemonWarp_BINARY_DIR}/orientedImagesDemons_test.nii.gz
+    ${BRAINSCommonLib_DATA_DIRS}/ValidateOrientedImagesTest5.nii.gz
+    ${BRAINSDemonWarp_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
     --compareNumberOfPixelsTolerance 49800
     --compareIntensityTolerance 25
     BRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/orientedImagesDemons_test.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
     --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField_orientedImage.nii.gz
     --inputPixelType uchar
     --smoothDeformationFieldSigma 1.5
@@ -403,14 +403,14 @@ add_test(ValidateVectorDiffeomorphicTest6_nii ${VBRAINS_Demon_Warp_TESTS}
 
 add_test(ValidateVectorOrientedImagesTest6_nii ${VBRAINS_Demon_Warp_TESTS}
  --compare
-    ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    ${BRAINSDemonWarp_BINARY_DIR}/orientedVectorImagesDemons_test.nii.gz
+    ${BRAINSCommonLib_DATA_DIRS}/ValidateVectorOrientedImagesTest6.nii.gz
+    ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
     --compareNumberOfPixelsTolerance 50000
     --compareIntensityTolerance 25
     VBRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/orientedVectorImagesDemons_test.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
     --inputPixelType uchar
     --smoothDeformationFieldSigma 1.5
     --outputDebug
@@ -421,14 +421,14 @@ add_test(ValidateVectorOrientedImagesTest6_nii ${VBRAINS_Demon_Warp_TESTS}
 
 add_test(ValidateVectorOrientedImagesTest7_nii ${VBRAINS_Demon_Warp_TESTS}
  --compare
-    ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    ${BRAINSDemonWarp_BINARY_DIR}/orientedVectorImagesDemons1_test.nii.gz
+    ${BRAINSCommonLib_DATA_DIRS}/ValidateVectorOrientedImagesTest7.nii.gz
+    ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
     --compareNumberOfPixelsTolerance 51000
     --compareIntensityTolerance 25
     VBRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/orientedVectorImagesDemons1_test.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
     --inputPixelType uchar
     --smoothDeformationFieldSigma 1.5
     --outputDebug
@@ -495,14 +495,14 @@ add_test(ValidateDiffeomorphicWithMask_Test_nii ${BRAINS_Demon_Warp_TESTS}
 #Test for initial Transform
 add_test(ValidateInitialTransform_Test_nii ${BRAINS_Demon_Warp_TESTS}
   --compare
-    ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.result.nii.gz
-    ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithTransform_test.nii.gz
+    ${BRAINSCommonLib_DATA_DIRS}/ValidateInitialTransform_Test.nii.gz
+    ${BRAINSDemonWarp_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
     --compareNumberOfPixelsTolerance 20
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.rescale.rigid.nii.gz
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
-    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithTransform_test.nii.gz
+    --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
     --outputPixelType short
     --outputDebug
     --initializeWithTransform ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat
