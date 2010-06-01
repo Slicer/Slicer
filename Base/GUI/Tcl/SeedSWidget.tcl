@@ -323,6 +323,16 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
     $this pick
   }
 
+  # if in place mode, set the pick state to outside
+  set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
+  if { $interactionNode != "" } {
+      set mode [$interactionNode GetCurrentInteractionMode]
+      set modeString [$interactionNode GetInteractionModeAsString $mode]
+      if { $modeString == "Place" } {
+          set _pickState "outside"
+      }
+  }
+
   switch $_pickState {
     "outside" {
       # when mouse isn't over us, we don't do anything
@@ -338,7 +348,6 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
         "LeftButtonPressEvent" {
             # only respond to seed picks if visible
             if { $visibility } {
-                set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
                 if { $interactionNode != "" } {
                     set mode [$interactionNode GetCurrentInteractionMode]
                     set modeString [$interactionNode GetInteractionModeAsString $mode]
@@ -379,7 +388,6 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
           SeedSWidget::SetAllTextVisibility 1
             eval $movedCommand
             
-            set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
             # Reset interaction mode to default viewtransform
             # mode if user has not selected a persistent pick or place.
             # This implementation of mouse modes turns on
