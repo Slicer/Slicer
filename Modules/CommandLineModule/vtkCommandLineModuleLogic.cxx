@@ -474,6 +474,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     {
     vtkSlicerApplication::GetInstance()->InformationMessage( "Found CommandLine Module, target is ");
     vtkSlicerApplication::GetInstance()->InformationMessage(  node0->GetModuleDescription().GetTarget().c_str());
+    vtkSlicerApplication::GetInstance()->InformationMessage( "\n");
     commandType = CommandLineModule;
     if ( entryPoint != NULL )
       {
@@ -482,7 +483,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     }
   else if ( node0->GetModuleDescription().GetType() == "SharedObjectModule" )
     {
-    vtkSlicerApplication::GetInstance()->InformationMessage( "Found SharedObject Module" );
+    vtkSlicerApplication::GetInstance()->InformationMessage( "Found SharedObject Module\n" );
 
     commandType = SharedObjectModule;
     if ( entryPoint == NULL )
@@ -492,7 +493,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     }
   else if ( node0->GetModuleDescription().GetType() == "PythonModule" )
     {
-    vtkSlicerApplication::GetInstance()->InformationMessage( "Found Python Module" );
+    vtkSlicerApplication::GetInstance()->InformationMessage( "Found Python Module\n" );
     commandType = PythonModule;
     }
   vtkSlicerApplication::GetInstance()->InformationMessage( node0->GetModuleDescription().GetType().c_str() );
@@ -1678,7 +1679,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   else if ( commandType == PythonModule )
     {
     // For the moment, ignore the output and just run the module
-    vtkSlicerApplication::GetInstance()->InformationMessage( "Preparing to execute Python Module" );
+    vtkSlicerApplication::GetInstance()->InformationMessage( "Preparing to execute Python Module\n" );
 
     // Now, call Python properly.  For the moment, make a big string...
     // ...later we'll want to do this through the Python API
