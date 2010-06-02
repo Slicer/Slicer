@@ -19,6 +19,7 @@ PURPOSE.  See the above copyright notices for more information.
 #define __itkGridForwardWarpImageFilterNew_h
 
 #include "itkImageToImageFilter.h"
+#include "itkFixedArray.h"
 
 namespace itk
 {
@@ -103,10 +104,18 @@ public:
   /** Get the foreground value */
   itkGetConstMacro( ForegroundValue, PixelType );
 
-  /** Set the foreground value */
-  itkSetMacro( GridPixelSpacing , typename OutputImageType::SizeType );
+  /** Set the spacing for the grids value, a spacing of 0 indicates that
+   * displacements in that direction should be set to zero (thus keeping the lines
+   * in plane).  Negative grid spacings indicate that grid lines in that direction should
+   * not be rendered, but that in the multi-dimensional framework, the absolute value of
+   * that spacing should be used when deterimining which lines to render.
+   * For example, if you want only Z-dir warped lines in a 2D X-dir view, then
+   * set grid spacing to 0,-8,8.
+   */
+  typedef FixedArray<int, ImageDimension> GridSpacingType;
+  itkSetMacro( GridPixelSpacing , GridSpacingType);
   /** Get the foreground value */
-  itkGetConstMacro( GridPixelSpacing, typename OutputImageType::SizeType );
+  itkGetConstMacro( GridPixelSpacing, GridSpacingType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
@@ -131,9 +140,9 @@ private:
   GridForwardWarpImageFilterNew(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  PixelType                  m_BackgroundValue;
-  PixelType                  m_ForegroundValue;
-  typename OutputImageType::SizeType  m_GridPixelSpacing;
+  PixelType       m_BackgroundValue;
+  PixelType       m_ForegroundValue;
+  GridSpacingType m_GridPixelSpacing;
   };
 
 } // end namespace itk

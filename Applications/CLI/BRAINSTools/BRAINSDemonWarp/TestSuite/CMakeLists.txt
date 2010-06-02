@@ -98,7 +98,7 @@ add_test(ValidateDiffeomorphicTest2_nii ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons2.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons2_test.nii.gz
-    --compareNumberOfPixelsTolerance 200
+    --compareNumberOfPixelsTolerance 300
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
@@ -269,7 +269,7 @@ add_test(ValidateVectorDiffeomorphicTest2_nii ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons2.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons2_test.nii.gz
-    --compareNumberOfPixelsTolerance 200
+    --compareNumberOfPixelsTolerance 300
     --compareIntensityTolerance 10
     VBRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
@@ -519,7 +519,7 @@ add_test(ValidateLogDemons_Test_nii ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/logDemons.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/logDemons_test.nii.gz
-    --compareNumberOfPixelsTolerance 0
+    --compareNumberOfPixelsTolerance 500
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
@@ -541,7 +541,7 @@ add_test(ValidateSymmetricLogDemons_Test1_nii ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/symmetricLogDemons1.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
-    --compareNumberOfPixelsTolerance 0
+    --compareNumberOfPixelsTolerance 1300
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
@@ -563,7 +563,7 @@ add_test(ValidateSymmetricLogDemons_Test2_nii ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/symmetricLogDemons2.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test2.nii.gz
-    --compareNumberOfPixelsTolerance 0
+    --compareNumberOfPixelsTolerance 1300
     --compareIntensityTolerance 10
     BRAINSDemonWarpTest
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz

@@ -372,7 +372,7 @@ endif()
     --numberOfHistogramBins 200
     --numberOfSamples 144000
     --translationScale 500
-    --minimumStepSize 0.05,0.0003
+    --minimumStepSize 0.05,0.0050
     --outputVolumePixelType short
     --transformType Rigid,Rigid
     --initializeTransformMode GeometryOn
@@ -395,7 +395,7 @@ endif()
     --numberOfHistogramBins 200
     --numberOfSamples 72000
     --translationScale 250
-    --minimumStepSize 0.05,0.001,0.0000316
+    --minimumStepSize 0.05,0.001,0.00075
     --outputVolumePixelType uchar
     --transformType Rigid,Rigid,Rigid
     --initializeTransformMode CenterOfHead
@@ -639,7 +639,7 @@ endif()
     --numberOfHistogramBins 200
     --numberOfSamples 72000
     --translationScale 250
-    --minimumStepSize 0.0001
+    --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --maskProcessingMode ROIAUTO
     --initialTransform ${BRAINSCommonLib_DATA_DIRS}/Initializer_BRAINSFitTest_TranslationRescaleHeadMasks.mat

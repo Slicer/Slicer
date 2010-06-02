@@ -49,7 +49,6 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
 {
   PARSE_ARGS;
 
-
   const bool         debug = true;
   const bool useTransform = (warpTransform.size() > 0);
     {
@@ -154,14 +153,11 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
       defaultValue,
       interpolationMode,
       pixelType == "binary");
-  if(addGrids)
+  if(gridSpacing.size() == ImageType::ImageDimension )
     {
     // find min/max pixels for image
     //
     typedef itk::StatisticsImageFilter<ImageType> StatisticsFilterType;
-    typedef itk::MaximumImageFilter<ImageType> MaxFilterType;
-    typedef itk::GridForwardWarpImageFilterNew
-      <DeformationFieldType,ImageType> GFType;
 
     StatisticsFilterType::Pointer statsFilter =
       StatisticsFilterType::New();
@@ -170,54 +166,35 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     ImageType::PixelType minPixel(statsFilter->GetMinimum());
     ImageType::PixelType maxPixel(statsFilter->GetMaximum());
 
-    itk::GridImageSource<ImageType>::Pointer myGrid=itk::GridImageSource<ImageType>::New();
-    myGrid->SetSize(PrincipalOperandImage->GetLargestPossibleRegion().GetSize() );
-    myGrid->SetSpacing(PrincipalOperandImage->GetSpacing() );
-    myGrid->SetDirection(PrincipalOperandImage->GetDirection() );
-    myGrid->SetOrigin(PrincipalOperandImage->GetOrigin() );
-    itk::GridImageSource<ImageType>::BoolArrayType WhichDirections;
-    WhichDirections[0]=true;
-    WhichDirections[1]=true;
-    WhichDirections[2]=false;
-    myGrid->SetWhichDimensions(WhichDirections);
-    itk::GridImageSource<ImageType>::ArrayType GridArray;
-    GridArray[0]=15;
-    GridArray[1]=15;
-    GridArray[2]=0;
-    myGrid->SetGridSpacing(GridArray);
-      {
-      // Specify 0th order B-spline function (Box function)
-      typedef itk::BSplineKernelFunction <0> KernelType;
-      KernelType::Pointer kernel = KernelType :: New ();
-      myGrid->SetKernelFunction(kernel);
+    //
+    // create the grid
+    if ( useTransform )
+      { //HACK:  Need to make handeling of transforms more elegant as is done in BRAINSFitHelper.
+      typedef itk::TransformToDeformationFieldSource<DeformationFieldType,double> ConverterType;
+      ConverterType::Pointer myConverter=ConverterType::New();
+      myConverter->SetTransform(genericTransform);
+      myConverter->SetOutputParametersFromImage(TransformedImage);
+      myConverter->Update();
+      DeformationField=myConverter->GetOutput();
       }
-    myGrid->SetScale(maxPixel);
-    myGrid->Update();
-
-    itk::BinaryThresholdImageFilter<ImageType,ImageType>::Pointer myThresholder=itk::BinaryThresholdImageFilter<ImageType,ImageType>::New();
-    myThresholder->SetInput(myGrid->GetOutput());
-    myThresholder->SetInsideValue(maxPixel);
-    myThresholder->SetOutsideValue(minPixel);
-    myThresholder->SetLowerThreshold(0.0);
-    myThresholder->SetUpperThreshold(maxPixel-1);
-    myThresholder->Update();
-
+    typedef itk::MaximumImageFilter<ImageType> MaxFilterType;
+    typedef itk::GridForwardWarpImageFilterNew
+      <DeformationFieldType,ImageType> GFType;
+    GFType::Pointer GFFilter = GFType::New();
+    GFFilter->SetInput(DeformationField);
+    GFType::GridSpacingType  GridOffsets;
+    GridOffsets[0]=gridSpacing[0];
+    GridOffsets[1]=gridSpacing[1];
+    GridOffsets[2]=gridSpacing[2];
+    GFFilter->SetGridPixelSpacing(GridOffsets);
+    GFFilter->SetBackgroundValue(minPixel);
+    GFFilter->SetForegroundValue(maxPixel);
     // merge grid with warped image
     MaxFilterType::Pointer MFilter = MaxFilterType::New();
-    MFilter->SetInput1(myThresholder->GetOutput() );
-    MFilter->SetInput2(PrincipalOperandImage);
+    MFilter->SetInput1(GFFilter->GetOutput());
+    MFilter->SetInput2(TransformedImage);
     MFilter->Update();
-    PrincipalOperandImage = MFilter->GetOutput();
-
-    TransformedImage= GenericTransformImage<ImageType, ImageType,
-      DeformationFieldType>(
-        PrincipalOperandImage,
-        ReferenceImage,
-        DeformationField,
-        genericTransform,
-        defaultValue,
-        "Linear",
-        pixelType == "binary");
+    TransformedImage = MFilter->GetOutput();
     }
 
   // Write out the output image;  threshold it if necessary.

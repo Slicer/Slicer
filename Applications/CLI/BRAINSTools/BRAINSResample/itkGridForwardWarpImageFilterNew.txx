@@ -43,7 +43,6 @@ GridForwardWarpImageFilterNew<TDeformationField,TOutputImage>
     {
     m_GridPixelSpacing[q]=10;//Old default was 5
     }
-    m_GridPixelSpacing[ImageDimension-1]=1;//Old default was 5
 }
 
 /**
@@ -84,8 +83,8 @@ GridForwardWarpImageFilterNew<TDeformationField,TOutputImage>
   outputPtr->FillBuffer(m_BackgroundValue);
 
   IndexType FirstIndex = fieldPtr->GetRequestedRegion().GetIndex();
-  IndexType LastIndex = fieldPtr->GetRequestedRegion().GetIndex() +
-     fieldPtr->GetRequestedRegion().GetSize();
+  IndexType OnePastValidIndex = fieldPtr->GetRequestedRegion().GetIndex() +
+    fieldPtr->GetRequestedRegion().GetSize();
 
   // iterator for the output image
   typedef ImageRegionIteratorWithIndex<OutputImageType> OutputImageIteratorWithIndex;
@@ -100,8 +99,18 @@ GridForwardWarpImageFilterNew<TDeformationField,TOutputImage>
 
   typedef typename IndexType::IndexValueType IndexValueType;
 
-  IndexType index, refIndex, targetIndex;
-  ContinuousIndex<float, ImageDimension> contindex;
+  IndexType index;
+  IndexType refIndex;
+  IndexType targetIndex;
+  //ContinuousIndex<float, ImageDimension> contindex;
+  unsigned int nonZeroGridDirections=0;
+  for(int q=0; q< ImageDimension ; q++)
+    {
+    if(m_GridPixelSpacing[q] != 0 )
+      {
+      nonZeroGridDirections++;
+      }
+    }
 
   for (iter.GoToBegin(), fieldIt.GoToBegin(); !iter.IsAtEnd(); ++iter, ++fieldIt)
     {
@@ -110,67 +119,81 @@ GridForwardWarpImageFilterNew<TDeformationField,TOutputImage>
     unsigned int numGridIntersect = 0;
     for( unsigned int dim = 0; dim < ImageDimension; dim++ )
       {
-      numGridIntersect += ( ( index[dim] % m_GridPixelSpacing[dim] ) == 0 );
+      numGridIntersect += ( ( m_GridPixelSpacing[dim] != 0 ) && ( ( index[dim] % vcl_abs(m_GridPixelSpacing[dim]) ) == 0 ) );
       }
-
-    if (numGridIntersect == ImageDimension) //else do nothing!
+    if (numGridIntersect == nonZeroGridDirections) //else do nothing!
       {
-      // we are on a grid point => transform it
-
-      // get the required displacement
-      DisplacementType displacement = fieldIt.Get();
-      // compute the mapped point
-      bool inside = true;
-      for(unsigned int j = 0; j < ImageDimension; j++ )
+      // we are on a grid refPoint => transform it
+      typename TOutputImage::PointType refPoint;
+      outputPtr->TransformIndexToPhysicalPoint( index, refPoint );
+      // compute the mapped refPoint
         {
-        //HACK:  This computation is wrong!  Need to go through the physical space translations
-        //to get the image origin taken into account!
-        contindex[j] = index[j] + displacement[j]/spacing[j];
-        if (contindex[j]<FirstIndex[j] || contindex[j]>(LastIndex[j]-1))
+        // get the required displacement
+        DisplacementType displacement = fieldIt.Get();
+        for(unsigned int j = 0; j < ImageDimension; j++ )
           {
-          inside = false;
-          break;
+          if(m_GridPixelSpacing[j] != 0) //Do not compute offsets for collapsed dimensions
+            {
+            refPoint[j] += displacement[j];
+            }
+          //else refPoint[j]=refPoint[j];
           }
-        refIndex[j] = Math::Round<IndexValueType>(contindex[j]);
         }
-
+      const bool inside=outputPtr->TransformPhysicalPointToIndex( refPoint, refIndex );
       if( inside )
         {
-        // We know the current grid point is inside
+        // We know the current grid refPoint is inside
         // we will check if the grid points that are above are also inside
         // In such a case we draw a Bresenham line
         for( unsigned int dim = 0; dim < ImageDimension; dim++ )
           {
-          targetIndex = index;
-          targetIndex[dim] += m_GridPixelSpacing[dim];
-          if ( targetIndex[dim]<LastIndex[dim] )
+          if( m_GridPixelSpacing[dim] <= 0 )//Don't do invisible direction
             {
-            // get the required displacement
-            displacement = fieldPtr->GetPixel( targetIndex );
-
-            // compute the mapped point
-            bool targetIn = true;
-            for( unsigned int j = 0; j < ImageDimension; j++ )
+            //targetIndex[dim]=targetIndex[dim];//Leave as same value
+            continue;
+            }
+          targetIndex = index;
+          targetIndex[dim] += m_GridPixelSpacing[dim];//For non-collapsed dimension.
+          // compute the mapped targetPoint
+          typename TOutputImage::PointType targetPoint;
+          outputPtr->TransformIndexToPhysicalPoint( targetIndex, targetPoint );
+            {
+            // get the required targetDisplacement
+            DisplacementType targetDisplacement = fieldPtr->GetPixel( targetIndex );
+            for(unsigned int j = 0; j < ImageDimension; j++ )
               {
-              contindex[j] = targetIndex[j] + displacement[j]/spacing[j];
-              if( contindex[j]<FirstIndex[j] || contindex[j]>(LastIndex[j]-1) )
+              if(m_GridPixelSpacing[j] != 0) //Do not compute offsets for collapsed dimensions
                 {
-                targetIn = false;
-                break;
+                targetPoint[j] += targetDisplacement[j];
                 }
-              targetIndex[j] = Math::Round<IndexValueType>(contindex[j]);
+              //else targetPoint[j]=targetPoint[j];
               }
-
-            if( targetIn )
+            }
+          const bool targetIn=outputPtr->TransformPhysicalPointToIndex( targetPoint, targetIndex );
+          if( targetIn )
+            {
+            for ( LineIteratorType lineIter(outputPtr, refIndex, targetIndex);
+              !lineIter.IsAtEnd(); ++lineIter )
               {
-              for ( LineIteratorType lineIter(outputPtr, refIndex, targetIndex);
-                    !lineIter.IsAtEnd(); ++lineIter )
+#if 0
+              typename TOutputImage::IndexType testIndex=lineIter.GetIndex();
+              bool lineIsInside=true;
+              for(unsigned int j = 0; j < ImageDimension; j++ )
+                {
+                if( ( testIndex[j] < FirstIndex[j] ) || ( testIndex[j] >= OnePastValidIndex[j] ))
+                  {
+                  lineIsInside=false;
+                  break;
+                  }
+                }
+              if(lineIsInside)
+#endif
                 {
                 lineIter.Set(m_ForegroundValue);
                 }
               }
             }
-          }
+          } //end for loop for radiating lines in each direction
         }
       }
     }
