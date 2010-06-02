@@ -21,7 +21,14 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # Numpy warnings
   "_configtest.*warning"
-  "numpy.(core|numarray|linalg|random).*warning (C4244|C4028|C4996)"
+  # C4244: 'conversion' conversion from 'type1' to 'type2', possible loss of data
+  # C4028: formal parameter 'number' different from declaration
+  # C4996: 'function': was declared deprecated
+  # C4133: '=' : incompatible types - from 'PyArray_Descr *' to 'PyObject *'
+  # C4146: unary minus operator applied to unsigned type, result still unsigned
+  # C4716: function '...' : must return a value
+  # C4723: Potential divide by zero
+  "numpy.(core|numarray|linalg|random).*warning (C4244|C4028|C4996|C4133|C4146|C4716|C4723)"
   "NUMPY.*Warning"
   
   # CLAPACK
@@ -30,8 +37,18 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # Tcl
   "tcl.tcl.unix.*warning: cast"
   
-  # Itcl
+  # Tk
+  "tcl.tk.unix.*warning: cast"
+  
+  # incrTcl
+  "generic.itk_(options|archetype).*warning"
   "generic.itcl_.*warning"
+  
+  # Blt
+  "blt(Bgexec|Tree|TreeCmd|UnixPipe|Util|GrAxis|GrBar|GrMisc|Color|Config|Container|Hierbox|UnixImage|Table|TreeView|TreeViewCmd|TreeViewStyle|ObjConfig|Ted).c.*warning: cast"
+  "blt(List|NsUtil|Bind).c.*warning: overflow"
+  "bltCanvEps.*warning: initialization from incompatible pointer type"
+  "bltColor.c.*warning:.*defined but not used
   
   # qt suppressions from vtk...
   # Some Slicer dashboards include building bits of Qt which produce lots of
