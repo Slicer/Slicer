@@ -93,7 +93,7 @@ endif()
 
 if(CMAKE_COMPILER_2005)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
-endif(CMAKE_COMPILER_2005)
+endif()
 
 #-----------------------------------------------------------------------------
 # Always build Shared library
@@ -176,7 +176,11 @@ option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" ON)
 option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
 
 if(Slicer3_USE_QT)
-  SET(minimum_required_qt_version "4.6.2")
+  set(minimum_required_qt_version "4.6.2")
+  # If leopard or snowleopard - see CMake/Modules/Platform/Darwin.cmake
+  if(DARWIN_MAJOR_VERSION GREATER "9")
+    set(minimum_required_qt_version "4.7.0")
+  endif()
   
   find_package(Qt4)
   
