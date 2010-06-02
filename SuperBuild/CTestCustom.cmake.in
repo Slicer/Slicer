@@ -21,7 +21,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # Numpy warnings
   "_configtest.*warning"
-  "NUMPY._configtest.*undefined reference"
   # C4244: 'conversion' conversion from 'type1' to 'type2', possible loss of data
   # C4028: formal parameter 'number' different from declaration
   # C4996: 'function': was declared deprecated
@@ -137,6 +136,7 @@ SET(CTEST_CUSTOM_ERROR_EXCEPTION
   ${CTEST_CUSTOM_ERROR_EXCEPTION}
   # Numpy errors
   "NUMPY.*Warning"
+  "NUMPY._configtest.*undefined reference"
   "_configtest.*error"
   "collect2: ld returned 1 exit status"
   )
