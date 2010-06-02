@@ -76,7 +76,7 @@ vtkBrainlabModuleConnectionStep::vtkBrainlabModuleConnectionStep()
 
   this->IGTLConnector = NULL;
   this->ConnectionStatus = NULL;
-
+  this->Option = -1;
 }
 
 //----------------------------------------------------------------------------
@@ -497,8 +497,6 @@ void vtkBrainlabModuleConnectionStep::ConnectButtonCallback()
       this->GetGUI()->GetMRMLManager()->GetMRMLScene()->Modified();
 
       vtkSlicerApplication::GetInstance( )->GetModuleGUIByName("OpenIGTLink IF")->Enter();
- 
-      
       }
 
     if (this->SimulatorButton->GetSelectedState())
@@ -518,6 +516,7 @@ void vtkBrainlabModuleConnectionStep::ConnectButtonCallback()
 void vtkBrainlabModuleConnectionStep::DisconnectButtonCallback()
 {
   // DisconnectButton Pressed
+
 
   if (this->DisconnectButton)
     {
@@ -594,12 +593,35 @@ int vtkBrainlabModuleConnectionStep::Start()
     return 0;
     }
 
+  // Establish Connection
+  int r = this->Socket->ConnectToServer(this->ServerHostname.c_str(), this->ServerPort);
+  if (r != 0)
+    {
+    std::string msg = "Cannot connect to the server."; 
+    vtkSlicerApplication::GetInstance()->RequestDisplayMessage ("Error", msg.c_str());
+    this->ConnectionStatus->SetText("Disconnected.");
+    }
+  else
+    {
+    this->ConnectionStatus->SetText("Connected.");
+    if (this->SimulatorButton->GetSelectedState())
+      {
+      if (this->RandomDataButton->GetSelectedState())
+        {
+        this->Option = 0; 
+        }
+      else
+        {
+        this->Option = 1; 
+        }
+      }
 
   this->StreamingOn = true;
   this->ServerStopFlag = false;
   this->Thread = vtkMultiThreader::New();
   this->ThreadID = this->Thread->SpawnThread((vtkThreadFunctionType) &vtkBrainlabModuleConnectionStep::ThreadFunction, this);
 
+    }
   // Following line is necessary in some Linux environment,
   // since it takes for a while for the thread to update
   // this->State to non STATE_OFF value. This causes error
@@ -618,24 +640,26 @@ int vtkBrainlabModuleConnectionStep::Stop()
 {
   if (this->ConnectionStatus) this->ConnectionStatus->SetText("Disconnected.");
 //  this->ConnectionStatus->SetForegroundColor(255, 99, 71);
- 
+
   // Check if thread exists
   if (this->ThreadID >= 0)
     {
     // NOTE: Thread should be killed by activating ServerStopFlag.
     this->ServerStopFlag = true;
     this->StreamingOn = false;
-
     this->Thread->TerminateThread(this->ThreadID);
     this->Thread->Delete();
     this->Thread = NULL;
     this->ThreadID = -1;
-    return 1;
     }
-  else
+
+  if (this->Socket.IsNotNull())
     {
-    return 0;
+    this->Socket->CloseSocket();
     }
+
+  return 1;
+
 }
 
 
@@ -646,75 +670,46 @@ void* vtkBrainlabModuleConnectionStep::ThreadFunction(void* ptr)
   vtkMultiThreader::ThreadInfo* vinfo = 
     static_cast<vtkMultiThreader::ThreadInfo*>(ptr);
   vtkBrainlabModuleConnectionStep* conStep = static_cast<vtkBrainlabModuleConnectionStep*>(vinfo->UserData);
-  
+
   if (conStep)
     {
     double fps      = 3; 
     int    interval = (int) (1000.0 / fps);
 
     //------------------------------------------------------------
-    // Establish Connection
-    int r = conStep->Socket->ConnectToServer(conStep->ServerHostname.c_str(), conStep->ServerPort);
-    if (r != 0)
-      {
-      std::string msg = "Cannot connect to the server."; 
-      vtkSlicerApplication::GetInstance()->RequestDisplayMessage ("Error", msg.c_str());
-      if (conStep->ConnectionStatus) conStep->ConnectionStatus->SetText("Disconnected.");
-      //    conStep->ConnectionStatus->SetForegroundColor(255, 99, 71);
-      }
-    else
-      {
-      if (conStep->ConnectionStatus) conStep->ConnectionStatus->SetText("Connected.");
-      //  conStep->ConnectionStatus->SetForegroundColor(0, 255, 0);
-      //  conStep->ConnectionStatus->SetBackgroundColor(0, 255, 0);
- 
-      //------------------------------------------------------------
-      // Allocate Transform Message Class
+    // Allocate Transform Message Class
+    igtl::TransformMessage::Pointer transMsg;
+    transMsg = igtl::TransformMessage::New();
+    transMsg->SetDeviceName("brainlab_tracker");
 
-      igtl::TransformMessage::Pointer transMsg;
-      transMsg = igtl::TransformMessage::New();
-      transMsg->SetDeviceName("brainlab_tracker");
-
-      //------------------------------------------------------------
-      // loop
-      unsigned int index = 0;
-      while (conStep->GetStreamingOn())
+    //------------------------------------------------------------
+    // loop
+    unsigned int index = 0;
+    while (conStep->GetStreamingOn())
+      {
+      // streaming tracking points of simulation
+      igtl::Matrix4x4 matrix;
+      if (conStep->Option == 0)
         {
-        // streaming tracking points of simulation
-        igtl::Matrix4x4 matrix;
-        if (conStep->SimulatorButton->GetSelectedState())
-          {
-          if (conStep->RandomDataButton->GetSelectedState())
-            {
-            conStep->GetRandomTestMatrix(matrix);
-            }
-          else
-            {
-            std::vector<double> *values = conStep->SimulatorTrackingData[index];
-            conStep->GenerateTrackingMatrix(values, matrix);
-            }
-          }
+        conStep->GetRandomTestMatrix(matrix);
+        }
+      else if (conStep->Option == 1)
+        {
+        std::vector<double> *values = conStep->SimulatorTrackingData[index];
+        conStep->GenerateTrackingMatrix(values, matrix);
+        }
 
-        transMsg->SetMatrix(matrix);
-        transMsg->Pack();
-        conStep->Socket->Send(transMsg->GetPackPointer(), transMsg->GetPackSize());
-        igtl::Sleep(interval); // wait
+      transMsg->SetMatrix(matrix);
+      transMsg->Pack();
+      conStep->Socket->Send(transMsg->GetPackPointer(), transMsg->GetPackSize());
+      igtl::Sleep(interval); // wait
 
-        index++;
-        if (index == conStep->SimulatorTrackingData.size()) index = 0;
-        } 
+      index++;
+      if (index == conStep->SimulatorTrackingData.size()) index = 0;
       } 
+    } 
 
-  if (conStep->Socket.IsNotNull())
-    {
-    conStep->Socket->CloseSocket();
-    if (conStep->ConnectionStatus) conStep->ConnectionStatus->SetText("Disconnected.");
-    //    conStep->ConnectionStatus->SetForegroundColor(255, 99, 71);
-    //    conStep->ConnectionStatus->SetBackgroundColor(255, 99, 71);
-    }
   conStep->ThreadID = -1;
-  }
-
   return NULL;
 }
 
