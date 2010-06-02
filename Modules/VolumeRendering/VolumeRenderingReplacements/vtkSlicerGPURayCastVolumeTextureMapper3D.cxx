@@ -1153,7 +1153,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
     "    if ( any(lessThanEqual(eyePos, mmn)) || any(greaterThanEqual(eyePos, mmx)) )       \n"
     "    {                                                                                  \n"
     "      float toEyeDist = length(nextRayOrigin - eyePos);                                \n"
-    "      fading = 1.1 - (toEyeDist - ParaMatrix[2][2])/ParaMatrix[3][2];                  \n"
+    "      fading = 1.0 - (toEyeDist - ParaMatrix[2][2])/ParaMatrix[3][2];                  \n"
     "    }                                                                                  \n"
     "  }                                                                                    \n"
     "                                                                                       \n"
