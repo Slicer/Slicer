@@ -30,6 +30,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkCallbackCommand.h"
 
+#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMultiThreader.h"
@@ -93,6 +94,10 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
 
   vtkGetObjectMacro ( LocatorTransform, vtkTransform );
   vtkGetObjectMacro ( LocatorMatrix,    vtkMatrix4x4 );
+
+  /// The selected transform node is observed for TransformModified events and the transform 
+  /// data is copied to the slice nodes depending on the current mode
+  vtkGetObjectMacro ( LocatorTransformNode,    vtkMRMLTransformNode );
 
   void PrintSelf(ostream&, vtkIndent);
 
@@ -217,6 +222,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFLogic : public vtkSlicerModuleLog
   // What's a difference between LocatorMatrix and Locator Transform???
   vtkMatrix4x4*         LocatorMatrix;
   vtkTransform*         LocatorTransform;
+  vtkMRMLTransformNode* LocatorTransformNode;
 
 };
 
