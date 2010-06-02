@@ -177,8 +177,20 @@ option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
 
 if(Slicer3_USE_QT)
   set(minimum_required_qt_version "4.6.2")
-  # If leopard or snowleopard - see CMake/Modules/Platform/Darwin.cmake
-  if(DARWIN_MAJOR_VERSION GREATER "9")
+  # For Mac OS X 10.6, Apple has started recommending developers to build their applications 64-bit.
+  # The main reason is that there is a small speed increase due to the extra registers on Intel 
+  #CPU's, all their machine offerings have been 64-bit since 2007, and there is a cost for reading 
+  # all the 32-bit libraries into memory if everything else is 64-bit. If you want to follow this
+  # advice, there is only one choice, 64-bit Cocoa.
+  #
+  # See CMake/Modules/Platform/Darwin.cmake)
+  #   6.x == Mac OSX 10.2 (Jaguar)
+  #   7.x == Mac OSX 10.3 (Panther)
+  #   8.x == Mac OSX 10.4 (Tiger)
+  #   9.x == Mac OSX 10.5 (Leopard)
+  #  10.x == Mac OSX 10.6 (Snow Leopard)
+
+  if(DARWIN_MAJOR_VERSION GREATER "10")
     set(minimum_required_qt_version "4.7.0")
   endif()
   
