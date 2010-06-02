@@ -76,6 +76,7 @@ protected:
   // whether we should stream data to OpenIGTLink
   bool                          StreamingOn;
  
+  double                        FramesPerSeconds;
   int                           Option; // 0 = generate tracking data from memory
                                         // 1 = read tracking data from a file
 

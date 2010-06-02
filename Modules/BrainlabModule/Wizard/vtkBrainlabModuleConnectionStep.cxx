@@ -77,6 +77,8 @@ vtkBrainlabModuleConnectionStep::vtkBrainlabModuleConnectionStep()
   this->IGTLConnector = NULL;
   this->ConnectionStatus = NULL;
   this->Option = -1;
+  this->FramesPerSeconds = 0;
+ 
 }
 
 //----------------------------------------------------------------------------
@@ -488,8 +490,18 @@ void vtkBrainlabModuleConnectionStep::ConnectButtonCallback()
       {
       this->IGTLConnector = vtkMRMLIGTLConnectorNode::New();
       this->IGTLConnector->SetRestrictDeviceName(0);
-      this->IGTLConnector->SetServerHostname(this->ServerHostname);
-      this->IGTLConnector->SetServerPort(this->ServerPort);
+
+      if (this->Option == 3)
+        {
+        this->IGTLConnector->SetServerHostname(this->ServerHostname);
+        this->IGTLConnector->SetServerPort(this->ServerPort);
+        }
+      else
+        {
+        this->IGTLConnector->SetServerHostname("localhost");
+        this->IGTLConnector->SetServerPort(18944);
+        }
+
       this->IGTLConnector->SetType(vtkMRMLIGTLConnectorNode::TYPE_SERVER);
       this->IGTLConnector->Modified();
       this->IGTLConnector->Start();
@@ -593,8 +605,42 @@ int vtkBrainlabModuleConnectionStep::Start()
     return 0;
     }
 
+  this->FramesPerSeconds = this->FrequencyEntry->GetWidget()->GetValueAsDouble();
+ 
+  // Options of tracking data source
+  if (this->BrainlabButton->GetSelectedState())
+    {
+    // from a real Brainlab system
+    this->Option = 3;
+    }
+  else
+    {
+    if (this->SimulatorButton->GetSelectedState())
+      {
+      if (this->RandomDataButton->GetSelectedState())
+        {
+        // from random generation in memory
+        this->Option = 0; 
+        }
+      else
+        {
+        // from a file 
+        this->Option = 1; 
+        }
+      }
+    }
+
   // Establish Connection
-  int r = this->Socket->ConnectToServer(this->ServerHostname.c_str(), this->ServerPort);
+  int r;
+  if (this->Option == 3)
+    {
+    r = this->Socket->ConnectToServer(this->ServerHostname.c_str(), this->ServerPort);
+    }
+  else
+    {
+    r = this->Socket->ConnectToServer("localhost", 18944);
+    }
+
   if (r != 0)
     {
     std::string msg = "Cannot connect to the server."; 
@@ -604,23 +650,10 @@ int vtkBrainlabModuleConnectionStep::Start()
   else
     {
     this->ConnectionStatus->SetText("Connected.");
-    if (this->SimulatorButton->GetSelectedState())
-      {
-      if (this->RandomDataButton->GetSelectedState())
-        {
-        this->Option = 0; 
-        }
-      else
-        {
-        this->Option = 1; 
-        }
-      }
-
-  this->StreamingOn = true;
-  this->ServerStopFlag = false;
-  this->Thread = vtkMultiThreader::New();
-  this->ThreadID = this->Thread->SpawnThread((vtkThreadFunctionType) &vtkBrainlabModuleConnectionStep::ThreadFunction, this);
-
+    this->StreamingOn = true;
+    this->ServerStopFlag = false;
+    this->Thread = vtkMultiThreader::New();
+    this->ThreadID = this->Thread->SpawnThread((vtkThreadFunctionType) &vtkBrainlabModuleConnectionStep::ThreadFunction, this);
     }
   // Following line is necessary in some Linux environment,
   // since it takes for a while for the thread to update
@@ -673,7 +706,12 @@ void* vtkBrainlabModuleConnectionStep::ThreadFunction(void* ptr)
 
   if (conStep)
     {
-    double fps      = 3; 
+    double fps      = 10; 
+    if (conStep->Option == 3)
+      {
+      fps = conStep->FramesPerSeconds;
+      }
+
     int    interval = (int) (1000.0 / fps);
 
     //------------------------------------------------------------

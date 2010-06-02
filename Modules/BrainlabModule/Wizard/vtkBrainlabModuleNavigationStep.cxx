@@ -181,7 +181,7 @@ void vtkBrainlabModuleNavigationStep::ShowUserInterface()
     this->AxialCheckButton = vtkKWCheckButton::New();
     this->AxialCheckButton->SetParent(this->ButtonFrame);
     this->AxialCheckButton->Create();
-    this->AxialCheckButton->SelectedStateOff();
+    this->AxialCheckButton->SelectedStateOn();
     this->AxialCheckButton->SetText("Axial");
     }
    if (! this->SagittalCheckButton)
@@ -189,7 +189,7 @@ void vtkBrainlabModuleNavigationStep::ShowUserInterface()
     this->SagittalCheckButton = vtkKWCheckButton::New();
     this->SagittalCheckButton->SetParent(this->ButtonFrame);
     this->SagittalCheckButton->Create();
-    this->SagittalCheckButton->SelectedStateOff();
+    this->SagittalCheckButton->SelectedStateOn();
     this->SagittalCheckButton->SetText("Sagittal");
     }
   if (! this->CoronalCheckButton)
@@ -197,7 +197,7 @@ void vtkBrainlabModuleNavigationStep::ShowUserInterface()
     this->CoronalCheckButton = vtkKWCheckButton::New();
     this->CoronalCheckButton->SetParent(this->ButtonFrame);
     this->CoronalCheckButton->Create();
-    this->CoronalCheckButton->SelectedStateOff();
+    this->CoronalCheckButton->SelectedStateOn();
     this->CoronalCheckButton->SetText("Coronal");
     }
   this->Script("pack %s %s %s -side left -anchor w -padx 2 -pady 2", 
@@ -408,7 +408,7 @@ void vtkBrainlabModuleNavigationStep::UpdateSliceNode(int sliceNodeNumber, vtkMa
       }
     else
       {
-      cerr << "axial here: " << px << "  "  << py << "  " << pz << endl;
+      // cerr << "axial here: " << px << "  "  << py << "  " << pz << endl;
       this->SliceNode[sliceNodeNumber]->SetOrientationToAxial();
       this->SliceNode[sliceNodeNumber]->JumpSlice(px, py, pz);
       }
