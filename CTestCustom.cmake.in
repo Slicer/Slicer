@@ -44,6 +44,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # itk suppressions
   "[Uu]tilities.gdcm"
   "[Uu]tilities.vxl"
+  "[Uu]tilities.itktiff"
   "[Ii]nsight.[Cc]ode.[Cc]ommon"
   "[Ii]nsight.[Cc]ode.[Nn]umerics"
   "[Ii]nsight.[Cc]ode.(IO|io)"

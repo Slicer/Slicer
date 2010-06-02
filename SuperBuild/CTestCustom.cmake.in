@@ -48,7 +48,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "blt(Bgexec|Tree|TreeCmd|UnixPipe|Util|GrAxis|GrBar|GrMisc|Color|Config|Container|Hierbox|UnixImage|Table|TreeView|TreeViewCmd|TreeViewStyle|ObjConfig|Ted).c.*warning: cast"
   "blt(List|NsUtil|Bind).c.*warning: overflow"
   "bltCanvEps.*warning: initialization from incompatible pointer type"
-  "bltColor.c.*warning:.*defined but not used
+  "bltColor.c.*warning:.*defined but not used"
   
   # qt suppressions from vtk...
   # Some Slicer dashboards include building bits of Qt which produce lots of
@@ -86,6 +86,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # ITK suppressions
   "[Uu]tilities.gdcm"
   "[Uu]tilities.vxl"
+  "[Uu]tilities.itktiff"
   "[Ii]nsight.[Cc]ode.[Cc]ommon"
   "[Ii]nsight.[Cc]ode.[Nn]umerics"
   "[Ii]nsight.[Cc]ode.(IO|io)"
