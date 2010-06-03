@@ -20,6 +20,7 @@ endif()
 
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://teem.svn.sourceforge.net/svnroot/teem/teem/tags/1.10.0"
+  UPDATE_COMMAND ""
   DEPENDS ${teem_DEPENDENCIES}
   SOURCE_DIR teem
   BINARY_DIR teem-build
