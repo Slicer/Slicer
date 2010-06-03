@@ -2,6 +2,8 @@
 set(proj python)
 set(python_base ${CMAKE_CURRENT_BINARY_DIR}/${proj})
 set(python_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
+set(python_SVN_REPOSITORY "http://svn.python.org/projects/python/branches/release26-maint")
+set(python_SVN_REVISION -r 81659)
 
 if(WIN32)
 
@@ -27,7 +29,8 @@ if(WIN32)
 
   ExternalProject_Add(${proj}
     DEPENDS ${python_DEPENDENCIES}
-    SVN_REPOSITORY "http://svn.python.org/projects/python/branches/release26-maint"
+    SVN_REPOSITORY ${python_SVN_REPOSITORY}
+    SVN_REVISION ${python_SVN_REVISION}
     SOURCE_DIR python-build
     UPDATE_COMMAND ""
     PATCH_COMMAND ${python_PATCH_COMMAND}
@@ -150,52 +153,39 @@ if(WIN32)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_CFG_INTDIR}/python26.dll
     DEPENDEES install
     )
-elseif(APPLE)
-  set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
+    
+elseif(UNIX)
   set(python_BUILD_IN_SOURCE 1)
   
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_configure_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake
     @ONLY)
     
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_make_step_apple.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/python_make_step_apple.cmake
-    @ONLY)
-
-  set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake)
-  set(python_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_make_step_apple.cmake)
-  set(python_INSTALL_COMMAND make install)
-
-  ExternalProject_Add(${proj}
-    DEPENDS ${python_DEPENDENCIES}
-    SVN_REPOSITORY ${python_SVN}
-    SOURCE_DIR python
-    BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
-    CONFIGURE_COMMAND ${python_CONFIGURE_COMMAND}
-    BUILD_COMMAND ${python_BUILD_COMMAND}
-    INSTALL_COMMAND ${python_INSTALL_COMMAND}
-    )
-else()
-  set(python_SVN "http://svn.python.org/projects/python/branches/release26-maint")
-  set(python_BUILD_IN_SOURCE 1)
-  
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_configure_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_make_step.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_make_step.cmake
     @ONLY)
     
-  set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake)
-  set(python_BUILD_COMMAND make)
-  set(python_INSTALL_COMMAND make install)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_install_step.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_install_step.cmake
+    @ONLY)
 
+  set(python_SOURCE_DIR python)
+  set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake)
+  set(python_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_make_step.cmake)
+  set(python_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_install_step.cmake)
+  
   ExternalProject_Add(${proj}
+    SVN_REPOSITORY ${python_SVN_REPOSITORY}
+    SVN_REVISION ${python_SVN_REVISION}
     DEPENDS ${python_DEPENDENCIES}
-    SVN_REPOSITORY ${python_SVN}
-    SOURCE_DIR python
+    SOURCE_DIR ${python_SOURCE_DIR}
     BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
     CONFIGURE_COMMAND ${python_CONFIGURE_COMMAND}
     BUILD_COMMAND ${python_BUILD_COMMAND}
+    UPDATE_COMMAND ""
     INSTALL_COMMAND ${python_INSTALL_COMMAND}
     )
+
 endif()
 
 #-----------------------------------------------------------------------------
