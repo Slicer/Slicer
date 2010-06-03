@@ -59,24 +59,16 @@ vtkMRMLDiffusionTensorVolumeNode::vtkMRMLDiffusionTensorVolumeNode()
 
 void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
 {
-  if (!this->GetScene())
-    {
-    vtkWarningMacro("SetAndObserveDisplayNodeID: no scene set, cannot observe a display node");
-    return;
-    }
   if (displayNodeID == NULL)
     {
     vtkDebugMacro("SetAndObserveDisplayNodeID: null display node id");
     return;
     }
-  if (vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetScene()->GetNodeByID(displayNodeID))!=NULL)
+  if (vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetScene()->GetNodeByID(displayNodeID))==NULL)
     {
+    vtkWarningMacro("SetAndObserveDisplayNodeID: The node to display " << displayNodeID << " can not display diffusion tensors");
+    }
     Superclass::SetAndObserveDisplayNodeID(displayNodeID);
-    }
-  else
-    {
-    vtkErrorMacro("SetAndObserveDisplayNodeID: The node to display " << displayNodeID << " can not display diffusion tensors");
-    }
 }
 
 //----------------------------------------------------------------------------
