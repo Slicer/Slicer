@@ -313,6 +313,10 @@ void vtkSlicerROIDisplayWidget::UpdateWidget()
   YRange->SetRange(bounds[1],bounds[4]);
   ZRange->SetRange(bounds[2],bounds[5]);
   
+  this->XRange->SetResolution(this->XResolution);
+  this->YRange->SetResolution(this->YResolution);
+  this->ZRange->SetResolution(this->ZResolution);
+      
   int vis = this->ROINode->GetVisibility();
 
   if (vis > 0)
