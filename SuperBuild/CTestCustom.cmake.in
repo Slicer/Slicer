@@ -13,8 +13,6 @@ SET(CTEST_CUSTOM_WARNING_MATCH
   
 SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
-  #"y.tab.c."
-  #"getdate.y."
   #"vtkparse.tab.c"
   "Microsoft SDKs."
   "VC.include."
@@ -68,7 +66,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
   "Modules._multiprocessing.multiprocessing.*warning C4101"
   # Mac
-  "/usr/bin/ranlib: file: libpython2.6.a(pymath.o) has no symbols"
+  "/usr/bin/ranlib: file:.*libpython2.6.a(pymath.o) has no symbols"
   
   # Make
   "warning: jobserver unavailable"
@@ -92,6 +90,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Ii]nsight.[Cc]ode.[Cc]ommon"
   "[Ii]nsight.[Cc]ode.[Nn]umerics"
   "[Ii]nsight.[Cc]ode.(IO|io)"
+  "[Ii]nsight.[Cc]ode.[Ss]patial[Oo]bject"
+  "[Ii]nsight.[Uu]tilities.[Nn]rrd(IO|io)"
+  "[Ii]nsight.[Uu]tilities.(openjpeg|nifti)"
 
   # VTK suppressions
   "vtkfreetype"
@@ -110,6 +111,10 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # exception specific to Mac/X11
   "VTK.Rendering.vtkOpenGL.*warning: this is the location of the previous definition"
 
+  # KWWidgets
+  "(KWW|kww)idgets.[Uu]tilities.tkdnd"
+  "(KWW|kww)idgets.vtk(KW|kw)"
+  
   
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
@@ -128,7 +133,18 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
   "cmcurl.*warning.*conversion from.*possible loss of data"
-  "cmcurl.(transfer|ftp|file|cookie).c.*warning C4244"
+  # C4701: potentially uninitialized local variable '...' used
+  # C4057: 'function' : '...' differs in indirection to slightly different base types from '...'
+  # C4245: '=' : conversion from '...' to '...', signed/unsigned mismatch
+  # C4706: assignment within conditional expression
+  # C4232: nonstandard extension used : '...' : address of dllimport '...' is not static, identity not guaranteed
+  "cmcurl.(transfer|ftp|file|cookie|url|telnet|multi|hostip4|formdata|easy).c.*warning (C4244|C4701|C4057|C4245|C4706|C4232)"
+  # C4131: uses old-style declarator
+  # C4244: conversion from '...' to '...', possible loss of data
+  # C4127: conditional expression is constant
+  "y.tab.c.*warning (C4131|C4244|C4127|C4701)"
+  # C4100: unreferenced formal parameter
+  "getdate.y.*warning(C4100|C4127|C4244)"
   
   # Visual studio spurious warnings...
   "The following environment variables were not found"
