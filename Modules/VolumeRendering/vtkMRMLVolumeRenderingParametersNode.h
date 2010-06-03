@@ -188,6 +188,9 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkGetMacro(FollowVolumeDisplayNode, int);
   vtkSetMacro(FollowVolumeDisplayNode, int);
 
+  vtkGetMacro(UseSingleVolumeProperty, int);
+  vtkSetMacro(UseSingleVolumeProperty, int);
+  
   vtkSetVector2Macro(WindowLevel, double);
   vtkGetVectorMacro(WindowLevel, double, 2);
 
@@ -315,6 +318,8 @@ protected:
 
   //follow window/level and thresholding setting in volume display node
   int FollowVolumeDisplayNode;
+
+  int UseSingleVolumeProperty;
 
   //bg volume window & level
   double WindowLevel[2];

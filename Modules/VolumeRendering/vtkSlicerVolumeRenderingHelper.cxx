@@ -121,6 +121,8 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->CB_FollowVolumeDisplayNode = NULL;
   this->CB_FollowVolumeDisplayNodeFg = NULL;
 
+  this->CB_UseSingleVolumeProperty = NULL;
+
   //PauseResume
   this->PB_PauseResume = NULL;
   this->VI_PauseResume = NULL;
@@ -795,6 +797,15 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   mainFrame->SetLabelText("Background Volume");
   this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", mainFrame->GetWidgetName() );
 
+  this->CB_UseSingleVolumeProperty = vtkKWCheckButtonWithLabel::New();
+  this->CB_UseSingleVolumeProperty->SetParent(mainFrame->GetFrame());
+  this->CB_UseSingleVolumeProperty->Create();
+  this->CB_UseSingleVolumeProperty->SetLabelText("Apply To Fg Volume");
+  this->CB_UseSingleVolumeProperty->SetBalloonHelpString("When checked, fg volume will use bg volume property. Usefull in pre and post treatment image comparison.");
+  this->CB_UseSingleVolumeProperty->SetLabelWidth(20);
+  this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_UseSingleVolumeProperty->GetWidgetName() );
+  this->CB_UseSingleVolumeProperty->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
+  
   this->CB_FollowVolumeDisplayNode = vtkKWCheckButtonWithLabel::New();
   this->CB_FollowVolumeDisplayNode->SetParent(mainFrame->GetFrame());
   this->CB_FollowVolumeDisplayNode->Create();
@@ -910,6 +921,8 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->SVP_VolumePropertyWidgetFg->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
 
   mainFrameFg->CollapseFrame();
+
+  mainFrameFg->Delete();
   
    // ---
   // LOAD FRAME            
@@ -932,7 +945,7 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
                 this->LoadVolumePropertyButton->GetWidgetName());
   this->LoadVolumePropertyButton->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  mainFrameFg->Delete();
+  
   loadFrame->Delete();
  }
 
@@ -979,6 +992,14 @@ void vtkSlicerVolumeRenderingHelper::DestroyPropertyTab()
     this->CB_UseThreshold = NULL;
   }
 
+  if(this->CB_UseSingleVolumeProperty != NULL)
+  {
+    this->CB_UseSingleVolumeProperty->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->GUICallbackCommand);
+    this->CB_UseSingleVolumeProperty->SetParent(NULL);
+    this->CB_UseSingleVolumeProperty->Delete();
+    this->CB_UseSingleVolumeProperty = NULL;
+  }
+  
   if(this->CB_FollowVolumeDisplayNode != NULL)
   {
     this->CB_FollowVolumeDisplayNode->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->GUICallbackCommand);
@@ -1191,6 +1212,34 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
       vspNode->SetCroppingEnabled(this->CB_CroppingButton->GetWidget()->GetSelectedState());
       this->Gui->GetLogic()->SetROI(vspNode);
       this->Gui->RequestRender();
+      return;
+    }
+    else if (callerObjectCheckButton == this->CB_UseSingleVolumeProperty->GetWidget())
+    {
+      vspNode->SetUseSingleVolumeProperty(this->CB_UseSingleVolumeProperty->GetWidget()->GetSelectedState());
+        
+      if (this->CB_UseSingleVolumeProperty->GetWidget()->GetSelectedState())
+      {
+        if (vspNode->GetUseFgThreshold())
+          this->FrameThresholdingFg->CollapseFrame();
+        else
+          this->SVP_VolumePropertyWidgetFg->GetEditorFrame()->CollapseFrame();
+        
+        this->CB_UseThresholdFg->EnabledOff();
+      }
+      else
+      {
+        if (vspNode->GetUseFgThreshold())
+          this->FrameThresholdingFg->ExpandFrame();
+        else
+          this->SVP_VolumePropertyWidgetFg->GetEditorFrame()->ExpandFrame();
+        
+        this->CB_UseThresholdFg->EnabledOn();
+      }
+
+      this->Gui->GetLogic()->UpdateVolumePropertyGPURaycastII(vspNode);
+      this->Gui->RequestRender();
+      
       return;
     }
     else if (callerObjectCheckButton == this->CB_FollowVolumeDisplayNode->GetWidget())

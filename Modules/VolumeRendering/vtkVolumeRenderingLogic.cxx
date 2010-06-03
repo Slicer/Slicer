@@ -1079,7 +1079,27 @@ void vtkVolumeRenderingLogic::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRend
     this->VolumePropertyGPURaycastII->SetInterpolationType(prop->GetInterpolationType());
   }
 
-  if (vspNode->GetFgVolumePropertyNode())//copy fg property into 2nd component property
+  if (vspNode->GetUseSingleVolumeProperty())
+  {
+    vtkVolumeProperty* propFg = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
+    int colorChannels = propFg->GetColorChannels(0);
+
+    switch(colorChannels)
+    {
+    case 1:
+      this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetGrayTransferFunction(0));
+      break;
+    case 3:
+      this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetRGBTransferFunction(0));
+      break;
+    }
+
+    this->VolumePropertyGPURaycastII->SetScalarOpacity(1, propFg->GetScalarOpacity(0));
+    this->VolumePropertyGPURaycastII->SetGradientOpacity(1, propFg->GetGradientOpacity(0));
+    this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(1, propFg->GetScalarOpacityUnitDistance(0));
+    this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(1, propFg->GetDisableGradientOpacity(0));
+  }
+  else if (vspNode->GetFgVolumePropertyNode())//copy fg property into 2nd component property
   {
     vtkVolumeProperty* propFg = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty();
     int colorChannels = propFg->GetColorChannels(0);

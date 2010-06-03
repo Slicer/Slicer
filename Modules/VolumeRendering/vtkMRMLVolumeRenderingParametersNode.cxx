@@ -106,7 +106,8 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   this->GPURaycastIIFusion = 0;
 
   this->FollowVolumeDisplayNode = 0;// by default do not follow volume display node
-
+  this->UseSingleVolumeProperty = 0;
+  
   this->WindowLevel[0] = 0.0;
   this->WindowLevel[1] = 0.0;
 }
@@ -312,6 +313,12 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->FollowVolumeDisplayNode;
       continue;
     }
+    if (!strcmp(attName, "useSingleVolumeProperty"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->UseSingleVolumeProperty;
+    }
   }
 }
 
@@ -345,6 +352,7 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " useFgThreshold=\"" << this->UseFgThreshold << "\"";
   of << indent << " gpuRaycastIIBgFgRatio=\"" << this->GPURaycastIIBgFgRatio << "\"";
   of << indent << " followVolumeDisplayNode=\"" << this->FollowVolumeDisplayNode << "\"";
+  of << indent << " useSingleVolumeProperty=\"" << this->UseSingleVolumeProperty << "\"";
   of << indent << " windowLevel=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
 }
 
@@ -435,6 +443,7 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetGPURaycastIIFusion(node->GetGPURaycastIIFusion());
   this->SetWindowLevel(node->GetWindowLevel());
   this->SetFollowVolumeDisplayNode(node->GetFollowVolumeDisplayNode());
+  this->SetUseSingleVolumeProperty(node->GetUseSingleVolumeProperty());
   
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
