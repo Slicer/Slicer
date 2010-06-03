@@ -10,6 +10,7 @@ ExternalProject_Add(${proj}
   CVS_REPOSITORY ":pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets"
   CVS_MODULE "KWWidgets"
   CVS_TAG -r ${kwwidgets_tag}
+  UPDATE_COMMAND ""
   SOURCE_DIR KWWidgets
   BINARY_DIR KWWidgets-build
   CMAKE_GENERATOR ${gen}

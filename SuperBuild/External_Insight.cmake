@@ -8,6 +8,7 @@ ExternalProject_Add(${proj}
   CVS_REPOSITORY ":pserver:anonymous:insight@public.kitware.com:/cvsroot/Insight"
   CVS_MODULE "Insight"
   CVS_TAG -r ITK-3-18
+  UPDATE_COMMAND ""
   SOURCE_DIR Insight
   BINARY_DIR Insight-build
   CMAKE_GENERATOR ${gen}
