@@ -42,6 +42,8 @@ if { [itcl::find class EditColor] == "" } {
 
   itcl::class EditColor {
 
+    destructor {}
+
     #TODO collect utilities into parent specific for widgets
     # - for now, use the Box parent
     #inherit SlicerWidget
@@ -50,6 +52,7 @@ if { [itcl::find class EditColor] == "" } {
     public variable selectCommand ""
 
     variable _observedParameterNode ""
+    variable _colorBox ""
 
     # methods
     method create {} {}
@@ -57,14 +60,20 @@ if { [itcl::find class EditColor] == "" } {
     method updateGUI {label} {}
     method updateParameterNode {} {}
     method getColorNode {} {}
+    method showColorBox {} {}
   }
 }
 
 # ------------------------------------------------------------------
 #                        CONSTRUCTOR/DESTRUCTOR
-# - rely on superclass
+# - constructor: rely on superclass
 # ------------------------------------------------------------------
 
+itcl::body EditColor::destructor {} {
+  if { $_colorBox != "" } {
+    itcl::delete object $_colorBox
+  }
+}
 
 # create the edit box
 itcl::body EditColor::create { } {
@@ -94,7 +103,7 @@ itcl::body EditColor::create { } {
   $o(colorPatch) SetBorderWidth 2
   $o(colorPatch) SetReliefToSolid
   # TODO: can't get events from Canvas through kww, need to access tk directly
-  bind [$o(colorPatch) GetWidgetName] <1> "::Box::ShowDialog ColorBox"
+  bind [$o(colorPatch) GetWidgetName] <1> "$this showColorBox"
 
   # TODO: don't pack this until it's integrated better: [$o(colorOption) GetWidgetName]
 
@@ -191,4 +200,20 @@ itcl::body EditColor::getColorNode {} {
     }
   }
   return ""
+}
+
+#
+# show the color box associated with the widget
+#
+itcl::body EditColor::showColorBox {} {
+  set colorNode [$this getColorNode]
+  if { $_colorBox == "" } {
+    set _colorBox [ColorBox #auto]
+    $_colorBox configure -colorNode $colorNode
+    $_colorBox configure -selectCommand "EditorSetPaintLabel %d"
+    $_colorBox create
+  } else {
+    $_colorBox configure -colorNode $colorNode
+    $_colorBox show
+  }
 }

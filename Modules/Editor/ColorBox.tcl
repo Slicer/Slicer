@@ -47,6 +47,7 @@ if { [itcl::find class ColorBox] == "" } {
     method create {} {}
     method update {} {}
     method processEvent {{caller ""} {event ""}} {}
+    method show {} {}
     method getColorNode {} {}
 
   }
@@ -73,9 +74,8 @@ itcl::body ColorBox::create { } {
   $o(toplevel) SetTitle "Color Box"
   $o(toplevel) Create
 
-  # delete this instance when the window is closed
-  wm protocol [$o(toplevel) GetWidgetName] \
-    WM_DELETE_WINDOW "$this hide"
+  # hide this instance when the window is closed or key pressed
+  wm protocol [$o(toplevel) GetWidgetName] WM_DELETE_WINDOW "$this hide"
   bind [$o(toplevel) GetWidgetName] <KeyPress> "$this hide"
 
 
@@ -124,6 +124,8 @@ itcl::body ColorBox::create { } {
       }
     }
 
+    $this configure -selectCommand "EditorSetPaintLabel %d"
+
     set SelectionChangedEvent 10000
     $::slicer3::Broker AddObservation [$o(colors) GetWidget] $SelectionChangedEvent "::Box::ProtectedCallback $this processEvent $o(colors)"
   }
@@ -133,6 +135,15 @@ itcl::body ColorBox::create { } {
   $this setMode $mode
 
   $o(toplevel) Display
+}
+
+itcl::body ColorBox::show {} {
+  set oldSelectCommand [$this cget -selectCommand]
+  $this configure -selectCommand ""
+  set w [$o(colors) GetWidget]
+  $w ClearSelection
+  $this configure -selectCommand $oldSelectCommand
+  chain
 }
 
 #
@@ -155,9 +166,7 @@ itcl::body ColorBox::processEvent { {caller ""} {event ""} } {
     if { $selectCommand != "" } {
       set cmd [format $selectCommand $colorIndex]
       eval $cmd
-    } else {
-      EditorSetPaintLabel $colorIndex
-    }
+    } 
     $this hide
   }
 }

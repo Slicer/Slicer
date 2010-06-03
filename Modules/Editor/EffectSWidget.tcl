@@ -214,7 +214,7 @@ itcl::body EffectSWidget::buildOptions { } {
     $o(scopeOption) SetParent [$this getOptionsFrame]
     $o(scopeOption) Create
     $o(scopeOption) SetLabelText "Scope: "
-    $o(scopeOption) SetBalloonHelpString "Choose the scope for applying this tool."
+    $o(scopeOption) SetBalloonHelpString "Choose the scope for applying this tool.  Scope of 'visible' refers to contents of Red slice by default (or slice clicked in)"
     foreach s $_scopeOptions {
       [$menuButton GetMenu] AddRadioButton $s
     }

@@ -216,13 +216,19 @@ itcl::body HelperBox::mergeVolume {} {
   if { $_master == "" || [info command $_master] == "" } {
     return ""
   }
+
+  # if we already have a merge and the master hasn't changed, use it
   if { $_merge != "" && $_master == $_masterWhenMergeWasSet } {
     if { [$::slicer3::MRMLScene GetNodeByID [$_merge GetID]] != "" } {
       return $_merge
-    } else {
-      set _merge ""
-    }
+    } 
   }
+
+  set _merge ""
+  set _masterWhenMergeWasSemasterWhenMergeWasSet ""
+
+  # otherwise pick the merge based on the master name
+  # - either return the merge volume or empty string
   set masterName [$_master GetName]
   set mergeName $masterName-label
   set _merge [$this getNodeByName $mergeName]
@@ -256,8 +262,8 @@ itcl::body HelperBox::promptStructure {} {
   if { $_colorBox == "" } {
     set _colorBox [ColorBox #auto]
     $_colorBox configure -colorNode $colorNode
-    $_colorBox configure -selectCommand "$this addStructure %d"
     $_colorBox create
+    $_colorBox configure -selectCommand "$this addStructure %d"
   } else {
     $_colorBox configure -colorNode $colorNode
     $_colorBox show
@@ -274,6 +280,8 @@ itcl::body HelperBox::addStructure { {label ""} {options ""} } {
   } 
 
   if { $label == "" } {
+    # if no label given, prompt the user.  The selectCommand of the colorBox will
+    # then re-invoke this method with the label value set and we will continue
     set label [$this promptStructure]
     return
   }
@@ -630,11 +638,13 @@ itcl::body HelperBox::updateStructures {} {
   set vNode [$::slicer3::MRMLScene GetNextNodeByClass "vtkMRMLScalarVolumeNode"]
   while { $vNode != "" } {
     set vName [$vNode GetName]
-    if { [string match "$masterName-*-label" $vName] } {
+    if { [string match "$masterName-*-label" $vName]  ||
+         [string match "$masterName-*-label\[0-9\]*" $vName] } {
       # figure out what name it is
+      # - account for the fact that sometimes a number will be added to the end of the name
       set start [expr 1+[string length $masterName]]
-      set endOff [string length "-label"]
-      set structureName [string range $vName $start end-$endOff]
+      set end [expr [string last "-label" $vName] - 1]
+      set structureName [string range $vName $start $end]
       set structureIndex [$colorNode GetColorIndexByName $structureName]
       set structureColor [lrange [$lut GetTableValue $structureIndex] 0 2]
       
@@ -791,7 +801,7 @@ itcl::body HelperBox::create { } {
   $o(deleteStructuresButton) SetParent $o(allButtonsFrame)
   $o(deleteStructuresButton) Create
   $o(deleteStructuresButton) SetText "Delete Structures"
-  $o(deleteStructuresButton) SetBalloonHelpString "Delete all the structure volumes from the scene"
+  $o(deleteStructuresButton) SetBalloonHelpString "Delete all the structure volumes from the scene.\n\nNote: to delete individual structure volumes, use the Data Module."
   pack [$o(deleteStructuresButton) GetWidgetName] -side left
 
   # merge button
