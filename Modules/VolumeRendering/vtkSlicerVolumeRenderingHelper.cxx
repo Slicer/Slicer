@@ -1353,6 +1353,10 @@ void vtkSlicerVolumeRenderingHelper::SetROIRange(vtkMRMLVolumeRenderingParameter
     this->ROIWidget->SetXRangeExtent(bounds[0], bounds[1]);
     this->ROIWidget->SetYRangeExtent(bounds[2], bounds[3]);
     this->ROIWidget->SetZRangeExtent(bounds[4], bounds[5]);
+
+    this->ROIWidget->SetXResolution((bounds[1] - bounds[0])*0.01);
+    this->ROIWidget->SetYResolution((bounds[3] - bounds[2])*0.01);
+    this->ROIWidget->SetZResolution((bounds[5] - bounds[4])*0.01);
   }
 }
 
