@@ -21,12 +21,14 @@ ExternalProject_Add(NUMPY
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   #URL "http://iweb.dl.sourceforge.net/project/numpy/NumPy/1.4.1/numpy-1.4.1.tar.gz"
   SVN_REPOSITORY http://svn.scipy.org/svn/numpy/trunk
+  SVN_REVISION -r "8454"
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
   CONFIGURE_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_configure_step.cmake
   BUILD_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_make_step.cmake
+  UPDATE_COMMAND ""
   INSTALL_COMMAND ""
   DEPENDS ${numpy_DEPENDENCIES}
   )
