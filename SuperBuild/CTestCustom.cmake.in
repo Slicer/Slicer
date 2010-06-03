@@ -105,6 +105,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.*Infovis.*cxx"
   # exception specific to Mac/Carbon
   "VTK.Rendering.vtkCarbonRenderWindow.*warning.*(NewRgn|DiffRgn|EqualRgn|DisposeRgn).*is deprecated"
+  # exception specific to Mac/X11
+  "VTK.Rendering.vtkOpenGL.*warning: this is the location of the previous definition"
+
   
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
