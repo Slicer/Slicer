@@ -67,6 +67,8 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules.zlib.gzio"
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
   "Modules._multiprocessing.multiprocessing.*warning C4101"
+  # Mac
+  "/usr/bin/ranlib: file: libpython2.6.a(pymath.o) has no symbols"
   
   # Make
   "warning: jobserver unavailable"
