@@ -32,7 +32,7 @@ catch {set script [file normalize $script]}
 set PACKAGE_NAME [file tail [file dirname [file dirname [file normalize [info script ]]]]]
 proc Usage { {msg ""} } {
     global SLICER
-    
+
     set msg "$msg\nusage: getbuildtest \[options\] \[target\]"
     set msg "$msg\n  \[target\] is determined automatically if not specified"
     set msg "$msg\n  \[options\] is one of the following:"
@@ -109,7 +109,7 @@ for {set i 0} {$i < $argc} {incr i} {
       if { $i == $argc } {
                 Usage "Missing installPrefix pathname"
             } else {
-                set ::GETBUILDTEST(installPrefix) [lindex $argv $i ]  
+                set ::GETBUILDTEST(installPrefix) [lindex $argv $i ]
             }
   }
        "--skipupdate" {
@@ -128,7 +128,7 @@ for {set i 0} {$i < $argc} {incr i} {
             if { $i == $argc } {
               Usage "Missing package-name argument"
             } else {
-              set PACKAGE_NAME [lindex $argv $i ]  
+              set PACKAGE_NAME [lindex $argv $i ]
             }
         }
         "--clean" -
@@ -188,13 +188,13 @@ for {set i 0} {$i < $argc} {incr i} {
             }
         }
         "--pack" {
-                set ::GETBUILDTEST(pack) "true"            
+                set ::GETBUILDTEST(pack) "true"
         }
         "--upload" {
             set ::GETBUILDTEST(upload) "true"
             incr i
             if {$i == $argc} {
-                # uses default value                
+                # uses default value
             } else {
                 # peek at the next arg to see if we should use it...
                 set arg [lindex $argv $i]
@@ -303,7 +303,7 @@ proc runcmd {args} {
         gets $fp line
         puts $line
     }
-    set ret [catch "close $fp" res] 
+    set ret [catch "close $fp" res]
     if { $ret } {
         puts stderr $res
         if { $isWindows } {
@@ -311,7 +311,7 @@ proc runcmd {args} {
         } else {
             error $ret
         }
-    } 
+    }
 }
 
 
@@ -328,7 +328,7 @@ switch $tcl_platform(os) {
 # First, set up the directory
 # - determine the location
 # - determine the build
-# 
+#
 
 set ::PACKAGE_HOME [file dirname [file dirname $script]]
 set cwd [pwd]
@@ -385,7 +385,7 @@ set BUILD_PACKAGE(tk) "no"
 set BUILD_PACKAGE(vtk) "yes"
 set BUILD_PACKAGE(itk) "yes"
 set BUILD_PACKAGE(vtkinria3d) "no"
-# 
+#
 # I think the default should be SystemQT, so
 # later on, the Qt stuff in package_variables.tcl will
 # test if Qt is installed and exit with a helpful message
@@ -479,17 +479,17 @@ set BUILD_PACKAGE(itk) "yes"
 set package_found 1
 }
 
-if { ${PACKAGE_NAME} == "iccdefRegistration_New" } {                                           
-set ::PACKAGE_TAG "https://www.psychiatry.uiowa.edu/svn/code/BRAINS/branches/zhao_iccdef"      
-set BUILD_PACKAGE(cmake) "yes" 
+if { ${PACKAGE_NAME} == "iccdefRegistration_New" } {
+set ::PACKAGE_TAG "https://www.psychiatry.uiowa.edu/svn/code/BRAINS/branches/zhao_iccdef"
+set BUILD_PACKAGE(cmake) "yes"
 #set BUILD_PACKAGE(tcl) "yes"
 #set BUILD_PACKAGE(tk) "yes"
 #set BUILD_PACKAGE(vtk) "yes"
-#set BUILD_PACKAGE(kwwidgets) "yes"                                                                
-set BUILD_PACKAGE(fftw) "yes"                                                                  
-set BUILD_PACKAGE(itk) "yes"                                                                   
-set FFTW_CMAKE_FLAGS "-DFFTW_DIR:PATH=$::PACKAGE_BUILD -DFFTW_LIB:PATH=$::PACKAGE_BUILD/lib"   
-set package_found 1                                                                            
+#set BUILD_PACKAGE(kwwidgets) "yes"
+set BUILD_PACKAGE(fftw) "yes"
+set BUILD_PACKAGE(itk) "yes"
+set FFTW_CMAKE_FLAGS "-DFFTW_DIR:PATH=$::PACKAGE_BUILD -DFFTW_LIB:PATH=$::PACKAGE_BUILD/lib"
+set package_found 1
 }
 
 if { ${PACKAGE_NAME} == "SGIProgsNew" } {
@@ -520,7 +520,7 @@ set env(ADD_WRAPITK) $::ADD_WRAPITK
 #######
 #
 # Note: the local vars file, $PACKAGE_HOME/BuildScripts/package_variables.tcl, overrides the default values in this script
-# - use it to set your local environment and then your change won't 
+# - use it to set your local environment and then your change won't
 #   be overwritten when this file is updated
 #
 set localvarsfile $PACKAGE_HOME/BuildScripts/package_variables.tcl
@@ -657,10 +657,10 @@ if { $BUILD_PACKAGE(vtkinria3d) == "yes" } {
 }
 if { $::GETBUILDTEST(release) != "" } {
    append cmd " $::GETBUILDTEST(release)"
-} 
+}
 if { $::GETBUILDTEST(update) != "" } {
    append cmd " $::GETBUILDTEST(update)"
-} 
+}
 if { $BUILD_PACKAGE(fltk) == "yes" } {
     append cmd " --build-fltk"
 }
@@ -711,7 +711,7 @@ if {$isLinux || $isDarwin} {
         if { $::GETBUILDTEST(cpack-generator) == "DEB" } {
             set ::GETBUILDTEST(cpack-extension) ".deb"
         }
-    } 
+    }
 }
 
 
@@ -849,11 +849,17 @@ if { $isWindows } {
          }
        }
        if {[string compare $env(PACKAGE_BUILD_TYPE) "PROFILE" ] == 0 } {
-           set cmd "${cmd} -D ${DASHBOARD_TYPE}Coverage"
+         set cmd "${cmd} -D ${DASHBOARD_TYPE}Coverage"
        }
        set cmd "${cmd} -D ${DASHBOARD_TYPE}Submit"
        puts "BUILD COMMAND $cmd"
+       if { ${PACKAGE_NAME} == "BRAINS3" } {
+         cd src-build
+       }
        set buildReturn [ catch "eval $cmd" ]
+       if { ${PACKAGE_NAME} == "BRAINS3" } {
+         cd ..
+       }
 
     } else {
       #
@@ -881,14 +887,14 @@ if { $isWindows } {
 if {$::GETBUILDTEST(upload) == "true"} {
     set scpfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
     set namic_path "/clients/$::PACKAGE_NAME/WWW/Downloads"
-    if {$::GETBUILDTEST(pack) == "true" &&  
-        [file exists $::PACKAGE_BUILD/$scpfile] && 
+    if {$::GETBUILDTEST(pack) == "true" &&
+        [file exists $::PACKAGE_BUILD/$scpfile] &&
         $::GETBUILDTEST(upload) == "true"} {
         puts "About to do a $::GETBUILDTEST(uploadFlag) upload with $scpfile"
     }
 
     switch $::GETBUILDTEST(uploadFlag) {
-        "nightly" {            
+        "nightly" {
             # reset the file name - take out the date
             #set ex ".${::GETBUILDTEST(version-patch)}"
             #regsub $ex $scpfile "" scpNightlyFile
@@ -914,10 +920,10 @@ if {$::GETBUILDTEST(upload) == "true"} {
         "Linux" {
             set scpcmd "/usr/bin/scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
         }
-        "Darwin" {            
+        "Darwin" {
             set scpcmd "/usr/bin/scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
         }
-        default {             
+        default {
             set scpcmd "scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
         }
     }

@@ -40,9 +40,7 @@ namespace itk
       typename WarperType::Pointer warper = WarperType::New();
       warper->SetInput(m_InputImage);
       warper->SetDeformationField(m_DeformationField);
-      warper->SetOutputOrigin( m_DeformationField->GetOrigin() );
-      warper->SetOutputSpacing( m_DeformationField->GetSpacing() );
-      warper->SetOutputDirection( m_DeformationField->GetDirection() );
+      warper->SetOutputParametersFromImage(m_DeformationField);
       warper->SetEdgePaddingValue(m_DefaultPixelValue);
       warper->Update();
       std::cout << "  Registration Applied" << std::endl;

@@ -21,6 +21,7 @@
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkWarpImageFilter.h"
 #include "itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunction.h"
+#include "GenericTransformImage.h"
 
 namespace itk
 {
@@ -394,7 +395,7 @@ namespace itk
                        }
                      DeformedMovingImagePtr=TransformWarp<RealImageType,RealImageType,TDeformationField>(
                        sourceMovingImage,
-                       m_FixedImage,
+                       m_FixedImage.GetPointer(),
                        0,
                        GetInterpolatorFromString<RealImageType>(this->m_InterpolationMode),
                        m_DeformationField);

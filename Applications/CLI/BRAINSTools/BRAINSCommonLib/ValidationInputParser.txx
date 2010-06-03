@@ -27,9 +27,7 @@
 #include <itkIO.h>
 #include <metaCommand.h>
 #include "itkImageRegionIterator.h"
-#ifdef __USE_BRAINS2_INTEGRATION
 #include "TransformToDeformationField.h"
-#endif
 #include <itkDeformationFieldJacobianDeterminantFilter.h>
 // #include <itkMultiplyImageFilter.h>
 // #include "Jacobian.h"
