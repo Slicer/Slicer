@@ -16,6 +16,7 @@
 // SlicerQt includes
 #include <qSlicerModuleFactoryManager.h>
 #include <qSlicerCoreModuleFactory.h>
+#include <qSlicerCoreApplication.h>
 
 // STD includes
 #include <cstdlib>
@@ -23,8 +24,11 @@
 
 #include "TestingMacros.h"
 
-int qSlicerModuleFactoryManagerTest1(int, char * [] )
+int qSlicerModuleFactoryManagerTest1(int argc, char ** argv )
 {
+  qSlicerCoreApplication app(argc, argv);
+  Q_UNUSED(app);
+  
   qSlicerModuleFactoryManager moduleFactoryManager;
 
   // Register factories
@@ -33,7 +37,7 @@ int qSlicerModuleFactoryManagerTest1(int, char * [] )
   // Register core modules
   moduleFactoryManager.registerModules("qSlicerCoreModuleFactory");
 
-  QString moduleName = "qSlicerTransformsModule";
+  QString moduleName = "transforms";
   
   if (!moduleFactoryManager.moduleTitle( moduleName ).isEmpty())
     {

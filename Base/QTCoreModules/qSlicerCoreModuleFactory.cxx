@@ -72,6 +72,11 @@ void qSlicerCoreModuleFactory::registerItems()
   d->registerCoreModule<qSlicerTransformsModule>();
   
   // FIXME: Move the following to the Models module (when it will be ready in Qt.)
+  Q_ASSERT(qSlicerCoreApplication::application());
+  if(!qSlicerCoreApplication::application())
+    {
+    return;
+    }
   qSlicerCoreApplication::application()->coreIOManager()
     ->registerIO(new qSlicerModelsIO());
   qSlicerCoreApplication::application()->coreIOManager()
