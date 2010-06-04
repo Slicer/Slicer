@@ -144,6 +144,7 @@ int vtkSlicermiAnnotationModuleLogicTest1(int , char * [] )
   rnode->SetPosition1(ctp);
   if (!WaitForTestReceivedMessage(node2))
     {
+      cout << "Problem with SetPosition1" << endl;
       return EXIT_FAILURE; 
     }
   cout << "SetPosition1 OK" << endl;
@@ -151,6 +152,7 @@ int vtkSlicermiAnnotationModuleLogicTest1(int , char * [] )
   rnode->SetPosition2(ctp);
   if (!WaitForTestReceivedMessage(node2))
     {
+      cout << "Problem with SetPosition2" << endl;
       return EXIT_FAILURE; 
     }
   cout << "SetPosition2 OK" << endl;
@@ -160,9 +162,10 @@ int vtkSlicermiAnnotationModuleLogicTest1(int , char * [] )
   double scale = 20;
   rnode->GetAnnotationTextDisplayNode()->SetTextScale( scale );
   if (!WaitForTestReceivedMessage(node2))
-  {
+    {
+      cout << "Problem with SetTextScale" << endl;
       return EXIT_FAILURE; 
-  }
+    }
   cout << "SetTextScale OK" << endl;
   
 
