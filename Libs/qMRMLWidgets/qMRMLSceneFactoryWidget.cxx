@@ -113,6 +113,13 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
     int numClasses = d->MRMLScene->GetNumberOfRegisteredNodeClasses();
     int classNumber = rand() % numClasses; 
     vtkMRMLNode* node = d->MRMLScene->GetNthRegisteredNodeClass(classNumber);
+    Q_ASSERT(node);
+    while (node->GetSingletonTag())
+      {
+      classNumber = rand() % numClasses;
+      node = d->MRMLScene->GetNthRegisteredNodeClass(classNumber);
+      Q_ASSERT(node);
+      }
     nodeClassName = QLatin1String(node->GetClassName()); 
     if (nodeClassName.isEmpty())
       {
@@ -130,7 +137,11 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode(const QString& className)
   Q_ASSERT(!className.isEmpty());
   Q_ASSERT(d->MRMLScene != 0);
   vtkMRMLNode* node = qMRMLNodeFactory::createNode(d->MRMLScene, className);
-  emit mrmlNodeAdded(node);
+  Q_ASSERT(node);
+  if (node)
+    {
+    emit mrmlNodeAdded(node);
+    }
   return node;
 }
 
