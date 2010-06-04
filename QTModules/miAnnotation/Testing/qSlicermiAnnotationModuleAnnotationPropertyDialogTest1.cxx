@@ -8,11 +8,14 @@
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 
-vtkMRMLAnnotationRulerNode* m_rulerCopy;
-vtkMRMLAnnotationAngleNode* m_angleCopy;
-vtkMRMLAnnotationDisplayNode* m_textDispCopy;
-vtkMRMLAnnotationLineDisplayNode* m_lineDispCopy;
-vtkMRMLAnnotationPointDisplayNode* m_pointDispCopy;
+// VTK includes
+#include <vtkSmartPointer.h>
+
+vtkSmartPointer<vtkMRMLAnnotationRulerNode> m_rulerCopy;
+vtkSmartPointer<vtkMRMLAnnotationAngleNode> m_angleCopy;
+vtkSmartPointer<vtkMRMLAnnotationDisplayNode> m_textDispCopy;
+vtkSmartPointer<vtkMRMLAnnotationLineDisplayNode> m_lineDispCopy;
+vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode> m_pointDispCopy;
 
 void SaveLinesNode(vtkMRMLAnnotationLinesNode* node);
 void SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node);
@@ -21,7 +24,7 @@ void UndoLinesNode(vtkMRMLAnnotationLinesNode* node);
 void UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node);
 void UndoAnnotationNode(vtkMRMLAnnotationNode* node);
 
-
+//-----------------------------------------------------------------------------
 void SaveLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
     if (!node)
@@ -30,7 +33,7 @@ void SaveLinesNode(vtkMRMLAnnotationLinesNode* node)
     }
     if (!m_lineDispCopy)
     {
-        m_lineDispCopy = vtkMRMLAnnotationLineDisplayNode::New();
+        m_lineDispCopy = vtkSmartPointer<vtkMRMLAnnotationLineDisplayNode>::New();
     }
 
     node->CreateAnnotationLineDisplayNode();
@@ -39,6 +42,7 @@ void SaveLinesNode(vtkMRMLAnnotationLinesNode* node)
 
 }
 
+//-----------------------------------------------------------------------------
 void SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
     if (!node)
@@ -48,13 +52,14 @@ void SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 
     if (!m_pointDispCopy)
     {
-        m_pointDispCopy = vtkMRMLAnnotationPointDisplayNode::New();
+        m_pointDispCopy = vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New();
     }
     node->CreateAnnotationPointDisplayNode();
     m_pointDispCopy->Copy(node->GetAnnotationPointDisplayNode());
     SaveAnnotationNode( (vtkMRMLAnnotationNode*) node);
 }
 
+//-----------------------------------------------------------------------------
 void SaveAnnotationNode(vtkMRMLAnnotationNode* node)
 {
     if (!node)
@@ -64,12 +69,13 @@ void SaveAnnotationNode(vtkMRMLAnnotationNode* node)
 
     if (!m_textDispCopy)
     {
-        m_textDispCopy = vtkMRMLAnnotationTextDisplayNode::New();
+        m_textDispCopy = vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode>::New();
     }
     node->CreateAnnotationTextDisplayNode();
     m_textDispCopy->Copy(node->GetAnnotationTextDisplayNode());
 }
 
+//-----------------------------------------------------------------------------
 void SaveStateForUndo(vtkMRMLNode* node)
 {
     if( node->IsA( "vtkMRMLAnnotationAngleNode" ) ) 
@@ -77,7 +83,7 @@ void SaveStateForUndo(vtkMRMLNode* node)
         vtkMRMLAnnotationAngleNode* mynode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
         if (!m_angleCopy)
         {
-            m_angleCopy = vtkMRMLAnnotationAngleNode::New();
+            m_angleCopy = vtkSmartPointer<vtkMRMLAnnotationAngleNode>::New();
         }
         m_angleCopy->Copy(mynode);
         SaveLinesNode(mynode);
@@ -87,7 +93,7 @@ void SaveStateForUndo(vtkMRMLNode* node)
         vtkMRMLAnnotationRulerNode* mynode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
         if (!m_rulerCopy)
         {
-            m_rulerCopy = vtkMRMLAnnotationRulerNode::New();
+            m_rulerCopy = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
         }
         m_rulerCopy->Copy(mynode);
         SaveLinesNode(mynode);
@@ -95,6 +101,7 @@ void SaveStateForUndo(vtkMRMLNode* node)
 
 }
 
+//-----------------------------------------------------------------------------
 void UndoLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
     if (!node)
@@ -106,6 +113,7 @@ void UndoLinesNode(vtkMRMLAnnotationLinesNode* node)
     UndoControlPoints(node);
 }
 
+//-----------------------------------------------------------------------------
 void UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
     if (!node)
@@ -117,6 +125,7 @@ void UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node)
     UndoAnnotationNode( (vtkMRMLAnnotationNode*) node);
 }
 
+//-----------------------------------------------------------------------------
 void UndoAnnotationNode(vtkMRMLAnnotationNode* node)
 {
     if (!node)
@@ -127,6 +136,7 @@ void UndoAnnotationNode(vtkMRMLAnnotationNode* node)
     node->GetAnnotationTextDisplayNode()->Copy(m_textDispCopy);
 }
 
+//-----------------------------------------------------------------------------
 void Undo(vtkMRMLNode* node)
 {
     if( node->IsA( "vtkMRMLAnnotationAngleNode" ) ) 
@@ -148,7 +158,7 @@ void Undo(vtkMRMLNode* node)
 
 }
 
-
+//-----------------------------------------------------------------------------
 int qSlicermiAnnotationModuleAnnotationPropertyDialogTest1( int, char * [] )
 {
     // Basic Setup 
