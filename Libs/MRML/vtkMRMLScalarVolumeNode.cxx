@@ -332,31 +332,42 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
 
   if (imageDataScalar && imageDataScalar->GetNumberOfScalarComponents() == 1) 
     {
-    // check the scalar type, bimodal analysis only works on int
+    int needAdHoc = 0;
+
     if (imageDataScalar->GetScalarType() != VTK_INT)
       {
-      vtkDebugMacro("CalculateScalarAutoLevels: image data scalar type is not integer, doing ad hoc calc of window/level.");
+      needAdHoc = 1; 
       }
+    else 
+      {
+      // data type is VTK_INT, so calculate window/level
+      // check the scalar type, bimodal analysis only works on int
+      if (this->Bimodal == NULL)
+        {
+        this->Bimodal = vtkImageBimodalAnalysis::New();
+        }
+      if (this->Accumulate == NULL)
+        {
+        this->Accumulate = vtkImageAccumulateDiscrete::New();
+        }
 
-    if (this->Bimodal == NULL)
-      {
-      this->Bimodal = vtkImageBimodalAnalysis::New();
+      this->Accumulate->SetInput(imageDataScalar);
+      this->Bimodal->SetInput(this->Accumulate->GetOutput());
+      this->Bimodal->Update();
+      // Workaround for image data where all accumulate samples fall
+      // within the same histogram bin
+      if ( this->Bimodal->GetWindow() == 0.0 && this->Bimodal->GetLevel() == 0.0 )
+        {
+        needAdHoc = 1; 
+        }
       }
-    if (this->Accumulate == NULL)
+    
+    if ( needAdHoc )
       {
-      this->Accumulate = vtkImageAccumulateDiscrete::New();
-      }
-    this->Accumulate->SetInput(imageDataScalar);
-    this->Bimodal->SetInput(this->Accumulate->GetOutput());
-    this->Bimodal->Update();
-    double range[2];
-    imageDataScalar->GetScalarRange(range);
-    // Workaround for image data where all accumulate samples fall
-    // within the same histogram bin
-    if ( (this->Bimodal->GetWindow() == 0.0 && this->Bimodal->GetLevel() == 0.0) ||
-         (imageDataScalar->GetScalarType()!= VTK_INT && (range[1]-range[0]) < 1.00001) )
-      {
- 
+      vtkDebugMacro("CalculateScalarAutoLevels: image data scalar type is not integer, doing ad hoc calc of window/level.");
+        double range[2];
+      imageDataScalar->GetScalarRange(range);
+
       double min = range[0];
       double max = range[1];
       //std::cout << "CalculateScalarAutoLevels: Window and Level are 0, or type is not int, using image scalar range, " << min << ", " << max << std::endl);
