@@ -3,6 +3,8 @@
 #include "vtkMRMLScene.h"
 
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkMRMLLayoutNode.h"
 
 #include "vtkKWMessageDialog.h"
 #include "vtkKWProgressGauge.h"
@@ -304,6 +306,14 @@ void vtkBrainlabModuleGUI::ProcessLogicEvents (
 void vtkBrainlabModuleGUI::Enter()
 {
   this->NavigationStep->Timer(1);
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
+
+  if (appGUI)
+    {
+    vtkMRMLLayoutNode *layout = appGUI->GetGUILayoutNode();
+    appGUI->GetMRMLScene()->SaveStateForUndo ( layout );
+    layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+    }
 }
 
 
