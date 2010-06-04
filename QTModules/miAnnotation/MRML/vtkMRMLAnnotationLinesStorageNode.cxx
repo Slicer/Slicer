@@ -149,7 +149,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
   size_t  startPos =attValue.find("|",0) +1;
   size_t  endPos =attValue.find("|",startPos);
   int columnNumber = 1;
-  vtkIdType coordID[2];
+  vtkIdType coordID[2] = {-1, -1};
   while (startPos != std::string::npos && (columnNumber < numColumns)) 
     {
       if (startPos != endPos) 

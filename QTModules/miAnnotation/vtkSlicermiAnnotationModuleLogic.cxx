@@ -1885,8 +1885,7 @@ const char* vtkSlicermiAnnotationModuleLogic::AddBidLineNode()
 // Spline Node
 //-----------------------------------------------------------------------------
 const char* vtkSlicermiAnnotationModuleLogic::AddSplineNode()
-{   
-  vtkSplineRepresentation* sRep = vtkSplineRepresentation::New();
+{
   vtkSplineWidget* sWidget = vtkSplineWidget::New();
   sWidget->PlaceWidget();
   sWidget->ProjectToPlaneOn();

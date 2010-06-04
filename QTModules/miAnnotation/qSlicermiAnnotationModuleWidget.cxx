@@ -586,10 +586,8 @@ void qSlicermiAnnotationModuleWidget::AddFiducialCompleted(vtkObject* object, vo
   CTK_D(qSlicermiAnnotationModuleWidget);
 
   d->fiducialTypeButton->setChecked(false);
-  vtkMRMLAnnotationFiducialNode* node = vtkMRMLAnnotationFiducialNode::SafeDownCast(
-    d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
-
-  const char* newFiducialNodeID = node->GetID();
+  //vtkMRMLAnnotationFiducialNode* node = vtkMRMLAnnotationFiducialNode::SafeDownCast(
+  //  d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
 
   double thevalue = 0.0;
   QString valueString = "";
@@ -1131,7 +1129,7 @@ void qSlicermiAnnotationModuleWidget::visibleSelectedButtonClicked()
     CTK_D(qSlicermiAnnotationModuleWidget);
 
     std::vector<int> selectedRows;
-    bool isVisible;
+    bool isVisible = false;
 
     if( m_index >= 0 )
     {
@@ -1167,7 +1165,7 @@ void qSlicermiAnnotationModuleWidget::lockSelectedButtonClicked()
     CTK_D(qSlicermiAnnotationModuleWidget);
 
     std::vector<int> selectedRows;
-    bool isLocked;
+    bool isLocked = false;
 
     if( m_IDs.size() >= 1 )
     {
@@ -1707,7 +1705,7 @@ void qSlicermiAnnotationModuleWidget::onTextNodeButtonClicked()
   double thevalue = 0.0;
   thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
 
-  char* format = " ";
+  const char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1731,7 +1729,7 @@ void qSlicermiAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object, vo
   double thevalue = 0.0;
   thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
 
-  char* format = " ";
+  const char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1768,7 +1766,7 @@ void qSlicermiAnnotationModuleWidget::onROINodeButtonClicked()
   m_index++;
 
   double thevalue = 0.0;
-  char* format = " ";
+  const char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1793,7 +1791,7 @@ void qSlicermiAnnotationModuleWidget::onPolylineButtonClicked()
   m_index++;
 
   double thevalue = 0.0;
-  char* format = " ";
+  const char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1818,7 +1816,7 @@ void qSlicermiAnnotationModuleWidget::onSplineButtonClicked()
   m_index++;
 
   double thevalue = 0.0;
-  char* format = " ";
+  const char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );

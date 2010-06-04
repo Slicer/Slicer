@@ -70,7 +70,7 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
       of << indent << "linePtsID=\"" ;
       for (int i = 0; i < n; i++ ) 
     {
-      vtkIdType npts;
+      vtkIdType npts = 0;
       vtkIdType *pts = NULL;
       lines->GetNextCell(npts, pts);
       for (int j= 0; j < npts ; j++)
@@ -371,9 +371,9 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
   // cellLine->SetTraversalLocation(id);
 
   vtkIdType *cPts = NULL;
-  vtkIdType cNpts;
+  vtkIdType cNpts = 0;
   vtkIdType *nPts = NULL;
-  vtkIdType nNpts;
+  vtkIdType nNpts = 0;
   for (int i = 0; i <= id; i++ ) 
     {
       lines->GetNextCell(cNpts, cPts);
@@ -424,7 +424,7 @@ int vtkMRMLAnnotationLinesNode::GetEndPointsId(vtkIdType id, vtkIdType ctrlPtsID
   vtkCellArray* lines = this->PolyData->GetLines();
   lines->InitTraversal();
 
-  vtkIdType npts;
+  vtkIdType npts = 0;
   vtkIdType *pts = NULL;
   
   for (int i = 0; i < id; i++ ) 
