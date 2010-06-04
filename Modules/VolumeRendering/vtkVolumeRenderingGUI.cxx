@@ -701,7 +701,7 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
         if (dim[ii] < 2) 
           {
           this->DisplayMessageDialog("Invalid volume dimension, at least 2 is required");
-          this->NS_ImageData->SetSelected(NULL);
+          this->NS_ImageDataFg->SetSelected(NULL);
           return;
           }
         }
