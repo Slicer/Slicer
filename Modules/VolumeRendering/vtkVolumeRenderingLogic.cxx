@@ -417,7 +417,7 @@ void vtkVolumeRenderingLogic::UpdateFgVolumePropertyScalarRange(vtkMRMLVolumeRen
 }
 
 void vtkVolumeRenderingLogic::UpdateVolumePropertyByDisplayNode(vtkMRMLVolumeRenderingParametersNode* vspNode)
-{printf("424\n");
+{
   //add points into transfer functions
   vtkKWHistogram *histogram = this->Histograms->GetHistogramWithName("0");
 
