@@ -170,73 +170,83 @@ void vtkSlicermiAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::ProcessLogicEvents(vtkObject *caller, unsigned long event, void *callData )
 {
-    // cout << "=============== vtkSlicermiAnnotationModuleLogic::ProcessLogicEvents" << endl;
-    // Check RulerNode
+  // cout << "=============== vtkSlicermiAnnotationModuleLogic::ProcessLogicEvents" << endl;
+  // Check RulerNode
+  {
+  vtkMRMLAnnotationRulerNode *callerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(caller);
+  if (callerNode != NULL)
     {
-        vtkMRMLAnnotationRulerNode *callerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(caller);
-        if (callerNode != NULL) 
+    if (event == vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent)
+      {
+      this->TestReceivedMessage = 1;
+      //vtkWarningMacro("ProcessLogicEvents: got a control point modified event");
+      // need to be sure that the modifeid event isn't coming from the widget moving
+      //this->Update3DRuler(callerNode);
+      }
+    if (event == vtkCommand::ModifiedEvent)
+      {
+      this->TestReceivedMessage = 1;
+      //vtkWarningMacro("ProcessLogicEvents: got a control point modified event");
+      // need to be sure that the modifeid event isn't coming from the widget moving
+      //this->Update3DRuler(callerNode);
+      }
+    if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
+      {
+      vtkDebugMacro("ProcessLogicEvents: got a transform modified event");
+      //this->Update3DRuler(callerNode);
+      }
+    // check for a node added event
+    if (event == vtkMRMLScene::NodeAddedEvent)
+      {
+      vtkDebugMacro("ProcessMRMLEvents: got a node added event on scene");
+      //check to see if it was a angle node
+      vtkMRMLAnnotationAngleNode *addNode = reinterpret_cast<vtkMRMLAnnotationAngleNode*>(callData);
+      if (addNode != NULL && addNode->IsA("vtkMRMLAnnotationAngleNode"))
         {
-            if (event == vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent)
-            {
-                cout << "Received vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent from rulernode" << endl;
-                this->TestReceivedMessage = 1;
-                //vtkWarningMacro("ProcessLogicEvents: got a control point modified event");
-                // need to be sure that the modifeid event isn't coming from the widget moving
-                //this->Update3DRuler(callerNode);
-            }
-            if (event == vtkCommand::ModifiedEvent)
-            {
-                cout << "Received vtkCommand::ModifiedEvent from rulernode" << endl;
-                this->TestReceivedMessage = 1;
-                //vtkWarningMacro("ProcessLogicEvents: got a control point modified event");
-                // need to be sure that the modifeid event isn't coming from the widget moving
-                //this->Update3DRuler(callerNode);
-            }
-            if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
-            {
-                vtkDebugMacro("ProcessLogicEvents: got a transform modified event");
-                //this->Update3DRuler(callerNode);
-            }
-            // check for a node added event
-            if (event == vtkMRMLScene::NodeAddedEvent)
-            {
-                vtkDebugMacro("ProcessMRMLEvents: got a node added event on scene");
-                //check to see if it was a angle node    
-                vtkMRMLAnnotationAngleNode *addNode = reinterpret_cast<vtkMRMLAnnotationAngleNode*>(callData);
-                if (addNode != NULL && addNode->IsA("vtkMRMLAnnotationAngleNode"))
-                {
-                    vtkDebugMacro("Got a node added event with a angle node " << addNode->GetID());
-                    return;
-                }
-            }
+        vtkDebugMacro("Got a node added event with a angle node " << addNode->GetID());
+        return;
         }
+      }
     }
-
-    // Check for fiducials 
+  else
     {
-        vtkMRMLFiducialListNode* callerNode = vtkMRMLFiducialListNode::SafeDownCast(caller);
-        if (callerNode != NULL) 
+    vtkMRMLAnnotationTextDisplayNode *callerNode = vtkMRMLAnnotationTextDisplayNode::SafeDownCast(caller);
+    if (callerNode != NULL)
+      {
+      if (event == vtkCommand::ModifiedEvent)
         {
-            if ( event == vtkMRMLScene::NodeAddedEvent ) 
-            {
-                cout << "miAnnotation:: vtkMRMLScene::NodeAddedEvent" << endl;
-                return;
-            }
-            if ( event == vtkMRMLFiducialListNode::FiducialModifiedEvent ) 
-            {
-                cout << "miAnnotation:: vtkMRMLScene::FiducialModifiedEvent" << endl;
-                return;
-            }
-
-            if ( event == vtkMRMLScene::NodeRemovedEvent ) 
-            {
-                cout << "miAnnotation:: vtkMRMLScene::NodeRemovedEvent" << endl;
-                return;
-            }
+        this->TestReceivedMessage = 1;
+        //vtkWarningMacro("ProcessLogicEvents: got a control point modified event");
+        // need to be sure that the modifeid event isn't coming from the widget moving
+        //this->Update3DRuler(callerNode);
         }
+      }
     }
+  }
 
+  // Check for fiducials
+    {
+    vtkMRMLFiducialListNode* callerNode = vtkMRMLFiducialListNode::SafeDownCast(caller);
+    if (callerNode != NULL)
+      {
+      if ( event == vtkMRMLScene::NodeAddedEvent )
+        {
+        cout << "miAnnotation:: vtkMRMLScene::NodeAddedEvent" << endl;
+        return;
+        }
+      if ( event == vtkMRMLFiducialListNode::FiducialModifiedEvent )
+        {
+        cout << "miAnnotation:: vtkMRMLScene::FiducialModifiedEvent" << endl;
+        return;
+        }
 
+      if ( event == vtkMRMLScene::NodeRemovedEvent )
+        {
+        cout << "miAnnotation:: vtkMRMLScene::NodeRemovedEvent" << endl;
+        return;
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1913,19 +1923,18 @@ const char* vtkSlicermiAnnotationModuleLogic::AddSplineNode()
 //-----------------------------------------------------------------------------
 // This is for testing right now 
 //-----------------------------------------------------------------------------
-void vtkSlicermiAnnotationModuleLogic::AddRulerNodeObserver(vtkMRMLAnnotationRulerNode* rnode) 
+void vtkSlicermiAnnotationModuleLogic::AddRulerNodeObserver(vtkMRMLAnnotationRulerNode* rnode)
 {
-    if (rnode->HasObserver(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, (vtkCommand *)this->LogicCallbackCommand) != 1)
+  if (rnode->HasObserver(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, (vtkCommand *)this->LogicCallbackCommand) != 1)
     {
-        rnode->AddObserver(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, (vtkCommand *)this->LogicCallbackCommand);
+    rnode->AddObserver(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, (vtkCommand *)this->LogicCallbackCommand);
     }
-    if (rnode->GetAnnotationTextDisplayNode()==NULL)
+  if (rnode->GetAnnotationTextDisplayNode()==NULL)
     {
-        rnode->CreateAnnotationTextDisplayNode();
+    rnode->CreateAnnotationTextDisplayNode();
     }
-    if (rnode->GetAnnotationTextDisplayNode()->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCallbackCommand) != 1)
+  if (rnode->GetAnnotationTextDisplayNode()->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCallbackCommand) != 1)
     {
-        rnode->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCallbackCommand);
+    rnode->GetAnnotationTextDisplayNode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->LogicCallbackCommand);
     }
 }
-
