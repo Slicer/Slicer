@@ -689,7 +689,7 @@ void vtkImageGraph::Draw2DGraph(vtkImageData *data, int NumRegion, vtkFloatingPo
   int            idxR;
   vtkIdType      TempIncX, TempIncY, TempIncZ;
   int *TempExt;
-  vtkImageData   *TempCurve;
+  vtkImageData   *TempCurve = 0;
   void           **RegionPtr = new void*[NumRegion];
   unsigned char  **RegionColor = new unsigned char*[NumRegion];
   int            *RegionIncY = new int[NumRegion];  
