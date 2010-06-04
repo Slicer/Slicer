@@ -1474,7 +1474,7 @@ int vtkChangeTrackerLogic::DoITKRegistration(vtkSlicerApplication *app){
     return -2;
   }
 
-  moduleNode->SetModuleDescription("Rigid registration");
+  moduleNode->SetModuleDescription("Fast Rigid registration");
 
 
   // Create output transform node
@@ -1531,7 +1531,7 @@ int vtkChangeTrackerLogic::DoITKROIRegistration(vtkSlicerApplication *app){
     return -2;
   }
 
-  moduleNode->SetModuleDescription("Rigid registration");
+  moduleNode->SetModuleDescription("Fast Rigid registration");
 
   // Create output transform node
   // TODO: check whether the transform has been created, delete/reuse if yes
