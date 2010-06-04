@@ -41,6 +41,7 @@ if { [itcl::find class RulerSWidget] == "" } {
     method updateMRMLFromWidget {} {}
     method updateWidgetFromMRML {} {}
     method updateAnnotation {} {}
+    method lockWidget { lockFlag } {}
   }
 }
 
@@ -275,4 +276,13 @@ itcl::body RulerSWidget::processEvent { {caller ""} {event ""} } {
       [$sliceGUI GetSliceViewer] RequestRender
     }
   }
+}
+
+itcl::body RulerSWidget::lockWidget { lockFlag } {
+
+    if {$lockFlag == 1} {
+        $o(lineWidget) ProcessEventsOff
+    } else {
+        $o(lineWidget) ProcessEventsOn
+    }
 }
