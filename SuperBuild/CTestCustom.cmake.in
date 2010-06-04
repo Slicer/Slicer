@@ -27,6 +27,10 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # C4716: function '...' : must return a value
   # C4723: Potential divide by zero
   "numpy.(core|numarray|linalg|random).*warning (C4244|C4028|C4996|C4133|C4146|C4716|C4723)"
+  # warning: assignment from incompatible pointer type
+  # warning: ‘...’ defined but not used
+  # warning: ‘...’ may be used uninitialized in this function
+  "numpy.(core).*warning.*(assignment|defined but not used|uninitialized)"
   "NUMPY.*Warning"
   
   # CLAPACK
@@ -39,14 +43,17 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "tcl.tk.unix.*warning: cast"
   
   # incrTcl
-  "generic.itk_(options|archetype).*warning"
+  "generic.itk_(option|archetype).*warning"
   "generic.itcl_.*warning"
   
   # Blt
   "blt(Bgexec|Tree|TreeCmd|UnixPipe|Util|GrAxis|GrBar|GrMisc|Color|Config|Container|Hierbox|UnixImage|Table|TreeView|TreeViewCmd|TreeViewStyle|ObjConfig|Ted).c.*warning: cast"
-  "blt(List|NsUtil|Bind).c.*warning: overflow"
-  "bltCanvEps.*warning: initialization from incompatible pointer type"
-  "bltColor.c.*warning:.*defined but not used"
+  # warning: overflow in implicit constant conversion
+  "blt(List|NsUtil|Bind|Table|TreeViewCmd).c.*warning: overflow"
+  "bltCanvEps.*warning: (initialization|assignment) from incompatible pointer type"
+  # warning: implicit declaration of function ‘...’
+  # warning: ‘...’ defined but not used
+  "blt(TreeViewStyle|Ted|Color).c.*warning:.*(implicit declaration|defined but not used)"
   
   # qt suppressions from vtk...
   # Some Slicer dashboards include building bits of Qt which produce lots of
@@ -129,6 +136,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # About redefinition of symbols
   "pyconfig.h.*warning:.*redefined"
   "features.h.*"
+  "Objects.unicodeobject.c.*warning:.*differ in signedness"
 
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
