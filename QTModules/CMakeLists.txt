@@ -18,8 +18,8 @@ INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3QTModuleMacros.cmake)
 
 SET(qtmodules
   SlicerWelcome
-  Volumes
-  Measurements
+  #Volumes
+  #Measurements
   TractographyFiducialSeeding
   )
 
