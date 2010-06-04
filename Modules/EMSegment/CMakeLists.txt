@@ -18,8 +18,6 @@ endif(NOT Slicer3_SOURCE_DIR)
 # --------------------------------------------------------------------------
 # Include dirs
 
-set (IBM_FLAG 0)
-
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in 
   ${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h
@@ -51,10 +49,10 @@ file(GLOB headers
   "${CMAKE_CURRENT_SOURCE_DIR}/Graph/*.h"
   )
 
-file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tasks/*.tcl" "Tcl/*.tcl" )
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl" )
 
 foreach(file ${TCLFILES})
-  configure_file(
+ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
     ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY)
@@ -63,8 +61,23 @@ endforeach(file)
 
 install(
   FILES ${TCLFILES}
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}
-  )
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Tcl
+)
+
+
+file(GLOB TASKFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tasks/*.tcl" )
+
+foreach(file ${TASKFILES})
+ configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+endforeach(file)
+
+install(
+  FILES ${TASKFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Tasks
+)
 
 install(FILES 
   ${headers} 
