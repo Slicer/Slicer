@@ -551,7 +551,7 @@ int vtkMRMLIGTLConnectorNode::ReceiveController()
     int r = this->Socket->Receive(headerMsg->GetPackPointer(), headerMsg->GetPackSize());
     if (r != headerMsg->GetPackSize())
       {
-      vtkErrorMacro("Irregluar size.");
+      vtkErrorMacro("Irregluar size " << r << " expecting " << headerMsg->GetPackSize() );
       break;
       }
 
@@ -755,8 +755,11 @@ void vtkMRMLIGTLConnectorNode::ImportDataFromCircularBuffer()
           strcmp((*inIter)->GetName(), (*nameIter).c_str()) == 0)
         {
         vtkMRMLNode* node = (*inIter);
+        node->DisableModifiedEventOn();
         converter->IGTLToMRML(buffer, node);
-        node->Modified();
+        node->Modified();  // in case converter doesn't call any Modifieds itself
+        node->DisableModifiedEventOff();
+        node->InvokePendingModifiedEvent();
         continue;
         }
       }
@@ -771,8 +774,11 @@ void vtkMRMLIGTLConnectorNode::ImportDataFromCircularBuffer()
         {
         vtkMRMLNode* node = converter->CreateNewNode(this->GetScene(), buffer->GetDeviceName());
         RegisterIncomingMRMLNode(node);
+        node->DisableModifiedEventOn();
         converter->IGTLToMRML(buffer, node);
-        node->Modified();
+        node->Modified();  // in case converter doesn't call any Modifieds itself
+        node->DisableModifiedEventOff();
+        node->InvokePendingModifiedEvent();
         }
       else
         {
@@ -780,8 +786,11 @@ void vtkMRMLIGTLConnectorNode::ImportDataFromCircularBuffer()
           {
           vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(collection->GetItemAsObject(i));
           RegisterIncomingMRMLNode(node);
+          node->DisableModifiedEventOn();
           converter->IGTLToMRML(buffer, node);
-          node->Modified();
+          node->Modified();  // in case converter doesn't call any Modifieds itself
+          node->DisableModifiedEventOff();
+          node->InvokePendingModifiedEvent();
           continue;
           }
         }

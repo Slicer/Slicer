@@ -110,58 +110,21 @@ int vtkIGTLToMRMLPosition::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRML
   positionMsg->GetQuaternion(quaternion);
 
   igtl::QuaternionToMatrix(quaternion, matrix);
-  //matrix[0][3] = position[0];
-  //matrix[1][3] = position[1];
-  //matrix[2][3] = position[2];
   
-  float tx = matrix[0][0];
-  float ty = matrix[1][0];
-  float tz = matrix[2][0];
-  float sx = matrix[0][1];
-  float sy = matrix[1][1];
-  float sz = matrix[2][1];
-  float nx = matrix[0][2];
-  float ny = matrix[1][2];
-  float nz = matrix[2][2];
-  //float px = matrix[0][3];
-  //float py = matrix[1][3];
-  //float pz = matrix[2][3];
-  float px = position[0];
-  float py = position[1];
-  float pz = position[2];
-  
-  std::cerr << "matrix = " << std::endl;
-  std::cerr << tx << ", " << ty << ", " << tz << std::endl;
-  std::cerr << sx << ", " << sy << ", " << sz << std::endl;
-  std::cerr << nx << ", " << ny << ", " << nz << std::endl;
-  std::cerr << px << ", " << py << ", " << pz << std::endl;
-  
-  vtkMatrix4x4* transform = vtkMatrix4x4::New();
   vtkMatrix4x4* transformToParent = transformNode->GetMatrixTransformToParent();
+  double *transformToParentElement = &transformToParent->Element[0][0];
+  float *matrixElement = &matrix[0][0];
+  for (int i = 0; i < 16; i++)
+    {
+    transformToParentElement[i] = matrixElement[i];
+    }
+  transformToParent->Element[0][3] = position[0];
+  transformToParent->Element[1][3] = position[1];
+  transformToParent->Element[2][3] = position[2];
 
-  transform->Identity();
-  transform->SetElement(0, 0, tx);
-  transform->SetElement(1, 0, ty);
-  transform->SetElement(2, 0, tz);
-
-  transform->SetElement(0, 1, sx);
-  transform->SetElement(1, 1, sy);
-  transform->SetElement(2, 1, sz);
-
-  transform->SetElement(0, 2, nx);
-  transform->SetElement(1, 2, ny);
-  transform->SetElement(2, 2, nz);
-
-  transform->SetElement(0, 3, px);
-  transform->SetElement(1, 3, py);
-  transform->SetElement(2, 3, pz);
-
-  transformToParent->DeepCopy(transform);
-
-  transform->Delete();
+  transformToParent->Modified();
 
   return 1;
-
 }
 
 
