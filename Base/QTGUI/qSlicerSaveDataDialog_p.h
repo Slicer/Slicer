@@ -26,16 +26,22 @@ public:
   explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=0);
   virtual ~qSlicerSaveDataDialogPrivate();
                                      
-  QList<qSlicerIO::IOProperties> selectedFiles();
-  void populateItems(vtkMRMLScene* scene);
+  void populateItems();
+                                         
+  void setMRMLScene(vtkMRMLScene* scene);
+  vtkMRMLScene* mrmlScene()const;
 
 public slots:
   void setDirectory(const QString& newDirectory);
   void selectModifiedSceneData();
   void selectModifiedData();
+  bool save();
   
 protected slots:
   void formatChanged();
+  bool saveScene();
+  bool saveScene(QFileInfo file);
+  bool saveNodes();
 
 protected:
   enum ColumnType
@@ -47,6 +53,7 @@ protected:
     FileNameColumn = 4,
     FileDirectoryColumn = 5
   };
+  vtkMRMLScene* MRMLScene;
 };
 
 #endif
