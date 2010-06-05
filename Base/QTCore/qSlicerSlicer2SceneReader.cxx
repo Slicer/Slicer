@@ -1256,7 +1256,7 @@ bool qSlicerSlicer2SceneReader::load(const IOProperties& properties)
 {
   CTK_D(qSlicerSlicer2SceneReader);
   QString file = properties["fileName"].toString();
-  Q_ASSERT(file.isEmpty());
+  Q_ASSERT(!file.isEmpty());
 
   d->TransformIDStack.clear();
   d->FiducialListNode = 0;
