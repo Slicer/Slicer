@@ -194,6 +194,9 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkSetVector2Macro(WindowLevel, double);
   vtkGetVectorMacro(WindowLevel, double, 2);
 
+  vtkSetVector2Macro(WindowLevelFg, double);
+  vtkGetVectorMacro(WindowLevelFg, double, 2);
+  
 protected:
   vtkMRMLVolumeRenderingParametersNode();
   ~vtkMRMLVolumeRenderingParametersNode();
@@ -323,6 +326,9 @@ protected:
 
   //bg volume window & level
   double WindowLevel[2];
+
+  //fg volume window & level
+  double WindowLevelFg[2];
 };
 
 #endif

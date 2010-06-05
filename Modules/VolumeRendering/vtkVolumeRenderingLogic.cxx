@@ -621,60 +621,97 @@ void vtkVolumeRenderingLogic::SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRe
   this->UpdateFgVolumePropertyScalarRange(vspNode);
   this->SetupHistogramsFg(vspNode);
 
-  //add points into transfer functions
-  vtkKWHistogram *histogram = this->HistogramsFg->GetHistogramWithName("0");
-
-  double totalOccurance = histogram->GetTotalOccurence();
-  double thresholdLow = totalOccurance * 0.2;
-  double thresholdHigh = totalOccurance * 0.8;
-  double range[2];
-
-  histogram->GetRange(range);
-
-  double thresholdLowIndex = range[0];
-  double sumLowIndex = 0;
-  double thresholdHighIndex = range[0];
-  double sumHighIndex = 0;
-
-  //calculate distance
-  double bin_width = (range[1] == range[0] ? 1 : (range[1] - range[0])/(double)histogram->GetNumberOfBins());
-
-  while(sumLowIndex < thresholdLow)
+  if (vspNode->GetFgVolumeNode())
   {
-    sumLowIndex += histogram->GetOccurenceAtValue(thresholdLowIndex);
-    thresholdLowIndex += bin_width;
+    vtkMRMLScalarVolumeDisplayNode *vpNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(vspNode->GetFgVolumeNode()->GetDisplayNode());
+    vtkMRMLLabelMapVolumeDisplayNode *vlNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(vspNode->GetFgVolumeNode()->GetDisplayNode());
+    
+    if (vpNode)
+    {
+      //add points into transfer functions
+      vtkKWHistogram *histogram = this->HistogramsFg->GetHistogramWithName("0");
+
+      double range[2];
+      histogram->GetRange(range);
+          
+      double windowLevel[2];
+      windowLevel[0] = vpNode->GetWindow();
+      windowLevel[1] = vpNode->GetLevel();
+
+      vspNode->SetWindowLevelFg(windowLevel);
+      
+      vtkVolumeProperty *prop = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty();
+      prop->SetInterpolationTypeToLinear();
+
+      vtkPiecewiseFunction *opacity = prop->GetScalarOpacity();
+      
+      opacity->RemoveAllPoints();
+      opacity->AddPoint(range[0], 0.0);
+      opacity->AddPoint(windowLevel[1] - windowLevel[0]*0.5, 0.0);
+      opacity->AddPoint(windowLevel[1] + windowLevel[0]*0.5, 1.0);
+      opacity->AddPoint(range[1], 1.0);
+        
+      vtkColorTransferFunction *colorTransfer = prop->GetRGBTransferFunction();
+
+      colorTransfer->RemoveAllPoints();
+
+      vtkLookupTable* pLut = vpNode->GetColorNode()->GetLookupTable();
+
+      if (pLut == NULL)
+      {
+        colorTransfer->AddRGBPoint(range[0], 0.0, 0.0, 0.0);
+        colorTransfer->AddRGBPoint(windowLevel[1] - windowLevel[0]*0.5, 0.0, 0.0, 0.0);
+        colorTransfer->AddRGBPoint(windowLevel[1] + windowLevel[0]*0.5, 1.0, 1.0, 1.0);
+        colorTransfer->AddRGBPoint(range[1], 1.0, 1.0, 1.0);
+      }
+      else
+      {
+        int size = pLut->GetNumberOfTableValues();
+
+        double color[4];
+        pLut->GetTableValue(0, color);
+      
+        if (size == 1)
+        {
+          colorTransfer->AddRGBPoint(range[0], color[0], color[1], color[2]);
+          colorTransfer->AddRGBPoint(windowLevel[1] - windowLevel[0]*0.5, color[0], color[1], color[2]);
+          colorTransfer->AddRGBPoint(windowLevel[1] + windowLevel[0]*0.5, color[0], color[1], color[2]);
+          colorTransfer->AddRGBPoint(range[1], color[0], color[1], color[2]);
+        }
+        else
+        {
+          colorTransfer->AddRGBPoint(range[0], color[0], color[1], color[2]);
+        
+          double value = windowLevel[1] - windowLevel[0]*0.5;
+          double step;
+
+          step = windowLevel[0] / (size - 1);
+
+          int downSamplingFactor = 64;
+          
+          for (int i = 0; i < size; i += downSamplingFactor, value += downSamplingFactor*step)
+          {
+            pLut->GetTableValue(i, color);
+            colorTransfer->AddRGBPoint(value, color[0], color[1], color[2]);
+          }
+
+          pLut->GetTableValue(size - 1, color);
+          colorTransfer->AddRGBPoint(windowLevel[1] + windowLevel[0]*0.5, color[0], color[1], color[2]);
+          colorTransfer->AddRGBPoint(range[1], color[0], color[1], color[2]);
+        }
+      }
+      
+      prop->ShadeOn();
+      prop->SetAmbient(0.30);
+      prop->SetDiffuse(0.60);
+      prop->SetSpecular(0.50);
+      prop->SetSpecularPower(40);
+    }
+    else if (vlNode)
+    {
+    //TODO label map
+    } 
   }
-
-  while(sumHighIndex < thresholdHigh)
-  {
-    sumHighIndex += histogram->GetOccurenceAtValue(thresholdHighIndex);
-    thresholdHighIndex += bin_width;
-  }
-
-  vtkVolumeProperty *prop = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty();
-  prop->SetInterpolationTypeToLinear();
-  vtkPiecewiseFunction *opacity = prop->GetScalarOpacity();
-
-  opacity->RemoveAllPoints();
-  opacity->AddPoint(range[0], 0.0);
-  opacity->AddPoint(thresholdLowIndex, 0.0);
-  opacity->AddPoint(thresholdHighIndex, 0.2);
-  opacity->AddPoint(range[1], 0.2);
-
-  vtkColorTransferFunction *colorTransfer = prop->GetRGBTransferFunction();
-
-  colorTransfer->RemoveAllPoints();
-  colorTransfer->AddRGBPoint(range[0], 0.3, 0.3, 1.0);
-  colorTransfer->AddRGBPoint(thresholdLowIndex, 0.3, 0.3, 1.0);
-  colorTransfer->AddRGBPoint(thresholdLowIndex + 0.5 * (thresholdHighIndex - thresholdLowIndex), 0.3, 1.0, 0.3);
-  colorTransfer->AddRGBPoint(thresholdHighIndex, 1.0, 0.3, 0.3);
-  colorTransfer->AddRGBPoint(range[1], 1.0, 0.3, 0.3);
-
-  prop->ShadeOn();
-  prop->SetAmbient(0.30);
-  prop->SetDiffuse(0.60);
-  prop->SetSpecular(0.50);
-  prop->SetSpecularPower(40);
 }
 
 void vtkVolumeRenderingLogic::ComputeInternalVolumeSize(int index)

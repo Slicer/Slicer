@@ -720,7 +720,6 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   this->VolumeSpacing[2] = 
     (static_cast<double>(dim[2])-1.01)*(double)spacing[2] / static_cast<double>(this->VolumeDimensions[2]-1);
 
-
   // Transfer the input volume to the RGBA volume
   void *dataPtr = input->GetScalarPointer();
   void *dataPtr1 = NULL;
@@ -737,7 +736,7 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
         this, offset, scale, offset1, scale1,
         this->Volume1));
     }
-  
+
   int dataPtrSize = dim[0]*dim[1]*dim[2];
   float* floatDataPtr = new float[dataPtrSize];  
   

@@ -1513,6 +1513,7 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageDataFg()
   }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 1.0);
+
 }
 
 int vtkVolumeRenderingGUI::ValidateParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode)

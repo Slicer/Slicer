@@ -110,6 +110,9 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
   
   this->WindowLevel[0] = 0.0;
   this->WindowLevel[1] = 0.0;
+
+  this->WindowLevelFg[0] = 0.0;
+  this->WindowLevelFg[1] = 0.0;
 }
 
 //----------------------------------------------------------------------------
@@ -306,6 +309,14 @@ void vtkMRMLVolumeRenderingParametersNode::ReadXMLAttributes(const char** atts)
       ss >> this->WindowLevel[1];
       continue;
     }
+    if (!strcmp(attName,"windowLevelFg"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->WindowLevelFg[0];
+      ss >> this->WindowLevelFg[1];
+      continue;
+    }
     if (!strcmp(attName,"followVolumeDisplayNode"))
     {
       std::stringstream ss;
@@ -354,6 +365,7 @@ void vtkMRMLVolumeRenderingParametersNode::WriteXML(ostream& of, int nIndent)
   of << indent << " followVolumeDisplayNode=\"" << this->FollowVolumeDisplayNode << "\"";
   of << indent << " useSingleVolumeProperty=\"" << this->UseSingleVolumeProperty << "\"";
   of << indent << " windowLevel=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
+  of << indent << " windowLevelFg=\"" << this->WindowLevelFg[0] << " " << this->WindowLevelFg[1] << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -442,6 +454,7 @@ void vtkMRMLVolumeRenderingParametersNode::Copy(vtkMRMLNode *anode)
   this->SetGPURaycastIIBgFgRatio(node->GetGPURaycastIIBgFgRatio());
   this->SetGPURaycastIIFusion(node->GetGPURaycastIIFusion());
   this->SetWindowLevel(node->GetWindowLevel());
+  this->SetWindowLevelFg(node->GetWindowLevelFg());
   this->SetFollowVolumeDisplayNode(node->GetFollowVolumeDisplayNode());
   this->SetUseSingleVolumeProperty(node->GetUseSingleVolumeProperty());
   
