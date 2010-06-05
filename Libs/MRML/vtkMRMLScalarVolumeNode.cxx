@@ -334,13 +334,21 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
     {
     int needAdHoc = 0;
 
-    if (imageDataScalar->GetScalarType() != VTK_INT)
+    int scalarType = imageDataScalar->GetScalarType();
+    if (scalarType != VTK_INT && 
+        scalarType != VTK_SHORT &&
+        scalarType != VTK_CHAR &&
+        scalarType != VTK_SIGNED_CHAR &&
+        scalarType != VTK_UNSIGNED_CHAR &&
+        scalarType != VTK_UNSIGNED_SHORT &&
+        scalarType != VTK_UNSIGNED_INT)
       {
+      // if not an integer type, estimate with ad hoc method
       needAdHoc = 1; 
       }
     else 
       {
-      // data type is VTK_INT, so calculate window/level
+      // data type is VTK_INT or similar, so calculate window/level
       // check the scalar type, bimodal analysis only works on int
       if (this->Bimodal == NULL)
         {
