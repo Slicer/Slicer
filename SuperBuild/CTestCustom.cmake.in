@@ -62,10 +62,16 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # results:
   "include.[Qq]t([Cc]ore|[Gg]ui).*warning C4127: conditional expression is constant"
   "[Qq]t.*h.*warning.*declaration of .* shadows a member of .this"
-  "[Qq]t.*h.*warning.*(copy constructor|assignment operator) could not be generated"  
+  "[Qq]t.*h.*warning.*(copy constructor|assignment operator) could not be generated"
+  # Tiger / 4.6.2 warning
+  "include.[Qq]t[Cc]ore.qtextcodec.h.*warning.*is already a friend of"
 
   # Suppress warning caused when QT 'foreach' loops are combined
   ".*warning: declaration of '_container_' shadows a previous local"
+  
+  # STL - Tiger
+  "include.c.*bits.stl_algo.h.*warning: comparison between signed and unsigned integer expressions"
+
   
   # Python
   "Modules.zlib.gzio.*warning C4996"
