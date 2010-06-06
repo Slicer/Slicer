@@ -8,6 +8,8 @@
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIOOptions
 {
 public:  
+  explicit qSlicerIOOptions(){}
+  virtual ~qSlicerIOOptions(){}
   virtual qSlicerIO::IOProperties options()const;
 };
 

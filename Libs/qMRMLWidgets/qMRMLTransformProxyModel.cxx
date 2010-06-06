@@ -22,6 +22,7 @@ class qMRMLNodeItemHelperPrivate;
 class QMRML_WIDGETS_EXPORT qMRMLTransformItemHelperFactory : public qMRMLAbstractItemHelperFactory
 {
 public:
+  virtual ~qMRMLTransformItemHelperFactory(){}
   virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column)const;
   virtual qMRMLAbstractItemHelper* createRootItem(vtkMRMLScene* scene)const;
 };

@@ -36,6 +36,7 @@ class vtkVariantArray;
 class QMRML_WIDGETS_EXPORT qMRMLAbstractItemHelperFactory
 {
 public:
+  virtual ~qMRMLAbstractItemHelperFactory(){}
   virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column)const = 0;
   virtual qMRMLAbstractItemHelper* createRootItem(vtkMRMLScene* scene)const = 0;
 };
