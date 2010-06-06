@@ -147,6 +147,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkSetAndObserveMRMLNodeMacro(this->InteractionNode, node);
     }
 
+    /// set the lock flag on all 3d widgets, so they will either respond to
+    /// events or not.
+    void ModifyAll3DWidgetsLock(int lockFlag);
+
  protected:
     vtkSlicerToolbarGUI ( );
     virtual ~vtkSlicerToolbarGUI ( );

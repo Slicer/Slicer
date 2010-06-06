@@ -665,7 +665,13 @@ void vtkSlicerFiducialListWidget::UpdateFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialListWidget::RequestRender()
 {
-  this->Render(); /* requests render from viewer widget */
+    if (this->GetRenderPending())
+    {
+    return;
+    }
+
+  this->SetRenderPending(1);
+  this->Script("after idle \"%s Render\"", this->GetTclName());
 }
 
 //---------------------------------------------------------------------------
@@ -1742,7 +1748,7 @@ void vtkSlicerFiducialListWidget::Update3DWidgetGlyphType(vtkMRMLFiducialListNod
   vtkSlicerSeedWidgetClass *seedWidget = this->GetSeedWidget(fiducialListNode->GetID());
   if (seedWidget == NULL)
     {
-    vtkDebugMacro("Update3DWidgetLock: no seed widget to update! Checked for id " << fiducialListNode->GetID());
+    vtkDebugMacro("Update3DWidgetGlyphType: no seed widget to update! Checked for id " << fiducialListNode->GetID());
     return;
     }
 
@@ -2055,4 +2061,35 @@ void vtkSlicerFiducialListWidget::Swap(vtkMRMLFiducialListNode *flist, int first
 void vtkSlicerFiducialListWidget::UpdateViewNode()
 {
   // obsolete as per comment in vtkSlicerViewerWidget::UpdateViewNode
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialListWidget::ModifyAllWidgetLock(int lockFlag)
+{
+  std::map<std::string, vtkSlicerSeedWidgetClass *>::iterator iter;
+  for (iter = this->SeedWidgets.begin(); iter !=  this->SeedWidgets.end(); iter++)
+    {
+    if (iter->second->GetWidget())
+      {
+      // get the fiducial list node associated with this widget
+      vtkMRMLNode *node = NULL;
+      node = this->MRMLScene->GetNodeByID(iter->first.c_str());
+      int thisListLock = lockFlag;
+      if (node)
+        {
+        vtkMRMLFiducialListNode *fidListNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+        if (fidListNode)
+          {
+          if (fidListNode->GetLocked() == 1 && lockFlag == 0)
+            {
+            thisListLock = 1;
+            }
+          }
+        }
+      iter->second->GetWidget()->SetProcessEvents(!thisListLock);
+      if ( thisListLock )
+        {
+        }
+      }
+    }
 }

@@ -1135,6 +1135,8 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
     switch (mode)
       {
       case vtkMRMLInteractionNode::PickManipulate:
+        // turn on processing events on the vtk 3d widgets
+        this->ModifyAll3DWidgetsLock(0);
         selected = this->MousePickButton->GetSelectedState();
         if ( !selected )
           {
@@ -1144,6 +1146,8 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
           }
         break;
       case vtkMRMLInteractionNode::Place:
+        // turn off processing events on the vtk 3d widgets
+        this->ModifyAll3DWidgetsLock(1);
         selected = this->MousePlaceButton->GetSelectedState();
         if ( !selected)
           {
@@ -1153,6 +1157,10 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
           }
         break;
       case vtkMRMLInteractionNode::ViewTransform:
+        // turn on processing events on the vtk 3d widgets
+        // TODO: should they be locked when transforming the view? only if we
+        // can't get the hover zone to be coincident with the manipulate zone
+        this->ModifyAll3DWidgetsLock(0);
         selected = this->MouseTransformViewButton->GetSelectedState();
         if ( !selected)
           {
@@ -1833,4 +1841,20 @@ void vtkSlicerToolbarGUI::HideCompareViewCustomLayoutFrame()
       return;
 
     this->CompareViewBoxTopLevel->Withdraw();
+}
+
+
+
+//--------------------------------------------------------------------------
+void vtkSlicerToolbarGUI::ModifyAll3DWidgetsLock(int lockFlag)
+{
+  //vtkWarningMacro("ModifyAll3DWidgetsLock: lockFlag = " << lockFlag);
+
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI ( );
+  if ( appGUI )
+    {
+    appGUI->ModifyAllWidgetLock(lockFlag);
+    }
+
+  vtkDebugMacro("ModifyAll3DWidgetsLock: done changing locks on widgets (lock = " << lockFlag << ")");
 }

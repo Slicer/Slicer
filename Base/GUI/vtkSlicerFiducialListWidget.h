@@ -128,6 +128,12 @@ public:
     {
     vtkSetAndObserveMRMLNodeMacro( this->ViewNode, snode );
     };
+  ///
+  /// change the lock flags on all seed widgets. If lockFlag is 0, don't turn
+  /// off locking if the fiducial list node associated with the list has
+  /// locking turned on
+  void ModifyAllWidgetLock(int lockFlag);
+
 protected:
   vtkSlicerFiducialListWidget();
   virtual ~vtkSlicerFiducialListWidget();

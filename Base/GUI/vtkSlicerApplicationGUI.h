@@ -203,6 +203,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessSaveSceneAsCommand();
     void ProcessCloseSceneCommand();
     void ProcessAddRulerCommand();
+    void ProcessMouseModeToggleCommand();
     void UpdateLayout();
     void CustomizeStatusBarLayout();
 
@@ -366,6 +367,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     /// 
     /// Get SlicerApplication
     vtkSlicerApplication* GetSlicerApplication();
+
+    ///
+    /// This method iterates through all widgets
+    /// that control vtk widgets and update the
+    /// process events flag on them.
+    /// It does not change mrml node flags.
+    /// The method is called with the appropriate lockFlag
+    /// by the vtkSlicerToolbarGUI, when the
+    /// vtkMRMLInteractionNode invokes an
+    /// InteractionModeChangedEvent.
+    /// Developers note: this method should be
+    /// extended to include any new widgets that
+    /// are pickable, so that they are integrated with
+    /// the Application's pick/place/transform mouse-modes.
+    void ModifyAllWidgetLock(int lockFlag);
 
 protected:
     vtkSlicerApplicationGUI ( );

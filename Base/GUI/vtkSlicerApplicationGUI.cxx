@@ -504,6 +504,20 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
       }
 
     }
+
+  //--- The scene may have a new interaction node which
+  //--- specifies a Mouse Mode -- but no InteractionModeChangedEvent
+  //--- will have been invoked for the GUI to capture.
+  //--- So we invoke the event here after the scene is finished loading.
+  if ( this->GetApplicationLogic() )
+    {
+    if ( this->GetApplicationLogic()->GetInteractionNode() )
+      {
+      this->GetApplicationLogic()->GetInteractionNode()->InvokeEvent (
+                                                                      vtkMRMLInteractionNode::InteractionModeChangedEvent );
+      }
+    }
+
   progressDialog->SetParent(NULL);
   progressDialog->Delete();
 #endif
@@ -829,6 +843,48 @@ void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
     }
   dialog->Delete();
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessMouseModeToggleCommand()
+{
+  vtkSlicerToolbarGUI *tgui = this->GetApplicationToolbar();
+  if ( tgui == NULL )
+    {
+    vtkErrorMacro("ProcessMouseModeToggleCommand: no ToolbarGUI. can't toggle mouse mode with keypress.");
+    return;
+    }
+
+  //TODO
+  if ( this->GetApplicationLogic() == NULL )
+    {
+    vtkErrorMacro("ProcessMouseModeToggleCommand: no ApplicationLogic. can't toggle mouse mode with keypress.");
+    return;
+    }
+  if ( this->GetApplicationLogic()->GetInteractionNode() == NULL )
+    {
+    vtkErrorMacro("ProcessMouseModeToggleCommand: can't find ApplicationLogic's Interaction Node. unable to toggle mouse mode with keypress.");
+    return;
+    }
+  
+  //--- Toggle Place mode from keyboard command.
+  vtkMRMLInteractionNode *inode = this->GetApplicationLogic()->GetInteractionNode();
+  int mode = inode->GetCurrentInteractionMode();
+  if ( mode == vtkMRMLInteractionNode::Place )
+    {
+    inode->NormalizeAllMouseModes();
+    inode->SetLastInteractionMode ( inode->GetCurrentInteractionMode() );
+    inode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
+    }
+  else
+    {
+    inode->NormalizeAllMouseModes();
+    inode->SetLastInteractionMode ( inode->GetCurrentInteractionMode() );
+    inode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::Place );
+    inode->SetPlaceModePersistence ( 1 );
+    }
+  
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddRulerCommand()
@@ -2018,6 +2074,11 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+M");
   this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
   
+  // Toggle among mouse modes.
+  i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Toggle 'Persistent Place' Interaction Mode...", this, "ProcessMouseModeToggleCommand");
+  this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "Ctrl+I");
+  this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
+
   //
   // View Menu
   //
@@ -4883,3 +4944,88 @@ int vtkSlicerApplicationGUI::GetNumberOfVisibleViewNodes()
 }
 
 
+//-------------------------------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ModifyAllWidgetLock(int lockFlag)
+{
+  //---
+  //--- This method is called with the appropriate lockFlag
+  //--- by the ToolbarGUI, when the vtkMRMLInteractionNode
+  //--- invokes an InteractionModeChangedEvent.
+  //---
+
+
+  ///
+  /// FIDUCIALS
+  ///
+  // iterate through the fiducial list widgets
+  int nb_fid_viewer_widgets = this->GetNumberOfFiducialListWidgets();
+  for (int i = 0; i < nb_fid_viewer_widgets; ++i)
+    {
+    vtkSlicerFiducialListWidget *fidlist_widget = this->GetNthFiducialListWidget(i);
+    if (fidlist_widget)
+      {
+      fidlist_widget->ModifyAllWidgetLock(lockFlag);
+      }
+    }
+
+
+  ///
+  /// MEASUREMENTS
+  ///
+  if ( this->GetApplication() == NULL )
+    {
+    vtkWarningMacro ( "ApplicationGUI::ModifyAllWidgetLock: Got NULL Application. Not modifying lock on some widgets." );
+    return;
+    }
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+  if ( app == NULL )
+    {
+    vtkWarningMacro ( "ApplicationGUI::ModifyAllWidgetLock: Got NULL Slicer Application. Not modifying lock on some widgets." );
+    return;
+    }
+  vtkSlicerModuleGUI *m = app->GetModuleGUIByName("Measurements");
+
+  if (m == NULL)
+    {
+    vtkWarningMacro ( "ApplicationGUI::ModifyAllWidgetLock: Got NULL Measurements Modules. Not modifying lock on measurements widgets." );
+    return;
+    }
+  app->Script("$::slicer3::MeasurementsGUI ModifyAllLock %d", lockFlag);
+
+
+
+  ///
+  /// Developers: INCLUDE OTHER PICKABLE WIDGETS HERE
+  ///
+
+
+  //--- now reset the cursor to default if we are not picking.
+  if ( lockFlag )
+    {
+
+    vtkSlicerViewerWidget *active_viewer = this->GetActiveViewerWidget();
+    if ( active_viewer == NULL )
+      {
+      vtkWarningMacro ( "ApplicationGUI::ModifyAllWidgetLock: no active viewer widget. Not able to reset cursor." );
+      return;
+      }
+    if ( active_viewer->GetMainViewer() == NULL )
+      {
+      vtkWarningMacro ( "ApplicationGUI::ModifyAllWidgetLock: no main viewer. Not able to reset cursor." );
+      return;
+      }
+    vtkRenderWindow *ren_win = active_viewer->GetMainViewer()->GetRenderWindow();
+    if ( ren_win == NULL )
+      {
+      vtkWarningMacro ( "ApplicationGUI::ModifyAllWidgetLock: no render window. Not able to reset cursor.");
+      return;
+      }
+    //--- if lockFlag == 1, then processEvents should be set to 0.
+    //--- Trying this as a mechanism to give back
+    //--- the default cursor, in case it is the picking cursor.
+    //--- trick will be to get it to stick -- and not be reset to the picking cursor
+    //--- by subsequent events.
+    ren_win->SetCurrentCursor ( VTK_CURSOR_DEFAULT );
+    }
+
+}
