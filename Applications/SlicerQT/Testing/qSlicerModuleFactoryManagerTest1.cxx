@@ -24,7 +24,7 @@
 
 #include "TestingMacros.h"
 
-int qSlicerModuleFactoryManagerTest1(int argc, char ** argv )
+int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
 {
   qSlicerCoreApplication app(argc, argv);
   Q_UNUSED(app);
