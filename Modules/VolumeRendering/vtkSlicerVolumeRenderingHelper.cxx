@@ -1106,6 +1106,10 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
       {
         vpNode->SetModifiedSinceRead(1);
       }
+
+      if (vspNode->GetCurrentVolumeMapper() == 4)//multi-volume
+        this->Gui->GetLogic()->UpdateVolumePropertyGPURaycastII(vspNode);
+        
       this->Gui->RequestRender();
       return;
     }
