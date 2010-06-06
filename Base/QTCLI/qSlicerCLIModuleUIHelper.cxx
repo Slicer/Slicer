@@ -56,6 +56,7 @@ class WidgetValueWrapper
 {
 public:
   WidgetValueWrapper(const QString& _name, const QString& _label):Name(_name), Label(_label){}
+  virtual ~WidgetValueWrapper(){}
   virtual QVariant value() = 0;
   QString label(){ return this->Label; }
   QString name(){ return this->Name; }
