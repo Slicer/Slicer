@@ -631,7 +631,7 @@ void vtkFetchMILogic::RequestResourceUpload ( )
     int success = this->RestoreFileNamesOnSelectedResources();
     if ( !success )
       {
-      //--- post message to user. filenames may be corrupt.
+      //--- post message to user. filoenames may be corrupt.
       msg = "Error restoring filenames associated with loaded datasets after a remote upload failure. Warning: file paths may be corrupted. As a precautionary measure, please save all datasets and scene file to a safe location on local disk or file system.";
       this->FetchMINode->SetErrorMessage (msg.c_str() );
       this->FetchMINode->InvokeEvent ( vtkMRMLFetchMINode::RemoteIOErrorEvent );
@@ -3370,50 +3370,7 @@ void vtkFetchMILogic::RequestResourceDownload ( const char *uri, const char *sli
   //--- handle scene with separate set of methods.
   if ( !(strcmp(slicerDataType, "MRML")))
     {
-    if (!this->Profiling)
-      {
-      this->RequestSceneDownload ( uri );
-      }
-    else
-      {
-      // TIME TEST BEGIN
-      this->DebugOn();
-      double timeStart = 0.0;
-      double timeStop = 0.0;
-      try
-        {
-        itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
-        timeStart = clock->GetTimeStamp();
-        vtkDebugMacro ( "==============================================================");
-        vtkDebugMacro (<< "-------------------------BEGINNING TIME TEST---------------------------------------" );
-        vtkDebugMacro (<< "Calling initial RequestSceneDownload() method at:" << timeStart << "." );
-        vtkDebugMacro ( "==============================================================");
-        }
-      catch( itk::ExceptionObject  )
-        {
-        vtkErrorMacro ( "Unable to set up time profiling" );
-        throw;    
-        }
-
-      this->RequestSceneDownload ( uri );
-
-      try
-        {
-        itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
-        timeStop = clock->GetTimeStamp();
-        double timeLength = (timeStop - timeStart);
-        vtkDebugMacro ( "==============================================================");
-        vtkDebugMacro (<< "Returned from RequestSceneDownload() method. Entire scene download took: " << timeLength << ".");
-        vtkDebugMacro ( "==============================================================");      
-        }
-      catch( itk::ExceptionObject  )
-        {
-        vtkErrorMacro ( "Unable to set up time profiling" );
-        throw;    
-        }
-      // TIME TEST END
-      this->DebugOff();
-      }
+    this->RequestSceneDownload ( uri );
     }
   else 
     {
@@ -3803,6 +3760,18 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
     return;
     }
 
+  //--- The scene may have a new interaction node which
+  //--- specifies a Mouse Mode -- but no InteractionModeChangedEvent
+  //--- will have been invoked for the GUI to capture.
+  //--- So we invoke the event here after the scene is finished loading.
+  if ( this->ApplicationLogic )
+    {
+    if ( this->ApplicationLogic->GetInteractionNode() )
+      {
+      this->ApplicationLogic->GetInteractionNode()->InvokeEvent (
+                                                                 vtkMRMLInteractionNode::InteractionModeChangedEvent );
+      }
+    }
 }
 
 
