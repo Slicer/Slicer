@@ -117,9 +117,9 @@ namespace itk
                typename TransformType::Pointer initialITKTransform = TransformType::New();
                initialITKTransform->SetIdentity();
 
-               if ( initializeTransformMode == "GeometryOn" )
+               if ( initializeTransformMode == "useGeometryAlign" )
                  {
-                 // GeometryOn assumes objects are center in field of view, with different
+                 // useGeometryAlign assumes objects are center in field of view, with different
                  // physical extents to the fields of view
                  typedef itk::CenteredTransformInitializer<TransformType, FixedVolumeType,
                          MovingVolumeType> OrdinaryInitializerType;
@@ -132,7 +132,7 @@ namespace itk
                  CenteredInitializer->GeometryOn(); // Use the image spce center
                  CenteredInitializer->InitializeTransform();
                  }
-               else if ( initializeTransformMode == "CenterOfHead" )
+               else if ( initializeTransformMode == "useCenterOfHeadAlign" )
                  {
                  typedef typename itk::ImageMaskSpatialObject<FixedVolumeType::ImageDimension> ImageMaskSpatialObjectType;
                  typedef itk::Image<unsigned char, 3> MaskImageType;
@@ -217,10 +217,6 @@ namespace itk
                fixedMask=p;
                }
 #endif
-
-             //HACK:
-             std::cout << "MOVING HEAD SIZE: " << movingFindCenter->GetHeadSizeEstimate() << std::endl;
-             std::cout << "FIXED  HEAD SIZE: " <<  fixedFindCenter->GetHeadSizeEstimate() << std::endl;
 
              const double movingHeadScaleGuessRatio= 1;//fixedFindCenter->GetHeadSizeEstimate()/ movingFindCenter->GetHeadSizeEstimate();
 
@@ -436,9 +432,9 @@ namespace itk
 #endif
              AssignRigid::AssignConvertedTransform(initialITKTransform,quickSetVersor.GetPointer() );
                  }
-               else if ( initializeTransformMode == "MomentsOn" )
+               else if ( initializeTransformMode == "useMomentsAlign" )
                  {
-                 // MomentsOn assumes that the structures being registered have same amount
+                 // useMomentsAlign assumes that the structures being registered have same amount
                  // of mass approximately uniformly distributed.
                  typename SpecificInitializerType::Pointer CenteredInitializer
                    = SpecificInitializerType::New();
@@ -501,9 +497,9 @@ namespace itk
     m_SplineGridSize[1]=10;
     m_SplineGridSize[2]=12;
     m_MaxBSplineDisplacement=0.0,
-      m_CostFunctionConvergenceFactor = 1e+9,
-      m_ProjectedGradientTolerance = 1e-5,
-      m_ActualNumberOfIterations=0;
+    m_CostFunctionConvergenceFactor = 1e+9,
+    m_ProjectedGradientTolerance = 1e-5,
+    m_ActualNumberOfIterations=0;
     m_PermittedNumberOfIterations=0;
     //m_AccumulatedNumberOfIterationsForAllLevels=0;
     m_DebugLevel=0;
@@ -584,6 +580,37 @@ namespace itk
         std::cout << std::flush << std::endl;
         }
 
+      //Initialize Transforms
+      if ( localInitializeTransformMode != "Off" )
+        // Use CenteredVersorTranformInitializer
+        {
+        typedef VersorRigid3DTransformType           TransformType;
+        std::cout << "Initializing transform with " << localInitializeTransformMode << std::endl;
+        typedef itk::CenteredVersorTransformInitializer<FixedVolumeType,
+                MovingVolumeType> InitializerType;
+
+        TransformType::Pointer initialITKTransform =
+          DoCenteredInitialization<FixedVolumeType, MovingVolumeType,
+          TransformType, InitializerType>(
+            m_FixedVolume,
+            m_PreprocessedMovingVolume,
+            m_FixedBinaryVolume,
+            m_MovingBinaryVolume,
+            this->m_NumberOfHistogramBins,
+            this->m_NumberOfSamples,
+            localInitializeTransformMode);
+        m_CurrentGenericTransform=initialITKTransform.GetPointer();
+        localInitializeTransformMode = "Off";//Now reset to Off once initialization is done.
+
+        //Now if necessary clip the images based on m_MaskInferiorCutOffFromCenter
+        DoCenteredTransformMaskClipping<TransformType,
+          FixedVolumeType::ImageDimension>(
+            m_FixedBinaryVolume,
+            m_MovingBinaryVolume,
+            initialITKTransform,
+            m_MaskInferiorCutOffFromCenter);
+        }
+
       for ( unsigned int currentTransformIndex = 0; currentTransformIndex < m_TransformType.size(); currentTransformIndex++ )
         {
         //m_AccumulatedNumberOfIterationsForAllLevels += localNumberOfIterations[currentTransformIndex];
@@ -609,31 +636,7 @@ namespace itk
           //
           TransformType::Pointer initialITKTransform = TransformType::New();
           initialITKTransform->SetIdentity();
-
-          if ( localInitializeTransformMode != "Off" )
-            // Use CenteredVersorTranformInitializer
-            {
-            std::cout << "Initializing transform " << currentTransformType << " with " << localInitializeTransformMode << std::endl;
-            typedef itk::CenteredVersorTransformInitializer<FixedVolumeType,
-                    MovingVolumeType> InitializerType;
-            initialITKTransform
-              = DoCenteredInitialization<FixedVolumeType, MovingVolumeType,
-              TransformType, InitializerType>(
-                m_FixedVolume,
-                m_PreprocessedMovingVolume,
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                this->m_NumberOfHistogramBins,
-                this->m_NumberOfSamples,
-                localInitializeTransformMode);
-            DoCenteredTransformMaskClipping<TransformType,
-              FixedVolumeType::ImageDimension>(
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                initialITKTransform,
-                m_MaskInferiorCutOffFromCenter);
-            }
-          else if ( m_CurrentGenericTransform.IsNotNull() )
+            if ( m_CurrentGenericTransform.IsNotNull() )
             {
             try
               {
@@ -688,33 +691,7 @@ namespace itk
           //
           TransformType::Pointer initialITKTransform = TransformType::New();
           initialITKTransform->SetIdentity();
-
-          if ( localInitializeTransformMode != "Off" )     // Use
-            // CenteredVersorTranformInitializer
-            {
-            std::cout << "Initializing transform " << currentTransformType << " with " << localInitializeTransformMode << std::endl;
-            typedef itk::CenteredVersorTransformInitializer<FixedVolumeType,
-                    MovingVolumeType> InitializerType;
-            VersorRigid3DTransformType::Pointer tempVersorITKTransform
-              = DoCenteredInitialization<FixedVolumeType, MovingVolumeType,
-              VersorRigid3DTransformType, InitializerType>(
-                m_FixedVolume,
-                m_PreprocessedMovingVolume,
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                this->m_NumberOfHistogramBins,
-                this->m_NumberOfSamples,
-                localInitializeTransformMode);
-            AssignRigid::AssignConvertedTransform(initialITKTransform,
-              tempVersorITKTransform.GetPointer() );
-            DoCenteredTransformMaskClipping<TransformType,
-              FixedVolumeType::ImageDimension>(
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                initialITKTransform,
-                m_MaskInferiorCutOffFromCenter);
-            }
-          else if ( m_CurrentGenericTransform.IsNotNull() )
+            if ( m_CurrentGenericTransform.IsNotNull() )
             {
             try
               {
@@ -778,33 +755,7 @@ namespace itk
           //
           TransformType::Pointer initialITKTransform = TransformType::New();
           initialITKTransform->SetIdentity();
-
-          if ( localInitializeTransformMode != "Off" )     // Use
-            // CenteredVersorTranformInitializer
-            {
-            std::cout << "Initializing transform " << currentTransformType << " with " << localInitializeTransformMode << std::endl;
-            typedef itk::CenteredVersorTransformInitializer<FixedVolumeType,
-                    MovingVolumeType> InitializerType;
-            VersorRigid3DTransformType::Pointer tempVersorITKTransform
-              = DoCenteredInitialization<FixedVolumeType, MovingVolumeType,
-              VersorRigid3DTransformType, InitializerType>(
-                m_FixedVolume,
-                m_PreprocessedMovingVolume,
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                this->m_NumberOfHistogramBins,
-                this->m_NumberOfSamples,
-                localInitializeTransformMode);
-            AssignRigid::AssignConvertedTransform(initialITKTransform,
-              tempVersorITKTransform.GetPointer() );
-            DoCenteredTransformMaskClipping<TransformType,
-              FixedVolumeType::ImageDimension>(
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                initialITKTransform,
-                m_MaskInferiorCutOffFromCenter);
-            }
-          else if ( m_CurrentGenericTransform.IsNotNull() )
+          if ( m_CurrentGenericTransform.IsNotNull() )
             {
             try
               {
@@ -875,33 +826,7 @@ namespace itk
           //
           TransformType::Pointer initialITKTransform = TransformType::New();
           initialITKTransform->SetIdentity();
-
-          if ( localInitializeTransformMode != "Off" )     // Use
-            //
-            // CenteredTranformInitializer
-            {
-            std::cout << "Initializing transform " << currentTransformType << " with " << localInitializeTransformMode << std::endl;
-            typedef itk::CenteredTransformInitializer<TransformType,
-                    FixedVolumeType,
-                    MovingVolumeType> InitializerType;
-            initialITKTransform
-              = DoCenteredInitialization<FixedVolumeType, MovingVolumeType,
-              TransformType, InitializerType>(
-                m_FixedVolume,
-                m_PreprocessedMovingVolume,
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                this->m_NumberOfHistogramBins,
-                this->m_NumberOfSamples,
-                localInitializeTransformMode);
-            DoCenteredTransformMaskClipping<TransformType,
-              FixedVolumeType::ImageDimension>(
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                initialITKTransform,
-                m_MaskInferiorCutOffFromCenter);
-            }
-          else if ( m_CurrentGenericTransform.IsNotNull() )
+          if ( m_CurrentGenericTransform.IsNotNull() )
             {
             try
               {
@@ -995,34 +920,7 @@ namespace itk
             transformInitializer->InitializeTransform();
             }
 
-
-          if ( localInitializeTransformMode != "Off" )     // Use
-            //
-            // CenteredTranformInitializer
-            {
-            std::cout << "Initializing transform " << currentTransformType << " with " << localInitializeTransformMode << std::endl;
-            typedef itk::CenteredTransformInitializer<AffineTransformType,
-                    FixedVolumeType,
-                    MovingVolumeType> InitializerType;
-            bulkAffineTransform
-              = DoCenteredInitialization<FixedVolumeType, MovingVolumeType,
-              AffineTransformType, InitializerType>(
-                m_FixedVolume,
-                m_PreprocessedMovingVolume,
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                this->m_NumberOfHistogramBins,
-                this->m_NumberOfSamples,
-                localInitializeTransformMode);
-            DoCenteredTransformMaskClipping<AffineTransformType,
-              FixedVolumeType::ImageDimension>(
-                m_FixedBinaryVolume,
-                m_MovingBinaryVolume,
-                bulkAffineTransform,
-                m_MaskInferiorCutOffFromCenter);
-            initialBSplineTransform->SetBulkTransform(   bulkAffineTransform   );
-            }
-          else if ( m_CurrentGenericTransform.IsNotNull() )
+          if ( m_CurrentGenericTransform.IsNotNull() )
             {
             try
               {
@@ -1416,7 +1314,19 @@ namespace itk
       oss  << "--projectedGradientTolerance " << this->m_ProjectedGradientTolerance << " \\" << std::endl;
       oss  << "--costFunctionConvergenceFactor " << this->m_CostFunctionConvergenceFactor << " \\" << std::endl;
       oss  << "--backgroundFillValue " << this->m_BackgroundFillValue  << "  \\" << std::endl;
-      oss  << "--initializeTransformMode " << this->m_InitializeTransformMode  << "  \\" << std::endl;
+      if(this->m_InitializeTransformMode == "useGeometryAlign")
+        {
+        oss  << "--useGeometryAlign \\" << std::endl;
+        }
+      else if(this->m_InitializeTransformMode == "useMomentsAlign")
+        {
+        oss  << "--useMomentsAlign \\" << std::endl;
+        }
+      else if(this->m_InitializeTransformMode == "useCenterOfHeadAlign")
+        {
+        oss  << "--useCenterOfHeadAlign \\" << std::endl;
+        }
+      //NO LONGER VALID BRAINSFit oss  << "--initializeTransformMode " << this->m_InitializeTransformMode  << "  \\" << std::endl;
       oss  << "--maskInferiorCutOffFromCenter " << this->m_MaskInferiorCutOffFromCenter  << "  \\" << std::endl;
       oss  << "--splineGridSize " ;
       for(unsigned int q=0; q< this->m_SplineGridSize.size(); q++)

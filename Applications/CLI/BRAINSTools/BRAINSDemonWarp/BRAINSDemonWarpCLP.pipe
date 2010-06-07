@@ -144,13 +144,6 @@
                                         </fileTypes>
                                 </format>
                         </input>
-                        <input id="BRAINSDemonWarpCLP_0.forceCoronalZeroOrigin" name="forceCoronalZeroOrigin" description="Flag to indicate that all images being read in must have their spatial centers matched. (default: 0)&#xA;" enabled="false" required="false" order="27" switch="--forceCoronalZeroOrigin" switchSpaced="true">
-                                <format type="File" cardinality="0">
-                                        <fileTypes>
-                                                <filetype name="No input" extension="" description="" />
-                                        </fileTypes>
-                                </format>
-                        </input>
                         <input id="BRAINSDemonWarpCLP_0.checkerboardPatternSubdivisions" name="checkerboardPatternSubdivisions" description="Number of Checkerboard subdivisions in all 3 directions (default: 4,4,4)&#xA;" enabled="false" required="false" order="28" switch="--checkerboardPatternSubdivisions" switchSpaced="true">
                                 <format type="String" cardinality="1" />
                         </input>
@@ -170,16 +163,6 @@
                         </output>
                         <input id="BRAINSDemonWarpCLP_0.inputPixelType" name="inputPixelType" description="Input Volumes Pixel Type: float|uchar|short|ushort|int (default: float)&#xA;" enabled="false" required="false" order="31" switch="--inputPixelType" switchSpaced="true">
                                 <format type="Enumerated" cardinality="1">
-                                        <enumeration>float</enumeration>
-                                        <enumeration>uchar</enumeration>
-                                        <enumeration>short</enumeration>
-                                        <enumeration>ushort</enumeration>
-                                        <enumeration>int</enumeration>
-                                </format>
-                        </input>
-                        <input id="BRAINSDemonWarpCLP_0.outputPixelType" name="outputPixelType" description="Output Volume Pixel Type: float|uchar|short|ushort|int (default: CopyInputPixelType)" enabled="false" required="false" order="32" switch="--outputPixelType" switchSpaced="true">
-                                <format type="Enumerated" cardinality="1">
-                                        <enumeration>CopyInputPixelType</enumeration>
                                         <enumeration>float</enumeration>
                                         <enumeration>uchar</enumeration>
                                         <enumeration>short</enumeration>

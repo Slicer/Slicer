@@ -41,7 +41,6 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     command.outputPixelType = outputPixelType;
     command.outputDisplacementFieldPrefix = outputDisplacementFieldPrefix;
     command.outputCheckerboardVolume = outputCheckerboardVolume;
-    command.forceCoronalZeroOrigin = forceCoronalZeroOrigin;
     command.outputNormalized = outputNormalized;
     command.outputDebug = outputDebug;
     command.maskProcessingMode = maskProcessingMode;
@@ -50,10 +49,12 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     command.lowerThresholdForBOBF = lowerThresholdForBOBF;
     command.upperThresholdForBOBF = upperThresholdForBOBF;
     command.backgroundFillValue = backgroundFillValue;
-    command.movingLandmarks = movingLandmarks;
-    command.fixedLandmarks = fixedLandmarks;
+    //Not yet implemented.
+    //command.forceCoronalZeroOrigin = forceCoronalZeroOrigin;
+//    command.movingLandmarks = movingLandmarks;
+//    command.fixedLandmarks = fixedLandmarks;
+//    command.initializeWithFourier = initializeWithFourier;
     command.initializeWithDeformationField = initializeWithDeformationField;
-    command.initializeWithFourier = initializeWithFourier;
     command.initializeWithTransform = initializeWithTransform;
 
     command.histogramMatch = histogramMatch;
@@ -88,12 +89,8 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
       command.neighborhoodForBOBF[i] = neighborhoodForBOBF[i];
       command.medianFilterSize[i] = medianFilterSize[i];
       }
-
-    if ( outputPixelType == "CopyInputPixelType" )
-      {
-      command.outputPixelType = inputPixelType;
-      }
     }
+
   //  bool debug=true;
   if ( command.outputDebug )
     {
@@ -138,12 +135,14 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
       << std::endl
       << "               medianFilterSize: " << command.medianFilterSize
       << std::endl
+/** NOT YET IMPLEMENTED
       << "        movingLandmarks: " << command.movingLandmarks << std::endl
       << "         fixedLandmarks: " << command.fixedLandmarks << std::endl
-      << "  initializeWithDeformationField: "
-      << command.initializeWithDeformationField  << std::endl
       << "     initializeWithFourier: " << command.initializeWithFourier
       << std::endl
+*/
+      << "  initializeWithDeformationField: "
+      << command.initializeWithDeformationField  << std::endl
       << "       initializeWithTransform: "
       << command.initializeWithTransform << std::endl
       << "                    gradientType: " << command.gradientType

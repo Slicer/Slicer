@@ -213,15 +213,16 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     {
     itk::MultiThreader::SetGlobalMaximumNumberOfThreads(debugNumberOfThreads);
     }
-  std::string localInitializeTransformMode=initializeTransformMode;
-  if ( ( localInitializeTransformMode != "Off" ) && ( initialTransform.size() > 0 ) )
+  std::string localInitializeTransformMode="Off";
+  if( ( ( initialTransform.size() > 0 ) + (useCenterOfHeadAlign == true) + (useGeometryAlign == true) + (useMomentsAlign == true) ) > 1 )
     {
-    std::cout
-      << "WARNING: Setting localInitializeTransformMode to Off because initialTransform is specified. You can silence this message by specifying --localInitializeTransformMode Off on the command line when using an explicit initialTransform."
-      << std::endl;
-    localInitializeTransformMode="Off";
+    std::cout << "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign ]" << std::endl;
     }
-  std::vector<int> zeroOrigin(3, 0);
+  if( useCenterOfHeadAlign == true) { localInitializeTransformMode="useCenterOfHeadAlign"; }
+  if( useGeometryAlign == true)     { localInitializeTransformMode="useGeometryAlign"; }
+  if( useMomentsAlign == true)      { localInitializeTransformMode="useMomentsAlign"; }
+
+  //std::vector<int> zeroOrigin(3, 0);
 
   //Verify that the spline grid sizes are greater than 3
     {
@@ -237,38 +238,28 @@ int BRAINSFitPrimary( int argc, char *argv[] )
         }
       }
     }
-
-  //  const bool explicitOriginsFlag(fixedVolumeOriginArg.isSet() &&
-  //                                 movingVolumeOriginArg.isSet());
-  //
   std::vector<std::string> localTransformType;
-  if(registrationClass.size() != 0)
-    {
-    localTransformType.resize(5);
-    localTransformType[0]="Rigid";
-    localTransformType[1]="ScaleVersor3D";
-    localTransformType[2]="ScaleSkewVersor3D";
-    localTransformType[3]="Affine";
-    localTransformType[4]="BSpline";
-    //Now truncate at the right level;
-    if(registrationClass == "Rigid")                  { localTransformType.resize(1); }
-    else if(registrationClass == "ScaleVersor3D")     { localTransformType.resize(2); }
-    else if(registrationClass == "ScaleSkewVersor3D") { localTransformType.resize(3); }
-    else if(registrationClass == "Affine")            { localTransformType.resize(4); }
-    else if(registrationClass == "BSpline")           { localTransformType.resize(5); }
-    else
-      {
-      std::cerr << "Unrecognized registrationClass specified." << std::endl;
-      exit(-1);
-      }
-    }
+  //See if the individual boolean registration options are being used.  If any of these are set, then transformType is not used.
+   if( (useRigid == true) || (useScaleVersor3D == true) ||(useScaleSkewVersor3D == true ) || (useAffine == true) || (useBSpline == true ) )
+     {
+     localTransformType.resize(0);//Set to zero lenght;
+     if(useRigid == true)             { localTransformType.push_back("Rigid"); }
+     if(useScaleVersor3D == true)     { localTransformType.push_back("ScaleVersor3D"); }
+     if(useScaleSkewVersor3D == true) { localTransformType.push_back("ScaleSkewVersor3D"); }
+     if(useAffine == true)            { localTransformType.push_back("Affine"); }
+     if(useBSpline == true)           { localTransformType.push_back("BSpline"); }
+     }
   else if(transformType.size() > 0 )
     {
     localTransformType=transformType;
     }
+  else if( ( ( initialTransform.size() > 0 ) + (useCenterOfHeadAlign == true) + (useGeometryAlign == true) + (useMomentsAlign == true) ) > 0 )
+    {
+    //Only do the initialization phase;
+    }
   else
     {
-    std::cerr << "Required flag of registationClass or transformType must be set!" <<std::endl;
+    std::cerr << "ERROR: No registration phases specified to perform!" <<std::endl;
     exit(-1);
     }
 
@@ -281,21 +272,26 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     std::cout << "Error:  user can only specify one output transform type." << std::endl;
     exit(-1);
     }
-  if(linearTransform.size() > 0)
+  if(linearTransform.size() > 0 )
     {
     localOutputTransform=linearTransform;
-    if(localTransformType[localTransformType.size() -1 ] == "BSpline" )
+    if( ( localTransformType.size() > 0 ) && ( localTransformType[localTransformType.size() -1 ] == "BSpline" ) )
       {
       std::cout << "Error:  Linear transforms can not be used for BSpline registration!" << std::endl;
       exit(-1);
       }
     }
-  else if(bsplineTransform.size() > 0)
+  else if(bsplineTransform.size() > 0 )
     {
     localOutputTransform=bsplineTransform;
-    if(localTransformType[localTransformType.size() -1 ] != "BSpline" )
+    if(( localTransformType.size() > 0 ) && ( localTransformType[localTransformType.size() -1 ] != "BSpline" ) )
       {
       std::cout << "Error:  BSpline registrations require output transform to be of type BSpline!" << std::endl;
+      exit(-1);
+      }
+    else if ( localTransformType.size() == 0 )
+      {
+      std::cout << "Error:  Initializer only registrations require output transform to be of type Linear!" << std::endl;
       exit(-1);
       }
     }
@@ -318,7 +314,8 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     {
     if(numberOfIterations.size() != 1)
       {
-      std::cerr << "The numberOfIterations array must match the localTransformType length" <<std::endl;
+      std::cerr << "The numberOfIterations array must match the length of the transformType"
+                << "length, or have a single value that is used for all registration phases." <<std::endl;
       exit(-1);
       }
     else
@@ -505,8 +502,8 @@ int BRAINSFitPrimary( int argc, char *argv[] )
   itk::TransformFactory<AffineTransformType>::RegisterTransform();
   itk::TransformFactory<BSplineTransformType>::RegisterTransform();
 
+  //Note itk::ReadTransformFromDisk returns NULL if file name does not exist.
   GenericTransformType::Pointer currentGenericTransform=itk::ReadTransformFromDisk(initialTransform);
-
 
   FixedVolumeType::Pointer resampledImage;
   /*
@@ -517,7 +514,6 @@ int BRAINSFitPrimary( int argc, char *argv[] )
   int actualIterations = 0;
   int permittedIterations = 0;
   //int allLevelsIterations=0;
-
 
     {
     typedef itk::BRAINSFitHelper HelperType;
@@ -678,6 +674,7 @@ int BRAINSFitPrimary( int argc, char *argv[] )
       }
     }
 
+#if 0 //HACK:  This does not work properly when only an initializer transform is used, or if the final transform is BSpline.
   // GREG:  BRAINSFit currently does not determine if the registrations have not converged before reaching their maximum number of iterations.  Currently transforms are always written out, under the assumption that the registraiton converged.  We need to figure out how to determine if the registrations did not converge (i.e. maximum number of iterations were reached), and then not write out the transforms, unless explicitly demanded to write them out from a command line flag.
   // GREG:  We should write a test, and document what the expected behaviors are when a multi-level registration is requested (Rigid,ScaleSkew,Affine), and one of the first types does not converge.
   //HACK  This does not work properly until BSpline reports iterations correctly
@@ -690,17 +687,20 @@ int BRAINSFitPrimary( int argc, char *argv[] )
       return failureExitCode; // taken right off the command line.
       }
     }
+#endif
 
   /*const int write_status=*/
   itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
     localOutputTransform,strippedOutputTransform);
 
+#if 0 //HACK:  This does not work properly when only an initializer transform is used, or if the final transform is BSpline.
   if ( actualIterations + 1 >= permittedIterations )
     {
     std::cout << "actualIterations: " << actualIterations << std::endl;
     std::cout << "permittedIterations: " << permittedIterations << std::endl;
     return failureExitCode; // taken right off the command line.
     }
+#endif
 
   return 0;
 }

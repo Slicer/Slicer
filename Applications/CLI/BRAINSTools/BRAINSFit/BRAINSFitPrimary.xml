@@ -3,13 +3,13 @@
   <category>Registration</category>
   <title>BRAINSFit</title>
   <description>Uses the Mattes Mutual Registration algorithm to register a three-dimensional volume to a reference volume </description>
-  <documentation-url>http://www.nitrc.org/plugins/mwiki/index.php/multimodereg:MainPage</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:BRAINSFit</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>Hans J. Johnson, hans-johnson -at- uiowa.edu, http://wwww.psychiatry.uiowa.edu</contributor>
   <acknowledgements>Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vincent Magnotta(1,2,3);  Andriy Fedorov(5), fedorov -at- bwh.harvard.edu (Slicer integration); (1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Radiology, 3=University of Iowa Department of Biomedical Engineering, 4=University of Iowa Department of Electrical and Computer Engineering, 5=Surgical Planning Lab, Harvard)  </acknowledgements>
   <version>3.0.0</version>
   <parameters advanced="false">
-    <label>Required Input Parameters</label>
+    <label>Input Parameters</label>
 
     <image>
       <name>fixedVolume</name>
@@ -29,27 +29,112 @@
       <channel>input</channel>
     </image>
 
+    <!--
+    <string-enumeration>
+      <name>initializeTransformMode</name>
+      <longflag>initializeTransformMode</longflag>
+      <label>Intitialze Transform Mode</label>
+      <description>Determine how to initialize the transform center.  GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsAlign assumes that the center of mass of the images represent similar structures.  useCenterOfHeadAlign attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
+      <default>useGeometryAlign</default>
+      <element>Off</element>
+      <element>useMomentsAlign</element>
+      <element>useCenterOfHeadAlign</element>
+      <element>useGeometryAlign</element>
+    </string-enumeration>
+    -->
+
+  </parameters>
+  <!-- -->
+  <parameters>
+    <label>Registration phases to use</label>
+
+    <transform fileExtensions=".mat">
+      <name>initialTransform</name>
+      <longflag>initialTransform</longflag>
+      <label>Initialize with previously generated transform</label>
+      <description>Filename of transform used to initialize the registration.  This CAN NOT be used with either CenterOfHeadLAlign, MomentsAlign, GeometryAlign, or initialTransform file.</description>
+      <channel>input</channel>
+    </transform>
+    <boolean>
+       <name>useMomentsAlign</name>
+       <longflag>useMomentsAlign</longflag>
+       <label>Initialize with MomentsAlign registration phase</label>
+       <description>MomentsAlign assumes that the center of mass of the images represent similar structures.  Perform a MomentsAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either CenterOfHeadLAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useGeometryAlign</name>
+       <longflag>useGeometryAlign</longflag>
+       <label>Initialize with GeometryCenterAlign registration phase</label>
+       <description>GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures. Perform a GeometryCenterAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, CenterOfHeadAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useCenterOfHeadAlign</name>
+       <longflag>useCenterOfHeadAlign</longflag>
+       <label>Initialize with CenterOfHeadAlign registration phase</label>
+       <description>CenterOfHeadAlign attempts to find a hemisphere full of foreground voxels from the superior direction as an estimate of where the center of a head shape would be to drive a center of mass estimate.  Perform a CenterOfHeadAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useRigid</name>
+       <longflag>useRigid</longflag>
+       <label>Include Rigid registration phase</label>
+       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useScaleVersor3D</name>
+       <longflag>useScaleVersor3D</longflag>
+       <label>Include ScaleVersor3D registration phase</label>
+       <description>Perform a ScaleVersor3D registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useScaleSkewVersor3D</name>
+       <longflag>useScaleSkewVersor3D</longflag>
+       <label>Include ScaleSkewVersor3D registration phase</label>
+       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useAffine</name>
+       <longflag>useAffine</longflag>
+       <label>Include Affine registration phase</label>
+       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useBSpline</name>
+       <longflag>useBSpline</longflag>
+       <label>Include BSpline registration phase</label>
+       <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
+       <default>false</default>
+    </boolean>
+    <!--
     <string-enumeration>
       <name>registrationClass</name>
       <longflag>registrationClass</longflag>
       <label>Class of Registration</label>
-      <description>Specifies one of the five supported transform types.  The valid types are, Rigid, ScaleVersor3D, ScaleSkewVersor3D, Affine, and BSpline.  Note that registration proceeds from the lowest parameter dimension upto the parameter type choosen.  Selecting BSpline for registrationClass has the same effect as setting transformType to "Rigid,ScaleVersor3D,ScaleSkewVersor3D,Affine,BSpline".</description>
-      <default></default>
-      <element>Rigid</element>
-      <element>ScaleVersor3D</element>
-      <element>ScaleSkewVersor3D</element>
-      <element>Affine</element>
-      <element>BSpline</element>
+      <description>Specifies one of the five supported transform types.  The valid types are, (R)Rigid, (R+S)ScaleVersor3D, (R+S+S)ScaleSkewVersor3D, (A)Affine, (BS)BSpline, (O)ther.  Note that registration proceeds from the lowest parameter dimension upto the parameter type choosen.  Selecting BS for registrationClass has the same effect as setting transformType to "Rigid,ScaleVersor3D,ScaleSkewVersor3D,Affine,BSpline".  Set to (O)ther when using the more flexible Transform Type flag under Registration Parameters settings.</description>
+      <default>O</default>
+      <element>R</element>
+      <element>R+S</element>
+      <element>R+S+S</element>
+      <element>A</element>
+      <element>BS</element>
+      <element>O</element>
     </string-enumeration>
+  -->
   </parameters>
 
   <parameters advanced="false">
-    <label>Output Settings</label>
+    <label>Output Settings (At least one output must be specified.)</label>
     <transform fileExtensions=".mat" type="bspline" reference="movingVolume">
       <name>bsplineTransform</name>
       <longflag>bsplineTransform</longflag>
       <label>Slicer BSpline Transform</label>
-      <description>Filename to which save the (optional) estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS BSpline</description>
+      <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS BSpline</description>
       <channel>output</channel>
     </transform>
 
@@ -57,52 +142,43 @@
       <name>linearTransform</name>
       <longflag>linearTransform</longflag>
       <label>Slicer Linear Transform</label>
-      <description>Filename to which save the (optional) estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS ---NOT--- BSpline</description>
+      <description>(optional) Filename to which save the estimated transform. NOTE: You must set at least one output object (either a deformed image or a transform.  NOTE: USE THIS ONLY IF THE FINAL TRANSFORM IS ---NOT--- BSpline</description>
       <channel>output</channel>
     </transform>
+
+    <transform fileExtensions=".mat" reference="movingVolume">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <label>Output Transform</label>
+      <description>(optional) Filename to which save the (optional) estimated transform. NOTE: You must select either the outputTransform or the outputVolume option.</description>
+      <channel>output</channel>
+    </transform>
+
 
     <image>
       <name>outputVolume</name>
       <longflag>outputVolume</longflag>
       <label>Output Image Volume</label>
-      <description>The (optional) output image for registration. NOTE: You must select either the outputTransform or the outputVolume option.</description>
+      <description>(optional) Output image for registration. NOTE: You must select either the outputTransform or the outputVolume option.</description>
       <channel>output</channel>
       <default></default>
     </image>
- </parameters>
-  <!-- -->
-  <parameters advanced="true">
-    <label>Transform Initialization Parameters</label>
-    <transform fileExtensions=".mat" reference="movingVolume">
-      <name>outputTransform</name>
-      <longflag>outputTransform</longflag>
-      <label>Output Transform</label>
-      <description>Filename to which save the (optional) estimated transform. NOTE: You must select either the outputTransform or the outputVolume option.</description>
-      <channel>output</channel>
-    </transform>
-
 
     <string-enumeration>
-      <name>initializeTransformMode</name>
-      <longflag>initializeTransformMode</longflag>
-      <label>Intitialze Transform Mode</label>
-      <description>Determine how to initialize the transform center.  GeometryOn on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsOn assumes that the center of mass of the images represent similar structures.  CenterOfHead attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
-      <default>GeometryOn</default>
-      <element>Off</element>
-      <element>MomentsOn</element>
-      <element>CenterOfHead</element>
-      <element>GeometryOn</element>
+      <name>outputVolumePixelType</name>
+      <longflag>outputVolumePixelType</longflag>
+      <label>Output Image Pixel Type</label>
+      <description>The output image Pixel Type is the scalar datatype for representation of the Output Volume.</description>
+      <default>float</default>
+      <element>float</element>
+      <element>short</element>
+      <element>ushort</element>
+      <element>int</element>
+      <element>uint</element>
+      <element>uchar</element>
     </string-enumeration>
 
-    <transform fileExtensions=".mat">
-      <name>initialTransform</name>
-      <longflag>initialTransform</longflag>
-      <label>Initial Transform</label>
-      <description>Filename of transform used to initialize the registration.</description>
-      <channel>input</channel>
-    </transform>
-
-  </parameters>
+ </parameters>
   <!-- -->
   <parameters advanced="true">
     <label>Registration Parameters</label>
@@ -112,7 +188,7 @@
       <longflag>transformType</longflag>
       <label>Transform Type</label>
       <description>Specifies a list of registration types to be used.  The valid types are, Rigid, ScaleVersor3D, ScaleSkewVersor3D, Affine, and BSpline.  Specifiying more than one in a comma separated list will initialize the next stage with the previous results. If registrationClass flag is used, it overrides this parameter setting.</description>
-      <default>Rigid</default>
+      <default></default>
     </string-vector>
 
 
@@ -191,24 +267,9 @@
       <name>strippedOutputTransform</name>
       <longflag>strippedOutputTransform</longflag>
       <label>Stripped Output Transform</label>
-      <description>File name for the rigid component of the estimated affine transform. Can be used to rigidly register the moving image to the fixed image.</description>
+      <description>File name for the rigid component of the estimated affine transform. Can be used to rigidly register the moving image to the fixed image. NOTE:  This value is overwritten if either bsplineTransform or linearTransform is set.</description>
       <channel>output</channel>
     </transform>
-
-
-    <string-enumeration>
-      <name>outputVolumePixelType</name>
-      <longflag>outputVolumePixelType</longflag>
-      <label>Output Image Pixel Type</label>
-      <description>The output image Pixel Type is the scalar datatype for representation of the Output Volume.</description>
-      <default>float</default>
-      <element>float</element>
-      <element>short</element>
-      <element>ushort</element>
-      <element>int</element>
-      <element>uint</element>
-      <element>uchar</element>
-    </string-enumeration>
 
     <double>
       <name>backgroundFillValue</name>
@@ -222,7 +283,7 @@
       <name>maskInferiorCutOffFromCenter</name>
       <longflag>maskInferiorCutOffFromCenter</longflag>
       <label>Inferior Cut Off From Center</label>
-      <description>For use with --initializeTransformMode CenterOfHead (and --maskProcessingMode ROIAUTO): the cut-off below the image centers, in millimeters, </description>
+      <description>For use with --useCenterOfHeadAlign (and --maskProcessingMode ROIAUTO): the cut-off below the image centers, in millimeters, </description>
       <default>1000.0</default>
     </double>
 
@@ -238,7 +299,7 @@
       <name>interpolationMode</name>
       <longflag>interpolationMode</longflag>
       <label>Interpolation Mode</label>
-      <description>Type of interpolation used</description>
+      <description>Type of interpolation to be used when applying transform to moving volume.  Options are Linear, NearestNeighbor, BSpline, or WindowedSinc</description>
       <default>Linear</default>
       <element>NearestNeighbor</element>
       <element>Linear</element>
@@ -468,7 +529,7 @@
       <description>A bit vector to permit linear transform parameters to vary under optimization.  The vector order corresponds with transform parameters, and beyond the end ones fill in as a default.  For instance, you can choose to rotate only in x (pitch) with 1,0,0;  this is mostly for expert use in turning on and off individual degrees of freedom in rotation, translation or scaling without multiplying the number of transform representations; this trick is probably meaningless when tried with the general affine transform.</description>
       <default></default>
     </integer-vector>
-
+<!-- //No longer in use
     <integer-vector>
       <name>fixedVolumeOrigin</name>
       <longflag>fixedVolumeOrigin</longflag>
@@ -484,6 +545,7 @@
       <description>The coordinates of the origin of the moving image.  This will over-ride the information read from disk and is VERY DANGEROUS.</description>
       <default>0,0,0</default>
     </integer-vector>
+    -->
 
   </parameters>
 

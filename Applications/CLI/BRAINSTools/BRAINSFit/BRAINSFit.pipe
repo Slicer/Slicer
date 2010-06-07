@@ -33,12 +33,12 @@
                                         <value />
                                 </values>
                         </input>
-                        <input id="BRAINSFit_1.initializeTransformMode" name="initializeTransformMode" description="Determine how to initialize the transform. GeometryOn on assumes that the center of the voxel lattice of the images represent similar structures. MomentsOn assumes that the center of mass of the images represent similar structures. Off assumes that the physical space of the images are close, and that an identity matrix initialization is a good starting point. This ﬂag is mutually exclusive with the initialTransform ﬂag. One of Off, MomentsOn, GeometryOn (default: Off)" enabled="false" required="false" order="26" switch="--initializeTransformMode" switchSpaced="true">
+                        <input id="BRAINSFit_1.initializeTransformMode" name="initializeTransformMode" description="Determine how to initialize the transform. useGeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures. useMomentsAlign assumes that the center of mass of the images represent similar structures. Off assumes that the physical space of the images are close, and that an identity matrix initialization is a good starting point. This ﬂag is mutually exclusive with the initialTransform ﬂag. One of Off, useMomentsAlign, useGeometryAlign (default: Off)" enabled="false" required="false" order="26" switch="--initializeTransformMode" switchSpaced="true">
                                 <format type="Enumerated" cardinality="1">
-                                        <enumeration>MomentsOn</enumeration>
-                                        <enumeration>GeometryOn</enumeration>
+                                        <enumeration>useMomentsAlign</enumeration>
+                                        <enumeration>useGeometryAlign</enumeration>
                                         <enumeration>Off</enumeration>
-                                        <enumeration>CenterOfHead</enumeration>
+                                        <enumeration>useCenterOfHeadAlign</enumeration>
                                 </format>
                                 <values>
                                         <value />
@@ -127,12 +127,6 @@
                         </input>
                         <input id="BRAINSFit_1.movingVolumeTimeIndex" name="movingVolumeTimeIndex" description="The index in the time series for the 3D moving image to fit, if 4-dimensional. (default: 0) " enabled="false" required="false" order="19" switch="--movingVolumeTimeIndex" switchSpaced="true">
                                 <format type="Number" cardinality="1" />
-                        </input>
-                        <input id="BRAINSFit_1.fixedVolumeOrigin" name="fixedVolumeOrigin" description="The coordinates of the origin of the fixed image. (default: 0,0,0)   Use commas (with no spaces) to separate multiple input values." enabled="false" required="false" order="18" switch="--fixedVolumeOrigin" switchSpaced="true">
-                                <format type="String" cardinality="1" />
-                        </input>
-                        <input id="BRAINSFit_1.movingVolumeOrigin" name="movingVolumeOrigin " description="The coordinates of the origin of the moving image. (default: 0,0,0)  Use commas (with no spaces) to separate multiple input values." enabled="false" required="false" order="17" switch="--movingVolumeOrigin" switchSpaced="true">
-                                <format type="String" cardinality="1" />
                         </input>
                         <input id="BRAINSFit_1.medianFilterSize" name="medianFilterSize " description="The radius for the optional MedianImageFilter preprocessing in all 3 directions. (default: 0,0,0)  Use commas (with no spaces) to separate multiple input values." enabled="false" required="false" order="8" switch="--medianFilterSize" switchSpaced="true">
                                 <format type="String" cardinality="1" />
@@ -228,7 +222,7 @@
                         <input id="BRAINSFit_1.explicitOrigins" name="explicitOrigins" description="Flag to use origins such as a hand-picked AC point for initial&#xA;alignment instead of the origins that came with the fixed and moving&#xA;images.  If --explicitOrigins is given and the origins are both 0,0,0,&#xA;then the resulting transform will be represented with respect to 0,0,0&#xA;and the fit will rotate about the image centroids. (default: 0)&#xA;" enabled="false" required="false" order="43" switch="--explicitOrigins" switchSpaced="true">
                                 <format type="Number" cardinality="1" />
                         </input>
-                        <input id="BRAINSFit_1.maskInferiorCutOffFromCenter" name="maskInferiorCutOffFromCenter" description="The cut-off below the image centers, in millimeters. For use with --initializeTransformMode CenterOfHead and --maskProcessingMode ROIAUTO. (default: 0)" enabled="false" required="false" order="45" switch="--maskInferiorCutOffFromCenter" switchSpaced="true">
+                        <input id="BRAINSFit_1.maskInferiorCutOffFromCenter" name="maskInferiorCutOffFromCenter" description="The cut-off below the image centers, in millimeters. For use with --initializeTransformMode useCenterOfHeadAlign and --maskProcessingMode ROIAUTO. (default: 0)" enabled="false" required="false" order="45" switch="--maskInferiorCutOffFromCenter" switchSpaced="true">
                                 <format type="Number" cardinality="1" />
                         </input>
                         <input id="BRAINSFit_1.outputMovingVolumeROI" name="outputMovingVolumeROI" description="The ROI automatically found in moving image." enabled="false" required="false" order="46" switch="--outputMovingVolumeROI" switchSpaced="true">

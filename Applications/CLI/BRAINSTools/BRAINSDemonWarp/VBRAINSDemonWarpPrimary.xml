@@ -4,16 +4,18 @@
   <title>BRAINSVectorDemonWarping</title>
 
   <description>
-    This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.
+    This program finds a deformation field to warp a moving image onto a fixed image.  The images must be of the same signal kind, and contain an image of the same kind of object.  This program uses the Thirion Demons warp software in ITK, the Insight Toolkit.  Additional information is available at: http://www.nitrc.org/projects/brainsdemonwarp.
+
   </description>
-  <version>1.0</version>
-  <documentation-url></documentation-url>
+  <version>3.0.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Modules:BRAINSDemonWarp</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
-  <contributor>This tool was developed by Hans Johnson, Greg Harris, and YongQaing Zhao.</contributor>
+  <contributor>This tool was developed by Hans J. Johnson and Greg Harris.</contributor>
+  <acknowledgements>The development of this tool was supported by funding from grants NS050568 and NS40068 from the National Institute of Neurological Disorders and Stroke and grants MH31593, MH40856, from the National Institute of Mental Health.  </acknowledgements>
 
   <parameters>
-    <label>Input Image Files</label>
-    <description>Parameters for specifying the Thirion registration image set</description>
+    <label>Inputs</label>
+    <description>Common input parameters.  All must be specified</description>
 
     <image multiple="true">
       <name>movingVolume</name>
@@ -28,20 +30,35 @@
       <name>fixedVolume</name>
       <flag>f</flag>
       <longflag alias="fixed_image">fixedVolume</longflag>
-      <description>Required: input fixed target image</description>
+      <description>Required: input fixed (target) image</description>
       <label>Fixed Image Volume</label>
       <channel>input</channel>
     </image>
+
+    <string-enumeration>
+      <name>inputPixelType</name>
+      <longflag>inputPixelType</longflag>
+      <description>Input volumes will be typecast to this format: float|short|ushort|int|uchar</description>
+      <label>Input Type</label>
+      <default>float</default>
+      <element>float</element>
+      <element>short</element>
+      <element>ushort</element>
+      <element>int</element>
+      <element>uchar</element>
+      <channel>input</channel>
+    </string-enumeration>
+
   </parameters>
 
   <parameters>
-    <label>Output Files</label>
-    <description>Output file in which to store tract lines</description>
+    <label>Outputs</label>
+    <description>Common output parameters.  At least one must be specified.</description>
     <image>
       <name>outputVolume</name>
       <flag>o</flag>
       <longflag alias="output_image">outputVolume</longflag>
-      <description>Required: output resampled moving image.</description>
+      <description>Required: output resampled moving image (will have the same physical space as the fixedVolume).</description>
       <label>Output Image Volume</label>
       <channel>output</channel>
     </image>
@@ -50,16 +67,42 @@
       <name>outputDeformationFieldVolume</name>
       <flag>O</flag>
       <longflag alias="output_field">outputDeformationFieldVolume</longflag>
-      <description>Required: output deformation field vector image.</description>
+      <description>Output deformation field vector image (will have the same physical space as the fixedVolume).</description>
       <label>Output Deformation Field Volume</label>
       <channel>output</channel>
     </transform>
 
+    <string-enumeration>
+      <name>outputPixelType</name>
+      <longflag>outputPixelType</longflag>
+      <description>outputVolume will be typecast to this format: float|short|ushort|int|uchar</description>
+      <label>Output Type</label>
+      <default>float</default>
+      <element>float</element>
+      <element>short</element>
+      <element>ushort</element>
+      <element>int</element>
+      <element>uchar</element>
+      <channel>input</channel>
+    </string-enumeration>
+
+  <string-enumeration>
+      <name>interpolationMode</name>
+      <longflag>interpolationMode</longflag>
+      <label>Interpolation Mode</label>
+      <description>Type of interpolation to be used when applying transform to moving volume.  Options are Linear, NearestNeighbor, BSpline, or WindowedSinc</description>
+      <default>Linear</default>
+      <element>NearestNeighbor</element>
+      <element>Linear</element>
+      <element>BSpline</element>
+      <element>WindowedSinc</element>
+    </string-enumeration>
   </parameters>
 
+
   <parameters>
-    <label>Thirion Registration Parameters</label>
-    <description>Input parameters controlling the Thirion Registation</description>
+    <label>Registration Parameters</label>
+    <description>Input parameters controlling the behavior of the demons registration.</description>
     <string-enumeration>
       <name>registrationFilterType</name>
       <longflag>registrationFilterType</longflag>
@@ -72,115 +115,138 @@
       <element>LogDemons</element>
       <element>SymmetricLogDemons</element>:
     </string-enumeration>
+
     <double>
       <name>smoothDeformationFieldSigma</name>
       <flag>s</flag>
       <longflag alias="def_field_sigma">smoothDeformationFieldSigma</longflag>
       <label>Deformation field smoothing sigma</label>
-      <description>A gaussian smoothing value to be applied to the deformation feild/</description>
+      <description>A gaussian smoothing value to be applied to the deformation feild at each iteration.</description>
       <default>1.0</default>
     </double>
 
+    <integer>
+      <name>numberOfPyramidLevels</name>
+      <flag>n</flag>
+      <longflag alias="num_levels">numberOfPyramidLevels</longflag>
+      <label>Pyramid Levels</label>
+      <description>Number of image pyramid levels to use in the multi-resolution registration.</description>
+      <default>5</default>
+    </integer>
+    <integer-vector>
+      <name>minimumFixedPyramid</name>
+      <longflag>minimumFixedPyramid</longflag>
+      <description>The shrink factor for the first level of the fixed image pyramid. (i.e. start at 1/16 scale, then 1/8, then 1/4, then 1/2, and finally full scale)</description>
+      <label>Moving Shrink Factors</label>
+      <default>16,16,16</default>
+    </integer-vector>
+    <integer-vector>
+      <name>minimumMovingPyramid</name>
+      <longflag>minimumMovingPyramid</longflag>
+      <label>Moving Shrink Factors</label>
+      <description>The shrink factor for the first level of the moving image pyramid. (i.e. start at 1/16 scale, then 1/8, then 1/4, then 1/2, and finally full scale)</description>
+      <default>16,16,16</default>
+    </integer-vector>
 
-    <string-enumeration>
-      <name>inputPixelType</name>
-      <longflag>inputPixelType</longflag>
-      <description>Input Volumes Pixel Type: float|uchar|short|ushort|int</description>
-      <label>Type Code for Input Volumes Pixel Type</label>
-      <default>float</default>
-      <element>float</element>
-      <element>uchar</element>
-      <element>short</element>
-      <element>ushort</element>
-      <element>int</element>
-      <channel>input</channel>
-    </string-enumeration>
-
-    <string-enumeration>
-      <name>outputPixelType</name>
-      <longflag>outputPixelType</longflag>
-      <description>Output Volume Pixel Type: float|uchar|short|ushort|int</description>
-      <label>Type Code for Output Volume Pixel Type</label>
-      <default>CopyInputPixelType</default>
-      <element>CopyInputPixelType</element>
-      <element>float</element>
-      <element>uchar</element>
-      <element>short</element>
-      <element>ushort</element>
-      <element>int</element>
-      <channel>input</channel>
-    </string-enumeration>
-
-  <string-enumeration>
-      <name>interpolationMode</name>
-      <longflag>interpolationMode</longflag>
-      <label>Interpolation Mode</label>
-      <description>Type of interpolation used</description>
-      <default>Linear</default>
-      <element>NearestNeighbor</element>
-      <element>Linear</element>
-      <element>BSpline</element>
-      <element>WindowedSinc</element>
-    </string-enumeration>
+    <integer-vector>
+      <name>arrayOfPyramidLevelIterations</name>
+      <flag>i</flag>
+      <longflag alias="number_iterations">arrayOfPyramidLevelIterations</longflag>
+      <description>The number of iterations for each pyramid level</description>
+      <label>the iteration count for each pyramid level</label>
+      <default>100,100,100</default>
+    </integer-vector>
   </parameters>
 
   <parameters advanced="true">
-  <label> Advanced Options </label>
-  <description> Uncommon debugging or other advanced options. </description>
-    <string>
-      <name>outputDisplacementFieldPrefix</name>
-      <longflag>outputDisplacementFieldPrefix</longflag>
-      <description>Displacement Field filename prefix for x y and z component images</description>
-      <label>Displacement Field Prefix</label>
-      <channel>input</channel>
-      <default>none</default>
-    </string>
+  <label> Input image pre-processing options </label>
+  <description> Operations to perform on the images before starting the registration. </description>
+    <boolean>
+       <name>histogramMatch</name>
+       <flag>e</flag>
+       <longflag alias="use_histogram_matching">histogramMatch</longflag>
+       <description>Histogram Match the input images.  This is suitable for images of the same modality that may have different absolute scales, but the same overall intensity profile.</description>
+       <label>Histogram Match</label>
+       <default>false</default>
+    </boolean>
+    <integer>
+      <name>numberOfHistogramBins</name>
+      <longflag>numberOfHistogramBins</longflag>
+      <description>The number of histogram levels</description>
+      <label>Number of histogram bins to use in histogramMatch</label>
+      <default>256</default>
+    </integer>
 
-    <image>
-      <name>outputCheckerboardVolume</name>
-      <longflag>outputCheckerboardVolume</longflag>
-      <description>Checkerboard image volume</description>
-      <label>Output Checkerboard Volume</label>
-      <channel>output</channel>
-    </image>
+    <integer>
+      <name>numberOfMatchPoints</name>
+      <longflag>numberOfMatchPoints</longflag>
+      <description>The number of match points for histrogramMatch</description>
+      <label>Number of Match Points</label>
+      <default>2</default>
+    </integer>
 
     <integer-vector>
-      <name>checkerboardPatternSubdivisions</name>
-      <longflag>checkerboardPatternSubdivisions</longflag>
-      <description>Number of Checkerboard subdivisions in all 3 directions</description>
-      <label>Checkerboard Pattern Subdivisions</label>
-      <default>4,4,4</default>
+      <name>medianFilterSize</name>
+      <longflag>medianFilterSize</longflag>
+      <label>Median Filter Size</label>
+      <description>Median filter radius in all 3 directions.  When images have a lot of salt and pepper noise, this step can improve the registration.</description>
+      <default>0,0,0</default>
       <channel>input</channel>
     </integer-vector>
 
-    <boolean>
-      <name>forceCoronalZeroOrigin</name>
-      <longflag>forceCoronalZeroOrigin</longflag>
-      <description>Flag to indicate that all images being read in must have their spatial centers matched.</description>
-      <label>Center Volumes</label>
-      <default>0</default>
-      <channel>input</channel>
-    </boolean>
+    </parameters>
 
-    <boolean>
-      <name>outputNormalized</name>
-      <longflag>outputNormalized</longflag>
-      <description>Flag to warp and write the normalized images to output.  In normalized images the image values are fit-scaled to be between 0 and 1</description>
-      <label>Warp Normalized Images</label>
-      <default>1</default>
-      <channel>input</channel>
-    </boolean>
+  <parameters advanced="true">
+  <label> Deformation field initialziation </label>
+  <description> Options for initializing the deformation field. </description>
 
-    <boolean>
-      <name>outputDebug</name>
-      <flag>v</flag>
-      <longflag>outputDebug</longflag>
-      <description>Flag to write the images after each step</description>
-      <label>Write Intermediate Images</label>
-      <default>0</default>
+    <transform fileExtensions=".nrrd" type="nonlinear">
+      <name>initializeWithDeformationField</name>
+      <longflag>initializeWithDeformationField</longflag>
+      <description>Initial deformation field vector image file name</description>
+      <label>Initial Deformation Field Volume</label>
       <channel>input</channel>
-    </boolean>
+    </transform>
 
+<!--
+    <file>
+      <name>movingLandmarks</name>
+      <longflag>movingLandmarks</longflag>
+      <description>Landmarks filename for moving image to initialize deformation field</description>
+      <label>Moving Landmarks Filename</label>
+      <channel>input</channel>
+    </file>
+
+    <file>
+      <name>fixedLandmarks</name>
+      <longflag>fixedLandmarks</longflag>
+      <description>Landmarks filename for fixed (target) image to initialize deformation field</description>
+      <label>Fixed Landmarks Filename</label>
+      <channel>input</channel>
+    </file>
+
+    <transform fileExtensions=".coeff" type="nonlinear">
+      <name>initializeWithFourier</name>
+      <longflag>initializeWithFourier</longflag>
+      <description>Initial Coefficient filename.</description>
+      <label>Initial Coefficient Filename</label>
+      <channel>input</channel>
+    </transform>
+    -->
+
+    <transform fileExtensions=".mat">
+      <name>initializeWithTransform</name>
+      <longflag>initializeWithTransform</longflag>
+      <description>Initial Transform filename</description>
+      <label>Initial Transform  Filename</label>
+      <channel>input</channel>
+    </transform>
+  </parameters>
+
+  <parameters advanced="true">
+  <label> Mask Options </label>
+  <description> Options for setting binary masks for the registration. </description>
+  <!-- This should really be maskProcessingMode -->
     <boolean>
       <name>makeBOBF</name>
       <longflag>makeBOBF</longflag>
@@ -190,21 +256,21 @@
       <channel>input</channel>
     </boolean>
 
-    <file>
+    <image type="label">
       <name>fixedBinaryVolume</name>
       <longflag>fixedBinaryVolume</longflag>
       <description>Mask filename for desired region of interest in the Fixed image.</description>
       <label>Input Fixed Mask Filename</label>
       <channel>input</channel>
-    </file>
+    </image>
 
-    <file>
+    <image type="label">
       <name>movingBinaryVolume</name>
       <longflag>movingBinaryVolume</longflag>
       <description>Mask filename for desired region of interest in the Moving image.</description>
       <label>Input Moving Mask Filename</label>
       <channel>input</channel>
-    </file>
+    </image>
 
     <integer>
       <name>lowerThresholdForBOBF</name>
@@ -251,14 +317,64 @@
       <channel>input</channel>
     </integer-vector>
 
+
+  </parameters>
+
+  <parameters advanced="true">
+  <label> Advanced Options </label>
+  <description> Uncommon debugging or other advanced options. </description>
+    <string>
+      <name>outputDisplacementFieldPrefix</name>
+      <longflag>outputDisplacementFieldPrefix</longflag>
+      <label>Component displacement field prefix</label>
+      <description>Displacement field filename prefix for writing separate x, y, and z component images</description>
+      <channel>output</channel>
+      <default>none</default>
+    </string>
+
+    <image>
+      <name>outputCheckerboardVolume</name>
+      <longflag>outputCheckerboardVolume</longflag>
+      <description>Genete a checkerboard image volume between the fixedVolume and the deformed movingVolume.</description>
+      <label>Output Checkerboard Volume</label>
+      <channel>output</channel>
+    </image>
+
     <integer-vector>
-      <name>medianFilterSize</name>
-      <longflag>medianFilterSize</longflag>
-      <description>Median filter radius in all 3 directions</description>
-      <label>Median Filter Size</label>
-      <default>0,0,0</default>
-      <channel>input</channel>
+      <name>checkerboardPatternSubdivisions</name>
+      <longflag>checkerboardPatternSubdivisions</longflag>
+      <description>Number of Checkerboard subdivisions in all 3 directions</description>
+      <label>Checkerboard Pattern Subdivisions</label>
+      <default>4,4,4</default>
     </integer-vector>
+
+<!-- This flag should be removed
+    <boolean>
+      <name>forceCoronalZeroOrigin</name>
+      <longflag>forceCoronalZeroOrigin</longflag>
+      <description>Flag to indicate that all images being read in must have their spatial centers matched.</description>
+      <label>Center Volumes</label>
+      <default>0</default>
+      <channel>input</channel>
+    </boolean>
+    -->
+
+    <boolean>
+      <name>outputNormalized</name>
+      <longflag>outputNormalized</longflag>
+      <description>Flag to warp and write the normalized images to output.  In normalized images the image values are fit-scaled to be between 0 and the maximum storage type value.</description>
+      <label>Warp Normalized Images</label>
+      <default>1</default>
+    </boolean>
+
+    <boolean>
+      <name>outputDebug</name>
+      <flag>v</flag>
+      <longflag>outputDebug</longflag>
+      <description>Flag to write debugging images after each step.</description>
+      <label>Write Intermediate Images</label>
+      <default>0</default>
+    </boolean>
 
     <float-vector>
       <name>weightFactors</name>
@@ -270,90 +386,7 @@
       <channel>input</channel>
     </float-vector>
 
-    <file>
-      <name>movingLandmarks</name>
-      <longflag>movingLandmarks</longflag>
-      <description>Landmarks filename for moving image to initialize deformation field</description>
-      <label>Moving Landmarks Filename</label>
-      <channel>input</channel>
-    </file>
 
-    <file>
-      <name>fixedLandmarks</name>
-      <longflag>fixedLandmarks</longflag>
-      <description>Landmarks filename for fixed (target) image to initialize deformation field</description>
-      <label>Fixed Landmarks Filename</label>
-      <channel>input</channel>
-    </file>
-
-    <transform fileExtensions=".nrrd" type="nonlinear">
-      <name>initializeWithDeformationField</name>
-      <longflag>initializeWithDeformationField</longflag>
-      <description>Initial deformation field vector image file name</description>
-      <label>Initial Deformation Field Volume</label>
-      <channel>input</channel>
-    </transform>
-
-
-    <file>
-      <name>initializeWithFourier</name>
-      <longflag>initializeWithFourier</longflag>
-      <description>Initial Coefficient filename.</description>
-      <label>Initial Coefficient Filename</label>
-      <channel>input</channel>
-    </file>
-
-    <transform fileExtensions=".mat">
-      <name>initializeWithTransform</name>
-      <longflag>initializeWithTransform</longflag>
-      <description>Initial Transform filename</description>
-      <label>Initial Transform  Filename</label>
-      <channel>input</channel>
-    </transform>
-    <integer>
-      <name>numberOfHistogramBins</name>
-      <longflag>numberOfHistogramBins</longflag>
-      <description>the number of histogram levels</description>
-      <label>Number of Histogram Bins</label>
-      <default>256</default>
-    </integer>
-    <integer>
-      <name>numberOfMatchPoints</name>
-      <longflag>numberOfMatchPoints</longflag>
-      <description>the number of match points</description>
-      <label>Number of Match Points</label>
-      <default>2</default>
-    </integer>
-    <integer>
-      <name>numberOfPyramidLevels</name>
-      <flag>n</flag>
-      <longflag alias="num_levels">numberOfPyramidLevels</longflag>
-      <description>the number of pyramid levels</description>
-      <label>Number of Pyramid Levels</label>
-      <default>3</default>
-    </integer>
-    <integer-vector>
-      <name>arrayOfPyramidLevelIterations</name>
-      <flag>i</flag>
-      <longflag alias="number_iterations">arrayOfPyramidLevelIterations</longflag>
-      <description>the iterations for each pyramid level</description>
-      <label>the iteration count for each pyramid level</label>
-      <default>100,100,100</default>
-    </integer-vector>
-    <integer-vector>
-      <name>minimumFixedPyramid</name>
-      <longflag>minimumFixedPyramid</longflag>
-      <description>the Shrink factor for the first level of the fixed image pyramid</description>
-      <label>Moving Shrink Factors</label>
-      <default>16,16,16</default>
-    </integer-vector>
-    <integer-vector>
-      <name>minimumMovingPyramid</name>
-      <longflag>minimumMovingPyramid</longflag>
-      <description>the Shrink factor for the first level of the moving image pyramid</description>
-      <label>Moving Shrink Factors</label>
-      <default>16,16,16</default>
-    </integer-vector>
     <integer-enumeration>
        <name>gradientType</name>
        <flag>t</flag>
@@ -381,14 +414,6 @@
        <label>Max Step Length</label>
        <default>2.0</default>
        </double>
-    <boolean>
-       <name>histogramMatch</name>
-       <flag>e</flag>
-       <longflag alias="use_histogram_matching">histogramMatch</longflag>
-       <description>Histogram Match the input images.  This is suitable for images of the same modality that may have different absolute scales, but the same overall intensity profile.</description>
-       <label>Histogram Match</label>
-       <default>false</default>
-    </boolean>
     <boolean>
        <name>turnOffDiffeomorph</name>
        <flag>a</flag>

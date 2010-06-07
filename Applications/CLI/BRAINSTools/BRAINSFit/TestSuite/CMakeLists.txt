@@ -95,7 +95,7 @@ endif()
     --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --transformType Affine
-    --initializeTransformMode MomentsOn
+    --useMomentsAlign
     --maskProcessingMode ROI
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/test.mask
@@ -144,7 +144,7 @@ endif()
     --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --transformType Affine
-    --initializeTransformMode MomentsOn
+    --useMomentsAlign
     --maskProcessingMode ROI
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/test.mask
@@ -170,7 +170,7 @@ endif()
     --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --transformType Affine
-    --initializeTransformMode MomentsOn
+    --useMomentsAlign
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/translation.test.nii.gz
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
@@ -195,7 +195,7 @@ endif()
     --minimumStepSize 0.01,0.003,0.001,0.001
     --outputVolumePixelType short
     --maskProcessingMode ROIAUTO
-    --initializeTransformMode CenterOfHead
+    --useCenterOfHeadAlign
     --transformType Rigid,ScaleVersor3D,Affine,BSpline
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.rescale.rigid.nii.gz
@@ -277,7 +277,7 @@ endif()
     --minimumStepSize 0.01,0.003,0.01
     --outputVolumePixelType short
     --maskProcessingMode ROIAUTO
-    --initializeTransformMode CenterOfHead
+    --useCenterOfHeadAlign
     --transformType Rigid,ScaleVersor3D,BSpline
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.rescale.rigid.nii.gz
@@ -306,7 +306,7 @@ endif()
     --minimumStepSize 0.01,0.003,0.01
     --outputVolumePixelType short
     --maskProcessingMode ROIAUTO
-    --initializeTransformMode CenterOfHead
+    --useCenterOfHeadAlign
     --transformType Rigid,ScaleVersor3D,BSpline
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.rescale.rigid.nii.gz
@@ -330,7 +330,7 @@ endif()
     --fixedVolumeTimeIndex 0 --movingVolumeTimeIndex 0
     --minimumStepSize 0.001 --numberOfSamples 100000 --numberOfIterations 1500
     --numberOfHistogramBins 200
-    --transformType Rigid --initializeTransformMode MomentsOn --translationScale 1000
+    --transformType Rigid --useMomentsAlign --translationScale 1000
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.mat
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     )
@@ -351,7 +351,7 @@ endif()
     --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --transformType Rigid
-    --initializeTransformMode MomentsOn
+    --useMomentsAlign
     --medianFilterSize 1,1,1
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.test.nii.gz
@@ -375,7 +375,7 @@ endif()
     --minimumStepSize 0.05,0.0050
     --outputVolumePixelType short
     --transformType Rigid,Rigid
-    --initializeTransformMode GeometryOn
+    --useGeometryAlign
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.geom.test.nii.gz
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
@@ -398,7 +398,7 @@ endif()
     --minimumStepSize 0.05,0.001,0.00075
     --outputVolumePixelType uchar
     --transformType Rigid,Rigid,Rigid
-    --initializeTransformMode CenterOfHead
+    --useCenterOfHeadAlign
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.test.nii.gz
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
@@ -445,7 +445,7 @@ endif()
     --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --transformType Rigid
-    --initializeTransformMode MomentsOn
+    --useMomentsAlign
     --maskProcessingMode ROI
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/test.mask
@@ -495,8 +495,8 @@ endif()
     --minimumStepSize 0.01,0.003
     --outputVolumePixelType uchar
     --maskProcessingMode ROIAUTO
-    --initializeTransformMode CenterOfHead
-    --registrationClass ScaleVersor3D
+    --useCenterOfHeadAlign
+    --useRigid --useScaleVersor3D
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --movingVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.rescale.test.nii.gz
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
@@ -568,7 +568,7 @@ endif()
     --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --transformType ScaleSkewVersor3D
-    --initializeTransformMode MomentsOn
+    --useMomentsAlign
     --maskProcessingMode ROI
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/test.mask
@@ -617,7 +617,7 @@ endif()
     --minimumStepSize 0.001,0.0001
     --outputVolumePixelType uchar
     --maskProcessingMode ROIAUTO
-    --initializeTransformMode CenterOfHead
+    --useCenterOfHeadAlign
     --transformType Rigid,ScaleVersor3D
     --permitParameterVariation 0,0,0,1,1,1
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
@@ -716,7 +716,7 @@ endif()
     --minimumStepSize 0.001
     --outputVolumePixelType uchar
     --transformType ScaleVersor3D
-    --initializeTransformMode MomentsOn
+    --useMomentsAlign
     --maskProcessingMode ROI
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
     --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/test.mask
@@ -759,7 +759,7 @@ endif()
     --fixedVolumeTimeIndex 0 --movingVolumeTimeIndex 0
     --minimumStepSize 0.001 --numberOfSamples 75000 --numberOfIterations 1500
     --numberOfHistogramBins 200
-    --transformType Rigid --initializeTransformMode MomentsOn --translationScale 1000
+    --transformType Rigid --useMomentsAlign --translationScale 1000
     --outputTransform ${BRAINSFit_BINARY_DIR}/Testing/TEST.mat
     --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/TEST_output.nii.gz
     )

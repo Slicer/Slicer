@@ -56,6 +56,7 @@ add_test(ValidateFastSymmetricForcesTest_nii ${BRAINS_Demon_Warp_TESTS}
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_test.nii.gz
     --inputPixelType uchar
+    --outputPixelType uchar
     --medianFilterSize 1,1,1
     --outputDebug
     --smoothDeformationFieldSigma 1.0
@@ -189,6 +190,7 @@ add_test(ValidateOrientedImagesTest5_nii ${BRAINS_Demon_Warp_TESTS}
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
     --outputDeformationFieldVolume ${BRAINSDemonWarp_BINARY_DIR}/OutDefField_orientedImage.nii.gz
     --inputPixelType uchar
+    --outputPixelType uchar
     --smoothDeformationFieldSigma 1.5
     --outputDebug
     --numberOfPyramidLevels 3
@@ -228,6 +230,7 @@ add_test(ValidateVectorFastSymmetricForcesTest_nii ${VBRAINS_Demon_Warp_TESTS}
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_V_test.nii.gz
     --inputPixelType uchar
+    --outputPixelType uchar
     --medianFilterSize 1,1,1
     --outputDebug
     --smoothDeformationFieldSigma 1.0
@@ -301,7 +304,8 @@ add_test(ValidateVectorDiffeomorphicTest3_nii ${VBRAINS_Demon_Warp_TESTS}
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz,${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_T1.nii.gz
 #    --outputDeformationFieldVolume ${VBRAINSDemonWarp_BINARY_DIR}/OutDefField.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
-    --inputPixelType int    --outputPixelType uchar
+    --inputPixelType int
+    --outputPixelType uchar
     --outputNormalized
     --fixedBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_A_small/SUBJ_A_small_brain_cut_mask.nii.gz
     --movingBinaryVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_brain_cut_mask.nii.gz
@@ -412,6 +416,7 @@ add_test(ValidateVectorOrientedImagesTest6_nii ${VBRAINS_Demon_Warp_TESTS}
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
     --inputPixelType uchar
+    --outputPixelType uchar
     --smoothDeformationFieldSigma 1.5
     --outputDebug
     --numberOfPyramidLevels 5
@@ -430,6 +435,7 @@ add_test(ValidateVectorOrientedImagesTest7_nii ${VBRAINS_Demon_Warp_TESTS}
     --fixedVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz,${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_dbg_splayed.nii.gz
     --outputVolume ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
     --inputPixelType uchar
+    --outputPixelType uchar
     --smoothDeformationFieldSigma 1.5
     --outputDebug
     --weightFactors 0.8,0.2

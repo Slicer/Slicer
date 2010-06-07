@@ -28,7 +28,6 @@ int VBRAINSDemonWarpPrimary(int argc, char *argv[])
     command.outputPixelType = outputPixelType;
     command.outputDisplacementFieldPrefix = outputDisplacementFieldPrefix;
     command.outputCheckerboardVolume = outputCheckerboardVolume;
-    command.forceCoronalZeroOrigin = forceCoronalZeroOrigin;
     command.outputNormalized = outputNormalized;
     command.outputDebug = outputDebug;
     command.makeBOBF = makeBOBF;
@@ -37,10 +36,13 @@ int VBRAINSDemonWarpPrimary(int argc, char *argv[])
     command.lowerThresholdForBOBF = lowerThresholdForBOBF;
     command.upperThresholdForBOBF = upperThresholdForBOBF;
     command.backgroundFillValue = backgroundFillValue;
+    /* NOT YET IMPLEMENTED
+    command.forceCoronalZeroOrigin = forceCoronalZeroOrigin;
     command.movingLandmarks = movingLandmarks;
     command.fixedLandmarks = fixedLandmarks;
-    command.initializeWithDeformationField = initializeWithDeformationField;
     command.initializeWithFourier = initializeWithFourier;
+    */
+    command.initializeWithDeformationField = initializeWithDeformationField;
     command.initializeWithTransform = initializeWithTransform;
 
     command.histogramMatch = histogramMatch;
@@ -84,11 +86,6 @@ int VBRAINSDemonWarpPrimary(int argc, char *argv[])
       command.seedForBOBF[i] = seedForBOBF[i];
       command.neighborhoodForBOBF[i] = neighborhoodForBOBF[i];
       command.medianFilterSize[i] = medianFilterSize[i];
-      }
-
-    if ( outputPixelType == "CopyInputPixelType" )
-      {
-      command.outputPixelType = inputPixelType;
       }
     }
   //  bool debug=true;
@@ -140,11 +137,13 @@ int VBRAINSDemonWarpPrimary(int argc, char *argv[])
       << std::endl
       << "               medianFilterSize: " << command.medianFilterSize
       << std::endl
+      /* NOT YET IMPLEMENTED
       << "        movingLandmarks: " << command.movingLandmarks << std::endl
       << "         fixedLandmarks: " << command.fixedLandmarks << std::endl
+      << "     initializeWithFourier: " << command.initializeWithFourier
+      */
       << "  initializeWithDeformationField: "
       << command.initializeWithDeformationField  << std::endl
-      << "     initializeWithFourier: " << command.initializeWithFourier
       << std::endl
       << "       initializeWithTransform: "
       << command.initializeWithTransform << std::endl

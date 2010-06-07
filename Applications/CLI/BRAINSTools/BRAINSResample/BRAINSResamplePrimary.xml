@@ -6,13 +6,14 @@
   <description>
    This program resamples an image image using a deformation field or a transform (BSpline, Affine, Rigid, etc.).
   </description>
-  <version>0.1</version>
+  <version>3.0.0</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:BRAINSResample</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt </license>
   <contributor>This tool was developed by Vincent Magnotta, Greg Harris, and Hans Johnson.</contributor>
+  <acknowledgements>The development of this tool was supported by funding from grants NS050568 and NS40068 from the National Institute of Neurological Disorders and Stroke and grants MH31593, MH40856, from the National Institute of Mental Health.  </acknowledgements>
 
   <parameters>
-    <label>Input Parameters</label>
+    <label>Inputs</label>
     <description>Parameters for specifying the image to warp and resulting image space</description>
 
     <image>
@@ -33,8 +34,8 @@
   </parameters>
 
   <parameters>
-    <label>Output Parameters</label>
-    <description>Resulting deformed image</description>
+    <label>Outputs</label>
+    <description>Resulting deformed image parameters</description>
 
     <image>
       <name>outputVolume</name>
@@ -44,18 +45,19 @@
       <channel>output</channel>
     </image>
 
+
     <string-enumeration>
       <name>pixelType</name>
       <longflag>pixelType</longflag>
       <label>Pixel Type</label>
       <description>Specifies the pixel type for the input/output images.  The "binary" pixel type uses a modified algorithm whereby the image is read in as unsigned char, a signed distance map is created, signed distance map is resampled, and then a thresholded image of type unsigned char is written to disk.</description>
-      <default>uchar</default>
-      <element>uchar</element>
+      <default>float</default>
+      <element>float</element>
       <element>short</element>
       <element>ushort</element>
       <element>int</element>
       <element>uint</element>
-      <element>float</element>
+      <element>uchar</element>
       <element>binary</element>
     </string-enumeration>
 
@@ -64,7 +66,6 @@
   <parameters>
     <label>Warping Parameters</label>
     <description>Parameters used to define home the image is warped</description>
-
 
     <transform fileExtensions=".nrrd" type="nonlinear" >
       <name>deformationVolume</name>
@@ -88,7 +89,7 @@
       <name>interpolationMode</name>
       <longflag>interpolationMode</longflag>
       <label>Interpolation Mode</label>
-      <description>Type of interpolation used</description>
+      <description>Type of interpolation to be used when applying transform to moving volume.  Options are Linear, NearestNeighbor, BSpline, or WindowedSinc</description>
       <default>Linear</default>
       <element>NearestNeighbor</element>
       <element>Linear</element>
@@ -108,7 +109,6 @@
 
   <parameters advanced="true">
     <label>Advanced Options</label>
-
 <!-- Not yet implemented
     <boolean>
       <name>invertTransform</name>
@@ -127,6 +127,5 @@
       <default></default>
     </integer-vector>
   </parameters>
-
 
 </executable>

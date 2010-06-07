@@ -74,7 +74,6 @@ struct BRAINSDemonWarpAppParameters {
   std::string outputCheckerboardVolume;
   std::string registrationFilterType;
   itk::Index<3> checkerboardPatternSubdivisions;
-  bool forceCoronalZeroOrigin;
   bool outputNormalized;
   bool outputDebug;
   std::string maskProcessingMode;
@@ -86,10 +85,13 @@ struct BRAINSDemonWarpAppParameters {
   itk::Index<3> seedForBOBF;
   itk::Index<3> neighborhoodForBOBF;
   itk::Size<3> medianFilterSize;
+/*/Not yet implemented
+  bool forceCoronalZeroOrigin;
   std::string movingLandmarks;
   std::string fixedLandmarks;
-  std::string initializeWithDeformationField;
   std::string initializeWithFourier;
+  */
+  std::string initializeWithDeformationField;
   std::string initializeWithTransform;
   unsigned int numberOfBCHApproximationTerms;
 
@@ -459,7 +461,7 @@ void ThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
 
     app->SetRegistrationFilter(filter);
     }
-
+/*NOT YET IMPLEMENTED
   if ( command.fixedLandmarks != "none"
     && command.fixedLandmarks != ""
     && command.movingLandmarks != "none"
@@ -467,15 +469,16 @@ void ThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     {
     app->SetMovingLandmarkFilename(command.movingLandmarks);
     app->SetFixedLandmarkFilename(command.fixedLandmarks);
+  if ( command.initializeWithFourier != "" )
+    {
+    app->SetInitialCoefficientFilename( command.initializeWithFourier.c_str () );
     }
+    }
+    */
   if ( command.initializeWithDeformationField != "" )
     {
     app->SetInitialDeformationFieldFilename(
       command.initializeWithDeformationField.c_str () );
-    }
-  if ( command.initializeWithFourier != "" )
-    {
-    app->SetInitialCoefficientFilename( command.initializeWithFourier.c_str () );
     }
   if ( command.initializeWithTransform != "" )
     {
@@ -517,7 +520,6 @@ void ThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     app->SetCheckerBoardPattern (array);
     }
 
-  app->SetForceCoronalZeroOrigin (command.forceCoronalZeroOrigin);
   if ( command.outputNormalized )
     {
     std::string normalize = "ON"; // TODO:  SetOutNormalized should be a boolean
@@ -884,6 +886,7 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     app->SetRegistrationFilter(filter);
     }
 
+  /* NOT YET IMPLEMENTED
   if ( command.fixedLandmarks != "none"
     && command.fixedLandmarks != ""
     && command.movingLandmarks != "none"
@@ -892,14 +895,16 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     app->SetMovingLandmarkFilename(command.movingLandmarks);
     app->SetFixedLandmarkFilename(command.fixedLandmarks);
     }
+  if ( command.initializeWithFourier != "" )
+    {
+    app->SetInitialCoefficientFilename( command.initializeWithFourier.c_str () );
+    }
+   app->SetForceCoronalZeroOrigin (command.forceCoronalZeroOrigin);
+*/
   if ( command.initializeWithDeformationField != "" )
     {
     app->SetInitialDeformationFieldFilename(
       command.initializeWithDeformationField.c_str () );
-    }
-  if ( command.initializeWithFourier != "" )
-    {
-    app->SetInitialCoefficientFilename( command.initializeWithFourier.c_str () );
     }
   if ( command.initializeWithTransform != "" )
     {
@@ -936,7 +941,6 @@ void VectorThirionFunction (const struct BRAINSDemonWarpAppParameters & command)
     app->SetCheckerBoardPattern (array);
     }
 
-  app->SetForceCoronalZeroOrigin (command.forceCoronalZeroOrigin);
   if ( command.outputNormalized )
     {
     std::string normalize = "ON"; // TODO:  SetOutNormalized should be a boolean
