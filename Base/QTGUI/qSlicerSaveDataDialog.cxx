@@ -78,7 +78,6 @@ vtkMRMLScene* qSlicerSaveDataDialogPrivate::mrmlScene()const
 void qSlicerSaveDataDialogPrivate::setDirectory(const QString& newDirectory)
 {
   QDir newDir(newDirectory);
-  qDebug() << "Directory: " << newDirectory;
   Q_ASSERT(newDir.exists());
 
   const int rowCount = this->FileWidget->rowCount();
@@ -110,7 +109,6 @@ void qSlicerSaveDataDialogPrivate::populateItems()
   this->FileWidget->setSortingEnabled(false);
 
   int row = 0;
-  qDebug() << "populateItems: " << this->MRMLScene->GetRootDirectory();
   this->DirectoryButton->setDirectory(this->MRMLScene->GetRootDirectory());
   this->FileWidget->insertRow(row);
   // Scene Name
@@ -133,13 +131,14 @@ void qSlicerSaveDataDialogPrivate::populateItems()
   sceneComboBoxWidget->setEnabled(false);
   this->FileWidget->setCellWidget(row, FileFormatColumn, sceneComboBoxWidget);
   // Scene FileName
-  if (this->MRMLScene->GetURL())
+  if (this->MRMLScene->GetURL() != 0)
     {
     QFileInfo sceneFileInfo;
-    sceneFileInfo = QFileInfo(QDir(this->MRMLScene->GetRootDirectory()),
-                              this->MRMLScene->GetURL());
-    this->FileWidget->setItem(row, FileNameColumn, 
-                              new QTableWidgetItem(sceneFileInfo.fileName()));
+    sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
+                               this->MRMLScene->GetURL());
+    this->FileWidget->setItem( row, FileNameColumn, 
+                               new QTableWidgetItem(
+                                 sceneFileInfo.completeBaseName()));
     }
   else
     {
@@ -429,7 +428,11 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
     this->FileWidget->cellWidget(found[0].row(), FileDirectoryColumn));
 
   QDir directory = fileDirectoryButton->directory();
-  QFileInfo file = QFileInfo(directory, fileNameItem->text() + QString(".mrml"));
+  QFileInfo file = QFileInfo(directory, fileNameItem->text());
+  if (file.suffix() != "mrml")
+    {
+    file = QFileInfo(directory, fileNameItem->text() + QString(".mrml"));
+    }
   return this->saveScene(file);
 }
 
