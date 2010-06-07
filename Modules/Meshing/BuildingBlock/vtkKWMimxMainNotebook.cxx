@@ -49,7 +49,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkFESurfaceList.h"
 #include "vtkFiniteElementBuildingBlockList.h"
 #include "vtkFiniteElementMeshList.h"
-
+#include "vtkFiniteElementImageList.h"
+#include "vtkMimxImageActor.h"
+#include "vtkKWMimxViewProperties.h"
 
 // define the option types
 #define VTK_KW_OPTION_NONE         0
@@ -416,5 +418,67 @@ void vtkKWMimxMainNotebook::RestoreVisibilityStateOfObjectLists(void)
       }   
 
   
+}
+
+// Code to synchronize the viewProperties dialog with the MRML scene automatically.  The viewProperties
+// panel builds a list of all the images, surfaces, bblocks, and meshes.  We want this list to reflect
+// the current MRML scene always.
+
+void vtkKWMimxMainNotebook::SynchronizeViewPropertiesWithMRMLScene()
+{
+    // update MRML-backed lists to look at new scene
+    this->ImageMenuGroup->GetImageList()->SetMRMLSceneForStorage(vtkMRMLScene::GetActiveScene());
+    this->SurfaceMenuGroup->GetSurfaceList()->SetMRMLSceneForStorage(vtkMRMLScene::GetActiveScene());
+    this->BBMenuGroup->GetBBoxList()->SetMRMLSceneForStorage(vtkMRMLScene::GetActiveScene());
+    this->FEMeshMenuGroup->GetFEMeshList()->SetMRMLSceneForStorage(vtkMRMLScene::GetActiveScene());
+
+    //this->ViewProperties->ClearAllObjects();
+    this->SynchronizeViewPropertiesImages();
+//    this->SynchronizeViewPropertiesSurfaces();
+//    this->SynchronizeViewPropertiesBBlocks();
+//    this->SynchronizeViewPropertiesMeshes();
+}
+
+
+void vtkKWMimxMainNotebook::SynchronizeViewPropertiesImages()
+{
+    // Go through the scene and add a viewProperties entry for each FiniteElementImageNode
+    // found in the MRML scene.  This is needed when a MRML scene has been reloaded and
+    // the ViewProperties dialog doesn't contain records of the objects that are in the
+    // MRML-based imageList.
+
+    int nnodes;
+
+    nnodes = this->ImageMenuGroup->GetImageList()->GetNumberOfItems();
+    cout << "SynchronizeViewPropertiesImages: found " << nnodes << " images" << endl;
+
+    vtkMimxImageActor *actor;
+    for ( int i=0; i<nnodes; i++)
+    {
+      actor = vtkMimxImageActor::SafeDownCast(this->ImageMenuGroup->GetImageList()->GetItem(i));
+      if (actor)
+      {
+               this->MimxMainWindow->GetViewProperties()->AddObjectList(actor);
+               this->MimxMainWindow->GetRenderWidget()->Render();
+      }
+      else
+          vtkErrorMacro("MimxMainNotebook: found null image actor in MRML scene");
+    }
+}
+
+void vtkKWMimxMainNotebook::SynchronizeViewPropertiesSurfaces()
+{
+   cout << "SynchronizeViewPropertiesSurfaces" << endl;
+}
+
+
+void vtkKWMimxMainNotebook::SynchronizeViewPropertiesBBlocks()
+{
+   cout << "SynchronizeViewPropertiesBBlocks" << endl;
+}
+
+void vtkKWMimxMainNotebook::SynchronizeViewPropertiesMeshes()
+{
+   cout << "SynchronizeViewPropertiesMeshes" << endl;
 }
 

@@ -31,10 +31,13 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkRenderWindowInteractor.h"
 #include "vtkProperty.h"
 #include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
-#include "vtkTransformFilter.h"
 #include "vtkPointSet.h"
 #include "vtkImageReslice.h"
+
+#include "vtkTransform.h"
+#include "vtkTransformFilter.h"
+#include "vtkSTLReader.h"
+#include "vtkSTLWriter.h"
 
 // filter to fix ITK / VTK image orientation.  This class uses an ITK actor to read in
 // files but Slicer is a VTK application, so reorient images to VTK style using a flip
@@ -159,6 +162,7 @@ void vtkMimxImageActor::InitializePlaneWidgets()
      reslice->SetResliceAxesDirectionCosines( directionCosines );
      reslice->Update();
 
+
      int *extent = reslice->GetOutput()->GetExtent();
      std::cout << "extent: ( " << extent[0] << "," << extent[1] << "," << extent[2] << ")" << std::endl;
 
@@ -204,6 +208,28 @@ void vtkMimxImageActor::InitializePlaneWidgets()
 void vtkMimxImageActor::InitializePlaneWidgets(vtkMatrix4x4* matrix, double origin[3])
 {
 
+// fix dataset to slicer orientation
+//  vtkSTLReader* reader = vtkSTLReader::New();
+//  reader->SetFileName("/Users/dot/Projects/fe/training-slicer3.4/ExampleData/index_proximal.stl");
+//  reader->Update();
+//
+//    vtkTransform* xform = vtkTransform::New();
+//    vtkMatrix4x4* inv = vtkMatrix4x4::New();
+//    inv->DeepCopy(matrix);
+//    inv->Invert();
+//    xform->SetMatrix(inv);
+//    xform->Scale(5.0,5.0,5.0);
+//    cout << "matrix to transform surface:" << endl;
+//    inv->Print(std::cout);
+//    vtkTransformFilter* xformFilter = vtkTransformFilter::New();
+//    xformFilter->SetTransform(xform);
+//    xformFilter->SetInput(reader->GetOutput());
+//
+//    vtkSTLWriter* writer = vtkSTLWriter::New();
+//    writer->SetInput(xformFilter->GetOutput());
+//    writer->SetFileName("/Users/dot/Projects/fe/training-slicer3.4/ExampleData/index_proximal_slicer.stl");
+//    writer->Write();
+
     // a matrix is used since this is called from within Slicer.  The image datasets
     // in slicer are referenced in RAS coordinates, so transform the dataset before passing
     // it to the imagePlaneWidgets.
@@ -224,11 +250,36 @@ void vtkMimxImageActor::InitializePlaneWidgets(vtkMatrix4x4* matrix, double orig
      //std::cout << "Origin 1: " << origin[1] << std::endl;
      //std::cout << "Origin 2: " << origin[2] << std::endl;
 
+     // handle a transformation that might be on the image.  For example, if the
+     // user selected "center image" on the GUI before loading, a column vector
+     // transform will be in the IJK2RAS matrix passed in.
+
+     vtkMatrix4x4 *xlate = vtkMatrix4x4::New();
+     xlate->Identity();
+     // copy the transformation entries only from the passed matrix
+     for (int i=0; i<3; i++)
+      {
+        xlate->SetElement(i,3,matrix->GetElement(i,3));
+      }
+
+     // make a transform and a transformed image extent to handle if the user selected
+     // auto-center.  The xform is used to make an imageData with modified origin and extent
+
      vtkImageData *vtkImage = vtkImageData::SafeDownCast(this->SavedImage);
+     vtkTransform* xlateXform = vtkTransform::New();
+     xlateXform->SetMatrix(xlate);
+     vtkTransformFilter* xformFilter = vtkTransformFilter::New();
+     xformFilter->SetInput(vtkImage);
+     xformFilter->SetTransform(xlateXform);
+
      vtkImageReslice *reslice = vtkImageReslice::New();
      reslice->SetInput( vtkImage );
      reslice->SetResliceAxesDirectionCosines( directionCosines );
+     reslice->SetResliceTransform(xlateXform);
+     reslice->SetInformationInput(vtkImageData::SafeDownCast(xformFilter->GetOutput()));
      reslice->Update();
+     xlateXform->Delete();
+     xlate->Delete();
 
      int *extent = reslice->GetOutput()->GetExtent();
      std::cout << "extent: ( " << extent[0] << "," << extent[1] << "," << extent[2] << ")" << std::endl;

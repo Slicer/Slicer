@@ -99,6 +99,9 @@ public:
   // save reference to the scene to be used for storage 
    void SetMRMLSceneForStorage(vtkMRMLScene* scene);
    
+   // added for Slicer integration - peek in list needed for syncing lists with MRML
+   int ContainsItem(vtkMimxActorBase* actor);
+
 protected:
   vtkLinkedListWrapper();
   virtual ~vtkLinkedListWrapper();

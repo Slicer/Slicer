@@ -63,46 +63,5 @@ void vtkIA_FEMeshLogic::Apply()
     vtkErrorMacro("No input IA_FEMeshNode found");
     return;
     }
-  
-  // find input volume
-//  vtkMRMLNode* inNode = this->GetMRMLScene()->GetNodeByID(this->IA_FEMeshNode->GetInputVolumeRef());
-//  vtkMRMLScalarVolumeNode *inVolume =  dynamic_cast<vtkMRMLScalarVolumeNode *> (inNode);
-//  if (inVolume == NULL)
-//    {
-//    vtkErrorMacro("No input volume found");
-//    return;
-//    }
-//  
-  //this->IA_FEMesh->SetInput(inVolume->GetImageData());
-  
-  
-  // set filter parameters
-  // *** we don't have a subobject like the slicer daemon example had
-  //this->IA_FEMesh->SetConductanceParameter(this->IA_FEMeshNode->GetConductance());
-  //this->IA_FEMesh->SetNumberOfIterations(this->IA_FEMeshNode->GetNumberOfIterations());
-  //this->IA_FEMesh->SetTimeStep(this->IA_FEMeshNode->GetTimeStep());
-  
-  // find output volume
-//  vtkMRMLScalarVolumeNode *outVolume = NULL;
-//  if (this->IA_FEMeshNode->GetOutputVolumeRef() != NULL)
-//    {
-//    vtkMRMLNode* outNode = this->GetMRMLScene()->GetNodeByID(this->IA_FEMeshNode->GetOutputVolumeRef());
-//    outVolume =  dynamic_cast<vtkMRMLScalarVolumeNode *> (outNode);
-//    if (outVolume == NULL)
-//      {
-//      vtkErrorMacro("No output volume found with id= " << this->IA_FEMeshNode->GetOutputVolumeRef());
-//      return;
-//      }
-//    }
-//  else 
-//    {
-//    // create new volume Node and add it to mrml scene
-//    this->GetMRMLScene()->SaveStateForUndo();
-//    outVolume = vtkMRMLScalarVolumeNode::New();
-//    this->GetMRMLScene()->AddNode(outVolume);  
-//    outVolume->Delete();
-//    }
 
-  //outVolume->SetImageData(this->IA_FEMesh->GetOutput());
-  //this->IA_FEMesh->Update();
 }

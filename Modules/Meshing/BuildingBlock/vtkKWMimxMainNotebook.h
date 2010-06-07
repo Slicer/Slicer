@@ -66,6 +66,13 @@ public:
   void SaveVisibilityStateOfObjectLists(void);
   void RestoreVisibilityStateOfObjectLists(void);
 
+  // methods to update the view Properties dialog when the MRML scene changes
+  void SynchronizeViewPropertiesWithMRMLScene();
+  void SynchronizeViewPropertiesImages();
+  void SynchronizeViewPropertiesSurfaces();
+  void SynchronizeViewPropertiesBBlocks();
+  void SynchronizeViewPropertiesMeshes();
+
   // Description:
   // disconnect circular references that prevent clean shutdown (leaks)
   virtual void TearDown();

@@ -75,6 +75,7 @@ public:
   vtkSetObjectMacro(ViewProperties, vtkKWMimxViewProperties);
   vtkSetObjectMacro(MenuGroup, vtkKWMimxMainMenuGroup);
   vtkSetObjectMacro(ImageList, vtkLinkedListWrapper);
+  vtkGetObjectMacro(ImageList, vtkLinkedListWrapper);
   vtkSetObjectMacro(DoUndoTree, vtkLinkedListWrapperTree);
 
   // Description:

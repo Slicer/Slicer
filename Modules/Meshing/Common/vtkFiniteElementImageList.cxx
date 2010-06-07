@@ -127,6 +127,24 @@ vtkMimxImageActor* vtkFiniteElementImageList::GetItem(vtkIdType id)
 
 }
 
+
+int vtkFiniteElementImageList::ContainsItem(vtkMimxImageActor* actor)
+{
+
+   bool found = false;
+   int numItems = this->GetNumberOfItems();
+   for (int i=0; i<numItems; i++)
+   {
+       // set the flag if there is a pointer to the same object already in the list
+       found |= found && (this->GetItem(i) == actor);
+   }
+   if (found)
+       cout << "vtkFiniteElementImageList: found image in list" << endl;
+   else
+       cout << "vtkFiniteElementImageList: didn't find image in list" << endl;
+   return found;
+}
+
 int vtkFiniteElementImageList::GetNumberOfItems()
 {
   //return this->InternalMimxObjectList->GetNumberOfItems();

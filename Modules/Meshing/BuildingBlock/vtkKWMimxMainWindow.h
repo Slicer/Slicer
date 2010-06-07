@@ -36,6 +36,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkKWRenderWidget.h"
 #include "vtkKWWindow.h"
 #include "vtkBuildingBlockWin32Header.h"
+//#include "vtkKWMimxViewProperties.h"
 
 
 class vtkCallbackCommand;
@@ -272,7 +273,8 @@ public:
   // Widgets that must be public
   vtkKWRenderWidget *RenderWidget;
   vtkRenderer *AxesRenderer;
-        
+  vtkKWMimxMainNotebook *MainUserInterfacePanel;
+
 protected:
   vtkKWMimxMainWindow();
   ~vtkKWMimxMainWindow();
@@ -280,9 +282,7 @@ protected:
   vtkMimxErrorCallback *ErrorCallback;
   vtkKWMimxViewProperties *ViewProperties;
   vtkLinkedListWrapperTree *DoUndoTree;
-  vtkKWMimxMainNotebook *MainUserInterfacePanel;
   vtkKWMimxDisplayPropertiesGroup *DisplayPropertyDialog;
-
   vtkSlicerModuleCollapsibleFrame *MainFrame;
 
         

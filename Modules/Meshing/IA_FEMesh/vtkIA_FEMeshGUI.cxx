@@ -66,6 +66,11 @@ Version:   $Revision: 1.2 $
 #include "vtkKWMimxMainUserInterfacePanel.h"
 #include "vtkLinkedListWrapperTree.h"
 
+#include "vtkMRMLFiniteElementImageNode.h"
+#include "vtkMRMLFiniteElementBuildingBlockNode.h"
+#include "vtkMRMLFESurfaceNode.h"
+#include "vtkMRMLFiniteElementMeshNode.h"
+
 //------------------------------------------------------------------------------
 vtkIA_FEMeshGUI* vtkIA_FEMeshGUI::New()
 {
@@ -103,6 +108,20 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
   this->SavedAxisLabelState = 0;
   this->SavedLayoutEnumeration = 0;
   this->FirstEntryToModule=true;
+
+  // register new MRML nodes so a scene load recognizes new node classes.
+  vtkMRMLFiniteElementImageNode* newMRMLImageNode = vtkMRMLFiniteElementImageNode::New();
+  vtkMRMLScene::GetActiveScene()->RegisterNodeClass(newMRMLImageNode);
+  newMRMLImageNode->Delete();
+  vtkMRMLFESurfaceNode* newMRMLSurfaceNode = vtkMRMLFESurfaceNode::New();
+  vtkMRMLScene::GetActiveScene()->RegisterNodeClass(newMRMLSurfaceNode);
+  newMRMLSurfaceNode->Delete();
+  vtkMRMLFiniteElementMeshNode* newMRMLMeshNode = vtkMRMLFiniteElementMeshNode::New();
+  vtkMRMLScene::GetActiveScene()->RegisterNodeClass(newMRMLMeshNode);
+  newMRMLMeshNode->Delete();
+  vtkMRMLFiniteElementBuildingBlockNode* newMRMLBBLockNode = vtkMRMLFiniteElementBuildingBlockNode::New();
+  vtkMRMLScene::GetActiveScene()->RegisterNodeClass(newMRMLBBLockNode);
+  newMRMLBBLockNode->Delete();
 
 }
 
@@ -168,13 +187,14 @@ void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *vtkNotUsed(caller),
 
 
 //---------------------------------------------------------------------------
-void vtkIA_FEMeshGUI::ProcessMrmlEvents ( vtkObject *caller,
+void vtkIA_FEMeshGUI::ProcessMRMLEvents ( vtkObject *caller,
                                           unsigned long event,
                                           void *callData )
 {
       // If there is a scene close or open event, the wizard should
       // keep the lists and viewProperties in sync
-      std::cout << "IA_FEMesh: MRML callback command received" << std::endl;
+
+       //std::cout << "IA_FEMesh: MRML callback command received" << std::endl;
 
       if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::SceneCloseEvent ))
         {
@@ -183,6 +203,21 @@ void vtkIA_FEMeshGUI::ProcessMrmlEvents ( vtkObject *caller,
       if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::NewSceneEvent ))
         {
             std::cout << "IA-FEMesh: got MRML new scene event. " << endl;
+        }
+      if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::SceneLoadStartEvent ))
+        {
+             std::cout << "IA-FEMesh: got MRML scene load start event. " << endl;
+        }
+      if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::SceneLoadEndEvent ))
+        {
+             std::cout << "IA-FEMesh: got MRML scene load end event. " << endl;
+             vtkMRMLScene::GetActiveScene();
+             this->MeshingUI->MainUserInterfacePanel->SynchronizeViewPropertiesWithMRMLScene();
+        }
+      if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::SceneEditedEvent ))
+        {
+             std::cout << "IA-FEMesh: got MRML scene edited " << endl;
+             this->MeshingUI->MainUserInterfacePanel->SynchronizeViewPropertiesWithMRMLScene();
         }
 }
 
@@ -303,13 +338,15 @@ void vtkIA_FEMeshGUI::Enter ( )
   //this->MeshingUI->AddOrientationAxis();
   this->MeshingUI->CustomApplicationSettingsModuleEntry();
   
-
   // register with the MRML scene to receive callbacks when the scene is closed or opened.
   this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
   this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, (vtkCommand *)this->MRMLCallbackCommand);
   this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
   this->GetMRMLScene()->AddObserver(vtkMRMLScene::NewSceneEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneEditedEvent, (vtkCommand *)this->MRMLCallbackCommand);
 
+  // look for objects in MRML scene that don't show up in IA-FEMesh panels because scene changed
+  this->MeshingUI->MainUserInterfacePanel->SynchronizeViewPropertiesWithMRMLScene();
 
   // restore the state of object visibility depending on how they were when exiting the module
   // This is gated to happen only after returning to the module.  Not the first time, when the 
@@ -322,6 +359,8 @@ void vtkIA_FEMeshGUI::Enter ( )
   }
   else
     this->MeshingUI->RestoreVisibilityStateOfObjectLists(); 
+
+
 }
  
  

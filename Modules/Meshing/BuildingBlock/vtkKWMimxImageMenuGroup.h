@@ -57,6 +57,7 @@ public:
 
   void DeleteImageCallback();
   vtkSetObjectMacro(FEMeshList, vtkLinkedListWrapper);
+
   
 protected:
         vtkKWMimxImageMenuGroup();

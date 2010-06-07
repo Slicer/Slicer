@@ -71,6 +71,23 @@ int vtkLinkedListWrapper::AppendItem(vtkMimxActorBase* actor)
 }
 
 
+int vtkLinkedListWrapper::ContainsItem(vtkMimxActorBase* actor)
+{
+  // be sure to check which type of objects are being stored in this particular instance and go to
+  // the proper sublist to delete the stored item.
+  switch (this->ListDatatype)
+  {
+      //case ACTOR_POLYDATA_SURFACE: {return this->MRMLSurfaceList->ContainsItem(Num); break;}
+      //case ACTOR_BUILDING_BLOCK: {return this->MRMLBBlockList->ContainsItem(Num); break;}
+      //case ACTOR_FE_MESH: {return this->MRMLMeshList->ContainsItem(Num); break;}
+      case ACTOR_IMAGE: {return this->MRMLImageList->ContainsItem(vtkMimxImageActor::SafeDownCast(actor)); break; }
+      default: {vtkErrorMacro("attempted request of unsupported Mimx Actor Datatype");
+            cout << "tried retrieval for unsupported type" << endl;
+            return VTK_ERROR;
+            }
+      }
+}
+
 int vtkLinkedListWrapper::AppendItem(vtkMimxImageActor* actor)
 {
    // Put entry in the local list and the correct MRML list
@@ -219,3 +236,6 @@ void vtkLinkedListWrapper::SetMRMLSceneForStorage(vtkMRMLScene* scene)
   this->MRMLBBlockList->SetMRMLSceneForStorage(scene);
   this->MRMLMeshList->SetMRMLSceneForStorage(scene);
 }
+
+
+
