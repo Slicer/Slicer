@@ -123,6 +123,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.Rendering.vtkCarbonRenderWindow.*warning.*(NewRgn|DiffRgn|EqualRgn|DisposeRgn).*is deprecated"
   # exception specific to Mac/X11
   "VTK.Rendering.vtkOpenGL.*warning: this is the location of the previous definition"
+  
+  # CTK - log4qt
+  "logobjectptr.obj : warning LNK4221: no public symbols found; archive member will be inaccessible"
 
   # KWWidgets
   "(KWW|kww)idgets.[Uu]tilities.tkdnd"
