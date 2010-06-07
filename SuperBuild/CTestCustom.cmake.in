@@ -126,6 +126,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # CTK - log4qt
   "logobjectptr.obj : warning LNK4221: no public symbols found; archive member will be inaccessible"
+  "/usr/bin/ranlib: .*liblog4qt.a(log4qt.cpp.o) has no symbols"
 
   # KWWidgets
   "(KWW|kww)idgets.[Uu]tilities.tkdnd"
