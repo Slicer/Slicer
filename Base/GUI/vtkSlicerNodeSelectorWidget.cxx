@@ -642,7 +642,15 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     m->SetValue(name.c_str());
 
     // new value, set it and notify observers
+    std::string oldName = std::string(node->GetName());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
+
+    // in case modules rename the node need to refresh all selectors
+    // by sending NodeAddedEvent
+    if (oldName != std::string(node->GetName()))
+      {
+      this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
+      }
     }
   else
     {

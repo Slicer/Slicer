@@ -294,55 +294,44 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
 
   fiberNode->SetAndObservePolyData(outFibers);
   
+  int newNode = 0;
   vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetLineDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddLineDisplayNode();
-    }
-
-  dnode->DisableModifiedEventOn();
-  if (displayMode == 0)
-    {
+    dnode->DisableModifiedEventOn();
     dnode->SetScalarVisibility(1);
     dnode->SetVisibility(1);
+    dnode->DisableModifiedEventOff();
+    newNode = 1;
     }
-  else
-    {
-    dnode->SetVisibility(0);
-    dnode->SetScalarVisibility(0);
-    }
-
-  dnode->DisableModifiedEventOff();
 
   dnode = fiberNode->GetTubeDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddTubeDisplayNode();
+    if (newNode)
+      {
+      dnode->DisableModifiedEventOn();
+      dnode->SetVisibility(0);
+      dnode->SetScalarVisibility(0);
+      dnode->DisableModifiedEventOff();
+      }
     }
-
-  dnode->DisableModifiedEventOn();
-  if (displayMode == 1)
-    {
-    dnode->SetScalarVisibility(1);
-    dnode->SetVisibility(1);
-    }
-  else
-    {
-    dnode->SetVisibility(0);
-    dnode->SetScalarVisibility(0);
-    }
-  dnode->DisableModifiedEventOff();
 
   dnode = fiberNode->GetGlyphDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddGlyphDisplayNode();
+    if (newNode)
+      {
+      dnode->DisableModifiedEventOn();
+      dnode->SetVisibility(0);
+      dnode->SetScalarVisibility(0);
+      dnode->DisableModifiedEventOff();
+      }
     }
 
-  dnode->DisableModifiedEventOn();
-  dnode->SetVisibility(0);
-  dnode->SetScalarVisibility(0);
-  dnode->DisableModifiedEventOff();
 
   if (fiberNode->GetStorageNode() == NULL) 
     {

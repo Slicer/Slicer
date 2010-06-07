@@ -36,6 +36,7 @@ class vtkKWCheckButton;
 class vtkKWMenuButtonWithLabel;
 class vtkKWScaleWithLabel;
 class vtkKWEntryWithLabel;
+class vtkKWPushButton;
 
 class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : public vtkSlicerModuleGUI
 {
@@ -163,7 +164,7 @@ protected:
   vtkKWScaleWithLabel *RegionSampleSizeScale;
   vtkKWEntryWithLabel *MaxNumberOfSeedsEntry;
 
-  vtkKWMenuButtonWithLabel *DisplayMenu;
+  vtkKWPushButton *DisplayMenu;
 
   vtkKWCheckButton *SeedSelectedFiducialsButton;
   vtkKWCheckButton *SeedButton;
