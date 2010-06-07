@@ -62,6 +62,10 @@ proc progress_Window {geometry message progress} {
     
     set ::progress_StartTime [clock clicks -milliseconds]
     after 100 progress_Animate 100
+
+    # make the window go away if no progress message arrives in 2 seconds
+    # (a new one will be created if needed by a new message)
+    after 2000 destroy .progress
   }
 
   wm withdraw .
