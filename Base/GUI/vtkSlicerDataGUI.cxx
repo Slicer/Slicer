@@ -1213,8 +1213,8 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
             {
             win->SetStatusText ( "Reading and loading color LUT file..." );
             app->Script ( "update idletasks" );
-            vtkMRMLColorNode *node = colorLogic->LoadColorFile(fileName);
-            if (!node)
+            int retval = colorLogic->LoadColorFile(fileName);
+            if (!retval)
               {
                 vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
                 dialog->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
@@ -1225,10 +1225,6 @@ void vtkSlicerDataGUI::ProcessGUIEvents ( vtkObject *caller,
                 dialog->Invoke();
                 dialog->Delete();
                 vtkErrorMacro("ProcessGUIEvents: unable to read file " << fileName);
-              }
-            else
-              {
-              node->Delete();
               }
             }
           }

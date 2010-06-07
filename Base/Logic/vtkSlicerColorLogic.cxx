@@ -906,7 +906,7 @@ void vtkSlicerColorLogic::AddColorFile(const char *fileName, std::vector<std::st
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
+int vtkSlicerColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
 {
   vtkSmartPointer<vtkMRMLColorTableNode> node = vtkSmartPointer<vtkMRMLColorTableNode>::New();
   
@@ -951,7 +951,7 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName, cons
       // don't add the name to the list of files, otherwise it will get loaded
       //again with the default ones
       //this->AddColorFile(fileName);
-      return node;
+      return 1;
       }
     }
   else
@@ -965,6 +965,6 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName, cons
       }
     }
   vtkDebugMacro("LoadColorFile: failed to reaad color file " << fileName << ", returning null");
-  return NULL;
+  return 0;
 }
 
