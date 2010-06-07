@@ -1,6 +1,9 @@
 
 set(clapack_version 3.2.1)
-set(clapack_file "http://www.netlib.org/clapack/clapack-${clapack_version}-CMAKE.tgz")
+#set(clapack_file "http://www.netlib.org/clapack/clapack-${clapack_version}-CMAKE.tgz")
+# Since the netlib.org server has been down several time, especially when the nightly dashboard 
+# started, we added a copy of the archive to slicer3 lib mirrors.
+set(clapack_file http://svn.slicer.org/Slicer3-lib-mirrors/trunk/clapack-${clapack_version}-CMAKE.tgz)
 
 # The CLAPACK external project for Titan
 
