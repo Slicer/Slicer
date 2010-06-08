@@ -61,6 +61,18 @@ def getLabelDefinition(executableNode):
         return "** <span style=\"color:green\">'''"+getTextValuesFromNode(labelNode.childNodes)+"'''</span>";
     return "";
 
+# Extract the default value
+def getDefaultValueDefinition(executableNode):
+    labelNodeList=executableNode.getElementsByTagName("default")
+    if labelNodeList.length > 0 :
+        labelNode=labelNodeList[0]  ## Only get the first one
+        return "''Default value: "+getTextValuesFromNode(labelNode.childNodes)+"''";
+    return "";
+
+if len(sys.argv) != 2:
+  print "Usage: pass SEM XML description file as parameter!"
+  sys.exit()
+
 ## Read the xml file from the first argument of command line
 doc = xml.dom.minidom.parse(sys.argv[1]);
 
@@ -94,6 +106,11 @@ for parameterNode in executableNode.getElementsByTagName("parameters"):
   while currentNode is not None :
       if currentNode.nodeType == currentNode.ELEMENT_NODE:
         if getThisNodesInfoAsText(currentNode,"label") != "": #If this node doe not have a "label" element, then just skip it.
-          print "%s %s %s: %s" % (getLabelDefinition(currentNode), getLongFlagDefinition(currentNode),getFlagDefinition(currentNode),getThisNodesInfoAsText(currentNode,"description"))
+          if getThisNodesInfoAsText(currentNode,"default") != "": # if this node has a default value -- document it!
+            print "%s %s %s: %s %s" % (getLabelDefinition(currentNode), getLongFlagDefinition(currentNode),getFlagDefinition(currentNode),getThisNodesInfoAsText(currentNode,"description"),getDefaultValueDefinition(currentNode))
+          else:
+            print "%s %s %s: %s" % (getLabelDefinition(currentNode), getLongFlagDefinition(currentNode),getFlagDefinition(currentNode),getThisNodesInfoAsText(currentNode,"description"))
       currentNode=currentNode.nextSibling
+  print # newlines to make it more readable
+  print
 
