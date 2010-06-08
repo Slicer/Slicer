@@ -52,7 +52,7 @@ if(WIN32)
   # Convenient helper function
   function(build_python_target target depend)
     ExternalProject_Add_Step(${proj} Build_${target}
-      COMMAND ${DEVENV} ${python_sln} /build Release /project ${target}
+      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project ${target}
       DEPENDEES ${depend}
       )
   endfunction(build_python_target)
@@ -81,7 +81,7 @@ if(WIN32)
   build_python_target(_multiprocessing Build_pythonw)
   
   ExternalProject_Add_Step(${proj} Build_python
-    COMMAND ${DEVENV} ${python_sln} /build Release /project _multiprocessing
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _multiprocessing
     DEPENDEES Build__multiprocessing
     DEPENDERS install
     )
