@@ -167,8 +167,11 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # Visual studio spurious warnings...
   "The following environment variables were not found"
   
+  # Since NUMPY has test that return build errors, let's add the following exception
+  "WARNING non-zero return value in ctest from"
+  
   # CTK Documentation warning
-  "CMake Warning at Documentation/CMakeLists.txt:62"
+  "CMake Warning at Documentation/CMakeLists.txt:62" 
   )
   
 SET(CTEST_CUSTOM_ERROR_EXCEPTION
