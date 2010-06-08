@@ -127,6 +127,10 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # CTK - log4qt
   "logobjectptr.obj : warning LNK4221: no public symbols found; archive member will be inaccessible"
   "/usr/bin/ranlib: .*liblog4qt.a(log4qt.cpp.o) has no symbols"
+  "log4qt.rollingfileappender.h.*Warning: Property declaration maxFileSize has no READ accessor function."
+  
+  # CTK Documentation warning
+  "CMake Warning at Documentation/CMakeLists.txt:62"
 
   # KWWidgets
   "(KWW|kww)idgets.[Uu]tilities.tkdnd"
@@ -169,9 +173,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # Since NUMPY has test that return build errors, let's add the following exception
   "WARNING non-zero return value in ctest from"
-  
-  # CTK Documentation warning
-  "CMake Warning at Documentation/CMakeLists.txt:62" 
+   
   )
   
 SET(CTEST_CUSTOM_ERROR_EXCEPTION
