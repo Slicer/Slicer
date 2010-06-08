@@ -57,7 +57,7 @@ if(WIN32)
       )
   endfunction(build_python_target)
 
-  build_python_target(make_versioninfo configure)
+  build_python_target(make_versioninfo build)
   build_python_target(make_buildinfo Build_make_versioninfo)
   build_python_target(kill_python Build_make_buildinfo)
   build_python_target(w9xpopen Build_kill_python)
@@ -81,7 +81,7 @@ if(WIN32)
   build_python_target(_multiprocessing Build_pythonw)
   
   ExternalProject_Add_Step(${proj} Build_python
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _multiprocessing
+    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project python
     DEPENDEES Build__multiprocessing
     DEPENDERS install
     )
@@ -159,4 +159,5 @@ else()
   set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.so)
   set(slicer_PYTHON_EXECUTABLE ${CMAKE_BINARY_DIR}/python-build/bin/python)
 endif()
+
 
