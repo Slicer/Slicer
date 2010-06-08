@@ -101,7 +101,7 @@ print "|}\n"
 
 # Now print all the command line arguments and the labels that showup in the GUI interface
 for parameterNode in executableNode.getElementsByTagName("parameters"):
-  print "* <span style=\"color:blue\">'''''%s''''' </span> %s" % (getThisNodesInfoAsText(parameterNode,"label"),getThisNodesInfoAsText(parameterNode,"description"))
+  print "* <span style=\"color:blue\">'''''%s''''' </span> " % getThisNodesInfoAsText(parameterNode,"label")
   currentNode = parameterNode.firstChild
   while currentNode is not None :
       if currentNode.nodeType == currentNode.ELEMENT_NODE:
