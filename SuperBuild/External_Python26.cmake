@@ -63,15 +63,6 @@ if(WIN32)
   build_python_target(w9xpopen Build_kill_python)
   build_python_target(pythoncore Build_w9xpopen)
   build_python_target(_socket Build_pythoncore)
-
-  if(Slicer3_USE_KWWIDGETS)
-    ExternalProject_Add_Step(${proj} Build__tkinter
-      COMMAND ${DEVENV} ${python_sln} /build Release /project _tkinter
-      DEPENDEES Build__socket
-      DEPENDERS Build_python
-      )
-  endif()
-
   build_python_target(_testcapi Build_pythoncore)
   build_python_target(_msi Build__testcapi)
   build_python_target(_elementtree Build__msi)
@@ -87,6 +78,14 @@ if(WIN32)
     DEPENDEES Build__multiprocessing
     DEPENDERS install
     )
+    
+  if(Slicer3_USE_KWWIDGETS)
+    ExternalProject_Add_Step(${proj} Build__tkinter
+      COMMAND ${DEVENV} ${python_sln} /build Release /project _tkinter
+      DEPENDEES Build__socket
+      DEPENDERS Build_python
+      )
+  endif()
 
   ExternalProject_Add_Step(${proj} CopyPythonLib
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.lib ${CMAKE_BINARY_DIR}/python-build/Lib/python26.lib
