@@ -295,10 +295,10 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   fiberNode->SetAndObservePolyData(outFibers);
   
   int newNode = 0;
-  vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetLineDisplayNode();
+  vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetTubeDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
-    dnode = fiberNode->AddLineDisplayNode();
+    dnode = fiberNode->AddTubeDisplayNode();
     dnode->DisableModifiedEventOn();
     dnode->SetScalarVisibility(1);
     dnode->SetVisibility(1);
@@ -306,10 +306,10 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
     newNode = 1;
     }
 
-  dnode = fiberNode->GetTubeDisplayNode();
+  dnode = fiberNode->GetLineDisplayNode();
   if (dnode == NULL || oldPoly == NULL)
     {
-    dnode = fiberNode->AddTubeDisplayNode();
+    dnode = fiberNode->AddLineDisplayNode();
     if (newNode)
       {
       dnode->DisableModifiedEventOn();

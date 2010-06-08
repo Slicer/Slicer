@@ -355,7 +355,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
       message->SetParent ( this->UIPanel->GetPageWidget ( "Tractography" ) );
       message->SetStyleToYesNo();
-      std::string msg = "TractographyFiducialSeeding is about to create new tracks for " + std::string(fiberNode->GetName()) + " which contains polydata. Do you want to override it?";
+      std::string msg = "TractographyFiducialSeeding is about to create new tracts for " + std::string(fiberNode->GetName()) + " which contains polydata. Do you want to override it?";
       message->SetText(msg.c_str());
       message->Create();
       createFiber = message->Invoke();
@@ -871,7 +871,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->DisplayMenu->SetParent(moduleFrame->GetFrame());
   this->DisplayMenu->Create();
   //this->DisplayMenu->SetWidth(60);
-  this->DisplayMenu->SetText("Go to Fiber Bundles Module to Change Tracks Display");
+  this->DisplayMenu->SetText("Go to Fiber Bundles Module to Change Tracts Display");
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                this->DisplayMenu->GetWidgetName());
 
