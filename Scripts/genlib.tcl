@@ -366,6 +366,7 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
 if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 
     if {$isWindows} {
+      cd $::Slicer3_LIB
       runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/$::TCL_VERSION-build tcl-build
     }
 
