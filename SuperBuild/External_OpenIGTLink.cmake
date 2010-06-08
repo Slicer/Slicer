@@ -5,7 +5,7 @@
 set(proj OpenIGTLink)
 
 ExternalProject_Add(${proj}
-  SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/branches/OpenIGTLink-1-0"
+  SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
   SOURCE_DIR OpenIGTLink
   BINARY_DIR OpenIGTLink-build
   CMAKE_GENERATOR ${gen}
@@ -15,6 +15,7 @@ ExternalProject_Add(${proj}
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DCMAKE_SKIP_RPATH:BOOL=ON
     -DOpenIGTLink_DIR:FILEPATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
+    -DOpenIGTLink_PROTOCOL_VERSION_2:BOOL=ON
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
   INSTALL_COMMAND ""
 )

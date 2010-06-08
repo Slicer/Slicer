@@ -1287,6 +1287,7 @@ if { [BuildThis $::OPENIGTLINK_TEST_FILE "openigtlink"] == 1 && [string tolower 
             -DBUILD_SHARED_LIBS:BOOL=ON \
             -DCMAKE_SKIP_RPATH:BOOL=OFF \
             -DOpenIGTLink_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
+            -DOpenIGTLink_PROTOCOL_VERSION_2:BOOL=ON \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
             ../OpenIGTLink
       } else {
@@ -1297,6 +1298,7 @@ if { [BuildThis $::OPENIGTLINK_TEST_FILE "openigtlink"] == 1 && [string tolower 
             -DBUILD_SHARED_LIBS:BOOL=ON \
             -DCMAKE_SKIP_RPATH:BOOL=ON \
             -DOpenIGTLink_DIR:FILEPATH=$Slicer3_LIB/OpenIGTLink-build \
+            -DOpenIGTLink_PROTOCOL_VERSION_2:BOOL=ON \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
             ../OpenIGTLink
       }
