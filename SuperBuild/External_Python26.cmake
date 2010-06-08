@@ -71,7 +71,6 @@ if(WIN32)
     build_python_target(_testcapi Build_pythoncore)  
   endif()
 
-  build_python_target(_testcapi Build_pythoncore)
   build_python_target(_msi Build__testcapi)
   build_python_target(_elementtree Build__msi)
   build_python_target(_ctypes_test Build__elementtree)
