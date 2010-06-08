@@ -15,14 +15,48 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget"/>
+    <widget class="qMRMLVolumeThresholdWidget" name="MRMLVolumeThresholdWidget" native="true"/>
    </item>
    <item>
-    <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
+    <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget" native="true"/>
+   </item>
+   <item>
+    <widget class="ctkTransferFunctionWidget" name="TransferFunctionWidget">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>150</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkTransferFunctionWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>ctkTransferFunctionWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>qMRMLVolumeThresholdWidget</class>
    <extends>QWidget</extends>
@@ -32,12 +66,6 @@
    <class>qMRMLWindowLevelWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWindowLevelWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

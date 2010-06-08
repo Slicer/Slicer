@@ -17,12 +17,13 @@ qSlicerVolumeDisplayWidget::qSlicerVolumeDisplayWidget(QWidget* _parent) : Super
 // --------------------------------------------------------------------------
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
 {  
-  if (volumeNode) 
-  {
-    if (std::string(volumeNode->GetClassName()) == std::string("vtkMRMLScalarVolumeNode"))
+  if (volumeNode == 0) 
     {
-      this->setCurrentWidget(this->ScalarVolumeDisplayWidget);
-      this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
+    return;
     }
-  }
+  if (volumeNode->IsA("vtkMRMLScalarVolumeNode"))
+    {
+    this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
+    this->setCurrentWidget(this->ScalarVolumeDisplayWidget);
+    }
 }
