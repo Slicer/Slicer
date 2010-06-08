@@ -48,92 +48,44 @@ if(WIN32)
       DEPENDERS build
       )
   endif()
+  
+  # Convenient helper function
+  function(build_python_target target depend)
+    ExternalProject_Add_Step(${proj} Build_${target}
+      COMMAND ${DEVENV} ${python_sln} /build Release /project ${target}
+      DEPENDEES ${depend}
+      )
+  endfunction(build_python_target)
 
-  ExternalProject_Add_Step(${proj} Build_make_versioninfo
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_versioninfo
-    DEPENDEES configure
-    )
-
-  ExternalProject_Add_Step(${proj} Build_make_buildinfo
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project make_buildinfo
-    DEPENDEES Build_make_versioninfo
-    )
-
-  ExternalProject_Add_Step(${proj} Build_kill_python
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project kill_python
-    DEPENDEES Build_kill_python
-    )
-
-  ExternalProject_Add_Step(${proj} Build_w9xpopen
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project w9xpopen
-    DEPENDEES Build_kill_python
-    )
-
-  ExternalProject_Add_Step(${proj} Build_pythoncore
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythoncore
-    DEPENDEES Build_w9xpopen
-    )
-
-  ExternalProject_Add_Step(${proj} Build__socket
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _socket
-    DEPENDEES Build_pythoncore
-    )
+  build_python_target(make_versioninfo configure)
+  build_python_target(make_buildinfo Build_make_versioninfo)
+  build_python_target(kill_python Build_make_buildinfo)
+  build_python_target(w9xpopen Build_kill_python)
+  build_python_target(pythoncore Build_w9xpopen)
+  build_python_target(_socket Build_pythoncore)
 
   if(Slicer3_USE_KWWIDGETS)
     ExternalProject_Add_Step(${proj} Build__tkinter
-      COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _tkinter
+      COMMAND ${DEVENV} ${python_sln} /build Release /project _tkinter
       DEPENDEES Build__socket
+      DEPENDERS Build_python
       )
   endif()
 
-  ExternalProject_Add_Step(${proj} Build__testcapi
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _testcapi
-    DEPENDEES Build_pythoncore
-    )
-
-  ExternalProject_Add_Step(${proj} Build__msi
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _msi
-    DEPENDEES Build__testcapi
-    )
-
-  ExternalProject_Add_Step(${proj} Build__elementtree
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _elementtree
-    DEPENDEES Build__msi
-    )
-
-  ExternalProject_Add_Step(${proj} Build__ctypes_test
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes_test
-    DEPENDEES Build__elementtree
-    )
-
-  ExternalProject_Add_Step(${proj} Build__ctypes
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _ctypes
-    DEPENDEES python_sln
-    )
-
-  ExternalProject_Add_Step(${proj} Build_winsound
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project winsound
-    DEPENDEES Build__ctypes
-    )
-
-  ExternalProject_Add_Step(${proj} Build_pyexpat
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pyexpat
-    DEPENDEES Build_winsound
-    )
-
-  ExternalProject_Add_Step(${proj} Build_pythonw
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project pythonw
-    DEPENDEES Build_pyexpat
-    )
-
-  ExternalProject_Add_Step(${proj} Build__multiprocessing
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project _multiprocessing
-    DEPENDEES Build_pythonw
-    )
-    
+  build_python_target(_testcapi Build_pythoncore)
+  build_python_target(_msi Build__testcapi)
+  build_python_target(_elementtree Build__msi)
+  build_python_target(_ctypes_test Build__elementtree)
+  build_python_target(_ctypes Build__ctypes_test)
+  build_python_target(winsound Build__ctypes)
+  build_python_target(pyexpat Build_winsound)
+  build_python_target(pythonw Build_pyexpat)
+  build_python_target(_multiprocessing Build_pythonw)
+  
   ExternalProject_Add_Step(${proj} Build_python
-    COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project python
-    DEPENDEES _multiprocessing
+    COMMAND ${DEVENV} ${python_sln} /build Release /project _multiprocessing
+    DEPENDEES Build__multiprocessing
+    DEPENDERS install
     )
 
   ExternalProject_Add_Step(${proj} CopyPythonLib
