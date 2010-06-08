@@ -21,7 +21,10 @@
 
 #include "vtkKWInternationalization.h"
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkMRMLSliceCompositeNode.h"
 
+ 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkBrainlabModuleNavigationStep);
 vtkCxxRevisionMacro(vtkBrainlabModuleNavigationStep, "$Revision: 1.8 $");
@@ -320,6 +323,7 @@ void vtkBrainlabModuleNavigationStep::MRMLTreeButtonCallback()
 }
 
 
+
 void vtkBrainlabModuleNavigationStep::ProcessTimerEvents()
 {
 
@@ -327,16 +331,30 @@ void vtkBrainlabModuleNavigationStep::ProcessTimerEvents()
     {
     if (this->TrackingSourceSelectorWidget)
       {
-      // Slice Driven by Locator
       vtkMRMLLinearTransformNode* transNode =    
         vtkMRMLLinearTransformNode::SafeDownCast(this->TrackingSourceSelectorWidget->GetSelected());
+      int vis = (transNode ? 1 : 0);
+
+      // If we have a tracking source, turn on the Slice Intersections feature.
+      vtkSlicerApplicationGUI *appGUI = this->GetGUI()->GetApplicationGUI();
+      if (appGUI)
+        {
+        int cnnodes = appGUI->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+        for (int i = 0; i < cnnodes; i++)
+          {
+          vtkMRMLSliceCompositeNode *cnode = 
+            vtkMRMLSliceCompositeNode::SafeDownCast( appGUI->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+          cnode->SetSliceIntersectionVisibility( vis );
+          }
+        }
+
+      // Slice Driven by Locator
       if (transNode)
         {
         vtkMatrix4x4* transform = transNode->GetMatrixTransformToParent();
         if (transform)
           {
           // transform->Print(cerr);
-
           for (int i = 0; i < 3; i++)
             {
             UpdateSliceNode(i, transform);
