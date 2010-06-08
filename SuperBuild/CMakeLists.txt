@@ -342,7 +342,7 @@ set(teem_DEPENDENCIES vtk)
 set(cmcurl_DEPENDENCIES)
 set(slicer_DEPENDENCIES vtk Insight BatchMake OpenIGTLink teem cmcurl)
 if(Slicer3_USE_KWWIDGETS)
-  list(APPEND slicer_DEPENDENCIES blt incrTcl iwidgets)
+  list(APPEND slicer_DEPENDENCIES blt itcl iwidgets)
 endif()
 
 #------------------------------------------------------------------------------
