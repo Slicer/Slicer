@@ -112,15 +112,15 @@ int vtkIGTLToMRMLPosition::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRML
   igtl::QuaternionToMatrix(quaternion, matrix);
   
   vtkMatrix4x4* transformToParent = transformNode->GetMatrixTransformToParent();
-  double *transformToParentElement = &transformToParent->Element[0][0];
-  float *matrixElement = &matrix[0][0];
-  for (int i = 0; i < 16; i++)
+  int row, column;
+  for (row = 0; row < 4; row++)
     {
-    transformToParentElement[i] = matrixElement[i];
+    for (column = 0; column < 3; column++)
+      {
+      transformToParent->Element[row][column] = matrix[row][column];
+      }
+    transformToParent->Element[row][3] = position[row];
     }
-  transformToParent->Element[0][3] = position[0];
-  transformToParent->Element[1][3] = position[1];
-  transformToParent->Element[2][3] = position[2];
 
   transformToParent->Modified();
 
