@@ -341,6 +341,9 @@ set(OpenIGTLink_DEPENDENCIES)
 set(teem_DEPENDENCIES vtk)
 set(cmcurl_DEPENDENCIES)
 set(slicer_DEPENDENCIES vtk Insight BatchMake OpenIGTLink teem cmcurl)
+if(Slicer3_USE_KWWIDGETS)
+  list(APPEND slicer_DEPENDENCIES blt incrTcl iwidgets)
+endif()
 
 #------------------------------------------------------------------------------
 # Conditionnaly include ExternalProject Target
