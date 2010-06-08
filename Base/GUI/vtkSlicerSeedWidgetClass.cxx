@@ -131,7 +131,7 @@ vtkSlicerSeedWidgetClass::vtkSlicerSeedWidgetClass()
 
   this->Widget = vtkSeedWidget::New();
   // turn off cursor changes for now, not allowing native adding of points
-  //this->Widget->ManagesCursorOff();
+  this->Widget->ManagesCursorOff();
   this->Widget->EnabledOff();
   this->Widget->CreateDefaultRepresentation();
   this->Widget->SetRepresentation(this->Representation);
@@ -271,6 +271,10 @@ int vtkSlicerSeedWidgetClass::AddSeed(double *position, const char *pointID)
   // set the position if it was passed in
   if (handle)
     {
+    // turn off managing the cursor, this doesn't stop the cursor from turning
+    // into a hand, but in conjunction with the seed widget not managing it,
+    // the cursor should only turn into a hand when can pick it up and move it
+    handle->ManagesCursorOff();
     // save the id and index
     vtkSeedRepresentation *sr = vtkSeedRepresentation::SafeDownCast(this->GetWidget()->GetRepresentation());
     if (sr)
