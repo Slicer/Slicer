@@ -41,15 +41,22 @@ SET(CTEST_CUSTOM_COVERAGE_EXCLUDE
 SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
   
-  # itk suppressions
+  # Suppressing warnings about GL_GLEXT_LEGACY, the link reported below 
+  # report a similar problem with GL_GLEXT_PROTOTYPE.
+  # http://lists.apple.com/archives/mac-opengl/2009/Dec/msg00081.html
+  # That problem could be solved installing a newer version of X11 SDK
+  # See http://xquartz.macosforge.org/trac/changeset/343
+  ".*warning.*GL_GLEXT_LEGACY.*redefined"
+  
+  # ITK suppressions
   "[Uu]tilities.gdcm"
   "[Uu]tilities.vxl"
   "[Uu]tilities.itktiff"
   "[Ii]nsight.[Cc]ode.[Cc]ommon"
   "[Ii]nsight.[Cc]ode.[Nn]umerics"
   "[Ii]nsight.[Cc]ode.(IO|io)"
-
-  # vtk suppressions
+  
+  # VTK suppressions
   "vtkfreetype"
   "Utilities.vtktiff"
   "VTK.*IO.vtkMySQLQuery.cxx"
@@ -63,6 +70,8 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "VTK.*Infovis.*cxx"
   # exception specific to Mac/Carbon
   "VTK.Rendering.vtkCarbonRenderWindow.*warning.*(NewRgn|DiffRgn|EqualRgn|DisposeRgn).*is deprecated"
+  # exception specific to Mac/X11
+  "VTK.Rendering.vtkOpenGL.*warning: this is the location of the previous definition"
 
 
   # qt suppressions from vtk...
