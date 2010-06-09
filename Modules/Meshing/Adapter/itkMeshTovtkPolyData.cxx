@@ -50,7 +50,26 @@ itkMeshTovtkPolyData
 itkMeshTovtkPolyData
 ::~itkMeshTovtkPolyData()
 {
-  
+  if (m_itkTriangleMesh)
+    {
+    m_itkTriangleMesh->Delete();
+    m_itkTriangleMesh = NULL;
+    }
+  if ( m_Points )
+    {
+    m_Points->Delete();
+    m_Points = NULL;
+    }
+  if (m_PolyData)
+    {
+    m_PolyData->Delete();
+    m_PolyData = NULL;
+    }
+  if (m_Polys)
+    {
+    m_Polys->Delete();
+    m_Polys = NULL;
+    }
 }
 
 void
@@ -101,7 +120,8 @@ itkMeshTovtkPolyData
   m_PolyData->SetPoints(m_Points);
 
   m_Points->Delete();
-
+  m_Points = NULL;
+  
   CellsContainerPointer cells = m_itkTriangleMesh->GetCells();
   CellsContainerIterator cellIt = cells->Begin();
   vtkIdType pts[3];
@@ -135,5 +155,6 @@ itkMeshTovtkPolyData
   
   m_PolyData->SetPolys(m_Polys);
   m_Polys->Delete();
+  m_Polys = NULL;
 
 }

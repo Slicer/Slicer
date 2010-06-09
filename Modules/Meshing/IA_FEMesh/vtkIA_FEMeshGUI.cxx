@@ -101,8 +101,8 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
   // since the toplevel is a loadable module but the other libraries
   // didn't get loaded
   Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
-  Mimxcommon_Init(interp);
-  Buildingblock_Init(interp);
+  //Mimxcommon_Init(interp);
+  //Buildingblock_Init(interp);
     
   this->SavedBoxState = 0;
   this->SavedAxisLabelState = 0;
@@ -129,7 +129,8 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
 {
 
-
+  this->RemoveMRMLObservers();
+  
   if (this->Logic != NULL)
     {
     this->Logic->Delete();
@@ -320,34 +321,67 @@ void vtkIA_FEMeshGUI::Enter ( )
 {
   // get pointers to the current scene.  
   //vtkMRMLScene *SlicerScene = vtkMRMLScene::GetActiveScene();
-  vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
-  vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
-  if (this->SavedBoxState) this->SavedBoxState = viewnode->GetBoxVisible();
-  if (this->SavedAxisLabelState) this->SavedAxisLabelState = viewnode->GetAxisLabelsVisible();
-  if (this->SavedLayoutEnumeration) this->SavedLayoutEnumeration = layoutnode->GetViewArrangement();
-  if (viewnode) {
-      viewnode->GetBackgroundColor(this->SavedBackgroundColor);
-      viewnode->SetBoxVisible(0);
-      viewnode->SetAxisLabelsVisible(0);
-      double blackBackground[3]; blackBackground[0]=blackBackground[1]=blackBackground[2] = 0.0;
-      viewnode->SetBackgroundColor(blackBackground);
-  }
+  vtkMRMLViewNode *viewnode = NULL;
+  vtkMRMLLayoutNode *layoutnode = NULL;
+  if (this->GetApplicationGUI())
+    {
+    if (this->GetApplicationGUI()->GetViewControlGUI())
+      {
+      viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
+      }
+    layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
+    }
+  if (viewNode)
+    {
+    if (this->SavedBoxState)
+      {
+      this->SavedBoxState = viewnode->GetBoxVisible();
+      }
+    if (this->SavedAxisLabelState)
+      {
+      this->SavedAxisLabelState = viewnode->GetAxisLabelsVisible();
+      }
+    }
+  if (layoutnode)
+    {
+    if (this->SavedLayoutEnumeration)
+      {
+      this->SavedLayoutEnumeration = layoutnode->GetViewArrangement();
+      }
+    }
+  if (viewnode)
+    {
+    viewnode->GetBackgroundColor(this->SavedBackgroundColor);
+    viewnode->SetBoxVisible(0);
+    viewnode->SetAxisLabelsVisible(0);
+    double blackBackground[3]; blackBackground[0]=blackBackground[1]=blackBackground[2] = 0.0;
+    viewnode->SetBackgroundColor(blackBackground);
+    }
   // add the specific application settings for this module here
-
-  if (layoutnode) layoutnode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
-  //this->MeshingUI->AddOrientationAxis();
-  this->MeshingUI->CustomApplicationSettingsModuleEntry();
   
-  // register with the MRML scene to receive callbacks when the scene is closed or opened.
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::NewSceneEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneEditedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-
-  // look for objects in MRML scene that don't show up in IA-FEMesh panels because scene changed
-  this->MeshingUI->MainUserInterfacePanel->SynchronizeViewPropertiesWithMRMLScene();
-
+  if (layoutnode)
+    {
+    layoutnode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
+    }
+  if (this->MeshingUI)
+    {
+    //this->MeshingUI->AddOrientationAxis();
+    this->MeshingUI->CustomApplicationSettingsModuleEntry();
+    }
+  if ( this->GetMRMLScene())
+    {
+    // register with the MRML scene to receive callbacks when the scene is closed or opened.
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::NewSceneEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneEditedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    }
+  if (this->MeshingUI)
+    {
+    // look for objects in MRML scene that don't show up in IA-FEMesh panels because scene changed
+    this->MeshingUI->MainUserInterfacePanel->SynchronizeViewPropertiesWithMRMLScene();
+    }
   // restore the state of object visibility depending on how they were when exiting the module
   // This is gated to happen only after returning to the module.  Not the first time, when the 
   // lists aren't initialized yet. 
@@ -358,8 +392,12 @@ void vtkIA_FEMeshGUI::Enter ( )
     this->FirstEntryToModule=false;
   }
   else
-    this->MeshingUI->RestoreVisibilityStateOfObjectLists(); 
-
+    {
+    if (this->MeshingUI)
+      {
+      this->MeshingUI->RestoreVisibilityStateOfObjectLists(); 
+      }
+    }
 
 }
  
@@ -368,24 +406,47 @@ void vtkIA_FEMeshGUI::Enter ( )
 void vtkIA_FEMeshGUI::Exit ( )
 {
   // restore the MRML Scene state
-  vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
-  vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
+  vtkMRMLViewNode *viewnode = NULL;
+  vtkMRMLLayoutNode *layoutnode = NULL;
+  if (this->GetApplicationGUI())
+    {
+    if (this->GetApplicationGUI()->GetViewControlGUI())
+      {
+      viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
+      }
+    layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
+    }
   // remove the specific application settings for this module here
-  if (layoutnode) layoutnode->SetViewArrangement(this->SavedLayoutEnumeration);
-  if (viewnode) {
+  if (layoutnode)
+    {
+    layoutnode->SetViewArrangement(this->SavedLayoutEnumeration);
+    }
+  if (viewnode)
+    {
     viewnode->SetBoxVisible(this->SavedBoxState);
     viewnode->SetAxisLabelsVisible(this->SavedAxisLabelState);
     viewnode->SetBackgroundColor(this->SavedBackgroundColor);
-  }
-  //this->MeshingUI->RemoveOrientationAxis();
-  this->MeshingUI->CustomApplicationSettingsModuleExit();
-  // save the state of object visibility so we can restore later
-  this->MeshingUI->SaveVisibilityStateOfObjectLists();
+    }
+  if (this->MeshingUI)
+    {
+    //this->MeshingUI->RemoveOrientationAxis();
+    this->MeshingUI->CustomApplicationSettingsModuleExit();
+    // save the state of object visibility so we can restore later
+    this->MeshingUI->SaveVisibilityStateOfObjectLists();
+    }
+  this->RemoveMRMLObservers();
 
+}
+
+void vtkIA_FEMeshGUI::RemoveMRMLObservers()
+{
   // release callbacks so nothing is called while module is not active
-  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent,  (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadStartEvent,  (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent,  (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NewSceneEvent,  (vtkCommand *)this->MRMLCallbackCommand);
-
+  if (this->GetMRMLScene())
+    {
+    this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadStartEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NewSceneEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneEditedEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+    }
 }

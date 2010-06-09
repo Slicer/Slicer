@@ -280,6 +280,7 @@ void vtkMimxImageActor::InitializePlaneWidgets(vtkMatrix4x4* matrix, double orig
      reslice->Update();
      xlateXform->Delete();
      xlate->Delete();
+     xformFilter->Delete();
 
      int *extent = reslice->GetOutput()->GetExtent();
      std::cout << "extent: ( " << extent[0] << "," << extent[1] << "," << extent[2] << ")" << std::endl;

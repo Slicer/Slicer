@@ -36,6 +36,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkKWRenderWidget.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
+#include "vtkSmartPointer.h"
 //#include "vtkKWMimxViewProperties.h"
 #include "vtkObjectFactory.h"
 
@@ -79,6 +80,22 @@ vtkKWMimxGroupBase::~vtkKWMimxGroupBase()
   this->CancelButton->Delete();
   this->MainFrame->Delete();
   this->ApplyButton->Delete();
+  if (this->ImageList)
+    {
+    this->ImageList->Delete();
+    }
+   if (this->SurfaceList)
+    {
+    this->SurfaceList->Delete();
+    }
+    if (this->FEMeshList)
+    {
+    this->FEMeshList->Delete();
+    }
+  if (this->DoUndoTree)
+    {
+    this->DoUndoTree->Delete();
+    }
 }
 //----------------------------------------------------------------------------
 void vtkKWMimxGroupBase::CreateWidget()
@@ -114,7 +131,7 @@ void vtkKWMimxGroupBase::PrintSelf(ostream& os, vtkIndent indent)
 void vtkKWMimxGroupBase::AddMeshToDisplay( vtkUnstructuredGrid *mesh, 
             const char *namePrefix, const char *foundationName, const char *elementSetName)
 {
-  vtkMimxMeshActor *actor = vtkMimxMeshActor::New();
+  vtkSmartPointer<vtkMimxMeshActor> actor = vtkSmartPointer<vtkMimxMeshActor>::New();
   actor->SetFoundationName(foundationName);
   this->FEMeshList->AppendItem( actor );
         actor->SetDataSet( mesh );
@@ -176,7 +193,7 @@ void vtkKWMimxGroupBase::AddMeshToDisplay( vtkUnstructuredGrid *mesh,
   // check if triangle or quad elements exist
   if (elementSetName != NULL)
   {
-    vtkCellTypes *cellTypes = vtkCellTypes::New();
+  vtkSmartPointer<vtkCellTypes> cellTypes = vtkSmartPointer<vtkCellTypes>::New();
     actor->GetDataSet()->GetCellTypes(cellTypes);
    
     for (int i=0; i<cellTypes->GetNumberOfTypes(); i++)
@@ -357,12 +374,12 @@ void vtkKWMimxGroupBase::AddImageToDisplay(vtkImageData *surface,
 {
 
   // initialize an image actor to hold the reference to the stored image in the MRML scene
-  vtkMimxImageActor *actor = vtkMimxImageActor::New();
+  vtkSmartPointer<vtkMimxImageActor> actor = vtkSmartPointer<vtkMimxImageActor>::New();
   actor->SetInteractor(this->GetMimxMainWindow()->GetRenderWidget()->GetRenderWindow()->GetInteractor());
 
   // copy the image referenced elsewhere in the MRML scene so we will have our own copy for the rest of
   // the processing workflow
-  vtkImageData *imageToAdd = vtkImageData::New();
+  vtkSmartPointer<vtkImageData> imageToAdd = vtkSmartPointer<vtkImageData>::New();
   imageToAdd->DeepCopy(surface);
   actor->SetImageDataSet( imageToAdd, matrix, origin );
   cout << "MimxGroupBase: imageToAdd->Delete();" << endl;

@@ -204,7 +204,7 @@ vtkMimxViewMergePointsWidget::~vtkMimxViewMergePointsWidget()
 
   this->HandlePicker->Delete();
   this->HexPicker->Delete();
-
+  this->SurfacePicker->Delete();
   this->HandleProperty->Delete();
   this->SelectedHandleProperty->Delete();
   this->OutlineProperty->Delete();

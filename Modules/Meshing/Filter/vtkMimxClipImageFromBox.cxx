@@ -50,15 +50,30 @@ vtkMimxClipImageFromBox::vtkMimxClipImageFromBox()
         IpMode = 1;
         FName = NULL;
         IpImage = NULL;
+        OpImage = NULL;
 }
 
 vtkMimxClipImageFromBox::~vtkMimxClipImageFromBox()
 {
         BoxWidget->Delete();
+        PlaneX->SetPicker(NULL);
         PlaneX->Delete();
+        PlaneY->SetPicker(NULL);
         PlaneY->Delete();
+        PlaneZ->SetPicker(NULL);
         PlaneZ->Delete();
         CellPicker->Delete();
+        Reader->Delete();
+        Filter->Delete();
+        ResampleFilter->Delete();
+        if (this->IpImage)
+          {
+          this->IpImage->Delete();
+          }
+        if (this->OpImage)
+          {
+          this->OpImage->Delete();
+          }
 }
 
 void vtkMimxClipImageFromBox::DisplayWidgets()

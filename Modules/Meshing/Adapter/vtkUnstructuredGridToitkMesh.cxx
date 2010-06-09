@@ -27,6 +27,10 @@ vtkUnstructuredGridToitkMesh
     {
       m_Grid->Delete();
     }
+  if (m_itkMesh)
+    {
+    m_itkMesh->Delete();
+    }
 }
 
 void
@@ -121,6 +125,7 @@ vtkUnstructuredGridToitkMesh
          }
       m_itkMesh->SetCell(cellId, c);
     }
-
+  points->Delete();
+  cells->Delete();
 }
 

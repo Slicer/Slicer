@@ -93,6 +93,8 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshGUI : public vtkSlicerModuleGUI
   //BTX
   using vtkSlicerComponentGUI::Enter; 
   //ETX
+  /// Remove observers that we added on the mrml scene
+  virtual void RemoveMRMLObservers();
   virtual void Exit ( );
 
   virtual void SetActiveViewer(vtkSlicerViewerWidget *activeViewer);
