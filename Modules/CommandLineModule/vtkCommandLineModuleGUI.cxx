@@ -1427,8 +1427,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           nodeClass = "vtkMRMLScalarVolumeNode";
           }
 
+        //tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
+        //                       (title + " Volume").c_str());
         tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
-                                 (title + " Volume").c_str());
+                                 (*pit).GetLabel().c_str());
         tparameter->SetNoneEnabled(noneEnabled);
         tparameter->SetDefaultEnabled(0);
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
@@ -1474,19 +1476,19 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           }
 
         tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
-                                 (title + " Volume").c_str());
+                                 (*pit).GetLabel().c_str());
         if ((*pit).GetType() == "any")
           {
           // Add all of the other concrete volume node types
           tparameter->AddNodeClass("vtkMRMLVectorVolumeNode",
                                    attrName, attrValue, 
-                                   (title + " VectorVolume").c_str());
+                                   (*pit).GetLabel().c_str());
           tparameter->AddNodeClass("vtkMRMLDiffusionTensorVolumeNode",
                                    attrName, attrValue, 
-                                   (title + " DiffusionTensorVolume").c_str());
+                                   (*pit).GetLabel().c_str());
           tparameter->AddNodeClass("vtkMRMLDiffusionWeightedVolumeNode",
                                    attrName, attrValue, 
-                                   (title + " DiffusionWeightedVolume").c_str());
+                                   (*pit).GetLabel().c_str());
           }
         tparameter->SetNewNodeEnabled(1);
         tparameter->SetNoneEnabled(noneEnabled);
