@@ -33,11 +33,13 @@ set(Slicer3_HOME "${Slicer3_BINARY_DIR}")
 # Convenient macro allowing to download a file
 #
 MACRO(downloadFile url dest)
-  FILE(DOWNLOAD ${url} ${dest} STATUS status)
-  LIST(GET status 0 error_code)
-  LIST(GET status 1 error_msg)
-  IF(error_code)
-    MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+  IF(NOT EXISTS ${dest})
+    FILE(DOWNLOAD ${url} ${dest} STATUS status)
+    LIST(GET status 0 error_code)
+    LIST(GET status 1 error_msg)
+    IF(error_code)
+      MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+    ENDIF()
   ENDIF()
 ENDMACRO()
 
