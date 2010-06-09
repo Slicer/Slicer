@@ -103,6 +103,11 @@ if(WIN32)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_CFG_INTDIR}/python26.dll
     DEPENDEES install
     )
+
+  ExternalProject_Add_Step(${proj} CopyPyconfigHeader
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PC/pyconfig.h ${CMAKE_BINARY_DIR}/python-build/Include/pyconfig.h
+    DEPENDEES install
+    )
     
 elseif(UNIX)
   set(python_BUILD_IN_SOURCE 1)
