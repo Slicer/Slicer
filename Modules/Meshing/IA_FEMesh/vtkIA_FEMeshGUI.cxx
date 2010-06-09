@@ -101,8 +101,8 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
   // since the toplevel is a loadable module but the other libraries
   // didn't get loaded
   Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
-  //Mimxcommon_Init(interp);
-  //Buildingblock_Init(interp);
+  Mimxcommon_Init(interp);
+  Buildingblock_Init(interp);
     
   this->SavedBoxState = 0;
   this->SavedAxisLabelState = 0;
@@ -331,7 +331,7 @@ void vtkIA_FEMeshGUI::Enter ( )
       }
     layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
     }
-  if (viewNode)
+  if (viewnode)
     {
     if (this->SavedBoxState)
       {
