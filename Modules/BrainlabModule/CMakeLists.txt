@@ -117,8 +117,8 @@ endif(BUILD_TESTING)
 # --------------------------------------------------------------------------
 # Install the testing data
 
-install(DIRECTORY
-  Testing/TestData
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
-  PATTERN ".svn" EXCLUDE
-  )
+# install(DIRECTORY
+#  Testing/TestData
+#  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
+#  PATTERN ".svn" EXCLUDE
+#  )
