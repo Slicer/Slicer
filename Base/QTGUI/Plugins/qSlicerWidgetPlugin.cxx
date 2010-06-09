@@ -2,10 +2,12 @@
 #include "qSlicerWidget.h"
 #include "qSlicerApplication.h" // For qSlicerApplyPalette function
 
+// --------------------------------------------------------------------------
 qSlicerWidgetPlugin::qSlicerWidgetPlugin()
 {
 }
 
+// --------------------------------------------------------------------------
 QWidget *qSlicerWidgetPlugin::createWidget(QWidget *_parent)
 {
   qSlicerWidget* _widget = new qSlicerWidget(_parent);
@@ -26,16 +28,19 @@ QString qSlicerWidgetPlugin::domXml() const
           "</widget>\n";
 }
 
+// --------------------------------------------------------------------------
 QString qSlicerWidgetPlugin::includeFile() const
 {
   return "qSlicerWidget.h";
 }
 
+// --------------------------------------------------------------------------
 bool qSlicerWidgetPlugin::isContainer() const
 {
   return true;
 }
 
+// --------------------------------------------------------------------------
 QString qSlicerWidgetPlugin::name() const
 {
   return "qSlicerWidget";

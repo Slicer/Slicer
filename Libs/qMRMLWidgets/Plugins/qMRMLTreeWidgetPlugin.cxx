@@ -1,17 +1,21 @@
+
+// qMRML includes
 #include "qMRMLTreeWidgetPlugin.h"
 #include "qMRMLTreeWidget.h"
 
-qMRMLTreeWidgetPlugin::qMRMLTreeWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
+// --------------------------------------------------------------------------
+qMRMLTreeWidgetPlugin::qMRMLTreeWidgetPlugin(QObject *_parent):QObject(_parent)
 {
 }
 
+// --------------------------------------------------------------------------
 QWidget *qMRMLTreeWidgetPlugin::createWidget(QWidget *_parent)
 {
   qMRMLTreeWidget* _widget = new qMRMLTreeWidget(_parent);
   return _widget;
 }
 
+// --------------------------------------------------------------------------
 QString qMRMLTreeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLTreeWidget\" \
@@ -19,21 +23,25 @@ QString qMRMLTreeWidgetPlugin::domXml() const
           "</widget>\n";
 }
 
+// --------------------------------------------------------------------------
 QIcon qMRMLTreeWidgetPlugin::icon() const
 {
   return QIcon(":/Icons/listview.png");
 }
 
+// --------------------------------------------------------------------------
 QString qMRMLTreeWidgetPlugin::includeFile() const
 {
   return "qMRMLTreeWidget.h";
 }
 
+// --------------------------------------------------------------------------
 bool qMRMLTreeWidgetPlugin::isContainer() const
 {
   return false;
 }
 
+// --------------------------------------------------------------------------
 QString qMRMLTreeWidgetPlugin::name() const
 {
   return "qMRMLTreeWidget";

@@ -605,6 +605,7 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
   events->Delete();
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::DeleteSliceLogics()
 {
   if (this->InternalSliceLogicMap)

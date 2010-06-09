@@ -34,11 +34,9 @@ public:
   virtual ~qSlicerCoreModuleFactory(){}
 
   ///
-  /// \overload
   virtual void registerItems();
 
   ///
-  /// \overload
   virtual QString objectNameToKey(const QString& objectName);
 
   /// Extract module name given a core module \a className

@@ -3,8 +3,9 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLTreeWidgetPlugin : public QObject,
-                                public qMRMLWidgetsAbstractPlugin
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLTreeWidgetPlugin :
+  public QObject,
+  public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 

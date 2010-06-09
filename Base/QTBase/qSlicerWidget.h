@@ -73,7 +73,6 @@ public:
 public slots:
 
   /// 
-  /// \Overload
   virtual void setParentVisible(bool visible);
 
   /// 

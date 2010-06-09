@@ -6,7 +6,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
 
-// SlicerQt
+// SlicerQt includes
 #include "qSlicerModuleSelectorWidget.h"
 #include "qSlicerModuleSelectorWidget_p.h"
 

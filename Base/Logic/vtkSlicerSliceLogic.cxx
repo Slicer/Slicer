@@ -12,6 +12,7 @@
 
 =========================================================================auto=*/
 
+// VTK includes
 #include "vtkSmartPointer.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
@@ -20,8 +21,8 @@
 #include "vtkPoints.h"
 #include "vtkImageBlend.h"
 #include "vtkImageMathematics.h"
-#include "vtkSmartPointer.h"
 
+// MRML includes
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
@@ -33,12 +34,12 @@
 
 #include "vtkSlicerSliceLogic.h"
 
+// STD includes
 #include <sstream>
 #include <iostream>
 
-vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision$");
-vtkStandardNewMacro(vtkSlicerSliceLogic);
-
+//----------------------------------------------------------------------------
+// Convenient macros
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
@@ -47,9 +48,14 @@ vtkStandardNewMacro(vtkSlicerSliceLogic);
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
+//----------------------------------------------------------------------------
 const int vtkSlicerSliceLogic::SLICE_INDEX_ROTATED=-1;
 const int vtkSlicerSliceLogic::SLICE_INDEX_OUT_OF_VOLUME=-2;
 const int vtkSlicerSliceLogic::SLICE_INDEX_NO_VOLUME=-3;
+
+//----------------------------------------------------------------------------
+vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision$");
+vtkStandardNewMacro(vtkSlicerSliceLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerSliceLogic::vtkSlicerSliceLogic()
@@ -138,7 +144,7 @@ void vtkSlicerSliceLogic::UpdateSliceNode()
     // local SliceNode is out of sync with the scene
     this->SetSliceNode (NULL);
     }
-
+  
   if ( this->SliceNode == NULL )
     {
     if ( node == NULL )
@@ -194,7 +200,6 @@ void vtkSlicerSliceLogic::UpdateSliceNodeFromLayout()
 }
 
 //----------------------------------------------------------------------------
-
 void vtkSlicerSliceLogic::UpdateSliceCompositeNode()
 {
   // find SliceCompositeNode in the scene
@@ -1058,7 +1063,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     }
 }
 
-
+//----------------------------------------------------------------------------
 vtkMRMLVolumeNode *vtkSlicerSliceLogic::GetLayerVolumeNode(int layer)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
@@ -1091,6 +1096,7 @@ vtkMRMLVolumeNode *vtkSlicerSliceLogic::GetLayerVolumeNode(int layer)
   return ( vtkMRMLVolumeNode::SafeDownCast ( this->MRMLScene->GetNodeByID( id )) );
 }
 
+//----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
 void vtkSlicerSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double rasDimensions[3], double rasCenter[3])
 {
@@ -1164,6 +1170,7 @@ void vtkSlicerSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double 
     }
 }
 
+//----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
 void vtkSlicerSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode, double sliceDimensions[3], double sliceCenter[3])
 {
@@ -1182,6 +1189,7 @@ void vtkSlicerSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6])
 {
   sliceBounds[0] = sliceBounds[1] = 0.0;
@@ -1254,6 +1262,7 @@ void vtkSlicerSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, do
   sliceBounds[5] = maxBounds[2];
 }
 
+//----------------------------------------------------------------------------
 // Get the spacing of the volume, transformed to slice space
 double *vtkSlicerSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
 {
@@ -1317,6 +1326,7 @@ double *vtkSlicerSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode
   return (this->SliceSpacing);
 }
 
+//----------------------------------------------------------------------------
 // adjust the node's field of view to match the extent of current volume
 void vtkSlicerSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int width, int height)
 {
@@ -1383,7 +1393,7 @@ void vtkSlicerSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int wi
   sliceNode->UpdateMatrices( );
 }
 
-
+//----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
 void vtkSlicerSliceLogic::GetBackgroundRASBox(double rasDimensions[3], double rasCenter[3])
 {
@@ -1392,6 +1402,7 @@ void vtkSlicerSliceLogic::GetBackgroundRASBox(double rasDimensions[3], double ra
   this->GetVolumeRASBox( backgroundNode, rasDimensions, rasCenter );
 }
 
+//----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
 void vtkSlicerSliceLogic::GetBackgroundSliceDimensions(double sliceDimensions[3], double sliceCenter[3])
 {
@@ -1400,6 +1411,7 @@ void vtkSlicerSliceLogic::GetBackgroundSliceDimensions(double sliceDimensions[3]
   this->GetVolumeSliceDimensions( backgroundNode, sliceDimensions, sliceCenter );
 }
 
+//----------------------------------------------------------------------------
 // Get the spacing of the volume, transformed to slice space
 double *vtkSlicerSliceLogic::GetBackgroundSliceSpacing()
 {
@@ -1408,6 +1420,7 @@ double *vtkSlicerSliceLogic::GetBackgroundSliceSpacing()
   return (this->GetVolumeSliceSpacing( backgroundNode ));
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::GetBackgroundSliceBounds(double sliceBounds[6])
 {
   vtkMRMLVolumeNode *backgroundNode = NULL;
@@ -1415,6 +1428,7 @@ void vtkSlicerSliceLogic::GetBackgroundSliceBounds(double sliceBounds[6])
   this->GetVolumeSliceBounds(backgroundNode, sliceBounds);
 }
 
+//----------------------------------------------------------------------------
 // adjust the node's field of view to match the extent of current background volume
 void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
 {
@@ -1423,6 +1437,7 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
   this->FitSliceToVolume( backgroundNode, width, height );
 }
 
+//----------------------------------------------------------------------------
 // adjust the node's field of view to match the extent of all volume layers
 void vtkSlicerSliceLogic::FitSliceToAll(int width, int height)
 {
@@ -1438,6 +1453,7 @@ void vtkSlicerSliceLogic::FitSliceToAll(int width, int height)
     }
 }
 
+//----------------------------------------------------------------------------
 double *vtkSlicerSliceLogic::GetLowestVolumeSliceSpacing()
 {
   vtkMRMLVolumeNode *volumeNode;
@@ -1452,6 +1468,7 @@ double *vtkSlicerSliceLogic::GetLowestVolumeSliceSpacing()
   return (this->SliceSpacing);
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::GetLowestVolumeSliceBounds(double sliceBounds[6])
 {
   vtkMRMLVolumeNode *volumeNode;
@@ -1467,8 +1484,8 @@ void vtkSlicerSliceLogic::GetLowestVolumeSliceBounds(double sliceBounds[6])
   return this->GetVolumeSliceBounds( NULL, sliceBounds );
 }
 
+//----------------------------------------------------------------------------
 // Get/Set the current distance from the origin to the slice plane
-
 double vtkSlicerSliceLogic::GetSliceOffset()
 {
   //
@@ -1504,6 +1521,7 @@ double vtkSlicerSliceLogic::GetSliceOffset()
 
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::SetSliceOffset(double offset)
 {
   //
@@ -1566,6 +1584,7 @@ void vtkSlicerSliceLogic::SetSliceOffset(double offset)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::GetPolyDataAndLookUpTableCollections(vtkPolyDataCollection *polyDataCollection,
                                                                vtkCollection *lookupTableCollection)
 {
@@ -1583,6 +1602,7 @@ void vtkSlicerSliceLogic::GetPolyDataAndLookUpTableCollections(vtkPolyDataCollec
   lookupTableCollection = this->LookupTableCollection;
 } 
 
+//----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::AddSliceGlyphs(vtkSlicerSliceLayerLogic *layerLogic)
 {
  if (layerLogic && layerLogic->GetVolumeNode()) 
@@ -1623,6 +1643,7 @@ void vtkSlicerSliceLogic::AddSliceGlyphs(vtkSlicerSliceLayerLogic *layerLogic)
     
 }
 
+//----------------------------------------------------------------------------
 std::vector< vtkMRMLDisplayNode*> vtkSlicerSliceLogic::GetPolyDataDisplayNodes()
 {
   std::vector< vtkMRMLDisplayNode*> nodes;
@@ -1655,6 +1676,7 @@ std::vector< vtkMRMLDisplayNode*> vtkSlicerSliceLogic::GetPolyDataDisplayNodes()
   return nodes;
 }
 
+//----------------------------------------------------------------------------
 int vtkSlicerSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode *volumeNode)
 {
   if ( !volumeNode )
@@ -1758,6 +1780,7 @@ int vtkSlicerSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolu
   return sliceIndex;
 }
 
+//----------------------------------------------------------------------------
 // sliceIndex: DICOM slice index, 1-based
 int vtkSlicerSliceLogic::GetSliceIndexFromOffset(double sliceOffset)
 {

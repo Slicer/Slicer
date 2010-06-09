@@ -31,7 +31,6 @@ public:
   virtual ~qSlicerCLIExecutableModuleFactoryItem(){}
 
   ///
-  /// \overload
   virtual bool load();
 
   ///
@@ -61,11 +60,9 @@ public:
   virtual ~qSlicerCLIExecutableModuleFactory(){}
 
   ///
-  /// \overload
   virtual void registerItems();
 
   ///
-  /// \overload
 //   virtual QString fileNameToKey(const QString& fileName);
 
   /// Extract module name given \a executableName

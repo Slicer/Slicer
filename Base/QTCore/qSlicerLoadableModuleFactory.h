@@ -35,11 +35,9 @@ public:
   virtual ~qSlicerLoadableModuleFactory(){}
 
   ///
-  /// \overload
   virtual void registerItems();
 
   ///
-  /// \overload
   virtual QString fileNameToKey(const QString& fileName);
 
   ///
