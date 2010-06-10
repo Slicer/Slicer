@@ -22,6 +22,7 @@ PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #include "vtkMimxInteractorStyleUser.h"
 #include "vtkMath.h"
+#include "vtkCellPicker.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkObjectFactory.h"
 #include "vtkCommand.h"

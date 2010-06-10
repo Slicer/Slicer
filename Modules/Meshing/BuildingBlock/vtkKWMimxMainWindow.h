@@ -28,6 +28,7 @@ PURPOSE.  See the above copyright notices for more information.
 // and the view window to view the objects. Also contains access to a pop-up
 // window to change the display settings.
 
+
 #ifndef __vtkKWMimxMainWindow_h
 #define __vtkKWMimxMainWindow_h
 

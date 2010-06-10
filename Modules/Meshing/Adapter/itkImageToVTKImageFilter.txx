@@ -66,11 +66,6 @@ ImageToVTKImageFilter<TInputImage>
     m_Importer->Delete();
     m_Importer = 0;
     }
-  if( m_Exporter )
-    {
-    m_Exporter->Delete();
-    m_Exporter = 0;
-    }
 }
 
 

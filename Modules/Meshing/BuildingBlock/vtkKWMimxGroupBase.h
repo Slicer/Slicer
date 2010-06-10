@@ -36,6 +36,7 @@ PURPOSE.  See the above copyright notices for more information.
 /* VTK Headers */
 #include "vtkCommand.h"
 
+
 /* KWWidget Headers */
 #include "vtkKWCompositeWidget.h"
 
