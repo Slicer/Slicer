@@ -24,7 +24,7 @@
 #include <vector>
 #include <string>
 
-class VTK_IGT_EXPORT vtkIGTLToMRMLBase : public vtkObject
+class VTK_BRAINLABMODULE_EXPORT vtkIGTLToMRMLBase : public vtkObject
 {
 
  public:

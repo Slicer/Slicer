@@ -19,7 +19,7 @@ class vtkKWPushButton;
 class vtkKWMenuButton;
 
 
-class VTK_IGT_EXPORT vtkBrainlabModuleUserInputStep : public vtkBrainlabModuleStep
+class VTK_BRAINLABMODULE_EXPORT vtkBrainlabModuleUserInputStep : public vtkBrainlabModuleStep
 {
 public:
   static vtkBrainlabModuleUserInputStep *New();

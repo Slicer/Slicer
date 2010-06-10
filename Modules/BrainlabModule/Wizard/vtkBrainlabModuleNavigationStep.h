@@ -12,7 +12,7 @@ class vtkSlicerNodeSelectorWidget;
 class vtkMRMLSliceNode;
 class vtkMatrix4x4;
 
-class VTK_IGT_EXPORT vtkBrainlabModuleNavigationStep : public vtkBrainlabModuleStep
+class VTK_BRAINLABMODULE_EXPORT vtkBrainlabModuleNavigationStep : public vtkBrainlabModuleStep
 {
 public:
   static vtkBrainlabModuleNavigationStep *New();

@@ -10,7 +10,7 @@ class vtkKWMenu;
 #define EMSEG_MENU_BUTTON_WIDTH 15
 #define EMSEG_WIDGETS_LABEL_WIDTH 25
 
-class VTK_IGT_EXPORT vtkBrainlabModuleStep : public vtkKWWizardStep
+class VTK_BRAINLABMODULE_EXPORT vtkBrainlabModuleStep : public vtkKWWizardStep
 {
 public:
   static vtkBrainlabModuleStep *New();

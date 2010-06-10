@@ -12,7 +12,7 @@ class vtkBrainlabModuleConnectionStep;
 class vtkMRMLNode;
 class vtkKWWizardWidget;
  
-class VTK_IGT_EXPORT vtkBrainlabModuleGUI : public vtkSlicerModuleGUI
+class VTK_BRAINLABMODULE_EXPORT vtkBrainlabModuleGUI : public vtkSlicerModuleGUI
 {
 public:
   static vtkBrainlabModuleGUI *New();

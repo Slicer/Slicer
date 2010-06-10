@@ -14,7 +14,7 @@ class vtkMRMLModelNode;
 #include <vtksys/stl/map>
 #include <vtksys/stl/vector>
 
-class VTK_IGT_EXPORT vtkBrainlabModuleMRMLManager : 
+class VTK_BRAINLABMODULE_EXPORT vtkBrainlabModuleMRMLManager : 
   public vtkObject
 {
 public:

@@ -17,7 +17,7 @@ class vtkMRMLIGTLConnectorNode;
 class vtkKWLabel;
 
 
-class VTK_IGT_EXPORT vtkBrainlabModuleConnectionStep : public vtkBrainlabModuleStep
+class VTK_BRAINLABMODULE_EXPORT vtkBrainlabModuleConnectionStep : public vtkBrainlabModuleStep
 {
 public:
   static vtkBrainlabModuleConnectionStep *New();

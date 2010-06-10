@@ -35,7 +35,7 @@ class vtkMultiThreader;
 class vtkMutexLock;
 class vtkIGTLCircularBuffer;
 
-class VTK_IGT_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
+class VTK_BRAINLABMODULE_EXPORT vtkMRMLIGTLConnectorNode : public vtkMRMLNode
 {
 
  public:

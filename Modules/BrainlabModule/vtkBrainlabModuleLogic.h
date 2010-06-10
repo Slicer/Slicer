@@ -5,7 +5,7 @@
 #include "vtkBrainlabModule.h"
 #include "vtkBrainlabModuleMRMLManager.h"
 
-class VTK_IGT_EXPORT vtkBrainlabModuleLogic : 
+class VTK_BRAINLABMODULE_EXPORT vtkBrainlabModuleLogic : 
   public vtkSlicerModuleLogic
 {
 public:

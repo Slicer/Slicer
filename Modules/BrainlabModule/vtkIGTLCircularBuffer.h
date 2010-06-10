@@ -26,7 +26,7 @@
 
 class vtkMutexLock;
 
-class VTK_IGT_EXPORT vtkIGTLCircularBuffer : public vtkObject
+class VTK_BRAINLABMODULE_EXPORT vtkIGTLCircularBuffer : public vtkObject
 {
  public:
 

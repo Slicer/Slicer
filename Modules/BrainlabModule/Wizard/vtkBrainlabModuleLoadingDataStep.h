@@ -9,7 +9,7 @@ class vtkKWMenuButtonWithLabel;
 class vtkKWPushButton;
 class vtkKWTopLevel;
 
-class VTK_IGT_EXPORT vtkBrainlabModuleLoadingDataStep : public vtkBrainlabModuleStep
+class VTK_BRAINLABMODULE_EXPORT vtkBrainlabModuleLoadingDataStep : public vtkBrainlabModuleStep
 {
 public:
   static vtkBrainlabModuleLoadingDataStep *New();
