@@ -32,15 +32,22 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # warning: ‘...’ may be used uninitialized in this function
   "numpy.(core).*warning.*(assignment|defined but not used|uninitialized)"
   "NUMPY.*Warning"
+  # Mac
+  "numpy.core.src.multiarray.descriptor.*was declared here"
   
   # CLAPACK
   "CLAPACK.BLAS.SRC"
+  "CLAPACK.F2CLIBS.libf2c"
   
   # Tcl
   "tcl.tcl.unix.*warning: cast"
+  #  warning: '...' is deprecated (declared at ...)
+  "tcl.tcl.unix.*warning:.*is deprecated"
+  
   
   # Tk
   "tcl.tk.unix.*warning: cast"
+  "System.Library.Frameworks.Tk.framework.Headers.X11.Xlib.h.*warning: function declaration isn't a prototype"
   
   # incrTcl
   "generic.itk_(option|archetype).*warning"
@@ -54,6 +61,8 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # warning: implicit declaration of function ‘...’
   # warning: ‘...’ defined but not used
   "blt(TreeViewStyle|Ted|Color).c.*warning:.*(implicit declaration|defined but not used)"
+  # Mac
+  "ranlib: file: libBLT.*has no symbols"
   
   # qt suppressions from vtk...
   # Some Slicer dashboards include building bits of Qt which produce lots of
@@ -71,15 +80,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # STL - Tiger
   "include.c.*bits.stl_algo.h.*warning: comparison between signed and unsigned integer expressions"
-
-  
-  # Python
-  "Modules.zlib.gzio.*warning C4996"
-  "Modules.zlib.gzio"
-  "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
-  "Modules._multiprocessing.multiprocessing.*warning C4101"
-  # Mac
-  "/usr/bin/ranlib: file:.*libpython2.6.a(pymath.o) has no symbols"
   
   # Make
   "warning: jobserver unavailable"
@@ -146,11 +146,24 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512"
   
-  # Python suppressions
+  # Teem
+  # Mac - teem/src/nrrd/superset.c:433: warning: format '%d' expects type 'int', but argument 6 has type 'ptrdiff_t'
+  "teem.src.nrrd.superset.c.*warning"
+  
+  # Python
+  "Modules.zlib.gzio.*warning C4996"
+  "Modules.zlib.gzio"
+  "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
+  "Modules._multiprocessing.multiprocessing.*warning C4101"
+  "Objects.unicodeobject.c.*warning:.*differ in signedness"
   # About redefinition of symbols
   "pyconfig.h.*warning:.*redefined"
   "features.h.*"
-  "Objects.unicodeobject.c.*warning:.*differ in signedness"
+  # Mac
+  "ranlib: file:.*libpython2.6.a.*has no symbols"
+  "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
+  "python.Mac.Modules.(cf|Nav).*warning: (cast|unused)"
+  "python.Modules._ctypes.*warning: function declaration isn't a prototype"
 
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
@@ -167,6 +180,10 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "y.tab.c.*warning (C4131|C4244|C4127|C4701)"
   # C4100: unreferenced formal parameter
   "getdate.y.*warning(C4100|C4127|C4244)"
+  # Mac
+  "curl.mprintf.*warning.*redefined"
+  "usr.include.secure._stdio.h.*warning: this is the location of the previous definition"
+  "ranlib: file:.*bin.libslicerlibcurl.a.*has no symbols"
   
   # Visual studio spurious warnings...
   "The following environment variables were not found"
