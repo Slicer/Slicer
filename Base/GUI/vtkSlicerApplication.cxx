@@ -104,6 +104,8 @@ const char *vtkSlicerApplication::RmRegKey = "Rm";
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
 const char *vtkSlicerApplication::LoadCommandLineModulesRegKey = "LoadCommandLineModules";
+const char *vtkSlicerApplication::DeleteTemporaryFilesRegKey = "DeleteTemporaryFiles";
+const char *vtkSlicerApplication::RedirectModuleStreamsRegKey = "RedirectModuleStreams";
 const char *vtkSlicerApplication::LoadModulesRegKey = "LoadModules";
 const char *vtkSlicerApplication::IgnoreModulesRegKey = "IgnoreModules";
 const char *vtkSlicerApplication::EnableDaemonRegKey = "EnableDaemon";
@@ -238,6 +240,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->SvnRevision, "");
 
     this->LoadCommandLineModules = 1;
+    this->DeleteTemporaryFiles = 1;
+    this->RedirectModuleStreams = 1;
     this->LoadModules = 1;
     this->IgnoreModules = vtkStringArray::New();
     this->LoadableModules = vtkStringArray::New();
@@ -976,6 +980,18 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->LoadCommandLineModules = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey);
     }
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::DeleteTemporaryFilesRegKey))
+    {
+    this->DeleteTemporaryFiles = this->GetIntRegistryValue(
+      2, "RunTime", vtkSlicerApplication::DeleteTemporaryFilesRegKey);
+    }
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::RedirectModuleStreamsRegKey))
+    {
+    this->RedirectModuleStreams = this->GetIntRegistryValue(
+      2, "RunTime", vtkSlicerApplication::RedirectModuleStreamsRegKey);
+    }
 
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::IgnoreModulesRegKey))
@@ -1206,6 +1222,12 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey, "%d",
     this->LoadCommandLineModules);
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::DeleteTemporaryFilesRegKey, "%d",
+    this->DeleteTemporaryFiles);
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::RedirectModuleStreamsRegKey, "%d",
+    this->RedirectModuleStreams);
 
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadModulesRegKey, "%d",
@@ -2403,6 +2425,8 @@ void vtkSlicerApplication::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "Flags: \n";
   os << nextIndent << "LoadModules: " << LoadModules << "\n";
   os << nextIndent << "LoadCommandLineModules: " << LoadCommandLineModules <<  "\n";
+  os << nextIndent << "DeleteTemporaryFiles: " << DeleteTemporaryFiles <<  "\n";
+  os << nextIndent << "RedirectModuleStreams: " << RedirectModuleStreams <<  "\n";
   os << nextIndent << "EnableDaemon: " << EnableDaemon <<  "\n";
 
   os << indent << "Remote I/O:\n";
@@ -2518,3 +2542,79 @@ qSlicerModulePanel* vtkSlicerApplication::modulePanel()
 }
 
 #endif
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::SetRedirectModuleStreams(int flag)
+{
+  if (this->RedirectModuleStreams == flag)
+    {
+    return;
+    }
+  vtkDebugMacro("SetRedirectModuleStreams: using flag = " << flag);
+  this->RedirectModuleStreams = flag;
+
+  // now find all the command line logics
+  if (this->ModuleGUICollection)
+    {
+    this->ModuleGUICollection->InitTraversal();
+    vtkSlicerComponentGUI *gui = NULL;
+    while ( (gui = this->ModuleGUICollection->GetNextItem()) != NULL)
+      {
+      if (gui->IsA("vtkCommandLineModuleGUI"))
+        {
+        // can't get at c++ command line module gui header file, so get at it
+        // via the tcl interpreter
+        std::string tclGUIName = gui->GetGUIName();
+        // replace spaces with underscores
+        std::replace(tclGUIName.begin(), tclGUIName.end(), ' ', '_');
+        vtkDebugMacro("SetRedirectModuleStreams: calling set redirect module streams " << flag << " on CommandLineModuleGUI_" << tclGUIName.c_str());
+        // needs braces around it because some gui names have slashes, dashes,
+        // etc
+        this->Script("[${::slicer3::CommandLineModuleGUI_%s} GetLogic] SetRedirectModuleStreams %d", tclGUIName.c_str(), flag);
+        }
+      else
+        {
+        vtkDebugMacro("SetRedirectModuleStreams: non cli module: " << gui->GetGUIName());
+        }
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplication::SetDeleteTemporaryFiles(int flag)
+{
+  if (this->DeleteTemporaryFiles == flag)
+    {
+    return;
+    }
+  vtkDebugMacro("SetDeleteTemporaryFiles: using flag = " << flag);
+  this->DeleteTemporaryFiles = flag;
+
+  // now find all the command line logics
+  if (this->ModuleGUICollection)
+    {
+    this->ModuleGUICollection->InitTraversal();
+    vtkSlicerComponentGUI *gui = NULL;
+    while ( (gui = this->ModuleGUICollection->GetNextItem()) != NULL)
+      {
+      if (gui->IsA("vtkCommandLineModuleGUI"))
+        {
+        // can't get at c++ command line module gui header file, so get at it
+        // via the tcl interpreter
+        std::string tclGUIName = gui->GetGUIName();
+        // replace spaces with underscores
+        std::replace(tclGUIName.begin(), tclGUIName.end(), ' ', '_');
+        vtkDebugMacro("SetDeleteTemporaryFiles: calling set delete temporary files " << flag << " on CommandLineModuleGUI_" << tclGUIName.c_str());
+        // needs braces around it because some gui names have slashes, dashes,
+        // etc
+        this->Script("[${::slicer3::CommandLineModuleGUI_%s} GetLogic] SetDeleteTemporaryFiles %d", tclGUIName.c_str(), flag);
+        }
+      else
+        {
+        vtkDebugMacro("SetDeleteTemporaryFiles: non cli module: " << gui->GetGUIName());
+        }
+      }
+    }
+}

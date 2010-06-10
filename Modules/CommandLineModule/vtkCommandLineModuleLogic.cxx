@@ -119,6 +119,15 @@ vtkCommandLineModuleLogic::~vtkCommandLineModuleLogic()
 void vtkCommandLineModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
+
+  os << indent << "RedirectModuleStreams: " << this->RedirectModuleStreams << "\n";
+  os << indent << "DeleteTemporaryFiles: " << this->DeleteTemporaryFiles << "\n";
+  os << indent << "TemporaryDirectory: " << this->TemporaryDirectory.c_str() << "\n";
+  if (this->CommandLineModuleNode)
+    {
+    os << indent << "CommandLineModuleNode:\n";
+    this->CommandLineModuleNode->PrintSelf(os, indent.GetNextIndent());
+    }
 }
 
 std::string

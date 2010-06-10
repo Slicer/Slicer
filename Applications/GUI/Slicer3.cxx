@@ -1670,11 +1670,26 @@ int Slicer3_main(int& argc, char *argv[])
         = vtkCommandLineModuleLogic::New ( );
 
       // set up stream redirection
-      if (NoModuleStreamsRedirect)
+      if (slicerApp->GetRedirectModuleStreams() == 0 ||
+          NoModuleStreamsRedirect)
         {
         commandLineModuleLogic->RedirectModuleStreamsOff();
         }
+      else
+        {
+        commandLineModuleLogic->RedirectModuleStreamsOn();
+        }
 
+      // set up deleting temporary files
+      if (slicerApp->GetDeleteTemporaryFiles() == 0 ||
+          NoDeleteTemporaryFiles)
+        {
+        commandLineModuleLogic->DeleteTemporaryFilesOff();
+        }
+      else
+        {
+        commandLineModuleLogic->DeleteTemporaryFilesOn();
+        }
       // Set the ModuleDescripton on the gui
       commandLineModuleGUI->SetModuleDescription( desc );
 

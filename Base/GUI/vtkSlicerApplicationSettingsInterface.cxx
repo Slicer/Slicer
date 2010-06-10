@@ -51,6 +51,8 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->LoadModulesCheckButton = NULL;
   this->ModulesSelectionButton = NULL;
   this->LoadCommandLineModulesCheckButton = NULL;
+  this->RedirectModuleStreamsCheckButton = NULL;
+  this->DeleteTemporaryFilesCheckButton = NULL;
   this->EnableDaemonCheckButton = NULL;
 
   this->FontSettingsFrame = NULL;
@@ -175,6 +177,16 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     {
     this->LoadCommandLineModulesCheckButton->Delete();
     this->LoadCommandLineModulesCheckButton = NULL;
+    }
+  if (this->RedirectModuleStreamsCheckButton)
+    {
+    this->RedirectModuleStreamsCheckButton->Delete();
+    this->RedirectModuleStreamsCheckButton = NULL;
+    }
+  if (this->DeleteTemporaryFilesCheckButton)
+    {
+    this->DeleteTemporaryFilesCheckButton->Delete();
+    this->DeleteTemporaryFilesCheckButton = NULL;
     }
 
   if (this->EnableDaemonCheckButton)
@@ -627,6 +639,44 @@ void vtkSlicerApplicationSettingsInterface::Create()
          << "  -side top -anchor w -expand no -fill none" << endl;
 
   // --------------------------------------------------------------
+  // Module settings : Redirect streams for commandline modules? (CLI plugins)
+
+  if (!this->RedirectModuleStreamsCheckButton)
+    {
+    this->RedirectModuleStreamsCheckButton = vtkKWCheckButton::New();
+    }
+  this->RedirectModuleStreamsCheckButton->SetParent(moduleScrollFrame->GetFrame()); //frame);
+  this->RedirectModuleStreamsCheckButton->Create();
+  this->RedirectModuleStreamsCheckButton->SetText(
+    "Redirect I/O Streams for Command-Line Plugins");
+  this->RedirectModuleStreamsCheckButton->SetCommand(
+    this, "RedirectModuleStreamsCallback");
+  this->RedirectModuleStreamsCheckButton->SetBalloonHelpString(
+    "Control if command-line plugins (CLI) should have their i/o streams redirected or not (useful for debugging).");
+
+  tk_cmd << "pack " << this->RedirectModuleStreamsCheckButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill none" << endl;
+
+  // --------------------------------------------------------------
+  // Module settings : Delete temporary files for commandline modules? (CLI plugins)
+
+  if (!this->DeleteTemporaryFilesCheckButton)
+    {
+    this->DeleteTemporaryFilesCheckButton = vtkKWCheckButton::New();
+    }
+  this->DeleteTemporaryFilesCheckButton->SetParent(moduleScrollFrame->GetFrame()); //frame);
+  this->DeleteTemporaryFilesCheckButton->Create();
+  this->DeleteTemporaryFilesCheckButton->SetText(
+    "Delete Temporary Files for Command-Line Plugins");
+  this->DeleteTemporaryFilesCheckButton->SetCommand(
+    this, "DeleteTemporaryFilesCallback");
+  this->DeleteTemporaryFilesCheckButton->SetBalloonHelpString(
+    "Control if files from command-line plugins (CLI) should be deleted after being read back into Slicer. If this is not checked, beware of filling up your temporary directory.");
+
+  tk_cmd << "pack " << this->DeleteTemporaryFilesCheckButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill none" << endl;
+
+  // --------------------------------------------------------------
   // Module settings : Home Module
 
   if ( !this->HomeModuleEntry )
@@ -1069,6 +1119,7 @@ void vtkSlicerApplicationSettingsInterface::ModulesSelectionCallback()
       }
     }
 }
+
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::LoadCommandLineModulesCallback(int state)
 {
@@ -1077,6 +1128,28 @@ void vtkSlicerApplicationSettingsInterface::LoadCommandLineModulesCallback(int s
   if (app)
     {
     app->SetLoadCommandLineModules(state ? 1 : 0);       
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::RedirectModuleStreamsCallback(int state)
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
+    {
+    app->SetRedirectModuleStreams(state ? 1 : 0);       
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::DeleteTemporaryFilesCallback(int state)
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
+    {
+    app->SetDeleteTemporaryFiles(state ? 1 : 0);       
     }
 }
 
@@ -1402,6 +1475,16 @@ void vtkSlicerApplicationSettingsInterface::Update()
       {
       this->LoadCommandLineModulesCheckButton->SetSelectedState(
         app->GetLoadCommandLineModules() ? 1 : 0);
+      }
+    if (this->RedirectModuleStreamsCheckButton)
+      {
+      this->RedirectModuleStreamsCheckButton->SetSelectedState(
+        app->GetRedirectModuleStreams() ? 1 : 0);
+      }
+    if (this->DeleteTemporaryFilesCheckButton)
+      {
+      this->DeleteTemporaryFilesCheckButton->SetSelectedState(
+        app->GetDeleteTemporaryFiles() ? 1 : 0);
       }
     if (this->HomeModuleEntry)
       {
