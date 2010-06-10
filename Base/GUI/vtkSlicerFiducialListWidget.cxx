@@ -16,7 +16,7 @@
 
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
-
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLFiducialListNode.h"
 
 
@@ -1308,6 +1308,25 @@ void vtkSlicerFiducialListWidget::AddSeedWidget(vtkMRMLFiducialListNode *fiducia
   vtkSlicerFiducialsSeedWidgetCallback *myCallback = vtkSlicerFiducialsSeedWidgetCallback::New();
   myCallback->FiducialListNode = fiducialListNode;
   myCallback->SeedWidgetClass = c;
+
+   //
+  //--- make seed widget's initial interaction behavior compliant  with mouse mode.
+  //--- this may need to go after Update3DWidget...
+  //
+  vtkMRMLInteractionNode *interactionNode =
+    vtkMRMLInteractionNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+  if ( interactionNode == NULL )
+    {
+    vtkDebugMacro ( "AddSeedWidget: No interaction node in the scene." );
+    return;
+    }
+  int placePersistence = interactionNode->GetPlaceModePersistence();
+  int currentMode = interactionNode->GetCurrentInteractionMode();
+  if ( currentMode == vtkMRMLInteractionNode::Place && placePersistence == 1 )
+    {
+    c->GetWidget()->ProcessEventsOff();
+    }
+
   c->GetWidget()->AddObserver(vtkCommand::InteractionEvent,myCallback);
   c->GetWidget()->AddObserver(vtkCommand::StartInteractionEvent, myCallback);
   c->GetWidget()->AddObserver(vtkCommand::PlacePointEvent, myCallback);
