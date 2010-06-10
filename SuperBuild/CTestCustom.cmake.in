@@ -155,15 +155,18 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules.zlib.gzio"
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
   "Modules._multiprocessing.multiprocessing.*warning C4101"
+  # Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
-  # About redefinition of symbols
-  "pyconfig.h.*warning:.*redefined"
-  "features.h.*"
+  "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
+  "Modules.(getpath|signalmodule).c.*warning: ignoring return value of.*declared with attribute warn_unused_result"
   # Mac
   "ranlib: file:.*libpython2.6.a.*has no symbols"
   "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
   "python.Mac.Modules.(cf|Nav).*warning: (cast|unused)"
   "python.Modules._ctypes.*warning: function declaration isn't a prototype"
+  # About redefinition of symbols
+  "pyconfig.h.*warning:.*redefined"
+  "features.h.*"
 
   # curl suppressions
   "cmcurl.*warning.*conditional expression is constant"
