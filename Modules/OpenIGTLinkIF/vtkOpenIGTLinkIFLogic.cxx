@@ -118,7 +118,11 @@ vtkOpenIGTLinkIFLogic::~vtkOpenIGTLinkIFLogic()
     UnregisterMessageConverter(this->ImageMetaListConverter);
     this->ImageMetaListConverter->Delete();
     }
-
+  if (this->TrackingDataConverter)
+    {
+    UnregisterMessageConverter(this->TrackingDataConverter);
+    this->TrackingDataConverter->Delete();
+    }
 
   if (this->DataCallbackCommand)
     {
