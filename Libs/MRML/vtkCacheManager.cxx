@@ -624,6 +624,33 @@ void vtkCacheManager::DeleteFromCache( const char *target )
 
 
 //----------------------------------------------------------------------------
+int vtkCacheManager::ClearCacheCheck()
+{
+  //
+  // This method is called after ClearCache(),
+  // to see if that method actually cleaned the cache.
+  // If not, an event is invoked.
+  // Things to do: get cache dir
+  // check to see how many files are in it.
+  // if more than... 0? invoke CacheDirtyEvent.
+  //
+  vtksys_stl::string cachedir = this->GetRemoteCacheDirectory();
+  if ( cachedir.c_str() != NULL )
+    {
+    unsigned long numFiles = vtksys::Directory::GetNumberOfFilesInDirectory( cachedir.c_str() );
+    //--- assume method will return . and ..
+    if ( numFiles > 2 )
+      {
+      this->InvokeEvent ( vtkCacheManager::CacheDirtyEvent );
+      return 0;
+      }
+    }
+  return 1;
+}
+
+
+
+//----------------------------------------------------------------------------
 int vtkCacheManager::ClearCache()
 {
 

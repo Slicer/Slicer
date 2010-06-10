@@ -59,7 +59,12 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   /// Removes all files from the cachedir
   /// and removes all filenames from CachedFileList
   int ClearCache ( );
-  
+  ///
+  /// This method is called after ClearCache(),
+  /// to see if that method actually cleaned the cache.
+  /// If not, an event (CacheDirtyEvent) is invoked.
+  int ClearCacheCheck ( );
+
   /// 
   /// Before a file or directory is deleted,
   /// Marks any nodes that hold the uri as
@@ -148,6 +153,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       InsufficientFreeBufferEvent =  21000,
       CacheLimitExceededEvent,
       CacheDeleteEvent,
+      CacheDirtyEvent,
       CacheClearEvent,
       SettingsUpdateEvent,
     };
