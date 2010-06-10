@@ -23,6 +23,8 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "vtkMimxImageActor.h"
 
+#include "vtkSmartPointer.h"
+
 #include "vtkActor.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
@@ -67,6 +69,8 @@ vtkMimxImageActor::~vtkMimxImageActor()
         this->PlaneY->Delete();
         this->PlaneZ->Delete();
         this->Reader->Delete();
+        this->FlipFilter->SetInput(NULL);
+        this->FlipFilter->Delete();
         this->Filter->Delete();
 }
 
@@ -124,18 +128,18 @@ void vtkMimxImageActor::InitializePlaneWidgets()
      ////////////////////////////////////////////////
      double directionCosines[9];
 
-     vtkMatrix4x4 *cosineMatrix = vtkMatrix4x4::New();
+     vtkSmartPointer<vtkMatrix4x4> cosineMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
      cosineMatrix->Identity();
      vtkImageData *vtkImage = vtkImageData::SafeDownCast(this->SavedImage);
 
      //this->SavedImage->Print(std::cout);
 
-     vtkMatrix4x4* LpsToRasMatrix = vtkMatrix4x4::New();
+     vtkSmartPointer<vtkMatrix4x4> LpsToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
      LpsToRasMatrix->Identity();
      //LpsToRasMatrix->SetElement(0, 0, -1.0);
      //LpsToRasMatrix->SetElement(1, 1, -1.0);
 
-     vtkMatrix4x4* resultMatrix = vtkMatrix4x4::New();
+     vtkSmartPointer<vtkMatrix4x4> resultMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
      vtkMatrix4x4::Multiply4x4(LpsToRasMatrix, cosineMatrix, resultMatrix);
      resultMatrix->Invert();
      for (int i=0,k=0; i<3; i++)
@@ -154,7 +158,7 @@ void vtkMimxImageActor::InitializePlaneWidgets()
      std::cout << "*** Result Matrix ***" << std::endl;
      resultMatrix->Print(std::cout);
 
-     vtkImageReslice *reslice = vtkImageReslice::New();
+     vtkSmartPointer<vtkImageReslice> reslice = vtkSmartPointer<vtkImageReslice>::New();
      reslice->SetInput( vtkImage );
      reslice->SetResliceAxesDirectionCosines( directionCosines );
      reslice->Update();
@@ -225,7 +229,7 @@ void vtkMimxImageActor::InitializePlaneWidgets(vtkMatrix4x4* matrix, double orig
      //std::cout << "Origin 2: " << origin[2] << std::endl;
 
      vtkImageData *vtkImage = vtkImageData::SafeDownCast(this->SavedImage);
-     vtkImageReslice *reslice = vtkImageReslice::New();
+     vtkSmartPointer<vtkImageReslice> reslice = vtkSmartPointer<vtkImageReslice>::New();
      reslice->SetInput( vtkImage );
      reslice->SetResliceAxesDirectionCosines( directionCosines );
      reslice->Update();
