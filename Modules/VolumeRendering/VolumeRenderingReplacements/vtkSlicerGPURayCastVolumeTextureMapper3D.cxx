@@ -197,8 +197,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::AdaptivePerformanceControl()
   if (this->RaySteps > maxRaysteps) this->RaySteps = maxRaysteps;
   if (this->RaySteps < 150.0f)       this->RaySteps = 150.0f;
 
-  cout<<this->Framerate<<" "<<this->TimeToDraw<<" "<<this->RaySteps<<endl;
-  cout.flush();
+//  cout<<this->Framerate<<" "<<this->TimeToDraw<<" "<<this->RaySteps<<endl;
+//  cout.flush();
 }
 
 //needs to be cleaned, 2008/10/20, Yanling Liu
