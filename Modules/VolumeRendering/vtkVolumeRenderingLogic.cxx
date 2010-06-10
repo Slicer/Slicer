@@ -801,7 +801,11 @@ void vtkVolumeRenderingLogic::CalculateMatrix(vtkMRMLVolumeRenderingParametersNo
 
 void vtkVolumeRenderingLogic::SetExpectedFPS(vtkMRMLVolumeRenderingParametersNode* vspNode)
 {
-  int fps = vspNode->GetExpectedFPS();
+  float fps;
+  if (vspNode->GetExpectedFPS() == 0)
+    fps = 0.001;
+  else
+    fps = vspNode->GetExpectedFPS();
 
   this->MapperTexture->SetFramerate(fps);
   this->MapperGPURaycast->SetFramerate(fps);
@@ -974,9 +978,9 @@ int vtkVolumeRenderingLogic::SetupCPURayCastInteractive(vtkMRMLVolumeRenderingPa
     return 0;
 
   //when start (rendering??) set CPU ray casting to be interactive
-  if (buttonDown == 1)
+  if (buttonDown == 1 && vspNode->GetExpectedFPS() > 0)
   {
-    float desiredTime = 1.0f/vspNode->GetExpectedFPS();//expected fps will not be 0 so safe to do division here
+    float desiredTime = 1.0f/vspNode->GetExpectedFPS();
 
     this->MapperRaycast->SetAutoAdjustSampleDistances(1);
     this->MapperRaycast->ManualInteractiveOn();

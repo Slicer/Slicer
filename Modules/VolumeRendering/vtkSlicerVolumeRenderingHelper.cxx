@@ -877,7 +877,7 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SVP_VolumePropertyWidget->GetWidgetName());
 
-  this->SVP_VolumePropertyWidget->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
+//  this->SVP_VolumePropertyWidget->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
 
   mainFrame->Delete();
 
@@ -934,7 +934,7 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SVP_VolumePropertyWidgetFg->GetWidgetName());
 
-  this->SVP_VolumePropertyWidgetFg->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
+//  this->SVP_VolumePropertyWidgetFg->AddObserver(vtkKWEvent::VolumePropertyChangingEvent, (vtkCommand*)this->GUICallbackCommand);
 
   mainFrameFg->CollapseFrame();
 
