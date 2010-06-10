@@ -406,6 +406,40 @@ int main(int argc, char* argv[])
     vendor[k] =  toupper( vendor[k] );
   }
 
+  // check the tag 0008|0060 for modlity information
+  std::string modality;
+  ExtractBinValEntry( headerLite, 0x0008, 0x0060, modality );
+  for (unsigned int k = 0; k < modality.size(); k++)
+  {
+    modality[k] =  toupper( modality[k] );
+  }
+  if (  modality.find("PT") != std::string::npos 
+        || modality.find("ST") != std::string::npos )
+    {
+      typedef itk::Image<unsigned short, 3> USVolumeType;
+      itk::ImageSeriesReader<USVolumeType>::Pointer seriesReader = 
+        itk::ImageSeriesReader<USVolumeType>::New();
+      seriesReader->SetFileNames( filenamesInSeries );
+
+      itk::ImageFileWriter<USVolumeType>::Pointer nrrdImageWriter = 
+        itk::ImageFileWriter<USVolumeType>::New();
+
+      nrrdImageWriter->SetFileName( nhdrname );
+      nrrdImageWriter->SetInput( seriesReader->GetOutput() );
+      try 
+        { 
+          nrrdImageWriter->Update(); 
+        } 
+      catch( itk::ExceptionObject & err ) 
+        { 
+          std::cerr << "ExceptionObject caught !" << std::endl; 
+          std::cerr << err << std::endl; 
+          return EXIT_FAILURE;
+        } 
+      return EXIT_SUCCESS;
+    }
+
+  
   std::string ImageType;
   ExtractBinValEntry( headerLite, 0x0008, 0x0008, ImageType );
   std::cout << ImageType << std::endl;
