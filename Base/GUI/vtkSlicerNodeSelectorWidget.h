@@ -36,6 +36,7 @@
 #include "vtkSlicerBaseGUI.h"
 #include "vtkSlicerContextMenuHelper.h"
 
+class vtkSlicerColorLUTIcons;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerNodeSelectorWidget : public vtkKWMenuButtonWithSpinButtonsWithLabel
 {
 public:
@@ -188,8 +189,13 @@ public:
   void ProcessCommand(char *selectedID);
 
   bool CheckNodeClass(vtkMRMLNode *node);
+  /// Returns true if the className is in the list of node classes
+  bool HasNodeClass(const char  *className);
 
-  /// 
+  /// If this selector widget has vtkMRMLColorNodes, add color icons
+  void AddColorIcons();
+
+  ///
   /// Flags to avoid event loops
   /// NOTE: don't use the SetMacro or it call modified itself and generate even more events!
   vtkGetMacro(InMRMLCallbackFlag, int);
@@ -274,6 +280,9 @@ private:
   /// Note: This method has only effects if overwritten in a sub class. Also overwrite AddAditionalNodes().
   virtual vtkMRMLNode* GetSelectedInAdditional(){return NULL;}
 
+  /// pointers to icons for when have color nodes
+  vtkSlicerColorLUTIcons *ColorIcons;
+   
   vtkSlicerNodeSelectorWidget(const vtkSlicerNodeSelectorWidget&); /// Not implemented
   void operator=(const vtkSlicerNodeSelectorWidget&); /// Not Implemented
 };

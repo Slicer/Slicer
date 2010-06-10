@@ -169,7 +169,6 @@ void vtkSlicerLabelMapVolumeDisplayWidget::UpdateWidgetFromMRML ()
   if ( this->ColorSelectorWidget && displayNode != NULL )
     {
        this->ColorSelectorWidget->UpdateMenu();
-       this->AddColorIcons ( this->ColorSelectorWidget );
        // set the color node selector to reflect the volume's color node
        this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
     }

@@ -33,7 +33,6 @@ vtkSlicerVolumeDisplayWidget::vtkSlicerVolumeDisplayWidget ( )
 {
 
     this->VolumeNode = NULL;
-    this->ColorIcons = NULL;
 }
 
 
@@ -43,11 +42,6 @@ vtkSlicerVolumeDisplayWidget::~vtkSlicerVolumeDisplayWidget ( )
 
   this->SetAndObserveMRMLScene ( NULL );
   vtkSetMRMLNodeMacro(this->VolumeNode, NULL);
-  if ( this->ColorIcons )
-    {
-    this->ColorIcons->Delete();
-    this->ColorIcons = NULL;
-    }
   this->RemoveMRMLObservers();
   this->RemoveWidgetObservers();
 }
@@ -171,69 +165,7 @@ void vtkSlicerVolumeDisplayWidget::RemoveWidgetObservers ( )
 void vtkSlicerVolumeDisplayWidget::CreateWidget ( )
 {
   this->Superclass::CreateWidget();
-  this->ColorIcons = vtkSlicerColorLUTIcons::New();
 }
 
-
-
-//---------------------------------------------------------------------------
-void  vtkSlicerVolumeDisplayWidget::AddColorIcons(vtkSlicerNodeSelectorWidget *selector)
-{
-  if ( selector == NULL ||
-       selector->GetWidget() == NULL ||
-       selector->GetWidget()->GetWidget() == NULL )
-    {
-    vtkErrorMacro ( "Got NULL ColorSelectorWidget or component widgets." );
-    return;
-    }
-
-  //---
-  //--- This processes only one level of menu cascade.
-  //--- assume nodes or node categories are in the main
-  //--- menu and nodes are in any cascade. 
-  //---
-  vtkKWMenuButton *mb = selector->GetWidget()->GetWidget();
-  vtkKWMenu *m = mb->GetMenu();
-  vtkKWMenu *c = NULL;
-
-  std::string s;
-  std::string subs;
-
-  int num = m->GetNumberOfItems();
-  //don't process commands?
-  for ( int i = 0; i < num; i++)
-    {
-    // is item a cascade?
-    c = m->GetItemCascade ( i );
-    if ( c != NULL )
-      {
-      // if cascade, process its cascade menu items.
-      int numm = c->GetNumberOfItems();
-      for ( int j=0; j < numm; j++ )
-        {
-        subs.clear();
-        if ( c->GetItemLabel(j) != NULL )
-          {
-          subs = c->GetItemLabel ( j );
-
-          // insert icon in cascade menu
-          // TODO: get nodeid for this menu item and pass that as well.
-          c->SetItemImageToIcon ( j, this->ColorIcons->GetIconByName ( subs.c_str() ));
-          c->SetItemCompoundModeToLeft ( j );          
-          }
-        }
-      continue;
-      }
-    // otherwise... insert icon in main menu
-    // TODO: get nodeid for this menu item and pass that as well.
-    s.clear();
-    if ( m->GetItemLabel ( i) != NULL )
-      {
-      s = m->GetItemLabel( i );
-      m->SetItemImageToIcon ( i, this->ColorIcons->GetIconByName ( s.c_str() ));
-      m->SetItemCompoundModeToLeft ( i );      
-      }
-    }  
-}
 
 

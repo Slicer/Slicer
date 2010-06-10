@@ -28,7 +28,6 @@
 #include "vtkScalarBarWidget.h"
 #include "vtkKWScalarBarAnnotation.h"
 #include "vtkSlicerViewerWidget.h"
-#include "vtkSlicerColorLUTIcons.h"
 #include "vtkSlicerPopUpHelpWidget.h"
 
 //---------------------------------------------------------------------------
@@ -66,10 +65,6 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
     this->MultiSelectModeOff();
 
     this->ViewerWidget = NULL;
-
-    // TODO: test this.
-    this->ColorIcons = NULL;
-    this->ColorIcons = vtkSlicerColorLUTIcons::New();
 }
 
 
@@ -150,12 +145,6 @@ vtkSlicerColorDisplayWidget::~vtkSlicerColorDisplayWidget ( )
     this->ScalarBarWidget->SetInteractor(NULL);
     this->ScalarBarWidget->Delete();
     this->ScalarBarWidget = NULL;
-    }
-
-  if ( this->ColorIcons)
-    {
-    this->ColorIcons->Delete();
-    this->ColorIcons = NULL;
     }
 
   this->SetViewerWidget(NULL);
@@ -609,10 +598,6 @@ void vtkSlicerColorDisplayWidget::UpdateWidget()
         }
       }
 
-    // TODO: Test this approach
-    // and possibly move into nodeselector class.
-     this->AddColorIcons();
-  
     // update the range
     if (range)
       {
@@ -1030,74 +1015,6 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   displayFrame->Delete();
   
 }
-
-//---------------------------------------------------------------------------
-void vtkSlicerColorDisplayWidget::AddColorIcons()
-{
-  if ( this->ColorSelectorWidget == NULL ||
-       this->ColorSelectorWidget->GetWidget() == NULL ||
-       this->ColorSelectorWidget->GetWidget()->GetWidget() == NULL )
-    {
-    vtkErrorMacro ( "Got NULL ColorSelectorWidget or component widgets." );
-    return;
-    }
-
-  if ( this->ColorIcons == NULL )
-    {
-    return;
-    }
-
-  //---
-  //--- This processes only one level of menu cascade.
-  //--- assume nodes or node categories are in the main
-  //--- menu and nodes are in any cascade. 
-  //---
-  vtkKWMenuButton *mb = this->ColorSelectorWidget->GetWidget()->GetWidget();
-  vtkKWMenu *m = mb->GetMenu();
-  vtkKWMenu *c = NULL;
-
-  std::string s;
-  std::string subs;
-
-  int num = m->GetNumberOfItems();
-  //don't process commands?
-  for ( int i = 0; i < num; i++)
-    {
-    // is item a cascade?
-    c = m->GetItemCascade ( i );
-    if ( c != NULL )
-      {
-      // if cascade, process its cascade menu items.
-      int numm = c->GetNumberOfItems();
-      for ( int j=0; j < numm; j++ )
-        {
-        subs.clear();
-        if ( c->GetItemLabel(j) != NULL )
-          {
-          subs = c->GetItemLabel ( j );
-
-          // insert icon in cascade menu
-          // TODO: get nodeid for this menu item and pass that as well.
-          c->SetItemImageToIcon ( j, this->ColorIcons->GetIconByName ( subs.c_str() ));
-          c->SetItemCompoundModeToLeft ( j );
-          }
-        }
-      continue;
-      }
-    // otherwise... insert icon in main menu
-    // TODO: get nodeid for this menu item and pass that as well.
-    s.clear();
-    if ( m->GetItemLabel ( i) != NULL )
-      {
-      s = m->GetItemLabel( i );
-      m->SetItemImageToIcon ( i, this->ColorIcons->GetIconByName ( s.c_str() ));
-      m->SetItemCompoundModeToLeft ( i );
-      }
-    }  
-}
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerColorDisplayWidget::UpdateElement(int row, int col, char * str)

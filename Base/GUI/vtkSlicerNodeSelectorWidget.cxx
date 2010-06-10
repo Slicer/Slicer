@@ -17,6 +17,7 @@ Version:   $Revision$
 
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButtonWithSpinButtons.h"
+#include "vtkSlicerColorLUTIcons.h"
 
 #include <sstream>
 
@@ -94,6 +95,9 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->InMRMLCallbackFlag = 0;
   this->IgnoreNodeAddedEvents = 0;
   this->SetBalloonHelpString("Select a node");
+
+  this->ColorIcons = NULL;
+  this->ColorIcons = vtkSlicerColorLUTIcons::New();
 }
 
 //----------------------------------------------------------------------------
@@ -108,6 +112,12 @@ vtkSlicerNodeSelectorWidget::~vtkSlicerNodeSelectorWidget()
   if (this->ContextMenuHelper)
     {
     this->ContextMenuHelper->Delete();
+    }
+
+  if ( this->ColorIcons)
+    {
+    this->ColorIcons->Delete();
+    this->ColorIcons = NULL;
     }
 }
 
@@ -518,6 +528,9 @@ void vtkSlicerNodeSelectorWidget::UnconditionalUpdateMenu()
   this->ContextMenuHelper->PopulateMenu();
   this->ContextMenuHelper->UpdateMenuState();
 
+  // add icons if these are color nodes
+  this->AddColorIcons();
+  
   if (oldSelectedNode != selectedNode)
     {
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
@@ -682,3 +695,72 @@ void vtkSlicerNodeSelectorWidget::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 }
 
+//----------------------------------------------------------------------------
+bool vtkSlicerNodeSelectorWidget::HasNodeClass(const char *className)
+{
+  for (int c=0; c < this->GetNumberOfNodeClasses(); c++)
+    {
+    if (!strcmp(this->GetNodeClass(c), className))
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerNodeSelectorWidget::AddColorIcons()
+{
+  if (!this->HasNodeClass("vtkMRMLColorNode") &&
+      !this->HasNodeClass("vtkMRMLColorTableNode"))
+    {
+    return;
+    }
+  //---
+  //--- This processes only one level of menu cascade.
+  //--- assume nodes or node categories are in the main
+  //--- menu and nodes are in any cascade. 
+  //---
+  vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
+  vtkKWMenu *m = mb->GetMenu();
+  vtkKWMenu *c = NULL;
+
+  std::string s;
+  std::string subs;
+
+  int num = m->GetNumberOfItems();
+  //don't process commands?
+  for ( int i = 0; i < num; i++)
+    {
+    // is item a cascade?
+    c = m->GetItemCascade ( i );
+    if ( c != NULL )
+      {
+      // if cascade, process its cascade menu items.
+      int numm = c->GetNumberOfItems();
+      for ( int j=0; j < numm; j++ )
+        {
+        subs.clear();
+        if ( c->GetItemLabel(j) != NULL )
+          {
+          subs = c->GetItemLabel ( j );
+
+          // insert icon in cascade menu
+          // TODO: get nodeid for this menu item and pass that as well.
+          c->SetItemImageToIcon ( j, this->ColorIcons->GetIconByName ( subs.c_str() ));
+          c->SetItemCompoundModeToLeft ( j );
+          }
+        }
+      continue;
+      }
+    // otherwise... insert icon in main menu
+    // TODO: get nodeid for this menu item and pass that as well.
+    s.clear();
+    if ( m->GetItemLabel ( i) != NULL )
+      {
+      s = m->GetItemLabel( i );
+      m->SetItemImageToIcon ( i, this->ColorIcons->GetIconByName ( s.c_str() ));
+      m->SetItemCompoundModeToLeft ( i );
+      }
+    }  
+}

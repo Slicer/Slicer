@@ -378,7 +378,6 @@ void vtkSlicerVectorVolumeDisplayWidget::UpdateWidgetFromMRML ()
      if ( this->ColorSelectorWidget )
        {
        this->ColorSelectorWidget->UpdateMenu();
-       this->AddColorIcons ( this->ColorSelectorWidget );
        this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
        }
     this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );

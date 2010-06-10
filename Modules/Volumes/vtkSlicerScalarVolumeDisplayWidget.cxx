@@ -394,7 +394,6 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
     if ( this->ColorSelectorWidget )
       {
       this->ColorSelectorWidget->UpdateMenu();
-      this->AddColorIcons ( this->ColorSelectorWidget );
       }
 
     }  
