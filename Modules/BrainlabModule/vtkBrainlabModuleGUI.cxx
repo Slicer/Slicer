@@ -59,8 +59,11 @@ vtkBrainlabModuleGUI::~vtkBrainlabModuleGUI()
 {
   this->RemoveLogicObservers();
 
-  this->GetMRMLManager()->SetMRMLScene(NULL);
-  this->SetMRMLManager(NULL);
+  if (this->GetMRMLManager())
+    {
+    this->GetMRMLManager()->SetMRMLScene(NULL);
+    this->SetMRMLManager(NULL);
+    }
   this->SetLogic(NULL);
 
   if (this->WizardWidget)
