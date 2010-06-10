@@ -323,6 +323,12 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
             w->GetDataTransfer()->SetTransferStatus ( vtkDataTransfer::Deleted );
             }
           }
+        //--- check cache to see if there's junk still left in it.
+        //--- if there's junk: recommend that people check the
+        //--- always re-download button to ensure no dirty downloads
+        //--- are there in cache.
+        this->CacheManager->ClearCacheCheck();
+        
         //--- and get rid of anything else there...
         //--- which will trigger a CacheClearEvent
         //--- that causes this overview panel to update.
@@ -514,6 +520,35 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
         this->UpdateOverviewPanel();
         }
       }
+    else if ( event == vtkCacheManager::CacheDirtyEvent )
+      {
+      //--- check to see if 'always redownload' option is checked.
+      //--- if not, then make recommendation to user.
+      //--- pop up dialog. --/
+      if ( this->ForceReloadCheckButton->GetSelectedState( ) == 0)
+        {
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
+        if ( app != NULL )
+          {
+          vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+          if ( appGUI != NULL )
+            {
+            vtkSlicerWindow *win = appGUI->GetMainSlicerWindow();
+            if ( win != NULL )
+              {
+              vtkKWMessageDialog *d = vtkKWMessageDialog::New();
+              d->SetParent ( win->GetViewFrame() );
+              d->SetStyleToMessage();
+              std::string msg = "Not all files were removed from your cache. An Application must be holding on to one or more of them and preventing their removal. Selecting the \"Always Re-download\" checkbutton in the Cache and DataI/O Manager GUI, will ensure that dirty files are not loaded instead of fresh downloads.";
+              d->SetText ( msg.c_str());
+              d->Create();
+              d->Invoke();
+              d->Delete();
+              }
+            }
+          }
+        }
+      }
     else if ( event == vtkCacheManager::CacheClearEvent )
       {
       this->UpdateEntireGUI();
@@ -589,6 +624,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::SetAndObserveCacheManager( vtkCacheManag
   vtkIntArray  *events = vtkIntArray::New();
   events->InsertNextValue( vtkCacheManager::CacheLimitExceededEvent);
   events->InsertNextValue( vtkCacheManager::InsufficientFreeBufferEvent);
+  events->InsertNextValue( vtkCacheManager::CacheDirtyEvent);
   events->InsertNextValue( vtkCacheManager::CacheClearEvent);
   events->InsertNextValue( vtkCacheManager::CacheDeleteEvent);
   events->InsertNextValue( vtkCacheManager::SettingsUpdateEvent );
