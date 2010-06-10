@@ -11,6 +11,8 @@ vtkCxxRevisionMacro ( vtkSlicerColorLUTIcons, "$Revision: 12141 $");
 //---------------------------------------------------------------------------
 vtkSlicerColorLUTIcons::vtkSlicerColorLUTIcons ( )
 {
+  this->GenericColorsIcon = vtkKWIcon::New();
+  this->GenericAnatomyColorsIcon = vtkKWIcon::New();
   this->AbdomenIcon = vtkKWIcon::New();
   this->SPLBrainAtlasIcon = vtkKWIcon::New();
   this->BlankLUTIcon = vtkKWIcon::New();
@@ -80,6 +82,16 @@ vtkSlicerColorLUTIcons::~vtkSlicerColorLUTIcons ( )
 
   this->NamedIcons.clear();
   
+  if ( this->GenericColorsIcon )
+    {
+    this->GenericColorsIcon->Delete();
+    this->GenericColorsIcon = NULL;
+    }
+  if ( this->GenericAnatomyColorsIcon)
+    {
+    this->GenericAnatomyColorsIcon->Delete();
+    this->GenericAnatomyColorsIcon = NULL;    
+    }
   if ( this->AbdomenIcon )
     {
     this->AbdomenIcon->Delete();
@@ -447,6 +459,16 @@ vtkKWIcon* vtkSlicerColorLUTIcons::GetIconByName ( const char *name )
 void vtkSlicerColorLUTIcons::AssignImageDataToIcons ( )
 {
 
+  this->GenericColorsIcon->SetImage ( image_genericColors,
+                                      image_genericColors_width,
+                                      image_genericColors_height,
+                                      image_genericColors_pixel_size,
+                                      image_genericColors_length, 0);
+  this->GenericAnatomyColorsIcon->SetImage (image_genericAnatomyColors,
+                                            image_genericAnatomyColors_width,
+                                            image_genericAnatomyColors_height,
+                                            image_genericAnatomyColors_pixel_size,
+                                            image_genericAnatomyColors_length, 0);
   this->AbdomenIcon->SetImage ( image_abdomenColors,
                                 image_abdomenColors_width,
                                 image_abdomenColors_height,
@@ -804,6 +826,8 @@ void vtkSlicerColorLUTIcons::AssignNamesToIcons ()
   this->SetIconName ( this->TintWarmTint1Icon, "WarmTint1");
   this->SetIconName ( this->TintWarmTint2Icon, "WarmTint2");
   this->SetIconName ( this->TintWarmTint3Icon, "WarmTint3");
+  this->SetIconName ( this->GenericColorsIcon, "GenericColors");
+  this->SetIconName ( this->GenericAnatomyColorsIcon, "GenericAnatomyColors" );
 }
 
 
@@ -814,6 +838,8 @@ void vtkSlicerColorLUTIcons::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "SlicerColorLUTIcons: " << this->GetClassName ( ) << "\n";
 
+    os << indent << "GenericColorsIcon: " << this->GetGenericColorsIcon() << "\n";
+    os << indent << "GenericAnatomyColorsIcon: " << this->GetGenericAnatomyColorsIcon() << "\n";
     os << indent << "AbdomenIcon: " << this->GetAbdomenIcon() << "\n";
     os << indent << "SPLBrainAtlasIcon: " << this->GetSPLBrainAtlasIcon() << "\n";
     os << indent << "BlankLUTIcon: " << this->GetBlankLUTIcon() << "\n";

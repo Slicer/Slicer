@@ -70,6 +70,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorLUTIcons : public vtkSlicerIcons
     vtkGetObjectMacro (TintWarmTint3Icon, vtkKWIcon );    
     vtkGetObjectMacro (AbdomenIcon, vtkKWIcon );
     vtkGetObjectMacro (SPLBrainAtlasIcon, vtkKWIcon );
+    vtkGetObjectMacro (GenericColorsIcon, vtkKWIcon );
+    vtkGetObjectMacro (GenericAnatomyColorsIcon, vtkKWIcon);
 
     virtual void SetIconName ( vtkKWIcon *icon, const char *name );
     virtual vtkKWIcon *GetIconByName ( const char *name );
@@ -79,6 +81,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorLUTIcons : public vtkSlicerIcons
  protected:
     vtkSlicerColorLUTIcons ( );
     ~vtkSlicerColorLUTIcons ( );
+    vtkKWIcon *GenericColorsIcon;
+    vtkKWIcon *GenericAnatomyColorsIcon;
     vtkKWIcon *CartilegeMIdGEMIC3TIcon;
     vtkKWIcon *CartilegeMIdGEMIC15TIcon;
     vtkKWIcon *DiscreteBlueIcon;

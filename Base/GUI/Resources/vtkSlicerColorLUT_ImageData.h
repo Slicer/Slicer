@@ -1,3 +1,59 @@
+
+/* 
+ * Resource generated for file:
+ *    genericAnatomyColors.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_genericAnatomyColors_width          = 52;
+static const unsigned int  image_genericAnatomyColors_height         = 21;
+static const unsigned int  image_genericAnatomyColors_pixel_size     = 3;
+static const unsigned long image_genericAnatomyColors_length         = 1008;
+static const unsigned long image_genericAnatomyColors_decoded_length = 3276;
+
+static const unsigned char image_genericAnatomyColors[] = 
+  "eNrt19tPUgEAx/Ezq7+jrXrpMV/b1B5sLres1ZyYlwEiB/CGF1bmZaIcDgSYkXI/cgAz2y"
+  "JxagrI1YXgHYWJtwSFyjSnK9fMPB1JnZu1+Qec7fcHfB6/PwC4pPErt/aZU2vBep9sMbKi"
+  "IoODWn2fnqmUuz8oNW5Yh22GoUqpQEFmiDvZpbchagqJsSSWzWPYAqmHa6UzRqDUaLDyYL"
+  "3lh79+gEOZDXlcJsNERbYzK6kZBlFntRtGbJAmYrN7RYZfFnVAwl7Xwr3cvH4uaKqmxldg"
+  "5FBjIxkA1Jns29hKdGgvXgYAQDar3N4rnY7M1/taQ6sxFYVpRgzv9QXqtkmHWuXmd2AbUX"
+  "6lFFbklwi7StlpQnLyA2ZEJF/GsBDJ1GAGQR8vLRosP1h/vhOsNVexZhe8w+8Q3GbPTpLA"
+  "9C5bjUPQbod0YceQR6zft2gC4rKvqLCnMbePyzBV0+IrNHJoMW8G0GRK8a1vJNp1CVdwm/"
+  "zQVjIdCcVt0WMbTd027jyyrf21FcdtAnLyQ2ZYJF/6hy2A25hxW/uJ7fWRDT2frZuwETbC"
+  "RtgIG2EjbISNsJ3DVjwdmTtrc6mVp21Fx235f1vNKdujY1vtGRv7jI1u5BTEvHdP2hJNuI"
+  "rbVH7dt9/gzMp83Zh0MRJtpTEtiG7QkKNqmx5WS+1CFNvEu/clX5nLEBvYZemS/OR7RSsC"
+  "5RyGLWf28GyF9FHendW5Muzzi++Bp+bKkpmFCY9RPVme68pKkQjAN9ZGFx8dgrQrzqERcT"
+  "tu80vKtxFxf0NebyN4ZHvCND7O+eRNB6CBW2OxjUSn9sJ13KYIyHd/Fk2sLtX52oKra2oy"
+  "y4Kgg3oq0joxgCpcfAPe5HCF7JmMWiTqwG2HTc5aFKqmMOwjycT1UGg+Xmo4VLq32bI7Uz"
+  "fAAf3zk65uZLQq05p7s1lAMZrrXTCK/4WwwzYiRvesikAzaweBTTxSTxO9+2lBfNS3Vawv"
+  "nvsA1Jc0Htu54XyVcO0P2aG9RQ==";
+
+/* 
+ * Resource generated for file:
+ *    genericColors.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_genericColors_width          = 52;
+static const unsigned int  image_genericColors_height         = 21;
+static const unsigned int  image_genericColors_pixel_size     = 3;
+static const unsigned long image_genericColors_length         = 1008;
+static const unsigned long image_genericColors_decoded_length = 3276;
+
+static const unsigned char image_genericColors[] = 
+  "eNrt19tPUgEAx/Ezq7+jrXrpMV/b1B5sLres1ZyYlwEiB/CGF1bmZaIcDgSYkXI/cgAz2y"
+  "JxagrI1YXgHYWJtwSFyjSnK9fMPB1JnZu1+Qec7fcHfB6/PwC4pPErt/aZU2vBep9sMbKi"
+  "IoODWn2fnqmUuz8oNW5Yh22GoUqpQEFmiDvZpbchagqJsSSWzWPYAqmHa6UzRqDUaLDyYL"
+  "3lh79+gEOZDXlcJsNERbYzK6kZBlFntRtGbJAmYrN7RYZfFnVAwl7Xwr3cvH4uaKqmxldg"
+  "5FBjIxkA1Jns29hKdGgvXgYAQDar3N4rnY7M1/taQ6sxFYVpRgzv9QXqtkmHWuXmd2AbUX"
+  "6lFFbklwi7StlpQnLyA2ZEJF/GsBDJ1GAGQR8vLRosP1h/vhOsNVexZhe8w+8Q3GbPTpLA"
+  "9C5bjUPQbod0YceQR6zft2gC4rKvqLCnMbePyzBV0+IrNHJoMW8G0GRK8a1vJNp1CVdwm/"
+  "zQVjIdCcVt0WMbTd027jyyrf21FcdtAnLyQ2ZYJF/6hy2A25hxW/uJ7fWRDT2frZuwETbC"
+  "RtgIG2EjbISNsJ3DVjwdmTtrc6mVp21Fx235f1vNKdujY1vtGRv7jI1u5BTEvHdP2hJNuI"
+  "rbVH7dt9/gzMp83Zh0MRJtpTEtiG7QkKNqmx5WS+1CFNvEu/clX5nLEBvYZemS/OR7RSsC"
+  "5RyGLWf28GyF9FHendW5Muzzi++Bp+bKkpmFCY9RPVme68pKkQjAN9ZGFx8dgrQrzqERcT"
+  "tu80vKtxFxf0NebyN4ZHvCND7O+eRNB6CBW2OxjUSn9sJ13KYIyHd/Fk2sLtX52oKra2oy"
+  "y4Kgg3oq0joxgCpcfAPe5HCF7JmMWiTqwG2HTc5aFKqmMOwjycT1UGg+Xmo4VLq32bI7Uz"
+  "fAAf3zk65uZLQq05p7s1lAMZrrXTCK/4WwwzYiRvesikAzaweBTTxSTxO9+2lBfNS3Vawv"
+  "nvsA1Jc0Htu54XyVcO0P2aG9RQ==";
+
+
 /* 
  * Resource generated for file:
  *    SPL-BrainAtlas-ColorFile.png (zlib, base64) (image file)
