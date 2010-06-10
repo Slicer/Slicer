@@ -270,6 +270,15 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->FrameFPS->SetLabelText("Expected Interactive Framerate");
     this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameFPS->GetWidgetName() );
 
+    this->SC_CheckFPS = vtkKWCheckButton::New();
+    this->SC_CheckFPS->SetParent(this->FrameFPS->GetFrame());
+    this->SC_CheckFPS->Create();
+    this->SC_CheckFPS->SelectedStateOn();
+    this->SC_CheckFPS->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
+    this->Script(
+      "pack %s -side left -anchor w -expand 0 -padx 2 -pady 2", 
+      this->SC_CheckFPS->GetWidgetName());
+    
     this->SC_ExpectedFPS=vtkKWScale::New();
     this->SC_ExpectedFPS->SetParent(this->FrameFPS->GetFrame());
     this->SC_ExpectedFPS->Create();
@@ -279,7 +288,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->SC_ExpectedFPS->SetValue(5.0);
     this->SC_ExpectedFPS->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
     this->SC_ExpectedFPS->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_ExpectedFPS->GetWidgetName() );
+    this->Script ( "pack %s -side right -anchor w -expand 1 -fill x -padx 2 -pady 2", this->SC_ExpectedFPS->GetWidgetName() );
 
   }
 
@@ -545,6 +554,13 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
     this->MB_GPURayCastTechnique3 = NULL;
   }
 
+  if (this->SC_CheckFPS != NULL)
+    {
+    this->SC_CheckFPS->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
+    this->SC_CheckFPS->SetParent(NULL);
+    this->SC_CheckFPS->Delete();
+    this->SC_CheckFPS = NULL;
+    }
   if(this->SC_ExpectedFPS != NULL)
   {
     this->SC_ExpectedFPS->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->GUICallbackCommand);
@@ -1203,7 +1219,12 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
   {
     vtkKWCheckButton *callerObjectCheckButton = vtkKWCheckButton::SafeDownCast(caller);
 
-    if (callerObjectCheckButton == this->CB_CPURayCastMIP->GetWidget())
+    if(callerObjectCheckButton == this->SC_CheckFPS)
+    {
+      this->ProcessExpectedFPS();
+      return;
+    } 
+    else if (callerObjectCheckButton == this->CB_CPURayCastMIP->GetWidget())
     {
       vspNode->SetCPURaycastMode(this->CB_CPURayCastMIP->GetWidget()->GetSelectedState());
 
@@ -1797,8 +1818,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
 void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
-
-  vspNode->SetExpectedFPS((int)(this->SC_ExpectedFPS->GetValue()));
+  this->SC_ExpectedFPS->SetEnabled(this->SC_CheckFPS->GetSelectedState());
+  int fps = this->SC_CheckFPS->GetSelectedState() ? static_cast<int>(this->SC_ExpectedFPS->GetValue()) : 0;
+  vspNode->SetExpectedFPS(fps);
 
   this->Gui->GetLogic()->SetExpectedFPS(vspNode);
 
@@ -1808,8 +1830,9 @@ void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
     vtkSlicerViewerWidget *slicer_viewer_widget = this->Gui->GetApplicationGUI()->GetNthViewerWidget(i);
     if (slicer_viewer_widget)
       {
-      slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->SetDesiredUpdateRate (this->SC_ExpectedFPS->GetValue());
-      slicer_viewer_widget->GetMainViewer()->GetRenderWindow()->GetInteractor()->SetDesiredUpdateRate(this->SC_ExpectedFPS->GetValue());
+      vtkRenderWindow* renderWindow = slicer_viewer_widget->GetMainViewer()->GetRenderWindow();
+      renderWindow->SetDesiredUpdateRate(fps);
+      renderWindow->GetInteractor()->SetDesiredUpdateRate(fps);
       }
     }
 

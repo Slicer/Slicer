@@ -45,6 +45,7 @@ class vtkKWRange;
 class vtkSlicerROIDisplayWidget;
 class vtkKWLoadSaveButton;
 class vtkMRMLVolumeRenderingParametersNode;
+class vtkKWCheckButton;
 
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVolumeRenderingHelper :public vtkKWObject
 {
@@ -150,6 +151,9 @@ protected:
     // Icon for the visibility of volume rendering
     vtkSlicerVisibilityIcons *VI_PauseResume;
 
+    // Description:
+    // Checkbox for enabling/disabling interactive rendering methods
+    vtkKWCheckButton *SC_CheckFPS;
 
     // Description:
     // Adjust the frame for interactive rendering methods
