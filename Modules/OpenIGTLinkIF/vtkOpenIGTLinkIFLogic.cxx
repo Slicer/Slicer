@@ -63,7 +63,6 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   this->SliceOrientation[2] = SLICE_RTIMAGE_INPLANE90;
 
   // Timer Handling
-
   this->DataCallbackCommand = vtkCallbackCommand::New();
   this->DataCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->DataCallbackCommand->SetCallback(vtkOpenIGTLinkIFLogic::DataCallback);
@@ -80,13 +79,16 @@ vtkOpenIGTLinkIFLogic::vtkOpenIGTLinkIFLogic()
   this->LinearTransformConverter = vtkIGTLToMRMLLinearTransform::New();
   this->ImageConverter           = vtkIGTLToMRMLImage::New();
   this->PositionConverter        = vtkIGTLToMRMLPosition::New();
+  this->ImageMetaListConverter   = vtkIGTLToMRMLImageMetaList::New();
+  this->TrackingDataConverter    = vtkIGTLToMRMLTrackingData::New();
 
   RegisterMessageConverter(this->LinearTransformConverter);
   RegisterMessageConverter(this->ImageConverter);
   RegisterMessageConverter(this->PositionConverter);
+  RegisterMessageConverter(this->ImageMetaListConverter);
+  RegisterMessageConverter(this->TrackingDataConverter);
 
   this->LocatorTransformNode = NULL;
-
 }
 
 
@@ -108,9 +110,15 @@ vtkOpenIGTLinkIFLogic::~vtkOpenIGTLinkIFLogic()
   if (this->PositionConverter)
     {
     UnregisterMessageConverter(this->PositionConverter);
-
     this->PositionConverter->Delete();
     }
+
+  if (this->ImageMetaListConverter)
+    {
+    UnregisterMessageConverter(this->ImageMetaListConverter);
+    this->ImageMetaListConverter->Delete();
+    }
+
 
   if (this->DataCallbackCommand)
     {
@@ -338,6 +346,7 @@ int vtkOpenIGTLinkIFLogic::SetSliceDriver(int index, int v)
       vtkSetAndObserveMRMLNodeEventsMacro( this->LocatorTransformNode, transNode, nodeEvents);
       nodeEvents->Delete();
       transNode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+
       }
     }
 

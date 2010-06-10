@@ -22,6 +22,7 @@
 #include "vtkImageData.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "igtlImageMessage.h"
+#include "vtkMRMLIGTLQueryNode.h"
 
 vtkStandardNewMacro(vtkIGTLToMRMLImage);
 vtkCxxRevisionMacro(vtkIGTLToMRMLImage, "$Revision$");
@@ -390,7 +391,46 @@ int vtkIGTLToMRMLImage::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRMLNod
 int vtkIGTLToMRMLImage::MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, int* size, void** igtlMsg)
 {
   
-  if (mrmlNode && event == vtkMRMLVolumeNode::ImageDataModifiedEvent)
+  if (!mrmlNode)
+    {
+    return 0;
+    }
+
+  // If mrmlNode is query node
+  if (strcmp(mrmlNode->GetNodeTagName(), "IGTLQuery") == 0 ) // Query Node
+    {
+    vtkMRMLIGTLQueryNode* qnode = vtkMRMLIGTLQueryNode::SafeDownCast(mrmlNode);
+    if (qnode)
+      {
+      if (qnode->GetQueryType() == vtkMRMLIGTLQueryNode::TYPE_GET)
+        {
+        if (this->GetImageMessage.IsNull())
+          {
+          this->GetImageMessage = igtl::GetImageMessage::New();
+          }
+        this->GetImageMessage->SetDeviceName(mrmlNode->GetName());
+        this->GetImageMessage->Pack();
+        *size = this->GetImageMessage->GetPackSize();
+        *igtlMsg = this->GetImageMessage->GetPackPointer();
+        return 1;
+        }
+      /*
+      else if (qnode->GetQueryType() == vtkMRMLIGTLQueryNode::TYPE_START)
+        {
+        *size = 0;
+        return 0;
+        }
+      else if (qnode->GetQueryType() == vtkMRMLIGTLQueryNode::TYPE_STOP)
+        {
+        *size = 0;
+        return 0;
+        }
+      */
+      return 0;
+      }
+    }
+  // If mrmlNode is Image node
+  else if (event == vtkMRMLVolumeNode::ImageDataModifiedEvent)
     {
     return 1;
     }
