@@ -2,9 +2,9 @@
 #define __vtkBrainlabModuleGUI_h
 
 #include "vtkSlicerModuleGUI.h"
+#include "vtkBrainlabModuleLogic.h"
 #include "vtkBrainlabModule.h"
 
-class vtkBrainlabModuleLogic;
 class vtkBrainlabModuleMRMLManager;
 class vtkBrainlabModuleLoadingDataStep;
 class vtkBrainlabModuleNavigationStep;
@@ -26,10 +26,10 @@ public:
   // Description: 
   // Get/Set logic node
   vtkGetObjectMacro(Logic, vtkBrainlabModuleLogic);
-//  virtual void SetLogic(vtkBrainlabModuleLogic*);
+  vtkSetObjectMacro(Logic, vtkBrainlabModuleLogic);
 
   /// Implement setter for vtkLogic* pointer
-//  virtual void SetModuleLogic(vtkSlicerLogic*);
+  // to allow access to logic's MRML Manager from GUI
   void SetModuleLogic ( vtkSlicerLogic *logic );
  
   // Get/Set mrml manager node

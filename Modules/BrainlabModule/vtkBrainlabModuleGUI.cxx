@@ -59,8 +59,9 @@ vtkBrainlabModuleGUI::~vtkBrainlabModuleGUI()
 {
   this->RemoveLogicObservers();
 
+  this->GetMRMLManager()->SetMRMLScene(NULL);
   this->SetMRMLManager(NULL);
-//  this->SetLogic(NULL);
+  this->SetLogic(NULL);
 
   if (this->WizardWidget)
     {
@@ -88,9 +89,8 @@ vtkBrainlabModuleGUI::~vtkBrainlabModuleGUI()
 //----------------------------------------------------------------------------
 void vtkBrainlabModuleGUI::SetModuleLogic(vtkSlicerLogic* logic)
 {
-  this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); 
+  this->SetLogic ( vtkBrainlabModuleLogic::SafeDownCast(logic) ); 
 
-  //this->SetLogic( dynamic_cast<vtkBrainlabModuleLogic*> (logic) );
   this->GetLogic()->GetMRMLManager()->SetMRMLScene( this->GetMRMLScene() ); 
   this->SetMRMLManager( this->GetLogic()->GetMRMLManager() );
 }
