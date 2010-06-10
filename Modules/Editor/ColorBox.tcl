@@ -104,7 +104,7 @@ itcl::body ColorBox::create { } {
     $w SetPotentialCellColorsChangedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
     $w SetColumnSortedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
 
-    foreach column {Number Color Name} text {Number Color Name} width {7 6 15} {
+    foreach column {Number Color Name} text {Number Color Name} width {7 6 25} {
       set col($column) [$w AddColumn $column]
       $w ColumnEditableOff $col($column)
       $w SetColumnWidth $col($column) $width
@@ -130,7 +130,7 @@ itcl::body ColorBox::create { } {
     $::slicer3::Broker AddObservation [$o(colors) GetWidget] $SelectionChangedEvent "::Box::ProtectedCallback $this processEvent $o(colors)"
   }
   pack [$o(colors) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
+    -side top -anchor e -fill both -expand true -padx 2 -pady 2 
 
   $this setMode $mode
 
