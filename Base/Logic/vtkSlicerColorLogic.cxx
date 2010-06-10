@@ -423,9 +423,10 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
         }
 
       // check if this is the new default one read in from file
-      if (strcmp(ctnode->GetName(),"Slicer3_2010_Label_Colors") == 0)
+      if (strcmp(ctnode->GetName(),"GenericColors") == 0 ||
+          strcmp(ctnode->GetName(),"GenericAnatomyColors") == 0)
         {
-        vtkDebugMacro("Found default brain lut node");
+        vtkDebugMacro("Found default lut node");
         // remove the category attribute so it floats to the top of the node
         // selector
         // can't unset an attribute, so just don't set it at all
@@ -678,13 +679,13 @@ const char *vtkSlicerColorLogic::GetDefaultVolumeColorNodeID()
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
 {
-  return vtkSlicerColorLogic::GetDefaultFileColorNodeID("Slicer3_2010_Label_Colors.txt");
+  return vtkSlicerColorLogic::GetDefaultFileColorNodeID("GenericColors.txt");
 }
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
 {
-  return vtkSlicerColorLogic::GetDefaultFileColorNodeID("Slicer3_2010_Brain_Labels.txt");
+  return vtkSlicerColorLogic::GetDefaultFileColorNodeID("GenericAnatomyColors.txt");
 }
 
 //----------------------------------------------------------------------------
