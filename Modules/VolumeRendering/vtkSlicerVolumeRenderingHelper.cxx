@@ -273,11 +273,10 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->SC_CheckFPS = vtkKWCheckButton::New();
     this->SC_CheckFPS->SetParent(this->FrameFPS->GetFrame());
     this->SC_CheckFPS->Create();
+    this->SC_CheckFPS->SetBalloonHelpString("Turn On/Off performance control. Uncheck the button will force high quality rendering.");
     this->SC_CheckFPS->SelectedStateOn();
     this->SC_CheckFPS->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
-    this->Script(
-      "pack %s -side left -anchor w -expand 0 -padx 2 -pady 2", 
-      this->SC_CheckFPS->GetWidgetName());
+    this->Script( "pack %s -side left -anchor w -expand 0 -padx 2 -pady 2", this->SC_CheckFPS->GetWidgetName());
     
     this->SC_ExpectedFPS=vtkKWScale::New();
     this->SC_ExpectedFPS->SetParent(this->FrameFPS->GetFrame());
