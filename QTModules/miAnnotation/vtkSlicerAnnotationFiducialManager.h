@@ -119,6 +119,8 @@ protected:
   /// update the point property passed by the point display node
   void UpdatePointDisplayProperty(vtkMRMLAnnotationPointDisplayNode *node);
 
+  void UpdateLockUnlock(vtkMRMLFiducialListNode* node);
+
   /// the id of the mrml node currently displayed in the widget
   char* FiducialNodeID;
 

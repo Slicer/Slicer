@@ -47,10 +47,11 @@ void vtkMRMLAnnotationTextNode::Initialize(vtkMRMLScene* mrmlScene)
     return;
   }
 
+  this->SetText(0, "This is a Text Node", 1, 1);
+
   mrmlScene->AddNode(this);
   this->CreateAnnotationTextDisplayNode();
 
-  this->SetText(0, "This is a Text Node", 1, 1);
 
   this->GetAnnotationTextDisplayNode()->SetTextScale(10);
   this->SetAnnotationAttribute(0, vtkMRMLAnnotationNode::TEXT_VISIBLE, 1);

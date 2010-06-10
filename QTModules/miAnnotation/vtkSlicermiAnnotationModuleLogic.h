@@ -40,6 +40,11 @@ class vtkMRMLAnnotationTextNode;
 class vtkSlicerSeedWidgetClass;
 class vtkTextWidget;
 class vtkSlicerROIDisplayWidget;
+class vtkSlicerAnnotationROIManager;
+class vtkSlicerAnnotationSplineManager;
+class vtkSlicerAnnotationBidimensionalManager;
+class vtkSlicerAnnotationTextManager;
+
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicermiAnnotationModuleLogic :
   public vtkSlicerModuleLogic
@@ -73,7 +78,7 @@ public:
   enum
   {
       AddAngleCompletedEvent = 19020,
-      AddTextNodeCompletedEvent,
+    AddTextNodeCompletedEvent,
   };
 
   static vtkSlicermiAnnotationModuleLogic *New();
@@ -110,9 +115,6 @@ public:
   const char* AddTextNode();
   void AddTextNodeCompleted();
   vtkMRMLAnnotationTextNode* GetTextNodeByID(const char* id);
-  void AddTextWidget(vtkMRMLAnnotationTextNode* node);
-  vtkTextWidget* GetTextWidget(const char* nodeID);
-  void RemoveTextWidget(vtkMRMLAnnotationTextNode* node);
   
   // ROI Node
   const char* AddROINode();
@@ -192,10 +194,11 @@ private:
   vtkSlicerAnnotationRulerManager *m_RulerManager;
   vtkSlicerAnnotationAngleManager *m_AngleManager;
   vtkSlicerAnnotationFiducialManager *m_FiducialManager;
-
-  std::map<std::string, vtkTextWidget*> TextWidgets;
+  vtkSlicerAnnotationROIManager *m_ROIManager;
+  vtkSlicerAnnotationSplineManager *m_SplineManager;
+  vtkSlicerAnnotationBidimensionalManager *m_BidimensionalManager;
+  vtkSlicerAnnotationTextManager *m_TextManager;
 
 };
 
 #endif
-

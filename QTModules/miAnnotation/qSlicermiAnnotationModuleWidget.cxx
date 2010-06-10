@@ -553,8 +553,8 @@ void qSlicermiAnnotationModuleWidget::StartAddingFiducials()
     return;
   }
 
-  m_IDs.push_back( newFiducialNodeID );
-  m_index++;
+  //m_IDs.push_back( newFiducialNodeID );
+  //m_index++;
 
   qvtkConnect(d->logic()->GetFiducialManager(),  vtkSlicerAnnotationFiducialManager::AddFiducialCompletedEvent,
     this, SLOT(AddFiducialCompleted(vtkObject*, void*)) );
@@ -586,8 +586,17 @@ void qSlicermiAnnotationModuleWidget::AddFiducialCompleted(vtkObject* object, vo
   CTK_D(qSlicermiAnnotationModuleWidget);
 
   d->fiducialTypeButton->setChecked(false);
-  //vtkMRMLAnnotationFiducialNode* node = vtkMRMLAnnotationFiducialNode::SafeDownCast(
-  //  d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
+
+  std::vector<vtkMRMLNode*> nodevector;
+  d->logic()->GetMRMLScene()->GetNodesByClass("vtkMRMLFiducialListNode", nodevector);
+
+  m_IDs.push_back(nodevector[nodevector.size()-1]->GetID());
+  m_index++;
+  
+  //vtkMRMLAnnotationFiducialNode* node = vtkMRMLAnnotationFiducialNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
+  vtkMRMLFiducialListNode* node = vtkMRMLFiducialListNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
+
+  const char* newFiducialNodeID = node->GetID();
 
   double thevalue = 0.0;
   QString valueString = "";
@@ -599,7 +608,8 @@ void qSlicermiAnnotationModuleWidget::AddFiducialCompleted(vtkObject* object, vo
 void qSlicermiAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 {
   CTK_D(qSlicermiAnnotationModuleWidget);
-  d->logic()->SaveMRMLScene();
+
+ d->logic()->SaveMRMLScene();
 }
 
 //-----------------------------------------------------------------------------
@@ -802,7 +812,7 @@ void qSlicermiAnnotationModuleWidget::onSaveAnnotationButtonClicked()
         QDir::currentPath(),
         "Annotations (*.txt)");
 
-    // save the documents  .
+    // save the documents...
     if ( !filename.isNull())
     {
         QFile file(filename);
@@ -984,7 +994,7 @@ bool qSlicermiAnnotationModuleWidget::saveAnnotationReport()
     imgdir.append("_files");
     QDir currentdir = QDir::current();
 
-    if ( !currentdir.exists() )
+    if ( currentdir.exists() )
     {
         if ( !currentdir.mkdir( imgdir ) )
         {
@@ -1143,17 +1153,22 @@ void qSlicermiAnnotationModuleWidget::visibleSelectedButtonClicked()
 
     foreach(int i, selectedRows)
     {
-        vtkMRMLAnnotationNode* node = (vtkMRMLAnnotationNode*)d->logic()->GetMRMLScene()->GetNodeByID( m_IDs[i] );
-        if ( node->GetVisible() )
-        {
-            node->SetVisible(0);
-            isVisible = false;
-        }
-        else
-        {
-            node->SetVisible(1);
-            isVisible = true;
-        }
+    vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
+    if (fNode != NULL && fNode->IsA("vtkMRMLFiducialListNode"))
+    {
+      isVisible = !fNode->GetVisibility();
+      fNode->SetVisibility((int)isVisible);
+    }
+    else
+    {
+      vtkMRMLAnnotationNode* node = (vtkMRMLAnnotationNode*)d->logic()->GetMRMLScene()->GetNodeByID( m_IDs[i] );
+      if ( node )
+      {
+        isVisible = !node->GetVisible();
+        node->SetVisible((int)isVisible);
+      } 
+
+    }
     }
 
     d->setInvisibleItemIcon( isVisible );
@@ -1185,6 +1200,16 @@ void qSlicermiAnnotationModuleWidget::lockSelectedButtonClicked()
             isLocked = !node->GetLocked();
             node->SetLocked((int)isLocked);
         }
+    else
+    {
+      vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
+      if (fNode != NULL && fNode->IsA("vtkMRMLFiducialListNode"))
+      {
+        isLocked = !fNode->GetLocked();
+        fNode->SetLocked((int)isLocked);
+      }
+    }
+
         if ( this->GetPropertyDialog(m_IDs[i]) != NULL && this->GetPropertyDialog(m_IDs[i])->isVisible() )
         {
             this->GetPropertyDialog(m_IDs[i])->UpdateLockUnlockStatus(isLocked);
@@ -1432,15 +1457,15 @@ void qSlicermiAnnotationModuleWidget::updateAnnotationTable(int index, double th
         textString = node->GetText(0);
     }
   else if ( mrmlnode->IsA("vtkMRMLAnnotationTextNode") )
-    {
+  {
     vtkMRMLAnnotationTextNode* node = vtkMRMLAnnotationTextNode::SafeDownCast(mrmlnode);
     textString = node->GetText(0);
-    }
+  }
   else if ( mrmlnode->IsA("vtkMRMLROINode") )
-    {
+  {
     vtkMRMLROINode* node = vtkMRMLROINode::SafeDownCast(mrmlnode);
     textString = node->GetLabelText();
-    }
+  }
 
     QString labelString = QString("Seed %1").arg(QString::number(m_index));
     QString valueString;
@@ -1694,10 +1719,10 @@ void qSlicermiAnnotationModuleWidget::onTextNodeButtonClicked()
 
   const char *newTextNodeID = d->logic()->AddTextNode();
   if (!newTextNodeID)
-    {
+  {
     std::cerr << "Could not add Text Node" << std::endl;
     return;
-    }
+  }
 
   m_IDs.push_back( newTextNodeID );
   m_index++;
@@ -1705,7 +1730,7 @@ void qSlicermiAnnotationModuleWidget::onTextNodeButtonClicked()
   double thevalue = 0.0;
   thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
 
-  const char* format = " ";
+  char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1729,7 +1754,7 @@ void qSlicermiAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object, vo
   double thevalue = 0.0;
   thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
 
-  const char* format = " ";
+  char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1757,16 +1782,16 @@ void qSlicermiAnnotationModuleWidget::onROINodeButtonClicked()
 
   const char *newROINodeID = d->logic()->AddROINode();
   if (!newROINodeID)
-    {
+  {
     std::cerr << "Could not add ROI Node" << std::endl;
     return;
-    }
+  }
 
   m_IDs.push_back( newROINodeID );
   m_index++;
 
   double thevalue = 0.0;
-  const char* format = " ";
+  char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1782,16 +1807,16 @@ void qSlicermiAnnotationModuleWidget::onPolylineButtonClicked()
 
   const char *newNodeID = d->logic()->AddBidLineNode();
   if (!newNodeID)
-    {
+  {
     std::cerr << "Could not add ROI Node" << std::endl;
     return;
-    }
+  }
 
   m_IDs.push_back( newNodeID );
   m_index++;
 
   double thevalue = 0.0;
-  const char* format = " ";
+  char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1807,19 +1832,18 @@ void qSlicermiAnnotationModuleWidget::onSplineButtonClicked()
 
   const char *newNodeID = d->logic()->AddSplineNode();
   if (!newNodeID)
-    {
+  {
     std::cerr << "Could not add ROI Node" << std::endl;
     return;
-    }
+  }
 
   m_IDs.push_back( newNodeID );
   m_index++;
 
   double thevalue = 0.0;
-  const char* format = " ";
+  char* format = " ";
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
   this->selectRowByIndex( m_index );
 }
-

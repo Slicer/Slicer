@@ -371,11 +371,14 @@ void vtkSlicerAnnotationFiducialManager::UpdateInteractionModeAtEndInteraction()
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationFiducialManager::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
 {
+  vtkMRMLFiducialListNode *callerList = vtkMRMLFiducialListNode::SafeDownCast(caller);
   vtkMRMLFiducialListNode *callDataList =  NULL;
-  if (callData != NULL)
-  {
-    callDataList = reinterpret_cast<vtkMRMLFiducialListNode *>(callData);
-  }
+  
+  //if (callData != NULL)
+  //{
+  callDataList = reinterpret_cast<vtkMRMLFiducialListNode *>(callData);
+  //}
+
   vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
 
   // the scene was closed, don't get node removed events so clear up here
@@ -406,6 +409,9 @@ void vtkSlicerAnnotationFiducialManager::ProcessMRMLEvents ( vtkObject *caller, 
     }
   }
 
+  vtkMRMLAnnotationFiducialNode *node = vtkMRMLAnnotationFiducialNode::SafeDownCast(caller);
+  vtkMRMLAnnotationFiducialNode *activeFiducialNode = (vtkMRMLAnnotationFiducialNode *)this->MRMLScene->GetNodeByID(this->GetFiducialNodeID());
+
   // check for a node added to the scene event
   if (callScene != NULL && callScene == this->MRMLScene && callData != NULL && event == vtkMRMLScene::NodeAddedEvent)
   {
@@ -422,7 +428,7 @@ void vtkSlicerAnnotationFiducialManager::ProcessMRMLEvents ( vtkObject *caller, 
     else if (addNode2 != NULL && addNode2->IsA("vtkMRMLFiducialListNode"))
     {
       this->AddSeedWidget(addNode2);
-      this->InvokeEvent(vtkSlicerAnnotationFiducialManager::AddFiducialCompletedEvent);
+      //this->InvokeEvent(vtkSlicerAnnotationFiducialManager::AddFiducialCompletedEvent);
     }
   }
   else if (callData != NULL && event == vtkMRMLScene::NodeAddedEvent)
@@ -430,15 +436,21 @@ void vtkSlicerAnnotationFiducialManager::ProcessMRMLEvents ( vtkObject *caller, 
     vtkMRMLFiducialListNode *addNode = reinterpret_cast<vtkMRMLFiducialListNode*>(callData);
     if (addNode != NULL && addNode->IsA("vtkMRMLFiducialListNode"))
     {
-      vtkDebugMacro("Got a node added event with a Fiducial node " << addNode->GetID());
+    vtkDebugMacro("Got a node added event with a Fiducial node " << addNode->GetID());
+    this->AddSeedWidget(addNode);
+    this->InvokeEvent(vtkSlicerAnnotationFiducialManager::AddFiducialCompletedEvent);
+    if (this->GetSeedWidget(addNode->GetID())==NULL)
+    {
       this->AddSeedWidget(addNode);
       this->InvokeEvent(vtkSlicerAnnotationFiducialManager::AddFiducialCompletedEvent);
-      return;
+    }
     }
   }
+  else if (callerList != NULL && event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
+  {
+    this->UpdateLockUnlock(callerList);
+  }
   
-
-
 }
 
 
@@ -699,6 +711,10 @@ void vtkSlicerAnnotationFiducialManager::AddSeedWidget(vtkMRMLAnnotationFiducial
   {
     FiducialNode->AddObserver(vtkMRMLAnnotationFiducialNode::FiducialNodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
   }
+  if (FiducialNode->HasObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+  {
+    FiducialNode->AddObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -764,6 +780,15 @@ void vtkSlicerAnnotationFiducialManager::AddSeedWidget(vtkMRMLFiducialListNode *
   {
     fiducialListNode->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
   }
+  if (fiducialListNode->HasObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+  {
+    fiducialListNode->AddObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  }
+  if (fiducialListNode->HasObserver(vtkMRMLFiducialListNode::DisplayModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+  {
+    fiducialListNode->AddObserver(vtkMRMLFiducialListNode::DisplayModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  }
+
   // set the interactor first
   this->Update3DWidgetVisibility(fiducialListNode);
 
@@ -1250,4 +1275,22 @@ void vtkSlicerAnnotationFiducialManager::UpdateSeed(vtkMRMLFiducialListNode *fli
   {
     this->GetViewerWidget()->Render();
   }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationFiducialManager::UpdateLockUnlock(vtkMRMLFiducialListNode* node)
+{
+  if (node == NULL)
+  {
+    return;
+  }
+
+  vtkSlicerSeedWidgetClass *widget = this->GetSeedWidget(node->GetID());
+  if (!widget)
+  {
+    cout << "No distance widget found, adding a distance widget for this one" << endl;
+    return;
+  }
+
+  widget->SetSeedsLocked( node->GetLocked() );
 }

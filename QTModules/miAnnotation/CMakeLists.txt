@@ -55,6 +55,12 @@ SET(qt_module_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationStickyNode.h
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationTextNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationTextNode.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationROINode.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationROINode.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationSplineNode.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationSplineNode.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationBidimensionalNode.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLAnnotationBidimensionalNode.h
   qSlicermiAnnotationModule.cxx
   qSlicermiAnnotationModule.h
   vtkSlicermiAnnotationModuleLogic.cxx
@@ -77,6 +83,14 @@ SET(qt_module_SRCS
   vtkSlicerAnnotationAngleManager.h
   vtkSlicerAnnotationFiducialManager.cxx
   vtkSlicerAnnotationFiducialManager.h
+  vtkSlicerAnnotationROIManager.cxx
+  vtkSlicerAnnotationROIManager.h
+  vtkSlicerAnnotationSplineManager.cxx
+  vtkSlicerAnnotationSplineManager.h
+  vtkSlicerAnnotationBidimensionalManager.cxx
+  vtkSlicerAnnotationBidimensionalManager.h
+  vtkSlicerAnnotationTextManager.cxx
+  vtkSlicerAnnotationTextManager.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidget.cxx
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidget.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidgetClass.cxx
