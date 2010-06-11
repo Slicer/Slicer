@@ -662,20 +662,20 @@ void vtkOpenIGTLinkIFLogic::UpdateSliceNode(int sliceNodeNumber, vtkMatrix4x4* t
 
   CheckSliceNode();
 
-  float tx = transform->GetElement(0, 0);
-  float ty = transform->GetElement(1, 0);
-  float tz = transform->GetElement(2, 0);
+  float tx = transform->Element[0][0];
+  float ty = transform->Element[1][0];
+  float tz = transform->Element[2][0];
   /*
   float sx = transform->GetElement(0, 1);
   float sy = transform->GetElement(1, 1);
   float sz = transform->GetElement(2, 1);
   */
-  float nx = transform->GetElement(0, 2);
-  float ny = transform->GetElement(1, 2);
-  float nz = transform->GetElement(2, 2);
-  float px = transform->GetElement(0, 3);
-  float py = transform->GetElement(1, 3);
-  float pz = transform->GetElement(2, 3);
+  float nx = transform->Element[0][2];
+  float ny = transform->Element[1][2];
+  float nz = transform->Element[2][2];
+  float px = transform->Element[0][3];
+  float py = transform->Element[1][3];
+  float pz = transform->Element[2][3];
 
   if (strcmp(this->SliceNode[sliceNodeNumber]->GetOrientationString(), "Axial") == 0)
     {

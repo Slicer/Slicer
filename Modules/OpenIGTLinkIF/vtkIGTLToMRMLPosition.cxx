@@ -113,7 +113,7 @@ int vtkIGTLToMRMLPosition::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRML
   
   vtkMatrix4x4* transformToParent = transformNode->GetMatrixTransformToParent();
   int row, column;
-  for (row = 0; row < 4; row++)
+  for (row = 0; row < 3; row++)
     {
     for (column = 0; column < 3; column++)
       {
@@ -121,6 +121,10 @@ int vtkIGTLToMRMLPosition::IGTLToMRML(igtl::MessageBase::Pointer buffer, vtkMRML
       }
     transformToParent->Element[row][3] = position[row];
     }
+  transformToParent->Element[3][0] = 0.0;
+  transformToParent->Element[3][1] = 0.0;
+  transformToParent->Element[3][2] = 0.0;
+  transformToParent->Element[3][3] = 1.0;
 
   transformToParent->Modified();
 

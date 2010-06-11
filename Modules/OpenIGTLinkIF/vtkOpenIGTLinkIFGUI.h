@@ -230,6 +230,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   //----------------------------------------------------------------
   int TimerFlag;
   int TimerInterval;
+  vtkTimerLog* TimerLog;
 
   //----------------------------------------------------------------
   // GUI widgets

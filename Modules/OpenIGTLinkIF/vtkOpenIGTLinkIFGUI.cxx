@@ -70,6 +70,8 @@
 #include "vtkImageChangeInformation.h"
 #include "vtkSlicerColorLogic.h"
 
+#include "vtkTimerLog.h"
+
 #include "vtkMRMLLinearTransformNode.h"
 
 #include "vtkMRMLIGTLConnectorNode.h"
@@ -78,6 +80,7 @@
 #include "vtkMRMLImageMetaListNode.h"
 #include "vtkMRMLIGTLQueryNode.h"
 #include "vtkMRMLIGTLTrackingDataBundleNode.h"
+
 
 #include <vector>
 #include <sstream>
@@ -178,6 +181,7 @@ vtkOpenIGTLinkIFGUI::vtkOpenIGTLinkIFGUI ( )
   // Locator  (MRML)
   this->CloseScene              = false;
   this->TimerFlag = 0;
+  this->TimerLog = vtkTimerLog::New();
   this->ConnectorNodeList.clear();
   this->IOConfigTreeConnectorList.clear();
   this->IOConfigTreeIOList.clear();
@@ -1448,6 +1452,8 @@ void vtkOpenIGTLinkIFGUI::ProcessTimerEvents()
     // -----------------------------------------
     // Update connector list, property frame and IO config tree
 
+    this->TimerLog->StartTimer();
+      
     // TODO: This part should be handled in MRML event handler
     if (this->UpdateConnectorListFlag)
       {
@@ -1473,9 +1479,15 @@ void vtkOpenIGTLinkIFGUI::ProcessTimerEvents()
     // Check incomming new data
     this->GetLogic()->ImportEvents();
     this->GetLogic()->ImportFromCircularBuffers();
+
+    this->TimerLog->StopTimer();
+    int msec = (int) (this->TimerLog->GetElapsedTime() * 1000.0); /* Elapsed time in the timer handler (ms)*/
+    int newtimer = this->TimerInterval - msec;
+    if (newtimer < 5) newtimer = 5;
+
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(), 
-                                         this->TimerInterval,
-                                         this, "ProcessTimerEvents");        
+                                         newtimer,
+                                         this, "ProcessTimerEvents");
     }
 }
 
