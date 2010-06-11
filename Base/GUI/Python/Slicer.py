@@ -674,8 +674,7 @@ def ParseArgs ( ModuleArgs, ArgTags, ArgFlags, ArgMultiples ):
             else:
                 FlagArgs[argflag] = CastArg(ModuleArgs.pop(0),argtag)
         else:
-            nFlags = len([argflag for argflag in ArgFlags if argflag != ''])
-            ArgTags = ArgTags[nFlags:]
+            ArgTags = [argtag for argtag,argflag in zip(ArgTags,ArgFlags) if argflag == ''] 
             PositionalArgs.append(CastArg(arg,ArgTags.pop(0)))
             while len(ModuleArgs) != 0:
                 PositionalArgs.append(CastArg(ModuleArgs.pop(0),ArgTags.pop(0)))
