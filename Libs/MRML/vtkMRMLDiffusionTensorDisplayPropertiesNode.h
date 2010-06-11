@@ -212,7 +212,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// 
   /// Return the lowest and highest integers, for use in looping
   int GetFirstGlyphGeometry() {return this->Lines;};
-  int GetLastGlyphGeometry() {return this->Superquadrics;};
+  int GetLastGlyphGeometry() {return this->Ellipsoids;};
 
   /// 
   /// Return a text string describing the GlyphGeometry variable

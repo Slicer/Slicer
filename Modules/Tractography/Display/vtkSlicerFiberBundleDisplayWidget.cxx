@@ -606,15 +606,17 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   //Create dummy display properties node to init variables
   vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = 
     vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-  int initIdx = propNode->GetFirstColorGlyphBy();
-  int endIdx = propNode->GetLastColorGlyphBy();
   int currentVal = propNode->GetColorGlyphBy();
   this->GeometryColorMap.clear();
-  for (int k=initIdx ; k<=endIdx ; k++)
+
+  std::vector<int> supportedModes;
+  vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes(supportedModes);
+
+  for (int k=0 ; k<supportedModes.size() ; k++)
   {
-    propNode->SetColorGlyphBy(k);
+    propNode->SetColorGlyphBy(supportedModes[k]);
     const char *tag = propNode->GetColorGlyphByAsString();
-    this->GeometryColorMap[std::string(tag)]=k;
+    this->GeometryColorMap[std::string(tag)]=supportedModes[k];
     colorMenuButton->GetWidget()->GetMenu()->AddRadioButton(tag);
   }
   // init to class default value
@@ -788,3 +790,4 @@ void vtkSlicerFiberBundleDisplayWidget::SetTractVisibility(int visibility)
 {
   this->VisibilityButton->GetWidget()->SetSelectedState(visibility);
 }
+
