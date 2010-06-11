@@ -23,7 +23,9 @@ if(WIN32 AND CMAKE_CONFIGURATION_TYPES)
   # here, so we are going to have to stick to the value of CMAKE_BUILD_TYPE
   # if it has been set explicitly (by a dashboard for example), or the
   # first value in CMAKE_CONFIGURATION_TYPES (i.e. Debug)/
+if (Slicer3_USE_KWWIDGETS)
   kwwidgets_get_cmake_build_type(build_type)
+endif (Slicer3_USE_KWWIDGETS)
 endif(WIN32 AND CMAKE_CONFIGURATION_TYPES)
 
 #####################
