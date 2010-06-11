@@ -320,6 +320,10 @@ const char*
 vtkMRMLEMSVolumeCollectionNode::
 GetNthVolumeNodeID(int n) const
 {
+  if (this->GetNumberOfVolumes() <= n) 
+    {
+      return NULL;
+    }
   KeyIterator i = this->KeyList.begin();
   vtksys_stl::advance(i, n);
   return this->KeyToVolumeNodeIDMap[*i].c_str();

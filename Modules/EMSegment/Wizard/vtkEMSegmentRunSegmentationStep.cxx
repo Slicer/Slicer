@@ -1735,14 +1735,17 @@ void vtkEMSegmentRunSegmentationStep::MRMLUpdateROINodeFromROI()
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkMRMLVolumeNode* volumeNode =  mrmlManager->GetWorkingDataNode()->GetInputTargetNode()->GetNthVolumeNode(0);
 
-  if(!volumeNode)
-    return;
+  if(!volumeNode) return;
 
+
+  this->GetGUI()->GetLogic()->DefineValidSegmentationBoundary();
   int minPoint[3];
   int maxPoint[3];
-
   mrmlManager->GetSegmentationBoundaryMin(minPoint);
   mrmlManager->GetSegmentationBoundaryMax(maxPoint);
+
+  //cout << "SegmentationBoundaryMin: " << minPoint[0] << " " << minPoint[1] << " " << minPoint[2] << endl;
+  //cout << "SegmentationBoundaryMax: " << maxPoint[0] << " " << maxPoint[1] << " " << maxPoint[2] << endl;
 
   // Has to be set to -1 bc segmentationboundarymin/max starts at 1 not 0 !   
   ROIMinIJK[0] = minPoint[0] - 1;

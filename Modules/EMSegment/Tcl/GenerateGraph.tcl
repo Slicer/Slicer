@@ -648,7 +648,7 @@ itcl::body EMSegmenterGraph::CalcProb { } {
     foreach nodeID $EMSegment(GlobalSuperClassList) { 
     set NormProb [$_mrmlManager  GetTreeNodeChildrenSumClassProbability $nodeID]
     # Round it up or down otherwise it recalculates everything every time this function is called  
-    if {($NormProb != 0.0) || ($NormProb != 1.0)} {
+    if {($NormProb != 0.0) && ($NormProb != 1.0)} {
         set numChildren [ $_mrmlManager GetTreeNodeNumberOfChildren $nodeID ] 
         for {set i 0 } { $i < $numChildren } { incr i }  {
         set childID [ $_mrmlManager GetTreeNodeChildNodeID $nodeID $i ] 
@@ -953,9 +953,9 @@ itcl::body EMSegmenterGraph::DeleteRedMarker { graphID } {
 itcl::body EMSegmenterGraph::GetGUICallbackCommand { ID event } {
     global EMSegment Volume
     if { $event == 1 } {
-    DeleteRedMarker 0
-    DeleteRedMarker 1 
-    DeleteRedMarker 2
+      DeleteRedMarker 0
+      DeleteRedMarker 1 
+      DeleteRedMarker 2
     } 
 
     # Define Window
@@ -963,11 +963,11 @@ itcl::body EMSegmenterGraph::GetGUICallbackCommand { ID event } {
      set sliceGUI $_sliceGUI0
      set ri $_renInteractor0
     } elseif { $ID == 1 } {
-    set sliceGUI $_sliceGUI1
-    set ri $_renInteractor1
+      set sliceGUI $_sliceGUI1
+      set ri $_renInteractor1
     } else {
-    set sliceGUI $_sliceGUI2
-    set ri $_renInteractor2
+      set sliceGUI $_sliceGUI2
+      set ri $_renInteractor2
     }
       #    [eval $$tmp]
     #    set tmp _renInteractor$ID
@@ -978,35 +978,36 @@ itcl::body EMSegmenterGraph::GetGUICallbackCommand { ID event } {
     set RAS "[lrange [ eval [$sliceNode GetXYToRAS] MultiplyPoint [$ri GetEventPosition] 0 1] 0 2 ] 1"
  
     # Retrieve Intensity values 
-    set 2DFlag 1
+    set 2DFlag [expr [llength $EMSegment(SelVolList,VolumeList)] > 1 ? 1 : 0 ]
     set index 0
     set result ""
     foreach vol $EMSegment(SelVolList,VolumeList) {
-    set RASToIJK [vtkMatrix4x4 New]
-    $Volume($vol,node) GetRASToIJKMatrix $RASToIJK
-    set IJK [eval $RASToIJK MultiplyPoint $RAS] 
-    $RASToIJK Delete
-    set xIJK [expr round([lindex $IJK 0])]
-    set yIJK [expr round([lindex $IJK 1])]
-    set zIJK [expr round([lindex $IJK 2])]
+      set RASToIJK [vtkMatrix4x4 New]
+      $Volume($vol,node) GetRASToIJKMatrix $RASToIJK
+      set IJK [eval $RASToIJK MultiplyPoint $RAS] 
+      $RASToIJK Delete
+      set xIJK [expr round([lindex $IJK 0])]
+      set yIJK [expr round([lindex $IJK 1])]
+      set zIJK [expr round([lindex $IJK 2])]
 
-    scan [$Volume($vol,data) GetExtent]  "%d %d %d %d %d %d" Xmin Xmax Ymin Ymax Zmin Zmax
-    if {[expr (($Xmin > $xIJK) || ($Xmax < $xIJK) || ($Ymin > $yIJK) || ($Ymax < $yIJK) || ($Zmin > $zIJK) || ($Zmax < $zIJK))]} {
+      scan [$Volume($vol,data) GetExtent]  "%d %d %d %d %d %d" Xmin Xmax Ymin Ymax Zmin Zmax
+      if {[expr (($Xmin > $xIJK) || ($Xmax < $xIJK) || ($Ymin > $yIJK) || ($Ymax < $yIJK) || ($Zmin > $zIJK) || ($Zmax < $zIJK))]} {
         set 2DFlag 0
         DeleteRedMarker $index
-    } else {
+      } else {
         # update line   
         set pixel [$Volume($vol,data) GetScalarComponentAsFloat $xIJK $yIJK $zIJK 0]
         set result "${result}$pixel "
         CreateDisplayRedLine $index $pixel
+      }
+      incr index
     }
-    incr index
-    }
+
     # Update Cross
     if {$2DFlag } {
-    eval CreateDisplayRedCross 2 $result
+        eval CreateDisplayRedCross 2 $result
     } else {
-    DeleteRedMarker 2
+       DeleteRedMarker 2
     }
     # puts "Update $xIJK $yIJK $zIJK $result" 
 }

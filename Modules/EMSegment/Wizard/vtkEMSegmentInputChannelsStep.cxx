@@ -384,8 +384,8 @@ void vtkEMSegmentInputChannelsStep::Validate()
      {
        vtkMRMLVolumeNode* cNode = vtkMRMLVolumeNode::SafeDownCast(this->InputChannelDefineLineVolume[i]->GetSelected());
        for (int j=i+1;  j < this->GetNumberOfInputChannels(); j++)
-     {
-       if (cNode == vtkMRMLVolumeNode::SafeDownCast(this->InputChannelDefineLineVolume[j]->GetSelected()))
+       {
+         if (cNode == vtkMRMLVolumeNode::SafeDownCast(this->InputChannelDefineLineVolume[j]->GetSelected()))
          {
            vtkKWMessageDialog::PopupMessage(this->GetApplication(),NULL,"Input Channel Error", "No two Input volumes can be the same", 
                         vtkKWMessageDialog::ErrorIcon | vtkKWMessageDialog::InvokeAtPointer);
@@ -393,8 +393,17 @@ void vtkEMSegmentInputChannelsStep::Validate()
            wizard_workflow->ProcessInputs();
            return;
          }
+       }
+
+       // i cannot be larger then umver of target volumes bc i starts with 0 !
+       if (i ==  mrmlManager->GetTargetNumberOfSelectedVolumes()) 
+     {
+       mrmlManager->AddTargetSelectedVolumeByMRMLID(cNode->GetID());
      }
+       else 
+     {
        mrmlManager->SetTargetSelectedVolumeNthMRMLID(i,cNode->GetID());
+     }
      }
 
    inputNodes->SetNumberOfInputChannelName(this->GetNumberOfInputChannels());

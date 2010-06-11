@@ -492,16 +492,17 @@ IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
     {
     for (int c = 0; c < 4; ++c)
       {
-      if ((*matrixLHS)[r][c] != (*matrixRHS)[r][c])
+        // Otherwise small errors will cause that they are not equal but should be ignored !
+    if (double(int((*matrixLHS)[r][c]*100000)/100000.0) != double(int((*matrixRHS)[r][c]*100000)/100000.0))
         {
         equalMatrix = false;
+    break;
         }
       }
     }
 
   matrixLHS->Delete();
   matrixRHS->Delete();
-
   return equalExent && equalMatrix;
 }
 
@@ -2152,15 +2153,9 @@ CopyTreeDataToSegmenter(vtkImageEMLocalSuperClass* node, vtkIdType nodeID)
 }
 
 //-----------------------------------------------------------------------------
-void
-vtkEMSegmentLogic::
-CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass* node, 
-                               vtkIdType nodeID)
+void vtkEMSegmentLogic::DefineValidSegmentationBoundary() 
 {
-  unsigned int numTargetImages = 
-    this->MRMLManager->GetTargetNumberOfSelectedVolumes();
-
-  //
+ //
   // Setup ROI.  If if looks bogus then use the default (entire image)
   bool useDefaultBoundary = false;
   int boundMin[3];
@@ -2192,25 +2187,42 @@ CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass* node,
       << std::endl
       << "====================================================================" << std::endl
       << "Warning: the segmentation ROI was bogus, setting ROI to entire image"  << std::endl
-      << "Axis 0 -  Image Min: 1 <= RoiMin: " << boundMin[0] << " <= ROIMax: " << boundMax[0] << " <=  Image Max:" << targetImageDimensions[0] <<  std::endl
-      << "Axis 1 -  Image Min: 1 <= RoiMin: " << boundMin[1] << " <= ROIMax: " << boundMax[1] << " <=  Image Max:" << targetImageDimensions[1] <<  std::endl
-      << "Axis 2 -  Image Min: 1 <= RoiMin: " << boundMin[2] << " <= ROIMax: " << boundMax[2] << " <=  Image Max:" << targetImageDimensions[2] <<  std::endl
+      << "Axis 0 -  Image Min: 1 <= RoiMin(" << boundMin[0] << ") <= ROIMax(" << boundMax[0] <<") <=  Image Max:" << targetImageDimensions[0] <<  std::endl
+      << "Axis 1 -  Image Min: 1 <= RoiMin(" << boundMin[1] << ") <= ROIMax(" << boundMax[1] << ") <=  Image Max:" << targetImageDimensions[1] <<  std::endl
+      << "Axis 2 -  Image Min: 1 <= RoiMin(" << boundMin[2] << ") <= ROIMax(" << boundMax[2] << ") <=  Image Max:" << targetImageDimensions[2] <<  std::endl
       << "NOTE: The above warning about ROI should not lead to poor segmentation results;  the entire image shold be segmented.  It only indicates an error if you intended to segment a subregion of the image."
       << std::endl
-      << "====================================================================" << std::endl;
+      << "Define Boundary as: ";
+      for (unsigned int i = 0; i < 3; ++i)
+        {
+          boundMin[i] = 1;
+          boundMax[i] = targetImageDimensions[i];
+          std::cerr << boundMin[i] << ", " << boundMax[i] << ",   ";
+        }
+      std::cerr << std::endl << "====================================================================" << std::endl;
 
-    for (unsigned int i = 0; i < 3; ++i)
-      {
-      boundMin[i] = 1;
-      boundMax[i] = targetImageDimensions[i];
-      std::cerr << boundMin[i] << ", " << boundMax[i] << "   ";
-      }
-    std::cerr << std::endl;
+      this->MRMLManager->SetSegmentationBoundaryMin(boundMin);
+      this->MRMLManager->SetSegmentationBoundaryMax(boundMax); 
     }
+}
 
+void
+vtkEMSegmentLogic::
+CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass* node, 
+                               vtkIdType nodeID)
+{
+  unsigned int numTargetImages = 
+  this->MRMLManager->GetTargetNumberOfSelectedVolumes();
+
+ 
+  this->DefineValidSegmentationBoundary();
+  int boundMin[3];
+  int boundMax[3];
+  this->MRMLManager->GetSegmentationBoundaryMin(boundMin);
+  this->MRMLManager->GetSegmentationBoundaryMax(boundMax);
   node->SetSegmentationBoundaryMin(boundMin[0], boundMin[1], boundMin[2]);
   node->SetSegmentationBoundaryMax(boundMax[0], boundMax[1], boundMax[2]);
-  
+
   node->SetProbDataWeight(this->MRMLManager->
                           GetTreeNodeSpatialPriorWeight(nodeID));
 

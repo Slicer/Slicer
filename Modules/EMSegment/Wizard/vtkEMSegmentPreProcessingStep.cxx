@@ -137,6 +137,10 @@ void vtkEMSegmentPreProcessingStep::Validate()
     mrmlManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(1);
     mrmlManager->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(1);
 
+    cout << "=============================================" << endl;
+    cout << "Pre-processing completed successfully" << endl;
+    cout << "=============================================" << endl;
+
   // Everything went smoothly
   this->Superclass::Validate();
 }
@@ -150,6 +154,10 @@ void vtkEMSegmentPreProcessingStep::SetTaskPreprocessingSetting()
       return;
     }
 
+  if (! mrmlManager->GetNode()->GetTaskPreprocessingSetting()) 
+    {
+      return;
+    }
 
   std::string oldText = mrmlManager->GetNode()->GetTaskPreprocessingSetting();
 

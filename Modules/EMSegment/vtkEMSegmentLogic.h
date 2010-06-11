@@ -149,6 +149,8 @@ public:
 
   void PrintText(char *TEXT);
 
+  void DefineValidSegmentationBoundary(); 
+
 
 private:
   vtkEMSegmentLogic();
