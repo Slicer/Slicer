@@ -107,6 +107,7 @@ vtkIGTLRemoteDataListWindow::~vtkIGTLRemoteDataListWindow()
     this->CloseButton->Delete();
     }
 
+  this->MRMLObserverManager->Delete();
   this->MainFrame->Delete();
   this->SetApplication(NULL);
 

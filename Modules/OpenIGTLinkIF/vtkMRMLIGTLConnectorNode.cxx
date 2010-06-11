@@ -131,6 +131,11 @@ vtkMRMLIGTLConnectorNode::~vtkMRMLIGTLConnectorNode()
     {
     this->EventQueueMutex->Delete();
     }
+
+  if (this->QueryQueueMutex)
+    {
+    this->QueryQueueMutex->Delete();
+    }
 }
 
 

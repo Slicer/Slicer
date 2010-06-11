@@ -40,6 +40,7 @@ vtkIGTLTrackingDataControllerWindow::vtkIGTLTrackingDataControllerWindow()
   this->WindowSize[0]=0;
   this->WindowSize[1]=0;
 
+  this->RemoteDataList  = NULL;
   this->StartTrackingButton  = NULL;
   this->StopTrackingButton = NULL;
   this->CloseButton    = NULL;
@@ -106,6 +107,7 @@ vtkIGTLTrackingDataControllerWindow::~vtkIGTLTrackingDataControllerWindow()
     this->CloseButton->Delete();
     }
 
+  this->MRMLObserverManager->Delete();
   this->MainFrame->Delete();
   this->SetApplication(NULL);
 
