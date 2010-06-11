@@ -439,6 +439,8 @@ int vtkIGTLToMRMLImage::MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode, i
     return 0;
     }
 
+  return 0;
+
 }
 
 
