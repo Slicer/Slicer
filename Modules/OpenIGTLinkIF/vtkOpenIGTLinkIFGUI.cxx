@@ -215,6 +215,11 @@ vtkOpenIGTLinkIFGUI::~vtkOpenIGTLinkIFGUI ( )
 
   this->SetModuleLogic ( NULL );
 
+  if (this->TimerLog)
+    {
+    this->TimerLog->Delete();
+    }
+    
 
   //----------------------------------------------------------------
   // Visualization Control Frame
