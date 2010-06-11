@@ -825,7 +825,7 @@ void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
   CTK_D(qSlicerCLIModuleUIHelper);
   Q_ASSERT(commandLineModuleNode);
 
-  commandLineModuleNode->SetDisableModifiedEvent(true);
+  int disabledModify = commandLineModuleNode->StartModify();
   
   foreach(WidgetValueWrapper* widgetValueWrapper, d->WidgetValueWrappers)
     {
@@ -857,7 +857,7 @@ void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
       }
     }
 
-  commandLineModuleNode->SetDisableModifiedEvent(false);
+  commandLineModuleNode->EndModify(disabledModify);
 
   // notify observer(s)
   commandLineModuleNode->Modified();
