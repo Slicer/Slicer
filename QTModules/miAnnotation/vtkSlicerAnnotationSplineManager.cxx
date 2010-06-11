@@ -25,6 +25,24 @@
 #include "vtkSplineWidget.h"
 #include "vtkMRMLAnnotationSplineNode.h"
 
+class vtkSlicerAnnotationSplineManagerCallback : public vtkCommand
+{
+public:
+  static vtkSlicerAnnotationSplineManagerCallback *New()
+  { return new vtkSlicerAnnotationSplineManagerCallback; }
+  virtual void Execute(vtkObject *caller, unsigned long, void* callData)
+  {
+    vtkSplineWidget *spline = reinterpret_cast<vtkSplineWidget*>(caller);
+    spline->GetPolyData(Poly);
+    ManagerPointer->UpdateSplineMeasurement(SplineNode, spline);
+  }
+  vtkSlicerAnnotationSplineManagerCallback():Poly(0){};
+  vtkPolyData* Poly;
+  vtkMRMLAnnotationSplineNode* SplineNode;
+  vtkSlicerAnnotationSplineManager* ManagerPointer;
+};
+
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerAnnotationSplineManager );
 vtkCxxRevisionMacro ( vtkSlicerAnnotationSplineManager, "$Revision: 1.0 $");
@@ -133,6 +151,15 @@ void vtkSlicerAnnotationSplineManager::Update3DWidget(vtkMRMLAnnotationSplineNod
     }
   }
 
+  vtkPolyData* poly = vtkPolyData::New();
+  widget->GetPolyData(poly);
+
+  vtkSlicerAnnotationSplineManagerCallback* mycallback = vtkSlicerAnnotationSplineManagerCallback::New();
+  mycallback->Poly = poly;
+  mycallback->SplineNode = activeNode;
+  widget->AddObserver(vtkCommand::InteractionEvent, mycallback);
+
+
     this->Updating3DWidget = 1;
 
   //vtkSplineRepresentation* sRep = vtkSplineRepresentation::New();
@@ -149,6 +176,10 @@ void vtkSlicerAnnotationSplineManager::Update3DWidget(vtkMRMLAnnotationSplineNod
   if (activeNode->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
   {
     activeNode->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+  }
+  if (activeNode->HasObserver ( vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, this->MRMLCallbackCommand ) == 0)
+  {
+    activeNode->AddObserver ( vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, this->MRMLCallbackCommand );
   }
   if (activeNode->HasObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
   {
@@ -178,6 +209,11 @@ void vtkSlicerAnnotationSplineManager::AddMRMLObservers ( )
         {
             this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
+    if (this->MRMLScene->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+    {
+      this->MRMLScene->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    }
+
     }
 }
 
@@ -197,6 +233,10 @@ void vtkSlicerAnnotationSplineManager::RemoveMRMLObservers ( )
         {
             node->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
+    if (node->HasObserver(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand))
+    {
+      node->RemoveObservers(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    }
         node = NULL;
     }
     //events->Delete();
@@ -226,6 +266,24 @@ void vtkSlicerAnnotationSplineManager::AddSplineWidget(vtkMRMLAnnotationSplineNo
   vtkSplineWidget* c = vtkSplineWidget::New();
 
     this->SplineWidgets[node->GetID()] = c;
+
+  if (node->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
+  {
+    node->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+  }
+  if (node->HasObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand ) == 0)
+  {
+    node->AddObserver ( vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand );
+  }
+  if (node->HasObserver ( vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, this->MRMLCallbackCommand ) == 0)
+  {
+    node->AddObserver ( vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, this->MRMLCallbackCommand );
+  }
+  if (node->HasObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+  {
+    node->AddObserver(vtkMRMLAnnotationNode::LockModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  }
+
 }
 
 //---------------------------------------------------------------------------
@@ -414,5 +472,20 @@ void vtkSlicerAnnotationSplineManager::UpdateVisibility(vtkMRMLAnnotationSplineN
   else
   {
     widget->EnabledOff();
+  }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationSplineManager::UpdateSplineMeasurement(vtkMRMLAnnotationSplineNode* node, vtkSplineWidget* widget)
+{
+  //vtkSplineWidget* widget = this->GetSplineWidget(node->GetID());
+  if ( widget==NULL)
+  {
+    return;
+  }  
+
+  if ( widget->GetSummedLength() != node->GetSplineMeasurement() )
+  {
+    node->SetSplineMeasurement(widget->GetSummedLength());
   }
 }

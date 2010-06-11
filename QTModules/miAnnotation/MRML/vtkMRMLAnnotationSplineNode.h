@@ -115,6 +115,9 @@ public:
   int GetVisibility() {return this->GetVisible();}
   void SetVisibility(int flag) {this->SetVisible(flag);}
 
+  double GetSplineMeasurement();
+  void SetSplineMeasurement(double val);
+
   enum
   {
       SplineNodeAddedEvent = 0,
@@ -134,8 +137,9 @@ protected:
   char* DistanceAnnotationFormat;
  
   int SetControlPoint(int id, double newControl[3]);
-
   int AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
+
+  double splineMeasurement;
 
 };
 

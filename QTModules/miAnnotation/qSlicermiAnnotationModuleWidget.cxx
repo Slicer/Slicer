@@ -41,7 +41,7 @@
 #include "vtkMRMLNode.h"
 
 #include "vtkMRMLAnnotationStickyNode.h"
-
+#include "vtkMRMLAnnotationSplineNode.h"
 #include "vtkMRMLAnnotationTextNode.h"
 
 #include "vtkMRMLROINode.h"
@@ -976,7 +976,6 @@ void qSlicermiAnnotationModuleWidget::onGenerateReportButtonClicked()
 
     this->connect(m_ReportDialog, SIGNAL(filenameSelected()), this, SLOT(saveAnnotationReport()) );
     this->m_report = report;
-    //std::cout << m_report.toStdString() << std::endl;
 
 }
 
@@ -1840,10 +1839,15 @@ void qSlicermiAnnotationModuleWidget::onSplineButtonClicked()
   m_IDs.push_back( newNodeID );
   m_index++;
 
-  double thevalue = 0.0;
-  char* format = " ";
+  vtkMRMLAnnotationSplineNode* node = vtkMRMLAnnotationSplineNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newNodeID));
+
+  double thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );;
+  char* format = node->GetDistanceAnnotationFormat();
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
   this->selectRowByIndex( m_index );
+
+  qvtkConnect(node, vtkMRMLAnnotationSplineNode::ValueModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)) );
+
 }

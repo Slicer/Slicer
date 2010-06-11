@@ -409,9 +409,6 @@ void vtkSlicerAnnotationFiducialManager::ProcessMRMLEvents ( vtkObject *caller, 
     }
   }
 
-  vtkMRMLAnnotationFiducialNode *node = vtkMRMLAnnotationFiducialNode::SafeDownCast(caller);
-  vtkMRMLAnnotationFiducialNode *activeFiducialNode = (vtkMRMLAnnotationFiducialNode *)this->MRMLScene->GetNodeByID(this->GetFiducialNodeID());
-
   // check for a node added to the scene event
   if (callScene != NULL && callScene == this->MRMLScene && callData != NULL && event == vtkMRMLScene::NodeAddedEvent)
   {

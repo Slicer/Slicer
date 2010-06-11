@@ -196,7 +196,6 @@ void vtkSlicermiAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::ProcessLogicEvents(vtkObject *caller, unsigned long event, void *callData )
 {
-    // cout << "=============== vtkSlicermiAnnotationModuleLogic::ProcessLogicEvents" << endl;
     // Check RulerNode
     {
         vtkMRMLAnnotationRulerNode *callerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(caller);
@@ -257,18 +256,15 @@ void vtkSlicermiAnnotationModuleLogic::ProcessLogicEvents(vtkObject *caller, uns
         {
             if ( event == vtkMRMLScene::NodeAddedEvent ) 
             {
-                cout << "miAnnotation:: vtkMRMLScene::NodeAddedEvent" << endl;
                 return;
             }
             if ( event == vtkMRMLFiducialListNode::FiducialModifiedEvent ) 
             {
-                cout << "miAnnotation:: vtkMRMLScene::FiducialModifiedEvent" << endl;
                 return;
             }
 
             if ( event == vtkMRMLScene::NodeRemovedEvent ) 
             {
-                cout << "miAnnotation:: vtkMRMLScene::NodeRemovedEvent" << endl;
                 return;
             }
         }
@@ -341,8 +337,16 @@ void vtkSlicermiAnnotationModuleLogic::ModifyPropertiesAndWidget(vtkMRMLNode* no
     {
         return;
     }
-  this->SetAnnotationLinesProperties(vtkMRMLAnnotationLinesNode::SafeDownCast(node), type, data);
-    this->GetViewerWidget()->Render();
+  if ( vtkMRMLAnnotationLinesNode::SafeDownCast(node) == NULL )
+  {
+    this->SetAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode::SafeDownCast(node), type, data);
+  } 
+  else
+  {
+    this->SetAnnotationLinesProperties(vtkMRMLAnnotationLinesNode::SafeDownCast(node), type, data);
+  }
+  
+  this->GetViewerWidget()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -512,15 +516,12 @@ void vtkSlicermiAnnotationModuleLogic::RemoveAngle(const char* id)
 //-----------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::AddAngleCompleted()
 {
-    cout << "angle widget is created!" << endl;
     this->InvokeEvent(vtkSlicermiAnnotationModuleLogic::AddAngleCompletedEvent, NULL);
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::SetAnnotationSelectedByIDs(std::vector<const char*> selectedIDs, std::vector<const char*> allIDs)
 {
-    cout << "vtkSlicermiAnnotationModuleLogic::SetAnnotationSelectedByIDs Start" << endl;
-
     for (unsigned int i=0; i<allIDs.size(); ++i)
     {
         if ( allIDs[i] == NULL )
@@ -624,6 +625,8 @@ const char* vtkSlicermiAnnotationModuleLogic::AddRuler()
         rulerNode->SetName("AnnotationRuler");
     }
     rulerNode->Delete();
+
+  this->GetViewerWidget()->Render();
 
     return rulerNode->GetID();
 }
@@ -852,7 +855,6 @@ void vtkSlicermiAnnotationModuleLogic::SetFiducialPositionsByNodeID(const char* 
 void vtkSlicermiAnnotationModuleLogic::Update3DFiducial(vtkMRMLAnnotationFiducialNode *activeCPNode)
 {
     CTK_D(vtkSlicermiAnnotationModuleLogic);
-    cout << "vtkSlicermiAnnotationModuleLogic::Update3DFriduail Start" << endl;
 
     if (activeCPNode == NULL)
     {
@@ -870,8 +872,6 @@ void vtkSlicermiAnnotationModuleLogic::Update3DFiducial(vtkMRMLAnnotationFiducia
 
     d->Updating3DFiducial = 1;
 
-    cout << "Updating 3d widget from " << activeCPNode->GetID() << endl;
-
     if ( activeCPNode->GetVisible() )
     {
 
@@ -879,11 +879,9 @@ void vtkSlicermiAnnotationModuleLogic::Update3DFiducial(vtkMRMLAnnotationFiducia
         {
             // Initialize point
         }
-        cout << "UpdateWidget: fiducial widget on" << endl;
     }
     else
     {
-        cout << "UpdateWidget: fiducial widget off" << endl;
     }
 
     vtkMRMLTransformNode* tnode = activeCPNode->GetParentTransformNode();
@@ -906,7 +904,6 @@ void vtkSlicermiAnnotationModuleLogic::Update3DFiducial(vtkMRMLAnnotationFiducia
     }
     // reset the flag
     d->Updating3DFiducial= 0;
-    cout << "vtkSlicermiAnnotationModuleLogic::Update3DFiducial End: Successfull" << endl;
 }
 
 //---------------------------------------------------------------------------
@@ -1343,7 +1340,7 @@ const char* vtkSlicermiAnnotationModuleLogic::GetAnnotationTextFormatProperty(vt
   }
   else if (node->IsA("vtkMRMLAnnotationSplineNode"))
   {
-    return " ";
+    return vtkMRMLAnnotationSplineNode::SafeDownCast(node)->GetDistanceAnnotationFormat();
   }
 
     return NULL;
@@ -1386,7 +1383,7 @@ double vtkSlicermiAnnotationModuleLogic::GetAnnotationMeasurement(vtkMRMLNode* n
   }
   else if (node->IsA("vtkMRMLAnnotationSplineNode"))
   {
-    return 0;
+    return vtkMRMLAnnotationSplineNode::SafeDownCast(node)->GetSplineMeasurement();
   }
 
     return NULL;
@@ -1823,7 +1820,6 @@ const char* vtkSlicermiAnnotationModuleLogic::AddTextNode()
 //---------------------------------------------------------------------------
 void vtkSlicermiAnnotationModuleLogic::AddTextNodeCompleted()
 {
-  cout << "text node is created!" << endl;
   this->InvokeEvent(vtkSlicermiAnnotationModuleLogic::AddTextNodeCompletedEvent, NULL);
 }
 

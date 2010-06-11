@@ -98,7 +98,7 @@ void vtkSlicerAnnotationTextManager::ProcessMRMLEvents ( vtkObject *caller, unsi
   }
   else if (callerNode != NULL && event == vtkCommand::ModifiedEvent)
   {
-    this->UpdateVisibility(callerNode);
+    this->UpdateWidget(callerNode);
     this->RequestRender();
   }
 }
@@ -398,13 +398,16 @@ void vtkSlicerAnnotationTextManager::UpdateLockUnlock(vtkMRMLAnnotationTextNode*
   }
 }
 
-void vtkSlicerAnnotationTextManager::UpdateVisibility(vtkMRMLAnnotationTextNode *activeNode)
+void vtkSlicerAnnotationTextManager::UpdateWidget(vtkMRMLAnnotationTextNode *activeNode)
 {
   vtkTextWidget *widget = this->GetTextWidget(activeNode->GetID());
   if ( widget==NULL)
   {
     return;
   }  
+
+  vtkTextRepresentation* rep = vtkTextRepresentation::SafeDownCast(widget->GetRepresentation());
+  rep->SetText(activeNode->GetText(0));
 
   if (activeNode->GetVisible())
   {

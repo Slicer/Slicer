@@ -44,8 +44,7 @@ vtkMRMLNode* vtkMRMLAnnotationSplineNode::CreateNodeInstance()
 vtkMRMLAnnotationSplineNode::vtkMRMLAnnotationSplineNode()
 {
   this->HideFromEditors = false;
-  this->DistanceAnnotationFormat = NULL;
-  this->SetDistanceAnnotationFormat("%.0f mm");
+  this->DistanceAnnotationFormat = "%.2f mm";
   this->Resolution = 5;
 }
 //----------------------------------------------------------------------------
@@ -65,8 +64,7 @@ void vtkMRMLAnnotationSplineNode::Initialize(vtkMRMLScene* mrmlScene)
     
     this->AddText(" ",1,1);
 
-  // Default bounds to get started
-  double bounds[6] = { -0.5, 0.5, -0.5, 0.5, -0.5, 0.5 };
+  this->splineMeasurement = 0.0;
 
     this->InvokeEvent(vtkMRMLAnnotationSplineNode::SplineNodeAddedEvent);
 }
@@ -142,7 +140,6 @@ void vtkMRMLAnnotationSplineNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLAnnotationSplineNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLAnnotationSplineNode *node = (vtkMRMLAnnotationSplineNode *) anode;
 }
 
 //-----------------------------------------------------------
@@ -417,4 +414,17 @@ void vtkMRMLAnnotationSplineNode::ApplyTransform(vtkAbstractTransform* transform
     transform->TransformPoint(xyzIn,xyzOut);
     this->SetPosition2(xyzOut);
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationSplineNode::SetSplineMeasurement(double val)
+{
+  this->splineMeasurement = val;
+  this->InvokeEvent(vtkMRMLAnnotationSplineNode::ValueModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLAnnotationSplineNode::GetSplineMeasurement()
+{
+  return this->splineMeasurement;
 }

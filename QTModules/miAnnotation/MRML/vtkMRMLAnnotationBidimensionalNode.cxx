@@ -65,9 +65,6 @@ void vtkMRMLAnnotationBidimensionalNode::Initialize(vtkMRMLScene* mrmlScene)
     
     this->AddText(" ",1,1);
 
-  // Default bounds to get started
-  double bounds[6] = { -0.5, 0.5, -0.5, 0.5, -0.5, 0.5 };
-
     this->InvokeEvent(vtkMRMLAnnotationBidimensionalNode::BidimensionalNodeAddedEvent);
 }
 
@@ -142,7 +139,6 @@ void vtkMRMLAnnotationBidimensionalNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLAnnotationBidimensionalNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLAnnotationBidimensionalNode *node = (vtkMRMLAnnotationBidimensionalNode *) anode;
 }
 
 //-----------------------------------------------------------

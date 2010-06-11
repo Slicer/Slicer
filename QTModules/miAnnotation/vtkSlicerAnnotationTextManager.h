@@ -58,7 +58,7 @@ public:
     vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
     virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
 
-  void UpdateVisibility(vtkMRMLAnnotationTextNode *activeNode);
+  void UpdateWidget(vtkMRMLAnnotationTextNode *activeNode);
 
   void RequestRender();
   void Render();

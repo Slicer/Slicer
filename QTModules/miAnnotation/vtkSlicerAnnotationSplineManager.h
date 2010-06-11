@@ -63,6 +63,8 @@ public:
 
   void UpdateVisibility(vtkMRMLAnnotationSplineNode *activeNode);
 
+  void UpdateSplineMeasurement(vtkMRMLAnnotationSplineNode* node, vtkSplineWidget* widget);
+
   void RequestRender();
   void Render();
 
