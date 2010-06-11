@@ -141,7 +141,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
   
   #Batchmake 
-  "BatchMake.Utilities.Zip.(unzipcmd|zipcmd).*warning C4996"
+  "BatchMake.Utilities.Zip.(zip|unzipcmd|zipcmd).*warning"
   
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512"
@@ -164,6 +164,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
   "python.Mac.Modules.(cf|Nav).*warning: (cast|unused)"
   "python.Modules._ctypes.*warning: function declaration isn't a prototype"
+  "QuickTime.framework.QuickTime, missing required architecture x86_64 in file"
   # About redefinition of symbols
   "pyconfig.h.*warning:.*redefined"
   "features.h.*"
