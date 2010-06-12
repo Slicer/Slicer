@@ -17,6 +17,7 @@
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkMRMLFiducialListNode.h"
 
 
 qSlicermiAnnotationModuleAnnotationPropertyDialog::~qSlicermiAnnotationModuleAnnotationPropertyDialog()
@@ -122,30 +123,34 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode *
     }
 
     // Lock/Unlock properties
+  if ( vtkMRMLAnnotationNode::SafeDownCast(node) != NULL )
+  {
     if (  vtkMRMLAnnotationNode::SafeDownCast(node)->GetLocked() == 1 )
     {
-        ui.annotationTextEdit->setEnabled(false);
-        for (int i=0; i<m_logic->GetNumberOfControlPoints(vtkMRMLAnnotationControlPointsNode::SafeDownCast(node))*3; ++i)
-        {
-            m_lineEditList[i]->setEnabled(false);
-        }
-        ui.textTab->setEnabled(false);
-        ui.pointTab->setEnabled(false);
-        ui.lineTab->setEnabled(false);
+      ui.annotationTextEdit->setEnabled(false);
+      for (int i=0; i<m_logic->GetNumberOfControlPoints(vtkMRMLAnnotationControlPointsNode::SafeDownCast(node))*3; ++i)
+      {
+        m_lineEditList[i]->setEnabled(false);
+      }
+      ui.textTab->setEnabled(false);
+      ui.pointTab->setEnabled(false);
+      ui.lineTab->setEnabled(false);
     } 
     else
     {
-        ui.annotationTextEdit->setEnabled(true);
-        for (int i=0; i<m_logic->GetNumberOfControlPoints(vtkMRMLAnnotationControlPointsNode::SafeDownCast(node))*3; ++i)
-        {
-            m_lineEditList[i]->setEnabled(true);
-        }
-        ui.textTab->setEnabled(true);
-        ui.pointTab->setEnabled(true);
-        ui.lineTab->setEnabled(true);
+      ui.annotationTextEdit->setEnabled(true);
+      for (int i=0; i<m_logic->GetNumberOfControlPoints(vtkMRMLAnnotationControlPointsNode::SafeDownCast(node))*3; ++i)
+      {
+        m_lineEditList[i]->setEnabled(true);
+      }
+      ui.textTab->setEnabled(true);
+      ui.pointTab->setEnabled(true);
+      ui.lineTab->setEnabled(true);
     }
 
-    // Type
+  }
+
+  // Type
     QString typeString;
     typeString.append("<p>Annotation Type: ")
         .append("<img src='")
@@ -176,7 +181,9 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode *
     ui.displayPropertiesCTKCollapsibleGroupBox->setEnabled(true);
     ui.displayPropertiesCTKCollapsibleGroupBox->setChecked(false);
 
-    if ( node->IsA("vtkMRMLAnnotationStickyNode") || node->IsA("vtkMRMLAnnotationFiducialNode") )
+    if ( node->IsA("vtkMRMLAnnotationStickyNode") 
+    || node->IsA("vtkMRMLAnnotationFiducialNode")
+    || node->IsA("vtkMRMLAnnotationTextNode") )
     {
         ui.coordinatesLabel->setVisible(false);
         ui.annotationValueBrowser->setVisible(false);
@@ -186,6 +193,35 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode *
     }
 
     // Text Display Properties
+  if ( node->IsA("vtkMRMLFiducialListNode") )
+  {
+    vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+    double* color;
+    QColor qcolor;
+
+    color = fNode->GetColor();
+    this->TurnColorArrayToQColor(color, qcolor);
+    ui.textUnselectedColorPickerButton->setColor( qcolor );
+    ui.textUnselectedColorPickerButton->setText("Selected Text Color");
+    ui.pointUnselectedColorPickerButton->setColor( qcolor );
+    ui.pointUnselectedColorPickerButton->setText("Selected Point Color");
+    color = fNode->GetSelectedColor();
+    this->TurnColorArrayToQColor(color, qcolor);
+    ui.textSelectedColorPickerButton->setColor( qcolor );
+    ui.textSelectedColorPickerButton->setText("Text Color");
+    ui.pointSelectedColorPickerButton->setColor(qcolor);
+    ui.pointSelectedColorPickerButton->setText("Point Color");
+
+    ui.textScaleSliderSpinBoxWidget->setValue(fNode->GetTextScale());
+    ui.pointOpacitySliderSpinBoxWidget->setValue(fNode->GetOpacity());
+    ui.pointAmbientSliderSpinBoxWidget->setValue(fNode->GetAmbient());
+    ui.pointDiffuseSliderSpinBoxWidget->setValue(fNode->GetDiffuse());
+    ui.pointSpecularSliderSpinBoxWidget->setValue(fNode->GetSpecular());
+
+    ui.lineTab->setEnabled(false);
+    return;
+  }
+  
     double* color;
     QColor qcolor;
     color = m_logic->GetAnnotationLinesPropertiesColor(node, m_logic->TEXT_COLOR);
@@ -683,7 +719,9 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::TurnQColorToColorArray(d
 void qSlicermiAnnotationModuleAnnotationPropertyDialog::onCollapsibleGroupBoxClicked()
 {
   vtkMRMLNode * node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_nodeId);
-  if ( node->IsA("vtkMRMLAnnotationStickyNode") || node->IsA("vtkMRMLAnnotationFiducialNode") )
+  if ( node->IsA("vtkMRMLAnnotationStickyNode") 
+    || node->IsA("vtkMRMLAnnotationFiducialNode")
+    || node->IsA("vtkMRMLAnnotationTextNode") )
   {
     ui.coordinatesLabel->setVisible(false);
     ui.annotationValueBrowser->setVisible(false);

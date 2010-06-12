@@ -53,20 +53,6 @@ public:
   // get/set the first point position
   double* GetPosition1() {return this->GetControlPointCoordinates(0);}
 
-  int SetPosition1(double newControl[3]) { return this->SetControlPoint(0, newControl) ; }
-  int SetPosition1(double nC1, double nC2, double nC3) { 
-    double newControl[3] = {nC1,nC2,nC3};
-    return this->SetPosition1(newControl) ; 
-  }
-
-
-  double* GetPosition2() {return this->GetControlPointCoordinates(1);}
-  int SetPosition2(double newControl[3]) { return this->SetControlPoint(1, newControl);}
-  int SetPosition2(double nC1, double nC2, double nC3) { 
-    double newControl[3] = {nC1,nC2,nC3};
-    return this->SetPosition2(newControl) ; 
-  }
-
   // Description:
   // get/set the distance annotation format, it's in standard sprintf notation
   vtkGetStringMacro(DistanceAnnotationFormat);
@@ -107,8 +93,6 @@ public:
  // Description:
   // transform utility functions
   virtual bool CanApplyNonLinearTransforms() { return true; }
-  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
-  virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   void Initialize(vtkMRMLScene* mrmlScene);
 
@@ -117,6 +101,8 @@ public:
 
   double GetSplineMeasurement();
   void SetSplineMeasurement(double val);
+
+  int SetControlPoint(double newControl[3], int id);
 
   enum
   {
@@ -136,7 +122,6 @@ protected:
   int Resolution;
   char* DistanceAnnotationFormat;
  
-  int SetControlPoint(int id, double newControl[3]);
   int AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
 
   double splineMeasurement;

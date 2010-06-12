@@ -25,6 +25,85 @@
 #include "vtkBiDimensionalWidget.h"
 #include "vtkMRMLAnnotationBidimensionalNode.h"
 
+class vtkSlicerAnnotationBidimensionalManagerCallback : public vtkCommand
+{
+public:
+  static vtkSlicerAnnotationBidimensionalManagerCallback *New()
+  { return new vtkSlicerAnnotationBidimensionalManagerCallback; }
+  virtual void Execute(vtkObject *caller, unsigned long event, void* callData)
+  {
+    vtkBiDimensionalWidget *widget = reinterpret_cast<vtkBiDimensionalWidget*>(caller);
+    ManagerPointer->UpdateBidimensionalMeasurement(BiNode, widget);
+    if (event == vtkCommand::InteractionEvent)
+    {
+      if (widget->GetRepresentation())
+      {
+        vtkBiDimensionalRepresentation2D *rep = vtkBiDimensionalRepresentation2D::SafeDownCast(widget->GetRepresentation());
+        if (rep)
+        {
+          double p1[3], p2[3], p3[3], p4[3];
+          rep->GetPoint1WorldPosition(p1);
+          rep->GetPoint2WorldPosition(p2);
+          rep->GetPoint3WorldPosition(p3);
+          rep->GetPoint4WorldPosition(p4);
+
+          if (this->BiNode)
+          {
+            // does the angle node have a transform?
+            vtkMRMLTransformNode* tnode = this->BiNode->GetParentTransformNode();
+            vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+            transformToWorld->Identity();
+            if (tnode != NULL && tnode->IsLinear())
+            {
+              vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+              lnode->GetMatrixTransformToWorld(transformToWorld);
+            }
+            // convert by the inverted parent transform
+            double  xyzw[4];
+            xyzw[0] = p1[0];
+            xyzw[1] = p1[1];
+            xyzw[2] = p1[2];
+            xyzw[3] = 1.0;
+            double worldxyz[4], *worldp = &worldxyz[0];
+            transformToWorld->Invert();
+            transformToWorld->MultiplyPoint(xyzw, worldp);
+            this->BiNode->SetControlPoint(worldxyz, 0);
+            // second point
+            xyzw[0] = p2[0];
+            xyzw[1] = p2[1];
+            xyzw[2] = p2[2];
+            xyzw[3] = 1.0;
+            transformToWorld->MultiplyPoint(xyzw, worldp);
+            this->BiNode->SetControlPoint(worldxyz, 1);
+            // 3rd point
+            xyzw[0] = p3[0];
+            xyzw[1] = p3[1];
+            xyzw[2] = p3[2];
+            xyzw[3] = 1.0;
+            transformToWorld->MultiplyPoint(xyzw, worldp);
+            this->BiNode->SetControlPoint(worldxyz, 2);
+            // 4th point
+            xyzw[0] = p4[0];
+            xyzw[1] = p4[1];
+            xyzw[2] = p4[2];
+            xyzw[3] = 1.0;
+            transformToWorld->MultiplyPoint(xyzw, worldp);
+            this->BiNode->SetControlPoint(worldxyz, 3);
+
+            transformToWorld->Delete();
+            transformToWorld = NULL;
+            tnode = NULL;
+          }
+        }
+      }
+    }
+
+  }
+  vtkSlicerAnnotationBidimensionalManagerCallback(){};
+  vtkMRMLAnnotationBidimensionalNode* BiNode;
+  vtkSlicerAnnotationBidimensionalManager* ManagerPointer;
+};
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerAnnotationBidimensionalManager );
 vtkCxxRevisionMacro ( vtkSlicerAnnotationBidimensionalManager, "$Revision: 1.0 $");
@@ -139,6 +218,12 @@ void vtkSlicerAnnotationBidimensionalManager::Update3DWidget(vtkMRMLAnnotationBi
   widget->SetRepresentation(bidRep);
   widget->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
   widget->On();
+
+  vtkSlicerAnnotationBidimensionalManagerCallback* mycallback = vtkSlicerAnnotationBidimensionalManagerCallback::New();
+  mycallback->BiNode = activeNode;
+  mycallback->ManagerPointer = this;
+  widget->AddObserver(vtkCommand::InteractionEvent, mycallback);
+
 
   if (activeNode->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
   {
@@ -413,4 +498,17 @@ void vtkSlicerAnnotationBidimensionalManager::UpdateVisibility(vtkMRMLAnnotation
   {
     widget->EnabledOff();
   }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationBidimensionalManager::UpdateBidimensionalMeasurement(vtkMRMLAnnotationBidimensionalNode* node, vtkBiDimensionalWidget* widget)
+{
+  if ( widget==NULL)
+  {
+    return;
+  }  
+
+  vtkBiDimensionalRepresentation2D* rep = vtkBiDimensionalRepresentation2D::SafeDownCast(widget->GetRepresentation());
+
+  node->SetBidimensionalMeasurement(rep->GetLength1() * rep->GetLength2());
 }

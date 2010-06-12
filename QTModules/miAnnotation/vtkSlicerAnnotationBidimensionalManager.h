@@ -60,6 +60,8 @@ public:
 
   void UpdateVisibility(vtkMRMLAnnotationBidimensionalNode *activeNode);
 
+  void UpdateBidimensionalMeasurement(vtkMRMLAnnotationBidimensionalNode* node, vtkBiDimensionalWidget* widget);
+
   void RequestRender();
   void Render();
 

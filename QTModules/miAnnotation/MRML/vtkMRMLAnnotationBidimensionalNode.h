@@ -66,6 +66,11 @@ public:
   int GetVisibility() {return this->GetVisible();}
   void SetVisibility(int flag) {this->SetVisible(flag);}
 
+  double GetBidimensionalMeasurement();
+  void SetBidimensionalMeasurement(double val);
+
+  int SetControlPoint(double newControl[3], int id);
+
   enum
   {
       BidimensionalNodeAddedEvent = 0,
@@ -83,6 +88,7 @@ protected:
   // number of subdivisions on the line
   int Resolution;
   char* AnnotationFormat;
+  double biMeasurement;
  
 };
 

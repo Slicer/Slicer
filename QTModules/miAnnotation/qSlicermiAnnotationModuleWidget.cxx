@@ -54,6 +54,7 @@
 
 #include "vtkSlicerAnnotationRulerManager.h"
 #include "vtkSlicerAnnotationFiducialManager.h"
+#include "vtkMRMLAnnotationBidimensionalNode.h"
 
 //-----------------------------------------------------------------------------
 class qSlicermiAnnotationModuleWidgetPrivate: public ctkPrivate<qSlicermiAnnotationModuleWidget>,
@@ -595,8 +596,6 @@ void qSlicermiAnnotationModuleWidget::AddFiducialCompleted(vtkObject* object, vo
   
   //vtkMRMLAnnotationFiducialNode* node = vtkMRMLAnnotationFiducialNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
   vtkMRMLFiducialListNode* node = vtkMRMLFiducialListNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
-
-  const char* newFiducialNodeID = node->GetID();
 
   double thevalue = 0.0;
   QString valueString = "";
@@ -1729,7 +1728,7 @@ void qSlicermiAnnotationModuleWidget::onTextNodeButtonClicked()
   double thevalue = 0.0;
   thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
 
-  char* format = " ";
+  char* format = const_cast<char*>(" ");
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1753,7 +1752,7 @@ void qSlicermiAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object, vo
   double thevalue = 0.0;
   thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
 
-  char* format = " ";
+  char* format = const_cast<char*>(" ");
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1790,7 +1789,7 @@ void qSlicermiAnnotationModuleWidget::onROINodeButtonClicked()
   m_index++;
 
   double thevalue = 0.0;
-  char* format = " ";
+  char* format = const_cast<char*>(" ");
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -1814,12 +1813,16 @@ void qSlicermiAnnotationModuleWidget::onPolylineButtonClicked()
   m_IDs.push_back( newNodeID );
   m_index++;
 
-  double thevalue = 0.0;
-  char* format = " ";
+  vtkMRMLAnnotationBidimensionalNode* node = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newNodeID));
+
+  double thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );
+  char* format = node->GetAnnotationFormat();;
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
   this->selectRowByIndex( m_index );
+
+  qvtkConnect(node, vtkMRMLAnnotationBidimensionalNode::ValueModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)) );
 }
 
 //-----------------------------------------------------------------------------
@@ -1841,7 +1844,7 @@ void qSlicermiAnnotationModuleWidget::onSplineButtonClicked()
 
   vtkMRMLAnnotationSplineNode* node = vtkMRMLAnnotationSplineNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newNodeID));
 
-  double thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );;
+  double thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );
   char* format = node->GetDistanceAnnotationFormat();
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);

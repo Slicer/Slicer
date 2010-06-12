@@ -44,7 +44,7 @@ vtkMRMLNode* vtkMRMLAnnotationSplineNode::CreateNodeInstance()
 vtkMRMLAnnotationSplineNode::vtkMRMLAnnotationSplineNode()
 {
   this->HideFromEditors = false;
-  this->DistanceAnnotationFormat = "%.2f mm";
+  this->DistanceAnnotationFormat = const_cast<char*>("%.2f mm");
   this->Resolution = 5;
 }
 //----------------------------------------------------------------------------
@@ -62,6 +62,29 @@ void vtkMRMLAnnotationSplineNode::Initialize(vtkMRMLScene* mrmlScene)
     this->CreateAnnotationPointDisplayNode();
     this->CreateAnnotationLineDisplayNode();
     
+  // default starting position
+  {
+    double pos[3] = {0.0, 0.0, 0.0};
+    this->SetControlPoint(pos, 0);
+  }
+  { 
+    double pos[3] = {0.0, 0.0, 0.0};
+    this->SetControlPoint(pos, 1);
+  }
+  {
+    double pos[3] = {0.0, 0.0, 0.0};
+    this->SetControlPoint(pos, 2);
+  }
+  { 
+    double pos[3] = {0.0, 0.0, 0.0};
+    this->SetControlPoint(pos, 3);
+  }
+  { 
+    double pos[3] = {0.0, 0.0, 0.0};
+    this->SetControlPoint(pos, 4);
+  }
+
+
     this->AddText(" ",1,1);
 
   this->splineMeasurement = 0.0;
@@ -258,9 +281,9 @@ int vtkMRMLAnnotationSplineNode::SetRuler(vtkIdType line1Id, int sel, int vis)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLAnnotationSplineNode::SetControlPoint(int id, double newControl[3])
+int vtkMRMLAnnotationSplineNode::SetControlPoint(double newControl[3], int id)
 {
-  if (id < 0 || id > 1) {
+  if (id < 0 || id > 4) {
     return 0;
   }
 
@@ -347,74 +370,6 @@ void vtkMRMLAnnotationSplineNode::SetLineColour(double initColor[3])
   node->SetSelectedColor(initColor);
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationSplineNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
-{
-  double (*matrix)[4] = transformMatrix->Element;
-  double xyzIn[3];
-  double xyzOut[3];
-  double *p = NULL;
-
-  // first point
-  p = this->GetPosition1();
-  if (p)
-    {
-    xyzIn[0] = p[0];
-    xyzIn[1] = p[1];
-    xyzIn[2] = p[2];
-  
-    xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
-    xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
-    xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
-    this->SetPosition1(xyzOut);
-    }
-
-  // second point
-  p = this->GetPosition2();
-  if (p)
-    {
-    xyzIn[0] = p[0];
-    xyzIn[1] = p[1];
-    xyzIn[2] = p[2];
-
-    xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
-    xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
-    xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
-    this->SetPosition2(xyzOut);
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationSplineNode::ApplyTransform(vtkAbstractTransform* transform)
-{
-  double xyzIn[3];
-  double xyzOut[3];
-  double *p;
-
-  // first point
-  p = this->GetPosition1();
-  if (p)
-    {
-    xyzIn[0] = p[0];
-    xyzIn[1] = p[1];
-    xyzIn[2] = p[2];
-    
-    transform->TransformPoint(xyzIn,xyzOut);
-    this->SetPosition1(xyzOut);
-    }
-  
-  // second point
-  p = this->GetPosition2();
-  if (p)
-    {
-    xyzIn[0] = p[0];
-    xyzIn[1] = p[1];
-    xyzIn[2] = p[2];
-    
-    transform->TransformPoint(xyzIn,xyzOut);
-    this->SetPosition2(xyzOut);
-    }
-}
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationSplineNode::SetSplineMeasurement(double val)
@@ -428,3 +383,4 @@ double vtkMRMLAnnotationSplineNode::GetSplineMeasurement()
 {
   return this->splineMeasurement;
 }
+

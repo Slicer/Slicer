@@ -1336,7 +1336,7 @@ const char* vtkSlicermiAnnotationModuleLogic::GetAnnotationTextFormatProperty(vt
   }
   else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
   {
-    return " ";
+    return vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetAnnotationFormat();
   }
   else if (node->IsA("vtkMRMLAnnotationSplineNode"))
   {
@@ -1377,9 +1377,9 @@ double vtkSlicermiAnnotationModuleLogic::GetAnnotationMeasurement(vtkMRMLNode* n
   {
     return 0;
   }
-  else if (node->IsA("vtkMRMLBidimensionalNode"))
+  else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
   {
-    return 0;
+    return vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement();
   }
   else if (node->IsA("vtkMRMLAnnotationSplineNode"))
   {

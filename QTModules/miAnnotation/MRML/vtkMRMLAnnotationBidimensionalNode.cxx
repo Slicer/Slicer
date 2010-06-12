@@ -45,7 +45,7 @@ vtkMRMLAnnotationBidimensionalNode::vtkMRMLAnnotationBidimensionalNode()
 {
   this->HideFromEditors = false;
   this->AnnotationFormat = NULL;
-  this->SetAnnotationFormat("%.0f mm");
+  this->SetAnnotationFormat("%.2f mm");
   this->Resolution = 5;
 }
 //----------------------------------------------------------------------------
@@ -63,7 +63,27 @@ void vtkMRMLAnnotationBidimensionalNode::Initialize(vtkMRMLScene* mrmlScene)
     this->CreateAnnotationPointDisplayNode();
     this->CreateAnnotationLineDisplayNode();
     
+  // default starting position
+  {
+    double pos[3] = {-20.0, 0.0, -20.0};
+    this->SetControlPoint(pos, 0);
+  }
+  { 
+    double pos[3] = {-20.0, 0.0, 20.0};
+    this->SetControlPoint(pos, 1);
+  }
+  {
+    double pos[3] = {0.0, 20.0, 0.0};
+    this->SetControlPoint(pos, 2);
+  }
+  { 
+    double pos[3] = {0.0, -20.0, 0.0};
+    this->SetControlPoint(pos, 3);
+  }
+
     this->AddText(" ",1,1);
+
+  this->biMeasurement = 0.0;
 
     this->InvokeEvent(vtkMRMLAnnotationBidimensionalNode::BidimensionalNodeAddedEvent);
 }
@@ -184,3 +204,42 @@ void vtkMRMLAnnotationBidimensionalNode::PrintAnnotationInfo(ostream& os, vtkInd
   os << indent << "Resolution: " << this->Resolution << "\n";
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationBidimensionalNode::SetBidimensionalMeasurement(double val)
+{
+  this->biMeasurement = val;
+  this->InvokeEvent(vtkMRMLAnnotationBidimensionalNode::ValueModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLAnnotationBidimensionalNode::GetBidimensionalMeasurement()
+{
+  return this->biMeasurement;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLAnnotationBidimensionalNode::SetControlPoint(double newControl[3], int id)
+{
+  if (id < 0 || id > 3) {
+    return 0;
+  }
+
+  int flag = Superclass::SetControlPoint(id, newControl,1,1);
+  if (!flag) 
+  {
+    return 0;
+  }
+  if (this->GetNumberOfControlPoints() < 3) 
+  {
+    return 1;
+  }
+
+  if (this->GetNumberOfLines() == 2)
+  {
+    return 1;
+  } 
+
+  this->AddLine(0,1,1,1);
+  this->AddLine(1,2,1,1);
+  return 1;
+}

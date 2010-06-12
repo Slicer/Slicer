@@ -30,11 +30,79 @@ class vtkSlicerAnnotationSplineManagerCallback : public vtkCommand
 public:
   static vtkSlicerAnnotationSplineManagerCallback *New()
   { return new vtkSlicerAnnotationSplineManagerCallback; }
-  virtual void Execute(vtkObject *caller, unsigned long, void* callData)
+  virtual void Execute(vtkObject *caller, unsigned long event, void* callData)
   {
-    vtkSplineWidget *spline = reinterpret_cast<vtkSplineWidget*>(caller);
-    spline->GetPolyData(Poly);
-    ManagerPointer->UpdateSplineMeasurement(SplineNode, spline);
+    vtkSplineWidget *widget = reinterpret_cast<vtkSplineWidget*>(caller);
+    widget->GetPolyData(Poly);
+    ManagerPointer->UpdateSplineMeasurement(SplineNode, widget);
+  if (event == vtkCommand::InteractionEvent)
+  {
+    if (widget != NULL)
+    {
+      double p1[3], p2[3], p3[3], p4[3], p5[3];
+      widget->GetHandlePosition(0, p1);
+      widget->GetHandlePosition(1, p2);
+      widget->GetHandlePosition(2, p3);
+      widget->GetHandlePosition(3, p4);
+      widget->GetHandlePosition(4, p5);
+
+      if (this->SplineNode)
+      {
+        // does the angle node have a transform?
+        vtkMRMLTransformNode* tnode = this->SplineNode->GetParentTransformNode();
+        vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+        transformToWorld->Identity();
+        if (tnode != NULL && tnode->IsLinear())
+        {
+          vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+          lnode->GetMatrixTransformToWorld(transformToWorld);
+        }
+        // convert by the inverted parent transform
+        double  xyzw[4];
+        xyzw[0] = p1[0];
+        xyzw[1] = p1[1];
+        xyzw[2] = p1[2];
+        xyzw[3] = 1.0;
+        double worldxyz[4], *worldp = &worldxyz[0];
+        transformToWorld->Invert();
+        transformToWorld->MultiplyPoint(xyzw, worldp);
+        this->SplineNode->SetControlPoint(worldxyz, 0);
+        // second point
+        xyzw[0] = p2[0];
+        xyzw[1] = p2[1];
+        xyzw[2] = p2[2];
+        xyzw[3] = 1.0;
+        transformToWorld->MultiplyPoint(xyzw, worldp);
+        this->SplineNode->SetControlPoint(worldxyz, 1);
+        // 3rd point
+        xyzw[0] = p3[0];
+        xyzw[1] = p3[1];
+        xyzw[2] = p3[2];
+        xyzw[3] = 1.0;
+        transformToWorld->MultiplyPoint(xyzw, worldp);
+        this->SplineNode->SetControlPoint(worldxyz, 2);
+        // 4th point
+        xyzw[0] = p4[0];
+        xyzw[1] = p4[1];
+        xyzw[2] = p4[2];
+        xyzw[3] = 1.0;
+        transformToWorld->MultiplyPoint(xyzw, worldp);
+        this->SplineNode->SetControlPoint(worldxyz, 3);
+        // 5th point
+        xyzw[0] = p5[0];
+        xyzw[1] = p5[1];
+        xyzw[2] = p5[2];
+        xyzw[3] = 1.0;
+        transformToWorld->MultiplyPoint(xyzw, worldp);
+        this->SplineNode->SetControlPoint(worldxyz, 3);
+
+        transformToWorld->Delete();
+        transformToWorld = NULL;
+        tnode = NULL;
+      }
+    }
+  }
+
   }
   vtkSlicerAnnotationSplineManagerCallback():Poly(0){};
   vtkPolyData* Poly;
