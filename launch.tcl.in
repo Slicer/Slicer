@@ -300,12 +300,16 @@ proc launch_SetEnvironment {} {
     
       if {$::env(BUILD) == $::WINDOWS} {
         foreach buildType {"." Debug RelWithDebInfo Release MinSizeRel} {
-          set try "$::Slicer3_HOME/bin/$buildType/Slicer3-real.exe"
-          if { [file exists "$try"] } {
-            set ::Slicer3_REAL $try
+          set slicer3Real "$::Slicer3_HOME/bin/$buildType/Slicer3-real.exe"
+		  set slicerQTReal "$::Slicer3_HOME/bin/$buildType/SlicerQT-real.exe"
+          if { [file exists "$slicer3Real"] } {
+            set ::Slicer3_REAL $slicer3Real
+            set ::BUILD_SUBDIR $buildType
+          } elseif { [file exists "$slicerQTReal"] } {
+			set ::Slicer3_REAL $slicerQTReal
             set ::BUILD_SUBDIR $buildType
           }
-          if { [file exists "@VTK_DIR@/bin/$buildType/vtk.exe"] } {
+          if { [file exists "@VTK_DIR@/bin/$buildType/vtkCommon.dll"] } {
             set ::VTK_BUILD_SUBDIR $buildType
           }
           if { [file exists "@CTK_DIR@/CTK-build/bin/$buildType/CTKCore.dll"] } {
