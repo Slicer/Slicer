@@ -27,11 +27,11 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="ctkTitleComboBox" name="AllAnglesVisibilityComboBox">
-        <property name="title">
+       <widget class="ctkComboBox" name="AllAnglesVisibilityComboBox">
+        <property name="defaultText">
          <string/>
         </property>
-        <property name="icon">
+        <property name="defaultIcon">
          <iconset>
           <normaloff>:/Icons/VisibleOrInvisible.png</normaloff>:/Icons/VisibleOrInvisible.png</iconset>
         </property>
@@ -337,9 +337,9 @@
    <header>ctkCoordinatesWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkTitleComboBox</class>
+   <class>ctkComboBox</class>
    <extends>QComboBox</extends>
-   <header>ctkTitleComboBox.h</header>
+   <header>ctkComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeSelector</class>

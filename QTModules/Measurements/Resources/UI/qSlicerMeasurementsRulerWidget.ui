@@ -28,11 +28,11 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="ctkTitleComboBox" name="AllRulersVisibilityComboBox">
-        <property name="title">
+       <widget class="ctkComboBox" name="AllRulersVisibilityComboBox">
+        <property name="defaultText">
          <string/>
         </property>
-        <property name="icon">
+        <property name="defaultIcon">
          <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
           <normaloff>:/Icons/VisibleOrInvisible.png</normaloff>:/Icons/VisibleOrInvisible.png</iconset>
         </property>
@@ -289,9 +289,9 @@
    <header>ctkCoordinatesWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkTitleComboBox</class>
+   <class>ctkComboBox</class>
    <extends>QComboBox</extends>
-   <header>ctkTitleComboBox.h</header>
+   <header>ctkComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeSelector</class>
