@@ -43,7 +43,7 @@ qSlicerIO::IOFileType qSlicerVolumesIO::fileType()const
 //-----------------------------------------------------------------------------
 QString qSlicerVolumesIO::extensions()const
 {
-  return "*.hdr *.nhdr *.nrrd *.mhd *.mha *.vti *.nii *.gz *.mgz";
+  return "*.hdr *.nhdr *.nrrd *.mhd *.mha *.vti *.nii *.gz *.mgz *img";
 }
 
 //-----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
 {
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
-  
+
   QString name = fileName;
   if (properties.contains("name"))
     {
@@ -93,13 +93,13 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
       fileList->InsertNextValue(file.toLatin1().data());
       }
     }
-  vtkSlicerVolumesLogic* volumesLogic = 
+  vtkSlicerVolumesLogic* volumesLogic =
     vtkSlicerVolumesLogic::SafeDownCast(
       qSlicerCoreApplication::application()->moduleManager()
       ->module("volumes")->logic());
   Q_ASSERT(volumesLogic);
   vtkMRMLVolumeNode* node = volumesLogic->AddArchetypeVolume(
-    fileName.toLatin1().data(), 
+    fileName.toLatin1().data(),
     name.toLatin1().data(),
     options,
     fileList.GetPointer());
