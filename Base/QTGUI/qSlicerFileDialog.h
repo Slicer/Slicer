@@ -24,7 +24,7 @@ public:
   typedef QObject Superclass;
   qSlicerFileDialog(QObject* parent =0);
   virtual ~qSlicerFileDialog();
-  
+
   virtual qSlicerIO::IOFileType fileType()const = 0;
   enum IOAction
   {
@@ -39,7 +39,7 @@ public:
 
   ///
   /// TBD: move in qSlicerCoreIOManager or qSlicerIOManager ?
-  /// Return the namefilters of all the readers in IOManager corresponding to 
+  /// Return the namefilters of all the readers in IOManager corresponding to
   /// fileType
   static QStringList nameFilters(qSlicerIO::IOFileType fileType);
 

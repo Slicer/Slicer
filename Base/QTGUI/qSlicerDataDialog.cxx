@@ -37,7 +37,7 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
   connect(this->FileWidget, SIGNAL(cellChanged(int,int)),
           this, SLOT(updateCheckBoxHeader(int,int)));
   */
-  
+
   connect(this->AddDirectoryButton, SIGNAL(clicked()), this, SLOT(addDirectory()));
   connect(this->AddFilesButton, SIGNAL(clicked()), this, SLOT(addFiles()));
   QPushButton* resetButton = this->ButtonBox->button(QDialogButtonBox::Reset);
@@ -77,7 +77,7 @@ void qSlicerDataDialogPrivate::addFiles()
 void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
 {
   bool recursive = true;
-  QDir::Filters filters = 
+  QDir::Filters filters =
     QDir::AllDirs | QDir::Files | QDir::Readable | QDir::NoDotAndDotDot;
   foreach(QFileInfo entry, directory.entryInfoList(filters))
     {
@@ -99,16 +99,16 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
     {
     return;
     }
-  if (!this->FileWidget->findItems(file.absoluteFilePath(), 
+  if (!this->FileWidget->findItems(file.absoluteFilePath(),
                                    Qt::MatchExactly).isEmpty())
     {// file already exists
     qDebug() <<"already exists";
     return;
     }
-  qSlicerIO::IOFileType fileType = 
+  qSlicerIO::IOFileType fileType =
     qSlicerCoreApplication::application()->coreIOManager()->fileType(
        file.absoluteFilePath());
-  QString fileDescription = 
+  QString fileDescription =
     qSlicerCoreApplication::application()->coreIOManager()->fileDescription(
       file.absoluteFilePath());
   if (fileDescription == tr("Unknown"))
@@ -211,7 +211,7 @@ void qSlicerDataDialogPrivate::updateCheckBoxHeader(int itemRow, int itemColumn)
     }
   Qt::CheckState headerCheckState = this->FileWidget->item(itemRow,itemColumn)->checkState();
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
-    {    
+    {
     if (this->FileWidget->item(row, FileColumn)->checkState() !=
         headerCheckState)
       {
