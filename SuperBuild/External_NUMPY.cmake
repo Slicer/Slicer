@@ -1,6 +1,6 @@
 # The Numpy external project 
 
-set(numpy_binary "${CMAKE_CURRENT_BINARY_DIR}/NUMPY/")
+set(NUMPY_binary "${CMAKE_CURRENT_BINARY_DIR}/NUMPY/")
 
 # to configure numpy we run a cmake -P script
 # the script will create a site.cfg file
@@ -30,5 +30,5 @@ ExternalProject_Add(NUMPY
     -P ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_make_step.cmake
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
-  DEPENDS ${numpy_DEPENDENCIES}
+  DEPENDS ${NUMPY_DEPENDENCIES}
   )

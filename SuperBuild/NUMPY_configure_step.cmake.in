@@ -1,23 +1,23 @@
-message("Configuring numpy:\n@numpy_binary@")
+message("Configuring NUMPY:\n@NUMPY_binary@")
 set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 # setup the site.cfg file
-file(WRITE "@numpy_binary@/site.cfg"
+file(WRITE "@NUMPY_binary@/site.cfg"
 "
 [blas]
-library_dirs = @clapack_binary@/BLAS/SRC;@clapack_binary@/CLAPACK-build/F2CLIBS/libf2c
+library_dirs = @CLAPACK_binary@/BLAS/SRC;@CLAPACK_binary@/CLAPACK-build/F2CLIBS/libf2c
 libraries = blas,libf2c
 
 [lapack]
-library_dirs = @clapack_binary@/SRC/
+library_dirs = @CLAPACK_binary@/SRC/
 lapack_libs = lapack
 ")
 
 execute_process(
   COMMAND "@slicer_PYTHON_EXECUTABLE@" setup.py config
-  WORKING_DIRECTORY "@numpy_binary@"
+  WORKING_DIRECTORY "@NUMPY_binary@"
   RESULT_VARIABLE res)
 
 if(NOT ${res} EQUAL 0)
-  message(FATAL_ERROR "Error in config of numpy")
+  message(FATAL_ERROR "Error in config of NUMPY")
 endif()
 message("Numpy config worked.")

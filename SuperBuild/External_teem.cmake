@@ -4,18 +4,15 @@
 
 set(proj teem)
 
-set(zlib "vtkzlib.lib")
-set(png "vtkpng.lib")
-
 if(WIN32)
-  set(teem_ZLIB_LIBRARY ${CMAKE_BINARY_DIR}/VTK-build/bin/${CMAKE_CFG_INTDIR}/vtkzlib.lib)
-  set(teem_PNG_LIBRARY ${CMAKE_BINARY_DIR}/VTK-build/bin/${CMAKE_CFG_INTDIR}/vtkpng.lib)
+  set(teem_ZLIB_LIBRARY ${VTK_DIR}/bin/${CMAKE_CFG_INTDIR}/vtkzlib.lib)
+  set(teem_PNG_LIBRARY ${VTK_DIR}/bin/${CMAKE_CFG_INTDIR}/vtkpng.lib)
 elseif(APPLE)
-  set(teem_ZLIB_LIBRARY ${CMAKE_BINARY_DIR}/VTK-build/bin/libvtkzlib.dylib)
-  set(teem_PNG_LIBRARY ${CMAKE_BINARY_DIR}/VTK-build/bin/libvtkpng.dylib)
+  set(teem_ZLIB_LIBRARY ${VTK_DIR}/bin/libvtkzlib.dylib)
+  set(teem_PNG_LIBRARY ${VTK_DIR}/bin/libvtkpng.dylib)
 else()
-  set(teem_ZLIB_LIBRARY ${CMAKE_BINARY_DIR}/VTK-build/bin/libvtkzlib.so)
-  set(teem_PNG_LIBRARY ${CMAKE_BINARY_DIR}/VTK-build/bin/libvtkpng.so)
+  set(teem_ZLIB_LIBRARY ${VTK_DIR}/bin/libvtkzlib.so)
+  set(teem_PNG_LIBRARY ${VTK_DIR}/bin/libvtkpng.so)
 endif()
 
 ExternalProject_Add(${proj}
@@ -37,13 +34,13 @@ ExternalProject_Add(${proj}
     -DTeem_ZLIB:BOOL=ON
     -DTeem_PNG:BOOL=ON
     -DTeem_VTK_MANGLE:BOOL=ON
-    -DTeem_VTK_TOOLKITS_IPATH:FILEPATH=${CMAKE_BINARY_DIR}/VTK-build
-    -DZLIB_INCLUDE_DIR:PATH=${CMAKE_BINARY_DIR}/VTK/Utilities
-    -DTeem_VTK_ZLIB_MANGLE_IPATH:PATH=${CMAKE_BINARY_DIR}/VTK/Utilities/vtkzlib
-    -DTeem_ZLIB_DLLCONF_IPATH:PATH=${CMAKE_BINARY_DIR}/VTK-build/Utilities
+    -DTeem_VTK_TOOLKITS_IPATH:FILEPATH=${VTK_DIR}
+    -DZLIB_INCLUDE_DIR:PATH=${VTK_SOURCE_DIR}/Utilities
+    -DTeem_VTK_ZLIB_MANGLE_IPATH:PATH=${VTK_SOURCE_DIR}/Utilities/vtkzlib
+    -DTeem_ZLIB_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
     -DZLIB_LIBRARY:FILEPATH=${teem_ZLIB_LIBRARY}
-    -DPNG_PNG_INCLUDE_DIR:PATH=${CMAKE_BINARY_DIR}/VTK/Utilities/vtkpng
-    -DTeem_PNG_DLLCONF_IPATH:PATH=${CMAKE_BINARY_DIR}/VTK-build/Utilities
+    -DPNG_PNG_INCLUDE_DIR:PATH=${VTK_SOURCE_DIR}/Utilities/vtkpng
+    -DTeem_PNG_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
     -DPNG_LIBRARY:FILEPATH=${teem_PNG_LIBRARY}
     -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON
   INSTALL_COMMAND ""

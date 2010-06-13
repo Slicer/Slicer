@@ -321,22 +321,22 @@ if(Slicer3_USE_KWWIDGETS)
     set(python_DEPENDENCIES tk)
   endif()
 endif()
-set(clapack_DEPENDENCIES)
-set(numpy_DEPENDENCIES CLAPACK python)
+set(CLAPACK_DEPENDENCIES)
+set(NUMPY_DEPENDENCIES CLAPACK python)
 set(scipy_DEPENDENCIES NUMPY)
 
-set(vtk_DEPENDENCIES)
-set(CTK_DEPENDENCIES vtk)
+set(VTK_DEPENDENCIES)
+set(CTK_DEPENDENCIES VTK)
 if(Slicer3_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
 endif()
-set(KWWidgets_DEPENDENCIES vtk)
+set(KWWidgets_DEPENDENCIES VTK)
 set(Insight_DEPENDENCIES)
 set(BatchMake_DEPENDENCIES Insight)
 set(OpenIGTLink_DEPENDENCIES)
-set(teem_DEPENDENCIES vtk)
+set(teem_DEPENDENCIES VTK)
 set(cmcurl_DEPENDENCIES)
-set(slicer_DEPENDENCIES vtk Insight BatchMake OpenIGTLink teem cmcurl)
+set(slicer_DEPENDENCIES VTK Insight BatchMake OpenIGTLink teem cmcurl)
 
 #------------------------------------------------------------------------------
 # Conditionnaly include ExternalProject Target
@@ -408,7 +408,7 @@ endif()
 # List of external projects
 #------------------------------------------------------------------------------  
 
-set(external_project_list tk tcl incrTcl iwidgets blt python clapack numpy scipy vtk CTK KWWidgets Insight BatchMake OpenIGTLink teem cmcurl slicer)
+set(external_project_list tk tcl incrTcl iwidgets blt python CLAPACK NUMPY scipy VTK CTK KWWidgets Insight BatchMake OpenIGTLink teem cmcurl slicer)
 
 #-----------------------------------------------------------------------------
 # Dump external project dependencies
@@ -440,7 +440,7 @@ ExternalProject_Add(${proj}
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_TESTING:BOOL=ON
     # ITK
-    -DITK_DIR:PATH=${CMAKE_BINARY_DIR}/Insight-build
+    -DITK_DIR:PATH=${ITK_DIR}
     # Teem
     -DTeem_DIR:PATH=${CMAKE_BINARY_DIR}/teem-build
     # OpenIGTLink
@@ -450,7 +450,7 @@ ExternalProject_Add(${proj}
     -DSlicer3_USE_BatchMake=ON
     -DBatchMake_DIR:PATH=${CMAKE_BINARY_DIR}/BatchMake-build
     # VTK
-    -DVTK_DIR:PATH=${CMAKE_BINARY_DIR}/VTK-build
+    -DVTK_DIR:PATH=${VTK_DIR}
     -DVTK_DEBUG_LEAKS:BOOL=${Slicer3_USE_VTK_DEBUG_LEAKS}
     # TCL/Tk
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
@@ -469,7 +469,7 @@ ExternalProject_Add(${proj}
     # Qt
     -DSlicer3_USE_QT:BOOL=${Slicer3_USE_QT}
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
-    -DCTK_DIR:PATH=${CMAKE_BINARY_DIR}/CTK-build
+    -DCTK_DIR:PATH=${CTK_DIR}
     # KWWidgets
     -DSlicer3_USE_KWWIDGETS:BOOL=${Slicer3_USE_KWWIDGETS}
     -DKWWidgets_DIR:PATH=${CMAKE_BINARY_DIR}/KWWidgets-build
