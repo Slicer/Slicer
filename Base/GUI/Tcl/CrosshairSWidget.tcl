@@ -193,8 +193,13 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 
       if { $drg == "false" } {
           eval $this setPosition [$_crosshairNode GetCrosshairRAS]
-          if {0} {
+          if {1} {
             # SP - don't think this code is needed
+            # JM - this code is needed for the case the case where the slice node
+            #    is changing but through a slider or through a snapshot.  We need
+            #    this code to move the crosshair to the current slice.
+            #
+
             # puts "[clock seconds] Slice node change $_sliceNode"
 
             # No crosshairs are being dragged. So the slice node is changing through some
