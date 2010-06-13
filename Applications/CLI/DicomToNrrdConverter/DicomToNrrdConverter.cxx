@@ -416,7 +416,7 @@ int main(int argc, char* argv[])
   if (  modality.find("PT") != std::string::npos 
         || modality.find("ST") != std::string::npos )
     {
-      typedef itk::Image<unsigned short, 3> USVolumeType;
+      typedef itk::Image<float, 3> USVolumeType;
       itk::ImageSeriesReader<USVolumeType>::Pointer seriesReader = 
         itk::ImageSeriesReader<USVolumeType>::New();
       seriesReader->SetFileNames( filenamesInSeries );
