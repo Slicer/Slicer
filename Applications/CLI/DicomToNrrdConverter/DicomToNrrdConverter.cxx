@@ -1027,6 +1027,7 @@ int main(int argc, char* argv[])
         vect3d.normalize();
         DiffusionVectors.push_back(vect3d);
         }
+
       std::cout << "DiffusionDirectionality: " << DiffusionDirectionality  << " :B-Value " << b << " :DiffusionOrientation " << vect3d << " :Filename " << filenames[k] << std::endl;
       }
     }
@@ -1412,13 +1413,12 @@ int main(int argc, char* argv[])
       region.SetIndex( 2, slcMosaic );
 
       itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( img, region );
-
       for ( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt)
         {
         dmIt.Set( imIt.Get() );
         }
+      
       }
-
     if (nUsableVolumes == 1)
       {
       imgWriter->SetInput( dmImage );
@@ -1439,7 +1439,7 @@ int main(int argc, char* argv[])
       {
         if ( !NrrdFormat )
           { 
-            rawWriter->SetInput( reader->GetOutput() );
+            rawWriter->SetInput( dmImage );
             try
               {
                 rawWriter->Update();
