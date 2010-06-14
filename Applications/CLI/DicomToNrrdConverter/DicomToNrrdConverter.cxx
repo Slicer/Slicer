@@ -1663,7 +1663,7 @@ int main(int argc, char* argv[])
         {
         scaleFactor = sqrt( bValues[k]/maxBvalue );
         }
-      //std::cout << "For Multiple BValues: " << k << ": " << scaleFactor << std::endl;
+      std::cout << "For Multiple BValues: " << k << " -- " << bValues[k] << " / " << maxBvalue << " = " << scaleFactor << std::endl;
       if(useIdentityMeaseurementFrame)
         {
         vnl_vector_fixed<double,3> RotatedDiffusionVectors=InverseMeasurementFrame*(DiffusionVectors[k-nBaseline]);
