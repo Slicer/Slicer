@@ -53,7 +53,7 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
 
   this->NewVolumePropertyAddedFlag = 0;
   this->NewFgVolumePropertyAddedFlag = 0;
-
+  
   this->ScenarioNode = NULL;
 
   this->Presets = NULL;
@@ -461,6 +461,7 @@ void vtkVolumeRenderingGUI::AddMRMLObservers(void)
   if ( this->GetApplicationGUI() )
   {
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
   }
@@ -472,6 +473,7 @@ void vtkVolumeRenderingGUI::RemoveMRMLObservers(void)
   if ( this->GetApplicationGUI() )
   {
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
   }
@@ -840,17 +842,19 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
         //remember the newly added scenarioNode
         vtkMRMLVolumeRenderingScenarioNode *sNode = vtkMRMLVolumeRenderingScenarioNode::SafeDownCast(addedNode);
         this->ScenarioNode = sNode;
-
-        if (this->GetCurrentParametersNode() != NULL && this->CB_VolumeRenderingOnOff->GetWidget()->GetSelectedState())
-        {
-          this->InitializePipelineFromParametersNode();
-        }
       }
       else if (addedNode->IsA("vtkMRMLViewNode"))
       {
         vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(addedNode);
         viewNode->AddObserver(vtkMRMLViewNode::GraphicalResourcesCreatedEvent, (vtkCommand *) this->MRMLCallbackCommand);
       }
+    }
+  }
+  else if (event == vtkMRMLScene::SceneLoadEndEvent)
+  {
+    if (this->GetCurrentParametersNode() != NULL && this->CB_VolumeRenderingOnOff->GetWidget()->GetSelectedState())
+    {
+      this->InitializePipelineFromParametersNode();
     }
   }
   else if(event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
