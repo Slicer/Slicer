@@ -852,7 +852,7 @@ int main(int argc, char* argv[])
       else
         {
         UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-        vect3d.normalize();
+        // vect3d.normalize();
         DiffusionVectors.push_back(vect3d);
         }
 
@@ -1024,7 +1024,7 @@ int main(int argc, char* argv[])
           }
 
         UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-        vect3d.normalize();
+        // vect3d.normalize();
         DiffusionVectors.push_back(vect3d);
         }
 
@@ -1100,7 +1100,7 @@ int main(int argc, char* argv[])
         vect3d[1] = valueArray[1];
         vect3d[2] = valueArray[2];
         UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-        vect3d.normalize();
+        // vect3d.normalize();
         DiffusionVectors.push_back(vect3d);
         int p = bValues.size();
         std::cout << "Image#: " << k << " BV: " << bValues[p-1] << " GD: " << DiffusionVectors[p-1] << std::endl;
@@ -1257,7 +1257,7 @@ int main(int argc, char* argv[])
           vnl_vector_fixed<double, 3> vect3d;
           vect3d[0] = v[0]; vect3d[1] = v[1]; vect3d[2] = v[2];
           UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
-          vect3d.normalize();
+          // vect3d.normalize();
           DiffusionVectors.push_back( vect3d );
 
           bValues.push_back( *(double*)(dwbValue.c_str()) );
