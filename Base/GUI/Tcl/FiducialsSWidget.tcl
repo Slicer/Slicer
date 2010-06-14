@@ -138,7 +138,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
               # - if the slice is linked, then jump all slices to it
               set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
               set compositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
-              if { [$compositeNode GetLinkedControl] || [$_interactor GetControlKey] } {
+              if { [$compositeNode GetLinkedControl] } {
                 set jumpMode "all"
               } else {
                 set jumpMode "one"
