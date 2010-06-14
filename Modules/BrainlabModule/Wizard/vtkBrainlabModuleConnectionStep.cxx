@@ -833,9 +833,9 @@ void vtkBrainlabModuleConnectionStep::GetRandomTestMatrix(igtl::Matrix4x4& matri
 
   // random position
   static float phi = 0.0;
-  position[0] = 50.0 * cos(phi);
-  position[1] = 50.0 * sin(phi);
-  position[2] = 50.0 * cos(phi);
+  position[0] = 15.0 * cos(phi);
+  position[1] = 15.0 * sin(phi);
+  position[2] = 15.0 * cos(phi);
   phi = phi + 0.2;
 
   // random orientation
