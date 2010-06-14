@@ -46,6 +46,9 @@
          <property name="text">
           <string>Help</string>
          </property>
+         <property name="collapsed">
+          <bool>true</bool>
+         </property>
          <property name="contentsFrameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
