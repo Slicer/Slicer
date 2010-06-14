@@ -246,7 +246,7 @@ include(${ITK_USE_FILE})
 #-----------------------------------------------------------------------------
 # FindCTK
 #
-SET(git_repo http://github.com/pieper/CTK/raw/master/)
+SET(git_repo http://github.com/commontk/CTK/raw/master/)
 
 if (Slicer3_USE_QT)
   SET(file Utilities/CMake/FindCTK.cmake)

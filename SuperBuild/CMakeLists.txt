@@ -84,7 +84,7 @@ ENDFUNCTION()
 # Prerequisites
 #------------------------------------------------------------------------------
 
-set(git_repo http://github.com/pieper/CTK/raw/master/)
+set(git_repo http://github.com/commontk/CTK/raw/master/)
 
 set(file CMake/ExternalProject.cmake)
 downloadFile(${git_repo}/${file} ${CMAKE_BINARY_DIR}/${file})
