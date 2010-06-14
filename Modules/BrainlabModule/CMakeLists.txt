@@ -27,6 +27,8 @@ include_directories(
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
   ${OpenIGTLink_INCLUDE_DIRS}
+  ${OpenIGTLinkIF_SOURCE_DIR}
+  ${OpenIGTLinkIF_BINARY_DIR}
   )
 
 configure_file(
@@ -55,9 +57,6 @@ set(BrainlabModule_SRCS
   vtkBrainlabModuleGUI.cxx
   vtkBrainlabModuleLogic.cxx 
   vtkBrainlabModuleMRMLManager.cxx 
-  vtkIGTLToMRMLBase.cxx
-  vtkIGTLCircularBuffer.cxx
-  vtkMRMLIGTLConnectorNode.cxx
 
   # wizard : Add wizard supporting programs here
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkBrainlabModuleStep.cxx
@@ -65,15 +64,14 @@ set(BrainlabModule_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkBrainlabModuleConnectionStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkBrainlabModuleNavigationStep.cxx
 
-
   # MRML: Add MRML supporting programs herer
   # Algorithm  : Add  algorithm related programs here
 )
 
-#set_source_files_properties(
-  # Algorithm sources (temporary exclusion)
-#  WRAP_EXCLUDE
-#  )
+# set_source_files_properties(
+# Algorithm sources (temporary exclusion)
+# WRAP_EXCLUDE
+# )
   
 
 # --------------------------------------------------------------------------
@@ -103,6 +101,7 @@ target_link_libraries(${lib_name}
   ${KWWidgets_LIBRARIES} 
   ${ITK_LIBRARIES}
   ${OpenIGTLink_LIBRARIES}
+  OpenIGTLinkIF
   )
 
 slicer3_install_modules(${lib_name})

@@ -1,2 +1,3 @@
 Name: BrainlabModule 
-GUIName: BrainlabModule 
+GUIName: BrainlabModule
+Dependency: OpenIGTLinkIF
