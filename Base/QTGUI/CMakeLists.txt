@@ -59,6 +59,11 @@ SET(KIT_MOC_SRCS
   qSlicerSaveDataDialog_p.h
   qSlicerWidget.h
   )
+  
+# PythonQt decorator
+IF(Slicer3_USE_PYTHONQT)
+  LIST(APPEND KIT_MOC_SRCS qSlicerBaseQTGUIPythonQtDecorators.h)
+ENDIF(Slicer3_USE_PYTHONQT)
 
 # UI files
 SET(KIT_UI_SRCS
@@ -85,6 +90,22 @@ ENDIF()
 SET(KIT_resources
   Resources/qSlicerBaseQTGUI.qrc
 )
+
+# Python wrap
+IF(Slicer3_USE_PYTHONQT)
+
+  # Sources
+  LIST(APPEND KIT_SRCS
+    qSlicerPythonManager.cxx
+    qSlicerPythonManager.h
+    )
+
+  # Headers that should run through moc
+  LIST(APPEND KIT_MOC_SRCS
+    qSlicerPythonManager.h
+    )
+
+ENDIF(Slicer3_USE_PYTHONQT)
 
 Slicer3_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}

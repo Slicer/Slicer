@@ -13,20 +13,17 @@
 #ifndef __qSlicerPythonManager_h
 #define __qSlicerPythonManager_h
 
-// CTK includes
-# include <ctkAbstractPythonManager.h>
+// SlicerQt includes
+#include "qSlicerCorePythonManager.h"
+#include "qSlicerBaseQTGUIExport.h"
 
-#include "qSlicerBaseQTCoreExport.h"
-
-class PythonQtObjectPtr;
-
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPythonManager : public ctkAbstractPythonManager
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerPythonManager : public qSlicerCorePythonManager
 {
   Q_OBJECT
 
 public:
-  typedef ctkAbstractPythonManager Superclass;
-  qSlicerPythonManager(QObject* parent=NULL);
+  typedef qSlicerCorePythonManager Superclass;
+  qSlicerPythonManager(QObject* parent=0);
   ~qSlicerPythonManager();
   
 protected:

@@ -29,7 +29,7 @@ class qSlicerCoreCommandOptions;
 class qSlicerCoreApplicationPrivate;
 class qSlicerModuleManager;
 #ifdef Slicer3_USE_PYTHONQT
-class qSlicerPythonManager;
+class qSlicerCorePythonManager;
 #endif
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
@@ -125,7 +125,12 @@ public:
 #ifdef Slicer3_USE_PYTHONQT
   ///
   /// Get python manager
-  qSlicerPythonManager* pythonManager()const;
+  qSlicerCorePythonManager* corePythonManager()const;
+  
+  /// Set the IO manager
+  /// Note that qSlicerCoreApplication takes ownership of the object
+  void setCorePythonManager(qSlicerCorePythonManager* pythonManager);
+
 #endif
 
   ///

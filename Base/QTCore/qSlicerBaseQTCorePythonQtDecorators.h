@@ -10,8 +10,8 @@
 
 =========================================================================auto=*/
 
-#ifndef __qSlicerBaseQTBasePythonQtDecorators_h
-#define __qSlicerBaseQTBasePythonQtDecorators_h
+#ifndef __qSlicerBaseQTCorePythonQtDecorators_h
+#define __qSlicerBaseQTCorePythonQtDecorators_h
 
 // Qt includes
 #include <QObject>
@@ -27,12 +27,11 @@
 // PythonQT includes
 #include <PythonQtObjectPtr.h>
 
-// SlicerQT includes
+// SlicerQt includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerAbstractModule.h"
-#include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -55,14 +54,12 @@ public:
     pythonManager->registerClassForPythonQt(&qSlicerCoreApplication::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerModuleManager::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerAbstractModule::staticMetaObject);
-    pythonManager->registerClassForPythonQt(&qSlicerAbstractModuleWidget::staticMetaObject);
     pythonManager->registerCPPClassForPythonQt("qSlicerModuleFactoryManager");
     }
 
 public slots:
 
   // static methods
-
   QList<QWidget*> static_qSlicerCoreApplication_allWidgets()
     { 
     return qSlicerCoreApplication::allWidgets();
@@ -125,13 +122,6 @@ public slots:
   qSlicerAbstractModule* module(qSlicerModuleManager* _moduleManager, const QString& name)
     {
     return _moduleManager->module(name);
-    }
-
-  //----------------------------------------------------------------------------
-  // qSlicerAbstractModule
-  qSlicerAbstractModuleWidget* widgetRepresentation(qSlicerAbstractModule* _module)
-    {
-    return _module->widgetRepresentation();
     }
   
 };

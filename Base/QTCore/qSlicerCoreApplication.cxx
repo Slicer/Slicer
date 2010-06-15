@@ -44,7 +44,7 @@
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerCoreCommandOptions.h"
 #ifdef Slicer3_USE_PYTHONQT
-# include "qSlicerPythonManager.h"
+# include "qSlicerCorePythonManager.h"
 #endif
 
 // SlicerLogic includes
@@ -80,7 +80,7 @@ public:
   bool parseArguments(int argc, char** argv);
 
   ///
-  /// See the ExitWhenDone flag to True
+  /// Set the ExitWhenDone flag to True
   void terminate();
 
   ///
@@ -100,11 +100,11 @@ public:
   QSharedPointer<qSlicerModuleManager>       ModuleManager;
 
   ///
-  /// IOManager - It should exist only one instance of the IOManager
+  /// CoreIOManager - It should exist only one instance of the IOManager
   QSharedPointer<qSlicerCoreIOManager>       CoreIOManager;
 
   ///
-  /// CoreOptions - It should exist only one instance of the coreOptions
+  /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
   QSharedPointer<qSlicerCoreCommandOptions>  CoreCommandOptions;
 
   /// ExitWhenDone flag
@@ -136,7 +136,9 @@ public:
   char**             Argv;
 
 #ifdef Slicer3_USE_PYTHONQT
-  qSlicerPythonManager* PythonManager;
+  ///
+  /// CorePythonManager - It should exist only one instance of the CorePythonManager
+  QSharedPointer<qSlicerCorePythonManager> CorePythonManager;
 #endif
 };
 
@@ -153,20 +155,11 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate()
   this->Argc = 0;
   this->Argv = 0;
   this->ExitWhenDone = false;
-//   this->CoreIOManager = 0;
-
-#ifdef Slicer3_USE_PYTHONQT
-  this->PythonManager = new qSlicerPythonManager();
-#endif
 }
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
-{
-#ifdef Slicer3_USE_PYTHONQT
-  delete this->PythonManager;
-#endif
-  
+{  
   if (this->Argc && this->Argv)
     {
     for (int i = 0; i < this->Argc; ++i)
@@ -559,7 +552,19 @@ CTK_SET_CXX(qSlicerCoreApplication, const QString&, setSlicerHome, SlicerHome);
 
 //-----------------------------------------------------------------------------
 #ifdef Slicer3_USE_PYTHONQT
-CTK_GET_CXX(qSlicerCoreApplication, qSlicerPythonManager*, pythonManager, PythonManager);
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setCorePythonManager(qSlicerCorePythonManager* manager)
+{
+  ctk_d()->CorePythonManager = QSharedPointer<qSlicerCorePythonManager>(manager);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCorePythonManager* qSlicerCoreApplication::corePythonManager()const
+{
+  return ctk_d()->CorePythonManager.data();
+}
+
 #endif
 
 //-----------------------------------------------------------------------------

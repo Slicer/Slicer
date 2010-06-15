@@ -19,6 +19,9 @@
 #include "qSlicerIOManager.h"
 #include "qSlicerCommandOptions.h"
 #include "qSlicerApplication.h"
+#ifdef Slicer3_USE_PYTHONQT
+# include "qSlicerPythonManager.h"
+#endif
 
 #include "vtkSlicerConfigure.h"
 
@@ -98,6 +101,12 @@ void qSlicerApplicationPrivate::init()
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
   p->setCoreIOManager(new qSlicerIOManager);
+  
+  #ifdef Slicer3_USE_PYTHONQT
+  // Note: qSlicerCoreApplication class takes ownership of the pythonManager and
+  // will be responsible to delete it
+  p->setCorePythonManager(new qSlicerPythonManager());
+  #endif
 }
 
 //-----------------------------------------------------------------------------
@@ -191,7 +200,7 @@ void qSlicerApplication::initialize(bool& exitWhenDone)
 qSlicerCommandOptions* qSlicerApplication::commandOptions()
 {
   qSlicerCommandOptions* _commandOptions =
-    reinterpret_cast<qSlicerCommandOptions*>(this->coreCommandOptions());
+    dynamic_cast<qSlicerCommandOptions*>(this->coreCommandOptions());
   Q_ASSERT(_commandOptions);
   return _commandOptions;
 }
@@ -199,9 +208,18 @@ qSlicerCommandOptions* qSlicerApplication::commandOptions()
 //-----------------------------------------------------------------------------
 qSlicerIOManager* qSlicerApplication::ioManager()
 {
-  qSlicerIOManager* _ioManager = reinterpret_cast<qSlicerIOManager*>(this->coreIOManager());
+  qSlicerIOManager* _ioManager = dynamic_cast<qSlicerIOManager*>(this->coreIOManager());
   Q_ASSERT(_ioManager);
   return _ioManager;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerPythonManager* qSlicerApplication::pythonManager()
+{
+  qSlicerPythonManager* _pythonManager = 
+    qobject_cast<qSlicerPythonManager*>(this->corePythonManager());
+  Q_ASSERT(_pythonManager);
+  return _pythonManager;
 }
 
 //-----------------------------------------------------------------------------

@@ -70,7 +70,7 @@ SET(KIT_MOC_SRCS
 
 # PythonQt decorator
 IF(Slicer3_USE_PYTHONQT)
-  LIST(APPEND KIT_MOC_SRCS qSlicerBaseQTBasePythonQtDecorators.h)
+  LIST(APPEND KIT_MOC_SRCS qSlicerBaseQTCorePythonQtDecorators.h)
 ENDIF(Slicer3_USE_PYTHONQT)
 
 # Additional Target libraries (QT libs already included)
@@ -96,13 +96,13 @@ IF(Slicer3_USE_PYTHONQT)
     )
   # Sources
   LIST(APPEND KIT_SRCS
-    qSlicerPythonManager.cxx
-    qSlicerPythonManager.h
+    qSlicerCorePythonManager.cxx
+    qSlicerCorePythonManager.h
     )
 
   # Headers that should run through moc
   LIST(APPEND KIT_MOC_SRCS
-    qSlicerPythonManager.h
+    qSlicerCorePythonManager.h
     )
 
 ENDIF(Slicer3_USE_PYTHONQT)

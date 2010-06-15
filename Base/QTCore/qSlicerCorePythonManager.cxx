@@ -12,25 +12,25 @@
 
 // SlicerQt includes
 #include "qSlicerUtils.h"
-#include "qSlicerPythonManager.h"
+#include "qSlicerCorePythonManager.h"
 #include "qSlicerCoreApplication.h"
-#include "qSlicerBaseQTBasePythonQtDecorators.h"
+#include "qSlicerBaseQTCorePythonQtDecorators.h"
 
 #include "vtkSlicerConfigure.h" // For VTK_DIR
 
 //-----------------------------------------------------------------------------
-qSlicerPythonManager::qSlicerPythonManager(QObject* _parent) : Superclass(_parent)
+qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclass(_parent)
 {
 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerPythonManager::~qSlicerPythonManager()
+qSlicerCorePythonManager::~qSlicerCorePythonManager()
 {
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerPythonManager::pythonPaths()
+QStringList qSlicerCorePythonManager::pythonPaths()
 {
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   
@@ -59,7 +59,7 @@ QStringList qSlicerPythonManager::pythonPaths()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerPythonManager::preInitialization()
+void qSlicerCorePythonManager::preInitialization()
 {
   Superclass::preInitialization();
 
@@ -71,6 +71,4 @@ void qSlicerPythonManager::preInitialization()
   // Add object to python interpreter context
   this->addObjectToPythonMain("_qSlicerCoreApplicationInstance", app);
 
-  // Evaluate application script
-  this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt.py");
 }
