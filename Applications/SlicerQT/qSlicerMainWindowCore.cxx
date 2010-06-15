@@ -46,7 +46,8 @@ void qSlicerMainWindowCorePrivate::onModuleLoaded(qSlicerAbstractModule* module)
   Q_ASSERT(module);
   CTK_P(qSlicerMainWindowCore);
 
-  qSlicerAbstractModuleWidget* moduleWidget = module->widgetRepresentation();
+  qSlicerAbstractModuleWidget* moduleWidget =
+    dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
   Q_ASSERT(moduleWidget);
 
   QAction * action = moduleWidget->showModuleAction();
@@ -72,7 +73,8 @@ void qSlicerMainWindowCorePrivate::onModuleAboutToBeUnloaded(qSlicerAbstractModu
   Q_ASSERT(module);
   CTK_P(qSlicerMainWindowCore);
 
-  qSlicerAbstractModuleWidget* moduleWidget = module->widgetRepresentation();
+  qSlicerAbstractModuleWidget* moduleWidget =
+    dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
   Q_ASSERT(moduleWidget);
 
   QAction * action = moduleWidget->showModuleAction();

@@ -13,11 +13,13 @@ SET(KIT_include_directories
   ${qSlicerBaseQTCore_SOURCE_DIR}
   ${qSlicerBaseQTCore_BINARY_DIR}
   )
-  
+
 # Source files
 SET(KIT_SRCS
   qSlicerAbstractModulePanel.cxx
   qSlicerAbstractModulePanel.h
+  qSlicerAbstractModuleWidget.cxx
+  qSlicerAbstractModuleWidget.h
   qSlicerApplication.cxx
   qSlicerApplication.h
   qSlicerCommandOptions.cxx
@@ -36,11 +38,14 @@ SET(KIT_SRCS
   qSlicerModuleSelectorWidget.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
+  qSlicerWidget.cxx
+  qSlicerWidget.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   qSlicerAbstractModulePanel.h
+  qSlicerAbstractModuleWidget.h
   qSlicerApplication.h
   qSlicerDataDialog.h
   qSlicerDataDialog_p.h
@@ -52,6 +57,7 @@ SET(KIT_MOC_SRCS
   qSlicerModuleSelectorWidget_p.h
   qSlicerSaveDataDialog.h
   qSlicerSaveDataDialog_p.h
+  qSlicerWidget.h
   )
 
 # UI files
@@ -64,11 +70,11 @@ SET(KIT_UI_SRCS
 
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
-  qSlicerBaseQTBase
   qSlicerBaseQTCore
+  qMRMLWidgets
   )
 
-# Python wrap 
+# Python wrap
 IF(Slicer3_USE_PYTHONQT)
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
@@ -80,7 +86,7 @@ SET(KIT_resources
   Resources/qSlicerBaseQTGUI.qrc
 )
 
-Slicer3_build_slicer_qtbase_library( 
+Slicer3_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}

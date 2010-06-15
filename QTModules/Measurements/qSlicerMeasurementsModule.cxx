@@ -18,7 +18,7 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModule, QObject*);
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget * qSlicerMeasurementsModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerMeasurementsModule::createWidgetRepresentation()
 {
   return new qSlicerMeasurementsModuleWidget;
 }

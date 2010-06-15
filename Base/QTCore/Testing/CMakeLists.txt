@@ -1,9 +1,13 @@
 SET(KIT QTCore)
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  qSlicerAbstractCoreModuleTest1.cxx
+  qSlicerAbstractLoadableModuleTest1.cxx
+  qSlicerAbstractModuleTest1
   qSlicerCoreApplicationTest1.cxx
   qSlicerCoreIOManagerTest1.cxx
   qSlicerLoadableModuleFactoryTest1.cxx
+  qSlicerUtilsTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -30,14 +34,18 @@ ENDMACRO( SIMPLE_TEST  )
 
 # Remark: qSlicerModuleFactoryManager class is tested within Applications/SlicerQT/Testing
 
-ADD_TEST( qSlicerCoreApplicationTest1 
+ADD_TEST( qSlicerCoreApplicationTest1
   ${LAUNCH_EXE}
-  ${KIT_TESTS} qSlicerCoreApplicationTest1 
+  ${KIT_TESTS} qSlicerCoreApplicationTest1
   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SlicerQT )
 
-ADD_TEST( qSlicerCoreIOManagerTest1 
+ADD_TEST( qSlicerCoreIOManagerTest1
   ${LAUNCH_EXE}
-  ${KIT_TESTS} qSlicerCoreIOManagerTest1 
+  ${KIT_TESTS} qSlicerCoreIOManagerTest1
   ${CMAKE_SOURCE_DIR}/Libs/MRML/Testing/name.mrml)
 
+SIMPLE_TEST( qSlicerAbstractCoreModuleTest1 )
+SIMPLE_TEST( qSlicerAbstractLoadableModuleTest1 )
+SIMPLE_TEST( qSlicerAbstractModuleTest1 )
 SIMPLE_TEST( qSlicerLoadableModuleFactoryTest1 )
+SIMPLE_TEST( qSlicerUtilsTest1 )

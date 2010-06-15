@@ -3,7 +3,7 @@ PROJECT(qSlicerBaseQTGUIPlugin)
 #
 # See CMake/qCTKDesignerPluginMacros.cmake for details
 #
-  
+
 # Source files
 SET(designer_plugin_SRCS
   qSlicerQTGUIAbstractPlugin.cxx
@@ -24,12 +24,11 @@ SET(designer_plugin_MOC_SRCS
   )
 
 SET(designer_plugin_TARGET_LIBRARIES
-  qSlicerBaseQTBase
   qSlicerBaseQTCLI
   qSlicerBaseQTGUI
   )
 
-qctk_build_designer_plugin( 
+qctk_build_designer_plugin(
   NAME ${PROJECT_NAME}
   SRCS ${designer_plugin_SRCS}
   MOC_SRCS ${designer_plugin_MOC_SRCS}

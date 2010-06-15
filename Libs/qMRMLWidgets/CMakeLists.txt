@@ -89,7 +89,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLVolumeThresholdWidget.h
   qMRMLWindowLevelWidget.h
   )
-  
+
 # UI files
 SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLEventLoggerWidget.ui
@@ -98,7 +98,7 @@ SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLVolumeThresholdWidget.ui
   Resources/UI/qMRMLWindowLevelWidget.ui
 )
-  
+
 QT4_WRAP_CPP(qMRMLWidgets_SRCS ${qMRMLWidgets_MOC_SRCS})
 QT4_WRAP_UI(qMRMLWidgets_UI_CXX ${qMRMLWidgets_UI_SRCS})
 QT4_ADD_RESOURCES(qMRMLWidgets_QRC_SRCS Resources/qMRMLWidgets.qrc)
@@ -113,13 +113,13 @@ SET(include_dirs
   )
 
 SET(QT_INCLUDE_DIRS
-  ${QT_INCLUDE_DIR} 
+  ${QT_INCLUDE_DIR}
   ${QT_QTWEBKIT_INCLUDE_DIR}
-  ${QT_QTGUI_INCLUDE_DIR} 
-  ${QT_QTCORE_INCLUDE_DIR} 
+  ${QT_QTGUI_INCLUDE_DIR}
+  ${QT_QTCORE_INCLUDE_DIR}
   )
 
-FOREACH(package 
+FOREACH(package
     MRML
     )
   # This is mostly to test building this lib as standalone outside Slicer3
@@ -127,7 +127,7 @@ FOREACH(package
     SET(${package}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../${package}")
   ENDIF(NOT DEFINED ${package}_SOURCE_DIR)
   IF(NOT DEFINED ${package}_BINARY_DIR)
-    STRING(REPLACE ${PROJECT_NAME} ${package} 
+    STRING(REPLACE ${PROJECT_NAME} ${package}
       ${package}_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
     LINK_DIRECTORIES(${${package}_BINARY_DIR})
   ENDIF(NOT DEFINED ${package}_BINARY_DIR)
@@ -142,8 +142,8 @@ SET(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${include_dirs})
 
 FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-INSTALL(FILES 
-  ${headers} 
+INSTALL(FILES
+  ${headers}
   DESTINATION include/${PROJECT_NAME} COMPONENT Development
   )
 
@@ -153,18 +153,18 @@ INSTALL(FILES
 
 SET(lib_name "qMRMLWidgets")
 
-ADD_LIBRARY(${lib_name} 
+ADD_LIBRARY(${lib_name}
   ${qMRMLWidgets_SRCS}
   ${qMRMLWidgets_UI_CXX}
   ${qMRMLWidgets_QRC_SRCS}
 )
 
-SET(qMRMLWidgets_LIBRARIES 
+SET(qMRMLWidgets_LIBRARIES
   ${QT_LIBRARIES}
   ${CTK_LIBRARIES}
   MRML
   )
-  
+
 TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})
 
 # Apply user-defined properties to the library target.
@@ -180,7 +180,7 @@ ENDIF(Slicer3_LIBRARY_PROPERTIES)
 #
 
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
   LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
   )

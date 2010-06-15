@@ -8,20 +8,20 @@ SET(KIT_export_directive "Q_SLICER_BASE_QTCOREMODULES_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${qSlicerBaseQTBase_SOURCE_DIR}
-  ${qSlicerBaseQTBase_BINARY_DIR}
+  ${qSlicerBaseQTGUI_SOURCE_DIR}
+  ${qSlicerBaseQTGUI_BINARY_DIR}
   )
-  
+
 # Source files
 SET(KIT_SRCS
   qSlicerCoreModuleFactory.cxx
   qSlicerCoreModuleFactory.h
-  
+
   qSlicerCamerasModule.cxx
   qSlicerCamerasModule.h
   qSlicerCamerasModuleWidget.cxx
   qSlicerCamerasModuleWidget.h
-  
+
   qSlicerModelsIO.cxx
   qSlicerModelsIO.h
 
@@ -29,7 +29,7 @@ SET(KIT_SRCS
   qSlicerMRMLTreeModule.h
   qSlicerMRMLTreeModuleWidget.cxx
   qSlicerMRMLTreeModuleWidget.h
-  
+
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.cxx
@@ -40,7 +40,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   qSlicerCamerasModule.h
   qSlicerCamerasModuleWidget.h
-  
+
   qSlicerModelsIO.h
 
   qSlicerMRMLTreeModule.h
@@ -59,8 +59,7 @@ SET(KIT_UI_SRCS
 
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
-  qSlicerBaseQTBase
-  qSlicerBaseQTCore
+  qSlicerBaseQTGUI
   )
 
 # Resources
@@ -68,7 +67,7 @@ SET(KIT_resources
   Resources/qSlicerBaseQTCoreModules.qrc
 )
 
-Slicer3_build_slicer_qtbase_library( 
+Slicer3_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}

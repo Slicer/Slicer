@@ -33,29 +33,29 @@ public:
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerMRMLTreeModule(QObject *parent=0);
 
-  /// 
+  ///
   /// Display name for the module
   qSlicerGetTitleMacro("MRMLTree");
 
-  /// 
+  ///
   /// Help text of the module
   virtual QString helpText()const;
 
-  /// 
+  ///
   /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
 
 protected:
-  /// 
+  ///
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
+  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  /// 
+  ///
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
-  
+
 private:
-  /// 
+  ///
   /// Pimpl declaration
   CTK_DECLARE_PRIVATE(qSlicerMRMLTreeModule);
 };

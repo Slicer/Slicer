@@ -8,8 +8,6 @@ SET(KIT_export_directive "Q_SLICER_BASE_QTCORE_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${qSlicerBaseQTBase_SOURCE_DIR}
-  ${qSlicerBaseQTBase_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   ${MRMLCLI_SOURCE_DIR}
@@ -17,9 +15,17 @@ SET(KIT_include_directories
   ${FreeSurfer_SOURCE_DIR} # for qSlicerXcedeCatalogIO
   ${FreeSurfer_BINARY_DIR} # for qSlicerXcedeCatalogIO
   )
-  
+
 # Source files
 SET(KIT_SRCS
+  qSlicerAbstractCoreModule.cxx
+  qSlicerAbstractCoreModule.h
+  qSlicerAbstractLoadableModule.cxx
+  qSlicerAbstractLoadableModule.h
+  qSlicerAbstractModule.cxx
+  qSlicerAbstractModule.h
+  qSlicerAbstractModuleRepresentation.cxx
+  qSlicerAbstractModuleRepresentation.h
   qSlicerCoreApplication.cxx
   qSlicerCoreApplication.h
   qSlicerCoreCommandOptions.cxx
@@ -32,20 +38,27 @@ SET(KIT_SRCS
   qSlicerIOOptions.h
   qSlicerLoadableModuleFactory.cxx
   qSlicerLoadableModuleFactory.h
-  qSlicerModuleManager.cxx
-  qSlicerModuleManager.h
   qSlicerModuleFactoryManager.cxx
   qSlicerModuleFactoryManager.h
+  qSlicerModuleManager.cxx
+  qSlicerModuleManager.h
+  qSlicerObject.cxx
+  qSlicerObject.h
   qSlicerSceneIO.cxx
   qSlicerSceneIO.h
   qSlicerSlicer2SceneReader.cxx
   qSlicerSlicer2SceneReader.h
+  qSlicerUtils.cxx
+  qSlicerUtils.h
   qSlicerXcedeCatalogIO.cxx
   qSlicerXcedeCatalogIO.h
   )
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  qSlicerAbstractCoreModule.h
+  qSlicerAbstractLoadableModule.h
+  qSlicerAbstractModule.h
   qSlicerCoreApplication.h
   qSlicerCoreIOManager.h
   qSlicerIO.h
@@ -64,8 +77,10 @@ ENDIF(Slicer3_USE_PYTHONQT)
 SET(KIT_target_libraries
   ModuleDescriptionParser
   MRMLCLI
-  qSlicerBaseQTBase
+  SlicerBaseLogic
   FreeSurfer # for qSlicerXcedeCatalogIO
+  CTKCore
+  CTKVisualizationVTKCore
   )
 
 # Resources
@@ -73,7 +88,7 @@ SET(KIT_resources
   Resources/qSlicerBaseQTCore.qrc
 )
 
-# Python wrap 
+# Python wrap
 IF(Slicer3_USE_PYTHONQT)
 
   LIST(APPEND KIT_target_libraries
@@ -89,7 +104,7 @@ IF(Slicer3_USE_PYTHONQT)
   LIST(APPEND KIT_MOC_SRCS
     qSlicerPythonManager.h
     )
-    
+
 ENDIF(Slicer3_USE_PYTHONQT)
 
 Slicer3_build_slicer_qtbase_library(

@@ -29,7 +29,7 @@ protected:
 
   // Description:
   // Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
+  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
 
   // Description:
   // Create and return the logic associated to this module

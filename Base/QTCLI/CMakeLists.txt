@@ -8,8 +8,10 @@ SET(KIT_export_directive "Q_SLICER_BASE_QTCLI_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${qSlicerBaseQTBase_SOURCE_DIR}
-  ${qSlicerBaseQTBase_BINARY_DIR}
+  ${qSlicerBaseQTCore_SOURCE_DIR}
+  ${qSlicerBaseQTCore_BINARY_DIR}
+  ${qSlicerBaseQTGUI_SOURCE_DIR}
+  ${qSlicerBaseQTGUI_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   ${MRMLCLI_SOURCE_DIR}
@@ -54,10 +56,10 @@ SET(KIT_resources
 
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
-  qSlicerBaseQTBase
   qSlicerBaseQTCore
+  qSlicerBaseQTGUI
   qMRMLWidgets # HACK: Added ONLY for qCTKFlowLayout
-  SlicerBaseLogic
+  #SlicerBaseLogic
   ModuleDescriptionParser
   MRMLCLI
   )

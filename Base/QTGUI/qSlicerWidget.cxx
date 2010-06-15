@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -19,9 +19,6 @@
 
 #include "qSlicerWidget.h"
 
-// SlicerLogic includes
-#include "vtkSlicerApplicationLogic.h"
-
 // VTK includes
 #include "vtkSmartPointer.h"
 
@@ -30,12 +27,11 @@ class qSlicerWidgetPrivate: public ctkPrivate<qSlicerWidget>
 {
 public:
   QPointer<QWidget>                          ParentContainer;
-  vtkSmartPointer<vtkMRMLScene>              MRMLScene;
 };
 
 //-----------------------------------------------------------------------------
 qSlicerWidget::qSlicerWidget(QWidget * _parent, Qt::WindowFlags f)
-  :Superclass(_parent, f)
+  :QWidget(_parent, f)
 {
   CTK_INIT_PRIVATE(qSlicerWidget);
 }
@@ -148,24 +144,19 @@ void qSlicerWidget::setParentVisible(bool visible)
      }
    else
      {
-     this->Superclass::setVisible(visible);
+     this->QWidget::setVisible(visible);
      }
 }
-
-//-----------------------------------------------------------------------------
-void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
-{
-  if (scene == ctk_d()->MRMLScene)
-    {
-    return ;
-    }
-  ctk_d()->MRMLScene = scene;
-  emit mrmlSceneChanged(scene);
-}
-
-//-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerWidget, vtkMRMLScene*, mrmlScene, MRMLScene);
-
 //-----------------------------------------------------------------------------
 //CTK_SET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
 //CTK_GET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+//-----------------------------------------------------------------------------
+void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  bool emitSignal = this->mrmlScene() != scene;
+  this->qSlicerObject::setMRMLScene(scene);
+  if (emitSignal)
+    {
+    emit mrmlSceneChanged(scene);
+    }
+}

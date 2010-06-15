@@ -26,7 +26,7 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModule, QObject*);
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget * qSlicerCamerasModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation * qSlicerCamerasModule::createWidgetRepresentation()
 {
   return new qSlicerCamerasModuleWidget;
 }

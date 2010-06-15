@@ -75,7 +75,7 @@ void qSlicerCLIModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget * qSlicerCLIModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation * qSlicerCLIModule::createWidgetRepresentation()
 {
   CTK_D(qSlicerCLIModule);
   return new qSlicerCLIModuleWidget(&d->Desc);

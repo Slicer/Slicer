@@ -35,7 +35,7 @@ void qSlicerModuleTemplateModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget * qSlicerModuleTemplateModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation * qSlicerModuleTemplateModule::createWidgetRepresentation()
 {
   return new qSlicerModuleTemplateModuleWidget;
 }

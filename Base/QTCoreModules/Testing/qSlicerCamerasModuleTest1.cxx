@@ -9,9 +9,6 @@
 
 =========================================================================auto=*/
 
-// CTK includes
-#include <ctkSettings.h>
-
 // SlicerQT includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCamerasModule.h"
@@ -43,7 +40,7 @@ int qSlicerCamerasModuleTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  ctkSettings * settings = app.settings();
+  QSettings * settings = app.settings();
   if( settings == 0 )
     {
     std::cerr << "Problem with settings()" << std::endl;

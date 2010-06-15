@@ -31,7 +31,7 @@ public:
 
 protected:
   /// Create and return a widget representation of the object
-  virtual qSlicerAbstractModuleWidget* createWidgetRepresentation();
+  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
   virtual vtkSlicerLogic* createLogic();
 
 private:

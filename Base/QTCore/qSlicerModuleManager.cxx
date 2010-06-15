@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -38,7 +38,7 @@ public:
 
   ///
   /// Store Pair<ModuleName, ModuleObject>
-  QHash<QString, qSlicerAbstractModule*> ModuleList;  
+  QHash<QString, qSlicerAbstractModule*> ModuleList;
   qSlicerModuleFactoryManager            ModuleFactoryManager;
 };
 
@@ -52,7 +52,6 @@ qSlicerModuleManager::qSlicerModuleManager()
   Q_ASSERT(qSlicerCoreApplication::application());
   // and has been initialized
   Q_ASSERT(qSlicerCoreApplication::application()->initialized());
-  
 }
 
 //-----------------------------------------------------------------------------
@@ -165,7 +164,7 @@ bool qSlicerModuleManager::unLoadModule(const QString& name)
     {
     return false;
     }
-  
+
   qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find( name );
   if (iter == d->ModuleList.constEnd())
     {
@@ -175,10 +174,10 @@ bool qSlicerModuleManager::unLoadModule(const QString& name)
 
   qSlicerAbstractModule * _module = iter.value();
   Q_ASSERT(_module);
-  
+
   // Handle pre-unload
   emit this->moduleAboutToBeUnloaded(_module);
-  
+
   // Tells Qt to delete the object when appropriate
   _module->deleteLater();
 
@@ -198,12 +197,14 @@ qSlicerAbstractModule* qSlicerModuleManager::module(const QString& name)
 //  Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
   if (!d->ModuleFactoryManager.isRegistered(name))
     {
+    qDebug()<< "name: " << name << "not registered.";
     return 0;
     }
-  
+
   qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find(name);
   if ( iter == d->ModuleList.constEnd() )
     {
+    qDebug()<< "name: " << name << "not found.";
     return 0;
     }
   return iter.value();

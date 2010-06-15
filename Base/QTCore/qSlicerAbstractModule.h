@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -19,13 +19,13 @@
 #include <ctkPimpl.h>
 
 // QTBase includes
-#include "qSlicerBaseQTBaseExport.h"
+#include "qSlicerBaseQTCoreExport.h"
 
-class qSlicerAbstractModuleWidget;
-class vtkSlicerLogic; 
+class qSlicerAbstractModuleRepresentation;
+class vtkSlicerLogic;
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
-class QAction; 
+class QAction;
 class qSlicerAbstractModulePrivate;
 
 
@@ -42,7 +42,7 @@ class qSlicerAbstractModulePrivate;
 /// displayed to the user.
 /// When a MRML scene is set to the module, the module set the scene to the
 /// UI widget and the logic.
-class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractModule : public QObject
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractModule : public QObject
 {
   /// Any object deriving from QObject must have the Q_OBJECT macro in
   /// order to have the signal/slots working and the meta-class name valid.
@@ -61,13 +61,13 @@ public:
   /// Constructor
   /// Warning: If there is no parent given, make sure you delete the object.
   /// The modules can typically be instanciated before the application
-  /// is initialized (module manager, iomanager...). Most of the 
+  /// is initialized (module manager, iomanager...). Most of the
   /// initialization must be done in qSlicerAbstractModule::setup()
   qSlicerAbstractModule(QObject *parent=0);
 
   virtual void printAdditionalInfo();
 
-  /// 
+  ///
   /// Convenient method to return slicer wiki URL
   QString slicerWikiUrl()const{ return "http://www.slicer.org/slicerWiki/index.php"; }
 
@@ -80,8 +80,8 @@ public:
   ///
   /// Set/Get the name of the module (must be unique)
   virtual QString name()const;
-  virtual void setName(const QString& name); 
-  
+  virtual void setName(const QString& name);
+
   ///
   /// Title of the module, (displayed to the user)
   virtual QString title()const = 0;
@@ -98,7 +98,7 @@ public:
   /// This method allows to get a pointer to the WidgetRepresentation.
   /// If no WidgetRepresentation already exists, one will be created calling
   /// 'createWidgetRepresentation' method.
-  qSlicerAbstractModuleWidget* widgetRepresentation();
+  qSlicerAbstractModuleRepresentation* widgetRepresentation();
 
   ///
   /// Get/Set the application logic.
@@ -120,36 +120,38 @@ public:
   /// Returns true if the module is enabled.
   /// By default, a module is disabled
   bool isEnabled()const;
-  
+  friend class qSlicerAbstratModuleRepresentation;
+
 public slots:
 
   ///
   /// Enable/Disable the module
   virtual void setEnabled(bool enabled);
 
-  /// 
+  ///
   /// Set the current MRML scene to the widget
   virtual void setMRMLScene(vtkMRMLScene*);
 
 protected:
-  /// 
+  ///
   /// All initialization code should be done in the setup
   virtual void setup() = 0;
 
-  /// 
+  ///
   /// Create and return a widget representation for the module.
-  virtual qSlicerAbstractModuleWidget* createWidgetRepresentation() = 0;
+  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation() = 0;
 
-  /// 
+  ///
   /// Create and return the module logic
   /// Note: Only one instance of the logic will exist per module
   virtual vtkSlicerLogic* createLogic() = 0;
-  
+
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerAbstractModule);
-
-  /// 
+  friend class qSlicerAbstractModuleRepresentation;
+  void representationDeleted();
+  ///
   /// Indicate if the module has already been initialized
   bool Initialized;
 };

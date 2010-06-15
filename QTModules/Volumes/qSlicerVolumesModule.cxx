@@ -39,7 +39,7 @@ void qSlicerVolumesModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget * qSlicerVolumesModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerVolumesModule::createWidgetRepresentation()
 {
   return new qSlicerVolumesModuleWidget;
 }

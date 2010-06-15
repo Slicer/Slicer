@@ -51,11 +51,11 @@ class qSlicerApplicationPrivate: public ctkPrivate<qSlicerApplication>
   CTK_DECLARE_PUBLIC(qSlicerApplication);
   qSlicerApplicationPrivate();
 
-  /// 
+  ///
   /// Initialize application style
   void init();
 
-  /// 
+  ///
   /// Initialize application style
   void initStyle();
 
@@ -83,7 +83,7 @@ class qSlicerApplicationPrivate: public ctkPrivate<qSlicerApplication>
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::qSlicerApplicationPrivate()
 {
-  
+
 }
 
 //-----------------------------------------------------------------------------
@@ -257,4 +257,11 @@ void qSlicerApplication::setTopLevelWidgetVisible(qSlicerWidget* widget, bool vi
     {
     d->TopLevelWidgetsSavedVisibilityState[widget] = visible;
     }
+}
+
+//-----------------------------------------------------------------------------
+QSettings* qSlicerApplication::newSettings(const QString& organization,
+                                           const QString& application)
+{
+  return new ctkSettings(organization, application, this);
 }

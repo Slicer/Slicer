@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -20,11 +20,11 @@
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
 
-#include "qSlicerBaseQTBaseExport.h"
+#include "qSlicerBaseQTCoreExport.h"
 
 class qSlicerAbstractCoreModulePrivate;
 
-class Q_SLICER_BASE_QTBASE_EXPORT qSlicerAbstractCoreModule : public qSlicerAbstractModule
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public qSlicerAbstractModule
 {
   Q_OBJECT
 

@@ -9,7 +9,7 @@
 
 #include "qSlicerVolumesModuleExport.h"
 
-class qSlicerAbstractModuleWidget; 
+class qSlicerAbstractModuleWidget;
 class qSlicerVolumesModulePrivate;
 
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
@@ -31,7 +31,7 @@ protected:
 
   ///
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
+  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
 
   ///
   /// Create and return the logic associated to this module

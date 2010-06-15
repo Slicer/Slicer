@@ -8,29 +8,29 @@ MACRO(Slicer3_build_slicer_qtbase_library)
     ""
     ${ARGN}
     )
-  
+
   # Sanity checks
   IF(NOT DEFINED SLICERQTBASELIB_NAME)
     MESSAGE(SEND_ERROR "NAME is mandatory")
   ENDIF(NOT DEFINED SLICERQTBASELIB_NAME)
-  
+
   IF(NOT DEFINED SLICERQTBASELIB_EXPORT_DIRECTIVE)
     MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
   ENDIF(NOT DEFINED SLICERQTBASELIB_EXPORT_DIRECTIVE)
-  
+
   # Define library name
   SET(lib_name ${SLICERQTBASELIB_NAME})
 
   # --------------------------------------------------------------------------
   # Include dirs
-  
+
   SET(QT_INCLUDE_DIRS
-    ${QT_INCLUDE_DIR} 
+    ${QT_INCLUDE_DIR}
     ${QT_QTWEBKIT_INCLUDE_DIR}
-    ${QT_QTGUI_INCLUDE_DIR} 
-    ${QT_QTCORE_INCLUDE_DIR} 
+    ${QT_QTGUI_INCLUDE_DIR}
+    ${QT_QTCORE_INCLUDE_DIR}
     )
-  
+
   SET(include_dirs
     ${QT_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -43,27 +43,26 @@ MACRO(Slicer3_build_slicer_qtbase_library)
     ${MRML_BINARY_DIR}
     ${SLICERQTBASELIB_INCLUDE_DIRECTORIES}
     )
-  
+
   INCLUDE_DIRECTORIES(${include_dirs})
-  
+
   slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS tmp)
   slicer3_set_persistent_property(Slicer3_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
-  
-  
+
   #-----------------------------------------------------------------------------
   # Configure
   #
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${SLICERQTBASELIB_EXPORT_DIRECTIVE})
   SET(MY_EXPORT_HEADER_PREFIX ${SLICERQTBASELIB_NAME})
   SET(MY_LIBNAME ${lib_name})
-  
+
   CONFIGURE_FILE(
     ${Slicer3_SOURCE_DIR}/qSlicerExport.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   SET(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
-    
+
   #-----------------------------------------------------------------------------
   # Sources
   #
@@ -95,11 +94,9 @@ MACRO(Slicer3_build_slicer_qtbase_library)
     ${dynamicHeaders}
   )
 
-  
-  
   # --------------------------------------------------------------------------
   # Build the library
-  
+
   slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
   slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 
@@ -109,33 +106,33 @@ MACRO(Slicer3_build_slicer_qtbase_library)
     ${SLICERQTBASELIB_UI_CXX}
     ${SLICERQTBASELIB_QRC_SRCS}
     )
-  
+
   # Apply user-defined properties to the library target.
   IF(Slicer3_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer3_LIBRARY_PROPERTIES})
   ENDIF(Slicer3_LIBRARY_PROPERTIES)
-  
-  SET(QT_LIBRARIES 
-    ${QT_QTCORE_LIBRARY} 
-    ${QT_QTGUI_LIBRARY} 
-    ${QT_QTWEBKIT_LIBRARY} 
+
+  SET(QT_LIBRARIES
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
+    ${QT_QTWEBKIT_LIBRARY}
     )
-  
+
   TARGET_LINK_LIBRARIES(${lib_name}
     ${QT_LIBRARIES}
     ${SLICERQTBASELIB_TARGET_LIBRARIES}
     )
-  
+
   # Install rules
   INSTALL(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+    RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
     LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
   )
 
   # Install headers
   FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  INSTALL(FILES 
+  INSTALL(FILES
     ${headers}
     ${dynamicHeaders}
     DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development

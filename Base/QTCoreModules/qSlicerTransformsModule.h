@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -35,29 +35,29 @@ public:
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerTransformsModule(QObject *parent=0);
 
-  /// 
+  ///
   /// Display name for the module
   qSlicerGetTitleMacro("Transforms");
 
-  /// 
+  ///
   /// Help text of the module
   virtual QString helpText()const;
 
-  /// 
+  ///
   /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
 
 protected:
-  /// 
+  ///
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
+  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  /// 
+  ///
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
-  
+
 private:
-  /// 
+  ///
   /// Pimpl declaration
   CTK_DECLARE_PRIVATE(qSlicerTransformsModule);
 };

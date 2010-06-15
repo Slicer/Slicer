@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -16,7 +16,7 @@
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
-#include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerAbstractModuleRepresentation.h"
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
@@ -37,17 +37,17 @@ public:
   qSlicerAbstractModulePrivate()
     {
     this->Enabled = false;
-    this->Logic = 0;
-    this->Name = "NA"; 
+    this->Name = "NA";
+    this->WidgetRepresentation = 0;
     }
   ~qSlicerAbstractModulePrivate();
-  
+
   bool                                       Enabled;
   QString                                    Name;
-  QPointer<qSlicerAbstractModuleWidget>      WidgetRepresentation;
+  qSlicerAbstractModuleRepresentation*       WidgetRepresentation;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
-  vtkSmartPointer<vtkSlicerLogic>            Logic; 
+  vtkSmartPointer<vtkSlicerLogic>            Logic;
 };
 
 //-----------------------------------------------------------------------------
@@ -57,10 +57,7 @@ public:
 qSlicerAbstractModulePrivate::~qSlicerAbstractModulePrivate()
 {
   // Delete the widget representation
-  if (this->WidgetRepresentation)
-    {
-    delete this->WidgetRepresentation;
-    }
+  delete this->WidgetRepresentation;
 }
 
 //-----------------------------------------------------------------------------
@@ -95,15 +92,15 @@ void qSlicerAbstractModule::setName(const QString& _name)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractModule::category()const 
-{ 
-  return QString(); 
+QString qSlicerAbstractModule::category()const
+{
+  return QString();
 }
- 
+
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractModule::contributor()const 
-{ 
-  return QString(); 
+QString qSlicerAbstractModule::contributor()const
+{
+  return QString();
 }
 
 //-----------------------------------------------------------------------------
@@ -113,8 +110,8 @@ QString qSlicerAbstractModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractModule::acknowledgementText()const 
-{ 
+QString qSlicerAbstractModule::acknowledgementText()const
+{
   return QString();
 }
 
@@ -127,7 +124,7 @@ void qSlicerAbstractModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
   CTK_D(qSlicerAbstractModule);
   if (d->MRMLScene == _mrmlScene)
     {
-    return; 
+    return;
     }
   d->MRMLScene = _mrmlScene;
   // Since we don't want 'setMRMLScene' to instanciate explicitly the logic,
@@ -162,7 +159,7 @@ CTK_GET_CXX(qSlicerAbstractModule, bool, isEnabled, Enabled);
 CTK_SET_CXX(qSlicerAbstractModule, bool, setEnabled, Enabled);
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerAbstractModule::widgetRepresentation()
 {
   CTK_D(qSlicerAbstractModule);
 
@@ -191,16 +188,16 @@ qSlicerAbstractModuleWidget* qSlicerAbstractModule::widgetRepresentation()
     // Note: setMRMLScene should be called after setup (just to make sure widgets
     // are well written and can handle empty mrmlscene
     d->WidgetRepresentation->setMRMLScene(this->mrmlScene());
-    d->WidgetRepresentation->setWindowTitle(this->title());
+    //d->WidgetRepresentation->setWindowTitle(this->title());
     }
-  return d->WidgetRepresentation; 
+  return d->WidgetRepresentation;
 }
 
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerAbstractModule::logic()
 {
   CTK_D(qSlicerAbstractModule);
-  
+
   // Return a logic object is one already exists
   if (d->Logic)
     {
@@ -208,7 +205,7 @@ vtkSlicerLogic* qSlicerAbstractModule::logic()
     }
   // Attempt to create a logic object
   d->Logic.TakeReference(this->createLogic());
-  
+
   // If createLogic return a valid object, set its Scene and AppLogic
   // Note also that, in case no logic is associated with the module,
   // 'createLogic()' could return 0
@@ -221,6 +218,12 @@ vtkSlicerLogic* qSlicerAbstractModule::logic()
       }
     d->Logic->SetMRMLScene(this->mrmlScene());
     }
-  return d->Logic; 
+  return d->Logic;
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerAbstractModule::representationDeleted()
+{
+  CTK_D(qSlicerAbstractModule);
+  d->WidgetRepresentation = 0;
+}

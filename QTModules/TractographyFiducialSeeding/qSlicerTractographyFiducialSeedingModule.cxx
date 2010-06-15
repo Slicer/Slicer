@@ -24,7 +24,7 @@ qSlicerTractographyFiducialSeedingModule(QObject* _parent):Superclass(_parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget* qSlicerTractographyFiducialSeedingModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerTractographyFiducialSeedingModule::createWidgetRepresentation()
 {
   return new qSlicerTractographyFiducialSeedingModuleWidget;
 }

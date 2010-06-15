@@ -17,7 +17,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel: public qSlicerAbstractModul
   Q_OBJECT
 public:
   qSlicerModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
-  
+
   void clear();
 
 public slots:

@@ -21,16 +21,16 @@ public:
   typedef qSlicerAbstractLoadableModule Superclass;
   qSlicerMeasurementsModule(QObject *parent=0);
   virtual ~qSlicerMeasurementsModule(){}
-  
+
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
 protected:
 
-  /// 
+  ///
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
+  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  /// 
+  ///
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 

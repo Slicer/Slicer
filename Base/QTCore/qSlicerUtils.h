@@ -16,9 +16,9 @@
 
 #include <QString>
 
-#include "qSlicerBaseQTBaseExport.h"
+#include "qSlicerBaseQTCoreExport.h"
 
-class Q_SLICER_BASE_QTBASE_EXPORT qSlicerUtils
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerUtils
 {
   
 public:

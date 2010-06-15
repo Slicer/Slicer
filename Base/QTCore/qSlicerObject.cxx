@@ -10,42 +10,44 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerMRMLTreeModule.h"
 
-// SlicerQt includes
-#include "qSlicerMRMLTreeModuleWidget.h"
+// Qt includes
+#include <QDebug>
+
+// QTCore includes
+#include "qSlicerObject.h"
+
+// VTK includes
+#include "vtkMRMLScene.h"
+#include "vtkSmartPointer.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerMRMLTreeModulePrivate: public ctkPrivate<qSlicerMRMLTreeModule>
+class qSlicerObjectPrivate: public ctkPrivate<qSlicerObject>
 {
 public:
+  vtkSmartPointer<vtkMRMLScene>              MRMLScene;
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMRMLTreeModule, QObject*);
-
-//-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerMRMLTreeModule::createWidgetRepresentation()
+qSlicerObject::qSlicerObject()
 {
-  return new qSlicerMRMLTreeModuleWidget;
+  CTK_INIT_PRIVATE(qSlicerObject);
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerMRMLTreeModule::createLogic()
+qSlicerObject::~qSlicerObject()
 {
-  return 0;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMRMLTreeModule::helpText()const
+void qSlicerObject::setMRMLScene(vtkMRMLScene* scene)
 {
-  QString help = "%1";
-  return help.arg(this->slicerWikiUrl());
+  if (scene == ctk_d()->MRMLScene)
+    {
+    return ;
+    }
+  ctk_d()->MRMLScene = scene;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMRMLTreeModule::acknowledgementText()const
-{
-  QString acknowledgement = "";
-  return acknowledgement;
-}
+CTK_GET_CXX(qSlicerObject, vtkMRMLScene*, mrmlScene, MRMLScene);

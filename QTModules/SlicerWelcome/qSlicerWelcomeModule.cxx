@@ -19,7 +19,7 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerWelcomeModule, QObject*);
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget * qSlicerWelcomeModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerWelcomeModule::createWidgetRepresentation()
 {
   return new qSlicerWelcomeModuleWidget;
 }

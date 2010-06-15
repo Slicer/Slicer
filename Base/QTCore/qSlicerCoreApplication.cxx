@@ -15,11 +15,9 @@
 #include <QSharedPointer>
 #include <QStringList>
 #include <QDir>
+#include <QSettings>
 #include <QTimer>
 #include <QDebug>
-
-// CTK includes
-#include <ctkSettings.h>
 
 // MRML includes
 #include "vtkMRMLScene.h"
@@ -60,15 +58,15 @@ class qSlicerCoreApplicationPrivate: public ctkPrivate<qSlicerCoreApplication>
 {
 public:
   CTK_DECLARE_PUBLIC(qSlicerCoreApplication);
-  
-  typedef qSlicerCoreApplicationPrivate Self; 
+
+  typedef qSlicerCoreApplicationPrivate Self;
   qSlicerCoreApplicationPrivate();
   ~qSlicerCoreApplicationPrivate();
 
   ///
   /// Instanciate settings object
-  ctkSettings* instantiateSettings(const QString& suffix, bool useTmp);
-  
+  QSettings* instantiateSettings(const QString& suffix, bool useTmp);
+
   ///
   /// Given the program name, should return Slicer Home Directory
   void discoverSlicerHomeDirectory(const QString& programName);
@@ -80,7 +78,7 @@ public:
   ///
   /// Parse arguments
   bool parseArguments(int argc, char** argv);
-  
+
   ///
   /// See the ExitWhenDone flag to True
   void terminate();
@@ -94,8 +92,8 @@ public:
   vtkSmartPointer< vtkMRMLScene >               MRMLScene;
   vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
 
-  QString                              SlicerHome;
-  ctkSettings*                         Settings;
+  QString                                       SlicerHome;
+  QSettings*                                    Settings;
 
   ///
   /// ModuleManager - It should exist only one instance of the factory
@@ -110,7 +108,7 @@ public:
   QSharedPointer<qSlicerCoreCommandOptions>  CoreCommandOptions;
 
   /// ExitWhenDone flag
-  bool                                 ExitWhenDone; 
+  bool                                 ExitWhenDone;
 
   /// For ::PutEnv
   /// See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
@@ -120,7 +118,7 @@ public:
       {
       for (int i = 0; i < this->size(); ++i)
         {
-        delete []this->at(i); 
+        delete []this->at(i);
         }
       }
   };
@@ -180,7 +178,7 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 }
 
 //-----------------------------------------------------------------------------
-ctkSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suffix,
+QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suffix,
                                                                 bool useTmp)
 {
   CTK_P(qSlicerCoreApplication);
@@ -196,7 +194,7 @@ ctkSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& s
     settingsFileName += "-tmp";
     }
 
-  ctkSettings* settings = new ctkSettings(p->organizationName(), settingsFileName, p);
+  QSettings* settings = p->newSettings(p->organizationName(), settingsFileName);
 
   if (useTmp)
     {
@@ -452,11 +450,10 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
   Q_UNUSED(options);
-  
 }
 
 //-----------------------------------------------------------------------------
-ctkSettings* qSlicerCoreApplication::settings()
+QSettings* qSlicerCoreApplication::settings()
 {
   CTK_D(qSlicerCoreApplication);
 
@@ -473,7 +470,7 @@ void qSlicerCoreApplication::disableSettings()
 {
   CTK_D(qSlicerCoreApplication);
   Q_ASSERT(!d->Settings);
-  
+
   // Instanciate empty Settings
   d->Settings = d->instantiateSettings("", true);
 }
@@ -484,6 +481,13 @@ void qSlicerCoreApplication::clearSettings()
   CTK_D(qSlicerCoreApplication);
   Q_ASSERT(!d->Settings);
   d->Settings->clear();
+}
+
+//-----------------------------------------------------------------------------
+QSettings* qSlicerCoreApplication::newSettings(const QString& organization,
+                                               const QString& application)
+{
+  return new QSettings(organization, application, this);
 }
 
 //-----------------------------------------------------------------------------

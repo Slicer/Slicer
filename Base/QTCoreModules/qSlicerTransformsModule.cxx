@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -26,7 +26,7 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModule, QObject*);
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget * qSlicerTransformsModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerTransformsModule::createWidgetRepresentation()
 {
   return new qSlicerTransformsModuleWidget;
 }

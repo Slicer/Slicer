@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -22,7 +22,7 @@
 #include "qSlicerBaseQTCoreExport.h"
 
 class qSlicerAbstractModule;
-class qSlicerModuleFactoryManager; 
+class qSlicerModuleFactoryManager;
 
 class qSlicerModuleManagerPrivate;
 
@@ -33,31 +33,31 @@ public:
   qSlicerModuleManager();
   virtual ~qSlicerModuleManager();
 
-  /// 
+  ///
   virtual void printAdditionalInfo();
 
-  /// 
+  ///
   /// Return a pointer to the current module factory manager
   qSlicerModuleFactoryManager * factoryManager()const;
 
-  /// 
+  ///
   bool loadModule(const QString& name);
 
-  /// 
+  ///
   bool unLoadModule(const QString& name);
 
-  /// 
+  ///
   bool isLoaded(const QString& name)const;
 
-  /// 
+  ///
   qSlicerAbstractModule* module(const QString& name);
 
-  /// 
+  ///
   /// Convenient method to get module title given its name
   /// Deprecated
   QString moduleTitle(const QString& name) const;
 
-  /// 
+  ///
   /// Convenient method to get module name given its title
   /// Deprecated
   QString moduleName(const QString& title) const;

@@ -20,7 +20,7 @@ class qSlicermiAnnotationModulePrivate: public ctkPrivate<qSlicermiAnnotationMod
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicermiAnnotationModule, QObject*);
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget * qSlicermiAnnotationModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicermiAnnotationModule::createWidgetRepresentation()
 {
   return new qSlicermiAnnotationModuleWidget;
 }

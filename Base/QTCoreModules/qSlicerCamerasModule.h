@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -22,7 +22,7 @@
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
-class qSlicerAbstractModuleWidget; 
+class qSlicerAbstractModuleWidget;
 class qSlicerCamerasModulePrivate;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCamerasModule :
@@ -41,14 +41,14 @@ public:
 
 protected:
 
-  /// 
+  ///
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleWidget * createWidgetRepresentation();
+  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  /// 
+  ///
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
-  
+
 private:
   CTK_DECLARE_PRIVATE(qSlicerCamerasModule);
 };
