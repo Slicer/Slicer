@@ -47,7 +47,7 @@ public:
 
 //-----------------------------------------------------------------------------
 // qSlicerAbstractModulePrivate methods
-WidgetRepresentation::WidgetRepresentation()
+qSlicerAbstractModulePrivate::qSlicerAbstractModulePrivate()
 {
   this->Enabled = false;
   this->Name = "NA";
