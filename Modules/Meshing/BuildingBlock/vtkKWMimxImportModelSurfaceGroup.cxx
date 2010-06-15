@@ -77,6 +77,36 @@ PURPOSE.  See the above copyright notices for more information.
 vtkStandardNewMacro(vtkKWMimxImportModelSurfaceGroup);
 vtkCxxRevisionMacro(vtkKWMimxImportModelSurfaceGroup, "$Revision: 1.1.2.1 $");
 //----------------------------------------------------------------------------
+void vtkKWMimxImportModelSurfaceGroup::FillModelComboBox()
+{
+  // since slicer models can serve as surfaces to begin the meshing process, we want
+  // to discover any new models  and add them to a list the user can
+  // browse.
+
+  std::vector<vtkMRMLNode *> hnodes;
+  int nnodes;
+
+  hnodes.clear();
+  this->ModelListComboBox->GetWidget()->DeleteAllValues();
+  vtkMRMLScene* scene = vtkMRMLScene::GetActiveScene();
+  nnodes = scene->GetNodesByClass("vtkMRMLModelNode", hnodes);
+
+  for (unsigned int i=0; i<hnodes.size(); i++)
+  {
+
+    vtkMRMLModelNode *hnode = vtkMRMLModelNode::SafeDownCast(hnodes[i]);
+    //cout << "found model        : " << hnode->GetName() << endl;
+    //cout << "      model has tag: " << hnode->GetNodeTagName() << endl;
+
+    // defeat the addition of slice viewers.  They show up as Models in the MRML scene, but
+    // we can ignore them by rejecting anything containing the substring "Volume Slice".  This
+    // may have to be expanded in the future to reject other non-data Models in the MRML tree.
+
+    if (!(strstr(hnode->GetName(),"Volume Slice")))
+       this->ModelListComboBox->GetWidget()->AddValue( hnode->GetName());
+  }
+}
+
 vtkKWMimxImportModelSurfaceGroup::vtkKWMimxImportModelSurfaceGroup()
 {
     this->ModelListComboBox = NULL;
@@ -143,36 +173,6 @@ void vtkKWMimxImportModelSurfaceGroup::CreateWidget()
       this->FillModelComboBox();
 }
 
-void vtkKWMimxImportModelSurfaceGroup::FillModelComboBox()
-{
-  // since slicer models can serve as surfaces to begin the meshing process, we want
-  // to discover any new models  and add them to a list the user can
-  // browse.
-
-  std::vector<vtkMRMLNode *> hnodes;
-  int nnodes;
-
-  hnodes.clear();
-  this->ModelListComboBox->GetWidget()->DeleteAllValues();
-  vtkMRMLScene* scene = vtkMRMLScene::GetActiveScene();
-  nnodes = scene->GetNodesByClass("vtkMRMLModelNode", hnodes);
-
-  for (unsigned int i=0; i<hnodes.size(); i++)
-  {
-
-    vtkMRMLModelNode *hnode = vtkMRMLModelNode::SafeDownCast(hnodes[i]);
-    //cout << "found model        : " << hnode->GetName() << endl;
-    //cout << "      model has tag: " << hnode->GetNodeTagName() << endl;
-
-    // defeat the addition of slice viewers.  They show up as Models in the MRML scene, but
-    // we can ignore them by rejecting anything containing the substring "Volume Slice".  This
-    // may have to be expanded in the future to reject other non-data Models in the MRML tree.
-
-    if (!(strstr(hnode->GetName(),"Volume Slice")))
-       this->ModelListComboBox->GetWidget()->AddValue( hnode->GetName());
-  }
-}
-
 int vtkKWMimxImportModelSurfaceGroup::SelectModelToImportToSurfaceCallback()
 {
 
@@ -214,11 +214,17 @@ int vtkKWMimxImportModelSurfaceGroup::SelectModelToImportToSurfaceCallback()
             if (!(strcmp(hnode->GetName(),name)))
             {
                 // we know it is a model with the matching name, so get the polydata and create a new entry in the SurfaceList
-                vtkPolyData* modelPolys = vtkMRMLModelNode::SafeDownCast(hnode)->GetDisplayNode()->GetPolyData();
-                this->AddSurfaceToDisplay(modelPolys, "", name );
-                this->UpdateObjectLists();
-                this->GetMimxMainWindow()->SetStatusText("Imported a MRML Model for meshing");
-                // *** we could disable the display of the original model here, but we are assuming the user will do that if desired
+                vtkPolyData* modelPolys = vtkMRMLModelNode::SafeDownCast(hnode)->GetPolyData();
+                if (modelPolys)
+                {
+                    //cout << "Found model with " << numberOfPolys << " polygons" << endl;
+                    this->AddSurfaceToDisplay(modelPolys, "", name );
+                    this->UpdateObjectLists();
+                    this->GetMimxMainWindow()->SetStatusText("Imported a MRML Model for meshing");
+                    // *** we could disable the display of the original model here, but we are assuming the user will do that if desired
+                }
+                else
+                    vtkErrorMacro("IA-FEMesh: couldn't import model polygons.  An error occured reading MRML scene")
             }
       }
       // restore interface now that the model has been added

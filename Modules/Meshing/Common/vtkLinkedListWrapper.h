@@ -47,7 +47,6 @@
 //   to enable these lists to store data in the MRML tree as well as
 //   the local lists.  
 
-
 #include "vtkObject.h"
 
 #include "vtkMimxSurfacePolyDataActor.h"
@@ -100,9 +99,6 @@ public:
   // save reference to the scene to be used for storage 
    void SetMRMLSceneForStorage(vtkMRMLScene* scene);
    
-   // added for Slicer integration - peek in list needed for syncing lists with MRML
-   int ContainsItem(vtkMimxActorBase* actor);
-
 protected:
   vtkLinkedListWrapper();
   virtual ~vtkLinkedListWrapper();

@@ -37,6 +37,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkImageToVTKImageFilter.h"
 #include "vtkImageData.h"
 #include "vtkMimxCommonWin32Header.h"
+#include "vtkMatrix4x4.h"
 
 
 class vtkImageFlip;
@@ -59,9 +60,12 @@ public:
 
   // added so we can initialize from Slicer volume
   void SetImageDataSet(vtkImageData* image);
-  void SetImageDataSet(vtkImageData* image, vtkMatrix4x4* matrix, double origin[3]);
+  void SetImageDataSet(vtkImageData* image, vtkMatrix4x4* matrix, double origin[3], double spacing[3]);
   void InitializePlaneWidgets();
-  void InitializePlaneWidgets(vtkMatrix4x4* matrix, double origin[3]);
+  void InitializePlaneWidgets(vtkMatrix4x4* matrix, double origin[3], double spacing[3]);
+
+  vtkSetObjectMacro(RASToIJKMatrix,vtkMatrix4x4);
+  vtkGetObjectMacro(RASToIJKMatrix,vtkMatrix4x4);
 
   void SetInteractor(vtkRenderWindowInteractor *Int)
   {
@@ -73,9 +77,16 @@ public:
   vtkMimxImageActor();
   ~vtkMimxImageActor();
 
+   double Origin[3];  // info copied from originating volume
+   double Spacing[3]; // info copied from originating volume
+
 protected:
   typedef itk::ImageFileReader<ImageType> ReaderType;
   typedef itk::ImageToVTKImageFilter<ImageType> FilterType;
+
+  // this is the matrix showing orientation in Slicer3 world space. It is initialized when the actor
+  // is created during a slicer volume import
+  vtkMatrix4x4 *RASToIJKMatrix;
   ReaderType::Pointer Reader;
   FilterType::Pointer   Filter;
   vtkImagePlaneWidget *PlaneX;
@@ -88,6 +99,7 @@ protected:
   // required to update this so it is always current.
 
   vtkImageData* SavedImage;
+
 
 private:
   vtkMimxImageActor(const vtkMimxImageActor&);  // Not implemented.

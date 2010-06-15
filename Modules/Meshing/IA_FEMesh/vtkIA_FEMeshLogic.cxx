@@ -12,7 +12,6 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -23,6 +22,11 @@ Version:   $Revision: 1.2 $
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
+
+#include "vtkMRMLFiniteElementImageNode.h"
+#include "vtkMRMLFiniteElementBuildingBlockNode.h"
+#include "vtkMRMLFiniteElementMeshNode.h"
+#include "vtkMRMLFESurfaceNode.h"
 
 vtkIA_FEMeshLogic* vtkIA_FEMeshLogic::New()
 {
@@ -41,7 +45,7 @@ vtkIA_FEMeshLogic* vtkIA_FEMeshLogic::New()
 vtkIA_FEMeshLogic::vtkIA_FEMeshLogic()
 {
   IA_FEMeshNode = vtkMRMLIA_FEMeshNode::New();
-
+  this->First = true;
 }
 
 //----------------------------------------------------------------------------
@@ -49,6 +53,30 @@ vtkIA_FEMeshLogic::~vtkIA_FEMeshLogic()
 {
   this->IA_FEMeshNode->Delete();
 }
+
+void vtkIA_FEMeshLogic::SetMRMLScene(vtkMRMLScene *mrml)
+{
+   cout << "IA-FEMesh Logic: Set MRML Scene" << endl;
+   vtkSlicerModuleLogic::SetMRMLScene(mrml);
+   this->RegisterNodes();
+}
+
+void vtkIA_FEMeshLogic::RegisterNodes()
+{
+ if (this->MRMLScene && this->First)
+ {
+   vtkMRMLFiniteElementImageNode *imgNode = vtkMRMLFiniteElementImageNode::New();
+   this->MRMLScene->RegisterNodeClass(imgNode);  imgNode->Delete();
+   vtkMRMLFESurfaceNode *sNode = vtkMRMLFESurfaceNode::New();
+   this->MRMLScene->RegisterNodeClass(sNode);  sNode->Delete();
+   vtkMRMLFiniteElementBuildingBlockNode *bbNode = vtkMRMLFiniteElementBuildingBlockNode::New();
+   this->MRMLScene->RegisterNodeClass(bbNode);  bbNode->Delete();
+   vtkMRMLFiniteElementMeshNode *mNode = vtkMRMLFiniteElementMeshNode::New();
+   this->MRMLScene->RegisterNodeClass(mNode);  mNode->Delete();
+   this->First = false;
+ }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkIA_FEMeshLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -64,5 +92,6 @@ void vtkIA_FEMeshLogic::Apply()
     vtkErrorMacro("No input IA_FEMeshNode found");
     return;
     }
-
 }
+
+

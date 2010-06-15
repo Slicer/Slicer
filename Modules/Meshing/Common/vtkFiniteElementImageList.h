@@ -20,7 +20,6 @@
 //
 // 
 
-
 //#include "vtkCommon.h"
 #include "vtkObject.h"
 #include "vtkMimxImageActor.h"
@@ -50,9 +49,6 @@ public:
   virtual vtkMimxImageActor* GetItem(vtkIdType);
   virtual int GetNumberOfItems();
   virtual int RemoveItem(int );
-
-  // added for Slicer integration - test if actor already loaded in view properties
-  virtual int ContainsItem(vtkMimxImageActor*);
 protected:
     vtkMRMLScene* savedMRMLScene; 
     vtkFiniteElementImageList();

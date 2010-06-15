@@ -16,7 +16,6 @@
 
 #include "vtkSlicerModuleLogic.h"
 #include "vtkMRMLScene.h"
-
 #include "vtkIA_FEMesh.h"
 #include "vtkMRMLIA_FEMeshNode.h"
 
@@ -39,6 +38,12 @@ class VTK_IA_FEMesh_EXPORT vtkIA_FEMeshLogic : public vtkSlicerModuleLogic
   
   void Apply();
   
+  // called during instantiation; so declare custom MRML nodes here
+  virtual void SetMRMLScene(vtkMRMLScene *mrml);
+
+  // here is where the declaration is performed
+  void RegisterNodes();
+
 protected:
   vtkIA_FEMeshLogic();
   ~vtkIA_FEMeshLogic();
@@ -46,7 +51,7 @@ protected:
   void operator=(const vtkIA_FEMeshLogic&);
 
   vtkMRMLIA_FEMeshNode* IA_FEMeshNode;
-  //vtkITKIA_FEMesh* IA_FEMesh;
+  bool First;   // set during first time through mrml loading
 
 
 };

@@ -156,8 +156,8 @@ void vtkKWMimxImportImageGroup::FillModelComboBox()
   {
 
     vtkMRMLScalarVolumeNode *hnode = vtkMRMLScalarVolumeNode::SafeDownCast(hnodes[i]);
-    cout << "found volume        : " << hnode->GetName() << endl;
-    cout << "      volume has tag: " << hnode->GetNodeTagName() << endl;
+//    cout << "found volume        : " << hnode->GetName() << endl;
+//    cout << "      volume has tag: " << hnode->GetNodeTagName() << endl;
 
     // don't allow the user to pick previously-imported image datasets.  If a user has previously imported an image,
     // it would show up on the list for import again, unless we exclude items of the FiniteElementImage class
@@ -195,7 +195,7 @@ int vtkKWMimxImportImageGroup::SelectVolumeToImportToImageCallback()
 
       for (unsigned int i=0; i<hnodes.size(); i++)
       {
-          double imageOrigin[3];
+          double imageOrigin[3], imageSpacing[3], imageExtent[6];
           vtkMRMLScalarVolumeNode *hnode = vtkMRMLScalarVolumeNode::SafeDownCast(hnodes[i]);
           hnode->GetOrigin(imageOrigin);
 
@@ -210,9 +210,15 @@ int vtkKWMimxImportImageGroup::SelectVolumeToImportToImageCallback()
                vtkMatrix4x4* matrix = vtkMatrix4x4::New();
                vtkMRMLScalarVolumeNode::SafeDownCast(hnode)->GetRASToIJKMatrix(matrix);
 
-               newimage->GetOrigin(imageOrigin);
-               cout << "matrix:" << matrix << endl;
-               this->AddImageToDisplay(newimage, "", name, matrix, imageOrigin );
+               hnode->GetOrigin(imageOrigin);
+               hnode->GetSpacing(imageSpacing);
+
+//               cout << "ImportImageGroup matrix:" << matrix << endl;
+//               matrix->Print(std::cout);
+//               cout << "origin: (" << imageOrigin[0] << imageOrigin[1] << imageOrigin[2] << ")" << endl;
+//               cout << "spacing: (" << imageSpacing[0] << imageSpacing[1] << imageSpacing[2] << ")" << endl;
+
+               this->AddImageToDisplay(newimage, "", name, matrix, imageOrigin,imageSpacing );
                //this->AddImageToDisplay(newimage, "", name );
               this->UpdateObjectLists();
               this->GetMimxMainWindow()->SetStatusText("Imported a MRML Volume for display");

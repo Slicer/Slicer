@@ -36,9 +36,10 @@ vtkMRMLFESurfaceNode* vtkMRMLFESurfaceNode::New()
       return (vtkMRMLFESurfaceNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  vtkMimxSurfacePolyDataActor* newactor = new vtkMimxSurfacePolyDataActor;
   vtkMRMLFESurfaceNode* newnode = new vtkMRMLFESurfaceNode;
-  newnode->SetMimxSurfacePolyDataActor(newactor);
+  // next two lines caused leaks!
+  //vtkMimxSurfacePolyDataActor* newactor = new vtkMimxSurfacePolyDataActor;
+  //newnode->SetMimxSurfacePolyDataActor(newactor);
   return newnode;
   
 
@@ -55,9 +56,7 @@ vtkMRMLModelNode* vtkMRMLFESurfaceNode::CreateNodeInstance()
       return (vtkMRMLFESurfaceNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  vtkMimxSurfacePolyDataActor* newactor = new vtkMimxSurfacePolyDataActor;
   vtkMRMLFESurfaceNode* newnode = new vtkMRMLFESurfaceNode;
-  newnode->SetMimxSurfacePolyDataActor(newactor);
   return newnode;
 }
 

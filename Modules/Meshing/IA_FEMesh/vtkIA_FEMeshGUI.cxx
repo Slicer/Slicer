@@ -92,12 +92,11 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 //    this->MainUserInterfacePanel = NULL;
 //    this->DisplayPropertyDialog = NULL;
 
-  // try to load supporting libraries dynamically.  This is needed
-  // since the toplevel is a loadable module but the other libraries
-  // didn't get loaded
-  Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
-  Mimxcommon_Init(interp);
-  Buildingblock_Init(interp);
+
+//  Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
+//  Mimxcommon_Init(interp);
+//  Buildingblock_Init(interp);
+  this->InitializeSupportingLibraries();
     
   this->SavedBoxState = 0;
   this->SavedAxisLabelState = 0;
@@ -110,6 +109,8 @@ vtkIA_FEMeshGUI::vtkIA_FEMeshGUI()
 vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
 {
 
+    // remove MRML callbacks registered when Gui was built
+    //this->RemoveMRMLObservers();
 
   if (this->Logic != NULL)
     {
@@ -124,6 +125,15 @@ vtkIA_FEMeshGUI::~vtkIA_FEMeshGUI()
 
 }
 
+void vtkIA_FEMeshGUI::InitializeSupportingLibraries()
+{
+    // load supporting libraries dynamically.  This is needed
+    // since the toplevel is a loadable module but the other libraries
+    // didn't get loaded
+    Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
+    Mimxcommon_Init(interp);
+    Buildingblock_Init(interp);
+}
 
 //----------------------------------------------------------------------------
 void vtkIA_FEMeshGUI::PrintSelf(ostream& os, vtkIndent indent)
@@ -135,9 +145,6 @@ void vtkIA_FEMeshGUI::PrintSelf(ostream& os, vtkIndent indent)
 void vtkIA_FEMeshGUI::AddGUIObservers ( )
 {
 
-  //this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-      //vtkError("IA-FEMesh: couldn't register events on MRML scene.");
 }
 
 
@@ -145,8 +152,31 @@ void vtkIA_FEMeshGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkIA_FEMeshGUI::RemoveGUIObservers ( )
 {
-  // Fill in
-  //this->ApplyButton->RemoveObservers ( vtkCommand::ModifiedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkIA_FEMeshGUI::AddMRMLObservers ( )
+{
+    // register with the MRML scene to receive callbacks when the scene is closed or opened.
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::NewSceneEvent, (vtkCommand *)this->MRMLCallbackCommand);
+
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkIA_FEMeshGUI::RemoveMRMLObservers ( )
+{
+    // release callbacks so nothing is called while module is not active
+     this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+     this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadStartEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+     this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+     this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NewSceneEvent,  (vtkCommand *)this->MRMLCallbackCommand);
 }
 
 //---------------------------------------------------------------------------
@@ -168,7 +198,7 @@ void vtkIA_FEMeshGUI::ProcessGUIEvents ( vtkObject *vtkNotUsed(caller),
 
 
 //---------------------------------------------------------------------------
-void vtkIA_FEMeshGUI::ProcessMrmlEvents ( vtkObject *caller,
+void vtkIA_FEMeshGUI::ProcessMRMLEvents ( vtkObject *caller,
                                           unsigned long event,
                                           void *callData )
 {
@@ -249,6 +279,9 @@ void vtkIA_FEMeshGUI::BuildGUI ( )
 
   this->MeshingUI->CustomApplicationSettingsModuleEntry();
 
+  // setup callbacks to keep track of MRML changes and update the module automatically
+  //this->AddMRMLObservers();
+
 }
 
 void vtkIA_FEMeshGUI::SetActiveViewer(vtkSlicerViewerWidget *activeViewer)
@@ -283,7 +316,13 @@ void vtkIA_FEMeshGUI::TearDownGUI ( )
 // Describe behavior at module startup and exit.
 void vtkIA_FEMeshGUI::Enter ( )
 {
-  // get pointers to the current scene.  
+    // moved out of the constructor to reduce danger of memory leaks
+    if (this->FirstEntryToModule)
+    {
+        //this->InitializeSupportingLibraries();
+    }
+
+    // get pointers to the current scene.
   //vtkMRMLScene *SlicerScene = vtkMRMLScene::GetActiveScene();
   vtkMRMLViewNode *viewnode = this->GetApplicationGUI()->GetViewControlGUI()->GetActiveView();
   vtkMRMLLayoutNode *layoutnode = this->GetApplicationGUI()->GetGUILayoutNode();
@@ -304,11 +343,6 @@ void vtkIA_FEMeshGUI::Enter ( )
   this->MeshingUI->CustomApplicationSettingsModuleEntry();
   
 
-  // register with the MRML scene to receive callbacks when the scene is closed or opened.
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->AddObserver(vtkMRMLScene::NewSceneEvent, (vtkCommand *)this->MRMLCallbackCommand);
 
 
   // restore the state of object visibility depending on how they were when exiting the module
@@ -343,10 +377,5 @@ void vtkIA_FEMeshGUI::Exit ( )
   // save the state of object visibility so we can restore later
   this->MeshingUI->SaveVisibilityStateOfObjectLists();
 
-  // release callbacks so nothing is called while module is not active
-  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent,  (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadStartEvent,  (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent,  (vtkCommand *)this->MRMLCallbackCommand);
-  this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NewSceneEvent,  (vtkCommand *)this->MRMLCallbackCommand);
 
 }

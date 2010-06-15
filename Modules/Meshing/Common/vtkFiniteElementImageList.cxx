@@ -16,7 +16,6 @@
 
 
 
-
 #include "vtkMRMLScene.h"
 #include "vtkDebugLeaks.h"
 #include "vtkObject.h"
@@ -82,6 +81,9 @@ int vtkFiniteElementImageList::AppendItem(vtkMimxImageActor* actor)
      // share the actor with the local list so all the values are populated correctly 
      newMRMLNode->SetMimxImageActor(actor);
      newMRMLNode->SetAndObserveImageData(actor->GetDataSet());
+     newMRMLNode->SetRASToIJKMatrix(actor->GetRASToIJKMatrix());
+     newMRMLNode->SetOrigin(actor->Origin);
+     newMRMLNode->SetSpacing(actor->Spacing);
 
      // create node to use for display and storage in slicer; use standard
      // node initially to learn how display nodes work. Use our own
@@ -90,22 +92,28 @@ int vtkFiniteElementImageList::AppendItem(vtkMimxImageActor* actor)
      // for this version of the meshing module, we are using the Mimx
      // actors to render, so turn off the default MRML display of the image
      
-     //vtkMRMLScalarVolumeDisplayNode* dispNode = vtkMRMLScalarVolumeDisplayNode::New();
-     vtkMRMLVolumeArchetypeStorageNode* storeNode = vtkMRMLVolumeArchetypeStorageNode::New();
-     storeNode->SetScene(this->savedMRMLScene);
-     //dispNode->SetVisibility(0);
+     vtkMRMLScalarVolumeDisplayNode* dispNode = vtkMRMLScalarVolumeDisplayNode::New();
+     dispNode->SetDefaultColorMap();
+     dispNode->SetScene(this->savedMRMLScene);
+     dispNode->SetVisibility(1);
 
-      this->savedMRMLScene->AddNode(newMRMLNode);
-      this->savedMRMLScene->AddNode(storeNode);
+      vtkMRMLVolumeArchetypeStorageNode* storeNode = vtkMRMLVolumeArchetypeStorageNode::New();
+      storeNode->SetScene(this->savedMRMLScene);
 
       // Establish linkage between the image node and display and storage nodes is added
       // here.  There is no display node currently because the image actor is directly
       // handling the rendering in this version.
       
-      //this->savedMRMLScene->AddNode(dispNode);
-      //newMRMLNode->AddAndObserveDisplayNodeID(dispNode->GetID());
+      this->savedMRMLScene->AddNode(newMRMLNode);
+      this->savedMRMLScene->AddNode(storeNode);
+      this->savedMRMLScene->AddNode(dispNode);
+      this->savedMRMLScene->AddNode(dispNode);
+      newMRMLNode->AddAndObserveDisplayNodeID(dispNode->GetID());
       newMRMLNode->AddAndObserveStorageNodeID(storeNode->GetID());
 
+      dispNode->Delete();
+      storeNode->Delete();
+      newMRMLNode->Delete();
    }
    else {
        vtkErrorMacro("Attempted save to MRML, but scene not initialized");
@@ -126,24 +134,6 @@ vtkMimxImageActor* vtkFiniteElementImageList::GetItem(vtkIdType id)
    vtkMimxImageActor* returnNode = requestedMrmlNode->GetMimxImageActor();
    return returnNode;
 
-}
-
-
-int vtkFiniteElementImageList::ContainsItem(vtkMimxImageActor* actor)
-{
-
-   bool found = false;
-   int numItems = this->GetNumberOfItems();
-   for (int i=0; i<numItems; i++)
-   {
-       // set the flag if there is a pointer to the same object already in the list
-       found |= found && (this->GetItem(i) == actor);
-   }
-   if (found)
-       cout << "vtkFiniteElementImageList: found image in list" << endl;
-   else
-       cout << "vtkFiniteElementImageList: didn't find image in list" << endl;
-   return found;
 }
 
 int vtkFiniteElementImageList::GetNumberOfItems()

@@ -102,7 +102,7 @@ public:
 
   // version that accepts a transform matrix to orient the images to RAS for Slicer
   void AddImageToDisplay(vtkImageData *surface,
-            const char *namePrefix, const char *foundationName, vtkMatrix4x4 *matrix, double origin[3]);
+            const char *namePrefix, const char *foundationName, vtkMatrix4x4 *matrix, double origin[3], double spacing[3]);
 
   int CancelStatus;
 

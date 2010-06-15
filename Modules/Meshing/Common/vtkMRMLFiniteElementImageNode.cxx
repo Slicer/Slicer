@@ -34,11 +34,13 @@ vtkMRMLFiniteElementImageNode* vtkMRMLFiniteElementImageNode::New()
       return (vtkMRMLFiniteElementImageNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  vtkMimxImageActor* newactor = new vtkMimxImageActor;
+
   vtkMRMLFiniteElementImageNode* newnode = new vtkMRMLFiniteElementImageNode;
-  newnode->SetMimxImageActor(newactor);
+
+  // these two lines caused memory leaks!
+  //vtkMimxImageActor* newactor = new vtkMimxImageActor;
+  //newnode->SetMimxImageActor(newactor);
   return newnode;
-  
 
 }
 
@@ -53,9 +55,7 @@ vtkMRMLScalarVolumeNode* vtkMRMLFiniteElementImageNode::CreateNodeInstance()
       return (vtkMRMLFiniteElementImageNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  vtkMimxImageActor* newactor = new vtkMimxImageActor;
   vtkMRMLFiniteElementImageNode* newnode = new vtkMRMLFiniteElementImageNode;
-  newnode->SetMimxImageActor(newactor);
   return newnode;
 }
 

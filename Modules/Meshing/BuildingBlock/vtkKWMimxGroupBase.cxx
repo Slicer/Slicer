@@ -353,7 +353,7 @@ void vtkKWMimxGroupBase::AddSurfaceToDisplay(vtkPolyData *surface,
 
 //----------------------------------------------------------------------------
 void vtkKWMimxGroupBase::AddImageToDisplay(vtkImageData *surface,
-          const char *namePrefix, const char *foundationName, vtkMatrix4x4 *matrix, double origin[3])
+          const char *namePrefix, const char *foundationName, vtkMatrix4x4 *matrix, double origin[3], double spacing[3])
 {
 
   // initialize an image actor to hold the reference to the stored image in the MRML scene
@@ -364,8 +364,7 @@ void vtkKWMimxGroupBase::AddImageToDisplay(vtkImageData *surface,
   // the processing workflow
   vtkImageData *imageToAdd = vtkImageData::New();
   imageToAdd->DeepCopy(surface);
-  actor->SetImageDataSet( imageToAdd, matrix, origin );
-  cout << "MimxGroupBase: imageToAdd->Delete();" << endl;
+  actor->SetImageDataSet( imageToAdd, matrix, origin, spacing );
   actor->SetDataType(ACTOR_IMAGE);
   actor->SetFoundationName( foundationName );
 
@@ -376,6 +375,9 @@ void vtkKWMimxGroupBase::AddImageToDisplay(vtkImageData *surface,
   this->GetMimxMainWindow()->GetViewProperties()->AddObjectList( actor );
   this->GetMimxMainWindow()->GetRenderWidget()->Render();
   this->GetMimxMainWindow()->GetRenderWidget()->ResetCamera();
+
+  actor->Delete();
+  imageToAdd->Delete();
 }
 
 
