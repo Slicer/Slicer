@@ -24,12 +24,20 @@
 class qSlicerAbstractModuleRepresentationPrivate: public ctkPrivate<qSlicerAbstractModuleRepresentation>
 {
 public:
+  qSlicerAbstractModuleRepresentationPrivate();
   QString                         Name;
   vtkWeakPointer<vtkSlicerLogic>  Logic;
 private:
   CTK_DECLARE_PUBLIC(qSlicerAbstractModuleRepresentation);
   qSlicerAbstractModule*          Module;
 };
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModuleRepresentationPrivate
+::qSlicerAbstractModuleRepresentationPrivate()
+{
+  this->Module = 0;
+}
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation::qSlicerAbstractModuleRepresentation()
@@ -41,7 +49,10 @@ qSlicerAbstractModuleRepresentation::qSlicerAbstractModuleRepresentation()
 qSlicerAbstractModuleRepresentation::~qSlicerAbstractModuleRepresentation()
 {
   CTK_D(qSlicerAbstractModuleRepresentation);
-  d->Module->representationDeleted();
+  if (d->Module)
+    {
+    d->Module->representationDeleted();
+    }
 }
 
 //-----------------------------------------------------------------------------

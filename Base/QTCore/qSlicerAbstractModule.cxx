@@ -34,13 +34,8 @@ class qSlicerAbstractModulePrivate: public ctkPrivate<qSlicerAbstractModule>
 {
 public:
   CTK_DECLARE_PUBLIC(qSlicerAbstractModule);
-  qSlicerAbstractModulePrivate()
-    {
-    this->Enabled = false;
-    this->Name = "NA";
-    this->WidgetRepresentation = 0;
-    }
-  ~qSlicerAbstractModulePrivate();
+  qSlicerAbstractModulePrivate();
+  virtual ~qSlicerAbstractModulePrivate();
 
   bool                                       Enabled;
   QString                                    Name;
@@ -52,6 +47,12 @@ public:
 
 //-----------------------------------------------------------------------------
 // qSlicerAbstractModulePrivate methods
+WidgetRepresentation::WidgetRepresentation()
+{
+  this->Enabled = false;
+  this->Name = "NA";
+  this->WidgetRepresentation = 0;
+}
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModulePrivate::~qSlicerAbstractModulePrivate()
@@ -176,6 +177,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractModule::widgetRepresentation
     {
     d->WidgetRepresentation = this->createWidgetRepresentation();
     Q_ASSERT(d->WidgetRepresentation);
+    d->WidgetRepresentation->setModule(this);
     // Note: WidgetRepresentation->setLogic should be called before
     // WidgetRepresentation->setMRMLScene() because some methods
     // might need a logic when a MRML scene is set.
