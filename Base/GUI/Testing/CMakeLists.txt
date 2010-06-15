@@ -4,6 +4,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkSlicerModelsGUITest1.cxx
   vtkSlicerModuleGUITest1.cxx
   vtkSlicerComponentGUITest1.cxx
+  vtkSlicerViewerTest.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -50,3 +51,4 @@ ENDMACRO( SIMPLE_TEST  )
 SIMPLE_TEST( vtkSlicerModelsGUITest1 )
 SIMPLE_TEST( vtkSlicerModuleGUITest1 )
 SIMPLE_TEST( vtkSlicerComponentGUITest1 )
+SIMPLE_TEST( vtkSlicerViewerTest )
