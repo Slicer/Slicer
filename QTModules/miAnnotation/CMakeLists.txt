@@ -126,6 +126,7 @@ SET(qt_module_target_libraries
   #CommandLineModule
   #SlicerTractographyDisplay
   #SlicerTractographyFiducialSeeding
+  qSlicerBaseQTCore
   Measurements
   
   )
