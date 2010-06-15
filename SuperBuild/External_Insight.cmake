@@ -7,8 +7,9 @@ if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
   message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
+set(proj Insight)
+
 if(NOT DEFINED ITK_DIR)
-  set(proj Insight)
 #  message(STATUS "Adding project:${proj}")
   ExternalProject_Add(${proj}
     CVS_REPOSITORY ":pserver:anonymous:insight@public.kitware.com:/cvsroot/Insight"
@@ -36,6 +37,20 @@ if(NOT DEFINED ITK_DIR)
       -DBUILD_TESTING:BOOL=OFF
       -DITK_LEGACY_REMOVE:BOOL=ON
     INSTALL_COMMAND ""
+    DEPENDS ${Insight_DEPENDENCIES}
     )
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
+else()
+  # The project is provided using ITK_DIR, nevertheless since other project may depend on ITK, 
+  # let's add an 'empty' one
+  ExternalProject_Add(${proj}
+    SOURCE_DIR ${proj}
+    BINARY_DIR ${proj}-build
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    DEPENDS ${Insight_DEPENDENCIES}
+    )
 endif()

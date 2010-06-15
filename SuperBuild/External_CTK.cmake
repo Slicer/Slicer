@@ -7,8 +7,9 @@ if (Slicer3_USE_QT)
     message(FATAL_ERROR "CTK_DIR variable is defined but corresponds to non-existing directory")
   endif()
   
+  set(proj CTK)
+  
   if(NOT DEFINED CTK_DIR)
-    set(proj CTK)
 #    message(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
       GIT_REPOSITORY "git://github.com/commontk/CTK.git"
@@ -34,5 +35,18 @@ if (Slicer3_USE_QT)
       DEPENDS ${CTK_DEPENDENCIES}
       )
     set(CTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+    
+  else()
+    # The project is provided using CTK_DIR, nevertheless since other project may depend on CTK, 
+    # let's add an 'empty' one
+    ExternalProject_Add(${proj}
+      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+      BINARY_DIR ${proj}-build
+      DOWNLOAD_COMMAND "" 
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND ""
+      INSTALL_COMMAND ""
+      DEPENDS ${CTK_DEPENDENCIES}
+      )
   endif()
 endif()

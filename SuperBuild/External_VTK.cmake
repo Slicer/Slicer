@@ -11,9 +11,9 @@ if(DEFINED VTK_SOURCE_DIR AND NOT EXISTS ${VTK_SOURCE_DIR})
   message(FATAL_ERROR "VTK_SOURCE_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
+set(proj VTK)
 
-  set(proj VTK)
+if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
 #  message(STATUS "Adding project:${proj}")
 
   set(VTK_WRAP_TCL OFF)
@@ -145,4 +145,17 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
     )
   set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+
+else()
+  # The project is provided using VTK_DIR and VTK_SOURCE_DIR, nevertheless since other 
+  # project may depend on VTK, let's add an 'empty' one
+  ExternalProject_Add(${proj}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+    BINARY_DIR ${proj}-build
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    DEPENDS ${VTK_DEPENDENCIES}
+    )
 endif()
