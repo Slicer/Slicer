@@ -111,28 +111,18 @@ MACRO(qctk_install_designer_plugin)
     ARCHIVE DESTINATION ${QCTK_INSTALLDESIGNERPLUGIN_INSTALL_LIB_DIR} COMPONENT Development
   )
   
-  
-  #----------------------------------------------------------------------------
-  # Copy/Create library into bin/designer directory
-  #
-  GET_TARGET_PROPERTY(FILE_PATH ${QCTK_INSTALLDESIGNERPLUGIN_NAME} LOCATION)
-  GET_TARGET_PROPERTY(DIR_PATH ${QCTK_INSTALLDESIGNERPLUGIN_NAME} LIBRARY_OUTPUT_DIRECTORY)
-  GET_FILENAME_COMPONENT(LIB_NAME ${QCTK_INSTALLDESIGNERPLUGIN_NAME} NAME)
+  # Since QtDesigner expects plugin to be directly located under the
+  # directory 'designer', let's copy them. 
 
-  IF(WIN32)
+  IF(NOT CMAKE_CFG_INTDIR STREQUAL ".")
+    GET_TARGET_PROPERTY(FILE_PATH ${lib_name} LOCATION)
+    GET_TARGET_PROPERTY(DIR_PATH ${lib_name} LIBRARY_OUTPUT_DIRECTORY)
+  
     ADD_CUSTOM_COMMAND(
-      TARGET ${QCTK_INSTALLDESIGNERPLUGIN_NAME}
+      TARGET ${lib_name}
       POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_PATH}/designer/
-      COMMAND ${CMAKE_COMMAND} -E copy ${FILE_PATH} ${DIR_PATH}/${CMAKE_CFG_INTDIR}/designer/${CMAKE_SHARED_LIBRARY_PREFIX}${LIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}
+      COMMAND ${CMAKE_COMMAND} -E copy ${FILE_PATH} ${DIR_PATH}/../designer/${CMAKE_SHARED_LIBRARY_PREFIX}${lib_name}${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
       )
-  ELSE(WIN32)
-    ADD_CUSTOM_COMMAND(
-      TARGET ${QCTK_INSTALLDESIGNERPLUGIN_NAME}
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_PATH}/designer/
-      COMMAND ${CMAKE_COMMAND} -E create_symlink ${FILE_PATH} ${DIR_PATH}/designer/${CMAKE_SHARED_LIBRARY_PREFIX}${LIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}
-      )
-  ENDIF(WIN32)
+  ENDIF()
   
 ENDMACRO(qctk_install_designer_plugin)

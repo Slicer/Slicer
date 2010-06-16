@@ -331,11 +331,6 @@ proc launch_SetEnvironment {} {
           if { [file exists "@BatchMake_DIR@/bin/$buildType/BatchMake.dll"] } {
             set ::BatchMake_BUILD_SUBDIR $buildType
           }
-          if { "@Slicer3_QT_PLUGIN_PATH@" != "" } {
-            if { [file exists "@Slicer3_QT_PLUGIN_PATH@/$buildType/designer/qCTKWidgetsPlugin.dll"] } {
-              set ::QtDesignerPlugins_BUILD_SUBDIR $buildType
-            }
-          }
         }
       } else {
         set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real
@@ -436,7 +431,8 @@ proc launch_SetEnvironment {} {
     
     
       # QtDesigner variable  
-      StoreDirInEnvVar Slicer3_QT_PLUGIN_PATH "@Slicer3_QT_PLUGIN_PATH@/$::QtDesignerPlugins_BUILD_SUBDIR"
+      StoreDirInEnvVar Slicer3_QT_PLUGIN_PATH "$::Slicer3_HOME/bin"
+      StoreDirInEnvVar CTK_QT_PLUGIN_PATH "$::env(CTK_DIR)/CTK-build/bin"
       
     }
     
@@ -620,7 +616,7 @@ proc launch_SetPaths {} {
             set ::env(PATH) "$::env(Slicer3_QTLOADABLEMODULES_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(QT_BINARY_DIR):$::env(PATH)"
             set ::env(QTDESIGNER_EXE) "designer"
-            set ::env(QT_PLUGIN_PATH) "$::env(Slicer3_QT_PLUGIN_PATH)"
+            set ::env(QT_PLUGIN_PATH) "$::env(CTK_QT_PLUGIN_PATH):$::env(Slicer3_QT_PLUGIN_PATH)"
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -668,7 +664,7 @@ proc launch_SetPaths {} {
             set ::env(PATH) "$::env(Slicer3_QTLOADABLEMODULES_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(QT_BINARY_DIR):$::env(PATH)"
             set ::env(QTDESIGNER_EXE) "Designer.app"
-            set ::env(QT_PLUGIN_PATH) "$::env(Slicer3_QT_PLUGIN_PATH)"
+            set ::env(QT_PLUGIN_PATH) "$::env(CTK_QT_PLUGIN_PATH):$::env(Slicer3_QT_PLUGIN_PATH)"
         } elseif {$::env(BUILD) == $::WINDOWS} {
             # add vtk, slicer, and tcl bins
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
@@ -711,7 +707,7 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(Slicer3_QTLOADABLEMODULES_DIR)\;$::env(Path)
             set ::env(Path) $::env(QT_BINARY_DIR)\;$::env(Path)
             set ::env(QTDESIGNER_EXE) "designer.exe"
-            set ::env(QT_PLUGIN_PATH) $::env(Slicer3_QT_PLUGIN_PATH)
+            set ::env(QT_PLUGIN_PATH) $::env(CTK_QT_PLUGIN_PATH)\;$::env(Slicer3_QT_PLUGIN_PATH)
         } else {
             ShowAndLogError "Libraries: unknown build $::env(BUILD)"
         }
@@ -943,7 +939,7 @@ proc launch_RunProgram {} {
     if { $::LAUNCH(launchDesigner)} {
       set ::LAUNCH(launchCommand) $::env(QT_BINARY_DIR)/$::env(QTDESIGNER_EXE)
       puts "Starting $::LAUNCH(launchCommand)"
-      puts "Loading plugins from $::env(Slicer3_QT_PLUGIN_PATH)/designer"
+      puts "Loading plugins from $::env(Slicer3_QT_PLUGIN_PATH)/designer and $::env(CTK_QT_PLUGIN_PATH)"
     }
 
     #
