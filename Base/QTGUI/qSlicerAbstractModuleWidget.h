@@ -13,6 +13,10 @@
 #ifndef __qSlicerAbstractModuleWidget_h
 #define __qSlicerAbstractModuleWidget_h
 
+#if defined(_MSC_VER)
+#pragma warning( disable:4250 )
+#endif
+
 // CTK includes
 #include <ctkPimpl.h>
 
@@ -25,7 +29,8 @@
 ///
 /// Base class of all the Slicer module widgets. The widget is added in the module panels.
 /// Deriving from qSlicerWidget, it inherits the mrmlScene()/setMRMLScene() methods.
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModuleWidget : public qSlicerWidget, public qSlicerAbstractModuleRepresentation
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModuleWidget
+  :public qSlicerWidget, public qSlicerAbstractModuleRepresentation
 {
   Q_OBJECT
 public:
