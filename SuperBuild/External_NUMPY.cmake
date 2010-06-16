@@ -18,10 +18,11 @@ configure_file(
 # create an external project to download numpy,
 # and configure and build it
 ExternalProject_Add(NUMPY
+  URL "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz"
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   #URL "http://iweb.dl.sourceforge.net/project/numpy/NumPy/1.4.1/numpy-1.4.1.tar.gz"
-  SVN_REPOSITORY http://svn.scipy.org/svn/numpy/trunk
-  SVN_REVISION -r "8454"
+  #SVN_REPOSITORY http://svn.scipy.org/svn/numpy/trunk
+  #SVN_REVISION -r "8454"
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
   CONFIGURE_COMMAND ${CMAKE_COMMAND}
@@ -29,6 +30,7 @@ ExternalProject_Add(NUMPY
   BUILD_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/NUMPY_make_step.cmake
   UPDATE_COMMAND ""
+  DEPENDS 
+    ${NUMPY_DEPENDENCIES}
   INSTALL_COMMAND ""
-  DEPENDS ${NUMPY_DEPENDENCIES}
   )
