@@ -59,7 +59,7 @@ void vtkMRMLAnnotationRulerNode::Initialize(vtkMRMLScene* mrmlScene)
         return;
     }
 
-    mrmlScene->AddNode(this);
+  mrmlScene->AddNode(this);
 
     this->CreateAnnotationTextDisplayNode();
     this->CreateAnnotationPointDisplayNode();
@@ -67,11 +67,11 @@ void vtkMRMLAnnotationRulerNode::Initialize(vtkMRMLScene* mrmlScene)
     
     this->AddText(" ",1,1);
 
-    // default starting position
-    this->SetPosition1(-250.0, 50.0, 0.0);
-    this->SetPosition2(250.0, 50.0, 0.0);
+  // default starting position
+  this->SetPosition1(-250.0, 50.0, 0.0);
+  this->SetPosition2(250.0, 50.0, 0.0);
 
-    // the end points of the lines are blue
+  // the end points of the lines are blue
     double color1[3] = { 0.0, 0.0, 1.0}; 
     this->SetPointColour(color1);
 

@@ -66,8 +66,8 @@ public:
   int GetVisibility() {return this->GetVisible();}
   void SetVisibility(int flag) {this->SetVisible(flag);}
 
-  double GetBidimensionalMeasurement();
-  void SetBidimensionalMeasurement(double val);
+  std::vector<double> GetBidimensionalMeasurement();
+  void SetBidimensionalMeasurement(double val1, double val2);
 
   int SetControlPoint(double newControl[3], int id);
 
@@ -88,7 +88,7 @@ protected:
   // number of subdivisions on the line
   int Resolution;
   char* AnnotationFormat;
-  double biMeasurement;
+  std::vector<double> biMeasurement;
  
 };
 

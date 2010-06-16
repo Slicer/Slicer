@@ -38,7 +38,7 @@ public:
 
   static void TurnColorArrayToQColor(double* color, QColor &qcolor);
   static void TurnQColorToColorArray(double* color, QColor &qcolor);
-  static void FormatValueToChar(const char* format, double value, QString &valueString );
+  static void FormatValueToChar(const char* format, std::vector<double> vv, QString &valueString );
 
 
 protected:

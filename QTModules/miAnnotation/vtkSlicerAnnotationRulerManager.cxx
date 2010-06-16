@@ -1353,7 +1353,8 @@ void vtkSlicerAnnotationRulerManager::Update3DWidgetVisibility(vtkMRMLAnnotation
         return;
     }
     vtkLineWidget2 *distanceWidget = distanceWidgetClass->GetWidget();
-    if (distanceWidget->GetInteractor() == NULL)
+    
+  if (distanceWidget->GetInteractor() == NULL)
     {
         if (this->GetViewerWidget() &&
             this->GetViewerWidget()->GetMainViewer() &&
@@ -1378,6 +1379,7 @@ void vtkSlicerAnnotationRulerManager::Update3DWidgetVisibility(vtkMRMLAnnotation
             distanceWidget->SetInteractor(NULL);
         }
     }
+
     if (activeRulerNode->GetVisibility())
     {
         if (distanceWidget->GetInteractor() != NULL)

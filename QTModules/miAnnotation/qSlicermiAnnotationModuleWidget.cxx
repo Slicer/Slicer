@@ -55,6 +55,7 @@
 #include "vtkSlicerAnnotationRulerManager.h"
 #include "vtkSlicerAnnotationFiducialManager.h"
 #include "vtkMRMLAnnotationBidimensionalNode.h"
+#include "vtkMRMLAnnotationROINode.h"
 
 //-----------------------------------------------------------------------------
 class qSlicermiAnnotationModuleWidgetPrivate: public ctkPrivate<qSlicermiAnnotationModuleWidget>,
@@ -594,10 +595,8 @@ void qSlicermiAnnotationModuleWidget::AddFiducialCompleted(vtkObject* object, vo
   m_IDs.push_back(nodevector[nodevector.size()-1]->GetID());
   m_index++;
   
-  //vtkMRMLAnnotationFiducialNode* node = vtkMRMLAnnotationFiducialNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
-  vtkMRMLFiducialListNode* node = vtkMRMLFiducialListNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
-
-  double thevalue = 0.0;
+  std::vector<double> thevalue;
+  thevalue.push_back(0.0);
   QString valueString = "";
   char format[4] = " ";
   this->updateAnnotationTable( m_index, thevalue, format );
@@ -924,7 +923,7 @@ void qSlicermiAnnotationModuleWidget::onGenerateReportButtonClicked()
         {
             QString labelString = QString("Seed %1").arg(QString::number(i + 1));
 
-            float thevalue;
+      std::vector<double> thevalue;
             QString valueString, textString;
             report.append("<tr>\n").append(TD);
 
@@ -1334,7 +1333,7 @@ void qSlicermiAnnotationModuleWidget::deleteSelectedButtonClicked()
 
             d->removeAnnotation( m_index + 2 );
 
-            double thevalue;
+            std::vector<double> thevalue;
             // This is just a hack right now for fiducials
             char _format[4] = "%d";
             const char* format = _format;
@@ -1407,7 +1406,7 @@ void qSlicermiAnnotationModuleWidget::onCreateMeasurementRulerButtonClicked()
         return;
     }
 
-    double thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newRulerNodeID) );
+    std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newRulerNodeID) );
 
     m_IDs.push_back( newRulerNodeID );
     m_index++;
@@ -1433,7 +1432,7 @@ void qSlicermiAnnotationModuleWidget::onCreateMeasurementRulerButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicermiAnnotationModuleWidget::updateAnnotationTable(int index, double thevalue, const char* format)
+void qSlicermiAnnotationModuleWidget::updateAnnotationTable(int index, std::vector<double> thevalue, const char* format)
 {
     CTK_D(qSlicermiAnnotationModuleWidget);
 
@@ -1481,7 +1480,7 @@ void qSlicermiAnnotationModuleWidget::updateValue(vtkObject* annotationNode, voi
 
     const char* id = node->GetID();
     int index = this->getIndexByNodeID(id);
-    double thevalue = d->logic()->GetAnnotationMeasurement(node);
+    std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement(node);
     const char* format = d->logic()->GetAnnotationTextFormatProperty(node);
 
     QString valueString;
@@ -1609,7 +1608,8 @@ void qSlicermiAnnotationModuleWidget::AddAngleCompleted(vtkObject* object, void*
         d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
 
     const char* newAngleNodeID = node->GetID();
-    double thevalue = 0.0;
+    std::vector<double> thevalue;
+  thevalue.push_back(0.0);
     thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newAngleNodeID));
 
     char* format = node->GetLabelFormat();
@@ -1699,7 +1699,8 @@ void qSlicermiAnnotationModuleWidget::onStickyNodeButtonClicked()
     //vtkMRMLAnnotationStickyNode* node = vtkMRMLAnnotationStickyNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newStickyNodeID));
 
     char format[4] = " ";
-    double thevalue = 0;
+    std::vector<double> thevalue;
+  thevalue.push_back(0);
 
     QString valueString;
     qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
@@ -1725,7 +1726,8 @@ void qSlicermiAnnotationModuleWidget::onTextNodeButtonClicked()
   m_IDs.push_back( newTextNodeID );
   m_index++;
 
-  double thevalue = 0.0;
+  std::vector<double> thevalue;
+  thevalue.push_back(0.0);
   thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
 
   char* format = const_cast<char*>(" ");
@@ -1749,7 +1751,8 @@ void qSlicermiAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object, vo
     d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]) );
 
   const char* newTextNodeID = node->GetID();
-  double thevalue = 0.0;
+  std::vector<double> thevalue;
+  thevalue.push_back(0.0);
   thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
 
   char* format = const_cast<char*>(" ");
@@ -1788,12 +1791,18 @@ void qSlicermiAnnotationModuleWidget::onROINodeButtonClicked()
   m_IDs.push_back( newROINodeID );
   m_index++;
 
-  double thevalue = 0.0;
-  char* format = const_cast<char*>(" ");
+  vtkMRMLAnnotationROINode* node = vtkMRMLAnnotationROINode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newROINodeID));
+
+
+  std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement(d->logic()->GetMRMLScene()->GetNodeByID(newROINodeID));
+  char* format = node->GetROIAnnotationFormat();
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
   this->updateAnnotationTable( m_index, thevalue, format );
   this->selectRowByIndex( m_index );
+
+  qvtkConnect(node, vtkMRMLAnnotationROINode::ValueModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)) );
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1815,7 +1824,7 @@ void qSlicermiAnnotationModuleWidget::onPolylineButtonClicked()
 
   vtkMRMLAnnotationBidimensionalNode* node = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newNodeID));
 
-  double thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );
+  std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );
   char* format = node->GetAnnotationFormat();;
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
@@ -1844,7 +1853,7 @@ void qSlicermiAnnotationModuleWidget::onSplineButtonClicked()
 
   vtkMRMLAnnotationSplineNode* node = vtkMRMLAnnotationSplineNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newNodeID));
 
-  double thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );
+  std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );
   char* format = node->GetDistanceAnnotationFormat();
   QString valueString;
   qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);

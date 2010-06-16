@@ -141,7 +141,7 @@ public:
   int SetAnnotationLineDisplayProperties(vtkMRMLAnnotationLineDisplayNode* node, int type, void* data);
   vtkStdString GetAnnotationTextProperty(vtkMRMLNode* node);
   const char* GetAnnotationTextFormatProperty(vtkMRMLNode* node);
-  double GetAnnotationMeasurement(vtkMRMLNode* node);
+  std::vector<double> GetAnnotationMeasurement(vtkMRMLNode* node);
   int GetNumberOfControlPoints(vtkMRMLNode* mrmlnode);
   double* GetAnnotationControlPointsCoordinate(vtkMRMLNode* mrmlnode, vtkIdType coordId);
   int SetAnnotationControlPointsCoordinate(vtkMRMLNode* mrmlnode, double* pos, vtkIdType coordId);

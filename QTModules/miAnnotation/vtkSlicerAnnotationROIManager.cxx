@@ -32,6 +32,9 @@ public:
   { return new vtSlicerAnnotationROIWidgetCallback; }
   virtual void Execute(vtkObject *caller, unsigned long event, void*)
   {
+    vtkSlicerBoxWidget2 *widget = reinterpret_cast<vtkSlicerBoxWidget2*>(caller);
+    ROIManager->UpdateROIMeasurement(ROINode, widget);
+
     // only update the position if it's an interaction event
     if (event == vtkCommand::InteractionEvent || event == vtkCommand::EndInteractionEvent)
     {
@@ -676,4 +679,20 @@ void vtkSlicerAnnotationROIManager::UpdateLockUnlock(vtkMRMLAnnotationROINode* r
   {
     widget->ProcessEventsOn();
   }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationROIManager::UpdateROIMeasurement(vtkMRMLAnnotationROINode* node, vtkSlicerBoxWidget2* widget)
+{
+  //vtkSplineWidget* widget = this->GetSplineWidget(node->GetID());
+  if ( widget==NULL)
+  {
+    return;
+  }  
+
+  double exts[3];
+  vtkSlicerBoxRepresentation* rep = vtkSlicerBoxRepresentation::SafeDownCast(widget->GetRepresentation());
+  rep->GetExtents(exts);
+  
+  node->SetROIMeasurement(exts[0], exts[1], exts[2]);
 }

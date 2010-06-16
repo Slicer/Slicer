@@ -167,13 +167,14 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode *
     const char* textFormat = m_logic->GetAnnotationTextFormatProperty(node);
 
     // Value
-    double value = m_logic->GetAnnotationMeasurement(node);
+    std::vector<double> vv = m_logic->GetAnnotationMeasurement(node);
     char valuechar[100];
     QString valueString;
-    sprintf( valuechar, textFormat, value);
+    sprintf( valuechar, textFormat, vv);
     valueString.append("<p>Value: <b>").append(QString(valuechar)).append("</b></p>");
     ui.annotationValueBrowser->setHtml( valueString );
 
+  double value;
 
     // Default CollapsibleGroupBox Properties
     QVBoxLayout* groupBoxLayout = new QVBoxLayout;
@@ -319,7 +320,7 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::onCoordinateChanged(QStr
     
     std::vector<double> positions;
     QString valueString;
-    double thevalue;
+    std::vector<double> thevalue;
     const char* format;
 
     for (int i=0; i<m_lineEditList.size(); ++i)
@@ -702,11 +703,20 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::TurnColorArrayToQColor(d
 }
 
 
-void qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(const char* format, double value, QString &valueString )
+void qSlicermiAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(const char* format, std::vector<double> vv, QString &valueString )
 {
     char valuechar[100];
-    sprintf(valuechar, format, value);
-    valueString = valuechar;
+  QString tempString;
+  valueString = "";
+  foreach(double v, vv)
+  {
+    sprintf(valuechar, format, v);
+    tempString = valuechar;
+    tempString.append(" ");
+    valueString.append(tempString);
+  }
+  
+    //valueString = valuechar;
 }
 
 void qSlicermiAnnotationModuleAnnotationPropertyDialog::TurnQColorToColorArray(double* color, QColor &qcolor)

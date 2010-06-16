@@ -1332,7 +1332,7 @@ const char* vtkSlicermiAnnotationModuleLogic::GetAnnotationTextFormatProperty(vt
   }
   else if (node->IsA("vtkMRMLAnnotationROINode"))
   {
-    return " ";
+    return vtkMRMLAnnotationROINode::SafeDownCast(node)->GetROIAnnotationFormat();
   }
   else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
   {
@@ -1347,46 +1347,48 @@ const char* vtkSlicermiAnnotationModuleLogic::GetAnnotationTextFormatProperty(vt
 }
 
 //-----------------------------------------------------------------------------
-double vtkSlicermiAnnotationModuleLogic::GetAnnotationMeasurement(vtkMRMLNode* node)
+std::vector<double> vtkSlicermiAnnotationModuleLogic::GetAnnotationMeasurement(vtkMRMLNode* node)
 {
-    if (node->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    return 0;
-    }
+  std::vector<double> measurements;
+
+  if (node->IsA("vtkMRMLAnnotationFiducialNode"))
+  {
+    measurements.push_back(0);
+  }
   if (node->IsA("vtkMRMLFiducialListNode"))
   {
-    return 0;
+    measurements.push_back(0);
   }
-    else if (node->IsA("vtkMRMLAnnotationRulerNode"))
-    {
-        return vtkMRMLAnnotationRulerNode::SafeDownCast(node)->GetDistanceMeasurement();
-    }
-    else if (node->IsA("vtkMRMLAnnotationAngleNode"))
-    {
-        return vtkMRMLAnnotationAngleNode::SafeDownCast(node)->GetAngleMeasurement();
-    }
-    else if (node->IsA("vtkMRMLAnnotationStickyNode"))
-    {
-        return 0;
-    }
+  else if (node->IsA("vtkMRMLAnnotationRulerNode"))
+  {
+    measurements.push_back(vtkMRMLAnnotationRulerNode::SafeDownCast(node)->GetDistanceMeasurement());
+  }
+  else if (node->IsA("vtkMRMLAnnotationAngleNode"))
+  {
+    measurements.push_back(vtkMRMLAnnotationAngleNode::SafeDownCast(node)->GetAngleMeasurement());
+  }
+  else if (node->IsA("vtkMRMLAnnotationStickyNode"))
+  {
+    measurements.push_back(0);
+  }
   else if (node->IsA("vtkMRMLAnnotationTextNode"))
   {
-    return 0;
+    measurements.push_back(0);
   }
   else if (node->IsA("vtkMRMLAnnotationROINode"))
   {
-    return 0;
+    measurements = vtkMRMLAnnotationROINode::SafeDownCast(node)->GetROIMeasurement();
   }
   else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
   {
-    return vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement();
+    measurements = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement();
   }
   else if (node->IsA("vtkMRMLAnnotationSplineNode"))
   {
-    return vtkMRMLAnnotationSplineNode::SafeDownCast(node)->GetSplineMeasurement();
+    measurements.push_back(vtkMRMLAnnotationSplineNode::SafeDownCast(node)->GetSplineMeasurement());
   }
 
-    return NULL;
+    return measurements;
 }
 
 //-----------------------------------------------------------------------------

@@ -134,6 +134,9 @@ public:
   void SetRadiusXYZ(double* RadiusXYZ);
   vtkGetVectorMacro(RadiusXYZ,double,3);
 
+  std::vector<double> GetROIMeasurement();
+  void SetROIMeasurement(double val1, double val2, double val3);
+
   enum
   {
       ROINodeAddedEvent = 0,
@@ -159,7 +162,7 @@ protected:
 
   /// the model ids for the models that the ends of the ruler are constrained
   /// to
-  double ROIMeasurement;
+  std::vector<double> ROIMeasurement;
   int Visibility;
 
   /// 

@@ -510,5 +510,5 @@ void vtkSlicerAnnotationBidimensionalManager::UpdateBidimensionalMeasurement(vtk
 
   vtkBiDimensionalRepresentation2D* rep = vtkBiDimensionalRepresentation2D::SafeDownCast(widget->GetRepresentation());
 
-  node->SetBidimensionalMeasurement(rep->GetLength1() * rep->GetLength2());
+  node->SetBidimensionalMeasurement(rep->GetLength1(), rep->GetLength2());
 }

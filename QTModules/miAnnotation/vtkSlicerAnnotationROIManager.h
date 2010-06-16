@@ -86,6 +86,7 @@ public:
 
    void UpdateROIWidgetInteractors();
 
+   void UpdateROIMeasurement(vtkMRMLAnnotationROINode* node, vtkSlicerBoxWidget2* widget);
 
 protected:
     vtkSlicerAnnotationROIManager();

@@ -45,7 +45,7 @@ vtkMRMLAnnotationBidimensionalNode::vtkMRMLAnnotationBidimensionalNode()
 {
   this->HideFromEditors = false;
   this->AnnotationFormat = NULL;
-  this->SetAnnotationFormat("%.2f mm");
+  this->SetAnnotationFormat("%.1f");
   this->Resolution = 5;
 }
 //----------------------------------------------------------------------------
@@ -82,8 +82,6 @@ void vtkMRMLAnnotationBidimensionalNode::Initialize(vtkMRMLScene* mrmlScene)
   }
 
     this->AddText(" ",1,1);
-
-  this->biMeasurement = 0.0;
 
     this->InvokeEvent(vtkMRMLAnnotationBidimensionalNode::BidimensionalNodeAddedEvent);
 }
@@ -205,14 +203,16 @@ void vtkMRMLAnnotationBidimensionalNode::PrintAnnotationInfo(ostream& os, vtkInd
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationBidimensionalNode::SetBidimensionalMeasurement(double val)
+void vtkMRMLAnnotationBidimensionalNode::SetBidimensionalMeasurement(double val1, double val2)
 {
-  this->biMeasurement = val;
+  this->biMeasurement.clear();
+  this->biMeasurement.push_back(val1);
+  this->biMeasurement.push_back(val2);
   this->InvokeEvent(vtkMRMLAnnotationBidimensionalNode::ValueModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
-double vtkMRMLAnnotationBidimensionalNode::GetBidimensionalMeasurement()
+std::vector<double> vtkMRMLAnnotationBidimensionalNode::GetBidimensionalMeasurement()
 {
   return this->biMeasurement;
 }

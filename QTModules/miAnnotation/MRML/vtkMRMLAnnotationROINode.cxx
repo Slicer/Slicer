@@ -44,8 +44,7 @@ vtkMRMLNode* vtkMRMLAnnotationROINode::CreateNodeInstance()
 vtkMRMLAnnotationROINode::vtkMRMLAnnotationROINode()
 {
   this->HideFromEditors = false;
-  this->ROIAnnotationFormat = NULL;
-  this->SetROIAnnotationFormat("%.0f mm");
+  this->ROIAnnotationFormat = const_cast<char*>("%.1f");
   this->Resolution = 5;
 }
 //----------------------------------------------------------------------------
@@ -79,7 +78,12 @@ void vtkMRMLAnnotationROINode::Initialize(vtkMRMLScene* mrmlScene)
   this->InteractiveMode = 1;
   this->HideFromEditors = 0;
 
-    this->InvokeEvent(vtkMRMLAnnotationROINode::ROINodeAddedEvent);
+  this->ROIMeasurement.clear();
+  this->ROIMeasurement.push_back(20.0);
+  this->ROIMeasurement.push_back(20.0);
+  this->ROIMeasurement.push_back(20.0);
+
+  this->InvokeEvent(vtkMRMLAnnotationROINode::ROINodeAddedEvent);
 }
 
 //----------------------------------------------------------------------------
@@ -447,4 +451,21 @@ void vtkMRMLAnnotationROINode::SetRadiusXYZ(double* radiusXYZ)
 {
   this->SetRadiusXYZ(radiusXYZ[0], radiusXYZ[1], radiusXYZ[2]);
   return;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationROINode::SetROIMeasurement(double val1, double val2, double val3)
+{
+  this->ROIMeasurement.clear();
+  this->ROIMeasurement.push_back(val1);
+  this->ROIMeasurement.push_back(val2);
+  this->ROIMeasurement.push_back(val3);
+
+  this->InvokeEvent(vtkMRMLAnnotationROINode::ValueModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> vtkMRMLAnnotationROINode::GetROIMeasurement()
+{
+  return this->ROIMeasurement;
 }

@@ -96,7 +96,7 @@ protected slots:
     void annotationTextChanged(QString text, char* nodeId);
     void annotationCoordinateChanged(QString valueString, char* nodeId);
     void selectRowByIndex(int index);
-    void updateAnnotationTable(int index, double thevalue, const char* format);
+    void updateAnnotationTable(int index, std::vector<double> thevalue, const char* format);
     void updateValue(vtkObject* annotationNode, void* call_data);
     int getIndexByNodeID(const char* nodeID);
     void updateAnnotationText(int row, int col);
