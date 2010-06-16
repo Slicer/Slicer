@@ -37,7 +37,8 @@ if(NOT DEFINED ITK_DIR)
       -DBUILD_TESTING:BOOL=OFF
       -DITK_LEGACY_REMOVE:BOOL=ON
     INSTALL_COMMAND ""
-    DEPENDS ${Insight_DEPENDENCIES}
+    DEPENDS 
+      ${Insight_DEPENDENCIES}
     )
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
@@ -51,6 +52,7 @@ else()
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-    DEPENDS ${Insight_DEPENDENCIES}
+    DEPENDS 
+      ${Insight_DEPENDENCIES}
     )
 endif()

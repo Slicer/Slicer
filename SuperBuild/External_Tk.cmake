@@ -40,7 +40,6 @@ endif()
 if(NOT WIN32)
 
   ExternalProject_Add(${proj}
-    DEPENDS ${tk_DEPENDENCIES}
     SVN_REPOSITORY ${tk_SVN_REPOSITORY}
     SOURCE_DIR ${tk_SOURCE_DIR}
     UPDATE_COMMAND ""
@@ -48,6 +47,8 @@ if(NOT WIN32)
     CONFIGURE_COMMAND ${tk_CONFIGURE_COMMAND}
     BUILD_COMMAND ${tk_BUILD_COMMAND}
     INSTALL_COMMAND ${tk_INSTALL_COMMAND}
+    DEPENDS
+      ${tk_DEPENDENCIES}
   )
 
   ExternalProject_Add_Step(${proj} Install_default.h

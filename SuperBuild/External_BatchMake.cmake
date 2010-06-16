@@ -5,7 +5,6 @@
 set(proj BatchMake)
 
 ExternalProject_Add(${proj}
-  DEPENDS ${BatchMake_DEPENDENCIES}
   CVS_REPOSITORY ":pserver:anoncvs:@batchmake.org:/cvsroot/BatchMake"
   CVS_MODULE "BatchMake"
   SOURCE_DIR BatchMake
@@ -21,4 +20,6 @@ ExternalProject_Add(${proj}
     -DUSE_SPLASHSCREEN:BOOL=OFF
     -DITK_DIR:FILEPATH=${ITK_DIR}
   INSTALL_COMMAND ""
+  DEPENDS 
+    ${BatchMake_DEPENDENCIES}
 )

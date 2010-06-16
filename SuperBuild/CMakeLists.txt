@@ -309,6 +309,7 @@ configure_file(
 # Establish Target Dependencies based on Selected Options
 #------------------------------------------------------------------------------
 
+set(tcl_DEPENDENCIES)
 set(tk_DEPENDENCIES tcl)
 set(incrTcl_DEPENDENCIES tcl tk)
 set(iwidgets_DEPENDENCIES tcl itcl)

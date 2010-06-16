@@ -53,7 +53,6 @@ if (UNIX)
   endif()
 
   ExternalProject_Add(${proj}
-    DEPENDS ${blt_DEPENDENCIES}
     SVN_REPOSITORY ${blt_SVN}
     SOURCE_DIR tcl/blt
     BUILD_IN_SOURCE ${blt_BUILD_IN_SOURCE}
@@ -61,6 +60,8 @@ if (UNIX)
     CONFIGURE_COMMAND ${blt_CONFIGURE}
     BUILD_COMMAND ${blt_BUILD}
     INSTALL_COMMAND ${blt_INSTALL}
+    DEPENDS 
+      ${blt_DEPENDENCIES}
     )
   
   if(APPLE)

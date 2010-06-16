@@ -35,7 +35,6 @@ endif()
 
 if(NOT WIN32)
   ExternalProject_Add(${proj}
-    DEPENDS ${incrTcl_DEPENDENCIES}
     SVN_REPOSITORY ${itcl_SVN_REPOSITORY}
     SOURCE_DIR tcl/incrTcl
     BUILD_IN_SOURCE ${itcl_BUILD_IN_SOURCE}
@@ -43,6 +42,8 @@ if(NOT WIN32)
     CONFIGURE_COMMAND ${itcl_CONFIGURE_COMMAND}
     BUILD_COMMAND ${itcl_BUILD_COMMAND}
     INSTALL_COMMAND ${itcl_INSTALL_COMMAND}
+    DEPENDS 
+      ${incrTcl_DEPENDENCIES}
   )
 
   ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure

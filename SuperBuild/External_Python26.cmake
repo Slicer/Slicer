@@ -39,9 +39,9 @@ if(WIN32)
     CONFIGURE_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /Upgrade
     BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project select
     BUILD_IN_SOURCE 1
+    INSTALL_COMMAND ""
     DEPENDS 
       ${python_DEPENDENCIES}
-    INSTALL_COMMAND ""
   )
 
   if(Slicer3_USE_KWWIDGETS)
@@ -143,9 +143,9 @@ elseif(UNIX)
     CONFIGURE_COMMAND ${python_CONFIGURE_COMMAND}
     BUILD_COMMAND ${python_BUILD_COMMAND}
     UPDATE_COMMAND ""
+    INSTALL_COMMAND ${python_INSTALL_COMMAND}
     DEPENDS 
       ${python_DEPENDENCIES}
-    INSTALL_COMMAND ${python_INSTALL_COMMAND}
     )
     
   if(APPLE)

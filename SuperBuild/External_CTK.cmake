@@ -32,7 +32,8 @@ if (Slicer3_USE_QT)
         -DCTK_PLUGIN_org.commontk.eventbus:BOOL=OFF
         -Dgit_EXECUTABLE:FILEPATH=${git_EXECUTABLE}
       INSTALL_COMMAND ""
-      DEPENDS ${CTK_DEPENDENCIES}
+      DEPENDS 
+        ${CTK_DEPENDENCIES}
       )
     set(CTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
     
@@ -46,7 +47,8 @@ if (Slicer3_USE_QT)
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
-      DEPENDS ${CTK_DEPENDENCIES}
+      DEPENDS 
+        ${CTK_DEPENDENCIES}
       )
   endif()
 endif()

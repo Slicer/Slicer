@@ -15,4 +15,6 @@ ExternalProject_Add(${proj}
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DBUILD_TESTING:BOOL=OFF
   INSTALL_COMMAND ""
+  DEPENDS 
+    ${cmcurl_DEPENDENCIES}
 )
