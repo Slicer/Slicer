@@ -359,7 +359,11 @@ proc launch_SetEnvironment {} {
       set ::env(VTK_DIR)            [file normalize "@VTK_DIR@"]
       set ::env(VTK_BIN_DIR)        [file normalize "@VTK_DIR@/bin/$::VTK_BUILD_SUBDIR"]
       
-      set ::env(CTK_DIR)            [file normalize "@CTK_DIR@"]
+      if { "@CTK_DIR@" != "" } {
+        set ::env(CTK_DIR)         [file normalize "@CTK_DIR@"]
+      } else {
+        set ::env(CTK_DIR)         "$::Slicer3_HOME/bin"
+      }
       set ::env(CTK_BIN_DIR)        [file normalize "@CTK_DIR@/CTK-build/bin/$::CTK_BUILD_SUBDIR"]
     
       set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
