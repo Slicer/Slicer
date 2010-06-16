@@ -213,6 +213,7 @@ qSlicerIOManager* qSlicerApplication::ioManager()
   return _ioManager;
 }
 
+#ifdef Slicer3_USE_PYTHONQT
 //-----------------------------------------------------------------------------
 qSlicerPythonManager* qSlicerApplication::pythonManager()
 {
@@ -221,6 +222,7 @@ qSlicerPythonManager* qSlicerApplication::pythonManager()
   Q_ASSERT(_pythonManager);
   return _pythonManager;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 CTK_SET_CXX(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);
