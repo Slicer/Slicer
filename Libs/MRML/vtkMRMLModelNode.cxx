@@ -168,6 +168,17 @@ void vtkMRMLModelNode::AddPointScalars(vtkDataArray *array)
     // set the scalars
     this->PolyData->GetPointData()->SetScalars(array);
     }
+  // update the scalar range on this node - polydata get scalar range doesn't
+  // work here as it's not quite updated yet.
+  double *scalarRange = array->GetRange(); 
+  if (scalarRange)
+    {
+    vtkDebugMacro("AddPointScalars: Scalar range for new array = " << scalarRange[0] << ", " << scalarRange[1]);
+    if (this->GetDisplayNode())
+      {
+      this->GetDisplayNode()->SetScalarRange(scalarRange);
+      }
+    }
 }
 
 //---------------------------------------------------------------------------

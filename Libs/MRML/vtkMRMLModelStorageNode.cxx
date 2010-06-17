@@ -284,9 +284,19 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 
   this->SetReadStateIdle();
   if (modelNode->GetPolyData() != NULL) 
-  {
+    {
+    // is there an active scalar array?
+    if (modelNode->GetDisplayNode())
+      {
+      double *scalarRange =  modelNode->GetPolyData()->GetScalarRange();
+      if (scalarRange)
+        {
+        vtkDebugMacro("ReadData: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
+        modelNode->GetDisplayNode()->SetScalarRange(scalarRange);
+        }
+      }
     modelNode->GetPolyData()->Modified();
-  }
+    } 
   modelNode->SetModifiedSinceRead(0);
   return result;
 }
