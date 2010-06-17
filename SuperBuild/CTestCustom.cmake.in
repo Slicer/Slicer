@@ -126,7 +126,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # CTK - log4qt
   "logobjectptr.obj : warning LNK4221: no public symbols found; archive member will be inaccessible"
-  "/usr/bin/ranlib: .*liblog4qt.a(log4qt.cpp.o) has no symbols"
+  "/usr/bin/ranlib: .*libLog4Qt.a.*has no symbols"
   "log4qt.rollingfileappender.h.*Warning: Property declaration maxFileSize has no READ accessor function."
   
   # CTK Documentation warning
@@ -154,7 +154,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules.zlib.gzio.*warning C4996"
   "Modules.zlib.gzio"
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
-  "Modules._multiprocessing.multiprocessing.*warning C4101"
+  "Modules._multiprocessing.multiprocessing.*warning"
   # Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
   "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
@@ -165,6 +165,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "python.Mac.Modules.(cf|Nav).*warning: (cast|unused)"
   "python.Modules._ctypes.*warning: function declaration isn't a prototype"
   "QuickTime.framework.QuickTime, missing required architecture x86_64 in file"
+  "python.Modules._ssl.*incompatible pointer type"
+  "python.Mac.Modules.carbonevt.*defined but not used"
+  "python.Mac.Modules.qt._Qtmodule.*used uninitialized in this function"
   # About redefinition of symbols
   "pyconfig.h.*warning:.*redefined"
   "features.h.*"
