@@ -34,16 +34,6 @@ set(include_dirs
   ${RemoteIO_BINARY_DIR}
   )
 
-
-# IF(Slicer3_USE_QT)
-#   ADD_SUBDIRECTORY(Qt)
-#   set(include_dirs ${include_dirs} 
-#     ${SlicerBaseGUIQt_SOURCE_DIR}
-#     ${SlicerBaseGUIQt_BINARY_DIR}
-#     ${QT_INCLUDES}
-#     )
-# ENDIF(Slicer3_USE_QT)
-
 include_directories(${include_dirs})
 
 slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS tmp)
