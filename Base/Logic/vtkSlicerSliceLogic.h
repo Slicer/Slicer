@@ -135,58 +135,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   /// 
   /// the tail of the pipeline
   /// -- returns NULL if none of the inputs exist
-  vtkImageData *GetImageData () { 
-     if ( (this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
-         (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
-         (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) ) 
-      {     
-      return this->ImageData;
-      }
-     else
-      {
-      return NULL;
-      }
-  };
-
-  void UpdateImageData () { 
-    if ( (this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
-         (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
-         (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) ) 
-      {     
-      if ( this->Blend->GetInput(0) != NULL ) 
-        {
-        this->Blend->Update(); 
-        }
-      //this->ImageData = this->Blend->GetOutput();
-      if (this->ImageData== NULL || this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
-        {
-        if (this->ImageData== NULL)
-          {
-          this->ImageData = vtkImageData::New();
-          }
-        this->ImageData->DeepCopy( this->Blend->GetOutput()); 
-        this->ExtractModelTexture->SetInput( this->ImageData );
-        vtkTransform *activeSliceTransform = vtkTransform::New();
-        activeSliceTransform->Identity();
-        activeSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
-        this->ExtractModelTexture->SetResliceTransform( activeSliceTransform );
-        activeSliceTransform->Delete();
-        }
-      }
-    else 
-      {
-      if (this->ImageData)
-        {
-        this->ImageData->Delete();
-        }
-      this->ImageData=NULL;
-      this->ExtractModelTexture->SetInput( this->ImageData );
-      }
-  };
+  vtkImageData *GetImageData ();
 
   /// 
   /// update the pipeline to reflect the current state of the nodes
   void UpdatePipeline ();
+
+
+  ///
+  /// Internally used by UpdatePipeline
+  void UpdateImageData();
 
   /// 
   /// provide the virtual method that updates this Logic based

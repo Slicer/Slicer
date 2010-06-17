@@ -264,7 +264,7 @@ void vtkSlicerSliceLogic::ProcessMRMLEvents(vtkObject * caller,
     && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
-    if (node == NULL || !(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") || node->IsA("vtkMRMLVolumeNode")) ) 
+    if (node == NULL || !(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") || node->IsA("vtkMRMLVolumeNode")) )
       {
       return;
       }
@@ -591,10 +591,61 @@ void vtkSlicerSliceLogic::SetLabelOpacity(double labelOpacity)
 }
 
 //----------------------------------------------------------------------------
+vtkImageData * vtkSlicerSliceLogic::GetImageData()
+{
+   if ( (this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
+       (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
+       (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) )
+    {
+    return this->ImageData;
+    }
+   else
+    {
+    return NULL;
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceLogic::UpdateImageData ()
+{
+  if ( (this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
+       (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
+       (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) )
+    {
+    if ( this->Blend->GetInput(0) != NULL )
+      {
+      this->Blend->Update();
+      }
+    //this->ImageData = this->Blend->GetOutput();
+    if (this->ImageData== NULL || this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
+      {
+      if (this->ImageData== NULL)
+        {
+        this->ImageData = vtkImageData::New();
+        }
+      this->ImageData->DeepCopy( this->Blend->GetOutput());
+      this->ExtractModelTexture->SetInput( this->ImageData );
+      vtkTransform *activeSliceTransform = vtkTransform::New();
+      activeSliceTransform->Identity();
+      activeSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
+      this->ExtractModelTexture->SetResliceTransform( activeSliceTransform );
+      activeSliceTransform->Delete();
+      }
+    }
+  else
+    {
+    if (this->ImageData)
+      {
+      this->ImageData->Delete();
+      }
+    this->ImageData=NULL;
+    this->ExtractModelTexture->SetInput( this->ImageData );
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::UpdatePipeline()
 {
-
-
   int modified = 0;
 
   if ( this->SliceCompositeNode )
