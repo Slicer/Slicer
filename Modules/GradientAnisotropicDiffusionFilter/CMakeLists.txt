@@ -16,14 +16,6 @@ if(NOT Slicer3_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
 
-# IF(Slicer3_USE_QT)
-#   set(include_dirs ${include_dirs} ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
-#   QT4_WRAP_CPP(MOC_SRCS QtGADModule.h)
-#   SET(SRCS ${SRCS} ${MOC_SRCS} 
-#            QtGADModule.cxx QtGADModule.h)
-#   SET(QT_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QVTK)
-# ENDIF(Slicer3_USE_QT)
-
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -56,24 +48,6 @@ set(GradientAnisotropicDiffusionFilter_SRCS
   ${SRCS}
   )
 
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-#vtkModule.cxx
-#PROPERTIES
-#ABSTRACT "TRUE"
-#)
-
-# Helper classes
-
-# SET_SOURCE_FILES_PROPERTIES(
-#   QtGADModule.cxx 
-#   moc_QtGADModule.cxx 
-#   QtGADModule.h
-#   WRAP_EXCLUDE
-#   )
-
-
 # --------------------------------------------------------------------------
 # Wrapping
 
@@ -102,7 +76,6 @@ target_link_libraries(${lib_name}
   ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
-#   ${QT_LIBRARIES}
   ${ITK_LIBRARIES}
   )
 
