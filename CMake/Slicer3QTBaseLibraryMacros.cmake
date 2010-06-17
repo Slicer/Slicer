@@ -120,6 +120,7 @@ MACRO(Slicer3_build_slicer_qtbase_library)
 
   TARGET_LINK_LIBRARIES(${lib_name}
     ${QT_LIBRARIES}
+    ${CTK_EXTERNAL_LIBRARIES}
     ${SLICERQTBASELIB_TARGET_LIBRARIES}
     )
 
