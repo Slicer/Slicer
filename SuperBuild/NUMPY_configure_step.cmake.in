@@ -4,11 +4,11 @@ set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 file(WRITE "@NUMPY_binary@/site.cfg"
 "
 [blas]
-library_dirs = @CLAPACK_binary@/BLAS/SRC;@CLAPACK_binary@/CLAPACK-build/F2CLIBS/libf2c
+library_dirs = @CLAPACK_binary@/BLAS/SRC/@CMAKE_CFG_INTDIR@/;@CLAPACK_binary@/F2CLIBS/libf2c/@CMAKE_CFG_INTDIR@/
 libraries = blas,libf2c
 
 [lapack]
-library_dirs = @CLAPACK_binary@/SRC/
+library_dirs = @CLAPACK_binary@/SRC/@CMAKE_CFG_INTDIR@/
 lapack_libs = lapack
 ")
 
