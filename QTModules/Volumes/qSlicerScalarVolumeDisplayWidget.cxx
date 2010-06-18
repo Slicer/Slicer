@@ -48,6 +48,7 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   ctkTransferFunctionBarsItem* barsItem = 
     new ctkTransferFunctionBarsItem(this->Histogram);
   barsItem->setBarWidth(1.);
+  barsItem->setBarColor(QColor(Qt::black));
   this->TransferFunctionWidget->scene()->addItem(barsItem);
 }
 
