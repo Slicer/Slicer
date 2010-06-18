@@ -15,6 +15,7 @@ class qSlicerWelcomeModulePrivate;
 class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModule :
   public qSlicerAbstractLoadableModule
 {
+  Q_OBJECT
   Q_INTERFACES(qSlicerAbstractLoadableModule);
 
 public:
@@ -24,7 +25,10 @@ public:
   virtual ~qSlicerWelcomeModule(){}
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-
+  ///
+  /// Return help/acknowledgement text
+  virtual QString helpText()const;
+  virtual QString acknowledgementText()const;
 protected:
 
   ///

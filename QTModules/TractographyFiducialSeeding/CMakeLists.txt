@@ -19,6 +19,7 @@ SET(qt_module_SRCS
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
+  qSlicerTractographyFiducialSeedingModule.h
   qSlicerTractographyFiducialSeedingModuleWidget.h
   )
 

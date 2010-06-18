@@ -25,6 +25,7 @@ SET(qt_module_SRCS
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
+  qSlicerMeasurementsModule.h
   qSlicerMeasurementsModuleWidget.h
   Widgets/qSlicerMeasurementsAngleWidget.h
   Widgets/qSlicerMeasurementsRulerWidget.h

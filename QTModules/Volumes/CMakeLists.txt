@@ -33,6 +33,7 @@ SET(qt_module_SRCS
 SET(qt_module_MOC_SRCS
   qSlicerVolumesIO.h
   qSlicerVolumesIOOptionsWidget.h
+  qSlicerVolumesModule.h
   qSlicerVolumesModuleWidget.h
   qSlicerVolumeDisplayWidget.h
   qSlicerScalarVolumeDisplayWidget.h

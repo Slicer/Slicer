@@ -15,8 +15,8 @@ class qSlicermiAnnotationModulePrivate;
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicermiAnnotationModule :
   public qSlicerAbstractLoadableModule
 {
-  Q_INTERFACES(qSlicerAbstractLoadableModule);
-
+  Q_OBJECT
+  Q_INTERFACES(qSlicerAbstractLoadableModule)
 public:
 
   typedef qSlicerAbstractLoadableModule Superclass;

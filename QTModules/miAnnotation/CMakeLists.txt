@@ -99,6 +99,7 @@ SET(qt_module_SRCS
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
+  qSlicermiAnnotationModule.h
   qSlicermiAnnotationModuleWidget.h
   qSlicermiAnnotationModuleAnnotationPropertyDialog.h
   qSlicermiAnnotationModuleReportDialog.h

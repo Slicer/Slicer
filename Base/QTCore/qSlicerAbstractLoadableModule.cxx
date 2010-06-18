@@ -34,13 +34,15 @@ void qSlicerAbstractLoadableModule::setup()
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractLoadableModule::helpText()const
 {
-  qDebug() << "qSlicerAbstractLoadableModule::helpText - Not implemented";
+  qDebug() << "WARNING: " << this->metaObject()->className()
+           << "::helpText() is not implemented";
   return QString();
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractLoadableModule::acknowledgementText()const
 {
-  qDebug() << "qSlicerAbstractLoadableModule::acknowledgementText - Not implemented";
+  qDebug() << "WARNING: " << this->metaObject()->className()
+           << "::acknowledgementText - Not implemented";
   return QString();
 }

@@ -14,6 +14,7 @@ class qSlicerModuleTemplateModulePrivate;
 class Q_SLICER_QTMODULES_MODULETEMPLATE_EXPORT qSlicerModuleTemplateModule :
   public qSlicerAbstractLoadableModule
 {
+  Q_OBJECT
   Q_INTERFACES(qSlicerAbstractLoadableModule);
 
 public:
