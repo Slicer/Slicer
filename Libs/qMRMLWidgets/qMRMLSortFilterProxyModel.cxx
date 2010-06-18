@@ -29,7 +29,7 @@ public:
   CTK_DECLARE_PUBLIC(qMRMLSortFilterProxyModel);
   qMRMLSortFilterProxyModelPrivate();
 
-  QStringList                      NodeTypes; 
+  QStringList                      NodeTypes;
   bool                             ShowHidden;
   bool                             ShowChildNodeTypes;
   QStringList                      HideChildNodeTypes;
@@ -106,6 +106,11 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     {
     return true;
     }
+  if (!d->ShowHidden && node->GetHideFromEditors())
+    {
+    return false;
+    }
+
   foreach(const QString& nodeType, d->NodeTypes)
     {
     // filter by node type
