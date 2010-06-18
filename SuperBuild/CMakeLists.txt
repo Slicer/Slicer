@@ -10,9 +10,6 @@ project(Slicer3)
 enable_language(C)
 enable_language(CXX)
 
-
-
-
 #-----------------------------------------------------------------------------
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
 #-----------------------------------------------------------------------------
