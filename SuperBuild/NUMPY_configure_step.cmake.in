@@ -2,11 +2,19 @@ message("Configuring NUMPY:\n@NUMPY_binary@")
 set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 set(ENV{VS_UNICODE_OUTPUT} "")
 
+# As explained in site.cfg.example - See http://projects.scipy.org/numpy/browser/trunk/site.cfg.example
+# Directories listed in variable such as library_dirs or source_dirs should be separated using os.pathsep
+# On windows, the separator is ";" and ":" on unix-like platform
+set(path_sep ":")
+if(WIN32)
+  set(path_sep ";")
+endif()
+
 # setup the site.cfg file
 file(WRITE "@NUMPY_binary@/site.cfg"
 "
 [blas]
-library_dirs = @CLAPACK_binary@/BLAS/SRC/${CONFIG_TYPE}/;@CLAPACK_binary@/F2CLIBS/libf2c/${CONFIG_TYPE}/
+library_dirs = @CLAPACK_binary@/BLAS/SRC/${CONFIG_TYPE}/${path_sep}@CLAPACK_binary@/F2CLIBS/libf2c/${CONFIG_TYPE}/
 libraries = blas,libf2c
 
 [lapack]
