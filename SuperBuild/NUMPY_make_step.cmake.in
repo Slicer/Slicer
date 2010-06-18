@@ -1,11 +1,16 @@
 message("Building NUMPY:\n@NUMPY_binary@")
 set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+set(ENV{VS_UNICODE_OUTPUT} "")
+
 execute_process(
   COMMAND "@slicer_PYTHON_EXECUTABLE@" setup.py install
   WORKING_DIRECTORY "@NUMPY_binary@"
-  RESULT_VARIABLE res)
+  RESULT_VARIABLE res
+  OUTPUT_VARIABLE NUMPY_OUT
+  OUTPUT_VARIABLE NUMPY_ERR)
 
 if(NOT ${res} EQUAL 0)
+  message("NUMPY Errors detected: \n${NUMPY_OUT}\n${NUMPY_ERR}")
   message(FATAL_ERROR "Error in config of NUMPY")
 endif()
 message("Numpy build worked.")

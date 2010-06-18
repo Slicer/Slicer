@@ -1,5 +1,7 @@
 message("Configuring NUMPY:\n@NUMPY_binary@")
 set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+set(ENV{VS_UNICODE_OUTPUT} "")
+
 # setup the site.cfg file
 file(WRITE "@NUMPY_binary@/site.cfg"
 "
@@ -15,7 +17,8 @@ lapack_libs = lapack
 execute_process(
   COMMAND "@slicer_PYTHON_EXECUTABLE@" setup.py config
   WORKING_DIRECTORY "@NUMPY_binary@"
-  RESULT_VARIABLE res)
+  RESULT_VARIABLE res
+  )
 
 if(NOT ${res} EQUAL 0)
   message(FATAL_ERROR "Error in config of NUMPY")
