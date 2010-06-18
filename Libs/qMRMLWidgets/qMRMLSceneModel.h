@@ -32,13 +32,20 @@ public:
   typedef QAbstractItemModel Superclass;
   qMRMLSceneModel(QObject *parent=0);
   virtual ~qMRMLSceneModel();
-  
+
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
 
+  ///
+  /// Extra items that are prepended to the node list
+  /// Warning, setPreItems() resets the model, the currently selected item is lost
   void setPreItems(vtkObject* parent, const QStringList& extraItems);
-  void setPostItems(vtkObject* parent, const QStringList& extraItems);
   QStringList preItems(vtkObject* parent)const;
+
+  ///
+  /// Extra items that are appended to the node list
+  /// Warning, setPostItems() resets the model, the currently selected item is lost
+  void setPostItems(vtkObject* parent, const QStringList& extraItems);
   QStringList postItems(vtkObject* parent)const;
 
   virtual int columnCount(const QModelIndex &parent=QModelIndex())const;

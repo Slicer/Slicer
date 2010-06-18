@@ -21,7 +21,7 @@ class qMRMLNodeComboBoxPrivate;
 class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QComboBox
 {
   Q_OBJECT
-  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes) 
+  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
   Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
@@ -34,12 +34,13 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QComboBox
 public:
   /// Superclass typedef
   typedef QComboBox Superclass;
-  
-  /// Constructors
+
+  /// Construct an empty qMRMLNodeComboBox with a null scene,
+  /// no nodeType, where the hidden nodes are not forced on display.
   explicit qMRMLNodeComboBox(QWidget* parent = 0);
   virtual ~qMRMLNodeComboBox(){}
 
-  /// 
+  ///
   /// Get MRML scene
   vtkMRMLScene* mrmlScene()const;
   ///
@@ -47,13 +48,14 @@ public:
   /// the nodes
   qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
 
-  /// 
+  ///
   /// Set/Get node types to display in the list
-  /// NodeTypes are the class names, i.e. vtkMRMLViewNode, 
+  /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
   inline QStringList nodeTypes()const;
   inline void setNodeTypes(const QStringList& nodeTypes);
-  /// 
+
+  ///
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   inline void setShowHidden(bool);
@@ -67,17 +69,17 @@ public:
   inline bool showChildNodeTypes()const;
 
   ///
-  /// If a node is a nodeType, hide the node if it is also 
-  /// a ExcludedChildNodeType. (this can happen if nodeType is a 
+  /// If a node is a nodeType, hide the node if it is also
+  /// a ExcludedChildNodeType. (this can happen if nodeType is a
   /// mother class of ExcludedChildNodeType)
   inline void setHideChildNodeTypes(const QStringList& nodeTypes);
   inline QStringList hideChildNodeTypes()const;
-  
+
   ///
   /// Add node type attribute that filter the nodes to
   /// display. If a node is created via "AddNode", the attributes
   /// will be set to the new node
-  void addAttribute(const QString& nodeType, 
+  void addAttribute(const QString& nodeType,
                     const QString& attributeName,
                     const QVariant& attributeValue);
   ///
@@ -85,67 +87,67 @@ public:
   /// as count includes the "AddNode", "Remove Node"... items
   int nodeCount()const;
 
-  /// 
+  ///
   /// Return the currently selected node. 0 if no node is selected
   vtkMRMLNode* currentNode()const;
 
-  /// 
+  ///
   /// Return the currently selected node id . "" if no node is selected
   /// Utility function that is based on currentNode
   QString currentNodeId()const;
 
-  /// 
+  ///
   /// Set/Get SelectNodeUponCreation flags
   bool selectNodeUponCreation()const;
   void setSelectNodeUponCreation(bool value);
 
-  /// 
+  ///
   /// Set/Get NoneEnabled flags
   bool noneEnabled()const;
   void setNoneEnabled(bool enable);
 
-  /// 
+  ///
   /// Set/Get AddEnabled flags
   bool addEnabled()const;
   void setAddEnabled(bool enable);
 
-  /// 
+  ///
   /// Set/Get AddEnabled flags
   bool removeEnabled()const;
   void setRemoveEnabled(bool enable);
 
-  /// 
+  ///
   /// Set/Get AddEnabled flags
   bool editEnabled()const;
   void setEditEnabled(bool enable);
 
 public slots:
-  /// 
+  ///
   /// Set the scene the NodeSelector listens to.
   void setMRMLScene(vtkMRMLScene* scene);
-  
+
   ///
   /// Select the node to be current
   void setCurrentNode(vtkMRMLNode* node);
 
-  /// 
+  ///
   /// Create a node of the same type than on the "node types" properties
   virtual void addNode();
 
-  /// 
+  ///
   /// Remove the current node from the scene
   virtual void removeCurrentNode();
 
-  /// 
+  ///
   /// Edit the current node
   virtual void editCurrentNode();
 signals:
-  /// 
+  ///
   /// emit the current displayed node. NULL if
   /// the list is empty.
   void currentNodeChanged(vtkMRMLNode* node);
 
-  /// 
+  ///
   /// Signal emitted just after currentNodeChanged(vtkMRMLNode*) is.
   /// \a validNode set to True when the current node is changed.
   /// Set to False when the list is empty. Useful to
@@ -172,7 +174,7 @@ signals:
   void nodeAboutToBeRemoved(vtkMRMLNode* node);
 
   ///
-  /// TBD: 
+  /// TBD:
   /// void nodeRemoved(vtkMRMLNode*);
 
 protected:
