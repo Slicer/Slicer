@@ -105,6 +105,14 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
     fileList.GetPointer());
   if (node)
     {
+    vtkSlicerApplicationLogic* appLogic =
+      qSlicerCoreApplication::application()->appLogic();
+    vtkMRMLSelectionNode* selectedNode = appLogic->GetSelectionNode();
+    if (selectedNode)
+      {
+      selectedNode->SetReferenceActiveVolumeID(node->GetID());
+      appLogic->PropagateVolumeSelection();
+      }
     this->setLoadedNodes(QStringList(QString(node->GetID())));
     }
   else
