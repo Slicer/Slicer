@@ -37,6 +37,9 @@ vtkSlicerLogic::vtkSlicerLogic()
   this->LogicCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->LogicCallbackCommand->SetCallback(vtkSlicerLogic::LogicCallback);
 
+  this->MRMLCallbackCommand = this->MRMLObserverManager->GetCallbackCommand();
+
+
 }
 
 //----------------------------------------------------------------------------

@@ -39,6 +39,9 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
 }
 
 //-----------------------------------------------------------------------------
+CTK_GET_CXX(qSlicerMainWindow, ctkVTKRenderView*, renderView, VTKRenderView);
+
+//-----------------------------------------------------------------------------
 CTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
 
 //-----------------------------------------------------------------------------

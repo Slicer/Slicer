@@ -188,6 +188,7 @@ protected:
   /// 
   /// Holder for MRML and Logic callbacks
   vtkCallbackCommand *LogicCallbackCommand;
+  vtkCallbackCommand *MRMLCallbackCommand;
 
   /// 
   /// Flag to avoid event loops

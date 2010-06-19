@@ -121,7 +121,7 @@ void qSlicerCamerasModuleWidget::onCameraNodeAdded(vtkMRMLNode* mrmlNode)
     vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
     {
-    Q_ASSERT(cameraNode);
+    //Q_ASSERT(cameraNode);
     return;
     }
   this->qvtkConnect(cameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
@@ -135,7 +135,7 @@ void qSlicerCamerasModuleWidget::onCameraNodeRemoved(vtkMRMLNode* mrmlNode)
     vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
     {
-    Q_ASSERT(cameraNode);
+    //Q_ASSERT(cameraNode);
     return;
     }
   this->qvtkDisconnect(cameraNode,

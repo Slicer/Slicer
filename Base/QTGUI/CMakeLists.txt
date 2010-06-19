@@ -40,6 +40,14 @@ SET(KIT_SRCS
   qSlicerSaveDataDialog.h
   qSlicerWidget.cxx
   qSlicerWidget.h
+  vtkSlicerModelDisplayManager.cxx
+  vtkSlicerModelDisplayManager.h
+  vtkSlicerBoxRepresentation.cxx
+  vtkSlicerBoxRepresentation.h
+  vtkSlicerBoxWidget2.cxx
+  vtkSlicerBoxWidget2.h
+  vtkSlicerManagerInteractorStyle.h
+  vtkSlicerManagerInteractorStyle.cxx
   )
 
 # Headers that should run through moc

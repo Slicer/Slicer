@@ -15,6 +15,11 @@
 // qMRML includes
 // #include <qMRMLEventLoggerWidget.h>
 
+#include "vtkRenderWindow.h"
+#include "ctkVTKRenderView.h"
+
+#include "vtkSlicerModelDisplayManager.h"
+
 // QT includes
 #include <QSplashScreen>
 #include <QDebug>
@@ -100,6 +105,18 @@ int main(int argc, char* argv[])
   
   // Add modules to the selector
   window.moduleSelector()->addModules(moduleNames);
+
+  ctkVTKRenderView* renderView = window.renderView();
+
+  vtkRenderWindow *renderWindow = renderView->renderWindow();
+
+  vtkSlicerModelDisplayManager *modelManager = vtkSlicerModelDisplayManager::New();
+
+  modelManager->SetMRMLScene(app.mrmlScene());
+
+  modelManager->SetMainViewer(renderWindow);
+
+  modelManager->CreateWidget();
 
 //   qMRMLEventLoggerWidget logger;
 //   logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
