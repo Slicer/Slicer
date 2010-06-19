@@ -283,7 +283,8 @@ proc launch_SetEnvironment {} {
       # QtDesigner variable
       #
       set ::env(Slicer3_QT_PLUGIN_PATH)  "@Slicer3_INSTALL_LIB_DIR@"
-    
+      set ::env(CTK_QT_PLUGIN_PATH) "$::env(CTK_BIN_DIR)"
+      
     } else {
     
       # the not-installed case
