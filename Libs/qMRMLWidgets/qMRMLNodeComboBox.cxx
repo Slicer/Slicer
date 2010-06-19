@@ -252,7 +252,6 @@ void qMRMLNodeComboBox::editCurrentNode()
 void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
 {
   CTK_D(qMRMLNodeComboBox);
-  qDebug() << "emitCurrentNodeChanged" << currentIndex;
 
   vtkMRMLNode* node = d->mrmlNode(currentIndex);
   emit currentNodeChanged(node);

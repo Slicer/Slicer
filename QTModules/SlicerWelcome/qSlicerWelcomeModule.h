@@ -25,9 +25,13 @@ public:
   virtual ~qSlicerWelcomeModule(){}
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
+
   ///
-  /// Return help/acknowledgement text
+  /// Help to use the module
   virtual QString helpText()const;
+
+  ///
+  /// Return acknowledgements
   virtual QString acknowledgementText()const;
 protected:
 
