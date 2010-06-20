@@ -7,6 +7,7 @@
 
 // MRML includes
 #include <vtkMRMLNode.h>
+#include <vtkMRMLViewNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 
 // VTK includes
@@ -72,6 +73,24 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* tran
     {
     transform->PreMultiply();
     }
+}
+
+//------------------------------------------------------------------------------
+int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
+{
+  Q_ASSERT(scene);
+  int numberOfVisibleNodes = 0;
+  const char* className = "vtkMRMLViewNode";
+  int nnodes = scene->GetNumberOfNodesByClass(className);
+  for (int n = 0; n < nnodes; n++)
+    {
+    vtkMRMLViewNode * node = vtkMRMLViewNode::SafeDownCast(scene->GetNthNodeByClass(n, className));
+    if (node && node->GetVisibility())
+      {
+      numberOfVisibleNodes++;
+      }
+    }
+  return numberOfVisibleNodes;
 }
 
 //------------------------------------------------------------------------------

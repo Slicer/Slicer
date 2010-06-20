@@ -29,7 +29,10 @@ public:
   static void getTransformInCoordinateSystem(vtkMRMLNode* transformNode, bool global, 
     vtkTransform* transform); 
   static void getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* transformNode, 
-    bool global, vtkTransform* transform); 
+    bool global, vtkTransform* transform);
+
+  /// Retrieve the number of visible view node associated with \a scene
+  static int countVisibleViewNode(vtkMRMLScene* scene);
   
   /// 
   /// Used by the qMRMLItemModel;
