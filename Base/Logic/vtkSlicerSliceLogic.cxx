@@ -999,6 +999,11 @@ void vtkSlicerSliceLogic::DeleteSliceModel()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::CreateSliceModel()
 {
+  assert(this->MRMLScene);
+  if(!this->MRMLScene)
+    {
+    return;
+    }
 
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
