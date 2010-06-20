@@ -163,15 +163,15 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   void ProcessLogicEvents(); 
 
   /// 
-  /// manage and syncronise the SliceNode
+  /// Manage and syncronise the SliceNode
   void UpdateSliceNode();
 
   /// 
-  /// Upadte slicer node given a layout name
+  /// Update slicer node given a layout name
   void UpdateSliceNodeFromLayout();
 
   /// 
-  /// manage and syncronise the SliceCompositeNode
+  /// Manage and syncronise the SliceCompositeNode
   void UpdateSliceCompositeNode();
 
   /// 
@@ -295,27 +295,26 @@ protected:
   vtkSlicerSliceLogic(const vtkSlicerSliceLogic&);
   void operator=(const vtkSlicerSliceLogic&);
 
-  /// 
-  //
-  vtkMRMLSliceNode *SliceNode;
-  vtkMRMLSliceCompositeNode *SliceCompositeNode;
-  vtkSlicerSliceLayerLogic *BackgroundLayer;
-  vtkSlicerSliceLayerLogic *ForegroundLayer;
-  vtkSlicerSliceLayerLogic *LabelLayer;
+  vtkMRMLSliceNode *          SliceNode;
+  vtkMRMLSliceCompositeNode * SliceCompositeNode;
+  vtkSlicerSliceLayerLogic *  BackgroundLayer;
+  vtkSlicerSliceLayerLogic *  ForegroundLayer;
+  vtkSlicerSliceLayerLogic *  LabelLayer;
 
   double ForegroundOpacity;
   double LabelOpacity;
-  vtkImageBlend *Blend;
-  vtkImageData *ImageData;
-  vtkImageReslice *ExtractModelTexture;
 
-  vtkPolyDataCollection *PolyDataCollection;
-  vtkCollection *LookupTableCollection;
+  vtkImageBlend *   Blend;
+  vtkImageData *    ImageData;
+  vtkImageReslice * ExtractModelTexture;
 
-  vtkMRMLModelNode *SliceModelNode;
-  vtkMRMLModelDisplayNode *SliceModelDisplayNode;
-  vtkMRMLLinearTransformNode *SliceModelTransformNode;
-  double SliceSpacing[3];
+  vtkPolyDataCollection * PolyDataCollection;
+  vtkCollection *         LookupTableCollection;
+
+  vtkMRMLModelNode *            SliceModelNode;
+  vtkMRMLModelDisplayNode *     SliceModelDisplayNode;
+  vtkMRMLLinearTransformNode *  SliceModelTransformNode;
+  double                        SliceSpacing[3];
   
   void AddSliceGlyphs(vtkSlicerSliceLayerLogic *layerLogic);
 
