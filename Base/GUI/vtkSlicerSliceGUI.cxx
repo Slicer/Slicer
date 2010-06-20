@@ -340,15 +340,6 @@ void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
     LookupTableCollection->RemoveAllItems();
     LookupTableCollection->Delete();
 
-      /*
-    vtkMRMLSliceNode *snode = this->GetLogic()->GetSliceNode();
-
-    this->SetAndObserveMRMLNode( snode );
-    this->SetupViewerAndController();
-    vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
-    this->GetSliceController()->SetSliceNode (snode);
-    this->GetSliceController()->SetSliceCompositeNode (scnode);
-    */
     sliceViewer->RequestRender ( );
     }
 
