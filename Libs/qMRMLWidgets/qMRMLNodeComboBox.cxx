@@ -42,7 +42,7 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate()
 {
   this->MRMLNodeFactory = 0;
   this->MRMLSceneModel = 0;
-  this->SelectNodeUponCreation = true;
+  this->SelectNodeUponCreation = true; 
   this->NoneEnabled = false;
   this->AddEnabled = true;
   this->RemoveEnabled = true;
@@ -58,7 +58,7 @@ void qMRMLNodeComboBoxPrivate::init()
 
   QAbstractItemModel* model = p->createSceneModel();
   QAbstractItemModel* rootModel = model;
-  while (qobject_cast<QAbstractProxyModel*>(rootModel) &&
+  while (qobject_cast<QAbstractProxyModel*>(rootModel) && 
          qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel())
     {
     rootModel = qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel();
@@ -83,7 +83,7 @@ void qMRMLNodeComboBoxPrivate::init()
 vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int index)const
 {
   CTK_P(const qMRMLNodeComboBox);
-  QString nodeId =
+  QString nodeId = 
     p->itemData(index, qMRML::UIDRole).toString();
   if (nodeId.isEmpty())
     {
@@ -98,7 +98,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& inde
 {
   CTK_P(const qMRMLNodeComboBox);
   Q_ASSERT(p->model());
-  QString nodeId =
+  QString nodeId = 
     p->model()->data(index, qMRML::UIDRole).toString();
   if (nodeId.isEmpty())
     {
@@ -118,11 +118,6 @@ void qMRMLNodeComboBoxPrivate::updateNoneItem()
     noneItem.append("None");
     }
   this->MRMLSceneModel->setPreItems(p->mrmlScene(), noneItem);
-  // Select the None item if it's the only item in the list
-  if (p->nodeCount() == 0 && this->NoneEnabled)
-    {
-    p->setCurrentIndex(0);
-    }
 }
 
 // --------------------------------------------------------------------------
@@ -132,11 +127,11 @@ void qMRMLNodeComboBoxPrivate::updateActionItems()
   QStringList extraItems;
 
   if (p->mrmlScene() == 0)
-    {// if no scene is set, we remove the add/remove actions
+    {
     this->MRMLSceneModel->setPostItems(p->mrmlScene(), extraItems);
     return;
     }
-
+  
   if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled)
     {
     extraItems.append("separator");
@@ -156,7 +151,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems()
   this->MRMLSceneModel->setPostItems(p->mrmlScene(), extraItems);
 
   QObject::connect(p->view(), SIGNAL(clicked(const QModelIndex& )),
-                   p, SLOT(activateExtraItem(const QModelIndex& )),
+                   p, SLOT(activateExtraItem(const QModelIndex& )), 
                    Qt::UniqueConnection);
 }
 
@@ -194,7 +189,7 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeComboBox::addAttribute(const QString& nodeType,
+void qMRMLNodeComboBox::addAttribute(const QString& nodeType, 
                                      const QString& attributeName,
                                      const QVariant& attributeValue)
 {
@@ -210,9 +205,9 @@ void qMRMLNodeComboBox::addNode()
   // Create the MRML node via the MRML Scene
   // FIXME, for the moment we create only nodes of the first type, but we should
   // be able to add a node of any type in NodeTypes
-  vtkMRMLNode * _node =
+  vtkMRMLNode * _node = 
     d->MRMLNodeFactory->createNode(this->nodeTypes()[0]);
-  // The created node is appended at the bottom of the current list
+  // The created node is appended at the bottom of the current list  
   Q_ASSERT(_node);
   if (_node && this->selectNodeUponCreation())
     {// select the created node.
@@ -252,7 +247,6 @@ void qMRMLNodeComboBox::editCurrentNode()
 void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
 {
   CTK_D(qMRMLNodeComboBox);
-
   vtkMRMLNode* node = d->mrmlNode(currentIndex);
   emit currentNodeChanged(node);
   emit currentNodeChanged(node != 0);
@@ -269,10 +263,6 @@ vtkMRMLScene* qMRMLNodeComboBox::mrmlScene()const
 int qMRMLNodeComboBox::nodeCount()const
 {
   CTK_D(const qMRMLNodeComboBox);
-  if (this->mrmlScene() == 0)
-    {
-    return 0;
-    }
   int extraItemsCount =
       d->MRMLSceneModel->preItems(this->mrmlScene()).count()
     + (d->MRMLSceneModel->postItems(this->mrmlScene()).count() ? d->MRMLSceneModel->postItems(this->mrmlScene()).count(): 0);
@@ -290,28 +280,21 @@ void qMRMLNodeComboBox::removeCurrentNode()
 void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 {
   CTK_D(qMRMLNodeComboBox);
-
-  //maybe it shouldn't be commented
+  
   //if (d->MRMLSceneModel->mrmlScene() == scene)
-  //  {
+  //  { 
   //  return ;
   //  }
-
+  
+  // The Add button is valid only if the scene is non-empty
+  //this->setAddEnabled(scene != 0);
+  
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
   d->MRMLSceneModel->setMRMLScene(scene);
   d->updateNoneItem();
   d->updateActionItems();
   this->setRootModelIndex(this->model()->index(0, 0));
-
-  // updateNoneItem() might have set the currentIndex to 0 but
-  // updateActionItems() and setRootModelIndex reset the model and
-  // would set the current index to -1. This is why here we restore
-  // the currentIndex to 0 if we have to.
-  if (this->nodeCount() == 0 && d->NoneEnabled)
-    {
-    this->setCurrentIndex(0);
-    }
 
   this->setEnabled(scene != 0);
 }
@@ -422,7 +405,7 @@ void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex & parent, int start, in
     emit nodeAdded(node);
     }
 }
-
+ 
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end)
 {
