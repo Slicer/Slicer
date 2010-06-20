@@ -21,11 +21,18 @@ QWidget *qSlicerWidgetPlugin::createWidget(QWidget *_parent)
   return _widget;
 }
 
+// --------------------------------------------------------------------------
 QString qSlicerWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerWidget\" \
           name=\"SlicerWidget\">\n"
           "</widget>\n";
+}
+
+// --------------------------------------------------------------------------
+QIcon qSlicerWidgetPlugin::icon() const
+{
+  return QIcon(":/Icons/widget.png");
 }
 
 // --------------------------------------------------------------------------

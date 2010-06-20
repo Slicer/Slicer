@@ -10,10 +10,11 @@ public:
   qSlicerWidgetPlugin();
   
   QWidget *createWidget(QWidget *_parent);
-  QString domXml() const;
-  QString includeFile() const;
-  bool isContainer() const;
-  QString name() const;
+  QString  domXml() const;
+  QIcon    icon() const;
+  QString  includeFile() const;
+  bool     isContainer() const;
+  QString  name() const;
 };
 
 #endif
