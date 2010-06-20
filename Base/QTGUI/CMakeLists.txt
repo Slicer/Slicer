@@ -32,6 +32,9 @@ SET(KIT_SRCS
   qSlicerIOManager.h
   qSlicerIOOptionsWidget.cxx
   qSlicerIOOptionsWidget.h
+  qSlicerLayoutManager.cxx
+  qSlicerLayoutManager.h
+  qSlicerLayoutManager_p.h
   qSlicerModulePanel.cxx
   qSlicerModulePanel.h
   qSlicerModuleSelectorWidget.cxx
@@ -63,6 +66,8 @@ SET(KIT_MOC_SRCS
   qSlicerFileDialog.h
   qSlicerIOManager.h
   qSlicerIOOptionsWidget.h
+  qSlicerLayoutManager.h
+  qSlicerLayoutManager_p.h
   qSlicerModulePanel.h
   qSlicerModuleSelectorWidget.h
   qSlicerModuleSelectorWidget_p.h
