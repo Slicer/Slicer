@@ -63,6 +63,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLUtils.h
   qMRMLVolumeThresholdWidget.cxx
   qMRMLVolumeThresholdWidget.h
+  qMRMLWidget.cxx
+  qMRMLWidget.h
   qMRMLWindowLevelWidget.cxx
   qMRMLWindowLevelWidget.h
   )
@@ -87,6 +89,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLTransformSliders.h
   qMRMLTreeWidget.h
   qMRMLVolumeThresholdWidget.h
+  qMRMLWidget.h
   qMRMLWindowLevelWidget.h
   )
 

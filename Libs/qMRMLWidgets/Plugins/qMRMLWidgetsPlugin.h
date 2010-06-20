@@ -10,6 +10,7 @@
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTreeWidgetPlugin.h"
 #include "qMRMLVolumeThresholdWidgetPlugin.h"
+#include "qMRMLWidgetPlugin.h"
 #include "qMRMLWindowLevelWidgetPlugin.h"
 #include "qMRMLSceneFactoryWidgetPlugin.h"
 
@@ -36,6 +37,7 @@ public:
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeWidgetPlugin
             << new qMRMLVolumeThresholdWidgetPlugin
+            << new qMRMLWidgetPlugin
             << new qMRMLWindowLevelWidgetPlugin
             << new qMRMLSceneFactoryWidgetPlugin;
     return plugins;

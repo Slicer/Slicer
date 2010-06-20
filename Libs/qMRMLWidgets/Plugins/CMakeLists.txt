@@ -24,12 +24,14 @@ SET(designer_plugin_SRCS
   qMRMLTreeWidgetPlugin.h
   qMRMLSceneFactoryWidgetPlugin.cxx
   qMRMLSceneFactoryWidgetPlugin.h
-  qMRMLWidgetsAbstractPlugin.cxx
-  qMRMLWidgetsAbstractPlugin.h
-  qMRMLWidgetsPlugin.cxx
-  qMRMLWidgetsPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.cxx
   qMRMLVolumeThresholdWidgetPlugin.h
+  qMRMLWidgetsAbstractPlugin.cxx
+  qMRMLWidgetsAbstractPlugin.h
+  qMRMLWidgetPlugin.cxx
+  qMRMLWidgetPlugin.h
+  qMRMLWidgetsPlugin.cxx  
+  qMRMLWidgetsPlugin.h
   qMRMLWindowLevelWidgetPlugin.cxx
   qMRMLWindowLevelWidgetPlugin.h
   )
@@ -47,6 +49,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.h
+  qMRMLWidgetPlugin.h
   qMRMLWindowLevelWidgetPlugin.h
   )
 
