@@ -53,6 +53,10 @@
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer3_VERSION_{MINOR, MAJOR}, Slicer3_VERSION_FULL
 
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+  
 //-----------------------------------------------------------------------------
 class qSlicerCoreApplicationPrivate: public ctkPrivate<qSlicerCoreApplication>
 {
@@ -353,19 +357,17 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   d->discoverSlicerHomeDirectory(this->arguments().at(0));
   
   // Create MRML scene
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  VTK_CREATE(vtkMRMLScene, scene);
   vtksys_stl::string root = vtksys::SystemTools::GetCurrentWorkingDirectory();
   scene->SetRootDirectory(root.c_str());
   vtkMRMLScene::SetActiveScene( scene );
 
   // Register the node type for the command line modules
-  vtkSmartPointer<vtkMRMLCommandLineModuleNode> clmNode =
-    vtkSmartPointer<vtkMRMLCommandLineModuleNode>::New();
+  VTK_CREATE(vtkMRMLCommandLineModuleNode, clmNode);
   scene->RegisterNodeClass(clmNode);
 
   // Create the application Logic object,
-  vtkSmartPointer<vtkSlicerApplicationLogic> _appLogic =
-    vtkSmartPointer<vtkSlicerApplicationLogic>::New();
+  VTK_CREATE(vtkSlicerApplicationLogic, _appLogic);
   _appLogic->SetMRMLScene(scene);
 
   // pass through event handling once without observing the scene
@@ -375,7 +377,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   _appLogic->CreateProcessingThread();
 
   // --- First scene needs a crosshair to be added manually
-  vtkSmartPointer<vtkMRMLCrosshairNode> crosshair = vtkSmartPointer<vtkMRMLCrosshairNode>::New();
+  VTK_CREATE(vtkMRMLCrosshairNode, crosshair);
   crosshair->SetCrosshairName("default");
   scene->AddNode( crosshair );
 
