@@ -7,6 +7,7 @@
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
+#include <ctkLogger.h>
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"
@@ -14,6 +15,10 @@
 #include "qSlicerDataDialog_p.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerIOOptionsWidget.h"
+
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.slicer.base.qtgui.qSlicerDataDialog");
+//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
@@ -159,7 +164,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()
   QList<qSlicerIO::IOProperties> files;
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
     {
-    qDebug() << "row: " << row;
+    logger.trace(QString("selectedFiles - row: %1").arg(row));
     qSlicerIO::IOProperties properties;
     QTableWidgetItem* fileItem = this->FileWidget->item(row, FileColumn);
     QTableWidgetItem* descriptionItem = this->FileWidget->item(row, TypeColumn);
@@ -169,7 +174,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()
     Q_ASSERT(descriptionItem);
     if (fileItem->checkState() != Qt::Checked)
       {
-      qDebug() << "unchecked" ;
+      logger.trace(QString("selectedFiles - row: %1 - UnChecked").arg(row));
       continue;
       }
     properties["fileName"] = fileItem->text();
