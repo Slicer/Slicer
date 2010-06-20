@@ -18,6 +18,7 @@
 #include "qSlicerWidget.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerCommandOptions.h"
+#include "qSlicerLayoutManager.h"
 #include "qSlicerApplication.h"
 #ifdef Slicer3_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
@@ -224,6 +225,10 @@ qSlicerPythonManager* qSlicerApplication::pythonManager()
   return _pythonManager;
 }
 #endif
+
+//-----------------------------------------------------------------------------
+CTK_SET_CXX(qSlicerApplication, qSlicerLayoutManager*, setLayoutManager, LayoutManager);
+CTK_GET_CXX(qSlicerApplication, qSlicerLayoutManager*, layoutManager, LayoutManager);
 
 //-----------------------------------------------------------------------------
 CTK_SET_CXX(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);

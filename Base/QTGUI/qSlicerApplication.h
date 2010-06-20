@@ -19,6 +19,7 @@ class qSlicerIOManager;
 #ifdef Slicer3_USE_PYTHONQT
 class qSlicerPythonManager;
 #endif
+class qSlicerLayoutManager;
 class qSlicerWidget;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplication
@@ -45,11 +46,15 @@ public:
   ///
   /// Get IO Manager
   qSlicerIOManager* ioManager();
-  
+
   #ifdef Slicer3_USE_PYTHONQT
   /// Get Python Manager
   qSlicerPythonManager * pythonManager();
   #endif
+  ///
+  /// Set/Get layout manager
+  qSlicerLayoutManager* layoutManager()const;
+  void setLayoutManager(qSlicerLayoutManager* layoutManager);
 
   ///
   /// Set the visibility of the top level widgets.
