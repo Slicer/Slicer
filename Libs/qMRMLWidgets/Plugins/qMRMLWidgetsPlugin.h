@@ -7,6 +7,7 @@
 #include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLNodeSelectorPlugin.h"
 #include "qMRMLNodeTreeSelectorPlugin.h"
+#include "qMRMLSliceViewWidgetPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTreeWidgetPlugin.h"
 #include "qMRMLVolumeThresholdWidgetPlugin.h"
@@ -34,6 +35,7 @@ public:
             << new qMRMLNodeComboBoxPlugin
             << new qMRMLNodeSelectorPlugin
             << new qMRMLNodeTreeSelectorPlugin
+            << new qMRMLSliceViewWidgetPlugin
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeWidgetPlugin
             << new qMRMLVolumeThresholdWidgetPlugin

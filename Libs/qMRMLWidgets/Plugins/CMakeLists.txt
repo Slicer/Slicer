@@ -18,6 +18,8 @@ SET(designer_plugin_SRCS
   qMRMLNodeSelectorPlugin.h
   qMRMLNodeTreeSelectorPlugin.cxx
   qMRMLNodeTreeSelectorPlugin.h
+  qMRMLSliceViewWidgetPlugin.cxx
+  qMRMLSliceViewWidgetPlugin.h
   qMRMLTransformSlidersPlugin.cxx
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.cxx
@@ -46,6 +48,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLNodeSelectorPlugin.h
   qMRMLNodeTreeSelectorPlugin.h
   qMRMLSceneFactoryWidgetPlugin.h
+  qMRMLSliceViewWidgetPlugin.h
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.h
   qMRMLVolumeThresholdWidgetPlugin.h

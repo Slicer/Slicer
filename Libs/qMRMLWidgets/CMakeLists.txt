@@ -48,6 +48,9 @@ SET(qMRMLWidgets_SRCS
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
   qMRMLSceneModel.h
+  qMRMLSliceViewWidget.cxx
+  qMRMLSliceViewWidget.h
+  qMRMLSliceViewWidget_p.h
   qMRMLSortFilterProxyModel.cxx
   qMRMLSortFilterProxyModel.h
   qMRMLTransformProxyModel.cxx
@@ -82,6 +85,8 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLNodeTreeSelector.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
+  qMRMLSliceViewWidget.h
+  qMRMLSliceViewWidget_p.h
   qMRMLSortFilterProxyModel.h
   qMRMLTransformProxyModel.h
   qMRMLTreeProxyModel.h
@@ -97,6 +102,7 @@ SET(qMRMLWidgets_MOC_SRCS
 SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLEventLoggerWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
+  Resources/UI/qMRMLSliceViewWidget.ui
   Resources/UI/qMRMLTransformSliders.ui
   Resources/UI/qMRMLVolumeThresholdWidget.ui
   Resources/UI/qMRMLWindowLevelWidget.ui

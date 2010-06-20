@@ -3,6 +3,9 @@
     <file>Icons/VisibleOff.png</file>
     <file>Icons/VisibleOn.png</file>
     <file>Icons/VisibleOrInvisible.png</file>
+
+    <file>Icons/LinkOff.png</file>
+    <file>Icons/LinkOn.png</file>
     
     <file>Icons/LayoutChooseView.png</file>
     <file>Icons/LayoutCompareView.png</file>
@@ -17,5 +20,11 @@
     <file>Icons/LayoutSideBySideCompareView.png</file>
     <file>Icons/LayoutTabbed3DView.png</file>
     <file>Icons/LayoutTabbedSliceView.png</file>
+
+    <file>Icons/SliceMoreOptions.png</file>
+    <file>Icons/SliceViewerBG.png</file>
+    <file>Icons/SliceViewerFG.png</file>
+    <file>Icons/SliceViewerLB.png</file>
+    <file>Icons/SliceViewerOR.png</file>
   </qresource>
 </RCC>
