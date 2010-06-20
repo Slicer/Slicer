@@ -75,8 +75,9 @@ class qSlicerApplicationPrivate: public ctkPrivate<qSlicerApplication>
   // Load application styleSheet
   void loadStyleSheet();
 
-  QMap<QWidget*,bool>           TopLevelWidgetsSavedVisibilityState;
-  Qt::WindowFlags               DefaultWindowFlags;
+  QMap<QWidget*,bool>    TopLevelWidgetsSavedVisibilityState;
+  Qt::WindowFlags        DefaultWindowFlags;
+  qSlicerLayoutManager*  LayoutManager;
 };
 
 
@@ -86,7 +87,7 @@ class qSlicerApplicationPrivate: public ctkPrivate<qSlicerApplication>
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::qSlicerApplicationPrivate()
 {
-
+  this->LayoutManager = 0;
 }
 
 //-----------------------------------------------------------------------------
