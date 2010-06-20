@@ -37,7 +37,6 @@ vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeDisplayNode::New()
 }
 
 //----------------------------------------------------------------------------
-
 vtkMRMLNode* vtkMRMLScalarVolumeDisplayNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
@@ -113,6 +112,7 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
 
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();
