@@ -14,6 +14,18 @@ class vtkMRMLNode;
 class vtkMRMLScene;
 class qMRMLNodeFactoryPrivate;
 
+///
+/// vtkMRMLNodeInitializer is a default functor that should be dervied
+/// in case specific initialization steps are required
+struct QMRML_WIDGETS_EXPORT vtkMRMLNodeInitializer
+{
+  virtual void operator()(vtkMRMLNode* node)const
+    {
+    Q_UNUSED(node);
+    }
+};
+
+
 class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 {
   Q_OBJECT
@@ -34,11 +46,13 @@ public:
   /// 
   /// Create and add a node given its \a className to the scene associated with the factory
   /// Note: The scene has the ownership of the node and is responsible to delete it.
-  vtkMRMLNode* createNode(const QString& className);
+  vtkMRMLNode* createNode(const QString& className,
+                          const vtkMRMLNodeInitializer & initializer = vtkMRMLNodeInitializer());
 
   /// 
   /// Convenient method allowing to create a new node and add it to the \a scene
   static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className,
+    const vtkMRMLNodeInitializer & initializer = vtkMRMLNodeInitializer(),
     const AttributeType& attributes = AttributeType());
 
   /// 

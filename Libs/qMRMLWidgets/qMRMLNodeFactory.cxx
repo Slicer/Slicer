@@ -34,7 +34,8 @@ CTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
 CTK_GET_CXX(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
+vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
+                                          const vtkMRMLNodeInitializer & initializer)
 {
   CTK_D(qMRMLNodeFactory);
   
@@ -65,6 +66,9 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
                 "Can't add a node with a SingletonTag and an empty ID";
     return 0;
     }
+
+  // Extra initialization steps
+  initializer(node);
   
   vtkMRMLNode * nodeCreated = d->MRMLScene->AddNode(node);
   Q_ASSERT(nodeCreated);
@@ -81,7 +85,8 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& className,
-  const QHash<QString,QString>& attributes)
+                                          const vtkMRMLNodeInitializer & initializer,
+                                          const QHash<QString,QString>& attributes)
 {
   Q_ASSERT(scene);
   QSharedPointer<qMRMLNodeFactory> factory =
@@ -93,7 +98,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
     factory->addAttribute(key, attributes.value(key));
     }
   // Instanciate and return the requested node
-  return factory->createNode(className); 
+  return factory->createNode(className, initializer);
 }
 
 //------------------------------------------------------------------------------
