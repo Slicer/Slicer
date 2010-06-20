@@ -1,6 +1,10 @@
 #include "qSlicerApplication.h"
 
 // SlicerQT includes
+
+// CTK includes
+#include <ctkLogger.h>
+
 #include "qSlicerCommandOptions.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerMainWindow.h"
@@ -27,6 +31,8 @@
 //----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
+  ctkLogger::configure();
+
   qSlicerApplication app(argc, argv);
   app.setApplicationName("Slicer");
   //app.setApplicationVersion();
