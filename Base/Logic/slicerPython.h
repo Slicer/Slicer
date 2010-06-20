@@ -25,6 +25,10 @@
 #  undef _LARGEFILE_SOURCE
 #  endif 
 
+/* Undefine macros that Python.h defines to avoid redefinition warning.  */
+#undef _POSIX_C_SOURCE
+#undef _XOPEN_SOURCE
+
 /// If debug, Python wants pythonxx_d.lib, so fake it out
 
 #  ifdef _DEBUG
