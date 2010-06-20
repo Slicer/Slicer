@@ -1028,7 +1028,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
 
   //--- Popup Scale with Entry (displayed when user clicks LabelOpacityButton
   //--- LabelOpacityButton, LabelOpacityScale and its entry will be observed
-  //--- and their events handled in ProcessGUIEvents;
+  //--- and their events handled in sssGUIEvents;
   //--- the pop-up and hide behavior of the latter two will be managed locally
   //--- in the GUI.
   //--- TODO: make a SlicerWidget that handles this behavior. Leave event?
@@ -4076,7 +4076,7 @@ void vtkSlicerSliceControllerWidget::PrintSelf(ostream& os, vtkIndent indent)
   // widgets?
 }
 
-
+//----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::PopUpPrescribedSliceSpacingEntry()
 {
   if ( !this->MoreMenuButton || !this->MoreMenuButton->IsCreated())
@@ -4101,6 +4101,7 @@ void vtkSlicerSliceControllerWidget::PopUpPrescribedSliceSpacingEntry()
   
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::HidePrescribedSliceSpacingEntry()
 {
   if ( !this->PrescribedSliceSpacingTopLevel )
@@ -4110,6 +4111,7 @@ void vtkSlicerSliceControllerWidget::HidePrescribedSliceSpacingEntry()
   this->PrescribedSliceSpacingTopLevel->Withdraw();
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::SetSliceIndexEntryValueFromOffset(double sliceOffset)
 {
   int sliceIndex=this->SliceLogic->GetSliceIndexFromOffset(sliceOffset);
