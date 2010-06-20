@@ -70,6 +70,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLWidget.h
   qMRMLWindowLevelWidget.cxx
   qMRMLWindowLevelWidget.h
+  vtkMRMLThreeDRenderViewInteractorStyle.cxx
+  vtkMRMLThreeDRenderViewInteractorStyle.h
   )
 
 # Headers that should run through moc
