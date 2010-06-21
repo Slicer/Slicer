@@ -74,6 +74,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Qq]t.*h.*warning.*(copy constructor|assignment operator) could not be generated"
   # Tiger / 4.6.2 warning
   "include.[Qq]t[Cc]ore.qtextcodec.h.*warning.*is already a friend of"
+  "include.QtGui.(qtextformat|qtablewidget).*warning"
+  # Snowleopard / 4.6.2 warning
+  "QtGui.framework.Headers.(qtextformat|qtablewidget).*warning"
 
   # Suppress warning caused when QT 'foreach' loops are combined
   ".*warning: declaration of '_container_' shadows a previous local"
@@ -154,7 +157,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules.zlib.gzio.*warning C4996"
   "Modules.zlib.gzio"
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
-  "Modules._multiprocessing.multiprocessing.*warning"
+  "Modules._multiprocessing.*warning"
   # Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
   "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
@@ -168,6 +171,7 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "python.Modules._ssl.*incompatible pointer type"
   "python.Mac.Modules.carbonevt.*defined but not used"
   "python.Mac.Modules.qt._Qtmodule.*used uninitialized in this function"
+  "Modules.main.c.*warning: format not a string literal and no format arguments"
   # About redefinition of symbols
   "pyconfig.h.*warning:.*redefined"
   "features.h.*"
