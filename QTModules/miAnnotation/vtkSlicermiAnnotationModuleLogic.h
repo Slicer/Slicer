@@ -8,9 +8,6 @@
 #include <ctkPimpl.h>
 
 #include "qSlicermiAnnotationModuleExport.h"
-#include "vtkSlicerNodeSelectorWidget.h"
-#include "vtkKWUserInterfacePanel.h"
-#include "vtkSlicerModuleGUI.h"
 
 class vtkSlicerFiducialListWidget;
 class vtkSlicermiAnnotationModuleLogicPrivate;

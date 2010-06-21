@@ -7,7 +7,6 @@
 
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLSelectionNode.h"
-#include "vtkKWFrameWithLabel.h"
 
 #include "vtkMeasurementsGUI.h" 
 #include "vtkMRMLMeasurementsAngleNode.h"
@@ -23,8 +22,6 @@
 
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkLineRepresentation.h"
-#include "vtkKWTkUtilities.h"
-#include "vtkKWToolbarSet.h"
 #include "vtkWindowToImageFilter.h"
 #include "vtkPNGWriter.h"
 
