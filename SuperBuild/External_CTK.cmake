@@ -27,6 +27,7 @@ if (Slicer3_USE_QT)
         -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
         -DCTK_LIB_Widgets:BOOL=ON
         -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON
+        -DCTK_LIB_Scripting/Python/Core:BOOL=${Slicer3_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Widgets:BOOL=${Slicer3_USE_PYTHONQT}
         -DCTK_LIB_PluginFramework:BOOL=OFF
         -DCTK_PLUGIN_org.commontk.eventbus:BOOL=OFF
