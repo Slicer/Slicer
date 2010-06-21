@@ -19,6 +19,7 @@ class qMRMLNodeFactoryPrivate;
 /// in case specific initialization steps are required
 struct QMRML_WIDGETS_EXPORT vtkMRMLNodeInitializer
 {
+  virtual ~vtkMRMLNodeInitializer(){}
   virtual void operator()(vtkMRMLNode* node)const
     {
     Q_UNUSED(node);
