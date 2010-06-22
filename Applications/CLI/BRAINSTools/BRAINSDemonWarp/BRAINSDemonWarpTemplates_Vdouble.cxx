@@ -4,4 +4,3 @@ void VectorProcessOutputType_double(struct BRAINSDemonWarpAppParameters & comman
 {
   VectorProcessOutputType<double>(command);
 }
-

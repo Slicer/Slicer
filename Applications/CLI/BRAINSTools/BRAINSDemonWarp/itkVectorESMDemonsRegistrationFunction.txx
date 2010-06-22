@@ -29,9 +29,9 @@ namespace itk
  */
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::VectorESMDemonsRegistrationFunction()
-  {
+                                    TDeformationField>
+::VectorESMDemonsRegistrationFunction()
+{
   RadiusType   r;
   unsigned int j;
 
@@ -61,7 +61,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
   m_FixedImageGradientCalculatorVector.reserve(10);
   m_MappedMovingImageGradientCalculatorVector.reserve(10);
 
-    for ( unsigned int i = 0; i < 3; ++i )
+  for ( unsigned int i = 0; i < 3; ++i )
     {
     typename DefaultInterpolatorType::Pointer interp
       = DefaultInterpolatorType::New();
@@ -81,17 +81,17 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
     m_FixedImageGradientCalculator->UseImageDirectionOff();
     m_FixedImageGradientCalculatorVector.push_back(m_FixedImageGradientCalculator);
     m_MappedMovingImageGradientCalculator
-             = MovingImageGradientCalculatorType::New();
+      = MovingImageGradientCalculatorType::New();
     m_MappedMovingImageGradientCalculator->UseImageDirectionOff();
     m_MappedMovingImageGradientCalculatorVector.push_back(m_MappedMovingImageGradientCalculator);
- }
+    }
 
   m_Metric = NumericTraits<double>::max();
   m_SumOfSquaredDifference = 0.0;
   m_NumberOfPixelsProcessed = 0L;
   m_RMSChange = NumericTraits<double>::max();
   m_SumOfSquaredChange = 0.0;
-  }
+}
 
 /*
  * Standard "PrintSelf" method.
@@ -99,8 +99,8 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::PrintSelf(std::ostream & os, Indent indent) const
+                                    TDeformationField>
+::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -112,9 +112,9 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
   os << indent << "MovingImageIterpolator: ";
   os << m_MovingImageInterpolator.GetPointer() << std::endl;
   os << indent << "FixedImageGradientCalculator: ";
-//  os << m_FixedImageGradientCalculator.GetPointer() << std::endl;
+  //  os << m_FixedImageGradientCalculator.GetPointer() << std::endl;
   os << indent << "MappedMovingImageGradientCalculator: ";
-//  os << m_MappedMovingImageGradientCalculator.GetPointer() << std::endl;
+  //  os << m_MappedMovingImageGradientCalculator.GetPointer() << std::endl;
   os << indent << "DenominatorThreshold: ";
   os << m_DenominatorThreshold << std::endl;
   os << indent << "IntensityDifferenceThreshold: ";
@@ -138,8 +138,8 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::SetIntensityDifferenceThreshold(double threshold)
+                                    TDeformationField>
+::SetIntensityDifferenceThreshold(double threshold)
 {
   m_IntensityDifferenceThreshold = threshold;
 }
@@ -150,8 +150,8 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 double
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::GetIntensityDifferenceThreshold() const
+                                    TDeformationField>
+::GetIntensityDifferenceThreshold() const
 {
   return m_IntensityDifferenceThreshold;
 }
@@ -162,14 +162,14 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::InitializeIteration()
+                                    TDeformationField>
+::InitializeIteration()
 {
   if ( !this->GetMovingImage() || !this->GetFixedImage()
        || !m_MovingImageInterpolator )
     {
     itkExceptionMacro(
-       << "MovingImage, FixedImage and/or Interpolator not set" );
+      << "MovingImage, FixedImage and/or Interpolator not set" );
     }
 
   // cache fixed image information
@@ -187,7 +187,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
       m_Normalizer += m_FixedImageSpacing[k] * m_FixedImageSpacing[k];
       }
     m_Normalizer *= m_MaximumUpdateStepLength * m_MaximumUpdateStepLength
-                    / static_cast<double>( ImageDimension );
+      / static_cast<double>( ImageDimension );
     }
   else
     {
@@ -200,10 +200,10 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
   typedef itk::ImageRegionIterator<FixedImageType>   IteratorType;
 
   ConstIteratorType in_Fix( this->GetFixedImage(),
-    this->GetFixedImage()->GetRequestedRegion() );
+                            this->GetFixedImage()->GetRequestedRegion() );
 
   ConstIteratorType in_Mov( this->GetMovingImage(),
-    this->GetMovingImage()->GetRequestedRegion() );
+                            this->GetMovingImage()->GetRequestedRegion() );
 
   for ( unsigned int i = 0; i < this->GetFixedImage()->GetVectorLength(); ++i )
     {
@@ -211,15 +211,15 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
       = AdaptorType::New();
     vectorFixedImageToImageAdaptor->SetExtractComponentIndex( i );
     vectorFixedImageToImageAdaptor->SetImage( const_cast<VectorFixedImageType *>(
-        this->GetFixedImage() ) );
+                                                this->GetFixedImage() ) );
     vectorFixedImageToImageAdaptor->Update();
 
     typename AdaptorType::Pointer vectorMovingImageToImageAdaptor
       = AdaptorType::New();
     vectorMovingImageToImageAdaptor->SetExtractComponentIndex( i );
     vectorMovingImageToImageAdaptor->SetImage( const_cast<VectorMovingImageType
-        *>( this->
-          GetMovingImage() ) );
+                                               *>( this->
+                                                   GetMovingImage() ) );
     vectorMovingImageToImageAdaptor->Update();
 
     // setup gradient calculator
@@ -258,12 +258,12 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
  */
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 typename VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::PixelType
+                                             TDeformationField>
+::PixelType
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::ComputeUpdate( const NeighborhoodType & it, void *gd,
-  const FloatOffsetType & itkNotUsed(offset) )
+                                    TDeformationField>
+::ComputeUpdate( const NeighborhoodType & it, void *gd,
+                 const FloatOffsetType & itkNotUsed(offset) )
 {
   GlobalDataStruct *globalData = (GlobalDataStruct *)gd;
   PixelType        update;
@@ -271,8 +271,8 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
     = this->GetFixedImage()->GetLargestPossibleRegion().GetIndex();
   IndexType LastIndex
     = this->GetFixedImage()->GetLargestPossibleRegion().GetIndex()
-      + this->GetFixedImage()->
-        GetLargestPossibleRegion().GetSize();
+    + this->GetFixedImage()->
+    GetLargestPossibleRegion().GetSize();
 
   const IndexType index = it.GetIndex();
 
@@ -284,15 +284,15 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 
   for ( unsigned int i = 0; i < this->GetFixedImage()->GetVectorLength(); ++i )
     {
-     const double fixedValue = static_cast<double>(
-      this->GetFixedImage()->GetPixel( index).GetElement(i));
-/*
-   if(index[0]==32 && index[1]==32 && index[2]==32)
-    {
-    std::cout <<  "FV  at index "<< i  << "is " << fixedValue << std::endl;
-    std::cout <<  "FV  at index is " << this->GetFixedImage()->GetPixel( index) << std::endl;
-    }
-*/
+    const double fixedValue = static_cast<double>(
+      this->GetFixedImage()->GetPixel( index).GetElement(i) );
+    /*
+       if(index[0]==32 && index[1]==32 && index[2]==32)
+        {
+        std::cout <<  "FV  at index "<< i  << "is " << fixedValue << std::endl;
+        std::cout <<  "FV  at index is " << this->GetFixedImage()->GetPixel( index) << std::endl;
+        }
+    */
     // Get moving image related information
     // check if the point was mapped outside of the moving image using
     // the "special value" NumericTraits<MovingPixelType>::max()
@@ -311,7 +311,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
     // afterwards
 
     if ( ( this->m_UseGradientType == Symmetric )
-        ||   ( this->m_UseGradientType == WarpedMoving ) )
+         ||   ( this->m_UseGradientType == WarpedMoving ) )
       {
       // we don't use a CentralDifferenceImageFunction here to be able to
       // check for NumericTraits<MovingPixelType>::max()
@@ -341,7 +341,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
             {
             // forward difference
             warpedMovingGradient[dim] = static_cast<double>( movingPixValue )
-                                        - movingValue;
+              - movingValue;
             warpedMovingGradient[dim] /= m_FixedImageSpacing[dim];
             }
           tmpIndex[dim] -= 1;
@@ -519,7 +519,7 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
       {
       // "ITK-Thirion" normalization
       denom =  usedGradientTimes2SquaredMagnitude
-              + ( vnl_math_sqr(sum_speedValue) / m_Normalizer );
+        + ( vnl_math_sqr(sum_speedValue) / m_Normalizer );
       }
     else
       {
@@ -566,8 +566,8 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 void
 VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::ReleaseGlobalDataPointer( void *gd ) const
+                                    TDeformationField>
+::ReleaseGlobalDataPointer( void *gd ) const
 {
   GlobalDataStruct *globalData = (GlobalDataStruct *)gd;
 
@@ -578,9 +578,9 @@ VectorESMDemonsRegistrationFunction<TFixedImage, TMovingImage,
   if ( m_NumberOfPixelsProcessed )
     {
     m_Metric = m_SumOfSquaredDifference
-               / static_cast<double>( m_NumberOfPixelsProcessed );
+      / static_cast<double>( m_NumberOfPixelsProcessed );
     m_RMSChange = vcl_sqrt( m_SumOfSquaredChange
-      / static_cast<double>( m_NumberOfPixelsProcessed ) );
+                            / static_cast<double>( m_NumberOfPixelsProcessed ) );
     }
   m_MetricCalculationLock.Unlock();
 

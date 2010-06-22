@@ -11,28 +11,28 @@
 
 namespace itk
 {
-  /*This file defines Thirion registration class which initializes the input
-    parser, preprocessor and the registrator. */
+/*This file defines Thirion registration class which initializes the input
+  parser, preprocessor and the registrator. */
 
-  template <typename TImage,
-           typename TRealImage, typename TOutputImage
-             >
-             class BRAINSDemonWarp : public ApplicationBase<
-                                     ValidationInputParser<TImage>,
-                                     DemonsPreprocessor<TImage, TRealImage>,
-                                     DemonsRegistrator<TRealImage, TOutputImage,
-                                     ITK_TYPENAME TRealImage::PixelType>
-                                     >
-  {
+template <typename TImage,
+          typename TRealImage, typename TOutputImage
+          >
+class BRAINSDemonWarp : public ApplicationBase<
+  ValidationInputParser<TImage>,
+  DemonsPreprocessor<TImage, TRealImage>,
+  DemonsRegistrator<TRealImage, TOutputImage,
+                    ITK_TYPENAME TRealImage::PixelType>
+  >
+{
 public:
 
   /** Standard class typedefs. */
   typedef BRAINSDemonWarp Self;
   typedef ApplicationBase<ValidationInputParser<TImage>,
-          DemonsPreprocessor<TImage, TRealImage>,
-          DemonsRegistrator<TRealImage, TRealImage,
-          ITK_TYPENAME TRealImage::PixelType>
-            > Superclass;
+                          DemonsPreprocessor<TImage, TRealImage>,
+                          DemonsRegistrator<TRealImage, TRealImage,
+                                            ITK_TYPENAME TRealImage::PixelType>
+                          > Superclass;
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
@@ -53,11 +53,11 @@ public:
 
   /** Image dimension. */
   itkStaticConstMacro (ImageDimension, unsigned int,
-    TImage::ImageDimension);
+                       TImage::ImageDimension);
 
   /** Type to hold the number of checker boxes per dimension */
   typedef FixedArray<unsigned int, ::itk::GetImageDimension<
-    TImage>::ImageDimension> PatternArrayType;
+                                     TImage>::ImageDimension> PatternArrayType;
 
   typedef typename ImageType::PixelType PixelType;
   typedef typename ImageType::IndexType IndexType;
@@ -65,8 +65,8 @@ public:
 
   /** ShrinkFactors type. */
   typedef FixedArray<unsigned int,
-          itk::GetImageDimension<TImage>::ImageDimension>
-            ShrinkFactorsType;
+                     itk::GetImageDimension<TImage>::ImageDimension>
+  ShrinkFactorsType;
 
   /** IterationArray type. */
   typedef Array<unsigned int> IterationsArrayType;
@@ -199,51 +199,51 @@ public:
   /** Get the atlas image starting shrink factors. */
   itkGetConstReferenceMacro( TheMovingImageShrinkFactors, ShrinkFactorsType );
   void SetTheMovingImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
-    {
+  {
     this->m_TheMovingImageShrinkFactors = shrinkfactors;
-    }
+  }
 
   /** Get the subject image starting shrink factors. */
   itkGetConstReferenceMacro( TheFixedImageShrinkFactors, ShrinkFactorsType );
   void SetTheFixedImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
-    {
+  {
     this->m_TheFixedImageShrinkFactors = shrinkfactors;
-    }
+  }
 
   /** Get the number of iterations at each level. */
   itkGetConstReferenceMacro( NumberOfIterations, IterationsArrayType );
   void SetNumberOfIterations(const IterationsArrayType & iterations)
-    {
+  {
     m_NumberOfIterations = iterations;
-    }
+  }
 
   typedef itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
-          TDeformationField>
-            BaseRegistrationFilterType;
+                                               TDeformationField>
+  BaseRegistrationFilterType;
   void SetRegistrationFilter(
-    BaseRegistrationFilterType * filter)
-    {
+    BaseRegistrationFilterType *filter)
+  {
     this->m_Registrator->SetRegistrationFilter(filter);
-    }
+  }
 
   typedef itk::LogDomainDeformableRegistrationFilter<RealImageType, RealImageType,
-          TDeformationField>
-            LDDRegistrationFilterType;
-  void SetLDDRegistrationFilter( LDDRegistrationFilterType * filter)
-    {
+                                                     TDeformationField>
+  LDDRegistrationFilterType;
+  void SetLDDRegistrationFilter( LDDRegistrationFilterType *filter)
+  {
     this->m_Registrator->SetLDDRegistrationFilter(filter);
-    }
+  }
 
   void SetLogDomain(bool bl)
-    {
+  {
     this->m_Registrator->SetUseLogDomain(bl);
-    }
+  }
 
 protected:
 
   BRAINSDemonWarp ();
   virtual ~BRAINSDemonWarp ()
-    {}
+  {}
 
   /** Initialize the input parser. */
   virtual void InitializeParser ();
@@ -294,7 +294,7 @@ private:
   ShrinkFactorsType   m_TheFixedImageShrinkFactors;
   IterationsArrayType m_NumberOfIterations;
   std::string         m_InterpolationMode;
-  };
+};
 }          // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

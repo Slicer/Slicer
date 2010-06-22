@@ -6,11 +6,12 @@
 
 namespace itk
 {
-  // TODO: Need comment here
-  template <class TInputImage, class TOutputImage>
-    class ITK_EXPORT BOBFFilter :
-      public ImageToImageFilter<TInputImage, TOutputImage>
-  {
+/** \class BOBFilter
+ */
+template <class TInputImage, class TOutputImage>
+class ITK_EXPORT BOBFFilter :
+    public ImageToImageFilter<TInputImage, TOutputImage>
+{
 public:
   /** Standard class typedefs. */
   typedef BOBFFilter                                    Self;
@@ -26,7 +27,7 @@ public:
 
   /** ImageDimension enumeration. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-    TInputImage::ImageDimension);
+                      TInputImage::ImageDimension);
 
   /** Typedef to describe the output image region type. */
   typedef typename TOutputImage::RegionType OutputImageRegionType;
@@ -46,14 +47,14 @@ public:
 
   /** Set/Get the Input image. */
   void SetInputImage( const InputImageType *source )
-    {
+  {
     this->SetInput( source );
-    }
+  }
 
   const InputImageType * GetInputImage(void)
-    {
+  {
     return this->GetInput();
-    }
+  }
 
   /** Set the input mask */
   void SetInputMask( const InputImageType *image );
@@ -95,7 +96,7 @@ public:
 
 protected:
   BOBFFilter();
-  ~BOBFFilter() { };
+  ~BOBFFilter() { }
 private:
   BOBFFilter(const Self &);      // purposely not implemented
   void operator=(const Self &);  // purposely not implemented
@@ -108,7 +109,7 @@ private:
   InputPixelType  m_Upper;
   OutputPixelType m_ReplaceValue;
   InputSizeType   m_Radius;
-  };
+};
 }   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

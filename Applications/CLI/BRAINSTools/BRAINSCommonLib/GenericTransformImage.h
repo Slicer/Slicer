@@ -40,14 +40,14 @@ typedef itk::Transform<double,3,3> GenericTransformType;
 
 
 namespace GenericTransformImageNS {
-  static const unsigned int SpaceDimension = 3;
-  static const unsigned int SplineOrder = 3;
+static const unsigned int SpaceDimension = 3;
+static const unsigned int SplineOrder = 3;
 }
 
 
 typedef double CoordinateRepType;
 typedef itk::BSplineDeformableTransform<
-CoordinateRepType,
+  CoordinateRepType,
   GenericTransformImageNS::SpaceDimension,
   GenericTransformImageNS::SplineOrder > BSplineTransformType;
 
@@ -58,7 +58,7 @@ typedef itk::ScaleSkewVersor3DTransform<double> ScaleSkewVersor3DTransformType;
 
 namespace itk
 {
-  /**
+/**
    * \author Hans J. Johnson
    * \brief A utility function to write ITK compliant transforms to disk in a way that is compliant with the ReadTransformFromDisk
    * \param genericTransformToWrite A pointer to baseclass itk::Transform<double,3,3> that is
@@ -70,9 +70,9 @@ namespace itk
    * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
    * \endcode
    */
-  BRAINSCommonLib_EXPORT extern void WriteTransformToDisk(GenericTransformType const * const genericTransformToWrite,
-    const std::string outputTransform);
-  /**
+BRAINSCommonLib_EXPORT extern void WriteTransformToDisk(GenericTransformType const * const genericTransformToWrite,
+                                                        const std::string outputTransform);
+/**
    * \author Hans J. Johnson
    * \brief A utility function to read ITK compliant transforms to disk in a way that is compliant with the WriteTransformFromDisk
    * \param outputTransform the filename of the output transform.
@@ -97,9 +97,9 @@ namespace itk
    * }
    * \endcode
    */
-  BRAINSCommonLib_EXPORT extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTransform);
+BRAINSCommonLib_EXPORT extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTransform);
 
-  /**
+/**
    * \author Hans J. Johnson
    * \brief A utility function to write ITK compliant transforms to disk in a way that is compliant with the ReadTransformFromDisk
    * \param genericTransformToWrite A pointer to baseclass itk::Transform<double,3,3> that is
@@ -111,32 +111,28 @@ namespace itk
    * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
    * \endcode
    */
-  BRAINSCommonLib_EXPORT extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(const GenericTransformType::ConstPointer genericTransformToWrite);
+BRAINSCommonLib_EXPORT extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(const GenericTransformType::ConstPointer genericTransformToWrite);
 
-  /**
+/**
    * \author Hans J. Johnson
    * \brief Special purpose convenience function -- should not have a public interface.
    */
-  BRAINSCommonLib_EXPORT extern int WriteBothTransformsToDisk(
-    const GenericTransformType::ConstPointer genericTransformToWrite,
-    const std::string & outputTransform,
-    const std::string & strippedOutputTransform);
+BRAINSCommonLib_EXPORT extern int WriteBothTransformsToDisk(
+  const GenericTransformType::ConstPointer genericTransformToWrite,
+  const std::string & outputTransform,
+  const std::string & strippedOutputTransform);
 
-  /**
+/**
    * \author Hans J. Johnson
    * \brief Special purpose convenience function -- should not have a public interface.
    */
-  BRAINSCommonLib_EXPORT extern int WriteStrippedRigidTransformToDisk(
-    const GenericTransformType::ConstPointer genericTransformToWrite,
-    const std::string & strippedOutputTransform);
+BRAINSCommonLib_EXPORT extern int WriteStrippedRigidTransformToDisk(
+  const GenericTransformType::ConstPointer genericTransformToWrite,
+  const std::string & strippedOutputTransform);
+
+BRAINSCommonLib_EXPORT extern void AddExtraTransformRegister(void);
+
 }
-
-//  These were hoisted from the ApplyWarp main executable.
-//  REFACTOR:  It turned out to be very inconvenient to let RefImage differ from Image.
-typedef float                              PixelType;
-typedef itk::Image<PixelType, GenericTransformImageNS::SpaceDimension>    ImageType;
-typedef float                              RefPixelType;
-typedef itk::Image<RefPixelType, GenericTransformImageNS::SpaceDimension> RefImageType;
 
 /**
  * \author Hans J. Johnson

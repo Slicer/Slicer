@@ -1,5 +1,5 @@
-#ifndef _ThirionRegistration_txx
-#define _ThirionRegistration_txx
+#ifndef __ThirionRegistration_txx
+#define __ThirionRegistration_txx
 
 #include "ThirionRegistration.h"
 
@@ -7,8 +7,8 @@ namespace itk
 {
 template<typename TImage, typename TRealImage, typename TOutputImage>
 ThirionRegistration<TImage, TRealImage, TOutputImage>
-  ::ThirionRegistration()
-  {
+::ThirionRegistration()
+{
   m_TheMovingImageFilename = "";
   m_TheFixedImageFilename = "";
 
@@ -45,7 +45,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
     m_Seed[i] = 0;
     m_MedianFilterSize[i] = 0;
     }
-  }
+}
 
 /*This method initializes the input parser which reads in the moving image,
   fixed image and parameter file.*/
@@ -53,7 +53,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
 template<typename TImage, typename TRealImage, typename TOutputImage>
 void
 ThirionRegistration<TImage, TRealImage, TOutputImage>
-  ::InitializeParser()
+::InitializeParser()
 {
   this->m_Parser->SetTheMovingImageFilename(
     this->m_TheMovingImageFilename.c_str() );
@@ -87,7 +87,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
 template<typename TImage, typename TRealImage, typename TOutputImage>
 void
 ThirionRegistration<TImage, TRealImage, TOutputImage>
-  ::InitializePreprocessor()
+::InitializePreprocessor()
 {
   this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetTheFixedImage() );
   this->m_Preprocessor->SetInputMovingImage( this->m_Parser->GetTheMovingImage() );
@@ -117,7 +117,7 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
 template<typename TImage, typename TRealImage, typename TOutputImage>
 void
 ThirionRegistration<TImage, TRealImage, TOutputImage>
-  ::InitializeRegistrator()
+::InitializeRegistrator()
 {
   this->m_Registrator->SetDisplacementBaseName( this->GetDisplacementBaseName() );
   this->m_Registrator->SetWarpedImageName( this->GetWarpedImageName() );

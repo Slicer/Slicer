@@ -32,16 +32,16 @@ template<
   class TOutputImage,
   class TFieldValue>
 void VDemonsRegistrator<TRealImage, TOutputImage,
-  TFieldValue>::WriteDisplacementComponents ()
+                        TFieldValue>::WriteDisplacementComponents ()
 {
   m_DefaultPixelValue = NumericTraits<PixelType>::One;
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.
   typedef itk::Image<FieldValueType,
-    3>                  ComponentImageType;
+                     3>                  ComponentImageType;
   typedef itk::VectorIndexSelectionCastImageFilter<TDeformationField,
-    ComponentImageType> ComponentFilterType;
+                                                   ComponentImageType> ComponentFilterType;
 
   std::string CurrentComponentFilename;
   try
@@ -86,7 +86,7 @@ template<
   class TOutputImage,
   class TFieldValue>
 VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator ()
-  {
+{
   // Images need to be set from the outside
   m_VectorFixedImage = VectorImageType::New();
   m_VectorMovingImage = VectorImageType::New();
@@ -143,20 +143,20 @@ VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::VDemonsRegistrator ()
   m_OutDebug = false;
 
   m_InitialDeformationField = NULL;
-  m_InterpolationMode="Linear";
-  }
+  m_InterpolationMode = "Linear";
+}
 
 template<
   class TRealImage,
   class TOutputImage,
   class TFieldValue>
 VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::~VDemonsRegistrator ()
-  {
+{
   if ( m_Tag )
     {
     m_Registration->RemoveObserver (m_Tag);
     }
-  }
+}
 
 /*Perform the registration of preprocessed images.*/
 template<
@@ -165,12 +165,10 @@ template<
   class TFieldValue>
 void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
 {
-
   // Setup the registrator
 
-    typedef itk::MultiplyByConstantImageFilter<RealImageType, float,
+  typedef itk::MultiplyByConstantImageFilter<RealImageType, float,
     RealImageType> MultiplyByConstantImageType;
-
 
   if ( m_FixedImage.size() > 1 )
     {
@@ -182,18 +180,18 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     for ( unsigned int i = 0; i < m_FixedImage.size(); ++i )
       {
       typename MultiplyByConstantImageType::Pointer multi_FixedImageConstant
-      = MultiplyByConstantImageType::New();
+        = MultiplyByConstantImageType::New();
       multi_FixedImageConstant->SetInput( m_FixedImage[i] );
       multi_FixedImageConstant->SetConstant(m_WeightFactors[i]);
       multi_FixedImageConstant->Update();
 
       typename MultiplyByConstantImageType::Pointer multi_MovingImageConstant
-      = MultiplyByConstantImageType::New();
+        = MultiplyByConstantImageType::New();
       multi_MovingImageConstant->SetInput( m_MovingImage[i] );
       multi_MovingImageConstant->SetConstant(m_WeightFactors[i]);
       multi_MovingImageConstant->Update();
-      fixedVectorImage->SetNthInput(i, multi_FixedImageConstant->GetOutput());
-      movingVectorImage->SetNthInput(i, multi_MovingImageConstant->GetOutput());
+      fixedVectorImage->SetNthInput( i, multi_FixedImageConstant->GetOutput() );
+      movingVectorImage->SetNthInput( i, multi_MovingImageConstant->GetOutput() );
       }
 
     try
@@ -235,8 +233,8 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
          && this->m_MovingLandmarkFilename != "" )
       {
       std::cerr
-       << "Registering Landmarks as an initializer is not yet implemented"
-       << std::endl;
+        << "Registering Landmarks as an initializer is not yet implemented"
+        << std::endl;
       exit(-1);
       }
 
@@ -260,13 +258,13 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     if ( this->GetOutDebug() )
       {
       std::cout
-       <<
-      "Moving image shrink factors used in each level of MultiResolution Schedule\n"
-       << m_MovingImagePyramid->GetSchedule() << std::endl;
+        <<
+        "Moving image shrink factors used in each level of MultiResolution Schedule\n"
+        << m_MovingImagePyramid->GetSchedule() << std::endl;
       std::cout
-       <<
-      "Fixed image shrink factors used in each level of MultiResolution Schedule\n"
-       << m_FixedImagePyramid->GetSchedule() << std::endl;
+        <<
+        "Fixed image shrink factors used in each level of MultiResolution Schedule\n"
+        << m_FixedImagePyramid->GetSchedule() << std::endl;
       }
     try
       {
@@ -305,7 +303,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     m_Registration->SetMovingImage (m_MovingImage[0]);
     m_Registration->SetNumberOfLevels (m_NumberOfLevels);
     m_Registration->SetNumberOfIterations ( m_NumberOfIterations.
-        data_block () );
+                                            data_block () );
 
     // Setup the initial deformation field
     if ( this->m_InitialDeformationField.IsNotNull() )
@@ -317,8 +315,8 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
          && this->m_MovingLandmarkFilename != "" )
       {
       std::cerr
-       << "Registering Landmarks as an initializer is not yet implemented"
-       << std::endl;
+        << "Registering Landmarks as an initializer is not yet implemented"
+        << std::endl;
       exit(-1);
       }
     // Perform the registration.
@@ -342,13 +340,13 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     if ( this->GetOutDebug() )
       {
       std::cout
-       <<
-      "Moving image shrink factors used in each level of MultiResolution Schedule\n"
-       << m_MovingImagePyramid->GetSchedule() << std::endl;
+        <<
+        "Moving image shrink factors used in each level of MultiResolution Schedule\n"
+        << m_MovingImagePyramid->GetSchedule() << std::endl;
       std::cout
-       <<
-      "Fixed image shrink factors used in each level of MultiResolution Schedule\n"
-       << m_FixedImagePyramid->GetSchedule() << std::endl;
+        <<
+        "Fixed image shrink factors used in each level of MultiResolution Schedule\n"
+        << m_FixedImagePyramid->GetSchedule() << std::endl;
       }
     try
       {
@@ -385,7 +383,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
 
   // Write the output deformation fields if specified by the user.
   if ( this->m_DeformationFieldOutputName != std::string ("none")
-      && this->m_DeformationFieldOutputName != std::string ("") )
+       && this->m_DeformationFieldOutputName != std::string ("") )
     {
     itkUtil::WriteImage<TDeformationField>(m_DeformationField,
                                            this->m_DeformationFieldOutputName);
@@ -403,33 +401,34 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     }
 
   if ( this->m_WarpedImageName != std::string ("none")
-      || this->m_CheckerBoardFilename != std::string ("none") )
+       || this->m_CheckerBoardFilename != std::string ("none") )
     {
     typename RealImageType::Pointer DeformedMovingImagePtr(0);
+
+    {
+    typename RealImageType::Pointer sourceMovingImage = NULL;
+    if ( this->GetUseHistogramMatching() == true )
       {
-      typename RealImageType::Pointer sourceMovingImage=NULL;
-      if ( this->GetUseHistogramMatching() == true )
-        {
-        sourceMovingImage=m_MovingImage[0];
-        }
-      else
-        {
-        sourceMovingImage=m_UnNormalizedMovingImage[0];
-        }
-      DeformedMovingImagePtr=TransformWarp<RealImageType,RealImageType,TDeformationField>(
-        sourceMovingImage,
-        m_FixedImage[0],
-        0,
-        GetInterpolatorFromString<RealImageType>(this->m_InterpolationMode),
-        m_DeformationField);
+      sourceMovingImage = m_MovingImage[0];
       }
+    else
+      {
+      sourceMovingImage = m_UnNormalizedMovingImage[0];
+      }
+    DeformedMovingImagePtr = TransformWarp<RealImageType, RealImageType, TDeformationField>(
+      sourceMovingImage,
+      m_FixedImage[0],
+      0,
+      GetInterpolatorFromString<RealImageType>(this->m_InterpolationMode),
+      m_DeformationField);
+    }
 
     if ( this->GetOutDebug() )
       {
       std::cout << "-----Direction of output warped image\n"
-        << DeformedMovingImagePtr->GetDirection()
-        << "\n-----Direction of deformation field\n"
-        << this->m_DeformationField->GetDirection() << std::endl;
+                << DeformedMovingImagePtr->GetDirection()
+                << "\n-----Direction of deformation field\n"
+                << this->m_DeformationField->GetDirection() << std::endl;
       }
     /*Write the output image.*/
     if ( this->m_WarpedImageName != std::string ("none") )
@@ -438,7 +437,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
         = itkUtil::PreserveCast<RealImageType, TOutputImage>(
           DeformedMovingImagePtr);
       itkUtil::WriteImage<TOutputImage>(CastImageSptr,
-        this->m_WarpedImageName);
+                                        this->m_WarpedImageName);
 
       if ( this->GetOutDebug() )
         {
@@ -473,7 +472,7 @@ void VDemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
         }
       typename RealImageType::Pointer CheckerImagePtr = checker->GetOutput();
       itkUtil::WriteImage<RealImageType>(CheckerImagePtr,
-        this->m_CheckerBoardFilename);
+                                         this->m_CheckerBoardFilename);
       if ( this->GetOutDebug() )
         {
         std::cout << "---Checker Board Image has been written" << std::endl;

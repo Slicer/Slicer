@@ -35,48 +35,48 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkBRAINSROIAutoImageFilter.h"
 #include "BRAINSROIAutoCLP.h"
 
-typedef itk::Image<signed short, 3> VolumeImageType;
+typedef itk::Image<signed short, 3>  VolumeImageType;
 typedef itk::Image<unsigned char, 3> VolumeMaskType;
-typedef itk::SpatialObject<3>  SOImageMaskType;
+typedef itk::SpatialObject<3>        SOImageMaskType;
 
 /**
  * This file contains utility functions that are common to a few of the BRAINSFit Programs.
  */
 
 template <typename PixelType>
-  void
+void
 BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
-  VolumeMaskType::Pointer mask,
-  std::string &fileName)
+                               VolumeMaskType::Pointer mask,
+                               std::string & fileName)
 {
-  typedef typename itk::Image<PixelType,VolumeImageType::ImageDimension> WriteOutImageType;
+  typedef typename itk::Image<PixelType, VolumeImageType::ImageDimension>                       WriteOutImageType;
 
-  typedef typename itk::MultiplyImageFilter<VolumeMaskType,VolumeImageType,WriteOutImageType> MultiplierType;
+  typedef typename itk::MultiplyImageFilter<VolumeMaskType, VolumeImageType, WriteOutImageType> MultiplierType;
 
-  typename MultiplierType::Pointer clipper=MultiplierType::New();
+  typename MultiplierType::Pointer clipper = MultiplierType::New();
 
   clipper->SetInput1(mask);
   clipper->SetInput2(image);
   clipper->Update();
 
-  typename WriteOutImageType::Pointer temp=clipper->GetOutput();
+  typename WriteOutImageType::Pointer temp = clipper->GetOutput();
   itkUtil::WriteImage<WriteOutImageType>(temp, fileName);
 }
 
 int main( int argc, char *argv[] )
 {
   PARSE_ARGS;
-  if(inputVolume == "")
+  if ( inputVolume == "" )
     {
     std::cerr << argv[0] << ": Missing required --inputVolume parameter"
-      << std::cerr;
+              << std::cerr;
     exit(1);
     }
-  VolumeImageType::Pointer ImageInput=
-    itkUtil::ReadImage<VolumeImageType>(inputVolume);
+  VolumeImageType::Pointer ImageInput
+    = itkUtil::ReadImage<VolumeImageType>(inputVolume);
 
-  typedef itk::BRAINSROIAutoImageFilter<VolumeImageType,VolumeMaskType > ROIAutoType;
-  ROIAutoType::Pointer  ROIFilter=ROIAutoType::New();
+  typedef itk::BRAINSROIAutoImageFilter<VolumeImageType, VolumeMaskType> ROIAutoType;
+  ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
   ROIFilter->SetInput(ImageInput);
   ROIFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);
   ROIFilter->SetClosingSize(closingSize);
@@ -84,14 +84,14 @@ int main( int argc, char *argv[] )
   ROIFilter->SetDilateSize(ROIAutoDilateSize);
   ROIFilter->Update();
   SOImageMaskType::Pointer maskWrapper = ROIFilter->GetSpatialObjectROI();
-  VolumeMaskType::Pointer MaskImage = ROIFilter->GetOutput();
+  VolumeMaskType::Pointer  MaskImage = ROIFilter->GetOutput();
 
-  if(outputROIMaskVolume != "" )
+  if ( outputROIMaskVolume != "" )
     {
-    itkUtil::WriteImage<VolumeMaskType>(MaskImage,outputROIMaskVolume);
+    itkUtil::WriteImage<VolumeMaskType>(MaskImage, outputROIMaskVolume);
     }
 
-  if ( outputClippedVolumeROI != "")
+  if ( outputClippedVolumeROI != "" )
     {
     //      std::cout << "=========== resampledImage :\n" <<
     // resampledImage->GetDirection() << std::endl;
@@ -99,27 +99,27 @@ int main( int argc, char *argv[] )
     // command line parameter
     if ( outputVolumePixelType == "float" )
       {
-      BRAINSROIAUTOWriteOutputVolume<float>(ImageInput,MaskImage,outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<float>(ImageInput, MaskImage, outputClippedVolumeROI);
       }
     else if ( outputVolumePixelType == "short" )
       {
-      BRAINSROIAUTOWriteOutputVolume<signed short>(ImageInput,MaskImage,outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<signed short>(ImageInput, MaskImage, outputClippedVolumeROI);
       }
     else if ( outputVolumePixelType == "ushort" )
       {
-      BRAINSROIAUTOWriteOutputVolume<unsigned short>(ImageInput,MaskImage,outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<unsigned short>(ImageInput, MaskImage, outputClippedVolumeROI);
       }
     else if ( outputVolumePixelType == "int" )
       {
-      BRAINSROIAUTOWriteOutputVolume<signed int>(ImageInput,MaskImage,outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<signed int>(ImageInput, MaskImage, outputClippedVolumeROI);
       }
     else if ( outputVolumePixelType == "uint" )
       {
-      BRAINSROIAUTOWriteOutputVolume<unsigned int>(ImageInput,MaskImage,outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<unsigned int>(ImageInput, MaskImage, outputClippedVolumeROI);
       }
     else if ( outputVolumePixelType == "uchar" )
       {
-      BRAINSROIAUTOWriteOutputVolume<unsigned char>(ImageInput,MaskImage,outputClippedVolumeROI);
+      BRAINSROIAUTOWriteOutputVolume<unsigned char>(ImageInput, MaskImage, outputClippedVolumeROI);
       }
     }
   return 0;

@@ -31,17 +31,17 @@ bool keepOutputs(false);
 // typedefs
 typedef itk::Image<unsigned char, 3> ImageType;
 typedef itk::AffineTransform<double,
-  3>                        AffineTransformType;
+                             3>                        AffineTransformType;
 typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
 typedef itk::ResampleImageFilter<ImageType,
-  ImageType>         ResampleImageFilter;
+                                 ImageType>         ResampleImageFilter;
 
 //
 // apply an affine transform to an image, and
 // return the transformed image
 ImageType::Pointer
 Resample(ImageType::Pointer & inputImage,
-  AffineTransformType::Pointer & transform)
+         AffineTransformType::Pointer & transform)
 {
   ImageType::IndexType index = { { 0, 0, 0}};
   ImageType::PointType origin;

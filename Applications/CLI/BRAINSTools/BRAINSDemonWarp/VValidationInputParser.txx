@@ -43,8 +43,8 @@ namespace itk
 {
 template<typename TImage>
 VValidationInputParser<TImage>
-  ::VValidationInputParser()
-  {
+::VValidationInputParser()
+{
   //      m_TheMovingImageFilename = "";
   //      m_TheFixedImageFilename = "" ;
 
@@ -65,12 +65,12 @@ VValidationInputParser<TImage>
 
   m_OutDebug = false;
   m_ForceCoronalZeroOrigin = false;
-  }
+}
 
 template<typename TImage>
 void
 VValidationInputParser<TImage>
-  ::Execute()
+::Execute()
 {
   /*************************
    * Read in the images
@@ -86,9 +86,9 @@ VValidationInputParser<TImage>
     for ( unsigned int i = 0; i < m_TheFixedImageFilename.size(); ++i )
       {
       m_TheFixedImages.push_back( itkUtil::ReadImage<TImage>(
-          m_TheFixedImageFilename[i] ) );
+                                    m_TheFixedImageFilename[i] ) );
       m_TheMovingImages.push_back( itkUtil::ReadImage<TImage>(
-          m_TheMovingImageFilename[i] ) );
+                                     m_TheMovingImageFilename[i] ) );
       }
     }
   // HACK:  TODO:  Need to ensure that the fixed and moving images have the same
@@ -154,7 +154,7 @@ VValidationInputParser<TImage>
     typedef itk::AffineTransform<double, 3> ITKAffineTransformType;
     typedef itk::Vector<double, 3>          VectorType;
     VectorType const fixedImageScaleReciprocal( Reciprocal<double, 3>(
-        transform.GetFixedImageSpacing() ) );
+                                                  transform.GetFixedImageSpacing() ) );
 
     VectorType const movingImageScale( transform.GetMovingImageSpacing() );
 
@@ -162,7 +162,7 @@ VValidationInputParser<TImage>
     CrossOverAffineSystemType::Pointer crossOverAffineSystem
       = CrossOverAffineSystemType::New();
     crossOverAffineSystem->EncloseInScaling(fixedImageScaleReciprocal,
-      movingImageScale);
+                                            movingImageScale);
 
     const bool                      ApplyUpstream = false;
     ITKAffineTransformType::Pointer InitialITKAffineTransform
@@ -179,13 +179,13 @@ VValidationInputParser<TImage>
     ITKAffineTransformType::Pointer InitialITKAffineTransformInverse
       = ITKAffineTransformType::New();
     InitialITKAffineTransform->GetInverse(InitialITKAffineTransformInverse);
-    m_InitialDeformationField =
-      TransformToDeformationField(m_TheFixedImage,
-          InitialITKAffineTransformInverse);
+    m_InitialDeformationField
+      = TransformToDeformationField(m_TheFixedImage,
+                                    InitialITKAffineTransformInverse);
 #else
-    m_InitialDeformationField =
-      TransformToDeformationField(m_TheFixedImage,
-          InitialITKAffineTransform);
+    m_InitialDeformationField
+      = TransformToDeformationField(m_TheFixedImage,
+                                    InitialITKAffineTransform);
 #endif
     }
 #endif
@@ -196,13 +196,13 @@ VValidationInputParser<TImage>
     std::string                      CoeffNameInput(
       m_InitialCoefficientFilename.c_str() );
 
+    {
+    if ( this->GetOutDebug() )
       {
-      if ( this->GetOutDebug() )
-        {
-        std::cout << "Reading: " << CoeffNameInput << std::endl;
-        }
-      HarmonicReadAll3D(mu, CoeffNameInput);
+      std::cout << "Reading: " << CoeffNameInput << std::endl;
       }
+    HarmonicReadAll3D(mu, CoeffNameInput);
+    }
     if ( this->GetOutDebug() )
       {
       std::cout << "\nCreating Deformation fields from Coefficient files\n";

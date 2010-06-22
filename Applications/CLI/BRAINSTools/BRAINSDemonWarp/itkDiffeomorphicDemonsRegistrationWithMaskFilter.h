@@ -30,59 +30,59 @@ PURPOSE.  See the above copyright notices for more information.
 
 namespace itk
 {
-  /**
-   * \class DiffeomorphicDemonsRegistrationWithMaskFilter
-   * \brief Deformably register two images using a diffeomorphic demons algorithm.
-   *
-   * This class was contributed by Tom Vercauteren, INRIA & Mauna Kea
-   * Technologies, based on a variation of the DemonsRegistrationFilter. The
-   * basic modification is to use diffeomorphism exponentials.
-   *
-   * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache, "Non-parametric
-   * Diffeomorphic Image Registration with the Demons Algorithm",
-   * Proc. of MICCAI 2007.
-   *
-   * DiffeomorphicDemonsRegistrationWithMaskFilter implements the demons deformable algorithm that
-   * register two images by computing the deformation field which will map a
-   * moving image onto a fixed image.
-   *
-   * A deformation field is represented as a image whose pixel type is some
-   * vector type with at least N elements, where N is the dimension of
-   * the fixed image. The vector type must support element access via operator
-   * []. It is assumed that the vector elements behave like floating point
-   * scalars.
-   *
-   * This class is templated over the fixed image type, moving image type
-   * and the deformation field type.
-   *
-   * The input fixed and moving images are set via methods SetFixedImage and
-   * SetMovingImage respectively. An initial deformation field maybe set via
-   * SetInitialDeformationField or SetInput. If no initial field is set,
-   * a zero field is used as the initial condition.
-   *
-   * The output deformation field can be obtained via methods GetOutput
-   * or GetDeformationField.
-   *
-   * This class make use of the finite difference solver hierarchy. Update
-   * for each iteration is computed in DemonsRegistrationFunction.
-   *
-   * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
-   *
-   * \warning This filter assumes that the fixed image type, moving image type
-   * and deformation field type all have the same number of dimensions.
-   *
-   * This implementation was taken from the Insight Journal paper:
-   * http://hdl.handle.net/1926/510
-   *
-   * \sa DemonsRegistrationFilter
-   * \sa DemonsRegistrationFunction
-   * \ingroup DeformableImageRegistration MultiThreaded
-   */
-  template <class TFixedImage, class TMovingImage, class TDeformationField>
-    class ITK_EXPORT DiffeomorphicDemonsRegistrationWithMaskFilter :
-      public PDEDeformableRegistrationFilter<TFixedImage, TMovingImage,
-      TDeformationField>
-  {
+/**
+ * \class DiffeomorphicDemonsRegistrationWithMaskFilter
+ * \brief Deformably register two images using a diffeomorphic demons algorithm.
+ *
+ * This class was contributed by Tom Vercauteren, INRIA & Mauna Kea
+ * Technologies, based on a variation of the DemonsRegistrationFilter. The
+ * basic modification is to use diffeomorphism exponentials.
+ *
+ * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache, "Non-parametric
+ * Diffeomorphic Image Registration with the Demons Algorithm",
+ * Proc. of MICCAI 2007.
+ *
+ * DiffeomorphicDemonsRegistrationWithMaskFilter implements the demons deformable algorithm that
+ * register two images by computing the deformation field which will map a
+ * moving image onto a fixed image.
+ *
+ * A deformation field is represented as a image whose pixel type is some
+ * vector type with at least N elements, where N is the dimension of
+ * the fixed image. The vector type must support element access via operator
+ * []. It is assumed that the vector elements behave like floating point
+ * scalars.
+ *
+ * This class is templated over the fixed image type, moving image type
+ * and the deformation field type.
+ *
+ * The input fixed and moving images are set via methods SetFixedImage and
+ * SetMovingImage respectively. An initial deformation field maybe set via
+ * SetInitialDeformationField or SetInput. If no initial field is set,
+ * a zero field is used as the initial condition.
+ *
+ * The output deformation field can be obtained via methods GetOutput
+ * or GetDeformationField.
+ *
+ * This class make use of the finite difference solver hierarchy. Update
+ * for each iteration is computed in DemonsRegistrationFunction.
+ *
+ * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+ *
+ * \warning This filter assumes that the fixed image type, moving image type
+ * and deformation field type all have the same number of dimensions.
+ *
+ * This implementation was taken from the Insight Journal paper:
+ * http://hdl.handle.net/1926/510
+ *
+ * \sa DemonsRegistrationFilter
+ * \sa DemonsRegistrationFunction
+ * \ingroup DeformableImageRegistration MultiThreaded
+ */
+template <class TFixedImage, class TMovingImage, class TDeformationField>
+class ITK_EXPORT DiffeomorphicDemonsRegistrationWithMaskFilter :
+    public PDEDeformableRegistrationFilter<TFixedImage, TMovingImage,
+                                           TDeformationField>
+{
 public:
   /** Standard class typedefs. */
   typedef DiffeomorphicDemonsRegistrationWithMaskFilter Self;
@@ -97,7 +97,7 @@ public:
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( DiffeomorphicDemonsRegistrationWithMaskFilter,
-    PDEDeformableRegistrationFilter );
+                PDEDeformableRegistrationFilter );
 
   /** FixedImage image type. */
   typedef typename Superclass::FixedImageType    FixedImageType;
@@ -131,8 +131,7 @@ public:
   /** Inherit some enums from the superclass. */
   itkStaticConstMacro(ImageDimension, unsigned int, Superclass::ImageDimension);
 
-  typedef itk::SpatialObject<itkGetStaticConstMacro(ImageDimension)>  MaskType;
-
+  typedef itk::SpatialObject<itkGetStaticConstMacro(ImageDimension)> MaskType;
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image
@@ -236,7 +235,7 @@ private:
   VectorWarperPointer       m_Warper;
   AdderPointer              m_Adder;
   bool                      m_UseFirstOrderExp;
-  };
+};
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

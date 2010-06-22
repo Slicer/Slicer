@@ -1,15 +1,15 @@
-#ifndef _TransformAdaptor_txx
-#define _TransformAdaptor_txx
+#ifndef __TransformAdaptor_txx
+#define __TransformAdaptor_txx
 
 #include "TransformAdaptor.h"
 
 namespace itk
 {
 template<typename TCoordinateType, unsigned int NDimensions,
-  typename TInputImage>
+         typename TInputImage>
 TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
-  ::TransformAdaptor()
-  {
+::TransformAdaptor()
+{
   m_FixedImage   = NULL;
   m_MovingImage  = NULL;
 
@@ -22,13 +22,13 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
   m_InputAffineTransform = AffineTransformType::New();
   m_ITKAffineTransform = AffineTransformType::New();
   m_OutputAffineTransform = AffineTransformType::New();
-  }
+}
 
 template<typename TCoordinateType, unsigned int NDimensions,
-  typename TInputImage>
+         typename TInputImage>
 void
 TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
-  ::ExecuteInput()
+::ExecuteInput()
 {
   if ( GetInputAffineTransformFilename().size() != 0 )
     {
@@ -74,10 +74,10 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
 }
 
 template<typename TCoordinateType, unsigned int NDimensions,
-  typename TInputImage>
+         typename TInputImage>
 void
 TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
-  ::ExecuteOutput()
+::ExecuteOutput()
 {
   /***************************
    * Compute overall transform in the output side of the transform adaptor
@@ -112,10 +112,10 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
 }
 
 template<typename TCoordinateType, unsigned int NDimensions,
-  typename TInputImage>
+         typename TInputImage>
 void
 TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
-  ::EstablishCrossOverSystemForAir16(void)
+::EstablishCrossOverSystemForAir16(void)
 {
   /*
    *  IMPORTANT:  In the new design, conversion is accomplished by enclosing the
@@ -129,16 +129,16 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
                                                                 // identity
                                                                 // Affines.
 
-    {   /*  This is code for flipping axes, specific to Air16 files.
+  {   /*  This is code for flipping axes, specific to Air16 files.
          */
-    VectorType Flip(1.0);
+  VectorType Flip(1.0);
 
-    const int flipIndex = 1;    // A Flip in Y gets the rotation components of
-                                // Air16 evidently right.
-    Flip[flipIndex] = -1.0;
+  const int flipIndex = 1;    // A Flip in Y gets the rotation components of
+  // Air16 evidently right.
+  Flip[flipIndex] = -1.0;
 
-    GetCrossOverAffineSystem()->EncloseInScaling(Flip, Flip);
-    }
+  GetCrossOverAffineSystem()->EncloseInScaling(Flip, Flip);
+  }
 
   if ( false )  // Turning this off ...
     {
@@ -157,19 +157,19 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
     VectorType const HalfMovingVoxelUp( MovingImageSpacing.operator *( up ) );
 
     GetCrossOverAffineSystem()->EncloseInTranslation(HalfMovingVoxelUp,
-      HalfFixedVoxelDown);
+                                                     HalfFixedVoxelDown);
     }
 
-    {   /*  addressing voxels on the outside, addressing millimeters on the inside.
+  {   /*  addressing voxels on the outside, addressing millimeters on the inside.
          */
-    VectorType const FixedImageScaleReciprocal(
-      Reciprocal<TCoordinateType, NDimensions>( GetFixedImage()->GetSpacing() ) );
+  VectorType const FixedImageScaleReciprocal(
+    Reciprocal<TCoordinateType, NDimensions>( GetFixedImage()->GetSpacing() ) );
 
-    VectorType const MovingImageScale( GetMovingImage()->GetSpacing() );
+  VectorType const MovingImageScale( GetMovingImage()->GetSpacing() );
 
-    GetCrossOverAffineSystem()->EncloseInScaling(FixedImageScaleReciprocal,
-      MovingImageScale);
-    }
+  GetCrossOverAffineSystem()->EncloseInScaling(FixedImageScaleReciprocal,
+                                               MovingImageScale);
+  }
 
   if ( false )  // Turning this alternative off ...
     {
@@ -182,7 +182,7 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
       GetCenterFixedAffineTransform()->GetOffset() );
 
     GetCrossOverAffineSystem()->EncloseInTranslation(FixedImageCenter,
-      -MovingImageCenter);
+                                                     -MovingImageCenter);
     }
   if ( false )  // Turning this off made the output image pass through
                 // correctly;
@@ -212,10 +212,10 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
 }
 
 template<typename TCoordinateType, unsigned int NDimensions,
-  typename TInputImage>
+         typename TInputImage>
 void
 TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
-  ::EstablishCrossOverSystemForB2xfrm(void)
+::EstablishCrossOverSystemForB2xfrm(void)
 {
   /*
    *  IMPORTANT:  In the new design, conversion is accomplished by enclosing the
@@ -246,19 +246,19 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
     VectorType const HalfMovingVoxelUp( MovingImageSpacing.operator *( up ) );
 
     GetCrossOverAffineSystem()->EncloseInTranslation(HalfMovingVoxelUp,
-      HalfFixedVoxelDown);
+                                                     HalfFixedVoxelDown);
     }
 
-    {   /*  addressing voxels on the outside, addressing millimeters on the inside.
+  {   /*  addressing voxels on the outside, addressing millimeters on the inside.
          */
-    VectorType const FixedImageScaleReciprocal(
-      Reciprocal<TCoordinateType, NDimensions>( GetFixedImage()->GetSpacing() ) );
+  VectorType const FixedImageScaleReciprocal(
+    Reciprocal<TCoordinateType, NDimensions>( GetFixedImage()->GetSpacing() ) );
 
-    VectorType const MovingImageScale( GetMovingImage()->GetSpacing() );
+  VectorType const MovingImageScale( GetMovingImage()->GetSpacing() );
 
-    GetCrossOverAffineSystem()->EncloseInScaling(FixedImageScaleReciprocal,
-      MovingImageScale);
-    }
+  GetCrossOverAffineSystem()->EncloseInScaling(FixedImageScaleReciprocal,
+                                               MovingImageScale);
+  }
 
   if ( false )  // Turning this off made the output image pass through
                 // correctly;
@@ -297,10 +297,10 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
  */
 
 template<typename TCoordinateType, unsigned int NDimensions,
-  typename TInputImage>
+         typename TInputImage>
 void
 TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
-  ::ConvertInputAffineToITKAffine(void)
+::ConvertInputAffineToITKAffine(void)
 {
 #ifndef NDEBUG
   std::cout << "Inhaling Shift: " << GetInputAffineTransform()->GetOffset()
@@ -314,7 +314,7 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
     GetCrossOverAffineSystem()->GetInhaleEncodeConversion(),
     ApplyUpstream );
   GetITKAffineTransform()->Compose( GetInputAffineTransform(),
-    ApplyUpstream );
+                                    ApplyUpstream );
   GetITKAffineTransform()->Compose(
     GetCrossOverAffineSystem()->GetInhaleDecodeConversion(),
     ApplyUpstream );
@@ -328,10 +328,10 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
 }
 
 template<typename TCoordinateType, unsigned int NDimensions,
-  typename TInputImage>
+         typename TInputImage>
 void
 TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
-  ::ConvertITKAffineToOutputAffine(void)
+::ConvertITKAffineToOutputAffine(void)
 {
   GetOutputAffineTransform()->SetIdentity();
   const bool ApplyUpstream = false;
@@ -345,7 +345,7 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>
     GetCrossOverAffineSystem()->GetExhaleEncodeConversion(),
     ApplyUpstream );
   GetOutputAffineTransform()->Compose( GetITKAffineTransform(),
-    ApplyUpstream );
+                                       ApplyUpstream );
   GetOutputAffineTransform()->Compose(
     GetCrossOverAffineSystem()->GetExhaleDecodeConversion(),
     ApplyUpstream );

@@ -1,6 +1,6 @@
-#ifndef __BRAINSDemonWarpPrimary_H__
-#define __BRAINSDemonWarpPrimary_H__
+#ifndef __BRAINSDemonWarpPrimary_h
+#define __BRAINSDemonWarpPrimary_h
 
 int BRAINSDemonWarpPrimary(int argc, char *argv[]);
 
-#endif // __BRAINSDemonWarpPrimary_H__
+#endif // __BRAINSDemonWarpPrimary_h

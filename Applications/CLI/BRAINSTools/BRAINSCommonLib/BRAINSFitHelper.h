@@ -1,5 +1,5 @@
-#ifndef  __BRAINSFITHELPER__
-#define  __BRAINSFITHELPER__
+#ifndef  __BRAINSFitHelper_h
+#define  __BRAINSFitHelper_h
 
 /**
  * \author Hans J. Johnson
@@ -58,18 +58,20 @@
 
 #include "GenericTransformImage.h"
 
-typedef itk::SpatialObject<3>  SpatialObjectType;
+typedef itk::SpatialObject<3>      SpatialObjectType;
 typedef SpatialObjectType::Pointer ImageMaskPointer;
 
-namespace itk {
-  /** Method for verifying that the ordering of the transformTypes is consistent with converting routines. */
-  BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
+namespace itk
+{
+/** Method for verifying that the ordering of the transformTypes is consistent
+  with converting routines. */
+BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
 }
 
 namespace itk
 {
-  class BRAINSCommonLib_EXPORT BRAINSFitHelper : public Object
-  {
+class BRAINSCommonLib_EXPORT BRAINSFitHelper : public Object
+{
 public:
   /** Standard class typedefs. */
   typedef BRAINSFitHelper                Self;
@@ -100,11 +102,12 @@ public:
   itkSetObjectMacro( MovingVolume, MovingVolumeType)
     itkGetConstObjectMacro( MovingVolume, MovingVolumeType );
 
-  /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the algorithm.*/
+  /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the
+      algorithm.*/
   itkGetConstObjectMacro( PreprocessedMovingVolume, MovingVolumeType );
 
-  typedef MattesMutualInformationImageToImageMetric<FixedVolumeType,
-          MovingVolumeType> MetricType;
+  typedef MattesMutualInformationImageToImageMetric<FixedVolumeType,MovingVolumeType> 
+    MetricType;
   typedef MetricType::FixedImageMaskType
     FixedBinaryVolumeType;
   typedef FixedBinaryVolumeType::Pointer
@@ -113,7 +116,6 @@ public:
     MovingBinaryVolumeType;
   typedef MovingBinaryVolumeType::Pointer
     MovingBinaryVolumePointer;
-
 
   itkSetObjectMacro ( FixedBinaryVolume, FixedBinaryVolumeType );
   itkGetConstObjectMacro( FixedBinaryVolume, FixedBinaryVolumeType );
@@ -126,18 +128,13 @@ public:
     WINDOWSINC_INTERP = 1,
   } InterpolationType;
 
-  // FixedVolumeType::Pointer GetResampledImage(
-  //   InterpolationType newInterp) const;
-
-
-
   itkSetMacro(      NumberOfSamples,        unsigned int  );
   itkGetConstMacro( NumberOfSamples,        unsigned int  );
   itkSetMacro(      NumberOfHistogramBins,         unsigned int  );
   itkGetConstMacro( NumberOfHistogramBins,         unsigned int  );
   itkSetMacro(      NumberOfMatchPoints,           unsigned int  );
   itkGetConstMacro( NumberOfMatchPoints,           unsigned int  );
-  VECTORitkSetMacro( NumberOfIterations,   std::vector<int>/**/ );
+  VECTORitkSetMacro( NumberOfIterations,   std::vector<int> /**/ );
   VECTORitkSetMacro( MinimumStepLength, std::vector<double> );
   itkSetMacro(      MaximumStepLength,             double        );
   itkGetConstMacro( MaximumStepLength,             double        );
@@ -151,8 +148,8 @@ public:
   itkGetConstMacro( SkewScale,                     double        );
   itkSetMacro(      UseExplicitPDFDerivativesMode, std::string   );
   itkGetConstMacro( UseExplicitPDFDerivativesMode, std::string   );
-  itkSetMacro(      UseCachingOfBSplineWeightsMode,std::string   );
-  itkGetConstMacro( UseCachingOfBSplineWeightsMode,std::string   );
+  itkSetMacro(      UseCachingOfBSplineWeightsMode, std::string   );
+  itkGetConstMacro( UseCachingOfBSplineWeightsMode, std::string   );
   itkSetMacro(      CostFunctionConvergenceFactor, double        );
   itkGetConstMacro( CostFunctionConvergenceFactor, double        );
   itkSetMacro(      ProjectedGradientTolerance,    double        );
@@ -161,7 +158,7 @@ public:
   itkGetConstMacro( MaxBSplineDisplacement,        double        );
   itkSetMacro(      BackgroundFillValue,           double        );
   itkGetConstMacro( BackgroundFillValue,           double        );
-  VECTORitkSetMacro( TransformType, std::vector<std::string>);
+  VECTORitkSetMacro( TransformType, std::vector<std::string> );
   itkSetMacro(      InitializeTransformMode, std::string         );
   itkGetConstMacro( InitializeTransformMode, std::string         );
   itkSetMacro(      MaskInferiorCutOffFromCenter, double         );
@@ -172,38 +169,38 @@ public:
 
   itkGetConstMacro( ActualNumberOfIterations,      unsigned int  );
   itkGetConstMacro( PermittedNumberOfIterations,   unsigned int  );
-  //itkGetConstMacro( AccumulatedNumberOfIterationsForAllLevels, unsigned int);
+
   itkGetConstMacro( FinalMetricValue,         double        );
-  //
-  // Set/Get the Debugging level for filter verboseness
+  /** Set/Get the Debugging level for filter verboseness */
   itkSetMacro(     DebugLevel, unsigned int);
   itkGetConstMacro(DebugLevel, unsigned int);
-  itkSetMacro(     DisplayDeformedImage,bool);
-  itkGetConstMacro(DisplayDeformedImage,bool);
-  itkSetMacro(     PromptUserAfterDisplay,bool);
-  itkGetConstMacro(PromptUserAfterDisplay,bool);
+  itkSetMacro(     DisplayDeformedImage, bool);
+  itkGetConstMacro(DisplayDeformedImage, bool);
+  itkSetMacro(     PromptUserAfterDisplay, bool);
+  itkGetConstMacro(PromptUserAfterDisplay, bool);
   itkSetMacro(      ObserveIterations,        bool          );
   itkGetConstMacro( ObserveIterations,        bool          );
   /** Method to set the Permission to vary by level  */
   void SetPermitParameterVariation(std::vector<int> perms)
-    {
+  {
     m_PermitParameterVariation.resize( perms.size() );
     for ( unsigned int i = 0; i < perms.size(); i++ )
       {
       m_PermitParameterVariation[i] = perms[i];
       }
-    }
+  }
 
   itkSetMacro(     HistogramMatch, bool);
   itkGetConstMacro(HistogramMatch, bool);
 
   /** Method that initiates the registration. */
   void StartRegistration(void);
+
   void PrintCommandLine(const bool dumpTempVolumes, const std::string suffix) const;
 
 protected:
   BRAINSFitHelper();
-  virtual ~BRAINSFitHelper() {};
+  virtual ~BRAINSFitHelper() {}
 
   void PrintSelf(std::ostream & os, Indent indent) const;
 
@@ -221,14 +218,14 @@ private:
 
   FixedBinaryVolumePointer  m_FixedBinaryVolume;
   MovingBinaryVolumePointer m_MovingBinaryVolume;
-  std::vector<int> m_PermitParameterVariation;
+  std::vector<int>          m_PermitParameterVariation;
 
-  unsigned int     m_NumberOfSamples;
-  unsigned int     m_NumberOfHistogramBins;
-  bool             m_HistogramMatch;
-  unsigned int     m_NumberOfMatchPoints;
+  unsigned int m_NumberOfSamples;
+  unsigned int m_NumberOfHistogramBins;
+  bool         m_HistogramMatch;
+  unsigned int m_NumberOfMatchPoints;
   // TODO:  Would be better to have unsigned int
-  std::vector<int> m_NumberOfIterations;
+  std::vector<int>         m_NumberOfIterations;
   double                   m_MaximumStepLength;
   std::vector<double>      m_MinimumStepLength;
   double                   m_RelaxationFactor;
@@ -247,15 +244,14 @@ private:
   double                   m_MaxBSplineDisplacement;
   unsigned int             m_ActualNumberOfIterations;
   unsigned int             m_PermittedNumberOfIterations;
-  //unsigned int             m_AccumulatedNumberOfIterationsForAllLevels;
-  unsigned int             m_DebugLevel;
+  // unsigned int             m_AccumulatedNumberOfIterationsForAllLevels;
+  unsigned int                  m_DebugLevel;
   GenericTransformType::Pointer m_CurrentGenericTransform;
-  bool   m_DisplayDeformedImage;
-  bool   m_PromptUserAfterDisplay;
-  double m_FinalMetricValue;
-  bool   m_ObserveIterations;
-  }; // end BRAINSFitHelper class
+  bool                          m_DisplayDeformedImage;
+  bool                          m_PromptUserAfterDisplay;
+  double                        m_FinalMetricValue;
+  bool                          m_ObserveIterations;
+};   // end BRAINSFitHelper class
 } // end namespace itk
 
-
-#endif  //__BRAINSFITHELPER__
+#endif  // __BRAINSFITHELPER__

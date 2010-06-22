@@ -1,3 +1,3 @@
-#ifndef __BRAINSROIAUTOUTILS_H__
-#define __BRAINSROIAUTOUTILS_H__
-#endif //__BRAINSROIAUTOUTILS_H__
+#ifndef __BRAINSROIAutoUtils_h
+#define __BRAINSROIAutoUtils_h
+#endif // __BRAINSROIAutoUtils_h

@@ -30,9 +30,9 @@ namespace itk
  */
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::ESMDemonsRegistrationWithMaskFunction()
-  {
+                                      TDeformationField>
+::ESMDemonsRegistrationWithMaskFunction()
+{
   RadiusType   r;
   unsigned int j;
 
@@ -80,7 +80,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
   m_NumberOfPixelsProcessed = 0L;
   m_RMSChange = NumericTraits<double>::max();
   m_SumOfSquaredChange = 0.0;
-  }
+}
 
 /*
  * Standard "PrintSelf" method.
@@ -88,8 +88,8 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 void
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::PrintSelf(std::ostream & os, Indent indent) const
+                                      TDeformationField>
+::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -127,8 +127,8 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 void
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::SetIntensityDifferenceThreshold(double threshold)
+                                      TDeformationField>
+::SetIntensityDifferenceThreshold(double threshold)
 {
   m_IntensityDifferenceThreshold = threshold;
 }
@@ -139,8 +139,8 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 double
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::GetIntensityDifferenceThreshold() const
+                                      TDeformationField>
+::GetIntensityDifferenceThreshold() const
 {
   return m_IntensityDifferenceThreshold;
 }
@@ -151,14 +151,14 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 void
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::InitializeIteration()
+                                      TDeformationField>
+::InitializeIteration()
 {
   if ( !this->GetMovingImage() || !this->GetFixedImage()
        || !m_MovingImageInterpolator )
     {
     itkExceptionMacro(
-       << "MovingImage, FixedImage and/or Interpolator not set" );
+      << "MovingImage, FixedImage and/or Interpolator not set" );
     }
 
   // cache fixed image information
@@ -175,7 +175,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
       m_Normalizer += m_FixedImageSpacing[k] * m_FixedImageSpacing[k];
       }
     m_Normalizer *= m_MaximumUpdateStepLength * m_MaximumUpdateStepLength
-                    / static_cast<double>( ImageDimension );
+      / static_cast<double>( ImageDimension );
     }
   else
     {
@@ -212,12 +212,12 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
  */
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 typename ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::PixelType
+                                               TDeformationField>
+::PixelType
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::ComputeUpdate( const NeighborhoodType & it, void *gd,
-  const FloatOffsetType & itkNotUsed(offset) )
+                                      TDeformationField>
+::ComputeUpdate( const NeighborhoodType & it, void *gd,
+                 const FloatOffsetType & itkNotUsed(offset) )
 {
   GlobalDataStruct *globalData = (GlobalDataStruct *)gd;
   PixelType        update;
@@ -225,8 +225,8 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
     = this->GetFixedImage()->GetLargestPossibleRegion().GetIndex();
   IndexType LastIndex
     = this->GetFixedImage()->GetLargestPossibleRegion().GetIndex()
-      + this->GetFixedImage()->
-        GetLargestPossibleRegion().GetSize();
+    + this->GetFixedImage()->
+    GetLargestPossibleRegion().GetSize();
 
   const IndexType index = it.GetIndex();
 
@@ -251,36 +251,36 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
   // Determine if the current location falls within the deformed
   // moving image mask. If not, then set the update values to all
   // zeros and continue.
- if ( this->GetMovingImageMask() || this->GetFixedImageMask() )
- {
+  if ( this->GetMovingImageMask() || this->GetFixedImageMask() )
+    {
     typename FixedImageType::PointType fixedPoint;
     this->GetFixedImage()->TransformIndexToPhysicalPoint(index, fixedPoint);
 
-    if(this->GetMovingImageMask())
-    {
-       MovingImagePointType mappedPoint;
+    if ( this->GetMovingImageMask() )
+      {
+      MovingImagePointType mappedPoint;
 
-       for( unsigned int j = 0; j < ImageDimension; j++ )
-       {
-          mappedPoint[j] = fixedPoint[j] + it.GetCenterPixel()[j];
-       }
+      for ( unsigned int j = 0; j < ImageDimension; j++ )
+        {
+        mappedPoint[j] = fixedPoint[j] + it.GetCenterPixel()[j];
+        }
 
-       if (  !this->GetMovingImageMask()->IsInside(mappedPoint) )
-       {
-         update.Fill( 0.0 );
-         return update;
-       }
+      if ( !this->GetMovingImageMask()->IsInside(mappedPoint) )
+        {
+        update.Fill( 0.0 );
+        return update;
+        }
+      }
+
+    if ( this->GetFixedImageMask() )
+      {
+      if ( !this->GetFixedImageMask()->IsInside(fixedPoint) )
+        {
+        update.Fill( 0.0 );
+        return update;
+        }
+      }
     }
-
-    if(this->GetFixedImageMask())
-    {
-        if ( !this->GetFixedImageMask()->IsInside(fixedPoint) )
-       {
-         update.Fill( 0.0 );
-         return update;
-       }
-    }
-  }
 
   const double movingValue = static_cast<double>( movingPixValue );
 
@@ -290,7 +290,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
   CovariantVectorType usedOrientFreeGradientTimes2;
 
   if ( ( this->m_UseGradientType == Symmetric )
-      || ( this->m_UseGradientType == WarpedMoving ) )
+       || ( this->m_UseGradientType == WarpedMoving ) )
     {
     // we don't use a CentralDifferenceImageFunction here to be able to
     // check for NumericTraits<MovingPixelType>::max()
@@ -320,7 +320,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
           {
           // forward difference
           warpedMovingGradient[dim] = static_cast<double>( movingPixValue )
-                                      - movingValue;
+            - movingValue;
           warpedMovingGradient[dim] /= m_FixedImageSpacing[dim];
           }
         tmpIndex[dim] -= 1;
@@ -351,7 +351,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
       tmpIndex[dim] += 1;
       movingPixValue = m_MovingImageWarper->GetOutput()->GetPixel( tmpIndex );
       if ( movingPixValue == NumericTraits
-          <MovingPixelType>::max() )
+           <MovingPixelType>::max() )
         {
         // backward difference
         warpedMovingGradient[dim] = movingValue;
@@ -405,7 +405,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
     else if ( this->m_UseGradientType == WarpedMoving )
       {
       usedOrientFreeGradientTimes2 = warpedMovingGradient
-                                     + warpedMovingGradient;
+        + warpedMovingGradient;
       }
     else
       {
@@ -468,7 +468,7 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
       {
       // "ITK-Thirion" normalization
       denom =  usedGradientTimes2SquaredMagnitude
-              + ( vnl_math_sqr(speedValue) / m_Normalizer );
+        + ( vnl_math_sqr(speedValue) / m_Normalizer );
       }
     else
       {
@@ -514,8 +514,8 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
 template<class TFixedImage, class TMovingImage, class TDeformationField>
 void
 ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
-  TDeformationField>
-  ::ReleaseGlobalDataPointer( void *gd ) const
+                                      TDeformationField>
+::ReleaseGlobalDataPointer( void *gd ) const
 {
   GlobalDataStruct *globalData = (GlobalDataStruct *)gd;
 
@@ -526,9 +526,9 @@ ESMDemonsRegistrationWithMaskFunction<TFixedImage, TMovingImage,
   if ( m_NumberOfPixelsProcessed )
     {
     m_Metric = m_SumOfSquaredDifference
-               / static_cast<double>( m_NumberOfPixelsProcessed );
+      / static_cast<double>( m_NumberOfPixelsProcessed );
     m_RMSChange = vcl_sqrt( m_SumOfSquaredChange
-      / static_cast<double>( m_NumberOfPixelsProcessed ) );
+                            / static_cast<double>( m_NumberOfPixelsProcessed ) );
     }
   m_MetricCalculationLock.Unlock();
 

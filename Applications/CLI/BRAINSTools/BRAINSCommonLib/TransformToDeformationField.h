@@ -1,8 +1,8 @@
-#ifndef TransformToDeformationField_h
-#define TransformToDeformationField_h
+#ifndef __TransformToDeformationField_h
+#define __TransformToDeformationField_h
 #include "itkIO.h"
 #include "CrossOverAffineSystem.h"
-//#include "itkImageRegionIteratorWithIndex.h"
+// #include "itkImageRegionIteratorWithIndex.h"
 #include <itkTransformToDeformationFieldSource.h>
 
 /**
@@ -10,18 +10,15 @@
  */
 template <typename DeformationFieldPointerType, typename TransformPointerType>
 DeformationFieldPointerType
-  TransformToDeformationField
+TransformToDeformationField
 (itk::ImageBase<DeformationFieldPointerType::ObjectType::ImageDimension> *templateImage,
  TransformPointerType xfrm)
 {
-
 #if 1
   typedef typename DeformationFieldPointerType::ObjectType OutputType;
-  typedef typename
-    itk::TransformToDeformationFieldSource<OutputType,double>
+  typedef typename itk::TransformToDeformationFieldSource<OutputType, double>
     TodefType;
-  typename TodefType::Pointer todef =
-    TodefType::New();
+  typename TodefType::Pointer todef(TodefType::New());
   todef->SetOutputParametersFromImage(templateImage);
   todef->SetTransform(xfrm);
   try
@@ -56,14 +53,14 @@ DeformationFieldPointerType
     {
     typename TDeformationField::IndexType CurrentIndex = it.GetIndex();
     typename itk::Point<typename DeformationPixelType::ValueType,
-             DeformationPixelType::Dimension> IndexPhysicalLocation;
+                        DeformationPixelType::Dimension> IndexPhysicalLocation;
     deformation->TransformIndexToPhysicalPoint(CurrentIndex,
-      IndexPhysicalLocation);
+                                               IndexPhysicalLocation);
     // Need to copy because the types may not be the same.
     typename TransformType::InputPointType TransformIndexPhysicalLocation;
     for ( unsigned int curr_dim = 0;
-      curr_dim < DeformationPixelType::Dimension;
-      curr_dim++ )
+          curr_dim < DeformationPixelType::Dimension;
+          curr_dim++ )
       {
       TransformIndexPhysicalLocation[curr_dim]
         = IndexPhysicalLocation[curr_dim];
@@ -74,8 +71,8 @@ DeformationFieldPointerType
 
     DeformationPixelType DisplacementInPhysicalSpace;
     for ( unsigned int curr_dim = 0;
-      curr_dim < DeformationPixelType::Dimension;
-      curr_dim++ )
+          curr_dim < DeformationPixelType::Dimension;
+          curr_dim++ )
       {
       DisplacementInPhysicalSpace[curr_dim]
         = static_cast<typename DeformationPixelType::ValueType>(

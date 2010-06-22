@@ -4,4 +4,3 @@ void VectorProcessOutputType_ushort(struct BRAINSDemonWarpAppParameters & comman
 {
   VectorProcessOutputType<unsigned short>(command);
 }
-

@@ -11,28 +11,28 @@
 #include "itkVectorImage.h"
 namespace itk
 {
-  /*This file defines Thirion registration class which initializes the input
-    parser, preprocessor and the registrator. */
+/*This file defines Thirion registration class which initializes the input
+  parser, preprocessor and the registrator. */
 
-  template <typename TImage,
-           typename TRealImage, typename TOutputImage
-             >
-             class VBRAINSDemonWarp : public ApplicationBase<
-                                      VValidationInputParser<TImage>,
-                                      VDemonsPreprocessor<TImage, TRealImage>,
-                                      VDemonsRegistrator<TRealImage, TOutputImage,
-                                      ITK_TYPENAME TRealImage::PixelType>
-                                      >
-  {
+template <typename TImage,
+          typename TRealImage, typename TOutputImage
+          >
+class VBRAINSDemonWarp : public ApplicationBase<
+  VValidationInputParser<TImage>,
+  VDemonsPreprocessor<TImage, TRealImage>,
+  VDemonsRegistrator<TRealImage, TOutputImage,
+                     ITK_TYPENAME TRealImage::PixelType>
+  >
+{
 public:
 
   /** Standard class typedefs. */
   typedef VBRAINSDemonWarp Self;
   typedef ApplicationBase<VValidationInputParser<TImage>,
-          VDemonsPreprocessor<TImage, TRealImage>,
-          VDemonsRegistrator<TRealImage, TRealImage,
-          ITK_TYPENAME TRealImage::PixelType>
-            > Superclass;
+                          VDemonsPreprocessor<TImage, TRealImage>,
+                          VDemonsRegistrator<TRealImage, TRealImage,
+                                             ITK_TYPENAME TRealImage::PixelType>
+                          > Superclass;
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
@@ -54,11 +54,11 @@ public:
 
   /** Image dimension. */
   itkStaticConstMacro (ImageDimension, unsigned int,
-    TImage::ImageDimension);
+                       TImage::ImageDimension);
 
   /** Type to hold the number of checker boxes per dimension */
   typedef FixedArray<unsigned int, ::itk::GetImageDimension<
-    TImage>::ImageDimension> PatternArrayType;
+                                     TImage>::ImageDimension> PatternArrayType;
 
   typedef typename ImageType::PixelType PixelType;
   typedef typename ImageType::IndexType IndexType;
@@ -66,22 +66,22 @@ public:
 
   /** ShrinkFactors type. */
   typedef FixedArray<unsigned int,
-          itk::GetImageDimension<TImage>::ImageDimension>
-            ShrinkFactorsType;
+                     itk::GetImageDimension<TImage>::ImageDimension>
+  ShrinkFactorsType;
 
   /** IterationArray type. */
   typedef Array<unsigned int> IterationsArrayType;
   typedef Array<float>        WeightFactorType;
 
   void SetTheFixedImageFilename(std::vector<std::string> & names)
-    {
+  {
     m_TheFixedImageFilename = names;
-    }
+  }
 
   void SetTheMovingImageFilename(std::vector<std::string> & names)
-    {
+  {
     m_TheMovingImageFilename = names;
-    }
+  }
 
   /** Set the initial Displacement Field one of 3 ways. */
   itkSetStringMacro (InitialDeformationFieldFilename);
@@ -198,54 +198,54 @@ public:
   /** Get the atlas image starting shrink factors. */
   itkGetConstReferenceMacro( TheMovingImageShrinkFactors, ShrinkFactorsType );
   void SetTheMovingImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
-    {
+  {
     this->m_TheMovingImageShrinkFactors = shrinkfactors;
-    }
+  }
 
   /** Get the subject image starting shrink factors. */
   itkGetConstReferenceMacro( TheFixedImageShrinkFactors, ShrinkFactorsType );
   void SetTheFixedImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
-    {
+  {
     this->m_TheFixedImageShrinkFactors = shrinkfactors;
-    }
+  }
 
   /** Get the number of iterations at each level. */
   itkGetConstReferenceMacro( NumberOfIterations, IterationsArrayType );
   void SetNumberOfIterations(const IterationsArrayType & iterations)
-    {
+  {
     m_NumberOfIterations = iterations;
-    }
+  }
 
   itkGetConstReferenceMacro( WeightFactors, WeightFactorType );
   void SetWeightFactors(const WeightFactorType & factors)
-    {
+  {
     m_WeightFactors = factors;
-    }
+  }
 
   typedef itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
-          TDeformationField>
-            BaseRegistrationFilterType;
+                                               TDeformationField>
+  BaseRegistrationFilterType;
   void SetRegistrationFilter(
     typename BaseRegistrationFilterType::Pointer filter)
-    {
+  {
     this->m_Registrator->SetRegistrationFilter(filter);
-    }
+  }
 
   typedef itk::VectorDiffeomorphicDemonsRegistrationFilter<VectorImageType,
-          VectorImageType,
-          TDeformationField>
-            VectorRegistrationFilterType;
+                                                           VectorImageType,
+                                                           TDeformationField>
+  VectorRegistrationFilterType;
   void SetVectorRegistrationFilter(
     typename VectorRegistrationFilterType::Pointer filter)
-    {
+  {
     this->m_Registrator->SetVectorRegistrationFilter(filter);
-    }
+  }
 
 protected:
 
   VBRAINSDemonWarp ();
   virtual ~VBRAINSDemonWarp ()
-    {}
+  {}
 
   /** Initialize the input parser. */
   virtual void InitializeParser ();
@@ -296,7 +296,7 @@ private:
   IterationsArrayType m_NumberOfIterations;
   WeightFactorType    m_WeightFactors;
   std::string         m_InterpolationMode;
-  };
+};
 }          // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

@@ -7,8 +7,8 @@ namespace itk
 {
 template<typename TImage, typename TRealImage, typename TOutputImage>
 BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
-  ::BRAINSDemonWarp()
-  {
+::BRAINSDemonWarp()
+{
   m_TheMovingImageFilename = "";
   m_TheFixedImageFilename = "";
 
@@ -45,7 +45,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
     m_Seed[i] = 0;
     m_MedianFilterSize[i] = 0;
     }
-  }
+}
 
 /*This method initializes the input parser which reads in the moving image,
   fixed image and parameter file.*/
@@ -53,7 +53,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
 template<typename TImage, typename TRealImage, typename TOutputImage>
 void
 BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
-  ::InitializeParser()
+::InitializeParser()
 {
   this->m_Parser->SetTheMovingImageFilename(
     this->m_TheMovingImageFilename.c_str() );
@@ -87,7 +87,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
 template<typename TImage, typename TRealImage, typename TOutputImage>
 void
 BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
-  ::InitializePreprocessor()
+::InitializePreprocessor()
 {
   this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetTheFixedImage() );
   this->m_Preprocessor->SetInputMovingImage( this->m_Parser->GetTheMovingImage() );
@@ -117,7 +117,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
 template<typename TImage, typename TRealImage, typename TOutputImage>
 void
 BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
-  ::InitializeRegistrator()
+::InitializeRegistrator()
 {
   this->m_Registrator->SetDisplacementBaseName( this->GetDisplacementBaseName() );
   this->m_Registrator->SetWarpedImageName( this->GetWarpedImageName() );
@@ -140,7 +140,7 @@ BRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   this->m_Registrator->SetNumberOfLevels( this->m_Parser->GetNumberOfLevels() );
   this->m_Registrator->SetNumberOfIterations(
     this->m_Parser->GetNumberOfIterations() );
-  this->m_Registrator->SetInterpolationMode(this->GetInterpolationMode());
+  this->m_Registrator->SetInterpolationMode( this->GetInterpolationMode() );
 
   this->m_Registrator->SetFixedImageShrinkFactors(
     this->m_Parser->GetTheFixedImageShrinkFactors() );

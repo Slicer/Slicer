@@ -252,7 +252,8 @@
       <name>maxBSplineDisplacement</name>
       <longflag>maxBSplineDisplacement</longflag>
       <label>Maximum B-Spline Displacement</label>
-      <description> Sets the maximum allowed displacements in image physical coordinates for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.</description>
+      <description> Sets the maximum allowed displacements in image physical coordinates for BSpline control grid along each axis.  A value of 0.0 indicates that the problem should be unbounded.  NOTE:  This only constrains the BSpline portion, and does not limit the displacement from the associated bulk transform.  This can lead to a substantial reduction in computation time in the BSpline optimizer.
+      </description>
       <default>0.0</default>
     </double>
 

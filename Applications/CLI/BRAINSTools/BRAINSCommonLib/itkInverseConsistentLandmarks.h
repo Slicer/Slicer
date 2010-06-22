@@ -21,66 +21,68 @@ PURPOSE.  See the above copyright notices for more information.
 
 namespace itk
 {
-  template <typename PointStorageType, unsigned int Dimension = 3>
-    class InverseConsistentLandmarkPoint : public itk::Point<PointStorageType,
-    Dimension>
-  {
+template <typename PointStorageType, unsigned int VDimension = 3>
+class InverseConsistentLandmarkPoint : public itk::Point<PointStorageType,
+                                                         VDimension>
+{
 public:
-  typedef InverseConsistentLandmarkPoint          Self;
-  typedef itk::Point<PointStorageType, Dimension> Superclass;
+  typedef InverseConsistentLandmarkPoint           Self;
+  typedef itk::Point<PointStorageType, VDimension> Superclass;
 
   InverseConsistentLandmarkPoint(void)
-    {
-    _fWeighting = 0.0;
+  {
+    m_FWeighting = 0.0;
     ( *this )[0] = ( *this )[1] = ( *this )[2] = 0.0;
-    }
+  }
 
   InverseConsistentLandmarkPoint(const PointStorageType x,
-    const PointStorageType y,
-    const PointStorageType z,
-    const PointStorageType t,
-    const PointStorageType weighting) :
-    _fWeighting(weighting)
+                                 const PointStorageType y,
+                                 const PointStorageType z,
+                                 const PointStorageType t,
+                                 const PointStorageType weighting) :
+    m_FWeighting(weighting)
   {
-  ( *this )[0] = x; ( *this )[1] = y; ( *this )[2] = z;
-  m_T = t;
+    ( *this )[0] = x; ( *this )[1] = y; ( *this )[2] = z;
+    m_T = t;
   }
 
   InverseConsistentLandmarkPoint(const InverseConsistentLandmarkPoint & rhs) :
-    Superclass(rhs), _fWeighting(rhs._fWeighting)
-  {}
+    Superclass(rhs), m_FWeighting(rhs.m_FWeighting)
+  {
+  }
 
   PointStorageType GetT() const
-    {
+  {
     return m_T;
-    }
+  }
 
   void SetT(const PointStorageType val)
-    {
+  {
     m_T = val;
-    }
+  }
 
   PointStorageType GetWeighting(void) const
-    {
-    return _fWeighting;
-    }
+  {
+    return m_FWeighting;
+  }
 
   void SetWeighting(const PointStorageType val)
-    {
-    _fWeighting = val;
-    }
+  {
+    m_FWeighting = val;
+  }
 
   virtual ~InverseConsistentLandmarkPoint(void)
-    {}
+  {
+  }
 private:
   PointStorageType m_T;
-  PointStorageType _fWeighting;
-  };
+  PointStorageType m_FWeighting;
+};
 
-  template <typename PointStorageType, class PointSetType>
-    class InverseConsistentLandmarks :
-      public std::map<std::string, InverseConsistentLandmarkPoint<PointStorageType> >
-  {
+template <typename PointStorageType, class PointSetType>
+class InverseConsistentLandmarks :
+    public std::map<std::string, InverseConsistentLandmarkPoint<PointStorageType> >
+{
 public:
   typedef InverseConsistentLandmarks                       Self;
   typedef InverseConsistentLandmarkPoint<PointStorageType> PointType;
@@ -97,28 +99,28 @@ public:
     IPL_CEREBELLAR_BOUNDS_LANDMARKS,
     UNKNOWN_LANDMARKS
   }
-  Landmark_File_Format;
+    Landmark_File_Format;
   InverseConsistentLandmarks(void);
   InverseConsistentLandmarks( const int XDim, const int YDim,
-    const int ZDim, const int TDim = 0 );
+                              const int ZDim, const int TDim = 0 );
   virtual ~InverseConsistentLandmarks(void)
-    {}
+  {}
 
   InverseConsistentLandmarks & operator=(const InverseConsistentLandmarks & rhs);
 
   typedef typename itk::Image<unsigned char, 3> ImageType;
   PointSetTypePointer GetPointSet(typename ImageType::PointType Origin)
-    {
+  {
     typedef typename PointSetType::PointIdentifier PointIdentifierType;
     typedef typename PointSetType::PointType       PointSetPointType;
-    typedef typename Self::const_iterator          local_const_iterator;
+    typedef typename Self::const_iterator          LocalConstIterator;
 
     PointSetTypePointer pointSet = PointSetType::New();
     PointIdentifierType PointID
       = itk::NumericTraits<PointIdentifierType>::Zero;
 
-    local_const_iterator it = this->begin();
-    local_const_iterator itend = this->end();
+    LocalConstIterator it = this->begin();
+    LocalConstIterator itend = this->end();
     while ( it != itend )
       {
       const PointType   cur = ( *it ).second;
@@ -133,18 +135,18 @@ public:
       PointID++;
       }
     return pointSet;
-    }
+  }
 
   bool ReadPointTypes( const std::string lmrkfilename );
 
   bool ReadPointTypes( const std::string lmrkfilenamee,
-    const int XDim,
-    const int YDim,
-    const int ZDim,
-    const int TDim = 0 );
+                       const int XDim,
+                       const int YDim,
+                       const int ZDim,
+                       const int TDim = 0 );
 
   bool WritePointTypes( const std::string lmrkfilename,
-    const Landmark_File_Format lmkff = GEC_LANDMARKS );
+                        const Landmark_File_Format lmkff = GEC_LANDMARKS );
 
   bool PrintPointTypes( void ) const;
 
@@ -169,10 +171,10 @@ public:
    * \return true if successful, false if failed
    */
   bool ReadGECPointTypes( const std::string lmrkfilename,
-    const int XDim,
-    const int YDim,
-    const int ZDim,
-    const int TDim = 0 );
+                          const int XDim,
+                          const int YDim,
+                          const int ZDim,
+                          const int TDim = 0 );
 
   /**
    * Behavior is flaky at best, because lmks file does not specify image dimensions
@@ -190,10 +192,10 @@ public:
    * \return true if successful, false if failed
    */
   bool ReadIntellXPointTypes( const std::string lmrkfilename,
-    const int XDim,
-    const int YDim,
-    const int ZDim,
-    const int TDim = 0 );
+                              const int XDim,
+                              const int YDim,
+                              const int ZDim,
+                              const int TDim = 0 );
 
   /**
    * Behavior is flaky at best, because lmks file does not specify image dimensions
@@ -211,10 +213,10 @@ public:
    * \return true if successful, false if failed
    */
   bool ReadAnalyzePointTypes( const std::string lmrkfilename,
-    const int XDim,
-    const int YDim,
-    const int ZDim,
-    const int TDim = 0 );
+                              const int XDim,
+                              const int YDim,
+                              const int ZDim,
+                              const int TDim = 0 );
 
   /**
    * Function for reading a landmark file in IPL landmark format
@@ -235,10 +237,10 @@ public:
    * \return true if successful, false if failed
    */
   bool ReadIPLPointTypes( const std::string lmrkfilename,
-    const int XDim,
-    const int YDim,
-    const int ZDim,
-    const int TDim = 0 );
+                          const int XDim,
+                          const int YDim,
+                          const int ZDim,
+                          const int TDim = 0 );
 
   /**
    * Function for reading a landmark file in IPL talairach bounds format
@@ -259,10 +261,10 @@ public:
    * \return true if successful, false if failed
    */
   bool ReadIPLTalairachPointTypes( const std::string lmrkfilename,
-    const int XDim,
-    const int YDim,
-    const int ZDim,
-    const int TDim = 0 );
+                                   const int XDim,
+                                   const int YDim,
+                                   const int ZDim,
+                                   const int TDim = 0 );
 
   /**
    * Function for reading a landmark file in IPL talairach bounds format
@@ -283,10 +285,10 @@ public:
    * \return true if successful, false if failed
    */
   bool ReadIPLCerebellarPointTypes( const std::string lmrkfilename,
-    const int XDim,
-    const int YDim,
-    const int ZDim,
-    const int TDim = 0 );
+                                    const int XDim,
+                                    const int YDim,
+                                    const int ZDim,
+                                    const int TDim = 0 );
 
   bool WriteGECPointTypes( const std::string lmrkfilename ) const;
 
@@ -299,10 +301,10 @@ public:
   bool ConcatLandmarks( const std::string lmrkfilename );
 
   bool ConcatLandmarks( const std::string lmrkfilename,
-    const int XDim,
-    const int YDim,
-    const int ZDim,
-    const int TDim = 0 );
+                        const int XDim,
+                        const int YDim,
+                        const int ZDim,
+                        const int TDim = 0 );
 
   bool RemoveClosePoints( const PointStorageType distance = 0.0 );
 
@@ -313,47 +315,47 @@ public:
    * \return MaxXDim()
    */
   inline unsigned short getXDim(void) const
-    {
+  {
     return ImageDims[0];
-    }
+  }
 
   inline unsigned short getYDim(void) const
-    {
+  {
     return ImageDims[1];
-    }
+  }
 
   inline unsigned short getZDim(void) const
-    {
+  {
     return ImageDims[2];
-    }
+  }
 
   inline unsigned short getTDim(void) const
-    {
+  {
     return ImageDims[3];
-    }
+  }
 
   /**
    * If the image is 256x256, then this should be set to 255 because that is the max pixel number of the image.
    */
   inline void setXDim(const unsigned short newx)
-    {
+  {
     assert(newx > 0); ImageDims[0] = newx;
-    }
+  }
 
   inline void setYDim(const unsigned short newy)
-    {
+  {
     assert(newy > 0); ImageDims[1] = newy;
-    }
+  }
 
   inline void setZDim(const unsigned short newz)
-    {
+  {
     assert(newz > 0); ImageDims[2] = newz;
-    }
+  }
 
   inline void setTDim(const unsigned short newt)
-    {
+  {
     assert(newt > 0); ImageDims[3] = newt;
-    }
+  }
 
   /**
    * This rescales the landmarks to fit a new coordinate system.
@@ -366,20 +368,20 @@ public:
   bool rescale(const int newx, const int newy, const int newz, const int newt);
 
   void AddExtendedPointTypes3D_OnN(const InverseConsistentLandmarks & input,
-    const int nx, const int ny, const int nz);
+                                   const int nx, const int ny, const int nz);
 
   void AddExtendedPointTypes3D_UnitCube(
     const InverseConsistentLandmarks & input);
 
 private:
   bool process_bnd_point(const std::string & CurrentLandmarkName,
-    const char *buffer,
-    const unsigned short local_ImageDims[4], const float local_ImageRes[4],
-    PointType & ModifiedPoint);
+                         const char *buffer,
+                         const unsigned short local_ImageDims[4], const float local_ImageRes[4],
+                         PointType & ModifiedPoint);
 
   unsigned short ImageDims[4];
   float          ImageRes[4];
-  };
+};
 }
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkInverseConsistentLandmarks.txx"

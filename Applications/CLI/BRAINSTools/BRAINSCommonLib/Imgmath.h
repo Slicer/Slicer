@@ -13,8 +13,8 @@ PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
-#ifndef _ITKMATH_H_
-#define _ITKMATH_H_
+#ifndef __Imgmath_h
+#define __Imgmath_h
 
 /* This file contains the functions to perform pixel by pixel mathematical
  * operations on 2 images. All the functions are performed by using ITK
@@ -42,9 +42,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include <vcl_cmath.h>
 
 /* Iadd adds 2 images at every pixel location and outputs the resulting image.*/
-  template <class ImageType>
+template <class ImageType>
 typename ImageType::Pointer Iadd(const typename ImageType::Pointer input1,
-  typename ImageType::Pointer input2 )
+                                 typename ImageType::Pointer input2 )
 {
   typedef itk::AddImageFilter<ImageType, ImageType, ImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
@@ -66,9 +66,9 @@ typename ImageType::Pointer Iadd(const typename ImageType::Pointer input1,
 
 /* Isub subtracts 2 images at every pixel location and outputs the resulting
  * image.*/
-  template <class ImageType>
+template <class ImageType>
 typename ImageType::Pointer Isub(const typename ImageType::Pointer input1,
-  const typename ImageType::Pointer input2 )
+                                 const typename ImageType::Pointer input2 )
 {
   typedef itk::SubtractImageFilter<ImageType, ImageType, ImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
@@ -90,9 +90,9 @@ typename ImageType::Pointer Isub(const typename ImageType::Pointer input1,
 
 /* Imul multiplies 2 images at every pixel location and outputs the resulting
  * image.*/
-  template <class ImageType>
+template <class ImageType>
 typename ImageType::Pointer Imul(const typename ImageType::Pointer input1,
-  const typename ImageType::Pointer input2 )
+                                 const typename ImageType::Pointer input2 )
 {
   typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
@@ -114,9 +114,9 @@ typename ImageType::Pointer Imul(const typename ImageType::Pointer input1,
 
 /* Idiv divides 2 images at every pixel location and outputs the resulting
  * image.*/
-  template <class ImageType>
+template <class ImageType>
 typename ImageType::Pointer Idiv(const typename ImageType::Pointer input1,
-  const typename ImageType::Pointer input2 )
+                                 const typename ImageType::Pointer input2 )
 {
   typedef itk::DivideImageFilter<ImageType, ImageType, ImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
@@ -138,9 +138,9 @@ typename ImageType::Pointer Idiv(const typename ImageType::Pointer input1,
 
 /* Imax does the numerical generalization of OR on 2 (non-negative) images at every pixel location
  * and outputs the resulting image.*/
-  template <class ImageType>
+template <class ImageType>
 typename ImageType::Pointer Imax(const typename ImageType::Pointer input1,
-  const typename ImageType::Pointer input2 )
+                                 const typename ImageType::Pointer input2 )
 {
   typedef itk::MaximumImageFilter<ImageType, ImageType, ImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
@@ -162,9 +162,9 @@ typename ImageType::Pointer Imax(const typename ImageType::Pointer input1,
 
 /* Imin does the numerical generalization of AND on 2 (non-negative) images at every pixel location
  * and outputs the resulting image.*/
-  template <class ImageType>
+template <class ImageType>
 typename ImageType::Pointer Imin(const typename ImageType::Pointer input1,
-  const typename ImageType::Pointer input2 )
+                                 const typename ImageType::Pointer input2 )
 {
   typedef itk::MinimumImageFilter<ImageType, ImageType, ImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
@@ -184,9 +184,9 @@ typename ImageType::Pointer Imin(const typename ImageType::Pointer input1,
   return image;
 }
 
-  template <class ImageType>
+template <class ImageType>
 typename ImageType::Pointer IMask(typename ImageType::Pointer input1,
-  typename ImageType::Pointer mask )
+                                  typename ImageType::Pointer mask )
 {
   typename ImageType::Pointer image = ImageType::New();
   image->SetRegions( input1->GetLargestPossibleRegion() );
@@ -197,8 +197,8 @@ typename ImageType::Pointer IMask(typename ImageType::Pointer input1,
   RegionIteratorType in2( mask, mask->GetLargestPossibleRegion() );
   RegionIteratorType out( image, image->GetLargestPossibleRegion() );
   for ( in1.GoToBegin(), out.GoToBegin(), in2.GoToBegin();
-    !in1.IsAtEnd();
-    ++in1, ++in2, ++out )
+        !in1.IsAtEnd();
+        ++in1, ++in2, ++out )
     {
     const typename ImageType::PixelType temp = in1.Get();
     out.Set( ( in2.Get() > 0 ) ? temp : 0 );
@@ -223,7 +223,7 @@ typename ImageType::Pointer ImageAddConstant(
   for ( in.GoToBegin(); !in.IsAtEnd(); ++in )
     {
     out.Set( static_cast<typename ImageType::PixelType>( ( in.Get()
-          + shiftvalue ) ) );
+                                                           + shiftvalue ) ) );
     ++out;
     }
   return outImage;
@@ -234,8 +234,8 @@ typename ImageType::Pointer ImageMultiplyConstant(
   const typename ImageType::Pointer input,
   const double scalevalue)
 {
-  typedef typename itk::MultiplyByConstantImageFilter
-    <ImageType,double,ImageType> MultByConstFilterType;
+  typedef typename itk::MultiplyByConstantImageFilter<ImageType, double, ImageType>
+    MultByConstFilterType;
   typedef typename MultByConstFilterType::Pointer MultByConstFilterPointer;
   MultByConstFilterPointer filt = MultByConstFilterType::New();
   filt->SetInput(input);
@@ -264,7 +264,7 @@ typename ImageType::Pointer ImageComplementConstant(
   for ( in.GoToBegin(); !in.IsAtEnd(); ++in )
     {
     out.Set( static_cast<typename ImageType::PixelType>( ( referencevalue
-          - in.Get() ) ) );
+                                                           - in.Get() ) ) );
     ++out;
     }
   return outImage;
@@ -276,13 +276,13 @@ typename ImageType::Pointer ImageDivideConstant(
   const double denominator)
 {
   typename ImageType::Pointer DivImage = ImageMultiplyConstant(input,
-    1.0 / denominator);
+                                                               1.0 / denominator);
   return DivImage;
 }
 
-  template <class ImageType>
+template <class ImageType>
 void ImageSqrtValue(typename ImageType::Pointer Output,
-  const typename ImageType::Pointer Input)
+                    const typename ImageType::Pointer Input)
 {
   typename ImageType::Pointer image = ImageType::New();
   image->SetRegions( Input->GetLargestPossibleRegion() );
@@ -301,7 +301,7 @@ void ImageSqrtValue(typename ImageType::Pointer Output,
 }
 
 template <class ImageType>
-  typename ImageType::Pointer
+typename ImageType::Pointer
 ImageSqrtValue(const typename ImageType::Pointer input)
 {
   typename ImageType::Pointer rval;

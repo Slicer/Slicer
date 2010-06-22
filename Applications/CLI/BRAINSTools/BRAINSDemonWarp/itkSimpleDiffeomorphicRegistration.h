@@ -29,9 +29,9 @@ class itkSimpleDiffeomorphicRegistration : public itk::Object
 public:
   typedef itk::Image<float, DIM> TRealImage;
   typedef itk::DemonsPreprocessor<TRealImage,
-          TRealImage> DemonsPreprocessorType;
+                                  TRealImage> DemonsPreprocessorType;
   typedef itk::DemonsRegistrator<TRealImage, TRealImage,
-          float> DemonsRegistratorType;
+                                 float> DemonsRegistratorType;
   typedef itk::Image<itk::Vector<float, DIM>, DIM> TDeformationField;
 
   itkSimpleDiffeomorphicRegistration();

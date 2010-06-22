@@ -19,8 +19,8 @@ namespace itk
 {
 template<typename TInputImage, typename TOutputImage>
 VDemonsPreprocessor<TInputImage, TOutputImage>
-  ::VDemonsPreprocessor()
-  {
+::VDemonsPreprocessor()
+{
   m_UseHistogramMatching = 0;
   m_NumberOfHistogramLevels = 256;
   m_NumberOfMatchPoints = 1;
@@ -50,15 +50,15 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
   m_DefaultPixelValue = NumericTraits<PixelType>::One;
   m_Radius.Fill(1);
   m_OutDebug = false;
-  }
+}
 
 template<typename TInputImage, typename TOutputImage>
 void
 VDemonsPreprocessor<TInputImage, TOutputImage>
-  ::Execute()
+::Execute()
 {
   typedef itk::MultiplyByConstantImageFilter<TOutputImage, float,
-    TOutputImage> MultiplyByConstantImageType;
+                                             TOutputImage> MultiplyByConstantImageType;
 
   if ( m_MedianFilterSize[0] > 0  ||  m_MedianFilterSize[1] > 0
        ||  m_MedianFilterSize[2] > 0 )
@@ -87,26 +87,28 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
   for ( unsigned int i = 0; i < m_InputFixedImage.size(); ++i )
     {
     // Create UnNormalized...Images
-/*
-    typename MultiplyByConstantImageType::Pointer multi_FixedImageConstant
-      = MultiplyByConstantImageType::New();
-    multi_FixedImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
-        TOutputImage>(this->m_InputFixedImage[i]) );
-    multi_FixedImageConstant->SetConstant(m_WeightFactors[i]);
-    multi_FixedImageConstant->Update();
+    /*
+        typename MultiplyByConstantImageType::Pointer multi_FixedImageConstant
+          = MultiplyByConstantImageType::New();
+        multi_FixedImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
+            TOutputImage>(this->m_InputFixedImage[i]) );
+        multi_FixedImageConstant->SetConstant(m_WeightFactors[i]);
+        multi_FixedImageConstant->Update();
 
-    typename MultiplyByConstantImageType::Pointer multi_MovingImageConstant
-      = MultiplyByConstantImageType::New();
-    multi_MovingImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
-        TOutputImage>(this->m_InputMovingImage[i]) );
-    multi_MovingImageConstant->SetConstant(m_WeightFactors[i]);
-    multi_MovingImageConstant->Update();
-*/
-    this->m_UnNormalizedFixedImage.push_back(  itkUtil::PreserveCast<TInputImage, TOutputImage>(this->m_InputFixedImage[i]) );
-    this->m_UnNormalizedMovingImage.push_back(  itkUtil::PreserveCast<TInputImage, TOutputImage>(this->m_InputMovingImage[i]) );
+        typename MultiplyByConstantImageType::Pointer multi_MovingImageConstant
+          = MultiplyByConstantImageType::New();
+        multi_MovingImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
+            TOutputImage>(this->m_InputMovingImage[i]) );
+        multi_MovingImageConstant->SetConstant(m_WeightFactors[i]);
+        multi_MovingImageConstant->Update();
+    */
+    this->m_UnNormalizedFixedImage.push_back( itkUtil::PreserveCast<TInputImage,
+                                              TOutputImage>(this->m_InputFixedImage[i]) );
+    this->m_UnNormalizedMovingImage.push_back( itkUtil::PreserveCast<TInputImage,
+                                               TOutputImage>(this->m_InputMovingImage[i]) );
 
     m_OutputMovingImage.push_back( itkUtil::CopyImage<TOutputImage>(
-        m_UnNormalizedMovingImage[i]) );
+                                     m_UnNormalizedMovingImage[i]) );
 
     if ( this->GetUseHistogramMatching () )
       {
@@ -120,12 +122,12 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
         }
 
       if ( ( vcl_numeric_limits<typename OutputImageType::PixelType>::max()
-            - vcl_numeric_limits<typename OutputImageType::PixelType>::min() )
-          < m_NumberOfHistogramLevels )
+             - vcl_numeric_limits<typename OutputImageType::PixelType>::min() )
+           < m_NumberOfHistogramLevels )
         {
         std::cout
-         << "The intensity of range is less than Histogram levels!!"
-         << std::endl;
+          << "The intensity of range is less than Histogram levels!!"
+          << std::endl;
         }
 
       histogramfilter->SetInput( m_UnNormalizedMovingImage[i]  );
@@ -140,7 +142,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
       }
 
     m_OutputFixedImage.push_back( itkUtil::CopyImage<TOutputImage>(
-        m_UnNormalizedFixedImage[i]) );
+                                    m_UnNormalizedFixedImage[i]) );
 
     // Make BOBF Images if specified
     if ( this->m_FixedBinaryVolume != std::string ("none") )
@@ -152,7 +154,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
                   << m_OutputFixedImage[i]->GetOrigin() << std::endl;
         }
       m_OutputFixedImage[i] = this->MakeBOBFImage( m_OutputFixedImage[i],
-        m_FixedBinaryVolume );
+                                                   m_FixedBinaryVolume );
       if ( this->GetOutDebug() )
         {
         std::cout << "Fixed Origin" << m_OutputFixedImage[i]->GetOrigin()
@@ -161,7 +163,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
                   << m_OutputMovingImage[i]->GetOrigin() << std::endl;
         }
       m_OutputMovingImage[i] = this->MakeBOBFImage( m_OutputMovingImage[i],
-        m_MovingBinaryVolume);
+                                                    m_MovingBinaryVolume);
       if ( this->GetOutDebug() )
         {
         std::cout << "Moving Origin" << m_OutputMovingImage[i]->GetOrigin()
@@ -184,7 +186,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
     for ( unsigned int i = 1; i < m_InputFixedImage.size(); ++i )
       {
       if ( m_OutputFixedImage[i]->GetLargestPossibleRegion().GetSize() ==
-          m_OutputFixedImage[0]->GetLargestPossibleRegion().GetSize() )
+           m_OutputFixedImage[0]->GetLargestPossibleRegion().GetSize() )
         {
         condition *= 1;
         }
@@ -194,7 +196,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
         }
 
       if ( m_OutputFixedImage[i]->GetSpacing() ==
-          m_OutputFixedImage[0]->GetSpacing() )
+           m_OutputFixedImage[0]->GetSpacing() )
         {
         condition *= 1;
         }
@@ -204,7 +206,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
         }
 
       if ( m_OutputMovingImage[i]->GetLargestPossibleRegion().GetSize() ==
-          m_OutputMovingImage[0]->GetLargestPossibleRegion().GetSize() )
+           m_OutputMovingImage[0]->GetLargestPossibleRegion().GetSize() )
         {
         condition *= 1;
         }
@@ -214,7 +216,7 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
         }
 
       if ( m_OutputMovingImage[i]->GetDirection() ==
-          m_OutputMovingImage[0]->GetDirection() )
+           m_OutputMovingImage[0]->GetDirection() )
         {
         condition *= 1;
         }
@@ -226,8 +228,8 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
     if ( condition != 1 )
       {
       std::cout
-       << "Fixed images or Moving images have different size or spacing!"
-       << std::endl;
+        << "Fixed images or Moving images have different size or spacing!"
+        << std::endl;
       exit (-1);
       }
     }
@@ -238,15 +240,15 @@ VDemonsPreprocessor<TInputImage, TOutputImage>
 
 template<typename TInputImage, typename TOutputImage>
 typename VDemonsPreprocessor<TInputImage,
-  TOutputImage>::OutputImagePointer VDemonsPreprocessor<TInputImage,
-  TOutputImage>
-  ::MakeBOBFImage( OutputImagePointer input, std::string MaskName )
+                             TOutputImage>::OutputImagePointer VDemonsPreprocessor<TInputImage,
+                                                                                   TOutputImage>
+::MakeBOBFImage( OutputImagePointer input, std::string MaskName )
 {
   OutputImagePointer Mask = itkUtil::ReadImage<OutputImageType>(MaskName);
 
   if ( ( m_UnNormalizedFixedImage[0]->GetLargestPossibleRegion().GetSize() !=
-        Mask->GetLargestPossibleRegion().GetSize() )
-      || ( m_UnNormalizedFixedImage[0]->GetSpacing() != Mask->GetSpacing() ) )
+         Mask->GetLargestPossibleRegion().GetSize() )
+       || ( m_UnNormalizedFixedImage[0]->GetSpacing() != Mask->GetSpacing() ) )
     {
     if ( this->GetOutDebug() )
       {
@@ -260,9 +262,9 @@ typename VDemonsPreprocessor<TInputImage,
   if ( this->GetOutDebug() )
     {
     std::cout
-     <<
-    "Making Brain only Background filled image with the following parameters. "
-     << std::endl;
+      <<
+      "Making Brain only Background filled image with the following parameters. "
+      << std::endl;
     std::cout << "Lower Threshold:  " << m_Lower << std::endl;
     std::cout << "Upper Threshold:  " << m_Upper << std::endl;
     std::cout << "Neighborhood:  " << m_Radius << std::endl;

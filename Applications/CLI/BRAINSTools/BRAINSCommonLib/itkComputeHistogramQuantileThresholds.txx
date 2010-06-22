@@ -1,6 +1,8 @@
+#ifndef __itkComputeHistogramQuantileThresholds_txx
+#define __itkComputeHistogramQuantileThresholds_txx
 #include "itkComputeHistogramQuantileThresholds.h"
 
-//#include <itkSimpleFilterWatcher.h>
+// #include <itkSimpleFilterWatcher.h>
 #include <itkImageRegionIterator.h>
 #include <vnl/vnl_sample.h>
 #include <vnl/vnl_math.h>
@@ -11,27 +13,24 @@
 
 namespace itk
 {
-template <class TInputImage, class TMaskImage>
-ComputeHistogramQuantileThresholds<TInputImage,TMaskImage>
+template<class TInputImage, class TMaskImage>
+ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::ComputeHistogramQuantileThresholds() :
   m_QuantileLowerThreshold(0.0),
   m_QuantileUpperThreshold(1.0)
-{
-}
+{}
 
-template <class TInputImage, class TMaskImage>
-ComputeHistogramQuantileThresholds<TInputImage,TMaskImage>
+template<class TInputImage, class TMaskImage>
+ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::~ComputeHistogramQuantileThresholds()
-{
-}
+{}
 
-
-template <class TInputImage, class TMaskImage>
+template<class TInputImage, class TMaskImage>
 void
-ComputeHistogramQuantileThresholds<TInputImage,TMaskImage>
-::PrintSelf(std::ostream& os, Indent indent) const
+ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
+::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << "QuantileLowerThreshold "
      << m_QuantileLowerThreshold << " "
@@ -39,15 +38,15 @@ ComputeHistogramQuantileThresholds<TInputImage,TMaskImage>
      << m_QuantileUpperThreshold << std::endl;
 }
 
-template <class TInputImage, class TMaskImage>
+template<class TInputImage, class TMaskImage>
 void
-ComputeHistogramQuantileThresholds<TInputImage,TMaskImage>
-::ImageMinMax(typename TInputImage::PixelType &ImageMin,
-              typename TInputImage::PixelType &ImageMax)
+ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
+::ImageMinMax(typename TInputImage::PixelType & ImageMin,
+              typename TInputImage::PixelType & ImageMax)
 {
   typename MinimumMaximumImageFilter<TInputImage>::Pointer minmaxFilter
     = MinimumMaximumImageFilter<TInputImage>::New();
-  minmaxFilter->SetInput(this->GetImage());
+  minmaxFilter->SetInput( this->GetImage() );
   minmaxFilter->Update();
   ImageMax = minmaxFilter->GetMaximum();
   ImageMin = minmaxFilter->GetMinimum();
@@ -63,18 +62,18 @@ ComputeHistogramQuantileThresholds<TInputImage,TMaskImage>
  *              are above this threshold
  * @param m_NumberOfValidHistogramsEntries  The number of non-zero histogram bins
  */
-template <class TInputImage, class TMaskImage>
+template<class TInputImage, class TMaskImage>
 void
-ComputeHistogramQuantileThresholds<TInputImage,TMaskImage>
+ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>
 ::Calculate()
 {
   this->ImageMinMax(this->m_ImageMin, this->m_ImageMax);
 
-  typedef Statistics::ScalarImagePortionToHistogramGenerator<TInputImage,TMaskImage>
+  typedef Statistics::ScalarImagePortionToHistogramGenerator<TInputImage, TMaskImage>
     HistogramGeneratorType;
   typename HistogramGeneratorType::Pointer histogramGenerator
     = HistogramGeneratorType::New();
-  histogramGenerator->SetInput(this->GetImage());
+  histogramGenerator->SetInput( this->GetImage() );
   if ( m_BinaryPortionImage.IsNotNull() )
     {
     histogramGenerator->SetBinaryPortionImage( m_BinaryPortionImage );
@@ -90,67 +89,68 @@ ComputeHistogramQuantileThresholds<TInputImage,TMaskImage>
   histogramGenerator->InitializeHistogram( NumberOfBins, m_ImageMin, m_ImageMax );
 #endif
 
-
   histogramGenerator->Compute();
   typedef typename HistogramGeneratorType::HistogramType HistogramType;
   HistogramType *histogram = const_cast<HistogramType *>( histogramGenerator->GetOutput() );
   //  If the number of non-zero bins is <= 2, then it is a binary image, and
   // Otsu won't do:
   //
-    m_NumberOfValidHistogramsEntries = 0;
+  m_NumberOfValidHistogramsEntries = 0;
+  {
+  typename HistogramType::Iterator histIt = histogram->Begin();
+  bool                             saw_lowest = false;
+  while ( histIt != histogram->End() )
     {
-    typename HistogramType::Iterator histIt = histogram->Begin();
-    bool saw_lowest = false;
-    while ( histIt != histogram->End() )
+    // walking a 1-dimensional histogram from low to high:
+    const double measurement( histIt.GetMeasurementVector()[0] );
+
+    if ( histIt.GetFrequency() != 0 )
       {
-      // walking a 1-dimensional histogram from low to high:
-      const double measurement( histIt.GetMeasurementVector()[0] );
-      if ( histIt.GetFrequency() != 0 )
+      ++m_NumberOfValidHistogramsEntries;
+      m_UpperIntensityThresholdValue = static_cast<int>( measurement + 0.5 );
+      // rounding by chopping
+      if ( !saw_lowest )
         {
-        ++m_NumberOfValidHistogramsEntries;
-        m_UpperIntensityThresholdValue = static_cast<int>( measurement + 0.5 );
+        m_LowerIntensityThresholdValue = static_cast<int>( measurement + 0.5 );
         // rounding by chopping
-        if ( !saw_lowest )
-          {
-          m_LowerIntensityThresholdValue = static_cast<int>( measurement + 0.5 );
-          // rounding by chopping
-          saw_lowest = true;
-          }
+        saw_lowest = true;
         }
-      ++histIt;
       }
-    if ( m_NumberOfValidHistogramsEntries <= 2 ) // then it is a binary image:
-      {
-      std::cout
-        << "Image handled with only two catgegories; effectively, binary thresholding."
-        << std::endl;
-      }
-    else
-      {
-      m_LowerIntensityThresholdValue =
-        static_cast<typename TInputImage::PixelType>
-        ( histogram->Quantile(0, this->m_QuantileLowerThreshold) );
-      m_UpperIntensityThresholdValue =
-        static_cast<typename TInputImage::PixelType>
-        ( histogram->Quantile(0, this->m_QuantileUpperThreshold) );
-      std::cout
-        << m_NumberOfValidHistogramsEntries
-        << " ValidHistogramsEntries,  "
-        << histogram->GetTotalFrequency()
-        << " TotalFrequency"
-        << std::endl;
-      std::cout
-        << m_QuantileLowerThreshold
-        << " ---> "
-        << static_cast<int>(m_LowerIntensityThresholdValue)
-        << std::endl;
-      std::cout
-        << m_QuantileUpperThreshold
-        << " ---> "
-        << static_cast<int>(m_UpperIntensityThresholdValue)
-        << std::endl;
-     }
+    ++histIt;
     }
+  if ( m_NumberOfValidHistogramsEntries <= 2 ) // then it is a binary image:
+    {
+    std::cout
+      << "Image handled with only two catgegories; effectively, binary thresholding."
+      << std::endl;
+    }
+  else
+    {
+    m_LowerIntensityThresholdValue
+      = static_cast<typename TInputImage::PixelType>
+      ( histogram->Quantile(0, this->m_QuantileLowerThreshold) );
+    m_UpperIntensityThresholdValue
+      = static_cast<typename TInputImage::PixelType>
+      ( histogram->Quantile(0, this->m_QuantileUpperThreshold) );
+    std::cout
+      << m_NumberOfValidHistogramsEntries
+      << " ValidHistogramsEntries,  "
+      << histogram->GetTotalFrequency()
+      << " TotalFrequency"
+      << std::endl;
+    std::cout
+      << m_QuantileLowerThreshold
+      << " ---> "
+      << static_cast<int>(m_LowerIntensityThresholdValue)
+      << std::endl;
+    std::cout
+      << m_QuantileUpperThreshold
+      << " ---> "
+      << static_cast<int>(m_UpperIntensityThresholdValue)
+      << std::endl;
+    }
+  }
   return;
 }
 }
+#endif // __itkComputeHistogramQuantileThresholds_txx

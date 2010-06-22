@@ -20,7 +20,7 @@
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkWarpHarmonicEnergyCalculator.h"
 #include "itkVectorCentralDifferenceImageFunction.h"
-//#include <getopt.h>
+// #include <getopt.h>
 #include <iostream>
 
 #include "BRAINSDemonWarpTemplates.h"
@@ -49,20 +49,20 @@ public:
 
 void Execute(itk::Object *caller, const itk::EventObject & event)
 {
-Execute( (const itk::Object *)caller, event);
+  Execute( (const itk::Object *)caller, event);
 }
 
-void Execute(const itk::Object * object, const itk::EventObject & event)
-{
-const RegistrationFilterType * filter =
-dynamic_cast< const RegistrationFilterType * >( object );
+  void Execute(const itk::Object * object, const itk::EventObject & event)
+  {
+    const RegistrationFilterType * filter =
+      dynamic_cast< const RegistrationFilterType * >( object );
 
-if( !(itk::IterationEvent().CheckEvent( &event )) )
-{
-return;
-}
-std::cout <<   filter->GetMetric() << std::endl;
-}
+    if( !(itk::IterationEvent().CheckEvent( &event )) )
+      {
+      return;
+      }
+    std::cout <<   filter->GetMetric() << std::endl;
+  }
 };
 */
 
@@ -107,13 +107,13 @@ public:
     DeformationFieldType, TPixel, InternalImageType> JacobianFilterType;
 
   typedef itk::MinimumMaximumImageCalculator<InternalImageType>
-    MinMaxFilterType;
+  MinMaxFilterType;
 
   typedef itk::WarpHarmonicEnergyCalculator<DeformationFieldType>
-    HarmonicEnergyCalculatorType;
+  HarmonicEnergyCalculatorType;
 
   typedef itk::VectorCentralDifferenceImageFunction<DeformationFieldType>
-    WarpGradientCalculatorType;
+  WarpGradientCalculatorType;
 
   typedef typename WarpGradientCalculatorType::OutputType WarpGradientType;
 
@@ -129,22 +129,22 @@ private:
   typename WarpGradientCalculatorType::Pointer m_CompWarpGradientCalculator;
 public:
   void SetTrueField(const DeformationFieldType *truefield)
-    {
+  {
     m_TrueField = truefield;
 
     m_TrueWarpGradientCalculator = WarpGradientCalculatorType::New();
     m_TrueWarpGradientCalculator->SetInputImage( m_TrueField );
 
     m_CompWarpGradientCalculator =  WarpGradientCalculatorType::New();
-    }
+  }
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
-    {
+  {
     Execute( (const itk::Object *)caller, event );
-    }
+  }
 
   void Execute(const itk::Object *object, const itk::EventObject & event)
-    {
+  {
     if ( !( itk::IterationEvent().CheckEvent( &event ) ) )
       {
       return;
@@ -155,8 +155,8 @@ public:
     double       metricbefore = -1.0;
 
     if ( const DiffeomorphicDemonsRegistrationFilterType * DDfilter
-      = dynamic_cast<const DiffeomorphicDemonsRegistrationFilterType *>(
-        object ) )
+         = dynamic_cast<const DiffeomorphicDemonsRegistrationFilterType *>(
+           object ) )
       {
       iter = DDfilter->GetElapsedIterations() - 1;
       metricbefore = DDfilter->GetMetric();
@@ -164,9 +164,9 @@ public:
         ( DDfilter )->GetDeformationField();
       }
     else if ( const FastSymmetricForcesDemonsRegistrationFilterType * FSDfilter
-      = dynamic_cast<const
-      FastSymmetricForcesDemonsRegistrationFilterType *>(
-        object ) )
+              = dynamic_cast<const
+              FastSymmetricForcesDemonsRegistrationFilterType *>(
+                object ) )
       {
       iter = FSDfilter->GetElapsedIterations() - 1;
       metricbefore = FSDfilter->GetMetric();
@@ -174,7 +174,7 @@ public:
         ( FSDfilter )->GetDeformationField();
       }
     else if ( const DemonsRegistrationFilterType * Dfilter
-      = dynamic_cast<const DemonsRegistrationFilterType *>( object ) )
+              = dynamic_cast<const DemonsRegistrationFilterType *>( object ) )
       {
       iter = Dfilter->GetElapsedIterations() - 1;
       metricbefore = Dfilter->GetMetric();
@@ -182,9 +182,9 @@ public:
         ( Dfilter )->GetDeformationField();
       }
     else if ( const VectorDiffeomorphicDemonsRegistrationFilterType * VDDfilter
-      = dynamic_cast<const
-      VectorDiffeomorphicDemonsRegistrationFilterType *>(
-        object ) )
+              = dynamic_cast<const
+              VectorDiffeomorphicDemonsRegistrationFilterType *>(
+                object ) )
       {
       iter = VDDfilter->GetElapsedIterations() - 1;
       metricbefore = VDDfilter->GetMetric();
@@ -192,10 +192,10 @@ public:
         ( VDDfilter )->GetDeformationField();
       }
     else if ( const MultiResRegistrationFilterType * multiresfilter
-      = dynamic_cast<const MultiResRegistrationFilterType *>( object ) )
+              = dynamic_cast<const MultiResRegistrationFilterType *>( object ) )
       {
       std::cout << "Finished Multi-resolution iteration :"
-        << multiresfilter->GetCurrentLevel() - 1 << std::endl;
+                << multiresfilter->GetCurrentLevel() - 1 << std::endl;
       std::cout << "==============================" << std::endl << std::endl;
       }
     else
@@ -224,7 +224,7 @@ public:
         fieldDist = 0.0;
         fieldGradDist = 0.0;
         for ( currIter.GoToBegin(), trueIter.GoToBegin();
-          !currIter.IsAtEnd(); ++currIter, ++trueIter )
+              !currIter.IsAtEnd(); ++currIter, ++trueIter )
           {
           fieldDist += ( currIter.Value() - trueIter.Value() ).GetSquaredNorm();
 
@@ -232,22 +232,22 @@ public:
           tmp = (
             ( m_CompWarpGradientCalculator->EvaluateAtIndex( currIter.GetIndex() )
               - m_TrueWarpGradientCalculator->EvaluateAtIndex( trueIter.
-                GetIndex() )
-            ).GetVnlMatrix() ).frobenius_norm();
+                                                               GetIndex() )
+              ).GetVnlMatrix() ).frobenius_norm();
           fieldGradDist += tmp * tmp;
           }
         fieldDist = sqrt( fieldDist / (double)(
-            deffield->GetLargestPossibleRegion().
-            GetNumberOfPixels() ) );
+                            deffield->GetLargestPossibleRegion().
+                            GetNumberOfPixels() ) );
         fieldGradDist = sqrt( fieldGradDist / (double)(
-            deffield->GetLargestPossibleRegion().
-            GetNumberOfPixels() ) );
+                                deffield->GetLargestPossibleRegion().
+                                GetNumberOfPixels() ) );
 
         std::cout << "d(.,true) " << fieldDist << " - ";
         std::cout << "d(.,Jac(true)) " << fieldGradDist << " - ";
         }
 #if defined( USE_DEBUG_IMAGE_VIEWER )
-      if(DebugImageDisplaySender.Enabled())
+      if ( DebugImageDisplaySender.Enabled() )
         {
         DebugImageDisplaySender.SendImage<DeformationFieldType>(deffield, 0, 0);
         DebugImageDisplaySender.SendImage<DeformationFieldType>(deffield, 1, 1);
@@ -309,28 +309,28 @@ public:
       const double Q998 = *jac_ptr;
 
       std::cout << "max|Jac| " << maxJac << " - "
-        << "min|Jac| " << minJac << " - "
-        << "ratio(|Jac|<=0) " << jacBelowZeroPrc << std::endl;
+                << "min|Jac| " << minJac << " - "
+                << "ratio(|Jac|<=0) " << jacBelowZeroPrc << std::endl;
 
       if ( this->m_Fid.is_open() )
         {
         if ( !m_headerwritten )
           {
           this->m_Fid << "Iteration"
-            << ", MSE before"
-            << ", Harmonic energy"
-            << ", min|Jac|"
-            << ", 0.2% |Jac|"
-            << ", 01% |Jac|"
-            << ", 99% |Jac|"
-            << ", 99.8% |Jac|"
-            << ", max|Jac|"
-            << ", ratio(|Jac|<=0)";
+                      << ", MSE before"
+                      << ", Harmonic energy"
+                      << ", min|Jac|"
+                      << ", 0.2% |Jac|"
+                      << ", 01% |Jac|"
+                      << ", 99% |Jac|"
+                      << ", 99.8% |Jac|"
+                      << ", max|Jac|"
+                      << ", ratio(|Jac|<=0)";
 
           if ( m_TrueField )
             {
             this->m_Fid << ", dist(warp,true warp)"
-              << ", dist(Jac,true Jac)";
+                        << ", dist(Jac,true Jac)";
             }
 
           this->m_Fid << std::endl;
@@ -339,47 +339,47 @@ public:
           }
 
         this->m_Fid << iter
-          << ", " << metricbefore
-          << ", " << harmonicEnergy
-          << ", " << minJac
-          << ", " << Q002
-          << ", " << Q01
-          << ", " << Q99
-          << ", " << Q998
-          << ", " << maxJac
-          << ", " << jacBelowZeroPrc;
+                    << ", " << metricbefore
+                    << ", " << harmonicEnergy
+                    << ", " << minJac
+                    << ", " << Q002
+                    << ", " << Q01
+                    << ", " << Q99
+                    << ", " << Q998
+                    << ", " << maxJac
+                    << ", " << jacBelowZeroPrc;
 
         if ( m_TrueField )
           {
           this->m_Fid << ", " << fieldDist
-            << ", " << fieldGradDist;
+                      << ", " << fieldGradDist;
           }
 
         this->m_Fid << std::endl;
         }
       }
-    }
+  }
 
 protected:
   VCommandIterationUpdate() :
     m_Fid( "metricvalues.csv" ),
     m_headerwritten(false)
   {
-  m_JacobianFilter = JacobianFilterType::New();
-  m_JacobianFilter->SetUseImageSpacing( true );
-  m_JacobianFilter->ReleaseDataFlagOn();
+    m_JacobianFilter = JacobianFilterType::New();
+    m_JacobianFilter->SetUseImageSpacing( true );
+    m_JacobianFilter->ReleaseDataFlagOn();
 
-  m_Minmaxfilter = MinMaxFilterType::New();
+    m_Minmaxfilter = MinMaxFilterType::New();
 
-  m_HarmonicEnergyCalculator = HarmonicEnergyCalculatorType::New();
+    m_HarmonicEnergyCalculator = HarmonicEnergyCalculatorType::New();
 
-  m_TrueField = 0;
-  m_TrueWarpGradientCalculator = 0;
-  m_CompWarpGradientCalculator = 0;
+    m_TrueField = 0;
+    m_TrueWarpGradientCalculator = 0;
+    m_CompWarpGradientCalculator = 0;
   }
 
   ~VCommandIterationUpdate()
-    {
+  {
     this->m_Fid.close();
-    }
+  }
 };

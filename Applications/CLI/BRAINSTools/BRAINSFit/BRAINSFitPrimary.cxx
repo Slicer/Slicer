@@ -38,26 +38,26 @@ PURPOSE.  See the above copyright notices for more information.
 
 // Check that ITK was compiled with correct flags set:
 #ifndef ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE
-#error \
+#error                                                                  \
   "Results will not be correct if ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE is turned off"
 #endif
 #ifndef ITK_USE_ORIENTED_IMAGE_DIRECTION
-#error \
+#error                                                                  \
   "Results will not be correct if ITK_USE_ORIENTED_IMAGE_DIRECTION is turned off"
 #endif
 #ifndef ITK_USE_TRANSFORM_IO_FACTORIES
-#error \
+#error                                                                  \
   "BRAINSFit Requires ITK_USE_TRANSFORM_IO_FACTORIES to be on, please rebuild ITK."
 #endif
 
-#if (ITK_VERSION_MAJOR < 3  )
-#if (ITK_VERSION_MINOR < 15 )
-#if (ITK_VERSION_PATCH < 0 )
-#warning \
+#if ( ITK_VERSION_MAJOR < 3  )
+#if ( ITK_VERSION_MINOR < 15 )
+#if ( ITK_VERSION_PATCH < 0 )
+#warning                                                                \
   "A version of ITK greater than 3.15.0 is needed in order to have the cross platform transform patches included."
-#warning \
+#warning                                                        \
   "Use at your own risk with versions less than 3.15.0."
-#warning \
+#warning                                                                \
   "Version 3.15.0 has fixed several issues related to inconsistent rounding on different platforms, and inconsistent definition of the center of voxels."
 #endif
 #endif
@@ -66,19 +66,19 @@ PURPOSE.  See the above copyright notices for more information.
 #include "GenericTransformImage.h"
 
 typedef float PixelType;
-// Dimension and MaxInputDimension comes from an enum at the start of itkMultiModal3DMutualRegistrationHelper.h
+// Dimension and MaxInputDimension comes from an enum at the start of
+// itkMultiModal3DMutualRegistrationHelper.h
 
-typedef itk::Image<PixelType, Dimension>                            FixedVolumeType;
-typedef itk::Image<PixelType, Dimension>                            MovingVolumeType;
+typedef itk::Image<PixelType, Dimension> FixedVolumeType;
+typedef itk::Image<PixelType, Dimension> MovingVolumeType;
 
 typedef itk::Image<PixelType,
-        MaxInputDimension>                    InputImageType;
+                   MaxInputDimension>                    InputImageType;
 
 typedef itk::ImageFileReader<InputImageType>
 FixedVolumeReaderType;
 typedef itk::ImageFileReader<InputImageType>
 MovingVolumeReaderType;
-
 
 typedef AffineTransformType::Pointer
 AffineTransformPointer;
@@ -88,7 +88,7 @@ typedef itk::Vector<double, Dimension> VectorType;
 // This function deciphers the BackgroundFillValueString and returns a double
 // precision number based on the requested value
 double GetBackgroundFillValueFromString(
-  const std::string &BackgroundFillValueString )
+  const std::string & BackgroundFillValueString )
 {
   const std::string BIGNEGText("BIGNEG");
   const std::string NaNText("NaN");
@@ -122,14 +122,13 @@ double GetBackgroundFillValueFromString(
   return BackgroundFillValue;
 }
 
-
 template <class ImageType>
 typename ImageType::Pointer ExtractImage(
   typename InputImageType::Pointer & inputImage,
   unsigned int InputImageTimeIndex)
 {
   typedef typename itk::ExtractImageFilter<InputImageType,
-  ImageType> ExtractImageFilterType;
+    ImageType> ExtractImageFilterType;
   typename ExtractImageFilterType::Pointer extractImageFilter
     = ExtractImageFilterType::New();
 
@@ -152,10 +151,10 @@ typename ImageType::Pointer ExtractImage(
     {
     extractImageFilter->Update();
     }
-  catch (... )
+  catch ( ... )
     {
     std::cout << "Error while extracting a time indexed fixed image."
-      << std::endl;
+              << std::endl;
     throw;
     }
   typename ImageType::Pointer extractImage = extractImageFilter->GetOutput();
@@ -165,12 +164,12 @@ typename ImageType::Pointer ExtractImage(
   return extractImage;
 }
 
-  template <class ImageType>
+template <class ImageType>
 typename ImageType::Pointer DoMedian(typename ImageType::Pointer & input,
-  typename ImageType::SizeType indexRadius)
+                                     typename ImageType::SizeType indexRadius)
 {
   typedef typename itk::MedianImageFilter<ImageType,
-          ImageType> MedianFilterType;
+    ImageType> MedianFilterType;
   typename MedianFilterType::Pointer medianFilter = MedianFilterType::New();
 
   medianFilter->SetRadius( indexRadius );
@@ -179,8 +178,6 @@ typename ImageType::Pointer DoMedian(typename ImageType::Pointer & input,
   typename ImageType::Pointer result = medianFilter->GetOutput();
   return result;
 }
-
-
 
 #ifdef USE_DEBUG_IMAGE_VIEWER
 /*************************
@@ -194,15 +191,20 @@ int BRAINSFitPrimary( int argc, char *argv[] )
 {
   PARSE_ARGS;
 
-  //This is needed in order to read and write ScaleVersor3D TransformTypes.
-  //Hopefully in ITK-3-19 this will become part of the non-review transform types.
-  itk::TransformFactory<itk::ScaleVersor3DTransform<double> >::RegisterTransform ();
-  itk::TransformFactory<itk::ScaleVersor3DTransform<float> >::RegisterTransform ();
+  itk::AddExtraTransformRegister();
+  // Apparently when you register one transform, you need to register all your
+  // transforms.
+  //
+  itk::TransformFactory<VersorRigid3DTransformType>::RegisterTransform();
+  itk::TransformFactory<ScaleVersor3DTransformType>::RegisterTransform();
+  itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
+  itk::TransformFactory<AffineTransformType>::RegisterTransform();
+  itk::TransformFactory<BSplineTransformType>::RegisterTransform();
 
   RegisterBrains2MaskFactory();
 
 #ifdef USE_DEBUG_IMAGE_VIEWER
-  if(UseDebugImageViewer)
+  if ( UseDebugImageViewer )
     {
     DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
     }
@@ -213,78 +215,87 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     {
     itk::MultiThreader::SetGlobalMaximumNumberOfThreads(debugNumberOfThreads);
     }
-  std::string localInitializeTransformMode="Off";
-  if( ( ( initialTransform.size() > 0 ) + (useCenterOfHeadAlign == true) + (useGeometryAlign == true) + (useMomentsAlign == true) ) > 1 )
+  std::string localInitializeTransformMode = "Off";
+  if ( ( ( initialTransform.size() >
+           0 ) + ( useCenterOfHeadAlign == true ) + ( useGeometryAlign == true ) + ( useMomentsAlign == true ) ) > 1 )
     {
-    std::cout << "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign ]" << std::endl;
+    std::cout
+      <<
+      "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign ]"
+      << std::endl;
     }
-  if( useCenterOfHeadAlign == true) { localInitializeTransformMode="useCenterOfHeadAlign"; }
-  if( useGeometryAlign == true)     { localInitializeTransformMode="useGeometryAlign"; }
-  if( useMomentsAlign == true)      { localInitializeTransformMode="useMomentsAlign"; }
+  if ( useCenterOfHeadAlign == true ) { localInitializeTransformMode = "useCenterOfHeadAlign"; }
+  if ( useGeometryAlign == true )     { localInitializeTransformMode = "useGeometryAlign"; }
+  if ( useMomentsAlign == true )      { localInitializeTransformMode = "useMomentsAlign"; }
 
-  //std::vector<int> zeroOrigin(3, 0);
+  // std::vector<int> zeroOrigin(3, 0);
 
-  //Verify that the spline grid sizes are greater than 3
+  // Verify that the spline grid sizes are greater than 3
+  {
+  bool validGridSize = true;
+  for ( unsigned int sgs = 0; sgs < splineGridSize.size(); sgs++ )
     {
-    bool validGridSize=true;
-    for( unsigned int sgs=0; sgs< splineGridSize.size(); sgs++)
+    if ( splineGridSize[sgs] < 3 )
       {
-      if(splineGridSize[sgs] < 3)
-        {
-        validGridSize=false;
-        std::cout << "splineGridSize["<<sgs<<"]= "<< splineGridSize[sgs]
-          << " is invalid.  There must be at lest 3 divisions in each dimension of the image." << std::endl;
-        exit(-1);
-        }
+      validGridSize = false;
+      std::cout << "splineGridSize[" << sgs << "]= " << splineGridSize[sgs]
+                << " is invalid.  There must be at lest 3 divisions in each dimension of the image." << std::endl;
+      exit(-1);
       }
     }
+  }
   std::vector<std::string> localTransformType;
-  //See if the individual boolean registration options are being used.  If any of these are set, then transformType is not used.
-   if( (useRigid == true) || (useScaleVersor3D == true) ||(useScaleSkewVersor3D == true ) || (useAffine == true) || (useBSpline == true ) )
-     {
-     localTransformType.resize(0);//Set to zero lenght;
-     if(useRigid == true)             { localTransformType.push_back("Rigid"); }
-     if(useScaleVersor3D == true)     { localTransformType.push_back("ScaleVersor3D"); }
-     if(useScaleSkewVersor3D == true) { localTransformType.push_back("ScaleSkewVersor3D"); }
-     if(useAffine == true)            { localTransformType.push_back("Affine"); }
-     if(useBSpline == true)           { localTransformType.push_back("BSpline"); }
-     }
-  else if(transformType.size() > 0 )
+  // See if the individual boolean registration options are being used.  If any
+  // of these are set, then transformType is not used.
+  if ( ( useRigid == true ) || ( useScaleVersor3D == true ) || ( useScaleSkewVersor3D == true )
+       || ( useAffine == true ) || ( useBSpline == true ) )
     {
-    localTransformType=transformType;
+    localTransformType.resize(0); // Set to zero lenght;
+    if ( useRigid == true )             { localTransformType.push_back("Rigid"); }
+    if ( useScaleVersor3D == true )     { localTransformType.push_back("ScaleVersor3D"); }
+    if ( useScaleSkewVersor3D == true ) { localTransformType.push_back("ScaleSkewVersor3D"); }
+    if ( useAffine == true )            { localTransformType.push_back("Affine"); }
+    if ( useBSpline == true )           { localTransformType.push_back("BSpline"); }
     }
-  else if( ( ( initialTransform.size() > 0 ) + (useCenterOfHeadAlign == true) + (useGeometryAlign == true) + (useMomentsAlign == true) ) > 0 )
+  else if ( transformType.size() > 0 )
     {
-    //Only do the initialization phase;
+    localTransformType = transformType;
+    }
+  else if ( ( ( initialTransform.size() >
+                0 )
+              + ( useCenterOfHeadAlign == true ) + ( useGeometryAlign == true ) + ( useMomentsAlign == true ) ) > 0 )
+    {
+    // Only do the initialization phase;
     }
   else
     {
-    std::cerr << "ERROR: No registration phases specified to perform!" <<std::endl;
+    std::cerr << "ERROR: No registration phases specified to perform!" << std::endl;
     exit(-1);
     }
 
-  //In order to make the Slicer interface work, a few alternate command line options need to available
+  // In order to make the Slicer interface work, a few alternate command line
+  // options need to available
   std::string localOutputTransform;
-  if( ( linearTransform.size() > 0 && bsplineTransform.size() > 0 ) ||
-    ( linearTransform.size() > 0 && outputTransform.size() > 0 ) ||
-    ( outputTransform.size() > 0 && bsplineTransform.size() > 0 ) )
+  if ( ( linearTransform.size() > 0 && bsplineTransform.size() > 0 )
+       || ( linearTransform.size() > 0 && outputTransform.size() > 0 )
+       || ( outputTransform.size() > 0 && bsplineTransform.size() > 0 ) )
     {
     std::cout << "Error:  user can only specify one output transform type." << std::endl;
     exit(-1);
     }
-  if(linearTransform.size() > 0 )
+  if ( linearTransform.size() > 0 )
     {
-    localOutputTransform=linearTransform;
-    if( ( localTransformType.size() > 0 ) && ( localTransformType[localTransformType.size() -1 ] == "BSpline" ) )
+    localOutputTransform = linearTransform;
+    if ( ( localTransformType.size() > 0 ) && ( localTransformType[localTransformType.size() - 1] == "BSpline" ) )
       {
       std::cout << "Error:  Linear transforms can not be used for BSpline registration!" << std::endl;
       exit(-1);
       }
     }
-  else if(bsplineTransform.size() > 0 )
+  else if ( bsplineTransform.size() > 0 )
     {
-    localOutputTransform=bsplineTransform;
-    if(( localTransformType.size() > 0 ) && ( localTransformType[localTransformType.size() -1 ] != "BSpline" ) )
+    localOutputTransform = bsplineTransform;
+    if ( ( localTransformType.size() > 0 ) && ( localTransformType[localTransformType.size() - 1] != "BSpline" ) )
       {
       std::cout << "Error:  BSpline registrations require output transform to be of type BSpline!" << std::endl;
       exit(-1);
@@ -295,59 +306,59 @@ int BRAINSFitPrimary( int argc, char *argv[] )
       exit(-1);
       }
     }
-  else if(outputTransform.size() > 0)
+  else if ( outputTransform.size() > 0 )
     {
-    localOutputTransform=outputTransform;
+    localOutputTransform = outputTransform;
     }
 
   if ( localOutputTransform.size() == 0
-    && strippedOutputTransform.size() == 0
-    && outputVolume.size() == 0 )
+       && strippedOutputTransform.size() == 0
+       && outputVolume.size() == 0 )
     {
     std::cout << "Error:  user requested neither localOutputTransform,"
-      << " nor strippedOutputTransform,"
-      << " nor outputVolume." << std::endl;
+              << " nor strippedOutputTransform,"
+              << " nor outputVolume." << std::endl;
     return 2;
     }
 
-  if(numberOfIterations.size() != localTransformType.size())
+  if ( numberOfIterations.size() != localTransformType.size() )
     {
-    if(numberOfIterations.size() != 1)
+    if ( numberOfIterations.size() != 1 )
       {
       std::cerr << "The numberOfIterations array must match the length of the transformType"
-                << "length, or have a single value that is used for all registration phases." <<std::endl;
+                << "length, or have a single value that is used for all registration phases." << std::endl;
       exit(-1);
       }
     else
       {
       // replicate throughout
-      numberOfIterations.resize(localTransformType.size());
+      numberOfIterations.resize( localTransformType.size() );
       const int numberOf = numberOfIterations[0];
-      for (unsigned int i=1; i<localTransformType.size(); i++)
+      for ( unsigned int i = 1; i < localTransformType.size(); i++ )
         {
-        numberOfIterations[i]=(numberOf);
+        numberOfIterations[i] = ( numberOf );
         }
       }
     }
-  if(minimumStepSize.size() != localTransformType.size())
+  if ( minimumStepSize.size() != localTransformType.size() )
     {
-    if(minimumStepSize.size() != 1)
+    if ( minimumStepSize.size() != 1 )
       {
-      std::cerr << "The minimumStepSize array must match the localTransformType length" <<std::endl;
+      std::cerr << "The minimumStepSize array must match the localTransformType length" << std::endl;
       exit(-1);
       }
     else
       {
       // replicate throughout
       const double stepSize = minimumStepSize[0];
-      for (unsigned int i=1; i<localTransformType.size(); i++)
+      for ( unsigned int i = 1; i < localTransformType.size(); i++ )
         {
         minimumStepSize.push_back(stepSize);
         }
       }
     }
 
-  //Need to ensure that the order of transforms is from smallest to largest.
+  // Need to ensure that the order of transforms is from smallest to largest.
   itk::ValidateTransformRankOrdering(localTransformType);
 
   // Extracting a timeIndex cube from the fixed image goes here....
@@ -358,13 +369,13 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     OriginalFixedVolume ( itkUtil::ReadImage<InputImageType>(fixedVolume) );
 
   std::cerr << "Original Fixed image origin"
-    << OriginalFixedVolume->GetOrigin() << std::endl;
+            << OriginalFixedVolume->GetOrigin() << std::endl;
   // fixedVolumeTimeIndex lets lets us treat 3D as 4D.
   /***********************
    * Acquire Fixed Image Index
    **********************/
   extractFixedVolume = ExtractImage<FixedVolumeType>(OriginalFixedVolume,
-    fixedVolumeTimeIndex);
+                                                     fixedVolumeTimeIndex);
   // Extracting a timeIndex cube from the moving image goes here....
 
   InputImageType::Pointer OriginalMovingVolume (
@@ -376,13 +387,13 @@ int BRAINSFitPrimary( int argc, char *argv[] )
    * Acquire Moving Image Index
    **********************/
   extractMovingVolume = ExtractImage<MovingVolumeType>(OriginalMovingVolume,
-    movingVolumeTimeIndex);
+                                                       movingVolumeTimeIndex);
 
 #ifdef USE_DEBUG_IMAGE_VIEWER
-  if(DebugImageDisplaySender.Enabled())
+  if ( DebugImageDisplaySender.Enabled() )
     {
-    DebugImageDisplaySender.SendImage<itk::Image<float, 3> >(extractFixedVolume,0);
-    DebugImageDisplaySender.SendImage<itk::Image<float, 3> >(extractMovingVolume,1);
+    DebugImageDisplaySender.SendImage<itk::Image<float, 3> >(extractFixedVolume, 0);
+    DebugImageDisplaySender.SendImage<itk::Image<float, 3> >(extractMovingVolume, 1);
     }
 #endif
 
@@ -391,18 +402,21 @@ int BRAINSFitPrimary( int argc, char *argv[] )
   // command.GetValueAsInt(MedianFilterRadiusText, IntegerText);
   // Median Filter images if requested.
   if ( medianFilterSize[0] > 0 || medianFilterSize[1] > 0
-    || medianFilterSize[2] > 0 )
+       || medianFilterSize[2] > 0 )
     {
     FixedVolumeType::SizeType indexRadius;
-    indexRadius[0] = static_cast<long int>( medianFilterSize[0] ); // radius along x
-    indexRadius[1] = static_cast<long int>( medianFilterSize[1] ); // radius along y
-    indexRadius[2] = static_cast<long int>( medianFilterSize[2] ); // radius along z
+    indexRadius[0] = static_cast<long int>( medianFilterSize[0] ); // radius
+                                                                   // along x
+    indexRadius[1] = static_cast<long int>( medianFilterSize[1] ); // radius
+                                                                   // along y
+    indexRadius[2] = static_cast<long int>( medianFilterSize[2] ); // radius
+                                                                   // along z
     // DEBUG
     std::cout << "Median radius  " << indexRadius << std::endl;
     extractFixedVolume = DoMedian<FixedVolumeType>(extractFixedVolume,
-      indexRadius);
+                                                   indexRadius);
     extractMovingVolume = DoMedian<MovingVolumeType>(extractMovingVolume,
-      indexRadius);
+                                                     indexRadius);
     }
 
   //
@@ -412,98 +426,91 @@ int BRAINSFitPrimary( int argc, char *argv[] )
   //
   ImageMaskPointer fixedMask = NULL;
   ImageMaskPointer movingMask = NULL;
+  {
+  if ( maskProcessingMode == "NOMASK" )
     {
-    if (maskProcessingMode == "NOMASK")
+    if ( ( fixedBinaryVolume != "" )
+         || ( movingBinaryVolume != "" ) )
       {
-      if ( ( fixedBinaryVolume != "" )
-        || ( movingBinaryVolume != "" ) )
-        {
-        std::cout
-          << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
-          << std::endl;
-        exit(-1);
-        }
-      }
-    else if ( maskProcessingMode == "ROIAUTO" )
-      {
-      if ( ( fixedBinaryVolume != "" )
-        || ( movingBinaryVolume != "" ) )
-        {
-        std::cout
-          << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
-          << std::endl;
-        exit(-1);
-        }
-        {
-        typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType,itk::Image<unsigned char, 3> > ROIAutoType;
-        ROIAutoType::Pointer  ROIFilter=ROIAutoType::New();
-        ROIFilter->SetInput(extractFixedVolume);
-        ROIFilter->SetDilateSize(ROIAutoDilateSize);
-        ROIFilter->Update();
-        fixedMask= ROIFilter->GetSpatialObjectROI();
-        }
-        {
-        typedef itk::BRAINSROIAutoImageFilter<MovingVolumeType,itk::Image<unsigned char, 3> > ROIAutoType;
-        ROIAutoType::Pointer  ROIFilter=ROIAutoType::New();
-        ROIFilter->SetInput(extractMovingVolume);
-        ROIFilter->SetDilateSize(ROIAutoDilateSize);
-        ROIFilter->Update();
-        movingMask = ROIFilter->GetSpatialObjectROI();
-        }
-      }
-    else if ( maskProcessingMode == "ROI" )
-      {
-      if ( ( fixedBinaryVolume == "" )
-        || ( movingBinaryVolume == "" ) )
-        {
-        std::cout
-          <<
-          "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode"
-          << std::endl;
-        exit(-1);
-        }
-      fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
-        fixedBinaryVolume,
-        extractFixedVolume.GetPointer() );
-      movingMask = ReadImageMask<SpatialObjectType, Dimension>(
-        movingBinaryVolume,
-        extractMovingVolume.GetPointer() );
-      }
-      { //Write out some debugging information if requested
-      typedef itk::Image<unsigned char, 3> MaskImageType;
-      typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
-      if( ( !fixedMask.IsNull() ) && ( outputFixedVolumeROI != "" ) )
-        {
-        ImageMaskSpatialObjectType::Pointer fixedImageMask(
-          dynamic_cast< ImageMaskSpatialObjectType * >( fixedMask.GetPointer() ));
-        MaskImageType::Pointer tempOutputFixedVolumeROI = const_cast<MaskImageType *>( fixedImageMask->GetImage() );
-        itkUtil::WriteImage<MaskImageType>(tempOutputFixedVolumeROI,outputFixedVolumeROI);
-        }
-      if( ( !movingMask.IsNull() ) && ( outputMovingVolumeROI != "" ) )
-        {
-        ImageMaskSpatialObjectType::Pointer movingImageMask(
-          dynamic_cast< ImageMaskSpatialObjectType * >( movingMask.GetPointer() ));
-        MaskImageType::Pointer tempOutputMovingVolumeROI = const_cast<MaskImageType *>( movingImageMask->GetImage() );
-        itkUtil::WriteImage<MaskImageType>(tempOutputMovingVolumeROI,outputMovingVolumeROI);
-        }
+      std::cout
+        << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
+        << std::endl;
+      exit(-1);
       }
     }
+  else if ( maskProcessingMode == "ROIAUTO" )
+    {
+    if ( ( fixedBinaryVolume != "" )
+         || ( movingBinaryVolume != "" ) )
+      {
+      std::cout
+        << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
+        << std::endl;
+      exit(-1);
+      }
+    {
+    typedef itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
+    ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+    ROIFilter->SetInput(extractFixedVolume);
+    ROIFilter->SetDilateSize(ROIAutoDilateSize);
+    ROIFilter->Update();
+    fixedMask = ROIFilter->GetSpatialObjectROI();
+    }
+    {
+    typedef itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3> > ROIAutoType;
+    ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+    ROIFilter->SetInput(extractMovingVolume);
+    ROIFilter->SetDilateSize(ROIAutoDilateSize);
+    ROIFilter->Update();
+    movingMask = ROIFilter->GetSpatialObjectROI();
+    }
+    }
+  else if ( maskProcessingMode == "ROI" )
+    {
+    if ( ( fixedBinaryVolume == "" )
+         || ( movingBinaryVolume == "" ) )
+      {
+      std::cout
+        <<
+        "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode"
+        << std::endl;
+      exit(-1);
+      }
+    fixedMask = ReadImageMask<SpatialObjectType, Dimension>(
+      fixedBinaryVolume,
+      extractFixedVolume.GetPointer() );
+    movingMask = ReadImageMask<SpatialObjectType, Dimension>(
+      movingBinaryVolume,
+      extractMovingVolume.GetPointer() );
+    }
+  { // Write out some debugging information if requested
+  typedef itk::Image<unsigned char, 3>                               MaskImageType;
+  typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
+  if ( ( !fixedMask.IsNull() ) && ( outputFixedVolumeROI != "" ) )
+    {
+    ImageMaskSpatialObjectType::Pointer fixedImageMask(
+      dynamic_cast<ImageMaskSpatialObjectType *>( fixedMask.GetPointer() ) );
+    MaskImageType::Pointer tempOutputFixedVolumeROI = const_cast<MaskImageType *>( fixedImageMask->GetImage() );
+    itkUtil::WriteImage<MaskImageType>(tempOutputFixedVolumeROI, outputFixedVolumeROI);
+    }
+  if ( ( !movingMask.IsNull() ) && ( outputMovingVolumeROI != "" ) )
+    {
+    ImageMaskSpatialObjectType::Pointer movingImageMask(
+      dynamic_cast<ImageMaskSpatialObjectType *>( movingMask.GetPointer() ) );
+    MaskImageType::Pointer tempOutputMovingVolumeROI = const_cast<MaskImageType *>( movingImageMask->GetImage() );
+    itkUtil::WriteImage<MaskImageType>(tempOutputMovingVolumeROI, outputMovingVolumeROI);
+    }
+  }
+  }
   // This default fills the background with zeros
   //  const double BackgroundFillValue =
-  //  GetBackgroundFillValueFromString(command.GetValueAsString(BackgroundFillValueText,
+  //
+  //
+  // GetBackgroundFillValueFromString(command.GetValueAsString(BackgroundFillValueText,
   //  FloatCodeText));
 
-  // Apparently when you register one transform, you need to register all your
-  // transforms.
-  //
-  itk::TransformFactory<VersorRigid3DTransformType>::RegisterTransform();
-  itk::TransformFactory<ScaleVersor3DTransformType>::RegisterTransform();
-  itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
-  itk::TransformFactory<AffineTransformType>::RegisterTransform();
-  itk::TransformFactory<BSplineTransformType>::RegisterTransform();
-
-  //Note itk::ReadTransformFromDisk returns NULL if file name does not exist.
-  GenericTransformType::Pointer currentGenericTransform=itk::ReadTransformFromDisk(initialTransform);
+  // Note itk::ReadTransformFromDisk returns NULL if file name does not exist.
+  GenericTransformType::Pointer currentGenericTransform = itk::ReadTransformFromDisk(initialTransform);
 
   FixedVolumeType::Pointer resampledImage;
   /*
@@ -513,62 +520,62 @@ int BRAINSFitPrimary( int argc, char *argv[] )
    */
   int actualIterations = 0;
   int permittedIterations = 0;
-  //int allLevelsIterations=0;
+  // int allLevelsIterations=0;
 
+  {
+  typedef itk::BRAINSFitHelper HelperType;
+  HelperType::Pointer myHelper = HelperType::New();
+  myHelper->SetTransformType(localTransformType);
+  myHelper->SetFixedVolume(extractFixedVolume);
+  myHelper->SetMovingVolume(extractMovingVolume);
+  myHelper->SetHistogramMatch(histogramMatch);
+  myHelper->SetNumberOfMatchPoints(numberOfMatchPoints);
+  myHelper->SetFixedBinaryVolume(fixedMask);
+  myHelper->SetMovingBinaryVolume(movingMask);
+  myHelper->SetPermitParameterVariation(permitParameterVariation);
+  myHelper->SetNumberOfSamples(numberOfSamples);
+  myHelper->SetNumberOfHistogramBins(numberOfHistogramBins);
+  myHelper->SetNumberOfIterations(numberOfIterations);
+  myHelper->SetMaximumStepLength(maximumStepSize);
+  myHelper->SetMinimumStepLength(minimumStepSize);
+  myHelper->SetRelaxationFactor(relaxationFactor);
+  myHelper->SetTranslationScale(translationScale);
+  myHelper->SetReproportionScale(reproportionScale);
+  myHelper->SetSkewScale(skewScale);
+  myHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
+  myHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
+  myHelper->SetBackgroundFillValue(backgroundFillValue);
+  myHelper->SetInitializeTransformMode(localInitializeTransformMode);
+  myHelper->SetMaskInferiorCutOffFromCenter(maskInferiorCutOffFromCenter);
+  myHelper->SetCurrentGenericTransform(currentGenericTransform);
+  myHelper->SetSplineGridSize(splineGridSize);
+  myHelper->SetCostFunctionConvergenceFactor(costFunctionConvergenceFactor);
+  myHelper->SetProjectedGradientTolerance(projectedGradientTolerance);
+  myHelper->SetMaxBSplineDisplacement(maxBSplineDisplacement);
+  myHelper->SetDisplayDeformedImage(UseDebugImageViewer);
+  myHelper->SetPromptUserAfterDisplay(PromptAfterImageSend);
+  myHelper->SetDebugLevel(debugLevel);
+  if ( debugLevel > 7 )
     {
-    typedef itk::BRAINSFitHelper HelperType;
-    HelperType::Pointer myHelper=HelperType::New();
-    myHelper->SetTransformType(localTransformType);
-    myHelper->SetFixedVolume(extractFixedVolume);
-    myHelper->SetMovingVolume(extractMovingVolume);
-    myHelper->SetHistogramMatch(histogramMatch);
-    myHelper->SetNumberOfMatchPoints(numberOfMatchPoints);
-    myHelper->SetFixedBinaryVolume(fixedMask);
-    myHelper->SetMovingBinaryVolume(movingMask);
-    myHelper->SetPermitParameterVariation(permitParameterVariation);
-    myHelper->SetNumberOfSamples(numberOfSamples);
-    myHelper->SetNumberOfHistogramBins(numberOfHistogramBins);
-    myHelper->SetNumberOfIterations(numberOfIterations);
-    myHelper->SetMaximumStepLength(maximumStepSize);
-    myHelper->SetMinimumStepLength(minimumStepSize);
-    myHelper->SetRelaxationFactor(relaxationFactor);
-    myHelper->SetTranslationScale(translationScale);
-    myHelper->SetReproportionScale(reproportionScale);
-    myHelper->SetSkewScale(skewScale);
-    myHelper->SetUseExplicitPDFDerivativesMode(useExplicitPDFDerivativesMode);
-    myHelper->SetUseCachingOfBSplineWeightsMode(useCachingOfBSplineWeightsMode);
-    myHelper->SetBackgroundFillValue(backgroundFillValue);
-    myHelper->SetInitializeTransformMode(localInitializeTransformMode);
-    myHelper->SetMaskInferiorCutOffFromCenter(maskInferiorCutOffFromCenter);
-    myHelper->SetCurrentGenericTransform(currentGenericTransform);
-    myHelper->SetSplineGridSize(splineGridSize);
-    myHelper->SetCostFunctionConvergenceFactor(costFunctionConvergenceFactor);
-    myHelper->SetProjectedGradientTolerance(projectedGradientTolerance);
-    myHelper->SetMaxBSplineDisplacement(maxBSplineDisplacement);
-    myHelper->SetDisplayDeformedImage(UseDebugImageViewer);
-    myHelper->SetPromptUserAfterDisplay(PromptAfterImageSend);
-    myHelper->SetDebugLevel(debugLevel);
-    if(debugLevel > 7 )
-      {
-      myHelper->PrintCommandLine(true,"BF");
-      }
-    myHelper->StartRegistration();
-    currentGenericTransform=myHelper->GetCurrentGenericTransform();
-    MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
-
-      {
-      // Remember:  the Data is Moving's, the shape is Fixed's.
-      resampledImage=TransformResample<MovingVolumeType,FixedVolumeType>(
-        preprocessedMovingVolume,
-        extractFixedVolume,
-        backgroundFillValue,
-        GetInterpolatorFromString<MovingVolumeType>(interpolationMode),
-        currentGenericTransform);
-      }
-    actualIterations=myHelper->GetActualNumberOfIterations();
-    permittedIterations=myHelper->GetPermittedNumberOfIterations();
-    //allLevelsIterations=myHelper->GetAccumulatedNumberOfIterationsForAllLevels();
+    myHelper->PrintCommandLine(true, "BF");
     }
+  myHelper->StartRegistration();
+  currentGenericTransform = myHelper->GetCurrentGenericTransform();
+  MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
+
+  {
+  // Remember:  the Data is Moving's, the shape is Fixed's.
+  resampledImage = TransformResample<MovingVolumeType, FixedVolumeType>(
+    preprocessedMovingVolume,
+    extractFixedVolume,
+    backgroundFillValue,
+    GetInterpolatorFromString<MovingVolumeType>(interpolationMode),
+    currentGenericTransform);
+  }
+  actualIterations = myHelper->GetActualNumberOfIterations();
+  permittedIterations = myHelper->GetPermittedNumberOfIterations();
+  // allLevelsIterations=myHelper->GetAccumulatedNumberOfIterationsForAllLevels();
+  }
   /*
    *  At this point we can save the resampled image.
    */
@@ -581,9 +588,11 @@ int BRAINSFitPrimary( int argc, char *argv[] )
     // command line parameter
     if ( outputVolumePixelType == "float" )
       {
-      // itkUtil::WriteCastImage<itk::Image<float, FixedVolumeType::ImageDimension>, FixedVolumeType>(resampledImage,outputVolume);
+      // itkUtil::WriteCastImage<itk::Image<float,
+      // FixedVolumeType::ImageDimension>,
+      // FixedVolumeType>(resampledImage,outputVolume);
       typedef itk::Image<float,
-              FixedVolumeType::ImageDimension> WriteOutImageType;
+        FixedVolumeType::ImageDimension> WriteOutImageType;
       WriteOutImageType::Pointer CastImage
         = ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -594,9 +603,11 @@ int BRAINSFitPrimary( int argc, char *argv[] )
       }
     else if ( outputVolumePixelType == "short" )
       {
-      // itkUtil::WriteCastImage<itk::Image<signed short, FixedVolumeType::ImageDimension>, FixedVolumeType>(resampledImage,outputVolume);
+      // itkUtil::WriteCastImage<itk::Image<signed short,
+      // FixedVolumeType::ImageDimension>,
+      // FixedVolumeType>(resampledImage,outputVolume);
       typedef itk::Image<signed short,
-              FixedVolumeType::ImageDimension> WriteOutImageType;
+        FixedVolumeType::ImageDimension> WriteOutImageType;
       WriteOutImageType::Pointer CastImage
         = ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -607,9 +618,11 @@ int BRAINSFitPrimary( int argc, char *argv[] )
       }
     else if ( outputVolumePixelType == "ushort" )
       {
-      // itkUtil::WriteCastImage<itk::Image<unsigned short, FixedVolumeType::ImageDimension>, FixedVolumeType>(resampledImage,outputVolume);
+      // itkUtil::WriteCastImage<itk::Image<unsigned short,
+      // FixedVolumeType::ImageDimension>,
+      // FixedVolumeType>(resampledImage,outputVolume);
       typedef itk::Image<unsigned short,
-              FixedVolumeType::ImageDimension> WriteOutImageType;
+        FixedVolumeType::ImageDimension> WriteOutImageType;
       WriteOutImageType::Pointer CastImage
         = ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -620,9 +633,11 @@ int BRAINSFitPrimary( int argc, char *argv[] )
       }
     else if ( outputVolumePixelType == "int" )
       {
-      // itkUtil::WriteCastImage<itk::Image<signed int, FixedVolumeType::ImageDimension>, FixedVolumeType>(resampledImage,outputVolume);
+      // itkUtil::WriteCastImage<itk::Image<signed int,
+      // FixedVolumeType::ImageDimension>,
+      // FixedVolumeType>(resampledImage,outputVolume);
       typedef itk::Image<signed int,
-              FixedVolumeType::ImageDimension> WriteOutImageType;
+        FixedVolumeType::ImageDimension> WriteOutImageType;
       WriteOutImageType::Pointer CastImage
         = ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -633,9 +648,11 @@ int BRAINSFitPrimary( int argc, char *argv[] )
       }
     else if ( outputVolumePixelType == "uint" )
       {
-      // itkUtil::WriteCastImage<itk::Image<unsigned int, FixedVolumeType::ImageDimension>, FixedVolumeType>(resampledImage,outputVolume);
+      // itkUtil::WriteCastImage<itk::Image<unsigned int,
+      // FixedVolumeType::ImageDimension>,
+      // FixedVolumeType>(resampledImage,outputVolume);
       typedef itk::Image<unsigned int,
-              FixedVolumeType::ImageDimension> WriteOutImageType;
+        FixedVolumeType::ImageDimension> WriteOutImageType;
       WriteOutImageType::Pointer CastImage
         = ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -647,9 +664,11 @@ int BRAINSFitPrimary( int argc, char *argv[] )
 #if 0
     else if ( outputVolumePixelType == "char" )
       {
-      // itkUtil::WriteCastImage<itk::Image<signed char, FixedVolumeType::ImageDimension>, FixedVolumeType>(resampledImage,outputVolume);
+      // itkUtil::WriteCastImage<itk::Image<signed char,
+      // FixedVolumeType::ImageDimension>,
+      // FixedVolumeType>(resampledImage,outputVolume);
       typedef itk::Image<char,
-              FixedVolumeType::ImageDimension> WriteOutImageType;
+        FixedVolumeType::ImageDimension> WriteOutImageType;
       WriteOutImageType::Pointer CastImage
         = ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
@@ -661,26 +680,38 @@ int BRAINSFitPrimary( int argc, char *argv[] )
 #endif
     else if ( outputVolumePixelType == "uchar" )
       {
-      // itkUtil::WriteCastImage<itk::Image<unsigned char, FixedVolumeType::ImageDimension>, FixedVolumeType>(resampledImage,outputVolume);
+      // itkUtil::WriteCastImage<itk::Image<unsigned char,
+      // FixedVolumeType::ImageDimension>,
+      // FixedVolumeType>(resampledImage,outputVolume);
       typedef itk::Image<unsigned char,
-              FixedVolumeType::ImageDimension> WriteOutImageType;
+                         FixedVolumeType::ImageDimension> WriteOutImageType;
       WriteOutImageType::Pointer CastImage
         = ( scaleOutputValues == true ) ?
         ( itkUtil::PreserveCast<FixedVolumeType,
-          WriteOutImageType>(resampledImage) ) :
+                                WriteOutImageType>(resampledImage) ) :
         ( itkUtil::TypeCast<FixedVolumeType,
-          WriteOutImageType>(resampledImage) );
+                            WriteOutImageType>(resampledImage) );
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
       }
     }
 
-#if 0 //HACK:  This does not work properly when only an initializer transform is used, or if the final transform is BSpline.
-  // GREG:  BRAINSFit currently does not determine if the registrations have not converged before reaching their maximum number of iterations.  Currently transforms are always written out, under the assumption that the registraiton converged.  We need to figure out how to determine if the registrations did not converge (i.e. maximum number of iterations were reached), and then not write out the transforms, unless explicitly demanded to write them out from a command line flag.
-  // GREG:  We should write a test, and document what the expected behaviors are when a multi-level registration is requested (Rigid,ScaleSkew,Affine), and one of the first types does not converge.
-  //HACK  This does not work properly until BSpline reports iterations correctly
+#if 0 // HACK:  This does not work properly when only an initializer transform
+      // is used, or if the final transform is BSpline.
+  // GREG:  BRAINSFit currently does not determine if the registrations have not
+  // converged before reaching their maximum number of iterations.  Currently
+  // transforms are always written out, under the assumption that the
+  // registraiton converged.  We need to figure out how to determine if the
+  // registrations did not converge (i.e. maximum number of iterations were
+  // reached), and then not write out the transforms, unless explicitly demanded
+  // to write them out from a command line flag.
+  // GREG:  We should write a test, and document what the expected behaviors are
+  // when a multi-level registration is requested (Rigid,ScaleSkew,Affine), and
+  // one of the first types does not converge.
+  // HACK  This does not work properly until BSpline reports iterations
+  // correctly
   if ( actualIterations + 1 >= permittedIterations )
     {
-    if (writeTransformOnFailure == false) // taken right off the command line.
+    if ( writeTransformOnFailure == false ) // taken right off the command line.
       {
       std::cout << "actualIterations: " << actualIterations << std::endl;
       std::cout << "permittedIterations: " << permittedIterations << std::endl;
@@ -691,9 +722,10 @@ int BRAINSFitPrimary( int argc, char *argv[] )
 
   /*const int write_status=*/
   itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
-    localOutputTransform,strippedOutputTransform);
+                                 localOutputTransform, strippedOutputTransform);
 
-#if 0 //HACK:  This does not work properly when only an initializer transform is used, or if the final transform is BSpline.
+#if 0 // HACK:  This does not work properly when only an initializer transform
+      // is used, or if the final transform is BSpline.
   if ( actualIterations + 1 >= permittedIterations )
     {
     std::cout << "actualIterations: " << actualIterations << std::endl;

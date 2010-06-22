@@ -1,8 +1,8 @@
-#ifndef __BRAINSRESAMPLEPRIMARY_H__
-#define __BRAINSRESAMPLEPRIMARY_H__
+#ifndef __BRAINSRESAMPLEPRIMARY_h
+#define __BRAINSRESAMPLEPRIMARY_h
 
 #include "BRAINSResampleCommonLibWin32Header.h"
 
 int BRAINSResamplePrimary(int argc, char *argv[]);
 
-#endif // __BRAINSRESAMPLEPRIMARY_H__
+#endif // __BRAINSRESAMPLEPRIMARY_h

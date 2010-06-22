@@ -23,48 +23,48 @@ PURPOSE.  See the above copyright notices for more information.
 
 namespace itk
 {
-
-  /** \class OtsuHistogramMatchingImageFilter
-   * \brief Normalize the grayscale values between two image by histogram
-   * matching.
-   *
-   * OtsuHistogramMatchingImageFilter normalizes the grayscale values of a source
-   * image based on the grayscale values of a reference image.
-   * This filter uses a histogram matching technique where the histograms of the
-   * two images are matched only at a specified number of quantile values.
-   *
-   * This filter was orginally designed to normalize MR images of the same
-   * MR protocol and same body part. The algorithm works best if background
-   * pixels are excluded from both the source and reference histograms.
-   * A simple background exclusion method is to exclude all pixels whose
-   * grayscale values are smaller than the mean grayscale value.
-   * ThresholdAtMeanIntensityOn() switches on this simple background
-   * exclusion method.
-   *
-   * The source image can be set via either SetInput() or SetSourceImage().
-   * The reference image can be set via SetReferenceImage().
-   *
-   * SetNumberOfHistogramLevels() sets the number of bins used when
-   * creating histograms of the source and reference images.
-   * SetNumberOfMatchPoints() governs the number of quantile values to be
-   * matched.
-   *
-   * This filter assumes that both the source and reference are of the same
-   * type and that the input and output image type have the same number of
-   * dimension and have scalar pixel types.
-   *
-   * \ingroup IntensityImageFilters Multithreaded
-   *
-   */
-  /* THistogramMeasurement -- The precision level for which to do HistogramMeasurmenets */
-  template <class TInputImage, class TOutputImage, class THistogramMeasurement=ITK_TYPENAME TInputImage::PixelType>
-    class ITK_EXPORT OtsuHistogramMatchingImageFilter:
-      public ImageToImageFilter<TInputImage,TOutputImage>
-  {
+/** \class OtsuHistogramMatchingImageFilter
+ * \brief Normalize the grayscale values between two image by histogram
+ * matching.
+ *
+ * OtsuHistogramMatchingImageFilter normalizes the grayscale values of a source
+ * image based on the grayscale values of a reference image.
+ * This filter uses a histogram matching technique where the histograms of the
+ * two images are matched only at a specified number of quantile values.
+ *
+ * This filter was orginally designed to normalize MR images of the same
+ * MR protocol and same body part. The algorithm works best if background
+ * pixels are excluded from both the source and reference histograms.
+ * A simple background exclusion method is to exclude all pixels whose
+ * grayscale values are smaller than the mean grayscale value.
+ * ThresholdAtMeanIntensityOn() switches on this simple background
+ * exclusion method.
+ *
+ * The source image can be set via either SetInput() or SetSourceImage().
+ * The reference image can be set via SetReferenceImage().
+ *
+ * SetNumberOfHistogramLevels() sets the number of bins used when
+ * creating histograms of the source and reference images.
+ * SetNumberOfMatchPoints() governs the number of quantile values to be
+ * matched.
+ *
+ * This filter assumes that both the source and reference are of the same
+ * type and that the input and output image type have the same number of
+ * dimension and have scalar pixel types.
+ *
+ * \ingroup IntensityImageFilters Multithreaded
+ *
+ */
+/* THistogramMeasurement -- The precision level for which to do
+  HistogramMeasurmenets */
+template <class TInputImage, class TOutputImage, class THistogramMeasurement = ITK_TYPENAME TInputImage::PixelType>
+class ITK_EXPORT OtsuHistogramMatchingImageFilter :
+    public ImageToImageFilter<TInputImage, TOutputImage>
+{
 public:
   /** Standard class typedefs. */
-  typedef OtsuHistogramMatchingImageFilter                  Self;
-  typedef ImageToImageFilter<TInputImage,TOutputImage>  Superclass;
+  typedef OtsuHistogramMatchingImageFilter              Self;
+  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
   typedef SmartPointer<Self>                            Pointer;
   typedef SmartPointer<const Self>                      ConstPointer;
 
@@ -76,9 +76,9 @@ public:
 
   /** ImageDimension enumeration. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-    TInputImage::ImageDimension);
+                      TInputImage::ImageDimension);
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-    TOutputImage::ImageDimension);
+                      TOutputImage::ImageDimension);
 
   /** Typedef to describe the output image region type. */
   typedef typename TOutputImage::RegionType OutputImageRegionType;
@@ -91,27 +91,32 @@ public:
   typedef typename Superclass::OutputImagePointer     OutputImagePointer;
 
   /** Pixel related typedefs. */
-  typedef typename InputImageType::PixelType  InputPixelType;
-  typedef typename OutputImageType::PixelType OutputPixelType;
+  typedef typename InputImageType::PixelType    InputPixelType;
+  typedef typename OutputImageType::PixelType   OutputPixelType;
 
   typedef typename itk::Image<unsigned char, 3> MaskImageType;
 
   /** Histogram related typedefs. */
 #ifdef ITK_USE_REVIEW_STATISTICS
-  typedef Statistics::Histogram<THistogramMeasurement >   HistogramType;
+  typedef Statistics::Histogram<THistogramMeasurement>    HistogramType;
 #else
   typedef Statistics::Histogram<THistogramMeasurement, 1> HistogramType;
 #endif
   typedef typename HistogramType::Pointer                 HistogramPointer;
 
   /** Set/Get the source image. */
-  void SetSourceImage( const InputImageType * source )
-    { this->SetInput( source ); }
+  void SetSourceImage( const InputImageType *source )
+  { 
+    this->SetInput( source ); 
+  }
   const InputImageType * GetSourceImage(void)
-    { return this->GetInput(); }
+  { 
+    return this->GetInput(); 
+  }
 
   /** Set/Get the reference image. */
-  void SetReferenceImage( const InputImageType * reference );
+  void SetReferenceImage( const InputImageType *reference );
+
   const InputImageType * GetReferenceImage(void);
 
   itkSetObjectMacro(SourceMask, MaskImageType);
@@ -146,54 +151,57 @@ public:
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro(IntConvertibleToInputCheck,
-    (Concept::Convertible<int, InputPixelType>));
-  itkConceptMacro(SameDimensionCheck,
-    (Concept::SameDimension<ImageDimension, OutputImageDimension>));
-  itkConceptMacro(DoubleConvertibleToInputCheck,
-    (Concept::Convertible<double, InputPixelType>));
-  itkConceptMacro(DoubleConvertibleToOutputCheck,
-    (Concept::Convertible<double, OutputPixelType>));
-  itkConceptMacro(InputConvertibleToDoubleCheck,
-    (Concept::Convertible<InputPixelType, double>));
-  itkConceptMacro(OutputConvertibleToDoubleCheck,
-    (Concept::Convertible<OutputPixelType, double>));
-  itkConceptMacro(SameTypeCheck,
-    (Concept::SameType<InputPixelType, OutputPixelType>));
+  itkConceptMacro( IntConvertibleToInputCheck,
+                   ( Concept::Convertible<int, InputPixelType> ) );
+  itkConceptMacro( SameDimensionCheck,
+                   ( Concept::SameDimension<ImageDimension, OutputImageDimension> ) );
+  itkConceptMacro( DoubleConvertibleToInputCheck,
+                   ( Concept::Convertible<double, InputPixelType> ) );
+  itkConceptMacro( DoubleConvertibleToOutputCheck,
+                   ( Concept::Convertible<double, OutputPixelType> ) );
+  itkConceptMacro( InputConvertibleToDoubleCheck,
+                   ( Concept::Convertible<InputPixelType, double> ) );
+  itkConceptMacro( OutputConvertibleToDoubleCheck,
+                   ( Concept::Convertible<OutputPixelType, double> ) );
+  itkConceptMacro( SameTypeCheck,
+                   ( Concept::SameType<InputPixelType, OutputPixelType> ) );
   /** End concept checking */
 #endif
-
 protected:
   OtsuHistogramMatchingImageFilter();
-  ~OtsuHistogramMatchingImageFilter() {};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  ~OtsuHistogramMatchingImageFilter() {}
+  void PrintSelf(std::ostream & os, Indent indent) const;
 
   void BeforeThreadedGenerateData();
+
   void AfterThreadedGenerateData();
-  void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-    int threadId );
+
+  void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
+                            int threadId );
 
   /** Compute min, max and mean of an image. */
-  void ComputeMinMaxMean( const InputImageType * image,
-    THistogramMeasurement& minValue, THistogramMeasurement& maxValue, THistogramMeasurement& meanValue );
+  void ComputeMinMaxMean( const InputImageType *image,
+                          THistogramMeasurement & minValue,
+                          THistogramMeasurement & maxValue,
+                          THistogramMeasurement & meanValue );
 
   /** Construct a histogram from an image. */
-  void ConstructHistogram( const InputImageType * image,
-    const typename MaskImageType::Pointer mask,
-    HistogramType * histogram, const THistogramMeasurement minValue,
-    const THistogramMeasurement maxValue );
+  void ConstructHistogram( const InputImageType *image,
+                           const typename MaskImageType::Pointer mask,
+                           HistogramType *histogram, const THistogramMeasurement minValue,
+                           const THistogramMeasurement maxValue );
 
 private:
-  OtsuHistogramMatchingImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  OtsuHistogramMatchingImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);                   // purposely not implemented
 
-  unsigned long         m_NumberOfHistogramLevels;
-  unsigned long         m_NumberOfMatchPoints;
-  bool                  m_ThresholdAtMeanIntensity;
+  unsigned long m_NumberOfHistogramLevels;
+  unsigned long m_NumberOfMatchPoints;
+  bool          m_ThresholdAtMeanIntensity;
 
-  InputPixelType        m_SourceIntensityThreshold;
-  InputPixelType        m_ReferenceIntensityThreshold;
-  OutputPixelType       m_OutputIntensityThreshold;
+  InputPixelType  m_SourceIntensityThreshold;
+  InputPixelType  m_ReferenceIntensityThreshold;
+  OutputPixelType m_OutputIntensityThreshold;
 
   THistogramMeasurement m_SourceMinValue;
   THistogramMeasurement m_SourceMaxValue;
@@ -205,24 +213,21 @@ private:
   THistogramMeasurement m_OutputMaxValue;
   THistogramMeasurement m_OutputMeanValue;
 
-  HistogramPointer      m_SourceHistogram;
-  HistogramPointer      m_ReferenceHistogram;
-  HistogramPointer      m_OutputHistogram;
+  HistogramPointer m_SourceHistogram;
+  HistogramPointer m_ReferenceHistogram;
+  HistogramPointer m_OutputHistogram;
 
-  typedef vnl_matrix<double>  TableType;
-  TableType             m_QuantileTable;
+  typedef vnl_matrix<double> TableType;
+  TableType m_QuantileTable;
 
-  typedef vnl_vector<double>  GradientArrayType;
-  GradientArrayType     m_Gradients;
-  double                m_LowerGradient;
-  double                m_UpperGradient;
+  typedef vnl_vector<double> GradientArrayType;
+  GradientArrayType m_Gradients;
+  double            m_LowerGradient;
+  double            m_UpperGradient;
 
   typename MaskImageType::Pointer m_SourceMask;
   typename MaskImageType::Pointer m_ReferenceMask;
-
-  };
-
-
+};
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

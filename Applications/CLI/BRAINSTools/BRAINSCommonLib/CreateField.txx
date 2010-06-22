@@ -1,17 +1,17 @@
-#ifndef _CreateField_txx
-  #define _CreateFIeld_txx
-  #include "CreateField.h"
-  #include "itkIOCommon.h"
-  #include "itkVectorIndexSelectionCastImageFilter.h"
-  #include "itkIO.h"
-  #include <errno.h>
+#ifndef __CreateField_txx
+#define __CreateField_txx
+#include "CreateField.h"
+#include "itkIOCommon.h"
+#include "itkVectorIndexSelectionCastImageFilter.h"
+#include "itkIO.h"
+#include <errno.h>
 
 namespace itk
 {
 template<typename TImage, typename T2Image>
 CreateField<TImage,
-  T2Image>::CreateField()
-  {
+            T2Image>::CreateField()
+{
   // MUST GRAB IMAGE 1 AND 2, Parameter Map and Warped Image Name
   m_Image1Filename = "";
   m_Image2Filename = "";
@@ -55,18 +55,18 @@ CreateField<TImage,
   command->SetCallbackFunction( this, &Self::StartNewLevel );
 
   m_Tag = m_Registration->AddObserver( IterationEvent(), command );
-  }
+}
 
 template<typename TImage, typename T2Image>
 CreateField<TImage,
-  T2Image>::~CreateField()
-  {
+            T2Image>::~CreateField()
+{
   m_Registration->RemoveObserver( m_Tag );
-  }
+}
 
 template<typename TImage, typename T2Image>
 void CreateField<TImage,
-  T2Image>::Execute()
+                 T2Image>::Execute()
 {
   try
     {
@@ -101,12 +101,12 @@ void CreateField<TImage,
       }
     m_NumberOfLevels = uNumber;
 
-      {
-      itk::Array<unsigned int> temp( m_NumberOfLevels );
+    {
+    itk::Array<unsigned int> temp( m_NumberOfLevels );
 
-      temp.Fill( 0 );
-      m_NumberOfIterations = temp;
-      }
+    temp.Fill( 0 );
+    m_NumberOfIterations = temp;
+    }
 
     for ( unsigned int j = 0; j < m_NumberOfLevels; j++ )
       {
@@ -131,7 +131,7 @@ void CreateField<TImage,
       if ( fscanf( paramFile, "%d", &uNumber ) != 1 )
         {
         itkExceptionMacro(
-         << "  Could not find subject starting shrink factor. " );
+          << "  Could not find subject starting shrink factor. " );
         }
       m_Image2ShrinkFactors[j] = uNumber;
       }
@@ -191,17 +191,17 @@ void CreateField<TImage,
     if ( temp != m_MovingImage->GetDirection()
          ||
          ( itk::SpatialOrientationAdapter().FromDirectionCosines( m_FixedImage
-               ->GetDirection() ) !=
+                                                                  ->GetDirection() ) !=
            itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP )
-         )
+      )
       {
       std::cout
-       << "Image Directions are not the same or are not in RIP orientation "
-       << std::endl
-       << m_FixedImage->GetDirection()
-       << "=============" << std::endl
-       << m_MovingImage->GetDirection()
-       << std::endl;
+        << "Image Directions are not the same or are not in RIP orientation "
+        << std::endl
+        << m_FixedImage->GetDirection()
+        << "=============" << std::endl
+        << m_MovingImage->GetDirection()
+        << std::endl;
       }
     m_ImageOne->DisconnectPipeline();
     m_ImageOne = NULL;
@@ -271,7 +271,7 @@ void CreateField<TImage,
 
 template<typename TImage, typename T2Image>
 void CreateField<TImage,
-  T2Image>::ReleaseDataFlagOn()
+                 T2Image>::ReleaseDataFlagOn()
 {
   m_FixedImage->DisconnectPipeline();
   m_FixedImage = NULL;
@@ -281,9 +281,9 @@ void CreateField<TImage,
 
 template<typename TImage, typename T2Image>
 void CreateField<TImage,
-  T2Image>::NormalizeImage(InputImageType *input,
-  OutputImagePointer & output,
-  InputPixelType & min )
+                 T2Image>::NormalizeImage(InputImageType *input,
+                                          OutputImagePointer & output,
+                                          InputPixelType & min )
 {
   typedef MinimumMaximumImageFilter<InputImageType> MinMaxFilterType;
   typename MinMaxFilterType::Pointer minMaxFilter = MinMaxFilterType::New();
@@ -309,7 +309,7 @@ void CreateField<TImage,
 }
 
 template<typename OutputImageType,
-  typename InputImageType>
+         typename InputImageType>
 void FFCreateNewImageFromTemplate(
   typename OutputImageType::Pointer & PointerToOutputImage,
   const typename InputImageType::Pointer & PreInitializedImage )
@@ -325,7 +325,7 @@ void FFCreateNewImageFromTemplate(
 
 template<typename TImage, typename T2Image>
 void CreateField<TImage,
-  T2Image>::StartNewLevel()
+                 T2Image>::StartNewLevel()
 {
   std::cout << "  Starting level " << m_Registration->GetCurrentLevel()
             << std::endl;

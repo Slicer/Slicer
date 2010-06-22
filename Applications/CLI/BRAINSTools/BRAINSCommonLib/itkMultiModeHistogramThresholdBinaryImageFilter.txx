@@ -133,13 +133,17 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage,TOutputImage>
       {
       const double range=1.0-m_LinearQuantileThreshold;
       const double percentValue=(m_QuantileUpperThreshold.GetElement(j)-m_LinearQuantileThreshold)/range;
-      intensity_thresholdUpperLinearRegion=thresholdUpperLinearRegion+(imageMaxValue-thresholdUpperLinearRegion)*percentValue;
+      intensity_thresholdUpperLinearRegion=static_cast<typename InputImageType::PixelType>(
+        thresholdUpperLinearRegion+
+        (imageMaxValue-thresholdUpperLinearRegion)*percentValue);
       }
     else
       {
       const double range=(1.0-m_LinearQuantileThreshold)-m_LinearQuantileThreshold;
       const double percentValue=(m_QuantileUpperThreshold.GetElement(j)-m_LinearQuantileThreshold)/range;
-      intensity_thresholdUpperLinearRegion=thresholdLowerLinearRegion_foreground+(thresholdUpperLinearRegion-thresholdLowerLinearRegion_foreground)*percentValue;
+      intensity_thresholdUpperLinearRegion=static_cast<typename InputImageType::PixelType>(
+        thresholdLowerLinearRegion_foreground+
+        (thresholdUpperLinearRegion-thresholdLowerLinearRegion_foreground)*percentValue);
       }
     std::cout << "DEBUG:MINMAX:DEBUG: ["
       << imageMinValue << "," << imageMaxValue << "]" << std::endl;

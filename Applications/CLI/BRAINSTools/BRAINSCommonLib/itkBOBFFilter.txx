@@ -1,5 +1,5 @@
-#ifndef _itkBOBFFilter_txx
-#define _itkBOBFFilter_txx
+#ifndef __itkBOBFFilter_txx
+#define __itkBOBFFilter_txx
 
 #include "itkBOBFFilter.h"
 #include "itkImageRegionIterator.h"
@@ -15,15 +15,15 @@ namespace itk
  */
 template<class TInputImage, class TOutputImage>
 BOBFFilter<TInputImage, TOutputImage>
-  ::BOBFFilter()
-  {
+::BOBFFilter()
+{
   this->SetNumberOfRequiredInputs( 2 );
   m_Seed.Fill(0);
   m_Lower = NumericTraits<InputPixelType>::NonpositiveMin();
   m_Upper = NumericTraits<InputPixelType>::max();
   m_ReplaceValue = NumericTraits<OutputPixelType>::One;
   m_Radius.Fill(1);
-  }
+}
 
 /*
  *
@@ -31,7 +31,7 @@ BOBFFilter<TInputImage, TOutputImage>
 template<class TInputImage, class TOutputImage>
 void
 BOBFFilter<TInputImage, TOutputImage>
-  ::PrintSelf(std::ostream & os, Indent indent) const
+::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -46,19 +46,19 @@ template<class TInputImage, class TOutputImage>
 void
 BOBFFilter<TInputImage, TOutputImage>::SetInputMask(
   const typename BOBFFilter<TInputImage, TOutputImage>
-    ::InputImageType *image )
+  ::InputImageType *image )
 {
   this->SetNthInput( 1, const_cast<TInputImage *>( image ) );
 }
 
 template<class TInputImage, class TOutputImage>
 const typename BOBFFilter<TInputImage, TOutputImage>
-  ::InputImageType *
+::InputImageType *
 BOBFFilter<TInputImage, TOutputImage>
-  ::GetInputMask()
+::GetInputMask()
 {
   return static_cast<const TInputImage *>
-                                 ( this->ProcessObject::GetInput(1) );
+    ( this->ProcessObject::GetInput(1) );
 }
 
 template<class TInputImage, class TOutputImage>
@@ -98,7 +98,6 @@ void BOBFFilter<TInputImage, TOutputImage>::GenerateData()
       }
     }
 }
-
 }   // end namespace itk
 
 #endif // _itkBOBFFilter_txx

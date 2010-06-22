@@ -7,20 +7,21 @@
 #include "itkSubtractImageFilter.h"
 #include "itkVelocityFieldBCHCompositionFilter.h"
 
-namespace itk {
-
+namespace itk
+{
 // Default constructor
-template <class TFixedImage, class TMovingImage, class TField>
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+template<class TFixedImage, class TMovingImage, class TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::SymmetricLogDomainDemonsRegistrationFilter()
 {
   DemonsRegistrationFunctionPointer drfpf = DemonsRegistrationFunctionType::New();
+
   this->SetDifferenceFunction( static_cast<FiniteDifferenceFunctionType *>(
                                  drfpf.GetPointer() ) );
 
   DemonsRegistrationFunctionPointer drfpb = DemonsRegistrationFunctionType::New();
   this->SetBackwardDifferenceFunction( static_cast<FiniteDifferenceFunctionType *>(
-                                          drfpb.GetPointer() ) );
+                                         drfpb.GetPointer() ) );
 
   m_Multiplier = MultiplyByConstantType::New();
   m_Multiplier->InPlaceOn();
@@ -34,18 +35,17 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   m_BackwardUpdateBuffer = 0;
 }
 
-
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template <class TFixedImage, class TMovingImage, class TField>
-typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
-::DemonsRegistrationFunctionType*
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+template<class TFixedImage, class TMovingImage, class TField>
+typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+::DemonsRegistrationFunctionType *
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::GetForwardRegistrationFunctionType()
 {
-  DemonsRegistrationFunctionType *drfp =
-    dynamic_cast<DemonsRegistrationFunctionType *>(this->GetDifferenceFunction().GetPointer());
+  DemonsRegistrationFunctionType *drfp
+    = dynamic_cast<DemonsRegistrationFunctionType *>( this->GetDifferenceFunction().GetPointer() );
 
-  if( !drfp )
+  if ( !drfp )
     {
     itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
     }
@@ -53,18 +53,17 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   return drfp;
 }
 
-
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template <class TFixedImage, class TMovingImage, class TField>
-const typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
-::DemonsRegistrationFunctionType*
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+template<class TFixedImage, class TMovingImage, class TField>
+const typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+::DemonsRegistrationFunctionType *
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::GetForwardRegistrationFunctionType() const
 {
-  const DemonsRegistrationFunctionType *drfp =
-    dynamic_cast<const DemonsRegistrationFunctionType *>(this->GetDifferenceFunction().GetPointer());
+  const DemonsRegistrationFunctionType *drfp
+    = dynamic_cast<const DemonsRegistrationFunctionType *>( this->GetDifferenceFunction().GetPointer() );
 
-  if( !drfp )
+  if ( !drfp )
     {
     itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
     }
@@ -72,37 +71,35 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   return drfp;
 }
 
-
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template <class TFixedImage, class TMovingImage, class TField>
-typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
-::DemonsRegistrationFunctionType*
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+template<class TFixedImage, class TMovingImage, class TField>
+typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+::DemonsRegistrationFunctionType *
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::GetBackwardRegistrationFunctionType()
 {
-  DemonsRegistrationFunctionType *drfp =
-    dynamic_cast<DemonsRegistrationFunctionType *>(this->GetBackwardDifferenceFunction().GetPointer());
+  DemonsRegistrationFunctionType *drfp
+    = dynamic_cast<DemonsRegistrationFunctionType *>( this->GetBackwardDifferenceFunction().GetPointer() );
 
-  if( !drfp )
+  if ( !drfp )
     {
     itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
     }
 
   return drfp;
 }
-
 
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template <class TFixedImage, class TMovingImage, class TField>
-const typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
-::DemonsRegistrationFunctionType*
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+template<class TFixedImage, class TMovingImage, class TField>
+const typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+::DemonsRegistrationFunctionType *
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::GetBackwardRegistrationFunctionType() const
 {
-  const DemonsRegistrationFunctionType *drfp =
-    dynamic_cast<const DemonsRegistrationFunctionType *>(this->GetBackwardDifferenceFunction().GetPointer());
+  const DemonsRegistrationFunctionType *drfp
+    = dynamic_cast<const DemonsRegistrationFunctionType *>( this->GetBackwardDifferenceFunction().GetPointer() );
 
-  if( !drfp )
+  if ( !drfp )
     {
     itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
     }
@@ -110,15 +107,15 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   return drfp;
 }
 
-
 // Set the function state values before each iteration
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::InitializeIteration()
 {
   // update variables in the equation object
   DemonsRegistrationFunctionType *f = this->GetForwardRegistrationFunctionType();
+
   f->SetDeformationField( this->GetDeformationField() );
 
   DemonsRegistrationFunctionType *b = this->GetBackwardRegistrationFunctionType();
@@ -131,113 +128,109 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   Superclass::InitializeIteration();
 }
 
-
 // Get the metric value from the difference function
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 double
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::GetMetric() const
 {
   const DemonsRegistrationFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
   const DemonsRegistrationFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
-  return 0.5*(drfpf->GetMetric() + drfpb->GetMetric());
+
+  return 0.5 * ( drfpf->GetMetric() + drfpb->GetMetric() );
 }
 
-
 // Get Intensity Difference Threshold
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 double
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::GetIntensityDifferenceThreshold() const
 {
   const DemonsRegistrationFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
   const DemonsRegistrationFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
 
-  if ( drfpf->GetIntensityDifferenceThreshold() != drfpb->GetIntensityDifferenceThreshold())
-  {
-     itkExceptionMacro(<<"Forward and backward FiniteDifferenceFunctions not in sync");
-  }
+  if ( drfpf->GetIntensityDifferenceThreshold() != drfpb->GetIntensityDifferenceThreshold() )
+    {
+    itkExceptionMacro(<< "Forward and backward FiniteDifferenceFunctions not in sync");
+    }
   return drfpf->GetIntensityDifferenceThreshold();
 }
 
-
 // Set Intensity Difference Threshold
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::SetIntensityDifferenceThreshold(double threshold)
 {
   DemonsRegistrationFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
   DemonsRegistrationFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
+
   drfpf->SetIntensityDifferenceThreshold(threshold);
   drfpb->SetIntensityDifferenceThreshold(threshold);
 }
 
-
 // Set Maximum Update Step Length
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::SetMaximumUpdateStepLength(double step)
 {
   DemonsRegistrationFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
   DemonsRegistrationFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
+
   drfpf->SetMaximumUpdateStepLength(step);
   drfpb->SetMaximumUpdateStepLength(step);
 }
 
-
 // Get Maximum Update Step Length
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 double
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::GetMaximumUpdateStepLength() const
 {
   const DemonsRegistrationFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
   const DemonsRegistrationFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
 
-  if ( drfpf->GetMaximumUpdateStepLength() != drfpb->GetMaximumUpdateStepLength())
-  {
-     itkExceptionMacro(<<"Forward and backward FiniteDifferenceFunctions not in sync");
-  }
+  if ( drfpf->GetMaximumUpdateStepLength() != drfpb->GetMaximumUpdateStepLength() )
+    {
+    itkExceptionMacro(<< "Forward and backward FiniteDifferenceFunctions not in sync");
+    }
   return drfpf->GetMaximumUpdateStepLength();
 }
 
-
 // Get gradient type
-template <class TFixedImage, class TMovingImage, class TField>
-typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>::GradientType
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+template<class TFixedImage, class TMovingImage, class TField>
+typename SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>::GradientType
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::GetUseGradientType() const
 {
   const DemonsRegistrationFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
   const DemonsRegistrationFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
 
-  if ( drfpf->GetUseGradientType() != drfpb->GetUseGradientType())
-  {
-     itkExceptionMacro(<<"Forward and backward FiniteDifferenceFunctions not in sync");
-  }
+  if ( drfpf->GetUseGradientType() != drfpb->GetUseGradientType() )
+    {
+    itkExceptionMacro(<< "Forward and backward FiniteDifferenceFunctions not in sync");
+    }
   return drfpf->GetUseGradientType();
 }
 
-
 // Set gradient type
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::SetUseGradientType(GradientType gtype)
 {
   DemonsRegistrationFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
   DemonsRegistrationFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
+
   drfpf->SetUseGradientType(gtype);
   drfpb->SetUseGradientType(gtype);
 }
 
-
 // Allocate storage in m_UpdateBuffer
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::AllocateUpdateBuffer()
 {
   Superclass::AllocateUpdateBuffer();
@@ -245,11 +238,10 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   this->AllocateBackwardUpdateBuffer();
 }
 
-
 // Allocates storage in m_BackwardUpdateBuffer
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::AllocateBackwardUpdateBuffer()
 {
   if ( m_NumberOfBCHApproximationTerms < 3 )
@@ -261,42 +253,40 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   // The backward update buffer looks just like the output.
   VelocityFieldPointer output = this->GetOutput();
 
-  if ( !m_BackwardUpdateBuffer ) m_BackwardUpdateBuffer = VelocityFieldType::New();
-  m_BackwardUpdateBuffer->SetOrigin(output->GetOrigin());
-  m_BackwardUpdateBuffer->SetSpacing(output->GetSpacing());
-  m_BackwardUpdateBuffer->SetDirection(output->GetDirection());
-  m_BackwardUpdateBuffer->SetLargestPossibleRegion(output->GetLargestPossibleRegion());
-  m_BackwardUpdateBuffer->SetRequestedRegion(output->GetRequestedRegion());
-  m_BackwardUpdateBuffer->SetBufferedRegion(output->GetBufferedRegion());
+  if ( !m_BackwardUpdateBuffer ) {m_BackwardUpdateBuffer = VelocityFieldType::New(); }
+  m_BackwardUpdateBuffer->SetOrigin( output->GetOrigin() );
+  m_BackwardUpdateBuffer->SetSpacing( output->GetSpacing() );
+  m_BackwardUpdateBuffer->SetDirection( output->GetDirection() );
+  m_BackwardUpdateBuffer->SetLargestPossibleRegion( output->GetLargestPossibleRegion() );
+  m_BackwardUpdateBuffer->SetRequestedRegion( output->GetRequestedRegion() );
+  m_BackwardUpdateBuffer->SetBufferedRegion( output->GetBufferedRegion() );
   m_BackwardUpdateBuffer->Allocate();
 }
 
-
 // Smooth the backward update field using a separable Gaussian kernel
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::SmoothBackwardUpdateField()
 {
   // The update buffer will be overwritten with new data.
-  this->SmoothGivenField(this->GetBackwardUpdateBuffer(), this->GetUpdateFieldStandardDeviations());
+  this->SmoothGivenField( this->GetBackwardUpdateBuffer(), this->GetUpdateFieldStandardDeviations() );
 }
 
-
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 typename
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>::TimeStepType
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
-::ThreadedCalculateChange(const ThreadRegionType &regionToProcess, int)
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>::TimeStepType
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+::ThreadedCalculateChange(const ThreadRegionType & regionToProcess, int)
 {
-  typedef typename VelocityFieldType::RegionType      RegionType;
-  typedef typename VelocityFieldType::SizeType        SizeType;
-  typedef typename VelocityFieldType::SizeValueType   SizeValueType;
-  typedef typename VelocityFieldType::IndexType       IndexType;
-  typedef typename VelocityFieldType::IndexValueType  IndexValueType;
+  typedef typename VelocityFieldType::RegionType     RegionType;
+  typedef typename VelocityFieldType::SizeType       SizeType;
+  typedef typename VelocityFieldType::SizeValueType  SizeValueType;
+  typedef typename VelocityFieldType::IndexType      IndexType;
+  typedef typename VelocityFieldType::IndexValueType IndexValueType;
   typedef typename
-    FiniteDifferenceFunctionType::NeighborhoodType    NeighborhoodIteratorType;
-  typedef ImageRegionIterator<VelocityFieldType>      UpdateIteratorType;
+    FiniteDifferenceFunctionType::NeighborhoodType     NeighborhoodIteratorType;
+  typedef ImageRegionIterator<VelocityFieldType>     UpdateIteratorType;
 
   VelocityFieldPointer output = this->GetOutput();
 
@@ -306,12 +296,12 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   const typename FiniteDifferenceFunctionType::Pointer dfb
     = this->GetBackwardDifferenceFunction();
 
-  if ( dff->GetRadius() != dfb->GetRadius())
-  {
-     itkExceptionMacro(<<"Forward and backward FiniteDifferenceFunctions not in sync");
-  }
+  if ( dff->GetRadius() != dfb->GetRadius() )
+    {
+    itkExceptionMacro(<< "Forward and backward FiniteDifferenceFunctions not in sync");
+    }
 
-  const SizeType  radius = dff->GetRadius();
+  const SizeType radius = dff->GetRadius();
 
   // Break the input into a series of regions.  The first region is free
   // of boundary conditions, the rest with boundary conditions.  We operate
@@ -323,7 +313,7 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 
   FaceCalculatorType faceCalculator;
 
-  FaceListType faceList = faceCalculator(output, regionToProcess, radius);
+  FaceListType                    faceList = faceCalculator(output, regionToProcess, radius);
   typename FaceListType::iterator fIt = faceList.begin();
 
   // Ask the function object for a pointer to a data structure it
@@ -336,26 +326,28 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 
   // Process the non-boundary region.
   NeighborhoodIteratorType nD(radius, output, *fIt);
+
   if ( m_NumberOfBCHApproximationTerms == 2 )
     {
     UpdateIteratorType       nU(this->GetUpdateBuffer(),  *fIt);
-    while( !nD.IsAtEnd() )
+
+    while ( !nD.IsAtEnd() )
       {
-      nU.Value() = (dff->ComputeUpdate(nD, globalDataf)-dfb->ComputeUpdate(nD, globalDatab))*0.5;
+      nU.Value() = ( dff->ComputeUpdate(nD, globalDataf) - dfb->ComputeUpdate(nD, globalDatab) ) * 0.5;
       ++nD;
       ++nU;
       }
 
     // Process each of the boundary faces.
     NeighborhoodIteratorType bD;
-    UpdateIteratorType   bU;
-    for (++fIt; fIt != faceList.end(); ++fIt)
+    UpdateIteratorType       bU;
+    for ( ++fIt; fIt != faceList.end(); ++fIt )
       {
       bD = NeighborhoodIteratorType(radius, output, *fIt);
       bU = UpdateIteratorType  (this->GetUpdateBuffer(), *fIt);
       while ( !bD.IsAtEnd() )
         {
-        bU.Value() = (dff->ComputeUpdate(bD, globalDataf)-dfb->ComputeUpdate(bD, globalDatab))*0.5;
+        bU.Value() = ( dff->ComputeUpdate(bD, globalDataf) - dfb->ComputeUpdate(bD, globalDatab) ) * 0.5;
         ++bD;
         ++bU;
         }
@@ -364,8 +356,10 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   else
     {
     UpdateIteratorType       nUF(this->GetUpdateBuffer(),  *fIt);
+
     UpdateIteratorType       nUB(this->GetBackwardUpdateBuffer(),  *fIt);
-    while( !nD.IsAtEnd() )
+
+    while ( !nD.IsAtEnd() )
       {
       nUF.Value() = dff->ComputeUpdate(nD, globalDataf);
       nUB.Value() = dfb->ComputeUpdate(nD, globalDatab);
@@ -376,9 +370,9 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 
     // Process each of the boundary faces.
     NeighborhoodIteratorType bD;
-    UpdateIteratorType   bUF;
-    UpdateIteratorType   bUB;
-    for (++fIt; fIt != faceList.end(); ++fIt)
+    UpdateIteratorType       bUF;
+    UpdateIteratorType       bUB;
+    for ( ++fIt; fIt != faceList.end(); ++fIt )
       {
       bD = NeighborhoodIteratorType(radius, output, *fIt);
       bUF = UpdateIteratorType  (this->GetUpdateBuffer(), *fIt);
@@ -397,24 +391,24 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   // Ask the finite difference function to compute the time step for
   // this iteration.  We give it the global data pointer to use, then
   // ask it to free the global data memory.
-  TimeStepType timeStep = 0.5*( dff->ComputeGlobalTimeStep(globalDataf)
-                                + dfb->ComputeGlobalTimeStep(globalDatab) );
+  TimeStepType timeStep = 0.5 * ( dff->ComputeGlobalTimeStep(globalDataf)
+                                  + dfb->ComputeGlobalTimeStep(globalDatab) );
   dff->ReleaseGlobalDataPointer(globalDataf);
   dfb->ReleaseGlobalDataPointer(globalDatab);
 
   return timeStep;
 }
 
-
 // Get the metric value from the difference function
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 ::ApplyUpdate(TimeStepType dt)
 {
   const DemonsRegistrationFunctionType *drfpf = this->GetForwardRegistrationFunctionType();
   const DemonsRegistrationFunctionType *drfpb = this->GetBackwardRegistrationFunctionType();
-  this->SetRMSChange( 0.5*(drfpf->GetRMSChange() + drfpb->GetRMSChange()) );
+
+  this->SetRMSChange( 0.5 * ( drfpf->GetRMSChange() + drfpb->GetRMSChange() ) );
 
   if ( this->m_NumberOfBCHApproximationTerms < 3 )
     {
@@ -427,7 +421,7 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 
     // Use time step if necessary. In many cases
     // the time step is one so this will be skipped
-    if ( fabs(dt - 1.0)>1.0e-4 )
+    if ( fabs(dt - 1.0) > 1.0e-4 )
       {
       itkDebugMacro( "Using timestep: " << dt );
       m_Multiplier->SetConstant( dt );
@@ -438,7 +432,6 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
       // graft output back to this->GetUpdateBuffer()
       this->GetUpdateBuffer()->Graft( m_Multiplier->GetOutput() );
       }
-
 
     // Apply update
     m_Adder->SetInput( 0, this->GetOutput() );
@@ -464,7 +457,7 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 
     // Use time step if necessary. In many cases
     // the time step is one so this will be skipped
-    if ( fabs(dt - 1.0)>1.0e-4 )
+    if ( fabs(dt - 1.0) > 1.0e-4 )
       {
       itkDebugMacro( "Using timestep: " << dt );
       m_Multiplier->SetConstant( dt );
@@ -487,7 +480,7 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
     // Apply update (declare the filters here as efficiency is not critical
     // with "high" order BCH approximations)
     typedef VelocityFieldBCHCompositionFilter<
-       VelocityFieldType, VelocityFieldType>   BCHFilterType;
+      VelocityFieldType, VelocityFieldType>   BCHFilterType;
 
     typename BCHFilterType::Pointer bchfilter = BCHFilterType::New();
     bchfilter->SetNumberOfApproximationTerms( this->m_NumberOfBCHApproximationTerms );
@@ -503,7 +496,7 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
 
     // Now get Z( -v, K_fluid * u_backward )
     typedef OppositeImageFilter<
-       VelocityFieldType, VelocityFieldType>  OppositeFilterType;
+      VelocityFieldType, VelocityFieldType>  OppositeFilterType;
 
     typename OppositeFilterType::Pointer oppositefilter = OppositeFilterType::New();
     oppositefilter->SetInput( this->GetOutput() );
@@ -517,9 +510,10 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
     VelocityFieldPointer Zb = bchfilter->GetOutput();
     Zb->DisconnectPipeline();
 
-    // Finally get 0.5*( Z( v, K_fluid * u_forward ) - Z( -v, K_fluid * u_backward ) )
+    // Finally get 0.5*( Z( v, K_fluid * u_forward ) - Z( -v, K_fluid *
+    // u_backward ) )
     typedef SubtractImageFilter<
-       VelocityFieldType, VelocityFieldType, VelocityFieldType>  SubtracterType;
+      VelocityFieldType, VelocityFieldType, VelocityFieldType>  SubtracterType;
 
     typename SubtracterType::Pointer subtracter = SubtracterType::New();
     subtracter->SetInput( 0, Zf );
@@ -539,20 +533,17 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
     this->GraftOutput( m_Multiplier->GetOutput() );
     }
 
-
   // Smooth the velocity field
-  if( this->GetSmoothVelocityField() )
+  if ( this->GetSmoothVelocityField() )
     {
     this->SmoothVelocityField();
     }
-
 }
 
-
-template <class TFixedImage, class TMovingImage, class TField>
+template<class TFixedImage, class TMovingImage, class TField>
 void
-SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
-::PrintSelf(std::ostream& os, Indent indent) const
+SymmetricLogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf( os, indent );
 
@@ -561,8 +552,6 @@ SymmetricLogDomainDemonsRegistrationFilter<TFixedImage,TMovingImage,TField>
   os << indent << "Adder: " << m_Adder << std::endl;
   os << indent << "NumberOfBCHApproximationTerms: " << m_NumberOfBCHApproximationTerms << std::endl;
 }
-
-
 } // end namespace itk
 
 #endif

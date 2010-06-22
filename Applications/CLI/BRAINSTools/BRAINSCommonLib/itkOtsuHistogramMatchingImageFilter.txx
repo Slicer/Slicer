@@ -27,12 +27,11 @@
 
 namespace itk
 {
-
 /**
  *
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::OtsuHistogramMatchingImageFilter()
 {
   this->SetNumberOfRequiredInputs( 2 );
@@ -56,20 +55,19 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
   m_ReferenceHistogram = HistogramType::New();
   m_OutputHistogram = HistogramType::New();
 
-  m_SourceMask=NULL;
-  m_ReferenceMask=NULL;
+  m_SourceMask = NULL;
+  m_ReferenceMask = NULL;
 }
-
 
 /*
  *
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
 void
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
-::PrintSelf(std::ostream& os, Indent indent) const
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
+::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "NumberOfHistogramLevels: ";
   os << m_NumberOfHistogramLevels << std::endl;
@@ -100,27 +98,25 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
   os << m_UpperGradient << std::endl;
 }
 
-
 /*
  *
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
 void
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
-::SetReferenceImage( const InputImageType * reference )
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
+::SetReferenceImage( const InputImageType *reference )
 {
-  this->ProcessObject::SetNthInput(1,
-                                   const_cast< InputImageType * >( reference ) );
+  this->ProcessObject::SetNthInput( 1,
+                                    const_cast<InputImageType *>( reference ) );
 }
 
-
 /*
  *
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
-const typename OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
+const typename OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::InputImageType *
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::GetReferenceImage()
 {
   if ( this->GetNumberOfInputs() < 2 )
@@ -128,18 +124,17 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
     return NULL;
     }
 
-  return dynamic_cast<TInputImage*>(
+  return dynamic_cast<TInputImage *>(
     this->ProcessObject::GetInput(1) );
 }
-
 
 /*
  * This filter requires all of the input images to be
  * in the buffer.
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
 void
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::GenerateInputRequestedRegion()
 {
   this->Superclass::GenerateInputRequestedRegion();
@@ -148,26 +143,25 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
     {
     if ( this->GetInput(idx) )
       {
-      InputImagePointer image =
-        const_cast< InputImageType * >( this->GetInput(idx) );
+      InputImagePointer image
+        = const_cast<InputImageType *>( this->GetInput(idx) );
       image->SetRequestedRegionToLargestPossibleRegion();
       }
     }
 }
 
-
 /**
  *
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
 void
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::BeforeThreadedGenerateData()
 {
   unsigned int j;
 
-  InputImageConstPointer  source    = this->GetSourceImage();
-  InputImageConstPointer  reference = this->GetReferenceImage();
+  InputImageConstPointer source    = this->GetSourceImage();
+  InputImageConstPointer reference = this->GetReferenceImage();
 
   this->ComputeMinMaxMean( source, m_SourceMinValue,
                            m_SourceMaxValue, m_SourceMeanValue );
@@ -176,30 +170,27 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
 
   if ( m_ThresholdAtMeanIntensity )
     {
-      {
-      typedef OtsuThresholdImageCalculator<TInputImage> OtsuImageCalcType;
-      typename OtsuImageCalcType::Pointer OtsuImageCalc = OtsuImageCalcType::New();
-      OtsuImageCalc->SetImage(source);
-      OtsuImageCalc->Compute();
-      m_SourceIntensityThreshold    = static_cast<InputPixelType>(OtsuImageCalc->GetThreshold());
-      }
+    {
+    typedef OtsuThresholdImageCalculator<TInputImage> OtsuImageCalcType;
+    typename OtsuImageCalcType::Pointer OtsuImageCalc = OtsuImageCalcType::New();
+    OtsuImageCalc->SetImage(source);
+    OtsuImageCalc->Compute();
+    m_SourceIntensityThreshold    = static_cast<InputPixelType>( OtsuImageCalc->GetThreshold() );
+    }
 
-
-      {
-      typedef OtsuThresholdImageCalculator<TInputImage> OtsuImageCalcType;
-      typename OtsuImageCalcType::Pointer OtsuImageCalc = OtsuImageCalcType::New();
-      OtsuImageCalc->SetImage(reference);
-      OtsuImageCalc->Compute();
-      m_ReferenceIntensityThreshold = static_cast<InputPixelType>(OtsuImageCalc->GetThreshold());
-      }
+    {
+    typedef OtsuThresholdImageCalculator<TInputImage> OtsuImageCalcType;
+    typename OtsuImageCalcType::Pointer OtsuImageCalc = OtsuImageCalcType::New();
+    OtsuImageCalc->SetImage(reference);
+    OtsuImageCalc->Compute();
+    m_ReferenceIntensityThreshold = static_cast<InputPixelType>( OtsuImageCalc->GetThreshold() );
+    }
     }
   else
     {
     m_SourceIntensityThreshold    = static_cast<InputPixelType>(m_SourceMinValue);
     m_ReferenceIntensityThreshold = static_cast<InputPixelType>(m_ReferenceMinValue);
     }
-
-
 
   this->ConstructHistogram( source, m_SourceMask, m_SourceHistogram,
                             m_SourceIntensityThreshold, m_SourceMaxValue );
@@ -230,12 +221,12 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
   double denominator;
   for ( j = 0; j < m_NumberOfMatchPoints + 1; j++ )
     {
-    denominator = m_QuantileTable[0][j+1] -
-      m_QuantileTable[0][j];
+    denominator = m_QuantileTable[0][j + 1]
+      - m_QuantileTable[0][j];
     if ( denominator != 0 )
       {
-      m_Gradients[j] = m_QuantileTable[1][j+1] -
-        m_QuantileTable[1][j];
+      m_Gradients[j] = m_QuantileTable[1][j + 1]
+        - m_QuantileTable[1][j];
       m_Gradients[j] /= denominator;
       }
     else
@@ -255,12 +246,12 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
     m_LowerGradient = 0.0;
     }
 
-  denominator = m_QuantileTable[0][m_NumberOfMatchPoints+1] -
-    m_SourceMaxValue;
+  denominator = m_QuantileTable[0][m_NumberOfMatchPoints + 1]
+    - m_SourceMaxValue;
   if ( denominator != 0 )
     {
-    m_UpperGradient = m_QuantileTable[1][m_NumberOfMatchPoints+1] -
-      m_ReferenceMaxValue;
+    m_UpperGradient = m_QuantileTable[1][m_NumberOfMatchPoints + 1]
+      - m_ReferenceMaxValue;
     m_UpperGradient /= denominator;
     }
   else
@@ -269,20 +260,18 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
     }
 }
 
-
 /**
  *
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
 void
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::AfterThreadedGenerateData()
 {
-
-  OutputImagePointer  output    = this->GetOutput();
+  OutputImagePointer output    = this->GetOutput();
 
   this->ComputeMinMaxMean( output, m_OutputMinValue,
-    m_OutputMaxValue, m_OutputMeanValue );
+                           m_OutputMaxValue, m_OutputMeanValue );
 
   if ( m_ThresholdAtMeanIntensity )
     {
@@ -310,32 +299,29 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
     }
 }
 
-
 /**
  *
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
 void
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
-::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
+::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
                        int threadId )
 {
-
-  int i;
+  int          i;
   unsigned int j;
 
   // Get the input and output pointers;
-  InputImageConstPointer  input  = this->GetInput();
-  OutputImagePointer      output = this->GetOutput();
-
+  InputImageConstPointer input  = this->GetInput();
+  OutputImagePointer     output = this->GetOutput();
 
   // Transform the source image and write to output.
   typedef ImageRegionConstIterator<InputImageType> InputConstIterator;
   typedef ImageRegionIterator<OutputImageType>     OutputIterator;
 
   InputConstIterator inIter(  input, outputRegionForThread );
-  OutputIterator     outIter( output, outputRegionForThread );
 
+  OutputIterator     outIter( output, outputRegionForThread );
 
   // support progress methods/callbacks
   unsigned long updateVisits = 0;
@@ -344,18 +330,16 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
     {
     totalPixels = outputRegionForThread.GetNumberOfPixels();
     updateVisits = totalPixels / 10;
-    if( updateVisits < 1 ) updateVisits = 1;
+    if ( updateVisits < 1 ) {updateVisits = 1; }
     }
-
 
   double srcValue, mappedValue;
 
   for ( i = 0; !outIter.IsAtEnd(); ++inIter, ++outIter, i++ )
     {
-
-    if ( threadId == 0 && !(i % updateVisits ) )
+    if ( threadId == 0 && !( i % updateVisits ) )
       {
-      this->UpdateProgress((float)i / (float)totalPixels);
+      this->UpdateProgress( (float)i / (float)totalPixels );
       }
 
     srcValue = static_cast<double>( inIter.Get() );
@@ -371,45 +355,42 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
     if ( j == 0 )
       {
       // Linear interpolate from min to point[0]
-      mappedValue = m_ReferenceMinValue  +
-        ( srcValue - m_SourceMinValue ) * m_LowerGradient;
+      mappedValue = m_ReferenceMinValue
+        + ( srcValue - m_SourceMinValue ) * m_LowerGradient;
       }
     else if ( j == m_NumberOfMatchPoints + 2 )
       {
       // Linear interpolate from point[m_NumberOfMatchPoints+1] to max
-      mappedValue = m_ReferenceMaxValue +
-        ( srcValue - m_SourceMaxValue ) * m_UpperGradient;
+      mappedValue = m_ReferenceMaxValue
+        + ( srcValue - m_SourceMaxValue ) * m_UpperGradient;
       }
     else
       {
       // Linear interpolate from point[j] and point[j+1].
-      mappedValue = m_QuantileTable[1][j-1] +
-        ( srcValue - m_QuantileTable[0][j-1] ) * m_Gradients[j-1];
+      mappedValue = m_QuantileTable[1][j - 1]
+        + ( srcValue - m_QuantileTable[0][j - 1] ) * m_Gradients[j - 1];
       }
 
     outIter.Set( static_cast<OutputPixelType>( mappedValue ) );
-
     }
-
 }
-
 
 /**
  * Compute min, max and mean of an image.
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
 void
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::ComputeMinMaxMean(
-  const InputImageType * image,
-  THistogramMeasurement& minValue,
-  THistogramMeasurement& maxValue,
-  THistogramMeasurement& meanValue )
+  const InputImageType *image,
+  THistogramMeasurement & minValue,
+  THistogramMeasurement & maxValue,
+  THistogramMeasurement & meanValue )
 {
   typedef ImageRegionConstIterator<InputImageType> ConstIterator;
   ConstIterator iter( image, image->GetBufferedRegion() );
 
-  double sum = 0.0;
+  double   sum = 0.0;
   long int count = 0;
 
   minValue = static_cast<THistogramMeasurement>( iter.Get() );
@@ -425,47 +406,48 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
 
     ++iter;
     ++count;
-
     }
 
   meanValue = static_cast<THistogramMeasurement>( sum / static_cast<double>(count) );
-
 }
 
 /**
  * Construct a histogram from an image.
  */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement>
+template<class TInputImage, class TOutputImage, class THistogramMeasurement>
 void
-OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
+OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>
 ::ConstructHistogram(
-  const InputImageType * image,
-  const MaskImageType::Pointer mask, //HACK:  This should really be an itkSpatialObject, it is currently hardcoded to itk::Image<unsigned char, 3>
-  HistogramType  * histogram,
+  const InputImageType *image,
+  const MaskImageType::Pointer mask, // HACK:  This should really be an
+                                     // itkSpatialObject, it is currently
+                                     // hardcoded to itk::Image<unsigned char,
+                                     // 3>
+  HistogramType  *histogram,
   const THistogramMeasurement minValue,
   const THistogramMeasurement maxValue )
 {
-    {
-    // allocate memory for the histogram
-    typename HistogramType::SizeType size;
-    typename HistogramType::MeasurementVectorType lowerBound;
-    typename HistogramType::MeasurementVectorType upperBound;
+  {
+  // allocate memory for the histogram
+  typename HistogramType::SizeType              size;
+  typename HistogramType::MeasurementVectorType lowerBound;
+  typename HistogramType::MeasurementVectorType upperBound;
 
 #ifdef ITK_USE_REVIEW_STATISTICS
-    size.SetSize(1);
-    lowerBound.SetSize(1);
-    upperBound.SetSize(1);
-    histogram->SetMeasurementVectorSize(1);
+  size.SetSize(1);
+  lowerBound.SetSize(1);
+  upperBound.SetSize(1);
+  histogram->SetMeasurementVectorSize(1);
 #endif
 
-    size[0] = m_NumberOfHistogramLevels;
-    lowerBound.Fill(minValue);
-    upperBound.Fill(maxValue);
+  size[0] = m_NumberOfHistogramLevels;
+  lowerBound.Fill(minValue);
+  upperBound.Fill(maxValue);
 
-    //Initialize with equally spaced bins.
-    histogram->Initialize( size , lowerBound, upperBound );
-    histogram->SetToZero();
-    }
+  // Initialize with equally spaced bins.
+  histogram->Initialize( size, lowerBound, upperBound );
+  histogram->SetToZero();
+  }
 
   typename HistogramType::MeasurementVectorType measurement;
 
@@ -476,47 +458,45 @@ OtsuHistogramMatchingImageFilter<TInputImage,TOutputImage,THistogramMeasurement>
   typedef typename HistogramType::MeasurementType MeasurementType;
   measurement[0] = NumericTraits<MeasurementType>::Zero;
 
+  {
+  // put each image pixel into the histogram
+  typedef ImageRegionConstIteratorWithIndex<InputImageType> ConstIterator;
+  ConstIterator iter( image, image->GetBufferedRegion() );
+
+  iter.GoToBegin();
+  while ( !iter.IsAtEnd() )
     {
-    // put each image pixel into the histogram
-    typedef ImageRegionConstIteratorWithIndex<InputImageType> ConstIterator;
-    ConstIterator iter( image, image->GetBufferedRegion() );
-
-    iter.GoToBegin();
-    while ( !iter.IsAtEnd() )
+    InputPixelType value = iter.Get();
+    bool           inMeasurementRegion = false;
+    if ( static_cast<double>(value) >= minValue
+         && static_cast<double>(value) <= maxValue )
       {
-      InputPixelType value = iter.Get();
-      bool inMeasurementRegion=false;
-      if ( static_cast<double>(value) >= minValue &&
-        static_cast<double>(value) <= maxValue )
+      if ( mask.IsNull() ) // Assume entire area is valid
         {
-        if(mask.IsNull()) //Assume entire area is valid
+        inMeasurementRegion = true;
+        }
+      else
+        {
+        typename TInputImage::PointType physicalPoint;
+        image->TransformIndexToPhysicalPoint(iter.GetIndex(), physicalPoint);
+        typename MaskImageType::IndexType maskIndex;
+        const bool                        validRange = mask->TransformPhysicalPointToIndex(physicalPoint, maskIndex);
+        if ( validRange && ( mask->GetPixel(maskIndex) > 0 ) )
           {
-          inMeasurementRegion=true;
-          }
-        else
-          {
-          typename TInputImage::PointType physicalPoint;
-          image->TransformIndexToPhysicalPoint(iter.GetIndex(),physicalPoint);
-          typename MaskImageType::IndexType maskIndex;
-          const bool validRange=mask->TransformPhysicalPointToIndex(physicalPoint,maskIndex);
-          if(validRange && ( mask->GetPixel(maskIndex) > 0 ) )
-            {
-            inMeasurementRegion=true;
-            }
+          inMeasurementRegion = true;
           }
         }
-      if(inMeasurementRegion==true)
-        {
-        // add sample to histogram
-        measurement[0] = value;
-        histogram->IncreaseFrequency( measurement, 1 );
-        }
-      ++iter;
       }
+    if ( inMeasurementRegion == true )
+      {
+      // add sample to histogram
+      measurement[0] = value;
+      histogram->IncreaseFrequency( measurement, 1 );
+      }
+    ++iter;
     }
+  }
 }
-
-
 } // end namespace itk
 
 #endif

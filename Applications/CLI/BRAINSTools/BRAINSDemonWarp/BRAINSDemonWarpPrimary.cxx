@@ -18,78 +18,75 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
   // Apparently when you register one transform, you need to register all your
   // transforms.
   //
-  itk::TransformFactory<VersorRigid3DTransformType>::RegisterTransform();
-  itk::TransformFactory<ScaleVersor3DTransformType>::RegisterTransform();
-  itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
-  itk::TransformFactory<AffineTransformType>::RegisterTransform();
-  itk::TransformFactory<BSplineTransformType>::RegisterTransform();
+  itk::AddExtraTransformRegister();
+
   struct BRAINSDemonWarpAppParameters command;
 
-    {
-    PARSE_ARGS;
+  {
+  PARSE_ARGS;
 #ifdef USE_DEBUG_IMAGE_VIEWER
-    DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
-    DebugImageDisplaySender.SetPromptUser(PromptAfterImageSend);
+  DebugImageDisplaySender.SetEnabled(UseDebugImageViewer);
+  DebugImageDisplaySender.SetPromptUser(PromptAfterImageSend);
 #endif
 
-    command.registrationFilterType = registrationFilterType;
-    command.movingVolume = movingVolume;
-    command.fixedVolume = fixedVolume;
-    command.outputVolume = outputVolume;
-    command.outputDeformationFieldVolume = outputDeformationFieldVolume;
-    command.inputPixelType = inputPixelType;
-    command.outputPixelType = outputPixelType;
-    command.outputDisplacementFieldPrefix = outputDisplacementFieldPrefix;
-    command.outputCheckerboardVolume = outputCheckerboardVolume;
-    command.outputNormalized = outputNormalized;
-    command.outputDebug = outputDebug;
-    command.maskProcessingMode = maskProcessingMode;
-    command.fixedBinaryVolume = fixedBinaryVolume;
-    command.movingBinaryVolume = movingBinaryVolume;
-    command.lowerThresholdForBOBF = lowerThresholdForBOBF;
-    command.upperThresholdForBOBF = upperThresholdForBOBF;
-    command.backgroundFillValue = backgroundFillValue;
-    //Not yet implemented.
-    //command.forceCoronalZeroOrigin = forceCoronalZeroOrigin;
-//    command.movingLandmarks = movingLandmarks;
-//    command.fixedLandmarks = fixedLandmarks;
-//    command.initializeWithFourier = initializeWithFourier;
-    command.initializeWithDeformationField = initializeWithDeformationField;
-    command.initializeWithTransform = initializeWithTransform;
+  command.registrationFilterType = registrationFilterType;
+  command.movingVolume = movingVolume;
+  command.fixedVolume = fixedVolume;
+  command.outputVolume = outputVolume;
+  command.outputDeformationFieldVolume = outputDeformationFieldVolume;
+  command.inputPixelType = inputPixelType;
+  command.outputPixelType = outputPixelType;
+  command.outputDisplacementFieldPrefix = outputDisplacementFieldPrefix;
+  command.outputCheckerboardVolume = outputCheckerboardVolume;
+  command.outputNormalized = outputNormalized;
+  command.outputDebug = outputDebug;
+  command.maskProcessingMode = maskProcessingMode;
+  command.fixedBinaryVolume = fixedBinaryVolume;
+  command.movingBinaryVolume = movingBinaryVolume;
+  command.lowerThresholdForBOBF = lowerThresholdForBOBF;
+  command.upperThresholdForBOBF = upperThresholdForBOBF;
+  command.backgroundFillValue = backgroundFillValue;
+  // Not yet implemented.
+  // command.forceCoronalZeroOrigin = forceCoronalZeroOrigin;
+  //    command.movingLandmarks = movingLandmarks;
+  //    command.fixedLandmarks = fixedLandmarks;
+  //    command.initializeWithFourier = initializeWithFourier;
+  command.initializeWithDeformationField = initializeWithDeformationField;
+  command.initializeWithTransform = initializeWithTransform;
 
-    command.histogramMatch = histogramMatch;
-    command.numberOfHistogramLevels = numberOfHistogramBins;
-    command.numberOfMatchPoints = numberOfMatchPoints;
-    command.numberOfLevels = numberOfPyramidLevels;
-    command.numberOfIterations.SetSize(numberOfPyramidLevels);
+  command.histogramMatch = histogramMatch;
+  command.numberOfHistogramLevels = numberOfHistogramBins;
+  command.numberOfMatchPoints = numberOfMatchPoints;
+  command.numberOfLevels = numberOfPyramidLevels;
+  command.numberOfIterations.SetSize(numberOfPyramidLevels);
 
-    command.maxStepLength = maxStepLength;
-    command.gradientType = gradientType;
-    command.smoothDeformationFieldSigma = smoothDeformationFieldSigma;
-    command.smoothingUp = smoothingUp;
-    command.numberOfBCHApproximationTerms = numberOfBCHApproximationTerms;
-    command.interpolationMode=interpolationMode;
+  command.maxStepLength = maxStepLength;
+  command.gradientType = gradientType;
+  command.smoothDeformationFieldSigma = smoothDeformationFieldSigma;
+  command.smoothingUp = smoothingUp;
+  command.numberOfBCHApproximationTerms = numberOfBCHApproximationTerms;
+  command.interpolationMode = interpolationMode;
 
-    for ( int i = 0; i < numberOfPyramidLevels; i++ )
-      {
-      command.numberOfIterations[i] = arrayOfPyramidLevelIterations[i];
-      }
-
-    for ( int i = 0; i < 3; i++ )
-      {
-      command.theMovingImageShrinkFactors[i] = minimumMovingPyramid[i];
-      command.theFixedImageShrinkFactors[i] = minimumFixedPyramid[i];
-      }
-
-    for ( int i = 0; i < 3; i++ )
-      {
-      command.checkerboardPatternSubdivisions[i]
-        = checkerboardPatternSubdivisions[i];
-      command.seedForBOBF[i] = seedForBOBF[i];
-      command.neighborhoodForBOBF[i] = neighborhoodForBOBF[i];
-      command.medianFilterSize[i] = medianFilterSize[i];
-      }
+  for ( int i = 0; i < numberOfPyramidLevels; i++ )
+    {
+    command.numberOfIterations[i] = arrayOfPyramidLevelIterations[i];
     }
+
+  for ( int i = 0; i < 3; i++ )
+    {
+    command.theMovingImageShrinkFactors[i] = minimumMovingPyramid[i];
+    command.theFixedImageShrinkFactors[i] = minimumFixedPyramid[i];
+    }
+
+  for ( int i = 0; i < 3; i++ )
+    {
+    command.checkerboardPatternSubdivisions[i]
+      = checkerboardPatternSubdivisions[i];
+    command.seedForBOBF[i] = seedForBOBF[i];
+    command.neighborhoodForBOBF[i] = neighborhoodForBOBF[i];
+    command.medianFilterSize[i] = medianFilterSize[i];
+    }
+  }
 
   //  bool debug=true;
   if ( command.outputDebug )
@@ -135,12 +132,12 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
       << std::endl
       << "               medianFilterSize: " << command.medianFilterSize
       << std::endl
-/** NOT YET IMPLEMENTED
-      << "        movingLandmarks: " << command.movingLandmarks << std::endl
-      << "         fixedLandmarks: " << command.fixedLandmarks << std::endl
-      << "     initializeWithFourier: " << command.initializeWithFourier
-      << std::endl
-*/
+      /** NOT YET IMPLEMENTED
+          << "        movingLandmarks: " << command.movingLandmarks << std::endl
+          << "         fixedLandmarks: " << command.fixedLandmarks << std::endl
+          << "     initializeWithFourier: " << command.initializeWithFourier
+          << std::endl
+    */
       << "  initializeWithDeformationField: "
       << command.initializeWithDeformationField  << std::endl
       << "       initializeWithTransform: "
@@ -175,8 +172,8 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     }
 
   if ( ( command.checkerboardPatternSubdivisions[0] == 0 )
-    || ( command.checkerboardPatternSubdivisions[1] == 0 )
-    || ( command.checkerboardPatternSubdivisions[2] == 0 ) )
+       || ( command.checkerboardPatternSubdivisions[1] == 0 )
+       || ( command.checkerboardPatternSubdivisions[2] == 0 ) )
     {
     std::cout
       <<
@@ -187,7 +184,8 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
 
   //   if (command.outputVolume.size() == 0)
   //   {
-  //   violated = true; std::cout << "  --outputVolume Required! "  << std::endl;
+  //   violated = true; std::cout << "  --outputVolume Required! "  <<
+  // std::endl;
   //   }
   // if (outputDeformationFieldVolume.size() == 0) { violated = true; std::cout
   // << "  --outputDeformationFieldVolume Required! "  << std::endl; }
@@ -205,19 +203,19 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     {
     // check to see if valid type
     if ( ( CompareNoCase( command.inputPixelType.c_str(), std::string("uchar" ) ) )
-      && ( CompareNoCase( command.inputPixelType.c_str(), std::string("short" ) ) )
-      && ( CompareNoCase( command.inputPixelType.c_str(),
-          std::string("ushort") ) )
-      && ( CompareNoCase( command.inputPixelType.c_str(), std::string("int"   ) ) )
-      && ( CompareNoCase( command.inputPixelType.c_str(), std::string("float" ) ) )
+         && ( CompareNoCase( command.inputPixelType.c_str(), std::string("short" ) ) )
+         && ( CompareNoCase( command.inputPixelType.c_str(),
+                             std::string("ushort") ) )
+         && ( CompareNoCase( command.inputPixelType.c_str(), std::string("int"   ) ) )
+         && ( CompareNoCase( command.inputPixelType.c_str(), std::string("float" ) ) )
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-      // segments in one object file for the intel compiler
-      &&
-      ( CompareNoCase( command.inputPixelType.c_str(), std::string("uint"  ) ) )
-      && ( CompareNoCase( command.inputPixelType.c_str(),
-          std::string("double") ) )
+                           // segments in one object file for the intel compiler
+         &&
+         ( CompareNoCase( command.inputPixelType.c_str(), std::string("uint"  ) ) )
+         && ( CompareNoCase( command.inputPixelType.c_str(),
+                             std::string("double") ) )
 #endif
-    )
+      )
       {
       std::cout
         << "Error. Invalid data type string specified with --inputPixelType!"
@@ -232,22 +230,22 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     {
     // check to see if valid type
     if ( ( CompareNoCase( command.outputPixelType.c_str(),
-          std::string("uchar" ) ) )
-      &&            ( CompareNoCase( command.outputPixelType.c_str(),
-          std::string("SHORT") ) )
-      && ( CompareNoCase( command.outputPixelType.c_str(),
-          std::string("ushort") ) )
-      && ( CompareNoCase( command.outputPixelType.c_str(), std::string("int"   ) ) )
-      && ( CompareNoCase( command.outputPixelType.c_str(),
-          std::string("float" ) ) )
+                          std::string("uchar" ) ) )
+         &&            ( CompareNoCase( command.outputPixelType.c_str(),
+                                        std::string("SHORT") ) )
+         && ( CompareNoCase( command.outputPixelType.c_str(),
+                             std::string("ushort") ) )
+         && ( CompareNoCase( command.outputPixelType.c_str(), std::string("int"   ) ) )
+         && ( CompareNoCase( command.outputPixelType.c_str(),
+                             std::string("float" ) ) )
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-      // segments in one object file for the intel compiler
-      &&
-      ( CompareNoCase( command.outputPixelType.c_str(), std::string("uint"  ) ) )
-      && ( CompareNoCase( command.outputPixelType.c_str(),
-          std::string("double") ) )
+                           // segments in one object file for the intel compiler
+         &&
+         ( CompareNoCase( command.outputPixelType.c_str(), std::string("uint"  ) ) )
+         && ( CompareNoCase( command.outputPixelType.c_str(),
+                             std::string("double") ) )
 #endif
-    )
+      )
       {
       std::cout
         << "Error. Invalid data type string specified with --outputPixelType!"
@@ -300,4 +298,3 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     }
   return 0;
 }
-

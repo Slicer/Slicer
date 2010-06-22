@@ -782,6 +782,7 @@ file mkdir  $::PACKAGE_BUILD/${PACKAGE_NAME}-build
              -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
              -DUSE_OLD_BUILD:BOOL=OFF \
              -DBRAINS_BUILD_TESTING:BOOL=ON \
+             -DBUILD_TESTING:BOOL=ON \
              -DBRAINS_BINARY_DIR:PATH=$::PACKAGE_BUILD \
              -DDISABLE_ITK_TESTING:BOOL=ON \
              -DDISABLE_ALT_DICOM_FILTERS:BOOL=ON \
@@ -805,6 +806,7 @@ file mkdir  $::PACKAGE_BUILD/${PACKAGE_NAME}-build
              -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH=$::PACKAGE_BUILD/$::GETBUILDTEST(bin) \
              -DCMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH=$::PACKAGE_BUILD/$::GETBUILDTEST(lib) \
              -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH=$::PACKAGE_BUILD/$::GETBUILDTEST(lib) \
+             -DCTEST_NEW_FORMAT:BOOL=ON \
              $EXTRA_CMAKE_FLAGS \
              $FFTW_CMAKE_FLAGS \
              $::PACKAGE_HOME/../${PACKAGE_NAME}
@@ -852,7 +854,7 @@ if { $isWindows } {
          set cmd "${cmd} -D ${DASHBOARD_TYPE}Coverage"
        }
        set cmd "${cmd} -D ${DASHBOARD_TYPE}Submit"
-       puts "BUILD COMMAND $cmd"
+       set buildReturn [catch "runcmd $::MAKE"]
        if { ${PACKAGE_NAME} == "BRAINS3" } {
          cd src-build
        }

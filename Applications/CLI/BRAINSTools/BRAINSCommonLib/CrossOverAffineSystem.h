@@ -1,5 +1,5 @@
-#ifndef __CROSSOVER_AFFINE_SYSTEM_H__
-#define __CROSSOVER_AFFINE_SYSTEM_H__
+#ifndef __CrossOverAffineSystem_h
+#define __CrossOverAffineSystem_h
 
 #include <itkLightProcessObject.h>
 #include <itkMatrix.h>
@@ -28,8 +28,8 @@
  */
 
 template <class TCoordinateType,
-         unsigned int NDimensions = 3>
-         class ITK_EXPORT CrossOverAffineSystem : public itk::LightProcessObject
+          unsigned int NDimensions = 3>
+class ITK_EXPORT CrossOverAffineSystem : public itk::LightProcessObject
 {
 public:
   /** Standard class typedefs. */
@@ -49,31 +49,26 @@ public:
   itkStaticConstMacro(AffineDimension, unsigned int, NDimensions + 1);
 
   /** Type of the scalar representing coordinate and vector elements. */
-  typedef  TCoordinateType
-    ScalarType;
+  typedef  TCoordinateType ScalarType;
 
   typedef vnl_matrix_fixed<TCoordinateType, NDimensions + 1, NDimensions
-    + 1> VnlTransformMatrixType44;
+                           + 1> VnlTransformMatrixType44;
   // typedef vnl_matrix_fixed<TCoordinateType, NDimensions+1, NDimensions+1>
   //  VnlTransformMatrixType33;
 
   /** Affine conversion type for this class */
   typedef itk::AffineTransform<TCoordinateType,
-          NDimensions>                                         AffineTransformType;
-  typedef typename AffineTransformType::Pointer
-    AffineTransformPointer;
+    NDimensions>                                         AffineTransformType;
+  typedef typename AffineTransformType::Pointer          AffineTransformPointer;
   typedef typename AffineTransformType::MatrixType       MatrixType;
   typedef typename AffineTransformType::InputPointType   PointType;
   typedef typename AffineTransformType::OutputVectorType VectorType;
   typedef typename VectorType::ValueType                 ValueType;
 
   /** Quaternion conversion types for this class */
-  typedef itk::VersorTransform<TCoordinateType>
-    VersorTransformType;
-  typedef typename VersorTransformType::Pointer
-    VersorTransformPointer;
-  typedef typename VersorTransformType::ParametersType
-    VersorParametersType;
+  typedef itk::VersorTransform<TCoordinateType>        VersorTransformType;
+  typedef typename VersorTransformType::Pointer        VersorTransformPointer;
+  typedef typename VersorTransformType::ParametersType VersorParametersType;
 
   typedef itk::VersorRigid3DTransform<TCoordinateType>
     VersorRigid3DTransformType;
@@ -104,16 +99,16 @@ public:
 
   /** Generate the four coordinated AffineTransform conversions. */
   void EncloseInScaling( const VectorType & EncodeScale,
-    const VectorType & DecodeScale );
+                         const VectorType & DecodeScale );
 
   void EncloseInTranslation( const VectorType & EncodeShift,
-    const VectorType & DecodeShift );
+                             const VectorType & DecodeShift );
 
   void EncloseInCentering( const PointType & EncodeCenter,
-    const PointType & DecodeCenter );
+                           const PointType & DecodeCenter );
 
   void EncloseInAffineTransforms(AffineTransformPointer EncodeAffineTransform,
-    AffineTransformPointer DecodeAffineTransform);
+                                 AffineTransformPointer DecodeAffineTransform);
 
 protected:
 

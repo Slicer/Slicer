@@ -35,5 +35,3 @@ int CompareNoCase( const std::string & s, const std::string & s2 )
 
   return ( s2.size() == s.size() ) ? 0 : ( s.size() < s2.size() ) ? -1 : 1;
 }
-
-

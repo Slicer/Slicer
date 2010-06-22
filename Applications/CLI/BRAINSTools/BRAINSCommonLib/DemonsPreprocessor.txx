@@ -1,5 +1,5 @@
-#ifndef _DemonsPreprocessor_txx
-#define _DemonsPreprocessor_txx
+#ifndef __DemonsPreprocessor_txx
+#define __DemonsPreprocessor_txx
 
 #include "DemonsPreprocessor.h"
 #include "itkMinimumMaximumImageFilter.h"
@@ -20,8 +20,8 @@ namespace itk
 {
 template<typename TInputImage, typename TOutputImage>
 DemonsPreprocessor<TInputImage, TOutputImage>
-  ::DemonsPreprocessor()
-  {
+::DemonsPreprocessor()
+{
   m_UseHistogramMatching = 0;
   m_NumberOfHistogramLevels = 256;
   m_NumberOfMatchPoints = 1;
@@ -44,18 +44,18 @@ DemonsPreprocessor<TInputImage, TOutputImage>
   m_DefaultPixelValue = NumericTraits<PixelType>::One;
   m_Radius.Fill(1);
   m_OutDebug = false;
-  }
+}
 
 template<typename TInputImage, typename TOutputImage>
 void
 DemonsPreprocessor<TInputImage, TOutputImage>
-  ::Execute()
+::Execute()
 {
   if ( m_MedianFilterSize[0] > 0  ||  m_MedianFilterSize[1] > 0
        ||  m_MedianFilterSize[2] > 0 )
     {
     typedef typename itk::MedianImageFilter<TInputImage,
-      TInputImage> MedianImageFilterType;
+                                            TInputImage> MedianImageFilterType;
     typename MedianImageFilterType::Pointer medianFilter
       = MedianImageFilterType::New();
     medianFilter->SetRadius(m_MedianFilterSize);
@@ -70,18 +70,18 @@ DemonsPreprocessor<TInputImage, TOutputImage>
     medianFilter->Update();
     m_InputMovingImage = medianFilter->GetOutput();
     }
-    { // Create UnNormalized...Images
-      {
-      this->m_UnNormalizedFixedImage
-        = itkUtil::PreserveCast<TInputImage, TOutputImage>(
-        this->m_InputFixedImage);
-      }
-      {
-      m_UnNormalizedMovingImage
-        = itkUtil::PreserveCast<TInputImage, TOutputImage>(
-        this->m_InputMovingImage);
-      }
-    }
+  { // Create UnNormalized...Images
+  {
+  this->m_UnNormalizedFixedImage
+    = itkUtil::PreserveCast<TInputImage, TOutputImage>(
+      this->m_InputFixedImage);
+  }
+  {
+  m_UnNormalizedMovingImage
+    = itkUtil::PreserveCast<TInputImage, TOutputImage>(
+      this->m_InputMovingImage);
+  }
+  }
 
   //  m_OutputFixedImage =
   // itkUtil::CopyImage<TOutputImage>(m_UnNormalizedFixedImage);
@@ -100,8 +100,8 @@ DemonsPreprocessor<TInputImage, TOutputImage>
       std::cout << "Performing Histogram Matching \n";
       }
     if ( ( vcl_numeric_limits<typename OutputImageType::PixelType>::max()
-          - vcl_numeric_limits<typename OutputImageType::PixelType>::min() ) <
-        m_NumberOfHistogramLevels )
+           - vcl_numeric_limits<typename OutputImageType::PixelType>::min() ) <
+         m_NumberOfHistogramLevels )
       {
       std::cout << "The intensity of range is less than Histogram levels!!"
                 << std::endl;
@@ -147,7 +147,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
                 << std::endl;
       }
     m_OutputFixedImage = this->MakeBOBFImage( m_OutputFixedImage,
-      m_FixedBinaryVolume );
+                                              m_FixedBinaryVolume );
     if ( this->GetOutDebug() )
       {
       std::cout << "Fixed Origin" << m_OutputFixedImage->GetOrigin()
@@ -156,7 +156,7 @@ DemonsPreprocessor<TInputImage, TOutputImage>
                 << std::endl;
       }
     m_OutputMovingImage = this->MakeBOBFImage( m_OutputMovingImage,
-      m_MovingBinaryVolume);
+                                               m_MovingBinaryVolume);
     if ( this->GetOutDebug() )
       {
       std::cout << "Moving Origin" << m_OutputMovingImage->GetOrigin()
@@ -176,16 +176,15 @@ DemonsPreprocessor<TInputImage, TOutputImage>
   skull of the image. It uses the BOBF filter to perform the skull stripping.*/
 
 template<typename TInputImage, typename TOutputImage>
-typename DemonsPreprocessor<TInputImage,
-  TOutputImage>::OutputImagePointer DemonsPreprocessor<TInputImage,
-  TOutputImage>
-  ::MakeBOBFImage( OutputImagePointer input, std::string MaskName )
+typename DemonsPreprocessor<TInputImage,TOutputImage>::OutputImagePointer 
+DemonsPreprocessor<TInputImage,TOutputImage>
+::MakeBOBFImage( OutputImagePointer input, std::string MaskName )
 {
   OutputImagePointer Mask = itkUtil::ReadImage<OutputImageType>(MaskName);
 
   if ( ( m_UnNormalizedFixedImage->GetLargestPossibleRegion().GetSize() !=
-        Mask->GetLargestPossibleRegion().GetSize() )
-      || ( m_UnNormalizedFixedImage->GetSpacing() != Mask->GetSpacing() ) )
+         Mask->GetLargestPossibleRegion().GetSize() )
+       || ( m_UnNormalizedFixedImage->GetSpacing() != Mask->GetSpacing() ) )
     {
     if ( this->GetOutDebug() )
       {
@@ -199,9 +198,9 @@ typename DemonsPreprocessor<TInputImage,
   if ( this->GetOutDebug() )
     {
     std::cout
-     <<
-    "Making Brain only Background filled image with the following parameters. "
-     << std::endl;
+      <<
+      "Making Brain only Background filled image with the following parameters. "
+      << std::endl;
     std::cout << "Lower Threshold:  " << m_Lower << std::endl;
     std::cout << "Upper Threshold:  " << m_Upper << std::endl;
     std::cout << "Neighborhood:  " << m_Radius << std::endl;
