@@ -747,7 +747,7 @@ void vtkSlicerModelDisplayManager::ProcessMRMLEvents ( vtkObject *caller,
 
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && 
        (event == vtkMRMLScene::NodeAddedEvent || 
-        event == vtkMRMLScene::NodeRemovedEvent ) )
+        event == vtkMRMLScene::NodeRemovedEvent) )
     {
     vtkMRMLNode *node = (vtkMRMLNode*) (callData);
     if (node != NULL && node->IsA("vtkMRMLDisplayableNode") )
@@ -1798,7 +1798,10 @@ void vtkSlicerModelDisplayManager::RequestRender()
   // move the render to the last thing on the idle processing queue
  //this->Script("after cancel { if {[info command %s] != {}} {%s Render} }", this->GetTclName(), this->GetTclName());
   //this->Script("after idle { if {[info command %s] != {}} {%s Render} }", this->GetTclName(), this->GetTclName());
-  this->Render();
+  if (!this->MRMLScene->GetIsClosed())
+    {
+    this->Render();
+    }
 }
 
 //---------------------------------------------------------------------------
