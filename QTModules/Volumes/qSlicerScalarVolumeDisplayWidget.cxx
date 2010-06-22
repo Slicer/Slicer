@@ -55,7 +55,7 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
     this->TransferFunctionWidget->scene());
   // Transfer Function
   ctkVTKColorTransferFunction* transferFunction =
-    new ctkVTKColorTransferFunction(this->ColorTransferFunction);
+    new ctkVTKColorTransferFunction(this->ColorTransferFunction, p);
 
   ctkTransferFunctionGradientItem* gradientItem =
     new ctkTransferFunctionGradientItem(transferFunction);
