@@ -29,7 +29,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <index>1</index>
       <description>Resampled Volume</description>
     </image>
-    <image type="tensor">
+    <image type="any">
       <name>referenceVolume</name>
       <label>Reference Volume (To Set Output Parameters)</label>
       <channel>input</channel>
