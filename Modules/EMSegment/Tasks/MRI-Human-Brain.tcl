@@ -327,14 +327,14 @@ namespace eval EMSegmenterPreProcessingTcl {
         variable outputAtlasNode 
     
         set affineFlag [expr ([$mrmlManager GetRegistrationAffineType] != [$mrmlManager GetRegistrationTypeFromString AtlasToTargetAffineRegistrationOff]) ] 
-        set bSplineFlag [expr ([$mrmlManager GetRegistrationDeformableType ]  == [$mrmlManager GetRegistrationTypeFromString AtlasToTargetDeformableRegistrationOff]) ] 
+        set bSplineFlag [expr ([$mrmlManager GetRegistrationDeformableType ]  != [$mrmlManager GetRegistrationTypeFromString AtlasToTargetDeformableRegistrationOff]) ] 
 
         if {($alignFlag == 0) || (( $affineFlag == 0 ) && ( $bSplineFlag == 0 ))  } {
-        return [SkipAtlasRegistration]
+           return [SkipAtlasRegistration]
         }
 
         puts "=========================================="
-        puts "== Register Atlas "
+        puts "== Register Atlas ($affineFlag / $bSplineFlag) "
         puts "=========================================="
 
 
@@ -342,7 +342,7 @@ namespace eval EMSegmenterPreProcessingTcl {
         # Setup 
         # ----------------------------------------------------------------
         if { $outputAtlasNode == "" } {
-           puts "Atlas was empty"
+           puts "Aligned Atlas was empty"
            # puts "set outputAtlasNode \[ $mrmlManager CloneAtlasNode $inputAtlasNode \"AlignedAtlas\"\] "
            set outputAtlasNode [ $mrmlManager CloneAtlasNode $inputAtlasNode "Aligned"]
            $workingDN SetAlignedAtlasNodeID [$outputAtlasNode GetID]
@@ -441,7 +441,7 @@ namespace eval EMSegmenterPreProcessingTcl {
         } else {
             # New type 
             set registrationType  "CenterOfHeadAlign Rigid"
-        set fastFlag 0 
+            set fastFlag 0 
             if { $affineFlag } {
                set registrationType  "${registrationType} Affine"
            if { $affineType == [$mrmlManager GetRegistrationTypeFromString AtlasToTargetAffineRegistrationRigidMMIFast ] } {
@@ -504,12 +504,12 @@ namespace eval EMSegmenterPreProcessingTcl {
            }
         } 
 
-    if { 0 } {
-        $fixedRASToMovingRASTransformAffine Delete
-        if { $fixedRASToMovingRASTransformDeformable != "" } { 
-        $fixedRASToMovingRASTransformDeformable Delete
+        if { 0 } {
+          $fixedRASToMovingRASTransformAffine Delete
+          if { $fixedRASToMovingRASTransformDeformable != "" } { 
+           $fixedRASToMovingRASTransformDeformable Delete
         }
-    }
+        }
 
         puts "Atlas-to-target registration complete." 
         $workingDN SetAlignedAtlasNodeIsValid 1

@@ -404,9 +404,9 @@ namespace eval EMSegmenterPreProcessingTcl {
         variable subjectNode 
         variable inputAtlasNode 
         variable outputAtlasNode 
-    puts "=========================================="
-    puts "== Skip Atlas Registration"
-    puts "=========================================="
+        puts "=========================================="
+        puts "== Skip Atlas Registration"
+        puts "=========================================="
 
         # ----------------------------------------------------------------
         # Setup (General)
@@ -577,9 +577,9 @@ namespace eval EMSegmenterPreProcessingTcl {
           foreach TYPE $RegistrationType {
               $cmdNode SetParameterAsBool "use${TYPE}" 1
           }
-      if {$fastFlag} {
-        $cmdNode SetParameterAsInt "numberOfIterations" 5
-      }
+          if {$fastFlag} {
+             $cmdNode SetParameterAsInt "numberOfIterations" 5
+          }
       
           # Do no worry about fileExtensions=".mat" type="linear" reference="movingVolume"
               # these are set in vtkCommandLineModuleLogic.cxx automatically 

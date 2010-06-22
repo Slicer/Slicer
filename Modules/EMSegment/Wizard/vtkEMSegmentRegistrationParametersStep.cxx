@@ -269,7 +269,7 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     else if 
       (v == vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMIFast)
       {
-      value = "Rigid, MI Fast";
+      value = "Fast";
       }
     else if 
       (v == vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMI)
@@ -279,7 +279,7 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     else if 
       (v == vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMISlow)
       {
-      value = "Rigid, MI Slow";
+      value = "Slow";
       }
     else if 
       (v == vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCFast)
@@ -312,7 +312,7 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     else if (v == vtkEMSegmentMRMLManager::
              AtlasToTargetDeformableRegistrationBSplineMMIFast)
       {
-      value = "B-Spline, MI Fast";
+      value = "Fast";
       }
     else if (v == vtkEMSegmentMRMLManager::
              AtlasToTargetDeformableRegistrationBSplineMMI)
@@ -322,7 +322,7 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     else if (v == vtkEMSegmentMRMLManager::
              AtlasToTargetDeformableRegistrationBSplineMMISlow)
       {
-      value = "B-Spline, MI Slow";
+      value = "Slow";
       }
     else if (v == vtkEMSegmentMRMLManager::
              AtlasToTargetDeformableRegistrationBSplineNCCFast)
