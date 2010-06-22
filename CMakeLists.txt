@@ -40,6 +40,13 @@ MACRO(downloadFile url dest)
     IF(error_code)
       MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
     ENDIF()
+  ELSE()
+    # Make sure the file is not empty
+    FILE(READ ${dest} dest_content)
+    IF(dest_content STREQUAL "")
+      FILE(REMOVE ${dest})
+      downloadFile(${url} ${dest})
+    ENDIF()
   ENDIF()
 ENDMACRO()
 
