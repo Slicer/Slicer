@@ -168,13 +168,17 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode *
 
     // Value
     std::vector<double> vv = m_logic->GetAnnotationMeasurement(node);
-    char valuechar[100];
-    QString valueString;
-    sprintf( valuechar, textFormat, vv);
-    valueString.append("<p>Value: <b>").append(QString(valuechar)).append("</b></p>");
-    ui.annotationValueBrowser->setHtml( valueString );
 
-  double value;
+    QString valueString;
+    std::string tmpValue;
+    for (int i =0 ; i < int(vv.size()); i++) 
+      {
+    char tmpChar[200];   
+    sprintf(tmpChar, textFormat, vv[i]);
+    tmpValue +=  std::string(tmpChar) + std::string(" ");
+      }
+    valueString.append("<p>Value: <b>").append(QString(tmpValue.c_str())).append("</b></p>");
+    ui.annotationValueBrowser->setHtml( valueString );
 
     // Default CollapsibleGroupBox Properties
     QVBoxLayout* groupBoxLayout = new QVBoxLayout;
@@ -225,6 +229,8 @@ void qSlicermiAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode *
   
     double* color;
     QColor qcolor;
+    double value;
+
     color = m_logic->GetAnnotationLinesPropertiesColor(node, m_logic->TEXT_COLOR);
     this->TurnColorArrayToQColor(color, qcolor);
     ui.textUnselectedColorPickerButton->setColor( qcolor );
