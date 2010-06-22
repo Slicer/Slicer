@@ -238,6 +238,9 @@ protected:
 
     int NewVolumePropertyAddedFlag;
     int NewFgVolumePropertyAddedFlag;
+
+    int NewParametersNodeForNewInputFlag;
+    int NewParametersNodeFromSceneLoadingFlag;
 };
 
 #endif

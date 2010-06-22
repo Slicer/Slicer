@@ -53,6 +53,8 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
 
   this->NewVolumePropertyAddedFlag = 0;
   this->NewFgVolumePropertyAddedFlag = 0;
+  this->NewParametersNodeForNewInputFlag = 0;
+  this->NewParametersNodeFromSceneLoadingFlag = 0;
   
   this->ScenarioNode = NULL;
 
@@ -843,6 +845,25 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
         vtkMRMLVolumeRenderingScenarioNode *sNode = vtkMRMLVolumeRenderingScenarioNode::SafeDownCast(addedNode);
         this->ScenarioNode = sNode;
       }
+      else if (addedNode->IsA("vtkMRMLVolumeRenderingParametersNode") )
+      {
+        //make sure we only process this for new parameters node from other module
+        if (!this->NewParametersNodeForNewInputFlag && !this->NewParametersNodeFromSceneLoadingFlag)
+        {
+          vtkMRMLVolumeRenderingParametersNode *addedVspNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(addedNode);
+          
+          this->ScenarioNode->SetParametersNodeID(addedVspNode->GetID());
+          
+          if (this->GetCurrentParametersNode() != NULL && this->ValidateParametersNode(addedVspNode) )
+          {
+            this->InitializePipelineFromParametersNode();
+          }
+        }
+        else if (this->NewParametersNodeForNewInputFlag)
+        {
+          this->NewParametersNodeForNewInputFlag = 0;
+        }        
+      }
       else if (addedNode->IsA("vtkMRMLViewNode"))
       {
         vtkMRMLViewNode *viewNode = vtkMRMLViewNode::SafeDownCast(addedNode);
@@ -850,8 +871,14 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       }
     }
   }
+  else if (event == vtkMRMLScene::SceneLoadStartEvent)
+  {
+    this->NewParametersNodeFromSceneLoadingFlag = 1;
+  }
   else if (event == vtkMRMLScene::SceneLoadEndEvent)
   {
+    this->NewParametersNodeFromSceneLoadingFlag = 0;
+    
     if (this->GetCurrentParametersNode() != NULL && this->CB_VolumeRenderingOnOff->GetWidget()->GetSelectedState())
     {
       this->InitializePipelineFromParametersNode();
@@ -1320,7 +1347,10 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 
   if ( !vspNode )//no match
   {
+    this->NewParametersNodeForNewInputFlag = 1;//distiguish from new parameters node created from other modules
+    
     vspNode = this->GetLogic()->CreateParametersNode();
+    
     vspNode->SetAndObserveVolumeNodeID(this->NS_ImageData->GetSelected()->GetID());
 
     vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::New();
