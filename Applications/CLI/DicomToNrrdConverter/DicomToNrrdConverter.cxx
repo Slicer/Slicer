@@ -1705,7 +1705,7 @@ int main(int argc, char* argv[])
         header.write( reinterpret_cast<char *>(dmImage->GetBufferPointer()),
                       nVoxels*sizeof(short) );
       }
-    else 
+    else if (NrrdFormat)
       {
         unsigned long nVoxels = reader->GetOutput()->GetBufferedRegion().GetNumberOfPixels();
         header.write( reinterpret_cast<char *>(reader->GetOutput()->GetBufferPointer()),
