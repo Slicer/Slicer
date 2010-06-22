@@ -35,6 +35,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Output Directtory</label>
       <channel>output</channel>
       <description>Directory holding the output NRRD format</description>
+      <default>.</default>
     </directory>
 
     <string>

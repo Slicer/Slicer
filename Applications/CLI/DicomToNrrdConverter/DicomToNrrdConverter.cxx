@@ -297,10 +297,23 @@ int main(int argc, char* argv[])
   bool NrrdFormat = false;
 
   // check if the file name is valid
+  ::size_t slashpos = outputVolume.find( "/" );
+  if (slashpos == std::string::npos)
+  {
+    slashpos = outputVolume.find( "\\" );    // for windows
+  }
 
-  std::string nhdrname = outputDirectory + "/" + outputVolume;
+  std::string nhdrname;
+  if (slashpos != std::string::npos)
+  {
+    nhdrname = outputVolume;
+  }
+  else 
+  {
+    nhdrname = outputDirectory + "/" + outputVolume;
+  }
+
   std::cout << nhdrname << std::endl;
-
   std::string dataname;
     {
     ::size_t i = nhdrname.find(".nhdr");
@@ -510,6 +523,7 @@ int main(int argc, char* argv[])
     std::cerr << excp << std::endl;
     return EXIT_FAILURE;
     }
+  VolumeType::Pointer dmImage = VolumeType::New();
 
   //////////////////////////////////////////////////
   // 1-A) Read the input dicom headers
@@ -1381,7 +1395,6 @@ int main(int argc, char* argv[])
     dmSize[2] *= nSliceInVolume;
 
     region.SetSize( dmSize );
-    VolumeType::Pointer dmImage = VolumeType::New();
     dmImage->CopyInformation( img );
     dmImage->SetRegions( region );
     dmImage->Allocate();
@@ -1464,7 +1477,6 @@ int main(int argc, char* argv[])
     dmSize[2] = nSliceInVolume * (nUsableVolumes);
 
     region.SetSize( dmSize );
-    VolumeType::Pointer dmImage = VolumeType::New();
     dmImage->CopyInformation( img );
     dmImage->SetRegions( region );
     dmImage->Allocate();
@@ -1687,7 +1699,13 @@ int main(int argc, char* argv[])
 
     // write data in the same file is .nrrd was chosen
     header << std::endl;;
-    if (NrrdFormat)
+    if (NrrdFormat && SliceMosaic)
+      {
+        unsigned long nVoxels = dmImage->GetBufferedRegion().GetNumberOfPixels();
+        header.write( reinterpret_cast<char *>(dmImage->GetBufferPointer()),
+                      nVoxels*sizeof(short) );
+      }
+    else 
       {
         unsigned long nVoxels = reader->GetOutput()->GetBufferedRegion().GetNumberOfPixels();
         header.write( reinterpret_cast<char *>(reader->GetOutput()->GetBufferPointer()),
