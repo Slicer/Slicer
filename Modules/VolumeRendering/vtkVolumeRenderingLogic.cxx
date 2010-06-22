@@ -882,6 +882,75 @@ void vtkVolumeRenderingLogic::EstimateSampleDistance(vtkMRMLVolumeRenderingParam
     vspNode->SetEstimatedSampleDistance( 1.0f);
 }
 
+int vtkVolumeRenderingLogic::IsCurrentMapperSupported(vtkMRMLVolumeRenderingParametersNode* vspNode)
+{
+  if (vspNode == NULL)
+    return 0;
+
+  switch(vspNode->GetCurrentVolumeMapper())//mapper specific initialization
+  {
+  case 0:
+    return 1;
+  case 3:
+    {
+      vtkSlicerGPURayCastVolumeTextureMapper3D* MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
+
+      MapperGPURaycast->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
+      
+      if (MapperGPURaycast->IsRenderSupported(vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
+      {
+        MapperGPURaycast->Delete();
+        return 1;
+      }
+      else
+      {
+        MapperGPURaycast->Delete();
+        return 0;
+      }
+    }
+  case 4:
+    {
+      vtkSlicerGPURayCastVolumeMapper* MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
+      
+      MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
+      if (vspNode->GetFgVolumeNode())
+        MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData());
+      
+      if (MapperGPURaycastII->IsRenderSupported(vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
+      {
+        MapperGPURaycastII->Delete();
+        return 1;
+      }
+      else
+      {
+        MapperGPURaycastII->Delete();
+        return 0;
+      }
+    }
+  case 2:
+    {
+      vtkSlicerVolumeTextureMapper3D* MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
+    
+      MapperTexture->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
+
+      if (MapperTexture->IsRenderSupported(vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
+      {
+        MapperTexture->Delete();
+        return 1;
+      }
+      else
+      {
+        MapperTexture->Delete();
+        return 0;
+      }
+    }
+  case 1:
+    return 1;//assume vtkGPURayCastMapper is supported
+  default:
+    return 0;
+  }
+}
+
 /*
  * return values:
  * -1: requested mapper not supported

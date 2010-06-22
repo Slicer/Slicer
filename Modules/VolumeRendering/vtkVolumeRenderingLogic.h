@@ -107,6 +107,12 @@ public:
 
   vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
 
+  /* return values:
+   * 0: mapper not supported
+   * 1: mapper supported
+   */
+  int IsCurrentMapperSupported(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  
 protected:
   vtkVolumeRenderingLogic();
   ~vtkVolumeRenderingLogic();
