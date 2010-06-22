@@ -1,6 +1,6 @@
 project( dwiNoiseFilter )
 
-# 
+#
 # --------------------------------------------------------------------------
 # Special build configs (to handle linking on windows)
 #CONFIGURE_FILE(
@@ -23,27 +23,34 @@ include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 #####################
 
 set (CLP dwiNoiseFilter)
+if (Slicer3_SOURCE_DIR)
+   SET(LOGOFILE ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+endif (Slicer3_SOURCE_DIR)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${LOGOFILE})
 add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
+if(Slicer3_SOURCE_DIR)
+  slicer3_set_plugins_output_path(${CLP})
+endif(Slicer3_SOURCE_DIR)
 target_link_libraries (${CLP}
   ITKIO
-  ITKAlgorithms 
-  ITKBasicFilters 
+  ITKAlgorithms
+  ITKBasicFilters
   ModuleDescriptionParser
   # MRML
   )
 
 
 if (Slicer3_SOURCE_DIR)
-  # install each target in the production area (where it would appear in an 
-  # installation) and install each target in the developer area (for running 
+  # install each target in the production area (where it would appear in an
+  # installation) and install each target in the developer area (for running
   # from a build)
-  set(TARGETS        
+  set(TARGETS
     dwiNoiseFilter
     )
+if(Slicer3_SOURCE_DIR)
   slicer3_install_plugins(${TARGETS})
+endif(Slicer3_SOURCE_DIR)
 
 endif (Slicer3_SOURCE_DIR)

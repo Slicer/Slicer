@@ -25,7 +25,7 @@
 #endif
 #include <math.h>
 
-#include "itkPluginUtilities.h"
+#include "localPluginUtilities.h"
 
 #include "itkLMMSEVectorImageFilter.h"
 
