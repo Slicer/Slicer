@@ -27,7 +27,6 @@ public:
 
 public slots:
 
-  void setActiveVolumeNode(vtkMRMLNode* node);
 
 protected:
   virtual void setup();
