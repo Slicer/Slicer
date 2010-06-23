@@ -418,9 +418,8 @@ PrintImageInfo(vtkMRMLVolumeNode* volumeNode)
   int extent[6];
   volumeNode->GetImageData()->GetExtent(extent);
   std::cerr << "Extent: " << std::endl;
-  std::copy(extent, extent+6, std::ostream_iterator<int>(std::cerr, " "));
-  std::cerr << std::endl;
-  
+  std::cerr  << extent[0] << " " << extent[1] << " " << extent[2] << " " << extent[3] << " " << extent[4] << " " << extent[5] << std::endl;
+
   // ijkToRAS
   vtkMatrix4x4* matrix = vtkMatrix4x4::New();
   volumeNode->GetIJKToRASMatrix(matrix);
@@ -453,15 +452,9 @@ PrintImageInfo(vtkImageData* image)
   image->GetOrigin(origin);
   image->GetExtent(extent);
 
-  std::cerr << "Spacing: ";
-  std::copy(spacing,spacing+3,std::ostream_iterator<double>(std::cerr," "));
-  std::cerr << std::endl;
-  std::cerr << "Origin: ";
-  std::copy(origin,origin+3,std::ostream_iterator<double>(std::cerr," "));
-  std::cerr << std::endl;
-  std::cerr << "Extent: ";
-  std::copy(extent,extent+6,std::ostream_iterator<double>(std::cerr," "));
-  std::cerr << std::endl;
+  std::cerr << "Spacing: " << spacing[0] << " " << spacing[1] << " " << spacing[2] << std::endl;
+  std::cerr << "Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+  std::cerr << "Extent: " << extent[0] << " " << extent[1] << " " << extent[2] << " " << extent[3] << " " << extent[4] << " " << extent[5] << std::endl;
 }
 
 bool 

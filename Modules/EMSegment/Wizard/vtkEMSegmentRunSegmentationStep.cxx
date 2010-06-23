@@ -930,14 +930,31 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
 
   if(!this->roiNode)
     {
-    // Create ROI MRML node
-    // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
+      // Create ROI MRML node
+      // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
+      // First find out if roi node in scene 
       vtkMRMLScene *scene = this->GetGUI()->GetLogic()->GetMRMLScene();
-    this->roiNode = static_cast<vtkMRMLROINode*>(scene->CreateNodeByClass("vtkMRMLROINode"));
-    this->roiNode->SetName("SegmentationROI");
-    scene->AddNode(this->roiNode);
-    this->roiNode->SetVisibility(0);
-    // mrmlManger->SetROI_Ref(this->roiNode->GetID());
+      int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLROINode");
+      const char nodeName[40] = "SegmentationROI";
+      // cout << "Blkub " << numNodes << endl;
+      for (int i = 0; i < numNodes; ++i)
+    {
+      vtkMRMLROINode* node = (vtkMRMLROINode*)  scene->GetNthNodeByClass(i, "vtkMRMLROINode");
+      // cout << "Blkub-- " << i  << " " << (node != NULL)  !node->GetName() && !strcmp(node->GetName(), nodeName) << endl;
+
+      if (node != NULL && node->GetName() && !strcmp(node->GetName(), nodeName) )
+        {
+          // This does not work - so  have to delete it 
+          //this->roiNode = node;
+          scene->RemoveNode(node);
+        // break;
+        }
+    }
+      // Create new roi if necessary
+      this->roiNode = static_cast<vtkMRMLROINode*>(scene->CreateNodeByClass("vtkMRMLROINode"));
+      this->roiNode->SetName("SegmentationROI");
+      scene->AddNode(this->roiNode);
+      this->roiNode->SetVisibility(0);
     }
   
   // update the roiNode ROI to reflect what is stored in ROI MRML
