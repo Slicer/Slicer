@@ -12,7 +12,7 @@ if (Slicer3_USE_QT)
   if(NOT DEFINED CTK_DIR)
 #    message(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
-      GIT_REPOSITORY "git://github.com/commontk/CTK.git"
+      GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
       CMAKE_GENERATOR ${gen}

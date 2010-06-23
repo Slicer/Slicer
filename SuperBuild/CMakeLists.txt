@@ -84,8 +84,14 @@ ENDFUNCTION()
 # Prerequisites
 #------------------------------------------------------------------------------
 
-set(git_repo http://github.com/commontk/CTK/raw/master/)
+option(Slicer3_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
 
+set(git_protocol "git")
+if(NOT Slicer3_USE_GIT_PROTOCOL)
+  set(git_protocol "http")
+endif()
+
+set(git_repo http://github.com/commontk/CTK/raw/master/)
 set(file CMake/ExternalProject.cmake)
 downloadFile(${git_repo}/${file} ${CMAKE_BINARY_DIR}/${file})
 
