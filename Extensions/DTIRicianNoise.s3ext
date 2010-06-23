@@ -6,7 +6,8 @@
 
 # scm is source code manager (i.e. svn)
 scm       cvs
-cvspath   https://www.nitrc.org/cvsroot/dtiricianrem/
+cvsroot   :pserver:anonymous@www.nitrc.org:/cvsroot/dtiricianrem
+cvsmodule RicianDTI/RicianDTI
 
 # list dependencies 
 # - these should be names of other modules that have .s3ext files 
