@@ -255,7 +255,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
   if (snode->GetFileName() == 0 && !this->DirectoryButton->directory().isEmpty())
     {
     QString fileExtension = snode->GetDefaultWriteFileExtension();
-    if (fileExtension.isEmpty())
+    if (!fileExtension.isEmpty())
       {
       fileExtension = QString(".") + fileExtension;
       }
