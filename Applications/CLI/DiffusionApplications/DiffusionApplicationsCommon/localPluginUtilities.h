@@ -1,5 +1,5 @@
-#ifndef __localPluginUtilities.h
-#define __localPluginUtilities.h 
+#ifndef __localPluginUtilities_h
+#define __localPluginUtilities_h 
 
 #include "itkImage.h"
 #include "itkImageFileReader.h"
