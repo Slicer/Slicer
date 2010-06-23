@@ -8,9 +8,8 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLMatrixWidgetTest1.cxx
   qMRMLModelTest1.cxx
   qMRMLNodeComboBoxTest1.cxx
+  qMRMLNodeComboBoxTest2.cxx
   qMRMLNodeFactoryTest1.cxx
-  qMRMLNodeSelectorTest1.cxx
-  qMRMLNodeTreeSelectorTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
   qMRMLSceneModelTest1.cxx
   qMRMLTransformProxyModelTest1.cxx
@@ -44,9 +43,8 @@ SIMPLE_TEST( qMRMLListWidgetTest1 )
 SIMPLE_TEST( qMRMLMatrixWidgetTest1 )
 SIMPLE_TEST( qMRMLModelTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest1 )
+SIMPLE_TEST( qMRMLNodeComboBoxTest2 )
 SIMPLE_TEST( qMRMLNodeFactoryTest1 )
-SIMPLE_TEST( qMRMLNodeSelectorTest1 )
-SIMPLE_TEST( qMRMLNodeTreeSelectorTest1 )
 SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )
 SIMPLE_TEST( qMRMLSceneModelTest1 )
 SIMPLE_TEST( qMRMLTransformProxyModelTest1 )

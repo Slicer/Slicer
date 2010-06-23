@@ -5,18 +5,18 @@
 #include <ctkPimpl.h>
 
 /// qMRML includes
-#include "qMRMLNodeSelector.h"
+#include "qMRMLNodeComboBox.h"
 
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLNodeTreeSelectorPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLNodeTreeSelector : public qMRMLNodeSelector
+class QMRML_WIDGETS_EXPORT qMRMLNodeTreeSelector : public qMRMLNodeComboBox
 {
   Q_OBJECT
 public:
   /// Superclass typedef
-  typedef qMRMLNodeSelector Superclass;
+  typedef qMRMLNodeComboBox Superclass;
   
   /// Constructors
   explicit qMRMLNodeTreeSelector(QWidget* parent = 0);

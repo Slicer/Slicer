@@ -40,10 +40,6 @@ SET(qMRMLWidgets_SRCS
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
-  qMRMLNodeSelector.cxx
-  qMRMLNodeSelector.h
-  qMRMLNodeTreeSelector.cxx
-  qMRMLNodeTreeSelector.h
   qMRMLSceneFactoryWidget.cxx
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
@@ -86,8 +82,6 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLMatrixWidget.h
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.h
-  qMRMLNodeSelector.h
-  qMRMLNodeTreeSelector.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
   qMRMLSliceViewWidget.h

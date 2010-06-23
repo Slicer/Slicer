@@ -29,7 +29,7 @@
 #include <qCTKFlowLayout.h>
 
 // qMRML includes
-#include <qMRMLNodeSelector.h>
+#include <qMRMLNodeComboBox.h>
 #include <qMRMLNodeFactory.h>
 
 /// ModuleDescriptionParser includes
@@ -400,14 +400,14 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createStringTagWidget(const ModulePara
 }
 
 //-----------------------------------------------------------------------------
-WIDGET_VALUE_WRAPPER(Point, qMRMLNodeSelector, currentNodeId, setCurrentNode, String);
+WIDGET_VALUE_WRAPPER(Point, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String);
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParameter& moduleParameter)
 {
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList("vtkMRMLFiducialListNode"));
   //TODO - title + " FiducialList"
   //TODO - tparameter->SetNewNodeEnabled(1);
@@ -424,14 +424,14 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
 }
 
 //-----------------------------------------------------------------------------
-WIDGET_VALUE_WRAPPER(Region, qMRMLNodeSelector, currentNodeId, setCurrentNode, String);
+WIDGET_VALUE_WRAPPER(Region, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String);
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModuleParameter& moduleParameter)
 {
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList("vtkMRMLROIListNode"));
   //TODO - title + " RegionList"
   //TODO - tparameter->SetNewNodeEnabled(1);
@@ -447,7 +447,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
 }
 
 //-----------------------------------------------------------------------------
-WIDGET_VALUE_WRAPPER(Image, qMRMLNodeSelector, currentNodeId, setCurrentNode, String);
+WIDGET_VALUE_WRAPPER(Image, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String);
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParameter& moduleParameter)
@@ -487,7 +487,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
 
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
@@ -505,7 +505,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
 }
 
 //-----------------------------------------------------------------------------
-WIDGET_VALUE_WRAPPER(Geometry, qMRMLNodeSelector, currentNodeId, setCurrentNode, String);
+WIDGET_VALUE_WRAPPER(Geometry, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String);
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModuleParameter& moduleParameter)
@@ -535,7 +535,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
   
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setShowHidden(showHidden);
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
@@ -548,7 +548,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
 }
 
 //-----------------------------------------------------------------------------
-WIDGET_VALUE_WRAPPER(Table, qMRMLNodeSelector, currentNodeId, setCurrentNode, String);
+WIDGET_VALUE_WRAPPER(Table, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String);
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParameter& moduleParameter)
@@ -573,7 +573,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
 
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
@@ -585,7 +585,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
 }
 
 //-----------------------------------------------------------------------------
-WIDGET_VALUE_WRAPPER(Transform, qMRMLNodeSelector, currentNodeId, setCurrentNode, String);
+WIDGET_VALUE_WRAPPER(Transform, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String);
 
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleParameter& moduleParameter)
@@ -606,7 +606,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
 
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeSelector * widget = new qMRMLNodeSelector;
+  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),

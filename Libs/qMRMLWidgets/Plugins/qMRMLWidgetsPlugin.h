@@ -5,8 +5,6 @@
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
 #include "qMRMLNodeComboBoxPlugin.h"
-#include "qMRMLNodeSelectorPlugin.h"
-#include "qMRMLNodeTreeSelectorPlugin.h"
 #include "qMRMLSliceViewWidgetPlugin.h"
 #include "qMRMLThreeDRenderViewPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
@@ -34,8 +32,6 @@ public:
             << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin
             << new qMRMLNodeComboBoxPlugin
-            << new qMRMLNodeSelectorPlugin
-            << new qMRMLNodeTreeSelectorPlugin
             << new qMRMLThreeDRenderViewPlugin
             << new qMRMLSliceViewWidgetPlugin
             << new qMRMLTransformSlidersPlugin

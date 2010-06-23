@@ -18,7 +18,7 @@ class qMRMLNodeFactory;
 class qMRMLNodeComboBoxPrivate;
 //class qMRMLSortFilterProxyModel;
 
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QComboBox
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
@@ -33,7 +33,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QComboBox
 
 public:
   /// Superclass typedef
-  typedef QComboBox Superclass;
+  typedef QWidget Superclass;
 
   /// Construct an empty qMRMLNodeComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
@@ -121,6 +121,9 @@ public:
   bool editEnabled()const;
   void setEditEnabled(bool enable);
 
+  /// 
+  /// Model associated to the combobox
+  QAbstractItemModel* model()const;
 public slots:
   ///
   /// Set the scene the NodeSelector listens to.
@@ -129,6 +132,10 @@ public slots:
   ///
   /// Select the node to be current
   void setCurrentNode(vtkMRMLNode* node);
+
+  ///
+  /// Select the node to be current
+  void setCurrentNode(const QString& nodeID);
 
   ///
   /// Create a node of the same type than on the "node types" properties
@@ -141,6 +148,7 @@ public slots:
   ///
   /// Edit the current node
   virtual void editCurrentNode();
+
 signals:
   ///
   /// emit the current displayed node. NULL if
@@ -176,9 +184,11 @@ signals:
   ///
   /// TBD:
   /// void nodeRemoved(vtkMRMLNode*);
-
 protected:
   virtual QAbstractItemModel* createSceneModel();
+  
+  void setComboBox(QComboBox* comboBox);
+  QComboBox* comboBox()const;
 
 protected slots:
   void activateExtraItem(const QModelIndex& index);
