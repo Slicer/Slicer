@@ -351,7 +351,7 @@ void vtkIA_FEMeshGUI::Enter ( )
   
   if (this->FirstEntryToModule)
   {
-    std::cout << "IA_FEMesh: First entry received" << std::endl;
+    //std::cout << "IA_FEMesh: First entry received" << std::endl;
     this->FirstEntryToModule=false;
   }
   else

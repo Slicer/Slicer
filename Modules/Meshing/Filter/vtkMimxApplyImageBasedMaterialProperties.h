@@ -37,15 +37,17 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkUnstructuredGridAlgorithm.h"
 #include "vtkMimxFilterWin32Header.h"
 
-#include "itkImage.h"
-#include "itkOrientedImage.h"
-#include "itkIndex.h"
+//#include "itkImage.h"
+//#include "itkOrientedImage.h"
+//#include "itkIndex.h"
 
+#include "vtkImageData.h"
+#include "vtkMatrix4x4.h"
 
 class vtkUnstructuredGrid;
-typedef itk::Image<signed short, 3>  ImageType;
-typedef itk::OrientedImage<signed short, 3> OrientImageType;
-typedef itk::Index<3> IntegerType;
+//typedef itk::Image<signed short, 3>  ImageType;
+//typedef itk::OrientedImage<signed short, 3> OrientImageType;
+//typedef itk::Index<3> IntegerType;
 
 
 class VTK_MIMXFILTER_EXPORT vtkMimxApplyImageBasedMaterialProperties : public vtkUnstructuredGridAlgorithm
@@ -55,8 +57,8 @@ public:
   static vtkMimxApplyImageBasedMaterialProperties *New();
   vtkTypeRevisionMacro(vtkMimxApplyImageBasedMaterialProperties,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
-  void SetITKImage(ImageType::Pointer);
-  void SetITKOrientedImage(OrientImageType::Pointer);
+//  void SetITKImage(ImageType::Pointer);
+//  void SetITKOrientedImage(OrientImageType::Pointer);
   vtkSetMacro(ElementSetName, const char*);
   vtkSetMacro(ConstantA, double);
   vtkGetMacro(ConstantA, double);
@@ -66,17 +68,30 @@ public:
   vtkGetMacro(ConstantC, double);
   vtkSetMacro(IntensityCalculationMode, int);
   vtkGetMacro(IntensityCalculationMode, int);
+
+  vtkSetObjectMacro(VTKImage,vtkImageData);
+  vtkSetObjectMacro(ImageTransform,vtkMatrix4x4);
+
 protected:
   vtkMimxApplyImageBasedMaterialProperties();
   ~vtkMimxApplyImageBasedMaterialProperties();
-  ImageType::Pointer ITKImage;
-  OrientImageType::Pointer ITKOrientImage;
   
+  //slicer uses VTK image data volumes instead of ITK
+//  ImageType::Pointer ITKImage;
+//  OrientImageType::Pointer ITKOrientImage;
+  vtkImageData *VTKImage;
+  vtkMatrix4x4 *ImageTransform;
+
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   virtual int FillInputPortInformation(int , vtkInformation *);
-  double GetAverageSubRegionIntensityValue(IntegerType StartIndex, IntegerType EndIndex);
-  double GetMedianSubRegionIntensityValue(IntegerType StartIndex, IntegerType EndIndex);
-  double GetMaximumSubRegionIntensityValue(IntegerType StartIndex, IntegerType EndIndex);
+
+  // these accumulation routines are passed 3D bboxes in IJK coordinates to iterate over. The
+  // arguments are (int[3], int[3]) because points have already been transfored from RAS 2 IJK
+  // when these routines are called
+  double GetAverageSubRegionIntensityValue(int StartIndex[3], int EndIndex[3]);
+  double GetMedianSubRegionIntensityValue(int StartIndex[3], int EndIndex[3]);
+  double GetMaximumSubRegionIntensityValue(int StartIndex[3], int EndIndex[3]);
+
   double CalculateMaterialProperties(double Value);
   const char *ElementSetName;
   double ConstantA;

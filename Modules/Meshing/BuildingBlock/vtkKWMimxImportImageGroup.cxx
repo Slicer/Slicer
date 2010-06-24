@@ -195,7 +195,7 @@ int vtkKWMimxImportImageGroup::SelectVolumeToImportToImageCallback()
 
       for (unsigned int i=0; i<hnodes.size(); i++)
       {
-          double imageOrigin[3], imageSpacing[3], imageExtent[6];
+          double imageOrigin[3], imageSpacing[3];
           vtkMRMLScalarVolumeNode *hnode = vtkMRMLScalarVolumeNode::SafeDownCast(hnodes[i]);
           hnode->GetOrigin(imageOrigin);
 

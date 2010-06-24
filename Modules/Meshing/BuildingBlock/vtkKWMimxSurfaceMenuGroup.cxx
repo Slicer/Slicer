@@ -121,9 +121,9 @@ void vtkKWMimxSurfaceMenuGroup::CreateWidget()
         this->OperationMenuButton->SetEnabled(1);
 
         this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
-                "Import Model",this, "ImportModelSurfaceCallback");
-        this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
                 "Load",this, "LoadSurfaceCallback");
+        this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
+                "Import Model",this, "ImportModelSurfaceCallback");
         this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
                 "Delete",this, "DeleteSurfaceCallback");
         this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(

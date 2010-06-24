@@ -34,6 +34,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkKWMimxSurfaceMenuGroup.h"
 #include "vtkBuildingBlockWin32Header.h"
 
+#include "vtkMatrix4x4.h"
+
 class vtkIntArray;
 class vtkKWCheckButton;
 class vtkKWCheckButtonWithLabel;
@@ -80,7 +82,7 @@ public:
   int DefineConversionCallback();
   int ConversionApplyCallback();
   int ConversionCancelCallback();
-  
+
 protected:
   vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup();
   ~vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup();

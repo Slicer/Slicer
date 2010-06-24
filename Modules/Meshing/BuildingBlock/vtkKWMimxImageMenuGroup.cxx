@@ -131,15 +131,15 @@ void vtkKWMimxImageMenuGroup::CreateWidget()
         this->GetApplication()->Script("pack %s -side top -anchor n -padx 2 -pady 15", 
                 this->OperationMenuButton->GetWidgetName());
         this->OperationMenuButton->SetEnabled(1);
-        this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
-                "Load",this, "LoadImageCallback");
+//        this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
+//                "Load",this, "LoadImageCallback");
         this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
                 "Import",this, "ImportMRMLVolumeCallback");
         this->OperationMenuButton->GetWidget()->GetMenu()->AddRadioButton(
                 "Delete",this, "DeleteImageCallback");
         
         // Set the default mode
-        this->OperationMenuButton->GetWidget()->SetValue( "Load" );     
+        this->OperationMenuButton->GetWidget()->SetValue( "Import" );
         
 }
 

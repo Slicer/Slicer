@@ -36,13 +36,16 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkMesh.h"
 #include "itkMimxAccumulator.h"
 
+#include "vtkMath.h"
+
 vtkCxxRevisionMacro(vtkMimxApplyImageBasedMaterialProperties, "$Revision: 1.8 $");
 vtkStandardNewMacro(vtkMimxApplyImageBasedMaterialProperties);
 
 vtkMimxApplyImageBasedMaterialProperties::vtkMimxApplyImageBasedMaterialProperties()
 {
-        this->ITKImage = NULL;
-        this->ITKOrientImage = NULL;
+        //this->ITKImage = NULL;
+        this->VTKImage = NULL;
+        this->ImageTransform = NULL;
         this->ElementSetName = NULL;
         this->ConstantA = 0.0;
         this->ConstantB = 3790.0;
@@ -82,9 +85,9 @@ std::cerr << "Got Output vtkInformation" << std::endl;
                 return 0;
         }
 
-  if ((!this->ITKImage) && (! this->ITKOrientImage) )
+  if ((!this->VTKImage)  )
   {
-        vtkErrorMacro("Set ITK image");
+        vtkErrorMacro("Set VTK image");
         return 0;
   }
         
@@ -114,12 +117,17 @@ std::cerr << "Got Output vtkInformation" << std::endl;
   matarray->SetName(str);
   int i;
   double bounds[6];
-  typedef itk::Mesh<double, 3> MeshType;
-  ImageType::PointType p0;
-  ImageType::PointType p1;
+//  typedef itk::Mesh<double, 3> MeshType;
+//  ImageType::PointType p0;
+//  ImageType::PointType p1;
 
-  IntegerType::IndexType StartIndex;
-  IntegerType::IndexType EndIndex;
+//  IntegerType::IndexType StartIndex;
+//  IntegerType::IndexType EndIndex;
+
+  double p0[4], p1[4];
+  double p0ijk[4], p1ijk[4];
+ // vtkIDType StartPointIndex, EndPointIndex;
+
   input->BuildLinks();
   for (i=0; i < numCells; i++)
   {
@@ -128,45 +136,65 @@ std::cerr << "Got Output vtkInformation" << std::endl;
                         input->GetCellBounds(i, bounds);
                         p0[0] = bounds[0];      p0[1] = bounds[2];      p0[2] = bounds[4];
                         p1[0] = bounds[1];      p1[1] = bounds[3];      p1[2] = bounds[5];
-std::cerr << "ITK Image " << this->ITKImage << std::endl;
-                        if ( this->ITKImage )
+                        p0[3] = p1[3] = 1.0;
+                        std::cerr << "VTK Image " << this->VTKImage << std::endl;
+                        if ( this->VTKImage && this->ImageTransform )
                         {
-                        this->ITKImage->TransformPhysicalPointToIndex(p0, StartIndex);
-                        this->ITKImage->TransformPhysicalPointToIndex(p1, EndIndex);
+//                        this->ITKImage->TransformPhysicalPointToIndex(p0, StartIndex);
+//                        this->ITKImage->TransformPhysicalPointToIndex(p1, EndIndex);
+
+                          // we map from physical (RAS) coords to Index coords (ijk) using the
+                          // matrix to xform to RAS coords since the mesh is in RAS coords in slicer
+                          this->ImageTransform->MultiplyPoint(p0,p0ijk);
+                          this->ImageTransform->MultiplyPoint(p1,p1ijk);
+                          // now find the indices into the image corresponding to this ijk location
+                          //StartPointIndex = this->VTKImage->FindPoint(p0ijk);
+
                         }
                         else
                         {
-                        this->ITKOrientImage->TransformPhysicalPointToIndex(p0, StartIndex);
-                        this->ITKOrientImage->TransformPhysicalPointToIndex(p1, EndIndex);
+                          vtkErrorMacro("MimxApplyImageBasedMaterialProperties not initialized correctly!");
                         }
 std::cerr << "Point 0 " << p0 << std::endl;
 std::cerr << "Point 1 " << p1 << std::endl;
-std::cerr << "Start Index " << StartIndex << std::endl;
-std::cerr << "End Index " << EndIndex << std::endl;
+std::cerr << "Start Index: " << p0ijk << std::endl;
+std::cerr << "End Index: " << p1ijk << std::endl;
 
+                        // switch labels around so all coords are in increasing order
                         for (int j=0;j<3;j++)
                         {
-                        if (StartIndex[j] > EndIndex[j])
+                        if (p0ijk[j] > p1ijk[j])
                         {
-                          int tmpValue = EndIndex[j];
-                          StartIndex[j] = EndIndex[j];
-                          EndIndex[j] = tmpValue;
+                          int tmpValue = p0ijk[j];
+                          p0ijk[j] = p1ijk[j];
+                          p1ijk[j] = tmpValue;
                         }
                         }
-                        //std::cout << "Start Index: " << StartIndex << std::endl;
-                        //std::cout << "End Index: " << EndIndex << std::endl;
+                        std::cout << "Start Index: " << p0ijk << std::endl;
+                        std::cout << "End Index: " << p1ijk << std::endl;
                         
+                        // now calculate the intensity values to apply to the mesh point.  To do this, the
+                        // boundary box points are passed to the appropriate calculation algorithm.  Parameters
+                        // are passed as IJK space indices
                         double intensityvalue;
+
+                        int p0ijk_floor[3], p1ijk_floor[3];
+                        p0ijk_floor[0] = vtkMath::Floor(p0ijk[0]); p0ijk_floor[1] = vtkMath::Floor(p0ijk[1]); p0ijk_floor[2] = vtkMath::Floor(p0ijk[2]);
+                        p1ijk_floor[0] = vtkMath::Floor(p1ijk[0]); p1ijk_floor[1] = vtkMath::Floor(p1ijk[1]); p1ijk_floor[2] = vtkMath::Floor(p1ijk[2]);
+
                         switch (this->IntensityCalculationMode)
                         {
                           case AVERAGE:
-                            intensityvalue = this->GetAverageSubRegionIntensityValue(StartIndex, EndIndex);
+//                            intensityvalue = this->GetAverageSubRegionIntensityValue(StartIndex, EndIndex);
+                              intensityvalue = this->GetAverageSubRegionIntensityValue(p0ijk_floor, p1ijk_floor);
                             break;
                           case MEDIAN:
-                            intensityvalue = this->GetMedianSubRegionIntensityValue(StartIndex, EndIndex);
+//                            intensityvalue = this->GetMedianSubRegionIntensityValue(StartIndex, EndIndex);
+                              intensityvalue = this->GetMedianSubRegionIntensityValue(p0ijk_floor, p1ijk_floor);
                             break;
                           case MAXIMUM:
-                            intensityvalue = this->GetMaximumSubRegionIntensityValue(StartIndex, EndIndex);
+//                            intensityvalue = this->GetMaximumSubRegionIntensityValue(StartIndex, EndIndex);
+                              intensityvalue = this->GetMaximumSubRegionIntensityValue(p0ijk_floor, p1ijk_floor);
                             break;
                           default:
                             vtkErrorMacro("Invalid IntensityCalculationMode. Must be AVERAGE, MEDIAN, or MAXIMUM.");
@@ -206,134 +234,139 @@ int vtkMimxApplyImageBasedMaterialProperties::FillInputPortInformation(int port,
 }
 
 double vtkMimxApplyImageBasedMaterialProperties::
-        GetAverageSubRegionIntensityValue(IntegerType StartIndex, IntegerType EndIndex)
+        GetAverageSubRegionIntensityValue(int StartIndex[3], int EndIndex[3])
 {
         int i, j, k;
-        double PixelIntensity = 0.0;
+        double *PixelIntensity;
+        double AccumulatedIntensity = 0.0;
+        double CurrentIndex[3];
+
+        // calculate how many pixels we will accumulate
         int size = (EndIndex[2] - StartIndex[2] + 1);
         size *= (EndIndex[1] - StartIndex[1] + 1);
         size *= (EndIndex[0] - StartIndex[0] + 1);
+        std::cout << "accumulate over: " << size << "pixels" << endl;
+        
         mimxFunction::MeanAccumulator<double,double> accumulator(size);
         accumulator.Initialize();
-        
+
         for(k=StartIndex[2]; k<= EndIndex[2]; k++)
         {
                 for(j=StartIndex[1]; j<= EndIndex[1]; j++)
                 {
                         for(i=StartIndex[0]; i<= EndIndex[0]; i++)
                         {
-                                IntegerType::IndexType CurrentIndex;
-                                CurrentIndex[0] = i; CurrentIndex[1] = j; CurrentIndex[2] = k;
-                                if ( this->ITKImage )
+                                CurrentIndex[0] = (double)i; CurrentIndex[1] = (double)j; CurrentIndex[2] = (double)k;
+                                if ( this->VTKImage )
                                 {
-                                PixelIntensity = this->ITKImage->GetPixel(CurrentIndex);
-                                accumulator( PixelIntensity );
+                                  // find the index into the pixel array for i,j,k
+                                  vtkIdType PixelIndex = this->VTKImage->FindPoint(CurrentIndex);
+                                  PixelIntensity = this->VTKImage->GetPointData()->GetScalars()->GetTuple(PixelIndex);
+                                  // lookup the scalar value
+                                  AccumulatedIntensity += PixelIntensity[0] ;
+                                  accumulator(PixelIntensity[0]);
                                 }
                                 else
                                 {
-                         double tmpValue = static_cast<double> ( this->ITKOrientImage->GetPixel(CurrentIndex) );
-                         //std::cout << "Index : " << CurrentIndex << " " << tmpValue << std::endl;
-                         //PixelIntensity += tmpValue;
-                         accumulator( tmpValue );
+                                    AccumulatedIntensity = 0.0;
                                 }
                         }
                 }
         }
         
-        PixelIntensity = accumulator.GetValue();
-        
-        return PixelIntensity;
+        //PixelIntensity[0] = AccumulatedIntensity/(double)size;
+        //return PixelIntensity[0];
+        return accumulator.GetValue();
 }
 
 double vtkMimxApplyImageBasedMaterialProperties::
-        GetMedianSubRegionIntensityValue(IntegerType StartIndex, IntegerType EndIndex)
+        GetMedianSubRegionIntensityValue(int StartIndex[3], int EndIndex[3])
 {
-        int i, j, k;
-        double PixelIntensity = 0.0;
-        int size = (EndIndex[2] - StartIndex[2] + 1);
-        size *= (EndIndex[1] - StartIndex[1] + 1);
-        size *= (EndIndex[0] - StartIndex[0] + 1);
-        mimxFunction::MedianAccumulator<double> accumulator(size);
-        accumulator.Initialize();
-        
-        for(k=StartIndex[2]; k<= EndIndex[2]; k++)
-        {
-                for(j=StartIndex[1]; j<= EndIndex[1]; j++)
-                {
-                        for(i=StartIndex[0]; i<= EndIndex[0]; i++)
-                        {
-                                IntegerType::IndexType CurrentIndex;
-                                CurrentIndex[0] = i; CurrentIndex[1] = j; CurrentIndex[2] = k;
-                                if ( this->ITKImage )
-                                {
-                                PixelIntensity = this->ITKImage->GetPixel(CurrentIndex);
-                                accumulator( PixelIntensity );
+    int i, j, k;
+    double *PixelIntensity;
+    double AccumulatedIntensity = 0.0;
+    double CurrentIndex[3];
+
+    // calculate how many pixels we will accumulate
+    int size = (EndIndex[2] - StartIndex[2] + 1);
+    size *= (EndIndex[1] - StartIndex[1] + 1);
+    size *= (EndIndex[0] - StartIndex[0] + 1);
+    std::cout << "accumulate over: " << size << "pixels" << endl;
+
+    mimxFunction::MedianAccumulator<double> accumulator(size);
+    accumulator.Initialize();
+
+    for(k=StartIndex[2]; k<= EndIndex[2]; k++)
+    {
+            for(j=StartIndex[1]; j<= EndIndex[1]; j++)
+            {
+                    for(i=StartIndex[0]; i<= EndIndex[0]; i++)
+                    {
+                        CurrentIndex[0] = (double)i; CurrentIndex[1] = (double)j; CurrentIndex[2] = (double)k;
+                            if ( this->VTKImage )
+                            {
+                              // find the index into the pixel array for i,j,k
+                                vtkIdType PixelIndex = this->VTKImage->FindPoint(CurrentIndex);
+                                // find the contribution of this voxel to the resulting intensity.  If the
+                                // voxel maps outside the range then its contribution is zero and a warning is
+                                // generated
+                                if (PixelIndex >= 0)
+                                  PixelIntensity = this->VTKImage->GetPointData()->GetScalars()->GetTuple(PixelIndex);
+                                else {
+                                    PixelIntensity[0] = 0.0;
+                                    std::cerr <<"vtkMimxApplyImageBasedMaterialProperties: off image lookup for ijk= " << i << "," << j << "," << k << endl;;
                                 }
-                                else
-                                {
-                         double tmpValue = static_cast<double> ( this->ITKOrientImage->GetPixel(CurrentIndex) );
-                         //std::cout << "Index : " << CurrentIndex << " " << tmpValue << std::endl;
-                         //PixelIntensity += tmpValue;
-                         accumulator( tmpValue );
-                                }
-                        }
-                }
-        }
-        
-        PixelIntensity = accumulator.GetValue();
-        
-        return PixelIntensity;
+                              // incorporate the scalar intensity in the median calculation
+                             accumulator(PixelIntensity[0]);
+                            }
+                    }
+            }
+    }
+    return accumulator.GetValue();
 }
 
 double vtkMimxApplyImageBasedMaterialProperties::
-        GetMaximumSubRegionIntensityValue(IntegerType StartIndex, IntegerType EndIndex)
+        GetMaximumSubRegionIntensityValue(int StartIndex[3], int EndIndex[3])
 {
-        int i, j, k;
-        double PixelIntensity = 0.0;
-        int size = (EndIndex[2] - StartIndex[2] + 1);
-        size *= (EndIndex[1] - StartIndex[1] + 1);
-        size *= (EndIndex[0] - StartIndex[0] + 1);
+    int i, j, k;
+    double *PixelIntensity;
+    double MaximumIntensity = -9999999.0;
+    double CurrentIndex[3];
+
+    // calculate how many pixels we will accumulate
+    int size = (EndIndex[2] - StartIndex[2] + 1);
+    size *= (EndIndex[1] - StartIndex[1] + 1);
+    size *= (EndIndex[0] - StartIndex[0] + 1);
+    std::cout << "accumulate over: " << size << "pixels" << endl;
+
         mimxFunction::MaximumAccumulator<double> accumulator(size);
         accumulator.Initialize();
-        
-        for(k=StartIndex[2]; k<= EndIndex[2]; k++)
-        {
-                for(j=StartIndex[1]; j<= EndIndex[1]; j++)
-                {
-                        for(i=StartIndex[0]; i<= EndIndex[0]; i++)
-                        {
-                                IntegerType::IndexType CurrentIndex;
-                                CurrentIndex[0] = i; CurrentIndex[1] = j; CurrentIndex[2] = k;
-                                if ( this->ITKImage )
-                                {
-                                PixelIntensity = this->ITKImage->GetPixel(CurrentIndex);
-                                accumulator( PixelIntensity );
-                                }
-                                else
-                                {
-                         double tmpValue = static_cast<double> ( this->ITKOrientImage->GetPixel(CurrentIndex) );
-                         //std::cout << "Index : " << CurrentIndex << " " << tmpValue << std::endl;
-                         //PixelIntensity += tmpValue;
-                         accumulator( tmpValue );
-                                }
-                        }
-                }
-        }
-        
-        PixelIntensity = accumulator.GetValue();
-        
-        return PixelIntensity;
+
+    for(k=StartIndex[2]; k<= EndIndex[2]; k++)
+    {
+            for(j=StartIndex[1]; j<= EndIndex[1]; j++)
+            {
+                    for(i=StartIndex[0]; i<= EndIndex[0]; i++)
+                    {
+                         CurrentIndex[0] = (double)i; CurrentIndex[1] = (double)j; CurrentIndex[2] = (double)k;
+                            if ( this->VTKImage )
+                            {
+                              // find the index into the pixel array for i,j,k
+                              vtkIdType PixelIndex = this->VTKImage->FindPoint(CurrentIndex);
+                              PixelIntensity = this->VTKImage->GetPointData()->GetScalars()->GetTuple(PixelIndex);
+                             // save the largest voxel value we have come across so far as the result
+//                              if (MaximumIntensity < PixelIntensity[0])
+//                                      MaximumIntensity =  PixelIntensity[0];
+                              accumulator(PixelIntensity[0]);
+                            }
+                    }
+            }
+    }
+    // return the maximum voxel value found in the ROI
+    //return MaximumIntensity;
+    return accumulator.GetValue();
 }
 
-void vtkMimxApplyImageBasedMaterialProperties::SetITKImage(ImageType::Pointer InputImage)
-{
-        this->ITKImage = InputImage;
-}
-
-void vtkMimxApplyImageBasedMaterialProperties::SetITKOrientedImage(OrientImageType::Pointer InputImage)
-{
-        this->ITKOrientImage = InputImage;
-}
 
 double vtkMimxApplyImageBasedMaterialProperties::CalculateMaterialProperties( double ctValue )
 { 

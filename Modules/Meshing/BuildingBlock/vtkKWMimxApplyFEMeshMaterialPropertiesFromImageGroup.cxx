@@ -447,8 +447,8 @@ int vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup::
     vtkUnstructuredGrid *ugrid = vtkMimxMeshActor::SafeDownCast(this->FEMeshList
             ->GetItem(combobox->GetValueIndex(name)))->GetDataSet();
 
-    typedef itk::Image<signed short, 3>  ImageType;
-    ImageType::Pointer itkimage;
+//    typedef itk::Image<signed short, 3>  ImageType;
+//    ImageType::Pointer itkimage;
 
     combobox = this->ImageListComboBox->GetWidget();
     name = combobox->GetValue();
@@ -467,8 +467,16 @@ int vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup::
         callback->ErrorMessage("Poisson's ratio should be beetween -1.0 and 0.5");
         return 0;
     }
-    itkimage = vtkMimxImageActor::SafeDownCast(
-        this->ImageList->GetItem(combobox->GetValueIndex(name)))->GetITKImage();
+//    itkimage = vtkMimxImageActor::SafeDownCast(
+//        this->ImageList->GetItem(combobox->GetValueIndex(name)))->GetITKImage();
+
+    // get the vtk image and the ijk2ras matrix that will put the image and the mesh
+    // in the same RAS coord. system (the default for slicer).
+
+    vtkImageData *vtkimage = vtkMimxImageActor::SafeDownCast(
+        this->ImageList->GetItem(combobox->GetValueIndex(name)))->GetDataSet();
+    vtkMatrix4x4 *imageTransform = vtkMimxImageActor::SafeDownCast(
+            this->ImageList->GetItem(combobox->GetValueIndex(name)))->GetRASToIJKMatrix();
 
 
     char young[256];
@@ -526,7 +534,8 @@ int vtkKWMimxApplyFEMeshMaterialPropertiesFromImageGroup::
     vtkMimxApplyImageBasedMaterialProperties *applymatprops = 
         vtkMimxApplyImageBasedMaterialProperties::New();
     applymatprops->SetInput(ugrid);
-    applymatprops->SetITKImage(itkimage);
+    applymatprops->SetVTKImage(vtkimage);
+    applymatprops->SetImageTransform(imageTransform);
     callback->SetState(0);
     applymatprops->AddObserver(vtkCommand::ErrorEvent, callback, 1.0);
     applymatprops->SetElementSetName( this->ElementSetComboBox->GetWidget()->GetValue() );
