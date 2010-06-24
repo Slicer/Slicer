@@ -21,7 +21,7 @@
     <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget" native="true"/>
    </item>
    <item>
-    <widget class="ctkTransferFunctionWidget" name="TransferFunctionWidget">
+    <widget class="ctkTransferFunctionView" name="TransferFunctionWidget">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -47,9 +47,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkTransferFunctionWidget</class>
+   <class>ctkTransferFunctionView</class>
    <extends>QGraphicsView</extends>
-   <header>ctkTransferFunctionWidget.h</header>
+   <header>ctkTransferFunctionView.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
