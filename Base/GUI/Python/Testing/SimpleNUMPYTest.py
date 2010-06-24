@@ -4,6 +4,7 @@ print "Enabling CTEST_FULL_OUTPUT\n"
 print "\nChecking NUMPY..."
 try:
     import numpy
+    print numpy.__version__
     print "\t----> import numpy WORKS!"
     
 except ImportError:
