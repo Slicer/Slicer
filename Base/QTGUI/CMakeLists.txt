@@ -46,14 +46,20 @@ SET(KIT_SRCS
   qSlicerSliceViewWidget_p.h
   qSlicerWidget.cxx
   qSlicerWidget.h
-  vtkSlicerModelDisplayManager.cxx
-  vtkSlicerModelDisplayManager.h
-  vtkSlicerBoxRepresentation.cxx
-  vtkSlicerBoxRepresentation.h
-  vtkSlicerBoxWidget2.cxx
-  vtkSlicerBoxWidget2.h
-  vtkSlicerManagerInteractorStyle.h
-  vtkSlicerManagerInteractorStyle.cxx
+  vtkMRMLModelDisplayableManager.h
+  vtkMRMLModelDisplayableManager.cxx
+  vtkDisplayableManagerBoxRepresentation.cxx
+  vtkDisplayableManagerBoxRepresentation.h
+  vtkDisplayableManagerBoxWidget2.cxx
+  vtkDisplayableManagerBoxWidget2.h
+  vtkDisplayableManagerInteractorStyle.h
+  vtkDisplayableManagerInteractorStyle.cxx
+  vtkMRMLAbstractLogic.h
+  vtkMRMLAbstractLogic.cxx
+  vtkMRMLAbstractDisplayableManager.h
+  vtkMRMLAbstractDisplayableManager.cxx
+  vtkMRMLDisplayableManagerFactory.h
+  vtkMRMLDisplayableManagerFactory.cxx
   )
 
 # Headers that should run through moc
