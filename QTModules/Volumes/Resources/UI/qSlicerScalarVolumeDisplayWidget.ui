@@ -21,7 +21,7 @@
     <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget" native="true"/>
    </item>
    <item>
-    <widget class="ctkTransferFunctionView" name="TransferFunctionWidget">
+    <widget class="ctkTransferFunctionView" name="TransferFunctionView">
      <property name="maximumSize">
       <size>
        <width>16777215</width>

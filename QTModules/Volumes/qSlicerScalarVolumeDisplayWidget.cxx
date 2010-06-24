@@ -52,7 +52,7 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   this->setupUi(p);
 
   ctkTransferFunctionScene* scene = qobject_cast<ctkTransferFunctionScene*>(
-    this->TransferFunctionWidget->scene());
+    this->TransferFunctionView->scene());
   // Transfer Function
   ctkVTKColorTransferFunction* transferFunction =
     new ctkVTKColorTransferFunction(this->ColorTransferFunction, p);
