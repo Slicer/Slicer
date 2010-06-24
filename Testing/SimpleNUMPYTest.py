@@ -1,4 +1,6 @@
 
+import os
+
 # prevents dashboard from truncating output of this test.
 print "Enabling CTEST_FULL_OUTPUT\n"
 print "\nChecking NUMPY..."
@@ -9,7 +11,6 @@ try:
     
 except ImportError:
     print "\t----> import numpy FAILED."
-    #os._exit(-1)
-    Slicer.tk.eval('exit 1')
+    os._exit(1)
 
-Slicer.tk.eval('exit 0')
+os._exit(0)
