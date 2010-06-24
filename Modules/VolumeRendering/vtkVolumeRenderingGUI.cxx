@@ -847,15 +847,20 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       }
       else if (addedNode->IsA("vtkMRMLVolumeRenderingParametersNode") )
       {
+        vtkErrorMacro("new parameters node added");
         //make sure we only process this for new parameters node from other module
         if (!this->NewParametersNodeForNewInputFlag && !this->NewParametersNodeFromSceneLoadingFlag)
         {
           vtkMRMLVolumeRenderingParametersNode *addedVspNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(addedNode);
+
+          if (this->ScenarioNode == NULL)
+            this->ScenarioNode = this->GetLogic()->CreateScenarioNode();
           
           this->ScenarioNode->SetParametersNodeID(addedVspNode->GetID());
           
-          if (this->GetCurrentParametersNode() != NULL && this->ValidateParametersNode(addedVspNode) )
+          if (this->GetCurrentParametersNode() != NULL && this->ValidateParametersNode(this->GetCurrentParametersNode()) )
           {
+            vtkErrorMacro("new parameters node added, start to init");
             this->InitializePipelineFromParametersNode();
           }
         }
