@@ -847,7 +847,6 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       }
       else if (addedNode->IsA("vtkMRMLVolumeRenderingParametersNode") )
       {
-        vtkErrorMacro("new parameters node added");
         //make sure we only process this for new parameters node from other module
         if (!this->NewParametersNodeForNewInputFlag && !this->NewParametersNodeFromSceneLoadingFlag)
         {
@@ -860,7 +859,6 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
           
           if (this->GetCurrentParametersNode() != NULL && this->ValidateParametersNode(this->GetCurrentParametersNode()) )
           {
-            vtkErrorMacro("new parameters node added, start to init");
             this->InitializePipelineFromParametersNode();
           }
         }
@@ -1316,6 +1314,9 @@ void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
     selectedImageData->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent, this->MRMLCallbackCommand);
     selectedImageData->RemoveObservers(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, this->MRMLCallbackCommand);
     selectedImageData->RemoveObservers(vtkMRMLVolumeNode::DisplayModifiedEvent, this->MRMLCallbackCommand);
+
+    if (vspNode->GetROINode())
+      vspNode->GetROINode()->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand *) this->MRMLCallbackCommand);
   }
 
   this->GetApplicationGUI()->SetExternalProgress(buf, 0.2);
