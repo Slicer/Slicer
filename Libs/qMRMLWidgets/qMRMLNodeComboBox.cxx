@@ -82,7 +82,8 @@ void qMRMLNodeComboBoxPrivate::init()
   sortFilterModel->setSourceModel(model);
   this->setModel(sortFilterModel);
 
-  p->connect(p, SIGNAL(currentIndexChanged(int)), p, SLOT(emitCurrentNodeChanged(int)));
+  p->connect(this->ComboBox, SIGNAL(currentIndexChanged(int)), 
+             p, SLOT(emitCurrentNodeChanged(int)));
 
   p->setEnabled(p->mrmlScene() != 0);
 }
