@@ -1295,6 +1295,7 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
       break;
     case 5:
       fp_oss <<
+        "  vec3 eyePos = vec3(ParaMatrix[0][0], ParaMatrix[0][1], ParaMatrix[0][2]);         \n"
         "  while( (t < rayLen) && (alpha < 0.985) )                                          \n"
         "  {                                                                                 \n"
         "    vec4 nextColor = voxelColor(nextRayOrigin);                                     \n"
@@ -1303,7 +1304,8 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::LoadFragmentShaders()
         "    if (tempAlpha > 0.0)                                                            \n"
         "    {                                                                               \n"
         "      nextColor = directionalLight(nextRayOrigin, lightDir, nextColor);             \n"
-        "      float icpe = ICPE(nextRayOrigin, length(nextColor), alpha, t/rayLen);         \n"
+        "      float toEyeDist = (length(nextRayOrigin - eyePos) - ParaMatrix[2][2])/ParaMatrix[3][2];\n"
+        "      float icpe = ICPE(nextRayOrigin, length(nextColor), alpha, toEyeDist);        \n"
         "                                                                                    \n"
         "      tempAlpha = (1.0-alpha)*tempAlpha*icpe;                                       \n"
         "      pixelColor += nextColor*tempAlpha;                                            \n"
