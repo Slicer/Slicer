@@ -8,8 +8,8 @@ SET(KIT_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
-  ${qSlicerBaseQTBase_SOURCE_DIR}
-  ${qSlicerBaseQTBase_BINARY_DIR}
+  ${MRMLDisplayableManager_SOURCE_DIR}
+  ${MRMLDisplayableManager_BINARY_DIR}
   ${qSlicerBaseQTCore_SOURCE_DIR}
   ${qSlicerBaseQTCore_BINARY_DIR}
   )
@@ -93,6 +93,7 @@ SET(KIT_UI_SRCS
 
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
+  MRMLDisplayableManager
   qSlicerBaseQTCore
   qMRMLWidgets
   )

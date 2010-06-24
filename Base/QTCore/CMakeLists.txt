@@ -76,7 +76,6 @@ ENDIF(Slicer3_USE_PYTHONQT)
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
   ModuleDescriptionParser
-  MRMLCLI
   SlicerBaseLogic
   FreeSurfer # for qSlicerXcedeCatalogIO
   CTKCore

@@ -28,6 +28,8 @@ SET(dirs ${dirs}
   FreeSurfer
   MRML
   MRMLCLI
+  MRMLLogic
+  MRMLDisplayableManager
   )
 
 IF(Slicer3_USE_KWWIDGETS)

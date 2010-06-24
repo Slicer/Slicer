@@ -100,6 +100,8 @@ IF(BUILD_SHARED_LIBS)
        \"../lib/MGHImageIO\",                                       \\
        \"../lib/MRML\",                                             \\
        \"../lib/MRMLCLI\",                                          \\
+       \"../lib/MRMLLogic\",                                        \\
+       \"../lib/MRMLDisplayableManager\",                           \\
        \"../lib/ModuleDescriptionParser\",                          \\
        \"../lib/MRMLIDImageIO\",                                    \\
        \"../lib/Qdec\",                                             \\

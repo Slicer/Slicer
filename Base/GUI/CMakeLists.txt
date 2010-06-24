@@ -25,6 +25,8 @@ set(include_dirs
   ${qMRMLWidgets_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${MRMLDisplayableManager_SOURCE_DIR}
+  ${MRMLDisplayableManager_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   ${FreeSurfer_SOURCE_DIR}
@@ -178,6 +180,7 @@ add_library(${lib_name}
 
 set(libraries 
   ${KWWidgets_LIBRARIES}
+  MRMLDisplayableManager
   ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer

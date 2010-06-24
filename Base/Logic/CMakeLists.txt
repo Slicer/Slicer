@@ -17,6 +17,8 @@ set(include_dirs
   ${MRML_BINARY_DIR}
   ${MRMLCLI_SOURCE_DIR}
   ${MRMLCLI_BINARY_DIR}
+  ${MRMLLogic_SOURCE_DIR}
+  ${MRMLLogic_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   ${vtkTeem_SOURCE_DIR}
@@ -125,6 +127,7 @@ SET(VTK_LIBRARIES
 SET(libs
   MRML
   MRMLCLI
+  MRMLLogic
   vtkITK
   ${OPENTRACKER_LIB}
   FreeSurfer
