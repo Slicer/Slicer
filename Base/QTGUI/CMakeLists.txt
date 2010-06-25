@@ -8,6 +8,8 @@ SET(KIT_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
 
 # Additional directories to include
 SET(KIT_include_directories
+  ${MRMLLogic_SOURCE_DIR}
+  ${MRMLLogic_BINARY_DIR}
   ${MRMLDisplayableManager_SOURCE_DIR}
   ${MRMLDisplayableManager_BINARY_DIR}
   ${qSlicerBaseQTCore_SOURCE_DIR}
@@ -54,12 +56,6 @@ SET(KIT_SRCS
   vtkDisplayableManagerBoxWidget2.h
   vtkDisplayableManagerInteractorStyle.h
   vtkDisplayableManagerInteractorStyle.cxx
-  vtkMRMLAbstractLogic.h
-  vtkMRMLAbstractLogic.cxx
-  vtkMRMLAbstractDisplayableManager.h
-  vtkMRMLAbstractDisplayableManager.cxx
-  vtkMRMLDisplayableManagerFactory.h
-  vtkMRMLDisplayableManagerFactory.cxx
   )
 
 # Headers that should run through moc

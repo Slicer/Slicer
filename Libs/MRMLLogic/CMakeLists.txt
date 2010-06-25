@@ -59,7 +59,18 @@ SET(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.h
   )
 
+SET_SOURCE_FILES_PROPERTIES(
+  vtkMRMLAbstractLogic.cxx
+  vtkMRMLAbstractLogic.h
+  ABSTRACT
+  )
 
+SET_SOURCE_FILES_PROPERTIES(
+  vtkMRMLAbstractLogic.cxx
+  vtkMRMLAbstractLogic.h
+  WRAP_EXCLUDE
+  )
+  
 # TCL Wrapping
 if (VTK_WRAP_TCL)
    include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake") 

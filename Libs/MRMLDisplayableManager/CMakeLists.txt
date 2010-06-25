@@ -58,10 +58,23 @@ INSTALL(FILES
 # Sources
 
 SET(MRMLDisplayableManager_SRCS
-  vtkMRMLAbstractDisplayableManager.cxx
   vtkMRMLAbstractDisplayableManager.h
+  vtkMRMLAbstractDisplayableManager.cxx
+  vtkMRMLDisplayableManagerFactory.h
+  vtkMRMLDisplayableManagerFactory.cxx
+  )
+  
+SET_SOURCE_FILES_PROPERTIES(
+  vtkMRMLAbstractDisplayableManager.h
+  vtkMRMLAbstractDisplayableManager.cxx
+  ABSTRACT
   )
 
+SET_SOURCE_FILES_PROPERTIES(
+  vtkMRMLAbstractDisplayableManager.h
+  vtkMRMLAbstractDisplayableManager.cxx
+  WRAP_EXCLUDE
+  )
 
 # TCL Wrapping
 if (VTK_WRAP_TCL)

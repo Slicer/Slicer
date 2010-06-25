@@ -12,10 +12,12 @@
 
 =========================================================================auto=*/
 
+// VTK includes
 #include "vtkObjectFactory.h"
-#include "vtkMRMLDisplayableManagerFactory.h"
-
 #include "vtkCallbackCommand.h"
+
+// MRMLDisplayableManager includes
+#include "vtkMRMLDisplayableManagerFactory.h"
 
 vtkCxxRevisionMacro(vtkMRMLDisplayableManagerFactory, "$Revision: 13859 $");
 vtkStandardNewMacro(vtkMRMLDisplayableManagerFactory);

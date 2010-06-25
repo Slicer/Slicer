@@ -11,29 +11,29 @@
   Version:   $Revision: 13859 $
 
 =========================================================================auto=*/
-///  vtkMRMLDisplayableManagerFactory - superclass for slicer logic classes
+
+/// Factory where displayable manager classe should be registered with
 /// 
-/// Superclass for all slicer logic classes (application, views, slices).
-/// There must be a corresponding vtkSlicerGUI subclass corresponding 
-/// to each logic class that handles all GUI interaction (no GUI code
-/// goes in the logic class).
+/// A displayable manager class is responsible to represente a 
+/// MRMLDisplayable node in a renderer.
+/// 
 
 #ifndef __vtkMRMLDisplayableManagerFactory_h
 #define __vtkMRMLDisplayableManagerFactory_h
 
+// VTK includes
 #include "vtkObject.h"
-#include "vtkObjectFactory.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
 
-#include "qSlicerBaseQTGUIExport.h"
-
+// MRMLDisplayableManager includes
 #include "vtkMRMLAbstractDisplayableManager.h"
 
-class Q_SLICER_BASE_QTGUI_EXPORT vtkMRMLDisplayableManagerFactory : public vtkObject 
-{
-  public:
+#include "vtkMRMLDisplayableManagerWin32Header.h"
 
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactory : public vtkObject 
+{
+public:
   /// The Usual vtk class functions
   static vtkMRMLDisplayableManagerFactory *New();
   vtkTypeRevisionMacro(vtkMRMLDisplayableManagerFactory,vtkObject);
@@ -63,9 +63,9 @@ protected:
   std::vector<vtkMRMLAbstractDisplayableManager *> DisplayableManagers;
   //ETX
 
-  vtkMRMLScene *MRMLScene;
-  vtkRenderer *Renderer;
-  vtkRenderWindowInteractor *Interactor;
+  vtkMRMLScene *               MRMLScene;
+  vtkRenderer *                Renderer;
+  vtkRenderWindowInteractor *  Interactor;
 };
 
 #endif
