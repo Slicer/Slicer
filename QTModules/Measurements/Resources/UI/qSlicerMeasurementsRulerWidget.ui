@@ -91,7 +91,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="qMRMLNodeSelector" name="RulerNodeSelector">
+         <widget class="qMRMLNodeComboBox" name="RulerNodeSelector">
           <property name="nodeTypes">
            <stringlist>
             <string>vtkMRMLMeasurementsRulerNode</string>
@@ -294,9 +294,9 @@
    <header>ctkComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLNodeSelector</class>
+   <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
-   <header>qMRMLNodeSelector.h</header>
+   <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
