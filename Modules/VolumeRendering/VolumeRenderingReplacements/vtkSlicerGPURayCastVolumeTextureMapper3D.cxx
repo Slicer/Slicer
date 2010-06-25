@@ -162,13 +162,6 @@ void vtkSlicerGPURayCastVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolum
 
   this->TimeToDraw = static_cast<float>(this->Timer->GetElapsedTime());
 
-  // If the timer is not accurate enough, set it to a small
-  // time so that it is not zero
-  if ( this->TimeToDraw == 0.0 )
-  {
-    this->TimeToDraw = 0.0001;
-  }
-
   //printf("ray step: %f, fps: %f\n", this->RaySteps, 1.0/this->TimeToDraw);
 
 //  double progress = 1;
