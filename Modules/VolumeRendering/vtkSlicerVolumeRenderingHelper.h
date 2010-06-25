@@ -267,7 +267,7 @@ protected:
 
     // Description:
     // if cpu ray casting is in interaction mode
-    int CPURayCastingInteractionFlag;
+    int VolumeRenderingInteractionFlag;
 
     // Description:
     // Indicates if the VolumeRendering is Paused or not
@@ -313,7 +313,7 @@ private:
     void SetROIRange(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
     // Description:
-    // Setup CPU ray casing interactive mode parameters
-    void SetupCPURayCastInteractive();
+    // Setup volume rendering interactive mode parameters
+    void SetupVolumeRenderingInteractive();
 };
 #endif

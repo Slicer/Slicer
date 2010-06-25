@@ -1038,12 +1038,12 @@ int vtkVolumeRenderingLogic::SetupMapperFromParametersNode(vtkMRMLVolumeRenderin
 }
 
 /* return values:
- * 0: cpu ray cast not used
+ * 0: vtk gpu ray cast mapper used
  * 1: success
  */
-int vtkVolumeRenderingLogic::SetupCPURayCastInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown)
+int vtkVolumeRenderingLogic::SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown)
 {
-  if (this->Volume->GetMapper() != this->MapperRaycast)
+  if (vspNode->GetCurrentVolumeMapper() == 1)
     return 0;
 
   //when start (rendering??) set CPU ray casting to be interactive
@@ -1054,6 +1054,9 @@ int vtkVolumeRenderingLogic::SetupCPURayCastInteractive(vtkMRMLVolumeRenderingPa
     this->MapperRaycast->SetAutoAdjustSampleDistances(1);
     this->MapperRaycast->ManualInteractiveOn();
     this->MapperRaycast->SetManualInteractiveRate(desiredTime);
+
+    this->MapperGPURaycast->SetFramerate(vspNode->GetExpectedFPS());
+    this->MapperGPURaycastII->SetFramerate(vspNode->GetExpectedFPS());
   }
   else
   {
@@ -1062,6 +1065,9 @@ int vtkVolumeRenderingLogic::SetupCPURayCastInteractive(vtkMRMLVolumeRenderingPa
     this->MapperRaycast->SetSampleDistance(vspNode->GetEstimatedSampleDistance());
     this->MapperRaycast->SetImageSampleDistance(1.0f);
     this->MapperRaycast->ManualInteractiveOff();
+
+    this->MapperGPURaycast->SetFramerate(1.0);
+    this->MapperGPURaycastII->SetFramerate(1.0);
   }
 
   return 1;

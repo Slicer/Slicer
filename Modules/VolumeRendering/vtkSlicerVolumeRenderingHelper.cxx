@@ -127,7 +127,7 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->PB_PauseResume = NULL;
   this->VI_PauseResume = NULL;
 
-  this->CPURayCastingInteractionFlag = 0;
+  this->VolumeRenderingInteractionFlag = 0;
   this->SetupGUIFromParametersNodeFlag = 0;
 
   this->RenderingPaused = 0;
@@ -267,7 +267,7 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->FrameFPS->SetParent(this->FrameTechniques->GetFrame());
     this->FrameFPS->Create();
     this->FrameFPS->AllowFrameToCollapseOff();
-    this->FrameFPS->SetLabelText("Expected Interactive Framerate");
+    this->FrameFPS->SetLabelText("Interactive Speed");
     this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameFPS->GetWidgetName() );
 
     this->SC_CheckFPS = vtkKWCheckButton::New();
@@ -1843,19 +1843,19 @@ void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
   if (this->Gui == NULL)
     return;
 
-  int val = this->Gui->GetLogic()->SetupCPURayCastInteractive(this->Gui->GetCurrentParametersNode(), isDown);
+  int val = this->Gui->GetLogic()->SetupVolumeRenderingInteractive(this->Gui->GetCurrentParametersNode(), isDown);
 
   if (val == 0)
     return;
 
   if (isDown == 1)
-    this->CPURayCastingInteractionFlag = 1;
+    this->VolumeRenderingInteractionFlag = 1;
   else
   {
-    if (this->CPURayCastingInteractionFlag == 1)//avoid endless loop
+    if (this->VolumeRenderingInteractionFlag == 1)//avoid endless loop
     {
       this->Gui->RequestRender();
-      this->CPURayCastingInteractionFlag = 0;
+      this->VolumeRenderingInteractionFlag = 0;
     }
   }
 }

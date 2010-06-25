@@ -103,7 +103,7 @@ public:
    * 0: cpu ray cast not used
    * 1: success
    */
-  int SetupCPURayCastInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown);
+  int SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown);
 
   vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
 

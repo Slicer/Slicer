@@ -131,6 +131,14 @@ void vtkSlicerGPURayCastVolumeMapper::Render(vtkRenderer *ren, vtkVolume *vol)
     this->InitializeRayCast();
     }
 
+  //adjust ray steps based on requrestd frame rate
+  if ( this->TimeToDraw == 0.0 )
+  {
+    this->TimeToDraw = 0.0001;
+  }
+  
+  this->AdaptivePerformanceControl();
+  
   glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
 
   //setup material based on volume property
