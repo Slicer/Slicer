@@ -39,19 +39,17 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <default></default>
     </image>
 </parameters>
-
-<parameters advanced="true">
-    <label>Deformation Field</label>
-    <description>The deformation field is the last transform, the first applied since transforms are backward</description>
-    <string-enumeration>
-      <name>typeOfField</name>
-      <longflag>--hfieldtype</longflag>
-      <description>Set if the deformation field is an h-Field</description>
-      <label>Displacement or H-Field</label>
-      <element>displacement</element>
-      <element>h-Field</element>
-      <default>h-Field</default>
-    </string-enumeration>
+<parameters>
+  <label>Transform Parameters</label>
+  <description>Parameters used to transform the input image into the output image</description>
+    <transform fileExtensions=".mat">
+      <name>transformationFile</name>
+      <label>Transform Node</label>
+      <flag>-f</flag>
+      <longflag>--transformationFile</longflag>
+      <default></default>
+      <channel>input</channel>
+    </transform>
      <image type="vector">
         <name>deffield</name>
         <label>Deformation Field Volume</label>
@@ -61,52 +59,58 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
         <description>File containing the deformation field (3D vector image containing vectors with 3 components)</description>
         <default></default>
      </image>
-</parameters>
-
-<parameters advanced="true">
-    <label>Resampling Parameters</label>
-    <description>Parameters used for resampling</description>
-    <integer>
-      <name>numberOfThread</name>
-      <flag>-n</flag>
-      <longflag>--number_of_thread</longflag>
-      <description>Number of thread used to compute the output image</description>
-      <label>Number Of Threads</label>
-      <default>0</default>
-    </integer>
     <string-enumeration>
+      <name>typeOfField</name>
+      <longflag>--hfieldtype</longflag>
+      <description>Set if the deformation field is an -Field</description>
+      <label>Displacement or h-Field</label>
+      <element>displacement</element>
+      <element>h-Field</element>
+      <default>h-Field</default>
+    </string-enumeration>
+</parameters>
+<parameters>
+  <label>Processing Options</label>
+  <string-enumeration>
+      <name>interpolationType</name>
+      <flag>-i</flag>
+      <longflag>--interpolation</longflag>
+      <description>Sampling algorithm (linear , nn (nearest neighborhoor), ws (WindowedSinc), bs (BSpline) )</description>
+      <label>Interpolation</label>
+      <element>linear</element>
+      <element>nn</element>
+      <element>ws</element>
+      <element>bs</element>
+      <default>linear</default>
+  </string-enumeration>
+  <string-enumeration>
       <name>correction</name>
       <longflag>--correction</longflag>
       <description>Correct the tensors if computed tensor is not semi-definite positive</description>
-      <label>Correction</label>
+      <label>Tensors Correction</label>
       <element>zero</element>
       <element>none</element>
       <element>abs</element>
       <element>nearest</element>
-      <default>none</default>
+      <default>zero</default>
     </string-enumeration>
-    <double>
-      <name>defaultPixelValue</name>
-      <flag>-p</flag>
-      <longflag>--default_pixel_value</longflag>
-      <description>Default pixel value for samples falling outside of the input region</description>
-      <label>Default Pixel Value</label>
-      <default>1e-10</default>
-    </double>
 </parameters>
-
-
-<parameters>
-  <label>Transform Parameters</label>
-  <description>Parameters used to transform the input image into the output image</description>
-    <transform fileExtensions=".txt">
-      <name>transformationFile</name>
-      <label>Transform Node</label>
-      <flag>-f</flag>
-      <longflag>--transformationFile</longflag>
-      <default></default>
-      <channel>input</channel>
-    </transform>
+<parameters advanced="true">
+  <label>Tensor Transform Type</label>
+    <string-enumeration>
+      <name>ppd</name>
+      <longflag>--transform_tensor_method</longflag>
+      <flag>-T</flag>
+      <description>Chooses between 2 methods to transform the tensors: Finite Strain (FS), faster but less accurate, or Preservation of the Principal Direction (PPD)</description>
+      <label>Finite Strain (FS) or \nPreservation of the Principal Direction (PPD)</label>
+      <element>PPD</element>
+      <element>FS</element>
+      <default>PPD</default>
+    </string-enumeration>
+</parameters>
+<parameters advanced="true">
+    <label>Advanced Transform Parameters</label>
+    <description>Those parameters should normally not be modified</description>
     <string-enumeration>
       <name>transformsOrder</name>
       <longflag>--transform_order</longflag>
@@ -114,36 +118,15 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Transforms Order</label>
       <element>input-to-output</element>
       <element>output-to-input</element>
-      <default>input-to-output</default>
+      <default>output-to-input</default>
     </string-enumeration>
     <boolean>
       <name>bulk</name>
       <longflag>--bulk</longflag>
       <description>If the transform file contains one affine and one BSpline transform, sets the affine transform as a bulk transform in the BSpline transform</description>
       <label>Bulk Transform</label>
-      <default>false</default>
+      <default>true</default>
     </boolean>
-</parameters>
-<parameters advanced="true">
-    <label>Manual Transform (Used only if no transform node set)</label>
-    <double-vector>
-      <name>transformMatrix</name>
-      <flag>-m</flag>
-      <longflag>--transform_matrix</longflag>
-      <description>12 parameters of the transform matrix by rows ( --last 3 being translation-- )</description>
-      <label>Transform Matrix</label>
-      <default>1,0,0,0,1,0,0,0,1,0,0,0</default>
-    </double-vector>
-    <string-enumeration>
-      <name>transformType</name>
-      <flag>-t</flag>
-      <longflag>--transform</longflag>
-      <description>Transform algorithm\nrt = Rigid Transform\na = Affine Transform</description>
-      <label>Transform Type</label>
-      <element>rt</element>
-      <element>a</element>
-      <default>a</default>
-    </string-enumeration>
     <boolean>
       <name>space</name>
       <longflag>--spaceChange</longflag>
@@ -153,7 +136,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     </boolean>
 </parameters>
 <parameters advanced="true">
-    <label>Rigid/Affine Parameters</label>
+    <label>Advanced Rigid/Affine Parameters</label>
     <point multiple="false" coordinateSystem="lps">
       <name>rotationPoint</name>
       <flag>-r</flag>
@@ -189,72 +172,9 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     </boolean>
 </parameters>
 
-<parameters advanced="true">
-  <label>Tensor Transform Type</label>
-    <string-enumeration>
-      <name>ppd</name>
-      <longflag>--transform_tensor_method</longflag>
-      <flag>-T</flag>
-      <description>Chooses between 2 methods to transform the tensors: Finite Strain (FS), faster but less accurate, or Preservation of the Principal Direction (PPD)</description>
-      <label>Finite Strain (FS) or \nPreservation of the Principal Direction (PPD)</label>
-      <element>PPD</element>
-      <element>FS</element>
-      <default>PPD</default>
-    </string-enumeration>
-</parameters>
-
-
-
-<parameters>
-  <label>Interpolation Type</label>
-  <string-enumeration>
-      <name>interpolationType</name>
-      <flag>-i</flag>
-      <longflag>--interpolation</longflag>
-      <description>Sampling algorithm (linear , nn (nearest neighborhoor), ws (WindowedSinc), bs (BSpline) )</description>
-      <label>Interpolation</label>
-      <element>linear</element>
-      <element>nn</element>
-      <element>ws</element>
-      <element>bs</element>
-      <default>linear</default>
-  </string-enumeration>
-</parameters>
 
 <parameters advanced="true">
-    <label>Windowed Sinc Interpolate Function Parameters</label>
-    <description>Parameters used for the Windowed Sinc interpolation</description>
-    <string-enumeration>
-      <name>windowFunction</name>
-      <flag>-W</flag>
-      <longflag>--window_function</longflag>
-      <description>Window Function \nh = Hamming \nc = Cosine \nw = Welch \nl = Lanczos \nb = Blackman</description>
-      <label>Window Function</label>
-      <element>h</element>
-      <element>c</element>
-      <element>w</element>
-      <element>l</element>
-      <element>b</element>
-      <default>c</default>
-     </string-enumeration>
-</parameters>
-
-<parameters advanced="true">
-    <label>BSpline Interpolate Function Parameters</label>
-    <description>Parameters used for the BSpline interpolation</description>
-    <integer>
-      <name>splineOrder</name>
-      <flag>-o</flag>
-      <longflag>--spline_order</longflag>
-      <description>Spline Order (Spline order may be from 0 to 5)</description>
-      <label>Spline Order</label>
-      <default>3</default>
-    </integer>
-</parameters>
-
-
-<parameters advanced="true">
-  <label>Output Parameters</label>
+  <label>Manual Output Parameters</label>
   <description>Parameters of the output image</description>
     <double-vector>
       <name>outputImageSpacing</name>
@@ -289,5 +209,80 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <default>0,0,0,0,0,0,0,0,0</default>
     </double-vector>
 </parameters>
+<parameters advanced="true">
+    <label>Advanced Resampling Parameters</label>
+    <description>Parameters used for resampling</description>
+    <integer>
+      <name>numberOfThread</name>
+      <flag>-n</flag>
+      <longflag>--number_of_thread</longflag>
+      <description>Number of thread used to compute the output image</description>
+      <label>Number Of Threads</label>
+      <default>0</default>
+    </integer>
+    <double>
+      <name>defaultPixelValue</name>
+      <flag>-p</flag>
+      <longflag>--default_pixel_value</longflag>
+      <description>Default pixel value for samples falling outside of the input region</description>
+      <label>Default Pixel Value</label>
+      <default>1e-10</default>
+    </double>
+</parameters>
+
+
+<parameters advanced="true">
+    <label>Windowed Sinc Interpolate Function Parameters</label>
+    <description>Parameters used for the Windowed Sinc interpolation</description>
+    <string-enumeration>
+      <name>windowFunction</name>
+      <flag>-W</flag>
+      <longflag>--window_function</longflag>
+      <description>Window Function \nh = Hamming \nc = Cosine \nw = Welch \nl = Lanczos \nb = Blackman</description>
+      <label>Window Function</label>
+      <element>h</element>
+      <element>c</element>
+      <element>w</element>
+      <element>l</element>
+      <element>b</element>
+      <default>c</default>
+     </string-enumeration>
+</parameters>
+
+<parameters advanced="true">
+    <label>BSpline Interpolate Function Parameters</label>
+    <description>Parameters used for the BSpline interpolation</description>
+    <integer>
+      <name>splineOrder</name>
+      <flag>-o</flag>
+      <longflag>--spline_order</longflag>
+      <description>Spline Order (Spline order may be from 0 to 5)</description>
+      <label>Spline Order</label>
+      <default>3</default>
+    </integer>
+</parameters>
+
+<parameters advanced="true">
+    <label>Manual Transform (Used only if no transform node set)</label>
+    <double-vector>
+      <name>transformMatrix</name>
+      <flag>-m</flag>
+      <longflag>--transform_matrix</longflag>
+      <description>12 parameters of the transform matrix by rows ( --last 3 being translation-- )</description>
+      <label>Transform Matrix</label>
+      <default>1,0,0,0,1,0,0,0,1,0,0,0</default>
+    </double-vector>
+    <string-enumeration>
+      <name>transformType</name>
+      <flag>-t</flag>
+      <longflag>--transform</longflag>
+      <description>Transform algorithm\nrt = Rigid Transform\na = Affine Transform</description>
+      <label>Transform Type</label>
+      <element>rt</element>
+      <element>a</element>
+      <default>a</default>
+    </string-enumeration>
+</parameters>
+
 
 </executable>
