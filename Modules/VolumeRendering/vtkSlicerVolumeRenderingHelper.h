@@ -153,7 +153,7 @@ protected:
 
     // Description:
     // Checkbox for enabling/disabling interactive rendering methods
-    vtkKWCheckButton *SC_CheckFPS;
+    vtkKWCheckButton *SC_EnablePerformanceControl;
 
     // Description:
     // Adjust the frame for interactive rendering methods
