@@ -87,36 +87,34 @@
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject 
 {
-  public:
+public:
 
   /// Typedef for member functions of SlicerLogic that can be used as
   /// scheduled tasks.
-  //BTX
   typedef void (vtkMRMLAbstractLogic::*TaskFunctionPointer)(void *clientdata);
-  //ETX
   
   /// The Usual vtk class functions
-  //static vtkMRMLAbstractLogic *New();
-  //vtkTypeRevisionMacro(vtkMRMLAbstractLogic,vtkObject);
+  static vtkMRMLAbstractLogic *New();
   void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeRevisionMacro(vtkMRMLAbstractLogic,vtkObject);
 
   /// Description
   /// All logic classes need to know about the current mrml scene
-  vtkGetObjectMacro (MRMLScene, vtkMRMLScene);
+  vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
 
   /// 
-  /// API for setting or setting and observing MRMLScene
-  void SetMRMLScene ( vtkMRMLScene *mrml );
-  void SetAndObserveMRMLScene ( vtkMRMLScene *mrml );
-  void SetAndObserveMRMLSceneEvents ( vtkMRMLScene *mrml, vtkIntArray *events );
+  /// API for setting and observing MRMLScene
+  void SetMRMLScene(vtkMRMLScene *mrml);
+  void SetAndObserveMRMLScene(vtkMRMLScene *mrml);
+  void SetAndObserveMRMLSceneEvents(vtkMRMLScene *mrml, vtkIntArray *events);
 
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-      unsigned long /*event*/, void * /*callData*/ ) { };
+  virtual void ProcessMRMLEvents(vtkObject * /*caller*/, 
+                                 unsigned long /*event*/, void * /*callData*/){ };
 
-  virtual void ProcessLogicEvents( vtkObject * /*caller*/, 
-      unsigned long /*event*/, void * /*callData*/ ) { };
+  virtual void ProcessLogicEvents(vtkObject * /*caller*/, 
+                                  unsigned long /*event*/, void * /*callData*/){ };
 
-  virtual void ProcessLogicEvents() {};
+  virtual void ProcessLogicEvents(){ };
 
   /// 
   /// Name of this node
@@ -144,16 +142,10 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject
 protected:
   vtkMRMLAbstractLogic();
   virtual ~vtkMRMLAbstractLogic();
-  vtkMRMLAbstractLogic(const vtkMRMLAbstractLogic&);
-  void operator=(const vtkMRMLAbstractLogic&);
-
+  
   /// Register node classes into the mrml scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes(){}
-
-  vtkMRMLScene *MRMLScene;
-
-  char *Name;
 
   //BTX
   /// a shared set of functions that call the 
@@ -166,19 +158,22 @@ protected:
 
   //ETX
 
-  /// 
   /// Holder for MRML and Logic callbacks
-  vtkCallbackCommand *LogicCallbackCommand;
-  vtkCallbackCommand *MRMLCallbackCommand;
+  vtkCallbackCommand * LogicCallbackCommand;
+  vtkCallbackCommand * MRMLCallbackCommand;
 
-  /// 
   /// Flag to avoid event loops
   int InLogicCallbackFlag;
   int InMRMLCallbackFlag;
 
 
-  vtkObserverManager *MRMLObserverManager;
-
+  vtkMRMLScene *       MRMLScene;
+  vtkObserverManager * MRMLObserverManager;
+  char *               Name;
+  
+private:
+  vtkMRMLAbstractLogic(const vtkMRMLAbstractLogic&); // Not implemented
+  void operator=(const vtkMRMLAbstractLogic&);       // Not implemented
 };
 
 #endif

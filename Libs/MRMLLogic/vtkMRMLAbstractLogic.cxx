@@ -19,6 +19,10 @@
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
 
+//---------------------------------------------------------------------------
+vtkStandardNewMacro(vtkMRMLAbstractLogic);
+vtkCxxRevisionMacro(vtkMRMLAbstractLogic, "$Revision: 13525 $");
+
 //----------------------------------------------------------------------------
 vtkMRMLAbstractLogic::vtkMRMLAbstractLogic()
 {
@@ -61,9 +65,9 @@ vtkMRMLAbstractLogic::~vtkMRMLAbstractLogic()
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->vtkObject::PrintSelf(os, indent);
+  this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "SlicerLogic: " << this->GetClassName() << "\n";
+  os << indent << "ClassName:   " << this->GetClassName() << "\n";
   os << indent << "MRMLScene:   " << this->GetMRMLScene() << "\n";
 }
 

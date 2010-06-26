@@ -38,7 +38,9 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager : pub
 {
 public:
   
-  //void PrintSelf(ostream& os, vtkIndent indent);
+  static vtkMRMLAbstractDisplayableManager *New();
+  void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeRevisionMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
 
   vtkGetObjectMacro(Renderer, vtkRenderer);
   vtkSetObjectMacro(Renderer, vtkRenderer);
@@ -46,17 +48,20 @@ public:
   vtkGetObjectMacro(Interactor, vtkRenderWindowInteractor);
   vtkSetObjectMacro(Interactor, vtkRenderWindowInteractor);
 
-  virtual void Create() = 0;
+  /// Method create should be re-implemented
+  virtual void Create(){};
 
 
 protected:
   vtkMRMLAbstractDisplayableManager();
   virtual ~vtkMRMLAbstractDisplayableManager();
-  vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&);
-  void operator=(const vtkMRMLAbstractDisplayableManager&);
-
+  
   vtkRenderWindowInteractor * Interactor;
   vtkRenderer               * Renderer;
+  
+private:
+  vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&); // Not implemented
+  void operator=(const vtkMRMLAbstractDisplayableManager&);                    // Not implemented
 };
 
 #endif

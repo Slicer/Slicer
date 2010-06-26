@@ -18,12 +18,16 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractDisplayableManager.h"
+
+//---------------------------------------------------------------------------
+vtkStandardNewMacro(vtkMRMLAbstractDisplayableManager);
+vtkCxxRevisionMacro(vtkMRMLAbstractDisplayableManager, "$Revision: 13525 $");
                        
 //----------------------------------------------------------------------------
 vtkMRMLAbstractDisplayableManager::vtkMRMLAbstractDisplayableManager()
 {
-  this->Renderer = NULL;
-  this->Interactor = NULL;
+  this->Renderer = 0;
+  this->Interactor = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -32,10 +36,8 @@ vtkMRMLAbstractDisplayableManager::~vtkMRMLAbstractDisplayableManager()
 }
 
 //----------------------------------------------------------------------------
-/*void vtkMRMLAbstractDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAbstractDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->vtkObject::PrintSelf(os, indent);
-
-  os << indent << "vtkMRMLAbstractDisplayableManager:             " << this->GetClassName() << "\n";
-}*/
+  this->Superclass::PrintSelf(os, indent);
+}
 
