@@ -33,7 +33,7 @@ def getThisNodesInfoAsTextTableLine(executableNode, label):
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         line = "|Program {0} || {1}\n {2}".format(label,
-            getTextValuesFromNode(labelNode.childNodes), "|-")
+            getTextValuesFromNode(labelNode.childNodes), "|-\n")
         return line
 
 
@@ -132,11 +132,10 @@ def DumpSEMMediaWikiHeader(executableNode, outfile):
     outfile.write("\n\n")
 
     outfile.write("===Authors, Collaborators & Contact===\n\n")
-    outfile.write(getThisNodesInfoAsText(
-            executableNode, "contributor").format("Author: {0}\n"))
+    outfile.write("Author: {0}\n\n".format(
+            getThisNodesInfoAsText( executableNode, "contributor")))
     outfile.write("Contributors: \n\n")
-    outfile.write("Contact: name, email\n")
-    outfile.write("\n\n")
+    outfile.write("Contact: name, email\n\n")
 
     outfile.write("===Module Description===\n")
     outfile.write("{| style=\"color:green\" border=\"1\"\n")
@@ -283,6 +282,9 @@ if __name__ == '__main__':
         action="store", type="string", default=None,
         metavar="MEDIAWIKIFILE",
         help="The MEDIAWIKIFILE ascii file with media-wiki formatted text.")
+    parser.add_option("-p", "--parts", dest="parts",
+        action="store", type="string", default="hbf",
+        help="The parts to print out, h=Header,b=body,f=footer")
     parser.epilog = program_description
 #    print program_description
     (options, args) = parser.parse_args()
@@ -297,6 +299,17 @@ if __name__ == '__main__':
     else:
         outfile = sys.stdout
 
-    DumpSEMMediaWikiAll(ExecutableNode, outfile)
+    for stage in options.parts:
+        if stage == "h":
+            DumpSEMMediaWikiHeader(ExecutableNode, outfile)
+        elif stage == "b":
+            DumpSEMMediaWikiFeatures(ExecutableNode, outfile)
+        elif stage == "f":
+            DumpSEMMediaWikiFooter(ExecutableNode, outfile)
+        else:
+            parser.error(
+                "The only valid options are [h|b|f]: Given {0}".format(
+                    stage))
+
     if options.xmlfilename != None:
         outfile.close()
