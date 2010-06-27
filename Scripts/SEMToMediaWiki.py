@@ -24,24 +24,6 @@ def getTextValuesFromNode(nodelist):
             rc.append(node.data)
     return ''.join(rc)
 
-#vv=[node for node in ll.childNodes[0].childNodes if node.nodeName == "description" ]
-#vv=[node for node in ll.childNodes[0].childNodes if node.nodeName == "parameters" ]
-
-def getThisNodesInfoAsTextTableLine(currentNode, label):
-    r"""
-    Create a formatted text string suitable for inclusion in a MediaWiki table
-    """
-
-    labelNodeList = [node for node in
-    currentNode.childNodes if node.nodeName == label]
-
-    if len(labelNodeList) > 0:
-        labelNode = labelNodeList[0]  # Only get the first one
-        line = "|Program {0} || {1}\n{2}".format(label,
-            getTextValuesFromNode(labelNode.childNodes), "|-\n")
-        return line
-    return ""
-
 
 def getThisNodesInfoAsText(currentNode, label):
     r"""
@@ -111,8 +93,8 @@ def GetSEMDoc(filename):
     """
     doc = xml.dom.minidom.parse(filename)
     executableNode = [node for node in doc.childNodes if
-            node.nodeName == "executable" ]
-    #Only use the first 
+            node.nodeName == "executable"]
+    #Only use the first
     return executableNode[0]
 
 
@@ -120,69 +102,84 @@ def DumpSEMMediaWikiHeader(executableNode):
     r"""
     Just dump the header section of the MediaWikiPage
     """
-    outRegion = ""
-    outRegion += "__NOTOC__\n\n"
-    outRegion += "==={0}===\n".format(
-            getThisNodesInfoAsText(executableNode, "title"))
-    outRegion += "{0}\n".format(
-            getThisNodesInfoAsText(executableNode, "title"))
 
-    outRegion += "{|\n"
-    outRegion += "{0}{1}".format("|[[Image:screenshotBlankNotOptional.png",
-            "|thumb|280px|User Interface]]\n")
-    outRegion += "|[[Image:screenshotBlank.png|thumb|280px|Output]]\n"
-    outRegion += "|[[Image:screenshotBlank.png|thumb|280px|Caption]]\n"
-    outRegion += "|}\n"
+    outputRegionTemplate = """
+__NOTOC__
 
-    # Print information about the program in general
-    outRegion += "== General Information ==\n\n"
-    outRegion += "===Module Type & Category===\n\n"
-    outRegion += "Type: CLI\n\n"
-    outRegion += "Category: {0}\n".format(
-            getThisNodesInfoAsText(executableNode, "category"))
-    outRegion += "\n\n"
+==={executableTitle}===
+{executableTitle}
 
-    outRegion += "===Authors, Collaborators & Contact===\n\n"
-    outRegion += "Author: {0}\n\n".format(
-            getThisNodesInfoAsText(executableNode, "contributor"))
-    outRegion += "Contributors: \n\n"
-    outRegion += "Contact: name, email\n\n"
+{tblStart}
+|[[Image:screenshotBlankNotOptional.png|thumb|280px|User Interface]]
+|[[Image:screenshotBlank.png|thumb|280px|Output]]
+|[[Image:screenshotBlank.png|thumb|280px|Caption]]
+{tblStop}
 
-    outRegion += "===Module Description===\n"
-    outRegion += "{| style=\"color:green\" border=\"1\"\n"
-    outRegion += "{0}".format(
-            getThisNodesInfoAsTextTableLine(executableNode, "title"))
-    outRegion += "{0}".format(
-            getThisNodesInfoAsTextTableLine(executableNode, "description"))
-    outRegion += "{0}".format(
-            getThisNodesInfoAsTextTableLine(executableNode, "version"))
-    outRegion += "{0}".format(
-            getThisNodesInfoAsTextTableLine(executableNode,
-                "documentation-url"))
-    outRegion += "{0}".format(
-            getThisNodesInfoAsTextTableLine(executableNode,
-                "doesnotexiststest"))
-    outRegion += "|}\n\n"
+== General Information ==
 
-    outRegion += "== Usage ==\n\n"
+===Module Type & Category===
 
-    outRegion += "===Use Cases, Examples===\n\n"
+Type: CLI
 
-    outRegion += "{0}{1}".format("This module is especially appropriate ",
-            "for these use cases:\n\n")
+Category: {executableCategory}
 
-    outRegion += "* Use Case 1:\n"
-    outRegion += "* Use Case 2:\n\n"
 
-    outRegion += "Examples of the module in use:\n\n"
+===Authors, Collaborators & Contact===
 
-    outRegion += "* Example 1:\n"
-    outRegion += "* Example 2:\n\n"
+Author: {executableAuthor}
 
-    outRegion += "===Tutorials===\n"
+Contributors:
 
-    outRegion += "* Tutorial 1\n"
-    outRegion += "** Data Set 1\n\n"
+Contact: name, email
+
+===Module Description===
+{tblStart} style="color:green" border="1"
+|Program title || {executableTitle}
+|-
+|Program description || {executableDescription}
+|-
+|Program version || {executableVersion}
+|-
+|Program documentation-url || {executableDocumentationURL}
+|-
+{tblStop}
+
+== Usage ==
+
+===Use Cases, Examples===
+
+This module is especially appropriate for these use cases:
+
+* Use Case 1:
+* Use Case 2:
+
+Examples of the module in use:
+
+* Example 1:
+* Example 2:
+
+===Tutorials===
+* Tutorial 1
+** Data Set 1
+"""
+
+    stringDict = dict({})
+    stringDict['executableTitle'] = getThisNodesInfoAsText(
+        executableNode, "title")
+    stringDict['executableCategory'] = getThisNodesInfoAsText(
+        executableNode, "category")
+    stringDict['executableAuthor'] = getThisNodesInfoAsText(
+        executableNode, "contributor")
+    stringDict['executableDescription'] = getThisNodesInfoAsText(
+        executableNode, "description")
+    stringDict['executableVersion'] = getThisNodesInfoAsText(
+        executableNode, "version")
+    stringDict['executableDocumentationURL'] = getThisNodesInfoAsText(
+        executableNode, "documentation-url")
+    stringDict['tblStart'] = "{|"  # To avoid subs the entire table as var
+    stringDict['tblStop'] = "|}"   # To avoid subs the entire table as var
+
+    outRegion = outputRegionTemplate.format(**stringDict)
     return outRegion
 
 
@@ -191,12 +188,11 @@ def DumpSEMMediaWikiFeatures(executableNode):
     outRegion += "===Quick Tour of Features and Use===\n\n"
     outRegion += "{0}{1}".format("A list panels in the interface,",
            " their features, what they mean, and how to use them.\n")
-    outRegion += "{|\n"
-    outRegion += "|\n"
+    outRegion += "{|\n|\n"
     # Now print all the command line arguments and the labels
     # that showup in the GUI interface
     for parameterNode in executableNode.getElementsByTagName("parameters"):
-        outRegion += "* <span style=\"color:blue\">'''''{0}''''' </span>: {1}\n".format(
+        outRegion += "* <span style=\"color:blue\">'''''{0}'''''</span>: {1}\n".format(
             getThisNodesInfoAsText(parameterNode, "label"),
             getThisNodesInfoAsText(parameterNode, "description"))
         currentNode = parameterNode.firstChild
@@ -230,53 +226,60 @@ def DumpSEMMediaWikiFeatures(executableNode):
 
 def DumpSEMMediaWikiFooter(executableNode):
     # footer
-    outRegion = ""
-    outRegion += "== Development ==\n\n"
-    outRegion += "===Notes from the Developer(s)===\n\n"
-    outRegion += "{0}{1}".format("Algorithms used, library classes",
-           " depended upon, use cases, etc.\n\n")
-    outRegion += "===Dependencies===\n\n"
-    outRegion += "{0}{1}".format(
-        "Other modules or packages that are required ",
-        "for this module's use.\n\n")
-    outRegion += "===Tests===\n\n"
-    outRegion += "{0}{1}{2}{3}".format("On the ",
-        "[http://www.cdash.org/CDash/index.php?project=Slicer3 Dashboard], ",
-        "these tests verify that the module is working on various ",
-        "platforms:\n\n")
-    outRegion += "{0}{1}".format(
-            "* MyModuleTest1 [http://viewvc.slicer.org/viewcvs.cgi/trunk",
-            "MyModuleTest1.cxx]\n")
-    outRegion += "{0}{1}".format(
-            "* MyModuleTest2 [http://viewvc.slicer.org/viewcvs.cgi/trunk",
-            " MyModuleTest2.cxx]\n\n")
-    outRegion += "===Known bugs===\n\n"
-    outRegion += "Links to known bugs in the Slicer3 bug tracker\n\n"
-    outRegion += "{0}{1}".format(
-            "* [http://www.na-mic.org/Bug/view.php?id=000 Bug 000:",
-            "description] \n\n")
-    outRegion += "===Usability issues===\n\n"
-    outRegion += "{0}{1}{2}".format(
-            "Follow this [http://na-mic.org/Mantis/main_page.php link] to",
-            "the Slicer3 bug tracker. Please select the '''usability",
-            "issue category''' when browsing or contributing.\n\n")
-    outRegion += "===Source code & documentation===\n\n"
-    outRegion += "Links to the module's source code:\n\n"
-    outRegion += "Source code:\n"
-    outRegion += "*[http://viewvc.slicer.org/viewcvs.cgi/trunk file.cxx ]\n"
-    outRegion += "*[http://viewvc.slicer.org/viewcvs.cgi/trunk file.h ]\n\n"
-    outRegion += "Doxygen documentation:\n"
-    outRegion += "{0}{1}".format(
-            "*[http://www.na-mic.org/Slicer/Documentation/Slicer3-doc/",
-            "html/classes.html class1]\n\n")
-    outRegion += "== More Information == \n\n"
-    outRegion += "===Acknowledgment===\n\n"
-    outRegion += "{0}\n".format(
-            getThisNodesInfoAsText(executableNode, "acknowledgements"))
-    outRegion += "===References===\n\n"
-    outRegion += "{0}{1}".format(
-            "Publications related to this module go here. Links to pdfs",
-            "would be useful.\n")
+    outRegionTemplate = """
+== Development ==
+
+===Notes from the Developer(s)===
+
+Algorithms used, library classes depended upon, use cases, etc.
+
+===Dependencies===
+
+Other modules or packages that are required for this module's use.
+
+===Tests===
+
+On the [http://www.cdash.org/CDash/index.php?project=Slicer3 Dashboard], these tests verify that the module is working on various platforms:
+
+* MyModuleTest1 [http://viewvc.slicer.org/viewcvs.cgi/trunkMyModuleTest1.cxx]
+* MyModuleTest2 [http://viewvc.slicer.org/viewcvs.cgi/trunk MyModuleTest2.cxx]
+
+===Known bugs===
+
+Links to known bugs in the Slicer3 bug tracker
+
+* [http://www.na-mic.org/Bug/view.php?id=000 Bug 000:description]
+
+===Usability issues===
+
+Follow this [http://na-mic.org/Mantis/main_page.php link] to
+the Slicer3 bug tracker. Please select the '''usabilityissue category''' when browsing or contributing.
+
+===Source code & documentation===
+
+Links to the module's source code:
+
+Source code:
+*[http://viewvc.slicer.org/viewcvs.cgi/trunk file.cxx ]
+*[http://viewvc.slicer.org/viewcvs.cgi/trunk file.h ]
+
+Doxygen documentation:
+*[http://www.na-mic.org/Slicer/Documentation/Slicer3-doc/html/classes.html class1]
+
+== More Information ==
+
+===Acknowledgment===
+
+{executableAcknowledgment}
+
+===References===
+
+Publications related to this module go here. Links to pdfs would be useful.
+"""
+
+    stringDict = dict({})
+    stringDict['executableAcknowledgment'] = getThisNodesInfoAsText(executableNode, "acknowledgements")
+    outRegion = outRegionTemplate.format(**stringDict)
     return outRegion
 
 
