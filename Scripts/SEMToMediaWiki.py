@@ -24,35 +24,43 @@ def getTextValuesFromNode(nodelist):
             rc.append(node.data)
     return ''.join(rc)
 
+#vv=[node for node in ll.childNodes[0].childNodes if node.nodeName == "description" ]
+#vv=[node for node in ll.childNodes[0].childNodes if node.nodeName == "parameters" ]
 
-def getThisNodesInfoAsTextTableLine(executableNode, label):
+def getThisNodesInfoAsTextTableLine(currentNode, label):
     r"""
     Create a formatted text string suitable for inclusion in a MediaWiki table
     """
-    labelNodeList = executableNode.getElementsByTagName(label)
-    if labelNodeList.length > 0:
+
+    labelNodeList = [node for node in
+    currentNode.childNodes if node.nodeName == label]
+
+    if len(labelNodeList) > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         line = "|Program {0} || {1}\n{2}".format(label,
             getTextValuesFromNode(labelNode.childNodes), "|-\n")
         return line
+    return ""
 
 
-def getThisNodesInfoAsText(executableNode, label):
+def getThisNodesInfoAsText(currentNode, label):
     r"""
     Only get the text info for the matching label at this level of the tree
     """
-    labelNodeList = executableNode.getElementsByTagName(label)
-    if labelNodeList.length > 0:
+    labelNodeList = [node for node in
+    currentNode.childNodes if node.nodeName == label]
+
+    if len(labelNodeList) > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return getTextValuesFromNode(labelNode.childNodes)
     return ""
 
 
-def getLongFlagDefinition(executableNode):
+def getLongFlagDefinition(currentNode):
     r"""
     Extract the long flag, and color the text string
     """
-    labelNodeList = executableNode.getElementsByTagName("longflag")
+    labelNodeList = currentNode.getElementsByTagName("longflag")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return "{0}{1}{2}".format("[<span style=\"color:orange\">--",
@@ -60,11 +68,11 @@ def getLongFlagDefinition(executableNode):
     return ""
 
 
-def getFlagDefinition(executableNode):
+def getFlagDefinition(currentNode):
     r"""
     Extract the (short) flag, and color the text string
     """
-    labelNodeList = executableNode.getElementsByTagName("flag")
+    labelNodeList = currentNode.getElementsByTagName("flag")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return "{0}{1}{2}".format("[<span style=\"color:pink\">-",
@@ -72,11 +80,11 @@ def getFlagDefinition(executableNode):
     return ""
 
 
-def getLabelDefinition(executableNode):
+def getLabelDefinition(currentNode):
     r"""
     Extract the nodes label, and color the text string
     """
-    labelNodeList = executableNode.getElementsByTagName("label")
+    labelNodeList = currentNode.getElementsByTagName("label")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return "{0}{1}{2}".format("** <span style=\"color:green\">'''",
@@ -84,11 +92,11 @@ def getLabelDefinition(executableNode):
     return ""
 
 
-def getDefaultValueDefinition(executableNode):
+def getDefaultValueDefinition(currentNode):
     r"""
     Extract the default value
     """
-    labelNodeList = executableNode.getElementsByTagName("default")
+    labelNodeList = currentNode.getElementsByTagName("default")
     if labelNodeList.length > 0:
         labelNode = labelNodeList[0]  # Only get the first one
         return "{0}{1}{2}".format("''Default value: ",
@@ -102,8 +110,10 @@ def GetSEMDoc(filename):
     Return the primary heirarchial tree node.
     """
     doc = xml.dom.minidom.parse(filename)
-    executableNode = doc.getElementsByTagName("executable")[0]
-    return executableNode
+    executableNode = [node for node in doc.childNodes if
+            node.nodeName == "executable" ]
+    #Only use the first 
+    return executableNode[0]
 
 
 def DumpSEMMediaWikiHeader(executableNode):
@@ -186,8 +196,9 @@ def DumpSEMMediaWikiFeatures(executableNode):
     # Now print all the command line arguments and the labels
     # that showup in the GUI interface
     for parameterNode in executableNode.getElementsByTagName("parameters"):
-        outRegion += "* <span style=\"color:blue\">'''''{0}''''' </span>\n".format(
-            getThisNodesInfoAsText(parameterNode, "label"))
+        outRegion += "* <span style=\"color:blue\">'''''{0}''''' </span>: {1}\n".format(
+            getThisNodesInfoAsText(parameterNode, "label"),
+            getThisNodesInfoAsText(parameterNode, "description"))
         currentNode = parameterNode.firstChild
         while currentNode is not None:
             if currentNode.nodeType == currentNode.ELEMENT_NODE:
@@ -269,7 +280,7 @@ def DumpSEMMediaWikiFooter(executableNode):
     return outRegion
 
 
-if __name__ == '__main__':
+def SEMToMediaWikiProg():
     from optparse import OptionParser
     usage = "%prog -x XMLFILE -o MEDIWIKIFILE"
     version = "%prog v0.1"
@@ -314,3 +325,5 @@ if __name__ == '__main__':
     else:
         sys.stdout.write(docString)
 
+if __name__ == '__main__':
+    SEMToMediaWikiProg()
