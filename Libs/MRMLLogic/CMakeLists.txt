@@ -74,8 +74,6 @@ if (VTK_WRAP_TCL)
    vtk_wrap_tcl3(MRMLLogic  MRMLLogic_TCL_SRCS   "${MRMLLogic_SRCS}" "")
 endif()
 
-message(MRMLLogic_TCL_SRCS:${MRMLLogic_TCL_SRCS})
-
 SET(srcs
  ${MRMLLogic_SRCS}
  )
