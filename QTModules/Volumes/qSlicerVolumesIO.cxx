@@ -17,6 +17,7 @@
 
 // MRML includes
 #include <vtkMRMLVolumeNode.h>
+#include <vtkMRMLSelectionNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

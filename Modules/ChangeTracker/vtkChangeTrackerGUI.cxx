@@ -638,7 +638,7 @@ void vtkChangeTrackerGUI::SliceLogicDefine() {
       events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
       events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 
-      this->SliceLogic = vtkSlicerSliceLogic::New ( );
+      this->SliceLogic = vtkMRMLSliceLogic::New ( );
       this->SliceLogic->SetName("TG");
 
       this->SliceLogic->SetMRMLScene ( this->GetMRMLScene());

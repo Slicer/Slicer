@@ -33,6 +33,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
+#include "vtkMRMLInteractionNode.h"
 
 #include "itkRealTimeClock.h"
 

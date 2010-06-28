@@ -6,7 +6,7 @@ catch {$sc Delete}
 set sc [vtkMRMLScene New]
 
 # test slice logic
-set logic [vtkSlicerSliceLogic New]
+set logic [vtkMRMLSliceLogic New]
 $logic SetName "Red"
 $logic SetMRMLScene $sc
 $logic ProcessLogicEvents

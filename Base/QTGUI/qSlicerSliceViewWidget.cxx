@@ -32,7 +32,7 @@ qSlicerSliceViewWidgetPrivate::qSlicerSliceViewWidgetPrivate()
 {
   logger.setTrace();
 
-  this->SliceLogic = vtkSmartPointer<vtkSlicerSliceLogic>::New();
+  this->SliceLogic = vtkSmartPointer<vtkMRMLSliceLogic>::New();
 
   this->qvtkConnect(this->SliceLogic,
                     vtkCommand::ModifiedEvent, this, SLOT(onSliceLogicModifiedEvent()));

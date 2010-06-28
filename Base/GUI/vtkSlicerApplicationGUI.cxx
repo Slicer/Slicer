@@ -4401,7 +4401,7 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
     // if get "compare0" is NULL, add it
     //---wjpTEST >
     //--- somehow GetSliceLogic isn't returning good value.
-    vtkSlicerSliceLogic *sliceLogic = this->GetApplicationLogic()->GetSliceLogic(layoutName);
+    vtkMRMLSliceLogic *sliceLogic = this->GetApplicationLogic()->GetSliceLogic(layoutName);
     if (sliceLogic == NULL)
       {
       vtkIntArray *events = vtkIntArray::New();
@@ -4412,7 +4412,7 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
       events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
       events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 
-      sliceLogic = vtkSlicerSliceLogic::New ( );
+      sliceLogic = vtkMRMLSliceLogic::New ( );
       this->GetApplicationLogic()->AddSliceLogic(layoutName, sliceLogic);
       sliceLogic->SetName(layoutName);
 
@@ -4559,13 +4559,13 @@ void vtkSlicerApplicationGUI::RemoveMainSliceViewerObservers ( )
     }
 }
 
-// to do: the three vtkSlicerSliceLogic pointers should be changed with a
-// pointer to a vtkSlicerSliceLogic map.
+// to do: the three vtkMRMLSliceLogic pointers should be changed with a
+// pointer to a vtkMRMLSliceLogic map.
 // current implementation only takes 3 for red, yellow, and green
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkSlicerSliceLogic *l0,
-                                                            vtkSlicerSliceLogic *l1,
-                                                            vtkSlicerSliceLogic *l2 )
+void vtkSlicerApplicationGUI::SetAndObserveMainSliceLogic ( vtkMRMLSliceLogic *l0,
+                                                            vtkMRMLSliceLogic *l1,
+                                                            vtkMRMLSliceLogic *l2 )
 {
         //if (this->SlicesGUI)
         //{

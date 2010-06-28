@@ -5,7 +5,6 @@
 #include "vtkSlicerSlicesGUI.h"
 //#include "vtkSlicerSliceGUICollection.h"
 #include "vtkSlicerSliceGUI.h"
-#include "vtkSlicerSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"

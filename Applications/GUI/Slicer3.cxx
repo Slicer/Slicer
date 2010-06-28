@@ -50,7 +50,6 @@
 #include "vtkSlicerLogoIcons.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkSlicerSliceLogic.h"
 #include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerModelHierarchyLogic.h"
 #include "vtkSlicerFiducialsLogic.h"
@@ -178,6 +177,8 @@ extern "C" {
 extern "C" int Slicerbasegui_Init(Tcl_Interp *interp);
 extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
+extern "C" int Mrmllogic_Init(Tcl_Interp *interp);
+extern "C" int Mrmldisplayablemanager_Init(Tcl_Interp *interp);
 extern "C" int Mrmlcli_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 extern "C" int Freesurfer_Init(Tcl_Interp *interp);
@@ -727,6 +728,8 @@ int Slicer3_main(int& argc, char *argv[])
   Slicerbaselogic_Init(interp);
   Mrml_Init(interp);
   Mrmlcli_Init(interp);
+  Mrmllogic_Init(interp);
+  Mrmldisplayablemanager_Init(interp);
   Vtkitk_Init(interp);
   Freesurfer_Init(interp);
   Igt_Init(interp);

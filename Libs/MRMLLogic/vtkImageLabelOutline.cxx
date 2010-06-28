@@ -13,8 +13,10 @@
 =========================================================================auto=*/
 #include "vtkImageLabelOutline.h"
 
+// VTK includes
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"
+
 
 //------------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkImageLabelOutline, "$Revision$");

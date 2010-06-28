@@ -71,7 +71,7 @@ update
 #
 
 # a SliceLogic 
-set ::slicel [vtkSlicerSliceLogic New]
+set ::slicel [vtkMRMLSliceLogic New]
 $::slicel SetAndObserveMRMLScene $::scene
 $::slicel ProcessMRMLEvents
 $::slicel ProcessLogicEvents

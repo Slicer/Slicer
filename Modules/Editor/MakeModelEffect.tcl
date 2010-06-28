@@ -73,7 +73,7 @@ itcl::body MakeModelEffect::apply {} {
   #
   # get the image data for the label layer
   #
-  set sliceLogic [lindex [vtkSlicerSliceLogic ListInstances] 0]
+  set sliceLogic [lindex [vtkMRMLSliceLogic ListInstances] 0]
   set layerLogic [$sliceLogic GetLabelLayer]
   set volumeNode [$layerLogic GetVolumeNode]
   if { $volumeNode == "" } {

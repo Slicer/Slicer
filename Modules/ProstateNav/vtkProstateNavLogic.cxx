@@ -253,7 +253,7 @@ void vtkProstateNavLogic::SetSliceViewFromVolume(vtkMRMLVolumeNode *volumeNode)
 
     vtkMatrix4x4 *newMatrix = vtkMatrix4x4::New();
 
-    vtkSlicerSliceLogic *slice = appLogic->GetSliceLogic(
+    vtkMRMLSliceLogic *slice = appLogic->GetSliceLogic(
       const_cast<char *>(panes[i]));
     
     vtkMRMLSliceNode *sliceNode = slice->GetSliceNode();

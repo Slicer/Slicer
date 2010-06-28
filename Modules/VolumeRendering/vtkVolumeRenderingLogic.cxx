@@ -1,4 +1,33 @@
+
+
+// Slicer includes
+#include "vtkSlicerVolumeTextureMapper3D.h"
+#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
+#include "vtkSlicerGPURayCastVolumeTextureMapper3D.h"
+#include "vtkSlicerGPURayCastVolumeMapper.h"
+
+// VolumeRendering includes
 #include "vtkVolumeRenderingLogic.h"
+
+// KWWidgets includes
+#include "vtkKWHistogramSet.h"
+#include "vtkKWHistogram.h"
+
+// MRMLLogic includes
+#include <vtkMRMLSliceLogic.h>
+
+// MRML includes
+#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingScenarioNode.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLROINode.h"
+#include "vtkMRMLVolumePropertyNode.h"
+#include "vtkMRMLVolumePropertyStorageNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLLabelMapVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+
+// VTK includes
 #include "vtkObjectFactory.h"
 #include "vtkObject.h"
 #include "vtkVolumeProperty.h"
@@ -8,28 +37,13 @@
 #include "vtkPlanes.h"
 #include "vtkPlane.h"
 #include "vtkGPUVolumeRayCastMapper.h"
+#include "vtkImageGradientMagnitude.h"
 
+// ITK includes
 #include <itksys/SystemTools.hxx> 
 #include <itksys/Directory.hxx> 
 
-#include "vtkMRMLVolumeRenderingParametersNode.h"
-#include "vtkMRMLVolumeRenderingScenarioNode.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLROINode.h"
-#include "vtkMRMLVolumePropertyNode.h"
-#include "vtkMRMLVolumePropertyStorageNode.h"
-#include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLLabelMapVolumeDisplayNode.h"
-
-#include "vtkSlicerVolumeTextureMapper3D.h"
-#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
-#include "vtkSlicerGPURayCastVolumeTextureMapper3D.h"
-#include "vtkSlicerGPURayCastVolumeMapper.h"
-#include "vtkImageGradientMagnitude.h"
-
-#include "vtkKWHistogramSet.h"
-#include "vtkKWHistogram.h"
-
+// STD includes
 #include <cmath>
 
 bool vtkVolumeRenderingLogic::First = true;
@@ -1092,7 +1106,7 @@ void vtkVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingParametersNod
     double xyz[3];
     double center[3];
 
-    vtkSlicerSliceLogic::GetVolumeRASBox(volumeNode, xyz,  center);
+    vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, xyz,  center);
     for (int i = 0; i < 3; i++)
     {
       xyz[i] *= 0.5;

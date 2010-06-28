@@ -29,7 +29,7 @@
 #include "vtkAbstractTransform.h"
 #include "vtkThreadedImageAlgorithm.h"
 
-#include "vtkSlicerBaseLogic.h"
+#include "vtkMRMLLogicWin32Header.h"
 
 /// interpolation mode constants
 #define VTK_SLICE_NEAREST 0
@@ -40,7 +40,7 @@ class vtkImageData;
 class vtkAbstractTransform;
 class vtkMatrix4x4;
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageSlice : public vtkThreadedImageAlgorithm
+class VTK_MRML_LOGIC_EXPORT vtkImageSlice : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageSlice *New();

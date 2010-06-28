@@ -3,6 +3,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentTestUtilities.h"
+#include "vtkMRMLVolumeNode.h"
 
 int main(int argc, char** argv)
 {

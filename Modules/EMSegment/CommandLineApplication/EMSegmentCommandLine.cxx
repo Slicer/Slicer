@@ -41,7 +41,9 @@ extern "C" int Vtkteem_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
-extern "C" int Mrmlcli_Init(Tcl_Interp *interp); 
+extern "C" int Mrmlcli_Init(Tcl_Interp *interp);
+extern "C" int Mrmllogic_Init(Tcl_Interp *interp); 
+extern "C" int Mrmldisplayablemanager_Init(Tcl_Interp *interp); 
 
 #define tgVtkCreateMacro(name,type) \
   name  = type::New(); \
@@ -434,8 +436,10 @@ int main(int argc, char** argv)
     Emsegment_Init(interp);
     Slicerbasegui_Init(interp);
     Slicerbaselogic_Init(interp);
-     Mrml_Init(interp);
-     Mrmlcli_Init(interp); 
+    Mrml_Init(interp);
+    Mrmlcli_Init(interp);
+    Mrmllogic_Init(interp);
+    Mrmldisplayablemanager_Init(interp);
     Vtkteem_Init(interp);
     Vtkitk_Init(interp);
 
@@ -1125,7 +1129,9 @@ int main(int argc, char** argv)
        Slicerbasegui_Init(interp);
        Slicerbaselogic_Init(interp);
        Mrml_Init(interp);
-       Mrmlcli_Init(interp); 
+       Mrmlcli_Init(interp);
+       Mrmllogic_Init(interp);
+       Mrmldisplayablemanager_Init(interp);
        Vtkteem_Init(interp);
        Vtkitk_Init(interp);
 

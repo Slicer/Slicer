@@ -99,7 +99,7 @@ if { 1 } {
     if { 1 } {
 
       catch "sliceLogic Delete"
-      set sliceLogic [vtkNew vtkSlicerSliceLogic]
+      set sliceLogic [vtkNew vtkMRMLSliceLogic]
       $sliceLogic SetName "DICOMViewer"
       $sliceLogic SetMRMLScene $scene
       $sliceLogic ProcessMRMLEvents

@@ -2,6 +2,7 @@
 // MRML includes
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
 
 // Tractography Logic includes
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"

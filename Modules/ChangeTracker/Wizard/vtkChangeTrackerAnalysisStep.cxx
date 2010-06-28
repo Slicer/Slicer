@@ -477,7 +477,7 @@ void vtkChangeTrackerAnalysisStep::ShowUserInterface()
         {
         vtkMRMLSliceCompositeNode *cv0SliceCompositeNode, *cv1SliceCompositeNode;
         vtkSlicerSliceControllerWidget *cv0SliceControllerWidget, *cv1SliceControllerWidget;
-        vtkSlicerSliceLogic *cv0SliceLogic, *cv1SliceLogic;
+        vtkMRMLSliceLogic *cv0SliceLogic, *cv1SliceLogic;
         cv0SliceCompositeNode = cv0GUI->GetLogic()->GetSliceCompositeNode();
         cv1SliceCompositeNode = cv1GUI->GetLogic()->GetSliceCompositeNode();
         cv0SliceLogic = cv0GUI->GetLogic();

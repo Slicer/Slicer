@@ -12,6 +12,8 @@ SET(KIT_include_directories
   ${ModuleDescriptionParser_BINARY_DIR}
   ${MRMLCLI_SOURCE_DIR}
   ${MRMLCLI_BINARY_DIR}
+  ${MRMLLogic_SOURCE_DIR}
+  ${MRMLLogic_BINARY_DIR}
   ${FreeSurfer_SOURCE_DIR} # for qSlicerXcedeCatalogIO
   ${FreeSurfer_BINARY_DIR} # for qSlicerXcedeCatalogIO
   )

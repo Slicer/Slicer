@@ -38,7 +38,7 @@
 #include "vtkSlicerVolumePropertyWidget.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerROIDisplayWidget.h"
-#include "vtkSlicerSliceLogic.h"
+#include "vtkMRMLSliceLogic.h"
 
 extern "C" int Volumerenderingreplacements1_Init(Tcl_Interp *interp);
 
@@ -973,7 +973,7 @@ void vtkVolumeRenderingGUI::FitROIToVolume()
     double xyz[3];
     double center[3];
 
-    vtkSlicerSliceLogic::GetVolumeRASBox(volumeNode, xyz,  center);
+    vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, xyz,  center);
     for (int i=0; i<3; i++)
       {
       xyz[i] /= 2;

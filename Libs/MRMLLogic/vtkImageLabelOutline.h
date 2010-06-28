@@ -20,10 +20,11 @@
 #define __vtkImageLabelOutline_h
 
 #include "vtkImageNeighborhoodFilter.h"
-#include "vtkSlicerBaseLogic.h"
+
+#include "vtkMRMLLogicWin32Header.h"
 
 class vtkImageData;
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageLabelOutline : public vtkImageNeighborhoodFilter
+class VTK_MRML_LOGIC_EXPORT vtkImageLabelOutline : public vtkImageNeighborhoodFilter
 {
 public:
   static vtkImageLabelOutline *New();
@@ -48,7 +49,7 @@ protected:
   int Outline;
 
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
-    int extent[6], int id);
+  int extent[6], int id);
 };
 
 #endif

@@ -20,6 +20,10 @@
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLVolumeDisplayNode.h>
 #include <vtkMRMLVolumeNode.h>
+#include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLStorageNode.h>
 
 /// FreeSurfer includes
 #include <vtkFSSurfaceHelper.h>

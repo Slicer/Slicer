@@ -33,7 +33,7 @@
 #include <vtkProperty2D.h>
 #include <vtkActor2D.h>
 
-// vtkMRML
+// MRML
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
@@ -43,9 +43,9 @@
 #include <vtkMRMLColorTableNode.h>
 
 // Slicer
-#include <vtkSlicerSliceLogic.h>
+#include <vtkMRMLSliceLogic.h>
 
-// std
+// STD
 #include <stdlib.h>
 
 
@@ -56,7 +56,7 @@
 // Build the slicer rendering infrastructure to render data from volume file
 // into the given render window.  Populate the scene and return the slice logic.
 //
-vtkSlicerSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, const char *archetype)
+vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, const char *archetype)
 {
   //
   // allocate needed nodes, add them to the scene, and connect them together
@@ -90,7 +90,7 @@ vtkSlicerSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw,
   //
   // Create the slice logic to create the slice image
   //
-  vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::New();
+  vtkMRMLSliceLogic *sliceLogic = vtkMRMLSliceLogic::New();
   sliceLogic->SetName( "Image Viewer" );
   sliceLogic->SetMRMLScene( scene );
   sliceLogic->ProcessMRMLEvents();
@@ -184,7 +184,7 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   qarchetype.append("share/MRML/Testing/TestData/fixed.nrrd");
   QByteArray archetype = qarchetype.toAscii();
 
-  vtkSlicerSliceLogic *sliceLogic = setupSliceDisplay( 
+  vtkMRMLSliceLogic *sliceLogic = setupSliceDisplay( 
           scene, vtkWidget->GetRenderWindow(), archetype.data() );
 
   // quit after 5 seconds if the Quit button hasn't been clicked

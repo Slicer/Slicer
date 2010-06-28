@@ -134,6 +134,6 @@ proc ScriptedModuleExampleLabelCheckpoint {} {
 # make it easier to test the model by looking for the first slice logic
 #
 proc ScriptedModuleExampleTestQuickModel {} {
-  set sliceLogic [lindex [vtkSlicerSliceLogic ListInstances] 0]
+  set sliceLogic [lindex [vtkMRMLSliceLogic ListInstances] 0]
   ScriptedModuleExampleAddQuickModel $sliceLogic
 }

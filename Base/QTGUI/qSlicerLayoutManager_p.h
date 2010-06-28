@@ -14,9 +14,6 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-// Logic includes
-#include "vtkSlicerSliceLogic.h"
-
 class QGridLayout;
 class qSlicerSliceViewWidget;
 class qMRMLThreeDRenderView;

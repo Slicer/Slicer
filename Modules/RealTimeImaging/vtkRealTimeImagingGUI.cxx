@@ -790,9 +790,9 @@ void vtkRealTimeImagingGUI::UpdateSliceDisplay(float px, float py, float pz)
 {
     vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
 
-    vtkSlicerSliceLogic *logic0 = appGUI->GetMainSliceGUI0()->GetLogic();
-    vtkSlicerSliceLogic *logic1 = appGUI->GetMainSliceGUI1()->GetLogic();
-    vtkSlicerSliceLogic *logic2 = appGUI->GetMainSliceGUI2()->GetLogic();
+    vtkMRMLSliceLogic *logic0 = appGUI->GetMainSliceGUI0()->GetLogic();
+    vtkMRMLSliceLogic *logic1 = appGUI->GetMainSliceGUI1()->GetLogic();
+    vtkMRMLSliceLogic *logic2 = appGUI->GetMainSliceGUI2()->GetLogic();
 
     vtkSlicerSliceControllerWidget *control0 = appGUI->GetMainSliceGUI0()->GetSliceController();
     vtkSlicerSliceControllerWidget *control1 = appGUI->GetMainSliceGUI1()->GetSliceController();

@@ -252,7 +252,7 @@ void vtkChangeTrackerSegmentationStep::ShowUserInterface()
   // this->TransitionCallback();   
   //  ~/Slicer/Slicer3/Base/Logic/vtkSlicersModelsLogic Clone 
   // -> copy slice modules
-  //  -> look in ~/Slicer/Slicer3/Base/Logic/vtkSlicerSliceLogic 
+  //  -> look in ~/Slicer/Slicer3/Libs/MRMLLogic/vtkMRMLSliceLogic 
   //    -> CreateSlicerModel 
   //       -> do a copy 
   // 

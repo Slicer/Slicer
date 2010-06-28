@@ -11,7 +11,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerSliceViewer.h"
-#include "vtkSlicerSliceLogic.h"
+#include "vtkMRMLSliceLogic.h"
 
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
@@ -43,7 +43,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     vtkGetObjectMacro ( SliceController, vtkSlicerSliceControllerWidget );
     vtkGetMacro ( ControllerStyle, int );
     vtkSetMacro ( ControllerStyle, int );
-    vtkGetObjectMacro ( Logic, vtkSlicerSliceLogic );
+    vtkGetObjectMacro ( Logic, vtkMRMLSliceLogic );
     vtkGetObjectMacro ( SliceNode, vtkMRMLSliceNode );
     
     /// 
@@ -54,13 +54,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     void SetAndObserveMRMLNode ( vtkMRMLSliceNode *node )
         { vtkSetAndObserveMRMLNodeMacro (this->SliceNode, node ); }
 
-    void SetModuleLogic ( vtkSlicerSliceLogic *logic )
+    void SetModuleLogic ( vtkMRMLSliceLogic *logic )
         { 
         this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); 
         this->SetupViewerAndController();
         }
 
-    void SetAndObserveModuleLogic ( vtkSlicerSliceLogic *logic )
+    void SetAndObserveModuleLogic ( vtkMRMLSliceLogic *logic )
         { 
         this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); 
         this->SetupViewerAndController();
@@ -143,7 +143,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceGUI : public vtkSlicerComponentGU
     vtkKWFrame *SliceGUIFrame;
 
     int ControllerStyle;
-    vtkSlicerSliceLogic *Logic;
+    vtkMRMLSliceLogic *Logic;
     vtkMRMLSliceNode *SliceNode;
 
     char *CurrentGUIEvent;

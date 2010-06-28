@@ -75,10 +75,6 @@ vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* 
     image->Update();
     }
   
-  /*
-    vtkSlicerSliceLayerLogic *reslice = vtkSlicerSliceLayerLogic::New();
-    reslice->SetUseReslice(0);
-  */
   scalarNode->SetAndObserveImageData(image);
   
   

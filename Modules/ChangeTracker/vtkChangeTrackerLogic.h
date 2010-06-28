@@ -4,6 +4,7 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkChangeTracker.h"
 #include "vtkMRMLChangeTrackerNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkTransform.h"
 
 #include <string>

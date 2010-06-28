@@ -981,7 +981,7 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
     double rasCenter[3];
     double rasBounds[6];
 
-    vtkSlicerSliceLogic::GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
+    vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
     //cout << "Center : " << rasCenter[0] << " " << rasCenter[1] << " " << rasCenter[2] << endl;
     //cout << "Dimension: " << rasDimensions[0] << " " << rasDimensions[1] << " " << rasDimensions[2] << endl;
 

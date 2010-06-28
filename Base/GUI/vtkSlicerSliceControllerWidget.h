@@ -24,7 +24,7 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 
-#include "vtkSlicerSliceLogic.h"
+#include "vtkMRMLSliceLogic.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSliceControllerWidget : public vtkSlicerWidget
 {
@@ -101,8 +101,8 @@ public:
 
   /// 
   /// slice logic controlling the slice to be manipulated
-  vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
-  void SetAndObserveSliceLogic (vtkSlicerSliceLogic *sLogic)
+  vtkGetObjectMacro ( SliceLogic, vtkMRMLSliceLogic );
+  void SetAndObserveSliceLogic (vtkMRMLSliceLogic *sLogic)
     {
     /// treat the logic as a MRML node (it will be passing on changes to volumes and layers)
     vtkSetAndObserveMRMLNodeMacro(this->SliceLogic, sLogic );
@@ -268,7 +268,7 @@ protected:
   //
   /// Logic
   //
-  vtkSlicerSliceLogic *SliceLogic;
+  vtkMRMLSliceLogic *SliceLogic;
 
 
 private:

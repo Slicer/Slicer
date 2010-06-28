@@ -10,16 +10,16 @@
 
 =========================================================================auto=*/
 
-#include "vtkSlicerSliceLogic.h"
+#include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include <stdlib.h>
 #include <iostream>
 
 #include "TestingMacros.h"
 
-int vtkSlicerSliceLogicTest1(int , char * [] )
+int vtkMRMLSliceLogicTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkSlicerSliceLogic > node1 = vtkSmartPointer< vtkSlicerSliceLogic >::New();
+  vtkSmartPointer< vtkMRMLSliceLogic > node1 = vtkSmartPointer< vtkMRMLSliceLogic >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
@@ -44,10 +44,10 @@ int vtkSlicerSliceLogicTest1(int , char * [] )
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   node1->SetMRMLScene(scene);
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceNode, SliceNode);
-  TEST_SET_GET_OBJECT(node1, vtkSlicerSliceLayerLogic, LabelLayer);
+  TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, LabelLayer);
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceCompositeNode, SliceCompositeNode);
-  TEST_SET_GET_OBJECT(node1, vtkSlicerSliceLayerLogic, ForegroundLayer);
-  TEST_SET_GET_OBJECT(node1, vtkSlicerSliceLayerLogic, BackgroundLayer);
+  TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, ForegroundLayer);
+  TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, BackgroundLayer);
   TEST_SET_GET_VALUE(node1, ForegroundOpacity, .5);
   TEST_SET_GET_VALUE(node1, LabelOpacity, .5);
   TEST_SET_GET_VALUE(node1, SliceOffset, 1);

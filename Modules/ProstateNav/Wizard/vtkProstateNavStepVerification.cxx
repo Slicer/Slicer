@@ -40,7 +40,6 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkMRMLFiducialListNode.h"
-#include "vtkSlicerSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkMRMLInteractionNode.h"

@@ -827,7 +827,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     // delay setting names from colours until asked for one
     if (this->Type == this->FullRainbow)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0, 1);
@@ -840,7 +840,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Grey)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0, 0);
@@ -853,7 +853,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Red)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0, 0);
@@ -866,7 +866,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Green)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.333, 0.333);
@@ -879,7 +879,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Blue)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.667, 0.667);
@@ -892,7 +892,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Yellow)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.167, 0.167);
@@ -905,7 +905,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Cyan)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.5, 0.5);
@@ -918,7 +918,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Magenta)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.833, 0.833);
@@ -931,7 +931,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->WarmShade1)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.167, 0.0);
@@ -944,7 +944,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->WarmShade2)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(.333, 0.167);
@@ -957,7 +957,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->WarmShade3)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.5, 0.333);
@@ -970,7 +970,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->CoolShade1)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.667, 0.5);
@@ -983,7 +983,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->CoolShade2)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.833, 0.667);
@@ -996,7 +996,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->CoolShade3)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(1.0, 0.833);
@@ -1009,7 +1009,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->WarmTint1)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.167, 0.0);
@@ -1022,7 +1022,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->WarmTint2)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(.333, 0.167);
@@ -1035,7 +1035,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->WarmTint3)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.5, 0.333);
@@ -1048,7 +1048,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->CoolTint1)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.667, 0.5);
@@ -1061,7 +1061,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->CoolTint2)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.833, 0.667);
@@ -1074,7 +1074,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->CoolTint3)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(1.0, 0.833);
@@ -1087,7 +1087,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Warm1)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.167, 0.0);
@@ -1100,7 +1100,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Warm2)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(.333, 0.167);
@@ -1113,7 +1113,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Warm3)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.5, 0.333);
@@ -1126,7 +1126,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Cool1)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.667, 0.5);
@@ -1139,7 +1139,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Cool2)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0.833, 0.667);
@@ -1152,7 +1152,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       }
     else if (this->Type == this->Cool3)
       {
-      // from vtkSlicerSliceLayerLogic.cxx
+      // from vtkMRMLSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(1.0, 0.833);

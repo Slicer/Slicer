@@ -25,6 +25,7 @@
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLPETProceduralColorNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 #include "itkImageSeriesReader.h"
 #include "itkOrientedImage.h"

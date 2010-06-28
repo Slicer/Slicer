@@ -6,13 +6,13 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerSliceLogic.h,v $
+  Module:    $RCSfile: vtkMRMLSliceLogic.h,v $
   Date:      $Date$
   Version:   $Revision$
 
 =========================================================================auto=*/
 
-///  vtkSlicerSliceLogic - slicer logic class for slice manipulation
+///  vtkMRMLSliceLogic - slicer logic class for slice manipulation
 /// 
 /// This class manages the logic associated with display of slice windows
 /// (but not the GUI).  Features of the class include:
@@ -26,23 +26,29 @@
 /// This class can also be used for resampling volumes for further computation.
 
 
-#ifndef __vtkSlicerSliceLogic_h
-#define __vtkSlicerSliceLogic_h
+#ifndef __vtkMRMLSliceLogic_h
+#define __vtkMRMLSliceLogic_h
 
-#include <stdlib.h>
 
-#include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
-
+// MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
-#include "vtkSlicerSliceLayerLogic.h"
 #include "vtkMRMLModelNode.h"
 
+// VTK includes
 #include "vtkImageBlend.h"
 #include "vtkCollection.h"
 #include "vtkPolyDataCollection.h"
+
+// MRMLLogic includes
+#include "vtkMRMLAbstractLogic.h"
+#include "vtkMRMLSliceLayerLogic.h"
+
+// STD includes
+#include <stdlib.h>
+
+#include "vtkMRMLLogicWin32Header.h"
 
 class vtkImageData;
 class vtkMRMLModelDisplayNode;
@@ -51,13 +57,13 @@ class vtkImageReslice;
 class vtkPolyDataCollection;
 class vtkCollection;
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
+class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic 
 {
-  public:
+public:
   
   /// The Usual vtk class functions
-  static vtkSlicerSliceLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerSliceLogic,vtkSlicerLogic);
+  static vtkMRMLSliceLogic *New();
+  vtkTypeRevisionMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
@@ -73,20 +79,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   /// 
   /// The background slice layer
   /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (BackgroundLayer, vtkSlicerSliceLayerLogic);
-  void SetBackgroundLayer (vtkSlicerSliceLayerLogic *BackgroundLayer);
+  vtkGetObjectMacro (BackgroundLayer, vtkMRMLSliceLayerLogic);
+  void SetBackgroundLayer (vtkMRMLSliceLayerLogic *BackgroundLayer);
 
   /// 
   /// The forground slice layer
   /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (ForegroundLayer, vtkSlicerSliceLayerLogic);
-  void SetForegroundLayer (vtkSlicerSliceLayerLogic *ForegroundLayer);
+  vtkGetObjectMacro (ForegroundLayer, vtkMRMLSliceLayerLogic);
+  void SetForegroundLayer (vtkMRMLSliceLayerLogic *ForegroundLayer);
 
   /// 
   /// The Label slice layer
   /// TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (LabelLayer, vtkSlicerSliceLayerLogic);
-  void SetLabelLayer (vtkSlicerSliceLayerLogic *LabelLayer);
+  vtkGetObjectMacro (LabelLayer, vtkMRMLSliceLayerLogic);
+  void SetLabelLayer (vtkMRMLSliceLayerLogic *LabelLayer);
 
   /// 
   /// The opacity of the forground slice layer
@@ -290,16 +296,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
 //ETX
 
 protected:
-  vtkSlicerSliceLogic();
-  ~vtkSlicerSliceLogic();
-  vtkSlicerSliceLogic(const vtkSlicerSliceLogic&);
-  void operator=(const vtkSlicerSliceLogic&);
+  vtkMRMLSliceLogic();
+  ~vtkMRMLSliceLogic();
+  vtkMRMLSliceLogic(const vtkMRMLSliceLogic&);
+  void operator=(const vtkMRMLSliceLogic&);
 
   vtkMRMLSliceNode *          SliceNode;
   vtkMRMLSliceCompositeNode * SliceCompositeNode;
-  vtkSlicerSliceLayerLogic *  BackgroundLayer;
-  vtkSlicerSliceLayerLogic *  ForegroundLayer;
-  vtkSlicerSliceLayerLogic *  LabelLayer;
+  vtkMRMLSliceLayerLogic *  BackgroundLayer;
+  vtkMRMLSliceLayerLogic *  ForegroundLayer;
+  vtkMRMLSliceLayerLogic *  LabelLayer;
 
   double ForegroundOpacity;
   double LabelOpacity;
@@ -316,7 +322,7 @@ protected:
   vtkMRMLLinearTransformNode *  SliceModelTransformNode;
   double                        SliceSpacing[3];
   
-  void AddSliceGlyphs(vtkSlicerSliceLayerLogic *layerLogic);
+  void AddSliceGlyphs(vtkMRMLSliceLayerLogic *layerLogic);
 
 };
 

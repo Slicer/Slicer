@@ -8,12 +8,15 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 
+
+#include <vtkMRMLInteractionNode.h>
+
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerToolbarIcons.h"
 #include "vtkSlicerModuleChooseGUI.h"
 #include "vtkSlicerPopUpHelpWidget.h"
-#include "vtkKWLoadSaveDialog.h"
 
+#include "vtkKWLoadSaveDialog.h"
 #include "vtkKWFrame.h"
 #include "vtkKWToolbar.h"
 #include "vtkKWPushButton.h"

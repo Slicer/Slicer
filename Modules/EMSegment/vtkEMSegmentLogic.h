@@ -12,6 +12,9 @@ class vtkImageEMLocalClass;
 class vtkKWApplication;
 
 class vtkGridTransform;
+class vtkTransform;
+class vtkImageData;
+class vtkMatrix4x4;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentLogic : 
   public vtkSlicerModuleLogic

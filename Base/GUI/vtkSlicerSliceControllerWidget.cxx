@@ -2877,7 +2877,6 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
     this->HideLightboxCustomLayoutFrame();
     }
 
-
   if ( button == this->PrescribedSliceSpacingCancelButton &&
        event == vtkKWPushButton::InvokedEvent )
     {
@@ -4122,13 +4121,13 @@ void vtkSlicerSliceControllerWidget::SetSliceIndexEntryValueFromOffset(double sl
     }
   else
     {
-    if (sliceIndex==vtkSlicerSliceLogic::SLICE_INDEX_ROTATED)
+    if (sliceIndex==vtkMRMLSliceLogic::SLICE_INDEX_ROTATED)
       {
       // reformatted slice
       this->SliceIndexEntry->SetWidth(4);
       this->SliceIndexEntry->SetValue("R");
       }
-    else if (sliceIndex==vtkSlicerSliceLogic::SLICE_INDEX_OUT_OF_VOLUME)
+    else if (sliceIndex==vtkMRMLSliceLogic::SLICE_INDEX_OUT_OF_VOLUME)
       {
       // out of volume
       this->SliceIndexEntry->SetWidth(4);

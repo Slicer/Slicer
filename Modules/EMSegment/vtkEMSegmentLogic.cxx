@@ -21,6 +21,7 @@
 #include "vtkMRMLEMSTreeParametersNode.h"
 #include "vtkMRMLEMSWorkingDataNode.h"
 #include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkImageEMLocalSegmenter.h"
 #include "vtkImageEMLocalSuperClass.h"
 #include "vtkImageMeanIntensityNormalization.h"

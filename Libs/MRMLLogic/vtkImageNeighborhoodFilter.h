@@ -22,9 +22,10 @@
 #define __vtkImageNeighborhoodFilter_h
 
 #include "vtkImageSpatialFilter.h"
-#include "vtkSlicerBaseLogic.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageNeighborhoodFilter : public vtkImageSpatialFilter
+#include "vtkMRMLLogicWin32Header.h"
+
+class VTK_MRML_LOGIC_EXPORT vtkImageNeighborhoodFilter : public vtkImageSpatialFilter
 {
 public:
   static vtkImageNeighborhoodFilter *New();

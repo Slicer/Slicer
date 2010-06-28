@@ -54,25 +54,19 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerApplicationLogic.cxx 
   vtkSlicerModuleLogic.cxx 
   vtkSlicerTask.cxx
-  vtkSlicerSliceLogic.cxx 
-  vtkSlicerSliceLayerLogic.cxx
   vtkSlicerModelsLogic.cxx 
   vtkSlicerModelHierarchyLogic.cxx
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
   vtkDataIOManagerLogic.cxx
   # slicer's vtk extensions (filters)
-  vtkImageSlicePaint.cxx 
-  vtkImageSlice.cxx 
+  vtkImageSlicePaint.cxx
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
   vtkSlicerROILogic.cxx
-  vtkImageResliceMask.cxx 
   vtkImageConnectivity.cxx 
   vtkImageLabelChange.cxx 
-  vtkImageErode.cxx 
-  vtkImageNeighborhoodFilter.cxx
-  vtkImageLabelOutline.cxx
+  vtkImageErode.cxx
   vtkSlicerTransformLogic.cxx
   vtkPichonFastMarching.cxx
   vtkPichonFastMarchingPDF.cxx
@@ -88,7 +82,6 @@ SET_SOURCE_FILES_PROPERTIES(
 # --------------------------------------------------------------------------
 # TCL Wrapping
 IF (VTK_WRAP_TCL)
-  SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
   VTK_WRAP_TCL3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
 ENDIF (VTK_WRAP_TCL)
 
@@ -131,7 +124,6 @@ SET(libs
   vtkITK
   ${OPENTRACKER_LIB}
   FreeSurfer
-  vtkTeem
   ${VTK_LIBRARIES}
   )
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})

@@ -6,18 +6,24 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerSliceLayerLogic.cxx,v $
+  Module:    $RCSfile: vtkMRMLSliceLayerLogic.cxx,v $
   Date:      $Date$
   Version:   $Revision$
 
 =========================================================================auto=*/
 
+
+// VTK includes
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkSmartPointer.h"
+#include "vtkPointData.h"
+#include "vtkDiffusionTensorMathematics.h"
 
-#include "vtkSlicerSliceLayerLogic.h"
+//
+#include "vtkImageLabelOutline.h"
 
+// MRML includes
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
@@ -29,18 +35,16 @@
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
-#include "vtkImageLabelOutline.h"
 
-#include "vtkPointData.h"
+// MRMLLogic includes
+#include "vtkMRMLSliceLayerLogic.h"
 
-#include "vtkDiffusionTensorMathematics.h"
-
-vtkCxxRevisionMacro(vtkSlicerSliceLayerLogic, "$Revision$");
-vtkStandardNewMacro(vtkSlicerSliceLayerLogic);
+vtkCxxRevisionMacro(vtkMRMLSliceLayerLogic, "$Revision$");
+vtkStandardNewMacro(vtkMRMLSliceLayerLogic);
 
 
 //----------------------------------------------------------------------------
-vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
+vtkMRMLSliceLayerLogic::vtkMRMLSliceLayerLogic()
 {
   this->VolumeNode = NULL;
   this->VolumeDisplayNode = NULL;
@@ -111,7 +115,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
+vtkMRMLSliceLayerLogic::~vtkMRMLSliceLayerLogic()
 {
   if ( this->SliceNode ) 
     {
@@ -162,7 +166,7 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller, 
+void vtkMRMLSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller, 
                                             unsigned long event, 
                                             void *callData)
 {
@@ -199,7 +203,7 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
       }
     else
       {      
-      vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: volume display node " \
+      vtkDebugMacro("vtkMRMLSliceLayerLogic::ProcessMRMLEvents: volume display node " \
           << (this->VolumeDisplayNode == NULL ? " is null" : "is set, but") \
           << ", not updating (color node may be null)\n");
       }
@@ -209,7 +213,7 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
+void vtkMRMLSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 {
   if ( sliceNode != this->SliceNode )
     {
@@ -224,7 +228,7 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
+void vtkMRMLSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
 {
   if (this->VolumeNode != volumeNode)
     {
@@ -243,7 +247,7 @@ void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
+void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
 {
   // if there's a display node, observe it
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
@@ -321,7 +325,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
         }
       return;
       }
-    vtkDebugMacro("vtkSlicerSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == NULL ? "null" : "valid") << endl);
+    vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == NULL ? "null" : "valid") << endl);
     if ( displayNode )
       {
       if (this->VolumeDisplayNode != NULL)
@@ -348,7 +352,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::UpdateTransforms()
+void vtkMRMLSliceLayerLogic::UpdateTransforms()
 {
   static bool reportedNonlinearTransformSupport = false;
   
@@ -424,7 +428,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
 }
 
-void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
+void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
 {
   vtkMRMLVolumeDisplayNode *volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
   vtkMRMLLabelMapVolumeDisplayNode *labelMapVolumeDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
@@ -519,7 +523,7 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
+void vtkMRMLSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
 {
   if ( this->VolumeNode )
   {
@@ -570,7 +574,7 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 

@@ -88,10 +88,6 @@
 class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject 
 {
 public:
-
-  /// Typedef for member functions of SlicerLogic that can be used as
-  /// scheduled tasks.
-  typedef void (vtkMRMLAbstractLogic::*TaskFunctionPointer)(void *clientdata);
   
   /// The Usual vtk class functions
   static vtkMRMLAbstractLogic *New();

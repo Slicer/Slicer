@@ -6,13 +6,13 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerSliceLayerLogic.h,v $
+  Module:    $RCSfile: vtkMRMLSliceLayerLogic.h,v $
   Date:      $Date$
   Version:   $Revision$
 
 =========================================================================auto=*/
 
-///  vtkSlicerSliceLayerLogic - slicer logic class for slice manipulation
+///  vtkMRMLSliceLayerLogic - slicer logic class for slice manipulation
 /// 
 /// This class manages the logic associated with reslicing of volumes
 /// (but not the GUI).  Features of the class include:
@@ -20,7 +20,7 @@
 /// - Reslicing 
 /// -- uses the vtkImageData and IJKToRAS transform from a vtkMRMLVolumeNode 
 /// -- disp
-/// -- uses a current slice view specification (typically set by vtkSlicerSliceLogic)
+/// -- uses a current slice view specification (typically set by vtkMRMLSliceLogic)
 /// - Outputs
 /// -- Colors vtkImageData for the given slice
 /// -- image is mapped through current window/level and lookup table
@@ -29,28 +29,10 @@
 //
 
 
-#ifndef __vtkSlicerSliceLayerLogic_h
-#define __vtkSlicerSliceLayerLogic_h
+#ifndef __vtkMRMLSliceLayerLogic_h
+#define __vtkMRMLSliceLayerLogic_h
 
-#include <stdlib.h>
-
-#include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
-
-#include "vtkMRML.h"
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLSliceNode.h"
-
-#include "vtkImageResliceMask.h"
-#include "vtkImageReslice.h"
-#include "vtkImageSlice.h"
-#include "vtkAssignAttribute.h"
-
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
-
+// VTK includes
 #include "vtkImageMapToWindowLevelColors.h"
 #include "vtkImageThreshold.h"
 #include "vtkImageAppendComponents.h"
@@ -59,16 +41,38 @@
 #include "vtkImageCast.h"
 #include "vtkLookupTable.h"
 
+//
+#include "vtkImageResliceMask.h"
+#include "vtkImageReslice.h"
+#include "vtkImageSlice.h"
+#include "vtkAssignAttribute.h"
+
+// MRML includes
+#include "vtkMRML.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+
+// MRMLLogic includes
+#include "vtkMRMLAbstractLogic.h"
+
+// STL includes
+#include <stdlib.h>
+
+#include "vtkMRMLLogicWin32Header.h"
 
 class vtkDiffusionTensorMathematics;
 class vtkImageLabelOutline;
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLogic 
+class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLayerLogic : public vtkMRMLAbstractLogic 
 {
-  public:
+public:
   
   /// The Usual vtk class functions
-  static vtkSlicerSliceLayerLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerSliceLayerLogic,vtkSlicerLogic);
+  static vtkMRMLSliceLayerLogic *New();
+  vtkTypeRevisionMacro(vtkMRMLSliceLayerLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
@@ -184,10 +188,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   vtkGetObjectMacro (XYToIJKTransform, vtkTransform);
     
 protected:
-  vtkSlicerSliceLayerLogic();
-  virtual ~vtkSlicerSliceLayerLogic();
-  vtkSlicerSliceLayerLogic(const vtkSlicerSliceLayerLogic&);
-  void operator=(const vtkSlicerSliceLayerLogic&);
+  vtkMRMLSliceLayerLogic();
+  virtual ~vtkMRMLSliceLayerLogic();
+  vtkMRMLSliceLayerLogic(const vtkMRMLSliceLayerLogic&);
+  void operator=(const vtkMRMLSliceLayerLogic&);
 
   /// 
   /// the MRML Nodes that define this Logic's parameters

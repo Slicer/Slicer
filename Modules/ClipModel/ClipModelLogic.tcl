@@ -134,6 +134,6 @@ proc ClipModelLabelCheckpoint {} {
 # make it easier to test the model by looking for the first slice logic
 #
 proc ClipModelTestQuickModel {} {
-  set sliceLogic [lindex [vtkSlicerSliceLogic ListInstances] 0]
+  set sliceLogic [lindex [vtkMRMLSliceLogic ListInstances] 0]
   ClipModelAddQuickModel $sliceLogic
 }

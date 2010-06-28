@@ -437,7 +437,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           "Translate" {
             #
             # Translate
-            # TODO: move calculation to vtkSlicerSliceLogic
+            # TODO: move calculation to vtkMRMLSliceLogic
             $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
             set tx [expr $windowx - [lindex $_actionStartViewportOrigin 0]]
             set ty [expr $windowy - [lindex $_actionStartViewportOrigin 1]]
@@ -469,7 +469,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           "Zoom" {
             #
             # Zoom
-            # TODO: move calculation to vtkSslicerSliceLogic
+            # TODO: move calculation to vtkMRMLSliceLogic
             $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
             set deltay [expr $windowy - [lindex $_actionStartWindowXY 1]]
 
@@ -503,7 +503,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           "Rotate" {
             #
             # Rotate
-            # TODO: move calculation to vtkSlicerSliceLogic
+            # TODO: move calculation to vtkMRMLSliceLogic
             $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
             set dx [expr $windowx - $lastwindowx]
             set dy [expr $windowy - $lastwindowy]

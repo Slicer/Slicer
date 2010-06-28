@@ -20,6 +20,7 @@
 #include "vtkMRMLEMSWorkingDataNode.h"
 #include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 #include "vtkMRMLEMSClassInteractionMatrixNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"

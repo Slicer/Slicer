@@ -12,6 +12,8 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 SET(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${vtkTeem_SOURCE_DIR}
+  ${vtkTeem_BINARY_DIR}
   )
 
 SET(packages
@@ -56,26 +58,23 @@ INSTALL(FILES
 
 SET(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.cxx
-  vtkMRMLAbstractLogic.h
-  )
-
-SET_SOURCE_FILES_PROPERTIES(
-  vtkMRMLAbstractLogic.cxx
-  vtkMRMLAbstractLogic.h
-  ABSTRACT
-  )
-
-SET_SOURCE_FILES_PROPERTIES(
-  vtkMRMLAbstractLogic.cxx
-  vtkMRMLAbstractLogic.h
-  WRAP_EXCLUDE
+  vtkMRMLSliceLayerLogic.cxx
+  vtkMRMLSliceLogic.cxx
+  # slicer's vtk extensions (filters)
+  vtkImageLabelOutline.cxx
+  vtkImageNeighborhoodFilter.cxx
+  vtkImageSlice.cxx
+  vtkImageResliceMask.cxx
   )
   
 # TCL Wrapping
 if (VTK_WRAP_TCL)
-   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake") 
+   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+   SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
    vtk_wrap_tcl3(MRMLLogic  MRMLLogic_TCL_SRCS   "${MRMLLogic_SRCS}" "")
 endif()
+
+message(MRMLLogic_TCL_SRCS:${MRMLLogic_TCL_SRCS})
 
 SET(srcs
  ${MRMLLogic_SRCS}
@@ -98,6 +97,7 @@ ADD_LIBRARY(${lib_name}
 
 SET(libs
   MRML
+  vtkTeem
   )
 
 TARGET_LINK_LIBRARIES(${lib_name}
@@ -149,4 +149,11 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
     ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development)
 
 ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+
+# --------------------------------------------------------------------------
+# Testing
+
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF(BUILD_TESTING)
  

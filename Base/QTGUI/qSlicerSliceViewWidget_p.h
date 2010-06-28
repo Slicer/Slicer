@@ -10,12 +10,12 @@
 // qMRML includes
 #include "qSlicerSliceViewWidget.h"
 
+// MRMLLogic includes
+#include <vtkMRMLSliceLogic.h>
+
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
-
-// Slicer includes
-#include <vtkSlicerSliceLogic.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerSliceViewWidgetPrivate: public QObject,
@@ -37,7 +37,7 @@ public slots:
   void onImageDataModifiedEvent();
 
 public:
-  vtkSmartPointer<vtkSlicerSliceLogic> SliceLogic;
+  vtkSmartPointer<vtkMRMLSliceLogic>   SliceLogic;
   vtkWeakPointer<vtkImageData>         ImageData;
 
 };

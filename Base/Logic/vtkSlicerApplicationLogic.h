@@ -24,19 +24,21 @@
 #ifndef __vtkSlicerApplicationLogic_h
 #define __vtkSlicerApplicationLogic_h
 
-#include "vtkMRMLSelectionNode.h"
-#include "vtkMRMLInteractionNode.h"
-
-#include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
-#include "vtkSlicerSliceLogic.h"
-
-#include "vtkCollection.h"
-
+// ITK includes
 #include "itkMultiThreader.h"
 #include "itkMutexLock.h"
 
+// VTK includes
+#include "vtkCollection.h"
+
+// Slice includes
+#include "vtkSlicerBaseLogic.h"
+#include "vtkSlicerLogic.h"
+
 //BTX
+class vtkMRMLSliceLogic;
+class vtkMRMLSelectionNode;
+class vtkMRMLInteractionNode;
 class ProcessingTaskQueue;
 class ModifiedQueue;
 class ReadDataQueue;
@@ -59,42 +61,22 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   vtkTypeRevisionMacro(vtkSlicerApplicationLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
     
-
   /// 
   /// Connect to the given URL.  Disconnect any currently active 
   /// connection to switch to a new connection.  A NULL pointer means
   /// to disconnect current and not have a current connection
   /// (creates a blank scene for manipulation).
   /// Return code tells if connection was completed successfully.
-  void Connect (const char *URL) {
-    if (this->MRMLScene)
-     {
-      this->MRMLScene->SetURL(URL);
-      this->MRMLScene->Connect();
-      }
-  };
+  void Connect (const char *URL);
 
   /// 
   /// Commit your current scene modifications to the connected URL
   /// Return code tells result of commit.
-  int Commit () {
-    if (this->MRMLScene)
-      {
-      return (this->MRMLScene->Commit());
-      }
-    return (0);
-  };
+  int Commit ();
   /// 
   /// Commit your current scene modifications to specified URL
   /// Return code tells result of commit.
-  int Commit (const char *URL) {
-    if (this->MRMLScene)
-      {
-      return (this->MRMLScene->Commit(URL));
-      }
-    return (0);
-  };
-
+  int Commit (const char *URL);
 
   /// 
   /// Additional methods here to manipulate the application:
@@ -117,31 +99,19 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   vtkGetObjectMacro (Views,vtkCollection);
 
   /// 
-  /// the ActiveView is the default destination of UI events
-  //vtkSetObjectMacro (ActiveView,vtkSlicerViewLogic);
-  //vtkGetObjectMacro (ActiveView,vtkSlicerViewLogic);
-
-  /// Slices
-  /// 
-  /// Slices are the 2D viewports that show composited layers
-  /// of volume data from a particular slice definition.
-  //vtkSetObjectMacro (Slices,vtkCollection);
-  //vtkGetObjectMacro (Slices,vtkCollection);
-
-  /// 
   /// the ActiveSlice is the default destination of UI events
-  vtkSetObjectMacro (ActiveSlice,vtkSlicerSliceLogic);
-  vtkGetObjectMacro (ActiveSlice,vtkSlicerSliceLogic);
+  void SetActiveSlice(vtkMRMLSliceLogic * newSliceLogic);
+  vtkMRMLSliceLogic* GetActiveSlice();
 
   /// 
   /// the SelectionNode 
-  vtkSetObjectMacro (SelectionNode,vtkMRMLSelectionNode);
-  vtkGetObjectMacro (SelectionNode,vtkMRMLSelectionNode);
+  void SetSelectionNode(vtkMRMLSelectionNode* newSelectionNode);
+  vtkMRMLSelectionNode* GetSelectionNode();
 
   /// 
-  /// the InteractionNode 
-  vtkSetObjectMacro (InteractionNode,vtkMRMLInteractionNode);
-  vtkGetObjectMacro (InteractionNode,vtkMRMLInteractionNode);
+  /// the InteractionNode
+  void SetInteractionNode(vtkMRMLInteractionNode* newInteractionNode);
+  vtkMRMLInteractionNode* GetInteractionNode();
 
   /// 
   /// Perform the default behavior related to selecting a volume
@@ -158,13 +128,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   /// 
   /// Modules are additional pieces of Slicer functionality
   /// that are loaded and managed at run time
-  //vtkSetObjectMacro (Modules,vtkCollection);
   vtkGetObjectMacro (Modules,vtkCollection);
-
-  /// 
-  /// the ActiveModule is the default destination of UI events
-  //vtkSetObjectMacro (ActiveModule,vtkSlicerModule);
-  //vtkGetObjectMacro (ActiveModule,vtkSlicerModule);
 
   /// 
   /// Creates a selection node if needed
@@ -256,20 +220,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
 
   /// 
   /// Add slice logic to the STL::MAP
-  void AddSliceLogic(const char *layoutName, vtkSlicerSliceLogic *sliceLogic);
+  void AddSliceLogic(const char *layoutName, vtkMRMLSliceLogic *sliceLogic);
 
   /// 
   /// Add slice logic to the STL::MAP using the slice logic's name for
   /// the key.
-  void AddSliceLogic(vtkSlicerSliceLogic *sliceLogic);
+  void AddSliceLogic(vtkMRMLSliceLogic *sliceLogic);
 
   /// 
   /// Get the slice logic for a particular layout "Red", "Green", "Yellow"
-  vtkSlicerSliceLogic* GetSliceLogic(const char *layoutName);
+  vtkMRMLSliceLogic* GetSliceLogic(const char *layoutName);
 
   /// 
   /// Remove a slice logic from the managed set
-  void RemoveSliceLogic(vtkSlicerSliceLogic *sliceLogic);
+  void RemoveSliceLogic(vtkMRMLSliceLogic *sliceLogic);
   void RemoveSliceLogic(char *layoutName);
   
   //
@@ -349,14 +313,11 @@ private:
   /// for now, make these generic collections
   /// - maybe they should be subclassed to be type-specific?
   vtkCollection *Views;
-  //vtkCollection *Slices;
   vtkCollection *Modules;
 
-  //vtkSlicerViewLogic *ActiveView;
-  vtkSlicerSliceLogic *ActiveSlice;
-  vtkMRMLSelectionNode *SelectionNode;
+  vtkMRMLSliceLogic *     ActiveSlice;
+  vtkMRMLSelectionNode *  SelectionNode;
   vtkMRMLInteractionNode *InteractionNode;
-  //vtkSlicerModuleLogic *ActiveModule;
 
   //BTX
   itk::MultiThreader::Pointer ProcessingThreader;

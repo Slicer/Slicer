@@ -68,9 +68,9 @@ class vtkAbstractTransform;
 class vtkMatrix4x4;
 class vtkImageStencilData;
 
-#include "vtkSlicerBaseLogic.h"
+#include "vtkMRMLLogicWin32Header.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageResliceMask : public vtkThreadedImageAlgorithm
+class VTK_MRML_LOGIC_EXPORT vtkImageResliceMask : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageResliceMask *New();
