@@ -63,7 +63,7 @@ void qMRMLNodeComboBoxPrivate::init()
   this->ComboBox = new QComboBox(p);
   p->setLayout(new QHBoxLayout);
   p->layout()->addWidget(this->ComboBox);
-  p->setContentsMargins(0,0,0,0);
+  p->layout()->setContentsMargins(0,0,0,0);
 
   this->MRMLNodeFactory = new qMRMLNodeFactory(p);
 
