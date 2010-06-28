@@ -1,5 +1,6 @@
 
 import os
+import sys
 
 # prevents dashboard from truncating output of this test.
 print >> sys.stderr, "Enabling CTEST_FULL_OUTPUT\n"
