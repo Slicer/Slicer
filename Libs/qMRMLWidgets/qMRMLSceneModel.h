@@ -78,6 +78,8 @@ protected:
   friend class qMRMLTreeProxyModel;
   qMRMLAbstractItemHelperFactory* itemFactory()const;
   qMRMLAbstractItemHelper* item(const QModelIndex &modelIndex)const;
+  static void DoCallback(vtkObject* vtk_obj, unsigned long event,
+                         void* client_data, void* call_data);
 private:
   CTK_DECLARE_PRIVATE(qMRMLSceneModel);
 };

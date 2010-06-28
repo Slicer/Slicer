@@ -17,6 +17,7 @@
 
 // VTK includes 
 #include <vtkSmartPointer.h>
+#include <vtkCallbackCommand.h>
 #include <vtkVariantArray.h>
 
 // STD includes
@@ -269,11 +270,13 @@ public:
   CTK_DECLARE_PUBLIC(qMRMLSceneModel);
   qMRMLSceneModelPrivate();
   ~qMRMLSceneModelPrivate();
+  void init();
   
   //qMRMLAbstractItemHelper* itemFromObject(vtkObject* object, int column)const;
   qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &index)const;
   QModelIndex indexFromItem(const qMRMLAbstractItemHelper* itemHelper)const;
 
+  vtkSmartPointer<vtkCallbackCommand> CallBack;
   qMRMLSceneModelItemHelperFactory* ItemFactory;
   vtkMRMLScene* MRMLScene;
   vtkMRMLNode*  MRMLNodeToBe;
@@ -283,15 +286,24 @@ public:
 //------------------------------------------------------------------------------
 qMRMLSceneModelPrivate::qMRMLSceneModelPrivate()
 {
+  this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->ItemFactory = new qMRMLSceneModelItemHelperFactory();
   this->MRMLScene = 0;
   this->MRMLNodeToBe = 0;
-  this->ItemFactory = new qMRMLSceneModelItemHelperFactory();
 }
 
 //------------------------------------------------------------------------------
 qMRMLSceneModelPrivate::~qMRMLSceneModelPrivate()
 {
   delete this->ItemFactory;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModelPrivate::init()
+{
+  CTK_P(qMRMLSceneModel);
+  this->CallBack->SetClientData(p);
+  this->CallBack->SetCallback(qMRMLSceneModel::DoCallback);
 }
 
 //------------------------------------------------------------------------------
@@ -330,6 +342,7 @@ qMRMLSceneModel::qMRMLSceneModel(QObject *_parent)
   :QAbstractItemModel(_parent)
 {
   CTK_INIT_PRIVATE(qMRMLSceneModel);
+  ctk_d()->init();
 }
 
 //------------------------------------------------------------------------------
@@ -419,6 +432,7 @@ QStringList qMRMLSceneModel::postItems(vtkObject* itemParent)const
 void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
 {
   CTK_D(qMRMLSceneModel);
+  /*
   // onMRMLSceneNodeAboutToBeAdded must be call as late as possible after 
   // vtkMRMLScene::NodeAboutToBeAddedEvent is fired. This fix the pb when a node
   // is created in the callback of the NodeAboutToBeAddedEvent.
@@ -438,6 +452,18 @@ void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
                       this, SLOT(onMRMLSceneNodeRemoved(vtkObject*, vtkObject*)), 10.);
   this->qvtkReconnect(d->MRMLScene, scene, vtkCommand::DeleteEvent,
                       this, SLOT(onMRMLSceneDeleted(vtkObject*)));
+  */
+  if (d->MRMLScene)
+    {
+    d->MRMLScene->RemoveObserver(d->CallBack);
+    }
+  if (scene)
+    {
+    scene->AddObserver(vtkMRMLScene::NodeAboutToBeAddedEvent, d->CallBack, -10.);
+    scene->AddObserver(vtkMRMLScene::NodeAddedEvent, d->CallBack, 10.);
+    scene->AddObserver(vtkMRMLScene::NodeAboutToBeRemovedEvent, d->CallBack, -10.);
+    scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, d->CallBack, 10.);
+    }
   this->beginResetModel();
   d->MRMLScene = scene;
   this->endResetModel();
@@ -605,6 +631,30 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject*
   this->beginInsertRows(d->indexFromItem(sceneItem.data()), insertLocation, insertLocation);
 }
 
+//-----------------------------------------------------------------------------
+void qMRMLSceneModel::DoCallback(vtkObject* vtk_obj, unsigned long event,
+                                 void* client_data, void* call_data)
+{
+  vtkMRMLScene* scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
+  qMRMLSceneModel* sceneModel = reinterpret_cast<qMRMLSceneModel*>(client_data);
+  vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(call_data);
+  switch(event)
+    {
+    case vtkMRMLScene::NodeAboutToBeAddedEvent:
+      sceneModel->onMRMLSceneNodeAboutToBeAdded(scene, node);
+      break;
+    case vtkMRMLScene::NodeAddedEvent:
+      sceneModel->onMRMLSceneNodeAdded(scene, node);
+      break;
+    case vtkMRMLScene::NodeAboutToBeRemovedEvent:
+      sceneModel->onMRMLSceneNodeAboutToBeRemoved(scene, node);
+      break;
+    case vtkMRMLScene::NodeRemovedEvent:
+      sceneModel->onMRMLSceneNodeRemoved(scene, node);
+      break;
+    }
+}
+
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
 {
@@ -614,8 +664,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
     {
     // it's kind of ugly to call just NodeAddedEvent without NodeAboutToBeAddedEvent, 
     // but we can handle that case...
-    qDebug() << "Warning, vtkMRMLScene::NodeAddedEvent has been fired without"
-      " vtkMRMLScene::NodeAboutToBeAddedEvent.";
+    //qDebug() << "Warning, vtkMRMLScene::NodeAddedEvent has been fired without"
+    //  " vtkMRMLScene::NodeAboutToBeAddedEvent.";
     //this->onMRMLSceneNodeAboutToBeAdded(scene, node);
     d->MRMLNodeToBe = vtkMRMLNode::SafeDownCast(node);
     Q_ASSERT(d->MRMLNodeToBe);
