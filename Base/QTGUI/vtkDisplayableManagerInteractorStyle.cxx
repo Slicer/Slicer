@@ -21,6 +21,7 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLSelectionNode.h"
 
 // for picking
