@@ -65,9 +65,6 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   ctkTransferFunctionBarsItem* barsItem =
     new ctkTransferFunctionBarsItem(this->Histogram);
   barsItem->setBarWidth(1.);
-  QColor highlight = p->palette().color(QPalette::Normal, QPalette::Highlight);
-  //highlight.setAlphaF(0.5); not correctly supported... strange
-  barsItem->setBarColor(highlight);
   scene->addItem(barsItem);
 }
 
