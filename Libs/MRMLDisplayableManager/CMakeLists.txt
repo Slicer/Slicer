@@ -96,6 +96,18 @@ TARGET_LINK_LIBRARIES(${lib_name}
   ${libs}
   )
 
+SET(VTK_LIBRARIES
+  vtkWidgets
+  )
+
+FOREACH(c ${VTK_LIBRARIES})
+  SET(tcl_wrap)
+  IF (VTK_WRAP_TCL)
+    SET(tcl_wrap TCL)
+  ENDIF()
+  TARGET_LINK_LIBRARIES(${lib_name} ${c}${tcl_wrap})
+ENDFOREACH(c)
+
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
