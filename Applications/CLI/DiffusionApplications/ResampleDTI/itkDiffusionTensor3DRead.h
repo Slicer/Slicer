@@ -16,7 +16,7 @@
 
 #include <itkObject.h>
 #include <itkMetaDataObject.h>
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkMatrix.h>
 #include <itkImageFileReader.h>
 #include <itkNrrdImageIO.h>
@@ -39,7 +39,7 @@ public:
   typedef DiffusionTensor3DRead Self ;
   typedef Matrix< double , 3 , 3 > MatrixType ;
   typedef DiffusionTensor3D< DataType > TensorDataType ;
-  typedef OrientedImage< TensorDataType , 3 > DiffusionImageType ;
+  typedef Image< TensorDataType , 3 > DiffusionImageType ;
   typedef typename DiffusionImageType::Pointer DiffusionImagePointer ;
   typedef ImageFileReader< DiffusionImageType > FileReaderType ;
   typedef MetaDataDictionary DictionaryType ;

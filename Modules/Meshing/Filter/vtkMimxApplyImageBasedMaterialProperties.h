@@ -38,7 +38,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkMimxFilterWin32Header.h"
 
 //#include "itkImage.h"
-//#include "itkOrientedImage.h"
+//#include "itkImage.h"
 //#include "itkIndex.h"
 
 #include "vtkImageData.h"
@@ -46,7 +46,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 class vtkUnstructuredGrid;
 //typedef itk::Image<signed short, 3>  ImageType;
-//typedef itk::OrientedImage<signed short, 3> OrientImageType;
+//typedef itk::Image<signed short, 3> OrientImageType;
 //typedef itk::Index<3> IntegerType;
 
 
@@ -57,8 +57,6 @@ public:
   static vtkMimxApplyImageBasedMaterialProperties *New();
   vtkTypeRevisionMacro(vtkMimxApplyImageBasedMaterialProperties,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
-//  void SetITKImage(ImageType::Pointer);
-//  void SetITKOrientedImage(OrientImageType::Pointer);
   vtkSetMacro(ElementSetName, const char*);
   vtkSetMacro(ConstantA, double);
   vtkGetMacro(ConstantA, double);

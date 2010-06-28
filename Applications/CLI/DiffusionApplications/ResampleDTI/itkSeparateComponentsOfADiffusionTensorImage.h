@@ -15,7 +15,7 @@
 #define __itkSeparateComponentsOfADiffusionTensorImage_h
 
 #include <itkImageToImageFilter.h>
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkDiffusionTensor3D.h>
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
@@ -29,23 +29,23 @@ namespace itk
 template< class TInput , class TOutput >
 class SeparateComponentsOfADiffusionTensorImage
 : public ImageToImageFilter
-< OrientedImage < DiffusionTensor3D < TInput > , 3 > ,
-  OrientedImage < TOutput , 3 > >
+< Image < DiffusionTensor3D < TInput > , 3 > ,
+  Image < TOutput , 3 > >
 {
 public :
 typedef TInput InputDataType ;
 typedef TOutput OutputDataType ;
 typedef ImageToImageFilter
-          < OrientedImage < DiffusionTensor3D < TInput > , 3 > ,
-            OrientedImage < TOutput , 3 > >
+          < Image < DiffusionTensor3D < TInput > , 3 > ,
+            Image < TOutput , 3 > >
 Superclass ;
 typedef DiffusionTensor3D< InputDataType > InputTensorDataType ;
-typedef OrientedImage< InputTensorDataType , 3 > InputImageType ;
+typedef Image< InputTensorDataType , 3 > InputImageType ;
 typedef SeparateComponentsOfADiffusionTensorImage Self ;
 typedef SmartPointer< Self > Pointer ;
 typedef SmartPointer< const Self > ConstPointer ;
 typedef typename InputImageType::Pointer InputImagePointerType ;
-typedef OrientedImage< OutputDataType , 3 > OutputImageType ;
+typedef Image< OutputDataType , 3 > OutputImageType ;
 typedef typename OutputImageType::Pointer OutputImagePointerType ;
 typedef itk::ImageRegionIterator< OutputImageType > OutputIteratorType ;
 typedef itk::ImageRegionConstIterator< InputImageType > InputIteratorType ;

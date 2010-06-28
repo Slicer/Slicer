@@ -23,7 +23,7 @@
 #endif
 
 #include "itkImage.h"
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -42,7 +42,7 @@
 #include "PolyDataToLabelmapCLP.h"
 
 
-typedef itk::OrientedImage< unsigned char, 3 > LabelImageType;
+typedef itk::Image< unsigned char, 3 > LabelImageType;
 
 LabelImageType::Pointer BinaryErodeFilter3D ( LabelImageType::Pointer & img , unsigned int ballsize )
 {

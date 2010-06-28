@@ -28,7 +28,7 @@ namespace itk
 template< class TData,
          unsigned int VRadius ,
          class TWindowFunction = Function::HammingWindowFunction< VRadius > ,
-         class TBoundaryCondition = ConstantBoundaryCondition< OrientedImage< TData , 3 > >  ,
+         class TBoundaryCondition = ConstantBoundaryCondition< Image< TData , 3 > >  ,
          class TCoordRep = double
         >
 class DiffusionTensor3DWindowedSincInterpolateImageFunction

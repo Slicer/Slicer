@@ -15,7 +15,7 @@
 #define __itkDiffusionTensor3DInterpolateImageFunctionReimplementation_h
 
 #include "itkDiffusionTensor3DInterpolateImageFunction.h"
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 //#include <itkImageRegionIteratorWithIndex.h>
 #include <itkInterpolateImageFunction.h>
 #include "itkSeparateComponentsOfADiffusionTensorImage.h"
@@ -50,7 +50,7 @@ public :
   typedef typename Superclass::TensorDataType TensorDataType ;
   typedef typename Superclass::DiffusionImageType DiffusionImageType ;
   typedef typename Superclass::DiffusionImageTypePointer DiffusionImageTypePointer ;
-  typedef OrientedImage< DataType , 3 > ImageType ;
+  typedef Image< DataType , 3 > ImageType ;
   typedef typename ImageType::Pointer ImagePointer ;
   typedef typename Superclass::PointType PointType ;
   typedef SmartPointer< Self > Pointer ;

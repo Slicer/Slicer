@@ -16,7 +16,7 @@
 
 #include <itkObject.h>
 #include "itkDiffusionTensor3D.h"
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkPoint.h>
 //#include <itkSemaphore.h>
 //#include <itkNumericTraits.h>
@@ -33,7 +33,7 @@ namespace itk
  */
 template< class TData , class TCoordRep = double >
 class DiffusionTensor3DInterpolateImageFunction :
-   public ImageFunction< OrientedImage< DiffusionTensor3D < TData > , 3 > ,
+   public ImageFunction< Image< DiffusionTensor3D < TData > , 3 > ,
                          DiffusionTensor3D < TData > ,
                          TCoordRep
                        >
@@ -42,13 +42,13 @@ public :
   typedef TData TensorType ;
   typedef DiffusionTensor3DInterpolateImageFunction Self ;
   typedef DiffusionTensor3D< TensorType > TensorDataType ;
-  typedef OrientedImage< TensorDataType , 3 > DiffusionImageType ;
+  typedef Image< TensorDataType , 3 > DiffusionImageType ;
   typedef typename DiffusionImageType::Pointer DiffusionImageTypePointer ;
   typedef Point< double , 3 > PointType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
   typedef typename TensorDataType::RealValueType TensorRealType ;
-  typedef ImageFunction< OrientedImage< DiffusionTensor3D < TData > , 3 > ,
+  typedef ImageFunction< Image< DiffusionTensor3D < TData > , 3 > ,
                          DiffusionTensor3D < TData > ,
                          TCoordRep
                        > Superclass ;

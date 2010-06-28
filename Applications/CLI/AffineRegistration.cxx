@@ -15,7 +15,7 @@
 
 #include "AffineRegistrationCLP.h"
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkOrientImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -102,13 +102,13 @@ template<class T1, class T2> int DoIt2( int argc, char * argv[], const T1&, cons
 
   const    unsigned int  ImageDimension = 3;
   typedef  T1  FixedPixelType; //##
-  typedef itk::OrientedImage<FixedPixelType, ImageDimension> FixedImageType;//##
+  typedef itk::Image<FixedPixelType, ImageDimension> FixedImageType;//##
 
   typedef itk::ImageFileReader<FixedImageType> FixedFileReaderType;//##
   typedef itk::OrientImageFilter<FixedImageType,FixedImageType> FixedOrientFilterType;//##
 
   typedef  T2  MovingPixelType;//##
-  typedef itk::OrientedImage<MovingPixelType, ImageDimension> MovingImageType;//##
+  typedef itk::Image<MovingPixelType, ImageDimension> MovingImageType;//##
 
   typedef itk::ImageFileReader<MovingImageType> MovingFileReaderType;//##
   typedef itk::OrientImageFilter<MovingImageType,MovingImageType> MovingOrientFilterType;//##

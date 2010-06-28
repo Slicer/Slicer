@@ -45,7 +45,7 @@
 #include "itkVersion.h"
 
 #include "itkPluginUtilities.h"
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkMinimumMaximumImageFilter.h"
 
 #include "itkImageFileReader.h"
@@ -78,9 +78,9 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   typedef T PixelType;
 
-  typedef itk::OrientedImage< PixelType, InputDimension >
+  typedef itk::Image< PixelType, InputDimension >
     InputImageType;
-  typedef itk::OrientedImage< PixelType, OutputDimension >
+  typedef itk::Image< PixelType, OutputDimension >
     OutputImageType;
   typedef itk::ImageFileReader< InputImageType >
     ReaderType;

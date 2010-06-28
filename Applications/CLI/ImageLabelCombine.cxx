@@ -30,7 +30,7 @@
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageDuplicator.h"
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 
 #include "ImageLabelCombineCLP.h"
 
@@ -50,7 +50,7 @@ int main( int argc, char * argv[] ){
   PARSE_ARGS;
 
   typedef short PixelType;
-  typedef itk::OrientedImage<PixelType,3> ImageType;
+  typedef itk::Image<PixelType,3> ImageType;
   typedef itk::ImageFileReader<ImageType> ReaderType;
   typedef itk::ImageFileWriter<ImageType> WriterType;
   typedef itk::ImageRegionIterator<ImageType> IteratorType;

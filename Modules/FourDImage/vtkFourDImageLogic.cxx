@@ -149,7 +149,7 @@ vtkMRMLTimeSeriesBundleNode* vtkFourDImageLogic::AddNewFourDBundleNode (  )
 int vtkFourDImageLogic::SortFilesFromDirToCreateFileList ( const char *path,
                                                            std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList)
 {
-  typedef itk::OrientedImage< PixelValueType, 2 > SliceType;
+  typedef itk::Image< PixelValueType, 2 > SliceType;
   typedef itk::ImageFileReader< SliceType > SliceReaderType;
   typedef itk::GDCMImageIO ImageIOType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
@@ -359,7 +359,7 @@ int vtkFourDImageLogic::CreateFileListFromDir(const char* path,
                                              std::vector<ReaderType::FileNamesContainer>& fileNamesContainerList)
 {
 
-  typedef itk::OrientedImage< PixelValueType, 2 > SliceType;
+  typedef itk::Image< PixelValueType, 2 > SliceType;
   typedef itk::ImageFileReader< SliceType > SliceReaderType;
   typedef itk::GDCMImageIO ImageIOType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;

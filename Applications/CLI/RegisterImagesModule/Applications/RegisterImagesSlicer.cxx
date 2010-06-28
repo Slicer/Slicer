@@ -10,7 +10,7 @@
 
 #include "itkTimeProbesCollectorBase.h"
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -36,7 +36,7 @@ void GetImageType (std::string fileName,
                    itk::ImageIOBase::IOComponentType &componentType,
                    unsigned int & dimensions )
 {
-  typedef itk::OrientedImage<short, 3> ImageType;
+  typedef itk::Image<short, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName.c_str());
@@ -64,7 +64,7 @@ int DoIt( int argc, char *argv[] )
     verbosity = VERBOSE;
     }
 
-  typedef typename itk::OrientedImage<T, DimensionT> ImageType;
+  typedef typename itk::Image<T, DimensionT> ImageType;
 
   typedef typename itk::ImageToImageRegistrationHelper< ImageType >  RegerType;
 

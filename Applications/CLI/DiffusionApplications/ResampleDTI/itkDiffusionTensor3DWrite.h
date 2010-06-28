@@ -16,7 +16,7 @@
 
 #include <itkObject.h>
 #include <itkMetaDataObject.h>
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkMatrix.h>
 #include <itkImageFileWriter.h>
 #include <itkNrrdImageIO.h>
@@ -38,7 +38,7 @@ public:
   typedef TData DataType ;
   typedef DiffusionTensor3DWrite Self ;
   typedef DiffusionTensor3D< DataType > TensorDataType ;
-  typedef OrientedImage< TensorDataType , 3 > DiffusionImageType ;
+  typedef Image< TensorDataType , 3 > DiffusionImageType ;
   typedef MetaDataDictionary DictionaryType ;
   typedef ImageFileWriter< DiffusionImageType > WriterType ;
   typedef SmartPointer< Self > Pointer ;

@@ -34,7 +34,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include <time.h>
 
 #include <itkImage.h>
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkImageRegionIteratorWithIndex.h>
 
 #include <itkMesh.h>

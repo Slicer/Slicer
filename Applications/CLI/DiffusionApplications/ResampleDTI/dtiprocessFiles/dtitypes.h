@@ -21,7 +21,7 @@
 #define DTITYPES_H
 
 // ITK Data types
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkVectorContainer.h>
 #include <itkVector.h>
 #include <itkCovariantVector.h>
@@ -48,15 +48,15 @@ typedef itk::Vector<double,3> DeformationPixelType;
 typedef itk::CovariantVector<double,3> GradientPixelType;
 
 typedef itk::VectorImage<ScalarPixelType, DIM> VectorImageType;
-typedef itk::OrientedImage<TensorPixelType, DIM> TensorImageType;
+typedef itk::Image<TensorPixelType, DIM> TensorImageType;
 
-typedef itk::OrientedImage<DeformationPixelType, DIM> DeformationImageType;
-typedef itk::OrientedImage<GradientPixelType, DIM> GradientImageType;
+typedef itk::Image<DeformationPixelType, DIM> DeformationImageType;
+typedef itk::Image<GradientPixelType, DIM> GradientImageType;
 
-typedef itk::OrientedImage<RealType, DIM> RealImageType;
-typedef itk::OrientedImage<ScalarPixelType, DIM> IntImageType;
-typedef itk::OrientedImage<LabelType, DIM> LabelImageType;
-typedef itk::OrientedImage<itk::RGBPixel<unsigned char>,3> RGBImageType;
+typedef itk::Image<RealType, DIM> RealImageType;
+typedef itk::Image<ScalarPixelType, DIM> IntImageType;
+typedef itk::Image<LabelType, DIM> LabelImageType;
+typedef itk::Image<itk::RGBPixel<unsigned char>,3> RGBImageType;
 
 typedef TensorImageType::SizeType ImageSizeType;
 typedef TensorImageType::SpacingType ImageSpacingType;

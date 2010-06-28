@@ -35,7 +35,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMA
  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
  */
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkOrientImageFilter.h"
 #include "itkMultiResolutionPDEDeformableRegistration2.h"
 #include "itkFastSymmetricForcesDemonsRegistrationFilter.h"
@@ -483,9 +483,8 @@ void DoDemonsRegistration( arguments args )
    typedef float PixelType;
 
    // read and transform oriented images, operate on non-oriented
-   typedef itk::OrientedImage< PixelType, Dimension >  OrientedImageType;
-   typedef itk::OrientImageFilter<OrientedImageType,OrientedImageType> OrientFilterType;//##
    typedef itk::Image< PixelType, Dimension > ImageType;
+   typedef itk::OrientImageFilter<ImageType,ImageType> OrientFilterType;//##
 
    // Images we use
    typename ImageType::Pointer fixedImage = 0;
@@ -494,7 +493,7 @@ void DoDemonsRegistration( arguments args )
    {//for mem allocations
    
    // Set up the file readers
-   typedef typename itk::ImageFileReader< OrientedImageType > ImageReaderType;
+   typedef typename itk::ImageFileReader< ImageType > ImageReaderType;
 
    typename ImageReaderType::Pointer fixedImageReader  = ImageReaderType::New();
    typename ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
@@ -1017,10 +1016,9 @@ int main( int argc, char *argv[] )
    
    switch ( imageIO->GetNumberOfDimensions() )
    {
-   // can't support the 2D case with OrientedImages.
-   //case 2:
-      //DoDemonsRegistration<2>(args);
-      //break;
+   case 2:
+      DoDemonsRegistration<2>(args);
+      break;
    case 3:
       DoDemonsRegistration<3>(args);
       break;

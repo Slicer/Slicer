@@ -16,7 +16,7 @@
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkImageIOBase.h>
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkPoint.h>
 #include <itkResampleImageFilter.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
@@ -621,10 +621,10 @@ SetAllTransform( parameters &list ,
 template<class PixelType>
 int AddImage( typename itk::VectorImage< PixelType, 3 >
               ::Pointer &imagePile,
-              const std::vector< typename itk::OrientedImage< PixelType , 3 > ::Pointer > &vectorImage
+              const std::vector< typename itk::Image< PixelType , 3 > ::Pointer > &vectorImage
             )
 {
-   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
+   typedef itk::Image< PixelType , 3 > ImageType ;
    imagePile->SetRegions( vectorImage.at( 0 )->GetLargestPossibleRegion().GetSize() ) ;
    imagePile->SetOrigin( vectorImage.at( 0 )->GetOrigin() ) ;
    imagePile->SetDirection( vectorImage.at( 0 )->GetDirection() ) ;
@@ -660,10 +660,10 @@ int AddImage( typename itk::VectorImage< PixelType, 3 >
 template< class PixelType >
 int SeparateImages( const typename itk::VectorImage< PixelType , 3 >
                     ::Pointer &imagePile ,
-                    std::vector< typename itk::OrientedImage< PixelType , 3 >::Pointer > &vectorImage
+                    std::vector< typename itk::Image< PixelType , 3 >::Pointer > &vectorImage
                   )
 {
-   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
+   typedef itk::Image< PixelType , 3 > ImageType ;
    typedef itk::VectorImage< PixelType , 3 > VectorImageType ;
    typename itk::VectorImage< PixelType , 3 >::SizeType size ;
    typename itk::VectorImage< PixelType , 3 >::DirectionType direction ;
@@ -1125,7 +1125,7 @@ SetInterpolator( const parameters &list )
 
 template< class PixelType > int Rotate( parameters &list )
 {
-   typedef itk::OrientedImage< PixelType , 3 > ImageType ;
+   typedef itk::Image< PixelType , 3 > ImageType ;
    typedef itk::ImageFileReader< ImageType > FileReaderType ;
    typedef itk::InterpolateImageFunction< ImageType , double > InterpolatorType ;
    typedef itk::ResampleImageFilter< ImageType, ImageType > ResampleType ;

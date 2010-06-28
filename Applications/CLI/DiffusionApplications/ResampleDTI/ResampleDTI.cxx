@@ -28,7 +28,7 @@
 #include <itkPoint.h>
 #include <itkImageFileReader.h>
 #include <itkImageIOBase.h>
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkTransformFileReader.h>
 #include "ResampleDTICLP.h"
 #include <itkDiffusionTensor3D.h>
@@ -131,7 +131,7 @@ InterpolationTypeFct( std::string interpolationType ,
     NearestNeighborhoodInterpolatorType ;
   typedef itk::DiffusionTensor3DLinearInterpolateFunction< PixelType >
     LinearInterpolatorType ;
-  typedef itk::ConstantBoundaryCondition< itk::OrientedImage< PixelType,3 > >
+  typedef itk::ConstantBoundaryCondition< itk::Image< PixelType,3 > >
     BoundaryConditionType ;
   typedef itk::Function::HammingWindowFunction< RADIUS > 
     HammingwindowFunctionType ;
@@ -246,7 +246,7 @@ SetListFromTransform( const typename itk::MatrixOffsetTransformBase< PixelType ,
 
 template< class PixelType >
 itk::Point< double >
-ImageCenter( const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
+ImageCenter( const typename itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >
              ::Pointer &image
            )
 {
@@ -275,7 +275,7 @@ ImageCenter( const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelTyp
 template< class PixelType >
 itk::Matrix< double , 4 , 4 >
 ComputeTransformMatrix( const parameters &list ,
-                        const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
+                        const typename itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >
                           ::Pointer &image ,
                           const itk::Point< double > &outputImageCenter
                       )
@@ -370,7 +370,7 @@ FSOrPPD( const std::string &ppd , itk::Matrix< double , 4 , 4 > *matrix = NULL )
 template< class PixelType >
 typename itk::DiffusionTensor3DTransform< PixelType >::Pointer
 SetUpTransform( const parameters &list ,
-                const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
+                const typename itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >
                   ::Pointer &image ,
                 const typename itk::DiffusionTensor3DNonRigidTransform< PixelType >::TransformType
                   ::Pointer &nonRigidFile ,
@@ -419,7 +419,7 @@ SetUpTransform( const parameters &list ,
 template< class PixelType >
 typename itk::DiffusionTensor3DTransform< PixelType >::Pointer
 SetTransformAndOrder( parameters &list ,
-              const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
+              const typename itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >
                 ::Pointer &image ,
               typename itk::DiffusionTensor3DNonRigidTransform< PixelType >
                                          ::TransformType::Pointer &transform ,
@@ -529,7 +529,7 @@ SetTransformAndOrder( parameters &list ,
 template< class PixelType >
 typename itk::DiffusionTensor3DTransform< PixelType >::Pointer
 SetTransform( parameters &list ,
-              const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
+              const typename itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >
                 ::Pointer &image ,
               itk::TransformFileReader::Pointer &transformFile ,
               const itk::Point< double > &outputImageCenter
@@ -572,7 +572,7 @@ SetTransform( parameters &list ,
 //handle, the function returns -1
 template< class PixelType >
 int ReadTransform( parameters &list ,
-                   const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >::Pointer &image ,
+                   const typename itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >::Pointer &image ,
                    itk::TransformFileReader::Pointer &transformFile
                  )
 {
@@ -608,11 +608,11 @@ template< class PixelType >
 void SetOutputParameters( const parameters &list ,
                           typename itk::DiffusionTensor3DResample< PixelType , PixelType >
                             ::Pointer &resampler ,
-                          const typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
+                          const typename itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >
                             ::Pointer &image
                         )
 {
-  typedef itk::OrientedImage< unsigned char , 3 > ImageType ;
+  typedef itk::Image< unsigned char , 3 > ImageType ;
   typedef itk::ImageFileReader< ImageType > ReaderType ;
   typedef itk::DiffusionTensor3DResample< PixelType , PixelType > ResamplerType ;
   typedef typename ReaderType::Pointer ReaderTypePointer ;
@@ -732,10 +732,10 @@ void SetOutputParameters( const parameters &list ,
 
 
 template< class PixelType >
-void RASLPS( typename itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >::Pointer &image )
+void RASLPS( typename itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >::Pointer &image )
 {
-  typename itk::OrientedImage< PixelType, 3 >::PointType m_Origin ;
-  typename itk::OrientedImage< PixelType, 3 >::DirectionType m_Direction ;
+  typename itk::Image< PixelType, 3 >::PointType m_Origin ;
+  typename itk::Image< PixelType, 3 >::DirectionType m_Direction ;
   m_Origin = image->GetOrigin() ;
   m_Direction = image->GetDirection() ;
   m_Origin[ 0 ] = -m_Origin[ 0 ] ;
@@ -800,7 +800,7 @@ void ResampleDeformationField( DeformationImageType::Pointer &field ,
 template< class PixelType >
 int Do( parameters list )
 {
-    typedef itk::OrientedImage< itk::DiffusionTensor3D< PixelType > , 3 >
+    typedef itk::Image< itk::DiffusionTensor3D< PixelType > , 3 >
       InputImageType ;
     typename InputImageType::Pointer image ;
     typedef itk::DiffusionTensor3DWrite< PixelType > WriterType ;

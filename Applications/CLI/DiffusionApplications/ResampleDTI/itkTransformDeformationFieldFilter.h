@@ -3,7 +3,7 @@
 
 #include <itkObject.h>
 #include <itkImageToImageFilter.h>
-#include <itkOrientedImage.h>
+#include <itkImage.h>
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
 #include <itkTransform.h>
@@ -19,20 +19,20 @@ namespace itk
 template< class TInput , class TOutput , int NDimensions >
 class TransformDeformationFieldFilter
 : public ImageToImageFilter
-< OrientedImage < itk::Vector< TInput , NDimensions > , NDimensions > ,
-  OrientedImage < itk::Vector< TOutput , NDimensions > , NDimensions > >
+< Image < itk::Vector< TInput , NDimensions > , NDimensions > ,
+  Image < itk::Vector< TOutput , NDimensions > , NDimensions > >
 {
 public :
 typedef TInput InputDataType ;
 typedef TOutput OutputDataType ;
 typedef ImageToImageFilter
-          < OrientedImage < itk::Vector< InputDataType , NDimensions > , NDimensions > ,
-              OrientedImage < itk::Vector< OutputDataType , NDimensions > , NDimensions > >
+          < Image < itk::Vector< InputDataType , NDimensions > , NDimensions > ,
+              Image < itk::Vector< OutputDataType , NDimensions > , NDimensions > >
 Superclass ;
 typedef itk::Vector< InputDataType , NDimensions > InputDeformationPixelType ;
-typedef OrientedImage< InputDeformationPixelType , NDimensions > InputDeformationFieldType ;
+typedef Image< InputDeformationPixelType , NDimensions > InputDeformationFieldType ;
 typedef itk::Vector< OutputDataType , NDimensions > OutputDeformationPixelType ;
-typedef OrientedImage< OutputDeformationPixelType , NDimensions > OutputDeformationFieldType ;
+typedef Image< OutputDeformationPixelType , NDimensions > OutputDeformationFieldType ;
 typedef TransformDeformationFieldFilter Self ;
 typedef SmartPointer< Self > Pointer ;
 typedef SmartPointer< const Self > ConstPointer ;

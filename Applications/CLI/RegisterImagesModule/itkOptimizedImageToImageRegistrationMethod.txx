@@ -44,7 +44,7 @@
 #include "itkFRPROptimizer.h"
 #include "itkImageMaskSpatialObject.h"
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 
 #include <sstream>
 

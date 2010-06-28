@@ -27,7 +27,7 @@
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkLBFGSBOptimizer.h"
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkOrientImageFilter.h"
 #include "itkResampleImageFilter.h"
 
@@ -57,8 +57,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
   const    unsigned int  ImageDimension = 3;
   typedef  T  PixelType;
   typedef  T  OutputPixelType;
-  typedef itk::OrientedImage< PixelType, ImageDimension >       InputImageType;
-  typedef itk::OrientedImage< OutputPixelType, ImageDimension > OutputImageType;
+  typedef itk::Image< PixelType, ImageDimension >       InputImageType;
+  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType > FixedImageReaderType;
   typedef itk::ImageFileReader< InputImageType > MovingImageReaderType;

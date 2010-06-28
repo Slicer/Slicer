@@ -36,7 +36,7 @@
 #include "vtkMRMLCurveAnalysisNode.h"
 
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageSeriesReader.h"
 
 #include "vtkIntensityCurves.h"
@@ -126,7 +126,7 @@ class VTK_FourDAnalysis_EXPORT vtkFourDAnalysisLogic : public vtkSlicerModuleLog
   //BTX
   //const int SpaceDim = 3;
   typedef short PixelValueType;
-  typedef itk::OrientedImage< PixelValueType, 3 > VolumeType;
+  typedef itk::Image< PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > ReaderType;
   //ETX
 

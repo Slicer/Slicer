@@ -9,7 +9,7 @@ command line processing and additional features have been added.
 #pragma warning ( disable : 4786 )
 #endif
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkExtractImageFilter.h"
@@ -43,7 +43,7 @@ int main( int argc, char* argv[] )
   PARSE_ARGS;
 
 
-  typedef itk::OrientedImage<short,3>               Image3DType;
+  typedef itk::Image<short,3>               Image3DType;
   typedef itk::Image<short,2>               Image2DType;
   typedef itk::ImageFileReader< Image3DType > ReaderType;
   typedef itk::ExtractImageFilter< Image3DType, Image2DType > ExtractType;

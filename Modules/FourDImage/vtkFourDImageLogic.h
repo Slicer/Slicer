@@ -34,7 +34,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLTimeSeriesBundleNode.h"
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageSeriesReader.h"
 
 #include <string>
@@ -103,7 +103,7 @@ class VTK_FourDImage_EXPORT vtkFourDImageLogic : public vtkSlicerModuleLogic
   //BTX
   //const int SpaceDim = 3;
   typedef short PixelValueType;
-  typedef itk::OrientedImage< PixelValueType, 3 > VolumeType;
+  typedef itk::Image< PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > ReaderType;
 
   // Description:

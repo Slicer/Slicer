@@ -22,7 +22,7 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -107,7 +107,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   typedef    T       PixelType;
 
-  typedef itk::OrientedImage< PixelType,  3 >   ImageType;
+  typedef itk::Image< PixelType,  3 >   ImageType;
 
   typedef itk::ImageFileReader< ImageType >  ReaderType;
   typedef itk::ImageFileWriter< ImageType > WriterType;

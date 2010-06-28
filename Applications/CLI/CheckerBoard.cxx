@@ -22,7 +22,7 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkResampleImageFilter.h"
 #include "itkImageFileWriter.h"
@@ -44,8 +44,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef T InputPixelType;
   typedef T OutputPixelType;
 
-  typedef itk::OrientedImage< InputPixelType,  3 >   InputImageType;
-  typedef itk::OrientedImage< OutputPixelType, 3 >   OutputImageType;
+  typedef itk::Image< InputPixelType,  3 >   InputImageType;
+  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ResampleImageFilter< InputImageType, InputImageType  > ResampleType;

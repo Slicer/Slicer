@@ -22,7 +22,7 @@
 
 
 #include "itkConfidenceConnectedImageFilter.h"
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkCastImageFilter.h"
 #include "itkCurvatureFlowImageFilter.h"
 #include "itkImageFileReader.h"
@@ -47,10 +47,10 @@ int main( int argc, char *argv[] )
 
   typedef   float           InternalPixelType;
   const     unsigned int    Dimension = 3;
-  typedef itk::OrientedImage< InternalPixelType, Dimension >  InternalImageType;
+  typedef itk::Image< InternalPixelType, Dimension >  InternalImageType;
 
   typedef unsigned short OutputPixelType;
-  typedef itk::OrientedImage< OutputPixelType, Dimension > OutputImageType;
+  typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
 
   typedef itk::CastImageFilter< InternalImageType, OutputImageType >
     CastingFilterType;

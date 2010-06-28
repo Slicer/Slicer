@@ -41,7 +41,7 @@ gradient directions is the same as the ImageOrientationPatient
 #include "itkXMLFilterWatcher.h"
 
 #include "itkNrrdImageIO.h"
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageSeriesReader.h"
 #include "itkMetaDataDictionary.h"
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
@@ -150,7 +150,7 @@ namespace {
   typedef itk::Vector<float, 3> OutputVectorType;
 
   typedef short PixelValueType;
-  typedef itk::OrientedImage< PixelValueType, 3 > VolumeType;
+  typedef itk::Image< PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > ReaderType;
   typedef itk::GDCMImageIO ImageIOType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;

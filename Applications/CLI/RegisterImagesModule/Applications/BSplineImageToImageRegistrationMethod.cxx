@@ -14,7 +14,7 @@
 =========================================================================*/
 
 #include "itkBSplineImageToImageRegistrationMethod.h"
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkImageToImageRegistrationMethodTestingHelper.h"
 
 #include "metaCommand.h"
@@ -26,7 +26,7 @@ void GetImageType (std::string fileName,
                    itk::ImageIOBase::IOComponentType & componentType,
                    int & dimensions)
 {
-  typedef itk::OrientedImage<short, 3> ImageType;
+  typedef itk::Image<short, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName.c_str());
@@ -42,7 +42,7 @@ int DoIt( MetaCommand & command )
 {
   typedef short     PixelType;
   
-  typedef itk::OrientedImage< PixelType, DimensionsT >    
+  typedef itk::Image< PixelType, DimensionsT >    
                                                   ImageType;
 
   typedef itk::BSplineImageToImageRegistrationMethod< ImageType >

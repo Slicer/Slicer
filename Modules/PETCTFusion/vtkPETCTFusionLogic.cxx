@@ -28,7 +28,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 
 #include "itkImageSeriesReader.h"
-#include "itkOrientedImage.h"
+#include "itkImage.h"
 #include "itkMetaDataDictionary.h"
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
@@ -215,9 +215,9 @@ int vtkPETCTFusionLogic::GetParametersFromDICOMHeader( const char *path)
 
 
   typedef short PixelValueType;
-  typedef itk::OrientedImage< PixelValueType, 3 > VolumeType;
+  typedef itk::Image< PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > ReaderType;
-  typedef itk::OrientedImage< PixelValueType, 2 > SliceType;
+  typedef itk::Image< PixelValueType, 2 > SliceType;
   typedef itk::ImageFileReader< SliceType > SliceReaderType;
   typedef itk::GDCMImageIO ImageIOType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
