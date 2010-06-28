@@ -592,7 +592,9 @@ void vtkNeuroNavLogic::UpdateLocatorTransform()
       }
 
     vtkMatrix4x4 *matrix = this->UpdatedTrackerNode->GetMatrixTransformToParent();
-    matrix->DeepCopy(locator_transform->GetMatrix());
+//    matrix->DeepCopy(locator_transform->GetMatrix());
+    matrix->DeepCopy(this->Pat2ImgReg->GetLandmarkTransformMatrix());
+
     this->UpdatedTrackerNode->Modified();
 
     locator_matrix->Delete();
