@@ -1016,9 +1016,6 @@ int main( int argc, char *argv[] )
    
    switch ( imageIO->GetNumberOfDimensions() )
    {
-   case 2:
-      DoDemonsRegistration<2>(args);
-      break;
    case 3:
       DoDemonsRegistration<3>(args);
       break;
