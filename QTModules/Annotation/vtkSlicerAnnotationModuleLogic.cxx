@@ -358,10 +358,10 @@ void vtkSlicerAnnotationModuleLogic::ModifyPropertiesAndWidget(vtkMRMLNode* node
 }
 
 //-----------------------------------------------------------------------------
-vtkImageData* vtkSlicerAnnotationModuleLogic::SaveScreenShot()
+/*vtkImageData* vtkSlicerAnnotationModuleLogic::SaveScreenShot()
 {
   return NULL;
-  /*
+
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (vtkSlicerApplication::GetInstance()); 
     if ( !app )
     {
@@ -388,8 +388,8 @@ vtkImageData* vtkSlicerAnnotationModuleLogic::SaveScreenShot()
     renderLargeImage->Update();
 
     return renderLargeImage->GetOutput();
-  */
-}
+
+}*/
 
 //-----------------------------------------------------------------------------
 // Angle Widget     

@@ -164,13 +164,13 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode * n
     ui.annotationTextEdit->setText(textString);
 
     // Text Format
-    const char* textFormat = m_logic->GetAnnotationTextFormatProperty(node);
+    //const char* textFormat = m_logic->GetAnnotationTextFormatProperty(node);
 
     // Value
     std::vector<double> vv = m_logic->GetAnnotationMeasurement(node);
     char valuechar[100];
     QString valueString;
-    sprintf( valuechar, textFormat, vv);
+    //sprintf( valuechar, textFormat, vv);
     valueString.append("<p>Value: <b>").append(QString(valuechar)).append("</b></p>");
     ui.annotationValueBrowser->setHtml( valueString );
 

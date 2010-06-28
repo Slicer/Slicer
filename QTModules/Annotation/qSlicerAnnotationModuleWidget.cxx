@@ -1532,10 +1532,10 @@ void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text, char* no
 
 void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
 {
-    CTK_D(qSlicerAnnotationModuleWidget);
+    //CTK_D(qSlicerAnnotationModuleWidget);
 
     vtkImageData* image = vtkImageData::New();
-    image = d->logic()->SaveScreenShot();
+    //image = d->logic()->SaveScreenShot();
 
     if ( m_ScreenShotDialog == NULL )
     {
@@ -1638,7 +1638,7 @@ QString qSlicerAnnotationModuleWidget::getAnnotationIconName(int index, bool isE
 
 void qSlicerAnnotationModuleWidget::onPauseButtonToggled(bool toggle)
 {
-    CTK_D(qSlicerAnnotationModuleWidget);
+    /*CTK_D(qSlicerAnnotationModuleWidget);
 
     if ( toggle )
     {
@@ -1650,7 +1650,7 @@ void qSlicerAnnotationModuleWidget::onPauseButtonToggled(bool toggle)
         interactionNode->NormalizeAllMouseModes();
         interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
         interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
-    }
+    }*/
 
 }
 

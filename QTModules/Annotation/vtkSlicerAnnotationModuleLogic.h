@@ -162,7 +162,7 @@ public:
   // Other Public Functions
   void ProcessLogicEvents(vtkObject *caller, unsigned long event, void *callData );
   vtkSlicerApplicationGUI* GetApplicationGUI();
-  vtkImageData* SaveScreenShot();
+  //vtkImageData* SaveScreenShot();
   void SaveMRMLScene();
   const char* GetIconName(vtkMRMLNode* node, bool isEdit=false);
 
