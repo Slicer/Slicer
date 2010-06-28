@@ -24,7 +24,7 @@ class vtkMRMLAnnotationROINode;
 //class vtkSlicerViewerWidget;
 class vtkCamera;
 class vtSlicerAnnotationROIWidgetCallback;
-class vtkSlicerBoxWidget2;
+//class vtkSlicerBoxWidget2;
 
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicerAnnotationROIManager : public qSlicerWidget
@@ -62,7 +62,7 @@ public:
    void RemoveBoxWidget(const char *pointID);
 
    /// Remove the box widget
-   void RemoveBoxWidget(vtkSlicerBoxWidget2* boxWidget);
+   //void RemoveBoxWidget(vtkSlicerBoxWidget2* boxWidget);
 
    void SetProcessingWidgetEvent(int flag)
    {
@@ -70,7 +70,7 @@ public:
    };
 
    /// return the current box widget corresponding to a given MRML ID
-   vtkSlicerBoxWidget2 *GetBoxWidgetByID (const char *id);
+   //vtkSlicerBoxWidget2 *GetBoxWidgetByID (const char *id);
 
    /// return the current box widget callback corresponding to a given MRML ID
    vtSlicerAnnotationROIWidgetCallback* GetBoxWidgetCallbackByID (const char *id);
@@ -86,7 +86,7 @@ public:
 
    void UpdateROIWidgetInteractors();
 
-   void UpdateROIMeasurement(vtkMRMLAnnotationROINode* node, vtkSlicerBoxWidget2* widget);
+   //void UpdateROIMeasurement(vtkMRMLAnnotationROINode* node, vtkSlicerBoxWidget2* widget);
 
 protected:
     vtkSlicerAnnotationROIManager();

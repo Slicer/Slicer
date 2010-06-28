@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationSplineNode_h
 #define __vtkMRMLAnnotationSplineNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;

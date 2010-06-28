@@ -52,19 +52,19 @@ slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ${CLP}Lib)
 
 #####################
-set (CLP DiffusionWeightedTest)
+#set (CLP DiffusionWeightedTest)
 
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+#set ( ${CLP}_SOURCE ${CLP}.cxx)
+#generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
 
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+#add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+#set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+#slicer3_set_plugins_output_path(${CLP}Lib)
+#target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
 
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
+#add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
+#slicer3_set_plugins_output_path(${CLP})
+#target_link_libraries (${CLP} ${CLP}Lib)
 
 
 #####################
@@ -774,8 +774,8 @@ if (Slicer3_SOURCE_DIR)
     CastLib
     ConfidenceConnected
     ConfidenceConnectedLib
-    CurvatureAnisotropicDiffusion
-    CurvatureAnisotropicDiffusionLib
+    #CurvatureAnisotropicDiffusion
+    #CurvatureAnisotropicDiffusionLib
     GradientAnisotropicDiffusion
     GradientAnisotropicDiffusionLib
     MedianImageFilter

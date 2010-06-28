@@ -1,4 +1,4 @@
-#include "vtkSlicermiAnnotationModuleLogic.h"
+#include "vtkSlicerAnnotationModuleLogic.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"

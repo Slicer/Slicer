@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationAngleNode_h
 #define __vtkMRMLAnnotationAngleNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;

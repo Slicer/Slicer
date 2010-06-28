@@ -1413,7 +1413,7 @@ void qSlicerAnnotationModuleWidget::onCreateMeasurementRulerButtonClicked()
 
     //vtkMRMLAnnotationRulerNode* node = d->logic()->GetRulerNodeByID( newRulerNodeID );
 
-    /*char* format = node->GetDistanceAnnotationFormat();
+    char* format = node->GetDistanceAnnotationFormat();
     QString valueString;
     qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
     this->updateAnnotationTable( m_index, thevalue, format );

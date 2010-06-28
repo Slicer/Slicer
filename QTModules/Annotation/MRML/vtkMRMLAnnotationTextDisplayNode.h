@@ -11,7 +11,7 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLAnnotationDisplayNode.h"
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 
 class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayNode : public vtkMRMLAnnotationDisplayNode
 {

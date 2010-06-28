@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationBidimensionalNode_h
 #define __vtkMRMLAnnotationBidimensionalNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;

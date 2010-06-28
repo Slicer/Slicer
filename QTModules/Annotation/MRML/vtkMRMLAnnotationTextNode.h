@@ -9,7 +9,7 @@
 #ifndef __vtkMRMLAnnotationTextNode_h
 #define __vtkMRMLAnnotationTextNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
 #include "vtkMRMLFiducial.h" 
 

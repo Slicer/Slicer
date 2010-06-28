@@ -790,7 +790,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddFiducialPicked()
   }
   fiducialNode->Delete();
 
-  return fiducialNode->GetID();*/
+  return fiducialNode->GetID();*/return NULL;
 }
 
 
@@ -923,6 +923,7 @@ void vtkSlicerAnnotationModuleLogic::Update3DFiducial(vtkMRMLAnnotationFiducialN
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::AddFiducialWidget(vtkMRMLAnnotationFiducialNode *cpNode)
 {
+/*
     CTK_D(vtkSlicerAnnotationModuleLogic);
     if (!cpNode)
     {
@@ -933,7 +934,7 @@ void vtkSlicerAnnotationModuleLogic::AddFiducialWidget(vtkMRMLAnnotationFiducial
         vtkDebugMacro("Already have widgets for ruler node " << cpNode->GetID());
         return;
     }
-/*
+
     // Just do this as a hack right now - should be the widget class 
     vtkSlicerFiducialListWidget  *c =  vtkSlicerFiducialListWidget::New();
 
@@ -958,9 +959,9 @@ void vtkSlicerAnnotationModuleLogic::AddFiducialWidget(vtkMRMLAnnotationFiducial
 //---------------------------------------------------------------------------
 vtkSlicerFiducialListWidget* vtkSlicerAnnotationModuleLogic::GetFiducialWidget(const char *nodeID)
 {
-    CTK_D(vtkSlicerAnnotationModuleLogic);
+/*    CTK_D(vtkSlicerAnnotationModuleLogic);
     // This hsould be the widget not mrml class - just do it right now bc widget does not extist
-/*
+
     std::map<std::string, vtkSlicerFiducialListWidget *>::iterator iter;
     for (iter = d->FiducialWidgets.begin();
         iter != d->FiducialWidgets.end();
@@ -977,13 +978,13 @@ vtkSlicerFiducialListWidget* vtkSlicerAnnotationModuleLogic::GetFiducialWidget(c
 
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::RemoveFiducialWidget(vtkMRMLAnnotationFiducialNode *cpNode)
-{
+{/*
     CTK_D(vtkSlicerAnnotationModuleLogic);
     if (!cpNode)
     {
         return;
     }
-    /*if (this->GetFiducialWidget(cpNode->GetID()) != NULL)
+    if (this->GetFiducialWidget(cpNode->GetID()) != NULL)
     {
         d->FiducialWidgets[cpNode->GetID()]->Delete();
         d->FiducialWidgets.erase(cpNode->GetID());
@@ -1920,7 +1921,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddROINode()
 //-----------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddBidLineNode()
 {
-  /*
+
   vtkBiDimensionalRepresentation2D* bidRep = vtkBiDimensionalRepresentation2D::New();
   vtkBiDimensionalWidget* bidWidget = vtkBiDimensionalWidget::New();
   bidWidget->SetRepresentation(bidRep);

@@ -529,20 +529,20 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # CurvatureAnisotropicDiffusion tests
-set (CLP CurvatureAnisotropicDiffusion)
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
+#set (CLP CurvatureAnisotropicDiffusion)
+#add_executable(${CLP}Test ${CLP}Test.cxx)
+#target_link_libraries(${CLP}Test ${CLP}Lib)
 
-add_test(${CLP}Test ${Launcher_Command} ${TestLocation}${CLP}Test
-  --compare ${BASELINE}/${CLP}Test.nhdr
-            ${TEMP}/${CLP}Test.nhdr
-    ModuleEntryPoint
-    --conductance 2
-    --timeStep 0.0625
-    --iterations 2
-    ${TEST_DATA}/MRHeadResampled.nhdr
-    ${TEMP}/${CLP}Test.nhdr
-  )
+#add_test(${CLP}Test ${Launcher_Command} ${TestLocation}${CLP}Test
+#  --compare ${BASELINE}/${CLP}Test.nhdr
+#            ${TEMP}/${CLP}Test.nhdr
+#    ModuleEntryPoint
+#    --conductance 2
+#    --timeStep 0.0625
+#    --iterations 2
+#    ${TEST_DATA}/MRHeadResampled.nhdr
+#    ${TEMP}/${CLP}Test.nhdr
+#  )
 
 ##################################
 # DiffusionTensorEstimation tests
@@ -592,15 +592,15 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # DiffusionWeightedTest tests
-add_test(DiffusionWeightedTestTest ${Launcher_Command} ${TestLocation}DiffusionWeightedTestTest
-  ModuleEntryPoint
-    ${MRML_TEST_DATA}/helix-DWI.nhdr
-    ${TEMP}/DiffusionWeightedTestTest.nhdr
-  )
+#add_test(DiffusionWeightedTestTest ${Launcher_Command} ${TestLocation}DiffusionWeightedTestTest
+#  ModuleEntryPoint
+#    ${MRML_TEST_DATA}/helix-DWI.nhdr
+#    ${TEMP}/DiffusionWeightedTestTest.nhdr
+#  )
 
-set (CLP DiffusionWeightedTest)
-add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
+#set (CLP DiffusionWeightedTest)
+#add_executable(${CLP}Test ${CLP}Test.cxx)
+#target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 # DWIDicomLoad tests

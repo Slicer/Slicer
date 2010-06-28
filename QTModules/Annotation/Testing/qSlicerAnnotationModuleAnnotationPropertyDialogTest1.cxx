@@ -1,5 +1,5 @@
-#include "qSlicermiAnnotationModuleAnnotationPropertyDialog.h"
-#include "vtkSlicermiAnnotationModuleLogic.h"
+#include "qSlicerAnnotationModuleAnnotationPropertyDialog.h"
+#include "vtkSlicerAnnotationModuleLogic.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"

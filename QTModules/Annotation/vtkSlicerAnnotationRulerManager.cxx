@@ -1110,7 +1110,7 @@ void vtkSlicerAnnotationRulerManager::AddDistanceWidget(vtkMRMLAnnotationRulerNo
 //---------------------------------------------------------------------------
 /*vtkMeasurementsDistanceWidgetClass* vtkSlicerAnnotationRulerManager::GetDistanceWidget(const char *nodeID)
 {
-    /*std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator iter;
+    std::map<std::string, vtkMeasurementsDistanceWidgetClass *>::iterator iter;
     for (iter = this->DistanceWidgets.begin();
         iter != this->DistanceWidgets.end();
         iter++)
@@ -1150,7 +1150,7 @@ std::string vtkSlicerAnnotationRulerManager::GetTextDisplayNodeID(const char *no
             return iter->second;
         }
     }
-    return tempstring;*/
+    return tempstring;*/return NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -1167,7 +1167,7 @@ std::string vtkSlicerAnnotationRulerManager::GetRulerNodeIDFromTextDisplayNode(c
         }
     }
     return tempstring;
-*/
+*/ return NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -1214,7 +1214,7 @@ std::string vtkSlicerAnnotationRulerManager::GetPointDisplayNodeID(const char *n
             return iter->second;
         }
     }
-    return tempstring;*/
+    return tempstring;*/ return NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -1383,7 +1383,7 @@ void vtkSlicerAnnotationRulerManager::Update3DWidgetVisibility(vtkMRMLAnnotation
         return;
     }
     //vtkLineWidget2 *distanceWidget = distanceWidgetClass->GetWidget();
-    /*
+
   if (distanceWidget->GetInteractor() == NULL)
     {
         if (this->GetViewerWidget() &&
@@ -1556,8 +1556,8 @@ vtkCamera *vtkSlicerAnnotationRulerManager::GetActiveCamera()
     {
         return mainViewer->GetRenderer()->GetActiveCamera();
     }
-    return NULL;
-*/}
+    return NULL;*/
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationRulerManager::UpdateDistanceMeasurement(vtkMRMLAnnotationRulerNode* rulerNode)
@@ -1593,9 +1593,9 @@ vtkSlicerSeedWidgetClass * vtkSlicerAnnotationRulerManager::GetSeedWidget(const 
         {
             return iter->second;
         }
-    }
+    }*/
     return NULL;
-*/}
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationRulerManager::AddSeedWidget(vtkMRMLAnnotationRulerNode* rulerNode)

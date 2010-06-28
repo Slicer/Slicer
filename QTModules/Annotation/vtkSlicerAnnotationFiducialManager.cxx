@@ -68,7 +68,7 @@ public:
     else if (event == vtkCommand::StartInteractionEvent)
     {
       std::cout << "StartInteraction Event\n";
-      /*if (this->FiducialListNode && this->FiducialListNode->GetScene())
+      if (this->FiducialListNode && this->FiducialListNode->GetScene())
       {
         this->FiducialListNode->GetScene()->SaveStateForUndo(this->FiducialListNode);
       }
@@ -82,7 +82,7 @@ public:
         std::cerr << "InteractionEvent: Null seed widget, returning.\n";
         return;
       }
-      /*if (!this->FiducialListNode)
+      if (!this->FiducialListNode)
       {
         std::cerr << "InteractionEvent: no fiducial list associated with this widget.\n";
         return;
@@ -94,7 +94,7 @@ public:
         return;
       }
       // does the fiducial list node have a transform?
-      /*vtkMRMLTransformNode* tnode = this->FiducialListNode->GetParentTransformNode();
+      vtkMRMLTransformNode* tnode = this->FiducialListNode->GetParentTransformNode();
       //vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
       //transformToWorld->Identity();
       if (tnode != NULL && tnode->IsLinear())
@@ -129,7 +129,7 @@ public:
           //"," << worldxyz[1] << "," << worldxyz[2] << std::endl;
           // figure out which fiducial id this nth seed widget is associated with
           int fidIndex = *n;
-          /*if (this->SeedWidgetClass)
+          if (this->SeedWidgetClass)
           {
             //std::string fidID = this->SeedWidgetClass->GetIDFromIndex(*n);
             if (fidID.compare("") != 0)
@@ -265,7 +265,7 @@ public:
 //---------------------------------------------------------------------------
 /*void vtkSlicerAnnotationFiducialManager::SetFiducialNodeID ( char *id )
 {
-  /*if (this->GetFiducialNodeID() != NULL &&
+  if (this->GetFiducialNodeID() != NULL &&
     id != NULL &&
     strcmp(id,this->GetFiducialNodeID()) == 0)
   {
@@ -307,7 +307,7 @@ public:
 /*void vtkSlicerAnnotationFiducialManager::UpdateInteractionModeAtStartInteraction()
 {
 
-  /*if ( this->MRMLScene == NULL )
+  if ( this->MRMLScene == NULL )
     {
     //vtkErrorMacro ( "UpdateInteractionModeAtStartInteraction: NULL scene.");
     return;
@@ -347,7 +347,7 @@ public:
 // the scene.
 /*void vtkSlicerAnnotationFiducialManager::UpdateInteractionModeAtEndInteraction()
 {
-  /*if ( this->MRMLScene == NULL )
+  if ( this->MRMLScene == NULL )
     {
     //vtkErrorMacro ( "UpdateInteractionModeAtStartInteraction: NULL scene.");
     return;
@@ -627,7 +627,7 @@ void vtkSlicerAnnotationFiducialManager::RemoveMRMLObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationFiducialManager::UpdateFiducialWidgetInteractors()
 {
-  bool isNull = false;
+  //bool isNull = false;
   /*if (this->GetViewerWidget() == NULL ||
       this->GetViewerWidget()->GetMainViewer() == NULL ||
       this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor() == NULL)
@@ -851,7 +851,9 @@ std::string vtkSlicerAnnotationFiducialManager::GetTextDisplayNodeID(const char 
     }
   }
   return tempstring;
-*/}
+*/
+return NULL;
+}
 
 //---------------------------------------------------------------------------
 std::string vtkSlicerAnnotationFiducialManager::GetFiducialNodeIDFromTextDisplayNode(const char *nodeID)

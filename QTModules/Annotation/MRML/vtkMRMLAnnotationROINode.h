@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationROINode_h
 #define __vtkMRMLAnnotationROINode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;

@@ -9,7 +9,7 @@
 #ifndef __vtkMRMLAnnotationLinesNode_h
 #define __vtkMRMLAnnotationLinesNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
 
 class vtkStringArray;

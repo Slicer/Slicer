@@ -6,7 +6,7 @@
 #ifndef __vtkMRMLAnnotationAngleStorageNode_h
 #define __vtkMRMLAnnotationAngleStorageNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 
 class vtkMRMLAnnotationAngleNode;

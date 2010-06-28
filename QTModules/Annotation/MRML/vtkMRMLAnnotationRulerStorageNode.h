@@ -6,7 +6,7 @@
 #ifndef __vtkMRMLAnnotationRulerStorageNode_h
 #define __vtkMRMLAnnotationRulerStorageNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 
 class vtkMRMLAnnotationRulerNode;

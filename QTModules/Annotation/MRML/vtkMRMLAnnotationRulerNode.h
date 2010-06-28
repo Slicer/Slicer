@@ -1,7 +1,7 @@
 #ifndef __vtkMRMLAnnotationRulerNode_h
 #define __vtkMRMLAnnotationRulerNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationLinesNode.h" 
 
 class vtkMatrix4x4;

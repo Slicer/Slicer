@@ -21,8 +21,8 @@
 #include "vtkMRMLLinearTransformNode.h"
 
 #include "vtkMRMLAnnotationROINode.h"
-#include "vtkSlicerBoxWidget2.h"
-#include "vtkSlicerBoxRepresentation.h"
+//#include "vtkSlicerBoxWidget2.h"
+//#include "vtkSlicerBoxRepresentation.h"
 
 
 class vtSlicerAnnotationROIWidgetCallback : public vtkCommand
@@ -256,7 +256,7 @@ void vtkSlicerAnnotationROIManager::RemoveBoxWidget(const char *roiID)
     return;
   }
 
-  vtkSlicerBoxWidget2* boxWidget = this->GetBoxWidgetByID(roiID);
+  /*vtkSlicerBoxWidget2* boxWidget = this->GetBoxWidgetByID(roiID);
   if  (boxWidget)
   {
     this->RemoveBoxWidget(boxWidget);
@@ -272,12 +272,12 @@ void vtkSlicerAnnotationROIManager::RemoveBoxWidget(const char *roiID)
   {
     boxWidgetCallback->Delete();
     //this->DisplayedBoxWidgetCallbacks.erase(std::string(roiID));
-  }
+  }*/
 
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationROIManager::RemoveBoxWidget(vtkSlicerBoxWidget2* boxWidget)
+/*void vtkSlicerAnnotationROIManager::RemoveBoxWidget(vtkSlicerBoxWidget2* boxWidget)
 {
   vtkSlicerBoxRepresentation* rep = reinterpret_cast<vtkSlicerBoxRepresentation*>(boxWidget->GetRepresentation());
 
@@ -293,10 +293,10 @@ void vtkSlicerAnnotationROIManager::RemoveBoxWidget(vtkSlicerBoxWidget2* boxWidg
   {
     rep->Delete();
   }
-}
+}*/
 
 //---------------------------------------------------------------------------
-vtkSlicerBoxWidget2* vtkSlicerAnnotationROIManager::GetBoxWidgetByID (const char *id)
+/*vtkSlicerBoxWidget2* vtkSlicerAnnotationROIManager::GetBoxWidgetByID (const char *id)
 {  
   if ( !id )      
   {
@@ -306,15 +306,15 @@ vtkSlicerBoxWidget2* vtkSlicerAnnotationROIManager::GetBoxWidgetByID (const char
 
   //std::map< std::string, vtkSlicerBoxWidget2 *>::iterator iter;
   //iter = this->DisplayedBoxWidgets.find(sid);
-  /*if (iter != this->DisplayedBoxWidgets.end())
+  if (iter != this->DisplayedBoxWidgets.end())
   {
     return (iter->second);
   }
   else
   {
     return (NULL);
-  }*/ return NULL;
-}
+  } return NULL;
+}*/
 
 //---------------------------------------------------------------------------
 vtSlicerAnnotationROIWidgetCallback* vtkSlicerAnnotationROIManager::GetBoxWidgetCallbackByID (const char *id)
@@ -334,7 +334,7 @@ vtSlicerAnnotationROIWidgetCallback* vtkSlicerAnnotationROIManager::GetBoxWidget
   else
   {
     return (NULL);
-  }*/
+  }*/ return NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -461,7 +461,7 @@ void vtkSlicerAnnotationROIManager::UpdateROIFromMRML(vtkMRMLAnnotationROINode *
 
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationROIManager::UpdateROITransform(vtkMRMLAnnotationROINode *roi)
-{
+{/*
   if (roi == NULL)
   {
     //vtkWarningMacro("UpdateROIFromMRML: null input list!");
@@ -486,7 +486,7 @@ void vtkSlicerAnnotationROIManager::UpdateROITransform(vtkMRMLAnnotationROINode 
     rep->SetPlaceFactor( 1.0 );
     rep->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
 
-    /*if (this->ViewerWidget && this->ViewerWidget->GetMainViewer() )
+    if (this->ViewerWidget && this->ViewerWidget->GetMainViewer() )
     {
       //vtkRenderWindowInteractor *interactor = this->ViewerWidget->GetMainViewer()->GetRenderWindow()->GetInteractor();
       //boxWidget->SetInteractor(interactor);
@@ -499,7 +499,7 @@ void vtkSlicerAnnotationROIManager::UpdateROITransform(vtkMRMLAnnotationROINode 
     boxWidget->AddObserver(vtkCommand::EndInteractionEvent, myCallback);
     boxWidget->AddObserver(vtkCommand::InteractionEvent, myCallback);
     myCallback->Delete();
-    */
+
     //this->DisplayedBoxWidgetCallbacks[roiID] = myCallback;    
     //this->DisplayedBoxWidgets[roiID] = boxWidget;
   }
@@ -521,7 +521,7 @@ void vtkSlicerAnnotationROIManager::UpdateROITransform(vtkMRMLAnnotationROINode 
     //rep->SetTransform(xform);
 
     //boxWidget->InvokeEvent(vtkCommand::EndInteractionEvent);
-  }
+  }*/
 }
 
 //---------------------------------------------------------------------------
@@ -585,7 +585,7 @@ void vtkSlicerAnnotationROIManager::RemoveMRMLROINodeObservers(vtkMRMLAnnotation
 
 //---------------------------------------------------------------------------
 /*void vtkSlicerAnnotationROIManager::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
-{/*
+{
   if (this->ViewerWidget != NULL)
   {
     // TODO: figure out if this is necessary
@@ -664,7 +664,7 @@ void vtkSlicerAnnotationROIManager::UpdateLockUnlock(vtkMRMLAnnotationROINode* r
     return;
   }
 
-  vtkSlicerBoxWidget2 *widget = this->GetBoxWidgetByID(roiNode->GetID());
+  /*vtkSlicerBoxWidget2 *widget = this->GetBoxWidgetByID(roiNode->GetID());
   if (!widget)
   {
     cout << "No distance widget found, adding a distance widget for this one" << endl;
@@ -678,11 +678,11 @@ void vtkSlicerAnnotationROIManager::UpdateLockUnlock(vtkMRMLAnnotationROINode* r
   else
   {
     widget->ProcessEventsOn();
-  }
+  }*/
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationROIManager::UpdateROIMeasurement(vtkMRMLAnnotationROINode* node, vtkSlicerBoxWidget2* widget)
+/*void vtkSlicerAnnotationROIManager::UpdateROIMeasurement(vtkMRMLAnnotationROINode* node, vtkSlicerBoxWidget2* widget)
 {
   //vtkSplineWidget* widget = this->GetSplineWidget(node->GetID());
   if ( widget==NULL)
@@ -691,8 +691,8 @@ void vtkSlicerAnnotationROIManager::UpdateROIMeasurement(vtkMRMLAnnotationROINod
   }  
 
   double exts[3];
-  vtkSlicerBoxRepresentation* rep = vtkSlicerBoxRepresentation::SafeDownCast(widget->GetRepresentation());
-  rep->GetExtents(exts);
+  //vtkSlicerBoxRepresentation* rep = vtkSlicerBoxRepresentation::SafeDownCast(widget->GetRepresentation());
+  //rep->GetExtents(exts);
   
-  node->SetROIMeasurement(exts[0], exts[1], exts[2]);
-}
+  //node->SetROIMeasurement(exts[0], exts[1], exts[2]);
+}*/

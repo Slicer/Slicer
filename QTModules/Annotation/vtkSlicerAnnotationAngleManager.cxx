@@ -159,7 +159,7 @@ vtkSlicerAnnotationAngleManager::~vtkSlicerAnnotationAngleManager ( )
 //---------------------------------------------------------------------------
 /*void vtkSlicerAnnotationAngleManager::SetAngleNodeID ( char *id )
 {
-    /*
+
     if (this->GetAngleNodeID() != NULL &&
         id != NULL &&
         strcmp(id,this->GetAngleNodeID()) == 0)
@@ -1202,7 +1202,7 @@ void vtkSlicerAnnotationAngleManager::RemoveAngleWidget(vtkMRMLAnnotationAngleNo
 
 //---------------------------------------------------------------------------
 /*std::string vtkSlicerAnnotationAngleManager::GetTextDisplayNodeID(const char *nodeID)
-{/*
+{
     std::string tempstring;
     std::map<std::string, std::string>::iterator iter;
     for (iter = this->TextDisplayNodes.begin(); iter != this->TextDisplayNodes.end(); iter++)
@@ -1218,7 +1218,7 @@ return NULL;}*/
 
 //---------------------------------------------------------------------------
 /*std::string vtkSlicerAnnotationAngleManager::GetAngleNodeIDFromTextDisplayNode(const char *nodeID)
-{/*
+{
     std::string tempstring;
     std::map<std::string, std::string>::iterator iter;
     for (iter = this->TextDisplayNodes.begin();    iter != this->TextDisplayNodes.end(); iter++)
@@ -1266,7 +1266,7 @@ void vtkSlicerAnnotationAngleManager::RemoveTextDisplayNodeID(vtkMRMLAnnotationA
 
 //---------------------------------------------------------------------------
 /*std::string vtkSlicerAnnotationAngleManager::GetPointDisplayNodeID(const char *nodeID)
-{/*
+{
     std::string tempstring;
     std::map<std::string, std::string>::iterator iter;
     for (iter = this->PointDisplayNodes.begin(); iter != this->PointDisplayNodes.end(); iter++)
@@ -1281,7 +1281,7 @@ void vtkSlicerAnnotationAngleManager::RemoveTextDisplayNodeID(vtkMRMLAnnotationA
 
 //---------------------------------------------------------------------------
 /*std::string vtkSlicerAnnotationAngleManager::GetAngleNodeIDFromPointDisplayNode(const char *nodeID)
-{/*
+{
     std::string tempstring;
     std::map<std::string, std::string>::iterator iter;
     for (iter = this->PointDisplayNodes.begin(); iter != this->PointDisplayNodes.end(); iter++)
@@ -1328,7 +1328,7 @@ void vtkSlicerAnnotationAngleManager::RemovePointDisplayNodeID(vtkMRMLAnnotation
 
 //---------------------------------------------------------------------------
 /*std::string vtkSlicerAnnotationAngleManager::GetLineDisplayNodeID(const char *nodeID)
-{/*
+{
     std::string tempstring;
     std::map<std::string, std::string>::iterator iter;
     for (iter = this->LineDisplayNodes.begin(); iter != this->LineDisplayNodes.end(); iter++)
@@ -1343,7 +1343,7 @@ void vtkSlicerAnnotationAngleManager::RemovePointDisplayNodeID(vtkMRMLAnnotation
 
 //---------------------------------------------------------------------------
 /*std::string vtkSlicerAnnotationAngleManager::GetAngleNodeIDFromLineDisplayNode(const char *nodeID)
-{/*
+{
     std::string tempstring;
     std::map<std::string, std::string>::iterator iter;
     for (iter = this->LineDisplayNodes.begin(); iter != this->LineDisplayNodes.end(); iter++)
@@ -1390,7 +1390,7 @@ void vtkSlicerAnnotationAngleManager::RemoveLineDisplayNodeID(vtkMRMLAnnotationA
 
 //---------------------------------------------------------------------------
 /*void vtkSlicerAnnotationAngleManager::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
-{/*
+{
     if (this->ViewerWidget != NULL)
     {
         // TODO: figure out if this is necessary

@@ -448,7 +448,7 @@ void vtkSlicerAnnotationSplineManager::Render()
 
   if (this->ViewerWidget)
   {
-    /*this->ViewerWidget->AddObserver(
+    this->ViewerWidget->AddObserver(
       vtkSlicerViewerWidget::ActiveCameraChangedEvent, 
       (vtkCommand *)this->GUICallbackCommand);
   }

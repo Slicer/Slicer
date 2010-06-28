@@ -9,7 +9,7 @@
 #ifndef __vtkMRMLAnnotationStickyNode_h
 #define __vtkMRMLAnnotationStickyNode_h
 
-#include "qSlicermiAnnotationModuleExport.h"
+#include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationNode.h" 
 
 class vtkStringArray;

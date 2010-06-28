@@ -151,6 +151,6 @@ Slicer3_build_qtmodule(
   )
 
 if(BUILD_TESTING)
-  ADD_SUBDIRECTORY(Testing)
+  #ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)
 
