@@ -58,6 +58,7 @@ INSTALL(FILES
 
 SET(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.cxx
+  vtkMRMLModelHierarchyLogic.cxx
   vtkMRMLSliceLayerLogic.cxx
   vtkMRMLSliceLogic.cxx
   # slicer's vtk extensions (filters)

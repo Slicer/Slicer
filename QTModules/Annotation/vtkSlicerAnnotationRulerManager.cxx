@@ -1555,8 +1555,8 @@ vtkCamera *vtkSlicerAnnotationRulerManager::GetActiveCamera()
         mainViewer->GetRenderer()->IsActiveCameraCreated())
     {
         return mainViewer->GetRenderer()->GetActiveCamera();
-    }
-    return NULL;*/
+    }*/
+    return NULL;
 }
 
 //---------------------------------------------------------------------------
