@@ -17,6 +17,9 @@
 #include <QString>
 #include <QStringList>
 
+// CTK includes
+#include <ctkLogger.h>
+
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerCoreApplication.h"
@@ -32,6 +35,10 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.slicer.base.qtcore.qSlicerCoreIOManager");
+//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class qSlicerCoreIOManagerPrivate: public ctkPrivate<qSlicerCoreIOManager>
@@ -50,6 +57,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManagerPrivate::qSlicerCoreIOManagerPrivate()
 {
+  logger.setTrace();
 }
 
 //-----------------------------------------------------------------------------
@@ -272,6 +280,7 @@ void qSlicerCoreIOManager::registerIO(qSlicerIO* io)
 {
   Q_ASSERT(io);
   CTK_D(qSlicerCoreIOManager);
+  logger.trace(QString("registerIO %1").arg(io->metaObject()->className()));
   d->Readers << io;
 
   // Reparent - this will make sure the object is destroyed properly
