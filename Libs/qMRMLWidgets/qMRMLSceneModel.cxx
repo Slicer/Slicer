@@ -295,6 +295,10 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate()
 //------------------------------------------------------------------------------
 qMRMLSceneModelPrivate::~qMRMLSceneModelPrivate()
 {
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->RemoveObserver(this->CallBack);
+    }
   delete this->ItemFactory;
 }
 
@@ -638,6 +642,9 @@ void qMRMLSceneModel::DoCallback(vtkObject* vtk_obj, unsigned long event,
   vtkMRMLScene* scene = reinterpret_cast<vtkMRMLScene*>(vtk_obj);
   qMRMLSceneModel* sceneModel = reinterpret_cast<qMRMLSceneModel*>(client_data);
   vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(call_data);
+  Q_ASSERT(scene);
+  Q_ASSERT(sceneModel);
+  Q_ASSERT(node);
   switch(event)
     {
     case vtkMRMLScene::NodeAboutToBeAddedEvent:
