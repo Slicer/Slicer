@@ -171,7 +171,6 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
     node = this->SliceNode;
     node->Register(this);
     this->SetSliceNode (NULL);
-    //this->MRMLScene->AddNodeNoNotify(node);
     this->MRMLScene->AddNode(node);
     this->SetSliceNode (node);
     node->UnRegister(this);
@@ -246,9 +245,9 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
     // local node not in the scene
     node = this->SliceCompositeNode;
     node->Register(this);
-    this->SetSliceCompositeNode (NULL);
-    this->MRMLScene->AddNodeNoNotify(node);
-    this->SetSliceCompositeNode (node);
+    this->SetSliceCompositeNode(NULL);
+    this->MRMLScene->AddNode(node);
+    this->SetSliceCompositeNode(node);
     node->UnRegister(this);
     }
 }
@@ -1071,8 +1070,8 @@ void vtkMRMLSliceLogic::CreateSliceModel()
 
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
-    this->MRMLScene->AddNodeNoNotify(this->SliceModelDisplayNode);
-    this->MRMLScene->AddNodeNoNotify(this->SliceModelTransformNode);
+    this->MRMLScene->AddNode(this->SliceModelDisplayNode);
+    this->MRMLScene->AddNode(this->SliceModelTransformNode);
     this->MRMLScene->AddNode(this->SliceModelNode);
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
