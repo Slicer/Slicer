@@ -16,7 +16,7 @@ proc ClipModelTearDownGUI {this} {
     # nodeSelector  ;# disabled for now
     set widgets {
         clip displayWidget modelsSelect roiSelect
-        modelsOutputSelect modelsFrame 
+        modelsOutputSelect modelsFrame insideOut
     }
     
     foreach w $widgets {
@@ -127,6 +127,13 @@ proc ClipModelBuildGUI {this} {
     $::ClipModel($this,clip) SetBalloonHelpString "Apply clipping"
     pack [$::ClipModel($this,clip) GetWidgetName] -side top -anchor w -padx 2 -pady 2 
     
+    set ::ClipModel($this,insideOut) [vtkKWCheckButton New]
+    $::ClipModel($this,insideOut) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
+    $::ClipModel($this,insideOut) Create
+    $::ClipModel($this,insideOut) SetText "Inside Out  Enabled"
+    $::ClipModel($this,insideOut) SetSelectedState 1
+    $::ClipModel($this,insideOut) SetBalloonHelpString " When InsideOut is turned on, a vertex is considered inside if it is inside the ROI. When off, a vertex is considered inside if it is outside the ROI. InsideOut is on by default in this module."
+    pack [$::ClipModel($this,insideOut) GetWidgetName] -side top -anchor w -padx 2 -pady 2 
 
     set ::ClipModel($this,displayWidget) [vtkSlicerROIDisplayWidget New]
     $::ClipModel($this,displayWidget) SetParent [$::ClipModel($this,modelsFrame) GetFrame]
@@ -140,6 +147,7 @@ proc ClipModelBuildGUI {this} {
 
 proc ClipModelAddGUIObservers {this} {
     $this AddObserverByNumber $::ClipModel($this,clip) 10000 
+    $this AddObserverByNumber $::ClipModel($this,insideOut) 10000 
     $this AddObserverByNumber $::ClipModel($this,modelsSelect) 11000  
     $this AddObserverByNumber $::ClipModel($this,roiSelect) 11000  
     $this AddObserverByNumber $::ClipModel($this,modelsOutputSelect) 11000  
@@ -152,6 +160,7 @@ proc ClipModelRemoveGUIObservers {this} {
     #$this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic] GetSelectionNode] \
     #  [$this GetNumberForVTKEvent ModifiedEvent]
     $this RemoveObserverByNumber $::ClipModel($this,clip) 10000
+    $this RemoveObserverByNumber $::ClipModel($this,insideOut) 10000
     $this RemoveObserverByNumber $::ClipModel($this,modelsSelect) 11000
     $this RemoveObserverByNumber $::ClipModel($this,roiSelect) 11000
     $this RemoveObserverByNumber $::ClipModel($this,modelsOutputSelect) 11000
@@ -330,6 +339,7 @@ proc ClipModelApply {this} {
         return
     }
     
+    set insideOut  [$::ClipModel($this,insideOut) GetSelectedState]
     set mod [$::ClipModel($this,modelsSelect) GetSelected]
     set modOut [$::ClipModel($this,modelsOutputSelect) GetSelected]
     #puts "here"
@@ -342,6 +352,7 @@ proc ClipModelApply {this} {
         return
     }
     
+    $::ClipModel($this,clipper) SetInsideOut $insideOut
     $::ClipModel($this,clipper) SetInput [$mod GetPolyData]
     $::ClipModel($this,clipper) Update
     #puts "Updating Cliiping"
