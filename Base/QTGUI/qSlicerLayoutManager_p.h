@@ -15,7 +15,7 @@
 #include <vtkSmartPointer.h>
 
 class QGridLayout;
-class qSlicerSliceViewWidget;
+class qMRMLSliceViewWidget;
 class qMRMLThreeDRenderView;
 class vtkObject;
 class vtkMRMLLayoutNode;
@@ -56,7 +56,7 @@ public:
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
-  qSlicerSliceViewWidget* sliceView(const QString& sliceViewName);
+  qMRMLSliceViewWidget* sliceView(const QString& sliceViewName);
 
 public slots:
   /// Handle MRML scene event
@@ -78,8 +78,8 @@ public:
   /// the current MRML layout node is updated from one of the switchTo* slots.
   bool               UpdatingMRMLLayoutNode;
 
-  QHash<QString, qMRMLThreeDRenderView*>                 ThreeDRenderViewMap;
-  QHash<QString, qSlicerSliceViewWidget*>                SliceViewMap;
+  QHash<QString, qMRMLThreeDRenderView*>               ThreeDRenderViewMap;
+  QHash<QString, qMRMLSliceViewWidget*>                SliceViewMap;
 };
 
 #endif

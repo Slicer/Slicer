@@ -43,9 +43,6 @@ SET(KIT_SRCS
   qSlicerModuleSelectorWidget.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
-  qSlicerSliceViewWidget.cxx
-  qSlicerSliceViewWidget.h
-  qSlicerSliceViewWidget_p.h
   qSlicerWidget.cxx
   qSlicerWidget.h
   )
@@ -67,8 +64,6 @@ SET(KIT_MOC_SRCS
   qSlicerModuleSelectorWidget_p.h
   qSlicerSaveDataDialog.h
   qSlicerSaveDataDialog_p.h
-  qSlicerSliceViewWidget.h
-  qSlicerSliceViewWidget_p.h
   qSlicerWidget.h
   )
   
@@ -90,6 +85,7 @@ SET(KIT_target_libraries
   MRMLDisplayableManager
   qSlicerBaseQTCore
   qMRMLWidgets
+
   )
 
 # Python wrap

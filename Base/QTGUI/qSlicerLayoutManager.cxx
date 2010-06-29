@@ -9,6 +9,7 @@
 
 // qMRML includes
 #include "qMRMLThreeDRenderView.h"
+#include "qMRMLSliceViewWidget.h"
 #include "qMRMLUtils.h"
 #include "qMRMLNodeFactory.h"
 
@@ -16,7 +17,6 @@
 #include "qSlicerLayoutManager.h"
 #include "qSlicerLayoutManager_p.h"
 #include "qSlicerApplication.h"
-#include "qSlicerSliceViewWidget.h"
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
@@ -47,7 +47,6 @@ qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate()
   this->TargetWidget = 0;
   this->CurrentViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
   this->UpdatingMRMLLayoutNode = false;
-  logger.setTrace();
 }
 
 //------------------------------------------------------------------------------
@@ -88,13 +87,14 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(const QString& sliceViewNa
   Q_ASSERT(this->MRMLScene);
   Q_ASSERT(sliceNode);
 
-  qSlicerSliceViewWidget * sliceView = 0;
+  qMRMLSliceViewWidget * sliceView = 0;
   
   //QString widgetId = QLatin1String(sliceNode->GetID());
 
   if (this->SliceViewMap.contains(sliceViewName))
     {
     sliceView = this->SliceViewMap[sliceViewName];
+
     if (sliceView->mrmlSliceNode() != sliceNode)
       {
       sliceView->setMRMLSliceNode(sliceNode);
@@ -104,7 +104,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(const QString& sliceViewNa
     }
   else
     {
-    sliceView = new qSlicerSliceViewWidget(sliceViewName, this->TargetWidget);
+    sliceView = new qMRMLSliceViewWidget(sliceViewName, this->TargetWidget);
     sliceView->setMRMLScene(this->MRMLScene);
     sliceView->setMRMLSliceNode(sliceNode);
 
@@ -193,7 +193,7 @@ void qSlicerLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* 
     {
     QString name = sliceNode->GetName();
     logger.trace(QString("onSliceNodeAddedEvent - name: %1").arg(name));
-    Q_ASSERT(name == "red" || name == "yellow" || name == "green");
+    Q_ASSERT(name == "Red" || name == "Yellow" || name == "Green");
     this->createSliceView(name, sliceNode);
     }
 }
@@ -283,6 +283,22 @@ struct vtkMRMLSliceNodeInitializer : public vtkMRMLNodeInitializer
     sliceNode->SetName(this->SliceLogicName.toLatin1());
     sliceNode->SetLayoutName(this->SliceLogicName.toLatin1());
     sliceNode->SetSingletonTag(this->SliceLogicName.toLatin1());
+    if (this->SliceLogicName == "Red")
+      {
+      sliceNode->SetOrientationToAxial();
+      }
+    else if(this->SliceLogicName == "Yellow")
+      {
+      sliceNode->SetOrientationToSagittal();
+      }
+    else if(this->SliceLogicName == "Green")
+      {
+      sliceNode->SetOrientationToCoronal();
+      }
+    else
+      {
+      sliceNode->SetOrientationToReformat();
+      }
     }
   QString SliceLogicName;
 };
@@ -314,12 +330,12 @@ void qSlicerLayoutManagerPrivate::initialize()
     Q_UNUSED(node);
     }
 
-  // Create "red", "yellow" and "green" vtkMRMLSliceNode if required
+  // Create "Red", "Yellow" and "Green" vtkMRMLSliceNode if required
   int sliceNodeCount = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
   if (sliceNodeCount == 0)
     {
     QStringList sliceLogicNames;
-    sliceLogicNames << "red" << "yellow" << "green";
+    sliceLogicNames << "Red" << "Yellow" << "Green";
     foreach(const QString& sliceLogicName, sliceLogicNames)
       {
       vtkMRMLSliceNodeInitializer sliceNodeInitializer(sliceLogicName);
@@ -366,10 +382,10 @@ qMRMLThreeDRenderView* qSlicerLayoutManagerPrivate::threeDRenderView(const QStri
 }
 
 //------------------------------------------------------------------------------
-qSlicerSliceViewWidget* qSlicerLayoutManagerPrivate::sliceView(const QString& name)
+qMRMLSliceViewWidget* qSlicerLayoutManagerPrivate::sliceView(const QString& name)
 {
   Q_ASSERT(this->SliceViewMap.contains(name));
-  qSlicerSliceViewWidget* sliceView = this->SliceViewMap[name];
+  qMRMLSliceViewWidget* sliceView = this->SliceViewMap[name];
   Q_ASSERT(sliceView);
   return sliceView;
 }
@@ -453,19 +469,19 @@ void qSlicerLayoutManager::switchToConventionalView()
   renderView->setVisible(true);
 
   // Red Slice Viewer
-  qSlicerSliceViewWidget* redSliceView = d->sliceView("red");
+  qMRMLSliceViewWidget* redSliceView = d->sliceView("Red");
   d->GridLayout->addWidget(redSliceView, 1, 0);
-  redSliceView->setVisible(true);
+  //redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
-  qSlicerSliceViewWidget* yellowSliceView = d->sliceView("yellow");
+  qMRMLSliceViewWidget* yellowSliceView = d->sliceView("Yellow");
   d->GridLayout->addWidget(yellowSliceView, 1, 1);
-  yellowSliceView->setVisible(true);
+  //yellowSliceView->setVisible(true);
 
   // Green Slice Viewer
-  qSlicerSliceViewWidget* greenSliceView = d->sliceView("green");
+  qMRMLSliceViewWidget* greenSliceView = d->sliceView("Green");
   d->GridLayout->addWidget(greenSliceView, 1, 2);
-  greenSliceView->setVisible(true);
+  //greenSliceView->setVisible(true);
 
   // Update LayoutNode
   qSlicerLayoutManager_updateLayoutNode(ConventionalView);
@@ -498,28 +514,28 @@ void qSlicerLayoutManager::switchToOneUp3DView()
 void qSlicerLayoutManager::switchToOneUpRedSliceView()
 {
   qSlicerLayoutManager_returnIfMatchCurrentView(OneUpRedSliceView);
-  this->switchToOneUpSliceView("red");
+  this->switchToOneUpSliceView("Red");
 }
 
 //------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToOneUpGreenSliceView()
 {
   qSlicerLayoutManager_returnIfMatchCurrentView(OneUpGreenSliceView);
-  this->switchToOneUpSliceView("green");
+  this->switchToOneUpSliceView("Green");
 }
 
 //------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToOneUpYellowSliceView()
 {
   qSlicerLayoutManager_returnIfMatchCurrentView(OneUpYellowSliceView);
-  this->switchToOneUpSliceView("yellow");
+  this->switchToOneUpSliceView("Yellow");
 }
 //------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToOneUpSliceView(const QString& sliceViewName)
 {
   // Sanity checks
-  Q_ASSERT(sliceViewName == "red" || sliceViewName == "yellow" || sliceViewName == "green");
-  if (sliceViewName != "red" && sliceViewName != "yellow" && sliceViewName != "green")
+  Q_ASSERT(sliceViewName == "Red" || sliceViewName == "Yellow" || sliceViewName == "Green");
+  if (sliceViewName != "Red" && sliceViewName != "Yellow" && sliceViewName != "Green")
     {
     qWarning() << "Slicer viewer name" << sliceViewName << "invalid !";
     return;
@@ -558,17 +574,17 @@ void qSlicerLayoutManager::switchToFourUpView()
   renderView->setVisible(true);
 
   // Red Slice Viewer
-  qMRMLSliceViewWidget* redSliceView = d->sliceView("red");
+  qMRMLSliceViewWidget* redSliceView = d->sliceView("Red");
   d->GridLayout->addWidget(redSliceView, 0, 1);
   redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
-  qMRMLSliceViewWidget* yellowSliceView = d->sliceView("yellow");
+  qMRMLSliceViewWidget* yellowSliceView = d->sliceView("Yellow");
   d->GridLayout->addWidget(yellowSliceView, 1, 0);
   yellowSliceView->setVisible(true);
 
   // Green Slice Viewer
-  qMRMLSliceViewWidget* greenSliceView = d->sliceView("green");
+  qMRMLSliceViewWidget* greenSliceView = d->sliceView("Green");
   d->GridLayout->addWidget(greenSliceView, 1, 1);
   greenSliceView->setVisible(true);
 
@@ -702,17 +718,17 @@ void qSlicerLayoutManager::switchToDual3DView()
   renderView2->setVisible(true);
 
   // Red Slice Viewer
-  qMRMLSliceViewWidget* redSliceView = d->sliceView("red");
+  qMRMLSliceViewWidget* redSliceView = d->sliceView("Red");
   d->GridLayout->addWidget(redSliceView, 0, 1);
   redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
-  qMRMLSliceViewWidget* yellowSliceView = d->sliceView("yellow");
+  qMRMLSliceViewWidget* yellowSliceView = d->sliceView("Yellow");
   d->GridLayout->addWidget(yellowSliceView, 1, 0);
   yellowSliceView->setVisible(true);
 
   // Green Slice Viewer
-  qMRMLSliceViewWidget* greenSliceView = d->sliceView("green");
+  qMRMLSliceViewWidget* greenSliceView = d->sliceView("Green");
   d->GridLayout->addWidget(greenSliceView, 1, 1);
   greenSliceView->setVisible(true);
 

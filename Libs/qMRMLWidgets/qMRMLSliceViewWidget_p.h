@@ -12,8 +12,12 @@
 #include "qMRMLSliceViewWidget.h"
 #include "ui_qMRMLSliceViewWidget.h"
 
+// MRMLLogic includes
+#include <vtkMRMLSliceLogic.h>
+
 /// VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 #include <vtkImageData.h>
 
 class vtkMRMLSliceNode;
@@ -34,8 +38,9 @@ public:
 
   void setupUi(qMRMLWidget* widget);
 
-  void setMRMLScene(vtkMRMLScene* scene);
-  void setMRMLSliceNode(vtkMRMLSliceNode* sliceNode);
+  void setMRMLScene(vtkMRMLScene* newScene);
+  void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);
+  void setImageData(vtkImageData* newImageData);
 
   void setupMoreOptionMenu();
 
@@ -49,8 +54,8 @@ public slots:
   void onNodeAddedEvent(vtkObject* scene, vtkObject* node);
   void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);
 
-  /// Triggered uppon MRML slice node updates
-  void onMRMLSliceNodeModifiedEvent();
+  /// Update widget state using the associated MRML slice node
+  void updateWidgetFromMRMLSliceNode();
 
   /// Triggered after a foregound layer volume node is selected
   /// using the associated qMRMLNodeComboBox
@@ -63,13 +68,20 @@ public slots:
   /// Triggered after a backgound layer volume node is selected
   /// using the associated qMRMLNodeComboBox
   void onLabelMapNodeSelected(vtkMRMLNode* node);
+  
+  /// Triggered after the SliceLogic is modified
+  void onSliceLogicModifiedEvent();
+
+  /// Triggered after the ImageData associated with the SliceLogic is modified
+  void onImageDataModifiedEvent();
 
 public:
-  vtkMRMLSliceNode*                MRMLSliceNode;
-  vtkMRMLSliceCompositeNode*       MRMLSliceCompositeNode;
-  vtkSmartPointer<vtkImageData>    ImageData;
-  QHash<QString, QString>          SliceOrientationToDescription;
-  QString                          SliceViewName;
+  vtkMRMLSliceNode*                   MRMLSliceNode;
+  vtkMRMLSliceCompositeNode*          MRMLSliceCompositeNode;
+  vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
+  vtkWeakPointer<vtkImageData>        ImageData;
+  QHash<QString, QString>             SliceOrientationToDescription;
+  QString                             SliceViewName;
 
   QAction* actionFitToWindow;
   QAction* actionTotateToVolumePlane;

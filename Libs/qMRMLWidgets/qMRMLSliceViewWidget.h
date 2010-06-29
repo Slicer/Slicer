@@ -20,6 +20,8 @@ class vtkMRMLSliceCompositeNode;
 class vtkImageData;
 class ctkVTKSliceView;
 
+class vtkMRMLSliceLogic;
+
 class QMRML_WIDGETS_EXPORT qMRMLSliceViewWidget : public qMRMLWidget
 {
   Q_OBJECT
@@ -50,6 +52,9 @@ public:
   void setMRMLSliceCompositeNode(vtkMRMLSliceCompositeNode* sliceCompositeNode);
   vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode()const;
 
+  /// Get slice view name
+  QString sliceViewName()const;
+
   ///
   /// Set slice offset range
   void setSliceOffsetRange(double min, double max);
@@ -61,29 +66,28 @@ public slots:
 
   /// 
   /// Set the MRML \a scene that should be listened for events
-  virtual void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* scene);
 
   ///
   /// Set \a sliceNode
-  virtual void setMRMLSliceNode(vtkMRMLSliceNode* sliceNode);
+  void setMRMLSliceNode(vtkMRMLSliceNode* sliceNode);
 
   ///
   /// Set imageData
-  virtual void setImageData(vtkImageData* newImageData);
+  void setImageData(vtkImageData* newImageData);
+  
+  ///
+  /// Fit slices to background
+  void fitSliceToBackground();
 
   ///
   /// Set slice orientation
-  /// Orientation could be either "Axial, "Sagital", "Coronal" or "Reformat"
+  /// Orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat"
   void setSliceOrientation(const QString& orienation);
 
   ///
-  /// \sa ctkVTKSliceView::scheduleRender()
-  void scheduleRender();
-
-protected slots:
-  ///
   /// Triggered after the slice offset slider position is changed
-  virtual void onSliceOffsetValueChanged(double value);
+  void setSliceOffsetValue(double value);
 
 protected:
 

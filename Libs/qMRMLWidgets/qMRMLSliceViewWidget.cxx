@@ -35,7 +35,12 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceViewWidget");
 qMRMLSliceViewWidgetPrivate::qMRMLSliceViewWidgetPrivate()
 {
   logger.setTrace();
-
+  
+  this->SliceLogic = vtkSmartPointer<vtkMRMLSliceLogic>::New();
+  
+  this->qvtkConnect(this->SliceLogic,
+                    vtkCommand::ModifiedEvent, this, SLOT(onSliceLogicModifiedEvent()));
+  
   this->MRMLSliceNode = 0;
   this->MRMLSliceCompositeNode = 0;
 
@@ -56,7 +61,7 @@ void qMRMLSliceViewWidgetPrivate::setupUi(qMRMLWidget* widget)
   CTK_P(qMRMLSliceViewWidget);
 
   this->Ui_qMRMLSliceViewWidget::setupUi(widget);
-
+  
   // Set LabelMapSelector attributes
   this->LabelMapSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
 
@@ -78,64 +83,109 @@ void qMRMLSliceViewWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // Connect Slice offset slider
   this->connect(this->SliceOffsetSlider, SIGNAL(valueIsChanging(double)),
-                p, SLOT(onSliceOffsetValueChanged(double)));
+                p, SLOT(setSliceOffsetValue(double)));
+                
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::setMRMLScene(vtkMRMLScene* scene)
+void qMRMLSliceViewWidgetPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
   CTK_P(qMRMLSliceViewWidget);
-  if (scene == p->mrmlScene())
+  if (newScene == p->mrmlScene())
     {
     return; 
     }
     
   this->qvtkReconnect(
-    p->mrmlScene(), scene,
+    p->mrmlScene(), newScene,
     vtkMRMLScene::SceneClosingEvent, this, SLOT(onSceneClosingEvent()));
 
   this->qvtkReconnect(
-    p->mrmlScene(), scene,
+    p->mrmlScene(), newScene,
     vtkMRMLScene::SceneCloseEvent, this, SLOT(onSceneCloseEvent()));
 
   this->qvtkReconnect(
-    p->mrmlScene(), scene,
+    p->mrmlScene(), newScene,
     vtkMRMLScene::SceneLoadStartEvent, this, SLOT(onSceneLoadStartEvent()));
 
   this->qvtkReconnect(
-    p->mrmlScene(), scene,
+    p->mrmlScene(), newScene,
     vtkMRMLScene::SceneLoadEndEvent, this, SLOT(onSceneLoadEndEvent()));
     
   this->qvtkReconnect(
-    p->mrmlScene(), scene,
+    p->mrmlScene(), newScene,
     vtkMRMLScene::NodeAddedEvent, this,
     SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
                       
   this->qvtkReconnect(
-    p->mrmlScene(), scene,
+    p->mrmlScene(), newScene,
     vtkMRMLScene::NodeRemovedEvent, this,
     SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
 
   this->qvtkReconnect(
-    p->mrmlScene(), scene,
+    p->mrmlScene(), newScene,
     vtkMRMLScene::SceneRestoredEvent, this, SLOT(onSceneRestoredEvent()));
 
-  p->setMRMLScene(scene);
+  p->setMRMLScene(newScene);
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::setMRMLSliceNode(vtkMRMLSliceNode* sliceNode)
+void qMRMLSliceViewWidgetPrivate::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
-  if (sliceNode == this->MRMLSliceNode)
+  CTK_P(qMRMLSliceViewWidget);
+  
+  if (newSliceNode == this->MRMLSliceNode)
     {
     return; 
     }
-
-  this->qvtkReconnect(this->MRMLSliceNode, sliceNode, vtkCommand::ModifiedEvent, this,
-                      SLOT(onMRMLSliceNodeModifiedEvent()));
     
-  this->MRMLSliceNode = sliceNode;
+  // List of events the slice logics should listen
+  VTK_CREATE(vtkIntArray, events);
+  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+
+  // Initialize logic
+  this->SliceLogic->SetMRMLScene(p->mrmlScene());
+  this->SliceLogic->SetSliceNode(newSliceNode);
+  this->SliceLogic->SetName(this->SliceViewName.toLatin1());
+  this->SliceLogic->ProcessLogicEvents();
+  this->SliceLogic->ProcessMRMLEvents(p->mrmlScene(), vtkCommand::ModifiedEvent, NULL);
+  this->SliceLogic->SetAndObserveMRMLSceneEvents(p->mrmlScene(), events);
+
+  this->qvtkReconnect(this->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent, 
+                      this, SLOT(updateWidgetFromMRMLSliceNode()));
+    
+  this->MRMLSliceNode = newSliceNode;
+
+  // Update widget state given the new node
+  this->updateWidgetFromMRMLSliceNode();
   
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceViewWidgetPrivate::setImageData(vtkImageData* newImageData)
+{
+  if (this->ImageData == newImageData)
+    {
+    return;
+    }
+
+  logger.trace("setImageData");
+  
+  this->qvtkReconnect(this->ImageData, newImageData,
+                      vtkCommand::ModifiedEvent, this, SLOT(onImageDataModifiedEvent()));
+
+  this->ImageData = newImageData;
+
+  // Since new layers have been associated with the current MRML Slice Node,
+  // let's update the widget state to reflect these changes
+  //this->updateWidgetFromMRMLSliceNode();
+  
+  this->onImageDataModifiedEvent();
 }
 
 // --------------------------------------------------------------------------
@@ -218,10 +268,12 @@ void qMRMLSliceViewWidgetPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onMRMLSliceNodeModifiedEvent()
+void qMRMLSliceViewWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
   CTK_P(qMRMLSliceViewWidget);
   Q_ASSERT(this->MRMLSliceCompositeNode);
+
+  logger.trace("updateWidgetFromMRMLSliceNode");
 
   // Update orientation selector state
   int index = this->OrientationSelector->findText(
@@ -257,7 +309,6 @@ void qMRMLSliceViewWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNode * no
     {
     return;
     }
-
   this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
 }
 
@@ -271,7 +322,6 @@ void qMRMLSliceViewWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNode * no
     {
     return;
     }
-
   this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
 }
 
@@ -285,8 +335,46 @@ void qMRMLSliceViewWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * node)
     {
     return;
     }
-
   this->MRMLSliceCompositeNode->SetLabelVolumeID(node ? node->GetID() : 0);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceViewWidgetPrivate::onSliceLogicModifiedEvent()
+{
+  CTK_P(qMRMLSliceViewWidget);
+
+  if (p->mrmlSliceCompositeNode() != this->SliceLogic->GetSliceCompositeNode())
+    {
+    p->setMRMLSliceCompositeNode(this->SliceLogic->GetSliceCompositeNode());
+    }
+
+  if (this->ImageData != this->SliceLogic->GetImageData())
+    {
+    logger.trace("onSliceLogicModifiedEvent - reconnect onImageDataModifiedEvent slot");
+    p->setImageData(this->SliceLogic->GetImageData());
+    }
+  
+  // Set the scale increments to match the z spacing (rotated into slice space)
+  const double * sliceSpacing = 0;
+  sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
+  Q_ASSERT(sliceSpacing);
+  double offsetResolution = sliceSpacing[2];
+  p->setSliceOffsetResolution(offsetResolution);
+
+  // Set slice offset range to match the field of view
+  // Calculate the number of slices in the current range
+  double sliceBounds[6] = {0, 0, 0, 0, 0, 0};
+  this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds);
+  p->setSliceOffsetRange(sliceBounds[4], sliceBounds[5]);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceViewWidgetPrivate::onImageDataModifiedEvent()
+{
+  logger.trace("onImageDataModifiedEvent");
+  this->VTKSliceView->setImageData(this->ImageData); 
+  //ctk_p()->fitSliceToBackground();
+  this->VTKSliceView->scheduleRender();
 }
 
 // --------------------------------------------------------------------------
@@ -322,6 +410,9 @@ CTK_GET_CXX(qMRMLSliceViewWidget, vtkMRMLSliceCompositeNode*,
             mrmlSliceCompositeNode, MRMLSliceCompositeNode);
 
 //---------------------------------------------------------------------------
+CTK_GET_CXX(qMRMLSliceViewWidget, QString, sliceViewName, SliceViewName);
+
+//---------------------------------------------------------------------------
 void qMRMLSliceViewWidget::setSliceOffsetRange(double min, double max)
 {
   ctk_d()->SliceOffsetSlider->setRange(min, max);
@@ -336,20 +427,32 @@ void qMRMLSliceViewWidget::setSliceOffsetResolution(double resolution)
 //---------------------------------------------------------------------------
 void qMRMLSliceViewWidget::setImageData(vtkImageData* newImageData)
 {
-  CTK_D(qMRMLSliceViewWidget);
-  if (d->ImageData == newImageData)
-    {
-    return;
-    }
-
-  d->VTKSliceView->setImageData(newImageData);
-
-  d->ImageData = newImageData;
+  ctk_d()->setImageData(newImageData);
 }
 
 //---------------------------------------------------------------------------
 CTK_GET_CXX(qMRMLSliceViewWidget, vtkImageData*, imageData, ImageData);
 CTK_GET_CXX(qMRMLSliceViewWidget, vtkMRMLSliceNode*, mrmlSliceNode, MRMLSliceNode);
+
+// --------------------------------------------------------------------------
+void qMRMLSliceViewWidget::setSliceOffsetValue(double value)
+{
+  CTK_D(qMRMLSliceViewWidget);
+  logger.trace(QString("setSliceOffsetValue: %1").arg(value));
+  d->SliceLogic->SetSliceOffset(value);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceViewWidget::fitSliceToBackground()
+{
+  CTK_D(qMRMLSliceViewWidget);
+  Q_ASSERT(d->SliceLogic->GetSliceNode());
+  int width = d->VTKSliceView->size().width();
+  int height = d->VTKSliceView->size().height();
+  logger.trace(QString("fitSliceToBackground - size(%1, %2)").arg(width).arg(height));
+  d->SliceLogic->FitSliceToAll(width, height);
+  d->SliceLogic->GetSliceNode()->UpdateMatrices();
+}
 
 //---------------------------------------------------------------------------
 QString qMRMLSliceViewWidget::sliceOrientation()
@@ -364,23 +467,11 @@ void qMRMLSliceViewWidget::setSliceOrientation(const QString& orientation)
 
 #ifndef QT_NO_DEBUG
   QStringList expectedOrientation;
-  expectedOrientation << "Axial" << "Sagital" << "Coronal" << "Reformat";
+  expectedOrientation << "Axial" << "Sagittal" << "Coronal" << "Reformat";
   Q_ASSERT(expectedOrientation.contains(orientation));
 #endif
 
   d->MRMLSliceNode->SetOrientationString(orientation.toLatin1());
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceViewWidget::scheduleRender()
-{
-  ctk_d()->VTKSliceView->scheduleRender();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLSliceViewWidget::onSliceOffsetValueChanged(double value)
-{
-  Q_UNUSED(value);
 }
 
 // --------------------------------------------------------------------------
