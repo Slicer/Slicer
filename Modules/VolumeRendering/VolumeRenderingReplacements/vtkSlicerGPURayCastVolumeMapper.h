@@ -27,7 +27,7 @@
 #ifndef __vtkSlicerGPURayCastVolumeMapper_h
 #define __vtkSlicerGPURayCastVolumeMapper_h
 
-#include "vtkSlicerGPUVolumeTextureMapper3D.h"
+#include "vtkSlicerGPUVolumeMapper.h"
 #include "vtkVolumeRenderingReplacements.h"
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
@@ -38,10 +38,10 @@ class vtkMatrix4x4;
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
-class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPURayCastVolumeMapper : public vtkSlicerGPUVolumeTextureMapper3D
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPURayCastVolumeMapper : public vtkSlicerGPUVolumeMapper
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGPURayCastVolumeMapper,vtkSlicerGPUVolumeTextureMapper3D);
+  vtkTypeRevisionMacro(vtkSlicerGPURayCastVolumeMapper,vtkSlicerGPUVolumeMapper);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkSlicerGPURayCastVolumeMapper *New();

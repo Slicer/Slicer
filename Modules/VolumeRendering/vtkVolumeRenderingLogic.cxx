@@ -3,8 +3,8 @@
 // Slicer includes
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
-#include "vtkSlicerGPURayCastVolumeTextureMapper3D.h"
 #include "vtkSlicerGPURayCastVolumeMapper.h"
+#include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 
 // VolumeRendering includes
 #include "vtkVolumeRenderingLogic.h"
@@ -53,9 +53,9 @@ vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
   //create instances of mappers
   this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
 
-  this->MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
+  this->MapperGPURaycast = vtkSlicerGPURayCastVolumeMapper::New();
 
-  this->MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
+  this->MapperGPURaycastII = vtkSlicerGPURayCastMultiVolumeMapper::New();
 
   this->MapperRaycast = vtkSlicerFixedPointVolumeRayCastMapper::New();
   this->MapperGPURaycast3 = vtkGPUVolumeRayCastMapper::New();
@@ -259,9 +259,9 @@ void vtkVolumeRenderingLogic::Reset()
   //create instances of mappers
   this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
 
-  this->MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
+  this->MapperGPURaycast = vtkSlicerGPURayCastVolumeMapper::New();
 
-  this->MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
+  this->MapperGPURaycastII = vtkSlicerGPURayCastMultiVolumeMapper::New();
 
   this->MapperRaycast = vtkSlicerFixedPointVolumeRayCastMapper::New();
 
@@ -907,7 +907,7 @@ int vtkVolumeRenderingLogic::IsCurrentMapperSupported(vtkMRMLVolumeRenderingPara
     return 1;
   case 3:
     {
-      vtkSlicerGPURayCastVolumeTextureMapper3D* MapperGPURaycast = vtkSlicerGPURayCastVolumeTextureMapper3D::New();
+      vtkSlicerGPURayCastVolumeMapper* MapperGPURaycast = vtkSlicerGPURayCastVolumeMapper::New();
 
       MapperGPURaycast->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
       
@@ -924,7 +924,7 @@ int vtkVolumeRenderingLogic::IsCurrentMapperSupported(vtkMRMLVolumeRenderingPara
     }
   case 4:
     {
-      vtkSlicerGPURayCastVolumeMapper* MapperGPURaycastII = vtkSlicerGPURayCastVolumeMapper::New();
+      vtkSlicerGPURayCastMultiVolumeMapper* MapperGPURaycastII = vtkSlicerGPURayCastMultiVolumeMapper::New();
       
       MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
       if (vspNode->GetFgVolumeNode())

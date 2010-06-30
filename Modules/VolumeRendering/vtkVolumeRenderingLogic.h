@@ -11,8 +11,8 @@
 
 class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerFixedPointVolumeRayCastMapper;
-class vtkSlicerGPURayCastVolumeTextureMapper3D;
 class vtkSlicerGPURayCastVolumeMapper;
+class vtkSlicerGPURayCastMultiVolumeMapper;
 class vtkGPUVolumeRayCastMapper;
 
 class vtkKWHistogramSet;
@@ -127,11 +127,11 @@ protected:
 
   // Description:
   // The hardware accelerated gpu ray cast mapper.
-  vtkSlicerGPURayCastVolumeTextureMapper3D *MapperGPURaycast;
+  vtkSlicerGPURayCastVolumeMapper *MapperGPURaycast;
 
   // Description:
   // The hardware accelerated multi-volume gpu ray cast mapper.
-  vtkSlicerGPURayCastVolumeMapper *MapperGPURaycastII;
+  vtkSlicerGPURayCastMultiVolumeMapper *MapperGPURaycastII;
 
   // Description:
   // The software accelerated software mapper

@@ -26,7 +26,8 @@
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
 #include "vtkOpenGLVolumeTextureMapper2D.h"
 #include "vtkSlicerOpenGLVolumeTextureMapper3D.h"
-#include "vtkSlicerGPURayCastVolumeTextureMapper3D.h"
+#include "vtkSlicerGPURayCastVolumeMapper.h"
+#include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 #endif
 
 #if defined(VTK_USE_MANGLED_MESA)
@@ -87,17 +88,30 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
       return vtkSlicerOpenGLVolumeTextureMapper3D::New();
       }
 
-        // 3D Volume Texture GPU RayCast Mapper
-    if(strcmp(vtkclassname, "vtkSlicerGPURayCastVolumeTextureMapper3D") == 0)
+        // 3D Volume GPU RayCast Mapper
+    if(strcmp(vtkclassname, "vtkSlicerGPURayCastVolumeMapper") == 0)
       {
 #if defined(VTK_USE_MANGLED_MESA)
       if ( vtkGraphicsFactory::GetUseMesaClasses() )
         {
-        vtkGenericWarningMacro("No support for mesa in vtkVolumeTextureMapper3D");
+        vtkGenericWarningMacro("No support for mesa in vtkSlicerGPURayCastVolumeMapper");
         return 0;
         }
 #endif
-        return vtkSlicerGPURayCastVolumeTextureMapper3D::New();
+        return vtkSlicerGPURayCastVolumeMapper::New();
+      }
+
+      // 3D Multi Volume GPU RayCast Mapper
+    if(strcmp(vtkclassname, "vtkSlicerGPURayCastMultiVolumeMapper") == 0)
+      {
+#if defined(VTK_USE_MANGLED_MESA)
+      if ( vtkGraphicsFactory::GetUseMesaClasses() )
+        {
+        vtkGenericWarningMacro("No support for mesa in vtkSlicerGPURayCastMultiVolumeMapper");
+        return 0;
+        }
+#endif
+        return vtkSlicerGPURayCastMultiVolumeMapper::New();
       }
       
     // Ray Cast Image Display Helper
