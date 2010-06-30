@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerGPURayCastVolumeMapper.h,v $
+  Module:    $RCSfile: vtkSlicerGPURayCastMultiVolumeMapper.h,v $
 
    Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
@@ -15,17 +15,17 @@
 
 
 =========================================================================*/
-// .NAME vtkSlicerGPURayCastVolumeMapper - concrete implementation of 3D volume texture mapping
+// .NAME vtkSlicerGPURayCastMultiVolumeMapper - concrete implementation of 3D volume texture mapping
 
 // .SECTION Description
-// vtkSlicerGPURayCastVolumeMapper renders two volume using ray casting on 3D texture.
+// vtkSlicerGPURayCastMultiVolumeMapper renders two volume using ray casting on 3D texture.
 // See vtkVolumeTextureMapper3D for full description.
 
 // .SECTION see also
 // vtkVolumeTextureMapper3D vtkVolumeMapper
 
-#ifndef __vtkSlicerGPURayCastVolumeMapper_h
-#define __vtkSlicerGPURayCastVolumeMapper_h
+#ifndef __vtkSlicerGPURayCastMultiVolumeMapper_h
+#define __vtkSlicerGPURayCastMultiVolumeMapper_h
 
 #include "vtkSlicerGPUVolumeMapper.h"
 #include "vtkVolumeRenderingReplacements.h"
@@ -38,13 +38,13 @@ class vtkMatrix4x4;
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
-class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPURayCastVolumeMapper : public vtkSlicerGPUVolumeMapper
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPURayCastMultiVolumeMapper : public vtkSlicerGPUVolumeMapper
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGPURayCastVolumeMapper,vtkSlicerGPUVolumeMapper);
+  vtkTypeRevisionMacro(vtkSlicerGPURayCastMultiVolumeMapper,vtkSlicerGPUVolumeMapper);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  static vtkSlicerGPURayCastVolumeMapper *New();
+  static vtkSlicerGPURayCastMultiVolumeMapper *New();
 
   // Description:
   // Overall alpha for volume rendering result
@@ -110,8 +110,8 @@ public:
   void ReleaseGraphicsResources(vtkWindow *);
 
 protected:
-  vtkSlicerGPURayCastVolumeMapper();
-  ~vtkSlicerGPURayCastVolumeMapper();
+  vtkSlicerGPURayCastMultiVolumeMapper();
+  ~vtkSlicerGPURayCastMultiVolumeMapper();
 
 //ETX
 
@@ -177,8 +177,8 @@ protected:
   void Setup3DTextureParameters( vtkVolumeProperty *property );
 
 private:
-  vtkSlicerGPURayCastVolumeMapper(const vtkSlicerGPURayCastVolumeMapper&);  // Not implemented.
-  void operator=(const vtkSlicerGPURayCastVolumeMapper&);  // Not implemented.
+  vtkSlicerGPURayCastMultiVolumeMapper(const vtkSlicerGPURayCastMultiVolumeMapper&);  // Not implemented.
+  void operator=(const vtkSlicerGPURayCastMultiVolumeMapper&);  // Not implemented.
 
   void PrintGLErrorString();
   void PrintFragmentShaderInfoLog();

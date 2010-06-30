@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerGPURayCastVolumeTextureMapper3D.h,v $
+  Module:    $RCSfile: vtkSlicerGPURayCastVolumeMapper.h,v $
 
    Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
@@ -15,17 +15,17 @@
 
 
 =========================================================================*/
-// .NAME vtkSlicerGPURayCastVolumeTextureMapper3D - concrete implementation of 3D volume texture mapping
+// .NAME vtkSlicerGPURayCastVolumeMapper - concrete implementation of 3D volume texture mapping
 
 // .SECTION Description
-// vtkSlicerGPURayCastVolumeTextureMapper3D renders a volume using ray casting on 3D texture.
+// vtkSlicerGPURayCastVolumeMapper renders a volume using ray casting on 3D texture.
 // See vtkVolumeTextureMapper3D for full description.
 
 // .SECTION see also
 // vtkVolumeTextureMapper3D vtkVolumeMapper
 
-#ifndef __vtkSlicerGPURayCastVolumeTextureMapper3D_h
-#define __vtkSlicerGPURayCastVolumeTextureMapper3D_h
+#ifndef __vtkSlicerGPURayCastVolumeMapper_h
+#define __vtkSlicerGPURayCastVolumeMapper_h
 
 #include "vtkSlicerGPUVolumeTextureMapper3D.h"
 #include "vtkVolumeRenderingReplacements.h"
@@ -38,13 +38,13 @@ class vtkMatrix4x4;
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
-class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPURayCastVolumeTextureMapper3D : public vtkSlicerGPUVolumeTextureMapper3D
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPURayCastVolumeMapper : public vtkSlicerGPUVolumeTextureMapper3D
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGPURayCastVolumeTextureMapper3D,vtkSlicerGPUVolumeTextureMapper3D);
+  vtkTypeRevisionMacro(vtkSlicerGPURayCastVolumeMapper,vtkSlicerGPUVolumeTextureMapper3D);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  static vtkSlicerGPURayCastVolumeTextureMapper3D *New();
+  static vtkSlicerGPURayCastVolumeMapper *New();
 
   // Description:
   // Distance color blending (closer voxels brighter, more far voxels darker)
@@ -105,8 +105,8 @@ public:
   void ReleaseGraphicsResources(vtkWindow *);
 
 protected:
-  vtkSlicerGPURayCastVolumeTextureMapper3D();
-  ~vtkSlicerGPURayCastVolumeTextureMapper3D();
+  vtkSlicerGPURayCastVolumeMapper();
+  ~vtkSlicerGPURayCastVolumeMapper();
 
 //ETX
 
@@ -170,8 +170,8 @@ protected:
   void Setup3DTextureParameters( vtkVolumeProperty *property );
 
 private:
-  vtkSlicerGPURayCastVolumeTextureMapper3D(const vtkSlicerGPURayCastVolumeTextureMapper3D&);  // Not implemented.
-  void operator=(const vtkSlicerGPURayCastVolumeTextureMapper3D&);  // Not implemented.
+  vtkSlicerGPURayCastVolumeMapper(const vtkSlicerGPURayCastVolumeMapper&);  // Not implemented.
+  void operator=(const vtkSlicerGPURayCastVolumeMapper&);  // Not implemented.
 
   void PrintGLErrorString();
   void PrintFragmentShaderInfoLog();

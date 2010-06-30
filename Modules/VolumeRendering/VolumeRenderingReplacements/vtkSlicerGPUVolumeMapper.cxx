@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerGPUVolumeTextureMapper3D.cxx,v $
+  Module:    $RCSfile: vtkSlicerGPUVolumeMapper.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkSlicerGPUVolumeTextureMapper3D.h"
+#include "vtkSlicerGPUVolumeMapper.h"
 #include "vtkSlicerVolumeRenderingFactory.h"
 
 #include "vtkRenderer.h"
@@ -28,11 +28,11 @@
 #include "vtkCommand.h"
 #include "vtkMultiThreader.h"
 
-vtkCxxRevisionMacro(vtkSlicerGPUVolumeTextureMapper3D, "$Revision: 1.6 $");
+vtkCxxRevisionMacro(vtkSlicerGPUVolumeMapper, "$Revision: 1.6 $");
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
-vtkInstantiatorNewMacro(vtkSlicerGPUVolumeTextureMapper3D);
+vtkInstantiatorNewMacro(vtkSlicerGPUVolumeMapper);
 //----------------------------------------------------------------------------
 
 // This method moves the scalars from the input volume into volume1 (and
@@ -92,8 +92,8 @@ vtkInstantiatorNewMacro(vtkSlicerGPUVolumeTextureMapper3D);
 // gradient magnitude.
 
 template <class T>
-void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
-                                               vtkSlicerGPUVolumeTextureMapper3D *me,
+void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
+                                               vtkSlicerGPUVolumeMapper *me,
                                                float offset, float scale,
                                                unsigned char *volume1)
 {
@@ -382,12 +382,12 @@ void vtkSlicerGPUVolumeTextureMapper3DComputeScalars( T *dataPtr,
 }
 
 
-VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients( void *arg)
+VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
 {
   GradientsArgsType *pArgs = (GradientsArgsType *)(((vtkMultiThreader::ThreadInfo *)arg)->UserData);
 
   float *dataPtr = pArgs->dataPtr;
-  vtkSlicerGPUVolumeTextureMapper3D *me = pArgs->me;
+  vtkSlicerGPUVolumeMapper *me = pArgs->me;
   double scalarRange[2];
   scalarRange[0] = pArgs->scalarRange[0];
   scalarRange[1] = pArgs->scalarRange[1];
@@ -641,7 +641,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients( void *
 }
 
 
-vtkSlicerGPUVolumeTextureMapper3D::vtkSlicerGPUVolumeTextureMapper3D()
+vtkSlicerGPUVolumeMapper::vtkSlicerGPUVolumeMapper()
 {
   // The input used when creating the textures
   this->SavedTextureInput             = NULL;
@@ -667,7 +667,7 @@ vtkSlicerGPUVolumeTextureMapper3D::vtkSlicerGPUVolumeTextureMapper3D()
   this->Threader               = vtkMultiThreader::New();
 }
 
-vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
+vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()
 {
   if (this->Volume1)
   {
@@ -695,15 +695,15 @@ vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
 }
 
 
-vtkSlicerGPUVolumeTextureMapper3D *vtkSlicerGPUVolumeTextureMapper3D::New()
+vtkSlicerGPUVolumeMapper *vtkSlicerGPUVolumeMapper::New()
 {
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret =
-    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUVolumeTextureMapper3D");
-  return (vtkSlicerGPUVolumeTextureMapper3D*)ret;
+    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUVolumeMapper");
+  return (vtkSlicerGPUVolumeMapper*)ret;
 }
 
-int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
+int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
 {
   int needToUpdate = 0;
 
@@ -839,7 +839,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   switch ( scalarType )
     {
     vtkTemplateMacro(
-      vtkSlicerGPUVolumeTextureMapper3DComputeScalars(
+      vtkSlicerGPUVolumeMapperComputeScalars(
         (VTK_TT *)(dataPtr), this,
         offset, scale,
         this->Volume1));
@@ -864,7 +864,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   this->GradientsArgs->volume1 = this->Volume1;
   this->GradientsArgs->volume2 = this->Volume2;
 
-  this->Threader->SetSingleMethod( vtkSlicerGPUVolumeTextureMapper3DComputeGradients, (void *)(this->GradientsArgs) );
+  this->Threader->SetSingleMethod( vtkSlicerGPUVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
 
   this->Threader->SingleMethodExecute();
 
@@ -873,7 +873,7 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   return 1;
 }
 
-void vtkSlicerGPUVolumeTextureMapper3D::CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize)
+void vtkSlicerGPUVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize)
 {
   int scalarType = input->GetScalarType();
   
@@ -946,7 +946,7 @@ void vtkSlicerGPUVolumeTextureMapper3D::CopyToFloatBuffer(vtkImageData* input, f
   }
 }
 
-int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
+int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
 {
   int needToUpdate = 0;
 
@@ -1208,8 +1208,8 @@ int vtkSlicerGPUVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
 }
 
 
-// Print the vtkSlicerGPUVolumeTextureMapper3D
-void vtkSlicerGPUVolumeTextureMapper3D::PrintSelf(ostream& os, vtkIndent indent)
+// Print the vtkSlicerGPUVolumeMapper
+void vtkSlicerGPUVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

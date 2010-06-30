@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerGPUVolumeMapper.cxx,v $
+  Module:    $RCSfile: vtkSlicerGPUMultiVolumeMapper.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkSlicerGPUVolumeMapper.h"
+#include "vtkSlicerGPUMultiVolumeMapper.h"
 #include "vtkSlicerVolumeRenderingFactory.h"
 
 #include "vtkMultiThreader.h"
@@ -29,11 +29,11 @@
 #include "vtkCommand.h"
 #include "vtkExecutive.h"
 
-vtkCxxRevisionMacro(vtkSlicerGPUVolumeMapper, "$Revision: 1.6 $");
+vtkCxxRevisionMacro(vtkSlicerGPUMultiVolumeMapper, "$Revision: 1.6 $");
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
-vtkInstantiatorNewMacro(vtkSlicerGPUVolumeMapper);
+vtkInstantiatorNewMacro(vtkSlicerGPUMultiVolumeMapper);
 //----------------------------------------------------------------------------
 
 //
@@ -45,10 +45,10 @@ vtkInstantiatorNewMacro(vtkSlicerGPUVolumeMapper);
 //  
 
 template <class T>
-void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
+void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
                                                 T *dataPtr1,
                                                 T *dataPtr2,
-                                               vtkSlicerGPUVolumeMapper *me,
+                                               vtkSlicerGPUMultiVolumeMapper *me,
                                                float offset, float scale, float offset1, float scale1,
                                                unsigned char *volume1)
 {
@@ -238,12 +238,12 @@ void vtkSlicerGPUVolumeMapperComputeScalars( T *dataPtr,
   }
 }
 
-VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
+VTK_THREAD_RETURN_TYPE vtkSlicerGPUMultiVolumeMapperComputeGradients( void *arg)
 {
   GPUGradientsArgsType *pArgs = (GPUGradientsArgsType *)(((vtkMultiThreader::ThreadInfo *)arg)->UserData);
   
   float *dataPtr = pArgs->dataPtr;
-  vtkSlicerGPUVolumeMapper *me = pArgs->me;
+  vtkSlicerGPUMultiVolumeMapper *me = pArgs->me;
   double scalarRange[2];
   scalarRange[0] = pArgs->scalarRange[0];
   scalarRange[1] = pArgs->scalarRange[1];
@@ -479,7 +479,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
   return VTK_THREAD_RETURN_VALUE;
 }
 
-vtkSlicerGPUVolumeMapper::vtkSlicerGPUVolumeMapper()
+vtkSlicerGPUMultiVolumeMapper::vtkSlicerGPUMultiVolumeMapper()
 {
   // The input used when creating the textures
   this->SavedTextureInput             = NULL;
@@ -510,7 +510,7 @@ vtkSlicerGPUVolumeMapper::vtkSlicerGPUVolumeMapper()
   this->GradientsArgs                = NULL;
 }
 
-vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()
+vtkSlicerGPUMultiVolumeMapper::~vtkSlicerGPUMultiVolumeMapper()
 {
   if (this->Volume1)
   {
@@ -543,15 +543,15 @@ vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()
   }
 }
 
-vtkSlicerGPUVolumeMapper *vtkSlicerGPUVolumeMapper::New()
+vtkSlicerGPUMultiVolumeMapper *vtkSlicerGPUMultiVolumeMapper::New()
 {
   // First try to create the object from the vtkObjectFactory
   vtkObject* ret = 
-    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUVolumeMapper");
-  return (vtkSlicerGPUVolumeMapper*)ret;
+    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUMultiVolumeMapper");
+  return (vtkSlicerGPUMultiVolumeMapper*)ret;
 }
 
-int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
+int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
 {
   int needToUpdate = 0;
 
@@ -731,7 +731,7 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   switch ( scalarType )
     {
     vtkTemplateMacro(
-      vtkSlicerGPUVolumeMapperComputeScalars(
+      vtkSlicerGPUMultiVolumeMapperComputeScalars(
         (VTK_TT *)(dataPtr), (VTK_TT*)(dataPtr1), (VTK_TT*)(dataPtr2),
         this, offset, scale, offset1, scale1,
         this->Volume1));
@@ -755,7 +755,7 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   this->GradientsArgs->scalarRange[1] = scalarRange[1];
   this->GradientsArgs->volume = this->Volume2;
   
-  this->Threader->SetSingleMethod( vtkSlicerGPUVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
+  this->Threader->SetSingleMethod( vtkSlicerGPUMultiVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
   this->Threader->SingleMethodExecute();
 
   delete [] floatDataPtr;
@@ -769,7 +769,7 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
     this->GradientsArgs->scalarRange[1] = scalarRange1[1];
     this->GradientsArgs->volume = this->Volume3;
     
-    this->Threader->SetSingleMethod( vtkSlicerGPUVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
+    this->Threader->SetSingleMethod( vtkSlicerGPUMultiVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
     this->Threader->SingleMethodExecute();
   }
   
@@ -778,7 +778,7 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   return 1;
 }
 
-void vtkSlicerGPUVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize)
+void vtkSlicerGPUMultiVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize)
 {
   int scalarType = input->GetScalarType();
   
@@ -851,7 +851,7 @@ void vtkSlicerGPUVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float* flo
   }
 }
 
-int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
+int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
 {
   int needToUpdate = 0;
 
@@ -1169,8 +1169,8 @@ int vtkSlicerGPUVolumeMapper::UpdateColorLookup( vtkVolume *vol )
 }
 
 
-// Print the vtkSlicerGPUVolumeMapper
-void vtkSlicerGPUVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
+// Print the vtkSlicerGPUMultiVolumeMapper
+void vtkSlicerGPUMultiVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -1180,7 +1180,7 @@ void vtkSlicerGPUVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
      << this->VolumeSpacing[1] << " " << this->VolumeSpacing[2] << endl;
 }
 
-void vtkSlicerGPUVolumeMapper::SetNthInput( int index, vtkDataSet *genericInput)
+void vtkSlicerGPUMultiVolumeMapper::SetNthInput( int index, vtkDataSet *genericInput)
 {
   vtkImageData *input = vtkImageData::SafeDownCast( genericInput );
   
@@ -1194,7 +1194,7 @@ void vtkSlicerGPUVolumeMapper::SetNthInput( int index, vtkDataSet *genericInput)
     }
 }
 
-void vtkSlicerGPUVolumeMapper::SetNthInput( int index, vtkImageData *input )
+void vtkSlicerGPUMultiVolumeMapper::SetNthInput( int index, vtkImageData *input )
 { 
   if (this->GetNumberOfInputPorts() < index + 1)
     this->SetNumberOfInputPorts(index + 1);
@@ -1205,7 +1205,7 @@ void vtkSlicerGPUVolumeMapper::SetNthInput( int index, vtkImageData *input )
     this->SetInputConnection(index, 0);
 }
 
-vtkImageData *vtkSlicerGPUVolumeMapper::GetNthInput(int index)
+vtkImageData *vtkSlicerGPUMultiVolumeMapper::GetNthInput(int index)
 {
   if (this->GetNumberOfInputPorts() < index + 1)
     return 0;

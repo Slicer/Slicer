@@ -1,14 +1,14 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerGPURayCastVolumeMapper.h,v $
+  Module:    $RCSfile: vtkSlicerGPURayCastMultiVolumeMapper.h,v $
 
    Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkSlicerGPURayCastVolumeMapper
+  Program:   vtkSlicerGPURayCastMultiVolumeMapper
   Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/ $
   Date:      $Date: 2009-01-07 09:26:53 -0500 (Tue, 30 Jan 2009) $
   Version:   $Revision:  $
@@ -20,7 +20,7 @@
 #include <sstream>
 
 #include "vtkWindows.h"
-#include "vtkSlicerGPURayCastVolumeMapper.h"
+#include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 
 #include "vtkImageData.h"
 #include "vtkMatrix4x4.h"
@@ -43,11 +43,11 @@
 #include "vtkCommand.h"
 
 //#ifndef VTK_IMPLEMENT_MESA_CXX
-vtkCxxRevisionMacro(vtkSlicerGPURayCastVolumeMapper, "$Revision: 1.2 $");
-vtkStandardNewMacro(vtkSlicerGPURayCastVolumeMapper);
+vtkCxxRevisionMacro(vtkSlicerGPURayCastMultiVolumeMapper, "$Revision: 1.2 $");
+vtkStandardNewMacro(vtkSlicerGPURayCastMultiVolumeMapper);
 //#endif
 
-vtkSlicerGPURayCastVolumeMapper::vtkSlicerGPURayCastVolumeMapper()
+vtkSlicerGPURayCastMultiVolumeMapper::vtkSlicerGPURayCastMultiVolumeMapper()
 {
   this->Initialized          =  0;
   this->RayCastInitialized       =  0;
@@ -76,12 +76,12 @@ vtkSlicerGPURayCastVolumeMapper::vtkSlicerGPURayCastVolumeMapper()
   this->GlobalAlpha          = 1.0f;
 }
 
-vtkSlicerGPURayCastVolumeMapper::~vtkSlicerGPURayCastVolumeMapper()
+vtkSlicerGPURayCastMultiVolumeMapper::~vtkSlicerGPURayCastMultiVolumeMapper()
 {
 }
 
 // Release the graphics resources used by this texture.
-void vtkSlicerGPURayCastVolumeMapper::ReleaseGraphicsResources(vtkWindow
+void vtkSlicerGPURayCastMultiVolumeMapper::ReleaseGraphicsResources(vtkWindow
                                 *renWin)
 {
   if (( this->Volume1Index || this->Volume2Index || this->Volume3Index
@@ -117,7 +117,7 @@ void vtkSlicerGPURayCastVolumeMapper::ReleaseGraphicsResources(vtkWindow
   this->Modified();
 }
 
-void vtkSlicerGPURayCastVolumeMapper::Render(vtkRenderer *ren, vtkVolume *vol)
+void vtkSlicerGPURayCastMultiVolumeMapper::Render(vtkRenderer *ren, vtkVolume *vol)
 {
   ren->GetRenderWindow()->MakeCurrent();
 
@@ -174,7 +174,7 @@ void vtkSlicerGPURayCastVolumeMapper::Render(vtkRenderer *ren, vtkVolume *vol)
 //  this->InvokeEvent(vtkCommand::VolumeMapperRenderProgressEvent, &progress);
 }
 
-void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()
+void vtkSlicerGPURayCastMultiVolumeMapper::AdaptivePerformanceControl()
 {
   //do automatic performance control
   if(this->Framerate <= 0.0f)
@@ -203,7 +203,7 @@ void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()
 }
 
 //needs to be cleaned, 2008/10/20, Yanling Liu
-void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *vtkNotUsed(pRen),
+void vtkSlicerGPURayCastMultiVolumeMapper::SetupRayCastParameters(vtkRenderer *vtkNotUsed(pRen),
                                                              vtkVolume *pVol)
 {
   double bounds[6];
@@ -437,7 +437,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *vtkNot
   matrix->Delete();
 }
 
-void vtkSlicerGPURayCastVolumeMapper::RenderGLSL( vtkRenderer *ren, vtkVolume *vol )
+void vtkSlicerGPURayCastMultiVolumeMapper::RenderGLSL( vtkRenderer *ren, vtkVolume *vol )
 {
   //force shader program reinit in dual 3D view mode
   if (vol->GetNumberOfConsumers() > 1)
@@ -461,7 +461,7 @@ void vtkSlicerGPURayCastVolumeMapper::RenderGLSL( vtkRenderer *ren, vtkVolume *v
   vtkgl::UseProgram(0);
 }
 
-void vtkSlicerGPURayCastVolumeMapper::DeleteTextureIndex( GLuint *index )
+void vtkSlicerGPURayCastMultiVolumeMapper::DeleteTextureIndex( GLuint *index )
 {
   if (glIsTexture(*index))
   {
@@ -472,14 +472,14 @@ void vtkSlicerGPURayCastVolumeMapper::DeleteTextureIndex( GLuint *index )
   }
 }
 
-void vtkSlicerGPURayCastVolumeMapper::CreateTextureIndex( GLuint *index )
+void vtkSlicerGPURayCastMultiVolumeMapper::CreateTextureIndex( GLuint *index )
 {
   GLuint tempIndex=0;
   glGenTextures(1, &tempIndex);
   *index = static_cast<long>(tempIndex);
 }
 
-void vtkSlicerGPURayCastVolumeMapper::Setup3DTextureParameters( vtkVolumeProperty *property )
+void vtkSlicerGPURayCastMultiVolumeMapper::Setup3DTextureParameters( vtkVolumeProperty *property )
 {
   if ( property->GetInterpolationType() == VTK_NEAREST_INTERPOLATION )
   {
@@ -496,7 +496,7 @@ void vtkSlicerGPURayCastVolumeMapper::Setup3DTextureParameters( vtkVolumePropert
   glTexParameterf( vtkgl::TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 }
 
-void vtkSlicerGPURayCastVolumeMapper::SetupTextures(vtkRenderer *vtkNotUsed(ren),
+void vtkSlicerGPURayCastMultiVolumeMapper::SetupTextures(vtkRenderer *vtkNotUsed(ren),
                                                     vtkVolume *vol )
 {
   //0, 1, 2, 3
@@ -599,7 +599,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures(vtkRenderer *vtkNotUsed(ren)
     vtkgl::Uniform1i(loc, 5);
 }
 
-int  vtkSlicerGPURayCastVolumeMapper::IsRenderSupported(vtkVolumeProperty *property )
+int  vtkSlicerGPURayCastMultiVolumeMapper::IsRenderSupported(vtkVolumeProperty *property )
 {
   if ( !this->Initialized )
     {
@@ -634,7 +634,7 @@ int  vtkSlicerGPURayCastVolumeMapper::IsRenderSupported(vtkVolumeProperty *prope
   return 1;
 }
 
-void vtkSlicerGPURayCastVolumeMapper::Initialize()
+void vtkSlicerGPURayCastMultiVolumeMapper::Initialize()
 {
   this->Initialized = 1;
   vtkOpenGLExtensionManager * extensions = vtkOpenGLExtensionManager::New();
@@ -676,7 +676,7 @@ void vtkSlicerGPURayCastVolumeMapper::Initialize()
 //  printf("%d \n", num);
 }
 
-int vtkSlicerGPURayCastVolumeMapper::IsTextureSizeSupported( int size[3] )
+int vtkSlicerGPURayCastMultiVolumeMapper::IsTextureSizeSupported( int size[3] )
 {
   if ( this->GetInput()->GetNumberOfScalarComponents() < 4 )
     {
@@ -698,8 +698,8 @@ int vtkSlicerGPURayCastVolumeMapper::IsTextureSizeSupported( int size[3] )
   return 1;
 }
 
-// Print the vtkSlicerGPURayCastVolumeMapper
-void vtkSlicerGPURayCastVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
+// Print the vtkSlicerGPURayCastMultiVolumeMapper
+void vtkSlicerGPURayCastMultiVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
 {
 
   vtkOpenGLExtensionManager * extensions = vtkOpenGLExtensionManager::New();
@@ -734,7 +734,7 @@ void vtkSlicerGPURayCastVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 
-void vtkSlicerGPURayCastVolumeMapper::DrawVolumeBBox()
+void vtkSlicerGPURayCastMultiVolumeMapper::DrawVolumeBBox()
 {
     glBegin(GL_QUADS);
         glColor3dv(VolumeBBoxVerticesColor[4]);
@@ -848,7 +848,7 @@ void vtkSlicerGPURayCastVolumeMapper::DrawVolumeBBox()
     glEnd();
 }
 
-void vtkSlicerGPURayCastVolumeMapper::InitializeRayCast()
+void vtkSlicerGPURayCastMultiVolumeMapper::InitializeRayCast()
 {
     RayCastInitialized = 1;
 
@@ -865,7 +865,7 @@ void vtkSlicerGPURayCastVolumeMapper::InitializeRayCast()
     LoadRayCastProgram();
 }
 
-void vtkSlicerGPURayCastVolumeMapper::LoadBgFgFragmentShader()
+void vtkSlicerGPURayCastMultiVolumeMapper::LoadBgFgFragmentShader()
 {
   /* techniques in GPU ray cast II
    * 0: composite with directional lighting (default)
@@ -1374,7 +1374,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadBgFgFragmentShader()
   free(pInfoLog);
 }
 
-void vtkSlicerGPURayCastVolumeMapper::LoadRayCastProgram()
+void vtkSlicerGPURayCastMultiVolumeMapper::LoadRayCastProgram()
 {
   vtkgl::AttachShader(RayCastProgram, RayCastVertexShader);
   vtkgl::AttachShader(RayCastProgram, RayCastFragmentShader);
@@ -1388,7 +1388,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadRayCastProgram()
 
 }
 
-void vtkSlicerGPURayCastVolumeMapper::LoadVertexShader()
+void vtkSlicerGPURayCastMultiVolumeMapper::LoadVertexShader()
 {
   std::ostringstream vp_oss;
   vp_oss <<
@@ -1424,7 +1424,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadVertexShader()
   }
 }
 
-void vtkSlicerGPURayCastVolumeMapper::PrintGLErrorString()
+void vtkSlicerGPURayCastMultiVolumeMapper::PrintGLErrorString()
 {
   GLenum error = glGetError();
 
@@ -1441,7 +1441,7 @@ void vtkSlicerGPURayCastVolumeMapper::PrintGLErrorString()
   }
 }
 
-void vtkSlicerGPURayCastVolumeMapper::PrintFragmentShaderInfoLog()
+void vtkSlicerGPURayCastMultiVolumeMapper::PrintFragmentShaderInfoLog()
 {
   GLint infoLogLen;
   vtkgl::GetShaderiv(RayCastFragmentShader, vtkgl::INFO_LOG_LENGTH, &infoLogLen);
@@ -1455,20 +1455,20 @@ void vtkSlicerGPURayCastVolumeMapper::PrintFragmentShaderInfoLog()
   }
 }
 
-void vtkSlicerGPURayCastVolumeMapper::SetTechniques(int tech, int techFg)
+void vtkSlicerGPURayCastMultiVolumeMapper::SetTechniques(int tech, int techFg)
 {
   this->Technique = tech;
   this->TechniqueFg = techFg;
   this->ReloadShaderFlag = 1;
 }
 
-void vtkSlicerGPURayCastVolumeMapper::SetColorOpacityFusion(int fusion)
+void vtkSlicerGPURayCastMultiVolumeMapper::SetColorOpacityFusion(int fusion)
 {
   this->ColorOpacityFusion = fusion;
   this->ReloadShaderFlag = 1;
 }
 
-void vtkSlicerGPURayCastVolumeMapper::SetInternalVolumeSize(int size)
+void vtkSlicerGPURayCastMultiVolumeMapper::SetInternalVolumeSize(int size)
 {
   if (this->InternalVolumeSize != size)
   {

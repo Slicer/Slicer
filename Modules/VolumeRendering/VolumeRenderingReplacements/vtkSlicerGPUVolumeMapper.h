@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerGPUVolumeTextureMapper3D.h,v $
+  Module:    $RCSfile: vtkSlicerGPUVolumeMapper.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,10 +12,10 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkSlicerGPUVolumeTextureMapper3D - GPU volume render with 3D texture mapping (GLSL)
+// .NAME vtkSlicerGPUVolumeMapper - GPU volume render with 3D texture mapping (GLSL)
 
 // .SECTION Description
-// vtkSlicerGPUVolumeTextureMapper3D renders a volume using 3D texture mapping in fragment shader. 
+// vtkSlicerGPUVolumeMapper renders a volume using 3D texture mapping in fragment shader. 
 // This class is actually an abstract superclass - with all the actual
 // work done by vtkSlicerGPURayCastVolumeTextureMapper3D. 
 // 
@@ -49,8 +49,8 @@
 // .SECTION see also
 // vtkVolumeMapper
 
-#ifndef __vtkSlicerGPUVolumeTextureMapper3D_h
-#define __vtkSlicerGPUVolumeTextureMapper3D_h
+#ifndef __vtkSlicerGPUVolumeMapper_h
+#define __vtkSlicerGPUVolumeMapper_h
 
 #include "vtkVolumeMapper.h"
 #include "vtkVolumeRenderingReplacements.h"
@@ -61,25 +61,25 @@ class vtkColorTransferFunction;
 class vtkPiecewiseFunction;
 class vtkVolumeProperty;
 
-VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients(void *arg);
+VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients(void *arg);
 
-class vtkSlicerGPUVolumeTextureMapper3D;
+class vtkSlicerGPUVolumeMapper;
 struct GradientsArgsType
 {
   float *dataPtr;
-  vtkSlicerGPUVolumeTextureMapper3D *me;
+  vtkSlicerGPUVolumeMapper *me;
   double scalarRange[2];
   unsigned char *volume1;
   unsigned char *volume2;
 };
 
-class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPUVolumeTextureMapper3D : public vtkVolumeMapper
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPUVolumeMapper : public vtkVolumeMapper
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGPUVolumeTextureMapper3D,vtkVolumeMapper);
+  vtkTypeRevisionMacro(vtkSlicerGPUVolumeMapper,vtkVolumeMapper);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  static vtkSlicerGPUVolumeTextureMapper3D *New();
+  static vtkSlicerGPUVolumeMapper *New();
 
   // Description:
   // Desired frame rate
@@ -110,8 +110,8 @@ public:
   virtual void Render(vtkRenderer *, vtkVolume *) {};   
 
 protected:
-  vtkSlicerGPUVolumeTextureMapper3D();
-  ~vtkSlicerGPUVolumeTextureMapper3D();
+  vtkSlicerGPUVolumeMapper();
+  ~vtkSlicerGPUVolumeMapper();
 
   float                     ScalarOffset;
   float                     ScalarScale;
@@ -161,11 +161,11 @@ protected:
   virtual int IsTextureSizeSupported( int [3] ) {return 0;};
   //ETX
   
-  friend VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients( void *arg );
+  friend VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg );
   
 private:
-  vtkSlicerGPUVolumeTextureMapper3D(const vtkSlicerGPUVolumeTextureMapper3D&);  // Not implemented.
-  void operator=(const vtkSlicerGPUVolumeTextureMapper3D&);  // Not implemented.
+  vtkSlicerGPUVolumeMapper(const vtkSlicerGPUVolumeMapper&);  // Not implemented.
+  void operator=(const vtkSlicerGPUVolumeMapper&);  // Not implemented.
 };
 
 
