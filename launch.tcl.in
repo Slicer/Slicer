@@ -234,8 +234,8 @@ proc launch_SetEnvironment {} {
         set ::env(PYTHON_DIR)         $::env(Slicer3_HOME)/lib/Python
       }
     
-      set ::env(OpenIGTLink_DIR)      $::env(Slicer3_HOME)/lib/OpenIGTLink
-      set ::env(OpenIGTLink_LIB_DIR)  $::env(Slicer3_HOME)/lib/OpenIGTLink
+      set ::env(OpenIGTLink_DIR)      $::env(Slicer3_HOME)/lib/igtl
+      set ::env(OpenIGTLink_LIB_DIR)  $::env(Slicer3_HOME)/lib/igtl
       set ::env(OpenIGTLink_BIN_DIR)  $::env(Slicer3_HOME)/bin
     
       set ::env(BatchMake_DIR)      $::env(Slicer3_HOME)/lib/BatchMake
