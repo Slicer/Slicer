@@ -540,30 +540,30 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   factory->AddObserver(vtkCommand::UpdateEvent, renderRequestCallback);
 
   // Register Displayable Managers
-  vtkMRMLCameraDisplayableManager * cameraNodeDM = vtkMRMLCameraDisplayableManager::New();
-  factory->RegisterDisplayableManager(cameraNodeDM);
-  cameraNodeDM->Delete();
+  vtkMRMLCameraDisplayableManager * cameraDM = vtkMRMLCameraDisplayableManager::New();
+  factory->RegisterDisplayableManager(cameraDM);
+  cameraDM->Delete();
   //cameraNodeDM->DebugOn();
 
-  vtkMRMLViewDisplayableManager * viewNodeDM = vtkMRMLViewDisplayableManager::New();
-  factory->RegisterDisplayableManager(viewNodeDM);
-  viewNodeDM->Delete();
+  vtkMRMLViewDisplayableManager * viewDM = vtkMRMLViewDisplayableManager::New();
+  factory->RegisterDisplayableManager(viewDM);
+  viewDM->Delete();
 
   // Check if GetDisplayableManagerByClassName works as expected
-  vtkMRMLCameraDisplayableManager * cameraNodeDM2 =
+  vtkMRMLCameraDisplayableManager * cameraDM2 =
       vtkMRMLCameraDisplayableManager::SafeDownCast(
           factory->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
-  if (cameraNodeDM2 != cameraNodeDM)
+  if (cameraDM2 != cameraDM)
     {
     std::cerr << "Failed to retrieve vtkMRMLCameraDisplayableManager using "
         << "GetDisplayableManagerByClassName" << std::endl;
     return EXIT_FAILURE;
     }
 
-  vtkMRMLViewDisplayableManager * viewNodeDM2 =
+  vtkMRMLViewDisplayableManager * viewDM2 =
       vtkMRMLViewDisplayableManager::SafeDownCast(
           factory->GetDisplayableManagerByClassName("vtkMRMLViewDisplayableManager"));
-  if (viewNodeDM2 != viewNodeDM)
+  if (viewDM2 != viewDM)
     {
     std::cerr << "Failed to retrieve vtkMRMLViewDisplayableManager using "
         << "GetDisplayableManagerByClassName" << std::endl;
