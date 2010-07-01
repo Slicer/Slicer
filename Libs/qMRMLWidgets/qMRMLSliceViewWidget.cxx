@@ -34,8 +34,6 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceViewWidget");
 //---------------------------------------------------------------------------
 qMRMLSliceViewWidgetPrivate::qMRMLSliceViewWidgetPrivate()
 {
-  logger.setTrace();
-  
   this->SliceLogic = vtkSmartPointer<vtkMRMLSliceLogic>::New();
   
   this->qvtkConnect(this->SliceLogic,
