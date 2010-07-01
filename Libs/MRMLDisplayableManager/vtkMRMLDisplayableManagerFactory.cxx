@@ -185,11 +185,6 @@ vtkMRMLViewNode* vtkMRMLDisplayableManagerFactory::GetMRMLViewNode()
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableManagerFactory::SetMRMLViewNode(vtkMRMLViewNode* newMRMLViewNode)
 {
-  if (this->Internal->MRMLViewNode == newMRMLViewNode)
-    {
-    return;
-    }
-
   for(std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
     {
     vtkMRMLAbstractDisplayableManager * displayManager = this->Internal->DisplayableManagers[i];

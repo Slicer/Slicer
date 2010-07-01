@@ -10,6 +10,7 @@
 class qMRMLThreeDRenderViewPrivate;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
+class vtkMRMLDisplayableManagerFactory;
 
 class QMRML_WIDGETS_EXPORT qMRMLThreeDRenderView : public ctkVTKRenderView
 {
@@ -21,6 +22,9 @@ public:
   /// Constructors
   explicit qMRMLThreeDRenderView(QWidget* parent = 0);
   virtual ~qMRMLThreeDRenderView(){}
+
+  /// Return the associated DisplayableManager factory
+  vtkMRMLDisplayableManagerFactory * displayableManagerFactory()const;
 
 public slots:
 

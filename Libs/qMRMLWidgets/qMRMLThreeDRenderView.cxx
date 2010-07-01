@@ -208,6 +208,10 @@ qMRMLThreeDRenderView::qMRMLThreeDRenderView(QWidget* _parent) : Superclass(_par
   this->setRenderEnabled(true);
 }
 
+//---------------------------------------------------------------------------
+CTK_GET_CXX(qMRMLThreeDRenderView, vtkMRMLDisplayableManagerFactory*,
+            displayableManagerFactory, DisplayableManagerFactory);
+
 //------------------------------------------------------------------------------
 void qMRMLThreeDRenderView::setMRMLScene(vtkMRMLScene* newScene)
 {
