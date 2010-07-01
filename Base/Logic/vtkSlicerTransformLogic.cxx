@@ -27,6 +27,31 @@
 
 #include "vtkStringArray.h"
 
+#include "itkAffineTransform.h"
+#include "itkBSplineDeformableTransform.h"
+#include "itkCenteredAffineTransform.h"
+#include "itkCenteredEuler3DTransform.h"
+#include "itkCenteredRigid2DTransform.h"
+#include "itkCenteredSimilarity2DTransform.h"
+#include "itkEuler2DTransform.h"
+#include "itkEuler3DTransform.h"
+#include "itkFixedCenterOfRotationAffineTransform.h"
+#include "itkIdentityTransform.h"
+#include "itkQuaternionRigidTransform.h"
+#include "itkRigid2DTransform.h"
+#include "itkRigid3DPerspectiveTransform.h"
+#include "itkRigid3DTransform.h"
+#include "itkScalableAffineTransform.h"
+#include "itkScaleLogarithmicTransform.h"
+#include "itkScaleSkewVersor3DTransform.h"
+#include "itkScaleTransform.h"
+#include "itkScaleVersor3DTransform.h"
+#include "itkSimilarity2DTransform.h"
+#include "itkTranslationTransform.h"
+#include "itkVersorRigid3DTransform.h"
+#include "itkVersorTransform.h"
+#include "itkTransformFactory.h"
+
 vtkCxxRevisionMacro(vtkSlicerTransformLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerTransformLogic);
 
@@ -135,3 +160,73 @@ int vtkSlicerTransformLogic::SaveTransform (const char* vtkNotUsed(filename),
 {
   return 1;
 }
+
+  // Register transform types with ITK factory
+  // This code is from Applications/CLI/BRAINSTools/BRAINSCommonLib/GenericTransformImage.cxx
+  // We do this in order to register ScaleVersor3DTransform, which is not done
+  // in ITK 3.18. The rest of transforms need to be re-registered when a new
+  // transform is added. TODO: this must be revised in 3.20, hopefully
+  // ScaleVersor3DTransform will be out of Review by then
+  void vtkSlicerTransformLogic::RegisterITKTransforms(){
+    //This is needed in order to read and write ScaleVersor3D TransformTypes.
+    //Hopefully in ITK-3-19 this will become part of the non-review transform types.
+    itk::TransformFactory<itk::ScaleVersor3DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleVersor3DTransform<float> >::RegisterTransform ();
+
+    itk::TransformFactory<itk::AffineTransform<double,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::AffineTransform<double,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::BSplineDeformableTransform<double,2,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::BSplineDeformableTransform<double,3,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::CenteredAffineTransform<double,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::CenteredAffineTransform<double,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::CenteredEuler3DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::CenteredRigid2DTransform < double > >::RegisterTransform();
+    itk::TransformFactory<itk::CenteredSimilarity2DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::Similarity2DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::Euler2DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::Euler3DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::FixedCenterOfRotationAffineTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::IdentityTransform<double,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::IdentityTransform<double,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::QuaternionRigidTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::Rigid2DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::Rigid3DPerspectiveTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::Rigid3DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScalableAffineTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleLogarithmicTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleSkewVersor3DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleTransform<double,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleTransform<double,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleTransform<double,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::TranslationTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::VersorRigid3DTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::VersorTransform<double> >::RegisterTransform ();
+    itk::TransformFactory<itk::AffineTransform<float,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::AffineTransform<float,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::BSplineDeformableTransform<float,2,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::BSplineDeformableTransform<float,3,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::CenteredAffineTransform<float,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::CenteredAffineTransform<float,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::CenteredEuler3DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::CenteredRigid2DTransform < float > >::RegisterTransform();
+    itk::TransformFactory<itk::CenteredSimilarity2DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::Similarity2DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::Euler2DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::Euler3DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::FixedCenterOfRotationAffineTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::IdentityTransform<float,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::IdentityTransform<float,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::QuaternionRigidTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::Rigid2DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::Rigid3DPerspectiveTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::Rigid3DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScalableAffineTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleLogarithmicTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleSkewVersor3DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleTransform<float,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleTransform<float,2> >::RegisterTransform ();
+    itk::TransformFactory<itk::ScaleTransform<float,3> >::RegisterTransform ();
+    itk::TransformFactory<itk::TranslationTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::VersorRigid3DTransform<float> >::RegisterTransform ();
+    itk::TransformFactory<itk::VersorTransform<float> >::RegisterTransform ();
+  }

@@ -36,6 +36,15 @@ vtkSlicerTransformsGUI::vtkSlicerTransformsGUI ( )
     NCIGTLabel = NULL;
     BIRNLabel = NULL;
 
+    // Register transform types with ITK factory
+    // This code is from Applications/CLI/BRAINSTools/BRAINSCommonLib/GenericTransformImage.cxx
+    // We do this in order to register ScaleVersor3DTransform, which is not done
+    // in ITK 3.18. The rest of transforms need to be re-registered when a new
+    // transform is added. TODO: this must be revised in 3.20, hopefully
+    // ScaleVersor3DTransform will be out of Review by then      
+    vtkSlicerTransformLogic *logic = vtkSlicerTransformLogic::New();
+    logic->RegisterITKTransforms();
+
 }
 
 
