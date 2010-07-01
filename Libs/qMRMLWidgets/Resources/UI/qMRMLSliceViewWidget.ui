@@ -294,7 +294,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
-   <extends>QComboBox</extends>
+   <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
