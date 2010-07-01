@@ -17,7 +17,7 @@ class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayNode : 
 {
  public:
   static vtkMRMLAnnotationTextDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode );
+  vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode )
   void PrintSelf ( ostream& os, vtkIndent indent );
   
   //--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayNode : 
   
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  virtual const char* GetNodeTagName() {return "AnnotationTextDisplay";};
+  virtual const char* GetNodeTagName() {return "AnnotationTextDisplay";}
 
   // Description:
   // Finds the storage node and read the data
@@ -56,12 +56,12 @@ class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayNode : 
   // Description:
   // Get/Set for Text scale
   void SetTextScale(double scale);
-  vtkGetMacro(TextScale,double);
+  vtkGetMacro(TextScale,double)
 
 
  protected:
   vtkMRMLAnnotationTextDisplayNode();
-  ~vtkMRMLAnnotationTextDisplayNode() { };
+  ~vtkMRMLAnnotationTextDisplayNode() { }
   vtkMRMLAnnotationTextDisplayNode( const vtkMRMLAnnotationTextDisplayNode& );
   void operator= ( const vtkMRMLAnnotationTextDisplayNode& );
 

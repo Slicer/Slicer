@@ -386,13 +386,13 @@ int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
   vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(idAtt));
   if (!dataArray) 
     {
-      vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << idAtt << " does not exist");
+      vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << idAtt << " does not exist")
       return 0;
     } 
   int n = dataArray->GetSize();
   if (idEntry < 0 || idEntry >= n)
     {
-      vtkErrorMacro("Annotation " << this->GetName() << " Annotation out of range");
+      vtkErrorMacro("Annotation " << this->GetName() << " Annotation out of range")
       return 0;
     } 
 

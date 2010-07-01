@@ -21,6 +21,11 @@ public:
 
   typedef qSlicerAbstractLoadableModule Superclass;
   qSlicerAnnotationModule(QObject *parent=0);
+
+  // Description:
+  // Return the help text for the Annotation module.
+  QString helpText();
+
   virtual ~qSlicerAnnotationModule(){}
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);

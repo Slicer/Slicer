@@ -47,8 +47,8 @@ public:
   };
 
 protected:
-  vtkMRMLAnnotationTextNode() { }; 
-  ~vtkMRMLAnnotationTextNode() { };
+  vtkMRMLAnnotationTextNode() { }
+  ~vtkMRMLAnnotationTextNode() { }
   vtkMRMLAnnotationTextNode(const vtkMRMLAnnotationTextNode&);
   void operator=(const vtkMRMLAnnotationTextNode&);
 

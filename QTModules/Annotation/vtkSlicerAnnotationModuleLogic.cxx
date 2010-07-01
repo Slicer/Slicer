@@ -1806,6 +1806,9 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
     }
 
 
+    vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+    textNode->Initialize(this->GetMRMLScene());
+
   /*
   if (m_TextManager == NULL)
   {*/
