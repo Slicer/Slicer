@@ -192,14 +192,6 @@ int BRAINSFitPrimary( int argc, char *argv[] )
   PARSE_ARGS;
 
   itk::AddExtraTransformRegister();
-  // Apparently when you register one transform, you need to register all your
-  // transforms.
-  //
-  itk::TransformFactory<VersorRigid3DTransformType>::RegisterTransform();
-  itk::TransformFactory<ScaleVersor3DTransformType>::RegisterTransform();
-  itk::TransformFactory<ScaleSkewVersor3DTransformType>::RegisterTransform();
-  itk::TransformFactory<AffineTransformType>::RegisterTransform();
-  itk::TransformFactory<BSplineTransformType>::RegisterTransform();
 
   RegisterBrains2MaskFactory();
 
