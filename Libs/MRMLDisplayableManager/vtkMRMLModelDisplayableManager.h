@@ -24,21 +24,22 @@
 #ifndef __vtkMRMLModelDisplayableManager_h
 #define __vtkMRMLModelDisplayableManager_h
 
-#include "vtkMRMLDisplayableManagerWin32Header.h"
-
+// MRMLDisplayableManager includes
 #include "vtkMRMLAbstractDisplayableManager.h"
 
-#include "vtkRenderWindow.h"
-
+// MRMLLogic includes
 #include "vtkMRMLModelHierarchyLogic.h"
 
-
+// MRML includes
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
 
-//#include "vtkBoundingBox.h"
+// VTK includes
+#include "vtkRenderWindow.h"
+
+#include "vtkMRMLDisplayableManagerWin32Header.h"
 
 class vtkMRMLDisplayableNode;
 class vtkMRMLDisplayNode;
@@ -71,10 +72,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  
-  //virtual void Register(vtkObjectBase *o) { Superclass::Register(o); };
-  //virtual void UnRegister(vtkObjectBase *o) { Superclass::UnRegister(o); };
-
 
   /// 
   /// Get/Set the Clip Nodes
@@ -83,39 +80,14 @@ public:
     {
     vtkSetAndObserveMRMLNodeMacro( this->ClipModelsNode, snode );
     }
-
-  /// 
-  /// alternative method to propagate events generated in GUI to logic / mrml
-  /// Here, it calls RequestRender in response to Expose and Configure events
-  virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
   
   /// 
   /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-  
-  /// 
-  /// removes observers on widgets in the class
-  virtual void RemoveWidgetObservers ( );
 
   /// 
   /// removes observers on widgets in the class
   virtual void RemoveMRMLObservers ( );
-
-  /// 
-  /// Get/Set the CameraNode
-  vtkGetObjectMacro(CameraNode, vtkMRMLCameraNode);
-  void SetAndObserveCameraNode (vtkMRMLCameraNode *snode)
-    {
-    vtkSetAndObserveMRMLNodeMacro( this->CameraNode, snode );
-    };
-
-  /// Description:
-  /// Get/Set the ViewNode
-  vtkGetObjectMacro(ViewNode, vtkMRMLViewNode);
-  void SetAndObserveViewNode (vtkMRMLViewNode *snode)
-    {
-    vtkSetAndObserveMRMLNodeMacro( this->ViewNode, snode );
-    };
 
   /// 
   /// return the current model actor corresponding to a give MRML ID
@@ -135,11 +107,6 @@ public:
   //  Avoid using this method - use RequestRender to automatically compress
   //  multiple renders for better interactive performance
   void Render();
-
-  /// 
-  /// Show and hide widget
-
-  void ColorAxisLabelActors ( double r, double g, double b);
   
   /// 
   /// Updates Actors based on models in the scene
@@ -172,6 +139,7 @@ public:
   {    
     return this->PickedNodeName.c_str();
   }
+  
   /// 
   /// Get/Set the picked RAS point, returns 0,0,0 if no pick
   vtkGetVectorMacro( PickedRAS, double, 3);
@@ -200,27 +168,15 @@ public:
   vtkGetMacro( EnableRender, int);
   vtkSetMacro( EnableRender, int);
 
-  /// 
-  /// Events
-  //BTX
-  enum
-  {
-    ActiveCameraChangedEvent   = 30000
-  };
-  //ETX
-
   void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
                              int planeDirection,
                              vtkPlane *plane);
-  ///
-  /// get at the bounding box, to allow the default placement of widgets
-  vtkGetObjectMacro(BoxAxisBoundingBox, vtkBoundingBox);
 
   int IsCreated()
   {
     return this->Created;
   }
-
+  
   /// 
   /// Create the widget.
   virtual void Create();
@@ -231,10 +187,6 @@ protected:
 
 
   int Created;
-
-  
-  void UpdateCameraNode();
-  void UpdateViewNode();
 
   int RenderPending;
   int UpdateFromMRMLRequested;
@@ -250,10 +202,6 @@ protected:
   void UpdateModifiedModel(vtkMRMLDisplayableNode *model);
 
   void CreateClipSlices();
-
-  void CreateAxis();
-  void AddAxisActors();
-  void UpdateAxis();
 
   int UpdateClipSlicesFromMRML();
 
@@ -274,9 +222,6 @@ protected:
 
   void RemoveDisplayable(vtkMRMLDisplayableNode* model);
 
-  void AddCameraObservers();
-  void RemoveCameraObservers();
-
   vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
 
   vtkClipPolyData* CreateTransformedClipper(vtkMRMLDisplayableNode *model);
@@ -292,14 +237,9 @@ protected:
   std::map<std::string, int> DisplayedVisibility;
   std::map<std::string, vtkMRMLDisplayableNode *> DisplayableNodes;
 
-  std::vector<vtkFollower *> AxisLabelActors;
-
   std::map<std::string, int>  RegisteredModelHierarchies;
 
   //ETX
-
-  vtkActor       *BoxAxisActor;
-  vtkBoundingBox *BoxAxisBoundingBox;
 
   int ProcessingMRMLEvent;
 
@@ -324,11 +264,6 @@ protected:
   bool ModelHierarchiesPresent;
 
   vtkMRMLModelHierarchyLogic *ModelHierarchyLogic;
-
-  vtkMRMLCameraNode *CameraNode;
-  int CameraNodeWasCreated;
-
-  vtkMRMLViewNode *ViewNode;
 
   bool SceneClosing;
 

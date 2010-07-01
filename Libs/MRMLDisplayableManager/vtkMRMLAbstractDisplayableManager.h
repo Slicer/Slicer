@@ -22,17 +22,16 @@
 #ifndef __vtkMRMLAbstractDisplayableManager_h
 #define __vtkMRMLAbstractDisplayableManager_h
 
-// VTK includes
-#include "vtkRenderWindowInteractor.h"
-#include "vtkRenderer.h"
-
-// MRML includes
-#include "vtkMRMLScene.h"
-
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
 
 #include "vtkMRMLDisplayableManagerWin32Header.h"
+
+class vtkMRMLDisplayableManagerFactory;
+class vtkMRMLViewNode;
+class vtkMRMLScene;
+class vtkRenderer;
+class vtkRenderWindowInteractor;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager : public vtkMRMLAbstractLogic 
 {
@@ -42,26 +41,97 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
 
-  vtkGetObjectMacro(Renderer, vtkRenderer);
-  vtkSetObjectMacro(Renderer, vtkRenderer);
+  ///
+  /// Return True if the DisplayableManager has already been initialized
+  bool IsInitialized();
 
-  vtkGetObjectMacro(Interactor, vtkRenderWindowInteractor);
-  vtkSetObjectMacro(Interactor, vtkRenderWindowInteractor);
+  ///
+  /// Return True if Create() method has been invoked
+  /// \sa CreateIfPossible() Create()
+  bool IsCreated();
 
-  /// Method create should be re-implemented
-  virtual void Create(){};
+  ///
+  /// Get Renderer
+  vtkRenderer* GetRenderer();
 
+  ///
+  /// Convenient method to get the WindowInteractor associated with the Renderer
+  vtkRenderWindowInteractor* GetInteractor();
+
+  ///
+  /// Get MRML ViewNode
+  vtkMRMLViewNode * GetMRMLViewNode();
+
+  ///
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
 protected:
+
   vtkMRMLAbstractDisplayableManager();
   virtual ~vtkMRMLAbstractDisplayableManager();
-  
-  vtkRenderWindowInteractor * Interactor;
-  vtkRenderer               * Renderer;
+
+  //BTX
+  friend class vtkMRMLDisplayableManagerFactory;
+  //ETX
+
+  /// Set Renderer and Interactor
+  /// No-op if already initialized.
+  /// Called by vtkMRMLDisplayableManagerFactory
+  /// \sa IsInitialized
+  void Initialize(vtkMRMLDisplayableManagerFactory * factory, vtkRenderer* newRenderer);
+
+  /// Set MRML ViewNode
+  /// Called by vtkMRMLDisplayableManagerFactory
+  void SetAndObserveMRMLViewNode(vtkMRMLViewNode * newMRMLViewNode);
+
+  /// Get associated DisplayableManager factory
+  vtkMRMLDisplayableManagerFactory * GetDisplayableManagerFactory();
+
+  /// Invoke Create() and set Created flag to True
+  /// A no-op if IsCreated() return True
+  void CreateIfPossible();
+
+  /// Called after a valid MRML ViewNode is set
+  /// Note that GetRenderer() and GetMRMLViewNode() will return valid object
+  virtual void Create(){}
+
+  /// Return the event id currently processed or 0 if any.
+  int GetProcessingMRMLEvent();
+
+  /// Remove MRML observers
+  virtual void RemoveMRMLObservers();
+
+  ///
+  void SetUpdateFromMRMLRequested(bool requested);
+
+  ///
+  virtual void UpdateFromMRML(){}
+
+  /// Invoke vtkCommand::UpdateEvent and then call vtkMRMLDisplayableManagerFactory::RequestRender()
+  /// which will also invoke vtkCommand::UpdateEvent
+  /// An observer can then listen for that event and "compress" the different Render requests
+  /// to efficiently call RenderWindow->Render()
+  void RequestRender();
+
+  /// Called after the corresponding MRML event is triggered.
+  /// \sa ProcessMRMLEvents
+  virtual void OnMRMLSceneClosingEvent(vtkMRMLScene* /*scene*/){}
+  virtual void OnMRMLSceneCloseEvent(vtkMRMLScene* /*scene*/){}
+  virtual void OnMRMLSceneLoadStartEvent(vtkMRMLScene* /*scene*/){}
+  virtual void OnMRMLSceneLoadEndEvent(vtkMRMLScene* /*scene*/){}
+  virtual void OnMRMLSceneRestoredEvent(vtkMRMLScene* /*scene*/){}
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLScene* /*scene*/, vtkMRMLNode* /*node*/){}
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* /*scene*/, vtkMRMLNode* /*node*/){}
   
 private:
+
   vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&); // Not implemented
   void operator=(const vtkMRMLAbstractDisplayableManager&);                    // Not implemented
+
+  //BTX
+  class vtkInternal;
+  vtkInternal* Internal;
+  //ETX
 };
 
 #endif

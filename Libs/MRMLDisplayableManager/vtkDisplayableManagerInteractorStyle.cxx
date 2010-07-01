@@ -127,7 +127,9 @@ void vtkDisplayableManagerInteractorStyle::OnLeftButtonDown()
                           this->Interactor->GetEventPosition()[1]);
   if (this->CurrentRenderer == NULL)
     {
-    vtkDebugMacro("OnLeftButtonDown: couldn't find the poked renderer at event position " << this->Interactor->GetEventPosition()[0] << ", " << this->Interactor->GetEventPosition()[1]);
+    vtkDebugMacro("OnLeftButtonDown: couldn't find the poked renderer at event position "
+                  << this->Interactor->GetEventPosition()[0] << ", "
+                  << this->Interactor->GetEventPosition()[1]);
     return;
     }
   
@@ -139,7 +141,8 @@ void vtkDisplayableManagerInteractorStyle::OnLeftButtonDown()
     
   if ( this->GetCameraNode() != NULL )
     {
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast (this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+        this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
 
     if (interactionNode != NULL)
       {
@@ -232,7 +235,8 @@ void vtkDisplayableManagerInteractorStyle::OnLeftButtonUp()
     
   if ( this->GetCameraNode() != NULL )
     {
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast (this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+        this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
 
     if (interactionNode != NULL)
       {
@@ -393,7 +397,6 @@ void vtkDisplayableManagerInteractorStyle::OnExpose()
     {
     this->GetViewerWidget()->RequestRender();
     }
-
 }
 
 //----------------------------------------------------------------------------

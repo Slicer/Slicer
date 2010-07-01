@@ -21,15 +21,16 @@
 #ifndef __vtkMRMLModelHierarchyLogic_h
 #define __vtkMRMLModelHierarchyLogic_h
 
-#include <stdlib.h>
+// MRML includes
+#include <vtkMRMLAbstractLogic.h>
+#include <vtkMRML.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLModelHierarchyNode.h>
+
+// STD includes
+#include <cstdlib>
 
 #include "vtkMRMLLogicWin32Header.h"
-
-#include "vtkMRMLAbstractLogic.h"
-#include "vtkMRML.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLModelHierarchyNode.h"
-
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractLogic 
 {

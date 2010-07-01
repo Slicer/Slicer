@@ -21,51 +21,80 @@
 #ifndef __vtkMRMLDisplayableManagerFactory_h
 #define __vtkMRMLDisplayableManagerFactory_h
 
-// VTK includes
-#include "vtkObject.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindowInteractor.h"
-
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractDisplayableManager.h"
 
+// VTK includes
+#include <vtkObject.h>
+
 #include "vtkMRMLDisplayableManagerWin32Header.h"
+
+class vtkRenderWindowInteractor;
+class vtkRenderer;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactory : public vtkObject 
 {
 public:
-  /// The Usual vtk class functions
+
   static vtkMRMLDisplayableManagerFactory *New();
   vtkTypeRevisionMacro(vtkMRMLDisplayableManagerFactory,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Set Renderer and Interactor
+  /// No-op if already initialized. 
+  /// \sa IsInitialized
+  void Initialize(vtkRenderer* newRenderer);
+  
+  ///
+  /// Return True if Factory has already been initialized
+  bool IsInitialized();
+
+  ///
+  /// Convenient method to get the WindowInteractor associated with the Renderer
+  vtkRenderWindowInteractor* GetInteractor();
+  
+  /// Invoke vtkCommand::UpdateEvent
+  /// An observer can then listen for that event and "compress" the different Render requests
+  /// to efficiently call RenderWindow->Render()
+  /// \sa vtkMRMLAbstractDisplayableManager::RequestRender()
+  void RequestRender();
+
+  ///
+  /// Get Renderer
+  vtkRenderer* GetRenderer();
+  
   /// 
   /// Register Displayable Manager
-  void RegisterDisplayableManager ( vtkMRMLAbstractDisplayableManager *displayableManager );
+  void RegisterDisplayableManager(vtkMRMLAbstractDisplayableManager *displayableManager);
 
-  vtkGetObjectMacro(Renderer, vtkRenderer);
-  vtkSetObjectMacro(Renderer, vtkRenderer);
+  ///
+  /// UnRegister Displayable Manager
+  void UnRegisterDisplayableManager(vtkMRMLAbstractDisplayableManager *displayableManager);
 
-  vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
-  vtkSetObjectMacro(MRMLScene, vtkMRMLScene);
+  ///
+  /// Return a DisplayManager given its class name
+  vtkMRMLAbstractDisplayableManager* GetDisplayableManagerByClassName(const char* className);
 
-  vtkGetObjectMacro(Interactor, vtkRenderWindowInteractor);
-  vtkSetObjectMacro(Interactor, vtkRenderWindowInteractor);
-
+  ///
+  /// Set / Get MRML ViewNode
+  vtkMRMLViewNode* GetMRMLViewNode();
+  void SetMRMLViewNode(vtkMRMLViewNode* newMRMLViewNode);
 
 protected:
+
   vtkMRMLDisplayableManagerFactory();
   virtual ~vtkMRMLDisplayableManagerFactory();
+
+  //BTX
+  class vtkInternal;
+  vtkInternal* Internal;
+  //ETX
+
+private:
+
   vtkMRMLDisplayableManagerFactory(const vtkMRMLDisplayableManagerFactory&);
   void operator=(const vtkMRMLDisplayableManagerFactory&);
 
-  //BTX
-  std::vector<vtkMRMLAbstractDisplayableManager *> DisplayableManagers;
-  //ETX
-
-  vtkMRMLScene *               MRMLScene;
-  vtkRenderer *                Renderer;
-  vtkRenderWindowInteractor *  Interactor;
 };
 
 #endif

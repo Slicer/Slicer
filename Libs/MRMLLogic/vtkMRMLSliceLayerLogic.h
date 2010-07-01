@@ -32,6 +32,18 @@
 #ifndef __vtkMRMLSliceLayerLogic_h
 #define __vtkMRMLSliceLayerLogic_h
 
+// MRMLLogic includes
+#include "vtkMRMLAbstractLogic.h"
+
+// MRML includes
+#include "vtkMRML.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+
 // VTK includes
 #include "vtkImageMapToWindowLevelColors.h"
 #include "vtkImageThreshold.h"
@@ -47,20 +59,8 @@
 #include "vtkImageSlice.h"
 #include "vtkAssignAttribute.h"
 
-// MRML includes
-#include "vtkMRML.h"
-#include "vtkMRMLVolumeNode.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
-
-// MRMLLogic includes
-#include "vtkMRMLAbstractLogic.h"
-
 // STL includes
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "vtkMRMLLogicWin32Header.h"
 

@@ -11,15 +11,17 @@
   Version:   $Revision: 13859 $
 
 =========================================================================auto=*/
-///  vtkMRMLAbstractLogic - superclass for slicer logic classes
+///  vtkMRMLAbstractLogic - Superclass for MRML logic classes
 /// 
-/// Superclass for all slicer logic classes.
-/// There must be a corresponding vtkSlicerGUI subclass corresponding 
-/// to each logic class that handles all GUI interaction (no GUI code
-/// goes in the logic class).
+/// Superclass for all MRML logic classes.
+/// There must be a corresponding UI class that handles all UI interaction
 
 #ifndef __vtkMRMLAbstractLogic_h
 #define __vtkMRMLAbstractLogic_h
+
+// MRML includes
+#include <vtkMRMLScene.h>
+#include <vtkObserverManager.h>
 
 // VTK includes
 #include <vtkCommand.h>
@@ -27,10 +29,6 @@
 #include <vtkObjectFactory.h>
 #include <vtkIntArray.h>
 #include <vtkUnsignedLongArray.h>
-
-// MRML includes
-#include "vtkMRMLScene.h"
-#include "vtkObserverManager.h"
 
 #include "vtkMRMLLogicWin32Header.h"
 
@@ -41,45 +39,45 @@
 
 //----------------------------------------------------------------------------
 #ifndef vtkSetMRMLNodeMacro
-#define vtkSetMRMLNodeMacro(node,value)  {                                      \
-  vtkObject *oldNode = (node);                                                  \
-  this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) ); \
-  if ( oldNode != (node) )                                                      \
-    {                                                                           \
-    this->InvokeEvent (vtkCommand::ModifiedEvent);                              \
-    }                                                                           \
+#define vtkSetMRMLNodeMacro(node,value)  {                                         \
+  vtkObject *oldNode = (node);                                                     \
+  this->GetMRMLObserverManager()->SetObject(vtkObjectPointer(&(node)), (value));   \
+  if (oldNode != (node))                                                           \
+    {                                                                              \
+    this->InvokeEvent(vtkCommand::ModifiedEvent);                                  \
+    }                                                                              \
 };
 #endif
 
 //----------------------------------------------------------------------------
 #ifndef vtkSetAndObserveMRMLNodeMacro
-#define vtkSetAndObserveMRMLNodeMacro(node,value)  {                                       \
+#define vtkSetAndObserveMRMLNodeMacro(node,value) {                                        \
   vtkObject *oldNode = (node);                                                             \
-  this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node) ), (value) ); \
-  if ( oldNode != (node) )                                                                 \
+  this->GetMRMLObserverManager()->SetAndObserveObject(vtkObjectPointer(&(node)), (value)); \
+  if (oldNode != (node))                                                                   \
     {                                                                                      \
-    this->InvokeEvent (vtkCommand::ModifiedEvent);                                         \
+    this->InvokeEvent(vtkCommand::ModifiedEvent);                                          \
     }                                                                                      \
 };
 #endif
 
 //----------------------------------------------------------------------------
 #ifndef vtkSetAndObserveNoModifyMRMLNodeMacro
-#define vtkSetAndObserveNoModifyMRMLNodeMacro(node,value)  {                               \
-  this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node) ), (value) ); \
+#define vtkSetAndObserveNoModifyMRMLNodeMacro(node,value) {                                 \
+  this->GetMRMLObserverManager()->SetAndObserveObject(vtkObjectPointer(&(node)), (value));  \
 };
 #endif
 
 //----------------------------------------------------------------------------
 #ifndef vtkSetAndObserveMRMLNodeEventsMacro
-#define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events)  {                           \
-  vtkObject *oldNode = (node);                                                              \
-  this->MRMLObserverManager->SetAndObserveObjectEvents (                                    \
-     vtkObjectPointer( &(node)), (value), (events));                                        \
-  if ( oldNode != (node) )                                                                  \
-    {                                                                                       \
-    this->InvokeEvent (vtkCommand::ModifiedEvent);                                          \
-    }                                                                                       \
+#define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events) {                        \
+  vtkObject *oldNode = (node);                                                          \
+  this->GetMRMLObserverManager()->SetAndObserveObjectEvents(                            \
+     vtkObjectPointer(&(node)), (value), (events));                                     \
+  if (oldNode != (node))                                                                \
+    {                                                                                   \
+    this->InvokeEvent(vtkCommand::ModifiedEvent);                                       \
+    }                                                                                   \
 };
 #endif
 
@@ -89,87 +87,71 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject
 {
 public:
   
-  /// The Usual vtk class functions
   static vtkMRMLAbstractLogic *New();
   void PrintSelf(ostream& os, vtkIndent indent);
-  vtkTypeRevisionMacro(vtkMRMLAbstractLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkMRMLAbstractLogic, vtkObject);
 
-  /// Description
-  /// All logic classes need to know about the current mrml scene
-  vtkGetObjectMacro(MRMLScene, vtkMRMLScene);
+  ///
+  /// Return a reference to the current MRML scene
+  vtkMRMLScene * GetMRMLScene();
 
-  /// 
-  /// API for setting and observing MRMLScene
-  void SetMRMLScene(vtkMRMLScene *mrml);
-  void SetAndObserveMRMLScene(vtkMRMLScene *mrml);
-  void SetAndObserveMRMLSceneEvents(vtkMRMLScene *mrml, vtkIntArray *events);
+  ///
+  /// Set and/or observe the MRMLScene
+  void SetMRMLScene(vtkMRMLScene * newScene);
+  void SetAndObserveMRMLScene(vtkMRMLScene * newScene);
+  void SetAndObserveMRMLSceneEvents(vtkMRMLScene * newScene, vtkIntArray * events);
 
-  virtual void ProcessMRMLEvents(vtkObject * /*caller*/, 
-                                 unsigned long /*event*/, void * /*callData*/){ };
+  virtual void ProcessMRMLEvents(vtkObject * /*caller*/, unsigned long /*event*/,
+                                 void * /*callData*/){ };
 
-  virtual void ProcessLogicEvents(vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, void * /*callData*/){ };
+  virtual void ProcessLogicEvents(vtkObject * /*caller*/, unsigned long /*event*/,
+                                  void * /*callData*/){ };
 
-  virtual void ProcessLogicEvents(){ };
+  /// Get MRML CallbackCommand
+  vtkCallbackCommand * GetMRMLCallbackCommand();
 
-  /// 
-  /// Name of this node
-  vtkSetStringMacro(Name);
-  vtkGetStringMacro(Name);
-  
-  /// 
-  /// Flags to avoid event loops
-  /// NOTE: don't use the SetMacro or it call modified itself and generate even more events!
-  void SetInLogicCallbackFlag (int flag) {
-    this->InLogicCallbackFlag = flag;
-  }
-  vtkGetMacro(InLogicCallbackFlag, int);
-  void SetInMRMLCallbackFlag (int flag) {
-    this->InMRMLCallbackFlag = flag;
-  }
-  vtkGetMacro(InMRMLCallbackFlag, int);
+  /// Get MRML ObserverManager
+  vtkObserverManager * GetMRMLObserverManager();
 
-  /// Additional functionality:
+  /// Set / Get flags to avoid event loops
+  void SetInMRMLCallbackFlag(int flag);
+  int GetInMRMLCallbackFlag();
 
-  /// Overload in modules that observe events, used during Loadable Module
-  /// discovery. CLIENT MUST DELETE!
-  virtual vtkIntArray* NewObservableEvents() { return vtkIntArray::New(); };
+  /// Get Logic CallbackCommand
+  vtkCallbackCommand * GetLogicCallbackCommand();
+
+  /// Set / Get flags to avoid event loops
+  void SetInLogicCallbackFlag(int flag);
+  int GetInLogicCallbackFlag();
 
 protected:
+
   vtkMRMLAbstractLogic();
   virtual ~vtkMRMLAbstractLogic();
   
-  /// Register node classes into the mrml scene. Called each time a new scene
+  /// Register node classes into the MRML scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes(){}
 
   //BTX
-  /// a shared set of functions that call the 
-  /// virtual ProcessMRMLEvents and ProcessLogicEvents methods in the
-  /// subclasses (if they are defined)
-  static void MRMLCallback(vtkObject *caller, 
-                unsigned long eid, void *clientData, void *callData);
-  static void LogicCallback(vtkObject *caller, 
-                unsigned long eid, void *clientData, void *callData);
+  /// MRMLCallback is a static function to relay modified events from the MRML Scene
+  /// In subclass, MRMLCallback can also be used to relay event from observe MRML node(s)
+  static void MRMLCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
 
+  /// LogicCallback is a static function to relay modified events from the Logic
+  static void LogicCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
   //ETX
-
-  /// Holder for MRML and Logic callbacks
-  vtkCallbackCommand * LogicCallbackCommand;
-  vtkCallbackCommand * MRMLCallbackCommand;
-
-  /// Flag to avoid event loops
-  int InLogicCallbackFlag;
-  int InMRMLCallbackFlag;
-
-
-  vtkMRMLScene *       MRMLScene;
-  vtkObserverManager * MRMLObserverManager;
-  char *               Name;
   
 private:
+
   vtkMRMLAbstractLogic(const vtkMRMLAbstractLogic&); // Not implemented
   void operator=(const vtkMRMLAbstractLogic&);       // Not implemented
+
+  //BTX
+  class vtkInternal;
+  vtkInternal * Internal;
+  //ETX
+
 };
 
 #endif

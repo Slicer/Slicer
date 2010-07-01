@@ -30,23 +30,23 @@
 #define __vtkMRMLSliceLogic_h
 
 
-// MRML includes
-#include "vtkMRML.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLSliceCompositeNode.h"
-#include "vtkMRMLModelNode.h"
-
-// VTK includes
-#include "vtkImageBlend.h"
-#include "vtkCollection.h"
-#include "vtkPolyDataCollection.h"
-
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
 #include "vtkMRMLSliceLayerLogic.h"
 
+// MRML includes
+#include <vtkMRML.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLModelNode.h>
+
+// VTK includes
+#include <vtkImageBlend.h>
+#include <vtkCollection.h>
+#include <vtkPolyDataCollection.h>
+
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "vtkMRMLLogicWin32Header.h"
 
@@ -61,18 +61,23 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic
 {
 public:
   
-  /// The Usual vtk class functions
+  /// The Usual VTK class functions
   static vtkMRMLSliceLogic *New();
   vtkTypeRevisionMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  ///
+  /// Set / Get SliceLogic name
+  vtkSetStringMacro(Name);
+  vtkGetStringMacro(Name);
+
   /// 
-  /// The mrml slice node for this slice logic
+  /// The MRML slice node for this slice logic
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode *SliceNode);
 
   /// 
-  /// The mrml slice node for this slice logic
+  /// The MRML slice node for this slice logic
   vtkGetObjectMacro (SliceCompositeNode, vtkMRMLSliceCompositeNode);
   void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *SliceCompositeNode);
 
@@ -147,15 +152,11 @@ public:
   /// update the pipeline to reflect the current state of the nodes
   void UpdatePipeline ();
 
-
   ///
   /// Internally used by UpdatePipeline
   void UpdateImageData();
 
-  /// 
-  /// provide the virtual method that updates this Logic based
-  /// on mrml changes and one that updates based on changes in 
-  /// the input logic (the slice layers in this case)
+
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );
@@ -296,16 +297,16 @@ public:
 //ETX
 
 protected:
-  vtkMRMLSliceLogic();
-  ~vtkMRMLSliceLogic();
-  vtkMRMLSliceLogic(const vtkMRMLSliceLogic&);
-  void operator=(const vtkMRMLSliceLogic&);
 
+  vtkMRMLSliceLogic();
+  virtual ~vtkMRMLSliceLogic();
+
+  char *                      Name;
   vtkMRMLSliceNode *          SliceNode;
   vtkMRMLSliceCompositeNode * SliceCompositeNode;
-  vtkMRMLSliceLayerLogic *  BackgroundLayer;
-  vtkMRMLSliceLayerLogic *  ForegroundLayer;
-  vtkMRMLSliceLayerLogic *  LabelLayer;
+  vtkMRMLSliceLayerLogic *    BackgroundLayer;
+  vtkMRMLSliceLayerLogic *    ForegroundLayer;
+  vtkMRMLSliceLayerLogic *    LabelLayer;
 
   double ForegroundOpacity;
   double LabelOpacity;
@@ -323,6 +324,11 @@ protected:
   double                        SliceSpacing[3];
   
   void AddSliceGlyphs(vtkMRMLSliceLayerLogic *layerLogic);
+
+private:
+
+  vtkMRMLSliceLogic(const vtkMRMLSliceLogic&);
+  void operator=(const vtkMRMLSliceLogic&);
 
 };
 

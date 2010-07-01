@@ -12,10 +12,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
+// MRMLLogic includes
 #include "vtkMRMLModelHierarchyLogic.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
 
 vtkCxxRevisionMacro(vtkMRMLModelHierarchyLogic, "$Revision: 12142 $");
 vtkStandardNewMacro(vtkMRMLModelHierarchyLogic);
@@ -33,9 +35,8 @@ vtkMRMLModelHierarchyLogic::~vtkMRMLModelHierarchyLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelHierarchyLogic::ProcessMRMLEvents(vtkObject * /*caller*/, 
-                                            unsigned long /*event*/, 
-                                            void * /*callData*/)
+void vtkMRMLModelHierarchyLogic::ProcessMRMLEvents(vtkObject * /*caller*/, unsigned long /*event*/,
+                                                   void * /*callData*/)
 {
   // TODO: implement if needed
 }
@@ -43,16 +44,16 @@ void vtkMRMLModelHierarchyLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
 //----------------------------------------------------------------------------
 int vtkMRMLModelHierarchyLogic::UpdateModelToHierarchyMap()
 {
-  if (this->MRMLScene == NULL)
+  if (this->GetMRMLScene() == 0)
     {
     this->ModelHierarchyNodes.clear();
     }
-  else if (this->MRMLScene->GetSceneModifiedTime() > this->ModelHierarchyNodesMTime)
+  else if (this->GetMRMLScene()->GetSceneModifiedTime() > this->ModelHierarchyNodesMTime)
   {
     this->ModelHierarchyNodes.clear();
     
     std::vector<vtkMRMLNode *> nodes;
-    int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
+    int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
   
     for (int i=0; i<nnodes; i++)
       {
@@ -66,17 +67,17 @@ int vtkMRMLModelHierarchyLogic::UpdateModelToHierarchyMap()
           }
         }
       }
-    this->ModelHierarchyNodesMTime = this->MRMLScene->GetSceneModifiedTime();
+    this->ModelHierarchyNodesMTime = this->GetMRMLScene()->GetSceneModifiedTime();
   }
-  return (int)ModelHierarchyNodes.size();
+  return static_cast<int>(ModelHierarchyNodes.size());
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyLogic::GetModelHierarchyNode(const char *modelNodeID)
 {
-  if (modelNodeID == NULL)
+  if (modelNodeID == 0)
     {
-    return NULL;
+    return 0;
     }
   this->UpdateModelToHierarchyMap();
   
@@ -89,7 +90,7 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyLogic::GetModelHierarchyNode(con
     }
   else
     {
-    return NULL;
+    return 0;
     }
   
 }
@@ -117,7 +118,7 @@ void vtkMRMLModelHierarchyLogic::GetHierarchyChildrenNodes(vtkMRMLModelHierarchy
 void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
 {
   std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> >::iterator iter;
-  if (this->MRMLScene == NULL)
+  if (this->GetMRMLScene() == 0)
     {
     for (iter  = this->HierarchyChildrenNodes.begin();
          iter != this->HierarchyChildrenNodes.end();
@@ -128,7 +129,7 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
     this->HierarchyChildrenNodes.clear();
     }
     
-  if (this->MRMLScene->GetSceneModifiedTime() > this->HierarchyChildrenNodesMTime)
+  if (this->GetMRMLScene()->GetSceneModifiedTime() > this->HierarchyChildrenNodesMTime)
   {
     for (iter  = this->HierarchyChildrenNodes.begin();
          iter != this->HierarchyChildrenNodes.end();
@@ -139,7 +140,7 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
     this->HierarchyChildrenNodes.clear();
     
     std::vector<vtkMRMLNode *> nodes;
-    int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
+    int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
   
     for (int i=0; i<nnodes; i++)
       {
@@ -163,6 +164,6 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
           }
         }
       }
-    this->HierarchyChildrenNodesMTime = this->MRMLScene->GetSceneModifiedTime();
+    this->HierarchyChildrenNodesMTime = this->GetMRMLScene()->GetSceneModifiedTime();
   }
 }
