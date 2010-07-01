@@ -20,20 +20,17 @@ public:
   
   /// Constructors
   explicit qMRMLThreeDRenderView(QWidget* parent = 0);
-  virtual ~qMRMLThreeDRenderView(){}  
-  
-  /// Set axis label color
-  void setAxisLabelColor( double r, double g, double b);
+  virtual ~qMRMLThreeDRenderView(){}
 
 public slots:
 
   /// 
   /// Set the MRML \a scene that should be listened for events
-  void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene* newScene);
 
   ///
   /// Set/Get \a viewNode
-  void setMRMLViewNode(vtkMRMLViewNode* viewNode);
+  void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
   vtkMRMLViewNode* mrmlViewNode()const;
   
 private:

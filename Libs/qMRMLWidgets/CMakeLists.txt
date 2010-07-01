@@ -69,8 +69,6 @@ SET(qMRMLWidgets_SRCS
   qMRMLWidget.h
   qMRMLWindowLevelWidget.cxx
   qMRMLWindowLevelWidget.h
-  vtkMRMLThreeDRenderViewInteractorStyle.cxx
-  vtkMRMLThreeDRenderViewInteractorStyle.h
   )
 
 # Headers that should run through moc
@@ -122,6 +120,8 @@ SET(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${MRMLLogic_SOURCE_DIR}
   ${MRMLLogic_BINARY_DIR}
+  ${MRMLDisplayableManager_SOURCE_DIR}
+  ${MRMLDisplayableManager_BINARY_DIR}
   )
 
 SET(QT_INCLUDE_DIRS
@@ -177,6 +177,7 @@ SET(qMRMLWidgets_LIBRARIES
   ${CTK_EXTERNAL_LIBRARIES}
   MRML
   MRMLLogic
+  MRMLDisplayableManager
   )
 
 TARGET_LINK_LIBRARIES(${lib_name} ${qMRMLWidgets_LIBRARIES})
