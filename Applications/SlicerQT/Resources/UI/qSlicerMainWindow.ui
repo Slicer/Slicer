@@ -13,26 +13,14 @@
   <property name="windowTitle">
    <string>SlicerQT</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
-    <property name="spacing">
-     <number>0</number>
-    </property>
-    <property name="margin">
-     <number>0</number>
-    </property>
-    <item>
-     <widget class="ctkVTKRenderView" name="VTKRenderView"/>
-    </item>
-   </layout>
-  </widget>
+  <widget class="QWidget" name="CentralWidget"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>787</width>
-     <height>28</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -65,9 +53,31 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <widget class="QMenu" name="menuLayout">
+     <property name="title">
+      <string>Layout</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+       <normaloff>:/Icons/LayoutChooseView.png</normaloff>:/Icons/LayoutChooseView.png</iconset>
+     </property>
+     <addaction name="actionViewLayoutConventional"/>
+     <addaction name="actionViewLayoutFourUp"/>
+     <addaction name="actionViewLayoutDual3D"/>
+     <addaction name="actionViewLayoutOneUp3D"/>
+     <addaction name="actionViewLayoutOneUpRedSlice"/>
+     <addaction name="actionViewLayoutOneUpYellowSlice"/>
+     <addaction name="actionViewLayoutOneUpGreenSlice"/>
+     <addaction name="actionViewLayoutTabbed3D"/>
+     <addaction name="actionViewLayoutTabbedSlice"/>
+     <addaction name="actionViewLayoutCompare"/>
+     <addaction name="actionViewLayoutSideBySideCompare"/>
+    </widget>
     <addaction name="actionViewExtensionManager"/>
     <addaction name="actionViewCacheRemoteIOManager"/>
     <addaction name="actionViewApplicationSettings"/>
+    <addaction name="separator"/>
+    <addaction name="menuLayout"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -79,7 +89,7 @@
      </property>
      <addaction name="actionWindowToolbarsLoadSave"/>
      <addaction name="actionWindowToolbarsUndoRedo"/>
-     <addaction name="actionWindowToolbarsView"/>
+     <addaction name="actionWindowToolbarsLayout"/>
      <addaction name="actionWindowToolbarsMouseMode"/>
      <addaction name="actionWindowToolbarsModules"/>
     </widget>
@@ -200,6 +210,28 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+  </widget>
+  <widget class="QToolBar" name="ViewToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionViewLayoutConventional"/>
+   <addaction name="actionViewLayoutFourUp"/>
+   <addaction name="actionViewLayoutDual3D"/>
+   <addaction name="actionViewLayoutOneUp3D"/>
+   <addaction name="actionViewLayoutOneUpRedSlice"/>
+   <addaction name="actionViewLayoutOneUpYellowSlice"/>
+   <addaction name="actionViewLayoutOneUpGreenSlice"/>
+   <addaction name="actionViewLayoutTabbed3D"/>
+   <addaction name="actionViewLayoutTabbedSlice"/>
+   <addaction name="actionViewLayoutCompare"/>
+   <addaction name="actionViewLayoutSideBySideCompare"/>
   </widget>
   <action name="actionFileLoadScene">
    <property name="icon">
@@ -390,12 +422,15 @@
     <string>Undo/Redo</string>
    </property>
   </action>
-  <action name="actionWindowToolbarsView">
+  <action name="actionWindowToolbarsLayout">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>View</string>
+    <string>Layout</string>
    </property>
   </action>
   <action name="actionWindowToolbarsMouseMode">
@@ -467,6 +502,105 @@
     <string>Modules</string>
    </property>
   </action>
+  <action name="actionViewLayoutConventional">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Conventional</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutFourUp">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutFourUpView.png</normaloff>:/Icons/LayoutFourUpView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Four-Up</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutDual3D">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutDual3DView.png</normaloff>:/Icons/LayoutDual3DView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Dual 3D</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutOneUp3D">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutOneUp3DView.png</normaloff>:/Icons/LayoutOneUp3DView.png</iconset>
+   </property>
+   <property name="text">
+    <string>3D only</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutOneUpRedSlice">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutOneUpRedSliceView.png</normaloff>:/Icons/LayoutOneUpRedSliceView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Red slice only</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutOneUpYellowSlice">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutOneUpYellowSliceView.png</normaloff>:/Icons/LayoutOneUpYellowSliceView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Yellow slice only</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutOneUpGreenSlice">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutOneUpGreenSliceView.png</normaloff>:/Icons/LayoutOneUpGreenSliceView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Green slice only</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutTabbed3D">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutTabbed3DView.png</normaloff>:/Icons/LayoutTabbed3DView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Tabbed 3D</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutTabbedSlice">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutTabbedSliceView.png</normaloff>:/Icons/LayoutTabbedSliceView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Tabbed slice</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutCompare">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Compare</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutSideBySideCompare">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Side-by-side Compare</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -486,14 +620,10 @@
    <extends>qSlicerWidget</extends>
    <header>qSlicerModulePanel.h</header>
   </customwidget>
-  <customwidget>
-   <class>ctkVTKRenderView</class>
-   <extends>QWidget</extends>
-   <header>ctkVTKRenderView.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
+  <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
   <include location="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc"/>
  </resources>
@@ -543,6 +673,22 @@
     <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWindowToolbarsLayout</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>ViewToolBar</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>447</x>
+     <y>46</y>
     </hint>
    </hints>
   </connection>

@@ -27,9 +27,21 @@ public slots:
   void onFileImportSceneActionTriggered();
   void onFileLoadSceneActionTriggered();
   void onEditUndoActionTriggered();
-  void onEditRedoActionTriggered();
+  void onEditRedoActionTriggered();  
+  void onViewLayoutConventionalActionTriggered();
+  void onViewLayoutFourUpActionTriggered();
+  void onViewLayoutDual3DActionTriggered();
+  void onViewLayoutOneUp3DActionTriggered();
+  void onViewLayoutOneUpRedSliceActionTriggered();
+  void onViewLayoutOneUpYellowSliceActionTriggered();
+  void onViewLayoutOneUpGreenSliceActionTriggered();
+  void onViewLayoutTabbed3DActionTriggered();
+  void onViewLayoutTabbedSliceActionTriggered();
+  void onViewLayoutCompareActionTriggered();
+  void onViewLayoutSideBySideCompareActionTriggered();
   void onWindowPythonInteractorActionTriggered();
-  
+
+
 protected:
   qSlicerMainWindow* widget() const;
 

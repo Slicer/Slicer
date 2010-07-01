@@ -13,7 +13,6 @@ class qSlicerModulePanel;
 class qSlicerModuleSelectorWidget; 
 class qSlicerMainWindowCore;
 class qSlicerMainWindowPrivate;
-class ctkVTKRenderView;
 
 class Q_SLICERQT_EXPORT qSlicerMainWindow : public QMainWindow
 {
@@ -39,8 +38,6 @@ public:
   // Description:
   // Return the module selector
   qSlicerModuleSelectorWidget* moduleSelector()const; 
-
-  ctkVTKRenderView* renderView() const;
   
 protected:
 

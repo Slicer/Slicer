@@ -1,10 +1,15 @@
-#include "qSlicerApplication.h"
 
-// SlicerQT includes
+// Qt includes
+#include <QSplashScreen>
+#include <QDebug>
 
 // CTK includes
 #include <ctkLogger.h>
 
+// qMRML includes
+// #include <qMRMLEventLoggerWidget.h>
+
+// SlicerQt includes
 #include "qSlicerCommandOptions.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerMainWindow.h"
@@ -15,17 +20,7 @@
 #include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerCLILoadableModuleFactory.h"
 #include "qSlicerCLIExecutableModuleFactory.h"
-
-#include "vtkRendererCollection.h"
-
-// qMRML includes
-// #include <qMRMLEventLoggerWidget.h>
-
-#include "vtkRenderWindow.h"
-#include "ctkVTKRenderView.h"
-
-#include "vtkMRMLModelDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerFactory.h"
+#include "qSlicerApplication.h"
 
 // QT includes
 #include <QSplashScreen>
@@ -114,22 +109,6 @@ int main(int argc, char* argv[])
   
   // Add modules to the selector
   window.moduleSelector()->addModules(moduleNames);
-
-  // This needs to be moved to a different widjet by JC
-  ctkVTKRenderView* renderView = window.renderView();
-
-  vtkRenderWindow *renderWindow = renderView->renderWindow();
-
-  vtkMRMLDisplayableManagerFactory *displayableManagerFactory = vtkMRMLDisplayableManagerFactory::New();
-
-  displayableManagerFactory->SetMRMLScene(app.mrmlScene());
-  displayableManagerFactory->SetRenderer(renderWindow->GetRenderers()->GetFirstRenderer());
-  displayableManagerFactory->SetInteractor(renderWindow->GetInteractor() );
-
-  vtkMRMLModelDisplayableManager *modelManager = vtkMRMLModelDisplayableManager::New();
-  displayableManagerFactory->RegisterDisplayableManager(modelManager);
-  modelManager->Delete();
-
 
 //   qMRMLEventLoggerWidget logger;
 //   logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
