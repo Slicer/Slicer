@@ -59,6 +59,7 @@ INSTALL(FILES
 
 SET(MRMLDisplayableManager_SRCS
   vtkMRMLAbstractDisplayableManager.cxx
+  vtkMRMLCameraDisplayableManager.cxx
   vtkMRMLDisplayableManagerFactory.cxx
   vtkMRMLModelDisplayableManager.cxx
   
