@@ -191,7 +191,7 @@ void qSlicerLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* 
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   if (sliceNode)
     {
-    QString name = sliceNode->GetName();
+    QString name = sliceNode->GetLayoutName();
     logger.trace(QString("onSliceNodeAddedEvent - name: %1").arg(name));
     Q_ASSERT(name == "Red" || name == "Yellow" || name == "Green");
     this->createSliceView(name, sliceNode);
@@ -281,8 +281,8 @@ struct vtkMRMLSliceNodeInitializer : public vtkMRMLNodeInitializer
     vtkMRMLSliceNode * sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
     Q_ASSERT(sliceNode);
     sliceNode->SetName(this->SliceLogicName.toLatin1());
-    sliceNode->SetLayoutName(this->SliceLogicName.toLatin1());
-    sliceNode->SetSingletonTag(this->SliceLogicName.toLatin1());
+    // Note that SingletonTag and LayoutName are the same
+    sliceNode->SetLayoutName(this->SliceLogicName.toLatin1()); 
     if (this->SliceLogicName == "Red")
       {
       sliceNode->SetOrientationToAxial();
