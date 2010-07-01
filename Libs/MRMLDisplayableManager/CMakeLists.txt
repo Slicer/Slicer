@@ -60,14 +60,11 @@ INSTALL(FILES
 SET(MRMLDisplayableManager_SRCS
   vtkMRMLAbstractDisplayableManager.cxx
   vtkMRMLDisplayableManagerFactory.cxx
-  vtkMRMLModelDisplayableManager.h
   vtkMRMLModelDisplayableManager.cxx
-  vtkDisplayableManagerBoxRepresentation.cxx
-  vtkDisplayableManagerBoxRepresentation.h
-  vtkDisplayableManagerBoxWidget2.cxx
-  vtkDisplayableManagerBoxWidget2.h
-  vtkDisplayableManagerInteractorStyle.h
+  
   vtkDisplayableManagerInteractorStyle.cxx
+  vtkDisplayableManagerBoxWidget2.cxx
+  vtkDisplayableManagerBoxRepresentation.cxx
   )
 
 # TCL Wrapping
