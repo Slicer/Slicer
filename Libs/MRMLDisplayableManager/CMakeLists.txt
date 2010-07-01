@@ -161,3 +161,9 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
 ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
  
+# --------------------------------------------------------------------------
+# Testing
+
+IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
+ENDIF(BUILD_TESTING)
