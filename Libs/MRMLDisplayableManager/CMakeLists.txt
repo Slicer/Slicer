@@ -62,6 +62,7 @@ SET(MRMLDisplayableManager_SRCS
   vtkMRMLCameraDisplayableManager.cxx
   vtkMRMLDisplayableManagerFactory.cxx
   vtkMRMLModelDisplayableManager.cxx
+  vtkMRMLViewDisplayableManager.cxx
   
   vtkDisplayableManagerInteractorStyle.cxx
   vtkDisplayableManagerBoxWidget2.cxx
