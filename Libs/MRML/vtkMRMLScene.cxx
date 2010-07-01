@@ -1161,6 +1161,18 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     vtkErrorMacro("RemoveNode: unable to remove null node");
     return;
     }
+  
+  #ifndef NDEBUG
+  // Since calling IsNodePresent cost, let's display a "developper hint" only if build as Debug
+  // The caller should make sure the node isn't already removed
+  if (!this->IsNodePresent(n))
+    {
+    vtkErrorMacro("RemoveNode: Node " << n->GetClassName() << "[" 
+                                      << n << "]" << " already removed");
+    return;
+    }
+  #endif
+  
   n->Register(this);
   this->InvokeEvent(this->NodeAboutToBeRemovedEvent, n);
 
