@@ -1,0 +1,5 @@
+#Insight Transform File V1.0
+# Transform 0
+Transform: Rigid3DTransform_double_3_3
+Parameters: 1 -0 0 -0 0.8660254037844387 -0.5 -0 0.5 0.8660254037844387 0 0 0
+FixedParameters: 0 0 0
