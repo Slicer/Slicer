@@ -86,7 +86,7 @@ struct parameters
   double defaultPixelValue ;
   std::string imageCenter ;
   std::string transformsOrder ;
-  bool bulk ;
+  bool notbulk ;
 };
 
 
@@ -926,7 +926,7 @@ int Do( parameters list )
         typename itkTransformDeformationFieldFilterType::Pointer transformDeformationFieldFilter = itkTransformDeformationFieldFilterType::New() ;
         transform = SetTransform< PixelType > ( list , image , transformFile , outputImageCenter ) ;
         //check if there is a bspline transform and a bulk transform with it
-        if( list.bulk && transform->GetTransform()->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3"  && transformFile->GetTransformList()->size() )//Check if transform file contains a BSpline 
+        if( !list.notbulk && transform->GetTransform()->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3"  && transformFile->GetTransformList()->size() )//Check if transform file contains a BSpline 
         {
           //transform = SetTransform< PixelType > ( list , image , transformFile , outputImageCenter ) ;
           //order=3 for the BSpline seems to be standard among tools in Slicer3 and BRAINTools       
@@ -1125,13 +1125,7 @@ int main( int argc , char * argv[] )
   list.defaultPixelValue = defaultPixelValue ;
   list.imageCenter = imageCenter ;
   list.transformsOrder = transformsOrder ;
-  list.bulk = bulk ;
-  if( list.deffield.compare( "" ) && list.bulk )
-  {
-    std::cerr << "Cannot apply both a deformation field transform\
- and a BSpline transform with a bulk transform at the same time" << std::endl ;
-    return EXIT_FAILURE ;
-  }
+  list.notbulk = notbulk ;
   //verify if all the vector parameters have the good length
   if( list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3
       || ( list.outputImageOrigin.size() != 3 
