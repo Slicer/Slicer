@@ -1390,7 +1390,7 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
 
   //fps
   this->SC_ExpectedFPS->SetValue(vspNode->GetExpectedFPS());
-  
+
   //-------------------------techniques----------------------------
   this->CB_CPURayCastMIP->GetWidget()->SetSelectedState(vspNode->GetCPURaycastMode());
 
