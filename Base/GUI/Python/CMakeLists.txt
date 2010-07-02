@@ -87,6 +87,11 @@ else (WIN32 AND PYTHON_DEBUG_LIBRARIES)
   target_link_libraries( ${lib_name} ${PYTHON_LIBRARIES})
 endif (WIN32 AND PYTHON_DEBUG_LIBRARIES)
 
+# Apply user-defined properties to the library target.
+IF(Slicer3_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer3_LIBRARY_PROPERTIES})
+ENDIF(Slicer3_LIBRARY_PROPERTIES)
+
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
