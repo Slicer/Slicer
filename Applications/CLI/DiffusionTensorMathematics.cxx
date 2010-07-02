@@ -85,6 +85,58 @@ int main( int argc, char * argv[] )
     {
     math->SetOperationToMaxEigenvalue();
     }
+  else if (operation == std::string("ColorByOrientation"))
+    {
+    math->SetOperationToColorByOrientation();
+    }
+  else if (operation == std::string("ColorByMode"))
+    {
+    math->SetOperationToColorByMode();
+    }
+  else if (operation == std::string("MaxEigenvalueProjectionX"))
+    {
+    math->SetOperationToMaxEigenvalueProjectionX();
+    }
+  else if (operation == std::string("MaxEigenvalueProjectionY"))
+    {
+    math->SetOperationToMaxEigenvalueProjectionY();
+    }
+  else if (operation == std::string("MaxEigenvalueProjectioZ"))
+    {
+    math->SetOperationToMaxEigenvalueProjectionZ();
+    }
+  else if (operation == std::string("RAIMaxEigenvecX"))
+    {
+    math->SetOperationToRAIMaxEigenvecX();
+    }
+  else if (operation == std::string("RAIMaxEigenvecY"))
+    {
+    math->SetOperationToRAIMaxEigenvecY();
+    }
+  else if (operation == std::string("RAIMaxEigenvecZ"))
+    {
+    math->SetOperationToRAIMaxEigenvecZ();
+    }
+  else if (operation == std::string("D11"))
+    {
+    math->SetOperationToD11();
+    }
+  else if (operation == std::string("D22"))
+    {
+    math->SetOperationToD22();
+    }
+  else if (operation == std::string("D33"))
+    {
+    math->SetOperationToD33();
+    }
+  else if (operation == std::string("ParallelDiffusivity"))
+    {
+    math->SetOperationToParallelDiffusivity();
+    }
+  else if (operation == std::string("PerpendicularDffusivity"))
+    {
+    math->SetOperationToPerpendicularDiffusivity();
+    }
   else
     {
     std::cerr << argv[0] <<": Operation "<< operation<< "not supported"<< std::endl;

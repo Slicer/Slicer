@@ -45,23 +45,23 @@
     <label>ROI definition</label>
     <description>Selection of label/s for ROI definition</description>
     
-    <integer>
-      <name>PassLabel</name>
-      <label> ROI pass label</label>
+    <integer-vector>
+      <name>PassLabels</name>
+      <label> ROI pass labels</label>
       <flag>-p</flag>
       <longflag>--pass</longflag>
-      <description>ROI label value that defines pass region.</description>
+      <description>A comma separated list of label values of ROI labels that defines pass region. The fiber will pass through all labels</description>
       <default>1</default>
-    </integer>
+    </integer-vector>
 
-    <integer>
-      <name>NotPassLabel</name>
-      <label> ROI not pass label</label>
+    <integer-vector>
+      <name>NotPassLabels</name>
+      <label> ROI not pass labels</label>
       <flag>-n</flag>
       <longflag>--nopass</longflag>
-      <description>ROI label value that defines no pass region.</description>
+      <description>A comma separated list of label values of ROI labels that defines no pass region.</description>
       <default>9999</default>
-    </integer>
+    </integer-vector>
 
   </parameters>  
 </executable>

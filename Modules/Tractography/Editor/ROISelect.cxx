@@ -113,8 +113,14 @@ int main( int argc, const char * argv[] ){
     int pt[3];
     short *inPtr;
     bool addLine = false;
-    bool pass = false;
+
     bool nopass = false;
+    std::vector<bool> passes;
+    for (unsigned int ipl=0; ipl<PassLabels.size(); ipl++)
+      {
+      passes.push_back(false);
+      }
+
     for (j=0; j < npts; j++)
       {
       inPts->GetPoint(pts[j],p);
@@ -123,16 +129,42 @@ int main( int argc, const char * argv[] ){
       pt[1]= (int) floor(pIJK[1]);
       pt[2]= (int) floor(pIJK[2]);
       inPtr = (short *) readerROI_A->GetOutput()->GetScalarPointer(pt);
-      if (!inPtr || *inPtr == NotPassLabel)
+
+      for (unsigned int inpl=0; inpl< NotPassLabels.size(); inpl++)
         {
-        nopass = true;
+        if (!inPtr || *inPtr == NotPassLabels[inpl])
+          {
+          nopass = true;
+          break; //skip this polyline
+          }
+        }
+      if (nopass)
+        {
         break; //skip this polyline
         }
-      if( *inPtr == PassLabel)
+
+      for (unsigned int ipl=0; ipl<PassLabels.size(); ipl++)
         {
-        pass = true;
+        if( *inPtr == PassLabels[ipl])
+          {
+          passes[ipl] = true;
+          break;
+          }
+        }
+
+      } //for (j=0; j < npts; j++)
+
+    // check passes and no passes for a polyline
+    bool pass = true;
+    for (unsigned int ipl=0; ipl<PassLabels.size(); ipl++)
+      {
+      if (passes[ipl] == false)
+        {
+        pass = false;
+        break;
         }
       }
+
     if (pass && !nopass) 
       {
       addLine = true;
