@@ -218,6 +218,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetUseCompression(true);
     imageWriter->Update( );
     }
   else if ( pixelType == "uchar" )
@@ -233,6 +234,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetUseCompression(true);
     imageWriter->Update( );
     }
   else if ( pixelType == "short" )
@@ -248,6 +250,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetUseCompression(true);
     imageWriter->Update( );
     }
   else if ( pixelType == "ushort" )
@@ -263,6 +266,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetUseCompression(true);
     imageWriter->Update( );
     }
   else if ( pixelType == "int" )
@@ -278,6 +282,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetUseCompression(true);
     imageWriter->Update( );
     }
   else if ( pixelType == "uint" )
@@ -292,6 +297,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetUseCompression(true);
     imageWriter->Update( );
     }
   else if ( pixelType == "float" )
@@ -300,6 +306,7 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     WriterType::Pointer imageWriter = WriterType::New();
     imageWriter->SetFileName( outputVolume );
     imageWriter->SetInput( TransformedImage );
+    imageWriter->SetUseCompression(true);
     imageWriter->Update( );
     }
   else

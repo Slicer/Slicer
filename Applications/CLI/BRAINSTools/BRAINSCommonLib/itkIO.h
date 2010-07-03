@@ -212,7 +212,7 @@ WriteImage(typename ImageType::Pointer & image,
   typename  WriterType::Pointer writer = WriterType::New();
 
   writer->SetFileName( filename.c_str() );
-
+  writer->SetUseCompression(true);
   writer->SetInput(image);
 
   try
