@@ -803,7 +803,7 @@ void vtkSlicerSeedWidgetClass::SetNthSeedSelected(int n, int selectedFlag)
       }
     else
       {
-      vtkErrorMacro("Unable to get propery for handle representation on seed " << n);
+      vtkErrorMacro("Unable to get property for handle representation on seed " << n);
       }
     /*
     vtkPropCollection *pc = vtkPropCollection::New();

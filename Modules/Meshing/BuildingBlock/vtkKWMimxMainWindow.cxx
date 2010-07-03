@@ -428,7 +428,7 @@ void vtkKWMimxMainWindow::AddCustomApplicationSettingsPanel()
   }
   this->PropertyPrecisionScale->SetParent ( frame );
   this->PropertyPrecisionScale->Create();
-  this->PropertyPrecisionScale->SetLabelText("ABAQUS Material Propery Precision:");
+  this->PropertyPrecisionScale->SetLabelText("ABAQUS Material Property Precision:");
   this->PropertyPrecisionScale->GetWidget()->SetRange(0.0, 10.0);
   this->PropertyPrecisionScale->GetWidget()->SetResolution(1.0);
   this->PropertyPrecisionScale->GetWidget()->SetCommand( this, "ABAQUSPrecisionCallback");

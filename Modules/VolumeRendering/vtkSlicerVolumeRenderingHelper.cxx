@@ -816,7 +816,7 @@ void vtkSlicerVolumeRenderingHelper::CreatePropertyTab()
   this->CB_UseSingleVolumeProperty->SetParent(mainFrame->GetFrame());
   this->CB_UseSingleVolumeProperty->Create();
   this->CB_UseSingleVolumeProperty->SetLabelText("Apply To Fg Volume");
-  this->CB_UseSingleVolumeProperty->SetBalloonHelpString("When checked, fg volume will use bg volume property. Usefull in pre and post treatment image comparison.");
+  this->CB_UseSingleVolumeProperty->SetBalloonHelpString("When checked, fg volume will use bg volume property. Useful in pre and post treatment image comparison.");
   this->CB_UseSingleVolumeProperty->SetLabelWidth(20);
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->CB_UseSingleVolumeProperty->GetWidgetName() );
   this->CB_UseSingleVolumeProperty->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
