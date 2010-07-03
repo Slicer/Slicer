@@ -29,8 +29,8 @@ void qMRMLTreeWidgetPrivate::init()
   transformModel->setSourceModel(sceneModel);
   p->QTreeView::setModel(transformModel);
   
-  ctkModelTester * tester = new ctkModelTester(p);
-  tester->setModel(transformModel);
+  //ctkModelTester * tester = new ctkModelTester(p);
+  //tester->setModel(transformModel);
 }
 
 //------------------------------------------------------------------------------
