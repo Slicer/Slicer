@@ -40,6 +40,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
+  qMRMLROIWidget.cxx
+  qMRMLROIWidget.h
   qMRMLSceneFactoryWidget.cxx
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
@@ -80,6 +82,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLMatrixWidget.h
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.h
+  qMRMLROIWidget.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
   qMRMLSliceViewWidget.h
@@ -100,6 +103,7 @@ SET(qMRMLWidgets_MOC_SRCS
 # UI files
 SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLEventLoggerWidget.ui
+  Resources/UI/qMRMLROIWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLSliceViewWidget.ui
   Resources/UI/qMRMLTransformSliders.ui

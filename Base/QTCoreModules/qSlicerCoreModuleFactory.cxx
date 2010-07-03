@@ -14,6 +14,7 @@
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerCamerasModule.h"
 #include "qSlicerMRMLTreeModule.h"
+#include "qSlicerROIModule.h"
 #include "qSlicerTransformsModule.h"
 // FIXME:Move the following to the Models module (when it will be ready in Qt.)
 #include "qSlicerCoreApplication.h"
@@ -69,6 +70,7 @@ void qSlicerCoreModuleFactory::registerItems()
   CTK_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
   d->registerCoreModule<qSlicerMRMLTreeModule>();
+  d->registerCoreModule<qSlicerROIModule>();
   d->registerCoreModule<qSlicerTransformsModule>();
   
   // FIXME: Move the following to the Models module (when it will be ready in Qt.)

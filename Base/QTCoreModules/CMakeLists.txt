@@ -30,6 +30,11 @@ SET(KIT_SRCS
   qSlicerMRMLTreeModuleWidget.cxx
   qSlicerMRMLTreeModuleWidget.h
 
+  qSlicerROIModule.cxx
+  qSlicerROIModule.h
+  qSlicerROIModuleWidget.cxx
+  qSlicerROIModuleWidget.h
+
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.cxx
@@ -46,6 +51,9 @@ SET(KIT_MOC_SRCS
   qSlicerMRMLTreeModule.h
   qSlicerMRMLTreeModuleWidget.h
 
+  qSlicerROIModule.h
+  qSlicerROIModuleWidget.h
+
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.h
   )
@@ -54,6 +62,7 @@ SET(KIT_MOC_SRCS
 SET(KIT_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
   Resources/UI/qSlicerMRMLTreeModule.ui
+  Resources/UI/qSlicerROIModule.ui
   Resources/UI/qSlicerTransformsModule.ui
 )
 
