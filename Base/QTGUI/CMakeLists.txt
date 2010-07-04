@@ -37,6 +37,11 @@ SET(KIT_SRCS
   qSlicerLayoutManager.cxx
   qSlicerLayoutManager.h
   qSlicerLayoutManager_p.h
+
+  qSlicerModelsDialog.cxx
+  qSlicerModelsDialog.h
+  qSlicerModelsDialog_p.h
+
   qSlicerModulePanel.cxx
   qSlicerModulePanel.h
   qSlicerModuleSelectorWidget.cxx
@@ -59,6 +64,10 @@ SET(KIT_MOC_SRCS
   qSlicerIOOptionsWidget.h
   qSlicerLayoutManager.h
   qSlicerLayoutManager_p.h
+
+  qSlicerModelsDialog.h
+  qSlicerModelsDialog_p.h
+
   qSlicerModulePanel.h
   qSlicerModuleSelectorWidget.h
   qSlicerModuleSelectorWidget_p.h
@@ -75,6 +84,7 @@ ENDIF(Slicer3_USE_PYTHONQT)
 # UI files
 SET(KIT_UI_SRCS
   Resources/UI/qSlicerDataDialog.ui
+  Resources/UI/qSlicerModelsDialog.ui
   Resources/UI/qSlicerModulePanel.ui
   Resources/UI/qSlicerModuleSelectorWidget.ui
   Resources/UI/qSlicerSaveDataDialog.ui

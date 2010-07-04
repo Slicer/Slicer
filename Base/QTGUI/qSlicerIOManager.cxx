@@ -11,6 +11,7 @@
 #include "qSlicerIOManager.h"
 #include "qSlicerFileDialog.h"
 #include "qSlicerDataDialog.h"
+#include "qSlicerModelsDialog.h"
 #include "qSlicerSaveDataDialog.h"
 
 /// MRML includes
@@ -33,8 +34,9 @@ void qSlicerIOManagerPrivate::init()
 {
   CTK_P(qSlicerIOManager);
   this->Favorites << QUrl::fromLocalFile(QDir::homePath());
-  p->registerDialog(new qSlicerStandardFileDialog(p));
+  //p->registerDialog(new qSlicerStandardFileDialog(p));
   p->registerDialog(new qSlicerDataDialog(p));
+  p->registerDialog(new qSlicerModelsDialog(p));
   p->registerDialog(new qSlicerSaveDataDialog(p));
 }
 
