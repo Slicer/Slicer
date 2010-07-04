@@ -13,6 +13,7 @@
 // SlicerQt/CoreModules
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerCamerasModule.h"
+#include "qSlicerDataModule.h"
 #include "qSlicerMRMLTreeModule.h"
 #include "qSlicerROIModule.h"
 #include "qSlicerTransformsModule.h"
@@ -69,6 +70,7 @@ void qSlicerCoreModuleFactory::registerItems()
 {
   CTK_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
+  d->registerCoreModule<qSlicerDataModule>();
   d->registerCoreModule<qSlicerMRMLTreeModule>();
   d->registerCoreModule<qSlicerROIModule>();
   d->registerCoreModule<qSlicerTransformsModule>();
