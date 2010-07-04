@@ -37,7 +37,7 @@ public:
   virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
   virtual Qt::ItemFlags flags(const QModelIndex &index)const;
   virtual bool hasChildren(const QModelIndex &parent=QModelIndex())const;
-  //virtual QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole)const;
+  virtual QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole)const;
   virtual QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex())const;
   //virtual bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
   virtual QMap<int, QVariant> itemData(const QModelIndex &index)const;
@@ -53,6 +53,7 @@ public:
   virtual Qt::DropActions supportedDropActions()const;
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
+
 protected:
   friend class qMRMLSortFilterProxyModel;
   virtual qMRMLAbstractItemHelper* item(const QModelIndex& index)const;

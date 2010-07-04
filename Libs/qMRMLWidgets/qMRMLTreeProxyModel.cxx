@@ -781,6 +781,16 @@ bool qMRMLTreeProxyModel::hasChildren(const QModelIndex &vparent)const
 }
 
 //------------------------------------------------------------------------------
+QVariant qMRMLTreeProxyModel::headerData(int section, Qt::Orientation orientation, int role)const
+{
+  Q_ASSERT(this->sourceModel());
+  // QAbstractProxyModel doesn't work as it tries to map an index into the
+  // source model. It can fail because the model can be empty... Here we know
+  // that the section doesn't change, so let's use it directly.
+  return this->sourceModel()->headerData(section, orientation, role);
+}
+
+//------------------------------------------------------------------------------
 QModelIndex qMRMLTreeProxyModel::index(int row, int column, const QModelIndex &vparent)const
 {
   CTK_D(const qMRMLTreeProxyModel);
