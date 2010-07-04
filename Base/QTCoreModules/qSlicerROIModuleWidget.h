@@ -8,8 +8,6 @@
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerBaseQTCoreModulesExport.h"
 
-class vtkMRMLNode;
-class vtkMRMLViewNode;
 class qSlicerROIModuleWidgetPrivate;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerROIModuleWidget :

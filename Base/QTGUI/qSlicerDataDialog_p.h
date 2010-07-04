@@ -26,7 +26,7 @@ public:
   explicit qSlicerDataDialogPrivate(QWidget* _parent=0);
   virtual ~qSlicerDataDialogPrivate();
                                      
-  QList<qSlicerIO::IOProperties> selectedFiles();
+  QList<qSlicerIO::IOProperties> selectedFiles()const;
 public slots:
   void addDirectory();
   void addFiles();

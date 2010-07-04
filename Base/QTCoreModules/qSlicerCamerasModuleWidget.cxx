@@ -10,10 +10,6 @@
 
 =========================================================================auto=*/
 
-
-// Qt includes
-#include <vector>
-
 // SlicerQt includes
 #include "qSlicerCamerasModuleWidget.h"
 #include "ui_qSlicerCamerasModule.h"
@@ -21,6 +17,9 @@
 // MRML includes
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLCameraNode.h"
+
+// STD includes
+#include <vector>
 
 //-----------------------------------------------------------------------------
 class qSlicerCamerasModuleWidgetPrivate: public ctkPrivate<qSlicerCamerasModuleWidget>,

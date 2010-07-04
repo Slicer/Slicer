@@ -159,7 +159,7 @@ void qSlicerDataDialogPrivate::reset()
 }
 
 //-----------------------------------------------------------------------------
-QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()
+QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
 {
   QList<qSlicerIO::IOProperties> files;
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
