@@ -29,9 +29,10 @@ public:
   virtual ~qSlicerIOManager();
 
   bool openLoadSceneDialog();
-  bool openImportSceneDialog();
-  bool openLoadVolumeDialog();
-  inline bool openLoadDataDialog();
+  bool openAddSceneDialog();
+  inline bool openAddVolumesDialog();
+  inline bool openAddModelsDialog();
+  inline bool openAddDataDialog();
   inline bool openSaveDataDialog();
 
   bool openDialog(qSlicerIO::IOFileType fileType,
@@ -58,9 +59,21 @@ private:
 };
 
 //------------------------------------------------------------------------------
-bool qSlicerIOManager::openLoadDataDialog()
+bool qSlicerIOManager::openAddDataDialog()
 {
   return this->openDialog(qSlicerIO::NoFile, qSlicerFileDialog::Read);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::openAddVolumesDialog()
+{
+  return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::openAddModelsDialog()
+{
+  return this->openDialog(qSlicerIO::ModelFile, qSlicerFileDialog::Read);
 }
 
 //------------------------------------------------------------------------------

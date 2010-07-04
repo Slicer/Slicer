@@ -552,7 +552,7 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
     return;
     }
 #ifdef Slicer3_USE_QT
-  qSlicerApplication::application()->ioManager()->openImportSceneDialog();
+  qSlicerApplication::application()->ioManager()->openAddSceneDialog();
 #else
   if ( !this->LoadSceneDialog->IsCreated() )
     {
@@ -805,7 +805,7 @@ void vtkSlicerApplicationGUI::DownloadSampleVolume(const char *uri)
 void vtkSlicerApplicationGUI::ProcessAddDataCommand()
 {
 #ifdef Slicer3_USE_QT
-  qSlicerApplication::application()->ioManager()->openLoadDataDialog();
+  qSlicerApplication::application()->ioManager()->openAddDataDialog();
 #else
   this->GetApplication()->Script("::Loader::ShowDialog");
 #endif

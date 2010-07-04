@@ -61,17 +61,11 @@ bool qSlicerIOManager::openLoadSceneDialog()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerIOManager::openImportSceneDialog()
+bool qSlicerIOManager::openAddSceneDialog()
 {
   qSlicerIO::IOProperties properties;
   properties["clear"] = false;
   return this->openDialog(qSlicerIO::SceneFile, qSlicerFileDialog::Read, properties);
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerIOManager::openLoadVolumeDialog()
-{
-  return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read);
 }
 
 //-----------------------------------------------------------------------------

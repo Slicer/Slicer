@@ -120,13 +120,13 @@ CTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onFileAddDataActionTriggered()
 {
-  qSlicerApplication::application()->ioManager()->openLoadDataDialog();
+  qSlicerApplication::application()->ioManager()->openAddDataDialog();
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onFileImportSceneActionTriggered()
 {
-  qSlicerApplication::application()->ioManager()->openImportSceneDialog();
+  qSlicerApplication::application()->ioManager()->openAddSceneDialog();
 }
 
 //---------------------------------------------------------------------------
