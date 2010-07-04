@@ -273,11 +273,15 @@ public:
   void init();
   
   vtkObject* object(const QModelIndex &index)const;
+
   //qMRMLAbstractItemHelper* itemFromObject(vtkObject* object, int column)const;
   qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &index)const;
   QModelIndex indexFromItem(const qMRMLAbstractItemHelper* itemHelper)const;
 
+  void listenNodeModifiedEvent();
+
   vtkSmartPointer<vtkCallbackCommand> CallBack;
+  bool ListenNodeModifiedEvent;
   qMRMLSceneModelItemHelperFactory* ItemFactory;
   vtkMRMLScene* MRMLScene;
   vtkMRMLNode*  MRMLNodeToBe;
@@ -288,6 +292,7 @@ public:
 qMRMLSceneModelPrivate::qMRMLSceneModelPrivate()
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->ListenNodeModifiedEvent = false;
   this->ItemFactory = new qMRMLSceneModelItemHelperFactory();
   this->MRMLScene = 0;
   this->MRMLNodeToBe = 0;
@@ -344,6 +349,24 @@ QModelIndex qMRMLSceneModelPrivate::indexFromItem(const qMRMLAbstractItemHelper*
     }
   return p->createIndex(item->row(), item->column(), 
                         reinterpret_cast<void*>(item->object()));
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
+{
+  CTK_P(qMRMLSceneModel);
+  p->qvtkDisconnect(0, vtkCommand::ModifiedEvent, p, SLOT(onMRMLNodeModified(vtkObject*)));
+  if (!this->ListenNodeModifiedEvent)
+    {
+    return;
+    }
+  QModelIndex sceneIndex = p->mrmlSceneIndex();
+  const int count = p->rowCount(sceneIndex);
+  for (int i = 0; i < count; ++i)
+    {
+    p->qvtkConnect(p->mrmlNode(sceneIndex.child(i,0)),vtkCommand::ModifiedEvent,
+                   p, SLOT(onMRMLNodeModified(vtkObject*)));
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -479,6 +502,7 @@ void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
   d->MRMLScene = scene;
   this->endResetModel();
   //this->reset();
+  d->listenNodeModifiedEvent();
 }
 
 //------------------------------------------------------------------------------
@@ -530,6 +554,26 @@ QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node)const
   return nodeIndexList;
 }
 
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::setListenNodeModifiedEvent(bool listen)
+{
+  CTK_D(qMRMLSceneModel);
+  if (d->ListenNodeModifiedEvent == listen)
+    {
+    return;
+    }
+  d->ListenNodeModifiedEvent = listen;
+  d->listenNodeModifiedEvent();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSceneModel::listenNodeModifiedEvent()const
+{
+  CTK_D(const qMRMLSceneModel);
+  return d->ListenNodeModifiedEvent;
+}
+
+//------------------------------------------------------------------------------
 int qMRMLSceneModel::columnCount(const QModelIndex &_parent)const
 {
   Q_UNUSED(_parent);
@@ -737,8 +781,14 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
     }
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
   d->MRMLNodeToBe = 0;
+  // endInsertRows fires the Qt signals
   this->endInsertRows();
 
+  if (d->ListenNodeModifiedEvent)
+    {
+    qvtkConnect(node, vtkCommand::ModifiedEvent,
+                this, SLOT(onMRMLNodeModified(vtkObject*)));
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -779,6 +829,14 @@ void qMRMLSceneModel::onMRMLSceneDeleted(vtkObject* scene)
   Q_ASSERT(scene == ctk_d()->MRMLScene);
   qDebug() << "onMRMLSceneDeleted";
   this->setMRMLScene(0);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
+{
+  vtkMRMLNode* modifiedNode = vtkMRMLNode::SafeDownCast(node);
+  QModelIndexList nodeIndexes = this->indexes(modifiedNode);
+  emit dataChanged(nodeIndexes.first(), nodeIndexes.last());
 }
 
 //------------------------------------------------------------------------------

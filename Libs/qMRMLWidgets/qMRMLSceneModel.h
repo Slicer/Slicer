@@ -12,6 +12,7 @@
 #include "qMRMLWidgetsExport.h"
 #include "qMRMLItemHelper.h"
 
+class vtkMRMLNode;
 class vtkMRMLScene;
 class QAction;
 class qMRMLSceneModelPrivate;
@@ -28,6 +29,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QAbstractItemModel
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
 public:
   typedef QAbstractItemModel Superclass;
   qMRMLSceneModel(QObject *parent=0);
@@ -42,6 +44,11 @@ public:
   vtkMRMLNode* mrmlNode(const QModelIndex &nodeIndex)const;
   QModelIndexList indexes(vtkMRMLNode* node)const;
 
+  /// Option that activates the expensive listening of the vtkMRMLNode Modified
+  /// events. When listening, the signal itemDataChanged() is fired when a
+  /// vtkMRMLNode is modified.False by default.
+  void setListenNodeModifiedEvent(bool listen);
+  bool listenNodeModifiedEvent()const;
 
   ///
   /// Extra items that are prepended to the node list
@@ -80,6 +87,8 @@ protected slots:
   void onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node);
   void onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node);
   void onMRMLSceneDeleted(vtkObject* scene);
+
+  void onMRMLNodeModified(vtkObject* node);
 protected:
   friend class qMRMLSortFilterProxyModel;
   friend class qMRMLTreeProxyModel;
