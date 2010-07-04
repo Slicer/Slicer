@@ -35,6 +35,13 @@ public:
 
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
+  QModelIndex mrmlSceneIndex()const;
+
+  /// Return the vtkMRMLNode associated to the node index.
+  /// 0 if the node index is not a MRML node (i.e. vtkMRMLScene, extra item...)
+  vtkMRMLNode* mrmlNode(const QModelIndex &nodeIndex)const;
+  QModelIndexList indexes(vtkMRMLNode* node)const;
+
 
   ///
   /// Extra items that are prepended to the node list

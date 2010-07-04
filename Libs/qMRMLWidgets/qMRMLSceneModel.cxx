@@ -272,6 +272,7 @@ public:
   ~qMRMLSceneModelPrivate();
   void init();
   
+  vtkObject* object(const QModelIndex &index)const;
   //qMRMLAbstractItemHelper* itemFromObject(vtkObject* object, int column)const;
   qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &index)const;
   QModelIndex indexFromItem(const qMRMLAbstractItemHelper* itemHelper)const;
@@ -311,6 +312,12 @@ void qMRMLSceneModelPrivate::init()
 }
 
 //------------------------------------------------------------------------------
+vtkObject* qMRMLSceneModelPrivate::object(const QModelIndex &index)const
+{
+  return reinterpret_cast<vtkObject*>(index.internalPointer());
+}
+
+//------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLSceneModelPrivate::itemFromIndex(const QModelIndex &index)const
 {
   CTK_P(const qMRMLSceneModel);
@@ -320,7 +327,7 @@ qMRMLAbstractItemHelper* qMRMLSceneModelPrivate::itemFromIndex(const QModelIndex
     return this->ItemFactory->createRootItem(this->MRMLScene);
     }
   //return this->itemFromObject(reinterpret_cast<vtkObject*>(index.internalPointer()), index.column());
-  return this->ItemFactory->createItem(reinterpret_cast<vtkObject*>(index.internalPointer()), index.column());
+  return this->ItemFactory->createItem(this->object(index), index.column());
 }
 
 //------------------------------------------------------------------------------
@@ -481,6 +488,48 @@ vtkMRMLScene* qMRMLSceneModel::mrmlScene()const
 }
 
 //------------------------------------------------------------------------------
+QModelIndex qMRMLSceneModel::mrmlSceneIndex()const
+{
+  CTK_D(const qMRMLSceneModel);
+  if (d->MRMLScene == 0)
+    {
+    return QModelIndex();
+    }
+  QSharedPointer<qMRMLAbstractItemHelper> sceneItem =
+    QSharedPointer<qMRMLAbstractItemHelper>(d->ItemFactory->createItem(d->MRMLScene, 0));
+  return d->indexFromItem(sceneItem.data());
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLSceneModel::mrmlNode(const QModelIndex &nodeIndex)const
+{
+  CTK_D(const qMRMLSceneModel);
+  return vtkMRMLNode::SafeDownCast(d->object(nodeIndex));
+}
+
+//------------------------------------------------------------------------------
+QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node)const
+{
+  CTK_D(const qMRMLSceneModel);
+  QModelIndexList nodeIndexList;
+  if (node == 0)
+    {
+    return nodeIndexList;
+    }
+  QSharedPointer<qMRMLAbstractItemHelper> firstNodeItem =
+    QSharedPointer<qMRMLAbstractItemHelper>(d->ItemFactory->createItem(node, 0));
+  Q_ASSERT(!firstNodeItem.isNull());
+  QModelIndex firstNodeIndex = d->indexFromItem(firstNodeItem.data());
+  const int nodeRow = firstNodeIndex.row();
+  QModelIndex nodeParent = firstNodeIndex.parent();
+  const int columns = this->columnCount(nodeParent);
+  for (int i = 0; i < columns; ++i)
+    {
+    nodeIndexList.push_back(nodeParent.child(nodeRow, i));
+    }
+  return nodeIndexList;
+}
+
 int qMRMLSceneModel::columnCount(const QModelIndex &_parent)const
 {
   Q_UNUSED(_parent);
@@ -614,27 +663,6 @@ QMap<int, QVariant> qMRMLSceneModel::itemData(const QModelIndex &_index)const
   return roles;
 }
 
-//------------------------------------------------------------------------------
-void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node)
-{
-  Q_UNUSED(scene);
-  CTK_D(qMRMLSceneModel);
-  Q_ASSERT(scene != 0);
-  Q_ASSERT(scene == d->MRMLScene);
-  
-  Q_ASSERT(d->MRMLNodeToBe == 0);
-  d->MRMLNodeToBe = vtkMRMLNode::SafeDownCast(node);
-  Q_ASSERT(d->MRMLNodeToBe);
-  QSharedPointer<qMRMLAbstractItemHelper> sceneItem = 
-    QSharedPointer<qMRMLAbstractItemHelper>(d->ItemFactory->createItem(d->MRMLScene, 0));
-  // vtkMRMLScene adds nodes at the end of its collection (but before the extra Items
-  // FIXME: handle cases where extraItems are not set to the mrmlscene but to other items
-  // (root, mrmlnode?)
-  // Warning, if you change the next 2 lines, make sure you do it also in onMRMLSceneNodeAdded
-  int insertLocation = sceneItem->childCount() - (d->ItemFactory->postItems()?d->ItemFactory->postItems()->GetNumberOfItems():0);
-  this->beginInsertRows(d->indexFromItem(sceneItem.data()), insertLocation, insertLocation);
-}
-
 //-----------------------------------------------------------------------------
 void qMRMLSceneModel::DoCallback(vtkObject* vtk_obj, unsigned long event,
                                  void* client_data, void* call_data)
@@ -663,10 +691,32 @@ void qMRMLSceneModel::DoCallback(vtkObject* vtk_obj, unsigned long event,
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node)
+{
+  Q_UNUSED(scene);
+  CTK_D(qMRMLSceneModel);
+  Q_ASSERT(scene != 0);
+  Q_ASSERT(scene == d->MRMLScene);
+  
+  Q_ASSERT(d->MRMLNodeToBe == 0);
+  d->MRMLNodeToBe = vtkMRMLNode::SafeDownCast(node);
+  Q_ASSERT(d->MRMLNodeToBe);
+  QSharedPointer<qMRMLAbstractItemHelper> sceneItem = 
+    QSharedPointer<qMRMLAbstractItemHelper>(d->ItemFactory->createItem(d->MRMLScene, 0));
+  // vtkMRMLScene adds nodes at the end of its collection (but before the extra Items
+  // FIXME: handle cases where extraItems are not set to the mrmlscene but to other items
+  // (root, mrmlnode?)
+  // Warning, if you change the next 2 lines, make sure you do it also in onMRMLSceneNodeAdded
+  int insertLocation = sceneItem->childCount() - (d->ItemFactory->postItems()?d->ItemFactory->postItems()->GetNumberOfItems():0);
+  this->beginInsertRows(d->indexFromItem(sceneItem.data()), insertLocation, insertLocation);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
 {
   CTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
+  Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
   if (d->MRMLNodeToBe == 0)
     {
     // it's kind of ugly to call just NodeAddedEvent without NodeAboutToBeAddedEvent, 

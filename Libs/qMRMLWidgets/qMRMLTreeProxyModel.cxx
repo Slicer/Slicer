@@ -566,6 +566,22 @@ vtkMRMLScene* qMRMLTreeProxyModel::mrmlScene()const
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLTreeProxyModel::mrmlNode(const QModelIndex &nodeIndex)const
+{
+  CTK_D(const qMRMLTreeProxyModel);
+  if (!nodeIndex.isValid())
+    {
+    return 0;
+    }
+
+  QSharedPointer<qMRMLAbstractItemHelper> item =
+    QSharedPointer<qMRMLAbstractItemHelper>(d->itemFromIndex(nodeIndex));
+  Q_ASSERT(!item.isNull());
+
+  return vtkMRMLNode::SafeDownCast(item->object());
+}
+
+//------------------------------------------------------------------------------
 void qMRMLTreeProxyModel::setSourceModel(QAbstractItemModel * sourceModelItem)
 {
   CTK_D(qMRMLTreeProxyModel);

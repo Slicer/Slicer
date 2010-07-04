@@ -26,6 +26,7 @@ public:
   virtual ~qMRMLTreeProxyModel();
 
   vtkMRMLScene* mrmlScene()const;
+  vtkMRMLNode*  mrmlNode(const QModelIndex& index)const;
 
   virtual QModelIndex mapFromSource(const QModelIndex & sourceIndex)const;
   virtual QModelIndex mapToSource(const QModelIndex & proxyIndex)const;
