@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QFileInfo>
 
+// CTK includes
+#include "qCTKFlowLayout.h"
 
 /// Volumes includes
 #include "qSlicerVolumesIOOptionsWidget.h"
@@ -24,7 +26,24 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
   CTK_INIT_PRIVATE(qSlicerVolumesIOOptionsWidget);
   CTK_D(qSlicerVolumesIOOptionsWidget);
   ctk_d()->setupUi(this);
-  // FIXME Replace the horizontal layout with a flow layout
+
+  // Replace the horizontal layout with a flow layout
+  qCTKFlowLayout* flowLayout = new qCTKFlowLayout;
+  QLayout* oldLayout = this->layout();
+  int margins[4];
+  oldLayout->getContentsMargins(&margins[0],&margins[1],&margins[2],&margins[3]);
+  QLayoutItem* item = 0;
+  while((item = oldLayout->takeAt(0)))
+    {
+    if (item->widget())
+      {
+      flowLayout->addWidget(item->widget());
+      }
+    }
+  // setLayout() will take care or reparenting layouts and widgets
+  delete oldLayout;
+  flowLayout->setContentsMargins(0,0,0,0);
+  this->setLayout(flowLayout);
 
   connect(d->NameLineEdit, SIGNAL(editingFinished()),
           this, SLOT(updateProperties()));
