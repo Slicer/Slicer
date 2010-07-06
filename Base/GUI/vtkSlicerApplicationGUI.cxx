@@ -814,7 +814,11 @@ void vtkSlicerApplicationGUI::ProcessAddDataCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddVolumeCommand()
 {
+#ifdef Slicer3_USE_QT
+  qSlicerApplication::application()->ioManager()->openAddVolumeDialog();
+#else
   this->GetApplication()->Script("::LoadVolume::ShowDialog");
+#endif
 }
 
 //---------------------------------------------------------------------------
