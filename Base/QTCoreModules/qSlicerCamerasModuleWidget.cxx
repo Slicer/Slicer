@@ -116,8 +116,7 @@ void qSlicerCamerasModuleWidget::setCameraToCurrentView(vtkMRMLNode* mrmlNode)
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModuleWidget::onCameraNodeAdded(vtkMRMLNode* mrmlNode)
 {
-  vtkMRMLCameraNode *cameraNode =
-    vtkMRMLCameraNode::SafeDownCast(mrmlNode);
+  vtkMRMLCameraNode *cameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
     {
     //Q_ASSERT(cameraNode);
@@ -130,8 +129,7 @@ void qSlicerCamerasModuleWidget::onCameraNodeAdded(vtkMRMLNode* mrmlNode)
 //-----------------------------------------------------------------------------
 void qSlicerCamerasModuleWidget::onCameraNodeRemoved(vtkMRMLNode* mrmlNode)
 {
-  vtkMRMLCameraNode *cameraNode =
-    vtkMRMLCameraNode::SafeDownCast(mrmlNode);
+  vtkMRMLCameraNode *cameraNode = vtkMRMLCameraNode::SafeDownCast(mrmlNode);
   if (!cameraNode)
     {
     //Q_ASSERT(cameraNode);
