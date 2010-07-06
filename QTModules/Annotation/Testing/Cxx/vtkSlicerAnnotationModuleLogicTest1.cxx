@@ -50,7 +50,7 @@ int colorTest(double *incolor, double *outcolor)
 
 } 
 
-int vtkSlicermiAnnotationModuleLogicTest1(int , char * [] )
+int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
 {
 
   // ======================

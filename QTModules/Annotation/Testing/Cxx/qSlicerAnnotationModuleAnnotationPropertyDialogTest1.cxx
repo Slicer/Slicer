@@ -159,7 +159,7 @@ void Undo(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-int qSlicermiAnnotationModuleAnnotationPropertyDialogTest1( int, char * [] )
+int qSlicerAnnotationModuleAnnotationPropertyDialogTest1( int, char * [] )
 {
     // Basic Setup 
     vtkSmartPointer<vtkSlicerAnnotationModuleLogic > pLogic = vtkSmartPointer< vtkSlicerAnnotationModuleLogic >::New();
