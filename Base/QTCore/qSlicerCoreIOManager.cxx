@@ -137,15 +137,16 @@ QString qSlicerCoreIOManager::fileDescription(const QString& fileName)const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& fileName)const
+qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const qSlicerIO::IOFileType& fileType)const
 {
   CTK_D(const qSlicerCoreIOManager);
-  qSlicerIO* reader = d->reader(fileName);
-  if (!reader)
+  QList<qSlicerIO*> readers = this->ios(fileType);
+  if (readers.isEmpty())
     {
     return 0;
     }
-  return reader->options();
+  readers[0]->setMRMLScene(d->currentScene());
+  return readers[0]->options();
 }
 
 //-----------------------------------------------------------------------------
@@ -158,7 +159,7 @@ bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::loadNodes(qSlicerIO::IOFileType fileType,
+bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const qSlicerIO::IOProperties& parameters,
                                      vtkCollection* loadedNodes)
 { 
@@ -260,7 +261,7 @@ const QList<qSlicerIO*>& qSlicerCoreIOManager::ios()const
 }
 
 //-----------------------------------------------------------------------------
-QList<qSlicerIO*> qSlicerCoreIOManager::ios(qSlicerIO::IOFileType fileType)const
+QList<qSlicerIO*> qSlicerCoreIOManager::ios(const qSlicerIO::IOFileType& fileType)const
 {
   CTK_D(const qSlicerCoreIOManager);
   QList<qSlicerIO*> res;

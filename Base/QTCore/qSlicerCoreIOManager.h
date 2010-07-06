@@ -47,8 +47,12 @@ public:
 
   ///
   /// Return the file option associated with a \a file
-  qSlicerIOOptions* fileOptions(const QString& file)const;
+  inline qSlicerIOOptions* fileOptions(const QString& file)const;
   
+  ///
+  /// Return the file option associated with a \a file type
+  qSlicerIOOptions* fileOptions(const qSlicerIO::IOFileType& fileType)const;
+
   ///
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.
@@ -63,7 +67,7 @@ public:
   /// Note: Make also sure the case of parameter name is respected
   ///
   /// \sa qSlicerIO::IOProperties, qSlicerIO::IOFileType
-  bool loadNodes(qSlicerIO::IOFileType fileType,
+  bool loadNodes(const qSlicerIO::IOFileType& fileType,
                  const qSlicerIO::IOProperties& parameters,
                  vtkCollection* loadedNodes = 0);
 
@@ -101,11 +105,16 @@ protected:
 
   ///
   /// Returns the list of registered readers or writers associated with \a fileType
-  QList<qSlicerIO*> ios(qSlicerIO::IOFileType fileType)const;
+  QList<qSlicerIO*> ios(const qSlicerIO::IOFileType& fileType)const;
   
 private:
   CTK_DECLARE_PRIVATE(qSlicerCoreIOManager);
 };
+
+qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& file)const
+{
+  return this->fileOptions(this->fileType(file));
+}
 
 #endif
 
