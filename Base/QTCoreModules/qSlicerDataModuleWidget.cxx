@@ -184,7 +184,7 @@ void qSlicerDataModuleWidget::addTransformation()
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::addFiducialList()
 {
-
+  qSlicerApplication::application()->ioManager()->openAddFiducialDialog();
 }
 
 //-----------------------------------------------------------------------------

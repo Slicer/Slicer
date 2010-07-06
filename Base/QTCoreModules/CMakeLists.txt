@@ -30,6 +30,9 @@ SET(KIT_SRCS
   qSlicerDataModuleWidget.cxx
   qSlicerDataModuleWidget.h
 
+  qSlicerFiducialsIO.cxx
+  qSlicerFiducialsIO.h
+
   qSlicerModelsIO.cxx
   qSlicerModelsIO.h
 
@@ -65,6 +68,8 @@ SET(KIT_MOC_SRCS
 
   qSlicerDataModule.h
   qSlicerDataModuleWidget.h
+
+  qSlicerFiducialsIO.h
 
   qSlicerModelsIO.h
 

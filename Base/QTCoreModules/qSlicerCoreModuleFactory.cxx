@@ -15,6 +15,7 @@
 #include "qSlicerCamerasModule.h"
 #include "qSlicerColorIO.h"
 #include "qSlicerDataModule.h"
+#include "qSlicerFiducialsIO.h"
 #include "qSlicerMRMLTreeModule.h"
 #include "qSlicerROIModule.h"
 #include "qSlicerTransformsIO.h"
@@ -80,6 +81,8 @@ void qSlicerCoreModuleFactory::registerItems()
   
   qSlicerCoreApplication::application()->coreIOManager()
     ->registerIO(new qSlicerColorIO());
+  qSlicerCoreApplication::application()->coreIOManager()
+    ->registerIO(new qSlicerFiducialsIO());
   qSlicerCoreApplication::application()->coreIOManager()
     ->registerIO(new qSlicerTransformsIO());
   // FIXME: Move the following to the Models module (when it will be ready in Qt.)

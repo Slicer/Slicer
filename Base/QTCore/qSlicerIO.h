@@ -35,6 +35,7 @@ public:
     ModelFile = 4,
     ScalarOverlayFile = 5,
     ColorTableFile = 7,
+    FiducialListFile = 8,
     UserFile = 32,
   };
 
