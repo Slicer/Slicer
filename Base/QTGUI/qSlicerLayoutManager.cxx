@@ -41,6 +41,7 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerLayoutManager");
 //------------------------------------------------------------------------------
 qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate()
 {
+  logger.setTrace();
   this->MRMLScene = 0;
   this->MRMLLayoutNode = 0;
   this->GridLayout = 0;
@@ -452,7 +453,8 @@ void qSlicerLayoutManager::setMRMLScene(vtkMRMLScene* scene)
   if (ctk_d()->MRMLLayoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayout##_NAME)  \
     {                                                                                           \
     return;                                                                                     \
-    }
+    }                                                                                           \
+    logger.trace(QString("switch to %1").arg(#_NAME));
 
 //------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToConventionalView()
@@ -471,17 +473,17 @@ void qSlicerLayoutManager::switchToConventionalView()
   // Red Slice Viewer
   qMRMLSliceViewWidget* redSliceView = d->sliceView("Red");
   d->GridLayout->addWidget(redSliceView, 1, 0);
-  //redSliceView->setVisible(true);
+  redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
   qMRMLSliceViewWidget* yellowSliceView = d->sliceView("Yellow");
   d->GridLayout->addWidget(yellowSliceView, 1, 1);
-  //yellowSliceView->setVisible(true);
+  yellowSliceView->setVisible(true);
 
   // Green Slice Viewer
   qMRMLSliceViewWidget* greenSliceView = d->sliceView("Green");
   d->GridLayout->addWidget(greenSliceView, 1, 2);
-  //greenSliceView->setVisible(true);
+  greenSliceView->setVisible(true);
 
   // Update LayoutNode
   qSlicerLayoutManager_updateLayoutNode(ConventionalView);
