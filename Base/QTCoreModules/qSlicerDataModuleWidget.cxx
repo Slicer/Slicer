@@ -190,7 +190,7 @@ void qSlicerDataModuleWidget::addFiducialList()
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::addColorTable()
 {
-
+  qSlicerApplication::application()->ioManager()->openAddColorTableDialog();
 }
 
 //-----------------------------------------------------------------------------

@@ -35,6 +35,7 @@ public:
   inline bool openAddModelDialog();
   inline bool openAddScalarOverlayDialog();
   inline bool openAddTransformDialog();
+  inline bool openAddColorTableDialog();
   inline bool openSaveDataDialog();
 
   bool openDialog(qSlicerIO::IOFileType fileType,
@@ -88,6 +89,12 @@ bool qSlicerIOManager::openAddScalarOverlayDialog()
 bool qSlicerIOManager::openAddTransformDialog()
 {
   return this->openDialog(qSlicerIO::TransformFile, qSlicerFileDialog::Read);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::openAddColorTableDialog()
+{
+  return this->openDialog(qSlicerIO::ColorTableFile, qSlicerFileDialog::Read);
 }
 
 //------------------------------------------------------------------------------

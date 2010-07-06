@@ -22,6 +22,9 @@ SET(KIT_SRCS
   qSlicerCamerasModuleWidget.cxx
   qSlicerCamerasModuleWidget.h
 
+  qSlicerColorIO.cxx
+  qSlicerColorIO.h
+
   qSlicerDataModule.cxx
   qSlicerDataModule.h
   qSlicerDataModuleWidget.cxx
@@ -44,6 +47,7 @@ SET(KIT_SRCS
   qSlicerScalarOverlayIO.h
   qSlicerScalarOverlayIOOptionsWidget.cxx
   qSlicerScalarOverlayIOOptionsWidget.h
+
   qSlicerTransformsIO.cxx
   qSlicerTransformsIO.h
   qSlicerTransformsModule.cxx
@@ -56,6 +60,8 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   qSlicerCamerasModule.h
   qSlicerCamerasModuleWidget.h
+
+  qSlicerColorIO.h
 
   qSlicerDataModule.h
   qSlicerDataModuleWidget.h
@@ -70,6 +76,7 @@ SET(KIT_MOC_SRCS
 
   qSlicerScalarOverlayIO.h
   qSlicerScalarOverlayIOOptionsWidget.h
+
   qSlicerTransformsIO.h
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.h

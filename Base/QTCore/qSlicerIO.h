@@ -34,6 +34,7 @@ public:
     TransformFile = 3,
     ModelFile = 4,
     ScalarOverlayFile = 5,
+    ColorTableFile = 7,
     UserFile = 32,
   };
 
