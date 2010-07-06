@@ -137,12 +137,24 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
   descriptionItem->setData(Qt::AccessibleDescriptionRole, fileType);
   this->FileWidget->setItem(row, TypeColumn, descriptionItem);
   // Options
-  qSlicerIOOptionsWidget* optionsWidget = dynamic_cast<qSlicerIOOptionsWidget*>(
+  qSlicerIOOptions* options =
     qSlicerCoreApplication::application()->coreIOManager()->fileOptions(
-      file.absoluteFilePath()));
+      file.absoluteFilePath());
+  qSlicerIOOptionsWidget* optionsWidget =
+    dynamic_cast<qSlicerIOOptionsWidget*>(options);
   if (optionsWidget)
     {
+    // TODO: support uneven rows. Until that day, we want to make sure the whole
+    // widget is visible
+    optionsWidget->setMinimumWidth(optionsWidget->sizeHint().width());
+    // The optionsWidget can use the filename to initialize some options.
+    optionsWidget->setFileName(file.absolutePath());
     this->FileWidget->setCellWidget(row, OptionsColumn, optionsWidget);
+    // TODO: connect signal validChanged(bool) with the accept button
+    }
+  else
+    {
+    delete options;
     }
   this->FileWidget->setSortingEnabled(sortingEnabled);
   // update columns the first time
@@ -177,11 +189,14 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
       logger.trace(QString("selectedFiles - row: %1 - UnChecked").arg(row));
       continue;
       }
-    properties["fileName"] = fileItem->text();
     properties["fileType"] = descriptionItem->data(Qt::AccessibleDescriptionRole).toInt();
     if (optionsItem)
       {
-      properties.unite(optionsItem->options());
+      properties.unite(optionsItem->properties());
+      }
+    else
+      {
+      properties["fileName"] = fileItem->text();
       }
     files << properties;
     }
