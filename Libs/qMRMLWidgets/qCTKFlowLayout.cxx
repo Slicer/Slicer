@@ -204,7 +204,7 @@ int qCTKFlowLayout::doLayout(const QRect &rect, bool testOnly) const
         spaceY = wid->style()->layoutSpacing(
             QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical);
     int nextX = x + item->sizeHint().width() + spaceX;
-    if (nextX - spaceX > effectiveRect.right() && lineHeight > 0)
+    if (nextX - spaceX > (effectiveRect.right() + 1) && lineHeight > 0)
       {
       x = effectiveRect.x();
       y = y + lineHeight + spaceY;
