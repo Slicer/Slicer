@@ -16,8 +16,8 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLAnnotationRulerStorageNodeTest1.cxx
   vtkMRMLAnnotationFiducialNodeTest1.cxx
   vtkMRMLAnnotationFiducialsStorageNodeTest1.cxx
-  vtkSlicerAnnotationModuleLogicTest1.cxx
-  qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
+  #vtkSlicerAnnotationModuleLogicTest1.cxx
+  #qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
   TestAnnAngleWidget3D.cxx
   EXTRA_INCLUDE TestingMacros.h
   )

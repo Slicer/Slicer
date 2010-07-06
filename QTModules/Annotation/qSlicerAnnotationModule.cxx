@@ -3,6 +3,12 @@
 // SlicerQT includes
 #include "qSlicerAnnotationModuleWidget.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
+#include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h"
+#include "qMRMLThreeDRenderView.h"
+#include "vtkMRMLDisplayableManagerFactory.h"
+
+#include "vtkMRMLAbstractDisplayableManager.h"
 
 // QT includes
 #include <QtPlugin>
@@ -28,8 +34,11 @@ qSlicerAbstractModuleRepresentation* qSlicerAnnotationModule::createWidgetRepres
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerAnnotationModule::createLogic()
 {
+
   return vtkSlicerAnnotationModuleLogic::New();
 }
+
+
 
 /**
   * Return the help text.

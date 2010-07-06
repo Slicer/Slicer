@@ -77,6 +77,10 @@ SET(qt_module_SRCS
   qSlicerAnnotationModuleScreenShotDialog.h
   qSlicerAnnotationModuleImageUtil.cxx
   qSlicerAnnotationModuleImageUtil.h
+  vtkMRMLAnnotationDisplayableManager.cxx
+  vtkMRMLAnnotationDisplayableManager.h
+  vtkMRMLAnnotationTextDisplayableManager.cxx
+  vtkMRMLAnnotationTextDisplayableManager.h
   vtkSlicerAnnotationRulerManager.cxx
   vtkSlicerAnnotationRulerManager.h
   vtkSlicerAnnotationAngleManager.cxx
@@ -89,8 +93,6 @@ SET(qt_module_SRCS
   vtkSlicerAnnotationSplineManager.h
   vtkSlicerAnnotationBidimensionalManager.cxx
   vtkSlicerAnnotationBidimensionalManager.h
-  qSlicerAnnotationTextManager.cxx
-  qSlicerAnnotationTextManager.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidget.cxx
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidget.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/Widgets/vtkAnnotationAngleWidgetClass.cxx

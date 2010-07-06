@@ -42,7 +42,7 @@
 #include "vtkMRMLAnnotationStickyNode.h"
 
 #include "vtkMRMLAnnotationTextNode.h"
-#include "qSlicerAnnotationTextManager.h"
+#include "vtkMRMLAnnotationTextDisplayableManager.h"
 
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkSlicerAnnotationROIManager.h"
@@ -65,12 +65,25 @@
 //#include "vtkSlicerSeedWidgetClass.h"
 #include "vtkSeedWidget.h"
 
+#include "qSlicerLayoutManager.h"
+#include "qMRMLThreeDRenderView.h"
+#include "vtkMRMLDisplayableManagerFactory.h"
+
+#include "vtkMRMLAbstractDisplayableManager.h"
+#include "qSlicerApplication.h"
+
 #include <string>
 #include <iostream>
 #include <sstream>
 
+#include <vtkSmartPointer.h>
+
 vtkCxxRevisionMacro(vtkSlicerAnnotationModuleLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerAnnotationModuleLogic);
+
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //-----------------------------------------------------------------------------
 // General Functions 
@@ -137,7 +150,13 @@ vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
   this->m_ROIManager = NULL;
   this->m_SplineManager = NULL;
   this->m_BidimensionalManager = NULL;
-  this->m_TextManager = NULL;
+
+
+
+
+
+
+
 }
 
 //-----------------------------------------------------------------------------
@@ -179,13 +198,13 @@ vtkSlicerAnnotationModuleLogic::~vtkSlicerAnnotationModuleLogic()
     //this->m_BidimensionalManager->Delete();
     this->m_BidimensionalManager = NULL;
   }
-  if (this->m_TextManager)
+  /*if (this->m_TextManager)
   {
     //this->m_TextManager->SetParent(NULL);
     //this->m_TextManager->Delete();
-    delete this->m_TextManager;
+
     this->m_TextManager = NULL;
-  }
+}*/
 
 }
 
@@ -1790,29 +1809,67 @@ public:
 const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 {   
 
-    // WORK IN PROGRESS!
+  // get an instance of the manager
+  vtkMRMLAnnotationDisplayableManager* m;
+  m = vtkMRMLAnnotationTextDisplayableManager::GetInstance();
 
-    if (this->m_TextManager == NULL) {
-        qSlicerAnnotationTextManager * textManager(0);
-        textManager->setMRMLScene(this->GetMRMLScene());
-        //applicationGUI=this->GetApplicationGUI();
-        /*if (applicationGUI) {
+  if (m==NULL) {
 
-        }*/
-        textManager->AddMRMLObservers();
-        //textManager.setParent(applicationGUI);
-        //textManager.create();
-        this->m_TextManager = textManager;
+      fprintf(stderr, "Could not get the Annotation Text Displayable Manager!\r\n");
+      return NULL;
+  }
+
+  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+    textNode->Initialize(m->GetMRMLScene());
+
+    // need a unique name since the storage node will be named from it
+    if (textNode->GetScene())
+    {
+      textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
     }
+    else
+    {
+      textNode->SetName("AnnotationText");
+    }
+    //textNode->Delete();
+/*
+    vtkTextWidget* textWidget = this->GetTextWidget(node->GetID());
+    vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation())->SetText((char*)data);
 
+    vtkMRMLAnnotationTextDisplayableManager::GetInstance()->RequestRender();
 
-    vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-    textNode->Initialize(this->GetMRMLScene());
+    vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
+    myCallback->textNode = textNode;
+    myCallback->textWidget = textWidget;
+    myCallback->LogicPointer = this;
+    textWidget->AddObserver(vtkCommand::PlacePointEvent, myCallback);
+    myCallback->Delete();
+*/
+    return textNode->GetID();
+
+    // WORK IN PROGRESS!
+//
+//    if (this->m_TextManager == NULL) {
+//        vtkMRMLAnnotationTextDisplayableManager * textManager(0);
+//        textManager->setMRMLScene(this->GetMRMLScene());
+//        //applicationGUI=this->GetApplicationGUI();
+//        /*if (applicationGUI) {
+//
+//        }*/
+//        textManager->AddMRMLObservers();
+//        //textManager.setParent(applicationGUI);
+//        //textManager.create();
+//        this->m_TextManager = textManager;
+//    }
+//
+//
+//    vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+//    textNode->Initialize(this->GetMRMLScene());
 
   /*
   if (m_TextManager == NULL)
   {*/
-    //this->m_TextManager = qSlicerAnnotationTextManager::New();
+    //this->m_TextManager = vtkMRMLAnnotationTextDisplayableManager::New();
     /*this->m_TextManager->SetMRMLScene( this->GetMRMLScene() );
     if (this->GetApplicationGUI()->GetActiveViewerWidget())
     {

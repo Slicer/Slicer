@@ -40,7 +40,7 @@ class vtkSlicerROIDisplayWidget;
 class vtkSlicerAnnotationROIManager;
 class vtkSlicerAnnotationSplineManager;
 class vtkSlicerAnnotationBidimensionalManager;
-class qSlicerAnnotationTextManager;
+class vtkMRMLAnnotationTextDisplayableManager;
 
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicerAnnotationModuleLogic :
@@ -194,7 +194,7 @@ private:
   vtkSlicerAnnotationROIManager *m_ROIManager;
   vtkSlicerAnnotationSplineManager *m_SplineManager;
   vtkSlicerAnnotationBidimensionalManager *m_BidimensionalManager;
-  qSlicerAnnotationTextManager *m_TextManager;
+  //vtkMRMLAnnotationTextDisplayableManager *m_TextManager;
 
 };
 

@@ -26,6 +26,7 @@ public:
   // Return the help text for the Annotation module.
   QString helpText();
 
+
   virtual ~qSlicerAnnotationModule(){}
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
