@@ -196,5 +196,5 @@ void qSlicerDataModuleWidget::addColorTable()
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::addDTI()
 {
-
+  qSlicerApplication::application()->ioManager()->openAddDTIDialog();
 }

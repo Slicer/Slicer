@@ -36,6 +36,7 @@ public:
     ScalarOverlayFile = 5,
     ColorTableFile = 7,
     FiducialListFile = 8,
+    DTIFile = 9,
     UserFile = 32,
   };
 
@@ -43,10 +44,20 @@ public:
 
   virtual QString description()const = 0;
   virtual IOFileType fileType()const = 0;
+  /// Return  a list (separated by " " ) of the supported extensions
+  /// Example: "*.jpg *.png *.tiff"
   virtual QString extensions()const;
+  /// Based on the file extensions, returns true if the file can be read,
+  /// false otherwise.
+  /// This function is relatively fast as it doesn't try to access the file.
   bool canLoadFile(const QString& file)const;
+  /// Returns a list of options for the reader. qSlicerIOOptions can be
+  /// derived and have a UI associated to it (i.e. qSlicerIOOptionsWidget).
+  /// Warning: you are responsible for freeing the memory of the returned
+  /// options
   virtual qSlicerIOOptions* options()const;
 
+  // TBD: Derive from qSlicerObject instead of reimplementing setMRMLScene ?
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
   

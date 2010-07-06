@@ -37,6 +37,7 @@ public:
   inline bool openAddTransformDialog();
   inline bool openAddColorTableDialog();
   inline bool openAddFiducialDialog();
+  inline bool openAddDTIDialog();
   inline bool openSaveDataDialog();
 
   bool openDialog(qSlicerIO::IOFileType fileType,
@@ -104,6 +105,12 @@ bool qSlicerIOManager::openAddFiducialDialog()
   return this->openDialog(qSlicerIO::FiducialListFile, qSlicerFileDialog::Read);
 }
 
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::openAddDTIDialog()
+{
+  //return this->openDialog(qSlicerIO::DTIFile, qSlicerFileDialog::Read);
+  return false;
+}
 
 //------------------------------------------------------------------------------
 bool qSlicerIOManager::openSaveDataDialog()
