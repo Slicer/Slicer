@@ -19,8 +19,12 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesIOOptionsWidget :
 public:
   qSlicerVolumesIOOptionsWidget(QWidget *parent=0);
 
-  virtual qSlicerIO::IOProperties options()const;
-  
+public slots:
+  virtual void setFileName(const QString& fileName);
+  virtual void setFileNames(const QStringList& fileNames);
+
+protected slots:
+  void updateProperties();
 private:
   CTK_DECLARE_PRIVATE(qSlicerVolumesIOOptionsWidget);
 };
