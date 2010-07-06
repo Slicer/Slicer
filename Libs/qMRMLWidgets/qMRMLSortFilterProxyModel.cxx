@@ -120,7 +120,10 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     {
     return false;
     }
-
+  if (d->NodeTypes.isEmpty())
+    {
+    return true;
+    }
   foreach(const QString& nodeType, d->NodeTypes)
     {
     // filter by node type
