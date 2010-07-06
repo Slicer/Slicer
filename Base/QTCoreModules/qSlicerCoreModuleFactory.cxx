@@ -16,6 +16,7 @@
 #include "qSlicerDataModule.h"
 #include "qSlicerMRMLTreeModule.h"
 #include "qSlicerROIModule.h"
+#include "qSlicerTransformsIO.h"
 #include "qSlicerTransformsModule.h"
 // FIXME:Move the following to the Models module (when it will be ready in Qt.)
 #include "qSlicerCoreApplication.h"
@@ -76,6 +77,8 @@ void qSlicerCoreModuleFactory::registerItems()
   d->registerCoreModule<qSlicerROIModule>();
   d->registerCoreModule<qSlicerTransformsModule>();
   
+  qSlicerCoreApplication::application()->coreIOManager()
+    ->registerIO(new qSlicerTransformsIO());
   // FIXME: Move the following to the Models module (when it will be ready in Qt.)
   Q_ASSERT(qSlicerCoreApplication::application());
   if(!qSlicerCoreApplication::application())

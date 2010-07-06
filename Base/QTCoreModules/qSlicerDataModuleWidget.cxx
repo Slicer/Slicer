@@ -178,7 +178,7 @@ void qSlicerDataModuleWidget::addScalarOverlay()
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::addTransformation()
 {
-
+  qSlicerApplication::application()->ioManager()->openAddTransformDialog();
 }
 
 //-----------------------------------------------------------------------------

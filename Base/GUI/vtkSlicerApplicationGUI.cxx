@@ -820,7 +820,11 @@ void vtkSlicerApplicationGUI::ProcessAddVolumeCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddTransformCommand()
 {
+#ifdef Slicer3_USE_QT
+  qSlicerApplication::application()->ioManager()->openAddTransformDialog();
+#else
   this->GetApplication()->Script("::LoadTransform::ShowDialog");
+#endif
 }
 
 //---------------------------------------------------------------------------

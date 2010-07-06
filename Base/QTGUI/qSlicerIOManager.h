@@ -34,6 +34,7 @@ public:
   inline bool openAddVolumeDialog();
   inline bool openAddModelDialog();
   inline bool openAddScalarOverlayDialog();
+  inline bool openAddTransformDialog();
   inline bool openSaveDataDialog();
 
   bool openDialog(qSlicerIO::IOFileType fileType,
@@ -81,6 +82,12 @@ bool qSlicerIOManager::openAddModelDialog()
 bool qSlicerIOManager::openAddScalarOverlayDialog()
 {
   return this->openDialog(qSlicerIO::ScalarOverlayFile, qSlicerFileDialog::Read);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerIOManager::openAddTransformDialog()
+{
+  return this->openDialog(qSlicerIO::TransformFile, qSlicerFileDialog::Read);
 }
 
 //------------------------------------------------------------------------------

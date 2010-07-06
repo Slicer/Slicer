@@ -44,6 +44,8 @@ SET(KIT_SRCS
   qSlicerScalarOverlayIO.h
   qSlicerScalarOverlayIOOptionsWidget.cxx
   qSlicerScalarOverlayIOOptionsWidget.h
+  qSlicerTransformsIO.cxx
+  qSlicerTransformsIO.h
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.cxx
@@ -68,6 +70,7 @@ SET(KIT_MOC_SRCS
 
   qSlicerScalarOverlayIO.h
   qSlicerScalarOverlayIOOptionsWidget.h
+  qSlicerTransformsIO.h
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.h
   )
