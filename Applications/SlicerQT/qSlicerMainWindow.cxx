@@ -108,6 +108,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindow_connect(EditRedo);
   qSlicerMainWindow_connect(EditUndo);
 
+  qSlicerMainWindow_connect(HelpAboutSlicerQT);
   qSlicerMainWindow_connect(ViewLayoutConventional);
   qSlicerMainWindow_connect(ViewLayoutFourUp);
   qSlicerMainWindow_connect(ViewLayoutDual3D);

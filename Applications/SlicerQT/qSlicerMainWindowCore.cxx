@@ -19,6 +19,7 @@
 #include "qSlicerModulePanel.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerAboutDialog.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
@@ -184,5 +185,12 @@ void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
   d->PythonShell->show();
   d->PythonShell->raise();
 #endif
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onHelpAboutSlicerQTActionTriggered()
+{
+  qSlicerAboutDialog about(0);
+  about.exec();
 }
 

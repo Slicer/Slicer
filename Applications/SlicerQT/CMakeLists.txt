@@ -182,6 +182,9 @@ ENDIF(SlicerQT_NEED_SHARED_FORWARD)
 # Sources
 #
 SET(SlicerQT_SRCS
+  qSlicerAboutDialog.h
+  qSlicerAboutDialog.cxx
+
   qSlicerMainWindow.h
   qSlicerMainWindow.cxx
   qSlicerMainWindowCore.h
@@ -189,12 +192,15 @@ SET(SlicerQT_SRCS
   )
 
 SET(SlicerQT_MOC_SRCS
+  qSlicerAboutDialog.h
+
   qSlicerMainWindow.h
   qSlicerMainWindowCore.h
   qSlicerMainWindowCore_p.h
   )
   
 SET(SlicerQT_UI_SRCS
+  Resources/UI/qSlicerAboutDialog.ui
   Resources/UI/qSlicerMainWindow.ui
   )
 

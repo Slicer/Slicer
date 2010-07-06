@@ -598,3 +598,25 @@ qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions()const
 {
   return ctk_d()->CoreCommandOptions.data();
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::copyrights()const
+{
+  QString copyrightsText(
+    "Slicer is NOT an FDA approved medical device.\n\n"
+    "See www.slicer.org for license details.\n\n"
+    "See http://www.na-mic.org/Wiki/index.php/Slicer3:Acknowledgements\n\n"
+    "VTK http://www.vtk.org/copyright.php\n\n"
+    "ITK http://www.itk.org/HTML/Copyright.htm\n\n"
+    "KWWidgets http://www.kitware.com/Copyright.htm\n\n"
+    "Tcl/Tk http://www.tcl.tk\n\n"
+    "Teem:  http://teem.sf.ne\n\nt"
+    "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community.\n\n"
+    "Special thanks to the NIH and our other supporters.\n\n"
+    "This work is part of the National Alliance for Medical Image Computing "
+    "(NAMIC), funded by the National Institutes of Health through the NIH "
+    "Roadmap for Medical Research, Grant U54 EB005149. Information on the "
+    "National Centers for Biomedical Computing can be obtained from "
+    "http://nihroadmap.nih.gov/bioinformatics.\n\n");
+  return copyrightsText;
+}

@@ -167,6 +167,8 @@ public:
   /// Clear application settings
   void clearSettings();
 
+  virtual QString copyrights()const;
+
 protected:
   ///
   virtual void handlePreApplicationCommandLineArguments();

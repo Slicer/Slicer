@@ -28,6 +28,7 @@ public slots:
   void onFileLoadSceneActionTriggered();
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();  
+  void onHelpAboutSlicerQTActionTriggered();
   void onViewLayoutConventionalActionTriggered();
   void onViewLayoutFourUpActionTriggered();
   void onViewLayoutDual3DActionTriggered();
