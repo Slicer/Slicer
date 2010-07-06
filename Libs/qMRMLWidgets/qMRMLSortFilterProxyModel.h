@@ -12,6 +12,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class vtkMRMLNode;
+class qMRMLAbstractItemHelper;
 class qMRMLSortFilterProxyModelPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyModel
@@ -68,6 +69,7 @@ protected:
   virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;
   virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
   
+  qMRMLAbstractItemHelper* sourceItem(const QModelIndex& index)const;
 private:
   CTK_DECLARE_PRIVATE(qMRMLSortFilterProxyModel);
 };
