@@ -1,7 +1,17 @@
 #include "qSlicerIOOptions.h"
 
 //------------------------------------------------------------------------------
-qSlicerIO::IOProperties qSlicerIOOptions::options()const
+qSlicerIOOptions::qSlicerIOOptions()
 {
-  return qSlicerIO::IOProperties();
+}
+
+//------------------------------------------------------------------------------
+qSlicerIOOptions::~qSlicerIOOptions()
+{
+}
+
+//------------------------------------------------------------------------------
+const qSlicerIO::IOProperties& qSlicerIOOptions::properties()const
+{
+  return this->Properties;
 }
