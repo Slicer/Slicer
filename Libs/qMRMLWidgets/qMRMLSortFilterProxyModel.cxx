@@ -60,6 +60,13 @@ qMRMLSortFilterProxyModel::~qMRMLSortFilterProxyModel()
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNode(const QModelIndex& index)const
+{
+  vtkObject* obj = reinterpret_cast<vtkObject*>(index.internalPointer());
+  return vtkMRMLNode::SafeDownCast(obj);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType, 
                                      const QString& attributeName,
                                      const QVariant& attributeValue)
@@ -85,9 +92,12 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
   CTK_D(const qMRMLSortFilterProxyModel);
   qMRMLTreeProxyModel* treeModel = qobject_cast<qMRMLTreeProxyModel*>(this->sourceModel());
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  // If treeModel != 0, it is safe to use qMRMLTreeProxyModel::proxyItem()
+  // because we know for sure that source_parent model is the proxy model and
+  // not the source model (which would be the scene model)
   QSharedPointer<qMRMLAbstractItemHelper> parentItem = 
     QSharedPointer<qMRMLAbstractItemHelper>(
-      treeModel ? treeModel->item(source_parent) : sceneModel->item(source_parent));
+      treeModel ? treeModel->proxyItem(source_parent) : sceneModel->item(source_parent));
   if (parentItem == 0)
     {
     Q_ASSERT(parentItem);

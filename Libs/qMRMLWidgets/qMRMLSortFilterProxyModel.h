@@ -11,6 +11,7 @@
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 
+class vtkMRMLNode;
 class qMRMLSortFilterProxyModelPrivate;
 
 class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyModel
@@ -24,6 +25,9 @@ public:
   typedef QSortFilterProxyModel Superclass;
   qMRMLSortFilterProxyModel(QObject *parent=0);
   virtual ~qMRMLSortFilterProxyModel();
+
+  /// Retrive the associated vtkMRMLNode
+  vtkMRMLNode* mrmlNode(const QModelIndex& index)const;
 
   /// 
   /// Set/Get node types to display in the list

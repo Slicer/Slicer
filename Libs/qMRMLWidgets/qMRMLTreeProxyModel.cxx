@@ -118,6 +118,8 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModelPrivate::itemFromIndex(const QModelI
   CTK_P(const qMRMLTreeProxyModel);
   if (modelIndex.model() == 0)
     {
+    // There is no way to know for sure where the modelIndex comes from. If you
+    // know, then use proxyItemFromIndex or sourceItemFromIndex directly
     Q_ASSERT(modelIndex.model());
     return 0;
     }
@@ -833,6 +835,13 @@ qMRMLAbstractItemHelper* qMRMLTreeProxyModel::item(const QModelIndex &modelIndex
 {
   CTK_D(const qMRMLTreeProxyModel);
   return d->itemFromIndex(modelIndex);
+}
+
+//------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLTreeProxyModel::proxyItem(const QModelIndex &modelIndex)const
+{
+  CTK_D(const qMRMLTreeProxyModel);
+  return d->proxyItemFromIndex(modelIndex);
 }
 
 //------------------------------------------------------------------------------

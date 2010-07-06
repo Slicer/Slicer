@@ -51,12 +51,19 @@ public:
   virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
   //virtual bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles);
   virtual Qt::DropActions supportedDropActions()const;
+
 public slots:
+  /// Utility slot that propagate the scene to the source (qMRMLSourceModel)
   void setMRMLScene(vtkMRMLScene* scene);
 
 protected:
   friend class qMRMLSortFilterProxyModel;
+  /// if you are not sure what model the index belongs to (proxy or source)
+  /// you can use this function.
   virtual qMRMLAbstractItemHelper* item(const QModelIndex& index)const;
+  /// if you know for sure it is a proxy model index you can use this function
+  /// otherwise, use item(const QModelIndex& index)const
+  virtual qMRMLAbstractItemHelper* proxyItem(const QModelIndex& index)const;
   virtual qMRMLAbstractItemHelperFactory* itemFactory()const = 0;
   //virtual qMRMLAbstractItemHelper* itemFromVTKObject(vtkObject* object, int column)const =0;
   //virtual qMRMLAbstractRootItemHelper* rootItem(vtkMRMLScene* scene)const =0;
