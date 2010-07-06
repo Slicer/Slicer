@@ -52,6 +52,12 @@ if(CMAKE_COMPILER_2005)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
 endif(CMAKE_COMPILER_2005)
 
+# DevStudio 9.0 - Disable warning C4996: [...] This function or variable may be unsafe. [...]
+# To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details
+if(MSVC90)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif(MSVC90)
+
 if(NOT DEFINED BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS ${Slicer3_BUILD_SHARED})
 endif(NOT DEFINED BUILD_SHARED_LIBS)

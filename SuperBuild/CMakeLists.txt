@@ -115,9 +115,16 @@ endif()
 # Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
 #------------------------------------------------------------------------------
 
+# Disable warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
 if(CMAKE_COMPILER_2005)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
 endif()
+
+# DevStudio 9.0 - Disable warning C4996: [...] This function or variable may be unsafe. [...]
+# To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details
+if(MSVC90)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif(MSVC90)
 
 #-----------------------------------------------------------------------------
 # Always build Shared library

@@ -78,6 +78,11 @@ IF(WIN32)
   ENDIF(NOT BORLAND)
 ENDIF(WIN32)
 
+# Disable warning C4996: [...] This function or variable may be unsafe. [...]
+# To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details
+if(MSVC90)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif(MSVC90)
 
 # include a test for endianness (used to be done by default)
 
