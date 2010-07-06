@@ -20,6 +20,8 @@
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWLoadSaveButton.h"
 
+#include "vtkSmartPointer.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerTransformsGUI );
 vtkCxxRevisionMacro ( vtkSlicerTransformsGUI, "$Revision$");
@@ -42,7 +44,7 @@ vtkSlicerTransformsGUI::vtkSlicerTransformsGUI ( )
     // in ITK 3.18. The rest of transforms need to be re-registered when a new
     // transform is added. TODO: this must be revised in 3.20, hopefully
     // ScaleVersor3DTransform will be out of Review by then      
-    vtkSlicerTransformLogic *logic = vtkSlicerTransformLogic::New();
+    vtkSmartPointer<vtkSlicerTransformLogic> logic = vtkSmartPointer<vtkSlicerTransformLogic>::New();
     logic->RegisterITKTransforms();
 
 }
