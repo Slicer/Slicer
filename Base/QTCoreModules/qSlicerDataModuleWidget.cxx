@@ -160,13 +160,13 @@ void qSlicerDataModuleWidget::addData()
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::addVolumes()
 {
-  qSlicerApplication::application()->ioManager()->openAddVolumesDialog();
+  qSlicerApplication::application()->ioManager()->openAddVolumeDialog();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::addModels()
 {
-  qSlicerApplication::application()->ioManager()->openAddModelsDialog();
+  qSlicerApplication::application()->ioManager()->openAddModelDialog();
 }
 
 //-----------------------------------------------------------------------------

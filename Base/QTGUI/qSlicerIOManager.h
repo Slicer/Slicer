@@ -30,9 +30,9 @@ public:
 
   bool openLoadSceneDialog();
   bool openAddSceneDialog();
-  inline bool openAddVolumesDialog();
-  inline bool openAddModelsDialog();
   inline bool openAddDataDialog();
+  inline bool openAddVolumeDialog();
+  inline bool openAddModelDialog();
   inline bool openAddScalarOverlayDialog();
   inline bool openSaveDataDialog();
 
@@ -66,13 +66,13 @@ bool qSlicerIOManager::openAddDataDialog()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerIOManager::openAddVolumesDialog()
+bool qSlicerIOManager::openAddVolumeDialog()
 {
   return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerIOManager::openAddModelsDialog()
+bool qSlicerIOManager::openAddModelDialog()
 {
   return this->openDialog(qSlicerIO::ModelFile, qSlicerFileDialog::Read);
 }
