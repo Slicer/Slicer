@@ -99,10 +99,14 @@ public:
     AddFiducialCompletedEvent = 0,
   };
 
-protected:
-  vtkSlicerAnnotationFiducialManager();
-  virtual ~vtkSlicerAnnotationFiducialManager();
 
+  vtkSlicerAnnotationFiducialManager(){
+
+  }
+  ~vtkSlicerAnnotationFiducialManager(){
+
+  }
+protected:
   /// update the widget GUI from the settings in the passed in FiducialNode
   void UpdateWidget(vtkMRMLAnnotationFiducialNode *FiducialNode);
 

@@ -220,31 +220,6 @@ public:
 //vtkStandardNewMacro (vtkSlicerAnnotationFiducialManager );
 //vtkCxxRevisionMacro ( vtkSlicerAnnotationFiducialManager, "$Revision: 1.0 $");
 
-//---------------------------------------------------------------------------
-/*vtkSlicerAnnotationFiducialManager::vtkSlicerAnnotationFiducialManager ( )
-{
-  this->FiducialNodeID = NULL;
-  this->ViewerWidget = NULL;
-
-  //this->SetFiducialNodeID(NULL);
-  
-  this->Updating3DFiducial = 0;
-
-}*/
-
-
-//---------------------------------------------------------------------------
-/*vtkSlicerAnnotationFiducialManager::~vtkSlicerAnnotationFiducialManager ( )
-{
-  this->RemoveMRMLObservers();
-
-  // gui elements
-
-  // 3d widgets
-  //this->SetFiducialNodeID(NULL);
-  //this->SetMRMLScene ( NULL );
-  
-}*/
 
 
 //---------------------------------------------------------------------------
