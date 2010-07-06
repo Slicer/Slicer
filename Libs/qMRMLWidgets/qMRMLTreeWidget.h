@@ -9,6 +9,7 @@
 
 #include "qMRMLWidgetsExport.h"
 
+class qMRMLSortFilterProxyModel;
 class qMRMLTreeWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
@@ -20,13 +21,18 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeWidget : public QTreeView
 public:
   qMRMLTreeWidget(QWidget *parent=0);
   virtual ~qMRMLTreeWidget();
-                           
+
   vtkMRMLScene* mrmlScene()const;
 
   /// \sa qMRMLSceneModel::setListenNodeModifiedEvent
   void setListenNodeModifiedEvent(bool listen);
   /// \sa qMRMLSceneModel::listenNodeModifiedEvent
   bool listenNodeModifiedEvent()const;
+
+  ///
+  /// Retrieve the sortFilterProxyModel used to filter/sort
+  /// the nodes
+  qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
