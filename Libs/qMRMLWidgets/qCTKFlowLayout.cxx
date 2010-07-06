@@ -42,6 +42,7 @@
 #include "qCTKFlowLayout.h"
 
 #include <QWidget>
+#include <QDebug>
 
 //-----------------------------------------------------------------------------
 qCTKFlowLayout::qCTKFlowLayout(QWidget *_parent, int _margin, int hSpacing, int vSpacing)
@@ -121,6 +122,7 @@ QLayoutItem *qCTKFlowLayout::takeAt(int index)
 //-----------------------------------------------------------------------------
 Qt::Orientations qCTKFlowLayout::expandingDirections() const
 {
+  // FIXME ?
   return 0;
 }
 
@@ -147,7 +149,21 @@ void qCTKFlowLayout::setGeometry(const QRect &rect)
 //-----------------------------------------------------------------------------
 QSize qCTKFlowLayout::sizeHint() const
 {
-  return this->minimumSize();
+  QSize size = QSize(0,0);
+  QLayoutItem *item;
+  foreach (item, this->ItemList)
+    {
+    QSize itemSize = item->sizeHint();
+    // FIME: add option to let the user choose what he would prefer:
+    // large width + short height or short wight + large height or ...
+    size.rwidth() += itemSize.width();
+    size.rheight() = qMax(itemSize.height(), size.height());
+    }
+  size += QSize((this->ItemList.count()-1) * this->horizontalSpacing(), 0);
+  int left, top, right, bottom;
+  this->getContentsMargins(&left, &top, &right, &bottom);
+  size += QSize(left+right, top+bottom);
+  return size;
 }
 
 //-----------------------------------------------------------------------------
@@ -156,9 +172,12 @@ QSize qCTKFlowLayout::minimumSize() const
   QSize size;
   QLayoutItem *item;
   foreach (item, this->ItemList)
+    {
     size = size.expandedTo(item->minimumSize());
-
-  size += QSize(2*this->margin(), 2*this->margin());
+    }
+  int left, top, right, bottom;
+  this->getContentsMargins(&left, &top, &right, &bottom);
+  size += QSize(left+right, top+bottom);
   return size;
 }
 
