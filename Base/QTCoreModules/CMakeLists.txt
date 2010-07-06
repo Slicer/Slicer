@@ -40,6 +40,10 @@ SET(KIT_SRCS
   qSlicerROIModuleWidget.cxx
   qSlicerROIModuleWidget.h
 
+  qSlicerScalarOverlayIO.cxx
+  qSlicerScalarOverlayIO.h
+  qSlicerScalarOverlayIOOptionsWidget.cxx
+  qSlicerScalarOverlayIOOptionsWidget.h
   qSlicerTransformsModule.cxx
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.cxx
@@ -62,6 +66,8 @@ SET(KIT_MOC_SRCS
   qSlicerROIModule.h
   qSlicerROIModuleWidget.h
 
+  qSlicerScalarOverlayIO.h
+  qSlicerScalarOverlayIOOptionsWidget.h
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.h
   )
@@ -72,6 +78,7 @@ SET(KIT_UI_SRCS
   Resources/UI/qSlicerDataModule.ui
   Resources/UI/qSlicerMRMLTreeModule.ui
   Resources/UI/qSlicerROIModule.ui
+  Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui
   Resources/UI/qSlicerTransformsModule.ui
 )
 

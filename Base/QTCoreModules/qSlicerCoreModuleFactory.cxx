@@ -21,6 +21,7 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerModelsIO.h"
+#include "qSlicerScalarOverlayIO.h"
 // endofFIXME
   
 //-----------------------------------------------------------------------------

@@ -46,8 +46,11 @@ bool qSlicerModelsIO::load(const IOProperties& properties)
 {
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
-  
-  // vtkSlicerModelsLogic* modelsLogic = 
+
+  // FIXME: Use the following commented lines when qSlicerModelsIO.[x/cxx] will
+  // be in the same directory than the Models module. Create its own logic for
+  // now.
+  // vtkSlicerModelsLogic* modelsLogic =
   //   vtkSlicerModelsLogic::SafeDownCast(
   //     qSlicerCoreApplication::application()->moduleManager()
   //     ->module("Models")->logic());
@@ -67,60 +70,3 @@ bool qSlicerModelsIO::load(const IOProperties& properties)
   modelsLogic->Delete();
   return node != 0;
 }
-
-
-//-----------------------------------------------------------------------------
-qSlicerScalarOverlayIO::qSlicerScalarOverlayIO(QObject* _parent)
-  :qSlicerIO(_parent)
-{
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerScalarOverlayIO::description()const
-{
-  return "Scalar Overlay";
-}
-
-//-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerScalarOverlayIO::fileType()const
-{
-  return qSlicerIO::ScalarOverlayFile;
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerScalarOverlayIO::extensions()const
-{
-  return "*.*";
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerScalarOverlayIO::load(const IOProperties& properties)
-{
-  Q_ASSERT(properties.contains("fileName"));
-  Q_ASSERT(properties.contains("modelNodeId"));
-  QString fileName = properties["fileName"].toString();
-  QString modelNodeId = properties["modelNodeId"].toString();
-  vtkMRMLModelNode* modelNode = 
-    vtkMRMLModelNode::SafeDownCast(
-      this->mrmlScene()->GetNodeByID(modelNodeId.toLatin1().data()));
-  Q_ASSERT(modelNode);
-
-  // vtkSlicerModelsLogic* modelsLogic = 
-  //   vtkSlicerModelsLogic::SafeDownCast(
-  //     qSlicerCoreApplication::application()->moduleManager()
-  //     ->module("Models")->logic());
-  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::New();
-  Q_ASSERT(modelsLogic);
-  vtkMRMLStorageNode* node = modelsLogic->AddScalar(fileName.toLatin1().data(), modelNode);
-  if (node)
-    {
-    this->setLoadedNodes(QStringList(QString(node->GetID())));
-    }
-  else
-    {
-    this->setLoadedNodes(QStringList());
-    }
-  modelsLogic->Delete();
-  return node != 0;
-}
-

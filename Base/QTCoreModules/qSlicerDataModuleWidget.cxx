@@ -172,7 +172,7 @@ void qSlicerDataModuleWidget::addModels()
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::addScalarOverlay()
 {
-
+  qSlicerApplication::application()->ioManager()->openAddScalarOverlayDialog();
 }
 
 //-----------------------------------------------------------------------------
