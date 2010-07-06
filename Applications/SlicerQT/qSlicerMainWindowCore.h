@@ -26,6 +26,9 @@ public slots:
   void onFileAddDataActionTriggered();
   void onFileImportSceneActionTriggered();
   void onFileLoadSceneActionTriggered();
+  void onFileAddVolumeActionTriggered();
+  void onFileAddTransformActionTriggered();
+  void onFileSaveSceneActionTriggered();
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();  
   void onHelpAboutSlicerQTActionTriggered();

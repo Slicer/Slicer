@@ -13,16 +13,16 @@
 #endif
 
 // SlicerQt includes
-#include "qSlicerMainWindowCore.h" 
-#include "qSlicerMainWindowCore_p.h"
-#include "qSlicerApplication.h"
-#include "qSlicerModulePanel.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerAboutDialog.h"
+#include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerLayoutManager.h"
+#include "qSlicerMainWindowCore.h" 
+#include "qSlicerMainWindowCore_p.h"
 #include "qSlicerModuleManager.h"
+#include "qSlicerModulePanel.h"
 #ifdef Slicer3_USE_PYTHONQT
 #include "qSlicerPythonManager.h"
 #endif
@@ -134,6 +134,24 @@ void qSlicerMainWindowCore::onFileImportSceneActionTriggered()
 void qSlicerMainWindowCore::onFileLoadSceneActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openLoadSceneDialog();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFileAddVolumeActionTriggered()
+{
+  qSlicerApplication::application()->ioManager()->openAddVolumeDialog();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFileAddTransformActionTriggered()
+{
+  qSlicerApplication::application()->ioManager()->openAddTransformDialog();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFileSaveSceneActionTriggered()
+{
+  qSlicerApplication::application()->ioManager()->openSaveDataDialog();
 }
 
 //---------------------------------------------------------------------------

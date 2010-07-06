@@ -104,11 +104,15 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindow_connect(FileAddData);
   qSlicerMainWindow_connect(FileImportScene);
   qSlicerMainWindow_connect(FileLoadScene);
+  qSlicerMainWindow_connect(FileAddVolume);
+  qSlicerMainWindow_connect(FileAddTransform);
+  qSlicerMainWindow_connect(FileSaveScene);
   
   qSlicerMainWindow_connect(EditRedo);
   qSlicerMainWindow_connect(EditUndo);
 
   qSlicerMainWindow_connect(HelpAboutSlicerQT);
+
   qSlicerMainWindow_connect(ViewLayoutConventional);
   qSlicerMainWindow_connect(ViewLayoutFourUp);
   qSlicerMainWindow_connect(ViewLayoutDual3D);
