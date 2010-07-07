@@ -44,7 +44,7 @@ qSlicerIO::IOFileType qSlicerVolumesIO::fileType()const
 //-----------------------------------------------------------------------------
 QString qSlicerVolumesIO::extensions()const
 {
-  return "*.hdr *.nhdr *.nrrd *.mhd *.mha *.vti *.nii *.gz *.mgz *img";
+  return "*.hdr *.nhdr *.nrrd *.mhd *.mha *.vti *.nii *.gz *.mgz *.img";
 }
 
 //-----------------------------------------------------------------------------
