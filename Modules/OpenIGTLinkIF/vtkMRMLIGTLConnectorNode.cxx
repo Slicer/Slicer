@@ -978,7 +978,7 @@ void vtkMRMLIGTLConnectorNode::UnregisterMessageConverter(vtkIGTLToMRMLBase* con
 
 
 //---------------------------------------------------------------------------
-int vtkMRMLIGTLConnectorNode::RegisterOutgoingMRMLNode(vtkMRMLNode* node)
+int vtkMRMLIGTLConnectorNode::RegisterOutgoingMRMLNode(vtkMRMLNode* node, const char* devType)
 {
 
   if (!node)
@@ -987,8 +987,16 @@ int vtkMRMLIGTLConnectorNode::RegisterOutgoingMRMLNode(vtkMRMLNode* node)
     }
 
   // Find a converter for the node
-  const char* tag = node->GetNodeTagName();
-  vtkIGTLToMRMLBase* converter = GetConverterByMRMLTag(tag);
+  vtkIGTLToMRMLBase* converter = NULL;
+  if (devType == NULL)
+    {
+    const char* tag = node->GetNodeTagName();
+    converter = GetConverterByMRMLTag(tag);
+    }
+  else
+    {
+    converter = GetConverterByIGTLDeviceType(devType);
+    }
   if (!converter)
     {
     return 0;
@@ -1095,9 +1103,6 @@ int vtkMRMLIGTLConnectorNode::RegisterIncomingMRMLNode(vtkMRMLNode* node)
 void vtkMRMLIGTLConnectorNode::UnregisterIncomingMRMLNode(vtkMRMLNode* node)
 {
 
-  std::cerr << "void vtkMRMLIGTLConnectorNode::UnregisterIncomingMRMLNode(vtkMRMLNode* node)" << std::endl;
-  
-
   if (!node)
     {
     return;
@@ -1137,6 +1142,21 @@ vtkMRMLNode* vtkMRMLIGTLConnectorNode::GetOutgoingMRMLNode(unsigned int i)
     {
     return NULL;
     }
+}
+
+
+//---------------------------------------------------------------------------
+vtkIGTLToMRMLBase* vtkMRMLIGTLConnectorNode::GetConverterByNodeID(const char* id)
+{
+
+  MessageConverterMapType::iterator iter;
+  iter = this->MRMLIDToConverterMap.find(id);
+  if (iter == this->MRMLIDToConverterMap.end())
+    {
+    return NULL;
+    }
+  return iter->second;
+  
 }
 
 

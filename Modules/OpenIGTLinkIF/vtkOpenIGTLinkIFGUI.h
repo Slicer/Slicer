@@ -160,7 +160,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   virtual void OpenRemoteDataListWindow(const char* conID);
   virtual void OpenTrackingDataControllerWindow(const char* conID);
   //virtual void AddNodeCallback(const char* conID, int io, const char* name, const char* type);
-  virtual void AddNodeCallback(const char* conID, int io, const char* nodeID);
+  virtual void AddNodeCallback(const char* conID, int io, const char* nodeID, const char* devType);
   virtual void DeleteNodeCallback(const char* conID, int io, const char* nodeID);
 
   // Description:
