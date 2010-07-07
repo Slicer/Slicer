@@ -1,14 +1,8 @@
-
 // QT includes
 #include <QtPlugin>
 
-// MRML includes
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-
 // Tractography Logic includes
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"
-#include "vtkMRMLTractographyFiducialSeedingNode.h"
 
 // Tractography QTModule includes
 #include "qSlicerTractographyFiducialSeedingModule.h"

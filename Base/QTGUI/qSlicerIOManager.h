@@ -108,8 +108,7 @@ bool qSlicerIOManager::openAddFiducialDialog()
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openAddDTIDialog()
 {
-  //return this->openDialog(qSlicerIO::DTIFile, qSlicerFileDialog::Read);
-  return false;
+  return this->openDialog(qSlicerIO::DTIFile, qSlicerFileDialog::Read);
 }
 
 //------------------------------------------------------------------------------

@@ -21,6 +21,7 @@ SET(qtmodules
   SlicerWelcome
   Volumes
   Measurements
+  TractographyDisplay
   TractographyFiducialSeeding
   )
 
