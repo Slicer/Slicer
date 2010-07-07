@@ -100,7 +100,13 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
 
   qSlicerAbstractModuleWidget* moduleWidget =
     dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
-  Q_ASSERT(moduleWidget);
+  if (moduleWidget == 0)
+    {
+    qDebug() << "Warning, there is no UI for the module"<< moduleName;
+    emit moduleAdded(module->name());
+    return;
+    }
+
   Q_ASSERT(!moduleWidget->name().isEmpty());
 
   CTK_D(qSlicerModulePanel);

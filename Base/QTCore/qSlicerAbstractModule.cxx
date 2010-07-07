@@ -10,8 +10,8 @@
 
 =========================================================================auto=*/
 
-
 // Qt includes
+#include <QDebug>
 #include <QPointer>
 
 // SlicerQt includes
@@ -176,7 +176,11 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractModule::widgetRepresentation
   if (!d->WidgetRepresentation)
     {
     d->WidgetRepresentation = this->createWidgetRepresentation();
-    Q_ASSERT(d->WidgetRepresentation);
+    if (d->WidgetRepresentation == 0)
+      {
+      qDebug() << "Warning, the module "<<this->title()<< "has no widget representation";
+      return 0;
+      }
     d->WidgetRepresentation->setModule(this);
     // Note: WidgetRepresentation->setLogic should be called before
     // WidgetRepresentation->setMRMLScene() because some methods

@@ -194,17 +194,20 @@ qSlicerAbstractModule* qSlicerModuleManager::module(const QString& name)
 
   // A module should be registered when attempting to obtain it
   // assert causes a crash on linux64 when this check fails
-//  Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
+  //  Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
   if (!d->ModuleFactoryManager.isRegistered(name))
     {
-    qDebug()<< "name: " << name << "not registered.";
+    qDebug() << "The module \"" << name << "\" has not been registered.";
+    qDebug() << "The following modules have been registered:"
+             << d->ModuleFactoryManager.moduleNames();
     return 0;
     }
 
   qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find(name);
   if ( iter == d->ModuleList.constEnd() )
     {
-    qDebug()<< "name: " << name << "not found.";
+    qDebug()<< "The module \"" << name << "\" can not be found.";
+    qDebug() << "The following modules exists:" << d->ModuleList.keys();
     return 0;
     }
   return iter.value();

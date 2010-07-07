@@ -4850,16 +4850,19 @@ void vtkSlicerApplicationGUI::SetCurrentQtModule(const char* moduleTitle)
 
   QString moduleName = moduleManager->moduleName(QLatin1String(moduleTitle));
   // Check if the corresponding QT module is loaded
-  bool moduleLoaded = moduleManager->isLoaded(moduleName);
+  qSlicerAbstractModule* module = moduleManager->module(moduleName);
+  bool moduleRep = module ? module->widgetRepresentation() != 0 : false;
 
-  qDebug() << "QT Module [" << QLatin1String(moduleTitle) << "] loaded:" << moduleLoaded;
+  qDebug() << "QT Module [" << QLatin1String(moduleTitle) << "] loaded:"
+           << moduleManager->isLoaded(moduleName);
+  qDebug() << "QT Module [" << QLatin1String(moduleTitle) << "] representation:" << moduleRep;
 
   // Set module panel visibility accordingly
   qSlicerApplication::application()->setTopLevelWidgetVisible(
-    this->GetSlicerApplication()->modulePanel(), moduleLoaded);
+    this->GetSlicerApplication()->modulePanel(), moduleRep);
 
   // Show module and update geometry if required
-  if (moduleLoaded)
+  if (moduleRep)
     {
     this->GetSlicerApplication()->modulePanel()->setModule(moduleName);
     this->ReposModulePanel();
