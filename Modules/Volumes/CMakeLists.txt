@@ -33,6 +33,8 @@ include_directories(
   ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${vtkSlicerTractographyModuleLogic_SOURCE_DIR}
   ${vtkSlicerTractographyModuleLogic_BINARY_DIR}
+  ${vtkSlicerTractographyDisplayModuleLogic_SOURCE_DIR}
+  ${vtkSlicerTractographyDisplayModuleLogic_BINARY_DIR}
   ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
   ${SlicerTractographyFiducialSeeding_BINARY_DIR}
   ${SlicerTractographyDisplay_SOURCE_DIR}

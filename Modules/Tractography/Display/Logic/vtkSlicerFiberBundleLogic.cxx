@@ -14,8 +14,6 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
-#include <itksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx> 
 
 #include "vtkSlicerFiberBundleLogic.h"
 #include "vtkSlicerFiberBundleDisplayLogic.h"
@@ -23,6 +21,9 @@
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
+
+#include <itksys/SystemTools.hxx> 
+#include <itksys/Directory.hxx> 
 
 vtkCxxRevisionMacro(vtkSlicerFiberBundleLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerFiberBundleLogic);

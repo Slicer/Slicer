@@ -25,10 +25,10 @@
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 
+#include "vtkDiffusionTensorGlyph.h"
 #include "vtkTubeFilter.h"
 
 //#include "vtkPointData.h"
-
 
 #include <sstream>
 

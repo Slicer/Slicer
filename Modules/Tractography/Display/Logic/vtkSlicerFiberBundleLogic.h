@@ -21,16 +21,16 @@
 #ifndef __vtkSlicerFiberBundleLogic_h
 #define __vtkSlicerFiberBundleLogic_h
 
+#include "vtkSlicerModuleLogic.h"
+#include "vtkSlicerTractographyDisplayModuleLogicExport.h"
+
+// STD includes
 #include <stdlib.h>
 
-#include "vtkSlicerTractographyDisplay.h"
+class vtkMRMLFiberBundleNode;
 
-#include "vtkSlicerModuleLogic.h"
-
-#include "vtkMRMLFiberBundleNode.h"
-
-
-class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleLogic : public vtkSlicerModuleLogic 
+class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleLogic
+  : public vtkSlicerModuleLogic 
 {
   public:
   

@@ -17,13 +17,19 @@ if(NOT Slicer3_SOURCE_DIR)
 endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
-# Include dirs
+# Add logic first
+ADD_SUBDIRECTORY(Logic)
 
+# --------------------------------------------------------------------------
+# Include dirs
+MESSAGE("tototot: ${vtkSlicerTractographyDisplayModuleLogic_SOURCE_DIR}")
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
+  ${vtkSlicerTractographyDisplayModuleLogic_SOURCE_DIR}
+  ${vtkSlicerTractographyDisplayModuleLogic_BINARY_DIR}
   )
 
 configure_file(
@@ -51,8 +57,8 @@ set(SlicerTractographyDisplay_SRCS
   vtkSlicerTractographyDisplayGUI.cxx
   vtkSlicerAllFiberBundlesDisplayWidget.cxx
   vtkSlicerFiberBundleDisplayWidget.cxx
-  vtkSlicerFiberBundleDisplayLogic.cxx
-  vtkSlicerFiberBundleLogic.cxx
+  #vtkSlicerFiberBundleDisplayLogic.cxx
+  #vtkSlicerFiberBundleLogic.cxx
   vtkSlicerDiffusionTensorIcons.cxx
   vtkSlicerTractographyDisplayLogic.cxx
   )
@@ -85,6 +91,7 @@ target_link_libraries(${lib_name}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
+  vtkSlicerTractographyDisplayModuleLogic
   )
 
 slicer3_install_modules(${lib_name})

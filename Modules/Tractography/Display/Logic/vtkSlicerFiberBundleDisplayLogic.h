@@ -26,16 +26,14 @@
 #include <stdlib.h>
 
 #include "vtkSlicerModuleLogic.h"
-
-#include "vtkSlicerTractographyDisplay.h"
+#include "vtkSlicerTractographyDisplayModuleLogicExport.h"
 
 #include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleDisplayNode.h"
 
-#include "vtkDiffusionTensorGlyph.h"
+class vtkSlicerTractographyDisplay;
 
-
-class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayLogic : public vtkSlicerModuleLogic 
+class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleDisplayLogic
+  : public vtkSlicerModuleLogic
 {
   public:
   

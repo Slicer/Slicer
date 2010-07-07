@@ -21,8 +21,10 @@
 #define __vtkSlicerTractographyDisplayLogic_h
 
 #include "vtkSlicerFiberBundleLogic.h"
+#include "vtkSlicerTractographyDisplayWin32Header.h"
 
-class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayLogic : public vtkSlicerFiberBundleLogic 
+class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayLogic
+  : public vtkSlicerFiberBundleLogic
 {
   public:
   
