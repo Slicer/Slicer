@@ -889,17 +889,18 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
+
+set(TRANSFORMS_DIR ${Slicer3_SOURCE_DIR}/Applications/CLI/DiffusionApplications/ResampleDTI/Testing/TestData )
 # ResampleVolume2 tests
 add_test(ResampleVolume2Test ${Launcher_Command} ${TestLocation}ResampleVolume2Test
   --compare 
     ${TEST_DATA}/MRHeadResampled.nhdr
-    ${TEMP}/ResampleVolume2Test.nhdr
+    ${TEMP}/ResampleVolume2Test.nrrd
   ModuleEntryPoint
     --Reference ${TEST_DATA}/MRHeadResampled.nhdr
     --number_of_thread 0
     --transform_matrix 1,0,0,0,1,0,0,0,1,0,0,0
     --transform rt
-    --space LPS
     --interpolation linear
     --window_function c
     --spline_order 3
@@ -907,8 +908,76 @@ add_test(ResampleVolume2Test ${Launcher_Command} ${TestLocation}ResampleVolume2T
     --size 0,0,0
     --direction_matrix 0,0,0,0,0,0,0,0,0
     ${TEST_DATA}/MRHeadResampled.nhdr
-    ${TEMP}/ResampleVolume2Test.nhdr
+    ${TEMP}/ResampleVolume2Test.nrrd
   )
+
+set(TransformFile ${TRANSFORMS_DIR}/rotation.tfm)
+add_test(ResampleVolume2RotationNNTest ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+  --compare
+    ${TEST_DATA}/MRHeadResampledRotationNN.nrrd
+    ${TEMP}/ResampleVolume2Test2.nrrd
+  ModuleEntryPoint
+    -f ${TransformFile}
+    --interpolation nn
+    -c
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/ResampleVolume2Test2.nrrd
+    -n 8
+  )
+
+set(RotationAndAffineFile ${TRANSFORMS_DIR}/rotationAndAffine.tfm)
+add_test(ResampleVolume2RotationAndAffineTest ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+  --compare
+    ${TEST_DATA}/MRHeadResampledRotationAndAffine.nrrd
+    ${TEMP}/ResampleVolume2Test3.nrrd
+  ModuleEntryPoint
+    -f ${RotationAndAffineFile}
+    --interpolation linear
+    -c
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/ResampleVolume2Test3.nrrd
+    --transform_order input-to-output
+  )
+
+set(BSplineFile ${Slicer3_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledBSplineTransform.tfm)
+add_test(ResampleVolume2BSplineWSInterpolationTest ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+  --compare
+    ${TEST_DATA}/MRHeadResampledBSplineWSInterpolationTest.nrrd
+    ${TEMP}/ResampleVolume2Test4.nrrd
+  ModuleEntryPoint
+    -f ${BSplineFile}
+    --interpolation ws
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/ResampleVolume2Test4.nrrd
+    --transform_order input-to-output
+
+  )
+
+set(AffineFile ${TRANSFORMS_DIR}/affine.tfm)
+add_test(ResampleVolume2BSplineInterpolationTest ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+  --compare
+    ${TEST_DATA}/MRHeadResampledBSplineInterpolationTest.nrrd
+    ${TEMP}/ResampleVolume2Test5.nrrd
+  ModuleEntryPoint
+    -f ${AffineFile}
+    --interpolation bs
+    -o 3
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/ResampleVolume2Test5.nrrd
+  )
+
+
+set(HFieldFile ${Slicer3_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledHField.nrrd)
+add_test(ResampleVolume2HFieldTest ${Launcher_Command} ${TestLocation}ResampleVolume2Test
+  --compare
+    ${TEST_DATA}/MRHeadResampledHFieldTest.nrrd
+    ${TEMP}/ResampleVolume2Test6.nrrd
+  ModuleEntryPoint
+    -H ${HFieldFile}
+    ${TEST_DATA}/MRHeadResampled.nhdr
+    ${TEMP}/ResampleVolume2Test6.nrrd
+  )
+
 
 set (CLP ResampleVolume2)
 add_executable(${CLP}Test ${CLP}Test.cxx)
