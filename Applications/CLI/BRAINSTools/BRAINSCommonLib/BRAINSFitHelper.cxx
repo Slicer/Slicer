@@ -19,7 +19,7 @@ void ValidateTransformRankOrdering(const std::vector<std::string> & transformTyp
   // dimensional, and throw an error if
   // B-Spline is before Rigid, or any other non-sensical ordering of the
   // transform types.
-  // Rigid=1, ScaleVersor3D=2, Affine=4, ScaleSkewVersor3D=3, and BSpline=5
+  // Rigid=1, ScaleVersor3D=2, ScaleSkewVersor3D=3, Affine=4, and (BSpline or ROIBspline)=5
   unsigned int CurrentTransformRank = 0;
 
   for ( unsigned int l = 0; l < transformType.size(); l++ )
@@ -34,7 +34,7 @@ void ValidateTransformRankOrdering(const std::vector<std::string> & transformTyp
         {
         std::cerr << "Ordering of transforms does not proceed from\n"
                   << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < BSpline" << std::endl;
+                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpine)" << std::endl;
         exit (-1);
         }
       }
@@ -48,7 +48,7 @@ void ValidateTransformRankOrdering(const std::vector<std::string> & transformTyp
         {
         std::cerr << "Ordering of transforms does not proceed from\n"
                   << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < BSpline" << std::endl;
+                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
         exit (-1);
         }
       }
@@ -62,7 +62,7 @@ void ValidateTransformRankOrdering(const std::vector<std::string> & transformTyp
         {
         std::cerr << "Ordering of transforms does not proceed from\n"
                   << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < BSpline" << std::endl;
+                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
         exit (-1);
         }
       }
@@ -76,7 +76,7 @@ void ValidateTransformRankOrdering(const std::vector<std::string> & transformTyp
         {
         std::cerr << "Ordering of transforms does not proceed from\n"
                   << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < BSpline" << std::endl;
+                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
         exit (-1);
         }
       }
@@ -90,10 +90,25 @@ void ValidateTransformRankOrdering(const std::vector<std::string> & transformTyp
         {
         std::cerr << "Ordering of transforms does not proceed from\n"
                   << "smallest to largest.  Please review settings for transformType.\n"
-                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < BSpline" << std::endl;
+                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
         exit (-1);
         }
       }
+    else if ( transformType[l] == "ROIBSpline" )
+      {
+      if ( CurrentTransformRank <= 5 )
+        {
+        CurrentTransformRank = 5;
+        }
+      else
+        {
+        std::cerr << "Ordering of transforms does not proceed from\n"
+                  << "smallest to largest.  Please review settings for transformType.\n"
+                  << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | ROIBSpline)" << std::endl;
+        exit (-1);
+        }
+      }
+
     else
       {
       std::cerr << " ERROR:  Invalid transform type specified for element " << l << " of --transformType: "
@@ -533,6 +548,14 @@ void
 BRAINSFitHelper::
 StartRegistration (void)
 {
+  // transformation derived at each registration step will be stored in
+  // m_GenericTransformList
+  unsigned currentTransformId = 0;
+  if(std::string(this->m_InitializeTransformMode) != "Off")
+    m_GenericTransformList.resize(m_TransformType.size()+1);
+  else
+    m_GenericTransformList.resize(m_TransformType.size());
+
   if ( m_HistogramMatch )
     {
     typedef itk::OtsuHistogramMatchingImageFilter<itk::Image<float,
@@ -639,6 +662,8 @@ StartRegistration (void)
         m_MovingBinaryVolume,
         initialITKTransform,
         m_MaskInferiorCutOffFromCenter);
+
+    m_GenericTransformList[currentTransformId++] = initialITKTransform;
     }
 
   for (unsigned int currentTransformIndex = 0;
@@ -1131,6 +1156,282 @@ StartRegistration (void)
         m_PermittedNumberOfIterations = 3;
         }
       }
+    else if ( currentTransformType == "ROIBSpline" )
+      {
+      //
+      // Process the bulkAffineTransform for BSpline's BULK
+      //
+      std::cout << "ROIBSpline transform" << std::endl;
+
+      AffineTransformType::Pointer bulkAffineTransform
+        = AffineTransformType::New();
+      bulkAffineTransform->SetIdentity();
+
+      typedef itk::Image<float, 3> RegisterImageType;
+
+      BSplineTransformType::Pointer outputBSplineTransform
+        = BSplineTransformType::New();
+      outputBSplineTransform->SetIdentity();
+
+      BSplineTransformType::Pointer initialBSplineTransform
+        = BSplineTransformType::New();
+      initialBSplineTransform->SetIdentity();
+
+      {
+      
+      typedef itk::Image<unsigned char, 3>                               MaskImageType;
+      typedef itk::ImageMaskSpatialObject<MaskImageType::ImageDimension> ImageMaskSpatialObjectType;
+
+      typedef BSplineTransformType::RegionType TransformRegionType;
+      typedef TransformRegionType::SizeType    TransformSizeType;
+      typedef itk::BSplineDeformableTransformInitializer
+        <BSplineTransformType,RegisterImageType> InitializerType;
+
+      ImageMaskSpatialObjectType::Pointer fixedImageMask(
+        dynamic_cast<ImageMaskSpatialObjectType *>( m_FixedBinaryVolume.GetPointer() ) );
+      ImageMaskSpatialObjectType::Pointer movingImageMask(
+        dynamic_cast<ImageMaskSpatialObjectType *>( m_MovingBinaryVolume.GetPointer() ) );
+
+      typedef ImageMaskSpatialObjectType::ImageType MaskImageType;
+      typedef itk::ResampleImageFilter<MaskImageType, MaskImageType, double > ResampleFilterType;
+      ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+      resampler->SetTransform( m_CurrentGenericTransform );
+      resampler->SetInput( movingImageMask->GetImage() );
+      resampler->SetOutputParametersFromImage( fixedImageMask->GetImage() );
+      resampler->Update();               
+      std::cout << "Moving binary resampled" << std::endl;
+
+      typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
+      AddFilterType::Pointer adder = AddFilterType::New();
+      adder->SetInput1(fixedImageMask->GetImage());
+      adder->SetInput2(resampler->GetOutput());
+      adder->Update();
+
+      /*
+      typedef itk::ImageFileWriter<MaskImageType> WriterType;
+      WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName( "/tmp/jointMask.nrrd" );
+      writer->SetInput( adder->GetOutput() );
+      writer->Update();
+      */
+
+      ImageMaskSpatialObjectType::Pointer jointMask = ImageMaskSpatialObjectType::New();
+      jointMask->SetImage(adder->GetOutput());
+      jointMask->ComputeObjectToWorldTransform();
+
+
+      // TODO: calculate bounding box for the moving binary volume, and take
+      // the largest of the two
+      FixedVolumeType::Pointer roiImage = FixedVolumeType::New();
+      FixedVolumeType::RegionType roiRegion = 
+        jointMask->GetAxisAlignedBoundingBoxRegion();
+      FixedVolumeType::SpacingType roiSpacing =
+        m_FixedVolume->GetSpacing();
+      //std::cout << "Image size: " << m_FixedVolume->GetBufferedRegion().GetSize() << std::endl;
+      //std::cout << "ROI size: " << roiRegion.GetSize() << std::endl;
+      //std::cout << "ROI spacing: " << roiSpacing << std::endl;
+      //std::cout << "ROI index: " << roiRegion.GetIndex() << std::endl;
+      //std::cout << "ROI size in physical space: " << 
+      //  roiRegion.GetSize()[0]*roiSpacing[0] << " " << 
+      //  roiRegion.GetSize()[1]*roiSpacing[1] << " " << 
+      //  roiRegion.GetSize()[2]*roiSpacing[2] << std::endl;
+
+      FixedVolumeType::PointType roiOriginPt;
+      FixedVolumeType::IndexType roiOriginIdx;
+      roiOriginIdx.Fill(0);
+      m_FixedVolume->TransformIndexToPhysicalPoint(roiRegion.GetIndex(),roiOriginPt);
+      roiRegion.SetIndex(roiOriginIdx);
+      roiImage->SetRegions(roiRegion);
+      roiImage->Allocate();
+      roiImage->FillBuffer(1.);
+      roiImage->SetSpacing(roiSpacing);
+      roiImage->SetOrigin(roiOriginPt);
+      roiImage->SetDirection(m_FixedVolume->GetDirection());      
+
+      InitializerType::Pointer transformInitializer = InitializerType::New();
+      transformInitializer->SetTransform( initialBSplineTransform );
+      transformInitializer->SetImage( roiImage );      
+      TransformSizeType tempGridSize;
+      tempGridSize[0] = m_SplineGridSize[0];
+      tempGridSize[1] = m_SplineGridSize[1];
+      tempGridSize[2] = m_SplineGridSize[2];
+      transformInitializer->SetGridSizeInsideTheImage( tempGridSize );
+      transformInitializer->InitializeTransform();
+      }
+
+      if ( m_CurrentGenericTransform.IsNotNull() )
+        {
+        try
+          {
+          const std::string transformFileType = m_CurrentGenericTransform->GetNameOfClass();
+          if ( transformFileType == "VersorRigid3DTransform" )
+            {
+            const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform
+              = dynamic_cast<VersorRigid3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            initialBSplineTransform->SetBulkTransform(   bulkAffineTransform   );
+            }
+          else if ( transformFileType == "ScaleVersor3DTransform" )
+            {
+            const ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform
+              = dynamic_cast<ScaleVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            initialBSplineTransform->SetBulkTransform(   bulkAffineTransform   );
+            }
+          else if ( transformFileType == "ScaleSkewVersor3DTransform" )
+            {
+            const ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform
+              = dynamic_cast<ScaleSkewVersor3DTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            initialBSplineTransform->SetBulkTransform(   bulkAffineTransform   );
+            }
+          else if ( transformFileType == "AffineTransform" )
+            {
+            const AffineTransformType::ConstPointer tempInitializerITKTransform
+              = dynamic_cast<AffineTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+            AssignRigid::AssignConvertedTransform(bulkAffineTransform,
+                                                  tempInitializerITKTransform);
+            initialBSplineTransform->SetBulkTransform(   bulkAffineTransform   );
+            }
+          else if ( transformFileType == "BSplineDeformableTransform" )
+            {
+            const BSplineTransformType::ConstPointer tempInitializerITKTransform
+              = dynamic_cast<BSplineTransformType const *const>( m_CurrentGenericTransform.GetPointer() );
+
+            initialBSplineTransform->SetBulkTransform(
+              tempInitializerITKTransform->GetBulkTransform() );
+            BSplineTransformType::ParametersType tempFixedInitialParameters
+              = tempInitializerITKTransform->GetFixedParameters();
+            BSplineTransformType::ParametersType initialFixedParameters
+              = initialBSplineTransform->GetFixedParameters();
+
+            bool checkMatch = true;     // Assume true;
+            if ( initialFixedParameters.GetSize() != tempFixedInitialParameters.GetSize() )
+              {
+              checkMatch = false;
+              std::cerr << "ERROR INITILIZATION FIXED PARAMETERS DO NOT MATCH: " << initialFixedParameters.GetSize()
+                        << " != " << tempFixedInitialParameters.GetSize() << std::endl;
+              }
+            if ( checkMatch )        //  This ramus covers the hypothesis that
+                                     // the
+              // FixedParameters represent the grid locations of the spline nodes.
+              {
+              for ( unsigned int i = 0; i < initialFixedParameters.GetSize(); i++ )
+                {
+                if ( initialFixedParameters.GetElement(i) != tempFixedInitialParameters.GetElement(i) )
+                  {
+                  checkMatch = false;
+                  std::cerr << "ERROR FIXED PARAMETERS DO NOT MATCH: " << initialFixedParameters.GetElement(i)
+                            << " != " << tempFixedInitialParameters.GetElement(i) << std::endl;
+                  }
+                }
+              }
+            if ( checkMatch )
+              {
+              BSplineTransformType::ParametersType tempInitialParameters
+                = tempInitializerITKTransform->GetParameters();
+              if ( initialBSplineTransform->GetNumberOfParameters() ==
+                   tempInitialParameters.Size() )
+                {
+                initialBSplineTransform->SetFixedParameters(
+                  tempFixedInitialParameters );
+                initialBSplineTransform->SetParametersByValue( tempInitialParameters );
+                }
+              else
+                {
+                // Error, initializing from wrong size transform parameters;
+                //  Use its bulk transform only?
+                std::cerr
+                  << "Trouble using the m_CurrentGenericTransform for initializing a BSPlineDeformableTransform:"
+                  << std::endl;
+                std::cerr
+                  <<
+                  "The initializing BSplineDeformableTransform has a different"
+                  << " number of Parameters, than what is required for the requested grid."
+                  << std::endl;
+                std::cerr
+                  << "BRAINSFit was only able to use the bulk transform that was before it."
+                  << std::endl;
+                exit(-1);
+                }
+              }
+            else
+              {
+              std::cerr
+                << "ERROR:  initialization BSpline transform does not have the same "
+                << "parameter dimensions as the one currently specified."
+                << std::endl;
+              exit(-1);
+              }
+            }
+          else
+            {
+            std::cerr << "ERROR:  Invalid transform initializer type found:  " << transformFileType << std::endl;
+            exit(-1);
+            }
+          }
+        catch ( itk::ExceptionObject & excp )
+          {
+          std::cout << "[FAILED]" << std::endl;
+          std::cerr
+            << "Error while reading the m_CurrentGenericTransform"
+            << std::endl;
+          std::cerr << excp << std::endl;
+          return;
+          }
+        }
+      const bool UseCachingOfBSplineWeights
+        = ( m_UseCachingOfBSplineWeightsMode == "ON" ) ? true : false;
+      // As recommended in documentation in
+      // itkMattesMutualInformationImageToImageMetric.h
+      // "UseExplicitPDFDerivatives = False ... This method is well suited
+      // for Transforms with a large number of parameters, such as,
+      // BSplineDeformableTransforms."
+      const bool UseExplicitPDFDerivatives
+        =  ( m_UseExplicitPDFDerivativesMode == "ON" ) ? true : false;
+
+      outputBSplineTransform
+        = DoBSpline<RegisterImageType, SpatialObjectType,
+        BSplineTransformType>(
+          initialBSplineTransform,
+          m_FixedVolume, m_PreprocessedMovingVolume,
+          m_FixedBinaryVolume, m_MovingBinaryVolume,
+          m_NumberOfSamples,
+          UseCachingOfBSplineWeights, UseExplicitPDFDerivatives,
+          this->m_MaxBSplineDisplacement,
+          this->m_CostFunctionConvergenceFactor,
+          this->m_ProjectedGradientTolerance,
+          this->m_DisplayDeformedImage,
+          this->m_PromptUserAfterDisplay);
+      if ( outputBSplineTransform.IsNull() )
+        {
+        std::cout
+          << "Error -- the BSpline fit has failed." << std::endl;
+        std::cout
+          << "Error -- the BSpline fit has failed." << std::endl;
+
+        m_ActualNumberOfIterations = 1;
+        m_PermittedNumberOfIterations = 1;
+        }
+      else
+        {
+        // Initialize next level of transformations with previous transform
+        // result
+        // TransformList.clear();
+        // TransformList.push_back(finalTransform);
+        m_CurrentGenericTransform = outputBSplineTransform;
+        localInitializeTransformMode = "Off";   // Now turn of the initiallize
+                                                // code to off
+        // HACK:  The BSpline optimizer does not return the correct iteration
+        // values.
+        m_ActualNumberOfIterations = 1;
+        m_PermittedNumberOfIterations = 3;
+        }
+      }
+
     else
       {
       std::cout
@@ -1141,7 +1442,15 @@ StartRegistration (void)
       exit(-1);
       return;
       }
+
+    if(currentTransformId > m_GenericTransformList.size()-1){
+        std::cerr << "Out of bounds access for transform vector!" << std::endl;
+        exit(-1);
+        return;
     }
+    m_GenericTransformList[currentTransformId++] = m_CurrentGenericTransform;
+    }
+
   return;
 }
 

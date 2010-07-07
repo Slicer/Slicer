@@ -164,7 +164,7 @@ public:
   itkSetMacro(      MaskInferiorCutOffFromCenter, double         );
   itkGetConstMacro( MaskInferiorCutOffFromCenter, double         );
   itkSetMacro(      CurrentGenericTransform,  GenericTransformType::Pointer );
-  itkGetConstMacro( CurrentGenericTransform,  GenericTransformType::Pointer );
+  itkGetConstMacro( CurrentGenericTransform,  GenericTransformType::Pointer );  
   VECTORitkSetMacro( SplineGridSize, std::vector<int>       );
 
   itkGetConstMacro( ActualNumberOfIterations,      unsigned int  );
@@ -180,6 +180,11 @@ public:
   itkGetConstMacro(PromptUserAfterDisplay, bool);
   itkSetMacro(      ObserveIterations,        bool          );
   itkGetConstMacro( ObserveIterations,        bool          );
+
+  const std::vector<GenericTransformType::Pointer>* GetGenericTransformListPtr(){
+    return &m_GenericTransformList;
+  }
+
   /** Method to set the Permission to vary by level  */
   void SetPermitParameterVariation(std::vector<int> perms)
   {
@@ -247,6 +252,7 @@ private:
   // unsigned int             m_AccumulatedNumberOfIterationsForAllLevels;
   unsigned int                  m_DebugLevel;
   GenericTransformType::Pointer m_CurrentGenericTransform;
+  std::vector<GenericTransformType::Pointer> m_GenericTransformList;
   bool                          m_DisplayDeformedImage;
   bool                          m_PromptUserAfterDisplay;
   double                        m_FinalMetricValue;
