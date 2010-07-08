@@ -1161,7 +1161,6 @@ StartRegistration (void)
       //
       // Process the bulkAffineTransform for BSpline's BULK
       //
-      std::cout << "ROIBSpline transform" << std::endl;
 
       AffineTransformType::Pointer bulkAffineTransform
         = AffineTransformType::New();
@@ -1199,7 +1198,6 @@ StartRegistration (void)
       resampler->SetInput( movingImageMask->GetImage() );
       resampler->SetOutputParametersFromImage( fixedImageMask->GetImage() );
       resampler->Update();               
-      std::cout << "Moving binary resampled" << std::endl;
 
       typedef itk::AddImageFilter<MaskImageType, MaskImageType> AddFilterType;
       AddFilterType::Pointer adder = AddFilterType::New();
@@ -1219,9 +1217,6 @@ StartRegistration (void)
       jointMask->SetImage(adder->GetOutput());
       jointMask->ComputeObjectToWorldTransform();
 
-
-      // TODO: calculate bounding box for the moving binary volume, and take
-      // the largest of the two
       FixedVolumeType::Pointer roiImage = FixedVolumeType::New();
       FixedVolumeType::RegionType roiRegion = 
         jointMask->GetAxisAlignedBoundingBoxRegion();
