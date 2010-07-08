@@ -1,8 +1,16 @@
-/*
- * vtkMRMLAnnotationDisplayableManager.cpp
- *
- *  Created on: Jul 6, 2010
- */
+/*=auto=========================================================================
+
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+ See Doc/copyright/copyright.txt
+ or http://www.slicer.org/copyright/copyright.txt for details.
+
+ Program:   3D Slicer
+ Module:    $RCSfile: vtkMRMLAnnotationDisplayableManager.cxx,v $
+ Date:      $Date: 2010/10/06 11:42:53 $
+ Version:   $Revision: 1.1 $
+
+ =========================================================================auto=*/
 
 #include <vtkMRMLAnnotationDisplayableManager.h>
 #include <qSlicerApplication.h>
@@ -10,122 +18,92 @@
 #include <qMRMLThreeDRenderView.h>
 #include <vtkMRMLDisplayableManagerFactory.h>
 
-vtkMRMLAnnotationDisplayableManager
-    * vtkMRMLAnnotationDisplayableManager::instanceOfManager = NULL;
+//---------------------------------------------------------------------------
+vtkStandardNewMacro(vtkMRMLAnnotationDisplayableManager);
+vtkCxxRevisionMacro(vtkMRMLAnnotationDisplayableManager, "$Revision: 1.1 $");
 
+vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
+{
+
+}
+
+// Destructor
 vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
 {
-  // TODO Auto-generated destructor stub
-}
-
-/**
- * Get an instance of the manager. If no instance exists, a new one will be created.
- */
-vtkMRMLAnnotationDisplayableManager*
-vtkMRMLAnnotationDisplayableManager::GetInstance()
-{
-
-  if (instanceOfManager == NULL)
-    {
-
-      // create new instance
-      instanceOfManager = new vtkMRMLAnnotationDisplayableManager();
-
-      // register this displayable manager with the factory
-      if (!instanceOfManager->RegisterManager())
-        {
-
-          // registration failed
-          // something went wrong
-          fprintf(stderr,
-              "Could not create a new instance of the manager or could not register it!\r\n");
-          instanceOfManager = NULL;
-
-        }
-
-      return instanceOfManager;
-    }
-  else
-    {
-
-      // return old instance, should be already registered at the factory
-      return instanceOfManager;
-
-    }
 
 }
 
-/**
- * Register the manager with the factory.
- */
-bool
-vtkMRMLAnnotationDisplayableManager::RegisterManager()
+
+void vtkMRMLAnnotationDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+}
+
+/// Register the manager with the factory.
+bool vtkMRMLAnnotationDisplayableManager::RegisterManager()
 {
 
-  int
-      cnt =
-          qSlicerApplication::application()->layoutManager()->threeDRenderViewCount();
+  int cnt = qSlicerApplication::application()->layoutManager()->threeDRenderViewCount();
 
   if (cnt > 0 && (this != NULL))
     {
-      printf(
-          "Starting registration of a new displayable manager instance...\r\n");
+    printf("Starting registration of a new displayable manager instance...\r\n");
 
-      // at least one render view exists, get the first
+    // at least one render view exists, get the first
 
-      qSlicerApplication * app = qSlicerApplication::application();
-      qSlicerLayoutManager * lm = NULL;
-      qMRMLThreeDRenderView * ddd = NULL;
-      vtkMRMLDisplayableManagerFactory * factory = NULL;
-      if (app != NULL)
-        {
-          lm = app->layoutManager();
-        }
-      else
-        {
-          fprintf(stderr, "Could not get the application!\r\n");
-          return false;
-        }
-      if (lm != NULL)
-        {
+    qSlicerApplication * application = qSlicerApplication::application();
+    qSlicerLayoutManager * layoutManager = NULL;
+    qMRMLThreeDRenderView * threeDRenderView = NULL;
+    vtkMRMLDisplayableManagerFactory * displayableManagerFactory = NULL;
+    if (application != NULL)
+      {
+      layoutManager = application->layoutManager();
+      }
+    else
+      {
+      fprintf(stderr, "Could not get the application!\r\n");
+      return false;
+      }
+    if (layoutManager != NULL)
+      {
 
-          ddd = lm->threeDRenderView(0);
+      threeDRenderView = layoutManager->threeDRenderView(0);
 
-        }
-      else
-        {
-          fprintf(stderr, "Could not get the layout manager!\r\n");
-          return false;
-        }
+      }
+    else
+      {
+      fprintf(stderr, "Could not get the layout manager!\r\n");
+      return false;
+      }
 
-      if (ddd != NULL)
-        {
-          factory = ddd->displayableManagerFactory();
-        }
-      else
-        {
+    if (threeDRenderView != NULL)
+      {
+      displayableManagerFactory = threeDRenderView->displayableManagerFactory();
+      }
+    else
+      {
 
-          fprintf(stderr, "Could not get the 3D Render View!\r\n");
-          return false;
-        }
+      fprintf(stderr, "Could not get the 3D Render View!\r\n");
+      return false;
+      }
 
-      // make sure we got the factory
-      Q_ASSERT(factory);
+    // make sure we got the factory
+    Q_ASSERT(displayableManagerFactory);
 
-      if (factory != NULL)
-        {
+    if (displayableManagerFactory != NULL)
+      {
 
-          factory->RegisterDisplayableManager(this);
-          factory->SetMRMLViewNode(factory->GetMRMLViewNode());
+      displayableManagerFactory->RegisterDisplayableManager(this);
+      displayableManagerFactory->SetMRMLViewNode(displayableManagerFactory->GetMRMLViewNode());
 
-        }
-      else
-        {
-          fprintf(stderr, "Could not get displayable manager factory!\r\n");
-          return false;
-        }
+      }
+    else
+      {
+      fprintf(stderr, "Could not get displayable manager factory!\r\n");
+      return false;
+      }
 
-      return true;
+    return true;
     }
 
   // something went wrong

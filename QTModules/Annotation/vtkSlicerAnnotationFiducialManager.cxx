@@ -345,8 +345,9 @@ public:
 }*/
 
 //---------------------------------------------------------------------------
-/*void vtkSlicerAnnotationFiducialManager::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
+void vtkSlicerAnnotationFiducialManager::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
 {
+/*
   vtkMRMLFiducialListNode *callerList = vtkMRMLFiducialListNode::SafeDownCast(caller);
   vtkMRMLFiducialListNode *callDataList =  NULL;
   
@@ -423,8 +424,8 @@ public:
   {
     this->UpdateLockUnlock(callerList);
   }
-  
-}*/
+ */
+}
 
 
 //---------------------------------------------------------------------------

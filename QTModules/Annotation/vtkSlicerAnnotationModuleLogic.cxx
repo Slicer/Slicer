@@ -1810,8 +1810,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 {   
 
   // get an instance of the manager
-  vtkMRMLAnnotationDisplayableManager* m;
-  m = vtkMRMLAnnotationTextDisplayableManager::GetInstance();
+  vtkMRMLAnnotationDisplayableManager* m = vtkMRMLAnnotationTextDisplayableManager::New();
 
   if (m==NULL) {
 

@@ -1,3 +1,17 @@
+/*=auto=========================================================================
+
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+ See Doc/copyright/copyright.txt
+ or http://www.slicer.org/copyright/copyright.txt for details.
+
+ Program:   3D Slicer
+ Module:    $RCSfile: vtkMRMLAnnotationTextDisplayableManager.cxx,v $
+ Date:      $Date: 2010/10/06 11:42:53 $
+ Version:   $Revision: 1.1 $
+
+ =========================================================================auto=*/
+
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkProperty.h"
@@ -26,9 +40,8 @@
 #include "vtkMRMLAnnotationTextNode.h"
 
 //---------------------------------------------------------------------------
-//vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager );
-//vtkCxxRevisionMacro ( vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $");
-
+vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager );
+vtkCxxRevisionMacro ( vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.1 $");
 
 // Constructors
 vtkMRMLAnnotationTextDisplayableManager::vtkMRMLAnnotationTextDisplayableManager()
@@ -44,7 +57,7 @@ vtkMRMLAnnotationTextDisplayableManager::vtkMRMLAnnotationTextDisplayableManager
 vtkMRMLAnnotationTextDisplayableManager::~vtkMRMLAnnotationTextDisplayableManager()
 {
 
-  //this->setMRMLScene(NULL);
+  this->NodeID=NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -66,14 +79,13 @@ vtkMRMLAnnotationTextDisplayableManager::~vtkMRMLAnnotationTextDisplayableManage
  }*/
 
 //---------------------------------------------------------------------------
-/*void vtkMRMLAnnotationTextDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
+void vtkMRMLAnnotationTextDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
  {
- this->vtkObject::PrintSelf ( os, indent );
- }*/
+ this->Superclass::PrintSelf ( os, indent );
+ }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     unsigned long event, void *callData)
 {/*
  this->ProcessingMRMLEvent = event;
@@ -125,9 +137,7 @@ vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::Update3DWidget(
-    vtkMRMLAnnotationTextNode *activeNode)
+void vtkMRMLAnnotationTextDisplayableManager::Update3DWidget(vtkMRMLAnnotationTextNode *activeNode)
 {/*
  if (activeNode == NULL)
  {
@@ -182,8 +192,7 @@ vtkMRMLAnnotationTextDisplayableManager::Update3DWidget(
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::AddMRMLObservers()
+void vtkMRMLAnnotationTextDisplayableManager::AddMRMLObservers()
 {/*
  // the widget as a whole needs to keep track of ruler nodes in the scene
  if (this->MRMLScene)
@@ -205,8 +214,7 @@ vtkMRMLAnnotationTextDisplayableManager::AddMRMLObservers()
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::RemoveMRMLObservers()
+void vtkMRMLAnnotationTextDisplayableManager::RemoveMRMLObservers()
 {/*
  // remove observers on the ruler nodes
  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLAnnotationTextNode");
@@ -235,18 +243,16 @@ vtkMRMLAnnotationTextDisplayableManager::RemoveMRMLObservers()
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::AddTextWidget(
-    vtkMRMLAnnotationTextNode *node)
+void vtkMRMLAnnotationTextDisplayableManager::AddTextWidget(vtkMRMLAnnotationTextNode *node)
 {
   if (!node)
     {
-      return;
+    return;
     }
   if (this->GetTextWidget(node->GetID()) != NULL)
     {
-      //vtkDebugMacro("Already have widgets for node " << node->GetID());
-      return;
+    //vtkDebugMacro("Already have widgets for node " << node->GetID());
+    return;
     }
 
   //vtkTextWidget* c = vtkTextWidget::New();
@@ -270,9 +276,7 @@ vtkMRMLAnnotationTextDisplayableManager::GetTextWidget(const char *nodeID)
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::RemoveTextWidget(
-    vtkMRMLAnnotationTextNode *node)
+void vtkMRMLAnnotationTextDisplayableManager::RemoveTextWidget(vtkMRMLAnnotationTextNode *node)
 {/*
  if (!node)
  {
@@ -286,8 +290,7 @@ vtkMRMLAnnotationTextDisplayableManager::RemoveTextWidget(
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::RemoveTextWidgets()
+void vtkMRMLAnnotationTextDisplayableManager::RemoveTextWidgets()
 {/*
  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLAnnotationTextNode");
  //vtkDebugMacro("RemoveTextWidgets: have " << nnodes << " ruler  nodes in the scene, " << this->TextWidgets.size() << " widgets defined already");
@@ -320,15 +323,13 @@ vtkMRMLAnnotationTextDisplayableManager::RemoveTextWidgets()
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::RequestRender()
+void vtkMRMLAnnotationTextDisplayableManager::RequestRender()
 {
   //this->GetViewerWidget()->RequestRender();
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::Render()
+void vtkMRMLAnnotationTextDisplayableManager::Render()
 {
   //this->GetViewerWidget()->Render();
 }
@@ -364,8 +365,7 @@ vtkMRMLAnnotationTextDisplayableManager::Render()
  }*/
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
+void vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
 {
   /*bool isNull = false;
    if (this->GetViewerWidget() == NULL ||
@@ -407,90 +407,77 @@ vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
    }*/
 }
 
-void
-vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosingEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosingEvent(vtkMRMLScene* /*scene*/)
 {
 }
-void
-vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneCloseEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneCloseEvent(vtkMRMLScene* /*scene*/)
 {
 }
-void
-vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadStartEvent(
-    vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadStartEvent(vtkMRMLScene* /*scene*/)
 {
 }
-void
-vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadEndEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadEndEvent(vtkMRMLScene* /*scene*/)
 {
 }
-void
-vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneRestoredEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneRestoredEvent(vtkMRMLScene* /*scene*/)
 {
 }
-void
-vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(
-    vtkMRMLScene* /*scene*/, vtkMRMLNode* /*node*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLScene* /*scene*/,
+    vtkMRMLNode* /*node*/)
 {
 }
-void
-vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(
-    vtkMRMLScene* /*scene*/, vtkMRMLNode* /*node*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* /*scene*/,
+    vtkMRMLNode* /*node*/)
 {
 }
 
-void vtkMRMLAnnotationTextDisplayableManager::UpdateFromMRML(){
+void vtkMRMLAnnotationTextDisplayableManager::UpdateFromMRML()
+{
 
 }
 
 //---------------------------------------------------------------------------
-void
-vtkMRMLAnnotationTextDisplayableManager::UpdateLockUnlock(
-    vtkMRMLAnnotationTextNode* textNode)
+void vtkMRMLAnnotationTextDisplayableManager::UpdateLockUnlock(vtkMRMLAnnotationTextNode* textNode)
 {
   if (textNode == NULL)
     {
-      return;
+    return;
     }
 
   vtkTextWidget *widget = this->GetTextWidget(textNode->GetID());
   if (!widget)
     {
-      cout << "No distance widget found, adding a distance widget for this one"
-          << endl;
-      return;
+    cout << "No distance widget found, adding a distance widget for this one" << endl;
+    return;
     }
 
   if (textNode->GetLocked())
     {
-      widget->ProcessEventsOff();
+    widget->ProcessEventsOff();
     }
   else
     {
-      widget->ProcessEventsOn();
+    widget->ProcessEventsOn();
     }
 }
 
-void
-vtkMRMLAnnotationTextDisplayableManager::UpdateWidget(
-    vtkMRMLAnnotationTextNode *activeNode)
+void vtkMRMLAnnotationTextDisplayableManager::UpdateWidget(vtkMRMLAnnotationTextNode *activeNode)
 {
   vtkTextWidget *widget = this->GetTextWidget(activeNode->GetID());
   if (widget == NULL)
     {
-      return;
+    return;
     }
 
-  vtkTextRepresentation* rep = vtkTextRepresentation::SafeDownCast(
-      widget->GetRepresentation());
+  vtkTextRepresentation* rep = vtkTextRepresentation::SafeDownCast(widget->GetRepresentation());
   rep->SetText(activeNode->GetText(0));
 
   if (activeNode->GetVisible())
     {
-      widget->EnabledOn();
+    widget->EnabledOn();
     }
   else
     {
-      widget->EnabledOff();
+    widget->EnabledOff();
     }
 }

@@ -6,9 +6,9 @@
  or http://www.slicer.org/copyright/copyright.txt for details.
 
  Program:   3D Slicer
- Module:    $RCSfile: vtkSlicerNodeSelectorWidget.h,v $
- Date:      $Date: 2006/01/08 04:48:05 $
- Version:   $Revision: 1.45 $
+ Module:    $RCSfile: vtkMRMLAnnotationTextDisplayableManager.h,v $
+ Date:      $Date: 2010/10/06 11:42:53 $
+ Version:   $Revision: 1.1 $
 
  =========================================================================auto=*/
 
@@ -25,19 +25,15 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayableManager : public vtkMRMLAnnotationDisplayableManager
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayableManager: public vtkMRMLAnnotationDisplayableManager
 {
 
 public:
 
-
-
-
-  virtual
-  ~vtkMRMLAnnotationTextDisplayableManager();
-
-  //vtkTypeRevisionMacro(vtkSlicerAnnotationTextManager, vtkSlicerWidget);
-  //void PrintSelf(ostream& os, vtkIndent indent);
+  static vtkMRMLAnnotationTextDisplayableManager *New();
+  void PrintSelf(ostream& os, vtkIndent indent);
+vtkTypeRevisionMacro(vtkMRMLAnnotationTextDisplayableManager, vtkMRMLAnnotationDisplayableManager)
+  ;
 
   /// alternative method to propagate events generated in GUI to logic / mrml
   virtual void
@@ -80,8 +76,7 @@ public:
   //std::map<std::string, vtkTextWidget *> TextWidgets;
   vtkTextWidget *
   GetTextWidget(const char * nodeID);
-  void
-  AddTextWidget(vtkMRMLAnnotationTextNode *node);
+  void AddTextWidget(vtkMRMLAnnotationTextNode *node);
   void
   RemoveTextWidget(vtkMRMLAnnotationTextNode *node);
   void
@@ -105,6 +100,11 @@ public:
 
 protected:
 
+  vtkMRMLAnnotationTextDisplayableManager();
+
+  virtual
+  ~vtkMRMLAnnotationTextDisplayableManager();
+
   void
   UpdateWidgetInteractors();
   void
@@ -122,12 +122,6 @@ protected:
   int ProcessingMRMLEvent;
 
 private:
-
-
-  // private constructor, access by getinstance
-  vtkMRMLAnnotationTextDisplayableManager();
-
-
 
   //vtkMRMLAnnotationTextDisplayableManager(const vtkMRMLAnnotationTextDisplayableManager&); /// Not implemented
   void
