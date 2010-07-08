@@ -191,22 +191,6 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
 {
   PARSE_ARGS;
 
-  std::cout << "Initial transform debug size: " << initialTransformDebug.size() << std::endl;
-  std::cout << "Initial transform debug: " << initialTransformDebug << std::endl;
-
-  std::cout << "Initial transform debug size: " << initialTransformDebug.size() << std::endl;
-  std::cout << "Initial transform debug: " << initialTransformDebug << std::endl;
-  std::cout << "Rigid transform debug size: " << rigidTransformDebug.size() << std::endl;
-  std::cout << "Rigid transform debug: " << rigidTransformDebug << std::endl;
-  std::cout << "ScaleVersor transform debug size: " << scaleVersorTransformDebug.size() << std::endl;
-  std::cout << "ScaleVersor transform debug: " << scaleVersorTransformDebug << std::endl;
-  std::cout << "ScaleSkew transform debug size: " << scaleSkewVersorTransformDebug.size() << std::endl;
-  std::cout << "ScaleSkew transform debug: " << scaleSkewVersorTransformDebug << std::endl;
-  std::cout << "Affine transform debug size: " << affineTransformDebug.size() << std::endl;
-  std::cout << "Affine transform debug: " << affineTransformDebug << std::endl;
-  std::cout << "BSpline transform debug size: " << bsplineTransformDebug.size() << std::endl;
-  std::cout << "BSpline transform debug: " << bsplineTransformDebug << std::endl;
-
   itk::AddExtraTransformRegister();
 
   RegisterBrains2MaskFactory();
@@ -550,27 +534,11 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
   MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
 
   const std::vector<GenericTransformType::Pointer> *tfmList = myHelper->GetGenericTransformListPtr();
-  /*
-  std::cout << "tfmList size is " << tfmList.size() << std::endl;
-  std::cout << "Initial transform debug size: " << initialTransformDebug.size() << std::endl;
-  std::cout << "Initial transform debug: " << initialTransformDebug << std::endl;
-  std::cout << "Rigid transform debug size: " << rigidTransformDebug.size() << std::endl;
-  std::cout << "Rigid transform debug: " << rigidTransformDebug << std::endl;
-  std::cout << "ScaleVersor transform debug size: " << scaleVersorTransformDebug.size() << std::endl;
-  std::cout << "ScaleVersor transform debug: " << scaleVersorTransformDebug << std::endl;
-  std::cout << "ScaleSkew transform debug size: " << scaleSkewVersorTransformDebug.size() << std::endl;
-  std::cout << "ScaleSkew transform debug: " << scaleSkewVersorTransformDebug << std::endl;
-  std::cout << "Affine transform debug size: " << affineTransformDebug.size() << std::endl;
-  std::cout << "Affine transform debug: " << affineTransformDebug << std::endl;
-  std::cout << "BSpline transform debug size: " << bsplineTransformDebug.size() << std::endl;
-  std::cout << "BSpline transform debug: " << bsplineTransformDebug << std::endl;
-  */
   if(tfmList->size()){
     unsigned currentTransformId = 0, requestedTransformId = 0;
     std::string currentFileName = "";
     if(localInitializeTransformMode != "Off"){
       if(initialTransformDebug.size()>0){
-//      std::cout << "Saving the following transform to " << initialTransformDebug << std::endl;
         std::cout << (*tfmList)[0] << std::endl;
         itk::WriteTransformToDisk((*tfmList)[0], initialTransformDebug);
       }
@@ -592,8 +560,6 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
       if(currentFileName.size() == 0)
         continue;
 
-//      std::cout << "Saving the following transform to " << currentFileName << std::endl;
-//      std::cout << "The transform type is " << localTransformType[requestedTransformId] << std::endl;
       std::cout << (*tfmList)[currentTransformId] << std::endl;
       itk::WriteTransformToDisk((*tfmList)[currentTransformId],currentFileName);
       currentFileName = "";
