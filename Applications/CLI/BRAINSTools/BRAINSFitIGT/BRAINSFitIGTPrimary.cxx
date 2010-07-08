@@ -560,7 +560,6 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
       if(currentFileName.size() == 0)
         continue;
 
-      std::cout << (*tfmList)[currentTransformId] << std::endl;
       itk::WriteTransformToDisk((*tfmList)[currentTransformId],currentFileName);
       currentFileName = "";
     }
@@ -568,7 +567,6 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
   
 
   {
-  std::cout << "Before resampling the image" << std::endl;
   // Remember:  the Data is Moving's, the shape is Fixed's.
   resampledImage = TransformResample<MovingVolumeType, FixedVolumeType>(
     preprocessedMovingVolume,
@@ -577,7 +575,6 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
     GetInterpolatorFromString<MovingVolumeType>(interpolationMode),
     currentGenericTransform);
   }
-  std::cout << "After resampling" << std::endl;
   actualIterations = myHelper->GetActualNumberOfIterations();
   permittedIterations = myHelper->GetPermittedNumberOfIterations();
   // allLevelsIterations=myHelper->GetAccumulatedNumberOfIterationsForAllLevels();
