@@ -24,13 +24,16 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractDisplayableManager);
 
+  /// Register the manager with the factory.
+  bool RegisterManager();
+
+
 protected:
   vtkMRMLAnnotationDisplayableManager();
   virtual ~vtkMRMLAnnotationDisplayableManager();
 
 private:
-  /// Register the manager with the factory.
-  bool RegisterManager();
+
 
 };
 

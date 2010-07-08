@@ -47,7 +47,7 @@ bool vtkMRMLAnnotationDisplayableManager::RegisterManager()
 
   if (cnt > 0 && (this != NULL))
     {
-    printf("Starting registration of a new displayable manager instance...\r\n");
+    vtkDebugMacro("Starting registration of a new displayable manager instance...");
 
     // at least one render view exists, get the first
 
@@ -61,7 +61,7 @@ bool vtkMRMLAnnotationDisplayableManager::RegisterManager()
       }
     else
       {
-      fprintf(stderr, "Could not get the application!\r\n");
+      vtkErrorMacro("Could not get the application!");
       return false;
       }
     if (layoutManager != NULL)
@@ -72,7 +72,7 @@ bool vtkMRMLAnnotationDisplayableManager::RegisterManager()
       }
     else
       {
-      fprintf(stderr, "Could not get the layout manager!\r\n");
+      vtkErrorMacro("Could not get the layout manager!");
       return false;
       }
 
@@ -83,7 +83,7 @@ bool vtkMRMLAnnotationDisplayableManager::RegisterManager()
     else
       {
 
-      fprintf(stderr, "Could not get the 3D Render View!\r\n");
+      vtkErrorMacro("Could not get the 3D Render View!");
       return false;
       }
 
@@ -99,7 +99,7 @@ bool vtkMRMLAnnotationDisplayableManager::RegisterManager()
       }
     else
       {
-      fprintf(stderr, "Could not get displayable manager factory!\r\n");
+      vtkErrorMacro("Could not get displayable manager factory!");
       return false;
       }
 
