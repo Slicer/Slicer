@@ -13,3 +13,8 @@ add_subdirectory(BRAINSFit)
 add_subdirectory(BRAINSDemonWarp)
 add_subdirectory(BRAINSROIAuto)
 add_subdirectory(BRAINSResample)
+
+option(BUILD_BRAINSFitIGT "Build the customized version of BRAINSFit for IGT registration support" OFF)
+if(BUILD_BRAINSFitIGT)
+  add_subdirectory(BRAINSFitIGT)
+endif(BUILD_BRAINSFitIGT)
