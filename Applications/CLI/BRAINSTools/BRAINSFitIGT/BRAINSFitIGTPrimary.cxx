@@ -370,33 +370,10 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
   // Need to ensure that the order of transforms is from smallest to largest.
   itk::ValidateTransformRankOrdering(localTransformType);
 
-  // Extracting a timeIndex cube from the fixed image goes here....
-  // Also MedianFilter
-  FixedVolumeType::Pointer  extractFixedVolume;
-  MovingVolumeType::Pointer extractMovingVolume;
-  InputImageType::Pointer
-    OriginalFixedVolume ( itkUtil::ReadImage<InputImageType>(fixedVolume) );
-
-  std::cerr << "Original Fixed image origin"
-            << OriginalFixedVolume->GetOrigin() << std::endl;
-  // fixedVolumeTimeIndex lets lets us treat 3D as 4D.
-  /***********************
-   * Acquire Fixed Image Index
-   **********************/
-  extractFixedVolume = ExtractImage<FixedVolumeType>(OriginalFixedVolume,
-                                                     fixedVolumeTimeIndex);
-  // Extracting a timeIndex cube from the moving image goes here....
-
-  InputImageType::Pointer OriginalMovingVolume (
-    itkUtil::ReadImage<InputImageType>(movingVolume) );
-  // This default lets us treat 3D as 4D.
-  // const unsigned int movingVolumeTimeIndex;
-
-  /***********************
-   * Acquire Moving Image Index
-   **********************/
-  extractMovingVolume = ExtractImage<MovingVolumeType>(OriginalMovingVolume,
-                                                       movingVolumeTimeIndex);
+  FixedVolumeType::Pointer 
+    extractFixedVolume ( itkUtil::ReadImage<FixedVolumeType>(fixedVolume) );
+  MovingVolumeType::Pointer 
+    extractMovingVolume ( itkUtil::ReadImage<MovingVolumeType>(movingVolume) );
 
 #ifdef USE_DEBUG_IMAGE_VIEWER
   if ( DebugImageDisplaySender.Enabled() )
