@@ -40,6 +40,8 @@ protected:
   vtkMRMLCameraDisplayableManager();
   virtual ~vtkMRMLCameraDisplayableManager();
 
+  virtual void Create();
+
   virtual void OnMRMLSceneCloseEvent(vtkMRMLScene* scene);
   virtual void OnMRMLSceneLoadEndEvent(vtkMRMLScene* scene);
   virtual void OnMRMLSceneRestoredEvent(vtkMRMLScene* scene);
