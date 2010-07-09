@@ -102,12 +102,12 @@ public:
 
   /// Get the max number of 'place' events
   /// allowed before interaction mode switches back to 'transform'.
-  vtkGetMacro ( NumberOfTransientPlaces, int );
+  vtkGetMacro (NumberOfTransientPlaces, int);
 
   /// 
-  /// Get/Set the main slicer viewer widget, for picking
-  vtkGetObjectMacro(ViewerWidget, vtkMRMLModelDisplayableManager);
-  virtual void SetViewerWidget(vtkMRMLModelDisplayableManager *viewerWidget);
+  /// Get/Set the ModelDisplayableManager, for picking
+  vtkGetObjectMacro(ModelDisplayableManager, vtkMRMLModelDisplayableManager);
+  virtual void SetModelDisplayableManager(vtkMRMLModelDisplayableManager *modelDisplayableManager);
 
   /// 
   /// Events
@@ -141,8 +141,8 @@ protected:
   int NumberOfTransientPlaces;
 
   /// 
-  /// A pointer back to the viewer widget, useful for picking
-  vtkMRMLModelDisplayableManager *ViewerWidget;
+  /// A pointer back to the ModelDisplayableManager, useful for picking
+  vtkMRMLModelDisplayableManager * ModelDisplayableManager;
   
 private:
   vtkDisplayableManagerInteractorStyle(const vtkDisplayableManagerInteractorStyle&);  /// Not implemented.
