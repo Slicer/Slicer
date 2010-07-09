@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Quantification</category>
+  <title>SUVComputation </title>
+  <description>
+Computes the standardized uptake value based on body weight. Takes an input PET image in either DICOM or NRRD format (NRRD header must contain Radiopharmaceutical parameters).Produces a vector that contains SUVmin, SUVmean, SUVmax. This vector can be written to or appended to a cvs file. </description>
+  <version>0.1.0.$Revision: 8595 $(alpha)</version>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:SUVComputation-Documentation-3.6</documentation-url>
+  <license></license>
+  <contributor>Wendy Plesniak, BWH (Ron Kikinis, BWH)</contributor>
+<acknowledgements>
+This work is funded by the Harvard Catalyst, and the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+
+  <parameters>
+    <label>Image and Information I/O </label>
+    <description>Input parameters</description>
+
+    <image>
+      <name>PETVolume</name>
+      <label>Input PET Volume</label>
+      <channel>input</channel>
+      <flag>-v</flag>
+      <longflag>-petVolume</longflag>
+      <description>Input PET volume for SUVbw computation.</description>
+    </image>
+
+    <image type="label">
+      <name>VOIVolume</name>
+      <label>Input VOI Volume</label>
+      <channel>input</channel>
+      <flag>-l</flag>
+      <longflag>-labelMap</longflag>
+      <description>Input label volume containing the volumes of interest</description>
+    </image>
+
+    <file fileExtensions=".dat">
+     <label>Nuclear Medicine Metadata file (.dat)</label>
+     <channel>input</channel>
+     <flag>-p</flag>
+     <longflag>-parameterFile</longflag>
+     <description>File containing DICOM header information for SUV computation</description>
+   </file>
+
+   <file fileExtensions=".csv">
+     <description>An output file</description>
+     <label>Output (csv) file</label>
+     <flag>-o</flag>
+     <longflag>-csvFile</longflag>
+     <channel>output</channel>
+   </file>
+
+
+
+  </parameters>
+
+</executable>
