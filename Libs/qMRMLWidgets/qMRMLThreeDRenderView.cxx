@@ -11,6 +11,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkDisplayableManagerInteractorStyle.h>
 #include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkMRMLViewDisplayableManager.h>
@@ -40,8 +41,6 @@ qMRMLThreeDRenderViewPrivate::qMRMLThreeDRenderViewPrivate()
 {
   logger.setTrace();
 
-  this->DisplayableManagerFactory = vtkMRMLDisplayableManagerFactory::New();
-//  this->BoxAxisBoundingBox = new vtkBoundingBox();
   this->MRMLScene = 0;
   this->MRMLViewNode = 0;
 }
@@ -49,8 +48,10 @@ qMRMLThreeDRenderViewPrivate::qMRMLThreeDRenderViewPrivate()
 //---------------------------------------------------------------------------
 qMRMLThreeDRenderViewPrivate::~qMRMLThreeDRenderViewPrivate()
 {
-  this->DisplayableManagerFactory->Delete();
-//  delete this->BoxAxisBoundingBox;
+  if (this->DisplayableManagerGroup)
+    {
+    this->DisplayableManagerGroup->Delete();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -190,27 +191,20 @@ qMRMLThreeDRenderView::qMRMLThreeDRenderView(QWidget* _parent) : Superclass(_par
   VTK_CREATE(vtkDisplayableManagerInteractorStyle, interactorStyle);
   this->interactor()->SetInteractorStyle(interactorStyle);
 
-  // Observe factory to catch RequestRender events
-  d->qvtkConnect(d->DisplayableManagerFactory, vtkCommand::UpdateEvent,
+  // Register Displayable Managers
+  VTK_CREATE(vtkMRMLDisplayableManagerFactory, factory);
+  factory->RegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
+  factory->RegisterDisplayableManager("vtkMRMLViewDisplayableManager");
+
+  d->DisplayableManagerGroup = factory->InstantiateDisplayableManagers(this->renderer());
+  Q_ASSERT(d->DisplayableManagerGroup);
+
+  // Observe displayable manager group to catch RequestRender events
+  d->qvtkConnect(d->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                  this, SLOT(scheduleRender()));
 
-  d->DisplayableManagerFactory->Initialize(this->renderer());
-
-  // Register Camera DisplayableManager
-  VTK_CREATE(vtkMRMLCameraDisplayableManager, cameraDisplayableManager);
-  d->DisplayableManagerFactory->RegisterDisplayableManager(cameraDisplayableManager);
-
-  // Register View DisplayableManager
-  VTK_CREATE(vtkMRMLViewDisplayableManager, viewDisplayableManager);
-  d->DisplayableManagerFactory->RegisterDisplayableManager(viewDisplayableManager);
-
-  // By default, enable rendering
   this->setRenderEnabled(true);
 }
-
-//---------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLThreeDRenderView, vtkMRMLDisplayableManagerFactory*,
-            displayableManagerFactory, DisplayableManagerFactory);
 
 //------------------------------------------------------------------------------
 void qMRMLThreeDRenderView::setMRMLScene(vtkMRMLScene* newScene)
@@ -236,7 +230,8 @@ void qMRMLThreeDRenderView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
     {
     return;
     }
-  d->DisplayableManagerFactory->SetMRMLViewNode(newViewNode);
+
+  d->DisplayableManagerGroup->SetMRMLViewNode(newViewNode);
   d->MRMLViewNode = newViewNode;
 }
 

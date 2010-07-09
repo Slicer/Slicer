@@ -11,10 +11,11 @@
 =========================================================================auto=*/
 
 // MRMLDisplayableManager includes
-#include "vtkMRMLDisplayableManagerFactory.h"
-#include "vtkMRMLViewDisplayableManager.h"
-#include "vtkMRMLCameraDisplayableManager.h"
-#include "vtkDisplayableManagerInteractorStyle.h"
+#include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLViewDisplayableManager.h>
+#include <vtkMRMLCameraDisplayableManager.h>
+#include <vtkDisplayableManagerInteractorStyle.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -507,7 +508,6 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   vtkDisplayableManagerInteractorStyle * iStyle = vtkDisplayableManagerInteractorStyle::New();
   ri->SetInteractorStyle(iStyle);
   iStyle->Delete();
-  //iStyle->DebugOn();
 
   // MRML scene
   vtkMRMLScene* scene = vtkMRMLScene::New();
@@ -531,25 +531,30 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     }
 
   // Factory
-  vtkMRMLDisplayableManagerFactory* factory = vtkMRMLDisplayableManagerFactory::New();
-  factory->Initialize(rr);
+  vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::New();
 
-  // RenderRequest Callback
-  vtkRenderRequestCallback * renderRequestCallback = vtkRenderRequestCallback::New();
-  renderRequestCallback->SetRenderer(rr);
-  factory->AddObserver(vtkCommand::UpdateEvent, renderRequestCallback);
+  // Check if GetRegisteredDisplayableManagerCount returns 0
+  if (factory->GetRegisteredDisplayableManagerCount() != 0)
+    {
+    std::cerr << "Expected RegisteredDisplayableManagerCount: 0" << std::endl;
+    std::cerr << "Current RegisteredDisplayableManagerCount:"
+        << factory->GetRegisteredDisplayableManagerCount() << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  // Register Displayable Managers
-  vtkMRMLCameraDisplayableManager * cameraDM = vtkMRMLCameraDisplayableManager::New();
-  factory->RegisterDisplayableManager(cameraDM);
-  cameraDM->Delete();
-  //cameraNodeDM->DebugOn();
+  factory->RegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
+  factory->RegisterDisplayableManager("vtkMRMLViewDisplayableManager");
 
-  vtkMRMLViewDisplayableManager * viewDM = vtkMRMLViewDisplayableManager::New();
-  factory->RegisterDisplayableManager(viewDM);
-  viewDM->Delete();
+  // Check if GetRegisteredDisplayableManagerCount returns 2
+  if (factory->GetRegisteredDisplayableManagerCount() != 2)
+    {
+    std::cerr << "Expected RegisteredDisplayableManagerCount: 2" << std::endl;
+    std::cerr << "Current RegisteredDisplayableManagerCount:"
+        << factory->GetRegisteredDisplayableManagerCount() << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  // Check if GetDisplayableManagerByClassName works as expected
+  /*// Check if GetDisplayableManagerByClassName works as expected
   vtkMRMLCameraDisplayableManager * cameraDM2 =
       vtkMRMLCameraDisplayableManager::SafeDownCast(
           factory->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
@@ -569,15 +574,42 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
         << "GetDisplayableManagerByClassName" << std::endl;
     return EXIT_FAILURE;
     }
+    */
+
+  vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
+      factory->InstantiateDisplayableManagers(rr);
+
+  if (!displayableManagerGroup)
+    {
+    std::cerr << "Failed to instantiate Displayable Managers using "
+        << "InstantiateDisplayableManagers" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Check if GetDisplayableManagerCount returns 2
+  if (displayableManagerGroup->GetDisplayableManagerCount() != 2)
+    {
+    std::cerr << "Check displayableManagerGroup->GetDisplayableManagerCount()" << std::endl;
+    std::cerr << "Expected DisplayableManagerCount: 2" << std::endl;
+    std::cerr << "Current DisplayableManagerCount:"
+      << displayableManagerGroup->GetDisplayableManagerCount() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // RenderRequest Callback
+  vtkRenderRequestCallback * renderRequestCallback = vtkRenderRequestCallback::New();
+  renderRequestCallback->SetRenderer(rr);
+  displayableManagerGroup->AddObserver(vtkCommand::UpdateEvent, renderRequestCallback);
 
   // Assign ViewNode
-  factory->SetMRMLViewNode(viewNode);
+  displayableManagerGroup->SetMRMLViewNode(viewNode);
 
   // Check if RenderWindowInteractor has NOT been changed
-  if (factory->GetInteractor() != ri)
+  if (displayableManagerGroup->GetInteractor() != ri)
     {
     std::cerr << "Expected RenderWindowInteractor:" << ri << std::endl;
-    std::cerr << "Current RenderWindowInteractor:" << factory->GetInteractor() << std::endl;
+    std::cerr << "Current RenderWindowInteractor:"
+        << displayableManagerGroup->GetInteractor() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -640,19 +672,10 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     std::cerr << "Failed to set URL: " << baselineScene << std::endl;
     return EXIT_FAILURE;
     }
-  scene->Import();
+  scene->Connect();
   if (scene->GetErrorCode() != vtkErrorCode::NoError)
     {
     std::cerr << "Failed to import baseline scene: " << baselineScene << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  // Since there is no interaction, exactly "1" RenderRequest is expected
-  int renderRequestCount = renderRequestCallback->GetRenderRequestCount();
-  if (renderRequestCount != 1)
-    {
-    std::cerr << "Expected RenderRequestCount: 1" << std::endl
-              << "Current RenderRequestCount: " <<  renderRequestCount << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -665,7 +688,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     screenshot    |= (strcmp("--Screenshot", argv[i]) == 0);
     }
   vtkInteractorEventRecorder * recorder = vtkInteractorEventRecorder::New();
-  recorder->SetInteractor(factory->GetInteractor());
+  recorder->SetInteractor(displayableManagerGroup->GetInteractor());
   if (!disableReplay)
     {
     if (record)
@@ -687,8 +710,10 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   int retval = vtkRegressionTestImageThreshold(rw, 85.0);
   if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
     {
-    factory->GetInteractor()->Initialize();
-    factory->GetInteractor()->Start();
+    displayableManagerGroup->GetInteractor()->Initialize();
+    displayableManagerGroup->GetInteractor()->Start();
+    std::cout << "Current RenderRequestCount: "
+        << renderRequestCallback->GetRenderRequestCount() << std::endl;
     }
 
   if (record || screenshot)
@@ -709,6 +734,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 
   recorder->Delete();
   renderRequestCallback->Delete();
+  if (displayableManagerGroup) { displayableManagerGroup->Delete(); }
   factory->Delete();
   applicationLogic->Delete();
   scene->Delete();

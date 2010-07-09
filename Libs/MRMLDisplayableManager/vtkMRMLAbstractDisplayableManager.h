@@ -27,7 +27,7 @@
 
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-class vtkMRMLDisplayableManagerFactory;
+class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLViewNode;
 class vtkMRMLScene;
 class vtkRenderer;
@@ -71,21 +71,22 @@ protected:
   virtual ~vtkMRMLAbstractDisplayableManager();
 
   //BTX
+  friend class vtkMRMLDisplayableManagerGroup; // Access to RemoveMRMLObservers()
   friend class vtkMRMLDisplayableManagerFactory;
   //ETX
 
   /// Set Renderer and Interactor
   /// No-op if already initialized.
-  /// Called by vtkMRMLDisplayableManagerFactory
+  /// Called by vtkMRMLDisplayableManagerGroup
   /// \sa IsInitialized
-  void Initialize(vtkMRMLDisplayableManagerFactory * factory, vtkRenderer* newRenderer);
+  void Initialize(vtkMRMLDisplayableManagerGroup * group, vtkRenderer* newRenderer);
 
   /// Set MRML ViewNode
   /// Called by vtkMRMLDisplayableManagerFactory
   void SetAndObserveMRMLViewNode(vtkMRMLViewNode * newMRMLViewNode);
 
-  /// Get associated DisplayableManager factory
-  vtkMRMLDisplayableManagerFactory * GetDisplayableManagerFactory();
+  /// Get associated DisplayableManager group
+  vtkMRMLDisplayableManagerGroup * GetDisplayableManagerGroup();
 
   /// Invoke Create() and set Created flag to True
   /// A no-op if IsCreated() return True

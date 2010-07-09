@@ -14,7 +14,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerFactory.h"
+#include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -22,6 +22,7 @@
 
 // VTK includes
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderWindow.h>
@@ -29,6 +30,10 @@
 
 // STD includes
 #include <cassert>
+
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractDisplayableManager);
@@ -46,7 +51,7 @@ public:
   bool                                UpdateFromMRMLRequested;
   vtkRenderer *                       Renderer;
   vtkMRMLViewNode *                   MRMLViewNode;
-  vtkMRMLDisplayableManagerFactory *  DisplayableManagerFactory;
+  vtkMRMLDisplayableManagerGroup *    DisplayableManagerGroup;
 };
 
 //----------------------------------------------------------------------------
@@ -61,7 +66,7 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal()
   this->UpdateFromMRMLRequested = false;
   this->Renderer = 0;
   this->MRMLViewNode = 0;
-  this->DisplayableManagerFactory = 0;
+  this->DisplayableManagerGroup = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -90,29 +95,32 @@ void vtkMRMLAbstractDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerFactory * vtkMRMLAbstractDisplayableManager::GetDisplayableManagerFactory()
+vtkMRMLDisplayableManagerGroup * vtkMRMLAbstractDisplayableManager::GetDisplayableManagerGroup()
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->DisplayableManagerFactory address "
-                << this->Internal->DisplayableManagerFactory );
-  return this->Internal->DisplayableManagerFactory;
+                << "returning Internal->DisplayableManagerGroup address "
+                << this->Internal->DisplayableManagerGroup );
+  return this->Internal->DisplayableManagerGroup;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::CreateIfPossible()
 {
+  if (!this->GetMRMLViewNode())
+    {
+    return;
+    }
   if (!this->IsCreated())
     {
     assert(this->GetMRMLScene());
     assert(this->GetMRMLViewNode());
     this->Create();
-    this->ProcessMRMLEvents(this->GetMRMLScene(), vtkMRMLScene::SceneLoadEndEvent, 0);
     this->Internal->Created = true;
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerFactory * factory,
+void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerGroup * group,
                                                    vtkRenderer* newRenderer)
 {
   // Sanity checks
@@ -120,7 +128,7 @@ void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerFact
     {
     return;
     }
-  if (!factory)
+  if (!group)
     {
     return;
     }
@@ -129,7 +137,7 @@ void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerFact
     return;
     }
 
-  this->Internal->DisplayableManagerFactory = factory;
+  this->Internal->DisplayableManagerGroup = group;
 
   this->Internal->Renderer = newRenderer;
   this->Internal->Renderer->Register(this);
@@ -137,7 +145,7 @@ void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerFact
   this->Internal->Initialized = true;
 
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "initializing with Factory " << factory << "and Renderer " << newRenderer);
+                << "initializing with Group " << group << " and Renderer " << newRenderer);
 
   this->Modified();
 }
@@ -192,7 +200,22 @@ vtkMRMLViewNode * vtkMRMLAbstractDisplayableManager::GetMRMLViewNode()
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLViewNode(vtkMRMLViewNode * newMRMLViewNode)
 {
-  this->SetMRMLScene(newMRMLViewNode ? newMRMLViewNode->GetScene() : 0);
+  VTK_CREATE(vtkIntArray, sceneEvents);
+  sceneEvents->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::SceneLoadStartEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::SceneLoadEndEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+
+  // Observe scene associated with the MRML ViewNode
+  vtkMRMLScene * sceneToObserve = 0;
+  if (newMRMLViewNode)
+    {
+    sceneToObserve = newMRMLViewNode->GetScene();
+    }
+  this->SetAndObserveMRMLSceneEvents(sceneToObserve, sceneEvents);
+
   vtkSetAndObserveMRMLNodeMacro(this->Internal->MRMLViewNode, newMRMLViewNode);
 }
 
@@ -229,7 +252,7 @@ void vtkMRMLAbstractDisplayableManager::RequestRender()
     }
 
   this->InvokeEvent(vtkCommand::UpdateEvent);
-  this->GetDisplayableManagerFactory()->RequestRender();
+  this->GetDisplayableManagerGroup()->RequestRender();
 }
 
 //---------------------------------------------------------------------------

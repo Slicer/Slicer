@@ -21,64 +21,60 @@
 #ifndef __vtkMRMLDisplayableManagerFactory_h
 #define __vtkMRMLDisplayableManagerFactory_h
 
-// MRMLDisplayableManager includes
-#include "vtkMRMLAbstractDisplayableManager.h"
-
 // VTK includes
 #include <vtkObject.h>
 
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-class vtkRenderWindowInteractor;
 class vtkRenderer;
+class vtkMRMLDisplayableManagerGroup;
+class vtkMRMLDisplayableManagerFactoryInitialize;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactory : public vtkObject 
 {
 public:
 
-  static vtkMRMLDisplayableManagerFactory *New();
   vtkTypeRevisionMacro(vtkMRMLDisplayableManagerFactory,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// Set Renderer and Interactor
-  /// No-op if already initialized. 
-  /// \sa IsInitialized
-  void Initialize(vtkRenderer* newRenderer);
+  //BTX
+  enum
+  {
+    DisplayableManagerFactoryRegisteredEvent     = 30100,
+    DisplayableManagerFactoryUnRegisteredEvent   = 30101
+  };
+  //ETX
+
+  ///
+  /// This is a singleton pattern New.  There will only be ONE
+  /// reference to a vtkMRMLDisplayableManagerFactory object per process. Clients that
+  /// call this must call Delete on the object so that the reference counting will work.
+  /// The single instance will be unreferenced when the program exits.
+  static vtkMRMLDisplayableManagerFactory *New();
+
+  ///
+  /// Return the singleton instance with no reference counting.
+  static vtkMRMLDisplayableManagerFactory* GetInstance();
+
+  ///
+  /// Register Displayable Manager identified by \a vtkClassName
+  /// \a vtkClassName should be a VTK class registered using the CMake macro VTK_MAKE_INSTANTIATOR3
+  void RegisterDisplayableManager(const char* vtkClassName);
+
+  ///
+  /// UnRegister Displayable Manager identified by \a vtkClassName
+  /// \a vtkClassName should be a VTK class registered using the CMake macro VTK_MAKE_INSTANTIATOR3
+  void UnRegisterDisplayableManager(const char* vtkClassName);
+
+  ///
+  /// Return number of registered displayable managers
+  int GetRegisteredDisplayableManagerCount();
   
-  ///
-  /// Return True if Factory has already been initialized
-  bool IsInitialized();
-
-  ///
-  /// Convenient method to get the WindowInteractor associated with the Renderer
-  vtkRenderWindowInteractor* GetInteractor();
-  
-  /// Invoke vtkCommand::UpdateEvent
-  /// An observer can then listen for that event and "compress" the different Render requests
-  /// to efficiently call RenderWindow->Render()
-  /// \sa vtkMRMLAbstractDisplayableManager::RequestRender()
-  void RequestRender();
-
-  ///
-  /// Get Renderer
-  vtkRenderer* GetRenderer();
-  
-  /// 
-  /// Register Displayable Manager
-  void RegisterDisplayableManager(vtkMRMLAbstractDisplayableManager *displayableManager);
-
-  ///
-  /// UnRegister Displayable Manager
-  void UnRegisterDisplayableManager(vtkMRMLAbstractDisplayableManager *displayableManager);
-
-  ///
-  /// Return a DisplayManager given its class name
-  vtkMRMLAbstractDisplayableManager* GetDisplayableManagerByClassName(const char* className);
-
-  ///
-  /// Set / Get MRML ViewNode
-  vtkMRMLViewNode* GetMRMLViewNode();
-  void SetMRMLViewNode(vtkMRMLViewNode* newMRMLViewNode);
+  /// Instantiate registrered DisplayableManagers
+  /// It returns a vtkMRMLDisplayableManagerGroup representing a list of DisplayableManager
+  /// Internally, the factory keep track of all the Group and will invoke the ModifiedEvent
+  /// of each group.
+  vtkMRMLDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer * newRenderer);
 
 protected:
 
@@ -90,6 +86,15 @@ protected:
   vtkInternal* Internal;
   //ETX
 
+  //BTX
+  typedef vtkMRMLDisplayableManagerFactory Self;
+  friend class vtkMRMLDisplayableManagerFactoryInitialize;
+  //ETX
+
+  static vtkMRMLDisplayableManagerFactory* Instance;
+  static void classInitialize();
+  static void classFinalize();
+
 private:
 
   vtkMRMLDisplayableManagerFactory(const vtkMRMLDisplayableManagerFactory&);
@@ -97,5 +102,25 @@ private:
 
 };
 
+//----------------------------------------------------------------------------
+//BTX
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactoryInitialize
+{
+public:
+  typedef vtkMRMLDisplayableManagerFactoryInitialize Self;
+
+  vtkMRMLDisplayableManagerFactoryInitialize();
+  ~vtkMRMLDisplayableManagerFactoryInitialize();
+private:
+  static unsigned int Count;
+};
+
+/// The instance (vtkMRMLDisplayableManagerFactoryInitializer) will show up in any
+/// translation unit that uses vtkMRMLDisplayableManagerFactory.
+/// It will make sure vtkMRMLDisplayableManagerFactory is initialized before it is used.
+static vtkMRMLDisplayableManagerFactoryInitialize vtkMRMLDisplayableManagerFactoryInitializer;
+//ETX
+
 #endif
+
 

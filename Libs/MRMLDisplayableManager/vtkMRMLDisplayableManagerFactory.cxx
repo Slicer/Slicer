@@ -14,15 +14,19 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLDisplayableManagerFactory.h"
+#include "vtkMRMLAbstractDisplayableManager.h"
+#include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkSmartPointer.h>
 #include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
+#include <vtkInstantiator.h>
 
 // STD includes
 #include <vector>
@@ -32,7 +36,10 @@
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkMRMLDisplayableManagerFactory, "$Revision: 13859 $");
-vtkStandardNewMacro(vtkMRMLDisplayableManagerFactory);
+
+//----------------------------------------------------------------------------
+// Needed when we don't use the vtkStandardNewMacro.
+vtkInstantiatorNewMacro(vtkMRMLDisplayableManagerFactory);
 
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayableManagerFactory::vtkInternal
@@ -40,26 +47,11 @@ class vtkMRMLDisplayableManagerFactory::vtkInternal
 public:
   vtkInternal();
 
-  // Collection of Displayable Managers
-  std::vector<vtkMRMLAbstractDisplayableManager *> DisplayableManagers;
+  // Collection of Displayable Manager classNames
+  std::vector<std::string> DisplayableManagerClassNames;
 
-  // Convenient typedef
-  typedef std::vector<vtkMRMLAbstractDisplayableManager *>::iterator DisplayableManagersIt;
-
-  // Map DisplayableManagerName -> DisplayableManagers*
-  std::map<std::string, vtkMRMLAbstractDisplayableManager*> NameToDisplayableManagerMap;
-
-  // Convenient typedef
-  typedef std::map<std::string, vtkMRMLAbstractDisplayableManager*>::iterator
-      NameToDisplayableManagerMapIt;
-
-
-  bool                        DisplayableManagersCreated;
-  vtkMRMLViewNode*            MRMLViewNode;
-  vtkRenderer*                Renderer;
-  vtkRenderWindowInteractor*  Interactor;
-  bool                        Initialized;
-
+  // .. and its associated convenient typedef
+  typedef std::vector<std::string>::iterator DisplayableManagerClassNamesIt;
 };
 
 //----------------------------------------------------------------------------
@@ -68,15 +60,62 @@ public:
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerFactory::vtkInternal::vtkInternal()
 {
-  this->DisplayableManagersCreated = false;
-  this->MRMLViewNode = 0;
-  this->Renderer = 0;
-  this->Interactor = 0;
-  this->Initialized = false;
 }
 
 //----------------------------------------------------------------------------
 // vtkMRMLDisplayableManagerFactory methods
+
+//----------------------------------------------------------------------------
+/// Default initialization to zero is necessary.
+vtkMRMLDisplayableManagerFactory* vtkMRMLDisplayableManagerFactory::Instance;
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayableManagerFactory::classInitialize()
+{
+  // Allocate the singleton
+  Self::Instance = vtkMRMLDisplayableManagerFactory::GetInstance();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayableManagerFactory::classFinalize()
+{
+  Self::Instance->Delete();
+  Self::Instance = 0;
+}
+
+//----------------------------------------------------------------------------
+// Up the reference count so it behaves like New
+vtkMRMLDisplayableManagerFactory* vtkMRMLDisplayableManagerFactory::New()
+{
+  vtkMRMLDisplayableManagerFactory* instance = Self::GetInstance();
+  instance->Register(0);
+  return instance;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLDisplayableManagerFactory* vtkMRMLDisplayableManagerFactory::GetInstance()
+{
+  if(!Self::Instance)
+    {
+    // Try the factory first
+    Self::Instance = (vtkMRMLDisplayableManagerFactory*)vtkObjectFactory::CreateInstance(
+        "vtkMRMLDisplayableManagerFactory");
+
+    // if the factory did not provide one, then create it here
+    if(!Self::Instance)
+      {
+      // if the factory failed to create the object,
+      // then destroy it now, as vtkDebugLeaks::ConstructClass was called
+      // with "vtkMRMLDisplayableManagerFactory", and not the real name of the class
+#ifdef VTK_DEBUG_LEAKS
+      vtkDebugLeaks::DestructClass("vtkMRMLDisplayableManagerFactory");
+#endif
+      Self::Instance = new vtkMRMLDisplayableManagerFactory;
+      }
+    }
+  // return the instance
+  return Self::Instance;
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerFactory::vtkMRMLDisplayableManagerFactory()
@@ -87,23 +126,6 @@ vtkMRMLDisplayableManagerFactory::vtkMRMLDisplayableManagerFactory()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerFactory::~vtkMRMLDisplayableManagerFactory()
 {
-  for(std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
-    {
-    this->Internal->DisplayableManagers[i]->RemoveMRMLObservers();
-    }
-
-  this->SetMRMLViewNode(0);
-
-  for(size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
-    {
-    this->Internal->DisplayableManagers[i]->Delete();
-    }
-
-  if (this->Internal->Renderer)
-    {
-    this->Internal->Renderer->UnRegister(this);
-    }
-
   delete this->Internal;
 }
 
@@ -114,198 +136,124 @@ void vtkMRMLDisplayableManagerFactory::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::Initialize(vtkRenderer* newRenderer)
+void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vtkClassName)
 {
-  // Sanity checks
-  if (this->Internal->Initialized)
+  // Check if the DisplayableManager has already been registered
+  vtkInternal::DisplayableManagerClassNamesIt it = std::find(
+      this->Internal->DisplayableManagerClassNames.begin(),
+      this->Internal->DisplayableManagerClassNames.end(),
+      vtkClassName);
+
+  if ( it != this->Internal->DisplayableManagerClassNames.end())
+    {
+    vtkWarningMacro(<<"RegisterDisplayableManager - " << vtkClassName << " already registered");
+    return;
+    }
+
+  // Check if vtkClassName is a valid vtk className
+  vtkSmartPointer<vtkObject> objectPointer;
+  objectPointer.TakeReference(vtkInstantiator::CreateInstance(vtkClassName));
+  if (!objectPointer)
     {
     return;
     }
+
+  // Register it
+  this->Internal->DisplayableManagerClassNames.push_back(vtkClassName);
+
+  this->InvokeEvent(Self::DisplayableManagerFactoryRegisteredEvent,
+                    const_cast<char*>(vtkClassName));
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* vtkClassName)
+{
+  // Check if the DisplayableManager is registered
+  vtkInternal::DisplayableManagerClassNamesIt it = std::find(
+      this->Internal->DisplayableManagerClassNames.begin(),
+      this->Internal->DisplayableManagerClassNames.end(),
+      vtkClassName);
+
+  if ( it == this->Internal->DisplayableManagerClassNames.end())
+    {
+    vtkWarningMacro(<<"UnRegisterDisplayableManager - " << vtkClassName << " is NOT registered");
+    return;
+    }
+
+  this->Internal->DisplayableManagerClassNames.erase(it);
+
+  this->InvokeEvent(Self::DisplayableManagerFactoryUnRegisteredEvent,
+                    const_cast<char*>(vtkClassName));
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLDisplayableManagerFactory::GetRegisteredDisplayableManagerCount()
+{
+  return this->Internal->DisplayableManagerClassNames.size();
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDisplayableManagers(
+    vtkRenderer * newRenderer)
+{
+  // Sanity checks
   if (!newRenderer)
     {
-    return;
-    }
-
-  this->Internal->Renderer = newRenderer;
-  this->Internal->Renderer->Register(this);
-    
-  this->Internal->Initialized = true;
-
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "initializing DisplayableManager using Renderer: " << newRenderer );
-
-  this->Modified();
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLDisplayableManagerFactory::IsInitialized()
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->Initialized of "
-                << this->Internal->Initialized);
-  return this->Internal->Initialized;
-}
-
-//----------------------------------------------------------------------------
-vtkRenderWindowInteractor* vtkMRMLDisplayableManagerFactory::GetInteractor()
-{
-  if (!this->Internal->Renderer || !this->Internal->Renderer->GetRenderWindow())
-    {
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning Interactor address 0");
-    return 0;
-    }
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->Renderer->GetRenderWindow()->GetInteractor() address "
-                << this->Internal->Renderer->GetRenderWindow()->GetInteractor() );
-  return this->Internal->Renderer->GetRenderWindow()->GetInteractor();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::RequestRender()
-{
-  this->InvokeEvent(vtkCommand::UpdateEvent);
-}
-
-//----------------------------------------------------------------------------
-vtkRenderer* vtkMRMLDisplayableManagerFactory::GetRenderer()
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->Renderer address " << this->Internal->Renderer );
-  return this->Internal->Renderer;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLViewNode* vtkMRMLDisplayableManagerFactory::GetMRMLViewNode()
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->MRMLViewNode address " << this->Internal->MRMLViewNode );
-  return this->Internal->MRMLViewNode;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::SetMRMLViewNode(vtkMRMLViewNode* newMRMLViewNode)
-{
-  for(std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
-    {
-    vtkMRMLAbstractDisplayableManager * displayManager = this->Internal->DisplayableManagers[i];
-
-    displayManager->SetAndObserveMRMLViewNode(newMRMLViewNode);
-
-    displayManager->CreateIfPossible();
-
-    }
-  vtkSetObjectBodyMacro(Internal->MRMLViewNode, vtkMRMLViewNode, newMRMLViewNode);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(
-  vtkMRMLAbstractDisplayableManager *displayableManager)
-{
-  // Sanity checks
-  if (!displayableManager)
-    {
-    vtkWarningMacro(<<"RegisterDisplayableManager - displayableManager is NULL");
-    return;
-    }
-
-  // Make sure the manager has NOT already been registered
-  vtkInternal::DisplayableManagersIt it = std::find(this->Internal->DisplayableManagers.begin(),
-                                                    this->Internal->DisplayableManagers.end(),
-                                                    displayableManager);
-
-  if ( it != this->Internal->DisplayableManagers.end())
-    {
-    vtkWarningMacro(<<"RegisterDisplayableManager - "
-                    << displayableManager->GetClassName()
-                    << " (" << displayableManager << ") already registered");
-    return;
-    }
-
-  // Make sure NO managers having the same className have been registered
-  vtkMRMLAbstractDisplayableManager * existingDisplayableManager =
-      this->GetDisplayableManagerByClassName(displayableManager->GetClassName());
-  if (existingDisplayableManager)
-    {
-    vtkWarningMacro(<<"RegisterDisplayableManager - There is already an existing "
-                    << existingDisplayableManager->GetClassName() << " identified by "
-                    << "(" << existingDisplayableManager <<")"
-                    << " - Failed to register instance (" << displayableManager << ")");
-    return;
-    }
-
-  displayableManager->Register(this);
-
-  // Initialize
-  assert(!displayableManager->IsInitialized());
-  displayableManager->Initialize(this, this->GetRenderer());
-
-  // Add to list
-  this->Internal->DisplayableManagers.push_back(displayableManager);
-
-  // Update Name -> Object map
-  const char * displayableManagerClassName = displayableManager->GetClassName();
-  this->Internal->NameToDisplayableManagerMap[displayableManagerClassName] = displayableManager;
-
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "registering DisplayableManager: " << displayableManager );
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(
-    vtkMRMLAbstractDisplayableManager *displayableManager)
-{
-  // Sanitu checks
-  if (!displayableManager)
-    {
-    return;
-    }
-
-  // Make it's a registered displayable manager
-  // Make sure the manager has NOT already been registered
-  vtkInternal::DisplayableManagersIt it = std::find(this->Internal->DisplayableManagers.begin(),
-                                                    this->Internal->DisplayableManagers.end(),
-                                                    displayableManager);
-
-  if ( it == this->Internal->DisplayableManagers.end())
-    {
-    vtkWarningMacro(<< "UnRegisterDisplayableManager - "
-                    << "displayableManager (" << displayableManager << ") is NOT registered");
-    return;
-    }
-
-  // Clean vector
-  this->Internal->DisplayableManagers.erase(it);
-
-  // Clean map
-  vtkInternal::NameToDisplayableManagerMapIt it2 =
-      this->Internal->NameToDisplayableManagerMap.find(displayableManager->GetClassName());
-  assert(it2 != this->Internal->NameToDisplayableManagerMap.end());
-  this->Internal->NameToDisplayableManagerMap.erase(it2);
-
-  displayableManager->RemoveMRMLObservers();
-  displayableManager->SetAndObserveMRMLViewNode(0);
-  displayableManager->Delete();
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLAbstractDisplayableManager*
-    vtkMRMLDisplayableManagerFactory::GetDisplayableManagerByClassName(const char* className)
-{
-  if (!className)
-    {
-    vtkWarningMacro(<< "GetDisplayableManagerByClassName - className is NULL");
-    return 0;
-    }
-  vtkInternal::NameToDisplayableManagerMapIt it =
-      this->Internal->NameToDisplayableManagerMap.find(className);
-
-  if (it == this->Internal->NameToDisplayableManagerMap.end())
-    {
-    //vtkWarningMacro(<< "GetDisplayableManagerByClassName - "
-    //                << "DisplayableManager identified by [" << className << "] does NOT exist");
+    vtkWarningMacro(<<"InstanciateDisplayableManagers - newRenderer is NULL");
     return 0;
     }
 
-  return it->second;
+  vtkMRMLDisplayableManagerGroup * displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
+
+  for(std::size_t i=0; i < this->Internal->DisplayableManagerClassNames.size(); ++i)
+    {
+    const char* className = this->Internal->DisplayableManagerClassNames[i].c_str();
+
+    // Object will be unregistered when the SmartPointer will go out-of-scope
+    vtkSmartPointer<vtkObject> objectSmartPointer;
+    objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(className));
+    vtkMRMLAbstractDisplayableManager* displayableManager =
+        vtkMRMLAbstractDisplayableManager::SafeDownCast(objectSmartPointer);
+    if (!displayableManager)
+      {
+      vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate " << className);
+      continue;
+      }
+
+    // A Group observes the factory and eventually instantiates new DisplayableManager
+    // when they are registered in the factory
+    displayableManagerGroup->SetAndObserveDisplayableManagerFactory(this);
+
+    // Note that DisplayableManagerGroup will take ownership of the object
+    displayableManagerGroup->AddAndInitialize(displayableManager);
+    }
+
+  displayableManagerGroup->Initialize(newRenderer);
+
+  return displayableManagerGroup;
 }
+
+
+//
+
+//----------------------------------------------------------------------------
+// vtkMRMLDisplayableManagerFactoryInitialize methods
+
+//----------------------------------------------------------------------------
+vtkMRMLDisplayableManagerFactoryInitialize::vtkMRMLDisplayableManagerFactoryInitialize()
+{
+  if(++Self::Count == 1)
+    { vtkMRMLDisplayableManagerFactory::classInitialize(); }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLDisplayableManagerFactoryInitialize::~vtkMRMLDisplayableManagerFactoryInitialize()
+{
+  if(--Self::Count == 0)
+    { vtkMRMLDisplayableManagerFactory::classFinalize(); }
+}
+
+//----------------------------------------------------------------------------
+/// Default initialization to zero is necessary.
+unsigned int vtkMRMLDisplayableManagerFactoryInitialize::Count;
 

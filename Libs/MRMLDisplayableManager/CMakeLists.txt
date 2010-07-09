@@ -57,32 +57,47 @@ INSTALL(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-SET(MRMLDisplayableManager_SRCS
-  vtkMRMLAbstractDisplayableManager.cxx
+SET(DisplayableManager_SRCS
   vtkMRMLCameraDisplayableManager.cxx
-  vtkMRMLDisplayableManagerFactory.cxx
   vtkMRMLModelDisplayableManager.cxx
   vtkMRMLViewDisplayableManager.cxx
+  )
+
+SET(KIT_SRCS
+  ${DisplayableManager_SRCS}
+  vtkMRMLAbstractDisplayableManager.cxx
+  vtkMRMLDisplayableManagerFactory.cxx
+  vtkMRMLDisplayableManagerGroup.cxx
   
   vtkDisplayableManagerInteractorStyle.cxx
   vtkDisplayableManagerBoxWidget2.cxx
   vtkDisplayableManagerBoxRepresentation.cxx
   )
 
+# Create the instantiator for DisplayableManager classes.
+SET(VTK_USE_INSTANTIATOR_NEW 1)
+VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}Instantiator"
+  DisplayableManagerInstantiator_SRCS
+  "${DisplayableManager_SRCS}"
+  "VTK_MRML_DISPLAYABLEMANAGER_EXPORT"
+  ${PROJECT_BINARY_DIR}
+  "vtk${PROJECT_NAME}Win32Header.h")
+
 # TCL Wrapping
 if (VTK_WRAP_TCL)
    include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake") 
-   vtk_wrap_tcl3(MRMLDisplayableManager  MRMLDisplayableManager_TCL_SRCS   "${MRMLDisplayableManager_SRCS}" "")
+   vtk_wrap_tcl3(MRMLDisplayableManager  KIT_TCL_SRCS   "${KIT_SRCS}" "")
 endif()
 
 SET(srcs
- ${MRMLDisplayableManager_SRCS}
+ ${KIT_SRCS}
+ ${DisplayableManagerInstantiator_SRCS}
  )
 
 if (VTK_WRAP_TCL)
   set(srcs
     ${srcs}
-    ${MRMLDisplayableManager_TCL_SRCS}
+    ${KIT_TCL_SRCS}
     )
 endif()
 
@@ -137,7 +152,7 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
 
   INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
-  VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${MRMLDisplayableManager_SRCS}")
+  VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${KIT_SRCS}")
   ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
   ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
   
