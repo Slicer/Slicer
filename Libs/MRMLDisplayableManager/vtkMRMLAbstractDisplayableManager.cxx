@@ -174,7 +174,7 @@ vtkRenderer * vtkMRMLAbstractDisplayableManager::GetRenderer()
 //---------------------------------------------------------------------------
 vtkRenderWindowInteractor * vtkMRMLAbstractDisplayableManager::GetInteractor()
 {
-  if (!this->Internal->Renderer && !this->Internal->Renderer->GetRenderWindow())
+  if (!this->Internal->Renderer || !this->Internal->Renderer->GetRenderWindow())
     {
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning Interactor address 0");
     return 0;
