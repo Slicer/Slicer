@@ -81,6 +81,11 @@ protected:
   /// \sa IsInitialized
   void Initialize(vtkMRMLDisplayableManagerGroup * group, vtkRenderer* newRenderer);
 
+  /// Called by Initialize();
+  /// Sub-class could overload that function and perform additional initialization steps
+  /// That function should only be used directly !
+  virtual void AdditionnalInitializeStep(){}
+
   /// Set MRML ViewNode
   /// Called by vtkMRMLDisplayableManagerFactory
   void SetAndObserveMRMLViewNode(vtkMRMLViewNode * newMRMLViewNode);
