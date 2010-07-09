@@ -3,7 +3,7 @@
 #include "vtkMRMLViewDisplayableManager.h"
 #include "vtkDisplayableManagerInteractorStyle.h"
 #include "vtkMRMLCameraDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerFactory.h"
+#include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
 #include <vtkMRMLCameraNode.h>
@@ -120,7 +120,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::AddAxis(vtkRenderer * renderer)
 
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * renderer,
-                                                                vtkMRMLViewNode * viewNode)
+                                                            vtkMRMLViewNode * viewNode)
 {
   assert(renderer);
   assert(renderer->IsActiveCameraCreated());
@@ -198,7 +198,6 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
         this->BoxAxisBoundingBox->GetMaxLength() * letterSize,
         this->BoxAxisBoundingBox->GetMaxLength() * letterSize);
       actor->SetOrigin(.5, .5,.5);
-      actor->SetCamera(renderer->GetActiveCamera());
       }
 
     // Position the axis labels
@@ -233,11 +232,12 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
       bounds[4] - offset);
     }
 
-  // Make the axis visible again
+  // Update camera and make the axis visible again
   this->BoxAxisActor->VisibilityOn();
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
     {
     vtkFollower* actor = this->AxisLabelActors[i];
+    actor->SetCamera(renderer->GetActiveCamera());
     actor->VisibilityOn();
     }
 
@@ -282,10 +282,10 @@ void vtkMRMLViewDisplayableManager::Create()
 
   this->Internal->AddAxis(this->GetRenderer());
 
-  // CameraNodeDisplayableManager is expected to be registered !
+  // CameraNodeDisplayableManager is expected to be instantiated !
   vtkMRMLCameraDisplayableManager * cameraDisplayableManager =
       vtkMRMLCameraDisplayableManager::SafeDownCast(
-          this->GetDisplayableManagerFactory()->GetDisplayableManagerByClassName(
+          this->GetDisplayableManagerGroup()->GetDisplayableManagerByClassName(
               "vtkMRMLCameraDisplayableManager"));
   assert(cameraDisplayableManager);
 
@@ -311,6 +311,7 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
     {
     if (event == vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent)
       {
+      vtkDebugMacro(<< "ProcessMRMLEvents - ActiveCameraChangedEvent");
       this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
       }
     }
