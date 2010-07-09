@@ -1,102 +1,67 @@
-/*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-
- See Doc/copyright/copyright.txt
- or http://www.slicer.org/copyright/copyright.txt for details.
-
- Program:   3D Slicer
- Module:    $RCSfile: vtkMRMLAnnotationTextDisplayableManager.cxx,v $
- Date:      $Date: 2010/10/06 11:42:53 $
- Version:   $Revision: 1.1 $
-
- =========================================================================auto=*/
-
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-#include "vtkProperty.h"
-
-#include "vtkMath.h"
-
+// AnnotationModule includes
 #include "vtkMRMLAnnotationTextDisplayableManager.h"
 
-#include "vtkLineWidget2.h"
-#include "vtkPointHandleRepresentation3D.h"
-#include "vtkLineRepresentation.h"
-#include "vtkPolygonalSurfacePointPlacer.h"
-
-//#include "vtkSlicerViewerWidget.h"
-//#include "vtkSlicerApplication.h"
-//#include "vtkSlicerApplicationGUI.h"
-
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLLinearTransformNode.h"
-
-#include "vtkCamera.h"
-#include "vtkRenderer.h"
-
-#include "vtkTextRepresentation.h"
-#include "vtkTextWidget.h"
+// AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationTextNode.h"
+
+// MRML includes
+#include <vtkMRMLTransformNode.h>
+#include <vtkMRMLLinearTransformNode.h>
+
+// VTK includes
+#include <vtkObject.h>
+#include <vtkObjectFactory.h>
+#include <vtkProperty.h>
+#include <vtkCamera.h>
+#include <vtkRenderer.h>
+#include <vtkTextRepresentation.h>
+#include <vtkTextWidget.h>
+#include <vtkLineWidget2.h>
+#include <vtkPointHandleRepresentation3D.h>
+#include <vtkLineRepresentation.h>
+#include <vtkPolygonalSurfacePointPlacer.h>
+#include <vtkMath.h>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager );
-vtkCxxRevisionMacro ( vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.1 $");
+vtkCxxRevisionMacro (vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $");
 
-// Constructors
+//---------------------------------------------------------------------------
 vtkMRMLAnnotationTextDisplayableManager::vtkMRMLAnnotationTextDisplayableManager()
 {
-
-  this->NodeID = NULL;
-  this->ViewerWidget = NULL;
+  this->NodeID = 0;
+  this->ViewerWidget = 0;
   this->Updating3DWidget = 0;
-
 }
 
-// Destructor
+//---------------------------------------------------------------------------
 vtkMRMLAnnotationTextDisplayableManager::~vtkMRMLAnnotationTextDisplayableManager()
 {
-
-  this->NodeID=NULL;
+  //this->RemoveMRMLObservers();
+  //this->setMRMLScene(0);
 }
 
 //---------------------------------------------------------------------------
-/*vtkMRMLAnnotationTextDisplayableManager::vtkMRMLAnnotationTextDisplayableManager ( )
- {
- this->NodeID = NULL;
- this->ViewerWidget = NULL;
- this->Updating3DWidget = 0;
- }*/
-
-//---------------------------------------------------------------------------
-/*vtkMRMLAnnotationTextDisplayableManager::~vtkMRMLAnnotationTextDisplayableManager ( )
- {
- this->RemoveMRMLObservers();
-
- // 3d widgets
- //this->SetMRMLScene ( NULL );
- 
- }*/
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
- {
- this->Superclass::PrintSelf ( os, indent );
- }
+void vtkMRMLAnnotationTextDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
-    unsigned long event, void *callData)
+                                                                unsigned long event,
+                                                                void *callData)
 {/*
  this->ProcessingMRMLEvent = event;
 
  vtkMRMLAnnotationTextNode *callerNode = vtkMRMLAnnotationTextNode::SafeDownCast(caller);
- vtkMRMLAnnotationTextNode *callDataNode =  NULL;
+ vtkMRMLAnnotationTextNode *callDataNode =  0;
  callDataNode = reinterpret_cast<vtkMRMLAnnotationTextNode *>(callData);
  vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
 
  // the scene was closed, don't get node removed events so clear up here
- if (callScene != NULL && event == vtkMRMLScene::SceneCloseEvent)
+ if (callScene != 0 && event == vtkMRMLScene::SceneCloseEvent)
  {
  //vtkDebugMacro("ProcessMRMLEvents: got a scene close event");
  // the lists are already gone from the scene, so need to clear out all the
@@ -105,30 +70,30 @@ void vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *calle
  return;
  }
  // first check to see if there was a ruler list node deleted
- else if (callScene != NULL && callScene == this->MRMLScene && event == vtkMRMLScene::NodeRemovedEvent)
+ else if (callScene != 0 && callScene == this->MRMLScene && event == vtkMRMLScene::NodeRemovedEvent)
  {
  //vtkDebugMacro("ProcessMRMLEvents: got a node deleted event on scene");
  // check to see if it was the current node that was deleted
- if (callData != NULL)
+ if (callData != 0)
  {
  vtkMRMLAnnotationTextNode *delNode = reinterpret_cast<vtkMRMLAnnotationTextNode*>(callData);
- if (delNode != NULL && delNode->IsA("vtkMRMLAnnotationTextNode"))
+ if (delNode != 0 && delNode->IsA("vtkMRMLAnnotationTextNode"))
  {
- //vtkDebugMacro("A ruler node got deleted " << (delNode->GetID() == NULL ? "null" : delNode->GetID()));
+ //vtkDebugMacro("A ruler node got deleted " << (delNode->GetID() == 0 ? "0" : delNode->GetID()));
  this->RemoveTextWidget(delNode);
  }
  }
  }
- else if (callScene != NULL && event == vtkMRMLScene::NodeAddedEvent && callDataNode != NULL && vtkMRMLAnnotationTextNode::SafeDownCast ( (vtkObjectBase *)callData ))
+ else if (callScene != 0 && event == vtkMRMLScene::NodeAddedEvent && callDataNode != 0 && vtkMRMLAnnotationTextNode::SafeDownCast ( (vtkObjectBase *)callData ))
  {
  this->Update3DWidget(callDataNode);
  this->RequestRender();
  }
- else if (callerNode != NULL && event == vtkMRMLAnnotationNode::LockModifiedEvent)
+ else if (callerNode != 0 && event == vtkMRMLAnnotationNode::LockModifiedEvent)
  {
  this->UpdateLockUnlock(callerNode);
  }
- else if (callerNode != NULL && event == vtkCommand::ModifiedEvent)
+ else if (callerNode != 0 && event == vtkCommand::ModifiedEvent)
  {
  this->UpdateWidget(callerNode);
  this->RequestRender();
@@ -139,9 +104,9 @@ void vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *calle
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::Update3DWidget(vtkMRMLAnnotationTextNode *activeNode)
 {/*
- if (activeNode == NULL)
+ if (activeNode == 0)
  {
- //vtkDebugMacro("Update3DWidget: passed in node is null, returning");
+ //vtkDebugMacro("Update3DWidget: passed in node is 0, returning");
  return;
  }
 
@@ -229,7 +194,7 @@ void vtkMRMLAnnotationTextDisplayableManager::RemoveMRMLObservers()
  {
  node->RemoveObservers(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
  }
- node = NULL;
+ node = 0;
  }
  //events->Delete();
 
@@ -249,7 +214,7 @@ void vtkMRMLAnnotationTextDisplayableManager::AddTextWidget(vtkMRMLAnnotationTex
     {
     return;
     }
-  if (this->GetTextWidget(node->GetID()) != NULL)
+  if (this->GetTextWidget(node->GetID()) != 0)
     {
     //vtkDebugMacro("Already have widgets for node " << node->GetID());
     return;
@@ -261,8 +226,7 @@ void vtkMRMLAnnotationTextDisplayableManager::AddTextWidget(vtkMRMLAnnotationTex
 }
 
 //---------------------------------------------------------------------------
-vtkTextWidget*
-vtkMRMLAnnotationTextDisplayableManager::GetTextWidget(const char *nodeID)
+vtkTextWidget* vtkMRMLAnnotationTextDisplayableManager::GetTextWidget(const char *nodeID)
 {/*
  std::map<std::string, vtkTextWidget *>::iterator iter;
  for (iter = this->TextWidgets.begin(); iter != this->TextWidgets.end(); iter++)
@@ -272,7 +236,7 @@ vtkMRMLAnnotationTextDisplayableManager::GetTextWidget(const char *nodeID)
  return iter->second;
  }
  }*/
-  return NULL;
+  return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -282,7 +246,7 @@ void vtkMRMLAnnotationTextDisplayableManager::RemoveTextWidget(vtkMRMLAnnotation
  {
  return;
  }
- if (this->GetTextWidget(node->GetID()) != NULL)
+ if (this->GetTextWidget(node->GetID()) != 0)
  {
  this->TextWidgets[node->GetID()]->Delete();
  this->TextWidgets.erase(node->GetID());
@@ -323,21 +287,9 @@ void vtkMRMLAnnotationTextDisplayableManager::RemoveTextWidgets()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::RequestRender()
-{
-  //this->GetViewerWidget()->RequestRender();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::Render()
-{
-  //this->GetViewerWidget()->Render();
-}
-
-//---------------------------------------------------------------------------
 /*void vtkMRMLAnnotationTextDisplayableManager::SetViewerWidget ( vtkSlicerViewerWidget *viewerWidget )
  {
- if (this->ViewerWidget != NULL)
+ if (this->ViewerWidget != 0)
  {
  // TODO: figure out if this is necessary
  this->RemoveTextWidgets();
@@ -367,13 +319,13 @@ void vtkMRMLAnnotationTextDisplayableManager::Render()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
 {
-  /*bool isNull = false;
-   if (this->GetViewerWidget() == NULL ||
-   this->GetViewerWidget()->GetMainViewer() == NULL ||
-   this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor() == NULL)
+  /*bool is0 = false;
+   if (this->GetViewerWidget() == 0 ||
+   this->GetViewerWidget()->GetMainViewer() == 0 ||
+   this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor() == 0)
    {
-   //vtkDebugMacro("UpdateSplineWidgetInteractors: viewer widget or main viewer are null, resetting to null");
-   isNull = true;
+   //vtkDebugMacro("UpdateSplineWidgetInteractors: viewer widget or main viewer are 0, resetting to 0");
+   is0 = true;
    }
 
    std::map<std::string, vtkTextWidget *>::iterator iter;
@@ -381,16 +333,16 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
    {
    if (iter->second)
    {
-   if (isNull)
+   if (is0)
    {
-   iter->second->SetInteractor(NULL);
+   iter->second->SetInteractor(0);
    }
    else
    {
    iter->second->SetInteractor(this->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor());
    }
    // now update the visibility for the ruler
-   vtkMRMLAnnotationTextNode *splineNode = NULL;
+   vtkMRMLAnnotationTextNode *splineNode = 0;
    if (this->GetMRMLScene())
    {
    vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(iter->first.c_str());
@@ -399,7 +351,7 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
    splineNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
    }
    }
-   if (splineNode != NULL)
+   if (splineNode != 0)
    {
    //this->Update3DWidgetVisibility(roiNode);
    }
@@ -407,30 +359,42 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
    }*/
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosingEvent(vtkMRMLScene* /*scene*/)
 {
 }
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneCloseEvent(vtkMRMLScene* /*scene*/)
 {
 }
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadStartEvent(vtkMRMLScene* /*scene*/)
 {
 }
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadEndEvent(vtkMRMLScene* /*scene*/)
 {
 }
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneRestoredEvent(vtkMRMLScene* /*scene*/)
 {
 }
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLScene* /*scene*/,
-    vtkMRMLNode* /*node*/)
-{
-}
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* /*scene*/,
-    vtkMRMLNode* /*node*/)
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLScene* /*scene*/, vtkMRMLNode* /*node*/)
 {
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* /*scene*/, vtkMRMLNode* /*node*/)
+{
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::UpdateFromMRML()
 {
 
@@ -439,7 +403,7 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdateFromMRML()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::UpdateLockUnlock(vtkMRMLAnnotationTextNode* textNode)
 {
-  if (textNode == NULL)
+  if (textNode == 0)
     {
     return;
     }
@@ -461,10 +425,12 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdateLockUnlock(vtkMRMLAnnotation
     }
 }
 
-void vtkMRMLAnnotationTextDisplayableManager::UpdateWidget(vtkMRMLAnnotationTextNode *activeNode)
+void
+vtkMRMLAnnotationTextDisplayableManager::UpdateWidget(
+    vtkMRMLAnnotationTextNode *activeNode)
 {
   vtkTextWidget *widget = this->GetTextWidget(activeNode->GetID());
-  if (widget == NULL)
+  if (widget == 0)
     {
     return;
     }

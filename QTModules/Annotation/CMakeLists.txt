@@ -18,13 +18,13 @@ SET(DisplayableManager_SRCS
   )
 
 # Create the instantiator for DisplayableManager classes.
-#SET(VTK_USE_INSTANTIATOR_NEW 1)
-#VTK_MAKE_INSTANTIATOR3("qSlicer${qt_module_title}ModuleInstantiator"
-#  DisplayableManagerInstantiator_SRCS
-#  "${DisplayableManager_SRCS}"
-#  "${qt_module_export_directive}"
-#  ${CMAKE_CURRENT_BINARY_DIR}
-#  "qSlicer${qt_module_title}ModuleExport.h")
+SET(VTK_USE_INSTANTIATOR_NEW 1)
+VTK_MAKE_INSTANTIATOR3("qSlicer${qt_module_title}ModuleInstantiator"
+  DisplayableManagerInstantiator_SRCS
+  "${DisplayableManager_SRCS}"
+  "${qt_module_export_directive}"
+  ${CMAKE_CURRENT_BINARY_DIR}
+  "qSlicer${qt_module_title}ModuleExport.h")
 
 # Source files
 SET(qt_module_SRCS
