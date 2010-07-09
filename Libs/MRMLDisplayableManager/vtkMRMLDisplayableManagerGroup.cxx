@@ -92,12 +92,6 @@ vtkMRMLDisplayableManagerGroup::vtkMRMLDisplayableManagerGroup()
 vtkMRMLDisplayableManagerGroup::~vtkMRMLDisplayableManagerGroup()
 {
   this->SetAndObserveDisplayableManagerFactory(0);
-
-  for(std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
-    {
-    this->Internal->DisplayableManagers[i]->RemoveMRMLObservers();
-    }
-
   this->SetMRMLViewNode(0);
 
   for(size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
@@ -399,7 +393,6 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryUnRegisteredEven
   this->Internal->DisplayableManagers.erase(it2);
 
   // Clean memory
-  displayableManager->RemoveMRMLObservers();
   displayableManager->Delete();
 
   // Remove it from the map

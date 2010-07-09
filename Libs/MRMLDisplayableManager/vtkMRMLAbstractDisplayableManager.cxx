@@ -79,6 +79,8 @@ vtkMRMLAbstractDisplayableManager::vtkMRMLAbstractDisplayableManager()
 //----------------------------------------------------------------------------
 vtkMRMLAbstractDisplayableManager::~vtkMRMLAbstractDisplayableManager()
 {
+  this->RemoveMRMLObservers();
+
   if (this->Internal->Renderer)
     {
     this->Internal->Renderer->UnRegister(this);
