@@ -51,13 +51,13 @@ public:
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLEvents
-  virtual void OnMRMLSceneClosingEvent(vtkMRMLScene* scene);
-  virtual void OnMRMLSceneCloseEvent(vtkMRMLScene* scene);
-  virtual void OnMRMLSceneLoadStartEvent(vtkMRMLScene* scene);
-  virtual void OnMRMLSceneLoadEndEvent(vtkMRMLScene* scene);
-  virtual void OnMRMLSceneRestoredEvent(vtkMRMLScene* scene);
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLScene* scene, vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* scene, vtkMRMLNode* node);
+  virtual void OnMRMLSceneClosingEvent();
+  virtual void OnMRMLSceneCloseEvent();
+  virtual void OnMRMLSceneLoadStartEvent();
+  virtual void OnMRMLSceneLoadEndEvent();
+  virtual void OnMRMLSceneRestoredEvent();
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
   /// Check scene to make sure that have a widget for each ruler node, and no extra widgets...
   void Update3DWidget(vtkMRMLAnnotationTextNode *activeNode);

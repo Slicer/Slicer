@@ -69,20 +69,20 @@ void vtkMRMLCameraDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneCloseEvent(vtkMRMLScene* vtkNotUsed(scene))
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneCloseEvent()
 {
   this->RemoveCameraObservers();
   this->SetAndObserveCameraNode(0);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneLoadEndEvent(vtkMRMLScene* vtkNotUsed(scene))
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneLoadEndEvent()
 {
   this->UpdateCameraNode();
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneRestoredEvent(vtkMRMLScene* scene)
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneRestoredEvent()
 {
   assert(this->GetMRMLViewNode());
   if (!this->GetMRMLViewNode())
@@ -98,7 +98,8 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneRestoredEvent(vtkMRMLScene* sce
   vtkMRMLCameraNode *camera_node = this->Internal->CameraNode;
   if (!camera_node)
     {
-    camera_node = vtkMRMLCameraNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
+    camera_node = vtkMRMLCameraNode::SafeDownCast(
+        this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
     camera_node->SetActiveTag(this->GetMRMLViewNode()->GetID());
     }
   else if (!camera_node->GetActiveTag())
@@ -108,8 +109,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneRestoredEvent(vtkMRMLScene* sce
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLScene* scene,
-                                                                    vtkMRMLNode* node)
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
   vtkEventBroker::GetInstance()->AddObservation(
       node, vtkMRMLCameraNode::ActiveTagModifiedEvent,
@@ -117,8 +117,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLScene* sc
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* scene,
-                                                                      vtkMRMLNode* node)
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
 {
   vtkEventBroker::GetInstance()->RemoveObservations(
       node, vtkMRMLCameraNode::ActiveTagModifiedEvent,
@@ -127,9 +126,9 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::ProcessMRMLEvents(vtkObject *caller, 
-                                                            unsigned long event, 
-                                                            void *callData)
+void vtkMRMLCameraDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
+                                                        unsigned long event,
+                                                        void *callData)
 {
   if (vtkMRMLCameraNode::SafeDownCast(caller))
     {

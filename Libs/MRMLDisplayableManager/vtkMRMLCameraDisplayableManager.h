@@ -42,11 +42,11 @@ protected:
 
   virtual void Create();
 
-  virtual void OnMRMLSceneCloseEvent(vtkMRMLScene* scene);
-  virtual void OnMRMLSceneLoadEndEvent(vtkMRMLScene* scene);
-  virtual void OnMRMLSceneRestoredEvent(vtkMRMLScene* scene);
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLScene* scene, vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* scene, vtkMRMLNode* node);
+  virtual void OnMRMLSceneCloseEvent();
+  virtual void OnMRMLSceneLoadEndEvent();
+  virtual void OnMRMLSceneRestoredEvent();
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
   void SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode);
   

@@ -360,37 +360,37 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosingEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosingEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneCloseEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneCloseEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadStartEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadStartEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadEndEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadEndEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneRestoredEvent(vtkMRMLScene* /*scene*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneRestoredEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLScene* /*scene*/, vtkMRMLNode* /*node*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* /*node*/)
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLScene* /*scene*/, vtkMRMLNode* /*node*/)
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/)
 {
 }
 

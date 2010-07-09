@@ -273,7 +273,7 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     }
 
   vtkMRMLScene * scene = vtkMRMLScene::SafeDownCast(caller);
-  assert(scene);
+  assert(scene == this->GetMRMLScene());
 
   vtkMRMLNode * node = 0;
 
@@ -282,29 +282,29 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
   switch(event)
     {
     case vtkMRMLScene::SceneClosingEvent:
-      this->OnMRMLSceneClosingEvent(scene);
+      this->OnMRMLSceneClosingEvent();
       break;
     case vtkMRMLScene::SceneCloseEvent:
-      this->OnMRMLSceneCloseEvent(scene);
+      this->OnMRMLSceneCloseEvent();
       break;
     case vtkMRMLScene::SceneLoadStartEvent:
-      this->OnMRMLSceneLoadStartEvent(scene);
+      this->OnMRMLSceneLoadStartEvent();
       break;
     case vtkMRMLScene::SceneLoadEndEvent:
-      this->OnMRMLSceneLoadEndEvent(scene);
+      this->OnMRMLSceneLoadEndEvent();
       break;
     case vtkMRMLScene::SceneRestoredEvent:
-      this->OnMRMLSceneRestoredEvent(scene);
+      this->OnMRMLSceneRestoredEvent();
       break;
     case vtkMRMLScene::NodeAddedEvent:
       node = reinterpret_cast<vtkMRMLNode*>(callData);
       assert(node);
-      this->OnMRMLSceneNodeAddedEvent(scene, node);
+      this->OnMRMLSceneNodeAddedEvent(node);
       break;
     case vtkMRMLScene::NodeRemovedEvent:
       node = reinterpret_cast<vtkMRMLNode*>(callData);
       assert(node);
-      this->OnMRMLSceneNodeRemovedEvent(scene, node);
+      this->OnMRMLSceneNodeRemovedEvent(node);
       break;
     }
 
