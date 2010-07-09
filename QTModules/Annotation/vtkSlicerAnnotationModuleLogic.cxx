@@ -1810,17 +1810,21 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 {   
 
   // get an instance of the manager
-  vtkMRMLAnnotationDisplayableManager* m = vtkMRMLAnnotationTextDisplayableManager::New();
-  m->RegisterManager();
+//  vtkMRMLAnnotationDisplayableManager* m;
+//  m = vtkMRMLAnnotationTextDisplayableManager::GetInstance();
+//
+//  if (m==NULL) {
+//
+//      fprintf(stderr, "Could not get the Annotation Text Displayable Manager!\r\n");
+//      return NULL;
+//  }
 
-  if (m==NULL) {
-
-      fprintf(stderr, "Could not get the Annotation Text Displayable Manager!\r\n");
-      return NULL;
-  }
+  // Register the DisplayableManager using the factory
+  vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+      "vtkMRMLAnnotationTextDisplayableManager");
 
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-    textNode->Initialize(m->GetMRMLScene());
+    textNode->Initialize(this->GetMRMLScene());
 
     // need a unique name since the storage node will be named from it
     if (textNode->GetScene())

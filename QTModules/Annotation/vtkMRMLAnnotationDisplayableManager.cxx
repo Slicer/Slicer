@@ -43,68 +43,68 @@ void vtkMRMLAnnotationDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 bool vtkMRMLAnnotationDisplayableManager::RegisterManager()
 {
 
-  int cnt = qSlicerApplication::application()->layoutManager()->threeDRenderViewCount();
-
-  if (cnt > 0 && (this != NULL))
-    {
-    vtkDebugMacro("Starting registration of a new displayable manager instance...");
-
-    // at least one render view exists, get the first
-
-    qSlicerApplication * application = qSlicerApplication::application();
-    qSlicerLayoutManager * layoutManager = NULL;
-    qMRMLThreeDRenderView * threeDRenderView = NULL;
-    vtkMRMLDisplayableManagerFactory * displayableManagerFactory = NULL;
-    if (application != NULL)
-      {
-      layoutManager = application->layoutManager();
-      }
-    else
-      {
-      vtkErrorMacro("Could not get the application!");
-      return false;
-      }
-    if (layoutManager != NULL)
-      {
-
-      threeDRenderView = layoutManager->threeDRenderView(0);
-
-      }
-    else
-      {
-      vtkErrorMacro("Could not get the layout manager!");
-      return false;
-      }
-
-    if (threeDRenderView != NULL)
-      {
-      displayableManagerFactory = threeDRenderView->displayableManagerFactory();
-      }
-    else
-      {
-
-      vtkErrorMacro("Could not get the 3D Render View!");
-      return false;
-      }
-
-    // make sure we got the factory
-    Q_ASSERT(displayableManagerFactory);
-
-    if (displayableManagerFactory != NULL)
-      {
-
-      displayableManagerFactory->RegisterDisplayableManager(this);
-      displayableManagerFactory->SetMRMLViewNode(displayableManagerFactory->GetMRMLViewNode());
-
-      }
-    else
-      {
-      vtkErrorMacro("Could not get displayable manager factory!");
-      return false;
-      }
-
-    return true;
-    }
+//  int cnt = qSlicerApplication::application()->layoutManager()->threeDRenderViewCount();
+//
+//  if (cnt > 0 && (this != NULL))
+//    {
+//    vtkDebugMacro("Starting registration of a new displayable manager instance...");
+//
+//    // at least one render view exists, get the first
+//
+//    qSlicerApplication * application = qSlicerApplication::application();
+//    qSlicerLayoutManager * layoutManager = NULL;
+//    qMRMLThreeDRenderView * threeDRenderView = NULL;
+//    vtkMRMLDisplayableManagerFactory * displayableManagerFactory = NULL;
+//    if (application != NULL)
+//      {
+//      layoutManager = application->layoutManager();
+//      }
+//    else
+//      {
+//      vtkErrorMacro("Could not get the application!");
+//      return false;
+//      }
+//    if (layoutManager != NULL)
+//      {
+//
+//      threeDRenderView = layoutManager->threeDRenderView(0);
+//
+//      }
+//    else
+//      {
+//      vtkErrorMacro("Could not get the layout manager!");
+//      return false;
+//      }
+//
+//    if (threeDRenderView != NULL)
+//      {
+//      displayableManagerFactory = threeDRenderView->displayableManagerFactory();
+//      }
+//    else
+//      {
+//
+//      vtkErrorMacro("Could not get the 3D Render View!");
+//      return false;
+//      }
+//
+//    // make sure we got the factory
+//    Q_ASSERT(displayableManagerFactory);
+//
+//    if (displayableManagerFactory != NULL)
+//      {
+//
+//      displayableManagerFactory->RegisterDisplayableManager(this);
+//      displayableManagerFactory->SetMRMLViewNode(displayableManagerFactory->GetMRMLViewNode());
+//
+//      }
+//    else
+//      {
+//      vtkErrorMacro("Could not get displayable manager factory!");
+//      return false;
+//      }
+//
+//    return true;
+//    }
 
   // something went wrong
   return false;
