@@ -22,7 +22,6 @@ ADD_SUBDIRECTORY(Logic)
 
 # --------------------------------------------------------------------------
 # Include dirs
-MESSAGE("tototot: ${vtkSlicerTractographyDisplayModuleLogic_SOURCE_DIR}")
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
