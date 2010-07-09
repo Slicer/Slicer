@@ -96,9 +96,6 @@ protected:
   /// Note that GetRenderer() and GetMRMLViewNode() will return valid object
   virtual void Create(){}
 
-  /// Return the event id currently processed or 0 if any.
-  int GetProcessingMRMLEvent();
-
   /// Remove MRML observers
   virtual void RemoveMRMLObservers();
 

@@ -34,6 +34,7 @@ public:
 
   vtkObserverManager * MRMLObserverManager;
   int                  InMRMLCallbackFlag;
+  int                  ProcessingMRMLEvent;
 
   vtkCallbackCommand * LogicCallbackCommand;
   int                  InLogicCallbackFlag;
@@ -49,6 +50,7 @@ vtkMRMLAbstractLogic::vtkInternal::vtkInternal()
 
   this->MRMLObserverManager = vtkObserverManager::New();
   this->InMRMLCallbackFlag = false;
+  this->ProcessingMRMLEvent = 0;
 
   this->InLogicCallbackFlag = false;
   this->LogicCallbackCommand = vtkCallbackCommand::New();
@@ -116,7 +118,9 @@ void vtkMRMLAbstractLogic::MRMLCallback(vtkObject *caller,unsigned long eid,
   vtkDebugWithObjectMacro(self, "In vtkMRMLAbstractLogic MRMLCallback");
 
   self->SetInMRMLCallbackFlag(1);
+  self->SetProcessingMRMLEvent(eid);
   self->ProcessMRMLEvents(caller, eid, callData);
+  self->SetProcessingMRMLEvent(0);
   self->SetInMRMLCallbackFlag(0);
 }
 
@@ -230,10 +234,25 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, 
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLAbstractLogic::GetProcessingMRMLEvent()
+{
+  vtkDebugMacro("returning Internal->ProcessingMRMLEvent of "
+                << this->Internal->ProcessingMRMLEvent);
+  return this->Internal->ProcessingMRMLEvent;
+}
+
+//----------------------------------------------------------------------------
 // NOTE: Do *NOT* use the SetMacro or it call modified itself and generate even more events !
 void vtkMRMLAbstractLogic::SetInLogicCallbackFlag(int flag)
 {
   this->Internal->InLogicCallbackFlag = flag;
+}
+
+//----------------------------------------------------------------------------
+// NOTE: Do *NOT* use the SetMacro or it call modified itself and generate even more events !
+void vtkMRMLAbstractLogic::SetProcessingMRMLEvent(int event)
+{
+  this->Internal->ProcessingMRMLEvent = event;
 }
 
 //----------------------------------------------------------------------------

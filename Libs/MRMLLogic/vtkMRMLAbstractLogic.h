@@ -120,8 +120,10 @@ public:
   /// Get Logic CallbackCommand
   vtkCallbackCommand * GetLogicCallbackCommand();
 
-  /// Set / Get flags to avoid event loops
-  void SetInLogicCallbackFlag(int flag);
+  /// Return the event id currently processed or 0 if any.
+  int GetProcessingMRMLEvent();
+
+  /// Get flags to avoid event loops
   int GetInLogicCallbackFlag();
 
 protected:
@@ -134,6 +136,12 @@ protected:
   virtual void RegisterNodes(){}
 
   //BTX
+  /// Set flags to avoid event loops
+  void SetInLogicCallbackFlag(int flag);
+
+  /// Set event id currently processed or 0 if any.
+  void SetProcessingMRMLEvent(int event);
+
   /// MRMLCallback is a static function to relay modified events from the MRML Scene
   /// In subclass, MRMLCallback can also be used to relay event from observe MRML node(s)
   static void MRMLCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);

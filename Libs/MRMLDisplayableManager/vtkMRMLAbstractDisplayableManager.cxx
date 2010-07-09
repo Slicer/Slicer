@@ -47,7 +47,6 @@ public:
 
   bool                                Initialized;
   bool                                Created;
-  int                                 ProcessingMRMLEvent;
   bool                                UpdateFromMRMLRequested;
   vtkRenderer *                       Renderer;
   vtkMRMLViewNode *                   MRMLViewNode;
@@ -62,7 +61,6 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal()
 {
   this->Initialized = false;
   this->Created = false;
-  this->ProcessingMRMLEvent = 0;
   this->UpdateFromMRMLRequested = false;
   this->Renderer = 0;
   this->MRMLViewNode = 0;
@@ -219,15 +217,6 @@ void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLViewNode(vtkMRMLViewNod
   vtkSetAndObserveMRMLNodeMacro(this->Internal->MRMLViewNode, newMRMLViewNode);
 }
 
-//----------------------------------------------------------------------------
-int vtkMRMLAbstractDisplayableManager::GetProcessingMRMLEvent()
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->ProcessingMRMLEvent of "
-                << this->Internal->ProcessingMRMLEvent);
-  return this->Internal->ProcessingMRMLEvent;
-}
-
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::SetUpdateFromMRMLRequested(bool requested)
 {
@@ -267,7 +256,7 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                           void *callData)
 {
   // Sanity checks
-  if (this->Internal->ProcessingMRMLEvent != 0)
+  if (this->GetInMRMLCallbackFlag())
     {
     return;
     }
@@ -276,8 +265,6 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
   assert(scene == this->GetMRMLScene());
 
   vtkMRMLNode * node = 0;
-
-  this->Internal->ProcessingMRMLEvent = event;
 
   switch(event)
     {
@@ -307,7 +294,5 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
       this->OnMRMLSceneNodeRemovedEvent(node);
       break;
     }
-
-  this->Internal->ProcessingMRMLEvent = 0;
 }
 
