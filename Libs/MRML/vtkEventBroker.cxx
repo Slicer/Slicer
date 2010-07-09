@@ -68,7 +68,7 @@ vtkEventBroker* vtkEventBroker::New()
 }
 
 //----------------------------------------------------------------------------
-// Return the single instance of the vtkOutputWindow
+// Return the single instance of the vtkEventBroker
 vtkEventBroker* vtkEventBroker::GetInstance()
 {
   if(!vtkEventBrokerInstance)
