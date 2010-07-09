@@ -684,7 +684,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
       }
     }
 
-  int retval = vtkRegressionTestImageThreshold(rw, 80.0);
+  int retval = vtkRegressionTestImageThreshold(rw, 85.0);
   if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
     {
     factory->GetInteractor()->Initialize();
