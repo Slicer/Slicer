@@ -71,8 +71,8 @@ protected:
   virtual ~vtkMRMLAbstractDisplayableManager();
 
   //BTX
-  friend class vtkMRMLDisplayableManagerGroup; // Access to RemoveMRMLObservers()
-  friend class vtkMRMLDisplayableManagerFactory;
+  /// Access to Initialize, SetMRMLViewNode and CreateIfPossible methods
+  friend class vtkMRMLDisplayableManagerGroup;
   //ETX
 
   /// Set Renderer and Interactor

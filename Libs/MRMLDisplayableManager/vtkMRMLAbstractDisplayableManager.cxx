@@ -95,8 +95,7 @@ void vtkMRMLAbstractDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerGroup * vtkMRMLAbstractDisplayableManager::GetDisplayableManagerGroup()
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->DisplayableManagerGroup address "
+  vtkDebugMacro("returning Internal->DisplayableManagerGroup address "
                 << this->Internal->DisplayableManagerGroup );
   return this->Internal->DisplayableManagerGroup;
 }
@@ -140,10 +139,11 @@ void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerGrou
   this->Internal->Renderer = newRenderer;
   this->Internal->Renderer->Register(this);
 
-  this->Internal->Initialized = true;
+  this->AdditionnalInitializeStep();
 
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "initializing with Group " << group << " and Renderer " << newRenderer);
+  vtkDebugMacro("initializing with Group " << group << " and Renderer " << newRenderer);
+
+  this->Internal->Initialized = true;
 
   this->Modified();
 }
@@ -151,25 +151,21 @@ void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerGrou
 //----------------------------------------------------------------------------
 bool vtkMRMLAbstractDisplayableManager::IsInitialized()
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->Initialized of "
-                << this->Internal->Initialized);
+  vtkDebugMacro("returning Internal->Initialized of " << this->Internal->Initialized);
   return this->Internal->Initialized;
 }
 
+//----------------------------------------------------------------------------
 bool vtkMRMLAbstractDisplayableManager::IsCreated()
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->Created of "
-                << this->Internal->Created);
+  vtkDebugMacro("returning Internal->Created of "<< this->Internal->Created);
   return this->Internal->Created;
 }
 
 //---------------------------------------------------------------------------
 vtkRenderer * vtkMRMLAbstractDisplayableManager::GetRenderer()
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->Renderer address " << this->Internal->Renderer );
+  vtkDebugMacro("returning Internal->Renderer address " << this->Internal->Renderer );
   return this->Internal->Renderer;
 }
 
@@ -181,8 +177,7 @@ vtkRenderWindowInteractor * vtkMRMLAbstractDisplayableManager::GetInteractor()
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning Interactor address 0");
     return 0;
     }
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->Renderer->GetRenderWindow()->GetInteractor() address "
+  vtkDebugMacro("returning Internal->Renderer->GetRenderWindow()->GetInteractor() address "
                 << this->Internal->Renderer->GetRenderWindow()->GetInteractor() );
   return this->Internal->Renderer->GetRenderWindow()->GetInteractor();
 }
@@ -190,8 +185,7 @@ vtkRenderWindowInteractor * vtkMRMLAbstractDisplayableManager::GetInteractor()
 //---------------------------------------------------------------------------
 vtkMRMLViewNode * vtkMRMLAbstractDisplayableManager::GetMRMLViewNode()
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "returning Internal->MRMLViewNode address " << this->Internal->MRMLViewNode );
+  vtkDebugMacro("returning Internal->MRMLViewNode address " << this->Internal->MRMLViewNode );
   return this->Internal->MRMLViewNode;
 }
 
