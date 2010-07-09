@@ -1,17 +1,23 @@
-#include "qSlicerAnnotationModule.h"
 
-// SlicerQT includes
+// Qt includes
+#include <QtPlugin>
+
+// MRMLDisplayableManager includes
+#include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLAbstractDisplayableManager.h>
+
+// qMRMLWidgets includes
+#include <qMRMLThreeDRenderView.h>
+
+// QTGUI includes
+#include <qSlicerApplication.h>
+#include <qSlicerLayoutManager.h>
+
+// AnnotationModule includes
+#include "vtkMRMLAnnotationTextDisplayableManager.h"
+#include "qSlicerAnnotationModule.h"
 #include "qSlicerAnnotationModuleWidget.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
-#include "qSlicerApplication.h"
-#include "qSlicerLayoutManager.h"
-#include "qMRMLThreeDRenderView.h"
-#include "vtkMRMLDisplayableManagerFactory.h"
-
-#include "vtkMRMLAbstractDisplayableManager.h"
-
-// QT includes
-#include <QtPlugin>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerAnnotationModule, qSlicerAnnotationModule);
@@ -26,6 +32,13 @@ class qSlicerAnnotationModulePrivate: public ctkPrivate<qSlicerAnnotationModule>
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAnnotationModule, QObject*);
 
 //-----------------------------------------------------------------------------
+void qSlicerAnnotationModule::setup()
+{
+  //vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::GetInstance();
+  //factory->RegisterDisplayableManager("vtkMRMLAnnotationTextDisplayableManager");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerAnnotationModule::createWidgetRepresentation()
 {
   return new qSlicerAnnotationModuleWidget;
@@ -34,15 +47,11 @@ qSlicerAbstractModuleRepresentation* qSlicerAnnotationModule::createWidgetRepres
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerAnnotationModule::createLogic()
 {
-
   return vtkSlicerAnnotationModuleLogic::New();
 }
 
-
-
-/**
-  * Return the help text.
-  */
-QString qSlicerAbstractLoadableModule::helpText() const {
+//-----------------------------------------------------------------------------
+QString qSlicerAbstractLoadableModule::helpText() const
+{
   return "The Annotation module.";
 }

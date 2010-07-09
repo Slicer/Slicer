@@ -33,6 +33,10 @@ public:
 
 protected:
 
+  ///
+  /// All initialization code should be done in the setup
+  virtual void setup();
+
   // Description:
   // Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
