@@ -50,7 +50,10 @@ void qSlicerMainWindowCorePrivate::onModuleLoaded(qSlicerAbstractModule* module)
 
   qSlicerAbstractModuleWidget* moduleWidget =
     dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
-  Q_ASSERT(moduleWidget);
+  if (!moduleWidget)
+    {
+    return;
+    }
 
   QAction * action = moduleWidget->showModuleAction();
   if (action)
