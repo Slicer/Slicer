@@ -95,7 +95,6 @@ SET(KIT_target_libraries
   MRMLDisplayableManager
   qSlicerBaseQTCore
   qMRMLWidgets
-
   )
 
 # Python wrap

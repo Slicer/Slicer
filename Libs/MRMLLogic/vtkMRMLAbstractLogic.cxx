@@ -196,6 +196,7 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLScene(vtkMRMLScene *newScene)
     {
     return;
     }
+
   vtkObject *oldValue = this->Internal->MRMLScene;
   this->Internal->MRMLObserverManager->SetAndObserveObject(
       vtkObjectPointer(&this->Internal->MRMLScene), newScene);

@@ -18,7 +18,7 @@ SET(packages
   MRML
   ModuleDescriptionParser
   )
-  
+
 FOREACH(package 
     ${packages}
     )
