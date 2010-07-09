@@ -669,6 +669,7 @@ int vtkMRMLScene::Connect()
   bool undoFlag = this->GetUndoFlag();
   this->SetUndoOff();
   
+  this->SetIsClosed(true);
   this->RemoveAllNodesExceptSingletons();
   this->ClearReferencedNodeID();
 
@@ -693,6 +694,7 @@ int vtkMRMLScene::Connect()
     }
     
   this->SetUndoFlag(undoFlag);
+  this->SetIsClosed(false);
   return res;
 }
 
