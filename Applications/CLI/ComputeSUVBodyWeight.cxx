@@ -170,7 +170,6 @@ struct parameters
     reader1->SetUseNativeOriginOn();
     reader1->Update();
     std::cout << "Done reading the file " << list.PETVolumeName.c_str() << endl;
-    std::cerr << "Done reading the file " << list.PETVolumeName.c_str() << endl;
 
     // Read the file
     reader2 = vtkITKArchetypeImageSeriesScalarReader::New();
@@ -181,7 +180,6 @@ struct parameters
     reader2->SetUseNativeOriginOn();
     reader2->Update();
     std::cout << "Done reading the file " << list.VOIVolumeName.c_str() << endl;
-    std::cerr << "Done reading the file " << list.VOIVolumeName.c_str() << endl;
 
     // stuff the images.
     reader1->Update();
@@ -272,7 +270,6 @@ struct parameters
     if ( voxNumber > 0 )
       {
       NumberOfVOIs++;
-      std::cerr << "Processing label value " << i << std::endl;
       double CPETmin = (labelstat->GetMin())[0];
       double CPETmax = (labelstat->GetMax())[0];
       double CPETmean = (labelstat->GetMean())[0];
@@ -307,10 +304,6 @@ struct parameters
       dose = DecayCorrection (list, dose, static_cast<char>(0));
       weight = ConvertWeightUnits ( weight, list.weightUnits.c_str(), "kg", static_cast<char>(0));
 
-      std::cerr << "tissueConversionFactor = " << tissueConversionFactor << std::endl;
-      std::cerr << "dose = " << dose << std::endl;
-      std::cerr << "weight = " << weight << std::endl;
-
       //--- check a possible multiply by slope -- take intercept into account?
       if ( dose == 0.0 )
         {
@@ -344,7 +337,6 @@ struct parameters
       ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmax << ", " << suvmean << ", " << ", " << ", " << ", " << ", "<<std::endl;
       ofile << ss.str();
       ofile.close();
-      std::cerr << "wrote to " << outputFile << ": " << ss.str() << std::endl;
       ss.str("");
       }
     
@@ -1010,13 +1002,6 @@ int main( int argc, char * argv[] )
   std::string secondstr;
   std::string tag;
 
-/*
-  for ( int i = 1; i < argc; i++ )
-    {
-    std::cerr << "argv[" << i << "]= " << argv[i] << std::endl;
-    }
-*/
-
   //... parse command line
  
   if ( argc != 9 )
@@ -1036,9 +1021,6 @@ int main( int argc, char * argv[] )
     list.parameterFile = argv[6];
     list.SUVOutputTable = argv[8];
 
-    std::cerr << "PET, LABEL, PARAMS, OUTPUT" << std::endl;
-    std::cerr << list.PETVolumeName.c_str() << list.VOIVolumeName.c_str() << list.parameterFile.c_str() << list.SUVOutputTable.c_str() << std::endl;
-    
     std::ifstream pfile;
     pfile.open ( list.parameterFile.c_str(), ios::in );
     if ( !pfile.is_open() )
@@ -1076,7 +1058,6 @@ int main( int argc, char * argv[] )
       if ( line.find ("Patient_Name: ") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.patientName = "MODULE_INIT_NO_VALUE";
 
@@ -1099,7 +1080,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Study_Date: ")!= std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.studyDate = "MODULE_INIT_NO_VALUE";
 
@@ -1164,7 +1144,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Units: ") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         std::string units = "MODULE_INIT_NO_VALUE";
 
@@ -1202,7 +1181,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Radionuclide_Total_Dose: ") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.injectedDose = 0.0;
         std::string tmp;
@@ -1228,7 +1206,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Patient's_Weight: ") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.patientWeight  = 0.0;
         std::string tmp;
@@ -1255,7 +1232,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Series_Time: ") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.seriesReferenceTime = "MODULE_INIT_NO_VALUE";
 
@@ -1314,7 +1290,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Radionuclide_Start_Time: ") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.injectionTime = "MODULE_INIT_NO_VALUE";
         std::string hourstr;
@@ -1376,7 +1351,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Decay_Correction:") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.decayCorrection = "MODULE_INIT_NO_VALUE";
 
@@ -1400,7 +1374,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("DecayFactor:") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.decayFactor = "MODULE_INIT_EMPTY_ID";
 
@@ -1425,7 +1398,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Radionuclide_Half_Life:") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.radionuclideHalfLife = "MODULE_INIT_NO_VALUE";
 
@@ -1453,7 +1425,6 @@ int main( int argc, char * argv[] )
       else if ( line.find ("Frame_Reference_Time: ") != std::string::npos )
         {
         // initialize
-        std::cerr << "line = " << line << std::endl;
         numchars = 0;
         list.frameReferenceTime = "MODULE_INIT_NO_VALUE";
 
