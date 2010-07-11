@@ -181,7 +181,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::AdaptivePerformanceControl()
   this->RaySteps *= targetTime/(this->TimeToDraw*1.5);
 
   int dim[3];
-  this->GetNthInput(0)->GetDimensions(dim);
+  this->GetVolumeDimensions(dim);
 
   float maxRaysteps = dim[0];
   maxRaysteps = maxRaysteps > dim[1] ? maxRaysteps : dim[1];
@@ -422,7 +422,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::SetupRayCastParameters(vtkRenderer *v
     volMat[i] = (GLfloat)(*(matrix->Element))[i];
 
   int dim[3];
-  this->GetNthInput(0)->GetDimensions(dim);
+  this->GetVolumeDimensions(dim);
   
   this->ParaMatrix1[0] = 1.0f / dim[0];
   this->ParaMatrix1[1] = 1.0f / dim[1];
@@ -508,7 +508,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::SetupTextures(vtkRenderer *vtkNotUsed
   if ( this->UpdateVolumes( vol ) || !this->Volume1Index || vol->GetNumberOfConsumers() > 1)
   {
     int dim[3];
-    this->GetNthInput(0)->GetDimensions(dim);
+    this->GetVolumeDimensions(dim);
 
     vtkgl::ActiveTexture( vtkgl::TEXTURE7 );
     this->DeleteTextureIndex(&this->Volume1Index);

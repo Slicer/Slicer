@@ -740,7 +740,7 @@ void vtkVolumeRenderingLogic::ComputeInternalVolumeSize(int index)
     break;
   case 1://256M
     this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
-    this->MapperGPURaycastII->SetInternalVolumeSize(256);
+    this->MapperGPURaycastII->SetInternalVolumeSize(320);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(256*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
     break;
@@ -752,7 +752,7 @@ void vtkVolumeRenderingLogic::ComputeInternalVolumeSize(int index)
     break;
   case 3://1024M
     this->MapperGPURaycast->SetInternalVolumeSize(400);
-    this->MapperGPURaycastII->SetInternalVolumeSize(600);
+    this->MapperGPURaycastII->SetInternalVolumeSize(620);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(1024*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
     break;
