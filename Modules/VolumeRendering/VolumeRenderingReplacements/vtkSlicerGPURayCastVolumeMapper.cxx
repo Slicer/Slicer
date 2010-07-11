@@ -262,41 +262,11 @@ void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *vtkNot
         vtkErrorMacro(<< "OpenGL guarantees only 6 additional clipping planes");
       }
 
-        double lowerBounds[3];
-        double upperBounds[3];
+      double lowerBounds[3];
+      double upperBounds[3];
 
-        double *pNormal = NULL;
-        double *pOrigin = NULL;
-  /*
-    //find out clip box
-    for (int i = 0; i < numClipPlanes; i++)
-    {
-        plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(i));
-        pNormal = plane->GetNormal();
-        pOrigin = plane->GetOrigin();
-
-        if (pNormal[0] > 0.85 || pNormal[0] < -0.85)//x
-        {
-            if (pNormal[0] > 0.0)//+x: min
-                lowerBounds[0] = pOrigin[0];
-            else
-                upperBounds[0] = pOrigin[0];
-        }
-        else if (pNormal[1] > 0.85 || pNormal[1] < -0.85)//y
-        {
-            if (pNormal[1] > 0.0)//+y: min
-                lowerBounds[1] = pOrigin[1];
-            else
-                upperBounds[1] = pOrigin[1];
-        }
-        else //z
-        {
-            if (pNormal[2] > 0.0)//+z: min
-                lowerBounds[2] = pOrigin[2];
-            else
-                upperBounds[2] = pOrigin[2];
-        }
-    }*/
+      double *pNormal = NULL;
+      double *pOrigin = NULL;
 
       plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(0));
       pNormal = plane->GetNormal();
@@ -481,9 +451,19 @@ void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *vtkNot
   for (int i = 0; i < 16; i++)
     volMat[i] = (GLfloat)(*(matrix->Element))[i];
 
+  int dim[3];
+  this->GetInput()->GetDimensions(dim);
+
+  this->ParaMatrix1[0] = 1.0f / dim[0];
+  this->ParaMatrix1[1] = 1.0f / dim[1];
+  this->ParaMatrix1[2] = 1.0f / dim[2];
+  
   GLint loc = vtkgl::GetUniformLocation(RayCastProgram, "ParaMatrix");
   if (loc >= 0)
     vtkgl::UniformMatrix4fv(loc, 1, false, this->ParaMatrix);
+//  loc = vtkgl::GetUniformLocation(RayCastProgram, "ParaMatrix1");
+//  if (loc >= 0)
+//    vtkgl::UniformMatrix4fv(loc, 1, false, this->ParaMatrix1);
   loc = vtkgl::GetUniformLocation(RayCastProgram, "VolumeMatrix");
   if (loc >= 0)
     vtkgl::UniformMatrix4fv(loc, 1, false, volMat);
@@ -947,6 +927,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShaders()
       "uniform sampler2D TextureColorLookup;                                                 \n"
       "uniform mat4 ParaMatrix;                                                              \n"
       "uniform mat4 VolumeMatrix;                                                            \n"
+      "//uniform mat4 ParaMatrix1;                                                             \n"
       "                                                                                      \n"
       "//ParaMatrix:                                                                         \n"
       "//EyePos.x,      EyePos.y,      EyePos.z,     Step                                    \n"
@@ -1063,19 +1044,24 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShaders()
       "vec3 voxelNormal(vec3 coord)                                                           \n"
         "{                                                                                    \n"
         "  {//on-the-fly normal estimation                                                    \n"
-        "    //vec4 sample1, sample2;                                                         \n"
-        "    //sample1.x = texture3D(TextureVol, coord + vec3(-0.01, 0.0, 0.0)).x;            \n"
-        "    //sample1.y = texture3D(TextureVol, coord + vec3(0.0, -0.01, 0.0)).x;            \n"
-        "    //sample1.z = texture3D(TextureVol, coord + vec3(0.0, 0.0, -0.01)).x;            \n"
-        "    //sample2.x = texture3D(TextureVol, coord + vec3(0.01, 0.0, 0.0)).x;             \n"
-        "    //sample2.y = texture3D(TextureVol, coord + vec3(0.0, 0.01, 0.0)).x;             \n"
-        "    //sample2.z = texture3D(TextureVol, coord + vec3(0.0, 0.0, 0.01)).x;             \n"
-        "    //vec4 normal = normalize(sample1-sample2);                                      \n"
+        "   //vec4 sample1, sample2;                                                            \n"
+        "   //sample1.x = texture3D(TextureVol, coord + vec3(-ParaMatrix1[0][0], 0.0, 0.0)).x;  \n"
+        "   //sample1.y = texture3D(TextureVol, coord + vec3(0.0, -ParaMatrix1[0][1], 0.0)).x;  \n"
+        "   //sample1.z = texture3D(TextureVol, coord + vec3(0.0, 0.0, -ParaMatrix1[0][2])).x;  \n"
+        "   //sample2.x = texture3D(TextureVol, coord + vec3(ParaMatrix1[0][0], 0.0, 0.0)).x;   \n"
+        "   //sample2.y = texture3D(TextureVol, coord + vec3(0.0, ParaMatrix1[0][1], 0.0)).x;   \n"
+        "   //sample2.z = texture3D(TextureVol, coord + vec3(0.0, 0.0, ParaMatrix1[0][2])).x;   \n"
+        "   //vec4 normal = sample1 - sample2;                                                  \n"
+        "   //if (length(normal) < 0.001) return vec3(0);                                     \n"
+        "   //normal = VolumeMatrix * normalize(normal);                                      \n"
+        "   //return gl_NormalMatrix * normal.xyz;                                            \n"
         "  }                                                                                  \n"
-        "  vec4 normal = texture3D(TextureVol1, coord);                                       \n"
-        "  normal = normal * 2.0 - 1.0;                                                       \n"
-        "  normal = VolumeMatrix * normal;                                                    \n"
-        "  return gl_NormalMatrix * normal.xyz;                                               \n"
+        "  {                                                                                  \n"
+        "   vec4 normal = texture3D(TextureVol1, coord);                                      \n"
+        "   normal = normal * 2.0 - 1.0;                                                      \n"
+        "   normal = VolumeMatrix * normal;                                                   \n"
+        "   return gl_NormalMatrix * normal.xyz;                                              \n"
+        "  }                                                                                  \n"
         "}                                                                                    \n";
   }
 
@@ -1085,7 +1071,10 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShaders()
     fp_oss <<
       "vec4 directionalLight(vec3 coord, vec3 lightDir, vec4 color)                              \n"
       "{                                                                                         \n"
-      "  vec3    normal = normalize(voxelNormal(coord));                                         \n"
+      "  vec3    normal = voxelNormal(coord);                                                    \n"
+      "  //if (length(normal) < 0.001)                                                             \n"
+      "  //  return gl_FrontMaterial.ambient * color;                                              \n"
+      "  normal = normalize(normal);                                                             \n"
       "  float   NdotL = abs(dot(normal, lightDir));                                             \n"
       "  vec4    specular = vec4(0);                                                             \n"
       "  if (NdotL > 0.0)                                                                        \n"
