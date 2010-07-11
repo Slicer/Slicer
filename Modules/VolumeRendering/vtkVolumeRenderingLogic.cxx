@@ -1057,7 +1057,7 @@ int vtkVolumeRenderingLogic::SetupMapperFromParametersNode(vtkMRMLVolumeRenderin
  */
 int vtkVolumeRenderingLogic::SetupVolumeRenderingInteractive(vtkMRMLVolumeRenderingParametersNode* vspNode, int buttonDown)
 {
-  if (vspNode->GetCurrentVolumeMapper() == 1)
+  if (vspNode->GetCurrentVolumeMapper() == 1)//vtk gpu mapper has different defination of interaction
     return 0;
 
   //when start (rendering??) set CPU ray casting to be interactive

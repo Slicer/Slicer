@@ -102,6 +102,10 @@ public:
     // process when user change the expected FPS
     void ProcessExpectedFPS(void);
 
+    // Description:
+    // process when user change the performance control method
+    void ProcessPerformanceControl(int id);
+
     //--------------------------------------------------------
     // Property
     //--------------------------------------------------------
@@ -152,13 +156,13 @@ protected:
     vtkSlicerVisibilityIcons *VI_PauseResume;
 
     // Description:
-    // Checkbox for enabling/disabling interactive rendering methods
-    vtkKWCheckButton *SC_EnablePerformanceControl;
+    // Adjust the frame for interactive rendering methods
+    vtkKWScaleWithEntry *SC_ExpectedFPS;
 
     // Description:
-    // Adjust the frame for interactive rendering methods
-    vtkKWScale *SC_ExpectedFPS;
-
+    // Define performance control method
+    vtkKWMenuButtonWithLabel *MB_PerformanceControl;
+    
     vtkKWPushButton *PB_HideSurfaceModels;
 
     //--------------------------------------------------------------------------
@@ -173,15 +177,10 @@ protected:
     vtkKWFrameWithLabel *FrameGPURayCasting3;
     vtkKWFrameWithLabel *FramePolygonBlending;
     vtkKWFrameWithLabel *FrameCPURayCasting;
-    vtkKWFrameWithLabel *FrameFPS;
 
     // Description:
     // Menu button to select which mapper to use
     vtkKWMenuButtonWithLabel *MB_Mapper;
-
-    // Description:
-    // Enable/Disable shading in CUDA Ray Cast Mapping
-    vtkKWCheckButtonWithLabel *CB_CUDARayCastShading;
 
     // Description:
     // Menu button to select internal volume size

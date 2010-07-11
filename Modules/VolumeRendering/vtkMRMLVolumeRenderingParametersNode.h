@@ -140,6 +140,9 @@ class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingParametersNode : pu
   vtkSetMacro(ExpectedFPS,int);
   vtkGetMacro(ExpectedFPS,int);
 
+  vtkSetMacro(PerformanceControl,int);
+  vtkGetMacro(PerformanceControl,int);
+
   vtkGetMacro (CurrentVolumeMapper, int);
   vtkSetMacro (CurrentVolumeMapper, int);
 
@@ -329,6 +332,14 @@ protected:
 
   //fg volume window & level
   double WindowLevelFg[2];
+
+  /*
+   * Performance Control method
+   * 0: Adaptive
+   * 1: Maximum Quality
+   * 2: Fixed Framerate
+   * */
+  int PerformanceControl;
 };
 
 #endif

@@ -1,9 +1,4 @@
 //Slicer
-//#include "vtkSlicerVolumeTextureMapper3D.h"
-//#include "vtkSlicerGPUVolumeTextureMapper3D.h"
-//#include "vtkSlicerGPURayCastVolumeTextureMapper3D.h"
-//#include "vtkSlicerGPURayCastVolumeMapper.h"
-//#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkSlicerVolumeRenderingHelper.h"
 #include "vtkVolumeRenderingGUI.h"
 #include "vtkSlicerApplication.h"
@@ -74,6 +69,8 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->GUICallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
   this->GUICallbackCommand->SetCallback(vtkSlicerVolumeRenderingHelper::GUIEventsCallback);
 
+  this->MB_PerformanceControl = NULL;
+  
   this->MB_GPURayCastTechnique = NULL;
 
   this->MB_GPURayCastTechniqueII = NULL;
@@ -92,7 +89,6 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->SC_GPURayCastIIFgBgRatio = NULL;
   this->MB_Mapper = NULL;
 
-  this->FrameFPS = NULL;
   this->FrameGPURayCasting = NULL;
   this->FramePolygonBlending = NULL;
   this->FrameCPURayCasting = NULL;
@@ -261,34 +257,35 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->MB_GPUMemorySize->GetWidgetName() );
   }
 
+  //Performance control
+  {
+    this->MB_PerformanceControl = vtkKWMenuButtonWithLabel::New();
+    this->MB_PerformanceControl->SetParent(this->FrameTechniques->GetFrame());
+    this->MB_PerformanceControl->SetLabelText("Speed Control");
+    this->MB_PerformanceControl->Create();
+    this->MB_PerformanceControl->SetLabelWidth(labelWidth);
+    this->MB_PerformanceControl->SetBalloonHelpString("Define volume rendeing performance control method. Adaptive: low/high qualty switching. Maximum Quality: force highest possible quality. Fixed Framerate: use user choice of interactive speed.");
+    this->MB_PerformanceControl->GetWidget()->GetMenu()->AddRadioButton("Adaptive");
+    this->MB_PerformanceControl->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessPerformanceControl 0");
+    this->MB_PerformanceControl->GetWidget()->GetMenu()->AddRadioButton("Maximum Quality");
+    this->MB_PerformanceControl->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessPerformanceControl 1");
+    this->MB_PerformanceControl->GetWidget()->GetMenu()->AddRadioButton("Fixed Framerate");
+    this->MB_PerformanceControl->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessPerformanceControl 2");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 4", this->MB_PerformanceControl->GetWidgetName() );    
+  }
+  
   //Framerate
   {
-    this->FrameFPS = vtkKWFrameWithLabel::New();
-    this->FrameFPS->SetParent(this->FrameTechniques->GetFrame());
-    this->FrameFPS->Create();
-    this->FrameFPS->AllowFrameToCollapseOff();
-    this->FrameFPS->SetLabelText("Interactive Speed");
-    this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->FrameFPS->GetWidgetName() );
-
-    this->SC_EnablePerformanceControl = vtkKWCheckButton::New();
-    this->SC_EnablePerformanceControl->SetParent(this->FrameFPS->GetFrame());
-    this->SC_EnablePerformanceControl->Create();
-    this->SC_EnablePerformanceControl->SetBalloonHelpString("Turn On/Off performance control. Uncheck the button will force high quality rendering.");
-    this->SC_EnablePerformanceControl->SelectedStateOn();
-    this->SC_EnablePerformanceControl->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
-    this->Script( "pack %s -side left -anchor w -expand 0 -padx 2 -pady 2", this->SC_EnablePerformanceControl->GetWidgetName());
-    
-    this->SC_ExpectedFPS=vtkKWScale::New();
-    this->SC_ExpectedFPS->SetParent(this->FrameFPS->GetFrame());
+    this->SC_ExpectedFPS=vtkKWScaleWithEntry::New();
+    this->SC_ExpectedFPS->SetParent(this->FrameTechniques->GetFrame());
     this->SC_ExpectedFPS->Create();
+    this->SC_ExpectedFPS->SetLabelText("Interactive Speed");
+    this->SC_ExpectedFPS->SetLabelWidth(labelWidth);
     this->SC_ExpectedFPS->SetBalloonHelpString("Adjust performance/quality. 1 fps: low performance/high quality. 20 fps: high performance/low quality.");
-    this->SC_ExpectedFPS->SetRange(1,20);
-    this->SC_ExpectedFPS->SetResolution(1);
-    this->SC_ExpectedFPS->SetValue(5.0);
-    this->SC_ExpectedFPS->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
-    this->SC_ExpectedFPS->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
-    this->Script ( "pack %s -side right -anchor w -expand 1 -fill x -padx 2 -pady 2", this->SC_ExpectedFPS->GetWidgetName() );
-
+    this->SC_ExpectedFPS->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->SC_ExpectedFPS->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *) this->GUICallbackCommand);
+    this->SC_ExpectedFPS->SetEntryWidth(5);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", this->SC_ExpectedFPS->GetWidgetName() );
   }
 
   labelWidth = 24;
@@ -512,6 +509,13 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
 
   //now the boring part: delete all widgets one by one, should have smart ptr to handle this
 
+  if(this->MB_PerformanceControl != NULL)
+  {
+    this->MB_PerformanceControl->SetParent(NULL);
+    this->MB_PerformanceControl->Delete();
+    this->MB_PerformanceControl=NULL;
+  }
+  
   if(this->MB_GPUMemorySize != NULL)
   {
     this->MB_GPUMemorySize->SetParent(NULL);
@@ -553,13 +557,6 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
     this->MB_GPURayCastTechnique3 = NULL;
   }
 
-  if (this->SC_EnablePerformanceControl != NULL)
-    {
-    this->SC_EnablePerformanceControl->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand*) this->GUICallbackCommand);
-    this->SC_EnablePerformanceControl->SetParent(NULL);
-    this->SC_EnablePerformanceControl->Delete();
-    this->SC_EnablePerformanceControl = NULL;
-    }
   if(this->SC_ExpectedFPS != NULL)
   {
     this->SC_ExpectedFPS->RemoveObservers(vtkKWScale::ScaleValueChangingEvent,(vtkCommand *) this->GUICallbackCommand);
@@ -666,13 +663,6 @@ void vtkSlicerVolumeRenderingHelper::DestroyTechniquesTab()
     this->FrameCPURayCasting->SetParent(NULL);
     this->FrameCPURayCasting->Delete();
     this->FrameCPURayCasting = NULL;
-  }
-
-  if (this->FrameFPS != NULL)
-  {
-    this->FrameFPS->SetParent(NULL);
-    this->FrameFPS->Delete();
-    this->FrameFPS = NULL;
   }
 }
 
@@ -1145,7 +1135,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
   //scales
   {
     vtkKWScale *callerObjectSC = vtkKWScale::SafeDownCast(caller);
-    if(callerObjectSC == this->SC_ExpectedFPS)
+    if(callerObjectSC == this->SC_ExpectedFPS->GetWidget())
     {
       this->ProcessExpectedFPS();
       return;
@@ -1218,12 +1208,7 @@ void vtkSlicerVolumeRenderingHelper::ProcessGUIEvents(vtkObject *caller,
   {
     vtkKWCheckButton *callerObjectCheckButton = vtkKWCheckButton::SafeDownCast(caller);
 
-    if(callerObjectCheckButton == this->SC_EnablePerformanceControl)
-    {
-      this->ProcessExpectedFPS();
-      return;
-    } 
-    else if (callerObjectCheckButton == this->CB_CPURayCastMIP->GetWidget())
+    if (callerObjectCheckButton == this->CB_CPURayCastMIP->GetWidget())
     {
       vspNode->SetCPURaycastMode(this->CB_CPURayCastMIP->GetWidget()->GetSelectedState());
 
@@ -1389,8 +1374,24 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   this->SetupGUIFromParametersNodeFlag = 1;
 
   //fps
+  this->SC_ExpectedFPS->GetWidget()->SetRange(1, 20);
+  this->SC_ExpectedFPS->GetWidget()->SetResolution(1);
   this->SC_ExpectedFPS->SetValue(vspNode->GetExpectedFPS());
 
+  //performance control
+  switch(vspNode->GetPerformanceControl())
+  {
+    case 0:
+      this->MB_PerformanceControl->GetWidget()->SetValue("Adaptive");
+      break;
+    case 1:
+      this->MB_PerformanceControl->GetWidget()->SetValue("Maximum Quality");
+      break;
+    case 2:
+      this->MB_PerformanceControl->GetWidget()->SetValue("Fixed Framerate");
+      break;
+  }
+  
   //-------------------------techniques----------------------------
   this->CB_CPURayCastMIP->GetWidget()->SetSelectedState(vspNode->GetCPURaycastMode());
 
@@ -1814,11 +1815,32 @@ void vtkSlicerVolumeRenderingHelper::ProcessThresholdFg(double, double)
   this->Gui->RequestRender();
 }
 
+void vtkSlicerVolumeRenderingHelper::ProcessPerformanceControl(int id)
+{
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+
+  vspNode->SetPerformanceControl(id);
+
+  this->ProcessExpectedFPS();
+}
+
 void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
-  this->SC_ExpectedFPS->SetEnabled(this->SC_EnablePerformanceControl->GetSelectedState());
-  int fps = this->SC_EnablePerformanceControl->GetSelectedState() ? static_cast<int>(this->SC_ExpectedFPS->GetValue()) : 0;
+  
+  int fps = this->SC_ExpectedFPS->GetValue();
+
+  switch(vspNode->GetPerformanceControl())
+  {
+    case 0:
+      break;
+    case 1:
+      fps = 0;
+      break;
+    case 2:
+      break;
+  }
+  
   vspNode->SetExpectedFPS(fps);
 
   this->Gui->GetLogic()->SetExpectedFPS(vspNode);
@@ -1843,7 +1865,8 @@ void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
   if (this->Gui == NULL)
     return;
 
-  if (!this->SC_EnablePerformanceControl->GetSelectedState())
+  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+  if (vspNode->GetPerformanceControl() != 0)
     return;
     
   int val = this->Gui->GetLogic()->SetupVolumeRenderingInteractive(this->Gui->GetCurrentParametersNode(), isDown);

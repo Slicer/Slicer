@@ -113,6 +113,8 @@ vtkMRMLVolumeRenderingParametersNode::vtkMRMLVolumeRenderingParametersNode()
 
   this->WindowLevelFg[0] = 0.0;
   this->WindowLevelFg[1] = 0.0;
+
+  this->PerformanceControl = 0;
 }
 
 //----------------------------------------------------------------------------
