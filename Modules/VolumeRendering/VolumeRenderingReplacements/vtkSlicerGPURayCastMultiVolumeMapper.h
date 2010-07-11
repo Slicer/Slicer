@@ -129,8 +129,6 @@ protected:
   int              InternalVolumeSize;
 
   GLuint           Volume1Index;
-  GLuint           Volume2Index;
-  GLuint           Volume3Index;
   GLuint           ColorLookupIndex;
   GLuint           ColorLookup2Index;
   GLuint           RayCastVertexShader;
@@ -142,7 +140,8 @@ protected:
   double           VolumeBBoxVerticesColor[8][3];
 
   GLfloat          ParaMatrix[16];//4x4 matrix uniform for ray casting parameters
-
+  GLfloat          ParaMatrix1[16];
+  
   float            RaySteps;
   float            GlobalAlpha;
   float            DepthPeelingThreshold;

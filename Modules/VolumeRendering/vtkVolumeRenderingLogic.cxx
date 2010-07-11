@@ -746,38 +746,38 @@ void vtkVolumeRenderingLogic::ComputeInternalVolumeSize(int index)
     break;
   case 2://512M
     this->MapperGPURaycast->SetInternalVolumeSize(320);
-    this->MapperGPURaycastII->SetInternalVolumeSize(320);
+    this->MapperGPURaycastII->SetInternalVolumeSize(500);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(512*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
     break;
   case 3://1024M
     this->MapperGPURaycast->SetInternalVolumeSize(400);
-    this->MapperGPURaycastII->SetInternalVolumeSize(400);
+    this->MapperGPURaycastII->SetInternalVolumeSize(600);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(1024*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
     break;
   case 4://1.5G
     this->MapperGPURaycast->SetInternalVolumeSize(460);
-    this->MapperGPURaycastII->SetInternalVolumeSize(460);
+    this->MapperGPURaycastII->SetInternalVolumeSize(700);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(1536*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(256);
     break;
   case 5://2.0G
     this->MapperGPURaycast->SetInternalVolumeSize(512);
-    this->MapperGPURaycastII->SetInternalVolumeSize(512);
+    this->MapperGPURaycastII->SetInternalVolumeSize(775);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(512);
     break;
   case 6://3.0G
     this->MapperGPURaycast->SetInternalVolumeSize(700);
-    this->MapperGPURaycastII->SetInternalVolumeSize(700);
+    this->MapperGPURaycastII->SetInternalVolumeSize(900);
 //    this->MapperGPURaycast3->SetMaxMemoryInBytes(3071*1024*1024);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(512);
     break;
   case 7://4.0G
     this->MapperGPURaycast->SetInternalVolumeSize(800);
-    this->MapperGPURaycastII->SetInternalVolumeSize(800);
+    this->MapperGPURaycastII->SetInternalVolumeSize(1000);
 //    this->MapperGPURaycast3->SetMaxMemoryInBytes(4095*1024*1024);
     this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
     this->MapperTexture->SetInternalVolumeSize(512);

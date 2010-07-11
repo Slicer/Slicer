@@ -40,8 +40,6 @@ vtkInstantiatorNewMacro(vtkSlicerGPUMultiVolumeMapper);
 //  1 component three input volumes (A, B, and LabelMap):
 //             R            G             B             A
 //  volume 1   scalar.A     scalar.B      Label              
-//  volume 2   normal.A.x   normal.A.y    normal.A.z    normal.A.mag  
-//  volume 3   normal.B.x   normal.B.y    normal.B.z    normal.B.mag
 //  
 
 template <class T>
@@ -621,14 +619,14 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   {
     if (this->Volume1)
         delete [] this->Volume1;
-    if (this->Volume2)
-        delete [] this->Volume2;
-    if (this->Volume3)
-        delete [] this->Volume3;
+//    if (this->Volume2)
+//        delete [] this->Volume2;
+//    if (this->Volume3)
+//        delete [] this->Volume3;
         
     this->Volume1 = new unsigned char [4*neededSize];
-    this->Volume2 = new unsigned char [4*neededSize];
-    this->Volume3 = new unsigned char [4*neededSize];
+//    this->Volume2 = new unsigned char [4*neededSize];
+//    this->Volume3 = new unsigned char [4*neededSize];
     
     this->VolumeSize       = neededSize;
   }
@@ -736,7 +734,7 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
         this, offset, scale, offset1, scale1,
         this->Volume1));
     }
-
+/*
   int dataPtrSize = dim[0]*dim[1]*dim[2];
   float* floatDataPtr = new float[dataPtrSize];  
   
@@ -774,7 +772,7 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   }
   
   delete [] floatDataPtr;
-  
+*/  
   return 1;
 }
 
