@@ -299,10 +299,10 @@ struct parameters
         return EXIT_FAILURE;
         }
 
-      double tissueConversionFactor = ConvertRadioactivityUnits (1, list.radioactivityUnits.c_str(), "kBq", static_cast<char>(0));
-      dose  = ConvertRadioactivityUnits ( dose, list.radioactivityUnits.c_str(), "MBq", static_cast<char>(0));
-      dose = DecayCorrection (list, dose, static_cast<char>(0));
-      weight = ConvertWeightUnits ( weight, list.weightUnits.c_str(), "kg", static_cast<char>(0));
+      double tissueConversionFactor = ConvertRadioactivityUnits (1, list.radioactivityUnits.c_str(), "kBq");
+      dose  = ConvertRadioactivityUnits ( dose, list.radioactivityUnits.c_str(), "MBq");
+      dose = DecayCorrection (list, dose);
+      weight = ConvertWeightUnits ( weight, list.weightUnits.c_str(), "kg");
 
       //--- check a possible multiply by slope -- take intercept into account?
       if ( dose == 0.0 )
@@ -352,10 +352,9 @@ struct parameters
 //...
 //...............................................................................................
 //...
-template<class T>
-double ConvertTimeToSeconds (const char *time, T )
-{
 
+double ConvertTimeToSeconds (const char *time )
+{
   if ( time == NULL )
     {
     std::cerr << "ConvertTimeToSeconds got a NULL time string." << std::endl;
@@ -404,7 +403,7 @@ double ConvertTimeToSeconds (const char *time, T )
 //...
 //...............................................................................................
 //...
-template<class T> double ConvertWeightUnits (double count, const char *fromunits, const char *tounits, T )
+double ConvertWeightUnits (double count, const char *fromunits, const char *tounits )
 {
 
   double conversion = count;
@@ -484,7 +483,7 @@ template<class T> double ConvertWeightUnits (double count, const char *fromunits
 //...
 //...............................................................................................
 //...  
-template<class T> double ConvertRadioactivityUnits (double count, const char *fromunits, const char *tounits, T )
+double ConvertRadioactivityUnits (double count, const char *fromunits, const char *tounits )
 {
 
   double conversion = count;
@@ -964,17 +963,17 @@ template<class T> double ConvertRadioactivityUnits (double count, const char *fr
 //...
 //...............................................................................................
 //...  
-template<class T>
-double DecayCorrection (parameters &list, double inVal, T )
+double DecayCorrection (parameters &list, double inVal )
 {
 
-  double scanTimeSeconds = ConvertTimeToSeconds (list.seriesReferenceTime.c_str(), static_cast<char>(0) );
-  double startTimeSeconds = ConvertTimeToSeconds ( list.injectionTime.c_str(), static_cast<char>(0) );
+  double scanTimeSeconds = ConvertTimeToSeconds (list.seriesReferenceTime.c_str() );
+  double startTimeSeconds = ConvertTimeToSeconds ( list.injectionTime.c_str() );
   double halfLife = atof ( list.radionuclideHalfLife.c_str() );
   double decayTime = scanTimeSeconds-startTimeSeconds;
   double correctedVal = inVal * (double)pow(2.0, -(decayTime/halfLife) );
   return ( correctedVal );
 }
+
 
 } // end of anonymous namespace
 
