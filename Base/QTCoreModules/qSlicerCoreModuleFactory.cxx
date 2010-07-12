@@ -14,6 +14,7 @@
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerCamerasModule.h"
 #include "qSlicerColorIO.h"
+#include "qSlicerColorsModule.h"
 #include "qSlicerDataModule.h"
 #include "qSlicerFiducialsIO.h"
 #include "qSlicerMRMLTreeModule.h"
@@ -74,6 +75,7 @@ void qSlicerCoreModuleFactory::registerItems()
 {
   CTK_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
+  d->registerCoreModule<qSlicerColorsModule>();
   d->registerCoreModule<qSlicerDataModule>();
   d->registerCoreModule<qSlicerMRMLTreeModule>();
   d->registerCoreModule<qSlicerROIModule>();

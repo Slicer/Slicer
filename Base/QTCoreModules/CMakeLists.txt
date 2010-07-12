@@ -24,6 +24,10 @@ SET(KIT_SRCS
 
   qSlicerColorIO.cxx
   qSlicerColorIO.h
+  qSlicerColorsModule.cxx
+  qSlicerColorsModule.h
+  qSlicerColorsModuleWidget.cxx
+  qSlicerColorsModuleWidget.h
 
   qSlicerDataModule.cxx
   qSlicerDataModule.h
@@ -65,6 +69,8 @@ SET(KIT_MOC_SRCS
   qSlicerCamerasModuleWidget.h
 
   qSlicerColorIO.h
+  qSlicerColorsModule.h
+  qSlicerColorsModuleWidget.h
 
   qSlicerDataModule.h
   qSlicerDataModuleWidget.h
@@ -90,6 +96,7 @@ SET(KIT_MOC_SRCS
 # UI files
 SET(KIT_UI_SRCS
   Resources/UI/qSlicerCamerasModule.ui
+  Resources/UI/qSlicerColorsModule.ui
   Resources/UI/qSlicerDataModule.ui
   Resources/UI/qSlicerMRMLTreeModule.ui
   Resources/UI/qSlicerROIModule.ui
