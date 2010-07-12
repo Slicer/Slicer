@@ -17,6 +17,12 @@
 #include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
+qMRMLAbstractItemHelper* qMRMLAbstractItemHelperFactory::createRootItem(vtkMRMLScene* scene)const
+{
+  return new qMRMLRootItemHelper(scene, this);
+}
+
+//------------------------------------------------------------------------------
 class qMRMLAbstractItemHelperPrivate: public ctkPrivate<qMRMLAbstractItemHelper>
 {
 public:
@@ -307,24 +313,24 @@ bool qMRMLAbstractNodeItemHelper::setData(const QVariant &value, int role)
 //------------------------------------------------------------------------------
 // qMRMLAbstractRootItemHelper
 //------------------------------------------------------------------------------
-class qMRMLAbstractRootItemHelperPrivate: public ctkPrivate<qMRMLAbstractRootItemHelper>
+class qMRMLRootItemHelperPrivate: public ctkPrivate<qMRMLRootItemHelper>
 {
 public:
-  CTK_DECLARE_PUBLIC(qMRMLAbstractRootItemHelper);
+  CTK_DECLARE_PUBLIC(qMRMLRootItemHelper);
   vtkMRMLScene* MRMLScene;
 };
 
 //------------------------------------------------------------------------------
-qMRMLAbstractRootItemHelper::qMRMLAbstractRootItemHelper(vtkMRMLScene* scene, 
-                                                         const qMRMLAbstractItemHelperFactory* itemFactory)
+qMRMLRootItemHelper::qMRMLRootItemHelper(vtkMRMLScene* scene, 
+                                         const qMRMLAbstractItemHelperFactory* itemFactory)
   :qMRMLAbstractItemHelper(-1, itemFactory)
 {
-  CTK_INIT_PRIVATE(qMRMLAbstractRootItemHelper);
+  CTK_INIT_PRIVATE(qMRMLRootItemHelper);
   ctk_d()->MRMLScene = scene;
 }
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLAbstractRootItemHelper::child(int _row, int _column) const
+qMRMLAbstractItemHelper* qMRMLRootItemHelper::child(int _row, int _column) const
 {
   if (_row == 0)
     {
@@ -335,13 +341,13 @@ qMRMLAbstractItemHelper* qMRMLAbstractRootItemHelper::child(int _row, int _colum
 }
 
 //------------------------------------------------------------------------------
-int qMRMLAbstractRootItemHelper::childCount() const
+int qMRMLRootItemHelper::childCount() const
 {
   return ctk_d()->MRMLScene ? 1 : 0;
 }
 
 //------------------------------------------------------------------------------
-QVariant qMRMLAbstractRootItemHelper::data(int role) const
+QVariant qMRMLRootItemHelper::data(int role) const
 {
   Q_UNUSED(role);
   Q_ASSERT(false);
@@ -349,45 +355,45 @@ QVariant qMRMLAbstractRootItemHelper::data(int role) const
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLAbstractRootItemHelper::flags() const
+Qt::ItemFlags qMRMLRootItemHelper::flags() const
 {
   Q_ASSERT(false);
   return 0;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLAbstractRootItemHelper::hasChildren() const
+bool qMRMLRootItemHelper::hasChildren() const
 {
   return ctk_d()->MRMLScene != 0 ? true : false;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLAbstractRootItemHelper::mrmlScene() const
+vtkMRMLScene* qMRMLRootItemHelper::mrmlScene() const
 {
   return ctk_d()->MRMLScene;
 }
 
 //------------------------------------------------------------------------------
-vtkObject* qMRMLAbstractRootItemHelper::object() const
+vtkObject* qMRMLRootItemHelper::object() const
 {
   return 0;
 }
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLAbstractRootItemHelper::parent() const
+qMRMLAbstractItemHelper* qMRMLRootItemHelper::parent() const
 {
   return 0;
 }
 
 //------------------------------------------------------------------------------
-int qMRMLAbstractRootItemHelper::row() const
+int qMRMLRootItemHelper::row() const
 {
   //Q_ASSERT(false);
   return -1;
 }
 
 //------------------------------------------------------------------------------
-int qMRMLAbstractRootItemHelper::childIndex(const qMRMLAbstractItemHelper* _child)const
+int qMRMLRootItemHelper::childIndex(const qMRMLAbstractItemHelper* _child)const
 {
   Q_UNUSED(_child);
   // we know for sure that child is a child of this, child is at index 0
@@ -405,6 +411,7 @@ public:
   { 
     return this->WeakPointer.GetPointer();
   }
+  // TBD: not sure it
   vtkWeakPointerBase WeakPointer;
 protected:
   vtkWeakObject(){}
@@ -437,7 +444,7 @@ bool qMRMLVariantArrayItemHelperPrivate::isSeparator()const
 qMRMLVariantArrayItemHelper::qMRMLVariantArrayItemHelper(vtkVariantArray* array, int column, const qMRMLAbstractItemHelperFactory* factory)
   :qMRMLAbstractItemHelper(column, factory)
 {
-  CTK_INIT_PRIVATE(qMRMLAbstractRootItemHelper);
+  CTK_INIT_PRIVATE(qMRMLVariantArrayItemHelper);
   ctk_d()->VariantArray = array;
 }
 

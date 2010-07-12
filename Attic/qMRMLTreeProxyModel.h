@@ -64,6 +64,8 @@ protected:
   /// if you know for sure it is a proxy model index you can use this function
   /// otherwise, use item(const QModelIndex& index)const
   virtual qMRMLAbstractItemHelper* proxyItem(const QModelIndex& index)const;
+  /// The factory that is used to create all the items of the model.
+  /// The subclass is responsible for deleting the itemFactory memory.
   virtual qMRMLAbstractItemHelperFactory* itemFactory()const = 0;
   //virtual qMRMLAbstractItemHelper* itemFromVTKObject(vtkObject* object, int column)const =0;
   //virtual qMRMLAbstractRootItemHelper* rootItem(vtkMRMLScene* scene)const =0;

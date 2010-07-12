@@ -46,6 +46,10 @@ SET(qMRMLWidgets_SRCS
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
   qMRMLSceneModel.h
+  qMRMLSceneTransformModel.cxx
+  qMRMLSceneTransformModel.h
+  qMRMLSceneTreeModel.cxx
+  qMRMLSceneTreeModel.h
   qMRMLSliceViewWidget.cxx
   qMRMLSliceViewWidget.h
   qMRMLSliceViewWidget_p.h
@@ -54,8 +58,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLThreeDRenderView.cxx
   qMRMLThreeDRenderView.h
   qMRMLThreeDRenderView_p.h
-  qMRMLTransformProxyModel.cxx
-  qMRMLTransformProxyModel.h
+  #qMRMLTransformProxyModel.cxx
+  #qMRMLTransformProxyModel.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
   qMRMLTreeProxyModel.cxx
@@ -85,12 +89,14 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLROIWidget.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
+  qMRMLSceneTransformModel.h
+  qMRMLSceneTreeModel.h
   qMRMLSliceViewWidget.h
   qMRMLSliceViewWidget_p.h
   qMRMLSortFilterProxyModel.h
   qMRMLThreeDRenderView.h
   qMRMLThreeDRenderView_p.h
-  qMRMLTransformProxyModel.h
+  #qMRMLTransformProxyModel.h
   qMRMLTreeProxyModel.h
   qMRMLTreeProxyModel_p.h
   qMRMLTransformSliders.h

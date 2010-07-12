@@ -15,7 +15,6 @@
 class vtkMRMLNode;
 class vtkMRMLScene;
 class QAction;
-class qMRMLSceneModelPrivate;
 
 namespace qMRML
 {
@@ -23,6 +22,26 @@ namespace qMRML
    UIDRole = Qt::UserRole
  };
 };
+
+class qMRMLSceneModelItemHelperFactoryPrivate;
+//------------------------------------------------------------------------------
+class QMRML_WIDGETS_EXPORT qMRMLSceneModelItemHelperFactory : public qMRMLAbstractItemHelperFactory
+{
+public:
+  qMRMLSceneModelItemHelperFactory();
+  virtual ~qMRMLSceneModelItemHelperFactory(){}
+  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object,int column) const;
+
+  void setPreItems(vtkCollection* itemCollection);
+  vtkCollection* preItems()const;
+  void setPostItems(vtkCollection* itemCollection);
+  vtkCollection* postItems()const;
+private:
+  CTK_DECLARE_PRIVATE(qMRMLSceneModelItemHelperFactory);
+};
+
+class qMRMLSceneModelPrivate;
+
 
 //------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QAbstractItemModel
@@ -82,18 +101,21 @@ public:
   virtual Qt::DropActions supportedDropActions()const;
 
 protected slots:
-  void onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node);
-  void onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObject* node);
-  void onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node);
-  void onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node);
+  virtual void onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node);
+  virtual void onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObject* node);
+  virtual void onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node);
+  virtual void onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node);
   void onMRMLSceneDeleted(vtkObject* scene);
 
   void onMRMLNodeModified(vtkObject* node);
 protected:
+  qMRMLSceneModel(qMRMLSceneModelItemHelperFactory* factory, QObject *parent=0);
   friend class qMRMLSortFilterProxyModel;
   friend class qMRMLTreeProxyModel;
-  qMRMLAbstractItemHelperFactory* itemFactory()const;
-  qMRMLAbstractItemHelper* item(const QModelIndex &modelIndex)const;
+  virtual qMRMLAbstractItemHelperFactory* itemFactory()const;
+  virtual qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &modelIndex)const;
+  virtual qMRMLAbstractItemHelper* itemFromObject(vtkObject* object, int column)const;
+  virtual QModelIndex indexFromItem(const qMRMLAbstractItemHelper* item)const;
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);
 private:

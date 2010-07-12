@@ -13,7 +13,7 @@
 // qMRMLWidgets predefs
 class qMRMLAbstractItemHelper;
 class qMRMLAbstractItemHelperPrivate;
-class qMRMLAbstractRootItemHelperPrivate;
+class qMRMLRootItemHelperPrivate;
 class qMRMLAbstractSceneItemHelperPrivate;
 class qMRMLAbstractNodeItemHelperPrivate;
 class qMRMLVariantArrayItemHelperPrivate;
@@ -38,7 +38,9 @@ class QMRML_WIDGETS_EXPORT qMRMLAbstractItemHelperFactory
 public:
   virtual ~qMRMLAbstractItemHelperFactory(){}
   virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column)const = 0;
-  virtual qMRMLAbstractItemHelper* createRootItem(vtkMRMLScene* scene)const = 0;
+  /// create a qMRMLRootItemHelper by default. Overwrite if you want a
+  /// different behavior.
+  virtual qMRMLAbstractItemHelper* createRootItem(vtkMRMLScene* scene)const;
 };
 
 //------------------------------------------------------------------------------
@@ -134,10 +136,10 @@ private:
 
 // FIXME: doesn't need to be derived, does it ?
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLAbstractRootItemHelper : public qMRMLAbstractItemHelper
+class QMRML_WIDGETS_EXPORT qMRMLRootItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  virtual ~qMRMLAbstractRootItemHelper(){}
+  virtual ~qMRMLRootItemHelper(){}
   virtual qMRMLAbstractItemHelper* child(int row, int column) const;
   virtual int childCount() const;
   virtual QVariant data(int role = Qt::DisplayRole) const;
@@ -148,13 +150,14 @@ public:
   virtual int row() const;
 
 protected:
-  qMRMLAbstractRootItemHelper(vtkMRMLScene* scene, const qMRMLAbstractItemHelperFactory* factory);
+  friend class qMRMLAbstractItemHelperFactory;
+  qMRMLRootItemHelper(vtkMRMLScene* scene, const qMRMLAbstractItemHelperFactory* factory);
   
   /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
   vtkMRMLScene* mrmlScene()const;
 private:
-  CTK_DECLARE_PRIVATE(qMRMLAbstractRootItemHelper);
+  CTK_DECLARE_PRIVATE(qMRMLRootItemHelper);
 };
 
 //------------------------------------------------------------------------------

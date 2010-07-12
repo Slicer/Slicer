@@ -15,8 +15,7 @@ public:
 
 protected:
   virtual qMRMLAbstractItemHelperFactory* itemFactory()const;
-  //virtual qMRMLAbstractItemHelper* itemFromVTKObject(vtkObject* object, int column)const;
-  //virtual qMRMLAbstractRootItemHelper* rootItem(vtkMRMLScene* scene)const;
+
 private:
   CTK_DECLARE_PRIVATE(qMRMLTransformProxyModel);
 };

@@ -19,7 +19,7 @@
 
 // qMRML includes
 #include "qMRMLSceneFactoryWidget.h"
-#include "qMRMLSceneModel.h"
+#include "qMRMLSceneTransformModel.h"
 
 #include "TestingMacros.h"
 #include <vtkEventBroker.h>
@@ -28,13 +28,13 @@
 #include <cstdlib>
 #include <iostream>
 
-int qMRMLModelTest1(int argc, char * argv [] )
+int qMRMLSceneTransformModelTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
   try
     {
-    qMRMLSceneModel model;
+    qMRMLSceneTransformModel model;
     ctkModelTester tester(&model);
 
     qMRMLSceneFactoryWidget sceneFactory(0);

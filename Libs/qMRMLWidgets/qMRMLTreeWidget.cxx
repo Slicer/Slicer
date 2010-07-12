@@ -8,7 +8,7 @@
 // qMRML includes
 #include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterProxyModel.h"
-#include "qMRMLTransformProxyModel.h"
+#include "qMRMLSceneTransformModel.h"
 #include "qMRMLTreeWidget.h"
 
 //------------------------------------------------------------------------------
@@ -20,7 +20,6 @@ public:
   void init();
 
   qMRMLSceneModel*           SceneModel;
-  qMRMLTransformProxyModel*  TransformModel;
   qMRMLSortFilterProxyModel* SortFilterModel;
 };
 
@@ -28,7 +27,6 @@ public:
 qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate()
 {
   this->SceneModel = 0;
-  this->TransformModel = 0;
   this->SortFilterModel = 0;
 }
 
@@ -37,11 +35,9 @@ void qMRMLTreeWidgetPrivate::init()
 {
   CTK_P(qMRMLTreeWidget);
   //p->QTreeView::setModel(new qMRMLItemModel(p));
-  this->SceneModel = new qMRMLSceneModel(p);
-  this->TransformModel = new qMRMLTransformProxyModel(p);
-  this->TransformModel->setSourceModel(this->SceneModel);
+  this->SceneModel = new qMRMLSceneTransformModel(p);
   this->SortFilterModel = new qMRMLSortFilterProxyModel(p);
-  this->SortFilterModel->setSourceModel(this->TransformModel);
+  this->SortFilterModel->setSourceModel(this->SceneModel);
   p->QTreeView::setModel(this->SortFilterModel);
 
   //ctkModelTester * tester = new ctkModelTester(p);

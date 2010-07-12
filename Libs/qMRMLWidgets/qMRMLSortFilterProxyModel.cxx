@@ -62,12 +62,9 @@ qMRMLSortFilterProxyModel::~qMRMLSortFilterProxyModel()
 // -----------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIndex)const
 {
-  qMRMLTreeProxyModel* treeModel = qobject_cast<qMRMLTreeProxyModel*>(this->sourceModel());
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
-  // If treeModel != 0, it is safe to use qMRMLTreeProxyModel::proxyItem()
-  // because we know for sure that source_parent model is the proxy model and
-  // not the source model (which would be the scene model)
-  return treeModel ? treeModel->proxyItem(sourceIndex) : sceneModel->item(sourceIndex);
+  Q_ASSERT(sceneModel);
+  return sceneModel->itemFromIndex(sourceIndex);
 }
 
 //-----------------------------------------------------------------------------

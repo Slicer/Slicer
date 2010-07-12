@@ -9,7 +9,7 @@
 #include "qMRMLListWidget.h"
 //#include "qMRMLItemModel.h"
 #include "qMRMLSceneModel.h"
-#include "qMRMLTransformProxyModel.h"
+#include "qMRMLSceneTransformModel.h"
 
 //------------------------------------------------------------------------------
 class qMRMLListWidgetPrivate: public ctkPrivate<qMRMLListWidget>
@@ -27,11 +27,9 @@ void qMRMLListWidgetPrivate::init()
   //p->QListView::setModel(new qMRMLSceneModel(p));
   ///new ctkModelTester(p->model(), p);
   
-  qMRMLSceneModel* sceneModel = new qMRMLSceneModel(p);
-  qMRMLTransformProxyModel* transformModel = new qMRMLTransformProxyModel(p);
-  transformModel->setSourceModel(sceneModel);
+  qMRMLSceneTransformModel* sceneModel = new qMRMLSceneTransformModel(p);
   QSortFilterProxyModel* sortModel = new QSortFilterProxyModel(p);
-  sortModel->setSourceModel(transformModel);
+  sortModel->setSourceModel(sceneModel);
   sortModel->setDynamicSortFilter(true);
   p->QListView::setModel(sortModel);
   p->setWrapping(true);
@@ -66,12 +64,9 @@ qMRMLListWidget::~qMRMLListWidget()
 void qMRMLListWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   QSortFilterProxyModel* sortModel = qobject_cast<QSortFilterProxyModel*>(this->model());
-  qMRMLTransformProxyModel* proxyModel = qobject_cast<qMRMLTransformProxyModel*>(sortModel->sourceModel());
-  
-  //qMRMLItemModel* mrmlModel = qobject_cast<qMRMLItemModel*>(this->model());
-  //qMRMLSceneModel* mrmlModel = qobject_cast<qMRMLSceneModel*>(this->model());
-  qMRMLSceneModel* mrmlModel = qobject_cast<qMRMLSceneModel*>(proxyModel->sourceModel());
+  qMRMLSceneModel* mrmlModel = qobject_cast<qMRMLSceneModel*>(sortModel->sourceModel());
   Q_ASSERT(mrmlModel);
+
   mrmlModel->setMRMLScene(scene);
   if (scene)
     {
@@ -85,6 +80,6 @@ void qMRMLListWidget::setMRMLScene(vtkMRMLScene* scene)
 vtkMRMLScene* qMRMLListWidget::mrmlScene()const
 {
   QSortFilterProxyModel* sortModel = qobject_cast<QSortFilterProxyModel*>(this->model());
-  Q_ASSERT(qobject_cast<const qMRMLTreeProxyModel*>(sortModel->sourceModel()));
-  return qobject_cast<const qMRMLTreeProxyModel*>(sortModel->sourceModel())->mrmlScene();
+  Q_ASSERT(qobject_cast<const qMRMLSceneModel*>(sortModel->sourceModel()));
+  return qobject_cast<const qMRMLSceneModel*>(sortModel->sourceModel())->mrmlScene();
 }

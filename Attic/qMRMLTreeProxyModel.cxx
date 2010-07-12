@@ -90,7 +90,7 @@ QModelIndex qMRMLTreeProxyModelPrivate::indexFromItem(const qMRMLAbstractItemHel
     {
     return QModelIndex();
     }
-  if (dynamic_cast<const qMRMLAbstractRootItemHelper*>(item) != 0)
+  if (dynamic_cast<const qMRMLRootItemHelper*>(item) != 0)
     {
     return QModelIndex();
     }

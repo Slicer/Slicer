@@ -12,7 +12,8 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLNodeFactoryTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
   qMRMLSceneModelTest1.cxx
-  qMRMLTransformProxyModelTest1.cxx
+  #qMRMLTransformProxyModelTest1.cxx
+  qMRMLSceneTransformModelTest1.cxx
   qMRMLTransformSlidersTest1.cxx
   qMRMLTreeWidgetTest1.cxx
   qMRMLUtilsTest1.cxx

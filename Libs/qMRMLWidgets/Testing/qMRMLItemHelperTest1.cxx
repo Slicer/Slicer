@@ -7,15 +7,15 @@
 #include <stdlib.h>
 #include <iostream>
 
-class qMRMLRootItemHelper: public qMRMLAbstractRootItemHelper
+class qMRMLRootItemHelper2: public qMRMLRootItemHelper
 {
 public: 
-  qMRMLRootItemHelper() : qMRMLAbstractRootItemHelper(0, 0)
+  qMRMLRootItemHelper2() : qMRMLRootItemHelper(0, 0)
   {
 qDebug() << "constructor";
   
   }
-  virtual ~qMRMLRootItemHelper()
+  virtual ~qMRMLRootItemHelper2()
   {
     qDebug() << "destructor";
   }
@@ -25,7 +25,7 @@ int qMRMLItemHelperTest1( int , char * [] )
 {
   QSharedPointer<qMRMLAbstractItemHelper> t = 
     QSharedPointer<qMRMLAbstractItemHelper>(
-      new qMRMLRootItemHelper);
+      new qMRMLRootItemHelper2);
   
   return EXIT_SUCCESS;
 }

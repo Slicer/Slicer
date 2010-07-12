@@ -24,7 +24,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformItemHelperFactory : public qMRMLAbstrac
 public:
   virtual ~qMRMLTransformItemHelperFactory(){}
   virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column)const;
-  virtual qMRMLAbstractItemHelper* createRootItem(vtkMRMLScene* scene)const;
+  /// The default behavior for createRootItem() is good enough
 };
 
 //------------------------------------------------------------------------------
@@ -61,20 +61,8 @@ protected:
   qMRMLNodeItemHelper(vtkMRMLNode* node, int column, const qMRMLAbstractItemHelperFactory* factory);
   // here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
-private:
-  CTK_DECLARE_PRIVATE(qMRMLNodeItemHelper);
 };
 
-//------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLRootItemHelper : public qMRMLAbstractRootItemHelper
-{
-public:
-  // child MUST be reimplemented
-  virtual qMRMLAbstractItemHelper* child(int row, int column) const;
-protected:
-  friend class qMRMLTransformItemHelperFactory;
-  qMRMLRootItemHelper(vtkMRMLScene* scene, const qMRMLAbstractItemHelperFactory* factory);
-};
 
 // qMRMLTransformItemHelperFactory
 //------------------------------------------------------------------------------
@@ -99,12 +87,6 @@ qMRMLAbstractItemHelper* qMRMLTransformItemHelperFactory::createItem(vtkObject* 
     Q_ASSERT( false);
     }
   return 0;
-}
-
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLTransformItemHelperFactory::createRootItem(vtkMRMLScene* scene)const
-{
-  return new qMRMLRootItemHelper(scene, this);
 }
 
 // qMRMLSceneItemHelper
@@ -169,17 +151,9 @@ qMRMLAbstractItemHelper* qMRMLSceneItemHelper::parent() const
 
 // qMRMLNodeItemHelper
 //------------------------------------------------------------------------------
-class qMRMLNodeItemHelperPrivate: public ctkPrivate<qMRMLNodeItemHelper>
-{
-public:
-  CTK_DECLARE_PUBLIC(qMRMLNodeItemHelper);
-};
-
-//------------------------------------------------------------------------------
 qMRMLNodeItemHelper::qMRMLNodeItemHelper(vtkMRMLNode* node, int _column, const qMRMLAbstractItemHelperFactory* _factory)
   :qMRMLAbstractNodeItemHelper(node, _column, _factory)
 {
-  CTK_INIT_PRIVATE(qMRMLNodeItemHelper);
   Q_ASSERT(node);
 }
 
@@ -287,24 +261,6 @@ bool qMRMLNodeItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLRootItemHelper::qMRMLRootItemHelper(vtkMRMLScene* scene, const qMRMLAbstractItemHelperFactory* itemFactory)
-  :qMRMLAbstractRootItemHelper(scene, itemFactory)
-{
-}
-
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLRootItemHelper::child(int _row, int _column) const
-{
-  if (_row == 0)
-    {
-    //return new qMRMLSceneItemHelper(this->mrmlScene(), _column);
-    //return this->mrmlScene();
-    return this->factory()->createItem(this->mrmlScene(), _column);
-    }
-  return 0;
-}
-
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
@@ -314,14 +270,21 @@ class qMRMLTransformProxyModelPrivate: public ctkPrivate<qMRMLTransformProxyMode
 public:
   CTK_DECLARE_PUBLIC(qMRMLTransformProxyModel);
   qMRMLTransformProxyModelPrivate();
+  virtual ~qMRMLTransformProxyModelPrivate();
   qMRMLTransformItemHelperFactory* ItemFactory;
 };
-
 
 //------------------------------------------------------------------------------
 qMRMLTransformProxyModelPrivate::qMRMLTransformProxyModelPrivate()
 {
   this->ItemFactory = new qMRMLTransformItemHelperFactory;
+}
+
+//------------------------------------------------------------------------------
+qMRMLTransformProxyModelPrivate::~qMRMLTransformProxyModelPrivate()
+{
+  delete this->ItemFactory;
+  this->ItemFactory = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -346,29 +309,3 @@ qMRMLAbstractItemHelperFactory* qMRMLTransformProxyModel::itemFactory()const
   CTK_D(const qMRMLTransformProxyModel);
   return d->ItemFactory;
 }
-/*
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLTransformProxyModel::itemFromVTKObject(vtkObject* object, int column)const
-{
-  Q_ASSERT(object);
-  if (object->IsA("vtkMRMLScene"))
-    {
-    return new qMRMLSceneItemHelper(vtkMRMLScene::SafeDownCast(object), column);
-    }
-  else if (object->IsA("vtkMRMLNode"))
-    {
-    return new qMRMLNodeItemHelper(vtkMRMLNode::SafeDownCast(object), column);
-    }
-  else
-    {
-    Q_ASSERT( false);
-    }
-  return 0;
-}
-
-//------------------------------------------------------------------------------
-qMRMLAbstractRootItemHelper* qMRMLTransformProxyModel::rootItem(vtkMRMLScene* scene)const
-{
-  return new qMRMLRootItemHelper(scene);
-}
-*/
