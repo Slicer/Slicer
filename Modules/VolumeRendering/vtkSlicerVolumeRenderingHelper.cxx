@@ -261,10 +261,10 @@ void vtkSlicerVolumeRenderingHelper::CreateTechniquesTab()
   {
     this->MB_PerformanceControl = vtkKWMenuButtonWithLabel::New();
     this->MB_PerformanceControl->SetParent(this->FrameTechniques->GetFrame());
-    this->MB_PerformanceControl->SetLabelText("Speed Control");
+    this->MB_PerformanceControl->SetLabelText("Quality Control");
     this->MB_PerformanceControl->Create();
     this->MB_PerformanceControl->SetLabelWidth(labelWidth);
-    this->MB_PerformanceControl->SetBalloonHelpString("Define volume rendeing performance control method. Adaptive: low/high qualty switching. Maximum Quality: force highest possible quality. Fixed Framerate: use user choice of interactive speed.");
+    this->MB_PerformanceControl->SetBalloonHelpString("Define volume rendeing performance/quality control method. Adaptive: low/high qualty switching. Maximum Quality: force highest possible quality. Fixed Framerate: use user choice of interactive speed.");
     this->MB_PerformanceControl->GetWidget()->GetMenu()->AddRadioButton("Adaptive");
     this->MB_PerformanceControl->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessPerformanceControl 0");
     this->MB_PerformanceControl->GetWidget()->GetMenu()->AddRadioButton("Maximum Quality");
