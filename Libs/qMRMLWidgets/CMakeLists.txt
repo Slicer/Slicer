@@ -26,8 +26,6 @@ SET(qMRMLWidgets_SRCS
   qCTKFlowLayout.h
   qMRMLColorTableComboBox.cxx
   qMRMLColorTableComboBox.h
-  #qMRMLColorTableProxyModel.cxx
-  #qMRMLColorTableProxyModel.h
   qMRMLEventLogger.cxx
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.cxx
@@ -66,12 +64,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLThreeDRenderView.cxx
   qMRMLThreeDRenderView.h
   qMRMLThreeDRenderView_p.h
-  #qMRMLTransformProxyModel.cxx
-  #qMRMLTransformProxyModel.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
-  qMRMLTreeProxyModel.cxx
-  qMRMLTreeProxyModel.h
   qMRMLTreeProxyModel_p.h
   qMRMLTreeWidget.cxx
   qMRMLTreeWidget.h
@@ -88,7 +82,6 @@ SET(qMRMLWidgets_SRCS
 # Headers that should run through moc
 SET(qMRMLWidgets_MOC_SRCS
   qMRMLColorTableComboBox.h
-  #qMRMLColorTableProxyModel.h
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.h
   qMRMLLinearTransformSlider.h
@@ -108,9 +101,6 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSortFilterProxyModel.h
   qMRMLThreeDRenderView.h
   qMRMLThreeDRenderView_p.h
-  #qMRMLTransformProxyModel.h
-  qMRMLTreeProxyModel.h
-  qMRMLTreeProxyModel_p.h
   qMRMLTransformSliders.h
   qMRMLTreeWidget.h
   qMRMLVolumeThresholdWidget.h

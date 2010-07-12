@@ -10,7 +10,6 @@
 // qMRML includes
 #include "qMRMLItemHelper.h"
 #include "qMRMLSceneModel.h"
-#include "qMRMLTreeProxyModel.h"
 #include "qMRMLUtils.h"
 
 #include "qMRMLSortFilterProxyModel.h"

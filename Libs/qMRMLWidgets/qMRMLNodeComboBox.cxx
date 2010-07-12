@@ -12,7 +12,6 @@
 #include "qMRMLNodeFactory.h"
 #include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterProxyModel.h"
-#include "qMRMLTreeProxyModel.h"
 
 // MRML includes
 #include <vtkMRMLNode.h>
