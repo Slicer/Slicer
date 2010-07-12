@@ -111,244 +111,6 @@ struct parameters
   std::string frameReferenceTime;
 } ;
   
-
-//...
-//...............................................................................................
-//...
-  template<class T>
-  int LoadImagesAndComputeSUV( parameters &list, T )
-{
-
-  typedef    T       InputPixelType;
-  typedef itk::Image< InputPixelType,  3 >   InputImageType;
-
-  typedef itk::Image< unsigned char, 3 > LabelImageType;
-  
-  typedef    T       OutputPixelType;
-  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
-
-  typedef itk::ImageFileReader< InputImageType > ReaderType;
-  typedef itk::ImageFileReader< LabelImageType > LabelReaderType;
-  typedef itk::ImageFileWriter< OutputImageType > WriterType;
-  
-  //
-  // for writing csv output files
-  //
-  std::string outputFile = list.SUVOutputTable;
-  std::ofstream ofile;
-
-  vtkImageData *petVolume;
-  vtkImageData *voiVolume;
-  vtkITKArchetypeImageSeriesReader *reader1 = NULL;
-  vtkITKArchetypeImageSeriesReader *reader2 = NULL;
-
-  // check for the input files
-  FILE * petfile;
-    petfile = fopen(list.PETVolumeName.c_str(),"r");
-    if (petfile == NULL)
-    {
-    std::cerr << "ERROR: cannot open input volume file " << list.PETVolumeName.c_str() << endl;
-        return EXIT_FAILURE;
-    }
-    fclose(petfile);
-
-  FILE * voifile;
-    voifile = fopen(list.VOIVolumeName.c_str(),"r");
-    if (voifile == NULL)
-    {
-    std::cerr << "ERROR: cannot open input volume file " << list.VOIVolumeName.c_str() << endl;
-        return EXIT_FAILURE;
-    }
-    fclose(voifile);
-
-    // Read the file
-    reader1 = vtkITKArchetypeImageSeriesScalarReader::New();
-//    vtkPluginFilterWatcher watchReader1 ( reader1, "Reading PET Volume", CLPProcessInformation );
-    reader1->SetArchetype(list.PETVolumeName.c_str());
-    reader1->SetOutputScalarTypeToNative();
-    reader1->SetDesiredCoordinateOrientationToNative();
-    reader1->SetUseNativeOriginOn();
-    reader1->Update();
-    std::cout << "Done reading the file " << list.PETVolumeName.c_str() << endl;
-
-    // Read the file
-    reader2 = vtkITKArchetypeImageSeriesScalarReader::New();
-//    vtkPluginFilterWatcher watchReader2 ( reader2, "Reading VOI Volume", CLPProcessInformation );
-    reader2->SetArchetype(list.VOIVolumeName.c_str());
-    reader2->SetOutputScalarTypeToNative();
-    reader2->SetDesiredCoordinateOrientationToNative();
-    reader2->SetUseNativeOriginOn();
-    reader2->Update();
-    std::cout << "Done reading the file " << list.VOIVolumeName.c_str() << endl;
-
-    // stuff the images.
-    reader1->Update();
-    reader2->Update();
-    petVolume = reader1->GetOutput();
-    petVolume->Update();
-    voiVolume = reader2->GetOutput();
-    voiVolume->Update();
-
-  //
-  // COMPUTE SUV
-  //
-  if (petVolume == NULL)
-    {
-    std::cerr << "No input volume found." <<std::endl;
-    return EXIT_FAILURE;
-    }
-  
-  // find input labelmap volume
-  if (voiVolume == NULL)
-    {
-    std::cerr <<  "No input volume found" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  // convert from input units.
-  if ( list.radioactivityUnits.c_str() == NULL )
-    {
-    std::cerr << "ComputeSUV: Got NULL radioactivity units. No computation done."<< std::endl;
-    return EXIT_FAILURE;
-    }
-  if ( list.weightUnits.c_str() == NULL )
-    {
-    std::cerr << "ComputeSUV: Got NULL weight units. No computation could be done." << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  double suvmax, suvmin, suvmean;
-
-  //--- find the max and min label in mask 
-  vtkImageAccumulate *stataccum = vtkImageAccumulate::New();
-  stataccum->SetInput ( voiVolume );
-  stataccum->Update();
-  int lo = static_cast<int>(stataccum->GetMin()[0]);
-  int hi = static_cast<int>(stataccum->GetMax()[0]);
-  stataccum->Delete();
-
-  int NumberOfVOIs = 0;
-  for(int i = lo; i <= hi; i++ ) 
-    {
-    std::stringstream ss;
-    if ( i == 0 )
-      {
-      //--- eliminate 0 (background) label.
-      continue;
-      }
-
-    suvmax = 0.0;
-    suvmean = 0.0;
-
-    // create the binary volume of the label
-    vtkImageThreshold *thresholder = vtkImageThreshold::New();
-    thresholder->SetInput(voiVolume);
-    thresholder->SetInValue(1);
-    thresholder->SetOutValue(0);
-    thresholder->ReplaceOutOn();
-    thresholder->ThresholdBetween(i,i);
-    thresholder->SetOutputScalarType(petVolume->GetScalarType());
-    thresholder->Update();
-    
-
-    // use vtk's statistics class with the binary labelmap as a stencil
-    vtkImageToImageStencil *stencil = vtkImageToImageStencil::New();
-    stencil->SetInput(thresholder->GetOutput());
-    stencil->ThresholdBetween(1, 1);
-    
-
-    vtkImageAccumulate *labelstat = vtkImageAccumulate::New();
-    labelstat->SetInput(petVolume);
-    labelstat->SetStencil(stencil->GetOutput());
-    labelstat->Update();
-   
-    stencil->Delete();
-
-    //--- For how many labels was SUV computed?
-
-    int voxNumber = labelstat->GetVoxelCount();
-    if ( voxNumber > 0 )
-      {
-      NumberOfVOIs++;
-      double CPETmin = (labelstat->GetMin())[0];
-      double CPETmax = (labelstat->GetMax())[0];
-      double CPETmean = (labelstat->GetMean())[0];
-
-      //--- we want to use the following units as noted at file top:
-      //--- CPET(t) -- tissue radioactivity in pixels-- kBq/mlunits
-      //--- injectced dose-- MBq and
-      //--- patient weight-- kg.
-      //--- computed SUV should be in units g/ml
-      double weight = list.patientWeight;
-      double dose = list.injectedDose;
-
-      //--- do some error checking and reporting.
-      if ( list.radioactivityUnits.c_str() == NULL )
-        {
-        std::cerr << "ComputeSUV: Got null radioactivityUnits." << std::endl;
-        return EXIT_FAILURE;
-        }
-      if ( dose == 0.0 )
-        {
-        std::cerr << "ComputeSUV: Got NULL dose!" << std::endl;
-        return EXIT_FAILURE;
-        }
-      if ( weight == 0.0 )
-        {
-        std::cerr <<"ComputeSUV: got zero weight!" << std::endl;
-        return EXIT_FAILURE;
-        }
-
-      double tissueConversionFactor = ConvertRadioactivityUnits (1, list.radioactivityUnits.c_str(), "kBq");
-      dose  = ConvertRadioactivityUnits ( dose, list.radioactivityUnits.c_str(), "MBq");
-      dose = DecayCorrection (list, dose);
-      weight = ConvertWeightUnits ( weight, list.weightUnits.c_str(), "kg");
-
-      //--- check a possible multiply by slope -- take intercept into account?
-      if ( dose == 0.0 )
-        {
-        // oops, weight by dose is infinity. make a ridiculous number.
-        double weightByDose = 0.0;
-        suvmin = 99999999999999999.;
-        suvmax = 99999999999999999.;
-        suvmean = 99999999999999999.;
-        std::cerr <<"Warning: got an injected dose of 0.0. Results of SUV computation not valid." << std::endl;
-        }
-      else 
-        {
-        double weightByDose = weight / dose;
-        suvmax = (CPETmax * tissueConversionFactor) * weightByDose;
-        suvmin = (CPETmin * tissueConversionFactor ) * weightByDose;
-        suvmean = (CPETmean * tissueConversionFactor) * weightByDose;
-        }
-      //--- write output file 
-      // open file containing suvs and append to it.
-      ofile.open ( outputFile.c_str(), ios::out | ios::app );
-      if ( !ofile.is_open() )
-        {
-        // report error, clean up, and get out.
-        std::cerr << "ERROR: cannot open nuclear medicine parameter file " << outputFile.c_str() << std::endl;
-        ofile.close();
-        return EXIT_FAILURE;
-        }
-      //--- for each value..
-      //--- format looks like:
-      // patientID, studyDate, dose, blood glucose, labelID, suvmax, suvmean, chemoStartDate, chemoEndDate ...
-      ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmax << ", " << suvmean << ", " << ", " << ", " << ", " << ", "<<std::endl;
-      ofile << ss.str();
-      ofile.close();
-      ss.str("");
-      }
-    
-    thresholder->Delete();
-    labelstat->Delete();
-    }
-  return EXIT_SUCCESS;
-  
-}
-
-
-
 //...
 //...............................................................................................
 //...
@@ -973,6 +735,245 @@ double DecayCorrection (parameters &list, double inVal )
   double correctedVal = inVal * (double)pow(2.0, -(decayTime/halfLife) );
   return ( correctedVal );
 }
+
+
+//...
+//...............................................................................................
+//...
+  template<class T>
+  int LoadImagesAndComputeSUV( parameters &list, T )
+{
+
+  typedef    T       InputPixelType;
+  typedef itk::Image< InputPixelType,  3 >   InputImageType;
+
+  typedef itk::Image< unsigned char, 3 > LabelImageType;
+  
+  typedef    T       OutputPixelType;
+  typedef itk::Image< OutputPixelType, 3 >   OutputImageType;
+
+  typedef itk::ImageFileReader< InputImageType > ReaderType;
+  typedef itk::ImageFileReader< LabelImageType > LabelReaderType;
+  typedef itk::ImageFileWriter< OutputImageType > WriterType;
+  
+  //
+  // for writing csv output files
+  //
+  std::string outputFile = list.SUVOutputTable;
+  std::ofstream ofile;
+
+  vtkImageData *petVolume;
+  vtkImageData *voiVolume;
+  vtkITKArchetypeImageSeriesReader *reader1 = NULL;
+  vtkITKArchetypeImageSeriesReader *reader2 = NULL;
+
+  // check for the input files
+  FILE * petfile;
+    petfile = fopen(list.PETVolumeName.c_str(),"r");
+    if (petfile == NULL)
+    {
+    std::cerr << "ERROR: cannot open input volume file " << list.PETVolumeName.c_str() << endl;
+        return EXIT_FAILURE;
+    }
+    fclose(petfile);
+
+  FILE * voifile;
+    voifile = fopen(list.VOIVolumeName.c_str(),"r");
+    if (voifile == NULL)
+    {
+    std::cerr << "ERROR: cannot open input volume file " << list.VOIVolumeName.c_str() << endl;
+        return EXIT_FAILURE;
+    }
+    fclose(voifile);
+
+    // Read the file
+    reader1 = vtkITKArchetypeImageSeriesScalarReader::New();
+//    vtkPluginFilterWatcher watchReader1 ( reader1, "Reading PET Volume", CLPProcessInformation );
+    reader1->SetArchetype(list.PETVolumeName.c_str());
+    reader1->SetOutputScalarTypeToNative();
+    reader1->SetDesiredCoordinateOrientationToNative();
+    reader1->SetUseNativeOriginOn();
+    reader1->Update();
+    std::cout << "Done reading the file " << list.PETVolumeName.c_str() << endl;
+
+    // Read the file
+    reader2 = vtkITKArchetypeImageSeriesScalarReader::New();
+//    vtkPluginFilterWatcher watchReader2 ( reader2, "Reading VOI Volume", CLPProcessInformation );
+    reader2->SetArchetype(list.VOIVolumeName.c_str());
+    reader2->SetOutputScalarTypeToNative();
+    reader2->SetDesiredCoordinateOrientationToNative();
+    reader2->SetUseNativeOriginOn();
+    reader2->Update();
+    std::cout << "Done reading the file " << list.VOIVolumeName.c_str() << endl;
+
+    // stuff the images.
+    reader1->Update();
+    reader2->Update();
+    petVolume = reader1->GetOutput();
+    petVolume->Update();
+    voiVolume = reader2->GetOutput();
+    voiVolume->Update();
+
+  //
+  // COMPUTE SUV
+  //
+  if (petVolume == NULL)
+    {
+    std::cerr << "No input volume found." <<std::endl;
+    return EXIT_FAILURE;
+    }
+  
+  // find input labelmap volume
+  if (voiVolume == NULL)
+    {
+    std::cerr <<  "No input volume found" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // convert from input units.
+  if ( list.radioactivityUnits.c_str() == NULL )
+    {
+    std::cerr << "ComputeSUV: Got NULL radioactivity units. No computation done."<< std::endl;
+    return EXIT_FAILURE;
+    }
+  if ( list.weightUnits.c_str() == NULL )
+    {
+    std::cerr << "ComputeSUV: Got NULL weight units. No computation could be done." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  double suvmax, suvmin, suvmean;
+
+  //--- find the max and min label in mask 
+  vtkImageAccumulate *stataccum = vtkImageAccumulate::New();
+  stataccum->SetInput ( voiVolume );
+  stataccum->Update();
+  int lo = static_cast<int>(stataccum->GetMin()[0]);
+  int hi = static_cast<int>(stataccum->GetMax()[0]);
+  stataccum->Delete();
+
+  int NumberOfVOIs = 0;
+  for(int i = lo; i <= hi; i++ ) 
+    {
+    std::stringstream ss;
+    if ( i == 0 )
+      {
+      //--- eliminate 0 (background) label.
+      continue;
+      }
+
+    suvmax = 0.0;
+    suvmean = 0.0;
+
+    // create the binary volume of the label
+    vtkImageThreshold *thresholder = vtkImageThreshold::New();
+    thresholder->SetInput(voiVolume);
+    thresholder->SetInValue(1);
+    thresholder->SetOutValue(0);
+    thresholder->ReplaceOutOn();
+    thresholder->ThresholdBetween(i,i);
+    thresholder->SetOutputScalarType(petVolume->GetScalarType());
+    thresholder->Update();
+    
+
+    // use vtk's statistics class with the binary labelmap as a stencil
+    vtkImageToImageStencil *stencil = vtkImageToImageStencil::New();
+    stencil->SetInput(thresholder->GetOutput());
+    stencil->ThresholdBetween(1, 1);
+    
+
+    vtkImageAccumulate *labelstat = vtkImageAccumulate::New();
+    labelstat->SetInput(petVolume);
+    labelstat->SetStencil(stencil->GetOutput());
+    labelstat->Update();
+   
+    stencil->Delete();
+
+    //--- For how many labels was SUV computed?
+
+    int voxNumber = labelstat->GetVoxelCount();
+    if ( voxNumber > 0 )
+      {
+      NumberOfVOIs++;
+      double CPETmin = (labelstat->GetMin())[0];
+      double CPETmax = (labelstat->GetMax())[0];
+      double CPETmean = (labelstat->GetMean())[0];
+
+      //--- we want to use the following units as noted at file top:
+      //--- CPET(t) -- tissue radioactivity in pixels-- kBq/mlunits
+      //--- injectced dose-- MBq and
+      //--- patient weight-- kg.
+      //--- computed SUV should be in units g/ml
+      double weight = list.patientWeight;
+      double dose = list.injectedDose;
+
+      //--- do some error checking and reporting.
+      if ( list.radioactivityUnits.c_str() == NULL )
+        {
+        std::cerr << "ComputeSUV: Got null radioactivityUnits." << std::endl;
+        return EXIT_FAILURE;
+        }
+      if ( dose == 0.0 )
+        {
+        std::cerr << "ComputeSUV: Got NULL dose!" << std::endl;
+        return EXIT_FAILURE;
+        }
+      if ( weight == 0.0 )
+        {
+        std::cerr <<"ComputeSUV: got zero weight!" << std::endl;
+        return EXIT_FAILURE;
+        }
+
+      double tissueConversionFactor = ConvertRadioactivityUnits (1, list.radioactivityUnits.c_str(), "kBq");
+      dose  = ConvertRadioactivityUnits ( dose, list.radioactivityUnits.c_str(), "MBq");
+      dose = DecayCorrection (list, dose);
+      weight = ConvertWeightUnits ( weight, list.weightUnits.c_str(), "kg");
+
+      //--- check a possible multiply by slope -- take intercept into account?
+      if ( dose == 0.0 )
+        {
+        // oops, weight by dose is infinity. make a ridiculous number.
+        double weightByDose = 0.0;
+        suvmin = 99999999999999999.;
+        suvmax = 99999999999999999.;
+        suvmean = 99999999999999999.;
+        std::cerr <<"Warning: got an injected dose of 0.0. Results of SUV computation not valid." << std::endl;
+        }
+      else 
+        {
+        double weightByDose = weight / dose;
+        suvmax = (CPETmax * tissueConversionFactor) * weightByDose;
+        suvmin = (CPETmin * tissueConversionFactor ) * weightByDose;
+        suvmean = (CPETmean * tissueConversionFactor) * weightByDose;
+        }
+      //--- write output file 
+      // open file containing suvs and append to it.
+      ofile.open ( outputFile.c_str(), ios::out | ios::app );
+      if ( !ofile.is_open() )
+        {
+        // report error, clean up, and get out.
+        std::cerr << "ERROR: cannot open nuclear medicine parameter file " << outputFile.c_str() << std::endl;
+        ofile.close();
+        return EXIT_FAILURE;
+        }
+      //--- for each value..
+      //--- format looks like:
+      // patientID, studyDate, dose, blood glucose, labelID, suvmax, suvmean, chemoStartDate, chemoEndDate ...
+      ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmax << ", " << suvmean << ", " << ", " << ", " << ", " << ", "<<std::endl;
+      ofile << ss.str();
+      ofile.close();
+      ss.str("");
+      }
+    
+    thresholder->Delete();
+    labelstat->Delete();
+    }
+  return EXIT_SUCCESS;
+  
+}
+
+
+
 
 
 } // end of anonymous namespace
