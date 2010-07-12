@@ -30,6 +30,7 @@
 #include "itkSpatialObjectReader.h"
 #include "itkSpatialObjectWriter.h"
 
+//BTX
 typedef itk::DefaultDynamicMeshTraits< vtkFloatingPointType , 3, 3, double > MeshTrait;
 typedef itk::Mesh<vtkFloatingPointType,3,MeshTrait> floatMesh;
 
@@ -52,7 +53,7 @@ typedef  itk::TriangleCell<CellType>   TriangleType;
 typedef itk::MeshSpatialObject<floatMesh> MeshSpatialObjectType;
 typedef itk::SpatialObjectReader<3,vtkFloatingPointType,MeshTrait> MeshReaderType;
 typedef itk::SpatialObjectWriter<3,vtkFloatingPointType,MeshTrait> MeshWriterType;
-
+//ETX
 class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
