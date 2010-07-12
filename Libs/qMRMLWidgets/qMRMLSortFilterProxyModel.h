@@ -12,6 +12,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class vtkMRMLNode;
+class vtkMRMLScene;
 class qMRMLAbstractItemHelper;
 class qMRMLSortFilterProxyModelPrivate;
 
@@ -26,6 +27,9 @@ public:
   typedef QSortFilterProxyModel Superclass;
   qMRMLSortFilterProxyModel(QObject *parent=0);
   virtual ~qMRMLSortFilterProxyModel();
+
+  /// Retrive the associated vtkMRMLNode
+  vtkMRMLScene* mrmlScene()const;
 
   /// Retrive the associated vtkMRMLNode
   vtkMRMLNode* mrmlNode(const QModelIndex& index)const;
@@ -64,6 +68,7 @@ public:
   void setHideChildNodeTypes(const QStringList& nodeTypes);
   QStringList hideChildNodeTypes()const;
 
+  // TODO Add setMRMLScene()
 protected:
   //virtual bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
   virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;

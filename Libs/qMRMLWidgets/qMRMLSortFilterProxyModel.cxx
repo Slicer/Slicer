@@ -68,6 +68,13 @@ qMRMLAbstractItemHelper* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLScene* qMRMLSortFilterProxyModel::mrmlScene()const
+{
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  return sceneModel->mrmlScene();
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNode(const QModelIndex& proxyIndex)const
 {
   QSharedPointer<qMRMLAbstractItemHelper> item =
@@ -124,6 +131,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     {
     return false;
     }
+  // Accept all the nodes if no type has been set
   if (d->NodeTypes.isEmpty())
     {
     return true;
