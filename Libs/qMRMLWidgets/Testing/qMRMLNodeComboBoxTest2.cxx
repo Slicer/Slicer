@@ -43,8 +43,7 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
     }
-  
-  // no type has been given yet -> no item shoud be listed
+
   if (nodeSelector.nodeCount())
     {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::count() failed." << std::endl;
@@ -57,12 +56,15 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   sceneFactory.generateNode();
   sceneFactory.generateNode();
 
-  // no type has been given yet -> no item shoud be listed
+  // All the types are accepted when no type has been given.
+  // the nodeselector may or may not contain nodes (some are hidden)
+  /*
   if (nodeSelector.nodeCount())
     {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::count() failed." << std::endl;
     return EXIT_FAILURE;
     }
+  */
 
   nodeSelector.setMRMLScene(0);
   if (nodeSelector.mrmlScene() != 0)
