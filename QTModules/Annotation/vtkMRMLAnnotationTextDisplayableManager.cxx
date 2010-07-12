@@ -33,6 +33,7 @@ vtkMRMLAnnotationTextDisplayableManager::vtkMRMLAnnotationTextDisplayableManager
   this->NodeID = 0;
   this->ViewerWidget = 0;
   this->Updating3DWidget = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -49,10 +50,24 @@ void vtkMRMLAnnotationTextDisplayableManager::PrintSelf(ostream& os, vtkIndent i
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAnnotationTextDisplayableManager::Create()
+{
+  // called during creation
+  printf("Create..");
+  vtkErrorMacro("tetdgfsaga");
+  this->AddObserver(vtkMRMLAnnotationTextNode::TextNodeAddedEvent,this->GetMRMLCallbackCommand());
+
+}
+
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                                 unsigned long event,
                                                                 void *callData)
-{/*
+{
+  printf("process mrml events..");
+
+  /*
  this->ProcessingMRMLEvent = event;
 
  vtkMRMLAnnotationTextNode *callerNode = vtkMRMLAnnotationTextNode::SafeDownCast(caller);
@@ -157,26 +172,40 @@ void vtkMRMLAnnotationTextDisplayableManager::Update3DWidget(vtkMRMLAnnotationTe
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::AddMRMLObservers()
-{/*
+/*void vtkMRMLAnnotationTextDisplayableManager::AddMRMLObservers()
+{
  // the widget as a whole needs to keep track of ruler nodes in the scene
- if (this->MRMLScene)
+  vtkErrorMacro("Get MRML Scene..");
+
+  vtkObserverManager * observerManager = this->GetMRMLObserverManager();
+  observerManager->AssignOwner(this);
+  observerManager->GetCallbackCommand()->SetClientData(reinterpret_cast<void *>(this));
+  observerManager->GetCallbackCommand()->SetCallback(vtkMRMLAnnotationTextDisplayableManager::MRMLCallback);
+
+  /*
+  vtkMRMLScene * scene = this->GetMRMLScene();
+
+  if (scene)
  {
  //vtkDebugMacro("AddMRMLObservers: watching for node removed, added, scene close events on the scene");
- if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+ if (scene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GetInMRMLCallbackFlag()) != 1)
  {
- this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+ scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GetInMRMLCallbackFlag());
  }
- if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+ if (scene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GetInMRMLCallbackFlag()) != 1)
  {
- this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+ scene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GetInMRMLCallbackFlag());
  }
- if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+ if (scene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GetInMRMLCallbackFlag()) != 1)
  {
- this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+ scene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GetInMRMLCallbackFlag());
  }
- }*/
-}
+ } else {
+
+   vtkErrorMacro("MRMLScene not found!");
+
+ }
+}*/
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::RemoveMRMLObservers()
@@ -387,6 +416,10 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneRestoredEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* /*node*/)
 {
+  vtkErrorMacro("caught event!");
+
+
+  //safe down cast to vtkMRMLAnnotationTextNode
 }
 
 //---------------------------------------------------------------------------

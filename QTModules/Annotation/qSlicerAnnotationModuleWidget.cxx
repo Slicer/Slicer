@@ -1905,8 +1905,15 @@ qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
     {
       fprintf(stderr, "Could not add Text Node!\r\n");
       return;
+    } else {
+
+      printf(newTextNodeID);
+
     }
 
+  printf("Logic called...");
+
+/*
   m_IDs.push_back(newTextNodeID);
   m_index++;
 
@@ -1920,7 +1927,7 @@ qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
   qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format,
       thevalue, valueString);
   this->updateAnnotationTable(m_index, thevalue, format);
-  this->selectRowByIndex(m_index);
+  this->selectRowByIndex(m_index);*/
 
   //  qvtkConnect(d->logic(),  vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent,
   //    this, SLOT(AddTextNodeCompleted(vtkObject*, void*)) );

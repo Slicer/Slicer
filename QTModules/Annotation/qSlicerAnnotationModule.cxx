@@ -34,6 +34,9 @@ CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAnnotationModule, QObject*);
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModule::setup()
 {
+
+  printf("startup");
+
   //vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::GetInstance();
   //factory->RegisterDisplayableManager("vtkMRMLAnnotationTextDisplayableManager");
 }

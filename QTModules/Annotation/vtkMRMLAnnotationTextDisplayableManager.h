@@ -40,8 +40,10 @@ public:
   /// Alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
+  virtual void Create();
+
   /// Add observers on node
-  virtual void AddMRMLObservers();
+  //virtual void AddMRMLObservers();
 
   /// Remove observers on node, from AbstractDisplayableManager
   virtual void RemoveMRMLObservers();

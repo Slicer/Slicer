@@ -1819,9 +1819,14 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 //      return NULL;
 //  }
 
+  printf("entering logic method");
+
   // Register the DisplayableManager using the factory
   vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationTextDisplayableManager");
+
+
+
 
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
     textNode->Initialize(this->GetMRMLScene());
@@ -1917,7 +1922,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
   myCallback->Delete();
   */
   //return textNode->GetID();
-  return NULL;
+  //return NULL;
 }
 
 //---------------------------------------------------------------------------
