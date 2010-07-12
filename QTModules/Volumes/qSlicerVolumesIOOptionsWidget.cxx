@@ -79,7 +79,11 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
 void qSlicerVolumesIOOptionsWidget::setFileName(const QString& fileName)
 {
   CTK_D(qSlicerVolumesIOOptionsWidget);
-  d->NameLineEdit->setText(QFileInfo(fileName).baseName());
+  QFileInfo fileInfo(fileName);
+  if (fileInfo.isFile())
+    {
+    d->NameLineEdit->setText(fileInfo.baseName());
+    }
   this->qSlicerIOOptionsWidget::setFileName(fileName);
 }
 
