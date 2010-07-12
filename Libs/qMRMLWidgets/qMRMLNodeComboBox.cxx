@@ -24,7 +24,7 @@ class qMRMLNodeComboBoxPrivate: public ctkPrivate<qMRMLNodeComboBox>
   CTK_DECLARE_PUBLIC(qMRMLNodeComboBox);
 public:
   qMRMLNodeComboBoxPrivate();
-  void init();
+  void init(QAbstractItemModel* model);
   vtkMRMLNode* mrmlNode(int index)const;
   vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
   void updateNoneItem();
@@ -56,7 +56,7 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate()
 }
 
 // -----------------------------------------------------------------------------
-void qMRMLNodeComboBoxPrivate::init()
+void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 {
   CTK_P(qMRMLNodeComboBox);
   Q_ASSERT(this->MRMLNodeFactory == 0);
@@ -67,7 +67,6 @@ void qMRMLNodeComboBoxPrivate::init()
 
   this->MRMLNodeFactory = new qMRMLNodeFactory(p);
 
-  QAbstractItemModel* model = p->createSceneModel();
   QAbstractItemModel* rootModel = model;
   while (qobject_cast<QAbstractProxyModel*>(rootModel) && 
          qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel())
@@ -75,6 +74,7 @@ void qMRMLNodeComboBoxPrivate::init()
     rootModel = qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel();
     }
   this->MRMLSceneModel = qobject_cast<qMRMLSceneModel*>(rootModel);
+  Q_ASSERT(this->MRMLSceneModel);
   this->updateNoneItem();
   this->updateActionItems();
 
@@ -179,11 +179,21 @@ void qMRMLNodeComboBoxPrivate::updateActionItems()
 // qMRMLNodeComboBox
 
 // --------------------------------------------------------------------------
-qMRMLNodeComboBox::qMRMLNodeComboBox(QWidget* _parent) : Superclass(_parent)
+qMRMLNodeComboBox::qMRMLNodeComboBox(QWidget* parentWidget)
+  : Superclass(parentWidget)
 {
   CTK_INIT_PRIVATE(qMRMLNodeComboBox);
   CTK_D(qMRMLNodeComboBox);
-  d->init();
+  d->init(new qMRMLSceneModel(this));
+}
+
+// --------------------------------------------------------------------------
+qMRMLNodeComboBox::qMRMLNodeComboBox(QAbstractItemModel* sceneModel, QWidget* parentWidget)
+  : Superclass(parentWidget)
+{
+  CTK_INIT_PRIVATE(qMRMLNodeComboBox);
+  CTK_D(qMRMLNodeComboBox);
+  d->init(sceneModel);
 }
 
 // --------------------------------------------------------------------------
@@ -238,12 +248,6 @@ void qMRMLNodeComboBox::addNode()
 }
 
 // --------------------------------------------------------------------------
-QAbstractItemModel* qMRMLNodeComboBox::createSceneModel()
-{
-  return new qMRMLSceneModel(this);
-}
-
-// --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeComboBox::currentNode()const
 {
   CTK_D(const qMRMLNodeComboBox);
@@ -287,6 +291,8 @@ int qMRMLNodeComboBox::nodeCount()const
   int extraItemsCount =
       d->MRMLSceneModel->preItems(this->mrmlScene()).count()
     + (d->MRMLSceneModel->postItems(this->mrmlScene()).count() ? d->MRMLSceneModel->postItems(this->mrmlScene()).count(): 0);
+  qDebug() << "ExtraItems: " << extraItemsCount << d->ComboBox->count();
+  Q_ASSERT(!this->mrmlScene() || d->ComboBox->count() >= extraItemsCount);
   return this->mrmlScene() ? d->ComboBox->count() - extraItemsCount : 0;
 }
 
@@ -434,14 +440,22 @@ QAbstractItemModel* qMRMLNodeComboBox::model()const
 }
 
 //----------------------------------=---------------------------------------
+QAbstractItemModel* qMRMLNodeComboBox::rootModel()const
+{
+  CTK_D(const qMRMLNodeComboBox);
+  return d->MRMLSceneModel;
+}
+
+//----------------------------------=---------------------------------------
 void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 {
   CTK_D(qMRMLNodeComboBox);
   QAbstractItemModel* oldModel = this->model();
+  QComboBox* oldComboBox = d->ComboBox;
   this->layout()->addWidget(comboBox);
   d->ComboBox = comboBox;
   d->setModel(oldModel);
-  this->layout()->removeWidget(d->ComboBox);
+  delete oldComboBox;
 }
 
 //----------------------------------=---------------------------------------

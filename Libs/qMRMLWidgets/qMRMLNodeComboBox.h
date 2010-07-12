@@ -127,7 +127,7 @@ public:
 public slots:
   ///
   /// Set the scene the NodeSelector listens to.
-  void setMRMLScene(vtkMRMLScene* scene);
+  virtual void setMRMLScene(vtkMRMLScene* scene);
 
   ///
   /// Select the node to be current
@@ -185,8 +185,10 @@ signals:
   /// TBD:
   /// void nodeRemoved(vtkMRMLNode*);
 protected:
-  virtual QAbstractItemModel* createSceneModel();
-  
+  /// qMRMLNodeComboBox will not take ownership on the model.
+  qMRMLNodeComboBox(QAbstractItemModel* model, QWidget* parent = 0);
+  QAbstractItemModel* rootModel()const;
+
   void setComboBox(QComboBox* comboBox);
   QComboBox* comboBox()const;
 

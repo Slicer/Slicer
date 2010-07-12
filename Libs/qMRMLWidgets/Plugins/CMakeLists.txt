@@ -6,6 +6,8 @@ PROJECT(qMRMLWidgetsPlugin)
 
 # Source files
 SET(designer_plugin_SRCS
+  qMRMLColorTableComboBoxPlugin.cxx
+  qMRMLColorTableComboBoxPlugin.h
   qMRMLLinearTransformSliderPlugin.cxx
   qMRMLLinearTransformSliderPlugin.h
   qMRMLListWidgetPlugin.cxx
@@ -41,6 +43,8 @@ SET(designer_plugin_SRCS
 # Headers that should run through moc
 SET(designer_plugin_MOC_SRCS
   qMRMLWidgetsPlugin.h
+
+  qMRMLColorTableComboBoxPlugin.h
   qMRMLLinearTransformSliderPlugin.h
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.h
