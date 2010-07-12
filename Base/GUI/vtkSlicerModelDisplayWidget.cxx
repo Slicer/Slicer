@@ -244,10 +244,19 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents(vtkObject *caller,
        // the node in UpdateMRML
        if (this->AutoScalarRangeCheckButton->GetWidget()->GetSelectedState())
          {
-         double *scalarRange = this->ModelDisplayNode->GetPolyData()->GetScalarRange();
-         vtkDebugMacro("ProcessWidgetEvents: Scalar range for display node polydata = " << scalarRange[0] << ", " << scalarRange[1]);
-         this->MinScalarRangeEntry->GetWidget()->SetValueAsDouble(scalarRange[0]);
-         this->MaxScalarRangeEntry->GetWidget()->SetValueAsDouble(scalarRange[1]);
+         if (this->ModelDisplayNode->GetPolyData() &&
+             this->ModelDisplayNode->GetPolyData()->GetScalarRange())
+           {
+           double *scalarRange = this->ModelDisplayNode->GetPolyData()->GetScalarRange();
+           vtkDebugMacro("ProcessWidgetEvents: Scalar range for display node polydata = " << scalarRange[0] << ", " << scalarRange[1]);
+           this->MinScalarRangeEntry->GetWidget()->SetValueAsDouble(scalarRange[0]);
+           this->MaxScalarRangeEntry->GetWidget()->SetValueAsDouble(scalarRange[1]);
+           }
+         else
+           {
+           this->MinScalarRangeEntry->GetWidget()->SetValueAsDouble(0.0);
+           this->MaxScalarRangeEntry->GetWidget()->SetValueAsDouble(1.0);
+           }
          }
        }
      }
@@ -446,7 +455,8 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
     // populate the scalars menu from the model node
     int numPointScalars;
     int numCellScalars;
-    if (this->ModelNode->GetPolyData()->GetPointData() != NULL)
+    if (this->ModelNode->GetPolyData() &&
+        this->ModelNode->GetPolyData()->GetPointData() != NULL)
       {
       numPointScalars = this->ModelNode->GetPolyData()->GetPointData()->GetNumberOfArrays();
       }
@@ -454,7 +464,8 @@ void vtkSlicerModelDisplayWidget::UpdateWidget()
       {
       numPointScalars = 0;
       }
-    if (this->ModelNode->GetPolyData()->GetCellData() != NULL)
+    if (this->ModelNode->GetPolyData() &&
+        this->ModelNode->GetPolyData()->GetCellData() != NULL)
       {
       numCellScalars = this->ModelNode->GetPolyData()->GetCellData()->GetNumberOfArrays();
       }
