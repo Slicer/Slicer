@@ -50,7 +50,7 @@ namespace eval LoadVolume {
       return ""
     }
     set files ""
-    set entries [glob -nocomplain $dir/*]
+    set entries [glob -nocomplain -directory $dir *]
     foreach e $entries {
       if { $progressCmd != "" } {
         set ret [eval $progressCmd \"$e\"]
@@ -684,7 +684,6 @@ itcl::body LoadVolume::apply { } {
                 if {$lev == ""} {
                     set lev 0.0
                 }
-                puts "Adding window level preset w = '$dicomwin', l = '$lev'"
                 $dispNode AddWindowLevelPreset $dicomwin $lev
             }
             # now use the first one, this call turns off the auto flag
@@ -692,32 +691,32 @@ itcl::body LoadVolume::apply { } {
         }
       }
     }
-      if {0} {
-    if {$_dicomWindowLevel(window) != -1} {
-      if {[$node IsA "vtkMRMLScalarVolumeNode"] == 1} {
-        set dispNode [$node GetScalarVolumeDisplayNode]
-        if {$dispNode != ""} {
-          $dispNode AutoWindowLevelOff
-          # for now, take the first if there's a list
-          set dicomwin [lindex [split $_dicomWindowLevel(window) {\\}] 0]
-          # puts "Got $dicomwin out of  $_dicomWindowLevel(window)"
-          $dispNode SetWindow $dicomwin
+    if {0} {
+      if {$_dicomWindowLevel(window) != -1} {
+        if {[$node IsA "vtkMRMLScalarVolumeNode"] == 1} {
+          set dispNode [$node GetScalarVolumeDisplayNode]
+          if {$dispNode != ""} {
+            $dispNode AutoWindowLevelOff
+            # for now, take the first if there's a list
+            set dicomwin [lindex [split $_dicomWindowLevel(window) {\\}] 0]
+            # puts "Got $dicomwin out of  $_dicomWindowLevel(window)"
+            $dispNode SetWindow $dicomwin
+          }
+        }
+      }
+      if {$_dicomWindowLevel(level) != -1} {
+        if {[$node IsA "vtkMRMLScalarVolumeNode"] == 1} {
+          set dispNode [$node GetScalarVolumeDisplayNode]
+          if {$dispNode != ""} {
+            $dispNode AutoWindowLevelOff
+            # for now, take the first if there's a list
+            set lev  [lindex [split $_dicomWindowLevel(level) {\\}] 0]
+            # puts "Got $lev out of $_dicomWindowLevel(level)"
+            $dispNode SetLevel $lev
+          }
         }
       }
     }
-    if {$_dicomWindowLevel(level) != -1} {
-      if {[$node IsA "vtkMRMLScalarVolumeNode"] == 1} {
-        set dispNode [$node GetScalarVolumeDisplayNode]
-        if {$dispNode != ""} {
-          $dispNode AutoWindowLevelOff
-          # for now, take the first if there's a list
-          set lev  [lindex [split $_dicomWindowLevel(level) {\\}] 0]
-          # puts "Got $lev out of $_dicomWindowLevel(level)"
-          $dispNode SetLevel $lev
-        }
-      }
-    }
-      }
     $::slicer3::ApplicationLogic PropagateVolumeSelection
 
     $::slicer3::Application SetRegistry "OpenPath" [file dirname $fileName]
@@ -790,7 +789,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
       set fileName [$directoryExplorer GetSelectedDirectory]
     }
     if { [file isdirectory $fileName] } {
-      set pathName [lindex [glob -nocomplain $fileName/*] 0]
+      set pathName [lindex [glob -directory $fileName -nocomplain *] 0]
       if { ![file isdirectory $pathName] } {
         set fileName $pathName
       }
@@ -1341,7 +1340,7 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName {includeSubs
   set SERIES "0008|103e"
   set SERIESNUMBER "0020|0011"
 
-  set files [glob -nocomplain $directoryName/*]
+  set files [glob -nocomplain -directory $directoryName *]
   set subdirs ""
   foreach f $files {
     if { [file isdirectory $f] } {
