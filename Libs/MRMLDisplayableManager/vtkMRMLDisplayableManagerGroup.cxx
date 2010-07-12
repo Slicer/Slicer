@@ -178,6 +178,8 @@ void vtkMRMLDisplayableManagerGroup::AddAndInitialize(
   if (!initialized)
     {
     displayableManager->Initialize(this, this->Internal->Renderer);
+    displayableManager->SetAndObserveMRMLViewNode(this->GetMRMLViewNode());
+    displayableManager->CreateIfPossible();
     }
 
   displayableManager->Register(this);
