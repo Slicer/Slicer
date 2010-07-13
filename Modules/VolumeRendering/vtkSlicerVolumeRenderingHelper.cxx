@@ -1876,7 +1876,7 @@ void vtkSlicerVolumeRenderingHelper::UpdateVolumePropertyFg()
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
 
-  this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSetFg());
-  this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetFgVolumePropertyNode()->GetVolumeProperty());
-  this->SVP_VolumePropertyWidget->Update();
+  this->SVP_VolumePropertyWidgetFg->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSetFg());
+  this->SVP_VolumePropertyWidgetFg->SetVolumeProperty(vspNode->GetFgVolumePropertyNode()->GetVolumeProperty());
+  this->SVP_VolumePropertyWidgetFg->Update();
 }
