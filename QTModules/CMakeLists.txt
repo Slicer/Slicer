@@ -18,11 +18,12 @@ INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3QTModuleMacros.cmake)
 
 SET(qtmodules
   Annotation
-  SlicerWelcome
-  Volumes
+  EMSegment
   Measurements
+  SlicerWelcome
   TractographyDisplay
   TractographyFiducialSeeding
+  Volumes
   )
 
 FOREACH(module ${qtmodules})
