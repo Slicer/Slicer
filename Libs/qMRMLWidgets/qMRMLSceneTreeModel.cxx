@@ -457,7 +457,11 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
   // we test if it's empty here, but it's just because I never needed nested calls
   // to rows about to be removed/added. It can be removed if needed
   Q_ASSERT(d->HiddenItems.empty());
-
+  if (this->listenNodeModifiedEvent())
+    {
+    qvtkDisconnect(node, vtkCommand::ModifiedEvent,
+                   this, SLOT(onMRMLNodeModified(vtkObject*)));
+    }
   QSharedPointer<qMRMLAbstractItemHelper> nodeItem =
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromObject(node, 0));
   QSharedPointer<qMRMLAbstractItemHelper> nodeItemParent =

@@ -785,7 +785,10 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObjec
   Q_ASSERT(d->MRMLNodeToBe == 0);
   d->MRMLNodeToBe = vtkMRMLNode::SafeDownCast(node);
   Q_ASSERT(d->MRMLNodeToBe);
-  
+
+  qvtkDisconnect(node, vtkCommand::ModifiedEvent,
+                this, SLOT(onMRMLNodeModified(vtkObject*)));
+
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(d->ItemFactory->createItem(node, 0));
   QSharedPointer<qMRMLAbstractItemHelper> _parent = 
@@ -820,6 +823,8 @@ void qMRMLSceneModel::onMRMLSceneDeleted(vtkObject* scene)
 void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
 {
   vtkMRMLNode* modifiedNode = vtkMRMLNode::SafeDownCast(node);
+  Q_ASSERT(modifiedNode && modifiedNode->GetScene());
+  Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
   QModelIndexList nodeIndexes = this->indexes(modifiedNode);
   emit dataChanged(nodeIndexes.first(), nodeIndexes.last());
 }

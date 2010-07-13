@@ -174,8 +174,9 @@ int qMRMLUtils::nodeIndex(vtkMRMLNode* node)
   QString nodeId = node->GetID();
   vtkMRMLNode* parent = qMRMLUtils::parentNode(node);
   vtkMRMLScene* scene = node->GetScene();
+  const int count = scene->GetNumberOfNodes();
   int index = -1;
-  for (int i = 0; scene->GetNumberOfNodes();++i)
+  for (int i = 0; i < count; ++i)
     {
     vtkMRMLNode* n = scene->GetNthNode(i);
     Q_ASSERT(n);
