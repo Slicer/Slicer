@@ -65,6 +65,8 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "GenericTransformImage.h"
 
+#include "itkGridImageSource.h"
+
 typedef float PixelType;
 // Dimension and MaxInputDimension comes from an enum at the start of
 // itkMultiModal3DMutualRegistrationHelper.h
@@ -532,6 +534,41 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
   myHelper->StartRegistration();
   currentGenericTransform = myHelper->GetCurrentGenericTransform();
   MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
+  
+// intraop acquisition is usually in lower resolution -- does it make sense to
+// increase the spacing for the resampled volume?
+// perhaps this can be done by the user with additional resampling ...
+#if 0
+  FixedVolumeType::Pointer 
+    resampleReferenceVolume = FixedVolumeType::New();
+  
+  // use spacing from the moving volume, since fixed volume usually has larger slice thickness
+  FixedVolumeType::SpacingType originalSpacing = extractFixedVolume->GetSpacing();
+  FixedVolumeType::SpacingType refSpacing;
+  FixedVolumeType::RegionType refRegion = extractFixedVolume->GetLargestPossibleRegion();
+
+  FixedVolumeType::SizeType originalSize = refRegion.GetSize();
+  MovingVolumeType::SizeType refSize;
+
+  refSpacing[0] = extractMovingVolume->GetSpacing()[0];
+  refSpacing[1] = extractMovingVolume->GetSpacing()[1];
+  refSpacing[2] = extractMovingVolume->GetSpacing()[2];
+
+  refSize[0] = originalSize[0]*originalSpacing[0]/refSpacing[0];
+  refSize[1] = originalSize[1]*originalSpacing[1]/refSpacing[1];
+  refSize[2] = originalSize[2]*originalSpacing[2]/refSpacing[2];
+ 
+  std::cout << "Setting output spacing to " << refSpacing << std::endl;
+
+  refRegion.SetSize(refSize);
+  
+  resampleReferenceVolume->SetRegions(refRegion);
+  resampleReferenceVolume->Allocate();
+  resampleReferenceVolume->SetDirection(extractFixedVolume->GetDirection());
+  resampleReferenceVolume->SetSpacing(refSpacing);
+  resampleReferenceVolume->SetOrigin(extractFixedVolume->GetOrigin());
+#endif // 
+
 
   const std::vector<GenericTransformType::Pointer> *tfmList = myHelper->GetGenericTransformListPtr();
   if(tfmList->size()){
@@ -556,6 +593,95 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
       if((localTransformType[requestedTransformId] == "BSpline" || localTransformType[requestedTransformId] == "ROIBSpline") 
           && bsplineTransformDebug.size()>0)
         currentFileName = bsplineTransformDebug;
+      
+      if((localTransformType[requestedTransformId] == "BSpline" || 
+          localTransformType[requestedTransformId] == "ROIBSpline") &&
+         deformedGridImage.size() > 0 
+        ){
+        
+        // generate the label image showing the bspline grid, and apply the
+        // bspline transformation
+        // ... follow BRAINSCommonLib/GenericTransformImage.cxx
+        GenericTransformType const * const tfm = (*tfmList)[currentTransformId];
+        const BSplineTransformType::ConstPointer bsplineTfm
+          = dynamic_cast<BSplineTransformType const * const>( tfm );
+
+        // get transform parameters
+        BSplineTransformType::ParametersType fixedParams =
+          bsplineTfm->GetFixedParameters();
+        BSplineTransformType::ParametersType params =
+          bsplineTfm->GetParameters();
+
+        typedef itk::GridImageSource<FixedVolumeType> GridSourceType;
+        GridSourceType::Pointer gridImageFilter = GridSourceType::New();
+
+        float scale = 255.0;
+        float gridThickness = 2.;
+        FixedVolumeType::SizeType size;
+        FixedVolumeType::SpacingType spacing;
+        GridSourceType::ArrayType gridSpacing; 
+        GridSourceType::ArrayType gridOffset; 
+        GridSourceType::ArrayType sigma; 
+        GridSourceType::BoolArrayType which; 
+
+        // Specify image parameters
+        spacing = extractMovingVolume->GetSpacing();
+        size = extractMovingVolume->GetLargestPossibleRegion().GetSize();
+
+        // Specify grid parameters
+        sigma.Fill( 1 );
+        which.Fill( true );
+        which[2] = false;
+
+        size[1] = size[1]*spacing[1]/spacing[0];
+        size[2] = size[2]*spacing[2]/spacing[0];
+        spacing.Fill(spacing[0]);
+
+        sigma[0] = spacing[0]*gridThickness;
+        sigma[1] = spacing[1]*gridThickness;
+        sigma[2] = spacing[2]*gridThickness;
+
+        gridSpacing[0] = fixedParams[6];
+        gridSpacing[1] = fixedParams[7];
+        gridSpacing[2] = fixedParams[8];
+
+        gridOffset[0] = gridSpacing[0]/2.;
+        gridOffset[1] = gridSpacing[1]/2.;
+        gridOffset[2] = gridSpacing[2]/2.;
+
+        // Specify 0th order B-spline function (Box function)
+        typedef itk::BSplineKernelFunction<0> KernelType;
+        KernelType::Pointer kernel = KernelType::New();
+
+        // Set parameters
+        gridImageFilter->SetKernelFunction( kernel );
+
+        // Set parameters; spacing and size will be different from those in
+        // the original moving image
+        gridImageFilter->SetSpacing( spacing );
+        gridImageFilter->SetSize( size );
+        gridImageFilter->SetOrigin( extractMovingVolume->GetOrigin() );
+        gridImageFilter->SetGridSpacing( gridSpacing );
+        gridImageFilter->SetGridOffset( gridOffset );
+        gridImageFilter->SetDirection( extractMovingVolume->GetDirection());
+        gridImageFilter->SetWhichDimensions( which );
+        gridImageFilter->SetSigma( sigma );
+        gridImageFilter->SetScale( scale );
+        gridImageFilter->Update();
+
+        // resample the grid and save the output
+        resampledImage = TransformResample<MovingVolumeType, FixedVolumeType>(
+          gridImageFilter->GetOutput(),
+          extractFixedVolume,
+//          resampleReferenceVolume,
+          0,
+          GetInterpolatorFromString<MovingVolumeType>(std::string("NearestNeighbor")),
+          currentGenericTransform);
+          
+        itkUtil::WriteImage<FixedVolumeType>(resampledImage, deformedGridImage);
+        
+      }
+
 
       if(currentFileName.size() == 0)
         continue;
@@ -570,6 +696,7 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
   // Remember:  the Data is Moving's, the shape is Fixed's.
   resampledImage = TransformResample<MovingVolumeType, FixedVolumeType>(
     preprocessedMovingVolume,
+//    resampleReferenceVolume, // fixed volume has large slice thickness
     extractFixedVolume,
     backgroundFillValue,
     GetInterpolatorFromString<MovingVolumeType>(interpolationMode),

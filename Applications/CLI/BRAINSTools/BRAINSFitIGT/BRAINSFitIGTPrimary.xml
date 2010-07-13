@@ -34,7 +34,7 @@
       <name>initializeTransformMode</name>
       <longflag>initializeTransformMode</longflag>
       <label>Intitialze Transform Mode</label>
-      <description>Determine how to initialize the transform center.  GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsAlign assumes that the center of mass of the images represent similar structures.  useCenterOfHeadAlign attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
+      <description>Determine how to initialize the transform center.  GeometryAlign on assumes that the center of the voxel lattice of the images represent similar structures.  MomentsAlign assumes that the center of mass of the images represent similar structures.  useROICenterAlign attempts to use the top of head and shape of neck to drive a center of mass estimate.  Off assumes that the physical space of the images are close, and that centering in terms of the image Origins is a good starting point.  This flag is mutually exclusive with the initialTransform flag.</description>
       <default>useGeometryAlign</default>
       <element>Off</element>
       <element>useMomentsAlign</element>
@@ -601,7 +601,15 @@
       <label>BSpline transform</label>
       <description></description>
       <channel>output</channel>
-    </transform>
+    </transform>    
+    
+    <image type="label">
+      <name>deformedGridImage</name>
+      <longflag>deformedGridImage</longflag>
+      <label>Grid image showing the deformation</label>
+      <description>Grid image</description>
+      <channel>output</channel>
+    </image>
 
   </parameters>
 
