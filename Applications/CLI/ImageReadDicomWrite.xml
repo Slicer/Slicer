@@ -181,6 +181,13 @@
       <label>Reverse Slices</label>
       <default>false</default>
     </boolean>
+    <boolean>
+      <name>useCompression</name>
+      <longflag>--useCompression</longflag>
+      <description>Compress the output pixel data.</description>
+      <label>Use Compression</label>
+      <default>false</default>
+    </boolean>
   </parameters>
 
 </executable>
