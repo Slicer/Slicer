@@ -367,6 +367,10 @@ QStringList qMRMLSceneModel::preItems(vtkObject* itemParent)const
   QStringList res; 
 
   vtkCollection* collection = d->ItemFactory->preItems();
+  if (collection == 0)
+    {
+    return res;
+    }
   // FIXME: not thread safe
   collection->InitTraversal();
   vtkObject* item = 0;
@@ -405,6 +409,11 @@ QStringList qMRMLSceneModel::postItems(vtkObject* itemParent)const
   QStringList res; 
 
   vtkCollection* collection = d->ItemFactory->postItems();
+  if (collection == 0)
+    {
+    return res;
+    }
+
   // FIXME: not thread safe
   collection->InitTraversal();
   vtkObject* item = 0;
