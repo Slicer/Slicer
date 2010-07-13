@@ -28,6 +28,8 @@ public:
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > itemsFromIndexes(
     const QModelIndex &_parent, int start, int end) const;
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > children(
+    const qMRMLAbstractItemHelper* parentItem) const;
+  QVector<QSharedPointer<qMRMLAbstractItemHelper> > children(
     const qMRMLAbstractItemHelper* parentItem, int start, int end) const;
 
   int rowWithHiddenItemsRemoved(const qMRMLAbstractItemHelper* item)const;
@@ -38,6 +40,7 @@ public:
 
 protected:
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > HiddenItems;
+  QVector<QSharedPointer<qMRMLAbstractItemHelper> > ItemsToAdd;
 #ifndef QT_NO_DEBUG
   vtkObject* HiddenVTKObject;
 #endif
@@ -296,6 +299,13 @@ qMRMLSceneTreeModelPrivate::itemsFromIndexes(const QModelIndex &_parent,
 
 //------------------------------------------------------------------------------
 QVector<QSharedPointer<qMRMLAbstractItemHelper> >
+qMRMLSceneTreeModelPrivate::children(const qMRMLAbstractItemHelper* parentItem) const
+{
+  return this->children(parentItem, 0, parentItem->childCount()-1);
+}
+
+//------------------------------------------------------------------------------
+QVector<QSharedPointer<qMRMLAbstractItemHelper> >
 qMRMLSceneTreeModelPrivate::children(const qMRMLAbstractItemHelper* parentItem,
                                      int start, int end) const
 {
@@ -323,11 +333,12 @@ qMRMLSceneTreeModelPrivate::children(const qMRMLAbstractItemHelper* parentItem,
 QStack<int>
 qMRMLSceneTreeModelPrivate::consecutiveRows(const QVector<QSharedPointer<qMRMLAbstractItemHelper> >& items ) const
 {
+  CTK_P(const qMRMLSceneTreeModel);
   QSharedPointer<qMRMLAbstractItemHelper> lastParentItem;
   int lastRow = -1;
   QStack<int> consecutiveRowsStack;
   bool aValidItem = false;
-  Q_ASSERT(items.size() == 2);
+  Q_ASSERT(items.size() % p->columnCount() == 0);
   foreach(const QSharedPointer<qMRMLAbstractItemHelper>& item, items)
     {
     // process only the column 0 items as we are only interested by the rows
@@ -489,7 +500,8 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
     //int numberOfRows = consecutiveRowsToBeRemoved[i];
     // proxyItemsFromSourceIndexes returned items for each column (not just 1
     // per row), here we compute the total number of items.
-    int numberOfItems = numberOfRows * this->columnCount();
+    QModelIndex parentIndex = this->indexFromItem(itemParent.data());
+    int numberOfItems = numberOfRows * this->columnCount(parentIndex);
     /*
     qDebug() << "****Remove:" << start << start + numberOfRows - 1 << item->object()
              << item->data().toString().toLatin1().data() << vtkMRMLNode::SafeDownCast(item->object())->GetID();
@@ -497,7 +509,12 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
     // send the Qt events for the qAbstractItemModel
     // the item to remove doesn't have to be hidden yet, it's valid to have it
     // in the tree
-    this->beginRemoveRows(this->indexFromItem(itemParent.data()), start, start + numberOfRows - 1);
+    //qDebug() << "Remove: " << parentIndex << this->rowCount(parentIndex) << start;
+    //qDebug() << qMRMLUtils::childCount(vtkMRMLNode::SafeDownCast(node));
+    Q_ASSERT(start < this->rowCount(parentIndex));
+    this->beginRemoveRows(parentIndex, start, start + numberOfRows - 1);
+
+    d->ItemsToAdd = d->children(item.data());
     // now we fake that the item is removed from the model
     d->HiddenItems += itemsToRemove.mid(0, numberOfItems);
 #ifndef QT_NO_DEBUG
@@ -508,7 +525,13 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
     // items have been removed from the tree. They aren't exactly removed, just
     // hidden for the momement. They will be truly removed when
     // onSourceRowsRemoved() will be called. Until then, we hide the items
+    // we could move endRemoveRows in onMRMLNodeSceneRemoved as we know only 1
+    // node has been removed
     this->endRemoveRows();
+    //qDebug() << "Removed: " << parentIndex << this->rowCount(parentIndex);
+    QSharedPointer<qMRMLAbstractItemHelper> sceneItem =
+      QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromObject(scene, 0));
+    //qDebug() << "onMRMLSceneNodeAboutToBeRemoved: scenecount: " << sceneItem->childCount();
     }
 }
 
@@ -550,10 +573,14 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node
     this->beginInsertRows(this->indexFromItem(itemParent.data()), start, start + numberOfRows - 1);
 
     d->HiddenItems.remove(0, numberOfRows * this->columnCount());
-
     this->endInsertRows();
     }
   Q_ASSERT(d->HiddenItems.empty());
+  if (this->listenNodeModifiedEvent())
+    {
+    qvtkConnect(node, vtkCommand::ModifiedEvent,
+                this, SLOT(onMRMLNodeModified(vtkObject*)));
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -562,10 +589,34 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject *no
   CTK_D(qMRMLSceneTreeModel);
 #ifndef QT_NO_DEBUG
   d->HiddenVTKObject = 0;
+  QSharedPointer<qMRMLAbstractItemHelper> sceneItem =
+    QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromObject(scene, 0));
+  //qDebug() << "onMRMLSceneNodeRemoved: scenecount: " << sceneItem->childCount();
 #endif
-  // we should probably not clear everything (in case if insertion/removes are 
+  // we should probably not clear everything (in case if insertion/removes are
   // nested)
   d->HiddenItems.clear();
+
+  if (!d->ItemsToAdd.size())
+    {
+    return;
+    }
+  QStack<int> consecutiveRowsToInsert = d->consecutiveRows(d->ItemsToAdd);
+  // items inserted are in this->ItemsToAdd.
+  foreach(int numberOfRows, consecutiveRowsToInsert)
+    {
+    Q_ASSERT(!d->ItemsToAdd.empty());
+
+    QSharedPointer<qMRMLAbstractItemHelper> item = d->ItemsToAdd.front();
+    QSharedPointer<qMRMLAbstractItemHelper> itemParent =
+      QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
+
+    int start = item->row();
+    qDebug() << "************onMRMLSceneNodeRemoved: "<<  start << this->indexFromItem(itemParent.data());
+    this->beginInsertRows(this->indexFromItem(itemParent.data()), start, start + numberOfRows - 1);
+    d->ItemsToAdd.remove(0, numberOfRows * this->columnCount());
+    this->endInsertRows();
+    }
 }
 //------------------------------------------------------------------------------
 // qMRMLSceneTreeModel
