@@ -146,6 +146,12 @@ public:
     vtkMRMLVolumePropertyNode* GetVolumePropertyNode();
     vtkMRMLVolumePropertyNode* GetFgVolumePropertyNode();
 
+    void ListenToTclMouseEvent(int OnOff);
+
+    // Description:
+    // Called everytime a mouse button is pressed
+    void SetButtonDown(int isDown);
+    
 protected:
     vtkVolumeRenderingGUI();
     ~vtkVolumeRenderingGUI();
@@ -241,6 +247,9 @@ protected:
 
     int NewParametersNodeForNewInputFlag;
     int NewParametersNodeFromSceneLoadingFlag;
+
+    // Description:
+    int VolumeRenderingInteractionFlag;
 };
 
 #endif

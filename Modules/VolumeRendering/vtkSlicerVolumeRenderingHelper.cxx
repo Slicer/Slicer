@@ -123,7 +123,6 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
   this->PB_PauseResume = NULL;
   this->VI_PauseResume = NULL;
 
-  this->VolumeRenderingInteractionFlag = 0;
   this->SetupGUIFromParametersNodeFlag = 0;
 
   this->RenderingPaused = 0;
@@ -131,9 +130,6 @@ vtkSlicerVolumeRenderingHelper::vtkSlicerVolumeRenderingHelper(void)
 
 vtkSlicerVolumeRenderingHelper::~vtkSlicerVolumeRenderingHelper(void)
 {
-  this->Gui->Script("bind all <Any-ButtonPress> {}",this->GetTclName());
-  this->Gui->Script("bind all <Any-ButtonRelease> {}",this->GetTclName());
-
   this->DestroyTechniquesTab();
   this->DestroyPropertyTab();
   this->DestroyROITab();
@@ -167,10 +163,6 @@ void vtkSlicerVolumeRenderingHelper::Init(vtkVolumeRenderingGUI *gui)
   this->SetApplication(this->Gui->GetApplication());
 
   BuildRenderingFrameGUI();
-
-  //hookup mouse button interaction (needed by CPU ray cast)
-  this->Gui->Script("bind all <Any-ButtonPress> {%s SetButtonDown 1}", this->GetTclName());
-  this->Gui->Script("bind all <Any-ButtonRelease> {%s SetButtonDown 0}", this->GetTclName());
 }
 
 void vtkSlicerVolumeRenderingHelper::BuildRenderingFrameGUI()
@@ -1858,32 +1850,6 @@ void vtkSlicerVolumeRenderingHelper::ProcessExpectedFPS(void)
     }
 
   this->Gui->RequestRender();
-}
-
-void vtkSlicerVolumeRenderingHelper::SetButtonDown(int isDown)
-{
-  if (this->Gui == NULL)
-    return;
-
-  vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
-  if (vspNode->GetPerformanceControl() != 0)
-    return;
-    
-  int val = this->Gui->GetLogic()->SetupVolumeRenderingInteractive(this->Gui->GetCurrentParametersNode(), isDown);
-
-  if (val == 0)
-    return;
-
-  if (isDown == 1)
-    this->VolumeRenderingInteractionFlag = 1;
-  else
-  {
-    if (this->VolumeRenderingInteractionFlag == 1)//avoid endless loop
-    {
-      this->Gui->RequestRender();
-      this->VolumeRenderingInteractionFlag = 0;
-    }
-  }
 }
 
 void vtkSlicerVolumeRenderingHelper::UpdateROI()
