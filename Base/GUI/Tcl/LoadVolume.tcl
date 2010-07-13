@@ -902,18 +902,10 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 
     # extract the file list corresponding to the selection (it is all the files in the selected series)
     # - the archetype file is the first one in the list
-    # - strip leading node serial number and (optional) trailing parenthetical description
+    # - use the cache of file names that was created when the dicom tree was populated
     set fileList ""
     foreach fileNode [$t GetNodeChildren $seriesNode] {
-      # - extract file name from node name
-      set nodeText [$t GetNodeText $fileNode]
-      set openParen [string last ( $nodeText]
-      set closeParen [string last ) $nodeText]
-      if { $openParen != -1 && $closeParen != -1 } {
-        set fileName [string range $nodeText [expr $openParen + 1] [expr $closeParen - 1]]
-      } else {
-        set fileName $nodeText
-      }
+      set fileName $_dicomTree(subscriptName,$fileNode)
       lappend fileList $fileName
     }
 
@@ -935,8 +927,11 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     # try to open the series and see the contents
     # - this is in a catch, since selectArchetype may have changed the layout
     #   of the tree
-    catch "$t OpenNode $seriesNode"
-    catch "$t SeeNode $selection"
+    set ret [catch "$t OpenNode $seriesNode" res]
+    if { $ret } { puts $res }
+    puts "trying to see $selection"
+    set ret [catch "$t SeeNode $selection" res]
+    if { $ret } { puts $res }
 
     set _processingEvents 0
     return
@@ -1505,7 +1500,8 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
           if { [llength $subseries] > 1 } {
             foreach sub $subseries {
               foreach {name value files} [split $sub ","] {}
-              set newSeries "$series for $name $value"
+              set seriesName $tree($patient,$study,series,displayName,$series)
+              set newSeries "$seriesName for $name $value"
               lappend tree($patient,$study,series) $newSeries
               set tree($patient,$study,$newSeries,files) $subseriesValues($sub)
             }
