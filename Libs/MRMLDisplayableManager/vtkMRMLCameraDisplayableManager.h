@@ -23,8 +23,8 @@ public:
 
   void UpdateCameraNode();
 
-  void AddCameraObservers();
-  void RemoveCameraObservers();
+//  void AddCameraObservers();
+//  void RemoveCameraObservers();
 
   ///
   /// Events

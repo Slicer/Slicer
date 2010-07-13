@@ -68,7 +68,7 @@ void vtkMRMLCameraDisplayableManager::Create()
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::OnMRMLSceneCloseEvent()
 {
-  this->RemoveCameraObservers();
+  //this->RemoveCameraObservers();
   this->SetAndObserveCameraNode(0);
 }
 
@@ -154,7 +154,7 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::RemoveMRMLObservers()
 {
-  this->RemoveCameraObservers();
+//  this->RemoveCameraObservers();
   this->SetAndObserveCameraNode(0);
 
   this->Superclass::RemoveMRMLObservers();
@@ -358,46 +358,36 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
   this->InvokeEvent(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent, camera);
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::AddCameraObservers()
-{
-  assert(this->GetMRMLScene()); //!this->MRMLScene || this->SceneClosing
-
-  vtkEventBroker *broker = vtkEventBroker::GetInstance();
-  std::vector< vtkObservation *> observations;
-  std::vector<vtkMRMLNode*> cnodes;
-  int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cnodes);
-  for (int n = 0; n < nnodes; n++)
-    {
-    vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
-    observations = broker->GetObservations(node, vtkMRMLCameraNode::ActiveTagModifiedEvent,
-                                           this, this->GetMRMLCallbackCommand());
-    if (node && observations.size() == 0)
-      {
-      broker->AddObservation (node, vtkMRMLCameraNode::ActiveTagModifiedEvent,
-                              this, this->GetMRMLCallbackCommand());
-      }
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::RemoveCameraObservers()
-{
-  if (this->GetMRMLScene())
-    {
-    vtkEventBroker *broker = vtkEventBroker::GetInstance();
-    std::vector< vtkObservation *> observations;
-    std::vector<vtkMRMLNode*> cnodes;
-    int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cnodes);
-    for (int n = 0; n < nnodes; n++)
-      {
-      vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(cnodes[n]);
-      observations = broker->GetObservations(node, vtkMRMLCameraNode::ActiveTagModifiedEvent,
-                                             this, this->GetMRMLCallbackCommand());
-      if ( node && observations.size() != 0 )
-        {
-        broker->RemoveObservations(observations);
-        }
-      }
-    }
-}
+////---------------------------------------------------------------------------
+//void vtkMRMLCameraDisplayableManager::AddCameraObservers()
+//{
+//  //!this->MRMLScene || this->SceneClosing
+//  assert(this->Internal->CameraNode);
+//
+//  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+//
+//  std::vector< vtkObservation *> observations = broker->GetObservations(
+//      this->Internal->CameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
+//      this, this->GetMRMLCallbackCommand());
+//
+//  assert(observations.size() == 0);
+//
+//  broker->AddObservation(this->Internal->CameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
+//                         this, this->GetMRMLCallbackCommand());
+//}
+//
+////---------------------------------------------------------------------------
+//void vtkMRMLCameraDisplayableManager::RemoveCameraObservers()
+//{
+//  assert(this->Internal->CameraNode);
+//
+//  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+//
+//  std::vector< vtkObservation *> observations = broker->GetObservations(
+//      this->Internal->CameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
+//      this, this->GetMRMLCallbackCommand());
+//
+//  assert(observations.size() == 1);
+//
+//  broker->RemoveObservations(observations);
+//}
