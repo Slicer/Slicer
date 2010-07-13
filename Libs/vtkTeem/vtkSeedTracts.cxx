@@ -469,9 +469,9 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
 //----------------------------------------------------------------------------
 void vtkSeedTracts::SeedStreamlinesInROI()
 {
-  float idxX, idxY, idxZ;
-  float maxX, maxY, maxZ;
-  float gridIncX, gridIncY, gridIncZ;
+  double idxX, idxY, idxZ;
+  double maxX, maxY, maxZ;
+  double gridIncX, gridIncY, gridIncZ;
   int inExt[6];
   double point[3], point2[3];
 

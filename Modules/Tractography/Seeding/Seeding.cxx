@@ -201,7 +201,15 @@ int main( int argc, const char * argv[] )
       }
     }
   
-  seed->SetIsotropicSeeding(1);
+  if (UseIndexSpace) 
+    {
+    seed->SetIsotropicSeeding(0);
+    }
+  else
+    {
+    seed->SetIsotropicSeeding(1);
+    }
+
   seed->SetIsotropicSeedingResolution(SeedSpacing);
   seed->SetMinimumPathLength(MinimumLength);
   seed->UseVtkHyperStreamlinePoints();

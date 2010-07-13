@@ -71,20 +71,29 @@
   <parameters>
     <label>Seed Placement Options</label>
     <description>Options for seed placement</description>
-    
+
+    <boolean>
+      <name>UseIndexSpace</name>
+      <label>Use Index Space</label>
+      <flag>-x</flag>
+      <longflag>--useindexspace</longflag>
+      <description>Seed at IJK voxel grid</description>
+      <default>false</default>  	
+    </boolean>
+      
     <double>
       <name>SeedSpacing</name>
       <label>Seed Spacing</label>
       <flag>-s</flag>
       <longflag>--seedspacing</longflag>
-      <description>Spacing (in mm) between seed points</description>
+      <description>Spacing (in mm) between seed points, only matters if use Use Index Space is off</description>
       <default>2</default>
       <constraints>
       	<minimum>0.1</minimum>
 	<maximum>10</maximum>
 	<step>0.1</step>
       </constraints>
-    </double>
+    </double>    
     
     <boolean>
       <name>RandomGrid</name>
