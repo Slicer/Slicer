@@ -26,7 +26,6 @@ public:
   vtkInternal();
   
   vtkMRMLCameraNode* CameraNode;
-  bool               CameraNodeWasCreated;
 };
 
 //---------------------------------------------------------------------------
@@ -36,7 +35,6 @@ public:
 vtkMRMLCameraDisplayableManager::vtkInternal::vtkInternal()
 {
   this->CameraNode = 0;
-  this->CameraNodeWasCreated = false;
 }
 
 //---------------------------------------------------------------------------
@@ -59,7 +57,6 @@ void vtkMRMLCameraDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "CameraNode: " << this->Internal->CameraNode << "\n";
-  os << indent << "CameraNodeWasCreated: " << this->Internal->CameraNodeWasCreated << "\n";
 }
 
 //---------------------------------------------------------------------------
