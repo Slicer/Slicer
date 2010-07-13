@@ -45,12 +45,16 @@ class vtkMRMLAbstractDisplayableManager::vtkInternal
 public:
   vtkInternal();
 
+  static void DoDeleteCallback(vtkObject* vtk_obj, unsigned long event,
+                               void* client_data, void* call_data);
+
   bool                                Initialized;
   bool                                Created;
   bool                                UpdateFromMRMLRequested;
   vtkRenderer *                       Renderer;
   vtkMRMLViewNode *                   MRMLViewNode;
   vtkMRMLDisplayableManagerGroup *    DisplayableManagerGroup;
+  vtkSmartPointer<vtkCallbackCommand> DeleteCallBackCommand;
 };
 
 //----------------------------------------------------------------------------
@@ -65,6 +69,23 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal()
   this->Renderer = 0;
   this->MRMLViewNode = 0;
   this->DisplayableManagerGroup = 0;
+  this->DeleteCallBackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->DeleteCallBackCommand->SetCallback(
+      vtkMRMLAbstractDisplayableManager::vtkInternal::DoDeleteCallback);
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::vtkInternal::DoDeleteCallback(vtkObject* vtk_obj,
+                                                                      unsigned long event,
+                                                                      void* vtkNotUsed(client_data),
+                                                                      void* vtkNotUsed(call_data))
+{
+  vtkMRMLAbstractDisplayableManager* self =
+      vtkMRMLAbstractDisplayableManager::SafeDownCast(vtk_obj);
+  assert(self);
+  assert(event == vtkCommand::DeleteEvent);
+
+  self->RemoveMRMLObservers();
 }
 
 //----------------------------------------------------------------------------
@@ -74,13 +95,12 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal()
 vtkMRMLAbstractDisplayableManager::vtkMRMLAbstractDisplayableManager()
 {
   this->Internal = new vtkInternal;
+  this->AddObserver(vtkCommand::DeleteEvent, this->Internal->DeleteCallBackCommand);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLAbstractDisplayableManager::~vtkMRMLAbstractDisplayableManager()
 {
-  this->RemoveMRMLObservers();
-
   if (this->Internal->Renderer)
     {
     this->Internal->Renderer->UnRegister(this);
