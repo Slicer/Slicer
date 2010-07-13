@@ -66,7 +66,6 @@ SET(qMRMLWidgets_SRCS
   qMRMLThreeDRenderView_p.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
-  qMRMLTreeProxyModel_p.h
   qMRMLTreeWidget.cxx
   qMRMLTreeWidget.h
   qMRMLUtils.cxx
