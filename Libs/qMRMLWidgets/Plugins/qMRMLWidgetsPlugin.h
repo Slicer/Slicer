@@ -6,6 +6,7 @@
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
 #include "qMRMLNodeComboBoxPlugin.h"
+#include "qMRMLRangeWidgetPlugin.h"
 #include "qMRMLROIWidgetPlugin.h"
 #include "qMRMLSliceViewWidgetPlugin.h"
 #include "qMRMLThreeDRenderViewPlugin.h"
@@ -35,6 +36,7 @@ public:
             << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin
             << new qMRMLNodeComboBoxPlugin
+            << new qMRMLRangeWidgetPlugin
             << new qMRMLROIWidgetPlugin
             << new qMRMLThreeDRenderViewPlugin
             << new qMRMLSliceViewWidgetPlugin

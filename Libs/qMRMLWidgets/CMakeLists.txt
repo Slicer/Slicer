@@ -42,6 +42,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
+  qMRMLRangeWidget.cxx
+  qMRMLRangeWidget.h
   qMRMLROIWidget.cxx
   qMRMLROIWidget.h
   qMRMLSceneCategoryModel.cxx
@@ -88,6 +90,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLMatrixWidget.h
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.h
+  qMRMLRangeWidget.h
   qMRMLROIWidget.h
   qMRMLSceneCategoryModel.h
   qMRMLSceneColorTableModel.h

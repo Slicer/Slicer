@@ -16,6 +16,8 @@ SET(designer_plugin_SRCS
   qMRMLMatrixWidgetPlugin.h
   qMRMLNodeComboBoxPlugin.cxx
   qMRMLNodeComboBoxPlugin.h
+  qMRMLRangeWidgetPlugin.cxx
+  qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.cxx
   qMRMLROIWidgetPlugin.h
   qMRMLSliceViewWidgetPlugin.cxx
@@ -49,6 +51,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.h
   qMRMLNodeComboBoxPlugin.h
+  qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.h
   qMRMLSceneFactoryWidgetPlugin.h
   qMRMLSliceViewWidgetPlugin.h
