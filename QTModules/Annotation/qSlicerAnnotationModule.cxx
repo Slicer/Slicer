@@ -38,6 +38,8 @@ void qSlicerAnnotationModule::setup()
   vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationTextDisplayableManager");
 
+  vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+      "vtkMRMLAnnotationFiducialDisplayableManager");
 
   //vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::GetInstance();
   //factory->RegisterDisplayableManager("vtkMRMLAnnotationTextDisplayableManager");

@@ -119,6 +119,6 @@ void vtkMRMLAnnotationFiducialNode::Initialize(vtkMRMLScene* mrmlScene)
 
   this->AddText(" ",1,1);
 
-  this->InvokeEvent(vtkMRMLAnnotationFiducialNode::FiducialNodeAddedEvent);
+  //this->InvokeEvent(vtkMRMLAnnotationFiducialNode::FiducialNodeAddedEvent);
 }
 

@@ -53,7 +53,7 @@
 #include "vtkSeedRepresentation.h"
 
 #include "vtkSlicerAnnotationRulerManager.h"
-#include "vtkSlicerAnnotationFiducialManager.h"
+#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 #include "vtkMRMLAnnotationBidimensionalNode.h"
 #include "vtkMRMLAnnotationROINode.h"
 
@@ -632,7 +632,7 @@ qSlicerAnnotationModuleWidget::moveUpSelected()
 //-----------------------------------------------------------------------------
 void
 qSlicerAnnotationModuleWidget::StartAddingFiducials()
-{/*
+{
  CTK_D(qSlicerAnnotationModuleWidget);
 
  d->logic()->StartAddingFiducials();
@@ -644,10 +644,10 @@ qSlicerAnnotationModuleWidget::StartAddingFiducials()
  return;
  }
 
- //m_IDs.push_back( newFiducialNodeID );
- //m_index++;
-
- //qvtkConnect(d->logic()->GetFiducialManager(),  vtkSlicerAnnotationFiducialManager::AddFiducialCompletedEvent,
+ m_IDs.push_back( newFiducialNodeID );
+ m_index++;
+ /*
+ //qvtkConnect(d->logic()->GetFiducialManager(),  vtkMRMLAnnotationFiducialDisplayableManager::AddFiducialCompletedEvent,
  //  this, SLOT(AddFiducialCompleted(vtkObject*, void*)) );
  */
 }

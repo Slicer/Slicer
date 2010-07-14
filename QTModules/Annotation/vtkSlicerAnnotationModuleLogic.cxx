@@ -61,7 +61,7 @@
 
 #include "vtkSlicerAnnotationRulerManager.h"
 #include "vtkSlicerAnnotationAngleManager.h"
-#include "vtkSlicerAnnotationFiducialManager.h"
+#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 //#include "vtkSlicerSeedWidgetClass.h"
 #include "vtkSeedWidget.h"
 
@@ -687,7 +687,7 @@ vtkMRMLAnnotationRulerNode* vtkSlicerAnnotationModuleLogic::GetRulerNodeByID(con
 
     return rulernode;
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Fiducial  Widget     
 //-----------------------------------------------------------------------------
@@ -709,11 +709,11 @@ public:
   }
   vtkAnnotationFiducialWidgetCallback(){}
   vtkSlicerAnnotationModuleLogic* LogicPointer;
-};
+};*/
 
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::StartAddingFiducials()
-{
+{/*
   vtkMRMLInteractionNode *interactionNode = this->GetApplicationLogic()->GetInteractionNode();
   if (interactionNode == NULL)
     {
@@ -723,7 +723,7 @@ void vtkSlicerAnnotationModuleLogic::StartAddingFiducials()
 
   interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
   interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::Place );
-}
+*/}
 
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::StopAddingFiducials()
@@ -738,19 +738,19 @@ void vtkSlicerAnnotationModuleLogic::StopAddingFiducials()
   interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
   interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::PickManipulate );
 }
-
+/*
 //-----------------------------------------------------------------------------
 vtkMRMLAnnotationFiducialNode* vtkSlicerAnnotationModuleLogic::GetFiducialNodeByID(const char* id)
 {
     return vtkMRMLAnnotationFiducialNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( id ));
 }
-
+*/
 //-----------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddFiducial()
-{
+{/*
   if (m_FiducialManager == NULL)
   {
-    this->m_FiducialManager = vtkSlicerAnnotationFiducialManager::New();
+    this->m_FiducialManager = vtkMRMLAnnotationFiducialDisplayableManager::New();
     this->m_FiducialManager->SetMRMLScene( this->GetMRMLScene() );
     if (this->GetApplicationGUI()->GetActiveViewerWidget())
     {
@@ -759,10 +759,10 @@ const char* vtkSlicerAnnotationModuleLogic::AddFiducial()
     this->m_FiducialManager->AddMRMLObservers();
     this->m_FiducialManager->SetParent ( this->GetApplicationGUI()->GetActiveViewerWidget()->GetParent() );
     this->m_FiducialManager->Create();
-  }
-
-  //vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
-  //fiducialNode->Initialize(this->GetMRMLScene());
+  }*/
+/*
+  vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
+  fiducialNode->Initialize(this->GetMRMLScene());
 
   vtkMRMLFiducialListNode* fiducialNode = vtkMRMLFiducialListNode::New();
   this->GetMRMLScene()->AddNode(fiducialNode);
@@ -771,14 +771,15 @@ const char* vtkSlicerAnnotationModuleLogic::AddFiducial()
   
   vtkAnnotationFiducialWidgetCallback *myCallback = vtkAnnotationFiducialWidgetCallback::New();
   myCallback->LogicPointer = this;
+
   this->m_FiducialManager->GetSeedWidget(fiducialNode->GetID() )->GetWidget()->AddObserver(vtkCommand::PlacePointEvent, myCallback);
   myCallback->Delete();
 
 
   //return fiducialNode->GetID();
  // return "";
-
-}*/
+*/ return 0;
+}
 
 //-----------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddFiducialPicked()
@@ -786,7 +787,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddFiducialPicked()
   /*  
   if (m_FiducialManager == NULL)
   {
-    this->m_FiducialManager = vtkSlicerAnnotationFiducialManager::New();
+    this->m_FiducialManager = vtkMRMLAnnotationFiducialDisplayableManager::New();
     this->m_FiducialManager->SetMRMLScene( this->GetMRMLScene() );
     if (this->GetApplicationGUI()->GetActiveViewerWidget())
     {

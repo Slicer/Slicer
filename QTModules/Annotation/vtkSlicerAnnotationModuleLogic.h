@@ -32,7 +32,7 @@ class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationStickyNode;
 class vtkSlicerAnnotationRulerManager;
 class vtkSlicerAnnotationAngleManager;
-class vtkSlicerAnnotationFiducialManager;
+class vtkMRMLAnnotationFiducialDisplayableManager;
 class vtkMRMLAnnotationTextNode;
 //class vtkSlicerSeedWidgetClass;
 class vtkTextWidget;
@@ -168,7 +168,7 @@ public:
 
   void AddRulerNodeObserver(vtkMRMLAnnotationRulerNode* rnode) ;
 
-  vtkSlicerAnnotationFiducialManager* GetFiducialManager(){ return m_FiducialManager; }
+  vtkMRMLAnnotationFiducialDisplayableManager* GetFiducialManager(){ return m_FiducialManager; }
 
   int TestReceivedMessage; 
 
@@ -190,7 +190,7 @@ private:
 
   vtkSlicerAnnotationRulerManager *m_RulerManager;
   vtkSlicerAnnotationAngleManager *m_AngleManager;
-  vtkSlicerAnnotationFiducialManager *m_FiducialManager;
+  vtkMRMLAnnotationFiducialDisplayableManager *m_FiducialManager;
   vtkSlicerAnnotationROIManager *m_ROIManager;
   vtkSlicerAnnotationSplineManager *m_SplineManager;
   vtkSlicerAnnotationBidimensionalManager *m_BidimensionalManager;
