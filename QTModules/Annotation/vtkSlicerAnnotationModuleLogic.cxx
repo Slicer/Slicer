@@ -339,7 +339,7 @@ vtkSlicerApplicationGUI* vtkSlicerAnnotationModuleLogic::GetApplicationGUI()
 
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::RemoveAnnotationByID(const char* id)
-{/*
+{
     vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
 
     if (node->IsA("vtkMRMLAnnotationFiducialNode"))
@@ -354,7 +354,7 @@ void vtkSlicerAnnotationModuleLogic::RemoveAnnotationByID(const char* id)
     {
         this->RemoveAngle(id);
     }
-*/
+
 }
 
 //-----------------------------------------------------------------------------
@@ -523,10 +523,12 @@ public:
 
 //-----------------------------------------------------------------------------
 vtkMRMLAnnotationAngleNode* vtkSlicerAnnotationModuleLogic::GetAngleNodeByID(const char* id)
-{
+{/*
     vtkMRMLAnnotationAngleNode* anglenode = 0;
     anglenode = vtkMRMLAnnotationAngleNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID( id ));
     return anglenode;
+*/
+return 0;
 }
 
 
@@ -542,9 +544,9 @@ void vtkSlicerAnnotationModuleLogic::RemoveAngle(const char* id)
         this->GetMRMLScene()->RemoveNode(angleNode);
     }
     this->GetViewerWidget()->Render();
-* 
+*/
 }
-
+/*
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::AddAngleCompleted()
 {
@@ -662,10 +664,10 @@ const char* vtkSlicerAnnotationModuleLogic::AddRuler()
 
     return rulerNode->GetID();
 }
-
+*/
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::RemoveRuler(const char* id)
-{
+{/*
     vtkMRMLAnnotationRulerNode *rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(
         this->GetMRMLScene()->GetNodeByID( id ));
 
@@ -674,8 +676,8 @@ void vtkSlicerAnnotationModuleLogic::RemoveRuler(const char* id)
         this->GetMRMLScene()->RemoveNode(rulerNode);
     }
     this->GetViewerWidget()->Render();
-}
-
+*/}
+/*
 //-----------------------------------------------------------------------------
 vtkMRMLAnnotationRulerNode* vtkSlicerAnnotationModuleLogic::GetRulerNodeByID(const char* id)
 {
@@ -685,7 +687,7 @@ vtkMRMLAnnotationRulerNode* vtkSlicerAnnotationModuleLogic::GetRulerNodeByID(con
 
     return rulernode;
 }
-
+/*
 //-----------------------------------------------------------------------------
 // Fiducial  Widget     
 //-----------------------------------------------------------------------------
@@ -771,12 +773,12 @@ const char* vtkSlicerAnnotationModuleLogic::AddFiducial()
   myCallback->LogicPointer = this;
   this->m_FiducialManager->GetSeedWidget(fiducialNode->GetID() )->GetWidget()->AddObserver(vtkCommand::PlacePointEvent, myCallback);
   myCallback->Delete();
-  */
+
 
   //return fiducialNode->GetID();
  // return "";
 
-}
+}*/
 
 //-----------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddFiducialPicked()
@@ -1821,15 +1823,13 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 
   printf("entering logic method");
 
-  // Register the DisplayableManager using the factory
-  vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationTextDisplayableManager");
 
 
 
 
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-    textNode->Initialize(this->GetMRMLScene());
+    textNode->Initialize(
+        this->GetMRMLScene());
 
     // need a unique name since the storage node will be named from it
     if (textNode->GetScene())
@@ -1844,8 +1844,6 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 /*
     vtkTextWidget* textWidget = this->GetTextWidget(node->GetID());
     vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation())->SetText((char*)data);
-
-    vtkMRMLAnnotationTextDisplayableManager::GetInstance()->RequestRender();
 
     vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
     myCallback->textNode = textNode;

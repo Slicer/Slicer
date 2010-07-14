@@ -65,7 +65,7 @@ public:
   void Update3DWidget(vtkMRMLAnnotationTextNode *activeNode);
 
   /// encapsulated 3d widgets for each ruler node
-  //std::map<std::string, vtkTextWidget *> TextWidgets;
+  std::map<std::string, vtkTextWidget *> TextWidgets;
   vtkTextWidget * GetTextWidget(const char * nodeID);
   void AddTextWidget(vtkMRMLAnnotationTextNode *node);
   void RemoveTextWidget(vtkMRMLAnnotationTextNode *node);
