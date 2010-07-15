@@ -1824,7 +1824,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
     {
     textNode->SetName("AnnotationText");
     }
-    //textNode->Delete();
+  textNode->Delete();
 /*
     vtkTextWidget* textWidget = this->GetTextWidget(node->GetID());
     vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation())->SetText((char*)data);
