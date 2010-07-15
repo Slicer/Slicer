@@ -69,6 +69,10 @@ public slots:
   virtual void onSceneImportedEvent();
   virtual void onSceneRestoredEvent();
 
+  ///
+  /// Enable / Disable console output
+  void setConsoleOutputEnabled(bool enabled);
+
 signals:
   /// 
   /// Emitted when the associated MRML scene event is fired

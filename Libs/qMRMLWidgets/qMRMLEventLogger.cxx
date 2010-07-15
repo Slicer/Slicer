@@ -20,6 +20,105 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLEventLogger");
 //--------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+// qMRMLEventLoggerPrivate methods
+
+//------------------------------------------------------------------------------
+void qMRMLEventLoggerPrivate::init()
+{
+  CTK_P(qMRMLEventLogger);
+  p->listenNodeAddedEvent(true);
+  p->listenNodeRemovedEvent(true);
+  p->listenNewSceneEvent(true);
+  p->listenSceneClosedEvent(true);
+  p->listenSceneAboutToBeClosedEvent(true);
+  p->listenSceneEditedEvent(true);
+  p->listenMetadataAddedEvent(true);
+  p->listenImportProgressFeedbackEvent(true);
+  p->listenSaveProgressFeedbackEvent(true);
+  p->listenSceneAboutToBeImportedEvent(true);
+  p->listenSceneImportedEvent(true);
+  p->listenSceneRestoredEvent(true);
+}
+
+//------------------------------------------------------------------------------
+qMRMLEventLoggerPrivate::qMRMLEventLoggerPrivate():Superclass()
+{
+  this->MRMLScene = 0;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
+{
+  CTK_P(qMRMLEventLogger);
+
+  if (scene == this->MRMLScene)
+    {
+    return;
+    }
+
+  QString cid; // connectionId
+
+  // Set a high priority, doing so will force the Logger to be first to catch and
+  // display the event associated with the scene.
+  float priority = 100.0;
+
+  this->EventNameToConnectionIdMap["NodeAdded"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::NodeAddedEvent, p,
+    SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)), priority);
+
+  this->EventNameToConnectionIdMap["NodeRemoved"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::NodeRemovedEvent, p,
+    SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)), priority);
+
+  this->EventNameToConnectionIdMap["NewScene"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::NewSceneEvent, p, SLOT(onNewSceneEvent()), priority);
+
+  this->EventNameToConnectionIdMap["SceneClosed"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneClosedEvent, p, SLOT(onSceneClosedEvent()), priority);
+
+  this->EventNameToConnectionIdMap["SceneAboutToBeClosed"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneAboutToBeClosedEvent, p, SLOT(onSceneAboutToBeClosedEvent()), priority);
+
+  this->EventNameToConnectionIdMap["SceneEdited"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneEditedEvent, p, SLOT(onSceneEditedEvent()), priority);
+
+  this->EventNameToConnectionIdMap["MetadataAdded"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::MetadataAddedEvent, p, SLOT(onMetadataAddedEvent()), priority);
+
+  this->EventNameToConnectionIdMap["ImportProgressFeedback"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::ImportProgressFeedbackEvent, p, SLOT(onImportProgressFeedbackEvent()), priority);
+
+  this->EventNameToConnectionIdMap["SaveProgressFeedback"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SaveProgressFeedbackEvent, p, SLOT(onSaveProgressFeedbackEvent()), priority);
+
+  this->EventNameToConnectionIdMap["SceneAboutToBeImported"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneAboutToBeImportedEvent, p, SLOT(onSceneAboutToBeImportedEvent()), priority);
+
+  this->EventNameToConnectionIdMap["SceneImported"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneImportedEvent, p, SLOT(onSceneImportedEvent()), priority);
+
+  this->EventNameToConnectionIdMap["SceneRestored"] = this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneRestoredEvent, p, SLOT(onSceneRestoredEvent()), priority);
+
+  this->MRMLScene = scene;
+}
+
+//------------------------------------------------------------------------------
+// qMRMLEventLogger methods
+
+//------------------------------------------------------------------------------
 qMRMLEventLogger::qMRMLEventLogger(QObject* _parent):Superclass(_parent)
 {
   logger.setInfo();
@@ -151,93 +250,15 @@ QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneRestored);
 #undef QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO
 
 //------------------------------------------------------------------------------
-// qMRMLEventLoggerPrivate methods
-
-//------------------------------------------------------------------------------
-void qMRMLEventLoggerPrivate::init()
+void qMRMLEventLogger::setConsoleOutputEnabled(bool enabled)
 {
-  CTK_P(qMRMLEventLogger);
-  p->listenNodeAddedEvent(true);
-  p->listenNodeRemovedEvent(true);
-  p->listenNewSceneEvent(true);
-  p->listenSceneClosedEvent(true);
-  p->listenSceneAboutToBeClosedEvent(true);
-  p->listenSceneEditedEvent(true);
-  p->listenMetadataAddedEvent(true);
-  p->listenImportProgressFeedbackEvent(true);
-  p->listenSaveProgressFeedbackEvent(true);
-  p->listenSceneAboutToBeImportedEvent(true);
-  p->listenSceneImportedEvent(true);
-  p->listenSceneRestoredEvent(true);
-}
-
-//------------------------------------------------------------------------------
-qMRMLEventLoggerPrivate::qMRMLEventLoggerPrivate():Superclass()
-{
-  this->MRMLScene = 0;
-}
-    
-//------------------------------------------------------------------------------
-void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
-{
-  CTK_P(qMRMLEventLogger);
-  
-  if (scene == this->MRMLScene)
+  if (enabled)
     {
-    return; 
+    logger.setInfo();
     }
-    
-  QString cid; // connectionId
-
-  this->EventNameToConnectionIdMap["NodeAdded"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::NodeAddedEvent, p,
-    SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
-                      
-  this->EventNameToConnectionIdMap["NodeRemoved"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::NodeRemovedEvent, p,
-    SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
-
-  this->EventNameToConnectionIdMap["NewScene"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::NewSceneEvent, p, SLOT(onNewSceneEvent()));
-
-  this->EventNameToConnectionIdMap["SceneClosed"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SceneClosedEvent, p, SLOT(onSceneClosedEvent()));
-
-  this->EventNameToConnectionIdMap["SceneAboutToBeClosed"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SceneAboutToBeClosedEvent, p, SLOT(onSceneAboutToBeClosedEvent()));
-
-  this->EventNameToConnectionIdMap["SceneEdited"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SceneEditedEvent, p, SLOT(onSceneEditedEvent()));
-
-  this->EventNameToConnectionIdMap["MetadataAdded"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::MetadataAddedEvent, p, SLOT(onMetadataAddedEvent()));
-
-  this->EventNameToConnectionIdMap["ImportProgressFeedback"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::ImportProgressFeedbackEvent, p, SLOT(onImportProgressFeedbackEvent()));
-                      
-  this->EventNameToConnectionIdMap["SaveProgressFeedback"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SaveProgressFeedbackEvent, p, SLOT(onSaveProgressFeedbackEvent()));
-
-  this->EventNameToConnectionIdMap["SceneAboutToBeImported"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SceneAboutToBeImportedEvent, p, SLOT(onSceneAboutToBeImportedEvent()));
-
-  this->EventNameToConnectionIdMap["SceneImported"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SceneImportedEvent, p, SLOT(onSceneImportedEvent()));
-
-  this->EventNameToConnectionIdMap["SceneRestored"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SceneRestoredEvent, p, SLOT(onSceneRestoredEvent()));
-
-  this->MRMLScene = scene; 
+  else
+    {
+    logger.setOff();
+    }
 }
+

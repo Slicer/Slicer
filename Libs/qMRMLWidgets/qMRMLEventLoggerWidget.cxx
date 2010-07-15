@@ -78,6 +78,13 @@ void qMRMLEventLoggerWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLEventLoggerWidget::setConsoleOutputEnabled(bool enabled)
+{
+  CTK_D(qMRMLEventLoggerWidget);
+  d->MRMLEventLogger->setConsoleOutputEnabled(enabled);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLEventLoggerWidget::onNodeAddedEvent(vtkObject* caller,
                                               vtkObject* call_data)
 {

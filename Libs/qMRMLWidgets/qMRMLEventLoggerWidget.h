@@ -27,6 +27,10 @@ public slots:
   /// Set the MRML scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* scene);
 
+  ///
+  /// Enable / Disable console output
+  void setConsoleOutputEnabled(bool enabled);
+
 protected slots:
   
   virtual void onNodeAddedEvent(vtkObject* caller, vtkObject* call_data);
