@@ -160,7 +160,10 @@ void qMRMLSliceViewWidgetPrivate::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNod
   this->MRMLSliceNode = newSliceNode;
 
   // Update widget state given the new node
-  this->updateWidgetFromMRMLSliceNode();
+  if (this->MRMLSliceNode)
+    {
+    this->updateWidgetFromMRMLSliceNode();
+    }
   
 }
 
@@ -269,6 +272,7 @@ void qMRMLSliceViewWidgetPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject
 void qMRMLSliceViewWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
   CTK_P(qMRMLSliceViewWidget);
+  Q_ASSERT(this->MRMLSliceNode);
   Q_ASSERT(this->MRMLSliceCompositeNode);
 
   logger.trace("updateWidgetFromMRMLSliceNode");
