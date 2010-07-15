@@ -1810,8 +1810,10 @@ public:
   vtkSlicerAnnotationModuleLogic* LogicPointer;
 };
 
+//---------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 {   
+  std::cout << "vtkSlicerAnnotationModuleLogic::AddTextNode" <<std::endl;
 
   // get an instance of the manager
 //  vtkMRMLAnnotationDisplayableManager* m;
@@ -1822,12 +1824,6 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 //      fprintf(stderr, "Could not get the Annotation Text Displayable Manager!\r\n");
 //      return NULL;
 //  }
-
-  printf("entering logic method");
-
-
-
-
 
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
     textNode->Initialize(

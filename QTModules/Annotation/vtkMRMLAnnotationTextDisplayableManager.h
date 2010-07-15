@@ -38,19 +38,14 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAnnotationTextDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// Alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
+protected:
+
+  vtkMRMLAnnotationTextDisplayableManager();
+  virtual ~vtkMRMLAnnotationTextDisplayableManager();
+
   virtual void Create();
-
-  /// Add observers on node
-  //virtual void AddMRMLObservers();
-
-  /// Remove observers on node, from AbstractDisplayableManager
-  virtual void RemoveMRMLObservers();
-
-  /// Update triggered from MRML node, from AbstractDisplayableManager
-  virtual void UpdateFromMRML();
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLEvents
@@ -58,49 +53,24 @@ public:
   virtual void OnMRMLSceneClosedEvent();
   virtual void OnMRMLSceneAboutToBeImportedEvent();
   virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneRestoredEvent();
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
-  /// Check scene to make sure that have a widget for each ruler node, and no extra widgets...
-  void Update3DWidget(vtkMRMLAnnotationTextNode *activeNode);
+  void SetAndObserveActiveTextNode(vtkMRMLAnnotationTextNode * textNode);
 
-  /// encapsulated 3d widgets for each ruler node
-  std::map<std::string, vtkTextWidget *> TextWidgets;
-  vtkTextWidget * GetTextWidget(const char * nodeID);
-  void AddTextWidget(vtkMRMLAnnotationTextNode *node);
-  void RemoveTextWidget(vtkMRMLAnnotationTextNode *node);
-  void RemoveTextWidgets();
-
-  /// Get/set the viewer widget so can add a the ruler widget to it
-  //vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
-  //virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
-
-  void UpdateWidget(vtkMRMLAnnotationTextNode *activeNode);
-
-protected:
-
-  vtkMRMLAnnotationTextDisplayableManager();
-  virtual ~vtkMRMLAnnotationTextDisplayableManager();
-
-  void UpdateWidgetInteractors();
-  void UpdateLockUnlock(vtkMRMLAnnotationTextNode* textNode);
-
-  /// the id of the mrml node currently displayed in the widget
-  char* NodeID;
-
-  /// flag set to 1 when updating a 3d widget (todo: set it to the index of the
-  /// ruler node / 3d widget once have more than one)
-  int Updating3DWidget;
-
-  /// pointer to the viewer widget so can add props, request renders
-  vtkSlicerViewerWidget *ViewerWidget;
-  int ProcessingMRMLEvent;
+  void OnMRMLAnnotationTextNodeModifiedEvent();
+  void OnMRMLAnnotationTextNodeTransformModifiedEvent();
+  void OnMRMLAnnotationTextNodeLockModifiedEvent();
 
 private:
 
   vtkMRMLAnnotationTextDisplayableManager(const vtkMRMLAnnotationTextDisplayableManager&); /// Not implemented
   void operator=(const vtkMRMLAnnotationTextDisplayableManager&); /// Not Implemented
+
+  //BTX
+  class vtkInternal;
+  vtkInternal * Internal;
+  //ETX
 
 };
 
