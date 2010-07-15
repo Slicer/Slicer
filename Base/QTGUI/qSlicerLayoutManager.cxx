@@ -566,6 +566,10 @@ void qSlicerLayoutManager::setMRMLScene(vtkMRMLScene* scene)
   d->UpdatingMRMLLayoutNode = false;
 
 #define qSlicerLayoutManager_returnIfMatchCurrentView(_NAME)                      \
+  if (!ctk_d()->MRMLScene)                                                        \
+    {                                                                             \
+    return;                                                                       \
+    }                                                                             \
   if (ctk_d()->CurrentViewArrangement == vtkMRMLLayoutNode::SlicerLayout##_NAME)  \
     {                                                                             \
     return;                                                                       \
