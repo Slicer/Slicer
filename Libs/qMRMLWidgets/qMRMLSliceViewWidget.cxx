@@ -136,6 +136,9 @@ void qMRMLSliceViewWidgetPrivate::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNod
     {
     return; 
     }
+
+  // Enable/disable widget
+  p->setDisabled(newSliceNode == 0);
     
   // List of events the slice logics should listen
   VTK_CREATE(vtkIntArray, events);
