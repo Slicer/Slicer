@@ -148,9 +148,16 @@ qMRMLThreeDRenderView::qMRMLThreeDRenderView(QWidget* _parent) : Superclass(_par
   this->interactor()->SetInteractorStyle(interactorStyle);
 
   // Register Displayable Managers
-  VTK_CREATE(vtkMRMLDisplayableManagerFactory, factory);
-  factory->RegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
-  factory->RegisterDisplayableManager("vtkMRMLViewDisplayableManager");
+  vtkMRMLDisplayableManagerFactory* factory = vtkMRMLDisplayableManagerFactory::GetInstance();
+  QStringList displayableManagers;
+  displayableManagers << "vtkMRMLCameraDisplayableManager" << "vtkMRMLViewDisplayableManager";
+  foreach(const QString displayableManagerName, displayableManagers)
+    {
+    if (!factory->IsDisplayableManagerRegistered(displayableManagerName.toLatin1()))
+      {
+      factory->RegisterDisplayableManager(displayableManagerName.toLatin1());
+      }
+    }
 
   d->DisplayableManagerGroup = factory->InstantiateDisplayableManagers(this->renderer());
   Q_ASSERT(d->DisplayableManagerGroup);
