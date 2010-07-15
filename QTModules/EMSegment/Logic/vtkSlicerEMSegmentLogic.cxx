@@ -420,7 +420,7 @@ vtkMRMLVolumeNode* vtkSlicerEMSegmentLogic::AddArchetypeVolume (const char* file
     {
     closeScene = true;
     this->GetMRMLScene()->SetIsClosing(true);
-    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneLoadStartEvent, NULL);
+    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, NULL);
     }
   int centerImage = 0;
   int labelMap = 0;
@@ -743,7 +743,7 @@ vtkMRMLVolumeNode* vtkSlicerEMSegmentLogic::AddArchetypeVolume (const char* file
   if (closeScene)
     {
     this->GetMRMLScene()->SetIsClosing(false);
-    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneLoadEndEvent, NULL);
+    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
     }
   return volumeNode;
 }

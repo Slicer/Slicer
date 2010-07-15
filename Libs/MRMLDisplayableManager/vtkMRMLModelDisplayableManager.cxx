@@ -465,12 +465,12 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents ( vtkObject *caller,
     this->UpdateFromMRMLRequested = 1;
     this->RequestRender();
     }
-  else if (event == vtkMRMLScene::SceneLoadStartEvent)
+  else if (event == vtkMRMLScene::SceneAboutToBeImportedEvent)
     {
     this->SetEnableRender(0);
     //this->GetRenderer()->SetRenderModeToDisabled();
     }
-  else if (event == vtkMRMLScene::SceneLoadEndEvent)
+  else if (event == vtkMRMLScene::SceneImportedEvent)
     {
     this->SetEnableRender(1);
     //this->GetRenderer()->SetRenderModeToInteractive();
@@ -761,8 +761,8 @@ void vtkMRMLModelDisplayableManager::Create()
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneLoadStartEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneLoadEndEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeImportedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);

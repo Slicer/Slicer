@@ -72,11 +72,11 @@ void qMRMLThreeDRenderViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
-    vtkMRMLScene::SceneLoadStartEvent, this, SLOT(onSceneLoadStartEvent()));
+    vtkMRMLScene::SceneAboutToBeImportedEvent, this, SLOT(onSceneAboutToBeImportedEvent()));
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
-    vtkMRMLScene::SceneLoadEndEvent, this, SLOT(onSceneLoadEndEvent()));
+    vtkMRMLScene::SceneImportedEvent, this, SLOT(onSceneImportedEvent()));
 //
 //  this->qvtkReconnect(
 //    this->MRMLScene, newScene,
@@ -134,14 +134,14 @@ void qMRMLThreeDRenderViewPrivate::onSceneAboutToBeClosedEvent()
 //}
 //
 // --------------------------------------------------------------------------
-void qMRMLThreeDRenderViewPrivate::onSceneLoadStartEvent()
+void qMRMLThreeDRenderViewPrivate::onSceneAboutToBeImportedEvent()
 {
   CTK_P(qMRMLThreeDRenderView);
   p->setRenderEnabled(false);
 }
 //
 // --------------------------------------------------------------------------
-void qMRMLThreeDRenderViewPrivate::onSceneLoadEndEvent()
+void qMRMLThreeDRenderViewPrivate::onSceneImportedEvent()
 {
   CTK_P(qMRMLThreeDRenderView);
   p->setRenderEnabled(true);

@@ -33,8 +33,8 @@ public slots:
   /// Handle MRML scene event
   void onSceneAboutToBeClosedEvent();
 //  void onSceneClosedEvent();
-  void onSceneLoadStartEvent();
-  void onSceneLoadEndEvent();
+  void onSceneAboutToBeImportedEvent();
+  void onSceneImportedEvent();
 //  void onSceneRestoredEvent();
 //  void onNodeAddedEvent(vtkObject* scene, vtkObject* node);
 //  void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);

@@ -423,12 +423,12 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosedEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadStartEvent()
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneAboutToBeImportedEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneLoadEndEvent()
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneImportedEvent()
 {
 }
 

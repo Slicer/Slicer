@@ -38,8 +38,8 @@ protected slots:
   virtual void onMetadataAddedEvent();
   virtual void onLoadProgressFeedbackEvent();
   virtual void onSaveProgressFeedbackEvent();
-  virtual void onSceneLoadStartEvent();
-  virtual void onSceneLoadEndEvent();
+  virtual void onSceneAboutToBeImportedEvent();
+  virtual void onSceneImportedEvent();
   virtual void onSceneRestoredEvent();
 
 private:

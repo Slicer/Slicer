@@ -36,8 +36,8 @@ public:
   bool listeningMetadataAddedEvent();
   bool listeningLoadProgressFeedbackEvent();
   bool listeningSaveProgressFeedbackEvent();
-  bool listeningSceneLoadStartEvent();
-  bool listeningSceneLoadEndEvent();
+  bool listeningSceneAboutToBeImportedEvent();
+  bool listeningSceneImportedEvent();
   bool listeningSceneRestoredEvent();
 
 public slots:
@@ -52,8 +52,8 @@ public slots:
   void listenMetadataAddedEvent(bool listen);
   void listenLoadProgressFeedbackEvent(bool listen);
   void listenSaveProgressFeedbackEvent(bool listen);
-  void listenSceneLoadStartEvent(bool listen);
-  void listenSceneLoadEndEvent(bool listen);
+  void listenSceneAboutToBeImportedEvent(bool listen);
+  void listenSceneImportedEvent(bool listen);
   void listenSceneRestoredEvent(bool listen);
 
   virtual void onNodeAddedEvent(vtkObject* caller, vtkObject* call_data);
@@ -65,8 +65,8 @@ public slots:
   virtual void onMetadataAddedEvent();
   virtual void onLoadProgressFeedbackEvent();
   virtual void onSaveProgressFeedbackEvent();
-  virtual void onSceneLoadStartEvent();
-  virtual void onSceneLoadEndEvent();
+  virtual void onSceneAboutToBeImportedEvent();
+  virtual void onSceneImportedEvent();
   virtual void onSceneRestoredEvent();
 
 signals:
@@ -81,8 +81,8 @@ signals:
   void signalMetadataAddedEvent();
   void signalLoadProgressFeedbackEvent();
   void signalSaveProgressFeedbackEvent();
-  void signalSceneLoadStartEvent();
-  void signalSceneLoadEndEvent();
+  void signalSceneAboutToBeImportedEvent();
+  void signalSceneImportedEvent();
   void signalSceneRestoredEvent();
 
 private:

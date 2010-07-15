@@ -218,7 +218,7 @@ void vtkSlicerSlicesGUI::AddGUIObservers ( )
 
   if (this->GetMRMLScene())
     {
-    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneImportedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneRestoredEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
         
@@ -701,7 +701,7 @@ void vtkSlicerSlicesGUI::ProcessMRMLEvents ( vtkObject *caller,
 {
   // std::cerr << "In ProcessMRMLEvents " << event << std::endl;
 
-  if (this->GetMRMLScene() && caller == this->GetMRMLScene() && (event == vtkMRMLScene::SceneLoadEndEvent || event == vtkMRMLScene::SceneRestoredEvent))
+  if (this->GetMRMLScene() && caller == this->GetMRMLScene() && (event == vtkMRMLScene::SceneImportedEvent || event == vtkMRMLScene::SceneRestoredEvent))
     {
     // Check the data model for the current module.  Need to be
     // careful that Slicer fully "up" before checking. As an

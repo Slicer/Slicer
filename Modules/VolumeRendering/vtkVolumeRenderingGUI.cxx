@@ -482,8 +482,8 @@ void vtkVolumeRenderingGUI::AddMRMLObservers(void)
   if ( this->GetApplicationGUI() )
   {
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand);
-    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, this->MRMLCallbackCommand);
-    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneAboutToBeImportedEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneImportedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
   }
@@ -495,8 +495,8 @@ void vtkVolumeRenderingGUI::RemoveMRMLObservers(void)
   if ( this->GetApplicationGUI() )
   {
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand);
-    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadStartEvent, this->MRMLCallbackCommand);
-    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneAboutToBeImportedEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneImportedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
   }
@@ -895,11 +895,11 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       }
     }
   }
-  else if (event == vtkMRMLScene::SceneLoadStartEvent)
+  else if (event == vtkMRMLScene::SceneAboutToBeImportedEvent)
   {
     this->NewParametersNodeFromSceneLoadingFlag = 1;
   }
-  else if (event == vtkMRMLScene::SceneLoadEndEvent)
+  else if (event == vtkMRMLScene::SceneImportedEvent)
   {
     this->NewParametersNodeFromSceneLoadingFlag = 0;
     

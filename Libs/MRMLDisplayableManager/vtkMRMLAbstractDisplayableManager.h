@@ -120,8 +120,8 @@ protected:
   /// \sa ProcessMRMLEvents
   virtual void OnMRMLSceneAboutToBeClosedEvent(){}
   virtual void OnMRMLSceneClosedEvent(){}
-  virtual void OnMRMLSceneLoadStartEvent(){}
-  virtual void OnMRMLSceneLoadEndEvent(){}
+  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
+  virtual void OnMRMLSceneImportedEvent(){}
   virtual void OnMRMLSceneRestoredEvent(){}
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* /*node*/){}
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}

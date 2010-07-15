@@ -690,7 +690,7 @@ int vtkMRMLScene::Import()
   this->SetIsClosing(true);
   this->ClearReferencedNodeID();
 
-  this->InvokeEvent(this->SceneLoadStartEvent, NULL);
+  this->InvokeEvent(this->SceneAboutToBeImportedEvent, NULL);
     
   // read nodes into a temp scene  
   vtkCollection* scene = vtkCollection::New();
@@ -763,7 +763,7 @@ int vtkMRMLScene::Import()
   
   this->SetIsClosing(false);
 
-  this->InvokeEvent(this->SceneLoadEndEvent, NULL);
+  this->InvokeEvent(this->SceneImportedEvent, NULL);
 
   int returnCode = 1;
   if (this->GetErrorCode() == 0) 

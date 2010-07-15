@@ -37,12 +37,12 @@ static void MRMLCallback(vtkObject *vtkNotUsed(caller), unsigned long eid,
 {
   vtkSlicerNodeSelectorWidget *self = reinterpret_cast<vtkSlicerNodeSelectorWidget *>(__clientData);
   
-  if (eid == vtkMRMLScene::SceneLoadStartEvent)
+  if (eid == vtkMRMLScene::SceneAboutToBeImportedEvent)
     {
     self->SetIgnoreNodeAddedEvents(1);
     return;
     }
-  else if (eid == vtkMRMLScene::SceneLoadEndEvent)
+  else if (eid == vtkMRMLScene::SceneImportedEvent)
     {
     self->SetIgnoreNodeAddedEvents(0);
     }
@@ -150,8 +150,8 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
     this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneEditedEvent, this->MRMLCallbackCommand );
-    this->MRMLScene->AddObserver( vtkMRMLScene::SceneLoadStartEvent, this->MRMLCallbackCommand );
-    this->MRMLScene->AddObserver( vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneAboutToBeImportedEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneImportedEvent, this->MRMLCallbackCommand );
     this->SetBinding ( "<Map>", this, "UpdateMenu");
     }
 

@@ -73,6 +73,11 @@ void qSlicerLayoutManagerPrivate::setMRMLScene(vtkMRMLScene* scene)
     vtkMRMLScene::NodeRemovedEvent, this,
     SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
 
+  this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneImportedEvent, this,
+    SLOT(onSceneImportedEvent()));
+
 //   this->qvtkReconnect(
 //     this->MRMLScene, scene,
 //     vtkMRMLScene::SceneClosedEvent, this,
@@ -219,6 +224,11 @@ void qSlicerLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject
 
 //------------------------------------------------------------------------------
 void qSlicerLayoutManagerPrivate::onSceneClosedEvent()
+{
+}
+
+//------------------------------------------------------------------------------
+void qSlicerLayoutManagerPrivate::onSceneImportedEvent()
 {
 }
 

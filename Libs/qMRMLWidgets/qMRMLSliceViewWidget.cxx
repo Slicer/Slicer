@@ -104,11 +104,11 @@ void qMRMLSliceViewWidgetPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
   this->qvtkReconnect(
     p->mrmlScene(), newScene,
-    vtkMRMLScene::SceneLoadStartEvent, this, SLOT(onSceneLoadStartEvent()));
+    vtkMRMLScene::SceneAboutToBeImportedEvent, this, SLOT(onSceneAboutToBeImportedEvent()));
 
   this->qvtkReconnect(
     p->mrmlScene(), newScene,
-    vtkMRMLScene::SceneLoadEndEvent, this, SLOT(onSceneLoadEndEvent()));
+    vtkMRMLScene::SceneImportedEvent, this, SLOT(onSceneImportedEvent()));
     
   this->qvtkReconnect(
     p->mrmlScene(), newScene,
@@ -207,16 +207,16 @@ void qMRMLSliceViewWidgetPrivate::onSceneClosedEvent()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onSceneLoadStartEvent()
+void qMRMLSliceViewWidgetPrivate::onSceneAboutToBeImportedEvent()
 {
-  qDebug() << "qMRMLSliceViewPrivate::onSceneLoadStartEvent";
+  qDebug() << "qMRMLSliceViewPrivate::onSceneAboutToBeImportedEvent";
   this->VTKSliceView->setRenderEnabled(false);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onSceneLoadEndEvent()
+void qMRMLSliceViewWidgetPrivate::onSceneImportedEvent()
 {
-  qDebug() << "qMRMLSliceViewPrivate::onSceneLoadEndEvent";
+  qDebug() << "qMRMLSliceViewPrivate::onSceneImportedEvent";
   this->VTKSliceView->setRenderEnabled(true);
   this->VTKSliceView->scheduleRender();
 }
