@@ -15,7 +15,7 @@ SET(qt_module_include_directories
 # DisplayableManager classes
 SET(DisplayableManager_SRCS
   vtkMRMLAnnotationTextDisplayableManager.cxx
-  vtkMRMLAnnotationFiducialDisplayableManager.cxx
+  #vtkMRMLAnnotationFiducialDisplayableManager.cxx
   )
 
 # Create the instantiator for DisplayableManager classes.

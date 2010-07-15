@@ -61,7 +61,8 @@
 
 #include "vtkSlicerAnnotationRulerManager.h"
 #include "vtkSlicerAnnotationAngleManager.h"
-#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
+// Note: the logic shouldn't deal with DisplayableManager directly
+//#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 //#include "vtkSlicerSeedWidgetClass.h"
 #include "vtkSeedWidget.h"
 

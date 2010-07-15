@@ -53,7 +53,7 @@
 #include "vtkSeedRepresentation.h"
 
 #include "vtkSlicerAnnotationRulerManager.h"
-#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
+//#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 #include "vtkMRMLAnnotationBidimensionalNode.h"
 #include "vtkMRMLAnnotationROINode.h"
 
@@ -1928,8 +1928,8 @@ qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
   this->updateAnnotationTable(m_index, thevalue, format);
   this->selectRowByIndex(m_index);
 
-    qvtkConnect(d->logic(),  vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent,
-      this, SLOT(AddTextNodeCompleted(vtkObject*, void*)) );
+  qvtkConnect(d->logic(), vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent,
+              this, SLOT(AddTextNodeCompleted(vtkObject*, void*)));
 
 }
 
