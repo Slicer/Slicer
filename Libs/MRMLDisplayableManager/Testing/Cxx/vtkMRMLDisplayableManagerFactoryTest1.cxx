@@ -59,6 +59,28 @@ int vtkMRMLDisplayableManagerFactoryTest1(int argc, char* argv[])
     }
 
   //----------------------------------------------------------------------------
+  // Check if IsDisplayableManagerRegistered works as expected
+  bool isRegistrered = factory->IsDisplayableManagerRegistered("vtkMRMLINVALIDManager");
+  if (isRegistrered)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
+    std::cerr << "\tExpected: false" << std::endl;
+    std::cerr << "\tCurrent: " << isRegistrered << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  isRegistrered = factory->IsDisplayableManagerRegistered("vtkMRMLCameraDisplayableManager");
+  if (isRegistrered)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
+    std::cerr << "\tExpected: false" << std::endl;
+    std::cerr << "\tCurrent: " << isRegistrered << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  //----------------------------------------------------------------------------
   // Register invalid DisplayableManager
   factory->RegisterDisplayableManager("vtkMRMLINVALIDManager");
 
@@ -93,6 +115,28 @@ int vtkMRMLDisplayableManagerFactoryTest1(int argc, char* argv[])
         << " - Problem with method factory->GetRegisteredDisplayableManagerCount()" << std::endl;
     std::cerr << "\tExpected: 1" << std::endl;
     std::cerr << "\tCurrent: " << factory->GetRegisteredDisplayableManagerCount() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  //----------------------------------------------------------------------------
+  // Check if IsDisplayableManagerRegistered works as expected
+  isRegistrered = factory->IsDisplayableManagerRegistered("vtkMRMLINVALIDManager");
+  if (isRegistrered)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
+    std::cerr << "\tExpected: false" << std::endl;
+    std::cerr << "\tCurrent: " << isRegistrered << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  isRegistrered = factory->IsDisplayableManagerRegistered("vtkMRMLCameraDisplayableManager");
+  if (!isRegistrered)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with method factory->IsDisplayableManagerRegistered()" << std::endl;
+    std::cerr << "\tExpected: true" << std::endl;
+    std::cerr << "\tCurrent: " << isRegistrered << std::endl;
     return EXIT_FAILURE;
     }
 

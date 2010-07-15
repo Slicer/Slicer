@@ -57,6 +57,11 @@ public:
   static vtkMRMLDisplayableManagerFactory* GetInstance();
 
   ///
+  /// Return True if Displayable Manager identified by \a vtkClassName
+  /// is already registered.
+  bool IsDisplayableManagerRegistered(const char* vtkClassName);
+
+  ///
   /// Register Displayable Manager identified by \a vtkClassName
   /// \a vtkClassName should be a VTK class registered using the CMake macro VTK_MAKE_INSTANTIATOR3
   void RegisterDisplayableManager(const char* vtkClassName);
