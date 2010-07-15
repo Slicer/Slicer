@@ -593,7 +593,12 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
   foreach {x y z } [rasToXYZ "$r $a $s"] {}
 
   # determine which renderer based on z position
-  set k [expr int($z + 0.5)]
+  # - ignore if z is not define (as when there is just one slice)
+  if { [catch expr $z] } {
+    set k -1
+  } else {
+    set k [expr int($z + 0.5)]
+  }
 
   if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
     if { [info command $_renderer] != "" && $_renderer != [$_renderWidget GetNthRenderer $k] } {

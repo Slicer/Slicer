@@ -232,7 +232,12 @@ itcl::body SWidget::queryLayers { x y {z 0} } {
   #
 
   # determine which renderer based on z position
-  set lightboxK [expr int($z + 0.5)]
+  # - ignore if z is not define (as when there is just one slice)
+  if { [catch expr $z] } {
+    set lightboxK -1
+  } else {
+    set lightboxK [expr int($z + 0.5)]
+  }
       
   foreach layer {background foreground label} {
     set _layers($layer,logic) [[$sliceGUI GetLogic]  Get[string totitle $layer]Layer]

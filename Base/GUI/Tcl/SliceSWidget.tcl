@@ -231,8 +231,11 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 
   if { $_layers(background,node) != "" } {
     set logic [$sliceGUI GetLogic]
-    set sliceSpacing [$logic GetLowestVolumeSliceSpacing]
-    $this configure -sliceStep [lindex $sliceSpacing 2]
+    set sliceSpacing [lindex [$logic GetLowestVolumeSliceSpacing] 0]
+    if { [catch "expr $sliceSpacing"] } {
+      set sliceSpacing 1.0
+    }
+    $this configure -sliceStep $sliceSpacing
   }
 
   foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
@@ -245,9 +248,17 @@ itcl::body SliceSWidget::resizeSliceNode {} {
   set pokedRenderer [$_renderWidget GetRenderer]  
   foreach {w h} [$pokedRenderer GetSize] {}
 
-
   foreach {nodeW nodeH nodeD} [$_sliceNode GetDimensions] {}
   foreach {nodefovx nodefovy nodefovz} [$_sliceNode GetFieldOfView] {}
+  if { [catch "expr $nodefovx"] } {
+    set nodefovx 1.0
+  }
+  if { [catch "expr $nodefovy"] } {
+    set nodefovy 1.0
+  }
+  if { [catch "expr $nodefovz"] } {
+    set nodefovz 1.0
+  }
 
   if { $windoww == "10" && $windowh == "10" } {
     #puts "ignoring bogus resize"
