@@ -66,10 +66,6 @@ void qMRMLThreeDRenderViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
     this->MRMLScene, newScene,
     vtkMRMLScene::SceneAboutToBeClosedEvent, this, SLOT(onSceneAboutToBeClosedEvent()));
 
-//  this->qvtkReconnect(
-//    this->MRMLScene, newScene,
-//    vtkMRMLScene::SceneClosedEvent, this, SLOT(onSceneClosedEvent()));
-
   this->qvtkReconnect(
     this->MRMLScene, newScene,
     vtkMRMLScene::SceneAboutToBeImportedEvent, this, SLOT(onSceneAboutToBeImportedEvent()));
@@ -77,16 +73,6 @@ void qMRMLThreeDRenderViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
   this->qvtkReconnect(
     this->MRMLScene, newScene,
     vtkMRMLScene::SceneImportedEvent, this, SLOT(onSceneImportedEvent()));
-//
-//  this->qvtkReconnect(
-//    this->MRMLScene, newScene,
-//    vtkMRMLScene::NodeAddedEvent, this,
-//    SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
-//
-//  this->qvtkReconnect(
-//    this->MRMLScene, newScene,
-//    vtkMRMLScene::NodeRemovedEvent, this,
-//    SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
 //
 //  this->qvtkReconnect(
 //    this->MRMLScene, newScene,
@@ -126,16 +112,11 @@ void qMRMLThreeDRenderViewPrivate::onSceneAboutToBeClosedEvent()
   CTK_P(qMRMLThreeDRenderView);
   p->setRenderEnabled(false);
 }
-//
-//// --------------------------------------------------------------------------
-//void qMRMLThreeDRenderViewPrivate::onSceneClosedEvent()
-//{
-//  logger.trace("onSceneClosedEvent");
-//}
-//
+
 // --------------------------------------------------------------------------
 void qMRMLThreeDRenderViewPrivate::onSceneAboutToBeImportedEvent()
 {
+  logger.trace("onSceneAboutToBeImportedEvent");
   CTK_P(qMRMLThreeDRenderView);
   p->setRenderEnabled(false);
 }
@@ -143,6 +124,7 @@ void qMRMLThreeDRenderViewPrivate::onSceneAboutToBeImportedEvent()
 // --------------------------------------------------------------------------
 void qMRMLThreeDRenderViewPrivate::onSceneImportedEvent()
 {
+  logger.trace("onSceneImportedEvent");
   CTK_P(qMRMLThreeDRenderView);
   p->setRenderEnabled(true);
   //p->scheduleRender();
@@ -152,32 +134,6 @@ void qMRMLThreeDRenderViewPrivate::onSceneImportedEvent()
 //void qMRMLThreeDRenderViewPrivate::onSceneRestoredEvent()
 //{
 //  logger.trace("onSceneRestoredEvent");
-//}
-  
-// --------------------------------------------------------------------------
-//void qMRMLThreeDRenderViewPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* node)
-//{
-//  Q_ASSERT(scene);
-//
-//  vtkMRMLNode * mrmlNode = vtkMRMLNode::SafeDownCast(node);
-//  Q_ASSERT(mrmlNode);
-//  if (!mrmlNode)
-//    {
-//    return;
-//    }
-//}
-
-// --------------------------------------------------------------------------
-//void qMRMLThreeDRenderViewPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* node)
-//{
-//  Q_ASSERT(scene);
-//
-//  vtkMRMLNode * mrmlNode = vtkMRMLNode::SafeDownCast(node);
-//  Q_ASSERT(mrmlNode);
-//  if (!mrmlNode)
-//    {
-//    return;
-//    }
 //}
 
 // --------------------------------------------------------------------------
