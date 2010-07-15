@@ -929,7 +929,6 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     #   of the tree
     set ret [catch "$t OpenNode $seriesNode" res]
     if { $ret } { puts $res }
-    puts "trying to see $selection"
     set ret [catch "$t SeeNode $selection" res]
     if { $ret } { puts $res }
 
@@ -1327,7 +1326,7 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName {includeSubs
   upvar $arrayName tree
 
   set progressDialog [$this progressDialog]
-  $progressDialog SetTitle "Parsing DICOM Files in $directoryName..."
+  $progressDialog SetTitle "Parsing DICOM Files in {$directoryName}..."
   $progressDialog SetMessageText "Starting..."
 
   set PATIENT "0010|0010"
