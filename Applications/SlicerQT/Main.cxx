@@ -6,8 +6,8 @@
 // CTK includes
 #include <ctkLogger.h>
 
-// qMRML includes
-// #include <qMRMLEventLoggerWidget.h>
+// qMRMLWidgets includes
+#include <qMRMLEventLoggerWidget.h>
 
 // SlicerQt includes
 #include "qSlicerCommandOptions.h"
@@ -110,15 +110,16 @@ int main(int argc, char* argv[])
   // Add modules to the selector
   window.moduleSelector()->addModules(moduleNames);
 
-//   qMRMLEventLoggerWidget logger;
-//   logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
-//   
-//   QObject::connect(qSlicerApplication::application(),
-//                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-//                    &logger,
-//                    SLOT(setMRMLScene(vtkMRMLScene*)));
-// 
-//   logger.show();
+//  qMRMLEventLoggerWidget logger;
+//  logger.setConsoleOutputEnabled(false);
+//  logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
+//
+//  QObject::connect(qSlicerApplication::application(),
+//                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+//                   &logger,
+//                   SLOT(setMRMLScene(vtkMRMLScene*)));
+//
+//  logger.show();
   
   return app.exec();
 }
