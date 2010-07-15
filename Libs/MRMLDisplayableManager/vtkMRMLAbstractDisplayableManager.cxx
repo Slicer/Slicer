@@ -271,12 +271,6 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                           unsigned long event,
                                                           void *callData)
 {
-  // Sanity checks
-  if (this->GetInMRMLCallbackFlag())
-    {
-    return;
-    }
-
   vtkMRMLScene * scene = vtkMRMLScene::SafeDownCast(caller);
   assert(scene == this->GetMRMLScene());
 
