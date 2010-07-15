@@ -187,6 +187,9 @@ void qMRMLThreeDRenderView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
     return;
     }
 
+  // Enable/disable widget
+  this->setDisabled(newViewNode == 0);
+
   d->DisplayableManagerGroup->SetMRMLViewNode(newViewNode);
   d->MRMLViewNode = newViewNode;
 }
