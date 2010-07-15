@@ -688,10 +688,6 @@ int vtkMRMLScene::Connect()
     this->GetUserTagTable()->ClearTagTable();
     }
   int res = this->Import();
-  if (!res)
-    {
-    this->InvokeEvent(vtkMRMLScene::SceneLoadingErrorEvent);
-    }
     
   this->SetUndoFlag(undoFlag);
   this->SetIsClosed(false);

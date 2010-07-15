@@ -47,7 +47,6 @@ QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(NodeRemoved);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(NewScene);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneClose);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneClosing);
-QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneLoadingError);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(MetadataAdded);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(LoadProgressFeedback);
@@ -90,7 +89,6 @@ QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(NodeRemoved);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(NewScene);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneClose);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneClosing);
-QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneLoadingError);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(MetadataAdded);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(LoadProgressFeedback);
@@ -131,7 +129,6 @@ void qMRMLEventLogger::on##_EVENT_NAME##Event()           \
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(NewScene);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneClose);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneClosing);
-QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneLoadingError);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(MetadataAdded);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(LoadProgressFeedback);
@@ -156,7 +153,6 @@ void qMRMLEventLoggerPrivate::init()
   p->listenNewSceneEvent(true);
   p->listenSceneCloseEvent(true);
   p->listenSceneClosingEvent(true);
-  p->listenSceneLoadingErrorEvent(true);
   p->listenSceneEditedEvent(true);
   p->listenMetadataAddedEvent(true);
   p->listenLoadProgressFeedbackEvent(true);
@@ -205,10 +201,6 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
   this->EventNameToConnectionIdMap["SceneClosing"] = this->qvtkReconnect(
     this->MRMLScene, scene,
     vtkMRMLScene::SceneClosingEvent, p, SLOT(onSceneClosingEvent()));
-
-  this->EventNameToConnectionIdMap["SceneLoadingError"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SceneLoadingErrorEvent, p, SLOT(onSceneLoadingErrorEvent()));
 
   this->EventNameToConnectionIdMap["SceneEdited"] = this->qvtkReconnect(
     this->MRMLScene, scene,
