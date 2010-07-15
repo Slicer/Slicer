@@ -150,7 +150,9 @@ qMRMLThreeDRenderView::qMRMLThreeDRenderView(QWidget* _parent) : Superclass(_par
   // Register Displayable Managers
   vtkMRMLDisplayableManagerFactory* factory = vtkMRMLDisplayableManagerFactory::GetInstance();
   QStringList displayableManagers;
-  displayableManagers << "vtkMRMLCameraDisplayableManager" << "vtkMRMLViewDisplayableManager";
+  displayableManagers << "vtkMRMLCameraDisplayableManager"
+      << "vtkMRMLViewDisplayableManager"
+      << "vtkMRMLModelDisplayableManager";
   foreach(const QString displayableManagerName, displayableManagers)
     {
     if (!factory->IsDisplayableManagerRegistered(displayableManagerName.toLatin1()))
