@@ -26,9 +26,13 @@
 #include <QSplashScreen>
 #include <QDebug>
 
+// VTK includes
+//#include <vtkObject.h>
+
 //----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
+  //vtkObject::SetGlobalWarningDisplay(false);
   ctkLogger::configure();
 
   qSlicerApplication app(argc, argv);
