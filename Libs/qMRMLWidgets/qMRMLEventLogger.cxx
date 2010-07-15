@@ -2,6 +2,9 @@
 // Qt includes
 #include <QDebug>
 
+// CTK includes
+#include <ctkLogger.h>
+
 // qMRML includes
 #include "qMRMLEventLogger.h"
 #include "qMRMLEventLogger_p.h"
@@ -12,9 +15,15 @@
 // VTK includes
 #include <vtkObject.h>
 
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLEventLogger");
+//--------------------------------------------------------------------------
+
 //------------------------------------------------------------------------------
 qMRMLEventLogger::qMRMLEventLogger(QObject* _parent):Superclass(_parent)
 {
+  logger.setInfo();
+
   CTK_INIT_PRIVATE(qMRMLEventLogger);
   CTK_D(qMRMLEventLogger);
   d->init();
@@ -104,14 +113,14 @@ QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneRestored);
 //------------------------------------------------------------------------------
 void qMRMLEventLogger::onNodeAddedEvent(vtkObject* caller, vtkObject* call_data)
 {
-  qDebug() << "qMRMLEventLogger::onNodeAddedEvent:" << caller->GetClassName();
+  logger.info(QString("onNodeAddedEvent: %1").arg(call_data->GetClassName()));
   emit this->signalNodeAddedEvent(caller, call_data);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLEventLogger::onNodeRemovedEvent(vtkObject* caller, vtkObject* call_data)
 {
-  qDebug() << "qMRMLEventLogger::onNodeRemovedEvent:" << caller->GetClassName();
+  logger.info(QString("onNodeRemovedEvent: %1").arg(call_data->GetClassName()));
   emit this->signalNodeRemovedEvent(caller, call_data);
 }
 
@@ -122,7 +131,7 @@ void qMRMLEventLogger::onNodeRemovedEvent(vtkObject* caller, vtkObject* call_dat
 #define QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(_EVENT_NAME)  \
 void qMRMLEventLogger::on##_EVENT_NAME##Event()           \
 {                                                         \
-  qDebug("qMRMLEventLogger::on%sEvent",#_EVENT_NAME);      \
+  logger.info(QString("on%1Event").arg(#_EVENT_NAME));    \
   emit signal##_EVENT_NAME##Event();                      \
 }
 
