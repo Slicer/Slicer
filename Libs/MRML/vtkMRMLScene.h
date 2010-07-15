@@ -346,7 +346,7 @@ public:
   static vtkMRMLScene *GetActiveScene();
 //ETX
 
-  //BTX
+//BTX
   enum
     {
       NodeAddedEvent = 66000,
@@ -443,6 +443,11 @@ public:
   /// IsConnecting is true during scene connect
   vtkGetMacro( IsConnecting, int );
   vtkSetMacro( IsConnecting, int );
+
+  ///
+  /// IsImporting is true during scene import
+  vtkGetMacro( IsImporting, int );
+  vtkSetMacro( IsImporting, int );
   
   /// 
   /// the version of the last loaded scene file
@@ -543,6 +548,7 @@ private:
 
   int IsClosing;
   int IsConnecting;
+  int IsImporting;
 };
 
 #endif

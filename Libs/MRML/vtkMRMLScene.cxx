@@ -118,6 +118,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->ErrorCode = 0;
   this->IsClosing = 0;
   this->IsConnecting = 0;
+  this->IsImporting = 0;
 
   this->LastLoadedVersion = NULL;
   this->Version = NULL;
@@ -688,6 +689,7 @@ int vtkMRMLScene::Import()
   
   this->SetUndoOff();
   this->SetIsClosing(true);
+  this->SetIsImporting(true);
   this->ClearReferencedNodeID();
 
   this->InvokeEvent(this->SceneAboutToBeImportedEvent, NULL);
@@ -762,6 +764,7 @@ int vtkMRMLScene::Import()
   this->SetUndoFlag(undoFlag);
   
   this->SetIsClosing(false);
+  this->SetIsImporting(false);
 
   this->InvokeEvent(this->SceneImportedEvent, NULL);
 
