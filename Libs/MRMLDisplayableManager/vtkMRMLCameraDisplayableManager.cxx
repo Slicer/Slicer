@@ -176,11 +176,6 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
     return;
     }
 
-  if (this->GetMRMLScene()->GetIsUpdating())
-    {
-    return;
-    }
-
   const char * defaultCameraName = "Default Scene Camera";
 
   // How many cameras are in the scene ?
