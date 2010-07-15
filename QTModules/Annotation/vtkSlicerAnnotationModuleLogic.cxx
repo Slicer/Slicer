@@ -1,90 +1,80 @@
-#include "vtkSlicerAnnotationModuleLogic.h"
 
-//#include "vtkSlicerFiducialsLogic.h"
-#include "qSlicerApplication.h"
-#include "qSlicerIOManager.h"
-//#include "vtkSlicerFiducialsGUI.h"
-//#include "vtkSlicerApplicationGUI.h"
 
-#include "vtkMRMLInteractionNode.h"
-#include "vtkMRMLSelectionNode.h"
+// QTGUI includes
+// Note: The logic shouldn't deal with UI Dialog
+#include <qSlicerApplication.h>
+#include <qSlicerIOManager.h>
 
-//#include "vtkMeasurementsGUI.h" 
-//#include "vtkMRMLMeasurementsAngleNode.h"
-//#include "vtkMeasurementsAngleWidget.h"
-//#include "vtkMeasurementsAngleWidgetClass.h"
-#include "vtkAngleRepresentation3D.h" 
+// Annotation includes
+#include <vtkSlicerAnnotationModuleLogic.h>
+
+// Annotation/MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationAngleStorageNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
-
 #include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkLineRepresentation.h"
-#include "vtkWindowToImageFilter.h"
-#include "vtkPNGWriter.h"
-
-//#include "vtkSlicerFiducialListWidget.h" 
-
-// Needed for ruler 
-#include "vtkLineWidget2.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLLinearTransformNode.h"
-#include "vtkPointHandleRepresentation3D.h"
-#include "vtkProperty.h"
-#include "vtkPolygonalSurfacePointPlacer.h"
-#include "vtkAngleWidget.h"
-#include "vtkMRMLScene.h"
-#include "vtkSphereHandleRepresentation.h"
-
 #include "vtkMRMLAnnotationStickyNode.h"
-
 #include "vtkMRMLAnnotationTextNode.h"
-#include "vtkMRMLAnnotationTextDisplayableManager.h"
-
 #include "vtkMRMLAnnotationROINode.h"
-#include "vtkSlicerAnnotationROIManager.h"
-
-#include "vtkSlicerAnnotationBidimensionalManager.h"
 #include "vtkMRMLAnnotationBidimensionalNode.h"
-
-#include "vtkSplineWidget.h"
-#include "vtkSplineRepresentation.h"
-#include "vtkMRMLBSplineTransformNode.h"
-#include "vtkSlicerAnnotationSplineManager.h"
 #include "vtkMRMLAnnotationSplineNode.h"
 
-#include "vtkSeedRepresentation.h"
-#include "vtkMRMLFiducial.h"
+// MRML includes
+#include <vtkMRMLScene.h>
+#include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLTransformNode.h> // for ruler
+#include <vtkMRMLLinearTransformNode.h> // for ruler
+#include <vtkMRMLFiducial.h>
+#include <vtkMRMLBSplineTransformNode.h>
 
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkPNGWriter.h>
+#include <vtkProperty.h>
+#include <vtkPolygonalSurfacePointPlacer.h>
+// Note: The following VTK includes should be in DisplayableManager
+#include <vtkLineRepresentation.h>
+#include <vtkLineWidget2.h> // for ruler
+#include <vtkPointHandleRepresentation3D.h>
+#include <vtkSphereHandleRepresentation.h>
+#include <vtkAngleWidget.h>
+#include <vtkAngleRepresentation3D.h>
+#include <vtkSplineWidget.h>
+#include <vtkSplineRepresentation.h>
+#include <vtkSeedWidget.h>
+#include <vtkSeedRepresentation.h>
+
+// Annotation/MRMLDisplayableManager includes
+// Note: The logic shouldn't deal with DisplayableManager directly !
 #include "vtkSlicerAnnotationRulerManager.h"
 #include "vtkSlicerAnnotationAngleManager.h"
-// Note: the logic shouldn't deal with DisplayableManager directly
+#include "vtkMRMLAnnotationTextDisplayableManager.h"
+#include "vtkSlicerAnnotationSplineManager.h"
+#include "vtkSlicerAnnotationROIManager.h"
+#include "vtkSlicerAnnotationBidimensionalManager.h"
 //#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
-//#include "vtkSlicerSeedWidgetClass.h"
-#include "vtkSeedWidget.h"
 
-#include "qSlicerLayoutManager.h"
-#include "qMRMLThreeDRenderView.h"
-#include "vtkMRMLDisplayableManagerFactory.h"
+// MRMLDisplayableManager includes
+#include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLAbstractDisplayableManager.h>
 
-#include "vtkMRMLAbstractDisplayableManager.h"
-#include "qSlicerApplication.h"
-
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
 
-#include <vtkSmartPointer.h>
-
-vtkCxxRevisionMacro(vtkSlicerAnnotationModuleLogic, "$Revision: 1.9.12.1 $");
-vtkStandardNewMacro(vtkSlicerAnnotationModuleLogic);
-
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
+//-----------------------------------------------------------------------------
+vtkCxxRevisionMacro(vtkSlicerAnnotationModuleLogic, "$Revision: 1.9.12.1 $");
+vtkStandardNewMacro(vtkSlicerAnnotationModuleLogic);
 
 //-----------------------------------------------------------------------------
 // General Functions 
@@ -114,13 +104,15 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+// vtkSlicerAnnotationModuleLogicPrivate methods
+
+//-----------------------------------------------------------------------------
 vtkSlicerAnnotationModuleLogicPrivate::vtkSlicerAnnotationModuleLogicPrivate()
 {
   this->AngleNodeID = 0;
   this->Updating3DFiducial = 0;
   this->Updating3DRuler = 0;
   this->Updating3DAngle = 0;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -137,27 +129,22 @@ vtkSlicerAnnotationModuleLogicPrivate::~vtkSlicerAnnotationModuleLogicPrivate()
   }
   this->AngleWidgets.clear(); 
 */
-
-
 }
+
+//-----------------------------------------------------------------------------
+// vtkSlicerAnnotationModuleLogic methods
 
 //-----------------------------------------------------------------------------
 vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
 {
   CTK_INIT_PRIVATE(vtkSlicerAnnotationModuleLogic);
-  this->m_RulerManager = NULL;
-  this->m_AngleManager = NULL;
-  this->m_FiducialManager = NULL;
-  this->m_ROIManager = NULL;
-  this->m_SplineManager = NULL;
-  this->m_BidimensionalManager = NULL;
 
-
-
-
-
-
-
+  this->m_RulerManager = 0;
+  this->m_AngleManager = 0;
+  this->m_FiducialManager = 0;
+  this->m_ROIManager = 0;
+  this->m_SplineManager = 0;
+  this->m_BidimensionalManager = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -165,46 +152,46 @@ vtkSlicerAnnotationModuleLogic::~vtkSlicerAnnotationModuleLogic()
 {
   if (this->m_RulerManager)
   {
-    //this->m_RulerManager->SetParent(NULL);
+    //this->m_RulerManager->SetParent(0);
     //this->m_RulerManager->Delete();
-    this->m_RulerManager = NULL;
+    this->m_RulerManager = 0;
   }
   if (this->m_AngleManager)
   {
-    //this->m_AngleManager->SetParent(NULL);
+    //this->m_AngleManager->SetParent(0);
     //this->m_AngleManager->Delete();
-    this->m_AngleManager = NULL;
+    this->m_AngleManager = 0;
   }
   if (this->m_FiducialManager)
   {
-    //this->m_FiducialManager->SetParent(NULL);
+    //this->m_FiducialManager->SetParent(0);
     //this->m_FiducialManager->Delete();
-    this->m_FiducialManager = NULL;
+    this->m_FiducialManager = 0;
   }
   if (this->m_ROIManager)
   {
-    //this->m_ROIManager->SetParent(NULL);
+    //this->m_ROIManager->SetParent(0);
     //this->m_ROIManager->Delete();
-    this->m_ROIManager = NULL;
+    this->m_ROIManager = 0;
   }
   if (this->m_SplineManager)
   {
-    //this->m_SplineManager->SetParent(NULL);
+    //this->m_SplineManager->SetParent(0);
     //this->m_SplineManager->Delete();
-    this->m_SplineManager = NULL;
+    this->m_SplineManager = 0;
   }
   if (this->m_BidimensionalManager)
   {
-    //this->m_BidimensionalManager->SetParent(NULL);
+    //this->m_BidimensionalManager->SetParent(0);
     //this->m_BidimensionalManager->Delete();
-    this->m_BidimensionalManager = NULL;
+    this->m_BidimensionalManager = 0;
   }
   /*if (this->m_TextManager)
   {
-    //this->m_TextManager->SetParent(NULL);
+    //this->m_TextManager->SetParent(0);
     //this->m_TextManager->Delete();
 
-    this->m_TextManager = NULL;
+    this->m_TextManager = 0;
 }*/
 
 }
@@ -222,7 +209,7 @@ void vtkSlicerAnnotationModuleLogic::ProcessLogicEvents(vtkObject *caller, unsig
     // Check RulerNode
     {
         vtkMRMLAnnotationRulerNode *callerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(caller);
-        if (callerNode != NULL) 
+        if (callerNode != 0)
         {
             if (event == vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent)
             {
@@ -249,7 +236,7 @@ void vtkSlicerAnnotationModuleLogic::ProcessLogicEvents(vtkObject *caller, unsig
                 vtkDebugMacro("ProcessMRMLEvents: got a node added event on scene");
                 //check to see if it was a angle node    
                 vtkMRMLAnnotationAngleNode *addNode = reinterpret_cast<vtkMRMLAnnotationAngleNode*>(callData);
-                if (addNode != NULL && addNode->IsA("vtkMRMLAnnotationAngleNode"))
+                if (addNode != 0 && addNode->IsA("vtkMRMLAnnotationAngleNode"))
                 {
                     vtkDebugMacro("Got a node added event with a angle node " << addNode->GetID());
                     return;
@@ -259,7 +246,7 @@ void vtkSlicerAnnotationModuleLogic::ProcessLogicEvents(vtkObject *caller, unsig
     else
     {
       vtkMRMLAnnotationTextDisplayNode *callerNode = vtkMRMLAnnotationTextDisplayNode::SafeDownCast(caller);
-      if (callerNode != NULL)
+      if (callerNode != 0)
       {
         if (event == vtkCommand::ModifiedEvent)
         {
@@ -276,7 +263,7 @@ void vtkSlicerAnnotationModuleLogic::ProcessLogicEvents(vtkObject *caller, unsig
     /* 
     {
         vtkMRMLFiducialListNode* callerNode = vtkMRMLFiducialListNode::SafeDownCast(caller);
-        if (callerNode != NULL) 
+        if (callerNode != 0)
         {
             if ( event == vtkMRMLScene::NodeAddedEvent ) 
             {
@@ -315,7 +302,7 @@ void vtkSlicerAnnotationModuleLogic::SaveMRMLScene()
 vtkSlicerViewerWidget* vtkSlicerAnnotationModuleLogic::GetViewerWidget()
 {
   //return this->GetApplicationGUI()->GetActiveViewerWidget();
-  return NULL;
+  return 0;
 }
 /*
 //---------------------------------------------------------------------------
@@ -324,14 +311,14 @@ vtkSlicerApplicationGUI* vtkSlicerAnnotationModuleLogic::GetApplicationGUI()
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (vtkSlicerApplication::GetInstance()); 
   if ( !app )
     {
-     std::cerr << "GetApplicationGUI: got Null SlicerApplication"  << std::endl;
-    return NULL;
+     std::cerr << "GetApplicationGUI: got 0 SlicerApplication"  << std::endl;
+    return 0;
     }
   vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
   if ( !appGUI )
    {
-     std::cerr << "GetApplicationGUI: got Null SlicerApplicationGUI"  << std::endl;
-    return NULL;
+     std::cerr << "GetApplicationGUI: got 0 SlicerApplicationGUI"  << std::endl;
+    return 0;
    }
   return appGUI;
  
@@ -365,7 +352,7 @@ void vtkSlicerAnnotationModuleLogic::ModifyPropertiesAndWidget(vtkMRMLNode* node
     {
         return;
     }
-  if ( vtkMRMLAnnotationLinesNode::SafeDownCast(node) == NULL )
+  if ( vtkMRMLAnnotationLinesNode::SafeDownCast(node) == 0 )
   {
     this->SetAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode::SafeDownCast(node), type, data);
   } 
@@ -380,20 +367,20 @@ void vtkSlicerAnnotationModuleLogic::ModifyPropertiesAndWidget(vtkMRMLNode* node
 //-----------------------------------------------------------------------------
 /*vtkImageData* vtkSlicerAnnotationModuleLogic::SaveScreenShot()
 {
-  return NULL;
+  return 0;
 
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (vtkSlicerApplication::GetInstance()); 
     if ( !app )
     {
-        std::cerr << "selectLayout: got Null SlicerApplication"  << std::endl;
-        return NULL;
+        std::cerr << "selectLayout: got 0 SlicerApplication"  << std::endl;
+        return 0;
     }
 
     vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
     if ( !appGUI )
     {
-        std::cerr << "selectLayout: got Null SlicerApplicationGUI"  << std::endl;
-        return NULL;
+        std::cerr << "selectLayout: got 0 SlicerApplicationGUI"  << std::endl;
+        return 0;
     }
 
     vtkSlicerViewerWidget* viewerWidget = appGUI->GetActiveViewerWidget();
@@ -443,7 +430,7 @@ public:
         vtkMRMLTransformNode* tnode = this->AngleNode->GetParentTransformNode();
         vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
         transformToWorld->Identity();
-        if (tnode != NULL && tnode->IsLinear())
+        if (tnode != 0 && tnode->IsLinear())
         {
             vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
             lnode->GetMatrixTransformToWorld(transformToWorld);
@@ -478,8 +465,8 @@ public:
         this->AngleNode->SetPositionCenter(worldxyz[0], worldxyz[1], worldxyz[2]);
         angleRep->SetCenterWorldPosition(worldxyz);
         transformToWorld->Delete();
-        transformToWorld = NULL;
-        tnode = NULL;
+        transformToWorld = 0;
+        tnode = 0;
 */
     }
         
@@ -551,7 +538,7 @@ void vtkSlicerAnnotationModuleLogic::RemoveAngle(const char* id)
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::AddAngleCompleted()
 {
-    this->InvokeEvent(vtkSlicerAnnotationModuleLogic::AddAngleCompletedEvent, NULL);
+    this->InvokeEvent(vtkSlicerAnnotationModuleLogic::AddAngleCompletedEvent, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -559,7 +546,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationSelectedByIDs(std::vector<cons
 {
     for (unsigned int i=0; i<allIDs.size(); ++i)
     {
-        if ( allIDs[i] == NULL )
+        if ( allIDs[i] == 0 )
         {
             continue;
         }
@@ -568,7 +555,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationSelectedByIDs(std::vector<cons
 
     for (unsigned int i=0; i<selectedIDs.size(); ++i)
     {
-        if ( selectedIDs[i] == NULL )
+        if ( selectedIDs[i] == 0 )
         {
             continue;
         }
@@ -580,7 +567,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationSelectedByIDs(std::vector<cons
 //-----------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddAngle()
 {
-    if (m_AngleManager == NULL)
+    if (m_AngleManager == 0)
     {
         this->m_AngleManager = vtkSlicerAnnotationAngleManager::New();
         this->m_AngleManager->SetMRMLScene( this->GetMRMLScene() );
@@ -634,7 +621,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddAngle()
 //-----------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddRuler()
 {    
-    if (m_RulerManager == NULL)
+    if (m_RulerManager == 0)
     {
         this->m_RulerManager = vtkSlicerAnnotationRulerManager::New();
         this->m_RulerManager->SetMRMLScene( this->GetMRMLScene() );
@@ -716,7 +703,7 @@ public:
 void vtkSlicerAnnotationModuleLogic::StartAddingFiducials()
 {/*
   vtkMRMLInteractionNode *interactionNode = this->GetApplicationLogic()->GetInteractionNode();
-  if (interactionNode == NULL)
+  if (interactionNode == 0)
     {
       std::cerr << "no interaction node in the scene, not updating the interaction mode!" << endl;
       return ;
@@ -730,7 +717,7 @@ void vtkSlicerAnnotationModuleLogic::StartAddingFiducials()
 void vtkSlicerAnnotationModuleLogic::StopAddingFiducials()
 {
   vtkMRMLInteractionNode *interactionNode = this->GetApplicationLogic()->GetInteractionNode();
-  if (interactionNode == NULL)
+  if (interactionNode == 0)
     {
       std::cerr << "no interaction node in the scene, not updating the interaction mode!" << endl;
       return ;
@@ -749,7 +736,7 @@ vtkMRMLAnnotationFiducialNode* vtkSlicerAnnotationModuleLogic::GetFiducialNodeBy
 //-----------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddFiducial()
 {/*
-  if (m_FiducialManager == NULL)
+  if (m_FiducialManager == 0)
   {
     this->m_FiducialManager = vtkMRMLAnnotationFiducialDisplayableManager::New();
     this->m_FiducialManager->SetMRMLScene( this->GetMRMLScene() );
@@ -786,7 +773,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddFiducial()
 const char* vtkSlicerAnnotationModuleLogic::AddFiducialPicked()
 {  
   /*  
-  if (m_FiducialManager == NULL)
+  if (m_FiducialManager == 0)
   {
     this->m_FiducialManager = vtkMRMLAnnotationFiducialDisplayableManager::New();
     this->m_FiducialManager->SetMRMLScene( this->GetMRMLScene() );
@@ -813,7 +800,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddFiducialPicked()
   }
   fiducialNode->Delete();
 
-  return fiducialNode->GetID();*/return NULL;
+  return fiducialNode->GetID();*/return 0;
 }
 
 
@@ -893,9 +880,9 @@ void vtkSlicerAnnotationModuleLogic::Update3DFiducial(vtkMRMLAnnotationFiducialN
 {
     CTK_D(vtkSlicerAnnotationModuleLogic);
 
-    if (activeCPNode == NULL)
+    if (activeCPNode == 0)
     {
-        vtkDebugMacro("Update3DWidget: passed in fiducial node is null, returning");
+        vtkDebugMacro("Update3DWidget: passed in fiducial node is 0, returning");
         return;
     }
 
@@ -924,16 +911,16 @@ void vtkSlicerAnnotationModuleLogic::Update3DFiducial(vtkMRMLAnnotationFiducialN
     vtkMRMLTransformNode* tnode = activeCPNode->GetParentTransformNode();
     vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
     transformToWorld->Identity();
-    if (tnode != NULL && tnode->IsLinear())
+    if (tnode != 0 && tnode->IsLinear())
     {
         vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
         lnode->GetMatrixTransformToWorld(transformToWorld);
     }
 
 
-    tnode = NULL;
+    tnode = 0;
     transformToWorld->Delete();
-    transformToWorld = NULL;
+    transformToWorld = 0;
 
     /*if (this->GetViewerWidget())
     {
@@ -952,7 +939,7 @@ void vtkSlicerAnnotationModuleLogic::AddFiducialWidget(vtkMRMLAnnotationFiducial
     {
         return;
     }
-    if (this->GetFiducialWidget(cpNode->GetID()) != NULL)
+    if (this->GetFiducialWidget(cpNode->GetID()) != 0)
     {
         vtkDebugMacro("Already have widgets for ruler node " << cpNode->GetID());
         return;
@@ -996,7 +983,7 @@ vtkSlicerFiducialListWidget* vtkSlicerAnnotationModuleLogic::GetFiducialWidget(c
         }
     }
     */
-    return NULL;
+    return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -1007,7 +994,7 @@ void vtkSlicerAnnotationModuleLogic::RemoveFiducialWidget(vtkMRMLAnnotationFiduc
     {
         return;
     }
-    if (this->GetFiducialWidget(cpNode->GetID()) != NULL)
+    if (this->GetFiducialWidget(cpNode->GetID()) != 0)
     {
         d->FiducialWidgets[cpNode->GetID()]->Delete();
         d->FiducialWidgets.erase(cpNode->GetID());
@@ -1029,7 +1016,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationLinesProperties(vtkMRMLAnnotat
     this->SetAnnotationControlPointsProperties(node, type, data);
 
     // Line Display Properties
-    if (node->GetAnnotationLineDisplayNode()==NULL)
+    if (node->GetAnnotationLineDisplayNode()==0)
     {
     }
     node->CreateAnnotationLineDisplayNode();
@@ -1053,7 +1040,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationProperties(vtkMRMLAnnotationNo
         }
     default:
         {
-            if (node->GetAnnotationTextDisplayNode()==NULL)
+            if (node->GetAnnotationTextDisplayNode()==0)
             {
             }
             node->CreateAnnotationTextDisplayNode();
@@ -1100,7 +1087,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationControlPointsProperties(vtkMRM
     }
 
     this->SetAnnotationProperties(node, type, data);
-    if (node->GetAnnotationPointDisplayNode()==NULL)
+    if (node->GetAnnotationPointDisplayNode()==0)
     {
     }
     node->CreateAnnotationPointDisplayNode();
@@ -1331,7 +1318,7 @@ const char* vtkSlicerAnnotationModuleLogic::GetIconName(vtkMRMLNode* node, bool 
   
 
   
-    return NULL;
+    return 0;
 } 
 
 //-----------------------------------------------------------------------------
@@ -1384,7 +1371,7 @@ const char* vtkSlicerAnnotationModuleLogic::GetAnnotationTextFormatProperty(vtkM
     return vtkMRMLAnnotationSplineNode::SafeDownCast(node)->GetDistanceAnnotationFormat();
   }
 
-    return NULL;
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1439,7 +1426,7 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationControlPointsCoordinate(vtk
 
     if (!node || (coordId >= node->GetNumberOfControlPoints()))
     {
-        return NULL;
+        return 0;
     }
 
     return node->GetControlPointCoordinates(coordId);
@@ -1452,7 +1439,7 @@ int vtkSlicerAnnotationModuleLogic::SetAnnotationControlPointsCoordinate(vtkMRML
 
     if (!node || (coordId >= node->GetNumberOfControlPoints()))
     {
-        return NULL;
+        return 0;
     }
 
     node->SetControlPoint(coordId, pos, 0, 1);
@@ -1465,12 +1452,12 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationLinesPropertiesDouble(vtkMRMLNo
 {
     if (!node)
     {
-        return NULL;
+        return 0;
     }
     vtkMRMLAnnotationLinesNode* lnode = vtkMRMLAnnotationLinesNode::SafeDownCast(node);
     if (!lnode)
     {
-        return NULL;
+        return 0;
     }
 
      if (this->GetAnnotationControlPointsPropertiesDouble((vtkMRMLAnnotationControlPointsNode*)lnode, type, result) )
@@ -1491,7 +1478,7 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationControlPointsPropertiesDouble(v
 {
     if (!node)
     {
-        return NULL;
+        return 0;
     }
 
     if ( this->GetAnnotationPropertiesDouble(node, type, result) )
@@ -1504,7 +1491,7 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationControlPointsPropertiesDouble(v
     {
         return 1;
     } 
-    return NULL;
+    return 0;
 
 }
 
@@ -1577,7 +1564,7 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationPropertiesDouble(vtkMRMLAnnotat
 {
     if (!node) 
     {
-        return NULL;
+        return 0;
     }
 
     node->CreateAnnotationTextDisplayNode();
@@ -1585,7 +1572,7 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationPropertiesDouble(vtkMRMLAnnotat
     {
         return 1;
     }
-    return NULL;
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1665,12 +1652,12 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationLineDisplayPropertiesColor(
 {
     if ((type != LINE_COLOR) && (type !=LINE_SELECTED_COLOR))
     {
-        return NULL;
+        return 0;
     }
 
     if (!node) 
     {
-        return NULL;
+        return 0;
     }
     return this->GetAnnotationDisplayPropertiesColor(node, type);
 }
@@ -1680,7 +1667,7 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationControlPointsPropertiesColo
 {
     if (!node)
     {
-        return NULL;
+        return 0;
     }
 
     switch(type)
@@ -1703,7 +1690,7 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationPropertiesColor(vtkMRMLAnno
 {
     if (!node) 
     {
-        return NULL;
+        return 0;
     }
     node->CreateAnnotationTextDisplayNode();
     return this->GetAnnotationTextDisplayPropertiesColor(node->GetAnnotationTextDisplayNode(), type);
@@ -1714,11 +1701,11 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationTextDisplayPropertiesColor(
 {
     if ((type != TEXT_COLOR) && (type !=TEXT_SELECTED_COLOR))
     {
-        return NULL;
+        return 0;
     }
     if (!node) 
     {
-        return NULL;
+        return 0;
     }
     return this->GetAnnotationDisplayPropertiesColor(node, type);
 }
@@ -1728,11 +1715,11 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationPointDisplayPropertiesColor
 {
     if ((type != POINT_COLOR) && (type !=POINT_SELECTED_COLOR))
     {
-        return NULL;
+        return 0;
     }
     if (!node) 
     {
-        return NULL;
+        return 0;
     }
     return this->GetAnnotationDisplayPropertiesColor(node, type);
 }
@@ -1742,7 +1729,7 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationDisplayPropertiesColor(vtkM
 {
     if (!node) 
     {
-        return NULL;
+        return 0;
     }
     switch(type)
     {
@@ -1759,7 +1746,7 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationDisplayPropertiesColor(vtkM
             return node->GetSelectedColor();
         }
     }
-    return NULL;
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1819,24 +1806,23 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 //  vtkMRMLAnnotationDisplayableManager* m;
 //  m = vtkMRMLAnnotationTextDisplayableManager::GetInstance();
 //
-//  if (m==NULL) {
+//  if (m==0) {
 //
 //      fprintf(stderr, "Could not get the Annotation Text Displayable Manager!\r\n");
-//      return NULL;
+//      return 0;
 //  }
 
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-    textNode->Initialize(
-        this->GetMRMLScene());
+  textNode->Initialize(this->GetMRMLScene());
 
-    // need a unique name since the storage node will be named from it
-    if (textNode->GetScene())
+  // need a unique name since the storage node will be named from it
+  if (textNode->GetScene())
     {
-      textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
+    textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
     }
-    else
+  else
     {
-      textNode->SetName("AnnotationText");
+    textNode->SetName("AnnotationText");
     }
     //textNode->Delete();
 /*
@@ -1854,7 +1840,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 
     // WORK IN PROGRESS!
 //
-//    if (this->m_TextManager == NULL) {
+//    if (this->m_TextManager == 0) {
 //        vtkMRMLAnnotationTextDisplayableManager * textManager(0);
 //        textManager->setMRMLScene(this->GetMRMLScene());
 //        //applicationGUI=this->GetApplicationGUI();
@@ -1872,7 +1858,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 //    textNode->Initialize(this->GetMRMLScene());
 
   /*
-  if (m_TextManager == NULL)
+  if (m_TextManager == 0)
   {*/
     //this->m_TextManager = vtkMRMLAnnotationTextDisplayableManager::New();
     /*this->m_TextManager->SetMRMLScene( this->GetMRMLScene() );
@@ -1918,13 +1904,13 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
   myCallback->Delete();
   */
   //return textNode->GetID();
-  //return NULL;
+  //return 0;
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::AddTextNodeCompleted()
 {
-  this->InvokeEvent(vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent, NULL);
+  this->InvokeEvent(vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1945,7 +1931,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddROINode()
   //vtkSlicerROIDisplayWidget* roiWidget = vtkSlicerROIDisplayWidget::SafeDownCast(roi->GetApplicationGUI()->GetActiveViewerWidget());
   //vtkMRMLROINode *roiNode = vtkMRMLROINode::New();
   /*
-  if (m_ROIManager == NULL)
+  if (m_ROIManager == 0)
   {
     this->m_ROIManager = vtkSlicerAnnotationROIManager::New();
     this->m_ROIManager->SetMRMLScene( this->GetMRMLScene() );
@@ -1996,7 +1982,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddBidLineNode()
   this->GetMRMLScene()->AddNode(node);
   
 
-  if (m_BidimensionalManager == NULL)
+  if (m_BidimensionalManager == 0)
   {
     this->m_BidimensionalManager = vtkSlicerAnnotationBidimensionalManager::New();
     this->m_BidimensionalManager->SetMRMLScene( this->GetMRMLScene() );
@@ -2025,7 +2011,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddBidLineNode()
 
   return node->GetID();
   */
-  return NULL;
+  return 0;
 
 }
 
@@ -2045,7 +2031,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddSplineNode()
   this->GetMRMLScene()->AddNode(node);
   */
 
-  /*if (m_SplineManager == NULL)
+  /*if (m_SplineManager == 0)
   {
     this->m_SplineManager = vtkSlicerAnnotationSplineManager::New();
     this->m_SplineManager->SetMRMLScene( this->GetMRMLScene() );
@@ -2074,7 +2060,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddSplineNode()
 
   return node->GetID();
   */
-  return NULL;
+  return 0;
 }
 
 
@@ -2088,7 +2074,7 @@ void vtkSlicerAnnotationModuleLogic::AddRulerNodeObserver(vtkMRMLAnnotationRuler
     {
         rnode->AddObserver(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, (vtkCommand *)this->LogicCallbackCommand);
     }
-    if (rnode->GetAnnotationTextDisplayNode()==NULL)
+    if (rnode->GetAnnotationTextDisplayNode()==0)
     {
         rnode->CreateAnnotationTextDisplayNode();
     }
