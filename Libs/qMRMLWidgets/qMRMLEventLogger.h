@@ -34,7 +34,7 @@ public:
   bool listeningSceneAboutToBeClosedEvent();
   bool listeningSceneEditedEvent();
   bool listeningMetadataAddedEvent();
-  bool listeningLoadProgressFeedbackEvent();
+  bool listeningImportProgressFeedbackEvent();
   bool listeningSaveProgressFeedbackEvent();
   bool listeningSceneAboutToBeImportedEvent();
   bool listeningSceneImportedEvent();
@@ -50,7 +50,7 @@ public slots:
   void listenSceneAboutToBeClosedEvent(bool listen);
   void listenSceneEditedEvent(bool listen);
   void listenMetadataAddedEvent(bool listen);
-  void listenLoadProgressFeedbackEvent(bool listen);
+  void listenImportProgressFeedbackEvent(bool listen);
   void listenSaveProgressFeedbackEvent(bool listen);
   void listenSceneAboutToBeImportedEvent(bool listen);
   void listenSceneImportedEvent(bool listen);
@@ -63,7 +63,7 @@ public slots:
   virtual void onSceneAboutToBeClosedEvent();
   virtual void onSceneEditedEvent();
   virtual void onMetadataAddedEvent();
-  virtual void onLoadProgressFeedbackEvent();
+  virtual void onImportProgressFeedbackEvent();
   virtual void onSaveProgressFeedbackEvent();
   virtual void onSceneAboutToBeImportedEvent();
   virtual void onSceneImportedEvent();
@@ -79,7 +79,7 @@ signals:
   void signalSceneAboutToBeClosedEvent();
   void signalSceneEditedEvent();
   void signalMetadataAddedEvent();
-  void signalLoadProgressFeedbackEvent();
+  void signalImportProgressFeedbackEvent();
   void signalSaveProgressFeedbackEvent();
   void signalSceneAboutToBeImportedEvent();
   void signalSceneImportedEvent();

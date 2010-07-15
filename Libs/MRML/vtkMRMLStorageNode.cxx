@@ -307,7 +307,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
     // of data. But,
     // commented out for now because CLI modules are using MRML to write
     // data in another thread, causing GUI to crash.
-//    this->Scene->InvokeEvent (vtkMRMLScene::LoadProgressFeedbackEvent );
+//    this->Scene->InvokeEvent (vtkMRMLScene::ImportProgressFeedbackEvent );
     }
 
   if ( this->GetURI() == NULL )

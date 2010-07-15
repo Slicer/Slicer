@@ -58,7 +58,7 @@ QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneAboutToBeClosed);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(MetadataAdded);
-QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(LoadProgressFeedback);
+QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(ImportProgressFeedback);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SaveProgressFeedback);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneAboutToBeImported);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneImported);
@@ -100,7 +100,7 @@ QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneAboutToBeClosed);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(MetadataAdded);
-QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(LoadProgressFeedback);
+QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(ImportProgressFeedback);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SaveProgressFeedback);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneAboutToBeImported);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneImported);
@@ -140,7 +140,7 @@ QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneAboutToBeClosed);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(MetadataAdded);
-QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(LoadProgressFeedback);
+QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(ImportProgressFeedback);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SaveProgressFeedback);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneAboutToBeImported);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneImported);
@@ -164,7 +164,7 @@ void qMRMLEventLoggerPrivate::init()
   p->listenSceneAboutToBeClosedEvent(true);
   p->listenSceneEditedEvent(true);
   p->listenMetadataAddedEvent(true);
-  p->listenLoadProgressFeedbackEvent(true);
+  p->listenImportProgressFeedbackEvent(true);
   p->listenSaveProgressFeedbackEvent(true);
   p->listenSceneAboutToBeImportedEvent(true);
   p->listenSceneImportedEvent(true);
@@ -219,9 +219,9 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
     this->MRMLScene, scene,
     vtkMRMLScene::MetadataAddedEvent, p, SLOT(onMetadataAddedEvent()));
 
-  this->EventNameToConnectionIdMap["LoadProgressFeedback"] = this->qvtkReconnect(
+  this->EventNameToConnectionIdMap["ImportProgressFeedback"] = this->qvtkReconnect(
     this->MRMLScene, scene,
-    vtkMRMLScene::LoadProgressFeedbackEvent, p, SLOT(onLoadProgressFeedbackEvent()));
+    vtkMRMLScene::ImportProgressFeedbackEvent, p, SLOT(onImportProgressFeedbackEvent()));
                       
   this->EventNameToConnectionIdMap["SaveProgressFeedback"] = this->qvtkReconnect(
     this->MRMLScene, scene,

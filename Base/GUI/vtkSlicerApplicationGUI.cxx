@@ -1653,7 +1653,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
   else if ( scene != NULL &&
             scene == this->MRMLScene &&
-            event == vtkMRMLScene::LoadProgressFeedbackEvent )
+            event == vtkMRMLScene::ImportProgressFeedbackEvent )
     {
     this->UpdateLoadStatusText();
     }
@@ -1905,7 +1905,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   // Observe an event that updates the status text during loading of data.
 
   vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::LoadProgressFeedbackEvent);
+  events->InsertNextValue(vtkMRMLScene::ImportProgressFeedbackEvent);
   events->InsertNextValue(vtkMRMLScene::SaveProgressFeedbackEvent);
   events->InsertNextValue( vtkMRMLScene::NodeAddedEvent );
   events->InsertNextValue( vtkMRMLScene::NodeRemovedEvent );

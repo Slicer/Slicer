@@ -356,7 +356,7 @@ public:
       SceneAboutToBeClosedEvent = 66004,
       SceneEditedEvent = 66006,
       MetadataAddedEvent = 66007,
-      LoadProgressFeedbackEvent = 66008,
+      ImportProgressFeedbackEvent = 66008,
       SaveProgressFeedbackEvent = 66009,
       SceneAboutToBeImportedEvent = 66010,
       SceneImportedEvent = 66011,
