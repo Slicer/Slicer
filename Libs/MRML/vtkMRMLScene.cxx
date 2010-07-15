@@ -2529,11 +2529,11 @@ void vtkMRMLScene::SetIsImporting(bool isImporting)
 
   if (isImporting)
     {
-    this->IsUpdating |= 0x3;
+    this->IsUpdating |= 0x4;
     }
   else
     {
-    this->IsUpdating &= 0x3;
+    this->IsUpdating &= 0x4;
     }
 
   this->Modified();
