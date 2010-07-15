@@ -24,13 +24,13 @@ public:
   explicit qSlicerLayoutManager(QWidget* widget);
   virtual ~qSlicerLayoutManager(){}
 
-  /// Return the number of instanciated ThreeDRenderView
+  /// Return the number of instantiated ThreeDRenderView
   int threeDRenderViewCount();
   
   /// Get ThreeDRenderView identified by \a id
-  /// Note that render view are internally identified by a name
-  /// of the form "RenderView#id"
-  /// where \a id is an integer ranging from 1 to N.
+  /// where \a id is an integer ranging from 0 to N-1 with N being the number
+  /// of instantiated qMRMLThreeDRenderView (that should also be equal to the number
+  /// of vtkMRMLViewNode)
   qMRMLThreeDRenderView* threeDRenderView(int id);
 
 public slots:

@@ -34,11 +34,17 @@ public:
 
   void setMRMLScene(vtkMRMLScene* scene);
 
-  /// Instanciate a slice viewer
+  /// If needed, instantiate a slice viewer corresponding to \a sliceViewName
   QWidget* createSliceView(const QString& sliceViewName, vtkMRMLSliceNode* sliceNode);
 
-  /// Instanciate a 3D viewer
-  QWidget* createThreeDRenderView(const QString& renderViewName, vtkMRMLViewNode* viewNode);
+  /// Delete slice viewer associated with \a sliceNode
+  void removeSliceView(vtkMRMLSliceNode* sliceNode);
+
+  /// If needed, instantiate a 3D Viewer corresponding to \a viewNode
+  QWidget* createThreeDRenderView(vtkMRMLViewNode* viewNode);
+
+  /// Delete 3D Viewer associated with \a viewNode
+  void removeThreeDRenderView(vtkMRMLViewNode* viewNode);
 
   ///
   void initialize();
@@ -52,7 +58,7 @@ public:
 
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName
-  qMRMLThreeDRenderView* threeDRenderView(const QString& renderViewName);
+  qMRMLThreeDRenderView* threeDRenderView(int id);
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
@@ -63,7 +69,7 @@ public slots:
   void onNodeAddedEvent(vtkObject* scene, vtkObject* node);
   void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);
   void onSceneImportedEvent();
-//   void onSceneCloseEvent();
+  void onSceneAboutToBeClosedEvent();
   void onSceneClosedEvent();
 
   /// Handle Layout node event
@@ -73,6 +79,7 @@ public:
   vtkMRMLScene*      MRMLScene;
   vtkMRMLLayoutNode* MRMLLayoutNode;
   int                CurrentViewArrangement;
+  int                SavedCurrentViewArrangement;
   QGridLayout*       GridLayout;
   QWidget*           TargetWidget;
   
@@ -80,8 +87,11 @@ public:
   /// the current MRML layout node is updated from one of the switchTo* slots.
   bool               UpdatingMRMLLayoutNode;
 
-  QHash<QString, qMRMLThreeDRenderView*>               ThreeDRenderViewMap;
-  QHash<QString, qMRMLSliceViewWidget*>                SliceViewMap;
+  QList<qMRMLThreeDRenderView*>              ThreeDRenderViewList;
+  QList<vtkMRMLViewNode*>                    MRMLViewNodeList;
+
+  QHash<QString, qMRMLSliceViewWidget*>      SliceViewMap;
+  QHash<vtkMRMLSliceNode*, QString>          MRMLSliceNodeToSliceViewName;
 };
 
 #endif
