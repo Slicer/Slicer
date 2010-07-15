@@ -76,6 +76,15 @@
        <description>CenterOfHeadAlign attempts to find a hemisphere full of foreground voxels from the superior direction as an estimate of where the center of a head shape would be to drive a center of mass estimate.  Perform a CenterOfHeadAlign registration as part of the sequential registration steps.   This option MUST come first, and CAN NOT be used with either MomentsAlign, GeometryAlign, or initialTransform file.  This family of options superceeds the use of transformType if any of them are set.</description>
        <default>false</default>
     </boolean>
+    
+    <boolean>
+       <name>useCenterOfROIAlign</name>
+       <longflag>useCenterOfROIAlign</longflag>
+       <label>Initialize with CenterOfROIAlign registration phase</label>
+       <description>CenterOfROIAlign aligns the centroids of the ROIs (binary images)</description>
+       <default>false</default>
+    </boolean>
+
     <boolean>
        <name>useRigid</name>
        <longflag>useRigid</longflag>

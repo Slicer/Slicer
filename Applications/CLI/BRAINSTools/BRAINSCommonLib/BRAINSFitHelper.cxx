@@ -9,6 +9,10 @@
 #include <fstream>
 #include "BRAINSFitHelper.h"
 
+#include "itkLabelObject.h"
+#include "itkStatisticsLabelObject.h"
+#include "itkLabelImageToStatisticsLabelMapFilter.h"
+
 namespace itk
 {
 void ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
@@ -155,52 +159,103 @@ typename TransformType::Pointer DoCenteredInitialization(
     CenteredInitializer->GeometryOn();              // Use the image spce center
     CenteredInitializer->InitializeTransform();
     }
-  else if ( initializeTransformMode == "useCenterOfHeadAlign" )
-    {
+  else if ( initializeTransformMode == "useCenterOfHeadAlign" ||
+            initializeTransformMode == "useCenterOfROIAlign" )
+    {    
     typedef typename itk::ImageMaskSpatialObject<FixedVolumeType::ImageDimension> ImageMaskSpatialObjectType;
     typedef itk::Image<unsigned char, 3>                                          MaskImageType;
-    //     typename MovingVolumeType::PointType movingCenter =
-    // GetCenterOfBrain<MovingVolumeType>(orientedMovingVolume);
-    //     typename FixedVolumeType::PointType fixedCenter =
-    // GetCenterOfBrain<FixedVolumeType>(orientedFixedVolume);
-    typedef typename itk::FindCenterOfBrainFilter<MovingVolumeType>
-      MovingFindCenterFilter;
-    typename MovingFindCenterFilter::Pointer movingFindCenter
-      = MovingFindCenterFilter::New();
-    movingFindCenter->SetInput(orientedMovingVolume);
-    if ( movingMask.IsNotNull() )
-      {
+    typename MovingVolumeType::PointType movingCenter;
+    typename FixedVolumeType::PointType fixedCenter;
+
+    if (initializeTransformMode == "useCenterOfROIAlign"){
+      // calculate the centers of each ROI
+      typedef itk::StatisticsLabelObject<unsigned char, 3> LabelObjectType;
+      typedef itk::LabelMap<LabelObjectType> LabelMapType;
+      typedef itk::LabelImageToStatisticsLabelMapFilter<MaskImageType,MaskImageType>
+        LabelStatisticsFilterType;
+      typedef LabelMapType::LabelObjectContainerType LabelObjectContainerType;
+
       typename ImageMaskSpatialObjectType::Pointer movingImageMask(
         dynamic_cast<ImageMaskSpatialObjectType *>( movingMask.GetPointer() ) );
       typename MaskImageType::Pointer tempOutputMovingVolumeROI
         = const_cast<MaskImageType *>( movingImageMask->GetImage() );
-      movingFindCenter->SetImageMask(tempOutputMovingVolumeROI);
-      }
-    movingFindCenter->Update();
-    typename MovingVolumeType::PointType movingCenter
-      = movingFindCenter->GetCenterOfBrain();
+
+      typename ImageMaskSpatialObjectType::Pointer fixedImageMask(
+        dynamic_cast<ImageMaskSpatialObjectType *>( fixedMask.GetPointer() ) );
+      typename MaskImageType::Pointer tempOutputFixedVolumeROI = 
+        const_cast<MaskImageType *>( fixedImageMask->GetImage() );
+
+      LabelStatisticsFilterType::Pointer movingImageToLabel = LabelStatisticsFilterType::New();
+      movingImageToLabel->SetInput(movingImageMask->GetImage());
+      movingImageToLabel->SetFeatureImage(movingImageMask->GetImage());
+      movingImageToLabel->SetComputePerimeter(false);
+      movingImageToLabel->Update();
+      
+      LabelStatisticsFilterType::Pointer fixedImageToLabel = LabelStatisticsFilterType::New();
+      fixedImageToLabel->SetInput(fixedImageMask->GetImage());
+      fixedImageToLabel->SetFeatureImage(fixedImageMask->GetImage());
+      fixedImageToLabel->SetComputePerimeter(false);
+      fixedImageToLabel->Update();
+
+      LabelObjectType *movingLabel = movingImageToLabel->GetOutput()->GetNthLabelObject(0);
+      LabelObjectType *fixedLabel = fixedImageToLabel->GetOutput()->GetNthLabelObject(0);
+
+      LabelObjectType::CentroidType movingCentroid = movingLabel->GetCentroid();
+      LabelObjectType::CentroidType fixedCentroid = fixedLabel->GetCentroid();
+
+      movingCenter[0] = movingCentroid[0];
+      movingCenter[1] = movingCentroid[1];
+      movingCenter[2] = movingCentroid[2];
+
+      fixedCenter[0] = fixedCentroid[0];
+      fixedCenter[1] = fixedCentroid[1];
+      fixedCenter[2] = fixedCentroid[2];
+
+      // calculate the translation (and rotation?)
+      // initialize the transform center using the fixed ROI center
+    } else { // CenterOfHead
+      //     typename MovingVolumeType::PointType movingCenter =
+      // GetCenterOfBrain<MovingVolumeType>(orientedMovingVolume);
+      //     typename FixedVolumeType::PointType fixedCenter =
+      // GetCenterOfBrain<FixedVolumeType>(orientedFixedVolume);
+      typedef typename itk::FindCenterOfBrainFilter<MovingVolumeType>
+        MovingFindCenterFilter;
+      typename MovingFindCenterFilter::Pointer movingFindCenter
+        = MovingFindCenterFilter::New();
+      movingFindCenter->SetInput(orientedMovingVolume);
+      if ( movingMask.IsNotNull() )
+        {
+        typename ImageMaskSpatialObjectType::Pointer movingImageMask(
+          dynamic_cast<ImageMaskSpatialObjectType *>( movingMask.GetPointer() ) );
+        typename MaskImageType::Pointer tempOutputMovingVolumeROI
+          = const_cast<MaskImageType *>( movingImageMask->GetImage() );
+        movingFindCenter->SetImageMask(tempOutputMovingVolumeROI);
+        }
+      movingFindCenter->Update();
+      typename MovingVolumeType::PointType movingCenter
+        = movingFindCenter->GetCenterOfBrain();
 #if 1
-    {
-    // convert mask image to mask
-    typedef typename itk::ImageMaskSpatialObject<Dimension>
-      ImageMaskSpatialObjectType;
-    typename ImageMaskSpatialObjectType::Pointer mask
-      = ImageMaskSpatialObjectType::New();
-    mask->SetImage( movingFindCenter->GetClippedImageMask() );
-
-    typename MaskImageType::Pointer ClippedMask = movingFindCenter->GetClippedImageMask();
-    // itkUtil::WriteImage<MaskImageType>( ClippedMask ,
-    // std::string("MOVING_MASK.nii.gz"));
-
-    mask->ComputeObjectToWorldTransform();
-    typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
-    if ( p.IsNull() )
       {
-      std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-      exit(-1);
+      // convert mask image to mask
+      typedef typename itk::ImageMaskSpatialObject<Dimension>
+        ImageMaskSpatialObjectType;
+      typename ImageMaskSpatialObjectType::Pointer mask
+        = ImageMaskSpatialObjectType::New();
+      mask->SetImage( movingFindCenter->GetClippedImageMask() );
+
+      typename MaskImageType::Pointer ClippedMask = movingFindCenter->GetClippedImageMask();
+      // itkUtil::WriteImage<MaskImageType>( ClippedMask ,
+      // std::string("MOVING_MASK.nii.gz"));
+
+      mask->ComputeObjectToWorldTransform();
+      typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
+      if ( p.IsNull() )
+        {
+        std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
+        exit(-1);
+        }
+      movingMask = p;
       }
-    movingMask = p;
-    }
 #endif
 
     typedef typename itk::FindCenterOfBrainFilter<FixedVolumeType>
@@ -219,26 +274,28 @@ typename TransformType::Pointer DoCenteredInitialization(
     fixedFindCenter->Update();
     typename FixedVolumeType::PointType fixedCenter
       = fixedFindCenter->GetCenterOfBrain();
+
 #if 1
-    {
-    // convert mask image to mask
-    typedef typename itk::ImageMaskSpatialObject<Dimension>
-      ImageMaskSpatialObjectType;
-    typename ImageMaskSpatialObjectType::Pointer mask
-      = ImageMaskSpatialObjectType::New();
-    mask->SetImage( fixedFindCenter->GetClippedImageMask() );
-
-    typename MaskImageType::Pointer ClippedMask = fixedFindCenter->GetClippedImageMask();
-    // itkUtil::WriteImage<MaskImageType>(ClippedMask,std::string("FIXED_MASK.nii.gz"));
-
-    mask->ComputeObjectToWorldTransform();
-    typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
-    if ( p.IsNull() )
       {
-      std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
-      exit(-1);
+      // convert mask image to mask
+      typedef typename itk::ImageMaskSpatialObject<Dimension>
+        ImageMaskSpatialObjectType;
+      typename ImageMaskSpatialObjectType::Pointer mask
+        = ImageMaskSpatialObjectType::New();
+      mask->SetImage( fixedFindCenter->GetClippedImageMask() );
+
+      typename MaskImageType::Pointer ClippedMask = fixedFindCenter->GetClippedImageMask();
+      // itkUtil::WriteImage<MaskImageType>(ClippedMask,std::string("FIXED_MASK.nii.gz"));
+
+      mask->ComputeObjectToWorldTransform();
+      typename SpatialObjectType::Pointer p = dynamic_cast<SpatialObjectType *>( mask.GetPointer() );
+      if ( p.IsNull() )
+        {
+        std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;
+        exit(-1);
+        }
+      fixedMask = p;
       }
-    fixedMask = p;
     }
 #endif
 
@@ -1222,14 +1279,16 @@ StartRegistration (void)
         jointMask->GetAxisAlignedBoundingBoxRegion();
       FixedVolumeType::SpacingType roiSpacing =
         m_FixedVolume->GetSpacing();
-      //std::cout << "Image size: " << m_FixedVolume->GetBufferedRegion().GetSize() << std::endl;
-      //std::cout << "ROI size: " << roiRegion.GetSize() << std::endl;
-      //std::cout << "ROI spacing: " << roiSpacing << std::endl;
-      //std::cout << "ROI index: " << roiRegion.GetIndex() << std::endl;
-      //std::cout << "ROI size in physical space: " << 
-      //  roiRegion.GetSize()[0]*roiSpacing[0] << " " << 
-      //  roiRegion.GetSize()[1]*roiSpacing[1] << " " << 
-      //  roiRegion.GetSize()[2]*roiSpacing[2] << std::endl;
+      /*
+      std::cout << "Image size: " << m_FixedVolume->GetBufferedRegion().GetSize() << std::endl;
+      std::cout << "ROI size: " << roiRegion.GetSize() << std::endl;
+      std::cout << "ROI spacing: " << roiSpacing << std::endl;
+      std::cout << "ROI index: " << roiRegion.GetIndex() << std::endl;
+      std::cout << "ROI size in physical space: " << 
+        roiRegion.GetSize()[0]*roiSpacing[0] << " " << 
+        roiRegion.GetSize()[1]*roiSpacing[1] << " " << 
+        roiRegion.GetSize()[2]*roiSpacing[2] << std::endl;
+        */
 
       FixedVolumeType::PointType roiOriginPt;
       FixedVolumeType::IndexType roiOriginIdx;
@@ -1242,6 +1301,16 @@ StartRegistration (void)
       roiImage->SetSpacing(roiSpacing);
       roiImage->SetOrigin(roiOriginPt);
       roiImage->SetDirection(m_FixedVolume->GetDirection());      
+
+      /*
+      std::cout << "ROI origin: " << roiOriginPt << std::endl;      
+      typedef itk::ImageFileWriter<FixedVolumeType> WriterType;
+      WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName( "/tmp/bsplineroi.nrrd" );
+      writer->SetInput( roiImage );
+      writer->Update();
+      */
+      
 
       InitializerType::Pointer transformInitializer = InitializerType::New();
       transformInitializer->SetTransform( initialBSplineTransform );

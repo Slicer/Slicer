@@ -210,17 +210,19 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
     itk::MultiThreader::SetGlobalMaximumNumberOfThreads(debugNumberOfThreads);
     }
   std::string localInitializeTransformMode = "Off";
-  if ( ( ( initialTransform.size() >
-           0 ) + ( useCenterOfHeadAlign == true ) + ( useGeometryAlign == true ) + ( useMomentsAlign == true ) ) > 1 )
+  if ( ( ( initialTransform.size() > 0 ) + ( useCenterOfHeadAlign == true ) + 
+         ( useGeometryAlign == true ) + ( useMomentsAlign == true ) + 
+         ( useCenterOfROIAlign == true) ) > 1 )
     {
     std::cout
       <<
-      "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign ]"
-      << std::endl;
+      "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign \
+        || useCenterOfROIAlign ]" << std::endl;
     }
   if ( useCenterOfHeadAlign == true ) { localInitializeTransformMode = "useCenterOfHeadAlign"; }
   if ( useGeometryAlign == true )     { localInitializeTransformMode = "useGeometryAlign"; }
   if ( useMomentsAlign == true )      { localInitializeTransformMode = "useMomentsAlign"; }
+  if ( useCenterOfROIAlign == true )      { localInitializeTransformMode = "useCenterOfROIAlign"; }
 
   // std::vector<int> zeroOrigin(3, 0);
 
