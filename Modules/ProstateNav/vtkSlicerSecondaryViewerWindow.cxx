@@ -163,7 +163,7 @@ void vtkSlicerSecondaryViewerWindow::CreateWidget()
   
   // Create list of MRML events for that the widgets will observe
   vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);

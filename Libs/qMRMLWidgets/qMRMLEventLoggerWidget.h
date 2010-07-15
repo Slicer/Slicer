@@ -32,7 +32,7 @@ protected slots:
   virtual void onNodeAddedEvent(vtkObject* caller, vtkObject* call_data);
   virtual void onNodeRemovedEvent(vtkObject* caller, vtkObject* call_data);
   virtual void onNewSceneEvent();
-  virtual void onSceneCloseEvent();
+  virtual void onSceneClosedEvent();
   virtual void onSceneClosingEvent();
   virtual void onSceneEditedEvent();
   virtual void onMetadataAddedEvent();

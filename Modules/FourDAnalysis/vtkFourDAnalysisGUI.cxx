@@ -693,7 +693,7 @@ void vtkFourDAnalysisGUI::AddGUIObservers ( )
   vtkIntArray* events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   
   if (this->GetMRMLScene() != NULL)
     {
@@ -1394,7 +1394,7 @@ void vtkFourDAnalysisGUI::ProcessMRMLEvents ( vtkObject *caller,
   else if (event == vtkMRMLScene::NodeRemovedEvent)
     {
     }
-  else if (event == vtkMRMLScene::SceneCloseEvent)
+  else if (event == vtkMRMLScene::SceneClosedEvent)
     {
     }
   else if (event == vtkCommand::ModifiedEvent)

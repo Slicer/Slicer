@@ -119,7 +119,7 @@ protected:
   /// Called after the corresponding MRML event is triggered.
   /// \sa ProcessMRMLEvents
   virtual void OnMRMLSceneClosingEvent(){}
-  virtual void OnMRMLSceneCloseEvent(){}
+  virtual void OnMRMLSceneClosedEvent(){}
   virtual void OnMRMLSceneLoadStartEvent(){}
   virtual void OnMRMLSceneLoadEndEvent(){}
   virtual void OnMRMLSceneRestoredEvent(){}

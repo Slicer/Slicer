@@ -613,7 +613,7 @@ void vtkOpenIGTLinkIFGUI::AddGUIObservers ( )
   events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   
   if (this->GetMRMLScene() != NULL)
     {
@@ -1432,7 +1432,7 @@ void vtkOpenIGTLinkIFGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   // -----------------------------------------
   // Closing the scene
-  else if (event == vtkMRMLScene::SceneCloseEvent)
+  else if (event == vtkMRMLScene::SceneClosedEvent)
     {
     if (this->LocatorCheckButton != NULL && this->LocatorCheckButton->GetSelectedState())
       {

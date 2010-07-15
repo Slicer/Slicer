@@ -159,7 +159,7 @@ int vtkOpenIGTLinkIFLogic::Initialize()
     vtkIntArray* events = vtkIntArray::New();
     //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
     //events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-    //events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    //events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
     //events->InsertNextValue(vtkMRMLScene::Node
     if (this->GetMRMLScene() != NULL)
       {

@@ -72,7 +72,7 @@ void QtSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
                          this, SLOT(UpdateMenu()));
     Connections->Connect(this->MRMLScene, vtkMRMLScene::NodeRemovedEvent,
                          this, SLOT(UpdateMenu()));
-    Connections->Connect(this->MRMLScene, vtkMRMLScene::SceneCloseEvent,
+    Connections->Connect(this->MRMLScene, vtkMRMLScene::SceneClosedEvent,
                          this, SLOT(UpdateMenu()));
     Connections->Connect(this->MRMLScene, vtkMRMLScene::SceneEditedEvent,
                          this, SLOT(UpdateMenu()));
@@ -80,7 +80,7 @@ void QtSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
   this->MRMLScene->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
    this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
    this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
-   this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+   this->MRMLScene->AddObserver( vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand );
    this->MRMLScene->AddObserver( vtkMRMLScene::SceneEditedEvent, this->MRMLCallbackCommand );
  **/
    }

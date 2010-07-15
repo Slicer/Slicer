@@ -1626,7 +1626,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
   else if (scene != NULL &&
            scene == this->MRMLScene &&
-           event == vtkMRMLScene::SceneCloseEvent )
+           event == vtkMRMLScene::SceneClosedEvent )
     {
     // is the scene closing?
     this->SceneClosing = true;
@@ -1909,7 +1909,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   events->InsertNextValue(vtkMRMLScene::SaveProgressFeedbackEvent);
   events->InsertNextValue( vtkMRMLScene::NodeAddedEvent );
   events->InsertNextValue( vtkMRMLScene::NodeRemovedEvent );
-  events->InsertNextValue( vtkMRMLScene::SceneCloseEvent );
+  events->InsertNextValue( vtkMRMLScene::SceneClosedEvent );
   events->InsertNextValue( vtkCommand::ModifiedEvent );
   this->SetAndObserveMRMLSceneEvents (this->MRMLScene, events );
   events->Delete();
@@ -4414,7 +4414,7 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
       {
       vtkIntArray *events = vtkIntArray::New();
       events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-      events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+      events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
       events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
       events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
       events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);

@@ -346,7 +346,7 @@ void vtkNeuroNavGUI::AddGUIObservers ( )
   vtkIntArray* events = vtkIntArray::New();
   //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   //events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   
   if (this->GetMRMLScene() != NULL)
     {
@@ -667,7 +667,7 @@ void vtkNeuroNavGUI::ProcessLogicEvents ( vtkObject *vtkNotUsed(caller),
 void vtkNeuroNavGUI::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller),
                                          unsigned long event, void *vtkNotUsed(callData))
 {
-  if (event == vtkMRMLScene::SceneCloseEvent)
+  if (event == vtkMRMLScene::SceneClosedEvent)
     {
     if (this->LocatorCheckButton != NULL && this->LocatorCheckButton->GetSelectedState())
       {

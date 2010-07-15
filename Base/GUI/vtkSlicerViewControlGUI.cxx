@@ -3099,7 +3099,7 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   vtkDebugMacro("processing event " << event);
    
-  if (event == vtkMRMLScene::SceneCloseEvent )
+  if (event == vtkMRMLScene::SceneClosedEvent )
     {
     this->SceneClosing = true;
     }
@@ -3124,7 +3124,7 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
   // has a node been added or deleted?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
        && ((event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent )
-           || (event == vtkMRMLScene::SceneCloseEvent) || (event == vtkMRMLScene::NewSceneEvent ) ) )
+           || (event == vtkMRMLScene::SceneClosedEvent) || (event == vtkMRMLScene::NewSceneEvent ) ) )
     {
     this->UpdateFromMRML();
     this->UpdateNavigationWidgetViewActors ( );

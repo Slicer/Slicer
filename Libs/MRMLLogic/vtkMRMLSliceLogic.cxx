@@ -478,7 +478,7 @@ void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic *backgroundLay
 
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
     events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
     events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
     this->BackgroundLayer->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
@@ -508,7 +508,7 @@ void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic *foregroundLay
 
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
     events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
     events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
     this->ForegroundLayer->SetAndObserveMRMLSceneEvents( this->GetMRMLScene(), events);
@@ -538,7 +538,7 @@ void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
 
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
     events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
     events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
     this->LabelLayer->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);

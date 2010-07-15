@@ -162,7 +162,7 @@ void vtkIA_FEMeshGUI::AddMRMLObservers ( )
     // register with the MRML scene to receive callbacks when the scene is closed or opened.
     this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, (vtkCommand *)this->MRMLCallbackCommand);
     this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, (vtkCommand *)this->MRMLCallbackCommand);
-    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     this->GetMRMLScene()->AddObserver(vtkMRMLScene::NewSceneEvent, (vtkCommand *)this->MRMLCallbackCommand);
 
 }
@@ -175,7 +175,7 @@ void vtkIA_FEMeshGUI::RemoveMRMLObservers ( )
     // release callbacks so nothing is called while module is not active
      this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent,  (vtkCommand *)this->MRMLCallbackCommand);
      this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadStartEvent,  (vtkCommand *)this->MRMLCallbackCommand);
-     this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent,  (vtkCommand *)this->MRMLCallbackCommand);
+     this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneClosedEvent,  (vtkCommand *)this->MRMLCallbackCommand);
      this->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NewSceneEvent,  (vtkCommand *)this->MRMLCallbackCommand);
 }
 
@@ -206,7 +206,7 @@ void vtkIA_FEMeshGUI::ProcessMRMLEvents ( vtkObject *caller,
       // keep the lists and viewProperties in sync
       std::cout << "IA_FEMesh: MRML callback command received" << std::endl;
 
-      if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::SceneCloseEvent ))
+      if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene  && (event == vtkMRMLScene::SceneClosedEvent ))
         {
             std::cout << "IA-FEMesh: got MRML scene close event.  Do housekeeping here to clear out lists and view properties. " << endl;
         }

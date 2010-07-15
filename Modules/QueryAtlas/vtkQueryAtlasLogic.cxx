@@ -72,7 +72,7 @@ void vtkQueryAtlasLogic::ProcessMrmlEvents(vtkObject *vtkNotUsed(caller),
 vtkIntArray* vtkQueryAtlasLogic::NewObservableEvents()
 {
   vtkIntArray* events = vtkIntArray::New();
-  events->InsertNextValue ( vtkMRMLScene::SceneCloseEvent );
+  events->InsertNextValue ( vtkMRMLScene::SceneClosedEvent );
   events->InsertNextValue ( vtkMRMLScene::NodeAddedEvent );
   events->InsertNextValue ( vtkMRMLScene::NodeRemovedEvent );
   return events;

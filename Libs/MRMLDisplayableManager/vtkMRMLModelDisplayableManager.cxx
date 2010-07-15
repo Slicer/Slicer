@@ -454,7 +454,7 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents ( vtkObject *caller,
     this->RemoveModelObservers(0);
     //this->RemoveCameraObservers();
     }
-  else if (event == vtkMRMLScene::SceneCloseEvent )
+  else if (event == vtkMRMLScene::SceneClosedEvent )
     {
     this->SceneClosing = true;
     //this->CameraNodeWasCreated = 0;
@@ -759,7 +759,7 @@ void vtkMRMLModelDisplayableManager::Create()
 
   // observe scene for add/remove nodes
   vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
   events->InsertNextValue(vtkMRMLScene::SceneLoadStartEvent);
   events->InsertNextValue(vtkMRMLScene::SceneLoadEndEvent);

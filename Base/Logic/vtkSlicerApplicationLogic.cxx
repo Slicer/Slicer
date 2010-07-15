@@ -648,7 +648,7 @@ void vtkSlicerApplicationLogic::CreateSliceLogics()
   // insert slicelogic pointers to a map InternalMRMLSliceLogicMap
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
   events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);

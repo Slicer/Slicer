@@ -247,7 +247,7 @@ void vtkIGTToolSelectorGUI::AddGUIObservers ( )
   vtkIntArray* events = vtkIntArray::New();
   //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   //events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   
   if (this->GetMRMLScene() != NULL)
     {
@@ -470,7 +470,7 @@ void vtkIGTToolSelectorGUI::ProcessMRMLEvents ( vtkObject *caller,
 {
   // Fill in
 
-  if (event == vtkMRMLScene::SceneCloseEvent)
+  if (event == vtkMRMLScene::SceneClosedEvent)
     {
     }
 }

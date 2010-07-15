@@ -271,7 +271,7 @@ void vtkSlicerAnnotationAngleManager::ProcessMRMLEvents ( vtkObject *caller, uns
     vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
 
     // the scene was closed, don't get node removed events so clear up here
-    if (callScene != NULL && event == vtkMRMLScene::SceneCloseEvent)
+    if (callScene != NULL && event == vtkMRMLScene::SceneClosedEvent)
     {
         //vtkDebugMacro("ProcessMRMLEvents: got a scene close event");
         // the lists are already gone from the scene, so need to clear out all the
@@ -1052,9 +1052,9 @@ void vtkSlicerAnnotationAngleManager::AddMRMLObservers ( )
         {
             this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
-        if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+        if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
         {
-            this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+            this->MRMLScene->AddObserver(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
     }*/
 }
@@ -1084,7 +1084,7 @@ void vtkSlicerAnnotationAngleManager::RemoveMRMLObservers ( )
         //vtkDebugMacro("RemoveMRMLObservers: stopping watching for node removed, added, scene close events on the scene");
         this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
         this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-        this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+        this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }*/
 }
 

@@ -127,7 +127,7 @@ void vtkSlicerAnnotationROIManager::AddMRMLObservers ()
 
   // observe scene for add/remove nodes
   vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
 
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -161,7 +161,7 @@ void vtkSlicerAnnotationROIManager::ProcessMRMLEvents ( vtkObject *caller, unsig
   callDataNode = reinterpret_cast<vtkMRMLAnnotationROINode *>(callData);
   vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
 
-  if (callScene != NULL && event == vtkMRMLScene::SceneCloseEvent)
+  if (callScene != NULL && event == vtkMRMLScene::SceneClosedEvent)
   {
     this->RemoveBoxWidgets();
     this->RequestRender();

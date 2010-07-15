@@ -487,7 +487,7 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   //Delete frames
   if ( this->GetApplicationGUI() &&  this->GetApplicationGUI()->GetMRMLScene())
     {
-    this->GetApplicationGUI()->GetMRMLScene()->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver( vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
@@ -551,7 +551,7 @@ void vtkVolumeRenderingGUI::AddMRMLObservers(void)
   //Remove the MRML observer
   if ( this->GetApplicationGUI() )
     {
-    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
     }
@@ -562,7 +562,7 @@ void vtkVolumeRenderingGUI::RemoveMRMLObservers(void)
   //Remove the MRML observer
   if ( this->GetApplicationGUI() )
     {
-    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand);
     }
@@ -854,7 +854,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     return;
     }
          
-  if (event == vtkMRMLScene::SceneCloseEvent)
+  if (event == vtkMRMLScene::SceneClosedEvent)
     {
     vtkSetAndObserveMRMLNodeMacro(this->ParametersNode, NULL);
     }

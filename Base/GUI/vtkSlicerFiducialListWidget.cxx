@@ -442,7 +442,7 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   // the scene was closed, don't get node removed events so clear up here
   if (callScene != NULL &&
-      event == vtkMRMLScene::SceneCloseEvent)
+      event == vtkMRMLScene::SceneClosedEvent)
     {
     vtkDebugMacro("ProcessMRMLEvents: got a scene close event");
     // the lists are already gone from the scene, so need to clear out all the
@@ -628,7 +628,7 @@ void vtkSlicerFiducialListWidget::CreateWidget ( )
   if (this->MRMLScene)
     {
     vtkIntArray *events = vtkIntArray::New();
-    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
     events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
     events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
     events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);

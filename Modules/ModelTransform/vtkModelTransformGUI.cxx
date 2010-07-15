@@ -198,7 +198,7 @@ vtkIntArray *vtkModelTransformGUI::NewObservableEvents()
  vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   // Slicer3.cxx calls delete on events
   return events;
 }

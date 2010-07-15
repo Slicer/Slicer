@@ -367,7 +367,7 @@ vtkIntArray *vtkFetchMIGUI::NewObservableEvents()
  vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::MetadataAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   // Slicer3.cxx calls delete on events
   return events;
 }
@@ -1522,7 +1522,7 @@ void vtkFetchMIGUI::ProcessMRMLEvents(vtkObject *caller,
       {
       this->UpdateSceneTableFromMRML();
       }    
-    if ( event == vtkMRMLScene::SceneCloseEvent )
+    if ( event == vtkMRMLScene::SceneClosedEvent )
       {
       this->Logic->ClearModifiedNodes();
       this->Logic->ClearSelectedStorableNodes();

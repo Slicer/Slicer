@@ -156,7 +156,7 @@ vtkIntArray*  vtkChangeTrackerGUI::NewObservableEvents()
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   // Slicer3.cxx calls delete on events
   return events;
 }
@@ -353,7 +353,7 @@ void vtkChangeTrackerGUI::ProcessMRMLEvents(vtkObject *caller,
     }
 
   // cout << "============ vtkChangeTrackerGUI::ProcessMRMLEvents Start ========== " << caller->GetClassName() << " " << event << endl;
-  if (event == vtkMRMLScene::SceneCloseEvent ) {
+  if (event == vtkMRMLScene::SceneClosedEvent ) {
     this->ResetPipeline();
     return;
   }
@@ -634,7 +634,7 @@ void vtkChangeTrackerGUI::SliceLogicDefine() {
   if (!this->SliceLogic) {
       vtkIntArray *events = vtkIntArray::New();
       events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-      events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+      events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
       events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
       events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 

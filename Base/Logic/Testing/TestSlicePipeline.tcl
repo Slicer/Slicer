@@ -13,7 +13,7 @@ $logic ProcessLogicEvents
 
 set events [vtkIntArray New]
 $events InsertNextValue 66002 ;#(vtkMRMLScene::NewSceneEvent);
-$events InsertNextValue 66003 ;#(vtkMRMLScene::SceneCloseEvent);
+$events InsertNextValue 66003 ;#(vtkMRMLScene::SceneClosedEvent);
 $events InsertNextValue 66000 ;#(vtkMRMLScene::NodeAddedEvent);
 $events InsertNextValue 66001 ;#(vtkMRMLScene::NodeRemovedEvent);
 $logic SetAndObserveMRMLSceneEvents $sc $events

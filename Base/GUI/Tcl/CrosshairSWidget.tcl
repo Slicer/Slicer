@@ -135,7 +135,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
   # watch for a scene close event so that we can get the state of the
   # crosshair back in sync with the SliceCompositeNode.  Scene close
   # events do not call modified when resetting the SliceCompositeNodes
-  $::slicer3::Broker AddObservation $::slicer3::MRMLScene 66003 "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneCloseEvent"
+  $::slicer3::Broker AddObservation $::slicer3::MRMLScene 66003 "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneClosedEvent"
 
   $this updateCrosshair
 }
@@ -237,7 +237,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
   }
 
 
-  if { $caller == $::slicer3::MRMLScene && $event == "SceneCloseEvent" } {
+  if { $caller == $::slicer3::MRMLScene && $event == "SceneClosedEvent" } {
       $this updateCrosshair
       return
   }

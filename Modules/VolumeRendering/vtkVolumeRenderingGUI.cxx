@@ -481,7 +481,7 @@ void vtkVolumeRenderingGUI::AddMRMLObservers(void)
   //Remove the MRML observer
   if ( this->GetApplicationGUI() )
   {
-    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadStartEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->AddObserver(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
@@ -494,7 +494,7 @@ void vtkVolumeRenderingGUI::RemoveMRMLObservers(void)
   //Remove the MRML observer
   if ( this->GetApplicationGUI() )
   {
-    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadStartEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand);
     this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand);
@@ -912,7 +912,7 @@ void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long e
   {
     this->RequestRender();
   }
-  else if (event == vtkMRMLScene::SceneCloseEvent)
+  else if (event == vtkMRMLScene::SceneClosedEvent)
   {
     this->DeleteRenderingFrame();
 

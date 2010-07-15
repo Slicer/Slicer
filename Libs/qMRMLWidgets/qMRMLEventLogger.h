@@ -30,7 +30,7 @@ public:
   bool listeningNodeAddedEvent();
   bool listeningNodeRemovedEvent();
   bool listeningNewSceneEvent();
-  bool listeningSceneCloseEvent();
+  bool listeningSceneClosedEvent();
   bool listeningSceneClosingEvent();
   bool listeningSceneEditedEvent();
   bool listeningMetadataAddedEvent();
@@ -46,7 +46,7 @@ public slots:
   void listenNodeAddedEvent(bool listen);
   void listenNodeRemovedEvent(bool listen);
   void listenNewSceneEvent(bool listen);
-  void listenSceneCloseEvent(bool listen);
+  void listenSceneClosedEvent(bool listen);
   void listenSceneClosingEvent(bool listen);
   void listenSceneEditedEvent(bool listen);
   void listenMetadataAddedEvent(bool listen);
@@ -59,7 +59,7 @@ public slots:
   virtual void onNodeAddedEvent(vtkObject* caller, vtkObject* call_data);
   virtual void onNodeRemovedEvent(vtkObject* caller, vtkObject* call_data);
   virtual void onNewSceneEvent();
-  virtual void onSceneCloseEvent();
+  virtual void onSceneClosedEvent();
   virtual void onSceneClosingEvent();
   virtual void onSceneEditedEvent();
   virtual void onMetadataAddedEvent();
@@ -75,7 +75,7 @@ signals:
   void signalNodeAddedEvent(vtkObject* calle, vtkObject* call_data);
   void signalNodeRemovedEvent(vtkObject* caller, vtkObject* call_data);
   void signalNewSceneEvent();
-  void signalSceneCloseEvent();
+  void signalSceneClosedEvent();
   void signalSceneClosingEvent();
   void signalSceneEditedEvent();
   void signalMetadataAddedEvent();

@@ -68,7 +68,7 @@ void qMRMLThreeDRenderViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
 //  this->qvtkReconnect(
 //    this->MRMLScene, newScene,
-//    vtkMRMLScene::SceneCloseEvent, this, SLOT(onSceneCloseEvent()));
+//    vtkMRMLScene::SceneClosedEvent, this, SLOT(onSceneClosedEvent()));
 
   this->qvtkReconnect(
     this->MRMLScene, newScene,
@@ -128,9 +128,9 @@ void qMRMLThreeDRenderViewPrivate::onSceneClosingEvent()
 }
 //
 //// --------------------------------------------------------------------------
-//void qMRMLThreeDRenderViewPrivate::onSceneCloseEvent()
+//void qMRMLThreeDRenderViewPrivate::onSceneClosedEvent()
 //{
-//  logger.trace("onSceneCloseEvent");
+//  logger.trace("onSceneClosedEvent");
 //}
 //
 // --------------------------------------------------------------------------

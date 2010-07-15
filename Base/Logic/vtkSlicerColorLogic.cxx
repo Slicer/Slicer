@@ -74,7 +74,7 @@ void vtkSlicerColorLogic::ProcessMRMLEvents(vtkObject * vtkNotUsed(caller),
   vtkDebugMacro("vtkSlicerColorLogic::ProcessMRMLEvents: got an event " << event);
   
   // when there's a new scene, add the default nodes
-  //if (event == vtkMRMLScene::NewSceneEvent || event == vtkMRMLScene::SceneCloseEvent)
+  //if (event == vtkMRMLScene::NewSceneEvent || event == vtkMRMLScene::SceneClosedEvent)
   if (event == vtkMRMLScene::NewSceneEvent)
     {
     vtkDebugMacro("vtkSlicerColorLogic::ProcessMRMLEvents: got a NewScene event " << event);

@@ -148,7 +148,7 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *aMRMLScene)
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeAddedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
-    this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+    this->MRMLScene->AddObserver( vtkMRMLScene::SceneClosedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneEditedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneLoadStartEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneLoadEndEvent, this->MRMLCallbackCommand );

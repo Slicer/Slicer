@@ -54,7 +54,7 @@ bool qMRMLEventLogger::listening##_EVENT_NAME##Event()        \
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(NodeAdded);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(NodeRemoved);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(NewScene);
-QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneClose);
+QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneClosing);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(MetadataAdded);
@@ -96,7 +96,7 @@ void qMRMLEventLogger::listen##_EVENT_NAME##Event(bool listen)      \
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(NodeAdded);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(NodeRemoved);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(NewScene);
-QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneClose);
+QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneClosing);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(MetadataAdded);
@@ -136,7 +136,7 @@ void qMRMLEventLogger::on##_EVENT_NAME##Event()           \
 }
 
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(NewScene);
-QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneClose);
+QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneClosing);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(MetadataAdded);
@@ -160,7 +160,7 @@ void qMRMLEventLoggerPrivate::init()
   p->listenNodeAddedEvent(true);
   p->listenNodeRemovedEvent(true);
   p->listenNewSceneEvent(true);
-  p->listenSceneCloseEvent(true);
+  p->listenSceneClosedEvent(true);
   p->listenSceneClosingEvent(true);
   p->listenSceneEditedEvent(true);
   p->listenMetadataAddedEvent(true);
@@ -203,9 +203,9 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
     this->MRMLScene, scene,
     vtkMRMLScene::NewSceneEvent, p, SLOT(onNewSceneEvent()));
 
-  this->EventNameToConnectionIdMap["SceneClose"] = this->qvtkReconnect(
+  this->EventNameToConnectionIdMap["SceneClosed"] = this->qvtkReconnect(
     this->MRMLScene, scene,
-    vtkMRMLScene::SceneCloseEvent, p, SLOT(onSceneCloseEvent()));
+    vtkMRMLScene::SceneClosedEvent, p, SLOT(onSceneClosedEvent()));
 
   this->EventNameToConnectionIdMap["SceneClosing"] = this->qvtkReconnect(
     this->MRMLScene, scene,

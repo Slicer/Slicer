@@ -32,7 +32,7 @@ public:
 public slots:
   /// Handle MRML scene event
   void onSceneClosingEvent();
-//  void onSceneCloseEvent();
+//  void onSceneClosedEvent();
   void onSceneLoadStartEvent();
   void onSceneLoadEndEvent();
 //  void onSceneRestoredEvent();

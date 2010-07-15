@@ -23,8 +23,8 @@
 #include <vtkMath.h>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager )
-vtkCxxRevisionMacro (vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $")
+vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager );
+vtkCxxRevisionMacro (vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationTextDisplayableManager::vtkMRMLAnnotationTextDisplayableManager()
@@ -92,7 +92,7 @@ void vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *calle
    vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
 
    // the scene was closed, don't get node removed events so clear up here
-   if (callScene != 0 && event == vtkMRMLScene::SceneCloseEvent)
+   if (callScene != 0 && event == vtkMRMLScene::SceneClosedEvent)
    {
    //vtkDebugMacro("ProcessMRMLEvents: got a scene close event");
    // the lists are already gone from the scene, so need to clear out all the
@@ -220,9 +220,9 @@ void vtkMRMLAnnotationTextDisplayableManager::Update3DWidget(vtkMRMLAnnotationTe
  {
  scene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GetInMRMLCallbackFlag());
  }
- if (scene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GetInMRMLCallbackFlag()) != 1)
+ if (scene->HasObserver(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->GetInMRMLCallbackFlag()) != 1)
  {
- scene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GetInMRMLCallbackFlag());
+ scene->AddObserver(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->GetInMRMLCallbackFlag());
  }
  } else {
 
@@ -256,7 +256,7 @@ void vtkMRMLAnnotationTextDisplayableManager::RemoveMRMLObservers()
  //vtkDebugMacro("RemoveMRMLObservers: stopping watching for node removed, added, scene close events on the scene");
  this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
  this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
- this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+ this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLCallbackCommand);
  }*/
 }
 
@@ -264,14 +264,14 @@ void vtkMRMLAnnotationTextDisplayableManager::RemoveMRMLObservers()
 void vtkMRMLAnnotationTextDisplayableManager::AddTextWidget(vtkMRMLAnnotationTextNode *node)
 {
   if (!node)
-  {
+    {
     return;
-  }
+    }
   if (this->GetTextWidget(node->GetID()) != 0)
   {
     vtkDebugMacro("Already have widgets for node " << node->GetID());
     return;
-  }
+    }
 
   vtkTextWidget* c = vtkTextWidget::New();
 
@@ -418,7 +418,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosingEvent()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneCloseEvent()
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosedEvent()
 {
 }
 
@@ -464,44 +464,46 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdateFromMRML()
 void vtkMRMLAnnotationTextDisplayableManager::UpdateLockUnlock(vtkMRMLAnnotationTextNode* textNode)
 {
   if (textNode == 0)
-  {
+    {
     return;
-  }
+    }
 
   vtkTextWidget *widget = this->GetTextWidget(textNode->GetID());
   if (!widget)
-  {
+    {
     cout << "No distance widget found, adding a distance widget for this one" << endl;
     return;
-  }
+    }
 
   if (textNode->GetLocked())
-  {
+    {
     widget->ProcessEventsOff();
-  }
+    }
   else
-  {
+    {
     widget->ProcessEventsOn();
-  }
+    }
 }
 
-void vtkMRMLAnnotationTextDisplayableManager::UpdateWidget(vtkMRMLAnnotationTextNode *activeNode)
+void
+vtkMRMLAnnotationTextDisplayableManager::UpdateWidget(
+    vtkMRMLAnnotationTextNode *activeNode)
 {
   vtkTextWidget *widget = this->GetTextWidget(activeNode->GetID());
   if (widget == 0)
-  {
+    {
     return;
-  }
+    }
 
   vtkTextRepresentation* rep = vtkTextRepresentation::SafeDownCast(widget->GetRepresentation());
   rep->SetText(activeNode->GetText(0));
 
   if (activeNode->GetVisible())
-  {
+    {
     widget->EnabledOn();
-  }
+    }
   else
-  {
+    {
     widget->EnabledOff();
-  }
+    }
 }

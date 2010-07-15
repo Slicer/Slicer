@@ -1777,7 +1777,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
   
   //--- is the scene closing?
-  if (event == vtkMRMLScene::SceneCloseEvent )
+  if (event == vtkMRMLScene::SceneClosedEvent )
     {
     this->SceneClosing = true;
     // clean up and reset globals.
@@ -1799,7 +1799,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
 vtkIntArray* vtkQueryAtlasGUI::NewObservableEvents()
 {
   vtkIntArray* events = vtkIntArray::New();
-  events->InsertNextValue ( vtkMRMLScene::SceneCloseEvent );
+  events->InsertNextValue ( vtkMRMLScene::SceneClosedEvent );
   events->InsertNextValue ( vtkMRMLScene::NodeAddedEvent );
   events->InsertNextValue ( vtkMRMLScene::NodeRemovedEvent );
   return events;

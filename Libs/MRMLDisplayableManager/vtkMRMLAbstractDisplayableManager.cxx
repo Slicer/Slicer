@@ -216,7 +216,7 @@ void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLViewNode(vtkMRMLViewNod
 {
   VTK_CREATE(vtkIntArray, sceneEvents);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
-  sceneEvents->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneLoadStartEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneLoadEndEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -287,8 +287,8 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     case vtkMRMLScene::SceneClosingEvent:
       this->OnMRMLSceneClosingEvent();
       break;
-    case vtkMRMLScene::SceneCloseEvent:
-      this->OnMRMLSceneCloseEvent();
+    case vtkMRMLScene::SceneClosedEvent:
+      this->OnMRMLSceneClosedEvent();
       break;
     case vtkMRMLScene::SceneLoadStartEvent:
       this->OnMRMLSceneLoadStartEvent();

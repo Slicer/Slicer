@@ -449,7 +449,7 @@ void vtkSlicerFiducialsGUI::RemoveMRMLObservers ( )
 
   this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
   this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-  this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+  this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLCallbackCommand);
 }
 
 
@@ -533,9 +533,9 @@ void vtkSlicerFiducialsGUI::AddMRMLObservers ( )
     {
     this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
-  if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+  if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
     {
-    this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    this->MRMLScene->AddObserver(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLCallbackCommand);
     }
 }
 
@@ -1755,7 +1755,7 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
     
 
     // did the scene close?
-    if (event == vtkMRMLScene::SceneCloseEvent)
+    if (event == vtkMRMLScene::SceneClosedEvent)
       {
       vtkDebugMacro("Scene closing, deleting rows");
       if (this->MultiColumnList && this->MultiColumnList->GetWidget())

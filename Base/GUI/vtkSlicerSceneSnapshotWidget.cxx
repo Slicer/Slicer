@@ -197,7 +197,7 @@ void vtkSlicerSceneSnapshotWidget::MRMLExtraCallback(vtkObject *caller,
 
   if (scene == self->GetMRMLScene() )
     {
-    if  (eid == vtkMRMLScene::SceneCloseEvent )
+    if  (eid == vtkMRMLScene::SceneClosedEvent )
       {
         self->RestoreSceneButton->SetImageToIcon (self->Icons->GetSlicerGoIcon() );
         self->RestoreSceneButton->SetBalloonHelpString ("Restore a scene snapshot (no snapshots currently available)." );
@@ -233,7 +233,7 @@ void vtkSlicerSceneSnapshotWidget::AddMRMLObservers ( )
   if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLExtraCallbackCommand) != 1)
     {
     this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLExtraCallbackCommand);
-    this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLExtraCallbackCommand);
+    this->MRMLScene->AddObserver(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLExtraCallbackCommand);
     }
   else
     {
@@ -250,7 +250,7 @@ void vtkSlicerSceneSnapshotWidget::RemoveMRMLObservers ()
     return;
     }
   this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLExtraCallbackCommand);
-  this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLExtraCallbackCommand);
+  this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneClosedEvent, (vtkCommand *)this->MRMLExtraCallbackCommand);
 }
 
 

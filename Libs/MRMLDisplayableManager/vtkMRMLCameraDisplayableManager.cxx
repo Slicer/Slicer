@@ -66,7 +66,7 @@ void vtkMRMLCameraDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::OnMRMLSceneCloseEvent()
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneClosedEvent()
 {
   //this->RemoveCameraObservers();
   this->SetAndObserveCameraNode(0);

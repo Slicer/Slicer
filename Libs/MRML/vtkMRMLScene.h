@@ -352,7 +352,7 @@ public:
       NodeAddedEvent = 66000,
       NodeRemovedEvent = 66001,
       NewSceneEvent = 66002,
-      SceneCloseEvent = 66003,
+      SceneClosedEvent = 66003,
       SceneClosingEvent = 66004,
       SceneEditedEvent = 66006,
       MetadataAddedEvent = 66007,
