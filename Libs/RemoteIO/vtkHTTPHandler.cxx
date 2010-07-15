@@ -210,7 +210,10 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
   delete this->LocalFile;
   this->LocalFile = NULL;
   */
-  fclose(this->LocalFile);
+  if (this->LocalFile)
+    {
+    fclose(this->LocalFile);
+    }
 }
 
 
