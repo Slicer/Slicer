@@ -117,6 +117,7 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->ErrorCode = 0;
   this->IsClosed = 0;
+  this->IsConnecting = 0;
 
   this->LastLoadedVersion = NULL;
   this->Version = NULL;
@@ -663,6 +664,7 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
+  this->SetIsConnecting(1);
   this->SetErrorCode(0);
   this->SetErrorMessage(std::string(""));
 
@@ -690,6 +692,7 @@ int vtkMRMLScene::Connect()
   int res = this->Import();
     
   this->SetUndoFlag(undoFlag);
+  this->SetIsConnecting(0);
   this->SetIsClosed(false);
   return res;
 }

@@ -438,6 +438,11 @@ public:
   /// to ignore transient modified events and related events
   vtkGetMacro( IsClosed, int );
   vtkSetMacro( IsClosed, int );
+
+  ///
+  /// IsConnecting is true during scene connect
+  vtkGetMacro( IsConnecting, int );
+  vtkSetMacro( IsConnecting, int );
   
   /// 
   /// the version of the last loaded scene file
@@ -537,6 +542,7 @@ private:
   static vtkMRMLScene *ActiveScene;
 
   int IsClosed;
+  int IsConnecting;
 };
 
 #endif
