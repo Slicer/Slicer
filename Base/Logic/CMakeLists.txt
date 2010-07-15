@@ -174,6 +174,7 @@ IF(Slicer3_USE_PYTHONQT AND BUILD_SHARED_LIBS)
   ENDFOREACH(c)
 
   TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD)
+  TARGET_LINK_LIBRARIES(${lib_name}Python MRMLLogicPythonD)
 
   ## Python modules on Windows must have the extension ".pyd"
   IF(WIN32 AND NOT CYGWIN)
