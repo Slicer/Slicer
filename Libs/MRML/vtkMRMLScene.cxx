@@ -116,7 +116,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->UserTagTable = NULL;
 
   this->ErrorCode = 0;
-  this->IsClosed = 0;
+  this->IsClosing = 0;
   this->IsConnecting = 0;
 
   this->LastLoadedVersion = NULL;
@@ -461,7 +461,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
 {
   this->SetUndoOff();
   this->InvokeEvent(this->SceneClosingEvent, NULL);
-  this->SetIsClosed(true);
+  this->SetIsClosing(true);
   
   if (!removeSingletons)
     {
@@ -506,7 +506,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   // Therefore, it should be put at the end, certainly after UniqueIDByClass
   // has been cleared
   this->InvokeEvent(this->SceneCloseEvent, NULL);
-  this->SetIsClosed(false);
+  this->SetIsClosing(false);
 }
 
 //------------------------------------------------------------------------------
@@ -687,7 +687,7 @@ int vtkMRMLScene::Import()
   bool undoFlag = this->GetUndoFlag();
   
   this->SetUndoOff();
-  this->SetIsClosed(true);
+  this->SetIsClosing(true);
   this->ClearReferencedNodeID();
 
   this->InvokeEvent(this->SceneLoadStartEvent, NULL);
@@ -761,7 +761,7 @@ int vtkMRMLScene::Import()
 
   this->SetUndoFlag(undoFlag);
   
-  this->SetIsClosed(false);
+  this->SetIsClosing(false);
 
   this->InvokeEvent(this->SceneLoadEndEvent, NULL);
 
@@ -1165,7 +1165,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
   this->InvokeEvent(this->NodeRemovedEvent, n);
   n->UnRegister(this);
 
-  if (!this->GetIsClosed())
+  if (!this->GetIsClosing())
     {
     vtkMRMLNode *node = NULL;
     vtkCollectionSimpleIterator it;
@@ -1198,7 +1198,7 @@ void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n)
   
   n->UnRegister(this);
 
-  if (!this->GetIsClosed())
+  if (!this->GetIsClosing())
     {
     vtkMRMLNode *node = NULL;
     for (int i=0; i < this->CurrentScene->GetNumberOfItems(); i++) 
@@ -1792,7 +1792,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
     return;
     }
 
-  if (this->IsClosed)
+  if (this->IsClosing)
     {
     return;
     }
@@ -1813,7 +1813,7 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
     {
     return;
     }
-  if (this->IsClosed)
+  if (this->IsClosing)
     {
     return;
     }
@@ -1840,7 +1840,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
     return;
     }
 
-  if (this->IsClosed)
+  if (this->IsClosing)
     {
     return;
     }
@@ -1869,7 +1869,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo ()
 {
-  if (this->IsClosed)
+  if (this->IsClosing)
     {
     return;
     }

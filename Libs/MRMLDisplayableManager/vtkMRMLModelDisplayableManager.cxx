@@ -1212,7 +1212,7 @@ vtkMRMLDisplayNode*  vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtk
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::RequestRender()
 {
-  if (!this->GetMRMLScene()->GetIsClosed())
+  if (!this->GetMRMLScene()->GetIsClosing())
     {
     this->Render();
     }

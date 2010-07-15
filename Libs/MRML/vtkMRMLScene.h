@@ -433,11 +433,11 @@ public:
   void AddURIHandler(vtkURIHandler *handler);
 
   /// 
-  /// IsClosed is true during scene loads
+  /// IsClosing is true during scene loads
   /// By checking this flag, logic and gui code can choose
   /// to ignore transient modified events and related events
-  vtkGetMacro( IsClosed, int );
-  vtkSetMacro( IsClosed, int );
+  vtkGetMacro( IsClosing, int );
+  vtkSetMacro( IsClosing, int );
 
   ///
   /// IsConnecting is true during scene connect
@@ -541,7 +541,7 @@ private:
 
   static vtkMRMLScene *ActiveScene;
 
-  int IsClosed;
+  int IsClosing;
   int IsConnecting;
 };
 

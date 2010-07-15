@@ -1760,7 +1760,7 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( )
   // --- Find out whether SliceViewers are linked or unlinked
   // --- so we know how to handle control.
   //
-  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosed())
+  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosing())
     {
     link = this->SliceCompositeNode->GetLinkedControl ( );
     }
@@ -1898,7 +1898,7 @@ void vtkSlicerSliceControllerWidget::RotateSliceToBackground ( )
   // --- Find out whether SliceViewers are linked or unlinked
   // --- so we know how to handle control.
   //
-  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosed())
+  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosing())
     {
     link = this->SliceCompositeNode->GetLinkedControl ( );
     }
@@ -2040,7 +2040,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
   // --- Find out whether SliceViewers are linked or unlinked
   // --- so we know how to handle control.
   //
-  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosed())
+  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosing())
     {
     link = this->SliceCompositeNode->GetLinkedControl ( );
     }
@@ -3222,7 +3222,7 @@ void vtkSlicerSliceControllerWidget::PopUpLightboxCustomLayoutFrame()
 void vtkSlicerSliceControllerWidget::HideLabelOpacityScaleAndEntry (  )
 {
   int link;
-  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosed())
+  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosing())
     {
     link = this->SliceCompositeNode->GetLinkedControl ( );
     }
@@ -3291,7 +3291,7 @@ void vtkSlicerSliceControllerWidget::PopUpLabelOpacityScaleAndEntry ( )
     }
 
   int link;
-  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosed())
+  if ( this->SliceCompositeNode && !this->MRMLScene->GetIsClosing())
     {
     link = this->SliceCompositeNode->GetLinkedControl ( );
     }

@@ -326,7 +326,7 @@ void vtkSlicerSlicesControlGUI::UpdateSliceGUIInteractorStyles ( )
 {
   // get all views from the scene
   // and observe active view.
-  if (this->MRMLScene && this->MRMLScene->GetIsClosed())
+  if (this->MRMLScene && this->MRMLScene->GetIsClosing())
     {
     return;
     }
@@ -380,7 +380,7 @@ void vtkSlicerSlicesControlGUI::UpdateSliceGUIInteractorStyles ( )
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::UpdateSlicesFromMRML()
 {
-  if (this->MRMLScene && this->MRMLScene->GetIsClosed())
+  if (this->MRMLScene && this->MRMLScene->GetIsClosing())
     {
     return;
     }
