@@ -955,7 +955,7 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
   // Remove Nodes 
   if (this->SliceModelNode != 0)
     {
-    if (this->GetMRMLScene())
+    if (this->GetMRMLScene() && this->GetMRMLScene()->IsNodePresent(this->SliceModelNode))
       {
       this->GetMRMLScene()->RemoveNode(this->SliceModelNode);
       }
@@ -964,7 +964,7 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
     }
   if (this->SliceModelDisplayNode != 0)
     {
-    if (this->GetMRMLScene())
+    if (this->GetMRMLScene() && this->GetMRMLScene()->IsNodePresent(this->SliceModelDisplayNode))
       {
       this->GetMRMLScene()->RemoveNode(this->SliceModelDisplayNode);
       }
@@ -973,7 +973,7 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
     }
   if (this->SliceModelTransformNode != 0)
     {
-    if (this->GetMRMLScene())
+    if (this->GetMRMLScene() && this->GetMRMLScene()->IsNodePresent(this->SliceModelTransformNode))
       {
       this->GetMRMLScene()->RemoveNode(this->SliceModelTransformNode);
       }
