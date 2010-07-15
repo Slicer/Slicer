@@ -215,8 +215,6 @@ void vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *calle
                                                                 unsigned long event,
                                                                 void *callData)
 {
-  std::cout << "vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents" <<std::endl;
-
   vtkMRMLAnnotationTextNode * annotationTextNode = vtkMRMLAnnotationTextNode::SafeDownCast(caller);
   if (annotationTextNode)
     {
