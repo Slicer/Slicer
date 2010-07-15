@@ -354,13 +354,13 @@ public:
       NewSceneEvent = 66002,
       SceneClosedEvent = 66003,
       SceneAboutToBeClosedEvent = 66004,
+      SceneRestoredEvent = 66005,
       SceneEditedEvent = 66006,
       MetadataAddedEvent = 66007,
       ImportProgressFeedbackEvent = 66008,
       SaveProgressFeedbackEvent = 66009,
       SceneAboutToBeImportedEvent = 66010,
       SceneImportedEvent = 66011,
-      SceneRestoredEvent = 66008,
       NodeAboutToBeAddedEvent = 66012,
       NodeAboutToBeRemovedEvent = 66013
     };
