@@ -318,7 +318,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   
   # MRML Scene update probably means we need to create a new model intersection SWidget
   if { $caller == $::slicer3::MRMLScene && 
-       ((($event == "NodeAddedEvent" || $event == "NodeRemovedEvent") && ![$::slicer3::MRMLScene GetIsClosing]) || 
+       ((($event == "NodeAddedEvent" || $event == "NodeRemovedEvent") && ![$::slicer3::MRMLScene GetIsUpdating]) || 
         $event == "SceneClosedEvent" || $event == "SceneAboutToBeClosedEvent" ||
         $event == "SceneImportedEvent") } {
     $this updateSWidgets

@@ -176,7 +176,7 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
     return;
     }
 
-  if (this->GetMRMLScene()->GetIsClosing())
+  if (this->GetMRMLScene()->GetIsUpdating())
     {
     return;
     }

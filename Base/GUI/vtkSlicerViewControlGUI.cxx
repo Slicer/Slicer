@@ -697,7 +697,7 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
 void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
 {
   
-  if (this->MRMLScene == NULL || this->MRMLScene->GetIsClosing())
+  if (this->MRMLScene == NULL || this->MRMLScene->GetIsUpdating())
     {
     return;
     }

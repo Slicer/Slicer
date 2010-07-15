@@ -433,21 +433,28 @@ public:
   void AddURIHandler(vtkURIHandler *handler);
 
   /// 
-  /// IsClosing is true during scene loads
-  /// By checking this flag, logic and gui code can choose
-  /// to ignore transient modified events and related events
+  /// IsClosing is true during scene close
+  /// \sa Clear()
   vtkGetMacro( IsClosing, int );
-  vtkSetMacro( IsClosing, int );
+  virtual void SetIsClosing(bool isClosing);
 
   ///
-  /// IsConnecting is true during scene connect
+  /// IsConnecting is True during scene connect
+  /// \sa Connect()
   vtkGetMacro( IsConnecting, int );
-  vtkSetMacro( IsConnecting, int );
+  virtual void SetIsConnecting(bool isConnecting);
 
   ///
-  /// IsImporting is true during scene import
+  /// IsImporting is True during scene import
+  /// \sa Import()
   vtkGetMacro( IsImporting, int );
-  vtkSetMacro( IsImporting, int );
+  virtual void SetIsImporting(bool isImporting);
+
+  ///
+  /// Return True if the scene is either being "closed", "connected"
+  /// or "imported". False otherwise.
+  /// \sa Clear() Import() Connect()
+  vtkGetMacro( IsUpdating, int );
   
   /// 
   /// the version of the last loaded scene file
@@ -549,6 +556,7 @@ private:
   int IsClosing;
   int IsConnecting;
   int IsImporting;
+  int IsUpdating;
 };
 
 #endif

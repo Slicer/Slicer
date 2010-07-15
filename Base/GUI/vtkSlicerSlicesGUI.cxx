@@ -420,7 +420,7 @@ vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetNthSliceGUI(int n)
 void vtkSlicerSlicesGUI::UpdateGUI()
 {
   if (this->GetMRMLScene() == NULL ||
-      this->GetMRMLScene()->GetIsClosing())
+      this->GetMRMLScene()->GetIsUpdating())
     {
     return;
     }

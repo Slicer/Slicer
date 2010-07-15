@@ -414,12 +414,12 @@ vtkMRMLScalarVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeScalarVolume 
 // higher bits are reserved for future use
 vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList)
 {
-  bool closeScene = false;
+  bool importingScene = false;
   if (this->GetMRMLScene() &&
-      this->GetMRMLScene()->GetIsClosing() == false)
+      this->GetMRMLScene()->GetIsImporting() == false)
     {
-    closeScene = true;
-    this->GetMRMLScene()->SetIsClosing(true);
+    importingScene = true;
+    this->GetMRMLScene()->SetIsImporting(true);
     this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, NULL);
     }
   int centerImage = 0;
@@ -740,9 +740,9 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
     // has a new node
     //this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, volumeNode);
     }
-  if (closeScene)
+  if (importingScene)
     {
-    this->GetMRMLScene()->SetIsClosing(false);
+    this->GetMRMLScene()->SetIsImporting(false);
     this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
     }
   return volumeNode;

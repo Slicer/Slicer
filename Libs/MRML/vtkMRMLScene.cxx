@@ -688,7 +688,6 @@ int vtkMRMLScene::Import()
   bool undoFlag = this->GetUndoFlag();
   
   this->SetUndoOff();
-  this->SetIsClosing(true);
   this->SetIsImporting(true);
   this->ClearReferencedNodeID();
 
@@ -763,7 +762,6 @@ int vtkMRMLScene::Import()
 
   this->SetUndoFlag(undoFlag);
   
-  this->SetIsClosing(false);
   this->SetIsImporting(false);
 
   this->InvokeEvent(this->SceneImportedEvent, NULL);
@@ -1168,7 +1166,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
   this->InvokeEvent(this->NodeRemovedEvent, n);
   n->UnRegister(this);
 
-  if (!this->GetIsClosing())
+  if (!this->GetIsUpdating())
     {
     vtkMRMLNode *node = NULL;
     vtkCollectionSimpleIterator it;
@@ -1201,7 +1199,7 @@ void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n)
   
   n->UnRegister(this);
 
-  if (!this->GetIsClosing())
+  if (!this->GetIsUpdating())
     {
     vtkMRMLNode *node = NULL;
     for (int i=0; i < this->CurrentScene->GetNumberOfItems(); i++) 
@@ -1795,7 +1793,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
     return;
     }
 
-  if (this->IsClosing)
+  if (this->IsUpdating)
     {
     return;
     }
@@ -1816,7 +1814,7 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
     {
     return;
     }
-  if (this->IsClosing)
+  if (this->IsUpdating)
     {
     return;
     }
@@ -1843,7 +1841,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
     return;
     }
 
-  if (this->IsClosing)
+  if (this->IsUpdating)
     {
     return;
     }
@@ -1872,7 +1870,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo ()
 {
-  if (this->IsClosing)
+  if (this->IsUpdating)
     {
     return;
     }
@@ -2470,6 +2468,76 @@ void vtkMRMLScene::AddURIHandler(vtkURIHandler *handler)
   this->GetURIHandlerCollection()->AddItem(handler);
 }
 
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SetIsClosing(bool isClosing)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting IsClosing to " << isClosing);
+  if (this->IsClosing == isClosing)
+    {
+    return;
+    }
+
+  this->IsClosing = isClosing;
+
+  if (isClosing)
+    {
+    this->IsUpdating |= 0x1;
+    }
+  else
+    {
+    this->IsUpdating &= 0x1;
+    }
+
+  this->Modified();
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SetIsConnecting(bool isConnecting)
+{
+  vtkDebugMacro(<< this->GetClassName()
+                << " (" << this << "): setting IsConnecting to " << isConnecting);
+  if (this->IsConnecting == isConnecting)
+    {
+    return;
+    }
+
+  this->IsConnecting = isConnecting;
+
+  if (isConnecting)
+    {
+    this->IsUpdating |= 0x2;
+    }
+  else
+    {
+    this->IsUpdating &= 0x2;
+    }
+
+  this->Modified();
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SetIsImporting(bool isImporting)
+{
+  vtkDebugMacro(<< this->GetClassName()
+                << " (" << this << "): setting IsImporting to " << isImporting);
+  if (this->IsImporting == isImporting)
+    {
+    return;
+    }
+
+  this->IsImporting = isImporting;
+
+  if (isImporting)
+    {
+    this->IsUpdating |= 0x3;
+    }
+  else
+    {
+    this->IsUpdating &= 0x3;
+    }
+
+  this->Modified();
+}
 
 //------------------------------------------------------------------------------
 vtkURIHandler * vtkMRMLScene::FindURIHandlerByName(const char *name)
