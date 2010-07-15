@@ -489,6 +489,11 @@ void vtkMRMLScene::Clear(int removeSingletons)
   this->ClearRedoStack ( );
   this->UniqueIDByClass.clear();
 
+  if ( this->GetUserTagTable() != NULL )
+    {
+    this->GetUserTagTable()->ClearTagTable();
+    }
+
 
   this->Modified();
   this->SetUndoOn();
@@ -665,35 +670,11 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 int vtkMRMLScene::Connect()
 {
   this->SetIsConnecting(1);
-  this->SetErrorCode(0);
-  this->SetErrorMessage(std::string(""));
-
+  this->Clear(0);
   bool undoFlag = this->GetUndoFlag();
-  this->SetUndoOff();
-  
-  this->SetIsClosed(true);
-  this->RemoveAllNodesExceptSingletons();
-  this->ClearReferencedNodeID();
-
-  // see vtkMRMLScene::Clear on why it was moved
-  //this->InvokeEvent(this->SceneCloseEvent, NULL);
-
-  this->ClearUndoStack ( );
-  this->ClearRedoStack ( );
-  this->UniqueIDByClass.clear();
-
-  // see vtkMRMLScene::Clear on why it was moved
-  this->InvokeEvent(this->SceneCloseEvent, NULL);
-
-  if ( this->GetUserTagTable() != NULL )
-    {
-    this->GetUserTagTable()->ClearTagTable();
-    }
-  int res = this->Import();
-    
+  int res = this->Import();    
   this->SetUndoFlag(undoFlag);
   this->SetIsConnecting(0);
-  this->SetIsClosed(false);
   return res;
 }
 
