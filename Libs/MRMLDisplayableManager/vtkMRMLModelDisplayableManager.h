@@ -64,67 +64,42 @@ class vtkDisplayableManagerBoxWidget2;
 class vtkDisplayableManagerBoxRepresentation;
 class vtkBoundingBox;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager : public vtkMRMLAbstractDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager :
+    public vtkMRMLAbstractDisplayableManager
 {
-
 public:
   static vtkMRMLModelDisplayableManager* New();
   vtkTypeRevisionMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// 
+  /// Get/Set the ClipModels Node
+  vtkMRMLClipModelsNode* GetClipModelsNode();
+  void SetClipModelsNode(vtkMRMLClipModelsNode *snode);
 
   /// 
-  /// Get/Set the Clip Nodes
-  vtkGetObjectMacro ( ClipModelsNode, vtkMRMLClipModelsNode );
-  void SetClipModelsNode (vtkMRMLClipModelsNode *snode)
-    {
-    vtkSetAndObserveMRMLNodeMacro( this->ClipModelsNode, snode );
-    }
+  /// Return the current model actor corresponding to a give MRML ID
+  vtkProp3D *GetActorByID(const char *id);
+
+  /// 
+  /// Return the current node ID corresponding to a given vtkProp3D
+  const char *GetIDByActor(vtkProp3D *actor);
+
+  /// 
+  /// Get world point picker
+  vtkWorldPointPicker* GetWorldPointPicker();
   
   /// 
-  /// alternative method to propagate events generated in GUI to logic / mrml
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+  /// Get property picker
+  vtkPropPicker* GetPropPicker();
 
   /// 
-  /// removes observers on widgets in the class
-  virtual void RemoveMRMLObservers ( );
+  /// Get cell picker
+  vtkCellPicker* GetCellPicker();
 
   /// 
-  /// return the current model actor corresponding to a give MRML ID
-  vtkProp3D *GetActorByID (const char *id);
-
-  /// 
-  /// return the current node ID corresponding to a given vtkProp3D
-  const char *GetIDByActor (vtkProp3D *actor);
-  
-  ///  
-  /// Post a request for a render -- won't be done until the system is
-  /// idle, and then only once....
-  void RequestRender();
-
-  ///  
-  /// Actually do a render (don't wait for idle)
-  //  Avoid using this method - use RequestRender to automatically compress
-  //  multiple renders for better interactive performance
-  void Render();
-  
-  /// 
-  /// Updates Actors based on models in the scene
-  void UpdateFromMRML();
-
-  /// 
-  /// picks a world point
-  vtkGetObjectMacro(WorldPointPicker, vtkWorldPointPicker);
-  
-  /// 
-  /// picks a property in the scene
-  vtkGetObjectMacro(PropPicker, vtkPropPicker);
-  /// 
-  /// picks a cell
-  vtkGetObjectMacro(CellPicker, vtkCellPicker);
-  /// 
-  /// picks a point
-  vtkGetObjectMacro(PointPicker, vtkPointPicker);
+  /// Get point picker
+  vtkPointPicker* GetPointPicker();
   
   /// 
   /// Convert an x/y location to a mrml node, 3d RAS point, point id, cell id,
@@ -135,169 +110,100 @@ public:
 
   /// 
   /// Get the name of the picked node, returns empty string if no pick
-  const char *GetPickedNodeName()
-  {    
-    return this->PickedNodeName.c_str();
-  }
+  const char *GetPickedNodeName();
   
   /// 
   /// Get/Set the picked RAS point, returns 0,0,0 if no pick
-  vtkGetVectorMacro( PickedRAS, double, 3);
-  vtkSetVectorMacro( PickedRAS, double, 3);
-  /// 
+  double* GetPickedRAS();
+  void SetPickedRAS(double* newPickedRAS);
+  
   /// Get/Set the picked cell id, returns -1 if no pick
-  vtkGetMacro( PickedCellID, vtkIdType);
-  vtkSetMacro( PickedCellID, vtkIdType);
+  vtkIdType GetPickedCellID();
+  void SetPickedCellID(vtkIdType newCellID);
+
   /// 
   /// Get/Set the picked point id, returns -1 if no pick
-  vtkGetMacro( PickedPointID, vtkIdType);
-  vtkSetMacro( PickedPointID, vtkIdType);
+  vtkIdType GetPickedPointID();
+  void SetPickedPointID(vtkIdType newPointID);
   
   /// 
-  /// get/set vtkMRMLModelHierarchyLogic
-  vtkGetObjectMacro( ModelHierarchyLogic, vtkMRMLModelHierarchyLogic );
-  vtkSetObjectMacro( ModelHierarchyLogic, vtkMRMLModelHierarchyLogic );
-
-  vtkGetObjectMacro ( BoxWidget, vtkDisplayableManagerBoxWidget2 );
-  vtkGetObjectMacro ( BoxWidgetRepresentation, vtkDisplayableManagerBoxRepresentation );
-
-  void SetBoxWidgetInteractor();
-  
-  /// 
-  /// Get/Set the enable renderer
-  vtkGetMacro( EnableRender, int);
-  vtkSetMacro( EnableRender, int);
+  /// Get/Set vtkMRMLModelHierarchyLogic
+  vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic();
+  void SetModelHierarchyLogic(vtkMRMLModelHierarchyLogic* newModelHierarchyLogic);
 
   void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
                              int planeDirection,
                              vtkPlane *plane);
+  
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
-  int IsCreated()
-  {
-    return this->Created;
-  }
-  
-  /// 
-  /// Create the widget.
-  virtual void Create();
-  
 protected:
+
   vtkMRMLModelDisplayableManager();
   virtual ~vtkMRMLModelDisplayableManager();
 
+  virtual void AdditionnalInitializeStep();
 
-  int Created;
+  virtual void OnMRMLSceneAboutToBeClosedEvent();
+  virtual void OnMRMLSceneClosedEvent();
+  virtual void OnMRMLSceneImportedEvent();
+  virtual void OnMRMLSceneRestoredEvent();
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
-  int RenderPending;
-  int UpdateFromMRMLRequested;
+  void OnMRMLDisplayableNodeModifiedEvent(vtkMRMLDisplayableNode * modelNode);
+
+  ///
+  /// Updates Actors based on models in the scene
+  void UpdateFromMRML();
+
+  virtual void RemoveMRMLObservers();
+
+  //BTX
+  friend class vtkDisplayableManagerInteractorStyle; // Access to RequestRender();
+  //ETX
 
   void RemoveModelProps();
-
   void RemoveModelObservers(int clearCache);
-  void RemoveModelObservers( vtkMRMLDisplayableNode *model);
+  void RemoveDisplayable(vtkMRMLDisplayableNode* model);
+  void RemoveDisplayableNodeObservers(vtkMRMLDisplayableNode *model);
 
   void UpdateModelsFromMRML();
   void UpdateModel(vtkMRMLDisplayableNode *model);
   void UpdateModelPolyData(vtkMRMLDisplayableNode *model);
   void UpdateModifiedModel(vtkMRMLDisplayableNode *model);
 
-  void CreateClipSlices();
+  void SetModelDisplayProperty(vtkMRMLDisplayableNode *model);
+  int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
 
   int UpdateClipSlicesFromMRML();
+  vtkClipPolyData* CreateTransformedClipper(vtkMRMLDisplayableNode *model);
 
-  void CheckModelHierarchies();
   void AddHierarchiyObservers();
   void RemoveHierarchyObservers(int clearCache);
 
-  void UpdateModelHierarchies() {
-    this->CheckModelHierarchies();
-    this->AddHierarchiyObservers();
-    };
+  void CheckModelHierarchies();
+  void UpdateModelHierarchies();
   void UpdateModelHierarchyVisibility(vtkMRMLModelHierarchyNode* mhnode, int visibility );
   void UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model);
 
-  void SetModelDisplayProperty(vtkMRMLDisplayableNode *model);
-
-  int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
-
-  void RemoveDisplayable(vtkMRMLDisplayableNode* model);
-
   vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
 
-  vtkClipPolyData* CreateTransformedClipper(vtkMRMLDisplayableNode *model);
-  
   //BTX
-
   std::vector< vtkMRMLDisplayNode* > GetDisplayNode(vtkMRMLDisplayableNode *model);
   void RemoveDispalyedID(std::string &id);
-
-  std::map<std::string, vtkProp3D *> DisplayedActors;
-  std::map<std::string, vtkMRMLDisplayNode *> DisplayedNodes;
-  std::map<std::string, int> DisplayedClipState;
-  std::map<std::string, int> DisplayedVisibility;
-  std::map<std::string, vtkMRMLDisplayableNode *> DisplayableNodes;
-
-  std::map<std::string, int>  RegisteredModelHierarchies;
-
   //ETX
-
-  int ProcessingMRMLEvent;
-
-  vtkMRMLClipModelsNode *ClipModelsNode;
-
-  vtkMRMLSliceNode *RedSliceNode;
-  vtkMRMLSliceNode *GreenSliceNode;
-  vtkMRMLSliceNode *YellowSliceNode;
-
-  vtkImplicitBoolean *SlicePlanes;
-  vtkPlane *RedSlicePlane;
-  vtkPlane *GreenSlicePlane;
-  vtkPlane *YellowSlicePlane;
-
-  int ClipType;
-  int RedSliceClipState;
-  int YellowSliceClipState;
-  int GreenSliceClipState;
-
-  bool ClippingOn;
-  
-  bool ModelHierarchiesPresent;
-
-  vtkMRMLModelHierarchyLogic *ModelHierarchyLogic;
-
-  bool SceneClosing;
-
-  vtkWorldPointPicker *WorldPointPicker;
-  vtkPropPicker *PropPicker;
-  vtkCellPicker *CellPicker;
-  vtkPointPicker *PointPicker;
-  
-  /// 
-  /// information about a pick event
-  //BTX
-  std::string PickedNodeName;
-  //ETX
-  double PickedRAS[3];
-  vtkIdType PickedCellID;
-  vtkIdType PickedPointID;
-
-  /// 
-  /// Reset all the pick vars
-  void ResetPick();
-  
-  vtkDisplayableManagerBoxWidget2         *BoxWidget;
-  vtkDisplayableManagerBoxRepresentation  *BoxWidgetRepresentation;
-
-  int EnableRender;
-
-  int UpdatingAxis;
-
-  int IsRendering;
   
 private:
   
-  vtkMRMLModelDisplayableManager(const vtkMRMLModelDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLModelDisplayableManager&); /// Not Implemented
+  vtkMRMLModelDisplayableManager(const vtkMRMLModelDisplayableManager&); // Not implemented
+  void operator=(const vtkMRMLModelDisplayableManager&);                 // Not Implemented
+
+  //BTX
+  class vtkInternal;
+  vtkInternal* Internal;
+  //ETX
+
 };
 
 #endif

@@ -66,9 +66,6 @@
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
 
-#include <vtkDisplayableManagerBoxWidget2.h>
-#include <vtkDisplayableManagerBoxRepresentation.h>
-
 // STD includes
 #include <string>
 #include <sstream>
@@ -79,133 +76,145 @@ vtkStandardNewMacro (vtkMRMLModelDisplayableManager );
 vtkCxxRevisionMacro ( vtkMRMLModelDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
-vtkMRMLModelDisplayableManager::vtkMRMLModelDisplayableManager()
+class vtkMRMLModelDisplayableManager::vtkInternal
 {
-  this->ProcessingMRMLEvent = 0;
-  this->UpdateFromMRMLRequested = 0;
+public:
+  vtkInternal();
+  ~vtkInternal();
 
-  //this->CameraNode = 0;
-  //this->CameraNodeWasCreated = 0;
+  void CreateClipSlices();
 
+  /// Reset all the pick vars
+  void ResetPick();
+
+  std::map<std::string, vtkProp3D *>               DisplayedActors;
+  std::map<std::string, vtkMRMLDisplayNode *>      DisplayedNodes;
+  std::map<std::string, int>                       DisplayedClipState;
+  std::map<std::string, int>                       DisplayedVisibility;
+  std::map<std::string, vtkMRMLDisplayableNode *>  DisplayableNodes;
+  std::map<std::string, int>                       RegisteredModelHierarchies;
+
+  vtkMRMLSliceNode *   RedSliceNode;
+  vtkMRMLSliceNode *   GreenSliceNode;
+  vtkMRMLSliceNode *   YellowSliceNode;
+
+  vtkSmartPointer<vtkImplicitBoolean> SlicePlanes;
+  vtkSmartPointer<vtkPlane>           RedSlicePlane;
+  vtkSmartPointer<vtkPlane>           GreenSlicePlane;
+  vtkSmartPointer<vtkPlane>           YellowSlicePlane;
+
+  vtkMRMLClipModelsNode * ClipModelsNode;
+  int                     ClipType;
+  int                     RedSliceClipState;
+  int                     YellowSliceClipState;
+  int                     GreenSliceClipState;
+  bool                    ClippingOn;
+
+  bool                         ModelHierarchiesPresent;
+  vtkMRMLModelHierarchyLogic * ModelHierarchyLogic;
+
+  vtkSmartPointer<vtkWorldPointPicker> WorldPointPicker;
+  vtkSmartPointer<vtkPropPicker>       PropPicker;
+  vtkSmartPointer<vtkCellPicker>       CellPicker;
+  vtkSmartPointer<vtkPointPicker>      PointPicker;
+
+  /// Information about a pick event
+  std::string  PickedNodeName;
+  double       PickedRAS[3];
+  vtkIdType    PickedCellID;
+  vtkIdType    PickedPointID;
+};
+
+//---------------------------------------------------------------------------
+// vtkInternal methods
+
+//---------------------------------------------------------------------------
+vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
+{
   this->ClipModelsNode = 0;
   this->RedSliceNode = 0;
   this->GreenSliceNode = 0;
   this->YellowSliceNode = 0;
 
-  this->SlicePlanes = 0;
-  this->RedSlicePlane = 0;
-  this->GreenSlicePlane = 0;
-  this->YellowSlicePlane = 0;
-
-  //this->ViewNode = 0;
-  //this->BoxAxisActor = 0;
-  //this->BoxAxisBoundingBox = new vtkBoundingBox;
-
-  this->SceneClosing = false;
-
   this->ModelHierarchiesPresent = false;
   this->ModelHierarchyLogic = 0;
 
-  this->WorldPointPicker = vtkWorldPointPicker::New();
-  this->PropPicker = vtkPropPicker::New();
-  this->CellPicker = vtkCellPicker::New();
+  // Instantiate and initialize Pickers
+  this->WorldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+  this->PropPicker = vtkSmartPointer<vtkPropPicker>::New();
+  this->CellPicker = vtkSmartPointer<vtkCellPicker>::New();
   this->CellPicker->SetTolerance(0.00001);
-  this->PointPicker = vtkPointPicker::New();
+  this->PointPicker = vtkSmartPointer<vtkPointPicker>::New();
   this->ResetPick();
+}
 
-  this->PickedCellID = 0;
-  this->PickedPointID = 0;
+//---------------------------------------------------------------------------
+vtkMRMLModelDisplayableManager::vtkInternal::~vtkInternal()
+{
 
-    
-  this->BoxWidget = vtkDisplayableManagerBoxWidget2::New();
-  this->BoxWidgetRepresentation = vtkDisplayableManagerBoxRepresentation::New();
-  this->BoxWidget->SetRepresentation(this->BoxWidgetRepresentation);
-  
-  this->EnableRender = 1;
-  this->UpdatingAxis = 0;
-  this->IsRendering = 0;
-  this->Created = 0;
+}
 
-  this->CreateClipSlices();
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::vtkInternal::CreateClipSlices()
+{
+  this->SlicePlanes = vtkSmartPointer<vtkImplicitBoolean>::New();
+  this->SlicePlanes->SetOperationTypeToIntersection();
+
+  this->RedSlicePlane = vtkSmartPointer<vtkPlane>::New();
+  this->GreenSlicePlane = vtkSmartPointer<vtkPlane>::New();
+  this->YellowSlicePlane = vtkSmartPointer<vtkPlane>::New();
+
+  this->ClipType = vtkMRMLClipModelsNode::ClipIntersection;
+
+  this->RedSliceClipState = vtkMRMLClipModelsNode::ClipOff;
+  this->YellowSliceClipState = vtkMRMLClipModelsNode::ClipOff;
+  this->GreenSliceClipState = vtkMRMLClipModelsNode::ClipOff;
+
+  this->ClippingOn = false;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::vtkInternal::ResetPick()
+{
+  this->PickedNodeName.clear();
+  for (int i=0; i < 3; i++)
+    {
+    this->PickedRAS[i] = 0.0;
+    }
+  this->PickedCellID = -1;
+  this->PickedPointID = -1;
+}
+
+//---------------------------------------------------------------------------
+// vtkMRMLModelDisplayableManager methods
+
+//---------------------------------------------------------------------------
+vtkMRMLModelDisplayableManager::vtkMRMLModelDisplayableManager()
+{
+  this->Internal = new vtkInternal();
+
+  this->Internal->CreateClipSlices();
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLModelDisplayableManager::~vtkMRMLModelDisplayableManager()
 {
-  //delete this->BoxAxisBoundingBox;
-
   this->SetModelHierarchyLogic(0);
 
-  this->RemoveMRMLObservers();
+  vtkSetMRMLNodeMacro(this->Internal->ClipModelsNode, 0);
+  vtkSetMRMLNodeMacro(this->Internal->RedSliceNode, 0);
+  vtkSetMRMLNodeMacro(this->Internal->GreenSliceNode, 0);
+  vtkSetMRMLNodeMacro(this->Internal->YellowSliceNode, 0);
 
-  vtkSetMRMLNodeMacro(this->ClipModelsNode, 0);
-  //vtkSetMRMLNodeMacro(this->CameraNode, 0);
-  //vtkSetMRMLNodeMacro(this->ViewNode, 0);
-
-  vtkSetMRMLNodeMacro(this->RedSliceNode, 0);
-  vtkSetMRMLNodeMacro(this->GreenSliceNode, 0);
-  vtkSetMRMLNodeMacro(this->YellowSliceNode, 0);
-
-  if (this->GetInteractor())
-    {
-    vtkDisplayableManagerInteractorStyle *iStyle;
-    iStyle = vtkDisplayableManagerInteractorStyle::SafeDownCast (this->GetInteractor()->GetInteractorStyle());
-    this->SetMRMLScene(0);
-    }
-
-  this->SlicePlanes->Delete();
-  this->SlicePlanes = 0;
-  this->RedSlicePlane->Delete();
-  this->RedSlicePlane = 0;
-  this->GreenSlicePlane->Delete();
-  this->GreenSlicePlane = 0;
-  this->YellowSlicePlane->Delete();
-  this->YellowSlicePlane = 0;
-
-  /*if (this->BoxAxisActor)
-    {
-    this->BoxAxisActor->Delete();
-    this->BoxAxisActor = 0;
-    }
-  for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
-    {
-    this->AxisLabelActors[i]->SetCamera(0);
-    this->AxisLabelActors[i]->Delete();
-    }
-  this->AxisLabelActors.clear();
-  */
   // release the DisplayedModelActors
-  this->DisplayedActors.clear();
-  
-  if (this->WorldPointPicker)
+  this->Internal->DisplayedActors.clear();
+
+  if (this->Internal->ModelHierarchyLogic)
     {
-    this->WorldPointPicker->Delete();
-    this->WorldPointPicker = 0;
-    }
-  if (this->PropPicker)
-    {
-    this->PropPicker->Delete();
-    this->PropPicker = 0;
-    }
-  if (this->CellPicker)
-    {
-    this->CellPicker->Delete();
-    this->CellPicker = 0;
-    }
-  if (this->PointPicker)
-    {
-    this->PointPicker->Delete();
-    this->PointPicker = 0;
+    this->Internal->ModelHierarchyLogic->Delete();
     }
 
-  if (this->ModelHierarchyLogic)
-    {
-    this->ModelHierarchyLogic->Delete();
-    }
-  
-  this->BoxWidget->SetRepresentation(0);
-  this->BoxWidgetRepresentation->Delete();
-  this->BoxWidget->Delete();
+  delete this->Internal;
 }
 
 //---------------------------------------------------------------------------
@@ -214,49 +223,51 @@ void vtkMRMLModelDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
   this->vtkObject::PrintSelf ( os, indent );
 
   os << indent << "vtkMRMLModelDisplayableManager: " << this->GetClassName() << "\n";
-
-  os << indent << "ProcessingMRMLEvent = " << this->ProcessingMRMLEvent << "\n";
     
-  os << indent << "ClipType = " << this->ClipType << "\n";
-  os << indent << "RedSliceClipState = " << this->RedSliceClipState << "\n";
-  os << indent << "YellowSliceClipState = " << this->YellowSliceClipState << "\n";
-  os << indent << "GreenSliceClipState = " << this->GreenSliceClipState << "\n";
-  os << indent << "ClippingOn = " << (this->ClippingOn ? "true" : "false") << "\n";
+  os << indent << "ClipType = " << this->Internal->ClipType << "\n";
+  os << indent << "RedSliceClipState = " << this->Internal->RedSliceClipState << "\n";
+  os << indent << "YellowSliceClipState = " << this->Internal->YellowSliceClipState << "\n";
+  os << indent << "GreenSliceClipState = " << this->Internal->GreenSliceClipState << "\n";
+  os << indent << "ClippingOn = " << (this->Internal->ClippingOn ? "true" : "false") << "\n";
 
-  os << indent << "ModelHierarchiesPresent = " << this->ModelHierarchiesPresent << "\n";
-  os << indent << "SceneClosing = " << this->SceneClosing << "\n";
+  os << indent << "ModelHierarchiesPresent = " << this->Internal->ModelHierarchiesPresent << "\n";
     
-  os << indent << "PickedNodeName = " << this->PickedNodeName.c_str() << "\n";
-  os << indent << "PickedRAS = (" << this->PickedRAS[0] << ", " << this->PickedRAS[1] << ", "<< this->PickedRAS[2] << ")\n";
-  os << indent << "PickedCellID = " << this->PickedCellID << "\n";
-  os << indent << "PickedPointID = " << this->PickedPointID << "\n";
+  os << indent << "PickedNodeName = " << this->Internal->PickedNodeName.c_str() << "\n";
+  os << indent << "PickedRAS = (" << this->Internal->PickedRAS[0] << ", "
+      << this->Internal->PickedRAS[1] << ", "<< this->Internal->PickedRAS[2] << ")\n";
+  os << indent << "PickedCellID = " << this->Internal->PickedCellID << "\n";
+  os << indent << "PickedPointID = " << this->Internal->PickedPointID << "\n";
 }
 
-/*
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::ProcessWidgetEvents(vtkObject *vtkNotUsed(caller),
-                                                unsigned long vtkNotUsed(event),
-                                                void *vtkNotUsed(callData))
+void vtkMRMLModelDisplayableManager::AdditionnalInitializeStep()
 {
-  // Not currently used... 
-  this->RequestRender();
-} 
-*/
+  assert(!this->IsInitialized());
+  vtkRenderWindowInteractor * interactor = this->GetInteractor();
+  if (interactor)
+    {
+    vtkDisplayableManagerInteractorStyle * interactorStyle =
+        vtkDisplayableManagerInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
+    if (interactorStyle)
+      {
+      interactorStyle->SetModelDisplayableManager(this);
+      }
+    }
+}
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::CreateClipSlices()
+vtkMRMLClipModelsNode* vtkMRMLModelDisplayableManager::GetClipModelsNode()
 {
-  this->SlicePlanes = vtkImplicitBoolean::New();
-  this->SlicePlanes->SetOperationTypeToIntersection();
-  this->RedSlicePlane = vtkPlane::New();
-  this->GreenSlicePlane = vtkPlane::New();
-  this->YellowSlicePlane = vtkPlane::New();
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
+                << "returning Internal->ClipModelsNode of "
+                << this->Internal->ClipModelsNode);
+  return this->Internal->ClipModelsNode;
+}
 
-  this->ClipType = vtkMRMLClipModelsNode::ClipIntersection;
-  this->RedSliceClipState = vtkMRMLClipModelsNode::ClipOff;
-  this->YellowSliceClipState = vtkMRMLClipModelsNode::ClipOff;
-  this->GreenSliceClipState = vtkMRMLClipModelsNode::ClipOff;
-  this->ClippingOn = false;
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::SetClipModelsNode(vtkMRMLClipModelsNode *snode)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->Internal->ClipModelsNode, snode);
 }
 
 //---------------------------------------------------------------------------
@@ -269,12 +280,12 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
 
   // update ClipModels node
   vtkMRMLClipModelsNode *clipNode = vtkMRMLClipModelsNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLClipModelsNode"));
-  if (clipNode != this->ClipModelsNode) 
+  if (clipNode != this->Internal->ClipModelsNode)
     {
-    vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, clipNode);
+    vtkSetAndObserveMRMLNodeMacro(this->Internal->ClipModelsNode, clipNode);
     }
 
-  if (this->ClipModelsNode == 0)
+  if (this->Internal->ClipModelsNode == 0)
     {
     return 0;
     }
@@ -306,37 +317,39 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
     node = 0;
     }
 
-  if (nodeRed != this->RedSliceNode)
+  if (nodeRed != this->Internal->RedSliceNode)
     {
-    vtkSetAndObserveMRMLNodeMacro(this->RedSliceNode, nodeRed);
+    vtkSetAndObserveMRMLNodeMacro(this->Internal->RedSliceNode, nodeRed);
     }
-  if (nodeGreen != this->GreenSliceNode)
+  if (nodeGreen != this->Internal->GreenSliceNode)
     {
-    vtkSetAndObserveMRMLNodeMacro(this->GreenSliceNode, nodeGreen);
+    vtkSetAndObserveMRMLNodeMacro(this->Internal->GreenSliceNode, nodeGreen);
     }
-  if (nodeYellow != this->YellowSliceNode)
+  if (nodeYellow != this->Internal->YellowSliceNode)
     {
-    vtkSetAndObserveMRMLNodeMacro(this->YellowSliceNode, nodeYellow);
+    vtkSetAndObserveMRMLNodeMacro(this->Internal->YellowSliceNode, nodeYellow);
     }
 
-  if (this->RedSliceNode == 0 || this->GreenSliceNode == 0 || this->YellowSliceNode == 0)
+  if (this->Internal->RedSliceNode == 0 ||
+      this->Internal->GreenSliceNode == 0 ||
+      this->Internal->YellowSliceNode == 0)
     {
     return 0;
     }
 
   int modifiedState = 0;
 
-  if ( this->ClipModelsNode->GetClipType() != this->ClipType)
+  if ( this->Internal->ClipModelsNode->GetClipType() != this->Internal->ClipType)
     {
     modifiedState = 1;
-    this->ClipType = this->ClipModelsNode->GetClipType();
-    if (this->ClipType == vtkMRMLClipModelsNode::ClipIntersection) 
+    this->Internal->ClipType = this->Internal->ClipModelsNode->GetClipType();
+    if (this->Internal->ClipType == vtkMRMLClipModelsNode::ClipIntersection)
       {
-      this->SlicePlanes->SetOperationTypeToIntersection();
+      this->Internal->SlicePlanes->SetOperationTypeToIntersection();
       }
-    else if (this->ClipType == vtkMRMLClipModelsNode::ClipUnion) 
+    else if (this->Internal->ClipType == vtkMRMLClipModelsNode::ClipUnion)
       {
-      this->SlicePlanes->SetOperationTypeToUnion();
+      this->Internal->SlicePlanes->SetOperationTypeToUnion();
       }
     else 
       {
@@ -344,89 +357,88 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
       }
     }
 
-  if (this->ClipModelsNode->GetRedSliceClipState() != this->RedSliceClipState)
+  if (this->Internal->ClipModelsNode->GetRedSliceClipState() != this->Internal->RedSliceClipState)
     {
-    if (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipOff)
+    if (this->Internal->RedSliceClipState == vtkMRMLClipModelsNode::ClipOff)
       {
-      this->SlicePlanes->AddFunction(this->RedSlicePlane);
+      this->Internal->SlicePlanes->AddFunction(this->Internal->RedSlicePlane);
       }
-    else if (this->ClipModelsNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+    else if (this->Internal->ClipModelsNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
       {
-      this->SlicePlanes->RemoveFunction(this->RedSlicePlane);
+      this->Internal->SlicePlanes->RemoveFunction(this->Internal->RedSlicePlane);
       }
     modifiedState = 1;
-    this->RedSliceClipState = this->ClipModelsNode->GetRedSliceClipState();
+    this->Internal->RedSliceClipState = this->Internal->ClipModelsNode->GetRedSliceClipState();
     }
 
-  if (this->ClipModelsNode->GetGreenSliceClipState() != this->GreenSliceClipState)
+  if (this->Internal->ClipModelsNode->GetGreenSliceClipState() != this->Internal->GreenSliceClipState)
     {
-    if (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipOff)
+    if (this->Internal->GreenSliceClipState == vtkMRMLClipModelsNode::ClipOff)
       {
-      this->SlicePlanes->AddFunction(this->GreenSlicePlane);
+      this->Internal->SlicePlanes->AddFunction(this->Internal->GreenSlicePlane);
       }
-    else if (this->ClipModelsNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+    else if (this->Internal->ClipModelsNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
       {
-      this->SlicePlanes->RemoveFunction(this->GreenSlicePlane);
+      this->Internal->SlicePlanes->RemoveFunction(this->Internal->GreenSlicePlane);
       }
     modifiedState = 1;
-    this->GreenSliceClipState = this->ClipModelsNode->GetGreenSliceClipState();
+    this->Internal->GreenSliceClipState = this->Internal->ClipModelsNode->GetGreenSliceClipState();
     }
 
-  if (this->ClipModelsNode->GetYellowSliceClipState() != this->YellowSliceClipState)
+  if (this->Internal->ClipModelsNode->GetYellowSliceClipState() != this->Internal->YellowSliceClipState)
     {
-    if (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipOff)
+    if (this->Internal->YellowSliceClipState == vtkMRMLClipModelsNode::ClipOff)
       {
-      this->SlicePlanes->AddFunction(this->YellowSlicePlane);
+      this->Internal->SlicePlanes->AddFunction(this->Internal->YellowSlicePlane);
       }
-    else if (this->ClipModelsNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
+    else if (this->Internal->ClipModelsNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff)
       {
-      this->SlicePlanes->RemoveFunction(this->YellowSlicePlane);
+      this->Internal->SlicePlanes->RemoveFunction(this->Internal->YellowSlicePlane);
       }
     modifiedState = 1;
-    this->YellowSliceClipState = this->ClipModelsNode->GetYellowSliceClipState();
+    this->Internal->YellowSliceClipState = this->Internal->ClipModelsNode->GetYellowSliceClipState();
     }
 
   // compute clipping on/off
-  if (this->ClipModelsNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipOff &&
-      this->ClipModelsNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipOff &&
-      this->ClipModelsNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff )
+  if (this->Internal->ClipModelsNode->GetRedSliceClipState() == vtkMRMLClipModelsNode::ClipOff &&
+      this->Internal->ClipModelsNode->GetGreenSliceClipState() == vtkMRMLClipModelsNode::ClipOff &&
+      this->Internal->ClipModelsNode->GetYellowSliceClipState() == vtkMRMLClipModelsNode::ClipOff )
     {
-    this->ClippingOn = false;
+    this->Internal->ClippingOn = false;
     }
   else
     {
-    this->ClippingOn = true;
+    this->Internal->ClippingOn = true;
     }
 
   // set slice plane normals and origins
   vtkMatrix4x4 *sliceMatrix = 0;
   int planeDirection = 1;
 
-  sliceMatrix = this->RedSliceNode->GetSliceToRAS();
-  planeDirection = (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
-  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->RedSlicePlane);
+  sliceMatrix = this->Internal->RedSliceNode->GetSliceToRAS();
+  planeDirection = (this->Internal->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->Internal->RedSlicePlane);
 
-  sliceMatrix = this->GreenSliceNode->GetSliceToRAS();
-  planeDirection = (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
-  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->GreenSlicePlane);
+  sliceMatrix = this->Internal->GreenSliceNode->GetSliceToRAS();
+  planeDirection = (this->Internal->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->Internal->GreenSlicePlane);
 
-  sliceMatrix = this->YellowSliceNode->GetSliceToRAS();
-  planeDirection = (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
-  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->YellowSlicePlane);
+  sliceMatrix = this->Internal->YellowSliceNode->GetSliceToRAS();
+  planeDirection = (this->Internal->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+  this->SetClipPlaneFromMatrix(sliceMatrix, planeDirection, this->Internal->YellowSlicePlane);
 
   return modifiedState;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
-                                                   int planeDirection,
-                                                   vtkPlane *plane)
+void vtkMRMLModelDisplayableManager::SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix,
+                                                            int planeDirection,
+                                                            vtkPlane *plane)
 {
   double normal[3];
   double origin[3];
-  int i;
 
-  for (i=0; i<3; i++) 
+  for (int i = 0; i < 3; i++)
     {
     normal[i] = planeDirection * sliceMatrix->GetElement(i,2);
     origin[i] = sliceMatrix->GetElement(i,3);
@@ -436,370 +448,215 @@ void vtkMRMLModelDisplayableManager::SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceM
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::ProcessMRMLEvents ( vtkObject *caller,
-                                                unsigned long event, 
-                                                void *callData )
+void vtkMRMLModelDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
+                                                       unsigned long event,
+                                                       void *callData)
 {
-  if (this->ProcessingMRMLEvent != 0 )
+  bool isUpdating = this->GetMRMLScene()->GetIsUpdating();
+  if (vtkMRMLDisplayableNode::SafeDownCast(caller))
     {
-    return;
-    }
-
-  this->ProcessingMRMLEvent = event;
-
-  vtkDebugMacro("ProcessMRMLEvents: processing event " << event);
-  if (event == vtkMRMLScene::SceneAboutToBeClosedEvent )
-    {
-    this->RemoveHierarchyObservers(0);
-    this->RemoveModelObservers(0);
-    //this->RemoveCameraObservers();
-    }
-  else if (event == vtkMRMLScene::SceneClosedEvent )
-    {
-    this->SceneClosing = true;
-    //this->CameraNodeWasCreated = 0;
-    this->RemoveModelProps();
-    this->RemoveHierarchyObservers(1);
-    this->RemoveModelObservers(1);
-    //this->RemoveCameraObservers();
-    this->UpdateFromMRMLRequested = 1;
-    this->RequestRender();
-    }
-  else if (event == vtkMRMLScene::SceneAboutToBeImportedEvent)
-    {
-    this->SetEnableRender(0);
-    //this->GetRenderer()->SetRenderModeToDisabled();
-    }
-  else if (event == vtkMRMLScene::SceneImportedEvent)
-    {
-    this->SetEnableRender(1);
-    //this->GetRenderer()->SetRenderModeToInteractive();
-    ///WJPTEST
-    ///Scene has loaded, nodes have been added.
-    ///Since node added events occurred before the observers
-    ///were put on camera nodes, so camera setup may not have
-    //been completed when it got added.
-    //this->UpdateCameraNode();
-    this->RequestRender();
-    } 
-  else 
-    {
-    this->SceneClosing = false;
-    }
-
-  if (event == vtkMRMLScene::SceneRestoredEvent )
-    {
-    /*
-    // Backward compatibility change: all scenes saved so far do have 
-    // camera nodes with an empty or false active tag. Restoring a snapshot
-    // will invalidate the current active camera. Try to catch that
-    // by grabbing the first available camera. Sounds like a hack, but
-    // too  much time was wasted on this thing.
-    if (this->GetMRMLViewNode())
+    if (isUpdating) { return; }
+    switch (event)
       {
-      vtkMRMLCameraNode *camera_node = this->CameraNode;
-      if (!camera_node)
-        {
-        camera_node = vtkMRMLCameraNode::SafeDownCast(
-          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
-        camera_node->SetActiveTag(this->GetMRMLViewNode()->GetID());
-        }
-      else if (!camera_node->GetActiveTag())
-        {
-        camera_node->SetActiveTag(this->GetMRMLViewNode()->GetID());
-        }
+      case vtkCommand::ModifiedEvent:
+      case vtkMRMLDisplayableNode::PolyDataModifiedEvent:
+      case vtkMRMLDisplayableNode::DisplayModifiedEvent:
+        this->OnMRMLDisplayableNodeModifiedEvent(vtkMRMLDisplayableNode::SafeDownCast(caller));
+        break;
+      default:
+        this->SetUpdateFromMRMLRequested(1);
+        this->RequestRender();
+        break;
       }
-      */
-    this->UpdateFromMRMLRequested = 1;
     }
-
-  if ( vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene() &&
-       (event == vtkMRMLScene::NodeAddedEvent || 
-        event == vtkMRMLScene::NodeRemovedEvent) )
+  else if (vtkMRMLClipModelsNode::SafeDownCast(caller))
     {
-    std::cout << "vtkMRMLModelDisplayableManager::ProcessMRMLEvents - ADDED/REMOVED" << std::endl;
-    vtkMRMLNode *node = (vtkMRMLNode*) (callData);
-    if (node != 0 && node->IsA("vtkMRMLDisplayableNode") )
+    if (isUpdating) { return; }
+    if (event == vtkCommand::ModifiedEvent)
       {
-      vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast(node);
-      if (event == vtkMRMLScene::NodeRemovedEvent)
-        {
-        this->RemoveDisplayable(dnode);
-        }
-      this->UpdateFromMRMLRequested = 1;
+      this->SetUpdateFromMRMLRequested(1);
       this->RequestRender();
       }
-    else if (node != 0 && node->IsA("vtkMRMLDisplayNode") )
+    }
+  else if (vtkMRMLSliceNode::SafeDownCast(caller))
+    {
+    if (isUpdating) { return; }
+    if (event == vtkCommand::ModifiedEvent)
       {
-      this->UpdateFromMRMLRequested = 1;
-      this->RequestRender();
+      if (this->UpdateClipSlicesFromMRML() || this->Internal->ClippingOn)
+        {
+        this->SetUpdateFromMRMLRequested(1);
+        this->RequestRender();
+        }
       }
-    else if (node != 0 && node->IsA("vtkMRMLModelHierarchyNode") )
+    }
+  else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller))
+    {
+    if (isUpdating) { return; }
+    if (event == vtkCommand::ModifiedEvent)
       {
       this->UpdateModelHierarchies();
-      this->UpdateFromMRMLRequested = 1;
+      this->SetUpdateFromMRMLRequested(1);
       this->RequestRender();
       }
-    else if (node != 0 && node->IsA("vtkMRMLClipModelsNode") )
-      {
-      if (event == vtkMRMLScene::NodeAddedEvent)
-        {
-        vtkSetAndObserveMRMLNodeMacro(this->ClipModelsNode, node);
-        }
-      else if (event == vtkMRMLScene::NodeRemovedEvent)
-        {
-        vtkSetMRMLNodeMacro(this->ClipModelsNode, 0);
-        }
-      this->UpdateFromMRMLRequested = 1;
-      this->RequestRender();
-      }
-    /*
-    else if (node != 0 && node->IsA("vtkMRMLCameraNode") )
-      {
-      if (event == vtkMRMLScene::NodeAddedEvent)
-        {
-        vtkEventBroker::GetInstance()->AddObservation ( 
-          node, vtkMRMLCameraNode::ActiveTagModifiedEvent, this, this->GetMRMLCallbackCommand());
-        }
-      else if (event == vtkMRMLScene::NodeRemovedEvent)
-        {
-        vtkEventBroker::GetInstance()->RemoveObservations ( 
-          node, vtkMRMLCameraNode::ActiveTagModifiedEvent, this, this->GetMRMLCallbackCommand() );
-        this->UpdateCameraNode();
-        }
-      }*/
-    }
-  /*
-  else if (vtkMRMLCameraNode::SafeDownCast(caller) != 0 &&
-           (event == vtkCommand::ModifiedEvent ||
-            event == vtkMRMLCameraNode::ActiveTagModifiedEvent))
-    {
-    vtkDebugMacro("ProcessingMRML: got a camera node modified event");
-    this->UpdateCameraNode();
-    this->RequestRender();
-    }*/
-  else if (vtkMRMLViewNode::SafeDownCast(caller) != 0 &&
-           event == vtkCommand::ModifiedEvent)
-    {
-    vtkDebugMacro("ProcessingMRML: got a view node modified event");
-    this->RequestRender();
-    }
-  else if (vtkMRMLDisplayableNode::SafeDownCast(caller) != 0)
-    {
-    // check for events on a model node
-    vtkMRMLDisplayableNode *modelNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
-    if (event == vtkCommand::ModifiedEvent ||
-        event == vtkMRMLDisplayableNode::PolyDataModifiedEvent ||
-        event == vtkMRMLDisplayableNode::DisplayModifiedEvent) 
-      {
-      // if the node is already cached with an actor process only this one
-      // if it was not visible and is still not visible do nothing
-      std::vector< vtkMRMLDisplayNode *> dnodes = this->GetDisplayNode(modelNode);
-      bool updateModel = false;
-      bool updateMRML = false;
-      for (unsigned int i=0; i<dnodes.size(); i++)
-        {
-        vtkMRMLDisplayNode *dnode = dnodes[i];
-        int visibility = dnode->GetVisibility();
-        //if (hdnode)
-        //  {
-        //  visibility = hdnode->GetVisibility();
-        //  }
-        if (this->DisplayedActors.find(dnode->GetID()) == this->DisplayedActors.end())
-          {
-          updateMRML = true;
-          break;
-          }
-        if (!(dnode && visibility == 0 && this->GetDisplayedModelsVisibility(dnode) == 0))
-          {
-          updateModel = true;
-          break;
-          }
-        }
-      if (updateModel) 
-        {
-        this->UpdateClipSlicesFromMRML();
-        this->UpdateModifiedModel(modelNode);
-        this->RequestRender();
-        }
-      if (updateMRML)
-        {
-        this->UpdateFromMRMLRequested = 1;
-        this->RequestRender();
-        }
-      }
-    else
-      {
-      this->UpdateFromMRMLRequested = 1;
-      this->RequestRender();
-      }
-    }
-  else if (vtkMRMLClipModelsNode::SafeDownCast(caller) != 0 &&
-           event == vtkCommand::ModifiedEvent)
-    {
-    this->UpdateFromMRMLRequested = 1;
-    this->RequestRender();
-    }
-  else if (vtkMRMLSliceNode::SafeDownCast(caller) != 0 &&
-           event == vtkCommand::ModifiedEvent && (this->UpdateClipSlicesFromMRML() || this->ClippingOn))
-    {
-    this->UpdateFromMRMLRequested = 1;
-    this->RequestRender();
-    }
-  else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller) &&
-           event == vtkCommand::ModifiedEvent)
-    {
-    this->UpdateModelHierarchies();
-    this->UpdateFromMRMLRequested = 1;
-    this->RequestRender();
     }
   else
     {
-    vtkDebugMacro("ProcessMRMLEvents: unhandled event " << event << " " << ((event == 31) ? "ModifiedEvent" : "not ModifiedEvent"));
-    if (vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene()) { vtkDebugMacro("\ton the mrml scene"); }
-    if (vtkMRMLNode::SafeDownCast(caller) != 0) { vtkDebugMacro("\tmrml node id = " << vtkMRMLNode::SafeDownCast(caller)->GetID()); }
+    this->Superclass::ProcessMRMLEvents(caller, event, callData);
     }
-  
-  this->ProcessingMRMLEvent = 0;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::Create()
+void vtkMRMLModelDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
 {
-  if (this->IsCreated())
+  this->RemoveHierarchyObservers(0);
+  this->RemoveModelObservers(0);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::OnMRMLSceneClosedEvent()
+{
+  // Clean
+  this->RemoveModelProps();
+  this->RemoveHierarchyObservers(1);
+  this->RemoveModelObservers(1);
+
+  this->SetUpdateFromMRMLRequested(1);
+  this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::OnMRMLSceneImportedEvent()
+{
+  this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::OnMRMLSceneRestoredEvent()
+{
+  this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+{
+  if (!node->IsA("vtkMRMLDisplayableNode") &&
+      !node->IsA("vtkMRMLDisplayNode") &&
+      !node->IsA("vtkMRMLModelHierarchyNode") &&
+      node->IsA("vtkMRMLClipModelsNode"))
     {
-    vtkErrorMacro(<< this->GetClassName() << " already created");
     return;
     }
-    
-  assert(this->GetRenderer());
-  if (!this->GetRenderer())
+
+  this->SetUpdateFromMRMLRequested(1);
+
+  // Escape if the scene a scene is being closed, imported or connected
+  if (this->GetMRMLScene()->GetIsUpdating()){ return; }
+
+  // Node specific processing
+  if (node->IsA("vtkMRMLModelHierarchyNode"))
+    {
+    this->UpdateModelHierarchies();
+    }
+  else if (node->IsA("vtkMRMLClipModelsNode"))
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->Internal->ClipModelsNode, node);
+    }
+
+  this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+{
+  if (!node->IsA("vtkMRMLDisplayableNode") &&
+      !node->IsA("vtkMRMLDisplayNode") &&
+      !node->IsA("vtkMRMLModelHierarchyNode") &&
+      !node->IsA("vtkMRMLClipModelsNode"))
     {
     return;
     }
-  
-  // Call the superclass to create the whole widget
-  
-  //double *c = slicerStyle->GetHighLightColor()
 
-  // added to enable active/passive stereo mode.  If user started slicer with --stereo
-  // command line option, then stereo might be enabled sometime during this session.  Therefore
-  // we need to request the correct OpenGL visual BEFORE the window is opened.  Quadbuffered
-  // stereo has to be requested before the first Render() call on the window.
-  
-  /***
-  if (vtkSlicerApplication::GetInstance()->GetStereoEnabled())
+  this->SetUpdateFromMRMLRequested(1);
+
+  // Escape if the scene a scene is being closed, imported or connected
+  if (this->GetMRMLScene()->GetIsUpdating()){ return; }
+
+  // Node specific processing
+  if (node->IsA("vtkMRMLDisplayableNode"))
     {
-    vtkDebugMacro("Opening Stereo Capable Window");
-    vtkRenderWindow* renWin = this->MainViewer->GetRenderWindow();
-    renWin->SetStereoCapableWindow(1);
-    renWin->SetStereoTypeToCrystalEyes();
+    this->RemoveDisplayable(vtkMRMLDisplayableNode::SafeDownCast(node));
     }
-    ***/
-  
-  // don't use vtkKWRenderWidget's built-in ExposeEvent handler.  
-  // It will call ProcessPendingEvents (update) even though it may already be inside
-  // a call to update.  It also calls Render directly, which will pull the vtk pipeline chain.
-  // Instead, use the RequestRender method to render when idle.
-  //this->MainViewer->GetVTKWidget()->RemoveBinding("<Expose>");
-  //this->MainViewer->GetVTKWidget()->AddBinding("<Expose>", this, "RequestRender");
-
-
-  //this->GetRenderer()->SetRendererBackgroundColor(
-  //  app->GetSlicerTheme()->GetSlicerColors()->ViewerBlue );
-
-  // tell the render widget not to respond to the Render() method
-  // - this class turns on rendering explicitly when it's own
-  //   Render() method is called.  This avoids redundant renders
-  //   when, for example, the annotation is changed.
-  //  TODO: this is disabled for until there is a way to observe 
-  //  for direct render requests to the renderer (so they can be placed
-  //  in the event queue)
-  //this->MainViewer->RenderStateOff();
-
-  /*
-  // make a Slicer viewer interactor style to process our events
-  // look at the InteractorStyle to get our events
-  vtkRenderWindowInteractor *rwi = this->GetInteractor();
-  if (rwi)
+  else if (node->IsA("vtkMRMLModelHierarchyNode"))
     {
-    vtkDisplayableManagerInteractorStyle *iStyle = vtkDisplayableManagerInteractorStyle::New();
-    iStyle->SetViewerWidget(this);
+    this->UpdateModelHierarchies();
+    }
+  else if (node->IsA("vtkMRMLClipModelsNode"))
+    {
+    vtkSetMRMLNodeMacro(this->Internal->ClipModelsNode, 0);
+    }
 
-    //if (this->ApplicationLogic != 0)
+  this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(
+    vtkMRMLDisplayableNode * modelNode)
+{
+  assert(modelNode);
+
+  // If the node is already cached with an actor process only this one
+  // If it was not visible and is still not visible do nothing
+  std::vector< vtkMRMLDisplayNode *> dnodes = this->GetDisplayNode(modelNode);
+  bool updateModel = false;
+  bool updateMRML = false;
+  for (unsigned int i=0; i<dnodes.size(); i++)
+    {
+    vtkMRMLDisplayNode *dnode = dnodes[i];
+    int visibility = dnode->GetVisibility();
+    //if (hdnode)
     //  {
-    //  iStyle->SetApplicationLogic(this->ApplicationLogic);
+    //  visibility = hdnode->GetVisibility();
     //  }
-    //else
-    //  {
-    //  vtkDebugMacro("Not setting interactor style's application logic to 0.");
-    //  }
-
-    rwi->SetInteractorStyle (iStyle);
-    iStyle->Delete();
+    if (this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end())
+      {
+      updateMRML = true;
+      break;
+      }
+    if (!(dnode && visibility == 0 && this->GetDisplayedModelsVisibility(dnode) == 0))
+      {
+      updateModel = true;
+      break;
+      }
     }
-  */
-
-
-  // Set the viewer's minimum dimension to be the modifiedState as that for
-  // the three main Slice viewers.
-  /*vtkCamera *camera = this->GetRenderer()->IsActiveCameraCreated() ?
-    this->GetRenderer()->GetActiveCamera() : 0;
-  if (camera)
+  if (updateModel)
     {
-    camera->ParallelProjectionOff();
+    this->UpdateClipSlicesFromMRML();
+    this->UpdateModifiedModel(modelNode);
+    this->RequestRender();
     }
-*/
-  //if ( this->GetApplication() != 0 )
-  //  {
-  //  app = (vtkSlicerApplication *)this->GetApplication();
-  //  this->GetRenderer()->SetWidth ( app->GetDefaultGeometry()->GetSliceViewerMinDim() );
-  //  this->GetRenderer()->SetHeight ( app->GetDefaultGeometry()->GetSliceViewerMinDim() );
-  //  }
-
-  // observe scene for add/remove nodes
-  vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeImportedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
-  events->InsertNextValue(vtkCommand::ModifiedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
-  this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
-  events->Delete();
-
-  //this->CreateClipSlices();
-  //this->CreateAxis();
-  //this->GetRenderer()->ResetCamera();
-
-  this->Created = 1;
+  if (updateMRML)
+    {
+    this->SetUpdateFromMRMLRequested(1);
+    this->RequestRender();
+    }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateFromMRML()
 {
-  //this->AddCameraObservers();
-  //this->UpdateCameraNode();
-
-  //this->AddAxisActors();
-
   this->UpdateClipSlicesFromMRML();
 
   this->RemoveModelProps();
   
   this->UpdateModelsFromMRML();
 
-  //this->RequestRender();
-
-  this->UpdateFromMRMLRequested = 0;
+  this->SetUpdateFromMRMLRequested(0);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
 {
-  std::cout << "vtkMRMLModelDisplayableManager::UpdateModelsFromMRML" << std::endl;
   vtkMRMLScene *scene = this->GetMRMLScene();
   vtkMRMLNode *node = 0;
   std::vector<vtkMRMLDisplayableNode *> slices;
@@ -820,7 +677,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
       {
       slices.push_back(model);
       vtkMRMLDisplayNode *dnode = model->GetDisplayNode();
-      if (dnode && this->DisplayedActors.find(dnode->GetID()) == this->DisplayedActors.end() )
+      if (dnode && this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end() )
         {
         clearDisplayedModels = true;
         }
@@ -830,18 +687,16 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
   if (clearDisplayedModels)
     {
     std::map<std::string, vtkProp3D *>::iterator iter;
-    for (iter = this->DisplayedActors.begin(); iter != this->DisplayedActors.end(); iter++)
+    for (iter = this->Internal->DisplayedActors.begin(); iter != this->Internal->DisplayedActors.end(); iter++)
       {
       this->GetRenderer()->RemoveViewProp(iter->second);
       }
-    //this->MainViewer->RemoveAllViewProps();
     this->RemoveModelObservers(1);
     this->RemoveHierarchyObservers(1);
-    this->DisplayedActors.clear();
-    this->DisplayedNodes.clear();
-    this->DisplayedClipState.clear();
-    this->DisplayedVisibility.clear();
-    //this->AddAxisActors();
+    this->Internal->DisplayedActors.clear();
+    this->Internal->DisplayedNodes.clear();
+    this->Internal->DisplayedClipState.clear();
+    this->Internal->DisplayedVisibility.clear();
     this->UpdateModelHierarchies();
     }
 
@@ -851,7 +706,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     vtkMRMLDisplayableNode *model = slices[i];
     // add nodes that are not in the list yet
     vtkMRMLDisplayNode *dnode = model->GetDisplayNode();
-    if (dnode && this->DisplayedActors.find(dnode->GetID()) == this->DisplayedActors.end() )
+    if (dnode && this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end() )
       {
       this->UpdateModel(model);
       } 
@@ -900,29 +755,29 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
 
     int clipping = modelDisplayNode->GetClipping();
     int visibility = modelDisplayNode->GetVisibility();
-    vtkPolyData *poly = modelDisplayNode->GetPolyData();
+    vtkPolyData *polyData = modelDisplayNode->GetPolyData();
 
     if (hdnode) 
       {
       clipping = hdnode->GetClipping();
       //visibility = hdnode->GetVisibility();
-      poly = hdnode->GetPolyData();
+      polyData = hdnode->GetPolyData();
       }  
     // hierarchy display nodes may not have poly data pointer
-    if (poly == 0)
+    if (polyData == 0)
       {
-      poly = model->GetPolyData();
+      polyData = model->GetPolyData();
       }
-    if (poly == 0)
+    if (polyData == 0)
       {
       hasPolyData = false;
       }
      
     std::map<std::string, vtkProp3D *>::iterator ait;
-    ait = this->DisplayedActors.find(modelDisplayNode->GetID());
-    if (ait == this->DisplayedActors.end() )
+    ait = this->Internal->DisplayedActors.find(modelDisplayNode->GetID());
+    if (ait == this->Internal->DisplayedActors.end() )
       {
-      if(poly)
+      if(polyData)
         {
 #ifdef USE_IMAGE_ACTOR
         if ( polyData->GetNumberOfCells() == 1 )
@@ -931,7 +786,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
           }
 #endif
         }
-      if ( !prop )
+      if (!prop)
         {
         prop = vtkActor::New();
         }
@@ -939,10 +794,10 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
     else
       {
       prop = (*ait).second;
-      std::map<std::string, int>::iterator cit = this->DisplayedClipState.find(modelDisplayNode->GetID());
-      if (modelDisplayNode && cit != this->DisplayedClipState.end() && cit->second == clipping )
+      std::map<std::string, int>::iterator cit = this->Internal->DisplayedClipState.find(modelDisplayNode->GetID());
+      if (modelDisplayNode && cit != this->Internal->DisplayedClipState.end() && cit->second == clipping )
         {
-        this->DisplayedVisibility[modelDisplayNode->GetID()] = visibility;
+        this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visibility;
         // make sure that we are looking at the current polydata (most of the code in here 
         // assumes a display node will never change what polydata it wants to view and hence
         // caches information to skip steps if the display node has already rendered. but we
@@ -951,9 +806,9 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
         if (actor)
           {
           vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast(actor->GetMapper());
-          if (mapper && mapper->GetInput() != poly && !(this->ClippingOn && clipping))
+          if (mapper && mapper->GetInput() != polyData && !(this->Internal->ClippingOn && clipping))
             {
-            mapper->SetInput(poly);
+            mapper->SetInput(polyData);
             }
           }
         vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
@@ -965,57 +820,55 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
         }
       }
 
-    vtkActor *actor;
     vtkClipPolyData *clipper = 0;
-    actor = vtkActor::SafeDownCast(prop);
+    vtkActor * actor = vtkActor::SafeDownCast(prop);
     if(actor)
       {
-      if (this->ClippingOn && modelDisplayNode != 0 && clipping)
+      if (this->Internal->ClippingOn && modelDisplayNode != 0 && clipping)
         {
         clipper = this->CreateTransformedClipper(model);
         }
 
-      vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
+      vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
      
       if (clipper)
         {
-        clipper->SetInput(poly);
+        clipper->SetInput(polyData);
         clipper->Update();
-        mapper->SetInput ( clipper->GetOutput() );
+        mapper->SetInput(clipper->GetOutput());
         }
       else
         {
-        mapper->SetInput(poly);
+        mapper->SetInput(polyData);
         }
 
-   
       actor->SetMapper(mapper);
       mapper->Delete();
       }
 
-    if (hasPolyData && ait == this->DisplayedActors.end())
+    if (hasPolyData && ait == this->Internal->DisplayedActors.end())
       {
       this->GetRenderer()->AddViewProp(prop);
-      this->DisplayedActors[modelDisplayNode->GetID()] = prop;
-      this->DisplayedNodes[std::string(modelDisplayNode->GetID())] = modelDisplayNode;
+      this->Internal->DisplayedActors[modelDisplayNode->GetID()] = prop;
+      this->Internal->DisplayedNodes[std::string(modelDisplayNode->GetID())] = modelDisplayNode;
     
       if (modelDisplayNode)
         {
-        this->DisplayedVisibility[modelDisplayNode->GetID()] = visibility;
+        this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visibility;
         }
       else
         {
-        this->DisplayedVisibility[modelDisplayNode->GetID()] = 1;
+        this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = 1;
         }
       
       if (clipper)
         {
-        this->DisplayedClipState[modelDisplayNode->GetID()] = 1;
+        this->Internal->DisplayedClipState[modelDisplayNode->GetID()] = 1;
         clipper->Delete();
         }
       else
         {
-        this->DisplayedClipState[modelDisplayNode->GetID()] = 0;
+        this->Internal->DisplayedClipState[modelDisplayNode->GetID()] = 0;
         }
       prop->Delete();
       }
@@ -1027,12 +880,12 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
       {
       if (clipper)
         {
-        this->DisplayedClipState[modelDisplayNode->GetID()] = 1;
+        this->Internal->DisplayedClipState[modelDisplayNode->GetID()] = 1;
         clipper->Delete();
         }
       else 
         {
-        this->DisplayedClipState[modelDisplayNode->GetID()] = 0;
+        this->Internal->DisplayedClipState[modelDisplayNode->GetID()] = 0;
         }
       }
     }
@@ -1046,36 +899,42 @@ void vtkMRMLModelDisplayableManager::UpdateModel(vtkMRMLDisplayableNode *model)
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
   std::vector< vtkObservation *> observations;
   // observe polydata
-  observations = broker->GetObservations( model, vtkMRMLDisplayableNode::PolyDataModifiedEvent, this, this->GetMRMLCallbackCommand() );
-  if ( observations.size() == 0 )
+  observations = broker->GetObservations(model, vtkMRMLDisplayableNode::PolyDataModifiedEvent,
+                                         this, this->GetMRMLCallbackCommand());
+  if (observations.size() == 0)
     {
-    broker->AddObservation( model, vtkMRMLDisplayableNode::PolyDataModifiedEvent, this, this->GetMRMLCallbackCommand() );
-    DisplayableNodes[model->GetID()] = model;
+    broker->AddObservation(model, vtkMRMLDisplayableNode::PolyDataModifiedEvent,
+                           this, this->GetMRMLCallbackCommand());
+    this->Internal->DisplayableNodes[model->GetID()] = model;
     }
   // observe display node
-  observations = broker->GetObservations( model, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, this->GetMRMLCallbackCommand() );
-  if ( observations.size() == 0 )
+  observations = broker->GetObservations(model, vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                                         this, this->GetMRMLCallbackCommand());
+  if (observations.size() == 0)
     {
-    broker->AddObservation( model, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, this->GetMRMLCallbackCommand() );
+    broker->AddObservation(model, vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                           this, this->GetMRMLCallbackCommand());
     }
 
-  observations = broker->GetObservations( model, vtkMRMLTransformableNode::TransformModifiedEvent, this, this->GetMRMLCallbackCommand() );
-  if ( observations.size() == 0 )
+  observations = broker->GetObservations(model, vtkMRMLTransformableNode::TransformModifiedEvent,
+                                         this, this->GetMRMLCallbackCommand());
+  if (observations.size() == 0)
     {
-    broker->AddObservation( model, vtkMRMLTransformableNode::TransformModifiedEvent, this, this->GetMRMLCallbackCommand() );
+    broker->AddObservation(model, vtkMRMLTransformableNode::TransformModifiedEvent,
+                           this, this->GetMRMLCallbackCommand());
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::CheckModelHierarchies()
 {
-  if (this->GetMRMLScene() == 0 || this->ModelHierarchyLogic == 0)
+  if (this->GetMRMLScene() == 0 || this->Internal->ModelHierarchyLogic == 0)
     {
     return;
     }
-  this->ModelHierarchyLogic->SetMRMLScene(this->GetMRMLScene());
-  int nnodes = this->ModelHierarchyLogic->GetNumberOfModelsInHierarchy();
-  this->ModelHierarchiesPresent = nnodes > 0 ? true:false;
+  this->Internal->ModelHierarchyLogic->SetMRMLScene(this->GetMRMLScene());
+  int nnodes = this->Internal->ModelHierarchyLogic->GetNumberOfModelsInHierarchy();
+  this->Internal->ModelHierarchiesPresent = nnodes > 0 ? true:false;
 }
 
 //---------------------------------------------------------------------------
@@ -1098,7 +957,7 @@ void vtkMRMLModelDisplayableManager::AddHierarchiyObservers()
     std::map<std::string, int>::iterator iter;
     // search for matching string (can't use find, since it would look for 
     // matching pointer not matching content)
-    for(iter=this->RegisteredModelHierarchies.begin(); iter != this->RegisteredModelHierarchies.end(); iter++) 
+    for(iter=this->Internal->RegisteredModelHierarchies.begin(); iter != this->Internal->RegisteredModelHierarchies.end(); iter++)
       {
       if ( iter->first.c_str() && !strcmp( iter->first.c_str(), node->GetID() ) )
         {
@@ -1109,33 +968,40 @@ void vtkMRMLModelDisplayableManager::AddHierarchiyObservers()
     if (!found)
       {
       broker->AddObservation( node, vtkCommand::ModifiedEvent, this, this->GetMRMLCallbackCommand() );
-      this->RegisteredModelHierarchies[node->GetID()] = 0;
+      this->Internal->RegisteredModelHierarchies[node->GetID()] = 0;
       }
     }
 }
 
-//----------------------------
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::UpdateModelHierarchies()
+{
+  this->CheckModelHierarchies();
+  this->AddHierarchiyObservers();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModelHierarchyVisibility(vtkMRMLModelHierarchyNode* mhnode, int visibility )
 {
   vtkMRMLDisplayNode* dnode = mhnode->GetDisplayNode();
   if (dnode)
     {
-    std::map<std::string, vtkProp3D *>::iterator iter = this->DisplayedActors.find(dnode->GetID());
-    if (iter != this->DisplayedActors.end())
+    std::map<std::string, vtkProp3D *>::iterator iter = this->Internal->DisplayedActors.find(dnode->GetID());
+    if (iter != this->Internal->DisplayedActors.end())
       {
       vtkProp3D *actor = iter->second;
       actor->SetVisibility(visibility);
-      this->DisplayedVisibility[dnode->GetID()] = visibility;
+      this->Internal->DisplayedVisibility[dnode->GetID()] = visibility;
       }
     }
 }
 
-//----------------------------
+//---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model)
 {
-  if (model && this->ModelHierarchyLogic)
+  if (model && this->Internal->ModelHierarchyLogic)
     {
-    vtkMRMLModelHierarchyNode* mhnode = this->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
+    vtkMRMLModelHierarchyNode* mhnode = this->Internal->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
 
     if (mhnode) 
       {
@@ -1146,12 +1012,12 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchyDisplay(vtkMRMLDisplaya
         vtkMRMLDisplayNode *dnode = model->GetNthDisplayNode(i);
         if (dnode)
           {
-          std::map<std::string, vtkProp3D *>::iterator iter = this->DisplayedActors.find(dnode->GetID());
-          if (iter != this->DisplayedActors.end())
+          std::map<std::string, vtkProp3D *>::iterator iter = this->Internal->DisplayedActors.find(dnode->GetID());
+          if (iter != this->Internal->DisplayedActors.end())
             {
             vtkProp3D *actor = iter->second;
             actor->SetVisibility(0);
-            this->DisplayedVisibility[dnode->GetID()] = 0;
+            this->Internal->DisplayedVisibility[dnode->GetID()] = 0;
             }
           }
         }
@@ -1168,7 +1034,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchyDisplay(vtkMRMLDisplaya
     }
 }
 
-//----------------------------
+//---------------------------------------------------------------------------
 std::vector< vtkMRMLDisplayNode* > vtkMRMLModelDisplayableManager::GetDisplayNode(vtkMRMLDisplayableNode *model)
 {
   std::vector< vtkMRMLDisplayNode* > dnodes;
@@ -1187,15 +1053,15 @@ std::vector< vtkMRMLDisplayNode* > vtkMRMLModelDisplayableManager::GetDisplayNod
   return dnodes;
 }
 
-//----------------------------
+//---------------------------------------------------------------------------
 vtkMRMLDisplayNode*  vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model)
 {
   vtkMRMLDisplayNode* dnode = 0;
-  if (this->ModelHierarchiesPresent)
+  if (this->Internal->ModelHierarchiesPresent)
     {
     vtkMRMLModelHierarchyNode* mhnode = 0;
     vtkMRMLModelHierarchyNode* phnode = 0;
-    mhnode = this->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
+    mhnode = this->Internal->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
     if (mhnode) 
       {
       phnode = mhnode->GetUnExpandedParentNode();
@@ -1208,55 +1074,13 @@ vtkMRMLDisplayNode*  vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtk
   return dnode;
 }
 
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::RequestRender()
-{
-  if (!this->GetMRMLScene()->GetIsUpdating())
-    {
-    this->Render();
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::Render()
-{
-  if (this->UpdateFromMRMLRequested)
-    {
-    this->UpdateFromMRML();
-    //this->UpdateAxis();
-    }
-
-  std::cout << "vtkMRMLModelDisplayableManager::Render" << std::endl;
-
-  // *** added code to check the RenderState and restore to whatever it
-  // was before the specific request to render, instead of just setting
-  // renderState to OFF.
-  if (this->GetEnableRender())
-    {
-    std::cout << "vtkMRMLModelDisplayableManager::Render - 0" << std::endl;
-
-    //int currentRenderState = this->MainViewer->GetRenderState();
-    //this->MainViewer->RenderStateOn();
-    if (this->GetRenderer()->IsActiveCameraCreated())
-      {
-      std::cout << "vtkMRMLModelDisplayableManager::Render - 1" << std::endl;
-      this->IsRendering = 1;
-      this->GetRenderer()->Render();
-      this->IsRendering = 0;
-      }
-    vtkDebugMacro("vtkMRMLModelDisplayableManager::Render called render" << endl);
-    //this->GetRenderer()->SetRenderState(currentRenderState);
-    } 
-}
-
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::RemoveModelProps()
 {
   std::map<std::string, vtkProp3D *>::iterator iter;
   std::map<std::string, int>::iterator clipIter;
   std::vector<std::string> removedIDs;
-  for(iter=this->DisplayedActors.begin(); iter != this->DisplayedActors.end(); iter++) 
+  for(iter=this->Internal->DisplayedActors.begin(); iter != this->Internal->DisplayedActors.end(); iter++)
     {
     vtkMRMLDisplayNode *modelDisplayNode = vtkMRMLDisplayNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
     if (modelDisplayNode == 0)
@@ -1271,15 +1095,15 @@ void vtkMRMLModelDisplayableManager::RemoveModelProps()
         {
         clipModel = modelDisplayNode->GetClipping();
         }
-      clipIter = this->DisplayedClipState.find(iter->first);
-      if (clipIter == this->DisplayedClipState.end())
+      clipIter = this->Internal->DisplayedClipState.find(iter->first);
+      if (clipIter == this->Internal->DisplayedClipState.end())
         {
         vtkErrorMacro ("vtkMRMLModelDisplayableManager::RemoveModelProps() Unknown clip state\n");
         }
       else 
         {
-        if ((clipIter->second && !this->ClippingOn) ||
-            (this->ClippingOn && clipIter->second != clipModel))
+        if ((clipIter->second && !this->Internal->ClippingOn) ||
+            (this->Internal->ClippingOn && clipIter->second != clipModel))
           {
           this->GetRenderer()->RemoveViewProp(iter->second);
           removedIDs.push_back(iter->first);
@@ -1308,8 +1132,8 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayable(vtkMRMLDisplayableNode* m
     vtkMRMLDisplayNode *displayNode = model->GetNthDisplayNode(i);
     if (displayNode)
       {
-      iter = this->DisplayedActors.find(displayNode->GetID());
-      if (iter != this->DisplayedActors.end())
+      iter = this->Internal->DisplayedActors.find(displayNode->GetID());
+      if (iter != this->Internal->DisplayedActors.end())
         {
         this->GetRenderer()->RemoveViewProp(iter->second);
         removedIDs.push_back(iter->first);
@@ -1321,22 +1145,22 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayable(vtkMRMLDisplayableNode* m
     {
     this->RemoveDispalyedID(removedIDs[i]);
     }
-  this->RemoveModelObservers(model);
-  this->DisplayableNodes.erase(model->GetID());
+  this->RemoveDisplayableNodeObservers(model);
+  this->Internal->DisplayableNodes.erase(model->GetID());
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::RemoveDispalyedID(std::string &id)
 {
   std::map<std::string, vtkMRMLDisplayNode *>::iterator modelIter;
-  this->DisplayedActors.erase(id);
-  this->DisplayedClipState.erase(id);
-  this->DisplayedVisibility.erase(id);
-  modelIter = this->DisplayedNodes.find(id);
-  if(modelIter != this->DisplayedNodes.end())
+  this->Internal->DisplayedActors.erase(id);
+  this->Internal->DisplayedClipState.erase(id);
+  this->Internal->DisplayedVisibility.erase(id);
+  modelIter = this->Internal->DisplayedNodes.find(id);
+  if(modelIter != this->Internal->DisplayedNodes.end())
     {
     //this->RemoveModelObservers(modelIter->second);
-    this->DisplayedNodes.erase(modelIter->first);
+    this->Internal->DisplayedNodes.erase(modelIter->first);
     }
 }
 
@@ -1346,8 +1170,8 @@ int vtkMRMLModelDisplayableManager::GetDisplayedModelsVisibility(vtkMRMLDisplayN
   int visibility = 1;
   
   std::map<std::string, int>::iterator iter;
-  iter = this->DisplayedVisibility.find(model->GetID());
-  if (iter != this->DisplayedVisibility.end())
+  iter = this->Internal->DisplayedVisibility.find(model->GetID());
+  if (iter != this->Internal->DisplayedVisibility.end())
     {
     visibility = iter->second;
     }
@@ -1360,11 +1184,8 @@ void vtkMRMLModelDisplayableManager::RemoveMRMLObservers()
 {
   this->RemoveModelObservers(1);
   this->RemoveHierarchyObservers(1);
-  //this->RemoveCameraObservers();
 
-  //this->SetAndObserveMRMLScene(0);
-  //this->SetAndObserveMRMLViewNode(0);
-  //this->SetAndObserveCameraNode(0);
+  this->Superclass::RemoveMRMLObservers();
 }
 
 //---------------------------------------------------------------------------
@@ -1372,22 +1193,24 @@ void vtkMRMLModelDisplayableManager::RemoveModelObservers(int clearCache)
 {
   std::map<std::string, vtkMRMLDisplayableNode *>::iterator iter;
 
-  for (iter=this->DisplayableNodes.begin(); iter!=this->DisplayableNodes.end(); iter++)
+  for (iter=this->Internal->DisplayableNodes.begin();
+       iter!=this->Internal->DisplayableNodes.end();
+       iter++)
     {
-    this->RemoveModelObservers(iter->second);
+    this->RemoveDisplayableNodeObservers(iter->second);
     }
   if (clearCache)
     {
-    this->DisplayableNodes.clear();
-    this->DisplayedActors.clear();
-    this->DisplayedNodes.clear();
-    this->DisplayedClipState.clear();
-    this->DisplayedVisibility.clear();
+    this->Internal->DisplayableNodes.clear();
+    this->Internal->DisplayedActors.clear();
+    this->Internal->DisplayedNodes.clear();
+    this->Internal->DisplayedClipState.clear();
+    this->Internal->DisplayedVisibility.clear();
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::RemoveModelObservers(vtkMRMLDisplayableNode *model)
+void vtkMRMLModelDisplayableManager::RemoveDisplayableNodeObservers(vtkMRMLDisplayableNode *model)
 {
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
   std::vector< vtkObservation *> observations;
@@ -1411,7 +1234,10 @@ void vtkMRMLModelDisplayableManager::RemoveHierarchyObservers(int clearCache)
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
   std::vector< vtkObservation *> observations;
   std::map<std::string, int>::iterator iter;
-  for(iter=this->RegisteredModelHierarchies.begin(); iter != this->RegisteredModelHierarchies.end(); iter++) 
+
+  for(iter=this->Internal->RegisteredModelHierarchies.begin();
+  iter != this->Internal->RegisteredModelHierarchies.end();
+  iter++)
     {
     vtkMRMLModelHierarchyNode *node = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
     if (node)
@@ -1423,7 +1249,7 @@ void vtkMRMLModelDisplayableManager::RemoveHierarchyObservers(int clearCache)
     }
   if (clearCache)
     {
-    RegisteredModelHierarchies.clear();
+    this->Internal->RegisteredModelHierarchies.clear();
     }
 }
 
@@ -1464,7 +1290,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       prop->SetUserMatrix(transformToWorld);
 
       prop->SetVisibility(mdnode->GetVisibility());
-      this->DisplayedVisibility[dnode->GetID()] = mdnode->GetVisibility();
+      this->Internal->DisplayedVisibility[dnode->GetID()] = mdnode->GetVisibility();
 
       if (actor)
         {
@@ -1611,8 +1437,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 //---------------------------------------------------------------------------
 // Description:
 // return the current actor corresponding to a give MRML ID
-vtkProp3D *
-vtkMRMLModelDisplayableManager::GetActorByID (const char *id)
+vtkProp3D * vtkMRMLModelDisplayableManager::GetActorByID(const char *id)
 {
   if ( !id )
     {
@@ -1622,7 +1447,7 @@ vtkMRMLModelDisplayableManager::GetActorByID (const char *id)
   std::map<std::string, vtkProp3D *>::iterator iter;
   // search for matching string (can't use find, since it would look for 
   // matching pointer not matching content)
-  for(iter=this->DisplayedActors.begin(); iter != this->DisplayedActors.end(); iter++) 
+  for(iter=this->Internal->DisplayedActors.begin(); iter != this->Internal->DisplayedActors.end(); iter++)
     {
     if ( iter->first.c_str() && !strcmp( iter->first.c_str(), id ) )
       {
@@ -1635,8 +1460,7 @@ vtkMRMLModelDisplayableManager::GetActorByID (const char *id)
 //---------------------------------------------------------------------------
 // Description:
 // return the ID for the given actor 
-const char *
-vtkMRMLModelDisplayableManager::GetIDByActor (vtkProp3D *actor)
+const char * vtkMRMLModelDisplayableManager::GetIDByActor(vtkProp3D *actor)
 {
   if ( !actor )
     {
@@ -1644,7 +1468,9 @@ vtkMRMLModelDisplayableManager::GetIDByActor (vtkProp3D *actor)
     }
 
   std::map<std::string, vtkProp3D *>::iterator iter;
-  for(iter=this->DisplayedActors.begin(); iter != this->DisplayedActors.end(); iter++) 
+  for(iter=this->Internal->DisplayedActors.begin();
+      iter != this->Internal->DisplayedActors.end();
+      iter++)
     {
     if ( iter->second && ( iter->second == actor ) )
       {
@@ -1655,15 +1481,36 @@ vtkMRMLModelDisplayableManager::GetIDByActor (vtkProp3D *actor)
 }
 
 
+//---------------------------------------------------------------------------
+vtkWorldPointPicker* vtkMRMLModelDisplayableManager::GetWorldPointPicker()
+{
+  vtkDebugMacro(<< "returning Internal->WorldPointPicker address "
+                << this->Internal->WorldPointPicker.GetPointer());
+  return this->Internal->WorldPointPicker;
+}
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::ResetPick()
+vtkPropPicker* vtkMRMLModelDisplayableManager::GetPropPicker()
 {
-  double zero[3] = {0.0, 0.0, 0.0};
-  this->PickedNodeName = std::string("");
-  this->SetPickedRAS(zero);
-  this->SetPickedCellID(-1);
-  this->SetPickedPointID(-1);
+  vtkDebugMacro(<< "returning Internal->PropPicker address "
+                << this->Internal->PropPicker.GetPointer());
+  return this->Internal->PropPicker;
+}
+
+//---------------------------------------------------------------------------
+vtkCellPicker* vtkMRMLModelDisplayableManager::GetCellPicker()
+{
+  vtkDebugMacro(<< "returning Internal->CellPicker address "
+                << this->Internal->CellPicker.GetPointer());
+  return this->Internal->CellPicker;
+}
+
+//---------------------------------------------------------------------------
+vtkPointPicker* vtkMRMLModelDisplayableManager::GetPointPicker()
+{
+  vtkDebugMacro(<< "returning Internal->PointPicker address "
+                << this->Internal->PointPicker.GetPointer());
+  return this->Internal->PointPicker;
 }
 
 //---------------------------------------------------------------------------
@@ -1672,8 +1519,8 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
   double RASPoint[3] = {0.0, 0.0, 0.0};
   double pickPoint[3] = {0.0, 0.0, 0.0};
 
-  // reset the pick vars
-  this->ResetPick();
+  // Reset the pick vars
+  this->Internal->ResetPick();
   
   vtkRenderer *ren;
   if (this->GetRenderer() != 0)
@@ -1695,18 +1542,18 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
   displayPoint[1] = renSize[1] - y;
   displayPoint[2] = 0.0;
 
-  if (this->CellPicker->Pick(displayPoint[0], displayPoint[1], displayPoint[2], ren))
+  if (this->Internal->CellPicker->Pick(displayPoint[0], displayPoint[1], displayPoint[2], ren))
     {
-    this->CellPicker->GetPickPosition(pickPoint);
-    this->SetPickedCellID(this->CellPicker->GetCellId());
+    this->Internal->CellPicker->GetPickPosition(pickPoint);
+    this->SetPickedCellID(this->Internal->CellPicker->GetCellId());
     // get the pointer to the poly data that the cell was in
-    vtkPolyData *polyData = vtkPolyData::SafeDownCast(this->CellPicker->GetDataSet());
+    vtkPolyData *polyData = vtkPolyData::SafeDownCast(this->Internal->CellPicker->GetDataSet());
     if (polyData != 0)
       {
       // now find the model this poly data belongs to
       std::map<std::string, vtkMRMLDisplayNode *>::iterator modelIter;
-      for (modelIter = this->DisplayedNodes.begin();
-           modelIter != this->DisplayedNodes.end();
+      for (modelIter = this->Internal->DisplayedNodes.begin();
+           modelIter != this->Internal->DisplayedNodes.end();
            modelIter++)
         {
         vtkDebugMacro("Checking model " << modelIter->first.c_str() << "'s polydata");
@@ -1715,7 +1562,7 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
           if (modelIter->second->GetPolyData() == polyData)
             {
             vtkDebugMacro("Found matching poly data, pick was on model " << modelIter->first.c_str());
-            this->PickedNodeName = modelIter->first;
+            this->Internal->PickedNodeName = modelIter->first;
             
             // figure out the closest vertex in the picked cell to the picked RAS
             // point. Only doing this on model nodes for now.
@@ -1785,18 +1632,88 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
 }     
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::SetBoxWidgetInteractor ()
+const char * vtkMRMLModelDisplayableManager::GetPickedNodeName()
 {
-  if ( this->GetRenderer() &&  
-       this->GetInteractor() )
+  vtkDebugMacro(<< "returning this->Internal->PickedNodeName of "
+                << (this->Internal->PickedNodeName.empty()?
+                    "(empty)":this->Internal->PickedNodeName));
+  return this->Internal->PickedNodeName.c_str();
+}
+
+//---------------------------------------------------------------------------
+double* vtkMRMLModelDisplayableManager::GetPickedRAS()
+{
+  vtkDebugMacro(<< "returning Internal->PickedRAS pointer " << this->Internal->PickedRAS);
+  return this->Internal->PickedRAS;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::SetPickedRAS(double* newPickedRAS)
+{
+  int i;
+  for (i=0; i<3; i++) { if ( newPickedRAS[i] != this->Internal->PickedRAS[i] ) { break; }}
+  if (i < 3)
     {
-    vtkRenderWindowInteractor *interactor = this->GetInteractor();
-    this->BoxWidget->SetInteractor(interactor);
+    for (i=0; i<3; i++) { this->Internal->PickedRAS[i] = newPickedRAS[i]; }
+    this->Modified();
     }
 }
 
 //---------------------------------------------------------------------------
-vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper (vtkMRMLDisplayableNode *model)
+vtkIdType vtkMRMLModelDisplayableManager::GetPickedCellID()
+{
+  vtkDebugMacro(<< "returning this->Internal->PickedCellID of " << this->Internal->PickedCellID);
+  return this->Internal->PickedCellID;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::SetPickedCellID(vtkIdType newCellID)
+{
+  vtkDebugMacro(<< "setting PickedCellID to " << newCellID);
+  if (this->Internal->PickedCellID != newCellID)
+    {
+    this->Internal->PickedCellID = newCellID;
+    this->Modified();
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkIdType vtkMRMLModelDisplayableManager::GetPickedPointID()
+{
+  vtkDebugMacro(<< "returning this->Internal->PickedPointID of " << this->Internal->PickedPointID);
+  return this->Internal->PickedPointID;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::SetPickedPointID(vtkIdType newPointID)
+{
+  vtkDebugMacro(<< "setting PickedPointID to " << newPointID);
+  if (this->Internal->PickedPointID != newPointID)
+    {
+    this->Internal->PickedPointID = newPointID;
+    this->Modified();
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLModelHierarchyLogic* vtkMRMLModelDisplayableManager::GetModelHierarchyLogic()
+{
+  vtkDebugMacro("returning Internal->ModelHierarchyLogic address "
+                << this->Internal->ModelHierarchyLogic);
+  return this->Internal->ModelHierarchyLogic;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::SetModelHierarchyLogic(
+    vtkMRMLModelHierarchyLogic* newModelHierarchyLogic)
+{
+  vtkSetObjectBodyMacro(Internal->ModelHierarchyLogic, vtkMRMLModelHierarchyLogic,
+                        newModelHierarchyLogic);
+}
+
+//---------------------------------------------------------------------------
+vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper(
+    vtkMRMLDisplayableNode *model)
 {
   vtkClipPolyData *clipper = vtkClipPolyData::New();
   clipper->SetValue( 0.0);
@@ -1810,11 +1727,11 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper (vtkMR
     lnode->GetMatrixTransformToWorld(transformToWorld);
 
     vtkImplicitBoolean *slicePlanes =   vtkImplicitBoolean::New();
-    if (this->ClipType == vtkMRMLClipModelsNode::ClipIntersection) 
+    if (this->Internal->ClipType == vtkMRMLClipModelsNode::ClipIntersection)
       {
       slicePlanes->SetOperationTypeToIntersection();
       }
-    else if (this->ClipType == vtkMRMLClipModelsNode::ClipUnion) 
+    else if (this->Internal->ClipType == vtkMRMLClipModelsNode::ClipUnion)
       {
       slicePlanes->SetOperationTypeToUnion();
       }
@@ -1824,17 +1741,17 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper (vtkMR
     vtkPlane *yellowSlicePlane = vtkPlane::New();
 
 
-    if (this->RedSliceClipState != vtkMRMLClipModelsNode::ClipOff)
+    if (this->Internal->RedSliceClipState != vtkMRMLClipModelsNode::ClipOff)
       {
       slicePlanes->AddFunction(redSlicePlane);
       }
 
-    if (this->GreenSliceClipState != vtkMRMLClipModelsNode::ClipOff)
+    if (this->Internal->GreenSliceClipState != vtkMRMLClipModelsNode::ClipOff)
       {
       slicePlanes->AddFunction(greenSlicePlane);
       }
 
-    if (this->YellowSliceClipState != vtkMRMLClipModelsNode::ClipOff)
+    if (this->Internal->YellowSliceClipState != vtkMRMLClipModelsNode::ClipOff)
       {
       slicePlanes->AddFunction(yellowSlicePlane);
       }
@@ -1844,22 +1761,22 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper (vtkMR
     int planeDirection = 1;
     transformToWorld->Invert();
 
-    sliceMatrix = this->RedSliceNode->GetSliceToRAS();
+    sliceMatrix = this->Internal->RedSliceNode->GetSliceToRAS();
     mat->Identity();
     vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
-    planeDirection = (this->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+    planeDirection = (this->Internal->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
     this->SetClipPlaneFromMatrix(mat, planeDirection, redSlicePlane);
 
-    sliceMatrix = this->GreenSliceNode->GetSliceToRAS();
+    sliceMatrix = this->Internal->GreenSliceNode->GetSliceToRAS();
     mat->Identity();
     vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
-    planeDirection = (this->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+    planeDirection = (this->Internal->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
     this->SetClipPlaneFromMatrix(mat, planeDirection, greenSlicePlane);
 
-    sliceMatrix = this->YellowSliceNode->GetSliceToRAS();
+    sliceMatrix = this->Internal->YellowSliceNode->GetSliceToRAS();
     mat->Identity();
     vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
-    planeDirection = (this->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
+    planeDirection = (this->Internal->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
     this->SetClipPlaneFromMatrix(mat, planeDirection, yellowSlicePlane);
 
     clipper->SetClipFunction(slicePlanes);
@@ -1872,7 +1789,7 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper (vtkMR
     }
   else 
     {
-    clipper->SetClipFunction(this->SlicePlanes);
+    clipper->SetClipFunction(this->Internal->SlicePlanes);
     }
   return clipper;
 }
