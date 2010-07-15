@@ -122,7 +122,7 @@ void vtkSlicerROIViewerWidget::AddMRMLObservers ()
  // observe scene for add/remove nodes
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
 
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);

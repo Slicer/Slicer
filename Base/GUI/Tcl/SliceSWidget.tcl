@@ -122,12 +122,12 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   set NodeAddedEvent 66000
   set NodeRemovedEvent 66001
   set SceneClosedEvent 66003
-  set SceneClosingEvent 66004
+  set SceneAboutToBeClosedEvent 66004
   set SceneLoadEndEvent 66011
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene $NodeAddedEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene NodeAddedEvent"
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene $NodeRemovedEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene NodeRemovedEvent"
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene $SceneClosedEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneClosedEvent"
-  $::slicer3::Broker AddObservation $::slicer3::MRMLScene $SceneClosingEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneClosingEvent"
+  $::slicer3::Broker AddObservation $::slicer3::MRMLScene $SceneAboutToBeClosedEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneAboutToBeClosedEvent"
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene $SceneLoadEndEvent "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneLoadEndEvent"
 
   # put the other widgets last the events in this widget get natural
@@ -319,7 +319,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   # MRML Scene update probably means we need to create a new model intersection SWidget
   if { $caller == $::slicer3::MRMLScene && 
        ((($event == "NodeAddedEvent" || $event == "NodeRemovedEvent") && ![$::slicer3::MRMLScene GetIsClosing]) || 
-        $event == "SceneClosedEvent" || $event == "SceneClosingEvent" ||
+        $event == "SceneClosedEvent" || $event == "SceneAboutToBeClosedEvent" ||
         $event == "SceneLoadEndEvent") } {
     $this updateSWidgets
   }

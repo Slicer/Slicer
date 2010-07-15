@@ -698,7 +698,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   vtkDebugMacro("ProcessMRMLEvents: processing event " << event);
 
-  if (event == vtkMRMLScene::SceneClosingEvent )
+  if (event == vtkMRMLScene::SceneAboutToBeClosedEvent )
     {
     this->RemoveHierarchyObservers(0);
     this->RemoveModelObservers(0);
@@ -1365,7 +1365,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   // observe scene for add/remove nodes
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneLoadStartEvent);
   events->InsertNextValue(vtkMRMLScene::SceneLoadEndEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);

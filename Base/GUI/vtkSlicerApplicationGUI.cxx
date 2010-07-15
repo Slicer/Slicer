@@ -1618,7 +1618,7 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
   else if (scene != NULL &&
            scene == this->MRMLScene &&
-           event == vtkMRMLScene::SceneClosingEvent )
+           event == vtkMRMLScene::SceneAboutToBeClosedEvent )
     {
     this->SceneClosing = true;
     // scene closing, let's try to release all the dependencies
@@ -4415,7 +4415,7 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
       vtkIntArray *events = vtkIntArray::New();
       events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
       events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-      events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+      events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
       events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
       events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
       events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);

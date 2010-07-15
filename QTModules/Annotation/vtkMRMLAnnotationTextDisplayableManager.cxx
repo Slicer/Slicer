@@ -413,7 +413,7 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdateWidgetInteractors()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneClosingEvent()
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
 {
 }
 

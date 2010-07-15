@@ -125,7 +125,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->DeleteEventCallback = vtkCallbackCommand::New();
   this->DeleteEventCallback->SetClientData( reinterpret_cast<void *>(this) );
   this->DeleteEventCallback->SetCallback( vtkMRMLScene::SceneCallback );
-  // we want to be first to catch the event, so that SceneClosingEvent, 
+  // we want to be first to catch the event, so that SceneAboutToBeClosedEvent, 
   // NodeRemovedEvent and SceneCloseddEvent are fired and caught before DeleteEvent
   // is caught by other observers.
   this->AddObserver(vtkCommand::DeleteEvent, this->DeleteEventCallback, 1000.);
@@ -460,7 +460,7 @@ void vtkMRMLScene::SceneCallback( vtkObject *vtkNotUsed(caller),
 void vtkMRMLScene::Clear(int removeSingletons) 
 {
   this->SetUndoOff();
-  this->InvokeEvent(this->SceneClosingEvent, NULL);
+  this->InvokeEvent(this->SceneAboutToBeClosedEvent, NULL);
   this->SetIsClosing(true);
   
   if (!removeSingletons)
@@ -498,7 +498,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   this->Modified();
   this->SetUndoOn();
 
-  // Unless I'm wrong, this should be at the very end. SceneClosingEvent
+  // Unless I'm wrong, this should be at the very end. SceneAboutToBeClosedEvent
   // is the event that gives a "chance" to objects to release resources.
   // SceneClosedEvent however means, we are done. At this point it seems
   // logical objects are free to create new objects/nodes, for example

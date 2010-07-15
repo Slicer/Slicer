@@ -96,7 +96,7 @@ void qMRMLSliceViewWidgetPrivate::setMRMLScene(vtkMRMLScene* newScene)
     
   this->qvtkReconnect(
     p->mrmlScene(), newScene,
-    vtkMRMLScene::SceneClosingEvent, this, SLOT(onSceneClosingEvent()));
+    vtkMRMLScene::SceneAboutToBeClosedEvent, this, SLOT(onSceneAboutToBeClosedEvent()));
 
   this->qvtkReconnect(
     p->mrmlScene(), newScene,
@@ -141,7 +141,7 @@ void qMRMLSliceViewWidgetPrivate::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNod
   VTK_CREATE(vtkIntArray, events);
   events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
@@ -194,9 +194,9 @@ void qMRMLSliceViewWidgetPrivate::setupMoreOptionMenu()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onSceneClosingEvent()
+void qMRMLSliceViewWidgetPrivate::onSceneAboutToBeClosedEvent()
 {
-  qDebug() << "qMRMLSliceViewPrivate::onSceneClosingEvent";
+  qDebug() << "qMRMLSliceViewPrivate::onSceneAboutToBeClosedEvent";
   this->VTKSliceView->setRenderEnabled(false);
 }
 

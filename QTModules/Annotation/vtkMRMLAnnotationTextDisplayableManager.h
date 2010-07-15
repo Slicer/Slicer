@@ -54,7 +54,7 @@ public:
 
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLEvents
-  virtual void OnMRMLSceneClosingEvent();
+  virtual void OnMRMLSceneAboutToBeClosedEvent();
   virtual void OnMRMLSceneClosedEvent();
   virtual void OnMRMLSceneLoadStartEvent();
   virtual void OnMRMLSceneLoadEndEvent();
