@@ -1712,8 +1712,8 @@ if (this->ClassOverviewWeightList)
         list->AddRow();
         vtkIdType class_id = mrmlManager->GetTreeNodeChildNodeID(parent,row);
         list->SetCellText(row, 0, mrmlManager->GetTreeNodeName(class_id));
-    list->SetCellTextAsDouble(row, 1, mrmlManager->GetTreeNodeClassProbability(class_id));
-    list->SetCellEditWindowToSpinBox(row,1);
+        list->SetCellTextAsDouble(row, 1, mrmlManager->GetTreeNodeClassProbability(class_id));
+        // list->SetCellEditWindowToSpinBox(row,1);
     if (row < rowNum) 
       {
         list->SetCellTextAsInt(row, 2, autoState[row]);
