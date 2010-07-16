@@ -232,8 +232,7 @@ typename TransformType::Pointer DoCenteredInitialization(
         movingFindCenter->SetImageMask(tempOutputMovingVolumeROI);
         }
       movingFindCenter->Update();
-      typename MovingVolumeType::PointType movingCenter
-        = movingFindCenter->GetCenterOfBrain();
+      movingCenter = movingFindCenter->GetCenterOfBrain();
 #if 1
       {
       // convert mask image to mask
@@ -272,8 +271,7 @@ typename TransformType::Pointer DoCenteredInitialization(
       fixedFindCenter->SetImageMask(tempOutputFixedVolumeROI);
       }
     fixedFindCenter->Update();
-    typename FixedVolumeType::PointType fixedCenter
-      = fixedFindCenter->GetCenterOfBrain();
+    fixedCenter = fixedFindCenter->GetCenterOfBrain();
 
 #if 1
       {
@@ -312,12 +310,12 @@ typename TransformType::Pointer DoCenteredInitialization(
       translationVector[i] = movingCenter[i] - fixedCenter[i];
       scaleValue[i] = movingHeadScaleGuessRatio;
       }
-#if 1
     typedef itk::Euler3DTransform<double> EulerAngle3DTransformType;
     typename EulerAngle3DTransformType::Pointer bestEulerAngles3D = EulerAngle3DTransformType::New();
     bestEulerAngles3D->SetCenter(rotationCenter);
     bestEulerAngles3D->SetTranslation(translationVector);
 
+#if 1
     typedef itk::Euler3DTransform<double> EulerAngle3DTransformType;
     typename EulerAngle3DTransformType::Pointer currentEulerAngles3D = EulerAngle3DTransformType::New();
     currentEulerAngles3D->SetCenter(rotationCenter);
@@ -464,6 +462,7 @@ typename TransformType::Pointer DoCenteredInitialization(
     }
 #endif
     }
+#endif
     typename VersorRigid3DTransformType::Pointer quickSetVersor = VersorRigid3DTransformType::New();
     quickSetVersor->SetCenter( bestEulerAngles3D->GetCenter() );
     quickSetVersor->SetTranslation( bestEulerAngles3D->GetTranslation() );
@@ -524,7 +523,7 @@ typename TransformType::Pointer DoCenteredInitialization(
     }
     }
 #endif
-#endif
+//#endif
     AssignRigid::AssignConvertedTransform( initialITKTransform, quickSetVersor.GetPointer() );
     }
   else if ( initializeTransformMode == "useMomentsAlign" )
