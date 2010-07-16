@@ -118,6 +118,8 @@ protected:
 
   void UpdateDataDirectory();
 
+  int CheckUniqueFilenames(vtkIntArray* arrayRows);
+
   /// 
   /// Create all the columns for the multicolumn list
   void SetupSaveDataListWidget();

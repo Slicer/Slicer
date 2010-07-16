@@ -368,6 +368,11 @@ int vtkSlicerMRMLSaveDataWidget::SaveMarkedData()
 //---------------------------------------------------------------------------
 int vtkSlicerMRMLSaveDataWidget::SaveData(vtkIntArray* arrayRows)
 {
+  if (!this->CheckUniqueFilenames(arrayRows))
+    {
+    return 0;
+    }
+
   int nrows = arrayRows->GetNumberOfTuples();
   int row, numNotWrite = 0;
   for (int i=0; i<nrows; i++)
@@ -465,6 +470,55 @@ int vtkSlicerMRMLSaveDataWidget::SaveData(vtkIntArray* arrayRows)
   if(numNotWrite)
     {
     return 0;
+    }
+  return 1;
+}
+
+
+//---------------------------------------------------------------------------
+int vtkSlicerMRMLSaveDataWidget::CheckUniqueFilenames(vtkIntArray* arrayRows)
+{
+  std::map<std::string, std::string> fileNames;
+  std::map<std::string, std::string>::iterator iter;
+
+  int nrows = arrayRows->GetNumberOfTuples();
+  int row = 0;
+  for (int i=0; i<nrows; i++)
+    {
+    row = arrayRows->GetValue(i);
+
+    std::string filePath = this->GetRowFullFileName(row);
+
+    if(filePath.empty())
+      {
+      continue;
+      }
+
+    std::string fileFormat (this->MultiColumnList->GetWidget()->
+                            GetCellText(row, Format_Column));
+
+    iter = fileNames.find(filePath);
+
+    if (iter != fileNames.end())
+      {
+      vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+      message->SetParent ( this->GetParent() );      
+      message->SetMasterWindow ( this->SaveDialog );
+      message->SetStyleToOkCancel();
+      std::string msg = "Two or more files have the same name: " + filePath + " One will overwrite the other. \nDo you want to continue saving?";
+      message->SetText(msg.c_str());
+      message->Create();
+      int ok = message->Invoke();
+      message->Delete(); 
+      if (!ok)
+        {
+        return 0;
+        }
+      }
+    else 
+      {
+      fileNames[filePath] = filePath;
+      }
     }
   return 1;
 }
