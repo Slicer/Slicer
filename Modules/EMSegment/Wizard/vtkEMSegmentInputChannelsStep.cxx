@@ -100,7 +100,9 @@ void vtkEMSegmentInputChannelsStep::ShowUserInterface()
        wizardWidget->SetNextButtonVisibility(0);
     }
 
-  
+  wizardWidget->SetBackButtonVisibility(1);
+  wizardWidget->SetFinishButtonVisibility(1);
+
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
   if (!mrmlManager || !wizard_widget)

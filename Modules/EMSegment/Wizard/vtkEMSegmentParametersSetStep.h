@@ -80,7 +80,7 @@ private:
   void UpdateTaskListIndex(int index);
 
   int LoadDefaultData(const char *dataLink, bool warningFlag);
-  void LoadTask(int index, bool warningFlag);
+  int LoadTask(int index, bool warningFlag);
 
   void DefineDefaultTasksList();
   //BTX:

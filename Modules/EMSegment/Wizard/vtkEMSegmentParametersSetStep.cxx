@@ -116,7 +116,8 @@ void vtkEMSegmentParametersSetStep::ShowUserInterface()
 
   wizardWidget->GetCancelButton()->SetEnabled(0);
   wizardWidget->SetNextButtonVisibility(0);
-
+  wizardWidget->SetBackButtonVisibility(0);
+  wizardWidget->SetFinishButtonVisibility(0);
 
   // Create the Parameters set frame
 
@@ -495,13 +496,13 @@ void vtkEMSegmentParametersSetStep::PopUpRenameEntry(int index)
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentParametersSetStep::LoadTask(int index, bool warningFlag)
+int vtkEMSegmentParametersSetStep::LoadTask(int index, bool warningFlag)
 {
 
   if (index < 0 || index >  int(this->pssDefaultTasksName.size() -2) )
     {
       vtkErrorMacro("Index is not defined");
-      return;
+      return 1;
     }
 
 
@@ -521,10 +522,11 @@ void vtkEMSegmentParametersSetStep::LoadTask(int index, bool warningFlag)
         {
           // Select the Node 
           this->SelectedParameterSetChangedCallback(index,0);
-      break;
+          break;
         }
       }
     }
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -547,17 +549,30 @@ int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *tclFile, bool war
   // Load MRML File whose location is defined in the tcl file 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkMRMLScene *scene = mrmlManager->GetMRMLScene();
-  const char* mrmlFile = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->Script("::EMSegmenterParametersStepTcl::DefineMRMLFile");
-  scene->SetURL(mrmlFile);
-  scene->Import();
-  this->GetGUI()->GetApplicationGUI()->SelectModule("EMSegmenter");
+  vtksys_stl::string mrmlFile(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->Script("::EMSegmenterParametersStepTcl::DefineMRMLFile"));
+  scene->SetURL(mrmlFile.c_str());
+ 
+  if (!scene->Import()) 
+    {
+      vtksys_stl::string msg= vtksys_stl::string("Could not load mrml file ") +  mrmlFile  ;
+      vtkKWMessageDialog::PopupMessage(this->GetApplication(),NULL,"Load Error", msg.c_str(), vtkKWMessageDialog::ErrorIcon | vtkKWMessageDialog::InvokeAtPointer);
+      return 1;
+    }
 
   if(scene->GetErrorCode())
     {
-      vtkErrorMacro("ERROR: Failed to connect to the data. Error code: " << scene->GetErrorCode() 
-      << " Error message: " << scene->GetErrorMessage());
+      vtksys_stl::string msg= vtksys_stl::string("Corrupted File", "MRML file") +  mrmlFile +  vtksys_stl::string(" was corrupted or could not be loaded");
+      vtkErrorMacro("ERROR: Failed to connect to the data. Error code: " << scene->GetErrorCode()  << " Error message: " << scene->GetErrorMessage());
+      vtkKWMessageDialog::PopupMessage(this->GetApplication(),NULL, "Corrupted File", msg.c_str() , vtkKWMessageDialog::ErrorIcon | vtkKWMessageDialog::InvokeAtPointer);
       return 1;
     }
+
+  cout << "==========================================================================" << endl;
+  cout << "== Completed loading task data " << endl;
+  cout << "==========================================================================" << endl;
+
+ this->GetGUI()->GetApplicationGUI()->SelectModule("EMSegmenter");
+
   return 0;
 }
 
