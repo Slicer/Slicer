@@ -832,6 +832,7 @@ void qSlicerLayoutManager::switchToDual3DView()
     {
     vtkMRMLNode * node = qMRMLNodeFactory::createNode(d->MRMLScene, "vtkMRMLViewNode");
     Q_ASSERT(node);
+    Q_UNUSED(node);
     }
 
   // Second render view

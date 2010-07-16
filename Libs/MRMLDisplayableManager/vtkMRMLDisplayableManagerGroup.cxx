@@ -323,13 +323,11 @@ vtkMRMLAbstractDisplayableManager*
 void vtkMRMLDisplayableManagerGroup::DoCallback(vtkObject* vtk_obj, unsigned long event,
                                                 void* client_data, void* call_data)
 {
-  vtkMRMLDisplayableManagerFactory* factory =
-      reinterpret_cast<vtkMRMLDisplayableManagerFactory*>(vtk_obj);
   vtkMRMLDisplayableManagerGroup* self =
       reinterpret_cast<vtkMRMLDisplayableManagerGroup*>(client_data);
   char* displayableManagerName = reinterpret_cast<char*>(call_data);
-  assert(factory);
   assert(self);
+  assert(reinterpret_cast<vtkMRMLDisplayableManagerFactory*>(vtk_obj));
   assert(displayableManagerName);
 
   switch(event)

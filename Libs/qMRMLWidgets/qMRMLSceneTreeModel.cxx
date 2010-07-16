@@ -333,7 +333,7 @@ qMRMLSceneTreeModelPrivate::children(const qMRMLAbstractItemHelper* parentItem,
 QStack<int>
 qMRMLSceneTreeModelPrivate::consecutiveRows(const QVector<QSharedPointer<qMRMLAbstractItemHelper> >& items ) const
 {
-  CTK_P(const qMRMLSceneTreeModel);
+  //CTK_P(const qMRMLSceneTreeModel);
   QSharedPointer<qMRMLAbstractItemHelper> lastParentItem;
   int lastRow = -1;
   QStack<int> consecutiveRowsStack;

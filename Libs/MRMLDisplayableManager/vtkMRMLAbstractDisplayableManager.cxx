@@ -271,8 +271,7 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                           unsigned long event,
                                                           void *callData)
 {
-  vtkMRMLScene * scene = vtkMRMLScene::SafeDownCast(caller);
-  assert(scene == this->GetMRMLScene());
+  assert(vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene());
 
   vtkMRMLNode * node = 0;
 
