@@ -1,4 +1,15 @@
 SET(KIT Annotation)
+
+SET( KIT_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
+
+IF(WIN32)
+  SET(KIT_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
+ENDIF(WIN32)
+
+MACRO( SIMPLE_TEST  TESTNAME )
+  ADD_TEST( ${TESTNAME} ${LAUNCH_EXE} ${KIT_TESTS} ${TESTNAME} )
+ENDMACRO( SIMPLE_TEST  )
+
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLAnnotationNodeTest1.cxx
@@ -19,7 +30,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLAnnotationTextDisplayableManagerTest1.cxx
   #vtkSlicerAnnotationModuleLogicTest1.cxx
   #qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
-  TestAnnAngleWidget3D.cxx
+  #TestAnnAngleWidget3D.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -31,32 +42,24 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
-SET( Annotation_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
+set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 
-IF(WIN32)
-  SET(Annotation_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
-ENDIF(WIN32)
-
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${LAUNCH_EXE} ${Annotation_TESTS} ${TESTNAME} )
-ENDMACRO( SIMPLE_TEST  )
-
-SIMPLE_TEST( vtkMRMLAnnotationNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationStorageNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationDisplayNodeTest1 )
-SIMPLE_TEST( TestAnnAngleWidget3D )
-SIMPLE_TEST( vtkMRMLAnnotationControlPointsNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationPointDisplayNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationControlPointsStorageNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationLinesNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationLineDisplayNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationLinesStorageNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationAngleNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationAngleStorageNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationRulerNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationRulerStorageNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationFiducialNodeTest1 )
-SIMPLE_TEST( vtkMRMLAnnotationTextDisplayableManagerTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationStorageNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationDisplayNodeTest1 )
+#SIMPLE_TEST( TestAnnAngleWidget3D )
+#SIMPLE_TEST( vtkMRMLAnnotationControlPointsNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationPointDisplayNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationControlPointsStorageNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationLinesNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationLineDisplayNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationLinesStorageNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationAngleNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationAngleStorageNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationRulerNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationRulerStorageNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationFiducialNodeTest1 )
+#SIMPLE_TEST( vtkMRMLAnnotationTextDisplayableManagerTest1 )
 #SIMPLE_TEST( vtkSlicerAnnotationModuleLogicTest1 )
 #SIMPLE_TEST( qSlicerAnnotationModuleAnnotationPropertyDialogTest1 )
 
@@ -101,3 +104,16 @@ file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 #   ${TESTFILES}
 #   DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
 #   ) 
+
+
+#
+# Add all the tests
+#
+FOREACH (test ${TestsToRun})
+  GET_FILENAME_COMPONENT(TName ${test} NAME_WE)
+  ADD_TEST(${TName} ${LAUNCH_EXE} ${CXX_TEST_PATH}/${KIT}CxxTests ${TName}
+      -D ${CMAKE_CURRENT_SOURCE_DIR}/../
+      -T ${TEMP}
+      #-V Baseline/${TName}.png
+      )
+ENDFOREACH()
