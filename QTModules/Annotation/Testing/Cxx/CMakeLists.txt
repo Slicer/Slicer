@@ -16,6 +16,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLAnnotationRulerStorageNodeTest1.cxx
   vtkMRMLAnnotationFiducialNodeTest1.cxx
   vtkMRMLAnnotationFiducialsStorageNodeTest1.cxx
+  vtkMRMLAnnotationTextDisplayableManagerTest1.cxx
   #vtkSlicerAnnotationModuleLogicTest1.cxx
   #qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
   TestAnnAngleWidget3D.cxx
@@ -55,11 +56,12 @@ SIMPLE_TEST( vtkMRMLAnnotationAngleStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLAnnotationRulerNodeTest1 )
 SIMPLE_TEST( vtkMRMLAnnotationRulerStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLAnnotationFiducialNodeTest1 )
-SIMPLE_TEST( vtkSlicerAnnotationModuleLogicTest1 )
-SIMPLE_TEST( qSlicerAnnotationModuleAnnotationPropertyDialogTest1 )
+SIMPLE_TEST( vtkMRMLAnnotationTextDisplayableManagerTest1 )
+#SIMPLE_TEST( vtkSlicerAnnotationModuleLogicTest1 )
+#SIMPLE_TEST( qSlicerAnnotationModuleAnnotationPropertyDialogTest1 )
 
 
-ADD_TEST(Slicer3AnnotationRulerTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
+#ADD_TEST(Slicer3AnnotationRulerTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
 
 # SIMPLE_TEST( vtkMRMLAnnotationFiducialStorageNodeTest1 )
 # Install the testing data
