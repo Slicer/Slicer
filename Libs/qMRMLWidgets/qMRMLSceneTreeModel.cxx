@@ -333,12 +333,14 @@ qMRMLSceneTreeModelPrivate::children(const qMRMLAbstractItemHelper* parentItem,
 QStack<int>
 qMRMLSceneTreeModelPrivate::consecutiveRows(const QVector<QSharedPointer<qMRMLAbstractItemHelper> >& items ) const
 {
-  //CTK_P(const qMRMLSceneTreeModel);
+  CTK_P(const qMRMLSceneTreeModel);
+  Q_ASSERT(items.size() % p->columnCount() == 0);
+  Q_UNUSED(p);
+
   QSharedPointer<qMRMLAbstractItemHelper> lastParentItem;
   int lastRow = -1;
   QStack<int> consecutiveRowsStack;
   bool aValidItem = false;
-  Q_ASSERT(items.size() % p->columnCount() == 0);
   foreach(const QSharedPointer<qMRMLAbstractItemHelper>& item, items)
     {
     // process only the column 0 items as we are only interested by the rows
