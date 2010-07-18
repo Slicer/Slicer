@@ -5,7 +5,7 @@ SET(qt_module_title "Volumes")
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_VOLUMES_EXPORT")
 
-# Additional directories to include
+# Additional includes - Current_{source,binary} and Slicer3_{Libs,Base} already included
 SET(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
