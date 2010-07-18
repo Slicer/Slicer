@@ -1,5 +1,5 @@
-#ifndef __qSlicerWidget_h
-#define __qSlicerWidget_h
+#ifndef __qMRMLWidget_h
+#define __qMRMLWidget_h
 
 // Qt includes
 #include <QWidget>
