@@ -579,7 +579,7 @@
     <transform fileExtensions=".mat">
       <name>rigidTransformDebug</name>
       <longflag>rigidTransformDebug</longflag>
-      <label>Rigid versor transform</label>
+      <label>Rigid transform</label>
       <description></description>
       <channel>output</channel>
     </transform>
