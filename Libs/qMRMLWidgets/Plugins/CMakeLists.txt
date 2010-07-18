@@ -20,6 +20,8 @@ SET(designer_plugin_SRCS
   qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.cxx
   qMRMLROIWidgetPlugin.h
+  qMRMLSliceControllerWidgetPlugin.cxx
+  qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceViewWidgetPlugin.cxx
   qMRMLSliceViewWidgetPlugin.h
   qMRMLThreeDRenderViewPlugin.cxx
@@ -54,6 +56,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.h
   qMRMLSceneFactoryWidgetPlugin.h
+  qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceViewWidgetPlugin.h
   qMRMLThreeDRenderViewPlugin.h
   qMRMLTransformSlidersPlugin.h

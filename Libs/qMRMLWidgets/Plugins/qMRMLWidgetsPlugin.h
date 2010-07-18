@@ -8,6 +8,7 @@
 #include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLRangeWidgetPlugin.h"
 #include "qMRMLROIWidgetPlugin.h"
+#include "qMRMLSliceControllerWidgetPlugin.h"
 #include "qMRMLSliceViewWidgetPlugin.h"
 #include "qMRMLThreeDRenderViewPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
@@ -39,6 +40,7 @@ public:
             << new qMRMLRangeWidgetPlugin
             << new qMRMLROIWidgetPlugin
             << new qMRMLThreeDRenderViewPlugin
+            << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceViewWidgetPlugin
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeWidgetPlugin
