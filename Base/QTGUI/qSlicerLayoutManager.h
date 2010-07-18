@@ -10,6 +10,7 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 class qMRMLThreeDRenderView;
+class qMRMLSliceViewWidget;
 class qSlicerLayoutManagerPrivate;
 class vtkMRMLScene;
 
@@ -23,6 +24,9 @@ public:
   /// Constructors
   explicit qSlicerLayoutManager(QWidget* widget);
   virtual ~qSlicerLayoutManager(){}
+
+  /// Get SliceViewWidget identified by \a name
+  qMRMLSliceViewWidget* sliceView(const QString& name);
 
   /// Return the number of instantiated ThreeDRenderView
   int threeDRenderViewCount();

@@ -529,6 +529,17 @@ qSlicerLayoutManager::qSlicerLayoutManager(QWidget* widget) : Superclass(widget)
 }
 
 //------------------------------------------------------------------------------
+qMRMLSliceViewWidget* qSlicerLayoutManager::sliceView(const QString& name)
+{
+  CTK_D(qSlicerLayoutManager);
+  if (!d->SliceViewMap.contains(name))
+    {
+    return 0;
+    }
+  return d->SliceViewMap[name];
+}
+
+//------------------------------------------------------------------------------
 int qSlicerLayoutManager::threeDRenderViewCount()
 {
   CTK_D(qSlicerLayoutManager);
