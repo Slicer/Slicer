@@ -14,7 +14,7 @@ if(NOT DEFINED ITK_DIR)
   ExternalProject_Add(${proj}
     CVS_REPOSITORY ":pserver:anonymous:insight@public.kitware.com:/cvsroot/Insight"
     CVS_MODULE "Insight"
-    CVS_TAG -r ITK-3-18
+    CVS_TAG -r ITK-3-20
     UPDATE_COMMAND ""
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
