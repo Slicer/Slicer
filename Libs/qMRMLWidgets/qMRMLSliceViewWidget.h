@@ -13,6 +13,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLSliceViewWidgetPrivate;
+class qMRMLSliceControllerWidget;
 class vtkMRMLScene;
 class vtkMRMLNode;
 class vtkMRMLSliceNode;
@@ -31,53 +32,53 @@ public:
   typedef qMRMLWidget Superclass;
   
   /// Constructors
-  explicit qMRMLSliceViewWidget(const QString& sliceViewName, QWidget* parent = 0);
+  explicit qMRMLSliceViewWidget(QWidget* parent = 0);
   virtual ~qMRMLSliceViewWidget(){}
 
-  /// Get slice orientation
-  /// \sa setSliceOrientation(QString);
-  QString sliceOrientation();
+  /// Get slice controller
+  qMRMLSliceControllerWidget* sliceController()const;
 
-  /// Get \a sliceNode
+  /// \sa qMRMLSliceControllerWidget::mrmlSliceNode()
+  /// \sa setMRMLSliceNode()
   vtkMRMLSliceNode* mrmlSliceNode()const;
 
-  /// Get imageData
+  /// \sa qMRMLSliceControllerWidget::sliceOrientation()
+  /// \sa setSliceOrientation()
+  QString sliceOrientation()const;
+
+  /// \sa qMRMLSliceControllerWidget::imageData()
+  /// \sa setImageData();
   vtkImageData* imageData()const;
 
-  /// Set/Get \a sliceCompositeNode
-  void setMRMLSliceCompositeNode(vtkMRMLSliceCompositeNode* sliceCompositeNode);
+  /// \sa qMRMLSliceControllerWidget::mrmlSliceCompositeNode()
   vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode()const;
 
-  /// Get slice view name
+  /// \sa qMRMLSliceControllerWidget::sliceViewName()
+  /// \sa setSliceViewName()
   QString sliceViewName()const;
 
-  /// Set slice offset range
-  void setSliceOffsetRange(double min, double max);
-
-  /// Set slice offset increment
-  void setSliceOffsetResolution(double resolution);
+  /// \sa qMRMLSliceControllerWidget::sliceViewName()
+  /// \sa sliceViewName()
+  void setSliceViewName(const QString& newSliceViewName);
 
 public slots:
 
-  /// Set the MRML \a scene that should be listened for events
-  void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLScene(vtkMRMLScene * newScene);
 
-  ///
-  /// Set \a sliceNode
-  void setMRMLSliceNode(vtkMRMLSliceNode* sliceNode);
+  /// \sa qMRMLSliceControllerWidget::setMRMLSliceNode()
+  /// \sa mrmlSliceNode()
+  void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);
 
-  /// Set imageData
+  /// \sa qMRMLSliceControllerWidget::setImageData()
+  /// \sa imageData()
   void setImageData(vtkImageData* newImageData);
   
-  /// Fit slices to background
-  void fitSliceToBackground();
-
-  /// Set slice orientation
-  /// Orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat"
+  /// \sa qMRMLSliceControllerWidget::setSliceOrientation()
+  /// \sa sliceOrientation()
   void setSliceOrientation(const QString& orienation);
 
-  /// Triggered after the slice offset slider position is changed
-  void setSliceOffsetValue(double value);
+  /// Fit slices to background
+  void fitSliceToBackground();
 
 protected:
 

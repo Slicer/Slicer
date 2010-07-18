@@ -11,7 +11,7 @@ qMRMLSliceViewWidgetPlugin::qMRMLSliceViewWidgetPlugin(QObject *_parent):QObject
 //-----------------------------------------------------------------------------
 QWidget *qMRMLSliceViewWidgetPlugin::createWidget(QWidget *_parent)
 {
-  qMRMLSliceViewWidget* _widget = new qMRMLSliceViewWidget("red", _parent);
+  qMRMLSliceViewWidget* _widget = new qMRMLSliceViewWidget(_parent);
   return _widget;
 }
 

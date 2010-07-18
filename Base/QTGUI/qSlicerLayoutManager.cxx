@@ -114,7 +114,8 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(const QString& sliceViewNa
     }
   else
     {
-    sliceView = new qMRMLSliceViewWidget(sliceViewName, this->TargetWidget);
+    sliceView = new qMRMLSliceViewWidget(this->TargetWidget);
+    sliceView->setSliceViewName(sliceViewName);
     sliceView->setMRMLScene(this->MRMLScene);
     sliceView->setMRMLSliceNode(sliceNode);
 
