@@ -258,9 +258,9 @@ int BRAINSFitIGTPrimary( int argc, char *argv[] )
     {
     localTransformType = transformType;
     }
-  else if ( ( ( initialTransform.size() >
-                0 )
-              + ( useCenterOfHeadAlign == true ) + ( useGeometryAlign == true ) + ( useMomentsAlign == true ) ) > 0 )
+  else if ( ( ( initialTransform.size() >  0 ) + ( useCenterOfHeadAlign == true ) 
+            + ( useGeometryAlign == true ) + ( useMomentsAlign == true ) 
+            + ( useCenterOfROIAlign == true) ) > 0 )
     {
     // Only do the initialization phase;
     }
