@@ -26,6 +26,7 @@
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerModelsIO.h"
 #include "qSlicerScalarOverlayIO.h"
+#include "qSlicerSliceControllerModule.h"
 // endofFIXME
   
 //-----------------------------------------------------------------------------
@@ -79,6 +80,7 @@ void qSlicerCoreModuleFactory::registerItems()
   //d->registerCoreModule<qSlicerDataModule>();
   //d->registerCoreModule<qSlicerMRMLTreeModule>();
   d->registerCoreModule<qSlicerROIModule>();
+  d->registerCoreModule<qSlicerSliceControllerModule>();
   d->registerCoreModule<qSlicerTransformsModule>();
   
   qSlicerCoreApplication::application()->coreIOManager()
