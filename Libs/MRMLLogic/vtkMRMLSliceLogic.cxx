@@ -62,6 +62,7 @@ vtkStandardNewMacro(vtkMRMLSliceLogic);
 //----------------------------------------------------------------------------
 vtkMRMLSliceLogic::vtkMRMLSliceLogic()
 {
+  this->Initialized = false;
   this->Name = 0;
   this->BackgroundLayer = 0;
   this->ForegroundLayer = 0;
@@ -124,6 +125,57 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
 
   this->DeleteSliceModel();
 
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::IsInitialized()
+{
+  return this->Initialized;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::Initialize(const char* name, vtkMRMLScene * newScene,
+                                   vtkMRMLSliceNode* newSliceNode)
+{
+  if (this->Initialized)
+    {
+    vtkWarningMacro(<< "vtkMRMLSliceLogic already initialized");
+    return;
+    }
+
+  // Sanity checks
+  if (!name || strlen(name) == 0)
+    {
+    vtkWarningMacro(<< "Initialize - name is NULL");
+    return;
+    }
+  if (!newScene)
+    {
+    vtkWarningMacro(<< "Initialize - newScene is NULL");
+    return;
+    }
+  if (!newSliceNode)
+    {
+    vtkWarningMacro(<< "Initialize - newSliceNode is NULL");
+    return;
+    }
+
+  // List of events the slice logics should listen
+  vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
+  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+
+  this->SetAndObserveMRMLSceneEvents(newScene, events);
+  this->SetSliceNode(newSliceNode);
+  this->SetName(name);
+  this->ProcessLogicEvents();
+  this->ProcessMRMLEvents(newScene, vtkCommand::ModifiedEvent, 0);
+
+  this->Initialized = true;
 }
 
 //----------------------------------------------------------------------------
@@ -456,11 +508,9 @@ void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *sliceCompositeNode)
 {
-    // Observe the composite node, since this holds the parameters for
-    // this pipeline
+  // Observe the composite node, since this holds the parameters for this pipeline
   vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, sliceCompositeNode );
   this->UpdatePipeline();
-
 }
 
 //----------------------------------------------------------------------------

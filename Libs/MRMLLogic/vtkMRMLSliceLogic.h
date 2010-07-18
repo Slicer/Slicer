@@ -66,6 +66,9 @@ public:
   vtkTypeRevisionMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  bool IsInitialized();
+  void Initialize(const char* name, vtkMRMLScene * newScene, vtkMRMLSliceNode* newSliceNode);
+
   ///
   /// Set / Get SliceLogic name
   vtkSetStringMacro(Name);
@@ -307,6 +310,7 @@ protected:
 
   int SliceViewSize[2];
 
+  bool                        Initialized;
   char *                      Name;
   vtkMRMLSliceNode *          SliceNode;
   vtkMRMLSliceCompositeNode * SliceCompositeNode;
