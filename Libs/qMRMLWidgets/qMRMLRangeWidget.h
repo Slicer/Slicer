@@ -11,8 +11,7 @@
 
 class qMRMLRangeSliderPrivate;
 
-///
-/// qMRMLRangeWidget is a wrapper around a ctkRangewidget
+/// qMRMLRangeWidget is a wrapper around a ctkRangeWidget
 class QMRML_WIDGETS_EXPORT qMRMLRangeWidget : public ctkRangeWidget
 {
   Q_OBJECT
@@ -21,7 +20,7 @@ class QMRML_WIDGETS_EXPORT qMRMLRangeWidget : public ctkRangeWidget
 
 public:
   /// Constructor
-  /// If \li parent is null, qMRMLRangeWidget will be a top-leve widget
+  /// If \li parent is null, qMRMLRangeWidget will be a top-level widget
   /// \note The \li parent can be set later using QWidget::setParent()
   explicit qMRMLRangeWidget(QWidget* parent = 0);
 
@@ -36,6 +35,7 @@ public slots:
   void setMaximumHandlePalette(const QPalette& palette);
 };
 
+/// qMRMLDoubleRangeSlider is a wrapper around a ctkDoubleRangeSlider
 class QMRML_WIDGETS_EXPORT qMRMLDoubleRangeSlider : public ctkDoubleRangeSlider
 {
   Q_OBJECT;
@@ -52,6 +52,7 @@ public slots:
   void setMaximumHandlePalette(const QPalette& palette);
 };
 
+/// qMRMLRangeSlider is a wrapper around a ctkRangeSlider
 class QMRML_WIDGETS_EXPORT qMRMLRangeSlider : public ctkRangeSlider
 {
   Q_OBJECT;

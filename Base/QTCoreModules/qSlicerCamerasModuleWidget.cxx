@@ -135,9 +135,8 @@ void qSlicerCamerasModuleWidget::onCameraNodeRemoved(vtkMRMLNode* mrmlNode)
     //Q_ASSERT(cameraNode);
     return;
     }
-  this->qvtkDisconnect(cameraNode,
-    vtkMRMLCameraNode::ActiveTagModifiedEvent,
-    this, SLOT(synchronizeCameraWithView()));
+  this->qvtkDisconnect(cameraNode, vtkMRMLCameraNode::ActiveTagModifiedEvent,
+                       this, SLOT(synchronizeCameraWithView()));
 }
 
 //-----------------------------------------------------------------------------

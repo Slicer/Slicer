@@ -24,11 +24,9 @@ public:
 
 public slots:
 
-  /// 
   /// Set the MRML \a scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* newScene);
 
-  ///
   /// Set/Get \a viewNode
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
   vtkMRMLViewNode* mrmlViewNode()const;
