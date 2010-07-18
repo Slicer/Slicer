@@ -110,61 +110,61 @@ public:
   /// The opacity of the Label slice layer
   /// TODO: this will eventually be generalized to a per-layer compositing function
   /// -- could be checkerboard or other filter
-  vtkGetMacro (LabelOpacity, double);
-  void SetLabelOpacity (double LabelOpacity);
+  vtkGetMacro(LabelOpacity, double);
+  void SetLabelOpacity(double LabelOpacity);
 
   /// 
   /// Model slice plane 
-  vtkGetObjectMacro (SliceModelNode, vtkMRMLModelNode);
+  vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
 
   /// 
   /// Model slice plane display props
-  vtkGetObjectMacro (SliceModelDisplayNode, vtkMRMLModelDisplayNode);
+  vtkGetObjectMacro(SliceModelDisplayNode, vtkMRMLModelDisplayNode);
 
   /// 
   /// Model slice plane transform from xy to RAS
-  vtkGetObjectMacro (SliceModelTransformNode, vtkMRMLLinearTransformNode);
+  vtkGetObjectMacro(SliceModelTransformNode, vtkMRMLLinearTransformNode);
 
   /// 
   /// The compositing filter
   /// TODO: this will eventually be generalized to a per-layer compositing function
-  vtkGetObjectMacro (Blend, vtkImageBlend);
+  vtkGetObjectMacro(Blend, vtkImageBlend);
 
   /// 
   /// All the PolyData objects to render
-  vtkGetObjectMacro (PolyDataCollection, vtkPolyDataCollection);
+  vtkGetObjectMacro(PolyDataCollection, vtkPolyDataCollection);
 
   /// 
   /// All the LookupTable objects to color the PolyData object
-  vtkGetObjectMacro (LookupTableCollection, vtkCollection);
+  vtkGetObjectMacro(LookupTableCollection, vtkCollection);
 
   /// 
   /// An image reslice instance to pull a single slice from the volume that 
   /// represents the filmsheet display output
-  vtkGetObjectMacro (ExtractModelTexture, vtkImageReslice);
+  vtkGetObjectMacro(ExtractModelTexture, vtkImageReslice);
 
   /// 
   /// the tail of the pipeline
   /// -- returns NULL if none of the inputs exist
-  vtkImageData *GetImageData ();
+  vtkImageData *GetImageData();
 
   /// 
   /// update the pipeline to reflect the current state of the nodes
-  void UpdatePipeline ();
+  void UpdatePipeline();
 
   ///
   /// Internally used by UpdatePipeline
   void UpdateImageData();
 
 
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+  virtual void ProcessMRMLEvents(vtkObject * /*caller*/,
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );
-  virtual void ProcessMRMLEvents () { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
+  virtual void ProcessMRMLEvents() { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
 
   /// 
   /// process logic events
-  virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
+  virtual void ProcessLogicEvents(vtkObject * /*caller*/,
                                   unsigned long /*event*/, 
                                   void * /*callData*/ ) {this->ProcessLogicEvents();};
   void ProcessLogicEvents(); 
@@ -230,6 +230,10 @@ public:
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   void GetBackgroundSliceBounds(double sliceBounds[6]);
 
+  ///
+  /// Set sliceView size
+  void SetSliceViewSize(int width, int height);
+
   /// 
   /// adjust the node's field of view to match the extent of current background volume
   void FitSliceToBackground(int width, int height);
@@ -237,7 +241,7 @@ public:
   /// 
   /// adjust the node's field of view to match the extent of all volume layers
   ///  (fits to first non-null layer)
-  void FitSliceToAll(int width, int height);
+  void FitSliceToAll(int width = -1, int height = -1);
 
   /// 
   /// Get the spacing of the volume, transformed to slice space 
@@ -300,6 +304,8 @@ protected:
 
   vtkMRMLSliceLogic();
   virtual ~vtkMRMLSliceLogic();
+
+  int SliceViewSize[2];
 
   char *                      Name;
   vtkMRMLSliceNode *          SliceNode;
