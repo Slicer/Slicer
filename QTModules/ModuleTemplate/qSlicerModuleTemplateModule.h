@@ -23,6 +23,14 @@ public:
   qSlicerModuleTemplateModule(QObject *parent=0);
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
+  
+  ///
+  /// Help to use the module
+  virtual QString helpText()const;
+
+  ///
+  /// Return acknowledgements
+  virtual QString acknowledgementText()const;
 
 protected:
   ///

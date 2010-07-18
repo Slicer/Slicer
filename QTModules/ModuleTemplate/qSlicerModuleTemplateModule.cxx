@@ -8,7 +8,7 @@
 // ModuleTemplate Logic includes
 #include <vtkSlicerModuleTemplateLogic.h>
 
-// ModuleTemplate QTModule includes
+// ModuleTemplate includes
 #include "qSlicerModuleTemplateModule.h"
 #include "qSlicerModuleTemplateModuleWidget.h"
 
@@ -26,6 +26,18 @@ qSlicerModuleTemplateModule::qSlicerModuleTemplateModule(QObject* _parent)
   :Superclass(_parent)
 {
   CTK_INIT_PRIVATE(qSlicerModuleTemplateModule);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerModuleTemplateModule::helpText()const
+{
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerModuleTemplateModule::acknowledgementText()const
+{
+  return "This work was supported by ...";
 }
 
 //-----------------------------------------------------------------------------
