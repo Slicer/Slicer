@@ -113,8 +113,8 @@ public:
   /// Get MRML ObserverManager
   vtkObserverManager * GetMRMLObserverManager();
 
-  /// Set / Get flags to avoid event loops
-  void SetInMRMLCallbackFlag(int flag);
+  /// Get InMRMLCallbackFlag
+  /// \sa SetInMRMLCallbackFlag()
   int GetInMRMLCallbackFlag();
 
   /// Get Logic CallbackCommand
@@ -123,7 +123,8 @@ public:
   /// Return the event id currently processed or 0 if any.
   int GetProcessingMRMLEvent();
 
-  /// Get flags to avoid event loops
+  /// Get InLogicCallbackFlag
+  /// \sa SetInLogicCallbackFlag()
   int GetInLogicCallbackFlag();
 
 protected:
@@ -136,7 +137,14 @@ protected:
   virtual void RegisterNodes(){}
 
   //BTX
-  /// Set flags to avoid event loops
+  /// Set InMRMLCallbackFlag flag
+  /// True means ProcessMRMLEvent has already been called
+  /// In MRMLCallback, loop are avoided by checking the value of the flag
+  void SetInMRMLCallbackFlag(int flag);
+
+  /// Set InLogicCallbackFlag flag
+  /// True means ProcesslogicEvent has already been called
+  /// In LogicCallback, loop are avoided by checking the value of the flag
   void SetInLogicCallbackFlag(int flag);
 
   /// Set event id currently processed or 0 if any.
