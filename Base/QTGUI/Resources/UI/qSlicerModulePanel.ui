@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>357</width>
-    <height>120</height>
+    <height>161</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Module Panel</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
@@ -31,10 +31,10 @@
         <x>0</x>
         <y>0</y>
         <width>353</width>
-        <height>116</height>
+        <height>157</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="ctkCollapsibleButton" name="HelpCollapsibleButton">
          <property name="sizePolicy">
@@ -44,7 +44,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Help</string>
+          <string>Help &amp;&amp; Acknowledgement</string>
          </property>
          <property name="collapsed">
           <bool>true</bool>
@@ -52,21 +52,46 @@
          <property name="contentsFrameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="ctkFittedTextBrowser" name="HelpLabel">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
+           <widget class="QTabWidget" name="HelpAcknowledgementTabWidget">
+            <property name="currentIndex">
+             <number>1</number>
             </property>
-            <property name="verticalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOff</enum>
-            </property>
-            <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOff</enum>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
-            </property>
+            <widget class="QWidget" name="HelpTab">
+             <attribute name="title">
+              <string>Help</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="ctkFittedTextBrowser" name="HelpLabel">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="AcknowledgementTab">
+             <attribute name="title">
+              <string>Acknowledgement</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="ctkFittedTextBrowser" name="AcknowledgementLabel">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
          </layout>

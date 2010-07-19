@@ -134,6 +134,8 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
   d->HelpCollapsibleButton->setVisible(!help.isEmpty());
   d->HelpLabel->setHtml(help);
   //d->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
+  QString acknowledgement = module->acknowledgementText();
+  d->AcknowledgementLabel->setHtml(acknowledgement);
 
   emit moduleAdded(module->name());
 }
