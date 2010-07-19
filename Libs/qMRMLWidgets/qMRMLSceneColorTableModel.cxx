@@ -29,7 +29,7 @@ class vtkCategory;
 class QMRML_WIDGETS_EXPORT qMRMLColorTableItemHelperFactory : public qMRMLCategoryItemHelperFactory
 {
 public:
-  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column)const;
+  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column, int row = -1)const;
 };
 
 //------------------------------------------------------------------------------
@@ -41,14 +41,14 @@ public:
 protected:
   friend class qMRMLColorTableItemHelperFactory;
   qMRMLColorTableNodeItemHelper(vtkMRMLNode* node, int column,
-                                const qMRMLAbstractItemHelperFactory* factory);
+                                const qMRMLAbstractItemHelperFactory* factory, int row);
 };
 
 // qMRMLColorTableItemHelperFactory
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLColorTableItemHelperFactory
-::createItem(vtkObject* object, int column)const
+::createItem(vtkObject* object, int column, int row)const
 {
   if (!object)
     {
@@ -57,11 +57,11 @@ qMRMLAbstractItemHelper* qMRMLColorTableItemHelperFactory
     }
   if (object->IsA("vtkMRMLColorTableNode"))
     {
-    return new qMRMLColorTableNodeItemHelper(vtkMRMLNode::SafeDownCast(object), column, this);
+    return new qMRMLColorTableNodeItemHelper(vtkMRMLNode::SafeDownCast(object), column, this, row);
     }
   else
     {
-    return this->qMRMLCategoryItemHelperFactory::createItem(object, column);
+    return this->qMRMLCategoryItemHelperFactory::createItem(object, column, row);
     }
   return 0;
 }
@@ -72,8 +72,8 @@ qMRMLAbstractItemHelper* qMRMLColorTableItemHelperFactory
 qMRMLColorTableNodeItemHelper
 ::qMRMLColorTableNodeItemHelper(vtkMRMLNode* node,
                                 int itemColumn,
-                                const qMRMLAbstractItemHelperFactory* _factory)
-  :qMRMLCategoryNodeItemHelper(node, itemColumn, _factory)
+                                const qMRMLAbstractItemHelperFactory* _factory, int _row)
+  :qMRMLCategoryNodeItemHelper(node, itemColumn, _factory, _row)
 {
   Q_ASSERT(node);
 }

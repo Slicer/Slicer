@@ -30,7 +30,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModelItemHelperFactory : public qMRMLAbstra
 public:
   qMRMLSceneModelItemHelperFactory();
   virtual ~qMRMLSceneModelItemHelperFactory(){}
-  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object,int column) const;
+  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object,int column, int row = -1) const;
 
   void setPreItems(vtkCollection* itemCollection);
   vtkCollection* preItems()const;

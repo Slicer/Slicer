@@ -35,7 +35,7 @@ public:
 
 protected:
   friend class qMRMLCategoryItemHelperFactory;
-  qMRMLCategorySceneItemHelper(vtkMRMLScene* scene, int column, const qMRMLAbstractItemHelperFactory* factory);
+  qMRMLCategorySceneItemHelper(vtkMRMLScene* scene, int column, const qMRMLAbstractItemHelperFactory* factory, int row);
   // here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
 };
@@ -57,7 +57,7 @@ public:
 protected:
   friend class qMRMLCategoryItemHelperFactory;
   qMRMLCategoryItemHelper(vtkCategory* category, int column,
-                          const qMRMLAbstractItemHelperFactory* factory);
+                          const qMRMLAbstractItemHelperFactory* factory, int row);
   // here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
   CTK_DECLARE_PRIVATE(qMRMLCategoryItemHelper);
@@ -170,7 +170,7 @@ int qMRMLCategoryItemHelperFactory::categoryIndex(const QString& name)const
 
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLCategoryItemHelperFactory
-::createItem(vtkObject* object, int column)const
+::createItem(vtkObject* object, int column, int row)const
 {
   if (!object)
     {
@@ -180,20 +180,20 @@ qMRMLAbstractItemHelper* qMRMLCategoryItemHelperFactory
   if (object->IsA("vtkMRMLScene"))
     {
      qMRMLAbstractItemHelper* scene =
-      new qMRMLCategorySceneItemHelper(vtkMRMLScene::SafeDownCast(object), column, this);
+       new qMRMLCategorySceneItemHelper(vtkMRMLScene::SafeDownCast(object), column, this, 0);
      return new qMRMLExtraItemsHelper(this->preItems(), this->postItems(), scene);
     }
   else if (object->IsA("vtkMRMLNode"))
     {
-    return new qMRMLCategoryNodeItemHelper(vtkMRMLNode::SafeDownCast(object), column, this);
+    return new qMRMLCategoryNodeItemHelper(vtkMRMLNode::SafeDownCast(object), column, this, row);
     }
   else if (object->IsA("vtkCategory"))
     {
-    return new qMRMLCategoryItemHelper(vtkCategory::SafeDownCast(object), column, this);
+    return new qMRMLCategoryItemHelper(vtkCategory::SafeDownCast(object), column, this, row);
     }
   else
     {
-    return this->qMRMLSceneModelItemHelperFactory::createItem(object, column);
+    return this->qMRMLSceneModelItemHelperFactory::createItem(object, column, row);
     }
   return 0;
 }
@@ -204,8 +204,8 @@ qMRMLAbstractItemHelper* qMRMLCategoryItemHelperFactory
 
 qMRMLCategorySceneItemHelper
 ::qMRMLCategorySceneItemHelper(vtkMRMLScene* scene, int itemColumn,
-                               const qMRMLAbstractItemHelperFactory* factoryHelper)
-  :qMRMLAbstractSceneItemHelper(scene, itemColumn, factoryHelper)
+                               const qMRMLAbstractItemHelperFactory* factoryHelper, int itemRow)
+  :qMRMLAbstractSceneItemHelper(scene, itemColumn, factoryHelper, itemRow)
 {
 }
 
@@ -220,7 +220,7 @@ qMRMLAbstractItemHelper* qMRMLCategorySceneItemHelper::child(int childRow, int c
   if (childRow < colorFactory->Categories->GetNumberOfItems())
     {// categories are first in the tree
     return colorFactory->createItem(
-      colorFactory->Categories->GetItemAsObject(childRow),childColumn);
+      colorFactory->Categories->GetItemAsObject(childRow),childColumn, childRow);
     }
   // check for nodes without categories
   int index = colorFactory->Categories->GetNumberOfItems() - 1;
@@ -240,7 +240,7 @@ qMRMLAbstractItemHelper* qMRMLCategorySceneItemHelper::child(int childRow, int c
       }
     }
   Q_ASSERT(node);
-  return this->factory()->createItem(node,childColumn);
+  return this->factory()->createItem(node,childColumn, childRow);
 }
 
 //------------------------------------------------------------------------------
@@ -335,8 +335,8 @@ public:
 qMRMLCategoryItemHelper
 ::qMRMLCategoryItemHelper(vtkCategory* category,
                           int itemColumn,
-                          const qMRMLAbstractItemHelperFactory* helperFactory)
-  :qMRMLAbstractItemHelper(itemColumn, helperFactory)
+                          const qMRMLAbstractItemHelperFactory* helperFactory, int itemRow)
+  :qMRMLAbstractItemHelper(itemColumn, helperFactory, itemRow)
 {
   CTK_INIT_PRIVATE(qMRMLCategoryItemHelper);
   Q_ASSERT(category);
@@ -367,7 +367,7 @@ qMRMLAbstractItemHelper* qMRMLCategoryItemHelper
       }
     }
   Q_ASSERT(node);
-  return this->factory()->createItem(node, itemColumn);
+  return this->factory()->createItem(node, itemColumn, itemRow);
 }
 
 //------------------------------------------------------------------------------
@@ -484,9 +484,10 @@ vtkCategory* qMRMLCategoryItemHelper::category() const
 //------------------------------------------------------------------------------
 qMRMLCategoryNodeItemHelper
 ::qMRMLCategoryNodeItemHelper(vtkMRMLNode* node,
-                                int itemColumn,
-                                const qMRMLAbstractItemHelperFactory* _factory)
-  :qMRMLAbstractNodeItemHelper(node, itemColumn, _factory)
+                              int itemColumn,
+                              const qMRMLAbstractItemHelperFactory* _factory,
+                              int itemRow)
+  :qMRMLAbstractNodeItemHelper(node, itemColumn, _factory, itemRow)
 {
   Q_ASSERT(node);
 }

@@ -27,17 +27,24 @@ class qMRMLAbstractItemHelperPrivate: public ctkPrivate<qMRMLAbstractItemHelper>
 {
 public:
   CTK_DECLARE_PUBLIC(qMRMLAbstractItemHelper);
+  int Row;
   int Column;
   const qMRMLAbstractItemHelperFactory* ItemFactory;
 };
 
 //------------------------------------------------------------------------------
-qMRMLAbstractItemHelper::qMRMLAbstractItemHelper(int _column, const qMRMLAbstractItemHelperFactory* itemFactory)
+qMRMLAbstractItemHelper::qMRMLAbstractItemHelper(int _column, const qMRMLAbstractItemHelperFactory* itemFactory, int _row)
 {
   CTK_INIT_PRIVATE(qMRMLAbstractItemHelper);
   CTK_D(qMRMLAbstractItemHelper);
+  d->Row = _row;
   d->Column = _column;
   d->ItemFactory = itemFactory;
+}
+
+qMRMLAbstractItemHelper::~qMRMLAbstractItemHelper()
+{
+  //std::cout << "+";
 }
 
 //------------------------------------------------------------------------------
@@ -110,13 +117,24 @@ bool qMRMLAbstractItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
 //------------------------------------------------------------------------------
 int qMRMLAbstractItemHelper::row() const
 {
+  CTK_D(const qMRMLAbstractItemHelper);
   QSharedPointer<const qMRMLAbstractItemHelper> _parent =
     QSharedPointer<const qMRMLAbstractItemHelper>(this->parent());
   if (_parent.isNull())
     {
     return 0;
     }
+  if (d->Row != -1)
+    {
+    return d->Row;
+    }
   return _parent->childIndex(this);
+}
+
+//------------------------------------------------------------------------------
+int qMRMLAbstractItemHelper::row(const qMRMLAbstractItemHelper* child) const
+{
+  return this->childIndex(child);
 }
 
 //------------------------------------------------------------------------------
@@ -146,8 +164,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLAbstractSceneItemHelper::qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int _column, const qMRMLAbstractItemHelperFactory* itemFactory)
-  :qMRMLAbstractItemHelper(_column, itemFactory)
+qMRMLAbstractSceneItemHelper::qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int _column, const qMRMLAbstractItemHelperFactory* itemFactory, int _row)
+  :qMRMLAbstractItemHelper(_column, itemFactory, _row)
 {
   CTK_INIT_PRIVATE(qMRMLAbstractSceneItemHelper);
   ctk_d()->MRMLScene = scene;
@@ -215,8 +233,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLAbstractNodeItemHelper::qMRMLAbstractNodeItemHelper(vtkMRMLNode* _node, int _column, const qMRMLAbstractItemHelperFactory* itemFactory)
-  :qMRMLAbstractItemHelper(_column, itemFactory)
+qMRMLAbstractNodeItemHelper::qMRMLAbstractNodeItemHelper(vtkMRMLNode* _node, int _column, const qMRMLAbstractItemHelperFactory* itemFactory, int _row)
+  :qMRMLAbstractItemHelper(_column, itemFactory, _row)
 {
   CTK_INIT_PRIVATE(qMRMLAbstractNodeItemHelper);
   Q_ASSERT(_node);
@@ -323,7 +341,7 @@ public:
 //------------------------------------------------------------------------------
 qMRMLRootItemHelper::qMRMLRootItemHelper(vtkMRMLScene* scene, 
                                          const qMRMLAbstractItemHelperFactory* itemFactory)
-  :qMRMLAbstractItemHelper(-1, itemFactory)
+  :qMRMLAbstractItemHelper(-1, itemFactory, -1)
 {
   CTK_INIT_PRIVATE(qMRMLRootItemHelper);
   ctk_d()->MRMLScene = scene;
@@ -441,8 +459,8 @@ bool qMRMLVariantArrayItemHelperPrivate::isSeparator()const
 }
 
 //------------------------------------------------------------------------------
-qMRMLVariantArrayItemHelper::qMRMLVariantArrayItemHelper(vtkVariantArray* array, int column, const qMRMLAbstractItemHelperFactory* factory)
-  :qMRMLAbstractItemHelper(column, factory)
+qMRMLVariantArrayItemHelper::qMRMLVariantArrayItemHelper(vtkVariantArray* array, int column, const qMRMLAbstractItemHelperFactory* factory, int _row)
+  :qMRMLAbstractItemHelper(column, factory, _row)
 {
   CTK_INIT_PRIVATE(qMRMLVariantArrayItemHelper);
   ctk_d()->VariantArray = array;
@@ -563,7 +581,7 @@ public:
 
 //------------------------------------------------------------------------------
 qMRMLProxyItemHelper::qMRMLProxyItemHelper(qMRMLAbstractItemHelper* _proxy)
-:qMRMLAbstractItemHelper(_proxy->column(), _proxy->factory())
+  :qMRMLAbstractItemHelper(_proxy->column(), _proxy->factory(), _proxy->row())
 {
   CTK_INIT_PRIVATE(qMRMLProxyItemHelper);
   ctk_d()->Proxy = QSharedPointer<qMRMLAbstractItemHelper>(_proxy);
@@ -572,47 +590,47 @@ qMRMLProxyItemHelper::qMRMLProxyItemHelper(qMRMLAbstractItemHelper* _proxy)
 //------------------------------------------------------------------------------
 bool qMRMLProxyItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
 {
-  return this->proxy()->canReparent(newParent);
+  return ctk_d()->Proxy->canReparent(newParent);
 }
 
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLProxyItemHelper::child(int row, int column) const
 {
-  return this->proxy()->child(row, column);
+  return ctk_d()->Proxy->child(row, column);
 }
 
 //------------------------------------------------------------------------------
 int qMRMLProxyItemHelper::childCount() const
 {
-  return this->childCount();
+  return ctk_d()->Proxy->childCount();
 }
 
 //------------------------------------------------------------------------------
 int qMRMLProxyItemHelper::column() const
 {
-  return this->proxy()->column();
+  return ctk_d()->Proxy->column();
 }
 
 //------------------------------------------------------------------------------
 QVariant qMRMLProxyItemHelper::data(int role) const
 {
-  return this->proxy()->data(role);
+  return ctk_d()->Proxy->data(role);
 }
 //------------------------------------------------------------------------------
 Qt::ItemFlags qMRMLProxyItemHelper::flags() const
 {
-  return this->proxy()->flags();
+  return ctk_d()->Proxy->flags();
 }
 //------------------------------------------------------------------------------
 bool qMRMLProxyItemHelper::hasChildren() const
 {
-  return this->proxy()->hasChildren();
+  return ctk_d()->Proxy->hasChildren();
 }
 
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLProxyItemHelper::parent() const
 {
-  return this->proxy()->parent();
+  return ctk_d()->Proxy->parent();
 }
 
 //------------------------------------------------------------------------------
@@ -626,37 +644,37 @@ qMRMLAbstractItemHelper* qMRMLProxyItemHelper::proxy()const
 //------------------------------------------------------------------------------
 bool qMRMLProxyItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
 {
-  return this->proxy()->reparent(newParent);
+  return ctk_d()->Proxy->reparent(newParent);
 }
 
 //------------------------------------------------------------------------------
 int qMRMLProxyItemHelper::row() const
 {
-  return this->proxy()->row();
+  return ctk_d()->Proxy->row();
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLProxyItemHelper::setData(const QVariant &value, int role)
 {
-  return this->proxy()->setData(value, role);
+  return ctk_d()->Proxy->setData(value, role);
 }
 
 //------------------------------------------------------------------------------
 vtkObject* qMRMLProxyItemHelper::object()const
 {
-  return this->proxy()->object();
+  return ctk_d()->Proxy->object();
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLProxyItemHelper::operator==(const qMRMLAbstractItemHelper& helper)const
 {
-  return this->proxy()->operator==(helper);
+  return ctk_d()->Proxy->operator==(helper);
 }
 
 //------------------------------------------------------------------------------
 int qMRMLProxyItemHelper::childIndex(const qMRMLAbstractItemHelper* child)const
 {
-  return this->proxy()->childIndex(child);
+  return ctk_d()->Proxy->childIndex(child);
 }
 
 //------------------------------------------------------------------------------
@@ -701,30 +719,34 @@ qMRMLExtraItemsHelper::qMRMLExtraItemsHelper(vtkCollection* preItems,
   d->PreItems = preItems;
   d->PostItems = postItems;
 }
+
+//------------------------------------------------------------------------------
 qMRMLExtraItemsHelper::~qMRMLExtraItemsHelper()
 {
 
 }
+
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLExtraItemsHelper::child(int row, int column) const
 {
   CTK_D(const qMRMLExtraItemsHelper);
-
-  if (row < d->preItemsCount())
+  int tmp;
+  int relativeRow = row;
+  if (relativeRow < (tmp=d->preItemsCount()))
     {
-    return this->factory()->createItem(d->PreItems->GetItemAsObject(row), column);
+    return this->factory()->createItem(d->PreItems->GetItemAsObject(relativeRow), column, row);
     }
-  row -= d->preItemsCount();
-  if (row < this->proxy()->childCount())
+  relativeRow -= tmp;
+  if (relativeRow < (tmp = this->proxy()->childCount()))
     {
-    return this->qMRMLProxyItemHelper::child(row, column);
+    return this->qMRMLProxyItemHelper::child(relativeRow, column);
     }
-  row -= this->proxy()->childCount();
-  if (row < d->postItemsCount())
+  relativeRow -= tmp;
+  if (relativeRow < (tmp=d->postItemsCount()))
     {
-    return this->factory()->createItem(d->PostItems->GetItemAsObject(row), column);
+    return this->factory()->createItem(d->PostItems->GetItemAsObject(relativeRow), column, row);
     }
-  Q_ASSERT(row < d->postItemsCount());
+  Q_ASSERT(relativeRow < tmp);
   return 0;
 }
 
@@ -748,9 +770,9 @@ bool qMRMLExtraItemsHelper::hasChildren() const
     {
     return false;
     }
-  return this->qMRMLProxyItemHelper::hasChildren() 
-      || d->preItemsCount()
-      || d->postItemsCount();
+  return d->preItemsCount()
+    || d->postItemsCount()
+    || this->qMRMLProxyItemHelper::hasChildren();
 }
 
 //------------------------------------------------------------------------------
@@ -794,6 +816,24 @@ int qMRMLExtraItemsHelper::childIndex(const qMRMLAbstractItemHelper* child)const
     }
   // not a pre, nor a post, must be a child from the proxy
   childRow = d->preItemsCount();
-  Q_ASSERT(this->qMRMLProxyItemHelper::childIndex(child) >= 0);
-  return childRow + this->qMRMLProxyItemHelper::childIndex(child);
+  int index = this->qMRMLProxyItemHelper::childIndex(child);
+  if (index < 0)
+    {
+    Q_ASSERT(this->qMRMLProxyItemHelper::childIndex(child) >= 0);
+    }
+  return childRow + index;
+}
+
+//------------------------------------------------------------------------------
+vtkCollection* qMRMLExtraItemsHelper::preItems() const
+{
+  CTK_D(const qMRMLExtraItemsHelper);
+  return d->PreItems;
+}
+
+//------------------------------------------------------------------------------
+vtkCollection* qMRMLExtraItemsHelper::postItems() const
+{
+  CTK_D(const qMRMLExtraItemsHelper);
+  return d->PostItems;
 }

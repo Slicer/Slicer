@@ -37,10 +37,12 @@ public:
   int rowCountWithHiddenItemsRemoved(const qMRMLAbstractItemHelper* item)const;
 
   QStack<int> consecutiveRows(const QVector<QSharedPointer<qMRMLAbstractItemHelper> >& items ) const;
+  int hiddenItem(vtkObject* object, int column)const;
 
 protected:
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > HiddenItems;
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > ItemsToAdd;
+  QVector<vtkObject*>                               NodesAboutToBeAdded;
 #ifndef QT_NO_DEBUG
   vtkObject* HiddenVTKObject;
 #endif
@@ -58,16 +60,31 @@ qMRMLSceneTreeModelPrivate::qMRMLSceneTreeModelPrivate()
 int qMRMLSceneTreeModelPrivate::rowWithHiddenItemsRemoved(const qMRMLAbstractItemHelper* item)const
 {
   Q_ASSERT(item);
-  int rowWithHiddenItemsRemovedValue = item->row();
+  int itemRow = item->row();
+  if (this->HiddenItems.size() == 0)
+    {
+    return itemRow;
+    }
+  int rowWithHiddenItemsRemovedValue = itemRow;
+  QSharedPointer<qMRMLAbstractItemHelper> parentItem =
+    QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
+  int parentItemRow = parentItem->row();
   foreach( const QSharedPointer<qMRMLAbstractItemHelper>& hiddenItem, this->HiddenItems)
     {
-    if (*item == *hiddenItem)
+    int hiddenItemRow = hiddenItem->row();
+    if (itemRow == hiddenItemRow &&
+        item->column() == hiddenItem->column() &&
+        item->object() == hiddenItem->object())
       {
-      return -1;
+      continue;
       }
-    if ((*hiddenItem->parent()) == *item->parent() &&
+    QSharedPointer<qMRMLAbstractItemHelper> hiddenItemParent =
+      QSharedPointer<qMRMLAbstractItemHelper>(hiddenItem->parent());
+    if (hiddenItemParent->row() == parentItemRow &&
+        hiddenItemParent->column() == parentItem->column() &&
+        hiddenItemParent->object() == parentItem->object() &&
         hiddenItem->column() == item->column() &&
-        hiddenItem->row() <= item->row())
+        hiddenItemRow < itemRow)
       {
       --rowWithHiddenItemsRemovedValue;
       }
@@ -76,14 +93,19 @@ int qMRMLSceneTreeModelPrivate::rowWithHiddenItemsRemoved(const qMRMLAbstractIte
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneTreeModelPrivate::childRowWithHiddenItemsAdded(const qMRMLAbstractItemHelper* vparent, int row)const
+int qMRMLSceneTreeModelPrivate::childRowWithHiddenItemsAdded(const qMRMLAbstractItemHelper* parentItem, int row)const
 {
-  Q_ASSERT(vparent);
+  Q_ASSERT(parentItem);
+  int parentRow = parentItem->row();
   int childRowWithHiddenItemsAddedValue = row;
   foreach (const QSharedPointer<qMRMLAbstractItemHelper>& hiddenItem, this->HiddenItems)
     {
-    if ((*hiddenItem->parent()) == *vparent
-        && hiddenItem->column() == 0)
+    QSharedPointer<qMRMLAbstractItemHelper> hiddenItemParent =
+      QSharedPointer<qMRMLAbstractItemHelper>(hiddenItem->parent());
+    if (hiddenItemParent->row() == parentRow &&
+        hiddenItemParent->column() == parentItem->column() &&
+        hiddenItemParent->object() == parentItem->object() &&
+        hiddenItem->column() == 0)
       {
       if (hiddenItem->row() <= row)
         {
@@ -98,11 +120,19 @@ int qMRMLSceneTreeModelPrivate::childRowWithHiddenItemsAdded(const qMRMLAbstract
 int qMRMLSceneTreeModelPrivate::rowCountWithHiddenItemsRemoved(const qMRMLAbstractItemHelper* item)const
 {
   Q_ASSERT(item);
+  int itemRow = item->row();
   int rowCountWithHiddenItemsRemovedValue = item->childCount();
   foreach (const QSharedPointer<qMRMLAbstractItemHelper>& hiddenItem, this->HiddenItems)
     {
-    if ((*hiddenItem->parent()) == *item
-        && hiddenItem->column() == item->column())
+    if (hiddenItem->column() != 0)
+      {
+      continue;
+      }
+    QSharedPointer<qMRMLAbstractItemHelper> hiddenItemParent =
+      QSharedPointer<qMRMLAbstractItemHelper>(hiddenItem->parent());
+    if (hiddenItemParent->row() == itemRow
+        && hiddenItemParent->column() == item->column()
+        && hiddenItemParent->object() == item->object())
       {
       --rowCountWithHiddenItemsRemovedValue;
       }
@@ -316,11 +346,14 @@ qMRMLSceneTreeModelPrivate::children(const qMRMLAbstractItemHelper* parentItem,
   // for each row
   for (int i = start; i <= end; ++i)
     {
+    QSharedPointer<qMRMLAbstractItemHelper> childItem =
+      QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(i, 0));
     // for each column
     for (int j = 0 ; j < p->columnCount(); ++j)
       {
+      QModelIndex index = p->createIndex(i, j, childItem->object());
       QSharedPointer<qMRMLAbstractItemHelper> item =
-        QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(i, j));
+        QSharedPointer<qMRMLAbstractItemHelper>(p->itemFromIndex(index));
       Q_ASSERT(item.data());
       Q_ASSERT(j == item->column());
       _children.append(item);
@@ -351,10 +384,10 @@ qMRMLSceneTreeModelPrivate::consecutiveRows(const QVector<QSharedPointer<qMRMLAb
     aValidItem = true;
     QSharedPointer<qMRMLAbstractItemHelper> itemParent =
       QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
-
+    int itemRow = itemParent->row(item.data());
     if (!lastParentItem.isNull() &&
         itemParent->object() == lastParentItem->object() &&
-        item->row() == lastRow + 1)
+        itemRow == lastRow + 1)
       {
       Q_ASSERT(consecutiveRowsStack.size());
       ++consecutiveRowsStack.top();
@@ -364,13 +397,28 @@ qMRMLSceneTreeModelPrivate::consecutiveRows(const QVector<QSharedPointer<qMRMLAb
       consecutiveRowsStack.push(1);
       }
     lastParentItem = itemParent;
-    lastRow = item->row();
+    lastRow = itemRow;
     }
   Q_ASSERT(aValidItem);
   Q_ASSERT(!consecutiveRowsStack.empty());
   return consecutiveRowsStack;
 }
 
+int qMRMLSceneTreeModelPrivate::hiddenItem(vtkObject* object, int column)const
+{
+  int index = -1;
+  foreach(QSharedPointer<qMRMLAbstractItemHelper> item, this->HiddenItems)
+    {
+    ++index;
+    if (item->object() == object && item->column() == column)
+      {
+      Q_ASSERT(index != 1);
+      return index;
+      }
+    }
+  Q_ASSERT(0);
+  return -1;
+}
 
 // //------------------------------------------------------------------------------
 // void qMRMLSceneTreeModelPrivate::onSourceColumnsAboutToBeInserted(const QModelIndex & vparent, int start, int end)
@@ -455,12 +503,14 @@ qMRMLSceneTreeModelPrivate::consecutiveRows(const QVector<QSharedPointer<qMRMLAb
 //------------------------------------------------------------------------------
 void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node)
 {
+  CTK_D(qMRMLSceneTreeModel);
   Q_UNUSED(scene);
   Q_UNUSED(node);
   //qDebug() << "onSourceRowsAboutToBeInserted" << parent << start << end;
   // We can't do anything here because
   //  * we don't know where the new item will be added.
   // ->we'll do all the process in onSourceRowsInserted
+  d->NodesAboutToBeAdded << node;
 }
 
 //------------------------------------------------------------------------------
@@ -479,14 +529,16 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromObject(node, 0));
   QSharedPointer<qMRMLAbstractItemHelper> nodeItemParent =
     QSharedPointer<qMRMLAbstractItemHelper>(nodeItem->parent());
+  int nodeRow = nodeItemParent->row(nodeItem.data());
   QVector<QSharedPointer<qMRMLAbstractItemHelper> > itemsToRemove =
-    d->children(nodeItemParent.data(), nodeItem->row(), nodeItem->row());
+    d->children(nodeItemParent.data(), nodeRow, nodeRow);
 //itemsToRemove.push_back();
 //itemsToRemove.push_back(QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromObject(node, 1)));
   // We can process hidden items by bulk if they are consecutive.
   // While start/end cover consecutive items, they might not all be consecutive
   // if there are hidden items in the range.
-  QStack<int> consecutiveRowsToBeRemoved = d->consecutiveRows(itemsToRemove);
+  QStack<int> consecutiveRowsToBeRemoved;// = d->consecutiveRows(itemsToRemove);
+  consecutiveRowsToBeRemoved << 1;
   Q_ASSERT_X(consecutiveRowsToBeRemoved.size(), __FUNCTION__,QString("Node: %1, ").arg(node->GetClassName()).toLatin1().data());
 
   // for each consecutive items
@@ -498,7 +550,7 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
     QSharedPointer<qMRMLAbstractItemHelper> itemParent =
       QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
 
-    int start = item->row();
+    int start = itemParent->row(item.data());
     //int numberOfRows = consecutiveRowsToBeRemoved[i];
     // proxyItemsFromSourceIndexes returned items for each column (not just 1
     // per row), here we compute the total number of items.
@@ -543,41 +595,72 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node
   CTK_D(qMRMLSceneTreeModel);
   // we test if it's empty here, but it's just because I never needed nested calls
   // to rows about to be removed/added. It can be removed if needed
-  Q_ASSERT(d->HiddenItems.empty());
+  //Q_ASSERT(d->HiddenItems.empty());
 
-  //proxyItemsFromSourceIndexes returns also the column items
-  //d->HiddenItems << QSharedPointer<qMRMLAbstractItemHelper>(this->itemFactory()->createItem(node,0));
-  QSharedPointer<qMRMLAbstractItemHelper> nodeItem =
-    QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromObject(node, 0));
-  QSharedPointer<qMRMLAbstractItemHelper> nodeItemParent =
-    QSharedPointer<qMRMLAbstractItemHelper>(nodeItem->parent());
-  d->HiddenItems = d->children(nodeItemParent.data(), nodeItem->row(), nodeItem->row());
-  QStack<int> consecutiveRowsToInsert = d->consecutiveRows(d->HiddenItems);
-  Q_ASSERT_X(consecutiveRowsToInsert.size(), __FUNCTION__, QString("Start: %1, ").arg(node->GetClassName()).toLatin1().data());
+  QSharedPointer<qMRMLAbstractItemHelper> item;
+  QSharedPointer<qMRMLAbstractItemHelper> itemParent;
+  //int start = -1;
+  int hiddenItemsIndex = -1;
+  if (d->NodesAboutToBeAdded.empty())
+    {
+    hiddenItemsIndex = d->hiddenItem(node, 0);
+    item = d->HiddenItems[hiddenItemsIndex];
+    itemParent = QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
+    Q_ASSERT( (hiddenItemsIndex % this->columnCount()) ==0 );
+    }
+  else
+    {
+    int i = d->HiddenItems.count();
+    foreach(vtkObject* object, d->NodesAboutToBeAdded)
+      {
+      QSharedPointer<qMRMLAbstractItemHelper> nodeItem =
+        QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromObject(object, 0));
+      QSharedPointer<qMRMLAbstractItemHelper> nodeItemParent =
+        QSharedPointer<qMRMLAbstractItemHelper>(nodeItem->parent());
+      int nodeRow = nodeItemParent->row(nodeItem.data());
+      d->HiddenItems << d->children(nodeItemParent.data(), nodeRow, nodeRow);
+      if(object == node)
+        {
+        Q_ASSERT(hiddenItemsIndex == -1);
+        hiddenItemsIndex = i;
+        item = nodeItem;
+        itemParent = nodeItemParent;
+        //start = nodeRow;
+        }
+      i += this->columnCount();
+      }
+    Q_ASSERT( (hiddenItemsIndex % this->columnCount()) ==0 );
+    d->NodesAboutToBeAdded.clear();
+    }
   // items inserted are in this->HiddenItesm.
   //QVector<int>::const_iterator it;
   //for (it = consecutiveRowsStack.begin(); it != consecutiveRowsStack.end(); ++it)
-  foreach(int numberOfRows, consecutiveRowsToInsert)
-    {
-    Q_ASSERT(!d->HiddenItems.empty());
+  Q_ASSERT(!d->HiddenItems.empty());
 
-    QSharedPointer<qMRMLAbstractItemHelper> item = d->HiddenItems.front();
-    QSharedPointer<qMRMLAbstractItemHelper> itemParent = 
-      QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
-
-    int start = item->row();
-    //int numberOfRows = *it;
-    /*
+  //QSharedPointer<qMRMLAbstractItemHelper> item = d->HiddenItems.front();
+  //QSharedPointer<qMRMLAbstractItemHelper> itemParent = 
+  //  QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
+  //int start = item->row();
+  //int numberOfRows = *it;
+  /*
     qDebug() << "nbofrows:" << numberOfRows << " '"
-             << item->data().toString().toLatin1().data() << vtkMRMLNode::SafeDownCast(item->object())->GetID()
-             << "' start: "<< start << " vparent: " << itemParent->row() << " " << itemParent->column();
-    */
-    this->beginInsertRows(this->indexFromItem(itemParent.data()), start, start + numberOfRows - 1);
-
-    d->HiddenItems.remove(0, numberOfRows * this->columnCount());
-    this->endInsertRows();
+    << item->data().toString().toLatin1().data() << vtkMRMLNode::SafeDownCast(item->object())->GetID()
+    << "' start: "<< start << " vparent: " << itemParent->row() << " " << itemParent->column();
+  */
+  int start = d->rowWithHiddenItemsRemoved(item.data());
+  /*
+  qMRMLExtraItemsHelper* itemParentExtra = dynamic_cast<qMRMLExtraItemsHelper*>(itemParent.data());
+  if (itemParentExtra)
+    {
+    int postItemsCount = itemParentExtra->postItems() ?
+      itemParentExtra->postItems()->GetNumberOfItems() :0;
+    Q_ASSERT(start == itemParentExtra->childCount() - postItemsCount - 1 );
     }
-  Q_ASSERT(d->HiddenItems.empty());
+  */
+  this->beginInsertRows(this->indexFromItem(itemParent.data()), start, start);
+  d->HiddenItems.remove(hiddenItemsIndex, this->columnCount());
+  this->endInsertRows();
+  //Q_ASSERT(d->HiddenItems.empty());
   if (this->listenNodeModifiedEvent())
     {
     qvtkConnect(node, vtkCommand::ModifiedEvent,
@@ -603,7 +686,8 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject *no
     {
     return;
     }
-  QStack<int> consecutiveRowsToInsert = d->consecutiveRows(d->ItemsToAdd);
+  QStack<int> consecutiveRowsToInsert;// = d->consecutiveRows(d->ItemsToAdd);
+  consecutiveRowsToInsert.push(1);
   // items inserted are in this->ItemsToAdd.
   foreach(int numberOfRows, consecutiveRowsToInsert)
     {
@@ -613,8 +697,8 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject *no
     QSharedPointer<qMRMLAbstractItemHelper> itemParent =
       QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
 
-    int start = item->row();
-    qDebug() << "************onMRMLSceneNodeRemoved: "<<  start << this->indexFromItem(itemParent.data());
+    int start = itemParent->row(item.data());
+    //qDebug() << "************onMRMLSceneNodeRemoved: "<<  start << this->indexFromItem(itemParent.data());
     this->beginInsertRows(this->indexFromItem(itemParent.data()), start, start + numberOfRows - 1);
     d->ItemsToAdd.remove(0, numberOfRows * this->columnCount());
     this->endInsertRows();
@@ -778,8 +862,9 @@ bool qMRMLSceneTreeModel::dropMimeData(const QMimeData *dataValue, Qt::DropActio
 
         item->reparent(parentItem.data());
         // the item row should be automatically updated
+        int itemRow = parentItem->row(item.data());
         QVector<QSharedPointer<qMRMLAbstractItemHelper> > newItems =
-          d->itemsFromIndexes(vparent, item->row(), item->row());
+          d->itemsFromIndexes(vparent, itemRow, itemRow);
         d->HiddenItems += newItems;
 #ifndef QT_NO_DEBUG
         d->HiddenVTKObject= item->object();
@@ -789,7 +874,8 @@ bool qMRMLSceneTreeModel::dropMimeData(const QMimeData *dataValue, Qt::DropActio
         // what's tricky here is that vparent might be invalid now. (if the 
         // moved row was at the same level than the parent, it shifted up the 
         // parent). we must recompute the parent new index.
-        this->beginInsertRows(this->indexFromItem(parentItem.data()), item->row(), item->row());
+        itemRow = parentItem->row(item.data());
+        this->beginInsertRows(this->indexFromItem(parentItem.data()), itemRow, itemRow);
 
         d->HiddenItems.remove(d->HiddenItems.count() - newItems.count(), newItems.count());
 #ifndef QT_NO_DEBUG
@@ -859,7 +945,8 @@ QModelIndex qMRMLSceneTreeModel::index(int row, int column, const QModelIndex &v
     QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(row, column));
     
   // Let's make sure that the item we got has the required row
-  if (!item.isNull() && d->rowWithHiddenItemsRemoved(item.data()) != row)
+  if (d->HiddenItems.size() && !item.isNull() &&
+      d->rowWithHiddenItemsRemoved(item.data()) != row)
     {
     // item has a different row because there are hidden items that shift 
     // item's row. The item corresponding to the required row is after some 
@@ -870,8 +957,8 @@ QModelIndex qMRMLSceneTreeModel::index(int row, int column, const QModelIndex &v
     }
   Q_ASSERT(item.isNull() || item->object());
   
-  QModelIndex i = !item.isNull() ? this->createIndex(row, column, item->object()) : QModelIndex();
 #ifndef QT_NO_DEBUG
+  //QModelIndex i = !item.isNull() ? this->createIndex(row, column, item->object()) : QModelIndex();
   Q_ASSERT( d->HiddenVTKObject == 0 || d->HiddenVTKObject != item->object());
 #endif
   return !item.isNull() ? this->createIndex(row, column, item->object()) : QModelIndex();

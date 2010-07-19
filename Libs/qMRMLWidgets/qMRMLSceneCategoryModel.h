@@ -12,7 +12,7 @@ class QMRML_WIDGETS_EXPORT qMRMLCategoryItemHelperFactory : public qMRMLSceneMod
 public:
   qMRMLCategoryItemHelperFactory();
   virtual ~qMRMLCategoryItemHelperFactory();
-  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column)const;
+  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column, int row)const;
 
   void updateCategories(vtkMRMLScene* scene);
   vtkCategory* category(const QString& categoryName)const;
@@ -32,7 +32,7 @@ public:
 protected:
   friend class qMRMLCategoryItemHelperFactory;
   qMRMLCategoryNodeItemHelper(vtkMRMLNode* node, int column,
-                                const qMRMLAbstractItemHelperFactory* factory);
+                              const qMRMLAbstractItemHelperFactory* factory, int row);
 };
 
 //------------------------------------------------------------------------------
