@@ -60,6 +60,8 @@ public slots:
   /// Called after the ImageData associated with the SliceLogic is modified
   void onImageDataModifiedEvent();
 
+  void toggleControllerWidgetGroupVisibility();
+
 public:
   vtkMRMLSliceNode*                   MRMLSliceNode;
   vtkMRMLSliceCompositeNode*          MRMLSliceCompositeNode;
@@ -69,6 +71,7 @@ public:
   QHash<QString, QString>             SliceOrientationToDescription;
   QSize                               VTKSliceViewSize;
   QString                             SliceViewName;
+  QButtonGroup*                       ControllerButtonGroup;
 
   QAction* actionFitToWindow;
   QAction* actionTotateToVolumePlane;

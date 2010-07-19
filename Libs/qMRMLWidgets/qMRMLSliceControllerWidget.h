@@ -12,6 +12,7 @@
 
 #include "qMRMLWidgetsExport.h"
 
+class QButtonGroup;
 class qMRMLSliceControllerWidgetPrivate;
 class vtkMRMLScene;
 class vtkMRMLNode;
@@ -70,29 +71,36 @@ public:
   /// \note setSliceLogic() should be called before setMRMLSliceNode() otherwise it's a no-op.
   void setSliceLogic(vtkMRMLSliceLogic * newSliceLogic);
 
+  /// Set controller widget group
+  /// All controllers of a same group will be set visible or hidden if at least
+  /// one of the sliceCollapsibleButton of the group is clicked.
+  void setControllerButtonGroup(QButtonGroup* group);
+
 public slots:
 
-  /// Set \a newSliceNode
+  /// Set a new SliceNode.
   void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);
 
-  /// Set imageData
+  /// Set a new imageData.
   void setImageData(vtkImageData* newImageData);
 
   /// \sa fitSliceToBackground();
   void setSliceViewSize(const QSize& newSize);
 
-  /// Fit slices to background. A No-op if no SliceView has been set
+  /// Fit slices to background. A No-op if no SliceView has been set.
   /// \sa setSliceView();
   void fitSliceToBackground();
 
-  /// Set slice orientation
-  /// Orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat"
-  void setSliceOrientation(const QString& orienation);
+  /// Set slice orientation.
+  /// \note Orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".
+  void setSliceOrientation(const QString& orientation);
 
-  /// Called after the slice offset slider position is changed
-  void setSliceOffsetValue(double value);
+  /// Set slice \a offset.
+  void setSliceOffsetValue(double offset);
 
 signals:
+
+  /// This signal is emitted when the giben \a imageData is modified.
   void imageDataModified(vtkImageData * imageData);
 
 private:

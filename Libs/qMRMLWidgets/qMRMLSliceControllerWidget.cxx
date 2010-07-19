@@ -38,6 +38,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate()
   this->MRMLSliceNode = 0;
   this->MRMLSliceCompositeNode = 0;
 
+  this->ControllerButtonGroup = 0;
   this->SliceOrientation = "Axial";
 
   this->SliceOrientationToDescription["Axial"]    = QLatin1String("I <-----> S");
@@ -76,8 +77,10 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   // Set a ProxyStyle responsible for drawing the arrow
   //this->SliceCollapsibleButton->setStyle(new qMRMLSliceCollapsibleButtonStyle);
   
-  // Set LabelMapSelector attributes
+  // Set selector attributes
   this->LabelMapSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
+  this->BackgroundLayerNodeSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "0");
+  this->ForegroundLayerNodeSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "0");
 
   // Connect Orientation selector
   this->connect(this->OrientationSelector, SIGNAL(currentIndexChanged(QString)),
@@ -98,6 +101,11 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   // Connect Slice offset slider
   this->connect(this->SliceOffsetSlider, SIGNAL(valueIsChanging(double)),
                 p, SLOT(setSliceOffsetValue(double)));
+
+  // Connect SliceCollapsibleButton
+  // See qMRMLSliceControllerWidget::setControllerButtonGroup()
+  this->connect(this->SliceCollapsibleButton, SIGNAL(released()),
+                SLOT(toggleControllerWidgetGroupVisibility()));
 }
 
 // --------------------------------------------------------------------------
@@ -106,6 +114,12 @@ void qMRMLSliceControllerWidgetPrivate::onImageDataModifiedEvent()
   CTK_P(qMRMLSliceControllerWidget);
   logger.trace("onImageDataModifiedEvent");
   emit p->imageDataModified(this->ImageData);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::toggleControllerWidgetGroupVisibility()
+{
+  this->ControllerWidgetGroup->setVisible(!this->ControllerWidgetGroup->isVisible());
 }
 
 // --------------------------------------------------------------------------
@@ -146,6 +160,10 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   // Update "label map" node selector
   this->LabelMapSelector->setCurrentNode(
       p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
+
+  qDebug() << "updateWidgetFromMRMLSliceNode - GetSliceOffset" << this->SliceLogic->GetSliceOffset();
+  // Update slider position
+  this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
 }
 
 // --------------------------------------------------------------------------
@@ -282,6 +300,54 @@ void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setControllerButtonGroup(QButtonGroup* newButtonGroup)
+{
+  CTK_D(qMRMLSliceControllerWidget);
+
+  if (d->ControllerButtonGroup == newButtonGroup)
+    {
+    return;
+    }
+
+  if (d->ControllerButtonGroup)
+    {
+    // Remove SliceCollapsibleButton from ControllerButtonGroup
+    d->ControllerButtonGroup->removeButton(d->SliceCollapsibleButton);
+
+    // Disconnect widget with buttonGroup
+    this->disconnect(d->ControllerButtonGroup, SIGNAL(buttonReleased(int)),
+                     d, SLOT(toggleControllerWidgetGroupVisibility()));
+    }
+
+  if (newButtonGroup)
+    {
+    if (newButtonGroup->exclusive())
+      {
+      logger.error("setControllerButtonGroup - newButtonGroup shouldn't be exclusive - "
+                   "See QButtonGroup::setExclusive()");
+      }
+
+    // Disconnect sliceCollapsibleButton and  ControllerWidgetGroup
+    this->disconnect(d->SliceCollapsibleButton, SIGNAL(released()),
+                     d, SLOT(toggleControllerWidgetGroupVisibility()));
+
+    // Add SliceCollapsibleButton to newButtonGroup
+    newButtonGroup->addButton(d->SliceCollapsibleButton);
+
+    // Connect widget with buttonGroup
+    this->connect(newButtonGroup, SIGNAL(buttonReleased(int)),
+                  d, SLOT(toggleControllerWidgetGroupVisibility()));
+    }
+  else
+    {
+    this->connect(d->SliceCollapsibleButton, SIGNAL(released()),
+                  d, SLOT(toggleControllerWidgetGroupVisibility()));
+    }
+
+  d->ControllerButtonGroup = newButtonGroup;
+}
+
+//---------------------------------------------------------------------------
 CTK_GET_CXX(qMRMLSliceControllerWidget, vtkMRMLSliceCompositeNode*,
             mrmlSliceCompositeNode, MRMLSliceCompositeNode);
 
@@ -396,11 +462,11 @@ void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setSliceOffsetValue(double value)
+void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
 {
   CTK_D(qMRMLSliceControllerWidget);
-  logger.trace(QString("setSliceOffsetValue: %1").arg(value));
-  d->SliceLogic->SetSliceOffset(value);
+  logger.trace(QString("setSliceOffsetValue: %1").arg(offset));
+  d->SliceLogic->SetSliceOffset(offset);
 }
 
 // --------------------------------------------------------------------------

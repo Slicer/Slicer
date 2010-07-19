@@ -40,10 +40,13 @@
      <property name="text">
       <string/>
      </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="widget" native="true">
+    <widget class="QWidget" name="ControllerWidgetGroup" native="true">
      <layout class="QGridLayout" name="gridLayout">
       <property name="margin">
        <number>0</number>
