@@ -98,6 +98,12 @@ public slots:
   /// Set slice \a offset.
   void setSliceOffsetValue(double offset);
 
+  /// Set slice visible.
+  void setSliceVisible(bool visible);
+
+  /// Link/Unlink the slice controls across all slice viewer
+  void setSliceLink(bool linked);
+
 signals:
 
   /// This signal is emitted when the giben \a imageData is modified.

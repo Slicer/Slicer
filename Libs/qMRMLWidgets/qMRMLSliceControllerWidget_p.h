@@ -42,6 +42,9 @@ public slots:
   /// Update widget state using the associated MRML slice node
   void updateWidgetFromMRMLSliceNode();
 
+  /// Update widget state using the associated MRML slice composite node
+  void updateWidgetFromMRMLSliceCompositeNode();
+
   /// Called after a foregound layer volume node is selected
   /// using the associated qMRMLNodeComboBox
   void onForegroundLayerNodeSelected(vtkMRMLNode* node);

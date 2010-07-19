@@ -106,6 +106,14 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   // See qMRMLSliceControllerWidget::setControllerButtonGroup()
   this->connect(this->SliceCollapsibleButton, SIGNAL(released()),
                 SLOT(toggleControllerWidgetGroupVisibility()));
+
+  // Connect Slice visibility toggle
+  this->connect(this->SliceVisibilityToggle, SIGNAL(clicked(bool)),
+                p, SLOT(setSliceVisible(bool)));
+
+  // Connect link toggle
+  this->connect(this->SliceLinkToggle, SIGNAL(clicked(bool)),
+                p, SLOT(setSliceLink(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -132,9 +140,7 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionMenu()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
-  CTK_P(qMRMLSliceControllerWidget);
   Q_ASSERT(this->MRMLSliceNode);
-  Q_ASSERT(this->MRMLSliceCompositeNode);
 
   logger.trace("updateWidgetFromMRMLSliceNode");
 
@@ -149,6 +155,18 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
       this->SliceOrientationToDescription[
           QString::fromStdString(this->MRMLSliceNode->GetOrientationString())]);
 
+  // Update slice visibility toggle
+  this->SliceVisibilityToggle->setChecked(this->MRMLSliceNode->GetSliceVisible());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
+{
+  CTK_P(qMRMLSliceControllerWidget);
+  Q_ASSERT(this->MRMLSliceCompositeNode);
+
+  logger.trace("updateWidgetFromMRMLSliceCompositeNode");
+
   // Update "foreground layer" node selector
   this->ForegroundLayerNodeSelector->setCurrentNode(
       p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
@@ -161,8 +179,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->LabelMapSelector->setCurrentNode(
       p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
 
-  // Update slider position
-  this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
+  // Update slice link toggle
+  this->SliceLinkToggle->setChecked(this->MRMLSliceCompositeNode->GetLinkedControl());
 }
 
 // --------------------------------------------------------------------------
@@ -175,7 +193,21 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
     {
     return;
     }
-  this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
+
+  if (this->MRMLSliceCompositeNode->GetLinkedControl())
+    {
+    int nnodes = p->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    for (int i = 0; i < nnodes; ++i)
+      {
+      vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
+        p->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+      cnode->SetForegroundVolumeID(node ? node->GetID() : 0);
+      }
+    }
+  else
+    {
+    this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -188,7 +220,21 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
     {
     return;
     }
-  this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
+
+  if (this->MRMLSliceCompositeNode->GetLinkedControl())
+    {
+    int nnodes = p->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    for (int i = 0; i < nnodes; ++i)
+      {
+      vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
+        p->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+      cnode->SetBackgroundVolumeID(node ? node->GetID() : 0);
+      }
+    }
+  else
+    {
+    this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -201,7 +247,20 @@ void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * nod
     {
     return;
     }
-  this->MRMLSliceCompositeNode->SetLabelVolumeID(node ? node->GetID() : 0);
+  if (this->MRMLSliceCompositeNode->GetLinkedControl())
+    {
+    int nnodes = p->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    for (int i = 0; i < nnodes; ++i)
+      {
+      vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
+        p->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+      cnode->SetLabelVolumeID(node ? node->GetID() : 0);
+      }
+    }
+  else
+    {
+    this->MRMLSliceCompositeNode->SetLabelVolumeID(node ? node->GetID() : 0);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -231,6 +290,9 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
   double sliceBounds[6] = {0, 0, 0, 0, 0, 0};
   this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds);
   p->setSliceOffsetRange(sliceBounds[4], sliceBounds[5]);
+
+  // Update slider position
+  this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
 }
 
 // --------------------------------------------------------------------------
@@ -267,6 +329,9 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
     d->SliceLogic->Initialize(d->SliceViewName.toLatin1(), this->mrmlScene(), newSliceNode);
     }
 
+  d->qvtkReconnect(d->MRMLSliceCompositeNode, d->SliceLogic->GetSliceCompositeNode(),
+                   vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
+
   d->MRMLSliceCompositeNode = d->SliceLogic->GetSliceCompositeNode();
 
   d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
@@ -279,8 +344,12 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
     // Update widget state using Logic
     d->onSliceLogicModifiedEvent();
 
-    // Update widget state given the new node
+    // Update widget state given the new slice node
     d->updateWidgetFromMRMLSliceNode();
+
+    // Update widget state given the new slice composite node
+    d->updateWidgetFromMRMLSliceCompositeNode();
+
     }
 }
 
@@ -470,6 +539,10 @@ void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
 void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
 {
   CTK_D(qMRMLSliceControllerWidget);
+  if (!d->MRMLSliceNode)
+    {
+    return;
+    }
   logger.trace(QString("setSliceOffsetValue: %1").arg(offset));
   d->SliceLogic->SetSliceOffset(offset);
 }
@@ -508,10 +581,56 @@ void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
   Q_ASSERT(expectedOrientation.contains(orientation));
 #endif
 
+  if (!d->MRMLSliceNode || !d->MRMLSliceCompositeNode)
+    {
+    return;
+    }
+
+  if (d->MRMLSliceCompositeNode->GetLinkedControl())
+    {
+    // Loop over all vtkMRMLSliceNode and update Orientation property
+    int nnodes = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceNode");
+    for (int i = 0; i < nnodes; ++i)
+      {
+      vtkMRMLSliceNode * sliceNode = vtkMRMLSliceNode::SafeDownCast (
+        this->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceNode"));
+      sliceNode->SetOrientationString(orientation.toLatin1());
+      }
+    }
+  else
+    {
+    d->MRMLSliceNode->SetOrientationString(orientation.toLatin1());
+    }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
+{
+  CTK_D(qMRMLSliceControllerWidget);
+
   if (!d->MRMLSliceNode)
     {
     return;
     }
 
-  d->MRMLSliceNode->SetOrientationString(orientation.toLatin1());
+  d->MRMLSliceNode->SetSliceVisible(visible);
 }
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceLink(bool linked)
+{
+  if (!this->mrmlScene())
+    {
+    return;
+    }
+
+  // Loop over all vtkMRMLSliceCompositeNode and update LinkedControl property
+  int nnodes = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+  for (int i = 0; i < nnodes; ++i)
+    {
+    vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
+      this->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+    cnode->SetLinkedControl(linked);
+    }
+}
+
