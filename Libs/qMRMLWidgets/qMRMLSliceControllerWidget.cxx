@@ -32,8 +32,8 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate()
 {
   this->SliceLogic = vtkSmartPointer<vtkMRMLSliceLogic>::New();
   
-  this->qvtkConnect(this->SliceLogic,
-                    vtkCommand::ModifiedEvent, this, SLOT(onSliceLogicModifiedEvent()));
+  this->qvtkConnect(this->SliceLogic, vtkCommand::ModifiedEvent,
+                    this, SLOT(onSliceLogicModifiedEvent()));
   
   this->MRMLSliceNode = 0;
   this->MRMLSliceCompositeNode = 0;
@@ -161,7 +161,6 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->LabelMapSelector->setCurrentNode(
       p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
 
-  qDebug() << "updateWidgetFromMRMLSliceNode - GetSliceOffset" << this->SliceLogic->GetSliceOffset();
   // Update slider position
   this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
 }
@@ -275,9 +274,12 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
 
   d->MRMLSliceNode = newSliceNode;
 
-  // Update widget state given the new node
   if (d->MRMLSliceNode)
     {
+    // Update widget state using Logic
+    d->onSliceLogicModifiedEvent();
+
+    // Update widget state given the new node
     d->updateWidgetFromMRMLSliceNode();
     }
 }
@@ -293,6 +295,9 @@ void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic
     {
     return;
     }
+
+  d->qvtkReconnect(d->SliceLogic, newSliceLogic, vtkCommand::ModifiedEvent,
+                   d, SLOT(onSliceLogicModifiedEvent()));
 
   d->SliceLogic = newSliceLogic;
 
