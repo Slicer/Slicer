@@ -107,8 +107,13 @@ void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)
 void qSlicerDataModuleWidget::onMRMLNodeChanged(vtkMRMLNode* node)
 {
   CTK_D(qSlicerDataModuleWidget);
-  qvtkReconnect(d->MRMLNode, node, vtkCommand::ModifiedEvent,
+  qvtkDisconnect(d->MRMLNode, vtkCommand::ModifiedEvent,
+                 this, SLOT(onMRMLNodeModified()));
+  if (node)
+    {
+    qvtkConnect(node, vtkCommand::ModifiedEvent,
                 this,SLOT(onMRMLNodeModified()));
+    }
   d->MRMLNode = node;
   this->onMRMLNodeModified();
 }
@@ -117,8 +122,8 @@ void qSlicerDataModuleWidget::onMRMLNodeChanged(vtkMRMLNode* node)
 void qSlicerDataModuleWidget::onMRMLNodeModified()
 {
   CTK_D(qSlicerDataModuleWidget);
-  d->NodeIDLineEdit->setText(d->MRMLNode?d->MRMLNode->GetID() : "");
-  d->NodeNameLineEdit->setText(d->MRMLNode ?d->MRMLNode->GetName() : "");
+  d->NodeIDLineEdit->setText(d->MRMLNode ? d->MRMLNode->GetID() : "");
+  d->NodeNameLineEdit->setText(d->MRMLNode ? d->MRMLNode->GetName() : "");
 }
 
 //-----------------------------------------------------------------------------
