@@ -24,141 +24,224 @@
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
+// EMSegment/MRML includes
+#include <vtkEMSegmentMRMLManager.h>
+
 // MRML includes
-#include "vtkMRML.h"
-#include "vtkMRMLVolumeNode.h"
+#include <vtkMRML.h>
+#include <vtkMRMLVolumeNode.h>
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "vtkSlicerEMSegmentModuleLogicExport.h"
 
-class vtkMRMLScalarVolumeNode;
-class vtkMRMLScalarVolumeDisplayNode;
-class vtkMRMLVolumeHeaderlessStorageNode;
-class vtkStringArray;
+class vtkImageEMLocalSegmenter;
+class vtkImageEMLocalSuperClass;
+class vtkImageEMLocalClass;
+class vtkImageEMLocalGenericClass;
+class vtkTransform;
+class vtkGridTransform;
 
 class VTK_SLICER_EMSEGMENT_MODULE_LOGIC_EXPORT vtkSlicerEMSegmentLogic :
   public vtkSlicerModuleLogic
 {
-  public:
+public:
   
-  // The Usual vtk class functions
   static vtkSlicerEMSegmentLogic *New();
   vtkTypeRevisionMacro(vtkSlicerEMSegmentLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // The currently active mrml volume node 
-  vtkGetObjectMacro (ActiveVolumeNode, vtkMRMLVolumeNode);
-  void SetActiveVolumeNode (vtkMRMLVolumeNode *ActiveVolumeNode);
+  /// Name of the Module
+  /// This is used to construct the proc invocations
+  vtkGetStringMacro (ModuleName);
+  vtkSetStringMacro (ModuleName);
 
-  // Description:
-  // Sub type of loading an archetype volume that is known to be a scalar
-  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname, int loadingOptions);
+  /// Actions
+  virtual void      SaveTemplateNow();
+  virtual bool      SaveIntermediateResults();
 
-  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname) 
-    {
-    return this->AddArchetypeScalarVolume( filename, volname, 0);
-    };
+  /// Old Pipeline
+//  virtual bool      StartPreprocessing();
+//  virtual bool      StartPreprocessingInitializeInputData();
+//  virtual bool      StartPreprocessingTargetIntensityNormalization();
+//  virtual bool      StartPreprocessingTargetToTargetRegistration();
+//  virtual bool      StartPreprocessingAtlasToTargetRegistration();
+//  virtual void      StartSegmentation();
 
-  // Description:
-  // Overloaded function of AddArchetypeVolume to provide more 
-  // loading options, where variable loadingOptions is bit-coded as following:
-  // bit 0: label map
-  // bit 1: centered
-  // bit 2: loading single file
-  // higher bits are reserved for future use
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions) 
-    {
-    return (this->AddArchetypeVolume( filename, volname, loadingOptions, NULL));
-    };
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList);
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char *filename, const char* volname) 
-    {
-    return this->AddArchetypeVolume( filename, volname, 0, NULL);
-    };
+  /// New Pipeline
+//  virtual int       SourceTclFile(vtkKWApplication*app,const char *tclFile);
+//  virtual int       SourceTaskFiles(vtkKWApplication* app);
+//  virtual int       SourcePreprocessingTclFiles(vtkKWApplication* app);
+//  virtual void      StartSegmentationWithoutPreprocessing();
+//  int               ComputeIntensityDistributionsFromSpatialPrior(vtkKWApplication* app);
 
-  // Description:
-  // Create new mrml node and associated storage node.
-  // Read image data from a specified file
-  // vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, int centerImage, int labelMap, const char* volname);
 
-  // Description:
-  // Overloaded function of AddHeaderVolume to provide more 
-  // loading options, where variable loadingOptions is bit-coded as following:
-  // bit 0: label map
-  // bit 1: centered
-  // bit 2: loading signal file
-  // higher bits are reserved for future use
-  vtkMRMLVolumeNode* AddHeaderVolume (const char* filename, const char* volname, 
-                                      vtkMRMLVolumeHeaderlessStorageNode *headerStorage,
-                                      int loadingOptions);
-
-  // Description:
-  // Create new mrml node and associated storage node.
-  // Read image data from a specified file
-  // vtkMRMLVolumeNode* AddHeaderVolume (const char* filename, int centerImage, int labelMap, const char* volname, 
-  //                                    vtkMRMLVolumeHeaderlessStorageNode *headerStorage);
-
-  // Description:
-  // Write volume's image data to a specified file
-  int SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode);
-
-  // Description:
-  // Create a label map volume to match the given volume node and add it to
-  // the scene
-  vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name);
-
-  // Description:
-  // Create a deep copy of a volume and add it to the scene
-  vtkMRMLScalarVolumeNode *CloneVolume (vtkMRMLScene *scene, 
-                                        vtkMRMLVolumeNode *volumeNode, 
-                                        const char *name);
-
-  // Description:
-  // Update MRML events
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );    
-  // Description:
-  // Update logic events
-  virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );  
   //BTX
-  using vtkSlicerLogic::ProcessLogicEvents; 
+  std::string DefineTclTaskFullPathName(const char* TclFileName);
+  std::string GetTclTaskDirectory();
+  std::string GetTclGeneralDirectory();
+  std::string DefineTclTasksFileFromMRML();
   //ETX
-  
-  // Description:
-  // Computes matrix we need to register
-  // V1Node to V2Node given the
-  // "register.dat" matrix from tkregister2 (FreeSurfer)
-  void TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix( vtkMRMLVolumeNode *V1Node,
-                             vtkMRMLVolumeNode *V2Node,
-                             vtkMatrix4x4 *FSRegistrationMatrix,
-                             vtkMatrix4x4 *ResultsMatrix);
-  // Description:
-  // Convenience method to compute
-  // a volume's Vox2RAS-tkreg Matrix
-  void ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode,
-                                   vtkMatrix4x4 *M );
+
+  /// Used within StartSegmentation to copy data from the MRMLManager
+  /// to the segmenter algorithm.  Possibly useful for research purposes.
+  virtual void      CopyDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
+
+  /// Progress bar related functions: not currently used, likely to
+  /// change
+  vtkGetStringMacro(ProgressCurrentAction);
+  vtkGetMacro(ProgressGlobalFractionCompleted, double);
+  vtkGetMacro(ProgressCurrentFractionCompleted, double);
+
+  /// MRML Related Methods.  The collection of MRML nodes for the
+  /// EMSegmenter is complicated.  Therefore, the management of these
+  /// nodes are delagated to the vtkEMSegmentMRMLManager class.
+  vtkGetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
+
+  /// Register all the nodes used by this module with the current MRML scene.
+  virtual void RegisterMRMLNodesWithScene()
+      {
+      this->MRMLManager->RegisterMRMLNodesWithScene();
+      }
+
+  virtual void SetAndObserveMRMLScene(vtkMRMLScene* scene)
+      {
+      Superclass::SetAndObserveMRMLScene(scene);
+      this->MRMLManager->SetMRMLScene(scene);
+      }
+
+  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
+                                   void *callData )
+      {
+      this->MRMLManager->ProcessMRMLEvents(caller, event, callData);
+      }
+
+  ///
+  /// Special testing functions
+  virtual void      PopulateTestingData();
+  virtual void      SpecialTestingFunction();
+
+  /// Events to observe
+  virtual vtkIntArray* NewObservableEvents();
+
+  void StartPreprocessingResampleToTarget(vtkMRMLVolumeNode* movingVolumeNode, vtkMRMLVolumeNode* fixedVolumeNode, vtkMRMLVolumeNode* outputVolumeNode);
+
+  static void TransferIJKToRAS(vtkMRMLVolumeNode* volumeNode, int ijk[3], double ras[3]);
+  static void TransferRASToIJK(vtkMRMLVolumeNode* volumeNode, double ras[3], int ijk[3]);
+
+
+  double GuessRegistrationBackgroundLevel(vtkMRMLVolumeNode* volumeNode);
+
+  static void SlicerRigidRegister(vtkMRMLVolumeNode* fixedVolumeNode,
+                                  vtkMRMLVolumeNode* movingVolumeNode,
+                                  vtkMRMLVolumeNode* outputVolumeNode,
+                                  vtkTransform* fixedRASToMovingRASTransform,
+                                  int imageMatchType,
+                                  int iterpolationType,
+                                  double backgroundLevel);
+
+  static void
+  SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
+                        vtkMRMLVolumeNode* movingVolumeNode,
+                        vtkMRMLVolumeNode* outputVolumeNode,
+                        vtkGridTransform* fixedRASToMovingRASTransform,
+                        vtkTransform* fixedRASToMovingRASAffineTransform,
+                        int imageMatchType,
+                        int iterpolationType,
+                        double backgroundLevel);
+
+  static void
+  SlicerImageResliceWithGrid(vtkMRMLVolumeNode* inputVolumeNode,
+                             vtkMRMLVolumeNode* outputVolumeNode,
+                             vtkMRMLVolumeNode* outputVolumeGeometryNode,
+                             vtkGridTransform* outputRASToInputRASTransform,
+                             int iterpolationType,
+                             double backgroundLevel);
+
+
+  /// Utility --- should probably go to general slicer lib at some point
+  static void SlicerImageReslice(vtkMRMLVolumeNode* inputVolumeNode,
+                                 vtkMRMLVolumeNode* outputVolumeNode,
+                                 vtkMRMLVolumeNode* outputVolumeGeometryNode,
+                                 vtkTransform* outputRASToInputRASTransform,
+                                  int iterpolationType,
+                                 double backgroundLevel);
+
+  void PrintText(char *TEXT);
+
+  void DefineValidSegmentationBoundary();
+
 
 protected:
+
   vtkSlicerEMSegmentLogic();
   virtual ~vtkSlicerEMSegmentLogic();
-  vtkSlicerEMSegmentLogic(const vtkSlicerEMSegmentLogic&);
-  void operator=(const vtkSlicerEMSegmentLogic&);
 
-  // Description:
-  // Examine the file name to see if the extension is one of the supported
-  // freesurfer volume formats. Used to assign the proper colour node to label
-  // maps.
-  int IsFreeSurferVolume (const char* filename);
-  
-  // Description:
-  //
-  vtkMRMLVolumeNode *ActiveVolumeNode;
+private:
+
+  vtkSlicerEMSegmentLogic(const vtkSlicerEMSegmentLogic&); // Not implemented
+  void operator=(const vtkSlicerEMSegmentLogic&);          // Not implemented
+
+  /// The mrml manager is created in the constructor
+  vtkSetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
+
+  //BTX
+  template <class T>
+  static T GuessRegistrationBackgroundLevel(vtkImageData* imageData);
+  //ETX
+
+  static void
+  ComposeGridTransform(vtkGridTransform* inGrid,
+                       vtkMatrix4x4*     preMultiply,
+                       vtkMatrix4x4*     postMultiply,
+                       vtkGridTransform* outGrid);
+
+  /// Convenience method for determining if two volumes have same geometry
+  static bool IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
+                                    vtkMRMLVolumeNode* rhs);
+
+  static void PrintImageInfo(vtkMRMLVolumeNode* volumeNode);
+  static void PrintImageInfo(vtkImageData* image);
+
+  /// Copy data from MRML to algorithm
+  virtual void CopyAtlasDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
+  virtual void CopyTargetDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
+  virtual void CopyGlobalDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
+  virtual void CopyTreeDataToSegmenter(vtkImageEMLocalSuperClass* node,
+                                       vtkIdType nodeID);
+  virtual void CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass*
+                                              node,
+                                              vtkIdType nodeID);
+  virtual void CopyTreeParentDataToSegmenter(vtkImageEMLocalSuperClass* node,
+                                             vtkIdType nodeID);
+  virtual void CopyTreeLeafDataToSegmenter(vtkImageEMLocalClass* node,
+                                           vtkIdType nodeID);
+
+  /// Convienience methods for translating enums between algorithm and this module
+  virtual int ConvertGUIEnumToAlgorithmEnumStoppingConditionType(int guiEnumValue);
+  virtual int ConvertGUIEnumToAlgorithmEnumInterpolationType(int guiEnumValue);
+
+  /// Not currently used
+  vtkSetStringMacro(ProgressCurrentAction);
+  vtkSetMacro(ProgressGlobalFractionCompleted, double);
+  vtkSetMacro(ProgressCurrentFractionCompleted, double);
+
+  //void UpdateIntensityDistributionAuto(vtkKWApplication* app, vtkIdType nodeID);
+
+  ///
+  /// Since the mrml nodes are very complicated for this module, we
+  /// delegate the handling of them to a MRML manager
+  vtkEMSegmentMRMLManager* MRMLManager;
+
+  char *ModuleName;
+
+  ///
+  /// Information related to progress bars: this mechanism is not
+  /// currently implemented and might me best implemented elsewhere
+  char*  ProgressCurrentAction;
+  double ProgressGlobalFractionCompleted;
+  double ProgressCurrentFractionCompleted;
 };
 
 #endif
