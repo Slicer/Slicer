@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>620</width>
-    <height>122</height>
+    <height>111</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -289,5 +289,54 @@
  <resources>
   <include location="../qMRMLWidgets.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>qMRMLSliceControllerWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>BackgroundLayerNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>475</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLSliceControllerWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ForegroundLayerNodeSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>475</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLSliceControllerWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>LabelMapSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>165</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
