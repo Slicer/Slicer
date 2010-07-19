@@ -24,18 +24,16 @@ public:
   vtkTypeMacro(vtkEMSegmentLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description: The name of the Module---this is used to construct
-  // the proc invocations
+  /// Name of the Module
+  /// This is used to construct the proc invocations
   vtkGetStringMacro (ModuleName);
   vtkSetStringMacro (ModuleName);
 
-  //
-  // actions
-  //
+  /// Actions
   virtual void      SaveTemplateNow();
   virtual bool      SaveIntermediateResults();
 
-  // Old Pipeline
+  /// Old Pipeline
   virtual bool      StartPreprocessing();
   virtual bool      StartPreprocessingInitializeInputData();
   virtual bool      StartPreprocessingTargetIntensityNormalization();
@@ -43,7 +41,7 @@ public:
   virtual bool      StartPreprocessingAtlasToTargetRegistration();
   virtual void      StartSegmentation();
 
-  // New Pipeline
+  /// New Pipeline
   virtual int       SourceTclFile(vtkKWApplication*app,const char *tclFile);
   virtual int       SourceTaskFiles(vtkKWApplication* app);
   virtual int       SourcePreprocessingTclFiles(vtkKWApplication* app); 
@@ -58,30 +56,22 @@ public:
   std::string DefineTclTasksFileFromMRML();
   //ETX
   
-
-
-
-  // Used within StartSegmentation to copy data from the MRMLManager
-  // to the segmenter algorithm.  Possibly useful for research
-  // purposes.
+  /// Used within StartSegmentation to copy data from the MRMLManager
+  /// to the segmenter algorithm.  Possibly useful for research purposes.
   virtual void      CopyDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
 
-  //
-  // progress bar related functions: not currently used, likely to
-  // change
+  /// Progress bar related functions: not currently used, likely to
+  /// change
   vtkGetStringMacro(ProgressCurrentAction);
   vtkGetMacro(ProgressGlobalFractionCompleted, double);
   vtkGetMacro(ProgressCurrentFractionCompleted, double);
 
-  //
-  // MRML Related Methods.  The collection of MRML nodes for the
-  // EMSegmenter is complicated.  Therefore, the management of these
-  // nodes are delagated to the vtkEMSegmentMRMLManager class.
+  /// MRML Related Methods.  The collection of MRML nodes for the
+  /// EMSegmenter is complicated.  Therefore, the management of these
+  /// nodes are delagated to the vtkEMSegmentMRMLManager class.
   vtkGetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
 
-  //
-  // Register all the nodes used by this module with the current MRML
-  // scene.
+  /// Register all the nodes used by this module with the current MRML scene.
   virtual void RegisterMRMLNodesWithScene()
       { 
       this->MRMLManager->RegisterMRMLNodesWithScene(); 
@@ -99,12 +89,12 @@ public:
       this->MRMLManager->ProcessMRMLEvents(caller, event, callData); 
       }
 
-  //
-  // special testing functions
+  ///
+  /// Special testing functions
   virtual void      PopulateTestingData();
   virtual void      SpecialTestingFunction();
 
-  // events to observe
+  /// Events to observe
   virtual vtkIntArray* NewObservableEvents();
 
   void StartPreprocessingResampleToTarget(vtkMRMLVolumeNode* movingVolumeNode, vtkMRMLVolumeNode* fixedVolumeNode, vtkMRMLVolumeNode* outputVolumeNode);
@@ -142,7 +132,7 @@ public:
                              double backgroundLevel);
 
 
-  // utility---should probably go to general slicer lib at some point
+  /// Utility --- should probably go to general slicer lib at some point
   static void SlicerImageReslice(vtkMRMLVolumeNode* inputVolumeNode,
                                  vtkMRMLVolumeNode* outputVolumeNode,
                                  vtkMRMLVolumeNode* outputVolumeGeometryNode,
@@ -158,10 +148,11 @@ public:
 private:
   vtkEMSegmentLogic();
   ~vtkEMSegmentLogic();
-  vtkEMSegmentLogic(const vtkEMSegmentLogic&);
-  void operator=(const vtkEMSegmentLogic&);
 
-  // the mrml manager is created in the constructor
+  vtkEMSegmentLogic(const vtkEMSegmentLogic&); // Not implemented
+  void operator=(const vtkEMSegmentLogic&);    // Not implemented
+
+  /// The mrml manager is created in the constructor
   vtkSetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
 
   //BTX
@@ -175,15 +166,14 @@ private:
                        vtkMatrix4x4*     postMultiply,
                        vtkGridTransform* outGrid);
 
-  // Description:
-  // Convenience method for determining if two volumes have same geometry
+  /// Convenience method for determining if two volumes have same geometry
   static bool IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
                                     vtkMRMLVolumeNode* rhs);
 
   static void PrintImageInfo(vtkMRMLVolumeNode* volumeNode);
   static void PrintImageInfo(vtkImageData* image);
 
-  // copy data from MRML to algorithm
+  /// Copy data from MRML to algorithm
   virtual void CopyAtlasDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
   virtual void CopyTargetDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
   virtual void CopyGlobalDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
@@ -197,31 +187,27 @@ private:
   virtual void CopyTreeLeafDataToSegmenter(vtkImageEMLocalClass* node,
                                            vtkIdType nodeID);  
 
-  //
-  // convienience methods for translating enums between algorithm and
-  // this module
-  virtual int
-    ConvertGUIEnumToAlgorithmEnumStoppingConditionType(int guiEnumValue);
-  virtual int
-    ConvertGUIEnumToAlgorithmEnumInterpolationType(int guiEnumValue);
+  /// Convienience methods for translating enums between algorithm and this module
+  virtual int ConvertGUIEnumToAlgorithmEnumStoppingConditionType(int guiEnumValue);
+  virtual int ConvertGUIEnumToAlgorithmEnumInterpolationType(int guiEnumValue);
 
-  // not currently used
+  /// Not currently used
   vtkSetStringMacro(ProgressCurrentAction);
   vtkSetMacro(ProgressGlobalFractionCompleted, double);
   vtkSetMacro(ProgressCurrentFractionCompleted, double);
 
   void UpdateIntensityDistributionAuto(vtkKWApplication* app, vtkIdType nodeID);
 
-  //
-  // because the mrml nodes are very complicated for this module, we
-  // delegate the handeling of them to a MRML manager
+  ///
+  /// Since the mrml nodes are very complicated for this module, we
+  /// delegate the handling of them to a MRML manager
   vtkEMSegmentMRMLManager* MRMLManager;
 
   char *ModuleName;
 
-  //
-  // information related to progress bars: this mechanism is not
-  // currently implemented and might me best implemented elsewhere
+  ///
+  /// Information related to progress bars: this mechanism is not
+  /// currently implemented and might me best implemented elsewhere
   char*  ProgressCurrentAction;
   double ProgressGlobalFractionCompleted;
   double ProgressCurrentFractionCompleted;
