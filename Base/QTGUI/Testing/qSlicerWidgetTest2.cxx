@@ -92,10 +92,9 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
   //
   vtkMRMLSliceLogic *sliceLogic = vtkMRMLSliceLogic::New();
   sliceLogic->SetName( "Image Viewer" );
-  sliceLogic->SetMRMLScene( scene );
+  sliceLogic->SetAndObserveMRMLScene(scene);
   sliceLogic->ProcessMRMLEvents();
   sliceLogic->ProcessLogicEvents();
-  sliceLogic->SetAndObserveMRMLScene( scene );
 
   vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
   sliceNode->SetOrientationToCoronal();
