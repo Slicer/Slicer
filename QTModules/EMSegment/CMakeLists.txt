@@ -15,6 +15,8 @@ SET(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
+  ${EMSegmentMRML_SOURCE_DIR}
+  ${EMSegmentMRML_BINARY_DIR}
   )
 
 # Source files
