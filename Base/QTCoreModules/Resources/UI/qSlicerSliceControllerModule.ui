@@ -435,11 +435,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>598</x>
-     <y>659</y>
+     <y>743</y>
     </hint>
     <hint type="destinationlabel">
-     <x>340</x>
-     <y>689</y>
+     <x>492</x>
+     <y>778</y>
     </hint>
    </hints>
   </connection>
@@ -454,8 +454,56 @@
      <y>317</y>
     </hint>
     <hint type="destinationlabel">
-     <x>457</x>
-     <y>406</y>
+     <x>559</x>
+     <y>468</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSliceControllerModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>RedSliceControllerWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>5</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>88</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSliceControllerModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>YellowSliceControllerWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>135</x>
+     <y>5</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerSliceControllerModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GreenSliceControllerWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>293</x>
+     <y>3</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>285</y>
     </hint>
    </hints>
   </connection>
