@@ -100,10 +100,12 @@ vtkMRMLNode* qMRMLUtils::topLevelNthNode(vtkMRMLScene* scene, int nodeIndex)
     {
     return 0;
     }
-  for (int i = 0; i < scene->GetNumberOfNodes(); ++i)
+  vtkCollection* sceneCollection = scene->GetCurrentScene();
+  vtkMRMLNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (sceneCollection->InitTraversal(it);
+       (node = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
     {
-    vtkMRMLNode* node = scene->GetNthNode(i);
-    Q_ASSERT(node);
     vtkMRMLNode* parent = qMRMLUtils::parentNode(node);
     if (parent != 0)
       {
@@ -128,11 +130,12 @@ vtkMRMLNode* qMRMLUtils::childNode(vtkMRMLNode* node, int childIndex)
     }
   // MRML Transformable nodes
   QString nodeId = QString(node->GetID());
-  vtkMRMLScene* scene = node->GetScene();
-  for (int i = 0; i < scene->GetNumberOfNodes(); ++i)
+  vtkCollection* sceneCollection = node->GetScene()->GetCurrentScene();
+  vtkMRMLNode* n = 0;
+  vtkCollectionSimpleIterator it;
+  for (sceneCollection->InitTraversal(it);
+       (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
     {
-    vtkMRMLNode* n = scene->GetNthNode(i);
-    Q_ASSERT(n);
     vtkMRMLNode* parent = qMRMLUtils::parentNode(n);
     if (parent == 0)
       {
@@ -167,24 +170,26 @@ vtkMRMLNode* qMRMLUtils::parentNode(vtkMRMLNode* node)
 //------------------------------------------------------------------------------
 int qMRMLUtils::nodeIndex(vtkMRMLNode* node)
 {
-  if (!node)
+  const char* nodeId = node ? node->GetID() : 0;
+  if (nodeId == 0)
     {
     return -1;
     }
-  QString nodeId = node->GetID();
-  vtkMRMLNode* parent = qMRMLUtils::parentNode(node);
-  vtkMRMLScene* scene = node->GetScene();
-  const int count = scene->GetNumberOfNodes();
+  const char* nId = 0;
   int index = -1;
-  for (int i = 0; i < count; ++i)
+  vtkMRMLNode* parent = qMRMLUtils::parentNode(node);
+  vtkCollection* sceneCollection = node->GetScene()->GetCurrentScene();
+  vtkMRMLNode* n = 0;
+  vtkCollectionSimpleIterator it;
+  for (sceneCollection->InitTraversal(it);
+       (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
     {
-    vtkMRMLNode* n = scene->GetNthNode(i);
-    Q_ASSERT(n);
     // note: parent can be NULL, it means that the scene is the parent
     if (parent == qMRMLUtils::parentNode(n))
       {
       ++index;
-      if (nodeId == n->GetID())
+      nId = n->GetID();
+      if (nId && !strcmp(nodeId, nId))
         {
         return index;
         }
@@ -204,12 +209,13 @@ int qMRMLUtils::childCount(vtkMRMLNode* node)
     }
   // MRML Transformable nodes
   QString nodeId = QString(node->GetID());
-  vtkMRMLScene* scene = node->GetScene();
   int childCount = 0;
-  for (int i = 0; i < scene->GetNumberOfNodes(); ++i)
+  vtkCollection* sceneCollection = node->GetScene()->GetCurrentScene();
+  vtkMRMLNode* n = 0;
+  vtkCollectionSimpleIterator it;
+  for (sceneCollection->InitTraversal(it);
+       (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
     {
-    vtkMRMLNode* n = scene->GetNthNode(i);
-    Q_ASSERT(n);
     vtkMRMLNode* parent = qMRMLUtils::parentNode(n);
     if (parent == 0)
       {
@@ -233,10 +239,12 @@ int qMRMLUtils::childCount(vtkMRMLScene* scene)
     }
   // MRML Transformable nodes
   int childCount = 0;
-  for (int i = 0; i < scene->GetNumberOfNodes(); ++i)
+  vtkCollection* sceneCollection = scene->GetCurrentScene();
+  vtkMRMLNode* n = 0;
+  vtkCollectionSimpleIterator it;
+  for (sceneCollection->InitTraversal(it);
+       (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
     {
-    vtkMRMLNode* n = scene->GetNthNode(i);
-    Q_ASSERT(n);
     vtkMRMLNode* parent = qMRMLUtils::parentNode(n);
     if (parent)
       {
