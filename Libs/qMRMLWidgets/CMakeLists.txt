@@ -61,6 +61,9 @@ SET(qMRMLWidgets_SRCS
   qMRMLSliceControllerWidget.cxx
   qMRMLSliceControllerWidget.h
   qMRMLSliceControllerWidget_p.h
+  qMRMLSliceInformationWidget.cxx
+  qMRMLSliceInformationWidget.h
+  qMRMLSliceInformationWidget_p.h
   qMRMLSliceViewWidget.cxx
   qMRMLSliceViewWidget.h
   qMRMLSliceViewWidget_p.h
@@ -103,6 +106,8 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSceneTreeModel.h
   qMRMLSliceControllerWidget.h
   qMRMLSliceControllerWidget_p.h
+  qMRMLSliceInformationWidget.h
+  qMRMLSliceInformationWidget_p.h
   qMRMLSliceViewWidget.h
   qMRMLSliceViewWidget_p.h
   qMRMLSortFilterProxyModel.h
@@ -121,6 +126,7 @@ SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLROIWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLSliceControllerWidget.ui
+  Resources/UI/qMRMLSliceInformationWidget.ui
   Resources/UI/qMRMLSliceViewWidget.ui
   Resources/UI/qMRMLTransformSliders.ui
   Resources/UI/qMRMLVolumeThresholdWidget.ui
