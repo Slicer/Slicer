@@ -1,5 +1,6 @@
 
 // Qt includes
+#include <QButtonGroup>
 #include <QDebug>
 #include <QGridLayout>
 #include <QWidget>
@@ -7,11 +8,12 @@
 // CTK includes
 #include <ctkLogger.h>
 
-// qMRML includes
-#include "qMRMLThreeDRenderView.h"
-#include "qMRMLSliceViewWidget.h"
-#include "qMRMLUtils.h"
-#include "qMRMLNodeFactory.h"
+// qMRMLWidgets includes
+#include <qMRMLThreeDRenderView.h>
+#include <qMRMLSliceViewWidget.h>
+#include <qMRMLSliceControllerWidget.h>
+#include <qMRMLUtils.h>
+#include <qMRMLNodeFactory.h>
 
 // SlicerQt includes
 #include "qSlicerLayoutManager.h"
@@ -115,6 +117,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(const QString& sliceViewNa
   else
     {
     sliceView = new qMRMLSliceViewWidget(this->TargetWidget);
+    sliceView->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
     sliceView->setSliceViewName(sliceViewName);
     sliceView->setMRMLScene(this->MRMLScene);
     sliceView->setMRMLSliceNode(sliceNode);
@@ -523,6 +526,8 @@ qSlicerLayoutManager::qSlicerLayoutManager(QWidget* widget) : Superclass(widget)
   Q_ASSERT(widget);
   CTK_INIT_PRIVATE(qSlicerLayoutManager);
   CTK_D(qSlicerLayoutManager);
+  d->SliceControllerButtonGroup = new QButtonGroup(widget);
+  d->SliceControllerButtonGroup->setExclusive(false);
   d->GridLayout = new QGridLayout(widget);
   d->GridLayout->setContentsMargins(6, 6, 6, 6);
   d->GridLayout->setSpacing(0);

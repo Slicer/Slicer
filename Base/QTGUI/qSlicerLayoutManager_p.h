@@ -15,6 +15,7 @@
 #include <vtkSmartPointer.h>
 
 class QGridLayout;
+class QButtonGroup;
 class qMRMLSliceViewWidget;
 class qMRMLThreeDRenderView;
 class vtkObject;
@@ -82,6 +83,7 @@ public:
   int                SavedCurrentViewArrangement;
   QGridLayout*       GridLayout;
   QWidget*           TargetWidget;
+  QButtonGroup*      SliceControllerButtonGroup;
   
   /// Prevent onLayoutNodeModifiedEvent to be called when
   /// the current MRML layout node is updated from one of the switchTo* slots.
