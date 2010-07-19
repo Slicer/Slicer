@@ -15,12 +15,12 @@
 #ifndef __vtkImageEMLocalSuperClass_h
 #define __vtkImageEMLocalSuperClass_h 
   
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 
 #include "vtkImageEMLocalClass.h"
 #include "EMLocalInterface.h" 
 
-class VTK_EMSEGMENT_EXPORT vtkImageEMLocalSuperClass : public vtkImageEMLocalGenericClass
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMLocalSuperClass : public vtkImageEMLocalGenericClass
 {
   public:
   // -----------------------------------------------------

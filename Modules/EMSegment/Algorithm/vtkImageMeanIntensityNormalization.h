@@ -19,12 +19,12 @@
 
 #include "vtkImageToImageFilter.h"
 #include "vtkImageAccumulate.h"
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 
 #define INTENSITY_NORM_UNDEFINED 0
 #define INTENSITY_NORM_MEAN_MRI 1
 
-class VTK_EMSEGMENT_EXPORT vtkImageMeanIntensityNormalization : public vtkImageToImageFilter
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageMeanIntensityNormalization : public vtkImageToImageFilter
 {
   public:
   static vtkImageMeanIntensityNormalization *New();

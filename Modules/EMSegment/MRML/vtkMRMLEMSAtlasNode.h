@@ -3,10 +3,10 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 #include "vtkMRMLEMSVolumeCollectionNode.h"
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSAtlasNode : 
+class VTK_MRMLEMS_EXPORT vtkMRMLEMSAtlasNode : 
   public vtkMRMLEMSVolumeCollectionNode
 {
 public:

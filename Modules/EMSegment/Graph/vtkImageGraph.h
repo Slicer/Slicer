@@ -3,7 +3,7 @@
 #define __vtkImageGraph_h
 
 #include "vtkImageSource.h"
-#include "vtkEMSegmentStep.h"
+#include "vtkEMSegmentGraph.h"
 
 
 // From vtkImagePlot
@@ -11,7 +11,7 @@
 
 
 //BTX
-class   VTK_EMSEGMENT_EXPORT GraphList {
+class   VTK_EMSEGMENT_GRAPH_EXPORT GraphList {
 public:
    vtkFloatingPointType* GetColor() {return this->Color;}
    void SetColor (vtkFloatingPointType value[3]) {memcpy(this->Color,value,sizeof(vtkFloatingPointType)*3);}
@@ -33,7 +33,7 @@ public:
 // Type of curve:
 //  0 = curve representing contious data (e.g. /) 
 //  1 = curve representing discrete data (e.g. _|) 
-class  VTK_EMSEGMENT_EXPORT GraphEntryList : public GraphList {
+class  VTK_EMSEGMENT_GRAPH_EXPORT GraphEntryList : public GraphList {
 public:
    vtkImageData* GetGraphEntry() {return this->GraphEntry;} 
    void SetGraphEntry(vtkImageData* value) {this->GraphEntry = value;} 
@@ -64,7 +64,7 @@ class vtkScalarsToColors;
 class vtkIndirectLookupTable;
 class vtkLookupTable;
 
-class VTK_EMSEGMENT_EXPORT vtkImageGraph : public vtkImageSource
+class VTK_EMSEGMENT_GRAPH_EXPORT vtkImageGraph : public vtkImageSource
 {
 public:
   static vtkImageGraph *New();

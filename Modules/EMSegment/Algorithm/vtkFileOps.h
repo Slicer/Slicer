@@ -15,9 +15,9 @@
 #define __vtkFileOps_h
 
 #include "vtkObject.h"
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
     
-class VTK_EMSEGMENT_EXPORT vtkFileOps { //; prevent man page generation
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkFileOps { //; prevent man page generation
   public:
   static vtkFileOps *New() {return (new vtkFileOps);}
 

@@ -5,10 +5,10 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 #include "vtkMRMLEMSTreeParametersNode.h"
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTreeNode : 
+class VTK_MRMLEMS_EXPORT vtkMRMLEMSTreeNode : 
   public vtkMRMLNode
 {
 public:

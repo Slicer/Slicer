@@ -24,7 +24,7 @@
 // ------------------------------------
 #ifndef __vtkImageEMGeneral_h
 #define __vtkImageEMGeneral_h
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include <math.h>
 #include <cmath>
 #include "vtkMath.h"
@@ -94,7 +94,7 @@
 
 
 //ETX
-class VTK_EMSEGMENT_EXPORT vtkImageEMGeneral : public vtkImageMultipleInputFilter
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMGeneral : public vtkImageMultipleInputFilter
 {
   public:
   // -------------------------------

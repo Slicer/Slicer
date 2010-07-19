@@ -15,14 +15,14 @@
 #ifndef __vtkImageEMLocalClass_h
 #define __vtkImageEMLocalClass_h 
   
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 
 #include "vtkImageEMLocalGenericClass.h"
 #include "assert.h"
 
 #define EMSEGMENT_NUM_OF_QUALITY_MEASURE 1
 
-class VTK_EMSEGMENT_EXPORT vtkImageEMLocalClass : public vtkImageEMLocalGenericClass
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMLocalClass : public vtkImageEMLocalGenericClass
 {
   public:
   // -----------------------------------------------------

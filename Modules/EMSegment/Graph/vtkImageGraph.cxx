@@ -12,7 +12,6 @@
 
 =========================================================================auto=*/
 #include "vtkImageGraph.h"
-#include "vtkSlicerApplication.h"
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
 #include "vtkScalarsToColors.h"

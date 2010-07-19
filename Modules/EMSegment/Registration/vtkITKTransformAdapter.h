@@ -2,14 +2,14 @@
 #define __vtkITKTransformAdapter_h
 
 #include "vtkObject.h"
-#include "vtkEMSegmentWin32Header.h"
+#include "vtkEMSegmentRegistration.h"
 #include "vtkWarpTransform.h"
 #include "itkTransform.h"
 
 //
 // Helper class for converting from itk transforms to vtk transforms.
 // This class is not comprehensive or ready for general use.
-class VTK_EMSEGMENT_EXPORT vtkITKTransformAdapter : 
+class VTK_EMSEGMENT_REGISTRATION_EXPORT vtkITKTransformAdapter : 
   public vtkWarpTransform
 {
 public:

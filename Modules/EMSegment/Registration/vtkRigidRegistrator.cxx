@@ -1,10 +1,19 @@
 #define ITK_LEAN_AND_MEAN
+
+// vtkITK includes
+#include "vtkITKUtility.h"
+
+// VTK includes
 #include "vtkRigidRegistrator.h"
 #include "vtkObjectFactory.h"
-#include "itkImage.h"
-#include "itkVTKImageImport.h"
-#include "vtkITKUtility.h"
+#include "vtkImageCast.h"
+#include "vtkTypeTraits.h"
+#include "vtkImageChangeInformation.h"
+#include "vtkImagePermute.h"
+#include "vtkRegistratorTypeTraits.h"
 #include "vtkImageExport.h"
+
+// ITK includes
 #include "itkMultiResolutionImageRegistrationMethod.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkNormalizedCorrelationImageToImageMetric.h"
@@ -13,15 +22,12 @@
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkRealTimeClock.h"
 #include "itkPixelTraits.h"
-#include "vtkImageCast.h"
-#include "vtkTypeTraits.h"
 #include "itkVersorRigid3DTransform.h"
 #include "itkCenteredVersorTransformInitializer.h"
 #include "itkVersorRigid3DTransformOptimizer.h"
-#include "vtkRegistratorTypeTraits.h"
-#include "vtkImageChangeInformation.h"
-#include "vtkImagePermute.h"
 #include "itkImageFileWriter.h"
+#include "itkImage.h"
+#include "itkVTKImageImport.h"
 
 vtkCxxRevisionMacro(vtkRigidRegistrator, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkRigidRegistrator);

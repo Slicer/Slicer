@@ -4,13 +4,13 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 
 // Description: 
 // The scripted module node is simply a MRMLNode container for 
 // an arbitrary keyword value pair map
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSegmentNode : 
+class VTK_MRMLEMS_EXPORT vtkMRMLEMSegmentNode : 
   public vtkMRMLNode
 {
 public:

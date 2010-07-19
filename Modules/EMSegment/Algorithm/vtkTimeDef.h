@@ -15,7 +15,7 @@
 #define __vtkTimeDef_h
 
 
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "vtkObject.h"
 
 #ifndef _WIN32
@@ -93,7 +93,7 @@ do { \
 // ----------------------------------------------------------------------------------------------
 // Dummy class 
 // ----------------------------------------------------------------------------------------------/ 
-class VTK_EMSEGMENT_EXPORT vtkTimeDef { 
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkTimeDef { 
 public:
   static vtkTimeDef *New() {return (new vtkTimeDef);}
 protected:

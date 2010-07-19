@@ -15,12 +15,12 @@
 #ifndef __vtkImageEMAtlasSuperClass_h
 #define __vtkImageEMAtlasSuperClass_h 
   
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 
 #include "vtkImageEMAtlasClass.h"
 //!!!bcd!!!#include "vtkSlicer.h"
 
-class VTK_EMSEGMENT_EXPORT vtkImageEMAtlasSuperClass : public vtkImageEMGenericClass
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMAtlasSuperClass : public vtkImageEMGenericClass
 {
   public:
   // -----------------------------------------------------

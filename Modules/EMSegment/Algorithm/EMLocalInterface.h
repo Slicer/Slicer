@@ -26,7 +26,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef _EMLOCALINTERFACE_H_INCLUDED
 #define _EMLOCALINTERFACE_H_INCLUDED 1
 
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "vtkMultiThreader.h"
 
 // Defines the maximum number of threads used throughout this program.
@@ -65,7 +65,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Hierachy / SuperClass specific parameters 
 //--------------------------------------------------------------------
 //BTX  
-class VTK_EMSEGMENT_EXPORT EMLocal_Hierarchical_Class_Parameters {
+class VTK_EMSEGMENT_ALGORITHM_EXPORT EMLocal_Hierarchical_Class_Parameters {
  public: 
   int           NumClasses;
   int           NumTotalTypeCLASS;

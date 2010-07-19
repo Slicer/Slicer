@@ -21,14 +21,14 @@
 
 #include "vtkImageToImageFilter.h"
 #include "vtkImageGraph.h" // For GraphList
-#include "vtkEMSegmentStep.h"
+#include "vtkEMSegmentGraph.h"
 
 //BTX
 
 // Description:
 // Type of Objects:
 //  0 = a line 
-class  VTK_EMSEGMENT_EXPORT ObjectList : public GraphList {
+class  VTK_EMSEGMENT_GRAPH_EXPORT ObjectList : public GraphList {
 public:
    ObjectList* GetNext() {return this->Next;} 
    int AddObject(int pos[4],vtkFloatingPointType col[3],int type, int thick);  
@@ -52,7 +52,7 @@ protected:
 //ETX
 
 class vtkDataObject;
-class  VTK_EMSEGMENT_EXPORT vtkImageDrawObjects : public vtkImageToImageFilter
+class  VTK_EMSEGMENT_GRAPH_EXPORT vtkImageDrawObjects : public vtkImageToImageFilter
 { 
 public:
   static vtkImageDrawObjects *New();

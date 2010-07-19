@@ -3,12 +3,12 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 #include "vtkMRMLVolumeNode.h"
 #include <list>
 #include <map>
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSVolumeCollectionNode : 
+class VTK_MRMLEMS_EXPORT vtkMRMLEMSVolumeCollectionNode : 
   public vtkMRMLNode
 {
 public:

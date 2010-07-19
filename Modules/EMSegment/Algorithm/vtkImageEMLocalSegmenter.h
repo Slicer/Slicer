@@ -17,7 +17,7 @@
 #ifndef __vtkImageEMLocalSegmenter_h
 #define __vtkImageEMLocalSegmenter_h 
      
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "vtkImageEMGeneral.h" 
 #include "vtkImageEMLocalSuperClass.h"
 
@@ -29,7 +29,7 @@
 // Class Definition 
 //--------------------------------------------------------------------
 //ETX 
-class VTK_EMSEGMENT_EXPORT vtkImageEMLocalSegmenter : public vtkImageEMGeneral
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMLocalSegmenter : public vtkImageEMGeneral
 {
   public:
   // -----------------------------------------------------

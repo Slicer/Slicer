@@ -18,7 +18,7 @@
 #define __vtkImageEMAtlasSegmenter_h 
   
 #include "vtkImageEMGeneral.h" 
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "vtkImageData.h"
 #include "vtkImageEMAtlasSuperClass.h"
 
@@ -57,7 +57,7 @@ typedef struct {
 } EMAtlas_MF_Approximation_Work_Private;
 
 //ETX 
-class VTK_EMSEGMENT_EXPORT vtkImageEMAtlasSegmenter : public vtkImageEMGeneral
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMAtlasSegmenter : public vtkImageEMGeneral
 {
   public:
   // -----------------------------------------------------

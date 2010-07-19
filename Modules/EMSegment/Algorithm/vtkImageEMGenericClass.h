@@ -20,7 +20,7 @@
 #ifndef __vtkImageEMGenericClass_h
 #define __vtkImageEMGenericClass_h 
   
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include <iostream>
 #include "vtkImageMultipleInputFilter.h"
 #include "vtkImageData.h"
@@ -39,7 +39,7 @@ enum classType {CLASS, SUPERCLASS};
 
 //BTX
 // Class for  capturing different protocols throughout the segmentation process
-class  VTK_EMSEGMENT_EXPORT ProtocolMessages {
+class  VTK_EMSEGMENT_ALGORITHM_EXPORT ProtocolMessages {
 public:
   int GetFlag() {return this->Flag;}
   char* GetMessages();
@@ -122,7 +122,7 @@ private:
 //ETX
 
 
-class VTK_EMSEGMENT_EXPORT vtkImageEMGenericClass : public vtkImageMultipleInputFilter
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMGenericClass : public vtkImageMultipleInputFilter
 {
   public:
   // -----------------------------------------------------

@@ -3,10 +3,10 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 #include "vtkMRMLEMSIntensityNormalizationParametersNode.h"
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSGlobalParametersNode : 
+class VTK_MRMLEMS_EXPORT vtkMRMLEMSGlobalParametersNode : 
   public vtkMRMLNode
 {
 public:

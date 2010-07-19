@@ -15,7 +15,7 @@
 #define __vtkDataDef_h
 
 
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "vtkObject.h"
 #include "assert.h"
 // #include "ostream.h"
@@ -56,7 +56,7 @@ typedef struct {
 /// ----------------------------------------------------------------------------------------------/ 
 
 /// Kilian turn around dimension so it is y,x,z like in matlab ! 
-class VTK_EMSEGMENT_EXPORT EMVolume {
+class VTK_EMSEGMENT_ALGORITHM_EXPORT EMVolume {
 public:
   //static EMVolume *New() {return (new vtkDataDef);}
   EMVolume(){this->Data  = NULL;this->MaxX = this->MaxY = this->MaxZ = this->MaxXY = this->MaxXYZ = 0;}
@@ -226,7 +226,7 @@ protected :
 /// ----------------------------------------------------------------------------------------------/ 
 /// It is a 5 dimensional Volume where m[t1][t2][z][y][x] t1>= t2 is only defined 
 /// Lower Traingular matrix - or a symmetric matrix where you only save the lower triangle
-class VTK_EMSEGMENT_EXPORT EMTriVolume {
+class VTK_EMSEGMENT_ALGORITHM_EXPORT EMTriVolume {
 protected :
   EMVolume **TriVolume;
   int Dim;
@@ -340,7 +340,7 @@ void EraseDataFile(char *FileName) {
 /// ----------------------------------------------------------------------------------------------
 /// Dummy class 
 /// ----------------------------------------------------------------------------------------------/ 
-class VTK_EMSEGMENT_EXPORT vtkDataDef { 
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkDataDef { 
 public:
   static vtkDataDef *New() {return (new vtkDataDef);}
 protected:

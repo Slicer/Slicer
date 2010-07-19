@@ -3,12 +3,12 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 #include "vtkMRMLEMSVolumeCollectionNode.h"
 
 class vtkMRMLEMSIntensityNormalizationParametersNode;
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSTargetNode : 
+class VTK_MRMLEMS_EXPORT vtkMRMLEMSTargetNode : 
   public vtkMRMLEMSVolumeCollectionNode
 {
 public:

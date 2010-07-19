@@ -35,12 +35,12 @@
 #define __vtkIndirectLookupTable_h
 
 #include "vtkScalarsToColors.h"
-#include "vtkEMSegmentStep.h"
+#include "vtkEMSegmentGraph.h"
 
 
 class vtkLookupTable;
 class vtkUnsignedShortArray;
-class VTK_EMSEGMENT_EXPORT vtkIndirectLookupTable : public vtkScalarsToColors
+class VTK_EMSEGMENT_GRAPH_EXPORT vtkIndirectLookupTable : public vtkScalarsToColors
 {
 public:
   static vtkIndirectLookupTable *New();

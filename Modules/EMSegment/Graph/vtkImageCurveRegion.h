@@ -20,7 +20,7 @@
 #define __vtkImageCurveRegion_h
 
 #include "vtkImageSource.h"
-#include "vtkEMSegmentStep.h"
+#include "vtkEMSegmentGraph.h"
 
 
 // Copied from vtkImageGeneral.h
@@ -40,7 +40,7 @@
 #define EMSEGMENT_ONE_OVER_ROOT_2_PI sqrt(EMSEGMENT_ONE_OVER_2_PI)
 #define EMSEGMENT_MINUS_ONE_OVER_2_LOG_2 ((float) -.72134752)
 
-class VTK_EMSEGMENT_EXPORT vtkImageCurveRegion : public vtkImageSource
+class VTK_EMSEGMENT_GRAPH_EXPORT vtkImageCurveRegion : public vtkImageSource
 {
 public:
   static vtkImageCurveRegion *New();

@@ -4,9 +4,9 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSIntensityNormalizationParametersNode : 
+class VTK_MRMLEMS_EXPORT vtkMRMLEMSIntensityNormalizationParametersNode : 
   public vtkMRMLNode
 {
 public:

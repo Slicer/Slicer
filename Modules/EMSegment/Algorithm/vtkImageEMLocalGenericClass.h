@@ -24,7 +24,7 @@
 #ifndef __vtkImageEMLocalGenericClass_h
 #define __vtkImageEMLocalGenericClass_h 
   
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "vtkImageEMGenericClass.h"
 #include "vtkImageData.h"
 #include "vtkOStreamWrapper.h"
@@ -32,7 +32,7 @@
 // Do you want to run the code with all the print outs (set 1) or not (0)
 #define EMVERBOSE 0
 
-class VTK_EMSEGMENT_EXPORT vtkImageEMLocalGenericClass : public vtkImageEMGenericClass
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMLocalGenericClass : public vtkImageEMGenericClass
 {
   public:
   // -----------------------------------------------------

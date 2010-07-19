@@ -25,7 +25,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef _ITKEMLOCALREOPTIMIZATION_H_INCLUDED
 #define _ITKEMLOCALREOPTIMIZATION_H_INCLUDED 1
 
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "itkSingleValuedCostFunction.h"
 #include "EMLocalRegistrationCostFunction.h"
 #include "EMLocalShapeCostFunction.h"
@@ -47,7 +47,7 @@ namespace itk
  *
  * \ingroup RegistrationMetrics
  */
-class VTK_EMSEGMENT_EXPORT  EMLocalCostFunctionWrapper :  public SingleValuedCostFunction
+class VTK_EMSEGMENT_ALGORITHM_EXPORT  EMLocalCostFunctionWrapper :  public SingleValuedCostFunction
 {
 public:
 

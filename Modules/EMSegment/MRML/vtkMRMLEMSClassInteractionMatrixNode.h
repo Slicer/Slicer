@@ -3,12 +3,12 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 #include "vtkMRMLScene.h"
 
 #include <vector>
 
-class VTK_EMSEGMENT_EXPORT vtkMRMLEMSClassInteractionMatrixNode : 
+class VTK_MRMLEMS_EXPORT vtkMRMLEMSClassInteractionMatrixNode : 
   public vtkMRMLNode
 {
 public:

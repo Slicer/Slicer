@@ -4,9 +4,9 @@
 #include "vtkObject.h"
 #include "vtkImageData.h"
 #include "vtkTransform.h"
-#include "vtkEMSegmentWin32Header.h"
+#include "vtkEMSegmentRegistration.h"
 
-class VTK_EMSEGMENT_EXPORT vtkRigidRegistrator : 
+class VTK_EMSEGMENT_REGISTRATION_EXPORT vtkRigidRegistrator : 
   public vtkObject
 {
 public:

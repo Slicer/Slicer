@@ -27,26 +27,25 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm
-  ${CMAKE_CURRENT_SOURCE_DIR}/Registration
-  ${CMAKE_CURRENT_SOURCE_DIR}/Graph
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
   ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
   ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
   ${Volumes_BINARY_DIR}
+  ${EMSegmentMRML_SOURCE_DIR}
+  ${EMSegmentMRML_BINARY_DIR}
+  ${EMSegmentAlgorithm_SOURCE_DIR}
+  ${EMSegmentAlgorithm_BINARY_DIR}
+  ${EMSegmentRegistration_SOURCE_DIR}
+  ${EMSegmentRegistration_BINARY_DIR}
+  ${EMSegmentGraph_SOURCE_DIR}
+  ${EMSegmentGraph_BINARY_DIR}
   )
 
 file(GLOB headers 
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/*.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/MRML/*.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.txx"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Registration/*.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Graph/*.h"
   )
 
 file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl" )
@@ -92,7 +91,6 @@ set(EMSegment_SRCS
   # module
   vtkEMSegmentGUI.cxx
   vtkEMSegmentLogic.cxx 
-  vtkEMSegmentMRMLManager.cxx 
   # wizard
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentParametersSetStep.cxx
@@ -105,68 +103,6 @@ set(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentRunSegmentationStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentInputChannelsStep.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard/vtkEMSegmentPreProcessingStep.cxx
-  # MRML
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSSegmenterNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSTemplateNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSTreeNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSTreeParametersNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSTreeParametersParentNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSTreeParametersLeafNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSGlobalParametersNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSVolumeCollectionNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSAtlasNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSTargetNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSWorkingDataNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSIntensityNormalizationParametersNode.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSClassInteractionMatrixNode.cxx
-  # Algorithm 
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalInterface.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalRegistrationCostFunction.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalShapeCostFunction.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkDataDef.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkFileOps.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMGeneral.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMGenericClass.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalClass.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalGenericClass.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalSegmenter.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMLocalSuperClass.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkSimonParameterReaderWriter.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkTimeDef.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageMeanIntensityNormalization.cxx
-  # Registration
-  ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkRigidRegistrator.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkBSplineRegistrator.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkITKTransformAdapter.cxx
-  # not used in current implementation---used in slicer2 modules
-  #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasClass.cxx
-  #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSegmenter.cxx
-  #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSuperClass.cxx
-  #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMMarkov.cxx
-  )
-
- set(EMSegment_SRCS ${EMSegment_SRCS}
-   ${CMAKE_CURRENT_SOURCE_DIR}/Graph/vtkImageGraph.cxx
-   ${CMAKE_CURRENT_SOURCE_DIR}/Graph/vtkIndirectLookupTable.cxx
-   ${CMAKE_CURRENT_SOURCE_DIR}/Graph/vtkImageDrawObjects.cxx
-   ${CMAKE_CURRENT_SOURCE_DIR}/Graph/vtkImageCurveRegion.cxx
-  )
-
-set_source_files_properties(
-  # Algorithm sources (temporary exclusion)
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalInterface.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalRegistrationCostFunction.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/EMLocalShapeCostFunction.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkDataDef.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkFileOps.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkSimonParameterReaderWriter.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkTimeDef.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageMeanIntensityNormalization.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkBSplineRegistrator.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkRigidRegistrator.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkITKTransformAdapter.cxx
-  WRAP_EXCLUDE
   )
 
 # --------------------------------------------------------------------------
@@ -198,6 +134,10 @@ target_link_libraries(${lib_name}
   ${KWWidgets_LIBRARIES} 
   ${ITK_LIBRARIES}
   vtkSlicerVolumesModuleLogic
+  EMSegmentMRML
+  EMSegmentAlgorithm
+  EMSegmentRegistration
+  EMSegmentGraph
   Volumes
   )
 

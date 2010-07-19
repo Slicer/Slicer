@@ -1,8 +1,7 @@
 #ifndef __vtkEMSegmentMRMLManager_h
 #define __vtkEMSegmentMRMLManager_h
 
-#include "vtkSlicerModuleLogic.h"
-#include "vtkEMSegment.h"
+#include "vtkMRMLEMS.h"
 #include <vtkSetGet.h>
 
 class vtkMRMLEMSNode;
@@ -19,8 +18,8 @@ class vtkMRMLEMSWorkingDataNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLVolumeNode;
 // need enum values
-#include "MRML/vtkMRMLEMSTreeParametersLeafNode.h"
-#include "MRML/vtkMRMLEMSClassInteractionMatrixNode.h"
+#include "vtkMRMLEMSTreeParametersLeafNode.h"
+#include "vtkMRMLEMSClassInteractionMatrixNode.h"
 
 class vtkMRMLScene;
 
@@ -28,7 +27,7 @@ class vtkMRMLScene;
 #include <vtksys/stl/map>
 #include <vtksys/stl/vector>
 
-class VTK_EMSEGMENT_EXPORT vtkEMSegmentMRMLManager : 
+class VTK_MRMLEMS_EXPORT vtkEMSegmentMRMLManager : 
   public vtkObject
 {
 public:

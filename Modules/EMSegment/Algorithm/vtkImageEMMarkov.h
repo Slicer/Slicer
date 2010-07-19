@@ -16,7 +16,7 @@
 #ifndef __vtkImageEMMarkov_h
 #define __vtkImageEMMarkov_h
 
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "vtkImageData.h"
 #include "vtkImageToImageFilter.h"
 //!!!bcd!!!#include "vtkSlicer.h"
@@ -38,7 +38,7 @@
 
 
 
-class VTK_EMSEGMENT_EXPORT vtkImageEMMarkov : public vtkImageToImageFilter
+class VTK_EMSEGMENT_ALGORITHM_EXPORT vtkImageEMMarkov : public vtkImageToImageFilter
 {
   public:
   static vtkImageEMMarkov *New();

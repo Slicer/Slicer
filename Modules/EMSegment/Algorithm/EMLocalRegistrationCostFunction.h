@@ -27,7 +27,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "assert.h"
 
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "vtkMultiThreader.h"
 #include "vtkImageEMGenericClass.h" 
 #include "EMLocalInterface.h" 
@@ -106,7 +106,7 @@ class EMLocalRegistrationCostFunction_ROI {
 // ROI Related Structure
 // Main Class 
 // --------------------------------------
-class VTK_EMSEGMENT_EXPORT EMLocalRegistrationCostFunction { 
+class VTK_EMSEGMENT_ALGORITHM_EXPORT EMLocalRegistrationCostFunction { 
 public:
   // -----------------------------------------------
   // Core Functions 

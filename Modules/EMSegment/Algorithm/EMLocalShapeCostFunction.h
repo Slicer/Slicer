@@ -25,7 +25,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef _EMLOCALSHAPECOSTFUNCTION_H_INCLUDED
 #define _EMLOCALSHAPECOSTFUNCTION_H_INCLUDED 1
 
-#include "vtkEMSegment.h"
+#include "vtkEMSegmentAlgorithm.h"
 #include "EMLocalInterface.h" 
 #include "vtkMultiThreader.h"
 
@@ -49,7 +49,7 @@ typedef struct {
 
 } EMLocalShapeCostFunction_IterationSpecificVariables;
 
-class VTK_EMSEGMENT_EXPORT EMLocalShapeCostFunction { 
+class VTK_EMSEGMENT_ALGORITHM_EXPORT EMLocalShapeCostFunction { 
 public:
   // ------------------------
   // Core Functions

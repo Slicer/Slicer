@@ -1,15 +1,13 @@
-#include <string>
-#include <iostream>
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-
+// EMSegment
 #include "vtkEMSegmentMRMLManager.h"
-#include "vtkEMSegmentLogic.h"
-#include "vtkEMSegment.h"
+#include "EMLocalInterface.h" // Needed to translate between enums
 
-#include "vtkMRMLScene.h"
+// SlicerVolumesLogic includes
+#include "vtkSlicerVolumesLogic.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 
+// EMSEgment/MRML includes
 #include "vtkMRMLEMSNode.h"
 #include "vtkMRMLEMSSegmenterNode.h"
 #include "vtkMRMLEMSTemplateNode.h"
@@ -22,19 +20,24 @@
 #include "vtkMRMLEMSClassInteractionMatrixNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
+// MRML includes
+#include "vtkMRMLScene.h"
+
+// VTK includes
+#include "vtkObjectFactory.h"
 #include "vtkMatrix4x4.h"
 #include "vtkMath.h"
 
-#include "vtkSlicerVolumesLogic.h"
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
-
-// needed to translate between enums
-#include "EMLocalInterface.h"
-#include <math.h>
-#include <exception>
-
+// VTKSYS includes
 #include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <exception>
+#include <math.h>
 
 #define ERROR_NODE_VTKID 0
 
