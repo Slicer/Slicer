@@ -42,7 +42,8 @@ signals:
 
 protected slots:
   void onActivated(const QModelIndex& index);
-
+protected:
+  virtual void updateGeometries();
 private:
   CTK_DECLARE_PRIVATE(qMRMLTreeWidget);
 };

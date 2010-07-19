@@ -46,6 +46,8 @@ void qMRMLTreeWidgetPrivate::init()
                    p, SLOT(onActivated(const QModelIndex&)));
   QObject::connect(p, SIGNAL(clicked(const QModelIndex&)),
                    p, SLOT(onActivated(const QModelIndex&)));
+
+  p->setUniformRowHeights(true);
 }
 
 //------------------------------------------------------------------------------
@@ -109,4 +111,14 @@ qMRMLSortFilterProxyModel* qMRMLTreeWidget::sortFilterProxyModel()const
   CTK_D(const qMRMLTreeWidget);
   Q_ASSERT(d->SortFilterModel);
   return d->SortFilterModel;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeWidget::updateGeometries()
+{
+  if (!this->isVisible())
+    {
+    return;
+    }
+  this->QTreeView::updateGeometries();
 }
