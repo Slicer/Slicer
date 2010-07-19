@@ -25,11 +25,11 @@
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
-#include "vtkMRML.h"
-#include "vtkMRMLVolumeNode.h"
+#include <vtkMRML.h>
+#include <vtkMRMLVolumeNode.h>
 
 // STD includes
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "vtkSlicerModuleTemplateModuleLogicExport.h"
 
@@ -41,124 +41,107 @@ class vtkStringArray;
 class VTK_SLICER_MODULETEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerModuleTemplateLogic :
   public vtkSlicerModuleLogic
 {
-  public:
+public:
   
-  // The Usual vtk class functions
   static vtkSlicerModuleTemplateLogic *New();
   vtkTypeRevisionMacro(vtkSlicerModuleTemplateLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // The currently active mrml volume node 
-  vtkGetObjectMacro (ActiveVolumeNode, vtkMRMLVolumeNode);
-  void SetActiveVolumeNode (vtkMRMLVolumeNode *ActiveVolumeNode);
+  ///
+  /// The currently active mrml volume node 
+  vtkGetObjectMacro(ActiveVolumeNode, vtkMRMLVolumeNode);
+  void SetActiveVolumeNode(vtkMRMLVolumeNode *ActiveVolumeNode);
 
-  // Description:
-  // Sub type of loading an archetype volume that is known to be a scalar
-  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname, int loadingOptions);
+  ///
+  /// Sub type of loading an archetype volume that is known to be a scalar
+  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume(const char *filename, const char* volname, int loadingOptions);
+  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume(const char *filename, const char* volname);
 
-  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname) 
-    {
-    return this->AddArchetypeScalarVolume( filename, volname, 0);
-    };
+  /// Overloaded function of AddArchetypeVolume to provide more 
+  /// loading options, where variable loadingOptions is bit-coded as following:
+  /// bit 0: label map
+  /// bit 1: centered
+  /// bit 2: loading single file
+  /// higher bits are reserved for future use
+  vtkMRMLVolumeNode* AddArchetypeVolume(const char* filename, 
+                                        const char* volname, int loadingOptions);
+  vtkMRMLVolumeNode* AddArchetypeVolume(const char* filename, 
+                                        const char* volname, int loadingOptions, 
+                                        vtkStringArray *fileList);
+  vtkMRMLVolumeNode* AddArchetypeVolume(const char *filename, const char* volname);
 
-  // Description:
-  // Overloaded function of AddArchetypeVolume to provide more 
-  // loading options, where variable loadingOptions is bit-coded as following:
-  // bit 0: label map
-  // bit 1: centered
-  // bit 2: loading single file
-  // higher bits are reserved for future use
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions) 
-    {
-    return (this->AddArchetypeVolume( filename, volname, loadingOptions, NULL));
-    };
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList);
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char *filename, const char* volname) 
-    {
-    return this->AddArchetypeVolume( filename, volname, 0, NULL);
-    };
+  ///
+  /// Create new mrml node and associated storage node.
+  /// Read image data from a specified file
+  /// vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, int centerImage, int labelMap, const char* volname);
 
-  // Description:
-  // Create new mrml node and associated storage node.
-  // Read image data from a specified file
-  // vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, int centerImage, int labelMap, const char* volname);
+  /// Overloaded function of AddHeaderVolume to provide more 
+  /// loading options, where variable loadingOptions is bit-coded as following:
+  /// bit 0: label map
+  /// bit 1: centered
+  /// bit 2: loading signal file
+  /// higher bits are reserved for future use
+  vtkMRMLVolumeNode* AddHeaderVolume(const char* filename, const char* volname, 
+                                     vtkMRMLVolumeHeaderlessStorageNode *headerStorage,
+                                     int loadingOptions);
 
-  // Description:
-  // Overloaded function of AddHeaderVolume to provide more 
-  // loading options, where variable loadingOptions is bit-coded as following:
-  // bit 0: label map
-  // bit 1: centered
-  // bit 2: loading signal file
-  // higher bits are reserved for future use
-  vtkMRMLVolumeNode* AddHeaderVolume (const char* filename, const char* volname, 
-                                      vtkMRMLVolumeHeaderlessStorageNode *headerStorage,
-                                      int loadingOptions);
+  ///
+  /// Write volume's image data to a specified file
+  int SaveArchetypeVolume(const char* filename, vtkMRMLVolumeNode *volumeNode);
 
-  // Description:
-  // Create new mrml node and associated storage node.
-  // Read image data from a specified file
-  // vtkMRMLVolumeNode* AddHeaderVolume (const char* filename, int centerImage, int labelMap, const char* volname, 
-  //                                    vtkMRMLVolumeHeaderlessStorageNode *headerStorage);
+  ///
+  /// Create a label map volume to match the given volume node and add it to
+  /// the scene
+  vtkMRMLScalarVolumeNode *CreateLabelVolume(vtkMRMLScene *scene, 
+                                             vtkMRMLVolumeNode *volumeNode, 
+                                             const char *name);
 
-  // Description:
-  // Write volume's image data to a specified file
-  int SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode);
+  ///
+  /// Create a deep copy of a volume and add it to the scene
+  vtkMRMLScalarVolumeNode *CloneVolume(vtkMRMLScene *scene, 
+                                       vtkMRMLVolumeNode *volumeNode, 
+                                       const char *name);
 
-  // Description:
-  // Create a label map volume to match the given volume node and add it to
-  // the scene
-  vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name);
-
-  // Description:
-  // Create a deep copy of a volume and add it to the scene
-  vtkMRMLScalarVolumeNode *CloneVolume (vtkMRMLScene *scene, 
-                                        vtkMRMLVolumeNode *volumeNode, 
-                                        const char *name);
-
-  // Description:
-  // Update MRML events
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );    
-  // Description:
-  // Update logic events
-  virtual void ProcessLogicEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
-                                  void * /*callData*/ );  
+  ///
+  /// Update MRML events
+  virtual void ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData);
+  
+  ///
+  /// Update logic events
+  virtual void ProcessLogicEvents(vtkObject * caller, unsigned long event, void * callData);  
+  
   //BTX
   using vtkSlicerLogic::ProcessLogicEvents; 
   //ETX
   
-  // Description:
-  // Computes matrix we need to register
-  // V1Node to V2Node given the
-  // "register.dat" matrix from tkregister2 (FreeSurfer)
-  void TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix( vtkMRMLVolumeNode *V1Node,
+  ///
+  /// Computes matrix we need to register
+  /// V1Node to V2Node given the
+  /// "register.dat" matrix from tkregister2 (FreeSurfer)
+  void TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix(vtkMRMLVolumeNode *V1Node,
                              vtkMRMLVolumeNode *V2Node,
                              vtkMatrix4x4 *FSRegistrationMatrix,
                              vtkMatrix4x4 *ResultsMatrix);
-  // Description:
-  // Convenience method to compute
-  // a volume's Vox2RAS-tkreg Matrix
-  void ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode,
-                                   vtkMatrix4x4 *M );
+  ///
+  /// Convenience method to compute
+  /// a volume's Vox2RAS-tkreg Matrix
+  void ComputeTkRegVox2RASMatrix(vtkMRMLVolumeNode *VNode, vtkMatrix4x4 *M);
 
 protected:
   vtkSlicerModuleTemplateLogic();
   virtual ~vtkSlicerModuleTemplateLogic();
-  vtkSlicerModuleTemplateLogic(const vtkSlicerModuleTemplateLogic&);
-  void operator=(const vtkSlicerModuleTemplateLogic&);
 
-  // Description:
-  // Examine the file name to see if the extension is one of the supported
-  // freesurfer volume formats. Used to assign the proper colour node to label
-  // maps.
-  int IsFreeSurferVolume (const char* filename);
+  ///
+  /// Examine the file name to see if the extension is one of the supported
+  /// freesurfer volume formats. Used to assign the proper colour node to label maps.
+  int IsFreeSurferVolume(const char* filename);
   
-  // Description:
-  //
   vtkMRMLVolumeNode *ActiveVolumeNode;
+  
+private:
+
+  vtkSlicerModuleTemplateLogic(const vtkSlicerModuleTemplateLogic&); // Not implemented
+  void operator=(const vtkSlicerModuleTemplateLogic&);               // Not implemented
 };
 
 #endif

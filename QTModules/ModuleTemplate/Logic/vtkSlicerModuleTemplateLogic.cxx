@@ -12,58 +12,58 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include <vtksys/SystemTools.hxx> 
-
-#include <vtkSmartPointer.h>
-
-#include "vtkImageThreshold.h"
-#include "vtkImageAccumulateDiscrete.h"
-#include "vtkImageBimodalAnalysis.h"
-#include "vtkImageExtractComponents.h"
-#include "vtkDiffusionTensorMathematics.h"
-#include "vtkAssignAttribute.h"
-
+// 
 #include "vtkSlicerModuleTemplateLogic.h"
 #include "vtkSlicerColorLogic.h"
 
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLVolumeHeaderlessStorageNode.h"
+// MRML includes
+#include <vtkMRMLScalarVolumeNode.h>
+#include <vtkMRMLVectorVolumeNode.h>
+#include <vtkMRMLVolumeArchetypeStorageNode.h>
+#include <vtkMRMLVolumeHeaderlessStorageNode.h>
+#include <vtkMRMLNRRDStorageNode.h>
+#include <vtkMRMLDiffusionTensorVolumeNode.h>
+#include <vtkMRMLDiffusionWeightedVolumeNode.h>
+#include <vtkMRMLScalarVolumeDisplayNode.h>
+#include <vtkMRMLLabelMapVolumeDisplayNode.h>
+#include <vtkMRMLVectorVolumeDisplayNode.h>
+#include <vtkMRMLDiffusionTensorVolumeDisplayNode.h>
+#include <vtkMRMLDiffusionWeightedVolumeDisplayNode.h>
+#include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
+#include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
 
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx> 
 
-#include "vtkMRMLNRRDStorageNode.h"
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
+#include <vtkSmartPointer.h>
+#include <vtkImageThreshold.h>
+#include <vtkImageAccumulateDiscrete.h>
+#include <vtkImageBimodalAnalysis.h>
+#include <vtkImageExtractComponents.h>
+#include <vtkDiffusionTensorMathematics.h>
+#include <vtkAssignAttribute.h>
+#include <vtkStringArray.h>
 
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLLabelMapVolumeDisplayNode.h"
-#include "vtkMRMLVectorVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
-#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
-
-#include "vtkStringArray.h"
-
+//----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerModuleTemplateLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerModuleTemplateLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerModuleTemplateLogic::vtkSlicerModuleTemplateLogic()
 {
-  this->ActiveVolumeNode = NULL;
+  this->ActiveVolumeNode = 0;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerModuleTemplateLogic::~vtkSlicerModuleTemplateLogic()
 {
-  if (this->ActiveVolumeNode != NULL)
+  if (this->ActiveVolumeNode != 0)
     {
     this->ActiveVolumeNode->Delete();
-    this->ActiveVolumeNode = NULL;
+    this->ActiveVolumeNode = 0;
     }
 }
 
@@ -81,11 +81,11 @@ void vtkSlicerModuleTemplateLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(call
 {
   if (event ==  vtkCommand::ProgressEvent) 
     {
-    this->InvokeEvent ( vtkCommand::ProgressEvent,callData );
+    this->InvokeEvent(vtkCommand::ProgressEvent,callData);
     }
 }
 
-//#include "vtkMRMLScalarVolumeDisplayNode.h"
+//#include <vtkMRMLScalarVolumeDisplayNode.h"
 //----------------------------------------------------------------------------
 void vtkSlicerModuleTemplateLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 {
@@ -129,11 +129,11 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddHeaderVolume (const char* fi
     useOrientationFromFile = 0;
     }
 
-  vtkMRMLVolumeNode *volumeNode = NULL;
-  vtkMRMLVolumeDisplayNode *displayNode = NULL;
+  vtkMRMLVolumeNode *volumeNode = 0;
+  vtkMRMLVolumeDisplayNode *displayNode = 0;
 
-  vtkMRMLScalarVolumeDisplayNode *sdisplayNode = NULL;
-  vtkMRMLVectorVolumeDisplayNode *vdisplayNode = NULL;
+  vtkMRMLScalarVolumeDisplayNode *sdisplayNode = 0;
+  vtkMRMLVectorVolumeDisplayNode *vdisplayNode = 0;
 
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkMRMLVectorVolumeNode *vectorNode = vtkMRMLVectorVolumeNode::New();
@@ -168,9 +168,9 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddHeaderVolume (const char* fi
 
   storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
-  if (volumeNode != NULL)
+  if (volumeNode != 0)
     {
-    if (volname == NULL)
+    if (volname == 0)
       {
       const vtksys_stl::string fname(filename);
       vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
@@ -315,7 +315,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeScalarVolume 
   if (storageNode->SupportedFileType(filename) == 0)
     {
       vtkErrorMacro("LoadArchetypeScalarVolume: volume archetype storage node can't read this kind of file: " << filename);
-      return NULL;
+      return 0;
     }
   else { vtkDebugMacro("LoadArchetypeScalarVolume: filename is a supported type"); }
 
@@ -324,7 +324,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeScalarVolume 
   storageNode->SetUseOrientationFromFile(useOrientationFromFile);
   storageNode->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
-  if (volname == NULL)
+  if (volname == 0)
     {
     const vtksys_stl::string fname(filename);
     vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
@@ -405,6 +405,13 @@ vtkMRMLScalarVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeScalarVolume 
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeScalarVolume(
+  const char *filename, const char* volname) 
+{
+  return this->AddArchetypeScalarVolume(filename, volname, 0);
+}
+
+//----------------------------------------------------------------------------
 // int loadingOptions is bit-coded as following:
 // bit 0: label map
 // bit 1: centered
@@ -420,7 +427,7 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
     {
     importingScene = true;
     this->GetMRMLScene()->SetIsImporting(true);
-    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, NULL);
+    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, 0);
     }
   int centerImage = 0;
   int labelMap = 0;
@@ -453,14 +460,14 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
     useOrientationFromFile = 0;
     }
 
-  vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = NULL;
-  vtkSmartPointer<vtkMRMLVolumeDisplayNode> displayNode = NULL;
-  vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode> lmdisplayNode= NULL;
+  vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = 0;
+  vtkSmartPointer<vtkMRMLVolumeDisplayNode> displayNode = 0;
+  vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode> lmdisplayNode= 0;
 
-  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode> dtdisplayNode = NULL;
-  vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeDisplayNode> dwdisplayNode = NULL;
-  vtkSmartPointer<vtkMRMLVectorVolumeDisplayNode> vdisplayNode = NULL;
-  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> sdisplayNode = NULL;
+  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode> dtdisplayNode = 0;
+  vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeDisplayNode> dwdisplayNode = 0;
+  vtkSmartPointer<vtkMRMLVectorVolumeDisplayNode> vdisplayNode = 0;
+  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> sdisplayNode = 0;
 
   vtkSmartPointer<vtkMRMLScalarVolumeNode> scalarNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
   vtkSmartPointer<vtkMRMLVectorVolumeNode> vectorNode = vtkSmartPointer<vtkMRMLVectorVolumeNode>::New();
@@ -470,11 +477,11 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
   // Instanciation of the two I/O mechanism
   vtkSmartPointer<vtkMRMLNRRDStorageNode> storageNode1 = vtkSmartPointer<vtkMRMLNRRDStorageNode>::New();
   vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode> storageNode2 = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
-  vtkSmartPointer<vtkMRMLStorageNode> storageNode = NULL;
+  vtkSmartPointer<vtkMRMLStorageNode> storageNode = 0;
 
   // set the volume name
   std::string volumeName;
-  if (volname != NULL)
+  if (volname != 0)
     {
     volumeName = std::string(volname);
     }
@@ -505,7 +512,7 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
     storageNode1->SetScene(this->GetMRMLScene());
     storageNode2->SetURI(filename);
     storageNode2->SetScene(this->GetMRMLScene());
-    if (fileList != NULL)
+    if (fileList != 0)
       {
       // it's a list of uris
       int numURIs = fileList->GetNumberOfValues();
@@ -526,7 +533,7 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
     {
     storageNode1->SetFileName(filename);
     storageNode2->SetFileName(filename);
-    if (fileList != NULL)
+    if (fileList != 0)
       {
       int numFiles = fileList->GetNumberOfValues();
       vtkDebugMacro("Have a list of " << numFiles << " files that go along with the archetype");
@@ -666,29 +673,29 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
   
   if (nodeSetUsed != 1)
     {
-    dwiNode->SetAndObserveDisplayNodeID(NULL);
-    dwiNode->SetAndObserveStorageNodeID(NULL);
+    dwiNode->SetAndObserveDisplayNodeID(0);
+    dwiNode->SetAndObserveStorageNodeID(0);
     this->GetMRMLScene()->RemoveNode(dwdisplayNode);
     this->GetMRMLScene()->RemoveNode(dwiNode);
     }
   if (nodeSetUsed != 2)
     {
-    tensorNode->SetAndObserveDisplayNodeID(NULL);
-    tensorNode->SetAndObserveStorageNodeID(NULL);
+    tensorNode->SetAndObserveDisplayNodeID(0);
+    tensorNode->SetAndObserveStorageNodeID(0);
     this->GetMRMLScene()->RemoveNode(dtdisplayNode);
     this->GetMRMLScene()->RemoveNode(tensorNode);
     }
   if (nodeSetUsed != 3 && nodeSetUsed != 4)
     {
-    vectorNode->SetAndObserveDisplayNodeID(NULL);
-    vectorNode->SetAndObserveStorageNodeID(NULL);
+    vectorNode->SetAndObserveDisplayNodeID(0);
+    vectorNode->SetAndObserveStorageNodeID(0);
     this->GetMRMLScene()->RemoveNode(vdisplayNode);
     this->GetMRMLScene()->RemoveNode(vectorNode);
     }
   if (nodeSetUsed != 5)
     {
-    scalarNode->SetAndObserveDisplayNodeID(NULL);
-    scalarNode->SetAndObserveStorageNodeID(NULL);
+    scalarNode->SetAndObserveDisplayNodeID(0);
+    scalarNode->SetAndObserveStorageNodeID(0);
     if (labelMap)
       {
       this->GetMRMLScene()->RemoveNode(lmdisplayNode);
@@ -711,7 +718,7 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
     this->GetMRMLScene()->RemoveNode(storageNode2);
     }
   
-  if (volumeNode != NULL)
+  if (volumeNode != 0)
     {
     vtkSmartPointer<vtkSlicerColorLogic> colorLogic = vtkSmartPointer<vtkSlicerColorLogic>::New();
     if (labelMap) 
@@ -743,25 +750,41 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
   if (importingScene)
     {
     this->GetMRMLScene()->SetIsImporting(false);
-    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
+    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneImportedEvent, 0);
     }
   return volumeNode;
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerModuleTemplateLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode)
+vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume(const char* filename, 
+                                                                    const char* volname, 
+                                                                    int loadingOptions) 
 {
-  if (volumeNode == NULL || filename == NULL)
+  return (this->AddArchetypeVolume(filename, volname, loadingOptions, 0));
+}
+  
+//----------------------------------------------------------------------------
+vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume(const char *filename, 
+                                                                    const char* volname) 
+{
+  return this->AddArchetypeVolume(filename, volname, 0, 0);
+};
+
+//----------------------------------------------------------------------------
+int vtkSlicerModuleTemplateLogic::SaveArchetypeVolume(const char* filename, 
+                                                      vtkMRMLVolumeNode *volumeNode)
+{
+  if (volumeNode == 0 || filename == 0)
     {
     return 0;
     }
   
-  vtkMRMLNRRDStorageNode *storageNode1 = NULL;
-  vtkMRMLVolumeArchetypeStorageNode *storageNode2 = NULL;
-  vtkMRMLStorageNode *storageNode = NULL;
+  vtkMRMLNRRDStorageNode *storageNode1 = 0;
+  vtkMRMLVolumeArchetypeStorageNode *storageNode2 = 0;
+  vtkMRMLStorageNode *storageNode = 0;
   vtkMRMLStorageNode *snode = volumeNode->GetStorageNode();
 
-  if (snode != NULL)
+  if (snode != 0)
     {
     storageNode2 = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(snode);
     storageNode1 = vtkMRMLNRRDStorageNode::SafeDownCast(snode);
@@ -781,7 +804,7 @@ int vtkSlicerModuleTemplateLogic::SaveArchetypeVolume (const char* filename, vtk
       volumeNode->IsA("vtkMRMLVectorVolumeNode"))
     {
 
-    if (storageNode1 == NULL)
+    if (storageNode1 == 0)
       {
       storageNode1 = vtkMRMLNRRDStorageNode::New();
       storageNode1->SetScene(this->GetMRMLScene());
@@ -801,7 +824,7 @@ int vtkSlicerModuleTemplateLogic::SaveArchetypeVolume (const char* filename, vtk
     }
   else
     {
-    if (storageNode2 == NULL)
+    if (storageNode2 == 0)
       {
       storageNode2 = vtkMRMLVolumeArchetypeStorageNode::New();
       storageNode2->SetScene(this->GetMRMLScene());
@@ -828,9 +851,9 @@ int vtkSlicerModuleTemplateLogic::SaveArchetypeVolume (const char* filename, vtk
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode *vtkSlicerModuleTemplateLogic::CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name)
 {
-  if ( volumeNode == NULL ) 
+  if ( volumeNode == 0 ) 
     {
-    return NULL;
+    return 0;
     }
 
   // create a display node
@@ -844,7 +867,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerModuleTemplateLogic::CreateLabelVolume (vtkMRM
   int modifiedSinceRead = volumeNode->GetModifiedSinceRead();
   labelNode->CopyWithScene(volumeNode);
   
-  labelNode->SetAndObserveStorageNodeID(NULL);
+  labelNode->SetAndObserveStorageNodeID(0);
   labelNode->SetModifiedSinceRead(1);
   labelNode->SetLabelMap(1);
   
@@ -888,9 +911,9 @@ CloneVolume (vtkMRMLScene *scene,
              vtkMRMLVolumeNode *volumeNode, 
              const char *name)
 {
-  if ( scene == NULL || volumeNode == NULL ) 
+  if ( scene == 0 || volumeNode == 0 ) 
     {
-    return NULL;
+    return 0;
     }
 
   // clone the display node
@@ -910,7 +933,7 @@ CloneVolume (vtkMRMLScene *scene,
   // clone the volume node
   vtkMRMLScalarVolumeNode *clonedVolumeNode = vtkMRMLScalarVolumeNode::New();
   clonedVolumeNode->CopyWithScene(volumeNode);
-  clonedVolumeNode->SetAndObserveStorageNodeID(NULL);
+  clonedVolumeNode->SetAndObserveStorageNodeID(0);
   std::string uname = this->MRMLScene->GetUniqueNameByString(name);
   clonedVolumeNode->SetName(uname.c_str());
   clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
@@ -979,12 +1002,12 @@ void vtkSlicerModuleTemplateLogic::ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode
 
     if (!VNode)
       {
-      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input volume node is null");
+      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input volume node is 0");
       return;
       }
     if (!M)
       {
-      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input matrix is null");
+      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input matrix is 0");
       return;
       }
     double *spacing = VNode->GetSpacing();
@@ -992,9 +1015,9 @@ void vtkSlicerModuleTemplateLogic::ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode
     dR = spacing[1];
     dS = spacing[2];
 
-    if (VNode->GetImageData() == NULL)
+    if (VNode->GetImageData() == 0)
       {
-      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input volume's image data is null");
+      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input volume's image data is 0");
       return;
       }
     VNode->GetImageData()->GetDimensions(dim);
@@ -1024,7 +1047,7 @@ void vtkSlicerModuleTemplateLogic::TranslateFreeSurferRegistrationMatrixIntoSlic
   if  ( V1Node  && V2Node && FSRegistrationMatrix  && RAS2RASMatrix )
     {
 
-    if ( RAS2RASMatrix == NULL )
+    if ( RAS2RASMatrix == 0 )
       {
       RAS2RASMatrix = vtkMatrix4x4::New();
       }
