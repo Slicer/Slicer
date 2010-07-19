@@ -28,7 +28,10 @@ void qSlicerSliceControllerModuleWidget::setup()
   d->setupUi(this);
 
   qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
-  Q_ASSERT(layoutManager);
+  if (!layoutManager)
+    {
+    return;
+    }
 
   // Red
   qMRMLSliceViewWidget * redSliceViewWidget = layoutManager->sliceView("Red");
