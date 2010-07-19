@@ -66,7 +66,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="OrientationSelector">
+       <widget class="QComboBox" name="SliceOrientationSelector">
         <property name="toolTip">
          <string>Select orientation</string>
         </property>

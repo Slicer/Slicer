@@ -83,7 +83,7 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->ForegroundLayerNodeSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "0");
 
   // Connect Orientation selector
-  this->connect(this->OrientationSelector, SIGNAL(currentIndexChanged(QString)),
+  this->connect(this->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)),
                 p, SLOT(setSliceOrientation(QString)));
 
   // Connect Foreground layer selector
@@ -139,10 +139,10 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   logger.trace("updateWidgetFromMRMLSliceNode");
 
   // Update orientation selector state
-  int index = this->OrientationSelector->findText(
+  int index = this->SliceOrientationSelector->findText(
       QString::fromStdString(this->MRMLSliceNode->GetOrientationString()));
   Q_ASSERT(index>=0 && index <=4);
-  this->OrientationSelector->setCurrentIndex(index);
+  this->SliceOrientationSelector->setCurrentIndex(index);
 
   // Update slice offset slider tooltip
   this->SliceOffsetSlider->setToolTip(
@@ -494,7 +494,7 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
 //---------------------------------------------------------------------------
 QString qMRMLSliceControllerWidget::sliceOrientation()
 {
-  return ctk_d()->OrientationSelector->currentText();
+  return ctk_d()->SliceOrientationSelector->currentText();
 }
 
 //---------------------------------------------------------------------------
@@ -508,8 +508,10 @@ void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
   Q_ASSERT(expectedOrientation.contains(orientation));
 #endif
 
-  if (d->MRMLSliceNode)
+  if (!d->MRMLSliceNode)
     {
-    d->MRMLSliceNode->SetOrientationString(orientation.toLatin1());
+    return;
     }
+
+  d->MRMLSliceNode->SetOrientationString(orientation.toLatin1());
 }
