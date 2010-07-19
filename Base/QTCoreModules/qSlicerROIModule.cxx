@@ -38,11 +38,11 @@ QString qSlicerROIModule::helpText()const
     "rotated and/or translated relative to the RAS space by placing it inside "
     "the Transformation node in the Data module. The ROI module allows user to "
     "create new ROI's, change their visibility, and also change the size and "
-    "location of ROI's.\nRegion Of Interest (ROI) is used in other modules such "
-    "as ClipModels, VolumeRendering, etc. \n For more information see "
-    "<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:ROIModule-"
-    "Documentation-3.6</a>\n";
-  return help;
+    "location of ROI's.<br>Region Of Interest (ROI) is used in other modules such "
+    "as ClipModels, VolumeRendering, etc. <br>For more information see "
+    "<a href=\"%1/Modules:ROI-Module-Documentation-3.6\">%1/Modules:ROIModule-"
+    "Documentation-3.6</a>";
+  return help.arg(this->slicerWikiUrl());
 }
 
 //-----------------------------------------------------------------------------
@@ -50,8 +50,9 @@ QString qSlicerROIModule::acknowledgementText()const
 {
   QString about =
     "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
-    "Community. See <a>http://www.slicer.org</a> for details.\n"
-    "The Volumes module was contributed by Alex Yarmarkovich, Isomics Inc. "
-    "with help from others at SPL, BWH (Ron Kikinis)";
-  return about.arg(this->slicerWikiUrl());
+    "Community.<br>"
+    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>"
+    "The ROI module was contributed by Alex Yarmarkovich, Isomics "
+    "Inc. with help from others at SPL, BWH (Ron Kikinis)";
+  return about;
 }

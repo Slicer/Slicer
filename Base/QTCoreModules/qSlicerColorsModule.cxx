@@ -32,8 +32,8 @@ QString qSlicerColorsModule::helpText()const
 {
   QString help =
     "The <b>Colors Module</b> manages color look up tables.<br>"
-    "For more information see <a>http://www.slicer.org/slicerWiki/index.php/"
-    "Modules:Colors-Documentation-3.6</a><br>"
+    "For more information see <a href=\"%1/Modules:Colors-Documentation-3.6\">"
+    "%1/Modules:Colors-Documentation-3.6</a><br>"
     "Tables are used by mappers to translate between an integer and a colour "
     "value for display of models and volumes.<br>Slicer supports three kinds "
     "of tables:<br>"
@@ -48,15 +48,16 @@ QString qSlicerColorsModule::helpText()const
     "0-255.<br><br>Users are only allowed to edit User type tables. Use the "
     "Edit frame to create a new color table (you can copy from an existing "
     "one), and save it to a file using the File, Save interface.";
-  return help;
+  return help.arg(this->slicerWikiUrl());
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerColorsModule::acknowledgementText()const
 {
   QString about =
-    "This module was developed by Nicole Aucoin, SPL, BWH (Ron Kikinis). "
     "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
-    "Community. See %1 for details.";
-  return about.arg(this->slicerWikiUrl());
+    "Community.<br>"
+    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details."
+    "This Color module was developed by Nicole Aucoin, SPL, BWH (Ron Kikinis).";
+  return about;
 }

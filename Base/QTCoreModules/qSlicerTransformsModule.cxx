@@ -41,8 +41,9 @@ vtkSlicerLogic* qSlicerTransformsModule::createLogic()
 QString qSlicerTransformsModule::helpText()const
 {
   QString help =
-    "The Transforms Module creates and edits transforms. \n"
-    "<a href=%1/Modules:Transforms-Documentation-3.4>%1/Modules:Transforms-Documentation-3.4</a>";
+    "The Transforms Module creates and edits transforms.<br>"
+    "<a href=%1/Modules:Transforms-Documentation-3.4>%1/Modules:Transforms-"
+    "Documentation-3.6</a>";
   return help.arg(this->slicerWikiUrl());
 }
 
@@ -50,9 +51,10 @@ QString qSlicerTransformsModule::helpText()const
 QString qSlicerTransformsModule::acknowledgementText()const
 {
   QString acknowledgement =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. "
-    "See <a href=\"http://www.slicer.org\">http://www.slicer.org</a> for details.\n"
-    "The Transforms module was contributed by Alex Yarmarkovich, Isomics Inc. with "
-    "help from others at SPL, BWH (Ron Kikinis)";
+    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
+    "Community.<br>"
+    "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>"
+    "The Transforms module was contributed by Alex Yarmarkovich, Isomics Inc. "
+      "with help from others at SPL, BWH (Ron Kikinis)<br>";
   return acknowledgement;
 }
