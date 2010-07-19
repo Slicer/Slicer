@@ -132,20 +132,7 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
     this->PrescribedSliceSpacingRadioButton->setChecked(true);
     double prescribedSpacing[3] = {0.0, 0.0, 0.0};
     this->MRMLSliceNode->GetPrescribedSliceSpacing(prescribedSpacing);
-    double currentPrescribedSpacing = 0.0;
-    if (this->SliceOrientationSelector->currentText() == "Red")
-      {
-      currentPrescribedSpacing = prescribedSpacing[0];
-      }
-    else if (this->SliceOrientationSelector->currentText() == "Yellow")
-      {
-      currentPrescribedSpacing = prescribedSpacing[1];
-      }
-    else if (this->SliceOrientationSelector->currentText() == "Green")
-      {
-      currentPrescribedSpacing = prescribedSpacing[2];
-      }
-    this->PrescribedSpacingSpinBox->setValue(currentPrescribedSpacing);
+    this->PrescribedSpacingSpinBox->setValue(prescribedSpacing[2]);
     }
 }
 
@@ -302,18 +289,7 @@ void qMRMLSliceInformationWidget::setPrescribedSliceSpacing(double spacing)
 
   double spacingArray[3] = {0.0, 0.0, 0.0};
   d->MRMLSliceNode->GetPrescribedSliceSpacing(spacingArray);
-  if (d->SliceOrientationSelector->currentText() == "Red")
-    {
-    spacingArray[0] = spacing;
-    }
-  else if (d->SliceOrientationSelector->currentText() == "Yellow")
-    {
-    spacingArray[1] = spacing;
-    }
-  else if (d->SliceOrientationSelector->currentText() == "Green")
-    {
-    spacingArray[2] = spacing;
-    }
+  spacingArray[2] = spacing;
   d->MRMLSliceNode->SetPrescribedSliceSpacing(spacingArray);
 }
 

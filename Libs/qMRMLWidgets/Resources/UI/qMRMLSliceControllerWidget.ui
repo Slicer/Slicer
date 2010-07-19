@@ -68,7 +68,7 @@
       <item row="0" column="1">
        <widget class="QComboBox" name="SliceOrientationSelector">
         <property name="toolTip">
-         <string>Select orientation</string>
+         <string>Slice orientation (Axial, Sagittal, Coronal, Reformat).</string>
         </property>
         <item>
          <property name="text">

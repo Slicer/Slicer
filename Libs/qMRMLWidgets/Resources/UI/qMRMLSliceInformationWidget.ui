@@ -20,12 +20,15 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Layout Name</string>
+      <string>Layout Name:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
     <widget class="QLineEdit" name="LayoutNameLineEdit">
+     <property name="toolTip">
+      <string>Name of the slice</string>
+     </property>
      <property name="readOnly">
       <bool>true</bool>
      </property>
@@ -34,7 +37,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Orientation</string>
+      <string>Orientation:</string>
      </property>
     </widget>
    </item>
@@ -43,7 +46,7 @@
      <item>
       <widget class="QComboBox" name="SliceOrientationSelector">
        <property name="toolTip">
-        <string>Select orientation</string>
+        <string>Slice orientation (Axial, Sagittal, Coronal, Reformat)</string>
        </property>
        <item>
         <property name="text">
@@ -72,12 +75,15 @@
    <item row="2" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>Slice visible</string>
+      <string>Slice visible:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
     <widget class="QToolButton" name="SliceVisibilityToggle">
+     <property name="toolTip">
+      <string>Toggle the visibility of the slice in the 3D scene</string>
+     </property>
      <property name="text">
       <string>...</string>
      </property>
@@ -103,12 +109,15 @@
    <item row="3" column="0">
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>Widget visible</string>
+      <string>Widget visible:</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1">
     <widget class="QToolButton" name="WidgetVisibilityToggle">
+     <property name="toolTip">
+      <string>Toggle the visibility of the reformat widget in the 3D scene</string>
+     </property>
      <property name="text">
       <string>...</string>
      </property>
@@ -133,8 +142,11 @@
    </item>
    <item row="4" column="0">
     <widget class="QLabel" name="label_6">
+     <property name="toolTip">
+      <string>Dimension of the slice.</string>
+     </property>
      <property name="text">
-      <string>Dimension</string>
+      <string>Dimension:</string>
      </property>
     </widget>
    </item>
@@ -145,6 +157,9 @@
      </property>
      <item>
       <widget class="QLineEdit" name="DimensionXEdit">
+       <property name="toolTip">
+        <string>Slice dimension in X</string>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -152,6 +167,9 @@
      </item>
      <item>
       <widget class="QLineEdit" name="DimensionYEdit">
+       <property name="toolTip">
+        <string>Slice dimension in Y</string>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -159,6 +177,9 @@
      </item>
      <item>
       <widget class="QLineEdit" name="DimensionZEdit">
+       <property name="toolTip">
+        <string>Slice dimension in Z</string>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -168,8 +189,11 @@
    </item>
    <item row="5" column="0">
     <widget class="QLabel" name="label_7">
+     <property name="toolTip">
+      <string>Field of view of the slice.</string>
+     </property>
      <property name="text">
-      <string>Field of view</string>
+      <string>Field of view:</string>
      </property>
     </widget>
    </item>
@@ -180,6 +204,9 @@
      </property>
      <item>
       <widget class="QLineEdit" name="FieldOfViewXEdit">
+       <property name="toolTip">
+        <string>Field of view in X (mm)</string>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -187,6 +214,9 @@
      </item>
      <item>
       <widget class="QLineEdit" name="FieldOfViewYEdit">
+       <property name="toolTip">
+        <string>Field of view in Y (mm)</string>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -194,6 +224,9 @@
      </item>
      <item>
       <widget class="QLineEdit" name="FieldOfViewZEdit">
+       <property name="toolTip">
+        <string>Field of view in Z (mm)</string>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -203,8 +236,11 @@
    </item>
    <item row="6" column="0">
     <widget class="QLabel" name="label_8">
+     <property name="toolTip">
+      <string>Layout of the lightbox (rows, columns)</string>
+     </property>
      <property name="text">
-      <string>Lightbox layout</string>
+      <string>Lightbox layout:</string>
      </property>
     </widget>
    </item>
@@ -215,6 +251,9 @@
      </property>
      <item>
       <widget class="QSpinBox" name="LightboxLayoutRowsSpinBox">
+       <property name="toolTip">
+        <string>Number of rows in the lightbox</string>
+       </property>
        <property name="minimum">
         <number>1</number>
        </property>
@@ -225,6 +264,9 @@
      </item>
      <item>
       <widget class="QSpinBox" name="LightboxLayoutColumnsSpinBox">
+       <property name="toolTip">
+        <string>Number of columns in the lightbox</string>
+       </property>
        <property name="minimum">
         <number>1</number>
        </property>
@@ -237,8 +279,11 @@
    </item>
    <item row="7" column="0">
     <widget class="QLabel" name="label_9">
+     <property name="toolTip">
+      <string>Slice spacing can be prescribed by the user or context or set automatically</string>
+     </property>
      <property name="text">
-      <string>Slice spacing mode</string>
+      <string>Slice spacing mode:</string>
      </property>
     </widget>
    </item>
@@ -269,7 +314,7 @@
    <item row="8" column="0">
     <widget class="QLabel" name="label_10">
      <property name="text">
-      <string>Prescribed spacing</string>
+      <string>Prescribed spacing:</string>
      </property>
     </widget>
    </item>
@@ -277,6 +322,9 @@
     <widget class="QDoubleSpinBox" name="PrescribedSpacingSpinBox">
      <property name="enabled">
       <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>Slice spacing used when slice spacing mode is prescribed by the user or by the context</string>
      </property>
      <property name="decimals">
       <number>1</number>

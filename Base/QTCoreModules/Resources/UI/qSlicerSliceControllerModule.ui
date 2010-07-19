@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>804</height>
+    <height>792</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -63,7 +63,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Active Slice</string>
+           <string>Slice Node:</string>
           </property>
          </widget>
         </item>
@@ -71,6 +71,9 @@
          <widget class="qMRMLNodeComboBox" name="MRMLSliceNodeComboBox">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Select a slice from the current scene</string>
           </property>
           <property name="nodeTypes">
            <stringlist>
