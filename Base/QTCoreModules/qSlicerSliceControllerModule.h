@@ -21,7 +21,7 @@ public:
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerSliceControllerModule(QObject *parent=0);
 
-  qSlicerGetTitleMacro("Slices");
+  qSlicerGetTitleMacro("Slice Controllers");
 
 protected:
   ///
