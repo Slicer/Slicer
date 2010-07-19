@@ -104,7 +104,7 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // Connect SliceCollapsibleButton
   // See qMRMLSliceControllerWidget::setControllerButtonGroup()
-  this->connect(this->SliceCollapsibleButton, SIGNAL(released()),
+  this->connect(this->SliceCollapsibleButton, SIGNAL(clicked()),
                 SLOT(toggleControllerWidgetGroupVisibility()));
 
   // Connect Slice visibility toggle
@@ -389,7 +389,7 @@ void qMRMLSliceControllerWidget::setControllerButtonGroup(QButtonGroup* newButto
     d->ControllerButtonGroup->removeButton(d->SliceCollapsibleButton);
 
     // Disconnect widget with buttonGroup
-    this->disconnect(d->ControllerButtonGroup, SIGNAL(buttonReleased(int)),
+    this->disconnect(d->ControllerButtonGroup, SIGNAL(buttonClicked(int)),
                      d, SLOT(toggleControllerWidgetGroupVisibility()));
     }
 
@@ -402,19 +402,19 @@ void qMRMLSliceControllerWidget::setControllerButtonGroup(QButtonGroup* newButto
       }
 
     // Disconnect sliceCollapsibleButton and  ControllerWidgetGroup
-    this->disconnect(d->SliceCollapsibleButton, SIGNAL(released()),
+    this->disconnect(d->SliceCollapsibleButton, SIGNAL(clicked()),
                      d, SLOT(toggleControllerWidgetGroupVisibility()));
 
     // Add SliceCollapsibleButton to newButtonGroup
     newButtonGroup->addButton(d->SliceCollapsibleButton);
 
     // Connect widget with buttonGroup
-    this->connect(newButtonGroup, SIGNAL(buttonReleased(int)),
+    this->connect(newButtonGroup, SIGNAL(buttonClicked(int)),
                   d, SLOT(toggleControllerWidgetGroupVisibility()));
     }
   else
     {
-    this->connect(d->SliceCollapsibleButton, SIGNAL(released()),
+    this->connect(d->SliceCollapsibleButton, SIGNAL(clicked()),
                   d, SLOT(toggleControllerWidgetGroupVisibility()));
     }
 
