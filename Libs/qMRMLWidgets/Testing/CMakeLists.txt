@@ -40,6 +40,13 @@ MACRO( SIMPLE_TEST  TESTNAME )
   ADD_TEST( ${TESTNAME} ${LAUNCH_EXE} ${qMRMLWidgets_TESTS} ${TESTNAME} )
 ENDMACRO( SIMPLE_TEST  )
 
+MACRO( SCENE_TEST  TEST SCENENAME )
+ADD_TEST( ${TEST}_${SCENENAME} 
+  ${LAUNCH_EXE}  ${qMRMLWidgets_TESTS} ${TEST}
+  ${MRML_SOURCE_DIR}/Testing/${SCENENAME}
+  )
+ENDMACRO( SCENE_TEST )
+
 SIMPLE_TEST( qMRMLColorTableComboBoxTest1 )
 SIMPLE_TEST( qMRMLItemHelperTest1 )
 SIMPLE_TEST( qMRMLLinearTransformSliderTest1 )
@@ -52,8 +59,8 @@ SIMPLE_TEST( qMRMLNodeFactoryTest1 )
 SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )
 SIMPLE_TEST( qMRMLSceneModelTest1 )
 SIMPLE_TEST( qMRMLSceneTransformModelTest1 )
-SIMPLE_TEST( qMRMLSceneTransformModelTest2 )
+SCENE_TEST( qMRMLSceneTransformModelTest2 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLTransformSlidersTest1 )
-SIMPLE_TEST( qMRMLTreeWidgetTest1 )
+SCENE_TEST( qMRMLTreeWidgetTest1 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLUtilsTest1 )
 SIMPLE_TEST( qMRMLWidgetsExportTest1 )

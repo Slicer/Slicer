@@ -16,6 +16,7 @@
 
 // qMRML includes
 #include "qMRMLSceneTransformModel.h"
+#include "qMRMLSortFilterProxyModel.h"
 
 #include "TestingMacros.h"
 #include <vtkEventBroker.h>
@@ -27,15 +28,29 @@
 int qMRMLSceneTransformModelTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+  if( argc < 2 )
+    {
+    std::cerr << "Error: missing arguments" << std::endl;
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
+    return EXIT_FAILURE;
+    }
 
   try
     {
     qMRMLSceneTransformModel model;
+    qMRMLSortFilterProxyModel sort;
+    sort.setSourceModel(&model);
     vtkMRMLScene* scene = vtkMRMLScene::New();
     model.setMRMLScene(scene);
-    scene->SetURL("/home/julien/data/Slicer/SPL_PNL_Brain_Atlas2008/brain_atlas_2008.mrml");
+    scene->SetURL(argv[1]);
     scene->Connect();
     std::cout << std::endl << "Loaded" << std::endl;
+
+    scene->SetURL(argv[1]);
+    scene->Connect();
+    std::cout << std::endl << "Loaded twice" << std::endl;
+
     scene->Delete();
 
     }

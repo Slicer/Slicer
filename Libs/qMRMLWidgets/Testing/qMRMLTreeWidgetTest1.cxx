@@ -16,10 +16,17 @@
 int qMRMLTreeWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+  if( argc < 2 )
+    {
+    std::cerr << "Error: missing arguments" << std::endl;
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
+    return EXIT_FAILURE;
+    }
   std::cout << std::endl<< "***************************************" << std::endl;
   vtkTimerLog* timer = vtkTimerLog::New();
   vtkMRMLScene* scene = vtkMRMLScene::New();
-  scene->SetURL("/home/julien/data/Slicer/SPL_PNL_Brain_Atlas2008/brain_atlas_2008.mrml");
+  scene->SetURL(argv[1]);
   timer->StartTimer();
   scene->Import();
   timer->StopTimer();
@@ -33,7 +40,7 @@ int qMRMLTreeWidgetTest1( int argc, char * argv [] )
   scene = vtkMRMLScene::New();
   qMRMLSceneModel   sceneModel;
   sceneModel.setMRMLScene(scene);
-  scene->SetURL("/home/julien/data/Slicer/SPL_PNL_Brain_Atlas2008/brain_atlas_2008.mrml");
+  scene->SetURL(argv[1]);
   timer->StartTimer();
   scene->Import();
   timer->StopTimer();
@@ -47,7 +54,7 @@ int qMRMLTreeWidgetTest1( int argc, char * argv [] )
   scene = vtkMRMLScene::New();
   qMRMLSceneTransformModel   transformModel;
   transformModel.setMRMLScene(scene);
-  scene->SetURL("/home/julien/data/Slicer/SPL_PNL_Brain_Atlas2008/brain_atlas_2008.mrml");
+  scene->SetURL(argv[1]);
    timer->StartTimer();
   scene->Import();
   timer->StopTimer();
@@ -63,7 +70,7 @@ int qMRMLTreeWidgetTest1( int argc, char * argv [] )
   transformModel2.setMRMLScene(scene);
   qMRMLSortFilterProxyModel  sortModel;
   sortModel.setSourceModel(&transformModel2);
-  scene->SetURL("/home/julien/data/Slicer/SPL_PNL_Brain_Atlas2008/brain_atlas_2008.mrml");
+  scene->SetURL(argv[1]);
    timer->StartTimer();
   scene->Import();
   timer->StopTimer();
@@ -78,7 +85,7 @@ int qMRMLTreeWidgetTest1( int argc, char * argv [] )
   scene = vtkMRMLScene::New();
   qMRMLTreeWidget   mrmlItem;
   mrmlItem.setMRMLScene(scene);
-  scene->SetURL("/home/julien/data/Slicer/SPL_PNL_Brain_Atlas2008/brain_atlas_2008.mrml");
+  scene->SetURL(argv[1]);
    timer->StartTimer();
   scene->Import();
   timer->StopTimer();
@@ -93,7 +100,7 @@ int qMRMLTreeWidgetTest1( int argc, char * argv [] )
   qMRMLTreeWidget   treeWidget;
   treeWidget.show();
   treeWidget.setMRMLScene(scene);
-  scene->SetURL("/home/julien/data/Slicer/SPL_PNL_Brain_Atlas2008/brain_atlas_2008.mrml");
+  scene->SetURL(argv[1]);
   timer->StartTimer();
   scene->Import();
   timer->StopTimer();
