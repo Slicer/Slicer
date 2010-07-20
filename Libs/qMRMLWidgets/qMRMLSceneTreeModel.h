@@ -58,11 +58,15 @@ protected:
   ///virtual qMRMLAbstractItemHelperFactory* itemFactory()const = 0;
   //virtual qMRMLAbstractItemHelper* itemFromVTKObject(vtkObject* object, int column)const =0;
   //virtual qMRMLAbstractRootItemHelper* rootItem(vtkMRMLScene* scene)const =0;
-  virtual void onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node);
-  virtual void onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObject* node);
-  virtual void onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node);
-  virtual void onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node);
+  virtual void onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);
+  virtual void onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node);
+  virtual void onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);
+  virtual void onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node);
 
+  virtual void onMRMLSceneAboutToBeImported(vtkMRMLScene* scene);
+  virtual void onMRMLSceneImported(vtkMRMLScene* scene);
+  virtual void onMRMLSceneAboutToBeClosed(vtkMRMLScene* scene);
+  virtual void onMRMLSceneClosed(vtkMRMLScene* scene);
   virtual QModelIndex indexFromItem(const qMRMLAbstractItemHelper* item)const;
 private:
   //qMRMLAbstractItemHelperFactory* sourceItemFactory()const;

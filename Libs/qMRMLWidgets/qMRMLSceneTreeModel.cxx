@@ -501,9 +501,14 @@ int qMRMLSceneTreeModelPrivate::hiddenItem(vtkObject* object, int column)const
 // }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node)
+void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   CTK_D(qMRMLSceneTreeModel);
+  if (scene->GetIsClosing() || scene->GetIsImporting())
+    {
+    return;
+    }
+
   Q_UNUSED(scene);
   Q_UNUSED(node);
   //qDebug() << "onSourceRowsAboutToBeInserted" << parent << start << end;
@@ -514,9 +519,14 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObj
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObject* node)
+void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   CTK_D(qMRMLSceneTreeModel);
+  if (scene->GetIsClosing() || scene->GetIsImporting())
+    {
+    return;
+    }
+
   // we test if it's empty here, but it's just because I never needed nested calls
   // to rows about to be removed/added. It can be removed if needed
   Q_ASSERT(d->HiddenItems.empty());
@@ -550,7 +560,8 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
     QSharedPointer<qMRMLAbstractItemHelper> itemParent =
       QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
 
-    int start = itemParent->row(item.data());
+    int start = d->rowWithHiddenItemsRemoved(item.data());
+    //qDebug() << (void *)item->object() << d->HiddenItems.size();
     //int numberOfRows = consecutiveRowsToBeRemoved[i];
     // proxyItemsFromSourceIndexes returned items for each column (not just 1
     // per row), here we compute the total number of items.
@@ -566,6 +577,7 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
     //qDebug() << "Remove: " << parentIndex << this->rowCount(parentIndex) << start;
     //qDebug() << qMRMLUtils::childCount(vtkMRMLNode::SafeDownCast(node));
     Q_ASSERT(start < this->rowCount(parentIndex));
+    //qDebug() << "Remove: " << this->mrmlScene()->GetNumberOfNodes() << qMRMLUtils::childCount(this->mrmlScene());
     this->beginRemoveRows(parentIndex, start, start + numberOfRows - 1);
 
     d->ItemsToAdd = d->children(item.data());
@@ -590,9 +602,14 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkO
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneTreeModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node)
+void qMRMLSceneTreeModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   CTK_D(qMRMLSceneTreeModel);
+  if (scene->GetIsClosing() || scene->GetIsImporting())
+    {
+    return;
+    }
+
   // we test if it's empty here, but it's just because I never needed nested calls
   // to rows about to be removed/added. It can be removed if needed
   //Q_ASSERT(d->HiddenItems.empty());
@@ -657,6 +674,7 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node
     Q_ASSERT(start == itemParentExtra->childCount() - postItemsCount - 1 );
     }
   */
+  //qDebug() << "Scene: " << this->mrmlScene()->GetNumberOfNodes() << qMRMLUtils::childCount(this->mrmlScene());
   this->beginInsertRows(this->indexFromItem(itemParent.data()), start, start);
   d->HiddenItems.remove(hiddenItemsIndex, this->columnCount());
   this->endInsertRows();
@@ -669,9 +687,14 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneTreeModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject *node)
+void qMRMLSceneTreeModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode *node)
 {
   CTK_D(qMRMLSceneTreeModel);
+  if (scene->GetIsClosing() || scene->GetIsImporting())
+    {
+    return;
+    }
+
 #ifndef QT_NO_DEBUG
   d->HiddenVTKObject = 0;
   QSharedPointer<qMRMLAbstractItemHelper> sceneItem =
@@ -680,7 +703,8 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject *no
 #endif
   // we should probably not clear everything (in case if insertion/removes are
   // nested)
-  d->HiddenItems.clear();
+  int hiddenItemsIndex = d->hiddenItem(node, 0);
+  d->HiddenItems.remove(hiddenItemsIndex, this->columnCount());
 
   if (!d->ItemsToAdd.size())
     {
@@ -697,13 +721,40 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject *no
     QSharedPointer<qMRMLAbstractItemHelper> itemParent =
       QSharedPointer<qMRMLAbstractItemHelper>(item->parent());
 
-    int start = itemParent->row(item.data());
+    int start = d->rowWithHiddenItemsRemoved(item.data());
     //qDebug() << "************onMRMLSceneNodeRemoved: "<<  start << this->indexFromItem(itemParent.data());
     this->beginInsertRows(this->indexFromItem(itemParent.data()), start, start + numberOfRows - 1);
     d->ItemsToAdd.remove(0, numberOfRows * this->columnCount());
     this->endInsertRows();
     }
 }
+
+//------------------------------------------------------------------------------
+void qMRMLSceneTreeModel::onMRMLSceneAboutToBeImported(vtkMRMLScene* scene)
+{
+  this->beginResetModel();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneTreeModel::onMRMLSceneImported(vtkMRMLScene* scene)
+{
+  this->endResetModel();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneTreeModel::onMRMLSceneAboutToBeClosed(vtkMRMLScene* scene)
+{
+  this->beginResetModel();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneTreeModel::onMRMLSceneClosed(vtkMRMLScene* scene)
+{
+  this->endResetModel();
+}
+
+
+
 //------------------------------------------------------------------------------
 // qMRMLSceneTreeModel
 
@@ -942,21 +993,9 @@ QModelIndex qMRMLSceneTreeModel::index(int row, int column, const QModelIndex &v
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(vparent));
     
   QSharedPointer<qMRMLAbstractItemHelper> item = 
-    QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(row, column));
-    
-  // Let's make sure that the item we got has the required row
-  if (d->HiddenItems.size() && !item.isNull() &&
-      d->rowWithHiddenItemsRemoved(item.data()) != row)
-    {
-    // item has a different row because there are hidden items that shift 
-    // item's row. The item corresponding to the required row is after some 
-    // hidden items. childRowWithHiddenItemsAdded will get the row if the 
-    // hidden items were not hidden. 
-    item = QSharedPointer<qMRMLAbstractItemHelper>(
-      parentItem->child(d->childRowWithHiddenItemsAdded(parentItem.data(), row), column));
-    }
-  Q_ASSERT(item.isNull() || item->object());
-  
+    QSharedPointer<qMRMLAbstractItemHelper>(
+      parentItem->child(d->childRowWithHiddenItemsAdded(parentItem.data(), row)
+                        , column));
 #ifndef QT_NO_DEBUG
   //QModelIndex i = !item.isNull() ? this->createIndex(row, column, item->object()) : QModelIndex();
   Q_ASSERT( d->HiddenVTKObject == 0 || d->HiddenVTKObject != item->object());
@@ -1079,6 +1118,13 @@ Qt::DropActions qMRMLSceneTreeModel::supportedDropActions()const
 {
   return Qt::MoveAction;
 }
+
+//------------------------------------------------------------------------------
+//qMRMLAbstractItemHelper* qMRMLSceneTreeModel::itemFromIndex(const QModelIndex &modelIndex)const
+//{
+//  CTK_D(const qMRMLSceneModel);
+//  return d->itemFromIndex(modelIndex);
+//}
 
 //------------------------------------------------------------------------------
 QModelIndex qMRMLSceneTreeModel::indexFromItem(const qMRMLAbstractItemHelper* item)const

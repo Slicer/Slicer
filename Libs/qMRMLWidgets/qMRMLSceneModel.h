@@ -101,10 +101,16 @@ public:
   virtual Qt::DropActions supportedDropActions()const;
 
 protected slots:
-  virtual void onMRMLSceneNodeAboutToBeAdded(vtkObject* scene, vtkObject* node);
-  virtual void onMRMLSceneNodeAboutToBeRemoved(vtkObject* scene, vtkObject* node);
-  virtual void onMRMLSceneNodeAdded(vtkObject* scene, vtkObject* node);
-  virtual void onMRMLSceneNodeRemoved(vtkObject* scene, vtkObject* node);
+  virtual void onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);
+  virtual void onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node);
+  virtual void onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);
+  virtual void onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node);
+
+  virtual void onMRMLSceneAboutToBeImported(vtkMRMLScene* scene);
+  virtual void onMRMLSceneImported(vtkMRMLScene* scene);
+  virtual void onMRMLSceneAboutToBeClosed(vtkMRMLScene* scene);
+  virtual void onMRMLSceneClosed(vtkMRMLScene* scene);
+
   void onMRMLSceneDeleted(vtkObject* scene);
 
   void onMRMLNodeModified(vtkObject* node);
