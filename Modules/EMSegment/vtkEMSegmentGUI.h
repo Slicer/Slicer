@@ -4,6 +4,14 @@
 #include "vtkSlicerModuleGUI.h"
 #include "vtkEMSegment.h"
 
+// Had to add this to force loading of these support libraries
+// Only libraries with entries that will be dynamically called from TCL need to be instantiated
+#include "vtkTcl.h"
+extern "C" int Emsegmentalgorithm_Init(Tcl_Interp *interp);
+extern "C" int Emsegmentmrml_Init(Tcl_Interp *interp);
+extern "C" int Emsegmentregistration_Init(Tcl_Interp *interp);
+extern "C" int Emsegmentgraph_Init(Tcl_Interp *interp);
+
 class vtkEMSegmentLogic;
 class vtkEMSegmentMRMLManager;
 class vtkMRMLEMSNode;

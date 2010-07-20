@@ -86,6 +86,22 @@ vtkEMSegmentGUI::vtkEMSegmentGUI()
 
   this->StartSegmentStep= NULL;
   this->SegmentationMode = SegmentationModeAdvanced;
+
+  // Try to load supporting libraries dynamically.  This is needed
+  // since the toplevel is a loadable module but the other libraries
+  // didn't get loaded
+  Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
+  if (interp)
+    {
+    Emsegmentalgorithm_Init(interp);
+    Emsegmentmrml_Init(interp);
+    Emsegmentregistration_Init(interp);
+    Emsegmentgraph_Init(interp);
+    }
+  else
+    {
+    vtkErrorMacro("Failed to obtain reference to application TCL interpreter");
+    }
 }
 
 //----------------------------------------------------------------------------
