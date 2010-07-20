@@ -25,8 +25,8 @@ void qSlicerVolumesModuleWidget::setup()
 
   QObject::connect(d->ActiveVolumeNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, 
                                                 SLOT(setActiveVolumeNode(vtkMRMLNode*)));
-  ctkModelTester* tester = new ctkModelTester(this);
-  tester->setModel(d->ActiveVolumeNodeSelector->model());
+  //ctkModelTester* tester = new ctkModelTester(this);
+  //tester->setModel(d->ActiveVolumeNodeSelector->model());
 }
 
 //-----------------------------------------------------------------------------
