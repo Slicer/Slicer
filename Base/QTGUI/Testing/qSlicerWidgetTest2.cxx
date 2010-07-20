@@ -12,7 +12,6 @@
 // this is a test of the slicer slice logic resampling pipeline
 
 // qSlicer
-#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerWidget.h"
 
 // Qt

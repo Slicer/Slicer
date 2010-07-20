@@ -12,7 +12,7 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerAbstractModule.h"
 
 #include <stdlib.h>
 

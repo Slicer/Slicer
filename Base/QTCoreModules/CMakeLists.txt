@@ -14,6 +14,9 @@ SET(KIT_include_directories
 
 # Source files
 SET(KIT_SRCS
+  qSlicerAbstractCoreModule.cxx
+  qSlicerAbstractCoreModule.h
+
   qSlicerCoreModuleFactory.cxx
   qSlicerCoreModuleFactory.h
 
@@ -70,6 +73,8 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  qSlicerAbstractCoreModule.h
+
   qSlicerCamerasModule.h
   qSlicerCamerasModuleWidget.h
 

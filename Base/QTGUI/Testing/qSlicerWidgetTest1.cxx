@@ -12,7 +12,6 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerWidget.h"
 
 #include <QApplication>
