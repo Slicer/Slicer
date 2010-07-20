@@ -114,7 +114,7 @@ void vtkSlicerGPURayCastVolumeMapper::Render(vtkRenderer *ren, vtkVolume *vol)
 
   if ( !this->Initialized )
   {
-    this->Initialize();
+    this->Initialize(ren->GetRenderWindow());
   }
 
   if ( !this->RayCastInitialized || this->ReloadShaderFlag)
@@ -599,11 +599,15 @@ void vtkSlicerGPURayCastVolumeMapper::SetupTextures(vtkRenderer *vtkNotUsed(ren)
     vtkgl::Uniform1i(loc, 6);
 }
 
-int  vtkSlicerGPURayCastVolumeMapper::IsRenderSupported(vtkVolumeProperty *property )
+int  vtkSlicerGPURayCastVolumeMapper::IsRenderSupported(vtkRenderWindow* window, vtkVolumeProperty *property )
 {
+  if (window)
+    {
+    window->MakeCurrent();
+    }
   if ( !this->Initialized )
     {
-    this->Initialize();
+    this->Initialize(window);
     }
 
   if ( !this->RayCastSupported )
@@ -634,11 +638,14 @@ int  vtkSlicerGPURayCastVolumeMapper::IsRenderSupported(vtkVolumeProperty *prope
   return 1;
 }
 
-void vtkSlicerGPURayCastVolumeMapper::Initialize()
+void vtkSlicerGPURayCastVolumeMapper::Initialize(vtkRenderWindow* window)
 {
   this->Initialized = 1;
   vtkOpenGLExtensionManager * extensions = vtkOpenGLExtensionManager::New();
-  extensions->SetRenderWindow(NULL); // set render window to the current one.
+  if (window)
+    {
+    extensions->SetRenderWindow(window); // set render window to the current one.
+    }
 
   int supports_2_0=extensions->ExtensionSupported( "GL_VERSION_2_0" );
   if(supports_2_0)

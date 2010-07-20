@@ -17,7 +17,6 @@ class vtkGPUVolumeRayCastMapper;
 
 class vtkKWHistogramSet;
 
-class vtkRenderer;
 class vtkTimerLog;
 class vtkMatrix4x4;
 class vtkPlanes;
