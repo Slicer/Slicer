@@ -669,6 +669,15 @@ if(Slicer3_BUILD_MODULES)
   ADD_SUBDIRECTORY(Modules/EMSegment/Graph)
 endif()
 
+# Since EMSegment module expects Volume module and its associated library to be
+# built beforehand,let's enfore that by building EMSegment here.
+# Note that EMSegment has been commented in Modules/CMakeLists.txt
+IF (Slicer3_USE_KWWIDGETS)
+  if(Slicer3_BUILD_MODULES)
+    ADD_SUBDIRECTORY(Modules/EMSegment)
+  endif()
+ENDIF()
+
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
 #
