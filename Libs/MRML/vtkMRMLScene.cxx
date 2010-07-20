@@ -506,8 +506,8 @@ void vtkMRMLScene::Clear(int removeSingletons)
   // to create a few new scene once the current one has been close.
   // Therefore, it should be put at the end, certainly after UniqueIDByClass
   // has been cleared
-  this->InvokeEvent(this->SceneClosedEvent, NULL);
   this->SetIsClosing(false);
+  this->InvokeEvent(this->SceneClosedEvent, NULL);
 }
 
 //------------------------------------------------------------------------------
@@ -688,10 +688,9 @@ int vtkMRMLScene::Import()
   bool undoFlag = this->GetUndoFlag();
   
   this->SetUndoOff();
+  this->InvokeEvent(this->SceneAboutToBeImportedEvent, NULL);
   this->SetIsImporting(true);
   this->ClearReferencedNodeID();
-
-  this->InvokeEvent(this->SceneAboutToBeImportedEvent, NULL);
     
   // read nodes into a temp scene  
   vtkCollection* scene = vtkCollection::New();
