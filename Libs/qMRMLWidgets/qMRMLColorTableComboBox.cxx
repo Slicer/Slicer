@@ -21,7 +21,7 @@ qMRMLColorTableComboBox::qMRMLColorTableComboBox(QWidget* parentWidget)
   : Superclass(this->createSceneModel(), parentWidget)
 {
   CTK_INIT_PRIVATE(qMRMLColorTableComboBox);
-  //this->rootModel()->setParent(this);
+  this->rootModel()->setParent(this);
   ctkTreeComboBox* comboBox = new ctkTreeComboBox;
   this->setComboBox(comboBox);
   this->setShowHidden(true);
