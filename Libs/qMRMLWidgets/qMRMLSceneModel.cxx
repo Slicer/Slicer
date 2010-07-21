@@ -636,9 +636,29 @@ QModelIndex qMRMLSceneModel::index(int row, int column, const QModelIndex &_pare
     {
     return QModelIndex();
     }
-  QSharedPointer<qMRMLAbstractItemHelper> item = 
+  int child = row;
+  if(d->MRMLNodeToBeAdded)
+    {
+    int pos = this->mrmlScene()->IsNodePresent(d->MRMLNodeToBeAdded);
+    --pos;
+    if (pos != -1 && pos <= child)
+      {
+      --child;
+      }
+    }
+  if(d->MRMLNodeToBe)
+    {
+    int pos = this->mrmlScene()->IsNodePresent(d->MRMLNodeToBe);
+    --pos;
+    if (pos != -1 && pos <= child)
+      {
+      ++child;
+      }
+    }
+  //qDebug() << (void *) this << "index:" << row << column << child << _parent << d->MRMLNodeToBe;
+  QSharedPointer<qMRMLAbstractItemHelper> item =
     QSharedPointer<qMRMLAbstractItemHelper>(
-      parentItem->child(row, column));
+      parentItem->child(child, column));
   Q_ASSERT(item.isNull() || item->object());
 
   return !item.isNull() ? this->createIndex(row, column, item->object()) : QModelIndex();
@@ -746,8 +766,9 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRML
   Q_ASSERT(scene == d->MRMLScene);
   /*
   Q_ASSERT(d->MRMLNodeToBe == 0);
-  d->MRMLNodeToBe = vtkMRMLNode::SafeDownCast(node);
-  Q_ASSERT(d->MRMLNodeToBe);
+  Q_ASSERT(d->MRMLNodeToBeAdded == 0);
+  d->MRMLNodeToBeAdded = vtkMRMLNode::SafeDownCast(node);
+  Q_ASSERT(d->MRMLNodeToBeAdded);
   QSharedPointer<qMRMLAbstractItemHelper> sceneItem = 
     QSharedPointer<qMRMLAbstractItemHelper>(d->ItemFactory->createItem(d->MRMLScene, 0));
   // vtkMRMLScene adds nodes at the end of its collection (but before the extra Items
@@ -765,6 +786,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
   CTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
+  //Q_ASSERT(d->MRMLNodeToBeAdded);
+  int insertLocation = -1;
   if (d->MRMLNodeToBeAdded == 0)
     {
     // it's kind of ugly to call just NodeAddedEvent without NodeAboutToBeAddedEvent, 
@@ -776,7 +799,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
     Q_ASSERT(d->MRMLNodeToBeAdded);
     Q_ASSERT(d->MRMLScene->IsNodePresent(d->MRMLNodeToBeAdded));
     qMRMLAbstractItemHelper* sceneItem = d->ItemFactory->createItem(d->MRMLScene, 0);
-    int insertLocation = sceneItem->childCount() -
+    insertLocation = sceneItem->childCount() -
       (d->ItemFactory->postItems()?d->ItemFactory->postItems()->GetNumberOfItems():0);
     // the node has already been added, offset the position
     insertLocation -= 1;
@@ -802,6 +825,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   CTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(d->MRMLNodeToBe == 0);
+  Q_ASSERT(d->MRMLNodeToBeAdded == 0);
 
   qvtkDisconnect(node, vtkCommand::ModifiedEvent,
                 this, SLOT(onMRMLNodeModified(vtkObject*)));
@@ -813,7 +837,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
       item->parent());
   int itemRow = parentItem->row(item.data());
   this->beginRemoveRows(this->indexFromItem(parentItem.data()), itemRow, itemRow);
-
+  //qDebug() << (void *) this << "about to remove:" << vtkMRMLNode::SafeDownCast(node) << itemRow;
+  //qDebug() << node->GetID() << this->mrmlScene()->GetNodeByID(node->GetID());
   d->MRMLNodeToBe = vtkMRMLNode::SafeDownCast(node);
   Q_ASSERT(d->MRMLNodeToBe);
   this->endRemoveRows();
@@ -842,6 +867,8 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
   d->MRMLNodeToBe = 0;
   this->endRemoveRows();
   */
+  //qDebug() << (void *) this << "removed:" << node;
+
   Q_ASSERT(d->MRMLNodeToBe == node);
   d->MRMLNodeToBe = 0;
 }
@@ -937,7 +964,7 @@ QModelIndex qMRMLSceneModel::parent(const QModelIndex &_index)const
 //------------------------------------------------------------------------------
 int qMRMLSceneModel::rowCount(const QModelIndex &_parent) const
 {
-  //CTK_D(const qMRMLSceneModel);
+  CTK_D(const qMRMLSceneModel);
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(_parent));
   Q_ASSERT(!item.isNull());
@@ -950,7 +977,17 @@ int qMRMLSceneModel::rowCount(const QModelIndex &_parent) const
                     << " " << _parent.parent().row() << " " << _parent.parent().column() 
                     << " : " << item->childCount() << std::endl;
   rowCountDebugFile.close();*/
-  return !item.isNull() ? item->childCount() : 0;
+  int count = !item.isNull() ? item->childCount() : 0;
+  if (d->MRMLNodeToBeAdded)
+    {
+    --count;
+    }
+  if (d->MRMLNodeToBe)
+    {
+    ++count;
+    }
+  Q_ASSERT(count >= 0);
+  return count;
 }
 
 //------------------------------------------------------------------------------
