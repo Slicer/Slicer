@@ -313,26 +313,30 @@ void vtkMRMLSliceLogic::ProcessMRMLEvents(vtkObject * caller,
                                             unsigned long event, 
                                             void * callData )
 {
-  //
-  // if you don't have a node yet, look in the scene to see if 
-  // one exists for you to use.  If not, create one and add it to the scene
-  //  
-  if ( vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene()
-    && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
+  if (vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene())
     {
-    vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
-    if (node == 0 || !(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") || node->IsA("vtkMRMLVolumeNode")) )
+    if (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent)
       {
+      vtkMRMLNode *node =  reinterpret_cast<vtkMRMLNode*> (callData);
+      if (!node)
+        {
+        return;
+        }
+      // Return if different from SliceCompositeNode, SliceNode or VolumeNode
+      if (!(node->IsA("vtkMRMLSliceCompositeNode")
+        || node->IsA("vtkMRMLSliceNode")
+        || node->IsA("vtkMRMLVolumeNode")))
+        {
+        return;
+        }
+      }
+
+    if (event == vtkMRMLScene::SceneAboutToBeClosedEvent)
+      {
+      this->UpdateSliceNodeFromLayout();
+      this->DeleteSliceModel();
       return;
       }
-    }
-
-  if (event == vtkMRMLScene::SceneAboutToBeClosedEvent) 
-    {
-    this->UpdateSliceNodeFromLayout();
-    this->DeleteSliceModel();
-
-    return;
     }
 
   // Set up the nodes and models
