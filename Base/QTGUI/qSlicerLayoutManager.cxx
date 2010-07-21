@@ -709,12 +709,12 @@ void qSlicerLayoutManager::switchToFourUpView()
 
   // First render view
   qMRMLThreeDRenderView * renderView = d->threeDRenderView(0);
-  d->GridLayout->addWidget(renderView, 0, 0); // fromRow, fromColumn, rowSpan, columnSpan
+  d->GridLayout->addWidget(renderView, 0, 1); // fromRow, fromColumn, rowSpan, columnSpan
   renderView->setVisible(true);
 
   // Red Slice Viewer
   qMRMLSliceViewWidget* redSliceView = d->sliceView("Red");
-  d->GridLayout->addWidget(redSliceView, 0, 1);
+  d->GridLayout->addWidget(redSliceView, 0, 0);
   redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
