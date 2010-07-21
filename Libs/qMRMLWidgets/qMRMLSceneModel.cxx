@@ -229,6 +229,7 @@ public:
   qMRMLSceneModelItemHelperFactory* ItemFactory;
   vtkMRMLScene* MRMLScene;
   vtkMRMLNode*  MRMLNodeToBe;
+  vtkMRMLNode*  MRMLNodeToBeAdded;
   QList<QAction*> Actions;
 };
 
@@ -240,6 +241,7 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate()
   this->ItemFactory = 0;
   this->MRMLScene = 0;
   this->MRMLNodeToBe = 0;
+  this->MRMLNodeToBeAdded = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -763,16 +765,16 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
   CTK_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
-  if (d->MRMLNodeToBe == 0)
+  if (d->MRMLNodeToBeAdded == 0)
     {
     // it's kind of ugly to call just NodeAddedEvent without NodeAboutToBeAddedEvent, 
     // but we can handle that case...
     //qDebug() << "Warning, vtkMRMLScene::NodeAddedEvent has been fired without"
     //  " vtkMRMLScene::NodeAboutToBeAddedEvent.";
     //this->onMRMLSceneNodeAboutToBeAdded(scene, node);
-    d->MRMLNodeToBe = vtkMRMLNode::SafeDownCast(node);
-    Q_ASSERT(d->MRMLNodeToBe);
-    Q_ASSERT(d->MRMLScene->IsNodePresent(d->MRMLNodeToBe));
+    d->MRMLNodeToBeAdded = vtkMRMLNode::SafeDownCast(node);
+    Q_ASSERT(d->MRMLNodeToBeAdded);
+    Q_ASSERT(d->MRMLScene->IsNodePresent(d->MRMLNodeToBeAdded));
     qMRMLAbstractItemHelper* sceneItem = d->ItemFactory->createItem(d->MRMLScene, 0);
     int insertLocation = sceneItem->childCount() -
       (d->ItemFactory->postItems()?d->ItemFactory->postItems()->GetNumberOfItems():0);
@@ -781,8 +783,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
     this->beginInsertRows(this->indexFromItem(sceneItem), insertLocation , insertLocation);
     delete sceneItem;
     }
-  Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
-  d->MRMLNodeToBe = 0;
+  Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBeAdded);
+  d->MRMLNodeToBeAdded = 0;
   // endInsertRows fires the Qt signals
   this->endInsertRows();
 
