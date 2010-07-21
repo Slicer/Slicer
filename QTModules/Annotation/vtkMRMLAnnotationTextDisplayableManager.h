@@ -56,11 +56,11 @@ protected:
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
-  void SetAndObserveActiveTextNode(vtkMRMLAnnotationTextNode * textNode);
+  void SetAndObserveTextNodes();
 
-  void OnMRMLAnnotationTextNodeModifiedEvent();
-  void OnMRMLAnnotationTextNodeTransformModifiedEvent();
-  void OnMRMLAnnotationTextNodeLockModifiedEvent();
+  void OnMRMLAnnotationTextNodeModifiedEvent(vtkMRMLNode* node);
+  void OnMRMLAnnotationTextNodeTransformModifiedEvent(vtkMRMLNode* node);
+  void OnMRMLAnnotationTextNodeLockModifiedEvent(vtkMRMLNode* node);
 
 private:
 

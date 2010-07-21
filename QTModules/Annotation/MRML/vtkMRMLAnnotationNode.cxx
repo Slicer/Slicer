@@ -586,13 +586,14 @@ void vtkMRMLAnnotationNode::SetLocked(int locked)
     {
         return;
     }
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Locked to " << locked);
+    std::cout << this->GetClassName() << " (" << this->GetID() << "): setting Locked to " << locked << std::endl;
     this->Locked = locked;
-     if(!this->GetDisableModifiedEvent())
-     {
-          // invoke a display modified event
-          this->InvokeEvent(vtkMRMLAnnotationNode::LockModifiedEvent);
-     }
-     this->ModifiedSinceReadOn();
+    if(!this->GetDisableModifiedEvent())
+    {
+      // invoke a display modified event
+      std::cout << "Invoking LockModifiedEvent" << std::endl;
+      this->InvokeEvent(vtkMRMLAnnotationNode::LockModifiedEvent);
+    }
+    this->ModifiedSinceReadOn();
 }
    

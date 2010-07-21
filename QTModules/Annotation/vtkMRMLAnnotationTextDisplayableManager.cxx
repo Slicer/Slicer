@@ -24,9 +24,6 @@
 #include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkMath.h>
 
-// STD includes
-#include <algorithm>
-#include <cassert>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -61,8 +58,6 @@ public:
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationTextNode*, vtkTextWidget *>::iterator TextWidgetsIt;
 
-  ///
-  vtkMRMLAnnotationTextNode* ActiveTextNode;
 };
 
 //---------------------------------------------------------------------------
@@ -71,7 +66,6 @@ public:
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationTextDisplayableManager::vtkInternal::vtkInternal()
 {
-  this->ActiveTextNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -86,7 +80,10 @@ void vtkMRMLAnnotationTextDisplayableManager::vtkInternal::UpdateLockUnlock(
 
   vtkTextWidget * textWidget = this->GetTextWidget(textNode);
   // A text widget is expected
-  assert(textWidget);
+  if(textWidget == 0)
+    {
+    return;
+    }
 
   if (textNode->GetLocked())
     {
@@ -105,7 +102,10 @@ void vtkMRMLAnnotationTextDisplayableManager::vtkInternal::UpdateWidget(
 
   vtkTextWidget * textWidget = this->GetTextWidget(textNode);
   // textWidget is expected to be valid
-  assert(textNode);
+  if (textNode == 0)
+    {
+    return;
+    }
 
   // Obtain associated representation
   vtkTextRepresentation* textRepr =
@@ -154,11 +154,11 @@ void vtkMRMLAnnotationTextDisplayableManager::vtkInternal::RemoveTextWidget(
     return;
   }
 
-#ifndef NDEBUG
   // Make sure the map contains a vtkWidgetText associated with this textNode
   TextWidgetsIt it = this->TextWidgets.find(textNode);
-  assert(it != this->TextWidgets.end());
-#endif
+  if (it == this->TextWidgets.end()) {
+    return;
+  }
 
   // Delete and Remove textWidget from the map
   this->TextWidgets[textNode]->Delete();
@@ -168,6 +168,7 @@ void vtkMRMLAnnotationTextDisplayableManager::vtkInternal::RemoveTextWidget(
       this->AnnotationTextNodeList.begin(),
       this->AnnotationTextNodeList.end(),
       textNode);
+
 
   this->AnnotationTextNodeList.erase(it2);
 }
@@ -194,15 +195,22 @@ void vtkMRMLAnnotationTextDisplayableManager::PrintSelf(ostream& os, vtkIndent i
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::SetAndObserveActiveTextNode(
-    vtkMRMLAnnotationTextNode * textNode)
+void vtkMRMLAnnotationTextDisplayableManager::SetAndObserveTextNodes()
 {
   VTK_CREATE(vtkIntArray, textNodeEvents);
   textNodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   textNodeEvents->InsertNextValue(vtkMRMLAnnotationNode::LockModifiedEvent);
   textNodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
 
-  vtkSetAndObserveMRMLNodeEventsMacro(Internal->ActiveTextNode, textNode, textNodeEvents);
+
+  // run through all associated textNodes
+  vtkInternal::AnnotationTextNodeListIt it;
+  it = Internal->AnnotationTextNodeList.begin();
+  while(it != Internal->AnnotationTextNodeList.end())
+    {
+    vtkSetAndObserveMRMLNodeEventsMacro(*it, *it, textNodeEvents);
+    ++it;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -221,13 +229,13 @@ void vtkMRMLAnnotationTextDisplayableManager::ProcessMRMLEvents(vtkObject *calle
     switch(event)
       {
       case vtkCommand::ModifiedEvent:
-        this->OnMRMLAnnotationTextNodeModifiedEvent();
+        this->OnMRMLAnnotationTextNodeModifiedEvent(annotationTextNode);
         break;
       case vtkMRMLTransformableNode::TransformModifiedEvent:
-        this->OnMRMLAnnotationTextNodeTransformModifiedEvent();
+        this->OnMRMLAnnotationTextNodeTransformModifiedEvent(annotationTextNode);
         break;
       case vtkMRMLAnnotationNode::LockModifiedEvent:
-        this->OnMRMLAnnotationTextNodeLockModifiedEvent();
+        this->OnMRMLAnnotationTextNodeLockModifiedEvent(annotationTextNode);
         break;
       }
     }
@@ -266,17 +274,25 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLN
     return;
     }
 
-#ifndef NDEBUG
-  // Node added shouldn't be already managed
+  // Node added should not be already managed
   vtkInternal::AnnotationTextNodeListIt it = std::find(
       this->Internal->AnnotationTextNodeList.begin(),
       this->Internal->AnnotationTextNodeList.end(),
       textNode);
-  assert(it == this->Internal->AnnotationTextNodeList.end());
-#endif
+  if (it != this->Internal->AnnotationTextNodeList.end())
+    {
+      vtkErrorMacro("This node is already associated to the displayable manager!")
+      return;
+    }
+
+  // There should not be a widget for the new node
+  if (this->Internal->GetTextWidget(textNode) != 0)
+    {
+    vtkErrorMacro("A widget is already associated to this node!");
+    return;
+    }
 
   // Create VTK Widget
-  assert(this->Internal->GetTextWidget(textNode) == 0);
   vtkTextWidget* textWidget = vtkTextWidget::New();
   this->Internal->TextWidgets[textNode] = textWidget;
 
@@ -288,10 +304,10 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLN
   textWidget->SetInteractor(this->GetInteractor());
   textWidget->On();
 
-  // Add observers
-  this->SetAndObserveActiveTextNode(textNode);
-
   this->Internal->AnnotationTextNodeList.push_back(textNode);
+
+  // Refresh observers
+  this->SetAndObserveTextNodes();
 
   this->RequestRender();
 
@@ -317,29 +333,49 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRM
     }
 
   this->Internal->AnnotationTextNodeList.erase(it);
+
+  // Refresh observers
+  this->SetAndObserveTextNodes();
+
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeModifiedEvent()
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeModifiedEvent(vtkMRMLNode* node)
 {
   std::cout << "OnMRMLAnnotationTextNodeModifiedEvent" << std::endl;
-  assert(this->Internal->ActiveTextNode);
-  this->Internal->UpdateWidget(this->Internal->ActiveTextNode);
+  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
+  if (!textNode)
+    {
+    vtkErrorMacro("Can not access node.")
+    return;
+    }
+  this->Internal->UpdateWidget(textNode);
   this->RequestRender();
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeTransformModifiedEvent()
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeTransformModifiedEvent(vtkMRMLNode* node)
 {
   std::cout << "OnMRMLAnnotationTextNodeTransformModifiedEvent" << std::endl;
-  assert(this->Internal->ActiveTextNode);
-  this->Internal->UpdateWidget(this->Internal->ActiveTextNode);
+  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
+  if (!textNode)
+    {
+    vtkErrorMacro("Can not access node.")
+    return;
+    }
+  this->Internal->UpdateWidget(textNode);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeLockModifiedEvent()
+void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeLockModifiedEvent(vtkMRMLNode* node)
 {
-  std::cout << "OnMRMLAnnotationTextNodeLockModifiedEvent" << std::endl;
-  assert(this->Internal->ActiveTextNode);
-  this->Internal->UpdateLockUnlock(this->Internal->ActiveTextNode);
+
+  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
+  if (!textNode)
+    {
+    vtkErrorMacro("Can not access node.")
+    return;
+    }
+  std::cout << "OnMRMLAnnotationTextNodeLockModifiedEvent (Id: " << textNode->GetID() << ")" << std::endl;
+  this->Internal->UpdateLockUnlock(textNode);
 }

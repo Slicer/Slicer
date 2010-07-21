@@ -37,6 +37,9 @@
 #include "vtkPointHandleRepresentation3D.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 
+#include "vtkMRMLDisplayableManagerFactory.h";
+#include "vtkMRMLAnnotationTextDisplayableManager.h"
+
 #include "vtkObserverManager.h"
 #include "vtkMRMLNode.h"
 
@@ -803,7 +806,7 @@ qSlicerAnnotationModuleWidget::onLockUnlockAllButtonClicked()
 {
   this->selectedAllButtonClicked();
   this->lockSelectedButtonClicked();
-  this->selectedAllButtonClicked();
+  //this->selectedAllButtonClicked();
 }
 
 void
@@ -956,7 +959,7 @@ qSlicerAnnotationModuleWidget::onGenerateReportButtonClicked()
   QString
       report =
           "<html>\n"
-            "<head><meta name=\"Author\" content=\"Yong Zhang, Kilian Pohl\"><title>3D Slicer Report</title>\n"
+            "<head><meta name=\"Author\" content=\"Daniel Haehn, Kilian Pohl, Yong Zhang\"><title>3D Slicer Report</title>\n"
             "<style type=\"text/css\">\n"
             "<!--\n"
             "body {\n"
@@ -1316,14 +1319,16 @@ qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
       return;
     }
 
+  std::cout << "Selected:" << selectedRows.size() << std::endl;
+
   foreach(int i, selectedRows)
       {
         vtkMRMLAnnotationNode* node = vtkMRMLAnnotationNode::SafeDownCast(
             d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
         if (node)
           {
-            isLocked = !node->GetLocked();
-            node->SetLocked((int) isLocked);
+
+            node->SetLocked(!node->GetLocked());
           }
         else
           {
