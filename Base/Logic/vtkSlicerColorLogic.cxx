@@ -135,7 +135,9 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   for (int i = basicNode->GetFirstType(); i <= basicNode->GetLastType(); i++)
     {
     // don't add a second Lables node, File node or the old atlas node
-    if (i != basicNode->Labels && i != basicNode->File && i != 11)
+    if (i != vtkMRMLColorTableNode::Labels &&
+        i != vtkMRMLColorTableNode::File &&
+        i != vtkMRMLColorTableNode::Obsolete)
       {
       vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
       node->SetType(i);
@@ -511,10 +513,10 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
   vtkMRMLColorTableNode *node;
   for (int i = basicNode->GetFirstType(); i <= basicNode->GetLastType(); i++)
     {
-    // don't have a File node
-    if (i != basicNode->File)
+    // don't have a File node...
+    if (i != vtkMRMLColorTableNode::File
+        && i != vtkMRMLColorTableNode::Obsolete)
       {
-      basicNode->SetType(i);
       //std::string id = std::string(this->GetDefaultColorTableNodeID(i));
       const char* id = this->GetDefaultColorTableNodeID(i);
       vtkDebugMacro("vtkSlicerColorLogic::RemoveDefaultColorNodes: trying to find node with id " << id << endl);
@@ -525,6 +527,7 @@ void vtkSlicerColorLogic::RemoveDefaultColorNodes()
         }
       }
     }
+  basicNode->Delete();
 
   // remove freesurfer nodes
   vtkMRMLFreeSurferProceduralColorNode *basicFSNode = vtkMRMLFreeSurferProceduralColorNode::New();
