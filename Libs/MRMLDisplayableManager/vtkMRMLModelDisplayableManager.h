@@ -60,8 +60,6 @@ class vtkPointPicker;
 class vtkPlane;
 class vtkClipPolyData;
 class vtkPMatrix4x4;
-class vtkDisplayableManagerBoxWidget2;
-class vtkDisplayableManagerBoxRepresentation;
 class vtkBoundingBox;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager :

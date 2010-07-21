@@ -70,8 +70,6 @@ SET(KIT_SRCS
   vtkMRMLDisplayableManagerGroup.cxx
   
   vtkDisplayableManagerInteractorStyle.cxx
-  vtkDisplayableManagerBoxWidget2.cxx
-  vtkDisplayableManagerBoxRepresentation.cxx
   )
 
 # Create the instantiator for DisplayableManager classes.
