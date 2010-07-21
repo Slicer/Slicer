@@ -110,6 +110,6 @@ int qMRMLTreeWidgetTest1( int argc, char * argv [] )
   timer->StopTimer();
   std::cout << "qMRMLTreeWidget visible Deleted: " << timer->GetElapsedTime() << std::endl;
 
-
+  timer->Delete();
   return EXIT_SUCCESS;
 }
