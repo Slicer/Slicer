@@ -43,7 +43,6 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerLayoutManager");
 //------------------------------------------------------------------------------
 qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate()
 {
-  logger.setTrace();
   this->MRMLScene = 0;
   this->MRMLLayoutNode = 0;
   this->GridLayout = 0;
