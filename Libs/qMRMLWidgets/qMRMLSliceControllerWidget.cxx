@@ -270,6 +270,10 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 
   if (this->MRMLSliceCompositeNode != this->SliceLogic->GetSliceCompositeNode())
     {
+    this->qvtkReconnect(this->MRMLSliceCompositeNode,
+                        this->SliceLogic->GetSliceCompositeNode(),
+                        vtkCommand::ModifiedEvent,
+                        this, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
     this->MRMLSliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
     }
 
@@ -328,11 +332,16 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
     {
     d->SliceLogic->Initialize(d->SliceViewName.toLatin1(), this->mrmlScene(), newSliceNode);
     }
-
-  d->qvtkReconnect(d->MRMLSliceCompositeNode, d->SliceLogic->GetSliceCompositeNode(),
-                   vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
-
-  d->MRMLSliceCompositeNode = d->SliceLogic->GetSliceCompositeNode();
+  else
+    {
+#ifndef QT_NO_DEBUG
+    if (this->mrmlScene())
+      {
+      Q_ASSERT(d->SliceLogic->GetMRMLScene() == this->mrmlScene());
+      }
+#endif
+    this->setMRMLScene(d->SliceLogic->GetMRMLScene());
+    }
 
   d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
                    d, SLOT(updateWidgetFromMRMLSliceNode()));
@@ -341,6 +350,10 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
 
   if (d->MRMLSliceNode)
     {
+    Q_ASSERT(this->mrmlScene());
+
+    // Please note that the order of the following statements matters !
+
     // Update widget state using Logic
     d->onSliceLogicModifiedEvent();
 
@@ -349,7 +362,6 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
 
     // Update widget state given the new slice composite node
     d->updateWidgetFromMRMLSliceCompositeNode();
-
     }
 }
 
