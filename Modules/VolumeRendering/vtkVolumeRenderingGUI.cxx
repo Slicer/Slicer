@@ -97,6 +97,8 @@ vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
 
 vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
 {
+  this->ListenToTclMouseEvent(0);
+   
   this->RemoveMRMLObservers();
 
   if(this->CB_VolumeRenderingOnOff != NULL)
@@ -441,6 +443,8 @@ void vtkVolumeRenderingGUI::BuildGUI(void)
   this->AddMRMLObservers();
 
   this->Built = true;
+
+  this->ListenToTclMouseEvent(1);
 }
 
 void vtkVolumeRenderingGUI::TearDownGUI(void)
@@ -989,15 +993,11 @@ void vtkVolumeRenderingGUI::Enter(void)
   this->CreateModuleEventBindings();
 
   this->UpdateGUI();
-
-  this->ListenToTclMouseEvent(1);
 }
 
 void vtkVolumeRenderingGUI::Exit(void)
 {
   this->ReleaseModuleEventBindings();
-
-  this->ListenToTclMouseEvent(0);
 }
 
 void vtkVolumeRenderingGUI::SetButtonDown(int isDown)
