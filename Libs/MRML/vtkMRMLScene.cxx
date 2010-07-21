@@ -714,7 +714,6 @@ int vtkMRMLScene::Import()
     this->UpdateNodeReferences(scene);
     
     this->InvokeEvent(this->NewSceneEvent, NULL);
-    
     for (scene->InitTraversal(it); 
          (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
       {
@@ -1023,8 +1022,15 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       if (sn->GetSingletonTag() != NULL && strcmp(sn->GetSingletonTag(),
                                                   n->GetSingletonTag()) == 0)
         {
+        std::string oldId(sn->GetID());
         sn->CopyWithSceneWithSingleModifiedEvent(n);
+
         this->RemoveNodeReferences(n);
+        // cache the node so the whole scene cache stays up-todate
+        this->NodeIDs.erase(oldId);
+        this->NodeIDs[std::string(sn->GetID())] = sn;
+        this->NodeIDsMTime = this->CurrentScene->GetMTime();
+
         return sn;
         }
       }
@@ -1144,23 +1150,30 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     return;
     }
   
-  #ifndef NDEBUG
+#ifndef NDEBUG
   // Since calling IsNodePresent cost, let's display a "developper hint" only if build as Debug
   // The caller should make sure the node isn't already removed
-  if (!this->IsNodePresent(n))
+  if (this->IsNodePresent(n) == 0)
     {
-    vtkErrorMacro("RemoveNode: Node " << n->GetClassName() << "[" 
-                                      << n << "]" << " already removed");
-    return;
+    vtkErrorMacro("RemoveNode: Node " << n->GetClassName() << "/"
+                  << n->GetName() << "[" << n << "]" << " already removed");
     }
-  #endif
+  // As callbacks may want to look for the removed node, the nodeID list should
+  // be up to date. It's not vtkMRMLScene::RemoveNode responsability to be up to
+  // date though.
+  if (this->GetNodeByID(n->GetID()) == NULL)
+    {
+    vtkErrorMacro("RemoveNode: class: " << n->GetClassName() << " name:"
+                  << n->GetName() << " id: " << n->GetID()
+                  << "["  << n << "]" << " can't be found by ID");
+    }
+#endif
   
   n->Register(this);
   this->InvokeEvent(this->NodeAboutToBeRemovedEvent, n);
 
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
-  
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
   this->InvokeEvent(this->NodeRemovedEvent, n);
   n->UnRegister(this);
