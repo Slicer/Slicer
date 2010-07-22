@@ -171,6 +171,9 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   // Set default background color
   this->setBackgroundColor(QColor::fromRgbF(0.701960784314, 0.701960784314, 0.905882352941));
 
+  // Hide orientation widget
+  this->setOrientationWidgetVisible(false);
+
   this->setRenderEnabled(true);
 }
 
