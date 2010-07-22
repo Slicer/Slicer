@@ -210,6 +210,7 @@ switch $::tcl_platform(os) {
         }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.6.so
+        set ::PYTHON_EXECUTABLE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.6
         set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/numpy/core/numeric.pyc
@@ -251,6 +252,7 @@ switch $::tcl_platform(os) {
         }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.6.dylib
+        set ::PYTHON_EXECUTABLE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.6
         set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/numpy/core/numeric.pyc
@@ -287,6 +289,7 @@ switch $::tcl_platform(os) {
         }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.6.so
+        set ::PYTHON_EXECUTABLE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.6
         set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/numpy/core/numeric.pyc
@@ -328,6 +331,7 @@ switch $::tcl_platform(os) {
         }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/PCbuild/python.exe
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/PCbuild/python26.lib
+        set ::PYTHON_EXECUTABLE $::PYTHON_BIN_DIR/PCbuild/python.exe
 
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include
 

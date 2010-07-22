@@ -246,6 +246,7 @@ set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
 option(Slicer3_USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
 if(Slicer3_USE_PYTHON)
   find_package(PythonLibs)
+  find_package(PythonInterp)
 endif(Slicer3_USE_PYTHON)
 
 #-----------------------------------------------------------------------------
