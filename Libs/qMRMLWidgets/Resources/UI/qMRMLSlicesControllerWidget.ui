@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>349</width>
-    <height>26</height>
+    <width>393</width>
+    <height>28</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,11 +19,17 @@
    </property>
    <item>
     <widget class="QToolButton" name="FeaturesVisibilityButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Toggle visibility of various Slice Viewer features.</string>
      </property>
      <property name="text">
-      <string/>
+      <string>Visibility</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -33,11 +39,17 @@
    </item>
    <item>
     <widget class="QToolButton" name="FitToWindowButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Fits image data to the window in all Slice Viewers.</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Fit to Window</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -50,11 +62,17 @@
    </item>
    <item>
     <widget class="QToolButton" name="LabelOpacityButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Popup scale to adjust opacity of Label Layer in all Slice Viewers.</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Label Opacity</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -67,11 +85,17 @@
    </item>
    <item>
     <widget class="QToolButton" name="AnnotationButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Choose annotation options for all Slice Viewers.</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Annotations</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -84,11 +108,17 @@
    </item>
    <item>
     <widget class="QToolButton" name="CompositingButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Choose compositing options for all Slice Viewers.</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Compositing</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -101,11 +131,17 @@
    </item>
    <item>
     <widget class="QToolButton" name="CrossHairButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Choose among crosshair options for all Slice Viewers.</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Cross-hair</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -118,11 +154,17 @@
    </item>
    <item>
     <widget class="QToolButton" name="SpatialUnitsButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Assign axis labels in all Slice Viewers.</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Spatial Unit</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -135,11 +177,17 @@
    </item>
    <item>
     <widget class="QToolButton" name="FieldOfViewButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Set the field of view (in mm) in a Slice Window.</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Field of View</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -155,12 +203,9 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Preferred</enum>
-     </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>22</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -168,11 +213,17 @@
    </item>
    <item>
     <widget class="QToolButton" name="ToggleFgBgButton">
+     <property name="maximumSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Toggle visibility of Foreground and Background Layers in Slice Viewers.</string>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>Toggle Fg/Bg</string>
      </property>
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
@@ -190,11 +241,17 @@
      </property>
      <item>
       <widget class="QToolButton" name="ShowFgButton">
+       <property name="maximumSize">
+        <size>
+         <width>26</width>
+         <height>26</height>
+        </size>
+       </property>
        <property name="toolTip">
         <string>Show Foreground Layer in Slice Viewers.</string>
        </property>
        <property name="text">
-        <string>...</string>
+        <string>Fade to Fg</string>
        </property>
        <property name="icon">
         <iconset resource="../qMRMLWidgets.qrc">
@@ -229,11 +286,17 @@
      </item>
      <item>
       <widget class="QToolButton" name="ShowBgButton">
+       <property name="maximumSize">
+        <size>
+         <width>26</width>
+         <height>26</height>
+        </size>
+       </property>
        <property name="toolTip">
         <string>Show Background Layer in Slice Viewers.</string>
        </property>
        <property name="text">
-        <string>...</string>
+        <string>Fade to Bg</string>
        </property>
        <property name="icon">
         <iconset resource="../qMRMLWidgets.qrc">
