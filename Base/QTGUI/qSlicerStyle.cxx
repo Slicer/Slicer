@@ -9,7 +9,7 @@
 // qSlicerStyle methods
 
 // --------------------------------------------------------------------------
-qSlicerStyle::qSlicerStyle() : Superclass()
+qSlicerStyle::qSlicerStyle(QStyle* style) : Superclass(style)
 {
 
 }

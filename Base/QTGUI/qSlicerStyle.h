@@ -2,24 +2,23 @@
 #define __qSlicerStyle_h
 
 // Qt includes
-#include <QCleanlooksStyle>
+#include <QProxyStyle>
 
 #include "qSlicerBaseQTGUIExport.h"
 
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStyle : public QCleanlooksStyle
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStyle : public QProxyStyle
 {
 public:
   /// Superclass typedef
-  typedef QCleanlooksStyle Superclass;
+  typedef QProxyStyle Superclass;
 
   /// Constructors
-  explicit qSlicerStyle();
+  explicit qSlicerStyle(QStyle* style = 0);
   virtual ~qSlicerStyle(){}
 
   virtual int pixelMetric(PixelMetric metric, const QStyleOption * option = 0,
                           const QWidget * widget = 0)const;
-
 };
 
 #endif
