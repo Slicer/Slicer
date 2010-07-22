@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>787</width>
-     <height>27</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -169,7 +169,11 @@
        <property name="contentsFrameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2"/>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="qMRMLSlicesControllerWidget" name="MRMLSlicesControllerWidget"/>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
@@ -610,6 +614,17 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLSlicesControllerWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSlicesControllerWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -622,10 +637,10 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
-  <include location="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc"/>
  </resources>
  <connections>
   <connection>
