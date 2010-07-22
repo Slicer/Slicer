@@ -27,6 +27,7 @@
 // STD includes
 #include <vector>
 #include <map>
+#include <algorithm>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
