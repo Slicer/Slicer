@@ -6,8 +6,8 @@
 #include <ctkLogger.h>
 
 // qMRML includes
-#include "qMRMLThreeDRenderView.h"
-#include "qMRMLThreeDRenderView_p.h"
+#include "qMRMLThreeDView.h"
+#include "qMRMLThreeDView_p.h"
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLDisplayableManagerFactory.h>
@@ -30,14 +30,14 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDRenderView");
+static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDView");
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-// qMRMLThreeDRenderViewPrivate methods
+// qMRMLThreeDViewPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLThreeDRenderViewPrivate::qMRMLThreeDRenderViewPrivate()
+qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate()
 {
   logger.setTrace();
 
@@ -46,7 +46,7 @@ qMRMLThreeDRenderViewPrivate::qMRMLThreeDRenderViewPrivate()
 }
 
 //---------------------------------------------------------------------------
-qMRMLThreeDRenderViewPrivate::~qMRMLThreeDRenderViewPrivate()
+qMRMLThreeDViewPrivate::~qMRMLThreeDViewPrivate()
 {
   if (this->DisplayableManagerGroup)
     {
@@ -55,7 +55,7 @@ qMRMLThreeDRenderViewPrivate::~qMRMLThreeDRenderViewPrivate()
 }
 
 //---------------------------------------------------------------------------
-void qMRMLThreeDRenderViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
+void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
   if (newScene == this->MRMLScene)
     {
@@ -82,7 +82,7 @@ void qMRMLThreeDRenderViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 //---------------------------------------------------------------------------
-//vtkMRMLCameraNode* qMRMLThreeDRenderViewPrivate::lookUpMRMLCameraNode(vtkMRMLViewNode* viewNode)
+//vtkMRMLCameraNode* qMRMLThreeDViewPrivate::lookUpMRMLCameraNode(vtkMRMLViewNode* viewNode)
 //{
 //  Q_ASSERT(viewNode);
 //
@@ -106,44 +106,44 @@ void qMRMLThreeDRenderViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 //}
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDRenderViewPrivate::onSceneAboutToBeClosedEvent()
+void qMRMLThreeDViewPrivate::onSceneAboutToBeClosedEvent()
 {
   logger.trace("onSceneAboutToBeClosedEvent");
-  CTK_P(qMRMLThreeDRenderView);
+  CTK_P(qMRMLThreeDView);
   p->setRenderEnabled(false);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDRenderViewPrivate::onSceneAboutToBeImportedEvent()
+void qMRMLThreeDViewPrivate::onSceneAboutToBeImportedEvent()
 {
   logger.trace("onSceneAboutToBeImportedEvent");
-  CTK_P(qMRMLThreeDRenderView);
+  CTK_P(qMRMLThreeDView);
   p->setRenderEnabled(false);
 }
 //
 // --------------------------------------------------------------------------
-void qMRMLThreeDRenderViewPrivate::onSceneImportedEvent()
+void qMRMLThreeDViewPrivate::onSceneImportedEvent()
 {
   logger.trace("onSceneImportedEvent");
-  CTK_P(qMRMLThreeDRenderView);
+  CTK_P(qMRMLThreeDView);
   p->setRenderEnabled(true);
   //p->scheduleRender();
 }
 //
 //// --------------------------------------------------------------------------
-//void qMRMLThreeDRenderViewPrivate::onSceneRestoredEvent()
+//void qMRMLThreeDViewPrivate::onSceneRestoredEvent()
 //{
 //  logger.trace("onSceneRestoredEvent");
 //}
 
 // --------------------------------------------------------------------------
-// qMRMLThreeDRenderView methods
+// qMRMLThreeDView methods
 
 // --------------------------------------------------------------------------
-qMRMLThreeDRenderView::qMRMLThreeDRenderView(QWidget* _parent) : Superclass(_parent)
+qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
 {
-  CTK_INIT_PRIVATE(qMRMLThreeDRenderView);
-  CTK_D(qMRMLThreeDRenderView);
+  CTK_INIT_PRIVATE(qMRMLThreeDView);
+  CTK_D(qMRMLThreeDView);
   VTK_CREATE(vtkDisplayableManagerInteractorStyle, interactorStyle);
   this->interactor()->SetInteractorStyle(interactorStyle);
 
@@ -172,9 +172,9 @@ qMRMLThreeDRenderView::qMRMLThreeDRenderView(QWidget* _parent) : Superclass(_par
 }
 
 //------------------------------------------------------------------------------
-void qMRMLThreeDRenderView::setMRMLScene(vtkMRMLScene* newScene)
+void qMRMLThreeDView::setMRMLScene(vtkMRMLScene* newScene)
 {
-  CTK_D(qMRMLThreeDRenderView);
+  CTK_D(qMRMLThreeDView);
   if (d->MRMLScene == newScene)
     {
     return;
@@ -188,9 +188,9 @@ void qMRMLThreeDRenderView::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLThreeDRenderView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
+void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 {
-  CTK_D(qMRMLThreeDRenderView);
+  CTK_D(qMRMLThreeDView);
   if (d->MRMLViewNode == newViewNode)
     {
     return;
@@ -204,5 +204,5 @@ void qMRMLThreeDRenderView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLThreeDRenderView, vtkMRMLViewNode*, mrmlViewNode, MRMLViewNode);
+CTK_GET_CXX(qMRMLThreeDView, vtkMRMLViewNode*, mrmlViewNode, MRMLViewNode);
 

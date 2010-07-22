@@ -57,24 +57,6 @@ public:
   qSlicerLayoutManager* layoutManager()const;
   void setLayoutManager(qSlicerLayoutManager* layoutManager);
 
-//  ///
-//  /// Get active DisplayableManager factory id
-//  int activeDisplayableManagerFactoryId();
-//
-//  /// Convenient method allowing to register a DisplayableManager with a given factory
-//  /// If \a factoryId is equal to -1, \a newDisplayableManager will be registered with
-//  /// all factory already instanciated
-//  void registerDisplayableManager(vtkMRMLAbstractDisplayableManager * newDisplayableManager,
-//                                  int factoryId = -1);
-//
-//  ///
-//  /// Get number of DisplayableManager factory already instanciated
-//  int displayableManagerFactoryCount();
-//
-//  ///
-//  /// Get DisplayableManager factory identified by its ID
-//  vtkMRMLDisplayableManagerFactory * displayableManagerFactory(int factoryId);
-
   ///
   /// Set the visibility of the top level widgets.
   /// If set to 'False', the state of the widget will be saved.

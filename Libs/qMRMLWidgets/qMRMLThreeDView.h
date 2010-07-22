@@ -1,5 +1,5 @@
-#ifndef __qMRMLThreeDRenderView_h
-#define __qMRMLThreeDRenderView_h
+#ifndef __qMRMLThreeDView_h
+#define __qMRMLThreeDView_h
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -7,11 +7,11 @@
 
 #include "qMRMLWidgetsExport.h"
 
-class qMRMLThreeDRenderViewPrivate;
+class qMRMLThreeDViewPrivate;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLThreeDRenderView : public ctkVTKRenderView
+class QMRML_WIDGETS_EXPORT qMRMLThreeDView : public ctkVTKRenderView
 {
   Q_OBJECT
 public:
@@ -19,8 +19,8 @@ public:
   typedef ctkVTKRenderView Superclass;
   
   /// Constructors
-  explicit qMRMLThreeDRenderView(QWidget* parent = 0);
-  virtual ~qMRMLThreeDRenderView(){}
+  explicit qMRMLThreeDView(QWidget* parent = 0);
+  virtual ~qMRMLThreeDView(){}
 
 public slots:
 
@@ -32,7 +32,7 @@ public slots:
   vtkMRMLViewNode* mrmlViewNode()const;
   
 private:
-  CTK_DECLARE_PRIVATE(qMRMLThreeDRenderView);
+  CTK_DECLARE_PRIVATE(qMRMLThreeDView);
 };
 
 #endif

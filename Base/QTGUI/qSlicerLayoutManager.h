@@ -9,7 +9,7 @@
 
 #include "qSlicerBaseQTGUIExport.h"
 
-class qMRMLThreeDRenderView;
+class qMRMLThreeDView;
 class qMRMLSliceViewWidget;
 class qSlicerLayoutManagerPrivate;
 class vtkMRMLScene;
@@ -29,13 +29,13 @@ public:
   qMRMLSliceViewWidget* sliceView(const QString& name);
 
   /// Return the number of instantiated ThreeDRenderView
-  int threeDRenderViewCount();
+  int threeDViewCount();
   
   /// Get ThreeDRenderView identified by \a id
   /// where \a id is an integer ranging from 0 to N-1 with N being the number
-  /// of instantiated qMRMLThreeDRenderView (that should also be equal to the number
+  /// of instantiated qMRMLThreeDView (that should also be equal to the number
   /// of vtkMRMLViewNode)
-  qMRMLThreeDRenderView* threeDRenderView(int id);
+  qMRMLThreeDView* threeDView(int id);
 
 public slots:
 

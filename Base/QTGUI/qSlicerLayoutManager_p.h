@@ -17,7 +17,7 @@
 class QGridLayout;
 class QButtonGroup;
 class qMRMLSliceViewWidget;
-class qMRMLThreeDRenderView;
+class qMRMLThreeDView;
 class vtkObject;
 class vtkMRMLLayoutNode;
 class vtkMRMLViewNode;
@@ -42,10 +42,10 @@ public:
   void removeSliceView(vtkMRMLSliceNode* sliceNode);
 
   /// If needed, instantiate a 3D Viewer corresponding to \a viewNode
-  QWidget* createThreeDRenderView(vtkMRMLViewNode* viewNode);
+  QWidget* createThreeDView(vtkMRMLViewNode* viewNode);
 
   /// Delete 3D Viewer associated with \a viewNode
-  void removeThreeDRenderView(vtkMRMLViewNode* viewNode);
+  void removeThreeDView(vtkMRMLViewNode* viewNode);
 
   ///
   void initialize();
@@ -59,7 +59,7 @@ public:
 
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName
-  qMRMLThreeDRenderView* threeDRenderView(int id);
+  qMRMLThreeDView* threeDView(int id);
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
@@ -89,8 +89,8 @@ public:
   /// the current MRML layout node is updated from one of the switchTo* slots.
   bool               UpdatingMRMLLayoutNode;
 
-  QList<qMRMLThreeDRenderView*>              ThreeDRenderViewList;
-  QList<vtkMRMLViewNode*>                    MRMLViewNodeList;
+  QList<qMRMLThreeDView*>              ThreeDViewList;
+  QList<vtkMRMLViewNode*>              MRMLViewNodeList;
 
   QHash<QString, qMRMLSliceViewWidget*>      SliceViewMap;
   QHash<vtkMRMLSliceNode*, QString>          MRMLSliceNodeToSliceViewName;

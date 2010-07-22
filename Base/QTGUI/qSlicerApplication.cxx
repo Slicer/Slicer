@@ -14,9 +14,6 @@
 #include <ctkSettings.h>
 #include <ctkLogger.h>
 
-// qMRMLWidgets includes
-#include <qMRMLThreeDRenderView.h>
-
 // QTGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerWidget.h"
@@ -235,56 +232,6 @@ qSlicerPythonManager* qSlicerApplication::pythonManager()
 //-----------------------------------------------------------------------------
 CTK_SET_CXX(qSlicerApplication, qSlicerLayoutManager*, setLayoutManager, LayoutManager);
 CTK_GET_CXX(qSlicerApplication, qSlicerLayoutManager*, layoutManager, LayoutManager);
-
-////-----------------------------------------------------------------------------
-//int qSlicerApplication::activeDisplayableManagerFactoryId()
-//{
-//  // Not yet implemented - Always return the first one
-//  if (this->layoutManager()->threeDRenderViewCount() == 0)
-//    {
-//    return -1;
-//    }
-//  return 0;
-//}
-
-////-----------------------------------------------------------------------------
-//void qSlicerApplication::registerDisplayableManager(
-//    vtkMRMLAbstractDisplayableManager * newDisplayableManager, int factoryId)
-//{
-//  if (!newDisplayableManager)
-//    {
-//    logger.warn("registerDisplayableManager - Failed to register a NULL displayableManager");
-//    return;
-//    }
-//  qMRMLThreeDRenderView * threeDRenderView = this->layoutManager()->threeDRenderView(factoryId);
-//  if (!threeDRenderView)
-//    {
-//    logger.warn(QString("registerDisplayableManager - factoryId %1 is invalid").arg(factoryId));
-//    return;
-//    }
-//  Q_ASSERT(threeDRenderView->displayableManagerFactory());
-//  threeDRenderView->displayableManagerFactory()->RegisterDisplayableManager(newDisplayableManager);
-//}
-
-////-----------------------------------------------------------------------------
-//int qSlicerApplication::displayableManagerFactoryCount()
-//{
-//  // Since exactly one displayableManager factory is associated with each ThreeDRenderView,
-//  // returning the number of ThreeDRenderView is valid.
-//  return this->layoutManager()->threeDRenderViewCount();
-//}
-
-////-----------------------------------------------------------------------------
-//vtkMRMLDisplayableManagerFactory * qSlicerApplication::displayableManagerFactory(int factoryId)
-//{
-//  qMRMLThreeDRenderView * threeDRenderView = this->layoutManager()->threeDRenderView(factoryId);
-//  if (!threeDRenderView)
-//    {
-//    logger.warn(QString("displayableManagerFactory - factoryId %1 is invalid").arg(factoryId));
-//    return 0;
-//    }
-//  return threeDRenderView->displayableManagerFactory();
-//}
 
 //-----------------------------------------------------------------------------
 CTK_SET_CXX(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);

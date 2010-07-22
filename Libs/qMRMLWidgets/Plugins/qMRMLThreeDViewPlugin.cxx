@@ -1,25 +1,25 @@
 
 // qMRML includes
-#include "qMRMLThreeDRenderViewPlugin.h"
-#include "qMRMLThreeDRenderView.h"
+#include "qMRMLThreeDViewPlugin.h"
+#include "qMRMLThreeDView.h"
 
 //-----------------------------------------------------------------------------
-qMRMLThreeDRenderViewPlugin::qMRMLThreeDRenderViewPlugin(QObject *_parent):QObject(_parent)
+qMRMLThreeDViewPlugin::qMRMLThreeDViewPlugin(QObject *_parent):QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLThreeDRenderViewPlugin::createWidget(QWidget *_parent)
+QWidget *qMRMLThreeDViewPlugin::createWidget(QWidget *_parent)
 {
-  qMRMLThreeDRenderView* _widget = new qMRMLThreeDRenderView(_parent);
+  qMRMLThreeDView* _widget = new qMRMLThreeDView(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLThreeDRenderViewPlugin::domXml() const
+QString qMRMLThreeDViewPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLThreeDRenderView\" \
-          name=\"MRMLThreeDRenderView\">\n"
+  return "<widget class=\"qMRMLThreeDView\" \
+          name=\"MRMLThreeDView\">\n"
           " <property name=\"geometry\">\n"
           "  <rect>\n"
           "   <x>0</x>\n"
@@ -32,19 +32,19 @@ QString qMRMLThreeDRenderViewPlugin::domXml() const
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLThreeDRenderViewPlugin::includeFile() const
+QString qMRMLThreeDViewPlugin::includeFile() const
 {
-  return "qMRMLThreeDRenderView.h";
+  return "qMRMLThreeDView.h";
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLThreeDRenderViewPlugin::isContainer() const
+bool qMRMLThreeDViewPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLThreeDRenderViewPlugin::name() const
+QString qMRMLThreeDViewPlugin::name() const
 {
-  return "qMRMLThreeDRenderView";
+  return "qMRMLThreeDView";
 }

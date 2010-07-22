@@ -15,7 +15,6 @@
 #include <vtkMRMLAnnotationDisplayableManager.h>
 #include <qSlicerApplication.h>
 #include <qSlicerLayoutManager.h>
-#include <qMRMLThreeDRenderView.h>
 #include <vtkMRMLDisplayableManagerFactory.h>
 
 //---------------------------------------------------------------------------

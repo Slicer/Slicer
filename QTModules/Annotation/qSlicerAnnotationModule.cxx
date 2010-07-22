@@ -6,9 +6,6 @@
 #include <vtkMRMLDisplayableManagerFactory.h>
 #include <vtkMRMLAbstractDisplayableManager.h>
 
-// qMRMLWidgets includes
-#include <qMRMLThreeDRenderView.h>
-
 // QTGUI includes
 #include <qSlicerApplication.h>
 #include <qSlicerLayoutManager.h>

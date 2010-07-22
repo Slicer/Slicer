@@ -72,9 +72,9 @@ SET(qMRMLWidgets_SRCS
   qMRMLSlicesControllerWidget_p.h
   qMRMLSortFilterProxyModel.cxx
   qMRMLSortFilterProxyModel.h
-  qMRMLThreeDRenderView.cxx
-  qMRMLThreeDRenderView.h
-  qMRMLThreeDRenderView_p.h
+  qMRMLThreeDView.cxx
+  qMRMLThreeDView.h
+  qMRMLThreeDView_p.h
   qMRMLTransformSliders.cxx
   qMRMLTransformSliders.h
   qMRMLTreeWidget.cxx
@@ -116,8 +116,8 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSlicesControllerWidget.h
   qMRMLSlicesControllerWidget_p.h
   qMRMLSortFilterProxyModel.h
-  qMRMLThreeDRenderView.h
-  qMRMLThreeDRenderView_p.h
+  qMRMLThreeDView.h
+  qMRMLThreeDView_p.h
   qMRMLTransformSliders.h
   qMRMLTreeWidget.h
   qMRMLVolumeThresholdWidget.h

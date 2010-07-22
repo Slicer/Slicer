@@ -9,7 +9,7 @@
 #include <ctkLogger.h>
 
 // qMRMLWidgets includes
-#include <qMRMLThreeDRenderView.h>
+#include <qMRMLThreeDView.h>
 #include <qMRMLSliceViewWidget.h>
 #include <qMRMLSliceControllerWidget.h>
 #include <qMRMLUtils.h>
@@ -153,45 +153,45 @@ void qSlicerLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
 }
 
 // --------------------------------------------------------------------------
-QWidget* qSlicerLayoutManagerPrivate::createThreeDRenderView(vtkMRMLViewNode* viewNode)
+QWidget* qSlicerLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* viewNode)
 {
   Q_ASSERT(this->MRMLScene);
   Q_ASSERT(viewNode);
 
-  qMRMLThreeDRenderView* threeDRenderView = 0;
+  qMRMLThreeDView* threeDView = 0;
   
   int viewNodeIndex = this->MRMLViewNodeList.indexOf(viewNode);
   if (viewNodeIndex != -1)
     {
-    Q_ASSERT(0 >= viewNodeIndex && viewNodeIndex < this->ThreeDRenderViewList.size());
-    threeDRenderView = this->ThreeDRenderViewList[viewNodeIndex];
-    logger.trace("createThreeDRenderView - return existing qMRMLThreeDRenderView");
-    if (threeDRenderView->mrmlViewNode() != viewNode)
+    Q_ASSERT(0 >= viewNodeIndex && viewNodeIndex < this->ThreeDViewList.size());
+    threeDView = this->ThreeDViewList[viewNodeIndex];
+    logger.trace("createThreeDView - return existing qMRMLThreeDView");
+    if (threeDView->mrmlViewNode() != viewNode)
       {
-      threeDRenderView->setMRMLViewNode(viewNode);
+      threeDView->setMRMLViewNode(viewNode);
       }
     }
   else
     {
-    logger.trace("createThreeDRenderView - instantiated new qMRMLThreeDRenderView");
-    threeDRenderView = new qMRMLThreeDRenderView(this->TargetWidget);
-    threeDRenderView->setMRMLScene(this->MRMLScene);
-    threeDRenderView->setMRMLViewNode(viewNode);
+    logger.trace("createThreeDView - instantiated new qMRMLThreeDView");
+    threeDView = new qMRMLThreeDView(this->TargetWidget);
+    threeDView->setMRMLScene(this->MRMLScene);
+    threeDView->setMRMLViewNode(viewNode);
 
     QObject::connect(qSlicerApplication::application(),
                     SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                    threeDRenderView,
+                    threeDView,
                     SLOT(setMRMLScene(vtkMRMLScene*)));
 
-    this->ThreeDRenderViewList.push_back(threeDRenderView);
+    this->ThreeDViewList.push_back(threeDView);
     this->MRMLViewNodeList.push_back(viewNode);
     }
 
-  return threeDRenderView;
+  return threeDView;
 }
 
 // --------------------------------------------------------------------------
-void qSlicerLayoutManagerPrivate::removeThreeDRenderView(vtkMRMLViewNode* viewNode)
+void qSlicerLayoutManagerPrivate::removeThreeDView(vtkMRMLViewNode* viewNode)
 {
   Q_ASSERT(viewNode);
   int indexViewNode = this->MRMLViewNodeList.indexOf(viewNode);
@@ -199,18 +199,18 @@ void qSlicerLayoutManagerPrivate::removeThreeDRenderView(vtkMRMLViewNode* viewNo
   // The MRMLViewNode is expected to be in the list
   Q_ASSERT(indexViewNode >= 0);
 
-  // The 'indexViewNode' should also be a valid ThreeDRenderViewList index
-  Q_ASSERT(indexViewNode < this->ThreeDRenderViewList.size());
+  // The 'indexViewNode' should also be a valid ThreeDViewList index
+  Q_ASSERT(indexViewNode < this->ThreeDViewList.size());
 
-  qMRMLThreeDRenderView * threeDRenderView = this->ThreeDRenderViewList.at(indexViewNode);
+  qMRMLThreeDView * threeDView = this->ThreeDViewList.at(indexViewNode);
 
   // The MRMLViewNode associated with the corresponding ThreeRenderView should match
-  Q_ASSERT(viewNode == threeDRenderView->mrmlViewNode());
+  Q_ASSERT(viewNode == threeDView->mrmlViewNode());
 
-  // Remove threeDRenderView
+  // Remove threeDView
   this->MRMLViewNodeList.removeAt(indexViewNode);
-  this->ThreeDRenderViewList.removeAt(indexViewNode);
-  delete threeDRenderView;
+  this->ThreeDViewList.removeAt(indexViewNode);
+  delete threeDView;
 }
 
 // --------------------------------------------------------------------------
@@ -241,7 +241,7 @@ void qSlicerLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* 
   if (viewNode)
     {
     logger.trace(QString("onViewNodeAddedEvent - id: %1").arg(viewNode->GetID()));
-    this->createThreeDRenderView(viewNode);
+    this->createThreeDView(viewNode);
     }
 
   // Slice node
@@ -275,7 +275,7 @@ void qSlicerLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject
   vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(node);
   if (viewNode)
     {
-    this->removeThreeDRenderView(viewNode);
+    this->removeThreeDView(viewNode);
     }
 
   // Slice node
@@ -501,10 +501,10 @@ void qSlicerLayoutManagerPrivate::clearLayout()
 }
 
 //------------------------------------------------------------------------------
-qMRMLThreeDRenderView* qSlicerLayoutManagerPrivate::threeDRenderView(int id)
+qMRMLThreeDView* qSlicerLayoutManagerPrivate::threeDView(int id)
 {
-  Q_ASSERT(id >=0 && id < this->ThreeDRenderViewList.size());
-  return this->ThreeDRenderViewList.at(id);
+  Q_ASSERT(id >=0 && id < this->ThreeDViewList.size());
+  return this->ThreeDViewList.at(id);
 }
 
 //------------------------------------------------------------------------------
@@ -545,21 +545,21 @@ qMRMLSliceViewWidget* qSlicerLayoutManager::sliceView(const QString& name)
 }
 
 //------------------------------------------------------------------------------
-int qSlicerLayoutManager::threeDRenderViewCount()
+int qSlicerLayoutManager::threeDViewCount()
 {
   CTK_D(qSlicerLayoutManager);
-  return d->ThreeDRenderViewList.size();
+  return d->ThreeDViewList.size();
 }
 
 //------------------------------------------------------------------------------
-qMRMLThreeDRenderView* qSlicerLayoutManager::threeDRenderView(int id)
+qMRMLThreeDView* qSlicerLayoutManager::threeDView(int id)
 {
   CTK_D(qSlicerLayoutManager);
-  if(id < 0 || id >= d->ThreeDRenderViewList.size());
+  if(id < 0 || id >= d->ThreeDViewList.size());
     {
     return 0;
     }
-  return d->threeDRenderView(id);
+  return d->threeDView(id);
 }
 
 //------------------------------------------------------------------------------
@@ -602,7 +602,7 @@ void qSlicerLayoutManager::switchToConventionalView()
   d->clearLayout();
 
   // First render view
-  qMRMLThreeDRenderView * renderView = d->threeDRenderView(0);
+  qMRMLThreeDView * renderView = d->threeDView(0);
   d->GridLayout->addWidget(renderView, 0, 0, 1, -1); // fromRow, fromColumn, rowSpan, columnSpan
   renderView->setVisible(true);
 
@@ -638,7 +638,7 @@ void qSlicerLayoutManager::switchToOneUp3DView()
   d->clearLayout();
 
   // First render view
-  qMRMLThreeDRenderView * renderView = d->threeDRenderView(0);
+  qMRMLThreeDView * renderView = d->threeDView(0);
   d->GridLayout->addWidget(renderView, 0, 0, 1, -1); // fromRow, fromColumn, rowSpan, columnSpan
   renderView->setVisible(true);
 
@@ -707,7 +707,7 @@ void qSlicerLayoutManager::switchToFourUpView()
   d->clearLayout();
 
   // First render view
-  qMRMLThreeDRenderView * renderView = d->threeDRenderView(0);
+  qMRMLThreeDView * renderView = d->threeDView(0);
   d->GridLayout->addWidget(renderView, 0, 1); // fromRow, fromColumn, rowSpan, columnSpan
   renderView->setVisible(true);
 
@@ -837,7 +837,7 @@ void qSlicerLayoutManager::switchToDual3DView()
   d->clearLayout();
 
   // First render view
-  qMRMLThreeDRenderView * renderView = d->threeDRenderView(0);
+  qMRMLThreeDView * renderView = d->threeDView(0);
   d->GridLayout->addWidget(renderView, 0, 0); // fromRow, fromColumn, rowSpan, columnSpan
   renderView->setVisible(true);
   
@@ -852,7 +852,7 @@ void qSlicerLayoutManager::switchToDual3DView()
     }
 
   // Second render view
-  qMRMLThreeDRenderView * renderView2 = d->threeDRenderView(1);
+  qMRMLThreeDView * renderView2 = d->threeDView(1);
   d->GridLayout->addWidget(renderView2, 0, 1);
   renderView2->setVisible(true);
 
