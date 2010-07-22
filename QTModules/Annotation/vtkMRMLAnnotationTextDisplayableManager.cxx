@@ -24,6 +24,9 @@
 #include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkMath.h>
 
+// STD includes
+#include <vector>
+#include <map>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
