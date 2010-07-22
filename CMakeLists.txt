@@ -515,6 +515,11 @@ CONFIGURE_FILE(
   )
 
 CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh
+  )
+
+CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/computeCodeCoverageLocally.sh.in 
   ${CMAKE_CURRENT_BINARY_DIR}/Scripts/computeCodeCoverageLocally.sh
   )
