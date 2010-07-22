@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
+    <width>370</width>
     <height>111</height>
    </rect>
   </property>
@@ -206,12 +206,6 @@
             <normaloff>:/Icons/LinkOff.png</normaloff>
             <normalon>:/Icons/LinkOn.png</normalon>:/Icons/LinkOff.png</iconset>
           </property>
-          <property name="iconSize">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -230,12 +224,6 @@
             <normaloff>:/Icons/VisibleOff.png</normaloff>
             <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
           </property>
-          <property name="iconSize">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -252,12 +240,6 @@
           <property name="icon">
            <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
           </property>
          </widget>
         </item>
