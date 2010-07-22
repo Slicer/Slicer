@@ -668,7 +668,8 @@ ENDIF (Slicer3_USE_KWWIDGETS)
 # The EMSegment{Registration,Graph,Algorithm,MRML} libraries are built from the top-level
 # CMakeLists.txt. Doing so allow to build these libraries also if Slicer3_USE_KWWIDGETS is OFF
 
-if(Slicer3_BUILD_MODULES)
+if(Slicer3_BUILD_MODULES OR Slicer3_BUILD_QTLOADABLEMODULES)
+  include("${Slicer3_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   ADD_SUBDIRECTORY(Modules/EMSegment/Algorithm)
   ADD_SUBDIRECTORY(Modules/EMSegment/MRML)
   ADD_SUBDIRECTORY(Modules/EMSegment/Registration)

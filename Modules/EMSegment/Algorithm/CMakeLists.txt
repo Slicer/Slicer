@@ -27,10 +27,10 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 # --------------------------------------------------------------------------
 # Find ITK
 
-if(NOT ITK_FOUND)
-  find_package(ITK REQUIRED)
-  include(${ITK_USE_FILE})
-endif(NOT ITK_FOUND)
+#if(NOT ITK_FOUND)
+#  find_package(ITK REQUIRED)
+#  include(${ITK_USE_FILE})
+#endif(NOT ITK_FOUND)
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -96,11 +96,14 @@ set_source_files_properties(
 
 # --------------------------------------------------------------------------
 # Wrapping
+set(KIT_TCL_SRCS)
+if(VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  vtk_wrap_tcl3(${PROJECT_NAME}
+    KIT_TCL_SRCS
+    "${KIT_SRCS}" "")
+endif()
 
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(${PROJECT_NAME}
-  KIT_TCL_SRCS
-  "${KIT_SRCS}" "")
 
 # --------------------------------------------------------------------------
 # Build and install the library

@@ -59,11 +59,13 @@ set(KIT_SRCS
 
 # --------------------------------------------------------------------------
 # Wrapping
-
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(${PROJECT_NAME}
-  KIT_TCL_SRCS
-  "${KIT_SRCS}" "")
+set(KIT_TCL_SRCS)
+if(VTK_WRAP_TCL)
+  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  vtk_wrap_tcl3(${PROJECT_NAME}
+    KIT_TCL_SRCS
+    "${KIT_SRCS}" "")
+endif()
 
 # --------------------------------------------------------------------------
 # Build and install the library
