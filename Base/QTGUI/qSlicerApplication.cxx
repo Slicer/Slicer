@@ -1,4 +1,5 @@
 // Qt includes
+#include <QCleanlooksStyle>
 #include <QColor>
 #include <QDebug>
 #include <QFont>
@@ -118,7 +119,7 @@ void qSlicerApplicationPrivate::init()
 void qSlicerApplicationPrivate::initStyle()
 {
   CTK_P(qSlicerApplication);
-  p->setStyle(new qSlicerStyle);
+  p->setStyle(new qSlicerStyle(new QCleanlooksStyle));
 }
 
 //-----------------------------------------------------------------------------
