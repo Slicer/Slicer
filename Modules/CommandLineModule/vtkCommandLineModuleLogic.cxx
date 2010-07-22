@@ -1861,8 +1861,50 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           else
             {
             vtkWarningMacro( << "Referenced parameter unknown: " << (*pit).GetReference() );
+            }        
+          }         
+        if ((*pit).GetTag() == "image"
+            && (*pit).GetChannel() == "output"
+            && (*pit).GetReference().size() > 0)
+          {
+          std::string reference;
+          if (node0->GetModuleDescription().HasParameter((*pit).GetReference()))
+            {
+            reference
+              = node0->GetModuleDescription()
+                           .GetParameterDefaultValue((*pit).GetReference());
+            if (reference.size() > 0)
+              {
+              vtkMRMLScalarVolumeNode *v
+                = vtkMRMLScalarVolumeNode::SafeDownCast(this->MRMLScene
+                           ->GetNodeByID(reference.c_str()));
+              if (v)
+                {
+                vtkMRMLScalarVolumeDisplayNode *d
+                  = vtkMRMLScalarVolumeDisplayNode::New();
+                d->CopyWithScene(v->GetDisplayNode());
+                this->MRMLScene->AddNodeNoNotify(d);
+                d->Delete();
+
+                vtkSmartPointer<vtkStringArray> reqSTNID = vtkSmartPointer<vtkStringArray>::New();
+                vtkStdString areq;
+                areq = "[$::slicer3::MRMLScene GetNodeByID " + (*pit).GetDefault() + "] "
+                  + "SetAndObserveDisplayNodeID "
+                  + d->GetID() + " ; "
+                  + "$::slicer3::MRMLScene Edited";
+                reqSTNID->InsertNextValue( areq );
+                this->GetApplicationLogic()->RequestModified( reqSTNID );
+                }
+              else
+                {
+                vtkWarningMacro( << "Cannot find referenced node " << (*pit).GetDefault());
+                }
+              }
             }
-        
+          else
+            {
+            vtkWarningMacro( << "Referenced parameter unknown: " << (*pit).GetReference() );
+            }  
           }
         }
       }

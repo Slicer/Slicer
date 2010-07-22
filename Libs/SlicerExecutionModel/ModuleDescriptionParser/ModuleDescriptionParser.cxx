@@ -929,9 +929,13 @@ startElement(void *userData, const char *element, const char **attrs)
           return;
           }
         }
+      else if ((strcmp(attrs[2*attr], "reference") == 0))
+        {
+        parameter->SetReference(attrs[2*attr+1]);
+        }
       else
         {
-        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\", \"fileExtensions\", \"type\" and \"hidden\" are accepted.");
+        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\", \"fileExtensions\", \"type\", \"hidden\" and \"reference\" are accepted.");
         if (ps->ErrorDescription.size() == 0)
           {
           ps->ErrorDescription = error;
