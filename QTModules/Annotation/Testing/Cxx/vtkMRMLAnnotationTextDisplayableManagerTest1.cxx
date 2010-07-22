@@ -38,7 +38,6 @@
 
 // STD includes
 #include <cstdlib>
-#include <iostream>
 #include <iterator>
 
 #include "TestingMacros.h"
@@ -73,6 +72,7 @@ protected:
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
 {
+
 
   /*
    *
@@ -354,6 +354,11 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
 */
   // cleanup
 
+  scene->RemoveNode(textNode1);
+  scene->RemoveNode(textNode2);
+  scene->RemoveNode(textNode3);
+  scene->RemoveNode(textNode4);
+
   textNode1->Delete();
   textNode2->Delete();
   textNode3->Delete();
@@ -366,6 +371,7 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
   rr->Delete();
   rw->Delete();
   ri->Delete();
+
 
   return EXIT_SUCCESS;
 }
