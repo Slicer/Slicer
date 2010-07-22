@@ -281,14 +281,14 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLN
       textNode);
   if (it != this->Internal->AnnotationTextNodeList.end())
     {
-      vtkErrorMacro("This node is already associated to the displayable manager!")
+      vtkErrorMacro("OnMRMLSceneNodeAddedEvent - This node is already associated to the displayable manager!")
       return;
     }
 
   // There should not be a widget for the new node
   if (this->Internal->GetTextWidget(textNode) != 0)
     {
-    vtkErrorMacro("A widget is already associated to this node!");
+    vtkErrorMacro("OnMRMLSceneNodeAddedEvent - A widget is already associated to this node!");
     return;
     }
 
@@ -321,7 +321,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRM
     {
     return;
     }
-
+/*
   vtkInternal::AnnotationTextNodeListIt it = std::find(
       this->Internal->AnnotationTextNodeList.begin(),
       this->Internal->AnnotationTextNodeList.end(),
@@ -333,6 +333,9 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRM
     }
 
   this->Internal->AnnotationTextNodeList.erase(it);
+*/
+
+  this->Internal->RemoveTextWidget(textNode);
 
   // Refresh observers
   this->SetAndObserveTextNodes();
@@ -342,11 +345,11 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRM
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeModifiedEvent(vtkMRMLNode* node)
 {
-  std::cout << "OnMRMLAnnotationTextNodeModifiedEvent" << std::endl;
+  vtkDebugMacro("OnMRMLAnnotationTextNodeModifiedEvent");
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
   if (!textNode)
     {
-    vtkErrorMacro("Can not access node.")
+    vtkErrorMacro("OnMRMLAnnotationTextNodeModifiedEvent - Can not access node.")
     return;
     }
   this->Internal->UpdateWidget(textNode);
@@ -356,11 +359,11 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeModifiedEv
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeTransformModifiedEvent(vtkMRMLNode* node)
 {
-  std::cout << "OnMRMLAnnotationTextNodeTransformModifiedEvent" << std::endl;
+  vtkDebugMacro("OnMRMLAnnotationTextNodeTransformModifiedEvent");
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
   if (!textNode)
     {
-    vtkErrorMacro("Can not access node.")
+    vtkErrorMacro("OnMRMLAnnotationTextNodeTransformModifiedEvent - Can not access node.")
     return;
     }
   this->Internal->UpdateWidget(textNode);
@@ -373,7 +376,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnMRMLAnnotationTextNodeLockModifi
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
   if (!textNode)
     {
-    vtkErrorMacro("Can not access node.")
+    vtkErrorMacro("OnMRMLAnnotationTextNodeLockModifiedEvent - Can not access node.")
     return;
     }
   std::cout << "OnMRMLAnnotationTextNodeLockModifiedEvent (Id: " << textNode->GetID() << ")" << std::endl;
