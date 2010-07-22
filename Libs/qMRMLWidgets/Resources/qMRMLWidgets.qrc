@@ -39,5 +39,21 @@
     <file>Icons/SlicesSpatialUnit.png</file>
     <file>Icons/SlicesToggleFgBg.png</file>
 
+    <file>Icons/ViewCamera.png</file>
+    <file>Icons/ViewCameraSelect.png</file>
+    <file>Icons/ViewCapture.png</file>
+    <file>Icons/ViewCenter.png</file>
+    <file>Icons/ViewFeaturesVisible.png</file>
+    <file>Icons/ViewOrtho.png</file>
+    <file>Icons/ViewPerspective.png</file>
+    <file>Icons/ViewPitch.png</file>
+    <file>Icons/ViewRock.png</file>
+    <file>Icons/ViewRoll.png</file>
+    <file>Icons/ViewSpin.png</file>
+    <file>Icons/ViewStereo.png</file>
+    <file>Icons/ViewYaw.png</file>
+    <file>Icons/ViewZoomIn.png</file>
+    <file>Icons/ViewZoomOut.png</file>
+
   </qresource>
 </RCC>

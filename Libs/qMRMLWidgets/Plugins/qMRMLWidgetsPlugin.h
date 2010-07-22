@@ -13,6 +13,7 @@
 #include "qMRMLSliceViewWidgetPlugin.h"
 #include "qMRMLSlicesControllerWidgetPlugin.h"
 #include "qMRMLThreeDViewPlugin.h"
+#include "qMRMLThreeDViewsControllerWidgetPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTreeWidgetPlugin.h"
 #include "qMRMLVolumeThresholdWidgetPlugin.h"
@@ -41,17 +42,18 @@ public:
             << new qMRMLNodeComboBoxPlugin
             << new qMRMLRangeWidgetPlugin
             << new qMRMLROIWidgetPlugin
-            << new qMRMLThreeDViewPlugin
+            << new qMRMLSceneFactoryWidgetPlugin
             << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceInformationWidgetPlugin
-            << new qMRMLSliceViewWidgetPlugin
             << new qMRMLSlicesControllerWidgetPlugin
+            << new qMRMLSliceViewWidgetPlugin
+            << new qMRMLThreeDViewPlugin
+            << new qMRMLThreeDViewsControllerWidgetPlugin
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeWidgetPlugin
             << new qMRMLVolumeThresholdWidgetPlugin
             << new qMRMLWidgetPlugin
-            << new qMRMLWindowLevelWidgetPlugin
-            << new qMRMLSceneFactoryWidgetPlugin;
+            << new qMRMLWindowLevelWidgetPlugin;
     return plugins;
     }
 };
