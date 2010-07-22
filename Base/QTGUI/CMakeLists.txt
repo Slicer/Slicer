@@ -48,6 +48,8 @@ SET(KIT_SRCS
   qSlicerModuleSelectorWidget.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
+  qSlicerStyle.cxx
+  qSlicerStyle.h
   qSlicerWidget.cxx
   qSlicerWidget.h
   )
