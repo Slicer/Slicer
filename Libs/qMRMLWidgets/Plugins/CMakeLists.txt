@@ -26,6 +26,8 @@ SET(designer_plugin_SRCS
   qMRMLSliceInformationWidgetPlugin.h
   qMRMLSliceViewWidgetPlugin.cxx
   qMRMLSliceViewWidgetPlugin.h
+  qMRMLSlicesControllerWidgetPlugin.cxx
+  qMRMLSlicesControllerWidgetPlugin.h
   qMRMLThreeDRenderViewPlugin.cxx
   qMRMLThreeDRenderViewPlugin.h
   qMRMLTransformSlidersPlugin.cxx
@@ -61,6 +63,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceInformationWidgetPlugin.h
   qMRMLSliceViewWidgetPlugin.h
+  qMRMLSlicesControllerWidgetPlugin.h
   qMRMLThreeDRenderViewPlugin.h
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeWidgetPlugin.h

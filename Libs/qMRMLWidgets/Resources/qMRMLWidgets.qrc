@@ -26,5 +26,18 @@
     <file>Icons/SliceViewerFG.png</file>
     <file>Icons/SliceViewerLB.png</file>
     <file>Icons/SliceViewerOR.png</file>
+
+    <file>Icons/SlicesAnnotation.png</file>
+    <file>Icons/SlicesComposite.png</file>
+    <file>Icons/SlicesCrosshair.png</file>
+    <file>Icons/SlicesFadeToBG.png</file>
+    <file>Icons/SlicesFadeToFG.png</file>
+    <file>Icons/SlicesFeaturesVisible.png</file>
+    <file>Icons/SlicesFieldOfView.png</file>
+    <file>Icons/SlicesFitToWindow.png</file>
+    <file>Icons/SlicesLabelOpacity.png</file>
+    <file>Icons/SlicesSpatialUnit.png</file>
+    <file>Icons/SlicesToggleFgBg.png</file>
+
   </qresource>
 </RCC>

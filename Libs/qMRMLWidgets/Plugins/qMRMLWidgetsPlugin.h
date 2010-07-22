@@ -11,6 +11,7 @@
 #include "qMRMLSliceControllerWidgetPlugin.h"
 #include "qMRMLSliceInformationWidgetPlugin.h"
 #include "qMRMLSliceViewWidgetPlugin.h"
+#include "qMRMLSlicesControllerWidgetPlugin.h"
 #include "qMRMLThreeDRenderViewPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTreeWidgetPlugin.h"
@@ -44,6 +45,7 @@ public:
             << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceInformationWidgetPlugin
             << new qMRMLSliceViewWidgetPlugin
+            << new qMRMLSlicesControllerWidgetPlugin
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeWidgetPlugin
             << new qMRMLVolumeThresholdWidgetPlugin
