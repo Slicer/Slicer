@@ -1,5 +1,4 @@
 // Qt includes
-#include <QCleanlooksStyle>
 #include <QColor>
 #include <QDebug>
 #include <QFont>
@@ -24,6 +23,7 @@
 #include "qSlicerIOManager.h"
 #include "qSlicerCommandOptions.h"
 #include "qSlicerLayoutManager.h"
+#include "qSlicerStyle.h"
 #ifdef Slicer3_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif
@@ -62,7 +62,7 @@ class qSlicerApplicationPrivate: public ctkPrivate<qSlicerApplication>
   qSlicerApplicationPrivate();
 
   ///
-  /// Initialize application style
+  /// Convenient method regrouping all initialization code
   void init();
 
   ///
@@ -121,7 +121,7 @@ void qSlicerApplicationPrivate::init()
 void qSlicerApplicationPrivate::initStyle()
 {
   CTK_P(qSlicerApplication);
-  p->setStyle(new QCleanlooksStyle);
+  p->setStyle(new qSlicerStyle);
 }
 
 //-----------------------------------------------------------------------------
