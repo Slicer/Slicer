@@ -231,7 +231,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 
   if { $_layers(background,node) != "" } {
     set logic [$sliceGUI GetLogic]
-    set sliceSpacing [lindex [$logic GetLowestVolumeSliceSpacing] 0]
+    set sliceSpacing [lindex [$logic GetLowestVolumeSliceSpacing] 2]
     if { [catch "expr $sliceSpacing"] } {
       set sliceSpacing 1.0
     }
