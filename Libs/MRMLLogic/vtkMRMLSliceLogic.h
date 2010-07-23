@@ -265,6 +265,11 @@ public:
   double GetSliceOffset();
   void SetSliceOffset(double offset);
 
+  /// 
+  /// Set the current distance so that it corresponds to the closest center of 
+  /// a voxel in IJK space (integer value)
+  void SnapSliceOffsetToIJK();
+
   static const int SLICE_INDEX_ROTATED;
   static const int SLICE_INDEX_OUT_OF_VOLUME;
   static const int SLICE_INDEX_NO_VOLUME;

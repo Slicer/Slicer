@@ -1715,6 +1715,26 @@ void vtkMRMLSliceLogic::SetSliceOffset(double offset)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::SnapSliceOffsetToIJK()
+{
+  double offset, *spacing, bounds[6];
+  double oldOffset = this->GetSliceOffset();
+  spacing = this->GetLowestVolumeSliceSpacing();
+  this->GetLowestVolumeSliceBounds( bounds );
+  
+  // number of slices along the offset dimension (depends on ijkToRAS and Transforms)
+  int slices = static_cast<int> (0.5 + ((bounds[5] - bounds[4]) / spacing[2]));
+
+  double boundsRange = bounds[5] - bounds[4];
+  double normalizedOffset = (oldOffset - bounds[4]) / boundsRange;
+  // round to nearest int and then convert back to double
+  offset = static_cast<double> ( static_cast<int> (0.5 + normalizedOffset * slices) ) ; 
+  this->SetSliceOffset( offset );
+}
+
+
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::GetPolyDataAndLookUpTableCollections(vtkPolyDataCollection *polyDataCollection,
                                                                vtkCollection *lookupTableCollection)
 {
