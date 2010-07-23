@@ -10,8 +10,8 @@ namespace itk
 /**
  * Initialize new instance
  */
-template<class TInputImage, class TOutputImage>
-ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage >
+ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
 ::ExponentialDeformationFieldImageFilter2()
 {
   m_AutomaticNumberOfIterations = true;
@@ -22,8 +22,8 @@ ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
   m_Oppositer = OppositerType::New();
   m_Warper = VectorWarperType::New();
 
-  FieldInterpolatorPointer VectorInterpolator
-    = FieldInterpolatorType::New();
+  FieldInterpolatorPointer VectorInterpolator =
+    FieldInterpolatorType::New();
   m_Warper->SetInterpolator(VectorInterpolator);
 
   m_Adder = AdderType::New();
@@ -35,9 +35,9 @@ ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
  *
  * \todo Add details about this class
  */
-template<class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
-ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
+ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -55,9 +55,9 @@ ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
 /**
  * GenerateData
  */
-template<class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
-ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
+ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
 ::GenerateData()
 {
   itkDebugMacro(<< "Actually executing");
@@ -85,7 +85,7 @@ ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
         }
       }
 
-    typedef ImageRegionConstIterator<InputImageType> InputConstIterator;
+    typedef ImageRegionConstIterator< InputImageType > InputConstIterator;
     InputConstIterator InputIt = InputConstIterator(
       inputPtr, inputPtr->GetRequestedRegion() );
 
@@ -99,14 +99,14 @@ ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
     maxnorm2 /= vnl_math_sqr(minpixelspacing);
 
     InputPixelRealValueType numiterfloat = 2.0
-      + 0.5 * vcl_log(maxnorm2) / vnl_math::ln2;
+                                           + 0.5 * vcl_log(maxnorm2) / vnl_math::ln2;
 
     if ( numiterfloat >= 0.0 )
       {
       // take the ceil and threshold
       numiter = vnl_math_min(
-        static_cast<unsigned int>(numiterfloat + 1.0),
-        m_MaximumNumberOfIterations );
+        static_cast< unsigned int >( numiterfloat + 1.0 ),
+        m_MaximumNumberOfIterations);
       }
     else
       {
@@ -150,11 +150,11 @@ ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
   m_Divider->GraftOutput( this->GetOutput() );
   if ( !this->m_ComputeInverse )
     {
-    m_Divider->SetConstant( static_cast<InputPixelRealValueType>(1 << numiter) );
+    m_Divider->SetConstant( static_cast< InputPixelRealValueType >( 1 << numiter ) );
     }
   else
     {
-    m_Divider->SetConstant( -static_cast<InputPixelRealValueType>(1 << numiter) );
+    m_Divider->SetConstant( -static_cast< InputPixelRealValueType >( 1 << numiter ) );
     }
 
   m_Divider->Update();
@@ -202,6 +202,6 @@ ExponentialDeformationFieldImageFilter2<TInputImage, TOutputImage>
     progress.CompletedPixel();
     }
 }
-} // end namespace itk
+}   // end namespace itk
 
 #endif

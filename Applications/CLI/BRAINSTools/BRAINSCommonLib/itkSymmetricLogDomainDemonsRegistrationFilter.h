@@ -47,22 +47,22 @@ namespace itk
  * \ingroup DeformableImageRegistration MultiThreaded
  * \author Florence Dru, INRIA and Tom Vercauteren, MKT
  */
-template <class TFixedImage, class TMovingImage, class TField>
-class ITK_EXPORT SymmetricLogDomainDemonsRegistrationFilter :
-    public LogDomainDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
+template< class TFixedImage, class TMovingImage, class TField >
+class ITK_EXPORT SymmetricLogDomainDemonsRegistrationFilter:
+  public LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
 {
 public:
   /** Standard class typedefs. */
-  typedef SymmetricLogDomainDemonsRegistrationFilter                               Self;
-  typedef LogDomainDeformableRegistrationFilter<TFixedImage, TMovingImage, TField> Superclass;
-  typedef SmartPointer<Self>                                                       Pointer;
-  typedef SmartPointer<const Self>                                                 ConstPointer;
+  typedef SymmetricLogDomainDemonsRegistrationFilter                                 Self;
+  typedef LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField > Superclass;
+  typedef SmartPointer< Self >                                                       Pointer;
+  typedef SmartPointer< const Self >                                                 ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( SymmetricLogDomainDemonsRegistrationFilter, LogDomainDeformableRegistrationFilter );
+  itkTypeMacro(SymmetricLogDomainDemonsRegistrationFilter, LogDomainDeformableRegistrationFilter);
 
   /** FixedImage image type. */
   typedef typename Superclass::FixedImageType    FixedImageType;
@@ -88,12 +88,12 @@ public:
 
   /** Take timestep type from the FiniteDifferenceFunction. */
   typedef typename
-    FiniteDifferenceFunctionType::TimeStepType TimeStepType;
+  FiniteDifferenceFunctionType::TimeStepType TimeStepType;
 
   /** DemonsRegistrationFilterFunction type. */
-  typedef ESMDemonsRegistrationFunction<FixedImageType,
-    MovingImageType,
-    DeformationFieldType>                          DemonsRegistrationFunctionType;
+  typedef ESMDemonsRegistrationFunction< FixedImageType,
+                                         MovingImageType,
+                                         DeformationFieldType >                          DemonsRegistrationFunctionType;
   typedef typename DemonsRegistrationFunctionType::Pointer      DemonsRegistrationFunctionPointer;
   typedef typename DemonsRegistrationFunctionType::GradientType GradientType;
 
@@ -103,7 +103,7 @@ public:
    * This value is calculated for the current iteration */
   virtual double GetMetric() const;
 
-  virtual void SetUseGradientType( GradientType gtype );
+  virtual void SetUseGradientType(GradientType gtype);
 
   virtual GradientType GetUseGradientType() const;
 
@@ -123,8 +123,8 @@ public:
 
   /** Set/Get the number of terms used in the Baker-Campbell-Hausdorff
     approximation. */
-  itkSetMacro( NumberOfBCHApproximationTerms, unsigned int );
-  itkGetConstMacro( NumberOfBCHApproximationTerms, unsigned int );
+  itkSetMacro(NumberOfBCHApproximationTerms, unsigned int);
+  itkGetConstMacro(NumberOfBCHApproximationTerms, unsigned int);
 protected:
   SymmetricLogDomainDemonsRegistrationFilter();
   ~SymmetricLogDomainDemonsRegistrationFilter() {}
@@ -162,17 +162,18 @@ protected:
    * will be used by the filter to calculate updates at image pixels.
    * \returns A FiniteDifferenceObject pointer. */
   itkGetConstReferenceObjectMacro(BackwardDifferenceFunction,
-                                  FiniteDifferenceFunctionType );
+                                  FiniteDifferenceFunctionType);
 
   /** This method sets the pointer to a FiniteDifferenceFunction object that
    * will be used by the filter to calculate updates at image pixels.
    * \returns A FiniteDifferenceObject pointer. */
-  itkSetObjectMacro(BackwardDifferenceFunction, FiniteDifferenceFunctionType );
+  itkSetObjectMacro(BackwardDifferenceFunction, FiniteDifferenceFunctionType);
 private:
-  SymmetricLogDomainDemonsRegistrationFilter(const Self &); // purposely not
-                                                            // implemented
-  void operator=(const Self &);                             // purposely not
-                                                            // implemented
+  SymmetricLogDomainDemonsRegistrationFilter(const Self &);   // purposely not
+                                                              // implemented
+  void operator=(const Self &);                               // purposely not
+
+  // implemented
 
   /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is of the correct type.
    * this method will throw an exception if the function is not of the expected type. */
@@ -187,10 +188,10 @@ private:
   /** Exp and composition typedefs */
   typedef MultiplyByConstantImageFilter<
     VelocityFieldType,
-    TimeStepType, VelocityFieldType>                   MultiplyByConstantType;
+    TimeStepType, VelocityFieldType >                   MultiplyByConstantType;
 
   typedef AddImageFilter<
-    VelocityFieldType, VelocityFieldType>                AdderType;
+    VelocityFieldType, VelocityFieldType >                AdderType;
 
   typedef typename MultiplyByConstantType::Pointer MultiplyByConstantPointer;
   typedef typename AdderType::Pointer              AdderPointer;
@@ -204,10 +205,10 @@ private:
   /** The buffer that holds the updates for an iteration of the algorithm. */
   VelocityFieldPointer m_BackwardUpdateBuffer;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkSymmetricLogDomainDemonsRegistrationFilter.txx"
+#  include "itkSymmetricLogDomainDemonsRegistrationFilter.txx"
 #endif
 
 #endif

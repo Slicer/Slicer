@@ -25,12 +25,12 @@
 
 namespace itk
 {
-template<class TInputImage, class TOutputImage>
-BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage >
+BRAINSROIAutoImageFilter< TInputImage, TOutputImage >
 ::BRAINSROIAutoImageFilter()
 {
   // this filter requires two input images
-  this->SetNumberOfRequiredInputs( 1 );
+  this->SetNumberOfRequiredInputs(1);
   m_OtsuPercentileThreshold = 0.01;
   m_ClosingSize = 9.0;
   m_ThresholdCorrectionFactor = 1.0;
@@ -38,18 +38,19 @@ BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
   m_ResultMaskPointer = NULL;
 }
 
-template<class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
-BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
+BRAINSROIAutoImageFilter< TInputImage, TOutputImage >
 ::GenerateData()
 {
-  m_ResultMaskPointer = NULL; // Need to make this null during every re-run of
-                              // the data.
-  // Create a process accumulator for tracking the progress of this minipipeline
+  m_ResultMaskPointer = NULL;   // Need to make this null during every re-run of
+                                // the data.
+  // Create a process accumulator for tracking the progress of this
+  // minipipeline
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
 
-  typedef itk::LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage> LFFMaskFilterType;
+  typedef itk::LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage > LFFMaskFilterType;
   typename LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
   // Register the filter with the with progress accumulator using
   // equal weight proportion
@@ -63,9 +64,9 @@ BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
   this->GraftOutput( LFF->GetOutput() );
 }
 
-template<class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
-BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
+BRAINSROIAutoImageFilter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -79,5 +80,5 @@ BRAINSROIAutoImageFilter<TInputImage, TOutputImage>
   os << indent << "DilateSize: "
      << m_DilateSize << std::endl;
 }
-} // end namespace itk
+}   // end namespace itk
 #endif

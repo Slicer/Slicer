@@ -28,7 +28,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 #include "itkCastImageFilter.h"
 
-typedef itk::SpatialObject<3>      SpatialObjectType;
+typedef itk::SpatialObject< 3 >    SpatialObjectType;
 typedef SpatialObjectType::Pointer ImageMaskPointer;
 
 namespace itk
@@ -42,9 +42,9 @@ namespace itk
  *
  * \ingroup IntensityImageFilters
  */
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT BRAINSROIAutoImageFilter :
-    public ImageToImageFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage >
+class ITK_EXPORT BRAINSROIAutoImageFilter:
+  public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Extract dimension from input and output image. */
@@ -58,10 +58,10 @@ public:
   typedef TOutputImage OutputImageType;
 
   /** Standard class typedefs. */
-  typedef BRAINSROIAutoImageFilter                            Self;
-  typedef ImageToImageFilter<InputImageType, OutputImageType> Superclass;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef SmartPointer<const Self>                            ConstPointer;
+  typedef BRAINSROIAutoImageFilter                              Self;
+  typedef ImageToImageFilter< InputImageType, OutputImageType > Superclass;
+  typedef SmartPointer< Self >                                  Pointer;
+  typedef SmartPointer< const Self >                            ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -70,50 +70,52 @@ public:
   itkTypeMacro(BRAINSROIAutoImageFilter, ImageToImageFilter);
 
   /** Image typedef support. */
-  typedef typename InputImageType::PixelType                      InputPixelType;
-  typedef typename OutputImageType::PixelType                     OutputPixelType;
+  typedef typename InputImageType::PixelType  InputPixelType;
+  typedef typename OutputImageType::PixelType OutputPixelType;
 
-  typedef typename InputImageType::RegionType                     InputImageRegionType;
-  typedef typename OutputImageType::RegionType                    OutputImageRegionType;
+  typedef typename InputImageType::RegionType  InputImageRegionType;
+  typedef typename OutputImageType::RegionType OutputImageRegionType;
 
-  typedef typename InputImageType::SizeType                       InputSizeType;
+  typedef typename InputImageType::SizeType InputSizeType;
 
-  typedef itk::Image<unsigned char, 3>                            UCHARIMAGE;
-  typedef itk::ImageMaskSpatialObject<UCHARIMAGE::ImageDimension> ImageMaskSpatialObjectType;
+  typedef itk::Image< unsigned char, 3 >                            UCHARIMAGE;
+  typedef itk::ImageMaskSpatialObject< UCHARIMAGE::ImageDimension > ImageMaskSpatialObjectType;
 
   /** */
-  itkSetMacro(     OtsuPercentileThreshold, double);
+  itkSetMacro(OtsuPercentileThreshold, double);
   itkGetConstMacro(OtsuPercentileThreshold, double);
   /** */
-  itkSetMacro(     ThresholdCorrectionFactor, double);
+  itkSetMacro(ThresholdCorrectionFactor, double);
   itkGetConstMacro(ThresholdCorrectionFactor, double);
   /** The closing size in mm, this is rounded up to the next closest number of voxel
    * by taking Spacing into account */
-  itkSetMacro(     ClosingSize, double);
+  itkSetMacro(ClosingSize, double);
   itkGetConstMacro(ClosingSize, double);
   /** The dilation size in mm, this is rounded up to the next closest number of voxel
    * by taking Spacing into account */
-  itkSetMacro(     DilateSize, double);
+  itkSetMacro(DilateSize, double);
   itkGetConstMacro(DilateSize, double);
 
-  // NOTE:  This will generate a new spatial object each time it is called, and
+  // NOTE:  This will generate a new spatial object each time it is called,
+  // and
   // not return the previous spatial object
   ImageMaskPointer GetSpatialObjectROI(void)
   {
-    if ( m_ResultMaskPointer.IsNull() ) // This is a cheap way to only create
-                                        // the mask once, note that this is made
-                                        // null when GenerateData is called.
+    if ( m_ResultMaskPointer.IsNull() )   // This is a cheap way to only create
+                                          // the mask once, note that this is
+                                          // made
+                                          // null when GenerateData is called.
       {
-      typedef itk::CastImageFilter<OutputImageType, UCHARIMAGE> CastImageFilter;
+      typedef itk::CastImageFilter< OutputImageType, UCHARIMAGE > CastImageFilter;
       typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput( this->GetOutput() );
-      castFilter->Update( );
+      castFilter->Update();
 
       // convert mask image to mask
       typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
       mask->SetImage( castFilter->GetOutput() );
       mask->ComputeObjectToWorldTransform();
-      m_ResultMaskPointer = dynamic_cast<ImageMaskSpatialObjectType *>( mask.GetPointer() );
+      m_ResultMaskPointer = dynamic_cast< ImageMaskSpatialObjectType * >( mask.GetPointer() );
       }
     return m_ResultMaskPointer;
   }
@@ -121,7 +123,7 @@ public:
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( SameDimensionCheck,
-                   ( Concept::SameDimension<InputImageDimension, OutputImageDimension> ) );
+                   ( Concept::SameDimension< InputImageDimension, OutputImageDimension > ) );
   /** End concept checking */
 #endif
 protected:
@@ -132,8 +134,8 @@ protected:
   void GenerateData();
 
 private:
-  BRAINSROIAutoImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);           // purposely not implemented
+  BRAINSROIAutoImageFilter(const Self &);   // purposely not implemented
+  void operator=(const Self &);             // purposely not implemented
 
   double           m_OtsuPercentileThreshold;
   double           m_ThresholdCorrectionFactor;
@@ -141,10 +143,10 @@ private:
   double           m_DilateSize;
   ImageMaskPointer m_ResultMaskPointer;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkBRAINSROIAutoImageFilter.txx"
+#  include "itkBRAINSROIAutoImageFilter.txx"
 #endif
 
 #endif

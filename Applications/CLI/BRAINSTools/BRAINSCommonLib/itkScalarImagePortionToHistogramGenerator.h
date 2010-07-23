@@ -19,13 +19,13 @@ PURPOSE.  See the above copyright notices for more information.
 
 #ifdef ITK_USE_REVIEW_STATISTICS
 
-#include "itkImageToListSampleFilter.h"
-#include "itkSampleToHistogramFilter.h"
+#  include "itkImageToListSampleFilter.h"
+#  include "itkSampleToHistogramFilter.h"
 
 #else
 
-#include "itkImageToListGenerator.h"
-#include "itkListSampleToHistogramFilter.h"
+#  include "itkImageToListGenerator.h"
+#  include "itkListSampleToHistogramFilter.h"
 
 #endif
 
@@ -40,15 +40,15 @@ namespace Statistics
  *
  * \brief TODO
  */
-template <class TImageType, class TMaskType>
-class ScalarImagePortionToHistogramGenerator : public Object
+template< class TImageType, class TMaskType >
+class ScalarImagePortionToHistogramGenerator:public Object
 {
 public:
   /** Standard typedefs */
   typedef ScalarImagePortionToHistogramGenerator Self;
   typedef Object                                 Superclass;
-  typedef SmartPointer<Self>                     Pointer;
-  typedef SmartPointer<const Self>               ConstPointer;
+  typedef SmartPointer< Self >                   Pointer;
+  typedef SmartPointer< const Self >             ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ScalarImagePortionToHistogramGenerator, Object);
@@ -56,41 +56,41 @@ public:
   /** standard New() method support */
   itkNewMacro(Self);
 
-  typedef TImageType                                  ImageType;
-  typedef typename TImageType::PixelType              PixelType;
-  typedef typename NumericTraits<PixelType>::RealType RealPixelType;
+  typedef TImageType                                    ImageType;
+  typedef typename TImageType::PixelType                PixelType;
+  typedef typename NumericTraits< PixelType >::RealType RealPixelType;
 
-  typedef itk::Statistics::Histogram<double>          HistogramType;
-  typedef typename HistogramType::Pointer             HistogramPointer;
-  typedef typename HistogramType::ConstPointer        HistogramConstPointer;
+  typedef itk::Statistics::Histogram< double > HistogramType;
+  typedef typename HistogramType::Pointer      HistogramPointer;
+  typedef typename HistogramType::ConstPointer HistogramConstPointer;
 
 #ifdef ITK_USE_REVIEW_STATISTICS
-  typedef itk::Statistics::ImageToListSampleFilter<ImageType,TMaskType> ListSampleGeneratorType;
+  typedef itk::Statistics::ImageToListSampleFilter< ImageType, TMaskType > ListSampleGeneratorType;
+  typedef typename ListSampleGeneratorType::Pointer                        ListSampleGeneratorPointer;
+  typedef typename ListSampleGeneratorType::ListSampleType                 ListSampleType;
+
+  typedef itk::Statistics::SampleToHistogramFilter< ListSampleType, HistogramType > GeneratorType;
+  typedef typename GeneratorType::Pointer                                           GeneratorPointer;
+#else
+  typedef itk::Statistics::ImageToListGenerator< ImageType, TMaskType > ListSampleGeneratorType;
   typedef typename ListSampleGeneratorType::Pointer                     ListSampleGeneratorPointer;
   typedef typename ListSampleGeneratorType::ListSampleType              ListSampleType;
 
-  typedef itk::Statistics::SampleToHistogramFilter<ListSampleType, HistogramType> GeneratorType;
-  typedef typename GeneratorType::Pointer                                         GeneratorPointer;
-#else
-  typedef itk::Statistics::ImageToListGenerator<ImageType,TMaskType> ListSampleGeneratorType;
-  typedef typename ListSampleGeneratorType::Pointer                  ListSampleGeneratorPointer;
-  typedef typename ListSampleGeneratorType::ListSampleType           ListSampleType;
-
-  typedef itk::Statistics::ListSampleToHistogramFilter<ListSampleType, HistogramType> GeneratorType;
-  typedef typename GeneratorType::Pointer                                             GeneratorPointer;
+  typedef itk::Statistics::ListSampleToHistogramFilter< ListSampleType, HistogramType > GeneratorType;
+  typedef typename GeneratorType::Pointer                                               GeneratorPointer;
 #endif
 public:
 
   /** Triggers the Computation of the histogram */
-  void Compute( void );
+  void Compute(void);
 
   /** Connects the input image for which the histogram is going to be computed
     */
-  void SetInput( const TImageType * );
+  void SetInput(const TImageType *);
 
   /** Connects the input image for which the histogram is going to be computed
     */
-  void SetBinaryPortionImage( const TMaskType * );
+  void SetBinaryPortionImage(const TMaskType *);
 
   /** Return the histogram.
     \warning This output is only valid after the Compute() method has been invoked
@@ -100,20 +100,20 @@ public:
 #ifdef ITK_USE_REVIEW_STATISTICS
 
   /** Set number of histogram bins */
-  void SetNumberOfBins( unsigned int numberOfBins );
+  void SetNumberOfBins(unsigned int numberOfBins);
 
   /** Set marginal scale value to be passed to the histogram generator */
-  void SetMarginalScale( double marginalScale );
+  void SetMarginalScale(double marginalScale);
 
   /** Set the minimum value from which the bins will be computed */
-  void SetHistogramMin( RealPixelType minimumValue );
+  void SetHistogramMin(RealPixelType minimumValue);
 
   /** Set the maximum value from which the bins will be computed */
-  void SetHistogramMax( RealPixelType maximumValue );
+  void SetHistogramMax(RealPixelType maximumValue);
 
 #else
 
-  void InitializeHistogram( unsigned int numberOfBins, RealPixelType minimumValue, RealPixelType maximumValue );
+  void InitializeHistogram(unsigned int numberOfBins, RealPixelType minimumValue, RealPixelType maximumValue);
 
 #endif
 protected:
@@ -128,16 +128,17 @@ private:
   HistogramPointer m_Histogram;
   GeneratorPointer m_HistogramGenerator;
 
-  ScalarImagePortionToHistogramGenerator(const Self &); // purposely not
-                                                        // implemented
-  void operator=(const Self &);                         // purposely not
-                                                        // implemented
+  ScalarImagePortionToHistogramGenerator(const Self &);   // purposely not
+                                                          // implemented
+  void operator=(const Self &);                           // purposely not
+
+  // implemented
 };
 }   // end of namespace Statistics
-} // end of namespace itk
+}   // end of namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkScalarImagePortionToHistogramGenerator.txx"
+#  include "itkScalarImagePortionToHistogramGenerator.txx"
 #endif
 
 #endif

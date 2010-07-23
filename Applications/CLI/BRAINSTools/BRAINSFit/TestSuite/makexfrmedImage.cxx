@@ -13,10 +13,10 @@
 #include <math.h>
 
 #ifndef M_PI
-#define M_PI 3.1415926
+#  define M_PI 3.1415926
 #endif
 #ifndef M_TWOPI
-#define M_TWOPI ( 2.0 * M_PI )
+#  define M_TWOPI ( 2.0 * M_PI )
 #endif
 inline double DEGREES(double x)
 {
@@ -29,12 +29,12 @@ bool keepOutputs(false);
 
 //
 // typedefs
-typedef itk::Image<unsigned char, 3> ImageType;
-typedef itk::AffineTransform<double,
-                             3>                        AffineTransformType;
-typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
-typedef itk::ResampleImageFilter<ImageType,
-                                 ImageType>         ResampleImageFilter;
+typedef itk::Image< unsigned char, 3 > ImageType;
+typedef itk::AffineTransform< double,
+                              3 >                        AffineTransformType;
+typedef itk::LinearInterpolateImageFunction< ImageType, double > InterpolatorType;
+typedef itk::ResampleImageFilter< ImageType,
+                                  ImageType >         ResampleImageFilter;
 
 //
 // apply an affine transform to an image, and
@@ -51,8 +51,8 @@ Resample(ImageType::Pointer & inputImage,
 
   interp->SetInputImage(inputImage);
 
-  ResampleImageFilter::Pointer resample
-    = ResampleImageFilter::New();
+  ResampleImageFilter::Pointer resample =
+    ResampleImageFilter::New();
   resample->SetInput(inputImage);
   resample->SetSize(size);
   resample->SetTransform(transform);
@@ -72,8 +72,8 @@ int main(int argc, char **argv)
   std::string xfrmImageName( itksys::SystemTools::CollapseFullPath(argv[2]) );
 
   // read input image
-  ImageType::Pointer startImage
-    = itkUtil::ReadImageCoronal<ImageType>(startImageName);
+  ImageType::Pointer startImage =
+    itkUtil::ReadImageCoronal< ImageType >(startImageName);
 
   if ( startImage.IsNull() )
     {
@@ -121,6 +121,6 @@ int main(int argc, char **argv)
   transform->Translate(imageCenter);
 
   ImageType::Pointer xfrmImage = Resample(startImage, transform);
-  itkUtil::WriteImage<ImageType>(xfrmImage, xfrmImageName);
+  itkUtil::WriteImage< ImageType >(xfrmImage, xfrmImageName);
   exit(0);
 }

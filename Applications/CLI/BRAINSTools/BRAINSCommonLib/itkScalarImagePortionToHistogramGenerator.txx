@@ -23,8 +23,8 @@ namespace itk
 {
 namespace Statistics
 {
-template<class TImageType, class TMaskType>
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
+template< class TImageType, class TMaskType >
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
 ::ScalarImagePortionToHistogramGenerator()
 {
   m_ImageToListSampleGenerator = ListSampleGeneratorType::New();
@@ -36,26 +36,26 @@ ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
 #endif
 }
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetInput( const ImageType *image )
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
+::SetInput(const ImageType *image)
 {
-  m_ImageToListSampleGenerator->SetInput( image );
+  m_ImageToListSampleGenerator->SetInput(image);
 }
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetBinaryPortionImage( const TMaskType *binaryImage )
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
+::SetBinaryPortionImage(const TMaskType *binaryImage)
 {
-  m_ImageToListSampleGenerator->SetMaskImage( binaryImage );
-  m_ImageToListSampleGenerator->SetMaskValue( NumericTraits<typename TMaskType::PixelType>::One );
+  m_ImageToListSampleGenerator->SetMaskImage(binaryImage);
+  m_ImageToListSampleGenerator->SetMaskValue(NumericTraits< typename TMaskType::PixelType >::One);
 }
 
-template<class TImageType, class TMaskType>
-const typename ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>::HistogramType *
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
+template< class TImageType, class TMaskType >
+const typename ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::HistogramType *
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
 ::GetOutput() const
 {
 #ifdef ITK_USE_REVIEW_STATISTICS
@@ -65,9 +65,9 @@ ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
 #endif
 }
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
 ::Compute()
 {
   m_ImageToListSampleGenerator->Update();
@@ -80,56 +80,56 @@ ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
 
 #ifdef ITK_USE_REVIEW_STATISTICS
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetNumberOfBins( unsigned int numberOfBins )
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
+::SetNumberOfBins(unsigned int numberOfBins)
 {
   typename HistogramType::SizeType size;
 
   size.SetSize(1);
-  size.Fill( numberOfBins );
-  m_HistogramGenerator->SetHistogramSize( size );
+  size.Fill(numberOfBins);
+  m_HistogramGenerator->SetHistogramSize(size);
 }
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetHistogramMin( RealPixelType minimumValue )
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
+::SetHistogramMin(RealPixelType minimumValue)
 {
   typedef typename GeneratorType::HistogramMeasurementVectorType MeasurementVectorType;
   MeasurementVectorType minVector(1);
 
   minVector[0] = minimumValue;
-  m_HistogramGenerator->SetHistogramBinMinimum( minVector );
+  m_HistogramGenerator->SetHistogramBinMinimum(minVector);
 }
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetHistogramMax( RealPixelType maximumValue )
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
+::SetHistogramMax(RealPixelType maximumValue)
 {
   typedef typename GeneratorType::HistogramMeasurementVectorType MeasurementVectorType;
   MeasurementVectorType maxVector(1);
 
   maxVector[0] = maximumValue;
-  m_HistogramGenerator->SetHistogramBinMaximum( maxVector );
+  m_HistogramGenerator->SetHistogramBinMaximum(maxVector);
 }
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::SetMarginalScale( double marginalScale )
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
+::SetMarginalScale(double marginalScale)
 {
-  m_HistogramGenerator->SetMarginalScale( marginalScale );
+  m_HistogramGenerator->SetMarginalScale(marginalScale);
 }
 
 #else
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
-::InitializeHistogram( unsigned int numberOfBins, RealPixelType minimumValue, RealPixelType maximumValue )
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
+::InitializeHistogram(unsigned int numberOfBins, RealPixelType minimumValue, RealPixelType maximumValue)
 {
   typedef typename HistogramType::MeasurementVectorType MeasurementVectorType;
   MeasurementVectorType minVector(1);
@@ -145,21 +145,21 @@ ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
 
   m_Histogram = HistogramType::New();
   m_Histogram->Initialize(size, minVector, maxVector);
-  m_HistogramGenerator->SetHistogram( m_Histogram );
+  m_HistogramGenerator->SetHistogram(m_Histogram);
 }
 
 #endif
 
-template<class TImageType, class TMaskType>
+template< class TImageType, class TMaskType >
 void
-ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>
+ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
   os << "ImageToListSampleGenerator = " << m_ImageToListSampleGenerator << std::endl;
   os << "HistogramGenerator = " << m_HistogramGenerator << std::endl;
 }
-} // end of namespace Statistics
-} // end of namespace itk
+}   // end of namespace Statistics
+}   // end of namespace itk
 
 #endif

@@ -13,18 +13,18 @@ namespace itk
  * form a deformable registration/atlas segmentation application.
  *
  */
-template <typename TParser,
+template< typename TParser,
           typename TPreprocessor,
-          typename TRegistrator>
-class ApplicationBase : public Object
+          typename TRegistrator >
+class ApplicationBase:public Object
 {
 public:
 
   /** Standard class typedefs. */
-  typedef ApplicationBase          Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef ApplicationBase            Self;
+  typedef Object                     Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(MIMApplication, Object);
@@ -78,7 +78,7 @@ protected:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "ApplicationBase.txx"
+#  include "ApplicationBase.txx"
 #endif
 
 #endif

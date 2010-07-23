@@ -66,58 +66,58 @@ void Execute(itk::Object *caller, const itk::EventObject & event)
 };
 */
 
-template <class TPixel = float, unsigned int VImageDimension = 3>
-class VCommandIterationUpdate : public itk::Command
+template< class TPixel = float, unsigned int VImageDimension = 3 >
+class VCommandIterationUpdate:public itk::Command
 {
 public:
-  typedef  VCommandIterationUpdate                     Self;
-  typedef  itk::Command                                Superclass;
-  typedef  itk::SmartPointer<Self>                     Pointer;
+  typedef  VCommandIterationUpdate   Self;
+  typedef  itk::Command              Superclass;
+  typedef  itk::SmartPointer< Self > Pointer;
 
-  typedef itk::Image<TPixel, VImageDimension>          InternalImageType;
-  typedef itk::Vector<TPixel, VImageDimension>         VectorPixelType;
-  typedef itk::Image<VectorPixelType, VImageDimension> DeformationFieldType;
-  typedef itk::VectorImage<TPixel, VImageDimension>    VectorImageType;
+  typedef itk::Image< TPixel, VImageDimension >          InternalImageType;
+  typedef itk::Vector< TPixel, VImageDimension >         VectorPixelType;
+  typedef itk::Image< VectorPixelType, VImageDimension > DeformationFieldType;
+  typedef itk::VectorImage< TPixel, VImageDimension >    VectorImageType;
 
   typedef itk::DemonsRegistrationFilter<
     InternalImageType,
     InternalImageType,
-    DeformationFieldType>   DemonsRegistrationFilterType;
+    DeformationFieldType >   DemonsRegistrationFilterType;
 
   typedef itk::DiffeomorphicDemonsRegistrationFilter<
     InternalImageType,
     InternalImageType,
-    DeformationFieldType>   DiffeomorphicDemonsRegistrationFilterType;
+    DeformationFieldType >   DiffeomorphicDemonsRegistrationFilterType;
 
   typedef itk::VectorDiffeomorphicDemonsRegistrationFilter<
     VectorImageType,
     VectorImageType,
-    DeformationFieldType>   VectorDiffeomorphicDemonsRegistrationFilterType;
+    DeformationFieldType >   VectorDiffeomorphicDemonsRegistrationFilterType;
 
   typedef itk::FastSymmetricForcesDemonsRegistrationFilter<
     InternalImageType,
     InternalImageType,
-    DeformationFieldType>   FastSymmetricForcesDemonsRegistrationFilterType;
+    DeformationFieldType >   FastSymmetricForcesDemonsRegistrationFilterType;
 
   typedef itk::MultiResolutionPDEDeformableRegistration<
     InternalImageType, InternalImageType,
-    DeformationFieldType, TPixel>   MultiResRegistrationFilterType;
+    DeformationFieldType, TPixel >   MultiResRegistrationFilterType;
 
   typedef itk::DisplacementFieldJacobianDeterminantFilter<
-    DeformationFieldType, TPixel, InternalImageType> JacobianFilterType;
+    DeformationFieldType, TPixel, InternalImageType > JacobianFilterType;
 
-  typedef itk::MinimumMaximumImageCalculator<InternalImageType>
+  typedef itk::MinimumMaximumImageCalculator< InternalImageType >
   MinMaxFilterType;
 
-  typedef itk::WarpHarmonicEnergyCalculator<DeformationFieldType>
+  typedef itk::WarpHarmonicEnergyCalculator< DeformationFieldType >
   HarmonicEnergyCalculatorType;
 
-  typedef itk::VectorCentralDifferenceImageFunction<DeformationFieldType>
+  typedef itk::VectorCentralDifferenceImageFunction< DeformationFieldType >
   WarpGradientCalculatorType;
 
   typedef typename WarpGradientCalculatorType::OutputType WarpGradientType;
 
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 private:
   std::ofstream m_Fid;
   bool          m_headerwritten;
@@ -133,7 +133,7 @@ public:
     m_TrueField = truefield;
 
     m_TrueWarpGradientCalculator = WarpGradientCalculatorType::New();
-    m_TrueWarpGradientCalculator->SetInputImage( m_TrueField );
+    m_TrueWarpGradientCalculator->SetInputImage(m_TrueField);
 
     m_CompWarpGradientCalculator =  WarpGradientCalculatorType::New();
   }
@@ -145,54 +145,54 @@ public:
 
   void Execute(const itk::Object *object, const itk::EventObject & event)
   {
-    if ( !( itk::IterationEvent().CheckEvent( &event ) ) )
+    if ( !( itk::IterationEvent().CheckEvent(&event) ) )
       {
       return;
       }
 
     typename DeformationFieldType::Pointer deffield = 0;
-    unsigned int iter = vcl_numeric_limits<unsigned int>::max();
+    unsigned int iter = vcl_numeric_limits< unsigned int >::max();
     double       metricbefore = -1.0;
 
-    if ( const DiffeomorphicDemonsRegistrationFilterType * DDfilter
-         = dynamic_cast<const DiffeomorphicDemonsRegistrationFilterType *>(
-           object ) )
+    if ( const DiffeomorphicDemonsRegistrationFilterType * DDfilter =
+           dynamic_cast< const DiffeomorphicDemonsRegistrationFilterType * >(
+             object ) )
       {
       iter = DDfilter->GetElapsedIterations() - 1;
       metricbefore = DDfilter->GetMetric();
-      deffield = const_cast<DiffeomorphicDemonsRegistrationFilterType *>
-        ( DDfilter )->GetDeformationField();
+      deffield = const_cast< DiffeomorphicDemonsRegistrationFilterType * >
+                 ( DDfilter )->GetDeformationField();
       }
-    else if ( const FastSymmetricForcesDemonsRegistrationFilterType * FSDfilter
-              = dynamic_cast<const
-              FastSymmetricForcesDemonsRegistrationFilterType *>(
-                object ) )
+    else if ( const FastSymmetricForcesDemonsRegistrationFilterType * FSDfilter =
+                dynamic_cast< const
+                              FastSymmetricForcesDemonsRegistrationFilterType * >(
+                  object ) )
       {
       iter = FSDfilter->GetElapsedIterations() - 1;
       metricbefore = FSDfilter->GetMetric();
-      deffield = const_cast<FastSymmetricForcesDemonsRegistrationFilterType *>
-        ( FSDfilter )->GetDeformationField();
+      deffield = const_cast< FastSymmetricForcesDemonsRegistrationFilterType * >
+                 ( FSDfilter )->GetDeformationField();
       }
-    else if ( const DemonsRegistrationFilterType * Dfilter
-              = dynamic_cast<const DemonsRegistrationFilterType *>( object ) )
+    else if ( const DemonsRegistrationFilterType * Dfilter =
+                dynamic_cast< const DemonsRegistrationFilterType * >( object ) )
       {
       iter = Dfilter->GetElapsedIterations() - 1;
       metricbefore = Dfilter->GetMetric();
-      deffield = const_cast<DemonsRegistrationFilterType *>
-        ( Dfilter )->GetDeformationField();
+      deffield = const_cast< DemonsRegistrationFilterType * >
+                 ( Dfilter )->GetDeformationField();
       }
-    else if ( const VectorDiffeomorphicDemonsRegistrationFilterType * VDDfilter
-              = dynamic_cast<const
-              VectorDiffeomorphicDemonsRegistrationFilterType *>(
-                object ) )
+    else if ( const VectorDiffeomorphicDemonsRegistrationFilterType * VDDfilter =
+                dynamic_cast< const
+                              VectorDiffeomorphicDemonsRegistrationFilterType * >(
+                  object ) )
       {
       iter = VDDfilter->GetElapsedIterations() - 1;
       metricbefore = VDDfilter->GetMetric();
-      deffield = const_cast<VectorDiffeomorphicDemonsRegistrationFilterType *>
-        ( VDDfilter )->GetDeformationField();
+      deffield = const_cast< VectorDiffeomorphicDemonsRegistrationFilterType * >
+                 ( VDDfilter )->GetDeformationField();
       }
-    else if ( const MultiResRegistrationFilterType * multiresfilter
-              = dynamic_cast<const MultiResRegistrationFilterType *>( object ) )
+    else if ( const MultiResRegistrationFilterType * multiresfilter =
+                dynamic_cast< const MultiResRegistrationFilterType * >( object ) )
       {
       std::cout << "Finished Multi-resolution iteration :"
                 << multiresfilter->GetCurrentLevel() - 1 << std::endl;
@@ -212,14 +212,14 @@ public:
       double tmp;
       if ( m_TrueField )
         {
-        typedef itk::ImageRegionConstIteratorWithIndex<DeformationFieldType>
-          FieldIteratorType;
+        typedef itk::ImageRegionConstIteratorWithIndex< DeformationFieldType >
+        FieldIteratorType;
         FieldIteratorType currIter(
           deffield, deffield->GetLargestPossibleRegion() );
         FieldIteratorType trueIter(
           m_TrueField, deffield->GetLargestPossibleRegion() );
 
-        m_CompWarpGradientCalculator->SetInputImage( deffield );
+        m_CompWarpGradientCalculator->SetInputImage(deffield);
 
         fieldDist = 0.0;
         fieldGradDist = 0.0;
@@ -233,7 +233,7 @@ public:
             ( m_CompWarpGradientCalculator->EvaluateAtIndex( currIter.GetIndex() )
               - m_TrueWarpGradientCalculator->EvaluateAtIndex( trueIter.
                                                                GetIndex() )
-              ).GetVnlMatrix() ).frobenius_norm();
+            ).GetVnlMatrix() ).frobenius_norm();
           fieldGradDist += tmp * tmp;
           }
         fieldDist = sqrt( fieldDist / (double)(
@@ -249,24 +249,24 @@ public:
 #if defined( USE_DEBUG_IMAGE_VIEWER )
       if ( DebugImageDisplaySender.Enabled() )
         {
-        DebugImageDisplaySender.SendImage<DeformationFieldType>(deffield, 0, 0);
-        DebugImageDisplaySender.SendImage<DeformationFieldType>(deffield, 1, 1);
-        DebugImageDisplaySender.SendImage<DeformationFieldType>(deffield, 2, 2);
+        DebugImageDisplaySender.SendImage< DeformationFieldType >(deffield, 0, 0);
+        DebugImageDisplaySender.SendImage< DeformationFieldType >(deffield, 1, 1);
+        DebugImageDisplaySender.SendImage< DeformationFieldType >(deffield, 2, 2);
         }
 #endif // defined(USE_DEBUG_IMAGE_VIEWER)
 
-      m_HarmonicEnergyCalculator->SetImage( deffield );
+      m_HarmonicEnergyCalculator->SetImage(deffield);
       m_HarmonicEnergyCalculator->Compute();
-      const double harmonicEnergy
-        = m_HarmonicEnergyCalculator->GetHarmonicEnergy();
+      const double harmonicEnergy =
+        m_HarmonicEnergyCalculator->GetHarmonicEnergy();
       std::cout << "harmo. " << harmonicEnergy << " - ";
 
-      m_JacobianFilter->SetInput( deffield );
+      m_JacobianFilter->SetInput(deffield);
       m_JacobianFilter->UpdateLargestPossibleRegion();
 
       const unsigned int numPix = m_JacobianFilter->
-        GetOutput()->GetLargestPossibleRegion().
-        GetNumberOfPixels();
+                                  GetOutput()->GetLargestPossibleRegion().
+                                  GetNumberOfPixels();
 
       TPixel *pix_start = m_JacobianFilter->GetOutput()->GetBufferPointer();
       TPixel *pix_end = pix_start + numPix;
@@ -282,8 +282,8 @@ public:
           ++jacBelowZero;
           }
         }
-      const double jacBelowZeroPrc = static_cast<double>( jacBelowZero )
-        / static_cast<double>( numPix );
+      const double jacBelowZeroPrc = static_cast< double >( jacBelowZero )
+                                     / static_cast< double >( numPix );
 
       // Get min an max jac
       const double minJac = *( std::min_element (pix_start, pix_end) );
@@ -292,19 +292,19 @@ public:
       // Get some quantiles
       // We don't need the jacobian image
       // we can modify/sort it in place
-      jac_ptr = pix_start + static_cast<unsigned int>( 0.002 * numPix );
+      jac_ptr = pix_start + static_cast< unsigned int >( 0.002 * numPix );
       std::nth_element(pix_start, jac_ptr, pix_end);
       const double Q002 = *jac_ptr;
 
-      jac_ptr = pix_start + static_cast<unsigned int>( 0.01 * numPix );
+      jac_ptr = pix_start + static_cast< unsigned int >( 0.01 * numPix );
       std::nth_element(pix_start, jac_ptr, pix_end);
       const double Q01 = *jac_ptr;
 
-      jac_ptr = pix_start + static_cast<unsigned int>( 0.99 * numPix );
+      jac_ptr = pix_start + static_cast< unsigned int >( 0.99 * numPix );
       std::nth_element(pix_start, jac_ptr, pix_end);
       const double Q99 = *jac_ptr;
 
-      jac_ptr = pix_start + static_cast<unsigned int>( 0.998 * numPix );
+      jac_ptr = pix_start + static_cast< unsigned int >( 0.998 * numPix );
       std::nth_element(pix_start, jac_ptr, pix_end);
       const double Q998 = *jac_ptr;
 
@@ -361,12 +361,12 @@ public:
   }
 
 protected:
-  VCommandIterationUpdate() :
-    m_Fid( "metricvalues.csv" ),
+  VCommandIterationUpdate():
+    m_Fid("metricvalues.csv"),
     m_headerwritten(false)
   {
     m_JacobianFilter = JacobianFilterType::New();
-    m_JacobianFilter->SetUseImageSpacing( true );
+    m_JacobianFilter->SetUseImageSpacing(true);
     m_JacobianFilter->ReleaseDataFlagOn();
 
     m_Minmaxfilter = MinMaxFilterType::New();

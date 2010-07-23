@@ -58,33 +58,33 @@
 
 #include "GenericTransformImage.h"
 
-typedef itk::SpatialObject<3>      SpatialObjectType;
+typedef itk::SpatialObject< 3 >    SpatialObjectType;
 typedef SpatialObjectType::Pointer ImageMaskPointer;
 
 namespace itk
 {
 /** Method for verifying that the ordering of the transformTypes is consistent
   with converting routines. */
-BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
+BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector< std::string > & transformType);
 }
 
 namespace itk
 {
-class BRAINSCommonLib_EXPORT BRAINSFitHelper : public Object
+class BRAINSCommonLib_EXPORT BRAINSFitHelper:public Object
 {
 public:
   /** Standard class typedefs. */
-  typedef BRAINSFitHelper                Self;
-  typedef ProcessObject                  Superclass;
-  typedef SmartPointer<Self>             Pointer;
-  typedef SmartPointer<const Self>       ConstPointer;
+  typedef BRAINSFitHelper            Self;
+  typedef ProcessObject              Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
-  typedef float                          PixelType;
-  typedef itk::Image<PixelType, 3>       FixedVolumeType;
-  typedef FixedVolumeType::ConstPointer  FixedImageConstPointer;
-  typedef FixedVolumeType::Pointer       FixedImagePointer;
+  typedef float                         PixelType;
+  typedef itk::Image< PixelType, 3 >    FixedVolumeType;
+  typedef FixedVolumeType::ConstPointer FixedImageConstPointer;
+  typedef FixedVolumeType::Pointer      FixedImagePointer;
 
-  typedef itk::Image<PixelType, 3>       MovingVolumeType;
+  typedef itk::Image< PixelType, 3 >     MovingVolumeType;
   typedef MovingVolumeType::ConstPointer MovingImageConstPointer;
   typedef MovingVolumeType::Pointer      MovingImagePointer;
 
@@ -95,98 +95,99 @@ public:
   itkTypeMacro(BRAINSFitHelper, ProcessObject);
 
   /** Set/Get the Fixed image. */
-  itkSetObjectMacro(FixedVolume, FixedVolumeType );
-  itkGetConstObjectMacro( FixedVolume, FixedVolumeType );
+  itkSetObjectMacro(FixedVolume, FixedVolumeType);
+  itkGetConstObjectMacro(FixedVolume, FixedVolumeType);
 
   /** Set/Get the Moving image. */
-  itkSetObjectMacro( MovingVolume, MovingVolumeType)
-    itkGetConstObjectMacro( MovingVolume, MovingVolumeType );
+  itkSetObjectMacro(MovingVolume, MovingVolumeType)
+  itkGetConstObjectMacro(MovingVolume, MovingVolumeType);
 
   /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the
       algorithm.*/
-  itkGetConstObjectMacro( PreprocessedMovingVolume, MovingVolumeType );
+  itkGetConstObjectMacro(PreprocessedMovingVolume, MovingVolumeType);
 
-  typedef MattesMutualInformationImageToImageMetric<FixedVolumeType,MovingVolumeType> 
-    MetricType;
+  typedef MattesMutualInformationImageToImageMetric< FixedVolumeType, MovingVolumeType >
+  MetricType;
   typedef MetricType::FixedImageMaskType
-    FixedBinaryVolumeType;
+  FixedBinaryVolumeType;
   typedef FixedBinaryVolumeType::Pointer
-    FixedBinaryVolumePointer;
+  FixedBinaryVolumePointer;
   typedef MetricType::MovingImageMaskType
-    MovingBinaryVolumeType;
+  MovingBinaryVolumeType;
   typedef MovingBinaryVolumeType::Pointer
-    MovingBinaryVolumePointer;
+  MovingBinaryVolumePointer;
 
-  itkSetObjectMacro ( FixedBinaryVolume, FixedBinaryVolumeType );
-  itkGetConstObjectMacro( FixedBinaryVolume, FixedBinaryVolumeType );
+  itkSetObjectMacro (FixedBinaryVolume, FixedBinaryVolumeType);
+  itkGetConstObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
 
-  itkSetObjectMacro( MovingBinaryVolume, MovingBinaryVolumeType );
-  itkGetConstObjectMacro( MovingBinaryVolume, MovingBinaryVolumeType );
+  itkSetObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
+  itkGetConstObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
 
   typedef enum {
     LINEAR_INTERP = 0,
     WINDOWSINC_INTERP = 1,
-  } InterpolationType;
+    } InterpolationType;
 
-  itkSetMacro(      NumberOfSamples,        unsigned int  );
-  itkGetConstMacro( NumberOfSamples,        unsigned int  );
-  itkSetMacro(      NumberOfHistogramBins,         unsigned int  );
-  itkGetConstMacro( NumberOfHistogramBins,         unsigned int  );
-  itkSetMacro(      NumberOfMatchPoints,           unsigned int  );
-  itkGetConstMacro( NumberOfMatchPoints,           unsigned int  );
-  VECTORitkSetMacro( NumberOfIterations,   std::vector<int> /**/ );
-  VECTORitkSetMacro( MinimumStepLength, std::vector<double> );
-  itkSetMacro(      MaximumStepLength,             double        );
-  itkGetConstMacro( MaximumStepLength,             double        );
-  itkSetMacro(      RelaxationFactor,              double        );
-  itkGetConstMacro( RelaxationFactor,              double        );
-  itkSetMacro(      TranslationScale,              double        );
-  itkGetConstMacro( TranslationScale,              double        );
-  itkSetMacro(      ReproportionScale,             double        );
-  itkGetConstMacro( ReproportionScale,             double        );
-  itkSetMacro(      SkewScale,                     double        );
-  itkGetConstMacro( SkewScale,                     double        );
-  itkSetMacro(      UseExplicitPDFDerivativesMode, std::string   );
-  itkGetConstMacro( UseExplicitPDFDerivativesMode, std::string   );
-  itkSetMacro(      UseCachingOfBSplineWeightsMode, std::string   );
-  itkGetConstMacro( UseCachingOfBSplineWeightsMode, std::string   );
-  itkSetMacro(      CostFunctionConvergenceFactor, double        );
-  itkGetConstMacro( CostFunctionConvergenceFactor, double        );
-  itkSetMacro(      ProjectedGradientTolerance,    double        );
-  itkGetConstMacro( ProjectedGradientTolerance,    double        );
-  itkSetMacro(      MaxBSplineDisplacement,        double        );
-  itkGetConstMacro( MaxBSplineDisplacement,        double        );
-  itkSetMacro(      BackgroundFillValue,           double        );
-  itkGetConstMacro( BackgroundFillValue,           double        );
-  VECTORitkSetMacro( TransformType, std::vector<std::string> );
-  itkSetMacro(      InitializeTransformMode, std::string         );
-  itkGetConstMacro( InitializeTransformMode, std::string         );
-  itkSetMacro(      MaskInferiorCutOffFromCenter, double         );
-  itkGetConstMacro( MaskInferiorCutOffFromCenter, double         );
-  itkSetMacro(      CurrentGenericTransform,  GenericTransformType::Pointer );
-  itkGetConstMacro( CurrentGenericTransform,  GenericTransformType::Pointer );  
-  VECTORitkSetMacro( SplineGridSize, std::vector<int>       );
+  itkSetMacro(NumberOfSamples,        unsigned int);
+  itkGetConstMacro(NumberOfSamples,        unsigned int);
+  itkSetMacro(NumberOfHistogramBins,         unsigned int);
+  itkGetConstMacro(NumberOfHistogramBins,         unsigned int);
+  itkSetMacro(NumberOfMatchPoints,           unsigned int);
+  itkGetConstMacro(NumberOfMatchPoints,           unsigned int);
+  VECTORitkSetMacro(NumberOfIterations,   std::vector< int > /**/);
+  VECTORitkSetMacro(MinimumStepLength, std::vector< double > );
+  itkSetMacro(MaximumStepLength,             double);
+  itkGetConstMacro(MaximumStepLength,             double);
+  itkSetMacro(RelaxationFactor,              double);
+  itkGetConstMacro(RelaxationFactor,              double);
+  itkSetMacro(TranslationScale,              double);
+  itkGetConstMacro(TranslationScale,              double);
+  itkSetMacro(ReproportionScale,             double);
+  itkGetConstMacro(ReproportionScale,             double);
+  itkSetMacro(SkewScale,                     double);
+  itkGetConstMacro(SkewScale,                     double);
+  itkSetMacro(UseExplicitPDFDerivativesMode, std::string);
+  itkGetConstMacro(UseExplicitPDFDerivativesMode, std::string);
+  itkSetMacro(UseCachingOfBSplineWeightsMode, std::string);
+  itkGetConstMacro(UseCachingOfBSplineWeightsMode, std::string);
+  itkSetMacro(CostFunctionConvergenceFactor, double);
+  itkGetConstMacro(CostFunctionConvergenceFactor, double);
+  itkSetMacro(ProjectedGradientTolerance,    double);
+  itkGetConstMacro(ProjectedGradientTolerance,    double);
+  itkSetMacro(MaxBSplineDisplacement,        double);
+  itkGetConstMacro(MaxBSplineDisplacement,        double);
+  itkSetMacro(BackgroundFillValue,           double);
+  itkGetConstMacro(BackgroundFillValue,           double);
+  VECTORitkSetMacro(TransformType, std::vector< std::string > );
+  itkSetMacro(InitializeTransformMode, std::string);
+  itkGetConstMacro(InitializeTransformMode, std::string);
+  itkSetMacro(MaskInferiorCutOffFromCenter, double);
+  itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
+  itkSetMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
+  itkGetConstMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
+  VECTORitkSetMacro(SplineGridSize, std::vector< int >       );
 
-  itkGetConstMacro( ActualNumberOfIterations,      unsigned int  );
-  itkGetConstMacro( PermittedNumberOfIterations,   unsigned int  );
+  itkGetConstMacro(ActualNumberOfIterations,      unsigned int);
+  itkGetConstMacro(PermittedNumberOfIterations,   unsigned int);
 
-  itkGetConstMacro( FinalMetricValue,         double        );
+  itkGetConstMacro(FinalMetricValue,         double);
   /** Set/Get the Debugging level for filter verboseness */
-  itkSetMacro(     DebugLevel, unsigned int);
+  itkSetMacro(DebugLevel, unsigned int);
   itkGetConstMacro(DebugLevel, unsigned int);
-  itkSetMacro(     DisplayDeformedImage, bool);
+  itkSetMacro(DisplayDeformedImage, bool);
   itkGetConstMacro(DisplayDeformedImage, bool);
-  itkSetMacro(     PromptUserAfterDisplay, bool);
+  itkSetMacro(PromptUserAfterDisplay, bool);
   itkGetConstMacro(PromptUserAfterDisplay, bool);
-  itkSetMacro(      ObserveIterations,        bool          );
-  itkGetConstMacro( ObserveIterations,        bool          );
+  itkSetMacro(ObserveIterations,        bool);
+  itkGetConstMacro(ObserveIterations,        bool);
 
-  const std::vector<GenericTransformType::Pointer>* GetGenericTransformListPtr(){
+  const std::vector< GenericTransformType::Pointer > * GetGenericTransformListPtr()
+  {
     return &m_GenericTransformList;
   }
 
   /** Method to set the Permission to vary by level  */
-  void SetPermitParameterVariation(std::vector<int> perms)
+  void SetPermitParameterVariation(std::vector< int > perms)
   {
     m_PermitParameterVariation.resize( perms.size() );
     for ( unsigned int i = 0; i < perms.size(); i++ )
@@ -195,7 +196,7 @@ public:
       }
   }
 
-  itkSetMacro(     HistogramMatch, bool);
+  itkSetMacro(HistogramMatch, bool);
   itkGetConstMacro(HistogramMatch, bool);
 
   /** Method that initiates the registration. */
@@ -211,11 +212,11 @@ protected:
 
   /** Method invoked by the pipeline in order to trigger the computation of
    * the registration. */
-  void  GenerateData ();
+  void  GenerateData();
 
 private:
-  BRAINSFitHelper(const Self &); // purposely not implemented
-  void operator=(const Self &);  // purposely not implemented
+  BRAINSFitHelper(const Self &);   // purposely not implemented
+  void operator=(const Self &);    // purposely not implemented
 
   FixedImagePointer  m_FixedVolume;
   MovingImagePointer m_MovingVolume;
@@ -223,41 +224,41 @@ private:
 
   FixedBinaryVolumePointer  m_FixedBinaryVolume;
   MovingBinaryVolumePointer m_MovingBinaryVolume;
-  std::vector<int>          m_PermitParameterVariation;
+  std::vector< int >        m_PermitParameterVariation;
 
   unsigned int m_NumberOfSamples;
   unsigned int m_NumberOfHistogramBins;
   bool         m_HistogramMatch;
   unsigned int m_NumberOfMatchPoints;
   // TODO:  Would be better to have unsigned int
-  std::vector<int>         m_NumberOfIterations;
-  double                   m_MaximumStepLength;
-  std::vector<double>      m_MinimumStepLength;
-  double                   m_RelaxationFactor;
-  double                   m_TranslationScale;
-  double                   m_ReproportionScale;
-  double                   m_SkewScale;
-  std::string              m_UseExplicitPDFDerivativesMode;
-  std::string              m_UseCachingOfBSplineWeightsMode;
-  double                   m_BackgroundFillValue;
-  std::vector<std::string> m_TransformType;
-  std::string              m_InitializeTransformMode;
-  double                   m_MaskInferiorCutOffFromCenter;
-  std::vector<int>         m_SplineGridSize;
-  double                   m_CostFunctionConvergenceFactor;
-  double                   m_ProjectedGradientTolerance;
-  double                   m_MaxBSplineDisplacement;
-  unsigned int             m_ActualNumberOfIterations;
-  unsigned int             m_PermittedNumberOfIterations;
+  std::vector< int >         m_NumberOfIterations;
+  double                     m_MaximumStepLength;
+  std::vector< double >      m_MinimumStepLength;
+  double                     m_RelaxationFactor;
+  double                     m_TranslationScale;
+  double                     m_ReproportionScale;
+  double                     m_SkewScale;
+  std::string                m_UseExplicitPDFDerivativesMode;
+  std::string                m_UseCachingOfBSplineWeightsMode;
+  double                     m_BackgroundFillValue;
+  std::vector< std::string > m_TransformType;
+  std::string                m_InitializeTransformMode;
+  double                     m_MaskInferiorCutOffFromCenter;
+  std::vector< int >         m_SplineGridSize;
+  double                     m_CostFunctionConvergenceFactor;
+  double                     m_ProjectedGradientTolerance;
+  double                     m_MaxBSplineDisplacement;
+  unsigned int               m_ActualNumberOfIterations;
+  unsigned int               m_PermittedNumberOfIterations;
   // unsigned int             m_AccumulatedNumberOfIterationsForAllLevels;
-  unsigned int                  m_DebugLevel;
-  GenericTransformType::Pointer m_CurrentGenericTransform;
-  std::vector<GenericTransformType::Pointer> m_GenericTransformList;
-  bool                          m_DisplayDeformedImage;
-  bool                          m_PromptUserAfterDisplay;
-  double                        m_FinalMetricValue;
-  bool                          m_ObserveIterations;
-};   // end BRAINSFitHelper class
-} // end namespace itk
+  unsigned int                                 m_DebugLevel;
+  GenericTransformType::Pointer                m_CurrentGenericTransform;
+  std::vector< GenericTransformType::Pointer > m_GenericTransformList;
+  bool                                         m_DisplayDeformedImage;
+  bool                                         m_PromptUserAfterDisplay;
+  double                                       m_FinalMetricValue;
+  bool                                         m_ObserveIterations;
+};  // end BRAINSFitHelper class
+}   // end namespace itk
 
 #endif  // __BRAINSFITHELPER__

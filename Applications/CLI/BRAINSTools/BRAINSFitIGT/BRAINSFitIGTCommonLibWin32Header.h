@@ -1,6 +1,7 @@
 // /  BRAINSFitIGTCommonLibWin32Header - manage Windows system differences
 // /
-// / The BRAINSFitIGTCommonLibWin32Header captures some system differences between
+// / The BRAINSFitIGTCommonLibWin32Header captures some system differences
+// between
 // Unix
 // / and Windows operating systems.
 
@@ -10,13 +11,13 @@
 #include <BRAINSFitIGTCommonLib.h>
 
 #if defined( WIN32 ) && !defined( BRAINSFitIGTCommonLib_STATIC )
-#if defined( BRAINSFitIGTCommonLib_EXPORTS )
-#define BRAINSFitIGTCommonLib_EXPORT __declspec( dllexport )
+#  if defined( BRAINSFitIGTCommonLib_EXPORTS )
+#    define BRAINSFitIGTCommonLib_EXPORT __declspec(dllexport)
+#  else
+#    define BRAINSFitIGTCommonLib_EXPORT __declspec(dllimport)
+#  endif
 #else
-#define BRAINSFitIGTCommonLib_EXPORT __declspec( dllimport )
-#endif
-#else
-#define BRAINSFitIGTCommonLib_EXPORT
+#  define BRAINSFitIGTCommonLib_EXPORT
 #endif
 
 #endif

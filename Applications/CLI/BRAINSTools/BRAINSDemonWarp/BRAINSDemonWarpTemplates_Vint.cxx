@@ -2,5 +2,5 @@
 
 void VectorProcessOutputType_int(struct BRAINSDemonWarpAppParameters & command)
 {
-  VectorProcessOutputType<int>(command);
+  VectorProcessOutputType< int >(command);
 }

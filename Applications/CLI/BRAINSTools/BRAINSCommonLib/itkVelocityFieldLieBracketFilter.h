@@ -35,23 +35,23 @@ namespace itk
  *
  * \author Florence Dru, INRIA and Tom Vercauteren, MKT
  */
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT VelocityFieldLieBracketFilter :
-    public ImageToImageFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage >
+class ITK_EXPORT VelocityFieldLieBracketFilter:
+  public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Standard class typedefs. */
-  typedef VelocityFieldLieBracketFilter                 Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  typedef VelocityFieldLieBracketFilter                   Self;
+  typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
+  typedef SmartPointer< Self >                            Pointer;
+  typedef SmartPointer< const Self >                      ConstPointer;
 
   /** Some convenient typedefs. */
-  typedef TInputImage                            InputFieldType;
-  typedef typename InputFieldType::PixelType     InputFieldPixelType;
-  typedef typename InputFieldType::Pointer       InputFieldPointer;
-  typedef typename InputFieldType::ConstPointer  InputFieldConstPointer;
-  typedef typename InputFieldType::RegionType    InputFieldRegionType;
+  typedef TInputImage                           InputFieldType;
+  typedef typename InputFieldType::PixelType    InputFieldPixelType;
+  typedef typename InputFieldType::Pointer      InputFieldPointer;
+  typedef typename InputFieldType::ConstPointer InputFieldConstPointer;
+  typedef typename InputFieldType::RegionType   InputFieldRegionType;
 
   typedef TOutputImage                           OutputFieldType;
   typedef typename OutputFieldType::PixelType    OutputFieldPixelType;
@@ -63,15 +63,15 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( VelocityFieldLieBracketFilter, ImageToImageFilter );
+  itkTypeMacro(VelocityFieldLieBracketFilter, ImageToImageFilter);
 
   /** Gradient calculator type. */
-  typedef itk::VectorCentralDifferenceImageFunction<InputFieldType>
-    InputFieldGradientCalculatorType;
+  typedef itk::VectorCentralDifferenceImageFunction< InputFieldType >
+  InputFieldGradientCalculatorType;
 
   /** Gradient type. */
   typedef typename InputFieldGradientCalculatorType::OutputType
-    InputFieldGradientType;
+  InputFieldGradientType;
 
   /** VelocityFieldLieBracketFilter needs a larger input requested region than
    * the output requested region.  As such, VelocityFieldLieBracketFilter needs
@@ -80,26 +80,26 @@ public:
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
   virtual void GenerateInputRequestedRegion()
-    throw( InvalidRequestedRegionError );
+  throw( InvalidRequestedRegionError );
 
   /** ImageDimension constants */
-  itkStaticConstMacro( InputFieldDimension, unsigned int,
-                       TInputImage::ImageDimension);
-  itkStaticConstMacro( OutputFieldDimension, unsigned int,
-                       TOutputImage::ImageDimension);
-  itkStaticConstMacro( InputFieldPixelDimension, unsigned int,
-                       InputFieldPixelType::Dimension );
-  itkStaticConstMacro( OutputFieldPixelDimension, unsigned int,
-                       OutputFieldPixelType::Dimension );
+  itkStaticConstMacro(InputFieldDimension, unsigned int,
+                      TInputImage::ImageDimension);
+  itkStaticConstMacro(OutputFieldDimension, unsigned int,
+                      TOutputImage::ImageDimension);
+  itkStaticConstMacro(InputFieldPixelDimension, unsigned int,
+                      InputFieldPixelType::Dimension);
+  itkStaticConstMacro(OutputFieldPixelDimension, unsigned int,
+                      OutputFieldPixelType::Dimension);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( SameDimensionCheck1,
-                   ( Concept::SameDimension<InputFieldDimension, OutputFieldDimension> ) );
+                   ( Concept::SameDimension< InputFieldDimension, OutputFieldDimension > ) );
   itkConceptMacro( SameDimensionCheck2,
-                   ( Concept::SameDimension<InputFieldDimension, InputFieldPixelDimension> ) );
+                   ( Concept::SameDimension< InputFieldDimension, InputFieldPixelDimension > ) );
   itkConceptMacro( SameDimensionCheck3,
-                   ( Concept::SameDimension<OutputFieldDimension, OutputFieldPixelDimension> ) );
+                   ( Concept::SameDimension< OutputFieldDimension, OutputFieldPixelDimension > ) );
   /** End concept checking */
 #endif
 protected:
@@ -118,28 +118,28 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData()  */
   void ThreadedGenerateData(const OutputFieldRegionType & outputRegionForThread,
-                            int threadId );
+                            int threadId);
 
   void BeforeThreadedGenerateData();
 
   /** Set right and left gradient calculators. */
-  itkSetObjectMacro( RightGradientCalculator, InputFieldGradientCalculatorType );
-  itkSetObjectMacro( LeftGradientCalculator,  InputFieldGradientCalculatorType );
+  itkSetObjectMacro(RightGradientCalculator, InputFieldGradientCalculatorType);
+  itkSetObjectMacro(LeftGradientCalculator,  InputFieldGradientCalculatorType);
 
   /** Get right and left gradient calculators. */
-  itkGetObjectMacro( RightGradientCalculator, InputFieldGradientCalculatorType );
-  itkGetObjectMacro( LeftGradientCalculator,  InputFieldGradientCalculatorType );
+  itkGetObjectMacro(RightGradientCalculator, InputFieldGradientCalculatorType);
+  itkGetObjectMacro(LeftGradientCalculator,  InputFieldGradientCalculatorType);
 private:
-  VelocityFieldLieBracketFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                // purposely not implemented
+  VelocityFieldLieBracketFilter(const Self &);   // purposely not implemented
+  void operator=(const Self &);                  // purposely not implemented
 
   typename InputFieldGradientCalculatorType::Pointer m_RightGradientCalculator;
   typename InputFieldGradientCalculatorType::Pointer m_LeftGradientCalculator;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVelocityFieldLieBracketFilter.txx"
+#  include "itkVelocityFieldLieBracketFilter.txx"
 #endif
 
 #endif

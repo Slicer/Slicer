@@ -10,13 +10,13 @@
 #include <BRAINSROIAutoCommonLib.h>
 
 #if defined( WIN32 ) && !defined( BRAINSROIAutoCommonLib_STATIC )
-#if defined( BRAINSROIAutoCommonLib_EXPORTS )
-#define BRAINSROIAutoCommonLib_EXPORT __declspec( dllexport )
+#  if defined( BRAINSROIAutoCommonLib_EXPORTS )
+#    define BRAINSROIAutoCommonLib_EXPORT __declspec(dllexport)
+#  else
+#    define BRAINSROIAutoCommonLib_EXPORT __declspec(dllimport)
+#  endif
 #else
-#define BRAINSROIAutoCommonLib_EXPORT __declspec( dllimport )
-#endif
-#else
-#define BRAINSROIAutoCommonLib_EXPORT
+#  define BRAINSROIAutoCommonLib_EXPORT
 #endif
 
 #endif

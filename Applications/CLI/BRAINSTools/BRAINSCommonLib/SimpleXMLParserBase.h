@@ -24,7 +24,7 @@
 XERCES_CPP_NAMESPACE_USE
 
 /**
- * \class SimpleXMLParserBase 
+ * \class SimpleXMLParserBase
  * contains the common code
  * needed to Read and Write an XML file.
  * Any actual interpretation is delegated to subclass
@@ -33,7 +33,7 @@ class SimpleXMLParserBase
 {
 public:
   typedef XercesDOMParser ParserType;
-  SimpleXMLParserBase() : m_Parser(0)
+  SimpleXMLParserBase():m_Parser(0)
   {}
 
   void Read(const std::string & filename)
@@ -113,15 +113,15 @@ public:
     // get a serializer, an instance of DOMWriter
     XMLCh tempStr[100];
     XMLString::transcode("LS", tempStr, 99);
-    DOMImplementation *impl
-      = DOMImplementationRegistry::getDOMImplementation(tempStr);
-    DOMWriter *theSerializer
-      = ( (DOMImplementationLS *)impl )->createDOMWriter();
+    DOMImplementation *impl =
+      DOMImplementationRegistry::getDOMImplementation(tempStr);
+    DOMWriter *theSerializer =
+      ( (DOMImplementationLS *)impl )->createDOMWriter();
 
     XMLFormatTarget *formatTarget = new LocalFileFormatTarget( filename.c_str() );
     theSerializer->writeNode
       ( formatTarget,
-        *static_cast<DOMNode *>( this->m_Parser->getDocument() ) );
+      *static_cast< DOMNode * >( this->m_Parser->getDocument() ) );
     delete theSerializer;
   }
 

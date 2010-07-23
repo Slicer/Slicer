@@ -17,32 +17,32 @@
 // TODO:  Need to make return types an input template type.
 namespace AssignRigid
 {
-typedef itk::AffineTransform<double, 3>       AffineTransformType;
-typedef AffineTransformType::Pointer          AffineTransformPointer;
+typedef itk::AffineTransform< double, 3 > AffineTransformType;
+typedef AffineTransformType::Pointer      AffineTransformPointer;
 
-typedef vnl_matrix_fixed<double, 4, 4>        VnlTransformMatrixType44;
+typedef vnl_matrix_fixed< double, 4, 4 > VnlTransformMatrixType44;
 
-typedef itk::Matrix<double, 3, 3>             Matrix3D;
-typedef  itk::Versor<double>                  VersorType;
+typedef itk::Matrix< double, 3, 3 > Matrix3D;
+typedef  itk::Versor< double >      VersorType;
 
 typedef AffineTransformType::MatrixType       MatrixType;
 typedef AffineTransformType::InputPointType   PointType;
 typedef AffineTransformType::OutputVectorType VectorType;
 
-typedef itk::VersorRigid3DTransform<double>
+typedef itk::VersorRigid3DTransform< double >
 VersorRigid3DTransformType;
 typedef VersorRigid3DTransformType::Pointer
 VersorRigid3DTransformPointer;
 typedef VersorRigid3DTransformType::ParametersType
 VersorRigid3DParametersType;
 
-typedef itk::ScaleVersor3DTransform<double>
+typedef itk::ScaleVersor3DTransform< double >
 ScaleVersor3DTransformType;
 typedef ScaleVersor3DTransformType::Pointer ScaleVersor3DTransformPointer;
 typedef ScaleVersor3DTransformType::ParametersType
 ScaleVersor3DParametersType;
 
-typedef itk::ScaleSkewVersor3DTransform<double>
+typedef itk::ScaleSkewVersor3DTransform< double >
 ScaleSkewVersor3DTransformType;
 typedef ScaleSkewVersor3DTransformType::Pointer
 ScaleSkewVersor3DTransformPointer;
@@ -64,9 +64,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, while assigning AffineTransformPointer := AffineTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, while assigning AffineTransformPointer := AffineTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -88,7 +88,7 @@ AssignConvertedTransform(AffineTransformPointer & result,
       {
       offset[i] = matrix.get(i, 3);
       }
-    itk::Point<double, 3> ZeroCenter;
+    itk::Point< double, 3 > ZeroCenter;
     ZeroCenter.Fill(0.0);
     result->SetIdentity();
     result->SetCenter(ZeroCenter);         // Assume that rotation is about 0.0
@@ -99,9 +99,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, while assigning AffineTransformPointer := VnlTransformMatrixType44."
-      << std::endl;
+    <<
+    "Error missing Pointer data, while assigning AffineTransformPointer := VnlTransformMatrixType44."
+    << std::endl;
     throw;
     }
 }
@@ -131,9 +131,9 @@ AssignConvertedTransform(VnlTransformMatrixType44 & result,
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, while assigning VnlTransformMatrixType44 := AffineTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, while assigning VnlTransformMatrixType44 := AffineTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -155,9 +155,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning AffineTransformPointer := ScaleSkewVersor3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning AffineTransformPointer := ScaleSkewVersor3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -177,9 +177,9 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer & result,
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning AffineTransformPointer := ScaleSkewVersor3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning AffineTransformPointer := ScaleSkewVersor3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -204,9 +204,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning AffineTransformPointer := ScaleVersor3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning AffineTransformPointer := ScaleVersor3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -227,9 +227,9 @@ AssignConvertedTransform(ScaleVersor3DTransformPointer & result,
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning ScaleVersor3DTransform := ScaleVersor3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning ScaleVersor3DTransform := ScaleVersor3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -255,9 +255,9 @@ AssignConvertedTransform(AffineTransformPointer & result,
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning AffineTransformPointer := VersorRigid3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning AffineTransformPointer := VersorRigid3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -278,9 +278,9 @@ inline void AssignConvertedTransform(
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning VersorRigid3DTransformPointer := VersorRigid3DTTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning VersorRigid3DTransformPointer := VersorRigid3DTTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -303,9 +303,9 @@ inline void AssignConvertedTransform(
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning ScaleSkewVersor3DTransformPointer := ScaleVersor3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning ScaleSkewVersor3DTransformPointer := ScaleVersor3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -327,9 +327,9 @@ inline void AssignConvertedTransform(
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning ScaleSkewVersor3DTransformPointer := VersorRigid3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning ScaleSkewVersor3DTransformPointer := VersorRigid3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -351,9 +351,9 @@ inline void AssignConvertedTransform(
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning ScaleVersor3DTransformPointer := VersorRigid3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning ScaleVersor3DTransformPointer := VersorRigid3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -372,9 +372,9 @@ inline void ExtractVersorRigid3DTransform(
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -393,9 +393,9 @@ inline void ExtractVersorRigid3DTransform(
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleSkewVersor3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleSkewVersor3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -412,9 +412,9 @@ inline void ExtractVersorRigid3DTransform(
   else
     {
     std::cout
-      <<
-      "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer."
-      << std::endl;
+    <<
+    "Error missing Pointer data, assigning VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer."
+    << std::endl;
     throw;
     }
 }
@@ -429,14 +429,14 @@ inline void ExtractVersorRigid3DTransform(
  * must clip out the null subspace, if any.
  */
 inline Matrix3D
-orthogonalize( const Matrix3D rotator)
+orthogonalize(const Matrix3D rotator)
 {
-  vnl_svd<double> decomposition(
+  vnl_svd< double > decomposition(
     rotator.GetVnlMatrix(),
     -1E-6);
-  vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse( decomposition.Winverse() );
+  vnl_diag_matrix< vnl_svd< double >::singval_t > Winverse( decomposition.Winverse() );
 
-  vnl_matrix<double> W(3, 3);
+  vnl_matrix< double > W(3, 3);
   W.fill( double(0) );
 
   for ( unsigned int i = 0; i < 3; ++i )
@@ -447,7 +447,7 @@ orthogonalize( const Matrix3D rotator)
       }
     }
 
-  vnl_matrix<double> result(
+  vnl_matrix< double > result(
     decomposition.U() *W *decomposition.V().conjugate_transpose() );
 
   //    std::cout << " svd Orthonormalized Rotation: " << std::endl

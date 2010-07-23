@@ -20,18 +20,16 @@ class PrettyPrintTable
 {
 public:
 private:
-  typedef std::vector<std::string> rowType;
-  typedef std::vector<rowType>     tableType;
+  typedef std::vector< std::string > rowType;
+  typedef std::vector< rowType >     tableType;
 
   tableType    m_Table;
   unsigned int m_Pad;
   bool         m_rightJustify;
-
 public:
-  PrettyPrintTable() : m_Pad(1),
-                       m_rightJustify(false)
-  {
-  }
+  PrettyPrintTable():m_Pad(1),
+    m_rightJustify(false)
+  {}
 
   void setTablePad(unsigned int pad)
   {
@@ -52,7 +50,7 @@ public:
   {
     // Make sure the table has enough rows.
     if ( m_Table.size() <= row )
-      { // Add empty rows
+      {   // Add empty rows
       m_Table.resize(row + 1);
       }
     // For each row, make sure that it now has enough columns.
@@ -74,7 +72,7 @@ public:
   void add(const unsigned int row, const unsigned int column, const int x, const char *printf_format = 0)
   {
     const char *format(printf_format == 0 ? "%d" : printf_format);
-    char       buf[4096];
+    char        buf[4096];
 
     SNPRINTF_FUNC(buf, 4096, format, x);
     this->add(row, column, buf);
@@ -83,7 +81,7 @@ public:
   void add(const unsigned int row, const unsigned int column, const unsigned int x, const char *printf_format = 0)
   {
     const char *format(printf_format == 0 ? "%d" : printf_format);
-    char       buf[4096];
+    char        buf[4096];
 
     SNPRINTF_FUNC(buf, 4096, format, x);
     this->add(row, column, buf);
@@ -92,7 +90,7 @@ public:
   void add(const unsigned int row, const unsigned int column, const double x, const char *printf_format = 0)
   {
     const char *format(printf_format == 0 ? "%lf" : printf_format);
-    char       buf[4096];
+    char        buf[4096];
 
     SNPRINTF_FUNC(buf, 4096, format, x);
     this->add(row, column, buf);
@@ -100,7 +98,7 @@ public:
 
   void Print(std::ostream & output)
   {
-    typedef std::vector<unsigned int> ColWidthsType;
+    typedef std::vector< unsigned int > ColWidthsType;
     ColWidthsType colWidths(m_Table[0].size(), 0);
     // find largest columns
     for ( unsigned i = 0; i < m_Table.size(); i++ )
@@ -121,7 +119,7 @@ public:
         if ( m_rightJustify )
           {
           int count = colWidths[j]
-            - m_Table[i][j].size();
+                      - m_Table[i][j].size();
           while ( count-- )
             {
             output << " ";

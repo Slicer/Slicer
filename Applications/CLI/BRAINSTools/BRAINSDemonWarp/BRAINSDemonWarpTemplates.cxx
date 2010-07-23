@@ -17,7 +17,7 @@ void PrintDataTypeStrings(void)
 }
 
 // This function compares strings ignoring case.
-int CompareNoCase( const std::string & s, const std::string & s2 )
+int CompareNoCase(const std::string & s, const std::string & s2)
 {
   // Compare strings.
   std::string::const_iterator p = s.begin();

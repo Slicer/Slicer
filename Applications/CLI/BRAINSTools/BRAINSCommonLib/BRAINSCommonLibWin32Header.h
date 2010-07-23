@@ -10,13 +10,13 @@
 #include <BRAINSCommonLib.h>
 
 #if defined( WIN32 ) && !defined( BRAINSCommonLib_STATIC )
-#if defined( BRAINSCommonLib_EXPORTS )
-#define BRAINSCommonLib_EXPORT __declspec( dllexport )
+#  if defined( BRAINSCommonLib_EXPORTS )
+#    define BRAINSCommonLib_EXPORT __declspec(dllexport)
+#  else
+#    define BRAINSCommonLib_EXPORT __declspec(dllimport)
+#  endif
 #else
-#define BRAINSCommonLib_EXPORT __declspec( dllimport )
-#endif
-#else
-#define BRAINSCommonLib_EXPORT
+#  define BRAINSCommonLib_EXPORT
 #endif
 
 #endif

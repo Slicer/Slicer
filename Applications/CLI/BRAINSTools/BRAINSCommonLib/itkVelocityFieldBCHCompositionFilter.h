@@ -34,22 +34,22 @@ namespace itk
  *
  * \author Florence Dru, INRIA and Tom Vercauteren, MKT
  */
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT VelocityFieldBCHCompositionFilter :
-    public InPlaceImageFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage >
+class ITK_EXPORT VelocityFieldBCHCompositionFilter:
+  public InPlaceImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Standard class typedefs. */
-  typedef VelocityFieldBCHCompositionFilter             Self;
-  typedef InPlaceImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  typedef VelocityFieldBCHCompositionFilter               Self;
+  typedef InPlaceImageFilter< TInputImage, TOutputImage > Superclass;
+  typedef SmartPointer< Self >                            Pointer;
+  typedef SmartPointer< const Self >                      ConstPointer;
 
   /** Some convenient typedefs. */
-  typedef TInputImage                            InputFieldType;
-  typedef typename InputFieldType::PixelType     InputFieldPixelType;
-  typedef typename InputFieldType::Pointer       InputFieldPointer;
-  typedef typename InputFieldType::ConstPointer  InputFieldConstPointer;
+  typedef TInputImage                           InputFieldType;
+  typedef typename InputFieldType::PixelType    InputFieldPixelType;
+  typedef typename InputFieldType::Pointer      InputFieldPointer;
+  typedef typename InputFieldType::ConstPointer InputFieldConstPointer;
 
   typedef TOutputImage                           OutputFieldType;
   typedef typename OutputFieldType::PixelType    OutputFieldPixelType;
@@ -60,11 +60,11 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( VelocityFieldBCHCompositionFilter, InPlaceImageFilter );
+  itkTypeMacro(VelocityFieldBCHCompositionFilter, InPlaceImageFilter);
 
   /** Set/Get the NumberOfApproximationTerms used in the BCH approximation. */
-  itkSetMacro( NumberOfApproximationTerms, unsigned int );
-  itkGetConstMacro( NumberOfApproximationTerms, unsigned int );
+  itkSetMacro(NumberOfApproximationTerms, unsigned int);
+  itkGetConstMacro(NumberOfApproximationTerms, unsigned int);
 protected:
   VelocityFieldBCHCompositionFilter();
   ~VelocityFieldBCHCompositionFilter() {}
@@ -76,45 +76,48 @@ protected:
   void GenerateData();
 
   /** Adder type. */
-  typedef NaryAddImageFilter<InputFieldType, InputFieldType> AdderType;
-  typedef typename AdderType::Pointer                        AdderPointer;
+  typedef NaryAddImageFilter< InputFieldType, InputFieldType > AdderType;
+  typedef typename AdderType::Pointer                          AdderPointer;
 
   /** Lie bracket calculator type. */
-  typedef VelocityFieldLieBracketFilter<InputFieldType, InputFieldType> LieBracketFilterType;
-  typedef typename LieBracketFilterType::Pointer                        LieBracketFilterPointer;
+  typedef VelocityFieldLieBracketFilter< InputFieldType, InputFieldType > LieBracketFilterType;
+  typedef typename LieBracketFilterType::Pointer                          LieBracketFilterPointer;
 
   /** Multiplier type. */
-  typedef MultiplyByConstantImageFilter<InputFieldType, double, InputFieldType> MultiplierType;
-  typedef typename MultiplierType::Pointer                                      MultiplierPointer;
+  typedef MultiplyByConstantImageFilter< InputFieldType, double, InputFieldType > MultiplierType;
+  typedef typename MultiplierType::Pointer                                        MultiplierPointer;
 
   /** Set/Get the adder. */
-  itkSetObjectMacro( Adder, AdderType );
-  itkGetObjectMacro( Adder, AdderType );
+  itkSetObjectMacro(Adder, AdderType);
+  itkGetObjectMacro(Adder, AdderType);
 
   /** Set/Get the multipliers. */
-  itkSetObjectMacro( Multiplier, MultiplierType );
-  itkGetObjectMacro( Multiplier, MultiplierType );
-  itkSetObjectMacro( Multiplier2, MultiplierType );
-  itkGetObjectMacro( Multiplier2, MultiplierType );
+  itkSetObjectMacro(Multiplier, MultiplierType);
+  itkGetObjectMacro(Multiplier, MultiplierType);
+  itkSetObjectMacro(Multiplier2, MultiplierType);
+  itkGetObjectMacro(Multiplier2, MultiplierType);
 
   /** Set/Get the Lie bracket filters. */
-  itkSetObjectMacro( LieBracketFilter, LieBracketFilterType );
-  itkGetObjectMacro( LieBracketFilter, LieBracketFilterType );
-  itkSetObjectMacro( LieBracketFilter2, LieBracketFilterType );
-  itkGetObjectMacro( LieBracketFilter2, LieBracketFilterType );
+  itkSetObjectMacro(LieBracketFilter, LieBracketFilterType);
+  itkGetObjectMacro(LieBracketFilter, LieBracketFilterType);
+  itkSetObjectMacro(LieBracketFilter2, LieBracketFilterType);
+  itkGetObjectMacro(LieBracketFilter2, LieBracketFilterType);
 
 #if ( ITK_VERSION_MAJOR < 3 ) || ( ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR < 13 )
   virtual void SetInPlace(const bool b)
-    {
+  {
     // Work-around for http://www.itk.org/Bug/view.php?id=8672
     if ( b ) {itkWarningMacro("A more recent version of ITK is required for this filter to run inplace"); }
     this->Superclass::SetInPlace(false);
-    }
+  }
 
 #endif
 private:
-  VelocityFieldBCHCompositionFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                    // purposely not implemented
+  VelocityFieldBCHCompositionFilter(const Self &);   // purposely not
+                                                     // implemented
+  void operator=(const Self &);                      // purposely not
+
+  // implemented
 
   AdderPointer            m_Adder;
   LieBracketFilterPointer m_LieBracketFilter;
@@ -123,10 +126,10 @@ private:
   MultiplierPointer       m_Multiplier2;
   unsigned int            m_NumberOfApproximationTerms;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVelocityFieldBCHCompositionFilter.txx"
+#  include "itkVelocityFieldBCHCompositionFilter.txx"
 #endif
 
 #endif

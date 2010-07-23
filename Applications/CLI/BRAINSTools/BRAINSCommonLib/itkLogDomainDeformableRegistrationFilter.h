@@ -61,23 +61,23 @@ namespace itk
  * \sa PDEDeformableRegistrationFunction.
  * \ingroup DeformableImageRegistration
  */
-template <class TFixedImage, class TMovingImage, class TField>
-class ITK_EXPORT LogDomainDeformableRegistrationFilter :
-    public DenseFiniteDifferenceImageFilter<TField, TField>
+template< class TFixedImage, class TMovingImage, class TField >
+class ITK_EXPORT LogDomainDeformableRegistrationFilter:
+  public DenseFiniteDifferenceImageFilter< TField, TField >
 {
 public:
   /** Standard class typedefs. */
-  typedef LogDomainDeformableRegistrationFilter            Self;
-  typedef DenseFiniteDifferenceImageFilter<TField, TField> Superclass;
-  typedef SmartPointer<Self>                               Pointer;
-  typedef SmartPointer<const Self>                         ConstPointer;
+  typedef LogDomainDeformableRegistrationFilter              Self;
+  typedef DenseFiniteDifferenceImageFilter< TField, TField > Superclass;
+  typedef SmartPointer< Self >                               Pointer;
+  typedef SmartPointer< const Self >                         ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( LogDomainDeformableRegistrationFilter,
-                DenseFiniteDifferenceImageFilter );
+  itkTypeMacro(LogDomainDeformableRegistrationFilter,
+               DenseFiniteDifferenceImageFilter);
 
   /** FixedImage image type. */
   typedef TFixedImage                           FixedImageType;
@@ -102,32 +102,32 @@ public:
 
   /** FiniteDifferenceFunction type. */
   typedef typename Superclass::FiniteDifferenceFunctionType
-    FiniteDifferenceFunctionType;
+  FiniteDifferenceFunctionType;
 
   /** PDEDeformableRegistrationFunction type. */
-  typedef PDEDeformableRegistrationFunction<FixedImageType, MovingImageType,
-    DeformationFieldType>
-    PDEDeformableRegistrationFunctionType;
+  typedef PDEDeformableRegistrationFunction< FixedImageType, MovingImageType,
+                                             DeformationFieldType >
+  PDEDeformableRegistrationFunctionType;
 
   /** Inherit some enums and typedefs from the superclass. */
   itkStaticConstMacro(ImageDimension, unsigned int,
                       Superclass::ImageDimension);
 
   /** Set the fixed image. */
-  void SetFixedImage( const FixedImageType *ptr );
+  void SetFixedImage(const FixedImageType *ptr);
 
   /** Get the fixed image. */
   const FixedImageType * GetFixedImage(void) const;
 
   /** Set the moving image. */
-  void SetMovingImage( const MovingImageType *ptr );
+  void SetMovingImage(const MovingImageType *ptr);
 
   /** Get the moving image. */
   const MovingImageType * GetMovingImage(void) const;
 
   /** Set initial velocity field. */
-  void SetInitialVelocityField( VelocityFieldType *ptr )
-  { this->SetInput( ptr ); }
+  void SetInitialVelocityField(VelocityFieldType *ptr)
+  { this->SetInput(ptr); }
 
   /** Get output velocity field. */
   VelocityFieldType * GetVelocityField() { return this->GetOutput(); }
@@ -142,62 +142,62 @@ public:
    * this checks whether the fixed and moving images have been
    * set. While LogDomainDeformableRegistration can take a third input as an
    * initial velocity field, this input is not a required input. */
-  virtual std::vector<SmartPointer<DataObject> >::size_type GetNumberOfValidRequiredInputs() const;
+  virtual std::vector< SmartPointer< DataObject > >::size_type GetNumberOfValidRequiredInputs() const;
 
   /** Set/Get whether the velocity field is smoothed
    * (regularized). Smoothing the velocity yields a solution
    * elastic in nature. If SmoothVelocityField is on, then the
    * velocity field is smoothed with a Gaussian whose standard
    * deviations are specified with SetStandardDeviations() */
-  itkSetMacro( SmoothVelocityField, bool );
-  itkGetConstMacro( SmoothVelocityField, bool );
-  itkBooleanMacro( SmoothVelocityField );
+  itkSetMacro(SmoothVelocityField, bool);
+  itkGetConstMacro(SmoothVelocityField, bool);
+  itkBooleanMacro(SmoothVelocityField);
 
   /** Set the Gaussian smoothing standard deviations for the
    * velocity field. The values are set with respect to pixel
    * coordinates. */
-  itkSetVectorMacro( StandardDeviations, double, ImageDimension );
-  virtual void SetStandardDeviations( double value );
+  itkSetVectorMacro(StandardDeviations, double, ImageDimension);
+  virtual void SetStandardDeviations(double value);
 
   /** Get the Gaussian smoothing standard deviations use for smoothing
    * the velocity field. */
   const double * GetStandardDeviations(void) const
-  { return static_cast<const double *>( m_StandardDeviations ); }
+  { return static_cast< const double * >( m_StandardDeviations ); }
 
   /** Set/Get whether the update field is smoothed
    * (regularized). Smoothing the update field yields a solution
    * viscous in nature. If SmoothUpdateField is on, then the
    * update field is smoothed with a Gaussian whose standard
    * deviations are specified with SetUpdateFieldStandardDeviations() */
-  itkSetMacro( SmoothUpdateField, bool );
-  itkGetConstMacro( SmoothUpdateField, bool );
-  itkBooleanMacro( SmoothUpdateField );
+  itkSetMacro(SmoothUpdateField, bool);
+  itkGetConstMacro(SmoothUpdateField, bool);
+  itkBooleanMacro(SmoothUpdateField);
 
   /** Set the Gaussian smoothing standard deviations for the update
    * field. The values are set with respect to pixel coordinates. */
-  itkSetVectorMacro( UpdateFieldStandardDeviations, double, ImageDimension );
-  virtual void SetUpdateFieldStandardDeviations( double value );
+  itkSetVectorMacro(UpdateFieldStandardDeviations, double, ImageDimension);
+  virtual void SetUpdateFieldStandardDeviations(double value);
 
   /** Get the Gaussian smoothing standard deviations used for
    * smoothing the update field. */
   const double * GetUpdateFieldStandardDeviations(void) const
-  { return static_cast<const double *>( m_UpdateFieldStandardDeviations ); }
+  { return static_cast< const double * >( m_UpdateFieldStandardDeviations ); }
 
   /** Stop the registration after the current iteration. */
   virtual void StopRegistration()
-  { 
-    m_StopRegistrationFlag = true; 
+  {
+    m_StopRegistrationFlag = true;
   }
 
   /** Set/Get the desired maximum error of the Gaussian kernel approximate.
    * \sa GaussianOperator. */
-  itkSetMacro( MaximumError, double );
-  itkGetConstMacro( MaximumError, double );
+  itkSetMacro(MaximumError, double);
+  itkGetConstMacro(MaximumError, double);
 
   /** Set/Get the desired limits of the Gaussian kernel width.
    * \sa GaussianOperator. */
-  itkSetMacro( MaximumKernelWidth, unsigned int );
-  itkGetConstMacro( MaximumKernelWidth, unsigned int );
+  itkSetMacro(MaximumKernelWidth, unsigned int);
+  itkGetConstMacro(MaximumKernelWidth, unsigned int);
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image
@@ -211,12 +211,12 @@ protected:
 
   /** Exponential type */
   typedef ExponentialDeformationFieldImageFilter2<
-    VelocityFieldType, DeformationFieldType>      FieldExponentiatorType;
+    VelocityFieldType, DeformationFieldType >      FieldExponentiatorType;
 
   typedef typename FieldExponentiatorType::Pointer FieldExponentiatorPointer;
 
-  itkSetObjectMacro( Exponentiator, FieldExponentiatorType );
-  itkGetObjectMacro( Exponentiator, FieldExponentiatorType );
+  itkSetObjectMacro(Exponentiator, FieldExponentiatorType);
+  itkGetObjectMacro(Exponentiator, FieldExponentiatorType);
 
   /** Supplies the halting criteria for this class of filters.  The
    * algorithm will stop after a user-specified number of iterations. */
@@ -274,10 +274,11 @@ protected:
   virtual void GenerateInputRequestedRegion();
 
 private:
-  LogDomainDeformableRegistrationFilter(const Self &); // purposely not
-                                                       // implemented
-  void operator=(const Self &);                        // purposely not
-                                                       // implemented
+  LogDomainDeformableRegistrationFilter(const Self &);   // purposely not
+                                                         // implemented
+  void operator=(const Self &);                          // purposely not
+
+  // implemented
 
   /** Standard deviation for Gaussian smoothing */
   double m_StandardDeviations[ImageDimension];
@@ -302,10 +303,10 @@ private:
   FieldExponentiatorPointer m_Exponentiator;
   FieldExponentiatorPointer m_InverseExponentiator;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkLogDomainDeformableRegistrationFilter.txx"
+#  include "itkLogDomainDeformableRegistrationFilter.txx"
 #endif
 
 #endif

@@ -25,7 +25,7 @@
 #include <metaCommand.h>
 #include "itkImageRegionIterator.h"
 #ifdef __USE_BRAINS2_INTEGRATION
-#include "TransformToDeformationField.h"
+#  include "TransformToDeformationField.h"
 #endif
 #include <itkDeformationFieldJacobianDeterminantFilter.h>
 // #include <itkMultiplyImageFilter.h>
@@ -33,16 +33,16 @@
 #include <fstream>
 
 #ifdef __USE_BRAINS2_INTEGRATION
-#include "iccdefdeformation/Deformation.h"
-#include "iccdefdeformation/Utils.h"
-#include "b2Affine_rw.h"
-#include "iccdefdeformation/HarmonicArrayIO.h"
+#  include "iccdefdeformation/Deformation.h"
+#  include "iccdefdeformation/Utils.h"
+#  include "b2Affine_rw.h"
+#  include "iccdefdeformation/HarmonicArrayIO.h"
 #endif
 
 namespace itk
 {
-template<typename TImage>
-VValidationInputParser<TImage>
+template< typename TImage >
+VValidationInputParser< TImage >
 ::VValidationInputParser()
 {
   //      m_TheMovingImageFilename = "";
@@ -57,19 +57,19 @@ VValidationInputParser<TImage>
   m_NumberOfMatchPoints = 7;
 
   m_NumberOfLevels = 1;
-  m_TheMovingImageShrinkFactors.Fill( 1 );
-  m_TheFixedImageShrinkFactors.Fill( 1 );
+  m_TheMovingImageShrinkFactors.Fill(1);
+  m_TheFixedImageShrinkFactors.Fill(1);
 
   m_NumberOfIterations = IterationsArrayType(1);
-  m_NumberOfIterations.Fill( 10 );
+  m_NumberOfIterations.Fill(10);
 
   m_OutDebug = false;
   m_ForceCoronalZeroOrigin = false;
 }
 
-template<typename TImage>
+template< typename TImage >
 void
-VValidationInputParser<TImage>
+VValidationInputParser< TImage >
 ::Execute()
 {
   /*************************
@@ -85,10 +85,10 @@ VValidationInputParser<TImage>
     {
     for ( unsigned int i = 0; i < m_TheFixedImageFilename.size(); ++i )
       {
-      m_TheFixedImages.push_back( itkUtil::ReadImage<TImage>(
-                                    m_TheFixedImageFilename[i] ) );
-      m_TheMovingImages.push_back( itkUtil::ReadImage<TImage>(
-                                     m_TheMovingImageFilename[i] ) );
+      m_TheFixedImages.push_back( itkUtil::ReadImage< TImage >(
+                                    m_TheFixedImageFilename[i]) );
+      m_TheMovingImages.push_back( itkUtil::ReadImage< TImage >(
+                                     m_TheMovingImageFilename[i]) );
       }
     }
   // HACK:  TODO:  Need to ensure that the fixed and moving images have the same
@@ -103,7 +103,7 @@ VValidationInputParser<TImage>
   // m_InitialCoefficientFilename << std::endl;
   if ( m_InitialDeformationFieldFilename != "" )
     {
-    typedef   itk::ImageFileReader<TDeformationField> FieldReaderType;
+    typedef   itk::ImageFileReader< TDeformationField > FieldReaderType;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
     fieldReader->SetFileName( m_InitialDeformationFieldFilename.c_str() );
     try
@@ -132,61 +132,61 @@ VValidationInputParser<TImage>
     //  reads and converts a brains2 .xfrm file.
 
     // read brains2 transform file
-    typedef B2AffineTransform<ImageType>                  B2AffineTransformType;
+    typedef B2AffineTransform< ImageType >                B2AffineTransformType;
     typedef typename B2AffineTransformType::TransformType AffineTransformType;
     B2AffineTransformType transform;
     transform.Read(m_InitialTransformFilename);
-    typename AffineTransformType::Pointer inputAffineTransform
-      = transform.GetAffineTransformPointer();
+    typename AffineTransformType::Pointer inputAffineTransform =
+      transform.GetAffineTransformPointer();
     if ( inputAffineTransform.IsNull() )
       {
       std::cerr << "Can't read transform file" << m_InitialTransformFilename
                 << std::endl;
       }
 
-    typename TDeformationField::RegionType::SizeType size
-      = transform.GetFixedImageSize();
-    typename TDeformationField::SpacingType spacing
-      = transform.GetFixedImageSpacing();
+    typename TDeformationField::RegionType::SizeType size =
+      transform.GetFixedImageSize();
+    typename TDeformationField::SpacingType spacing =
+      transform.GetFixedImageSpacing();
 
     // convert brains2 transform, which is in index, to ITK transform, which is
     // in mm
-    typedef itk::AffineTransform<double, 3> ITKAffineTransformType;
-    typedef itk::Vector<double, 3>          VectorType;
-    VectorType const fixedImageScaleReciprocal( Reciprocal<double, 3>(
+    typedef itk::AffineTransform< double, 3 > ITKAffineTransformType;
+    typedef itk::Vector< double, 3 >          VectorType;
+    VectorType const fixedImageScaleReciprocal( Reciprocal< double, 3 >(
                                                   transform.GetFixedImageSpacing() ) );
 
     VectorType const movingImageScale( transform.GetMovingImageSpacing() );
 
-    typedef CrossOverAffineSystem<double, 3> CrossOverAffineSystemType;
-    CrossOverAffineSystemType::Pointer crossOverAffineSystem
-      = CrossOverAffineSystemType::New();
+    typedef CrossOverAffineSystem< double, 3 > CrossOverAffineSystemType;
+    CrossOverAffineSystemType::Pointer crossOverAffineSystem =
+      CrossOverAffineSystemType::New();
     crossOverAffineSystem->EncloseInScaling(fixedImageScaleReciprocal,
                                             movingImageScale);
 
     const bool                      ApplyUpstream = false;
-    ITKAffineTransformType::Pointer InitialITKAffineTransform
-      = ITKAffineTransformType::New();
+    ITKAffineTransformType::Pointer InitialITKAffineTransform =
+      ITKAffineTransformType::New();
     InitialITKAffineTransform->SetIdentity();
     InitialITKAffineTransform->Compose(
       crossOverAffineSystem->GetInhaleEncodeConversion(),
-      ApplyUpstream );
-    InitialITKAffineTransform->Compose( inputAffineTransform, ApplyUpstream );
+      ApplyUpstream);
+    InitialITKAffineTransform->Compose(inputAffineTransform, ApplyUpstream);
     InitialITKAffineTransform->Compose(
       crossOverAffineSystem->GetInhaleDecodeConversion(),
-      ApplyUpstream );
-#ifdef USE_TRANSFORM_INVERSE_FOR_INIT_FROM_AFFINE_TRANSFORM
-    ITKAffineTransformType::Pointer InitialITKAffineTransformInverse
-      = ITKAffineTransformType::New();
+      ApplyUpstream);
+#  ifdef USE_TRANSFORM_INVERSE_FOR_INIT_FROM_AFFINE_TRANSFORM
+    ITKAffineTransformType::Pointer InitialITKAffineTransformInverse =
+      ITKAffineTransformType::New();
     InitialITKAffineTransform->GetInverse(InitialITKAffineTransformInverse);
-    m_InitialDeformationField
-      = TransformToDeformationField(m_TheFixedImage,
-                                    InitialITKAffineTransformInverse);
-#else
-    m_InitialDeformationField
-      = TransformToDeformationField(m_TheFixedImage,
-                                    InitialITKAffineTransform);
-#endif
+    m_InitialDeformationField =
+      TransformToDeformationField(m_TheFixedImage,
+                                  InitialITKAffineTransformInverse);
+#  else
+    m_InitialDeformationField =
+      TransformToDeformationField(m_TheFixedImage,
+                                  InitialITKAffineTransform);
+#  endif
     }
 #endif
 #ifdef __USE_BRAINS2_INTEGRATION
@@ -196,13 +196,13 @@ VValidationInputParser<TImage>
     std::string                      CoeffNameInput(
       m_InitialCoefficientFilename.c_str() );
 
-    {
-    if ( this->GetOutDebug() )
       {
-      std::cout << "Reading: " << CoeffNameInput << std::endl;
+      if ( this->GetOutDebug() )
+        {
+        std::cout << "Reading: " << CoeffNameInput << std::endl;
+        }
+      HarmonicReadAll3D(mu, CoeffNameInput);
       }
-    HarmonicReadAll3D(mu, CoeffNameInput);
-    }
     if ( this->GetOutDebug() )
       {
       std::cout << "\nCreating Deformation fields from Coefficient files\n";

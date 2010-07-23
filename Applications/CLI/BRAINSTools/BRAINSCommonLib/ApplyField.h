@@ -10,15 +10,15 @@
 
 namespace itk
 {
-template <typename TDeformationField, typename TInputImage,
-          typename TOutputImage>
-class ApplyField : public Object
+template< typename TDeformationField, typename TInputImage,
+          typename TOutputImage >
+class ApplyField:public Object
 {
 public:
-  typedef ApplyField               Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef ApplyField                 Self;
+  typedef Object                     Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   itkTypeMacro(MIMApplication, Object);
 
@@ -51,13 +51,13 @@ protected:
   ApplyField();
   virtual ~ApplyField();
 private:
-  typename InputImageType::Pointer    m_InputImage;
-  typename OutputImageType::Pointer   m_OutputImage;
+  typename InputImageType::Pointer m_InputImage;
+  typename OutputImageType::Pointer m_OutputImage;
   typename TDeformationField::Pointer m_DeformationField;
-  PixelType                           m_DefaultPixelValue;
+  PixelType m_DefaultPixelValue;
 };
 }
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "ApplyField.txx"
+#  include "ApplyField.txx"
 #endif
 #endif

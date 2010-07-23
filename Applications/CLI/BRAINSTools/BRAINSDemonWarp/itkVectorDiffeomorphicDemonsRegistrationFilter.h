@@ -76,25 +76,25 @@ namespace itk
  * \sa DemonsRegistrationFunction
  * \ingroup DeformableImageRegistration MultiThreaded
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
-class ITK_EXPORT VectorDiffeomorphicDemonsRegistrationFilter :
-    public PDEDeformableRegistrationFilter<TFixedImage, TMovingImage,
-                                           TDeformationField>
+template< class TFixedImage, class TMovingImage, class TDeformationField >
+class ITK_EXPORT VectorDiffeomorphicDemonsRegistrationFilter:
+  public PDEDeformableRegistrationFilter< TFixedImage, TMovingImage,
+                                          TDeformationField >
 {
 public:
   /** Standard class typedefs. */
   typedef VectorDiffeomorphicDemonsRegistrationFilter Self;
   typedef PDEDeformableRegistrationFilter<
-    TFixedImage, TMovingImage, TDeformationField>      Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+    TFixedImage, TMovingImage, TDeformationField >      Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( VectorDiffeomorphicDemonsRegistrationFilter,
-                PDEDeformableRegistrationFilter );
+  itkTypeMacro(VectorDiffeomorphicDemonsRegistrationFilter,
+               PDEDeformableRegistrationFilter);
 
   /** FixedImage image type. */
   typedef TFixedImage                           FixedImageType;
@@ -112,19 +112,19 @@ public:
 
   /** FiniteDifferenceFunction type. */
   typedef typename
-    Superclass::FiniteDifferenceFunctionType FiniteDifferenceFunctionType;
+  Superclass::FiniteDifferenceFunctionType FiniteDifferenceFunctionType;
 
   /** Take timestep type from the FiniteDifferenceFunction. */
   typedef typename
-    FiniteDifferenceFunctionType::TimeStepType TimeStepType;
+  FiniteDifferenceFunctionType::TimeStepType TimeStepType;
 
   /** DemonsRegistrationFilterFunction type. */
-  typedef VectorESMDemonsRegistrationFunction<FixedImageType, MovingImageType,
-    DeformationFieldType>
-    DemonsRegistrationFunctionType;
+  typedef VectorESMDemonsRegistrationFunction< FixedImageType, MovingImageType,
+                                               DeformationFieldType >
+  DemonsRegistrationFunctionType;
 
   typedef typename
-    DemonsRegistrationFunctionType::GradientType GradientType;
+  DemonsRegistrationFunctionType::GradientType GradientType;
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image
@@ -134,16 +134,16 @@ public:
 
   virtual const double & GetRMSChange() const;
 
-  virtual void SetUseGradientType( GradientType gtype );
+  virtual void SetUseGradientType(GradientType gtype);
 
   virtual GradientType GetUseGradientType() const;
 
   /** Use a first-order approximation of the exponential.
    *  This amounts to using an update rule of the type
    *  s <- s o (Id + u) instead of s <- s o exp(u) */
-  itkSetMacro( UseFirstOrderExp, bool );
-  itkGetMacro( UseFirstOrderExp, bool );
-  itkBooleanMacro( UseFirstOrderExp );
+  itkSetMacro(UseFirstOrderExp, bool);
+  itkGetMacro(UseFirstOrderExp, bool);
+  itkBooleanMacro(UseFirstOrderExp);
 
   /** Set/Get the threshold below which the absolute difference of
    * intensity yields a match. When the intensities match between a
@@ -175,8 +175,8 @@ protected:
   virtual void ApplyUpdate(TimeStepType dt);
 
 private:
-  VectorDiffeomorphicDemonsRegistrationFilter(const Self &); // purposely not
-  // implemented
+  //purposefully not implemented
+  VectorDiffeomorphicDemonsRegistrationFilter(const Self &);
   void operator=(const Self &);                              // purposely not
 
   // implemented
@@ -186,33 +186,33 @@ private:
   DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType();
 
   const DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType()
-    const;
+  const;
 
   /** Exp and composition typedefs */
   typedef MultiplyByConstantImageFilter<
     DeformationFieldType,
-    TimeStepType, DeformationFieldType>                MultiplyByConstantType;
+    TimeStepType, DeformationFieldType >                MultiplyByConstantType;
 
   typedef ExponentialDeformationFieldImageFilter<
-    DeformationFieldType, DeformationFieldType>        FieldExponentiatorType;
+    DeformationFieldType, DeformationFieldType >        FieldExponentiatorType;
 
   typedef WarpVectorImageFilter<
     DeformationFieldType,
-    DeformationFieldType, DeformationFieldType>        VectorWarperType;
+    DeformationFieldType, DeformationFieldType >        VectorWarperType;
 
   typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-    DeformationFieldType, double>                      FieldInterpolatorType;
+    DeformationFieldType, double >                      FieldInterpolatorType;
 
   typedef AddImageFilter<
     DeformationFieldType,
-    DeformationFieldType, DeformationFieldType>        AdderType;
+    DeformationFieldType, DeformationFieldType >        AdderType;
 
   typedef typename MultiplyByConstantType::Pointer MultiplyByConstantPointer;
   typedef typename FieldExponentiatorType::Pointer FieldExponentiatorPointer;
   typedef typename VectorWarperType::Pointer       VectorWarperPointer;
   typedef typename FieldInterpolatorType::Pointer  FieldInterpolatorPointer;
   typedef typename FieldInterpolatorType::OutputType
-    FieldInterpolatorOutputType;
+  FieldInterpolatorOutputType;
   typedef typename AdderType::Pointer AdderPointer;
 
   MultiplyByConstantPointer m_Multiplier;
@@ -224,7 +224,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVectorDiffeomorphicDemonsRegistrationFilter.txx"
+#  include "itkVectorDiffeomorphicDemonsRegistrationFilter.txx"
 #endif
 
 #endif

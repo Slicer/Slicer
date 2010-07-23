@@ -29,21 +29,19 @@
 #include "itkTransformFileReader.h"
 #include "itkTransformFileWriter.h"
 //
-//TODO:  The next two should be hidden in the cxx files again.
+// TODO:  The next two should be hidden in the cxx files again.
 typedef itk::TransformFileReader                    TransformReaderType;
 typedef itk::TransformFileReader::TransformListType TransformListType;
 
-//TODO:  This should really be taken as a typedef from the BSpline class.
-//TODO:  These should be hidden in the BRAINSFit namespace.
-typedef itk::Transform<double,3,3> GenericTransformType;
+// TODO:  This should really be taken as a typedef from the BSpline class.
+// TODO:  These should be hidden in the BRAINSFit namespace.
+typedef itk::Transform< double, 3, 3 > GenericTransformType;
 
-
-
-namespace GenericTransformImageNS {
+namespace GenericTransformImageNS
+{
 static const unsigned int SpaceDimension = 3;
 static const unsigned int SplineOrder = 3;
 }
-
 
 typedef double CoordinateRepType;
 typedef itk::BSplineDeformableTransform<
@@ -51,10 +49,10 @@ typedef itk::BSplineDeformableTransform<
   GenericTransformImageNS::SpaceDimension,
   GenericTransformImageNS::SplineOrder > BSplineTransformType;
 
-typedef itk::AffineTransform<double, 3> AffineTransformType;
-typedef itk::VersorRigid3DTransform<double> VersorRigid3DTransformType;
-typedef itk::ScaleVersor3DTransform<double> ScaleVersor3DTransformType;
-typedef itk::ScaleSkewVersor3DTransform<double> ScaleSkewVersor3DTransformType;
+typedef itk::AffineTransform< double, 3 >         AffineTransformType;
+typedef itk::VersorRigid3DTransform< double >     VersorRigid3DTransformType;
+typedef itk::ScaleVersor3DTransform< double >     ScaleVersor3DTransformType;
+typedef itk::ScaleSkewVersor3DTransform< double > ScaleSkewVersor3DTransformType;
 
 namespace itk
 {
@@ -70,8 +68,9 @@ namespace itk
    * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
    * \endcode
    */
-BRAINSCommonLib_EXPORT extern void WriteTransformToDisk(GenericTransformType const * const genericTransformToWrite,
+BRAINSCommonLib_EXPORT extern void WriteTransformToDisk(GenericTransformType const *const genericTransformToWrite,
                                                         const std::string outputTransform);
+
 /**
    * \author Hans J. Johnson
    * \brief A utility function to read ITK compliant transforms to disk in a way that is compliant with the WriteTransformFromDisk
@@ -111,7 +110,8 @@ BRAINSCommonLib_EXPORT extern GenericTransformType::Pointer ReadTransformFromDis
    * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
    * \endcode
    */
-BRAINSCommonLib_EXPORT extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(const GenericTransformType::ConstPointer genericTransformToWrite);
+BRAINSCommonLib_EXPORT extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
+  const GenericTransformType::ConstPointer genericTransformToWrite);
 
 /**
    * \author Hans J. Johnson
@@ -131,52 +131,57 @@ BRAINSCommonLib_EXPORT extern int WriteStrippedRigidTransformToDisk(
   const std::string & strippedOutputTransform);
 
 BRAINSCommonLib_EXPORT extern void AddExtraTransformRegister(void);
-
 }
 
 /**
  * \author Hans J. Johnson
  * \brief A class to transform images
  */
-template <class InputImageType, class OutputImageType>
+template< class InputImageType, class OutputImageType >
 typename OutputImageType::Pointer
 TransformResample(
-  InputImageType const * const inputImage,
-  const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+  InputImageType const *const inputImage,
+  const itk::ImageBase< InputImageType::ImageDimension > *ReferenceImage,
   typename InputImageType::PixelType defaultValue,
-  typename itk::InterpolateImageFunction<InputImageType, typename itk::NumericTraits<typename InputImageType::PixelType>::RealType >::Pointer interp,
+  typename itk::InterpolateImageFunction< InputImageType,
+                                          typename itk::NumericTraits< typename InputImageType::PixelType >::RealType >
+  ::Pointer interp,
   typename GenericTransformType::Pointer transform);
 
 /**
  * \author Hans J. Johnson
  * \brief A class to transform images
  */
-template <class InputImageType, class OutputImageType, class DeformationImageType>
+template< class InputImageType, class OutputImageType, class DeformationImageType >
 typename OutputImageType::Pointer
 TransformWarp(
-  InputImageType const * const inputImage,
-  const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+  InputImageType const *const inputImage,
+  const itk::ImageBase< InputImageType::ImageDimension > *ReferenceImage,
   typename InputImageType::PixelType defaultValue,
-  typename itk::InterpolateImageFunction<InputImageType, typename itk::NumericTraits<typename InputImageType::PixelType>::RealType >::Pointer interp,
+  typename itk::InterpolateImageFunction< InputImageType,
+                                          typename itk::NumericTraits< typename InputImageType::PixelType >::RealType >
+  ::Pointer interp,
   typename DeformationImageType::Pointer deformationField);
-
 
 /**
  * \author Hans J. Johnson
  * \brief A class to transform images.  Only one of genericTransform or DeformationField can be non-null.
  */
-template <typename InputImageType, class OutputImageType, typename DeformationImageType>
+template< typename InputImageType, class OutputImageType, typename DeformationImageType >
 typename OutputImageType::Pointer GenericTransformImage(
-  InputImageType const * const OperandImage,
-  const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+  InputImageType const *const OperandImage,
+  const itk::ImageBase< InputImageType::ImageDimension > *ReferenceImage,
   typename DeformationImageType::Pointer DeformationField,
   typename GenericTransformType::Pointer genericTransform,
-  typename InputImageType::PixelType suggestedDefaultValue, //NOTE:  This is ignored in the case of binary image!
+  typename InputImageType::PixelType suggestedDefaultValue,   // NOTE:  This is
+                                                              // ignored in the
+                                                              // case of binary
+                                                              // image!
   const std::string interpolationMode,
   const bool binaryFlag);
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "GenericTransformImage.txx"
+#  include "GenericTransformImage.txx"
 #endif
 
 #endif

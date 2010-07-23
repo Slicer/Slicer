@@ -60,25 +60,25 @@ namespace itk
  * \ingroup FiniteDifferenceFunctions
  *
  */
-template <class TFixedImage, class TMovingImage, class TDeformationField>
-class ITK_EXPORT VectorESMDemonsRegistrationFunction :
-    public PDEDeformableRegistrationFunction<TFixedImage,
-                                             TMovingImage, TDeformationField>
+template< class TFixedImage, class TMovingImage, class TDeformationField >
+class ITK_EXPORT VectorESMDemonsRegistrationFunction:
+  public PDEDeformableRegistrationFunction< TFixedImage,
+                                            TMovingImage, TDeformationField >
 {
 public:
   /** Standard class typedefs. */
   typedef VectorESMDemonsRegistrationFunction Self;
   typedef PDEDeformableRegistrationFunction<
-    TFixedImage, TMovingImage, TDeformationField>    Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+    TFixedImage, TMovingImage, TDeformationField >    Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( VectorESMDemonsRegistrationFunction,
-                PDEDeformableRegistrationFunction );
+  itkTypeMacro(VectorESMDemonsRegistrationFunction,
+               PDEDeformableRegistrationFunction);
 
   /** MovingImage image type. */
   typedef TMovingImage                                 VectorMovingImageType;
@@ -93,69 +93,69 @@ public:
 
   /** MovingImage image type. */
   //  typedef typename Superclass::MovingImageType      MovingImageType;
-  typedef  itk::Image<float, itkGetStaticConstMacro(ImageDimension)> MovingImageType;
+  typedef  itk::Image< float, itkGetStaticConstMacro(ImageDimension) > MovingImageType;
   //  typedef typename Superclass::MovingImagePointer   MovingImagePointer;
-  typedef  typename MovingImageType::Pointer                         MovingImagePointer;
-  typedef typename MovingImageType::PixelType                        MovingPixelType;
+  typedef  typename MovingImageType::Pointer  MovingImagePointer;
+  typedef typename MovingImageType::PixelType MovingPixelType;
 
   /** FixedImage image type. */
   //  typedef typename Superclass::FixedImageType       FixedImageType;
-  typedef itk::Image<float, itkGetStaticConstMacro(ImageDimension)> FixedImageType;
-  typedef typename  FixedImageType::Pointer                         FixedImagePointer;
+  typedef itk::Image< float, itkGetStaticConstMacro(ImageDimension) > FixedImageType;
+  typedef typename  FixedImageType::Pointer                           FixedImagePointer;
   //  typedef typename Superclass::FixedImagePointer    FixedImagePointer;
-  typedef typename FixedImageType::IndexType                        IndexType;
-  typedef typename FixedImageType::SizeType                         SizeType;
-  typedef typename FixedImageType::SpacingType                      SpacingType;
-  typedef typename FixedImageType::DirectionType                    DirectionType;
+  typedef typename FixedImageType::IndexType     IndexType;
+  typedef typename FixedImageType::SizeType      SizeType;
+  typedef typename FixedImageType::SpacingType   SpacingType;
+  typedef typename FixedImageType::DirectionType DirectionType;
 
   /** Deformation field type. */
   typedef typename Superclass::DeformationFieldType DeformationFieldType;
   typedef typename Superclass::DeformationFieldTypePointer
-    DeformationFieldTypePointer;
+  DeformationFieldTypePointer;
 
   /** Inherit some enums from the superclass. */
-  typedef typename Superclass::PixelType                                                          PixelType;
-  typedef typename Superclass::RadiusType                                                         RadiusType;
-  typedef typename Superclass::NeighborhoodType                                                   NeighborhoodType;
-  typedef typename Superclass::FloatOffsetType                                                    FloatOffsetType;
-  typedef typename Superclass::TimeStepType                                                       TimeStepType;
+  typedef typename Superclass::PixelType        PixelType;
+  typedef typename Superclass::RadiusType       RadiusType;
+  typedef typename Superclass::NeighborhoodType NeighborhoodType;
+  typedef typename Superclass::FloatOffsetType  FloatOffsetType;
+  typedef typename Superclass::TimeStepType     TimeStepType;
 
-  typedef itk::VectorImageToImageAdaptor<MovingPixelType, itkGetStaticConstMacro(ImageDimension)> AdaptorType;
+  typedef itk::VectorImageToImageAdaptor< MovingPixelType, itkGetStaticConstMacro(ImageDimension) > AdaptorType;
 
   /** Interpolator type. */
   typedef double CoordRepType;
   typedef InterpolateImageFunction<
-    AdaptorType, CoordRepType>                   InterpolatorType;
+    AdaptorType, CoordRepType >                   InterpolatorType;
   typedef typename InterpolatorType::Pointer   InterpolatorPointer;
   typedef typename InterpolatorType::PointType PointType;
   typedef LinearInterpolateImageFunction<
-    AdaptorType, CoordRepType>                   DefaultInterpolatorType;
+    AdaptorType, CoordRepType >                   DefaultInterpolatorType;
 
   /** Warper type */
   typedef WarpImageFilter<
     AdaptorType,
-    MovingImageType, DeformationFieldType>           WarperType;
+    MovingImageType, DeformationFieldType >           WarperType;
   typedef typename WarperType::Pointer WarperPointer;
 
   /** Covariant vector type. */
-  typedef CovariantVector<double,
-    itkGetStaticConstMacro(ImageDimension)>
-    CovariantVectorType;
+  typedef CovariantVector< double,
+                           itkGetStaticConstMacro(ImageDimension) >
+  CovariantVectorType;
 
   /** Fixed image gradient calculator type. */
-  typedef CentralDifferenceImageFunction<AdaptorType> GradientCalculatorType;
-  typedef typename GradientCalculatorType::Pointer    GradientCalculatorPointer;
+  typedef CentralDifferenceImageFunction< AdaptorType > GradientCalculatorType;
+  typedef typename GradientCalculatorType::Pointer      GradientCalculatorPointer;
 
   /** Moving image gradient (unwarped) calculator type. */
-  typedef CentralDifferenceImageFunction<AdaptorType, CoordRepType>
-    MovingImageGradientCalculatorType;
+  typedef CentralDifferenceImageFunction< AdaptorType, CoordRepType >
+  MovingImageGradientCalculatorType;
   typedef typename MovingImageGradientCalculatorType::Pointer
-    MovingImageGradientCalculatorPointer;
+  MovingImageGradientCalculatorPointer;
 
   /** Set the moving image interpolator. */
-  void SetMovingImageInterpolator( InterpolatorType *ptr )
+  void SetMovingImageInterpolator(InterpolatorType *ptr)
   {
-    m_MovingImageInterpolator = ptr; m_MovingImageWarper->SetInterpolator( ptr );
+    m_MovingImageInterpolator = ptr; m_MovingImageWarper->SetInterpolator(ptr);
   }
 
   /** Get the moving image interpolator. */
@@ -166,7 +166,7 @@ public:
 
   /** This class uses a constant timestep of 1. */
   virtual TimeStepType ComputeGlobalTimeStep( void *itkNotUsed(GlobalData) )
-    const
+  const
   {
     return m_TimeStep;
   }
@@ -184,7 +184,7 @@ public:
   }
 
   /** Release memory for global data structure. */
-  virtual void ReleaseGlobalDataPointer( void *GlobalData ) const;
+  virtual void ReleaseGlobalDataPointer(void *GlobalData) const;
 
   /** Set the object's state before each iteration. */
   virtual void InitializeIteration();
@@ -194,8 +194,8 @@ public:
   virtual PixelType  ComputeUpdate(
     const NeighborhoodType & neighborhood,
     void *globalData,
-    const FloatOffsetType & offset
-    = FloatOffsetType(0.0) );
+    const FloatOffsetType & offset =
+      FloatOffsetType(0.0) );
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image
@@ -238,10 +238,10 @@ public:
     Fixed,
     WarpedMoving,
     MappedMoving
-  };
+    };
 
   /** Set/Get the type of used image forces */
-  virtual void SetUseGradientType( GradientType gtype )
+  virtual void SetUseGradientType(GradientType gtype)
   {
     m_UseGradientType = gtype;
   }
@@ -252,7 +252,7 @@ public:
   }
 
   /** Set the moving image.  */
-  void SetMovingImage( const VectorMovingImageType *ptr )
+  void SetMovingImage(const VectorMovingImageType *ptr)
   {
     m_MovingImage = ptr;
   }
@@ -264,7 +264,7 @@ public:
   }
 
   /** Set the fixed image. */
-  void SetFixedImage( const VectorFixedImageType *ptr )
+  void SetFixedImage(const VectorFixedImageType *ptr)
   {
     m_FixedImage = ptr;
   }
@@ -281,8 +281,8 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** FixedImage image neighborhood iterator type. */
-  typedef ConstNeighborhoodIterator<FixedImageType>
-    FixedImageNeighborhoodIteratorType;
+  typedef ConstNeighborhoodIterator< FixedImageType >
+  FixedImageNeighborhoodIteratorType;
 
   /** A global data type for this class of equation. Used to store
    * iterators for the fixed image. */
@@ -292,11 +292,9 @@ protected:
     double m_SumOfSquaredChange;
   };
 private:
-  VectorESMDemonsRegistrationFunction(const Self &); // purposely not
-  // implemented
-  void operator=(const Self &);                      // purposely not
-
-  // implemented
+  //purposefully not implemented
+  VectorESMDemonsRegistrationFunction(const Self &);
+  void operator=(const Self &);
 
   VectorFixedImagePointer  m_FixedImage;
   VectorMovingImagePointer m_MovingImage;
@@ -345,15 +343,15 @@ private:
   /** Mutex lock to protect modification to metric. */
   mutable SimpleFastMutexLock m_MetricCalculationLock;
 
-  std::vector<WarperPointer>                        m_MovingImageWarperVector;
-  std::vector<InterpolatorPointer>                  m_MovingImageInterpolatorVector;
-  std::vector<GradientCalculatorPointer>            m_FixedImageGradientCalculatorVector;
-  std::vector<MovingImageGradientCalculatorPointer> m_MappedMovingImageGradientCalculatorVector;
+  std::vector< WarperPointer >                        m_MovingImageWarperVector;
+  std::vector< InterpolatorPointer >                  m_MovingImageInterpolatorVector;
+  std::vector< GradientCalculatorPointer >            m_FixedImageGradientCalculatorVector;
+  std::vector< MovingImageGradientCalculatorPointer > m_MappedMovingImageGradientCalculatorVector;
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkVectorESMDemonsRegistrationFunction.txx"
+#  include "itkVectorESMDemonsRegistrationFunction.txx"
 #endif
 
 #endif

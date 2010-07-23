@@ -19,8 +19,8 @@ PURPOSE.  See the above copyright notices for more information.
 
 namespace itk
 {
-template<typename TParser, typename TPreprocessor, typename TRegistrator>
-ApplicationBase<TParser, TPreprocessor, TRegistrator>
+template< typename TParser, typename TPreprocessor, typename TRegistrator >
+ApplicationBase< TParser, TPreprocessor, TRegistrator >
 ::ApplicationBase()
 {
   m_Parser       = ParserType::New();
@@ -29,9 +29,9 @@ ApplicationBase<TParser, TPreprocessor, TRegistrator>
   m_OutDebug  = false;
 }
 
-template<typename TParser, typename TPreprocessor, typename TRegistrator>
+template< typename TParser, typename TPreprocessor, typename TRegistrator >
 void
-ApplicationBase<TParser, TPreprocessor, TRegistrator>
+ApplicationBase< TParser, TPreprocessor, TRegistrator >
 ::Execute()
 {
   /**************************
@@ -53,7 +53,7 @@ ApplicationBase<TParser, TPreprocessor, TRegistrator>
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw err;
     }
-  catch (... )
+  catch ( ... )
     {
     std::cout << "Error occurred during input parsing." << std::endl;
     throw;
@@ -79,7 +79,7 @@ ApplicationBase<TParser, TPreprocessor, TRegistrator>
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw err;
     }
-  catch (... )
+  catch ( ... )
     {
     std::cout << "Error occured during preprocessing." << std::endl;
     throw;
@@ -106,7 +106,7 @@ ApplicationBase<TParser, TPreprocessor, TRegistrator>
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw err;
     }
-  catch (... )
+  catch ( ... )
     {
     std::cout << "Error occured during registration" << std::endl;
     throw;

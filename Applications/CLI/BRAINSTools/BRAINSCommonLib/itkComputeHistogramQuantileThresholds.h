@@ -13,9 +13,9 @@ namespace itk
  * This filter just computes Histogram Quantile Thresholds.  It does not apply the thresholds.
  *
  */
-template <class TInputImage, class TMaskImage>
-class ITK_EXPORT ComputeHistogramQuantileThresholds :
-    public Object
+template< class TInputImage, class TMaskImage >
+class ITK_EXPORT ComputeHistogramQuantileThresholds:
+  public Object
 {
 public:
   /** Extract dimension from input and output image. */
@@ -28,10 +28,10 @@ public:
   typedef typename InputImageType::RegionType   InputImageRegionType;
   typedef typename InputImageType::PixelType    InputPixelType;
 
-  typedef ComputeHistogramQuantileThresholds    Self;
-  typedef Object                                Superclass;
-  typedef SmartPointer<Self>                    Pointer;
-  typedef typename TMaskImage::PixelType        MaskPixelType;
+  typedef ComputeHistogramQuantileThresholds Self;
+  typedef Object                             Superclass;
+  typedef SmartPointer< Self >               Pointer;
+  typedef typename TMaskImage::PixelType     MaskPixelType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -68,23 +68,23 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
 private:
-  InputImagePointer            m_Image;
+  InputImagePointer m_Image;
   typename TMaskImage::Pointer m_BinaryPortionImage;
   void ImageMinMax(InputPixelType & min, InputPixelType & max);
 
-  double                          m_QuantileLowerThreshold;
-  double                          m_QuantileUpperThreshold;
+  double m_QuantileLowerThreshold;
+  double m_QuantileUpperThreshold;
   typename TInputImage::PixelType m_ImageMin;
   typename TInputImage::PixelType m_ImageMax;
 
   typename InputImageType::PixelType m_LowerIntensityThresholdValue;
   typename InputImageType::PixelType m_UpperIntensityThresholdValue;
-  unsigned int                       m_NumberOfValidHistogramsEntries;
+  unsigned int m_NumberOfValidHistogramsEntries;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #if ITK_TEMPLATE_TXX
-# include "itkComputeHistogramQuantileThresholds.txx"
+#  include "itkComputeHistogramQuantileThresholds.txx"
 #endif
 
 #endif

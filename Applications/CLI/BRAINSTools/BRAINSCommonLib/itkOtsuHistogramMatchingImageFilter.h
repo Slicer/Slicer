@@ -57,16 +57,16 @@ namespace itk
  */
 /* THistogramMeasurement -- The precision level for which to do
   HistogramMeasurmenets */
-template <class TInputImage, class TOutputImage, class THistogramMeasurement = ITK_TYPENAME TInputImage::PixelType>
-class ITK_EXPORT OtsuHistogramMatchingImageFilter :
-    public ImageToImageFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage, class THistogramMeasurement = ITK_TYPENAME TInputImage::PixelType >
+class ITK_EXPORT OtsuHistogramMatchingImageFilter:
+  public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Standard class typedefs. */
-  typedef OtsuHistogramMatchingImageFilter              Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  typedef OtsuHistogramMatchingImageFilter                Self;
+  typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
+  typedef SmartPointer< Self >                            Pointer;
+  typedef SmartPointer< const Self >                      ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -91,31 +91,32 @@ public:
   typedef typename Superclass::OutputImagePointer     OutputImagePointer;
 
   /** Pixel related typedefs. */
-  typedef typename InputImageType::PixelType    InputPixelType;
-  typedef typename OutputImageType::PixelType   OutputPixelType;
+  typedef typename InputImageType::PixelType  InputPixelType;
+  typedef typename OutputImageType::PixelType OutputPixelType;
 
-  typedef typename itk::Image<unsigned char, 3> MaskImageType;
+  typedef typename itk::Image< unsigned char, 3 > MaskImageType;
 
   /** Histogram related typedefs. */
 #ifdef ITK_USE_REVIEW_STATISTICS
-  typedef Statistics::Histogram<THistogramMeasurement>    HistogramType;
+  typedef Statistics::Histogram< THistogramMeasurement > HistogramType;
 #else
-  typedef Statistics::Histogram<THistogramMeasurement, 1> HistogramType;
+  typedef Statistics::Histogram< THistogramMeasurement, 1 > HistogramType;
 #endif
-  typedef typename HistogramType::Pointer                 HistogramPointer;
+  typedef typename HistogramType::Pointer HistogramPointer;
 
   /** Set/Get the source image. */
-  void SetSourceImage( const InputImageType *source )
-  { 
-    this->SetInput( source ); 
+  void SetSourceImage(const InputImageType *source)
+  {
+    this->SetInput(source);
   }
+
   const InputImageType * GetSourceImage(void)
-  { 
-    return this->GetInput(); 
+  {
+    return this->GetInput();
   }
 
   /** Set/Get the reference image. */
-  void SetReferenceImage( const InputImageType *reference );
+  void SetReferenceImage(const InputImageType *reference);
 
   const InputImageType * GetReferenceImage(void);
 
@@ -123,21 +124,21 @@ public:
   itkSetObjectMacro(ReferenceMask, MaskImageType);
 
   /** Set/Get the number of histogram levels used. */
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
-  itkGetConstMacro( NumberOfHistogramLevels, unsigned long );
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
+  itkGetConstMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Set/Get the number of match points used. */
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
-  itkGetConstMacro( NumberOfMatchPoints, unsigned long );
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
+  itkGetConstMacro(NumberOfMatchPoints, unsigned long);
 
   /** Set/Get the threshold at mean intensity flag.
    * If true, only source (reference) pixels which are greater
    * than the mean source (reference) intensity is used in
    * the histogram matching. If false, all pixels are
    * used. */
-  itkSetMacro( ThresholdAtMeanIntensity, bool );
-  itkGetConstMacro( ThresholdAtMeanIntensity, bool );
-  itkBooleanMacro( ThresholdAtMeanIntensity );
+  itkSetMacro(ThresholdAtMeanIntensity, bool);
+  itkGetConstMacro(ThresholdAtMeanIntensity, bool);
+  itkBooleanMacro(ThresholdAtMeanIntensity);
 
   /** This filter requires all of the input to be in the buffer. */
   virtual void GenerateInputRequestedRegion();
@@ -152,19 +153,19 @@ public:
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( IntConvertibleToInputCheck,
-                   ( Concept::Convertible<int, InputPixelType> ) );
+                   ( Concept::Convertible< int, InputPixelType > ) );
   itkConceptMacro( SameDimensionCheck,
-                   ( Concept::SameDimension<ImageDimension, OutputImageDimension> ) );
+                   ( Concept::SameDimension< ImageDimension, OutputImageDimension > ) );
   itkConceptMacro( DoubleConvertibleToInputCheck,
-                   ( Concept::Convertible<double, InputPixelType> ) );
+                   ( Concept::Convertible< double, InputPixelType > ) );
   itkConceptMacro( DoubleConvertibleToOutputCheck,
-                   ( Concept::Convertible<double, OutputPixelType> ) );
+                   ( Concept::Convertible< double, OutputPixelType > ) );
   itkConceptMacro( InputConvertibleToDoubleCheck,
-                   ( Concept::Convertible<InputPixelType, double> ) );
+                   ( Concept::Convertible< InputPixelType, double > ) );
   itkConceptMacro( OutputConvertibleToDoubleCheck,
-                   ( Concept::Convertible<OutputPixelType, double> ) );
+                   ( Concept::Convertible< OutputPixelType, double > ) );
   itkConceptMacro( SameTypeCheck,
-                   ( Concept::SameType<InputPixelType, OutputPixelType> ) );
+                   ( Concept::SameType< InputPixelType, OutputPixelType > ) );
   /** End concept checking */
 #endif
 protected:
@@ -177,23 +178,23 @@ protected:
   void AfterThreadedGenerateData();
 
   void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                            int threadId );
+                            int threadId);
 
   /** Compute min, max and mean of an image. */
-  void ComputeMinMaxMean( const InputImageType *image,
-                          THistogramMeasurement & minValue,
-                          THistogramMeasurement & maxValue,
-                          THistogramMeasurement & meanValue );
+  void ComputeMinMaxMean(const InputImageType *image,
+                         THistogramMeasurement & minValue,
+                         THistogramMeasurement & maxValue,
+                         THistogramMeasurement & meanValue);
 
   /** Construct a histogram from an image. */
-  void ConstructHistogram( const InputImageType *image,
-                           const typename MaskImageType::Pointer mask,
-                           HistogramType *histogram, const THistogramMeasurement minValue,
-                           const THistogramMeasurement maxValue );
+  void ConstructHistogram(const InputImageType *image,
+                          const typename MaskImageType::Pointer mask,
+                          HistogramType *histogram, const THistogramMeasurement minValue,
+                          const THistogramMeasurement maxValue);
 
 private:
-  OtsuHistogramMatchingImageFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                   // purposely not implemented
+  OtsuHistogramMatchingImageFilter(const Self &);   // purposely not implemented
+  void operator=(const Self &);                     // purposely not implemented
 
   unsigned long m_NumberOfHistogramLevels;
   unsigned long m_NumberOfMatchPoints;
@@ -217,10 +218,10 @@ private:
   HistogramPointer m_ReferenceHistogram;
   HistogramPointer m_OutputHistogram;
 
-  typedef vnl_matrix<double> TableType;
+  typedef vnl_matrix< double > TableType;
   TableType m_QuantileTable;
 
-  typedef vnl_vector<double> GradientArrayType;
+  typedef vnl_vector< double > GradientArrayType;
   GradientArrayType m_Gradients;
   double            m_LowerGradient;
   double            m_UpperGradient;
@@ -228,10 +229,10 @@ private:
   typename MaskImageType::Pointer m_SourceMask;
   typename MaskImageType::Pointer m_ReferenceMask;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkOtsuHistogramMatchingImageFilter.txx"
+#  include "itkOtsuHistogramMatchingImageFilter.txx"
 #endif
 
 #endif

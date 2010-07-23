@@ -69,23 +69,23 @@ namespace itk
  *
  * \ingroup DeformableImageRegistration
  */
-template <class TFixedImage, class TMovingImage, class TField, class TRealType = float>
-class ITK_EXPORT MultiResolutionLogDomainDeformableRegistration :
-    public ImageToImageFilter<TField, TField>
+template< class TFixedImage, class TMovingImage, class TField, class TRealType = float >
+class ITK_EXPORT MultiResolutionLogDomainDeformableRegistration:
+  public ImageToImageFilter< TField, TField >
 {
 public:
   /** Standard class typedefs */
   typedef MultiResolutionLogDomainDeformableRegistration Self;
-  typedef ImageToImageFilter<TField, TField>             Superclass;
-  typedef SmartPointer<Self>                             Pointer;
-  typedef SmartPointer<const Self>                       ConstPointer;
+  typedef ImageToImageFilter< TField, TField >           Superclass;
+  typedef SmartPointer< Self >                           Pointer;
+  typedef SmartPointer< const Self >                     ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( MultiResolutionLogDomainDeformableRegistration,
-                ImageToImageFilter );
+  itkTypeMacro(MultiResolutionLogDomainDeformableRegistration,
+               ImageToImageFilter);
 
   /** Fixed image type. */
   typedef TFixedImage                           FixedImageType;
@@ -110,61 +110,61 @@ public:
                       FixedImageType::ImageDimension);
 
   /** Internal float image type. */
-  typedef Image<TRealType, itkGetStaticConstMacro(ImageDimension)> FloatImageType;
+  typedef Image< TRealType, itkGetStaticConstMacro(ImageDimension) > FloatImageType;
 
   /** The internal registration type. */
-  typedef LogDomainDeformableRegistrationFilter<FloatImageType, FloatImageType, VelocityFieldType>
-    RegistrationType;
+  typedef LogDomainDeformableRegistrationFilter< FloatImageType, FloatImageType, VelocityFieldType >
+  RegistrationType;
 
   typedef typename RegistrationType::Pointer RegistrationPointer;
 
   /** The default registration type. */
   typedef LogDomainDemonsRegistrationFilter<
-    FloatImageType, FloatImageType, VelocityFieldType> DefaultRegistrationType;
+    FloatImageType, FloatImageType, VelocityFieldType > DefaultRegistrationType;
 
   /** The fixed multi-resolution image pyramid type. */
-  typedef MultiResolutionPyramidImageFilter<FixedImageType, FloatImageType>
-    FixedImagePyramidType;
+  typedef MultiResolutionPyramidImageFilter< FixedImageType, FloatImageType >
+  FixedImagePyramidType;
 
   typedef typename FixedImagePyramidType::Pointer FixedImagePyramidPointer;
 
   /** The moving multi-resolution image pyramid type. */
-  typedef MultiResolutionPyramidImageFilter<MovingImageType, FloatImageType>
-    MovingImagePyramidType;
+  typedef MultiResolutionPyramidImageFilter< MovingImageType, FloatImageType >
+  MovingImagePyramidType;
 
   typedef typename MovingImagePyramidType::Pointer MovingImagePyramidPointer;
 
   /** The velocity field expander type. */
-  typedef VectorResampleImageFilter<VelocityFieldType, VelocityFieldType>
-    FieldExpanderType;
+  typedef VectorResampleImageFilter< VelocityFieldType, VelocityFieldType >
+  FieldExpanderType;
   typedef typename FieldExpanderType::Pointer FieldExpanderPointer;
 
   /** Set the fixed image. */
-  virtual void SetFixedImage( const FixedImageType *ptr );
+  virtual void SetFixedImage(const FixedImageType *ptr);
 
   /** Get the fixed image. */
   const FixedImageType * GetFixedImage(void) const;
 
   /** Set the moving image. */
-  virtual void SetMovingImage( const MovingImageType *ptr );
+  virtual void SetMovingImage(const MovingImageType *ptr);
 
   /** Get the moving image. */
   const MovingImageType * GetMovingImage(void) const;
 
   /** Set initial velocity field to be used as is (no smoothing, no
    *  subsampling at the coarsest level of the pyramid. */
-  virtual void SetInitialVelocityField( VelocityFieldType *ptr )
-    {
+  virtual void SetInitialVelocityField(VelocityFieldType *ptr)
+  {
     this->m_InitialVelocityField = ptr;
-    }
+  }
 
   /** Set initial velocity field. No assumption is made on the
    *  input. It will therefore be smoothed and resampled to match the
    *  images characteristics at the coarsest level of the pyramid. */
-  virtual void SetArbitraryInitialVelocityField( VelocityFieldType *ptr )
-    {
-    this->SetInput( ptr );
-    }
+  virtual void SetArbitraryInitialVelocityField(VelocityFieldType *ptr)
+  {
+    this->SetInput(ptr);
+  }
 
   /** Get output velocity field. */
   VelocityFieldType * GetVelocityField() { return this->GetOutput(); }
@@ -180,47 +180,47 @@ public:
    * fixed and moving images have been set. While
    * MultiResolutionLogDomainDeformableRegistration can take a third input
    * as an initial velocity field, this input is not a required input. */
-  virtual std::vector<SmartPointer<DataObject> >::size_type GetNumberOfValidRequiredInputs() const;
+  virtual std::vector< SmartPointer< DataObject > >::size_type GetNumberOfValidRequiredInputs() const;
 
   /** Set the internal registrator. */
-  itkSetObjectMacro( RegistrationFilter, RegistrationType );
+  itkSetObjectMacro(RegistrationFilter, RegistrationType);
 
   /** Get the internal registrator. */
-  itkGetObjectMacro( RegistrationFilter, RegistrationType );
+  itkGetObjectMacro(RegistrationFilter, RegistrationType);
 
   /** Set the fixed image pyramid. */
-  itkSetObjectMacro( FixedImagePyramid, FixedImagePyramidType );
+  itkSetObjectMacro(FixedImagePyramid, FixedImagePyramidType);
 
   /** Get the fixed image pyramid. */
-  itkGetObjectMacro( FixedImagePyramid, FixedImagePyramidType );
+  itkGetObjectMacro(FixedImagePyramid, FixedImagePyramidType);
 
   /** Set the moving image pyramid. */
-  itkSetObjectMacro( MovingImagePyramid, MovingImagePyramidType );
+  itkSetObjectMacro(MovingImagePyramid, MovingImagePyramidType);
 
   /** Get the moving image pyramid. */
-  itkGetObjectMacro( MovingImagePyramid, MovingImagePyramidType );
+  itkGetObjectMacro(MovingImagePyramid, MovingImagePyramidType);
 
   /** Set number of multi-resolution levels. */
-  virtual void SetNumberOfLevels( unsigned int num );
+  virtual void SetNumberOfLevels(unsigned int num);
 
   /** Get number of multi-resolution levels. */
-  itkGetConstReferenceMacro( NumberOfLevels, unsigned int );
+  itkGetConstReferenceMacro(NumberOfLevels, unsigned int);
 
   /** Get the current resolution level being processed. */
-  itkGetConstReferenceMacro( CurrentLevel, unsigned int );
+  itkGetConstReferenceMacro(CurrentLevel, unsigned int);
 
   /** Set number of iterations per multi-resolution levels. */
-  itkSetVectorMacro( NumberOfIterations, unsigned int, m_NumberOfLevels );
+  itkSetVectorMacro(NumberOfIterations, unsigned int, m_NumberOfLevels);
 
   /** Set the moving image pyramid. */
-  itkSetObjectMacro( FieldExpander, FieldExpanderType );
+  itkSetObjectMacro(FieldExpander, FieldExpanderType);
 
   /** Get the moving image pyramid. */
-  itkGetObjectMacro( FieldExpander, FieldExpanderType );
+  itkGetObjectMacro(FieldExpander, FieldExpanderType);
 
   /** Get number of iterations per multi-resolution levels. */
   virtual const unsigned int * GetNumberOfIterations() const
-    { return &( m_NumberOfIterations[0] ); }
+  { return &( m_NumberOfIterations[0] ); }
 
   /** Stop the registration after the current iteration. */
   virtual void StopRegistration();
@@ -232,12 +232,12 @@ protected:
 
   /** Exponential type */
   typedef ExponentialDeformationFieldImageFilter2<
-    VelocityFieldType, DeformationFieldType>      FieldExponentiatorType;
+    VelocityFieldType, DeformationFieldType >      FieldExponentiatorType;
 
   typedef typename FieldExponentiatorType::Pointer FieldExponentiatorPointer;
 
-  itkSetObjectMacro( Exponentiator, FieldExponentiatorType );
-  itkGetObjectMacro( Exponentiator, FieldExponentiatorType );
+  itkSetObjectMacro(Exponentiator, FieldExponentiatorType);
+  itkGetObjectMacro(Exponentiator, FieldExponentiatorType);
 
   /** Generate output data by performing the registration
    * at each resolution level. */
@@ -257,17 +257,21 @@ protected:
   /** The current implementation of this class does not supprot
    * streaming. As such it produces the output for the largest
    * possible region. */
-  virtual void EnlargeOutputRequestedRegion( DataObject *ptr );
+  virtual void EnlargeOutputRequestedRegion(DataObject *ptr);
 
   /** This method returns true to indicate that the registration should
    * terminate at the current resolution level. */
   virtual bool Halt();
 
 private:
-  MultiResolutionLogDomainDeformableRegistration(const Self &); // purposely not
-                                                                // implemented
-  void operator=(const Self &);                                 // purposely not
-                                                                // implemented
+  MultiResolutionLogDomainDeformableRegistration(const Self &);   // purposely
+                                                                  // not
+                                                                  // implemented
+  void operator=(const Self &);                                   // purposely
+
+  // not
+
+  // implemented
 
   RegistrationPointer       m_RegistrationFilter;
   FixedImagePyramidPointer  m_FixedImagePyramid;
@@ -275,19 +279,19 @@ private:
   FieldExpanderPointer      m_FieldExpander;
   VelocityFieldPointer      m_InitialVelocityField;
 
-  unsigned int              m_NumberOfLevels;
-  unsigned int              m_CurrentLevel;
-  std::vector<unsigned int> m_NumberOfIterations;
+  unsigned int                m_NumberOfLevels;
+  unsigned int                m_CurrentLevel;
+  std::vector< unsigned int > m_NumberOfIterations;
 
   /** Flag to indicate user stop registration request. */
   bool m_StopRegistrationFlag;
 
   FieldExponentiatorPointer m_Exponentiator;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMultiResolutionLogDomainDeformableRegistration.txx"
+#  include "itkMultiResolutionLogDomainDeformableRegistration.txx"
 #endif
 
 #endif

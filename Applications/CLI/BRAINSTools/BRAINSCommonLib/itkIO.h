@@ -31,8 +31,8 @@ typedef SOAdapterType::DirectionType   DirectionType;
  *
  */
 /** read an image using ITK -- image-based template */
-template <typename TImage>
-typename TImage::Pointer ReadImage( const std::string fileName)
+template< typename TImage >
+typename TImage::Pointer ReadImage(const std::string fileName)
 {
   typename TImage::Pointer image;
   std::string               extension = itksys::SystemTools::GetFilenameLastExtension(fileName);
@@ -42,15 +42,15 @@ typename TImage::Pointer ReadImage( const std::string fileName)
     std::string dicomDir = itksys::SystemTools::GetParentDirectory( fileName.c_str() );
 
     itk::GDCMSeriesFileNames::Pointer FileNameGenerator = itk::GDCMSeriesFileNames::New();
-    FileNameGenerator->SetUseSeriesDetails( true );
-    FileNameGenerator->SetDirectory( dicomDir );
-    typedef const std::vector<std::string> ContainerType;
+    FileNameGenerator->SetUseSeriesDetails(true);
+    FileNameGenerator->SetDirectory(dicomDir);
+    typedef const std::vector< std::string > ContainerType;
     const ContainerType & seriesUIDs = FileNameGenerator->GetSeriesUIDs();
 
-    typedef typename itk::ImageSeriesReader<TImage> ReaderType;
+    typedef typename itk::ImageSeriesReader< TImage > ReaderType;
     typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileNames( FileNameGenerator->GetFileNames( seriesUIDs[0] ) );
-    reader->SetImageIO( dicomIO );
+    reader->SetFileNames( FileNameGenerator->GetFileNames(seriesUIDs[0]) );
+    reader->SetImageIO(dicomIO);
     try
       {
       reader->Update();
@@ -72,7 +72,7 @@ typename TImage::Pointer ReadImage( const std::string fileName)
     }
   else
     {
-    typedef itk::ImageFileReader<TImage> ReaderType;
+    typedef itk::ImageFileReader< TImage > ReaderType;
     typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( fileName.c_str() );
     try
@@ -103,7 +103,7 @@ typename TImage::Pointer ReadImage( const std::string fileName)
  *
  */
 
-template <class ImageType1, class ImageType2>
+template< class ImageType1, class ImageType2 >
 bool
 ImagePhysicalDimensionsAreIdentical(typename ImageType1::Pointer & inputImage1,
                                     typename ImageType2::Pointer & inputImage2)
@@ -116,103 +116,98 @@ ImagePhysicalDimensionsAreIdentical(typename ImageType1::Pointer & inputImage1,
   return same;
 }
 
-template <class ImageType>
+template< class ImageType >
 typename ImageType::Pointer
 OrientImage(typename ImageType::ConstPointer & inputImage,
             itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
 {
-  typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter
-    = itk::OrientImageFilter<ImageType, ImageType>::New();
+  typename itk::OrientImageFilter< ImageType, ImageType >::Pointer orienter =
+    itk::OrientImageFilter< ImageType, ImageType >::New();
 
   orienter->SetDesiredCoordinateOrientation(orient);
   orienter->UseImageDirectionOn();
   orienter->SetInput(inputImage);
   orienter->Update();
-  typename ImageType::Pointer returnval
-    = orienter->GetOutput();
+  typename ImageType::Pointer returnval =
+    orienter->GetOutput();
   returnval->DisconnectPipeline();
   orienter->ReleaseDataFlagOn();
   return returnval;
 }
 
-template <class ImageType>
+template< class ImageType >
 typename ImageType::Pointer
 OrientImage(typename ImageType::ConstPointer & inputImage,
             const typename ImageType::DirectionType & dirCosines)
 {
-  return OrientImage<ImageType>
-    ( inputImage,
-      SOAdapterType().FromDirectionCosines(
-        dirCosines) );
+  return OrientImage< ImageType >
+           ( inputImage,
+           SOAdapterType().FromDirectionCosines(
+             dirCosines) );
 }
 
-template <class ImageType>
+template< class ImageType >
 typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage,
             const typename ImageType::DirectionType & dirCosines)
 {
   typename ImageType::ConstPointer constImg(inputImage);
-  return OrientImage<ImageType>
-    ( constImg,
-      SOAdapterType().FromDirectionCosines(
-        dirCosines) );
+  return OrientImage< ImageType >
+           ( constImg,
+           SOAdapterType().FromDirectionCosines(
+             dirCosines) );
 }
 
-template <class ImageType>
+template< class ImageType >
 typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage,
             itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
 {
   typename ImageType::ConstPointer constImg(inputImage);
-  return OrientImage<ImageType>(constImg, orient);
+  return OrientImage< ImageType >(constImg, orient);
 }
 
-template <class ImageType>
+template< class ImageType >
 typename ImageType::Pointer
 ReadImageAndOrient(const std::string & filename,
                    itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
 {
-  typename ImageType::Pointer img
-    = ReadImage<ImageType>(filename);
+  typename ImageType::Pointer img =
+    ReadImage< ImageType >(filename);
   typename ImageType::ConstPointer constImg(img);
-  typename ImageType::Pointer image = itkUtil::OrientImage<ImageType>(constImg,
-                                                                      orient);
+  typename ImageType::Pointer image = itkUtil::OrientImage< ImageType >(constImg,
+                                                                        orient);
   return image;
 }
 
-template <class ImageType>
+template< class ImageType >
 typename ImageType::Pointer
 ReadImageAndOrient(const std::string & filename,
-                   const DirectionType & dir )
+                   const DirectionType & dir)
 {
-  return ReadImageAndOrient<ImageType>
-    ( filename,
-      SOAdapterType().FromDirectionCosines(dir) );
+  return ReadImageAndOrient< ImageType >
+           ( filename,
+           SOAdapterType().FromDirectionCosines(dir) );
 }
 
-template <typename  TReadImageType>
+template< typename  TReadImageType >
 typename TReadImageType::Pointer ReadImageCoronal(const std::string & fileName)
 {
   DirectionType CORdir = SOAdapterType().ToDirectionCosines
-    (itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP);
+                           (itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP);
 
-  return ReadImageAndOrient<TReadImageType>(fileName, CORdir);
-
-
-
-
+  return ReadImageAndOrient< TReadImageType >(fileName, CORdir);
 }
 
-template <class ImageType>
+template< class ImageType >
 void
 WriteImage(typename ImageType::Pointer & image,
            const std::string & filename)
 {
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  typedef itk::ImageFileWriter< ImageType > WriterType;
   typename  WriterType::Pointer writer = WriterType::New();
-
+  writer->UseCompressionOn();
   writer->SetFileName( filename.c_str() );
-  writer->SetUseCompression(true);
   writer->SetInput(image);
 
   try
@@ -238,12 +233,12 @@ WriteImage(typename ImageType::Pointer & image,
  *
  * @return typename OutputImageType::Pointer
  */
-template <class InputImageType, class OutputImageType>
+template< class InputImageType, class OutputImageType >
 typename OutputImageType::Pointer
 TypeCast(const typename InputImageType::Pointer & input)
 {
-  typedef itk::CastImageFilter<InputImageType,
-    OutputImageType> CastToRealFilterType;
+  typedef itk::CastImageFilter< InputImageType,
+                                OutputImageType > CastToRealFilterType;
   typename CastToRealFilterType::Pointer toReal = CastToRealFilterType::New();
   toReal->SetInput(input);
   toReal->Update();
@@ -263,16 +258,16 @@ TypeCast(const typename InputImageType::Pointer & input)
  *        image
  * \return A new image of the specified type and scale.
  */
-template <class InputImageType, class OutputImageType>
+template< class InputImageType, class OutputImageType >
 typename OutputImageType::Pointer
 ScaleAndCast(const typename InputImageType::Pointer & image,
              const typename OutputImageType::PixelType OutputMin,
              const typename OutputImageType::PixelType OutputMax)
 {
-  typedef itk::RescaleIntensityImageFilter<InputImageType,
-    OutputImageType> R2CRescaleFilterType;
-  typename R2CRescaleFilterType::Pointer RealToProbMapCast
-    = R2CRescaleFilterType::New();
+  typedef itk::RescaleIntensityImageFilter< InputImageType,
+                                            OutputImageType > R2CRescaleFilterType;
+  typename R2CRescaleFilterType::Pointer RealToProbMapCast =
+    R2CRescaleFilterType::New();
   RealToProbMapCast->SetOutputMinimum(OutputMin);
   RealToProbMapCast->SetOutputMaximum(OutputMax);
   RealToProbMapCast->SetInput(image);
@@ -305,35 +300,35 @@ ScaleAndCast(const typename InputImageType::Pointer & image,
  *
  * @return typename OutputImageType::Pointer
  */
-template <class InputImageType, class OutputImageType>
+template< class InputImageType, class OutputImageType >
 typename OutputImageType::Pointer
 PreserveCast(const typename InputImageType::Pointer image)
 {
-  const typename InputImageType::PixelType inputmin
-    = itk::NumericTraits<typename InputImageType::PixelType>::min();
-  const typename InputImageType::PixelType inputmax
-    = itk::NumericTraits<typename InputImageType::PixelType>::max();
-  const typename OutputImageType::PixelType outputmin
-    = itk::NumericTraits<typename OutputImageType::PixelType>::min();
-  const typename OutputImageType::PixelType outputmax
-    = itk::NumericTraits<typename OutputImageType::PixelType>::max();
+  const typename InputImageType::PixelType inputmin =
+    itk::NumericTraits< typename InputImageType::PixelType >::min();
+  const typename InputImageType::PixelType inputmax =
+    itk::NumericTraits< typename InputImageType::PixelType >::max();
+  const typename OutputImageType::PixelType outputmin =
+    itk::NumericTraits< typename OutputImageType::PixelType >::min();
+  const typename OutputImageType::PixelType outputmax =
+    itk::NumericTraits< typename OutputImageType::PixelType >::max();
   if ( ( inputmin >= outputmin ) && ( inputmax <= outputmax ) )
     {
-    return TypeCast<InputImageType, OutputImageType>(image);
+    return TypeCast< InputImageType, OutputImageType >(image);
     }
   else
     {
-    return ScaleAndCast<InputImageType, OutputImageType>(image,
-                                                         outputmin,
-                                                         outputmax);
+    return ScaleAndCast< InputImageType, OutputImageType >(image,
+                                                           outputmin,
+                                                           outputmax);
     }
 }
 
-template <class ImageType>
+template< class ImageType >
 typename ImageType::Pointer
-CopyImage(const typename ImageType::Pointer & input )
+CopyImage(const typename ImageType::Pointer & input)
 {
-  typedef itk::ImageDuplicator<ImageType> ImageDupeType;
+  typedef itk::ImageDuplicator< ImageType > ImageDupeType;
   typename ImageDupeType::Pointer MyDuplicator = ImageDupeType::New();
   MyDuplicator->SetInputImage(input);
   MyDuplicator->Update();

@@ -33,16 +33,16 @@
 #include <fstream>
 
 #ifdef __USE_BRAINS2_INTEGRATION
-#include "iccdefdeformation/Deformation.h"
-#include "iccdefdeformation/Utils.h"
-#include "b2Affine_rw.h"
-#include "iccdefdeformation/HarmonicArrayIO.h"
+#  include "iccdefdeformation/Deformation.h"
+#  include "iccdefdeformation/Utils.h"
+#  include "b2Affine_rw.h"
+#  include "iccdefdeformation/HarmonicArrayIO.h"
 #endif
 
 namespace itk
 {
-template<typename TImage>
-ValidationInputParser<TImage>
+template< typename TImage >
+ValidationInputParser< TImage >
 ::ValidationInputParser()
 {
   m_TheMovingImageFilename = "";
@@ -57,19 +57,19 @@ ValidationInputParser<TImage>
   m_NumberOfMatchPoints = 7;
 
   m_NumberOfLevels = 1;
-  m_TheMovingImageShrinkFactors.Fill( 1 );
-  m_TheFixedImageShrinkFactors.Fill( 1 );
+  m_TheMovingImageShrinkFactors.Fill(1);
+  m_TheFixedImageShrinkFactors.Fill(1);
 
   m_NumberOfIterations = IterationsArrayType(1);
-  m_NumberOfIterations.Fill( 10 );
+  m_NumberOfIterations.Fill(10);
 
   m_OutDebug = false;
   m_ForceCoronalZeroOrigin = false;
 }
 
-template<typename TImage>
+template< typename TImage >
 void
-ValidationInputParser<TImage>
+ValidationInputParser< TImage >
 ::Execute()
 {
   /*************************
@@ -83,10 +83,10 @@ ValidationInputParser<TImage>
       {
       std::cout << "---Forcing Brains2 Orientation " << std::endl;
       }
-    m_TheFixedImage = itkUtil::ReadBrains2Image<TImage>(
-      m_TheFixedImageFilename );
-    m_TheMovingImage = itkUtil::ReadBrains2Image<TImage>(
-      m_TheMovingImageFilename );
+    m_TheFixedImage = itkUtil::ReadBrains2Image< TImage >(
+      m_TheFixedImageFilename);
+    m_TheMovingImage = itkUtil::ReadBrains2Image< TImage >(
+      m_TheMovingImageFilename);
 #else
     std::cout << "---Forcing Brains2 Orientation not yet implemented"
               << std::endl;
@@ -95,10 +95,11 @@ ValidationInputParser<TImage>
     }
   else
     {
-    m_TheFixedImage = itkUtil::ReadImage<TImage>( m_TheFixedImageFilename );
-    m_TheMovingImage = itkUtil::ReadImage<TImage>( m_TheMovingImageFilename );
+    m_TheFixedImage = itkUtil::ReadImage< TImage >(m_TheFixedImageFilename);
+    m_TheMovingImage = itkUtil::ReadImage< TImage >(m_TheMovingImageFilename);
     }
-  // HACK:  TODO:  Need to ensure that the fixed and moving images have the same
+  // HACK:  TODO:  Need to ensure that the fixed and moving images have the
+  // same
   // orientations.
 
   // TODO:  Need to figure out how to read in the initial deformation field.
@@ -110,7 +111,7 @@ ValidationInputParser<TImage>
   // m_InitialCoefficientFilename << std::endl;
   if ( m_InitialDeformationFieldFilename != "" )
     {
-    typedef   itk::ImageFileReader<TDeformationField> FieldReaderType;
+    typedef   itk::ImageFileReader< TDeformationField > FieldReaderType;
     typename FieldReaderType::Pointer fieldReader = FieldReaderType::New();
     fieldReader->SetFileName( m_InitialDeformationFieldFilename.c_str() );
     try
@@ -140,18 +141,19 @@ ValidationInputParser<TImage>
     // VBRAINSDemonWarpPrimary.cxx
     // Review reading of transform files from BRAINSFit code for
     // reading Versor/Euler/Affine file from
-    // Apparently when you register one transform, you need to register all your
+    // Apparently when you register one transform, you need to register all
+    // your
     // transforms.
     //
-        itk::AddExtraTransformRegister();
+    itk::AddExtraTransformRegister();
 
     //  ####### Now use TransformToDeformationFieldSource
-    typedef itk::TransformToDeformationFieldSource<TDeformationField, double>
-      DeformationFieldGeneratorType;
-    typedef typename DeformationFieldGeneratorType::TransformType TransformType;     
+    typedef itk::TransformToDeformationFieldSource< TDeformationField, double >
+    DeformationFieldGeneratorType;
+    typedef typename DeformationFieldGeneratorType::TransformType TransformType;
     // Only a templated base class.
 
-    typename TransformType::Pointer trsf = itk::ReadTransformFromDisk( m_InitialTransformFilename );
+    typename TransformType::Pointer trsf = itk::ReadTransformFromDisk(m_InitialTransformFilename);
 
     typename DeformationFieldGeneratorType::Pointer defGenerator = DeformationFieldGeneratorType::New();
     defGenerator->SetOutputSpacing( this->GetTheFixedImage()->GetSpacing() );
@@ -182,13 +184,13 @@ ValidationInputParser<TImage>
     std::string                      CoeffNameInput(
       m_InitialCoefficientFilename.c_str() );
 
-    {
-    if ( this->GetOutDebug() )
       {
-      std::cout << "Reading: " << CoeffNameInput << std::endl;
+      if ( this->GetOutDebug() )
+        {
+        std::cout << "Reading: " << CoeffNameInput << std::endl;
+        }
+      HarmonicReadAll3D(mu, CoeffNameInput);
       }
-    HarmonicReadAll3D(mu, CoeffNameInput);
-    }
     if ( this->GetOutDebug() )
       {
       std::cout << "\nCreating Deformation fields from Coefficient files\n";
@@ -214,6 +216,6 @@ ValidationInputParser<TImage>
               << m_TheFixedImageShrinkFactors << std::endl;
     }
 }
-} // namespace itk
+}   // namespace itk
 
 #endif

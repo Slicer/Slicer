@@ -16,10 +16,10 @@
 #include "itkTestMain.h"
 
 #ifndef M_PI
-#define M_PI 3.1415926
+#  define M_PI 3.1415926
 #endif
 #ifndef M_TWOPI
-#define M_TWOPI ( 2.0 * M_PI )
+#  define M_TWOPI ( 2.0 * M_PI )
 #endif
 inline double DEGREES(double x)
 {
@@ -32,14 +32,14 @@ static bool keepOutputs(false);
 
 //
 // typedefs
-typedef itk::Image<unsigned char, 3> ImageType;
-typedef itk::AffineTransform<double,
-                             3>                        AffineTransformType;
-typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
+typedef itk::Image< unsigned char, 3 > ImageType;
+typedef itk::AffineTransform< double,
+                              3 >                        AffineTransformType;
+typedef itk::LinearInterpolateImageFunction< ImageType, double > InterpolatorType;
 // typedef itk::NearestNeighborInterpolateImageFunction<ImageType,double>
 //  InterpolatorType;
-typedef itk::ResampleImageFilter<ImageType,
-                                 ImageType>         ResampleImageFilter;
+typedef itk::ResampleImageFilter< ImageType,
+                                  ImageType >         ResampleImageFilter;
 
 //
 // given two images, compute the RMS error between them.
@@ -77,7 +77,7 @@ static void WriteTransform(AffineTransformType::Pointer & MyTransform,
   TransformWriterType::Pointer affineWriter =  TransformWriterType::New();
 
   affineWriter->SetFileName( TransformFilename.c_str() );
-  affineWriter->SetInput( MyTransform );
+  affineWriter->SetInput(MyTransform);
   affineWriter->Update();
 }
 
@@ -101,12 +101,13 @@ Register(const std::string & registrationProgram,
 {
   std::string cmdLine(registrationProgram);
 
-  cmdLine     // " --forceImageOrientation Axial"
-    += " --numberOfIterations 2500"
-    " --numberOfSamples 24000" // test is on small image, speed things up
-    " --translationScale 250"
-    " --minimumStepSize 0.01"
-    " --outputVolumePixelType uchar";
+  cmdLine +=  // " --forceImageOrientation Axial"
+             " --numberOfIterations 2500"
+             " --numberOfSamples 24000" // test is on small image, speed things
+                                        // up
+             " --translationScale 250"
+             " --minimumStepSize 0.01"
+             " --outputVolumePixelType uchar";
   cmdLine += " --transformType ";
   cmdLine += transformType;
 
@@ -191,8 +192,8 @@ SimpleRotation(const double imageCenter[3])
 static AffineTransformType::Pointer
 Translate(const double xoffset, const double yoffset, const double zoffset)
 {
-  AffineTransformType::Pointer transform
-    = AffineTransformType::New();
+  AffineTransformType::Pointer transform =
+    AffineTransformType::New();
   AffineTransformType::OutputVectorType offset;
 
   offset[0] = xoffset;
@@ -207,8 +208,8 @@ Translate(const double xoffset, const double yoffset, const double zoffset)
 static AffineTransformType::Pointer
 Scale(const double xScale, const double yScale, const double zScale)
 {
-  AffineTransformType::Pointer transform
-    = AffineTransformType::New();
+  AffineTransformType::Pointer transform =
+    AffineTransformType::New();
   AffineTransformType::OutputVectorType scale;
 
   scale[0] = xScale;
@@ -224,11 +225,11 @@ int BRAINSFitTestDriver(int argc, char **argv)
   if ( argc != 6 && argc != 7 )
     {
     std::cerr << "BRAINSFitTest "
-      "[-k] <test-class> <source-image> <source-mask> <work-directory> <path-to-RegistrationProgram>"
+                 "[-k] <test-class> <source-image> <source-mask> <work-directory> <path-to-RegistrationProgram>"
               << std::endl;
     std::cerr
-      << "first argument required to be either [translation|rotation|scale]"
-      << std::endl;
+    << "first argument required to be either [translation|rotation|scale]"
+    << std::endl;
     exit(1);
     }
   if ( strcmp(argv[1], "-k") == 0 )
@@ -247,8 +248,8 @@ int BRAINSFitTestDriver(int argc, char **argv)
   else
     {
     std::cerr
-      << "first argument required to be either [translation|rotation|scale] : "
-      << RegistrationClass << std::endl;
+    << "first argument required to be either [translation|rotation|scale] : "
+    << RegistrationClass << std::endl;
     exit(-1);
     }
   std::string startImageName( itksys::SystemTools::CollapseFullPath(argv[1]) );
@@ -268,8 +269,8 @@ int BRAINSFitTestDriver(int argc, char **argv)
   ImageType::DirectionType IdentityOrientation;
   IdentityOrientation.SetIdentity();
   // read input image
-  ImageType::Pointer startImage
-    = itkUtil::ReadImage<ImageType>(startImageName);
+  ImageType::Pointer startImage =
+    itkUtil::ReadImage< ImageType >(startImageName);
 
   if ( startImage.IsNull() )
     {
@@ -279,8 +280,8 @@ int BRAINSFitTestDriver(int argc, char **argv)
     }
 
   // read input mask
-  ImageType::Pointer startMask
-    = itkUtil::ReadImage<ImageType>(startMaskName);
+  ImageType::Pointer startMask =
+    itkUtil::ReadImage< ImageType >(startMaskName);
   if ( startMask.IsNull() )
     {
     std::cerr << "Can't read test mask "
@@ -302,8 +303,8 @@ int BRAINSFitTestDriver(int argc, char **argv)
   ImageType::DirectionType Orientation = startImage->GetDirection();
   ImageType::SpacingType   spacing = startImage->GetSpacing();
   ImageType::PointType     origin = startImage->GetOrigin();
-  ImageType::SizeType      size
-    = startImage->GetLargestPossibleRegion().GetSize();
+  ImageType::SizeType      size =
+    startImage->GetLargestPossibleRegion().GetSize();
 
   unsigned    errors(0);
   std::string blank("");
@@ -317,12 +318,12 @@ int BRAINSFitTestDriver(int argc, char **argv)
     ImageType::Pointer translatedImage = Resample(startImage, transform);
     std::string        translatedImageName = PrependName(startImageName,
                                                          RegistrationClass + ".");
-    itkUtil::WriteImage<ImageType>(translatedImage, translatedImageName);
+    itkUtil::WriteImage< ImageType >(translatedImage, translatedImageName);
 
     ImageType::Pointer translatedMask = Resample(startMask, transform);
     std::string        translatedMaskName = PrependName(startMaskName,
                                                         RegistrationClass + ".");
-    itkUtil::WriteImage<ImageType>(translatedMask, translatedMaskName);
+    itkUtil::WriteImage< ImageType >(translatedMask, translatedMaskName);
 
     std::string registrationTransformName = RegistrationClass + ".txt";
     std::string registeredImageName = PrependName(startImageName,
@@ -375,12 +376,12 @@ int BRAINSFitTestDriver(int argc, char **argv)
                 << std::endl;
       exit(4);
       }
-    AffineTransformType::OutputPointType transformedCenter
-      = transform->TransformPoint(CenterOfRotation);
+    AffineTransformType::OutputPointType transformedCenter =
+      transform->TransformPoint(CenterOfRotation);
 
     std::string rotatedImageName = PrependName(startImageName,
                                                RegistrationClass + ".");
-    itkUtil::WriteImage<ImageType>(rotatedImage, rotatedImageName);
+    itkUtil::WriteImage< ImageType >(rotatedImage, rotatedImageName);
     if ( !itksys::SystemTools::FileExists( rotatedImageName.c_str() ) )
       {
       std::cerr << "Writing "
@@ -392,7 +393,7 @@ int BRAINSFitTestDriver(int argc, char **argv)
     ImageType::Pointer rotatedMask = Resample(startMask, transform);
     std::string        rotatedMaskName = PrependName(startMaskName,
                                                      RegistrationClass + ".");
-    itkUtil::WriteImage<ImageType>(rotatedMask, rotatedMaskName);
+    itkUtil::WriteImage< ImageType >(rotatedMask, rotatedMaskName);
     if ( !itksys::SystemTools::FileExists( rotatedMaskName.c_str() ) )
       {
       std::cerr << "Writing "
@@ -403,7 +404,7 @@ int BRAINSFitTestDriver(int argc, char **argv)
     for ( unsigned i = 0; i < 4; i++ )
       {
       std::string registrationTransformName = regTypes[i] + RegistrationClass
-        + ".txt";
+                                              + ".txt";
       std::string registeredImageName = PrependName(startImageName,
                                                     RegistrationClass + "Registered.");
       for ( unsigned j = 0; j < 2; j++ )
@@ -463,7 +464,7 @@ int BRAINSFitTestDriver(int argc, char **argv)
 
     AffineTransformType::Pointer initializerTransform = Scale(0.8, 0.9, 0.85);
     std::string                  InitializerTransformName = RegistrationClass
-      + "Init.txt";
+                                                            + "Init.txt";
     WriteTransform(initializerTransform, InitializerTransformName);
 
     ImageType::Pointer scaledImage = Resample(startImage, transform);
@@ -471,12 +472,12 @@ int BRAINSFitTestDriver(int argc, char **argv)
               << std::endl;
     std::string scaledImageName = PrependName(startImageName,
                                               RegistrationClass + ".");
-    itkUtil::WriteImage<ImageType>(scaledImage, scaledImageName);
+    itkUtil::WriteImage< ImageType >(scaledImage, scaledImageName);
 
     ImageType::Pointer scaledMask = Resample(startMask, transform);
     std::string        scaledMaskName = PrependName(startMaskName,
                                                     RegistrationClass + ".");
-    itkUtil::WriteImage<ImageType>(scaledMask, scaledMaskName);
+    itkUtil::WriteImage< ImageType >(scaledMask, scaledMaskName);
     if ( !itksys::SystemTools::FileExists( scaledMaskName.c_str() ) )
       {
       std::cerr << "Writing "
@@ -494,7 +495,7 @@ int BRAINSFitTestDriver(int argc, char **argv)
                   << InitializerTransformName << std::endl;
         }
       std::string registrationTransformName = regTypes[i] + RegistrationClass
-        + ".txt";
+                                              + ".txt";
       std::string regScaleName = regTypes[i] + RegistrationClass + ".";
       std::string registeredImageName = PrependName(startImageName,
                                                     RegistrationClass + "Registered.");

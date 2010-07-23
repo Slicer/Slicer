@@ -7,9 +7,9 @@
 /**
  * Constructor
  */
-template<class TCoordinateType, unsigned int NDimensions>
-CrossOverAffineSystem<TCoordinateType, NDimensions>
-::CrossOverAffineSystem() :
+template< class TCoordinateType, unsigned int NDimensions >
+CrossOverAffineSystem< TCoordinateType, NDimensions >
+::CrossOverAffineSystem():
   m_InhaleEncodeConversion(),
   m_InhaleDecodeConversion(),
   m_ExhaleEncodeConversion(),
@@ -29,8 +29,8 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>
 /**
  * Destructor
  */
-template<class TCoordinateType, unsigned int NDimensions>
-CrossOverAffineSystem<TCoordinateType, NDimensions>::
+template< class TCoordinateType, unsigned int NDimensions >
+CrossOverAffineSystem< TCoordinateType, NDimensions >::
 ~CrossOverAffineSystem()
 {
   return;
@@ -39,13 +39,13 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>::
 /**
  * Utility function not provided in general vector implementations.
  */
-template<class TCoordinateType, unsigned int NDimensions>
-typename CrossOverAffineSystem<TCoordinateType, NDimensions>::VectorType
-Reciprocal(const typename CrossOverAffineSystem<TCoordinateType,
-                                                NDimensions>::VectorType & Scale)
+template< class TCoordinateType, unsigned int NDimensions >
+typename CrossOverAffineSystem< TCoordinateType, NDimensions >::VectorType
+Reciprocal(const typename CrossOverAffineSystem< TCoordinateType,
+                                                 NDimensions >::VectorType & Scale)
 {
-  typedef typename CrossOverAffineSystem<TCoordinateType,
-                                         NDimensions>::VectorType VectorType;
+  typedef typename CrossOverAffineSystem< TCoordinateType,
+                                          NDimensions >::VectorType VectorType;
   VectorType ReciprocalScale(Scale);
 
   for ( unsigned int i = 0; i < NDimensions; i++ )
@@ -64,11 +64,10 @@ Reciprocal(const typename CrossOverAffineSystem<TCoordinateType,
  * So in EstablishCrossOverSystemForAir16() in TransformAdaptor.txx,
  * the two arguments are to be given from the 'inhale' point of view.
  */
-template<class TCoordinateType, unsigned int NDimensions>
+template< class TCoordinateType, unsigned int NDimensions >
 void
-CrossOverAffineSystem<TCoordinateType, NDimensions>::
-EncloseInScaling(const VectorType & EncodeScale,
-                 const VectorType & DecodeScale)
+CrossOverAffineSystem< TCoordinateType, NDimensions >::EncloseInScaling(const VectorType & EncodeScale,
+                                                                        const VectorType & DecodeScale)
 {
 #ifdef VERBOSE_PRINTING
   std::cout << "Encode Scale: " << EncodeScale << std::endl;
@@ -83,10 +82,10 @@ EncloseInScaling(const VectorType & EncodeScale,
   m_InhaleDecodeConversion->Scale(DecodeScale,
                                   DecodeApplyUpstream);
 
-  VectorType ReciprocalEncodeScale( Reciprocal<TCoordinateType, NDimensions>(
+  VectorType ReciprocalEncodeScale( Reciprocal< TCoordinateType, NDimensions >(
                                       EncodeScale) );
 
-  VectorType ReciprocalDecodeScale( Reciprocal<TCoordinateType, NDimensions>(
+  VectorType ReciprocalDecodeScale( Reciprocal< TCoordinateType, NDimensions >(
                                       DecodeScale) );
 
   m_ExhaleEncodeConversion->Scale(ReciprocalEncodeScale,
@@ -102,11 +101,10 @@ EncloseInScaling(const VectorType & EncodeScale,
  * So in EstablishCrossOverSystemForAir16() in TransformAdaptor.txx,
  * the two arguments are to be given from the 'inhale' point of view.
  */
-template<class TCoordinateType, unsigned int NDimensions>
+template< class TCoordinateType, unsigned int NDimensions >
 void
-CrossOverAffineSystem<TCoordinateType, NDimensions>::
-EncloseInTranslation(const VectorType & EncodeShift,
-                     const VectorType & DecodeShift)
+CrossOverAffineSystem< TCoordinateType, NDimensions >::EncloseInTranslation(const VectorType & EncodeShift,
+                                                                            const VectorType & DecodeShift)
 {
 #ifdef VERBOSE_PRINTING
   std::cout << "Encode Shift: " << EncodeShift << std::endl;
@@ -137,11 +135,10 @@ EncloseInTranslation(const VectorType & EncodeShift,
 #endif
 }
 
-template<class TCoordinateType, unsigned int NDimensions>
+template< class TCoordinateType, unsigned int NDimensions >
 void
-CrossOverAffineSystem<TCoordinateType, NDimensions>::
-EncloseInCentering(const PointType & EncodeCenter,
-                   const PointType & DecodeCenter)
+CrossOverAffineSystem< TCoordinateType, NDimensions >::EncloseInCentering(const PointType & EncodeCenter,
+                                                                          const PointType & DecodeCenter)
 {
 #ifdef VERBOSE_PRINTING
   std::cout << "Encode Center: " << EncodeCenter << std::endl;
@@ -170,11 +167,10 @@ EncloseInCentering(const PointType & EncodeCenter,
  * two entire transforms in like fashion to the more useful routines above.
  * The two arguments are to be given from the 'inhale' point of view.
  */
-template<class TCoordinateType, unsigned int NDimensions>
+template< class TCoordinateType, unsigned int NDimensions >
 void
-CrossOverAffineSystem<TCoordinateType, NDimensions>::
-EncloseInAffineTransforms(AffineTransformPointer Encode,
-                          AffineTransformPointer Decode)
+CrossOverAffineSystem< TCoordinateType, NDimensions >::EncloseInAffineTransforms(AffineTransformPointer Encode,
+                                                                                 AffineTransformPointer Decode)
 {
   const bool EncodeApplyUpstream = false;
   const bool DecodeApplyUpstream = true;
@@ -186,8 +182,8 @@ EncloseInAffineTransforms(AffineTransformPointer Encode,
 
   AffineTransformPointer EncodeInverse = AffineTransformType::New();
   AffineTransformPointer DecodeInverse = AffineTransformType::New();
-  Encode->GetInverse( EncodeInverse );
-  Decode->GetInverse( DecodeInverse );
+  Encode->GetInverse(EncodeInverse);
+  Decode->GetInverse(DecodeInverse);
 
   m_ExhaleEncodeConversion->Compose(EncodeInverse,
                                     EncodeApplyUpstream);

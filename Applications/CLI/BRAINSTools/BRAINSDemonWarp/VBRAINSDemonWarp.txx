@@ -5,8 +5,8 @@
 
 namespace itk
 {
-template<typename TImage, typename TRealImage, typename TOutputImage>
-VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
+template< typename TImage, typename TRealImage, typename TOutputImage >
+VBRAINSDemonWarp< TImage, TRealImage, TOutputImage >
 ::VBRAINSDemonWarp()
 {
   m_TheMovingImageFilename.reserve(10);
@@ -19,10 +19,10 @@ VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   m_CheckerBoardFilename = "none";
   m_DeformationFieldOutputName = "none";
   m_DisplacementBaseName = "none";
-  m_CheckerBoardPattern.Fill( 4 );
-  m_Lower = NumericTraits<PixelType>::NonpositiveMin();
-  m_Upper = NumericTraits<PixelType>::max();
-  m_DefaultPixelValue = NumericTraits<PixelType>::Zero;
+  m_CheckerBoardPattern.Fill(4);
+  m_Lower = NumericTraits< PixelType >::NonpositiveMin();
+  m_Upper = NumericTraits< PixelType >::max();
+  m_DefaultPixelValue = NumericTraits< PixelType >::Zero;
   m_Radius.Fill(1);
   m_FixedBinaryVolume = "none";
   m_MovingBinaryVolume = "none";
@@ -50,14 +50,14 @@ VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
 /*This method initializes the input parser which reads in the moving image,
   fixed image and parameter file.*/
 
-template<typename TImage, typename TRealImage, typename TOutputImage>
+template< typename TImage, typename TRealImage, typename TOutputImage >
 void
-VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
+VBRAINSDemonWarp< TImage, TRealImage, TOutputImage >
 ::InitializeParser()
 {
-  this->m_Parser->SetTheMovingImageFilename( this->m_TheMovingImageFilename );
+  this->m_Parser->SetTheMovingImageFilename(this->m_TheMovingImageFilename);
 
-  this->m_Parser->SetTheFixedImageFilename( this->m_TheFixedImageFilename);
+  this->m_Parser->SetTheFixedImageFilename(this->m_TheFixedImageFilename);
   this->m_Parser->SetForceCoronalZeroOrigin( this->GetForceCoronalZeroOrigin() );
 
   this->m_Parser->SetInitialDeformationFieldFilename(
@@ -83,9 +83,9 @@ VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
   images before registration. The image files which are read in using the parser
   are given to the preprocessor.*/
 
-template<typename TImage, typename TRealImage, typename TOutputImage>
+template< typename TImage, typename TRealImage, typename TOutputImage >
 void
-VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
+VBRAINSDemonWarp< TImage, TRealImage, TOutputImage >
 ::InitializePreprocessor()
 {
   this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetTheFixedImages() );
@@ -114,9 +114,9 @@ VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
 /*This method initializes the registration process. The preprocessed output
   files are passed to the registrator.*/
 
-template<typename TImage, typename TRealImage, typename TOutputImage>
+template< typename TImage, typename TRealImage, typename TOutputImage >
 void
-VBRAINSDemonWarp<TImage, TRealImage, TOutputImage>
+VBRAINSDemonWarp< TImage, TRealImage, TOutputImage >
 ::InitializeRegistrator()
 {
   this->m_Registrator->SetDisplacementBaseName( this->GetDisplacementBaseName() );

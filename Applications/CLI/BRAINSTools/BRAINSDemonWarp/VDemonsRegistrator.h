@@ -46,20 +46,20 @@ namespace itk
  *   - Checkerboard image
  *   - x,y,z components of displacement fields.
  */
-template <
+template<
   class TRealImage,
   class TOutputImage,
   class TFieldValue = ITK_TYPENAME TRealImage::PixelType
   >
-class VDemonsRegistrator : public Object
+class VDemonsRegistrator:public Object
 {
 public:
 
   /** Standard class typedefs. */
-  typedef VDemonsRegistrator       Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef VDemonsRegistrator         Self;
+  typedef Object                     Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(VDemonsRegistrator, Object);
@@ -72,108 +72,108 @@ public:
   typedef typename RealImageType::PixelType RealPixelType;
 
   /** Moving Image Type. */
-  typedef typename TOutputImage::PixelType            PixelType;
-  typedef typename RealImageType::Pointer             ImagePointer;
-  typedef typename itk::VectorImage<RealPixelType, 3> VectorImageType;
+  typedef typename TOutputImage::PixelType              PixelType;
+  typedef typename RealImageType::Pointer               ImagePointer;
+  typedef typename itk::VectorImage< RealPixelType, 3 > VectorImageType;
 
-  typedef Array<float>                                WeightFactorType;
+  typedef Array< float > WeightFactorType;
 
   /** Image dimension enumeration. */
   itkStaticConstMacro(ImageDimension, unsigned int, TRealImage::ImageDimension);
 
   /** Type to hold the number of checker boxes per dimension */
-  typedef FixedArray<unsigned int,
-                     ::itk::GetImageDimension<TRealImage>::ImageDimension>
+  typedef FixedArray< unsigned int,
+                      ::itk::GetImageDimension< TRealImage >::ImageDimension >
   PatternArrayType;
 
   /** Set Checker pattern */
-  itkSetMacro( CheckerBoardPattern, PatternArrayType );
-  itkGetConstReferenceMacro( CheckerBoardPattern, PatternArrayType );
+  itkSetMacro(CheckerBoardPattern, PatternArrayType);
+  itkGetConstReferenceMacro(CheckerBoardPattern, PatternArrayType);
 
   /** Deformation field value type. */
   typedef TFieldValue FieldValueType;
 
   /** Deformation field pixel type. */
-  typedef Vector<FieldValueType,
-                 itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
+  typedef Vector< FieldValueType,
+                  itkGetStaticConstMacro(ImageDimension) > FieldPixelType;
 
   /** Deformation field type. */
-  typedef Image<FieldPixelType,
-                itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+  typedef Image< FieldPixelType,
+                 itkGetStaticConstMacro(ImageDimension) > TDeformationField;
 
   /** Fixed Image Pyramid Type. */
   typedef RecursiveMultiResolutionPyramidImageFilter<
     RealImageType,
-    RealImageType>    FixedImagePyramidType;
+    RealImageType >    FixedImagePyramidType;
 
   /** Moving Image Pyramid Type. */
   typedef RecursiveMultiResolutionPyramidImageFilter<
     RealImageType,
-    RealImageType>   MovingImagePyramidType;
+    RealImageType >   MovingImagePyramidType;
 
   /** Registration Method. */
   typedef MultiResolutionPDEDeformableRegistration<
     RealImageType,
     RealImageType,
-    TDeformationField, float>    RegistrationType;
+    TDeformationField, float >    RegistrationType;
 
   typedef VectorMultiResolutionPDEDeformableRegistration<
     VectorImageType,
     VectorImageType,
-    TDeformationField, float>    VectorRegistrationType;
+    TDeformationField, float >    VectorRegistrationType;
 
   /** UnsignedIntArray type. */
-  typedef Array<unsigned int> UnsignedIntArray;
+  typedef Array< unsigned int > UnsignedIntArray;
 
   /** ShrinkFactorsArray type. */
-  typedef FixedArray<unsigned int,
-                     itkGetStaticConstMacro(ImageDimension)> ShrinkFactorsArray;
+  typedef FixedArray< unsigned int,
+                      itkGetStaticConstMacro(ImageDimension) > ShrinkFactorsArray;
 
   /** Set the intial deformation field **/
   itkSetObjectMacro (InitialDeformationField, TDeformationField);
 
   /** Set the fixed image. */
-  void SetFixedImage(std::vector<ImagePointer> & image)
+  void SetFixedImage(std::vector< ImagePointer > & image)
   {
     m_FixedImage = image;
   }
 
   /** Set the moving image. */
-  void SetMovingImage(std::vector<ImagePointer> & image)
+  void SetMovingImage(std::vector< ImagePointer > & image)
   {
     m_MovingImage = image;
   }
 
   /** Set the Unnormalized moving image. */
-  void SetUnNormalizedFixedImage(std::vector<ImagePointer> & image)
+  void SetUnNormalizedFixedImage(std::vector< ImagePointer > & image)
   {
     m_UnNormalizedFixedImage = image;
   }
 
   /** Set the Unnormalized moving image. */
-  void SetUnNormalizedMovingImage(std::vector<ImagePointer> & image)
+  void SetUnNormalizedMovingImage(std::vector< ImagePointer > & image)
   {
     m_UnNormalizedMovingImage = image;
   }
 
   /** Set the number of resolution levels. */
   itkSetClampMacro( NumberOfLevels, unsigned short, 1,
-                    NumericTraits<unsigned short>::max() );
+                    NumericTraits< unsigned short >::max() );
 
   /** Set the number of iterations per level. */
-  itkSetMacro( NumberOfIterations, UnsignedIntArray );
+  itkSetMacro(NumberOfIterations, UnsignedIntArray);
 
   /** Set the fixed and moving image shrink factors. */
-  itkSetMacro( FixedImageShrinkFactors, ShrinkFactorsArray );
-  itkSetMacro( MovingImageShrinkFactors, ShrinkFactorsArray );
+  itkSetMacro(FixedImageShrinkFactors, ShrinkFactorsArray);
+  itkSetMacro(MovingImageShrinkFactors, ShrinkFactorsArray);
 
   /** Set Displacementname */
-  itkSetStringMacro( DisplacementBaseName );
-  itkGetStringMacro( DisplacementBaseName );
+  itkSetStringMacro(DisplacementBaseName);
+  itkGetStringMacro(DisplacementBaseName);
 
   /** Set WarpedImageName */
-  itkSetStringMacro( WarpedImageName );
-  itkGetStringMacro( WarpedImageName );
+  itkSetStringMacro(WarpedImageName);
+  itkGetStringMacro(WarpedImageName);
 
   /** Set CheckerBoard ImageName */
   itkSetStringMacro(CheckerBoardFilename);
@@ -191,18 +191,18 @@ public:
   virtual void Execute();
 
   /** Get the deformation field. */
-  itkGetObjectMacro( DeformationField, TDeformationField );
+  itkGetObjectMacro(DeformationField, TDeformationField);
 
   /** Initialize registration at the start of new level. */
   void StartNewLevel();
 
   /**Output Normalized Image.*/
-  itkSetStringMacro(OutNormalized );
-  itkGetStringMacro( OutNormalized );
+  itkSetStringMacro(OutNormalized);
+  itkGetStringMacro(OutNormalized);
 
   /**Set Debug mode*/
-  itkSetMacro(OutDebug, bool );
-  itkGetConstMacro( OutDebug,  bool );
+  itkSetMacro(OutDebug, bool);
+  itkGetConstMacro(OutDebug,  bool);
 
   itkSetStringMacro (FixedLandmarkFilename);
   itkGetStringMacro (FixedLandmarkFilename);
@@ -213,11 +213,11 @@ public:
   itkGetMacro(DefaultPixelValue, typename RealImageType::PixelType);
 
   /** Get the interpolation Mode. */
-  itkGetMacro( InterpolationMode, std::string );
-  itkSetMacro( InterpolationMode, std::string );
+  itkGetMacro(InterpolationMode, std::string);
+  itkSetMacro(InterpolationMode, std::string);
 
-  typedef itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
-                                               TDeformationField>
+  typedef itk::PDEDeformableRegistrationFilter< RealImageType, RealImageType,
+                                                TDeformationField >
   BaseRegistrationFilterType;
   void SetRegistrationFilter(
     typename BaseRegistrationFilterType::Pointer filter)
@@ -226,9 +226,9 @@ public:
     //      this->m_VectorRegistration->SetRegistrationFilter(filter);
   }
 
-  typedef itk::VectorDiffeomorphicDemonsRegistrationFilter<VectorImageType,
-                                                           VectorImageType,
-                                                           TDeformationField>
+  typedef itk::VectorDiffeomorphicDemonsRegistrationFilter< VectorImageType,
+                                                            VectorImageType,
+                                                            TDeformationField >
   VectorRegistrationFilterType;
   void SetVectorRegistrationFilter(
     typename VectorRegistrationFilterType::Pointer filter)
@@ -245,16 +245,16 @@ protected:
   VDemonsRegistrator();
   ~VDemonsRegistrator();
 private:
-  VDemonsRegistrator( const Self & );              // purposely not implemented
-  void operator=( const Self & );                  // purposely not implemented
+  VDemonsRegistrator(const Self &);                // purposely not implemented
+  void operator=(const Self &);                    // purposely not implemented
 
   void WriteDisplacementComponents();
 
   typename TDeformationField::Pointer m_InitialDeformationField;
-  std::vector<ImagePointer> m_FixedImage;
-  std::vector<ImagePointer> m_MovingImage;
-  std::vector<ImagePointer> m_UnNormalizedMovingImage;
-  std::vector<ImagePointer> m_UnNormalizedFixedImage;
+  std::vector< ImagePointer > m_FixedImage;
+  std::vector< ImagePointer > m_MovingImage;
+  std::vector< ImagePointer > m_UnNormalizedMovingImage;
+  std::vector< ImagePointer > m_UnNormalizedFixedImage;
   typename FixedImagePyramidType::Pointer m_FixedImagePyramid;
   typename MovingImagePyramidType::Pointer m_MovingImagePyramid;
   typename RegistrationType::Pointer m_Registration;
@@ -289,7 +289,7 @@ private:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "VDemonsRegistrator.txx"
+#  include "VDemonsRegistrator.txx"
 #endif
 
 #endif

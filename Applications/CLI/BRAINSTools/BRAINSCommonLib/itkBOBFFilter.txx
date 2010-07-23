@@ -13,24 +13,24 @@ namespace itk
 /*
  *
  */
-template<class TInputImage, class TOutputImage>
-BOBFFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage >
+BOBFFilter< TInputImage, TOutputImage >
 ::BOBFFilter()
 {
-  this->SetNumberOfRequiredInputs( 2 );
+  this->SetNumberOfRequiredInputs(2);
   m_Seed.Fill(0);
-  m_Lower = NumericTraits<InputPixelType>::NonpositiveMin();
-  m_Upper = NumericTraits<InputPixelType>::max();
-  m_ReplaceValue = NumericTraits<OutputPixelType>::One;
+  m_Lower = NumericTraits< InputPixelType >::NonpositiveMin();
+  m_Upper = NumericTraits< InputPixelType >::max();
+  m_ReplaceValue = NumericTraits< OutputPixelType >::One;
   m_Radius.Fill(1);
 }
 
 /*
  *
  */
-template<class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
-BOBFFilter<TInputImage, TOutputImage>
+BOBFFilter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -42,27 +42,27 @@ BOBFFilter<TInputImage, TOutputImage>
 /*
  *
  */
-template<class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
-BOBFFilter<TInputImage, TOutputImage>::SetInputMask(
-  const typename BOBFFilter<TInputImage, TOutputImage>
-  ::InputImageType *image )
+BOBFFilter< TInputImage, TOutputImage >::SetInputMask(
+  const typename BOBFFilter< TInputImage, TOutputImage >
+  ::InputImageType *image)
 {
-  this->SetNthInput( 1, const_cast<TInputImage *>( image ) );
+  this->SetNthInput( 1, const_cast< TInputImage * >( image ) );
 }
 
-template<class TInputImage, class TOutputImage>
-const typename BOBFFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage >
+const typename BOBFFilter< TInputImage, TOutputImage >
 ::InputImageType *
-BOBFFilter<TInputImage, TOutputImage>
+BOBFFilter< TInputImage, TOutputImage >
 ::GetInputMask()
 {
-  return static_cast<const TInputImage *>
-    ( this->ProcessObject::GetInput(1) );
+  return static_cast< const TInputImage * >
+         ( this->ProcessObject::GetInput(1) );
 }
 
-template<class TInputImage, class TOutputImage>
-void BOBFFilter<TInputImage, TOutputImage>::GenerateData()
+template< class TInputImage, class TOutputImage >
+void BOBFFilter< TInputImage, TOutputImage >::GenerateData()
 {
   OutputImagePointer     OutputPtr = this->GetOutput();
   InputImageConstPointer InputImage  = this->GetInputImage();
@@ -72,11 +72,11 @@ void BOBFFilter<TInputImage, TOutputImage>::GenerateData()
   OutputPtr->SetRequestedRegion( InputImage->GetRequestedRegion() );
   OutputPtr->SetBufferedRegion( InputImage->GetBufferedRegion() );
   OutputPtr->SetLargestPossibleRegion( InputImage->GetLargestPossibleRegion() );
-  OutputPtr->CopyInformation( InputImage );
+  OutputPtr->CopyInformation(InputImage);
   OutputPtr->Allocate();
 
-  typedef ImageRegionConstIterator<TInputImage> InputIterator;
-  typedef ImageRegionIterator<TOutputImage>     OutputIterator;
+  typedef ImageRegionConstIterator< TInputImage > InputIterator;
+  typedef ImageRegionIterator< TOutputImage >     OutputIterator;
 
   OutputIterator outItr( OutputPtr, OutputPtr->GetLargestPossibleRegion() );
 

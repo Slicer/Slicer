@@ -18,35 +18,35 @@
  * http://www.nitrc.org/projects/multimodereg/
  */
 
-template <class RegisterImageType, class ImageMaskSpatialObjectType, class BSplineTransformType>
+template< class RegisterImageType, class ImageMaskSpatialObjectType, class BSplineTransformType >
 typename BSplineTransformType::Pointer
-DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
-           typename RegisterImageType::Pointer m_FixedVolume,
-           typename RegisterImageType::Pointer m_MovingVolume,
-           typename ImageMaskSpatialObjectType::Pointer m_FixedMask,
-           typename ImageMaskSpatialObjectType::Pointer m_MovingMask,
-           const int m_NumberOfSamples,
-           const bool m_UseCachingOfBSplineWeights,
-           const bool m_UseExplicitPDFDerivatives,
-           const double m_MaxBSplineDisplacement,
-           const float m_CostFunctionConvergenceFactor,
-           const float m_ProjectedGradientTolerance,
-           const bool m_DisplayDeformedImage,
-           const bool m_PromptUserAfterDisplay)
+DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
+          typename RegisterImageType::Pointer m_FixedVolume,
+          typename RegisterImageType::Pointer m_MovingVolume,
+          typename ImageMaskSpatialObjectType::Pointer m_FixedMask,
+          typename ImageMaskSpatialObjectType::Pointer m_MovingMask,
+          const int m_NumberOfSamples,
+          const bool m_UseCachingOfBSplineWeights,
+          const bool m_UseExplicitPDFDerivatives,
+          const double m_MaxBSplineDisplacement,
+          const float m_CostFunctionConvergenceFactor,
+          const float m_ProjectedGradientTolerance,
+          const bool m_DisplayDeformedImage,
+          const bool m_PromptUserAfterDisplay)
 {
   /*
    *  Begin straightline BSpline optimization, after GTRACT/Common/itkAnatomicalBSplineFilter.
    */
 
-  typedef typename RegisterImageType::Pointer           RegisterImagePointer;
-  typedef typename RegisterImageType::ConstPointer      RegisterImageConstPointer;
-  typedef typename RegisterImageType::RegionType        RegisterImageRegionType;
-  typedef typename RegisterImageType::SizeType          RegisterImageSizeType;
-  typedef typename RegisterImageType::SpacingType       RegisterImageSpacingType;
-  typedef typename RegisterImageType::PointType         RegisterImagePointType;
-  typedef typename RegisterImageType::PixelType         RegisterImagePixelType;
-  typedef typename RegisterImageType::DirectionType     RegisterImageDirectionType;
-  typedef typename RegisterImageType::IndexType         RegisterImageIndexType;
+  typedef typename RegisterImageType::Pointer       RegisterImagePointer;
+  typedef typename RegisterImageType::ConstPointer  RegisterImageConstPointer;
+  typedef typename RegisterImageType::RegionType    RegisterImageRegionType;
+  typedef typename RegisterImageType::SizeType      RegisterImageSizeType;
+  typedef typename RegisterImageType::SpacingType   RegisterImageSpacingType;
+  typedef typename RegisterImageType::PointType     RegisterImagePointType;
+  typedef typename RegisterImageType::PixelType     RegisterImagePixelType;
+  typedef typename RegisterImageType::DirectionType RegisterImageDirectionType;
+  typedef typename RegisterImageType::IndexType     RegisterImageIndexType;
 
   typedef typename BSplineTransformType::RegionType     TransformRegionType;
   typedef typename TransformRegionType::SizeType        TransformSizeType;
@@ -55,19 +55,19 @@ DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
   typedef typename BSplineTransformType::DirectionType  TransformDirectionType;
   typedef typename BSplineTransformType::ParametersType TransformParametersType;
 
-  typedef typename itk::LBFGSBOptimizer                 OptimizerType;
+  typedef typename itk::LBFGSBOptimizer OptimizerType;
 
   typedef typename itk::MattesMutualInformationImageToImageMetric<
     RegisterImageType,
-    RegisterImageType>          MetricType;
+    RegisterImageType >          MetricType;
 
-  typedef typename itk:: LinearInterpolateImageFunction<
+  typedef typename itk::LinearInterpolateImageFunction<
     RegisterImageType,
-    double>          InterpolatorType;
+    double >          InterpolatorType;
 
   typedef typename itk::ImageRegistrationMethod<
     RegisterImageType,
-    RegisterImageType>          RegistrationType;
+    RegisterImageType >          RegistrationType;
 
   typedef typename BSplineTransformType::Pointer     TransformTypePointer;
   typedef typename MetricType::Pointer               MetricTypePointer;
@@ -77,12 +77,12 @@ DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
   typedef typename OptimizerType::BoundSelectionType OptimizerBoundSelectionType;
   typedef typename OptimizerType::BoundValueType     OptimizerBoundValueType;
 
-  typedef typename InterpolatorType::Pointer         InterpolatorTypePointer;
-  typedef typename RegistrationType::Pointer         RegistrationTypePointer;
+  typedef typename InterpolatorType::Pointer InterpolatorTypePointer;
+  typedef typename RegistrationType::Pointer RegistrationTypePointer;
 
   typedef typename itk::ResampleImageFilter<
     RegisterImageType,
-    RegisterImageType>     ResampleFilterType;
+    RegisterImageType >     ResampleFilterType;
 
   // TODO:  Expose these to the command line for consistancy.
   const int m_MaximumNumberOfIterations = 1500;
@@ -107,8 +107,8 @@ DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
     metric->SetMovingImageMask(m_MovingMask);
     }
 
-  metric->SetUseCachingOfBSplineWeights( m_UseCachingOfBSplineWeights );
-  metric->SetUseExplicitPDFDerivatives( m_UseExplicitPDFDerivatives );
+  metric->SetUseCachingOfBSplineWeights(m_UseCachingOfBSplineWeights);
+  metric->SetUseExplicitPDFDerivatives(m_UseExplicitPDFDerivatives);
 
   typename BSplineTransformType::Pointer m_OutputBSplineTransform = BSplineTransformType::New();
   m_OutputBSplineTransform->SetIdentity();
@@ -117,18 +117,18 @@ DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
   m_OutputBSplineTransform->SetParametersByValue( InitializerBsplineTransform->GetParameters() );
 
   /** Set up the Registration */
-  registration->SetMetric(        metric        );
-  registration->SetOptimizer(     optimizer     );
-  registration->SetInterpolator(  interpolator  );
-  registration->SetTransform( m_OutputBSplineTransform );
+  registration->SetMetric(metric);
+  registration->SetOptimizer(optimizer);
+  registration->SetInterpolator(interpolator);
+  registration->SetTransform(m_OutputBSplineTransform);
 
   /** Setup the Registration */
-  registration->SetFixedImage(    m_FixedVolume   );
-  registration->SetMovingImage(   m_MovingVolume   );
+  registration->SetFixedImage(m_FixedVolume);
+  registration->SetMovingImage(m_MovingVolume);
 
   RegisterImageRegionType fixedImageRegion = m_FixedVolume->GetBufferedRegion();
 
-  registration->SetFixedImageRegion( fixedImageRegion );
+  registration->SetFixedImageRegion(fixedImageRegion);
 
   registration->SetInitialTransformParameters( m_OutputBSplineTransform->GetParameters() );
 
@@ -144,34 +144,35 @@ DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
    *           = 2 if x[i] has both lower and upper bounds, and
    *           = 3 if x[1] has only an upper bound
    */
-  // TODO:  For control points outside the fixed image mask, it might be good to
+  // TODO:  For control points outside the fixed image mask, it might be good
+  // to
   // constrian
   // the parameters to something different than those control points inside the
   // fixed image mask.
   if ( vcl_abs(m_MaxBSplineDisplacement) < 1e-12 )
     {
-    boundSelect.Fill( 0 );
+    boundSelect.Fill(0);
     }
   else
     {
-    boundSelect.Fill( 2 );
+    boundSelect.Fill(2);
     }
-  upperBound.Fill(  m_MaxBSplineDisplacement );
-  lowerBound.Fill( -m_MaxBSplineDisplacement );
-  optimizer->SetBoundSelection( boundSelect );
-  optimizer->SetUpperBound( upperBound );
-  optimizer->SetLowerBound( lowerBound );
+  upperBound.Fill(m_MaxBSplineDisplacement);
+  lowerBound.Fill(-m_MaxBSplineDisplacement);
+  optimizer->SetBoundSelection(boundSelect);
+  optimizer->SetUpperBound(upperBound);
+  optimizer->SetLowerBound(lowerBound);
 
-  optimizer->SetCostFunctionConvergenceFactor( m_CostFunctionConvergenceFactor );
-  optimizer->SetProjectedGradientTolerance( m_ProjectedGradientTolerance );
-  optimizer->SetMaximumNumberOfIterations( m_MaximumNumberOfIterations );
-  optimizer->SetMaximumNumberOfEvaluations( m_MaximumNumberOfEvaluations );
-  optimizer->SetMaximumNumberOfCorrections( m_MaximumNumberOfCorrections );
+  optimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
+  optimizer->SetProjectedGradientTolerance(m_ProjectedGradientTolerance);
+  optimizer->SetMaximumNumberOfIterations(m_MaximumNumberOfIterations);
+  optimizer->SetMaximumNumberOfEvaluations(m_MaximumNumberOfEvaluations);
+  optimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
 
-  metric->SetNumberOfHistogramBins( m_BSplineHistogramBins );
+  metric->SetNumberOfHistogramBins(m_BSplineHistogramBins);
 
-  metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
-  metric->ReinitializeSeed( 76926294 );
+  metric->SetNumberOfSpatialSamples(m_NumberOfSamples);
+  metric->ReinitializeSeed(76926294);
 
   // Create the Command observer and register it with the optimizer.
   // TODO:  make this output optional.
@@ -180,17 +181,17 @@ DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
   const bool ObserveIterations = true;
   if ( ObserveIterations == true )
     {
-    typedef BRAINSFit::CommandIterationUpdate<OptimizerType, BSplineTransformType, RegisterImageType>
-      CommandIterationUpdateType;
-    typename CommandIterationUpdateType::Pointer observer
-      = CommandIterationUpdateType::New();
+    typedef BRAINSFit::CommandIterationUpdate< OptimizerType, BSplineTransformType, RegisterImageType >
+    CommandIterationUpdateType;
+    typename CommandIterationUpdateType::Pointer observer =
+      CommandIterationUpdateType::New();
     observer->SetDisplayDeformedImage(m_DisplayDeformedImage);
     observer->SetPromptUserAfterDisplay(m_PromptUserAfterDisplay);
     observer->SetPrintParameters(false);
     observer->SetMovingImage(m_MovingVolume);
     observer->SetFixedImage(m_FixedVolume);
     observer->SetTransform(m_OutputBSplineTransform);
-    optimizer->AddObserver( itk::IterationEvent(), observer );
+    optimizer->AddObserver(itk::IterationEvent(), observer);
     }
 
   /* Now start the execute function */
@@ -202,9 +203,9 @@ DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
 
   try
     {
-    collector.Start( "Registration" );
+    collector.Start("Registration");
     registration->StartRegistration();
-    collector.Stop( "Registration" );
+    collector.Stop("Registration");
     }
   catch ( itk::ExceptionObject & err )
     {
@@ -213,14 +214,14 @@ DoBSpline( typename BSplineTransformType::Pointer InitializerBsplineTransform,
     return NULL;
     }
 
-  OptimizerType::ParametersType finalParameters
-    = registration->GetLastTransformParameters();
+  OptimizerType::ParametersType finalParameters =
+    registration->GetLastTransformParameters();
 
   collector.Report();
   std::cout << "Stop condition from optimizer." << optimizer->GetStopConditionDescription() << std::endl;
 
   /* This call is required to copy the parameters */
-  m_OutputBSplineTransform->SetParametersByValue( finalParameters );
+  m_OutputBSplineTransform->SetParametersByValue(finalParameters);
   //  std::cout << "DELETEME:  " << finalParameters << std::endl;
   return m_OutputBSplineTransform;
 }

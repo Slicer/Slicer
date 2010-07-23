@@ -12,13 +12,13 @@ void RegisterBrains2MaskFactory()
   itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
 }
 
-template <class MaskType, unsigned VDimension>
+template< class MaskType, unsigned VDimension >
 typename MaskType::Pointer
 ReadImageMask(const std::string & filename,
-              typename itk::ImageBase<VDimension> *referenceImage)
+              typename itk::ImageBase< VDimension > *referenceImage)
 {
-  typedef unsigned char                                 MaskPixelType;
-  typedef typename itk::Image<MaskPixelType, VDimension> MaskImageType;
+  typedef unsigned char                                    MaskPixelType;
+  typedef typename itk::Image< MaskPixelType, VDimension > MaskImageType;
   typename MaskImageType::Pointer OrientedMaskImage = NULL;
 
   if ( itksys::SystemTools::GetFilenameLastExtension(filename) == ".mask" )
@@ -28,26 +28,26 @@ ReadImageMask(const std::string & filename,
     //       force the origin and direction orientation.
     //       The test suite should be re-written so that only if the brains2
     // read in the mask
-    OrientedMaskImage = itkUtil::ReadImageAndOrient<MaskImageType>( filename,
-                                                                    referenceImage->GetDirection() );
+    OrientedMaskImage = itkUtil::ReadImageAndOrient< MaskImageType >( filename,
+                                                                      referenceImage->GetDirection() );
     OrientedMaskImage->SetOrigin( referenceImage->GetOrigin() );
     // TODO: Should also check that spacing is the same;
     }
   else
     {
-    OrientedMaskImage = itkUtil::ReadImage<MaskImageType>(filename);
+    OrientedMaskImage = itkUtil::ReadImage< MaskImageType >(filename);
     // TODO:  May want to check that physical spaces overlap?
     }
   // convert mask image to mask
-  typedef typename itk::ImageMaskSpatialObject<VDimension>
-    ImageMaskSpatialObjectType;
-  typename ImageMaskSpatialObjectType::Pointer mask
-    = ImageMaskSpatialObjectType::New();
+  typedef typename itk::ImageMaskSpatialObject< VDimension >
+  ImageMaskSpatialObjectType;
+  typename ImageMaskSpatialObjectType::Pointer mask =
+    ImageMaskSpatialObjectType::New();
   mask->SetImage(OrientedMaskImage);
   //
   mask->ComputeObjectToWorldTransform();
   // return pointer to mask
-  typename MaskType::Pointer p = dynamic_cast<MaskType *>( mask.GetPointer() );
+  typename MaskType::Pointer p = dynamic_cast< MaskType * >( mask.GetPointer() );
   if ( p.IsNull() )
     {
     std::cout << "ERROR::" << __FILE__ << " " << __LINE__ << std::endl;

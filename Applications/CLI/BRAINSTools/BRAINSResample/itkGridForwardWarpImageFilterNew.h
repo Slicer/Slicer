@@ -51,25 +51,25 @@ namespace itk
  * http://hdl.handle.net/1926/510
  *
  */
-template <
+template<
   class TDeformationField,
   class TOutputImage
   >
-class ITK_EXPORT GridForwardWarpImageFilterNew :
-    public ImageToImageFilter<TDeformationField, TOutputImage>
+class ITK_EXPORT GridForwardWarpImageFilterNew:
+  public ImageToImageFilter< TDeformationField, TOutputImage >
 {
 public:
   /** Standard class typedefs. */
-  typedef GridForwardWarpImageFilterNew                       Self;
-  typedef ImageToImageFilter<TDeformationField, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                                  Pointer;
-  typedef SmartPointer<const Self>                            ConstPointer;
+  typedef GridForwardWarpImageFilterNew                         Self;
+  typedef ImageToImageFilter< TDeformationField, TOutputImage > Superclass;
+  typedef SmartPointer< Self >                                  Pointer;
+  typedef SmartPointer< const Self >                            ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( GridForwardWarpImageFilterNew, ImageToImageFilter );
+  itkTypeMacro(GridForwardWarpImageFilterNew, ImageToImageFilter);
 
   /** Typedef to describe the output image region type. */
   typedef typename TOutputImage::RegionType OutputImageRegionType;
@@ -84,9 +84,9 @@ public:
 
   /** Determine the image dimension. */
   itkStaticConstMacro(ImageDimension, unsigned int,
-                      TOutputImage::ImageDimension );
+                      TOutputImage::ImageDimension);
   itkStaticConstMacro(DeformationFieldDimension, unsigned int,
-                      TDeformationField::ImageDimension );
+                      TDeformationField::ImageDimension);
 
   /** Deformation field typedef support. */
   typedef TDeformationField                           DeformationFieldType;
@@ -94,14 +94,14 @@ public:
   typedef typename DeformationFieldType::PixelType    DisplacementType;
 
   /** Set the background value */
-  itkSetMacro( BackgroundValue, PixelType );
+  itkSetMacro(BackgroundValue, PixelType);
   /** Get the background value */
-  itkGetConstMacro( BackgroundValue, PixelType );
+  itkGetConstMacro(BackgroundValue, PixelType);
 
   /** Set the foreground value */
-  itkSetMacro( ForegroundValue, PixelType );
+  itkSetMacro(ForegroundValue, PixelType);
   /** Get the foreground value */
-  itkGetConstMacro( ForegroundValue, PixelType );
+  itkGetConstMacro(ForegroundValue, PixelType);
 
   /** Set the spacing for the grids value, a spacing of 0 indicates that
    * displacements in that direction should be set to zero (thus keeping the lines
@@ -111,17 +111,17 @@ public:
    * For example, if you want only Z-dir warped lines in a 2D X-dir view, then
    * set grid spacing to 0,-8,8.
    */
-  typedef FixedArray<int, ImageDimension> GridSpacingType;
-  itkSetMacro( GridPixelSpacing, GridSpacingType);
+  typedef FixedArray< int, ImageDimension > GridSpacingType;
+  itkSetMacro(GridPixelSpacing, GridSpacingType);
   /** Get the foreground value */
-  itkGetConstMacro( GridPixelSpacing, GridSpacingType);
+  itkGetConstMacro(GridPixelSpacing, GridSpacingType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro( SameDimensionCheck,
-                   ( Concept::SameDimension<ImageDimension, DeformationFieldDimension> ) );
+                   ( Concept::SameDimension< ImageDimension, DeformationFieldDimension > ) );
   itkConceptMacro( DeformationFieldHasNumericTraitsCheck,
-                   ( Concept::HasNumericTraits<typename TDeformationField::PixelType::ValueType> ) );
+                   ( Concept::HasNumericTraits< typename TDeformationField::PixelType::ValueType > ) );
   /** End concept checking */
 #endif
 protected:
@@ -146,7 +146,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkGridForwardWarpImageFilterNew.txx"
+#  include "itkGridForwardWarpImageFilterNew.txx"
 #endif
 
 #endif

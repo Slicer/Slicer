@@ -12,32 +12,32 @@ namespace itk
 /*This file defines Thirion registration class which initializes the input
   parser, preprocessor and the registrator. */
 
-template <typename TImage,
+template< typename TImage,
           typename TRealImage, typename TOutputImage
           >
-class ThirionRegistration : public ApplicationBase<
-  ValidationInputParser<TImage>,
-  DemonsPreprocessor<TImage, TRealImage>,
-  DemonsRegistrator<TRealImage, TOutputImage,
-                    ITK_TYPENAME TRealImage::PixelType>
-  >
+class ThirionRegistration:public ApplicationBase<
+    ValidationInputParser< TImage >,
+    DemonsPreprocessor< TImage, TRealImage >,
+    DemonsRegistrator< TRealImage, TOutputImage,
+                       ITK_TYPENAME TRealImage::PixelType >
+    >
 {
 public:
 
   /** Standard class typedefs. */
-  typedef ThirionRegistration      Self;
-  typedef ApplicationBase<ValidationInputParser<TImage>,
-                          DemonsPreprocessor<TImage, TRealImage>,
-                          DemonsRegistrator<TRealImage, TRealImage,
-                                            ITK_TYPENAME TRealImage::PixelType>> 
-    Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef ThirionRegistration Self;
+  typedef ApplicationBase< ValidationInputParser< TImage >,
+                           DemonsPreprocessor< TImage, TRealImage >,
+                           DemonsRegistrator< TRealImage, TRealImage,
+                                              ITK_TYPENAME TRealImage::PixelType > >
+  Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   /** Deformation field pixel type. */
-  typedef float                     FieldValueType;
-  typedef Vector<FieldValueType, 3> FieldPixelType;
-  typedef Image<FieldPixelType, 3>  TDeformationField;
+  typedef float                       FieldValueType;
+  typedef Vector< FieldValueType, 3 > FieldPixelType;
+  typedef Image< FieldPixelType, 3 >  TDeformationField;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro (ThirionRegistration, ApplicationBase);
@@ -54,19 +54,19 @@ public:
                        TImage::ImageDimension);
 
   /** Type to hold the number of checker boxes per dimension */
-  typedef FixedArray<unsigned int, ::itk::GetImageDimension<
-                                     TImage>::ImageDimension> PatternArrayType;
+  typedef FixedArray< unsigned int, ::itk::GetImageDimension<
+                        TImage >::ImageDimension > PatternArrayType;
 
   typedef typename ImageType::PixelType PixelType;
   typedef typename ImageType::IndexType IndexType;
   typedef typename ImageType::SizeType  SizeType;
 
   /** ShrinkFactors type. */
-  typedef FixedArray<unsigned int,
-                     itk::GetImageDimension<TImage>::ImageDimension> ShrinkFactorsType;
+  typedef FixedArray< unsigned int,
+                      itk::GetImageDimension< TImage >::ImageDimension > ShrinkFactorsType;
 
   /** IterationArray type. */
-  typedef Array<unsigned int> IterationsArrayType;
+  typedef Array< unsigned int > IterationsArrayType;
 
   /** Set the atlas patient ID. */
   itkSetStringMacro (TheMovingImageFilename);
@@ -173,40 +173,40 @@ public:
   itkGetConstMacro(UseHistogramMatching, bool);
 
   /** Get the number of histogram bins. */
-  itkGetConstMacro( NumberOfHistogramLevels, unsigned long );
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
+  itkGetConstMacro(NumberOfHistogramLevels, unsigned long);
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Get the number of match points. */
-  itkGetConstMacro( NumberOfMatchPoints, unsigned long );
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
+  itkGetConstMacro(NumberOfMatchPoints, unsigned long);
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
 
   /** Get the number of levels. */
-  itkGetMacro( NumberOfLevels, unsigned short );
-  itkSetMacro( NumberOfLevels, unsigned short );
+  itkGetMacro(NumberOfLevels, unsigned short);
+  itkSetMacro(NumberOfLevels, unsigned short);
 
   /** Get the atlas image starting shrink factors. */
-  itkGetConstReferenceMacro( TheMovingImageShrinkFactors, ShrinkFactorsType );
+  itkGetConstReferenceMacro(TheMovingImageShrinkFactors, ShrinkFactorsType);
   void SetTheMovingImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
   {
     this->m_TheMovingImageShrinkFactors = shrinkfactors;
   }
 
   /** Get the subject image starting shrink factors. */
-  itkGetConstReferenceMacro( TheFixedImageShrinkFactors, ShrinkFactorsType );
+  itkGetConstReferenceMacro(TheFixedImageShrinkFactors, ShrinkFactorsType);
   void SetTheFixedImageShrinkFactors(const ShrinkFactorsType & shrinkfactors)
   {
     this->m_TheFixedImageShrinkFactors = shrinkfactors;
   }
 
   /** Get the number of iterations at each level. */
-  itkGetConstReferenceMacro( NumberOfIterations, IterationsArrayType );
+  itkGetConstReferenceMacro(NumberOfIterations, IterationsArrayType);
   void SetNumberOfIterations(const IterationsArrayType & iterations)
   {
     m_NumberOfIterations = iterations;
   }
 
-  typedef itk::PDEDeformableRegistrationFilter<RealImageType, RealImageType,
-                                               TDeformationField> BaseRegistrationFilterType;
+  typedef itk::PDEDeformableRegistrationFilter< RealImageType, RealImageType,
+                                                TDeformationField > BaseRegistrationFilterType;
   void SetRegistrationFilter(
     typename BaseRegistrationFilterType::Pointer filter)
   {
@@ -217,17 +217,16 @@ protected:
 
   ThirionRegistration ();
   virtual ~ThirionRegistration ()
-  {
-  }
+  {}
 
   /** Initialize the input parser. */
-  virtual void InitializeParser ();
+  virtual void InitializeParser();
 
   /** Initialize the preprocessor */
-  virtual void InitializePreprocessor ();
+  virtual void InitializePreprocessor();
 
   /** Initialize the registrator  */
-  virtual void InitializeRegistrator ();
+  virtual void InitializeRegistrator();
 
 private:
 
@@ -256,7 +255,7 @@ private:
   PixelType        m_Lower;
   PixelType        m_Upper;
   PixelType        m_DefaultPixelValue;
-  SizeType         m_Radius; // for BOBF filter.
+  SizeType         m_Radius;   // for BOBF filter.
   SizeType         m_MedianFilterSize;
   std::string      m_FixedLandmarkFilename;
   std::string      m_MovingLandmarkFilename;
@@ -271,6 +270,6 @@ private:
 }          // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "ThirionRegistration.txx"
+#  include "ThirionRegistration.txx"
 #endif
 #endif

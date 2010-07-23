@@ -15,40 +15,40 @@ namespace itk
 /*
  * Default constructor
  */
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::VectorMultiResolutionPDEDeformableRegistration()
 {
   this->SetNumberOfRequiredInputs(2);
 
-  typename DefaultRegistrationType::Pointer registrator
-    = DefaultRegistrationType::New();
-  m_RegistrationFilter = static_cast<RegistrationType *>(
+  typename DefaultRegistrationType::Pointer registrator =
+    DefaultRegistrationType::New();
+  m_RegistrationFilter = static_cast< RegistrationType * >(
     registrator.GetPointer() );
   m_FixedVectorImagePyramid.reserve(10);
   m_MovingVectorImagePyramid.reserve(10);
 
   m_NumberOfLevels = 3;
-  m_NumberOfIterations.resize( m_NumberOfLevels );
+  m_NumberOfIterations.resize(m_NumberOfLevels);
   m_FieldExpander     = FieldExpanderType::New();
 
   m_MovingImagePyramid  = MovingImagePyramidType::New();
   m_MovingImagePyramid->UseShrinkImageFilterOff();
   m_FixedImagePyramid     = FixedImagePyramidType::New();
   m_FixedImagePyramid->UseShrinkImageFilterOff();
-  m_FixedImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
-  m_MovingImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
+  m_FixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
+  m_MovingImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
 
   for ( unsigned int i = 0; i < 3; i++ )
     {
     typename MovingImagePyramidType::Pointer movingImagePyramid = MovingImagePyramidType::New();
     movingImagePyramid->UseShrinkImageFilterOff();
-    movingImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
+    movingImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
     typename FixedImagePyramidType::Pointer fixedImagePyramid = FixedImagePyramidType::New();
     fixedImagePyramid->UseShrinkImageFilterOff();
-    fixedImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
+    fixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
     m_MovingVectorImagePyramid.push_back(movingImagePyramid);
     m_FixedVectorImagePyramid.push_back(fixedImagePyramid);
     }
@@ -67,71 +67,71 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 /*
  * Set the moving image image.
  */
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::SetMovingImage(
-  const MovingImageType *ptr )
+  const MovingImageType *ptr)
 {
-  this->ProcessObject::SetNthInput( 2, const_cast<MovingImageType *>( ptr ) );
+  this->ProcessObject::SetNthInput( 2, const_cast< MovingImageType * >( ptr ) );
 }
 
 /*
  * Get the moving image image.
  */
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
-const typename VectorMultiResolutionPDEDeformableRegistration<TFixedImage,
-                                                              TMovingImage, TDeformationField, TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
+const typename VectorMultiResolutionPDEDeformableRegistration< TFixedImage,
+                                                               TMovingImage, TDeformationField, TRealType >
 ::MovingImageType *
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::GetMovingImage(void) const
 {
-  return dynamic_cast<const MovingImageType *>
-    ( this->ProcessObject::GetInput( 2 ) );
+  return dynamic_cast< const MovingImageType * >
+         ( this->ProcessObject::GetInput(2) );
 }
 
 /*
  * Set the fixed image.
  */
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::SetFixedImage(
-  const FixedImageType *ptr )
+  const FixedImageType *ptr)
 {
-  this->ProcessObject::SetNthInput( 1, const_cast<FixedImageType *>( ptr ) );
+  this->ProcessObject::SetNthInput( 1, const_cast< FixedImageType * >( ptr ) );
 }
 
 /*
  * Get the fixed image.
  */
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
-const typename VectorMultiResolutionPDEDeformableRegistration<TFixedImage,
-                                                              TMovingImage, TDeformationField, TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
+const typename VectorMultiResolutionPDEDeformableRegistration< TFixedImage,
+                                                               TMovingImage, TDeformationField, TRealType >
 ::FixedImageType *
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::GetFixedImage(void) const
 {
-  return dynamic_cast<const FixedImageType *>
-    ( this->ProcessObject::GetInput( 1 ) );
+  return dynamic_cast< const FixedImageType * >
+         ( this->ProcessObject::GetInput(1) );
 }
 
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
-std::vector<SmartPointer<DataObject> >::size_type
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
+std::vector< SmartPointer< DataObject > >::size_type
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::GetNumberOfValidRequiredInputs() const
 {
-  typename std::vector<SmartPointer<DataObject> >::size_type num = 0;
+  typename std::vector< SmartPointer< DataObject > >::size_type num = 0;
 
   if ( this->GetFixedImage() )
     {
@@ -149,35 +149,35 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 /*
  * Set the number of multi-resolution levels
  */
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::SetNumberOfLevels(
-  unsigned int num )
+  unsigned int num)
 {
   if ( m_NumberOfLevels != num )
     {
     this->Modified();
     m_NumberOfLevels = num;
-    m_NumberOfIterations.resize( m_NumberOfLevels );
+    m_NumberOfIterations.resize(m_NumberOfLevels);
     }
 
   if ( m_MovingImagePyramid && m_MovingImagePyramid->GetNumberOfLevels() != num )
     {
-    m_MovingImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
+    m_MovingImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
     for ( unsigned int i = 0; i < this->GetMovingImage()->GetVectorLength(); i++ )
       {
-      m_MovingVectorImagePyramid[i]->SetNumberOfLevels( m_NumberOfLevels );
+      m_MovingVectorImagePyramid[i]->SetNumberOfLevels(m_NumberOfLevels);
       }
     }
   if ( m_FixedImagePyramid && m_FixedImagePyramid->GetNumberOfLevels() != num )
     {
-    m_FixedImagePyramid->SetNumberOfLevels( m_NumberOfLevels );
+    m_FixedImagePyramid->SetNumberOfLevels(m_NumberOfLevels);
     for ( unsigned int i = 0; i < this->GetFixedImage()->GetVectorLength(); i++ )
       {
-      m_FixedVectorImagePyramid[i]->SetNumberOfLevels( m_NumberOfLevels );
+      m_FixedVectorImagePyramid[i]->SetNumberOfLevels(m_NumberOfLevels);
       }
     }
 }
@@ -185,11 +185,11 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 /*
  * Standard PrintSelf method.
  */
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -228,11 +228,11 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
  * registrator and field_expander.
  *
  */
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::GenerateData()
 {
   // Check for NULL images and pointers
@@ -241,17 +241,17 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 
   if ( !movingVectorImage || !fixedVectorImage )
     {
-    itkExceptionMacro( << "Fixed and/or moving image not set" );
+    itkExceptionMacro(<< "Fixed and/or moving image not set");
     }
 
   if ( !m_MovingImagePyramid || !m_FixedImagePyramid )
     {
-    itkExceptionMacro( << "Fixed and/or moving pyramid not set" );
+    itkExceptionMacro(<< "Fixed and/or moving pyramid not set");
     }
 
   if ( !m_RegistrationFilter )
     {
-    itkExceptionMacro( << "Registration filter not set" );
+    itkExceptionMacro(<< "Registration filter not set");
     }
 
   if ( this->m_InitialDeformationField && this->GetInput(0) )
@@ -266,7 +266,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 
   // Seperate the VectorInputImage to scalar Image
 
-  typedef VectorIndexSelectionCastImageFilter<TFixedImage, FloatImageType> VectorIndexSelectionType;
+  typedef VectorIndexSelectionCastImageFilter< TFixedImage, FloatImageType > VectorIndexSelectionType;
 
   // Create the image pyramids.
   for ( unsigned int i = 0; i < this->GetFixedImage()->GetVectorLength(); ++i )
@@ -285,10 +285,6 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     m_MovingImagePyramid->SetInput( vectorMovingImageIndex->GetOutput() );
     m_MovingImagePyramid->UpdateLargestPossibleRegion();
 
-    //
-    //
-    //
-    //
     // m_MovingVectorImagePyramid[i]->SetSchedule(this->GetMovingImagePyramid()->GetSchedule());
     m_MovingVectorImagePyramid[i]->SetInput( vectorMovingImageIndex->GetOutput() );
     m_MovingVectorImagePyramid[i]->UpdateLargestPossibleRegion();
@@ -296,8 +292,6 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     m_FixedImagePyramid->SetInput( vectorFixedImageIndex->GetOutput() );
     m_FixedImagePyramid->UpdateLargestPossibleRegion();
 
-    //
-    //
     // m_FixedVectorImagePyramid[i]->SetSchedule(this->GetFixedImagePyramid()->GetSchedule());
     m_FixedVectorImagePyramid[i]->SetInput( vectorFixedImageIndex->GetOutput() );
     m_FixedVectorImagePyramid[i]->UpdateLargestPossibleRegion();
@@ -314,7 +308,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 
   DeformationFieldPointer tempField = NULL;
 
-  DeformationFieldPointer inputPtr = const_cast<DeformationFieldType *>(
+  DeformationFieldPointer inputPtr = const_cast< DeformationFieldType * >(
     this->GetInput(0) );
 
   if ( this->m_InitialDeformationField )
@@ -329,26 +323,26 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     // First smooth it
     tempField = inputPtr;
 
-    typedef RecursiveGaussianImageFilter<DeformationFieldType,
-      DeformationFieldType> GaussianFilterType;
-    typename GaussianFilterType::Pointer smoother
-      = GaussianFilterType::New();
+    typedef RecursiveGaussianImageFilter< DeformationFieldType,
+                                          DeformationFieldType > GaussianFilterType;
+    typename GaussianFilterType::Pointer smoother =
+      GaussianFilterType::New();
 
     for ( unsigned int dim = 0;
           dim < DeformationFieldType::ImageDimension;
           ++dim )
       {
       // sigma accounts for the subsampling of the pyramid
-      double sigma = 0.5 * static_cast<float>(
+      double sigma = 0.5 * static_cast< float >(
         m_FixedImagePyramid->GetSchedule()[fixedLevel][dim] );
 
       // but also for a possible discrepancy in the spacing
       sigma *= fixedVectorImage->GetSpacing()[dim]
-        / inputPtr->GetSpacing()[dim];
+               / inputPtr->GetSpacing()[dim];
 
-      smoother->SetInput( tempField );
-      smoother->SetSigma( sigma );
-      smoother->SetDirection( dim );
+      smoother->SetInput(tempField);
+      smoother->SetSigma(sigma);
+      smoother->SetDirection(dim);
 
       smoother->Update();
 
@@ -357,10 +351,10 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
       }
 
     // Now resample
-    m_FieldExpander->SetInput( tempField );
+    m_FieldExpander->SetInput(tempField);
 
     typename FloatImageType::Pointer fi = m_FixedImagePyramid->GetOutput(
-      fixedLevel );
+      fixedLevel);
     m_FieldExpander->SetSize( fi->GetLargestPossibleRegion().GetSize() );
     m_FieldExpander->SetOutputStartIndex(
       fi->GetLargestPossibleRegion().GetIndex() );
@@ -369,7 +363,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     m_FieldExpander->SetOutputDirection( fi->GetDirection() );
 
     m_FieldExpander->UpdateLargestPossibleRegion();
-    m_FieldExpander->SetInput( NULL );
+    m_FieldExpander->SetInput(NULL);
     tempField = m_FieldExpander->GetOutput();
     tempField->DisconnectPipeline();
     }
@@ -380,16 +374,16 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     {
     if ( tempField.IsNull() )
       {
-      m_RegistrationFilter->SetInitialDeformationField( NULL );
+      m_RegistrationFilter->SetInitialDeformationField(NULL);
       }
     else
       {
       // Resample the field to be the same size as the fixed image
       // at the current level
-      m_FieldExpander->SetInput( tempField );
+      m_FieldExpander->SetInput(tempField);
 
-      typename FloatImageType::Pointer fi
-        = m_FixedImagePyramid->GetOutput( fixedLevel );
+      typename FloatImageType::Pointer fi =
+        m_FixedImagePyramid->GetOutput(fixedLevel);
       m_FieldExpander->SetSize(
         fi->GetLargestPossibleRegion().GetSize() );
       m_FieldExpander->SetOutputStartIndex(
@@ -399,19 +393,19 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
       m_FieldExpander->SetOutputDirection( fi->GetDirection() );
 
       m_FieldExpander->UpdateLargestPossibleRegion();
-      m_FieldExpander->SetInput( NULL );
+      m_FieldExpander->SetInput(NULL);
       tempField = m_FieldExpander->GetOutput();
       tempField->DisconnectPipeline();
 
-      m_RegistrationFilter->SetInitialDeformationField( tempField );
+      m_RegistrationFilter->SetInitialDeformationField(tempField);
       }
 
-    typedef itk::ImageToVectorImageFilter<FloatImageType>
-      ImageToVectorImageType;
-    typename ImageToVectorImageType::Pointer vectorFixedImage
-      = ImageToVectorImageType::New();
-    typename ImageToVectorImageType::Pointer vectorMovingImage
-      = ImageToVectorImageType::New();
+    typedef itk::ImageToVectorImageFilter< FloatImageType >
+    ImageToVectorImageType;
+    typename ImageToVectorImageType::Pointer vectorFixedImage =
+      ImageToVectorImageType::New();
+    typename ImageToVectorImageType::Pointer vectorMovingImage =
+      ImageToVectorImageType::New();
     for ( unsigned int i = 0; i < this->GetFixedImage()->GetVectorLength(); ++i )
       {
       vectorFixedImage->SetNthInput( i,
@@ -431,7 +425,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
       throw err;
       throw err;
       }
-    catch (... )
+    catch ( ... )
       {
       std::cout << "Caught a non-ITK exception " << __FILE__ << " "
                 << __LINE__ << std::endl;
@@ -441,8 +435,8 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     m_RegistrationFilter->SetMovingImage( vectorMovingImage->GetOutput() );
     m_RegistrationFilter->SetFixedImage( vectorFixedImage->GetOutput() );
 
-    m_RegistrationFilter->SetNumberOfIterations( m_NumberOfIterations[
-                                                   m_CurrentLevel] );
+    m_RegistrationFilter->SetNumberOfIterations(m_NumberOfIterations[
+                                                  m_CurrentLevel]);
 
     // cache shrink factors for computing the next expand factors.
     lastShrinkFactorsAllOnes = true;
@@ -473,11 +467,11 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     // We can release data from pyramid which are no longer required.
     if ( movingLevel > 0 )
       {
-      m_MovingImagePyramid->GetOutput( movingLevel - 1 )->ReleaseData();
+      m_MovingImagePyramid->GetOutput(movingLevel - 1)->ReleaseData();
       }
     if ( fixedLevel > 0 )
       {
-      m_FixedImagePyramid->GetOutput( fixedLevel - 1 )->ReleaseData();
+      m_FixedImagePyramid->GetOutput(fixedLevel - 1)->ReleaseData();
       }
     } // while not Halt()
 
@@ -488,7 +482,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     // to output of this filter
 
     // resample the field to the same size as the fixed image
-    m_FieldExpander->SetInput( tempField );
+    m_FieldExpander->SetInput(tempField);
     m_FieldExpander->SetSize(
       fixedVectorImage->GetLargestPossibleRegion().GetSize() );
     m_FieldExpander->SetOutputStartIndex(
@@ -505,39 +499,39 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     // all the last shrink factors are all ones
     // graft the output of registration filter to
     // to output of this filter
-    this->GraftOutput( tempField );
+    this->GraftOutput(tempField);
     }
 
   // Release memory
-  m_FieldExpander->SetInput( NULL );
+  m_FieldExpander->SetInput(NULL);
   m_FieldExpander->GetOutput()->ReleaseData();
-  m_RegistrationFilter->SetInput( NULL );
+  m_RegistrationFilter->SetInput(NULL);
   m_RegistrationFilter->GetOutput()->ReleaseData();
 }
 
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::StopRegistration()
 {
   m_RegistrationFilter->StopRegistration();
   m_StopRegistrationFlag = true;
 }
 
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 bool
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::Halt()
 {
   // Halt the registration after the user-specified number of levels
   if ( m_NumberOfLevels != 0 )
     {
-    this->UpdateProgress( static_cast<float>( m_CurrentLevel )
-                          / static_cast<float>( m_NumberOfLevels ) );
+    this->UpdateProgress( static_cast< float >( m_CurrentLevel )
+                          / static_cast< float >( m_NumberOfLevels ) );
     }
 
   if ( m_CurrentLevel >= m_NumberOfLevels )
@@ -554,11 +548,11 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     }
 }
 
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::GenerateOutputInformation()
 {
   typename DataObject::Pointer output;
@@ -574,7 +568,7 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     // Initial deforamtion field is not set.
     // Copy information from the fixed image.
     for ( unsigned int idx = 0; idx <
-            this->GetNumberOfOutputs(); ++idx )
+          this->GetNumberOfOutputs(); ++idx )
       {
       output = this->GetOutput(idx);
       if ( output )
@@ -585,19 +579,19 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     }
 }
 
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::GenerateInputRequestedRegion()
 {
   // call the superclass's implementation
   Superclass::GenerateInputRequestedRegion();
 
   // request the largest possible region for the moving image
-  MovingImagePointer movingPtr
-    = const_cast<MovingImageType *>( this->GetMovingImage() );
+  MovingImagePointer movingPtr =
+    const_cast< MovingImageType * >( this->GetMovingImage() );
   if ( movingPtr )
     {
     movingPtr->SetRequestedRegionToLargestPossibleRegion();
@@ -605,11 +599,11 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
 
   // just propagate up the output requested region for
   // the fixed image and initial deformation field.
-  DeformationFieldPointer inputPtr
-    = const_cast<DeformationFieldType *>( this->GetInput() );
+  DeformationFieldPointer inputPtr =
+    const_cast< DeformationFieldType * >( this->GetInput() );
   DeformationFieldPointer outputPtr = this->GetOutput();
-  FixedImagePointer       fixedPtr
-    = const_cast<FixedImageType *>( this->GetFixedImage() );
+  FixedImagePointer       fixedPtr =
+    const_cast< FixedImageType * >( this->GetFixedImage() );
 
   if ( inputPtr )
     {
@@ -622,20 +616,20 @@ VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
     }
 }
 
-template<class TFixedImage, class TMovingImage, class TDeformationField,
-         class TRealType>
+template< class TFixedImage, class TMovingImage, class TDeformationField,
+          class TRealType >
 void
-VectorMultiResolutionPDEDeformableRegistration<TFixedImage, TMovingImage,
-                                               TDeformationField, TRealType>
+VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
+                                                TDeformationField, TRealType >
 ::EnlargeOutputRequestedRegion(
-  DataObject *ptr )
+  DataObject *ptr)
 {
   // call the superclass's implementation
-  Superclass::EnlargeOutputRequestedRegion( ptr );
+  Superclass::EnlargeOutputRequestedRegion(ptr);
 
   // set the output requested region to largest possible.
   DeformationFieldType *outputPtr;
-  outputPtr = dynamic_cast<DeformationFieldType *>( ptr );
+  outputPtr = dynamic_cast< DeformationFieldType * >( ptr );
 
   if ( outputPtr )
     {

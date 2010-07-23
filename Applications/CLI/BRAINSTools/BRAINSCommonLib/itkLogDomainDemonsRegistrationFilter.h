@@ -47,22 +47,22 @@ namespace itk
  * \ingroup DeformableImageRegistration MultiThreaded
  * \author Florence Dru, INRIA and Tom Vercauteren, MKT
  */
-template <class TFixedImage, class TMovingImage, class TField>
-class ITK_EXPORT LogDomainDemonsRegistrationFilter :
-    public LogDomainDeformableRegistrationFilter<TFixedImage, TMovingImage, TField>
+template< class TFixedImage, class TMovingImage, class TField >
+class ITK_EXPORT LogDomainDemonsRegistrationFilter:
+  public LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
 {
 public:
   /** Standard class typedefs. */
-  typedef LogDomainDemonsRegistrationFilter                                        Self;
-  typedef LogDomainDeformableRegistrationFilter<TFixedImage, TMovingImage, TField> Superclass;
-  typedef SmartPointer<Self>                                                       Pointer;
-  typedef SmartPointer<const Self>                                                 ConstPointer;
+  typedef LogDomainDemonsRegistrationFilter                                          Self;
+  typedef LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField > Superclass;
+  typedef SmartPointer< Self >                                                       Pointer;
+  typedef SmartPointer< const Self >                                                 ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( LogDomainDemonsRegistrationFilter, LogDomainDeformableRegistrationFilter );
+  itkTypeMacro(LogDomainDemonsRegistrationFilter, LogDomainDeformableRegistrationFilter);
 
   /** FixedImage image type. */
   typedef typename Superclass::FixedImageType    FixedImageType;
@@ -88,12 +88,12 @@ public:
 
   /** Take timestep type from the FiniteDifferenceFunction. */
   typedef typename
-    FiniteDifferenceFunctionType::TimeStepType TimeStepType;
+  FiniteDifferenceFunctionType::TimeStepType TimeStepType;
 
   /** DemonsRegistrationFilterFunction type. */
-  typedef ESMDemonsRegistrationFunction<FixedImageType,
-    MovingImageType,
-    DeformationFieldType>                          DemonsRegistrationFunctionType;
+  typedef ESMDemonsRegistrationFunction< FixedImageType,
+                                         MovingImageType,
+                                         DeformationFieldType >                          DemonsRegistrationFunctionType;
   typedef typename DemonsRegistrationFunctionType::Pointer      DemonsRegistrationFunctionPointer;
   typedef typename DemonsRegistrationFunctionType::GradientType GradientType;
 
@@ -105,7 +105,7 @@ public:
 
   virtual const double & GetRMSChange() const;
 
-  virtual void SetUseGradientType( GradientType gtype );
+  virtual void SetUseGradientType(GradientType gtype);
 
   virtual GradientType GetUseGradientType() const;
 
@@ -141,8 +141,11 @@ protected:
   virtual void ApplyUpdate(TimeStepType dt);
 
 private:
-  LogDomainDemonsRegistrationFilter(const Self &); // purposely not implemented
-  void operator=(const Self &);                    // purposely not implemented
+  LogDomainDemonsRegistrationFilter(const Self &);   // purposely not
+                                                     // implemented
+  void operator=(const Self &);                      // purposely not
+
+  // implemented
 
   /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is of the correct type.
    * this method will throw an exception if the function is not of the expected type. */
@@ -153,11 +156,11 @@ private:
   /** Exp and composition typedefs */
   typedef MultiplyByConstantImageFilter<
     VelocityFieldType,
-    TimeStepType, VelocityFieldType>                   MultiplyByConstantType;
+    TimeStepType, VelocityFieldType >                   MultiplyByConstantType;
 
   typedef VelocityFieldBCHCompositionFilter<
     VelocityFieldType,
-    VelocityFieldType>                                 BCHFilterType;
+    VelocityFieldType >                                 BCHFilterType;
 
   typedef typename MultiplyByConstantType::Pointer MultiplyByConstantPointer;
   typedef typename BCHFilterType::Pointer          BCHFilterPointer;
@@ -165,10 +168,10 @@ private:
   MultiplyByConstantPointer m_Multiplier;
   BCHFilterPointer          m_BCHFilter;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkLogDomainDemonsRegistrationFilter.txx"
+#  include "itkLogDomainDemonsRegistrationFilter.txx"
 #endif
 
 #endif

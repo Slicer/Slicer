@@ -6,13 +6,13 @@
 namespace itk
 {
 // Default constructor
-template<class TFixedImage, class TMovingImage, class TField>
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+template< class TFixedImage, class TMovingImage, class TField >
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::LogDomainDemonsRegistrationFilter()
 {
   DemonsRegistrationFunctionPointer drfp = DemonsRegistrationFunctionType::New();
 
-  this->SetDifferenceFunction( static_cast<FiniteDifferenceFunctionType *>(
+  this->SetDifferenceFunction( static_cast< FiniteDifferenceFunctionType * >(
                                  drfp.GetPointer() ) );
 
   m_Multiplier = MultiplyByConstantType::New();
@@ -22,51 +22,52 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
   m_BCHFilter->InPlaceOn();
 
   // Set number of terms in the BCH approximation to default value
-  m_BCHFilter->SetNumberOfApproximationTerms( 2 );
+  m_BCHFilter->SetNumberOfApproximationTerms(2);
 }
 
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template<class TFixedImage, class TMovingImage, class TField>
-typename LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+template< class TFixedImage, class TMovingImage, class TField >
+typename LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::DemonsRegistrationFunctionType *
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::DownCastDifferenceFunctionType()
 {
-  DemonsRegistrationFunctionType *drfp
-    = dynamic_cast<DemonsRegistrationFunctionType *>( this->GetDifferenceFunction().GetPointer() );
+  DemonsRegistrationFunctionType *drfp =
+    dynamic_cast< DemonsRegistrationFunctionType * >( this->GetDifferenceFunction().GetPointer() );
 
   if ( !drfp )
     {
-    itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
+    itkExceptionMacro(<< "Could not cast difference function to SymmetricDemonsRegistrationFunction");
     }
 
   return drfp;
 }
 
 // Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
-template<class TFixedImage, class TMovingImage, class TField>
-const typename LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+template< class TFixedImage, class TMovingImage, class TField >
+const typename LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::DemonsRegistrationFunctionType *
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::DownCastDifferenceFunctionType() const
 {
-  const DemonsRegistrationFunctionType *drfp
-    = dynamic_cast<const DemonsRegistrationFunctionType *>( this->GetDifferenceFunction().GetPointer() );
+  const DemonsRegistrationFunctionType *drfp =
+    dynamic_cast< const DemonsRegistrationFunctionType * >( this->GetDifferenceFunction().GetPointer() );
 
   if ( !drfp )
     {
-    itkExceptionMacro( << "Could not cast difference function to SymmetricDemonsRegistrationFunction" );
+    itkExceptionMacro(<< "Could not cast difference function to SymmetricDemonsRegistrationFunction");
     }
 
   return drfp;
 }
 
 // Set the function state values before each iteration
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 void
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::InitializeIteration()
 {
+  //
   // std::cout<<"LogDomainDemonsRegistrationFilter::InitializeIteration"<<std::endl;
   // update variables in the equation object
   DemonsRegistrationFunctionType *f = this->DownCastDifferenceFunctionType();
@@ -78,9 +79,9 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Get the metric value from the difference function
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 double
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GetMetric() const
 {
   const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
@@ -89,9 +90,9 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Get Intensity Difference Threshold
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 double
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GetIntensityDifferenceThreshold() const
 {
   const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
@@ -100,9 +101,9 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Set Intensity Difference Threshold
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 void
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::SetIntensityDifferenceThreshold(double threshold)
 {
   DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
@@ -111,9 +112,9 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Set Maximum Update Step Length
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 void
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::SetMaximumUpdateStepLength(double step)
 {
   DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
@@ -122,9 +123,9 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Get Maximum Update Step Length
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 double
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GetMaximumUpdateStepLength() const
 {
   const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
@@ -133,27 +134,27 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Set number of terms used in the BCH approximation
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 void
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::SetNumberOfBCHApproximationTerms(unsigned int numterms)
 {
   this->m_BCHFilter->SetNumberOfApproximationTerms(numterms);
 }
 
 // Get number of terms used in the BCH approximation
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 unsigned int
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GetNumberOfBCHApproximationTerms() const
 {
   return this->m_BCHFilter->GetNumberOfApproximationTerms();
 }
 
 // Get the metric value from the difference function
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 const double &
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GetRMSChange() const
 {
   const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
@@ -162,9 +163,9 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Get gradient type
-template<class TFixedImage, class TMovingImage, class TField>
-typename LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>::GradientType
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+template< class TFixedImage, class TMovingImage, class TField >
+typename LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >::GradientType
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GetUseGradientType() const
 {
   const DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
@@ -173,9 +174,9 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Set gradient type
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 void
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::SetUseGradientType(GradientType gtype)
 {
   DemonsRegistrationFunctionType *drfp = this->DownCastDifferenceFunctionType();
@@ -184,9 +185,9 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
 }
 
 // Get the metric value from the difference function
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 void
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::ApplyUpdate(TimeStepType dt)
 {
   // std::cout<<"LogDomainDemonsRegistrationFilter::ApplyUpdate"<<std::endl;
@@ -201,8 +202,8 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
   // the time step is one so this will be skipped
   if ( fabs(dt - 1.0) > 1.0e-4 )
     {
-    itkDebugMacro( "Using timestep: " << dt );
-    m_Multiplier->SetConstant( dt );
+    itkDebugMacro("Using timestep: " << dt);
+    m_Multiplier->SetConstant(dt);
     m_Multiplier->SetInput( this->GetUpdateBuffer() );
     m_Multiplier->GraftOutput( this->GetUpdateBuffer() );
     // in place update
@@ -238,16 +239,16 @@ LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
     }
 }
 
-template<class TFixedImage, class TMovingImage, class TField>
+template< class TFixedImage, class TMovingImage, class TField >
 void
-LogDomainDemonsRegistrationFilter<TFixedImage, TMovingImage, TField>
+LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Multiplier: " << m_Multiplier << std::endl;
   os << indent << "BCHFilter: " << m_BCHFilter << std::endl;
 }
-} // end namespace itk
+}   // end namespace itk
 
 #endif

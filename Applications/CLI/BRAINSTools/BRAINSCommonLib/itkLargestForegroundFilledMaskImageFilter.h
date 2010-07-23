@@ -32,9 +32,9 @@ namespace itk
  * values specified by the user (defaults to 1 and 0 respectively).
  *
  */
-template <class TInputImage, class TOutputImage = TInputImage>
-class ITK_EXPORT LargestForegroundFilledMaskImageFilter :
-    public ImageToImageFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage = TInputImage >
+class ITK_EXPORT LargestForegroundFilledMaskImageFilter:
+  public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Extract dimension from input and output image. */
@@ -44,21 +44,21 @@ public:
                       TOutputImage::ImageDimension);
 
   /** Convenient typedefs for simplifying declarations. */
-  typedef TInputImage                                            InputImageType;
-  typedef typename InputImageType::ConstPointer                  InputImagePointer;
-  typedef typename InputImageType::RegionType                    InputImageRegionType;
-  typedef typename InputImageType::PixelType                     InputPixelType;
+  typedef TInputImage                           InputImageType;
+  typedef typename InputImageType::ConstPointer InputImagePointer;
+  typedef typename InputImageType::RegionType   InputImageRegionType;
+  typedef typename InputImageType::PixelType    InputPixelType;
 
-  typedef TOutputImage                                           OutputImageType;
-  typedef typename OutputImageType::Pointer                      OutputImagePointer;
-  typedef typename OutputImageType::RegionType                   OutputImageRegionType;
-  typedef typename OutputImageType::PixelType                    OutputPixelType;
+  typedef TOutputImage                         OutputImageType;
+  typedef typename OutputImageType::Pointer    OutputImagePointer;
+  typedef typename OutputImageType::RegionType OutputImageRegionType;
+  typedef typename OutputImageType::PixelType  OutputPixelType;
 
-  typedef LargestForegroundFilledMaskImageFilter                 Self;
-  typedef ImageToImageFilter<InputImageType, OutputImageType>    Superclass;
-  typedef SmartPointer<Self>                                     Pointer;
-  typedef Image<unsigned short, OutputImageType::ImageDimension> IntegerImageType;
-  typedef typename IntegerImageType::PixelType                   IntegerPixelType;
+  typedef LargestForegroundFilledMaskImageFilter                   Self;
+  typedef ImageToImageFilter< InputImageType, OutputImageType >    Superclass;
+  typedef SmartPointer< Self >                                     Pointer;
+  typedef Image< unsigned short, OutputImageType::ImageDimension > IntegerImageType;
+  typedef typename IntegerImageType::PixelType                     IntegerPixelType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -125,10 +125,10 @@ private:
   IntegerPixelType m_InsideValue;
   IntegerPixelType m_OutsideValue;
 };
-} // end namespace itk
+}   // end namespace itk
 
 #if ITK_TEMPLATE_TXX
-# include "itkLargestForegroundFilledMaskImageFilter.txx"
+#  include "itkLargestForegroundFilledMaskImageFilter.txx"
 #endif
 
 #endif

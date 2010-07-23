@@ -8,16 +8,16 @@ namespace itk
 {
 /** \class BOBFilter
  */
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT BOBFFilter :
-    public ImageToImageFilter<TInputImage, TOutputImage>
+template< class TInputImage, class TOutputImage >
+class ITK_EXPORT BOBFFilter:
+  public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Standard class typedefs. */
-  typedef BOBFFilter                                    Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
-  typedef SmartPointer<Self>                            Pointer;
-  typedef SmartPointer<const Self>                      ConstPointer;
+  typedef BOBFFilter                                      Self;
+  typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
+  typedef SmartPointer< Self >                            Pointer;
+  typedef SmartPointer< const Self >                      ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -46,9 +46,9 @@ public:
   typedef typename InputImageType::SizeType   InputSizeType;
 
   /** Set/Get the Input image. */
-  void SetInputImage( const InputImageType *source )
+  void SetInputImage(const InputImageType *source)
   {
-    this->SetInput( source );
+    this->SetInput(source);
   }
 
   const InputImageType * GetInputImage(void)
@@ -57,7 +57,7 @@ public:
   }
 
   /** Set the input mask */
-  void SetInputMask( const InputImageType *image );
+  void SetInputMask(const InputImageType *image);
 
   /** Get the input mask */
   const InputImageType * GetInputMask(void);
@@ -96,10 +96,10 @@ public:
 
 protected:
   BOBFFilter();
-  ~BOBFFilter() { }
+  ~BOBFFilter() {}
 private:
-  BOBFFilter(const Self &);      // purposely not implemented
-  void operator=(const Self &);  // purposely not implemented
+  BOBFFilter(const Self &);       // purposely not implemented
+  void operator=(const Self &);   // purposely not implemented
 
   void PrintSelf(std::ostream & os, Indent indent) const;
 
@@ -113,7 +113,7 @@ private:
 }   // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkBOBFFilter.txx"
+#  include "itkBOBFFilter.txx"
 #endif
 
 #endif

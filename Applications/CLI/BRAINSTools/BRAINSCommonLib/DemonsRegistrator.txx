@@ -26,26 +26,26 @@
 namespace itk
 {
 /*This function writes the displacement fields of the Deformation.*/
-template<class TRealImage, class TOutputImage, class TFieldValue>
-void DemonsRegistrator<TRealImage, TOutputImage,
-                       TFieldValue>::WriteDisplacementComponents ()
+template< class TRealImage, class TOutputImage, class TFieldValue >
+void DemonsRegistrator< TRealImage, TOutputImage,
+                        TFieldValue >::WriteDisplacementComponents()
 {
-  m_DefaultPixelValue = NumericTraits<PixelType>::One;
+  m_DefaultPixelValue = NumericTraits< PixelType >::One;
 
   // we use the vector index selection filter to break the deformation field
   // into x,y,z components.
-  typedef itk::Image<FieldValueType,
-                     3>                  ComponentImageType;
-  typedef itk::VectorIndexSelectionCastImageFilter<TDeformationField,
-                                                   ComponentImageType> ComponentFilterType;
+  typedef itk::Image< FieldValueType,
+                      3 >                  ComponentImageType;
+  typedef itk::VectorIndexSelectionCastImageFilter< TDeformationField,
+                                                    ComponentImageType > ComponentFilterType;
 
   std::string CurrentComponentFilename;
   try
     {
     char ext[3][14] = { "_xdisp.nii.gz", "_ydisp.nii.gz", "_zdisp.nii.gz"};
 
-    typename ComponentFilterType::Pointer myComponentFilter
-      = ComponentFilterType::New ();
+    typename ComponentFilterType::Pointer myComponentFilter =
+      ComponentFilterType::New ();
     myComponentFilter->SetInput (m_DeformationField);
 
     for ( unsigned int extiter = 0; extiter < 3; extiter++ )
@@ -53,17 +53,17 @@ void DemonsRegistrator<TRealImage, TOutputImage,
       CurrentComponentFilename = m_DisplacementBaseName + ext[extiter];
       if ( this->GetOutDebug() )
         {
-        std:: cout << "Writing Transform Image: "
-                   << CurrentComponentFilename << std::endl;
+        std::cout << "Writing Transform Image: "
+                  << CurrentComponentFilename << std::endl;
         }
 
       myComponentFilter->SetIndex (extiter);
 
-      typename ComponentImageType::Pointer DisplacementComponentImagePtr
-        = myComponentFilter->GetOutput ();
+      typename ComponentImageType::Pointer DisplacementComponentImagePtr =
+        myComponentFilter->GetOutput ();
 
-      itkUtil::WriteImage<ComponentImageType>(DisplacementComponentImagePtr,
-                                              CurrentComponentFilename);
+      itkUtil::WriteImage< ComponentImageType >(DisplacementComponentImagePtr,
+                                                CurrentComponentFilename);
       }
     }
   catch ( itk::ExceptionObject & e )
@@ -80,8 +80,8 @@ void DemonsRegistrator<TRealImage, TOutputImage,
 template<
   class TRealImage,
   class TOutputImage,
-  class TFieldValue>
-DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator ()
+  class TFieldValue >
+DemonsRegistrator< TRealImage, TOutputImage, TFieldValue >::DemonsRegistrator ()
 {
   // Images need to be set from the outside
   m_FixedImage = NULL;
@@ -97,7 +97,7 @@ DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator ()
   m_MovingImagePyramid = MovingImagePyramidType::New ();
   m_MovingImagePyramid->UseShrinkImageFilterOff();
 
-  m_DefaultPixelValue =  NumericTraits<typename RealImageType::PixelType>::Zero;
+  m_DefaultPixelValue =  NumericTraits< typename RealImageType::PixelType >::Zero;
 
   // Default parameters
   m_NumberOfLevels = 1;
@@ -111,7 +111,7 @@ DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator ()
   m_DisplacementBaseName = "none";
   m_CheckerBoardFilename = "none";
   m_DeformationFieldOutputName = "none";
-  m_CheckerBoardPattern.Fill( 4 );
+  m_CheckerBoardPattern.Fill(4);
   m_OutNormalized  = "OFF";
 
   m_UseHistogramMatching = false;
@@ -125,8 +125,8 @@ DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::DemonsRegistrator ()
 template<
   class TRealImage,
   class TOutputImage,
-  class TFieldValue>
-DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::~DemonsRegistrator ()
+  class TFieldValue >
+DemonsRegistrator< TRealImage, TOutputImage, TFieldValue >::~DemonsRegistrator ()
 {
   if ( !m_UseLogDomain )
     {
@@ -148,8 +148,8 @@ DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::~DemonsRegistrator ()
 template<
   typename TRealImage,
   class TOutputImage,
-  class TFieldValue>
-void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
+  class TFieldValue >
+void DemonsRegistrator< TRealImage, TOutputImage, TFieldValue >::Execute()
 {
 #if 1
   // Setup the image pyramids
@@ -159,7 +159,7 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
 
   m_MovingImagePyramid->SetNumberOfLevels (m_NumberOfLevels);
   m_MovingImagePyramid->
-    SetStartingShrinkFactors ( m_MovingImageShrinkFactors.GetDataPointer () );
+  SetStartingShrinkFactors ( m_MovingImageShrinkFactors.GetDataPointer () );
 #endif
   // Setup the registrator
 
@@ -169,17 +169,17 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     m_Registration->SetMovingImagePyramid (m_MovingImagePyramid);
 
     // Setup an registration observer
-    typedef SimpleMemberCommand<Self> CommandType;
+    typedef SimpleMemberCommand< Self > CommandType;
     typename CommandType::Pointer command = CommandType::New ();
     command->SetCallbackFunction (this, &Self::StartNewLevel);
 
     m_Tag = m_Registration->AddObserver (IterationEvent (), command);
 
     typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      TDeformationField, double> FieldInterpolatorType;
+      TDeformationField, double > FieldInterpolatorType;
 
-    typename FieldInterpolatorType::Pointer VectorInterpolator
-      = FieldInterpolatorType::New();
+    typename FieldInterpolatorType::Pointer VectorInterpolator =
+      FieldInterpolatorType::New();
 
     m_Registration->GetFieldExpander()->SetInterpolator(VectorInterpolator);
 
@@ -198,8 +198,8 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
          && this->m_MovingLandmarkFilename != "" )
       {
       std::cerr
-        << "Registering Landmarks as an initializer is not yet implemented"
-        << std::endl;
+      << "Registering Landmarks as an initializer is not yet implemented"
+      << std::endl;
       exit(-1);
       }
     // Perform the registration.
@@ -214,22 +214,22 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
       throw err;
       throw err;
       }
-    catch (... )
+    catch ( ... )
       {
       std::
-        cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
-             << std::endl;
+      cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
+           << std::endl;
       }
     if ( this->GetOutDebug() )
       {
       std::cout
-        <<
-        "Moving image shrink factors used in each level of MultiResolution Schedule\n"
-        << m_MovingImagePyramid->GetSchedule() << std::endl;
+      <<
+      "Moving image shrink factors used in each level of MultiResolution Schedule\n"
+      << m_MovingImagePyramid->GetSchedule() << std::endl;
       std::cout
-        <<
-        "Fixed image shrink factors used in each level of MultiResolution Schedule\n"
-        << m_FixedImagePyramid->GetSchedule() << std::endl;
+      <<
+      "Fixed image shrink factors used in each level of MultiResolution Schedule\n"
+      << m_FixedImagePyramid->GetSchedule() << std::endl;
       }
     try
       {
@@ -256,11 +256,11 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       throw err;
       }
-    catch (... )
+    catch ( ... )
       {
       std::
-        cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
-             << std::endl;
+      cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
+           << std::endl;
       }
     }
 
@@ -271,17 +271,17 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     //  m_LDRegistration->SetMovingImagePyramid (m_MovingImagePyramid);
 
     // Setup an registration observer
-    typedef SimpleMemberCommand<Self> CommandType;
+    typedef SimpleMemberCommand< Self > CommandType;
     typename CommandType::Pointer command = CommandType::New ();
     command->SetCallbackFunction (this, &Self::StartNewLevel);
 
     m_Tag = m_LDRegistration->AddObserver (IterationEvent (), command);
 
     typedef VectorLinearInterpolateNearestNeighborExtrapolateImageFunction<
-      TDeformationField, double> FieldInterpolatorType;
+      TDeformationField, double > FieldInterpolatorType;
 
-    typename FieldInterpolatorType::Pointer VectorInterpolator
-      = FieldInterpolatorType::New();
+    typename FieldInterpolatorType::Pointer VectorInterpolator =
+      FieldInterpolatorType::New();
 
     m_LDRegistration->GetFieldExpander()->SetInterpolator(VectorInterpolator);
 
@@ -308,20 +308,20 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
       throw err;
       throw err;
       }
-    catch (... )
+    catch ( ... )
       {
       std::
-        cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
-             << std::endl;
+      cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
+           << std::endl;
       }
     if ( this->GetOutDebug() )
       {
       std::cout
-        << "Moving image shrink factors used in each level of MultiResolution Schedule\n"
-        << m_MovingImagePyramid->GetSchedule() << std::endl;
+      << "Moving image shrink factors used in each level of MultiResolution Schedule\n"
+      << m_MovingImagePyramid->GetSchedule() << std::endl;
       std::cout
-        << "Fixed image shrink factors used in each level of MultiResolution Schedule\n"
-        << m_FixedImagePyramid->GetSchedule() << std::endl;
+      << "Fixed image shrink factors used in each level of MultiResolution Schedule\n"
+      << m_FixedImagePyramid->GetSchedule() << std::endl;
       }
     try
       {
@@ -348,11 +348,11 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       throw err;
       }
-    catch (... )
+    catch ( ... )
       {
       std::
-        cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
-             << std::endl;
+      cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__
+           << std::endl;
       }
     }
 
@@ -360,8 +360,8 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
   if ( this->m_DeformationFieldOutputName != std::string ("none")
        && this->m_DeformationFieldOutputName != std::string ("") )
     {
-    itkUtil::WriteImage<TDeformationField>(m_DeformationField,
-                                           this->m_DeformationFieldOutputName);
+    itkUtil::WriteImage< TDeformationField >(m_DeformationField,
+                                             this->m_DeformationFieldOutputName);
     if ( this->GetOutDebug() )
       {
       std::cout << "---Deformation field has been written "
@@ -380,23 +380,23 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     /*Warp the image with the generated deformation field.*/
     typename RealImageType::Pointer DeformedMovingImagePtr(0);
 
-    {
-    typename RealImageType::Pointer sourceMovingImage = NULL;
-    if ( this->GetUseHistogramMatching() == true )
       {
-      sourceMovingImage = m_MovingImage;
+      typename RealImageType::Pointer sourceMovingImage = NULL;
+      if ( this->GetUseHistogramMatching() == true )
+        {
+        sourceMovingImage = m_MovingImage;
+        }
+      else
+        {
+        sourceMovingImage = m_UnNormalizedMovingImage;
+        }
+      DeformedMovingImagePtr = TransformWarp< RealImageType, RealImageType, TDeformationField >(
+        sourceMovingImage,
+        m_FixedImage.GetPointer(),
+        0,
+        GetInterpolatorFromString< RealImageType >(this->m_InterpolationMode),
+        m_DeformationField);
       }
-    else
-      {
-      sourceMovingImage = m_UnNormalizedMovingImage;
-      }
-    DeformedMovingImagePtr = TransformWarp<RealImageType, RealImageType, TDeformationField>(
-      sourceMovingImage,
-      m_FixedImage.GetPointer(),
-      0,
-      GetInterpolatorFromString<RealImageType>(this->m_InterpolationMode),
-      m_DeformationField);
-    }
 
     if ( this->GetOutDebug() )
       {
@@ -410,11 +410,11 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
 
     if ( this->m_WarpedImageName != std::string ("") && this->m_WarpedImageName != std::string ("none") )
       {
-      typename TOutputImage::Pointer CastImageSptr
-        = itkUtil::PreserveCast<RealImageType, TOutputImage>(
+      typename TOutputImage::Pointer CastImageSptr =
+        itkUtil::PreserveCast< RealImageType, TOutputImage >(
           DeformedMovingImagePtr);
-      itkUtil::WriteImage<TOutputImage>(CastImageSptr,
-                                        this->m_WarpedImageName);
+      itkUtil::WriteImage< TOutputImage >(CastImageSptr,
+                                          this->m_WarpedImageName);
 
       if ( this->GetOutDebug() )
         {
@@ -424,7 +424,7 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
     /*Write the checkerboard image of the fixed image and the output image.*/
     if ( this->m_CheckerBoardFilename != std::string ("") && this->m_CheckerBoardFilename != std::string ("none") )
       {
-      typedef itk::CheckerBoardImageFilter<RealImageType> Checkerfilter;
+      typedef itk::CheckerBoardImageFilter< RealImageType > Checkerfilter;
       typename Checkerfilter::Pointer checker = Checkerfilter::New ();
       if ( this->GetUseHistogramMatching() == true )
         {
@@ -444,12 +444,12 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
         {
         std::cout << "Caught an ITK exception: " << std::endl;
         std::cout << err << " " << __FILE__ << " " << __LINE__ << std::
-          endl;
+        endl;
         throw err;
         }
       typename RealImageType::Pointer CheckerImagePtr = checker->GetOutput();
-      itkUtil::WriteImage<RealImageType>(CheckerImagePtr,
-                                         this->m_CheckerBoardFilename);
+      itkUtil::WriteImage< RealImageType >(CheckerImagePtr,
+                                           this->m_CheckerBoardFilename);
       if ( this->GetOutDebug() )
         {
         std::cout << "---Checker Board Image has been written" << std::endl;
@@ -462,8 +462,8 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::Execute ()
 template<
   class TRealImage,
   class TOutputImage,
-  class TFieldValue>
-void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::StartNewLevel ()
+  class TFieldValue >
+void DemonsRegistrator< TRealImage, TOutputImage, TFieldValue >::StartNewLevel()
 {
   if ( this->GetOutDebug() )
     {
@@ -477,5 +477,5 @@ void DemonsRegistrator<TRealImage, TOutputImage, TFieldValue>::StartNewLevel ()
       }
     }
 }
-} // namespace itk
+}   // namespace itk
 #endif

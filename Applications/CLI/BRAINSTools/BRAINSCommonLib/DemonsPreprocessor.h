@@ -30,16 +30,16 @@ namespace itk
  *    - the minimum value of original moving image
  *
  */
-template <typename TInputImage, typename TOutputImage>
-class ITK_EXPORT DemonsPreprocessor : public Object
+template< typename TInputImage, typename TOutputImage >
+class ITK_EXPORT DemonsPreprocessor:public Object
 {
 public:
 
   /** Standard class typedefs. */
-  typedef DemonsPreprocessor       Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef DemonsPreprocessor         Self;
+  typedef Object                     Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DemonsPreprocessor, Object);
@@ -48,7 +48,7 @@ public:
   itkNewMacro(Self);
 
   /** Input Image Type. */
-  typedef TInputImage  InputImageType;
+  typedef TInputImage InputImageType;
   /** Output Image Type. */
   typedef TOutputImage OutputImageType;
 
@@ -62,52 +62,52 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension);
 
   /** Set the input fixed image. */
-  itkSetObjectMacro( InputFixedImage, InputImageType );
+  itkSetObjectMacro(InputFixedImage, InputImageType);
 
   /** Set the input moving image. */
-  itkSetObjectMacro( InputMovingImage, InputImageType );
+  itkSetObjectMacro(InputMovingImage, InputImageType);
 
   /** Deformation field value type. */
   typedef float FieldValueType;
 
   /** Deformation field pixel type. */
-  typedef Vector<FieldValueType,
-    itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
+  typedef Vector< FieldValueType,
+                  itkGetStaticConstMacro(ImageDimension) > FieldPixelType;
 
   /** Deformation field type. */
-  typedef Image<FieldPixelType,
-    itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+  typedef Image< FieldPixelType,
+                 itkGetStaticConstMacro(ImageDimension) > TDeformationField;
 
   /** Set the initial Deformation Field. */
-  itkSetObjectMacro( InitialDeformationField, TDeformationField );
-  itkGetObjectMacro( InitialDeformationField, TDeformationField );
+  itkSetObjectMacro(InitialDeformationField, TDeformationField);
+  itkGetObjectMacro(InitialDeformationField, TDeformationField);
 
   /** Set the number of histogram levels to use. */
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Set the number of match points to use. */
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
 
   /** Method to execute the preprocessing. */
   virtual void Execute();
 
   /** Get the output fixed image. */
-  itkGetObjectMacro( OutputFixedImage, OutputImageType );
+  itkGetObjectMacro(OutputFixedImage, OutputImageType);
 
   /** Get the output moving image. */
-  itkGetObjectMacro( OutputMovingImage, OutputImageType );
+  itkGetObjectMacro(OutputMovingImage, OutputImageType);
 
   /** Get the output moving image. */
-  itkGetObjectMacro( UnNormalizedMovingImage, OutputImageType );
+  itkGetObjectMacro(UnNormalizedMovingImage, OutputImageType);
 
   /** Get the output moving image. */
-  itkGetObjectMacro( UnNormalizedFixedImage, OutputImageType );
+  itkGetObjectMacro(UnNormalizedFixedImage, OutputImageType);
 
   /** Get minimum value of original fixed image. */
-  itkGetMacro( FixedImageMinimum, InputPixelType );
+  itkGetMacro(FixedImageMinimum, InputPixelType);
 
   /** Get minimum value of original moving image. */
-  itkGetMacro( MovingImageMinimum, InputPixelType );
+  itkGetMacro(MovingImageMinimum, InputPixelType);
 
   /* BOBF macros*/
   /** Set Target Mask filename */
@@ -152,17 +152,17 @@ public:
 protected:
   DemonsPreprocessor();
   ~DemonsPreprocessor()
-    {}
+  {}
 private:
-  DemonsPreprocessor( const Self & );    // purposely not implemented
-  void operator=( const Self & );        // purposely not implemented
+  DemonsPreprocessor(const Self &);      // purposely not implemented
+  void operator=(const Self &);          // purposely not implemented
 
-  typename InputImageType::Pointer    m_InputFixedImage;
-  typename InputImageType::Pointer    m_InputMovingImage;
-  typename OutputImageType::Pointer   m_OutputFixedImage;
-  typename OutputImageType::Pointer   m_OutputMovingImage;
-  typename OutputImageType::Pointer   m_UnNormalizedMovingImage;
-  typename OutputImageType::Pointer   m_UnNormalizedFixedImage;
+  typename InputImageType::Pointer m_InputFixedImage;
+  typename InputImageType::Pointer m_InputMovingImage;
+  typename OutputImageType::Pointer m_OutputFixedImage;
+  typename OutputImageType::Pointer m_OutputMovingImage;
+  typename OutputImageType::Pointer m_UnNormalizedMovingImage;
+  typename OutputImageType::Pointer m_UnNormalizedFixedImage;
   typename TDeformationField::Pointer m_InitialDeformationField;
 
   unsigned long m_NumberOfHistogramLevels;
@@ -187,13 +187,13 @@ private:
 
   /*MakeBOBF function takes in a brain image and a whole brain mask and strips
     the skull of the image.*/
-  OutputImagePointer MakeBOBFImage( OutputImagePointer input,
-                                    std::string MaskName );
+  OutputImagePointer MakeBOBFImage(OutputImagePointer input,
+                                   std::string MaskName);
 };
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "DemonsPreprocessor.txx"
+#  include "DemonsPreprocessor.txx"
 #endif
 
 #endif // _DemonsPreprocessor_h

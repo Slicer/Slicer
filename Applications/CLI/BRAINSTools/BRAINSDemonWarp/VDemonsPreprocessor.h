@@ -31,16 +31,16 @@ namespace itk
  *    - the minimum value of original moving image
  *
  */
-template <typename TInputImage, typename TOutputImage>
-class ITK_EXPORT VDemonsPreprocessor : public Object
+template< typename TInputImage, typename TOutputImage >
+class ITK_EXPORT VDemonsPreprocessor:public Object
 {
 public:
 
   /** Standard class typedefs. */
-  typedef VDemonsPreprocessor      Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef VDemonsPreprocessor        Self;
+  typedef Object                     Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(VDemonsPreprocessor, Object);
@@ -49,7 +49,7 @@ public:
   itkNewMacro(Self);
 
   /** Input Image Type. */
-  typedef TInputImage  InputImageType;
+  typedef TInputImage InputImageType;
   /** Output Image Type. */
   typedef TOutputImage OutputImageType;
 
@@ -65,13 +65,13 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension);
 
   /** Set the input fixed image. */
-  void SetInputFixedImage(std::vector<InputImagePointer> & image)
+  void SetInputFixedImage(std::vector< InputImagePointer > & image)
   {
     m_InputFixedImage = image;
   }
 
   /** Set the input moving image. */
-  void SetInputMovingImage(std::vector<InputImagePointer> & image)
+  void SetInputMovingImage(std::vector< InputImagePointer > & image)
   {
     m_InputMovingImage = image;
   }
@@ -80,64 +80,64 @@ public:
   typedef float FieldValueType;
 
   /** Deformation field pixel type. */
-  typedef Vector<FieldValueType,
-    itkGetStaticConstMacro(ImageDimension)> FieldPixelType;
+  typedef Vector< FieldValueType,
+                  itkGetStaticConstMacro(ImageDimension) > FieldPixelType;
 
   /** Deformation field type. */
-  typedef Image<FieldPixelType,
-    itkGetStaticConstMacro(ImageDimension)> TDeformationField;
+  typedef Image< FieldPixelType,
+                 itkGetStaticConstMacro(ImageDimension) > TDeformationField;
 
   /** Set the initial Deformation Field. */
-  itkSetObjectMacro( InitialDeformationField, TDeformationField );
-  itkGetObjectMacro( InitialDeformationField, TDeformationField );
+  itkSetObjectMacro(InitialDeformationField, TDeformationField);
+  itkGetObjectMacro(InitialDeformationField, TDeformationField);
 
   /** Set the number of histogram levels to use. */
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Set the number of match points to use. */
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
 
   /** Method to execute the preprocessing. */
   virtual void Execute();
 
   /** Get the output fixed image. */
-  std::vector<OutputImagePointer> &  GetOutputFixedImage(void)
+  std::vector< OutputImagePointer > &  GetOutputFixedImage(void)
   {
     return m_OutputFixedImage;
   }
 
   /** Get the output moving image. */
-  std::vector<OutputImagePointer> &  GetOutputMovingImage()
+  std::vector< OutputImagePointer > &  GetOutputMovingImage()
   {
     return m_OutputMovingImage;
   }
 
   /** Get the output moving image. */
-  std::vector<OutputImagePointer> &  GetUnNormalizedMovingImage()
+  std::vector< OutputImagePointer > &  GetUnNormalizedMovingImage()
   {
     return m_UnNormalizedMovingImage;
   }
 
   /** Get the output moving image. */
-  std::vector<OutputImagePointer> &  GetUnNormalizedFixedImage()
+  std::vector< OutputImagePointer > &  GetUnNormalizedFixedImage()
   {
     return m_UnNormalizedFixedImage;
   }
 
   /** Get minimum value of original fixed image. */
-  itkGetMacro( FixedImageMinimum, InputPixelType );
+  itkGetMacro(FixedImageMinimum, InputPixelType);
 
   /** Get minimum value of original moving image. */
-  itkGetMacro( MovingImageMinimum, InputPixelType );
+  itkGetMacro(MovingImageMinimum, InputPixelType);
 
   /*BOBF macros*/
   /**Set Target Mask filename*/
-  itkSetStringMacro(FixedBinaryVolume );
-  itkGetStringMacro( FixedBinaryVolume );
+  itkSetStringMacro(FixedBinaryVolume);
+  itkGetStringMacro(FixedBinaryVolume);
 
   /**Set Template Mask filename*/
-  itkSetStringMacro(MovingBinaryVolume );
-  itkGetStringMacro( MovingBinaryVolume );
+  itkSetStringMacro(MovingBinaryVolume);
+  itkGetStringMacro(MovingBinaryVolume);
 
   /** Set/Get the lower threshold. The default is 0. */
   itkSetMacro(Lower, PixelType);
@@ -173,17 +173,17 @@ public:
 protected:
   VDemonsPreprocessor();
   ~VDemonsPreprocessor()
-    {}
+  {}
 private:
-  VDemonsPreprocessor( const Self & );    // purposely not implemented
-  void operator=( const Self & );         // purposely not implemented
+  VDemonsPreprocessor(const Self &);      // purposely not implemented
+  void operator=(const Self &);           // purposely not implemented
 
-  std::vector<InputImagePointer>  m_InputFixedImage;
-  std::vector<InputImagePointer>  m_InputMovingImage;
-  std::vector<OutputImagePointer> m_OutputFixedImage;
-  std::vector<OutputImagePointer> m_OutputMovingImage;
-  std::vector<OutputImagePointer> m_UnNormalizedMovingImage;
-  std::vector<OutputImagePointer> m_UnNormalizedFixedImage;
+  std::vector< InputImagePointer >  m_InputFixedImage;
+  std::vector< InputImagePointer >  m_InputMovingImage;
+  std::vector< OutputImagePointer > m_OutputFixedImage;
+  std::vector< OutputImagePointer > m_OutputMovingImage;
+  std::vector< OutputImagePointer > m_UnNormalizedMovingImage;
+  std::vector< OutputImagePointer > m_UnNormalizedFixedImage;
   typename TDeformationField::Pointer m_InitialDeformationField;
 
   unsigned long m_NumberOfHistogramLevels;
@@ -206,13 +206,13 @@ private:
 
   /*MakeBOBF function takes in a brain image and a whole brain mask and strips the
     skull of the image.*/
-  OutputImagePointer MakeBOBFImage( OutputImagePointer input,
-                                    std::string MaskName );
+  OutputImagePointer MakeBOBFImage(OutputImagePointer input,
+                                   std::string MaskName);
 };
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "VDemonsPreprocessor.txx"
+#  include "VDemonsPreprocessor.txx"
 #endif
 
 #endif // _VDemonsPreprocessor_h

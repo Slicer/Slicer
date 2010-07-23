@@ -9,30 +9,30 @@
 #include "DemonsPreprocessor.h"
 #include "DemonsRegistrator.h"
 
-#define DIM                                                     3
-#define MaxStepLength                                           2
-#define SmoothDeformationFieldSigma                             1.5
-#define NumberOfLevels                                          5
-#define NumberOfIteration0                                      300
-#define NumberOfIteration1                                      100  // 100
-#define NumberOfIteration2                                      30   // 30
-#define NumberOfIteration3                                      20   // 20
-#define NumberOfIteration4                                      15   // 15
-#define FixedPyramid                                            16
-#define NumberOfMatchPoints                                     7
-#define NumberOfHistogramLevels                                 1024
+#define DIM                         3
+#define MaxStepLength               2
+#define SmoothDeformationFieldSigma 1.5
+#define NumberOfLevels              5
+#define NumberOfIteration0          300
+#define NumberOfIteration1          100                              // 100
+#define NumberOfIteration2          30                               // 30
+#define NumberOfIteration3          20                               // 20
+#define NumberOfIteration4          15                               // 15
+#define FixedPyramid                16
+#define NumberOfMatchPoints         7
+#define NumberOfHistogramLevels     1024
 
 /** TODO:  Need to document this class
 */
-class itkSimpleDiffeomorphicRegistration : public itk::Object
+class itkSimpleDiffeomorphicRegistration:public itk::Object
 {
 public:
-  typedef itk::Image<float, DIM> TRealImage;
-  typedef itk::DemonsPreprocessor<TRealImage,
-                                  TRealImage> DemonsPreprocessorType;
-  typedef itk::DemonsRegistrator<TRealImage, TRealImage,
-                                 float> DemonsRegistratorType;
-  typedef itk::Image<itk::Vector<float, DIM>, DIM> TDeformationField;
+  typedef itk::Image< float, DIM > TRealImage;
+  typedef itk::DemonsPreprocessor< TRealImage,
+                                   TRealImage > DemonsPreprocessorType;
+  typedef itk::DemonsRegistrator< TRealImage, TRealImage,
+                                  float > DemonsRegistratorType;
+  typedef itk::Image< itk::Vector< float, DIM >, DIM > TDeformationField;
 
   itkSimpleDiffeomorphicRegistration();
   itkSetObjectMacro(FixedImage, TRealImage);

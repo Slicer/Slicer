@@ -27,17 +27,17 @@ namespace itk
  * the post-transform.
  *
  */
-template <typename TCoordinateType, unsigned int NDimensions,
-          typename TInputImage>
-class ITK_EXPORT TransformAdaptor : public LightProcessObject
+template< typename TCoordinateType, unsigned int NDimensions,
+          typename TInputImage >
+class ITK_EXPORT TransformAdaptor:public LightProcessObject
 {
 public:
 
   /** Standard class typedefs. */
-  typedef TransformAdaptor         Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef TransformAdaptor           Self;
+  typedef Object                     Superclass;
+  typedef SmartPointer< Self >       Pointer;
+  typedef SmartPointer< const Self > ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(TransformAdaptor, Object);
@@ -51,42 +51,42 @@ public:
   typedef typename InputImageType::SizeType InputImageSizeType;
 
   /** Image dimension enumeration. */
-  itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension );
+  itkStaticConstMacro(ImageDimension, unsigned int, TInputImage::ImageDimension);
 
   /** Type of the scalar representing coordinate and vector elements. */
   typedef  TCoordinateType
-    ScalarType;
+  ScalarType;
 
-  typedef vnl_matrix_fixed<TCoordinateType, NDimensions + 1, NDimensions
-                           + 1> VnlTransformMatrixType44;
+  typedef vnl_matrix_fixed< TCoordinateType, NDimensions + 1, NDimensions
+                            + 1 > VnlTransformMatrixType44;
 
   /** Affine transform type. */
-  typedef AffineTransform<TCoordinateType,
-                          itkGetStaticConstMacro(ImageDimension)> AffineTransformType;
+  typedef AffineTransform< TCoordinateType,
+                           itkGetStaticConstMacro(ImageDimension) > AffineTransformType;
   typedef typename AffineTransformType::Pointer
-    AffineTransformPointer;
+  AffineTransformPointer;
   typedef typename AffineTransformType::MatrixType
-    MatrixType;
+  MatrixType;
   typedef typename AffineTransformType::InputPointType
-    PointType;
+  PointType;
   typedef typename AffineTransformType::OutputVectorType
-    VectorType;
+  VectorType;
   typedef typename VectorType::ValueType
-    ValueType;
+  ValueType;
 
   /** CrossOverAffineSystem type. */
-  typedef CrossOverAffineSystem<TCoordinateType,
-    itkGetStaticConstMacro(ImageDimension)> CrossOverAffineSystemType;
+  typedef CrossOverAffineSystem< TCoordinateType,
+                                 itkGetStaticConstMacro(ImageDimension) > CrossOverAffineSystemType;
   typedef typename CrossOverAffineSystemType::Pointer
-    CrossOverAffineSystemPointer;
+  CrossOverAffineSystemPointer;
 
   /** Set the input fixed image. */
-  iplSetMacro( FixedImage, InputImagePointer );
-  iplGetMacro( FixedImage, InputImagePointer );
+  iplSetMacro(FixedImage, InputImagePointer);
+  iplGetMacro(FixedImage, InputImagePointer);
 
   /** Set the input moving image. */
-  iplSetMacro( MovingImage, InputImagePointer );
-  iplGetMacro( MovingImage, InputImagePointer );
+  iplSetMacro(MovingImage, InputImagePointer);
+  iplGetMacro(MovingImage, InputImagePointer);
 
   /** Methods to execute the transform processing. */
   void ExecuteInput();
@@ -102,36 +102,36 @@ public:
 
   void ConvertITKAffineToOutputAffine(void);
 
-  iplSetMacro( CenterMovingAffineTransform, AffineTransformPointer );
-  iplGetMacro( CenterMovingAffineTransform, AffineTransformPointer );
-  iplSetMacro( DeCenterMovingAffineTransform, AffineTransformPointer );
-  iplGetMacro( DeCenterMovingAffineTransform, AffineTransformPointer );
-  iplSetMacro( CenterFixedAffineTransform, AffineTransformPointer );
-  iplGetMacro( CenterFixedAffineTransform, AffineTransformPointer );
-  iplSetMacro( DeCenterFixedAffineTransform, AffineTransformPointer );
-  iplGetMacro( DeCenterFixedAffineTransform, AffineTransformPointer );
+  iplSetMacro(CenterMovingAffineTransform, AffineTransformPointer);
+  iplGetMacro(CenterMovingAffineTransform, AffineTransformPointer);
+  iplSetMacro(DeCenterMovingAffineTransform, AffineTransformPointer);
+  iplGetMacro(DeCenterMovingAffineTransform, AffineTransformPointer);
+  iplSetMacro(CenterFixedAffineTransform, AffineTransformPointer);
+  iplGetMacro(CenterFixedAffineTransform, AffineTransformPointer);
+  iplSetMacro(DeCenterFixedAffineTransform, AffineTransformPointer);
+  iplGetMacro(DeCenterFixedAffineTransform, AffineTransformPointer);
 
-  iplGetMacro( InputAffineTransformFilename, std::string );
-  iplSetMacro( InputAffineTransformFilename, std::string );
-  iplGetMacro( OutputAffineTransformFilename, std::string );
-  iplSetMacro( OutputAffineTransformFilename, std::string );
+  iplGetMacro(InputAffineTransformFilename, std::string);
+  iplSetMacro(InputAffineTransformFilename, std::string);
+  iplGetMacro(OutputAffineTransformFilename, std::string);
+  iplSetMacro(OutputAffineTransformFilename, std::string);
 
-  iplSetMacro( InputAffineTransform, AffineTransformPointer );
-  iplGetMacro( InputAffineTransform, AffineTransformPointer );
-  iplSetMacro( ITKAffineTransform, AffineTransformPointer );
-  iplGetMacro( ITKAffineTransform, AffineTransformPointer );
-  iplSetMacro( OutputAffineTransform, AffineTransformPointer );
-  iplGetMacro( OutputAffineTransform, AffineTransformPointer );
+  iplSetMacro(InputAffineTransform, AffineTransformPointer);
+  iplGetMacro(InputAffineTransform, AffineTransformPointer);
+  iplSetMacro(ITKAffineTransform, AffineTransformPointer);
+  iplGetMacro(ITKAffineTransform, AffineTransformPointer);
+  iplSetMacro(OutputAffineTransform, AffineTransformPointer);
+  iplGetMacro(OutputAffineTransform, AffineTransformPointer);
 
-  iplSetMacro( CrossOverAffineSystem, CrossOverAffineSystemPointer );
-  iplGetMacro( CrossOverAffineSystem, CrossOverAffineSystemPointer );
+  iplSetMacro(CrossOverAffineSystem, CrossOverAffineSystemPointer);
+  iplGetMacro(CrossOverAffineSystem, CrossOverAffineSystemPointer);
 protected:
   TransformAdaptor();
   ~TransformAdaptor()
-    {}
+  {}
 private:
-  TransformAdaptor( const Self & );             // purposely not implemented
-  void operator=( const Self & );               // purposely not implemented
+  TransformAdaptor(const Self &);               // purposely not implemented
+  void operator=(const Self &);                 // purposely not implemented
 
   InputImagePointer m_FixedImage;
   InputImagePointer m_MovingImage;
@@ -154,7 +154,7 @@ private:
 }   // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "TransformAdaptor.txx"
+#  include "TransformAdaptor.txx"
 #endif
 
 #endif

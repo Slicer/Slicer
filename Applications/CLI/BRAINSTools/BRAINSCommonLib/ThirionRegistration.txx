@@ -5,8 +5,8 @@
 
 namespace itk
 {
-template<typename TImage, typename TRealImage, typename TOutputImage>
-ThirionRegistration<TImage, TRealImage, TOutputImage>
+template< typename TImage, typename TRealImage, typename TOutputImage >
+ThirionRegistration< TImage, TRealImage, TOutputImage >
 ::ThirionRegistration()
 {
   m_TheMovingImageFilename = "";
@@ -19,10 +19,10 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   m_CheckerBoardFilename = "none";
   m_DeformationFieldOutputName = "none";
   m_DisplacementBaseName = "none";
-  m_CheckerBoardPattern.Fill( 4 );
-  m_Lower = NumericTraits<PixelType>::NonpositiveMin();
-  m_Upper = NumericTraits<PixelType>::max();
-  m_DefaultPixelValue = NumericTraits<PixelType>::Zero;
+  m_CheckerBoardPattern.Fill(4);
+  m_Lower = NumericTraits< PixelType >::NonpositiveMin();
+  m_Upper = NumericTraits< PixelType >::max();
+  m_DefaultPixelValue = NumericTraits< PixelType >::Zero;
   m_Radius.Fill(1);
   m_BOBFTargetMask = "none";
   m_BOBFTemplateMask = "none";
@@ -50,9 +50,9 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
 /*This method initializes the input parser which reads in the moving image,
   fixed image and parameter file.*/
 
-template<typename TImage, typename TRealImage, typename TOutputImage>
+template< typename TImage, typename TRealImage, typename TOutputImage >
 void
-ThirionRegistration<TImage, TRealImage, TOutputImage>
+ThirionRegistration< TImage, TRealImage, TOutputImage >
 ::InitializeParser()
 {
   this->m_Parser->SetTheMovingImageFilename(
@@ -84,9 +84,9 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
   images before registration. The image files which are read in using the parser
   are given to the preprocessor.*/
 
-template<typename TImage, typename TRealImage, typename TOutputImage>
+template< typename TImage, typename TRealImage, typename TOutputImage >
 void
-ThirionRegistration<TImage, TRealImage, TOutputImage>
+ThirionRegistration< TImage, TRealImage, TOutputImage >
 ::InitializePreprocessor()
 {
   this->m_Preprocessor->SetInputFixedImage( this->m_Parser->GetTheFixedImage() );
@@ -114,9 +114,9 @@ ThirionRegistration<TImage, TRealImage, TOutputImage>
 /*This method initializes the registration process. The preprocessed output
   files are passed to the registrator.*/
 
-template<typename TImage, typename TRealImage, typename TOutputImage>
+template< typename TImage, typename TRealImage, typename TOutputImage >
 void
-ThirionRegistration<TImage, TRealImage, TOutputImage>
+ThirionRegistration< TImage, TRealImage, TOutputImage >
 ::InitializeRegistrator()
 {
   this->m_Registrator->SetDisplacementBaseName( this->GetDisplacementBaseName() );
