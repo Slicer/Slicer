@@ -675,6 +675,9 @@ itcl::body Labeler::rotateSliceToImage { } {
     }
   }
 
+  # make sure the slice plane does not lie on an index boundary (to avoid rounding issues)
+  [$sliceGUI GetLogic] SnapSliceOffsetToIJK
+
   after idle $_sliceNode Modified
 }
 
