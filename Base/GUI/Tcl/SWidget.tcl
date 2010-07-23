@@ -19,7 +19,7 @@ namespace eval SWidget {
 # utility to run method only if instance hasn't already been deleted
 # (this is useful in event handling)
 #
-namespace eval SWidget set DEBUG_CALLBACKS 1
+namespace eval SWidget set DEBUG_CALLBACKS 0
 namespace eval SWidget {
   proc ProtectedCallback {instance args} {
     if { [info command $instance] != "" } {

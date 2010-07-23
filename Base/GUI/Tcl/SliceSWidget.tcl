@@ -846,6 +846,11 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
     set logic [$sgui GetLogic]
     set sliceCompositeNode [$logic GetSliceCompositeNode]
 
+    if { $sliceCompositeNode == "" } {
+      # need a composite node to be able to do anything
+      return
+    }
+
     if { $lname != "Red" && [string first "Compare" $lname] != 0 } {
       continue
     } 
@@ -982,6 +987,11 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
   set logic [$sliceGUI GetLogic]
   set sliceCompositeNode [$logic GetSliceCompositeNode]
 
+  if { $sliceCompositeNode == "" } {
+    # need a composite node to be able to do anything
+    return
+  }
+
   set foregroundname "None"
   set backgroundname "None"
   set labelname "None"
@@ -1117,6 +1127,11 @@ itcl::body SliceSWidget::updateStatusAnnotation {r a s} {
 
   set logic [$sliceGUI GetLogic]
   set sliceCompositeNode [$logic GetSliceCompositeNode]
+
+  if { $sliceCompositeNode == "" } {
+    # need a composite node to be able to do anything
+    return
+  }
 
   set foregroundname "None"
   set backgroundname "None"
