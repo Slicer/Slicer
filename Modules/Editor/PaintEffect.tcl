@@ -131,7 +131,10 @@ itcl::body PaintEffect::createGlyph { {polyData ""} } {
   #
   $o(rasToXY) DeepCopy [$_sliceNode GetXYToRAS]
   $o(rasToXY) Invert
-  set xyRadius [$o(rasToXY) MultiplyPoint $radius $radius $radius 0]
+  set xyRadius "10 10"
+  if { $radius != "" } {
+    set xyRadius [$o(rasToXY) MultiplyPoint $radius $radius $radius 0]
+  }
   foreach {xRadius yRadius} $xyRadius {}
   set xRadius [expr abs([lindex $xyRadius 0])]
   set yRadius [expr abs([lindex $xyRadius 1])]
