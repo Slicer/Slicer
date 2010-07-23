@@ -1723,7 +1723,6 @@ void vtkMRMLSliceLogic::SnapSliceOffsetToIJK()
   this->GetLowestVolumeSliceBounds( bounds );
   
   // number of slices along the offset dimension (depends on ijkToRAS and Transforms)
-  double slices = 1 + static_cast<int> (0.5 + ((bounds[5] - bounds[4]) / spacing[2]));
   double slice = (oldOffset - bounds[4]) / spacing[2];
   int intSlice = static_cast<int> (0.5 + slice);  
   offset = intSlice * spacing[2] + bounds[4];
