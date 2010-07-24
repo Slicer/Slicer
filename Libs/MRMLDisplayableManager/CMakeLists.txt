@@ -69,6 +69,7 @@ SET(KIT_SRCS
   vtkMRMLDisplayableManagerFactory.cxx
   vtkMRMLDisplayableManagerGroup.cxx
   
+  vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx
   )
 
