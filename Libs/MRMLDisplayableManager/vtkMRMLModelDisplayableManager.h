@@ -158,7 +158,7 @@ protected:
   virtual void RemoveMRMLObservers();
 
   //BTX
-  friend class vtkDisplayableManagerInteractorStyle; // Access to RequestRender();
+  friend class vtkThreeDViewInteractorStyle; // Access to RequestRender();
   //ETX
 
   void RemoveModelProps();

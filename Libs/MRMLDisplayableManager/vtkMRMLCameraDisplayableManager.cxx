@@ -1,7 +1,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLCameraDisplayableManager.h"
-#include "vtkDisplayableManagerInteractorStyle.h"
+#include "vtkThreeDViewInteractorStyle.h"
 
 // MRML includes
 #include <vtkMRMLCameraNode.h>
@@ -337,8 +337,8 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
   if (this->GetInteractor())
     {
     vtkInteractorObserver *iobs = this->GetInteractor()->GetInteractorStyle();
-    vtkDisplayableManagerInteractorStyle *istyle =
-        vtkDisplayableManagerInteractorStyle::SafeDownCast(iobs);
+    vtkThreeDViewInteractorStyle *istyle =
+        vtkThreeDViewInteractorStyle::SafeDownCast(iobs);
     if (istyle)
       {
       istyle->SetCameraNode(this->Internal->CameraNode);

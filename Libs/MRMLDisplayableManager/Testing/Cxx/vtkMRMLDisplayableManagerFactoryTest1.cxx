@@ -2,7 +2,7 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkDisplayableManagerInteractorStyle.h>
+#include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLAbstractDisplayableManager.h>
 
 // MRML includes
@@ -151,7 +151,7 @@ int vtkMRMLDisplayableManagerFactoryTest1(int argc, char* argv[])
   rw->SetInteractor(ri);
 
   // Set Interactor Style
-  VTK_CREATE(vtkDisplayableManagerInteractorStyle, iStyle);
+  VTK_CREATE(vtkThreeDViewInteractorStyle, iStyle);
   ri->SetInteractorStyle(iStyle);
 
   // MRML scene and ViewNode

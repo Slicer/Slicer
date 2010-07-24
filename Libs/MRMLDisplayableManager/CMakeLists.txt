@@ -69,7 +69,7 @@ SET(KIT_SRCS
   vtkMRMLDisplayableManagerFactory.cxx
   vtkMRMLDisplayableManagerGroup.cxx
   
-  vtkDisplayableManagerInteractorStyle.cxx
+  vtkThreeDViewInteractorStyle.cxx
   )
 
 # Create the instantiator for DisplayableManager classes.

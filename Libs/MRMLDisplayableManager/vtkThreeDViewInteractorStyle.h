@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkDisplayableManagerInteractorStyle - interactive manipulation of the camera
+///  vtkThreeDViewInteractorStyle - interactive manipulation of the camera
 /// 
 /// This class is based on vtkInteractorStyleTrackballCamera, but includes
 /// extra features and event invocations to support extra features of slicer.
@@ -32,8 +32,8 @@
 /// vtkInteractorStyleTrackballActor vtkInteractorStyleJoystickCamera
 /// vtkInteractorStyleJoystickActor
 
-#ifndef __vtkDisplayableManagerInteractorStyle_h
-#define __vtkDisplayableManagerInteractorStyle_h
+#ifndef __vtkThreeDViewInteractorStyle_h
+#define __vtkThreeDViewInteractorStyle_h
 
 // MRML includes
 #include "vtkMRML.h"
@@ -46,12 +46,12 @@
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 class vtkMRMLModelDisplayableManager;
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkDisplayableManagerInteractorStyle :
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkThreeDViewInteractorStyle :
     public vtkInteractorStyle
 {
 public:
-  static vtkDisplayableManagerInteractorStyle *New();
-  vtkTypeRevisionMacro(vtkDisplayableManagerInteractorStyle,vtkInteractorStyle);
+  static vtkThreeDViewInteractorStyle *New();
+  vtkTypeRevisionMacro(vtkThreeDViewInteractorStyle,vtkInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
@@ -122,8 +122,8 @@ public:
   //ETX
     
 protected:
-  vtkDisplayableManagerInteractorStyle();
-  ~vtkDisplayableManagerInteractorStyle();
+  vtkThreeDViewInteractorStyle();
+  ~vtkThreeDViewInteractorStyle();
 
   vtkMRMLCameraNode *CameraNode;
 
@@ -145,8 +145,8 @@ protected:
   vtkMRMLModelDisplayableManager * ModelDisplayableManager;
   
 private:
-  vtkDisplayableManagerInteractorStyle(const vtkDisplayableManagerInteractorStyle&);  /// Not implemented.
-  void operator=(const vtkDisplayableManagerInteractorStyle&);  /// Not implemented.
+  vtkThreeDViewInteractorStyle(const vtkThreeDViewInteractorStyle&);  /// Not implemented.
+  void operator=(const vtkThreeDViewInteractorStyle&);  /// Not implemented.
 };
 
 #endif

@@ -12,10 +12,9 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkDisplayableManagerInteractorStyle.h>
+#include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkMRMLViewDisplayableManager.h>
-#include <vtkDisplayableManagerInteractorStyle.h>
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
@@ -144,7 +143,7 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
 {
   CTK_INIT_PRIVATE(qMRMLThreeDView);
   CTK_D(qMRMLThreeDView);
-  VTK_CREATE(vtkDisplayableManagerInteractorStyle, interactorStyle);
+  VTK_CREATE(vtkThreeDViewInteractorStyle, interactorStyle);
   this->interactor()->SetInteractorStyle(interactorStyle);
 
   // Register Displayable Managers

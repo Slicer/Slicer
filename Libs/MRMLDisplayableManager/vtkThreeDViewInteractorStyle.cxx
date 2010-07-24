@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkDisplayableManagerInteractorStyle.cxx,v $
+  Module:    $RCSfile: vtkThreeDViewInteractorStyle.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkDisplayableManagerInteractorStyle.h"
+#include "vtkThreeDViewInteractorStyle.h"
 
 #include "vtkCamera.h"
 #include "vtkCommand.h"
@@ -27,11 +27,11 @@
 // for picking
 #include "vtkMRMLModelDisplayableManager.h"
 
-vtkCxxRevisionMacro(vtkDisplayableManagerInteractorStyle, "$Revision: 13328 $");
-vtkStandardNewMacro(vtkDisplayableManagerInteractorStyle);
+vtkCxxRevisionMacro(vtkThreeDViewInteractorStyle, "$Revision: 13328 $");
+vtkStandardNewMacro(vtkThreeDViewInteractorStyle);
 
 //----------------------------------------------------------------------------
-vtkDisplayableManagerInteractorStyle::vtkDisplayableManagerInteractorStyle() 
+vtkThreeDViewInteractorStyle::vtkThreeDViewInteractorStyle() 
 {
   this->MotionFactor   = 10.0;
   this->CameraNode = 0;
@@ -42,7 +42,7 @@ vtkDisplayableManagerInteractorStyle::vtkDisplayableManagerInteractorStyle()
 }
 
 //----------------------------------------------------------------------------
-vtkDisplayableManagerInteractorStyle::~vtkDisplayableManagerInteractorStyle() 
+vtkThreeDViewInteractorStyle::~vtkThreeDViewInteractorStyle() 
 {
   this->SetCameraNode(0);
   this->NumberOfPicks = 0;
@@ -50,7 +50,7 @@ vtkDisplayableManagerInteractorStyle::~vtkDisplayableManagerInteractorStyle()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnMouseMove() 
+void vtkThreeDViewInteractorStyle::OnMouseMove() 
 { 
   int x = this->Interactor->GetEventPosition()[0];
   int y = this->Interactor->GetEventPosition()[1];
@@ -101,7 +101,7 @@ void vtkDisplayableManagerInteractorStyle::OnMouseMove()
 
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnEnter()
+void vtkThreeDViewInteractorStyle::OnEnter()
 {
   if (this->HasObserver(vtkCommand::EnterEvent)) 
     {
@@ -110,7 +110,7 @@ void vtkDisplayableManagerInteractorStyle::OnEnter()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnLeave()
+void vtkThreeDViewInteractorStyle::OnLeave()
 {
   if (this->HasObserver(vtkCommand::LeaveEvent)) 
     {
@@ -121,7 +121,7 @@ void vtkDisplayableManagerInteractorStyle::OnLeave()
 
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnLeftButtonDown() 
+void vtkThreeDViewInteractorStyle::OnLeftButtonDown() 
 { 
   this->FindPokedRenderer(this->Interactor->GetEventPosition()[0], 
                           this->Interactor->GetEventPosition()[1]);
@@ -194,7 +194,7 @@ void vtkDisplayableManagerInteractorStyle::OnLeftButtonDown()
         // now throw the events
         if (mouseInteractionMode == vtkMRMLInteractionNode::Place)
           {
-          this->InvokeEvent(vtkDisplayableManagerInteractorStyle::PickEvent, this->Interactor->GetEventPosition());
+          this->InvokeEvent(vtkThreeDViewInteractorStyle::PickEvent, this->Interactor->GetEventPosition());
           //--- increment the number of Places that have occured.
           this->NumberOfPlaces++;
           }
@@ -202,14 +202,14 @@ void vtkDisplayableManagerInteractorStyle::OnLeftButtonDown()
           {
           // deal with select mode
           // throw a select region event
-          this->InvokeEvent(vtkDisplayableManagerInteractorStyle::SelectRegionEvent, this->Interactor->GetEventPosition());
+          this->InvokeEvent(vtkThreeDViewInteractorStyle::SelectRegionEvent, this->Interactor->GetEventPosition());
           this->NumberOfPicks++;
           // TODO: expand the mouse interaction modes and events to support
           // picking everything needed
 #ifndef QDEC_DEBUG
           // for the Qdec module, throw a plot event that won't clash with the
           // fiducials module looking for a pick event
-          this->InvokeEvent(vtkDisplayableManagerInteractorStyle::PlotEvent, this->Interactor->GetEventPosition());
+          this->InvokeEvent(vtkThreeDViewInteractorStyle::PlotEvent, this->Interactor->GetEventPosition());
 #endif
           }
         }
@@ -225,7 +225,7 @@ void vtkDisplayableManagerInteractorStyle::OnLeftButtonDown()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnLeftButtonUp()
+void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
 {
   // get the scene's mouse interaction mode
   int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
@@ -309,7 +309,7 @@ void vtkDisplayableManagerInteractorStyle::OnLeftButtonUp()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnMiddleButtonDown() 
+void vtkThreeDViewInteractorStyle::OnMiddleButtonDown() 
 {
   this->FindPokedRenderer(this->Interactor->GetEventPosition()[0], 
                           this->Interactor->GetEventPosition()[1]);
@@ -322,7 +322,7 @@ void vtkDisplayableManagerInteractorStyle::OnMiddleButtonDown()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnMiddleButtonUp()
+void vtkThreeDViewInteractorStyle::OnMiddleButtonUp()
 {
   switch (this->State) 
     {
@@ -333,7 +333,7 @@ void vtkDisplayableManagerInteractorStyle::OnMiddleButtonUp()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnRightButtonDown() 
+void vtkThreeDViewInteractorStyle::OnRightButtonDown() 
 {
   this->FindPokedRenderer(this->Interactor->GetEventPosition()[0], 
                           this->Interactor->GetEventPosition()[1]);
@@ -346,7 +346,7 @@ void vtkDisplayableManagerInteractorStyle::OnRightButtonDown()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnRightButtonUp()
+void vtkThreeDViewInteractorStyle::OnRightButtonUp()
 {
   switch (this->State) 
     {
@@ -357,7 +357,7 @@ void vtkDisplayableManagerInteractorStyle::OnRightButtonUp()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnMouseWheelForward() 
+void vtkThreeDViewInteractorStyle::OnMouseWheelForward() 
 {
   this->FindPokedRenderer(this->Interactor->GetEventPosition()[0], 
                           this->Interactor->GetEventPosition()[1]);
@@ -374,7 +374,7 @@ void vtkDisplayableManagerInteractorStyle::OnMouseWheelForward()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnMouseWheelBackward()
+void vtkThreeDViewInteractorStyle::OnMouseWheelBackward()
 {
   this->FindPokedRenderer(this->Interactor->GetEventPosition()[0], 
                           this->Interactor->GetEventPosition()[1]);
@@ -391,7 +391,7 @@ void vtkDisplayableManagerInteractorStyle::OnMouseWheelBackward()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::OnExpose()
+void vtkThreeDViewInteractorStyle::OnExpose()
 {
   if ( this->GetModelDisplayableManager() != 0 )
     {
@@ -400,7 +400,7 @@ void vtkDisplayableManagerInteractorStyle::OnExpose()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::Rotate()
+void vtkThreeDViewInteractorStyle::Rotate()
 {
   if (this->CurrentRenderer == 0)
     {
@@ -455,7 +455,7 @@ void vtkDisplayableManagerInteractorStyle::Rotate()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::Spin()
+void vtkThreeDViewInteractorStyle::Spin()
 {
   if (this->CurrentRenderer == 0)
     {
@@ -506,7 +506,7 @@ void vtkDisplayableManagerInteractorStyle::Spin()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::Pan()
+void vtkThreeDViewInteractorStyle::Pan()
 {
   if (this->CurrentRenderer == 0)
     {
@@ -580,7 +580,7 @@ void vtkDisplayableManagerInteractorStyle::Pan()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::Dolly()
+void vtkThreeDViewInteractorStyle::Dolly()
 {
   if (this->CurrentRenderer == 0)
     {
@@ -596,7 +596,7 @@ void vtkDisplayableManagerInteractorStyle::Dolly()
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::Dolly(double factor)
+void vtkThreeDViewInteractorStyle::Dolly(double factor)
 {
   if (this->CurrentRenderer == 0)
     {
@@ -642,13 +642,13 @@ void vtkDisplayableManagerInteractorStyle::Dolly(double factor)
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
+void vtkThreeDViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkDisplayableManagerInteractorStyle::SetModelDisplayableManager(
+void vtkThreeDViewInteractorStyle::SetModelDisplayableManager(
     vtkMRMLModelDisplayableManager * modelDisplayableManager)
 {
   this->ModelDisplayableManager = modelDisplayableManager;

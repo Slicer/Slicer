@@ -17,7 +17,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLModelDisplayableManager.h"
-#include "vtkDisplayableManagerInteractorStyle.h"
+#include "vtkThreeDViewInteractorStyle.h"
 
 // MRML includes
 #include <vtkMRMLDisplayableNode.h>
@@ -246,8 +246,8 @@ void vtkMRMLModelDisplayableManager::AdditionnalInitializeStep()
   vtkRenderWindowInteractor * interactor = this->GetInteractor();
   if (interactor)
     {
-    vtkDisplayableManagerInteractorStyle * interactorStyle =
-        vtkDisplayableManagerInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
+    vtkThreeDViewInteractorStyle * interactorStyle =
+        vtkThreeDViewInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
     if (interactorStyle)
       {
       interactorStyle->SetModelDisplayableManager(this);
