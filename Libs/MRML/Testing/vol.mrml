@@ -5,7 +5,7 @@
   fileName="TestData/fixed.nrrd" >
 </VolumeArchetypeStorage>
 
-VolumeDisplay
+<VolumeDisplay>
   id="vtkMRMLScalarVolumeDisplayNode1" 
   name="vtkMRMLScalarVolumeDisplayNode1" 
   hideFromEditors="true" selectable="true"  selected="false"  
