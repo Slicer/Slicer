@@ -504,7 +504,7 @@ int qMRMLSceneTreeModelPrivate::hiddenItem(vtkObject* object, int column)const
 void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   CTK_D(qMRMLSceneTreeModel);
-  if (scene->GetIsClosing() || scene->GetIsImporting())
+  if (scene->GetIsUpdating())
     {
     return;
     }
@@ -522,7 +522,7 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtk
 void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   CTK_D(qMRMLSceneTreeModel);
-  if (scene->GetIsClosing() || scene->GetIsImporting())
+  if (scene->GetIsUpdating())
     {
     return;
     }
@@ -605,7 +605,7 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, v
 void qMRMLSceneTreeModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   CTK_D(qMRMLSceneTreeModel);
-  if (scene->GetIsClosing() || scene->GetIsImporting())
+  if (scene->GetIsUpdating())
     {
     return;
     }
@@ -690,7 +690,7 @@ void qMRMLSceneTreeModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode*
 void qMRMLSceneTreeModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode *node)
 {
   CTK_D(qMRMLSceneTreeModel);
-  if (scene->GetIsClosing() || scene->GetIsImporting())
+  if (scene->GetIsUpdating())
     {
     return;
     }
