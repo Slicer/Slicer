@@ -83,14 +83,27 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     return;
     } // MRML
 
-  const char* className = this->MRMLScene->GetClassNameByTag(tagName);
+  const char* tmp = this->MRMLScene->GetClassNameByTag(tagName);
+  std::string className = tmp ? tmp : "";
 
-  if (className == NULL) 
+  // CreateNodeByClass should have a chance to instantiate non-registered node
+  if (className.empty())
     {
-    return;
+    className = "vtkMRML";
+    className += tagName;
+    // Append 'Node' prefix only if required
+    if (className.find("Node") != className.size() - 4)
+      {
+      className += "Node";
+      }
     }
 
-  vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass( className );
+  vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass( className.c_str() );
+  if (!node)
+    {
+    vtkWarningMacro(<< "Failed to CreateNodeByClass: " << className);
+    return;
+    }
 
   node->SetScene(this->MRMLScene);
   node->ReadXMLAttributes(atts);

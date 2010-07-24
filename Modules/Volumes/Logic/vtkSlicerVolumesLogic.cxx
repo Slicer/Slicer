@@ -414,14 +414,13 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
 // higher bits are reserved for future use
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList)
 {
-  bool importingScene = false;
-  if (this->GetMRMLScene() &&
-      this->GetMRMLScene()->GetIsImporting() == false)
-    {
-    importingScene = true;
-    this->GetMRMLScene()->SetIsImporting(true);
-    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, NULL);
-    }
+  //bool importingScene = false;
+  //if (this->GetMRMLScene() &&
+  //    this->GetMRMLScene()->GetIsImporting() == false)
+  //  {
+  //  importingScene = true;
+  this->GetMRMLScene()->SetIsImporting(true);
+  //  }
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
@@ -711,6 +710,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     this->GetMRMLScene()->RemoveNode(storageNode2);
     }
   
+  bool modified = false;
   if (volumeNode != NULL)
     {
     vtkSmartPointer<vtkSlicerColorLogic> colorLogic = vtkSmartPointer<vtkSlicerColorLogic>::New();
@@ -735,15 +735,19 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
         
     this->SetActiveVolumeNode(volumeNode);
 
-    this->Modified();
+    modified = true;
     // since added the node w/o notification, let the scene know now that it
     // has a new node
     //this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, volumeNode);
     }
-  if (importingScene)
+  //if (importingScene)
+  //  {
+  this->GetMRMLScene()->SetIsImporting(false);
+  //  this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
+  //  }
+  if (modified)
     {
-    this->GetMRMLScene()->SetIsImporting(false);
-    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
+    this->Modified();
     }
   return volumeNode;
 }

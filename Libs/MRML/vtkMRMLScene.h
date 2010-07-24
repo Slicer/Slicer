@@ -33,8 +33,6 @@ Version:   $Revision: 1.18 $
 #include "vtkObjectFactory.h"
 
 #include "vtkMRML.h"
-//#include "vtkMRMLNode.h"
-class vtkMRMLNode;
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkTagTable.h"
@@ -42,6 +40,8 @@ class vtkMRMLNode;
 class vtkCallbackCommand;
 class vtkGeneralTransform;
 class vtkURIHandler;
+class vtkMRMLNode;
+class vtkMRMLSceneSnapshotNode;
 
 class VTK_MRML_EXPORT vtkMRMLScene : public vtkCollection
 {
@@ -355,6 +355,7 @@ public:
       SceneClosedEvent = 66003,
       SceneAboutToBeClosedEvent = 66004,
       SceneRestoredEvent = 66005,
+      SceneAboutToBeRestoredEvent = 66014,
       SceneEditedEvent = 66006,
       MetadataAddedEvent = 66007,
       ImportProgressFeedbackEvent = 66008,
@@ -435,26 +436,34 @@ public:
   /// 
   /// IsClosing is true during scene close
   /// \sa Clear()
-  vtkGetMacro( IsClosing, int );
-  virtual void SetIsClosing(bool isClosing);
+  bool GetIsClosing();
 
   ///
   /// IsConnecting is True during scene connect
   /// \sa Connect()
-  vtkGetMacro( IsConnecting, int );
-  virtual void SetIsConnecting(bool isConnecting);
+  bool GetIsConnecting();
+
+  ///
+  /// IsImporting should be set to True when a important number of node will be added to the scene.
+  /// \note Every call to SetIsImporting(true) should be paired with
+  /// exactly one SetIsImporting(false)
+  void SetIsImporting(bool importing);
 
   ///
   /// IsImporting is True during scene import
   /// \sa Import()
-  vtkGetMacro( IsImporting, int );
-  virtual void SetIsImporting(bool isImporting);
+  bool GetIsImporting();
+
+  ///
+  /// IsRestoring is True during scene restore
+  /// \sa vtkMRMLSceneSnapshotNode::Restore()
+  bool GetIsRestoring();
 
   ///
   /// Return True if the scene is either being "closed", "connected"
   /// or "imported". False otherwise.
   /// \sa Clear() Import() Connect()
-  vtkGetMacro( IsUpdating, int );
+  bool GetIsUpdating();
   
   /// 
   /// the version of the last loaded scene file
@@ -468,10 +477,9 @@ public:
 
 
 protected:
+
   vtkMRMLScene();
-  ~vtkMRMLScene();
-  vtkMRMLScene(const vtkMRMLScene&);
-  void operator=(const vtkMRMLScene&);
+  virtual ~vtkMRMLScene();
   
   void PushIntoUndoStack();
   void PushIntoRedoStack();
@@ -485,19 +493,18 @@ protected:
   /// Handle vtkMRMLScene::DeleteEvent: clear the scene
   static void SceneCallback( vtkObject *caller, unsigned long eid, 
                              void *clientData, void *callData );
-  vtkCollection* CurrentScene;
+
+  vtkCollection*  CurrentScene;
+  unsigned long   SceneModifiedTime;
   
   /// data i/o handling members
-  vtkCacheManager *CacheManager;
-  vtkDataIOManager *DataIOManager;
-  vtkCollection *URIHandlerCollection;
-  vtkTagTable *UserTagTable;
-
-  unsigned long SceneModifiedTime;
+  vtkCacheManager *  CacheManager;
+  vtkDataIOManager * DataIOManager;
+  vtkCollection *    URIHandlerCollection;
+  vtkTagTable *      UserTagTable;
   
-  int UndoStackSize;
+  int  UndoStackSize;
   bool UndoFlag;
-  
   bool InUndo;
 
   //BTX
@@ -507,18 +514,17 @@ protected:
   
 
   //BTX
-  std::string         URL;
+  std::string                 URL;
+  std::string                 RootDirectory;
+
   std::map< std::string, int> UniqueIDByClass;
   std::vector< std::string >  UniqueIDs;
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
   std::vector< std::string >  RegisteredNodeTags;
-  std::string          RootDirectory;
 
-  std::vector< std::string > ReferencedIDs;
-  std::vector< vtkMRMLNode* > ReferencingNodes;
+  std::vector< std::string >          ReferencedIDs;
+  std::vector< vtkMRMLNode* >         ReferencingNodes;
   std::map< std::string, std::string> ReferencedIDChanges;
-  
-  //vtksys::hash_map<const char*, vtkMRMLNode*> NodeIDs;
   std::map<std::string, vtkMRMLNode*> NodeIDs;
 
   std::string ErrorMessage;
@@ -533,17 +539,25 @@ protected:
   vtkSetStringMacro(ClassNameList);
   vtkGetStringMacro(ClassNameList);
 
-  char *Version;
+  char * Version;
+  char * LastLoadedVersion;
 
-  char *LastLoadedVersion;
   vtkCallbackCommand *DeleteEventCallback;
   
 private:
-  /// hide the standard AddItem from the user and the compiler.
+
+  vtkMRMLScene(const vtkMRMLScene&);   // Not implemented
+  void operator=(const vtkMRMLScene&); // Not implemented
+
+  /// Hide the standard AddItem from the user and the compiler.
   void AddItem(vtkObject *o) { this->CurrentScene->vtkCollection::AddItem(o); this->Modified();};
   void RemoveItem(vtkObject *o) { this->CurrentScene->vtkCollection::RemoveItem(o); this->Modified();};
   void RemoveItem(int i) { this->CurrentScene->vtkCollection::RemoveItem(i); this->Modified();};
   int  IsItemPresent(vtkObject *o) { return this->CurrentScene->vtkCollection::IsItemPresent(o);};
+
+  //BTX
+  friend class vtkMRMLSceneSnapshotNode; // For IsRestoring
+  //ETX
   
   int LoadIntoScene(vtkCollection* scene);
 
@@ -556,7 +570,7 @@ private:
   int IsClosing;
   int IsConnecting;
   int IsImporting;
-  int IsUpdating;
+  int IsRestoring;
 };
 
 #endif

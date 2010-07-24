@@ -11,15 +11,6 @@ Date:      $Date: 2006/03/17 15:10:09 $
 Version:   $Revision: 1.18 $
 
 =========================================================================auto=*/
-#include <sstream>
-#include <map>
-
-//#include <hash_map>
-#include "vtkObjectFactory.h"
-#include "vtkErrorCode.h"
-#include "vtkCallbackCommand.h"
-#include "vtkCommand.h"
-#include "vtkGeneralTransform.h"
 
 #include "vtkMRMLConfigure.h" // MRML_USE*
 
@@ -88,7 +79,20 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVectorVolumeNode.h"
 #endif
 
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkErrorCode.h>
+#include <vtkCallbackCommand.h>
+#include <vtkCommand.h>
+#include <vtkGeneralTransform.h>
+#include <vtkDebugLeaks.h>
+
+// VTKSYS includes
 #include <vtksys/SystemTools.hxx>
+
+// STD includes
+#include <sstream>
+#include <map>
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -119,6 +123,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->IsClosing = 0;
   this->IsConnecting = 0;
   this->IsImporting = 0;
+  this->IsRestoring = 0;
 
   this->LastLoadedVersion = NULL;
   this->Version = NULL;
@@ -461,8 +466,8 @@ void vtkMRMLScene::SceneCallback( vtkObject *vtkNotUsed(caller),
 void vtkMRMLScene::Clear(int removeSingletons) 
 {
   this->SetUndoOff();
+  this->IsClosing++;
   this->InvokeEvent(this->SceneAboutToBeClosedEvent, NULL);
-  this->SetIsClosing(true);
   
   if (!removeSingletons)
     {
@@ -506,7 +511,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   // to create a few new scene once the current one has been close.
   // Therefore, it should be put at the end, certainly after UniqueIDByClass
   // has been cleared
-  this->SetIsClosing(false);
+  this->IsClosing--;
   this->InvokeEvent(this->SceneClosedEvent, NULL);
 }
 
@@ -593,7 +598,7 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
 {
   if (className == NULL)
     {
-    vtkErrorMacro("CreateNodeByClass: class name is null");
+    vtkErrorMacro("CreateNodeByClass: className is NULL");
     return NULL;
     }
   vtkMRMLNode* node = NULL;
@@ -606,12 +611,23 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
       }
     }
   // non-registered nodes can have a registered factory
-  if (node == NULL) 
+  if (node == NULL)
     {
-    vtkObject* ret = vtkObjectFactory::CreateInstance(className); 
-    if(ret) 
+    vtkObject* ret = vtkObjectFactory::CreateInstance(className);
+    if(ret)
       {
       node = static_cast<vtkMRMLNode *>(ret);
+      // Clean memory
+      if (!node)
+        {
+        ret->Delete();
+        }
+      }
+    else
+      {
+#ifdef VTK_DEBUG_LEAKS
+      vtkDebugLeaks::DestructClass(className);
+#endif
       }
     }
   return node;
@@ -665,17 +681,82 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
   return NULL;
 }
 
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::GetIsClosing()
+{
+  return this->IsClosing;
+}
 
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::GetIsConnecting()
+{
+  return this->IsConnecting;
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SetIsImporting(bool importing)
+{
+  if (importing)
+    {
+    this->IsImporting++;
+    this->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, NULL);
+    }
+  else
+    {
+    if (this->IsImporting == 0)
+      {
+      vtkErrorMacro(<< "Make sure SetIsImporting(true) / SetIsImporting(false) "
+                    "are paired properly");
+      return;
+      }
+
+    // See comment at the end of Import method implementation
+    if (this->IsImporting == 1 && this->IsConnecting > 0)
+      {
+      this->IsConnecting--;
+      }
+
+    this->IsImporting--;
+
+    this->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
+    }
+  this->Modified();
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::GetIsImporting()
+{
+  return this->IsImporting;
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::GetIsRestoring()
+{
+  return this->IsRestoring;
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::GetIsUpdating()
+{
+  return this->IsClosing || this->IsConnecting || this->IsImporting || this->IsRestoring;
+}
 
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
-  this->SetIsConnecting(1);
+  if (this->GetIsConnecting())
+    {
+    vtkErrorMacro(<< "vtkMRMLScene::Connect should NOT be called recusively !");
+    return 0;
+    }
+  this->IsConnecting++;
   this->Clear(0);
   bool undoFlag = this->GetUndoFlag();
-  int res = this->Import();    
+  int res = this->Import();
+
+  // Note that IsConnecting flag is decremented at the end of Import method
+  // This ensure that the event SceneImportedEvent is invoked after IsUpdating is decremented
   this->SetUndoFlag(undoFlag);
-  this->SetIsConnecting(0);
   return res;
 }
 
@@ -688,8 +769,7 @@ int vtkMRMLScene::Import()
   bool undoFlag = this->GetUndoFlag();
   
   this->SetUndoOff();
-  this->InvokeEvent(this->SceneAboutToBeImportedEvent, NULL);
-  this->SetIsImporting(true);
+  this->SetIsImporting(true); // Take care of sending SceneAboutToBeImportedEvent
   this->ClearReferencedNodeID();
     
   // read nodes into a temp scene  
@@ -761,8 +841,6 @@ int vtkMRMLScene::Import()
   this->SetUndoFlag(undoFlag);
   
   this->SetIsImporting(false);
-
-  this->InvokeEvent(this->SceneImportedEvent, NULL);
 
   int returnCode = 1;
   if (this->GetErrorCode() == 0) 
@@ -1805,7 +1883,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkMRMLNode *node)
     return;
     }
 
-  if (this->IsUpdating)
+  if (this->GetIsUpdating())
     {
     return;
     }
@@ -1826,7 +1904,7 @@ void vtkMRMLScene::SaveStateForUndo (std::vector<vtkMRMLNode *> nodes)
     {
     return;
     }
-  if (this->IsUpdating)
+  if (this->GetIsUpdating())
     {
     return;
     }
@@ -1853,7 +1931,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
     return;
     }
 
-  if (this->IsUpdating)
+  if (this->GetIsUpdating())
     {
     return;
     }
@@ -1882,7 +1960,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SaveStateForUndo ()
 {
-  if (this->IsUpdating)
+  if (this->GetIsUpdating())
     {
     return;
     }
@@ -2478,77 +2556,6 @@ void vtkMRMLScene::AddURIHandler(vtkURIHandler *handler)
     return;
     }
   this->GetURIHandlerCollection()->AddItem(handler);
-}
-
-//------------------------------------------------------------------------------
-void vtkMRMLScene::SetIsClosing(bool isClosing)
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting IsClosing to " << isClosing);
-  if (this->IsClosing == isClosing)
-    {
-    return;
-    }
-
-  this->IsClosing = isClosing;
-
-  if (isClosing)
-    {
-    this->IsUpdating |= 0x1;
-    }
-  else
-    {
-    this->IsUpdating &= 0x1;
-    }
-
-  this->Modified();
-}
-
-//------------------------------------------------------------------------------
-void vtkMRMLScene::SetIsConnecting(bool isConnecting)
-{
-  vtkDebugMacro(<< this->GetClassName()
-                << " (" << this << "): setting IsConnecting to " << isConnecting);
-  if (this->IsConnecting == isConnecting)
-    {
-    return;
-    }
-
-  this->IsConnecting = isConnecting;
-
-  if (isConnecting)
-    {
-    this->IsUpdating |= 0x2;
-    }
-  else
-    {
-    this->IsUpdating &= 0x2;
-    }
-
-  this->Modified();
-}
-
-//------------------------------------------------------------------------------
-void vtkMRMLScene::SetIsImporting(bool isImporting)
-{
-  vtkDebugMacro(<< this->GetClassName()
-                << " (" << this << "): setting IsImporting to " << isImporting);
-  if (this->IsImporting == isImporting)
-    {
-    return;
-    }
-
-  this->IsImporting = isImporting;
-
-  if (isImporting)
-    {
-    this->IsUpdating |= 0x4;
-    }
-  else
-    {
-    this->IsUpdating &= 0x4;
-    }
-
-  this->Modified();
 }
 
 //------------------------------------------------------------------------------
