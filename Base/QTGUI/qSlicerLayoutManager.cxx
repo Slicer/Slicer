@@ -496,14 +496,11 @@ void qSlicerLayoutManagerPrivate::clearLayout(QLayout* layout)
     {
     if (layoutItem->widget())
       {
-      qDebug() << " qSlicerLayoutManagerPrivate::clearLayout layoutItem->widget()" <<
-          layoutItem->widget();
       layoutItem->widget()->setVisible(false);
       layout->removeWidget(layoutItem->widget());
       }
     else if (layoutItem->layout())
       {
-      qDebug() << " qSlicerLayoutManagerPrivate::clearLayout";
       this->clearLayout(layoutItem->layout());
       }
     }
