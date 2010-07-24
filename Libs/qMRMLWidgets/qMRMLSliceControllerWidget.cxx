@@ -53,19 +53,31 @@ qMRMLSliceControllerWidgetPrivate::~qMRMLSliceControllerWidgetPrivate()
 }
 
 //-----------------------------------------------------------------------------
-namespace
-{
 class qMRMLSliceCollapsibleButtonStyle:public QProxyStyle
 {
 public:
+  qMRMLSliceCollapsibleButtonStyle(QStyle* style):QProxyStyle(style){}
+
   virtual void drawControl(ControlElement ce, const QStyleOption * opt,
                            QPainter * p, const QWidget * widget = 0) const
   {
     this->QProxyStyle::drawControl(ce, opt, p, widget);
-    this->QProxyStyle::drawPrimitive(QStyle::PE_IndicatorArrowUp, opt, p, widget);
+    if (widget && widget->objectName() == "SliceCollapsibleButton")
+      {
+      QWidget * controllerWidgetGroup =
+          widget->parentWidget()->findChild<QWidget*>("ControllerWidgetGroup");
+      Q_ASSERT(controllerWidgetGroup);
+      if (!controllerWidgetGroup->isVisible())
+        {
+        this->QProxyStyle::drawPrimitive(QStyle::PE_IndicatorArrowUp, opt, p, widget);
+        }
+      else
+        {
+        this->QProxyStyle::drawPrimitive(QStyle::PE_IndicatorArrowDown, opt, p, widget);
+        }
+      }
   }
 };
-}
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
@@ -75,7 +87,7 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->Ui_qMRMLSliceControllerWidget::setupUi(widget);
 
   // Set a ProxyStyle responsible for drawing the arrow
-  //this->SliceCollapsibleButton->setStyle(new qMRMLSliceCollapsibleButtonStyle);
+  this->SliceCollapsibleButton->setStyle(new qMRMLSliceCollapsibleButtonStyle(p->style()));
   
   // Set selector attributes
   this->LabelMapSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
