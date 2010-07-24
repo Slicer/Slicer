@@ -14,6 +14,7 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+class QLayout;
 class QGridLayout;
 class QButtonGroup;
 class qMRMLSliceViewWidget;
@@ -55,7 +56,7 @@ public:
   void endUpdateLayout(bool updateEnabled);
   
   /// Hide and remove all widgets from the current layout
-  void clearLayout();
+  void clearLayout(QLayout* layout);
 
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName

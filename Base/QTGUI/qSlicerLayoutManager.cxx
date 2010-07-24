@@ -3,6 +3,7 @@
 #include <QButtonGroup>
 #include <QDebug>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QWidget>
 
 // CTK includes
@@ -291,7 +292,7 @@ void qSlicerLayoutManagerPrivate::onSceneAboutToBeClosedEvent()
 {
   logger.trace("onSceneAboutToBeClosedEvent");
 
-  this->clearLayout();
+  this->clearLayout(this->GridLayout);
   this->SavedCurrentViewArrangement = this->CurrentViewArrangement;
   this->CurrentViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
 }
@@ -487,13 +488,24 @@ void qSlicerLayoutManagerPrivate::endUpdateLayout(bool updatesEnabled)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerLayoutManagerPrivate::clearLayout()
+void qSlicerLayoutManagerPrivate::clearLayout(QLayout* layout)
 {
+  Q_ASSERT(layout);
   QLayoutItem * layoutItem = 0;
-  while ((layoutItem = this->GridLayout->takeAt(0)) != 0)
+  while ((layoutItem = layout->takeAt(0)) != 0)
     {
-    layoutItem->widget()->setVisible(false);
-    this->GridLayout->removeWidget(layoutItem->widget());
+    if (layoutItem->widget())
+      {
+      qDebug() << " qSlicerLayoutManagerPrivate::clearLayout layoutItem->widget()" <<
+          layoutItem->widget();
+      layoutItem->widget()->setVisible(false);
+      layout->removeWidget(layoutItem->widget());
+      }
+    else if (layoutItem->layout())
+      {
+      qDebug() << " qSlicerLayoutManagerPrivate::clearLayout";
+      this->clearLayout(layoutItem->layout());
+      }
     }
 }
 
@@ -596,7 +608,7 @@ void qSlicerLayoutManager::switchToConventionalView()
   qSlicerLayoutManager_returnIfMatchCurrentView(ConventionalView);
   d->initialize();
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   // First render view
   qMRMLThreeDView * renderView = d->threeDView(0);
@@ -632,7 +644,7 @@ void qSlicerLayoutManager::switchToOneUp3DView()
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   // First render view
   qMRMLThreeDView * renderView = d->threeDView(0);
@@ -680,7 +692,7 @@ void qSlicerLayoutManager::switchToOneUpSliceView(const QString& sliceViewName)
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   // Slice viewer
   qMRMLSliceViewWidget* sliceView = d->sliceView(sliceViewName);
@@ -701,7 +713,7 @@ void qSlicerLayoutManager::switchToFourUpView()
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   // First render view
   qMRMLThreeDView * renderView = d->threeDView(0);
@@ -737,7 +749,7 @@ void qSlicerLayoutManager::switchToTabbed3DView()
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   logger.debug("switchToTabbed3DView - Not Implemented");
 
@@ -756,7 +768,7 @@ void qSlicerLayoutManager::switchToTabbedSliceView()
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   logger.debug("switchToTabbedSliceView - Not Implemented");
 
@@ -775,7 +787,7 @@ void qSlicerLayoutManager::switchToLightboxView()
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   logger.debug("switchToLightboxView - Not Implemented");
 
@@ -794,7 +806,7 @@ void qSlicerLayoutManager::switchToCompareView()
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   logger.debug("switchToCompareView - Not Implemented");
 
@@ -813,7 +825,7 @@ void qSlicerLayoutManager::switchToSideBySideCompareView()
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   logger.debug("switchToSideBySideCompareView - Not Implemented");
 
@@ -831,7 +843,7 @@ void qSlicerLayoutManager::switchToDual3DView()
   d->initialize();
 
   bool updatesEnabled = d->startUpdateLayout();
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   // First render view
   qMRMLThreeDView * renderView = d->threeDView(0);
@@ -853,19 +865,23 @@ void qSlicerLayoutManager::switchToDual3DView()
   d->GridLayout->addWidget(renderView2, 0, 1);
   renderView2->setVisible(true);
 
+  // Add an horizontal layout to group the 3 sliceViews
+  QHBoxLayout * sliceViewLayout = new QHBoxLayout();
+  d->GridLayout->addLayout(sliceViewLayout, 1, 0, 1, 2); // fromRow, fromColumn, rowSpan, columnSpan
+
   // Red Slice Viewer
   qMRMLSliceViewWidget* redSliceView = d->sliceView("Red");
-  d->GridLayout->addWidget(redSliceView, 0, 1);
+  sliceViewLayout->addWidget(redSliceView);
   redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
   qMRMLSliceViewWidget* yellowSliceView = d->sliceView("Yellow");
-  d->GridLayout->addWidget(yellowSliceView, 1, 0);
+  sliceViewLayout->addWidget(yellowSliceView);
   yellowSliceView->setVisible(true);
 
   // Green Slice Viewer
   qMRMLSliceViewWidget* greenSliceView = d->sliceView("Green");
-  d->GridLayout->addWidget(greenSliceView, 1, 1);
+  sliceViewLayout->addWidget(greenSliceView);
   greenSliceView->setVisible(true);
 
   // Update LayoutNode
@@ -879,7 +895,7 @@ void qSlicerLayoutManager::switchToNone()
 {
   CTK_D(qSlicerLayoutManager);
   qSlicerLayoutManager_returnIfMatchCurrentView(None);
-  d->clearLayout();
+  d->clearLayout(d->GridLayout);
 
   // Update LayoutNode
   qSlicerLayoutManager_updateLayoutNode(None);
