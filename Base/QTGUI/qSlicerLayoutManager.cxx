@@ -317,18 +317,15 @@ void qSlicerLayoutManagerPrivate::onSceneImportedEvent()
 {
   logger.trace("onSceneImportedEvent");
 
-  if (this->MRMLScene->GetIsConnecting())
-    {
-    // Since the loaded scene may not contain the required node, calling initialize
-    // will make sure the LayoutNode, MRMLViewNode, MRMLSliceNode exists.
-    this->initialize();
+  // Since the loaded scene may not contain the required node, calling initialize
+  // will make sure the LayoutNode, MRMLViewNode, MRMLSliceNode exists.
+  this->initialize();
 
-    // Make sure the layoutNode arrangement match the LayoutManager one
-    Q_ASSERT(this->MRMLLayoutNode);
+  // Make sure the layoutNode arrangement match the LayoutManager one
+  Q_ASSERT(this->MRMLLayoutNode);
 
-    // Restore saved view arrangement
-    this->MRMLLayoutNode->SetViewArrangement(this->SavedCurrentViewArrangement);
-    }
+  // Restore saved view arrangement
+  this->MRMLLayoutNode->SetViewArrangement(this->SavedCurrentViewArrangement);
 }
 
 //------------------------------------------------------------------------------
