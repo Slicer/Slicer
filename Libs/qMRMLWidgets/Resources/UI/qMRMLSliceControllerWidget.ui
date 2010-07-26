@@ -151,6 +151,9 @@
           <string>vtkMRMLVolumeNode</string>
          </stringlist>
         </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
         <property name="addEnabled">
          <bool>false</bool>
         </property>
