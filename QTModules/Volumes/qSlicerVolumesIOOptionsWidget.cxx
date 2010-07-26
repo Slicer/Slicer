@@ -45,7 +45,7 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
   flowLayout->setContentsMargins(0,0,0,0);
   this->setLayout(flowLayout);
 
-  connect(d->NameLineEdit, SIGNAL(editingFinished()),
+  connect(d->NameLineEdit, SIGNAL(textChanged(const QString&)),
           this, SLOT(updateProperties()));
   connect(d->LabelMapCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(updateProperties()));
@@ -61,7 +61,7 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
 void qSlicerVolumesIOOptionsWidget::updateProperties()
 {
   CTK_D(const qSlicerVolumesIOOptionsWidget);
-  if (d->NameLineEdit->text().isEmpty())
+  if (!d->NameLineEdit->text().isEmpty())
     {
     this->Properties["name"] = d->NameLineEdit->text();
     }
