@@ -655,6 +655,10 @@ QModelIndex qMRMLSceneModel::index(int row, int column, const QModelIndex &_pare
       ++child;
       }
     }
+  if (child < 0)
+    {
+    return QModelIndex();
+    }
   //qDebug() << (void *) this << "index:" << row << column << child << _parent << d->MRMLNodeToBe;
   QSharedPointer<qMRMLAbstractItemHelper> item =
     QSharedPointer<qMRMLAbstractItemHelper>(
@@ -984,9 +988,10 @@ int qMRMLSceneModel::rowCount(const QModelIndex &_parent) const
     }
   if (d->MRMLNodeToBe)
     {
-    ++count;
+    --count;
     }
   Q_ASSERT(count >= 0);
+  
   return count;
 }
 
