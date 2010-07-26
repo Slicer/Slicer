@@ -1812,6 +1812,7 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 //      return 0;
 //  }
 
+
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
   textNode->Initialize(this->GetMRMLScene());
 
@@ -1824,6 +1825,9 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
     {
     textNode->SetName("AnnotationText");
     }
+
+
+
   textNode->Delete();
 /*
     vtkTextWidget* textWidget = this->GetTextWidget(node->GetID());

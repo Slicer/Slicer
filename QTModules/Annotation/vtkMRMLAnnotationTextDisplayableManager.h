@@ -7,20 +7,20 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkSlicerNodeSelectorWidget.h,v $
- Date:      $Date: 2006/01/08 04:48:05 $
- Version:   $Revision: 1.45 $
+ Module:    $RCSfile: vtkMRMLAnnotationTextDisplayableManager.h,v $
+ Date:      $Date: 2010/07/26 04:48:05 $
+ Version:   $Revision: 1.5 $
 
  =========================================================================auto=*/
 
-#ifndef __vtkSlicerAnnotationTextManager_h
-#define __vtkSlicerAnnotationTextManager_h
+#ifndef __vtkMRMLAnnotationTextDisplayableManager_h
+#define __vtkMRMLAnnotationTextDisplayableManager_h
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLAbstractDisplayableManager.h>
+#include <vtkMRMLAnnotationDisplayableManager.h>
 
 class vtkMRMLAnnotationTextNode;
 class vtkSlicerViewerWidget;
@@ -30,47 +30,28 @@ class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayableManager :
-    public vtkMRMLAbstractDisplayableManager
+    public vtkMRMLAnnotationDisplayableManager
 {
 public:
 
   static vtkMRMLAnnotationTextDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationTextDisplayableManager, vtkMRMLAbstractDisplayableManager);
+  vtkTypeRevisionMacro(vtkMRMLAnnotationTextDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
-
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
 protected:
 
-  vtkMRMLAnnotationTextDisplayableManager();
-  virtual ~vtkMRMLAnnotationTextDisplayableManager();
+  vtkMRMLAnnotationTextDisplayableManager(){}
+  virtual ~vtkMRMLAnnotationTextDisplayableManager(){}
 
-  virtual void Create();
-
-  /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
-  /// \sa ProcessMRMLEvents
-  virtual void OnMRMLSceneAboutToBeClosedEvent();
-  virtual void OnMRMLSceneClosedEvent();
-  virtual void OnMRMLSceneAboutToBeImportedEvent();
-  virtual void OnMRMLSceneImportedEvent();
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
-
-  void SetAndObserveTextNodes();
-
-  void OnMRMLAnnotationTextNodeModifiedEvent(vtkMRMLNode* node);
-  void OnMRMLAnnotationTextNodeTransformModifiedEvent(vtkMRMLNode* node);
-  void OnMRMLAnnotationTextNodeLockModifiedEvent(vtkMRMLNode* node);
+  /// Create a widget.
+  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
+  /// Propagate properties of MRML node to widgets.
+  virtual void SetWidget(vtkMRMLAnnotationNode* node);
 
 private:
 
   vtkMRMLAnnotationTextDisplayableManager(const vtkMRMLAnnotationTextDisplayableManager&); /// Not implemented
   void operator=(const vtkMRMLAnnotationTextDisplayableManager&); /// Not Implemented
-
-  //BTX
-  class vtkInternal;
-  vtkInternal * Internal;
-  //ETX
 
 };
 

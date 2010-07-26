@@ -1,111 +1,424 @@
-/*=auto=========================================================================
+// AnnotationModule includes
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+// AnnotationModule/MRML includes
+#include "vtkMRMLAnnotationNode.h"
 
- See Doc/copyright/copyright.txt
- or http://www.slicer.org/copyright/copyright.txt for details.
+// MRML includes
+#include <vtkMRMLTransformNode.h>
+#include <vtkMRMLLinearTransformNode.h>
 
- Program:   3D Slicer
- Module:    $RCSfile: vtkMRMLAnnotationDisplayableManager.cxx,v $
- Date:      $Date: 2010/10/06 11:42:53 $
- Version:   $Revision: 1.1 $
+// VTK includes
+#include <vtkObject.h>
+#include <vtkObjectFactory.h>
+#include <vtkAbstractWidget.h>
+#include <vtkCallbackCommand.h>
+#include <vtkSmartPointer.h>
+#include <vtkProperty.h>
+#include <vtkCamera.h>
+#include <vtkRenderer.h>
+#include <vtkPointHandleRepresentation3D.h>
+#include <vtkLineRepresentation.h>
+#include <vtkPolygonalSurfacePointPlacer.h>
+#include <vtkMath.h>
 
- =========================================================================auto=*/
+// STD includes
+#include <vector>
+#include <map>
+#include <algorithm>
 
-#include <vtkMRMLAnnotationDisplayableManager.h>
-#include <qSlicerApplication.h>
-#include <qSlicerLayoutManager.h>
-#include <vtkMRMLDisplayableManagerFactory.h>
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLAnnotationDisplayableManager);
-vtkCxxRevisionMacro(vtkMRMLAnnotationDisplayableManager, "$Revision: 1.1 $");
+vtkStandardNewMacro (vtkMRMLAnnotationDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLAnnotationDisplayableManager, "$Revision: 1.1 $");
 
+//---------------------------------------------------------------------------
+class vtkMRMLAnnotationDisplayableManager::vtkInternal
+{
+public:
+  vtkInternal();
+
+  void UpdateLocked(vtkMRMLAnnotationNode* node);
+  void UpdateVisible(vtkMRMLAnnotationNode* node);
+  void UpdateWidget(vtkMRMLAnnotationNode* node);
+
+  /// Get a vtkAbstractWidget* given \a node
+  vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
+  void RemoveWidget(vtkMRMLAnnotationNode *node);
+
+  /// List of Nodes managed by the DisplayableManager
+  std::vector<vtkMRMLAnnotationNode*> AnnotationNodeList;
+
+  /// .. and its associated convenient typedef
+  typedef std::vector<vtkMRMLAnnotationNode*>::iterator AnnotationNodeListIt;
+
+  /// Map of vtkWidget indexed using associated node ID
+  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *> Widgets;
+
+  /// .. and its associated convenient typedef
+  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetsIt;
+
+};
+
+//---------------------------------------------------------------------------
+// vtkInternal methods
+
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationDisplayableManager::vtkInternal::vtkInternal()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::vtkInternal::UpdateLocked(
+    vtkMRMLAnnotationNode* node)
+{
+  // Sanity checks
+  if (node == 0)
+    {
+    return;
+    }
+
+  vtkAbstractWidget * widget = this->GetWidget(node);
+  // A widget is expected
+  if(widget == 0)
+    {
+    return;
+    }
+
+  if (node->GetLocked())
+    {
+    widget->ProcessEventsOff();
+    }
+  else
+    {
+    widget->ProcessEventsOn();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::vtkInternal::UpdateVisible(
+    vtkMRMLAnnotationNode* node)
+{
+  // Sanity checks
+  if (node == 0)
+    {
+    return;
+    }
+
+  vtkAbstractWidget * widget = this->GetWidget(node);
+  // A widget is expected
+  if(widget == 0)
+    {
+    return;
+    }
+
+  if (node->GetVisible())
+    {
+    widget->EnabledOn();
+    }
+  else
+    {
+    widget->EnabledOff();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::vtkInternal::UpdateWidget(
+    vtkMRMLAnnotationNode *node)
+{
+  if (!node)
+    {
+      return;
+    }
+
+  vtkAbstractWidget * widget = this->GetWidget(node);
+  // Widget is expected to be valid
+  if (widget == 0)
+    {
+    return;
+    }
+
+  this->UpdateLocked(node);
+  this->UpdateVisible(node);
+
+}
+
+//---------------------------------------------------------------------------
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::vtkInternal::GetWidget(
+    vtkMRMLAnnotationNode * node)
+{
+  if (!node)
+    {
+    return 0;
+    }
+
+  // Make sure the map contains a vtkWidget associated with this node
+  WidgetsIt it = this->Widgets.find(node);
+  if (it == this->Widgets.end())
+    {
+    return 0;
+    }
+
+  return it->second;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::vtkInternal::RemoveWidget(
+    vtkMRMLAnnotationNode *node)
+{
+  if (!node)
+  {
+    return;
+  }
+
+  // Make sure the map contains a vtkWidget associated with this node
+  WidgetsIt it = this->Widgets.find(node);
+  if (it == this->Widgets.end()) {
+    return;
+  }
+
+  // Delete and Remove vtkWidget from the map
+  this->Widgets[node]->Delete();
+  this->Widgets.erase(node);
+
+  vtkInternal::AnnotationNodeListIt it2 = std::find(
+      this->AnnotationNodeList.begin(),
+      this->AnnotationNodeList.end(),
+      node);
+
+  this->AnnotationNodeList.erase(it2);
+}
+
+//---------------------------------------------------------------------------
+// vtkMRMLAnnotationDisplayableManager methods
+
+//---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
 {
-
+  this->Internal = new vtkInternal;
 }
 
-// Destructor
+//---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
 {
-
+  delete this->Internal;
 }
 
-
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-/// Register the manager with the factory.
-bool vtkMRMLAnnotationDisplayableManager::RegisterManager()
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 {
+  VTK_CREATE(vtkIntArray, nodeEvents);
+  nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+  nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::LockModifiedEvent);
+  nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
 
-//  int cnt = qSlicerApplication::application()->layoutManager()->threeDRenderViewCount();
-//
-//  if (cnt > 0 && (this != NULL))
-//    {
-//    vtkDebugMacro("Starting registration of a new displayable manager instance...");
-//
-//    // at least one render view exists, get the first
-//
-//    qSlicerApplication * application = qSlicerApplication::application();
-//    qSlicerLayoutManager * layoutManager = NULL;
-//    qMRMLThreeDRenderView * threeDRenderView = NULL;
-//    vtkMRMLDisplayableManagerFactory * displayableManagerFactory = NULL;
-//    if (application != NULL)
-//      {
-//      layoutManager = application->layoutManager();
-//      }
-//    else
-//      {
-//      vtkErrorMacro("Could not get the application!");
-//      return false;
-//      }
-//    if (layoutManager != NULL)
-//      {
-//
-//      threeDRenderView = layoutManager->threeDRenderView(0);
-//
-//      }
-//    else
-//      {
-//      vtkErrorMacro("Could not get the layout manager!");
-//      return false;
-//      }
-//
-//    if (threeDRenderView != NULL)
-//      {
-//      displayableManagerFactory = threeDRenderView->displayableManagerFactory();
-//      }
-//    else
-//      {
-//
-//      vtkErrorMacro("Could not get the 3D Render View!");
-//      return false;
-//      }
-//
-//    // make sure we got the factory
-//    Q_ASSERT(displayableManagerFactory);
-//
-//    if (displayableManagerFactory != NULL)
-//      {
-//
-//      displayableManagerFactory->RegisterDisplayableManager(this);
-//      displayableManagerFactory->SetMRMLViewNode(displayableManagerFactory->GetMRMLViewNode());
-//
-//      }
-//    else
-//      {
-//      vtkErrorMacro("Could not get displayable manager factory!");
-//      return false;
-//      }
-//
-//    return true;
-//    }
 
-  // something went wrong
-  return false;
+  // run through all associated nodes
+  vtkInternal::AnnotationNodeListIt it;
+  it = Internal->AnnotationNodeList.begin();
+  while(it != Internal->AnnotationNodeList.end())
+    {
+    vtkSetAndObserveMRMLNodeEventsMacro(*it, *it, nodeEvents);
+    ++it;
+    }
+}
 
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::Create()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
+                                                            unsigned long event,
+                                                            void *callData)
+{
+  vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(caller);
+  if (annotationNode)
+    {
+    switch(event)
+      {
+      case vtkCommand::ModifiedEvent:
+        this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
+        break;
+      case vtkMRMLTransformableNode::TransformModifiedEvent:
+        this->OnMRMLAnnotationNodeTransformModifiedEvent(annotationNode);
+        break;
+      case vtkMRMLAnnotationNode::LockModifiedEvent:
+        this->OnMRMLAnnotationNodeLockModifiedEvent(annotationNode);
+        break;
+      }
+    }
+  else
+    {
+    this->Superclass::ProcessMRMLEvents(caller, event, callData);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeImportedEvent()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+{
+  vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
+  vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    return;
+    }
+
+  // Node added should not be already managed
+  vtkInternal::AnnotationNodeListIt it = std::find(
+      this->Internal->AnnotationNodeList.begin(),
+      this->Internal->AnnotationNodeList.end(),
+      annotationNode);
+  if (it != this->Internal->AnnotationNodeList.end())
+    {
+      vtkErrorMacro("OnMRMLSceneNodeAddedEvent - This node is already associated to the displayable manager!")
+      return;
+    }
+
+  // There should not be a widget for the new node
+  if (this->Internal->GetWidget(annotationNode) != 0)
+    {
+    vtkErrorMacro("OnMRMLSceneNodeAddedEvent - A widget is already associated to this node!");
+    return;
+    }
+
+  // Create the Widget and add it to the list.
+  this->Internal->Widgets[annotationNode] = this->CreateWidget(annotationNode);
+
+  // Add the node to the list.
+  this->Internal->AnnotationNodeList.push_back(annotationNode);
+
+  // Refresh observers
+  this->SetAndObserveNodes();
+
+  this->RequestRender();
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+{
+  vtkDebugMacro("OnMRMLSceneNodeRemovedEvent");
+  vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    return;
+    }
+  /*
+  // Remove the node from the list.
+  vtkInternal::AnnotationNodeListIt it = std::find(
+      this->Internal->AnnotationNodeList.begin(),
+      this->Internal->AnnotationNodeList.end(),
+      annotationNode);
+  if (it == this->Internal->AnnotationNodeList.end())
+    {
+    return;
+    }
+  this->Internal->AnnotationNodeList.erase(it);
+  */
+
+  // Remove the widget from the list.
+  this->Internal->RemoveWidget(annotationNode);
+
+  // Refresh observers
+  this->SetAndObserveNodes();
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node)
+{
+  vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent");
+  vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("OnMRMLAnnotationNodeModifiedEvent - Can not access node.")
+    return;
+    }
+  // Update the standard settings of all widgets.
+  this->Internal->UpdateWidget(annotationNode);
+
+  // Set individual properties of the widget.
+  this->SetWidget(annotationNode);
+
+  this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node)
+{
+  vtkDebugMacro("OnMRMLAnnotationNodeTransformModifiedEvent");
+  vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("OnMRMLAnnotationNodeTransformModifiedEvent - Can not access node.")
+    return;
+    }
+  // Update the standard settings of all widgets.
+  this->Internal->UpdateWidget(annotationNode);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node)
+{
+  vtkDebugMacro("OnMRMLAnnotationNodeLockModifiedEvent");
+  vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    vtkErrorMacro("OnMRMLAnnotationNodeLockModifiedEvent - Can not access node.")
+    return;
+    }
+  // Update the standard settings of all widgets.
+  this->Internal->UpdateWidget(annotationNode);
+}
+
+//---------------------------------------------------------------------------
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::GetWidget(vtkMRMLAnnotationNode * node)
+{
+  return this->Internal->GetWidget(node);
+}
+
+//---------------------------------------------------------------------------
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+{
+  // A widget should be created here.
+  vtkErrorMacro("CreateWidget should be overloaded!");
+  return 0;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
+{
+  // The properties of a widget should be set here.
+  vtkErrorMacro("SetWidget should be overloaded!");
 }
