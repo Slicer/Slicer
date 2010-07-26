@@ -107,6 +107,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindow_connect(FileAddVolume);
   qSlicerMainWindow_connect(FileAddTransform);
   qSlicerMainWindow_connect(FileSaveScene);
+  qSlicerMainWindow_connect(FileCloseScene);
   
   qSlicerMainWindow_connect(EditRedo);
   qSlicerMainWindow_connect(EditUndo);

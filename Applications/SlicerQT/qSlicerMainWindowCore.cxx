@@ -158,6 +158,12 @@ void qSlicerMainWindowCore::onFileSaveSceneActionTriggered()
 }
 
 //---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFileCloseSceneActionTriggered()
+{
+  qSlicerCoreApplication::application()->mrmlScene()->Clear(false);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onEditUndoActionTriggered()
 {
   qSlicerApplication::application()->mrmlScene()->Undo();
