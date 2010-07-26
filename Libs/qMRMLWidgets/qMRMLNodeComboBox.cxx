@@ -7,6 +7,9 @@
 #include <QHBoxLayout>
 #include <QStandardItemModel>
 
+// CTK includes
+#include <ctkComboBox.h>
+
 // qMRMLWidgets includes
 #include "qMRMLNodeComboBox.h"
 #include "qMRMLNodeFactory.h"
@@ -59,7 +62,9 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 {
   CTK_P(qMRMLNodeComboBox);
   Q_ASSERT(this->MRMLNodeFactory == 0);
-  this->ComboBox = new QComboBox(p);
+  ctkComboBox* comboBox = new ctkComboBox(p);
+  comboBox->setElideMode(Qt::ElideMiddle);
+  this->ComboBox = comboBox;
   p->setLayout(new QHBoxLayout);
   p->layout()->addWidget(this->ComboBox);
   p->layout()->setContentsMargins(0,0,0,0);
