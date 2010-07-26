@@ -326,22 +326,21 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* _node)
+void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* newCurrentNode)
 {
-  CTK_D(qMRMLNodeComboBox);
-  int index = _node ? d->ComboBox->findData(_node->GetID(), qMRML::UIDRole) : -1;
-  d->ComboBox->setCurrentIndex(index);
+  this->setCurrentNode(newCurrentNode ? newCurrentNode->GetID() : "");
 }
 
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
 {
-  vtkMRMLScene* scene = this->mrmlScene();
-  if (scene == 0)
+  CTK_D(qMRMLNodeComboBox);
+  int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRML::UIDRole) : -1;
+  if (index == -1 && d->NoneEnabled)
     {
-    return;
+    index = 0; // select None
     }
-  this->setCurrentNode(scene->GetNodeByID(nodeID.toLatin1().data()));
+  d->ComboBox->setCurrentIndex(index);
 }
 
 //--------------------------------------------------------------------------
