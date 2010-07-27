@@ -24,7 +24,7 @@ public:
   qSlicerSliceControllerModuleWidget(QWidget *parent=0);
 
 public slots:
-
+  virtual void setMRMLScene(vtkMRMLScene *newScene);
 
 protected:
   virtual void setup();

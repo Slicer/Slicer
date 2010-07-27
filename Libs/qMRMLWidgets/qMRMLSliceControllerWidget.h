@@ -68,7 +68,6 @@ public:
 
   /// Set \a newSliceLogic
   /// Use if two instances of the controller need to observe the same logic.
-  /// \note setSliceLogic() should be called before setMRMLSliceNode() otherwise it's a no-op.
   void setSliceLogic(vtkMRMLSliceLogic * newSliceLogic);
 
   /// Set controller widget group
@@ -77,6 +76,8 @@ public:
   void setControllerButtonGroup(QButtonGroup* group);
 
 public slots:
+
+  virtual void setMRMLScene(vtkMRMLScene* newScene);
 
   /// Set a new SliceNode.
   void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);

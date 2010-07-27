@@ -78,14 +78,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkSlicerLogic
   static void LoadDefaultParameterSets(vtkMRMLScene *);
 
 protected:
-  vtkSlicerModuleLogic();
-  ~vtkSlicerModuleLogic();
-  vtkSlicerModuleLogic(const vtkSlicerModuleLogic&);
-  void operator=(const vtkSlicerModuleLogic&);
 
-  vtkSlicerApplicationLogic *ApplicationLogic;
-  char *ModuleLocation;
-  char *ModuleName;
+  vtkSlicerModuleLogic();
+  virtual ~vtkSlicerModuleLogic();
+
+  vtkSlicerApplicationLogic * ApplicationLogic;
+  char *                      ModuleLocation;
+  char *                      ModuleName;
 
   virtual int IsModuleShareDirectoryDefined();
   virtual int IsModuleLibDirectoryDefined();
@@ -94,6 +93,9 @@ protected:
   vtkSetStringMacro(ModuleLibDirectory);
 
 private:
+
+  vtkSlicerModuleLogic(const vtkSlicerModuleLogic&); // Not implemented
+  void operator=(const vtkSlicerModuleLogic&);       // Not implemented
 
   char *ModuleShareDirectory;
   char *ModuleLibDirectory;

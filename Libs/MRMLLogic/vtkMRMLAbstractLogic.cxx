@@ -182,8 +182,8 @@ void vtkMRMLAbstractLogic::SetMRMLScene(vtkMRMLScene * newScene)
     }
 
   vtkObject *oldValue = this->Internal->MRMLScene;
-  this->Internal->MRMLObserverManager->SetObject(
-      vtkObjectPointer(&this->Internal->MRMLScene), newScene);
+
+  this->SetMRMLSceneInternal(newScene);
 
   this->RegisterNodes();
 
@@ -191,6 +191,13 @@ void vtkMRMLAbstractLogic::SetMRMLScene(vtkMRMLScene * newScene)
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent);
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+{
+  this->Internal->MRMLObserverManager->SetObject(
+      vtkObjectPointer(&this->Internal->MRMLScene), newScene);
 }
 
 //----------------------------------------------------------------------------
@@ -202,8 +209,8 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLScene(vtkMRMLScene *newScene)
     }
 
   vtkObject *oldValue = this->Internal->MRMLScene;
-  this->Internal->MRMLObserverManager->SetAndObserveObject(
-      vtkObjectPointer(&this->Internal->MRMLScene), newScene);
+
+  this->SetAndObserveMRMLSceneInternal(newScene);
 
   this->RegisterNodes();
 
@@ -211,6 +218,13 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLScene(vtkMRMLScene *newScene)
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent);
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene)
+{
+  this->Internal->MRMLObserverManager->SetAndObserveObject(
+      vtkObjectPointer(&this->Internal->MRMLScene), newScene);
 }
 
 //----------------------------------------------------------------------------
@@ -222,8 +236,8 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, 
     }
 
   vtkObject *oldValue = this->Internal->MRMLScene;
-  this->Internal->MRMLObserverManager->SetAndObserveObjectEvents(
-      vtkObjectPointer(&this->Internal->MRMLScene), newScene, events );
+
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
 
   this->RegisterNodes();
 
@@ -231,6 +245,14 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, 
     {
     this->InvokeEvent (vtkCommand::ModifiedEvent);
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene,
+                                                                vtkIntArray *events)
+{
+  this->Internal->MRMLObserverManager->SetAndObserveObjectEvents(
+      vtkObjectPointer(&this->Internal->MRMLScene), newScene, events);
 }
 
 //----------------------------------------------------------------------------

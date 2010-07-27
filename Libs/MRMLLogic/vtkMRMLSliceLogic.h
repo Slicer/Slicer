@@ -66,8 +66,10 @@ public:
   vtkTypeRevisionMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Convenient methods allowing to initialize SliceLogic given \a newSliceNode
+  /// \note This method should be used when the Logic is "shared" between two widgets
+  void Initialize(vtkMRMLSliceNode* newSliceNode);
   bool IsInitialized();
-  void Initialize(const char* name, vtkMRMLScene * newScene, vtkMRMLSliceNode* newSliceNode);
 
   ///
   /// Set / Get SliceLogic name
@@ -77,7 +79,7 @@ public:
   /// 
   /// The MRML slice node for this slice logic
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
-  void SetSliceNode (vtkMRMLSliceNode *SliceNode);
+  void SetSliceNode (vtkMRMLSliceNode * newSliceNode);
 
   /// 
   /// The MRML slice node for this slice logic
@@ -312,6 +314,8 @@ protected:
 
   vtkMRMLSliceLogic();
   virtual ~vtkMRMLSliceLogic();
+
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
   int SliceViewSize[2];
 

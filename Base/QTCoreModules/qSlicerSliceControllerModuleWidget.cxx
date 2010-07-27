@@ -26,6 +26,14 @@ void qSlicerSliceControllerModuleWidget::setup()
 {
   CTK_D(qSlicerSliceControllerModuleWidget);
   d->setupUi(this);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSliceControllerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
+{
+  CTK_D(qSlicerSliceControllerModuleWidget);
+
+  this->Superclass::setMRMLScene(newScene);
 
   qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)

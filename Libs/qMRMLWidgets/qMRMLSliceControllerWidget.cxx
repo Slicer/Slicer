@@ -287,6 +287,11 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
                         vtkCommand::ModifiedEvent,
                         this, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
     this->MRMLSliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+
+    if (this->MRMLSliceCompositeNode)
+      {
+      this->updateWidgetFromMRMLSliceCompositeNode();
+      }
     }
 
   if (this->ImageData != this->SliceLogic->GetImageData())
@@ -327,9 +332,30 @@ qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(QWidget* _parent) : Super
 CTK_GET_CXX(qMRMLSliceControllerWidget, vtkMRMLSliceNode*, mrmlSliceNode, MRMLSliceNode);
 
 //---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
+{
+  CTK_D(qMRMLSliceControllerWidget);
+
+  if (this->mrmlScene() == newScene)
+    {
+    return;
+    }
+
+  d->SliceLogic->SetMRMLScene(newScene);
+
+  this->Superclass::setMRMLScene(newScene);
+}
+
+//---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
   CTK_D(qMRMLSliceControllerWidget);
+
+  if (this->mrmlScene() == 0)
+    {
+    logger.error("Failed to setMRMLSliceNode - MRMLScene is NULL");
+    return;
+    }
 
   if (newSliceNode == d->MRMLSliceNode)
     {
@@ -342,7 +368,7 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
   // Initialize logic
   if (!d->SliceLogic->IsInitialized())
     {
-    d->SliceLogic->Initialize(d->SliceViewName.toLatin1(), this->mrmlScene(), newSliceNode);
+    d->SliceLogic->Initialize(newSliceNode);
     }
   else
     {
@@ -394,7 +420,10 @@ void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic
 
   d->SliceLogic = newSliceLogic;
 
-  this->setMRMLSliceNode(d->SliceLogic->GetSliceNode());
+  if (d->SliceLogic)
+    {
+    this->setMRMLSliceNode(d->SliceLogic->GetSliceNode());
+    }
 }
 
 //---------------------------------------------------------------------------

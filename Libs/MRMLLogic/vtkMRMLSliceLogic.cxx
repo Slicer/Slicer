@@ -134,8 +134,7 @@ bool vtkMRMLSliceLogic::IsInitialized()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::Initialize(const char* name, vtkMRMLScene * newScene,
-                                   vtkMRMLSliceNode* newSliceNode)
+void vtkMRMLSliceLogic::Initialize(vtkMRMLSliceNode* newSliceNode)
 {
   if (this->Initialized)
     {
@@ -144,19 +143,24 @@ void vtkMRMLSliceLogic::Initialize(const char* name, vtkMRMLScene * newScene,
     }
 
   // Sanity checks
-  if (!name || strlen(name) == 0)
-    {
-    vtkWarningMacro(<< "Initialize - name is NULL");
-    return;
-    }
-  if (!newScene)
-    {
-    vtkWarningMacro(<< "Initialize - newScene is NULL");
-    return;
-    }
   if (!newSliceNode)
     {
     vtkWarningMacro(<< "Initialize - newSliceNode is NULL");
+    return;
+    }
+
+  this->SetSliceNode(newSliceNode);
+
+  this->Initialized = true;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+{
+  // Sanity checks
+  if (!this->GetName() || strlen(this->GetName()) == 0)
+    {
+    vtkErrorMacro(<< "Name is NULL - Make sure you call SetName before SetMRMLScene !");
     return;
     }
 
@@ -169,13 +173,10 @@ void vtkMRMLSliceLogic::Initialize(const char* name, vtkMRMLScene * newScene,
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
 
-  this->SetAndObserveMRMLSceneEvents(newScene, events);
-  this->SetSliceNode(newSliceNode);
-  this->SetName(name);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
+
   this->ProcessLogicEvents();
   this->ProcessMRMLEvents(newScene, vtkCommand::ModifiedEvent, 0);
-
-  this->Initialized = true;
 }
 
 //----------------------------------------------------------------------------
@@ -484,25 +485,30 @@ void vtkMRMLSliceLogic::ProcessLogicEvents()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
+void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode * newSliceNode)
 {
-    // Don't directly observe the slice node -- the layers will observe it and
-    // will notify us when things have changed.
-    // This class takes care of passing the one slice node to each of the layers
-    // so that users of this class only need to set the node one place.
-  vtkSetMRMLNodeMacro( this->SliceNode, sliceNode );
+  if (this->SliceNode == newSliceNode)
+    {
+    return;
+    }
+
+  // Don't directly observe the slice node -- the layers will observe it and
+  // will notify us when things have changed.
+  // This class takes care of passing the one slice node to each of the layers
+  // so that users of this class only need to set the node one place.
+  vtkSetMRMLNodeMacro( this->SliceNode, newSliceNode );
 
   if (this->BackgroundLayer)
     {
-    this->BackgroundLayer->SetSliceNode(sliceNode);
+    this->BackgroundLayer->SetSliceNode(newSliceNode);
     }
   if (this->ForegroundLayer)
     {
-    this->ForegroundLayer->SetSliceNode(sliceNode);
+    this->ForegroundLayer->SetSliceNode(newSliceNode);
     }
   if (this->LabelLayer)
     {
-    this->LabelLayer->SetSliceNode(sliceNode);
+    this->LabelLayer->SetSliceNode(newSliceNode);
     }
 
   this->Modified();

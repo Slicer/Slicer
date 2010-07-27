@@ -90,44 +90,21 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   vtkTypeRevisionMacro(vtkSlicerLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// Description
-  /// All logic classes need to know about the current mrml scene
-  vtkGetObjectMacro (MRMLScene, vtkMRMLScene);
+  /// Get MRMLScene
+  vtkMRMLScene* GetMRMLScene();
 
   /// 
-  /// API for setting or setting and observing MRMLScene
-  void SetMRMLScene ( vtkMRMLScene *mrml )
-    {
-    vtkObject *oldValue = this->MRMLScene;
-    this->MRMLObserverManager->SetObject ( vtkObjectPointer( &this->MRMLScene), mrml );
-    this->RegisterNodes();
-    if ( oldValue != this->MRMLScene )
-      {
-      this->InvokeEvent (vtkCommand::ModifiedEvent);
-      }
-    }
+  /// Set MRMLScene
+  void SetMRMLScene(vtkMRMLScene *mrml);
 
-  void SetAndObserveMRMLScene ( vtkMRMLScene *mrml )
-    {
-    vtkObject *oldValue = this->MRMLScene;
-    this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->MRMLScene), mrml );
-    this->RegisterNodes();
-    if ( oldValue != this->MRMLScene )
-      {
-      this->InvokeEvent (vtkCommand::ModifiedEvent);
-      }
-    }
-
-  void SetAndObserveMRMLSceneEvents ( vtkMRMLScene *mrml, vtkIntArray *events )
-    {
-    vtkObject *oldValue = this->MRMLScene;
-    this->MRMLObserverManager->SetAndObserveObjectEvents ( vtkObjectPointer( &this->MRMLScene), mrml, events );
-    this->RegisterNodes();
-    if ( oldValue != this->MRMLScene )
-      {
-      this->InvokeEvent (vtkCommand::ModifiedEvent);
-      }
-    }
+  /// Set and observe MRML Scene. In order to provide a single method to set the scene,
+  /// please consider overloading SetMRMLSceneInternal() instead.
+  /// \note After each module are ported to Qt, these methods will be removed.
+  /// \deprecated
+  /// \sa SetMRMLSceneInternal()
+  /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
+  void SetAndObserveMRMLScene(vtkMRMLScene *newScene);
+  void SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, vtkIntArray *events);
 
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
       unsigned long /*event*/, void * /*callData*/ ) { };
@@ -161,18 +138,24 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   virtual vtkIntArray* NewObservableEvents() { return vtkIntArray::New(); };
 
 protected:
+
   vtkSlicerLogic();
   virtual ~vtkSlicerLogic();
-  vtkSlicerLogic(const vtkSlicerLogic&);
-  void operator=(const vtkSlicerLogic&);
+
+  /// Called each time a new scene is set. Can be reimplemented in derivated classes.
+  /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
+  /// Convenient method to set and observe the scene
+  void SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene);
+  void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene, vtkIntArray *events);
 
   /// Register node classes into the mrml scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes();
 
-  vtkMRMLScene *MRMLScene;
-
-  char *Name;
+  vtkMRMLScene * MRMLScene;
+  char *         Name;
 
   //BTX
   /// a shared set of functions that call the 
@@ -185,19 +168,18 @@ protected:
 
   //ETX
 
-  /// 
   /// Holder for MRML and Logic callbacks
-  vtkCallbackCommand *LogicCallbackCommand;
-  vtkCallbackCommand *MRMLCallbackCommand;
-
-  /// 
+  vtkCallbackCommand *  LogicCallbackCommand;
+  vtkCallbackCommand *  MRMLCallbackCommand;
   /// Flag to avoid event loops
-  int InLogicCallbackFlag;
-  int InMRMLCallbackFlag;
+  int                  InLogicCallbackFlag;
+  int                  InMRMLCallbackFlag;
+  vtkObserverManager * MRMLObserverManager;
 
+private:
 
-  vtkObserverManager *MRMLObserverManager;
-
+  vtkSlicerLogic(const vtkSlicerLogic&); // Not implemented
+  void operator=(const vtkSlicerLogic&); // Not implemented
 };
 
 #endif

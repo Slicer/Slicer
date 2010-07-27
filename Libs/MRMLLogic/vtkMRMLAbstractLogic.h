@@ -96,8 +96,15 @@ public:
   vtkMRMLScene * GetMRMLScene();
 
   ///
-  /// Set and/or observe the MRMLScene
+  /// Set MRMLScene
   void SetMRMLScene(vtkMRMLScene * newScene);
+
+  /// Set and observe MRML Scene. In order to provide a single method to set the scene,
+  /// please consider overloading SetMRMLSceneInternal() instead.
+  /// \note After each module are ported to Qt, these methods will be removed.
+  /// \deprecated
+  /// \sa SetMRMLSceneInternal()
+  /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
   void SetAndObserveMRMLScene(vtkMRMLScene * newScene);
   void SetAndObserveMRMLSceneEvents(vtkMRMLScene * newScene, vtkIntArray * events);
 
@@ -131,6 +138,14 @@ protected:
 
   vtkMRMLAbstractLogic();
   virtual ~vtkMRMLAbstractLogic();
+
+  /// Called each time a new scene is set. Can be reimplemented in derivated classes.
+  /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+
+  /// Convenient method to set and observe the scene
+  void SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene);
+  void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene, vtkIntArray *events);
   
   /// Register node classes into the MRML scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
