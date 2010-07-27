@@ -24,24 +24,24 @@
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
-// EMSegment/MRML includes
-#include <vtkEMSegmentMRMLManager.h>
-
 // MRML includes
 #include <vtkMRML.h>
-#include <vtkMRMLVolumeNode.h>
 
 // STD includes
 #include <cstdlib>
 
 #include "vtkSlicerEMSegmentModuleLogicExport.h"
 
+class vtkEMSegmentMRMLManager;
+class vtkMRMLVolumeNode;
 class vtkImageEMLocalSegmenter;
 class vtkImageEMLocalSuperClass;
 class vtkImageEMLocalClass;
 class vtkImageEMLocalGenericClass;
 class vtkTransform;
 class vtkGridTransform;
+class vtkImageData;
+class vtkMatrix4x4;
 
 class VTK_SLICER_EMSEGMENT_MODULE_LOGIC_EXPORT vtkSlicerEMSegmentLogic :
   public vtkSlicerModuleLogic
@@ -99,33 +99,16 @@ public:
   /// nodes are delagated to the vtkEMSegmentMRMLManager class.
   vtkGetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
 
-  /// Register all the nodes used by this module with the current MRML scene.
-  virtual void RegisterMRMLNodesWithScene()
-      {
-      this->MRMLManager->RegisterMRMLNodesWithScene();
-      }
-
-  virtual void SetAndObserveMRMLScene(vtkMRMLScene* scene)
-      {
-      Superclass::SetAndObserveMRMLScene(scene);
-      this->MRMLManager->SetMRMLScene(scene);
-      }
-
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
-                                   void *callData )
-      {
-      this->MRMLManager->ProcessMRMLEvents(caller, event, callData);
-      }
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
   ///
   /// Special testing functions
   virtual void      PopulateTestingData();
   virtual void      SpecialTestingFunction();
 
-  /// Events to observe
-  virtual vtkIntArray* NewObservableEvents();
-
-  void StartPreprocessingResampleToTarget(vtkMRMLVolumeNode* movingVolumeNode, vtkMRMLVolumeNode* fixedVolumeNode, vtkMRMLVolumeNode* outputVolumeNode);
+  void StartPreprocessingResampleToTarget(vtkMRMLVolumeNode* movingVolumeNode,
+                                          vtkMRMLVolumeNode* fixedVolumeNode,
+                                          vtkMRMLVolumeNode* outputVolumeNode);
 
   static void TransferIJKToRAS(vtkMRMLVolumeNode* volumeNode, int ijk[3], double ras[3]);
   static void TransferRASToIJK(vtkMRMLVolumeNode* volumeNode, double ras[3], int ijk[3]);
@@ -165,7 +148,7 @@ public:
                                  vtkMRMLVolumeNode* outputVolumeNode,
                                  vtkMRMLVolumeNode* outputVolumeGeometryNode,
                                  vtkTransform* outputRASToInputRASTransform,
-                                  int iterpolationType,
+                                 int iterpolationType,
                                  double backgroundLevel);
 
   void PrintText(char *TEXT);
@@ -178,13 +161,14 @@ protected:
   vtkSlicerEMSegmentLogic();
   virtual ~vtkSlicerEMSegmentLogic();
 
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
+  virtual void RegisterNodes();
+
 private:
 
   vtkSlicerEMSegmentLogic(const vtkSlicerEMSegmentLogic&); // Not implemented
   void operator=(const vtkSlicerEMSegmentLogic&);          // Not implemented
-
-  /// The mrml manager is created in the constructor
-  vtkSetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
 
   //BTX
   template <class T>

@@ -15,8 +15,8 @@
 // EMSegment/Logic includes
 #include "vtkSlicerEMSegmentLogic.h"
 
-
 // EMSegment/MRML includes
+#include <vtkEMSegmentMRMLManager.h>
 #include <vtkMRMLEMSNode.h>
 #include <vtkMRMLEMSSegmenterNode.h>
 #include <vtkMRMLEMSTemplateNode.h>
@@ -90,16 +90,16 @@ vtkSlicerEMSegmentLogic::vtkSlicerEMSegmentLogic()
 
   //this->DebugOn();
 
-  this->MRMLManager = NULL; // NB: must be set before SetMRMLManager is called
+  this->MRMLManager = 0; // NB: must be set before SetMRMLManager is called
   vtkEMSegmentMRMLManager* manager = vtkEMSegmentMRMLManager::New();
-  this->SetMRMLManager(manager);
+  vtkSetObjectBodyMacro(MRMLManager,vtkEMSegmentMRMLManager,manager);
   manager->Delete();
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerEMSegmentLogic::~vtkSlicerEMSegmentLogic()
 {
-  this->SetMRMLManager(NULL);
+  vtkSetObjectBodyMacro(MRMLManager, vtkEMSegmentMRMLManager, 0);
   this->SetProgressCurrentAction(NULL);
   this->SetModuleName(NULL);
 }
@@ -108,6 +108,27 @@ vtkSlicerEMSegmentLogic::~vtkSlicerEMSegmentLogic()
 void vtkSlicerEMSegmentLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerEMSegmentLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+{
+  this->SetAndObserveMRMLSceneInternal(newScene);
+  this->MRMLManager->SetMRMLScene(newScene);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerEMSegmentLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event,
+                                                void *callData)
+{
+  this->MRMLManager->ProcessMRMLEvents(caller, event, callData);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerEMSegmentLogic::RegisterNodes()
+{
+  std::cout << "vtkSlicerEMSegmentLogic - RegisterNodes" << std::endl;
+  this->MRMLManager->RegisterMRMLNodesWithScene();
 }
 
 //----------------------------------------------------------------------------
@@ -1929,18 +1950,6 @@ void
 vtkSlicerEMSegmentLogic::
 SpecialTestingFunction()
 {
-}
-
-//-----------------------------------------------------------------------------
-vtkIntArray*
-vtkSlicerEMSegmentLogic::
-NewObservableEvents()
-{
-  vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-
-  return events;
 }
 
 //-----------------------------------------------------------------------------
