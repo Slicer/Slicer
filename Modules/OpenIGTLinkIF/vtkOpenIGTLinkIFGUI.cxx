@@ -2250,8 +2250,13 @@ void vtkOpenIGTLinkIFGUI::AddIOConfigContextMenuItem(int type, const char* conID
     }
   else if (type == NODE_DEVICE)
     {
+    if (io == vtkMRMLIGTLConnectorNode::IO_OUTGOING)
+      {
+      sprintf(command, "ExportDataToIGTLCallback %s %s", conID, nodeID);
+      this->IOConfigContextMenu->AddCommand("Push to OpenIGTLink connection", this, command);
+      }
     sprintf(command, "DeleteNodeCallback %s %d %s", conID, io, nodeID);
-    this->IOConfigContextMenu->AddCommand("Delete this node", this, command);
+    this->IOConfigContextMenu->AddCommand("Remove this node", this, command);
     }
 
 }
@@ -2322,6 +2327,19 @@ void vtkOpenIGTLinkIFGUI::AddNodeCallback(const char* conID, int io, const char*
     }
 
   UpdateIOConfigTree();
+}
+
+
+//----------------------------------------------------------------------------
+void vtkOpenIGTLinkIFGUI::ExportDataToIGTLCallback(const char* conID, const char* nodeID)
+{
+  vtkMRMLIGTLConnectorNode* connector = GetConnector(conID);
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(nodeID);
+  if (connector && node)
+    {
+    connector->PushNode(node);
+    }
+  
 }
 
 

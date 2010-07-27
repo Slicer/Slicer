@@ -161,6 +161,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkOpenIGTLinkIFGUI : public vtkSlicerModuleGUI
   virtual void OpenTrackingDataControllerWindow(const char* conID);
   //virtual void AddNodeCallback(const char* conID, int io, const char* name, const char* type);
   virtual void AddNodeCallback(const char* conID, int io, const char* nodeID, const char* devType);
+  virtual void ExportDataToIGTLCallback(const char* conID, const char* nodeID);
   virtual void DeleteNodeCallback(const char* conID, int io, const char* nodeID);
 
   // Description:

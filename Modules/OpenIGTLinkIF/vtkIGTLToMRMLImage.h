@@ -52,7 +52,7 @@ class VTK_OPENIGTLINKIF_EXPORT vtkIGTLToMRMLImage : public vtkIGTLToMRMLBase
 
  protected:
   //BTX
-  igtl::ImageMessage::Pointer OutImageMsg;
+  igtl::ImageMessage::Pointer OutImageMessage;
   igtl::GetImageMessage::Pointer GetImageMessage;
   //ETX
   

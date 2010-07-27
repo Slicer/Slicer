@@ -128,21 +128,18 @@ int vtkIGTLToMRMLLinearTransform::IGTLToMRML(igtl::MessageBase::Pointer buffer, 
   vtkMatrix4x4* transformToParent = transformNode->GetMatrixTransformToParent();
 
   transform->Identity();
-  transform->SetElement(0, 0, tx);
-  transform->SetElement(1, 0, ty);
-  transform->SetElement(2, 0, tz);
-
-  transform->SetElement(0, 1, sx);
-  transform->SetElement(1, 1, sy);
-  transform->SetElement(2, 1, sz);
-
-  transform->SetElement(0, 2, nx);
-  transform->SetElement(1, 2, ny);
-  transform->SetElement(2, 2, nz);
-
-  transform->SetElement(0, 3, px);
-  transform->SetElement(1, 3, py);
-  transform->SetElement(2, 3, pz);
+  transform->Element[0][0] = tx;
+  transform->Element[1][0] = ty;
+  transform->Element[2][0] = tz;
+  transform->Element[0][1] = sx;
+  transform->Element[1][1] = sy;
+  transform->Element[2][1] = sz;
+  transform->Element[0][2] = nx;
+  transform->Element[1][2] = ny;
+  transform->Element[2][2] = nz;
+  transform->Element[0][3] = px;
+  transform->Element[1][3] = py;
+  transform->Element[2][3] = pz;
 
   transformToParent->DeepCopy(transform);
 
@@ -179,25 +176,22 @@ int vtkIGTLToMRMLLinearTransform::MRMLToIGTL(unsigned long event, vtkMRMLNode* m
 
     igtl::Matrix4x4 igtlmatrix;
     
-    igtlmatrix[0][0]  = matrix->GetElement(0, 0);
-    igtlmatrix[1][0]  = matrix->GetElement(1, 0);
-    igtlmatrix[2][0]  = matrix->GetElement(2, 0);
-    igtlmatrix[3][0]  = matrix->GetElement(3, 0);
-    
-    igtlmatrix[0][1]  = matrix->GetElement(0, 1);
-    igtlmatrix[1][1]  = matrix->GetElement(1, 1);
-    igtlmatrix[2][1]  = matrix->GetElement(2, 1);
-    igtlmatrix[3][1]  = matrix->GetElement(3, 1);
-    
-    igtlmatrix[0][2]  = matrix->GetElement(0, 2);
-    igtlmatrix[1][2]  = matrix->GetElement(1, 2);
-    igtlmatrix[2][2]  = matrix->GetElement(2, 2);
-    igtlmatrix[3][2]  = matrix->GetElement(3, 2);
-    
-    igtlmatrix[0][3]  = matrix->GetElement(0, 3);
-    igtlmatrix[1][3]  = matrix->GetElement(1, 3);
-    igtlmatrix[2][3]  = matrix->GetElement(2, 3);
-    igtlmatrix[3][3]  = matrix->GetElement(3, 3);
+    igtlmatrix[0][0]  = matrix->Element[0][0];
+    igtlmatrix[1][0]  = matrix->Element[1][0];
+    igtlmatrix[2][0]  = matrix->Element[2][0];
+    igtlmatrix[3][0]  = matrix->Element[3][0];
+    igtlmatrix[0][1]  = matrix->Element[0][1];
+    igtlmatrix[1][1]  = matrix->Element[1][1];
+    igtlmatrix[2][1]  = matrix->Element[2][1];
+    igtlmatrix[3][1]  = matrix->Element[3][1];
+    igtlmatrix[0][2]  = matrix->Element[0][2];
+    igtlmatrix[1][2]  = matrix->Element[1][2];
+    igtlmatrix[2][2]  = matrix->Element[2][2];
+    igtlmatrix[3][2]  = matrix->Element[3][2];
+    igtlmatrix[0][3]  = matrix->Element[0][3];
+    igtlmatrix[1][3]  = matrix->Element[1][3];
+    igtlmatrix[2][3]  = matrix->Element[2][3];
+    igtlmatrix[3][3]  = matrix->Element[3][3];
     
     this->OutTransformMsg->SetMatrix(igtlmatrix);
     this->OutTransformMsg->Pack();

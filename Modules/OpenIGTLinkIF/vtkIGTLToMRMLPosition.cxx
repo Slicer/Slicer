@@ -152,25 +152,22 @@ int vtkIGTLToMRMLPosition::MRMLToIGTL(unsigned long event, vtkMRMLNode* mrmlNode
 
     igtl::Matrix4x4 igtlmatrix;
     
-    igtlmatrix[0][0]  = matrix->GetElement(0, 0);
-    igtlmatrix[1][0]  = matrix->GetElement(1, 0);
-    igtlmatrix[2][0]  = matrix->GetElement(2, 0);
-    igtlmatrix[3][0]  = matrix->GetElement(3, 0);
-    
-    igtlmatrix[0][1]  = matrix->GetElement(0, 1);
-    igtlmatrix[1][1]  = matrix->GetElement(1, 1);
-    igtlmatrix[2][1]  = matrix->GetElement(2, 1);
-    igtlmatrix[3][1]  = matrix->GetElement(3, 1);
-    
-    igtlmatrix[0][2]  = matrix->GetElement(0, 2);
-    igtlmatrix[1][2]  = matrix->GetElement(1, 2);
-    igtlmatrix[2][2]  = matrix->GetElement(2, 2);
-    igtlmatrix[3][2]  = matrix->GetElement(3, 2);
-    
-    igtlmatrix[0][3]  = matrix->GetElement(0, 3);
-    igtlmatrix[1][3]  = matrix->GetElement(1, 3);
-    igtlmatrix[2][3]  = matrix->GetElement(2, 3);
-    igtlmatrix[3][3]  = matrix->GetElement(3, 3);
+    igtlmatrix[0][0]  = matrix->Element[0][0];
+    igtlmatrix[1][0]  = matrix->Element[1][0];
+    igtlmatrix[2][0]  = matrix->Element[2][0];
+    igtlmatrix[3][0]  = matrix->Element[3][0];
+    igtlmatrix[0][1]  = matrix->Element[0][1];
+    igtlmatrix[1][1]  = matrix->Element[1][1];
+    igtlmatrix[2][1]  = matrix->Element[2][1];
+    igtlmatrix[3][1]  = matrix->Element[3][1];
+    igtlmatrix[0][2]  = matrix->Element[0][2];
+    igtlmatrix[1][2]  = matrix->Element[1][2];
+    igtlmatrix[2][2]  = matrix->Element[2][2];
+    igtlmatrix[3][2]  = matrix->Element[3][2];
+    igtlmatrix[0][3]  = matrix->Element[0][3];
+    igtlmatrix[1][3]  = matrix->Element[1][3];
+    igtlmatrix[2][3]  = matrix->Element[2][3];
+    igtlmatrix[3][3]  = matrix->Element[3][3];
 
     float position[3];
     float quaternion[4];
