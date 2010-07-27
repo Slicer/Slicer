@@ -1,0 +1,16 @@
+message("Building WEAVE:\n@weave_binary@")
+set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+set(ENV{VS_UNICODE_OUTPUT} "")
+
+execute_process(
+  COMMAND "@slicer_PYTHON_EXECUTABLE@" setup.py install
+  WORKING_DIRECTORY "@weave_source@"
+  RESULT_VARIABLE res
+  OUTPUT_VARIABLE WEAVE_OUT
+  OUTPUT_VARIABLE WEAVE_ERR)
+
+if(NOT ${res} EQUAL 0)
+  message("WEAVE Errors detected: \n${WEAVE_OUT}\n${WEAVE_ERR}")
+  message(FATAL_ERROR "Error in config of Weave")
+endif()
+message("Weave build worked.")
