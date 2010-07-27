@@ -26,7 +26,7 @@ public:
   virtual QAction* showModuleAction();
 
 public slots:
-
+  void showPanel(int panelId);
 
 protected:
   virtual void setup();

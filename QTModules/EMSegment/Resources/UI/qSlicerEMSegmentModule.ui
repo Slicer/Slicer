@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
      <property name="text">
@@ -22,6 +22,15 @@
      <property name="contentsFrameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QStackedWidget" name="PanelStack">
+        <property name="currentIndex">
+         <number>-1</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -36,6 +45,64 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Test panels</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QComboBox" name="TestPanelsComboBox">
+        <item>
+         <property name="text">
+          <string>DefineTask</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DefineInputChannels</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DefineAnatomicalTree</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DefineAtlas</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>EditRegistrationParameters</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DefinePreprocessing</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SpecifyIntensityDistribution</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>EditNodeBasedParameters</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>RunSegmentation</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -100,15 +167,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
