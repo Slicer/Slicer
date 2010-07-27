@@ -11,8 +11,8 @@ C++ equivalents to Python functions.
 
 from types import InstanceType, XRangeType
 import inspect
-import scipy.weave.md5_load as md5
-import scipy.weave as weave
+import weave.md5_load as md5
+import weave as weave
 
 from bytecodecompiler import CXXCoder,Type_Descriptor,Function_Descriptor
 
