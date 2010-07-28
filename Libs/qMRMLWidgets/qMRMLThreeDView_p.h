@@ -39,8 +39,8 @@ public slots:
 public:
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
-  vtkMRMLScene*                              MRMLScene;
-  vtkMRMLViewNode*                           MRMLViewNode;
+  vtkMRMLScene*                      MRMLScene;
+  vtkMRMLViewNode*                   MRMLViewNode;
 };
 
 #endif

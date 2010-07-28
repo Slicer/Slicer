@@ -13,8 +13,6 @@
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
-#include <vtkMRMLCameraDisplayableManager.h>
-#include <vtkMRMLViewDisplayableManager.h>
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
