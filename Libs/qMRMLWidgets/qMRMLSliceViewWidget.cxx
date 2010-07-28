@@ -7,10 +7,16 @@
 // CTK includes
 #include <ctkVTKSliceView.h>
 #include <ctkLogger.h>
+#include <vtkLightBoxRendererManager.h>
 
 // qMRML includes
 #include "qMRMLSliceViewWidget.h"
 #include "qMRMLSliceViewWidget_p.h"
+
+// MRMLDisplayableManager includes
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
+//#include <vtkSliceViewInteractorStyle.h>
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
@@ -30,11 +36,16 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceViewWidget");
 //---------------------------------------------------------------------------
 qMRMLSliceViewWidgetPrivate::qMRMLSliceViewWidgetPrivate()
 {
+  this->DisplayableManagerGroup = 0;
 }
 
 //---------------------------------------------------------------------------
 qMRMLSliceViewWidgetPrivate::~qMRMLSliceViewWidgetPrivate()
 {
+  if (this->DisplayableManagerGroup)
+    {
+    this->DisplayableManagerGroup->Delete();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -89,6 +100,29 @@ qMRMLSliceViewWidget::qMRMLSliceViewWidget(QWidget* _parent) : Superclass(_paren
   CTK_D(qMRMLSliceViewWidget);
   d->setupUi(this);
 
+  // Register Displayable Managers
+  vtkMRMLSliceViewDisplayableManagerFactory* factory =
+      vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
+  QStringList displayableManagers;
+//  displayableManagers << "vtkMRMLCameraDisplayableManager"
+//      << "vtkMRMLViewDisplayableManager"
+//      << "vtkMRMLModelDisplayableManager";
+  foreach(const QString displayableManagerName, displayableManagers)
+    {
+    if (!factory->IsDisplayableManagerRegistered(displayableManagerName.toLatin1()))
+      {
+      factory->RegisterDisplayableManager(displayableManagerName.toLatin1());
+      }
+    }
+
+  d->DisplayableManagerGroup = factory->InstantiateDisplayableManagers(
+      d->VTKSliceView->lightBoxRendererManager()->GetRenderer(0));
+  Q_ASSERT(d->DisplayableManagerGroup);
+
+  // Observe displayable manager group to catch RequestRender events
+  d->qvtkConnect(d->DisplayableManagerGroup, vtkCommand::UpdateEvent,
+                 d->VTKSliceView, SLOT(scheduleRender()));
+
   connect(d->VTKSliceView, SIGNAL(resized(const QSize&,const QSize&)),
           d->SliceController, SLOT(setSliceViewSize(const QSize&)));
 
@@ -132,7 +166,9 @@ void qMRMLSliceViewWidget::setMRMLScene(vtkMRMLScene* newScene)
 //---------------------------------------------------------------------------
 void qMRMLSliceViewWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
-  ctk_d()->SliceController->setMRMLSliceNode(newSliceNode);
+  CTK_D(qMRMLSliceViewWidget);
+  d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
+  d->SliceController->setMRMLSliceNode(newSliceNode);
 }
 
 //---------------------------------------------------------------------------

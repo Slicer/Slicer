@@ -9,6 +9,7 @@
 #include "qMRMLSliceViewWidget.h"
 #include "ui_qMRMLSliceViewWidget.h"
 
+class vtkMRMLDisplayableManagerGroup;
 class QResizeEvent;
 
 //-----------------------------------------------------------------------------
@@ -35,6 +36,10 @@ public slots:
   /// Connected with the imageDataModified signal invoked by qMRMLSliceControllerWidget
   /// \sa qMRMLSliceControllerWidget::imageDataModified
   void onImageDataModified(vtkImageData * imageData);
+
+public:
+
+  vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
 };
 
 #endif
