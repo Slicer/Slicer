@@ -59,10 +59,6 @@
 #include "vtkSlicerAnnotationBidimensionalManager.h"
 //#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 
-// MRMLDisplayableManager includes
-#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
-
 // STD includes
 #include <string>
 #include <iostream>
@@ -1812,35 +1808,25 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 //      return 0;
 //  }
 
+  //InvokeEvent(vtkMRMLAnnotationNode::AboutToAddEvent);
 
-  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-  textNode->Initialize(this->GetMRMLScene());
-
-  // need a unique name since the storage node will be named from it
-  if (textNode->GetScene())
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+  if ( interactionNode == NULL )
     {
-    textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
-    }
-  else
-    {
-    textNode->SetName("AnnotationText");
+    vtkErrorMacro ( "AddTextNode: No interaction node in the scene." );
+    return 0;
     }
 
+  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
 
+  if (interactionNode->GetCurrentInteractionMode()!=vtkMRMLInteractionNode::Place) {
 
-  textNode->Delete();
-/*
-    vtkTextWidget* textWidget = this->GetTextWidget(node->GetID());
-    vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation())->SetText((char*)data);
+    vtkErrorMacro("AddTextNode: Could not set place mode!");
 
-    vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
-    myCallback->textNode = textNode;
-    myCallback->textWidget = textWidget;
-    myCallback->LogicPointer = this;
-    textWidget->AddObserver(vtkCommand::PlacePointEvent, myCallback);
-    myCallback->Delete();
-*/
-    return textNode->GetID();
+  }
+
+  return 0;
 
     // WORK IN PROGRESS!
 //

@@ -43,6 +43,8 @@ protected:
   vtkMRMLAnnotationTextDisplayableManager(){}
   virtual ~vtkMRMLAnnotationTextDisplayableManager(){}
 
+  /// Callback for click in RenderWindow
+  virtual void OnClickInRenderWindow();
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Propagate properties of MRML node to widgets.

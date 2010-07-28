@@ -7,6 +7,7 @@
 // MRML includes
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLInteractionNode.h>
 
 // VTK includes
 #include <vtkObject.h>
@@ -21,6 +22,7 @@
 #include <vtkLineRepresentation.h>
 #include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkMath.h>
+#include <vtkRenderWindowInteractor.h>
 
 // STD includes
 #include <vector>
@@ -30,6 +32,8 @@
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
+typedef void (*fp)(void);
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationDisplayableManager);
@@ -193,6 +197,55 @@ void vtkMRMLAnnotationDisplayableManager::vtkInternal::RemoveWidget(
 }
 
 //---------------------------------------------------------------------------
+// RenderwindowInteractor Callback
+class vtkAnnotationRenderwindowInteractorCallback : public vtkCommand
+{
+public:
+  static vtkAnnotationRenderwindowInteractorCallback *New()
+  { return new vtkAnnotationRenderwindowInteractorCallback; }
+
+  virtual void Execute (vtkObject *caller, unsigned long event, void*)
+  {
+
+    std::cout << "Execute callback!" << std::endl;
+
+    if (!this->displayableManager)
+      {
+      return;
+      }
+
+    vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+        displayableManager->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+    if ( interactionNode == NULL )
+      {
+      std::cout << "No interaction node!" << std::endl;
+      return;
+      }
+
+    std::cout << "CurrentInteractionMode: " << interactionNode->GetInteractionModeAsString(interactionNode->GetCurrentInteractionMode()) << std::endl;
+    if (interactionNode->GetCurrentInteractionMode()==vtkMRMLInteractionNode::Place)
+      {
+        // only catch event if in Place mode
+        if (event == vtkCommand::LeftButtonReleaseEvent)
+        {
+          std::cout << "Clicked!" << std::endl;
+        }
+      }
+
+  }
+
+  vtkAnnotationRenderwindowInteractorCallback(){}
+
+  ~vtkAnnotationRenderwindowInteractorCallback(){
+
+    this->displayableManager->Delete();
+
+  }
+
+  vtkMRMLAnnotationDisplayableManager* displayableManager;
+};
+
+//---------------------------------------------------------------------------
 // vtkMRMLAnnotationDisplayableManager methods
 
 //---------------------------------------------------------------------------
@@ -235,6 +288,11 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::Create()
 {
+  std::cout << "Add observer!" << std::endl;
+  vtkAnnotationRenderwindowInteractorCallback *myCallback = vtkAnnotationRenderwindowInteractorCallback::New();
+  myCallback->displayableManager = this;
+  this->GetInteractor()->AddObserver(vtkCommand::LeftButtonReleaseEvent, myCallback);
+  myCallback->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -406,6 +464,13 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(
 vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::GetWidget(vtkMRMLAnnotationNode * node)
 {
   return this->Internal->GetWidget(node);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindow()
+{
+  // The user clicked in the renderWindow
+  vtkErrorMacro("OnClickInRenderWindow should be overloaded!");
 }
 
 //---------------------------------------------------------------------------

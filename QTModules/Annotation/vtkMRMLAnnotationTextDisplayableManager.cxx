@@ -91,3 +91,23 @@ void vtkMRMLAnnotationTextDisplayableManager::SetWidget(vtkMRMLAnnotationNode* n
   // Update Text
   textRepr->SetText(textNode->GetText(0));
 }
+
+void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow()
+{
+  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+  textNode->Initialize(this->GetMRMLScene());
+
+  // need a unique name since the storage node will be named from it
+  if (textNode->GetScene())
+    {
+    textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
+    }
+  else
+    {
+    textNode->SetName("AnnotationText");
+    }
+
+
+
+  textNode->Delete();
+}

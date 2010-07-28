@@ -1,168 +1,52 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
-  or http://www.slicer.org/copyright/copyright.txt for details.
+ See Doc/copyright/copyright.txt
+ or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerNodeSelectorWidget.h,v $
-  Date:      $Date: 2006/01/08 04:48:05 $
-  Version:   $Revision: 1.45 $
+ Program:   3D Slicer
 
-=========================================================================auto=*/
+ Module:    $RCSfile: vtkMRMLAnnotationFiducialDisplayableManager.h,v $
+ Date:      $Date: 2010/07/27 04:48:05 $
+ Version:   $Revision: 1.1 $
 
+ =========================================================================auto=*/
 
-#ifndef __vtkSlicerAnnotationFiducialManager_h
-#define __vtkSlicerAnnotationFiducialManager_h
+#ifndef __vtkMRMLAnnotationFiducialDisplayableManager_h
+#define __vtkMRMLAnnotationFiducialDisplayableManager_h
 
-
-#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
+// AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
+
+// MRMLDisplayableManager includes
+#include <vtkMRMLAnnotationDisplayableManager.h>
 
 class vtkMRMLAnnotationFiducialNode;
 class vtkSlicerViewerWidget;
-class vtkCamera;
-class vtkMRMLAnnotationTextDisplayNode;
+//class vtkMRMLAnnotationFiducialDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
-//class vtkSlicerSeedWidgetClass;
-class vtkMRMLFiducialListNode;
+class vtkMRMLAnnotationLineDisplayNode;
+class vtkSeedWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationFiducialDisplayableManager : public vtkMRMLAbstractThreeDViewDisplayableManager
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationFiducialDisplayableManager :
+    public vtkMRMLAnnotationDisplayableManager
 {
-  
 public:
 
   static vtkMRMLAnnotationFiducialDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationFiducialDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeRevisionMacro(vtkMRMLAnnotationFiducialDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
-
-
-  /// Getting the mrml Fiducial node id
-  //vtkGetStringMacro(FiducialNodeID);
-
-  /// Set the fid list id, and update the widgets
-  //void SetFiducialNodeID(char *id);
-  
-  /// alternative method to propagate events generated in GUI to logic / mrml
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-
-
-  virtual void Create();
-
-
-  /// alternative method to propagate events generated in GUI to logic / mrml
-  //virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
-  
-  /// add observers on node
-  //virtual void AddMRMLObservers ( );
-
-  /// remove observers on node
-  virtual void RemoveMRMLObservers ( );
-
-  /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
-  /// \sa ProcessMRMLEvents
-  virtual void OnMRMLSceneClosingEvent();
-  virtual void OnMRMLSceneCloseEvent();
-  virtual void OnMRMLSceneLoadStartEvent();
-  virtual void OnMRMLSceneLoadEndEvent();
-  virtual void OnMRMLSceneRestoredEvent();
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
-
-
-  /// Update the interactors on all the widgets
-  void UpdateFiducialWidgetInteractors();
-
-  /// encapsulated 3d widgets for each Fiducial node
-  //std::map<std::string, vtkSlicerSeedWidgetClass*> SeedWidgets;
-
-  //vtkSlicerSeedWidgetClass *GetSeedWidget(const char * nodeID);
-  void AddSeedWidget(vtkMRMLAnnotationFiducialNode *FiducialNode);
-  void AddSeedWidget(vtkMRMLFiducialListNode *FiducialListNode);
-
-  void RemoveSeedWidget(vtkMRMLAnnotationFiducialNode *FiducialNode);
-  void RemoveSeedWidgets();
-
-  void AddSeed(vtkMRMLFiducialListNode *fiducialListNode, const char *pointID);
-  void RemoveSeed(vtkMRMLFiducialListNode *fiducialListNode, const char *pointID);
-  void UpdateSeed(vtkMRMLFiducialListNode *flist, const char *fidID); 
-
-  /// Get/set the viewer widget so can add a the Fiducial widget to it
-  //vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
-  //virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
-
-  void UpdateCamera();
-  vtkCamera *GetActiveCamera();
-
-  /// encapsulated text display node for each Fiducial node
-  //std::map<std::string, std::string> TextDisplayNodes;
-  std::string GetTextDisplayNodeID(const char *nodeID);
-  std::string GetFiducialNodeIDFromTextDisplayNode(const char *nodeID);
-  void AddTextDiaplayNodeID(vtkMRMLAnnotationFiducialNode *FiducialNode);
-  void RemoveTextDisplayNodeID(vtkMRMLAnnotationFiducialNode *FiducialNode);
-
-  /// encapsulated point display node for each Fiducial node
-  //std::map<std::string, std::string> PointDisplayNodes;
-  std::string GetPointDisplayNodeID(const char *nodeID);
-  std::string GetFiducialNodeIDFromPointDisplayNode(const char *nodeID);
-  void AddPointDiaplayNodeID(vtkMRMLAnnotationFiducialNode *FiducialNode);
-  void RemovePointDisplayNodeID(vtkMRMLAnnotationFiducialNode *FiducialNode);
-
-  void UpdateFiducialMeasurement(vtkMRMLAnnotationFiducialNode *FiducialNode);
-
-  enum
-  {
-    AddFiducialCompletedEvent = 0,
-  };
-
 
 protected:
 
+  vtkMRMLAnnotationFiducialDisplayableManager(){}
+  virtual ~vtkMRMLAnnotationFiducialDisplayableManager(){}
 
-  vtkMRMLAnnotationFiducialDisplayableManager();
-  virtual ~vtkMRMLAnnotationFiducialDisplayableManager();
-
-
-  /// update the widget GUI from the settings in the passed in FiducialNode
-  void UpdateWidget(vtkMRMLAnnotationFiducialNode *FiducialNode);
-
-  /// update the 3d distance widget from the settings in the passed in
-  /// FiducialNode
-  void Update3DWidget(vtkMRMLFiducialListNode *activeFiducialListNode);
-
-  /// update the display nodes for FiducialNode
-  void UpdateDisplayNode(vtkMRMLAnnotationFiducialNode *FiducialNode);
-
-  /// update the text property passed by the text display node
-  void UpdateTextDisplayProperty(vtkMRMLAnnotationTextDisplayNode *node);
-
-  /// update the point property passed by the point display node
-  void UpdatePointDisplayProperty(vtkMRMLAnnotationPointDisplayNode *node);
-
-  void UpdateLockUnlock(vtkMRMLFiducialListNode* node);
-
-  /// the id of the mrml node currently displayed in the widget
-  char* FiducialNodeID;
-
-  /// flag set to 1 when updating a 3d widget (todo: set it to the index of the
-  /// Fiducial node / 3d widget once have more than one)
-  int Updating3DFiducial;
-
-  /// pointer to the viewer widget so can add props, request renders 
-  vtkSlicerViewerWidget *ViewerWidget;
-
-  /// Sets Slicer's interaction mode to "pick and manipulate"
-  /// when a widget is being manipulated, and
-  void UpdateInteractionModeAtStartInteraction();
-  ///
-  /// Resets Slicer's interaction mode back to original
-  /// interaction mode when manipulation is finished.
-  void UpdateInteractionModeAtEndInteraction();
-
-  ///  update the visibility of the 3d widget associated with the passed node
-  void Update3DWidgetVisibility(vtkMRMLFiducialListNode *activeFiducialListNode);
-
+  /// Create a widget.
+  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
+  /// Propagate properties of MRML node to widgets.
+  virtual void SetWidget(vtkMRMLAnnotationNode* node);
 
 private:
 

@@ -35,10 +35,10 @@ void qSlicerAnnotationModule::setup()
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationTextDisplayableManager");
 
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationFiducialDisplayableManager");
+//  vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+//      "vtkMRMLAnnotationFiducialDisplayableManager");
 
-  //vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
+  //vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::GetInstance();
   //factory->RegisterDisplayableManager("vtkMRMLAnnotationTextDisplayableManager");
 }
 
