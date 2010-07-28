@@ -30,7 +30,6 @@
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 class vtkRenderer;
-class vtkMRMLThreeDViewDisplayableManagerGroup;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewDisplayableManagerFactory
   : public vtkMRMLDisplayableManagerFactory

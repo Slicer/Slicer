@@ -1,7 +1,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLThreeDViewDisplayableManagerGroup.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
@@ -166,7 +166,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int argc, char* argv[])
 
   //----------------------------------------------------------------------------
   // Instanciate DisplayableManagerGroup
-  vtkMRMLThreeDViewDisplayableManagerGroup * group = factory->InstantiateDisplayableManagers(rr);
+  vtkMRMLDisplayableManagerGroup * group = factory->InstantiateDisplayableManagers(rr);
   if (!group)
     {
     std::cerr << "Line " << __LINE__
@@ -232,7 +232,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int argc, char* argv[])
 
   //----------------------------------------------------------------------------
   // Attempt to get the Registered DisplayableManagers
-  vtkMRMLAbstractThreeDViewDisplayableManager * dm1 =
+  vtkMRMLAbstractDisplayableManager * dm1 =
       group->GetDisplayableManagerByClassName("vtkMRMLViewDisplayableManager");
   if (!dm1)
     {
@@ -249,7 +249,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int argc, char* argv[])
     std::cerr << "\tCurrent: " << dm1->GetClassName() << std::endl;
     }
 
-  vtkMRMLAbstractThreeDViewDisplayableManager * dm2 =
+  vtkMRMLAbstractDisplayableManager * dm2 =
       group->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager");
   if (!dm2)
     {

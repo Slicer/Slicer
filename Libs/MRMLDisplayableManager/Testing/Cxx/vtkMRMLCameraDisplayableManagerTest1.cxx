@@ -12,7 +12,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLThreeDViewDisplayableManagerGroup.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLViewDisplayableManager.h>
 #include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkThreeDViewInteractorStyle.h>
@@ -576,7 +576,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     }
     */
 
-  vtkMRMLThreeDViewDisplayableManagerGroup * displayableManagerGroup =
+  vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
       factory->InstantiateDisplayableManagers(rr);
 
   if (!displayableManagerGroup)
@@ -602,7 +602,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   displayableManagerGroup->AddObserver(vtkCommand::UpdateEvent, renderRequestCallback);
 
   // Assign ViewNode
-  displayableManagerGroup->SetMRMLViewNode(viewNode);
+  displayableManagerGroup->SetMRMLDisplayableNode(viewNode);
 
   // Check if RenderWindowInteractor has NOT been changed
   if (displayableManagerGroup->GetInteractor() != ri)

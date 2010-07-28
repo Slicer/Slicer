@@ -3,7 +3,7 @@
 #include "vtkMRMLViewDisplayableManager.h"
 #include "vtkThreeDViewInteractorStyle.h"
 #include "vtkMRMLCameraDisplayableManager.h"
-#include "vtkMRMLThreeDViewDisplayableManagerGroup.h"
+#include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
 #include <vtkMRMLCameraNode.h>

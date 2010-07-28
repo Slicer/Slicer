@@ -11,7 +11,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLThreeDViewDisplayableManagerGroup.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkMRMLViewDisplayableManager.h>
@@ -204,7 +204,7 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
   // Enable/disable widget
   this->setDisabled(newViewNode == 0);
 
-  d->DisplayableManagerGroup->SetMRMLViewNode(newViewNode);
+  d->DisplayableManagerGroup->SetMRMLDisplayableNode(newViewNode);
   d->MRMLViewNode = newViewNode;
 }
 

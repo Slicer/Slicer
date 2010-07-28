@@ -58,19 +58,24 @@ INSTALL(FILES
 # Sources
 
 SET(DisplayableManager_SRCS
+
   # DisplayableManager associated with ThreeDView
   vtkMRMLCameraDisplayableManager.cxx
   vtkMRMLModelDisplayableManager.cxx
   vtkMRMLViewDisplayableManager.cxx
+
   # DisplayableManager associated with SliceView
   )
 
 SET(KIT_SRCS
   ${DisplayableManager_SRCS}
-  vtkMRMLAbstractThreeDViewDisplayableManager.cxx
+  vtkMRMLAbstractDisplayableManager.cxx
+  vtkMRMLDisplayableManagerGroup.cxx
   vtkMRMLDisplayableManagerFactory.cxx
+
+  # ThreeDView factory and DisplayableManager
+  vtkMRMLAbstractThreeDViewDisplayableManager.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
-  vtkMRMLThreeDViewDisplayableManagerGroup.cxx
   
   vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx
