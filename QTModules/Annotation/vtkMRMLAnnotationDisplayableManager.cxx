@@ -207,8 +207,6 @@ public:
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
 
-    std::cout << "Execute callback!" << std::endl;
-
     if (!this->displayableManager)
       {
       return;
@@ -222,13 +220,12 @@ public:
       return;
       }
 
-    std::cout << "CurrentInteractionMode: " << interactionNode->GetInteractionModeAsString(interactionNode->GetCurrentInteractionMode()) << std::endl;
     if (interactionNode->GetCurrentInteractionMode()==vtkMRMLInteractionNode::Place)
       {
         // only catch event if in Place mode
         if (event == vtkCommand::LeftButtonReleaseEvent)
         {
-          std::cout << "Clicked!" << std::endl;
+          displayableManager->OnClickInThreeDRenderWindowGetCoordinates();
         }
       }
 
@@ -467,7 +464,20 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::GetWidget(vtkMRMLAnnota
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindow()
+void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordinates()
+{
+  int x = this->GetInteractor()->GetEventPosition()[0];
+  int rawY = this->GetInteractor()->GetEventPosition()[1];
+  this->GetInteractor()->SetEventPositionFlipY(x, rawY);
+  int y = this->GetInteractor()->GetEventPosition()[1];
+
+  this->OnClickInThreeDRenderWindow(x, y);
+}
+
+//---------------------------------------------------------------------------
+// Functions to overload!
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindow(int x, int y)
 {
   // The user clicked in the renderWindow
   vtkErrorMacro("OnClickInRenderWindow should be overloaded!");

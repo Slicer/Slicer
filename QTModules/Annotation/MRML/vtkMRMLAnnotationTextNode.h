@@ -32,8 +32,8 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "AnnotationText";};
 
-  //int SetTextCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
-  //double* GetTextCoordinates() {return this->GetControlPointCoordinates(0);}
+  int SetTextCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
+  double* GetTextCoordinates() {return this->GetControlPointCoordinates(0);}
 
   void SetTextNodeLabel(const char* newLabel) {this->SetText(0, newLabel, 1, 1);}
   vtkStdString GetTextNodeLabel() {return this->GetText(0);}

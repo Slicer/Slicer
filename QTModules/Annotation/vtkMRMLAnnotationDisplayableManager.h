@@ -40,6 +40,10 @@ public:
 
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
+  // Get the coordinates of a click in the RenderWindow
+  void OnClickInThreeDRenderWindowGetCoordinates();
+
+
 protected:
 
   vtkMRMLAnnotationDisplayableManager();
@@ -67,8 +71,9 @@ protected:
   /// Get the widget of a node.
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
 
+
   /// Callback for click in RenderWindow
-  virtual void OnClickInRenderWindow();
+  virtual void OnClickInThreeDRenderWindow(int x, int y);
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Propagate properties of MRML node to widgets.

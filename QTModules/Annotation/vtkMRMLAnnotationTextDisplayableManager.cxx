@@ -61,6 +61,7 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
   textRep->SetText(textNode->GetText(0));
   textWidget->SetRepresentation(textRep);
   textWidget->SetInteractor(this->GetInteractor());
+  textRep->SetPosition(textNode->GetControlPointCoordinates(0));
   textWidget->On();
 
   // add callback
@@ -92,10 +93,17 @@ void vtkMRMLAnnotationTextDisplayableManager::SetWidget(vtkMRMLAnnotationNode* n
   textRepr->SetText(textNode->GetText(0));
 }
 
-void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow()
+void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(int x, int y)
 {
+  double coordinates[3];
+  coordinates[0]=(double)x;
+  coordinates[1]=(double)y;
+  coordinates[2]=0;
+
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
   textNode->Initialize(this->GetMRMLScene());
+
+  textNode->SetTextCoordinates(coordinates);
 
   // need a unique name since the storage node will be named from it
   if (textNode->GetScene())
@@ -106,8 +114,6 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow()
     {
     textNode->SetName("AnnotationText");
     }
-
-
 
   textNode->Delete();
 }
