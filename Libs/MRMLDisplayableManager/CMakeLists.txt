@@ -76,6 +76,10 @@ SET(KIT_SRCS
   # ThreeDView factory and DisplayableManager
   vtkMRMLAbstractThreeDViewDisplayableManager.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
+
+  # SliceView factory and DisplayableManager
+  vtkMRMLAbstractSliceViewDisplayableManager.cxx
+  vtkMRMLSliceViewDisplayableManagerFactory.cxx
   
   vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx
