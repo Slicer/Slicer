@@ -69,7 +69,7 @@ SET(KIT_SRCS
   ${DisplayableManager_SRCS}
   vtkMRMLAbstractDisplayableManager.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
-  vtkMRMLDisplayableManagerGroup.cxx
+  vtkMRMLThreeDViewDisplayableManagerGroup.cxx
   
   vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx

@@ -12,7 +12,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLThreeDViewDisplayableManagerGroup.h>
 #include <vtkMRMLViewDisplayableManager.h>
 #include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkThreeDViewInteractorStyle.h>
@@ -151,7 +151,7 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
+  vtkMRMLThreeDViewDisplayableManagerGroup * displayableManagerGroup =
       factory->InstantiateDisplayableManagers(rr);
 
   if (!displayableManagerGroup)

@@ -8,7 +8,7 @@
 // qMRML includes
 #include "qMRMLThreeDView.h"
 
-class vtkMRMLDisplayableManagerGroup;
+class vtkMRMLThreeDViewDisplayableManagerGroup;
 class vtkMRMLViewNode;
 class vtkMRMLCameraNode;
 class vtkObject;
@@ -38,9 +38,9 @@ public slots:
 
 public:
 
-  vtkMRMLDisplayableManagerGroup*          DisplayableManagerGroup;
-  vtkMRMLScene*                            MRMLScene;
-  vtkMRMLViewNode*                         MRMLViewNode;
+  vtkMRMLThreeDViewDisplayableManagerGroup*  DisplayableManagerGroup;
+  vtkMRMLScene*                              MRMLScene;
+  vtkMRMLViewNode*                           MRMLViewNode;
 };
 
 #endif

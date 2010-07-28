@@ -15,7 +15,7 @@
 // MRMLDisplayableManager includes
 #include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
 #include "vtkMRMLAbstractDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerGroup.h"
+#include "vtkMRMLThreeDViewDisplayableManagerGroup.h"
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
@@ -233,7 +233,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactory::GetRegisteredDisplayableManagerC
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerGroup* vtkMRMLThreeDViewDisplayableManagerFactory::InstantiateDisplayableManagers(
+vtkMRMLThreeDViewDisplayableManagerGroup* vtkMRMLThreeDViewDisplayableManagerFactory::InstantiateDisplayableManagers(
     vtkRenderer * newRenderer)
 {
   // Sanity checks
@@ -243,7 +243,7 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLThreeDViewDisplayableManagerFactory::Inst
     return 0;
     }
 
-  vtkMRMLDisplayableManagerGroup * displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
+  vtkMRMLThreeDViewDisplayableManagerGroup * displayableManagerGroup = vtkMRMLThreeDViewDisplayableManagerGroup::New();
 
   for(std::size_t i=0; i < this->Internal->DisplayableManagerClassNames.size(); ++i)
     {

@@ -11,7 +11,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLThreeDViewDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLCameraDisplayableManager.h>
 #include <vtkMRMLViewDisplayableManager.h>

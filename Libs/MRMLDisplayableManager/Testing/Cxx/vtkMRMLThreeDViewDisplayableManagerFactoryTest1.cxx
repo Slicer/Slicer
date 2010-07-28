@@ -1,7 +1,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLThreeDViewDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLAbstractDisplayableManager.h>
 
@@ -166,7 +166,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int argc, char* argv[])
 
   //----------------------------------------------------------------------------
   // Instanciate DisplayableManagerGroup
-  vtkMRMLDisplayableManagerGroup * group = factory->InstantiateDisplayableManagers(rr);
+  vtkMRMLThreeDViewDisplayableManagerGroup * group = factory->InstantiateDisplayableManagers(rr);
   if (!group)
     {
     std::cerr << "Line " << __LINE__

@@ -27,7 +27,7 @@
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 class vtkRenderer;
-class vtkMRMLDisplayableManagerGroup;
+class vtkMRMLThreeDViewDisplayableManagerGroup;
 class vtkMRMLThreeDViewDisplayableManagerFactoryInitialize;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewDisplayableManagerFactory : public vtkObject 
@@ -76,10 +76,10 @@ public:
   int GetRegisteredDisplayableManagerCount();
   
   /// Instantiate registrered DisplayableManagers
-  /// It returns a vtkMRMLDisplayableManagerGroup representing a list of DisplayableManager
+  /// It returns a vtkMRMLThreeDViewDisplayableManagerGroup representing a list of DisplayableManager
   /// Internally, the factory keep track of all the Group and will invoke the ModifiedEvent
   /// of each group.
-  vtkMRMLDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer * newRenderer);
+  vtkMRMLThreeDViewDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer * newRenderer);
 
 protected:
 

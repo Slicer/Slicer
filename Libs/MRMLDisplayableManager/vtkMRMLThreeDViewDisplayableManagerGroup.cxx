@@ -6,14 +6,14 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLDisplayableManagerGroup.cxx,v $
+  Module:    $RCSfile: vtkMRMLThreeDViewDisplayableManagerGroup.cxx,v $
   Date:      $Date: 2010-06-19 12:48:04 -0400 (Sat, 19 Jun 2010) $
   Version:   $Revision: 13859 $
 
 =========================================================================auto=*/
 
 // MRMLDisplayableManager includes
-#include "vtkMRMLDisplayableManagerGroup.h"
+#include "vtkMRMLThreeDViewDisplayableManagerGroup.h"
 #include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
 #include "vtkMRMLAbstractDisplayableManager.h"
 
@@ -35,11 +35,11 @@
 #include <cassert>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLDisplayableManagerGroup, "$Revision: 13859 $");
-vtkStandardNewMacro(vtkMRMLDisplayableManagerGroup);
+vtkCxxRevisionMacro(vtkMRMLThreeDViewDisplayableManagerGroup, "$Revision: 13859 $");
+vtkStandardNewMacro(vtkMRMLThreeDViewDisplayableManagerGroup);
 
 //----------------------------------------------------------------------------
-class vtkMRMLDisplayableManagerGroup::vtkInternal
+class vtkMRMLThreeDViewDisplayableManagerGroup::vtkInternal
 {
 public:
   vtkInternal();
@@ -68,7 +68,7 @@ public:
 // vtkInternal methods
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerGroup::vtkInternal::vtkInternal()
+vtkMRMLThreeDViewDisplayableManagerGroup::vtkInternal::vtkInternal()
 {
   this->MRMLViewNode = 0;
   this->Renderer = 0;
@@ -78,10 +78,10 @@ vtkMRMLDisplayableManagerGroup::vtkInternal::vtkInternal()
 }
 
 //----------------------------------------------------------------------------
-// vtkMRMLDisplayableManagerGroup methods
+// vtkMRMLThreeDViewDisplayableManagerGroup methods
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerGroup::vtkMRMLDisplayableManagerGroup()
+vtkMRMLThreeDViewDisplayableManagerGroup::vtkMRMLThreeDViewDisplayableManagerGroup()
 {
   this->Internal = new vtkInternal;
   this->Internal->CallBackCommand->SetCallback(Self::DoCallback);
@@ -89,7 +89,7 @@ vtkMRMLDisplayableManagerGroup::vtkMRMLDisplayableManagerGroup()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerGroup::~vtkMRMLDisplayableManagerGroup()
+vtkMRMLThreeDViewDisplayableManagerGroup::~vtkMRMLThreeDViewDisplayableManagerGroup()
 {
   this->SetAndObserveDisplayableManagerFactory(0);
   this->SetMRMLViewNode(0);
@@ -108,13 +108,13 @@ vtkMRMLDisplayableManagerGroup::~vtkMRMLDisplayableManagerGroup()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLThreeDViewDisplayableManagerGroup::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
+void vtkMRMLThreeDViewDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
     vtkMRMLThreeDViewDisplayableManagerFactory * factory)
 {
   // Remove observers
@@ -146,7 +146,7 @@ void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::AddAndInitialize(
+void vtkMRMLThreeDViewDisplayableManagerGroup::AddAndInitialize(
     vtkMRMLAbstractDisplayableManager * displayableManager)
 {
   // Sanity checks
@@ -194,13 +194,13 @@ void vtkMRMLDisplayableManagerGroup::AddAndInitialize(
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayableManagerGroup::GetDisplayableManagerCount()
+int vtkMRMLThreeDViewDisplayableManagerGroup::GetDisplayableManagerCount()
 {
   return this->Internal->DisplayableManagers.size();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::Initialize(vtkRenderer* newRenderer)
+void vtkMRMLThreeDViewDisplayableManagerGroup::Initialize(vtkRenderer* newRenderer)
 {
   // Sanity checks
   if (this->Internal->Initialized)
@@ -239,7 +239,7 @@ void vtkMRMLDisplayableManagerGroup::Initialize(vtkRenderer* newRenderer)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLDisplayableManagerGroup::IsInitialized()
+bool vtkMRMLThreeDViewDisplayableManagerGroup::IsInitialized()
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
                 << "returning Internal->Initialized of "
@@ -248,7 +248,7 @@ bool vtkMRMLDisplayableManagerGroup::IsInitialized()
 }
 
 //----------------------------------------------------------------------------
-vtkRenderWindowInteractor* vtkMRMLDisplayableManagerGroup::GetInteractor()
+vtkRenderWindowInteractor* vtkMRMLThreeDViewDisplayableManagerGroup::GetInteractor()
 {
   if (!this->Internal->Renderer || !this->Internal->Renderer->GetRenderWindow())
     {
@@ -262,13 +262,13 @@ vtkRenderWindowInteractor* vtkMRMLDisplayableManagerGroup::GetInteractor()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::RequestRender()
+void vtkMRMLThreeDViewDisplayableManagerGroup::RequestRender()
 {
   this->InvokeEvent(vtkCommand::UpdateEvent);
 }
 
 //----------------------------------------------------------------------------
-vtkRenderer* vtkMRMLDisplayableManagerGroup::GetRenderer()
+vtkRenderer* vtkMRMLThreeDViewDisplayableManagerGroup::GetRenderer()
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
                 << "returning Internal->Renderer address " << this->Internal->Renderer );
@@ -276,7 +276,7 @@ vtkRenderer* vtkMRMLDisplayableManagerGroup::GetRenderer()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLViewNode* vtkMRMLDisplayableManagerGroup::GetMRMLViewNode()
+vtkMRMLViewNode* vtkMRMLThreeDViewDisplayableManagerGroup::GetMRMLViewNode()
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
                 << "returning Internal->MRMLViewNode address " << this->Internal->MRMLViewNode );
@@ -284,7 +284,7 @@ vtkMRMLViewNode* vtkMRMLDisplayableManagerGroup::GetMRMLViewNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::SetMRMLViewNode(vtkMRMLViewNode* newMRMLViewNode)
+void vtkMRMLThreeDViewDisplayableManagerGroup::SetMRMLViewNode(vtkMRMLViewNode* newMRMLViewNode)
 {
   for(std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
     {
@@ -299,7 +299,7 @@ void vtkMRMLDisplayableManagerGroup::SetMRMLViewNode(vtkMRMLViewNode* newMRMLVie
 
 //----------------------------------------------------------------------------
 vtkMRMLAbstractDisplayableManager*
-    vtkMRMLDisplayableManagerGroup::GetDisplayableManagerByClassName(const char* className)
+    vtkMRMLThreeDViewDisplayableManagerGroup::GetDisplayableManagerByClassName(const char* className)
 {
   if (!className)
     {
@@ -320,11 +320,11 @@ vtkMRMLAbstractDisplayableManager*
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::DoCallback(vtkObject* vtk_obj, unsigned long event,
+void vtkMRMLThreeDViewDisplayableManagerGroup::DoCallback(vtkObject* vtk_obj, unsigned long event,
                                                 void* client_data, void* call_data)
 {
-  vtkMRMLDisplayableManagerGroup* self =
-      reinterpret_cast<vtkMRMLDisplayableManagerGroup*>(client_data);
+  vtkMRMLThreeDViewDisplayableManagerGroup* self =
+      reinterpret_cast<vtkMRMLThreeDViewDisplayableManagerGroup*>(client_data);
   char* displayableManagerName = reinterpret_cast<char*>(call_data);
   assert(self);
   assert(reinterpret_cast<vtkMRMLThreeDViewDisplayableManagerFactory*>(vtk_obj));
@@ -342,7 +342,7 @@ void vtkMRMLDisplayableManagerGroup::DoCallback(vtkObject* vtk_obj, unsigned lon
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
+void vtkMRMLThreeDViewDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
     const char* displayableManagerName)
 {
   assert(displayableManagerName);
@@ -366,7 +366,7 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryUnRegisteredEvent(
+void vtkMRMLThreeDViewDisplayableManagerGroup::onDisplayableManagerFactoryUnRegisteredEvent(
     const char* displayableManagerName)
 {
   assert(displayableManagerName);

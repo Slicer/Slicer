@@ -14,7 +14,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerGroup.h"
+#include "vtkMRMLThreeDViewDisplayableManagerGroup.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -53,7 +53,7 @@ public:
   bool                                UpdateFromMRMLRequested;
   vtkRenderer *                       Renderer;
   vtkMRMLViewNode *                   MRMLViewNode;
-  vtkMRMLDisplayableManagerGroup *    DisplayableManagerGroup;
+  vtkMRMLThreeDViewDisplayableManagerGroup *    DisplayableManagerGroup;
   vtkSmartPointer<vtkCallbackCommand> DeleteCallBackCommand;
 };
 
@@ -115,7 +115,7 @@ void vtkMRMLAbstractDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerGroup * vtkMRMLAbstractDisplayableManager::GetDisplayableManagerGroup()
+vtkMRMLThreeDViewDisplayableManagerGroup * vtkMRMLAbstractDisplayableManager::GetDisplayableManagerGroup()
 {
   vtkDebugMacro("returning Internal->DisplayableManagerGroup address "
                 << this->Internal->DisplayableManagerGroup );
@@ -139,7 +139,7 @@ void vtkMRMLAbstractDisplayableManager::CreateIfPossible()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerGroup * group,
+void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLThreeDViewDisplayableManagerGroup * group,
                                                    vtkRenderer* newRenderer)
 {
   // Sanity checks

@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLDisplayableManagerGroup.h,v $
+  Module:    $RCSfile: vtkMRMLThreeDViewDisplayableManagerGroup.h,v $
   Date:      $Date: 2010-06-19 12:48:04 -0400 (Sat, 19 Jun 2010) $
   Version:   $Revision: 13859 $
 
@@ -18,8 +18,8 @@
 /// or SetAndObserveMRMLViewNode on all member of the group.
 /// 
 
-#ifndef __vtkMRMLDisplayableManagerGroup_h
-#define __vtkMRMLDisplayableManagerGroup_h
+#ifndef __vtkMRMLThreeDViewDisplayableManagerGroup_h
+#define __vtkMRMLThreeDViewDisplayableManagerGroup_h
 
 // VTK includes
 #include <vtkObject.h>
@@ -32,12 +32,12 @@ class vtkMRMLViewNode;
 class vtkRenderer;
 class vtkRenderWindowInteractor;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerGroup : public vtkObject 
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewDisplayableManagerGroup : public vtkObject 
 {
 public:
 
-  static vtkMRMLDisplayableManagerGroup *New();
-  vtkTypeRevisionMacro(vtkMRMLDisplayableManagerGroup,vtkObject);
+  static vtkMRMLThreeDViewDisplayableManagerGroup *New();
+  vtkTypeRevisionMacro(vtkMRMLThreeDViewDisplayableManagerGroup,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///
@@ -86,11 +86,11 @@ public:
 
 protected:
 
-  vtkMRMLDisplayableManagerGroup();
-  virtual ~vtkMRMLDisplayableManagerGroup();
+  vtkMRMLThreeDViewDisplayableManagerGroup();
+  virtual ~vtkMRMLThreeDViewDisplayableManagerGroup();
 
   //BTX
-  typedef vtkMRMLDisplayableManagerGroup Self;
+  typedef vtkMRMLThreeDViewDisplayableManagerGroup Self;
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);
   /// Trigger upon a DisplayableManager is either registered or unregisterer from
@@ -106,8 +106,8 @@ protected:
 
 private:
 
-  vtkMRMLDisplayableManagerGroup(const vtkMRMLDisplayableManagerGroup&);
-  void operator=(const vtkMRMLDisplayableManagerGroup&);
+  vtkMRMLThreeDViewDisplayableManagerGroup(const vtkMRMLThreeDViewDisplayableManagerGroup&);
+  void operator=(const vtkMRMLThreeDViewDisplayableManagerGroup&);
 
 };
 

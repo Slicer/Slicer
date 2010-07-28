@@ -27,7 +27,7 @@
 
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-class vtkMRMLDisplayableManagerGroup;
+class vtkMRMLThreeDViewDisplayableManagerGroup;
 class vtkMRMLViewNode;
 class vtkMRMLScene;
 class vtkRenderer;
@@ -72,14 +72,14 @@ protected:
 
   //BTX
   /// Access to Initialize, SetMRMLViewNode and CreateIfPossible methods
-  friend class vtkMRMLDisplayableManagerGroup;
+  friend class vtkMRMLThreeDViewDisplayableManagerGroup;
   //ETX
 
   /// Set Renderer and Interactor
   /// No-op if already initialized.
-  /// Called by vtkMRMLDisplayableManagerGroup
+  /// Called by vtkMRMLThreeDViewDisplayableManagerGroup
   /// \sa IsInitialized
-  void Initialize(vtkMRMLDisplayableManagerGroup * group, vtkRenderer* newRenderer);
+  void Initialize(vtkMRMLThreeDViewDisplayableManagerGroup * group, vtkRenderer* newRenderer);
 
   /// Called by Initialize();
   /// Sub-class could overload that function and perform additional initialization steps
@@ -96,7 +96,7 @@ protected:
   void SetAndObserveMRMLViewNode(vtkMRMLViewNode * newMRMLViewNode);
 
   /// Get associated DisplayableManager group
-  vtkMRMLDisplayableManagerGroup * GetDisplayableManagerGroup();
+  vtkMRMLThreeDViewDisplayableManagerGroup * GetDisplayableManagerGroup();
 
   /// Invoke Create() and set Created flag to True
   /// A no-op if IsCreated() return True
