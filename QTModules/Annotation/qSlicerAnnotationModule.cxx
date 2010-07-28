@@ -3,7 +3,7 @@
 #include <QtPlugin>
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLAbstractDisplayableManager.h>
 
 // QTGUI includes
@@ -32,13 +32,13 @@ CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAnnotationModule, QObject*);
 void qSlicerAnnotationModule::setup()
 {
 
-  vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationTextDisplayableManager");
 
-  vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationFiducialDisplayableManager");
 
-  //vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::GetInstance();
+  //vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   //factory->RegisterDisplayableManager("vtkMRMLAnnotationTextDisplayableManager");
 }
 

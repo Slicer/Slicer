@@ -10,7 +10,7 @@
 #include "qMRMLThreeDView_p.h"
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLCameraDisplayableManager.h>
@@ -147,7 +147,7 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   this->interactor()->SetInteractorStyle(interactorStyle);
 
   // Register Displayable Managers
-  vtkMRMLDisplayableManagerFactory* factory = vtkMRMLDisplayableManagerFactory::GetInstance();
+  vtkMRMLThreeDViewDisplayableManagerFactory* factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   QStringList displayableManagers;
   displayableManagers << "vtkMRMLCameraDisplayableManager"
       << "vtkMRMLViewDisplayableManager"

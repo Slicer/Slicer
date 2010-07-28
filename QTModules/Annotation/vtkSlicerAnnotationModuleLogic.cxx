@@ -60,7 +60,7 @@
 //#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLAbstractDisplayableManager.h>
 
 // STD includes

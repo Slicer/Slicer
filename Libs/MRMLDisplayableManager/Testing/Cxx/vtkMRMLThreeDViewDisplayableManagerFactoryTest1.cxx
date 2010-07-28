@@ -1,6 +1,6 @@
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLAbstractDisplayableManager.h>
@@ -23,9 +23,9 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayableManagerFactoryTest1(int argc, char* argv[])
+int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int argc, char* argv[])
 {
-  vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::GetInstance();
+  vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   if (!factory)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with GetInstance() method" << std::endl;
@@ -35,7 +35,7 @@ int vtkMRMLDisplayableManagerFactoryTest1(int argc, char* argv[])
   //----------------------------------------------------------------------------
   // Since the factory is a singleton, object returned using either New() or GetInstance()
   // should be the same
-  VTK_CREATE(vtkMRMLDisplayableManagerFactory, factoryUsingSmartPointer);
+  VTK_CREATE(vtkMRMLThreeDViewDisplayableManagerFactory, factoryUsingSmartPointer);
   if (!factoryUsingSmartPointer)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with New() method" << std::endl;

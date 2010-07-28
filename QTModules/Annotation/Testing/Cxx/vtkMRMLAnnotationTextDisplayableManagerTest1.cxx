@@ -11,7 +11,7 @@
 =========================================================================auto=*/
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLDisplayableManagerFactory.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkMRMLViewDisplayableManager.h>
 #include <vtkMRMLCameraDisplayableManager.h>
@@ -124,7 +124,7 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
    *
    */
   // Factory
-  vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::New();
+  vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::New();
 
   // Check if GetRegisteredDisplayableManagerCount returns 0
   if (factory->GetRegisteredDisplayableManagerCount() != 0)

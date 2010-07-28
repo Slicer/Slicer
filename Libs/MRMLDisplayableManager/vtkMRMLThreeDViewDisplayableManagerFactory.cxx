@@ -6,14 +6,14 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLDisplayableManagerFactory.cxx,v $
+  Module:    $RCSfile: vtkMRMLThreeDViewDisplayableManagerFactory.cxx,v $
   Date:      $Date: 2010-06-19 12:48:04 -0400 (Sat, 19 Jun 2010) $
   Version:   $Revision: 13859 $
 
 =========================================================================auto=*/
 
 // MRMLDisplayableManager includes
-#include "vtkMRMLDisplayableManagerFactory.h"
+#include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
 #include "vtkMRMLAbstractDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
 
@@ -35,14 +35,14 @@
 #include <cassert>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLDisplayableManagerFactory, "$Revision: 13859 $");
+vtkCxxRevisionMacro(vtkMRMLThreeDViewDisplayableManagerFactory, "$Revision: 13859 $");
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
-vtkInstantiatorNewMacro(vtkMRMLDisplayableManagerFactory);
+vtkInstantiatorNewMacro(vtkMRMLThreeDViewDisplayableManagerFactory);
 
 //----------------------------------------------------------------------------
-class vtkMRMLDisplayableManagerFactory::vtkInternal
+class vtkMRMLThreeDViewDisplayableManagerFactory::vtkInternal
 {
 public:
   vtkInternal();
@@ -58,26 +58,26 @@ public:
 // vtkInternal methods
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerFactory::vtkInternal::vtkInternal()
+vtkMRMLThreeDViewDisplayableManagerFactory::vtkInternal::vtkInternal()
 {
 }
 
 //----------------------------------------------------------------------------
-// vtkMRMLDisplayableManagerFactory methods
+// vtkMRMLThreeDViewDisplayableManagerFactory methods
 
 //----------------------------------------------------------------------------
 /// Default initialization to zero is necessary.
-vtkMRMLDisplayableManagerFactory* vtkMRMLDisplayableManagerFactory::Instance;
+vtkMRMLThreeDViewDisplayableManagerFactory* vtkMRMLThreeDViewDisplayableManagerFactory::Instance;
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::classInitialize()
+void vtkMRMLThreeDViewDisplayableManagerFactory::classInitialize()
 {
   // Allocate the singleton
-  Self::Instance = vtkMRMLDisplayableManagerFactory::GetInstance();
+  Self::Instance = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::classFinalize()
+void vtkMRMLThreeDViewDisplayableManagerFactory::classFinalize()
 {
   Self::Instance->Delete();
   Self::Instance = 0;
@@ -85,32 +85,32 @@ void vtkMRMLDisplayableManagerFactory::classFinalize()
 
 //----------------------------------------------------------------------------
 // Up the reference count so it behaves like New
-vtkMRMLDisplayableManagerFactory* vtkMRMLDisplayableManagerFactory::New()
+vtkMRMLThreeDViewDisplayableManagerFactory* vtkMRMLThreeDViewDisplayableManagerFactory::New()
 {
-  vtkMRMLDisplayableManagerFactory* instance = Self::GetInstance();
+  vtkMRMLThreeDViewDisplayableManagerFactory* instance = Self::GetInstance();
   instance->Register(0);
   return instance;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerFactory* vtkMRMLDisplayableManagerFactory::GetInstance()
+vtkMRMLThreeDViewDisplayableManagerFactory* vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()
 {
   if(!Self::Instance)
     {
     // Try the factory first
-    Self::Instance = (vtkMRMLDisplayableManagerFactory*)vtkObjectFactory::CreateInstance(
-        "vtkMRMLDisplayableManagerFactory");
+    Self::Instance = (vtkMRMLThreeDViewDisplayableManagerFactory*)vtkObjectFactory::CreateInstance(
+        "vtkMRMLThreeDViewDisplayableManagerFactory");
 
     // if the factory did not provide one, then create it here
     if(!Self::Instance)
       {
       // if the factory failed to create the object,
       // then destroy it now, as vtkDebugLeaks::ConstructClass was called
-      // with "vtkMRMLDisplayableManagerFactory", and not the real name of the class
+      // with "vtkMRMLThreeDViewDisplayableManagerFactory", and not the real name of the class
 #ifdef VTK_DEBUG_LEAKS
-      vtkDebugLeaks::DestructClass("vtkMRMLDisplayableManagerFactory");
+      vtkDebugLeaks::DestructClass("vtkMRMLThreeDViewDisplayableManagerFactory");
 #endif
-      Self::Instance = new vtkMRMLDisplayableManagerFactory;
+      Self::Instance = new vtkMRMLThreeDViewDisplayableManagerFactory;
       }
     }
   // return the instance
@@ -118,25 +118,25 @@ vtkMRMLDisplayableManagerFactory* vtkMRMLDisplayableManagerFactory::GetInstance(
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerFactory::vtkMRMLDisplayableManagerFactory()
+vtkMRMLThreeDViewDisplayableManagerFactory::vtkMRMLThreeDViewDisplayableManagerFactory()
 {
   this->Internal = new vtkInternal;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerFactory::~vtkMRMLDisplayableManagerFactory()
+vtkMRMLThreeDViewDisplayableManagerFactory::~vtkMRMLThreeDViewDisplayableManagerFactory()
 {
   delete this->Internal;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLThreeDViewDisplayableManagerFactory::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLDisplayableManagerFactory::IsDisplayableManagerRegistered(const char* vtkClassName)
+bool vtkMRMLThreeDViewDisplayableManagerFactory::IsDisplayableManagerRegistered(const char* vtkClassName)
 {
   // Sanity checks
   if (!vtkClassName)
@@ -162,7 +162,7 @@ bool vtkMRMLDisplayableManagerFactory::IsDisplayableManagerRegistered(const char
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vtkClassName)
+void vtkMRMLThreeDViewDisplayableManagerFactory::RegisterDisplayableManager(const char* vtkClassName)
 {
   // Sanity checks
   if (!vtkClassName)
@@ -199,7 +199,7 @@ void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* vtkClassName)
+void vtkMRMLThreeDViewDisplayableManagerFactory::UnRegisterDisplayableManager(const char* vtkClassName)
 {
   // Sanity checks
   if (!vtkClassName)
@@ -227,13 +227,13 @@ void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* 
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayableManagerFactory::GetRegisteredDisplayableManagerCount()
+int vtkMRMLThreeDViewDisplayableManagerFactory::GetRegisteredDisplayableManagerCount()
 {
   return this->Internal->DisplayableManagerClassNames.size();
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDisplayableManagers(
+vtkMRMLDisplayableManagerGroup* vtkMRMLThreeDViewDisplayableManagerFactory::InstantiateDisplayableManagers(
     vtkRenderer * newRenderer)
 {
   // Sanity checks
@@ -277,23 +277,23 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
 //
 
 //----------------------------------------------------------------------------
-// vtkMRMLDisplayableManagerFactoryInitialize methods
+// vtkMRMLThreeDViewDisplayableManagerFactoryInitialize methods
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerFactoryInitialize::vtkMRMLDisplayableManagerFactoryInitialize()
+vtkMRMLThreeDViewDisplayableManagerFactoryInitialize::vtkMRMLThreeDViewDisplayableManagerFactoryInitialize()
 {
   if(++Self::Count == 1)
-    { vtkMRMLDisplayableManagerFactory::classInitialize(); }
+    { vtkMRMLThreeDViewDisplayableManagerFactory::classInitialize(); }
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerFactoryInitialize::~vtkMRMLDisplayableManagerFactoryInitialize()
+vtkMRMLThreeDViewDisplayableManagerFactoryInitialize::~vtkMRMLThreeDViewDisplayableManagerFactoryInitialize()
 {
   if(--Self::Count == 0)
-    { vtkMRMLDisplayableManagerFactory::classFinalize(); }
+    { vtkMRMLThreeDViewDisplayableManagerFactory::classFinalize(); }
 }
 
 //----------------------------------------------------------------------------
 /// Default initialization to zero is necessary.
-unsigned int vtkMRMLDisplayableManagerFactoryInitialize::Count;
+unsigned int vtkMRMLThreeDViewDisplayableManagerFactoryInitialize::Count;
 

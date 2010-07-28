@@ -14,7 +14,7 @@
 
 /// Superclass for displayable manager classes.
 /// 
-/// A displayable manager class is responsible to represente a 
+/// A displayable manager class is responsible to represent a
 /// MRMLDisplayable node in a renderer.
 /// 
 
@@ -83,11 +83,16 @@ protected:
 
   /// Called by Initialize();
   /// Sub-class could overload that function and perform additional initialization steps
-  /// That function should only be used directly !
+  /// \note Initialization occurs before the MRMLViewNode is set and observed
+  /// \warning That function should only be used directly !
+  /// \sa Initialize
   virtual void AdditionnalInitializeStep(){}
+  
+  /// Called by SetMRMLScene - Used to initialize the Scene
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// Set MRML ViewNode
-  /// Called by vtkMRMLDisplayableManagerFactory
+  /// Called by vtkMRMLThreeDViewDisplayableManagerFactory
   void SetAndObserveMRMLViewNode(vtkMRMLViewNode * newMRMLViewNode);
 
   /// Get associated DisplayableManager group
@@ -98,19 +103,21 @@ protected:
   void CreateIfPossible();
 
   /// Called after a valid MRML ViewNode is set
-  /// Note that GetRenderer() and GetMRMLViewNode() will return valid object
+  /// \note GetRenderer() and GetMRMLViewNode() will return valid object
   virtual void Create(){}
 
   /// Remove MRML observers
   virtual void RemoveMRMLObservers();
 
-  ///
+  /// Specify if UodateFromMRML() should be called
+  /// \sa UpdateFromMRML()
   void SetUpdateFromMRMLRequested(bool requested);
 
-  ///
+  /// Called from RequestRender method if UpdateFromMRMLRequested is true
+  /// \sa RequestRender() SetUpdateFromMRMLRequested()
   virtual void UpdateFromMRML(){}
 
-  /// Invoke vtkCommand::UpdateEvent and then call vtkMRMLDisplayableManagerFactory::RequestRender()
+  /// Invoke vtkCommand::UpdateEvent and then call vtkMRMLThreeDViewDisplayableManagerFactory::RequestRender()
   /// which will also invoke vtkCommand::UpdateEvent
   /// An observer can then listen for that event and "compress" the different Render requests
   /// to efficiently call RenderWindow->Render()

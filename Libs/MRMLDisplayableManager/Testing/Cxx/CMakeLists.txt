@@ -13,7 +13,7 @@ ENDMACRO( SIMPLE_TEST  )
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLCameraDisplayableManagerTest1.cxx
-  vtkMRMLDisplayableManagerFactoryTest1.cxx
+  vtkMRMLThreeDViewDisplayableManagerFactoryTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
 )
 

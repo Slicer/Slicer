@@ -14,7 +14,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLDisplayableManagerGroup.h"
-#include "vtkMRMLDisplayableManagerFactory.h"
+#include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
 #include "vtkMRMLAbstractDisplayableManager.h"
 
 // MRML includes
@@ -58,7 +58,7 @@ public:
       NameToDisplayableManagerMapIt;
 
   vtkSmartPointer<vtkCallbackCommand> CallBackCommand;
-  vtkMRMLDisplayableManagerFactory*   DisplayableManagerFactory;
+  vtkMRMLThreeDViewDisplayableManagerFactory*   DisplayableManagerFactory;
   vtkMRMLViewNode*                    MRMLViewNode;
   vtkRenderer*                        Renderer;
   bool                                Initialized;
@@ -115,7 +115,7 @@ void vtkMRMLDisplayableManagerGroup::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
-    vtkMRMLDisplayableManagerFactory * factory)
+    vtkMRMLThreeDViewDisplayableManagerFactory * factory)
 {
   // Remove observers
   if (this->Internal->DisplayableManagerFactory)
@@ -135,12 +135,12 @@ void vtkMRMLDisplayableManagerGroup::SetAndObserveDisplayableManagerFactory(
 
     // DisplayableManagerFactoryRegisteredEvent
     this->Internal->DisplayableManagerFactory->AddObserver(
-        vtkMRMLDisplayableManagerFactory::DisplayableManagerFactoryRegisteredEvent,
+        vtkMRMLThreeDViewDisplayableManagerFactory::DisplayableManagerFactoryRegisteredEvent,
         this->Internal->CallBackCommand);
 
     // DisplayableManagerFactoryUnRegisteredEvent
     this->Internal->DisplayableManagerFactory->AddObserver(
-        vtkMRMLDisplayableManagerFactory::DisplayableManagerFactoryUnRegisteredEvent,
+        vtkMRMLThreeDViewDisplayableManagerFactory::DisplayableManagerFactoryUnRegisteredEvent,
         this->Internal->CallBackCommand);
     }
 }
@@ -327,15 +327,15 @@ void vtkMRMLDisplayableManagerGroup::DoCallback(vtkObject* vtk_obj, unsigned lon
       reinterpret_cast<vtkMRMLDisplayableManagerGroup*>(client_data);
   char* displayableManagerName = reinterpret_cast<char*>(call_data);
   assert(self);
-  assert(reinterpret_cast<vtkMRMLDisplayableManagerFactory*>(vtk_obj));
+  assert(reinterpret_cast<vtkMRMLThreeDViewDisplayableManagerFactory*>(vtk_obj));
   assert(displayableManagerName);
 
   switch(event)
     {
-    case vtkMRMLDisplayableManagerFactory::DisplayableManagerFactoryRegisteredEvent:
+    case vtkMRMLThreeDViewDisplayableManagerFactory::DisplayableManagerFactoryRegisteredEvent:
       self->onDisplayableManagerFactoryRegisteredEvent(displayableManagerName);
       break;
-    case vtkMRMLDisplayableManagerFactory::DisplayableManagerFactoryUnRegisteredEvent:
+    case vtkMRMLThreeDViewDisplayableManagerFactory::DisplayableManagerFactoryUnRegisteredEvent:
       self->onDisplayableManagerFactoryUnRegisteredEvent(displayableManagerName);
       break;
     }

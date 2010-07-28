@@ -212,7 +212,7 @@ vtkMRMLViewNode * vtkMRMLAbstractDisplayableManager::GetMRMLViewNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLViewNode(vtkMRMLViewNode * newMRMLViewNode)
+void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   VTK_CREATE(vtkIntArray, sceneEvents);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
@@ -221,14 +221,20 @@ void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLViewNode(vtkMRMLViewNod
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+}
 
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLViewNode(vtkMRMLViewNode * newMRMLViewNode)
+{
   // Observe scene associated with the MRML ViewNode
   vtkMRMLScene * sceneToObserve = 0;
   if (newMRMLViewNode)
     {
     sceneToObserve = newMRMLViewNode->GetScene();
     }
-  this->SetAndObserveMRMLSceneEvents(sceneToObserve, sceneEvents);
+  this->SetMRMLScene(sceneToObserve);
 
   vtkSetAndObserveMRMLNodeMacro(this->Internal->MRMLViewNode, newMRMLViewNode);
 }

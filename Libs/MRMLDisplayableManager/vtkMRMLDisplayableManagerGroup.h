@@ -26,7 +26,7 @@
 
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-class vtkMRMLDisplayableManagerFactory;
+class vtkMRMLThreeDViewDisplayableManagerFactory;
 class vtkMRMLAbstractDisplayableManager;
 class vtkMRMLViewNode;
 class vtkRenderer;
@@ -42,7 +42,7 @@ public:
 
   ///
   /// Set and observe DisplayableManager factory
-  void SetAndObserveDisplayableManagerFactory(vtkMRMLDisplayableManagerFactory * factory);
+  void SetAndObserveDisplayableManagerFactory(vtkMRMLThreeDViewDisplayableManagerFactory * factory);
 
   ///
   /// Add a DisplayableManager and initialize it if required

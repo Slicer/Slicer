@@ -37,7 +37,7 @@
 #include "vtkPointHandleRepresentation3D.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 
-#include "vtkMRMLDisplayableManagerFactory.h";
+#include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
 #include "vtkMRMLAnnotationTextDisplayableManager.h"
 
 #include "vtkObserverManager.h"
