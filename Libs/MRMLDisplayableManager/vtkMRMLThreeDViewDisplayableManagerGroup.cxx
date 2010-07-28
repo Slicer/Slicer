@@ -15,7 +15,7 @@
 // MRMLDisplayableManager includes
 #include "vtkMRMLThreeDViewDisplayableManagerGroup.h"
 #include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
-#include "vtkMRMLAbstractDisplayableManager.h"
+#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
@@ -45,16 +45,16 @@ public:
   vtkInternal();
 
   // Collection of Displayable Managers
-  std::vector<vtkMRMLAbstractDisplayableManager *> DisplayableManagers;
+  std::vector<vtkMRMLAbstractThreeDViewDisplayableManager *> DisplayableManagers;
 
   // .. and its associated convenient typedef
-  typedef std::vector<vtkMRMLAbstractDisplayableManager *>::iterator DisplayableManagersIt;
+  typedef std::vector<vtkMRMLAbstractThreeDViewDisplayableManager *>::iterator DisplayableManagersIt;
 
   // Map DisplayableManagerName -> DisplayableManagers*
-  std::map<std::string, vtkMRMLAbstractDisplayableManager*> NameToDisplayableManagerMap;
+  std::map<std::string, vtkMRMLAbstractThreeDViewDisplayableManager*> NameToDisplayableManagerMap;
 
   // .. and its associated convenient typedef
-  typedef std::map<std::string, vtkMRMLAbstractDisplayableManager*>::iterator
+  typedef std::map<std::string, vtkMRMLAbstractThreeDViewDisplayableManager*>::iterator
       NameToDisplayableManagerMapIt;
 
   vtkSmartPointer<vtkCallbackCommand> CallBackCommand;
@@ -147,7 +147,7 @@ void vtkMRMLThreeDViewDisplayableManagerGroup::SetAndObserveDisplayableManagerFa
 
 //----------------------------------------------------------------------------
 void vtkMRMLThreeDViewDisplayableManagerGroup::AddAndInitialize(
-    vtkMRMLAbstractDisplayableManager * displayableManager)
+    vtkMRMLAbstractThreeDViewDisplayableManager * displayableManager)
 {
   // Sanity checks
   if (!displayableManager)
@@ -223,7 +223,7 @@ void vtkMRMLThreeDViewDisplayableManagerGroup::Initialize(vtkRenderer* newRender
   // Loop though DisplayableManager and intialize
   for(size_t i = 0; i < this->Internal->DisplayableManagers.size(); ++i)
     {
-    vtkMRMLAbstractDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];
+    vtkMRMLAbstractThreeDViewDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];
     bool initialized = displayableManager->IsInitialized();
 
     // Already initalized DisplayableManager are expected to have the same Renderer
@@ -288,7 +288,7 @@ void vtkMRMLThreeDViewDisplayableManagerGroup::SetMRMLViewNode(vtkMRMLViewNode* 
 {
   for(std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
     {
-    vtkMRMLAbstractDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];
+    vtkMRMLAbstractThreeDViewDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];
 
     displayableManager->SetAndObserveMRMLViewNode(newMRMLViewNode);
 
@@ -298,7 +298,7 @@ void vtkMRMLThreeDViewDisplayableManagerGroup::SetMRMLViewNode(vtkMRMLViewNode* 
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLAbstractDisplayableManager*
+vtkMRMLAbstractThreeDViewDisplayableManager*
     vtkMRMLThreeDViewDisplayableManagerGroup::GetDisplayableManagerByClassName(const char* className)
 {
   if (!className)
@@ -350,8 +350,8 @@ void vtkMRMLThreeDViewDisplayableManagerGroup::onDisplayableManagerFactoryRegist
   // Object will be unregistered when the SmartPointer will go out-of-scope
   vtkSmartPointer<vtkObject> objectSmartPointer;
   objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(displayableManagerName));
-  vtkMRMLAbstractDisplayableManager* displayableManager =
-      vtkMRMLAbstractDisplayableManager::SafeDownCast(objectSmartPointer);
+  vtkMRMLAbstractThreeDViewDisplayableManager* displayableManager =
+      vtkMRMLAbstractThreeDViewDisplayableManager::SafeDownCast(objectSmartPointer);
   if (!displayableManager)
     {
     vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate "
@@ -378,7 +378,7 @@ void vtkMRMLThreeDViewDisplayableManagerGroup::onDisplayableManagerFactoryUnRegi
   // The DisplayableManager is expected to be in the map
   assert(it != this->Internal->NameToDisplayableManagerMap.end());
 
-  vtkMRMLAbstractDisplayableManager * displayableManager = it->second;
+  vtkMRMLAbstractThreeDViewDisplayableManager * displayableManager = it->second;
   assert(displayableManager);
 
   // Find DisplayableManager in the vector

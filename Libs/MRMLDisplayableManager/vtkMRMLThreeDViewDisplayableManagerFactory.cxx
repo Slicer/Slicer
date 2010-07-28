@@ -14,7 +14,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
-#include "vtkMRMLAbstractDisplayableManager.h"
+#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLThreeDViewDisplayableManagerGroup.h"
 
 // MRML includes
@@ -252,8 +252,8 @@ vtkMRMLThreeDViewDisplayableManagerGroup* vtkMRMLThreeDViewDisplayableManagerFac
     // Object will be unregistered when the SmartPointer will go out-of-scope
     vtkSmartPointer<vtkObject> objectSmartPointer;
     objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(className));
-    vtkMRMLAbstractDisplayableManager* displayableManager =
-        vtkMRMLAbstractDisplayableManager::SafeDownCast(objectSmartPointer);
+    vtkMRMLAbstractThreeDViewDisplayableManager* displayableManager =
+        vtkMRMLAbstractThreeDViewDisplayableManager::SafeDownCast(objectSmartPointer);
     if (!displayableManager)
       {
       vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate " << className);

@@ -25,7 +25,7 @@
 #define __vtkMRMLModelDisplayableManager_h
 
 // MRMLDisplayableManager includes
-#include "vtkMRMLAbstractDisplayableManager.h"
+#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 
 // MRMLLogic includes
 #include "vtkMRMLModelHierarchyLogic.h"
@@ -63,11 +63,11 @@ class vtkPMatrix4x4;
 class vtkBoundingBox;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager :
-    public vtkMRMLAbstractDisplayableManager
+    public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
   static vtkMRMLModelDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractDisplayableManager);
+  vtkTypeRevisionMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 

@@ -3,7 +3,7 @@
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 #include <vtkMRMLThreeDViewDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
-#include <vtkMRMLAbstractDisplayableManager.h>
+#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -232,7 +232,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int argc, char* argv[])
 
   //----------------------------------------------------------------------------
   // Attempt to get the Registered DisplayableManagers
-  vtkMRMLAbstractDisplayableManager * dm1 =
+  vtkMRMLAbstractThreeDViewDisplayableManager * dm1 =
       group->GetDisplayableManagerByClassName("vtkMRMLViewDisplayableManager");
   if (!dm1)
     {
@@ -249,7 +249,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int argc, char* argv[])
     std::cerr << "\tCurrent: " << dm1->GetClassName() << std::endl;
     }
 
-  vtkMRMLAbstractDisplayableManager * dm2 =
+  vtkMRMLAbstractThreeDViewDisplayableManager * dm2 =
       group->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager");
   if (!dm2)
     {

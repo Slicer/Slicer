@@ -61,7 +61,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLAbstractDisplayableManager.h>
+#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 // STD includes
 #include <string>

@@ -2,19 +2,19 @@
 #define __vtkMRMLViewDisplayableManager_h
 
 // MRMLDisplayableManager includes
-#include "vtkMRMLAbstractDisplayableManager.h"
+#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 class vtkMRMLCameraNode;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewDisplayableManager : 
-  public vtkMRMLAbstractDisplayableManager
+  public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 
 public:
   static vtkMRMLViewDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLViewDisplayableManager,vtkMRMLAbstractDisplayableManager);
+  vtkTypeRevisionMacro(vtkMRMLViewDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);

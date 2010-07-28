@@ -27,7 +27,7 @@
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 class vtkMRMLThreeDViewDisplayableManagerFactory;
-class vtkMRMLAbstractDisplayableManager;
+class vtkMRMLAbstractThreeDViewDisplayableManager;
 class vtkMRMLViewNode;
 class vtkRenderer;
 class vtkRenderWindowInteractor;
@@ -46,7 +46,7 @@ public:
 
   ///
   /// Add a DisplayableManager and initialize it if required
-  void AddAndInitialize(vtkMRMLAbstractDisplayableManager * displayableManager);
+  void AddAndInitialize(vtkMRMLAbstractThreeDViewDisplayableManager * displayableManager);
 
   ///
   /// Return the number of DisplayableManager already added to the group
@@ -54,7 +54,7 @@ public:
 
   ///
   /// Return a DisplayableManager given its class name
-  vtkMRMLAbstractDisplayableManager* GetDisplayableManagerByClassName(const char* className);
+  vtkMRMLAbstractThreeDViewDisplayableManager* GetDisplayableManagerByClassName(const char* className);
 
   /// Set Renderer and Interactor
   /// No-op if already initialized.
@@ -72,7 +72,7 @@ public:
   /// Invoke vtkCommand::UpdateEvent
   /// An observer can then listen for that event and "compress" the different Render requests
   /// to efficiently call RenderWindow->Render()
-  /// \sa vtkMRMLAbstractDisplayableManager::RequestRender()
+  /// \sa vtkMRMLAbstractThreeDViewDisplayableManager::RequestRender()
   void RequestRender();
 
   ///

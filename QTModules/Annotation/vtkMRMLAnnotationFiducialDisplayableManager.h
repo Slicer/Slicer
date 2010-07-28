@@ -17,7 +17,7 @@
 #define __vtkSlicerAnnotationFiducialManager_h
 
 
-#include "vtkMRMLAbstractDisplayableManager.h"
+#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "qSlicerAnnotationModuleExport.h"
 
 class vtkMRMLAnnotationFiducialNode;
@@ -28,13 +28,13 @@ class vtkMRMLAnnotationPointDisplayNode;
 //class vtkSlicerSeedWidgetClass;
 class vtkMRMLFiducialListNode;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationFiducialDisplayableManager : public vtkMRMLAbstractDisplayableManager
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationFiducialDisplayableManager : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
   
 public:
 
   static vtkMRMLAnnotationFiducialDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationFiducialDisplayableManager, vtkMRMLAbstractDisplayableManager);
+  vtkTypeRevisionMacro(vtkMRMLAnnotationFiducialDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 

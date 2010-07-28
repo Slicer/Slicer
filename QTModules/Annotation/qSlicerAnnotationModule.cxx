@@ -4,7 +4,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
-#include <vtkMRMLAbstractDisplayableManager.h>
+#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 // QTGUI includes
 #include <qSlicerApplication.h>

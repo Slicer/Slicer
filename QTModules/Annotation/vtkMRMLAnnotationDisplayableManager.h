@@ -20,7 +20,7 @@
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLAbstractDisplayableManager.h>
+#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 class vtkMRMLAnnotationNode;
 class vtkSlicerViewerWidget;
@@ -30,12 +30,12 @@ class vtkMRMLAnnotationLineDisplayNode;
 class vtkAbstractWidget;
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManager :
-    public vtkMRMLAbstractDisplayableManager
+    public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
 
   static vtkMRMLAnnotationDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractDisplayableManager);
+  vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);

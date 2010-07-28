@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLAbstractDisplayableManager.h,v $
+  Module:    $RCSfile: vtkMRMLAbstractThreeDViewDisplayableManager.h,v $
   Date:      $Date: 2010-06-19 12:48:04 -0400 (Sat, 19 Jun 2010) $
   Version:   $Revision: 13859 $
 
@@ -19,8 +19,8 @@
 /// 
 
 
-#ifndef __vtkMRMLAbstractDisplayableManager_h
-#define __vtkMRMLAbstractDisplayableManager_h
+#ifndef __vtkMRMLAbstractThreeDViewDisplayableManager_h
+#define __vtkMRMLAbstractThreeDViewDisplayableManager_h
 
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
@@ -33,13 +33,13 @@ class vtkMRMLScene;
 class vtkRenderer;
 class vtkRenderWindowInteractor;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager : public vtkMRMLAbstractLogic 
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractThreeDViewDisplayableManager : public vtkMRMLAbstractLogic 
 {
 public:
   
-  static vtkMRMLAbstractDisplayableManager *New();
+  static vtkMRMLAbstractThreeDViewDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent);
-  vtkTypeRevisionMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
+  vtkTypeRevisionMacro(vtkMRMLAbstractThreeDViewDisplayableManager, vtkMRMLAbstractLogic);
 
   ///
   /// Return True if the DisplayableManager has already been initialized
@@ -67,8 +67,8 @@ public:
 
 protected:
 
-  vtkMRMLAbstractDisplayableManager();
-  virtual ~vtkMRMLAbstractDisplayableManager();
+  vtkMRMLAbstractThreeDViewDisplayableManager();
+  virtual ~vtkMRMLAbstractThreeDViewDisplayableManager();
 
   //BTX
   /// Access to Initialize, SetMRMLViewNode and CreateIfPossible methods
@@ -135,8 +135,8 @@ protected:
   
 private:
 
-  vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&); // Not implemented
-  void operator=(const vtkMRMLAbstractDisplayableManager&);                    // Not implemented
+  vtkMRMLAbstractThreeDViewDisplayableManager(const vtkMRMLAbstractThreeDViewDisplayableManager&); // Not implemented
+  void operator=(const vtkMRMLAbstractThreeDViewDisplayableManager&);                    // Not implemented
 
   //BTX
   class vtkInternal;
