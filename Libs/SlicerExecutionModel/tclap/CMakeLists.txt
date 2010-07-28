@@ -7,9 +7,9 @@ ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
 
-if(NOT DEFINED BUILD_SHARED_LIBS)
-  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif(NOT DEFINED BUILD_SHARED_LIBS)
+## No libs created in tclap if(NOT DEFINED BUILD_SHARED_LIBS)
+## No libs created in tclap   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+## No libs created in tclap endif(NOT DEFINED BUILD_SHARED_LIBS)
 
 include(GenerateTCLAPConfig.cmake)
 

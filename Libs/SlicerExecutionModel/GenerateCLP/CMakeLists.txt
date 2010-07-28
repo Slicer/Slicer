@@ -32,7 +32,7 @@ add_executable(GenerateCLP ${GENERATECLP_SOURCE})
 get_target_property(GenerateCLP_EXE_PATH GenerateCLP LOCATION)
 
 target_link_libraries(GenerateCLP
-  ModuleDescriptionParser
+  ModuleDescriptionParser-static
   itksys
   ITKEXPAT)
 
