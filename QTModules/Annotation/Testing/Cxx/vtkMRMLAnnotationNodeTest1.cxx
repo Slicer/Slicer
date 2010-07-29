@@ -18,6 +18,9 @@ int vtkMRMLAnnotationNodeTest1(int , char * [] )
   // Basic Setup 
   // ======================
   vtkSmartPointer< vtkMRMLAnnotationNode > node2 = vtkSmartPointer< vtkMRMLAnnotationNode >::New();
+  // This was a bug - used to crash
+  node2->GetText(0); 
+
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
   {
 

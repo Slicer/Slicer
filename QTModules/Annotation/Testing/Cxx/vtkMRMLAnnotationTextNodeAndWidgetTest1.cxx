@@ -231,9 +231,7 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
   coordinates[2]=0;
 
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-
   textNode->GetTextLabel();
-
   textNode->SetTextLabel("New text");
 
   scene->AddNodeNoNotify(textNode);
