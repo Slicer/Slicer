@@ -143,16 +143,21 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   //2. Set Up matrices
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
   vtkMRMLTransformNode* fxformNode = transformableNode->GetParentTransformNode();
-  vtkMatrix4x4* transformVolumeToFifucial = vtkMatrix4x4::New();
-  transformVolumeToFifucial->Identity();
+  vtkMatrix4x4* transformVolumeToFiducial = vtkMatrix4x4::New();
+  transformVolumeToFiducial->Identity();
   if (fxformNode != NULL )
     {
-    fxformNode->GetMatrixTransformToNode(vxformNode, transformVolumeToFifucial);
+    fxformNode->GetMatrixTransformToNode(vxformNode, transformVolumeToFiducial);
+    } 
+  else if (vxformNode != NULL ) 
+    {
+    vxformNode->GetMatrixTransformToNode(fxformNode, transformVolumeToFiducial);
+    transformVolumeToFiducial->Invert();
     }
   vtkTransform *transFiducial = vtkTransform::New();
   transFiducial->Identity();
   transFiducial->PreMultiply();
-  transFiducial->SetMatrix(transformVolumeToFifucial);
+  transFiducial->SetMatrix(transformVolumeToFiducial);
 
   vtkMatrix4x4 *mat = vtkMatrix4x4::New();
   volumeNode->GetRASToIJKMatrix(mat);
@@ -342,7 +347,16 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
     }
 
   fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
-  
+ 
+  if (vxformNode != NULL )
+    { 
+    fiberNode->SetAndObserveTransformNodeID(vxformNode->GetID());
+    } 
+  else 
+    {
+    fiberNode->SetAndObserveTransformNodeID(NULL);
+    }
+
   volumeNode->SetModifiedSinceRead(0);
   fiberNode->SetModifiedSinceRead(1);
 
@@ -355,7 +369,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   trans2->Delete();
   trans->Delete();
   streamer->Delete();
-  transformVolumeToFifucial->Delete();
+  transformVolumeToFiducial->Delete();
   transFiducial->Delete();
   return 1;
 }
