@@ -41,11 +41,11 @@ public:
   /// Remove the module from the list of available module
   void removeModule(const QString& moduleName);
 
+public slots:
   ///
   /// Select a module by title. It looks for the module action and triggers it
   void selectModuleByTitle(const QString& title);
 
-public slots:
   ///
   /// Select a module by name. It looks for the module action and triggers it
   void selectModule(const QString& moduleName);

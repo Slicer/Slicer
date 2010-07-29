@@ -133,8 +133,8 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->ModuleSearchCompleter = new QCompleter(QStringList());
   this->ModuleSearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
   this->ModuleSearchLineEdit->setCompleter(this->ModuleSearchCompleter);
-  QObject::connect(this->ModuleSearchLineEdit, SIGNAL(returnPressed()),
-                   p, SLOT(searchModule()));
+  QObject::connect(this->ModuleSearchLineEdit, SIGNAL(textChanged(const QString&)),
+                   p, SLOT(selectModuleByTitle(const QString&)));
   p->addWidget(this->ModuleSearchLineEdit);
 
   this->addDefaultCategories();
@@ -375,7 +375,9 @@ void qSlicerModuleSelectorToolBar::removeModule(const QString& moduleName)
 void qSlicerModuleSelectorToolBar::selectModule(const QString& moduleName)
 {
   CTK_D(qSlicerModuleSelectorToolBar);
-  QAction* moduleAction = d->action(QVariant(moduleName), d->ModulesMenu);
+  // It's faster to look for the action in the AllModulesMenu (no need to
+  // do a recursive search
+  QAction* moduleAction = d->action(QVariant(moduleName), d->AllModulesMenu);
   if (moduleAction)
     {
     // triggering the action will eventually call actionSelected();
@@ -387,7 +389,9 @@ void qSlicerModuleSelectorToolBar::selectModule(const QString& moduleName)
 void qSlicerModuleSelectorToolBar::selectModuleByTitle(const QString& title)
 {
   CTK_D(qSlicerModuleSelectorToolBar);
-  QAction* moduleAction = d->action(title, d->ModulesMenu);
+  // it's faster to look for the action in the AllModulesMenu (no need to
+  // do a recursive search
+  QAction* moduleAction = d->action(title, d->AllModulesMenu);
   if (moduleAction)
     {
     // triggering the action will eventually call actionSelected();
