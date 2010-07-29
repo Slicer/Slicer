@@ -9,6 +9,7 @@
 
 #include "qSlicerQTExport.h"
 
+class qSlicerAbstractModule;
 class qSlicerModulePanel;
 class qSlicerModuleSelectorToolBar;
 class qSlicerMainWindowCore;
@@ -28,17 +29,13 @@ public:
   qSlicerMainWindowCore* core()const;
 
   // Description:
-  // Return the moduleToolBar
-  QToolBar* moduleToolBar()const;
-
-  // Description:
   // Return the module panel
   qSlicerModulePanel* modulePanel() const;
 
-  // Description:
-  // Return the module selector
-  qSlicerModuleSelectorToolBar* moduleSelector()const;
-  
+protected slots:
+  void onModuleLoaded(qSlicerAbstractModule* module);
+  void onModuleAboutToBeUnloaded(qSlicerAbstractModule* module);
+
 protected:
 
   // Description:

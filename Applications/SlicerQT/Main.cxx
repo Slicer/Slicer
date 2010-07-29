@@ -103,16 +103,16 @@ int main(int argc, char* argv[])
     {
     splash.clearMessage();
     }
-  
+
+  // TODO: load home module (check in Settings)
+  window.modulePanel()->setModule( moduleManager->moduleName("SlicerWelcome") );
+
   // Show main window
   window.show();
   if (!app.commandOptions()->noSplash())
     {
     splash.finish(&window);
     }
-  
-  // Add modules to the selector
-  window.moduleSelector()->addModules(moduleNames);
 
 //  qMRMLEventLoggerWidget logger;
 //  logger.setConsoleOutputEnabled(false);

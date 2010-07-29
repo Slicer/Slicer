@@ -46,7 +46,6 @@ public slots:
   void onViewLayoutSideBySideCompareActionTriggered();
   void onWindowPythonInteractorActionTriggered();
 
-
 protected:
   qSlicerMainWindow* widget() const;
 

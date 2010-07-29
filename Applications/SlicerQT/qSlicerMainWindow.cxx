@@ -1,10 +1,14 @@
 // Qt includes
 #include <QDebug>
+#include <QSignalMapper>
+#include <QStringList>
 
 // SlicerQt includes
 #include "qSlicerMainWindow.h" 
 #include "ui_qSlicerMainWindow.h" 
 #include "qSlicerApplication.h"
+#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerModuleManager.h"
@@ -16,18 +20,27 @@ class qSlicerMainWindowPrivate: public ctkPrivate<qSlicerMainWindow>, public Ui_
 {
 public:
   CTK_DECLARE_PUBLIC(qSlicerMainWindow);
-  qSlicerMainWindowPrivate()
-    {
-    this->Core = 0;
-    this->ModuleSelector = 0; 
-    }
+  qSlicerMainWindowPrivate();
   void setupUi(QMainWindow * mainWindow);
-  qSlicerMainWindowCore*       Core;
+
+  qSlicerMainWindowCore*        Core;
   qSlicerModuleSelectorToolBar* ModuleSelector;
+  QStringList                   ModuleToolBarList;
+  QSignalMapper*                ModuleToolBarMapper;
 };
 
 //-----------------------------------------------------------------------------
 // qSlicerMainWindowPrivate methods
+
+qSlicerMainWindowPrivate::qSlicerMainWindowPrivate()
+{
+  this->Core = 0;
+  this->ModuleSelector = 0;
+  this->ModuleToolBarList << "Data"  << "Volumes" << "Models" << "Transforms"
+                          << "Fiducials" << "Editor" << "Measurements"
+                          << "Colors";
+  this->ModuleToolBarMapper = 0;
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
@@ -36,6 +49,23 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
+  // Update the list of modules when they are loaded
+  this->ModuleToolBarMapper = new QSignalMapper(p);
+  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
+  Q_ASSERT(moduleManager);
+
+  QObject::connect(moduleManager,
+                   SIGNAL(moduleLoaded(qSlicerAbstractModule*)),
+                   p, SLOT(onModuleLoaded(qSlicerAbstractModule*)));
+
+  QObject::connect(moduleManager,
+                   SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractModule*)),
+                   p, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractModule*)));
+
+  QObject::connect(this->ModuleToolBarMapper, SIGNAL(mapped(const QString&)),
+                   this->ModulePanel, SLOT(setModule(const QString&)));
+
+  // Create a Module selector
   this->ModuleSelector = new qSlicerModuleSelectorToolBar("Module Selector",p);
   p->insertToolBar(this->ModuleToolBar, this->ModuleSelector);
 
@@ -53,6 +83,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    layoutManager,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -75,13 +106,7 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
 CTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerMainWindow, QToolBar*, moduleToolBar, ModuleToolBar);
-
-//-----------------------------------------------------------------------------
 CTK_GET_CXX(qSlicerMainWindow, qSlicerModulePanel*, modulePanel, ModulePanel);
-
-//-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerMainWindow, qSlicerModuleSelectorToolBar*, moduleSelector, ModuleSelector);
 
 //-----------------------------------------------------------------------------
 // Helper macro allowing to connect the MainWindow action with the corresponding
@@ -129,5 +154,71 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindow_connect(WindowPythonInteractor);
     
 }
-
 #undef qSlicerMainWindow_connect
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractModule* module)
+{
+  CTK_D(qSlicerMainWindow);
+  if (!module)
+    {
+    return;
+    }
+
+  // Module Selector ToolBar
+  d->ModuleSelector->addModule(module->name());
+
+  // Module ToolBar
+  qSlicerAbstractModuleWidget* moduleWidget =
+    dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
+  if (!moduleWidget)
+    {
+    return;
+    }
+
+  QAction * action = moduleWidget->createAction();
+  if (!action || action->icon().isNull())
+    {
+    return;
+    }
+  Q_ASSERT(action->data().toString() == module->name());
+  qDebug() << action->text() << module->title();
+  Q_ASSERT(action->text() == module->title());
+
+  // here we just want the icons, no text
+  action->setText("");
+
+  // Add action to signal mapper
+  d->ModuleToolBarMapper->setMapping(action, module->name());
+  QObject::connect(action, SIGNAL(triggered()),
+                   d->ModuleToolBarMapper, SLOT(map()));
+
+  // Update action state
+  bool visible = d->ModuleToolBarList.contains(module->title());
+  action->setVisible(visible);
+  action->setEnabled(visible);
+
+  // Add action to ToolBar
+  d->ModuleToolBar->addAction(action);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractModule* module)
+{
+  CTK_D(qSlicerMainWindow);
+  if (!module)
+    {
+    return;
+    }
+
+  foreach(QAction* action, d->ModuleToolBar->actions())
+    {
+    if (action->data().toString() == module->name())
+      {
+      d->ModuleToolBar->removeAction(action);
+      d->ModuleToolBarMapper->removeMappings(action);
+      return;
+      }
+    }
+}
+
