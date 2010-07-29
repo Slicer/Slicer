@@ -2,6 +2,7 @@
 #include <QDebug>
 //#include <QSignalMapper>
 #include <QStringList>
+#include <QToolButton>
 
 // SlicerQt includes
 #include "qSlicerMainWindow.h" 
@@ -15,6 +16,8 @@
 #include "qSlicerMainWindowCore.h"
 #include "qSlicerModuleSelectorToolBar.h"
 
+// MRML includes
+#include <vtkMRMLScene.h>
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowPrivate: public ctkPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
 {
@@ -84,6 +87,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    layoutManager,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
 
+  // Listen to the scene
+  p->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
+                 p, SLOT(onMRMLSceneModified(vtkObject*)));
+  p->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
 }
 
 //-----------------------------------------------------------------------------
@@ -137,10 +144,10 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindow_connect(FileAddTransform);
   qSlicerMainWindow_connect(FileSaveScene);
   qSlicerMainWindow_connect(FileCloseScene);
-  
-  qSlicerMainWindow_connect(EditRedo);
-  qSlicerMainWindow_connect(EditUndo);
 
+  qSlicerMainWindow_connect(EditUndo);
+  qSlicerMainWindow_connect(EditRedo);
+  
   qSlicerMainWindow_connect(HelpAboutSlicerQT);
 
   qSlicerMainWindow_connect(ViewLayoutConventional);
@@ -219,5 +226,19 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* mod
       return;
       }
     }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
+{
+  CTK_D(qSlicerMainWindow);
+  
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
+  if (scene->GetIsUpdating())
+    {
+    return;
+    }
+  d->actionEditUndo->setEnabled(scene && scene->GetNumberOfUndoLevels());
+  d->actionEditRedo->setEnabled(scene && scene->GetNumberOfRedoLevels());
 }
 

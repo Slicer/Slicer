@@ -6,6 +6,7 @@
 
 // CTK includes
 #include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 #include "qSlicerQTExport.h"
 
@@ -18,6 +19,7 @@ class qSlicerMainWindowPrivate;
 class Q_SLICERQT_EXPORT qSlicerMainWindow : public QMainWindow
 {
   Q_OBJECT
+  QVTK_OBJECT
   
 public:
   
@@ -35,6 +37,7 @@ protected slots:
   void onModuleLoaded(qSlicerAbstractCoreModule* module);
   void onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
 
+  void onMRMLSceneModified(vtkObject*);
 protected:
 
   // Description:

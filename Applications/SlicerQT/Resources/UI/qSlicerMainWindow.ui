@@ -219,6 +219,19 @@
     <bool>false</bool>
    </attribute>
   </widget>
+  <widget class="QToolBar" name="UndoRedoToolBar">
+   <property name="windowTitle">
+    <string>Undo Redo ToolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionEditUndo"/>
+   <addaction name="actionEditRedo"/>
+  </widget>
   <widget class="QToolBar" name="ViewToolBar">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -342,6 +355,10 @@
    </property>
   </action>
   <action name="actionEditUndo">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Undo.png</normaloff>:/Icons/Undo.png</iconset>
+   </property>
    <property name="text">
     <string>Undo</string>
    </property>
@@ -350,6 +367,10 @@
    </property>
   </action>
   <action name="actionEditRedo">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Redo.png</normaloff>:/Icons/Redo.png</iconset>
+   </property>
    <property name="text">
     <string>Redo</string>
    </property>
@@ -448,6 +469,9 @@
   </action>
   <action name="actionWindowToolbarsUndoRedo">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">

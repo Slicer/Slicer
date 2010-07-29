@@ -7,6 +7,8 @@
     <file>Icons/Next.png</file>
     <file>Icons/Previous.png</file>
     <file>Icons/ModuleHistory.png</file>
+    <file>Icons/Undo.png</file>
+    <file>Icons/Redo.png</file>
 
     <file>Icons/CheckModified.png</file>
     <file>Icons/CheckModifiedData.png</file>
