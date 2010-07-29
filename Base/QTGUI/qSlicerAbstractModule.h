@@ -16,11 +16,15 @@
 // Qt includes
 #include <QIcon>
 
+// CTK includes
+#include <ctkPimpl.h>
+
 // SlicerQt includes
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerBaseQTGUIExport.h"
 
 class QAction;
+class qSlicerAbstractModulePrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule : public qSlicerAbstractCoreModule
 {
@@ -36,7 +40,9 @@ public:
   ///
   /// Returns a QAction if the module would like to be added in a toolbar.
   /// By default, returns no QAction.
-  QAction * createAction();
+  QAction * action();
+private:
+  CTK_DECLARE_PRIVATE(qSlicerAbstractModule);
 };
 
 #endif

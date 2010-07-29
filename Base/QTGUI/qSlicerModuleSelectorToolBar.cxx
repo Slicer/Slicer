@@ -403,7 +403,7 @@ void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
     {
     return;
     }
-  QAction* moduleAction = module->createAction();
+  QAction* moduleAction = module->action();
 
   QMenu* menu = d->menu(d->ModulesMenu, module->category().split('.'));
   d->addModuleAction(menu, moduleAction);

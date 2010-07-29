@@ -170,7 +170,7 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
   d->ModuleSelector->addModule(module->name());
 
   // Module ToolBar
-  QAction * action = module->createAction();
+  QAction * action = module->action();
   if (!action || action->icon().isNull())
     {
     return;
@@ -180,7 +180,7 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
   Q_ASSERT(action->text() == module->title());
 
   // here we just want the icons, no text
-  action->setText("");
+  //action->setText("");
 
   // Add action to signal mapper
   d->ModuleToolBarMapper->setMapping(action, module->name());
