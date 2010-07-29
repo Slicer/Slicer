@@ -88,11 +88,12 @@
       <string>&amp;Toolbars</string>
      </property>
      <addaction name="actionWindowToolbarsLoadSave"/>
+     <addaction name="actionWindowToolbarsModuleSelector"/>
+     <addaction name="actionWindowToolbarsModules"/>
      <addaction name="actionWindowToolbarsUndoRedo"/>
      <addaction name="actionWindowToolbarsView"/>
      <addaction name="actionWindowToolbarsLayout"/>
      <addaction name="actionWindowToolbarsMouseMode"/>
-     <addaction name="actionWindowToolbarsModules"/>
     </widget>
     <addaction name="actionWindowShowMainPanel"/>
     <addaction name="actionWindowShowBottomPanel"/>
@@ -207,7 +208,6 @@
    </attribute>
    <addaction name="actionFileLoadScene"/>
    <addaction name="actionFileSaveScene"/>
-   <addaction name="separator"/>
   </widget>
   <widget class="QToolBar" name="ModuleToolBar">
    <property name="windowTitle">
@@ -264,6 +264,17 @@
    <addaction name="actionViewLayoutTabbedSlice"/>
    <addaction name="actionViewLayoutCompare"/>
    <addaction name="actionViewLayoutSideBySideCompare"/>
+  </widget>
+  <widget class="QToolBar" name="MouseModeToolBar">
+   <property name="windowTitle">
+    <string>Mouse Mode ToolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="actionFileLoadScene">
    <property name="icon">
@@ -474,6 +485,9 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Load/Save</string>
    </property>
@@ -502,6 +516,9 @@
   </action>
   <action name="actionWindowToolbarsMouseMode">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -699,6 +716,17 @@
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionWindowToolbarsModuleSelector">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Module Selector</string>
    </property>
   </action>
   <action name="actionWindowToolbarsView">

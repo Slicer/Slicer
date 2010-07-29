@@ -20,7 +20,6 @@ class Q_SLICERQT_EXPORT qSlicerMainWindow : public QMainWindow
 {
   Q_OBJECT
   QVTK_OBJECT
-  
 public:
   
   typedef QMainWindow Superclass;
@@ -32,6 +31,15 @@ public:
 
   /// Return the module selector
   qSlicerModuleSelectorToolBar* moduleSelector()const;
+
+public slots:
+  void showMainToolBar(bool visible);
+  void showUndoRedoToolBar(bool visible);
+  void showViewToolBar(bool visible);
+  void showLayoutToolBar(bool visible);
+  void showMouseModeToolBar(bool visible);
+  void showModuleToolBar(bool visible);
+  void showModuleSelectorToolBar(bool visible);
 
 protected slots:
   void onModuleLoaded(qSlicerAbstractCoreModule* module);

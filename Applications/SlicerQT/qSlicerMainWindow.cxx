@@ -1,6 +1,5 @@
 // Qt includes
 #include <QDebug>
-//#include <QSignalMapper>
 #include <QStringList>
 #include <QToolButton>
 
@@ -18,6 +17,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowPrivate: public ctkPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
 {
@@ -70,6 +70,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Create a Module selector
   this->ModuleSelector = new qSlicerModuleSelectorToolBar("Module Selector",p);
+  this->ModuleSelector->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
   p->insertToolBar(this->ModuleToolBar, this->ModuleSelector);
 
   // Connect the selector with the module panel
@@ -172,7 +173,22 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindow_connect(ViewLayoutSideBySideCompare);
   
   qSlicerMainWindow_connect(WindowPythonInteractor);
-    
+
+  //connect ToolBars actions
+  connect(d->actionWindowToolbarsLoadSave, SIGNAL(toggled(bool)),
+          this, SLOT(showMainToolBar(bool)));
+  connect(d->actionWindowToolbarsUndoRedo, SIGNAL(toggled(bool)),
+          this, SLOT(showUndoRedoToolBar(bool)));
+  connect(d->actionWindowToolbarsLayout, SIGNAL(toggled(bool)),
+          this, SLOT(showLayoutToolBar(bool)));
+  connect(d->actionWindowToolbarsView, SIGNAL(toggled(bool)),
+          this, SLOT(showViewToolBar(bool)));
+  connect(d->actionWindowToolbarsMouseMode, SIGNAL(toggled(bool)),
+          this, SLOT(showMouseModeToolBar(bool)));
+  connect(d->actionWindowToolbarsModules, SIGNAL(toggled(bool)),
+          this, SLOT(showModuleToolBar(bool)));
+  connect(d->actionWindowToolbarsModuleSelector, SIGNAL(toggled(bool)),
+          this, SLOT(showModuleSelectorToolBar(bool)));
 }
 #undef qSlicerMainWindow_connect
 
@@ -251,3 +267,72 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
   d->actionEditRedo->setEnabled(scene && scene->GetNumberOfRedoLevels());
 }
 
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::showMainToolBar(bool visible)
+{
+  CTK_D(qSlicerMainWindow);
+  // set the action state just in case the slot has been called by something
+  // else than the toolbar QAction
+  d->actionWindowToolbarsLoadSave->setChecked(visible);
+  d->MainToolBar->setVisible(visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::showUndoRedoToolBar(bool visible)
+{
+  CTK_D(qSlicerMainWindow);
+  // set the action state just in case the slot has been called by something
+  // else than the toolbar QAction
+  d->actionWindowToolbarsUndoRedo->setChecked(visible);
+  d->UndoRedoToolBar->setVisible(visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::showViewToolBar(bool visible)
+{
+  CTK_D(qSlicerMainWindow);
+  // set the action state just in case the slot has been called by something
+  // else than the toolbar QAction
+  d->actionWindowToolbarsView->setChecked(visible);
+  d->ViewToolBar->setVisible(visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::showLayoutToolBar(bool visible)
+{
+  CTK_D(qSlicerMainWindow);
+  // set the action state just in case the slot has been called by something
+  // else than the toolbar QAction
+  d->actionWindowToolbarsLayout->setChecked(visible);
+  d->LayoutToolBar->setVisible(visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::showMouseModeToolBar(bool visible)
+{
+  CTK_D(qSlicerMainWindow);
+  // set the action state just in case the slot has been called by something
+  // else than the toolbar QAction
+  d->actionWindowToolbarsMouseMode->setChecked(visible);
+  d->MouseModeToolBar->setVisible(visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::showModuleToolBar(bool visible)
+{
+  CTK_D(qSlicerMainWindow);
+  // set the action state just in case the slot has been called by something
+  // else than the toolbar QAction
+  d->actionWindowToolbarsModules->setChecked(visible);
+  d->ModuleToolBar->setVisible(visible);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::showModuleSelectorToolBar(bool visible)
+{
+  CTK_D(qSlicerMainWindow);
+  // set the action state just in case the slot has been called by something
+  // else than the toolbar QAction
+  d->actionWindowToolbarsModuleSelector->setChecked(visible);
+  d->ModuleSelector->setVisible(visible);
+}
