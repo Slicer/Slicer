@@ -2,7 +2,7 @@
 #define __qSlicerAnnotationModule_h
 
 // SlicerQT includes
-#include "qSlicerAbstractLoadableModule.h"
+#include "qSlicerLoadableModule.h"
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -13,18 +13,18 @@ class qSlicerAbstractModuleWidget;
 class qSlicerAnnotationModulePrivate;
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationModule :
-  public qSlicerAbstractLoadableModule
+  public qSlicerLoadableModule
 {
   Q_OBJECT
-  Q_INTERFACES(qSlicerAbstractLoadableModule)
+  Q_INTERFACES(qSlicerLoadableModule)
 public:
 
-  typedef qSlicerAbstractLoadableModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerAnnotationModule(QObject *parent=0);
 
   // Description:
   // Return the help text for the Annotation module.
-  QString helpText();
+  virtual QString helpText()const ;
 
 
   virtual ~qSlicerAnnotationModule(){}

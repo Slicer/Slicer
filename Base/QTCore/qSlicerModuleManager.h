@@ -21,7 +21,7 @@
 
 #include "qSlicerBaseQTCoreExport.h"
 
-class qSlicerAbstractModule;
+class qSlicerAbstractCoreModule;
 class qSlicerModuleFactoryManager;
 
 class qSlicerModuleManagerPrivate;
@@ -50,7 +50,7 @@ public:
   bool isLoaded(const QString& name)const;
 
   ///
-  qSlicerAbstractModule* module(const QString& name);
+  qSlicerAbstractCoreModule* module(const QString& name);
 
   ///
   /// Convenient method to get module title given its name
@@ -63,8 +63,8 @@ public:
   QString moduleName(const QString& title) const;
 
 signals:
-  void moduleLoaded(qSlicerAbstractModule* module);
-  void moduleAboutToBeUnloaded(qSlicerAbstractModule* module);
+  void moduleLoaded(qSlicerAbstractCoreModule* module);
+  void moduleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
 
 private:
   qSlicerModuleManager(const qSlicerModuleManager&);  /// Not implemented.

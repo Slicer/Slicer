@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
  All Rights Reserved.
 
  See Doc/copyright/copyright.txt
@@ -11,24 +11,29 @@
 =========================================================================auto=*/
 
 // Qt includes
+#include <QDebug>
 #include <QAction>
-#include <QIcon>
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
-#include "qSlicerAbstractModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget::qSlicerAbstractModuleWidget(QWidget* parentWidget)
-  :qSlicerWidget(parentWidget)
+qSlicerAbstractModule::qSlicerAbstractModule(QObject* parentObject)
+  :Superclass(parentObject)
 {
+
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModuleWidget::setup()
+QIcon qSlicerAbstractModule::icon()const
 {
-  const qSlicerAbstractModule* m =
-    qobject_cast<const qSlicerAbstractModule*>(this->module());
-  this->setWindowTitle(m->title());
-  this->setWindowIcon(m->icon());
+  return QIcon();
+}
+
+//-----------------------------------------------------------------------------
+QAction* qSlicerAbstractModule::createAction()
+{
+  QAction* action = new QAction(this->icon(), this->title(), this);
+  action->setData(this->name());
+  return action;
 }

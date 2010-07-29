@@ -37,7 +37,7 @@ QString qSlicerCLIExecutableModuleFactoryItem::path()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
+qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 {
   qDebug() << "CmdLineExecutableModuleItem::instantiate - name:" << this->path();
   return 0;

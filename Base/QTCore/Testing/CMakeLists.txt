@@ -1,8 +1,7 @@
 SET(KIT QTCore)
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
-  qSlicerAbstractLoadableModuleTest1.cxx
-  qSlicerAbstractModuleTest1
+  qSlicerAbstractCoreModuleTest1
   qSlicerCoreApplicationTest1.cxx
   qSlicerCoreIOManagerTest1.cxx
   qSlicerLoadableModuleFactoryTest1.cxx
@@ -43,7 +42,6 @@ ADD_TEST( qSlicerCoreIOManagerTest1
   ${KIT_TESTS} qSlicerCoreIOManagerTest1
   ${CMAKE_SOURCE_DIR}/Libs/MRML/Testing/name.mrml)
 
-SIMPLE_TEST( qSlicerAbstractLoadableModuleTest1 )
-SIMPLE_TEST( qSlicerAbstractModuleTest1 )
+SIMPLE_TEST( qSlicerAbstractCoreModuleTest1 )
 SIMPLE_TEST( qSlicerLoadableModuleFactoryTest1 )
 SIMPLE_TEST( qSlicerUtilsTest1 )

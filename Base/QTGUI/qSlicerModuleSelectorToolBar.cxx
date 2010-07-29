@@ -397,10 +397,13 @@ qSlicerModuleSelectorToolBar::qSlicerModuleSelectorToolBar(QWidget* parentWidget
 void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
 {
   CTK_D(qSlicerModuleSelectorToolBar);
-  qSlicerAbstractModule* module =
-    qSlicerApplication::application()->moduleManager()->module(moduleName);
-  QAction* moduleAction = new QAction(module->title(), this);
-  moduleAction->setData(moduleName);
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(
+    qSlicerApplication::application()->moduleManager()->module(moduleName));
+  if (!module)
+    {
+    return;
+    }
+  QAction* moduleAction = module->createAction();
 
   QMenu* menu = d->menu(d->ModulesMenu, module->category().split('.'));
   d->addModuleAction(menu, moduleAction);

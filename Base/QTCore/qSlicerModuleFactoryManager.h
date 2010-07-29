@@ -22,14 +22,14 @@
 
 #include "qSlicerBaseQTCoreExport.h"
 
-class qSlicerAbstractModule;
+class qSlicerAbstractCoreModule;
 
 class qSlicerModuleFactoryManagerPrivate;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager
 {
 public:
-  typedef ctkAbstractFactory<qSlicerAbstractModule> qSlicerAbstractModuleFactory;
+  typedef ctkAbstractFactory<qSlicerAbstractCoreModule> qSlicerAbstractModuleFactory;
  
   qSlicerModuleFactoryManager();
 
@@ -74,7 +74,7 @@ public:
 
   /// 
   /// Instantiate a module given its name
-  qSlicerAbstractModule* instantiateModule(const QString& name);
+  qSlicerAbstractCoreModule* instantiateModule(const QString& name);
 
   /// 
   /// Uninstantiate a module given its name

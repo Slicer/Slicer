@@ -18,7 +18,7 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerCoreModule.h"
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
@@ -27,13 +27,17 @@ class vtkMRMLNode;
 class qSlicerTransformsModulePrivate;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerTransformsModule :
-  public qSlicerAbstractCoreModule
+  public qSlicerCoreModule
 {
   Q_OBJECT
 public:
 
-  typedef qSlicerAbstractCoreModule Superclass;
+  typedef qSlicerCoreModule Superclass;
   qSlicerTransformsModule(QObject *parent=0);
+
+  ///
+  /// Icon of the transform module
+  virtual QIcon icon()const;
 
   ///
   /// Display name for the module

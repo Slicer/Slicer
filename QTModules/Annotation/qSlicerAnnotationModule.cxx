@@ -55,7 +55,7 @@ vtkSlicerLogic* qSlicerAnnotationModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractLoadableModule::helpText() const
+QString qSlicerAnnotationModule::helpText() const
 {
   return "The Annotation module.";
 }

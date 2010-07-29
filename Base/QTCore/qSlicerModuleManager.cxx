@@ -17,7 +17,7 @@
 // SlicerQt includes
 #include "qSlicerModuleManager.h"
 #include "qSlicerCoreApplication.h"
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerModuleFactoryManager.h"
 
 // MRML includes
@@ -31,14 +31,14 @@ public:
 
   ///
   /// Handle post-load initialization
-  void onModuleLoaded(qSlicerAbstractModule* module);
+  void onModuleLoaded(qSlicerAbstractCoreModule* module);
 
-  typedef QHash<QString, qSlicerAbstractModule*>::const_iterator ModuleListConstIterator;
-  typedef QHash<QString, qSlicerAbstractModule*>::iterator       ModuleListIterator;
+  typedef QHash<QString, qSlicerAbstractCoreModule*>::const_iterator ModuleListConstIterator;
+  typedef QHash<QString, qSlicerAbstractCoreModule*>::iterator       ModuleListIterator;
 
   ///
   /// Store Pair<ModuleName, ModuleObject>
-  QHash<QString, qSlicerAbstractModule*> ModuleList;
+  QHash<QString, qSlicerAbstractCoreModule*> ModuleList;
   qSlicerModuleFactoryManager            ModuleFactoryManager;
 };
 
@@ -116,7 +116,7 @@ bool qSlicerModuleManager::loadModule(const QString& name)
     }
 
   // Instantiate the module
-  qSlicerAbstractModule * _module = d->ModuleFactoryManager.instantiateModule(name);
+  qSlicerAbstractCoreModule * _module = d->ModuleFactoryManager.instantiateModule(name);
   if (!_module)
     {
     qWarning() << "Failed to instanciate module: " << name;
@@ -172,7 +172,7 @@ bool qSlicerModuleManager::unLoadModule(const QString& name)
     return false;
     }
 
-  qSlicerAbstractModule * _module = iter.value();
+  qSlicerAbstractCoreModule * _module = iter.value();
   Q_ASSERT(_module);
 
   // Handle pre-unload
@@ -188,7 +188,7 @@ bool qSlicerModuleManager::unLoadModule(const QString& name)
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerModuleManager::module(const QString& name)
+qSlicerAbstractCoreModule* qSlicerModuleManager::module(const QString& name)
 {
   CTK_D(qSlicerModuleManager);
 

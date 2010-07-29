@@ -5,24 +5,25 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractLoadableModule.h"
+#include "qSlicerLoadableModule.h"
 
 #include "qSlicerMeasurementsModuleExport.h"
 
 class qSlicerMeasurementsModulePrivate;
 
 class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsModule :
-  public qSlicerAbstractLoadableModule
+  public qSlicerLoadableModule
 {
   Q_OBJECT
-  Q_INTERFACES(qSlicerAbstractLoadableModule);
+  Q_INTERFACES(qSlicerLoadableModule);
 
 public:
 
-  typedef qSlicerAbstractLoadableModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerMeasurementsModule(QObject *parent=0);
   virtual ~qSlicerMeasurementsModule(){}
 
+  virtual QIcon icon()const;
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
 protected:

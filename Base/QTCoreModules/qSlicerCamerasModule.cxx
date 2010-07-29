@@ -26,6 +26,12 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModule, QObject*);
 
 //-----------------------------------------------------------------------------
+QIcon qSlicerCamerasModule::icon()const
+{
+  return QIcon(":/Icons/Cameras.png");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerCamerasModule::createWidgetRepresentation()
 {
   return new qSlicerCamerasModuleWidget;

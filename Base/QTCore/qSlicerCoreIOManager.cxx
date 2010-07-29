@@ -9,7 +9,7 @@
 #include <ctkLogger.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerIO.h"

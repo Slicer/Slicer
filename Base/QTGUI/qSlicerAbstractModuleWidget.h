@@ -38,10 +38,6 @@ public:
   /// \sa QWidget
   qSlicerAbstractModuleWidget(QWidget *parent=0);
 
-  ///
-  /// Returns a QAction if the module would like to be added in a toolbar.
-  /// By default, returns no QAction.
-  virtual QAction * createAction();
 protected:
   virtual void setup();
 };

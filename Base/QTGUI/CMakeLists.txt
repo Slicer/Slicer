@@ -18,6 +18,8 @@ SET(KIT_include_directories
 
 # Source files
 SET(KIT_SRCS
+  qSlicerAbstractModule.cxx
+  qSlicerAbstractModule.h
   qSlicerAbstractModulePanel.cxx
   qSlicerAbstractModulePanel.h
   qSlicerAbstractModuleWidget.cxx
@@ -37,6 +39,8 @@ SET(KIT_SRCS
   qSlicerLayoutManager.cxx
   qSlicerLayoutManager.h
   qSlicerLayoutManager_p.h
+  qSlicerLoadableModule.cxx
+  qSlicerLoadableModule.h
 
   qSlicerModelsDialog.cxx
   qSlicerModelsDialog.h
@@ -57,6 +61,7 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  qSlicerAbstractModule.h
   qSlicerAbstractModulePanel.h
   qSlicerAbstractModuleWidget.h
   qSlicerApplication.h
@@ -67,6 +72,7 @@ SET(KIT_MOC_SRCS
   qSlicerIOOptionsWidget.h
   qSlicerLayoutManager.h
   qSlicerLayoutManager_p.h
+  qSlicerLoadableModule.h
 
   qSlicerModelsDialog.h
   qSlicerModelsDialog_p.h

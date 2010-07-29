@@ -16,6 +16,12 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerColorsModule, QObject*);
 
 //-----------------------------------------------------------------------------
+QIcon qSlicerColorsModule::icon()const
+{
+  return QIcon(":/Icons/Colors.png");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerColorsModule::createWidgetRepresentation()
 {
   return new qSlicerColorsModuleWidget;

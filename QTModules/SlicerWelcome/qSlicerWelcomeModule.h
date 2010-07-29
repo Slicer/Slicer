@@ -5,7 +5,7 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractLoadableModule.h"
+#include "qSlicerLoadableModule.h"
 
 #include "qSlicerWelcomeModuleExport.h"
 
@@ -13,14 +13,14 @@ class qSlicerAbstractModuleWidget;
 class qSlicerWelcomeModulePrivate;
 
 class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModule :
-  public qSlicerAbstractLoadableModule
+  public qSlicerLoadableModule
 {
   Q_OBJECT
-  Q_INTERFACES(qSlicerAbstractLoadableModule);
+  Q_INTERFACES(qSlicerLoadableModule);
 
 public:
 
-  typedef qSlicerAbstractLoadableModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerWelcomeModule(QObject *parent=0);
   virtual ~qSlicerWelcomeModule(){}
 

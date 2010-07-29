@@ -19,18 +19,18 @@
 #include <ctkAbstractPluginFactory.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 
 #include "qSlicerBaseQTCoreExport.h"
 
 class qSlicerLoadableModuleFactoryPrivate;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerLoadableModuleFactory :
-  public ctkAbstractPluginFactory<qSlicerAbstractModule>
+  public ctkAbstractPluginFactory<qSlicerAbstractCoreModule>
 {
 public:
 
-  typedef ctkAbstractPluginFactory<qSlicerAbstractModule> Superclass;
+  typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerLoadableModuleFactory();
   virtual ~qSlicerLoadableModuleFactory(){}
 

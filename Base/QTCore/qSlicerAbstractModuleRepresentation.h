@@ -24,7 +24,7 @@
 
 /// class vtkSlicerApplicationLogic;
 class vtkSlicerLogic;
-class qSlicerAbstractModule;
+class qSlicerAbstractCoreModule;
 class QAction;
 class qSlicerAbstractModuleRepresentationPrivate;
 
@@ -53,15 +53,15 @@ protected:
   /// Return the logic of the module
   vtkSlicerLogic* logic() const;
 
-  const qSlicerAbstractModule* module()const;
+  const qSlicerAbstractCoreModule* module()const;
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerAbstractModuleRepresentation);
 
   /// Give access to qSlicerAbstractModule to the method
   /// qSlicerAbstractModuleRepresentation::setModule
-  friend class qSlicerAbstractModule;
-  void setModule(qSlicerAbstractModule* module);
+  friend class qSlicerAbstractCoreModule;
+  void setModule(qSlicerAbstractCoreModule* module);
 };
 
 #endif

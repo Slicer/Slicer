@@ -5,21 +5,21 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractLoadableModule.h"
+#include "qSlicerLoadableModule.h"
 
 #include "qSlicerEMSegmentModuleExport.h"
 
 class qSlicerEMSegmentModulePrivate;
 
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentModule :
-  public qSlicerAbstractLoadableModule
+  public qSlicerLoadableModule
 {
   Q_OBJECT
-  Q_INTERFACES(qSlicerAbstractLoadableModule);
+  Q_INTERFACES(qSlicerLoadableModule);
 
 public:
 
-  typedef qSlicerAbstractLoadableModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerEMSegmentModule(QObject *parent=0);
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);

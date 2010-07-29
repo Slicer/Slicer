@@ -11,9 +11,15 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerDataModule::qSlicerDataModule(QObject* parentObject)
-  :qSlicerAbstractCoreModule(parentObject)
+  :Superclass(parentObject)
 {
   CTK_INIT_PRIVATE(qSlicerDataModule);
+}
+
+//-----------------------------------------------------------------------------
+QIcon qSlicerDataModule::icon()const
+{
+  return QIcon(":/Icons/Data.png");
 }
 
 //-----------------------------------------------------------------------------

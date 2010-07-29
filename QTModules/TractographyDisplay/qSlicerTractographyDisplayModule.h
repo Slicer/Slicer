@@ -2,19 +2,19 @@
 #define __qSlicerTractographyDisplayModule_h
 
 /// SlicerQT includes
-#include "qSlicerAbstractLoadableModule.h"
+#include "qSlicerLoadableModule.h"
 
 #include "qSlicerTractographyDisplayModuleExport.h"
 
 class qSlicerTractographyDisplayModulePrivate;
 
 class Q_SLICER_QTMODULES_TRACTOGRAPHYDISPLAY_EXPORT qSlicerTractographyDisplayModule
-  :public qSlicerAbstractLoadableModule
+  :public qSlicerLoadableModule
 {
   Q_OBJECT
-  Q_INTERFACES(qSlicerAbstractLoadableModule);
+  Q_INTERFACES(qSlicerLoadableModule);
 public:
-  typedef qSlicerAbstractLoadableModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
 
   qSlicerTractographyDisplayModule(QObject *_parent = 0);
 

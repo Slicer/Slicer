@@ -25,11 +25,11 @@
 class qSlicerCoreModuleFactoryPrivate;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCoreModuleFactory :
-  public ctkAbstractQObjectFactory<qSlicerAbstractModule>
+  public ctkAbstractQObjectFactory<qSlicerAbstractCoreModule>
 {
 public:
 
-  typedef ctkAbstractQObjectFactory<qSlicerAbstractModule> Superclass;
+  typedef ctkAbstractQObjectFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCoreModuleFactory();
   virtual ~qSlicerCoreModuleFactory(){}
 

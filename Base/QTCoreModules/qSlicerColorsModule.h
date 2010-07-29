@@ -5,20 +5,21 @@
 #include <ctkPimpl.h>
 
 /// SlicerQt includes
-#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerCoreModule.h"
 #include "qSlicerBaseQTCoreModulesExport.h"
 
 class qSlicerAbstractModuleWidget;
 class qSlicerColorsModulePrivate;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerColorsModule :
-  public qSlicerAbstractCoreModule
+  public qSlicerCoreModule
 {
   Q_OBJECT
 public:
-  typedef qSlicerAbstractCoreModule Superclass;
+  typedef qSlicerCoreModule Superclass;
   qSlicerColorsModule(QObject *parent=0);
 
+  virtual QIcon icon()const;
   qSlicerGetTitleMacro("Color");
 
   /// Return help/acknowledgement text

@@ -31,6 +31,12 @@ qSlicerVolumesModule::qSlicerVolumesModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
+QIcon qSlicerVolumesModule::icon()const
+{
+  return QIcon(":/Icons/Volumes.png");
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerVolumesModule::setup()
 {
   this->Superclass::setup();

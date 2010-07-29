@@ -15,7 +15,7 @@
 #define __qSlicerCLIExecutableModuleFactory_h
 
 // SlicerQT includes
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerBaseQTCLIExport.h"
 
 // CTK includes
@@ -23,10 +23,10 @@
 #include <ctkAbstractPluginFactory.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIExecutableModuleFactoryItem : public ctkAbstractFactoryItem<qSlicerAbstractModule>
+class qSlicerCLIExecutableModuleFactoryItem : public ctkAbstractFactoryItem<qSlicerAbstractCoreModule>
 {
 public:
-  typedef ctkAbstractFactoryItem<qSlicerAbstractModule> Superclass;
+  typedef ctkAbstractFactoryItem<qSlicerAbstractCoreModule> Superclass;
   explicit qSlicerCLIExecutableModuleFactoryItem(const QString& itemKey, const QString& itemPath);
   virtual ~qSlicerCLIExecutableModuleFactoryItem(){}
 
@@ -38,7 +38,7 @@ public:
   QString path();
 
 protected:
-  virtual qSlicerAbstractModule* instanciator();
+  virtual qSlicerAbstractCoreModule* instanciator();
 
 private:
   QString          Path;
@@ -50,11 +50,11 @@ class qSlicerCLIExecutableModuleFactoryPrivate;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory :
-  public ctkAbstractPluginFactory<qSlicerAbstractModule,qSlicerCLIExecutableModuleFactoryItem>
+  public ctkAbstractPluginFactory<qSlicerAbstractCoreModule,qSlicerCLIExecutableModuleFactoryItem>
 {
 public:
 
-  typedef ctkAbstractPluginFactory<qSlicerAbstractModule,
+  typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule,
                                     qSlicerCLIExecutableModuleFactoryItem> Superclass;
   qSlicerCLIExecutableModuleFactory();
   virtual ~qSlicerCLIExecutableModuleFactory(){}

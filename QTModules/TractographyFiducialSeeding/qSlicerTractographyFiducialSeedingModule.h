@@ -2,19 +2,19 @@
 #define __qSlicerTractographyFiducialSeedingModule_h
 
 /// SlicerQT includes
-#include "qSlicerAbstractLoadableModule.h"
+#include "qSlicerLoadableModule.h"
 
 #include "qSlicerTractographyFiducialSeedingModuleExport.h"
 
 class qSlicerTractographyFiducialSeedingModulePrivate;
 class qSlicerTractographyFiducialSeedingModuleWidget;
 
-class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyFiducialSeedingModule : public qSlicerAbstractLoadableModule
+class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyFiducialSeedingModule : public qSlicerLoadableModule
 {
   Q_OBJECT
-  Q_INTERFACES(qSlicerAbstractLoadableModule);
+  Q_INTERFACES(qSlicerLoadableModule);
 public:
-  typedef qSlicerAbstractLoadableModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
 
   qSlicerTractographyFiducialSeedingModule(QObject *_parent = 0);
 

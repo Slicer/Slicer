@@ -12,33 +12,14 @@
 
 =========================================================================auto=*/
 
-#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerLoadableModule.h"
 
 #include <stdlib.h>
-#include <iostream>
 
-class ACoreModule: public qSlicerAbstractCoreModule
+int qSlicerLoadableModuleTest1(int, char * [] )
 {
-public:
-  virtual QString title()const
-  {
-    return "A title \n\t#$%^&*";
-  }
-  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation()
-  {
-    return 0;
-  }
-  vtkSlicerLogic* createLogic()
-  {
-    return 0;
-  }
-};
 
-
-int qSlicerAbstractCoreModuleTest1(int, char * [] )
-{
-  qSlicerAbstractCoreModule* module = new ACoreModule;
-  delete module;
 
   return EXIT_SUCCESS;
 }
+

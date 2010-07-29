@@ -17,7 +17,7 @@
 
 #ifdef Slicer3_USE_QT
 
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModulePanel.h"
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
@@ -4850,7 +4850,7 @@ void vtkSlicerApplicationGUI::SetCurrentQtModule(const char* moduleTitle)
 
   QString moduleName = moduleManager->moduleName(QLatin1String(moduleTitle));
   // Check if the corresponding QT module is loaded
-  qSlicerAbstractModule* module = moduleManager->module(moduleName);
+  qSlicerAbstractCoreModule* module = moduleManager->module(moduleName);
   bool moduleRep = module ? module->widgetRepresentation() != 0 : false;
 
   qDebug() << "QT Module [" << QLatin1String(moduleTitle) << "] loaded:"

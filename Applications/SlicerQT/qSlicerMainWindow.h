@@ -9,7 +9,7 @@
 
 #include "qSlicerQTExport.h"
 
-class qSlicerAbstractModule;
+class qSlicerAbstractCoreModule;
 class qSlicerModulePanel;
 class qSlicerModuleSelectorToolBar;
 class qSlicerMainWindowCore;
@@ -33,8 +33,8 @@ public:
   qSlicerModulePanel* modulePanel() const;
 
 protected slots:
-  void onModuleLoaded(qSlicerAbstractModule* module);
-  void onModuleAboutToBeUnloaded(qSlicerAbstractModule* module);
+  void onModuleLoaded(qSlicerAbstractCoreModule* module);
+  void onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
 
 protected:
 

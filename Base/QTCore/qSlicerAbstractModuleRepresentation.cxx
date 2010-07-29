@@ -11,7 +11,7 @@
 =========================================================================auto=*/
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModuleRepresentation.h"
 
 // Slicer includes
@@ -29,7 +29,7 @@ public:
 
 private:
   CTK_DECLARE_PUBLIC(qSlicerAbstractModuleRepresentation);
-  qSlicerAbstractModule*          Module;
+  qSlicerAbstractCoreModule*          Module;
 };
 
 //-----------------------------------------------------------------------------
@@ -76,14 +76,14 @@ vtkSlicerLogic* qSlicerAbstractModuleRepresentation::logic()const
 }
 
 //-----------------------------------------------------------------------------
-const qSlicerAbstractModule* qSlicerAbstractModuleRepresentation::module()const
+const qSlicerAbstractCoreModule* qSlicerAbstractModuleRepresentation::module()const
 {
   CTK_D(const qSlicerAbstractModuleRepresentation);
   return d->Module;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractModule* module)
+void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractCoreModule* module)
 {
   CTK_D(qSlicerAbstractModuleRepresentation);
   d->Module = module;

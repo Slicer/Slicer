@@ -9,8 +9,8 @@
  Program:   3D Slicer
 
 =========================================================================auto=*/
-#ifndef __qSlicerAbstractModule_h
-#define __qSlicerAbstractModule_h
+#ifndef __qSlicerAbstractCoreModule_h
+#define __qSlicerAbstractCoreModule_h
 
 // Qt includes
 #include <QObject>
@@ -26,14 +26,14 @@ class vtkSlicerLogic;
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
 class QAction;
-class qSlicerAbstractModulePrivate;
+class qSlicerAbstractCoreModulePrivate;
 
 
 #define qSlicerGetTitleMacro(_TITLE)               \
   static QString staticTitle() { return _TITLE; }  \
   virtual QString title()const { return _TITLE; }
 
-/// qSlicerAbstractModule is the base class of any module in Slicer.
+/// qSlicerAbstractCoreModule is the base class of any module in Slicer.
 /// Core modules, Loadable modules, CLI modules derive from it.
 /// It is responsible to create the UI and the Logic:
 /// createWidgetRepresentation() and createLogic() must be reimplemented in
@@ -42,7 +42,7 @@ class qSlicerAbstractModulePrivate;
 /// displayed to the user.
 /// When a MRML scene is set to the module, the module set the scene to the
 /// UI widget and the logic.
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractModule : public QObject
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
 {
   /// Any object deriving from QObject must have the Q_OBJECT macro in
   /// order to have the signal/slots working and the meta-class name valid.
@@ -62,8 +62,8 @@ public:
   /// Warning: If there is no parent given, make sure you delete the object.
   /// The modules can typically be instanciated before the application
   /// is initialized (module manager, iomanager...). Most of the
-  /// initialization must be done in qSlicerAbstractModule::setup()
-  qSlicerAbstractModule(QObject *parent=0);
+  /// initialization must be done in qSlicerAbstractCoreModule::setup()
+  qSlicerAbstractCoreModule(QObject *parent=0);
 
   virtual void printAdditionalInfo();
 
@@ -120,7 +120,6 @@ public:
   /// Returns true if the module is enabled.
   /// By default, a module is disabled
   bool isEnabled()const;
-  friend class qSlicerAbstratModuleRepresentation;
 
 public slots:
 
@@ -148,7 +147,7 @@ protected:
 
 
 private:
-  CTK_DECLARE_PRIVATE(qSlicerAbstractModule);
+  CTK_DECLARE_PRIVATE(qSlicerAbstractCoreModule);
   friend class qSlicerAbstractModuleRepresentation;
   void representationDeleted();
   ///

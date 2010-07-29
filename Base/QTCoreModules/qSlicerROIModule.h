@@ -5,7 +5,7 @@
 #include <ctkPimpl.h>
 
 /// SlicerQt includes
-#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerCoreModule.h"
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
@@ -13,11 +13,11 @@ class qSlicerAbstractModuleWidget;
 class qSlicerROIModulePrivate;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerROIModule :
-  public qSlicerAbstractCoreModule
+  public qSlicerCoreModule
 {
   Q_OBJECT
 public:
-  typedef qSlicerAbstractCoreModule Superclass;
+  typedef qSlicerCoreModule Superclass;
   qSlicerROIModule(QObject *parent=0);
 
   qSlicerGetTitleMacro("ROI");

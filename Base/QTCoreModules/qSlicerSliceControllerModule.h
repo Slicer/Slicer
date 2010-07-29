@@ -5,20 +5,20 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerCoreModule.h"
 
 #include "qSlicerBaseQTCoreModulesExport.h"
 
 class qSlicerSliceControllerModulePrivate;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerSliceControllerModule :
-  public qSlicerAbstractCoreModule
+  public qSlicerCoreModule
 {
   Q_OBJECT
 
 public:
 
-  typedef qSlicerAbstractCoreModule Superclass;
+  typedef qSlicerCoreModule Superclass;
   qSlicerSliceControllerModule(QObject *parent=0);
 
   qSlicerGetTitleMacro("Slice Controllers");

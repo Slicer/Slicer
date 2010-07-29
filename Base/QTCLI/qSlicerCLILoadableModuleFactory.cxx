@@ -27,7 +27,7 @@ qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(const Q
   const QString& itemPath):Superclass(itemKey, itemPath){}
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
+qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 {
   qSlicerCLILoadableModule * module = new qSlicerCLILoadableModule();
 

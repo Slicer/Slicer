@@ -11,7 +11,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerROIModule::qSlicerROIModule(QObject* parentObject)
-  :qSlicerAbstractCoreModule(parentObject)
+  :Superclass(parentObject)
 {
   CTK_INIT_PRIVATE(qSlicerROIModule);
 }

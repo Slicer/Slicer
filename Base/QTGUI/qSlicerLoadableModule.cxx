@@ -14,25 +14,25 @@
 #include <QDebug>
 
 // SlicerQt includes
-#include "qSlicerAbstractLoadableModule.h"
+#include "qSlicerLoadableModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerAbstractLoadableModulePrivate: public ctkPrivate<qSlicerAbstractLoadableModule>
+class qSlicerLoadableModulePrivate: public ctkPrivate<qSlicerLoadableModule>
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractLoadableModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerLoadableModule, QObject*);
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractLoadableModule::setup()
+void qSlicerLoadableModule::setup()
 {
   Q_ASSERT(ctk_d() != 0);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractLoadableModule::helpText()const
+QString qSlicerLoadableModule::helpText()const
 {
   qDebug() << "WARNING: " << this->metaObject()->className()
            << "::helpText() is not implemented";
@@ -40,7 +40,7 @@ QString qSlicerAbstractLoadableModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractLoadableModule::acknowledgementText()const
+QString qSlicerLoadableModule::acknowledgementText()const
 {
   qDebug() << "WARNING: " << this->metaObject()->className()
            << "::acknowledgementText - Not implemented";

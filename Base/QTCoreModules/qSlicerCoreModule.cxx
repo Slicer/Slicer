@@ -14,19 +14,19 @@
 #include <QDebug>
 
 // SlicerQt includes
-#include "qSlicerAbstractCoreModule.h"
+#include "qSlicerCoreModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerAbstractCoreModulePrivate: public ctkPrivate<qSlicerAbstractCoreModule>
+class qSlicerCoreModulePrivate: public ctkPrivate<qSlicerCoreModule>
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractCoreModule, QObject*);
+CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCoreModule, QObject*);
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractCoreModule::setup()
+void qSlicerCoreModule::setup()
 {
 }
 

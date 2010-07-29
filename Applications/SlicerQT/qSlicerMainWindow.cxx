@@ -55,12 +55,12 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   Q_ASSERT(moduleManager);
 
   QObject::connect(moduleManager,
-                   SIGNAL(moduleLoaded(qSlicerAbstractModule*)),
-                   p, SLOT(onModuleLoaded(qSlicerAbstractModule*)));
+                   SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
+                   p, SLOT(onModuleLoaded(qSlicerAbstractCoreModule*)));
 
   QObject::connect(moduleManager,
-                   SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractModule*)),
-                   p, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractModule*)));
+                   SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
+                   p, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule*)));
 
   QObject::connect(this->ModuleToolBarMapper, SIGNAL(mapped(const QString&)),
                    this->ModulePanel, SLOT(setModule(const QString&)));
@@ -157,9 +157,10 @@ void qSlicerMainWindow::setupMenuActions()
 #undef qSlicerMainWindow_connect
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractModule* module)
+void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
 {
   CTK_D(qSlicerMainWindow);
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
   if (!module)
     {
     return;
@@ -169,20 +170,13 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractModule* module)
   d->ModuleSelector->addModule(module->name());
 
   // Module ToolBar
-  qSlicerAbstractModuleWidget* moduleWidget =
-    dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
-  if (!moduleWidget)
-    {
-    return;
-    }
-
-  QAction * action = moduleWidget->createAction();
+  QAction * action = module->createAction();
   if (!action || action->icon().isNull())
     {
     return;
     }
+
   Q_ASSERT(action->data().toString() == module->name());
-  qDebug() << action->text() << module->title();
   Q_ASSERT(action->text() == module->title());
 
   // here we just want the icons, no text
@@ -203,7 +197,7 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractModule* module)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractModule* module)
+void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module)
 {
   CTK_D(qSlicerMainWindow);
   if (!module)

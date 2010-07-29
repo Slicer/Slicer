@@ -48,7 +48,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
-  qSlicerAbstractModule * abstractModule = moduleFactoryManager.instantiateModule( moduleName );
+  qSlicerAbstractCoreModule * abstractModule = moduleFactoryManager.instantiateModule( moduleName );
 
   if( abstractModule == NULL )
     {

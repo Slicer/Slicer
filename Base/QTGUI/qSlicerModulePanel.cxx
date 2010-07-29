@@ -18,7 +18,7 @@
 #include "ui_qSlicerModulePanel.h"
 #include "qSlicerApplication.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 
 //---------------------------------------------------------------------------
@@ -51,7 +51,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
 {
   CTK_D(qSlicerModulePanel);
 
-  qSlicerAbstractModule * module = 0;
+  qSlicerAbstractCoreModule * module = 0;
 
   if (!moduleName.isEmpty())
     {
@@ -94,7 +94,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
 //---------------------------------------------------------------------------
 void qSlicerModulePanel::addModule(const QString& moduleName)
 {
-  qSlicerAbstractModule* module =
+  qSlicerAbstractCoreModule* module =
     qSlicerApplication::application()->moduleManager()->module(moduleName);
   Q_ASSERT(module);
 
@@ -143,7 +143,7 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
 //---------------------------------------------------------------------------
 void qSlicerModulePanel::removeModule(const QString& moduleName)
 {
-  qSlicerAbstractModule * module =
+  qSlicerAbstractCoreModule * module =
     qSlicerApplication::application()->moduleManager()->module(moduleName);
   Q_ASSERT(module);
 

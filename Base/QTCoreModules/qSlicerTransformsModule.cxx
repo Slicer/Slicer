@@ -26,6 +26,12 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModule, QObject*);
 
 //-----------------------------------------------------------------------------
+QIcon qSlicerTransformsModule::icon()const
+{
+  return QIcon(":/Icons/Transforms.png");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerTransformsModule::createWidgetRepresentation()
 {
   return new qSlicerTransformsModuleWidget;

@@ -5,7 +5,7 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractLoadableModule.h"
+#include "qSlicerLoadableModule.h"
 
 #include "qSlicerVolumesModuleExport.h"
 
@@ -13,16 +13,17 @@ class qSlicerAbstractModuleWidget;
 class qSlicerVolumesModulePrivate;
 
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
-  public qSlicerAbstractLoadableModule
+  public qSlicerLoadableModule
 {
   Q_OBJECT
-  Q_INTERFACES(qSlicerAbstractLoadableModule);
+  Q_INTERFACES(qSlicerLoadableModule);
 
 public:
 
-  typedef qSlicerAbstractLoadableModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerVolumesModule(QObject *parent=0);
 
+  virtual QIcon icon()const;
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
 protected:
