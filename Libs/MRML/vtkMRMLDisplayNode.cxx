@@ -138,7 +138,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 
   if (this->ColorNodeID != NULL) 
     {
-    of << indent << " colorNodeRef=\"" << this->ColorNodeID << "\"";
+    of << indent << " colorNodeID=\"" << this->ColorNodeID << "\"";
     }
 
   if (this->ActiveScalarName != NULL)
@@ -324,7 +324,8 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
         this->AutoScalarRange = 0;
         }
       }
-    else if (!strcmp(attName, "colorNodeRef")) 
+    else if (!strcmp(attName, "colorNodeID") ||
+             !strcmp(attName, "colorNodeRef")) 
       {
       this->SetColorNodeID(attValue);
       //this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
