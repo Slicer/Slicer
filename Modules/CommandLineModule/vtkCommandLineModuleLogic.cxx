@@ -46,6 +46,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLDoubleArrayNode.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
 
+#include "vtkMRMLLabelMapVolumeDisplayNode.h"
+
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
 #include "itksys/RegularExpression.hxx"
@@ -1880,24 +1882,42 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
                            ->GetNodeByID(reference.c_str()));
               if (v)
                 {
-                vtkMRMLScalarVolumeDisplayNode *d
-                  = vtkMRMLScalarVolumeDisplayNode::New();
-                d->CopyWithScene(v->GetDisplayNode());
-                this->MRMLScene->AddNodeNoNotify(d);
-                d->Delete();
+                if(!v->GetLabelMap())
+                  {
+                  vtkMRMLScalarVolumeDisplayNode *d
+                    = vtkMRMLScalarVolumeDisplayNode::New();
+                  d->CopyWithScene(v->GetDisplayNode());
+                  this->MRMLScene->AddNodeNoNotify(d);
+                  d->Delete();
 
-                vtkSmartPointer<vtkStringArray> reqSTNID = vtkSmartPointer<vtkStringArray>::New();
-                vtkStdString areq;
-                areq = "[$::slicer3::MRMLScene GetNodeByID " + (*pit).GetDefault() + "] "
-                  + "SetAndObserveDisplayNodeID "
-                  + d->GetID() + " ; "
-                  + "$::slicer3::MRMLScene Edited";
-                reqSTNID->InsertNextValue( areq );
-                this->GetApplicationLogic()->RequestModified( reqSTNID );
-                }
-              else
-                {
-                vtkWarningMacro( << "Cannot find referenced node " << (*pit).GetDefault());
+                  vtkSmartPointer<vtkStringArray> reqSTNID = vtkSmartPointer<vtkStringArray>::New();
+                  vtkStdString areq;
+                  areq = "[$::slicer3::MRMLScene GetNodeByID " + (*pit).GetDefault() + "] "
+                    + "SetAndObserveDisplayNodeID "
+                    + d->GetID() + " ; " +
+                    " [$::slicer3::MRMLScene GetNodeByID " + (*pit).GetDefault() + 
+                     "] SetLabelMap 0 ;" + "$::slicer3::MRMLScene Edited";
+                  reqSTNID->InsertNextValue( areq );
+                  this->GetApplicationLogic()->RequestModified( reqSTNID );
+                  }
+                else
+                  {
+                  vtkMRMLLabelMapVolumeDisplayNode *d
+                    = vtkMRMLLabelMapVolumeDisplayNode::New();
+                  d->CopyWithScene(v->GetDisplayNode());
+                  this->MRMLScene->AddNodeNoNotify(d);
+                  d->Delete();
+
+                  vtkSmartPointer<vtkStringArray> reqSTNID = vtkSmartPointer<vtkStringArray>::New();
+                  vtkStdString areq;
+                  areq = "[$::slicer3::MRMLScene GetNodeByID " + (*pit).GetDefault() + "] "
+                    + "SetAndObserveDisplayNodeID "
+                    + d->GetID() + " ; " +
+                    " [$::slicer3::MRMLScene GetNodeByID " + (*pit).GetDefault() + 
+                     "] SetLabelMap 1 ;" + "$::slicer3::MRMLScene Edited";
+                  reqSTNID->InsertNextValue( areq );
+                  this->GetApplicationLogic()->RequestModified( reqSTNID );
+                  }
                 }
               }
             }
