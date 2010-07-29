@@ -418,6 +418,17 @@ void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBar::removeModule(const QString& moduleName)
+{
+  CTK_D(qSlicerModuleSelectorToolBar);
+  QAction* moduleAction = d->action(QVariant(moduleName), d->ModulesMenu);
+  QMenu* menu = d->actionMenu(moduleAction, d->ModulesMenu);
+  menu->removeAction(moduleAction);
+  d->AllModulesMenu->removeAction(moduleAction);
+  d->HistoryMenu->removeAction(moduleAction);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBar::selectModule(const QString& moduleName)
 {
   CTK_D(qSlicerModuleSelectorToolBar);

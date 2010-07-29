@@ -214,6 +214,7 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* mod
     if (action->data().toString() == module->name())
       {
       d->ModuleToolBar->removeAction(action);
+      d->ModuleSelector->removeModule(module->name());
       //d->ModuleToolBarMapper->removeMappings(action);
       return;
       }

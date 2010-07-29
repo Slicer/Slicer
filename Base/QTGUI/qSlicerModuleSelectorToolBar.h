@@ -20,12 +20,17 @@ public:
   qSlicerModuleSelectorToolBar(QWidget* parent = 0);
 
   ///
-  /// Add a list of module available for selection
+  /// Add a module by name. The module action will be inserted
+  /// based on its category.
   void addModule(const QString& moduleName);
 
   ///
   /// Add a list of module available for selection
   inline void addModules(const QStringList& moduleNames);
+
+  ///
+  /// Add a list of module available for selection
+  void removeModule(const QString& moduleName);
 
   ///
   /// Select module by title
