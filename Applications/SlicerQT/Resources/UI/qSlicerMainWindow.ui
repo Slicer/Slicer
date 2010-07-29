@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>787</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -252,10 +252,16 @@
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionFileImportScene">
    <property name="text">
     <string>Import Scene</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionFileAddData">
@@ -264,6 +270,9 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionFileAddVolume">
@@ -274,6 +283,9 @@
    <property name="text">
     <string>Add Volume</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionFileAddTransform">
    <property name="icon">
@@ -282,6 +294,9 @@
    </property>
    <property name="text">
     <string>Add Transform</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionFileSaveScene">
@@ -295,6 +310,9 @@
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionFileCloseScene">
    <property name="text">
@@ -303,10 +321,16 @@
    <property name="shortcut">
     <string>Ctrl+W</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionFileExit">
    <property name="text">
     <string>E&amp;xit</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionEditSetHome">
@@ -518,6 +542,9 @@
    <property name="text">
     <string>Conventional</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionViewLayoutFourUp">
    <property name="icon">
@@ -526,6 +553,9 @@
    </property>
    <property name="text">
     <string>Four-Up</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionViewLayoutDual3D">
@@ -536,6 +566,9 @@
    <property name="text">
     <string>Dual 3D</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionViewLayoutOneUp3D">
    <property name="icon">
@@ -544,6 +577,9 @@
    </property>
    <property name="text">
     <string>3D only</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionViewLayoutOneUpRedSlice">
@@ -554,6 +590,9 @@
    <property name="text">
     <string>Red slice only</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionViewLayoutOneUpYellowSlice">
    <property name="icon">
@@ -562,6 +601,9 @@
    </property>
    <property name="text">
     <string>Yellow slice only</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionViewLayoutOneUpGreenSlice">
@@ -572,6 +614,9 @@
    <property name="text">
     <string>Green slice only</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionViewLayoutTabbed3D">
    <property name="icon">
@@ -580,6 +625,9 @@
    </property>
    <property name="text">
     <string>Tabbed 3D</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionViewLayoutTabbedSlice">
@@ -590,6 +638,9 @@
    <property name="text">
     <string>Tabbed slice</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionViewLayoutCompare">
    <property name="icon">
@@ -599,6 +650,9 @@
    <property name="text">
     <string>Compare</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionViewLayoutSideBySideCompare">
    <property name="icon">
@@ -607,6 +661,9 @@
    </property>
    <property name="text">
     <string>Side-by-side Compare</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
  </widget>

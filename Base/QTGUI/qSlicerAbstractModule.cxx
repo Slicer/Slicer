@@ -35,5 +35,6 @@ QAction* qSlicerAbstractModule::createAction()
 {
   QAction* action = new QAction(this->icon(), this->title(), this);
   action->setData(this->name());
+  action->setIconVisibleInMenu(true);
   return action;
 }
