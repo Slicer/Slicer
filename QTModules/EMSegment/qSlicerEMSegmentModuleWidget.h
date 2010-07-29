@@ -23,8 +23,6 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerEMSegmentModuleWidget(QWidget *parent=0);
 
-  virtual QAction* showModuleAction();
-
 public slots:
   void showPanel(int panelId);
 

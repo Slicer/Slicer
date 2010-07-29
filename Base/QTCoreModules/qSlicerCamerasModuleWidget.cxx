@@ -49,12 +49,6 @@ void qSlicerCamerasModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
-QAction* qSlicerCamerasModuleWidget::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/Cameras.png"), tr("Show Cameras module"), this);
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerCamerasModuleWidget::onCurrentViewNodeChanged(vtkMRMLNode* mrmlNode)
 {
   vtkMRMLViewNode* currentViewNode = vtkMRMLViewNode::SafeDownCast(mrmlNode);

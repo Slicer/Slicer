@@ -20,12 +20,6 @@ void qSlicerModuleTemplateModuleWidget::setup()
 {
   CTK_D(qSlicerModuleTemplateModuleWidget);
   d->setupUi(this);
-
-}
-
-//-----------------------------------------------------------------------------
-QAction* qSlicerModuleTemplateModuleWidget::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/ModuleTemplate.png"), tr("Show ModuleTemplate module"), this);
+  this->Superclass::setup();
 }
 

@@ -35,8 +35,6 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerCamerasModuleWidget(QWidget *parent=0);
 
-  virtual QAction* showModuleAction();
-
 public slots:
   /// 
   /// Inherited from qSlicerWidget. Reimplemented for refresh issues.

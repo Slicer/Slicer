@@ -23,8 +23,6 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerModuleTemplateModuleWidget(QWidget *parent=0);
 
-  virtual QAction* showModuleAction();
-
 public slots:
 
 

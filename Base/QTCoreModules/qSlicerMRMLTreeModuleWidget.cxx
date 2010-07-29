@@ -38,9 +38,3 @@ void qSlicerMRMLTreeModuleWidget::setup()
   d->setupUi(this);
 
 }
-
-//-----------------------------------------------------------------------------
-QAction* qSlicerMRMLTreeModuleWidget::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/Data.png"), tr("Show MRMLTree module"), this);
-}

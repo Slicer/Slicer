@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Colors</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+    <normaloff>:/Icons/Colors.png</normaloff>:/Icons/Colors.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
@@ -284,7 +288,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qSlicerBaseQTCoreModules.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>qSlicerColorsModule</sender>

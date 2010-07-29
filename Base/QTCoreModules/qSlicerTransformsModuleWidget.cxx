@@ -104,12 +104,6 @@ void qSlicerTransformsModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
-QAction* qSlicerTransformsModuleWidget::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/Transforms.png"), tr("Show Transforms module"), this);
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::onCoordinateReferenceButtonPressed(int id)
 {
   CTK_D(qSlicerTransformsModuleWidget);

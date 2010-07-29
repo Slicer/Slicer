@@ -39,14 +39,11 @@ public:
   qSlicerAbstractModuleWidget(QWidget *parent=0);
 
   ///
-  /// Reimplemented from qSlicerAbstractModuleRepresentation
-  /// Set the module unique name to the window title of the widget
-  virtual void setName(const QString& moduleName);
-
-  ///
   /// Returns a QAction if the module would like to be added in a toolbar.
   /// By default, returns no QAction.
-  virtual QAction * showModuleAction();
+  virtual QAction * createAction();
+protected:
+  virtual void setup();
 };
 
 #endif

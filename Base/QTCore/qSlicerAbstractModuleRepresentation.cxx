@@ -25,8 +25,8 @@ class qSlicerAbstractModuleRepresentationPrivate: public ctkPrivate<qSlicerAbstr
 {
 public:
   qSlicerAbstractModuleRepresentationPrivate();
-  QString                         Name;
   vtkWeakPointer<vtkSlicerLogic>  Logic;
+
 private:
   CTK_DECLARE_PUBLIC(qSlicerAbstractModuleRepresentation);
   qSlicerAbstractModule*          Module;
@@ -56,8 +56,17 @@ qSlicerAbstractModuleRepresentation::~qSlicerAbstractModuleRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-CTK_SET_CXX(qSlicerAbstractModuleRepresentation, const QString&, setName, Name);
-CTK_GET_CXX(qSlicerAbstractModuleRepresentation, QString, name, Name);
+QAction* qSlicerAbstractModuleRepresentation::createAction()
+{
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerAbstractModuleRepresentation::moduleName()const
+{
+  CTK_D(const qSlicerAbstractModuleRepresentation);
+  return d->Module->name();
+}
 
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerAbstractModuleRepresentation::logic()const
@@ -67,12 +76,10 @@ vtkSlicerLogic* qSlicerAbstractModuleRepresentation::logic()const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModuleRepresentation::setLogic(vtkSlicerLogic* _logic)
+const qSlicerAbstractModule* qSlicerAbstractModuleRepresentation::module()const
 {
-  // setLogic should be called only one time with valid object...
-  Q_ASSERT(_logic);
-  CTK_D(qSlicerAbstractModuleRepresentation);
-  d->Logic = _logic;
+  CTK_D(const qSlicerAbstractModuleRepresentation);
+  return d->Module;
 }
 
 //-----------------------------------------------------------------------------
@@ -80,4 +87,5 @@ void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractModule* modul
 {
   CTK_D(qSlicerAbstractModuleRepresentation);
   d->Module = module;
+  d->Logic = module ? module->logic() : 0;
 }

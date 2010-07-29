@@ -76,7 +76,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
   if (currentModuleWidget)
     {
     // Remove the current module
-    this->removeModule(currentModuleWidget->name());
+    this->removeModule(currentModuleWidget->moduleName());
     }
 
   if (module)
@@ -107,7 +107,7 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
     return;
     }
 
-  Q_ASSERT(!moduleWidget->name().isEmpty());
+  Q_ASSERT(!moduleWidget->moduleName().isEmpty());
 
   CTK_D(qSlicerModulePanel);
 

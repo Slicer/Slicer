@@ -38,28 +38,30 @@ public:
 
   ///
   /// Return the action allowing to show the module
-  virtual QAction* showModuleAction()  { return 0; }
+  /// 0 by default
+  virtual QAction* createAction();
 
   ///
   /// Set/Get module name
-  virtual void setName(const QString& moduleName);
-  QString name()const;
+  QString moduleName()const;
 
 protected:
   ///
   /// All inialization code should be done in the setup
   virtual void setup() = 0;
 
-  ///
-  /// Set/Get associated Logic
-  void setLogic(vtkSlicerLogic* logic);
+  /// Return the logic of the module
   vtkSlicerLogic* logic() const;
+
+  const qSlicerAbstractModule* module()const;
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerAbstractModuleRepresentation);
-  void setModule(qSlicerAbstractModule* module);
-  /// Give access to qSlicerAbstractModule to the method qSlicerAbstractModuleRepresentation::setLogic
+
+  /// Give access to qSlicerAbstractModule to the method
+  /// qSlicerAbstractModuleRepresentation::setModule
   friend class qSlicerAbstractModule;
+  void setModule(qSlicerAbstractModule* module);
 };
 
 #endif

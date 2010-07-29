@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerMeasurementsModule.qrc">
+    <normaloff>:/Icons/Measurements.png</normaloff>:/Icons/Measurements.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <property name="margin">
     <number>6</number>

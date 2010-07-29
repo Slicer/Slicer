@@ -18,9 +18,3 @@ void qSlicerMeasurementsModuleWidget::setup()
   CTK_D(qSlicerMeasurementsModuleWidget);
   d->setupUi(this);
 }
-
-//-----------------------------------------------------------------------------
-QAction* qSlicerMeasurementsModuleWidget::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/Measurements.png"), tr("Show Measurements module"), this);
-}

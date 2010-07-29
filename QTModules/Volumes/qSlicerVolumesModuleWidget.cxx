@@ -30,12 +30,6 @@ void qSlicerVolumesModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
-QAction* qSlicerVolumesModuleWidget::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/Volumes.png"), tr("Show Volumes module"), this);
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerVolumesModuleWidget::setActiveVolumeNode(vtkMRMLNode* node)
 {
   CTK_D(qSlicerVolumesModuleWidget);

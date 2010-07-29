@@ -23,8 +23,6 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerVolumesModuleWidget(QWidget *parent=0);
 
-  virtual QAction* showModuleAction();
-
 public slots:
 
   void setActiveVolumeNode(vtkMRMLNode* node);

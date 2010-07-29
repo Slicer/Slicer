@@ -10,7 +10,12 @@
 
 =========================================================================auto=*/
 
+// Qt includes
+#include <QAction>
+#include <QIcon>
+
 // SlicerQt includes
+#include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 
 //-----------------------------------------------------------------------------
@@ -20,15 +25,15 @@ qSlicerAbstractModuleWidget::qSlicerAbstractModuleWidget(QWidget* parentWidget)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractModuleWidget::setName(const QString& name)
+QAction* qSlicerAbstractModuleWidget::createAction()
 {
-  this->qSlicerAbstractModuleRepresentation::setName(name);
-  // better than nothing but still not that...
-  this->setWindowTitle(name);
+  QAction* action = new QAction(this->windowIcon(), this->module()->title(), this);
+  action->setData(this->module()->name());
+  return action;
 }
 
 //-----------------------------------------------------------------------------
-QAction* qSlicerAbstractModuleWidget::showModuleAction()
+void qSlicerAbstractModuleWidget::setup()
 {
-  return 0;
+  this->setWindowTitle(module()->title());
 }

@@ -75,11 +75,6 @@ void qSlicerEMSegmentModuleWidget::setup()
   d->PanelStack->setCurrentIndex(0);
 }
 
-//-----------------------------------------------------------------------------
-QAction* qSlicerEMSegmentModuleWidget::showModuleAction()
-{
-  return new QAction(QIcon(":/Icons/EMSegment.png"), tr("Show EMSegment module"), this);
-}
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentModuleWidget::showPanel(int panelId)

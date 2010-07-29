@@ -36,8 +36,6 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTransformsModuleWidget(QWidget *parent=0);
 
-  virtual QAction* showModuleAction();
-
 public slots:
   void loadTransform();
 

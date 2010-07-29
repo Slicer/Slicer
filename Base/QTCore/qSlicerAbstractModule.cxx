@@ -182,14 +182,6 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractModule::widgetRepresentation
       return 0;
       }
     d->WidgetRepresentation->setModule(this);
-    // Note: WidgetRepresentation->setLogic should be called before
-    // WidgetRepresentation->setMRMLScene() because some methods
-    // might need a logic when a MRML scene is set.
-    if (d->Logic)
-      {
-      d->WidgetRepresentation->setLogic(d->Logic);
-      }
-    d->WidgetRepresentation->setName(this->name());
     d->WidgetRepresentation->setup();
     // Note: setMRMLScene should be called after setup (just to make sure widgets
     // are well written and can handle empty mrmlscene

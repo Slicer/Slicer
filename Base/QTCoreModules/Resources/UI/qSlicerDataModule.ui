@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Data</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+    <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_3iew">
    <item>
     <widget class="ctkCollapsibleButton" name="DisplayModifiyButton">

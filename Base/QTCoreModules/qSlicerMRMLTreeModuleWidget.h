@@ -34,8 +34,6 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerMRMLTreeModuleWidget(QWidget *parent=0);
 
-  virtual QAction* showModuleAction();
-
 protected:
   virtual void setup();
 

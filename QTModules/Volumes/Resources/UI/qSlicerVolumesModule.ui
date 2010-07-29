@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Volumes</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerVolumesModule.qrc">
+    <normaloff>:/Icons/Volumes.png</normaloff>:/Icons/Volumes.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -23,12 +27,12 @@
    </item>
    <item row="0" column="1">
     <widget class="qMRMLNodeComboBox" name="ActiveVolumeNodeSelector">
-     <property name="nodeTypes" stdset="0">
+     <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="addEnabled" stdset="0">
+     <property name="addEnabled">
       <bool>false</bool>
      </property>
     </widget>
@@ -59,7 +63,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
-   <extends>QComboBox</extends>
+   <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
@@ -74,7 +78,9 @@
    <header>qSlicerVolumeDisplayWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qSlicerVolumesModule.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>qSlicerVolumesModule</sender>
