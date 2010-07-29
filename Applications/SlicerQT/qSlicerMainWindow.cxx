@@ -1,6 +1,6 @@
 // Qt includes
 #include <QDebug>
-#include <QSignalMapper>
+//#include <QSignalMapper>
 #include <QStringList>
 
 // SlicerQt includes
@@ -26,7 +26,7 @@ public:
   qSlicerMainWindowCore*        Core;
   qSlicerModuleSelectorToolBar* ModuleSelector;
   QStringList                   ModuleToolBarList;
-  QSignalMapper*                ModuleToolBarMapper;
+  //QSignalMapper*                ModuleToolBarMapper;
 };
 
 //-----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate()
   this->ModuleToolBarList << "Data"  << "Volumes" << "Models" << "Transforms"
                           << "Fiducials" << "Editor" << "Measurements"
                           << "Colors";
-  this->ModuleToolBarMapper = 0;
+  //this->ModuleToolBarMapper = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
   // Update the list of modules when they are loaded
-  this->ModuleToolBarMapper = new QSignalMapper(p);
+  //this->ModuleToolBarMapper = new QSignalMapper(p);
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
 
@@ -62,8 +62,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
                    p, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule*)));
 
-  QObject::connect(this->ModuleToolBarMapper, SIGNAL(mapped(const QString&)),
-                   this->ModulePanel, SLOT(setModule(const QString&)));
+  //QObject::connect(this->ModuleToolBarMapper, SIGNAL(mapped(const QString&)),
+  //                 this->ModulePanel, SLOT(setModule(const QString&)));
 
   // Create a Module selector
   this->ModuleSelector = new qSlicerModuleSelectorToolBar("Module Selector",p);
@@ -187,9 +187,9 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
   //action->setText("");
 
   // Add action to signal mapper
-  d->ModuleToolBarMapper->setMapping(action, module->name());
-  QObject::connect(action, SIGNAL(triggered()),
-                   d->ModuleToolBarMapper, SLOT(map()));
+  //d->ModuleToolBarMapper->setMapping(action, module->name());
+  //QObject::connect(action, SIGNAL(triggered()),
+  //                 d->ModuleToolBarMapper, SLOT(map()));
 
   // Update action state
   bool visible = d->ModuleToolBarList.contains(module->title());
@@ -214,7 +214,7 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* mod
     if (action->data().toString() == module->name())
       {
       d->ModuleToolBar->removeAction(action);
-      d->ModuleToolBarMapper->removeMappings(action);
+      //d->ModuleToolBarMapper->removeMappings(action);
       return;
       }
     }
