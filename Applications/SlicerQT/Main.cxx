@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
     }
 
   // TODO: load home module (check in Settings)
-  window.modulePanel()->setModule( moduleManager->moduleName("SlicerWelcome") );
+  window.moduleSelector()->selectModuleByTitle("SlicerWelcome");
 
   // Show main window
   window.show();

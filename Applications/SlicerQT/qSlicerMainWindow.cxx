@@ -106,7 +106,11 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
 CTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerMainWindow, qSlicerModulePanel*, modulePanel, ModulePanel);
+qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const
+{
+  CTK_D(const qSlicerMainWindow);
+  return d->ModuleSelector;
+}
 
 //-----------------------------------------------------------------------------
 // Helper macro allowing to connect the MainWindow action with the corresponding

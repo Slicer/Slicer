@@ -28,9 +28,8 @@ public:
   // Return the main window core.
   qSlicerMainWindowCore* core()const;
 
-  // Description:
-  // Return the module panel
-  qSlicerModulePanel* modulePanel() const;
+  /// Return the module selector
+  qSlicerModuleSelectorToolBar* moduleSelector()const;
 
 protected slots:
   void onModuleLoaded(qSlicerAbstractCoreModule* module);
