@@ -1903,7 +1903,26 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::AddTextNodeCompleted()
 {
-  this->InvokeEvent(vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent, 0);
+  //this->InvokeEvent(vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent, 0);
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+  if ( interactionNode == NULL )
+    {
+    vtkErrorMacro ( "AddTextNode: No interaction node in the scene." );
+    return;
+    }
+
+
+  interactionNode->SetPlaceModePersistence(0);
+  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewRotate);
+
+  if (interactionNode->GetCurrentInteractionMode()!=vtkMRMLInteractionNode::ViewRotate) {
+
+    vtkErrorMacro("AddTextNode: Could not set place mode!");
+
+  }
+
+  std::cout << "CurrentInteractionMode: " << interactionNode->GetInteractionModeAsString(interactionNode->GetCurrentInteractionMode()) << std::endl;
 }
 
 //-----------------------------------------------------------------------------

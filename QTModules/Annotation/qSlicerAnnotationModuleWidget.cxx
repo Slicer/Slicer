@@ -557,6 +557,8 @@ qSlicerAnnotationModuleWidget::setup()
       SLOT(onLockUnlockAllButtonClicked()));
   this->connect(d->pauseButton, SIGNAL(toggled(bool)), this,
       SLOT(onPauseButtonToggled(bool)));
+  this->connect(d->resumeButton, SIGNAL(toggled(bool)), this,
+      SLOT(onResumeButtonToggled(bool)));
   this->connect(d->tableWidget, SIGNAL(itemSelectionChanged()), this,
       SLOT(onItemSelectionChanged()));
 
@@ -1816,11 +1818,37 @@ qSlicerAnnotationModuleWidget::getAnnotationIconName(int index, bool isEdit)
 }
 
 void
+qSlicerAnnotationModuleWidget::onResumeButtonToggled(bool toggle)
+{
+   CTK_D(qSlicerAnnotationModuleWidget);
+
+   d->pauseButton->setChecked(false);
+
+   d->logic()->AddTextNode();
+
+   /*if ( toggle )
+   {
+   d->resumeButton->setChecked(false);
+   vtkMRMLInteractionNode *interactionNode = NULL;
+   interactionNode = d->logic()->GetApplicationLogic()->GetInteractionNode();
+   //this->SetInteractionNode ( interactionNode );
+
+   interactionNode->NormalizeAllMouseModes();
+   interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
+   interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
+   }*/
+
+}
+
+void
 qSlicerAnnotationModuleWidget::onPauseButtonToggled(bool toggle)
 {
-  /*CTK_D(qSlicerAnnotationModuleWidget);
+   CTK_D(qSlicerAnnotationModuleWidget);
 
-   if ( toggle )
+   d->resumeButton->setChecked(false);
+   d->logic()->AddTextNodeCompleted();
+
+   /*if ( toggle )
    {
    d->resumeButton->setChecked(false);
    vtkMRMLInteractionNode *interactionNode = NULL;
@@ -1903,9 +1931,11 @@ qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
-  printf("Trying to add a text node..\r\n");
 
   const char *newTextNodeID = d->logic()->AddTextNode();
+  d->textTypeButton->setChecked(true);
+  d->resumeButton->setChecked(true);
+  d->pauseButton->setChecked(false);
   if (!newTextNodeID)
     {
 

@@ -111,6 +111,7 @@ protected slots:
     bool saveScreenShot();
 
     // Mouse Mode Operation
+    void onResumeButtonToggled(bool toggle);
     void onPauseButtonToggled(bool toggle);
 
 private:
