@@ -12,6 +12,7 @@
 
 ==========================================================================*/
 #include "Utils.h"
+#include <math.h>
 
 void Crash()
 {
@@ -19,30 +20,30 @@ void Crash()
   free( foo );
 }
 
-void pkmult( const vector<double>& vecin, const vector<double>& mat, vector<double>& vecout )
+void pkmult( const std::vector<double>& vecin, const std::vector<double>& mat, std::vector<double>& vecout )
 {
   vecout[0] = mat[0] * vecin[0] + mat[1] * vecin[1] + mat[2] * vecin[2];
   vecout[1] = mat[3] * vecin[0] + mat[4] * vecin[1] + mat[5] * vecin[2];
   vecout[2] = mat[6] * vecin[0] + mat[7] * vecin[1] + mat[8] * vecin[2];
 }
 
-void pkmult( const valarray<double>& vecin, const vector<double>& mat, valarray<double>& vecout )
+void pkmult( const std::valarray<double>& vecin, const std::vector<double>& mat, std::valarray<double>& vecout )
 {
   vecout[0] = mat[0] * vecin[0] + mat[1] * vecin[1] + mat[2] * vecin[2];
   vecout[1] = mat[3] * vecin[0] + mat[4] * vecin[1] + mat[5] * vecin[2];
   vecout[2] = mat[6] * vecin[0] + mat[7] * vecin[1] + mat[8] * vecin[2];
 }
 
-void pkmult2( const valarray<double>& vecin, const valarray<double>& mat, valarray<double>& vecout )
+void pkmult2( const std::valarray<double>& vecin, const std::valarray<double>& mat, std::valarray<double>& vecout )
 {
   vecout[0] = mat[0] * vecin[0] + mat[1] * vecin[1] ;
   vecout[1] = mat[2] * vecin[0] + mat[3] * vecin[1] ;
 }
 
-void SelfUnion( vector<int>& vec )
+void SelfUnion( std::vector<int>& vec )
 {
-  sort( vec.begin(), vec.end() );
-  vec.erase( unique(vec.begin(), vec.end()),vec.end() );
+  std::sort( vec.begin(), vec.end() );
+  vec.erase( std::unique(vec.begin(), vec.end()),vec.end() );
 }
 
 std::vector<int> ListToSTDVector( const std::list<int>& ListIn_ )
@@ -58,13 +59,13 @@ std::vector<int> ListToSTDVector( const std::list<int>& ListIn_ )
   return res;
 }
 
-void DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z )
+void DropIdx( const std::vector<int>& L_zp, const std::vector<int>& L_zn, std::vector<int>& L_z )
 {
-  vector<int> L_z_(0);
+  std::vector<int> L_z_(0);
   for( ::size_t i = 0; i < L_z.size(); i++ )
     {
-    int num1 = count( L_zp.begin(), L_zp.end(), L_z[i] );
-    int num2 = count( L_zn.begin(), L_zn.end(), L_z[i] );
+    int num1 = std::count( L_zp.begin(), L_zp.end(), L_z[i] );
+    int num2 = std::count( L_zn.begin(), L_zn.end(), L_z[i] );
     if( num1 + num2 == 0 )
       {
       L_z_.push_back( L_z[i] );
@@ -73,19 +74,19 @@ void DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z
   L_z = L_z_;
 }
 
-void ProcessTriDataFiles( const vector<string>& filenames, valarray<int> &CurIdx,
-                          valarray<double> &CurVertX, valarray<double> &CurVertY, valarray<double> &CurVertZ )
+void ProcessTriDataFiles( const std::vector<std::string>& filenames, std::valarray<int> &CurIdx,
+                          std::valarray<double> &CurVertX, std::valarray<double> &CurVertY, std::valarray<double> &CurVertZ )
 {
-  string fileNameFaces = filenames[0];
-  string fileNameVerts = filenames[1];
+  std::string fileNameFaces = filenames[0];
+ std:: string fileNameVerts = filenames[1];
 
-    cout<<"Reading from "<<fileNameFaces<<", "<<fileNameVerts<<"\n";
+    std::cout<<"Reading from "<<fileNameFaces<<", "<<fileNameVerts<<"\n";
 
 // read a comma separted value file that defines the vertices
 // and indices into vertices for all faces
 
   char line[512];
-  ifstream fin( fileNameFaces.c_str() );
+  std::ifstream fin( fileNameFaces.c_str() );
   int numFaces = 0;
 
 //cout<<"Start reading faces data..."<<fileNameFaces.c_str()<<"\n";
@@ -100,12 +101,12 @@ void ProcessTriDataFiles( const vector<string>& filenames, valarray<int> &CurIdx
     }
   fin.close();
 
-  cout<<"Done Reading faces data...";
+  std::cout<<"Done Reading faces data...";
 
-  CurIdx   = valarray<int>( (numFaces-1)*3 );
-  ifstream fin2( fileNameFaces.c_str() );
+  CurIdx   = std::valarray<int>( (numFaces-1)*3 );
+  std::ifstream fin2( fileNameFaces.c_str() );
 
-  string csTemp;
+  std::string csTemp;
 
 //cout<<"Reading face data...\n";
 //cout<<"Creating object with "<<numFaces<<" triangles\n";
@@ -119,22 +120,22 @@ void ProcessTriDataFiles( const vector<string>& filenames, valarray<int> &CurIdx
       break;
 ////cout<<csTemp.c_str()<<"\n";
     int comma1_idx = csTemp.find_first_of(',');
-    string s1 = csTemp.substr(0,comma1_idx);
+    std::string s1 = csTemp.substr(0,comma1_idx);
     idx = atoi(s1.c_str());
     (CurIdx)[ 3*k + 0 ] = idx-1;
-    string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
+    std::string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
     int comma2_idx = rest1.find_first_of(',');
-    string s2 = rest1.substr(0,comma2_idx);
+    std::string s2 = rest1.substr(0,comma2_idx);
     idx = atoi(s2.c_str());
     (CurIdx)[ 3*k + 1 ] = idx-1;
-    string rest2 = rest1.substr(comma2_idx+1,rest1.length());
-    idx = atoi(rest2.c_str());
+    std::string rest2 = rest1.substr(comma2_idx+1,rest1.length());
+    idx = std::atoi(rest2.c_str());
     (CurIdx)[ 3*k + 2 ] = idx-1;
     k++;
     }
 
   fin2.close();
-  ifstream vin( fileNameVerts.c_str() );
+  std::ifstream vin( fileNameVerts.c_str() );
 //cout<<"Counting vertices...\n";
   int numVerts = 0;
   k = 0;
@@ -145,14 +146,14 @@ void ProcessTriDataFiles( const vector<string>& filenames, valarray<int> &CurIdx
     }
 //numVerts--; // last line is blank
   vin.close();
-  cout<<"Done counting vertices \n";
+  std::cout<<"Done counting vertices \n";
 //double* tempnorms = new double[3*numVerts];
 
-  CurVertX = valarray<double>(numVerts-1);
-  CurVertY = valarray<double>(numVerts-1);
-  CurVertZ = valarray<double>(numVerts-1);
+  CurVertX = std::valarray<double>(numVerts-1);
+  CurVertY = std::valarray<double>(numVerts-1);
+  CurVertZ = std::valarray<double>(numVerts-1);
 
-  ifstream vin2( fileNameVerts.c_str() );
+  std::ifstream vin2( fileNameVerts.c_str() );
 //double* tempverts = new double[3*numVerts];
 //cout<<"Making object with "<<3*numVerts<<" vertices and normals...\n";
 //double val;
@@ -166,15 +167,15 @@ void ProcessTriDataFiles( const vector<string>& filenames, valarray<int> &CurIdx
       break;
 ////cout<<csTemp.c_str()<<"\n";
     int comma1_idx = csTemp.find_first_of(',');
-    string s1 = csTemp.substr(0,comma1_idx);
+    std::string s1 = csTemp.substr(0,comma1_idx);
     val = atof(s1.c_str());
     CurVertX[ k ] = val;
-    string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
+    std::string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
     int comma2_idx = rest1.find_first_of(',');
-    string s2 = rest1.substr(0,comma2_idx);
+    std::string s2 = rest1.substr(0,comma2_idx);
     val = atof(s2.c_str());
     CurVertY[ k ] = val;
-    string rest2 = rest1.substr(comma2_idx+1,rest1.length());
+    std::string rest2 = rest1.substr(comma2_idx+1,rest1.length());
     val = atof(rest2.c_str());
     CurVertZ[ k ] = val;
     k++;
@@ -190,23 +191,23 @@ cout<< (*CurVert)[i] <<", ";*/
 
 }
 
-void ReadNormals( const string& filename, valarray<double>& nx, valarray<double>& ny, valarray<double>& nz )
+void ReadNormals( const std::string& filename, std::valarray<double>& nx, std::valarray<double>& ny, std::valarray<double>& nz )
 {
 // don't need this, the normals are pre-allocated before getting here
-  ifstream vin( filename.c_str() );
+  std::ifstream vin( filename.c_str() );
   int numVerts = 0;
   char line[512];
-  string csTemp;
+ std:: string csTemp;
   while( !vin.eof() )
     {
     vin>>line;
     numVerts++;
     }
   vin.close();
-  nx = valarray<double>(numVerts-1);
-  ny = valarray<double>(numVerts-1);
-  nz = valarray<double>(numVerts-1);
-  ifstream vin2( filename.c_str() );
+  nx = std::valarray<double>(numVerts-1);
+  ny = std::valarray<double>(numVerts-1);
+  nz = std::valarray<double>(numVerts-1);
+  std::ifstream vin2( filename.c_str() );
   double val;
   int k = 0;
   while( !vin2.eof() )
@@ -217,15 +218,15 @@ void ReadNormals( const string& filename, valarray<double>& nx, valarray<double>
       break;
 ////cout<<csTemp.c_str()<<"\n";
     int comma1_idx = csTemp.find_first_of(',');
-    string s1 = csTemp.substr(0,comma1_idx);
+    std::string s1 = csTemp.substr(0,comma1_idx);
     val = atof(s1.c_str());
     nx[ k ] = val;
-    string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
+    std::string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
     int comma2_idx = rest1.find_first_of(',');
-    string s2 = rest1.substr(0,comma2_idx);
+    std::string s2 = rest1.substr(0,comma2_idx);
     val = atof(s2.c_str());
     ny[ k ] = val;
-    string rest2 = rest1.substr(comma2_idx+1,rest1.length());
+    std::string rest2 = rest1.substr(comma2_idx+1,rest1.length());
     val = atof(rest2.c_str());
     nz[ k ] = val;
     k++;

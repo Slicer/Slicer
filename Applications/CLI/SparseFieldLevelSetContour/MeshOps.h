@@ -35,36 +35,36 @@
 
 struct AdjData {
 int myIdx;
-vector<int> myNeighbs;
+std::vector<int> myNeighbs;
 };
 
 
 struct MeshData {
-valarray<double> MeanCurv;
-valarray<double> dkdx;
-valarray<double> dkdy;
-valarray<double> dkdz;
-valarray<double> nx;
-valarray<double> ny;
-valarray<double> nz;
+std::valarray<double> MeanCurv;
+std::valarray<double> dkdx;
+std::valarray<double> dkdy;
+std::valarray<double> dkdz;
+std::valarray<double> nx;
+std::valarray<double> ny;
+std::valarray<double> nz;
 
 // derivatives w.r.t. intrinsic basis on manifold
-valarray<double> dkde1;
-valarray<double> dkde2;
-valarray<double> dkmag;
+std::valarray<double> dkde1;
+std::valarray<double> dkde2;
+std::valarray<double> dkmag;
 
 // extra color maps to use for various purposes
-valarray<double> cmap0;
-valarray<double> cmap1;
-valarray<double> cmap2;
-valarray<double> cmap3;
+std::valarray<double> cmap0;
+std::valarray<double> cmap1;
+std::valarray<double> cmap2;
+std::valarray<double> cmap3;
 
 vtkPolyData* polydata;
 vtkPolyDataMapper *mapper;
-vector<AdjData> adj; // neighbors N steps into tree
-vector<AdjData> adjimm; // immediate neighbors; not yet computed
+std::vector<AdjData> adj; // neighbors N steps into tree
+std::vector<AdjData> adjimm; // immediate neighbors; not yet computed
 
-valarray<double> kappa;
+std::valarray<double> kappa;
 
 int adj_levels;
 int smoothH_its;
@@ -90,6 +90,6 @@ void SmoothCurvature( MeshData* meshdata );
 
 void ComputeGradCurvatureTangentPlane( MeshData* meshdata );
 
-vector<int> InitPath( MeshData* meshdata, vector<int> pts);
+std::vector<int> InitPath( MeshData* meshdata, std::vector<int> pts);
 
 #endif

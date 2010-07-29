@@ -27,7 +27,7 @@ public:
 L_z = C;
 meshdata = data;
 energy = mergy;
-phi = vector<double>(data->MeanCurv.size());
+phi = std::vector<double>(data->MeanCurv.size());
 CleanLZ();
 InitSphere();
 dDirection = -1.0;
@@ -40,8 +40,8 @@ L_z = C;
 meshdata = data;
 L_z = C; L_n1 = Ln1; L_p1 = Lp1; L_n2 = Ln2; L_p2 = Lp2;
 int numVerts = map.size();
-point_type = vector<int>(numVerts);
-phi        = vector<double>(numVerts);
+point_type = std::vector<int>(numVerts);
+phi        = std::vector<double>(numVerts);
 for( unsigned int i = 0; i < map.size(); i++ ) {
   point_type[i] = map[i];
   phi[i]        = double( map[i] );
@@ -63,20 +63,20 @@ std::list<int> L_n2;
 std::list<int> L_p2;
 double dDirection;
 
-vector<int> point_type;
-vector<double> phi;
-void SelfUnion( vector<int>& vec );
-void SelfUnion( list<int>& vec );
-void DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z );
-void DropIdx( const list<int>& L_zp, const list<int>& L_zn, list<int>& L_z );
-void AppendIdx( const vector<int>& src, vector<int>& dst );
+std::vector<int> point_type;
+std::vector<double> phi;
+void SelfUnion( std::vector<int>& vec );
+void SelfUnion( std::list<int>& vec );
+void DropIdx( const std::vector<int>& L_zp, const std::vector<int>& L_zn, std::vector<int>& L_z );
+void DropIdx( const std::list<int>& L_zp, const std::list<int>& L_zn, std::list<int>& L_z );
+void AppendIdx( const std::vector<int>& src, std::vector<int>& dst );
 
 public:
 void SwitchDirection()    { dDirection *= -1.0; }
 std::vector<double>* GetPhi()  { return &phi; };
 std::list<int>*  GetPtrLZ()  { return &L_z; };
 
-vector<int> EvolveRecalc( );
+std::vector<int> EvolveRecalc( );
 // "sphere": assume that the mesh is homeomorphic to a sphere
 bool InitSphere(); // determine what the other layers are on the mesh given L_z
 bool InitFast(); // TODO: a fast way of doing this (local search...)

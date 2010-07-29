@@ -13,8 +13,8 @@
 ==========================================================================*/
 #include "MeshEnergy.h"
 
-void MeshEnergy::GetNormalsTangentPlane( const vector<int>& C, const vector<double>& phi,
-                                         valarray<double>& ne1, valarray<double>& ne2, 
+void MeshEnergy::GetNormalsTangentPlane( const std::vector<int>& C, const std::vector<double>& phi,
+                                         std::valarray<double>& ne1, std::valarray<double>& ne2, 
                                          MeshData* vtkNotUsed(meshdata))
 {
   vtkPoints*    verts = meshdata->polydata->GetPoints();
@@ -22,26 +22,26 @@ void MeshEnergy::GetNormalsTangentPlane( const vector<int>& C, const vector<doub
   for( ::size_t k_ = 0; k_ < C.size(); k_++ )
     {
     int k = C[k_];
-    vector<double> nhat(3);
+    std::vector<double> nhat(3);
     nhat[0] = meshdata->nx[k]; // these are normal to surface; the nx_ are the contour normals
     nhat[1] = meshdata->ny[k];
     nhat[2] = meshdata->nz[k];
 // step 1. create the rotation matrix that orients the current normal as [0,0,1]'.
 
     double phiang = atan2( nhat[0], nhat[1] );
-    vector<double> rotate1(9);
+    std::vector<double> rotate1(9);
     rotate1[0] = cos(phiang); rotate1[1] = -sin(phiang); rotate1[2] = 0;
     rotate1[3] = sin(phiang); rotate1[4] = cos(phiang); rotate1[5] = 0;
     rotate1[6] = 0; rotate1[7] = 0; rotate1[8] = 1.0;
-    vector<double> nhat_a(3);
+    std::vector<double> nhat_a(3);
     pkmult( nhat, rotate1, nhat_a );
     double ytilde = nhat_a[1];
     double theta = M_PI_2 - atan2(nhat[2],ytilde);
-    vector<double> rotate2(9);
+    std::vector<double> rotate2(9);
     rotate2[0] = 1.0; rotate2[1] = 0; rotate2[2] = 0;
     rotate2[3] = 0; rotate2[4] = cos(theta); rotate2[5] = -sin(theta);
     rotate2[6] = 0; rotate2[7] = sin(theta); rotate2[8] = cos(theta);
-    vector<double> nhat_b(3);
+    std::vector<double> nhat_b(3);
     pkmult( nhat_a, rotate2, nhat_b );
 // nhat_b should now be [0 0 1]'
 
@@ -50,12 +50,12 @@ void MeshEnergy::GetNormalsTangentPlane( const vector<int>& C, const vector<doub
 // apply rotate2 * rotate1 to each *translated* neighbor of this k-th point
     ::size_t num_neigh = meshdata->adj[k].myNeighbs.size();
     double vec[3];
-    vector<double> vv(3);
-    vector<double> vv_(3);
-    valarray<double> xdata(num_neigh);
-    valarray<double> ydata(num_neigh);
-    valarray<double> zdata(num_neigh);
-// step 2. create temporary set of vectors as copies of neighboring points
+    std::vector<double> vv(3);
+    std::vector<double> vv_(3);
+    std::valarray<double> xdata(num_neigh);
+    std::valarray<double> ydata(num_neigh);
+    std::valarray<double> zdata(num_neigh);
+// step 2. create temporary set of std::vectors as copies of neighboring points
 // translated to origin
 // step 3. apply the rotation to all these points
     for ( ::size_t i = 0; i < num_neigh; i++ )
@@ -76,8 +76,8 @@ void MeshEnergy::GetNormalsTangentPlane( const vector<int>& C, const vector<doub
 continue;*/
 
 // step 4. find least-squares fit for H(x,y) = ax + by
-    valarray<double> RHS(2);
-    valarray<double> ATA(4);
+    std::valarray<double> RHS(2);
+    std::valarray<double> ATA(4);
     ATA[0] = (xdata * xdata).sum();
     ATA[1] = (xdata * ydata).sum();
     ATA[2] = ATA[1];
@@ -87,8 +87,8 @@ continue;*/
     RHS[1] = (ydata * zdata).sum();
 
     int maxits = 1000;
-    valarray<double> ab = RHS; // initial guess
-    valarray<double> LHS(2);
+    std::valarray<double> ab = RHS; // initial guess
+    std::valarray<double> LHS(2);
     pkmult2( ab, ATA, LHS );
     double res = sqrt( ( (LHS - RHS)*(LHS - RHS) ).sum() );
     double tol = 1e-8;
@@ -109,8 +109,8 @@ continue;*/
 
 }
 
-void MeshEnergy::GetKappa( const vector<int>& C, const vector<double>& phi,
-                           valarray<double>& kappa)
+void MeshEnergy::GetKappa( const std::vector<int>& C, const std::vector<double>& phi,
+                           std::valarray<double>& kappa)
 {
 // kappa: divergence of normal
 // dy^2 * dxx - 2dxdydxy + dx^2dyy / ( dx^2 + dy^2 )^(3/2)
@@ -120,26 +120,26 @@ void MeshEnergy::GetKappa( const vector<int>& C, const vector<double>& phi,
   for( ::size_t k_ = 0; k_ < C.size(); k_++ )\
     {
     int k = C[k_];
-    vector<double> nhat(3);
+    std::vector<double> nhat(3);
     nhat[0] = meshdata->nx[k]; // these are normal to surface; the nx_ are the contour normals
     nhat[1] = meshdata->ny[k];
     nhat[2] = meshdata->nz[k];
 // step 1. create the rotation matrix that orients the current normal as [0,0,1]'.
 
     double phiang = atan2( nhat[0], nhat[1] );
-    vector<double> rotate1(9);
+    std::vector<double> rotate1(9);
     rotate1[0] = cos(phiang); rotate1[1] = -sin(phiang); rotate1[2] = 0;
     rotate1[3] = sin(phiang); rotate1[4] = cos(phiang); rotate1[5] = 0;
     rotate1[6] = 0; rotate1[7] = 0; rotate1[8] = 1.0;
-    vector<double> nhat_a(3);
+    std::vector<double> nhat_a(3);
     pkmult( nhat, rotate1, nhat_a );
     double ytilde = nhat_a[1];
     double theta = M_PI_2 - atan2(nhat[2],ytilde);
-    vector<double> rotate2(9);
+    std::vector<double> rotate2(9);
     rotate2[0] = 1.0; rotate2[1] = 0; rotate2[2] = 0;
     rotate2[3] = 0; rotate2[4] = cos(theta); rotate2[5] = -sin(theta);
     rotate2[6] = 0; rotate2[7] = sin(theta); rotate2[8] = cos(theta);
-    vector<double> nhat_b(3);
+    std::vector<double> nhat_b(3);
     pkmult( nhat_a, rotate2, nhat_b );
 // nhat_b should now be [0 0 1]'
 
@@ -148,12 +148,12 @@ void MeshEnergy::GetKappa( const vector<int>& C, const vector<double>& phi,
 // apply rotate2 * rotate1 to each *translated* neighbor of this k-th point
     ::size_t num_neigh = meshdata->adj[k].myNeighbs.size();
     double vec[3];
-    vector<double> vv(3);
-    vector<double> vv_(3);
-    valarray<double> xdata(num_neigh);
-    valarray<double> ydata(num_neigh);
-    valarray<double> zdata(num_neigh);
-// step 2. create temporary set of vectors as copies of neighboring points
+    std::vector<double> vv(3);
+    std::vector<double> vv_(3);
+    std::valarray<double> xdata(num_neigh);
+    std::valarray<double> ydata(num_neigh);
+    std::valarray<double> zdata(num_neigh);
+// step 2. create temporary set of std::vectors as copies of neighboring points
 // translated to origin
 // step 3. apply the rotation to all these points
     for (::size_t i = 0; i < num_neigh; i++ )
@@ -177,8 +177,8 @@ continue;*/
     double phi_x = 0.0;
     double phi_y = 0.0;
     {
-    valarray<double> RHS(2);
-    valarray<double> ATA(4);
+    std::valarray<double> RHS(2);
+    std::valarray<double> ATA(4);
     ATA[0] = (xdata * xdata).sum();
     ATA[1] = (xdata * ydata).sum();
     ATA[2] = ATA[1];
@@ -188,8 +188,8 @@ continue;*/
     RHS[1] = (ydata * zdata).sum();
 
     int maxits = 1000;
-    valarray<double> ab = RHS; // initial guess
-    valarray<double> LHS(2);
+    std::valarray<double> ab = RHS; // initial guess
+    std::valarray<double> LHS(2);
     pkmult2( ab, ATA, LHS );
     double res = sqrt( ( (LHS - RHS)*(LHS - RHS) ).sum() );
     double tol = 1e-8;
@@ -208,14 +208,14 @@ continue;*/
 
 // step 4. find least-squares fit for phi(x,y) = ax^2 + bxy + cy^2
 // to get second derivatives
-    valarray<double> RHS(3); // A'z
+  std::valarray<double> RHS(3); // A'z
     RHS[0] = ( xdata * xdata * zdata  ).sum();
     RHS[1] = ( xdata * ydata * zdata  ).sum();
     RHS[2] = ( ydata * ydata * zdata  ).sum();
 
     double tik_delta = 1e-1 * abs(RHS).min();
 
-    vector<double> ATA(9); // A'A
+    std::vector<double> ATA(9); // A'A
     ATA[0] = tik_delta + (xdata * xdata * xdata * xdata).sum();
     ATA[1] = (xdata * xdata * xdata * ydata).sum();
     ATA[2] = (xdata * xdata * ydata * ydata).sum();
@@ -227,8 +227,8 @@ continue;*/
     ATA[8] = tik_delta + (ydata * ydata * ydata * ydata).sum();
 
     int maxits = 1000;
-    valarray<double> abc = RHS; // initial guess
-    valarray<double> LHS(3);
+    std::valarray<double> abc = RHS; // initial guess
+    std::valarray<double> LHS(3);
     pkmult( abc, ATA, LHS );
     double res = sqrt( ( (LHS - RHS)*(LHS - RHS) ).sum() );
     double tol = 1e-8;

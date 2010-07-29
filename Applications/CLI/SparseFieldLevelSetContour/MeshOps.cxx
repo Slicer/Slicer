@@ -13,6 +13,7 @@
 ==========================================================================*/
 #include "MeshOps.h"
 #include "vtkSmartPointer.h"
+#include <math.h>
 
 void ComputeCurvatureData( MeshData* meshdata )
 {
@@ -36,8 +37,8 @@ void ComputeCurvatureData( MeshData* meshdata )
   meshdata->ny.resize(numverts);
   meshdata->nz.resize(numverts);
   //std::cout << "After allocation, nx = " << meshdata->nx.size() << "\n";
-  meshdata->adj = vector<AdjData>( numverts );
-  meshdata->adjimm = vector<AdjData>( numverts );
+  meshdata->adj = std::vector<AdjData>( numverts );
+  meshdata->adjimm = std::vector<AdjData>( numverts );
 
   ComputeAdjacency( meshdata );
   ComputeNormals( meshdata );
@@ -69,7 +70,7 @@ void SmoothCurvature( MeshData* meshdata )
   int iterations = meshdata->smoothH_its;
   vtkPoints*    verts = meshdata->polydata->GetPoints();
   int numverts = verts->GetNumberOfPoints();
-  valarray<double> tempK = meshdata->MeanCurv;
+  std::valarray<double> tempK = meshdata->MeanCurv;
   for( int i = 0; i < iterations; i++ )
     {
     for( int k = 0; k < numverts; k++ )
@@ -105,7 +106,7 @@ void ComputeGradCurvatureTangentPlane( MeshData* meshdata )
 
   for( int k = 0; k < numverts; k++ )
     {
-    vector<double> nhat(3);
+    std::vector<double> nhat(3);
     nhat[0] = meshdata->nx[k];
     nhat[1] = meshdata->ny[k];
     nhat[2] = meshdata->nz[k];
@@ -125,19 +126,19 @@ Vec = transform*Vec;
 */
 
     double phiang = atan2( nhat[0], nhat[1] );
-    vector<double> rotate1(9);
+    std::vector<double> rotate1(9);
     rotate1[0] = cos(phiang); rotate1[1] = -sin(phiang); rotate1[2] = 0;
     rotate1[3] = sin(phiang); rotate1[4] = cos(phiang); rotate1[5] = 0;
     rotate1[6] = 0; rotate1[7] = 0; rotate1[8] = 1.0;
-    vector<double> nhat_a(3);
+    std::vector<double> nhat_a(3);
     pkmult( nhat, rotate1, nhat_a );
     double ytilde = nhat_a[1];
     double theta = M_PI_2 - atan2(nhat[2],ytilde);
-    vector<double> rotate2(9);
+    std::vector<double> rotate2(9);
     rotate2[0] = 1.0; rotate2[1] = 0; rotate2[2] = 0;
     rotate2[3] = 0; rotate2[4] = cos(theta); rotate2[5] = -sin(theta);
     rotate2[6] = 0; rotate2[7] = sin(theta); rotate2[8] = cos(theta);
-    vector<double> nhat_b(3);
+    std::vector<double> nhat_b(3);
     pkmult( nhat_a, rotate2, nhat_b );
 // nhat_b should now be [0 0 1]'
 
@@ -154,11 +155,11 @@ Vec = transform*Vec;
   
 
     double vec[3];
-    vector<double> vv(3);
-    vector<double> vv_(3);
-    valarray<double> xdata(num_neigh);
-    valarray<double> ydata(num_neigh);
-    valarray<double> zdata(num_neigh);
+    std::vector<double> vv(3);
+    std::vector<double> vv_(3);
+    std::valarray<double> xdata(num_neigh);
+    std::valarray<double> ydata(num_neigh);
+    std::valarray<double> zdata(num_neigh);
 // step 2. create temporary set of vectors as copies of neighboring points
 // translated to origin
 // step 3. apply the rotation to all these points
@@ -178,8 +179,8 @@ Vec = transform*Vec;
       }
 
 // step 4. find least-squares fit for H(x,y) = ax + by
-    valarray<double> RHS(2);
-    valarray<double> ATA(4);
+    std::valarray<double> RHS(2);
+    std::valarray<double> ATA(4);
     ATA[0] = (xdata * xdata).sum();
     ATA[1] = (xdata * ydata).sum();
     ATA[2] = ATA[1];
@@ -189,8 +190,8 @@ Vec = transform*Vec;
     RHS[1] = (ydata * zdata).sum();
 
     int maxits = 1000;
-    valarray<double> ab = RHS; // initial guess
-    valarray<double> LHS(2);
+    std::valarray<double> ab = RHS; // initial guess
+    std::valarray<double> LHS(2);
     pkmult2( ab, ATA, LHS );
     double res = sqrt( ( (LHS - RHS)*(LHS - RHS) ).sum() );
     double tol = 1e-8;
@@ -229,7 +230,7 @@ void ComputeCurvature( MeshData* meshdata )
 
   for( int k = 0; k < numverts; k++ )
     {
-    vector<double> nhat(3);
+    std::vector<double> nhat(3);
     nhat[0] = meshdata->nx[k];
     nhat[1] = meshdata->ny[k];
     nhat[2] = meshdata->nz[k];
@@ -249,19 +250,19 @@ Vec = transform*Vec;
 */
 
     double phiang = atan2( nhat[0], nhat[1] );
-    vector<double> rotate1(9);
+    std::vector<double> rotate1(9);
     rotate1[0] = cos(phiang); rotate1[1] = -sin(phiang); rotate1[2] = 0;
     rotate1[3] = sin(phiang); rotate1[4] = cos(phiang); rotate1[5] = 0;
     rotate1[6] = 0; rotate1[7] = 0; rotate1[8] = 1.0;
-    vector<double> nhat_a(3);
+    std::vector<double> nhat_a(3);
     pkmult( nhat, rotate1, nhat_a );
     double ytilde = nhat_a[1];
     double theta = M_PI_2 - atan2(nhat[2],ytilde);
-    vector<double> rotate2(9);
+    std::vector<double> rotate2(9);
     rotate2[0] = 1.0; rotate2[1] = 0; rotate2[2] = 0;
     rotate2[3] = 0; rotate2[4] = cos(theta); rotate2[5] = -sin(theta);
     rotate2[6] = 0; rotate2[7] = sin(theta); rotate2[8] = cos(theta);
-    vector<double> nhat_b(3);
+    std::vector<double> nhat_b(3);
     pkmult( nhat_a, rotate2, nhat_b );
 // nhat_b should now be [0 0 1]'
 
@@ -276,11 +277,11 @@ Vec = transform*Vec;
   }
   
   double vec[3];
-    vector<double> vv(3);
-    vector<double> vv_(3);
-    valarray<double> xdata(num_neigh);
-    valarray<double> ydata(num_neigh);
-    valarray<double> zdata(num_neigh);
+    std::vector<double> vv(3);
+    std::vector<double> vv_(3);
+    std::valarray<double> xdata(num_neigh);
+    std::valarray<double> ydata(num_neigh);
+    std::valarray<double> zdata(num_neigh);
 // step 2. create temporary set of vectors as copies of neighboring points
 // translated to origin
 // step 3. apply the rotation to all these points
@@ -300,14 +301,14 @@ Vec = transform*Vec;
       }
 // step 4. find least-squares fit for z(x,y) = ax^2 + bxy + cy^2
 
-    valarray<double> RHS(3); // A'z
+    std::valarray<double> RHS(3); // A'z
     RHS[0] = ( xdata * xdata * zdata  ).sum();
     RHS[1] = ( xdata * ydata * zdata  ).sum();
     RHS[2] = ( ydata * ydata * zdata  ).sum();
 
     double tik_delta = 1e-1 * abs(RHS).min();
 
-    vector<double> ATA(9); // A'A
+    std::vector<double> ATA(9); // A'A
     ATA[0] = tik_delta + (xdata * xdata * xdata * xdata).sum();
     ATA[1] = (xdata * xdata * xdata * ydata).sum();
     ATA[2] = (xdata * xdata * ydata * ydata).sum();
@@ -319,8 +320,8 @@ Vec = transform*Vec;
     ATA[8] = tik_delta + (ydata * ydata * ydata * ydata).sum();
 
     int maxits = 1000;
-    valarray<double> abc = RHS; // initial guess
-    valarray<double> LHS(3);
+    std::valarray<double> abc = RHS; // initial guess
+    std::valarray<double> LHS(3);
     pkmult( abc, ATA, LHS );
     double res = sqrt( ( (LHS - RHS)*(LHS - RHS) ).sum() );
     double tol = 1e-8;
@@ -348,7 +349,7 @@ Vec = transform*Vec;
     }
 }
 
-vector<int> InitPath( MeshData* meshdata, vector<int> pts)
+std::vector<int> InitPath( MeshData* meshdata, std::vector<int> pts)
 {
 // given several seed points, form a contour via
 // some shortest straight euclidean path
@@ -357,10 +358,10 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
   if( numPts < 3 )
     {
     std::cerr<<"Must have at least 3 pts to define closed contour! \n";
-    return vector<int>(0);
+    return std::vector<int>(0);
     }
 
-  vector<int> C(0);
+  std::vector<int> C(0);
   
   if (meshdata->polydata->GetPointData()->GetScalars("InitialCurvature") != NULL)
     {
@@ -397,7 +398,7 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
     verts->GetPoint( nextPt, thatpt ); // point where we're path finding towards
     while( Cpt != nextPt )
       { // path-find until you get to the nextPt
-      vector<int> neigh_pts = meshdata->adjimm[Cpt].myNeighbs;
+      std::vector<int> neigh_pts = meshdata->adjimm[Cpt].myNeighbs;
       double minDist = 1e9;
       int minIdx = Cpt;
       for( ::size_t k = 0; k < neigh_pts.size(); k++ )
@@ -406,7 +407,7 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
         int idx_count = 0;
         if( idx != nextPt )
           {
-          idx_count = count( C.begin(), C.end(), idx );
+          idx_count = std::count( C.begin(), C.end(), idx );
           }
         // for each neighbor, measure the distance to the nextPt
         // keep the index of least distance
@@ -421,10 +422,10 @@ vector<int> InitPath( MeshData* meshdata, vector<int> pts)
   // ok now we know the index of the best neighbor.
   // push it onto the path stack and make it the new current point
       Cpt = minIdx;
-      if( (minIdx != nextPt) && count( C.begin(), C.end(), Cpt ) != 0 )
+      if( (minIdx != nextPt) && std::count( C.begin(), C.end(), Cpt ) != 0 )
         {
         std::cerr<<"Error, path finder stuck in a loop. Try another initialization. \n";
-        return vector<int>(0);
+        return std::vector<int>(0);
         }
       //if( Cpt != nextPt ) // later debug: make sure the nextPt later gets put on the stack
       C.push_back( Cpt );
@@ -462,7 +463,7 @@ void ComputeNormals( MeshData* meshdata )
 
   if( bTextInputNormals )
     {
-    string filename = "..\\data\\n3.dat";
+    std::string filename = "..\\data\\n3.dat";
     ReadNormals( filename, meshdata->nx, meshdata->ny, meshdata->nz );
     
     }
@@ -472,10 +473,10 @@ void ComputeNormals( MeshData* meshdata )
     vtkPoints*    verts = meshdata->polydata->GetPoints();
     int numfaces = faces->GetNumberOfCells();
     int numverts = verts->GetNumberOfPoints();
-    valarray<double> fnx( numverts );
-    valarray<double> fny( numverts );
-    valarray<double> fnz( numverts );
-    vector<int> vertcount(numverts); // number of times vertex has been added to
+    std::valarray<double> fnx( numverts );
+    std::valarray<double> fny( numverts );
+    std::valarray<double> fnz( numverts );
+    std::vector<int> vertcount(numverts); // number of times vertex has been added to
     double pt0[3];
     double pt1[3];
     double pt2[3];
@@ -522,9 +523,9 @@ void ComputeNormals( MeshData* meshdata )
       }
 
     if( ! bTextInputNormals ) {
-      meshdata->nx = valarray<double>(numverts);
-      meshdata->ny = valarray<double>(numverts);
-      meshdata->nz = valarray<double>(numverts);
+      meshdata->nx = std::valarray<double>(numverts);
+      meshdata->ny = std::valarray<double>(numverts);
+      meshdata->nz = std::valarray<double>(numverts);
       for( int i = 0;  i < numverts; i++ )
       {
         meshdata->nx[i] = fnx[i] / vertcount[i] ;
@@ -557,7 +558,7 @@ void ComputeAdjacency( MeshData* meshdata )
 
   // for every face, make all vertices on the face store in the adjimm list
   for( int i = 0; i < numverts; i++ ) {
-    meshdata->adj[i].myNeighbs    = vector<int>(1);
+    meshdata->adj[i].myNeighbs    = std::vector<int>(1);
     meshdata->adj[i].myNeighbs[0] = i;
     meshdata->adj[i].myIdx = i;
   }
@@ -574,7 +575,7 @@ void ComputeAdjacency( MeshData* meshdata )
 //    int vert2 = pts[2];
     for( int k = 0 ; k < 3; k++ ) {
       for( int kk = 0; kk < 3; kk++ ) {
-        if( 0 == count( meshdata->adjimm[pts[kk]].myNeighbs.begin(), meshdata->adjimm[pts[kk]].myNeighbs.end(),pts[k] ) ) {
+        if( 0 == std::count( meshdata->adjimm[pts[kk]].myNeighbs.begin(), meshdata->adjimm[pts[kk]].myNeighbs.end(),pts[k] ) ) {
           meshdata->adjimm[pts[kk]].myNeighbs.push_back( pts[k] );
       }
       }
@@ -584,7 +585,7 @@ void ComputeAdjacency( MeshData* meshdata )
   for( int i = 0; i < numverts; i++ )
     {
     meshdata->polydata->GetPointCells( i, cellIds );
-    meshdata->adj[i].myNeighbs = vector<int>(0);
+    meshdata->adj[i].myNeighbs = std::vector<int>(0);
     meshdata->adj[i].myIdx = i;
     int iAdjCellCount = cellIds->GetNumberOfIds();
     if( 0 == (i % 10000 ) )
@@ -597,9 +598,9 @@ void ComputeAdjacency( MeshData* meshdata )
       vtkIdType npts;
       vtkIdType* pts;
       faces->GetCell(id*4,npts, pts );
-      int c0 = count( meshdata->adj[i].myNeighbs.begin(),meshdata->adj[i].myNeighbs.end(),pts[0] );
-      int c1 = count( meshdata->adj[i].myNeighbs.begin(),meshdata->adj[i].myNeighbs.end(),pts[1] );
-      int c2 = count( meshdata->adj[i].myNeighbs.begin(),meshdata->adj[i].myNeighbs.end(),pts[2] );
+      int c0 = std::count( meshdata->adj[i].myNeighbs.begin(),meshdata->adj[i].myNeighbs.end(),pts[0] );
+      int c1 = std::count( meshdata->adj[i].myNeighbs.begin(),meshdata->adj[i].myNeighbs.end(),pts[1] );
+      int c2 = std::count( meshdata->adj[i].myNeighbs.begin(),meshdata->adj[i].myNeighbs.end(),pts[2] );
       if( c0 == 0 )
         {
         meshdata->adj[i].myNeighbs.push_back( pts[0] );
@@ -632,13 +633,13 @@ void ComputeAdjacency( MeshData* meshdata )
       for( ::size_t k = 0; k < len; k++ )
         { // for every neigbhor index
         int idx = meshdata->adj[i].myNeighbs[k];
-        vector<int>* others = &(meshdata->adj[idx].myNeighbs); // get neighbor's neighbor array
+        std::vector<int>* others = &(meshdata->adj[idx].myNeighbs); // get neighbor's neighbor array
         ::size_t otherlen = (others)->size(); // length of neighbor's neighbor array
         for( ::size_t j = 0; j < otherlen; j++ )
           { // for every element in neighbor's neigbhor array
           int ptId = (*others)[j];
-          int num = count( meshdata->adj[i].myNeighbs.begin(),meshdata->adj[i].myNeighbs.end(),ptId );
-          int num2 = count( tempdata->adj[i].myNeighbs.begin(),tempdata->adj[i].myNeighbs.end(),ptId );
+          int num = std::count( meshdata->adj[i].myNeighbs.begin(),meshdata->adj[i].myNeighbs.end(),ptId );
+          int num2 = std::count( tempdata->adj[i].myNeighbs.begin(),tempdata->adj[i].myNeighbs.end(),ptId );
           if( (num + num2) == 0 ) // if I don't have his neigbhor yet, add it to my list of neighbors
             {
             tempdata->adj[i].myNeighbs.push_back( ptId );
@@ -655,10 +656,10 @@ void ComputeAdjacency( MeshData* meshdata )
 int CountVertsOnMesh( vtkPolyData* poly )
 {
   int num = 0;
-  vector<int> idx(0);
+  std::vector<int> idx(0);
   vtkCellArray* faces = poly->GetPolys();
   vtkPoints* verts = poly->GetPoints();
-  vector<bool> alreadyFound( verts->GetNumberOfPoints() );
+  std::vector<bool> alreadyFound( verts->GetNumberOfPoints() );
   faces->SetTraversalLocation(0);
   for( ::size_t i = 0; i < (unsigned int)(faces->GetNumberOfCells()); i++ )
     {

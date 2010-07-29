@@ -22,10 +22,10 @@ public:
 MeanCurvatureEnergy( MeshData* data ) {meshdata = data;}
 virtual ~MeanCurvatureEnergy( ) {}
 
-double eval_energy( const vector<int>& C );
-valarray<double> getforce( const list<int>& C);
-valarray<double> getforce( const list<int>& C, 
-const std::list<int>& L_p1, const list<int>& L_n1,
+double eval_energy( const std::vector<int>& C );
+std::valarray<double> getforce( const std::list<int>& C);
+std::valarray<double> getforce( const std::list<int>& C,
+const std::list<int>& L_p1, const std::list<int>& L_n1,
 const std::vector<double>& phi);
 
 };

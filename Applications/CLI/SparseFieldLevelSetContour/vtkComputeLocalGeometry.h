@@ -58,8 +58,8 @@ public:
 
   MeshData* GetMeshData() { return myMeshData; }
   void SetMeshData(MeshData* data) { myMeshData = data; }
-  void GetLists(   list<int>& C, list<int>& L_p1,   list<int>& L_n1,   list<int>& L_p2,
-    list<int>& L_n2,   vector<int>& map_ ) {
+  void GetLists(   std::list<int>& C, std::list<int>& L_p1,   std::list<int>& L_n1,   std::list<int>& L_p2,
+    std::list<int>& L_n2,   std::vector<int>& map_ ) {
       C = Lz;  L_n1=Ln1 ;   L_p1=Lp1; L_n2 = Ln2; L_p2 = Lp2; map_ = map;
   }
 
@@ -74,12 +74,12 @@ private:
   vtkComputeLocalGeometry(const vtkComputeLocalGeometry&);  // Not implemented.
   void operator=(const vtkComputeLocalGeometry&);  // Not implemented.
   MeshData* myMeshData;
-  list<int> Lz;
-  list<int> Ln1;
-  list<int> Lp1;
-  list<int> Ln2;
-  list<int> Lp2;
-  vector<int> map;
+  std::list<int> Lz;
+  std::list<int> Ln1;
+  std::list<int> Lp1;
+  std::list<int> Ln2;
+  std::list<int> Lp2;
+  std::vector<int> map;
 
   int evolve_its;
   int mesh_smooth_its;

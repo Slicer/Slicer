@@ -160,8 +160,8 @@ int vtkComputeLocalGeometry::RequestData(
 
 
     int Ck = 1;     // first 'exterior class' of blobs
-    vector<int> Ak; // area of each Ck blob
-    vector<int> class_of_blob(numVerts);
+    std::vector<int> Ak; // area of each Ck blob
+    std::vector<int> class_of_blob(numVerts);
 
     //visited[vprime_idx] = 1;
     //visited.push_back( vprime_idx );
@@ -189,7 +189,7 @@ int vtkComputeLocalGeometry::RequestData(
             j++;
         }
         // everything part of that first 'blob' is in visited...
-        int num_ones = count( visited.begin(), visited.end(), 1 );
+        int num_ones = std::count( visited.begin(), visited.end(), 1 );
 //        int numel = visited.size();
         int num_ones_delta = num_ones - num_ones_prev;
         Ak.push_back(num_ones_delta); // area of this blob....

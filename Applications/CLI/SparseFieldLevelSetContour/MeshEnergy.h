@@ -24,11 +24,11 @@ MeshEnergy() { }
 MeshEnergy( const MeshEnergy & );
 virtual ~MeshEnergy() { }
 // evaluate energy at every point indexed by C
-virtual double eval_energy( const vector<int>& C ) = 0;
+virtual double eval_energy( const std::vector<int>& C ) = 0;
 
 // get the force F at the vertices for sparse field method
-virtual valarray<double> getforce( const std::list<int>& C ) = 0;
-virtual valarray<double> getforce( const std::list<int>& C, 
+virtual std::valarray<double> getforce( const std::list<int>& C ) = 0;
+virtual std::valarray<double> getforce( const std::list<int>& C,
 const std::list<int>& L_p1, const std::list<int>& L_n1,
 const std::vector<double>& phi) = 0;
 
@@ -37,11 +37,11 @@ MeshData* meshdata;
 
 protected:
 
-void GetKappa( const vector<int>& C, const vector<double>& phi,
-valarray<double>& kappa);
+void GetKappa( const std::vector<int>& C, const std::vector<double>& phi,
+std::valarray<double>& kappa);
 
-void GetNormalsTangentPlane( const vector<int>& C, const vector<double>& phi,
-valarray<double>& ne1, valarray<double>& ne2, MeshData* meshdata );
+void GetNormalsTangentPlane( const std::vector<int>& C, const std::vector<double>& phi,
+std::valarray<double>& ne1, std::valarray<double>& ne2, MeshData* meshdata );
 
 };
 

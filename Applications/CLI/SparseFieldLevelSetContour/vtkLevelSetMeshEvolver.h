@@ -55,9 +55,9 @@ public:
   vtkIntArray* GetActiveContourFinal( ) 
         { return this->activeContourFinal;} // return list of vertex indices of the Final updated 'dense curve'
   
-  void SetLists(   const list<int>& C, 
-                   const list<int>& Lp1, const list<int>& Ln1, const list<int>& Lp2,
-                   const list<int>& Ln2, const vector<int>& map_  ) {
+  void SetLists(   const std::list<int>& C,
+                   const std::list<int>& Lp1, const std::list<int>& Ln1, const std::list<int>& Lp2,
+                   const std::list<int>& Ln2, const std::vector<int>& map_  ) {
           L_z = C; L_n1 = Ln1; L_p1 = Lp1; L_n2 = Ln2; L_p2 = Lp2;
           map = map_;
         }
@@ -76,12 +76,12 @@ private:
   void operator=(const vtkLevelSetMeshEvolver&);  // Not implemented.
 
   MeshData* myMeshData;
-  list<int> L_z;
-  list<int> L_n1;
-  list<int> L_p1;
-  list<int> L_n2;
-  list<int> L_p2;
-  vector<int> map;
+  std::list<int> L_z;
+  std::list<int> L_n1;
+  std::list<int> L_p1;
+  std::list<int> L_n2;
+  std::list<int> L_p2;
+  std::vector<int> map;
 };
 
 #endif

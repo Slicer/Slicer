@@ -14,19 +14,19 @@
 #include "LSops.h"
 #include <list>
 
-void SparseFieldLS::SelfUnion( list<int>& vec )
+void SparseFieldLS::SelfUnion( std::list<int>& vec )
 {
   vec.sort();
-  vec.erase( unique(vec.begin(), vec.end()),vec.end() );
+  vec.erase( std::unique(vec.begin(), vec.end()),vec.end() );
 }
 
-void SparseFieldLS::SelfUnion( vector<int>& vec )
+void SparseFieldLS::SelfUnion( std::vector<int>& vec )
 { 
-  sort( vec.begin(), vec.end() );
-  vec.erase( unique(vec.begin(), vec.end()),vec.end() );
+  std::sort( vec.begin(), vec.end() );
+  vec.erase( std::unique(vec.begin(), vec.end()),vec.end() );
 }
 
-void SparseFieldLS::AppendIdx( const vector<int>& src, vector<int>& dst ) {
+void SparseFieldLS::AppendIdx( const std::vector<int>& src, std::vector<int>& dst ) {
   for(unsigned int i = 0; i < src.size(); i++ )
     {
     dst.push_back( src[i] );
@@ -34,12 +34,12 @@ void SparseFieldLS::AppendIdx( const vector<int>& src, vector<int>& dst ) {
   SelfUnion( dst );
 }
 
-void SparseFieldLS::DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, vector<int>& L_z )
+void SparseFieldLS::DropIdx( const std::vector<int>& L_zp, const std::vector<int>& L_zn, std::vector<int>& L_z )
 {
-  vector<int> L_z_(0);
+  std::vector<int> L_z_(0);
   for(unsigned int i = 0; i < L_z.size(); i++ ) {
-    int num1 = count( L_zp.begin(), L_zp.end(), L_z[i] );
-    int num2 = count( L_zn.begin(), L_zn.end(), L_z[i] );
+    int num1 = std::count( L_zp.begin(), L_zp.end(), L_z[i] );
+    int num2 = std::count( L_zn.begin(), L_zn.end(), L_z[i] );
     if( num1 + num2 == 0 )
       L_z_.push_back( L_z[i] );
   }
@@ -47,14 +47,14 @@ void SparseFieldLS::DropIdx( const vector<int>& L_zp, const vector<int>& L_zn, v
 
 }
 
-void SparseFieldLS::DropIdx( const list<int>& L_zp, const list<int>& L_zn, list<int>& L_z )
+void SparseFieldLS::DropIdx( const std::list<int>& L_zp, const std::list<int>& L_zn, std::list<int>& L_z )
 {
-  list<int> L_z_(0);
+  std::list<int> L_z_(0);
   while( 0 < L_z.size() ) {
     int idx  = L_z.front();
     L_z.pop_front( );
-    int num1 = count( L_zp.begin(), L_zp.end(), idx );
-    int num2 = count( L_zn.begin(), L_zn.end(), idx );
+    int num1 = std::count( L_zp.begin(), L_zp.end(), idx );
+    int num2 = std::count( L_zn.begin(), L_zn.end(), idx );
     if( num1 + num2 == 0 )
       L_z_.push_back( idx );
   }
@@ -70,7 +70,7 @@ bool SparseFieldLS::InitSphere()
 }
 
 
-vector<int> SparseFieldLS::Evolve(int its )
+std::vector<int> SparseFieldLS::Evolve(int its )
 {
     double cfl = 0.2;
     
@@ -103,7 +103,7 @@ vector<int> SparseFieldLS::Evolve(int its )
       Sp2.clear();
       Sn2.clear();
 
-      valarray<double> F = energy->getforce( L_z, L_p1, L_n1, phi );
+      std::valarray<double> F = energy->getforce( L_z, L_p1, L_n1, phi );
       for( ::size_t i = 0; i < F.size(); i++ ) phi[ Lz[i] ] += dDirection*cfl * F[i] ;
      
       /*
@@ -264,7 +264,7 @@ vector<int> SparseFieldLS::Evolve(int its )
         }
      
       if( its_%50 == 0 )
-        cout<<"LZ state: "<<Sz.size()<<","<<L_z.size()<<"\n";
+        std::cout<<"LZ state: "<<Sz.size()<<","<<L_z.size()<<"\n";
       while( Sz.size() > 0 ) {
         int idx = Sz.front();
         L_z.push_back( idx );

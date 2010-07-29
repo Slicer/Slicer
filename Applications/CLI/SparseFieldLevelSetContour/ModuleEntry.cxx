@@ -1,6 +1,7 @@
 #include "ModuleEntry.h"
 
 #include <list>
+#include <math.h>
 
 // Input: mesh and indices of vertices for initialization
 void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
@@ -68,7 +69,7 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
 }
 
 void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, 
-                                            vector< vector<float> >& initPoints3D,
+                                            std::vector< std::vector<float> >& initPoints3D,
                                              vtkPolyData* outputMesh,
                                              InitParam init,
                                              bool bForceRecompute )
@@ -89,9 +90,9 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
 
   if( iNumSeedPoints < 2 ) { 
     std::cout<<"Error, no fiducial points were read...check your input format\n";
-    vector<float> X(3); X[0] = 20; X[1] = 0; X[2] = 0;
-    vector<float> Y(3); Y[0] = 0; X[1] = 20; Y[2] = 0;
-    vector<float> Z(3); Z[0] = 0; Z[1] = 0; Z[2] = 20;
+    std::vector<float> X(3); X[0] = 20; X[1] = 0; X[2] = 0;
+    std::vector<float> Y(3); Y[0] = 0; X[1] = 20; Y[2] = 0;
+    std::vector<float> Z(3); Z[0] = 0; Z[1] = 0; Z[2] = 20;
     initPoints3D.push_back( X );
     initPoints3D.push_back( Y );
     initPoints3D.push_back( Z );
@@ -127,7 +128,7 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
 // evolution of existing curve or only pre-compute geometry!
 void MeshContourEvolver::entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh, InitParam init )
 {  
-  vtkIntArray* emptyIntVec = NULL;
+  vtkIntArray* emptyIntVec;
   entry_main( inputMesh, emptyIntVec, outputMesh, init );
 
   return;

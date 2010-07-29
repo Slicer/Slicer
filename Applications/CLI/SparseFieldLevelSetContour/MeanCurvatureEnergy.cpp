@@ -20,17 +20,17 @@ double MeanCurvatureEnergy::eval_energy(const std::vector<int> &C)
   return E;
 }
 
-valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C_, 
+std::valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C_, 
                                                 const std::list<int>& L_p1, const std::list<int>& L_n1,
-                                                const vector<double>& phi)
+                                                const std::vector<double>& phi)
 {
 
-  valarray<double> force( C_.size() );
+  std::valarray<double> force( C_.size() );
 // exp( -lambda * H ) * ( nhat dot gradH + kappa )
 
-  valarray<double> ne1(C_.size());
-  valarray<double> ne2(C_.size());
-  valarray<double> kappa(C_.size());
+  std::valarray<double> ne1(C_.size());
+  std::valarray<double> ne2(C_.size());
+  std::valarray<double> kappa(C_.size());
   
   std::vector<int> C = ListToSTDVector( C_ );
 
@@ -61,8 +61,8 @@ valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C_,
     }
 }
 
-valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C)
+std::valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C)
 {
   std::cout<<"Err!\n";
-  return valarray<double>(0);
+  return std::valarray<double>(0);
 }

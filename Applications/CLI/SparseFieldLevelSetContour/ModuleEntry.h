@@ -24,7 +24,7 @@
 
 #include <vector>
 
-using std::vector;
+//using std::vector;
 
 namespace MeshContourEvolver {
 

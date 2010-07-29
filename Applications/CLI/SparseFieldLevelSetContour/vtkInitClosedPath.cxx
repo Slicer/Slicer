@@ -77,7 +77,7 @@ int UpdateInitLists( const std::vector< std::vector<int> > LstarIJidx,
                 std::vector<int> IJinitList = accessible_init_indices[ idxRev ];
                 for( ::size_t m = 0; m < IJinitList.size(); m++ ) {
                   int init_pt = IJinitList[m];
-                  if( 0 == count( accessible_init_indices[idx].begin(),
+                  if( 0 == std::count( accessible_init_indices[idx].begin(),
                     accessible_init_indices[idx].end(), init_pt) ) {
                         accessible_init_indices[idx].push_back( init_pt );
                         bShowUpdate[i][j] = -3;
@@ -105,7 +105,7 @@ void Debug_Display_Path_Vals( vtkIntArray* activeContourVertIdx,
   
   std::vector<int> seedIdx = seedIdx_;
   std::sort( seedIdx.begin(), seedIdx.end() );
-  seedIdx.erase( unique(seedIdx.begin(), seedIdx.end()),seedIdx.end() );
+  seedIdx.erase( std::unique(seedIdx.begin(), seedIdx.end()),seedIdx.end() );
 
   for( ::size_t i = 0; i < numVerts; i++ ) {
       int val = 0;
@@ -430,7 +430,7 @@ BUILD_DISTANCE_TO_INIT:
         faces->GetCell(id*4,npts, pts ); // get "pts",  vertex indices ot neighbor cell
         for( int j = 0; j < npts; j++ ) {
           size_t pt = pts[j];
-          if( 0 == count( tmpNextVerts.begin(), tmpNextVerts.end(), pt ) ) { 
+          if( 0 == std::count( tmpNextVerts.begin(), tmpNextVerts.end(), pt ) ) {
           int idxFirstHit = LstarIdx[pt]; //firstHitInitIdx[ pt ];
 //          int idxSpawn    = LstarIdx[idx]; //firstHitInitIdx[ idx ];
           bool bDidUpdate = false;
@@ -568,7 +568,7 @@ BUILD_DISTANCE_TO_INIT:
      
      // for every face, make all vertices on the face store in the adjimm list
       for(unsigned int i = 0; i < numVerts; i++ ) {
-        adjimm[i].myNeighbs    = vector<int>(1);
+        adjimm[i].myNeighbs    = std::vector<int>(1);
         adjimm[i].myNeighbs[0] = i;
         adjimm[i].myIdx = i;
       }
@@ -583,7 +583,7 @@ BUILD_DISTANCE_TO_INIT:
 //        int vert2 = pts[2];
         for( int k = 0 ; k < 3; k++ ) {
           for( int kk = 0; kk < 3; kk++ ) {
-            if( 0 == count( adjimm[pts[kk]].myNeighbs.begin(), adjimm[pts[kk]].myNeighbs.end(),pts[k] ) ) {
+            if( 0 == std::count( adjimm[pts[kk]].myNeighbs.begin(), adjimm[pts[kk]].myNeighbs.end(),pts[k] ) ) {
               adjimm[pts[kk]].myNeighbs.push_back( pts[k] );
           }
           }
@@ -610,7 +610,7 @@ BUILD_DISTANCE_TO_INIT:
         }
   #define NUM_INIT_RECURSIONS 2
         if( 1 ) {
-          if( idxAdd >= 0 && (0== count( seedIdx.begin(), seedIdx.end(), idxAdd ) ) )
+          if( idxAdd >= 0 && (0== std::count( seedIdx.begin(), seedIdx.end(), idxAdd ) ) )
               seedIdx.push_back(idxAdd);
         }
 
@@ -642,7 +642,7 @@ BUILD_DISTANCE_TO_INIT:
               int idx_count = 0;
               if( idx != nextPt )
               {
-                idx_count = count( C.begin(), C.end(), idx );
+                idx_count = std::count( C.begin(), C.end(), idx );
               }
               // for each neighbor, measure the distance to the nextPt
               // keep the index of least distance
@@ -657,7 +657,7 @@ BUILD_DISTANCE_TO_INIT:
             // ok now we know the index of the best neighbor.
             // push it onto the path stack and make it the new current point
             Cpt = minIdx;
-            if( (minIdx != nextPt) && count( C.begin(), C.end(), Cpt ) != 0 )
+            if( (minIdx != nextPt) && std::count( C.begin(), C.end(), Cpt ) != 0 )
             {
              // std::cerr<<"Error, path finder stuck in a loop. Try another initialization. \n";
               break;
@@ -716,9 +716,9 @@ BUILD_DISTANCE_TO_INIT:
     }
     
     for( int n = 0; n < 0; n++ ) {
-      vector<double> Lstar_ = Lstar;
+      std::vector<double> Lstar_ = Lstar;
       for( ::size_t k = 0; k < numVerts; k++ ) {
-        vector<int>* neigh = &(adjimm[k].myNeighbs);
+        std::vector<int>* neigh = &(adjimm[k].myNeighbs);
 //        double sumLstar = 0.0;
         for( ::size_t m = 0 ; m < neigh->size(); m++ ) {
           Lstar[k] = Lstar[k] * Lstar_[ (*neigh)[m] ]; 
@@ -737,7 +737,7 @@ BUILD_DISTANCE_TO_INIT:
   else { // if it already exists, verify that we point to it
      activeContourVertIdx = vtkIntArray::SafeDownCast( contourIdxArrayIn );
      std::string name( activeContourVertIdx->GetName( ) );
-     cout<<"re-using existing array named: "<<name<<"\n";
+     std::cout<<"re-using existing array named: "<<name<<"\n";
   }
 
   // update progress bar at some intervals
