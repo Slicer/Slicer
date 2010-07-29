@@ -9,7 +9,7 @@
 #include "qSlicerModulePanel.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerMainWindowCore.h"
-#include "qSlicerModuleSelectorWidget.h"
+#include "qSlicerModuleSelectorToolBar.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowPrivate: public ctkPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
@@ -23,7 +23,7 @@ public:
     }
   void setupUi(QMainWindow * mainWindow);
   qSlicerMainWindowCore*       Core;
-  qSlicerModuleSelectorWidget* ModuleSelector; 
+  qSlicerModuleSelectorToolBar* ModuleSelector;
 };
 
 //-----------------------------------------------------------------------------
@@ -36,8 +36,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
-  this->ModuleSelector = new qSlicerModuleSelectorWidget(p);
-  this->MainToolBar->addWidget(this->ModuleSelector);
+  this->ModuleSelector = new qSlicerModuleSelectorToolBar("Module Selector",p);
+  p->insertToolBar(this->ModuleToolBar, this->ModuleSelector);
 
   // Connect the selector with the module panel
   QObject::connect(this->ModuleSelector, SIGNAL(moduleSelected(const QString&)),
@@ -81,7 +81,7 @@ CTK_GET_CXX(qSlicerMainWindow, QToolBar*, moduleToolBar, ModuleToolBar);
 CTK_GET_CXX(qSlicerMainWindow, qSlicerModulePanel*, modulePanel, ModulePanel);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerMainWindow, qSlicerModuleSelectorWidget*, moduleSelector, ModuleSelector);
+CTK_GET_CXX(qSlicerMainWindow, qSlicerModuleSelectorToolBar*, moduleSelector, ModuleSelector);
 
 //-----------------------------------------------------------------------------
 // Helper macro allowing to connect the MainWindow action with the corresponding

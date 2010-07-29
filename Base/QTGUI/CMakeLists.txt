@@ -44,8 +44,9 @@ SET(KIT_SRCS
 
   qSlicerModulePanel.cxx
   qSlicerModulePanel.h
-  qSlicerModuleSelectorWidget.cxx
-  qSlicerModuleSelectorWidget.h
+
+  qSlicerModuleSelectorToolBar.cxx
+  qSlicerModuleSelectorToolBar.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
   qSlicerStyle.cxx
@@ -71,8 +72,7 @@ SET(KIT_MOC_SRCS
   qSlicerModelsDialog_p.h
 
   qSlicerModulePanel.h
-  qSlicerModuleSelectorWidget.h
-  qSlicerModuleSelectorWidget_p.h
+  qSlicerModuleSelectorToolBar.h
   qSlicerSaveDataDialog.h
   qSlicerSaveDataDialog_p.h
   qSlicerWidget.h
@@ -88,7 +88,6 @@ SET(KIT_UI_SRCS
   Resources/UI/qSlicerDataDialog.ui
   Resources/UI/qSlicerModelsDialog.ui
   Resources/UI/qSlicerModulePanel.ui
-  Resources/UI/qSlicerModuleSelectorWidget.ui
   Resources/UI/qSlicerSaveDataDialog.ui
 )
 

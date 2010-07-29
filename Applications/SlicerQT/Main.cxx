@@ -13,7 +13,7 @@
 #include "qSlicerCommandOptions.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerMainWindow.h"
-#include "qSlicerModuleSelectorWidget.h"
+#include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerCoreModuleFactory.h"

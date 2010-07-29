@@ -10,7 +10,7 @@
 #include "qSlicerQTExport.h"
 
 class qSlicerModulePanel;
-class qSlicerModuleSelectorWidget; 
+class qSlicerModuleSelectorToolBar;
 class qSlicerMainWindowCore;
 class qSlicerMainWindowPrivate;
 
@@ -37,7 +37,7 @@ public:
 
   // Description:
   // Return the module selector
-  qSlicerModuleSelectorWidget* moduleSelector()const; 
+  qSlicerModuleSelectorToolBar* moduleSelector()const;
   
 protected:
 

@@ -18,14 +18,19 @@ public:
 
   qSlicerTractographyFiducialSeedingModule(QObject *_parent = 0);
 
-  /// 
+  ///
+  /// Category of the module
+  virtual QString category() const {return "Diffusion.Tractography";}
+
+  ///
   /// Display name for the module
-  virtual QString title()const {return "FiducialSeeding";} 
-   /// 
+  virtual QString title()const {return "FiducialSeeding";}
+
+  ///
   /// Help text of the module
   virtual QString helpText()const;
 
-  /// 
+  ///
   /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
 
