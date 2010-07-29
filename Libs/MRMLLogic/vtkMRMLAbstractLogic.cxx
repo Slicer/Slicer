@@ -19,6 +19,9 @@
 #include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
 
+// STD includes
+#include <cassert>
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractLogic);
 vtkCxxRevisionMacro(vtkMRMLAbstractLogic, "$Revision: 13525 $");
@@ -295,4 +298,40 @@ int vtkMRMLAbstractLogic::GetInMRMLCallbackFlag()
 {
   return this->Internal->InMRMLCallbackFlag;
 }
-    
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+{
+  assert(vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene());
+
+  vtkMRMLNode * node = 0;
+
+  switch(event)
+    {
+    case vtkMRMLScene::SceneAboutToBeClosedEvent:
+      this->OnMRMLSceneAboutToBeClosedEvent();
+      break;
+    case vtkMRMLScene::SceneClosedEvent:
+      this->OnMRMLSceneClosedEvent();
+      break;
+    case vtkMRMLScene::SceneAboutToBeImportedEvent:
+      this->OnMRMLSceneAboutToBeImportedEvent();
+      break;
+    case vtkMRMLScene::SceneImportedEvent:
+      this->OnMRMLSceneImportedEvent();
+      break;
+    case vtkMRMLScene::SceneRestoredEvent:
+      this->OnMRMLSceneRestoredEvent();
+      break;
+    case vtkMRMLScene::NodeAddedEvent:
+      node = reinterpret_cast<vtkMRMLNode*>(callData);
+      assert(node);
+      this->OnMRMLSceneNodeAddedEvent(node);
+      break;
+    case vtkMRMLScene::NodeRemovedEvent:
+      node = reinterpret_cast<vtkMRMLNode*>(callData);
+      assert(node);
+      this->OnMRMLSceneNodeRemovedEvent(node);
+      break;
+    }
+}

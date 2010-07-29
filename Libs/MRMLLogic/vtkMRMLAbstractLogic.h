@@ -108,8 +108,7 @@ public:
   void SetAndObserveMRMLScene(vtkMRMLScene * newScene);
   void SetAndObserveMRMLSceneEvents(vtkMRMLScene * newScene, vtkIntArray * events);
 
-  virtual void ProcessMRMLEvents(vtkObject * /*caller*/, unsigned long /*event*/,
-                                 void * /*callData*/){ };
+  virtual void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void * callData);
 
   virtual void ProcessLogicEvents(vtkObject * /*caller*/, unsigned long /*event*/,
                                   void * /*callData*/){ };
@@ -139,6 +138,16 @@ protected:
   vtkMRMLAbstractLogic();
   virtual ~vtkMRMLAbstractLogic();
 
+  /// Called after the corresponding MRML event is triggered.
+  /// \sa ProcessMRMLEvents
+  virtual void OnMRMLSceneAboutToBeClosedEvent(){}
+  virtual void OnMRMLSceneClosedEvent(){}
+  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
+  virtual void OnMRMLSceneImportedEvent(){}
+  virtual void OnMRMLSceneRestoredEvent(){}
+  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* /*node*/){}
+  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
+
   /// Called each time a new scene is set. Can be reimplemented in derivated classes.
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
@@ -147,11 +156,11 @@ protected:
   void SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene);
   void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene, vtkIntArray *events);
   
+  //BTX
   /// Register node classes into the MRML scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes(){}
 
-  //BTX
   /// Set InMRMLCallbackFlag flag
   /// True means ProcessMRMLEvent has already been called
   /// In MRMLCallback, loop are avoided by checking the value of the flag

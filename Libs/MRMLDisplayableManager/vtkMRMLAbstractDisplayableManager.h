@@ -58,9 +58,6 @@ public:
   /// Convenient method to get the WindowInteractor associated with the Renderer
   vtkRenderWindowInteractor* GetInteractor();
 
-  ///
-  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
-
 protected:
 
   vtkMRMLAbstractDisplayableManager();
@@ -122,16 +119,6 @@ protected:
   /// An observer can then listen for that event and "compress" the different Render requests
   /// to efficiently call RenderWindow->Render()
   void RequestRender();
-
-  /// Called after the corresponding MRML event is triggered.
-  /// \sa ProcessMRMLEvents
-  virtual void OnMRMLSceneAboutToBeClosedEvent(){}
-  virtual void OnMRMLSceneClosedEvent(){}
-  virtual void OnMRMLSceneAboutToBeImportedEvent(){}
-  virtual void OnMRMLSceneImportedEvent(){}
-  virtual void OnMRMLSceneRestoredEvent(){}
-  virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* /*node*/){}
-  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
   
 private:
 

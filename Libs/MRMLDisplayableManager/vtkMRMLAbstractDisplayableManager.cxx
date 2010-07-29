@@ -53,7 +53,7 @@ public:
   bool                                      UpdateFromMRMLRequested;
   vtkRenderer *                             Renderer;
   vtkMRMLNode *                             MRMLDisplayableNode;
-  vtkMRMLDisplayableManagerGroup *  DisplayableManagerGroup;
+  vtkMRMLDisplayableManagerGroup *          DisplayableManagerGroup;
   vtkSmartPointer<vtkCallbackCommand>       DeleteCallBackCommand;
 };
 
@@ -273,43 +273,3 @@ void vtkMRMLAbstractDisplayableManager::RemoveMRMLObservers()
 {
   this->SetAndObserveMRMLDisplayableNode(0);
 }
-
-//---------------------------------------------------------------------------
-void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
-                                                          unsigned long event,
-                                                          void *callData)
-{
-  assert(vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene());
-
-  vtkMRMLNode * node = 0;
-
-  switch(event)
-    {
-    case vtkMRMLScene::SceneAboutToBeClosedEvent:
-      this->OnMRMLSceneAboutToBeClosedEvent();
-      break;
-    case vtkMRMLScene::SceneClosedEvent:
-      this->OnMRMLSceneClosedEvent();
-      break;
-    case vtkMRMLScene::SceneAboutToBeImportedEvent:
-      this->OnMRMLSceneAboutToBeImportedEvent();
-      break;
-    case vtkMRMLScene::SceneImportedEvent:
-      this->OnMRMLSceneImportedEvent();
-      break;
-    case vtkMRMLScene::SceneRestoredEvent:
-      this->OnMRMLSceneRestoredEvent();
-      break;
-    case vtkMRMLScene::NodeAddedEvent:
-      node = reinterpret_cast<vtkMRMLNode*>(callData);
-      assert(node);
-      this->OnMRMLSceneNodeAddedEvent(node);
-      break;
-    case vtkMRMLScene::NodeRemovedEvent:
-      node = reinterpret_cast<vtkMRMLNode*>(callData);
-      assert(node);
-      this->OnMRMLSceneNodeRemovedEvent(node);
-      break;
-    }
-}
-
