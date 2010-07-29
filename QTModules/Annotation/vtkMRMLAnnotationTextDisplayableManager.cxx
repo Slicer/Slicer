@@ -66,38 +66,40 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
     return 0;
     }
 
-  std::cout << "....11...." << std::endl;
   vtkTextWidget* textWidget = vtkTextWidget::New();
   VTK_CREATE(vtkTextRepresentation, textRep);
-  std::cout << "....22...." << std::endl;
+
   textRep->SetMoving(1);
-  std::cout << "....221...." << std::endl;
-  if (!textNode->GetText(0))
+
+  if (textNode->GetTextLabel())
     {
-    vtkErrorMacro("CreateWidget: No text was set for the node!")
-    return 0;
+    textRep->SetText(textNode->GetTextLabel());
     }
-  textRep->SetText(textNode->GetText(0));
-  std::cout << "....222...." << std::endl;
+  else
+    {
+    textRep->SetText("New text");
+    }
+
   textWidget->SetRepresentation(textRep);
-  std::cout << "....223...." << std::endl;
+
   textWidget->SetInteractor(this->GetInteractor());
 
-  std::cout << "....224...." << std::endl;
-  if (!textNode->GetTextCoordinates())
+
+  if (textNode->GetTextCoordinates())
     {
-    vtkErrorMacro("CreateWidget: Could not get coordinates for widget!")
-    return 0;
+
+    textRep->SetPosition(textNode->GetTextCoordinates()[0],textNode->GetTextCoordinates()[1]);
+    //textRep->SetPosition(0.01, 0.01);
+
     }
 
-  textRep->SetPosition(textNode->GetTextCoordinates());
   textWidget->On();
-  std::cout << ".....33..." << std::endl;
+
   // add callback
   vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
   textWidget->AddObserver(vtkCommand::HoverEvent, myCallback);
   myCallback->Delete();
-  std::cout << ".....44..." << std::endl;
+
   return textWidget;
 
 }
@@ -122,7 +124,7 @@ void vtkMRMLAnnotationTextDisplayableManager::SetWidget(vtkMRMLAnnotationNode* n
   textRepr->SetText(textNode->GetText(0));
 }
 
-void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(int x, int y)
+void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(float x, float y)
 {
   double coordinates[3];
   coordinates[0]=(double)x;
@@ -130,9 +132,12 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(int x,
   coordinates[2]=0;
 
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+  textNode->SetTextCoordinates(coordinates);
+  textNode->SetTextLabel("New text");
+
   textNode->Initialize(this->GetMRMLScene());
 
-  textNode->SetTextCoordinates(coordinates);
+
 
   // need a unique name since the storage node will be named from it
   if (textNode->GetScene())

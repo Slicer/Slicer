@@ -73,7 +73,7 @@ protected:
 
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInThreeDRenderWindow(int x, int y);
+  virtual void OnClickInThreeDRenderWindow(float x, float y);
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Propagate properties of MRML node to widgets.

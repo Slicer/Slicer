@@ -340,7 +340,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
-  std::cout << "....1...." << std::endl;
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
@@ -348,7 +347,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     return;
     }
 
-  std::cout << "....2...." << std::endl;
   // Node added should not be already managed
   vtkInternal::AnnotationNodeListIt it = std::find(
       this->Internal->AnnotationNodeList.begin(),
@@ -360,14 +358,12 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
       return;
     }
 
-  std::cout << "....3...." << std::endl;
   // There should not be a widget for the new node
   if (this->Internal->GetWidget(annotationNode) != 0)
     {
     vtkErrorMacro("OnMRMLSceneNodeAddedEvent: A widget is already associated to this node!");
     return;
     }
-  std::cout << "....4...." << std::endl;
 
   // Create the Widget and add it to the list.
   vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
@@ -379,10 +375,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
 
   // Add the node to the list.
   this->Internal->AnnotationNodeList.push_back(annotationNode);
-  std::cout << "....5...." << std::endl;
+
   // Refresh observers
   this->SetAndObserveNodes();
-  std::cout << "....6...." << std::endl;
+
   this->RequestRender();
 
 }
@@ -473,10 +469,14 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::GetWidget(vtkMRMLAnnota
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordinates()
 {
-  int x = this->GetInteractor()->GetEventPosition()[0];
-  int rawY = this->GetInteractor()->GetEventPosition()[1];
-  this->GetInteractor()->SetEventPositionFlipY(x, rawY);
-  int y = this->GetInteractor()->GetEventPosition()[1];
+  double x = this->GetInteractor()->GetEventPosition()[0];
+  //int rawY = this->GetInteractor()->GetEventPosition()[1];
+  //this->GetInteractor()->SetEventPositionFlipY(x, rawY);
+  double y = this->GetInteractor()->GetEventPosition()[1];
+
+  this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
+  this->GetRenderer()->NormalizedDisplayToViewport(x,y);
+  this->GetRenderer()->ViewportToNormalizedViewport(x,y);
 
   this->OnClickInThreeDRenderWindow(x, y);
 }
@@ -484,7 +484,7 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordina
 //---------------------------------------------------------------------------
 // Functions to overload!
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindow(int x, int y)
+void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindow(float x, float y)
 {
   // The user clicked in the renderWindow
   vtkErrorMacro("OnClickInRenderWindow should be overloaded!");
