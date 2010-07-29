@@ -378,7 +378,6 @@ double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType
 
   if (!this->PolyData || !this->PolyData->GetPoints()) 
     {
-      vtkErrorMacro("GetControlPointCoordinates: " << this->GetName() << " PolyData or  PolyData->GetPoints() is NULL" ); 
       return 0;
     }
 
