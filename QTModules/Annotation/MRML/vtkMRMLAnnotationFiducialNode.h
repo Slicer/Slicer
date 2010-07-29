@@ -45,8 +45,6 @@ public:
   int SetFiducialCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
   double* GetFiducialCoordinates() {return this->GetControlPointCoordinates(0);}
 
-  void Initialize(vtkMRMLScene* mrmlScene);
-
   enum
   {
     FiducialNodeAddedEvent = 0,

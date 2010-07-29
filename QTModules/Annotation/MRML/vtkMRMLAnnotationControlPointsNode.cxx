@@ -512,4 +512,14 @@ void vtkMRMLAnnotationControlPointsNode::SetNumberingSchemeFromString(const char
     }  
 }
 
-
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationControlPointsNode::Initialize(vtkMRMLScene* mrmlScene)
+{
+  if (!mrmlScene)
+  {
+    vtkErrorMacro("Scene was null!")
+    return;
+  }
+  Superclass::Initialize(mrmlScene);
+  this->CreateAnnotationPointDisplayNode();
+}

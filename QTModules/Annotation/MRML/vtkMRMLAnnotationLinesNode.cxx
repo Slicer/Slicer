@@ -581,3 +581,15 @@ int vtkMRMLAnnotationLinesNode::SetControlPoint(int id, double newControl[3],int
     }
   return result;
 }
+
+void vtkMRMLAnnotationLinesNode::Initialize(vtkMRMLScene* mrmlScene)
+{
+   if (!mrmlScene)
+   {
+     vtkErrorMacro("Scene was null!")
+     return;
+   }
+ 
+   Superclass::Initialize(mrmlScene);
+  this->CreateAnnotationPointDisplayNode();
+}

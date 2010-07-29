@@ -39,25 +39,16 @@ vtkMRMLNode* vtkMRMLAnnotationTextNode::CreateNodeInstance()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationTextNode::Initialize(vtkMRMLScene* mrmlScene)
-{
-  if (!mrmlScene)
-  {
-    vtkErrorMacro("Scene was null!")
-    return;
-  }
-
-  this->SetTextLabel("New text");
-
-  cout << "-->>>> -------" << endl;
-  mrmlScene->AddNode(this);
-  cout << "--<<<<< -------" << endl;
-
-  this->CreateAnnotationTextDisplayNode();
-  this->CreateAnnotationPointDisplayNode();
- 
-  this->GetAnnotationTextDisplayNode()->SetTextScale(10);
-
-
-}
+// void vtkMRMLAnnotationTextNode::Initialize(vtkMRMLScene* mrmlScene)
+// {
+//   if (!mrmlScene)
+//   {
+//     vtkErrorMacro("Scene was null!")
+//     return;
+//   }
+// 
+//   Superclass::Initialize(mrmlScene);
+//   this->SetTextLabel("New text");
+//   this->GetAnnotationTextDisplayNode()->SetTextScale(10); 
+// }
 

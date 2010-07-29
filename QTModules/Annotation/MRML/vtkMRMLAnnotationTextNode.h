@@ -38,8 +38,6 @@ public:
   void SetTextLabel(const char* newLabel) {this->SetText(0, newLabel, 1, 1);}
   vtkStdString GetTextLabel() {return this->GetText(0);}
 
-  void Initialize(vtkMRMLScene* mrmlScene);
-
   enum
   {
     TextNodeAddedEvent = 0,

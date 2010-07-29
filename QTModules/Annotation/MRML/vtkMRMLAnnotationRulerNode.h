@@ -114,7 +114,7 @@ public:
   // Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
 
-  void Initialize(vtkMRMLScene* mrmlScene);
+  //  void Initialize(vtkMRMLScene* mrmlScene);
 
   int GetVisibility() {return this->GetVisible();}
   void SetVisibility(int flag) {this->SetVisible(flag);}

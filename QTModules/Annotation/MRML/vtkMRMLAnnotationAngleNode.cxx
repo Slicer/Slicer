@@ -50,67 +50,67 @@ vtkMRMLAnnotationAngleNode::vtkMRMLAnnotationAngleNode()
   this->ModelIDCenter = NULL;
 }
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleNode::Initialize(vtkMRMLScene* mrmlScene)
-{
-  if (!mrmlScene)
-    {
-      vtkErrorMacro("Scene was null!");
-      return;
-    }
-    
-  mrmlScene->AddNode(this);
-  this->CreateAnnotationTextDisplayNode();
-  this->CreateAnnotationPointDisplayNode();
-  this->CreateAnnotationLineDisplayNode();
-
-  this->AddText(" ",1,1);
-
-  // default starting position
-  {
-    double pos[3] = {-100.0, 0.0, 50.0};
-    this->SetPosition1(pos);
-  }
-  { 
-    double pos[3] = {100.0, 0.0, 50.0};
-    this->SetPosition2(pos);
-  }
-  {
-    double pos[3] = {0.0, 0.0, 0.0};
-    this->SetPositionCenter(pos);
-  }
-
-  // the annotation on the line
-  this->SetLabelScale(10.0);
-  this->SetLabelVisibility(1);
-
-  // visibility of elements of the widget
-  this->SetRay1Visibility(1);
-  this->SetRay2Visibility(1);
-  this->SetArcVisibility(1);
-  
-  // the end points of the lines are blue, they're cloned so can't have a
-  // different colour for each end
-  {
-    double color[3] = { 0.0, 0.0, 1.0}; 
-    this->SetPointColour(color);
-  }
-  // line colour
-  {
-    double color[3] = { 1.0, 1.0, 1.0}; 
-    this->SetLineColour(color);
-  }
-  // text colour
-  {
-    double color[3] = { 1.0, 0.0, 0.0 } ;
-    this->SetLabelTextColour(color);
-  }
-
-  // default taken from vtkLineRepresentation
-  this->SetResolution(5);
-  
-  this->InvokeEvent(vtkMRMLAnnotationAngleNode::AngleNodeAddedEvent);
-
-}
+// void vtkMRMLAnnotationAngleNode::Initialize(vtkMRMLScene* mrmlScene)
+// {
+//   if (!mrmlScene)
+//     {
+//       vtkErrorMacro("Scene was null!");
+//       return;
+//     }
+//     
+//   mrmlScene->AddNode(this);
+//   this->CreateAnnotationTextDisplayNode();
+//   this->CreateAnnotationPointDisplayNode();
+//   this->CreateAnnotationLineDisplayNode();
+// 
+//   this->AddText(" ",1,1);
+// 
+//   // default starting position
+//   {
+//     double pos[3] = {-100.0, 0.0, 50.0};
+//     this->SetPosition1(pos);
+//   }
+//   { 
+//     double pos[3] = {100.0, 0.0, 50.0};
+//     this->SetPosition2(pos);
+//   }
+//   {
+//     double pos[3] = {0.0, 0.0, 0.0};
+//     this->SetPositionCenter(pos);
+//   }
+// 
+//   // the annotation on the line
+//   this->SetLabelScale(10.0);
+//   this->SetLabelVisibility(1);
+// 
+//   // visibility of elements of the widget
+//   this->SetRay1Visibility(1);
+//   this->SetRay2Visibility(1);
+//   this->SetArcVisibility(1);
+//   
+//   // the end points of the lines are blue, they're cloned so can't have a
+//   // different colour for each end
+//   {
+//     double color[3] = { 0.0, 0.0, 1.0}; 
+//     this->SetPointColour(color);
+//   }
+//   // line colour
+//   {
+//     double color[3] = { 1.0, 1.0, 1.0}; 
+//     this->SetLineColour(color);
+//   }
+//   // text colour
+//   {
+//     double color[3] = { 1.0, 0.0, 0.0 } ;
+//     this->SetLabelTextColour(color);
+//   }
+// 
+//   // default taken from vtkLineRepresentation
+//   this->SetResolution(5);
+//   
+//   this->InvokeEvent(vtkMRMLAnnotationAngleNode::AngleNodeAddedEvent);
+// 
+// }
 
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationAngleNode::~vtkMRMLAnnotationAngleNode()

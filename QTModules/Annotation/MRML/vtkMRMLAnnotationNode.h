@@ -111,6 +111,8 @@ public:
   vtkGetMacro(Locked, int);
   void SetLocked(int init);
 
+  void Initialize(vtkMRMLScene* mrmlScene);
+
 protected:
   vtkMRMLAnnotationNode();
   ~vtkMRMLAnnotationNode();

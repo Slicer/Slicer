@@ -94,7 +94,7 @@ public:
   // Initializes all variables associated with annotations
   virtual void ResetAnnotations();
 
-  
+  void Initialize(vtkMRMLScene* mrmlScene); 
 
 protected:
   vtkMRMLAnnotationLinesNode();

@@ -131,7 +131,7 @@ public:
   // Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
 
-  void Initialize(vtkMRMLScene* mrmlScene);
+  //  void Initialize(vtkMRMLScene* mrmlScene);
 
  // Description:
   // get/set the id of the model the ends of the widget are constrained upon

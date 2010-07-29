@@ -465,9 +465,9 @@ int vtkMRMLAnnotationNode::AddText(const char *newText,int selectedFlag, int vis
 //-------------------------------------------------------------------------
 vtkStdString  vtkMRMLAnnotationNode::GetText(int n)
 {
-  if (!this->TextList) 
+  if ((this->GetNumberOfTexts() <= n) || n < 0 )
     {
-      return vtkStdString::vtkStdString(NULL);
+      return vtkStdString::vtkStdString();
     }
   return this->TextList->GetValue(n); 
 }
@@ -597,3 +597,16 @@ void vtkMRMLAnnotationNode::SetLocked(int locked)
     this->ModifiedSinceReadOn();
 }
    
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationNode::Initialize(vtkMRMLScene* mrmlScene)
+{
+  if (!mrmlScene)
+  {
+    vtkErrorMacro("Scene was null!")
+    return;
+  }
+
+  mrmlScene->AddNode(this);
+  this->CreateAnnotationTextDisplayNode();
+}
