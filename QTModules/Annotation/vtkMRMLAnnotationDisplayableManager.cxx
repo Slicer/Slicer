@@ -216,7 +216,6 @@ public:
         displayableManager->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
     if ( interactionNode == NULL )
       {
-      std::cout << "No interaction node!" << std::endl;
       return;
       }
 
@@ -285,7 +284,6 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::Create()
 {
-  std::cout << "Add observer!" << std::endl;
   vtkAnnotationRenderwindowInteractorCallback *myCallback = vtkAnnotationRenderwindowInteractorCallback::New();
   myCallback->displayableManager = this;
   this->GetInteractor()->AddObserver(vtkCommand::LeftButtonReleaseEvent, myCallback);
@@ -342,6 +340,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
+  std::cout << "....1...." << std::endl;
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
@@ -349,6 +348,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     return;
     }
 
+  std::cout << "....2...." << std::endl;
   // Node added should not be already managed
   vtkInternal::AnnotationNodeListIt it = std::find(
       this->Internal->AnnotationNodeList.begin(),
@@ -356,26 +356,33 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
       annotationNode);
   if (it != this->Internal->AnnotationNodeList.end())
     {
-      vtkErrorMacro("OnMRMLSceneNodeAddedEvent - This node is already associated to the displayable manager!")
+      vtkErrorMacro("OnMRMLSceneNodeAddedEvent: This node is already associated to the displayable manager!")
       return;
     }
 
+  std::cout << "....3...." << std::endl;
   // There should not be a widget for the new node
   if (this->Internal->GetWidget(annotationNode) != 0)
     {
-    vtkErrorMacro("OnMRMLSceneNodeAddedEvent - A widget is already associated to this node!");
+    vtkErrorMacro("OnMRMLSceneNodeAddedEvent: A widget is already associated to this node!");
     return;
     }
+  std::cout << "....4...." << std::endl;
 
   // Create the Widget and add it to the list.
-  this->Internal->Widgets[annotationNode] = this->CreateWidget(annotationNode);
+  vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
+  if (!newWidget) {
+    vtkErrorMacro("OnMRMLSceneNodeAddedEvent: Widget was not created!")
+    return;
+  }
+  this->Internal->Widgets[annotationNode] = newWidget;
 
   // Add the node to the list.
   this->Internal->AnnotationNodeList.push_back(annotationNode);
-
+  std::cout << "....5...." << std::endl;
   // Refresh observers
   this->SetAndObserveNodes();
-
+  std::cout << "....6...." << std::endl;
   this->RequestRender();
 
 }

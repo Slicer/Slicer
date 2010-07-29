@@ -46,15 +46,18 @@ void vtkMRMLAnnotationTextNode::Initialize(vtkMRMLScene* mrmlScene)
     vtkErrorMacro("Scene was null!")
     return;
   }
+
+  this->SetTextLabel("New text");
+
   cout << "-->>>> -------" << endl;
   mrmlScene->AddNode(this);
   cout << "--<<<<< -------" << endl;
+
   this->CreateAnnotationTextDisplayNode();
   this->CreateAnnotationPointDisplayNode();
-
-   this->SetTextLabel(" ");
- 
  
   this->GetAnnotationTextDisplayNode()->SetTextScale(10);
+
+
 }
 

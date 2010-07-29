@@ -52,23 +52,52 @@ void vtkMRMLAnnotationTextDisplayableManager::PrintSelf(ostream& os, vtkIndent i
 /// Create a new text widget.
 vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
+  if (!node)
+    {
+    vtkErrorMacro("CreateWidget: Node not set!")
+    return 0;
+    }
+
   vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
 
+  if (!textNode)
+    {
+    vtkErrorMacro("CreateWidget: Could not get text node!")
+    return 0;
+    }
+
+  std::cout << "....11...." << std::endl;
   vtkTextWidget* textWidget = vtkTextWidget::New();
   VTK_CREATE(vtkTextRepresentation, textRep);
-
+  std::cout << "....22...." << std::endl;
   textRep->SetMoving(1);
+  std::cout << "....221...." << std::endl;
+  if (!textNode->GetText(0))
+    {
+    vtkErrorMacro("CreateWidget: No text was set for the node!")
+    return 0;
+    }
   textRep->SetText(textNode->GetText(0));
+  std::cout << "....222...." << std::endl;
   textWidget->SetRepresentation(textRep);
+  std::cout << "....223...." << std::endl;
   textWidget->SetInteractor(this->GetInteractor());
-  textRep->SetPosition(textNode->GetControlPointCoordinates(0));
-  textWidget->On();
 
+  std::cout << "....224...." << std::endl;
+  if (!textNode->GetTextCoordinates())
+    {
+    vtkErrorMacro("CreateWidget: Could not get coordinates for widget!")
+    return 0;
+    }
+
+  textRep->SetPosition(textNode->GetTextCoordinates());
+  textWidget->On();
+  std::cout << ".....33..." << std::endl;
   // add callback
   vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
   textWidget->AddObserver(vtkCommand::HoverEvent, myCallback);
   myCallback->Delete();
-
+  std::cout << ".....44..." << std::endl;
   return textWidget;
 
 }
