@@ -218,12 +218,17 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
   // Add one TextNode to scene and see if widget appears!
   //
 
+  // fail if there are already widgets in the RenderView
+  if (rr->GetViewProps()->GetNumberOfItems()!=0) {
+    std::cerr << "Expected number of items in renderer: 0" << std::endl;
+    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
+    return EXIT_FAILURE;
+  }
+
   double coordinates[3];
   coordinates[0]=(double)30;
   coordinates[1]=(double)30;
   coordinates[2]=0;
-
-  std::cout << "Creating textNode" << std::endl;
 
   vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
 
@@ -248,10 +253,6 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
     textNode->SetName("AnnotationText");
     }
 
-  std::cout << "Done: Creating textNode" << std::endl;
-
-  std::cout << "Creating textWidget" << std::endl;
-
   vtkTextWidget* textWidget = vtkTextWidget::New();
   VTK_CREATE(vtkTextRepresentation, textRep);
 
@@ -264,8 +265,6 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
   textRep->SetText(textNode->GetText(0));
-
-  std::cout << "Setting textRepresentation and attach to RenderInteractor" << std::endl;
 
   textWidget->SetRepresentation(textRep);
   textWidget->SetInteractor(ri);
@@ -284,16 +283,9 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  std::cout << "Setting position for widget" << std::endl;
-
   textRep->SetPosition(textNode->GetTextCoordinates());
   textWidget->On();
 
-  std::cout << "Render.." << std::endl;
-
-  displayableManagerGroup->RequestRender();
-
-  std::cout << "Query number of rendered items.." << std::endl;
 
   // fail if widget did not appear
   if (rr->GetViewProps()->GetNumberOfItems()!=1) {
@@ -302,26 +294,20 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  std::cout << "Cleanup." << std::endl;
-
   scene->RemoveNode(textNode);
-  std::cout << "Cleanup2." << std::endl;
+
   textNode->Delete();
   textWidget->Delete();
   textRep->Delete();
-  std::cout << "Cleanup3." << std::endl;
+
   renderRequestCallback->Delete();
   if (displayableManagerGroup) { displayableManagerGroup->Delete(); }
   factory->Delete();
   applicationLogic->Delete();
   scene->Delete();
-  std::cout << "Cleanup4." << std::endl;
-
 
   ri->Delete();
-  std::cout << "Cleanup41." << std::endl;
   rr->Delete();
-  std::cout << "Cleanup42" << std::endl;
   rw->Delete();
 
 
