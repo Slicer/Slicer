@@ -87,6 +87,15 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    layoutManager,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
 
+  // Populate the View ToolBar
+  QToolButton* layoutButton = new QToolButton(p);
+  layoutButton->setMenu(this->MenuLayout);
+  layoutButton->setPopupMode(QToolButton::InstantPopup);
+  layoutButton->setDefaultAction(this->actionViewLayoutConventional);
+  QObject::connect(this->MenuLayout, SIGNAL(triggered(QAction*)),
+                   layoutButton, SLOT(setDefaultAction(QAction*)));
+  this->ViewToolBar->addWidget(layoutButton);
+
   // Listen to the scene
   p->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
                  p, SLOT(onMRMLSceneModified(vtkObject*)));
