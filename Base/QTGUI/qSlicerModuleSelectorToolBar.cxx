@@ -29,24 +29,23 @@ public:
 
   void addModuleAction(QMenu* menu, QAction* moduleAction);
   QMenu* menu(QMenu* parentMenu, QStringList subCategories);
-  /// Return the last action in the menu that is not a menu (recursive)
-  QAction* lastMenuAction(QMenu* menu)const;
-  QAction* firstMenuAction(QMenu* menu)const;
 
   QAction* action(const QVariant& actionData, QMenu* parentMenu)const;
   QAction* action(const QString& text, QMenu* parentMenu)const;
   QAction* lastSelectedAction()const;
-  QAction* previousAction(QAction* action)const;
-  QAction* nextAction(QAction* action)const;
   QMenu*   actionMenu(QAction* action, QMenu* parentMenu)const;
 
-  void insertActionInHistory(QAction* action);
+  void insertActionOnTop(QAction* action, QMenu* menu);
 
   QMenu*       AllModulesMenu;
   QMenu*       ModulesMenu;
   QPushButton* ModulesButton;
   QMenu*       HistoryMenu;
   QToolButton* HistoryButton;
+  QToolButton* PreviousButton;
+  QMenu*       PreviousHistoryMenu;
+  QToolButton* NextButton;
+  QMenu*       NextHistoryMenu;
   QLineEdit*   ModuleSearchLineEdit;
   QCompleter*  ModuleSearchCompleter;
 };
@@ -60,6 +59,10 @@ qSlicerModuleSelectorToolBarPrivate::qSlicerModuleSelectorToolBarPrivate()
   this->ModulesButton = 0;
   this->HistoryMenu = 0;
   this->HistoryButton = 0;
+  this->PreviousButton = 0;
+  this->PreviousHistoryMenu = 0;
+  this->NextButton = 0;
+  this->NextHistoryMenu = 0;
   this->ModuleSearchLineEdit = 0;
   this->ModuleSearchCompleter = 0;
 }
@@ -73,10 +76,10 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QIcon historyIcon(":Icons/ModuleHistory.png");
 
   // Modules Label
-  p->addWidget(new QLabel("Modules:", p));
+  p->addWidget(new QLabel(QObject::tr("Modules:"), p));
 
   // Modules pushbutton
-  this->ModulesMenu = new QMenu("Modules",p);
+  this->ModulesMenu = new QMenu(QObject::tr("Modules"),p);
   this->ModulesButton = new QPushButton(p);
   this->ModulesButton->setMenu(this->ModulesMenu);
   QStyleOptionButton opt;
@@ -86,15 +89,37 @@ void qSlicerModuleSelectorToolBarPrivate::init()
       this->ModulesButton->fontMetrics().size(
         Qt::TextShowMnemonic, "XXXXXXXXXXXXXXXXXXXXXXXXXX"),this->ModulesButton).width());
   p->addWidget(this->ModulesButton);
-  QObject::connect(this->ModulesMenu, SIGNAL(triggered(QAction*)),
-                   p, SLOT(actionSelected(QAction*)));
 
-  // Previous / Next
-  p->addAction(previousIcon, "Previous", p, SLOT(selectPreviousModule()));
-  p->addAction(nextIcon, "Next", p, SLOT(selectNextModule()));
+  // Previous button
+  this->PreviousHistoryMenu = new QMenu(p);
+  this->PreviousButton = new QToolButton(p);
+  this->PreviousButton->setIcon(previousIcon);
+  this->PreviousButton->setText(QObject::tr("Previous"));
+  this->PreviousButton->setMenu(this->PreviousHistoryMenu);
+  this->PreviousButton->setArrowType(Qt::NoArrow);
+  // selectPreviousModule is called only if the toolbutton is clicked not if an
+  // action in the history is triggered
+  QObject::connect(this->PreviousButton, SIGNAL(clicked(bool)),
+                   p, SLOT(selectPreviousModule()));
+  p->addWidget(this->PreviousButton);
+  this->PreviousButton->setEnabled(this->PreviousHistoryMenu->actions().size() > 0);
+
+  // Next button
+  this->NextHistoryMenu = new QMenu(p);
+  this->NextButton = new QToolButton(p);
+  this->NextButton->setIcon(nextIcon);
+  this->NextButton->setText(QObject::tr("Next"));
+  this->NextButton->setMenu(this->NextHistoryMenu);
+  this->NextButton->setArrowType(Qt::NoArrow);
+  // selectNextModule is called only if the toolbutton is clicked not if an
+  // action in the history is triggered
+  QObject::connect(this->NextButton, SIGNAL(clicked(bool)),
+                   p, SLOT(selectNextModule()));
+  p->addWidget(this->NextButton);
+  this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
 
   // History
-  this->HistoryMenu = new QMenu("Modules history", p);
+  this->HistoryMenu = new QMenu(QObject::tr("Modules history"), p);
   this->HistoryButton = new QToolButton;
   this->HistoryButton->setIcon(historyIcon);
   this->HistoryButton->setMenu(this->HistoryMenu);
@@ -104,7 +129,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // Search
   this->ModuleSearchLineEdit = new QLineEdit(p);
   // TODO clear the search text when the line edit gets the focus
-  this->ModuleSearchLineEdit->setText("Search a module");
+  this->ModuleSearchLineEdit->setText(QObject::tr("Search a module"));
   this->ModuleSearchCompleter = new QCompleter(QStringList());
   this->ModuleSearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
   this->ModuleSearchLineEdit->setCompleter(this->ModuleSearchCompleter);
@@ -117,7 +142,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
 
 void qSlicerModuleSelectorToolBarPrivate::addDefaultCategories()
 {
-  this->AllModulesMenu = this->ModulesMenu->addMenu("All Modules");
+  this->AllModulesMenu = this->ModulesMenu->addMenu(QObject::tr("All Modules"));
   this->ModulesMenu->addSeparator();
   // between the 2 separators goes the top level modules (with no category)
   this->ModulesMenu->addSeparator();
@@ -240,98 +265,10 @@ QMenu* qSlicerModuleSelectorToolBarPrivate::menu(QMenu* menu, QStringList subCat
 }
 
 //---------------------------------------------------------------------------
-QAction* qSlicerModuleSelectorToolBarPrivate::firstMenuAction(QMenu* menu)const
-{
-  QList<QAction*> actions = menu->actions();
-  if (actions.isEmpty())
-    {
-    return 0;
-    }
-  QAction* firstAction = actions[0];
-  if (firstAction->menu())
-    {
-    return this->firstMenuAction(firstAction->menu());
-    }
-  return firstAction;
-}
-
-//---------------------------------------------------------------------------
-QAction* qSlicerModuleSelectorToolBarPrivate::lastMenuAction(QMenu* menu)const
-{
-  QList<QAction*> actions = menu->actions();
-  if (actions.isEmpty())
-    {
-    return 0;
-    }
-  QAction* lastAction = actions[actions.size()-1];
-  if (lastAction->menu())
-    {
-    return this->lastMenuAction(lastAction->menu());
-    }
-  return lastAction;
-}
-
-//---------------------------------------------------------------------------
 QAction* qSlicerModuleSelectorToolBarPrivate::lastSelectedAction()const
 {
   QList<QAction*> actions = this->HistoryMenu->actions();
   return actions.size() ? actions[0] : 0;
-}
-
-//---------------------------------------------------------------------------
-QAction* qSlicerModuleSelectorToolBarPrivate::previousAction(QAction* action)const
-{
-  QMenu* menu = this->AllModulesMenu;
-  QList<QAction*> actions = menu->actions();
-  int index = actions.indexOf(action);
-  Q_ASSERT(actions.size());
-  if (index < 0)
-    {
-    // error
-    return actions[0];
-    }
-  QAction* previousAction = 0;
-  if (index == 0)
-    {
-    previousAction = this->AllModulesMenu->menuAction();
-    }
-  else
-    {
-    previousAction = actions[index - 1];
-    }
-  if (previousAction->menu())
-    {
-    previousAction = this->lastMenuAction(previousAction->menu());
-    }
-  return previousAction;
-}
-
-//---------------------------------------------------------------------------
-QAction* qSlicerModuleSelectorToolBarPrivate::nextAction(QAction* action)const
-{
-  QMenu* menu = this->AllModulesMenu;
-  QList<QAction*> actions = menu->actions();
-  int index = actions.indexOf(action);
-  Q_ASSERT(actions.size());
-  if (index < 0)
-    {
-    // error
-    return actions[0];
-    }
-  QAction* nextAction = 0;
-  if (index == actions.size()-1)
-    {
-    nextAction = this->AllModulesMenu->menuAction();
-    }
-  else
-    {
-    nextAction = actions[index + 1];
-    }
-  if (nextAction->menu())
-    {
-    nextAction = this->firstMenuAction(nextAction->menu());
-    }
-  return nextAction;
 }
 
 //---------------------------------------------------------------------------
@@ -360,17 +297,16 @@ QMenu* qSlicerModuleSelectorToolBarPrivate::actionMenu(QAction* action, QMenu* p
     }
   return 0;
 }
-
 //---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBarPrivate::insertActionInHistory(QAction* action)
+void qSlicerModuleSelectorToolBarPrivate::insertActionOnTop(QAction* action, QMenu* menu)
 {
-  this->HistoryMenu->removeAction(action);
-  QAction* before = this->HistoryMenu->actions().isEmpty() ? 0 : this->HistoryMenu->actions().first();
-  this->HistoryMenu->insertAction(before, action);
-  QList<QAction*> actions = this->HistoryMenu->actions();
+  menu->removeAction(action);
+  QAction* before = menu->actions().isEmpty() ? 0 : menu->actions().first();
+  menu->insertAction(before, action);
+  QList<QAction*> actions = menu->actions();
   for (int i = 8; i < actions.size(); ++i)
     {
-    this->HistoryMenu->removeAction(actions[i]);
+    menu->removeAction(actions[i]);
     }
 }
 
@@ -404,13 +340,15 @@ void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
     return;
     }
   QAction* moduleAction = module->action();
+  QObject::connect(moduleAction, SIGNAL(triggered(bool)),
+                   this, SLOT(onActionTriggered()));
 
   QMenu* menu = d->menu(d->ModulesMenu, module->category().split('.'));
   d->addModuleAction(menu, moduleAction);
-  // Add in "All Modules
+  // Add in "All Modules" as well
   d->addModuleAction(d->AllModulesMenu, moduleAction);
 
-  // here we assume the model is not automatically sorted
+  // here we assume the completion model is not automatically sorted
   int actionCount = d->ModuleSearchCompleter->model()->rowCount();
   d->ModuleSearchCompleter->model()->insertRow(actionCount);
   QModelIndex index = d->ModuleSearchCompleter->model()->index(actionCount -1, 0);
@@ -421,11 +359,16 @@ void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
 void qSlicerModuleSelectorToolBar::removeModule(const QString& moduleName)
 {
   CTK_D(qSlicerModuleSelectorToolBar);
+  // removing a module consists in retrieving the unique action of the module
+  // and removing it from all the possible menus
   QAction* moduleAction = d->action(QVariant(moduleName), d->ModulesMenu);
   QMenu* menu = d->actionMenu(moduleAction, d->ModulesMenu);
   menu->removeAction(moduleAction);
   d->AllModulesMenu->removeAction(moduleAction);
   d->HistoryMenu->removeAction(moduleAction);
+  d->PreviousHistoryMenu->removeAction(moduleAction);
+  d->NextHistoryMenu->removeAction(moduleAction);
+  // TBD: what if the module is the current module ?
 }
 
 //---------------------------------------------------------------------------
@@ -435,7 +378,8 @@ void qSlicerModuleSelectorToolBar::selectModule(const QString& moduleName)
   QAction* moduleAction = d->action(QVariant(moduleName), d->ModulesMenu);
   if (moduleAction)
     {
-    this->actionSelected(moduleAction);
+    // triggering the action will eventually call actionSelected();
+    moduleAction->trigger();
     }
 }
 
@@ -446,16 +390,71 @@ void qSlicerModuleSelectorToolBar::selectModuleByTitle(const QString& title)
   QAction* moduleAction = d->action(title, d->ModulesMenu);
   if (moduleAction)
     {
-    this->actionSelected(moduleAction);
+    // triggering the action will eventually call actionSelected();
+    moduleAction->trigger();
     }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBar::onActionTriggered()
+{
+  // we know for sure that the sender is the triggered QAction
+  this->actionSelected(qobject_cast<QAction*>(this->sender()));
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
 {
   CTK_D(qSlicerModuleSelectorToolBar);
+  QAction* lastAction = d->lastSelectedAction();
+  if (action == lastAction)
+    {
+    return;
+    }
+  QList<QAction*> previousActions = d->PreviousHistoryMenu->actions();
+  QList<QAction*> nextActions = d->NextHistoryMenu->actions();
+  int actionIndexInPreviousMenu = previousActions.indexOf(action);
+  int actionIndexInNextMenu = nextActions.indexOf(action);
+  if ( actionIndexInNextMenu >= 0)
+    {
+    previousActions.push_front(lastAction);
+    for (int i = 0; i < actionIndexInNextMenu ; ++i)
+      {
+      previousActions.push_front(nextActions.takeFirst());
+      }
+    Q_ASSERT(nextActions[0] == action);
+    nextActions.removeFirst();
+    }
+  else if ( actionIndexInPreviousMenu >= 0)
+    {
+    nextActions.push_front(lastAction);
+    for (int i = 0; i < actionIndexInPreviousMenu  ; ++i)
+      {
+      nextActions.push_front(previousActions.takeFirst());
+      }
+    Q_ASSERT(previousActions[0] == action);
+    previousActions.removeFirst();
+    }
+  else
+    {
+    previousActions.push_front(lastAction);
+    nextActions.clear();
+    }
+  // don't keep more than X history
+  previousActions = previousActions.mid(0, 8);
+  nextActions = nextActions.mid(0, 8);
+
+  d->PreviousHistoryMenu->clear();
+  d->PreviousHistoryMenu->addActions(previousActions);
+  d->NextHistoryMenu->clear();
+  d->NextHistoryMenu->addActions(nextActions);
+
+  d->ModulesButton->setIcon(action->icon());
   d->ModulesButton->setText(action->text());
-  d->insertActionInHistory(action);
+  d->PreviousButton->setEnabled(d->PreviousHistoryMenu->actions().size());
+  d->NextButton->setEnabled(d->NextHistoryMenu->actions().size());
+
+  d->insertActionOnTop(action, d->HistoryMenu);
   d->ModuleSearchLineEdit->setText("Search a module");
   emit moduleSelected(action->data().toString());
 }
@@ -464,16 +463,32 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
 void qSlicerModuleSelectorToolBar::selectNextModule()
 {
   CTK_D(qSlicerModuleSelectorToolBar);
-  QAction* currentAction = d->lastSelectedAction();
-  this->actionSelected(d->nextAction(currentAction));
+  // selectNextModule() is not called when an action from the next history menu
+  // is triggered. selectNextModule() is called only if the next toolbutton is
+  // clicked.
+  QList<QAction*> actions = d->NextHistoryMenu->actions();
+  QAction* nextAction = actions.size() ? actions.first() : 0;
+  if (nextAction)
+    {
+    // triggering the action will eventually call actionSelected()
+    nextAction->trigger();
+    }
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBar::selectPreviousModule()
 {
   CTK_D(qSlicerModuleSelectorToolBar);
-  QAction* currentAction = d->lastSelectedAction();
-  this->actionSelected(d->previousAction(currentAction));
+  // selectPreviousModule() is not called when an action from the Previous
+  // history menu is triggered. selectPreviousModule() is called only if the
+  // previous toolbutton is clicked.
+  QList<QAction*> actions = d->PreviousHistoryMenu->actions();
+  QAction* previousAction = actions.size() ? actions.first() : 0;
+  if (previousAction)
+    {
+    // triggering the action will eventually call actionSelected()
+    previousAction->trigger();
+    }
 }
 
 //---------------------------------------------------------------------------
