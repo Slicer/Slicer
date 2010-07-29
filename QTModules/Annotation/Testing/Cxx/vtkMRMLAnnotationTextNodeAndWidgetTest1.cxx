@@ -298,6 +298,8 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
 
   scene->RemoveNode(textNode);
 
+  std::cout << "Test OK!" << std::endl;
+
   textNode->Delete();
   textWidget->Delete();
   textRep->Delete();
