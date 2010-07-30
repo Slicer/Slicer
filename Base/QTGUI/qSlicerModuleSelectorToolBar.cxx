@@ -220,6 +220,7 @@ void qSlicerModuleSelectorToolBarPrivate::addModuleAction(QMenu* menu, QAction* 
   // The actions are before submenus and inserted alphabetically
   foreach(QAction* action, actions)
     {
+    Q_ASSERT(action);
     if (!moduleAction->menu() && (action->menu() ||
                                   action->isSeparator() ||
                                   action->text() > moduleAction->text()))
@@ -340,6 +341,7 @@ void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
     return;
     }
   QAction* moduleAction = module->action();
+  Q_ASSERT(moduleAction);
   QObject::connect(moduleAction, SIGNAL(triggered(bool)),
                    this, SLOT(onActionTriggered()));
 
@@ -421,7 +423,10 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
   int actionIndexInNextMenu = nextActions.indexOf(action);
   if ( actionIndexInNextMenu >= 0)
     {
-    previousActions.push_front(lastAction);
+    if (lastAction)
+      {
+      previousActions.push_front(lastAction);
+      }
     for (int i = 0; i < actionIndexInNextMenu ; ++i)
       {
       previousActions.push_front(nextActions.takeFirst());
@@ -431,7 +436,10 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
     }
   else if ( actionIndexInPreviousMenu >= 0)
     {
-    nextActions.push_front(lastAction);
+    if (lastAction)
+      {
+      nextActions.push_front(lastAction);
+      }
     for (int i = 0; i < actionIndexInPreviousMenu  ; ++i)
       {
       nextActions.push_front(previousActions.takeFirst());
@@ -441,7 +449,10 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
     }
   else
     {
-    previousActions.push_front(lastAction);
+    if (lastAction)
+      {
+      previousActions.push_front(lastAction);
+      }
     nextActions.clear();
     }
   // don't keep more than X history
@@ -458,7 +469,10 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
   d->PreviousButton->setEnabled(d->PreviousHistoryMenu->actions().size());
   d->NextButton->setEnabled(d->NextHistoryMenu->actions().size());
 
-  d->insertActionOnTop(action, d->HistoryMenu);
+  if (action)
+    {
+    d->insertActionOnTop(action, d->HistoryMenu);
+    }
   d->ModuleSearchLineEdit->setText("Search a module");
   emit moduleSelected(action->data().toString());
 }
