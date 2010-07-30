@@ -635,14 +635,14 @@ void vtkModelTransformGUI::BuildGUI ( )
   this->ModelSelector->SetPadX(2);
   this->ModelSelector->SetPadY(2);
   this->ModelSelector->SetLabelText( "Input Model ");
-  this->ModelSelector->SetBalloonHelpString("Select a model to transfrom.");
+  this->ModelSelector->SetBalloonHelpString("Select a model to transform.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->ModelSelector->GetWidgetName());
 
   this->TransformSelector = vtkSlicerNodeSelectorWidget::New();
   this->TransformSelector->SetParent( f );
   this->TransformSelector->Create();
-  this->TransformSelector->AddNodeClass("vtkMRMLTransformNode", NULL, NULL, NULL);
+  this->TransformSelector->AddNodeClass("vtkMRMLLinearTransformNode", NULL, NULL, NULL);
   this->TransformSelector->SetChildClassesEnabled(1);
   this->TransformSelector->SetShowHidden (1);
   this->TransformSelector->SetMRMLScene(this->GetMRMLScene());
@@ -651,8 +651,8 @@ void vtkModelTransformGUI::BuildGUI ( )
   this->TransformSelector->SetBorderWidth(2);
   this->TransformSelector->SetPadX(2);
   this->TransformSelector->SetPadY(2);
-  this->TransformSelector->SetLabelText( "Transfrom ");
-  this->TransformSelector->SetBalloonHelpString("Select a transform.");
+  this->TransformSelector->SetLabelText( "Linear transform ");
+  this->TransformSelector->SetBalloonHelpString("Select a linear transform.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->TransformSelector->GetWidgetName());
 
