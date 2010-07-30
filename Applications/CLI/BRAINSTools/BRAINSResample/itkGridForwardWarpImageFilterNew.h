@@ -1,19 +1,19 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile: itkGridForwardWarpImageFilterNew.h,v $
-Language:  C++
-Date:      $Date: 2009-04-23 03:43:41 $
-Version:   $Revision: 1.2 $
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkGridForwardWarpImageFilterNew.h,v $
+ *  Language:  C++
+ *  Date:      $Date: 2009-04-23 03:43:41 $
+ *  Version:   $Revision: 1.2 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #ifndef __itkGridForwardWarpImageFilterNew_h
 #define __itkGridForwardWarpImageFilterNew_h
@@ -24,33 +24,33 @@ PURPOSE.  See the above copyright notices for more information.
 namespace itk
 {
 /** \class GridForwardWarpImageFilterNew
- * \brief Warps a grid using an input deformation field.
- *
- * GridForwardWarpImageFilterNew warps a grid with respect to
- * a given deformation field.
- *
- * A deformation field is represented as a image whose pixel type is some
- * vector type with at least N elements, where N is the dimension of
- * the input image. The vector type must support element access via operator
- * [].
- *
- * The output image is produced by forward mapping.
- *
- * Each vector in the deformation field represent the distance between
- * a geometric point in the input space and a point in the output space such
- * that:
- *
- * \f[ p_{in} = p_{out} + d \f]
- *
- * Typically the mapped position does not correspond to an integer pixel
- * position in the output image. We round it.
- *
- * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
- *
- * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/510
- *
- */
+  * \brief Warps a grid using an input deformation field.
+  *
+  * GridForwardWarpImageFilterNew warps a grid with respect to
+  * a given deformation field.
+  *
+  * A deformation field is represented as a image whose pixel type is some
+  * vector type with at least N elements, where N is the dimension of
+  * the input image. The vector type must support element access via operator
+  * [].
+  *
+  * The output image is produced by forward mapping.
+  *
+  * Each vector in the deformation field represent the distance between
+  * a geometric point in the input space and a point in the output space such
+  * that:
+  *
+  * \f[ p_{in} = p_{out} + d \f]
+  *
+  * Typically the mapped position does not correspond to an integer pixel
+  * position in the output image. We round it.
+  *
+  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+  *
+  * This implementation was taken from the Insight Journal paper:
+  * http://hdl.handle.net/1926/510
+  *
+  */
 template<
   class TDeformationField,
   class TOutputImage
@@ -104,13 +104,16 @@ public:
   itkGetConstMacro(ForegroundValue, PixelType);
 
   /** Set the spacing for the grids value, a spacing of 0 indicates that
-   * displacements in that direction should be set to zero (thus keeping the lines
-   * in plane).  Negative grid spacings indicate that grid lines in that direction should
-   * not be rendered, but that in the multi-dimensional framework, the absolute value of
-   * that spacing should be used when deterimining which lines to render.
-   * For example, if you want only Z-dir warped lines in a 2D X-dir view, then
-   * set grid spacing to 0,-8,8.
-   */
+    * displacements in that direction should be set to zero (thus keeping the
+    *lines
+    * in plane).  Negative grid spacings indicate that grid lines in that
+    *direction should
+    * not be rendered, but that in the multi-dimensional framework, the absolute
+    *value of
+    * that spacing should be used when deterimining which lines to render.
+    * For example, if you want only Z-dir warped lines in a 2D X-dir view, then
+    * set grid spacing to 0,-8,8.
+    */
   typedef FixedArray< int, ImageDimension > GridSpacingType;
   itkSetMacro(GridPixelSpacing, GridSpacingType);
   /** Get the foreground value */
@@ -131,8 +134,8 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   /**
-   * GenerateData()
-   */
+    * GenerateData()
+    */
   void GenerateData();
 
 private:

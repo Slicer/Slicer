@@ -8,30 +8,33 @@
 namespace itk
 {
 /**
- * \class LargestForegroundFilledMaskImageFilter
- * \author Hans J. Johnson
- *
- * This filter does a good job of finding a single largest connected
- * mask that separates the foreground object from the background.
- * It assumes that the corner voxels of the image belong to the backgound.
- * This filter was written for the purpose of finding the tissue
- * region of a brain image with no internal holes.
- *
- * The OtsuPercentile Thresholds are used to define the range of values
- * where the percentage of voxels falls beetween
- * (0+OtsuPercentileLowerThreshold) < "Intensities of Interest" < (1-OtsuPercentileUpperThreshold).
- *
- * The ClosingSize specifies how many mm to dilate followed by
- * erode to fill holes that be present in the image.
- *
- * The DilateSize specifies how many mm to dilate
- * as a final step to include a small amount of surface background in addition to the
- * tissue region present in the image.
- *
- * The image that is returned will be a binary image with foreground and background
- * values specified by the user (defaults to 1 and 0 respectively).
- *
- */
+  * \class LargestForegroundFilledMaskImageFilter
+  * \author Hans J. Johnson
+  *
+  * This filter does a good job of finding a single largest connected
+  * mask that separates the foreground object from the background.
+  * It assumes that the corner voxels of the image belong to the backgound.
+  * This filter was written for the purpose of finding the tissue
+  * region of a brain image with no internal holes.
+  *
+  * The OtsuPercentile Thresholds are used to define the range of values
+  * where the percentage of voxels falls beetween
+  * (0+OtsuPercentileLowerThreshold) < "Intensities of Interest" <
+  *(1-OtsuPercentileUpperThreshold).
+  *
+  * The ClosingSize specifies how many mm to dilate followed by
+  * erode to fill holes that be present in the image.
+  *
+  * The DilateSize specifies how many mm to dilate
+  * as a final step to include a small amount of surface background in addition
+  *to the
+  * tissue region present in the image.
+  *
+  * The image that is returned will be a binary image with foreground and
+  *background
+  * values specified by the user (defaults to 1 and 0 respectively).
+  *
+  */
 template< class TInputImage, class TOutputImage = TInputImage >
 class ITK_EXPORT LargestForegroundFilledMaskImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
@@ -73,8 +76,9 @@ public:
   itkGetConstMacro(OtsuPercentileUpperThreshold, double);
 
   /** Short hand for setting both upper and lower
-   * (0+OtsuPercentileThreshold) < "Intensities of Interest" < (1-OtsuPercentileThreshold).
-   */
+    * (0+OtsuPercentileThreshold) < "Intensities of Interest" <
+    *(1-OtsuPercentileThreshold).
+    */
   void SetOtsuPercentileThreshold(const double percentile)
   {
     this->SetOtsuPercentileLowerThreshold(percentile);
@@ -86,12 +90,14 @@ public:
     return this->GetOtsuPercentileLowerThreshold();
   }
 
-  /** The closing size in mm, this is rounded up to the next closest number of voxel
-   * by taking Spacing into account */
+  /** The closing size in mm, this is rounded up to the next closest number of
+    * voxel
+    * by taking Spacing into account */
   itkSetMacro(ClosingSize, double);
   itkGetConstMacro(ClosingSize, double);
-  /** The dilation size in mm, this is rounded up to the next closest number of voxel
-   * by taking Spacing into account */
+  /** The dilation size in mm, this is rounded up to the next closest number of
+    * voxel
+    * by taking Spacing into account */
   itkSetMacro(DilateSize, double);
   itkGetConstMacro(DilateSize, double);
   itkSetMacro(InsideValue, IntegerPixelType);
@@ -109,8 +115,9 @@ protected:
 
 private:
   /** Returns true if more than two bins of informaiton are found,
-   * returns false if only two bins of informaiton are found (i.e. found a binary image).
-   * Low and High are set to the ?????? */
+    * returns false if only two bins of informaiton are found (i.e. found a
+    *binary image).
+    * Low and High are set to the ?????? */
   unsigned int SetLowHigh(InputPixelType & low,
                           InputPixelType & high);
 
@@ -125,7 +132,7 @@ private:
   IntegerPixelType m_InsideValue;
   IntegerPixelType m_OutsideValue;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #if ITK_TEMPLATE_TXX
 #  include "itkLargestForegroundFilledMaskImageFilter.txx"

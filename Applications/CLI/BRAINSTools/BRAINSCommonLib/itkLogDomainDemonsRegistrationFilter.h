@@ -10,43 +10,45 @@
 namespace itk
 {
 /**
- * \class LogDomainDemonsRegistrationFilter
- * \brief Deformably register two images using a diffeomorphic demons algorithm.
- *
- * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
- * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
- * Proc. of MICCAI 2008.
- *
- * Velocity and deformation fields are represented as images whose pixel type are
- * some vector type with at least N elements, where N is the dimension of
- * the fixed image. The vector type must support element access via operator
- * []. It is assumed that the vector elements behave like floating point
- * scalars.
- *
- * This class is templated over the fixed image type, moving image type
- * and the velocity/deformation field type.
- *
- * The input fixed and moving images are set via methods SetFixedImage
- * and SetMovingImage respectively. An initial velocity field maybe set via
- * SetInitialVelocityField or SetInput. If no initial field is set,
- * a zero field is used as the initial condition.
- *
- * The output velocity field can be obtained via methods GetOutput
- * or GetVelocityField.
- *
- * The output deformation field can be obtained via method GetDeformationField.
- *
- * This class make use of the finite difference solver hierarchy. Update
- * for each iteration is computed using a PDEDeformableRegistrationFunction.
- *
- * \warning This filter assumes that the fixed image type, moving image type
- * and velocity field type all have the same number of dimensions.
- *
- * \sa DemonsRegistrationFilter
- * \sa DemonsRegistrationFunction
- * \ingroup DeformableImageRegistration MultiThreaded
- * \author Florence Dru, INRIA and Tom Vercauteren, MKT
- */
+  * \class LogDomainDemonsRegistrationFilter
+  * \brief Deformably register two images using a diffeomorphic demons
+  *algorithm.
+  *
+  * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
+  * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
+  * Proc. of MICCAI 2008.
+  *
+  * Velocity and deformation fields are represented as images whose pixel type
+  *are
+  * some vector type with at least N elements, where N is the dimension of
+  * the fixed image. The vector type must support element access via operator
+  * []. It is assumed that the vector elements behave like floating point
+  * scalars.
+  *
+  * This class is templated over the fixed image type, moving image type
+  * and the velocity/deformation field type.
+  *
+  * The input fixed and moving images are set via methods SetFixedImage
+  * and SetMovingImage respectively. An initial velocity field maybe set via
+  * SetInitialVelocityField or SetInput. If no initial field is set,
+  * a zero field is used as the initial condition.
+  *
+  * The output velocity field can be obtained via methods GetOutput
+  * or GetVelocityField.
+  *
+  * The output deformation field can be obtained via method GetDeformationField.
+  *
+  * This class make use of the finite difference solver hierarchy. Update
+  * for each iteration is computed using a PDEDeformableRegistrationFunction.
+  *
+  * \warning This filter assumes that the fixed image type, moving image type
+  * and velocity field type all have the same number of dimensions.
+  *
+  * \sa DemonsRegistrationFilter
+  * \sa DemonsRegistrationFunction
+  * \ingroup DeformableImageRegistration MultiThreaded
+  * \author Florence Dru, INRIA and Tom Vercauteren, MKT
+  */
 template< class TFixedImage, class TMovingImage, class TField >
 class ITK_EXPORT LogDomainDemonsRegistrationFilter:
   public LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
@@ -98,9 +100,9 @@ public:
   typedef typename DemonsRegistrationFunctionType::GradientType GradientType;
 
   /** Get the metric value. The metric value is the mean square difference
-   * in intensity between the fixed image and transforming moving image
-   * computed over the the overlapping region between the two images.
-   * This value is calculated for the current iteration */
+    * in intensity between the fixed image and transforming moving image
+    * computed over the the overlapping region between the two images.
+    * This value is calculated for the current iteration */
   virtual double GetMetric() const;
 
   virtual const double & GetRMSChange() const;
@@ -110,21 +112,21 @@ public:
   virtual GradientType GetUseGradientType() const;
 
   /** Set/Get the threshold below which the absolute difference of
-   * intensity yields a match. When the intensities match between a
-   * moving and fixed image pixel, the update vector (for that
-   * iteration) will be the zero vector. Default is 0.001. */
+    * intensity yields a match. When the intensities match between a
+    * moving and fixed image pixel, the update vector (for that
+    * iteration) will be the zero vector. Default is 0.001. */
   virtual void SetIntensityDifferenceThreshold(double);
 
   virtual double GetIntensityDifferenceThreshold() const;
 
   /** Set/Get the maximum length in terms of pixels of
-   *  the vectors in the update buffer. */
+    *  the vectors in the update buffer. */
   virtual void SetMaximumUpdateStepLength(double);
 
   virtual double GetMaximumUpdateStepLength() const;
 
   /** Set/Get the number of terms used in the Baker-Campbell-Hausdorff
-    approximation. */
+    * approximation. */
   virtual void SetNumberOfBCHApproximationTerms(unsigned int);
 
   virtual unsigned int GetNumberOfBCHApproximationTerms() const;
@@ -141,14 +143,14 @@ protected:
   virtual void ApplyUpdate(TimeStepType dt);
 
 private:
-  LogDomainDemonsRegistrationFilter(const Self &);   // purposely not
-                                                     // implemented
-  void operator=(const Self &);                      // purposely not
+  // purposely not implemented
+  LogDomainDemonsRegistrationFilter(const Self &);
+  void operator=(const Self &);
 
-  // implemented
-
-  /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is of the correct type.
-   * this method will throw an exception if the function is not of the expected type. */
+  /** Downcast the DifferenceFunction using a dynamic_cast to ensure that it is
+    * of the correct type.
+    * this method will throw an exception if the function is not of the expected
+    *type. */
   DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType();
 
   const DemonsRegistrationFunctionType *  DownCastDifferenceFunctionType() const;
@@ -168,7 +170,7 @@ private:
   MultiplyByConstantPointer m_Multiplier;
   BCHFilterPointer          m_BCHFilter;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "itkLogDomainDemonsRegistrationFilter.txx"

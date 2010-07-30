@@ -2,17 +2,17 @@
 #define  __BRAINSFitHelper_h
 
 /**
- * \author Hans J. Johnson
- *
- * The intension of the BRIANSFitHelper is to provide a simple non-templated class
- * that can be used in other programs in a way that is very similar to the
- * command line version of the program from the SlicerExecutionModel version
- * of the BRAINSFitPrimary program.
- *
- * Almost all the command line options are available in this version, but
- * there is no need to read or write files to disk in order to use this class.
- *
- */
+  * \author Hans J. Johnson
+  *
+  * The intension of the BRIANSFitHelper is to provide a simple non-templated
+  * class that can be used in other programs in a way that is very similar to
+  * the command line version of the program from the SlicerExecutionModel
+  * version of the BRAINSFitPrimary program.
+  *
+  * Almost all the command line options are available in this version, but
+  * there is no need to read or write files to disk in order to use this class.
+  *
+  */
 #include <fstream>
 #include <vector>
 #include <string>
@@ -64,7 +64,7 @@ typedef SpatialObjectType::Pointer ImageMaskPointer;
 namespace itk
 {
 /** Method for verifying that the ordering of the transformTypes is consistent
-  with converting routines. */
+  * with converting routines. */
 BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vector< std::string > & transformType);
 }
 
@@ -103,7 +103,7 @@ public:
   itkGetConstObjectMacro(MovingVolume, MovingVolumeType);
 
   /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the
-      algorithm.*/
+    *  algorithm.*/
   itkGetConstObjectMacro(PreprocessedMovingVolume, MovingVolumeType);
 
   typedef MattesMutualInformationImageToImageMetric< FixedVolumeType, MovingVolumeType >
@@ -211,12 +211,12 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** Method invoked by the pipeline in order to trigger the computation of
-   * the registration. */
+    * the registration. */
   void  GenerateData();
 
 private:
-  BRAINSFitHelper(const Self &);   // purposely not implemented
-  void operator=(const Self &);    // purposely not implemented
+  BRAINSFitHelper(const Self &); // purposely not implemented
+  void operator=(const Self &);  // purposely not implemented
 
   FixedImagePointer  m_FixedVolume;
   MovingImagePointer m_MovingVolume;

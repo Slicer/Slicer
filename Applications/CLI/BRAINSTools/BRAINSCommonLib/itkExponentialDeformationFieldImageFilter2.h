@@ -12,37 +12,37 @@
 namespace itk
 {
 /** \class ExponentialDeformationFieldImageFilter2
- * \brief Computes a diffeomorphic deformation field as the Lie group
- * exponential of a vector field.
- *
- * ExponentialDeformationFieldImageFilter2 takes a 'smooth' vector field
- * as input and computes the deformation field that is its exponential.
- *
- * Given that both the input and output deformation field are represented as
- * discrete images with pixel type vector, the exponential will be only an
- * estimation and will probably not correspond to a perfect exponential.  The
- * precision of the exponential can be improved at the price of increasing the
- * computation time (number of iterations).
- *
- * The method used for computing the exponential deformation field is
- * an iterative scaling and squaring (cf Arsigny et al., "A
- * Log-Euclidean Framework for Statistics on Diffeomorphisms", MICCAI'06).
- *
- *    \f[
- *      exp(\Phi) = exp( \frac{\Phi}{2^N} )^{2^N}
- *    \f]
- *
- *
- * This filter expects both the input and output images to be of pixel type
- * Vector.
- *
- * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
- *
- * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/510
- *
- * \ingroup ImageToImageFilter
- */
+  * \brief Computes a diffeomorphic deformation field as the Lie group
+  * exponential of a vector field.
+  *
+  * ExponentialDeformationFieldImageFilter2 takes a 'smooth' vector field
+  * as input and computes the deformation field that is its exponential.
+  *
+  * Given that both the input and output deformation field are represented as
+  * discrete images with pixel type vector, the exponential will be only an
+  * estimation and will probably not correspond to a perfect exponential.  The
+  * precision of the exponential can be improved at the price of increasing the
+  * computation time (number of iterations).
+  *
+  * The method used for computing the exponential deformation field is
+  * an iterative scaling and squaring (cf Arsigny et al., "A
+  * Log-Euclidean Framework for Statistics on Diffeomorphisms", MICCAI'06).
+  *
+  *    \f[
+  *      exp(\Phi) = exp( \frac{\Phi}{2^N} )^{2^N}
+  *    \f]
+  *
+  *
+  * This filter expects both the input and output images to be of pixel type
+  * Vector.
+  *
+  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+  *
+  * This implementation was taken from the Insight Journal paper:
+  * http://hdl.handle.net/1926/510
+  *
+  * \ingroup ImageToImageFilter
+  */
 template< class TInputImage, class TOutputImage >
 class ITK_EXPORT ExponentialDeformationFieldImageFilter2:
   public ImageToImageFilter< TInputImage, TOutputImage >
@@ -76,18 +76,18 @@ public:
   itkGetConstMacro(MaximumNumberOfIterations, unsigned int);
 
   /** If AutomaticNumberOfIterations is off, the number of iterations is
-   * given by MaximumNumberOfIterations. If it is on, we try to get
-   * the lowest good number (which may not be larger than
-   * MaximumNumberOfIterations ) */
+    * given by MaximumNumberOfIterations. If it is on, we try to get
+    * the lowest good number (which may not be larger than
+    * MaximumNumberOfIterations ) */
   itkSetMacro(AutomaticNumberOfIterations, bool);
   itkGetConstMacro(AutomaticNumberOfIterations, bool);
   itkBooleanMacro(AutomaticNumberOfIterations);
 
   /** If ComputeInverse is on, the filter will compute the exponential
-   * of the opposite (minus) of the input vector field. The output deformation
-   * fields computed with ComputeInverse set to on and off respectively
-   * therefore represent spatial transformations that are inverses of
-   * each other. */
+    * of the opposite (minus) of the input vector field. The output deformation
+    * fields computed with ComputeInverse set to on and off respectively
+    * therefore represent spatial transformations that are inverses of
+    * each other. */
   itkSetMacro(ComputeInverse, bool);
   itkGetConstMacro(ComputeInverse, bool);
   itkBooleanMacro(ComputeInverse);
@@ -153,9 +153,9 @@ protected:
   typedef typename FieldInterpolatorType::OutputType FieldInterpolatorOutputType;
   typedef typename AdderType::Pointer                AdderPointer;
 private:
-  ExponentialDeformationFieldImageFilter2(const Self &);   // purposely not
-                                                           // implemented
-  void operator=(const Self &);                            // purposely not
+  ExponentialDeformationFieldImageFilter2(const Self &); // purposely not
+                                                         // implemented
+  void operator=(const Self &);                          // purposely not
 
   // implemented
 
@@ -170,7 +170,7 @@ private:
   VectorWarperPointer     m_Warper;
   AdderPointer            m_Adder;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "itkExponentialDeformationFieldImageFilter2.txx"

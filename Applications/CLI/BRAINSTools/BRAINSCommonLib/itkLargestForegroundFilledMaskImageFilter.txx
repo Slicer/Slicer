@@ -131,16 +131,14 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >
     }
   else
     {
-    // ## The Otsu thresholding stuff below should not be part of the new
-    // class,
+    // ## The Otsu thresholding stuff below should not be part of the new class,
     // it shout really be a separate function.
     typedef OtsuThresholdImageCalculator< TInputImage > OtsuImageCalcType;
     typename OtsuImageCalcType::Pointer OtsuImageCalc = OtsuImageCalcType::New();
     OtsuImageCalc->SetImage( this->GetInput() );
     OtsuImageCalc->Compute();
     typename TInputImage::PixelType otsuThreshold = OtsuImageCalc->GetThreshold();
-    // std::cout << "whole-image-based otsuThreshold was: " << otsuThreshold
-    // <<
+    // std::cout << "whole-image-based otsuThreshold was: " << otsuThreshold <<
     // std::endl;
 
     typename TInputImage::PixelType otsuThresholdResult =
@@ -165,8 +163,7 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >
   // C'mon, guys.  I need to know what's going on.  Leave this output visible
   // for me.  Please?
 #if 1
-  // HACK:  The printout below is not what is really being used to
-  // threshold.
+  // HACK:  The printout below is not what is really being used to threshold.
   //  it is really threshold_low_foreground, NumericTraits<typename
   // OutputImageType::PixelType>::max()
   std::cout << "LowHigh Thresholds: [" << static_cast< int >( threshold_low ) << ","
@@ -267,42 +264,35 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >
   seededConnectedThresholdFilter = seededConnectedThresholdFilterType::New();
 
     {
-    const typename IntegerImageType::IndexType SeedLocation = { { 0, 0, 0}};
+    const typename IntegerImageType::IndexType SeedLocation = { { 0, 0, 0 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation =
-                  { { ImageSize[0] - 1, 0, 0}};
+    const typename IntegerImageType::IndexType SeedLocation = { { ImageSize[0] - 1, 0, 0 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation =
-                  { { 0, ImageSize[1] - 1, 0}};
+    const typename IntegerImageType::IndexType SeedLocation = { { 0, ImageSize[1] - 1, 0 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation =
-                  { { ImageSize[0] - 1, ImageSize[1] - 1, 0}};
+    const typename IntegerImageType::IndexType SeedLocation = { { ImageSize[0] - 1, ImageSize[1] - 1, 0 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation =
-                  { { 0, 0, ImageSize[2] - 1}};
+    const typename IntegerImageType::IndexType SeedLocation = { { 0, 0, ImageSize[2] - 1 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation =
-                  { { ImageSize[0] - 1, 0, ImageSize[2] - 1}};
+    const typename IntegerImageType::IndexType SeedLocation = { { ImageSize[0] - 1, 0, ImageSize[2] - 1 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation =
-                  { { 0, ImageSize[1] - 1, ImageSize[2] - 1}};
+    const typename IntegerImageType::IndexType SeedLocation = { { 0, ImageSize[1] - 1, ImageSize[2] - 1 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
     {
-    const typename IntegerImageType::IndexType SeedLocation =
-                  { { ImageSize[0] - 1, ImageSize[1] - 1, ImageSize[2] - 1}};
+    const typename IntegerImageType::IndexType SeedLocation = { { ImageSize[0] - 1, ImageSize[1] - 1, ImageSize[2] - 1 } };
     seededConnectedThresholdFilter->SetSeed(SeedLocation);
     }
 

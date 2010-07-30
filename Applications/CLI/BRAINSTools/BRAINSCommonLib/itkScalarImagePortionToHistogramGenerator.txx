@@ -1,19 +1,19 @@
 /*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkScalarImagePortionToHistogramGenerator.txx,v $
-  Language:  C++
-  Date:      $Date: 2009-08-17 18:29:01 $
-  Version:   $Revision: 1.4 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkScalarImagePortionToHistogramGenerator.txx,v $
+ *  Language:  C++
+ *  Date:      $Date: 2009-08-17 18:29:01 $
+ *  Version:   $Revision: 1.4 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *    This software is distributed WITHOUT ANY WARRANTY; without even
+ *    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *    PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __itkScalarImagePortionToHistogramGenerator_txx
 #define __itkScalarImagePortionToHistogramGenerator_txx
 
@@ -159,7 +159,7 @@ ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
   os << "ImageToListSampleGenerator = " << m_ImageToListSampleGenerator << std::endl;
   os << "HistogramGenerator = " << m_HistogramGenerator << std::endl;
 }
-}   // end of namespace Statistics
-}   // end of namespace itk
+} // end of namespace Statistics
+} // end of namespace itk
 
 #endif

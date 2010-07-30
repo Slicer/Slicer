@@ -26,10 +26,10 @@ typedef itk::SpatialOrientationAdapter SOAdapterType;
 typedef SOAdapterType::DirectionType   DirectionType;
 
 /**
- *
- *
- *
- */
+  *
+  *
+  *
+  */
 /** read an image using ITK -- image-based template */
 template< typename TImage >
 typename TImage::Pointer ReadImage(const std::string fileName)
@@ -98,10 +98,10 @@ typename TImage::Pointer ReadImage(const std::string fileName)
 }
 
 /**
- *
- *
- *
- */
+  *
+  *
+  *
+  */
 
 template< class ImageType1, class ImageType2 >
 bool
@@ -209,7 +209,6 @@ WriteImage(typename ImageType::Pointer & image,
   writer->UseCompressionOn();
   writer->SetFileName( filename.c_str() );
   writer->SetInput(image);
-
   try
     {
     writer->Update();
@@ -223,16 +222,16 @@ WriteImage(typename ImageType::Pointer & image,
 }
 
 /**
- *
- *
- * @author hjohnson (6/4/2008)
- *
- * @param InputImageType
- * @param OutputImageType
- * @param input
- *
- * @return typename OutputImageType::Pointer
- */
+  *
+  *
+  * @author hjohnson (6/4/2008)
+  *
+  * @param InputImageType
+  * @param OutputImageType
+  * @param input
+  *
+  * @return typename OutputImageType::Pointer
+  */
 template< class InputImageType, class OutputImageType >
 typename OutputImageType::Pointer
 TypeCast(const typename InputImageType::Pointer & input)
@@ -246,18 +245,18 @@ TypeCast(const typename InputImageType::Pointer & input)
 }
 
 /**
- *   \author Hans J. Johnson
- *   Converts images from one type to
- *  another with explicit min and max values. NOTE:  The original
- *  range of the image is determined explicitly from the data,
- *  and then linearly scaled into the range specified.
- * \param image --The input image to convert and scale
- * \param OuputMin --The required minimum value of the output
- *        image
- * \param OutputMax -- The required maximum value of the output
- *        image
- * \return A new image of the specified type and scale.
- */
+  *   \author Hans J. Johnson
+  *   Converts images from one type to
+  *  another with explicit min and max values. NOTE:  The original
+  *  range of the image is determined explicitly from the data,
+  *  and then linearly scaled into the range specified.
+  * \param image --The input image to convert and scale
+  * \param OuputMin --The required minimum value of the output
+  *        image
+  * \param OutputMax -- The required maximum value of the output
+  *        image
+  * \return A new image of the specified type and scale.
+  */
 template< class InputImageType, class OutputImageType >
 typename OutputImageType::Pointer
 ScaleAndCast(const typename InputImageType::Pointer & image,
@@ -287,19 +286,19 @@ ScaleAndCast(const typename InputImageType::Pointer & image,
 }
 
 /**
- * This function will do a type cast if the OutputImageType
- * intensity range is larger than the input image type range.
- * If the OutputImageType range is smaller, then a Scaling will
- * occur.
- *
- * @author hjohnson (6/4/2008)
- *
- * @param InputImageType
- * @param OutputImageType
- * @param image
- *
- * @return typename OutputImageType::Pointer
- */
+  * This function will do a type cast if the OutputImageType
+  * intensity range is larger than the input image type range.
+  * If the OutputImageType range is smaller, then a Scaling will
+  * occur.
+  *
+  * @author hjohnson (6/4/2008)
+  *
+  * @param InputImageType
+  * @param OutputImageType
+  * @param image
+  *
+  * @return typename OutputImageType::Pointer
+  */
 template< class InputImageType, class OutputImageType >
 typename OutputImageType::Pointer
 PreserveCast(const typename InputImageType::Pointer image)

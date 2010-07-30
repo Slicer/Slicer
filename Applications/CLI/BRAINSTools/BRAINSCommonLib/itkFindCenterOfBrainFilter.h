@@ -8,8 +8,8 @@
 namespace itk
 {
 /**
- * \class FindCenterOfBrainFilter
- */
+  * \class FindCenterOfBrainFilter
+  */
 template< class TInputImage, class TMaskImage = itk::Image< unsigned char, 3 > >
 class ITK_EXPORT FindCenterOfBrainFilter:
   public ImageToImageFilter< TInputImage, TInputImage >
@@ -108,14 +108,12 @@ private:
   //
   // DEBUGGING
   bool m_GenerateDebugImages;
-  typename TMaskImage::Pointer m_ImageMask;          /** The foreground mask,
-                                                     computed automatically if
-                                                     not specified on the
-                                                     command line. **/
-  typename TMaskImage::Pointer m_ClippedImageMask;   /** The foreground mask,
-                                                     computed automatically if
-                                                     not specified on the
-                                                     command line. **/
+  /** The foreground mask, computed automatically if not specified
+   * on the command line. **/
+  typename TMaskImage::Pointer m_ImageMask;
+  /** The foreground mask, computed automatically if
+   * not specified on the command line. **/
+  typename TMaskImage::Pointer m_ClippedImageMask;
   typename TInputImage::Pointer m_TrimmedImage;
   DistanceImagePointer m_DebugDistanceImage;
   InputImagePointer    m_DebugGridImage;

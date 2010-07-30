@@ -1,19 +1,19 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile: itkBRAINSROIAutoImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2008-10-16 19:33:40 $
-Version:   $Revision: 1.7 $
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkBRAINSROIAutoImageFilter.h,v $
+ *  Language:  C++
+ *  Date:      $Date: 2008-10-16 19:33:40 $
+ *  Version:   $Revision: 1.7 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __itkBRAINSROIAutoImageFilter_h
 #define __itkBRAINSROIAutoImageFilter_h
 
@@ -34,14 +34,14 @@ typedef SpatialObjectType::Pointer ImageMaskPointer;
 namespace itk
 {
 /** \class BRAINSROIAutoImageFilter
- * \brief This is a class to help with identifying common tissue
- * Regions in an image.
- *
- * \sa Image
- * \sa Neighborhood
- *
- * \ingroup IntensityImageFilters
- */
+  * \brief This is a class to help with identifying common tissue
+  * Regions in an image.
+  *
+  * \sa Image
+  * \sa Neighborhood
+  *
+  * \ingroup IntensityImageFilters
+  */
 template< class TInputImage, class TOutputImage >
 class ITK_EXPORT BRAINSROIAutoImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
@@ -87,24 +87,24 @@ public:
   /** */
   itkSetMacro(ThresholdCorrectionFactor, double);
   itkGetConstMacro(ThresholdCorrectionFactor, double);
-  /** The closing size in mm, this is rounded up to the next closest number of voxel
-   * by taking Spacing into account */
+  /** The closing size in mm, this is rounded up to the next closest number of
+    * voxel
+    * by taking Spacing into account */
   itkSetMacro(ClosingSize, double);
   itkGetConstMacro(ClosingSize, double);
-  /** The dilation size in mm, this is rounded up to the next closest number of voxel
-   * by taking Spacing into account */
+  /** The dilation size in mm, this is rounded up to the next closest number of
+    * voxel
+    * by taking Spacing into account */
   itkSetMacro(DilateSize, double);
   itkGetConstMacro(DilateSize, double);
 
-  // NOTE:  This will generate a new spatial object each time it is called,
-  // and
+  // NOTE:  This will generate a new spatial object each time it is called, and
   // not return the previous spatial object
   ImageMaskPointer GetSpatialObjectROI(void)
   {
-    if ( m_ResultMaskPointer.IsNull() )   // This is a cheap way to only create
-                                          // the mask once, note that this is
-                                          // made
-                                          // null when GenerateData is called.
+    if ( m_ResultMaskPointer.IsNull() ) // This is a cheap way to only create
+                                        // the mask once, note that this is made
+                                        // null when GenerateData is called.
       {
       typedef itk::CastImageFilter< OutputImageType, UCHARIMAGE > CastImageFilter;
       typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
@@ -134,8 +134,8 @@ protected:
   void GenerateData();
 
 private:
-  BRAINSROIAutoImageFilter(const Self &);   // purposely not implemented
-  void operator=(const Self &);             // purposely not implemented
+  BRAINSROIAutoImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);           // purposely not implemented
 
   double           m_OtsuPercentileThreshold;
   double           m_ThresholdCorrectionFactor;
@@ -143,7 +143,7 @@ private:
   double           m_DilateSize;
   ImageMaskPointer m_ResultMaskPointer;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "itkBRAINSROIAutoImageFilter.txx"

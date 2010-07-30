@@ -1,17 +1,17 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile$
-Language:  C++
-
-Copyright (c) 2002 Insight Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile$
+ *  Language:  C++
+ *
+ *  Copyright (c) 2002 Insight Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __ApplicationBase_txx
 #define __ApplicationBase_txx
 
@@ -35,8 +35,8 @@ ApplicationBase< TParser, TPreprocessor, TRegistrator >
 ::Execute()
 {
   /**************************
-   * Parse input
-   **************************/
+    * Parse input
+    */
   if ( this->GetOutDebug() )
     {
     std::cout << "Parsing input ... " << std::endl;
@@ -60,8 +60,8 @@ ApplicationBase< TParser, TPreprocessor, TRegistrator >
     }
 
   /**************************
-   * Preprocess the images before registration
-   **************************/
+    * Preprocess the images before registration
+    */
 
   if ( this->GetOutDebug() )
     {
@@ -86,8 +86,8 @@ ApplicationBase< TParser, TPreprocessor, TRegistrator >
     }
 
   /**************************
-   * Registered the processed images
-   **************************/
+    * Registered the processed images
+    */
   if ( this->GetOutDebug() )
     {
     std::cout << "Register the images ... " << std::endl;

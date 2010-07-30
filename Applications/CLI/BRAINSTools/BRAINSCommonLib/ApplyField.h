@@ -1,7 +1,7 @@
 /**
- * \defgroup AF Apply Field
- * \ingroup Reg
- */
+  * \defgroup AF Apply Field
+  * \ingroup Reg
+  */
 #ifndef __ApplyField_h
 #define __ApplyField_h
 
@@ -36,8 +36,8 @@ public:
   itkGetObjectMacro(OutputImage, OutputImageType);
 
   /** Set/Get value to replace thresholded pixels. Pixels that lie *
-   *  within Lower and Upper (inclusive) will be replaced with this
-   *  value. The default is 1. */
+    *  within Lower and Upper (inclusive) will be replaced with this
+    *  value. The default is 1. */
   itkSetMacro(DefaultPixelValue,  PixelType);
   itkGetMacro(DefaultPixelValue,  PixelType);
 

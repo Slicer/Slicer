@@ -80,8 +80,8 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
 ::ExecuteOutput()
 {
   /***************************
-   * Compute overall transform in the output side of the transform adaptor
-   ***************************/
+    * Compute overall transform in the output side of the transform adaptor
+    */
 
   std::cout << "Overall transform matrix: " << std::endl;
   std::cout << GetITKAffineTransform()->GetMatrix() << std::endl;
@@ -118,32 +118,35 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
 ::EstablishCrossOverSystemForAir16(void)
 {
   /*
-   *  IMPORTANT:  In the new design, conversion is accomplished by enclosing the
-   *              alien transform in an encoding-decoding pair of AffineTransforms.
-   *
-   *  All the paired EncloseIn operators are expressed in their Inhale sense.
-   */
+    *  IMPORTANT:  In the new design, conversion is accomplished by enclosing
+    *the
+    *              alien transform in an encoding-decoding pair of
+    *AffineTransforms.
+    *
+    *  All the paired EncloseIn operators are expressed in their Inhale sense.
+    */
 
   m_CrossOverAffineSystem = CrossOverAffineSystemType::New();   // established
                                                                 // the 4
                                                                 // identity
                                                                 // Affines.
 
-    {   /*  This is code for flipping axes, specific to Air16 files.
-         */
+    { /*  This is code for flipping axes, specific to Air16 files.
+        */
     VectorType Flip(1.0);
 
-    const int flipIndex = 1;   // A Flip in Y gets the rotation components of
+    const int flipIndex = 1;  // A Flip in Y gets the rotation components of
     // Air16 evidently right.
     Flip[flipIndex] = -1.0;
 
     GetCrossOverAffineSystem()->EncloseInScaling(Flip, Flip);
     }
 
-  if ( false )   // Turning this off ...
+  if ( false )  // Turning this off ...
     {
-    /*  address voxel floor corners on the outside, address voxel centers on the inside.
-     */
+    /*  address voxel floor corners on the outside, address voxel centers on the
+      * inside.
+      */
     VectorType const MovingImageSpacing( GetMovingImage()->GetSpacing() );
 
     VectorType const FixedImageSpacing( GetFixedImage()->GetSpacing() );
@@ -160,8 +163,9 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
                                                      HalfFixedVoxelDown);
     }
 
-    {   /*  addressing voxels on the outside, addressing millimeters on the inside.
-         */
+    { /*  addressing voxels on the outside, addressing millimeters on the
+        * inside.
+        */
     VectorType const FixedImageScaleReciprocal(
       Reciprocal< TCoordinateType, NDimensions >( GetFixedImage()->GetSpacing() ) );
 
@@ -171,10 +175,11 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
                                                  MovingImageScale);
     }
 
-  if ( false )   // Turning this alternative off ...
+  if ( false )  // Turning this alternative off ...
     {
-    /*  uncentered on the outside (like the b2 standard, RIP), centered on the inside.
-     */
+    /*  uncentered on the outside (like the b2 standard, RIP), centered on the
+      * inside.
+      */
     VectorType const MovingImageCenter(
       GetCenterMovingAffineTransform()->GetOffset() );
 
@@ -184,8 +189,8 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
     GetCrossOverAffineSystem()->EncloseInTranslation(FixedImageCenter,
                                                      -MovingImageCenter);
     }
-  if ( false )   // Turning this off made the output image pass through
-                 // correctly;
+  if ( false )  // Turning this off made the output image pass through
+                // correctly;
     {
     VectorType const MovingImageCenter(
       GetCenterMovingAffineTransform()->GetOffset() );
@@ -193,8 +198,9 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
     VectorType const FixedImageCenter(
       GetCenterFixedAffineTransform()->GetOffset() );
 
-    /*  uncentered on the outside (like the b2 standard, RIP), centered on the inside.
-     */
+    /*  uncentered on the outside (like the b2 standard, RIP), centered on the
+      * inside.
+      */
     //  GetCrossOverAffineSystem()->EncloseInTranslation(FixedImageCenter,
     // -MovingImageCenter);
 
@@ -218,21 +224,24 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
 ::EstablishCrossOverSystemForB2xfrm(void)
 {
   /*
-   *  IMPORTANT:  In the new design, conversion is accomplished by enclosing the
-   *              alien transform in an encoding-decoding pair of AffineTransforms.
-   *
-   *  All the paired EncloseIn operators are expressed in their Inhale sense.
-   */
+    *  IMPORTANT:  In the new design, conversion is accomplished by enclosing
+    *the
+    *              alien transform in an encoding-decoding pair of
+    *AffineTransforms.
+    *
+    *  All the paired EncloseIn operators are expressed in their Inhale sense.
+    */
 
   m_CrossOverAffineSystem = CrossOverAffineSystemType::New();   // established
                                                                 // the 4
                                                                 // identity
                                                                 // Affines.
 
-  if ( false )   // Turning this off ...
+  if ( false )  // Turning this off ...
     {
-    /*  address voxel floor corners on the outside, address voxel centers on the inside.
-     */
+    /*  address voxel floor corners on the outside, address voxel centers on the
+      * inside.
+      */
     VectorType const MovingImageSpacing( GetMovingImage()->GetSpacing() );
 
     VectorType const FixedImageSpacing( GetFixedImage()->GetSpacing() );
@@ -249,8 +258,9 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
                                                      HalfFixedVoxelDown);
     }
 
-    {   /*  addressing voxels on the outside, addressing millimeters on the inside.
-         */
+    { /*  addressing voxels on the outside, addressing millimeters on the
+        * inside.
+        */
     VectorType const FixedImageScaleReciprocal(
       Reciprocal< TCoordinateType, NDimensions >( GetFixedImage()->GetSpacing() ) );
 
@@ -260,8 +270,8 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
                                                  MovingImageScale);
     }
 
-  if ( false )   // Turning this off made the output image pass through
-                 // correctly;
+  if ( false )  // Turning this off made the output image pass through
+                // correctly;
     {
     VectorType const MovingImageCenter(
       GetCenterMovingAffineTransform()->GetOffset() );
@@ -269,8 +279,9 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
     VectorType const FixedImageCenter(
       GetCenterFixedAffineTransform()->GetOffset() );
 
-    /*  uncentered on the outside (like the b2 standard, RIP), centered on the inside.
-     */
+    /*  uncentered on the outside (like the b2 standard, RIP), centered on the
+      * inside.
+      */
     //  GetCrossOverAffineSystem()->EncloseInTranslation(FixedImageCenter,
     // -MovingImageCenter);
 
@@ -288,13 +299,13 @@ TransformAdaptor< TCoordinateType, NDimensions, TInputImage >
 }
 
 /*
- *  So much for conversion transform initialization.
- *  The affine convention converters below are general to
- *  any affine representation.  Just initialize the conversion
- *  logic with the appropriate EstablishCrossOverSystem call.
- *
- *  TODO:  Add other conventions besides b2/xfrm, Air16:  matlab/spm, nifti.
- */
+  *  So much for conversion transform initialization.
+  *  The affine convention converters below are general to
+  *  any affine representation.  Just initialize the conversion
+  *  logic with the appropriate EstablishCrossOverSystem call.
+  *
+  *  TODO:  Add other conventions besides b2/xfrm, Air16:  matlab/spm, nifti.
+  */
 
 template< typename TCoordinateType, unsigned int NDimensions,
           typename TInputImage >

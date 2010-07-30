@@ -6,27 +6,27 @@
 namespace itk
 {
 /** \class TransformAdaptor
- *
- * This component converts transform formats required for
- * input and output for use in registration.
- *
- * The preprocessing is activatived by method ExecuteInput().
- *
- * The postprocessing is activatived by method ExecuteOutput().
- *
- * Inputs:
- *    - pointer to original fixed image
- *    - pointer original moving image
- *
- * Outputs:
- *    - pointer to transform representing the pre-transform
- *    - pointer to transform representing the post-transform
- *
- * After registration, the overall transform is obtained by
- * composing pre-transform, the registration transform and
- * the post-transform.
- *
- */
+  *
+  * This component converts transform formats required for
+  * input and output for use in registration.
+  *
+  * The preprocessing is activatived by method ExecuteInput().
+  *
+  * The postprocessing is activatived by method ExecuteOutput().
+  *
+  * Inputs:
+  *    - pointer to original fixed image
+  *    - pointer original moving image
+  *
+  * Outputs:
+  *    - pointer to transform representing the pre-transform
+  *    - pointer to transform representing the post-transform
+  *
+  * After registration, the overall transform is obtained by
+  * composing pre-transform, the registration transform and
+  * the post-transform.
+  *
+  */
 template< typename TCoordinateType, unsigned int NDimensions,
           typename TInputImage >
 class ITK_EXPORT TransformAdaptor:public LightProcessObject

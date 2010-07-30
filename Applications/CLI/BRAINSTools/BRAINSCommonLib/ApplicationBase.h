@@ -7,12 +7,12 @@
 namespace itk
 {
 /** \class ApplicationBase
- *
- * This class ties together an input parser, a preprocessor,
- * a registrator components to
- * form a deformable registration/atlas segmentation application.
- *
- */
+  *
+  * This class ties together an input parser, a preprocessor,
+  * a registrator components to
+  * form a deformable registration/atlas segmentation application.
+  *
+  */
 template< typename TParser,
           typename TPreprocessor,
           typename TRegistrator >

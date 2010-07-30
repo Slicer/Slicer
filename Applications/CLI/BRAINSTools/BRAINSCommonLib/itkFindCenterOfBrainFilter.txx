@@ -8,7 +8,6 @@
 
 // #define USE_DEBUGGIN_IMAGES
 #include "itksys/SystemTools.hxx"
-#include "itkImageFileWriter.h"
 
 namespace itk
 {
@@ -131,8 +130,7 @@ FindCenterOfBrainFilter< TInputImage, TMaskImage >
   std::cout << "maxSIDirection = " << maxSIDirection << std::endl;
 
   // //////////////////////////////////////////////////////////////////////
-  //  This will produce ForegroundLevel representing where to threshold the
-  // head
+  //  This will produce ForegroundLevel representing where to threshold the head
   // from the neck.
   // double ForegroundLevel = 1;
   typename DistanceImageType::Pointer distanceMap = DistanceImageType::New();
@@ -175,30 +173,11 @@ FindCenterOfBrainFilter< TInputImage, TMaskImage >
   double inferiorCutOff = -1000000;
   std::cout << "Computing Sampled Distance Computations" << std::endl;
   const double samplingDistanceMM = 3.0;
-  // Only
-  // look
-  // in
-  // 3mm
-  // regions
+  // Only look in 3mm regions
   const double samplingDistanceCM = samplingDistanceMM * 0.1;
-  // Only
-  // look
-  // in
-  // 3mm
-  // regions
+  // Only look in 3mm regions
   const double rectangularGridRadius = 150.0;
-  // How
-  // big
-  // of
-  // region
-  // around
-  // COM
-  // are
-  // we
-  // going
-  // to
-  // look
-  // for?
+  // How big of region around COM are we going to look for?
   const int numberOfSamplelingLines =
     static_cast< int >( ( rectangularGridRadius * 2.0 ) / samplingDistanceMM );
 
@@ -211,18 +190,18 @@ FindCenterOfBrainFilter< TInputImage, TMaskImage >
     this->m_DebugGridImage->FillBuffer(numberOfSamplelingLines);
     }
 
+  // Use 400mm as the (-200mm,200mm) as the distance to look.
   std::vector< unsigned int > maskCountsInPlane(numberOfSamplelingLines);
-  // Use 400mm as the (-200mm,200mm)  as the distance to look.
 
   std::fill(maskCountsInPlane.begin(), maskCountsInPlane.end(), 0);
     {
     typename TInputImage::PointType CenterOfMass;
       {
-        {   //
-            //
-            // //////////////////////////////////////////////////////////////////////
-            //  This will get an initial center of mass for the entire
-            // foreground region.
+        {
+        /*
+          * This will get an initial center of mass for the entire
+          * foreground region.
+          */
           {
           typedef typename itk::ImageMomentsCalculator< MaskImageType > momentsCalculatorType;
           typename momentsCalculatorType::Pointer moments = momentsCalculatorType::New();
@@ -252,17 +231,13 @@ FindCenterOfBrainFilter< TInputImage, TMaskImage >
         for ( rectPhysPoint[1] = -rectangularGridRadius;
               rectPhysPoint[1] < rectangularGridRadius;
               rectPhysPoint[1] += samplingDistanceMM )
-        // Raster
-        // through
-        // (-120mm,120mm)
+        // Raster through (-120mm,120mm)
           {
           currRotatedSampleGridLocation[1] = CenterOfMass[1] + rectPhysPoint[1];
           for ( rectPhysPoint[0] = -rectangularGridRadius;
                 rectPhysPoint[0] < rectangularGridRadius;
                 rectPhysPoint[0] += samplingDistanceMM )
-          // Raster
-          // through
-          // (-120mm,120mm)
+          // Raster through (-120mm,120mm)
             {
             currRotatedSampleGridLocation[0] = CenterOfMass[0] + rectPhysPoint[0];
 
@@ -288,37 +263,14 @@ FindCenterOfBrainFilter< TInputImage, TMaskImage >
           }
 
         const double crossSectionalArea = maskCountsInPlane[dIndex] * samplingDistanceCM * samplingDistanceCM;
-        // Put
-        // this
-        // into
-        // cm^2
+        // Put this into cm^2
         const double crossSectionalVolume = crossSectionalArea * ( samplingDistanceCM );
-        // Put
-        // this
-        // into
-        // cm^3
+        // Put this into cm^3
         const double estimated_radius = vcl_sqrt(crossSectionalArea / vnl_math::pi);
-        // Estimate
-        // the
-        // radis
-        // of
-        // a
-        // circle
-        // filling
-        // this
-        // much
-        // space
+        // Estimate the radis of a circle filling this much space
         const double ScaleFactor = 1.1;
-        // Add
-        // 10%
-        // for
-        // safety
-        // //5+(crossSectionalArea-200)/100;
-        // //Larger
-        // brains
-        // need
-        // more
-        // scaling
+        // Add 10% for safety //5+(crossSectionalArea-200)/100; //Larger brains
+        // need more scaling
         const double CurentVolumeBasedOnArea = ScaleFactor
                                                * ( 1.33333333333333333 * vnl_math::pi * estimated_radius
                                                    * estimated_radius * estimated_radius );
@@ -356,11 +308,11 @@ FindCenterOfBrainFilter< TInputImage, TMaskImage >
       }
     }
 
-  // //////////////////////////////////////////////////////////////////////
-  //  This will convert the LFFimage code image with the rule, foreach voxel,
-  //  if not in tissue LFFimage mask region or distance map is greater than T,
+  ////////////////////////////////////////////////////////////////////////
+  // This will convert the LFFimage code image with the rule, foreach voxel,
+  // if not in tissue LFFimage mask region or distance map is greater than T,
   // set the result image voxel to Background;
-  //  otherwise set the result image voxel to the source image pixel value.
+  // otherwise set the result image voxel to the source image pixel value.
     {
       {
       typename itk::ImageDuplicator< MaskImageType >::Pointer id = itk::ImageDuplicator< MaskImageType >::New();
@@ -388,18 +340,7 @@ FindCenterOfBrainFilter< TInputImage, TMaskImage >
       typename TInputImage::PointType currLoc;
       this->m_TrimmedImage->TransformIndexToPhysicalPoint(ClippedImagePixel.GetIndex(), currLoc);
       if ( currLoc[2] > inferiorCutOff && ( ClippedMaskPixel.Get() != 0 ) )
-      // If
-      // this
-      // mask
-      // voxel
-      // is
-      // in
-      // the
-      // foreground
-      // AND
-      // above
-      // the
-      // inferiorCutOff
+      // If this mask voxel is in the foreground AND above the inferiorCutOff
         {
         ClippedMaskPixel.Set(1);
         // putchar('1');
@@ -421,7 +362,7 @@ FindCenterOfBrainFilter< TInputImage, TMaskImage >
     this->m_DebugTrimmedImage = this->m_TrimmedImage;
     }
 
-  // //////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////
   //  This will use the clipped LFFimage image to get the head center of mass.
     {
     typedef typename itk::ImageMomentsCalculator< TInputImage > momentsCalculatorType;

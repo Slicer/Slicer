@@ -181,16 +181,16 @@ MultiResolutionLogDomainDeformableRegistration< TFixedImage, TMovingImage, TFiel
 }
 
 /*
- * Perform a the deformable registration using a multiresolution scheme
- * using an internal mini-pipeline
- *
- *  ref_pyramid ->  registrator  ->  field_expander --|| tempField
- * test_pyramid ->           |                              |
- *                           |                              |
- *                           --------------------------------
- *
- * A tempField image is used to break the cycle between the
- * registrator and field_expander.*/
+  * Perform a the deformable registration using a multiresolution scheme
+  * using an internal mini-pipeline
+  *
+  *  ref_pyramid ->  registrator  ->  field_expander --|| tempField
+  * test_pyramid ->           |                              |
+  *                           |                              |
+  *                           --------------------------------
+  *
+  * A tempField image is used to break the cycle between the
+  * registrator and field_expander.*/
 template< class TFixedImage, class TMovingImage, class TField, class TRealType >
 void
 MultiResolutionLogDomainDeformableRegistration< TFixedImage, TMovingImage, TField, TRealType >
@@ -375,7 +375,7 @@ MultiResolutionLogDomainDeformableRegistration< TFixedImage, TMovingImage, TFiel
       {
       m_FixedImagePyramid->GetOutput(fixedLevel - 1)->ReleaseData();
       }
-    }   // while not Halt()
+    } // while not Halt()
 
   if ( !lastShrinkFactorsAllOnes )
     {
@@ -535,8 +535,6 @@ typename MultiResolutionLogDomainDeformableRegistration< TFixedImage, TMovingIma
 MultiResolutionLogDomainDeformableRegistration< TFixedImage, TMovingImage, TField, TRealType >
 ::GetDeformationField()
 {
-  //
-  // std::cout<<"MultiResolutionLogDomainDeformableRegistration::GetDeformationField"<<std::endl;
   m_Exponentiator->SetInput( this->GetVelocityField() );
   m_Exponentiator->ComputeInverseOff();
   m_Exponentiator->Update();
@@ -551,8 +549,6 @@ typename MultiResolutionLogDomainDeformableRegistration< TFixedImage, TMovingIma
 MultiResolutionLogDomainDeformableRegistration< TFixedImage, TMovingImage, TField, TRealType >
 ::GetInverseDeformationField()
 {
-  //
-  // std::cout<<"MultiResolutionLogDomainDeformableRegistration::GetInverseDeformationField"<<std::endl;
   m_Exponentiator->SetInput( this->GetVelocityField() );
   m_Exponentiator->ComputeInverseOn();
   m_Exponentiator->Update();
@@ -562,6 +558,6 @@ MultiResolutionLogDomainDeformableRegistration< TFixedImage, TMovingImage, TFiel
   m_Exponentiator->ComputeInverseOff();
   return field;
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

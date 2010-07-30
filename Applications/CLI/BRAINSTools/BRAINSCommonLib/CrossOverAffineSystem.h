@@ -19,13 +19,13 @@
 #include <stdio.h>
 
 /*
- *  The "Coordinate System" problem is closely related to generation
- *  of reliable choices for an affine transform.  AffineTransforms need
- *  to be generated in terms of a graphical vector space to map from,
- *  and a possibly different graphical vector space to map to.
- *
- *
- */
+  *  The "Coordinate System" problem is closely related to generation
+  *  of reliable choices for an affine transform.  AffineTransforms need
+  *  to be generated in terms of a graphical vector space to map from,
+  *  and a possibly different graphical vector space to map to.
+  *
+  *
+  */
 
 template< class TCoordinateType,
           unsigned int NDimensions = 3 >
@@ -126,8 +126,8 @@ protected:
   mutable AffineTransformPointer m_ExhaleEncodeConversion;
   mutable AffineTransformPointer m_ExhaleDecodeConversion;
 private:
-  CrossOverAffineSystem(const Self &);   // purposely not implemented
-  void operator=(const Self &);          // purposely not implemented
+  CrossOverAffineSystem(const Self &); // purposely not implemented
+  void operator=(const Self &);        // purposely not implemented
 };
 
 #ifndef ITK_MANUAL_INSTANTIATION

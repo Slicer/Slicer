@@ -18,7 +18,6 @@
 // The following was just copied out of iccdefWarpImage.cc.  Sorry.
 #include "itkImage.h"
 #include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkSpatialOrientation.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
@@ -73,8 +72,8 @@ ValidationInputParser< TImage >
 ::Execute()
 {
   /*************************
-   * Read in the images
-   *************************/
+    * Read in the images
+    */
   if ( this->m_ForceCoronalZeroOrigin == true )
     {
 #ifdef FORCE_ZERO_ORIENT_BRAINS2_IMAGE  // NOTE:  IN THE AUTOSEGMENTATION CODE,
@@ -98,8 +97,7 @@ ValidationInputParser< TImage >
     m_TheFixedImage = itkUtil::ReadImage< TImage >(m_TheFixedImageFilename);
     m_TheMovingImage = itkUtil::ReadImage< TImage >(m_TheMovingImageFilename);
     }
-  // HACK:  TODO:  Need to ensure that the fixed and moving images have the
-  // same
+  // HACK:  TODO:  Need to ensure that the fixed and moving images have the same
   // orientations.
 
   // TODO:  Need to figure out how to read in the initial deformation field.
@@ -141,8 +139,7 @@ ValidationInputParser< TImage >
     // VBRAINSDemonWarpPrimary.cxx
     // Review reading of transform files from BRAINSFit code for
     // reading Versor/Euler/Affine file from
-    // Apparently when you register one transform, you need to register all
-    // your
+    // Apparently when you register one transform, you need to register all your
     // transforms.
     //
     itk::AddExtraTransformRegister();
@@ -216,6 +213,6 @@ ValidationInputParser< TImage >
               << m_TheFixedImageShrinkFactors << std::endl;
     }
 }
-}   // namespace itk
+} // namespace itk
 
 #endif

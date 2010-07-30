@@ -88,20 +88,20 @@ VDemonsPreprocessor< TInputImage, TOutputImage >
     {
     // Create UnNormalized...Images
     /*
-        typename MultiplyByConstantImageType::Pointer multi_FixedImageConstant
-          = MultiplyByConstantImageType::New();
-        multi_FixedImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
-            TOutputImage>(this->m_InputFixedImage[i]) );
-        multi_FixedImageConstant->SetConstant(m_WeightFactors[i]);
-        multi_FixedImageConstant->Update();
-
-        typename MultiplyByConstantImageType::Pointer multi_MovingImageConstant
-          = MultiplyByConstantImageType::New();
-        multi_MovingImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
-            TOutputImage>(this->m_InputMovingImage[i]) );
-        multi_MovingImageConstant->SetConstant(m_WeightFactors[i]);
-        multi_MovingImageConstant->Update();
-    */
+      *  typename MultiplyByConstantImageType::Pointer multi_FixedImageConstant
+      *    = MultiplyByConstantImageType::New();
+      *  multi_FixedImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
+      *      TOutputImage>(this->m_InputFixedImage[i]) );
+      *  multi_FixedImageConstant->SetConstant(m_WeightFactors[i]);
+      *  multi_FixedImageConstant->Update();
+      *
+      *  typename MultiplyByConstantImageType::Pointer multi_MovingImageConstant
+      *    = MultiplyByConstantImageType::New();
+      *  multi_MovingImageConstant->SetInput( itkUtil::PreserveCast<TInputImage,
+      *      TOutputImage>(this->m_InputMovingImage[i]) );
+      *  multi_MovingImageConstant->SetConstant(m_WeightFactors[i]);
+      *  multi_MovingImageConstant->Update();
+      */
     this->m_UnNormalizedFixedImage.push_back( itkUtil::PreserveCast< TInputImage,
                                                                      TOutputImage >(this->m_InputFixedImage[i]) );
     this->m_UnNormalizedMovingImage.push_back( itkUtil::PreserveCast< TInputImage,
@@ -236,7 +236,8 @@ VDemonsPreprocessor< TInputImage, TOutputImage >
 }
 
 /*This function takes in a brain image and a whole brain mask and strips the
-  skull of the image. It uses the BOBF filter to perform the skull stripping.*/
+  * skull of the image. It uses the BOBF filter to perform the skull
+  * stripping.*/
 
 template< typename TInputImage, typename TOutputImage >
 typename VDemonsPreprocessor< TInputImage,

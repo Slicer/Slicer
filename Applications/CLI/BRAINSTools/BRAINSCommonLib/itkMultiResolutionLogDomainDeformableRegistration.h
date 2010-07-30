@@ -14,61 +14,64 @@
 namespace itk
 {
 /**
- * \class MultiResolutionLogDomainDeformableRegistration
- * \brief Framework for performing multi-resolution log-domain
- * deformable registration.
- *
- * MultiResolutionLogDomainDeformableRegistration provides a generic framework
- * to peform multi-resolution deformable registration.
- *
- * At each resolution level a LogDomainDeformableRegistrationFilter is used
- * to register two images by computing the velocity field whose exponential will
- * map a moving image onto a fixed image.
- *
- * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
- * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
- * Proc. of MICCAI 2008.
- *
- * Velocity and deformation fields are represented as images whose pixel type is some
- * vector type with at least N elements, where N is the dimension of
- * the fixed image. The vector type must support element access via operator
- * []. It is assumed that the vector elements behave like floating point
- * scalars.
- *
- * The internal LogDomainDeformableRegistrationFilter can be set using
- * SetRegistrationFilter. By default a LogDomainDemonsRegistrationFilter is used.
- *
- * The input fixed and moving images are set via methods SetFixedImage
- * and SetMovingImage respectively. An initial velocity field maybe set via
- * SetInitialVelocityField if is matches the characteristics of the coarsest
- * pyramid level. If no such assumption can be made (e.g. the velocity field
- * has the same characteristics as the input images), an initial velocity
- * field can still be set via SetArbitraryInitialVelocityField or
- * SetInput. The filter will then take care of mathching the coarsest level
- * characteristics. If no initial field is set a zero field is used as the
- * initial condition.
- *
- * MultiResolutionPyramidImageFilters are used to downsample the fixed
- * and moving images. A VectorExpandImageFilter is used to upsample
- * the velocity field as we move from a coarse to fine solution.
- *
- * This class is templated over the fixed image type, the moving image type,
- * and the velocity/deformation Field type.
- *
- * \warning This class assumes that the fixed, moving and
- * field image types all have the same number of dimensions.
- *
- * \author Florence Dru, INRIA and Tom Vercauteren, MKT
- *
- * \sa LogDomainDeformableRegistrationFilter
- * \sa LogDomainDemonsRegistrationFilter
- * \sa MultiResolutionPyramidImageFilter
- * \sa VectorExpandImageFilter
- *
- * The current implementation of this class does not support streaming.
- *
- * \ingroup DeformableImageRegistration
- */
+  * \class MultiResolutionLogDomainDeformableRegistration
+  * \brief Framework for performing multi-resolution log-domain
+  * deformable registration.
+  *
+  * MultiResolutionLogDomainDeformableRegistration provides a generic framework
+  * to peform multi-resolution deformable registration.
+  *
+  * At each resolution level a LogDomainDeformableRegistrationFilter is used
+  * to register two images by computing the velocity field whose exponential
+  *will
+  * map a moving image onto a fixed image.
+  *
+  * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
+  * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
+  * Proc. of MICCAI 2008.
+  *
+  * Velocity and deformation fields are represented as images whose pixel type
+  *is some
+  * vector type with at least N elements, where N is the dimension of
+  * the fixed image. The vector type must support element access via operator
+  * []. It is assumed that the vector elements behave like floating point
+  * scalars.
+  *
+  * The internal LogDomainDeformableRegistrationFilter can be set using
+  * SetRegistrationFilter. By default a LogDomainDemonsRegistrationFilter is
+  *used.
+  *
+  * The input fixed and moving images are set via methods SetFixedImage
+  * and SetMovingImage respectively. An initial velocity field maybe set via
+  * SetInitialVelocityField if is matches the characteristics of the coarsest
+  * pyramid level. If no such assumption can be made (e.g. the velocity field
+  * has the same characteristics as the input images), an initial velocity
+  * field can still be set via SetArbitraryInitialVelocityField or
+  * SetInput. The filter will then take care of mathching the coarsest level
+  * characteristics. If no initial field is set a zero field is used as the
+  * initial condition.
+  *
+  * MultiResolutionPyramidImageFilters are used to downsample the fixed
+  * and moving images. A VectorExpandImageFilter is used to upsample
+  * the velocity field as we move from a coarse to fine solution.
+  *
+  * This class is templated over the fixed image type, the moving image type,
+  * and the velocity/deformation Field type.
+  *
+  * \warning This class assumes that the fixed, moving and
+  * field image types all have the same number of dimensions.
+  *
+  * \author Florence Dru, INRIA and Tom Vercauteren, MKT
+  *
+  * \sa LogDomainDeformableRegistrationFilter
+  * \sa LogDomainDemonsRegistrationFilter
+  * \sa MultiResolutionPyramidImageFilter
+  * \sa VectorExpandImageFilter
+  *
+  * The current implementation of this class does not support streaming.
+  *
+  * \ingroup DeformableImageRegistration
+  */
 template< class TFixedImage, class TMovingImage, class TField, class TRealType = float >
 class ITK_EXPORT MultiResolutionLogDomainDeformableRegistration:
   public ImageToImageFilter< TField, TField >
@@ -152,15 +155,15 @@ public:
   const MovingImageType * GetMovingImage(void) const;
 
   /** Set initial velocity field to be used as is (no smoothing, no
-   *  subsampling at the coarsest level of the pyramid. */
+    *  subsampling at the coarsest level of the pyramid. */
   virtual void SetInitialVelocityField(VelocityFieldType *ptr)
   {
     this->m_InitialVelocityField = ptr;
   }
 
   /** Set initial velocity field. No assumption is made on the
-   *  input. It will therefore be smoothed and resampled to match the
-   *  images characteristics at the coarsest level of the pyramid. */
+    *  input. It will therefore be smoothed and resampled to match the
+    *  images characteristics at the coarsest level of the pyramid. */
   virtual void SetArbitraryInitialVelocityField(VelocityFieldType *ptr)
   {
     this->SetInput(ptr);
@@ -176,10 +179,10 @@ public:
   DeformationFieldPointer GetInverseDeformationField();
 
   /** Get the number of valid inputs.  For
-   * MultiResolutionLogDomainDeformableRegistration, this checks whether the
-   * fixed and moving images have been set. While
-   * MultiResolutionLogDomainDeformableRegistration can take a third input
-   * as an initial velocity field, this input is not a required input. */
+    * MultiResolutionLogDomainDeformableRegistration, this checks whether the
+    * fixed and moving images have been set. While
+    * MultiResolutionLogDomainDeformableRegistration can take a third input
+    * as an initial velocity field, this input is not a required input. */
   virtual std::vector< SmartPointer< DataObject > >::size_type GetNumberOfValidRequiredInputs() const;
 
   /** Set the internal registrator. */
@@ -240,36 +243,33 @@ protected:
   itkGetObjectMacro(Exponentiator, FieldExponentiatorType);
 
   /** Generate output data by performing the registration
-   * at each resolution level. */
+    * at each resolution level. */
   virtual void GenerateData();
 
   /** The current implementation of this class does not support
-   * streaming. As such it requires the largest possible region
-   * for the moving, fixed and input velocity field. */
+    * streaming. As such it requires the largest possible region
+    * for the moving, fixed and input velocity field. */
   virtual void GenerateInputRequestedRegion();
 
   /** By default, the output velocity field has the same
-   * spacing, origin and LargestPossibleRegion as the input/initial
-   * velocity field. If the initial velocity field is not set, the output
-   * information is copied from the fixed image. */
+    * spacing, origin and LargestPossibleRegion as the input/initial
+    * velocity field. If the initial velocity field is not set, the output
+    * information is copied from the fixed image. */
   virtual void GenerateOutputInformation();
 
   /** The current implementation of this class does not supprot
-   * streaming. As such it produces the output for the largest
-   * possible region. */
+    * streaming. As such it produces the output for the largest
+    * possible region. */
   virtual void EnlargeOutputRequestedRegion(DataObject *ptr);
 
   /** This method returns true to indicate that the registration should
-   * terminate at the current resolution level. */
+    * terminate at the current resolution level. */
   virtual bool Halt();
 
 private:
-  MultiResolutionLogDomainDeformableRegistration(const Self &);   // purposely
-                                                                  // not
-                                                                  // implemented
-  void operator=(const Self &);                                   // purposely
-
-  // not
+  // purposely not implemented
+  MultiResolutionLogDomainDeformableRegistration(const Self &);
+  void operator=(const Self &);
 
   // implemented
 
@@ -288,7 +288,7 @@ private:
 
   FieldExponentiatorPointer m_Exponentiator;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "itkMultiResolutionLogDomainDeformableRegistration.txx"

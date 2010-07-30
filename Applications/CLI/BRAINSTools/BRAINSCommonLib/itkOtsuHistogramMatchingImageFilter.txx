@@ -1,19 +1,19 @@
 /*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkOtsuHistogramMatchingImageFilter.txx,v $
-  Language:  C++
-  Date:      $Date: 2009-05-05 17:00:00 $
-  Version:   $Revision: 1.19 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkOtsuHistogramMatchingImageFilter.txx,v $
+ *  Language:  C++
+ *  Date:      $Date: 2009-05-05 17:00:00 $
+ *  Version:   $Revision: 1.19 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *    This software is distributed WITHOUT ANY WARRANTY; without even
+ *    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *    PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __itkOtsuHistogramMatchingImageFilter_txx
 #define __itkOtsuHistogramMatchingImageFilter_txx
 
@@ -28,8 +28,8 @@
 namespace itk
 {
 /**
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
 ::OtsuHistogramMatchingImageFilter()
@@ -60,8 +60,8 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /*
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
@@ -99,8 +99,8 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /*
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
@@ -111,8 +111,8 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /*
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 const typename OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
 ::InputImageType *
@@ -129,9 +129,9 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /*
- * This filter requires all of the input images to be
- * in the buffer.
- */
+  * This filter requires all of the input images to be
+  * in the buffer.
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
@@ -151,8 +151,8 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /**
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
@@ -261,8 +261,8 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /**
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
@@ -300,8 +300,8 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /**
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
@@ -330,7 +330,7 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
     {
     totalPixels = outputRegionForThread.GetNumberOfPixels();
     updateVisits = totalPixels / 10;
-    if ( updateVisits < 1 ) {updateVisits = 1; }
+    if ( updateVisits < 1 ) { updateVisits = 1; }
     }
 
   double srcValue, mappedValue;
@@ -376,8 +376,8 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /**
- * Compute min, max and mean of an image.
- */
+  * Compute min, max and mean of an image.
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
@@ -412,17 +412,17 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
 }
 
 /**
- * Construct a histogram from an image.
- */
+  * Construct a histogram from an image.
+  */
 template< class TInputImage, class TOutputImage, class THistogramMeasurement >
 void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
 ::ConstructHistogram(
   const InputImageType *image,
-  const MaskImageType::Pointer mask,   // HACK:  This should really be an
-                                       // itkSpatialObject, it is currently
-                                       // hardcoded to itk::Image<unsigned char,
-                                       // 3>
+  const MaskImageType::Pointer mask, // HACK:  This should really be an
+                                     // itkSpatialObject, it is currently
+                                     // hardcoded to itk::Image<unsigned char,
+                                     // 3>
   HistogramType  *histogram,
   const THistogramMeasurement minValue,
   const THistogramMeasurement maxValue)
@@ -471,7 +471,7 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
       if ( static_cast< double >( value ) >= minValue
            && static_cast< double >( value ) <= maxValue )
         {
-        if ( mask.IsNull() )   // Assume entire area is valid
+        if ( mask.IsNull() ) // Assume entire area is valid
           {
           inMeasurementRegion = true;
           }
@@ -497,6 +497,6 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
       }
     }
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

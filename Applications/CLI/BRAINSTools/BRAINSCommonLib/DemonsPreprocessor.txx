@@ -14,7 +14,6 @@
 #include "itkMultiResolutionPDEDeformableRegistration.h"
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkWarpImageFilter.h"
-#include "itkImageFileWriter.h"
 
 namespace itk
 {
@@ -70,7 +69,7 @@ DemonsPreprocessor< TInputImage, TOutputImage >
     medianFilter->Update();
     m_InputMovingImage = medianFilter->GetOutput();
     }
-    {   // Create UnNormalized...Images
+    { // Create UnNormalized...Images
       {
       this->m_UnNormalizedFixedImage =
         itkUtil::PreserveCast< TInputImage, TOutputImage >(
@@ -173,7 +172,8 @@ DemonsPreprocessor< TInputImage, TOutputImage >
 }
 
 /*This function takes in a brain image and a whole brain mask and strips the
-  skull of the image. It uses the BOBF filter to perform the skull stripping.*/
+  * skull of the image. It uses the BOBF filter to perform the skull
+  * stripping.*/
 
 template< typename TInputImage, typename TOutputImage >
 typename DemonsPreprocessor< TInputImage, TOutputImage >::OutputImagePointer

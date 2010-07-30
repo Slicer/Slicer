@@ -12,10 +12,10 @@
 #  define SNPRINTF_FUNC snprintf
 #endif
 /**
- * \class PrettyPrintTable
- * \author Kent Williams
- * Simple class to print out column-aligned tables
- */
+  * \class PrettyPrintTable
+  * \author Kent Williams
+  * Simple class to print out column-aligned tables
+  */
 class PrettyPrintTable
 {
 public:
@@ -50,7 +50,7 @@ public:
   {
     // Make sure the table has enough rows.
     if ( m_Table.size() <= row )
-      {   // Add empty rows
+      { // Add empty rows
       m_Table.resize(row + 1);
       }
     // For each row, make sure that it now has enough columns.

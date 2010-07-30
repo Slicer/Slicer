@@ -7,12 +7,13 @@
 namespace itk
 {
 /**
- * \class ComputeHistogramQuantileThresholds
- * \author Hans J. Johnson
- *
- * This filter just computes Histogram Quantile Thresholds.  It does not apply the thresholds.
- *
- */
+  * \class ComputeHistogramQuantileThresholds
+  * \author Hans J. Johnson
+  *
+  * This filter just computes Histogram Quantile Thresholds.  It does not apply
+  *the thresholds.
+  *
+  */
 template< class TInputImage, class TMaskImage >
 class ITK_EXPORT ComputeHistogramQuantileThresholds:
   public Object
@@ -81,7 +82,7 @@ private:
   typename InputImageType::PixelType m_UpperIntensityThresholdValue;
   unsigned int m_NumberOfValidHistogramsEntries;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #if ITK_TEMPLATE_TXX
 #  include "itkComputeHistogramQuantileThresholds.txx"

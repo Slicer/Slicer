@@ -1,19 +1,19 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile: itkOppositeImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2009-02-19 21:18:10 $
-Version:   $Revision: 0.0 $
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkOppositeImageFilter.h,v $
+ *  Language:  C++
+ *  Date:      $Date: 2009-02-19 21:18:10 $
+ *  Version:   $Revision: 0.0 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #ifndef __itkOppositeImageFilter_h
 #define __itkOppositeImageFilter_h
@@ -24,17 +24,17 @@ PURPOSE.  See the above copyright notices for more information.
 namespace itk
 {
 /** \class OppositeImageFilter
- *
- * \brief Take the opposite of the input pixels.
- *
- * This filter is templated over the input image type
- * and the output image type.
- *
- * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
- *
- * \ingroup IntensityImageFilters  Multithreaded
- * \sa UnaryFunctorImageFilter
- */
+  *
+  * \brief Take the opposite of the input pixels.
+  *
+  * This filter is templated over the input image type
+  * and the output image type.
+  *
+  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+  *
+  * \ingroup IntensityImageFilters  Multithreaded
+  * \sa UnaryFunctorImageFilter
+  */
 namespace Functor
 {
 template< class TInput, class TOutput >
@@ -103,9 +103,9 @@ protected:
   }
 
 private:
-  OppositeImageFilter(const Self &);   // purposely not implemented
-  void operator=(const Self &);        // purposely not implemented
+  OppositeImageFilter(const Self &); // purposely not implemented
+  void operator=(const Self &);      // purposely not implemented
 };
-}   // end namespace itk
+} // end namespace itk
 
 #endif

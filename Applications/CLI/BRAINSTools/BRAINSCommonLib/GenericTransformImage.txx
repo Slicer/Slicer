@@ -124,10 +124,10 @@ typename OutputImageType::Pointer GenericTransformImage(
   const itk::ImageBase< InputImageType::ImageDimension > *ReferenceImage,
   typename DeformationImageType::Pointer DeformationField,
   typename GenericTransformType::Pointer genericTransform,
-  typename InputImageType::PixelType suggestedDefaultValue,   // NOTE:  This is
-                                                              // ignored in the
-                                                              // case of binary
-                                                              // image!
+  typename InputImageType::PixelType suggestedDefaultValue, //NOTE:  This is
+                                                            // ignored in the
+                                                            // case of binary
+                                                            // image!
   const std::string interpolationMode,
   const bool binaryFlag)
 {
@@ -148,10 +148,12 @@ typename OutputImageType::Pointer GenericTransformImage(
                 << "          the signed distance map implied by your choice" << std::endl
                 << "          of pixelType binary." << std::endl;
       }
-    /* We make the values inside the structures positive and outside negative using
-        BinaryThresholdImageFilter. As the lower and upper threshold values are 0
-        only values of 0 in the image are filled with 0.0 and other values are 1.0
-        */
+    /* We make the values inside the structures positive and outside negative
+      * using
+      *  BinaryThresholdImageFilter. As the lower and upper threshold values are
+      *     0 only values of 0 in the image are filled with 0.0 and other 
+      *     values are  1.0
+      */
 
     typedef itk::BinaryThresholdImageFilter< InputImageType,
                                              InputImageType > FloatThresholdFilterType;
@@ -181,7 +183,7 @@ typename OutputImageType::Pointer GenericTransformImage(
 
       DistanceFilter->Update();
       PrincipalOperandImage = DistanceFilter->GetOutput();
-      // PrincipalOperandImage->DisconnectPipeline();
+      //PrincipalOperandImage->DisconnectPipeline();
       }
     // Using suggestedDefaultValue based on the size of the image so that
     // intensity values
@@ -194,40 +196,33 @@ typename OutputImageType::Pointer GenericTransformImage(
       {
       diagonalLength += size[s] * spacing[s];
       }
-    // Consider the 3D diagonal value, to guarantee that the background filler
-    // is
-    // unlikely to add shapes to the thresholded signed distance image.
-    // This is an easy enough proof of a lower bound on the image min, since
-    // it
-    // works even if the mask is a single voxel in the image field corner.
-    //        suggestedDefaultValue=vcl_sqrt( diagonalLength );
-    // In most cases, a heuristic fraction of the diagonal value is an even
-    // better
-    // lower bound: if the midpoint of the image is inside the mask, 1/2 is a
-    // lower
-    // bound as well, and the background is unlikely to drive the upper limit
-    // of
-    // the
-    // intensity range when we visualize the intermediate image for debugging.
+    // Consider the 3D diagonal value, to guarantee that the background
+    // filler is unlikely to add shapes to the thresholded signed
+    // distance image. This is an easy enough proof of a lower bound on
+    // the image min, since it works even if the mask is a single voxel in
+    // the image field corner. suggestedDefaultValue=
+    // vcl_sqrt( diagonalLength );
+    // In most cases, a heuristic fraction of the diagonal value is an
+    // even better lower bound: if the midpoint of the image is inside the
+    // mask, 1/2 is a lower bound as well, and the background is unlikely
+    // to drive the upper limit of the intensity range when we visualize
+    // the intermediate image for debugging.
 
     suggestedDefaultValue = -vcl_sqrt(diagonalLength) * 0.5;
     }
-  else   // other than if (pixelType == "binary")
+  else // other than if (pixelType == "binary")
     {
     PrincipalOperandImage = OperandImage;
     }
 
-  // RESAMPLE with the
-  // appropriate transform
-  // and interpolator:
-  typename InputImageType::Pointer TransformedImage;   // One name for the
-                                                       // intermediate resampled
-                                                       // float image.
+  // RESAMPLE with the appropriate transform and interpolator:
+  // One name for the intermediate resampled float image.
+  typename InputImageType::Pointer TransformedImage;
 
-  if ( DeformationField.IsNull() )   // (useTransform)
+  if ( DeformationField.IsNull() ) // (useTransform)
     {
-    // std::cout<< " Deformation Field is Null... " << std::endl;
-    if ( genericTransform.IsNotNull() )   // (definitelyBSpline)
+    //std::cout<< " Deformation Field is Null... " << std::endl;
+    if ( genericTransform.IsNotNull() ) // (definitelyBSpline)
       {
       TransformedImage = TransformResample< InputImageType, OutputImageType >(
         PrincipalOperandImage,
@@ -240,8 +235,7 @@ typename OutputImageType::Pointer GenericTransformImage(
 
   else if ( DeformationField.IsNotNull() )
     {
-    //  std::cout<< "Deformation Field is given, so applied to the image..."
-    // <<
+    //  std::cout<< "Deformation Field is given, so applied to the image..." <<
     // std::endl;
     TransformedImage = TransformWarp< InputImageType, OutputImageType, DeformationImageType >(
       PrincipalOperandImage,
@@ -263,7 +257,7 @@ typename OutputImageType::Pointer GenericTransformImage(
     typedef short int                                                                      MaskPixelType;
     typedef typename itk::Image< MaskPixelType,  GenericTransformImageNS::SpaceDimension > MaskImageType;
 
-    // Now Threshold and write out image
+    //Now Threshold and write out image
     typedef typename itk::BinaryThresholdImageFilter< InputImageType,
                                                       MaskImageType > BinaryThresholdFilterType;
     typename BinaryThresholdFilterType::Pointer finalFilter =

@@ -24,11 +24,11 @@
 XERCES_CPP_NAMESPACE_USE
 
 /**
- * \class SimpleXMLParserBase
- * contains the common code
- * needed to Read and Write an XML file.
- * Any actual interpretation is delegated to subclass
- */
+  * \class SimpleXMLParserBase
+  * contains the common code
+  * needed to Read and Write an XML file.
+  * Any actual interpretation is delegated to subclass
+  */
 class SimpleXMLParserBase
 {
 public:

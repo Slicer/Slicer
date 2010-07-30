@@ -253,7 +253,7 @@ SymmetricLogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
   // The backward update buffer looks just like the output.
   VelocityFieldPointer output = this->GetOutput();
 
-  if ( !m_BackwardUpdateBuffer ) {m_BackwardUpdateBuffer = VelocityFieldType::New(); }
+  if ( !m_BackwardUpdateBuffer ) { m_BackwardUpdateBuffer = VelocityFieldType::New(); }
   m_BackwardUpdateBuffer->SetOrigin( output->GetOrigin() );
   m_BackwardUpdateBuffer->SetSpacing( output->GetSpacing() );
   m_BackwardUpdateBuffer->SetDirection( output->GetDirection() );
@@ -552,6 +552,6 @@ SymmetricLogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
   os << indent << "Adder: " << m_Adder << std::endl;
   os << indent << "NumberOfBCHApproximationTerms: " << m_NumberOfBCHApproximationTerms << std::endl;
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

@@ -1,16 +1,16 @@
 /*=========================================================================
-
-Program:   BRAINSDemonsWarp
-Module:    $RCSfile: ITKHeader.h,v $
-Language:  C++
-Date:      $Date: 2006-04-25 23:20:16 $
-Version:   $Revision: 1.1 $
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   BRAINSDemonsWarp
+ *  Module:    $RCSfile: ITKHeader.h,v $
+ *  Language:  C++
+ *  Date:      $Date: 2006-04-25 23:20:16 $
+ *  Version:   $Revision: 1.1 $
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #include "itkSimpleDiffeomorphicRegistration.h"
 #include "itkVector.h"
@@ -29,15 +29,16 @@ itkSimpleDiffeomorphicRegistration::itkSimpleDiffeomorphicRegistration()
 }
 
 /*
-void itkSimpleDiffeomorphicRegistration::SetDeformedImageName(std::string name) {
-m_DeformedImageName = name;
-}
-*/
+  * void itkSimpleDiffeomorphicRegistration::SetDeformedImageName(std::string
+  * name) {
+  * m_DeformedImageName = name;
+  * }
+  */
 /*
-std::string itkSimpleDiffeomorphicRegistration::GetDeformedImageName(void) {
-return m_DeformedImageName;
-}
-*/
+  * std::string itkSimpleDiffeomorphicRegistration::GetDeformedImageName(void) {
+  * return m_DeformedImageName;
+  * }
+  */
 
 void itkSimpleDiffeomorphicRegistration::InitializePreprocessor()
 {

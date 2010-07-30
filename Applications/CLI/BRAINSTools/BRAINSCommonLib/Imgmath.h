@@ -1,24 +1,24 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile$
-Language:  C++
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile$
+ *  Language:  C++
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #ifndef __Imgmath_h
 #define __Imgmath_h
 
 /* This file contains the functions to perform pixel by pixel mathematical
- * operations on 2 images. All the functions are performed by using ITK
- * filters. */
+  * operations on 2 images. All the functions are performed by using ITK
+  * filters. */
 
 #include "itkImage.h"
 #include "itkSquaredDifferenceImageFilter.h"
@@ -65,7 +65,7 @@ typename ImageType::Pointer Iadd(const typename ImageType::Pointer input1,
 }
 
 /* Isub subtracts 2 images at every pixel location and outputs the resulting
- * image.*/
+  * image.*/
 template< class ImageType >
 typename ImageType::Pointer Isub(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
@@ -89,7 +89,7 @@ typename ImageType::Pointer Isub(const typename ImageType::Pointer input1,
 }
 
 /* Imul multiplies 2 images at every pixel location and outputs the resulting
- * image.*/
+  * image.*/
 template< class ImageType >
 typename ImageType::Pointer Imul(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
@@ -113,7 +113,7 @@ typename ImageType::Pointer Imul(const typename ImageType::Pointer input1,
 }
 
 /* Idiv divides 2 images at every pixel location and outputs the resulting
- * image.*/
+  * image.*/
 template< class ImageType >
 typename ImageType::Pointer Idiv(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
@@ -136,8 +136,9 @@ typename ImageType::Pointer Idiv(const typename ImageType::Pointer input1,
   return image;
 }
 
-/* Imax does the numerical generalization of OR on 2 (non-negative) images at every pixel location
- * and outputs the resulting image.*/
+/* Imax does the numerical generalization of OR on 2 (non-negative) images at
+  * every pixel location
+  * and outputs the resulting image.*/
 template< class ImageType >
 typename ImageType::Pointer Imax(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
@@ -160,8 +161,9 @@ typename ImageType::Pointer Imax(const typename ImageType::Pointer input1,
   return image;
 }
 
-/* Imin does the numerical generalization of AND on 2 (non-negative) images at every pixel location
- * and outputs the resulting image.*/
+/* Imin does the numerical generalization of AND on 2 (non-negative) images at
+  * every pixel location
+  * and outputs the resulting image.*/
 template< class ImageType >
 typename ImageType::Pointer Imin(const typename ImageType::Pointer input1,
                                  const typename ImageType::Pointer input2)
@@ -211,8 +213,7 @@ typename ImageType::Pointer ImageAddConstant(
   const typename ImageType::Pointer input,
   const double shiftvalue)
 {
-  // TODO:  This should be a UnaryImageFunctor operation to get
-  // multi-threading.
+  // TODO:  This should be a UnaryImageFunctor operation to get multi-threading.
   typename ImageType::Pointer outImage = ImageType::New();
   outImage->SetRegions( input->GetLargestPossibleRegion() );
   outImage->CopyInformation(input);
@@ -245,16 +246,17 @@ typename ImageType::Pointer ImageMultiplyConstant(
   return filt->GetOutput();
 }
 
-/* ImageComplementConstant does the numerical generalization of NOT on one (non-negative) image
- * at every pixel location and outputs the resulting image.  For finding the binary mask image Not,
- * referencevalue should be 1;  however there is no defaulting to 1 here. */
+/* ImageComplementConstant does the numerical generalization of NOT on one
+  * (non-negative) image
+  * at every pixel location and outputs the resulting image.  For finding the
+  *binary mask image Not,
+  * referencevalue should be 1;  however there is no defaulting to 1 here. */
 template< class ImageType >
 typename ImageType::Pointer ImageComplementConstant(
   const typename ImageType::Pointer input,
   const double referencevalue)
 {
-  // TODO:  This should be a UnaryImageFunctor operation to get
-  // multi-threading.
+  // TODO:  This should be a UnaryImageFunctor operation to get multi-threading.
   typename ImageType::Pointer outImage = ImageType::New();
   outImage->SetRegions( input->GetLargestPossibleRegion() );
   outImage->CopyInformation(input);

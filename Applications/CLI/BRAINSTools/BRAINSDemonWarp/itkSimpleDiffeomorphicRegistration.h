@@ -23,7 +23,7 @@
 #define NumberOfHistogramLevels     1024
 
 /** TODO:  Need to document this class
-*/
+  */
 class itkSimpleDiffeomorphicRegistration:public itk::Object
 {
 public:

@@ -1,19 +1,19 @@
 /*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkBRAINSROIAutoImageFilter.txx,v $
-  Language:  C++
-  Date:      $Date: 2008-10-16 16:45:09 $
-  Version:   $Revision: 1.13 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkBRAINSROIAutoImageFilter.txx,v $
+ *  Language:  C++
+ *  Date:      $Date: 2008-10-16 16:45:09 $
+ *  Version:   $Revision: 1.13 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *    This software is distributed WITHOUT ANY WARRANTY; without even
+ *    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *    PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __itkBRAINSROIAutoImageFilter_txx
 #define __itkBRAINSROIAutoImageFilter_txx
 #include "itkBRAINSROIAutoImageFilter.h"
@@ -43,10 +43,9 @@ void
 BRAINSROIAutoImageFilter< TInputImage, TOutputImage >
 ::GenerateData()
 {
-  m_ResultMaskPointer = NULL;   // Need to make this null during every re-run of
-                                // the data.
-  // Create a process accumulator for tracking the progress of this
-  // minipipeline
+  m_ResultMaskPointer = NULL; // Need to make this null during every re-run of
+                              // the data.
+  // Create a process accumulator for tracking the progress of this minipipeline
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
 
@@ -80,5 +79,5 @@ BRAINSROIAutoImageFilter< TInputImage, TOutputImage >
   os << indent << "DilateSize: "
      << m_DilateSize << std::endl;
 }
-}   // end namespace itk
+} // end namespace itk
 #endif

@@ -1,19 +1,19 @@
 /*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkESMDemonsRegistrationFunction.txx,v $
-  Language:  C++
-  Date:      $Date: 2008-07-11 19:02:04 $
-  Version:   $Revision: 1.4 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkESMDemonsRegistrationFunction.txx,v $
+ *  Language:  C++
+ *  Date:      $Date: 2008-07-11 19:02:04 $
+ *  Version:   $Revision: 1.4 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *    This software is distributed WITHOUT ANY WARRANTY; without even
+ *    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *    PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #ifndef __itkVectorESMDemonsRegistrationFunction_txx
 #define __itkVectorESMDemonsRegistrationFunction_txx
@@ -25,8 +25,8 @@
 namespace itk
 {
 /**
- * Default constructor
- */
+  * Default constructor
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
                                      TDeformationField >
@@ -94,8 +94,8 @@ VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
 }
 
 /*
- * Standard "PrintSelf" method.
- */
+  * Standard "PrintSelf" method.
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
@@ -133,8 +133,8 @@ VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
 }
 
 /**
- *
- */
+  *
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
@@ -145,8 +145,8 @@ VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
 }
 
 /**
- *
- */
+  *
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 double
 VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
@@ -157,8 +157,8 @@ VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
 }
 
 /**
- * Set the function state values before each iteration
- */
+  * Set the function state values before each iteration
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
@@ -254,8 +254,8 @@ VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
 }
 
 /**
- * Compute update at a non boundary neighbourhood
- */
+  * Compute update at a non boundary neighbourhood
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 typename VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
                                               TDeformationField >
@@ -287,12 +287,13 @@ VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
     const double fixedValue = static_cast< double >(
       this->GetFixedImage()->GetPixel(index).GetElement(i) );
     /*
-       if(index[0]==32 && index[1]==32 && index[2]==32)
-        {
-        std::cout <<  "FV  at index "<< i  << "is " << fixedValue << std::endl;
-        std::cout <<  "FV  at index is " << this->GetFixedImage()->GetPixel( index) << std::endl;
-        }
-    */
+      * if(index[0]==32 && index[1]==32 && index[2]==32)
+      *  {
+      *  std::cout <<  "FV  at index "<< i  << "is " << fixedValue << std::endl;
+      *  std::cout <<  "FV  at index is " << this->GetFixedImage()->GetPixel(
+      * index) << std::endl;
+      *  }
+      */
     // Get moving image related information
     // check if the point was mapped outside of the moving image using
     // the "special value" NumericTraits<MovingPixelType>::max()
@@ -488,10 +489,10 @@ VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
 #endif
 
   /**
-   * Compute Update.
-   * We avoid the mismatch in units between the two terms.
-   * and avoid large step using a normalization term.
-   */
+    * Compute Update.
+    * We avoid the mismatch in units between the two terms.
+    * and avoid large step using a normalization term.
+    */
 
   CovariantVectorType tempGradient = usedGradientTimes2[0];
   double              sum_speedValue = speedValue[0];
@@ -561,8 +562,8 @@ VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,
 }
 
 /**
- * Update the metric and release the per-thread-global data.
- */
+  * Update the metric and release the per-thread-global data.
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorESMDemonsRegistrationFunction< TFixedImage, TMovingImage,

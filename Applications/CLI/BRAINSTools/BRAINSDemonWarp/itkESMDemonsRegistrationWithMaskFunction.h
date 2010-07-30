@@ -1,19 +1,19 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile: itkESMDemonsRegistrationWithMaskFunction.h,v $
-Language:  C++
-Date:      $Date: 2008-11-12 13:59:47 $
-Version:   $Revision: 1.6 $
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkESMDemonsRegistrationWithMaskFunction.h,v $
+ *  Language:  C++
+ *  Date:      $Date: 2008-11-12 13:59:47 $
+ *  Version:   $Revision: 1.6 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #ifndef __itkESMDemonsRegistrationWithMaskFunction_h
 #define __itkESMDemonsRegistrationWithMaskFunction_h
@@ -30,36 +30,36 @@ PURPOSE.  See the above copyright notices for more information.
 namespace itk
 {
 /**
- * \class ESMDemonsRegistrationWithMaskFunction
- *
- * \brief Fast implementation of the symmetric demons registration force
- *
- * This class provides a substantially faster implementation of the
- * symmetric demons registration force. Speed is improved by keeping
- * a deformed copy of the moving image for gradient evaluation.
- *
- * Symmetric forces simply means using the mean of the gradient
- * of the fixed image and the gradient of the warped moving
- * image.
- *
- * Note that this class also enables the use of fixed, mapped moving
- * and warped moving images forces by using a call to SetUseGradientType
- *
- * The moving image should not be saturated. We indeed use
- * NumericTraits<MovingPixelType>::Max() as a special value.
- *
- * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
- *
- * This implementation was taken from the Insight Journal paper:
- * http://hdl.handle.net/1926/510
- *
- * \sa SymmetricForcesDemonsRegistrationFunction
- * \sa SymmetricForcesDemonsRegistrationFilter
- * \sa DemonsRegistrationFilter
- * \sa DemonsRegistrationFunction
- * \ingroup FiniteDifferenceFunctions
- *
- */
+  * \class ESMDemonsRegistrationWithMaskFunction
+  *
+  * \brief Fast implementation of the symmetric demons registration force
+  *
+  * This class provides a substantially faster implementation of the
+  * symmetric demons registration force. Speed is improved by keeping
+  * a deformed copy of the moving image for gradient evaluation.
+  *
+  * Symmetric forces simply means using the mean of the gradient
+  * of the fixed image and the gradient of the warped moving
+  * image.
+  *
+  * Note that this class also enables the use of fixed, mapped moving
+  * and warped moving images forces by using a call to SetUseGradientType
+  *
+  * The moving image should not be saturated. We indeed use
+  * NumericTraits<MovingPixelType>::Max() as a special value.
+  *
+  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
+  *
+  * This implementation was taken from the Insight Journal paper:
+  * http://hdl.handle.net/1926/510
+  *
+  * \sa SymmetricForcesDemonsRegistrationFunction
+  * \sa SymmetricForcesDemonsRegistrationFilter
+  * \sa DemonsRegistrationFilter
+  * \sa DemonsRegistrationFunction
+  * \ingroup FiniteDifferenceFunctions
+  *
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 class ITK_EXPORT ESMDemonsRegistrationWithMaskFunction:
   public PDEDeformableRegistrationFunction< TFixedImage,
@@ -167,7 +167,7 @@ public:
   }
 
   /** Return a pointer to a global data structure that is passed to
-   * this object from the solver at each calculation.  */
+    * this object from the solver at each calculation.  */
   virtual void * GetGlobalDataPointer() const
   {
     GlobalDataStruct *global = new GlobalDataStruct();
@@ -185,7 +185,7 @@ public:
   virtual void InitializeIteration();
 
   /** This method is called by a finite difference solver image filter at
-   * each pixel that does not lie on a data set boundary */
+    * each pixel that does not lie on a data set boundary */
   virtual PixelType  ComputeUpdate(
     const NeighborhoodType & neighborhood,
     void *globalData,
@@ -193,8 +193,8 @@ public:
       FloatOffsetType(0.0) );
 
   /** Get the metric value. The metric value is the mean square difference
-   * in intensity between the fixed image and transforming moving image
-   * computed over the the overlapping region between the two images. */
+    * in intensity between the fixed image and transforming moving image
+    * computed over the the overlapping region between the two images. */
   virtual double GetMetric() const
   {
     return m_Metric;
@@ -207,16 +207,16 @@ public:
   }
 
   /** Set/Get the threshold below which the absolute difference of
-   * intensity yields a match. When the intensities match between a
-   * moving and fixed image pixel, the update vector (for that
-   * iteration) will be the zero vector. Default is 0.001. */
+    * intensity yields a match. When the intensities match between a
+    * moving and fixed image pixel, the update vector (for that
+    * iteration) will be the zero vector. Default is 0.001. */
   virtual void SetIntensityDifferenceThreshold(double);
 
   virtual double GetIntensityDifferenceThreshold() const;
 
   /** Set/Get the maximum update step length. In Thirion this is 0.5.
-   *  Setting it to 0 implies no restriction (beware of numerical
-   *  instability in this case. */
+    *  Setting it to 0 implies no restriction (beware of numerical
+    *  instability in this case. */
   virtual void SetMaximumUpdateStepLength(double sm)
   {
     this->m_MaximumUpdateStepLength = sm;
@@ -276,7 +276,7 @@ protected:
   FixedImageNeighborhoodIteratorType;
 
   /** A global data type for this class of equation. Used to store
-   * iterators for the fixed image. */
+    * iterators for the fixed image. */
   struct GlobalDataStruct {
     double m_SumOfSquaredDifference;
     unsigned long m_NumberOfPixelsProcessed;
@@ -320,8 +320,8 @@ private:
   double m_MaximumUpdateStepLength;
 
   /** The metric value is the mean square difference in intensity between
-   * the fixed image and transforming moving image computed over the
-   * the overlapping region between the two images. */
+    * the fixed image and transforming moving image computed over the
+    * the overlapping region between the two images. */
   mutable double        m_Metric;
   mutable double        m_SumOfSquaredDifference;
   mutable unsigned long m_NumberOfPixelsProcessed;

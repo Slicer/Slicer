@@ -9,8 +9,9 @@ void PrintDataTypeStrings(void)
   std::cout << "ushort" << std::endl;
   std::cout << "int" << std::endl;
   std::cout << "float" << std::endl;
-#ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes
-  // too many segments in one object file for the intel compiler
+#ifdef _USE_UNCOMMON_TYPES  // This is commented out because it causes
+                            // too many segments in one object file for the
+                            // intel compiler
   std::cout << "uint" << std::endl;
   std::cout << "double" << std::endl;
 #endif

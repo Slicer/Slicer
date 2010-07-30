@@ -342,7 +342,8 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 
         //      typename MaskImageType::Pointer fm =
         // castFixedMaskImage->GetOutput();
-        //      itkUtil::WriteImage<MaskImageType>(fm, "fixedMaskImage.nii.gz");
+        //      itkUtil::WriteImage<MaskImageType>(fm,
+        // "fixedMaskImage.nii.gz");
 
         // convert mask image to mask
         typename ImageMaskSpatialObjectType::Pointer fixedMask = ImageMaskSpatialObjectType::New();
@@ -534,25 +535,27 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
   if ( command.outputCheckerboardVolume != "" )
     {
     app->SetCheckerBoardFilename ( command.outputCheckerboardVolume.c_str () );
-    unsigned int array[3] =
-                { command.checkerboardPatternSubdivisions[0],
-                command.checkerboardPatternSubdivisions[1],
-                command.checkerboardPatternSubdivisions[2]};
+    unsigned int array[3] = {
+      command.checkerboardPatternSubdivisions[0],
+      command.checkerboardPatternSubdivisions[1],
+      command.checkerboardPatternSubdivisions[2]
+      };
     app->SetCheckerBoardPattern (array);
     }
 
   if ( command.outputNormalized )
     {
-    std::string normalize = "ON"; // TODO:  SetOutNormalized should be a boolean
-    // not a string.
+    std::string normalize = "ON";   // TODO:  SetOutNormalized should be a
+                                    // boolean
+                                    // not a string.
     app->SetOutNormalized ( normalize.c_str () );
     }
 
   if ( command.outputDebug )
     {
     bool debug = true;
-    app->SetOutDebug (debug); // TODO:  SetOutDebug should be a boolean not a
-    // string.
+    app->SetOutDebug (debug);   // TODO:  SetOutDebug should be a boolean not a
+                                // string.
     }
 
   app->SetTheMovingImageShrinkFactors(command.theMovingImageShrinkFactors);
@@ -600,14 +603,14 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     app->SetLower (command.lowerThresholdForBOBF);
     app->SetUpper (command.upperThresholdForBOBF);
     typename ImageType::SizeType radius;
-    radius[0] = command.neighborhoodForBOBF[0]; // Radius along X
-    radius[1] = command.neighborhoodForBOBF[1]; // Radius along Y
-    radius[2] = command.neighborhoodForBOBF[2]; // Radius along Z
+    radius[0] = command.neighborhoodForBOBF[0];   // Radius along X
+    radius[1] = command.neighborhoodForBOBF[1];   // Radius along Y
+    radius[2] = command.neighborhoodForBOBF[2];   // Radius along Z
     app->SetRadius (radius);
     typename ImageType::IndexType seed;
-    seed[0] = command.seedForBOBF[0]; // Seed in X dimension;
-    seed[1] = command.seedForBOBF[1]; // Seed in Y dimension;
-    seed[2] = command.seedForBOBF[2]; // Seed in Z dimension;
+    seed[0] = command.seedForBOBF[0];   // Seed in X dimension;
+    seed[1] = command.seedForBOBF[1];   // Seed in Y dimension;
+    seed[2] = command.seedForBOBF[2];   // Seed in Z dimension;
     app->SetSeed (seed);
     }
   if ( command.outputDebug )
@@ -680,8 +683,9 @@ ProcessOutputType(struct BRAINSDemonWarpAppParameters & command)
       {
       ProcessAppType< PixelType, float >(command);
       }
-#ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-    // segments in one object file for the intel compiler
+#ifdef _USE_UNCOMMON_TYPES  // This is commented out because it causes too many
+                            // segments in one object file for the intel
+                            // compiler
     else if ( CompareNoCase ( command.outputPixelType,
                               std::string ("uint") ) == 0 )
       {
@@ -955,25 +959,27 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
   if ( command.outputCheckerboardVolume != "" )
     {
     app->SetCheckerBoardFilename ( command.outputCheckerboardVolume.c_str () );
-    unsigned int array[3] =
-                { command.checkerboardPatternSubdivisions[0],
-                command.checkerboardPatternSubdivisions[1],
-                command.checkerboardPatternSubdivisions[2]};
+    unsigned int array[3] = {
+      command.checkerboardPatternSubdivisions[0],
+      command.checkerboardPatternSubdivisions[1],
+      command.checkerboardPatternSubdivisions[2]
+      };
     app->SetCheckerBoardPattern (array);
     }
 
   if ( command.outputNormalized )
     {
-    std::string normalize = "ON"; // TODO:  SetOutNormalized should be a boolean
-    // not a string.
+    std::string normalize = "ON";   // TODO:  SetOutNormalized should be a
+                                    // boolean
+                                    // not a string.
     app->SetOutNormalized ( normalize.c_str () );
     }
 
   if ( command.outputDebug )
     {
     bool debug = true;
-    app->SetOutDebug (debug); // TODO:  SetOutDebug should be a boolean not a
-    // string.
+    app->SetOutDebug (debug);   // TODO:  SetOutDebug should be a boolean not a
+                                // string.
     }
 
   app->SetTheMovingImageShrinkFactors(command.theMovingImageShrinkFactors);
@@ -1013,14 +1019,14 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
     app->SetLower (command.lowerThresholdForBOBF);
     app->SetUpper (command.upperThresholdForBOBF);
     typename ImageType::SizeType radius;
-    radius[0] = command.neighborhoodForBOBF[0]; // Radius along X
-    radius[1] = command.neighborhoodForBOBF[1]; // Radius along Y
-    radius[2] = command.neighborhoodForBOBF[2]; // Radius along Z
+    radius[0] = command.neighborhoodForBOBF[0];   // Radius along X
+    radius[1] = command.neighborhoodForBOBF[1];   // Radius along Y
+    radius[2] = command.neighborhoodForBOBF[2];   // Radius along Z
     app->SetRadius (radius);
     typename ImageType::IndexType seed;
-    seed[0] = command.seedForBOBF[0]; // Seed in X dimension;
-    seed[1] = command.seedForBOBF[1]; // Seed in Y dimension;
-    seed[2] = command.seedForBOBF[2]; // Seed in Z dimension;
+    seed[0] = command.seedForBOBF[0];   // Seed in X dimension;
+    seed[1] = command.seedForBOBF[1];   // Seed in Y dimension;
+    seed[2] = command.seedForBOBF[2];   // Seed in Z dimension;
     app->SetSeed (seed);
     }
   if ( command.outputDebug )
@@ -1088,8 +1094,9 @@ VectorProcssOutputType(struct BRAINSDemonWarpAppParameters & command)
       {
       VectorProcessAppType< PixelType, float >(command);
       }
-#ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-    // segments in one object file for the intel compiler
+#ifdef _USE_UNCOMMON_TYPES  // This is commented out because it causes too many
+                            // segments in one object file for the intel
+                            // compiler
     else if ( CompareNoCase ( command.outputPixelType, std::string ("uint") ) == 0 )
       {
       VectorProcessAppType< PixelType, unsigned int >(command);
@@ -1146,8 +1153,9 @@ VectorProcessOutputType(struct BRAINSDemonWarpAppParameters & command)
       {
       VectorProcessAppType< PixelType, float >(command);
       }
-#ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-    // segments in one object file for the intel compiler
+#ifdef _USE_UNCOMMON_TYPES  // This is commented out because it causes too many
+                            // segments in one object file for the intel
+                            // compiler
     else if ( CompareNoCase ( command.outputPixelType,
                               std::string ("uint") ) == 0 )
       {

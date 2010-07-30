@@ -1,19 +1,19 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile$
-Language:  C++
-Date:      $Date: 2007-08-02 14:58:12 -0500 (Thu, 02 Aug 2007) $
-Version:   $Revision: 10282 $
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile$
+ *  Language:  C++
+ *  Date:      $Date: 2007-08-02 14:58:12 -0500 (Thu, 02 Aug 2007) $
+ *  Version:   $Revision: 10282 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __itkMultiModal3DMutualRegistrationHelper_txx
 #define __itkMultiModal3DMutualRegistrationHelper_txx
 
@@ -28,8 +28,8 @@ PURPOSE.  See the above copyright notices for more information.
 namespace itk
 {
 /*
- * Constructor
- */
+  * Constructor
+  */
 template< typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage >
 MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage,
@@ -73,8 +73,8 @@ MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage,
 }
 
 /*
- * Initialize by setting the interconnects between components.
- */
+  * Initialize by setting the interconnects between components.
+  */
 template< typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage >
 void
@@ -110,16 +110,18 @@ throw ( ExceptionObject )
 
   metric->SetNumberOfHistogramBins(m_NumberOfHistogramBins);
   /*
-  //This would be nice to dynamically use a percentage of samples based on the mask or image size.
-  //It will need quite a bit of testing to make sure that backwards compatibility is maintained.
-  if(m_NumberOfSamples <= 0 )
-  {
-  m_NumberOfSamples=256*256*256;
-  metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
-  metric->SetUseAllPixels(true);  //DEBUG -- This was way too slow.
-  }
-  else
-  */
+    * //This would be nice to dynamically use a percentage of samples based on
+    *    the mask or image size.
+    * //It will need quite a bit of testing to make sure that backwards
+    *    compatibility is maintained.
+    * if(m_NumberOfSamples <= 0 )
+    * {
+    * m_NumberOfSamples=256*256*256;
+    * metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
+    * metric->SetUseAllPixels(true);  //DEBUG -- This was way too slow.
+    * }
+    * else
+    */
     {
     metric->SetNumberOfSpatialSamples(m_NumberOfSamples);
     }
@@ -143,8 +145,7 @@ throw ( ExceptionObject )
   else
     {
     metric->SetUseExplicitPDFDerivatives(true);   // the default
-    // metric->SetUseExplicitPDFDerivatives(true);  //DEBUG -- Just test set
-    // to
+    // metric->SetUseExplicitPDFDerivatives(true);  //DEBUG -- Just test set to
     // false saves memory at expense of runtime
     }
 
@@ -302,17 +303,8 @@ throw ( ExceptionObject )
     {
     if ( localPermissionToVary[i] == 0 )
       {
-      optimizerScales[i] = 0.5 * vcl_numeric_limits< float >::max();   // Make
-                                                                       // huge
-                                                                       // to
-                                                                       //
-                                                                       //
-                                                                       // greatly
-                                                                       //
-                                                                       //
-                                                                       // penilize
-                                                                       // any
-                                                                       // motion
+      //Make huge to greatly penilize any motion
+      optimizerScales[i] = 0.5 * vcl_numeric_limits< float >::max();
       }
     }
 
@@ -364,8 +356,8 @@ throw ( ExceptionObject )
 }
 
 /*
- * Starts the Registration Process
- */
+  * Starts the Registration Process
+  */
 template< typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage >
 void
@@ -429,8 +421,8 @@ MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage,
 }
 
 /**
- *
- */
+  *
+  */
 template< typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage >
 unsigned long
@@ -478,8 +470,8 @@ MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage,
 }
 
 /*
- * Generate Data
- */
+  * Generate Data
+  */
 template< typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage >
 void
@@ -552,8 +544,8 @@ MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage,
 }
 
 /*
- *  Get Output
- */
+  *  Get Output
+  */
 template< typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage >
 const typename MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer,
@@ -586,8 +578,8 @@ MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage,
 }
 
 /*
- * PrintSelf
- */
+  * PrintSelf
+  */
 template< typename TTransformType, typename TOptimizer, typename TFixedImage,
           typename TMovingImage >
 void
@@ -600,6 +592,6 @@ MultiModal3DMutualRegistrationHelper< TTransformType, TOptimizer, TFixedImage,
   os << indent << "Fixed Image: " << m_FixedImage.GetPointer() << std::endl;
   os << indent << "Moving Image: " << m_MovingImage.GetPointer() << std::endl;
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

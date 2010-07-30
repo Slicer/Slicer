@@ -24,29 +24,29 @@ typedef itk::ScaleSkewVersor3DTransform< double > ScaleSkewVersor3DTransformType
 // 12 Parameters
 typedef itk::AffineTransform< double, 3 > AffineTransformType;
 /** \class ValidationInputParser
- *
- * This component parse an input parameter file for a simple
- * atlas based segmentation application.
- *
- * This class is activated by method Execute().
- *
- * Inputs:
- *  - altas image name
- *  - subject image name
- *  - the  parameter filename
- *
- *
- * Outputs:
- *  - pointer to the subject (fixed) image
- *  - pointer to the atlas (moving) image
- *  - the number of histogram levels to use
- *  - the number of histogram match points to use
- *  - the number of levels
- *  - the number of iterations at each level
- *  - the fixed image starting shrink factors
- *  - the moving image starting shrink factors
- *
- */
+  *
+  * This component parse an input parameter file for a simple
+  * atlas based segmentation application.
+  *
+  * This class is activated by method Execute().
+  *
+  * Inputs:
+  *  - altas image name
+  *  - subject image name
+  *  - the  parameter filename
+  *
+  *
+  * Outputs:
+  *  - pointer to the subject (fixed) image
+  *  - pointer to the atlas (moving) image
+  *  - the number of histogram levels to use
+  *  - the number of histogram match points to use
+  *  - the number of levels
+  *  - the number of iterations at each level
+  *  - the fixed image starting shrink factors
+  *  - the moving image starting shrink factors
+  *
+  */
 
 template< typename TImage >
 class ITK_EXPORT ValidationInputParser:public Object

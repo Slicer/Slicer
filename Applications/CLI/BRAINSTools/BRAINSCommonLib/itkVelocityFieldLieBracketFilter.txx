@@ -8,8 +8,8 @@
 namespace itk
 {
 /**
- * Default constructor.
- */
+  * Default constructor.
+  */
 template< class TInputImage, class TOutputImage >
 VelocityFieldLieBracketFilter< TInputImage, TOutputImage >
 ::VelocityFieldLieBracketFilter()
@@ -22,8 +22,8 @@ VelocityFieldLieBracketFilter< TInputImage, TOutputImage >
 }
 
 /**
- * Standard PrintSelf method.
- */
+  * Standard PrintSelf method.
+  */
 template< class TInputImage, class TOutputImage >
 void
 VelocityFieldLieBracketFilter< TInputImage, TOutputImage >
@@ -124,8 +124,8 @@ VelocityFieldLieBracketFilter< TInputImage, TOutputImage >
 }
 
 /**
- * GenerateData()
- */
+  * GenerateData()
+  */
 template< class TInputImage, class TOutputImage >
 void
 VelocityFieldLieBracketFilter< TInputImage, TOutputImage >
@@ -174,9 +174,9 @@ VelocityFieldLieBracketFilter< TInputImage, TOutputImage >
     ++leftIter;
     ++rightIter;
     ++outputIter;
-    progress.CompletedPixel();   // potential exception thrown here
+    progress.CompletedPixel(); // potential exception thrown here
     }
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

@@ -13,10 +13,11 @@
 #include "itkMultiModal3DMutualRegistrationHelper.h"
 
 /**
- * This class is the BSpline component of the BRAINSFit program developed at the University of Iowa.
- * The master version of this file is always located from the nitric site.
- * http://www.nitrc.org/projects/multimodereg/
- */
+  * This class is the BSpline component of the BRAINSFit program developed at
+  *the University of Iowa.
+  * The master version of this file is always located from the nitric site.
+  * http://www.nitrc.org/projects/multimodereg/
+  */
 
 template< class RegisterImageType, class ImageMaskSpatialObjectType, class BSplineTransformType >
 typename BSplineTransformType::Pointer
@@ -35,8 +36,9 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
           const bool m_PromptUserAfterDisplay)
 {
   /*
-   *  Begin straightline BSpline optimization, after GTRACT/Common/itkAnatomicalBSplineFilter.
-   */
+    *  Begin straightline BSpline optimization, after
+    *GTRACT/Common/itkAnatomicalBSplineFilter.
+    */
 
   typedef typename RegisterImageType::Pointer       RegisterImagePointer;
   typedef typename RegisterImageType::ConstPointer  RegisterImageConstPointer;
@@ -137,15 +139,14 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   OptimizerBoundValueType     lowerBound( m_OutputBSplineTransform->GetNumberOfParameters() );
 
   /**
-   *
-   * Set the boundary condition for each variable, where
-   * select[i] = 0 if x[i] is unbounded,
-   *           = 1 if x[i] has only a lower bound,
-   *           = 2 if x[i] has both lower and upper bounds, and
-   *           = 3 if x[1] has only an upper bound
-   */
-  // TODO:  For control points outside the fixed image mask, it might be good
-  // to
+    *
+    * Set the boundary condition for each variable, where
+    * select[i] = 0 if x[i] is unbounded,
+    *           = 1 if x[i] has only a lower bound,
+    *           = 2 if x[i] has both lower and upper bounds, and
+    *           = 3 if x[1] has only an upper bound
+    */
+  // TODO:  For control points outside the fixed image mask, it might be good to
   // constrian
   // the parameters to something different than those control points inside the
   // fixed image mask.

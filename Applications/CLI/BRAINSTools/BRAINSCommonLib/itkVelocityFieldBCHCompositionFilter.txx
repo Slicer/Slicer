@@ -7,8 +7,8 @@
 namespace itk
 {
 /**
- * Default constructor.
- */
+  * Default constructor.
+  */
 template< class TInputImage, class TOutputImage >
 VelocityFieldBCHCompositionFilter< TInputImage, TOutputImage >
 ::VelocityFieldBCHCompositionFilter()
@@ -38,8 +38,8 @@ VelocityFieldBCHCompositionFilter< TInputImage, TOutputImage >
 }
 
 /**
- * Standard PrintSelf method.
- */
+  * Standard PrintSelf method.
+  */
 template< class TInputImage, class TOutputImage >
 void
 VelocityFieldBCHCompositionFilter< TInputImage, TOutputImage >
@@ -56,8 +56,8 @@ VelocityFieldBCHCompositionFilter< TInputImage, TOutputImage >
 }
 
 /**
- * GenerateData()
- */
+  * GenerateData()
+  */
 template< class TInputImage, class TOutputImage >
 void
 VelocityFieldBCHCompositionFilter< TInputImage, TOutputImage >
@@ -154,6 +154,6 @@ VelocityFieldBCHCompositionFilter< TInputImage, TOutputImage >
   m_Adder->Update();
   this->GraftOutput( m_Adder->GetOutput() );
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

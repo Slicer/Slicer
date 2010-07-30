@@ -12,7 +12,7 @@
 namespace itk
 {
 /*This file defines Thirion registration class which initializes the input
-  parser, preprocessor and the registrator. */
+  * parser, preprocessor and the registrator. */
 
 template< typename TImage,
           typename TRealImage, typename TOutputImage
@@ -119,8 +119,8 @@ public:
   itkGetMacro (AppendOutputFile, bool);
   itkBooleanMacro (AppendOutputFile);
 
-  /*BOBF macros */
-  /**Set Target Mask filename*/
+  /*BOBF macros
+   *Set Target Mask filename*/
   itkSetStringMacro (FixedBinaryVolume);
   itkGetStringMacro (FixedBinaryVolume);
 
@@ -145,8 +145,8 @@ public:
   itkGetMacro (Upper, PixelType);
 
   /** Set/Get value to replace thresholded pixels. Pixels that lie *
-   *  within Lower and Upper (inclusive) will be replaced with this
-   *  value. The default is 1. */
+    *  within Lower and Upper (inclusive) will be replaced with this
+    *  value. The default is 1. */
   itkSetMacro (DefaultPixelValue, PixelType);
   itkGetMacro (DefaultPixelValue, PixelType);
 
@@ -171,11 +171,11 @@ public:
   itkSetStringMacro (MovingLandmarkFilename);
   itkGetStringMacro (MovingLandmarkFilename);
   /*
-  itkSetStringMacro (FixedMaskFilename);
-  itkGetStringMacro (FixedMaskFilename);
-  itkSetStringMacro (MovingMaskFilename);
-  itkGetStringMacro (MovingMaskFilename);
-  */
+    * itkSetStringMacro (FixedMaskFilename);
+    * itkGetStringMacro (FixedMaskFilename);
+    * itkSetStringMacro (MovingMaskFilename);
+    * itkGetStringMacro (MovingMaskFilename);
+    */
   /**Set histogram matching*/
   itkSetMacro(UseHistogramMatching, bool);
   itkGetConstMacro(UseHistogramMatching, bool);
@@ -281,7 +281,7 @@ private:
   PixelType        m_Lower;
   PixelType        m_Upper;
   PixelType        m_DefaultPixelValue;
-  SizeType         m_Radius; // for BOBF filter.
+  SizeType         m_Radius;   // for BOBF filter.
   SizeType         m_MedianFilterSize;
   std::string      m_FixedLandmarkFilename;
   std::string      m_MovingLandmarkFilename;

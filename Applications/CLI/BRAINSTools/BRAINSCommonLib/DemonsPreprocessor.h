@@ -6,30 +6,31 @@
 namespace itk
 {
 /** \class DemonsPreprocessor
- *
- * This component pre-processes the moving and fixed image before
- * registration.
- * If the fixed image dimensions are different from the moving image it will     * resample the moving image to match the fixed image dimensions.
- * Histogram matching is done to solve the intensity mismatch problem.
- *
- * The preprocessor also called the skull-stripping filter itkBOBF
- * if an atlas and subject whole brain masks are specified.
- *
- * The preprocessing is activatived by method Execute().
- *
- * Inputs:
- *    - pointer to original fixed image
- *    - pointer original moving image
- *    - number of histogram levels
- *    - number of match points
- *
- * Outputs:
- *    - pointer to processed fixed image
- *    - pointer to processed moving image
- *    - the minimum value of original fixed image
- *    - the minimum value of original moving image
- *
- */
+  *
+  * This component pre-processes the moving and fixed image before
+  * registration.
+  * If the fixed image dimensions are different from the moving image it will
+  *    * resample the moving image to match the fixed image dimensions.
+  * Histogram matching is done to solve the intensity mismatch problem.
+  *
+  * The preprocessor also called the skull-stripping filter itkBOBF
+  * if an atlas and subject whole brain masks are specified.
+  *
+  * The preprocessing is activatived by method Execute().
+  *
+  * Inputs:
+  *    - pointer to original fixed image
+  *    - pointer original moving image
+  *    - number of histogram levels
+  *    - number of match points
+  *
+  * Outputs:
+  *    - pointer to processed fixed image
+  *    - pointer to processed moving image
+  *    - the minimum value of original fixed image
+  *    - the minimum value of original moving image
+  *
+  */
 template< typename TInputImage, typename TOutputImage >
 class ITK_EXPORT DemonsPreprocessor:public Object
 {
@@ -109,8 +110,8 @@ public:
   /** Get minimum value of original moving image. */
   itkGetMacro(MovingImageMinimum, InputPixelType);
 
-  /* BOBF macros*/
-  /** Set Target Mask filename */
+  /* BOBF macros
+    * Set Target Mask filename */
   itkSetStringMacro(FixedBinaryVolume);
   itkGetStringMacro(FixedBinaryVolume);
 
@@ -186,7 +187,7 @@ private:
   bool m_UseHistogramMatching;
 
   /*MakeBOBF function takes in a brain image and a whole brain mask and strips
-    the skull of the image.*/
+    * the skull of the image.*/
   OutputImagePointer MakeBOBFImage(OutputImagePointer input,
                                    std::string MaskName);
 };

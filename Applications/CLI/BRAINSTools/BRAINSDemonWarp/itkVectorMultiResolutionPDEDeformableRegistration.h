@@ -16,48 +16,48 @@
 namespace itk
 {
 /**
- * \class VectorMultiResolutionPDEDeformableRegistration
- * \brief Framework for performing multi-resolution PDE
- * deformable registration ( with linear interpolation and NN extrapolation )
- *
- * VectorMultiResolutionPDEDeformableRegistration3 provides a generic framework
- * to peform multi-resolution deformable registration.
- *
- * At each resolution level a PDEDeformableRegistrationFilter is used
- * to register two images by computing the deformation field which will
- * map a moving image onto a fixed image.
- *
- * A deformation field is represented as an image whose pixel type is some
- * vector type with at least N elements, where N is the dimension of
- * the fixed image. The vector type must support element access via operator
- * []. It is assumed that the vector elements behave like floating point
- * scalars.
- *
- * The internal PDEDeformationRegistrationFilter can be set using
- * SetRegistrationFilter. By default a DemonsRegistrationFilter is used.
- *
- * The input fixed and moving images are set via methods SetFixedImage
- * and SetMovingImage respectively. An initial deformation field maybe set via
- * SetInitialDeformationField or SetInput. If no initial field is set
- * a zero field is used as the initial condition.
- *
- * RecursiveMultiResolutionPyramidImageFilters are used to downsample the fixed
- * and moving images. A VectorExpandImageFilter is used to upsample
- * the deformation as we move from a coarse to fine solution.
- *
- * This class is templated over the fixed image type, the moving image type,
- * and the Deformation Field type.
- *
- *
- * \sa PDEDeformableRegistrationFilter
- * \sa DemonsRegistrationFilter
- * \sa RecursiveMultiResolutionPyramidImageFilter
- * \sa VectorExpandImageFilter
- *
- * The current implementation of this class does not support streaming.
- *
- * \ingroup DeformableImageRegistration
- */
+  * \class VectorMultiResolutionPDEDeformableRegistration
+  * \brief Framework for performing multi-resolution PDE
+  * deformable registration ( with linear interpolation and NN extrapolation )
+  *
+  * VectorMultiResolutionPDEDeformableRegistration3 provides a generic framework
+  * to peform multi-resolution deformable registration.
+  *
+  * At each resolution level a PDEDeformableRegistrationFilter is used
+  * to register two images by computing the deformation field which will
+  * map a moving image onto a fixed image.
+  *
+  * A deformation field is represented as an image whose pixel type is some
+  * vector type with at least N elements, where N is the dimension of
+  * the fixed image. The vector type must support element access via operator
+  * []. It is assumed that the vector elements behave like floating point
+  * scalars.
+  *
+  * The internal PDEDeformationRegistrationFilter can be set using
+  * SetRegistrationFilter. By default a DemonsRegistrationFilter is used.
+  *
+  * The input fixed and moving images are set via methods SetFixedImage
+  * and SetMovingImage respectively. An initial deformation field maybe set via
+  * SetInitialDeformationField or SetInput. If no initial field is set
+  * a zero field is used as the initial condition.
+  *
+  * RecursiveMultiResolutionPyramidImageFilters are used to downsample the fixed
+  * and moving images. A VectorExpandImageFilter is used to upsample
+  * the deformation as we move from a coarse to fine solution.
+  *
+  * This class is templated over the fixed image type, the moving image type,
+  * and the Deformation Field type.
+  *
+  *
+  * \sa PDEDeformableRegistrationFilter
+  * \sa DemonsRegistrationFilter
+  * \sa RecursiveMultiResolutionPyramidImageFilter
+  * \sa VectorExpandImageFilter
+  *
+  * The current implementation of this class does not support streaming.
+  *
+  * \ingroup DeformableImageRegistration
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField,
           class TRealType = float >
 class ITK_EXPORT VectorMultiResolutionPDEDeformableRegistration:
@@ -164,8 +164,8 @@ public:
   }
 
   /** Set initial deformation field. No assumption is made on the
-   *  input. It will therefore be smoothed and resampled to match the
-   *  images characteristics at the coarsest level of the pyramid. */
+    *  input. It will therefore be smoothed and resampled to match the
+    *  images characteristics at the coarsest level of the pyramid. */
   virtual void SetArbitraryInitialDeformationField(DeformationFieldType *ptr)
   {
     this->SetInput(ptr);
@@ -178,11 +178,11 @@ public:
   }
 
   /** Get the number of valid inputs.  For
-   * MultiResolutionPDEDeformableRegistration2, this checks whether the
-   * fixed and moving images have been set. While
-   * MultiResolutionPDEDeformableRegistration2 can take a third input
-   * as an initial deformation field, this input is not a required input.
-   */
+    * MultiResolutionPDEDeformableRegistration2, this checks whether the
+    * fixed and moving images have been set. While
+    * MultiResolutionPDEDeformableRegistration2 can take a third input
+    * as an initial deformation field, this input is not a required input.
+    */
   virtual std::vector< SmartPointer< DataObject > >::size_type
   GetNumberOfValidRequiredInputs() const;
 
@@ -237,29 +237,29 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** Generate output data by performing the registration
-   * at each resolution level. */
+    * at each resolution level. */
   virtual void GenerateData();
 
   /** The current implementation of this class does not support
-   * streaming. As such it requires the largest possible region
-   * for the moving, fixed and input deformation field. */
+    * streaming. As such it requires the largest possible region
+    * for the moving, fixed and input deformation field. */
   virtual void GenerateInputRequestedRegion();
 
   /** By default, the output deformation field has the same
-   * spacing, origin and LargestPossibleRegion as the input/initial
-   * deformation field.
-   *
-   * If the initial deformation field is not set, the output
-   * information is copied from the fixed image. */
+    * spacing, origin and LargestPossibleRegion as the input/initial
+    * deformation field.
+    *
+    * If the initial deformation field is not set, the output
+    * information is copied from the fixed image. */
   virtual void GenerateOutputInformation();
 
   /** The current implementation of this class does not supprot
-   * streaming. As such it produces the output for the largest
-   * possible region. */
+    * streaming. As such it produces the output for the largest
+    * possible region. */
   virtual void EnlargeOutputRequestedRegion(DataObject *ptr);
 
   /** This method returns true to indicate that the registration should
-   * terminate at the current resolution level. */
+    * terminate at the current resolution level. */
   virtual bool Halt();
 
 private:

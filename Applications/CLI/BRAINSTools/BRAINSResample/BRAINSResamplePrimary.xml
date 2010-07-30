@@ -37,7 +37,7 @@
     <label>Outputs</label>
     <description>Resulting deformed image parameters</description>
 
-    <image reference="inputVolume">
+    <image>
       <name>outputVolume</name>
       <longflag>outputVolume</longflag>
       <description>Resulting deformed image</description>

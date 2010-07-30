@@ -27,7 +27,7 @@
 #include "itkTransformFactory.h"
 #include <itksys/SystemTools.hxx>
 
-// #include "itkSimilarity2DTransfor3DPerspectiveTransform.h"
+//#include "itkSimilarity2DTransfor3DPerspectiveTransform.h"
 
 namespace itk
 {
@@ -37,7 +37,7 @@ VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
   typedef VersorRigid3DTransformType VersorRigidTransformType;
   VersorRigidTransformType::Pointer versorRigid = VersorRigidTransformType::New();
   versorRigid->SetIdentity();
-  // //////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////
   // ConvertTransforms
   //
   if ( genericTransformToWrite.IsNotNull() )
@@ -70,14 +70,17 @@ VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
         AssignRigid::ExtractVersorRigid3DTransform(versorRigid, tempInitializerITKTransform);
         }
       /*
-        else if(transformFileType == "BSplineDeformableTransform")
-        {
-        BSplineTransformType::Pointer tempInitializerITKTransform
-        = dynamic_cast<BSplineTransformType *>( genericTransformToWrite.GetPointer() );
-        //AssignRigid::ExtractVersorRigid3DTransform(versorRigid, tempInitializerITKTransform->GetBulkTransform());
-        versorRigid=NULL; //NOT: Perhaps it makes sense to extract the rigid part of the bulk transform.  But that is pretty obscure case.
-        return NULL;
-        }
+        * else if(transformFileType == "BSplineDeformableTransform")
+        * {
+        * BSplineTransformType::Pointer tempInitializerITKTransform
+        * = dynamic_cast<BSplineTransformType *>(
+        *    genericTransformToWrite.GetPointer() );
+        * //AssignRigid::ExtractVersorRigid3DTransform(versorRigid,
+        *    tempInitializerITKTransform->GetBulkTransform());
+        * versorRigid=NULL; //NOT: Perhaps it makes sense to extract the rigid
+        *    part of the bulk transform.  But that is pretty obscure case.
+        * return NULL;
+        * }
         */
       else      //  NO SUCH CASE!!
         {
@@ -107,7 +110,7 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
                               const std::string & outputTransform,
                               const std::string & strippedOutputTransform)
 {
-  // //////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////
   // Write out tranfoms.
   //
   if ( genericTransformToWrite.IsNull() )
@@ -167,7 +170,7 @@ int WriteBothTransformsToDisk(const GenericTransformType::ConstPointer genericTr
                 << std::endl;
       return -1;
       }
-    // Should just write out the rigid transform here.
+    //Should just write out the rigid transform here.
     if ( strippedOutputTransform.size() > 0  )
       {
       typedef VersorRigid3DTransformType VersorRigidTransformType;
@@ -232,9 +235,9 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTra
       exit(-1);
       }
     }
-  if ( currentTransformList.size() == 1 ) // Most simple transform types
+  if ( currentTransformList.size() == 1 ) //Most simple transform types
     {
-    // NOTE:  The dynamic casting here circumvents the standard smart pointer
+    //NOTE:  The dynamic casting here circumvents the standard smart pointer
     // behavior.  It is important that
     // by making a new copy and transfering the parameters it is more safe.  Now
     // we only need to ensure
@@ -279,9 +282,9 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTra
       genericTransform = tempCopy.GetPointer();
       }
     }
-  else if ( currentTransformList.size() == 2 ) // A special case for
+  else if ( currentTransformList.size() == 2 ) //A special case for
                                                // BSplineTransforms
-  // To recombine the bulk and the bSpline transforms.
+  //To recombine the bulk and the bSpline transforms.
     {
     // transformListReader->GetTransformList();
     TransformListType::const_iterator initializeTransformsListIterator =
@@ -291,7 +294,7 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTra
                                                               ( ( *( initializeTransformsListIterator ) ).GetPointer() );
     const std::string FirstTransformFileType = FirstTransform->GetNameOfClass();
 
-    initializeTransformsListIterator++; // Increment to next iterator
+    initializeTransformsListIterator++; //Increment to next iterator
 
     const GenericTransformType::ConstPointer SecondTransform = dynamic_cast< GenericTransformType const *const >
                                                                ( ( *( initializeTransformsListIterator ) ).GetPointer() );
@@ -301,7 +304,7 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTra
       BSplineTransformType::New();
     outputBSplineTransform->SetIdentity();
 
-    // Now get the BSpline information
+    //Now get the BSpline information
     if ( FirstTransformFileType == "BSplineDeformableTransform" )
       {
       const BSplineTransformType::ConstPointer tempInitializerITKTransform =
@@ -351,8 +354,9 @@ GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTra
 void WriteTransformToDisk(GenericTransformType const *const MyTransform, const std::string TransformFilename)
 {
   /*
-     *  Convert the transform to the appropriate assumptions and write it out as requested.
-     */
+    *  Convert the transform to the appropriate assumptions and write it out as
+    *requested.
+    */
     {
     typedef itk::TransformFileWriter TransformWriterType;
     TransformWriterType::Pointer transformWriter =  TransformWriterType::New();
@@ -364,11 +368,11 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
       const BSplineTransformType::ConstPointer tempInitializerITKTransform =
         dynamic_cast< BSplineTransformType const *const >( MyTransform );
 
-      // NOTE: Order was reversed in order to get BSpline first, then Bulk
+      //NOTE: Order was reversed in order to get BSpline first, then Bulk
       // transform in order to
-      // try to appease Slicer3.
+      //try to appease Slicer3.
       transformWriter->AddTransform(tempInitializerITKTransform);
-      // Bulk transform is assumed to be second in Slicer3.
+      //Bulk transform is assumed to be second in Slicer3.
       transformWriter->AddTransform( tempInitializerITKTransform->GetBulkTransform() );
       }
     else
@@ -403,7 +407,7 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
     }
 }
 
-// Adding a single new transform require registering all the transform types.
+//Adding a single new transform require registering all the transform types.
 void AddExtraTransformRegister(void)
 {
   // This is needed in order to read and write ScaleVersor3D TransformTypes.
@@ -470,4 +474,4 @@ void AddExtraTransformRegister(void)
   itk::TransformFactory< itk::VersorRigid3DTransform< float > >::RegisterTransform ();
   itk::TransformFactory< itk::VersorTransform< float > >::RegisterTransform ();
 }
-} // end namespace itk
+} //end namespace itk

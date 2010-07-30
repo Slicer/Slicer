@@ -50,8 +50,8 @@ typedef ScaleSkewVersor3DTransformType::ParametersType
 ScaleSkewVersor3DParametersType;
 
 /**
- * AffineTransformPointer  :=  AffineTransformPointer
- */
+  * AffineTransformPointer  :=  AffineTransformPointer
+  */
 inline void
 AssignConvertedTransform(AffineTransformPointer & result,
                          const AffineTransformType::ConstPointer affine)
@@ -72,8 +72,8 @@ AssignConvertedTransform(AffineTransformPointer & result,
 }
 
 /**
- * AffineTransformPointer  :=  VnlTransformMatrixType44
- */
+  * AffineTransformPointer  :=  VnlTransformMatrixType44
+  */
 inline void
 AssignConvertedTransform(AffineTransformPointer & result,
                          const VnlTransformMatrixType44 & matrix)
@@ -107,8 +107,8 @@ AssignConvertedTransform(AffineTransformPointer & result,
 }
 
 /**
- * VnlTransformMatrixType44  :=  AffineTransformPointer
- */
+  * VnlTransformMatrixType44  :=  AffineTransformPointer
+  */
 inline void
 AssignConvertedTransform(VnlTransformMatrixType44 & result,
                          const AffineTransformType::ConstPointer affine)
@@ -139,8 +139,8 @@ AssignConvertedTransform(VnlTransformMatrixType44 & result,
 }
 
 /**
- * AffineTransformPointer  :=  ScaleSkewVersor3DTransformPointer
- */
+  * AffineTransformPointer  :=  ScaleSkewVersor3DTransformPointer
+  */
 inline void
 AssignConvertedTransform(AffineTransformPointer & result,
                          const ScaleSkewVersor3DTransformType::ConstPointer scale)
@@ -163,8 +163,8 @@ AssignConvertedTransform(AffineTransformPointer & result,
 }
 
 /**
- * ScaleSkewVersor3DTransformPointer  :=  ScaleSkewVersor3DTransformPointer
- */
+  * ScaleSkewVersor3DTransformPointer  :=  ScaleSkewVersor3DTransformPointer
+  */
 inline void
 AssignConvertedTransform(ScaleSkewVersor3DTransformPointer & result,
                          const ScaleSkewVersor3DTransformType::ConstPointer scale)
@@ -185,8 +185,8 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer & result,
 }
 
 /**
- * AffineTransformPointer  :=  ScaleVersor3DTransformPointer
- */
+  * AffineTransformPointer  :=  ScaleVersor3DTransformPointer
+  */
 
 inline void
 AssignConvertedTransform(AffineTransformPointer & result,
@@ -212,8 +212,8 @@ AssignConvertedTransform(AffineTransformPointer & result,
 }
 
 /**
- * ScaleVersor3DTransformPointer  :=  ScaleVersor3DTransformPointer
- */
+  * ScaleVersor3DTransformPointer  :=  ScaleVersor3DTransformPointer
+  */
 
 inline void
 AssignConvertedTransform(ScaleVersor3DTransformPointer & result,
@@ -235,8 +235,8 @@ AssignConvertedTransform(ScaleVersor3DTransformPointer & result,
 }
 
 /**
- * AffineTransformPointer  :=  VersorRigid3DTransformPointer
- */
+  * AffineTransformPointer  :=  VersorRigid3DTransformPointer
+  */
 inline void
 AssignConvertedTransform(AffineTransformPointer & result,
                          const VersorRigid3DTransformType::ConstPointer versorTransform)
@@ -263,8 +263,8 @@ AssignConvertedTransform(AffineTransformPointer & result,
 }
 
 /**
- *VersorRigid3DTransformPointer  :=  VersorRigid3DTransformPointer
- */
+  * *VersorRigid3DTransformPointer  :=  VersorRigid3DTransformPointer
+  */
 
 inline void AssignConvertedTransform(
   VersorRigid3DTransformPointer & result,
@@ -286,8 +286,8 @@ inline void AssignConvertedTransform(
 }
 
 /**
- * ScaleSkewVersor3DTransformPointer  :=  ScaleVersor3DTransformPointer
- */
+  * ScaleSkewVersor3DTransformPointer  :=  ScaleVersor3DTransformPointer
+  */
 inline void AssignConvertedTransform(
   ScaleSkewVersor3DTransformPointer & result,
   const ScaleVersor3DTransformType::ConstPointer scale)
@@ -311,8 +311,8 @@ inline void AssignConvertedTransform(
 }
 
 /**
- * ScaleSkewVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
- */
+  * ScaleSkewVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
+  */
 inline void AssignConvertedTransform(
   ScaleSkewVersor3DTransformPointer & result,
   const VersorRigid3DTransformType::ConstPointer versorRigid)
@@ -335,8 +335,8 @@ inline void AssignConvertedTransform(
 }
 
 /**
- * ScaleVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
- */
+  * ScaleVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
+  */
 inline void AssignConvertedTransform(
   ScaleVersor3DTransformPointer & result,
   const VersorRigid3DTransformType::ConstPointer versorRigid)
@@ -420,14 +420,14 @@ inline void ExtractVersorRigid3DTransform(
 }
 
 /**
- * VersorRigid3DTransformPointer  :=  AffineTransformPointer
- */
+  * VersorRigid3DTransformPointer  :=  AffineTransformPointer
+  */
 
 /**
- * Utility function in which we claim the singular-value decomposition (svd)
- * gives the orthogonalization of a matrix in its U component.  However we
- * must clip out the null subspace, if any.
- */
+  * Utility function in which we claim the singular-value decomposition (svd)
+  * gives the orthogonalization of a matrix in its U component.  However we
+  * must clip out the null subspace, if any.
+  */
 inline Matrix3D
 orthogonalize(const Matrix3D rotator)
 {

@@ -14,38 +14,38 @@
 namespace itk
 {
 /** \class VDemonsRegistrator
- *
- * This component computes the transform to register a
- * moving image onto a fixed image.
- *
- * In particular, it uses the deformable demons registration
- * algorithm.
- *
- * The registration is done using a multiresolution strategy.
- * At each resolution level, the downsampled images are obtained
- * using a RecursiveMultiResolutionPyramidImageFilter.
- *
- * \warning This class requires both images to be 3D.
- * It can write out the deformation field and the checker board image
- * of the fixed and output image.
- *
- * The registration process is activated by method Execute().
- *
- * Inputs:
- *   - pointer to fixed image
- *   - pointer to moving image
- *   - number of resolution levels
- *   - number of optimization iterations at each level
- *   - the initial rigid (quaternion) transform parameters
- *   - the coarest level shrink factors for the fixed image
- *   - the coarest level shrink factors for the moving image
- *
- * Outputs:
- *   - output deformation field
- *   - output image
- *   - Checkerboard image
- *   - x,y,z components of displacement fields.
- */
+  *
+  * This component computes the transform to register a
+  * moving image onto a fixed image.
+  *
+  * In particular, it uses the deformable demons registration
+  * algorithm.
+  *
+  * The registration is done using a multiresolution strategy.
+  * At each resolution level, the downsampled images are obtained
+  * using a RecursiveMultiResolutionPyramidImageFilter.
+  *
+  * \warning This class requires both images to be 3D.
+  * It can write out the deformation field and the checker board image
+  * of the fixed and output image.
+  *
+  * The registration process is activated by method Execute().
+  *
+  * Inputs:
+  *   - pointer to fixed image
+  *   - pointer to moving image
+  *   - number of resolution levels
+  *   - number of optimization iterations at each level
+  *   - the initial rigid (quaternion) transform parameters
+  *   - the coarest level shrink factors for the fixed image
+  *   - the coarest level shrink factors for the moving image
+  *
+  * Outputs:
+  *   - output deformation field
+  *   - output image
+  *   - Checkerboard image
+  *   - x,y,z components of displacement fields.
+  */
 template<
   class TRealImage,
   class TOutputImage,

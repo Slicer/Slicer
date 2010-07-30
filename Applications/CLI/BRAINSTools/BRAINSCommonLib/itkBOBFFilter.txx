@@ -11,8 +11,8 @@
 namespace itk
 {
 /*
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage >
 BOBFFilter< TInputImage, TOutputImage >
 ::BOBFFilter()
@@ -26,8 +26,8 @@ BOBFFilter< TInputImage, TOutputImage >
 }
 
 /*
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage >
 void
 BOBFFilter< TInputImage, TOutputImage >
@@ -40,8 +40,8 @@ BOBFFilter< TInputImage, TOutputImage >
 }
 
 /*
- *
- */
+  *
+  */
 template< class TInputImage, class TOutputImage >
 void
 BOBFFilter< TInputImage, TOutputImage >::SetInputMask(

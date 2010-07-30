@@ -202,8 +202,10 @@ void
 LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::InitializeIteration()
 {
-  //
-  // std::cout<<"LogDomainDeformableRegistrationFilter::InitializeIteration"<<std::endl;
+  /*
+    *
+    *std::cout<<"LogDomainDeformableRegistrationFilter::InitializeIteration"<<std::endl;
+    */
   MovingImageConstPointer movingPtr = this->GetMovingImage();
   FixedImageConstPointer  fixedPtr = this->GetFixedImage();
 
@@ -229,9 +231,9 @@ LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
 }
 
 /* Override the default implementation for the case when the
- * initial velocity is not set.
- * If the initial velocity is not set, the output is
- * fill with zero vectors.*/
+  * initial velocity is not set.
+  * If the initial velocity is not set, the output is
+  * fill with zero vectors.*/
 template< class TFixedImage, class TMovingImage, class TField >
 void
 LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
@@ -268,8 +270,10 @@ void
 LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GenerateOutputInformation()
 {
-  //
-  // std::cout<<"LogDomainDeformableRegistrationFilter::GenerateOutputInformation"<<std::endl;
+  /*
+    *
+    *std::cout<<"LogDomainDeformableRegistrationFilter::GenerateOutputInformation"<<std::endl;
+    */
   typename DataObject::Pointer output;
 
   if ( this->GetInput(0) )
@@ -299,9 +303,11 @@ void
 LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GenerateInputRequestedRegion()
 {
-  //
-  // std::cout<<"LogDomainDeformableRegistrationFilter::GenerateInputRequestedRegion"<<std::endl;
-  // call the superclass's implementation
+  /*
+    *
+    *std::cout<<"LogDomainDeformableRegistrationFilter::GenerateInputRequestedRegion"<<std::endl;
+    * call the superclass's implementation
+    */
   Superclass::GenerateInputRequestedRegion();
 
   // request the largest possible region for the moving image
@@ -450,8 +456,10 @@ typename LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TFiel
 LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GetDeformationField()
 {
-  //
-  // std::cout<<"LogDomainDeformableRegistration::GetDeformationField"<<std::endl;
+  /*
+    *
+    *std::cout<<"LogDomainDeformableRegistration::GetDeformationField"<<std::endl;
+    */
   m_Exponentiator->SetInput( this->GetVelocityField() );
   m_Exponentiator->GetOutput()->SetRequestedRegion( this->GetVelocityField()->GetRequestedRegion() );
   m_Exponentiator->Update();
@@ -464,13 +472,15 @@ typename LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TFiel
 LogDomainDeformableRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::GetInverseDeformationField()
 {
-  //
-  // std::cout<<"LogDomainDeformableRegistration::GetInverseDeformationField"<<std::endl;
+  /*
+    *
+    *std::cout<<"LogDomainDeformableRegistration::GetInverseDeformationField"<<std::endl;
+    */
   m_InverseExponentiator->SetInput( this->GetVelocityField() );
   m_InverseExponentiator->GetOutput()->SetRequestedRegion( this->GetVelocityField()->GetRequestedRegion() );
   m_InverseExponentiator->Update();
   return m_InverseExponentiator->GetOutput();
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

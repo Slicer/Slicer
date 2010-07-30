@@ -6,8 +6,8 @@
 #include <itkTransformToDeformationFieldSource.h>
 
 /**
- * Go from any subclass of Transform, to the corresponding deformation field
- */
+  * Go from any subclass of Transform, to the corresponding deformation field
+  */
 template< typename DeformationFieldPointerType, typename TransformPointerType >
 DeformationFieldPointerType
 TransformToDeformationField
@@ -27,14 +27,11 @@ TransformToDeformationField
     }
   catch ( itk::ExceptionObject & err )
     {
-    throw err;     // pass the buck up.
+    throw err; // pass the buck up.
     }
   // copy image
   // itk::ImageRegionIterator<OutputType>
-  //
-  //
-  //
-  // from(todef->GetOutput(),todef->GetOutput()->GetLargestPossibleRegion()),
+  //   from(todef->GetOutput(),todef->GetOutput()->GetLargestPossibleRegion()),
   //   to(deformation,deformation->GetLargestPossibleRegion());
   // for(from.GoToBegin(),to.GoToBegin();
   //     from != from.End() && to != to.End(); from++,to++)

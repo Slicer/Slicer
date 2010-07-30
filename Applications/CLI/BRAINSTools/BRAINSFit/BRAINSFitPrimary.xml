@@ -47,6 +47,7 @@
   <!-- -->
   <parameters>
     <label>Registration phases to use</label>
+    <description>Parameters that define which registration steps to use.</description>
 
     <transform fileExtensions=".mat">
       <name>initialTransform</name>

@@ -64,7 +64,7 @@ MultiModeHistogramThresholdBinaryImageFilter< TInputImage, TOutputImage >
   const unsigned int NumInputs = this->GetNumberOfInputs();
   for ( unsigned int j = 0; j < NumInputs; j++ )
     {
-    // Compute the quantile regions for linearizing the percentages.
+    //Compute the quantile regions for linearizing the percentages.
     typedef ComputeHistogramQuantileThresholds< TInputImage, TOutputImage > ImageCalcType;
     typename ImageCalcType::Pointer ImageCalc = ImageCalcType::New();
     ImageCalc->SetImage( this->GetInput(j) );

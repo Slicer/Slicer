@@ -12,8 +12,9 @@
 #include "itkBRAINSROIAutoImageFilter.h"
 
 /**
- * This file contains utility functions that are common to a few of the BRAINSFit Programs.
- */
+  * This file contains utility functions that are common to a few of the
+  *BRAINSFit Programs.
+  */
 
 static const unsigned int BFNSSpaceDimension = 3;
 static const unsigned int BFNSplineOrder = 3;
@@ -73,14 +74,13 @@ void DoCenteredTransformMaskClipping(
   typename MaskImageType::PointType fixedInferior  = fixedCenter;
   typename MaskImageType::PointType movingInferior = movingCenter;
 
-  fixedInferior[2] -= maskInferiorCutOffFromCenter;    // negative because
-                                                       // Superior is large in
-                                                       // magnitude.
-  movingInferior[2] -= maskInferiorCutOffFromCenter;   // ITK works in an LPS
-                                                       // system.
+  fixedInferior[2] -= maskInferiorCutOffFromCenter;   // negative because
+                                                      // Superior is large in
+                                                      // magnitude.
+  movingInferior[2] -= maskInferiorCutOffFromCenter;  // ITK works in an LPS
+                                                      // system.
 
-  //  Here we will set the appropriate parts of the f/m MaskImages to
-  // zeros....
+  //  Here we will set the appropriate parts of the f/m MaskImages to zeros....
   typename MaskImageType::PixelType zero = 0;
   typename MaskImageType::PointType location;
   typedef itk::ImageRegionIteratorWithIndex< MaskImageType > MaskIteratorType;

@@ -7,7 +7,7 @@
 namespace itk
 {
 /** \class BOBFilter
- */
+  */
 template< class TInputImage, class TOutputImage >
 class ITK_EXPORT BOBFFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
@@ -69,13 +69,13 @@ public:
   itkGetMacro(Lower, InputPixelType);
 
   /** Set/Get the upper threshold. The default is the largest possible
-   *  value for the InputPixelType. */
+    *  value for the InputPixelType. */
   itkSetMacro(Upper, InputPixelType);
   itkGetMacro(Upper, InputPixelType);
 
   /** Set/Get value to replace thresholded pixels. Pixels that lie *
-   *  within Lower and Upper (inclusive) will be replaced with this
-   *  value. The default is 1. */
+    *  within Lower and Upper (inclusive) will be replaced with this
+    *  value. The default is 1. */
   itkSetMacro(ReplaceValue, OutputPixelType);
   itkGetMacro(ReplaceValue, OutputPixelType);
 
@@ -98,8 +98,8 @@ protected:
   BOBFFilter();
   ~BOBFFilter() {}
 private:
-  BOBFFilter(const Self &);       // purposely not implemented
-  void operator=(const Self &);   // purposely not implemented
+  BOBFFilter(const Self &);      // purposely not implemented
+  void operator=(const Self &);  // purposely not implemented
 
   void PrintSelf(std::ostream & os, Indent indent) const;
 

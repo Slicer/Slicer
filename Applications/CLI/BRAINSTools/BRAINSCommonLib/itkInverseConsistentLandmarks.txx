@@ -1,17 +1,17 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile$
-Language:  C++
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile$
+ *  Language:  C++
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __itkInverseConsistentLandmarks_txx
 #define __itkInverseConsistentLandmarks_txx
 #include "itkInverseConsistentLandmarks.h"
@@ -51,7 +51,7 @@ InverseConsistentLandmarks< PointStorageType, PointSetType > &
 InverseConsistentLandmarks< PointStorageType, PointSetType >
 ::operator=(const InverseConsistentLandmarks & rhs)
 {
-  this->std::map< std::string, PointType >::operator= (rhs);
+  this->std::map< std::string, PointType >::operator=(rhs);
   ImageDims[0] = rhs.ImageDims[0];
   ImageDims[1] = rhs.ImageDims[1];
   ImageDims[2] = rhs.ImageDims[2];
@@ -238,57 +238,56 @@ typename InverseConsistentLandmarks< PointStorageType,
 InverseConsistentLandmarks< PointStorageType, PointSetType >
 ::QueryLandmarkFile(const std::string lmrkfilename)
 {
-  // These are the header formats for GEC, IntellX, and Analyze Landmark files
-  // respectively
-  // GEC Landmark File Format (typical extension .lmks)
-  //
-  // --------------------------------------------------------------------------------------
-  // #GECLANDMARKS-v1.0
-  // #IMAGEDIMS   XDIM   YDIM   ZDIM   TDIM
-  // #       Name            X            Y            Z            T
-  //    Weighting
-  // AC_Point 128 184 128 0 0
-  // PC_Point 100 160 130 0 0
-  // etc.
-  //
-  // --------------------------------------------------------------------------------------
-  // IntellX Landmark File Format (typical extension .lmk)
-  //
-  // --------------------------------------------------------------------------------------
-  // Landmarks-1.0
-  // Number of points
-  // "landmark identifier/description"
-  // XPOINT YPOINT ZPOINT 1 1
-  // "landmark identifier/description"
-  // XPOINT YPOINT ZPOINT 1 1
-  // etc.
-  //
-  // --------------------------------------------------------------------------------------
-  // Analyze Landmark File Format (typical extension .log)
-  //
-  // --------------------------------------------------------------------------------------
-  // # System Time
-  // # Volume=name of volume
-  // #
-  // #
+  /* These are the header formats for GEC, IntellX, and Analyze Landmark files
+    * respectively
+    * GEC Landmark File Format (typical extension .lmks)
+    *
+    *--------------------------------------------------------------------------------------
+    * #GECLANDMARKS-v1.0
+    * #IMAGEDIMS   XDIM   YDIM   ZDIM   TDIM
+    * #       Name            X            Y            Z            T
+    *    Weighting
+    * AC_Point 128 184 128 0 0
+    * PC_Point 100 160 130 0 0
+    * etc.
+    *
+    *--------------------------------------------------------------------------------------
+    * IntellX Landmark File Format (typical extension .lmk)
+    *
+    *--------------------------------------------------------------------------------------
+    * Landmarks-1.0
+    * Number of points
+    * "landmark identifier/description"
+    * XPOINT YPOINT ZPOINT 1 1
+    * "landmark identifier/description"
+    * XPOINT YPOINT ZPOINT 1 1
+    * etc.
+    *
+    *--------------------------------------------------------------------------------------
+    * Analyze Landmark File Format (typical extension .log)
+    *
+    *--------------------------------------------------------------------------------------
+    * # System Time
+    * # Volume=name of volume
+    * #
+    * #
+    * #     Point
+    * #   X    Y    Z     Value       Label
+    * # ==== ==== ====  ==========  ==========
+    *   129  277  128          14        Label
+    *   150  100  164          32        Label
+    * etc.
+    *
+    *--------------------------------------------------------------------------------------
+    * For specializing which file format it is, the firstline #GECLANDMARKS-v1.0
+    * will
+    * specify a type GEC_LANDMARKS.  The tag Landmarks-1.0 will specify a
+    * landmark
+    * file of the type INTELLX_LANDMARKS.  The lines
+    */
   // #     Point
   // #   X    Y    Z     Value       Label
-  // # ==== ==== ====  ==========  ==========
-  //   129  277  128          14        Label
-  //   150  100  164          32        Label
-  // etc.
-  //
-  // --------------------------------------------------------------------------------------
-  // For specializing which file format it is, the firstline
-  // #GECLANDMARKS-v1.0
-  // will
-  // specify a type GEC_LANDMARKS.  The tag Landmarks-1.0 will specify a
-  // landmark
-  // file of the type INTELLX_LANDMARKS.  The lines
-  // #     Point
-  // #   X    Y    Z     Value       Label
-  // will be used to specify a landmark file generated from an Analyze point
-  // log
+  // will be used to specify a landmark file generated from an Analyze point log
   // session as the type ANALYZE_LANDMARKS.  Any other format which doesn't
   // match
   // will return UNKNOWN_LANDMARKS.
@@ -303,7 +302,7 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >
     }
 
   const unsigned short int FILE_BUFFER_SIZE = 256;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                   status = 0;
   // Read Header Information
   status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
@@ -381,7 +380,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
     }
   const unsigned short int FILE_BUFFER_SIZE = 256;
   const unsigned short int LANDMARK_NAME_SIZE = 40;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char                     CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                   status = 0;
   // Read Header Information
@@ -507,7 +506,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
     return false;
     }
   const unsigned short int FILE_BUFFER_SIZE = 128;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   std::string              CurrentLandmarkName;
   char *                   status = 0;
   // Read Header Information
@@ -576,8 +575,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
         return false;
         }
       }
-    // Convert to Analyze coordinate system...Note the -1 is needed for
-    // correct
+    // Convert to Analyze coordinate system...Note the -1 is needed for correct
     // coord
     // Ex. 0,0,0 in Warp = 127,127,127 in a 128x128x128 analyze image.
     // Assumes the landmark dimensions have been set before used in this
@@ -615,8 +613,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
                         const int XDim, const int YDim,
                         const int ZDim, const int TDim)
 {
-  // std::cout << "Reading IntellX Landmark File " << lmrkfilename <<
-  // std::endl;
+  // std::cout << "Reading IntellX Landmark File " << lmrkfilename << std::endl;
   // std::cout << "Specifying dimensions " << XDim << ", " << YDim << ", " <<
   // ZDim << ", " << TDim << "." << std::endl;
 
@@ -656,7 +653,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
     return false;
     }
   const unsigned short int FILE_BUFFER_SIZE = 128;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   std::string              CurrentLandmarkName;
   char *                   status = 0;
   // Read Header Information
@@ -737,8 +734,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
       TempPnt[1] = static_cast< double >( val1 );
       TempPnt[2] = static_cast< double >( val2 );
       }
-    // Convert to Analyze coordinate system...Note the -1 is needed for
-    // correct
+    // Convert to Analyze coordinate system...Note the -1 is needed for correct
     // coord
     // Ex. 0,0,0 in Warp = 127,127,127 in a 128x128x128 analyze image.
     TempPnt[0] = static_cast< PointStorageType >( ImageDims[0] ) - TempPnt[0];
@@ -779,7 +775,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
     }
   const unsigned short int FILE_BUFFER_SIZE = 256;
   const unsigned short int LANDMARK_NAME_SIZE = 40;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char                     CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                   status = 0;
 
@@ -860,8 +856,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
       return false;
       }
 
-    // Here is how the naming definition is defined, if the label is not
-    // found,
+    // Here is how the naming definition is defined, if the label is not found,
     // the
     // landmark identifier is Landmark_N where N is the current number of
     // landmarks
@@ -955,7 +950,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
     }
   const unsigned short int FILE_BUFFER_SIZE = 256;
   const unsigned short int LANDMARK_NAME_SIZE = 40;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char                     CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                   status = 0;
 
@@ -1058,8 +1053,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
       return false;
       }
 
-    // Here is how the naming definition is defined, if the label is not
-    // found,
+    // Here is how the naming definition is defined, if the label is not found,
     // the
     // landmark identifier is Landmark_N where N is the current number of
     // landmarks
@@ -1418,8 +1412,7 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >
         removedpoint = true;
         this->erase(dter->first);
 
-        // The iterator has stayed the same, but the list has moved back one,
-        // so
+        // The iterator has stayed the same, but the list has moved back one, so
         // an
         // extra increment is needed.
         jter++;
@@ -1516,7 +1509,7 @@ bool InverseConsistentLandmarks< PointStorageType, PointSetType >
     }
   const unsigned short int FILE_BUFFER_SIZE = 256;
   const unsigned short int LANDMARK_NAME_SIZE = 40;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char                     CurrentLandmarkName[LANDMARK_NAME_SIZE];
   char *                   status = 0;
   // Read Header Information
@@ -1765,7 +1758,7 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >
     return false;
     }
   const unsigned short int FILE_BUFFER_SIZE = 256;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                   status = 0;
   // Read Header Information
   status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
@@ -1973,93 +1966,120 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >
       ( *this )[CurrentLandmarkName] = TempPnt;
 
       /*
-          CurrentLandmarkName="Tal_SLAPoint";    TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_SLPPoint";    TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_SRAPoint";    TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_SRPPoint";    TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_S_PC_APoint"; TempPnt[0]=PC_Point[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_S_PC_PPoint"; TempPnt[0]=PC_Point[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_SL_AC_Point"; TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_SR_AC_Point"; TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_SL_PC_Point"; TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_SR_PC_Point"; TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_S_AC_Point";  TempPnt[0]=PC_Point[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_S_PC_Point";  TempPnt[0]=PC_Point[0];
-          TempPnt[1]=SLAPoint[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-
-          CurrentLandmarkName="Tal_PC_LAPoint";    TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_LPPoint";    TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_RAPoint";    TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_RPPoint";    TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_PC_APoint"; TempPnt[0]=PC_Point[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_PC_PPoint"; TempPnt[0]=PC_Point[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_L_AC_Point"; TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_R_AC_Point"; TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_L_PC_Point"; TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_R_PC_Point"; TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_AC_Point";      TempPnt[0]=PC_Point[0];
-          TempPnt[1]=AC_Point[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_PC_Point";      TempPnt[0]=PC_Point[0];
-          TempPnt[1]=PC_Point[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-
-          CurrentLandmarkName="Tal_ILAPoint";    TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_ILPPoint";    TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_IRAPoint";    TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_IRPPoint";    TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_I_PC_APoint"; TempPnt[0]=PC_Point[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=SLAPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_I_PC_PPoint"; TempPnt[0]=PC_Point[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=IRPPoint[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_IL_AC_Point"; TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_IR_AC_Point"; TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_IL_PC_Point"; TempPnt[0]=SLAPoint[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_IR_PC_Point"; TempPnt[0]=IRPPoint[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_I_AC_Point";  TempPnt[0]=PC_Point[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=AC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          CurrentLandmarkName="Tal_I_PC_Point";  TempPnt[0]=PC_Point[0];
-          TempPnt[1]=IRPPoint[1]; TempPnt[2]=PC_Point[2]; (*this)[CurrentLandmarkName]=TempPnt;
-          */
+        *  CurrentLandmarkName="Tal_SLAPoint";    TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_SLPPoint";    TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_SRAPoint";    TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_SRPPoint";    TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_S_PC_APoint"; TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_S_PC_PPoint"; TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_SL_AC_Point"; TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_SR_AC_Point"; TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_SL_PC_Point"; TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_SR_PC_Point"; TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_S_AC_Point";  TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_S_PC_Point";  TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=SLAPoint[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *
+        *  CurrentLandmarkName="Tal_PC_LAPoint";    TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_LPPoint";    TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_RAPoint";    TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_RPPoint";    TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_PC_APoint"; TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_PC_PPoint"; TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_L_AC_Point"; TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_R_AC_Point"; TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_L_PC_Point"; TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_R_PC_Point"; TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_AC_Point";      TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=AC_Point[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_PC_Point";      TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=PC_Point[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *
+        *  CurrentLandmarkName="Tal_ILAPoint";    TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_ILPPoint";    TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_IRAPoint";    TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_IRPPoint";    TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_I_PC_APoint"; TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=SLAPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_I_PC_PPoint"; TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=IRPPoint[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_IL_AC_Point"; TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_IR_AC_Point"; TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_IL_PC_Point"; TempPnt[0]=SLAPoint[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_IR_PC_Point"; TempPnt[0]=IRPPoint[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_I_AC_Point";  TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=AC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        *  CurrentLandmarkName="Tal_I_PC_Point";  TempPnt[0]=PC_Point[0];
+        *  TempPnt[1]=IRPPoint[1]; TempPnt[2]=PC_Point[2];
+        *     (*this)[CurrentLandmarkName]=TempPnt;
+        */
       }
     }
   fclose(tempfile);
-  //    {//DEBUG // A Hack to get it to read Cerebellum bounds right away
-  // without any extra effort!!!
-  //    std::string cerfilename(lmrkfilename);
-  //    const std::string TalairachFilename("Talairach.bnd");
-  //
-  // cerfilename.replace(cerfilename.find(TalairachFilename),TalairachFilename.length(),"Cerebellum.bnd");
-  //    std::cout << "Now attempting to read: " << cerfilename << std::endl;
-  //    InverseConsistentLandmarks::ReadIPLCerebellarPointTypes(cerfilename);
-  //    }
   if ( this->size() > 0 )
     {
     return true;
@@ -2107,7 +2127,7 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >
     return false;
     }
   const unsigned short int FILE_BUFFER_SIZE = 256;
-  char                     buffer[FILE_BUFFER_SIZE];   // Dummy Varible
+  char                     buffer[FILE_BUFFER_SIZE]; // Dummy Varible
   char *                   status = 0;
   // Read Header Information
   status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
@@ -2211,8 +2231,8 @@ InverseConsistentLandmarks< PointStorageType, PointSetType >
       {
       return false;
       }
-      {                     // NOTE: for Cerebellum AC_Point is meaningless
-      PointType AC_Point;   // Antieror Commisure
+      {                    // NOTE: for Cerebellum AC_Point is meaningless
+      PointType AC_Point;  // Antieror Commisure
       status = fgets(buffer, FILE_BUFFER_SIZE, tempfile);
       if ( status == NULL )
         {

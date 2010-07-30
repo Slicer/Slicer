@@ -9,11 +9,11 @@
 namespace itk
 {
 /**
- * \author Hans J. Johnson
- *
- * This filter
- *
- */
+  * \author Hans J. Johnson
+  *
+  * This filter
+  *
+  */
 template< class TInputImage, class TOutputImage = Image< unsigned short, TInputImage::ImageDimension > >
 class ITK_EXPORT MultiModeHistogramThresholdBinaryImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
@@ -83,7 +83,7 @@ private:
   IntegerPixelType m_InsideValue;
   IntegerPixelType m_OutsideValue;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #if ITK_TEMPLATE_TXX
 #  include "itkMultiModeHistogramThresholdBinaryImageFilter.txx"

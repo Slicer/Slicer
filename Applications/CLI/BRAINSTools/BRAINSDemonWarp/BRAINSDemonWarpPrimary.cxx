@@ -7,9 +7,9 @@
 
 #ifdef USE_DEBUG_IMAGE_VIEWER
 /*************************
- * Have a global variable to
- * add debugging information.
- */
+  * Have a global variable to
+  * add debugging information.
+  */
 DebugImageViewerClient DebugImageDisplaySender;
 #endif
 
@@ -133,11 +133,11 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     << "               medianFilterSize: " << command.medianFilterSize
     << std::endl
     /** NOT YET IMPLEMENTED
-        << "        movingLandmarks: " << command.movingLandmarks << std::endl
-        << "         fixedLandmarks: " << command.fixedLandmarks << std::endl
-        << "     initializeWithFourier: " << command.initializeWithFourier
-        << std::endl
-  */
+      *  << "        movingLandmarks: " << command.movingLandmarks << std::endl
+      *  << "         fixedLandmarks: " << command.fixedLandmarks << std::endl
+      *  << "     initializeWithFourier: " << command.initializeWithFourier
+      *  << std::endl
+      */
     << "  initializeWithDeformationField: "
     << command.initializeWithDeformationField  << std::endl
     << "       initializeWithTransform: "
@@ -208,8 +208,9 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
                              std::string("ushort") ) )
          && ( CompareNoCase( command.inputPixelType.c_str(), std::string("int") ) )
          && ( CompareNoCase( command.inputPixelType.c_str(), std::string("float") ) )
-#ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-                           // segments in one object file for the intel compiler
+#ifdef _USE_UNCOMMON_TYPES  // This is commented out because it causes too many
+                            // segments in one object file for the intel
+                            // compiler
          &&
          ( CompareNoCase( command.inputPixelType.c_str(), std::string("uint") ) )
          && ( CompareNoCase( command.inputPixelType.c_str(),
@@ -238,8 +239,9 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
          && ( CompareNoCase( command.outputPixelType.c_str(), std::string("int") ) )
          && ( CompareNoCase( command.outputPixelType.c_str(),
                              std::string("float") ) )
-#ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-                           // segments in one object file for the intel compiler
+#ifdef _USE_UNCOMMON_TYPES  // This is commented out because it causes too many
+                            // segments in one object file for the intel
+                            // compiler
          &&
          ( CompareNoCase( command.outputPixelType.c_str(), std::string("uint") ) )
          && ( CompareNoCase( command.outputPixelType.c_str(),
@@ -277,8 +279,9 @@ int BRAINSDemonWarpPrimary(int argc, char *argv[])
     {
     ProcessOutputType_float(command);
     }
-#ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
-  // segments in one object file for the intel compiler
+#ifdef _USE_UNCOMMON_TYPES  // This is commented out because it causes too many
+                            // segments in one object file for the intel
+                            // compiler
   else if ( CompareNoCase ( command.inputPixelType, std::string ("uint") ) == 0 )
     {
     ProcessOutputType_uint(command);

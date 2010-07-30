@@ -1,19 +1,19 @@
 /*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkESMDemonsRegistrationWithMaskFunction.txx,v $
-  Language:  C++
-  Date:      $Date: 2008-11-10 12:44:44 $
-  Version:   $Revision: 1.10 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkESMDemonsRegistrationWithMaskFunction.txx,v $
+ *  Language:  C++
+ *  Date:      $Date: 2008-11-10 12:44:44 $
+ *  Version:   $Revision: 1.10 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *    This software is distributed WITHOUT ANY WARRANTY; without even
+ *    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *    PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #ifndef __itkESMDemonsRegistrationWithMaskFunction_txx
 #define __itkESMDemonsRegistrationWithMaskFunction_txx
@@ -26,8 +26,8 @@
 namespace itk
 {
 /**
- * Default constructor
- */
+  * Default constructor
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
                                        TDeformationField >
@@ -83,8 +83,8 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 }
 
 /*
- * Standard "PrintSelf" method.
- */
+  * Standard "PrintSelf" method.
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
@@ -122,8 +122,8 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 }
 
 /**
- *
- */
+  *
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
@@ -134,8 +134,8 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 }
 
 /**
- *
- */
+  *
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 double
 ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
@@ -146,8 +146,8 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 }
 
 /**
- * Set the function state values before each iteration
- */
+  * Set the function state values before each iteration
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
@@ -208,8 +208,8 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 }
 
 /**
- * Compute update at a non boundary neighbourhood
- */
+  * Compute update at a non boundary neighbourhood
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 typename ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
                                                 TDeformationField >
@@ -448,10 +448,10 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 #endif
 
   /**
-   * Compute Update.
-   * We avoid the mismatch in units between the two terms.
-   * and avoid large step using a normalization term.
-   */
+    * Compute Update.
+    * We avoid the mismatch in units between the two terms.
+    * and avoid large step using a normalization term.
+    */
 
   const double usedGradientTimes2SquaredMagnitude =
     usedGradientTimes2.GetSquaredNorm();
@@ -509,8 +509,8 @@ ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,
 }
 
 /**
- * Update the metric and release the per-thread-global data.
- */
+  * Update the metric and release the per-thread-global data.
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 ESMDemonsRegistrationWithMaskFunction< TFixedImage, TMovingImage,

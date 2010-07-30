@@ -1,19 +1,19 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile: itkScalarImagePortionToHistogramGenerator.h,v $
-Language:  C++
-Date:      $Date: 2009-08-08 14:18:12 $
-Version:   $Revision: 1.2 $
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkScalarImagePortionToHistogramGenerator.h,v $
+ *  Language:  C++
+ *  Date:      $Date: 2009-08-08 14:18:12 $
+ *  Version:   $Revision: 1.2 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __itkScalarImagePortionToHistogramGenerator_h
 #define __itkScalarImagePortionToHistogramGenerator_h
 
@@ -37,9 +37,9 @@ namespace itk
 namespace Statistics
 {
 /** \class ScalarImagePortionToHistogramGenerator
- *
- * \brief TODO
- */
+  *
+  * \brief TODO
+  */
 template< class TImageType, class TMaskType >
 class ScalarImagePortionToHistogramGenerator:public Object
 {
@@ -93,8 +93,9 @@ public:
   void SetBinaryPortionImage(const TMaskType *);
 
   /** Return the histogram.
-    \warning This output is only valid after the Compute() method has been invoked
-    \sa Compute */
+    * \warning This output is only valid after the Compute() method has been
+    *    invoked
+    * \sa Compute */
   const HistogramType * GetOutput() const;
 
 #ifdef ITK_USE_REVIEW_STATISTICS
@@ -128,14 +129,14 @@ private:
   HistogramPointer m_Histogram;
   GeneratorPointer m_HistogramGenerator;
 
-  ScalarImagePortionToHistogramGenerator(const Self &);   // purposely not
-                                                          // implemented
-  void operator=(const Self &);                           // purposely not
+  ScalarImagePortionToHistogramGenerator(const Self &); // purposely not
+                                                        // implemented
+  void operator=(const Self &);                         // purposely not
 
   // implemented
 };
 }   // end of namespace Statistics
-}   // end of namespace itk
+} // end of namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "itkScalarImagePortionToHistogramGenerator.txx"

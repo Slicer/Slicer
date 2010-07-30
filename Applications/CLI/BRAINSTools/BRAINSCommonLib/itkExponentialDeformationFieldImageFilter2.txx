@@ -8,8 +8,8 @@
 namespace itk
 {
 /**
- * Initialize new instance
- */
+  * Initialize new instance
+  */
 template< class TInputImage, class TOutputImage >
 ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
 ::ExponentialDeformationFieldImageFilter2()
@@ -31,10 +31,10 @@ ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
 }
 
 /**
- * Print out a description of self
- *
- * \todo Add details about this class
- */
+  * Print out a description of self
+  *
+  * \todo Add details about this class
+  */
 template< class TInputImage, class TOutputImage >
 void
 ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
@@ -53,8 +53,8 @@ ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
 }
 
 /**
- * GenerateData
- */
+  * GenerateData
+  */
 template< class TInputImage, class TOutputImage >
 void
 ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
@@ -92,7 +92,7 @@ ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
     for ( InputIt.GoToBegin(); !InputIt.IsAtEnd(); ++InputIt )
       {
       InputPixelRealValueType norm2 = InputIt.Get().GetSquaredNorm();
-      if ( norm2 > maxnorm2 ) {maxnorm2 = norm2; }
+      if ( norm2 > maxnorm2 ) { maxnorm2 = norm2; }
       }
 
     // Divide the norm by the minimum pixel spacing
@@ -202,6 +202,6 @@ ExponentialDeformationFieldImageFilter2< TInputImage, TOutputImage >
     progress.CompletedPixel();
     }
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

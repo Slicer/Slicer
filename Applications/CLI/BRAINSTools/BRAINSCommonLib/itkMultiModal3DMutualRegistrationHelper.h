@@ -1,17 +1,17 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile$
-Language:  C++
-
-Copyright (c) Insight Software Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile$
+ *  Language:  C++
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *  This software is distributed WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 #ifndef __itkMultiModal3DMutualRegistrationHelper_h
 #define __itkMultiModal3DMutualRegistrationHelper_h
 #if defined( _MSC_VER )
@@ -121,8 +121,7 @@ public:
 
   typename TImage::Pointer Transform(typename TTransform::Pointer & xfrm)
   {
-    //      std::cerr << "Moving Volume (in observer): " <<
-    // this->m_MovingImage
+    //      std::cerr << "Moving Volume (in observer): " << this->m_MovingImage
     // << std::endl;
     typedef typename itk::LinearInterpolateImageFunction< TImage, double > InterpolatorType;
     typename InterpolatorType::Pointer interp = InterpolatorType::New();
@@ -185,11 +184,9 @@ public:
         {
         m_Transform->SetParametersByValue(parms);
         }
-      // else, if it is a vnl optimizer wrapper, i.e., the BSpline
-      // optimizer,
+      // else, if it is a vnl optimizer wrapper, i.e., the BSpline optimizer,
       // the only hint you get
-      // is in the transform object used by the optimizer, so don't erase
-      // it,
+      // is in the transform object used by the optimizer, so don't erase it,
       // use it.
       typename TImage::Pointer transformResult =
         this->Transform(m_Transform);
@@ -203,7 +200,7 @@ public:
 #endif
   }
 };
-}   // end namespace BRAINSFit
+} // end namespace BRAINSFit
 
 namespace itk
 {
@@ -236,7 +233,7 @@ public:
   typedef typename TransformType::Pointer TransformPointer;
 
   /** Type for the output: Using Decorator pattern for enabling
-   *  the Transform to be passed in the data pipeline */
+    *  the Transform to be passed in the data pipeline */
   typedef DataObjectDecorator< TransformType >  TransformOutputType;
   typedef typename TransformOutputType::Pointer TransformOutputPointer;
   typedef typename TransformOutputType::ConstPointer
@@ -290,19 +287,19 @@ public:
   itkGetConstObjectMacro(MovingImage, MovingImageType);
 
   /*  void SetFixedBinaryVolume( FixedBinaryVolumePointer fixedImageMask )
-      {
-      m_FixedBinaryVolume = fixedImageMask;
-      }
-      */
+    *  {
+    *  m_FixedBinaryVolume = fixedImageMask;
+    *  }
+    */
 
   itkSetObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
   itkGetConstObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
 
   /*  void SetMovingBinaryVolume( MovingBinaryVolumePointer movingImageMask )
-      {
-      m_MovingBinaryVolume = movingImageMask;
-      }
-      */
+    *  {
+    *  m_MovingBinaryVolume = movingImageMask;
+    *  }
+    */
 
   itkSetObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
   itkGetConstObjectMacro(MovingBinaryVolume, MovingBinaryVolumeType);
@@ -339,11 +336,11 @@ public:
   const TransformOutputType * GetOutput() const;
 
   /** Make a DataObject of the correct type to be used as the specified
-   * output. */
+    * output. */
   virtual DataObjectPointer MakeOutput(unsigned int idx);
 
   /** Method to return the latest modified time of this object or
-   * any of its cached ivars */
+    * any of its cached ivars */
   unsigned long GetMTime() const;
 
   /** Method to set the Permission to vary by level  */
@@ -364,7 +361,7 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** Method invoked by the pipeline in order to trigger the computation of
-   * the registration. */
+    * the registration. */
   void  GenerateData();
 
 private:
@@ -412,7 +409,7 @@ private:
   double       m_FinalMetricValue;
   bool         m_ObserveIterations;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "itkMultiModal3DMutualRegistrationHelper.txx"

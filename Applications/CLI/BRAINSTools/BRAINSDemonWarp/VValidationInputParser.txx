@@ -74,7 +74,7 @@ VValidationInputParser< TImage >
 {
   /*************************
    * Read in the images
-   *************************/
+   */
   if ( this->m_ForceCoronalZeroOrigin == true )
     {
     std::cout << "---Forcing Brains2 Orientation not yet implemented"

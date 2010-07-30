@@ -285,14 +285,18 @@ VectorMultiResolutionPDEDeformableRegistration< TFixedImage, TMovingImage,
     m_MovingImagePyramid->SetInput( vectorMovingImageIndex->GetOutput() );
     m_MovingImagePyramid->UpdateLargestPossibleRegion();
 
-    // m_MovingVectorImagePyramid[i]->SetSchedule(this->GetMovingImagePyramid()->GetSchedule());
+    /*
+      m_MovingVectorImagePyramid[i]->SetSchedule(this->GetMovingImagePyramid()->GetSchedule());
+      */
     m_MovingVectorImagePyramid[i]->SetInput( vectorMovingImageIndex->GetOutput() );
     m_MovingVectorImagePyramid[i]->UpdateLargestPossibleRegion();
 
     m_FixedImagePyramid->SetInput( vectorFixedImageIndex->GetOutput() );
     m_FixedImagePyramid->UpdateLargestPossibleRegion();
 
-    // m_FixedVectorImagePyramid[i]->SetSchedule(this->GetFixedImagePyramid()->GetSchedule());
+    /*
+      m_FixedVectorImagePyramid[i]->SetSchedule(this->GetFixedImagePyramid()->GetSchedule());
+      */
     m_FixedVectorImagePyramid[i]->SetInput( vectorFixedImageIndex->GetOutput() );
     m_FixedVectorImagePyramid[i]->UpdateLargestPossibleRegion();
     }

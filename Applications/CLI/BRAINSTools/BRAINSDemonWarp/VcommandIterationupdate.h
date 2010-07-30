@@ -1,11 +1,11 @@
 /*
- *  VcommandIterationupdate.h
- *  ThirionCLP
- *
- *  Created by Yong Qiang Zhao on 8/21/08.
- *  Copyright 2008 __MyCompanyName__. All rights reserved.
- *
- */
+  *  VcommandIterationupdate.h
+  *  ThirionCLP
+  *
+  *  Created by Yong Qiang Zhao on 8/21/08.
+  *  Copyright 2008 __MyCompanyName__. All rights reserved.
+  *
+  */
 #include "itkCommand.h"
 #include "itkPDEDeformableRegistrationFilter.h"
 
@@ -26,45 +26,45 @@
 #include "BRAINSDemonWarpTemplates.h"
 
 /*
-class VCommandIterationUpdate : public itk::Command
-{
-public:
-typedef  VCommandIterationUpdate   Self;
-typedef  itk::Command             Superclass;
-typedef  itk::SmartPointer<VCommandIterationUpdate>  Pointer;
-itkNewMacro( VCommandIterationUpdate );
-protected:
-VCommandIterationUpdate() {};
-
-typedef itk::Image< float, 3 > InternalImageType;
-typedef itk::Vector< float, 3 >    VectorPixelType;
-typedef itk::Image<  VectorPixelType, 3 > DeformationFieldType;
-
-typedef itk::PDEDeformableRegistrationFilter<
-InternalImageType,
-InternalImageType,
-DeformationFieldType>   RegistrationFilterType;
-
-public:
-
-void Execute(itk::Object *caller, const itk::EventObject & event)
-{
-  Execute( (const itk::Object *)caller, event);
-}
-
-  void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
-    const RegistrationFilterType * filter =
-      dynamic_cast< const RegistrationFilterType * >( object );
-
-    if( !(itk::IterationEvent().CheckEvent( &event )) )
-      {
-      return;
-      }
-    std::cout <<   filter->GetMetric() << std::endl;
-  }
-};
-*/
+  * class VCommandIterationUpdate : public itk::Command
+  * {
+  * public:
+  * typedef  VCommandIterationUpdate   Self;
+  * typedef  itk::Command             Superclass;
+  * typedef  itk::SmartPointer<VCommandIterationUpdate>  Pointer;
+  * itkNewMacro( VCommandIterationUpdate );
+  * protected:
+  * VCommandIterationUpdate() {};
+  *
+  * typedef itk::Image< float, 3 > InternalImageType;
+  * typedef itk::Vector< float, 3 >    VectorPixelType;
+  * typedef itk::Image<  VectorPixelType, 3 > DeformationFieldType;
+  *
+  * typedef itk::PDEDeformableRegistrationFilter<
+  * InternalImageType,
+  * InternalImageType,
+  * DeformationFieldType>   RegistrationFilterType;
+  *
+  * public:
+  *
+  * void Execute(itk::Object *caller, const itk::EventObject & event)
+  * {
+  * Execute( (const itk::Object *)caller, event);
+  * }
+  *
+  * void Execute(const itk::Object * object, const itk::EventObject & event)
+  * {
+  *  const RegistrationFilterType * filter =
+  *    dynamic_cast< const RegistrationFilterType * >( object );
+  *
+  *  if( !(itk::IterationEvent().CheckEvent( &event )) )
+  *    {
+  *    return;
+  *    }
+  *  std::cout <<   filter->GetMetric() << std::endl;
+  * }
+  * };
+  */
 
 template< class TPixel = float, unsigned int VImageDimension = 3 >
 class VCommandIterationUpdate:public itk::Command

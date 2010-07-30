@@ -29,12 +29,12 @@
 #include "itkTransformFileReader.h"
 #include "itkTransformFileWriter.h"
 //
-// TODO:  The next two should be hidden in the cxx files again.
+//TODO:  The next two should be hidden in the cxx files again.
 typedef itk::TransformFileReader                    TransformReaderType;
 typedef itk::TransformFileReader::TransformListType TransformListType;
 
-// TODO:  This should really be taken as a typedef from the BSpline class.
-// TODO:  These should be hidden in the BRAINSFit namespace.
+//TODO:  This should really be taken as a typedef from the BSpline class.
+//TODO:  These should be hidden in the BRAINSFit namespace.
 typedef itk::Transform< double, 3, 3 > GenericTransformType;
 
 namespace GenericTransformImageNS
@@ -57,75 +57,95 @@ typedef itk::ScaleSkewVersor3DTransform< double > ScaleSkewVersor3DTransformType
 namespace itk
 {
 /**
-   * \author Hans J. Johnson
-   * \brief A utility function to write ITK compliant transforms to disk in a way that is compliant with the ReadTransformFromDisk
-   * \param genericTransformToWrite A pointer to baseclass itk::Transform<double,3,3> that is
-   * polymorphically cast to a real class like (i.e. itk::VersorRigid, itk::Affine, itk::BSpline, or similar)
-   * \param outputTransform the filename of the output transform.
-   * \code
-   * //To convert from non-const smart pointers ploymorphically to the smart ConstPointer up the class tree, use the GetPointer
-   * AffineTransformType::Pointer myAffine=AffineTransformType::New(); //NOTE:  This is not a const smart pointer
-   * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
-   * \endcode
-   */
+  * \author Hans J. Johnson
+  * \brief A utility function to write ITK compliant transforms to disk in a way
+  *that is compliant with the ReadTransformFromDisk
+  * \param genericTransformToWrite A pointer to baseclass
+  *itk::Transform<double,3,3> that is
+  * polymorphically cast to a real class like (i.e. itk::VersorRigid,
+  *itk::Affine, itk::BSpline, or similar)
+  * \param outputTransform the filename of the output transform.
+  * \code
+  * //To convert from non-const smart pointers ploymorphically to the smart
+  *ConstPointer up the class tree, use the GetPointer
+  * AffineTransformType::Pointer myAffine=AffineTransformType::New(); //NOTE:
+  * This is not a const smart pointer
+  * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
+  * \endcode
+  */
 BRAINSCommonLib_EXPORT extern void WriteTransformToDisk(GenericTransformType const *const genericTransformToWrite,
                                                         const std::string outputTransform);
 
 /**
-   * \author Hans J. Johnson
-   * \brief A utility function to read ITK compliant transforms to disk in a way that is compliant with the WriteTransformFromDisk
-   * \param outputTransform the filename of the output transform.
-   * \return A pointer to baseclass itk::Transform<double,3,3> that is
-   * polymorphically convertable to a real class like (i.e. itk::VersorRigid, itk::Affine, itk::BSpline, or similar)
-   * \code
-   * //To convert from non-const smart pointers ploymorphically to the smart ConstPointer up the class tree, use the GetPointer
-   * GenericTransformType::Pointer myGenericTransform=ReadTransformFromDisk(myAffine.GetPointer(), "myAffineFile.mat");
-   *
-   * VersorRigid3DTransformType::Pointer myVersorRigid3D=NULL;
-   * {
-   * const std::string transformFileType = myGenericTransform->GetNameOfClass();
-   * if ( transformFileType == "VersorRigid3DTransform" )
-   *   {
-   *   myVersorRigid3D->SetParameters( versorRigid->GetParameters() );
-   *   myVersorRigid3D->SetFixedParameters( versorRigid->GetFixedParameters() );
-   *   }
-   *   NOTE: It is more safe to copy parameters into the concrete class rather than attempting to dynamically
-   *   cast the base classes.  The reason is that the smart pointer management becomes very unweildy and
-   *   is hard to keep straight between the pointer that may delete the base class, and the pointer that
-   *   is the derived class.
-   * }
-   * \endcode
-   */
+  * \author Hans J. Johnson
+  * \brief A utility function to read ITK compliant transforms to disk in a way
+  *that is compliant with the WriteTransformFromDisk
+  * \param outputTransform the filename of the output transform.
+  * \return A pointer to baseclass itk::Transform<double,3,3> that is
+  * polymorphically convertable to a real class like (i.e. itk::VersorRigid,
+  *itk::Affine, itk::BSpline, or similar)
+  * \code
+  * //To convert from non-const smart pointers ploymorphically to the smart
+  *ConstPointer up the class tree, use the GetPointer
+  * GenericTransformType::Pointer
+  *myGenericTransform=ReadTransformFromDisk(myAffine.GetPointer(),
+  *"myAffineFile.mat");
+  *
+  * VersorRigid3DTransformType::Pointer myVersorRigid3D=NULL;
+  * {
+  * const std::string transformFileType = myGenericTransform->GetNameOfClass();
+  * if ( transformFileType == "VersorRigid3DTransform" )
+  *   {
+  *   myVersorRigid3D->SetParameters( versorRigid->GetParameters() );
+  *   myVersorRigid3D->SetFixedParameters( versorRigid->GetFixedParameters() );
+  *   }
+  *   NOTE: It is more safe to copy parameters into the concrete class rather
+  *than attempting to dynamically
+  *   cast the base classes.  The reason is that the smart pointer management
+  *becomes very unweildy and
+  *   is hard to keep straight between the pointer that may delete the base
+  *class, and the pointer that
+  *   is the derived class.
+  * }
+  * \endcode
+  */
 BRAINSCommonLib_EXPORT extern GenericTransformType::Pointer ReadTransformFromDisk(const std::string initialTransform);
 
 /**
-   * \author Hans J. Johnson
-   * \brief A utility function to write ITK compliant transforms to disk in a way that is compliant with the ReadTransformFromDisk
-   * \param genericTransformToWrite A pointer to baseclass itk::Transform<double,3,3> that is
-   * polymorphically cast to a real class like (i.e. itk::VersorRigid, itk::Affine, itk::BSpline, or similar)
-   * \param outputTransform the filename of the output transform.
-   * \code
-   * //To convert from non-const smart pointers ploymorphically to the smart ConstPointer up the class tree, use the GetPointer
-   * AffineTransformType::Pointer myAffine=AffineTransformType::New(); //NOTE:  This is not a const smart pointer
-   * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
-   * \endcode
-   */
+  * \author Hans J. Johnson
+  * \brief A utility function to write ITK compliant transforms to disk in a way
+  *that is compliant with the ReadTransformFromDisk
+  * \param genericTransformToWrite A pointer to baseclass
+  *itk::Transform<double,3,3> that is
+  * polymorphically cast to a real class like (i.e. itk::VersorRigid,
+  *itk::Affine, itk::BSpline, or similar)
+  * \param outputTransform the filename of the output transform.
+  * \code
+  * //To convert from non-const smart pointers ploymorphically to the smart
+  *ConstPointer up the class tree, use the GetPointer
+  * AffineTransformType::Pointer myAffine=AffineTransformType::New(); //NOTE:
+  * This is not a const smart pointer
+  * WriteTransformToDisk(myAffine.GetPointer(), "myAffineFile.mat");
+  * \endcode
+  */
 BRAINSCommonLib_EXPORT extern VersorRigid3DTransformType::Pointer ComputeRigidTransformFromGeneric(
   const GenericTransformType::ConstPointer genericTransformToWrite);
 
 /**
-   * \author Hans J. Johnson
-   * \brief Special purpose convenience function -- should not have a public interface.
-   */
+  * \author Hans J. Johnson
+  * \brief Special purpose convenience function -- should not have a public
+  *interface.
+  */
 BRAINSCommonLib_EXPORT extern int WriteBothTransformsToDisk(
   const GenericTransformType::ConstPointer genericTransformToWrite,
   const std::string & outputTransform,
   const std::string & strippedOutputTransform);
 
 /**
-   * \author Hans J. Johnson
-   * \brief Special purpose convenience function -- should not have a public interface.
-   */
+  * \author Hans J. Johnson
+  * \brief Special purpose convenience function -- should not have a public
+  *interface.
+  */
 BRAINSCommonLib_EXPORT extern int WriteStrippedRigidTransformToDisk(
   const GenericTransformType::ConstPointer genericTransformToWrite,
   const std::string & strippedOutputTransform);
@@ -134,9 +154,9 @@ BRAINSCommonLib_EXPORT extern void AddExtraTransformRegister(void);
 }
 
 /**
- * \author Hans J. Johnson
- * \brief A class to transform images
- */
+  * \author Hans J. Johnson
+  * \brief A class to transform images
+  */
 template< class InputImageType, class OutputImageType >
 typename OutputImageType::Pointer
 TransformResample(
@@ -149,9 +169,9 @@ TransformResample(
   typename GenericTransformType::Pointer transform);
 
 /**
- * \author Hans J. Johnson
- * \brief A class to transform images
- */
+  * \author Hans J. Johnson
+  * \brief A class to transform images
+  */
 template< class InputImageType, class OutputImageType, class DeformationImageType >
 typename OutputImageType::Pointer
 TransformWarp(
@@ -164,19 +184,20 @@ TransformWarp(
   typename DeformationImageType::Pointer deformationField);
 
 /**
- * \author Hans J. Johnson
- * \brief A class to transform images.  Only one of genericTransform or DeformationField can be non-null.
- */
+  * \author Hans J. Johnson
+  * \brief A class to transform images.  Only one of genericTransform or
+  *DeformationField can be non-null.
+  */
 template< typename InputImageType, class OutputImageType, typename DeformationImageType >
 typename OutputImageType::Pointer GenericTransformImage(
   InputImageType const *const OperandImage,
   const itk::ImageBase< InputImageType::ImageDimension > *ReferenceImage,
   typename DeformationImageType::Pointer DeformationField,
   typename GenericTransformType::Pointer genericTransform,
-  typename InputImageType::PixelType suggestedDefaultValue,   // NOTE:  This is
-                                                              // ignored in the
-                                                              // case of binary
-                                                              // image!
+  typename InputImageType::PixelType suggestedDefaultValue, //NOTE:  This is
+                                                            // ignored in the
+                                                            // case of binary
+                                                            // image!
   const std::string interpolationMode,
   const bool binaryFlag);
 

@@ -192,6 +192,14 @@ int BRAINSFitPrimary(int argc, char *argv[])
   PARSE_ARGS;
 
   itk::AddExtraTransformRegister();
+  // Apparently when you register one transform, you need to register all your
+  // transforms.
+  //
+  itk::TransformFactory< VersorRigid3DTransformType >::RegisterTransform();
+  itk::TransformFactory< ScaleVersor3DTransformType >::RegisterTransform();
+  itk::TransformFactory< ScaleSkewVersor3DTransformType >::RegisterTransform();
+  itk::TransformFactory< AffineTransformType >::RegisterTransform();
+  itk::TransformFactory< BSplineTransformType >::RegisterTransform();
 
   RegisterBrains2MaskFactory();
 
@@ -494,16 +502,12 @@ int BRAINSFitPrimary(int argc, char *argv[])
         }
       }
     }
-  // This default fills the background with zeros
-  //  const double BackgroundFillValue =
-  //
-  //
-  //
-  //
-  // GetBackgroundFillValueFromString(command.GetValueAsString(BackgroundFillValueText,
-  //  FloatCodeText));
-
-  // Note itk::ReadTransformFromDisk returns NULL if file name does not exist.
+  /* This default fills the background with zeros
+   *  const double BackgroundFillValue =
+   * GetBackgroundFillValueFromString(command.GetValueAsString(BackgroundFillValueText,
+   *  FloatCodeText));
+   * Note itk::ReadTransformFromDisk returns NULL if file name does not exist.
+   */
   GenericTransformType::Pointer currentGenericTransform = itk::ReadTransformFromDisk(initialTransform);
 
   FixedVolumeType::Pointer resampledImage;
@@ -568,9 +572,9 @@ int BRAINSFitPrimary(int argc, char *argv[])
       }
     actualIterations = myHelper->GetActualNumberOfIterations();
     permittedIterations = myHelper->GetPermittedNumberOfIterations();
-    //
-    //
-    // allLevelsIterations=myHelper->GetAccumulatedNumberOfIterationsForAllLevels();
+    /*
+      allLevelsIterations=myHelper->GetAccumulatedNumberOfIterationsForAllLevels();
+      */
     }
   /*
    *  At this point we can save the resampled image.
@@ -691,27 +695,33 @@ int BRAINSFitPrimary(int argc, char *argv[])
       }
     }
 
-#if 0 // HACK:  This does not work properly when only an initializer transform
-      // is used, or if the final transform is BSpline.
-  // GREG:  BRAINSFit currently does not determine if the registrations have not
-  // converged before reaching their maximum number of iterations.  Currently
-  // transforms are always written out, under the assumption that the
-  // registraiton converged.  We need to figure out how to determine if the
-  // registrations did not converge (i.e. maximum number of iterations were
-  // reached), and then not write out the transforms, unless explicitly demanded
-  // to write them out from a command line flag.
-  // GREG:  We should write a test, and document what the expected behaviors are
-  // when a multi-level registration is requested (Rigid,ScaleSkew,Affine), and
-  // one of the first types does not converge.
-  // HACK  This does not work properly until BSpline reports iterations
-  // correctly
+#if 0  // HACK:  This does not work properly when only an initializer transform
+       // is used, or if the final transform is BSpline.
+       // GREG:  BRAINSFit currently does not determine if the registrations
+       // have not
+       // converged before reaching their maximum number of iterations.
+       //  Currently
+       // transforms are always written out, under the assumption that the
+       // registraiton converged.  We need to figure out how to determine if the
+       // registrations did not converge (i.e. maximum number of iterations were
+       // reached), and then not write out the transforms, unless explicitly
+       // demanded
+       // to write them out from a command line flag.
+       // GREG:  We should write a test, and document what the expected
+       // behaviors are
+       // when a multi-level registration is requested (Rigid,ScaleSkew,Affine),
+       // and
+       // one of the first types does not converge.
+       // HACK  This does not work properly until BSpline reports iterations
+       // correctly
   if ( actualIterations + 1 >= permittedIterations )
     {
-    if ( writeTransformOnFailure == false ) // taken right off the command line.
+    if ( writeTransformOnFailure == false )   // taken right off the command
+                                              // line.
       {
       std::cout << "actualIterations: " << actualIterations << std::endl;
       std::cout << "permittedIterations: " << permittedIterations << std::endl;
-      return failureExitCode; // taken right off the command line.
+      return failureExitCode;   // taken right off the command line.
       }
     }
 #endif
@@ -720,13 +730,13 @@ int BRAINSFitPrimary(int argc, char *argv[])
   itk::WriteBothTransformsToDisk(currentGenericTransform.GetPointer(),
                                  localOutputTransform, strippedOutputTransform);
 
-#if 0 // HACK:  This does not work properly when only an initializer transform
-      // is used, or if the final transform is BSpline.
+#if 0  // HACK:  This does not work properly when only an initializer transform
+       // is used, or if the final transform is BSpline.
   if ( actualIterations + 1 >= permittedIterations )
     {
     std::cout << "actualIterations: " << actualIterations << std::endl;
     std::cout << "permittedIterations: " << permittedIterations << std::endl;
-    return failureExitCode; // taken right off the command line.
+    return failureExitCode;   // taken right off the command line.
     }
 #endif
 

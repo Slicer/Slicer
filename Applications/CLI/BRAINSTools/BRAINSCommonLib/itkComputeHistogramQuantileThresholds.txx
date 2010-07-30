@@ -53,15 +53,18 @@ ComputeHistogramQuantileThresholds< TInputImage, TMaskImage >
 }
 
 /**
- *
- * @author hjohnson (8/12/2008)
- *
- * @param m_LowerIntensityThresholdValue  The intensity value where "HistogramQuantileLowerThreshold" voxels
- *              are below this threshold
- * @param m_UpperIntensityThresholdValue  The intensity value where "HistogramQuantileUpperThreshold" voxels
- *              are above this threshold
- * @param m_NumberOfValidHistogramsEntries  The number of non-zero histogram bins
- */
+  *
+  * @author hjohnson (8/12/2008)
+  *
+  * @param m_LowerIntensityThresholdValue  The intensity value where
+  *"HistogramQuantileLowerThreshold" voxels
+  *              are below this threshold
+  * @param m_UpperIntensityThresholdValue  The intensity value where
+  *"HistogramQuantileUpperThreshold" voxels
+  *              are above this threshold
+  * @param m_NumberOfValidHistogramsEntries  The number of non-zero histogram
+  *bins
+  */
 template< class TInputImage, class TMaskImage >
 void
 ComputeHistogramQuantileThresholds< TInputImage, TMaskImage >
@@ -118,7 +121,7 @@ ComputeHistogramQuantileThresholds< TInputImage, TMaskImage >
         }
       ++histIt;
       }
-    if ( m_NumberOfValidHistogramsEntries <= 2 )   // then it is a binary image:
+    if ( m_NumberOfValidHistogramsEntries <= 2 ) // then it is a binary image:
       {
       std::cout
       << "Image handled with only two catgegories; effectively, binary thresholding."

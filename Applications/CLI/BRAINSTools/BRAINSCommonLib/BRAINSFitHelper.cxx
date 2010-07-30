@@ -1,5 +1,4 @@
 #include "itkIO.h"
-
 #ifdef USE_DEBUG_IMAGE_VIEWER
 #  include "DebugImageViewerClient.h"
 #endif
@@ -219,9 +218,9 @@ typename TransformType::Pointer DoCenteredInitialization(
       }
     else // CenterOfHead
       {  //     typename MovingVolumeType::PointType movingCenter =
-        // GetCenterOfBrain<MovingVolumeType>(orientedMovingVolume);
-        //     typename FixedVolumeType::PointType fixedCenter =
-        // GetCenterOfBrain<FixedVolumeType>(orientedFixedVolume);
+         // GetCenterOfBrain<MovingVolumeType>(orientedMovingVolume);
+         //     typename FixedVolumeType::PointType fixedCenter =
+         // GetCenterOfBrain<FixedVolumeType>(orientedFixedVolume);
       typedef typename itk::FindCenterOfBrainFilter< MovingVolumeType >
       MovingFindCenterFilter;
       typename MovingFindCenterFilter::Pointer movingFindCenter =
@@ -284,9 +283,6 @@ typename TransformType::Pointer DoCenteredInitialization(
         mask->SetImage( fixedFindCenter->GetClippedImageMask() );
 
         typename MaskImageType::Pointer ClippedMask = fixedFindCenter->GetClippedImageMask();
-        //
-        //
-        // itkUtil::WriteImage<MaskImageType>(ClippedMask,std::string("FIXED_MASK.nii.gz"));
 
         mask->ComputeObjectToWorldTransform();
         typename SpatialObjectType::Pointer p = dynamic_cast< SpatialObjectType * >( mask.GetPointer() );
@@ -299,12 +295,11 @@ typename TransformType::Pointer DoCenteredInitialization(
         }
       }
 
-    const double movingHeadScaleGuessRatio = 1;        //
-                                                       //
-                                                       // fixedFindCenter->GetHeadSizeEstimate()/
-                                                       //
-                                                       //
-                                                       // movingFindCenter->GetHeadSizeEstimate();
+    const double movingHeadScaleGuessRatio = 1;
+    /*
+      *
+      *fixedFindCenter->GetHeadSizeEstimate()/movingFindCenter->GetHeadSizeEstimate();
+      */
 
     typename TransformType::InputPointType rotationCenter;
     typename TransformType::OutputVectorType translationVector;
@@ -408,7 +403,7 @@ typename TransformType::Pointer DoCenteredInitialization(
 
               typedef itk::CheckerBoardImageFilter< FixedVolumeType > Checkerfilter;
               typename Checkerfilter::Pointer checker = Checkerfilter::New ();
-              unsigned int array[3] = {36, 36, 36};
+              unsigned int array[3] = { 36, 36, 36 };
 
               checker->SetInput1 (orientedFixedVolume);
               checker->SetInput2 (ResampledImage);
@@ -430,6 +425,7 @@ typename TransformType::Pointer DoCenteredInitialization(
                 {
                 typedef typename itk::ImageFileWriter< FixedVolumeType > WriterType;
                 typename WriterType::Pointer writer = WriterType::New();
+                writer->UseCompressionOn();
                 writer->SetFileName(filename);
                 writer->SetInput( checker->GetOutput() );
                 try
@@ -481,7 +477,7 @@ typename TransformType::Pointer DoCenteredInitialization(
 
       typedef itk::CheckerBoardImageFilter< FixedVolumeType > Checkerfilter;
       typename Checkerfilter::Pointer checker = Checkerfilter::New ();
-      unsigned int array[3] = {18, 18, 18};
+      unsigned int array[3] = { 18, 18, 18 };
 
       checker->SetInput1 (orientedFixedVolume);
       checker->SetInput2 (ResampledImage);
@@ -503,6 +499,7 @@ typename TransformType::Pointer DoCenteredInitialization(
         {
         typedef typename itk::ImageFileWriter< FixedVolumeType > WriterType;
         typename WriterType::Pointer writer = WriterType::New();
+        wirter->UseCompressionOn();
         writer->SetFileName(filename);
         // writer->SetInput(checker->GetOutput());
         writer->SetInput(ResampledImage);
@@ -519,7 +516,6 @@ typename TransformType::Pointer DoCenteredInitialization(
         }
       }
 #endif
-// #endif
     AssignRigid::AssignConvertedTransform( initialITKTransform, quickSetVersor.GetPointer() );
     }
   else if ( initializeTransformMode == "useMomentsAlign" )
@@ -1262,12 +1258,12 @@ BRAINSFitHelper::StartRegistration(void)
         adder->Update();
 
         /*
-        typedef itk::ImageFileWriter<MaskImageType> WriterType;
-        WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName( "/tmp/jointMask.nrrd" );
-        writer->SetInput( adder->GetOutput() );
-        writer->Update();
-        */
+          * typedef itk::ImageFileWriter<MaskImageType> WriterType;
+          * WriterType::Pointer writer = WriterType::New();
+          * writer->SetFileName( "/tmp/jointMask.nrrd" );
+          * writer->SetInput( adder->GetOutput() );
+          * writer->Update();
+          */
 
         ImageMaskSpatialObjectType::Pointer jointMask = ImageMaskSpatialObjectType::New();
         jointMask->SetImage( adder->GetOutput() );
@@ -1279,14 +1275,15 @@ BRAINSFitHelper::StartRegistration(void)
         FixedVolumeType::SpacingType roiSpacing =
           m_FixedVolume->GetSpacing();
         /*
-        std::cout << "Image size: " << m_FixedVolume->GetBufferedRegion().GetSize() << std::endl;
-        std::cout << "ROI size: " << roiRegion.GetSize() << std::endl;
-        std::cout << "ROI spacing: " << roiSpacing << std::endl;
-        std::cout << "ROI index: " << roiRegion.GetIndex() << std::endl;
-        std::cout << "ROI size in physical space: " <<
-          roiRegion.GetSize()[0]*roiSpacing[0] << " " <<
-          roiRegion.GetSize()[1]*roiSpacing[1] << " " <<
-          roiRegion.GetSize()[2]*roiSpacing[2] << std::endl;
+          * std::cout << "Image size: " <<
+          *    m_FixedVolume->GetBufferedRegion().GetSize() << std::endl;
+          * std::cout << "ROI size: " << roiRegion.GetSize() << std::endl;
+          * std::cout << "ROI spacing: " << roiSpacing << std::endl;
+          * std::cout << "ROI index: " << roiRegion.GetIndex() << std::endl;
+          * std::cout << "ROI size in physical space: " <<
+          * roiRegion.GetSize()[0]*roiSpacing[0] << " " <<
+          * roiRegion.GetSize()[1]*roiSpacing[1] << " " <<
+          * roiRegion.GetSize()[2]*roiSpacing[2] << std::endl;
           */
 
         FixedVolumeType::PointType roiOriginPt;
@@ -1302,13 +1299,13 @@ BRAINSFitHelper::StartRegistration(void)
         roiImage->SetDirection( m_FixedVolume->GetDirection() );
 
         /*
-        std::cout << "ROI origin: " << roiOriginPt << std::endl;
-        typedef itk::ImageFileWriter<FixedVolumeType> WriterType;
-        WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName( "/tmp/bsplineroi.nrrd" );
-        writer->SetInput( roiImage );
-        writer->Update();
-        */
+          * std::cout << "ROI origin: " << roiOriginPt << std::endl;
+          * typedef itk::ImageFileWriter<FixedVolumeType> WriterType;
+          * WriterType::Pointer writer = WriterType::New();
+          * writer->SetFileName( "/tmp/bsplineroi.nrrd" );
+          * writer->SetInput( roiImage );
+          * writer->Update();
+          */
 
         InitializerType::Pointer transformInitializer = InitializerType::New();
         transformInitializer->SetTransform(initialBSplineTransform);
@@ -1618,6 +1615,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
       {
       typedef itk::ImageFileWriter< FixedVolumeType > WriterType;
       WriterType::Pointer writer = WriterType::New();
+      writer->UseCompressionOn();
       writer->SetFileName(fixedVolumeString);
       writer->SetInput(this->m_FixedVolume);
       try
@@ -1634,6 +1632,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
       {
       typedef itk::ImageFileWriter< MovingVolumeType > WriterType;
       WriterType::Pointer writer = WriterType::New();
+      writer->UseCompressionOn();
       writer->SetFileName(movingVolumeString);
       writer->SetInput(this->m_MovingVolume);
       try

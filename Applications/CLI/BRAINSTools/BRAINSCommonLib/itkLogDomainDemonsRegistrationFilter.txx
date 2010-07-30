@@ -67,9 +67,7 @@ void
 LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
 ::InitializeIteration()
 {
-  //
-  // std::cout<<"LogDomainDemonsRegistrationFilter::InitializeIteration"<<std::endl;
-  // update variables in the equation object
+  //Update variables in the equation object
   DemonsRegistrationFunctionType *f = this->DownCastDifferenceFunctionType();
 
   f->SetDeformationField( this->GetDeformationField() );
@@ -249,6 +247,6 @@ LogDomainDemonsRegistrationFilter< TFixedImage, TMovingImage, TField >
   os << indent << "Multiplier: " << m_Multiplier << std::endl;
   os << indent << "BCHFilter: " << m_BCHFilter << std::endl;
 }
-}   // end namespace itk
+} // end namespace itk
 
 #endif

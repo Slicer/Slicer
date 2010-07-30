@@ -1,19 +1,19 @@
 /*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkGridForwardWarpImageFilterNew.txx,v $
-  Language:  C++
-  Date:      $Date: 2009-10-27 18:12:48 $
-  Version:   $Revision: 1.7 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkGridForwardWarpImageFilterNew.txx,v $
+ *  Language:  C++
+ *  Date:      $Date: 2009-10-27 18:12:48 $
+ *  Version:   $Revision: 1.7 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *    This software is distributed WITHOUT ANY WARRANTY; without even
+ *    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *    PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #ifndef __itkGridForwardWarpImageFilterNew_txx
 #define __itkGridForwardWarpImageFilterNew_txx
@@ -29,8 +29,8 @@
 namespace itk
 {
 /**
- * Default constructor.
- */
+  * Default constructor.
+  */
 template< class TDeformationField, class TOutputImage >
 GridForwardWarpImageFilterNew< TDeformationField, TOutputImage >
 ::GridForwardWarpImageFilterNew():
@@ -45,8 +45,8 @@ GridForwardWarpImageFilterNew< TDeformationField, TOutputImage >
 }
 
 /**
- * Standard PrintSelf method.
- */
+  * Standard PrintSelf method.
+  */
 template< class TDeformationField, class TOutputImage >
 void
 GridForwardWarpImageFilterNew< TDeformationField, TOutputImage >
@@ -63,8 +63,8 @@ GridForwardWarpImageFilterNew< TDeformationField, TOutputImage >
 }
 
 /**
- * Compute the output for the region specified by outputRegionForThread.
- */
+  * Compute the output for the region specified by outputRegionForThread.
+  */
 template< class TDeformationField, class TOutputImage >
 void
 GridForwardWarpImageFilterNew< TDeformationField, TOutputImage >

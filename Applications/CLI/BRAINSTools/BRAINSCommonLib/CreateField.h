@@ -1,7 +1,7 @@
 /**
- * \defgroup CF Create Field
- * \ingroup Reg
- */
+  * \defgroup CF Create Field
+  * \ingroup Reg
+  */
 #ifndef __CreateField_h
 #define __CreateField_h
 

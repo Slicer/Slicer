@@ -48,7 +48,7 @@ ThirionRegistration< TImage, TRealImage, TOutputImage >
 }
 
 /*This method initializes the input parser which reads in the moving image,
-  fixed image and parameter file.*/
+  * fixed image and parameter file.*/
 
 template< typename TImage, typename TRealImage, typename TOutputImage >
 void
@@ -81,8 +81,8 @@ ThirionRegistration< TImage, TRealImage, TOutputImage >
 }
 
 /*This method initializes the preprocessor which processes the moving and fixed
-  images before registration. The image files which are read in using the parser
-  are given to the preprocessor.*/
+  * images before registration. The image files which are read in using the
+  *    parser are given to the preprocessor.*/
 
 template< typename TImage, typename TRealImage, typename TOutputImage >
 void
@@ -112,7 +112,7 @@ ThirionRegistration< TImage, TRealImage, TOutputImage >
 }
 
 /*This method initializes the registration process. The preprocessed output
-  files are passed to the registrator.*/
+  * files are passed to the registrator.*/
 
 template< typename TImage, typename TRealImage, typename TOutputImage >
 void

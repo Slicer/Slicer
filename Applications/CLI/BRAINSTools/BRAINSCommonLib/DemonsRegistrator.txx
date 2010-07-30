@@ -15,8 +15,6 @@
 #include "itkCheckerBoardImageFilter.h"
 #include "itkIO.h"
 
-#include "itkImageFileWriter.h"
-
 #include "itkMultiResolutionPDEDeformableRegistration.h"
 #include "itkDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkWarpImageFilter.h"
@@ -42,7 +40,7 @@ void DemonsRegistrator< TRealImage, TOutputImage,
   std::string CurrentComponentFilename;
   try
     {
-    char ext[3][14] = { "_xdisp.nii.gz", "_ydisp.nii.gz", "_zdisp.nii.gz"};
+    char ext[3][14] = { "_xdisp.nii.gz", "_ydisp.nii.gz", "_zdisp.nii.gz" };
 
     typename ComponentFilterType::Pointer myComponentFilter =
       ComponentFilterType::New ();
@@ -477,5 +475,5 @@ void DemonsRegistrator< TRealImage, TOutputImage, TFieldValue >::StartNewLevel()
       }
     }
 }
-}   // namespace itk
+} // namespace itk
 #endif

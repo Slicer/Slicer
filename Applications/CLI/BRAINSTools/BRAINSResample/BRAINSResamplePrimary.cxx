@@ -1,9 +1,9 @@
 /* ==================================================================
-
-TODO:  NEED TO COMMENT WHAT THIS PROGRAM IS TO BE USED FOR
-HACK:  Need to update documentation and licensing.
-
-================================================================== */
+ *
+ *  TODO:  NEED TO COMMENT WHAT THIS PROGRAM IS TO BE USED FOR
+ *  HACK:  Need to update documentation and licensing.
+ *
+ *  ================================================================== */
 
 #include "BRAINSResamplePrimary.h"
 #include <iostream>
@@ -221,9 +221,9 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     MaskImageType::Pointer outputImage = castFilter->GetOutput();
     typedef itk::ImageFileWriter< MaskImageType > WriterType;
     WriterType::Pointer imageWriter = WriterType::New();
+    imageWriter->UseCompressionOn();
     imageWriter->SetFileName(outputVolume);
     imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->SetUseCompression(true);
     imageWriter->Update();
     }
   else if ( pixelType == "uchar" )
@@ -237,9 +237,9 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
 
     typedef itk::ImageFileWriter< NewImageType > WriterType;
     WriterType::Pointer imageWriter = WriterType::New();
+    imageWriter->UseCompressionOn();
     imageWriter->SetFileName(outputVolume);
     imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->SetUseCompression(true);
     imageWriter->Update();
     }
   else if ( pixelType == "short" )
@@ -253,9 +253,9 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
 
     typedef itk::ImageFileWriter< NewImageType > WriterType;
     WriterType::Pointer imageWriter = WriterType::New();
+    imageWriter->UseCompressionOn();
     imageWriter->SetFileName(outputVolume);
     imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->SetUseCompression(true);
     imageWriter->Update();
     }
   else if ( pixelType == "ushort" )
@@ -269,9 +269,9 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
 
     typedef itk::ImageFileWriter< NewImageType > WriterType;
     WriterType::Pointer imageWriter = WriterType::New();
+    imageWriter->UseCompressionOn();
     imageWriter->SetFileName(outputVolume);
     imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->SetUseCompression(true);
     imageWriter->Update();
     }
   else if ( pixelType == "int" )
@@ -285,9 +285,9 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
 
     typedef itk::ImageFileWriter< NewImageType > WriterType;
     WriterType::Pointer imageWriter = WriterType::New();
+    imageWriter->UseCompressionOn();
     imageWriter->SetFileName(outputVolume);
     imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->SetUseCompression(true);
     imageWriter->Update();
     }
   else if ( pixelType == "uint" )
@@ -300,18 +300,18 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
     castFilter->Update();
     typedef itk::ImageFileWriter< NewImageType > WriterType;
     WriterType::Pointer imageWriter = WriterType::New();
+    imageWriter->UseCompressionOn();
     imageWriter->SetFileName(outputVolume);
     imageWriter->SetInput( castFilter->GetOutput() );
-    imageWriter->SetUseCompression(true);
     imageWriter->Update();
     }
   else if ( pixelType == "float" )
     {
     typedef itk::ImageFileWriter< TBRAINSResampleInternalImageType > WriterType;
     WriterType::Pointer imageWriter = WriterType::New();
+    imageWriter->UseCompressionOn();
     imageWriter->SetFileName(outputVolume);
     imageWriter->SetInput(TransformedImage);
-    imageWriter->SetUseCompression(true);
     imageWriter->Update();
     }
   else

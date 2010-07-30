@@ -9,31 +9,34 @@
 namespace itk
 {
 /** \class VelocityFieldBCHCompositionFilter
- * \brief Compute Baker-Campbell-Hausdorff formula on two vector fields.
- *
- * See M. Bossa, M. Hernandez and S.Olmos, "Contributions to 3D diffeomorphic atlas
- * estimation: Application to brain images", Proc. of MICCAI’07
- * and
- * T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
- * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
- * Proc. of MICCAI 2008.
- *
- * This class is templated over the input field type and the output
- * field type.
- *
- * Velocity fields are represented as images whose pixel type are vector type
- * with N elements, where N is the dimension of the image.
- * The vector type must support element access via operator[]. It is assumed
- * that the vector elements behave like floating point scalars.
- *
- * The number of approximation terms to used in the BCH approximation is set via
- * SetNumberOfApproximationTerms method.
- *
- * \warning This filter assumes that the input field type and velocity field type
- * both have the same number of dimensions.
- *
- * \author Florence Dru, INRIA and Tom Vercauteren, MKT
- */
+  * \brief Compute Baker-Campbell-Hausdorff formula on two vector fields.
+  *
+  * See M. Bossa, M. Hernandez and S.Olmos, "Contributions to 3D diffeomorphic
+  *atlas
+  * estimation: Application to brain images", Proc. of MICCAI’07
+  * and
+  * T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
+  * "Symmetric Log-Domain Diffeomorphic Registration: A Demons-based Approach",
+  * Proc. of MICCAI 2008.
+  *
+  * This class is templated over the input field type and the output
+  * field type.
+  *
+  * Velocity fields are represented as images whose pixel type are vector type
+  * with N elements, where N is the dimension of the image.
+  * The vector type must support element access via operator[]. It is assumed
+  * that the vector elements behave like floating point scalars.
+  *
+  * The number of approximation terms to used in the BCH approximation is set
+  *via
+  * SetNumberOfApproximationTerms method.
+  *
+  * \warning This filter assumes that the input field type and velocity field
+  *type
+  * both have the same number of dimensions.
+  *
+  * \author Florence Dru, INRIA and Tom Vercauteren, MKT
+  */
 template< class TInputImage, class TOutputImage >
 class ITK_EXPORT VelocityFieldBCHCompositionFilter:
   public InPlaceImageFilter< TInputImage, TOutputImage >
@@ -71,8 +74,8 @@ protected:
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   /**
-   * GenerateData()
-   */
+    * GenerateData()
+    */
   void GenerateData();
 
   /** Adder type. */
@@ -107,17 +110,15 @@ protected:
   virtual void SetInPlace(const bool b)
   {
     // Work-around for http://www.itk.org/Bug/view.php?id=8672
-    if ( b ) {itkWarningMacro("A more recent version of ITK is required for this filter to run inplace"); }
+    if ( b ) { itkWarningMacro("A more recent version of ITK is required for this filter to run inplace"); }
     this->Superclass::SetInPlace(false);
   }
 
 #endif
 private:
-  VelocityFieldBCHCompositionFilter(const Self &);   // purposely not
-                                                     // implemented
-  void operator=(const Self &);                      // purposely not
-
-  // implemented
+  // purposely not implemented
+  VelocityFieldBCHCompositionFilter(const Self &);
+  void operator=(const Self &);
 
   AdderPointer            m_Adder;
   LieBracketFilterPointer m_LieBracketFilter;
@@ -126,7 +127,7 @@ private:
   MultiplierPointer       m_Multiplier2;
   unsigned int            m_NumberOfApproximationTerms;
 };
-}   // end namespace itk
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "itkVelocityFieldBCHCompositionFilter.txx"

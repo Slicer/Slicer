@@ -1,19 +1,19 @@
 /*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkDiffeomorphicDemonsRegistrationFilter.txx,v $
-  Language:  C++
-  Date:      $Date: 2008-07-11 19:02:04 $
-  Version:   $Revision: 1.5 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Program:   Insight Segmentation & Registration Toolkit
+ *  Module:    $RCSfile: itkDiffeomorphicDemonsRegistrationFilter.txx,v $
+ *  Language:  C++
+ *  Date:      $Date: 2008-07-11 19:02:04 $
+ *  Version:   $Revision: 1.5 $
+ *
+ *  Copyright (c) Insight Software Consortium. All rights reserved.
+ *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+ *
+ *    This software is distributed WITHOUT ANY WARRANTY; without even
+ *    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *    PURPOSE.  See the above copyright notices for more information.
+ *
+ *  =========================================================================*/
 
 #ifndef __itkVectorDiffeomorphicDemonsRegistrationFilter_txx
 #define __itkVectorDiffeomorphicDemonsRegistrationFilter_txx
@@ -24,8 +24,8 @@
 namespace itk
 {
 /**
- * Default constructor
- */
+  * Default constructor
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
                                              TDeformationField >
@@ -54,9 +54,9 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- * Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
- * It throws and exception, if it is not.
- */
+  * Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
+  * It throws and exception, if it is not.
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 typename VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
                                                       TDeformationField >::DemonsRegistrationFunctionType *
@@ -79,9 +79,9 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- * Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
- * It throws and exception, if it is not.
- */
+  * Checks whether the DifferenceFunction is of type DemonsRegistrationFunction.
+  * It throws and exception, if it is not.
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 const typename VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage,
                                                             TMovingImage,
@@ -105,8 +105,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- * Set the function state values before each iteration
- */
+  * Set the function state values before each iteration
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -134,8 +134,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /*
- * Get the metric value from the difference function
- */
+  * Get the metric value from the difference function
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 double
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -149,8 +149,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- *  Get Intensity Difference Threshold
- */
+  *  Get Intensity Difference Threshold
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 double
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -164,8 +164,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- *  Set Intensity Difference Threshold
- */
+  *  Set Intensity Difference Threshold
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -178,8 +178,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- *  Get Maximum Update Step Length
- */
+  *  Get Maximum Update Step Length
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 double
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -193,8 +193,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- *  Set Maximum Update Step Length
- */
+  *  Set Maximum Update Step Length
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -207,8 +207,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- * Get the metric value from the difference function
- */
+  * Get the metric value from the difference function
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 const double &
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -222,8 +222,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- *
- */
+  *
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 typename VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
                                                       TDeformationField >
@@ -239,8 +239,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- *
- */
+  *
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -253,8 +253,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- *
- */
+  *
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -275,8 +275,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
 }
 
 /**
- * Get the metric value from the difference function
- */
+  * Get the metric value from the difference function
+  */
 template< class TFixedImage, class TMovingImage, class TDeformationField >
 void
 VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
@@ -384,8 +384,8 @@ VectorDiffeomorphicDemonsRegistrationFilter< TFixedImage, TMovingImage,
   this->SetRMSChange( drfp->GetRMSChange() );
 
   /**
-   * Smooth the deformation field
-   */
+    * Smooth the deformation field
+    */
   if ( this->GetSmoothDeformationField() )
     {
     this->SmoothDeformationField();
