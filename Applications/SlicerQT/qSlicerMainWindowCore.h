@@ -32,7 +32,6 @@ public slots:
   void onFileCloseSceneActionTriggered();
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();  
-  void onHelpAboutSlicerQTActionTriggered();
   void onViewLayoutConventionalActionTriggered();
   void onViewLayoutFourUpActionTriggered();
   void onViewLayoutDual3DActionTriggered();
@@ -46,6 +45,16 @@ public slots:
   void onViewLayoutSideBySideCompareActionTriggered();
   void onWindowPythonInteractorActionTriggered();
 
+  void onHelpBrowseTutorialsActionTriggered();
+  void onHelpInterfaceDocumentationActionTriggered();
+  void onHelpSlicerPublicationsActionTriggered();
+  void onHelpAboutSlicerQTActionTriggered();
+
+  void onFeedbackReportBugActionTriggered();
+  void onFeedbackReportUsabilityIssueActionTriggered();
+  void onFeedbackMakeFeatureRequestActionTriggered();
+
+  void onFeedbackCommunitySlicerVisualBlogActionTriggered();
 protected:
   qSlicerMainWindow* widget() const;
 

@@ -1,9 +1,8 @@
 
 // Qt includes
-#include <QSignalMapper>
-#include <QToolBar>
-#include <QAction>
 #include <QDebug>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "vtkSlicerConfigure.h" // For Slicer3_USE_PYTHONQT
 
@@ -149,9 +148,44 @@ void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
 }
 
 //---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onHelpBrowseTutorialsActionTriggered()
+{
+  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3.6:Training"));
+}
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onHelpInterfaceDocumentationActionTriggered()
+{
+  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Documentation"));
+}
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onHelpSlicerPublicationsActionTriggered()
+{
+  QDesktopServices::openUrl(QUrl("http://www.slicer.org/publications"));
+}
+//---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onHelpAboutSlicerQTActionTriggered()
 {
   qSlicerAboutDialog about(0);
   about.exec();
 }
 
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFeedbackReportBugActionTriggered()
+{
+  QDesktopServices::openUrl(QUrl("http://www.na-mic.org/Bug/index.php"));
+}
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFeedbackReportUsabilityIssueActionTriggered()
+{
+  QDesktopServices::openUrl(QUrl("http://www.na-mic.org/Bug/index.php"));
+}
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFeedbackMakeFeatureRequestActionTriggered()
+{
+  QDesktopServices::openUrl(QUrl("http://www.na-mic.org/Bug/index.php"));
+}
+//---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFeedbackCommunitySlicerVisualBlogActionTriggered()
+{
+  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog"));
+}

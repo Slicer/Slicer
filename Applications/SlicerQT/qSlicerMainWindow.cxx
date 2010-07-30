@@ -101,6 +101,23 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   p->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
                  p, SLOT(onMRMLSceneModified(vtkObject*)));
   p->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
+
+  // Customize QAction icons with standard pixmapls
+  QIcon networkIcon = p->style()->standardIcon(QStyle::SP_DriveNetIcon);
+  QIcon informationIcon = p->style()->standardIcon(QStyle::SP_MessageBoxInformation);
+  QIcon criticalIcon = p->style()->standardIcon(QStyle::SP_MessageBoxCritical);
+  QIcon warningIcon = p->style()->standardIcon(QStyle::SP_MessageBoxWarning);
+  QIcon questionIcon = p->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
+
+  this->actionHelpBrowseTutorials->setIcon(networkIcon);
+  this->actionHelpInterfaceDocumentation->setIcon(networkIcon);
+  this->actionHelpSlicerPublications->setIcon(networkIcon);
+  this->actionHelpAboutSlicerQT->setIcon(informationIcon);
+
+  this->actionFeedbackReportBug->setIcon(criticalIcon);
+  this->actionFeedbackReportUsabilityIssue->setIcon(warningIcon);
+  this->actionFeedbackMakeFeatureRequest->setIcon(questionIcon);
+  this->actionFeedbackCommunitySlicerVisualBlog->setIcon(networkIcon);
 }
 
 //-----------------------------------------------------------------------------
@@ -157,8 +174,6 @@ void qSlicerMainWindow::setupMenuActions()
 
   qSlicerMainWindow_connect(EditUndo);
   qSlicerMainWindow_connect(EditRedo);
-  
-  qSlicerMainWindow_connect(HelpAboutSlicerQT);
 
   qSlicerMainWindow_connect(ViewLayoutConventional);
   qSlicerMainWindow_connect(ViewLayoutFourUp);
@@ -173,6 +188,16 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindow_connect(ViewLayoutSideBySideCompare);
   
   qSlicerMainWindow_connect(WindowPythonInteractor);
+
+  qSlicerMainWindow_connect(HelpBrowseTutorials);
+  qSlicerMainWindow_connect(HelpInterfaceDocumentation);
+  qSlicerMainWindow_connect(HelpSlicerPublications);
+  qSlicerMainWindow_connect(HelpAboutSlicerQT);
+
+  qSlicerMainWindow_connect(FeedbackReportBug);
+  qSlicerMainWindow_connect(FeedbackReportUsabilityIssue);
+  qSlicerMainWindow_connect(FeedbackMakeFeatureRequest);
+  qSlicerMainWindow_connect(FeedbackCommunitySlicerVisualBlog);
 
   //connect ToolBars actions
   connect(d->actionWindowToolbarsLoadSave, SIGNAL(toggled(bool)),
