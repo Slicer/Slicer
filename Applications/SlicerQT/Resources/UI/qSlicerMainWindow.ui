@@ -243,7 +243,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-  </widget>  <widget class="QToolBar" name="LayoutToolBar">
+  </widget>
+  <widget class="QToolBar" name="LayoutToolBar">
    <property name="windowTitle">
     <string>Layout ToolBar</string>
    </property>
@@ -287,16 +288,10 @@
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
   </action>
   <action name="actionFileImportScene">
    <property name="text">
     <string>Import Scene</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
    </property>
   </action>
   <action name="actionFileAddData">
@@ -305,9 +300,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
    </property>
   </action>
   <action name="actionFileAddVolume">
@@ -318,9 +310,6 @@
    <property name="text">
     <string>Add Volume</string>
    </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
   </action>
   <action name="actionFileAddTransform">
    <property name="icon">
@@ -329,9 +318,6 @@
    </property>
    <property name="text">
     <string>Add Transform</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
    </property>
   </action>
   <action name="actionFileSaveScene">
@@ -345,9 +331,6 @@
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
   </action>
   <action name="actionFileCloseScene">
    <property name="text">
@@ -356,16 +339,10 @@
    <property name="shortcut">
     <string>Ctrl+W</string>
    </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
   </action>
   <action name="actionFileExit">
    <property name="text">
     <string>E&amp;xit</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
    </property>
   </action>
   <action name="actionEditSetHome">
