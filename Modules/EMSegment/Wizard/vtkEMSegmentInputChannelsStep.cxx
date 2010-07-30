@@ -336,17 +336,27 @@ void vtkEMSegmentInputChannelsStep::Validate()
      {
        vtkMRMLVolumeNode* cNode = vtkMRMLVolumeNode::SafeDownCast(this->InputChannelDefineLineVolume[i]->GetSelected());
        if (!cNode)
-     {
-       vtkKWMessageDialog::PopupMessage(this->GetApplication(),NULL,"Input Channel Error", "Please assign an volume to each input channel",
+       {
+           vtkKWMessageDialog::PopupMessage(this->GetApplication(),NULL,"Input Channel Error", "Please assign an volume to each input channel",
                         vtkKWMessageDialog::ErrorIcon | vtkKWMessageDialog::InvokeAtPointer);
-       wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
-       wizard_workflow->ProcessInputs();
-       return;
-     }
-       if (cNode->GetImageData()->GetScalarRange()[0] < 0 )
+           wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
+           wizard_workflow->ProcessInputs();
+           return;
+       }
+       if (!cNode->GetImageData()) 
      {
-       failedTestNodes.push_back(cNode->GetName());
+       std::stringstream errorMessage;
+       errorMessage <<  "Volume of " << i + 1 << "th Input channel is empty !";
+           vtkKWMessageDialog::PopupMessage(this->GetApplication(),NULL,"Input Channel Error", errorMessage.str().c_str(), vtkKWMessageDialog::ErrorIcon | vtkKWMessageDialog::InvokeAtPointer);
+           wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
+           wizard_workflow->ProcessInputs();
+           return;
      }
+
+       if (cNode->GetImageData()->GetScalarRange()[0] < 0 )
+       {
+         failedTestNodes.push_back(cNode->GetName());
+       }
      }
     
    if (!failedTestNodes.empty())
