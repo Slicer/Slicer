@@ -23,10 +23,9 @@
     <file fileExtensions=".mrml">
       <name>mrmlSceneFileName</name>
       <longflag>mrmlSceneFileName</longflag>
-
       <description>Active MRML scene that contains EMSegment algorithm parameters.</description>
-
       <label>MRML Scene definning the Task</label>
+      <channel>input</channel>
     </file>    
 
     <file fileExtensions=".mhd">
