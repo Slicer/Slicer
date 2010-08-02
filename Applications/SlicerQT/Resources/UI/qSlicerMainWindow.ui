@@ -266,7 +266,10 @@
    <addaction name="actionViewLayoutCompare"/>
    <addaction name="actionViewLayoutSideBySideCompare"/>
   </widget>
-  <widget class="QToolBar" name="MouseModeToolBar">
+  <widget class="qSlicerMouseModeToolBar" name="MouseModeToolBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="windowTitle">
     <string>Mouse Mode ToolBar</string>
    </property>
@@ -753,6 +756,11 @@
    <extends>qSlicerWidget</extends>
    <header>qSlicerModulePanel.h</header>
   </customwidget>
+  <customwidget>
+   <class>qSlicerMouseModeToolBar</class>
+   <extends>QToolBar</extends>
+   <header>qSlicerMouseModeToolBar.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc"/>
@@ -822,6 +830,22 @@
     <hint type="destinationlabel">
      <x>447</x>
      <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWindowToolbarsMouseMode</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MouseModeToolBar</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>652</x>
+     <y>44</y>
     </hint>
    </hints>
   </connection>

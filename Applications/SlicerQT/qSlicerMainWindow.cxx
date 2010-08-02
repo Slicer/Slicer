@@ -77,6 +77,13 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QObject::connect(this->ModuleSelector, SIGNAL(moduleSelected(const QString&)),
                    this->ModulePanel, SLOT(setModule(const QString&)));
 
+  // MouseMode toolBar should listen the MRML scene
+  this->MouseModeToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  QObject::connect(qSlicerApplication::application(),
+                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->MouseModeToolBar,
+                   SLOT(setMRMLScene(vtkMRMLScene*)));
+
   // Instanciate and assign the layout manager to the slicer application
   qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(this->CentralWidget);
   qSlicerApplication::application()->setLayoutManager(layoutManager);
@@ -102,7 +109,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                  p, SLOT(onMRMLSceneModified(vtkObject*)));
   p->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
 
-  // Customize QAction icons with standard pixmapls
+  // Customize QAction icons with standard pixmaps
   QIcon networkIcon = p->style()->standardIcon(QStyle::SP_DriveNetIcon);
   QIcon informationIcon = p->style()->standardIcon(QStyle::SP_MessageBoxInformation);
   QIcon criticalIcon = p->style()->standardIcon(QStyle::SP_MessageBoxCritical);
