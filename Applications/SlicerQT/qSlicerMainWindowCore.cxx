@@ -15,6 +15,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerAboutDialog.h"
+#include "qSlicerActionsDialog.h"
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerLayoutManager.h"
@@ -52,7 +53,6 @@ qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent):Supercl
 
 //-----------------------------------------------------------------------------
 CTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
-
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onFileAddDataActionTriggered()
@@ -148,6 +148,34 @@ void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
 }
 
 //---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onHelpKeyboardShortcutsActionTriggered()
+{
+  qSlicerActionsDialog actionsDialog(this->widget());
+  actionsDialog.setActionsWithNoShortcutVisible(false);
+  actionsDialog.setMenuActionsVisible(false);
+  actionsDialog.addActions(this->widget()->findChildren<QAction*>(), "Slicer Application");
+
+  // scan the modules for their actions
+  QList<QAction*> moduleActions;
+  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
+  foreach(const QString& moduleName, moduleManager->moduleList())
+    {
+    qSlicerAbstractModule* module =
+      qobject_cast<qSlicerAbstractModule*>(moduleManager->module(moduleName));
+    if (module)
+      {
+      moduleActions << module->action();
+      }
+    }
+  if (moduleActions.size())
+    {
+    actionsDialog.addActions(moduleActions, "Modules");
+    }
+  // TODO add more actions
+  actionsDialog.exec();
+}
+
+//---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onHelpBrowseTutorialsActionTriggered()
 {
   QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3.6:Training"));
@@ -165,7 +193,7 @@ void qSlicerMainWindowCore::onHelpSlicerPublicationsActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onHelpAboutSlicerQTActionTriggered()
 {
-  qSlicerAboutDialog about(0);
+  qSlicerAboutDialog about(this->widget());
   about.exec();
 }
 

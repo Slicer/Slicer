@@ -224,3 +224,9 @@ QString qSlicerModuleManager::moduleName(const QString& title) const
 {
   return ctk_d()->ModuleFactoryManager.moduleName(title);
 }
+
+//---------------------------------------------------------------------------
+QStringList qSlicerModuleManager::moduleList() const
+{
+  return ctk_d()->ModuleFactoryManager.moduleNames();
+}

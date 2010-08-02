@@ -45,6 +45,7 @@ public slots:
   void onViewLayoutSideBySideCompareActionTriggered();
   void onWindowPythonInteractorActionTriggered();
 
+  void onHelpKeyboardShortcutsActionTriggered();
   void onHelpBrowseTutorialsActionTriggered();
   void onHelpInterfaceDocumentationActionTriggered();
   void onHelpSlicerPublicationsActionTriggered();

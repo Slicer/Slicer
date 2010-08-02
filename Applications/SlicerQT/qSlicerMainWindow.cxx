@@ -196,6 +196,7 @@ void qSlicerMainWindow::setupMenuActions()
   
   qSlicerMainWindow_connect(WindowPythonInteractor);
 
+  qSlicerMainWindow_connect(HelpKeyboardShortcuts);
   qSlicerMainWindow_connect(HelpBrowseTutorials);
   qSlicerMainWindow_connect(HelpInterfaceDocumentation);
   qSlicerMainWindow_connect(HelpSlicerPublications);
