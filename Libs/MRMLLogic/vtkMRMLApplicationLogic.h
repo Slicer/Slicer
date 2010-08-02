@@ -17,20 +17,18 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
 
-  /// Set / Get current Selection node
+  /// Get current Selection node
   vtkMRMLSelectionNode * GetSelectionNode();
-  void SetSelectionNode(vtkMRMLSelectionNode * newSelectionNode);
 
-  /// Set / Get current Interaction node
+  /// Get current Interaction node
   vtkMRMLInteractionNode * GetInteractionNode();
-  void SetInteractionNode(vtkMRMLInteractionNode * newInteractionNode);
-
-  void ProcessMRMLEvents(vtkObject * caller, unsigned long event, void * callData);
 
 protected:
 
   vtkMRMLApplicationLogic();
   virtual ~vtkMRMLApplicationLogic();
+
+  virtual void SetMRMLSceneInternal(vtkMRMLScene *newScene);
   
 private:
   

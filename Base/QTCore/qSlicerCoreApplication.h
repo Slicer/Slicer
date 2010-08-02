@@ -32,6 +32,7 @@ class qSlicerModuleManager;
 class qSlicerCorePythonManager;
 #endif
 class vtkSlicerApplicationLogic;
+class vtkMRMLApplicationLogic;
 class vtkMRMLScene;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
@@ -103,6 +104,9 @@ public:
 
   /// Get application logic
   vtkSlicerApplicationLogic* appLogic() const;
+
+  /// Get MRML ApplicationLogic
+  vtkMRMLApplicationLogic* mrmlApplicationLogic() const;
 
   ///
   /// Get slicer home directory
