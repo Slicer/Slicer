@@ -140,6 +140,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->addDefaultCategories();
 }
 
+//---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBarPrivate::addDefaultCategories()
 {
   this->AllModulesMenu = this->ModulesMenu->addMenu(QObject::tr("All Modules"));

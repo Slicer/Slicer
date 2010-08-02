@@ -51,6 +51,9 @@ SET(KIT_SRCS
 
   qSlicerModuleSelectorToolBar.cxx
   qSlicerModuleSelectorToolBar.h
+  qSlicerMouseModeToolBar.cxx
+  qSlicerMouseModeToolBar.h
+  qSlicerMouseModeToolBar_p.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
   qSlicerStyle.cxx
@@ -79,6 +82,8 @@ SET(KIT_MOC_SRCS
 
   qSlicerModulePanel.h
   qSlicerModuleSelectorToolBar.h
+  qSlicerMouseModeToolBar.h
+  qSlicerMouseModeToolBar_p.h
   qSlicerSaveDataDialog.h
   qSlicerSaveDataDialog_p.h
   qSlicerWidget.h
