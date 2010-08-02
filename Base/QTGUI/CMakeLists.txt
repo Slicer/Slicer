@@ -24,6 +24,8 @@ SET(KIT_SRCS
   qSlicerAbstractModulePanel.h
   qSlicerAbstractModuleWidget.cxx
   qSlicerAbstractModuleWidget.h
+  qSlicerActionsDialog.cxx
+  qSlicerActionsDialog.h
   qSlicerApplication.cxx
   qSlicerApplication.h
   qSlicerCommandOptions.cxx
@@ -67,6 +69,7 @@ SET(KIT_MOC_SRCS
   qSlicerAbstractModule.h
   qSlicerAbstractModulePanel.h
   qSlicerAbstractModuleWidget.h
+  qSlicerActionsDialog.h
   qSlicerApplication.h
   qSlicerDataDialog.h
   qSlicerDataDialog_p.h
@@ -96,6 +99,7 @@ ENDIF(Slicer3_USE_PYTHONQT)
 
 # UI files
 SET(KIT_UI_SRCS
+  Resources/UI/qSlicerActionsDialog.ui 
   Resources/UI/qSlicerDataDialog.ui
   Resources/UI/qSlicerModelsDialog.ui
   Resources/UI/qSlicerModulePanel.ui
