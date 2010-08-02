@@ -394,7 +394,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
     }
 
   // Adjust the range of the DWI slider selector
-  if (this->GetVolumeNode())
+  if ( this->GetVolumeNode() && this->GetVolumeNode()->GetImageData() )
     {
     this->DiffusionSelectorWidget->GetScale()->SetRange(0,this->GetVolumeNode()->GetImageData()->GetNumberOfScalarComponents()-1);
     }
