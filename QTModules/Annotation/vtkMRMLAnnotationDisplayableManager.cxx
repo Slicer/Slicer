@@ -197,51 +197,6 @@ void vtkMRMLAnnotationDisplayableManager::vtkInternal::RemoveWidget(
 }
 
 //---------------------------------------------------------------------------
-// RenderwindowInteractor Callback
-class vtkAnnotationRenderwindowInteractorCallback : public vtkCommand
-{
-public:
-  static vtkAnnotationRenderwindowInteractorCallback *New()
-  { return new vtkAnnotationRenderwindowInteractorCallback; }
-
-  virtual void Execute (vtkObject *caller, unsigned long event, void*)
-  {
-
-    if (!this->displayableManager)
-      {
-      return;
-      }
-
-    vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
-        displayableManager->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
-    if ( interactionNode == NULL )
-      {
-      return;
-      }
-
-    if (interactionNode->GetCurrentInteractionMode()==vtkMRMLInteractionNode::Place)
-      {
-        // only catch event if in Place mode
-        if (event == vtkCommand::LeftButtonReleaseEvent)
-        {
-          displayableManager->OnClickInThreeDRenderWindowGetCoordinates();
-        }
-      }
-
-  }
-
-  vtkAnnotationRenderwindowInteractorCallback(){}
-
-  ~vtkAnnotationRenderwindowInteractorCallback(){
-
-    this->displayableManager->Delete();
-
-  }
-
-  vtkMRMLAnnotationDisplayableManager* displayableManager;
-};
-
-//---------------------------------------------------------------------------
 // vtkMRMLAnnotationDisplayableManager methods
 
 //---------------------------------------------------------------------------
@@ -284,10 +239,6 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::Create()
 {
-  vtkAnnotationRenderwindowInteractorCallback *myCallback = vtkAnnotationRenderwindowInteractorCallback::New();
-  myCallback->displayableManager = this;
-  this->GetInteractor()->AddObserver(vtkCommand::LeftButtonReleaseEvent, myCallback);
-  myCallback->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -458,6 +409,18 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(
     }
   // Update the standard settings of all widgets.
   this->Internal->UpdateWidget(annotationNode);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
+{
+  if (eventid == vtkCommand::LeftButtonReleaseEvent)
+    {
+    if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
+      {
+      this->OnClickInThreeDRenderWindowGetCoordinates();
+      }
+    }
 }
 
 //---------------------------------------------------------------------------

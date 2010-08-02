@@ -84,6 +84,8 @@ private:
   vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&); /// Not implemented
   void operator=(const vtkMRMLAnnotationDisplayableManager&); /// Not Implemented
 
+  virtual void OnInteractorStyleEvent(int eventid);
+
   //BTX
   class vtkInternal;
   vtkInternal * Internal;
