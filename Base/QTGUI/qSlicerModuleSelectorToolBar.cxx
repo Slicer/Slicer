@@ -91,7 +91,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   p->addWidget(this->ModulesButton);
 
   // Previous button
-  this->PreviousHistoryMenu = new QMenu(p);
+  this->PreviousHistoryMenu = new QMenu("Modules Previous History", p);
   this->PreviousButton = new QToolButton(p);
   this->PreviousButton->setIcon(previousIcon);
   this->PreviousButton->setText(QObject::tr("Previous"));
@@ -105,7 +105,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->PreviousButton->setEnabled(this->PreviousHistoryMenu->actions().size() > 0);
 
   // Next button
-  this->NextHistoryMenu = new QMenu(p);
+  this->NextHistoryMenu = new QMenu("Modules Next History", p);
   this->NextButton = new QToolButton(p);
   this->NextButton->setIcon(nextIcon);
   this->NextButton->setText(QObject::tr("Next"));

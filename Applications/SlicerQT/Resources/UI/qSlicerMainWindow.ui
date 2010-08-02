@@ -288,6 +288,9 @@
    <property name="text">
     <string>Load Scene</string>
    </property>
+   <property name="toolTip">
+    <string>Raise a file browser to select a scene (mrml, xcat or xml) to load. It first clears any existing scene in Slicer and resets the application state.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
@@ -296,10 +299,16 @@
    <property name="text">
     <string>Import Scene</string>
    </property>
+   <property name="toolTip">
+    <string>Raise a file browser to navigate and select a scene file to be added to the existing Slicer scene. The scene is not cleared.</string>
+   </property>
   </action>
   <action name="actionFileAddData">
    <property name="text">
     <string>Add Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise an &quot;Add Data&quot; widget that allows you to select individual datasets to add to the existing scene. This load option is most useful when you want to load many different data types at once (volumes, models, etc.) which may not yet be described by a scene file.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -313,6 +322,9 @@
    <property name="text">
     <string>Add Volume</string>
    </property>
+   <property name="toolTip">
+    <string>Raise an &quot;Add Volume&quot; widget that allows you to select a volumetric dataset to add to the existing scene. The &quot;Volume Options&quot; panel can be used to clarify how a selected dataset should be loaded and displayed.</string>
+   </property>
   </action>
   <action name="actionFileAddTransform">
    <property name="icon">
@@ -321,6 +333,9 @@
    </property>
    <property name="text">
     <string>Add Transform</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise a standard file browser that allows you to select a transform to the existing scene.</string>
    </property>
   </action>
   <action name="actionFileSaveScene">
@@ -331,6 +346,9 @@
    <property name="text">
     <string>Save Scene</string>
    </property>
+   <property name="toolTip">
+    <string>Display the &quot;Save Data&quot; widget, which offers many options for saving a scene and/or individual datasets.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -338,6 +356,9 @@
   <action name="actionFileCloseScene">
    <property name="text">
     <string>Close Scene</string>
+   </property>
+   <property name="toolTip">
+    <string>Close the current scene and reset the application state. </string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
@@ -347,10 +368,16 @@
    <property name="text">
     <string>E&amp;xit</string>
    </property>
+   <property name="toolTip">
+    <string>Exit Slicer</string>
+   </property>
   </action>
   <action name="actionEditSetHome">
    <property name="text">
     <string>Set Home</string>
+   </property>
+   <property name="toolTip">
+    <string>Set a user's 'home module', which is the module displayed by default each time the Slicer application is started. The home module is saved in the Application Registry.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
@@ -364,6 +391,9 @@
    <property name="text">
     <string>Undo</string>
    </property>
+   <property name="toolTip">
+    <string>Undo the history of undoable commands, from last to first.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
    </property>
@@ -376,6 +406,9 @@
    <property name="text">
     <string>Redo</string>
    </property>
+   <property name="toolTip">
+    <string>Redo the history of commands most recently undone, from last to first.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
    </property>
@@ -383,6 +416,9 @@
   <action name="actionEditEditBox">
    <property name="text">
     <string>Edit Box</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise the Edit-box, a lightweight image editing tool.</string>
    </property>
    <property name="shortcut">
     <string>Space</string>
@@ -392,6 +428,9 @@
    <property name="text">
     <string>New Fiducial List</string>
    </property>
+   <property name="toolTip">
+    <string>Create a new list of fiducial points.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
    </property>
@@ -399,6 +438,9 @@
   <action name="actionViewExtensionManager">
    <property name="text">
     <string>Extension Manager</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise the &quot;Extension Manager&quot; wizard that provides status and information about available extensions</string>
    </property>
    <property name="shortcut">
     <string>/</string>
@@ -408,10 +450,16 @@
    <property name="text">
     <string>Cache &amp; Remote I/O Manager</string>
    </property>
+   <property name="toolTip">
+    <string>The Cache and Remote Data Handling interface provides status and information about all remote data transfers, and allows some control over the local cache.</string>
+   </property>
   </action>
   <action name="actionViewApplicationSettings">
    <property name="text">
     <string>Application Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>The Application Settings interface provides options for saving many of Slicer's Interface and Remote Data Handling options to the Application Registry, so they are preserved across sessions.</string>
    </property>
    <property name="shortcut">
     <string>F2</string>
@@ -427,6 +475,9 @@
    <property name="text">
     <string>&amp;Main Panel</string>
    </property>
+   <property name="toolTip">
+    <string>Collapse/Expand the GUI panel and allows Slicer's viewers to occupy the entire application window</string>
+   </property>
    <property name="shortcut">
     <string>F5</string>
    </property>
@@ -441,6 +492,9 @@
    <property name="text">
     <string>&amp;Bottom Panel</string>
    </property>
+   <property name="toolTip">
+    <string>Collapse/Expand the bottom split-panel in which Slice viewers are conventionally displayed, allowing the 3D view to occupy the vertical extent of the application window.</string>
+   </property>
    <property name="shortcut">
     <string>F6</string>
    </property>
@@ -449,6 +503,9 @@
    <property name="text">
     <string>&amp;Error Log</string>
    </property>
+   <property name="toolTip">
+    <string>Raise the error log display.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Alt+E</string>
    </property>
@@ -456,6 +513,9 @@
   <action name="actionWindowPythonInteractor">
    <property name="text">
     <string>Python Interactor</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise the Python Interactor for scripted interaction with Slicer data.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
@@ -471,6 +531,9 @@
    <property name="text">
     <string>Load/Save</string>
    </property>
+   <property name="toolTip">
+    <string>Show or Hide the &quot;Load/Save&quot; toolbar</string>
+   </property>
   </action>
   <action name="actionWindowToolbarsUndoRedo">
    <property name="checkable">
@@ -481,6 +544,9 @@
    </property>
    <property name="text">
     <string>Undo/Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or Hide the &quot;Undo/Redo&quot; toolbar.</string>
    </property>
   </action>
   <action name="actionWindowToolbarsLayout">
@@ -493,6 +559,9 @@
    <property name="text">
     <string>Layout</string>
    </property>
+   <property name="toolTip">
+    <string>Show or Hide the &quot;Layout&quot; toolbar</string>
+   </property>
   </action>
   <action name="actionWindowToolbarsMouseMode">
    <property name="checkable">
@@ -504,15 +573,24 @@
    <property name="text">
     <string>Mouse Mode</string>
    </property>
+   <property name="toolTip">
+    <string>Show or Hide the &quot;Mouse Mode&quot; toolbar</string>
+   </property>
   </action>
   <action name="actionHelpKeyboardShortcuts">
    <property name="text">
     <string>&amp;Keyboard Shortcuts</string>
    </property>
+   <property name="toolTip">
+    <string>Raise a window that lists commonly-used keyboard shortcuts.</string>
+   </property>
   </action>
   <action name="actionHelpBrowseTutorials">
    <property name="text">
     <string>Browse tutorials (www)</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise Slicer's training page in your favorite web browser</string>
    </property>
   </action>
   <action name="actionHelpInterfaceDocumentation">
@@ -529,25 +607,40 @@
    <property name="text">
     <string>About SlicerQT</string>
    </property>
+   <property name="toolTip">
+    <string>Provide a description of the Slicer3 effort and its support.</string>
+   </property>
   </action>
   <action name="actionFeedbackReportBug">
    <property name="text">
     <string>Feedback: report a bug (www)</string>
+   </property>
+   <property name="toolTip">
+    <string>Open your favorite web browser to http://www.na-mic.org/Bug/my_view_page.php so that any bug you encounter can quickly and easily be reported.</string>
    </property>
   </action>
   <action name="actionFeedbackReportUsabilityIssue">
    <property name="text">
     <string>Feedback: report usability issue (www)</string>
    </property>
+   <property name="toolTip">
+    <string>Open your favorite web browser to http://www.na-mic.org/Bug/my_view_page.php so that any usability issue you encounter can quickly be captured.</string>
+   </property>
   </action>
   <action name="actionFeedbackMakeFeatureRequest">
    <property name="text">
     <string>Feedback: make a feature request (www)</string>
    </property>
+   <property name="toolTip">
+    <string>Open your Firefox web browser to http://www.na-mic.org/Bug/my_view_page.php so that community feature requests can easily be collected.</string>
+   </property>
   </action>
   <action name="actionFeedbackCommunitySlicerVisualBlog">
    <property name="text">
     <string>Community: Slicer Visual Blog (www)</string>
+   </property>
+   <property name="toolTip">
+    <string>Open your favorite web browser to http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog where you can post screenshots of interesting ways you are using the Slicer3 software package in your research and share them with the Slicer community.</string>
    </property>
   </action>
   <action name="actionDebugLoadModule">
@@ -564,6 +657,9 @@
    </property>
    <property name="text">
     <string>Modules</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or Hide the &quot;Modules&quot; toolbar</string>
    </property>
   </action>
   <action name="actionViewLayoutConventional">
@@ -708,6 +804,9 @@
    <property name="text">
     <string>Module Selector</string>
    </property>
+   <property name="toolTip">
+    <string>Show or Hide the &quot;Module Selector&quot; toolbar</string>
+   </property>
   </action>
   <action name="actionWindowToolbarsView">
    <property name="checkable">
@@ -718,6 +817,9 @@
    </property>
    <property name="text">
     <string>View</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or Hide the &quot;View&quot; toolbar</string>
    </property>
   </action>
  </widget>
