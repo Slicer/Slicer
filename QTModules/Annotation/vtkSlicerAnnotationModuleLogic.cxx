@@ -200,8 +200,12 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 };
 
 //-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::ProcessLogicEvents(vtkObject *caller, unsigned long event, void *callData )
+void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData )
 {
+
+  std::cout << "ProcessMRMLEvents" << std::endl;
+
+  /*
     // Check RulerNode
     {
         vtkMRMLAnnotationRulerNode *callerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(caller);
@@ -1914,9 +1918,9 @@ void vtkSlicerAnnotationModuleLogic::AddTextNodeCompleted()
 
 
   interactionNode->SetPlaceModePersistence(0);
-  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewRotate);
+  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
 
-  if (interactionNode->GetCurrentInteractionMode()!=vtkMRMLInteractionNode::ViewRotate) {
+  if (interactionNode->GetCurrentInteractionMode()!=vtkMRMLInteractionNode::ViewTransform) {
 
     vtkErrorMacro("AddTextNode: Could not set place mode!");
 

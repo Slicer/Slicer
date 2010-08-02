@@ -160,7 +160,7 @@ public:
   double* GetAnnotationPointDisplayPropertiesColor(vtkMRMLAnnotationPointDisplayNode* node, int type);
 
   // Other Public Functions
-  void ProcessLogicEvents(vtkObject *caller, unsigned long event, void *callData );
+  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
   vtkSlicerApplicationGUI* GetApplicationGUI();
   //vtkImageData* SaveScreenShot();
   void SaveMRMLScene();

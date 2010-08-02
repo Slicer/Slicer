@@ -1,5 +1,6 @@
 // AnnotationModule includes
 #include "vtkMRMLAnnotationTextDisplayableManager.h"
+#include "vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationTextNode.h"
@@ -99,6 +100,8 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
   vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
   textWidget->AddObserver(vtkCommand::HoverEvent, myCallback);
   myCallback->Delete();
+
+  InvokeEvent(vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent,0);
 
   return textWidget;
 

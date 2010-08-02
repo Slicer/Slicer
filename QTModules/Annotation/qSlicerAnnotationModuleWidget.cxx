@@ -1931,11 +1931,13 @@ qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
-
-  const char *newTextNodeID = d->logic()->AddTextNode();
+  qvtkConnect(d->logic(), vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent,
+              this, SLOT(AddTextNodeCompleted(vtkObject*, void*)));
   d->textTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
   d->pauseButton->setChecked(false);
+  const char *newTextNodeID = d->logic()->AddTextNode();
+
   if (!newTextNodeID)
     {
 
@@ -1973,6 +1975,9 @@ void
 qSlicerAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object,
     void* call_data)
 {
+  std::cout << "SFSFSFDADDA" << std::endl;
+
+  /*
   CTK_D(qSlicerAnnotationModuleWidget);
 
   d->textTypeButton->setChecked(false);
@@ -2004,7 +2009,7 @@ qSlicerAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object,
   // watch for general modified events
   qvtkConnect(d->logic()->GetAngleNodeByID(newTextNodeID),
       vtkCommand::ModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)));
-
+*/
 }
 
 //-----------------------------------------------------------------------------
