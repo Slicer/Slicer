@@ -27,6 +27,8 @@
 
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
+class vtkMRMLInteractionNode;
+class vtkMRMLSelectionNode;
 class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLNode;
 class vtkMRMLScene;
@@ -58,6 +60,12 @@ public:
   /// Convenient method to get the WindowInteractor associated with the Renderer
   vtkRenderWindowInteractor* GetInteractor();
 
+  /// Convenient method to get the current InteractionNode
+  vtkMRMLInteractionNode* GetInteractionNode();
+
+  /// Convenient method to get the current SelectionNode
+  vtkMRMLSelectionNode* GetSelectionNode();
+
 protected:
 
   vtkMRMLAbstractDisplayableManager();
@@ -88,7 +96,7 @@ protected:
   /// Called by SetMRMLScene - Used to initialize the Scene
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
-  /// Set MRML ViewNode
+  /// Set MRML DisplayableNode
   /// Called by vtkMRMLDisplayableManagerFactory
   void SetAndObserveMRMLDisplayableNode(vtkMRMLNode * newMRMLDisplayableNode);
 
@@ -99,8 +107,8 @@ protected:
   /// A no-op if IsCreated() return True
   void CreateIfPossible();
 
-  /// Called after a valid MRML ViewNode is set
-  /// \note GetRenderer() and GetMRMLViewNode() will return valid object
+  /// Called after a valid MRML DisplayableNode is set
+  /// \note GetRenderer() and GetMRMLDisplayableNode() will return valid object
   virtual void Create(){}
 
   /// Remove MRML observers
@@ -114,11 +122,37 @@ protected:
   /// \sa RequestRender() SetUpdateFromMRMLRequested()
   virtual void UpdateFromMRML(){}
 
-  /// Invoke vtkCommand::UpdateEvent and then call vtkMRMLThreeDViewDisplayableManagerFactory::RequestRender()
-  /// which will also invoke vtkCommand::UpdateEvent
+  /// Invoke vtkCommand::UpdateEvent and then call
+  /// vtkMRMLThreeDViewDisplayableManagerFactory::RequestRender() which will also
+  /// invoke vtkCommand::UpdateEvent.
   /// An observer can then listen for that event and "compress" the different Render requests
   /// to efficiently call RenderWindow->Render()
   void RequestRender();
+
+  /// Usually used inside AdditionnalInitializeStep()
+  /// Allows to add observer to the current interactor style that will call the
+  /// virtual method OnInteractorStyleEvent accordingly.
+  /// \sa AdditionnalInitializeStep RemoveInteractorStyleObservableEvent
+  void AddInteractorStyleObservableEvent(int eventid);
+
+  /// \sa AddInteractorStyleObservableEvent
+  void RemoveInteractorStyleObservableEvent(int eventid);
+
+  /// Called after interactor style event specified using AddInteractorStyleObservableEvent
+  /// are invoked.
+  /// \note The following events are observed by default:
+  /// <ul>
+  ///   <li>vtkCommand::LeftButtonPressEvent</li>
+  ///   <li>vtkCommand::LeftButtonReleaseEvent</li>
+  ///   <li>vtkCommand::RightButtonPressEvent</li>
+  ///   <li>vtkCommand::RightButtonReleaseEvent</li>
+  ///   <li>vtkCommand::MiddleButtonPressEvent</li>
+  ///   <li>vtkCommand::MiddleButtonReleaseEvent</li>
+  ///   <li>vtkCommand::MouseWheelBackwardEvent</li>
+  ///   <li>vtkCommand::MouseWheelForwardEvent</li>
+  /// </ul>
+  /// \sa AddInteractorStyleObservableEvent RemoveInteractorStyleObservableEvent
+  virtual void OnInteractorStyleEvent(int eventid);
   
 private:
 
@@ -128,6 +162,7 @@ private:
   //BTX
   class vtkInternal;
   vtkInternal* Internal;
+  friend class vtkInternal; // For access from the callback function
   //ETX
 };
 
