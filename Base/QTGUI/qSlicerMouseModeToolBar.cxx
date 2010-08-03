@@ -33,8 +33,8 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate()
   logger.setTrace();
 
   // MRMLApplicationLogic should be instanciated
-  Q_ASSERT(qSlicerApplication::application()->mrmlApplicationLogic());
-  this->MRMLAppLogic = qSlicerApplication::application()->mrmlApplicationLogic();
+  ///Q_ASSERT(qSlicerApplication::application()->mrmlApplicationLogic());
+  this->MRMLAppLogic = qSlicerApplication::application() ? qSlicerApplication::application()->mrmlApplicationLogic(): 0;
 
   this->SinglePickModeAction = 0;
   this->PersistentPickModeAction = 0;

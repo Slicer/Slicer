@@ -3,6 +3,7 @@
 
 #include "qSlicerWidgetPlugin.h"
 #include "qSlicerModulePanelPlugin.h"
+#include "qSlicerMouseModeToolBarPlugin.h"
 
 // QT includes
 #include <QDesignerCustomWidgetCollectionInterface>
@@ -22,6 +23,7 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qSlicerWidgetPlugin;
     plugins << new qSlicerModulePanelPlugin;
+    plugins << new qSlicerMouseModeToolBarPlugin;
     return plugins;
     }
 };

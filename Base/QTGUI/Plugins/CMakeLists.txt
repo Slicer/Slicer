@@ -14,6 +14,8 @@ SET(designer_plugin_SRCS
   qSlicerWidgetPlugin.h
   qSlicerModulePanelPlugin.cxx
   qSlicerModulePanelPlugin.h
+  qSlicerMouseModeToolBarPlugin.cxx
+  qSlicerMouseModeToolBarPlugin.h
   )
 
 # Headers that should run through moc
