@@ -920,9 +920,17 @@ CloneVolume (vtkMRMLScene *scene,
   clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
 
   // copy over the volume's data
-  vtkImageData* clonedVolumeData = vtkImageData::New(); 
-  clonedVolumeData->DeepCopy(volumeNode->GetImageData());
-  clonedVolumeNode->SetAndObserveImageData( clonedVolumeData );
+ // Kilian: VTK crashes when volumeNode->GetImageData() = NULL 
+  if (volumeNode->GetImageData()) 
+    {
+      vtkImageData* clonedVolumeData = vtkImageData::New(); 
+      clonedVolumeData->DeepCopy(volumeNode->GetImageData());
+      clonedVolumeNode->SetAndObserveImageData( clonedVolumeData );
+      clonedVolumeData->Delete();
+    } else {
+      vtkErrorMacro("CloneVolume: The ImageData of VolumeNode with ID " << volumeNode->GetID() << " is null !");
+    }
+
   clonedVolumeNode->SetModifiedSinceRead(1);
 
   // add the cloned volume to the scene
@@ -930,7 +938,6 @@ CloneVolume (vtkMRMLScene *scene,
 
   // remove references
   clonedVolumeNode->Delete();
-  clonedVolumeData->Delete();
   clonedDisplayNode->Delete();
 
   return (clonedVolumeNode);
