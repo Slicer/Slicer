@@ -168,12 +168,22 @@
        <property name="text">
         <string>Manipulate Slice Views</string>
        </property>
-       <property name="contentsFrameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="margin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="qMRMLSlicesControllerWidget" name="MRMLSlicesControllerWidget"/>
+         <widget class="qMRMLSlicesControllerToolBar" name="MRMLSlicesControllerToolBar">
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="floatable">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -831,10 +841,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLSlicesControllerWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLSlicesControllerWidget.h</header>
-   <container>1</container>
+   <class>qMRMLSlicesControllerToolBar</class>
+   <extends>QToolBar</extends>
+   <header>qMRMLSlicesControllerToolBar.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLThreeDViewsControllerWidget</class>
