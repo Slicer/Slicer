@@ -31,7 +31,7 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModuleFactoryManager.h"
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractCoreModule.h"
 
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -53,7 +53,7 @@ public:
     Q_ASSERT(pythonManager);
     pythonManager->registerClassForPythonQt(&qSlicerCoreApplication::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerModuleManager::staticMetaObject);
-    pythonManager->registerClassForPythonQt(&qSlicerAbstractModule::staticMetaObject);
+    pythonManager->registerClassForPythonQt(&qSlicerAbstractCoreModule::staticMetaObject);
     pythonManager->registerCPPClassForPythonQt("qSlicerModuleFactoryManager");
     }
 
@@ -119,7 +119,7 @@ public slots:
     }
 
   /// 
-  qSlicerAbstractModule* module(qSlicerModuleManager* _moduleManager, const QString& name)
+  qSlicerAbstractCoreModule* module(qSlicerModuleManager* _moduleManager, const QString& name)
     {
     return _moduleManager->module(name);
     }
