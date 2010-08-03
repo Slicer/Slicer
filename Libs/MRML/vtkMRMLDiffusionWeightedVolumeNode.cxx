@@ -490,6 +490,7 @@ void vtkMRMLDiffusionWeightedVolumeNode:: CalculateAutoLevels( vtkMRMLScalarVolu
     this->ExtractComponents->SetInput(this->ImageData);
     this->ExtractComponents->SetComponents(displayNode->GetDiffusionComponent());
     imageDataScalar = this->ExtractComponents->GetOutput();
+    imageDataScalar->Update();
     }
 
    if (imageDataScalar != NULL)
