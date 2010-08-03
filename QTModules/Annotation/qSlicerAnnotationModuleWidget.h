@@ -44,6 +44,10 @@ public:
     ~qSlicerAnnotationModuleWidget();
     typedef enum { FiducialPoint=0, Angle=1, Ruler=2 } AnnotationType;
 
+
+    // Add a new annotation node to the list
+    void addNodeToTable(const char* newNodeID);
+
 protected:
 
 
@@ -111,8 +115,17 @@ protected slots:
     bool saveScreenShot();
 
     // Mouse Mode Operation
-    void onResumeButtonToggled(bool toggle);
-    void onPauseButtonToggled(bool toggle);
+    void enableMouseModeButtons();
+    void disableMouseModeButtons();
+
+    void onResumeButtonClicked();
+    void onPauseButtonClicked();
+    void onCancelButtonClicked();
+    void onDoneButtonClicked();
+
+    void deactivateAllAnnotationTools();
+    void cancelOrRemoveLastAddedAnnotationNode();
+
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);
@@ -127,6 +140,7 @@ private:
   qSlicerAnnotationModuleScreenShotDialog *m_ScreenShotDialog;
   QString m_report;
   int m_index;
+  int m_lastAddedIndex;
   std::vector<const char*> m_IDs;
   QPixmap m_screenshot;
   QStringList m_screenshotList;

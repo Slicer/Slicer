@@ -1,6 +1,9 @@
 #ifndef __vtkSlicerAnnotationModuleLogic_h
 #define __vtkSlicerAnnotationModuleLogic_h
 
+// Annotation QT includes
+#include "qSlicerAnnotationModuleWidget.h"
+
 // Slicer Logic includes
 #include "vtkSlicerModuleLogic.h"
 
@@ -82,6 +85,24 @@ public:
   vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Exit the place mode for annotations
+  void StopPlaceMode();
+
+  // After a node was added, propagate to widget
+  void AddNodeCompleted(vtkMRMLAnnotationNode* node);
+
+  // Cancel the current annotation placement or remove last annotation node
+  void CancelCurrentOrRemoveLastAddedAnnotationNode();
+
+  // Register the widget
+  void SetAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
+
+  // MRML events
+  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
+  void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+
+
+
   // Fiducial Related Public Functions
   const char* AddFiducial();
   const char* AddFiducialPicked();
@@ -110,7 +131,7 @@ public:
 
   // Text Node
   const char* AddTextNode();
-  void AddTextNodeCompleted();
+
   vtkMRMLAnnotationTextNode* GetTextNodeByID(const char* id);
   
   // ROI Node
@@ -160,7 +181,7 @@ public:
   double* GetAnnotationPointDisplayPropertiesColor(vtkMRMLAnnotationPointDisplayNode* node, int type);
 
   // Other Public Functions
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
+
   vtkSlicerApplicationGUI* GetApplicationGUI();
   //vtkImageData* SaveScreenShot();
   void SaveMRMLScene();
@@ -172,13 +193,14 @@ public:
 
   int TestReceivedMessage; 
 
+
+
 protected:
   vtkSlicerAnnotationModuleLogic();
   ~vtkSlicerAnnotationModuleLogic();
   // not implemented
   vtkSlicerAnnotationModuleLogic(const vtkSlicerAnnotationModuleLogic&);
   void operator=(const vtkSlicerAnnotationModuleLogic&);
-
 
 private:
   CTK_DECLARE_PRIVATE(vtkSlicerAnnotationModuleLogic);
@@ -195,6 +217,10 @@ private:
   vtkSlicerAnnotationSplineManager *m_SplineManager;
   vtkSlicerAnnotationBidimensionalManager *m_BidimensionalManager;
   //vtkMRMLAnnotationTextDisplayableManager *m_TextManager;
+
+  qSlicerAnnotationModuleWidget *m_Widget;
+
+  vtkMRMLAnnotationNode *m_LastAddedAnnotationNode;
 
 };
 

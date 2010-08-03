@@ -141,6 +141,11 @@ vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
   this->m_ROIManager = 0;
   this->m_SplineManager = 0;
   this->m_BidimensionalManager = 0;
+
+  this->m_Widget = 0;
+
+  this->m_LastAddedAnnotationNode = 0;
+
 }
 
 //-----------------------------------------------------------------------------
@@ -192,6 +197,15 @@ vtkSlicerAnnotationModuleLogic::~vtkSlicerAnnotationModuleLogic()
 
 }
 
+void vtkSlicerAnnotationModuleLogic::SetAndObserveWidget(qSlicerAnnotationModuleWidget* widget)
+{
+  if (!widget)
+    {
+    return;
+    }
+
+  this->m_Widget = widget;
+}
 
 //-----------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -203,7 +217,16 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData )
 {
 
-  std::cout << "ProcessMRMLEvents" << std::endl;
+  //std::cout << "vtkSlicerAnnotationModuleLogic ProcessMRMLEvents" << std::endl;
+
+  switch(event)
+    {
+    case vtkMRMLScene::NodeAddedEvent:
+      vtkMRMLAnnotationNode* annotationNode = reinterpret_cast<vtkMRMLAnnotationNode*>(callData);
+      this->OnMRMLSceneNodeAddedEvent(annotationNode);
+      break;
+    }
+
 
   /*
     // Check RulerNode
@@ -260,7 +283,7 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsign
     }
 
     // Check for fiducials
-    /* 
+
     {
         vtkMRMLFiducialListNode* callerNode = vtkMRMLFiducialListNode::SafeDownCast(caller);
         if (callerNode != 0)
@@ -282,6 +305,21 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsign
     }*/
 
 
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+{
+  vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
+  vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    return;
+    }
+
+  if (annotationNode->IsA("vtkMRMLAnnotationTextNode")) {
+    this->AddNodeCompleted(annotationNode);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1774,33 +1812,14 @@ const char* vtkSlicerAnnotationModuleLogic::AddStickyNode()
 //-----------------------------------------------------------------------------
 // Text Node
 //-----------------------------------------------------------------------------
-class vtkAnnotationTextWidgetCallback : public vtkCommand
-{
-public:
-  static vtkAnnotationTextWidgetCallback *New()
-  { return new vtkAnnotationTextWidgetCallback; }
-
-  virtual void Execute (vtkObject *caller, unsigned long event, void*)
-  {
-    // save node for undo if it's the start of an interaction event
-
-    if (event == vtkCommand::PlacePointEvent)
-    {
-      cout << "Text Node Point Placed\n";
-      LogicPointer->AddTextNodeCompleted();
-    }
-  }
-  //,DistanceRepresentation(0)
-  vtkAnnotationTextWidgetCallback():textNode(0), textWidget(0) {}
-  vtkMRMLAnnotationTextNode *textNode;
-  vtkTextWidget* textWidget;
-  vtkSlicerAnnotationModuleLogic* LogicPointer;
-};
 
 //---------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 {   
-  std::cout << "vtkSlicerAnnotationModuleLogic::AddTextNode" <<std::endl;
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(),events);
+  events->Delete();
 
   // get an instance of the manager
 //  vtkMRMLAnnotationDisplayableManager* m;
@@ -1830,8 +1849,6 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
     vtkErrorMacro("AddTextNode: Could not set place mode!");
 
   }
-
-  std::cout << "CurrentInteractionMode: " << interactionNode->GetInteractionModeAsString(interactionNode->GetCurrentInteractionMode()) << std::endl;
 
   return 0;
 
@@ -1905,28 +1922,62 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::AddTextNodeCompleted()
+void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode * node)
 {
-  //this->InvokeEvent(vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent, 0);
+
+  if (!node)
+    {
+    return;
+    }
+
+  if (!this->m_Widget)
+    {
+    return;
+    }
+
+  this->m_Widget->addNodeToTable(node->GetID());
+  this->m_LastAddedAnnotationNode = node;
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::StopPlaceMode()
+{
+
   vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
       this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
   if ( interactionNode == NULL )
     {
-    vtkErrorMacro ( "AddTextNode: No interaction node in the scene." );
+    vtkErrorMacro ( "StopPlaceMode: No interaction node in the scene." );
     return;
     }
-
 
   interactionNode->SetPlaceModePersistence(0);
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
 
   if (interactionNode->GetCurrentInteractionMode()!=vtkMRMLInteractionNode::ViewTransform) {
 
-    vtkErrorMacro("AddTextNode: Could not set place mode!");
+    vtkErrorMacro("AddTextNode: Could not set transform mode!");
 
   }
 
-  std::cout << "CurrentInteractionMode: " << interactionNode->GetInteractionModeAsString(interactionNode->GetCurrentInteractionMode()) << std::endl;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNode()
+{
+
+  if (!this->m_LastAddedAnnotationNode)
+    {
+    return;
+    }
+
+  if (this->m_LastAddedAnnotationNode->IsA("vtkMRMLAnnotationTextNode")) {
+    // for text annotations, just remove the last node
+    this->GetMRMLScene()->RemoveNode(this->m_LastAddedAnnotationNode);
+    this->m_LastAddedAnnotationNode = 0;
+  }
+
 }
 
 //-----------------------------------------------------------------------------
