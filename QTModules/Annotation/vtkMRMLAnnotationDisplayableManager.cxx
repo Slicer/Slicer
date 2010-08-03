@@ -100,7 +100,6 @@ void vtkMRMLAnnotationDisplayableManager::vtkInternal::UpdateLocked(
     {
     widget->ProcessEventsOn();
     }
-  widget->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -128,7 +127,6 @@ void vtkMRMLAnnotationDisplayableManager::vtkInternal::UpdateVisible(
     {
     widget->EnabledOff();
     }
-  widget->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -149,8 +147,6 @@ void vtkMRMLAnnotationDisplayableManager::vtkInternal::UpdateWidget(
 
   this->UpdateLocked(node);
   this->UpdateVisible(node);
-
-  widget->Delete();
 
 }
 
@@ -265,9 +261,6 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
         this->OnMRMLAnnotationNodeLockModifiedEvent(annotationNode);
         break;
       }
-
-    annotationNode->Delete();
-
     }
   else
     {
@@ -339,8 +332,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
 
   this->RequestRender();
 
-  annotationNode->Delete();
-
 }
 
 //---------------------------------------------------------------------------
@@ -371,8 +362,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNod
   // Refresh observers
   this->SetAndObserveNodes();
 
-  annotationNode->Delete();
-
 }
 
 //---------------------------------------------------------------------------
@@ -392,8 +381,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
   this->SetWidget(annotationNode);
 
   this->RequestRender();
-
-  annotationNode->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -408,8 +395,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeTransformModifiedE
     }
   // Update the standard settings of all widgets.
   this->Internal->UpdateWidget(annotationNode);
-
-  annotationNode->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -424,8 +409,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(
     }
   // Update the standard settings of all widgets.
   this->Internal->UpdateWidget(annotationNode);
-
-  annotationNode->Delete();
 }
 
 //---------------------------------------------------------------------------
