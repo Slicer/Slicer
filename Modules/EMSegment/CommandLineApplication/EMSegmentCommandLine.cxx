@@ -11,12 +11,7 @@
 #include "vtkMRMLEMSSegmenterNode.h"
 
 
-#ifdef EM_CL_GUI
-#include "EMSegmentCommandLine_GUIVersionCLP.h"
-#include "ModuleProcessInformation.h"
-#else
 #include "EMSegmentCommandLineCLP.h"
-#endif
 
 #include <vtksys/SystemTools.hxx>
 #include <stdexcept>
@@ -41,9 +36,8 @@ extern "C" int Vtkteem_Init(Tcl_Interp *interp);
 extern "C" int Vtkitk_Init(Tcl_Interp *interp);
 extern "C" int Slicerbaselogic_Init(Tcl_Interp *interp);
 extern "C" int Mrml_Init(Tcl_Interp *interp);
-extern "C" int Mrmlcli_Init(Tcl_Interp *interp);
-extern "C" int Mrmllogic_Init(Tcl_Interp *interp); 
-extern "C" int Mrmldisplayablemanager_Init(Tcl_Interp *interp); 
+extern "C" int Mrmlcli_Init(Tcl_Interp *interp); 
+extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 
 #define tgVtkCreateMacro(name,type) \
   name  = type::New(); \
@@ -387,126 +381,26 @@ public:
                       float totalProgress = 0.0f,
                       float stageProgress = 0.0f)
   {
-#ifdef EM_CL_GUI
-    if (this->ProcessInformation != NULL)
-    {
-      ProcessInformation->Progress      = totalProgress;
-      ProcessInformation->StageProgress = stageProgress;
-      strncpy(ProcessInformation->ProgressMessage,
-              message.c_str(), 1023);      
-      
-      if (this->ProcessInformation->ProgressCallbackFunction
-          && this->ProcessInformation->ProgressCallbackClientData)
-      {
-        (*(this->ProcessInformation->ProgressCallbackFunction))
-          (this->ProcessInformation->ProgressCallbackClientData);
-      }
-    }
-#else
   // unused variable
   (void)(message);
   (void)(totalProgress);
   (void)(stageProgress);
-#endif
   }
   
-#ifdef EM_CL_GUI
-  void SetProcessInformation(ModuleProcessInformation* processInformation)
-  {
-    this->ProcessInformation = processInformation;
-  }
-
-private:
-  ModuleProcessInformation* ProcessInformation;
-#endif
 };
 
 
 int main(int argc, char** argv)
 {
-  
-  if (0) 
-  {
-    Tcl_Interp *interp = vtkKWApplication::InitializeTcl(argc, argv, &cout);
-    if (!interp)
-      {
-    cout << "Error: InitializeTcl failed" << endl;
-    return EXIT_FAILURE; 
-      }
-    Emsegment_Init(interp);
-    Slicerbasegui_Init(interp);
-    Slicerbaselogic_Init(interp);
-    Mrml_Init(interp);
-    Mrmlcli_Init(interp);
-    Mrmllogic_Init(interp);
-    Mrmldisplayablemanager_Init(interp);
-    Vtkteem_Init(interp);
-    Vtkitk_Init(interp);
-
-    tgVtkDefineMacro(appTry,vtkSlicerApplication);
-    
-    // Get An error right here 
-    appTry->Script("set d [vtkMRMLEMSNode New]");
-    cout << "Hello " << appTry->Script("$d GetTclTaskFilename") << endl;
-    appTry->Script("$d Delete");
-    cout << "============================" << endl;
-    appTry->Script("set d [vtkMRMLScalarVolumeNode New]");
-    appTry->Delete();
-    exit(0);
-
-  }
- 
- 
-
-  //
   // parse arguments using the CLP system; this creates variables.
   PARSE_ARGS;
 
   ProgressReporter progressReporter;
   float currentStep = 0.0f;
   float totalSteps  = 6.0f;
-#ifdef EM_CL_GUI
-  progressReporter.SetProcessInformation(CLPProcessInformation);
-#endif
+
   progressReporter.ReportProgress("Parsing Arguments...", 
                                    currentStep++ / totalSteps);
-
-#ifdef EM_CL_GUI
-  // the GUI as a different interface than the command line; adapt.
-  // This is due to limitiations of the auto-generated gui and because
-  // we want the gui version to be very simple.
-  std::vector<std::string> targetVolumeFileNames;
-  if (!targetVolumeFileName1.empty())
-    {
-    targetVolumeFileNames.push_back(targetVolumeFileName1);
-    }
-  if (!targetVolumeFileName2.empty())
-    {
-    targetVolumeFileNames.push_back(targetVolumeFileName2);
-    }
-  if (!targetVolumeFileName3.empty())
-    {
-    targetVolumeFileNames.push_back(targetVolumeFileName3);
-    }
-  if (!targetVolumeFileName4.empty())
-    {
-    targetVolumeFileNames.push_back(targetVolumeFileName4);
-    }
-  if (!targetVolumeFileName5.empty())
-    {
-    targetVolumeFileNames.push_back(targetVolumeFileName5);
-    }
-  std::string resultStandardVolumeFileName = "";
-  std::string generateEmptyMRMLSceneAndQuit = "";
-  // Kilian - set to false
-  bool dontWriteResults = true;
-
-  bool dontUpdateIntermediateData = false;
-  std::string parametersMRMLNodeName = "";
-  std::vector<std::string> atlasVolumeFileNames;
-  bool disableCompression = false;
-  std::string resultMRMLSceneFileName = "";
-#endif
 
   bool useDefaultParametersNode = parametersMRMLNodeName.empty();
   bool useDefaultTarget         = targetVolumeFileNames.empty();
@@ -570,7 +464,6 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
     }
 
-#ifndef EM_CL_GUI
   // the gui uses <image>, the command line uses actual files
   for (unsigned int i = 0; i < targetVolumeFileNames.size(); ++i)
     {
@@ -595,7 +488,6 @@ int main(int argc, char** argv)
       return EXIT_FAILURE;
       }
     }
-#endif
 
   progressReporter.ReportProgress("Loading Data...", 
                                    currentStep++ / totalSteps);
@@ -1006,7 +898,7 @@ int main(int argc, char** argv)
         if (verbose) std::cerr << "Creating output volume node...";
 
         vtkstd::string absolutePath = resultVolumeFileName;
-#ifndef EM_CL_GUI
+
         // the gui uses <image>, the command line uses actual files
         //
         // Set up the filename so that a relative filename will be
@@ -1017,7 +909,6 @@ int main(int argc, char** argv)
           absolutePath = vtksys::SystemTools::
             CollapseFullPath(resultVolumeFileName.c_str());
           }
-#endif
 
         vtkMRMLVolumeNode* outputNode = 
           AddNewScalarArchetypeVolume(mrmlScene,
@@ -1129,11 +1020,11 @@ int main(int argc, char** argv)
        Slicerbasegui_Init(interp);
        Slicerbaselogic_Init(interp);
        Mrml_Init(interp);
-       Mrmlcli_Init(interp);
-       Mrmllogic_Init(interp);
-       Mrmldisplayablemanager_Init(interp);
+       Mrmlcli_Init(interp); 
        Vtkteem_Init(interp);
        Vtkitk_Init(interp);
+       // Brainsfit_Init(interp);
+       Commandlinemodule_Init(interp);
 
        // SLICER_HOME
        cout << "Setting SLICER home: " << endl;
@@ -1146,11 +1037,48 @@ int main(int argc, char** argv)
        cout << "Slicer home is " << slicerHome << endl;
 
 
-       tgVtkDefineMacro(app,vtkKWApplication);
+       tgVtkDefineMacro(app,vtkSlicerApplication);
        app->Script ("namespace eval slicer3 set Application %s", appTcl.c_str());
+
+       tgVtkDefineMacro(appLogic,vtkSlicerApplicationLogic);
+       app->Script ("namespace eval slicer3 set ApplicationLogic %s", appLogicTcl.c_str());
+
        std::string emLogicTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,emLogic));
        std::string emMRMLManagerTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,emMRMLManager));
-     
+       
+       // -----------------------------------
+       // Check Data 
+
+       vtkMRMLEMSTargetNode* inputNode =  emMRMLManager->GetTargetInputNode(); 
+       if (inputNode == NULL)
+      {
+        cout << "Input target node is null, aborting!" << endl;
+          return EXIT_FAILURE; 
+      }
+
+       for (int i=0;  i < inputNode->GetNumberOfVolumes(); i++)
+     {
+       vtkMRMLVolumeNode* cNode = inputNode->GetNthVolumeNode(i);
+       if (!cNode)
+         {
+           cout << "Input Channel Error: Please assign an volume to each input channel" << endl;
+           return EXIT_FAILURE; 
+         }
+       if (!cNode->GetImageData()) 
+         {
+           cout << "Input Channel Error: Volume of " << i + 1 << "th Input channel is empty !" << endl;
+                 return EXIT_FAILURE; 
+         }
+       if (cNode->GetImageData()->GetScalarRange()[0] < 0 )
+         {
+           cout << "Input Channel Error: Volume of " << i + 1 << "th is negative - we can only process non-negative volumes !" << endl;
+           return EXIT_FAILURE; 
+         }
+
+     }
+       // -----------------------------------
+       // Start processing
+
        try
        {
          if (verbose) std::cerr << "Starting preprocessing ..." << std::endl;

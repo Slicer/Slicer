@@ -74,7 +74,7 @@ namespace eval EMSegmenterPreProcessingTcl {
             return 1
         }
 
-        $preGUI DefineCheckButton "Is the Atlas aligned to the image ?" 0 $atlasAlignedFlagID 
+        $preGUI DefineCheckButton "Is Atlas aligned to the image ?" 0 $atlasAlignedFlagID 
         $preGUI DefineCheckButton "Are the input scans skull stripped ?" 0 $skullStrippedFlagID  
         $preGUI DefineVolumeMenuButton "Define ICC mask of the atlas ?" 0 $iccMaskSelectID
         $preGUI DefineCheckButton "Are the input scans image inhomogeneity corrected ?" 0 $inhomogeneityCorrectionFlagID
@@ -114,7 +114,7 @@ namespace eval EMSegmenterPreProcessingTcl {
           set iccMaskVTKID [GetVolumeMenuButtonValueFromMRML $iccMaskSelectID ] 
           set inhomogeneityCorrectionFlag [GetCheckButtonValueFromMRML $inhomogeneityCorrectionFlagID ]
 
-          puts "==>Setting $atlasAlignedFlag $skullStrippedFlag $iccMaskVTKID $inhomogeneityCorrectionFlag"
+          puts "==> Preprocessing Setting: $atlasAlignedFlag $skullStrippedFlag $iccMaskVTKID $inhomogeneityCorrectionFlag"
 
           if { ($atlasAlignedFlag == 0) && ($skullStrippedFlag == 1) } {
              PrintError "Run: We currently cannot align the atlas to skull stripped image" 

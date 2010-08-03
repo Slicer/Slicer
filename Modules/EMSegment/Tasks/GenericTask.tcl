@@ -111,6 +111,7 @@ namespace eval EMSegmenterPreProcessingTcl {
        puts stderr "ERROR: EMSegmenterPreProcessingTcl::${TEXT}"
     }
 
+
     # update subjectNode with new volumes - and delete the old ones 
     proc UpdateSubjectNode { newSubjectVolumeNodeList } {
     variable subjectNode
@@ -281,24 +282,24 @@ namespace eval EMSegmenterPreProcessingTcl {
       $preGUI DefineTextLabel "No preprocessing defined for this task!" 0 
     }
 
-    # ----------------------------------------------------------------
+   # ----------------------------------------------------------------
     # Make Sure that input volumes all have the same resolution 
     # from  StartPreprocessingTargetToTargetRegistration
     # ----------------------------------------------------------------
     proc RegisterInputImages { inputTargetNode fixedTargetImageIndex } {
         variable workingDN
         variable mrmlManager
-    variable LOGIC
+        variable LOGIC
         variable SCENE
 
        puts "=========================================="
-       puts "== Register Input Images"
+       puts "== Register Input Images --"
        puts "=========================================="
        # ----------------------------------------------------------------
        # set up rigid registration
        set alignedTarget [ $workingDN GetAlignedTargetNode]
        if { $alignedTarget == "" } {
-      # input scan does not have to be aligned 
+          # input scan does not have to be aligned 
           set alignedTarget [ $mrmlManager CloneTargetNode $inputTargetNode "Aligned"]
           $workingDN SetAlignedTargetNodeID [$alignedTarget GetID]
        } else  {
@@ -330,7 +331,6 @@ namespace eval EMSegmenterPreProcessingTcl {
               return 1
            }
        }
-
        set fixedVolumeNode  $outputVolumeNode($fixedTargetImageIndex)
        set fixedImageData   $outputVolumeData($fixedTargetImageIndex)
  
@@ -341,7 +341,7 @@ namespace eval EMSegmenterPreProcessingTcl {
        } else {
          puts "===> Skipping Registration of Target To Target "
        }
-
+   
        for { set i  0 } {$i < [$alignedTarget GetNumberOfVolumes] } { incr i } {
           if  { $i == $fixedTargetImageIndex } {
             continue;
@@ -394,6 +394,7 @@ namespace eval EMSegmenterPreProcessingTcl {
        return 0
     }
 
+
     #------------------------------------------------------
     # from  StartPreprocessingTargetToTargetRegistration
     # if alignFlag = 0 then it simply writes over the results 
@@ -427,7 +428,7 @@ namespace eval EMSegmenterPreProcessingTcl {
         PrintError "RegisterAtlas: Fixed image is null, skipping registration"
         return 1;
     }
-
+    
 
        # ----------------------------------------------------------------
        # Make Sure that atlas volumes all have the same resolution as input
@@ -508,26 +509,276 @@ namespace eval EMSegmenterPreProcessingTcl {
     return 0
     }
 
-    #------------------------------------------------------
-    # returns transformation when no error occurs 
-    proc BRAINSRegistration { fixedVolumeNode movingVolumeNode outVolumeNode backgroundLevel RegistrationType fastFlag} {
+
+    # returns transformation when no error occurs
+    # now call commandline directly  
+   
+    proc BRAINSResample { inputVolumeNode referenceVolumeNode outVolumeNode transformationNode backgroundLevel } {
        variable SCENE
-       variable LOGIC 
-       puts "=========================================="
-       puts "== Image Alignment: $RegistrationType "
-       puts "=========================================="
+
+       set  ValueList ""
+
+       if { $inputVolumeNode == "" || [$inputVolumeNode GetImageData] == "" } {
+           PrintError "BRAINSResample: volume node to be warped is not correctly defined" 
+           return 1
+       } 
+
+       if { $referenceVolumeNode == "" || [$referenceVolumeNode GetImageData] == "" } {
+           PrintError "BRAINSResample: reference image node is not correctly defined" 
+           return 1
+       } 
+
+       if { $transformationNode == "" } {
+               PrintError "BRAINSResample: transformation node not correctly defined" 
+           return 1
+       }
+
+       if { $outVolumeNode == "" } {
+           PrintError "BRAINSResample: output volume node not correctly defined" 
+           return 1
+       } 
+       
+       lappend ValueList "Float  defaultValue  $backgroundLevel"
+   
+       set referenceVolume [$referenceVolumeNode GetImageData]
+       set scalarType [$referenceVolume GetScalarTypeAsString] 
+       switch -exact "$scalarType" {
+           "bit" {   lappend ValueList "String pixelType binary"   }
+           "unsigned char" { lappend ValueList "String pixelType uchar"  }
+           "unsigned short" { lappend ValueList "String pixelType ushort"  }
+           "unsigned int" { lappend ValueList "String pixelType uint"   }
+           "short" -
+           "int" - 
+           "float" { lappend ValueList "String pixelType $scalarType"  }
+           default {
+           PrintError "BRAINSResample: cannot resample a volume of type $scalarType" 
+           return 1
+           }
+       }
+  
+    lappend ValueList "String interpolationMode Linear" 
+
+       # Start calling function 
        set module ""
+
        foreach gui [vtkCommandLineModuleGUI ListInstances] {
-          if { [$gui GetGUIName] == "BRAINSFit" } {
+          if { [$gui GetGUIName] == "BRAINSResample" } {
             set module $gui
-        break 
+            break 
           }
         }
         if { $module == "" } {
-          PrintError "AlignInputImages: Command line module 'BRAINSFit' is missing"
-          return ""
+        return [ BRAINSResampleCLI $inputVolumeNode $referenceVolumeNode $outVolumeNode $transformationNode "$ValueList" ]
         }
+
+       lappend  ValueList "String inputVolume [ $inputVolumeNode GetID]" 
+       lappend ValueList  "String referenceVolume  [ $referenceVolumeNode  GetID]" 
+       lappend ValueList  "String warpTransform  [ $transformationNode  GetID]"
+       lappend ValueList  "String outputVolume [ $outVolumeNode  GetID]"
+
+    puts "=========================================="
+    puts "== Resample Image"
+    puts "=========================================="
       
+        $module Enter
+      
+        set cmdNode [$::slicer3::MRMLScene CreateNodeByClass vtkMRMLCommandLineModuleNode]
+        $SCENE AddNode $cmdNode
+        $cmdNode SetModuleDescription "BRAINSResample"
+        $module SetCommandLineModuleNode $cmdNode     
+        [$module GetLogic] SetCommandLineModuleNode $cmdNode  
+    
+    foreach ATT $ValueList {
+        eval $cmdNode SetParameterAs[lindex $ATT 0] "[lindex $ATT 1]" "[lindex $ATT 2]" 
+    }
+
+       # Filter options - just set it here to make sure that if default values are changed this still works as it supposed to 
+      
+        [$module GetLogic] LazyEvaluateModuleTarget $cmdNode 
+        [$module GetLogic] ApplyAndWait $cmdNode
+        # Clean Up 
+        DeleteCommandLine $cmdNode 
+        $module Exit
+
+        return 0
+    }
+
+    proc BRAINSResampleCLI { inputVolumeNode referenceVolumeNode outVolumeNode transformationNode  ValueList } {
+       variable SCENE
+       puts "=========================================="
+       puts "== Resample Image CLI"
+       puts "=========================================="
+    
+       set PLUGINS_DIR "$::env(Slicer3_HOME)/lib/Slicer3/Plugins"
+       set CMD "${PLUGINS_DIR}/BRAINSResample "
+
+       set tmpFileName [WriteImageDataToTemporaryDir $inputVolumeNode ]
+       set RemoveFiles "$tmpFileName"
+       if { $tmpFileName == "" } {
+        return 1
+       }
+       set CMD "$CMD --inputVolume $tmpFileName" 
+
+       set tmpFileName [WriteImageDataToTemporaryDir $referenceVolumeNode ]
+       set RemoveFiles "$RemoveFiles $tmpFileName"
+       if { $tmpFileName == "" } { return 1 }
+       set CMD "$CMD --referenceVolume $tmpFileName" 
+
+       set tmpFileName [WriteTransformToTemporaryDir $transformationNode ]
+       set RemoveFiles "$RemoveFiles $tmpFileName"
+       if { $tmpFileName == "" } { return 1 }
+       set CMD "$CMD --warpTransform $tmpFileName" 
+
+       set outVolumeFileName [ CreateTemporaryFileName  $outVolumeNode ]
+       if { $outVolumeFileName == "" } { return 1 }
+       set CMD "$CMD --outputVolume $outVolumeFileName" 
+
+       foreach ATT $ValueList {
+       set CMD "$CMD --[lindex $ATT 1] [lindex $ATT 2]" 
+       }
+
+       puts "Executing $CMD" 
+       catch { eval exec $CMD } errmsg
+       puts "$errmsg"
+       
+       # Write results back to scene 
+       $::slicer3::ApplicationLogic RequestReadData [$outVolumeNode GetID] $outVolumeFileName 0 1  
+
+       WaitForDataToBeRead
+
+       foreach NAME $RemoveFiles {
+       file delete -force  $NAME 
+       }
+
+       return 0
+    }
+
+
+
+    proc WaitForDataToBeRead { } {
+    variable LOGIC
+        puts "Size of ReadDataQueue: $::slicer3::ApplicationLogic GetReadDataQueueSize [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
+    set i 20
+    while { [$::slicer3::ApplicationLogic GetReadDataQueueSize] && $i} {
+        $LOGIC PrintText "Waiting for data to be read... [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
+        incr i -1 
+            update
+            after 1000      
+        }
+        if { $i <= 0 } {
+            $LOGIC PrintText "Error: timeout waiting for data to be read"
+        }
+    }
+
+    proc DeleteCommandLine {clmNode } {
+       variable LOGIC
+      # Wait for jobs to finish
+      set waiting 1
+      set needToWait { "Idle" "Scheduled" "Running" }
+
+      while {$waiting} {
+        puts "Waiting for task..."
+        set waiting 0
+        set status [$clmNode GetStatusString]
+      $LOGIC PrintText  "[$clmNode GetName] $status"
+        if { [lsearch $needToWait $status] != -1 } {
+        set waiting 1
+            after 250
+    }
+      }
+
+     WaitForDataToBeRead
+      $clmNode Delete
+    }
+
+    proc Run { } {
+      puts "=========================================="
+      puts "== Preprocess Data"
+      puts "=========================================="
+      if {[InitPreProcessing]} { return 1}
+      # Simply sets the given atlas (inputAtlasNode) to the output atlas (outputAtlasNode) 
+      SkipAtlasRegistration
+      # Remove Transformations 
+      variable LOGIC 
+      return 0
+    }
+
+   #------------------------------------------------------
+   # returns transformation when no error occurs 
+   proc CreateTemporaryFileName { Node } {
+       variable GUI
+       if { [$Node GetClassName]  == "vtkMRMLScalarVolumeNode" } {
+        set EXT ".nrrd"
+       } else {
+       # Transform node - check also for bspline
+       set EXT ".mat"
+       }
+
+       return "[$GUI GetTemporaryDirectory ]/[expr int(rand()*10000)]_[$Node GetID]$EXT"
+    }
+
+   proc WriteImageDataToTemporaryDir { Node } {
+       variable GUI 
+       variable SCENE
+
+       set tmpName [ CreateTemporaryFileName $Node ]
+       if { $tmpName == "" } { return "" } 
+
+       set out [vtkMRMLVolumeArchetypeStorageNode New]
+       $out SetScene $SCENE 
+       $out SetFileName $tmpName 
+       set FLAG  [ $out WriteData $Node ]
+       $out Delete
+
+       if  { $FLAG == 0 } {
+           PrintError "WriteImageDataToTemporaryFileName: could not write file $tmpName"  
+       return ""
+       }
+
+       return "$tmpName"
+    }
+ 
+    proc WriteTransformToTemporaryDir { Node } {
+       variable GUI 
+       variable SCENE
+
+       set tmpName [ CreateTemporaryFileName $Node ]
+       if { $tmpName == "" } { return "" } 
+
+       set out [vtkMRMLTransformStorageNode New]
+       $out SetScene $SCENE 
+       $out SetFileName $tmpName 
+       puts "segFault in next line when running bsplines "
+       set FLAG  [ $out WriteData $Node ]
+       $out Delete
+       if  { $FLAG == 0 } {
+           PrintError "WriteTransformToTemporaryDir: could not write file $tmpName"  
+       return ""
+       }
+
+       return "$tmpName"
+    }
+ 
+
+    proc BRAINSRegistration { fixedVolumeNode movingVolumeNode outVolumeNode backgroundLevel RegistrationType fastFlag} {
+       variable SCENE
+       variable LOGIC 
+     
+       set module ""
+       foreach gui [vtkCommandLineModuleGUI ListInstances] {
+          if { [$gui GetGUIName] == "BRAINSFit" } {
+          set module $gui
+            break 
+          }
+        }
+        if { $module == "" } {
+        return [BRAINSRegistrationCLI $fixedVolumeNode $movingVolumeNode $outVolumeNode $backgroundLevel $RegistrationType $fastFlag ]
+        }
+     
+       puts "=========================================="
+       puts "== Image Alignment: $RegistrationType "
+       puts "=========================================="
+ 
         $module Enter
       
         set cmdNode [$::slicer3::MRMLScene CreateNodeByClass vtkMRMLCommandLineModuleNode]
@@ -568,7 +819,6 @@ namespace eval EMSegmenterPreProcessingTcl {
                   PrintError "AlignInputImages: output volume node not correctly defined" 
               return ""
           } 
-          # puts "SDFFSDFSDFS [ $outVolumeNode  GetID] [ $outVolumeNode  GetName] "
           $cmdNode SetParameterAsString "outputVolume"    [ $outVolumeNode  GetID]
       
           # Filter options - just set it here to make sure that if default values are changed this still works as it supposed to 
@@ -577,9 +827,11 @@ namespace eval EMSegmenterPreProcessingTcl {
           foreach TYPE $RegistrationType {
               $cmdNode SetParameterAsBool "use${TYPE}" 1
           }
+
           if {$fastFlag} {
-             $cmdNode SetParameterAsInt "numberOfIterations" 5
-          }
+             $cmdNode SetParameterAsInt "numberOfSamples" 1000
+          } 
+
       
           # Do no worry about fileExtensions=".mat" type="linear" reference="movingVolume"
               # these are set in vtkCommandLineModuleLogic.cxx automatically 
@@ -603,7 +855,7 @@ namespace eval EMSegmenterPreProcessingTcl {
           [$module GetLogic] ApplyAndWait $cmdNode
 
         # Clean Up 
-    DeleteCommandLine $cmdNode 
+        DeleteCommandLine $cmdNode 
         $module Exit
 
        # Remove Transformation from image
@@ -618,128 +870,134 @@ namespace eval EMSegmenterPreProcessingTcl {
         return [$SCENE GetNodeByID $transID]    
     }
 
-    proc BRAINSResample { inputVolumeNode referenceVolumeNode outVolumeNode transformationNode backgroundLevel } {
+   proc BRAINSRegistrationCLI { fixedVolumeNode movingVolumeNode outVolumeNode backgroundLevel RegistrationType fastFlag} {
        variable SCENE
+       variable LOGIC 
+       variable GUI
        puts "=========================================="
-       puts "== Resameple Image"
+       puts "== Image Alignment CommandLine: $RegistrationType "
        puts "=========================================="
-       set module ""
-       foreach gui [vtkCommandLineModuleGUI ListInstances] {
-          if { [$gui GetGUIName] == "BRAINSResample" } {
-            set module $gui
-        break 
+
+       set PLUGINS_DIR "$::env(Slicer3_HOME)/lib/Slicer3/Plugins"
+       set CMD "${PLUGINS_DIR}/BRAINSFit "
+
+       if { $fixedVolumeNode == "" || [$fixedVolumeNode GetImageData] == "" } {
+             PrintError "AlignInputImages: fixed volume node not correctly defined" 
+             return ""
+       } 
+
+       set tmpFileName [ WriteImageDataToTemporaryDir $fixedVolumeNode ]
+       set RemoveFiles "$tmpFileName" 
+
+    if { $tmpFileName == "" } {
+        return ""
+    }
+    set CMD "$CMD --fixedVolume $tmpFileName" 
+
+        if { $movingVolumeNode == "" || [$movingVolumeNode GetImageData] == "" } {
+             PrintError "AlignInputImages: moving volume node not correctly defined" 
+             return ""
+        } 
+
+        set tmpFileName [ WriteImageDataToTemporaryDir  $movingVolumeNode ]
+        set RemoveFiles "$RemoveFiles $tmpFileName" 
+
+    if { $tmpFileName == "" } { return 1 }
+    set CMD "$CMD --movingVolume $tmpFileName" 
+   
+        #  still define this
+        if { $outVolumeNode == "" } {
+               PrintError "AlignInputImages: output volume node not correctly defined" 
+              return ""
+        } 
+        set outVolumeFileName [ CreateTemporaryFileName  $outVolumeNode ]
+
+       if { $outVolumeFileName == "" } {
+       return ""
+       }
+       set CMD "$CMD --outputVolume $outVolumeFileName" 
+
+       # Do no worry about fileExtensions=".mat" type="linear" reference="movingVolume"
+       # these are set in vtkCommandLineModuleLogic.cxx automatically 
+          if { [lsearch $RegistrationType "BSpline"] > -1  } {
+              set transformNode [vtkMRMLBSplineTransformNode New]
+              $transformNode SetName "EMSegmentBSplineTransform"
+              $SCENE AddNode $transformNode
+              set transID  [$transformNode GetID]
+          set outTransformFileName [ CreateTemporaryFileName  $transformNode  ]
+              $transformNode Delete
+
+          set CMD "$CMD --bsplineTransform $outTransformFileName"
+
+          } else {
+              set transformNode [vtkMRMLLinearTransformNode New ]
+              $transformNode SetName "EMSegmentLinearTransform"
+              $SCENE AddNode $transformNode 
+              set transID  [$transformNode GetID]
+          set outTransformFileName [ CreateTemporaryFileName  $transformNode  ]
+
+              $transformNode Delete
+          set CMD "$CMD --outputTransform $outTransformFileName" 
           }
-        }
-        if { $module == "" } {
-          PrintError "BRAINSResample: Command line module 'BRAINSResample' is missing"
-          return 1
+
+        # -- still define this End
+      
+    # Write Parameters 
+        set fixedVolume [$fixedVolumeNode GetImageData]
+        set scalarType [$fixedVolume GetScalarTypeAsString]
+        switch -exact "$scalarType" {
+              "bit" {   set CMD "$CMD --outputVolumePixelType binary"  }
+              "unsigned char" {set CMD "$CMD --outputVolumePixelType uchar"  }
+              "unsigned short" {set CMD "$CMD --outputVolumePixelType ushort"  }
+              "unsigned int" {set CMD "$CMD --outputVolumePixelType uint"  }
+              "short" -
+              "int" - 
+              "float" { set CMD "$CMD --outputVolumePixelType $scalarType" }
+              default {
+                  PrintError "BRAINSRegistration: cannot resample a volume of type $scalarType" 
+                 return ""
+              }
         }
       
-        $module Enter
-      
-        set cmdNode [$::slicer3::MRMLScene CreateNodeByClass vtkMRMLCommandLineModuleNode]
-        $SCENE AddNode $cmdNode
-        $cmdNode SetModuleDescription "BRAINSResample"
-        $module SetCommandLineModuleNode $cmdNode     
-        [$module GetLogic] SetCommandLineModuleNode $cmdNode  
-    
-       if { $inputVolumeNode == "" || [$inputVolumeNode GetImageData] == "" } {
-               PrintError "BRAINSResample: volume node to be warped is not correctly defined" 
-           return 1
-       } 
-       $cmdNode SetParameterAsString "inputVolume"    [ $inputVolumeNode GetID]
-   
-       if { $referenceVolumeNode == "" || [$referenceVolumeNode GetImageData] == "" } {
-           PrintError "BRAINSResample: reference image node is not correctly defined" 
-           return 1
-       } 
-       $cmdNode SetParameterAsString "referenceVolume"   [ $referenceVolumeNode  GetID]
+        # Filter options - just set it here to make sure that if default values are changed this still works as it supposed to 
+        set CMD "$CMD --backgroundFillValue $backgroundLevel"
+        set CMD "$CMD --interpolationMode Linear"
+    # might be still wrong
+        foreach TYPE $RegistrationType {
+        set CMD "$CMD --use${TYPE}" 
+        }
+          
+       if {$fastFlag} {
+             set CMD "$CMD --numberOfSamples 10"
+       } else {
+             set CMD "$CMD --numberOfSamples 10000"
+       }
+
+       set CMD "$CMD --numberOfIterations 1500 --minimumStepSize 0.005 --translationScale 1000.0 --reproportionScale 1.0 --skewScale 1.0 --splineGridSize 14,10,12 --maxBSplineDisplacement 0.0 --maskInferiorCutOffFromCenter 1000.0  --maskProcessingMode NOMASK --fixedVolumeTimeIndex 0 --movingVolumeTimeIndex 0 --medianFilterSize 0,0,0 --numberOfHistogramBins 50 --numberOfMatchPoints 10 --useCachingOfBSplineWeightsMode ON --useExplicitPDFDerivativesMode AUTO --ROIAutoDilateSize 0.0 --relaxationFactor 0.5 --maximumStepSize 0.2 --failureExitCode -1 --debugNumberOfThreads -1 --debugLevel 0 --costFunctionConvergenceFactor 1e+9 --projectedGradientTolerance 1e-5"
+
+       puts "Executing $CMD" 
+       catch { eval exec $CMD } errmsg
+       puts "$errmsg"
        
-       if { $transformationNode == "" } {
-               PrintError "BRAINSResample: transformation node not correctly defined" 
-           return 1
+       # Remove Files 
+
+       # Write results back to scene 
+       $::slicer3::ApplicationLogic RequestReadData [$outVolumeNode GetID] $outVolumeFileName 0 1  
+       $::slicer3::ApplicationLogic RequestReadData $transID $outTransformFileName 0 1  
+
+       WaitForDataToBeRead
+
+       foreach NAME $RemoveFiles {
+       file delete -force  $NAME 
        }
-       variable LOGIC
-       $cmdNode SetParameterAsString "warpTransform"  [ $transformationNode  GetID]
-   
-       if { $outVolumeNode == "" } {
-               PrintError "BRAINSResample: output volume node not correctly defined" 
-           return 1
-       } 
-       $cmdNode SetParameterAsString "outputVolume"    [ $outVolumeNode  GetID]
-   
-       # Filter options - just set it here to make sure that if default values are changed this still works as it supposed to 
-       $cmdNode SetParameterAsFloat  "defaultValue"  $backgroundLevel
-   
-       set referenceVolume [$referenceVolumeNode GetImageData]
-       set scalarType [$referenceVolume GetScalarTypeAsString] 
-       switch -exact "$scalarType" {
-           "bit" {         $cmdNode SetParameterAsString "pixelType" "binary"  }
-           "unsigned char" {$cmdNode SetParameterAsString "pixelType" "uchar"  }
-           "unsigned short" {$cmdNode SetParameterAsString "pixelType" "ushort"  }
-           "unsigned int" {$cmdNode SetParameterAsString "pixelType" "uint"  }
-           "short" -
-           "int" - 
-           "float" { $cmdNode SetParameterAsString "pixelType" "$scalarType" }
-           default {
-           PrintError "BRAINSResample: cannot resample a volume of type $scalarType" 
-           return 1
-           }
-       }
-   
-        $cmdNode SetParameterAsString "interpolationMode" "Linear"      
-        [$module GetLogic] LazyEvaluateModuleTarget $cmdNode 
-        [$module GetLogic] ApplyAndWait $cmdNode
-        # Clean Up 
-    DeleteCommandLine $cmdNode 
-        $module Exit
 
-        return 0
+       # Remove Transformation from image
+       $movingVolumeNode SetAndObserveTransformNodeID "" 
+       $SCENE Edited
+
+       return [$SCENE GetNodeByID $transID]    
     }
 
-    proc DeleteCommandLine {clmNode } {
-       variable LOGIC
-      # Wait for jobs to finish
-      set waiting 1
-      set needToWait { "Idle" "Scheduled" "Running" }
-
-      while {$waiting} {
-        puts "Waiting for task..."
-        set waiting 0
-        set status [$clmNode GetStatusString]
-      $LOGIC PrintText  "[$clmNode GetName] $status"
-        if { [lsearch $needToWait $status] != -1 } {
-        set waiting 1
-            after 250
-    }
-      }
-
-      puts "$::slicer3::ApplicationLogic GetReadDataQueueSize [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
-      set i 20
-      while { [$::slicer3::ApplicationLogic GetReadDataQueueSize] && $i} {
-        $LOGIC PrintText "Waiting for data to be read... [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
-    incr i -1 
-    update
-        after 1000      
-      }
-      if { $i <= 0 } {
-          $LOGIC PrintText "Error: timeout waiting for data to be read"
-      }
-
-      $clmNode Delete
-    }
-
-    proc Run { } {
-      puts "=========================================="
-      puts "== Preprocess Data"
-      puts "=========================================="
-      if {[InitPreProcessing]} { return 1}
-      # Simply sets the given atlas (inputAtlasNode) to the output atlas (outputAtlasNode) 
-      SkipAtlasRegistration
-      # Remove Transformations 
-      variable LOGIC 
-      return 0
-    }
 
 }
  
