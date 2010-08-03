@@ -968,7 +968,7 @@ namespace eval EMSegmenterPreProcessingTcl {
         }
           
        if {$fastFlag} {
-             set CMD "$CMD --numberOfSamples 10"
+             set CMD "$CMD --numberOfSamples 1000"
        } else {
              set CMD "$CMD --numberOfSamples 10000"
        }
