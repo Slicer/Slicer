@@ -329,6 +329,7 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
     vtkMRMLDisplayNode *pnode = vtkMRMLDisplayNode::New();
     vtkSetAndObserveMRMLObjectMacro(pnode, dnode);
     this->DisplayNodes.push_back(pnode);
+    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, NULL);
     //pnode->Delete();
     /*
     if (this->IsA("vtkMRMLVolumeNode"))
