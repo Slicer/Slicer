@@ -1266,7 +1266,7 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
 
   set progressDialog [$this progressDialog]
   $progressDialog SetTitle "Working..."
-  $progressDialog SetMessageText "Displaying DICOM Tree for $directoryName..."
+  $progressDialog SetMessageText "Displaying DICOM Tree for {$directoryName}..."
   update
 
   set n 0 ;# serial number of node
