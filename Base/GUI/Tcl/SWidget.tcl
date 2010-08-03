@@ -160,9 +160,6 @@ if { [itcl::find class SWidget] == "" } {
 itcl::configbody SWidget::sliceGUI {
   set _renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
     
-  #set numberOfRenderers
-
-  #set _renderer [$_renderWidget GetRenderer]
   set _interactor [$_renderWidget GetRenderWindowInteractor]
   set _annotation [$_renderWidget GetCornerAnnotation]
   set _sliceNode [[$sliceGUI GetLogic] GetSliceNode]
