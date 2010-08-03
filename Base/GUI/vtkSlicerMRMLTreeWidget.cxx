@@ -201,8 +201,11 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
               }
             }
           }
-        if (node != NULL && node->IsA("vtkMRMLDisplayableNode") && !node->IsA("vtkMRMLVolumeNode") && !node->IsA("vtkMRMLTransformNode") &&
-          vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode() != NULL )
+        if (node != NULL && node->IsA("vtkMRMLDisplayableNode") && 
+            !node->IsA("vtkMRMLVolumeNode") && 
+            !node->IsA("vtkMRMLTransformNode") &&
+            vtkMRMLDisplayableNode::SafeDownCast(node)->GetNumberOfDisplayNodes() == 1 &&
+            vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode() != NULL )
           {
           sprintf(command, "ToggleVisibilityCallback {%s}", (const char *)callData);
           int index = this->ContextMenu->AddCheckButton("Visibility", this, command);
@@ -856,7 +859,8 @@ void vtkSlicerMRMLTreeWidget::UpdateNodeInTree(vtkMRMLNode *node)
 
   if (node->IsA("vtkMRMLDisplayableNode") && 
       !node->IsA("vtkMRMLVolumeNode") && 
-      !node->IsA("vtkMRMLTransformNode")) 
+      !node->IsA("vtkMRMLTransformNode")  &&
+      vtkMRMLDisplayableNode::SafeDownCast(node)->GetNumberOfDisplayNodes() == 1 )
     {
     vtkMRMLDisplayNode *display_node = 
       vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode();
