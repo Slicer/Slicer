@@ -612,7 +612,7 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   std::vector<int> supportedModes;
   vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes(supportedModes);
 
-  for (int k=0 ; k<supportedModes.size() ; k++)
+  for (unsigned int k=0 ; k<supportedModes.size() ; k++)
   {
     propNode->SetColorGlyphBy(supportedModes[k]);
     const char *tag = propNode->GetColorGlyphByAsString();
