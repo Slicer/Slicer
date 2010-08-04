@@ -561,7 +561,7 @@ int qSlicerLayoutManager::threeDViewCount()
 qMRMLThreeDView* qSlicerLayoutManager::threeDView(int id)
 {
   CTK_D(qSlicerLayoutManager);
-  if(id < 0 || id >= d->ThreeDViewList.size());
+  if(id < 0 || id >= d->ThreeDViewList.size())
     {
     return 0;
     }
