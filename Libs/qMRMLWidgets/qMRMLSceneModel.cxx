@@ -551,12 +551,12 @@ int qMRMLSceneModel::columnCount(const QModelIndex &_parent)const
 //------------------------------------------------------------------------------
 QVariant qMRMLSceneModel::data(const QModelIndex &_index, int role)const
 {
-  CTK_D(const qMRMLSceneModel);
+  //CTK_D(const qMRMLSceneModel);
   if (!_index.isValid())
     {
     return QVariant();
     }
-  Q_ASSERT(d->MRMLScene);
+  Q_ASSERT(ctk_d()->MRMLScene);
 
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(_index));
@@ -765,7 +765,7 @@ void qMRMLSceneModel::DoCallback(vtkObject* vtk_obj, unsigned long event,
 void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   Q_UNUSED(scene);
-  CTK_D(qMRMLSceneModel);
+  //CTK_D(qMRMLSceneModel);
   Q_ASSERT(scene != 0);
   Q_ASSERT(scene == d->MRMLScene);
   /*
