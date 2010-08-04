@@ -91,35 +91,35 @@ NAME* NAME::Instance;
 
 // TODO Would be great to have this macro working. that would avoid
 // to duplicate the following lines over and over
-//#define VTK_SINGLETON_GETINSTANCE_CXX(NAME)                            \
+//#define VTK_SINGLETON_GETINSTANCE_CXX(NAME)
 /* Up the reference count so it behaves like New */
-//NAME* NAME::New()                                                      \
-//{                                                                      \
-//  NAME* instance = Self::GetInstance();                                \
-//  instance->Register(0);                                               \
-//  return instance;                                                     \
-//}                                                                      \
-//NAME* NAME::GetInstance()                                              \
-//{                                                                      \
-//  if(!Self::Instance)                                                  \
-//    {                                                                  \
+//NAME* NAME::New()
+//{
+//  NAME* instance = Self::GetInstance();
+//  instance->Register(0);
+//  return instance;
+//}
+//NAME* NAME::GetInstance()
+//{
+//  if(!Self::Instance)
+//    {
     /* Try the factory first */
-//    Self::Instance = (NAME*)vtkObjectFactory::CreateInstance(#NAME);   \
-//                                                                       \
+//    Self::Instance = (NAME*)vtkObjectFactory::CreateInstance(#NAME);
+//
     /* if the factory did not provide one, then create it here*/
-//    if(!Self::Instance)                                                \
-//      {                                                                \
+//    if(!Self::Instance)
+//      {
       /* if the factory failed to create the object, */
       /* then destroy it now, as vtkDebugLeaks::ConstructClass */
       /* was called with "NAME", and not the real name of the class */
-//#ifdef VTK_DEBUG_LEAKS                                                 \
-//      vtkDebugLeaks::DestructClass(#NAME);                             \
-//#endif                                                                 \
-//      Self::Instance = new NAME;                                       \
-//      }                                                                \
-//    }                                                                  \
-//  return Self::Instance;                                               \
-//}                                                                      \
+//#ifdef VTK_DEBUG_LEAKS
+//      vtkDebugLeaks::DestructClass(#NAME);
+//#endif
+//      Self::Instance = new NAME;
+//      }
+//    }
+//  return Self::Instance;
+//}
 //vtkInstantiatorNewMacro(NAME);
 
 //----------------------------------------------------------------------------
