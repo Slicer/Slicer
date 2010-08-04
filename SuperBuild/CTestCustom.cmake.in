@@ -153,18 +153,17 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   # Mac - teem/src/nrrd/superset.c:433: warning: format '%d' expects type 'int', but argument 6 has type 'ptrdiff_t'
   "teem.src.nrrd.superset.c.*warning"
   
-  # Python
-  "Modules.zlib.gzio.*warning C4996"
+  # Python - Windows
   "Modules.zlib.gzio"
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
+  "Modules.audioop.c.*warning C4018"
   "Modules._multiprocessing.*warning"
+  # Python - Linux
   "dist.py.*UserWarning.*licence.*distribution option is deprecated"
-
-  # Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
   "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
   "Modules.(getpath|signalmodule).c.*warning: ignoring return value of.*declared with attribute warn_unused_result"
-  # Mac
+  # Python - Mac
   "ranlib: file:.*libpython2.6.a.*has no symbols"
   "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
   "python.Mac.Modules.(cf|Nav).*warning: (cast|unused)"
