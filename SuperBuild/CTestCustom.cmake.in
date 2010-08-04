@@ -158,7 +158,8 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules.zlib.gzio"
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
   "Modules._multiprocessing.*warning"
-  "dist.py.*UserWarning: 'licence' distribution option is deprecated; use 'license'"
+  "dist.py.*UserWarning.*licence.*distribution option is deprecated"
+
   # Linux
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
   "[Ii]nclude.(string|unicodeobject).h.*note: expected ‘const char *’ but argument is of type ‘unsigned char *’"
