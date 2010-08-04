@@ -228,8 +228,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::DoMRMLInteractionNodeCallba
   assert(event == vtkMRMLInteractionNode::InteractionModeChangedEvent);
 
   // vtkMRMLInteractionNode is expected to be source of the ModifiedEvent
-  vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(vtk_obj);
-  assert(interactionNode);
+  assert(vtkMRMLInteractionNode::SafeDownCast(vtk_obj));
 
   vtkMRMLAbstractDisplayableManager* self =
       reinterpret_cast<vtkMRMLAbstractDisplayableManager*>(client_data);
