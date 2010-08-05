@@ -568,7 +568,7 @@ namespace eval EMSegmenterPreProcessingTcl {
           }
         }
         if { $module == "" } {
-        return [ BRAINSResampleCLI $inputVolumeNode $referenceVolumeNode $outVolumeNode $transformationNode "$ValueList" ]
+           return [ BRAINSResampleCLI $inputVolumeNode $referenceVolumeNode $outVolumeNode $transformationNode "$ValueList" ]
         }
 
        lappend  ValueList "String inputVolume [ $inputVolumeNode GetID]" 
@@ -576,9 +576,9 @@ namespace eval EMSegmenterPreProcessingTcl {
        lappend ValueList  "String warpTransform  [ $transformationNode  GetID]"
        lappend ValueList  "String outputVolume [ $outVolumeNode  GetID]"
 
-    puts "=========================================="
-    puts "== Resample Image"
-    puts "=========================================="
+        puts "=========================================="
+        puts "== Resample Image"
+        puts "=========================================="
       
         $module Enter
       
@@ -612,19 +612,19 @@ namespace eval EMSegmenterPreProcessingTcl {
        set PLUGINS_DIR "$::env(Slicer3_HOME)/lib/Slicer3/Plugins"
        set CMD "${PLUGINS_DIR}/BRAINSResample "
 
-       set tmpFileName [WriteImageDataToTemporaryDir $inputVolumeNode ]
+       set tmpFileName [WriteDataToTemporaryDir $inputVolumeNode Volume ]
        set RemoveFiles "$tmpFileName"
        if { $tmpFileName == "" } {
         return 1
        }
        set CMD "$CMD --inputVolume $tmpFileName" 
 
-       set tmpFileName [WriteImageDataToTemporaryDir $referenceVolumeNode ]
+       set tmpFileName [WriteDataToTemporaryDir $referenceVolumeNode Volume ]
        set RemoveFiles "$RemoveFiles $tmpFileName"
        if { $tmpFileName == "" } { return 1 }
        set CMD "$CMD --referenceVolume $tmpFileName" 
 
-       set tmpFileName [WriteTransformToTemporaryDir $transformationNode ]
+       set tmpFileName [WriteDataToTemporaryDir $transformationNode Transform ]
        set RemoveFiles "$RemoveFiles $tmpFileName"
        if { $tmpFileName == "" } { return 1 }
        set CMD "$CMD --warpTransform $tmpFileName" 
@@ -634,21 +634,18 @@ namespace eval EMSegmenterPreProcessingTcl {
        set CMD "$CMD --outputVolume $outVolumeFileName" 
 
        foreach ATT $ValueList {
-       set CMD "$CMD --[lindex $ATT 1] [lindex $ATT 2]" 
+         set CMD "$CMD --[lindex $ATT 1] [lindex $ATT 2]" 
        }
 
        puts "Executing $CMD" 
        catch { eval exec $CMD } errmsg
        puts "$errmsg"
        
+    
        # Write results back to scene 
-       $::slicer3::ApplicationLogic RequestReadData [$outVolumeNode GetID] $outVolumeFileName 0 1  
-
-       WaitForDataToBeRead
-
-       foreach NAME $RemoveFiles {
-       file delete -force  $NAME 
-       }
+       # This does not work $::slicer3::ApplicationLogic RequestReadData [$outVolumeNode GetID] $outVolumeFileName 0 1  
+       ReadDataFromDisk $outVolumeNode $outVolumeFileName  Volume  
+       file delete -force $outVolumeFileName
 
        return 0
     }
@@ -656,14 +653,14 @@ namespace eval EMSegmenterPreProcessingTcl {
 
 
     proc WaitForDataToBeRead { } {
-    variable LOGIC
+        variable LOGIC
         puts "Size of ReadDataQueue: $::slicer3::ApplicationLogic GetReadDataQueueSize [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
-    set i 20
-    while { [$::slicer3::ApplicationLogic GetReadDataQueueSize] && $i} {
-        $LOGIC PrintText "Waiting for data to be read... [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
-        incr i -1 
-            update
-            after 1000      
+        set i 20
+        while { [$::slicer3::ApplicationLogic GetReadDataQueueSize] && $i} {
+          $LOGIC PrintText "Waiting for data to be read... [$::slicer3::ApplicationLogic GetReadDataQueueSize]"
+           incr i -1 
+           update
+           after 1000      
         }
         if { $i <= 0 } {
             $LOGIC PrintText "Error: timeout waiting for data to be read"
@@ -717,48 +714,67 @@ namespace eval EMSegmenterPreProcessingTcl {
        return "[$GUI GetTemporaryDirectory ]/[expr int(rand()*10000)]_[$Node GetID]$EXT"
     }
 
-   proc WriteImageDataToTemporaryDir { Node } {
+    proc WriteDataToTemporaryDir { Node Type} {
        variable GUI 
        variable SCENE
 
        set tmpName [ CreateTemporaryFileName $Node ]
        if { $tmpName == "" } { return "" } 
 
+       if { "$Type" == "Volume" } {
        set out [vtkMRMLVolumeArchetypeStorageNode New]
+       } elseif { "$Type" == "Transform" } {
+           set out [ vtkMRMLTransformStorageNode New ]
+       } else {
+       PrintError "WriteDataToTemporaryDir: Unkown type $Type" 
+       return 0
+       }
+       
        $out SetScene $SCENE 
        $out SetFileName $tmpName 
        set FLAG  [ $out WriteData $Node ]
        $out Delete
-
        if  { $FLAG == 0 } {
-           PrintError "WriteImageDataToTemporaryFileName: could not write file $tmpName"  
+           PrintError "WriteDataToTemporaryDir: could not write file $tmpName"  
        return ""
        }
 
        return "$tmpName"
     }
  
-    proc WriteTransformToTemporaryDir { Node } {
+   proc ReadDataFromDisk { Node FileName Type } {
        variable GUI 
        variable SCENE
-
-       set tmpName [ CreateTemporaryFileName $Node ]
-       if { $tmpName == "" } { return "" } 
-
-       set out [vtkMRMLTransformStorageNode New]
-       $out SetScene $SCENE 
-       $out SetFileName $tmpName 
-       puts "segFault in next line when running bsplines "
-       set FLAG  [ $out WriteData $Node ]
-       $out Delete
-       if  { $FLAG == 0 } {
-           PrintError "WriteTransformToTemporaryDir: could not write file $tmpName"  
-       return ""
+       if { [file exists $FileName] == 0 } {
+       PrintError "ReadImageData: $FileName does not exist" 
+       return 0
        }
+       
+       # Load a scalar or vector volume node
+       # Need to maintain the original coordinate frame established by 
+       # the images sent to the execution model 
+       if { "$Type" == "Volume" } {
+       set dataReader [ vtkMRMLVolumeArchetypeStorageNode New ]
+       $dataReader  SetCenterImage 0
+       } elseif { "$Type" == "Transform" } {
+           set dataReader [ vtkMRMLTransformStorageNode New ]
+       } else {
+       PrintError "ReadImageData: Unkown type $Type" 
+       return 0
+       }
+    
+       $dataReader SetScene $SCENE 
+       $dataReader SetFileName "$FileName" 
+       set FLAG  [ $dataReader ReadData $Node ]
+       $dataReader Delete
 
-       return "$tmpName"
+       if  { $FLAG == 0 } {
+           PrintError "ReadDataFromFile : could not read file $FileName"  
+           return 0
+       }
+       return 1
     }
- 
+
 
     proc BRAINSRegistration { fixedVolumeNode movingVolumeNode outVolumeNode backgroundLevel RegistrationType fastFlag} {
        variable SCENE
@@ -886,7 +902,7 @@ namespace eval EMSegmenterPreProcessingTcl {
              return ""
        } 
 
-       set tmpFileName [ WriteImageDataToTemporaryDir $fixedVolumeNode ]
+       set tmpFileName [ WriteDataToTemporaryDir $fixedVolumeNode Volume ]
        set RemoveFiles "$tmpFileName" 
 
     if { $tmpFileName == "" } {
@@ -899,11 +915,11 @@ namespace eval EMSegmenterPreProcessingTcl {
              return ""
         } 
 
-        set tmpFileName [ WriteImageDataToTemporaryDir  $movingVolumeNode ]
+        set tmpFileName [ WriteDataToTemporaryDir  $movingVolumeNode Volume]
         set RemoveFiles "$RemoveFiles $tmpFileName" 
 
-    if { $tmpFileName == "" } { return 1 }
-    set CMD "$CMD --movingVolume $tmpFileName" 
+        if { $tmpFileName == "" } { return 1 }
+        set CMD "$CMD --movingVolume $tmpFileName" 
    
         #  still define this
         if { $outVolumeNode == "" } {
@@ -913,9 +929,11 @@ namespace eval EMSegmenterPreProcessingTcl {
         set outVolumeFileName [ CreateTemporaryFileName  $outVolumeNode ]
 
        if { $outVolumeFileName == "" } {
-       return ""
+           return ""
        }
        set CMD "$CMD --outputVolume $outVolumeFileName" 
+
+       set RemoveFiles "$RemoveFiles  $outVolumeFileName"
 
        # Do no worry about fileExtensions=".mat" type="linear" reference="movingVolume"
        # these are set in vtkCommandLineModuleLogic.cxx automatically 
@@ -924,21 +942,22 @@ namespace eval EMSegmenterPreProcessingTcl {
               $transformNode SetName "EMSegmentBSplineTransform"
               $SCENE AddNode $transformNode
               set transID  [$transformNode GetID]
-          set outTransformFileName [ CreateTemporaryFileName  $transformNode  ]
+              set outTransformFileName [ CreateTemporaryFileName  $transformNode  ]
               $transformNode Delete
 
-          set CMD "$CMD --bsplineTransform $outTransformFileName"
+              set CMD "$CMD --bsplineTransform $outTransformFileName"
 
           } else {
               set transformNode [vtkMRMLLinearTransformNode New ]
               $transformNode SetName "EMSegmentLinearTransform"
               $SCENE AddNode $transformNode 
               set transID  [$transformNode GetID]
-          set outTransformFileName [ CreateTemporaryFileName  $transformNode  ]
+              set outTransformFileName [ CreateTemporaryFileName  $transformNode  ]
 
               $transformNode Delete
-          set CMD "$CMD --outputTransform $outTransformFileName" 
+              set CMD "$CMD --outputTransform $outTransformFileName" 
           }
+       set RemoveFiles "$RemoveFiles $outTransformFileName"
 
         # -- still define this End
       
@@ -964,7 +983,7 @@ namespace eval EMSegmenterPreProcessingTcl {
         set CMD "$CMD --interpolationMode Linear"
     # might be still wrong
         foreach TYPE $RegistrationType {
-        set CMD "$CMD --use${TYPE}" 
+           set CMD "$CMD --use${TYPE}" 
         }
           
        if {$fastFlag} {
@@ -979,16 +998,21 @@ namespace eval EMSegmenterPreProcessingTcl {
        catch { eval exec $CMD } errmsg
        puts "$errmsg"
        
-       # Remove Files 
-
-       # Write results back to scene 
-       $::slicer3::ApplicationLogic RequestReadData [$outVolumeNode GetID] $outVolumeFileName 0 1  
-       $::slicer3::ApplicationLogic RequestReadData $transID $outTransformFileName 0 1  
-
-       WaitForDataToBeRead
-
+  
+       # Read results back to scene 
+        # $::slicer3::ApplicationLogic RequestReadData [$outVolumeNode GetID] $outVolumeFileName 0 1 
+       # Cannot do it that way bc vtkSlicerApplicationLogic needs a cachemanager, which is defined through vtkSlicerCacheAndDataIOManagerGUI.cxx 
+       # instead
+       # ReadDataFromDisk $outVolumeNode /home/pohl/Slicer3pohl/463_vtkMRMLScalarVolumeNode17.nrrd Volume  
+       ReadDataFromDisk $outVolumeNode $outVolumeFileName Volume  
+ 
+       # ReadDataFromDisk [$SCENE GetNodeByID $transID] /home/pohl/Slicer3pohl/EMSegmentLinearTransform.mat  Transform 
+       ReadDataFromDisk [$SCENE GetNodeByID $transID] $outTransformFileName Transform 
+ 
+       # $LOGIC PrintText "==> [[$SCENE GetNodeByID $transID]  Print]" 
+       
        foreach NAME $RemoveFiles {
-       file delete -force  $NAME 
+          file delete -force  $NAME 
        }
 
        # Remove Transformation from image

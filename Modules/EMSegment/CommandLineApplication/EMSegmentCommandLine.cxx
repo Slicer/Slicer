@@ -1042,6 +1042,7 @@ int main(int argc, char** argv)
 
        tgVtkDefineMacro(appLogic,vtkSlicerApplicationLogic);
        app->Script ("namespace eval slicer3 set ApplicationLogic %s", appLogicTcl.c_str());
+       appLogic->SetAndObserveMRMLScene(mrmlScene);
 
        std::string emLogicTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,emLogic));
        std::string emMRMLManagerTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,emMRMLManager));
@@ -1122,9 +1123,12 @@ int main(int argc, char** argv)
        {
          throw std::runtime_error("ERROR: failed to run segmentation.");
        }
-       
+
+     appLogic->Delete();
+     appLogic = NULL;  
      app->Delete();
      app = NULL;
+
        
        }
     else 
