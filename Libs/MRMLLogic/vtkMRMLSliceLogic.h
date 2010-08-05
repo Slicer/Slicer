@@ -248,6 +248,11 @@ public:
   ///  (fits to first non-null layer)
   void FitSliceToAll(int width = -1, int height = -1);
 
+  ///
+  /// adjust the node's field of view to match the FOV
+  /// the value fov will be applied to the smallest slice window dimension
+  void FitFOVToBackground(double fov);
+
   /// 
   /// Get the spacing of the volume, transformed to slice space 
   /// - to be used, for example, to set the slice increment for stepping a single 

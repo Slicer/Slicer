@@ -1590,6 +1590,75 @@ void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSliceLogic::FitFOVToBackground(double fov)
+{
+  // get backgroundNode  and imagedata
+  vtkMRMLScalarVolumeNode* backgroundNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID(
+        this->SliceCompositeNode->GetBackgroundVolumeID() ));
+  vtkImageData *backgroundImage =
+    backgroundNode ? backgroundNode->GetImageData() : 0;
+  if (!backgroundImage)
+    {
+    return;
+    }
+  // get viewer's width and height. we may be using a LightBox
+  // display, so base width and height on renderer0 in the SliceViewer.
+  int width = this->SliceViewSize[0];
+  int height = this->SliceViewSize[1];
+
+  int dimensions[3];
+  double rasDimensions[4];
+  double doubleDimensions[4];
+  vtkSmartPointer<vtkMatrix4x4> ijkToRAS =
+    vtkSmartPointer<vtkMatrix4x4>::New();
+
+  // what are the actual dimensions of the imagedata?
+  backgroundImage->GetDimensions(dimensions);
+  doubleDimensions[0] = static_cast<double>(dimensions[0]);
+  doubleDimensions[1] = static_cast<double>(dimensions[1]);
+  doubleDimensions[2] = static_cast<double>(dimensions[2]);
+  doubleDimensions[3] = 0.0;
+  backgroundNode->GetIJKToRASMatrix(ijkToRAS);
+  ijkToRAS->MultiplyPoint(doubleDimensions, rasDimensions);
+
+  // and what are their slice dimensions?
+  vtkSmartPointer<vtkMatrix4x4> rasToSlice =
+    vtkSmartPointer<vtkMatrix4x4>::New();
+  double sliceDimensions[4];
+  rasToSlice->DeepCopy(this->SliceNode->GetSliceToRAS());
+  rasToSlice->SetElement(0, 3, 0.0);
+  rasToSlice->SetElement(1, 3, 0.0);
+  rasToSlice->SetElement(2, 3, 0.0);
+  rasToSlice->Invert();
+  rasToSlice->MultiplyPoint(rasDimensions, sliceDimensions);
+
+  double fovh, fovv;
+  // which is bigger, slice viewer width or height?
+  // assign user-specified fov to smaller slice window
+  // dimension
+  if ( width < height )
+    {
+    fovh = fov;
+    fovv = fov * height/width;
+    }
+  else
+    {
+    fovv = fov;
+    fovh = fov * width/height;
+    }
+  // we want to compute the slice dimensions of the
+  // user-specified fov (note that the slice node's z field of
+  // view is NOT changed)
+  this->SliceNode->SetFieldOfView(fovh, fovv, this->SliceNode->GetFieldOfView()[2]);
+
+  vtkSmartPointer<vtkMatrix4x4> sliceToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  sliceToRAS->DeepCopy(this->SliceNode->GetSliceToRAS());
+  this->SliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
+}
+
+//----------------------------------------------------------------------------
 double *vtkMRMLSliceLogic::GetLowestVolumeSliceSpacing()
 {
   vtkMRMLVolumeNode *volumeNode;
