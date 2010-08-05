@@ -336,7 +336,8 @@ void qSlicerLayoutManagerPrivate::onSceneImportedEvent()
   Q_ASSERT(this->MRMLLayoutNode);
 
   // Restore saved view arrangement
-  this->MRMLLayoutNode->SetViewArrangement(this->SavedCurrentViewArrangement);
+  //this->MRMLLayoutNode->SetViewArrangement(this->SavedCurrentViewArrangement);
+  this->onLayoutNodeModifiedEvent(this->MRMLLayoutNode);
 }
 
 //------------------------------------------------------------------------------
