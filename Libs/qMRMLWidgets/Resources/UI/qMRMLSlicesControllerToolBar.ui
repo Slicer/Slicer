@@ -395,7 +395,7 @@
    <sender>actionCrosshairNavigator</sender>
    <signal>toggled(bool)</signal>
    <receiver>qMRMLSlicesControllerToolBar</receiver>
-   <slot>setNavigatorVisible(bool)</slot>
+   <slot>setNavigatorEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -480,7 +480,7 @@
   <slot>setLabelGridVisible(bool)</slot>
   <slot>fitToWindow()</slot>
   <slot>setSliceIntersectionVisible(bool)</slot>
-  <slot>setNavigatorVisible(bool)</slot>
+  <slot>setNavigatorEnabled(bool)</slot>
   <slot>toggleBackgroundForeground()</slot>
   <slot>showBackground()</slot>
   <slot>showForeground()</slot>

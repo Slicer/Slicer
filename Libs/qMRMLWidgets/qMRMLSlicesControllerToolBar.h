@@ -2,6 +2,7 @@
 #define __qMRMLSlicesControllerToolBar_h
 
 // Qt includes
+#include <QSignalMapper>
 #include <QToolBar>
 
 // CTK includes
@@ -32,21 +33,29 @@ public slots:
   void setBackgroundGridVisible(bool visible);
   void setLabelGridVisible(bool visible);
   void fitToWindow();
-  void setNavigatorVisible(bool visible);
+  void setNavigatorEnabled(bool enable);
   void setSliceIntersectionVisible(bool visible);
   void toggleBackgroundForeground();
   void showBackground();
   void showForeground();
-
-protected slots:
-  void onAnnotationTriggered(QAction*);
-  void onCompositingActionTriggered(QAction*);
-  void onCrosshairActionTriggered(QAction*);
-  void onCrosshairThicknessActionTriggered(QAction*);
-  void onSpatialUnitsActionTriggered(QAction*);
+  void setForegroundOpacity(double value);
+  void setAnnotationMode(int mode);
+  void setCompositing(int mode);
+  void setCrosshairMode(int mode);
+  void setCrosshairThickness(int mode);
+  void setAnnotationSpace(int mode);
 
 private:
   CTK_DECLARE_PRIVATE(qMRMLSlicesControllerToolBar);
+};
+
+class qMRMLActionSignalMapper: public QSignalMapper
+{
+  Q_OBJECT
+public:
+  qMRMLActionSignalMapper(QObject* parent=0);
+public slots:
+  void map(QAction* sender);
 };
 
 #endif
