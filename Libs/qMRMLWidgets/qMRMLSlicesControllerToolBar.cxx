@@ -23,9 +23,11 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------
@@ -56,8 +58,12 @@ public:
   virtual void setupUi(QWidget* widget);
   vtkSmartPointer<vtkCollection> saveSliceCompositeNodes()const;
   vtkSmartPointer<vtkCollection> saveCrosshairNodes()const;
+  vtkSmartPointer<vtkCollection> saveSliceNodes()const;
+  vtkMRMLSliceLogic* sliceLogicByName(const QString& name)const;
 
   vtkMRMLScene*            MRMLScene;
+  vtkSmartPointer<vtkCollection> MRMLSliceLogics;
+
   ctkSliderSpinBoxWidget*  LabelOpacitySlider;
   QToolButton*             LabelOpacityToggleButton;
   double                   LastLabelOpacity;
@@ -115,6 +121,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
 
   // Fit to Window
   p->addAction(actionFit_to_Window);
+  actionFit_to_Window->setEnabled(this->MRMLSliceLogics.GetPointer() != 0);
 
   // Label Opacity
   QWidget* labelOpacityWidget = new QWidget(p);
@@ -304,7 +311,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   redSliceFOVLayout->setContentsMargins(0,0,0,0);
   redSliceFOVLayout->addWidget(new QLabel("Red slice FOV:", p));
   this->RedSliceFOVSpinBox = new QDoubleSpinBox(p);
-  this->RedSliceFOVSpinBox->setRange(0., 1000.);
+  this->RedSliceFOVSpinBox->setRange(0., 10000.);
   this->RedSliceFOVSpinBox->setValue(250.);
   QObject::connect(this->RedSliceFOVSpinBox, SIGNAL(valueChanged(double)),
                    p, SLOT(setRedSliceFOV(double)));
@@ -321,7 +328,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   yellowSliceFOVLayout->setContentsMargins(0,0,0,0);
   yellowSliceFOVLayout->addWidget(new QLabel("Yellow slice FOV:", p));
   this->YellowSliceFOVSpinBox = new QDoubleSpinBox(p);
-  this->YellowSliceFOVSpinBox->setRange(0., 1000.);
+  this->YellowSliceFOVSpinBox->setRange(0., 10000.);
   this->YellowSliceFOVSpinBox->setValue(250.);
   QObject::connect(this->YellowSliceFOVSpinBox, SIGNAL(valueChanged(double)),
                    p, SLOT(setYellowSliceFOV(double)));
@@ -338,7 +345,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   greenSliceFOVLayout->setContentsMargins(0,0,0,0);
   greenSliceFOVLayout->addWidget(new QLabel("Green slice FOV:", p));
   this->GreenSliceFOVSpinBox = new QDoubleSpinBox(p);
-  this->GreenSliceFOVSpinBox->setRange(0., 1000.);
+  this->GreenSliceFOVSpinBox->setRange(0., 10000.);
   this->GreenSliceFOVSpinBox->setValue(250.);
   QObject::connect(this->GreenSliceFOVSpinBox, SIGNAL(valueChanged(double)),
                    p, SLOT(setGreenSliceFOV(double)));
@@ -407,6 +414,41 @@ vtkSmartPointer<vtkCollection> qMRMLSlicesControllerToolBarPrivate::saveCrosshai
     }
   return nodes;
 }
+// --------------------------------------------------------------------------
+vtkSmartPointer<vtkCollection> qMRMLSlicesControllerToolBarPrivate::saveSliceNodes()const
+{
+  vtkSmartPointer<vtkCollection> nodes;
+  if (this->MRMLScene)
+    {
+    nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLSliceNodes"));
+    }
+  if (nodes)
+    {
+    this->MRMLScene->SaveStateForUndo(nodes);
+    }
+  return nodes;
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLSliceLogic* qMRMLSlicesControllerToolBarPrivate::sliceLogicByName(const QString& name)const
+{
+  if (!this->MRMLSliceLogics.GetPointer())
+    {
+    return 0;
+    }
+  vtkMRMLSliceLogic* logic;
+  vtkCollectionSimpleIterator it;
+  for (this->MRMLSliceLogics->InitTraversal(it);
+       (logic = vtkMRMLSliceLogic::SafeDownCast(
+         this->MRMLSliceLogics->GetNextItemAsObject(it)));)
+    {
+    if (name == logic->GetName())
+      {
+      return logic;
+      }
+    }
+  return 0;
+}
 
 // --------------------------------------------------------------------------
 // qMRMLSlicesControllerToolBar methods
@@ -417,6 +459,13 @@ qMRMLSlicesControllerToolBar::qMRMLSlicesControllerToolBar(QWidget* _parent) : S
   CTK_INIT_PRIVATE(qMRMLSlicesControllerToolBar);
   CTK_D(qMRMLSlicesControllerToolBar);
   d->setupUi(this);
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLScene* qMRMLSlicesControllerToolBar::mrmlScene()const
+{
+  CTK_D(const qMRMLSlicesControllerToolBar);
+  return d->MRMLScene;
 }
 
 // --------------------------------------------------------------------------
@@ -433,10 +482,11 @@ void qMRMLSlicesControllerToolBar::setMRMLScene(vtkMRMLScene* scene)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSlicesControllerToolBar::mrmlScene()const
+void qMRMLSlicesControllerToolBar::setMRMLSliceLogics(vtkCollection* logics)
 {
-  CTK_D(const qMRMLSlicesControllerToolBar);
-  return d->MRMLScene;
+  CTK_D(qMRMLSlicesControllerToolBar);
+  d->MRMLSliceLogics = logics;
+  d->actionFit_to_Window->setEnabled(logics != 0);
 }
 
 // --------------------------------------------------------------------------
@@ -481,13 +531,16 @@ void qMRMLSlicesControllerToolBar::onMRMLSceneChanged(
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::connectNode(vtkMRMLNode* node)
 {
+  CTK_D(qMRMLSlicesControllerToolBar);
   vtkMRMLSliceCompositeNode* compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
   vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
   if (compositeNode)
     {
     // only listen to the red slice composite node
-    if (QString(compositeNode->GetLayoutName()) == "Red")
+    vtkMRMLSliceLogic* redSliceLogic = d->sliceLogicByName("Red");
+    if (redSliceLogic &&
+        redSliceLogic->GetSliceCompositeNode() == compositeNode)
       {
       qvtkReconnect(compositeNode, vtkCommand::ModifiedEvent,
                     this, SLOT(updateFromCompositeNode(vtkObject*)));
@@ -570,15 +623,15 @@ void qMRMLSlicesControllerToolBar::updateFromSliceNode(vtkObject* node)
   QString layoutName = QString(snode->GetLayoutName());
   if (layoutName == "Red")
     {
-    d->RedSliceFOVSpinBox->setValue(fov[0] > fov[1] ? fov[0] : fov[1]);
+    d->RedSliceFOVSpinBox->setValue(fov[0] < fov[1] ? fov[0] : fov[1]);
     }
   else if(layoutName == "Yellow")
     {
-    d->YellowSliceFOVSpinBox->setValue(fov[0] > fov[1] ? fov[0] : fov[1]);
+    d->YellowSliceFOVSpinBox->setValue(fov[0] < fov[1] ? fov[0] : fov[1]);
     }
   else if (layoutName == "Green")
     {
-    d->GreenSliceFOVSpinBox->setValue(fov[0] > fov[1] ? fov[0] : fov[1]);
+    d->GreenSliceFOVSpinBox->setValue(fov[0] < fov[1] ? fov[0] : fov[1]);
     }
 }
 
@@ -675,7 +728,25 @@ void qMRMLSlicesControllerToolBar::setLabelGridVisible(bool visible)
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::fitToWindow()
 {
+  CTK_D(qMRMLSlicesControllerToolBar);
+  if (!d->MRMLSliceLogics.GetPointer())
+    {
+    return;
+    }
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceNodes();
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
 
+  vtkMRMLSliceLogic* logic;
+  vtkCollectionSimpleIterator it;
+  for(d->MRMLSliceLogics->InitTraversal(it);
+      (logic = vtkMRMLSliceLogic::SafeDownCast(
+        d->MRMLSliceLogics->GetNextItemAsObject(it)));)
+    {
+    logic->FitSliceToAll();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -878,17 +949,35 @@ void qMRMLSlicesControllerToolBar::setAnnotationSpace(int spatialUnits)
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setRedSliceFOV(double fov)
 {
-  //
+  CTK_D(qMRMLSlicesControllerToolBar);
+  vtkMRMLSliceLogic* redSliceLogic = d->sliceLogicByName("Red");
+  if (!redSliceLogic)
+    {
+    return;
+    }
+  redSliceLogic->FitFOVToBackground(fov);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setYellowSliceFOV(double fov)
 {
-  //
+  CTK_D(qMRMLSlicesControllerToolBar);
+  vtkMRMLSliceLogic* yellowSliceLogic = d->sliceLogicByName("Yellow");
+  if (!yellowSliceLogic)
+    {
+    return;
+    }
+  yellowSliceLogic->FitFOVToBackground(fov);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setGreenSliceFOV(double fov)
 {
-  //
+  CTK_D(qMRMLSlicesControllerToolBar);
+  vtkMRMLSliceLogic* greenSliceLogic = d->sliceLogicByName("Green");
+  if (!greenSliceLogic)
+    {
+    return;
+    }
+  greenSliceLogic->FitFOVToBackground(fov);
 }

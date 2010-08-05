@@ -100,6 +100,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->MRMLSlicesControllerToolBar,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
+  this->MRMLSlicesControllerToolBar->setMRMLSliceLogics(layoutManager->mrmlSliceLogics());
 
   // Populate the View ToolBar
   QToolButton* layoutButton = new QToolButton(p);

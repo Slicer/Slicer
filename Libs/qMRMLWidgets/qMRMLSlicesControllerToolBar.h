@@ -13,6 +13,7 @@
 class qMRMLSlicesControllerToolBarPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
+class vtkCollection;
 
 class QMRML_WIDGETS_EXPORT qMRMLSlicesControllerToolBar : public QToolBar
 {
@@ -30,6 +31,8 @@ public:
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLSliceLogics(vtkCollection* logics);
+
   void setFiducialPointsVisible(bool visible);
   void setFiducialLabelsVisible(bool visible);
   void setForegroundGridVisible(bool visible);
