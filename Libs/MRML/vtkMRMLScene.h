@@ -214,6 +214,7 @@ public:
   //BTX
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
   //ETX
+  vtkCollection* GetNodesByClass(const char *className);
   
   //BTX
   std::list<std::string> GetNodeClassesList();

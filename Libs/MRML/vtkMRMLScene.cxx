@@ -1488,6 +1488,28 @@ int vtkMRMLScene::GetNodesByClass(const char *className, std::vector<vtkMRMLNode
 }
 
 //------------------------------------------------------------------------------
+vtkCollection* vtkMRMLScene::GetNodesByClass(const char *className)
+{
+  if (className == NULL)
+    {
+    vtkErrorMacro("GetNodesByClass: class name is null.");
+    return 0;
+    }
+  vtkCollection* nodes = vtkCollection::New();
+  vtkMRMLNode *node;
+  vtkCollectionSimpleIterator it;
+  for (this->CurrentScene->InitTraversal(it);
+       (node = (vtkMRMLNode*)this->CurrentScene->GetNextItemAsObject(it)) ;)
+    {
+    if (node->IsA(className))
+      {
+      nodes->AddItem(node);
+      }
+    }
+  return nodes;
+}
+
+//------------------------------------------------------------------------------
 std::list< std::string > vtkMRMLScene::GetNodeClassesList()
 {
   std::list< std::string > classes;
