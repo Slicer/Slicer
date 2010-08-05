@@ -32,6 +32,8 @@ public slots:
   void setForegroundGridVisible(bool visible);
   void setBackgroundGridVisible(bool visible);
   void setLabelGridVisible(bool visible);
+  void setLabelOpacity(double value);
+  void toggleLabelOpacity(bool toggle);
   void fitToWindow();
   void setNavigatorEnabled(bool enable);
   void setSliceIntersectionVisible(bool visible);
@@ -44,6 +46,9 @@ public slots:
   void setCrosshairMode(int mode);
   void setCrosshairThickness(int mode);
   void setAnnotationSpace(int mode);
+  void setRedSliceFOV(double fov);
+  void setYellowSliceFOV(double fov);
+  void setGreenSliceFOV(double fov);
 
 private:
   CTK_DECLARE_PRIVATE(qMRMLSlicesControllerToolBar);

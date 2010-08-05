@@ -3,12 +3,17 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QDebug>
+#include <QDoubleSpinBox>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QMenu>
 #include <QToolButton>
+#include <QWidgetAction>
 
 // CTK includes
 #include <ctkDoubleSlider.h>
 #include <ctkLogger.h>
+#include <ctkSliderSpinBoxWidget.h>
 
 // qMRML includes
 #include "qMRMLSlicesControllerToolBar.h"
@@ -49,12 +54,18 @@ public:
   vtkCollection* saveCrosshairNodes()const;
 
   vtkMRMLScene*            MRMLScene;
+  ctkSliderSpinBoxWidget*  LabelOpacitySlider;
+  QToolButton*             LabelOpacityToggleButton;
+  double                   LastLabelOpacity;
   ctkDoubleSlider*         OpacitySlider;
   qMRMLActionSignalMapper* AnnotationsMapper;
   qMRMLActionSignalMapper* CompositingMapper;
   qMRMLActionSignalMapper* CrosshairMapper;
   qMRMLActionSignalMapper* CrosshairThicknessMapper;
   qMRMLActionSignalMapper* SpatialUnitsMapper;
+  QDoubleSpinBox*          RedSliceFOVSpinBox;
+  QDoubleSpinBox*          YellowSliceFOVSpinBox;
+  QDoubleSpinBox*          GreenSliceFOVSpinBox;
 };
 //--------------------------------------------------------------------------
 // qMRMLSlicesControllerToolBarPrivate methods
@@ -63,12 +74,18 @@ public:
 qMRMLSlicesControllerToolBarPrivate::qMRMLSlicesControllerToolBarPrivate()
 {
   this->MRMLScene = 0;
+  this->LabelOpacitySlider = 0;
+  this->LabelOpacityToggleButton = 0;
+  this->LastLabelOpacity = 1.;
   this->OpacitySlider = 0;
   this->AnnotationsMapper = 0;
   this->CompositingMapper = 0;
   this->CrosshairMapper = 0;
   this->CrosshairThicknessMapper = 0;
   this->SpatialUnitsMapper = 0;
+  this->RedSliceFOVSpinBox = 0;
+  this->YellowSliceFOVSpinBox = 0;
+  this->GreenSliceFOVSpinBox = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -95,11 +112,38 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   // Fit to Window
   p->addAction(actionFit_to_Window);
 
-  // Fiducial Visibility
+  // Label Opacity
+  QWidget* labelOpacityWidget = new QWidget(p);
+  QHBoxLayout* labelOpacityLayout = new QHBoxLayout(labelOpacityWidget);
+  labelOpacityLayout->setContentsMargins(0,0,0,0);
+  this->LabelOpacitySlider = new ctkSliderSpinBoxWidget(p);
+  this->LabelOpacitySlider->setRange(0., 1.);
+  this->LabelOpacitySlider->setValue(1.);
+  this->LabelOpacitySlider->setSingleStep(0.05);
+  QObject::connect(this->LabelOpacitySlider, SIGNAL(valueChanged(double)),
+                   p, SLOT(setLabelOpacity(double)));
+  this->LabelOpacityToggleButton = new QToolButton(p);
+  this->LabelOpacityToggleButton->setText("Toggle Opacity");
+  QIcon visibilityIcon;
+  visibilityIcon.addFile(":Icons/VisibleOn.png", QSize(), QIcon::Normal, QIcon::Off);
+  visibilityIcon.addFile(":Icons/VisibleOff.png", QSize(), QIcon::Normal, QIcon::On);
+  this->LabelOpacityToggleButton->setIcon(visibilityIcon);
+  this->LabelOpacityToggleButton->setCheckable(true);
+  // clicked is fired only if the user clicks on the button, not programatically
+  QObject::connect(this->LabelOpacityToggleButton, SIGNAL(clicked(bool)),
+                   p, SLOT(toggleLabelOpacity(bool)));
+  labelOpacityLayout->addWidget(this->LabelOpacityToggleButton);
+  labelOpacityLayout->addWidget(this->LabelOpacitySlider);
+  labelOpacityWidget->setLayout(labelOpacityLayout);
+  QMenu* fiducialsMenu = new QMenu(p);
+  QWidgetAction* sliderAction = new QWidgetAction(p);
+  sliderAction->setDefaultWidget(labelOpacityWidget);
+  fiducialsMenu->addAction(sliderAction);
   QToolButton* fiducialsButton = new QToolButton(p);
   fiducialsButton->setPopupMode(QToolButton::InstantPopup);
   fiducialsButton->setText("Fiducials");
   fiducialsButton->setIcon(QIcon(":Icons/SlicesLabelOpacity.png"));
+  fiducialsButton->setMenu(fiducialsMenu);
   p->addWidget(fiducialsButton);
 
   // Annotations
@@ -250,10 +294,67 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   p->addWidget(spatialUnitsButton);
 
   // Field of View
+  // red FOV
+  QWidget* redSliceFOVWidget = new QWidget(p);
+  QHBoxLayout* redSliceFOVLayout = new QHBoxLayout(p);
+  redSliceFOVLayout->setContentsMargins(0,0,0,0);
+  redSliceFOVLayout->addWidget(new QLabel("Red slice FOV:", p));
+  this->RedSliceFOVSpinBox = new QDoubleSpinBox(p);
+  this->RedSliceFOVSpinBox->setRange(0., 1000.);
+  this->RedSliceFOVSpinBox->setValue(250.);
+  QObject::connect(this->RedSliceFOVSpinBox, SIGNAL(valueChanged(double)),
+                   p, SLOT(setRedSliceFOV(double)));
+  QColor red;
+  red.setRgbF(0.952941176471, 0.290196078431, 0.2);
+  this->RedSliceFOVSpinBox->setPalette(QPalette(red));
+  redSliceFOVLayout->addWidget(this->RedSliceFOVSpinBox);
+  redSliceFOVWidget->setLayout(redSliceFOVLayout);
+  QWidgetAction* redSliceFOVAction = new QWidgetAction(p);
+  redSliceFOVAction->setDefaultWidget(redSliceFOVWidget);
+  // yellow FOV
+  QWidget* yellowSliceFOVWidget = new QWidget(p);
+  QHBoxLayout* yellowSliceFOVLayout = new QHBoxLayout(p);
+  yellowSliceFOVLayout->setContentsMargins(0,0,0,0);
+  yellowSliceFOVLayout->addWidget(new QLabel("Yellow slice FOV:", p));
+  this->YellowSliceFOVSpinBox = new QDoubleSpinBox(p);
+  this->YellowSliceFOVSpinBox->setRange(0., 1000.);
+  this->YellowSliceFOVSpinBox->setValue(250.);
+  QObject::connect(this->YellowSliceFOVSpinBox, SIGNAL(valueChanged(double)),
+                   p, SLOT(setYellowSliceFOV(double)));
+  QColor yellow;
+  yellow.setRgbF(0.929411764706, 0.835294117647, 0.298039215686);
+  this->YellowSliceFOVSpinBox->setPalette(QPalette(yellow));
+  yellowSliceFOVLayout->addWidget(this->YellowSliceFOVSpinBox);
+  yellowSliceFOVWidget->setLayout(yellowSliceFOVLayout);
+  QWidgetAction* yellowSliceFOVAction = new QWidgetAction(p);
+  yellowSliceFOVAction->setDefaultWidget(yellowSliceFOVWidget);
+  // green FOV
+  QWidget* greenSliceFOVWidget = new QWidget(p);
+  QHBoxLayout* greenSliceFOVLayout = new QHBoxLayout(p);
+  greenSliceFOVLayout->setContentsMargins(0,0,0,0);
+  greenSliceFOVLayout->addWidget(new QLabel("Green slice FOV:", p));
+  this->GreenSliceFOVSpinBox = new QDoubleSpinBox(p);
+  this->GreenSliceFOVSpinBox->setRange(0., 1000.);
+  this->GreenSliceFOVSpinBox->setValue(250.);
+  QObject::connect(this->GreenSliceFOVSpinBox, SIGNAL(valueChanged(double)),
+                   p, SLOT(setGreenSliceFOV(double)));
+  QColor green;
+  green.setRgbF(0.43137254902, 0.690196078431, 0.294117647059);
+  this->GreenSliceFOVSpinBox->setPalette(QPalette(green));
+  greenSliceFOVLayout->addWidget(this->GreenSliceFOVSpinBox);
+  greenSliceFOVWidget->setLayout(greenSliceFOVLayout);
+  QWidgetAction* greenSliceFOVAction = new QWidgetAction(p);
+  greenSliceFOVAction->setDefaultWidget(greenSliceFOVWidget);
+  // menu / tool button FOV
+  QMenu* fieldOfViewMenu = new QMenu(p);
+  fieldOfViewMenu->addAction(redSliceFOVAction);
+  fieldOfViewMenu->addAction(yellowSliceFOVAction);
+  fieldOfViewMenu->addAction(greenSliceFOVAction);
   QToolButton* fieldOfViewButton = new QToolButton(p);
   fieldOfViewButton->setPopupMode(QToolButton::InstantPopup);
   fieldOfViewButton->setText("Slices Field of View");
   fieldOfViewButton->setIcon(QIcon(":Icons/SlicesFieldOfView.png"));
+  fieldOfViewButton->setMenu(fieldOfViewMenu);
   p->addWidget(fieldOfViewButton);
 
   // Background / Foreground
@@ -433,6 +534,39 @@ void qMRMLSlicesControllerToolBar::fitToWindow()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::setLabelOpacity(double value)
+{
+  CTK_D(qMRMLSlicesControllerToolBar);
+  // LabelOpacityToggleButton doesn't fire the clicked(bool) signal here because
+  // it's check state is set programatically.
+  d->LabelOpacityToggleButton->setChecked(value == 0.);
+  vtkCollection* nodes = d->saveSliceCompositeNodes();
+  if (!nodes)
+    {
+    return;
+    }
+  vtkMRMLSliceCompositeNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    node->SetLabelOpacity(value);
+    }
+  if (value != 0.)
+    {
+    d->LastLabelOpacity = value;
+    }
+  nodes->Delete();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::toggleLabelOpacity(bool clicked)
+{
+  CTK_D(qMRMLSlicesControllerToolBar);
+  d->LabelOpacitySlider->setValue(clicked ? 0. : d->LastLabelOpacity);
+}
+
+// --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setNavigatorEnabled(bool enable)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
@@ -608,4 +742,22 @@ void qMRMLSlicesControllerToolBar::setAnnotationSpace(int spatialUnits)
     node->SetAnnotationSpace(spatialUnits);
     }
   nodes->Delete();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::setRedSliceFOV(double fov)
+{
+  //
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::setYellowSliceFOV(double fov)
+{
+  //
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::setGreenSliceFOV(double fov)
+{
+  //
 }
