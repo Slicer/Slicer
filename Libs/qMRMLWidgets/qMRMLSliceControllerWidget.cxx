@@ -488,6 +488,9 @@ void qMRMLSliceControllerWidget::setSliceViewSize(const QSize& newSize)
     }
   logger.trace(QString("setSliceViewSize - newSize(%1, %2)").
                arg(newSize.width()).arg(newSize.height()));
+
+  d->MRMLSliceNode->SetDimensions(
+    newSize.width(), newSize.height(), d->MRMLSliceNode->GetDimensions()[2]);
   d->VTKSliceViewSize = newSize;
   this->fitSliceToBackground();
 }
