@@ -18,6 +18,7 @@ class vtkMRMLApplicationLogic::vtkInternal
 {
 public:
   vtkInternal();
+  ~vtkInternal();
 
   vtkMRMLSelectionNode *    SelectionNode;
   vtkMRMLInteractionNode *  InteractionNode;
@@ -31,6 +32,11 @@ vtkMRMLApplicationLogic::vtkInternal::vtkInternal()
 {
   this->SelectionNode = 0;
   this->InteractionNode = 0;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLApplicationLogic::vtkInternal::~vtkInternal()
+{
 }
 
 //----------------------------------------------------------------------------
@@ -63,13 +69,13 @@ void vtkMRMLApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSelectionNode * vtkMRMLApplicationLogic::GetSelectionNode()
+vtkMRMLSelectionNode * vtkMRMLApplicationLogic::GetSelectionNode()const
 {
   return this->Internal->SelectionNode;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLInteractionNode * vtkMRMLApplicationLogic::GetInteractionNode()
+vtkMRMLInteractionNode * vtkMRMLApplicationLogic::GetInteractionNode()const
 {
   return this->Internal->InteractionNode;
 }

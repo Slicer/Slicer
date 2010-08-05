@@ -16,6 +16,7 @@ class qMRMLSliceViewWidgetPrivate;
 class qMRMLSliceControllerWidget;
 class vtkMRMLScene;
 class vtkMRMLNode;
+class vtkMRMLSliceLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceCompositeNode;
 class vtkImageData;
@@ -41,6 +42,9 @@ public:
   /// \sa qMRMLSliceControllerWidget::mrmlSliceNode()
   /// \sa setMRMLSliceNode()
   vtkMRMLSliceNode* mrmlSliceNode()const;
+
+  // \sa qMRMLSliceControllerWidget::sliceLogic()
+  vtkMRMLSliceLogic* sliceLogic()const;
 
   /// \sa qMRMLSliceControllerWidget::sliceOrientation()
   /// \sa setSliceOrientation()

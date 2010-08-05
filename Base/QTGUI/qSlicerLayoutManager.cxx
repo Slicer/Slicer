@@ -24,9 +24,11 @@
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLViewNode.h>
+#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkSmartPointer.h>
 #include <vtkIntArray.h>
 
@@ -46,6 +48,7 @@ qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate()
 {
   this->MRMLScene = 0;
   this->MRMLLayoutNode = 0;
+  this->MRMLSliceLogics = vtkCollection::New();
   this->GridLayout = 0;
   this->TargetWidget = 0;
   this->CurrentViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
@@ -56,6 +59,11 @@ qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate()
 //------------------------------------------------------------------------------
 qSlicerLayoutManagerPrivate::~qSlicerLayoutManagerPrivate()
 {
+  if (this->MRMLSliceLogics)
+    {
+    this->MRMLSliceLogics->RemoveAllItems();
+    this->MRMLSliceLogics->Delete();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -81,15 +89,15 @@ void qSlicerLayoutManagerPrivate::setMRMLScene(vtkMRMLScene* scene)
     vtkMRMLScene::SceneImportedEvent, this,
     SLOT(onSceneImportedEvent()));
 
-   this->qvtkReconnect(
-     this->MRMLScene, scene,
-     vtkMRMLScene::SceneAboutToBeClosedEvent, this,
-     SLOT(onSceneAboutToBeClosedEvent()));
+  this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneAboutToBeClosedEvent, this,
+    SLOT(onSceneAboutToBeClosedEvent()));
 
-   this->qvtkReconnect(
-     this->MRMLScene, scene,
-     vtkMRMLScene::SceneClosedEvent, this,
-     SLOT(onSceneClosedEvent()));
+  this->qvtkReconnect(
+    this->MRMLScene, scene,
+    vtkMRMLScene::SceneClosedEvent, this,
+    SLOT(onSceneClosedEvent()));
   
   this->MRMLScene = scene;
 }
@@ -128,6 +136,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(const QString& sliceViewNa
                     SLOT(setMRMLScene(vtkMRMLScene*)));
 
     this->SliceViewMap[sliceViewName] = sliceView;
+    this->MRMLSliceLogics->AddItem(sliceView->sliceLogic());
     logger.trace(
         QString("createSliceView - instantiated new qMRMLSliceViewWidget: %1").arg(sliceViewName));
     }
@@ -138,6 +147,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(const QString& sliceViewNa
 // --------------------------------------------------------------------------
 void qSlicerLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
 {
+  // removeSliceView doesn't delete anything, it just removes the node from the view
   Q_ASSERT(sliceNode);
 
   QString sliceViewName = QString::fromLatin1(sliceNode->GetLayoutName());
@@ -566,6 +576,13 @@ qMRMLThreeDView* qSlicerLayoutManager::threeDView(int id)
     return 0;
     }
   return d->threeDView(id);
+}
+
+//------------------------------------------------------------------------------
+vtkCollection* qSlicerLayoutManager::mrmlSliceLogics()const
+{
+  CTK_D(const qSlicerLayoutManager);
+  return d->MRMLSliceLogics;
 }
 
 //------------------------------------------------------------------------------

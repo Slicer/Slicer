@@ -12,6 +12,7 @@
 class qMRMLThreeDView;
 class qMRMLSliceViewWidget;
 class qSlicerLayoutManagerPrivate;
+class vtkCollection;
 class vtkMRMLScene;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLayoutManager : public QObject
@@ -36,6 +37,8 @@ public:
   /// of instantiated qMRMLThreeDView (that should also be equal to the number
   /// of vtkMRMLViewNode)
   qMRMLThreeDView* threeDView(int id);
+
+  vtkCollection* mrmlSliceLogics()const;
 
 public slots:
 

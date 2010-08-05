@@ -18,11 +18,10 @@ public:
   vtkTypeRevisionMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
 
   /// Get current Selection node
-  vtkMRMLSelectionNode * GetSelectionNode();
+  vtkMRMLSelectionNode * GetSelectionNode()const;
 
   /// Get current Interaction node
-  vtkMRMLInteractionNode * GetInteractionNode();
-
+  vtkMRMLInteractionNode * GetInteractionNode()const;
 protected:
 
   vtkMRMLApplicationLogic();

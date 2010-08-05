@@ -219,6 +219,12 @@ vtkMRMLSliceNode* qMRMLSliceViewWidget::mrmlSliceNode()const
   return ctk_d()->SliceController->mrmlSliceNode();
 }
 
+//---------------------------------------------------------------------------
+vtkMRMLSliceLogic* qMRMLSliceViewWidget::sliceLogic()const
+{
+  return ctk_d()->SliceController->sliceLogic();
+}
+
 // --------------------------------------------------------------------------
 void qMRMLSliceViewWidget::fitSliceToBackground()
 {

@@ -19,6 +19,7 @@ class QGridLayout;
 class QButtonGroup;
 class qMRMLSliceViewWidget;
 class qMRMLThreeDView;
+class vtkCollection;
 class vtkObject;
 class vtkMRMLLayoutNode;
 class vtkMRMLViewNode;
@@ -85,6 +86,7 @@ public:
   QGridLayout*       GridLayout;
   QWidget*           TargetWidget;
   QButtonGroup*      SliceControllerButtonGroup;
+  vtkCollection*     MRMLSliceLogics;
   
   /// Prevent onLayoutNodeModifiedEvent to be called when
   /// the current MRML layout node is updated from one of the switchTo* slots.
