@@ -7,14 +7,17 @@
 
 // CTK includes
 #include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLSlicesControllerToolBarPrivate;
+class vtkMRMLNode;
 class vtkMRMLScene;
 
 class QMRML_WIDGETS_EXPORT qMRMLSlicesControllerToolBar : public QToolBar
 {
   Q_OBJECT
+  QVTK_OBJECT
 public:
   /// Superclass typedef
   typedef QToolBar Superclass;
@@ -49,7 +52,13 @@ public slots:
   void setRedSliceFOV(double fov);
   void setYellowSliceFOV(double fov);
   void setGreenSliceFOV(double fov);
-
+protected slots:
+  void onMRMLSceneChanged(vtkObject*, void*, unsigned long, void*);
+  void updateFromCompositeNode(vtkObject*);
+  void updateFromCrosshairNode(vtkObject*);
+  void updateFromSliceNode(vtkObject*);
+protected:
+  void connectNode(vtkMRMLNode*);
 private:
   CTK_DECLARE_PRIVATE(qMRMLSlicesControllerToolBar);
 };

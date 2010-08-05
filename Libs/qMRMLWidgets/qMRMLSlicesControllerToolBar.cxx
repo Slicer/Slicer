@@ -23,6 +23,10 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceNode.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSlicesControllerToolBar");
@@ -50,14 +54,14 @@ public:
   qMRMLSlicesControllerToolBarPrivate();
 
   virtual void setupUi(QWidget* widget);
-  vtkCollection* saveSliceCompositeNodes()const;
-  vtkCollection* saveCrosshairNodes()const;
+  vtkSmartPointer<vtkCollection> saveSliceCompositeNodes()const;
+  vtkSmartPointer<vtkCollection> saveCrosshairNodes()const;
 
   vtkMRMLScene*            MRMLScene;
   ctkSliderSpinBoxWidget*  LabelOpacitySlider;
   QToolButton*             LabelOpacityToggleButton;
   double                   LastLabelOpacity;
-  ctkDoubleSlider*         OpacitySlider;
+  ctkDoubleSlider*         ForegroundOpacitySlider;
   qMRMLActionSignalMapper* AnnotationsMapper;
   qMRMLActionSignalMapper* CompositingMapper;
   qMRMLActionSignalMapper* CrosshairMapper;
@@ -77,7 +81,7 @@ qMRMLSlicesControllerToolBarPrivate::qMRMLSlicesControllerToolBarPrivate()
   this->LabelOpacitySlider = 0;
   this->LabelOpacityToggleButton = 0;
   this->LastLabelOpacity = 1.;
-  this->OpacitySlider = 0;
+  this->ForegroundOpacitySlider = 0;
   this->AnnotationsMapper = 0;
   this->CompositingMapper = 0;
   this->CrosshairMapper = 0;
@@ -296,7 +300,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   // Field of View
   // red FOV
   QWidget* redSliceFOVWidget = new QWidget(p);
-  QHBoxLayout* redSliceFOVLayout = new QHBoxLayout(p);
+  QHBoxLayout* redSliceFOVLayout = new QHBoxLayout(redSliceFOVWidget);
   redSliceFOVLayout->setContentsMargins(0,0,0,0);
   redSliceFOVLayout->addWidget(new QLabel("Red slice FOV:", p));
   this->RedSliceFOVSpinBox = new QDoubleSpinBox(p);
@@ -313,7 +317,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   redSliceFOVAction->setDefaultWidget(redSliceFOVWidget);
   // yellow FOV
   QWidget* yellowSliceFOVWidget = new QWidget(p);
-  QHBoxLayout* yellowSliceFOVLayout = new QHBoxLayout(p);
+  QHBoxLayout* yellowSliceFOVLayout = new QHBoxLayout(yellowSliceFOVWidget);
   yellowSliceFOVLayout->setContentsMargins(0,0,0,0);
   yellowSliceFOVLayout->addWidget(new QLabel("Yellow slice FOV:", p));
   this->YellowSliceFOVSpinBox = new QDoubleSpinBox(p);
@@ -330,7 +334,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   yellowSliceFOVAction->setDefaultWidget(yellowSliceFOVWidget);
   // green FOV
   QWidget* greenSliceFOVWidget = new QWidget(p);
-  QHBoxLayout* greenSliceFOVLayout = new QHBoxLayout(p);
+  QHBoxLayout* greenSliceFOVLayout = new QHBoxLayout(greenSliceFOVWidget);
   greenSliceFOVLayout->setContentsMargins(0,0,0,0);
   greenSliceFOVLayout->addWidget(new QLabel("Green slice FOV:", p));
   this->GreenSliceFOVSpinBox = new QDoubleSpinBox(p);
@@ -361,24 +365,28 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   p->addSeparator();
   p->addAction(actionToggleBgFg);
   p->addAction(actionShowBg);
-  this->OpacitySlider = new ctkDoubleSlider(p->orientation(), p);
-  this->OpacitySlider->setRange(0., 1.);
-  this->OpacitySlider->setValue(1.);
-  this->OpacitySlider->setSingleStep(0.1);
+  this->ForegroundOpacitySlider = new ctkDoubleSlider(p->orientation(), p);
+  this->ForegroundOpacitySlider->setRange(0., 1.);
+  this->ForegroundOpacitySlider->setValue(1.);
+  this->ForegroundOpacitySlider->setSingleStep(0.1);
   QObject::connect(p, SIGNAL(orientationChanged(Qt::Orientation)),
-                   this->OpacitySlider, SLOT(setOrientation(Qt::Orientation)));
-  QObject::connect(this->OpacitySlider, SIGNAL(valueChanged(double)),
+                   this->ForegroundOpacitySlider, SLOT(setOrientation(Qt::Orientation)));
+  QObject::connect(this->ForegroundOpacitySlider, SIGNAL(valueChanged(double)),
                    p, SLOT(setForegroundOpacity(double)));
-  p->addWidget(this->OpacitySlider);
+  p->addWidget(this->ForegroundOpacitySlider);
   p->addAction(actionShowFg);
 }
 
 // --------------------------------------------------------------------------
-vtkCollection* qMRMLSlicesControllerToolBarPrivate::saveSliceCompositeNodes()const
+vtkSmartPointer<vtkCollection> qMRMLSlicesControllerToolBarPrivate::saveSliceCompositeNodes()const
 {
-  vtkCollection* nodes = this->MRMLScene ?
-    this->MRMLScene->GetNodesByClass("vtkMRMLSliceCompositeNode") : 0;
-  if (nodes)
+  vtkSmartPointer<vtkCollection> nodes;
+  if (this->MRMLScene)
+    {
+    nodes.TakeReference(
+      this->MRMLScene->GetNodesByClass("vtkMRMLSliceCompositeNode"));
+    }
+  if (nodes.GetPointer())
     {
     this->MRMLScene->SaveStateForUndo(nodes);
     }
@@ -386,10 +394,13 @@ vtkCollection* qMRMLSlicesControllerToolBarPrivate::saveSliceCompositeNodes()con
 }
 
 // --------------------------------------------------------------------------
-vtkCollection* qMRMLSlicesControllerToolBarPrivate::saveCrosshairNodes()const
+vtkSmartPointer<vtkCollection> qMRMLSlicesControllerToolBarPrivate::saveCrosshairNodes()const
 {
-  vtkCollection* nodes = this->MRMLScene ?
-    this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNodes") : 0;
+  vtkSmartPointer<vtkCollection> nodes;
+  if (this->MRMLScene)
+    {
+    nodes.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNodes"));
+    }
   if (nodes)
     {
     this->MRMLScene->SaveStateForUndo(nodes);
@@ -412,7 +423,13 @@ qMRMLSlicesControllerToolBar::qMRMLSlicesControllerToolBar(QWidget* _parent) : S
 void qMRMLSlicesControllerToolBar::setMRMLScene(vtkMRMLScene* scene)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
+  qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent,
+                this, SLOT(onMRMLSceneChanged(vtkObject*, void*,  unsigned long, void *)));
+  qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::SceneImportedEvent,
+                this, SLOT(onMRMLSceneChanged(vtkObject*, void*,  unsigned long, void *)));
   d->MRMLScene = scene;
+  this->onMRMLSceneChanged(d->MRMLScene, reinterpret_cast<void*>(this),
+                           vtkMRMLScene::SceneImportedEvent, 0);
 }
 
 // --------------------------------------------------------------------------
@@ -423,13 +440,154 @@ vtkMRMLScene* qMRMLSlicesControllerToolBar::mrmlScene()const
 }
 
 // --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::onMRMLSceneChanged(
+  vtkObject* sender, void* calldata, unsigned long event, void* receiver)
+{
+  CTK_D(qMRMLSlicesControllerToolBar);
+  Q_UNUSED(receiver);
+  Q_ASSERT(d->MRMLScene == sender);
+  if (d->MRMLScene->GetIsImporting())
+    {
+    return;
+    }
+  if (event == vtkMRMLScene::NodeAddedEvent)
+    {
+    this->connectNode(reinterpret_cast<vtkMRMLNode*>(calldata));
+    }
+  else if (event == vtkMRMLScene::SceneImportedEvent)
+    {
+    std::vector<vtkMRMLNode*> nodes;
+    int nodesCount = d->MRMLScene->GetNodesByClass("vtkMRMLSliceCompositeNode", nodes);
+    for(int i = 0; i < nodesCount; ++i)
+      {
+      this->connectNode(nodes[i]);
+      this->connectNode(nodes[i]);
+      }
+    nodes.clear();
+    nodesCount = d->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode", nodes);
+    for(int i = 0; i < nodesCount; ++i)
+      {
+      this->connectNode(nodes[i]);
+      }
+    nodes.clear();
+    nodesCount = d->MRMLScene->GetNodesByClass("vtkMRMLSliceNode", nodes);
+    for(int i = 0; i < nodesCount; ++i)
+      {
+      this->connectNode(nodes[i]);
+      }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::connectNode(vtkMRMLNode* node)
+{
+  vtkMRMLSliceCompositeNode* compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
+  vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+  if (compositeNode)
+    {
+    // only listen to the red slice composite node
+    if (QString(compositeNode->GetLayoutName()) == "Red")
+      {
+      qvtkReconnect(compositeNode, vtkCommand::ModifiedEvent,
+                    this, SLOT(updateFromCompositeNode(vtkObject*)));
+      }
+    this->updateFromCompositeNode(node);
+    }
+  else if (crosshairNode)
+    {
+    qvtkReconnect(crosshairNode, vtkCommand::ModifiedEvent,
+                  this, SLOT(updateFromCrosshairNode(vtkObject*)));
+    this->updateFromCrosshairNode(node);
+    }
+  else if (sliceNode)
+    {
+    qvtkDisconnect(sliceNode, vtkCommand::ModifiedEvent,
+                   this, SLOT(updateFromSliceNode(vtkObject*)));
+    qvtkConnect(sliceNode, vtkCommand::ModifiedEvent,
+                this, SLOT(updateFromSliceNode(vtkObject*)));
+    this->updateFromSliceNode(node);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::updateFromCompositeNode(vtkObject* node)
+{
+  CTK_D(qMRMLSlicesControllerToolBar);
+  vtkMRMLSliceCompositeNode* cnode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
+  if (!cnode)
+    {
+    return;
+    }
+  d->actionFiducial_points->setChecked(cnode->GetFiducialVisibility());
+  d->actionFiducial_labels->setChecked(cnode->GetFiducialLabelVisibility());
+  d->actionForeground_grid->setChecked(cnode->GetForegroundGrid());
+  d->actionBackground_grid->setChecked(cnode->GetBackgroundGrid());
+  d->actionLabel_grid->setChecked(cnode->GetLabelGrid());
+  d->LabelOpacitySlider->setValue(cnode->GetLabelOpacity());
+  QAction* annotationAction = qobject_cast<QAction*>(
+    d->AnnotationsMapper->mapping(cnode->GetAnnotationMode()));
+  annotationAction->setChecked(true);
+  QAction* compositingAction = qobject_cast<QAction*>(
+    d->CompositingMapper->mapping(cnode->GetCompositing()));
+  compositingAction->setChecked(true);
+  d->actionCrosshairSlice_intersections->setChecked(cnode->GetSliceIntersectionVisibility());
+  QAction* spatialUnitsAction = qobject_cast<QAction*>(
+    d->SpatialUnitsMapper->mapping(cnode->GetAnnotationSpace()));
+  spatialUnitsAction->setChecked(true);
+  d->ForegroundOpacitySlider->setValue(cnode->GetForegroundOpacity());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::updateFromCrosshairNode(vtkObject* node)
+{
+  CTK_D(qMRMLSlicesControllerToolBar);
+  vtkMRMLCrosshairNode* xnode = vtkMRMLCrosshairNode::SafeDownCast(node);
+  if (!xnode)
+    {
+    return;
+    }
+  d->actionCrosshairNavigator->setChecked(xnode->GetNavigation());
+  QAction* crosshairAction =
+    qobject_cast<QAction*>(d->CrosshairMapper->mapping(xnode->GetCrosshairMode()));
+  crosshairAction->setChecked(true);
+  QAction* crosshairThicknessAction =
+    qobject_cast<QAction*>(d->CrosshairThicknessMapper->mapping(xnode->GetCrosshairThickness()));
+  crosshairThicknessAction->setChecked(true);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSlicesControllerToolBar::updateFromSliceNode(vtkObject* node)
+{
+  CTK_D(qMRMLSlicesControllerToolBar);
+  vtkMRMLSliceNode* snode = vtkMRMLSliceNode::SafeDownCast(node);
+  if (!snode)
+    {
+    return;
+    }
+  double fov[2];
+  snode->GetFieldOfView(fov);
+  QString layoutName = QString(snode->GetLayoutName());
+  if (layoutName == "Red")
+    {
+    d->RedSliceFOVSpinBox->setValue(fov[0] > fov[1] ? fov[0] : fov[1]);
+    }
+  else if(layoutName == "Yellow")
+    {
+    d->YellowSliceFOVSpinBox->setValue(fov[0] > fov[1] ? fov[0] : fov[1]);
+    }
+  else if (layoutName == "Green")
+    {
+    d->GreenSliceFOVSpinBox->setValue(fov[0] > fov[1] ? fov[0] : fov[1]);
+    }
+}
+
+// --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setFiducialPointsVisible(bool visible)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  // do it in case if it's not done yet. usually it's a no-op
-  d->actionFiducial_points->setChecked(visible);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -440,17 +598,14 @@ void qMRMLSlicesControllerToolBar::setFiducialPointsVisible(bool visible)
     {
     node->SetFiducialVisibility(visible);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setFiducialLabelsVisible(bool visible)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  // do it in case if it's not done yet. usually it's a no-op
-  d->actionFiducial_points->setChecked(visible);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -461,17 +616,14 @@ void qMRMLSlicesControllerToolBar::setFiducialLabelsVisible(bool visible)
     {
     node->SetFiducialLabelVisibility(visible);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setForegroundGridVisible(bool visible)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  // do it in case if it's not done yet. usually it's a no-op
-  d->actionForeground_grid->setChecked(visible);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -482,17 +634,14 @@ void qMRMLSlicesControllerToolBar::setForegroundGridVisible(bool visible)
     {
     node->SetForegroundGrid(visible);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setBackgroundGridVisible(bool visible)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  // do it in case if it's not done yet. usually it's a no-op
-  d->actionBackground_grid->setChecked(visible);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -503,17 +652,14 @@ void qMRMLSlicesControllerToolBar::setBackgroundGridVisible(bool visible)
     {
     node->SetBackgroundGrid(visible);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setLabelGridVisible(bool visible)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  // do it in case if it's not done yet. usually it's a no-op
-  d->actionLabel_grid->setChecked(visible);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -524,7 +670,6 @@ void qMRMLSlicesControllerToolBar::setLabelGridVisible(bool visible)
     {
     node->SetLabelGrid(visible);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
@@ -540,8 +685,8 @@ void qMRMLSlicesControllerToolBar::setLabelOpacity(double value)
   // LabelOpacityToggleButton doesn't fire the clicked(bool) signal here because
   // it's check state is set programatically.
   d->LabelOpacityToggleButton->setChecked(value == 0.);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -556,7 +701,6 @@ void qMRMLSlicesControllerToolBar::setLabelOpacity(double value)
     {
     d->LastLabelOpacity = value;
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
@@ -570,10 +714,8 @@ void qMRMLSlicesControllerToolBar::toggleLabelOpacity(bool clicked)
 void qMRMLSlicesControllerToolBar::setNavigatorEnabled(bool enable)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  // do it in case if it's not done yet. usually it's a no-op
-  d->actionCrosshairNavigator->setChecked(enable);
-  vtkCollection* nodes = d->saveCrosshairNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveCrosshairNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -584,17 +726,14 @@ void qMRMLSlicesControllerToolBar::setNavigatorEnabled(bool enable)
     {
     node->SetNavigation(enable);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setSliceIntersectionVisible(bool visible)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  // do it in case if it's not done yet. usually it's a no-op
-  d->actionCrosshairSlice_intersections->setChecked(visible);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -605,37 +744,35 @@ void qMRMLSlicesControllerToolBar::setSliceIntersectionVisible(bool visible)
     {
     node->SetSliceIntersectionVisibility(visible);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::toggleBackgroundForeground()
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  d->OpacitySlider->setValue(1. - d->OpacitySlider->value());
+  d->ForegroundOpacitySlider->setValue(1. - d->ForegroundOpacitySlider->value());
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::showBackground()
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  d->OpacitySlider->setValue(0.);
+  d->ForegroundOpacitySlider->setValue(0.);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::showForeground()
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  d->OpacitySlider->setValue(1.);
+  d->ForegroundOpacitySlider->setValue(1.);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setForegroundOpacity(double value)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  d->OpacitySlider->setValue(value);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -646,15 +783,14 @@ void qMRMLSlicesControllerToolBar::setForegroundOpacity(double value)
     {
     node->SetForegroundOpacity(value);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setAnnotationMode(int mode)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -665,15 +801,14 @@ void qMRMLSlicesControllerToolBar::setAnnotationMode(int mode)
     {
     node->SetAnnotationMode(mode);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setCompositing(int mode)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -684,15 +819,14 @@ void qMRMLSlicesControllerToolBar::setCompositing(int mode)
     {
     node->SetCompositing(mode);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setCrosshairMode(int mode)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  vtkCollection* nodes = d->saveCrosshairNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveCrosshairNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -703,15 +837,14 @@ void qMRMLSlicesControllerToolBar::setCrosshairMode(int mode)
     {
     node->SetCrosshairMode(mode);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setCrosshairThickness(int thicknessMode)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  vtkCollection* nodes = d->saveCrosshairNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveCrosshairNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -722,15 +855,14 @@ void qMRMLSlicesControllerToolBar::setCrosshairThickness(int thicknessMode)
     {
     node->SetCrosshairThickness(thicknessMode);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSlicesControllerToolBar::setAnnotationSpace(int spatialUnits)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  vtkCollection* nodes = d->saveSliceCompositeNodes();
-  if (!nodes)
+  vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
+  if (!nodes.GetPointer())
     {
     return;
     }
@@ -741,7 +873,6 @@ void qMRMLSlicesControllerToolBar::setAnnotationSpace(int spatialUnits)
     {
     node->SetAnnotationSpace(spatialUnits);
     }
-  nodes->Delete();
 }
 
 // --------------------------------------------------------------------------
