@@ -933,7 +933,6 @@ double DecayCorrection (parameters &list, double inVal )
       if ( dose == 0.0 )
         {
         // oops, weight by dose is infinity. make a ridiculous number.
-        double weightByDose = 0.0;
         suvmin = 99999999999999999.;
         suvmax = 99999999999999999.;
         suvmean = 99999999999999999.;
