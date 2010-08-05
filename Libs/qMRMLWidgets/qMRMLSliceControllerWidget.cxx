@@ -482,16 +482,12 @@ CTK_GET_CXX(qMRMLSliceControllerWidget, vtkMRMLSliceCompositeNode*,
 void qMRMLSliceControllerWidget::setSliceViewSize(const QSize& newSize)
 {
   CTK_D(qMRMLSliceControllerWidget);
-  if (d->VTKSliceViewSize.isNull() || d->VTKSliceViewSize == newSize)
-    {
-    return;
-    }
   logger.trace(QString("setSliceViewSize - newSize(%1, %2)").
                arg(newSize.width()).arg(newSize.height()));
 
+  // be careful here, it might trigger rendering twice...
   d->MRMLSliceNode->SetDimensions(
     newSize.width(), newSize.height(), d->MRMLSliceNode->GetDimensions()[2]);
-  d->VTKSliceViewSize = newSize;
   this->fitSliceToBackground();
 }
 
@@ -612,10 +608,7 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
     logger.warn("fitSliceToBackground - Failed because SliceLogic->GetSliceNode() is NULL");
     return;
     }
-  int width = d->VTKSliceViewSize.width();
-  int height = d->VTKSliceViewSize.height();
-  logger.trace(QString("fitSliceToBackground - size(%1, %2)").arg(width).arg(height));
-  d->SliceLogic->SetSliceViewSize(width, height);
+  logger.trace(QString("fitSliceToBackground"));
   d->SliceLogic->FitSliceToAll();
   d->SliceLogic->GetSliceNode()->UpdateMatrices();
 }

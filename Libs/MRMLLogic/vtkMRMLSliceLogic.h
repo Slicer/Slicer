@@ -235,10 +235,6 @@ public:
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   void GetBackgroundSliceBounds(double sliceBounds[6]);
 
-  ///
-  /// Set sliceView size
-  void SetSliceViewSize(int width, int height);
-
   /// 
   /// adjust the node's field of view to match the extent of current background volume
   void FitSliceToBackground(int width, int height);
@@ -321,8 +317,6 @@ protected:
   virtual ~vtkMRMLSliceLogic();
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
-
-  int SliceViewSize[2];
 
   bool                        Initialized;
   char *                      Name;

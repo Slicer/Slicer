@@ -85,7 +85,6 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->SliceModelDisplayNode = 0;
   this->ImageData = 0;
   this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
-  this->SliceViewSize[0] = this->SliceViewSize[1] = -1;
 }
 
 //----------------------------------------------------------------------------
@@ -1533,19 +1532,6 @@ void vtkMRMLSliceLogic::GetBackgroundSliceBounds(double sliceBounds[6])
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetSliceViewSize(int width, int height)
-{
-  if (this->SliceViewSize[0] == width && this->SliceViewSize[1] == height)
-    {
-    return;
-    }
-  this->SliceViewSize[0] = width;
-  this->SliceViewSize[1] = height;
-
-  this->Modified();
-}
-
-//----------------------------------------------------------------------------
 // adjust the node's field of view to match the extent of current background volume
 void vtkMRMLSliceLogic::FitSliceToBackground(int width, int height)
 {
@@ -1558,23 +1544,19 @@ void vtkMRMLSliceLogic::FitSliceToBackground(int width, int height)
 // adjust the node's field of view to match the extent of all volume layers
 void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
 {
-  // Use SliceViewSize if width and height parameters are omitted
+  // Use SliceNode dimensions if width and height parameters are omitted
   if (width <= 0 || height <= 0)
     {
-    width = this->SliceViewSize[0];
-    height = this->SliceViewSize[1];
-    if (width <= 0 || height <= 0)
-      {
-      vtkErrorMacro(<< "FitSliceToAll - Invalid width:" << width
-                    << ", height:" << height
-                    << " - Use SetSliceViewSize or pass valid width/height");
-      return;
-      }
+    unsigned int* dimensions = this->SliceNode->GetDimensions();
+    width = dimensions ? dimensions[0] : -1;
+    height = dimensions ? dimensions[1] : -1;
     }
-  else
+
+  if (width <= 0 || height <= 0)
     {
-    this->SliceViewSize[0] = width;
-    this->SliceViewSize[1] = height;
+    vtkErrorMacro(<< "FitSliceToAll - Invalid width:" << width
+                  << ", height:" << height);
+    return;
     }
 
   vtkMRMLVolumeNode *volumeNode;
@@ -1605,8 +1587,8 @@ void vtkMRMLSliceLogic::FitFOVToBackground(double fov)
     }
   // get viewer's width and height. we may be using a LightBox
   // display, so base width and height on renderer0 in the SliceViewer.
-  int width = this->SliceViewSize[0];
-  int height = this->SliceViewSize[1];
+  int width = this->SliceNode->GetDimensions()[0];
+  int height = this->SliceNode->GetDimensions()[1];
 
   int dimensions[3];
   double rasDimensions[4];

@@ -72,7 +72,6 @@ public:
   vtkWeakPointer<vtkImageData>        ImageData;
   QString                             SliceOrientation;
   QHash<QString, QString>             SliceOrientationToDescription;
-  QSize                               VTKSliceViewSize;
   QString                             SliceViewName;
   QButtonGroup*                       ControllerButtonGroup;
 
