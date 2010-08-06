@@ -129,7 +129,7 @@ void qSlicerLoadableModuleFactory::registerItems()
         qDebug() << "Attempt to register loadable module:" << fileInfo.fileName();
         }
 
-      QString libraryName;
+      QString libraryName = this->fileNameToKey(fileInfo.fileName());
       if (!this->registerLibrary(libraryName, fileInfo))
         {
         if (this->verbose())
