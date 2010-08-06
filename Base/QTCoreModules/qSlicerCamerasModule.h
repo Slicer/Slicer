@@ -33,6 +33,7 @@ public:
   typedef qSlicerCoreModule Superclass;
   qSlicerCamerasModule(QObject *parent=0);
 
+  virtual QString category()const;
   virtual QIcon icon()const;
   qSlicerGetTitleMacro("Cameras");
 

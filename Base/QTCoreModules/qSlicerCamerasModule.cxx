@@ -26,6 +26,12 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModule, QObject*);
 
 //-----------------------------------------------------------------------------
+QString qSlicerCamerasModule::category()const
+{
+  return "Developer Tools";
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerCamerasModule::icon()const
 {
   return QIcon(":/Icons/Cameras.png");
