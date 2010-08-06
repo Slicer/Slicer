@@ -71,7 +71,7 @@ CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAbstractCoreModule, QObject*);
 void qSlicerAbstractCoreModule::initialize(vtkSlicerApplicationLogic* _appLogic)
 {
   this->setAppLogic(_appLogic);
-  this->logic(); // Required to instanciate moduleLogic
+  this->logic(); // Create the logic if it hasn't been created already.
   this->setup(); // Setup is a virtual pure method overloaded in subclass
 }
 
@@ -144,12 +144,15 @@ void qSlicerAbstractCoreModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
 void qSlicerAbstractCoreModule::setAppLogic(vtkSlicerApplicationLogic* newAppLogic)
 {
   CTK_D(qSlicerAbstractCoreModule);
-  vtkSlicerModuleLogic* moduleLogic = vtkSlicerModuleLogic::SafeDownCast(this->logic());
+  d->AppLogic = newAppLogic;
+  // here we don't want to create a logic if no logic exists yet. it's not setAppLogic
+  // role to create logics.
+  vtkSlicerModuleLogic* moduleLogic =
+    vtkSlicerModuleLogic::SafeDownCast(d->Logic);
   if (moduleLogic)
     {
     moduleLogic->SetApplicationLogic(newAppLogic);
     }
-  d->AppLogic = newAppLogic;
 }
 
 //-----------------------------------------------------------------------------

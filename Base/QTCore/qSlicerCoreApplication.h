@@ -171,6 +171,7 @@ public:
   /// Clear application settings
   void clearSettings();
 
+  /// Return the copyrights of Slicer
   virtual QString copyrights()const;
 
 protected:
