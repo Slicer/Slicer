@@ -9,11 +9,11 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
 set(PARSER1TEST_SOURCE Parser1Test )
 add_executable(Parser1Test ${PARSER1TEST_SOURCE})
-target_link_libraries(Parser1Test ModuleDescriptionParser-static )
+target_link_libraries(Parser1Test ModuleDescriptionParser )
 
 set(ModuleFactoryTest_SOURCE ModuleFactoryTest )
 add_executable(ModuleFactoryTest ${ModuleFactoryTest_SOURCE})
-target_link_libraries(ModuleFactoryTest ModuleDescriptionParser-static )
+target_link_libraries(ModuleFactoryTest ModuleDescriptionParser )
 
 include_directories(
   ${ModuleDescriptionParser_SOURCE_DIR}
