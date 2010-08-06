@@ -76,7 +76,7 @@ void qSlicerCoreModuleFactory::registerItems()
 {
   CTK_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
-  //d->registerCoreModule<qSlicerColorsModule>();
+  d->registerCoreModule<qSlicerColorsModule>();
   d->registerCoreModule<qSlicerDataModule>();
   //d->registerCoreModule<qSlicerMRMLTreeModule>();
   d->registerCoreModule<qSlicerROIModule>();

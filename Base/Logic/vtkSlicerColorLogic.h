@@ -126,6 +126,9 @@ protected:
   vtkSlicerColorLogic(const vtkSlicerColorLogic&);
   void operator=(const vtkSlicerColorLogic&);
 
+  /// Reimplemented to listen to specific scene events
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
   /// 
   /// a vector holding discovered default colour files, found in the
   /// Resources/ColorFiles directory, white space separated with:

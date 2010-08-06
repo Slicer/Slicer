@@ -1,4 +1,8 @@
+// Qt includes
+#include <QSettings>
+
 // SlicerQt includes
+#include "qSlicerApplication.h"
 #include "qSlicerColorsModule.h"
 #include "qSlicerColorsModuleWidget.h"
 
@@ -19,6 +23,24 @@ CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerColorsModule, QObject*);
 QIcon qSlicerColorsModule::icon()const
 {
   return QIcon(":/Icons/Colors.png");
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerColorsModule::setup()
+{
+  QStringList paths = qSlicerApplication::application()->settings()
+    ->value("QTCoreModules/Colors/ColorFilePaths").toStringList();
+#ifdef Q_OS_WIN32
+  QString joinedPaths = paths.join(";");
+#else
+  QString joinedPaths = paths.join(":");
+#endif
+  vtkSlicerColorLogic* colorLogic =
+    vtkSlicerColorLogic::SafeDownCast(this->logic());
+  // Warning, if the logic has already created the color nodes (AddDefaultColorNodes),
+  // setting the user color file paths doesn't trigger any action to add new nodes.
+  // It's something that must be fixed into the logic, not here
+  colorLogic->SetUserColorFilePaths(joinedPaths.toLatin1().data());
 }
 
 //-----------------------------------------------------------------------------

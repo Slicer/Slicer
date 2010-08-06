@@ -972,3 +972,20 @@ int vtkSlicerColorLogic::LoadColorFile(const char *fileName, const char *nodeNam
   return 0;
 }
 
+//------------------------------------------------------------------------------
+void vtkSlicerColorLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+{
+  // This code is only executed in SlicerQT via:
+  // colorLogic->SetMRMLScene(scene)
+  // Slicer in KWWidget runs the old style:
+  //   colorLogic->SetAndObserveMRMLSceneEvents(scene, events)
+  vtkIntArray* sceneEvents = vtkIntArray::New();
+  sceneEvents->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+  sceneEvents->Delete();
+  if (newScene)
+    {
+    this->AddDefaultColorNodes();
+    }
+}
