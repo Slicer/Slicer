@@ -106,9 +106,9 @@ set(lib_name ModuleDescriptionParser)
 ## Always build an explicitly static library for linking against GenerateCLP so that
 ## GenerateCLP can be run from CMake without having to set DYLD_LIBRARY_PATH or LD_LIBRARY_PATH
 ## to the future location of of libModuleDescriptionParser.so
-add_library(${lib_name}-static STATIC
-  ${ModuleDescriptionParser_SRCS}
-  )
+## add_library(${lib_name}-static STATIC
+  ## ${ModuleDescriptionParser_SRCS}
+  ## )
 
 set(link_libs
   ITKEXPAT
@@ -128,7 +128,7 @@ if(NOT WIN32 AND HAVE_BFD)
 endif(NOT WIN32 AND HAVE_BFD)
 
 target_link_libraries(${lib_name} ${link_libs})
-target_link_libraries(${lib_name}-static ${link_libs})
+## target_link_libraries(${lib_name}-static ${link_libs})
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
