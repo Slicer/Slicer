@@ -29,7 +29,7 @@ public:
   // Convenient typedef
   typedef ctkFactoryLibraryItem<qSlicerAbstractCoreModule> Superclass;
   
-  explicit qSlicerCLILoadableModuleFactoryItem(const QString& itemKey, const QString& itemPath);
+  explicit qSlicerCLILoadableModuleFactoryItem(const QString& itemPath);
   virtual ~qSlicerCLILoadableModuleFactoryItem(){}
 
 protected:
@@ -41,32 +41,27 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class qSlicerCLILoadableModuleFactoryPrivate;
-
-//-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLILoadableModuleFactory :
-  public ctkAbstractLibraryFactory<qSlicerAbstractCoreModule,qSlicerCLILoadableModuleFactoryItem>
+  public ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>
 {
 public:
 
-  typedef ctkAbstractLibraryFactory<qSlicerAbstractCoreModule,
-                                     qSlicerCLILoadableModuleFactoryItem> Superclass;
+  typedef ctkAbstractLibraryFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCLILoadableModuleFactory();
-  virtual ~qSlicerCLILoadableModuleFactory(){}
 
-  ///
+  /// Reimplemented to scan the directory of the command line modules
   virtual void registerItems();
 
   ///
-  virtual QString fileNameToKey(const QString& fileName);
+  QString fileNameToKey(const QString& fileName)const;
 
   ///
   /// Extract module name given \a libraryName
-  /// See qSlicerUtils::extractModuleNameFromLibraryName
+  /// \sa qSlicerUtils::extractModuleNameFromLibraryName
   static QString extractModuleName(const QString& libraryName);
-
-private:
-  CTK_DECLARE_PRIVATE(qSlicerCLILoadableModuleFactory);
+protected: 
+  virtual ctkFactoryLibraryItem<qSlicerAbstractCoreModule>* createFactoryLibraryItem(
+    const QFileInfo& libraryFile)const;
 };
 
 #endif

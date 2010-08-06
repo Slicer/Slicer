@@ -19,8 +19,8 @@
 #include "qSlicerCLIModuleFactoryHelper.h"
 
 //-----------------------------------------------------------------------------
-qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(const QString& itemKey,
-  const QString& itemPath):Superclass(itemKey),Path(itemPath)
+qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
+  const QString& itemPath):Superclass(),Path(itemPath)
 {
 }
 
@@ -31,7 +31,7 @@ bool qSlicerCLIExecutableModuleFactoryItem::load()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIExecutableModuleFactoryItem::path()
+QString qSlicerCLIExecutableModuleFactoryItem::path()const
 {
   return this->Path;
 }
@@ -63,6 +63,13 @@ qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory():Superclas
 void qSlicerCLIExecutableModuleFactory::registerItems()
 {
   
+}
+
+//-----------------------------------------------------------------------------
+ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLIExecutableModuleFactory
+::createFactoryPluginItem(const QFileInfo& plugin)const
+{
+  return new qSlicerCLIExecutableModuleFactoryItem(plugin.filePath());
 }
 
 //-----------------------------------------------------------------------------

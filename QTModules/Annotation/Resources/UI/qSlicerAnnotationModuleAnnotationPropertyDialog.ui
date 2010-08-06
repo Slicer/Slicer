@@ -106,7 +106,7 @@
           </widget>
          </item>
          <item>
-          <widget class="ctkSliderSpinBoxWidget" name="textScaleSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget">
            <property name="maximum">
             <double>40.000000000000000</double>
            </property>
@@ -187,7 +187,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="pointOpacitySliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="pointOpacitySliderSpinBoxWidget">
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
@@ -197,24 +197,24 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="pointAmbientSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="pointDiffuseSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="pointSpecularSliderSpinBoxWidget"/>
+          <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget"/>
          </item>
          <item row="0" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="pointSizeSliderSpinBoxWidget"/>
+          <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget"/>
          </item>
         </layout>
        </item>
@@ -265,7 +265,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="lineWidthSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="lineWidthSliderSpinBoxWidget">
            <property name="singleStep">
             <double>0.100000000000000</double>
            </property>
@@ -279,7 +279,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="lineOpacitySliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="lineOpacitySliderSpinBoxWidget">
            <property name="maximum">
             <double>1.000000000000000</double>
            </property>
@@ -296,7 +296,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="lineAmbientSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="lineAmbientSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
@@ -310,7 +310,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="lineDiffuseSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="lineDiffuseSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
@@ -324,7 +324,7 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="ctkSliderSpinBoxWidget" name="lineSpecularSliderSpinBoxWidget">
+          <widget class="ctkSliderWidget" name="lineSpecularSliderSpinBoxWidget">
            <property name="maximum">
             <double>10.000000000000000</double>
            </property>
@@ -493,9 +493,9 @@
    <header>ctkColorPickerButton.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkSliderSpinBoxWidget</class>
+   <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
-   <header>ctkSliderSpinBoxWidget.h</header>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

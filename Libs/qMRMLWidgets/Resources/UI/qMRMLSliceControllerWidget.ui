@@ -247,7 +247,7 @@
          </widget>
         </item>
         <item>
-         <widget class="ctkSliderSpinBoxWidget" name="SliceOffsetSlider"/>
+         <widget class="ctkSliderWidget" name="SliceOffsetSlider"/>
         </item>
        </layout>
       </item>
@@ -258,9 +258,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkSliderSpinBoxWidget</class>
+   <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
-   <header>ctkSliderSpinBoxWidget.h</header>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>

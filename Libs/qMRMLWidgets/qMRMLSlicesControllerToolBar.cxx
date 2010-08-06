@@ -13,7 +13,7 @@
 // CTK includes
 #include <ctkDoubleSlider.h>
 #include <ctkLogger.h>
-#include <ctkSliderSpinBoxWidget.h>
+#include <ctkSliderWidget.h>
 
 // qMRML includes
 #include "qMRMLSlicesControllerToolBar.h"
@@ -64,7 +64,7 @@ public:
   vtkMRMLScene*            MRMLScene;
   vtkSmartPointer<vtkCollection> MRMLSliceLogics;
 
-  ctkSliderSpinBoxWidget*  LabelOpacitySlider;
+  ctkSliderWidget*  LabelOpacitySlider;
   QToolButton*             LabelOpacityToggleButton;
   double                   LastLabelOpacity;
   ctkDoubleSlider*         ForegroundOpacitySlider;
@@ -127,7 +127,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   QWidget* labelOpacityWidget = new QWidget(p);
   QHBoxLayout* labelOpacityLayout = new QHBoxLayout(labelOpacityWidget);
   labelOpacityLayout->setContentsMargins(0,0,0,0);
-  this->LabelOpacitySlider = new ctkSliderSpinBoxWidget(p);
+  this->LabelOpacitySlider = new ctkSliderWidget(p);
   this->LabelOpacitySlider->setRange(0., 1.);
   this->LabelOpacitySlider->setValue(1.);
   this->LabelOpacitySlider->setSingleStep(0.05);

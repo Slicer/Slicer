@@ -23,8 +23,11 @@
 #include "qSlicerUtils.h"
 
 //-----------------------------------------------------------------------------
-qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(const QString& itemKey,
-  const QString& itemPath):Superclass(itemKey, itemPath){}
+qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(
+  const QString& itemPath)
+  :Superclass(itemPath)
+{
+}
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
@@ -32,7 +35,8 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   qSlicerCLILoadableModule * module = new qSlicerCLILoadableModule();
 
   // Resolves symbol
-  char* xmlDescription = (char*)this->symbolAddress("XMLModuleDescription");
+  char* xmlDescription = reinterpret_cast<char*>(
+    this->symbolAddress("XMLModuleDescription"));
 
   // Retrieve
   //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
@@ -49,7 +53,8 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 
   // Resolves symbol
   qSlicerCLILoadableModule::ModuleEntryPointType moduleEntryPoint =
-    (qSlicerCLILoadableModule::ModuleEntryPointType)this->symbolAddress("ModuleEntryPoint");
+    reinterpret_cast<qSlicerCLILoadableModule::ModuleEntryPointType>(
+      this->symbolAddress("ModuleEntryPoint"));
 
   if (!moduleEntryPoint)
     {
@@ -71,20 +76,8 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 }
 
 //-----------------------------------------------------------------------------
-class qSlicerCLILoadableModuleFactoryPrivate:public ctkPrivate<qSlicerCLILoadableModuleFactory>
-{
-public:
-  CTK_DECLARE_PUBLIC(qSlicerCLILoadableModuleFactory);
-  qSlicerCLILoadableModuleFactoryPrivate()
-    {
-    }
-};
-
-//-----------------------------------------------------------------------------
 qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory():Superclass()
 {
-  CTK_INIT_PRIVATE(qSlicerCLILoadableModuleFactory);
-  
   // Set the list of required symbols for CmdLineLoadableModule,
   // if one of these symbols can't be resolved, the library won't be registered.
   QStringList cmdLineModuleSymbols;
@@ -122,19 +115,22 @@ void qSlicerCLILoadableModuleFactory::registerItems()
         fileInfo = QFileInfo(fileInfo.symLinkTarget());
         }
       // Skip if current file isn't a library
-      if (!QLibrary::isLibrary(fileInfo.fileName())) { continue; }
+      if (!QLibrary::isLibrary(fileInfo.fileName()))
+        {
+        continue;
+        }
 
       if (this->verbose())
         {
         qDebug() << "Attempt to register command line module:" << fileInfo.fileName();
         }
 
-      QString libraryName;
-      if (!this->registerLibrary(fileInfo, libraryName))
+      QString key = this->fileNameToKey(fileInfo.filePath());
+      if (!this->registerLibrary(key, fileInfo))
         {
         if (this->verbose())
           {
-          qWarning() << "Failed to register module: " << libraryName;
+          qWarning() << "Failed to register module: " << key;
           }
         continue;
         }
@@ -143,9 +139,16 @@ void qSlicerCLILoadableModuleFactory::registerItems()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& objectName)
+ctkFactoryLibraryItem<qSlicerAbstractCoreModule>* qSlicerCLILoadableModuleFactory::
+createFactoryLibraryItem(const QFileInfo& libraryFile)const
 {
-  return Self::extractModuleName(objectName);
+  return new qSlicerCLILoadableModuleFactoryItem(libraryFile.filePath());
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& objectName)const
+{
+  return qSlicerCLILoadableModuleFactory::extractModuleName(objectName);
 }
 
 //-----------------------------------------------------------------------------

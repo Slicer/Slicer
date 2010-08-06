@@ -32,7 +32,6 @@ public:
 
   typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerLoadableModuleFactory();
-  virtual ~qSlicerLoadableModuleFactory(){}
 
   ///
   virtual void registerItems();
@@ -44,7 +43,6 @@ public:
   /// Extract module name given \a libraryName
   /// \sa qSlicerUtils::extractModuleNameFromLibraryName
   static QString extractModuleName(const QString& libraryName);
-
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerLoadableModuleFactory);

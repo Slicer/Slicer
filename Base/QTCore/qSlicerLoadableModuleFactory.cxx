@@ -83,7 +83,7 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
 // qSlicerLoadableModuleFactory Methods
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableModuleFactory::qSlicerLoadableModuleFactory():Superclass()
+qSlicerLoadableModuleFactory::qSlicerLoadableModuleFactory()
 {
   CTK_INIT_PRIVATE(qSlicerLoadableModuleFactory);
 }
@@ -130,7 +130,7 @@ void qSlicerLoadableModuleFactory::registerItems()
         }
 
       QString libraryName;
-      if (!this->registerLibrary(fileInfo, libraryName))
+      if (!this->registerLibrary(libraryName, fileInfo))
         {
         if (this->verbose())
           {

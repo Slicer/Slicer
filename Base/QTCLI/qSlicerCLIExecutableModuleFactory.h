@@ -27,7 +27,7 @@ class qSlicerCLIExecutableModuleFactoryItem : public ctkAbstractFactoryItem<qSli
 {
 public:
   typedef ctkAbstractFactoryItem<qSlicerAbstractCoreModule> Superclass;
-  explicit qSlicerCLIExecutableModuleFactoryItem(const QString& itemKey, const QString& itemPath);
+  explicit qSlicerCLIExecutableModuleFactoryItem(const QString& itemPath);
   virtual ~qSlicerCLIExecutableModuleFactoryItem(){}
 
   ///
@@ -35,7 +35,7 @@ public:
 
   ///
   /// Return path associated with the executable module
-  QString path();
+  QString path()const;
 
 protected:
   virtual qSlicerAbstractCoreModule* instanciator();
@@ -50,12 +50,12 @@ class qSlicerCLIExecutableModuleFactoryPrivate;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory :
-  public ctkAbstractPluginFactory<qSlicerAbstractCoreModule,qSlicerCLIExecutableModuleFactoryItem>
+  public ctkAbstractPluginFactory<qSlicerAbstractCoreModule>
 {
 public:
 
-  typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule,
-                                    qSlicerCLIExecutableModuleFactoryItem> Superclass;
+  typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
+  
   qSlicerCLIExecutableModuleFactory();
   virtual ~qSlicerCLIExecutableModuleFactory(){}
 
@@ -63,7 +63,7 @@ public:
   virtual void registerItems();
 
   ///
-//   virtual QString fileNameToKey(const QString& fileName);
+  ///   virtual QString fileNameToKey(const QString& fileName);
 
   /// Extract module name given \a executableName
   /// For example: 
@@ -71,6 +71,9 @@ public:
   ///  Threshold -> threshold
   static QString extractModuleName(const QString& executableName);
 
+protected:
+  virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* createFactoryPluginItem(
+    const QFileInfo& plugin)const;
 private:
   CTK_DECLARE_PRIVATE(qSlicerCLIExecutableModuleFactory);
 };
