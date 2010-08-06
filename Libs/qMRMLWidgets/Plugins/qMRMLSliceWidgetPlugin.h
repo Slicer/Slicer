@@ -1,16 +1,16 @@
-#ifndef __qMRMLSliceViewWidgetPlugin_h
-#define __qMRMLSliceViewWidgetPlugin_h
+#ifndef __qMRMLSliceWidgetPlugin_h
+#define __qMRMLSliceWidgetPlugin_h
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLSliceViewWidgetPlugin :
+class QMRML_WIDGETS_PLUGIN_EXPORT qMRMLSliceWidgetPlugin :
   public QObject,
   public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLSliceViewWidgetPlugin(QObject *_parent = 0);
+  qMRMLSliceWidgetPlugin(QObject *_parent = 0);
   
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;

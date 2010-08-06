@@ -17,7 +17,7 @@
 class QLayout;
 class QGridLayout;
 class QButtonGroup;
-class qMRMLSliceViewWidget;
+class qMRMLSliceWidget;
 class qMRMLThreeDView;
 class vtkCollection;
 class vtkObject;
@@ -65,7 +65,7 @@ public:
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
-  qMRMLSliceViewWidget* sliceView(const QString& sliceViewName);
+  qMRMLSliceWidget* sliceView(const QString& sliceViewName);
 
 public slots:
   /// Handle MRML scene event
@@ -95,7 +95,7 @@ public:
   QList<qMRMLThreeDView*>              ThreeDViewList;
   QList<vtkMRMLViewNode*>              MRMLViewNodeList;
 
-  QHash<QString, qMRMLSliceViewWidget*>      SliceViewMap;
+  QHash<QString, qMRMLSliceWidget*>      SliceViewMap;
   QHash<vtkMRMLSliceNode*, QString>          MRMLSliceNodeToSliceViewName;
 };
 

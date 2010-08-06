@@ -2,7 +2,7 @@
 #include <QDebug>
 
 // qMRMLWidgets includes
-#include <qMRMLSliceViewWidget.h>
+#include <qMRMLSliceWidget.h>
 
 // SlicerQt includes
 #include "qSlicerSliceControllerModuleWidget.h"
@@ -42,19 +42,19 @@ void qSlicerSliceControllerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
     }
 
   // Red
-  qMRMLSliceViewWidget * redSliceViewWidget = layoutManager->sliceView("Red");
+  qMRMLSliceWidget * redSliceViewWidget = layoutManager->sliceView("Red");
   Q_ASSERT(redSliceViewWidget);
   d->RedSliceControllerWidget->setSliceLogic(
       redSliceViewWidget->sliceController()->sliceLogic());
 
   // Yellow
-  qMRMLSliceViewWidget * yellowSliceViewWidget = layoutManager->sliceView("Yellow");
+  qMRMLSliceWidget * yellowSliceViewWidget = layoutManager->sliceView("Yellow");
   Q_ASSERT(yellowSliceViewWidget);
   d->YellowSliceControllerWidget->setSliceLogic(
       yellowSliceViewWidget->sliceController()->sliceLogic());
 
   // Green
-  qMRMLSliceViewWidget * greenSliceViewWidget = layoutManager->sliceView("Green");
+  qMRMLSliceWidget * greenSliceViewWidget = layoutManager->sliceView("Green");
   Q_ASSERT(greenSliceViewWidget);
   d->GreenSliceControllerWidget->setSliceLogic(
       greenSliceViewWidget->sliceController()->sliceLogic());

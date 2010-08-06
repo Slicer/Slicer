@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qMRMLSliceViewWidget</class>
- <widget class="qMRMLWidget" name="qMRMLSliceViewWidget">
+ <class>qMRMLSliceWidget</class>
+ <widget class="qMRMLWidget" name="qMRMLSliceWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>qMRMLSliceViewWidget</string>
+   <string>qMRMLSliceWidget</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
@@ -74,7 +74,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qMRMLSliceViewWidget</sender>
+   <sender>qMRMLSliceWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>SliceController</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

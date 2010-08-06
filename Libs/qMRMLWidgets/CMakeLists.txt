@@ -64,9 +64,9 @@ SET(qMRMLWidgets_SRCS
   qMRMLSliceInformationWidget.cxx
   qMRMLSliceInformationWidget.h
   qMRMLSliceInformationWidget_p.h
-  qMRMLSliceViewWidget.cxx
-  qMRMLSliceViewWidget.h
-  qMRMLSliceViewWidget_p.h
+  qMRMLSliceWidget.cxx
+  qMRMLSliceWidget.h
+  qMRMLSliceWidget_p.h
   qMRMLSlicesControllerToolBar.cxx
   qMRMLSlicesControllerToolBar.h
   qMRMLSortFilterProxyModel.cxx
@@ -113,8 +113,8 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSliceControllerWidget_p.h
   qMRMLSliceInformationWidget.h
   qMRMLSliceInformationWidget_p.h
-  qMRMLSliceViewWidget.h
-  qMRMLSliceViewWidget_p.h
+  qMRMLSliceWidget.h
+  qMRMLSliceWidget_p.h
   qMRMLSlicesControllerToolBar.h
   qMRMLSortFilterProxyModel.h
   qMRMLThreeDView.h
@@ -135,7 +135,7 @@ SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLSliceControllerWidget.ui
   Resources/UI/qMRMLSliceInformationWidget.ui
-  Resources/UI/qMRMLSliceViewWidget.ui
+  Resources/UI/qMRMLSliceWidget.ui
   Resources/UI/qMRMLSlicesControllerToolBar.ui
   Resources/UI/qMRMLThreeDViewsControllerWidget.ui
   Resources/UI/qMRMLTransformSliders.ui

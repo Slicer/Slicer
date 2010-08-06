@@ -1,5 +1,5 @@
-#ifndef __qMRMLSliceViewWidget_h
-#define __qMRMLSliceViewWidget_h
+#ifndef __qMRMLSliceWidget_h
+#define __qMRMLSliceWidget_h
 
 // Qt includes
 #include <QWidget>
@@ -12,7 +12,7 @@
 
 #include "qMRMLWidgetsExport.h"
 
-class qMRMLSliceViewWidgetPrivate;
+class qMRMLSliceWidgetPrivate;
 class qMRMLSliceControllerWidget;
 class vtkMRMLScene;
 class vtkMRMLNode;
@@ -24,7 +24,7 @@ class ctkVTKSliceView;
 
 class vtkMRMLSliceLogic;
 
-class QMRML_WIDGETS_EXPORT qMRMLSliceViewWidget : public qMRMLWidget
+class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString sliceOrientation READ sliceOrientation WRITE setSliceOrientation)
@@ -33,8 +33,8 @@ public:
   typedef qMRMLWidget Superclass;
   
   /// Constructors
-  explicit qMRMLSliceViewWidget(QWidget* parent = 0);
-  virtual ~qMRMLSliceViewWidget(){}
+  explicit qMRMLSliceWidget(QWidget* parent = 0);
+  virtual ~qMRMLSliceWidget(){}
 
   /// Get slice controller
   qMRMLSliceControllerWidget* sliceController()const;
@@ -90,7 +90,7 @@ protected:
   ctkVTKSliceView * sliceView()const;
 
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSliceViewWidget);
+  CTK_DECLARE_PRIVATE(qMRMLSliceWidget);
 };
 
 #endif

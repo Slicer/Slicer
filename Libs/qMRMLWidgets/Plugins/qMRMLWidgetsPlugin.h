@@ -10,7 +10,7 @@
 #include "qMRMLROIWidgetPlugin.h"
 #include "qMRMLSliceControllerWidgetPlugin.h"
 #include "qMRMLSliceInformationWidgetPlugin.h"
-#include "qMRMLSliceViewWidgetPlugin.h"
+#include "qMRMLSliceWidgetPlugin.h"
 #include "qMRMLSlicesControllerToolBarPlugin.h"
 #include "qMRMLThreeDViewPlugin.h"
 #include "qMRMLThreeDViewsControllerWidgetPlugin.h"
@@ -46,7 +46,7 @@ public:
             << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceInformationWidgetPlugin
             << new qMRMLSlicesControllerToolBarPlugin
-            << new qMRMLSliceViewWidgetPlugin
+            << new qMRMLSliceWidgetPlugin
             << new qMRMLThreeDViewPlugin
             << new qMRMLThreeDViewsControllerWidgetPlugin
             << new qMRMLTransformSlidersPlugin

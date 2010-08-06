@@ -1,24 +1,24 @@
 
 // qMRML includes
-#include "qMRMLSliceViewWidgetPlugin.h"
-#include "qMRMLSliceViewWidget.h"
+#include "qMRMLSliceWidgetPlugin.h"
+#include "qMRMLSliceWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLSliceViewWidgetPlugin::qMRMLSliceViewWidgetPlugin(QObject *_parent):QObject(_parent)
+qMRMLSliceWidgetPlugin::qMRMLSliceWidgetPlugin(QObject *_parent):QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSliceViewWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *qMRMLSliceWidgetPlugin::createWidget(QWidget *_parent)
 {
-  qMRMLSliceViewWidget* _widget = new qMRMLSliceViewWidget(_parent);
+  qMRMLSliceWidget* _widget = new qMRMLSliceWidget(_parent);
   return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSliceViewWidgetPlugin::domXml() const
+QString qMRMLSliceWidgetPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLSliceViewWidget\" \
+  return "<widget class=\"qMRMLSliceWidget\" \
           name=\"MRMLSliceViewWidget\">\n"
           " <property name=\"geometry\">\n"
           "  <rect>\n"
@@ -32,19 +32,19 @@ QString qMRMLSliceViewWidgetPlugin::domXml() const
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSliceViewWidgetPlugin::includeFile() const
+QString qMRMLSliceWidgetPlugin::includeFile() const
 {
-  return "qMRMLSliceViewWidget.h";
+  return "qMRMLSliceWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSliceViewWidgetPlugin::isContainer() const
+bool qMRMLSliceWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSliceViewWidgetPlugin::name() const
+QString qMRMLSliceWidgetPlugin::name() const
 {
-  return "qMRMLSliceViewWidget";
+  return "qMRMLSliceWidget";
 }

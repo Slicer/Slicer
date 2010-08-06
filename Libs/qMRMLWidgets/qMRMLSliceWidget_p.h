@@ -1,28 +1,28 @@
-#ifndef __qMRMLSliceViewWidget_p_h
-#define __qMRMLSliceViewWidget_p_h
+#ifndef __qMRMLSliceWidget_p_h
+#define __qMRMLSliceWidget_p_h
 
 /// CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
 // qMRML includes
-#include "qMRMLSliceViewWidget.h"
-#include "ui_qMRMLSliceViewWidget.h"
+#include "qMRMLSliceWidget.h"
+#include "ui_qMRMLSliceWidget.h"
 
 class vtkMRMLDisplayableManagerGroup;
 class QResizeEvent;
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceViewWidgetPrivate: public QObject,
-                                   public ctkPrivate<qMRMLSliceViewWidget>,
-                                   public Ui_qMRMLSliceViewWidget
+class qMRMLSliceWidgetPrivate: public QObject,
+                                   public ctkPrivate<qMRMLSliceWidget>,
+                                   public Ui_qMRMLSliceWidget
 {
   Q_OBJECT
   QVTK_OBJECT
 public:
-  CTK_DECLARE_PUBLIC(qMRMLSliceViewWidget);
-  qMRMLSliceViewWidgetPrivate();
-  ~qMRMLSliceViewWidgetPrivate();
+  CTK_DECLARE_PUBLIC(qMRMLSliceWidget);
+  qMRMLSliceWidgetPrivate();
+  ~qMRMLSliceWidgetPrivate();
 
 public slots:
 

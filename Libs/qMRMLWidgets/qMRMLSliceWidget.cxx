@@ -10,8 +10,8 @@
 #include <vtkLightBoxRendererManager.h>
 
 // qMRML includes
-#include "qMRMLSliceViewWidget.h"
-#include "qMRMLSliceViewWidget_p.h"
+#include "qMRMLSliceWidget.h"
+#include "qMRMLSliceWidget_p.h"
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
@@ -27,20 +27,20 @@
 #include <vtkImageData.h>
 
 //--------------------------------------------------------------------------
-static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceViewWidget");
+static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceWidget");
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLSliceViewWidgetPrivate::qMRMLSliceViewWidgetPrivate()
+qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate()
 {
   this->DisplayableManagerGroup = 0;
 }
 
 //---------------------------------------------------------------------------
-qMRMLSliceViewWidgetPrivate::~qMRMLSliceViewWidgetPrivate()
+qMRMLSliceWidgetPrivate::~qMRMLSliceWidgetPrivate()
 {
   if (this->DisplayableManagerGroup)
     {
@@ -49,15 +49,15 @@ qMRMLSliceViewWidgetPrivate::~qMRMLSliceViewWidgetPrivate()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onSceneAboutToBeClosedEvent()
+void qMRMLSliceWidgetPrivate::onSceneAboutToBeClosedEvent()
 {
   this->VTKSliceView->setRenderEnabled(false);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onSceneClosedEvent()
+void qMRMLSliceWidgetPrivate::onSceneClosedEvent()
 {
-  CTK_P(qMRMLSliceViewWidget);
+  CTK_P(qMRMLSliceWidget);
   if (!p->mrmlScene()->GetIsUpdating())
     {
     this->VTKSliceView->setRenderEnabled(true);
@@ -65,25 +65,25 @@ void qMRMLSliceViewWidgetPrivate::onSceneClosedEvent()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onSceneAboutToBeImportedEvent()
+void qMRMLSliceWidgetPrivate::onSceneAboutToBeImportedEvent()
 {
   this->VTKSliceView->setRenderEnabled(false);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onSceneImportedEvent()
+void qMRMLSliceWidgetPrivate::onSceneImportedEvent()
 {
   this->VTKSliceView->setRenderEnabled(true);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onSceneRestoredEvent()
+void qMRMLSliceWidgetPrivate::onSceneRestoredEvent()
 {
   this->VTKSliceView->setRenderEnabled(true);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidgetPrivate::onImageDataModified(vtkImageData * imageData)
+void qMRMLSliceWidgetPrivate::onImageDataModified(vtkImageData * imageData)
 {
   logger.trace("onImageDataModifiedEvent");
   this->VTKSliceView->setImageData(imageData);
@@ -94,10 +94,10 @@ void qMRMLSliceViewWidgetPrivate::onImageDataModified(vtkImageData * imageData)
 // qMRMLSliceView methods
 
 // --------------------------------------------------------------------------
-qMRMLSliceViewWidget::qMRMLSliceViewWidget(QWidget* _parent) : Superclass(_parent)
+qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
 {
-  CTK_INIT_PRIVATE(qMRMLSliceViewWidget);
-  CTK_D(qMRMLSliceViewWidget);
+  CTK_INIT_PRIVATE(qMRMLSliceWidget);
+  CTK_D(qMRMLSliceWidget);
   d->setupUi(this);
 
   // Register Displayable Managers
@@ -132,9 +132,9 @@ qMRMLSliceViewWidget::qMRMLSliceViewWidget(QWidget* _parent) : Superclass(_paren
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceViewWidget::setMRMLScene(vtkMRMLScene* newScene)
+void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
-  CTK_D(qMRMLSliceViewWidget);
+  CTK_D(qMRMLSliceWidget);
   if (newScene == this->mrmlScene())
     {
     return;
@@ -164,73 +164,73 @@ void qMRMLSliceViewWidget::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceViewWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
+void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
-  CTK_D(qMRMLSliceViewWidget);
+  CTK_D(qMRMLSliceWidget);
   d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
   d->SliceController->setMRMLSliceNode(newSliceNode);
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceCompositeNode* qMRMLSliceViewWidget::mrmlSliceCompositeNode()const
+vtkMRMLSliceCompositeNode* qMRMLSliceWidget::mrmlSliceCompositeNode()const
 {
   return ctk_d()->SliceController->mrmlSliceCompositeNode();
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceViewWidget::setSliceViewName(const QString& newSliceViewName)
+void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
 {
   ctk_d()->SliceController->setSliceViewName(newSliceViewName);
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceViewWidget::sliceViewName()const
+QString qMRMLSliceWidget::sliceViewName()const
 {
   return ctk_d()->SliceController->sliceViewName();
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceViewWidget::setSliceOrientation(const QString& orientation)
+void qMRMLSliceWidget::setSliceOrientation(const QString& orientation)
 {
   ctk_d()->SliceController->setSliceOrientation(orientation);
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceViewWidget::sliceOrientation()const
+QString qMRMLSliceWidget::sliceOrientation()const
 {
   return ctk_d()->SliceController->sliceOrientation();
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceViewWidget::setImageData(vtkImageData* newImageData)
+void qMRMLSliceWidget::setImageData(vtkImageData* newImageData)
 {
   ctk_d()->SliceController->setImageData(newImageData);
 }
 
 //---------------------------------------------------------------------------
-vtkImageData* qMRMLSliceViewWidget::imageData() const
+vtkImageData* qMRMLSliceWidget::imageData() const
 {
   return ctk_d()->SliceController->imageData();
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceViewWidget::mrmlSliceNode()const
+vtkMRMLSliceNode* qMRMLSliceWidget::mrmlSliceNode()const
 {
   return ctk_d()->SliceController->mrmlSliceNode();
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceLogic* qMRMLSliceViewWidget::sliceLogic()const
+vtkMRMLSliceLogic* qMRMLSliceWidget::sliceLogic()const
 {
   return ctk_d()->SliceController->sliceLogic();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceViewWidget::fitSliceToBackground()
+void qMRMLSliceWidget::fitSliceToBackground()
 {
   ctk_d()->SliceController->fitSliceToBackground();
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLSliceViewWidget, ctkVTKSliceView*, sliceView, VTKSliceView);
-CTK_GET_CXX(qMRMLSliceViewWidget, qMRMLSliceControllerWidget*, sliceController, SliceController);
+CTK_GET_CXX(qMRMLSliceWidget, ctkVTKSliceView*, sliceView, VTKSliceView);
+CTK_GET_CXX(qMRMLSliceWidget, qMRMLSliceControllerWidget*, sliceController, SliceController);
