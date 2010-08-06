@@ -255,21 +255,11 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
   Q_ASSERT(action->data().toString() == module->name());
   Q_ASSERT(action->text() == module->title());
 
-  // here we just want the icons, no text
-  //action->setText("");
-
-  // Add action to signal mapper
-  //d->ModuleToolBarMapper->setMapping(action, module->name());
-  //QObject::connect(action, SIGNAL(triggered()),
-  //                 d->ModuleToolBarMapper, SLOT(map()));
-
-  // Update action state
-  bool visible = d->ModuleToolBarList.contains(module->title());
-  action->setVisible(visible);
-  action->setEnabled(visible);
-
   // Add action to ToolBar
-  d->ModuleToolBar->addAction(action);
+  if (d->ModuleToolBarList.contains(module->title()))
+    {
+    d->ModuleToolBar->addAction(action);
+    }
 }
 
 //---------------------------------------------------------------------------
