@@ -1546,17 +1546,17 @@ void vtkMRMLSliceLogic::FitSliceToBackground(int width, int height)
 void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
 {
   // Use SliceNode dimensions if width and height parameters are omitted
-  if (width <= 0 || height <= 0)
+  if (width < 0 || height < 0)
     {
     unsigned int* dimensions = this->SliceNode->GetDimensions();
     width = dimensions ? dimensions[0] : -1;
     height = dimensions ? dimensions[1] : -1;
     }
 
-  if (width <= 0 || height <= 0)
+  if (width < 0 || height < 0)
     {
-    vtkErrorMacro(<< "FitSliceToAll - Invalid width:" << width
-                  << ", height:" << height);
+    vtkErrorMacro(<< __FUNCTION__ << "- Invalid size:" << width
+                  << "x" << height);
     return;
     }
 
