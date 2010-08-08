@@ -331,7 +331,8 @@ void vtkMRMLSliceLogic::ProcessMRMLEvents(vtkObject * caller,
         }
       }
 
-    if (event == vtkMRMLScene::SceneAboutToBeClosedEvent)
+    if (event == vtkMRMLScene::SceneAboutToBeClosedEvent ||
+        caller == 0)
       {
       this->UpdateSliceNodeFromLayout();
       this->DeleteSliceModel();
