@@ -55,7 +55,10 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <widget class="QToolButton" name="toolButton">
+       <widget class="QToolButton" name="OrientationToolButton">
+        <property name="toolTip">
+         <string>Select options for the Viewer's orientation (not yet implemented).</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -94,6 +97,9 @@
       </item>
       <item row="0" column="2">
        <widget class="QToolButton" name="ForgroundLayerOptionButton">
+        <property name="toolTip">
+         <string>Select options for the Foreground Layer</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -132,6 +138,9 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="toolTip">
+         <string>Select options for the Label Layer (not yet implemented).</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -164,6 +173,9 @@
       </item>
       <item row="1" column="2">
        <widget class="QToolButton" name="BackgroundLayerOptionButton">
+        <property name="toolTip">
+         <string>Select options for the Background Layer</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -201,6 +213,9 @@
         </property>
         <item>
          <widget class="QToolButton" name="SliceLinkToggle">
+          <property name="toolTip">
+           <string>Links/Unlinks the slice controls (except scales) across all Slice Viewers.</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -219,6 +234,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="SliceVisibilityToggle">
+          <property name="toolTip">
+           <string>Toggles slice visibility in the MainViewer.</string>
+          </property>
           <property name="text">
            <string>...</string>
           </property>
@@ -247,7 +265,26 @@
          </widget>
         </item>
         <item>
-         <widget class="ctkSliderWidget" name="SliceOffsetSlider"/>
+         <widget class="ctkSliderWidget" name="SliceOffsetSlider">
+          <property name="toolTip">
+           <string>Slice distance from RAS origin</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="SliceIndexLabel">
+          <property name="toolTip">
+           <string>Slice number display
+Integer: slice number starting from 1 (not 0)
+Letter 'O': slice is out of volume
+Letter 'R': use Rotate to Volume Plane to see slice index
+
+Use this display to cross-reference to filmed images or other displays.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -255,6 +292,232 @@
     </widget>
    </item>
   </layout>
+  <action name="actionFit_to_window">
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fit to window</string>
+   </property>
+   <property name="toolTip">
+    <string>Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
+   </property>
+  </action>
+  <action name="actionRotate_to_Volume_Plane">
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicerRotateToPixelSpace.png</normaloff>:/Icons/SlicerRotateToPixelSpace.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rotate to Volume Plane</string>
+   </property>
+  </action>
+  <action name="actionAdjust_labelmap_opacity">
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesLabelOpacity.png</normaloff>:/Icons/SlicesLabelOpacity.png</iconset>
+   </property>
+   <property name="text">
+    <string>Adjust labelmap opacity</string>
+   </property>
+   <property name="toolTip">
+    <string>Popup scale to adjust opacity of label layer.</string>
+   </property>
+  </action>
+  <action name="actionShow_label_volume_outline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesLabelNoOutline.png</normaloff>
+     <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
+   </property>
+   <property name="text">
+    <string>Don't show label volume outlines</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle between showing label map volume with regions outlined or filled.</string>
+   </property>
+  </action>
+  <action name="actionShow_reformat_widget">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
+     <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show reformat widget</string>
+   </property>
+  </action>
+  <action name="actionCompositingAlpha_blend">
+   <property name="text">
+    <string>Alpha blend</string>
+   </property>
+  </action>
+  <action name="actionCompositingReverse_alpha_blend">
+   <property name="text">
+    <string>Reverse alpha blend</string>
+   </property>
+  </action>
+  <action name="actionCompositingAdd">
+   <property name="text">
+    <string>Add</string>
+   </property>
+  </action>
+  <action name="actionCompositingSubtract">
+   <property name="text">
+    <string>Subtract</string>
+   </property>
+  </action>
+  <action name="actionSliceSpacingModeAutomatic">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicerManualSliceSpacing.png</normaloff>:/Icons/SlicerManualSliceSpacing.png</iconset>
+   </property>
+   <property name="text">
+    <string>Automatic</string>
+   </property>
+  </action>
+  <action name="actionSliceSpacingModeManual">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
+   </property>
+   <property name="text">
+    <string>Manual</string>
+   </property>
+  </action>
+  <action name="actionLightbox1x1_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1x1 view</string>
+   </property>
+  </action>
+  <action name="actionLightbox1x2_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1x2 view</string>
+   </property>
+  </action>
+  <action name="actionLightbox1x3_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1x3 view</string>
+   </property>
+  </action>
+  <action name="actionLightbox1x4_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1x4 view</string>
+   </property>
+  </action>
+  <action name="actionLightbox1x6_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1x6 view</string>
+   </property>
+  </action>
+  <action name="actionLightbox1x8_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1x8 view</string>
+   </property>
+  </action>
+  <action name="actionLightbox2x2_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>2x2 view</string>
+   </property>
+  </action>
+  <action name="actionLightbox3x3_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>3x3 view</string>
+   </property>
+  </action>
+  <action name="actionLightbox6x6_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>6x6 view</string>
+   </property>
+  </action>
+  <action name="actionLightboxCustomized_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>customized view</string>
+   </property>
+  </action>
+  <action name="actionAdjustDisplayForeground_volume">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Foreground volume</string>
+   </property>
+  </action>
+  <action name="actionAdjustDisplayBackground_volume">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Background volume</string>
+   </property>
+  </action>
+  <action name="actionAdjustDisplayLabel_map_volume">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Label map volume</string>
+   </property>
+  </action>
+  <action name="actionForegroundInterpolation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Interpolation</string>
+   </property>
+  </action>
+  <action name="actionBackgroundInterpolation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Interpolation</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
