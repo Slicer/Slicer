@@ -36,9 +36,10 @@ public:
   ~qSlicerLayoutManagerPrivate();
 
   void setMRMLScene(vtkMRMLScene* scene);
+  void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
 
   /// If needed, instantiate a slice viewer corresponding to \a sliceViewName
-  QWidget* createSliceView(const QString& sliceViewName, vtkMRMLSliceNode* sliceNode);
+  QWidget* createSliceView(vtkMRMLSliceNode* sliceNode);
 
   /// Delete slice viewer associated with \a sliceNode
   void removeSliceView(vtkMRMLSliceNode* sliceNode);
@@ -55,6 +56,9 @@ public:
   /// Enable/disable paint event associated with the TargetWidget
   bool startUpdateLayout();
   void endUpdateLayout(bool updateEnabled);
+
+  /// Actually set the layout type to the node
+  void updateLayoutNode(int layout);
   
   /// Hide and remove all widgets from the current layout
   void clearLayout(QLayout* layout);
@@ -66,6 +70,19 @@ public:
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
   qMRMLSliceWidget* sliceView(const QString& sliceViewName);
+
+  void setLayoutInternal(int layout);
+  void setConventionalView();
+  void setOneUp3DView();
+  void setOneUpSliceView(const QString& sliceViewName);
+  void setFourUpView();
+  void setTabbed3DView();
+  void setTabbedSliceView();
+  void setLightboxView();
+  void setCompareView();
+  void setSideBySideCompareView();
+  void setDual3DView();
+  void setNone();
 
 public slots:
   /// Handle MRML scene event
@@ -87,16 +104,12 @@ public:
   QWidget*           TargetWidget;
   QButtonGroup*      SliceControllerButtonGroup;
   vtkCollection*     MRMLSliceLogics;
-  
-  /// Prevent onLayoutNodeModifiedEvent to be called when
-  /// the current MRML layout node is updated from one of the switchTo* slots.
-  bool               UpdatingMRMLLayoutNode;
 
-  QList<qMRMLThreeDView*>              ThreeDViewList;
-  QList<vtkMRMLViewNode*>              MRMLViewNodeList;
+  QList<qMRMLThreeDView*>           ThreeDViewList;
+  QList<vtkMRMLViewNode*>           MRMLViewNodeList;
 
-  QHash<QString, qMRMLSliceWidget*>      SliceViewMap;
-  QHash<vtkMRMLSliceNode*, QString>          MRMLSliceNodeToSliceViewName;
+  QHash<QString, qMRMLSliceWidget*> SliceViewMap;
+  QHash<vtkMRMLSliceNode*, QString> MRMLSliceNodeToSliceViewName;
 };
 
 #endif

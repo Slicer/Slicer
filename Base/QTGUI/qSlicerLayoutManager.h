@@ -6,8 +6,10 @@
 
 // CTK includes
 #include <ctkPimpl.h>
-
 #include "qSlicerBaseQTGUIExport.h"
+
+// MRML includes
+#include <vtkMRMLLayoutNode.h>
 
 class qMRMLThreeDView;
 class qMRMLSliceWidget;
@@ -26,6 +28,11 @@ public:
   explicit qSlicerLayoutManager(QWidget* widget);
   virtual ~qSlicerLayoutManager(){}
 
+  void setViewport(QWidget* widget);
+  QWidget* viewport()const;
+
+  vtkMRMLScene* mrmlScene()const;
+
   /// Get SliceViewWidget identified by \a name
   qMRMLSliceWidget* sliceView(const QString& name);
 
@@ -38,7 +45,10 @@ public:
   /// of vtkMRMLViewNode)
   qMRMLThreeDView* threeDView(int id);
 
+  /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   vtkCollection* mrmlSliceLogics()const;
+
+  int layout()const;
 
 public slots:
 
@@ -48,23 +58,90 @@ public slots:
 
   /// Switch to the different layout
   /// TODO A better way would be to register layout classes with the manager
-  void switchToConventionalView();
-  void switchToOneUp3DView();
-  void switchToOneUpRedSliceView();
-  void switchToOneUpYellowSliceView();
-  void switchToOneUpGreenSliceView();
+  inline void switchToConventionalView();
+  inline void switchToOneUp3DView();
+  inline void switchToOneUpRedSliceView();
+  inline void switchToOneUpYellowSliceView();
+  inline void switchToOneUpGreenSliceView();
   void switchToOneUpSliceView(const QString& sliceViewName);
-  void switchToFourUpView();
-  void switchToTabbed3DView();
-  void switchToTabbedSliceView();
-  void switchToLightboxView();
-  void switchToCompareView();
-  void switchToSideBySideCompareView();
-  void switchToDual3DView();
-  void switchToNone();
+  inline void switchToFourUpView();
+  inline void switchToTabbed3DView();
+  inline void switchToTabbedSliceView();
+  inline void switchToLightboxView();
+  inline void switchToCompareView();
+  inline void switchToSideBySideCompareView();
+  inline void switchToDual3DView();
+  inline void switchToNone();
+
+  /// Generic function
+  void setLayout(int);
   
 private:
   CTK_DECLARE_PRIVATE(qSlicerLayoutManager);
 };
+
+void qSlicerLayoutManager::switchToConventionalView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
+}
+void qSlicerLayoutManager::switchToOneUp3DView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
+}
+
+void qSlicerLayoutManager::switchToOneUpRedSliceView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
+}
+
+void qSlicerLayoutManager::switchToOneUpYellowSliceView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
+}
+
+void qSlicerLayoutManager::switchToOneUpGreenSliceView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
+}
+
+void qSlicerLayoutManager::switchToFourUpView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+}
+
+void qSlicerLayoutManager::switchToTabbed3DView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
+}
+
+void qSlicerLayoutManager::switchToTabbedSliceView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
+}
+
+void qSlicerLayoutManager::switchToLightboxView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutLightboxView);
+}
+
+void qSlicerLayoutManager::switchToCompareView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutCompareView);
+}
+
+void qSlicerLayoutManager::switchToSideBySideCompareView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView);
+}
+
+void qSlicerLayoutManager::switchToDual3DView()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutDual3DView);
+}
+
+void qSlicerLayoutManager::switchToNone()
+{
+  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutNone);
+}
 
 #endif
