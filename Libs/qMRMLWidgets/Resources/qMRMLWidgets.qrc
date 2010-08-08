@@ -27,6 +27,8 @@
     <file>Icons/SliceViewerLB.png</file>
     <file>Icons/SliceViewerOR.png</file>
 
+    <file>Icons/SlicerAutomaticSliceSpacing.png</file>
+    <file>Icons/SlicerManualSliceSpacing.png</file>
     <file>Icons/SlicesAnnotation.png</file>
     <file>Icons/SlicesComposite.png</file>
     <file>Icons/SlicesCrosshair.png</file>
@@ -35,9 +37,15 @@
     <file>Icons/SlicesFeaturesVisible.png</file>
     <file>Icons/SlicesFieldOfView.png</file>
     <file>Icons/SlicesFitToWindow.png</file>
+    <file>Icons/SlicesLabelNoOutline.png</file>
+    <file>Icons/SlicesLabelOutline.png</file>
     <file>Icons/SlicesLabelOpacity.png</file>
+    <file>Icons/SlicerRotateToPixelSpace.png</file>
     <file>Icons/SlicesSpatialUnit.png</file>
     <file>Icons/SlicesToggleFgBg.png</file>
+    <file>Icons/SlicesWinLevThreshCol.png</file>
+    <file>Icons/SliceWidgetOff.png</file>
+    <file>Icons/SliceWidgetOn.png</file>
 
     <file>Icons/ViewCamera.png</file>
     <file>Icons/ViewCameraSelect.png</file>
