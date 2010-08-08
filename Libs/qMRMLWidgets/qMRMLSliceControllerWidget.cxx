@@ -13,6 +13,7 @@
 #include "qMRMLSliceControllerWidget_p.h"
 
 // MRML includes
+#include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLScene.h>
@@ -111,7 +112,7 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
                 SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
 
   // Connect Slice offset slider
-  this->connect(this->SliceOffsetSlider, SIGNAL(valueIsChanging(double)),
+  this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
                 p, SLOT(setSliceOffsetValue(double)));
 
   // Connect SliceCollapsibleButton
@@ -591,7 +592,7 @@ void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
 void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
 {
   CTK_D(qMRMLSliceControllerWidget);
-  if (!d->MRMLSliceNode)
+  if (!d->SliceLogic)
     {
     return;
     }
@@ -661,29 +662,60 @@ void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
 {
   CTK_D(qMRMLSliceControllerWidget);
 
-  if (!d->MRMLSliceNode)
+  if (!d->MRMLSliceNode  || !d->MRMLSliceCompositeNode || !this->mrmlScene())
     {
     return;
     }
-
-  d->MRMLSliceNode->SetSliceVisible(visible);
+  vtkMRMLLayoutNode *layoutNode = vtkMRMLLayoutNode::SafeDownCast(
+    this->mrmlScene()->GetNthNodeByClass(0,"vtkMRMLLayoutNode"));
+  if (d->MRMLSliceCompositeNode->GetLinkedControl())
+    {
+    vtkCollection* sliceNodes = this->mrmlScene()->GetNodesByClass("vtkMRMLSliceNode");
+    if (!sliceNodes)
+      {
+      return;
+      }
+    vtkMRMLSliceNode* sliceNode = 0;
+    for(sliceNodes->InitTraversal();
+        (sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes->GetNextItemAsObject()));)
+      {
+      // if compareview, send only compareview slices to 3D main viewer; otherwise,
+      // only send red, yellow, and green to 3D main viewer.
+      if (layoutNode ? ((QString(sliceNode->GetLayoutName()) == "Compare" &&
+           layoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView) ||
+          (QString(sliceNode->GetLayoutName()) != "Compare" &&
+           layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutCompareView))
+          : true)
+        {
+        this->mrmlScene()->SaveStateForUndo(sliceNode);
+        sliceNode->SetSliceVisible(visible);
+        }
+      }
+    sliceNodes->Delete();
+    }
+  else
+    {
+    this->mrmlScene()->SaveStateForUndo(d->MRMLSliceNode);
+    d->MRMLSliceNode->SetSliceVisible(visible);
+    }
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceLink(bool linked)
 {
-  if (!this->mrmlScene())
+  vtkCollection* sliceCompositeNodes = this->mrmlScene() ?
+    this->mrmlScene()->GetNodesByClass("vtkMRMLSliceCompositeNode") : 0;
+  if (!sliceCompositeNodes)
     {
     return;
     }
-
-  // Loop over all vtkMRMLSliceCompositeNode and update LinkedControl property
-  int nnodes = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  for (int i = 0; i < nnodes; ++i)
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = 0;
+  for(sliceCompositeNodes->InitTraversal();
+      (sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(
+        sliceCompositeNodes->GetNextItemAsObject()));)
     {
-    vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
-      this->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
-    cnode->SetLinkedControl(linked);
+    sliceCompositeNode->SetLinkedControl(linked);
     }
+  sliceCompositeNodes->Delete();
 }
 
