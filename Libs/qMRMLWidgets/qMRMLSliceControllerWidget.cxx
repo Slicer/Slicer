@@ -634,21 +634,25 @@ void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
     {
     return;
     }
-
   if (d->MRMLSliceCompositeNode->GetLinkedControl())
     {
     // Loop over all vtkMRMLSliceNode and update Orientation property
-    int nnodes = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-    for (int i = 0; i < nnodes; ++i)
+    vtkCollection* nodes = this->mrmlScene()->GetNodesByClass("vtkMRMLSliceNode");
+    if (!nodes)
       {
-      vtkMRMLSliceNode * sliceNode = vtkMRMLSliceNode::SafeDownCast (
-        this->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceNode"));
-      sliceNode->SetOrientationString(orientation.toLatin1());
+      return;
       }
+    vtkMRMLSliceNode * sliceNode = 0;
+    for (nodes->InitTraversal(); (sliceNode = vtkMRMLSliceNode::SafeDownCast(
+                                    nodes->GetNextItemAsObject()));)
+      {
+      sliceNode->SetOrientation(orientation.toLatin1());
+      }
+    nodes->Delete();
     }
   else
     {
-    d->MRMLSliceNode->SetOrientationString(orientation.toLatin1());
+    d->MRMLSliceNode->SetOrientation(orientation.toLatin1());
     }
 }
 

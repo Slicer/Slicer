@@ -120,6 +120,34 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
   this->SetLayoutName(NULL);
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetOrientation(const char* orientation)
+{
+  if (!orientation)
+    {
+    return;
+    }
+ if (!strcmp(orientation, "Axial"))
+    {
+    this->SetOrientationToAxial();
+    }
+  else if (!strcmp(orientation, "Sagittal"))
+    {
+    this->SetOrientationToSagittal();
+    }
+  else if (!strcmp(orientation, "Coronal"))
+    {
+    this->SetOrientationToCoronal();
+    }
+  else if (!strcmp(orientation, "Reformat"))
+    {
+    this->SetOrientationToReformat();
+    }
+  else
+    {
+    vtkErrorMacro("SetOrientation: invalid orientation: " << orientation);
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToReformat()

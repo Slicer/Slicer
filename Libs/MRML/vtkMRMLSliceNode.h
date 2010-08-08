@@ -93,8 +93,16 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// General 'reformat' view that allows for multiplanar reformat
   void SetOrientationToReformat();
   
+  ///
+  /// Convenient function that calls SetOrientationToAxial(),
+  /// SetOrientationToSagittal(), SetOrientationToCoronal() or
+  /// SetOrientationToReformat() depending on the value of the string
+  void SetOrientation(const char* orientation);
+
   /// Description
   /// A description of the current orientation
+  /// Warning, OrientationString doesn't change the matrices, use
+  /// SetOrientation() instead.
   vtkGetStringMacro (OrientationString);
   vtkSetStringMacro (OrientationString);
 
