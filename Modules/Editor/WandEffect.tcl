@@ -71,48 +71,50 @@ itcl::body WandEffect::processEvent { {caller ""} {event ""} } {
   set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
-  switch $event {
-    "LeftButtonPressEvent" {
-      $this apply
-      $sliceGUI SetGUICommandAbortFlag 1
-    }
-    "MouseMoveEvent" {
-      $this preview
-    }
-    "KeyPressEvent" { 
-      set key [$_interactor GetKeySym]
-      if { [lsearch "minus equal plus" $key] != -1 } {
-        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+  if { $caller == $sliceGUI } {
+    switch $event {
+      "LeftButtonPressEvent" {
+        $this apply
         $sliceGUI SetGUICommandAbortFlag 1
-        switch [$_interactor GetKeySym] {
-          "minus" {
-            set node [EditorGetParameterNode]
-            set percentage [$node GetParameter "Wand,percentage"] 
-            $node SetParameter "Wand,percentage" [expr $percentage - 0.01]
+      }
+      "MouseMoveEvent" {
+        $this preview
+      }
+      "KeyPressEvent" { 
+        set key [$_interactor GetKeySym]
+        if { [lsearch "minus equal plus" $key] != -1 } {
+          $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+          $sliceGUI SetGUICommandAbortFlag 1
+          switch [$_interactor GetKeySym] {
+            "minus" {
+              set node [EditorGetParameterNode]
+              set percentage [$node GetParameter "Wand,percentage"] 
+              $node SetParameter "Wand,percentage" [expr $percentage - 0.01]
+            }
+            "equal" - "plus" {
+              set node [EditorGetParameterNode]
+              set percentage [$node GetParameter "Wand,percentage"] 
+              $node SetParameter "Wand,percentage" [expr $percentage + 0.01]
+            }
+            "3" {
+              $this apply3D
+            }
           }
-          "equal" - "plus" {
-            set node [EditorGetParameterNode]
-            set percentage [$node GetParameter "Wand,percentage"] 
-            $node SetParameter "Wand,percentage" [expr $percentage + 0.01]
-          }
-          "3" {
-            $this apply3D
-          }
+        } else {
+          # puts "wand ignoring $key"
         }
-      } else {
-        # puts "wand ignoring $key"
       }
-    }
-    "EnterEvent" {
-      $o(cursorActor) VisibilityOn
-      if { [info exists o(wandActor)] } {
-       $o(wandActor) VisibilityOn
+      "EnterEvent" {
+        $o(cursorActor) VisibilityOn
+        if { [info exists o(wandActor)] } {
+         $o(wandActor) VisibilityOn
+        }
       }
-    }
-    "LeaveEvent" {
-      $o(cursorActor) VisibilityOff
-      if { [info exists o(wandActor)] } {
-       $o(wandActor) VisibilityOff
+      "LeaveEvent" {
+        $o(cursorActor) VisibilityOff
+        if { [info exists o(wandActor)] } {
+         $o(wandActor) VisibilityOff
+        }
       }
     }
   }

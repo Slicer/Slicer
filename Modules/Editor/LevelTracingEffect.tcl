@@ -67,38 +67,40 @@ itcl::body LevelTracingEffect::processEvent { {caller ""} {event ""} } {
   set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
-  switch $event {
-    "LeftButtonPressEvent" {
-      $this apply
-      $sliceGUI SetGUICommandAbortFlag 1
-    }
-    "MouseMoveEvent" {
-      $this preview
-    }
-    "KeyPressEvent" { 
-      set key [$_interactor GetKeySym]
-      if { [lsearch "3" $key] != -1 } {
-        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+  if { $caller == $sliceGUI } {
+    switch $event {
+      "LeftButtonPressEvent" {
+        $this apply
         $sliceGUI SetGUICommandAbortFlag 1
-        switch [$_interactor GetKeySym] {
-          "3" {
-            $this apply3D
+      }
+      "MouseMoveEvent" {
+        $this preview
+      }
+      "KeyPressEvent" { 
+        set key [$_interactor GetKeySym]
+        if { [lsearch "3" $key] != -1 } {
+          $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+          $sliceGUI SetGUICommandAbortFlag 1
+          switch [$_interactor GetKeySym] {
+            "3" {
+              $this apply3D
+            }
           }
+        } else {
+          # puts "wand ignoring $key"
         }
-      } else {
-        # puts "wand ignoring $key"
       }
-    }
-    "EnterEvent" {
-      $o(cursorActor) VisibilityOn
-      if { [info exists o(tracingActor)] } {
-       $o(tracingActor) VisibilityOn
+      "EnterEvent" {
+        $o(cursorActor) VisibilityOn
+        if { [info exists o(tracingActor)] } {
+         $o(tracingActor) VisibilityOn
+        }
       }
-    }
-    "LeaveEvent" {
-      $o(cursorActor) VisibilityOff
-      if { [info exists o(tracingActor)] } {
-       $o(tracingActor) VisibilityOff
+      "LeaveEvent" {
+        $o(cursorActor) VisibilityOff
+        if { [info exists o(tracingActor)] } {
+         $o(tracingActor) VisibilityOff
+        }
       }
     }
   }

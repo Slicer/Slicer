@@ -64,16 +64,18 @@ itcl::body ChangeIslandEffect::processEvent { {caller ""} {event ""} } {
   set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
-  switch $event {
-    "LeftButtonPressEvent" {
-      $this apply
-      $sliceGUI SetGUICommandAbortFlag 1
-    }
-    "EnterEvent" {
-      $o(cursorActor) VisibilityOn
-    }
-    "LeaveEvent" {
-      $o(cursorActor) VisibilityOff
+  if { $caller == $sliceGUI } {
+    switch $event {
+      "LeftButtonPressEvent" {
+        $this apply
+        $sliceGUI SetGUICommandAbortFlag 1
+      }
+      "EnterEvent" {
+        $o(cursorActor) VisibilityOn
+      }
+      "LeaveEvent" {
+        $o(cursorActor) VisibilityOff
+      }
     }
   }
 

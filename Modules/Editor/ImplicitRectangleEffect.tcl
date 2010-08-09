@@ -185,48 +185,50 @@ itcl::body ImplicitRectangleEffect::processEvent { {caller ""} {event ""} } {
   set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
-  switch $event {
-    "LeftButtonPressEvent" {
-      set _actionState "dragging"
-      set _startXYPosition [$_interactor GetEventPosition]
-      set _currentXYPosition $_startXYPosition
-      $this updateGlyph $o(rectangle)
-      $sliceGUI SetGUICommandAbortFlag 1
-      $sliceGUI SetGrabID $this
-      [$_renderWidget GetRenderWindow] HideCursor
-      set _description "Drag to define rectangular region to label"
-    }
-    "MouseMoveEvent" {
-      switch $_actionState {
-        "dragging" {
-          $o(actor) VisibilityOn
-          set _currentXYPosition [$_interactor GetEventPosition]
-          $this updateGlyph $o(rectangle)
-        }
-        default {
-          set _startXYPosition "0 0"
-          set _currentXYPosition "0 0"
-          $this updateGlyph $o(rectangle)
-          $o(actor) VisibilityOff
+  if { $caller == $sliceGUI } {
+    switch $event {
+      "LeftButtonPressEvent" {
+        set _actionState "dragging"
+        set _startXYPosition [$_interactor GetEventPosition]
+        set _currentXYPosition $_startXYPosition
+        $this updateGlyph $o(rectangle)
+        $sliceGUI SetGUICommandAbortFlag 1
+        $sliceGUI SetGrabID $this
+        [$_renderWidget GetRenderWindow] HideCursor
+        set _description "Drag to define rectangular region to label"
+      }
+      "MouseMoveEvent" {
+        switch $_actionState {
+          "dragging" {
+            $o(actor) VisibilityOn
+            set _currentXYPosition [$_interactor GetEventPosition]
+            $this updateGlyph $o(rectangle)
+          }
+          default {
+            set _startXYPosition "0 0"
+            set _currentXYPosition "0 0"
+            $this updateGlyph $o(rectangle)
+            $o(actor) VisibilityOff
+          }
         }
       }
-    }
-    "LeftButtonReleaseEvent" {
-      [$_renderWidget GetRenderWindow] ShowCursor
-      $this applyPolyMask $o(rectangle)
-      set _actionState ""
-      $sliceGUI SetGrabID ""
-      set _description ""
-    }
-    "EnterEvent" {
-      set _description "Ready to ImplicitRectangle!"
-      $o(cursorActor) VisibilityOn
-      $o(actor) VisibilityOn
-    }
-    "LeaveEvent" {
-      set _description ""
-      $o(cursorActor) VisibilityOff
-      $o(actor) VisibilityOff
+      "LeftButtonReleaseEvent" {
+        [$_renderWidget GetRenderWindow] ShowCursor
+        $this applyPolyMask $o(rectangle)
+        set _actionState ""
+        $sliceGUI SetGrabID ""
+        set _description ""
+      }
+      "EnterEvent" {
+        set _description "Ready to ImplicitRectangle!"
+        $o(cursorActor) VisibilityOn
+        $o(actor) VisibilityOn
+      }
+      "LeaveEvent" {
+        set _description ""
+        $o(cursorActor) VisibilityOff
+        $o(actor) VisibilityOff
+      }
     }
   }
 

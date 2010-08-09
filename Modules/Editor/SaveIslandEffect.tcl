@@ -64,16 +64,18 @@ itcl::body SaveIslandEffect::processEvent { {caller ""} {event ""} } {
   set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
-  switch $event {
-    "LeftButtonPressEvent" {
-      $this apply
-      $sliceGUI SetGUICommandAbortFlag 1
-    }
-    "EnterEvent" {
-      $o(cursorActor) VisibilityOn
-    }
-    "LeaveEvent" {
-      $o(cursorActor) VisibilityOff
+  if { $caller == $sliceGUI } {
+    switch $event {
+      "LeftButtonPressEvent" {
+        $this apply
+        $sliceGUI SetGUICommandAbortFlag 1
+      }
+      "EnterEvent" {
+        $o(cursorActor) VisibilityOn
+      }
+      "LeaveEvent" {
+        $o(cursorActor) VisibilityOff
+      }
     }
   }
 
@@ -85,7 +87,7 @@ itcl::body SaveIslandEffect::apply {} {
 
   foreach {x y} [$_interactor GetEventPosition] {}
 
-  if { [$this getInputLabel] == "" || [$this getInputLabel] == "" } {
+  if { [$this getInputLabel] == "" || [$this getOutputLabel] == "" } {
     $this flashCursor 3
     return
   }

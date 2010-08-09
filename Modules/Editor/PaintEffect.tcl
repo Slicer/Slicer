@@ -243,50 +243,52 @@ itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
 
   set event [$sliceGUI GetCurrentGUIEvent] 
 
-  switch $event {
-    "LeftButtonPressEvent" {
-      set _actionState "painting"
-      foreach {x y} [$_interactor GetEventPosition] {}
-      if { $smudge } {
-        # in smudge mode, set the paint color to be the first pixel you touch
+  if { $caller == $sliceGUI } {
+    switch $event {
+      "LeftButtonPressEvent" {
+        set _actionState "painting"
+        foreach {x y} [$_interactor GetEventPosition] {}
+        if { $smudge } {
+          # in smudge mode, set the paint color to be the first pixel you touch
+          $this queryLayers $x $y
+          EditorSetPaintLabel [$this getPixel $_layers(label,image) \
+            $_layers(label,i) $_layers(label,j) $_layers(label,k)]
+        }
+        $this paintAddPoint $x $y
+        $sliceGUI SetGUICommandAbortFlag 1
+        $sliceGUI SetGrabID $this
+        [$_renderWidget GetRenderWindow] HideCursor
+      }
+      "MouseMoveEvent" {
+        $o(actor) VisibilityOn
+        set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
+        switch $_actionState {
+          "painting" {
+            foreach {x y} [$_interactor GetEventPosition] {}
+            $this paintAddPoint $x $y
+          }
+          default {
+          }
+        }
+      }
+      "LeftButtonReleaseEvent" {
+        $this paintApply
+        [$_renderWidget GetRenderWindow] ShowCursor
+        foreach {x y} [$_interactor GetEventPosition] {}
         $this queryLayers $x $y
-        EditorSetPaintLabel [$this getPixel $_layers(label,image) \
-          $_layers(label,i) $_layers(label,j) $_layers(label,k)]
+        $_layers(label,node) Modified
+        set _actionState ""
+        $sliceGUI SetGrabID ""
+        set _description ""
       }
-      $this paintAddPoint $x $y
-      $sliceGUI SetGUICommandAbortFlag 1
-      $sliceGUI SetGrabID $this
-      [$_renderWidget GetRenderWindow] HideCursor
-    }
-    "MouseMoveEvent" {
-      $o(actor) VisibilityOn
-      set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
-      switch $_actionState {
-        "painting" {
-          foreach {x y} [$_interactor GetEventPosition] {}
-          $this paintAddPoint $x $y
-        }
-        default {
-        }
+      "EnterEvent" {
+        set _description "Ready to Paint!"
+        $o(actor) VisibilityOn
       }
-    }
-    "LeftButtonReleaseEvent" {
-      $this paintApply
-      [$_renderWidget GetRenderWindow] ShowCursor
-      foreach {x y} [$_interactor GetEventPosition] {}
-      $this queryLayers $x $y
-      $_layers(label,node) Modified
-      set _actionState ""
-      $sliceGUI SetGrabID ""
-      set _description ""
-    }
-    "EnterEvent" {
-      set _description "Ready to Paint!"
-      $o(actor) VisibilityOn
-    }
-    "LeaveEvent" {
-      set _description ""
-      $o(actor) VisibilityOff
+      "LeaveEvent" {
+        set _description ""
+        $o(actor) VisibilityOff
+      }
     }
   }
 
