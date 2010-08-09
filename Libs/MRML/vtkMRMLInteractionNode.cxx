@@ -48,8 +48,9 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
   this->TransformModePersistence = 1;
   this->WindowLevelLock = 0;
   this->PlaceOperationLock = 0;
+  this->CustomTagMode = 0;
+  this->LastCustomTagMode = 0;
 
-  this->PlaceModeType = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -104,6 +105,10 @@ int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString
     {
     return ( vtkMRMLInteractionNode::ViewZoom);
     }
+  else if ( !strcmp (modeString, "CustomTag" ))
+    {
+    return ( vtkMRMLInteractionNode::CustomTag);
+    }
   else
     {
     return (-1);
@@ -117,15 +122,6 @@ void vtkMRMLInteractionNode::NormalizeAllMouseModes()
   this->PlaceModePersistence = 0;
   this->TransformModePersistence = 1;
 }
-
-
-
-//----------------------------------------------------------------------------
-void vtkMRMLInteractionNode::SetPlaceModeType ( int mode )
-{
-  this->PlaceModeType = mode;
-}
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SetPickModePersistence ( int val )
@@ -195,13 +191,67 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
       this->CurrentInteractionMode = mode;
       this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
+    case vtkMRMLInteractionNode::CustomTag:
+      if (!this->CustomTagMode)
+        {
+          vtkErrorMacro("SetCurrentInteractionMode: The customTagMode QAction has to be set before changing the interaction mode.")
+          return;
+        }
+      this->CurrentInteractionMode = mode;
+      this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
+      break;
     default:
       break;
     }
 }
 
+//----------------------------------------------------------------------------
+QAction* vtkMRMLInteractionNode::GetCustomTagMode()
+{
 
+  if (!this->CustomTagMode)
+    {
+    vtkErrorMacro("GetCustomTagMode: No customTag QAction was set.")
+    return 0;
+    }
+  else
+    {
+    return this->CustomTagMode;
+    }
 
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::SetCustomTagMode ( QAction * mode )
+{
+
+  this->CustomTagMode = mode;
+
+}
+
+//----------------------------------------------------------------------------
+QAction* vtkMRMLInteractionNode::GetLastCustomTagMode()
+{
+
+  if (!this->LastCustomTagMode)
+    {
+    vtkErrorMacro("GetLastCustomTagMode: No customTag QAction was set.")
+    return 0;
+    }
+  else
+    {
+    return this->LastCustomTagMode;
+    }
+
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::SetLastCustomTagMode ( QAction * mode )
+{
+
+  this->LastCustomTagMode = mode;
+
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
@@ -244,7 +294,11 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
   else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
     of << indent << " currentInteractionMode=\"" << "ViewTransform" << "\"";    
-    }  
+    }
+  else if ( this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::CustomTag )
+    {
+    of << indent << " currentInteractionMode=\"" << "CustomTag" << "\"";
+    }
 
   if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::PickManipulate )
     {
@@ -278,16 +332,21 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " lastInteractionMode=\"" << "ViewTransform" << "\"";    
     }
-
-  if (this->GetPlaceModeType() == vtkMRMLInteractionNode::PlaceTextAnnotation)
+  else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::CustomTag )
     {
-    of << indent << " placeModeType=\"" << "PlaceTextAnnotation" << "\"";
-    }
-  else if (this->GetPlaceModeType() == vtkMRMLInteractionNode::PlaceAngleAnnotation)
-    {
-    of << indent << " placeModeType=\"" << "PlaceAngleAnnotation" << "\"";
+    of << indent << " lastInteractionMode=\"" << "CustomTag" << "\"";
     }
 
+  // Write out the texts of the customTagMode QActions
+  /*if ( this->CustomTagMode )
+    {
+    of << indent << " customTagMode=\"" << this->GetCustomTagMode()->text() << "\"";
+    }
+
+  if ( this->LastCustomTagMode )
+    {
+    of << indent << " lastCustomTagMode=\"" << this->GetLastCustomTagMode()->text() << "\"";
+    }*/
 }
 
 //----------------------------------------------------------------------------
@@ -339,6 +398,10 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
         {
         this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewTransform;
         }
+      else if ( !strcmp (attValue, "CustomTag" ))
+        {
+          this->CurrentInteractionMode = vtkMRMLInteractionNode::CustomTag;
+        }
       }
     else if (!strcmp(attName, "lastInteractionMode"))
       {
@@ -374,19 +437,11 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
         {
         this->LastInteractionMode = vtkMRMLInteractionNode::ViewTransform;
         }
-      }
-    else if (!strcmp(attName, "placeModeType"))
-      {
-      if (!strcmp(attValue, "PlaceTextAnnotation"))
+      else if ( !strcmp (attValue, "CustomTag" ))
         {
-        this->PlaceModeType = vtkMRMLInteractionNode::PlaceTextAnnotation;
-        }
-      else if (!strcmp(attValue, "PlaceAngleAnnotation"))
-        {
-        this->PlaceModeType = vtkMRMLInteractionNode::PlaceAngleAnnotation;
+        this->LastInteractionMode = vtkMRMLInteractionNode::CustomTag;
         }
       }
-    
     }
     
   this->EndModify(disabledModify);
@@ -407,7 +462,15 @@ void vtkMRMLInteractionNode::Copy(vtkMRMLNode *anode)
   vtkMRMLInteractionNode *node = (vtkMRMLInteractionNode *) anode;
 
   this->SetCurrentInteractionMode (node->GetCurrentInteractionMode());
+  if ( node->GetCustomTagMode() )
+    {
+    this->SetCustomTagMode(node->GetCustomTagMode());
+    }
   this->SetLastInteractionMode ( node->GetLastInteractionMode());
+  if ( node->GetLastCustomTagMode() )
+    {
+    this->SetLastCustomTagMode ( node->GetLastCustomTagMode());
+    }
 
   this->EndModify(disabledModify);
 }
@@ -418,7 +481,15 @@ void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
   
   Superclass::PrintSelf(os,indent);
   os << indent << "CurrentInteractionMode:        " << this->GetInteractionModeAsString(this->CurrentInteractionMode) << "\n";
+ /* if (this->CustomTagMode)
+    {
+    os << indent << "CustomTagMode:        " << this->CustomTagMode->text() << "\n";
+    }*/
   os << indent << "LastInteractionMode:        " <<  this->GetInteractionModeAsString(this->LastInteractionMode) << "\n";
+  /*if (this->LastCustomTagMode)
+    {
+    os << indent << "LastCustomTagMode:        " << this->LastCustomTagMode->text() << "\n";
+    }*/
   os << indent << "WindowLevelLock: " << this->GetWindowLevelLock() << "\n";
   os << indent << "PlaceOperationLock: " << this->GetPlaceOperationLock() << "\n";
 }
@@ -460,5 +531,9 @@ const char * vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
     {
     return "ViewTransform";
     }
+  if (mode == this->CustomTag)
+      {
+      return "CustomTag";
+      }
   return "(unknown)";
 }

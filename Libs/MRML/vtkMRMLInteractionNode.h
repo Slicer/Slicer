@@ -4,6 +4,9 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
+// QT includes
+#include <QAction>
+
 class VTK_MRML_EXPORT vtkMRMLInteractionNode : public vtkMRMLNode
 {
 public:
@@ -40,9 +43,15 @@ public:
   void SetLastInteractionMode (int mode );
   
   ///
-  /// Get/Set for different types of place mode
-  vtkGetMacro (PlaceModeType, int );
-  void SetPlaceModeType (int mode);
+  /// Get/Set CustomTag mode.
+  /// A QAction is associated to the CustomTagMode. The convention for the text of the QAction is "ModuleName:CustomTagModeName".
+  QAction* GetCustomTagMode();
+  void SetCustomTagMode ( QAction * mode );
+
+  /// Get/Set LastCustomTag mode.
+  /// A QAction is associated to the LastCustomTagMode. The convention for the text of the QAction is "ModuleName:CustomTagModeName".
+  QAction* GetLastCustomTagMode();
+  void SetLastCustomTagMode ( QAction * mode );
 
   vtkGetMacro (PickModePersistence, int );
   vtkGetMacro (PlaceModePersistence, int);
@@ -86,12 +95,7 @@ public:
       ViewZoom,
       ViewRotate,
       ViewTransform,
-    };
-  /// different types of place mode
-  enum
-    {
-      PlaceTextAnnotation = 1000,
-      PlaceAngleAnnotation,
+      CustomTag,
     };
   /// events
   enum
@@ -127,8 +131,10 @@ protected:
   int LastInteractionMode;
   /// current mouse mode
   int CurrentInteractionMode;
-  /// current type of place mode
-  int PlaceModeType;
+  /// customTag mode
+  QAction * CustomTagMode;
+  /// Last customTag mode
+  QAction * LastCustomTagMode;
 };
 
 #endif
