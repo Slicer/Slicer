@@ -58,6 +58,7 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->SecondaryVolumeID = NULL;
   this->ActiveLabelVolumeID = NULL;
   this->ActiveFiducialListID = NULL;
+  this->ActiveAnnotationID = NULL;
   this->ActiveROIListID  =NULL;
   this->ActiveCameraID = NULL;
   this->ActiveViewID = NULL;
@@ -86,6 +87,11 @@ vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
     {
     delete [] this->ActiveFiducialListID;
     this->ActiveFiducialListID = NULL;
+    }
+  if (this->ActiveAnnotationID)
+    {
+    delete [] this->ActiveAnnotationID;
+    this->ActiveAnnotationID = NULL;
     }
   if (this->ActiveROIListID)
     {
@@ -120,6 +126,7 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
   of << indent << " secondaryVolumeID=\"" << (this->SecondaryVolumeID ? this->SecondaryVolumeID : "NULL") << "\"";
   of << indent << " activeLabelVolumeID=\"" << (this->ActiveLabelVolumeID ? this->ActiveLabelVolumeID : "NULL") << "\"";
   of << indent << " activeFiducialListID=\"" << (this->ActiveFiducialListID ? this->ActiveFiducialListID : "NULL") << "\"";
+  of << indent << " activeAnnotationID=\"" << (this->ActiveAnnotationID ? this->ActiveAnnotationID : "NULL") << "\"";
   of << indent << " activeROIListID=\"" << (this->ActiveROIListID ? this->ActiveROIListID : "NULL") << "\"";
   of << indent << " activeCameraID=\"" << (this->ActiveCameraID ? this->ActiveCameraID : "NULL") << "\"";
   of << indent << " activeViewID=\"" << (this->ActiveViewID ? this->ActiveViewID : "NULL") << "\"";
@@ -145,6 +152,10 @@ void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newI
   if (this->ActiveFiducialListID && !strcmp(oldID, this->ActiveFiducialListID))
     {
     this->SetActiveFiducialListID(newID);
+    }
+  if (this->ActiveAnnotationID && !strcmp(oldID, this->ActiveAnnotationID))
+    {
+    this->SetActiveAnnotationID(newID);
     }
   if ( this->ActiveCameraID && !strcmp (oldID, this->ActiveCameraID ))
     {
@@ -181,6 +192,10 @@ void vtkMRMLSelectionNode::UpdateReferences()
   if (this->ActiveFiducialListID != NULL && this->Scene->GetNodeByID(this->ActiveFiducialListID) == NULL)
     {
     this->SetActiveFiducialListID(NULL);
+    }
+  if (this->ActiveAnnotationID != NULL && this->Scene->GetNodeByID(this->ActiveAnnotationID) == NULL)
+    {
+    this->SetActiveAnnotationID(NULL);
     }
   if (this->ActiveViewID != NULL && this->Scene->GetNodeByID(this->ActiveViewID) == NULL)
     {
@@ -229,6 +244,11 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActiveFiducialListID(attValue);
       //this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
       }
+    if (!strcmp(attName, "activeFiducialListID"))
+      {
+      this->SetActiveAnnotationID(attValue);
+      //this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
+      }
     if (!strcmp (attName, "activeCameraID"))
       {
       this->SetActiveCameraID (attValue );
@@ -264,6 +284,7 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetSecondaryVolumeID(node->GetActiveVolumeID());
   this->SetActiveLabelVolumeID(node->GetActiveLabelVolumeID());
   this->SetActiveFiducialListID(node->GetActiveFiducialListID());
+  this->SetActiveAnnotationID(node->GetActiveAnnotationID());
   this->SetActiveCameraID (node->GetActiveCameraID());
   this->SetActiveViewID (node->GetActiveViewID() );
   this->SetActiveLayoutID (node->GetActiveLayoutID() );
@@ -281,6 +302,7 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "SecondaryVolumeID: " << ( (this->SecondaryVolumeID) ? this->SecondaryVolumeID : "None" ) << "\n";
   os << "ActiveLabelVolumeID: " << ( (this->ActiveLabelVolumeID) ? this->ActiveLabelVolumeID : "None" ) << "\n";
   os << "ActiveFiducialListID: " << ( (this->ActiveFiducialListID) ? this->ActiveFiducialListID : "None" ) << "\n";
+  os << "ActiveAnnotationID: " << ( (this->ActiveAnnotationID) ? this->ActiveAnnotationID : "None" ) << "\n";
   os << "ActiveCameraID: " << ( (this->ActiveCameraID) ? this->ActiveCameraID : "None" ) << "\n";
   os << "ActiveViewID: " << ( (this->ActiveViewID) ? this->ActiveViewID : "None" ) << "\n";
   os << "ActiveLayoutID: " << ( (this->ActiveLayoutID) ? this->ActiveLayoutID : "None" ) << "\n";
