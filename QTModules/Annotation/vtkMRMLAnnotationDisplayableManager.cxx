@@ -23,6 +23,10 @@
 #include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkMath.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkPointHandleRepresentation3D.h>
+#include <vtkSeedRepresentation.h>
+#include <vtkSeedWidget.h>
+#include <vtkProperty2D.h>
 
 // STD includes
 #include <vector>
@@ -199,10 +203,54 @@ void vtkMRMLAnnotationDisplayableManager::vtkInternal::RemoveWidget(
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationDisplayableManager methods
 
+// vtkMRMLAnnotationDisplayableManager seedCallback
+//---------------------------------------------------------------------------
+class vtkSeedCallback : public vtkCommand
+{
+public:
+  static vtkSeedCallback *New()
+  { return new vtkSeedCallback; }
+  vtkSeedCallback() {}
+
+  virtual void Execute(vtkObject*, unsigned long event, void *calldata)
+     {
+
+        std::cout << "entering" << std::endl;
+       if (event == vtkCommand::PlacePointEvent)
+       {
+         cout << "Point placed, total of: "
+             << this->SeedRepresentation->GetNumberOfSeeds() << endl;
+       }
+       if (event == vtkCommand::InteractionEvent)
+       {
+         if (calldata)
+         {
+           cout << "Interacting with seed : "
+               << *(static_cast< int * >(calldata)) << endl;
+         }
+       }
+
+
+       cout << "List of seeds (Display coordinates):" << endl;
+       for(vtkIdType i = 0; i < this->SeedRepresentation->GetNumberOfSeeds(); i++)
+         {
+         double pos[3];
+         this->SeedRepresentation->GetSeedDisplayPosition(i, pos);
+         cout << "(" << pos[0] << " " << pos[1] << " " << pos[2] << ")" << endl;
+         }
+
+     }
+
+     void SetRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep) {this->SeedRepresentation = rep;}
+   private:
+     vtkSmartPointer<vtkSeedRepresentation> SeedRepresentation;
+};
+
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
 {
   this->Internal = new vtkInternal;
+  this->m_ClickCounter = vtkMRMLAnnotationClickCounter::New();
 }
 
 //---------------------------------------------------------------------------
@@ -437,20 +485,46 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordina
   //this->GetInteractor()->SetEventPositionFlipY(x, rawY);
   double y = this->GetInteractor()->GetEventPosition()[1];
 
-  this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
-  this->GetRenderer()->NormalizedDisplayToViewport(x,y);
-  this->GetRenderer()->ViewportToNormalizedViewport(x,y);
 
   this->OnClickInThreeDRenderWindow(x, y);
 }
 
 //---------------------------------------------------------------------------
+/// Place a seed for widgets
+void vtkMRMLAnnotationDisplayableManager::PlaceSeed(double x, double y)
+{
+  std::cout << "PlaceSeed" << std::endl;
+
+  VTK_CREATE(vtkPointHandleRepresentation3D, handle);
+  handle->GetProperty()->SetColor(1,0,0);
+  handle->AllOn();
+  VTK_CREATE(vtkSeedRepresentation, rep);
+  rep->SetHandleRepresentation(handle);
+
+  //seed widget
+  VTK_CREATE(vtkSeedWidget, seedWidget);
+  seedWidget->SetInteractor(this->GetInteractor());
+  seedWidget->SetRepresentation(rep);
+
+  vtkSmartPointer<vtkSeedCallback> seedCallback = vtkSmartPointer<vtkSeedCallback>::New();
+  seedCallback->SetRepresentation(rep);
+  seedWidget->AddObserver(vtkCommand::PlacePointEvent,seedCallback);
+  seedWidget->AddObserver(vtkCommand::InteractionEvent,seedCallback);
+
+  seedWidget->On();
+
+  this->RequestRender();
+
+}
+
+
+//---------------------------------------------------------------------------
 // Functions to overload!
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindow(float x, float y)
+void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
   // The user clicked in the renderWindow
-  vtkErrorMacro("OnClickInRenderWindow should be overloaded!");
+  vtkErrorMacro("OnClickInThreeDRenderWindow should be overloaded!");
 }
 
 //---------------------------------------------------------------------------

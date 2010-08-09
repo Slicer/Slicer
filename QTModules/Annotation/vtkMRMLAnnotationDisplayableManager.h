@@ -18,6 +18,7 @@
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
+#include "vtkMRMLAnnotationClickCounter.h"
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
@@ -73,11 +74,18 @@ protected:
 
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInThreeDRenderWindow(float x, float y);
+  virtual void OnClickInThreeDRenderWindow(double x, double y);
+  /// Counter for clicks in 3D Render Window
+  vtkMRMLAnnotationClickCounter* m_ClickCounter;
+
+  /// Place a seed for widgets
+  virtual void PlaceSeed(double x, double y);
+
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Propagate properties of MRML node to widgets.
   virtual void SetWidget(vtkMRMLAnnotationNode* node);
+
 
 private:
 
@@ -90,6 +98,7 @@ private:
   class vtkInternal;
   vtkInternal * Internal;
   //ETX
+
 
 };
 

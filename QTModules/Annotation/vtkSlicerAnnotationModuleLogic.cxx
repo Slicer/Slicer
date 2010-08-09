@@ -1844,6 +1844,8 @@ const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
   interactionNode->SetPlaceModePersistence(1);
 
+  interactionNode->SetPlaceModeType(vtkMRMLInteractionNode::PlaceTextAnnotation);
+
   if (interactionNode->GetCurrentInteractionMode()!=vtkMRMLInteractionNode::Place) {
 
     vtkErrorMacro("AddTextNode: Could not set place mode!");

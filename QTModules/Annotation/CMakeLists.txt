@@ -16,6 +16,7 @@ SET(qt_module_include_directories
 SET(DisplayableManager_SRCS
   vtkMRMLAnnotationTextDisplayableManager.cxx
   vtkMRMLAnnotationFiducialDisplayableManager.cxx
+  vtkMRMLAnnotationAngleDisplayableManager.cxx
   )
 
 # Create the instantiator for DisplayableManager classes.
@@ -59,6 +60,8 @@ SET(qt_module_SRCS
   vtkSlicerAnnotationSplineManager.h
   vtkSlicerAnnotationBidimensionalManager.cxx
   vtkSlicerAnnotationBidimensionalManager.h
+  vtkMRMLAnnotationClickCounter.cxx
+  vtkMRMLAnnotationClickCounter.h
   )
 
 SET(MODULE_WIDGETS_SRCS

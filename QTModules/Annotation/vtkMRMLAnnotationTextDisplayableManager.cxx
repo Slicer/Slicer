@@ -4,6 +4,7 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationTextNode.h"
+#include <vtkMRMLInteractionNode.h>
 
 // VTK includes
 #include <vtkObject.h>
@@ -12,6 +13,7 @@
 #include <vtkProperty.h>
 #include <vtkTextRepresentation.h>
 #include <vtkTextWidget.h>
+#include <vtkRenderer.h>
 
 
 // Convenient macro
@@ -101,8 +103,6 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
   textWidget->AddObserver(vtkCommand::HoverEvent, myCallback);
   myCallback->Delete();
 
-  InvokeEvent(vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent,0);
-
   return textWidget;
 
 }
@@ -127,30 +127,58 @@ void vtkMRMLAnnotationTextDisplayableManager::SetWidget(vtkMRMLAnnotationNode* n
   textRepr->SetText(textNode->GetText(0));
 }
 
-void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(float x, float y)
+//---------------------------------------------------------------------------
+/// Create a annotationMRMLnode
+void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
-  double coordinates[3];
-  coordinates[0]=(double)x;
-  coordinates[1]=(double)y;
-  coordinates[2]=0;
 
-  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-  textNode->SetTextCoordinates(coordinates);
-  textNode->SetTextLabel("New text");
-
-  textNode->Initialize(this->GetMRMLScene());
-
-
-
-  // need a unique name since the storage node will be named from it
-  if (textNode->GetScene())
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+        this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
+  if ( interactionNode == NULL )
     {
-    textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
-    }
-  else
-    {
-    textNode->SetName("AnnotationText");
+    vtkErrorMacro ( "OnClickInThreeDRenderWindow: No interaction node in the scene." );
+    return;
     }
 
-  textNode->Delete();
-}
+  if (interactionNode->GetPlaceModeType() == vtkMRMLInteractionNode::PlaceTextAnnotation)
+    {
+
+    if (this->m_ClickCounter->HasEnoughClicks(3))
+      {
+
+      this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
+      this->GetRenderer()->NormalizedDisplayToViewport(x,y);
+      this->GetRenderer()->ViewportToNormalizedViewport(x,y);
+
+      double coordinates[3];
+      coordinates[0]=(double)x;
+      coordinates[1]=(double)y;
+      coordinates[2]=0;
+
+      vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+      textNode->SetTextCoordinates(coordinates);
+      textNode->SetTextLabel("New text");
+
+      textNode->Initialize(this->GetMRMLScene());
+
+      // need a unique name since the storage node will be named from it
+      if (textNode->GetScene())
+        {
+        textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
+        }
+      else
+        {
+        textNode->SetName("AnnotationText");
+        }
+
+      textNode->Delete();
+
+      } // has enough clicks
+    else
+      {
+        this->PlaceSeed(x,y);
+      }
+
+    } // place mode type
+
+  }
