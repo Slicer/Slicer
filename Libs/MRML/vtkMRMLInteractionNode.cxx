@@ -48,8 +48,6 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
   this->TransformModePersistence = 1;
   this->WindowLevelLock = 0;
   this->PlaceOperationLock = 0;
-  this->CustomTagMode = 0;
-  this->LastCustomTagMode = 0;
 
 }
 
@@ -192,65 +190,12 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
       this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
     case vtkMRMLInteractionNode::CustomTag:
-      if (!this->CustomTagMode)
-        {
-          vtkErrorMacro("SetCurrentInteractionMode: The customTagMode QAction has to be set before changing the interaction mode.")
-          return;
-        }
       this->CurrentInteractionMode = mode;
       this->InvokeEvent(this->InteractionModeChangedEvent, NULL);
       break;
     default:
       break;
     }
-}
-
-//----------------------------------------------------------------------------
-QAction* vtkMRMLInteractionNode::GetCustomTagMode()
-{
-
-  if (!this->CustomTagMode)
-    {
-    vtkErrorMacro("GetCustomTagMode: No customTag QAction was set.")
-    return 0;
-    }
-  else
-    {
-    return this->CustomTagMode;
-    }
-
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLInteractionNode::SetCustomTagMode ( QAction * mode )
-{
-
-  this->CustomTagMode = mode;
-
-}
-
-//----------------------------------------------------------------------------
-QAction* vtkMRMLInteractionNode::GetLastCustomTagMode()
-{
-
-  if (!this->LastCustomTagMode)
-    {
-    vtkErrorMacro("GetLastCustomTagMode: No customTag QAction was set.")
-    return 0;
-    }
-  else
-    {
-    return this->LastCustomTagMode;
-    }
-
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLInteractionNode::SetLastCustomTagMode ( QAction * mode )
-{
-
-  this->LastCustomTagMode = mode;
-
 }
 
 //----------------------------------------------------------------------------
@@ -337,16 +282,6 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
     of << indent << " lastInteractionMode=\"" << "CustomTag" << "\"";
     }
 
-  // Write out the texts of the customTagMode QActions
-  /*if ( this->CustomTagMode )
-    {
-    of << indent << " customTagMode=\"" << this->GetCustomTagMode()->text() << "\"";
-    }
-
-  if ( this->LastCustomTagMode )
-    {
-    of << indent << " lastCustomTagMode=\"" << this->GetLastCustomTagMode()->text() << "\"";
-    }*/
 }
 
 //----------------------------------------------------------------------------
@@ -462,15 +397,8 @@ void vtkMRMLInteractionNode::Copy(vtkMRMLNode *anode)
   vtkMRMLInteractionNode *node = (vtkMRMLInteractionNode *) anode;
 
   this->SetCurrentInteractionMode (node->GetCurrentInteractionMode());
-  if ( node->GetCustomTagMode() )
-    {
-    this->SetCustomTagMode(node->GetCustomTagMode());
-    }
+
   this->SetLastInteractionMode ( node->GetLastInteractionMode());
-  if ( node->GetLastCustomTagMode() )
-    {
-    this->SetLastCustomTagMode ( node->GetLastCustomTagMode());
-    }
 
   this->EndModify(disabledModify);
 }
@@ -481,15 +409,7 @@ void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
   
   Superclass::PrintSelf(os,indent);
   os << indent << "CurrentInteractionMode:        " << this->GetInteractionModeAsString(this->CurrentInteractionMode) << "\n";
- /* if (this->CustomTagMode)
-    {
-    os << indent << "CustomTagMode:        " << this->CustomTagMode->text() << "\n";
-    }*/
   os << indent << "LastInteractionMode:        " <<  this->GetInteractionModeAsString(this->LastInteractionMode) << "\n";
-  /*if (this->LastCustomTagMode)
-    {
-    os << indent << "LastCustomTagMode:        " << this->LastCustomTagMode->text() << "\n";
-    }*/
   os << indent << "WindowLevelLock: " << this->GetWindowLevelLock() << "\n";
   os << indent << "PlaceOperationLock: " << this->GetPlaceOperationLock() << "\n";
 }

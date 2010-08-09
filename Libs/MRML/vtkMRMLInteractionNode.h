@@ -4,9 +4,6 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 
-// QT includes
-#include <QAction>
-
 class VTK_MRML_EXPORT vtkMRMLInteractionNode : public vtkMRMLNode
 {
 public:
@@ -41,17 +38,6 @@ public:
   void SetCurrentInteractionMode ( int mode );
   vtkGetMacro (LastInteractionMode, int );
   void SetLastInteractionMode (int mode );
-  
-  ///
-  /// Get/Set CustomTag mode.
-  /// A QAction is associated to the CustomTagMode. The convention for the text of the QAction is "ModuleName:CustomTagModeName".
-  QAction* GetCustomTagMode();
-  void SetCustomTagMode ( QAction * mode );
-
-  /// Get/Set LastCustomTag mode.
-  /// A QAction is associated to the LastCustomTagMode. The convention for the text of the QAction is "ModuleName:CustomTagModeName".
-  QAction* GetLastCustomTagMode();
-  void SetLastCustomTagMode ( QAction * mode );
 
   vtkGetMacro (PickModePersistence, int );
   vtkGetMacro (PlaceModePersistence, int);
@@ -131,10 +117,6 @@ protected:
   int LastInteractionMode;
   /// current mouse mode
   int CurrentInteractionMode;
-  /// customTag mode
-  QAction * CustomTagMode;
-  /// Last customTag mode
-  QAction * LastCustomTagMode;
 };
 
 #endif
