@@ -18,7 +18,7 @@
 #include <vtkProperty.h>
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
-#include <vtkPointHandleRepresentation3D.h>
+#include <vtkSphereHandleRepresentation.h>
 #include <vtkLineRepresentation.h>
 #include <vtkPolygonalSurfacePointPlacer.h>
 #include <vtkMath.h>
@@ -27,6 +27,7 @@
 #include <vtkSeedRepresentation.h>
 #include <vtkSeedWidget.h>
 #include <vtkProperty2D.h>
+#include <vtkHandleWidget.h>
 
 // STD includes
 #include <vector>
@@ -493,25 +494,35 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordina
 /// Place a seed for widgets
 void vtkMRMLAnnotationDisplayableManager::PlaceSeed(double x, double y)
 {
-  std::cout << "PlaceSeed" << std::endl;
+  std::cout << "PlaceSeed" << x << ":" << y << std::endl;
 
-  VTK_CREATE(vtkPointHandleRepresentation3D, handle);
+  VTK_CREATE(vtkSphereHandleRepresentation, handle);
   handle->GetProperty()->SetColor(1,0,0);
-  handle->AllOn();
+  handle->SetHandleSize(5);
   VTK_CREATE(vtkSeedRepresentation, rep);
   rep->SetHandleRepresentation(handle);
 
   //seed widget
   VTK_CREATE(vtkSeedWidget, seedWidget);
-  seedWidget->SetInteractor(this->GetInteractor());
+  seedWidget->CreateDefaultRepresentation();
   seedWidget->SetRepresentation(rep);
 
-  vtkSmartPointer<vtkSeedCallback> seedCallback = vtkSmartPointer<vtkSeedCallback>::New();
-  seedCallback->SetRepresentation(rep);
-  seedWidget->AddObserver(vtkCommand::PlacePointEvent,seedCallback);
-  seedWidget->AddObserver(vtkCommand::InteractionEvent,seedCallback);
+  seedWidget->SetInteractor(this->GetInteractor());
+  seedWidget->SetCurrentRenderer(this->GetRenderer());
+  seedWidget->SetEnabled(1);
+  double p[3];
+  p[0]=x;
+  p[1]=y;
+  p[2]=0;
 
   seedWidget->On();
+
+  seedWidget->ProcessEventsOff();
+  vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
+
+  vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(p);
+
+  this->GetRenderer()->AddActor(newhandle->GetRepresentation());
 
   this->RequestRender();
 

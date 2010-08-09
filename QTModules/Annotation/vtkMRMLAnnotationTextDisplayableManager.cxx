@@ -139,11 +139,11 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
     vtkErrorMacro ( "OnClickInThreeDRenderWindow: No interaction node in the scene." );
     return;
     }
-
-  if (interactionNode->GetPlaceModeType() == vtkMRMLInteractionNode::PlaceTextAnnotation)
+/*
+  if (interactionNode->GetCustomTagMode()->text() == "Annotation:PlaceText")
     {
-
-    if (this->m_ClickCounter->HasEnoughClicks(3))
+*/
+    if (this->m_ClickCounter->HasEnoughClicks(5))
       {
 
       this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
@@ -178,7 +178,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
       {
         this->PlaceSeed(x,y);
       }
-
+/*
     } // place mode type
-
+*/
   }
