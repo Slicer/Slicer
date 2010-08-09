@@ -48,6 +48,8 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
   this->TransformModePersistence = 1;
   this->WindowLevelLock = 0;
   this->PlaceOperationLock = 0;
+
+  this->PlaceModeType = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -116,6 +118,13 @@ void vtkMRMLInteractionNode::NormalizeAllMouseModes()
   this->TransformModePersistence = 1;
 }
 
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLInteractionNode::SetPlaceModeType ( int mode )
+{
+  this->PlaceModeType = mode;
+}
 
 
 //----------------------------------------------------------------------------
@@ -268,7 +277,16 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
   else if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::ViewTransform )
     {
     of << indent << " lastInteractionMode=\"" << "ViewTransform" << "\"";    
-    }  
+    }
+
+  if (this->GetPlaceModeType() == vtkMRMLInteractionNode::PlaceTextAnnotation)
+    {
+    of << indent << " placeModeType=\"" << "PlaceTextAnnotation" << "\"";
+    }
+  else if (this->GetPlaceModeType() == vtkMRMLInteractionNode::PlaceAngleAnnotation)
+    {
+    of << indent << " placeModeType=\"" << "PlaceAngleAnnotation" << "\"";
+    }
 
 }
 
@@ -355,6 +373,17 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
       else if ( !strcmp (attValue, "ViewTransform" ))
         {
         this->LastInteractionMode = vtkMRMLInteractionNode::ViewTransform;
+        }
+      }
+    else if (!strcmp(attName, "placeModeType"))
+      {
+      if (!strcmp(attValue, "PlaceTextAnnotation"))
+        {
+        this->PlaceModeType = vtkMRMLInteractionNode::PlaceTextAnnotation;
+        }
+      else if (!strcmp(attValue, "PlaceAngleAnnotation"))
+        {
+        this->PlaceModeType = vtkMRMLInteractionNode::PlaceAngleAnnotation;
         }
       }
     

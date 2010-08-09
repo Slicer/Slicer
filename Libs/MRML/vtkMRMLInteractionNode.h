@@ -39,6 +39,11 @@ public:
   vtkGetMacro (LastInteractionMode, int );
   void SetLastInteractionMode (int mode );
   
+  ///
+  /// Get/Set for different types of place mode
+  vtkGetMacro (PlaceModeType, int );
+  void SetPlaceModeType (int mode);
+
   vtkGetMacro (PickModePersistence, int );
   vtkGetMacro (PlaceModePersistence, int);
   vtkGetMacro (TransformModePersistence, int );
@@ -82,6 +87,12 @@ public:
       ViewRotate,
       ViewTransform,
     };
+  /// different types of place mode
+  enum
+    {
+      PlaceTextAnnotation = 1000,
+      PlaceAngleAnnotation,
+    };
   /// events
   enum
     {
@@ -116,6 +127,8 @@ protected:
   int LastInteractionMode;
   /// current mouse mode
   int CurrentInteractionMode;
+  /// current type of place mode
+  int PlaceModeType;
 };
 
 #endif
