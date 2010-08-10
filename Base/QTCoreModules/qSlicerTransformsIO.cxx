@@ -36,7 +36,7 @@ qSlicerIO::IOFileType qSlicerTransformsIO::fileType()const
 //-----------------------------------------------------------------------------
 QString qSlicerTransformsIO::extensions()const
 {
-  return "*.txt";
+  return "*.tfm *.mat *.txt";
 }
 
 //-----------------------------------------------------------------------------
