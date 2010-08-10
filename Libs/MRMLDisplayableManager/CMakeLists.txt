@@ -168,6 +168,7 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
   
   TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
+  TARGET_LINK_LIBRARIES(${lib_name}PythonD MRMLLogicPythonD)
   
   FOREACH(c ${KIT_PYTHON_LIBRARIES})
     TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)

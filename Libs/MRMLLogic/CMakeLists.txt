@@ -95,6 +95,11 @@ ADD_LIBRARY(${lib_name}
   ${srcs}
  )
 
+SET(VTK_LIBRARIES
+  vtkHybrid
+  vtkRendering
+  )
+
 SET(libs
   MRML
   vtkTeem
