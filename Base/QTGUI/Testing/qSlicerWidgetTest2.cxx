@@ -21,6 +21,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QProcessEnvironment>
+#include <QWebView>
+#include <QUrl>
 
 // QVTK
 #include <QVTKWidget.h>
@@ -48,8 +50,8 @@
 #include <stdlib.h>
 
 
-#define WINDOW_WIDTH 300
-#define WINDOW_HEIGHT 450
+#define WINDOW_WIDTH 600
+#define WINDOW_HEIGHT 900
 
 //
 // Build the slicer rendering infrastructure to render data from volume file
@@ -146,7 +148,6 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   vbox.addWidget(&quitButton);
   app.connect(&quitButton, SIGNAL(clicked()), &parentWidget, SLOT(close()));
 
-
   qSlicerWidget* widget = new qSlicerWidget();
   widget->setParent(&parentWidget);
   vbox.addWidget(widget);
@@ -155,6 +156,11 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   vtkWidget->setParent(&parentWidget);
   vbox.addWidget(vtkWidget);
   vtkWidget->GetRenderWindow()->Render();
+
+  QWebView webView;
+  webView.setParent(&parentWidget);
+  webView.setUrl(QUrl("http://pyjs.org/examples"));
+  vbox.addWidget(&webView);
 
 
   QRect parentGeometry(10,10,WINDOW_WIDTH,WINDOW_HEIGHT);
