@@ -2,6 +2,7 @@
 
 from logic import *
 from mrml import *
+from mrmlLogic import *
 from teem import *
 from freesurfer import *
 from remoteio import *

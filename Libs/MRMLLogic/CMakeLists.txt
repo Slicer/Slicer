@@ -69,10 +69,12 @@ SET(MRMLLogic_SRCS
   vtkImageResliceMask.cxx
   )
   
+# set hints for tcl and python
+SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
+
 # TCL Wrapping
 if (VTK_WRAP_TCL)
    include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-   SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
    vtk_wrap_tcl3(MRMLLogic  MRMLLogic_TCL_SRCS   "${MRMLLogic_SRCS}" "")
 endif()
 
