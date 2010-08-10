@@ -485,7 +485,7 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
       {
       vtkMRMLSliceLogic *l = vtkMRMLSliceLogic::SafeDownCast((*lit).second);
       vtkMRMLSliceNode *sliceNode = l->GetSliceNode();
-      unsigned int *dims = sliceNode->GetDimensions();
+      int *dims = sliceNode->GetDimensions();
       l->FitSliceToAll(dims[0], dims[1]);
       }
     }

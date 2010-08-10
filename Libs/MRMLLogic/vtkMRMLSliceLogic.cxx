@@ -438,7 +438,7 @@ void vtkMRMLSliceLogic::ProcessLogicEvents()
 
 
     vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
-    unsigned int *dims = this->SliceNode->GetDimensions();
+    int *dims = this->SliceNode->GetDimensions();
     vtkMatrix4x4 *xyToRAS = this->SliceNode->GetXYToRAS();
 
     // set the plane corner point for use in a model
@@ -1548,7 +1548,7 @@ void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
   // Use SliceNode dimensions if width and height parameters are omitted
   if (width < 0 || height < 0)
     {
-    unsigned int* dimensions = this->SliceNode->GetDimensions();
+    int* dimensions = this->SliceNode->GetDimensions();
     width = dimensions ? dimensions[0] : -1;
     height = dimensions ? dimensions[1] : -1;
     }

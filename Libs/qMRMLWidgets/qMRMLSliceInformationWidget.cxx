@@ -104,7 +104,7 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->WidgetVisibilityToggle->setChecked(this->MRMLSliceNode->GetWidgetVisible());
 
   // Update dimension
-  unsigned int dimensions[3] = {0, 0, 0};
+  int dimensions[3] = {0, 0, 0};
   this->MRMLSliceNode->GetDimensions(dimensions);
   this->DimensionXEdit->setText(QString::number(dimensions[0]));
   this->DimensionYEdit->setText(QString::number(dimensions[1]));

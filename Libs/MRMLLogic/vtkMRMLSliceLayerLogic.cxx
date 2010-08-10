@@ -364,7 +364,7 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
   // Ensure display node matches the one we are observing
   this->UpdateNodeReferences();
   
-  unsigned int dimensions[3];
+  int dimensions[3];
   dimensions[0] = 100;  // dummy values until SliceNode is set
   dimensions[1] = 100;
   dimensions[2] = 100;

@@ -887,8 +887,8 @@ void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
     }
 }
 
-void vtkMRMLSliceNode::SetDimensions(unsigned int x, unsigned int y,
-                                     unsigned int z)
+void vtkMRMLSliceNode::SetDimensions(int x, int y,
+                                     int z)
 {
   if ( x != this->Dimensions[0] || y != this->Dimensions[1]
        || z != this->Dimensions[2] )

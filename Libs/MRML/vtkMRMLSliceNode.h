@@ -114,8 +114,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// 
   /// Number of samples in each direction
   /// -- note that the spacing is implicitly FieldOfView / Dimensions
-  vtkGetVector3Macro (Dimensions, unsigned int);
-  void SetDimensions (unsigned int x, unsigned int y, unsigned int z);
+  vtkGetVectorMacro(Dimensions,int,3)
+  void SetDimensions (int x, int y, int z);
 
   /// 
   /// Matrix mapping from XY pixel coordinates on an image window 
@@ -249,7 +249,7 @@ protected:
   int WidgetVisible;
   int UseLabelOutline;
   double FieldOfView[3];
-  unsigned int Dimensions[3];
+  int Dimensions[3];
   char *OrientationString;
 
   int LayoutGridRows;
