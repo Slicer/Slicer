@@ -101,6 +101,7 @@ vtkEventBroker::vtkEventBroker()
   this->CompressCallData = 0;
   this->LogFileName = NULL;
   this->ScriptHandler = NULL;
+  this->ScriptHandlerClientData = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -837,9 +838,12 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation, void *call
 
   // Invoke the observation
   // - run script is available, otherwise run callback command
+  //  -- pass back the client data to the script handler (for
+  //     example it could be the interpreter to use)
   if ( observation->GetScript() != NULL )
     {
-    (*(this->ScriptHandler)) ( observation->GetScript() );
+    (*(this->ScriptHandler)) ( 
+        observation->GetScript(), this->ScriptHandlerClientData );
     }
   else
     {

@@ -227,7 +227,7 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
   return 0;
 }
 
-void Slicer3_BrokerScriptHandler ( const char *script )
+void Slicer3_BrokerScriptHandler ( const char *script, void * vtkNotUsed(dummy) )
 {
   vtkSlicerApplication::GetInstance()->Script( script );
 }
@@ -932,7 +932,7 @@ int Slicer3_main(int& argc, char *argv[])
   // - synchronous mode so that redunant events do not get collapsed
   //   (this is compatible with standard vtk event behavior, but adds
   //   the ability to trace event execution).
-  vtkEventBroker::GetInstance()->SetScriptHandler( Slicer3_BrokerScriptHandler );
+  vtkEventBroker::GetInstance()->SetScriptHandler( Slicer3_BrokerScriptHandler, NULL );
   vtkEventBroker::GetInstance()->SetEventModeToSynchronous();
 
   if ( EventLog != "" )
