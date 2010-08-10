@@ -75,12 +75,6 @@ public:
 #ifdef Slicer3_USE_KWWIDGETS
 
   ///
-  /// initialize paths for module discovery
-  /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
-  /// removed once the QT GUI is functional.
-  void initializePaths(const QString& programPath);
-
-  ///
   /// Convenient method allowing to set the initialized flag
   /// DEPRECATED: This method was used by the KWWidgests GUI only and it will be
   /// removed once the QT GUI is functional. Only vtkSlicerApplication should use
@@ -99,11 +93,6 @@ public:
   /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
   /// removed once the QT GUI is functional.
   void setModuleManager(qSlicerModuleManager* moduleManager);
-
-  ///
-  /// Convenient method to set slicer home directory
-  /// Note: SlicerHome should be auto-discovered. See implementation details.
-  void setSlicerHome(const QString& slicerHome);
 
 #endif //Slicer3_USE_KWWIDGETS
 

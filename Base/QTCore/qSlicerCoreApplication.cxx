@@ -11,13 +11,14 @@
 =========================================================================auto=*/
 
 // Qt includes
-#include <QVector>
+#include <QDebug>
+#include <QDir>
+#include <QProcessEnvironment>
+#include <QSettings>
 #include <QSharedPointer>
 #include <QStringList>
-#include <QDir>
-#include <QSettings>
 #include <QTimer>
-#include <QDebug>
+#include <QVector>
 
 // For:
 //  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
@@ -49,10 +50,6 @@
 // VTK includes
 #include "vtkSmartPointer.h"
 
-// VTKSYS includes
-#include <vtksys/SystemTools.hxx>
-#include <vtksys/stl/string>
-
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer3_VERSION_{MINOR, MAJOR}, Slicer3_VERSION_FULL
 
@@ -76,11 +73,11 @@ public:
 
   ///
   /// Given the program name, should return Slicer Home Directory
-  void discoverSlicerHomeDirectory(const QString& programName);
+  void discoverSlicerHomeDirectory();
 
   ///
   /// Given the program name, attempt to return the corresponding binary directory
-  QString discoverSlicerBinDirectory(const QString& programName);
+  void discoverSlicerBinDirectory();
 
   ///
   /// Parse arguments
@@ -91,16 +88,18 @@ public:
   void terminate();
 
   ///
-  /// Accept argument of the form "FOO=BAR" and update the process environment
-  int putEnv(const QString& value);
-
-  ///
   /// MRMLScene and AppLogic pointers
   vtkSmartPointer< vtkMRMLScene >               MRMLScene;
   vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
   vtkSmartPointer< vtkMRMLApplicationLogic >    MRMLApplicationLogic;
 
+  /// SlicerBin doesn't contain Debug/Release/... (see IntDir)
+  QString                                       SlicerBin;
   QString                                       SlicerHome;
+  /// On windows platform, after the method 'discoverSlicerBinDirectory' has been called,
+  /// IntDir should be set to either Debug,
+  /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
+  QString                                       IntDir;
   QSettings*                                    Settings;
 
   ///
@@ -117,24 +116,6 @@ public:
 
   /// ExitWhenDone flag
   bool                                 ExitWhenDone;
-
-  /// For ::PutEnv
-  /// See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
-  struct DeletingCharVector : public QVector<char*>
-  {
-    ~DeletingCharVector()
-      {
-      for (int i = 0; i < this->size(); ++i)
-        {
-        delete []this->at(i);
-        }
-      }
-  };
-
-  /// On windows platform, after the method 'discoverSlicerBinDirectory' has been called,
-  /// IntDir should be set to either Debug,
-  /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
-  QString            IntDir;
 
   /// Indicate if initialize() method has been called.
   bool               Initialized;
@@ -205,66 +186,49 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory(const QString& programName)
+void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 {
-  QString slicerBinDir = this->discoverSlicerBinDirectory(programName);
-  if (slicerBinDir.isEmpty())
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+  this->SlicerHome = env.value("Slicer3_HOME");
+  if (!this->SlicerHome.isEmpty())
     {
-    qWarning() << "Failed to retrieve Slicer binary directory.";
     return;
     }
-    
-  this->SlicerHome = QString::fromStdString(
-    vtksys::SystemTools::CollapseFullPath((slicerBinDir + "/..").toLatin1()));
-    
-  // set the Slicer3_HOME variable if it doesn't already exist from the launcher 
-  if (QString::fromLatin1(getenv("Slicer3_HOME")) != this->SlicerHome)
+  QDir slicerBinDir(this->SlicerBin);
+  bool cdUpRes = slicerBinDir.cdUp();
+  if (!cdUpRes)
     {
-    // Update env
-    QString homeEnv = "Slicer3_HOME=%1";
-    //qDebug() << "Set environment: " << homeEnv.arg(this->SlicerHome);
-    this->putEnv(homeEnv.arg(this->SlicerHome));
+    qDebug() << "Warning, can't cdUp in " << slicerBinDir;
     }
+  this->SlicerHome = slicerBinDir.absolutePath();
+  env.insert("Slicer3_HOME", this->SlicerHome);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory(const QString& programName)
+void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 {
-  std::string programPath;
-  std::string errorMessage;
-  if ( !vtksys::SystemTools::FindProgramPath(programName.toLatin1(), programPath, errorMessage) )
+  CTK_P(qSlicerCoreApplication);
+  this->SlicerBin = QString();
+  this->IntDir = QString();
+  QDir slicerBinDir(p->applicationDirPath());
+  if ( !slicerBinDir.exists() )
     {
-    qCritical() << "Cannot find Slicer3 executable - " << errorMessage.c_str();
-    return "";
+    qCritical() << "Cannot find Slicer3 executable" << p->applicationDirPath();
+    return ;
     }
-
-  std::string slicerBinDir = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
-  
-  // If the path: [slicerBinDir + Slicer3_INSTALL_LIB_DIR] isn't valid, try to
-  // discover the appropriate one
-  std::string tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR;
-  if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
+  QDir slicerLibDir = slicerBinDir;
+  if (slicerLibDir.cd( QString("../") + Slicer3_INSTALL_LIB_DIR))
     {
-    // Handle Visual Studio IntDir
-    std::vector<std::string> pathComponents;
-    vtksys::SystemTools::SplitPath(slicerBinDir.c_str(), pathComponents);
-
-    slicerBinDir = slicerBinDir + "/..";
-    tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR;
-    if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
-      {
-      qCritical() << "Cannot find Slicer3 libraries";
-      return "";
-      }
-
-    if (pathComponents.size() > 0)
-      {
-      this->IntDir = QString::fromStdString(pathComponents[pathComponents.size()-1]);
-      }
+    this->SlicerBin = slicerBinDir.absolutePath();
+    return ;
     }
-
-  slicerBinDir = vtksys::SystemTools::CollapseFullPath(slicerBinDir.c_str());
-  return QString::fromStdString(slicerBinDir);
+  if (slicerLibDir.cd( QString("../../") + Slicer3_INSTALL_LIB_DIR))
+    {
+    this->IntDir = slicerBinDir.dirName();
+    slicerBinDir.cdUp();
+    this->SlicerBin = slicerBinDir.absolutePath();
+    return;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -300,19 +264,6 @@ void qSlicerCoreApplicationPrivate::terminate()
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerCoreApplicationPrivate::putEnv(const QString& value)
-{ 
-  static Self::DeletingCharVector local_environment;
-  char *env_var = new char[value.size() + 1];
-  strcpy(env_var, value.toLatin1());
-  int ret = putenv(env_var);
-  // Save the pointer in the static vector so that it can be deleted on exit
-  // See http://groups.google.com/group/comp.unix.wizards/msg/f0915a043bf259fa?dmode=source
-  local_environment << env_var;
-  return ret == 0;
-}
-
-//-----------------------------------------------------------------------------
 // qSlicerCoreApplication methods
 
 //-----------------------------------------------------------------------------
@@ -322,7 +273,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   CTK_D(qSlicerCoreApplication);
 
   this->setOrganizationName("NAMIC");
-  
+
   // Keep a local copy of the original arguments
   char **myArgv = new char*[_argc];
   for (int i = 0; i < _argc; ++i)
@@ -341,10 +292,11 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
     {
     qDebug() << "qSlicerCoreApplication must be given the true argc/argv";
     }
+  d->discoverSlicerBinDirectory();
   // Slicer Home Directory must be set in the constructor of qSlicerCoreApplication
   // in order to be used in the constructor of qSlicerApplication (to initialize the
   // QCoreApplication::addLibraryPath (to handle the iconengines plugin) )
-  d->discoverSlicerHomeDirectory(this->arguments().at(0));
+  d->discoverSlicerHomeDirectory();
 }
 
 //-----------------------------------------------------------------------------
@@ -369,8 +321,8 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   
   // Create MRML scene
   VTK_CREATE(vtkMRMLScene, scene);
-  vtksys_stl::string root = vtksys::SystemTools::GetCurrentWorkingDirectory();
-  scene->SetRootDirectory(root.c_str());
+  QString workingDirectory = QDir::currentPath();
+  scene->SetRootDirectory(workingDirectory.toLatin1());
   vtkMRMLScene::SetActiveScene( scene );
 
   // Register the node type for the command line modules
@@ -518,14 +470,6 @@ bool qSlicerCoreApplication::isInstalled()
 #ifdef Slicer3_USE_KWWIDGETS
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::initializePaths(const QString& programPath)
-{
-  CTK_D(qSlicerCoreApplication);
-  // we can't use this->arguments().at(0) here as argc/argv are incorrect.
-  d->discoverSlicerHomeDirectory(programPath);
-}
-
-//-----------------------------------------------------------------------------
 CTK_SET_CXX(qSlicerCoreApplication, bool, setInitialized, Initialized);
 
 //-----------------------------------------------------------------------------
@@ -569,9 +513,6 @@ QString qSlicerCoreApplication::slicerHome() const
   // TODO Use QCoreApplication::applicationDirPath
   return ctk_d()->SlicerHome;
 }
-
-//-----------------------------------------------------------------------------
-CTK_SET_CXX(qSlicerCoreApplication, const QString&, setSlicerHome, SlicerHome);
 
 //-----------------------------------------------------------------------------
 #ifdef Slicer3_USE_PYTHONQT

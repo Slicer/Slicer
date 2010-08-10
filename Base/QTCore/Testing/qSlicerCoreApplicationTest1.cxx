@@ -150,21 +150,6 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   std::cout << "Slicer Home Directory = " << qPrintable( homeDirectory ) << std::endl;
 
-  QString newHome = homeDirectory;
-
-  app.setSlicerHome( newHome );
-
-  QString newHome1 = app.slicerHome();
-
-  if( newHome1 != newHome )
-    {
-    std::cerr << "Error in setSlicerHome()/slicerHome() " << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  app.setSlicerHome( homeDirectory );
-
-
   vtkSlicerApplicationLogic * logic1 = app.appLogic();
 
   if( logic1 == NULL )

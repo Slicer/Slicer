@@ -1135,10 +1135,6 @@ int Slicer3_main(int& argc, char *argv[])
   // installation or build tree) to the user paths
   modulePaths = userModulePaths + PathSep + defaultModulePaths;
 
-#ifdef Slicer3_USE_QT
-  qSlicerApplication::application()->initializePaths(QString::fromStdString(programPath));
-#endif
-
   // =================== vvv
   // TODO: this is moved to the launcher since setting it at run
   // time has no effect on dlopen
