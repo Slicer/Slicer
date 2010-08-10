@@ -337,6 +337,8 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
   this->setCoreIOManager(new qSlicerCoreIOManager);
+
+  d->discoverSlicerHomeDirectory(this->arguments().at(0));
 }
 
 //-----------------------------------------------------------------------------
@@ -358,7 +360,6 @@ CTK_GET_CXX(qSlicerCoreApplication, bool, initialized, Initialized);
 void qSlicerCoreApplication::initialize(bool& exitWhenDone)
 {
   CTK_D(qSlicerCoreApplication);
-  d->discoverSlicerHomeDirectory(this->arguments().at(0));
   
   // Create MRML scene
   VTK_CREATE(vtkMRMLScene, scene);

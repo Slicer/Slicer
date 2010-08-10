@@ -7,13 +7,15 @@
 #include <QFontInfo>
 #include <QMap>
 #include <QPalette>
+#include <QPluginLoader>
 #include <QRect>
 #include <QStyle>
 #include <QWidget>
 
 // CTK includes
-#include <ctkSettings.h>
+#include <ctkIconEnginePlugin.h>
 #include <ctkLogger.h>
+#include <ctkSettings.h>
 
 // QTGUI includes
 #include "qSlicerApplication.h"
@@ -114,12 +116,28 @@ void qSlicerApplicationPrivate::init()
   p->setCorePythonManager(new qSlicerPythonManager());
   #endif
 }
-
+/*
+#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loaderV2,
+    (QIconEngineFactoryInterfaceV2_iid, QLatin1String("/iconengines"), Qt::CaseInsensitive))
+#endif
+*/
 //-----------------------------------------------------------------------------
 void qSlicerApplicationPrivate::initStyle()
 {
   CTK_P(qSlicerApplication);
   p->setStyle(new qSlicerStyle(new QCleanlooksStyle));
+
+  // Force showing the icons in the menus despite the native OS style
+  // discourages it
+  p->setAttribute(Qt::AA_DontShowIconsInMenus, false);
+
+  // Init the style of the icons
+  // The plugin qSlicerIconEnginePlugin is located in the iconengines
+  // subdirectory of Slicer lib dir (typically lib/Slicer).
+  // By adding the path to the lib dir, Qt automatically loads the icon engine
+  // plugin
+  p->addLibraryPath(p->slicerHome() + "/" + Slicer3_INSTALL_LIB_DIR);
 }
 
 //-----------------------------------------------------------------------------

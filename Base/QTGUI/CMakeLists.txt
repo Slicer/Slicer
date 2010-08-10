@@ -152,6 +152,32 @@ Slicer3_build_slicer_qtbase_library(
   RESOURCES ${KIT_resources}
   )
 
+# Slicer icon engine
+QT4_WRAP_CPP(MOC_qSlicerIconEnginePlugin qSlicerIconEnginePlugin.h)
+ADD_LIBRARY(qSlicerIconEnginePlugin
+  qSlicerIconEnginePlugin.cxx
+  qSlicerIconEnginePlugin.h
+  ${MOC_qSlicerIconEnginePlugin})
+
+TARGET_LINK_LIBRARIES(qSlicerIconEnginePlugin
+  ${CTK_LIBRARIES})
+
+SET_TARGET_PROPERTIES(qSlicerIconEnginePlugin
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY
+  "${CMAKE_BINARY_DIR}/lib/Slicer3/iconengines"
+  LIBRARY_OUTPUT_DIRECTORY
+  "${CMAKE_BINARY_DIR}/lib/Slicer3/iconengines"
+  ARCHIVE_OUTPUT_DIRECTORY
+  "${CMAKE_BINARY_DIR}/lib/Slicer3/iconengines"
+  )
+# Install rules
+INSTALL(TARGETS qSlicerIconEnginePlugin
+  RUNTIME DESTINATION lib/Slicer3/iconengines COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION lib/Slicer3/iconengines COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib/Slicer3/iconengines COMPONENT Development
+  )
+
 # Plugin
 ADD_SUBDIRECTORY(Plugins)
 

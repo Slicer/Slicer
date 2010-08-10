@@ -100,6 +100,11 @@ public:
   /// removed once the QT GUI is functional.
   void setModuleManager(qSlicerModuleManager* moduleManager);
 
+  ///
+  /// Convenient method to set slicer home directory
+  /// Note: SlicerHome should be auto-discovered. See implementation details.
+  void setSlicerHome(const QString& slicerHome);
+
 #endif //Slicer3_USE_KWWIDGETS
 
   /// Get application logic
@@ -110,12 +115,8 @@ public:
 
   ///
   /// Get slicer home directory
+  /// Valid only if qSlicerCoreApplication is initialized. 
   QString slicerHome() const;
-
-  ///
-  /// Convenient method to set slicer home directory
-  /// Note: SlicerHome should be auto-discovered. See implementation details.
-  void setSlicerHome(const QString& slicerHome);
 
   ///
   /// If any, this method return the build intermediate directory

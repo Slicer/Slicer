@@ -37,8 +37,6 @@ int main(int argc, char* argv[])
 
   qSlicerApplication app(argc, argv);
   app.setApplicationName("Slicer");
-  // Force showing the icons in the menus despite the native OS style discourage it
-  app.setAttribute(Qt::AA_DontShowIconsInMenus, false);
 
   //app.setApplicationVersion();
   //app.setWindowIcon(QIcon(":Icons/..."));
