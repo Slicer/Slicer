@@ -207,13 +207,18 @@ set_source_files_properties(
   ABSTRACT
   )
 
+#-----------------------------------------------------------------------------
+# Wrapping hints used by all Tcl, Python and Java wrapping.
+# It can also be used by external wrapping tools.
+SET(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
+
 # --------------------------------------------------------------------------
 # Wrapping
 IF (VTK_WRAP_TCL)
   include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-  set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
   vtk_wrap_tcl3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")
 ENDIF (VTK_WRAP_TCL)
+
 
 # --------------------------------------------------------------------------
 # Build and install the library
