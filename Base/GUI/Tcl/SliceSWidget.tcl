@@ -138,9 +138,10 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   $gridSWidget configure -layer "label"
   lappend _swidgets $gridSWidget
   lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
-  lappend _swidgets [RegionsSWidget #auto $sliceGUI]
   lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
   lappend _swidgets [VolumeDisplaySWidget #auto $sliceGUI]
+
+  #lappend _swidgets [RegionsSWidget #auto $sliceGUI] ;# not used
 
 }
 
@@ -335,6 +336,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     $this updateSWidgets
   }
 
+
   #
   # get the current event info
   # - the event type
@@ -346,7 +348,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   #
   if { $event != "ConfigureEvent" } {
     set tkwindow [$_renderWidget  GetWidgetName]
-    $_interactor UpdateSize [winfo width $tkwindow] [winfo height $tkwindow]
+    if { $tkwindow != "" } {
+      $_interactor UpdateSize [winfo width $tkwindow] [winfo height $tkwindow]
+    }
   }
 
 
@@ -395,7 +399,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   if { $caller != $_sliceNode } {
     $this resizeSliceNode
   }
-
 
   #
   # update the annotations even if they aren't currently visible
@@ -816,6 +819,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "ExitEvent" { }
   }
 
+
   if { $annotationsUpdated == false && [$this getInWidget] } {
       set xyToRAS [$_sliceNode GetXYToRAS]
       set ras [$xyToRAS MultiplyPoint $x $y $z 1]
@@ -991,6 +995,7 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
     # need a composite node to be able to do anything
     return
   }
+
 
   set foregroundname "None"
   set backgroundname "None"

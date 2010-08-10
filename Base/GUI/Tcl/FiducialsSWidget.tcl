@@ -32,7 +32,7 @@ if { [itcl::find class FiducialsSWidget] == "" } {
     # a list of seeds - the callback info includes the mapping to list and index
     variable _seedSWidgets ""
     variable _storedSeedSWidgets ""
-    variable _fiducialListObserverTagPairs ""
+    variable _fiducialListObservervations ""
     variable _timeOfLastKeyEvent 0
 
     # methods
@@ -86,13 +86,10 @@ itcl::body FiducialsSWidget::destructor {} {
   set _seedSWidgets ""
   set _storedSeedSWidgets ""
 
-  foreach pair $_fiducialListObserverTagPairs {
-    foreach {fidListNode tag} $pair {}
-    if { [info command $fidListNode] != "" } {
-      $fidListNode RemoveObserver $tag
-    }
+  foreach obs $_fiducialListObservervations {
+    $slicer3::Broker RemoveObservation $obs
   }
-  set _fiducialListObserverTagPairs ""
+  set _fiducialListObservervations ""
 }
 
 
@@ -125,6 +122,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     switch $event {
       "KeyPressEvent" { 
         set key [$_interactor GetKeySym]
+  puts "$this processing key $key"
         set activeKeys "grave quoteleft BackSpace Delete p"
         if { [lsearch $activeKeys $key] != -1 } {
           $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
@@ -208,13 +206,10 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
   # - these will be recreated below to match the current scene
   #
   if { [$caller IsA "vtkMRMLScene"] } {
-    foreach pair $_fiducialListObserverTagPairs {
-      foreach {fidListNode tag} $pair {}
-      if { [info command $fidListNode] != "" } {
-        $fidListNode RemoveObserver $tag
-      } 
+    foreach obs $_fiducialListObservervations {
+      $slicer3::Broker RemoveObservation $obs
     }
-    set _fiducialListObserverTagPairs ""
+    set _fiducialListObservervations ""
   }
 
   $this requestUpdate
@@ -328,15 +323,15 @@ itcl::body FiducialsSWidget::processUpdate {} {
 
 itcl::body FiducialsSWidget::addFiducialListObserver {fidListNode} {
   if { [info command $fidListNode] != "" } {
-    foreach {fnode tag} $_fiducialListObserverTagPairs {
-      if { $fnode == $fidListNode } {
+    foreach obs $_fiducialListObservervations {
+      if { [$obs GetSubject] == $fidListNode } {
         return ;# the observer already exists
       }
     }
     # no observer, so add one
-    set tag [$fidListNode AddObserver AnyEvent \
+    set obs [$::slicer3::Broker AddObservation $fidListNode AnyEvent \
         "::SWidget::ProtectedCallback $this processEvent $fidListNode"]
-    lappend _fiducialListObserverTagPairs "$fidListNode $tag"
+    lappend _fiducialListObservervations $obs
   }
 }
 

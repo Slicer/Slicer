@@ -106,7 +106,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
   # set the crosshair node and add observers to the crosshair
   # (for now, always talk to the singleton "default")
   #
-  set numberOfCrosshairs [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLCrosshairNode]
+  set numberOfCrosshairs [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLCrosshairNode"]
   for {set xi 0} { $xi < $numberOfCrosshairs} { [incr xi] } {
       set xnode [$::slicer3::MRMLScene GetNthNodeByClass $xi vtkMRMLCrosshairNode]
       if { [$xnode GetCrosshairName] == "default" } {

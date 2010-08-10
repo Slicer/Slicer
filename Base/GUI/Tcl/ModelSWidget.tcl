@@ -232,6 +232,12 @@ itcl::body ModelSWidget::highlight { } {
 
 itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
 
+  if { [info command ::Slicer3Adapters::Initialize] != "" } {
+    # stub out when working in slicer4
+    puts "TODO: skipping \"$this\" \"$caller\" \"$event\""
+    return
+  }
+
   if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
