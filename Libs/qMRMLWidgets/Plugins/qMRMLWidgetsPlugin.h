@@ -1,6 +1,7 @@
 #ifndef __qMRMLWidgetsPlugin_h
 #define __qMRMLWidgetsPlugin_h
 
+#include "qMRMLCollapsibleButtonPlugin.h"
 #include "qMRMLColorTableComboBoxPlugin.h"
 #include "qMRMLLinearTransformSliderPlugin.h"
 #include "qMRMLListWidgetPlugin.h"
@@ -35,7 +36,8 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qMRMLColorTableComboBoxPlugin
+    plugins << new qMRMLCollapsibleButtonPlugin
+            << new qMRMLColorTableComboBoxPlugin
             << new qMRMLLinearTransformSliderPlugin
             << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin
