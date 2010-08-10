@@ -28,6 +28,9 @@
 # include "qSlicerPythonManager.h"
 #endif
 
+// MRML includes
+#include "vtkMRMLScene.h"
+
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerApplication");
 //--------------------------------------------------------------------------
@@ -244,6 +247,7 @@ qSlicerPythonManager* qSlicerApplication::pythonManager()
   qSlicerPythonManager* _pythonManager = 
     qobject_cast<qSlicerPythonManager*>(this->corePythonManager());
   Q_ASSERT(_pythonManager);
+
   return _pythonManager;
 }
 #endif

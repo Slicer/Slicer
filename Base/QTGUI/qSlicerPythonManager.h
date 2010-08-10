@@ -17,6 +17,8 @@
 #include "qSlicerCorePythonManager.h"
 #include "qSlicerBaseQTGUIExport.h"
 
+class vtkObject;
+
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerPythonManager : public qSlicerCorePythonManager
 {
   Q_OBJECT
@@ -25,7 +27,14 @@ public:
   typedef qSlicerCorePythonManager Superclass;
   qSlicerPythonManager(QObject* parent=0);
   ~qSlicerPythonManager();
-  
+ 
+  /// register a vtk object pointer with python
+  void addVTKObject(const char *name, vtkObject *obj);
+
+  /// register a slicer object pointer with python
+  void addVTKSlicerObject(const char *name, vtkObject *obj);
+
+ 
 protected:
 
   virtual QStringList pythonPaths();
