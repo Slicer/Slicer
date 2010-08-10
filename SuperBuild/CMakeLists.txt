@@ -188,7 +188,8 @@ endif()
 #
 #
 # Note:
-#   Tcl, Tk, blt, incrTcl and iwidgets are build only if Slicer3_USE_KWWIDGETS is ON
+#   Tcl, Tk, and incrTcl are built in all cases
+#   blt and iwidgets are build only if Slicer3_USE_KWWIDGETS is ON
 #   Python is build if either Slicer3_USE_PYTHON or Slicer3_USE_PYTHONQT are ON
 # 
 
@@ -357,10 +358,10 @@ set(slicer_DEPENDENCIES VTK Insight BatchMake OpenIGTLink teem cmcurl)
 # Conditionnaly include ExternalProject Target
 #------------------------------------------------------------------------------
 
+include(External_Tcl)
+include(External_Tk)
+include(External_incrTcl)
 if(Slicer3_USE_KWWIDGETS)
-  include(External_Tcl)
-  include(External_Tk)
-  include(External_incrTcl)
   include(External_iwidgets)
   include(External_blt)
 endif()

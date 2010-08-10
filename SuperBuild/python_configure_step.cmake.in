@@ -3,13 +3,11 @@ if(UNIX)
   set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
   set(ENV{CXX} "@CMAKE_CXX_COMPILER@")
   
-  if(Slicer3_USE_KWWIDGETS)
-    set(ENV{LDFLAGS} "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
-    set(ENV{CPPFLAGS} "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")
-  endif()
+  set(ENV{LDFLAGS} "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
+  set(ENV{CPPFLAGS} "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")
   
   EXECUTE_PROCESS( 
-    COMMAND sh configure --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build --enable-shared
+    COMMAND sh configure --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build --with-tcl=@CMAKE_CURRENT_BINARY_DIR@/tcl-build --enable-unicode=ucs2 --enable-shared
     WORKING_DIRECTORY "@python_base@"
     RESULT_VARIABLE rv
     )
