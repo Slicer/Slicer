@@ -293,7 +293,7 @@
   <action name="actionFileLoadScene">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/LoadScene.png</normaloff>:/Icons/LoadScene.png</iconset>
+     <normaloff>:/Icons/Medium/SlicerLoadScene.png</normaloff>:/Icons/Medium/SlicerLoadScene.png</iconset>
    </property>
    <property name="text">
     <string>Load Scene</string>
@@ -306,6 +306,10 @@
    </property>
   </action>
   <action name="actionFileImportScene">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Medium/SlicerAddScene.png</normaloff>:/Icons/Medium/SlicerAddScene.png</iconset>
+   </property>
    <property name="text">
     <string>Import Scene</string>
    </property>
@@ -314,6 +318,10 @@
    </property>
   </action>
   <action name="actionFileAddData">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Medium/SlicerAddData.png</normaloff>:/Icons/Medium/SlicerAddData.png</iconset>
+   </property>
    <property name="text">
     <string>Add Data</string>
    </property>
@@ -327,7 +335,7 @@
   <action name="actionFileAddVolume">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/LoadVolume.png</normaloff>:/Icons/LoadVolume.png</iconset>
+     <normaloff>:/Icons/Medium/SlicerAddVolume.png</normaloff>:/Icons/Medium/SlicerAddVolume.png</iconset>
    </property>
    <property name="text">
     <string>Add Volume</string>
@@ -339,7 +347,7 @@
   <action name="actionFileAddTransform">
    <property name="icon">
     <iconset resource="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc">
-     <normaloff>:/Icons/LoadTransform.png</normaloff>:/Icons/LoadTransform.png</iconset>
+     <normaloff>:/Icons/Medium/SlicerAddTransform.png</normaloff>:/Icons/Medium/SlicerAddTransform.png</iconset>
    </property>
    <property name="text">
     <string>Add Transform</string>
