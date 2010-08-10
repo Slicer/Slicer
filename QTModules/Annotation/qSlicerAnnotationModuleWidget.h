@@ -48,6 +48,14 @@ public:
     // Add a new annotation node to the list
     void addNodeToTable(const char* newNodeID);
 
+    //BTX
+    /// Different Annotation Types
+    enum
+      {
+        TextNode = 1000,
+        AngleNode,
+      };
+
 protected:
 
 
@@ -72,6 +80,9 @@ protected slots:
 
     // Sticky Node
     void onStickyNodeButtonClicked();
+
+  // Angle Node
+  void onAngleNodeButtonClicked();
 
   // Text Node
   void onTextNodeButtonClicked();
@@ -127,6 +138,8 @@ protected slots:
     void cancelOrRemoveLastAddedAnnotationNode();
 
 
+
+
 private:
   CTK_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);
 
@@ -144,6 +157,10 @@ private:
   std::vector<const char*> m_IDs;
   QPixmap m_screenshot;
   QStringList m_screenshotList;
+
+
+  /// Type of current Annotations - described by enum
+  int m_CurrentAnnotationType;
 
 };
 

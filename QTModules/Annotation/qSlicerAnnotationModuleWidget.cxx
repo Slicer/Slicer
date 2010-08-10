@@ -656,6 +656,8 @@ qSlicerAnnotationModuleWidget::qSlicerAnnotationModuleWidget(QWidget* parent) :
   m_ReportDialog = NULL;
   m_ScreenShotDialog = NULL;
   m_report = "";
+
+  this->m_CurrentAnnotationType = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -709,6 +711,11 @@ void qSlicerAnnotationModuleWidget::setup()
       SIGNAL(clicked()),
       this,
       SLOT(onTextNodeButtonClicked()));
+  this->connect(
+      d->angleTypeButton,
+      SIGNAL(clicked()),
+      this,
+      SLOT(onAngleNodeButtonClicked()));
   this->connect(
       d->roiTypeButton,
       SIGNAL(clicked()),
@@ -780,7 +787,7 @@ void qSlicerAnnotationModuleWidget::setup()
       d->resumeButton,
       SIGNAL(clicked()),
       this,
-      SLOT(onResumeButtonClicked()));
+      SLOT(onResumeButtonClicked(0)));
   this->connect(
       d->cancelButton,
       SIGNAL(clicked()),
@@ -2362,14 +2369,22 @@ void qSlicerAnnotationModuleWidget::enableMouseModeButtons()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
-  d->pauseButton->setChecked(false);
-  d->resumeButton->setChecked(false);
-  d->cancelButton->setChecked(false);
-  d->doneButton->setChecked(false);
-  d->pauseButton->setEnabled(true);
-  d->resumeButton->setEnabled(true);
-  d->cancelButton->setEnabled(true);
-  d->doneButton->setEnabled(true);
+  d->pauseButton->setChecked(
+      false);
+  d->resumeButton->setChecked(
+      false);
+  d->cancelButton->setChecked(
+      false);
+  d->doneButton->setChecked(
+      false);
+  d->pauseButton->setEnabled(
+      true);
+  d->resumeButton->setEnabled(
+      true);
+  d->cancelButton->setEnabled(
+      true);
+  d->doneButton->setEnabled(
+      true);
 
 }
 
@@ -2378,14 +2393,22 @@ void qSlicerAnnotationModuleWidget::disableMouseModeButtons()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
-  d->pauseButton->setChecked(false);
-  d->resumeButton->setChecked(false);
-  d->cancelButton->setChecked(false);
-  d->doneButton->setChecked(false);
-  d->pauseButton->setEnabled(false);
-  d->resumeButton->setEnabled(false);
-  d->cancelButton->setEnabled(false);
-  d->doneButton->setEnabled(false);
+  d->pauseButton->setChecked(
+      false);
+  d->resumeButton->setChecked(
+      false);
+  d->cancelButton->setChecked(
+      false);
+  d->doneButton->setChecked(
+      false);
+  d->pauseButton->setEnabled(
+      false);
+  d->resumeButton->setEnabled(
+      false);
+  d->cancelButton->setEnabled(
+      false);
+  d->doneButton->setEnabled(
+      false);
 
   this->m_lastAddedIndex = -1;
 }
@@ -2398,7 +2421,15 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
   d->pauseButton->setChecked(
       false);
 
-  d->logic()->AddTextNode();
+  switch (this->m_CurrentAnnotationType)
+    {
+    case qSlicerAnnotationModuleWidget::TextNode:
+      d->logic()->AddTextNode();
+      break;
+    case qSlicerAnnotationModuleWidget::AngleNode:
+      d->logic()->AddAngleNode();
+      break;
+    }
 
   /*if ( toggle )
    {
@@ -2450,13 +2481,14 @@ void qSlicerAnnotationModuleWidget::cancelOrRemoveLastAddedAnnotationNode()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
-  if (this->m_lastAddedIndex!=-1)
+  if (this->m_lastAddedIndex != -1)
     {
 
     d->logic()->CancelCurrentOrRemoveLastAddedAnnotationNode();
 
     this->m_IDs.pop_back();
-    d->tableWidget->removeRow(this->m_lastAddedIndex);
+    d->tableWidget->removeRow(
+        this->m_lastAddedIndex);
     this->m_index--;
     this->m_lastAddedIndex = -1;
     }
@@ -2475,11 +2507,13 @@ void qSlicerAnnotationModuleWidget::deactivateAllAnnotationTools()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
+  this->m_CurrentAnnotationType = 0;
 
   d->textTypeButton->setChecked(
       false);
+  d->angleTypeButton->setChecked(
+      false);
   d->logic()->StopPlaceMode();
-
 
   this->disableMouseModeButtons();
 
@@ -2555,11 +2589,34 @@ void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
+// Angle Node
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onAngleNodeButtonClicked()
+{
+  CTK_D(qSlicerAnnotationModuleWidget);
+
+  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::AngleNode;
+
+  d->logic()->SetAndObserveWidget(
+      this);
+
+  this->enableMouseModeButtons();
+  this->onResumeButtonClicked();
+
+  d->angleTypeButton->setChecked(
+      true);
+  d->resumeButton->setChecked(
+      true);
+}
+
+//-----------------------------------------------------------------------------
 // Text Node
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
+
+  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::TextNode;
 
   d->logic()->SetAndObserveWidget(
       this);

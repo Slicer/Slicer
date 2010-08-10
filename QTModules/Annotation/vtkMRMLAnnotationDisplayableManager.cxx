@@ -28,6 +28,7 @@
 #include <vtkSeedWidget.h>
 #include <vtkProperty2D.h>
 #include <vtkHandleWidget.h>
+#include <vtkSphereWidget.h>
 
 // STD includes
 #include <vector>
@@ -204,60 +205,19 @@ void vtkMRMLAnnotationDisplayableManager::vtkInternal::RemoveWidget(
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationDisplayableManager methods
 
-// vtkMRMLAnnotationDisplayableManager seedCallback
-//---------------------------------------------------------------------------
-class vtkSeedCallback : public vtkCommand
-{
-public:
-  static vtkSeedCallback *New()
-  { return new vtkSeedCallback; }
-  vtkSeedCallback() {}
-
-  virtual void Execute(vtkObject*, unsigned long event, void *calldata)
-     {
-
-        std::cout << "entering" << std::endl;
-       if (event == vtkCommand::PlacePointEvent)
-       {
-         cout << "Point placed, total of: "
-             << this->SeedRepresentation->GetNumberOfSeeds() << endl;
-       }
-       if (event == vtkCommand::InteractionEvent)
-       {
-         if (calldata)
-         {
-           cout << "Interacting with seed : "
-               << *(static_cast< int * >(calldata)) << endl;
-         }
-       }
-
-
-       cout << "List of seeds (Display coordinates):" << endl;
-       for(vtkIdType i = 0; i < this->SeedRepresentation->GetNumberOfSeeds(); i++)
-         {
-         double pos[3];
-         this->SeedRepresentation->GetSeedDisplayPosition(i, pos);
-         cout << "(" << pos[0] << " " << pos[1] << " " << pos[2] << ")" << endl;
-         }
-
-     }
-
-     void SetRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep) {this->SeedRepresentation = rep;}
-   private:
-     vtkSmartPointer<vtkSeedRepresentation> SeedRepresentation;
-};
-
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
 {
   this->Internal = new vtkInternal;
   this->m_ClickCounter = vtkMRMLAnnotationClickCounter::New();
+  this->m_SeedWidget = 0;
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
 {
   delete this->Internal;
+  this->m_SeedWidget = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -375,6 +335,20 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
 
   // Add the node to the list.
   this->Internal->AnnotationNodeList.push_back(annotationNode);
+
+  // Remove all placed seeds
+  if (this->m_SeedWidget)
+    {
+    this->m_SeedWidget->Off();
+    this->m_SeedWidget = 0;
+    }
+
+  HandleWidgetListIt handleIt;
+  while(handleIt != this->m_HandleWidgetList.end())
+    {
+    this->m_HandleWidgetList.erase(handleIt);
+    ++handleIt;
+    }
 
   // Refresh observers
   this->SetAndObserveNodes();
@@ -496,33 +470,49 @@ void vtkMRMLAnnotationDisplayableManager::PlaceSeed(double x, double y)
 {
   std::cout << "PlaceSeed" << x << ":" << y << std::endl;
 
-  VTK_CREATE(vtkSphereHandleRepresentation, handle);
-  handle->GetProperty()->SetColor(1,0,0);
-  handle->SetHandleSize(5);
-  VTK_CREATE(vtkSeedRepresentation, rep);
-  rep->SetHandleRepresentation(handle);
+  if (!this->m_SeedWidget)
+    {
 
-  //seed widget
-  VTK_CREATE(vtkSeedWidget, seedWidget);
-  seedWidget->CreateDefaultRepresentation();
-  seedWidget->SetRepresentation(rep);
+    std::cout << "Create" << std::endl;
 
-  seedWidget->SetInteractor(this->GetInteractor());
-  seedWidget->SetCurrentRenderer(this->GetRenderer());
-  seedWidget->SetEnabled(1);
+    VTK_CREATE(vtkSphereHandleRepresentation, handle);
+    handle->GetProperty()->SetColor(1,0,0);
+    handle->SetHandleSize(5);
+
+    VTK_CREATE(vtkSeedRepresentation, rep);
+    rep->SetHandleRepresentation(handle);
+
+    //seed widget
+    vtkSeedWidget * seedWidget = vtkSeedWidget::New();
+    //seedWidget->CreateDefaultRepresentation();
+    seedWidget->SetRepresentation(rep);
+
+    seedWidget->SetInteractor(this->GetInteractor());
+    seedWidget->SetCurrentRenderer(this->GetRenderer());
+
+    seedWidget->ProcessEventsOff();
+    seedWidget->CompleteInteraction();
+
+    //seedWidget->On();
+
+    this->m_SeedWidget = seedWidget;
+
+    }
+
+  // Seed widget exists here, just add a new handle at the position x,y
+
   double p[3];
   p[0]=x;
   p[1]=y;
   p[2]=0;
 
-  seedWidget->On();
-
-  seedWidget->ProcessEventsOff();
-  vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
-
+  //VTK_CREATE(vtkHandleWidget, newhandle);
+  vtkHandleWidget * newhandle = this->m_SeedWidget->CreateNewHandle();
   vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(p);
 
-  this->GetRenderer()->AddActor(newhandle->GetRepresentation());
+  this->m_HandleWidgetList.push_back(newhandle);
+
+  this->m_SeedWidget->On();
 
   this->RequestRender();
 

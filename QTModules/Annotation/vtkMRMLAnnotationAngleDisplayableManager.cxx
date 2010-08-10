@@ -3,15 +3,18 @@
 #include "vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationTextNode.h"
+#include "vtkMRMLAnnotationAngleNode.h"
+#include "vtkMRMLSelectionNode.h"
 
 // VTK includes
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
-#include <vtkTextRepresentation.h>
-#include <vtkTextWidget.h>
+#include <vtkAngleRepresentation3D.h>
+#include <vtkAngleWidget.h>
+#include <vtkHandleWidget.h>
+#include <vtkHandleRepresentation.h>
 
 
 // Convenient macro
@@ -24,11 +27,11 @@ vtkCxxRevisionMacro (vtkMRMLAnnotationAngleDisplayableManager, "$Revision: 1.0 $
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationAngleDisplayableManager Callback
-class vtkAnnotationTextWidgetCallback : public vtkCommand
+class vtkAnnotationAngleWidgetCallback : public vtkCommand
 {
 public:
-  static vtkAnnotationTextWidgetCallback *New()
-  { return new vtkAnnotationTextWidgetCallback; }
+  static vtkAnnotationAngleWidgetCallback *New()
+  { return new vtkAnnotationAngleWidgetCallback; }
 
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
@@ -37,7 +40,7 @@ public:
       std::cout << "HoverEvent\n";
     }
   }
-  vtkAnnotationTextWidgetCallback(){}
+  vtkAnnotationAngleWidgetCallback(){}
 };
 
 //---------------------------------------------------------------------------
@@ -59,105 +62,131 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
     return 0;
     }
 
-  vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
-
-  if (!textNode)
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+        this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLSelectionNode"));
+  if ( selectionNode == NULL )
     {
-    vtkErrorMacro("CreateWidget: Could not get text node!")
+    vtkErrorMacro ( "OnClickInThreeDRenderWindow: No selection node in the scene." );
     return 0;
     }
 
-  vtkTextWidget* textWidget = vtkTextWidget::New();
-  VTK_CREATE(vtkTextRepresentation, textRep);
 
-  textRep->SetMoving(1);
-
-  if (textNode->GetTextLabel())
+  if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationAngleNode"))
     {
-    textRep->SetText(textNode->GetTextLabel());
+
+    vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
+
+    if (!angleNode)
+      {
+      vtkErrorMacro("CreateWidget: Could not get angle node!")
+      return 0;
+      }
+
+
+    vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::New();
+/*
+    vtkHandleWidget* h1 = this->m_HandleWidgetList[0];
+    vtkHandleWidget* h2 = this->m_HandleWidgetList[1];
+    vtkHandleWidget* h3 = this->m_HandleWidgetList[2];
+
+    double * position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+    rep->SetPoint1DisplayPosition(position1);
+
+    double * position2 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
+    rep->SetPoint2DisplayPosition(position2);
+
+    double * position3 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
+    rep->SetCenterDisplayPosition(position3);
+*/
+    vtkAngleWidget *angleWidget = vtkAngleWidget::New();
+    angleWidget->CreateDefaultRepresentation();
+    angleWidget->SetRepresentation(rep);
+    angleWidget->SetInteractor(this->GetInteractor());
+
+
+    return angleWidget;
     }
   else
     {
-    textRep->SetText("New text");
+    return 0;
     }
-
-  textWidget->SetRepresentation(textRep);
-
-  textWidget->SetInteractor(this->GetInteractor());
-
-
-  if (textNode->GetTextCoordinates())
-    {
-
-    textRep->SetPosition(textNode->GetTextCoordinates()[0],textNode->GetTextCoordinates()[1]);
-    //textRep->SetPosition(0.01, 0.01);
-
-    }
-
-  textWidget->On();
-
-  // add callback
-  vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
-  textWidget->AddObserver(vtkCommand::HoverEvent, myCallback);
-  myCallback->Delete();
-
-  InvokeEvent(vtkSlicerAnnotationModuleLogic::AddTextNodeCompletedEvent,0);
-
-  return textWidget;
-
 }
 
 //---------------------------------------------------------------------------
 /// Propagate MRML properties to an existing text widget.
 void vtkMRMLAnnotationAngleDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
 {
-  vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
+  vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
 
-  vtkAbstractWidget* textWidget = this->GetWidget(textNode);
-  if (!textWidget) {
+  vtkAbstractWidget* angleWidget = this->GetWidget(angleNode);
+  if (!angleWidget) {
     vtkErrorMacro("Widget was not found!");
     return;
   }
 
-  // Obtain associated representation
-  vtkTextRepresentation* textRepr =
-      vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
 
-  // Update Text
-  textRepr->SetText(textNode->GetText(0));
 }
 
-void vtkMRMLAnnotationAngleDisplayableManager::OnClickInThreeDRenderWindow(float x, float y)
+void vtkMRMLAnnotationAngleDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
 
-  if (this->m_ClickCounter->HasEnoughClicks(3))
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+        this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLSelectionNode"));
+  if ( selectionNode == NULL )
     {
-
-    double coordinates[3];
-    coordinates[0]=(double)x;
-    coordinates[1]=(double)y;
-    coordinates[2]=0;
-
-    vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-    textNode->SetTextCoordinates(coordinates);
-    textNode->SetTextLabel("New text");
-
-    textNode->Initialize(this->GetMRMLScene());
-
-
-
-    // need a unique name since the storage node will be named from it
-    if (textNode->GetScene())
-      {
-      textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
-      }
-    else
-      {
-      textNode->SetName("AnnotationText");
-      }
-
-    textNode->Delete();
-
+    vtkErrorMacro ( "OnClickInThreeDRenderWindow: No selection node in the scene." );
+    return;
     }
 
-  }
+  if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationAngleNode"))
+    {
+
+    if (this->m_ClickCounter->HasEnoughClicks(3))
+      {
+
+      //this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
+      //this->GetRenderer()->NormalizedDisplayToViewport(x,y);
+
+      this->PlaceSeed(x,y);
+      vtkMRMLAnnotationAngleNode *angleNode = vtkMRMLAnnotationAngleNode::New();
+      angleNode->Initialize(this->GetMRMLScene());
+
+
+/*
+      this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
+      this->GetRenderer()->NormalizedDisplayToViewport(x,y);
+      this->GetRenderer()->ViewportToNormalizedViewport(x,y);
+
+      double coordinates[3];
+      coordinates[0]=(double)x;
+      coordinates[1]=(double)y;
+      coordinates[2]=0;
+
+      vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+      textNode->SetTextCoordinates(coordinates);
+      textNode->SetTextLabel("New text");
+
+      textNode->Initialize(this->GetMRMLScene());
+
+      // need a unique name since the storage node will be named from it
+      if (textNode->GetScene())
+        {
+        textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
+        }
+      else
+        {
+        textNode->SetName("AnnotationText");
+        }
+
+      textNode->Delete();
+*/
+      } // has enough clicks
+    else
+      {
+        this->PlaceSeed(x,y);
+      }
+
+    } // selection Node GetActiveAnnotationID
+
+
+}

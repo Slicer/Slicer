@@ -22,12 +22,12 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLAnnotationDisplayableManager.h>
 
-class vtkMRMLAnnotationTextNode;
+class vtkMRMLAnnotationAngleNode;
 class vtkSlicerViewerWidget;
 class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
-class vtkTextWidget;
+class vtkAngleWidget;
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationAngleDisplayableManager :
     public vtkMRMLAnnotationDisplayableManager
@@ -44,7 +44,7 @@ protected:
   virtual ~vtkMRMLAnnotationAngleDisplayableManager(){}
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInThreeDRenderWindow(float x, float y);
+  virtual void OnClickInThreeDRenderWindow(double x, double y);
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Propagate properties of MRML node to widgets.

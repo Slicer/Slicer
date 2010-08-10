@@ -320,6 +320,9 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
   if (annotationNode->IsA("vtkMRMLAnnotationTextNode")) {
     this->AddNodeCompleted(annotationNode);
   }
+  if (annotationNode->IsA("vtkMRMLAnnotationAngleNode")) {
+    this->AddNodeCompleted(annotationNode);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1816,111 +1819,72 @@ const char* vtkSlicerAnnotationModuleLogic::AddStickyNode()
 //---------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
 {   
+
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (!selectionNode)
+    {
+    vtkErrorMacro("AddTextNode: No selection node in the scene.");
+    return 0;
+    }
+
+  selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationTextNode");
+
+  this->StartPlaceMode();
+
+  return 0;
+
+}
+
+//-----------------------------------------------------------------------------
+// Angle Node
+//-----------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerAnnotationModuleLogic::AddAngleNode()
+{
+
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (!selectionNode)
+    {
+    vtkErrorMacro("AddTextNode: No selection node in the scene.");
+    return 0;
+    }
+
+  selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationAngleNode");
+
+  this->StartPlaceMode();
+
+  return 0;
+
+}
+
+//---------------------------------------------------------------------------
+// Start the place mouse mode
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
+{
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(),events);
   events->Delete();
 
-  // get an instance of the manager
-//  vtkMRMLAnnotationDisplayableManager* m;
-//  m = vtkMRMLAnnotationTextDisplayableManager::GetInstance();
-//
-//  if (m==0) {
-//
-//      fprintf(stderr, "Could not get the Annotation Text Displayable Manager!\r\n");
-//      return 0;
-//  }
-
-  //InvokeEvent(vtkMRMLAnnotationNode::AboutToAddEvent);
-
   vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
       this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
-  if ( interactionNode == NULL )
+  if (!interactionNode)
     {
-    vtkErrorMacro ( "AddTextNode: No interaction node in the scene." );
-    return 0;
+    vtkErrorMacro ( "StartPlaceMode: No interaction node in the scene." );
+    return;
     }
 
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
   interactionNode->SetPlaceModePersistence(1);
 
-
-
   if (interactionNode->GetCurrentInteractionMode()!=vtkMRMLInteractionNode::Place) {
 
-    vtkErrorMacro("AddTextNode: Could not set place mode!");
-
-  }
-
-  return 0;
-
-    // WORK IN PROGRESS!
-//
-//    if (this->m_TextManager == 0) {
-//        vtkMRMLAnnotationTextDisplayableManager * textManager(0);
-//        textManager->setMRMLScene(this->GetMRMLScene());
-//        //applicationGUI=this->GetApplicationGUI();
-//        /*if (applicationGUI) {
-//
-//        }*/
-//        textManager->AddMRMLObservers();
-//        //textManager.setParent(applicationGUI);
-//        //textManager.create();
-//        this->m_TextManager = textManager;
-//    }
-//
-//
-//    vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-//    textNode->Initialize(this->GetMRMLScene());
-
-  /*
-  if (m_TextManager == 0)
-  {*/
-    //this->m_TextManager = vtkMRMLAnnotationTextDisplayableManager::New();
-    /*this->m_TextManager->SetMRMLScene( this->GetMRMLScene() );
-    if (this->GetApplicationGUI()->GetActiveViewerWidget())
-    {
-      this->m_TextManager->SetViewerWidget(this->GetApplicationGUI()->GetActiveViewerWidget());
-    }
-    this->m_TextManager->AddMRMLObservers();
-    this->m_TextManager->SetParent ( this->GetApplicationGUI()->GetActiveViewerWidget()->GetParent() );
-    this->m_TextManager->Create();
-  }
-
-  vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-  textNode->Initialize(this->GetMRMLScene());
-
-  // need a unique name since the storage node will be named from it
-  if (textNode->GetScene())
-  {
-    textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
-  }
-  else
-  {
-    textNode->SetName("AnnotationText");
-  }
-  textNode->Delete();
-  */
-  /*
-  if ( node->IsA("vtkMRMLAnnotationTextNode") )
-  {
-    vtkTextWidget* textWidget = this->GetTextWidget(node->GetID());
-    vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation())->SetText((char*)data);
-    this->GetViewerWidget()->Render();
+    vtkErrorMacro("StartPlaceMode: Could not set place mode!");
     return;
-  }
-  */
 
-  /*
-  vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
-  myCallback->textNode = textNode;
-  myCallback->textWidget = textWidget;
-  myCallback->LogicPointer = this;
-  textWidget->AddObserver(vtkCommand::PlacePointEvent, myCallback);
-  myCallback->Delete();
-  */
-  //return textNode->GetID();
-  //return 0;
+  }
 }
 
 //---------------------------------------------------------------------------

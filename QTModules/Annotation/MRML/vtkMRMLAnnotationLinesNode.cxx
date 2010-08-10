@@ -591,5 +591,5 @@ void vtkMRMLAnnotationLinesNode::Initialize(vtkMRMLScene* mrmlScene)
    }
  
    Superclass::Initialize(mrmlScene);
-  this->CreateAnnotationPointDisplayNode();
+   this->CreateAnnotationPointDisplayNode();
 }

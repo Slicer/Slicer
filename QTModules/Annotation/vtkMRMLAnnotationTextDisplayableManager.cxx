@@ -4,7 +4,7 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationTextNode.h"
-#include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLSelectionNode.h>
 
 // VTK includes
 #include <vtkObject.h>
@@ -15,6 +15,8 @@
 #include <vtkTextWidget.h>
 #include <vtkRenderer.h>
 
+// std includes
+#include <string>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -61,50 +63,67 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
     return 0;
     }
 
-  vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
-
-  if (!textNode)
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+        this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLSelectionNode"));
+  if ( selectionNode == NULL )
     {
-    vtkErrorMacro("CreateWidget: Could not get text node!")
+    vtkErrorMacro ( "OnClickInThreeDRenderWindow: No selection node in the scene." );
     return 0;
     }
 
-  vtkTextWidget* textWidget = vtkTextWidget::New();
-  VTK_CREATE(vtkTextRepresentation, textRep);
-
-  textRep->SetMoving(1);
-
-  if (textNode->GetTextLabel())
+  if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationTextNode"))
     {
-    textRep->SetText(textNode->GetTextLabel());
+
+
+    vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
+
+    if (!textNode)
+      {
+      vtkErrorMacro("CreateWidget: Could not get text node!")
+      return 0;
+      }
+
+    vtkTextWidget* textWidget = vtkTextWidget::New();
+    VTK_CREATE(vtkTextRepresentation, textRep);
+
+    textRep->SetMoving(1);
+
+    if (textNode->GetTextLabel())
+      {
+      textRep->SetText(textNode->GetTextLabel());
+      }
+    else
+      {
+      textRep->SetText("New text");
+      }
+
+    textWidget->SetRepresentation(textRep);
+
+    textWidget->SetInteractor(this->GetInteractor());
+
+
+    if (textNode->GetTextCoordinates())
+      {
+
+      textRep->SetPosition(textNode->GetTextCoordinates()[0],textNode->GetTextCoordinates()[1]);
+      //textRep->SetPosition(0.01, 0.01);
+
+      }
+
+    textWidget->On();
+
+    // add callback
+    vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
+    textWidget->AddObserver(vtkCommand::HoverEvent, myCallback);
+    myCallback->Delete();
+
+    return textWidget;
+
     }
   else
     {
-    textRep->SetText("New text");
+    return 0;
     }
-
-  textWidget->SetRepresentation(textRep);
-
-  textWidget->SetInteractor(this->GetInteractor());
-
-
-  if (textNode->GetTextCoordinates())
-    {
-
-    textRep->SetPosition(textNode->GetTextCoordinates()[0],textNode->GetTextCoordinates()[1]);
-    //textRep->SetPosition(0.01, 0.01);
-
-    }
-
-  textWidget->On();
-
-  // add callback
-  vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
-  textWidget->AddObserver(vtkCommand::HoverEvent, myCallback);
-  myCallback->Delete();
-
-  return textWidget;
-
 }
 
 //---------------------------------------------------------------------------
@@ -132,18 +151,18 @@ void vtkMRMLAnnotationTextDisplayableManager::SetWidget(vtkMRMLAnnotationNode* n
 void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
 
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(
-        this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLInteractionNode"));
-  if ( interactionNode == NULL )
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+        this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLSelectionNode"));
+  if ( selectionNode == NULL )
     {
-    vtkErrorMacro ( "OnClickInThreeDRenderWindow: No interaction node in the scene." );
+    vtkErrorMacro ( "OnClickInThreeDRenderWindow: No selection node in the scene." );
     return;
     }
-/*
-  if (interactionNode->GetCustomTagMode()->text() == "Annotation:PlaceText")
+
+  if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationTextNode"))
     {
-*/
-    if (this->m_ClickCounter->HasEnoughClicks(5))
+
+    if (this->m_ClickCounter->HasEnoughClicks(1))
       {
 
       this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
@@ -178,7 +197,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
       {
         this->PlaceSeed(x,y);
       }
-/*
-    } // place mode type
-*/
+
+    } // selection Node GetActiveAnnotationID
+
   }

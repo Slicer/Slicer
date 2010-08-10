@@ -85,6 +85,9 @@ public:
   vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Start the place mode for annotations
+  void StartPlaceMode();
+
   // Exit the place mode for annotations
   void StopPlaceMode();
 
@@ -129,11 +132,26 @@ public:
   // Sticky Node
   const char* AddStickyNode();
 
+
+
+
+
+
   // Text Node
   const char* AddTextNode();
 
   vtkMRMLAnnotationTextNode* GetTextNodeByID(const char* id);
   
+  // Angle Node
+  const char* AddAngleNode();
+
+
+
+
+
+
+
+
   // ROI Node
   const char* AddROINode();
 

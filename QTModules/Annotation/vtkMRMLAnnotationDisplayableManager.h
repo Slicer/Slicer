@@ -23,6 +23,10 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
+// VTK includes
+#include <vtkSeedWidget.h>
+#include <vtkHandleWidget.h>
+
 class vtkMRMLAnnotationNode;
 class vtkSlicerViewerWidget;
 class vtkMRMLAnnotationDisplayNode;
@@ -87,6 +91,14 @@ protected:
   virtual void SetWidget(vtkMRMLAnnotationNode* node);
 
 
+  /// SeedWidget for point placement
+  vtkSeedWidget * m_SeedWidget;
+  /// List of Handles for the SeedWidget
+  std::vector<vtkHandleWidget*> m_HandleWidgetList;
+  /// .. and its associated convenient typedef
+  typedef std::vector<vtkHandleWidget*>::iterator HandleWidgetListIt;
+
+
 private:
 
   vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&); /// Not implemented
@@ -98,6 +110,7 @@ private:
   class vtkInternal;
   vtkInternal * Internal;
   //ETX
+
 
 
 };
