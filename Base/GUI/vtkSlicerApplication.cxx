@@ -321,38 +321,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     this->ColorSwatchesAdded = 0;
 
-#ifdef Slicer3_USE_QT
-  // Since Qt 4.5, argc must be valid for the whole life of the
-  // application
-  static char *argv = NULL;
-  static int argc = 0;
-  this->Internal->qApplication = new qSlicerApplication(argc, &argv);
-  Q_CHECK_PTR(this->Internal->qApplication);
-
-  this->Internal->qApplication->setCoreCommandOptions(
-    new qSlicerCommandOptions(this->Internal->qApplication->settings()));
-
-  // Set window flags used to display top level widgets
-#ifdef Q_WS_MAC
-  this->Internal->qApplication->setDefaultWindowFlags(
-    Qt::WindowStaysOnTopHint | Qt::Tool);
-#elif defined(Q_WS_WIN)
-  this->Internal->qApplication->setDefaultWindowFlags(
-    Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint | Qt::WindowTitleHint);
-#else
-  this->Internal->qApplication->setDefaultWindowFlags(
-    Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
-#endif
-
-  this->Internal->ModulePanel = 
-    new qSlicerModulePanel(0, qSlicerApplication::application()->defaultWindowFlags());
-
- #ifdef Slicer3_USE_PYTHONQT
-  PythonQt::init(PythonQt::DoNotInitializePython);
-  PythonQt_QtAll::init();
- #endif
-#endif
-
 }
 
 //---------------------------------------------------------------------------
@@ -360,10 +328,12 @@ vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
 #ifdef Slicer3_USE_QT
   Q_ASSERT(this->Internal->ModulePanel);
-  delete this->Internal->ModulePanel; 
-  Q_ASSERT(this->Internal->qApplication);
-  this->Internal->qApplication->quit();
-  delete this->Internal->qApplication; 
+  if (this->Internal->ModulePanel)
+    {
+    delete this->Internal->ModulePanel;
+    }
+  qSlicerApplication::application()->quit();
+  delete qSlicerApplication::application();
 #endif
   delete this->Internal;
 
@@ -2536,9 +2506,15 @@ void vtkSlicerApplication::InitializeQtModule(const QString& moduleName)
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplication::SetModulePanel(qSlicerModulePanel* newModulePanel)
+{
+  this->Internal->ModulePanel = newModulePanel;
+}
+
+//----------------------------------------------------------------------------
 qSlicerModulePanel* vtkSlicerApplication::modulePanel()
 {
-  return this->Internal->ModulePanel; 
+  return this->Internal->ModulePanel;
 }
 
 #endif

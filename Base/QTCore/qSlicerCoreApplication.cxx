@@ -337,7 +337,13 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
   this->setCoreIOManager(new qSlicerCoreIOManager);
-
+  if (this->arguments().isEmpty())
+    {
+    qDebug() << "qSlicerCoreApplication must be given the true argc/argv";
+    }
+  // Slicer Home Directory must be set in the constructor of qSlicerCoreApplication
+  // in order to be used in the constructor of qSlicerApplication (to initialize the
+  // QCoreApplication::addLibraryPath (to handle the iconengines plugin) )
   d->discoverSlicerHomeDirectory(this->arguments().at(0));
 }
 

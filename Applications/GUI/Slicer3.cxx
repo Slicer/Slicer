@@ -21,12 +21,14 @@
 
 // SlicerQT includes
 #include "qSlicerApplication.h"
-#include "qSlicerModuleManager.h"
-#include "qSlicerModuleFactoryManager.h"
-#include "qSlicerCoreModuleFactory.h"
-#include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerCLILoadableModuleFactory.h"
 #include "qSlicerCLIExecutableModuleFactory.h"
+#include "qSlicerCommandOptions.h"
+#include "qSlicerCoreModuleFactory.h"
+#include "qSlicerLoadableModuleFactory.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerModulePanel.h"
 
 // QT includes
 #include <QStringList>
@@ -788,6 +790,31 @@ int Slicer3_main(int& argc, char *argv[])
     }";
   Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
   }
+
+#ifdef Slicer3_USE_QT
+  static int slicerAppArgc = 1;
+  qSlicerApplication* qApplication = new qSlicerApplication(slicerAppArgc, argv);
+  Q_CHECK_PTR(qApplication);
+
+  qApplication->setCoreCommandOptions(
+    new qSlicerCommandOptions(qApplication->settings()));
+
+  // Set window flags used to display top level widgets
+#ifdef Q_WS_MAC
+  qApplication->setDefaultWindowFlags(Qt::WindowStaysOnTopHint | Qt::Tool);
+#elif defined(Q_WS_WIN)
+  qApplication->setDefaultWindowFlags(
+    Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint | Qt::WindowTitleHint);
+#else
+  qApplication->setDefaultWindowFlags(
+    Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+#endif
+  slicerApp->SetModulePanel(new qSlicerModulePanel(0, qApplication->defaultWindowFlags()));
+ #ifdef Slicer3_USE_PYTHONQT
+  PythonQt::init(PythonQt::DoNotInitializePython);
+  PythonQt_QtAll::init();
+ #endif
+#endif
 
   //
   // ignore any modules specified on the command line

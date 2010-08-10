@@ -111,6 +111,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     /// 
     /// Return the module panel
     //BTX
+    void SetModulePanel(qSlicerModulePanel*);
     qSlicerModulePanel* modulePanel();
     //ETX
 #endif
