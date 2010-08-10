@@ -160,6 +160,7 @@ ADD_LIBRARY(qSlicerIconEnginePlugin
   ${MOC_qSlicerIconEnginePlugin})
 
 TARGET_LINK_LIBRARIES(qSlicerIconEnginePlugin
+  ${QT_LIBRARIES}
   ${CTK_LIBRARIES})
 
 SET_TARGET_PROPERTIES(qSlicerIconEnginePlugin
