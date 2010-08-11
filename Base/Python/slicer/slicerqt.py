@@ -1,5 +1,8 @@
 import slicer
-from slicer import vtk
+from slicer.vtk import *
+from PythonQt.CTKWidgets import *
+from PythonQt.CTKVisualizationVTKWidgets import *
+from PythonQt.qMRMLWidgets import *
 
 def quit():
   exit()
