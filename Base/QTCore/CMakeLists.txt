@@ -67,17 +67,22 @@ SET(KIT_MOC_SRCS
 # PythonQt decorator
 IF(Slicer3_USE_PYTHONQT)
   LIST(APPEND KIT_MOC_SRCS qSlicerBaseQTCorePythonQtDecorators.h)
-ENDIF(Slicer3_USE_PYTHONQT)
+ENDIF()
 
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
   ModuleDescriptionParser
   SlicerBaseLogic
-  vtkCommonPythonD # For vtkPythonUtils
   FreeSurfer # for qSlicerXcedeCatalogIO
   CTKCore
   CTKVisualizationVTKCore
   )
+  
+IF(Slicer3_USE_PYTHONQT)
+  LIST(APPEND KIT_target_libraries
+    vtkCommonPythonD # For vtkPythonUtils
+    )
+ENDIF()
 
 # Resources
 SET(KIT_resources
