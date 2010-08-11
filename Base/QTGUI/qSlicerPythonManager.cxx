@@ -25,10 +25,10 @@
 #include "qSlicerApplication.h"
 #include "qSlicerBaseQTGUIPythonQtDecorators.h"
 
+// SlicerVTK includes
 // VTK includes
 #include <vtkObject.h>
 
-// Slicer vtk includes
 #include "vtkEventBroker.h"
 
 // PythonQt wrapper initialization methods
@@ -101,7 +101,7 @@ void qSlicerPythonManager::preInitialization()
   //
   vtkEventBroker::GetInstance()->SetScriptHandler( Slicer3_BrokerScriptHandler, reinterpret_cast<void *>(this) );
   vtkEventBroker::GetInstance()->SetEventModeToSynchronous();
-  this->addVTKSlicerObject ("slicer.broker", vtkEventBroker::GetInstance());
+  this->addVTKObjectToPythonMain("slicer.broker", vtkEventBroker::GetInstance());
 
 
   // initialize global slicer.sliceViews dict
@@ -114,63 +114,6 @@ void qSlicerPythonManager::preInitialization()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerPythonManager::addVTKObject(const char *name, vtkObject *obj)
 {
-  char pointerString[BUFSIZ];
-  *pointerString = 0;
-  if ( sizeof(unsigned int) == sizeof(vtkObject*) ) 
-    {
-    sprintf( pointerString, "%x", reinterpret_cast<uintptr_t>(obj) );
-    }
-  if ( sizeof(unsigned long) == sizeof(vtkObject*) ) 
-    {
-    sprintf( pointerString, "%lx", reinterpret_cast<uintptr_t>(obj) );
-    }
-  if ( !*pointerString )
-    {
-    qCritical() << "Can't convert vtk object to python object";
-    return;
-    }
-
-  if ( strlen(name) > BUFSIZ - 100 )
-    {
-    qCritical() << "vtk object name too long";
-    return;
-    }
-
-  char script[BUFSIZ];
-  sprintf( script, "import vtk; %s = vtk.%s('_%s_%s_p')\n", 
-    name, obj->GetClassName(), pointerString, obj->GetClassName() );
-  this->executeString(QString(script));
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerPythonManager::addVTKSlicerObject(const char *name, vtkObject *obj)
-{
-  char pointerString[BUFSIZ];
-  *pointerString = 0;
-  if ( sizeof(unsigned int) == sizeof(vtkObject*) ) 
-    {
-    sprintf( pointerString, "%x", reinterpret_cast<uintptr_t>(obj) );
-    }
-  if ( sizeof(unsigned long) == sizeof(vtkObject*) ) 
-    {
-    sprintf( pointerString, "%lx", reinterpret_cast<uintptr_t>(obj) );
-    }
-  if ( !*pointerString )
-    {
-    qCritical() << "Can't convert slicer object to python object";
-    return;
-    }
-
-  if ( strlen(name) > BUFSIZ - 100 )
-    {
-    qCritical() << "Slicer object name too long";
-    return;
-    }
-
-  char script[BUFSIZ];
-  sprintf( script, "import slicer; %s = slicer.%s('_%s_%s_p')\n", 
-    name, obj->GetClassName(), pointerString, obj->GetClassName() );
-  this->executeString(QString(script));
-}

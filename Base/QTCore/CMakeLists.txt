@@ -73,6 +73,7 @@ ENDIF(Slicer3_USE_PYTHONQT)
 SET(KIT_target_libraries
   ModuleDescriptionParser
   SlicerBaseLogic
+  vtkCommonPythonD # For vtkPythonUtils
   FreeSurfer # for qSlicerXcedeCatalogIO
   CTKCore
   CTKVisualizationVTKCore

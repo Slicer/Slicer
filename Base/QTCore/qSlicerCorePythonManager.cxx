@@ -10,13 +10,26 @@
 
 =========================================================================auto=*/
 
+// CTK includes
+#include <ctkLogger.h>
+
+// PythonQt includes
+#include <PythonQt.h>
+
 // SlicerQt includes
 #include "qSlicerUtils.h"
 #include "qSlicerCorePythonManager.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerBaseQTCorePythonQtDecorators.h"
 
+// VTK includes
+#include <vtkPythonUtil.h>
+
 #include "vtkSlicerConfigure.h" // For VTK_DIR
+
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.slicer.base.qtcore.qSlicerCorePythonManager");
+//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclass(_parent)
@@ -71,4 +84,36 @@ void qSlicerCorePythonManager::preInitialization()
   // Add object to python interpreter context
   this->addObjectToPythonMain("_qSlicerCoreApplicationInstance", app);
 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtkObject * object)
+{
+  if (name.isNull() || !object)
+    {
+    return;
+    }
+  // Split name using '.'
+  QStringList moduleNameList = name.split('.', QString::SkipEmptyParts);
+
+  // Remove the last part
+  QString varName = moduleNameList.takeLast();
+
+  PyObject * module = PythonQt::self()->getMainModule();
+
+  // Loop over module name and try to import them one by one
+  foreach(const QString& moduleName, moduleNameList)
+    {
+    module = PyImport_ImportModule(moduleName.toLatin1());
+    Q_ASSERT(module);
+    }
+
+  // Add the object to the imported module
+  int ret = PyModule_AddObject(module, varName.toLatin1(),
+                               vtkPythonGetObjectFromPointer(object));
+  Q_ASSERT(ret == 0);
+  if (ret != 0)
+    {
+    logger.error(QString("Failed to add VTK object: %1").arg(name));
+    }
 }

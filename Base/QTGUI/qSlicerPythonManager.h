@@ -28,13 +28,6 @@ public:
   qSlicerPythonManager(QObject* parent=0);
   ~qSlicerPythonManager();
  
-  /// register a vtk object pointer with python
-  void addVTKObject(const char *name, vtkObject *obj);
-
-  /// register a slicer object pointer with python
-  void addVTKSlicerObject(const char *name, vtkObject *obj);
-
- 
 protected:
 
   virtual QStringList pythonPaths();
