@@ -50,9 +50,6 @@ void vtkIGTLToMRMLImage::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* name)
 {
 
-  vtkMRMLVolumeNode *volumeNode = NULL;
-
-  //vtkMRMLVolumeDisplayNode *displayNode = NULL;
   vtkMRMLScalarVolumeDisplayNode *displayNode = NULL;
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkImageData* image = vtkImageData::New();
@@ -82,23 +79,24 @@ vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* 
   //displayNode = vtkMRMLVolumeDisplayNode::New();
   displayNode = vtkMRMLScalarVolumeDisplayNode::New();
   scalarNode->SetLabelMap(0);
-  volumeNode = scalarNode;
+
+  vtkMRMLNode* n = NULL;
   
-  if (volumeNode != NULL)
+  if (scalarNode != NULL)
     {
-    volumeNode->SetName(name);
+    scalarNode->SetName(name);
     scene->SaveStateForUndo();
     
     vtkDebugMacro("Setting scene info");
-    volumeNode->SetScene(scene);
-    volumeNode->SetDescription("Received by OpenIGTLink");
+    scalarNode->SetScene(scene);
+    scalarNode->SetDescription("Received by OpenIGTLink");
     
     displayNode->SetScene(scene);
     
     
     double range[2];
     vtkDebugMacro("Set basic display info");
-    volumeNode->GetImageData()->GetScalarRange(range);
+    scalarNode->GetImageData()->GetScalarRange(range);
     range[0] = 0.0;
     range[1] = 256.0;
     displayNode->SetLowerThreshold(range[0]);
@@ -114,22 +112,21 @@ vtkMRMLNode* vtkIGTLToMRMLImage::CreateNewNode(vtkMRMLScene* scene, const char* 
     displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
     //colorLogic->Delete();
     
-    volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+    scalarNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     
-    vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
+    vtkDebugMacro("Name vol node "<<scalarNode->GetClassName());
     vtkDebugMacro("Display node "<<displayNode->GetClassName());
     
-    scene->AddNode(volumeNode);
+    n = scene->AddNode(scalarNode);
     vtkDebugMacro("Node added to scene");
+    this->CenterImage(scalarNode);
     }
-  
+
   scalarNode->Delete();
   displayNode->Delete();
   image->Delete();
 
-  this->CenterImage(volumeNode);
-
-  return volumeNode;
+  return n;
 }
 
 

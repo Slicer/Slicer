@@ -892,6 +892,7 @@ vtkMRMLModelNode* vtkOpenIGTLinkIFLogic::SetVisibilityOfLocatorModel(const char*
     this->GetApplicationLogic()->GetMRMLScene()->Modified();
     }
 
+  collection->Delete();
   return locatorModel;
 }
 
@@ -900,18 +901,16 @@ vtkMRMLModelNode* vtkOpenIGTLinkIFLogic::SetVisibilityOfLocatorModel(const char*
 vtkMRMLModelNode* vtkOpenIGTLinkIFLogic::AddLocatorModel(const char* nodeName, double r, double g, double b)
 {
 
-  vtkMRMLModelNode           *locatorModel;
-  vtkMRMLModelDisplayNode    *locatorDisp;
+  vtkMRMLModelNode* lm = vtkMRMLModelNode::New();
+  vtkMRMLModelDisplayNode* ld = vtkMRMLModelDisplayNode::New();
 
-  locatorModel = vtkMRMLModelNode::New();
-  locatorDisp = vtkMRMLModelDisplayNode::New();
-  
-  GetMRMLScene()->SaveStateForUndo();
-  GetMRMLScene()->AddNode(locatorDisp);
-  GetMRMLScene()->AddNode(locatorModel);  
-  
+  vtkMRMLModelNode        *locatorModel = vtkMRMLModelNode::SafeDownCast(GetMRMLScene()->AddNode(lm));
+  vtkMRMLModelDisplayNode *locatorDisp  = vtkMRMLModelDisplayNode::SafeDownCast(GetMRMLScene()->AddNode(ld));
+
+  lm->Delete();
+  ld->Delete();
+
   locatorDisp->SetScene(this->GetMRMLScene());
-  
   locatorModel->SetName(nodeName);
   locatorModel->SetScene(this->GetMRMLScene());
   locatorModel->SetAndObserveDisplayNodeID(locatorDisp->GetID());
@@ -960,9 +959,6 @@ vtkMRMLModelNode* vtkOpenIGTLinkIFLogic::AddLocatorModel(const char* nodeName, d
   cylinder->Delete();
   sphere->Delete();
   apd->Delete();
-
-  //locatorModel->Delete();
-  locatorDisp->Delete();
 
   return locatorModel;
 }

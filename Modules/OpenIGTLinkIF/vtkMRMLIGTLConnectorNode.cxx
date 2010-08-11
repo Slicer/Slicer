@@ -817,6 +817,7 @@ void vtkMRMLIGTLConnectorNode::ImportDataFromCircularBuffer()
             // but it should be able to hold multiple nodes.
             }
           }
+        collection->Delete();
         }
       }
 

@@ -57,9 +57,10 @@ vtkMRMLNode* vtkIGTLToMRMLLinearTransform::CreateNewNode(vtkMRMLScene* scene, co
   transformNode->ApplyTransform(transform);
   transform->Delete();
 
-  scene->AddNode(transformNode);  
+  vtkMRMLNode* n = scene->AddNode(transformNode);
+  transformNode->Delete();
 
-  return transformNode;
+  return n;
 }
 
 
