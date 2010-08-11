@@ -28,9 +28,6 @@
 # include "qSlicerPythonManager.h"
 #endif
 
-// MRML includes
-#include "vtkMRMLScene.h"
-
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerApplication");
 //--------------------------------------------------------------------------
