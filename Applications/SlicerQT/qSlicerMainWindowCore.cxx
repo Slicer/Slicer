@@ -143,8 +143,8 @@ void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
     }
   Q_ASSERT(d->PythonShell);
   d->PythonShell->show();
+  d->PythonShell->activateWindow();
   d->PythonShell->raise();
-  d->PythonShell->setFocus(Qt::PopupFocusReason);
 #endif
 }
 
