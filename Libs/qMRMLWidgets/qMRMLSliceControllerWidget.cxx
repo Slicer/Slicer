@@ -485,7 +485,10 @@ void qMRMLSliceControllerWidget::setSliceViewSize(const QSize& newSize)
   CTK_D(qMRMLSliceControllerWidget);
   logger.trace(QString("setSliceViewSize - newSize(%1, %2)").
                arg(newSize.width()).arg(newSize.height()));
-
+  if (!d->MRMLSliceNode)
+    {
+    return;
+    }
   // be careful here, it might trigger rendering twice...
   d->MRMLSliceNode->SetDimensions(
     newSize.width(), newSize.height(), d->MRMLSliceNode->GetDimensions()[2]);
