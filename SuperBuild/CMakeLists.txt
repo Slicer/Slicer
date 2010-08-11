@@ -277,6 +277,9 @@ endif()
 option(Slicer3_USE_VTK_DEBUG_LEAKS 
   "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
   
+# Enable the build of Command line module
+option(Slicer3_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
+  
 #------------------------------------------------------------------------------
 # Validate options
 #------------------------------------------------------------------------------  
@@ -458,9 +461,11 @@ ExternalProject_Add(${proj}
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE}
+    # Slicer specific options
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_TESTING:BOOL=ON
-    -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE}
+    -DSlicer3_BUILD_CLI:BOOL=${Slicer3_BUILD_CLI}
     # ITK
     -DITK_DIR:PATH=${ITK_DIR}
     # Teem
