@@ -1,5 +1,6 @@
 import slicer
 from slicer.vtk import *
+
 from PythonQt.CTKWidgets import *
 from PythonQt.CTKVisualizationVTKWidgets import *
 from PythonQt.qMRMLWidgets import *
@@ -105,3 +106,11 @@ def registerScriptedDisplayableManagers(sliceView):
     except AttributeError:
       slicer.mrmlScene = eval("slicer.sliceView%s.sliceLogic.GetMRMLScene()" % sliceView)
   tcl('SliceSWidget #auto %s' % sliceGUIName)
+  
+
+if __name__ == "__main__":
+
+  # Initialize global slicer.sliceViews dict
+  # -- it gets populated in qSlicerLayoutManagerPrivate::createSliceView
+  #    and then used by the scripted code that needs to access the slice views
+  slicer.sliceViews = {}

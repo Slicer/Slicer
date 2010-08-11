@@ -85,14 +85,6 @@ void qSlicerPythonManager::preInitialization()
   vtkEventBroker::GetInstance()->SetEventModeToSynchronous();
   this->addVTKObjectToPythonMain("slicer.broker", vtkEventBroker::GetInstance());
 
-
-  // initialize global slicer.sliceViews dict
-  // -- it gets populated in 
-  // qSlicerLayoutManagerPrivate::createSliceView
-  //    and then used by the scripted code that needs to access
-  //    the slice views
-  this->executeString(QString("slicer.sliceViews = {}"));
-
 }
 
 //-----------------------------------------------------------------------------
