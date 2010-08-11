@@ -64,11 +64,6 @@ SET(KIT_MOC_SRCS
   qSlicerXcedeCatalogIO.h
   )
 
-# PythonQt decorator
-IF(Slicer3_USE_PYTHONQT)
-  LIST(APPEND KIT_MOC_SRCS qSlicerBaseQTCorePythonQtDecorators.h)
-ENDIF()
-
 # Additional Target libraries (QT libs already included)
 SET(KIT_target_libraries
   ModuleDescriptionParser
@@ -77,12 +72,6 @@ SET(KIT_target_libraries
   CTKCore
   CTKVisualizationVTKCore
   )
-  
-IF(Slicer3_USE_PYTHONQT)
-  LIST(APPEND KIT_target_libraries
-    vtkCommonPythonD # For vtkPythonUtils
-    )
-ENDIF()
 
 # Resources
 SET(KIT_resources
@@ -94,6 +83,7 @@ IF(Slicer3_USE_PYTHONQT)
 
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonCore
+    vtkCommonPythonD # For vtkPythonUtils
     )
   # Sources
   LIST(APPEND KIT_SRCS
@@ -104,6 +94,7 @@ IF(Slicer3_USE_PYTHONQT)
   # Headers that should run through moc
   LIST(APPEND KIT_MOC_SRCS
     qSlicerCorePythonManager.h
+    qSlicerBaseQTCorePythonQtDecorators.h
     )
 
 ENDIF(Slicer3_USE_PYTHONQT)
