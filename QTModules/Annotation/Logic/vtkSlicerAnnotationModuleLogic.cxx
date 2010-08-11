@@ -6,7 +6,7 @@
 #include <qSlicerIOManager.h>
 
 // Annotation includes
-#include <vtkSlicerAnnotationModuleLogic.h>
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // Annotation/MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"
@@ -49,15 +49,6 @@
 #include <vtkSeedWidget.h>
 #include <vtkSeedRepresentation.h>
 
-// Annotation/MRMLDisplayableManager includes
-// Note: The logic shouldn't deal with DisplayableManager directly !
-#include "vtkSlicerAnnotationRulerManager.h"
-#include "vtkSlicerAnnotationAngleManager.h"
-#include "vtkMRMLAnnotationTextDisplayableManager.h"
-#include "vtkSlicerAnnotationSplineManager.h"
-#include "vtkSlicerAnnotationROIManager.h"
-#include "vtkSlicerAnnotationBidimensionalManager.h"
-//#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 
 // STD includes
 #include <string>

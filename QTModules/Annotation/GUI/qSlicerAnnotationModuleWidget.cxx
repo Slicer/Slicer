@@ -1,6 +1,6 @@
-#include "qSlicerAnnotationModuleWidget.h"
+#include "GUI/qSlicerAnnotationModuleWidget.h"
 #include "ui_qSlicerAnnotationModule.h"
-#include "vtkSlicerAnnotationModuleLogic.h"
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // CTK includes
 #include "ctkCollapsibleButton.h"
@@ -21,44 +21,15 @@
 #include <QBuffer>
 #include <QImageWriter>
 
-#include "vtkSlicerFiducialsLogic.h"
-#include "vtkMRMLAnnotationAngleNode.h"
-#include "vtkMRMLAnnotationRulerNode.h"
-//#include "vtkMeasurementsAngleWidget.h"
-#include "qSlicerAnnotationModulePushButton.h"
-#include "qSlicerAnnotationModuleReportDialog.h"
-#include "qSlicerAnnotationModuleAnnotationPropertyDialog.h"
-#include "qSlicerAnnotationModuleImageUtil.h"
-#include "qSlicerAnnotationModuleScreenShotDialog.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkAngleRepresentation3D.h"
-#include "vtkPointHandleRepresentation3D.h"
-#include "vtkMRMLAnnotationFiducialNode.h"
-
-#include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
-#include "vtkMRMLAnnotationTextDisplayableManager.h"
-
 #include "vtkObserverManager.h"
-#include "vtkMRMLNode.h"
 
-#include "vtkMRMLAnnotationStickyNode.h"
-#include "vtkMRMLAnnotationSplineNode.h"
-#include "vtkMRMLAnnotationTextNode.h"
+// GUI includes
+#include "GUI/qSlicerAnnotationModulePushButton.h"
+#include "GUI/qSlicerAnnotationModuleReportDialog.h"
+#include "GUI/qSlicerAnnotationModuleAnnotationPropertyDialog.h"
+#include "GUI/qSlicerAnnotationModuleImageUtil.h"
+#include "GUI/qSlicerAnnotationModuleScreenShotDialog.h"
 
-#include "vtkMRMLROINode.h"
-
-// for the seed widget
-//#include "vtkSlicerSeedWidgetClass.h"
-//#include "vtkSeedWidget.h"
-#include "vtkWidgetRepresentation.h"
-#include "vtkSeedRepresentation.h"
-
-#include "vtkSlicerAnnotationRulerManager.h"
-//#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
-#include "vtkMRMLAnnotationBidimensionalNode.h"
-#include "vtkMRMLAnnotationROINode.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerAnnotationModuleWidgetPrivate: public ctkPrivate<qSlicerAnnotationModuleWidget> ,
@@ -1705,7 +1676,7 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
 
   foreach(int i, selectedRows)
       {
-      vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(
+      /*vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(
           d->logic()->GetMRMLScene()->GetNodeByID(
               m_IDs[i]));
       if (fNode != NULL && fNode->IsA(
@@ -1725,8 +1696,8 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
           node->SetVisible(
               (int) isVisible);
           }
+*/
 
-        }
       }
 
   d->setInvisibleItemIcon(
@@ -1754,7 +1725,7 @@ void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
   std::cout << "Selected:" << selectedRows.size() << std::endl;
 
   foreach(int i, selectedRows)
-      {
+      {/*
       vtkMRMLAnnotationNode* node = vtkMRMLAnnotationNode::SafeDownCast(
           d->logic()->GetMRMLScene()->GetNodeByID(
               m_IDs[i]));
@@ -1786,7 +1757,7 @@ void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
             m_IDs[i])->UpdateLockUnlockStatus(
             isLocked);
         }
-
+*/
       }
 
   d->setLockUnLockIcon(
@@ -2063,7 +2034,7 @@ void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index,
                                                           const char* format)
 {
   CTK_D(qSlicerAnnotationModuleWidget);
-
+/*
   QString textString;
   vtkMRMLNode* mrmlnode = d->logic()->GetMRMLScene()->GetNodeByID(
       m_IDs[index]);
@@ -2122,12 +2093,12 @@ void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index,
       labelString,
       valueString,
       textString);
-
+*/
 }
 
 void qSlicerAnnotationModuleWidget::updateValue(vtkObject* annotationNode,
                                                 void* call_data)
-{
+{/*
   CTK_D(qSlicerAnnotationModuleWidget);
 
   vtkMRMLAnnotationNode* node = (vtkMRMLAnnotationNode*) annotationNode;
@@ -2175,7 +2146,7 @@ void qSlicerAnnotationModuleWidget::updateValue(vtkObject* annotationNode,
           valueString);
       }
     }
-
+*/
 }
 
 int qSlicerAnnotationModuleWidget::getIndexByNodeID(const char* nodeID)
@@ -2213,7 +2184,7 @@ void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text,
 void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
 {
   //CTK_D(qSlicerAnnotationModuleWidget);
-
+/*
   vtkImageData* image = vtkImageData::New();
   //image = d->logic()->SaveScreenShot();
 
@@ -2243,7 +2214,7 @@ void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
       m_ScreenShotDialog,
       SIGNAL(filenameSelected()),
       this,
-      SLOT(saveScreenShot()));
+      SLOT(saveScreenShot()));*/
 }
 
 bool qSlicerAnnotationModuleWidget::saveScreenShot()
@@ -2297,7 +2268,7 @@ void qSlicerAnnotationModuleWidget::AddAngleCompleted(vtkObject* object,
                                                       void* call_data)
 {
   CTK_D(qSlicerAnnotationModuleWidget);
-
+/*
   d->angleTypeButton->setChecked(
       false);
   vtkMRMLAnnotationAngleNode* node = vtkMRMLAnnotationAngleNode::SafeDownCast(
@@ -2346,7 +2317,7 @@ void qSlicerAnnotationModuleWidget::AddAngleCompleted(vtkObject* object,
           newAngleNodeID),
       vtkCommand::ModifiedEvent,
       this,
-      SLOT(updateValue(vtkObject*, void*)));
+      SLOT(updateValue(vtkObject*, void*)));*/
 
 }
 
@@ -2675,7 +2646,7 @@ void qSlicerAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object,
 // ROI Node
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
-{
+{/*
   CTK_D(qSlicerAnnotationModuleWidget);
 
   const char *newROINodeID = d->logic()->AddROINode();
@@ -2714,7 +2685,7 @@ void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
       vtkMRMLAnnotationROINode::ValueModifiedEvent,
       this,
       SLOT(updateValue(vtkObject*, void*)));
-
+*/
 }
 
 //-----------------------------------------------------------------------------
@@ -2753,7 +2724,7 @@ void qSlicerAnnotationModuleWidget::onPolylineButtonClicked()
 // Spline Node
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onSplineButtonClicked()
-{
+{/*
   CTK_D(qSlicerAnnotationModuleWidget);
 
   const char *newNodeID = d->logic()->AddSplineNode();
@@ -2792,7 +2763,7 @@ void qSlicerAnnotationModuleWidget::onSplineButtonClicked()
       vtkMRMLAnnotationSplineNode::ValueModifiedEvent,
       this,
       SLOT(updateValue(vtkObject*, void*)));
-
+*/
 }
 
 //-----------------------------------------------------------------------------

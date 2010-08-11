@@ -1,38 +1,37 @@
 // AnnotationModule includes
-#include "vtkMRMLAnnotationTextDisplayableManager.h"
-#include "vtkSlicerAnnotationModuleLogic.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationAngleDisplayableManager.h"
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationTextNode.h"
-#include <vtkMRMLSelectionNode.h>
+#include "vtkMRMLAnnotationAngleNode.h"
+#include "vtkMRMLSelectionNode.h"
 
 // VTK includes
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
-#include <vtkTextRepresentation.h>
-#include <vtkTextWidget.h>
-#include <vtkRenderer.h>
+#include <vtkAngleRepresentation3D.h>
+#include <vtkAngleWidget.h>
+#include <vtkHandleWidget.h>
+#include <vtkHandleRepresentation.h>
 
-// std includes
-#include <string>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkMRMLAnnotationAngleDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLAnnotationAngleDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationTextDisplayableManager Callback
-class vtkAnnotationTextWidgetCallback : public vtkCommand
+// vtkMRMLAnnotationAngleDisplayableManager Callback
+class vtkAnnotationAngleWidgetCallback : public vtkCommand
 {
 public:
-  static vtkAnnotationTextWidgetCallback *New()
-  { return new vtkAnnotationTextWidgetCallback; }
+  static vtkAnnotationAngleWidgetCallback *New()
+  { return new vtkAnnotationAngleWidgetCallback; }
 
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
@@ -41,21 +40,21 @@ public:
       std::cout << "HoverEvent\n";
     }
   }
-  vtkAnnotationTextWidgetCallback(){}
+  vtkAnnotationAngleWidgetCallback(){}
 };
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationTextDisplayableManager methods
+// vtkMRMLAnnotationAngleDisplayableManager methods
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAnnotationAngleDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
 /// Create a new text widget.
-vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
   if (!node)
     {
@@ -71,54 +70,43 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
     return 0;
     }
 
-  if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationTextNode"))
+
+  if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationAngleNode"))
     {
 
+    vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
 
-    vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
-
-    if (!textNode)
+    if (!angleNode)
       {
-      vtkErrorMacro("CreateWidget: Could not get text node!")
+      vtkErrorMacro("CreateWidget: Could not get angle node!")
       return 0;
       }
 
-    vtkTextWidget* textWidget = vtkTextWidget::New();
-    VTK_CREATE(vtkTextRepresentation, textRep);
 
-    textRep->SetMoving(1);
-
-    if (textNode->GetTextLabel())
-      {
-      textRep->SetText(textNode->GetTextLabel());
-      }
-    else
-      {
-      textRep->SetText("New text");
-      }
-
-    textWidget->SetRepresentation(textRep);
-
-    textWidget->SetInteractor(this->GetInteractor());
+    vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::New();
+    rep->InstantiateHandleRepresentation();
 
 
-    if (textNode->GetTextCoordinates())
-      {
+    vtkHandleWidget* h1 = this->m_HandleWidgetList[0];
+    vtkHandleWidget* h2 = this->m_HandleWidgetList[1];
+    vtkHandleWidget* h3 = this->m_HandleWidgetList[2];
 
-      textRep->SetPosition(textNode->GetTextCoordinates()[0],textNode->GetTextCoordinates()[1]);
-      //textRep->SetPosition(0.01, 0.01);
+    double * position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+    rep->SetPoint1DisplayPosition(position1);
 
-      }
+    double * position2 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
+    rep->SetPoint2DisplayPosition(position2);
 
-    textWidget->On();
+    double * position3 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
+    rep->SetCenterDisplayPosition(position3);
 
-    // add callback
-    vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
-    textWidget->AddObserver(vtkCommand::HoverEvent, myCallback);
-    myCallback->Delete();
+    vtkAngleWidget *angleWidget = vtkAngleWidget::New();
+    angleWidget->CreateDefaultRepresentation();
+    angleWidget->SetRepresentation(rep);
+    angleWidget->SetInteractor(this->GetInteractor());
 
-    return textWidget;
 
+    return angleWidget;
     }
   else
     {
@@ -128,27 +116,20 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
 
 //---------------------------------------------------------------------------
 /// Propagate MRML properties to an existing text widget.
-void vtkMRMLAnnotationTextDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationAngleDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
 {
-  vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
+  vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
 
-  vtkAbstractWidget* textWidget = this->GetWidget(textNode);
-  if (!textWidget) {
+  vtkAbstractWidget* angleWidget = this->GetWidget(angleNode);
+  if (!angleWidget) {
     vtkErrorMacro("Widget was not found!");
     return;
   }
 
-  // Obtain associated representation
-  vtkTextRepresentation* textRepr =
-      vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
 
-  // Update Text
-  textRepr->SetText(textNode->GetText(0));
 }
 
-//---------------------------------------------------------------------------
-/// Create a annotationMRMLnode
-void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationAngleDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
 
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -159,12 +140,21 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
     return;
     }
 
-  if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationTextNode"))
+  if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationAngleNode"))
     {
 
     if (this->m_ClickCounter->HasEnoughClicks(1))
       {
 
+      //this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
+      //this->GetRenderer()->NormalizedDisplayToViewport(x,y);
+
+      this->PlaceSeed(x,y);
+      vtkMRMLAnnotationAngleNode *angleNode = vtkMRMLAnnotationAngleNode::New();
+      angleNode->Initialize(this->GetMRMLScene());
+
+
+/*
       this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
       this->GetRenderer()->NormalizedDisplayToViewport(x,y);
       this->GetRenderer()->ViewportToNormalizedViewport(x,y);
@@ -191,7 +181,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
         }
 
       textNode->Delete();
-
+*/
       } // has enough clicks
     else
       {
@@ -200,4 +190,5 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
 
     } // selection Node GetActiveAnnotationID
 
-  }
+
+}

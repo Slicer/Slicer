@@ -9,7 +9,7 @@
 #include <QMessageBox>
 #include <QColorDialog>
 
-#include "vtkSlicerAnnotationModuleLogic.h"
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationLineDisplayNode.h"

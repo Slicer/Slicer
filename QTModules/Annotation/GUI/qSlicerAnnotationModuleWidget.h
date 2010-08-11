@@ -3,13 +3,13 @@
 
 // SlicerQT includes
 #include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerAnnotationModuleExport.h"
+#include "GUI/qSlicerAnnotationModuleAnnotationPropertyDialog.h"
 
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-#include "qSlicerAnnotationModuleExport.h"
-#include "qSlicerAnnotationModuleAnnotationPropertyDialog.h"
 
 class qSlicerAnnotationModuleReportDialog;
 class qSlicerAnnotationModuleScreenShotDialog;

@@ -1,5 +1,5 @@
 // AnnotationModule includes
-#include "vtkMRMLAnnotationFiducialDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationFiducialDisplayableManager.h"
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationFiducialNode.h"

@@ -7,41 +7,41 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationAngleDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationTextDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
  =========================================================================auto=*/
 
-#ifndef __vtkMRMLAnnotationAngleDisplayableManager_h
-#define __vtkMRMLAnnotationAngleDisplayableManager_h
+#ifndef __vtkMRMLAnnotationTextDisplayableManager_h
+#define __vtkMRMLAnnotationTextDisplayableManager_h
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLAnnotationDisplayableManager.h>
+#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
 
-class vtkMRMLAnnotationAngleNode;
+class vtkMRMLAnnotationTextNode;
 class vtkSlicerViewerWidget;
 class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
-class vtkAngleWidget;
+class vtkTextWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationAngleDisplayableManager :
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayableManager :
     public vtkMRMLAnnotationDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationAngleDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationAngleDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  static vtkMRMLAnnotationTextDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationTextDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
 
-  vtkMRMLAnnotationAngleDisplayableManager(){}
-  virtual ~vtkMRMLAnnotationAngleDisplayableManager(){}
+  vtkMRMLAnnotationTextDisplayableManager(){}
+  virtual ~vtkMRMLAnnotationTextDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInThreeDRenderWindow(double x, double y);
@@ -52,8 +52,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationAngleDisplayableManager(const vtkMRMLAnnotationAngleDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationAngleDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationTextDisplayableManager(const vtkMRMLAnnotationTextDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationTextDisplayableManager&); /// Not Implemented
 
 };
 

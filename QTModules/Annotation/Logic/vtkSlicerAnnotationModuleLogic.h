@@ -2,7 +2,7 @@
 #define __vtkSlicerAnnotationModuleLogic_h
 
 // Annotation QT includes
-#include "qSlicerAnnotationModuleWidget.h"
+#include "GUI/qSlicerAnnotationModuleWidget.h"
 
 // Slicer Logic includes
 #include "vtkSlicerModuleLogic.h"

@@ -20,7 +20,7 @@
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLAnnotationDisplayableManager.h>
+#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
 
 class vtkMRMLAnnotationFiducialNode;
 class vtkSlicerViewerWidget;

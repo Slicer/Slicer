@@ -11,10 +11,9 @@
 #include <qSlicerLayoutManager.h>
 
 // AnnotationModule includes
-#include "vtkMRMLAnnotationTextDisplayableManager.h"
 #include "qSlicerAnnotationModule.h"
-#include "qSlicerAnnotationModuleWidget.h"
-#include "vtkSlicerAnnotationModuleLogic.h"
+#include "GUI/qSlicerAnnotationModuleWidget.h"
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerAnnotationModule, qSlicerAnnotationModule);

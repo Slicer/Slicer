@@ -1,4 +1,4 @@
-#include <vtkMRMLAnnotationClickCounter.h>
+#include "MRMLDisplayableManager/vtkMRMLAnnotationClickCounter.h"
 
 // VTK includes
 #include <vtkObject.h>
