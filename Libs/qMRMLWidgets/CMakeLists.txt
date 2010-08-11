@@ -230,6 +230,19 @@ ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 
 # --------------------------------------------------------------------------
+# PythonQt wrapping
+#
+IF(qMRMLWidgets_WRAP_PYTHON)
+  ctkMacroWrapPythonQt("org.slicer.libs" ${lib_name}
+    KIT_PYTHONQT_SRCS "${qMRMLWidgets_SRCS}" FALSE)
+  ADD_LIBRARY(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
+  TARGET_LINK_LIBRARIES(${lib_name}PythonQt ${lib_name})
+  IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    SET_TARGET_PROPERTIES(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
+  ENDIF()
+ENDIF()
+
+# --------------------------------------------------------------------------
 # Install
 #
 
