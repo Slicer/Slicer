@@ -10,10 +10,6 @@
 
 =========================================================================auto=*/
 
-// Qt includes
-#include <QVariant>
-#include <QDebug>
-
 // PythonQT includes
 #include <PythonQt.h>
 
