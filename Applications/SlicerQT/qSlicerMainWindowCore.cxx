@@ -39,6 +39,15 @@ qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
   this->PythonShell = 0; 
   }
 
+//---------------------------------------------------------------------------
+qSlicerMainWindowCorePrivate::~qSlicerMainWindowCorePrivate()
+{
+  if (this->PythonShell)
+    {
+    delete this->PythonShell;
+    }
+}
+
 //-----------------------------------------------------------------------------
 // qSlicerMainWindowCore methods
 
@@ -137,7 +146,7 @@ void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
   if (!d->PythonShell)
     {
     Q_ASSERT(qSlicerApplication::application()->pythonManager());
-    d->PythonShell = new ctkPythonShell(qSlicerApplication::application()->pythonManager()/*, d->ParentWidget*/);
+    d->PythonShell = new ctkPythonShell(qSlicerApplication::application()->pythonManager());
     d->PythonShell->setAttribute(Qt::WA_QuitOnClose, false);
     d->PythonShell->resize(600, 280);
     }

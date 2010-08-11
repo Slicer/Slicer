@@ -24,7 +24,7 @@ class qSlicerMainWindowCorePrivate: public QObject,
 
 public:
   explicit qSlicerMainWindowCorePrivate();
-  virtual ~qSlicerMainWindowCorePrivate(){}
+  virtual ~qSlicerMainWindowCorePrivate();
 
 public:
   QPointer<qSlicerMainWindow> ParentWidget;
