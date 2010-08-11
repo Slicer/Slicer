@@ -15,13 +15,20 @@ SET(Slicer_PYTHON_FILES
   slicer/remoteio
   slicer/slicerqt
   slicer/vtk/__init__
-  tpycl/__init__
-  tpycl/tpycl
   )
 
 SET(Slicer_PYTHON_RESOURCES
-  tpycl/tpycl.tcl
   )
+  
+IF(Slicer3_USE_PYTHONQT_WITH_TCL)
+  LIST(APPEND Slicer_PYTHON_FILES 
+    tpycl/__init__
+    tpycl/tpycl
+    )
+  LIST(APPEND Slicer_PYTHON_RESOURCES
+    tpycl/tpycl.tcl
+    )
+ENDIF()
 
 SET(copied_python_files)
 
@@ -78,5 +85,7 @@ INSTALL(DIRECTORY "${Slicer3_BINARY_DIR}/bin/Python"
 # Testing
 #
 if(Slicer3_BUILD_TESTING)
-  add_subdirectory(tpycl/Testing)
+  IF(Slicer3_USE_PYTHONQT_WITH_TCL)
+    add_subdirectory(tpycl/Testing)
+  ENDIF()
 endif(Slicer3_BUILD_TESTING)

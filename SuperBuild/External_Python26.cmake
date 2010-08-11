@@ -16,15 +16,17 @@ if(WIN32)
 
   # point the tkinter build file to the slicer tcl-build
   set(python_PATCH_COMMAND)
-  set(python_tkinter ${python_base}/pyproject.vsprops)
-  string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
+  if(Slicer3_USE_KWWIDGETS OR Slicer3_USE_PYTHONQT_WITH_TCL)
+    set(python_tkinter ${python_base}/pyproject.vsprops)
+    string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
 
-  set(script ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/StringFindReplace.cmake)
-  set(out ${python_tkinter})
-  set(in ${python_tkinter})
+    set(script ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/StringFindReplace.cmake)
+    set(out ${python_tkinter})
+    set(in ${python_tkinter})
 
-  set(python_PATCH_COMMAND 
-    ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script})
+    set(python_PATCH_COMMAND 
+      ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script})
+  endif()
 
   ExternalProject_Add(${proj}
     #SVN_REPOSITORY ${python_SVN_REPOSITORY}
@@ -42,12 +44,14 @@ if(WIN32)
       ${python_DEPENDENCIES}
   )
 
-  # this must match the version of tcl we are building for slicer.
-  ExternalProject_Add_Step(${proj} Patch_tcltk_version
-    COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
-    DEPENDEES configure
-    DEPENDERS build
-    )
+  if(Slicer3_USE_KWWIDGETS OR Slicer3_USE_PYTHONQT_WITH_TCL)
+    # this must match the version of tcl we are building for slicer.
+    ExternalProject_Add_Step(${proj} Patch_tcltk_version
+      COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
+      DEPENDEES configure
+      DEPENDERS build
+      )
+  endif()
   
   # Convenient helper function
   function(build_python_target target depend)
@@ -64,8 +68,12 @@ if(WIN32)
   build_python_target(pythoncore Build_w9xpopen)
   build_python_target(_socket Build_pythoncore)
 
-  build_python_target(_tkinter Build__socket)
-  build_python_target(_testcapi Build__tkinter)
+  if(Slicer3_USE_KWWIDGETS OR Slicer3_USE_PYTHONQT_WITH_TCL)
+    build_python_target(_tkinter Build__socket)
+    build_python_target(_testcapi Build__tkinter)
+  else()
+    build_python_target(_testcapi Build__pythoncore)
+  endif()
 
   build_python_target(_msi Build__testcapi)
   build_python_target(_elementtree Build__msi)

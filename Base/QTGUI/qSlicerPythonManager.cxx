@@ -21,8 +21,10 @@
 #include "qSlicerApplication.h"
 #include "qSlicerBaseQTGUIPythonQtDecorators.h"
 
+#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
 // SlicerVTK includes
 #include "vtkEventBroker.h"
+#endif
 
 // PythonQt wrapper initialization methods
 void PythonQt_init_org_commontk_CTKWidgets(PyObject*);
@@ -71,6 +73,7 @@ void qSlicerPythonManager::preInitialization()
   // Evaluate application script
   this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt.py");
 
+#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
   // -- event broker
   // - script handler to pass callback strings to the tcl interpeter
   // - synchronous mode so that redundant events do not get collapsed
@@ -80,17 +83,20 @@ void qSlicerPythonManager::preInitialization()
                                                   reinterpret_cast<void *>(this));
   vtkEventBroker::GetInstance()->SetEventModeToSynchronous();
   this->addVTKObjectToPythonMain("slicer.broker", vtkEventBroker::GetInstance());
+#endif
 
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerPythonManager::eventBrokerScriptHandler(const char *script, void *clientData)
 {
+#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
   QString pythonScript = QString("global _tpycl; _tpycl.tcl_callback('%1')").arg(script);
   qSlicerPythonManager * self = reinterpret_cast<qSlicerPythonManager*>(clientData);
   Q_ASSERT(self);
   logger.setTrace();
   logger.trace(QString("Running broker observation script: %1").arg(script));
   self->executeString(pythonScript);
+#endif
 }
 

@@ -25,12 +25,12 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       list(APPEND VTK_DEPENDENCIES tk)
     endif(NOT WIN32)
     set(VTK_WRAP_TCL ON)
-  endif(Slicer3_USE_KWWIDGETS)
+  endif()
 
   if (Slicer3_USE_PYTHONQT)
     set(VTK_WRAP_PYTHON ON)
     list(APPEND VTK_DEPENDENCIES python)
-  endif(Slicer3_USE_PYTHONQT)
+  endif()
 
   set(VTK_PYTHON_ARGS)
   if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
@@ -38,7 +38,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
       -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
       )
-  endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+  endif()
 
   # On Mac, since:
   #    - Qt can't be build with X11 support
@@ -55,7 +55,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
         -DVTK_USE_QT:BOOL=ON
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         )
-    endif(Slicer3_USE_QT)
+    endif()
   else()
     if(Slicer3_USE_KWWIDGETS AND NOT Slicer3_USE_QT)
       set(VTK_QT_ARGS

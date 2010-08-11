@@ -242,7 +242,9 @@ if(Slicer3_USE_QT)
     # Includes Qt headers
     INCLUDE(${QT_USE_FILE})
 
-    option(Slicer3_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." OFF)
+    option(Slicer3_USE_PYTHONQT "Integrate a PythonQt interpreter into Slicer." OFF)
+    option(Slicer3_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" OFF)
+    mark_as_advanced(Slicer3_USE_PYTHONQT_WITH_TCL)
   
   else()
     MESSAGE(FATAL_ERROR "error: Qt >= ${minimum_required_qt_version} was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
@@ -358,9 +360,11 @@ set(slicer_DEPENDENCIES VTK Insight BatchMake OpenIGTLink teem cmcurl)
 # Conditionnaly include ExternalProject Target
 #------------------------------------------------------------------------------
 
-include(External_Tcl)
-include(External_Tk)
-include(External_incrTcl)
+if(Slicer3_USE_KWWIDGETS OR Slicer3_USE_PYTHONQT_WITH_TCL)
+  include(External_Tcl)
+  include(External_Tk)
+  include(External_incrTcl)
+endif()
 if(Slicer3_USE_KWWIDGETS)
   include(External_iwidgets)
   include(External_blt)
@@ -479,6 +483,7 @@ ExternalProject_Add(${proj}
     # Python
     -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
     -DSlicer3_USE_PYTHONQT:BOOL=${Slicer3_USE_PYTHONQT}
+    -DSlicer3_USE_PYTHONQT_WITH_TCL:BOOL=${Slicer3_USE_PYTHONQT_WITH_TCL}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF
     -DSlicer3_USE_NUMPY:BOOL=${Slicer3_BUILD_NUMPY}
     -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
