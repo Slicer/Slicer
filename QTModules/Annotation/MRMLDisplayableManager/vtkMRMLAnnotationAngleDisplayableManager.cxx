@@ -12,6 +12,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
 #include <vtkAngleRepresentation3D.h>
+#include <vtkSphereHandleRepresentation.h>
 #include <vtkAngleWidget.h>
 #include <vtkHandleWidget.h>
 #include <vtkHandleRepresentation.h>
@@ -56,6 +57,8 @@ void vtkMRMLAnnotationAngleDisplayableManager::PrintSelf(ostream& os, vtkIndent 
 /// Create a new text widget.
 vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
+  this->DebugOn();
+
   if (!node)
     {
     vtkErrorMacro("CreateWidget: Node not set!")
@@ -74,6 +77,8 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
   if (!strcmp(selectionNode->GetActiveAnnotationID(), "vtkMRMLAnnotationAngleNode"))
     {
 
+    vtkDebugMacro("CreateWidget: This is an angle node!")
+
     vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
 
     if (!angleNode)
@@ -82,29 +87,40 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
       return 0;
       }
 
+    VTK_CREATE(vtkSphereHandleRepresentation, handle);
+    handle->GetProperty()->SetColor(1,0,0);
+    handle->SetHandleSize(5);
 
     vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::New();
+    rep->SetHandleRepresentation(handle);
     rep->InstantiateHandleRepresentation();
+/*
 
+    vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
+    vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
+    vtkHandleWidget *h3 = this->m_HandleWidgetList[2];
 
-    vtkHandleWidget* h1 = this->m_HandleWidgetList[0];
-    vtkHandleWidget* h2 = this->m_HandleWidgetList[1];
-    vtkHandleWidget* h3 = this->m_HandleWidgetList[2];
-
-    double * position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+    double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
     rep->SetPoint1DisplayPosition(position1);
 
-    double * position2 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
+    double* position2 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
     rep->SetPoint2DisplayPosition(position2);
 
-    double * position3 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
+    double* position3 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
     rep->SetCenterDisplayPosition(position3);
 
+*/
     vtkAngleWidget *angleWidget = vtkAngleWidget::New();
     angleWidget->CreateDefaultRepresentation();
     angleWidget->SetRepresentation(rep);
     angleWidget->SetInteractor(this->GetInteractor());
+    angleWidget->SetCurrentRenderer(this->GetRenderer());
+    //angleWidget->Modified();
+    angleWidget->ProcessEventsOff();
 
+    angleWidget->On();
+
+    vtkDebugMacro("CreateWidget: Widget was set up - sending it..")
 
     return angleWidget;
     }

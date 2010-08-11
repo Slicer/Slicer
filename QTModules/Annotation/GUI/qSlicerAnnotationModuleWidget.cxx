@@ -2794,8 +2794,8 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
       m_index,
       thevalue,
       format);
-  this->selectRowByIndex(
-      m_index);
+  //this->selectRowByIndex(
+   //   m_index);
 
 }
 

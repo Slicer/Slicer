@@ -300,7 +300,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
+  this->DebugOn();
+
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
+  std::cout << node->GetID() << std::endl;
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
     {
@@ -328,7 +331,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   // Create the Widget and add it to the list.
   vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
   if (!newWidget) {
-    vtkErrorMacro("OnMRMLSceneNodeAddedEvent: Widget was not created!")
+    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Widget was not created!")
+    // Exit here, if this is not the right displayableManager
     return;
   }
   this->Internal->Widgets[annotationNode] = newWidget;
@@ -337,17 +341,14 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   this->Internal->AnnotationNodeList.push_back(annotationNode);
 
   // Remove all placed seeds
+  while(!this->m_HandleWidgetList.empty())
+    {
+    this->m_HandleWidgetList.pop_back();
+    }
   if (this->m_SeedWidget)
     {
     this->m_SeedWidget->Off();
     this->m_SeedWidget = 0;
-    }
-
-  HandleWidgetListIt handleIt;
-  while(handleIt != this->m_HandleWidgetList.end())
-    {
-    this->m_HandleWidgetList.erase(handleIt);
-    ++handleIt;
     }
 
   // Refresh observers

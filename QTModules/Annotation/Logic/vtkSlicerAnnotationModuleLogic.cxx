@@ -208,7 +208,7 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData )
 {
 
-  //std::cout << "vtkSlicerAnnotationModuleLogic ProcessMRMLEvents" << std::endl;
+  std::cout << "vtkSlicerAnnotationModuleLogic ProcessMRMLEvents" << std::endl;
 
   switch(event)
     {
@@ -1881,6 +1881,8 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode * node)
 {
+
+  std::cout << "AddNodeCompleted" << std::endl;
 
   if (!node)
     {
