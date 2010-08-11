@@ -10,23 +10,31 @@
 
 =========================================================================auto=*/
 
-// SlicerQt includes
-#include "qSlicerPythonManager.h"
-#include "qSlicerApplication.h"
-#include "qSlicerBaseQTGUIPythonQtDecorators.h"
-
 // Qt includes
 #include <QVariant>
 #include <QDebug>
 
+// PythonQT includes
+#include <PythonQt.h>
+
 // CTK includes
 #include <ctkLogger.h>
+
+// SlicerQt includes
+#include "qSlicerPythonManager.h"
+#include "qSlicerApplication.h"
+#include "qSlicerBaseQTGUIPythonQtDecorators.h"
 
 // VTK includes
 #include <vtkObject.h>
 
 // Slicer vtk includes
 #include "vtkEventBroker.h"
+
+// PythonQt wrapper initialization methods
+void PythonQt_init_org_commontk_CTKWidgets(PyObject*);
+void PythonQt_init_org_commontk_CTKVisualizationVTKWidgets(PyObject*);
+void PythonQt_init_org_slicer_libs_qMRMLWidgets(PyObject*);
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerPythonManager");
@@ -70,6 +78,11 @@ void Slicer3_BrokerScriptHandler ( const char *script, void *clientData )
 void qSlicerPythonManager::preInitialization()
 {
   Superclass::preInitialization();
+  
+  // Initialize wrappers
+  PythonQt_init_org_commontk_CTKWidgets(0);
+  PythonQt_init_org_commontk_CTKVisualizationVTKWidgets(0);
+  PythonQt_init_org_slicer_libs_qMRMLWidgets(0);
 
   // Register decorators
   this->registerPythonQtDecorator(new qSlicerBaseQTGUIPythonQtDecorators(this));

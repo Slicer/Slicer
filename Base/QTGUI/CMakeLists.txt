@@ -117,6 +117,9 @@ SET(KIT_target_libraries
 IF(Slicer3_USE_PYTHONQT)
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
+    CTKWidgetsPythonQt
+    CTKVisualizationVTKWidgetsPythonQt
+    qMRMLWidgetsPythonQt
     )
 ENDIF()
 
