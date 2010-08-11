@@ -5,7 +5,6 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QWidget>
-#include <QVariant>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -20,29 +19,17 @@
 // SlicerQt includes
 #include "qSlicerLayoutManager.h"
 #include "qSlicerLayoutManager_p.h"
-#include "qSlicerPythonManager.h"
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
-#include <vtkMRMLSliceLogic.h>
 
 // VTK includes
-#include <vtkObject.h>
 #include <vtkCollection.h>
 #include <vtkSmartPointer.h>
 #include <vtkIntArray.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkInteractorObserver.h>
-#include <vtkCornerAnnotation.h>
-
-// Temporary includes
-//#include <ctkVTKSliceView.h>
-//#include <vtkRenderer.h>
-//#include "qSlicerApplication.h"
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
