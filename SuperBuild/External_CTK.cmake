@@ -26,12 +26,14 @@ if (Slicer3_USE_QT)
         -DVTK_DIR:PATH=${VTK_DIR}
         -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
         -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
+        -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
         -DCTK_LIB_Widgets:BOOL=ON
         -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON
         -DCTK_LIB_Scripting/Python/Core:BOOL=${Slicer3_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI:BOOL=${Slicer3_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTUITOOLS:BOOL=${Slicer3_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Widgets:BOOL=${Slicer3_USE_PYTHONQT}
+        -DCTK_WRAP_PYTHONQT_LIGHT:BOOL=${Slicer3_USE_PYTHONQT}
         -DCTK_LIB_PluginFramework:BOOL=OFF
         -DCTK_PLUGIN_org.commontk.eventbus:BOOL=OFF
         -Dgit_EXECUTABLE:FILEPATH=${git_EXECUTABLE}
