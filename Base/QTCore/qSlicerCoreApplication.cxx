@@ -81,7 +81,7 @@ public:
 
   ///
   /// Parse arguments
-  bool parseArguments(int argc, char** argv);
+  bool parseArguments();
 
   ///
   /// Set the ExitWhenDone flag to True
@@ -120,10 +120,6 @@ public:
   /// Indicate if initialize() method has been called.
   bool               Initialized;
 
-  /// Local copy of the arguments
-  int                Argc;
-  char**             Argv;
-
 #ifdef Slicer3_USE_PYTHONQT
   ///
   /// CorePythonManager - It should exist only one instance of the CorePythonManager
@@ -141,22 +137,12 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate()
   this->MRMLScene = 0;
   this->Settings = 0;
   this->Initialized = false;
-  this->Argc = 0;
-  this->Argv = 0;
   this->ExitWhenDone = false;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
-{  
-  if (this->Argc && this->Argv)
-    {
-    for (int i = 0; i < this->Argc; ++i)
-      {
-      delete [] this->Argv[i];
-      }
-    delete [] this->Argv;
-    }
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -232,7 +218,7 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplicationPrivate::parseArguments(int _argc, char** _argv)
+bool qSlicerCoreApplicationPrivate::parseArguments()
 {
   CTK_P(qSlicerCoreApplication);
   
@@ -244,7 +230,7 @@ bool qSlicerCoreApplicationPrivate::parseArguments(int _argc, char** _argv)
     this->terminate();
     return false;
     }
-  if (!options->parse(_argc, _argv))
+  if (!options->parse(p->arguments()))
     {
     qCritical("Problem parsing command line arguments.  Try with --help.");
     this->terminate();
@@ -274,23 +260,12 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
 
   this->setOrganizationName("NAMIC");
 
-  // Keep a local copy of the original arguments
-  char **myArgv = new char*[_argc];
-  for (int i = 0; i < _argc; ++i)
-    {
-    int length = static_cast<int>(strlen(_argv[i])) + 1;
-    myArgv[i] = new char[length];
-    strncpy(myArgv[i], _argv[i], length);
-    }
-  d->Argc = _argc;
-  d->Argv = myArgv;
-
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
   this->setCoreIOManager(new qSlicerCoreIOManager);
   if (this->arguments().isEmpty())
     {
-    qDebug() << "qSlicerCoreApplication must be given the true argc/argv";
+    qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
     }
   d->discoverSlicerBinDirectory();
   // Slicer Home Directory must be set in the constructor of qSlicerCoreApplication
@@ -360,7 +335,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   d->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
 
   // Parse command line arguments
-  d->parseArguments(d->Argc, d->Argv);
+  d->parseArguments();
     
   exitWhenDone = d->ExitWhenDone;
 }
@@ -373,37 +348,44 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
 
-  if (options->helpSelected())
+  if (options->displayHelpAndExit())
     {
-    std::cout << options->help().toStdString() << std::endl;
+    std::cout << qPrintable(options->helpText()) << std::endl;
     d->terminate();
     return;
     }
     
   if (options->displayVersionAndExit())
     {
-    std::cout << this->applicationName().toStdString() << " " << Slicer3_VERSION_FULL << std::endl;
+    std::cout << qPrintable(this->applicationName()) << " " << Slicer3_VERSION_FULL << std::endl;
     d->terminate();
     return;
     }
 
   if (options->displayProgramPathAndExit())
     {
-    std::cout << this->arguments().at(0).toStdString() << std::endl;
+    std::cout << qPrintable(this->arguments().at(0)) << std::endl;
     d->terminate();
     return;
     }
 
   if (options->displayHomePathAndExit())
     {
-    std::cout << this->slicerHome().toStdString() << std::endl;
+    std::cout << qPrintable(this->slicerHome()) << std::endl;
+    d->terminate();
+    return;
+    }
+
+  if (options->displaySettingsPathAndExit())
+    {
+    std::cout << qPrintable(this->settings()->fileName()) << std::endl;
     d->terminate();
     return;
     }
 
   if (options->ignoreRest())
     {
-    qDebug() << "Ignored arguments:" << options->ignoredArguments();
+    qDebug() << "Ignored arguments:" << options->unparsedArguments();
     return;
     }
 }
@@ -433,7 +415,7 @@ QSettings* qSlicerCoreApplication::settings()
 void qSlicerCoreApplication::disableSettings()
 {
   CTK_D(qSlicerCoreApplication);
-  Q_ASSERT(!d->Settings);
+  Q_ASSERT(d->Settings);
 
   // Instanciate empty Settings
   d->Settings = d->instantiateSettings("", true);

@@ -13,9 +13,6 @@
 #ifndef __qSlicerCommandOptions_h
 #define __qSlicerCommandOptions_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerCoreCommandOptions.h"
 
@@ -29,16 +26,12 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreComma
 public:
   typedef qSlicerCoreCommandOptions Superclass;
   qSlicerCommandOptions(QSettings* _settings);
-  virtual ~qSlicerCommandOptions();
+  virtual ~qSlicerCommandOptions(){}
 
   bool noSplash()const;
 
 protected:
-  /// Initialize arguments
-  virtual void initialize();
-
-private:
-  CTK_DECLARE_PRIVATE(qSlicerCommandOptions);
+  virtual void addArguments();
 
 };
 

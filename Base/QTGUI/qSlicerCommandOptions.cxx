@@ -13,48 +13,24 @@
 #include "qSlicerCommandOptions.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerCommandOptionsPrivate: public ctkPrivate<qSlicerCommandOptions>
-{
-public:
-  qSlicerCommandOptionsPrivate();
-
-  bool NoSplash;
-
-};
-
-//-----------------------------------------------------------------------------
-// qSlicerCommandOptionsPrivate methods
-
-//-----------------------------------------------------------------------------
-qSlicerCommandOptionsPrivate::qSlicerCommandOptionsPrivate()
-{
-  this->NoSplash = false;
-}
-
-//-----------------------------------------------------------------------------
 // qSlicerCommandOptions methods
 
 //-----------------------------------------------------------------------------
 qSlicerCommandOptions::qSlicerCommandOptions(QSettings* _settings):Superclass(_settings)
 {
-  CTK_INIT_PRIVATE(qSlicerCommandOptions);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCommandOptions::~qSlicerCommandOptions()
+bool qSlicerCommandOptions::noSplash() const
 {
+  return this->parsedArgs().value("no-splash").toBool();
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerCommandOptions, bool, noSplash, NoSplash);
-
-//-----------------------------------------------------------------------------
-void qSlicerCommandOptions::initialize()
+void qSlicerCommandOptions::addArguments()
 {
-  CTK_D(qSlicerCommandOptions);
-  
-  this->Superclass::initialize();
+  this->Superclass::addArguments();
 
-  this->addBooleanArgument("--no-splash", 0, &d->NoSplash,
-                           "Disables the startup splash screen.");
+  this->addArgument("no-splash", "", QVariant::Bool,
+                    "Disables the startup splash screen.");
 }

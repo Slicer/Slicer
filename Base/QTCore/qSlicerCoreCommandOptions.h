@@ -15,19 +15,28 @@
 
 // CTK includes
 #include <ctkPimpl.h>
-#include <ctkVTKCommandOptions.h>
+#include <ctkCommandLineParser.h>
 
 #include "qSlicerBaseQTCoreExport.h"
 
 class QSettings;
 class qSlicerCoreCommandOptionsPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkVTKCommandOptions
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandLineParser
 {
 public:
-  typedef ctkVTKCommandOptions Superclass;
+  typedef ctkCommandLineParser Superclass;
   qSlicerCoreCommandOptions(QSettings* _settings);
   virtual ~qSlicerCoreCommandOptions();
+
+  /// Convenient method allowing to parse arguments
+  bool parse(const QStringList& arguments);
+
+  /// Return True if slicer should display help and exit
+  bool displayHelpAndExit()const;
+
+  /// Return True if the ignore rest argument has been passed
+  bool ignoreRest() const;
 
   /// Return True if the loading of Command Line Modules should be disabled
   bool disableCLIModule()const;
@@ -44,6 +53,9 @@ public:
   /// Return True if slicer should display home path and exit
   bool displayHomePathAndExit()const;
 
+  /// Return True if slicer should display settings path and exit
+  bool displaySettingsPathAndExit()const;
+
   /// Return True if slicer should display details regarding the module discovery process
   bool verboseModuleDiscovery()const;
 
@@ -54,15 +66,13 @@ public:
   QString tempDirectory()const;
 
 protected:
-  /// Initialize arguments
-  virtual void initialize();
+  /// Add arguments - Called from parse() method
+  /// \sa parse(const QStringList&)
+  virtual void addArguments();
 
-  // Disable current settings
-  virtual void disableCurrentSettings();
-
-  /// This method is called when wrong argument is found. If it returns False, then
-  /// the parsing will fail.
-  virtual bool wrongArgument(const char* argument);
+  /// Return the parsed arguments
+  /// \sa qSlicerCoreCommandOptions::parse(const QStringList&)
+  QHash<QString, QVariant> parsedArgs() const;
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerCoreCommandOptions);

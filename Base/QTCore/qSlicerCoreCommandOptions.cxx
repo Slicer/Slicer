@@ -25,12 +25,8 @@ class qSlicerCoreCommandOptionsPrivate: public ctkPrivate<qSlicerCoreCommandOpti
 public:
   qSlicerCoreCommandOptionsPrivate();
 
-  bool DisableCLIModule;
-  bool DisableLoadableModule;
-  bool DisplayVersionAndExit;
-  bool DisplayProgramPathAndExit;
-  bool DisplayHomePathAndExit;
-  bool VerboseModuleDiscovery;
+  QHash<QString, QVariant> ParsedArgs;
+  QSettings * Settings;
 };
 
 //-----------------------------------------------------------------------------
@@ -39,12 +35,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
 {
-  this->DisableCLIModule = false;
-  this->DisableLoadableModule = false;
-  this->DisplayVersionAndExit = false;
-  this->DisplayProgramPathAndExit = false;
-  this->DisplayHomePathAndExit = false;
-  this->VerboseModuleDiscovery = false;
+  this->Settings = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -54,6 +45,12 @@ qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
 qSlicerCoreCommandOptions::qSlicerCoreCommandOptions(QSettings* _settings):Superclass(_settings)
 {
   CTK_INIT_PRIVATE(qSlicerCoreCommandOptions);
+  CTK_D(qSlicerCoreCommandOptions);
+  d->Settings = _settings;
+  // Use Unix-style argument names
+  this->setArgumentPrefix("--", "-");
+  // Enable QSettings support
+  this->enableSettings("disable-settings");
 }
 
 //-----------------------------------------------------------------------------
@@ -62,54 +59,139 @@ qSlicerCoreCommandOptions::~qSlicerCoreCommandOptions()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableCLIModule, DisableCLIModule);
-CTK_GET_CXX(qSlicerCoreCommandOptions, bool, disableLoadableModule, DisableLoadableModule);
-CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayVersionAndExit, DisplayVersionAndExit);
-CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayProgramPathAndExit, DisplayProgramPathAndExit);
-CTK_GET_CXX(qSlicerCoreCommandOptions, bool, displayHomePathAndExit, DisplayHomePathAndExit);
-CTK_GET_CXX(qSlicerCoreCommandOptions, bool, verboseModuleDiscovery, VerboseModuleDiscovery);
-
-//-----------------------------------------------------------------------------
-QString qSlicerCoreCommandOptions::tempDirectory()const
-{
-  return this->settings()->value("temp-directory", QVariant(QDir::tempPath())).toString();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreCommandOptions::initialize()
+bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
 {
   CTK_D(qSlicerCoreCommandOptions);
-  
-  this->Superclass::initialize();
 
-  this->addBooleanArgument("--disable-cli-module", 0, &d->DisableCLIModule,
-                           "Disables the loading of Command Line Modules.");
+  this->addArguments();
 
-  this->addBooleanArgument("--disable-loadable-module", 0, &d->DisableLoadableModule,
-                           "Disables the loading of Loadable Modules.");
+  bool ok = false;
+  d->ParsedArgs = this->parseArguments(arguments, &ok);
+  if (!ok)
+    {
+    return false;
+    }
 
-  this->addBooleanArgument("--version", 0, &d->DisplayVersionAndExit,
-                           "Displays version information and exits.");
+  if (d->ParsedArgs.value("disable-settings").toBool())
+    {
+    qSlicerCoreApplication::application()->disableSettings();
+    }
 
-  this->addBooleanArgument("--program-path", 0, &d->DisplayProgramPathAndExit,
-                           "Displays application program path and exits.");
-
-  this->addBooleanArgument("--home", 0, &d->DisplayHomePathAndExit,
-                           "Displays home path and exits.");
-
-  this->addBooleanArgument("--verbose-module-discovery", 0, &d->VerboseModuleDiscovery,
-                           "Enable verbose output during module discovery process.");
+  return true;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreCommandOptions::disableCurrentSettings()
+bool qSlicerCoreCommandOptions::displayHelpAndExit()const
 {
-  qSlicerCoreApplication::application()->disableSettings();
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("help").toBool();
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::wrongArgument(const char* argument)
+bool qSlicerCoreCommandOptions::ignoreRest() const
 {
-  qWarning() << "Unknown argument:" << argument;
-  return false;
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("ignore-rest").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableCLIModule() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-cli-module").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableLoadableModule() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-loadable-module").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::displayVersionAndExit() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("version").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::displayProgramPathAndExit() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("program-path").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::displayHomePathAndExit() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("home").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::displaySettingsPathAndExit() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("settings-path").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::verboseModuleDiscovery() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("verbose-module-discovery").toBool();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreCommandOptions::tempDirectory() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  if (d->Settings)
+    {
+    return d->Settings->value("temp-directory", QVariant(QDir::tempPath())).toString();
+    }
+  return QDir::tempPath();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreCommandOptions::addArguments()
+{
+  this->addArgument("ignore-rest", "-", QVariant::Bool,
+                    "Ignores the rest of the labeled arguments following this flag.",
+                    QVariant(false), true);
+
+  this->addArgument("help", "h", QVariant::Bool,
+                    "Display available command line arguments.");
+
+  this->addArgument("disable-cli-module", "", QVariant::Bool,
+                    "Disables the loading of Command Line Modules.");
+
+  this->addArgument("disable-loadable-module", "", QVariant::Bool,
+                    "Disables the loading of Loadable Modules.");
+
+  this->addArgument("version", "", QVariant::Bool,
+                    "Displays version information and exits.");
+
+  this->addArgument("program-path", "", QVariant::Bool,
+                    "Displays application program path and exits.");
+
+  this->addArgument("home", "", QVariant::Bool,
+                    "Displays home path and exits.");
+
+  this->addArgument("settings-path", "", QVariant::Bool,
+                    "Displays settings path and exits.");
+
+  this->addArgument("verbose-module-discovery", "", QVariant::Bool,
+                    "Enable verbose output during module discovery process.");
+
+  this->addArgument("disable-settings", "", QVariant::Bool,
+                    "Start application ignoring user settings.");
+}
+
+//-----------------------------------------------------------------------------
+QHash<QString, QVariant> qSlicerCoreCommandOptions::parsedArgs() const
+{
+  CTK_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs;
 }
