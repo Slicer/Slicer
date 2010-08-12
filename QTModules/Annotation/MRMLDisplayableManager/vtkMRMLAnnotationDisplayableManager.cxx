@@ -8,6 +8,7 @@
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLInteractionNode.h>
+#include "vtkMRMLSelectionNode.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -211,6 +212,9 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
   this->Internal = new vtkInternal;
   this->m_ClickCounter = vtkMRMLAnnotationClickCounter::New();
   this->m_SeedWidget = 0;
+  this->m_DisableInteractorStyleEventsProcessing = 0;
+
+  this->m_Focus = "vtkMRMLAnnotationNode";
 }
 
 //---------------------------------------------------------------------------
@@ -218,6 +222,8 @@ vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
 {
   delete this->Internal;
   this->m_SeedWidget = 0;
+  this->m_DisableInteractorStyleEventsProcessing = 0;
+  this->m_Focus = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -356,6 +362,27 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
 
   this->RequestRender();
 
+  // for the following, deactivate tracking of mouse clicks b/c it might be simulated
+
+  this->m_DisableInteractorStyleEventsProcessing = 1;
+  // tear down widget creation
+  this->OnWidgetCreated();
+  this->m_DisableInteractorStyleEventsProcessing = 0;
+
+  // Remove all placed seeds
+  while(!this->m_HandleWidgetList.empty())
+    {
+    this->m_HandleWidgetList.pop_back();
+    }
+  if (this->m_SeedWidget)
+    {
+    this->m_SeedWidget->Off();
+    this->m_SeedWidget = 0;
+    }
+
+  // and render again after seeds were removed
+  this->RequestRender();
+
 }
 
 //---------------------------------------------------------------------------
@@ -438,6 +465,11 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
+  if (this->m_DisableInteractorStyleEventsProcessing == 1)
+    {
+    vtkDebugMacro("OnInteractorStyleEvent: Processing of events was disabled.")
+    return;
+    }
   if (eventid == vtkCommand::LeftButtonReleaseEvent)
     {
     if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
@@ -469,12 +501,10 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordina
 /// Place a seed for widgets
 void vtkMRMLAnnotationDisplayableManager::PlaceSeed(double x, double y)
 {
-  std::cout << "PlaceSeed" << x << ":" << y << std::endl;
+  vtkDebugMacro("PlaceSeed: " << x << ":" << y)
 
   if (!this->m_SeedWidget)
     {
-
-    std::cout << "Create" << std::endl;
 
     VTK_CREATE(vtkSphereHandleRepresentation, handle);
     handle->GetProperty()->SetColor(1,0,0);
@@ -519,9 +549,28 @@ void vtkMRMLAnnotationDisplayableManager::PlaceSeed(double x, double y)
 
 }
 
+//---------------------------------------------------------------------------
+/// Check if it is the correct displayableManager
+bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
+{
+
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+        this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLSelectionNode"));
+  if ( selectionNode == NULL )
+    {
+    vtkErrorMacro ( "OnClickInThreeDRenderWindow: No selection node in the scene." );
+    return false;
+    }
+
+  // the purpose of the displayableManager is hardcoded
+  return !strcmp(selectionNode->GetActiveAnnotationID(), this->m_Focus);
+
+}
 
 //---------------------------------------------------------------------------
 // Functions to overload!
+//---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
@@ -542,4 +591,11 @@ void vtkMRMLAnnotationDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
 {
   // The properties of a widget should be set here.
   vtkErrorMacro("SetWidget should be overloaded!");
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnWidgetCreated()
+{
+  // Actions after a widget was created should be executed here.
+  vtkErrorMacro("OnWidgetCreated should be overloaded!");
 }

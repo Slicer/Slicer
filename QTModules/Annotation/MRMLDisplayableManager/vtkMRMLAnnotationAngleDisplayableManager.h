@@ -40,7 +40,7 @@ public:
 
 protected:
 
-  vtkMRMLAnnotationAngleDisplayableManager(){}
+  vtkMRMLAnnotationAngleDisplayableManager(){this->m_Focus="vtkMRMLAnnotationAngleNode";}
   virtual ~vtkMRMLAnnotationAngleDisplayableManager(){}
 
   /// Callback for click in RenderWindow
@@ -49,6 +49,8 @@ protected:
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Propagate properties of MRML node to widgets.
   virtual void SetWidget(vtkMRMLAnnotationNode* node);
+  /// Gets called when widget was created
+  virtual void OnWidgetCreated();
 
 private:
 

@@ -89,7 +89,8 @@ protected:
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Propagate properties of MRML node to widgets.
   virtual void SetWidget(vtkMRMLAnnotationNode* node);
-
+  /// Gets called when widget was created
+  virtual void OnWidgetCreated();
 
   /// SeedWidget for point placement
   vtkSeedWidget * m_SeedWidget;
@@ -98,6 +99,11 @@ protected:
   /// .. and its associated convenient typedef
   typedef std::vector<vtkHandleWidget*>::iterator HandleWidgetListIt;
 
+  /// Check if it is the right displayManager
+  virtual bool IsCorrectDisplayableManager();
+
+  /// Focus of this displayableManager
+  const char* m_Focus;
 
 private:
 
@@ -111,7 +117,7 @@ private:
   vtkInternal * Internal;
   //ETX
 
-
+  int m_DisableInteractorStyleEventsProcessing;
 
 };
 

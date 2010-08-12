@@ -31,8 +31,8 @@ CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAnnotationModule, QObject*);
 void qSlicerAnnotationModule::setup()
 {
 
-  //vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-    //  "vtkMRMLAnnotationTextDisplayableManager");
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+      "vtkMRMLAnnotationTextDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationAngleDisplayableManager");
