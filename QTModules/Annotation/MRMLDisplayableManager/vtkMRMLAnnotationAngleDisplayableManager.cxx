@@ -54,7 +54,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PrintSelf(ostream& os, vtkIndent 
 }
 
 //---------------------------------------------------------------------------
-/// Create a new text widget.
+/// Create a new angle widget.
 vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
   if (!this->IsCorrectDisplayableManager())
@@ -102,7 +102,7 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
 }
 
 //---------------------------------------------------------------------------
-/// Propagate MRML properties to an existing text widget.
+/// Propagate MRML properties to an existing angle widget.
 void vtkMRMLAnnotationAngleDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
 {
   if (!this->IsCorrectDisplayableManager())
@@ -118,6 +118,8 @@ void vtkMRMLAnnotationAngleDisplayableManager::SetWidget(vtkMRMLAnnotationNode* 
     vtkErrorMacro("Widget was not found!");
     return;
   }
+
+  // not yet
 
 
 }
