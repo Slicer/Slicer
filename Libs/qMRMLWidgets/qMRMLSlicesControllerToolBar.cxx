@@ -618,7 +618,7 @@ void qMRMLSlicesControllerToolBar::updateFromSliceNode(vtkObject* node)
     {
     return;
     }
-  double fov[2];
+  double fov[3];
   snode->GetFieldOfView(fov);
   QString layoutName = QString(snode->GetLayoutName());
   if (layoutName == "Red")

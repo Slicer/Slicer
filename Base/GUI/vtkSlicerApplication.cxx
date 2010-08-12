@@ -327,7 +327,6 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
 #ifdef Slicer3_USE_QT
-  Q_ASSERT(this->Internal->ModulePanel);
   if (this->Internal->ModulePanel)
     {
     delete this->Internal->ModulePanel;

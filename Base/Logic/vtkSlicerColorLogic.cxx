@@ -303,7 +303,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       }
     else
       {
-      vtkErrorMacro("Unable to read freesurfer colour file " << node->GetFileName());
+      vtkErrorMacro("Unable to read freesurfer colour file " << (node->GetFileName() ? node->GetFileName() : ""));
       }
     }
   // node->Delete();
