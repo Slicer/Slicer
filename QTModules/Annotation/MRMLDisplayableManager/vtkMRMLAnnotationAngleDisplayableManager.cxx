@@ -17,6 +17,9 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkInteractorEventRecorder.h>
 
+// Math includes
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -37,11 +40,43 @@ public:
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
     if (event == vtkCommand::HoverEvent)
-    {
+      {
       std::cout << "HoverEvent\n";
-    }
+      }
+    if (event == vtkCommand::EndInteractionEvent)
+      {
+      //std::cout << "EndInteraction" << std::endl;
+      vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::SafeDownCast(this->m_Widget->GetRepresentation());
+
+      double position1[3];
+      double position2[3];
+      double position3[3];
+
+      rep->GetPoint1WorldPosition(position1);
+      rep->GetPoint2WorldPosition(position2);
+      rep->GetCenterWorldPosition(position3);
+
+      this->m_Node->SetPosition1(position1);
+      this->m_Node->SetPosition2(position2);
+      this->m_Node->SetPositionCenter(position3);
+
+      this->m_Node->SetAngleMeasurement(rep->GetAngle() / M_PI * 180.0);
+      this->m_Node->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent,this->m_Node);
+      }
   }
   vtkAnnotationAngleWidgetCallback(){}
+
+  void SetWidget(vtkAngleWidget *w)
+  {
+    this->m_Widget = w;
+  }
+  void SetNode(vtkMRMLAnnotationAngleNode *n)
+  {
+    this->m_Node = n;
+  }
+
+  vtkAngleWidget * m_Widget;
+  vtkMRMLAnnotationAngleNode * m_Node;
 };
 
 //---------------------------------------------------------------------------
@@ -92,6 +127,13 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
   angleWidget->SetCurrentRenderer(this->GetRenderer());
   //angleWidget->Modified();
   //angleWidget->ProcessEventsOff();
+
+  // add observer for end interaction
+  vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
+  myCallback->m_Node = angleNode;
+  myCallback->m_Widget = angleWidget;
+  angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
 
   angleWidget->On();
 

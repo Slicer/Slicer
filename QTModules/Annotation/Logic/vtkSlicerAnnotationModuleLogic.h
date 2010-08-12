@@ -103,7 +103,7 @@ public:
   // MRML events
   void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
   void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
-
+  void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
 
 
   // Fiducial Related Public Functions
@@ -178,8 +178,7 @@ public:
   vtkStdString GetAnnotationTextProperty(vtkMRMLNode* node);
   const char* GetAnnotationTextFormatProperty(vtkMRMLNode* node);
   std::vector<double> GetAnnotationMeasurement(vtkMRMLNode* node);
-  int GetNumberOfControlPoints(vtkMRMLNode* mrmlnode);
-  double* GetAnnotationControlPointsCoordinate(vtkMRMLNode* mrmlnode, vtkIdType coordId);
+
   int SetAnnotationControlPointsCoordinate(vtkMRMLNode* mrmlnode, double* pos, vtkIdType coordId);
 
   int GetAnnotationLinesPropertiesDouble(vtkMRMLNode* node, int type, double &result);
@@ -211,7 +210,16 @@ public:
 
   int TestReceivedMessage; 
 
+  /// Return the text of an Annotation MRML node
+  vtkStdString GetTextOfNodeByID(const char* id);
 
+  /// Return the number of Control Points
+  int GetNumberOfControlPoints(vtkMRMLNode* mrmlnode);
+  int GetNumberOfControlPointsByID(const char * id);
+
+  /// Return the Control Points of an Annotation MRML node
+  double* GetAnnotationControlPointsCoordinate(vtkMRMLNode* mrmlnode, vtkIdType coordId);
+  double* GetAnnotationControlPointsCoordinateByID(const char * id, vtkIdType coordId);
 
 protected:
   vtkSlicerAnnotationModuleLogic();

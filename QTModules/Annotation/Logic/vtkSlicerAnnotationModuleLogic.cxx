@@ -208,14 +208,23 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData )
 {
 
-  std::cout << "vtkSlicerAnnotationModuleLogic ProcessMRMLEvents" << std::endl;
+  std::cout << "vtkSlicerAnnotationModuleLogic ProcessMRMLEvents " << event << std::endl;
+
+  vtkMRMLAnnotationNode* annotationNode = reinterpret_cast<vtkMRMLAnnotationNode*>(callData);
+  if (!annotationNode)
+    {
+    return;
+    }
 
   switch(event)
     {
     case vtkMRMLScene::NodeAddedEvent:
-      vtkMRMLAnnotationNode* annotationNode = reinterpret_cast<vtkMRMLAnnotationNode*>(callData);
       this->OnMRMLSceneNodeAddedEvent(annotationNode);
       break;
+    case vtkCommand::ModifiedEvent:
+      this->OnMRMLAnnotationNodeModifiedEvent(annotationNode);
+      break;
+
     }
 
 
@@ -314,6 +323,37 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
   if (annotationNode->IsA("vtkMRMLAnnotationAngleNode")) {
     this->AddNodeCompleted(annotationNode);
   }
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node)
+{
+  vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent " << node->GetID());
+
+  vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    return;
+    }
+
+  std::vector<double> value = this->GetAnnotationMeasurement(annotationNode);
+  const char* format = this->GetAnnotationTextFormatProperty(annotationNode);
+
+  std::cout << "HERE:" << value[0] << std::endl;
+  this->m_Widget->updateAnnotationInTableByID(annotationNode->GetID(), value, format);
+
+  /*vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  if (!annotationNode)
+    {
+    return;
+    }
+
+  if (annotationNode->IsA("vtkMRMLAnnotationTextNode")) {
+    this->AddNodeCompleted(annotationNode);
+  }
+  if (annotationNode->IsA("vtkMRMLAnnotationAngleNode")) {
+    this->AddNodeCompleted(annotationNode);
+  }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -1246,6 +1286,25 @@ int vtkSlicerAnnotationModuleLogic::GetNumberOfControlPoints(vtkMRMLNode* mrmlno
 }
 
 //-----------------------------------------------------------------------------
+int vtkSlicerAnnotationModuleLogic::GetNumberOfControlPointsByID(const char * id)
+{
+  vtkMRMLNode * node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    return -1;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* cpNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  if (!cpNode)
+    {
+      return -1;
+    }
+
+  return cpNode->GetNumberOfControlPoints();
+}
+
+//-----------------------------------------------------------------------------
 const char* vtkSlicerAnnotationModuleLogic::GetIconName(vtkMRMLNode* node, bool isEdit)
 {
     if (node->IsA("vtkMRMLAnnotationFiducialNode"))
@@ -1462,6 +1521,26 @@ double* vtkSlicerAnnotationModuleLogic::GetAnnotationControlPointsCoordinate(vtk
     }
 
     return node->GetControlPointCoordinates(coordId);
+}
+
+//-----------------------------------------------------------------------------
+double* vtkSlicerAnnotationModuleLogic::GetAnnotationControlPointsCoordinateByID(const char * id, vtkIdType coordId)
+{
+  vtkMRMLNode * node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    return 0;
+    }
+
+  vtkMRMLAnnotationControlPointsNode* cpNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+
+  if (!cpNode || (coordId >= cpNode->GetNumberOfControlPoints()))
+  {
+      return 0;
+  }
+
+  return cpNode->GetControlPointCoordinates(coordId);
 }
 
 //-----------------------------------------------------------------------------
@@ -1856,6 +1935,7 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
 {
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
   this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(),events);
   events->Delete();
 
@@ -1882,8 +1962,6 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
 void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode * node)
 {
 
-  std::cout << "AddNodeCompleted" << std::endl;
-
   if (!node)
     {
     return;
@@ -1898,6 +1976,66 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode * no
   this->m_LastAddedAnnotationNode = node;
 
 }
+
+//---------------------------------------------------------------------------
+// Return the text of an annotation MRML Node
+vtkStdString vtkSlicerAnnotationModuleLogic::GetTextOfNodeByID(const char* id)
+{
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    return 0;
+    }
+
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+
+  return annotationNode->GetText(0);
+
+  /*
+  if (mrmlnode->IsA(
+      "vtkMRMLAnnotationAngleNode"))
+    {
+    vtkMRMLAnnotationAngleNode* node = vtkMRMLAnnotationAngleNode::SafeDownCast(
+        mrmlnode);
+    return node->GetText(
+        0);
+    }
+  else if (mrmlnode->IsA(
+      "vtkMRMLAnnotationRulerNode"))
+    {
+    vtkMRMLAnnotationRulerNode* node = vtkMRMLAnnotationRulerNode::SafeDownCast(
+        mrmlnode);
+    return node->GetText(
+        0);
+    }
+  else if (mrmlnode->IsA(
+      "vtkMRMLAnnotationFiducialNode"))
+    {
+    vtkMRMLAnnotationFiducialNode* node = vtkMRMLAnnotationFiducialNode::SafeDownCast(
+        mrmlnode);
+    return node->GetText(
+        0);
+    }
+  else if (mrmlnode->IsA(
+      "vtkMRMLAnnotationTextNode"))
+    {
+    vtkMRMLAnnotationTextNode* node = vtkMRMLAnnotationTextNode::SafeDownCast(
+        mrmlnode);
+    return node->GetText(
+        0);
+    }
+  else if (mrmlnode->IsA(
+      "vtkMRMLAnnotationROINode"))
+    {
+    vtkMRMLAnnotationROINode* node = vtkMRMLAnnotationROINode::SafeDownCast(
+        mrmlnode);
+    return node->GetTGetLabelText();
+    }*/
+
+
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::StopPlaceMode()

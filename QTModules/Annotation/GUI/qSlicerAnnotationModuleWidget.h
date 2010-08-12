@@ -48,6 +48,9 @@ public:
     // Add a new annotation node to the list
     void addNodeToTable(const char* newNodeID);
 
+    // Update an existing annotation in the list
+    void updateAnnotationInTableByID(const char* id, std::vector<double> value, const char* format);
+
     //BTX
     /// Different Annotation Types
     enum
@@ -112,7 +115,7 @@ protected slots:
     void annotationCoordinateChanged(QString valueString, char* nodeId);
     void selectRowByIndex(int index);
     void updateAnnotationTable(int index, std::vector<double> thevalue, const char* format);
-    void updateValue(vtkObject* annotationNode, void* call_data);
+
     int getIndexByNodeID(const char* nodeID);
     void updateAnnotationText(int row, int col);
     void onItemSelectionChanged();
@@ -134,7 +137,9 @@ protected slots:
     void onCancelButtonClicked();
     void onDoneButtonClicked();
 
-    void deactivateAllAnnotationTools();
+    void enableAllAnnotationTools();
+    void disableAllAnnotationTools();
+    void resetAllAnnotationTools();
     void cancelOrRemoveLastAddedAnnotationNode();
 
 
