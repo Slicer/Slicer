@@ -56,7 +56,9 @@ public:
     enum
       {
         TextNode = 1000,
+        FiducialNode,
         AngleNode,
+        StickyNode,
       };
 
 protected:
@@ -81,15 +83,7 @@ protected slots:
     void onCreateMeasurementAngleButtonToggled(bool toggle);
     void AddAngleCompleted(vtkObject* object, void* call_data);
 
-    // Sticky Node
-    void onStickyNodeButtonClicked();
 
-  // Angle Node
-  void onAngleNodeButtonClicked();
-
-  // Text Node
-  void onTextNodeButtonClicked();
-  void AddTextNodeCompleted(vtkObject* object, void* call_data);
 
   // ROI Node
   void onROINodeButtonClicked();
@@ -128,20 +122,35 @@ protected slots:
     bool saveAnnotationReport();
     bool saveScreenShot();
 
-    // Mouse Mode Operation
-    void enableMouseModeButtons();
-    void disableMouseModeButtons();
+    //void AddTextNodeCompleted(vtkObject* object, void* call_data);
 
-    void onResumeButtonClicked();
-    void onPauseButtonClicked();
-    void onCancelButtonClicked();
-    void onDoneButtonClicked();
+  //------------------------------------------------------------------
+  // Daniel's approved code starting here
+  // Mouse Mode Operation
+  void enableMouseModeButtons();
+  void disableMouseModeButtons();
 
-    void enableAllAnnotationTools();
-    void disableAllAnnotationTools();
-    void resetAllAnnotationTools();
-    void cancelOrRemoveLastAddedAnnotationNode();
+  void onResumeButtonClicked();
+  void onPauseButtonClicked();
+  void onCancelButtonClicked();
+  void onDoneButtonClicked();
 
+  void enableAllAnnotationTools();
+  void disableAllAnnotationTools();
+  void resetAllAnnotationTools();
+  void cancelOrRemoveLastAddedAnnotationNode();
+
+  // Sticky Node (semi-approved)
+  void onStickyNodeButtonClicked();
+
+  // Angle Node
+  void onAngleNodeButtonClicked();
+
+  // Text Node
+  void onTextNodeButtonClicked();
+
+  // Fiducial Node
+  void onFiducialNodeButtonClicked();
 
 
 

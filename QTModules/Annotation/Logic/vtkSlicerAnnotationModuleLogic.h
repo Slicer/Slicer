@@ -81,6 +81,7 @@ public:
     AddTextNodeCompletedEvent,
   };
 
+  // starting Daniel approved code
   static vtkSlicerAnnotationModuleLogic *New();
   vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
@@ -90,6 +91,9 @@ public:
 
   // Exit the place mode for annotations
   void StopPlaceMode();
+
+  // Start adding a new annotation Node
+  void AddAnnotationNode(const char * nodeDescriptor);
 
   // After a node was added, propagate to widget
   void AddNodeCompleted(vtkMRMLAnnotationNode* node);
@@ -104,6 +108,17 @@ public:
   void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
   void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
+
+  // ^^^^ end of Daniel approved code
+
+
+
+
+
+
+  // Return
+  vtkMRMLAnnotationTextNode* GetTextNodeByID(const char* id);
+
 
 
   // Fiducial Related Public Functions
@@ -137,13 +152,7 @@ public:
 
 
 
-  // Text Node
-  const char* AddTextNode();
 
-  vtkMRMLAnnotationTextNode* GetTextNodeByID(const char* id);
-  
-  // Angle Node
-  const char* AddAngleNode();
 
 
 

@@ -261,7 +261,7 @@ p, li { white-space: pre-wrap; }
           </layout>
          </item>
          <item row="1" column="3">
-          <widget class="QPushButton" name="stickyNodeButton">
+          <widget class="QPushButton" name="stickyTypeButton">
            <property name="enabled">
             <bool>true</bool>
            </property>

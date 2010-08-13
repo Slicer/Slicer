@@ -24,6 +24,7 @@ SET(qt_module_include_directories
 SET(DisplayableManager_SRCS
   MRMLDisplayableManager/vtkMRMLAnnotationTextDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationFiducialDisplayableManager.cxx
+  MRMLDisplayableManager/vtkMRMLAnnotationStickyDisplayableManager.cxx  
   MRMLDisplayableManager/vtkMRMLAnnotationAngleDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationClickCounter.cxx

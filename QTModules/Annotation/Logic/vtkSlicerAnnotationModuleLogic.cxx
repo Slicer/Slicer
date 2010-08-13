@@ -317,12 +317,7 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
     return;
     }
 
-  if (annotationNode->IsA("vtkMRMLAnnotationTextNode")) {
-    this->AddNodeCompleted(annotationNode);
-  }
-  if (annotationNode->IsA("vtkMRMLAnnotationAngleNode")) {
-    this->AddNodeCompleted(annotationNode);
-  }
+  this->AddNodeCompleted(annotationNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -1882,49 +1877,25 @@ const char* vtkSlicerAnnotationModuleLogic::AddStickyNode()
     return stickyNode->GetID();
 }
 
-//-----------------------------------------------------------------------------
-// Text Node
-//-----------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------
-const char* vtkSlicerAnnotationModuleLogic::AddTextNode()
-{   
-
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-  if (!selectionNode)
-    {
-    vtkErrorMacro("AddTextNode: No selection node in the scene.");
-    return 0;
-    }
-
-  selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationTextNode");
-
-  this->StartPlaceMode();
-
-  return 0;
-
-}
 
 //-----------------------------------------------------------------------------
-// Angle Node
+// Add Annotation Node
 //-----------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-const char* vtkSlicerAnnotationModuleLogic::AddAngleNode()
+void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescriptor)
 {
 
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
   if (!selectionNode)
     {
-    vtkErrorMacro("AddTextNode: No selection node in the scene.");
-    return 0;
+    vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
+    return;
     }
 
-  selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationAngleNode");
+  selectionNode->SetActiveAnnotationID(nodeDescriptor);
 
   this->StartPlaceMode();
-
-  return 0;
 
 }
 

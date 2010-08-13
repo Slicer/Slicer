@@ -668,11 +668,11 @@ void qSlicerAnnotationModuleWidget::setup()
   //this->connect(d->angleTypeButton, SIGNAL(toggled(bool)),    this, SLOT(onCreateMeasurementAngleButtonToggled(bool)));
   this->connect(
       d->fiducialTypeButton,
-      SIGNAL(toggled(bool)),
+      SIGNAL(clicked()),
       this,
-      SLOT(onAddFiducialsButtonToggled(bool)));
+      SLOT(onFiducialNodeButtonClicked()));
   this->connect(
-      d->stickyNodeButton,
+      d->stickyTypeButton,
       SIGNAL(clicked()),
       this,
       SLOT(onStickyNodeButtonClicked()));
@@ -2351,8 +2351,6 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
-  std::cout << "onResumeButtonClicked" << std::endl;
-
   d->pauseButton->setChecked(
       false);
   d->resumeButton->setChecked(true);
@@ -2360,10 +2358,16 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
   switch (this->m_CurrentAnnotationType)
     {
     case qSlicerAnnotationModuleWidget::TextNode:
-      d->logic()->AddTextNode();
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationTextNode");
       break;
     case qSlicerAnnotationModuleWidget::AngleNode:
-      d->logic()->AddAngleNode();
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationAngleNode");
+      break;
+    case qSlicerAnnotationModuleWidget::FiducialNode:
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationFiducialNode");
+      break;
+    case qSlicerAnnotationModuleWidget::StickyNode:
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationStickyNode");
       break;
     }
 
@@ -2454,7 +2458,7 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
   d->roiTypeButton->setChecked(false);
   d->fiducialTypeButton->setChecked(false);
   d->splineTypeButton->setChecked(false);
-  d->stickyNodeButton->setChecked(false);
+  d->stickyTypeButton->setChecked(false);
   d->rulerTypeButton->setChecked(false);
   d->polylineTypeButton->setChecked(false);
 
@@ -2474,7 +2478,7 @@ void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
   d->roiTypeButton->setEnabled(false);
   d->fiducialTypeButton->setEnabled(false);
   d->splineTypeButton->setEnabled(false);
-  d->stickyNodeButton->setEnabled(false);
+  d->stickyTypeButton->setEnabled(false);
   d->rulerTypeButton->setEnabled(false);
   d->polylineTypeButton->setEnabled(false);
 }
@@ -2489,7 +2493,7 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
   d->roiTypeButton->setEnabled(true);
   d->fiducialTypeButton->setEnabled(true);
   d->splineTypeButton->setEnabled(true);
-  d->stickyNodeButton->setEnabled(true);
+  d->stickyTypeButton->setEnabled(true);
   d->rulerTypeButton->setEnabled(true);
   d->polylineTypeButton->setEnabled(true);
 }
@@ -2531,6 +2535,32 @@ void qSlicerAnnotationModuleWidget::RemovePropertyDialog(const char* id)
 void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
+
+  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::StickyNode;
+
+  d->logic()->SetAndObserveWidget(
+      this);
+
+  this->enableMouseModeButtons();
+  this->onResumeButtonClicked();
+
+  this->disableAllAnnotationTools();
+
+  QIcon icon = QIcon(":/Icons/AnnotationNote.png");
+
+  QPixmap pixmap = icon.pixmap(16,16);
+
+  QString tempdir = QString(std::getenv("TMPDIR"));
+  tempdir.append("sticky.png");
+  pixmap.save(tempdir);
+
+  d->stickyTypeButton->setChecked(
+      true);
+  d->resumeButton->setChecked(
+      true);
+
+  /*
+  CTK_D(qSlicerAnnotationModuleWidget);
   const char *newStickyNodeID = d->logic()->AddStickyNode();
   if (!newStickyNodeID)
     {
@@ -2559,7 +2589,7 @@ void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
       thevalue,
       format);
   this->selectRowByIndex(
-      m_index);
+      m_index);*/
 
 }
 
@@ -2612,6 +2642,30 @@ void qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
+// Angle Node
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onFiducialNodeButtonClicked()
+{
+  CTK_D(qSlicerAnnotationModuleWidget);
+
+  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::FiducialNode;
+
+  d->logic()->SetAndObserveWidget(
+      this);
+
+  this->enableMouseModeButtons();
+  this->onResumeButtonClicked();
+
+
+  this->disableAllAnnotationTools();
+
+  d->fiducialTypeButton->setChecked(
+      true);
+  d->resumeButton->setChecked(
+      true);
+}
+/*
+//-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object,
                                                          void* call_data)
 {
@@ -2649,8 +2703,8 @@ void qSlicerAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object,
    // watch for general modified events
    qvtkConnect(d->logic()->GetAngleNodeByID(newTextNodeID),
    vtkCommand::ModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)));
-   */
-}
+
+}*/
 
 //-----------------------------------------------------------------------------
 // ROI Node

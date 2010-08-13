@@ -7,14 +7,14 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationFiducialDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationStickyDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
  =========================================================================auto=*/
 
-#ifndef __vtkMRMLAnnotationFiducialDisplayableManager_h
-#define __vtkMRMLAnnotationFiducialDisplayableManager_h
+#ifndef __vtkMRMLAnnotationStickyDisplayableManager_h
+#define __vtkMRMLAnnotationStickyDisplayableManager_h
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
@@ -22,26 +22,26 @@
 // MRMLDisplayableManager includes
 #include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
 
-class vtkMRMLAnnotationFiducialNode;
+class vtkMRMLAnnotationStickyNode;
 class vtkSlicerViewerWidget;
 class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationFiducialDisplayableManager :
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationStickyDisplayableManager :
     public vtkMRMLAnnotationDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationFiducialDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationFiducialDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  static vtkMRMLAnnotationStickyDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationStickyDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
 
-  vtkMRMLAnnotationFiducialDisplayableManager(){this->m_Focus="vtkMRMLAnnotationFiducialNode";}
-  virtual ~vtkMRMLAnnotationFiducialDisplayableManager(){}
+  vtkMRMLAnnotationStickyDisplayableManager(){this->m_Focus="vtkMRMLAnnotationStickyNode";}
+  virtual ~vtkMRMLAnnotationStickyDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInThreeDRenderWindow(double x, double y);
@@ -54,8 +54,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationFiducialDisplayableManager(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationStickyDisplayableManager(const vtkMRMLAnnotationStickyDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationStickyDisplayableManager&); /// Not Implemented
 
 };
 

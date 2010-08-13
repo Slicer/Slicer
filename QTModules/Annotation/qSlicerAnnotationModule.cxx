@@ -37,8 +37,11 @@ void qSlicerAnnotationModule::setup()
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationAngleDisplayableManager");
 
-//  vtkMRMLDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-//      "vtkMRMLAnnotationFiducialDisplayableManager");
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+      "vtkMRMLAnnotationFiducialDisplayableManager");
+
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+      "vtkMRMLAnnotationStickyDisplayableManager");
 
   //vtkMRMLDisplayableManagerFactory * factory = vtkMRMLDisplayableManagerFactory::GetInstance();
   //factory->RegisterDisplayableManager("vtkMRMLAnnotationTextDisplayableManager");

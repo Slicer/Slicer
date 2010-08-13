@@ -1,5 +1,6 @@
 // AnnotationModule includes
 #include "MRMLDisplayableManager/vtkMRMLAnnotationFiducialDisplayableManager.h"
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationFiducialNode.h"
@@ -9,9 +10,14 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
-#include <vtkTextRepresentation.h>
+#include <vtkRenderer.h>
 #include <vtkSeedWidget.h>
+#include <vtkHandleRepresentation.h>
+#include <vtkSeedRepresentation.h>
+#include <vtkPointHandleRepresentation3D.h>
 
+// std includes
+#include <string>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -22,7 +28,7 @@ vtkStandardNewMacro (vtkMRMLAnnotationFiducialDisplayableManager);
 vtkCxxRevisionMacro (vtkMRMLAnnotationFiducialDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationTextDisplayableManager Callback
+// vtkMRMLAnnotationFiducialDisplayableManager Callback
 class vtkAnnotationFiducialWidgetCallback : public vtkCommand
 {
 public:
@@ -40,7 +46,7 @@ public:
 };
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationTextDisplayableManager methods
+// vtkMRMLAnnotationFiducialDisplayableManager methods
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationFiducialDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
@@ -52,14 +58,112 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PrintSelf(ostream& os, vtkInde
 /// Create a new text widget.
 vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return 0;
+    }
 
-  return 0;
+  if (!node)
+    {
+    vtkErrorMacro("CreateWidget: Node not set!")
+    return 0;
+    }
 
-}
+  vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
+
+  if (!fiducialNode)
+    {
+    vtkErrorMacro("CreateWidget: Could not get fiducial node!")
+    return 0;
+    }
+
+  VTK_CREATE(vtkPointHandleRepresentation3D, handle);
+  handle->GetProperty()->SetColor(1,0,0);
+  handle->SetHandleSize(5);
+
+  VTK_CREATE(vtkSeedRepresentation, rep);
+  rep->SetHandleRepresentation(handle);
+
+  //seed widget
+  vtkSeedWidget * seedWidget = vtkSeedWidget::New();
+  //seedWidget->CreateDefaultRepresentation();
+  seedWidget->SetRepresentation(rep);
+
+  seedWidget->SetInteractor(this->GetInteractor());
+  seedWidget->SetCurrentRenderer(this->GetRenderer());
+
+  seedWidget->ProcessEventsOff();
+  seedWidget->CompleteInteraction();
+
+  seedWidget->On();
+
+  vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
+
+  double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+
+  vtkHandleWidget * newhandle = seedWidget->CreateNewHandle();
+  vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
+
+  seedWidget->On();
+
+  return seedWidget;
+
+  }
+
 
 //---------------------------------------------------------------------------
 /// Propagate MRML properties to an existing text widget.
 void vtkMRMLAnnotationFiducialDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
 {
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  // nothing yet
 
 }
+
+//---------------------------------------------------------------------------
+/// Tear down the widget creation
+void vtkMRMLAnnotationFiducialDisplayableManager::OnWidgetCreated()
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  // nothing yet
+}
+
+//---------------------------------------------------------------------------
+/// Create a annotationMRMLnode
+void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  // place the seed where the user clicked
+  this->PlaceSeed(x,y);
+
+  if (this->m_ClickCounter->HasEnoughClicks(1))
+    {
+
+    vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
+
+    fiducialNode->Initialize(this->GetMRMLScene());
+
+
+    fiducialNode->Delete();
+
+    }
+
+  }
