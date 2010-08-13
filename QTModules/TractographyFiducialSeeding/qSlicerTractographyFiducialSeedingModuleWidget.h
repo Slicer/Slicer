@@ -23,18 +23,18 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent=0);
 
-  /// get current parameter node
+  /// Get current parameter node
   vtkMRMLTractographyFiducialSeedingNode* tractographyFiducialSeedingNode() {
     return this->TractographyFiducialSeedingNode;
   };
 
-  /// get current seeding node
+  /// Get current seeding node
   vtkMRMLTransformableNode* transformableNode(); 
 
-  /// get current DTI volume node
+  /// Get current DTI volume node
   vtkMRMLDiffusionTensorVolumeNode* diffusionTensorVolumeNode(); 
 
-  /// get current fiber bundlde node
+  /// Get current fiber bundlde node
   vtkMRMLFiberBundleNode* fiberBundleNode();
 
 public slots:
@@ -43,52 +43,52 @@ public slots:
   /// Set the current MRML scene to the widget
   virtual void setMRMLScene(vtkMRMLScene*);
 
-  /// set current parameter node
+  /// Set current parameter node
   void setTractographyFiducialSeedingNode(vtkMRMLNode *node);
 
-  /// set current seeding node
+  /// Set current seeding node
   void setTransformableNode(vtkMRMLNode *node);
 
-  /// set current DTI volume node
+  /// Set current DTI volume node
   void setDiffusionTensorVolumeNode(vtkMRMLNode *node);
 
-  /// set current fiber bundlde node
+  /// Set current fiber bundlde node
   void setFiberBundleNode(vtkMRMLNode *node);
 
-  /// set stopping criteria 0-Linear Measure, 1 - FA
+  /// Set stopping criteria 0-Linear Measure, 1 - FA
   void setStoppingCriteria(int value);
 
-  /// set display mode 0-line 1-tube
+  /// Set display mode 0-line 1-tube
   void setTrackDisplayMode(int value);
 
-  /// set stopping curvature
+  /// Set stopping curvature
   void setStoppingCurvature(double value);
 
-  /// set stopping curvature
+  /// Set stopping curvature
   void setStoppingValue(double value);
 
-  /// set integration step length, mm
+  /// Set integration step length, mm
   void setIntegrationStep(double value);
 
-  /// set minimum path length, mm
+  /// Set minimum path length, mm
   void setMinimumPath(double value);
 
-  /// set the size of fiducial region, mm
+  /// Set the size of fiducial region, mm
   void setFiducialRegion(double value);
 
-  /// set the step of fiducial region, mm
+  /// Set the step of fiducial region, mm
   void setFiducialRegionStep(double value);
 
-  /// set seed only selected fiducails
+  /// Set seed only selected fiducails
   void setSeedSelectedFiducials(int value);
 
-  /// set enable/disable seeding
+  /// Set enable/disable seeding
   void setEnableSeeding(int value);
 
-  /// set max number of seeds
+  /// Set max number of seeds
   void setMaxNumberSeeds(int value);
 
-  /// update widget GUI from parameter node
+  /// Update widget GUI from parameter node
   void updateWidgetFromMRML();
 
 protected:
