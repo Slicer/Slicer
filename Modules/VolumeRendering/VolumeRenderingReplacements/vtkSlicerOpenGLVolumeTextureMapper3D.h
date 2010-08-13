@@ -47,7 +47,7 @@ public:
   // Is hardware rendering supported? No if the input data is
   // more than one independent component, or if the hardware does
   // not support the required extensions
-  int IsRenderSupported(vtkVolumeProperty *);
+  int IsRenderSupported(vtkRenderWindow*,  vtkVolumeProperty *);
   
 //BTX
 
@@ -94,7 +94,7 @@ protected:
   GLuint           AlphaLookupIndex;
   vtkRenderWindow *RenderWindow;
   
-  void Initialize();
+  void Initialize(vtkRenderWindow*);
 
   virtual void RenderNV(vtkRenderer *ren, vtkVolume *vol);
   virtual void RenderFP(vtkRenderer *ren, vtkVolume *vol);

@@ -117,7 +117,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *v
   
   if ( !this->Initialized )
     {
-    this->Initialize();
+    this->Initialize(ren->GetRenderWindow());
     }
     
   // Start the timer now for more accurate overall rendering time (needed for performance control)
@@ -1742,11 +1742,15 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupProgramLocalsForShadingFP(
 }
 
 int  vtkSlicerOpenGLVolumeTextureMapper3D::IsRenderSupported(
-  vtkVolumeProperty *property )
+  vtkRenderWindow* window, vtkVolumeProperty *property )
 {
+  if (window)
+    {
+    window->MakeCurrent();
+    }
   if ( !this->Initialized )
     {
-    this->Initialize();
+    this->Initialize(window);
     }
   
   if ( this->RenderMethod == vtkSlicerVolumeTextureMapper3D::NO_METHOD )
@@ -1768,11 +1772,14 @@ int  vtkSlicerOpenGLVolumeTextureMapper3D::IsRenderSupported(
   return 1;
 }
 
-void vtkSlicerOpenGLVolumeTextureMapper3D::Initialize()
+void vtkSlicerOpenGLVolumeTextureMapper3D::Initialize(vtkRenderWindow* window)
 {
   this->Initialized = 1;
   vtkOpenGLExtensionManager * extensions = vtkOpenGLExtensionManager::New();
-  extensions->SetRenderWindow(NULL); // set render window to the current one.
+  if (window)
+    {
+    extensions->SetRenderWindow(window); // set render window to the current one.
+    }
   
   int supports_texture3D=extensions->ExtensionSupported( "GL_VERSION_1_2" );
   if(supports_texture3D)
