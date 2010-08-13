@@ -409,7 +409,6 @@ itcl::body SWidget::processUpdate {} {
 
 itcl::body SWidget::requestDelayedAnnotation { } {
     $this cancelDelayedAnnotation
-    $_renderWidget CornerAnnotationVisibilityOff
     set _annotationTaskID [after 300 $this processDelayedAnnotation]
 }
 
@@ -424,12 +423,13 @@ itcl::body SWidget::processDelayedAnnotation { } {
 }
 
 itcl::body SWidget::cancelDelayedAnnotation { } {
+    $_renderWidget CornerAnnotationVisibilityOff
     if {$_annotationTaskID != ""} {
         after cancel $_annotationTaskID
         set _annotationTaskID ""
+        [$sliceGUI GetSliceViewer] RequestRender
+        #puts "requesting a render on $this [expr rand()]"
     }
-    $_renderWidget CornerAnnotationVisibilityOff
-    [$sliceGUI GetSliceViewer] RequestRender
 }
 
 itcl::body SWidget::getInAnySliceSWidget { } {

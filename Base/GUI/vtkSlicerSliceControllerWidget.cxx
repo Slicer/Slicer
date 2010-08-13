@@ -3053,7 +3053,9 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
  
     // if slice viewers are linked in CompareView layout mode,
     // modify all slice logic to synch all Compare Slice viewers
-    if ( link && sgui0 &&
+    // (don't sync on ScaleValueChangingEvent for performance reasons,
+    // wait until the ScaleValueChangedEvent to propagate to the other viewers)
+    if ( link && sgui0 && (event != vtkKWScale::ScaleValueChangingEvent) &&
          ((layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView) ||
           (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView)) )
       {
@@ -3061,12 +3063,16 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     else
       {
+      // turn off linking for now and set it back to its original
+      // value when done modifying the node
+      this->SliceCompositeNode->SetLinkedControl(0);
       double oldValue = this->SliceLogic->GetSliceOffset();
       if (fabs(oldValue - offset) > 1.0e-6)
         {
         this->SliceLogic->SetSliceOffset( offset );
         modified = 1;
         }
+      this->SliceCompositeNode->SetLinkedControl(link);
       }
     
     // end event of the user interactiving with the slider
@@ -3171,7 +3177,12 @@ int vtkSlicerSliceControllerWidget::UpdateCompareView ( double newValue )
         double oldValue = sgui->GetLogic()->GetSliceOffset();
         if (fabs(oldValue - newValue) > 1.0e-6)
           {
+          // turn off linking while modifying the node
+          int link 
+            = sgui->GetLogic()->GetSliceCompositeNode()->GetLinkedControl();
+          sgui->GetLogic()->GetSliceCompositeNode()->SetLinkedControl(0);
           sgui->GetLogic()->SetSliceOffset( newValue );
+          sgui->GetLogic()->GetSliceCompositeNode()->SetLinkedControl(link);
           modified = 1;
           }
         }

@@ -222,16 +222,17 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $_crosshairNode } {
 
-      # update the design and properties of the crosshair
-      $this updateCrosshair
-
       # position crosshair actor
       foreach {r a s} [$_crosshairNode GetCrosshairRAS] {}
       $this setPosition $r $a $s
       
-      if { [$_crosshairNode GetNavigation] == 0 } {
-          [$sliceGUI GetSliceViewer] RequestRender
-      }
+      # update the design and properties of the crosshair
+      $this updateCrosshair
+
+#      if { [$_crosshairNode GetNavigation] == 0 } {
+#          puts "call is crosshair node $this [expr rand()]"
+#          [$sliceGUI GetSliceViewer] RequestRender
+#      }
 
       return
   }
@@ -581,6 +582,7 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
   $cidArray InsertNextTuple1 $cindex
   $o(crosshairHighlightVerts) SetNumberOfCells [expr $ccellCount + 1]
 
+  #puts "updateCrosshair  $this [expr rand()]"
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
@@ -594,7 +596,7 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
 
   # determine which renderer based on z position
   # - ignore if z is not define (as when there is just one slice)
-  if { [catch expr $z] } {
+  if { [catch {expr $z}] } {
     set k -1
   } else {
     set k [expr int($z + 0.5)]

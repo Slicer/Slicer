@@ -32,6 +32,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartViewportOrigin "0 0"
     variable _actionStartWindowXY "0 0"
     variable _actionStartFOV "250 250 250"
+    variable _actionLink 0
     variable _swidgets ""
     variable _inWidget 0
 
@@ -299,14 +300,18 @@ itcl::body SliceSWidget::resizeSliceNode {} {
           $w == $nodeW && $h == $nodeH && [expr abs($sliceStep - ($nodefovz / (1. * $nodeD)))] < $epsilon} {
       return
     }
-
+    #puts "node parameters changed"
+    set disabled [$_sliceNode GetDisableModifiedEvent]
+    #puts "$_sliceNode $disabled"
     $_sliceNode DisableModifiedEventOn
     $_sliceNode SetDimensions $w $h $nodeD
     $_sliceNode SetFieldOfView $fovx $fovy $fovz
-    $_sliceNode DisableModifiedEventOff
-    $_sliceNode InvokePendingModifiedEvent
-
-    [$sliceGUI GetSliceViewer] RequestRender
+    $_sliceNode SetDisableModifiedEvent $disabled
+    if { $disabled == 0 } {
+        $_sliceNode InvokePendingModifiedEvent
+        $_sliceNode DisableModifiedEventOff
+        [$sliceGUI GetSliceViewer] RequestRender
+    }
   }
 }
 
@@ -398,6 +403,18 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   #
   if { $caller != $_sliceNode } {
     $this resizeSliceNode
+  } 
+
+
+  #
+  # cancel any scheduled annotations
+  #
+  if { [itcl::find class ::SliceSWidget] == "::SliceSWidget"} {
+      set swidgets [itcl::find objects -class ::SliceSWidget]
+      foreach sw $swidgets {
+          # does this cause us to render every widget every event?
+          $sw cancelDelayedAnnotation
+      }
   }
 
   #
@@ -408,11 +425,13 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   set annotationsUpdated false
   set link [$_sliceCompositeNode GetLinkedControl]
   if { $link == 1 && [$this isCompareViewMode] == 1 && ([$this isCompareViewer] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
-    $this updateAnnotations $r $a $s
-    set annotationsUpdated true
+      #puts "annnotations"
+      $this updateAnnotations $r $a $s
+      set annotationsUpdated true
   } else {
-    $this updateAnnotation $r $a $s
-    set annotationsUpdated true
+      #puts "just one annotation"
+      $this updateAnnotation $r $a $s
+      set annotationsUpdated true
   }
 
 
@@ -466,16 +485,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
               $o(scratchMatrix) SetElement $i 3 [expr $v - [set $d]]
             }
 
-            # get the linked logics (including self)
-            set sliceLogics [$this getLinkedSliceLogics]
-            # save state for undo
-            
-            # set the SliceToRAS on each slice node
-            foreach logic $sliceLogics {
-              set snode [$logic GetSliceNode]
-              [$snode GetSliceToRAS] DeepCopy $o(scratchMatrix)
-              $snode UpdateMatrices
-            }
+            [$_sliceNode GetSliceToRAS] DeepCopy $o(scratchMatrix)
+            $_sliceNode UpdateMatrices
 
             $sliceGUI SetGUICommandAbortFlag 1
             $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
@@ -497,20 +508,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
                 lappend newFOV [expr $f * $factor]
               }
 
-              # get the linked logics (including self)
-              set sliceLogics [$this getLinkedSliceLogics]
-              # save state for undo
-                
-              # set the field of view on each slice node. note that
-              # the Red viewer and Compare viewers may have different
-              # aspect ratios, so set the field of views in x the same
               foreach {nfx nfy nfz} $newFOV {}
-              foreach logic $sliceLogics {
-                  set snode [$logic GetSliceNode]
-                  foreach {fx fy fz} [$snode GetFieldOfView] {}
-                  # new prescribed x fov, aspect corrected y fov, orig z fov
-                  $snode SetFieldOfView $nfx [expr $nfx*$fy/$fx] $fz
-              }
+              $_sliceNode SetFieldOfView $nfx $nfy $nfz
             }
             $sliceGUI SetGUICommandAbortFlag 1
           }
@@ -534,17 +533,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             $tfm SetMatrix [$_sliceNode GetSliceToRAS] 
             $tfm RotateX $ry
             $tfm RotateY $rx
+            
+            [$_sliceNode GetSliceToRAS] DeepCopy [$tfm GetMatrix]
+            $_sliceNode UpdateMatrices
 
-            # get the linked logics (including self)
-            set sliceLogics [$this getLinkedSliceLogics]
-            # save state for undo
-                
-            # set the SliceToRAS on each slice node
-            foreach logic $sliceLogics {
-              set snode [$logic GetSliceNode]
-              [$snode GetSliceToRAS] DeepCopy [$tfm GetMatrix]
-              $snode UpdateMatrices
-            }
             $tfm Delete
 
             $sliceGUI SetGUICommandAbortFlag 1
@@ -558,6 +550,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     "RightButtonPressEvent" {
+
+      $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
+
       $this requestDelayedAnnotation
       if { [$_sliceNode GetOrientationString] == "Reformat" && [$_interactor GetControlKey] } {
         set _actionState "Rotate"
@@ -568,13 +563,37 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set _actionStartWindowXY "$windowx $windowy"
       set _actionStartViewportOrigin "$rox $roy"
       set _actionStartRAS $ras
+      set _actionLink [$_sliceCompositeNode GetLinkedControl]
+      $_sliceCompositeNode SetLinkedControl 0
+
       $sliceGUI SetGrabID $this
       $sliceGUI SetGUICommandAbortFlag 1
       set _actionStartFOV [$_sliceNode GetFieldOfView]
-
-      $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
     }
     "RightButtonReleaseEvent" { 
+      $_sliceCompositeNode SetLinkedControl $_actionLink
+      if { $_actionState == "Zoom" } {
+         # set the field of view on each slice node. note that
+         # the Red viewer and Compare viewers may have different
+         # aspect ratios, so set the field of views in x the same
+         foreach {nfx nfy nfz} [$_sliceNode GetFieldOfView] {}
+         set sliceLogics [$this getLinkedSliceLogics]
+         foreach logic $sliceLogics {
+            set snode [$logic GetSliceNode]
+            foreach {fx fy fz} [$snode GetFieldOfView] {}
+            # new prescribed x fov, aspect corrected y fov, orig z fov
+            $snode SetFieldOfView $nfx [expr $nfx*$fy/$fx] $fz
+         }
+     } elseif { $_actionState == "Rotate" } {
+         set sliceLogics [$this getLinkedSliceLogics]
+         # set the SliceToRAS on each slice node
+         foreach logic $sliceLogics {
+           set snode [$logic GetSliceNode]
+           [$snode GetSliceToRAS] DeepCopy [$_sliceNode GetSliceToRAS]
+           $snode UpdateMatrices
+         }
+     }
+
       $this requestDelayedAnnotation
       set _actionState ""
       $sliceGUI SetGrabID ""
@@ -615,19 +634,33 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         }
     }
     "MiddleButtonPressEvent" {
+      $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
+
       $this requestDelayedAnnotation
       set _actionState "Translate"
       set _actionStartXY "$x $y"
       set _actionStartWindowXY "$windowx $windowy"
       set _actionStartViewportOrigin "$rox $roy"
       set _actionStartRAS $ras
+      set _actionLink [$_sliceCompositeNode GetLinkedControl]
+      $_sliceCompositeNode SetLinkedControl 0
+
       $sliceGUI SetGrabID $this
       $sliceGUI SetGUICommandAbortFlag 1
+
       $o(storeXYToRAS) DeepCopy [$_sliceNode GetXYToRAS]
       $o(storeSliceToRAS) DeepCopy [$_sliceNode GetSliceToRAS]
-      $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
     }
     "MiddleButtonReleaseEvent" { 
+      $_sliceCompositeNode SetLinkedControl $_actionLink
+      set sliceLogics [$this getLinkedSliceLogics]
+      foreach logic $sliceLogics {
+          set snode [$logic GetSliceNode]
+          [$snode GetSliceToRAS] DeepCopy [$_sliceNode GetSliceToRAS]
+          $snode UpdateMatrices
+      }
+
+      $this requestDelayedAnnotation
       set _actionState ""
       $sliceGUI SetGrabID ""
       $sliceGUI SetGUICommandAbortFlag 1
@@ -647,30 +680,55 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $this resizeSliceNode
     }
     "EnterEvent" { 
+      #puts "Enter"
       set _inWidget 1
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
 
-      set thisSliceSpacing [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing]
       set sliceGUIs [$this getLinkedSliceGUIs]
+      # find the slice spacing to use
+      set thisSliceSpacing [[$sliceGUI GetLogic] GetLowestVolumeSliceSpacing]
       foreach gui $sliceGUIs {
           set snode [$gui GetSliceNode]
           if { $_sliceNode != $snode } {
-              # prescribe spacing for all other guis
-              eval $snode SetPrescribedSliceSpacing $thisSliceSpacing
-              $snode SetSliceSpacingModeToPrescribed
-
-              # then tell them to reslice
-              set that [$this getSliceSWidgetForGUI $gui]
-              $that resizeSliceNode
-
-              [$gui GetSliceViewer] RequestRender
+              set sliceSpacing [[$gui GetLogic] GetLowestVolumeSliceSpacing]
+              if { [lindex $sliceSpacing 2] < [lindex $thisSliceSpacing 2] } {
+                  set thisSliceSpacing $sliceSpacing
+              }
           }
+      }
+      # disable modifieds
+      foreach gui $sliceGUIs {
+          set snode [$gui GetSliceNode]
+          $snode DisableModifiedEventOn
+      }
+      # modify each slice node
+      #puts "Current node $_sliceNode Current gui $sliceGUI Current SliceWidget $this"
+      $_sliceNode SetSliceSpacingModeToAutomatic
+      foreach gui $sliceGUIs {
+          set snode [$gui GetSliceNode]
+          
+          # prescribe spacing for all guis
+          eval $snode SetPrescribedSliceSpacing $thisSliceSpacing
+          $snode SetSliceSpacingModeToPrescribed
+
+          # then tell them to reslice
+          set that [$this getSliceSWidgetForGUI $gui]
+          $that resizeSliceNode
+      }
+      # enable modifieds, don't invoke the pending events, 
+      # request a render on each
+      foreach gui $sliceGUIs {
+          set snode [$gui GetSliceNode]
+          #$snode InvokePendingModifiedEvent
+          $snode DisableModifiedEventOff
+          [$gui GetSliceViewer] RequestRender
       }
     }
     "LeaveEvent" { 
+      #puts "Leave"
       set _inWidget 0
-
+ 
       set sliceGUIs [$this getLinkedSliceGUIs]
       # cancel annotation requests before doing anything else
       foreach gui $sliceGUIs {
@@ -682,7 +740,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         [[$gui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
         set snode [$gui GetSliceNode]
         if { [$this isCompareViewMode] == 1 } {
-          $snode SetSliceSpacingModeToAutomatic
+           # for now, don't switch back to automatic (maybe when we switch 
+           # out of compare view mode turn automatic back on)
+           # $snode SetSliceSpacingModeToAutomatic
         }
         [$gui GetSliceViewer] RequestRender
       }
@@ -820,12 +880,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   }
 
 
-  if { $annotationsUpdated == false && [$this getInWidget] } {
-      set xyToRAS [$_sliceNode GetXYToRAS]
-      set ras [$xyToRAS MultiplyPoint $x $y $z 1]
-      foreach {r a s t} $ras {}
-      $this updateAnnotation $r $a $s
-  }
+#  if { $annotationsUpdated == false && [$this getInWidget] } {
+#      set xyToRAS [$_sliceNode GetXYToRAS]
+#      set ras [$xyToRAS MultiplyPoint $x $y $z 1]
+#      foreach {r a s t} $ras {}
+#      $this updateAnnotation $r $a $s
+#  }
 }
 
 
@@ -953,7 +1013,7 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
         $annotation SetText 0 "${labelText}\n${voxelText}"
         $annotation SetText 1 $spaceText0
         $annotation SetText 2 $spaceText1
-          $annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
+        $annotation SetText 3 "${backgroundname}\n${foregroundname}\n${labelname}\n\n${reformation}\n${spacingText}"
       }
       "2" {
         $annotation SetText 0 "${labelText}"
@@ -970,14 +1030,7 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
     }
     
     # jvm - request a render so the annotations on other viewers update
-    $sw cancelDelayedAnnotation
-    [[$sgui GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
     $sw requestDelayedAnnotation
-    # this render only seems to be needed to get the cornerannotations
-    # to turn off in the other compare views when there is no
-    # crosshair or the crosshair is in navigation mode but not being
-    # dragged
-    [$sgui GetSliceViewer] RequestRender
   }
 }
 
@@ -1041,22 +1094,22 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
 
   set pixelValue $_layers(foreground,pixel)
   if { $pixelValue != "" && [string is double $pixelValue] } {
-      set fgvoxelText [format " Fg: %.1f" $pixelValue]
+      set fgvoxelText [format "Fg: %.1f" $pixelValue]
   } else {
       if { $pixelValue == "None"} {
           set fgvoxelText ""
       } else {
-          set fgvoxelText " Fg: $pixelValue,"
+          set fgvoxelText "Fg: $pixelValue,"
       }
   }
   set pixelValue $_layers(background,pixel)
   if { $pixelValue != "" && [string is double $pixelValue] } {
-      set bgvoxelText [format " Bg: %.1f" $pixelValue]
+      set bgvoxelText [format "Bg: %.1f" $pixelValue]
   } else {
       if { $pixelValue == "None"} {
           set bgvoxelText ""
       } else {
-          set bgvoxelText " Bg: $pixelValue,"
+          set bgvoxelText "Bg: $pixelValue,"
       }
   }
 
@@ -1116,9 +1169,6 @@ itcl::body SliceSWidget::updateAnnotation {r a s} {
   }
 
   # jvm - request a render so the annotations on other viewers update
-  $this cancelDelayedAnnotation
-  [[$sliceGUI GetSliceViewer] GetRenderWidget] CornerAnnotationVisibilityOff
-  [$sliceGUI GetSliceViewer] RequestRender
   $this requestDelayedAnnotation
 }
 
@@ -1291,7 +1341,10 @@ itcl::body SliceSWidget::moveSlice { delta } {
     # of SliceControllerWidgets.)
     set numberOfLogics [llength $logics]
     foreach logic $logics {
+        set tlink [[$logic GetSliceCompositeNode] GetLinkedControl]
+        [$logic GetSliceCompositeNode] SetLinkedControl 0
         $logic SetSliceOffset [expr $offset + $delta]
+        [$logic GetSliceCompositeNode] SetLinkedControl $tlink
     }
 }
 
