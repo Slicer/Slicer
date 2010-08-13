@@ -102,6 +102,9 @@ protected:
   /// Check if it is the right displayManager
   virtual bool IsCorrectDisplayableManager();
 
+  // Convert display to world coordinates
+  virtual double * GetDisplayToWorldCoordinates(double x, double y);
+
   /// Focus of this displayableManager
   const char* m_Focus;
 

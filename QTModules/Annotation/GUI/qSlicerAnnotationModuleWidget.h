@@ -59,6 +59,7 @@ public:
         FiducialNode,
         AngleNode,
         StickyNode,
+        SplineNode,
       };
 
 protected:
@@ -152,6 +153,8 @@ protected slots:
   // Fiducial Node
   void onFiducialNodeButtonClicked();
 
+  // Spline Node
+  void onSplineNodeButtonClicked();
 
 
 private:

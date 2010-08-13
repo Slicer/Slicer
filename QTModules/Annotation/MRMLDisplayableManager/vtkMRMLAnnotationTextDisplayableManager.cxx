@@ -13,6 +13,7 @@
 #include <vtkTextRepresentation.h>
 #include <vtkTextWidget.h>
 #include <vtkRenderer.h>
+#include <vtkHandleRepresentation.h>
 
 // std includes
 #include <string>
@@ -94,14 +95,22 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
 
   textWidget->SetInteractor(this->GetInteractor());
 
+  // we get display coordinates
+  // we need normalized viewport coordinates, so we transform
+  VTK_CREATE(vtkHandleWidget, h1);
+  h1 = this->m_HandleWidgetList[0];
 
-  if (textNode->GetTextCoordinates())
-    {
+  double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 
-    textRep->SetPosition(textNode->GetTextCoordinates()[0],textNode->GetTextCoordinates()[1]);
-    //textRep->SetPosition(0.01, 0.01);
+  double x = position1[0];
+  double y = position1[1];
 
-    }
+  this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
+  this->GetRenderer()->NormalizedDisplayToViewport(x,y);
+  this->GetRenderer()->ViewportToNormalizedViewport(x,y);
+
+  // we set normalized viewport coordinates
+  textRep->SetPosition(x,y);
 
   textWidget->On();
 
@@ -171,30 +180,16 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
   if (this->m_ClickCounter->HasEnoughClicks(1))
     {
 
-    this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
-    this->GetRenderer()->NormalizedDisplayToViewport(x,y);
-    this->GetRenderer()->ViewportToNormalizedViewport(x,y);
+    double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
 
-    double coordinates[3];
-    coordinates[0]=(double)x;
-    coordinates[1]=(double)y;
-    coordinates[2]=0;
-
+    // create the MRML node
     vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-    textNode->SetTextCoordinates(coordinates);
+    textNode->SetTextCoordinates(worldCoordinates);
     textNode->SetTextLabel("New text");
 
     textNode->Initialize(this->GetMRMLScene());
 
-    // need a unique name since the storage node will be named from it
-    if (textNode->GetScene())
-      {
-      textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
-      }
-    else
-      {
-      textNode->SetName("AnnotationText");
-      }
+    textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
 
     textNode->Delete();
 

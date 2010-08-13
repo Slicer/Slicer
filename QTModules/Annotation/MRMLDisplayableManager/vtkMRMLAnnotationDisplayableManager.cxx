@@ -550,6 +550,26 @@ void vtkMRMLAnnotationDisplayableManager::PlaceSeed(double x, double y)
 }
 
 //---------------------------------------------------------------------------
+/// Convert display to world coordinates
+double* vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x, double y)
+{
+  double coordinates[3];
+  coordinates[0]=(double)x;
+  coordinates[1]=(double)y;
+  coordinates[2]=0;
+
+  double * worldCoordinates;
+
+  this->GetRenderer()->SetDisplayPoint(coordinates);
+  this->GetRenderer()->DisplayToView();
+  this->GetRenderer()->GetViewPoint(coordinates);
+  this->GetRenderer()->ViewToWorld();
+  this->GetRenderer()->GetWorldPoint(worldCoordinates);
+
+  return worldCoordinates;
+}
+
+//---------------------------------------------------------------------------
 /// Check if it is the correct displayableManager
 bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 {

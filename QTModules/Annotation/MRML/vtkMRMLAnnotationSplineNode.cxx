@@ -219,7 +219,7 @@ void vtkMRMLAnnotationSplineNode::PrintAnnotationInfo(ostream& os, vtkIndent ind
 int vtkMRMLAnnotationSplineNode::AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag)
 {
   if (this->GetNumberOfControlPoints() > 1) {
-    vtkErrorMacro("AnnotationRuler: "<< this->GetName() << " cannot have more than 3 control points !");
+    vtkErrorMacro("AnnotationSpline: "<< this->GetName() << " cannot have more than 1 control points !");
     return -1;
   }
   return Superclass::AddControlPoint(newControl,selectedFlag,visibleFlag);

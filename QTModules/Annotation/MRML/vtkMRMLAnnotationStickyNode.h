@@ -11,11 +11,12 @@
 
 #include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationNode.h" 
+#include "vtkMRMLAnnotationControlPointsNode.h"
 
 class vtkStringArray;
 class vtkMRMLStorageNode;
 
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationStickyNode : public vtkMRMLAnnotationNode
+class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationStickyNode : public vtkMRMLAnnotationControlPointsNode
 {
 public:
   static vtkMRMLAnnotationStickyNode *New();
@@ -36,6 +37,8 @@ public:
   // Selected and visible are currently always set to 1 and are controlled by selected and visible flag - we can change this later
   void SetStickyText(const char* newLabel) {this->SetText(0,newLabel,1,1);}
   vtkStdString GetStickyText() {return this->GetText(0);}
+
+  int SetStickyCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
 
   void Initialize(vtkMRMLScene* mrmlScene);
 

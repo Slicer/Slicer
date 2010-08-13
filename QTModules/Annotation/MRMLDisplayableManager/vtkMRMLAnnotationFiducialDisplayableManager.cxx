@@ -98,11 +98,13 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   seedWidget->On();
 
-  vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
+  VTK_CREATE(vtkHandleWidget, h1);
+  h1 = this->m_HandleWidgetList[0];
 
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 
-  vtkHandleWidget * newhandle = seedWidget->CreateNewHandle();
+  VTK_CREATE(vtkHandleWidget, newhandle);
+  newhandle = seedWidget->CreateNewHandle();
   vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
 
   seedWidget->On();
@@ -157,10 +159,16 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInThreeDRenderWindow(do
   if (this->m_ClickCounter->HasEnoughClicks(1))
     {
 
+    double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
+
+    // create the MRML node
     vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
+
+    fiducialNode->SetFiducialCoordinates(worldCoordinates);
 
     fiducialNode->Initialize(this->GetMRMLScene());
 
+    fiducialNode->SetName(fiducialNode->GetScene()->GetUniqueNameByString("AnnotationFiducial"));
 
     fiducialNode->Delete();
 

@@ -116,7 +116,7 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
   handle->GetProperty()->SetColor(1,0,0);
   handle->SetHandleSize(5);
 
-  vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::New();
+  VTK_CREATE(vtkAngleRepresentation3D, rep);
   rep->SetHandleRepresentation(handle);
   rep->InstantiateHandleRepresentation();
 
@@ -177,14 +177,17 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated()
     return;
     }
 
-  vtkInteractorEventRecorder *recorder = vtkInteractorEventRecorder::New();
+  VTK_CREATE(vtkInteractorEventRecorder, recorder);
   recorder->SetInteractor(this->GetInteractor());
   recorder->ReadFromInputStringOn();
 
   std::ostringstream o;
-  vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
-  vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
-  vtkHandleWidget *h3 = this->m_HandleWidgetList[2];
+  VTK_CREATE(vtkHandleWidget, h1);
+  h1 = this->m_HandleWidgetList[0];
+  VTK_CREATE(vtkHandleWidget, h2);
+  h2 = this->m_HandleWidgetList[1];
+  VTK_CREATE(vtkHandleWidget, h3);
+  h3 = this->m_HandleWidgetList[2];
 
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 
@@ -229,8 +232,15 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInThreeDRenderWindow(doubl
   if (this->m_ClickCounter->HasEnoughClicks(3))
     {
 
+    // we can't set coordinates here to MRML, we will do it later
+
+    // create MRML node
     vtkMRMLAnnotationAngleNode *angleNode = vtkMRMLAnnotationAngleNode::New();
     angleNode->Initialize(this->GetMRMLScene());
+
+    angleNode->SetName(angleNode->GetScene()->GetUniqueNameByString("AnnotationAngle"));
+
+    angleNode->Delete();
 
     } // has enough clicks
 

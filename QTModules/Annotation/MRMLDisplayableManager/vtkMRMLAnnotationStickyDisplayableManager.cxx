@@ -83,6 +83,8 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyDisplayableManager::CreateWidget(vtkM
   VTK_CREATE(vtkHandleWidget,h1);
   h1 = this->m_HandleWidgetList[0];
 
+  // we get display coordinates, we need normalized viewport
+  // so we transform
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 
   double x = position1[0];
@@ -96,12 +98,13 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyDisplayableManager::CreateWidget(vtkM
 
   // a hack to get the icon
   std::stringstream s;
-  s << std::getenv("TMPDIR") << "sticky.png";
+  //s << std::getenv("TMPDIR") << "sticky.png";
+  s << "/tmp/" << "sticky.png";
   r->SetFileName(s.str().c_str());
 
   VTK_CREATE(vtkLogoRepresentation,logoRepresentation);
   logoRepresentation->SetImage(r->GetOutput());
-  logoRepresentation->SetPosition(x,y);
+  logoRepresentation->SetPosition(x,y); // here we set normalized viewport
   logoRepresentation->SetPosition2(.1, .1);
   logoRepresentation->GetImageProperty()->SetOpacity(.7);
 
@@ -159,10 +162,21 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInThreeDRenderWindow(doub
   if (this->m_ClickCounter->HasEnoughClicks(1))
     {
 
+    double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
+
+    double coordinates[3];
+    coordinates[0] = worldCoordinates[0];
+    coordinates[1] = worldCoordinates[1];
+    coordinates[2] = worldCoordinates[2];
+
+    // Create the node
     vtkMRMLAnnotationStickyNode *stickyNode = vtkMRMLAnnotationStickyNode::New();
 
     stickyNode->Initialize(this->GetMRMLScene());
 
+    stickyNode->SetStickyCoordinates(coordinates);
+
+    stickyNode->SetName(stickyNode->GetScene()->GetUniqueNameByString("AnnotationStickyNote"));
 
     stickyNode->Delete();
 

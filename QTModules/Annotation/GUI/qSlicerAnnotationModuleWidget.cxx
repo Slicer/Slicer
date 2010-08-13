@@ -700,7 +700,7 @@ void qSlicerAnnotationModuleWidget::setup()
       d->splineTypeButton,
       SIGNAL(clicked()),
       this,
-      SLOT(onSplineButtonClicked()));
+      SLOT(onSplineNodeButtonClicked()));
 
   this->connect(
       d->moveDownSelectedButton,
@@ -2369,6 +2369,9 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
     case qSlicerAnnotationModuleWidget::StickyNode:
       d->logic()->AddAnnotationNode("vtkMRMLAnnotationStickyNode");
       break;
+    case qSlicerAnnotationModuleWidget::SplineNode:
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationSplineNode");
+      break;
     }
 
   /*if ( toggle )
@@ -2546,50 +2549,20 @@ void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
 
   this->disableAllAnnotationTools();
 
+  // this is a hack to export the sticky note icon
+  // *sigh*
   QIcon icon = QIcon(":/Icons/AnnotationNote.png");
-
   QPixmap pixmap = icon.pixmap(16,16);
-
-  QString tempdir = QString(std::getenv("TMPDIR"));
+  //QString tempdir = QString(std::getenv("TMPDIR"));
+  QString tempdir = QString("/tmp/");
   tempdir.append("sticky.png");
   pixmap.save(tempdir);
+  // end of hack
 
   d->stickyTypeButton->setChecked(
       true);
   d->resumeButton->setChecked(
       true);
-
-  /*
-  CTK_D(qSlicerAnnotationModuleWidget);
-  const char *newStickyNodeID = d->logic()->AddStickyNode();
-  if (!newStickyNodeID)
-    {
-    std::cerr << "Could not add Sticky Node" << std::endl;
-    return;
-    }
-
-  m_IDs.push_back(
-      newStickyNodeID);
-  m_index++;
-
-  //vtkMRMLAnnotationStickyNode* node = vtkMRMLAnnotationStickyNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newStickyNodeID));
-
-  char format[4] = " ";
-  std::vector<double> thevalue;
-  thevalue.push_back(
-      0);
-
-  QString valueString;
-  qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
-      format,
-      thevalue,
-      valueString);
-  this->updateAnnotationTable(
-      m_index,
-      thevalue,
-      format);
-  this->selectRowByIndex(
-      m_index);*/
 
 }
 
@@ -2636,6 +2609,30 @@ void qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
   this->disableAllAnnotationTools();
 
   d->textTypeButton->setChecked(
+      true);
+  d->resumeButton->setChecked(
+      true);
+}
+
+//-----------------------------------------------------------------------------
+// Text Node
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onSplineNodeButtonClicked()
+{
+  CTK_D(qSlicerAnnotationModuleWidget);
+
+  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::SplineNode;
+
+  d->logic()->SetAndObserveWidget(
+      this);
+
+  this->enableMouseModeButtons();
+  this->onResumeButtonClicked();
+
+
+  this->disableAllAnnotationTools();
+
+  d->splineTypeButton->setChecked(
       true);
   d->resumeButton->setChecked(
       true);

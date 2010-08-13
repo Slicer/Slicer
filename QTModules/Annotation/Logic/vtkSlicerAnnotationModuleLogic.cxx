@@ -1895,6 +1895,8 @@ void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescript
 
   selectionNode->SetActiveAnnotationID(nodeDescriptor);
 
+  std::cout << "starting place mode for : " << nodeDescriptor << std::endl;
+
   this->StartPlaceMode();
 
 }
