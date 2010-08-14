@@ -273,6 +273,9 @@ int main( int argc, char* argv[] )
 
     WriterType::Pointer writer = WriterType::New();
       char imageNumber[BUFSIZ];
+#if WIN32
+#define snprintf sprintf_s
+#endif
       snprintf (imageNumber, BUFSIZ, dicomNumberFormat.c_str(), i+1);
       value.str("");
       value << dicomDirectory << "/" << dicomPrefix << imageNumber << ".dcm";
