@@ -272,8 +272,10 @@ int main( int argc, char* argv[] )
     itk::EncapsulateMetaData<std::string>(dictionary, "0028|1051", value.str());
 
     WriterType::Pointer writer = WriterType::New();
+      char imageNumber[BUFSIZ];
+      snprintf (imageNumber, BUFSIZ, dicomNumberFormat.c_str(), i+1);
       value.str("");
-      value << dicomDirectory << "/" << dicomPrefix << i + 1 << ".dcm";
+      value << dicomDirectory << "/" << dicomPrefix << imageNumber << ".dcm";
       writer->SetFileName(value.str().c_str());
 
       writer->SetInput(extract->GetOutput());

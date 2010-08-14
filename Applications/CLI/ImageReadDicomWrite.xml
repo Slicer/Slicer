@@ -174,6 +174,13 @@
       <label>DICOM filename prefix</label>
       <default>IMG</default>
     </string>
+    <string>
+      <name>dicomNumberFormat</name>
+      <longflag>--dicomNumberFormat</longflag>
+      <description>The printf-style format to be used when creating the per-slice DICOM filename.</description>
+      <label>DICOM file number format</label>
+      <default>%04d</default>
+    </string>
     <boolean>
       <name>reverseImages</name>
       <longflag>--reverseImages</longflag>
