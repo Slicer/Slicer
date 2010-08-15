@@ -747,7 +747,7 @@ target_link_libraries(${CLP}Test  ITKIO ITKBasicFilters)
 # ImageReadDicomWrite tests
 add_test(ImageReadDicomWriteTest ${Launcher_Command} ${TestLocation}ImageReadDicomWriteTest
   --compare ${BASELINE}/ImageReadDicomWriteTest.dcm
-            ${TEMP}/CTHeadAxialDicom40.dcm
+            ${TEMP}/CTHeadAxialDicom0040.dcm
   ModuleEntryPoint
     --patientName Austrialian
     --patientID 8775070
