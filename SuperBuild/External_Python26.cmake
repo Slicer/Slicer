@@ -148,21 +148,6 @@ elseif(UNIX)
       ${python_DEPENDENCIES}
     )
     
-  if(APPLE)
-  
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_environhack_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/python_environhack_step.cmake
-      @ONLY)
-    
-    FILE(WRITE ${python_base}/environhack.c "char **environ=0;")
-    
-    ExternalProject_Add_Step(${proj} EnvironHack
-      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_environhack_step.cmake
-      DEPENDEES build
-      DEPENDERS install
-      )
-  endif()
-
 endif()
 
 #-----------------------------------------------------------------------------
