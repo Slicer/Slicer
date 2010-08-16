@@ -444,6 +444,26 @@ vtkMRMLNode * vtkMRMLAbstractDisplayableManager::GetMRMLDisplayableNode()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(
+    vtkObject* caller, unsigned long event, void * callData)
+{
+  if (vtkMRMLScene::SafeDownCast(caller))
+    {
+    this->Superclass::ProcessMRMLEvents(caller, event, callData);
+    }
+  else if (vtkMRMLNode::SafeDownCast(caller))
+    {
+    assert(event == vtkCommand::ModifiedEvent);
+    this->onMRMLDisplayableNodeModifiedEvent(caller);
+    }
+  else
+    {
+    vtkErrorMacro(<< "ProcessMRMLEvents - Unknown caller:" << caller->GetClassName()
+                  << " - event:" << event);
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   VTK_CREATE(vtkIntArray, sceneEvents);

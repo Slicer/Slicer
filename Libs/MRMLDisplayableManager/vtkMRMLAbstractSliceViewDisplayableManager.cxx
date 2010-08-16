@@ -21,6 +21,9 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <cassert>
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractSliceViewDisplayableManager);
 vtkCxxRevisionMacro(vtkMRMLAbstractSliceViewDisplayableManager, "$Revision: 13525 $");
@@ -42,6 +45,14 @@ vtkMRMLAbstractSliceViewDisplayableManager::~vtkMRMLAbstractSliceViewDisplayable
 void vtkMRMLAbstractSliceViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractSliceViewDisplayableManager::onMRMLDisplayableNodeModifiedEvent(
+    vtkObject* caller)
+{
+  assert(vtkMRMLSliceNode::SafeDownCast(caller));
+  this->onMRMLSliceNodeModifiedEvent();
 }
 
 //---------------------------------------------------------------------------

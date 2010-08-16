@@ -21,6 +21,9 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <cassert>
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractThreeDViewDisplayableManager);
 vtkCxxRevisionMacro(vtkMRMLAbstractThreeDViewDisplayableManager, "$Revision: 13525 $");
@@ -42,6 +45,14 @@ vtkMRMLAbstractThreeDViewDisplayableManager::~vtkMRMLAbstractThreeDViewDisplayab
 void vtkMRMLAbstractThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractThreeDViewDisplayableManager::onMRMLDisplayableNodeModifiedEvent(
+    vtkObject* caller)
+{
+  assert(vtkMRMLViewNode::SafeDownCast(caller));
+  this->onMRMLViewNodeModifiedEvent();
 }
 
 //---------------------------------------------------------------------------

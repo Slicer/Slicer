@@ -92,9 +92,14 @@ protected:
   /// \warning That function should only be used directly !
   /// \sa Initialize
   virtual void AdditionnalInitializeStep(){}
-  
+
+  virtual void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void * callData);
+
   /// Called by SetMRMLScene - Used to initialize the Scene
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
+  /// Could be overloaded in DisplayableManager subclass
+  virtual void onMRMLDisplayableNodeModifiedEvent(vtkObject* vtkNotUsed(caller)){}
 
   /// Set MRML DisplayableNode
   /// Called by vtkMRMLDisplayableManagerFactory
