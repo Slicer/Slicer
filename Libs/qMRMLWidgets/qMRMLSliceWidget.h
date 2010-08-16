@@ -12,6 +12,8 @@
 
 #include "qMRMLWidgetsExport.h"
 
+
+class ctkVTKSliceView;
 class qMRMLSliceWidgetPrivate;
 class qMRMLSliceControllerWidget;
 class vtkMRMLScene;
@@ -19,10 +21,9 @@ class vtkMRMLNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceCompositeNode;
-class vtkImageData;
-class ctkVTKSliceView;
 
-class vtkMRMLSliceLogic;
+class vtkImageData;
+class vtkInteractorObserver;
 
 class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
 {
@@ -69,6 +70,8 @@ public:
   /// \sa qMRMLSliceControllerWidget::sliceViewName()
   /// \sa sliceViewName()
   void setSliceViewName(const QString& newSliceViewName);
+
+  vtkInteractorObserver* interactorStyle()const;
 
 public slots:
 

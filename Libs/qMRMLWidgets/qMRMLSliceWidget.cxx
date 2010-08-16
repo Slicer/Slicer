@@ -233,6 +233,12 @@ vtkImageData* qMRMLSliceWidget::imageData() const
 }
 
 //---------------------------------------------------------------------------
+vtkInteractorObserver* qMRMLSliceWidget::interactorStyle()const
+{
+  return this->sliceView()->interactorStyle();
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLSliceNode* qMRMLSliceWidget::mrmlSliceNode()const
 {
   return ctk_d()->SliceController->mrmlSliceNode();
