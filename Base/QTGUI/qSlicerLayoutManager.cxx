@@ -965,9 +965,12 @@ vtkMRMLScene* qSlicerLayoutManager::mrmlScene()const
 void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
     const QString& scriptedDisplayableManagerDirectory)
 {
+#ifdef MRMLDisplayableManager_USE_PYTHON
   CTK_D(qSlicerLayoutManager);
+
   Q_ASSERT(QFileInfo(scriptedDisplayableManagerDirectory).isDir());
   d->ScriptedDisplayableManagerDirectory = scriptedDisplayableManagerDirectory;
+#endif
 }
 
 //------------------------------------------------------------------------------
