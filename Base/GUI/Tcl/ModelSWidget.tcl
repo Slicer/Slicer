@@ -232,12 +232,6 @@ itcl::body ModelSWidget::highlight { } {
 
 itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
 
-  if { [info command ::Slicer3Adapters::Initialize] != "" } {
-    # stub out when working in slicer4
-    puts "TODO: skipping \"$this\" \"$caller\" \"$event\""
-    return
-  }
-
   if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
@@ -245,8 +239,10 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  if { [info command $_modelNode] == "" } {
-    # the model was deleted behind our back, do nothing
+  if { [info command $_modelNode] == "" || [$_modelNode GetPolyData] == "" } {
+    # the model was deleted behind our back, 
+    # or if there is no poly data, turn off our display and do nothing
+    $this configure -visibility 0
     return
   }
 
@@ -255,7 +251,7 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
 
   # control visibility based on ModelDisplayNode and 
   # transform based on transform node
-  if { $_modelNode != "" } { 
+  if { $_modelNode != "" && [$_modelNode GetPolyData] != "" } { 
     $o(cutter) SetInput [$_modelNode GetPolyData]
     set displayNode [$_modelNode GetDisplayNode]
 

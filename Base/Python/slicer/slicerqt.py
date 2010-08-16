@@ -103,11 +103,12 @@ def registerScriptedDisplayableManagers(sliceView):
   for key,method in (
       ('sliceLogic', 'SetLogic'),
       ('interactorStyle', 'SetInteractorStyle')):
-    instName = 'slicer.sliceView%s.%s' % (sliceView, key)
-    instClass = eval('%s.GetClassName()' % instName)
+    instName = 'slicer.sliceView%s_%s' % (sliceView, key)
+    evalString = '%s.GetClassName()' % instName
+    instClass = eval(evalString)
     # creat a proc that represents the instance
     tcl('set procName [::tpycl::uniqueInstanceName %s]' % instClass)
-    tclCmd = 'proc $procName {args} {::tpycl::methodCaller slicer.sliceView%s.%s $args}' % (sliceView, key)
+    tclCmd = 'proc $procName {args} {::tpycl::methodCaller slicer.sliceView%s_%s $args}' % (sliceView, key)
     tcl(tclCmd)
     # set the new tcl instance into the sliceGUI instance for this slice
     tcl('%s %s $procName' % (sliceGUIName, method))
@@ -117,7 +118,7 @@ def registerScriptedDisplayableManagers(sliceView):
     try:
       slicer.mrmlScene
     except AttributeError:
-      slicer.mrmlScene = eval("slicer.sliceView%s.sliceLogic.GetMRMLScene()" % sliceView)
+      slicer.mrmlScene = eval("slicer.sliceView%s_sliceLogic.GetMRMLScene()" % sliceView)
   tcl('SliceSWidget #auto %s' % sliceGUIName)
   
 

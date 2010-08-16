@@ -94,7 +94,7 @@ void qSlicerPythonManager::eventBrokerScriptHandler(const char *script, void *cl
   QString pythonScript = QString("global _tpycl; _tpycl.tcl_callback('%1')").arg(script);
   qSlicerPythonManager * self = reinterpret_cast<qSlicerPythonManager*>(clientData);
   Q_ASSERT(self);
-  logger.setTrace();
+  //logger.setTrace();
   logger.trace(QString("Running broker observation script: %1").arg(script));
   self->executeString(pythonScript);
 #endif

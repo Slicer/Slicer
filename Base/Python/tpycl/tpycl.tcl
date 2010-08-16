@@ -31,11 +31,15 @@ if { [info command ::tpycl::tcl_after] == "" } {
   rename ::after ::tpycl::tcl_after
 }
 
+set ::after_warning ""
 proc ::after {args} {
   # special purpose version of the after command to use 
   # an alternate event queue (probably Qt)
-  puts "TODO: need to handle after events"
-  puts "TODO: not hanlding: \"$args\""
+  if { $::after_warning == "" } {
+    puts "TODO: need to handle after events"
+    puts "TODO: not hanlding: \"$args\""
+    set ::after_warning "done"
+  }
   return "after0"
 }
 

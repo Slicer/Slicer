@@ -127,7 +127,7 @@ namespace eval Slicer3Adapters {
       # - observe the interactor style
       # -- need to give AddObservation the python name of the interactor style
       set layoutName [[$this GetSliceNode] GetLayoutName]
-      set pyname [format "slicer.sliceView%s.interactorStyle" $layoutName]
+      set pyname [format "slicer.sliceView%s_interactorStyle" $layoutName]
       set script "$this SetGrabID {}; $script"
       py_eval [format "slicer.broker.AddObservation(%s,'%s','%s')" $pyname $event $script]
     }
@@ -167,13 +167,19 @@ namespace eval Slicer3Adapters {
     # parts of the application
     variable _slicerWindow ""
 
+    # to limit printouts
+    variable _viewerWarning ""
+
     # methods
     # access to locally instanced classes
     method GetMainSlicerWindow {} {
       return $_slicerWindow
     }
     method GetActiveViewerWidget {} {
-      puts "TODO: need to be able to access the viewers from a script: $this GetActiveViewerWidget"
+      if { $_viewerWarning == "" } {
+        puts "TODO: need to be able to access the viewers from a script: $this GetActiveViewerWidget"
+        set _viewerWarning "done"
+      }
       return ""
     }
   }
@@ -194,7 +200,7 @@ namespace eval Slicer3Adapters {
     method GetRenderWidget {} {return $_renderWidget}
     method RequestRender {} {
       # TODO: need to have a request render methodology in Qt
-      puts "please render"
+      #puts "please render"
       #[[$_renderWidget GetRenderWindowInteractor] GetRenderWindow] Render
     }
     method GetHighlightColor {} {
@@ -214,7 +220,7 @@ namespace eval Slicer3Adapters {
 
     # methods
     method SetStatusText {arg} {
-      puts "TODO: Status Text $arg"
+      #puts "TODO: Status Text $arg"
     }
   }
 
@@ -299,7 +305,8 @@ namespace eval Slicer3Adapters {
     method GetVisibility {} {return $_visibility}
     method GetTextProperty {} {return $_textProperty}
     method SetText {corner text} {
-      puts "TODO: SetText $corner $text"
+      #puts "TODO: SetText $corner $text"
+      puts -nonewline "t";flush stdout
     }
   }
 
