@@ -65,12 +65,6 @@ file = open('@CMAKE_CURRENT_BINARY_DIR@/python_compile_@MY_TARGET_NAME@_complete
 file.write('Done')
 ")
 
-  # Byte compile the Python files.
-  #SET(compile_all_script "${CMAKE_CURRENT_BINARY_DIR}/compile_${MY_TARGET_NAME}_python_scripts.py")
-  #CONFIGURE_FILE("${CMAKE_CURRENT_LIST_DIR}/compile_python_scripts.py.in"
-  #               ${compile_all_script}
-  #               @ONLY IMMEDIATE)
-
   ADD_CUSTOM_COMMAND(
     COMMAND ${PYTHON_EXECUTABLE}
     ARGS  "${compile_all_script}"
