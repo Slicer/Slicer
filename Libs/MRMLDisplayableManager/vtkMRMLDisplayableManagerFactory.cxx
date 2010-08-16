@@ -16,7 +16,9 @@
 #include "vtkMRMLDisplayableManagerFactory.h"
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
+#ifdef MRMLDisplayableManager_USE_PYTHON
 #include "vtkMRMLScriptedDisplayableManager.h"
+#endif
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
@@ -134,12 +136,16 @@ void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
   objectPointer.TakeReference(vtkInstantiator::CreateInstance(vtkClassOrScriptName));
   if (!objectPointer)
     {
+#ifdef MRMLDisplayableManager_USE_PYTHON
     // Check if vtkClassOrScriptName is a python script
     std::string str(vtkClassOrScriptName);
     if (str.find(".py") == std::string::npos)
       {
       return;
       }
+#else
+    return;
+#endif
     }
 
   // Register it
@@ -204,6 +210,7 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
     {
     const char* classOrScriptName = this->Internal->DisplayableManagerClassNames[i].c_str();
 
+#ifdef MRMLDisplayableManager_USE_PYTHON
     // Are we dealing with a python scripted displayable manager
     std::string str(classOrScriptName);
     if (str.find(".py") != std::string::npos)
@@ -218,6 +225,7 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
       }
     else
       {
+#endif
       // Object will be unregistered when the SmartPointer will go out-of-scope
       vtkSmartPointer<vtkObject> objectSmartPointer;
       objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(classOrScriptName));
@@ -231,7 +239,9 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
 
       // Note that DisplayableManagerGroup will take ownership of the object
       displayableManagerGroup->AddAndInitialize(displayableManager);
+#ifdef MRMLDisplayableManager_USE_PYTHON
       }
+#endif
 
     }
 

@@ -6,6 +6,7 @@ IF(COMMAND CMAKE_POLICY)
 ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
+SET(MRMLDisplayableManager_USE_PYTHON ${Slicer3_USE_PYTHONQT})
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -15,7 +16,7 @@ SET(include_dirs
   ${MRMLLogic_SOURCE_DIR}
   ${MRMLLogic_BINARY_DIR}
   )
-IF(Slicer3_USE_PYTHONQT)
+IF(MRMLDisplayableManager_USE_PYTHON)
   LIST(APPEND include_dirs
     ${PYTHON_INCLUDE_DIR}
     )
@@ -90,7 +91,7 @@ SET(KIT_SRCS
   vtkThreeDViewInteractorStyle.cxx
   )
 
-IF(VTK_WRAP_PYTHON)
+IF(MRMLDisplayableManager_USE_PYTHON)
   LIST(APPEND KIT_SRCS
     vtkMRMLScriptedDisplayableManager.cxx
     )
@@ -140,7 +141,7 @@ SET(libs
   MRMLLogic
   )
 
-IF(VTK_WRAP_PYTHON)
+IF(MRMLDisplayableManager_USE_PYTHON)
   LIST(APPEND libs
     vtkCommonPythonD # For vtkPythonUtils
     ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY
@@ -180,7 +181,7 @@ INSTALL(TARGETS ${lib_name}
 # Create Python wrappers if VTK is wrapped in Python
 #
 
-IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+IF(MRMLDisplayableManager_USE_PYTHON AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
   SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
 
@@ -220,7 +221,7 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
   ADD_SUBDIRECTORY(Python)
 
-ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+ENDIF()
 
 # --------------------------------------------------------------------------
 # Testing

@@ -16,7 +16,9 @@
 #include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLDisplayableManagerFactory.h"
 #include "vtkMRMLAbstractDisplayableManager.h"
+#ifdef MRMLDisplayableManager_USE_PYTHON
 #include "vtkMRMLScriptedDisplayableManager.h"
+#endif
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -349,6 +351,7 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
 {
   assert(displayableManagerName);
 
+#ifdef MRMLDisplayableManager_USE_PYTHON
   std::string str(displayableManagerName);
   if (str.find(".py") != std::string::npos)
     {
@@ -360,6 +363,7 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
     }
   else
     {
+#endif
     // Object will be unregistered when the SmartPointer will go out-of-scope
     vtkSmartPointer<vtkObject> objectSmartPointer;
     objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(displayableManagerName));
@@ -373,7 +377,9 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
       }
 
     this->AddAndInitialize(displayableManager);
+#ifdef MRMLDisplayableManager_USE_PYTHON
     }
+#endif
 
   vtkDebugMacro(<< "group:" << this << ", onDisplayableManagerFactoryRegisteredEvent:"
                 << displayableManagerName)
