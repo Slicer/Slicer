@@ -178,6 +178,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void JumpSlice(double r, double a, double s);
   void JumpAllSlices(double r, double a, double s);
   void JumpSliceByOffsetting(double r, double a, double s);
+  void JumpSliceByOffsetting(int k, double r, double a, double s);
   void JumpSliceByCentering(double r, double a, double s);
 
   /// 

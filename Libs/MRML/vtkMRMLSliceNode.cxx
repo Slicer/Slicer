@@ -814,7 +814,7 @@ void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
   xyzToRAS->MultiplyPoint(p2xyz, p2ras);
 
   double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
-  
+
   if ( r != sr || a != sa || s != ss )
     {
     sliceToRAS->SetElement( 0, 3, r - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(0,2) );
@@ -844,7 +844,7 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
   xyzToRAS->MultiplyPoint(p2xyz, p2ras);
 
   double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
-  
+
   double d;
   d = (r-sr)*sliceToRAS->GetElement(0,2)
       + (a-sa)*sliceToRAS->GetElement(1,2)
@@ -857,6 +857,23 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
   sliceToRAS->SetElement( 1, 3, sa );
   sliceToRAS->SetElement( 2, 3, ss );
   this->UpdateMatrices();
+}
+
+void vtkMRMLSliceNode::JumpSliceByOffsetting(int k, double r, double a, double s)
+{
+  // Jump the slice such that the kth slice is at the specified
+  // ras. If there are not k slices, then jump the first slice to the
+  // specified ras
+
+  if (!(k >=0 && k < this->LayoutGridColumns * this->LayoutGridRows))
+    {
+    k = 0;
+    }
+  
+  //int oldActiveSlice = this->ActiveSlice;
+  this->ActiveSlice = k;
+  this->JumpSliceByOffsetting(r, a, s);
+  //this->ActiveSlice = oldActiveSlice;
 }
 
 void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
