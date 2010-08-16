@@ -99,7 +99,7 @@ protected:
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// Could be overloaded in DisplayableManager subclass
-  virtual void onMRMLDisplayableNodeModifiedEvent(vtkObject* vtkNotUsed(caller)){}
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* vtkNotUsed(caller)){}
 
   /// Set MRML DisplayableNode
   /// Called by vtkMRMLDisplayableManagerFactory

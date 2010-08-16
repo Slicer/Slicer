@@ -210,7 +210,7 @@ void vtkMRMLScriptedDisplayableManager::OnInteractorStyleEvent(int eventid)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager::onMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
+void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
   PyObject* method =
       this->Internal->PythonAPIMethods[vtkInternal::OnMRMLDisplayableNodeModifiedEventMethod];

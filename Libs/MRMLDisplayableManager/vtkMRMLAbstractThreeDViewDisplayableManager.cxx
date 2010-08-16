@@ -48,11 +48,11 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkInde
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractThreeDViewDisplayableManager::onMRMLDisplayableNodeModifiedEvent(
+void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(
     vtkObject* caller)
 {
   assert(vtkMRMLViewNode::SafeDownCast(caller));
-  this->onMRMLViewNodeModifiedEvent();
+  this->OnMRMLViewNodeModifiedEvent();
 }
 
 //---------------------------------------------------------------------------

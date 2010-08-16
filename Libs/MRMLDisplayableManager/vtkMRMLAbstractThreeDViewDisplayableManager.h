@@ -48,10 +48,10 @@ protected:
   vtkMRMLAbstractThreeDViewDisplayableManager();
   virtual ~vtkMRMLAbstractThreeDViewDisplayableManager();
 
-  virtual void onMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
 
   /// Could be overloaded if DisplayableManager subclass
-  virtual void onMRMLViewNodeModifiedEvent(){}
+  virtual void OnMRMLViewNodeModifiedEvent(){}
   
 private:
 

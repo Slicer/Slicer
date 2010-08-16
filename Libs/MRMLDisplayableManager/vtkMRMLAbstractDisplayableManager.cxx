@@ -454,7 +454,7 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLEvents(
   else if (vtkMRMLNode::SafeDownCast(caller))
     {
     assert(event == vtkCommand::ModifiedEvent);
-    this->onMRMLDisplayableNodeModifiedEvent(caller);
+    this->OnMRMLDisplayableNodeModifiedEvent(caller);
     }
   else
     {

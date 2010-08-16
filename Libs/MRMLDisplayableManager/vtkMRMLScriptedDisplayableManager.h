@@ -34,7 +34,7 @@ protected:
 
   virtual void OnInteractorStyleEvent(int eventid);
 
-  virtual void onMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
   
 private:
 

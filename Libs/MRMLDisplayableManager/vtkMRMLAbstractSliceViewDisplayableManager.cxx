@@ -48,11 +48,11 @@ void vtkMRMLAbstractSliceViewDisplayableManager::PrintSelf(ostream& os, vtkInden
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractSliceViewDisplayableManager::onMRMLDisplayableNodeModifiedEvent(
+void vtkMRMLAbstractSliceViewDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(
     vtkObject* caller)
 {
   assert(vtkMRMLSliceNode::SafeDownCast(caller));
-  this->onMRMLSliceNodeModifiedEvent();
+  this->OnMRMLSliceNodeModifiedEvent();
 }
 
 //---------------------------------------------------------------------------
