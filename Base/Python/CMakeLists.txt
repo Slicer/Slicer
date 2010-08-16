@@ -8,13 +8,13 @@ FIND_PACKAGE(PythonInterp REQUIRED)
 SET(Slicer_PYTHON_FILES
   slicer/__init__
   slicer/logic
-  slicer/mrml
-  slicer/mrmlLogic
-  slicer/teem
-  slicer/freesurfer
-  slicer/remoteio
   slicer/slicerqt
-  slicer/vtk/__init__
+  mrml
+  mrmlLogic
+  teem
+  freesurfer
+  remoteio
+  vtk/__init__
   )
 
 SET(Slicer_PYTHON_RESOURCES
