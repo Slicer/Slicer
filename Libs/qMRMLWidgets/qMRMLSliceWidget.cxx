@@ -116,6 +116,7 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
   QStringList displayableManagers;
   //displayableManagers << "vtkSliceDisplayableManager";
 
+#ifdef MRMLDisplayableManager_USE_PYTHON
   QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
   Q_ASSERT(dirInfo.isDir());
   if (dirInfo.isDir())
@@ -128,6 +129,7 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
     logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
                  arg(scriptedDisplayableManagerDirectory));
     }
+#endif
 
   // Register Displayable Managers
   vtkMRMLSliceViewDisplayableManagerFactory* factory =

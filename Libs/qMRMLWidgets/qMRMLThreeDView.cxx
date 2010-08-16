@@ -162,7 +162,7 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
   displayableManagers << "vtkMRMLCameraDisplayableManager"
       << "vtkMRMLViewDisplayableManager"
       << "vtkMRMLModelDisplayableManager";
-
+#ifdef MRMLDisplayableManager_USE_PYTHON
   QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
   Q_ASSERT(dirInfo.isDir());
   if (dirInfo.isDir())
@@ -175,6 +175,7 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
     logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
                  arg(scriptedDisplayableManagerDirectory));
     }
+#endif
 
   // Register Displayable Managers
   vtkMRMLThreeDViewDisplayableManagerFactory* factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
