@@ -36,16 +36,20 @@
 //---------------------------------------------------------------------------
 qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
   {
+#ifdef Slicer3_USE_PYTHONQT
   this->PythonShell = 0; 
+#endif
   }
 
 //---------------------------------------------------------------------------
 qSlicerMainWindowCorePrivate::~qSlicerMainWindowCorePrivate()
 {
+#ifdef Slicer3_USE_PYTHONQT
   if (this->PythonShell)
     {
     delete this->PythonShell;
     }
+#endif
 }
 
 //-----------------------------------------------------------------------------
