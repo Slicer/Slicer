@@ -35,9 +35,7 @@
          <item row="0" column="0">
           <widget class="QPushButton" name="roiTypeButton">
            <property name="toolTip">
-            <string>Lists the annotation types associated with the application. 
-The list is defined via a different module called Annotation Application.
-The buttons are therefore dynamically loaded into the GUI.</string>
+            <string>Region of interest</string>
            </property>
            <property name="text">
             <string/>
@@ -54,9 +52,7 @@ The buttons are therefore dynamically loaded into the GUI.</string>
          <item row="0" column="1">
           <widget class="QPushButton" name="textTypeButton">
            <property name="toolTip">
-            <string>Lists the annotation types associated with the application. 
-The list is defined via a different module called Annotation Application.
-The buttons are therefore dynamically loaded into the GUI.</string>
+            <string>Text annotation</string>
            </property>
            <property name="text">
             <string/>
@@ -73,7 +69,7 @@ The buttons are therefore dynamically loaded into the GUI.</string>
          <item row="0" column="2">
           <widget class="QPushButton" name="rulerTypeButton">
            <property name="toolTip">
-            <string>Create A Ruler for Measurement.</string>
+            <string>Distance measurement</string>
            </property>
            <property name="text">
             <string/>
@@ -90,8 +86,7 @@ The buttons are therefore dynamically loaded into the GUI.</string>
          <item row="1" column="0">
           <widget class="QPushButton" name="fiducialTypeButton">
            <property name="toolTip">
-            <string>Create Fiducials 
-When pressed, user can pick a point from the viewer to create a fiducial.</string>
+            <string>Fiducial point</string>
            </property>
            <property name="text">
             <string/>
@@ -117,9 +112,7 @@ When pressed, user can pick a point from the viewer to create a fiducial.</strin
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Lists the annotation types associated with the application. 
-The list is defined via a different module called Annotation Application.
-The buttons are therefore dynamically loaded into the GUI.</string>
+            <string>Polyline</string>
            </property>
            <property name="text">
             <string/>
@@ -145,9 +138,7 @@ The buttons are therefore dynamically loaded into the GUI.</string>
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Lists the annotation types associated with the application. 
-The list is defined via a different module called Annotation Application.
-The buttons are therefore dynamically loaded into the GUI.</string>
+            <string>Spline</string>
            </property>
            <property name="text">
             <string/>
@@ -169,11 +160,7 @@ The buttons are therefore dynamically loaded into the GUI.</string>
               <bool>false</bool>
              </property>
              <property name="toolTip">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Adjust Volume Properties - option menu comes up &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>Resume placement</string>
              </property>
              <property name="text">
               <string/>
@@ -193,16 +180,7 @@ p, li { white-space: pre-wrap; }
               <bool>false</bool>
              </property>
              <property name="toolTip">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;menue to select the fowllowing mouse behaviors:  &lt;br /&gt;- zoom, edit, pan, window/level&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- every behavior is associated with a different cursor and button icon&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- edit function:&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  -  just enough clicks for widget (single click), &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - or keep adding (double click)&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>Pause placement</string>
              </property>
              <property name="text">
               <string/>
@@ -222,11 +200,7 @@ p, li { white-space: pre-wrap; }
               <bool>false</bool>
              </property>
              <property name="toolTip">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Adjust Volume Properties - option menu comes up &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>Cancel placement</string>
              </property>
              <property name="text">
               <string/>
@@ -243,11 +217,7 @@ p, li { white-space: pre-wrap; }
               <bool>false</bool>
              </property>
              <property name="toolTip">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Adjust Volume Properties - option menu comes up &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>End placement</string>
              </property>
              <property name="text">
               <string/>
@@ -272,9 +242,7 @@ p, li { white-space: pre-wrap; }
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Lists the annotation types associated with the application. 
-The list is defined via a different module called Annotation Application.
-The buttons are therefore dynamically loaded into the GUI.</string>
+            <string>Sticky Note</string>
            </property>
            <property name="text">
             <string/>
@@ -291,7 +259,7 @@ The buttons are therefore dynamically loaded into the GUI.</string>
          <item row="0" column="3">
           <widget class="QPushButton" name="angleTypeButton">
            <property name="toolTip">
-            <string>Create An Angle for Measurement.</string>
+            <string>Angle measurement</string>
            </property>
            <property name="text">
             <string/>
