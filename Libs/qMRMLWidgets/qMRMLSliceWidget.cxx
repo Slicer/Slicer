@@ -1,8 +1,8 @@
 
 // Qt includes
-// #include <QStringList>
 #include <QDebug>
 #include <QMenu>
+#include <QFileInfo>
 
 // CTK includes
 #include <ctkVTKSliceView.h>
@@ -100,13 +100,39 @@ qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
   CTK_D(qMRMLSliceWidget);
   d->setupUi(this);
 
+  connect(d->VTKSliceView, SIGNAL(resized(const QSize&,const QSize&)),
+          d->SliceController, SLOT(setSliceViewSize(const QSize&)));
+
+  connect(d->SliceController,
+          SIGNAL(imageDataModified(vtkImageData*)), d,
+          SLOT(onImageDataModified(vtkImageData*)));
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory)
+{
+  CTK_D(qMRMLSliceWidget);
+
+  QStringList displayableManagers;
+  //displayableManagers << "vtkSliceDisplayableManager";
+
+  QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
+  Q_ASSERT(dirInfo.isDir());
+  if (dirInfo.isDir())
+    {
+    //displayableManagers<< QString("%1/vtkScriptedExampleDisplayableManager.py").
+    //  arg(scriptedDisplayableManagerDirectory);
+    }
+  else
+    {
+    logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
+                 arg(scriptedDisplayableManagerDirectory));
+    }
+
   // Register Displayable Managers
   vtkMRMLSliceViewDisplayableManagerFactory* factory =
       vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
-  QStringList displayableManagers;
-//  displayableManagers << "vtkMRMLCameraDisplayableManager"
-//      << "vtkMRMLViewDisplayableManager"
-//      << "vtkMRMLModelDisplayableManager";
+
   foreach(const QString displayableManagerName, displayableManagers)
     {
     if (!factory->IsDisplayableManagerRegistered(displayableManagerName.toLatin1()))
@@ -122,13 +148,6 @@ qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
   // Observe displayable manager group to catch RequestRender events
   d->qvtkConnect(d->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                  d->VTKSliceView, SLOT(scheduleRender()));
-
-  connect(d->VTKSliceView, SIGNAL(resized(const QSize&,const QSize&)),
-          d->SliceController, SLOT(setSliceViewSize(const QSize&)));
-
-  connect(d->SliceController,
-          SIGNAL(imageDataModified(vtkImageData*)), d,
-          SLOT(onImageDataModified(vtkImageData*)));
 }
 
 //---------------------------------------------------------------------------
@@ -234,3 +253,4 @@ void qMRMLSliceWidget::fitSliceToBackground()
 // --------------------------------------------------------------------------
 CTK_GET_CXX(qMRMLSliceWidget, ctkVTKSliceView*, sliceView, VTKSliceView);
 CTK_GET_CXX(qMRMLSliceWidget, qMRMLSliceControllerWidget*, sliceController, SliceController);
+

@@ -36,6 +36,11 @@ public:
   explicit qMRMLSliceWidget(QWidget* parent = 0);
   virtual ~qMRMLSliceWidget(){}
 
+  /// Register DisplayableManagers
+  /// \a scriptedDisplayableManagerDirectory is the based directory from which
+  /// scripted DisplayableManager should be sourced from.
+  void registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory);
+
   /// Get slice controller
   qMRMLSliceControllerWidget* sliceController()const;
 

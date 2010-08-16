@@ -86,6 +86,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Instanciate and assign the layout manager to the slicer application
   qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(this->CentralWidget);
+  layoutManager->setScriptedDisplayableManagerDirectory(
+      qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
   qSlicerApplication::application()->setLayoutManager(layoutManager);
 
   // Layout manager should also listen the MRML scene

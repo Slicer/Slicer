@@ -16,6 +16,7 @@
 #include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLDisplayableManagerFactory.h"
 #include "vtkMRMLAbstractDisplayableManager.h"
+#include "vtkMRMLScriptedDisplayableManager.h"
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -348,19 +349,31 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryRegisteredEvent(
 {
   assert(displayableManagerName);
 
-  // Object will be unregistered when the SmartPointer will go out-of-scope
-  vtkSmartPointer<vtkObject> objectSmartPointer;
-  objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(displayableManagerName));
-  vtkMRMLAbstractDisplayableManager* displayableManager =
-      vtkMRMLAbstractDisplayableManager::SafeDownCast(objectSmartPointer);
-  if (!displayableManager)
+  std::string str(displayableManagerName);
+  if (str.find(".py") != std::string::npos)
     {
-    vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate "
-                  << displayableManagerName);
-    return;
-    }
+    vtkSmartPointer<vtkMRMLScriptedDisplayableManager> scriptedDisplayableManager =
+        vtkSmartPointer<vtkMRMLScriptedDisplayableManager>::New();
+    scriptedDisplayableManager->SetPythonSource(displayableManagerName);
 
-  this->AddAndInitialize(displayableManager);
+    this->AddAndInitialize(scriptedDisplayableManager);
+    }
+  else
+    {
+    // Object will be unregistered when the SmartPointer will go out-of-scope
+    vtkSmartPointer<vtkObject> objectSmartPointer;
+    objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(displayableManagerName));
+    vtkMRMLAbstractDisplayableManager* displayableManager =
+        vtkMRMLAbstractDisplayableManager::SafeDownCast(objectSmartPointer);
+    if (!displayableManager)
+      {
+      vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate "
+                    << displayableManagerName);
+      return;
+      }
+
+    this->AddAndInitialize(displayableManager);
+    }
 
   vtkDebugMacro(<< "group:" << this << ", onDisplayableManagerFactoryRegisteredEvent:"
                 << displayableManagerName)

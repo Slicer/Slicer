@@ -33,6 +33,10 @@ public:
 
   vtkMRMLScene* mrmlScene()const;
 
+  /// Set the directory from which build-in scripted
+  /// displayableManagers should be sourced from.
+  void setScriptedDisplayableManagerDirectory(const QString& scriptedDisplayableManagerDirectory);
+
   /// Get SliceViewWidget identified by \a name
   qMRMLSliceWidget* sliceView(const QString& name);
 

@@ -40,6 +40,7 @@ public slots:
 public:
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
+  QString                            ScriptDisplayableManagerDirectory;
 };
 
 #endif

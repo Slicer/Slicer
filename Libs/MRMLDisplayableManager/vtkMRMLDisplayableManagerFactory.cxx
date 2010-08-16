@@ -16,6 +16,7 @@
 #include "vtkMRMLDisplayableManagerFactory.h"
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
+#include "vtkMRMLScriptedDisplayableManager.h"
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
@@ -107,12 +108,12 @@ bool vtkMRMLDisplayableManagerFactory::IsDisplayableManagerRegistered(const char
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vtkClassName)
+void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vtkClassOrScriptName)
 {
   // Sanity checks
-  if (!vtkClassName)
+  if (!vtkClassOrScriptName)
     {
-    vtkWarningMacro(<<"RegisterDisplayableManager - vtkClassName is NULL");
+    vtkWarningMacro(<<"RegisterDisplayableManager - vtkClassOrScriptName is NULL");
     return;
     }
 
@@ -120,36 +121,41 @@ void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
   vtkInternal::DisplayableManagerClassNamesIt it = std::find(
       this->Internal->DisplayableManagerClassNames.begin(),
       this->Internal->DisplayableManagerClassNames.end(),
-      vtkClassName);
+      vtkClassOrScriptName);
 
   if ( it != this->Internal->DisplayableManagerClassNames.end())
     {
-    vtkWarningMacro(<<"RegisterDisplayableManager - " << vtkClassName << " already registered");
+    vtkWarningMacro(<<"RegisterDisplayableManager - " << vtkClassOrScriptName << " already registered");
     return;
     }
 
-  // Check if vtkClassName is a valid vtk className
+  // Check if vtkClassOrScriptName is a valid vtk className
   vtkSmartPointer<vtkObject> objectPointer;
-  objectPointer.TakeReference(vtkInstantiator::CreateInstance(vtkClassName));
+  objectPointer.TakeReference(vtkInstantiator::CreateInstance(vtkClassOrScriptName));
   if (!objectPointer)
     {
-    return;
+    // Check if vtkClassOrScriptName is a python script
+    std::string str(vtkClassOrScriptName);
+    if (str.find(".py") == std::string::npos)
+      {
+      return;
+      }
     }
 
   // Register it
-  this->Internal->DisplayableManagerClassNames.push_back(vtkClassName);
+  this->Internal->DisplayableManagerClassNames.push_back(vtkClassOrScriptName);
 
   this->InvokeEvent(Self::DisplayableManagerFactoryRegisteredEvent,
-                    const_cast<char*>(vtkClassName));
+                    const_cast<char*>(vtkClassOrScriptName));
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* vtkClassName)
+void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* vtkClassOrScriptName)
 {
   // Sanity checks
-  if (!vtkClassName)
+  if (!vtkClassOrScriptName)
     {
-    vtkWarningMacro(<<"UnRegisterDisplayableManager - vtkClassName is NULL");
+    vtkWarningMacro(<<"UnRegisterDisplayableManager - vtkClassOrScriptName is NULL");
     return;
     }
   
@@ -157,18 +163,18 @@ void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* 
   vtkInternal::DisplayableManagerClassNamesIt it = std::find(
       this->Internal->DisplayableManagerClassNames.begin(),
       this->Internal->DisplayableManagerClassNames.end(),
-      vtkClassName);
+      vtkClassOrScriptName);
 
   if ( it == this->Internal->DisplayableManagerClassNames.end())
     {
-    vtkWarningMacro(<<"UnRegisterDisplayableManager - " << vtkClassName << " is NOT registered");
+    vtkWarningMacro(<<"UnRegisterDisplayableManager - " << vtkClassOrScriptName << " is NOT registered");
     return;
     }
 
   this->Internal->DisplayableManagerClassNames.erase(it);
 
   this->InvokeEvent(Self::DisplayableManagerFactoryUnRegisteredEvent,
-                    const_cast<char*>(vtkClassName));
+                    const_cast<char*>(vtkClassOrScriptName));
 }
 
 //----------------------------------------------------------------------------
@@ -190,27 +196,43 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
 
   vtkMRMLDisplayableManagerGroup * displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
 
+  // A Group observes the factory and eventually instantiates new DisplayableManager
+  // when they are registered in the factory
+  displayableManagerGroup->SetAndObserveDisplayableManagerFactory(this);
+
   for(std::size_t i=0; i < this->Internal->DisplayableManagerClassNames.size(); ++i)
     {
-    const char* className = this->Internal->DisplayableManagerClassNames[i].c_str();
+    const char* classOrScriptName = this->Internal->DisplayableManagerClassNames[i].c_str();
 
-    // Object will be unregistered when the SmartPointer will go out-of-scope
-    vtkSmartPointer<vtkObject> objectSmartPointer;
-    objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(className));
-    vtkMRMLAbstractThreeDViewDisplayableManager* displayableManager =
-        vtkMRMLAbstractThreeDViewDisplayableManager::SafeDownCast(objectSmartPointer);
-    if (!displayableManager)
+    // Are we dealing with a python scripted displayable manager
+    std::string str(classOrScriptName);
+    if (str.find(".py") != std::string::npos)
       {
-      vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate " << className);
-      continue;
+      // TODO Make sure the file exists ...
+      vtkSmartPointer<vtkMRMLScriptedDisplayableManager> scriptedDisplayableManager =
+          vtkSmartPointer<vtkMRMLScriptedDisplayableManager>::New();
+      scriptedDisplayableManager->SetPythonSource(classOrScriptName);
+
+      // Note that DisplayableManagerGroup will take ownership of the object
+      displayableManagerGroup->AddAndInitialize(scriptedDisplayableManager);
+      }
+    else
+      {
+      // Object will be unregistered when the SmartPointer will go out-of-scope
+      vtkSmartPointer<vtkObject> objectSmartPointer;
+      objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(classOrScriptName));
+      vtkMRMLAbstractThreeDViewDisplayableManager* displayableManager =
+          vtkMRMLAbstractThreeDViewDisplayableManager::SafeDownCast(objectSmartPointer);
+      if (!displayableManager)
+        {
+        vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate " << classOrScriptName);
+        continue;
+        }
+
+      // Note that DisplayableManagerGroup will take ownership of the object
+      displayableManagerGroup->AddAndInitialize(displayableManager);
       }
 
-    // A Group observes the factory and eventually instantiates new DisplayableManager
-    // when they are registered in the factory
-    displayableManagerGroup->SetAndObserveDisplayableManagerFactory(this);
-
-    // Note that DisplayableManagerGroup will take ownership of the object
-    displayableManagerGroup->AddAndInitialize(displayableManager);
     }
 
   displayableManagerGroup->Initialize(newRenderer);

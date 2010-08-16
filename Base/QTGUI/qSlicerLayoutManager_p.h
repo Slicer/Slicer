@@ -96,6 +96,7 @@ public slots:
   void onLayoutNodeModifiedEvent(vtkObject* layoutNode);
 
 public:
+  QString            ScriptedDisplayableManagerDirectory;
   vtkMRMLScene*      MRMLScene;
   vtkMRMLLayoutNode* MRMLLayoutNode;
   int                CurrentViewArrangement;

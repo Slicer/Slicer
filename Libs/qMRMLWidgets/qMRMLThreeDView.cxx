@@ -1,6 +1,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QFileInfo>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -140,16 +141,43 @@ void qMRMLThreeDViewPrivate::onSceneImportedEvent()
 qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
 {
   CTK_INIT_PRIVATE(qMRMLThreeDView);
-  CTK_D(qMRMLThreeDView);
   VTK_CREATE(vtkThreeDViewInteractorStyle, interactorStyle);
   this->interactor()->SetInteractorStyle(interactorStyle);
 
-  // Register Displayable Managers
-  vtkMRMLThreeDViewDisplayableManagerFactory* factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
+  // Set default background color
+  this->setBackgroundColor(QColor::fromRgbF(0.701960784314, 0.701960784314, 0.905882352941));
+
+  // Hide orientation widget
+  this->setOrientationWidgetVisible(false);
+
+  this->setRenderEnabled(true);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory)
+{
+  CTK_D(qMRMLThreeDView);
+
   QStringList displayableManagers;
   displayableManagers << "vtkMRMLCameraDisplayableManager"
       << "vtkMRMLViewDisplayableManager"
       << "vtkMRMLModelDisplayableManager";
+
+  QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
+  Q_ASSERT(dirInfo.isDir());
+  if (dirInfo.isDir())
+    {
+    displayableManagers << QString("%1/vtkScriptedExampleDisplayableManager.py").arg(
+        scriptedDisplayableManagerDirectory);
+    }
+  else
+    {
+    logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
+                 arg(scriptedDisplayableManagerDirectory));
+    }
+
+  // Register Displayable Managers
+  vtkMRMLThreeDViewDisplayableManagerFactory* factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   foreach(const QString displayableManagerName, displayableManagers)
     {
     if (!factory->IsDisplayableManagerRegistered(displayableManagerName.toLatin1()))
@@ -164,14 +192,6 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   // Observe displayable manager group to catch RequestRender events
   d->qvtkConnect(d->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                  this, SLOT(scheduleRender()));
-
-  // Set default background color
-  this->setBackgroundColor(QColor::fromRgbF(0.701960784314, 0.701960784314, 0.905882352941));
-
-  // Hide orientation widget
-  this->setOrientationWidgetVisible(false);
-
-  this->setRenderEnabled(true);
 }
 
 //------------------------------------------------------------------------------

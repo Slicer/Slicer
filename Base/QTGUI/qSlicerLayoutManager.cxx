@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QWidget>
+#include <QFileInfo>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -151,6 +152,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(vtkMRMLSliceNode* sliceNod
   else
     {
     sliceView = new qMRMLSliceWidget(this->TargetWidget);
+    sliceView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
     sliceView->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
     sliceView->setSliceViewName(sliceViewName);
     sliceView->setMRMLScene(this->MRMLScene);
@@ -240,6 +242,7 @@ QWidget* qSlicerLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* viewNode
     {
     logger.trace("createThreeDView - instantiated new qMRMLThreeDView");
     threeDView = new qMRMLThreeDView(this->TargetWidget);
+    threeDView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
     threeDView->setMRMLScene(this->MRMLScene);
     threeDView->setMRMLViewNode(viewNode);
 
@@ -956,6 +959,15 @@ vtkMRMLScene* qSlicerLayoutManager::mrmlScene()const
 {
   CTK_D(const qSlicerLayoutManager);
   return d->MRMLScene;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
+    const QString& scriptedDisplayableManagerDirectory)
+{
+  CTK_D(qSlicerLayoutManager);
+  Q_ASSERT(QFileInfo(scriptedDisplayableManagerDirectory).isDir());
+  d->ScriptedDisplayableManagerDirectory = scriptedDisplayableManagerDirectory;
 }
 
 //------------------------------------------------------------------------------

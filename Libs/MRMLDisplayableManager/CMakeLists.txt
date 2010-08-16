@@ -15,6 +15,11 @@ SET(include_dirs
   ${MRMLLogic_SOURCE_DIR}
   ${MRMLLogic_BINARY_DIR}
   )
+IF(Slicer3_USE_PYTHONQT)
+  LIST(APPEND include_dirs
+    ${PYTHON_INCLUDE_DIR}
+    )
+ENDIF()
 
 SET(packages
   MRML
@@ -85,6 +90,16 @@ SET(KIT_SRCS
   vtkThreeDViewInteractorStyle.cxx
   )
 
+IF(VTK_WRAP_PYTHON)
+  LIST(APPEND KIT_SRCS
+    vtkMRMLScriptedDisplayableManager.cxx
+    )
+  SET_SOURCE_FILES_PROPERTIES(
+    vtkMRMLScriptedDisplayableManager.cxx
+    WRAP_EXCLUDE
+    )
+ENDIF()
+
 # Create the instantiator for DisplayableManager classes.
 SET(VTK_USE_INSTANTIATOR_NEW 1)
 VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}Instantiator"
@@ -124,6 +139,13 @@ SET(libs
   MRML
   MRMLLogic
   )
+
+IF(VTK_WRAP_PYTHON)
+  LIST(APPEND libs
+    vtkCommonPythonD # For vtkPythonUtils
+    ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY
+    )
+ENDIF()
 
 TARGET_LINK_LIBRARIES(${lib_name}
   ${libs}
@@ -196,8 +218,10 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
     LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development)
 
+  ADD_SUBDIRECTORY(Python)
+
 ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
- 
+
 # --------------------------------------------------------------------------
 # Testing
 

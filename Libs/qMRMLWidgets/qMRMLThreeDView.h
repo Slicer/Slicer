@@ -22,6 +22,11 @@ public:
   explicit qMRMLThreeDView(QWidget* parent = 0);
   virtual ~qMRMLThreeDView(){}
 
+  /// Register DisplayableManagers
+  /// \a scriptedDisplayableManagerDirectory is the based directory from which
+  /// scripted DisplayableManager should be sourced from.
+  void registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory);
+
 public slots:
 
   /// Set the MRML \a scene that should be listened for events
