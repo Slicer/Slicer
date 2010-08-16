@@ -27,6 +27,11 @@
 //  - Slicer3_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
 
+#ifdef Slicer3_USE_PYTHONQT
+// PythonQt includes
+#include <PythonQt.h>
+#endif
+
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h"
@@ -333,6 +338,11 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
 
   // Instanciate moduleManager
   d->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
+
+#ifdef Slicer3_USE_PYTHONQT
+  // Initialize Python
+  this->corePythonManager()->mainContext();
+#endif
 
   // Parse command line arguments
   d->parseArguments();
