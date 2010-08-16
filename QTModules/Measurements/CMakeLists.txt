@@ -1,4 +1,3 @@
-PROJECT(qSlicerMeasurementsModule)
 
 # Module name (usually identique to the directory name)
 SET(qt_module_name "Measurements")
