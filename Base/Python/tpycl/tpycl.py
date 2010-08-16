@@ -29,7 +29,7 @@ class tpycl(object):
     self.tcl.createcommand("py_del", self.py_del)
     self.tcl.createcommand("py_vtkInstanceName", self.py_vtkInstanceName)
     # this path is slicer-specific
-    self.tcl.eval("source %s/bin/Python/tpycl/tpycl.tcl" % os.environ['Slicer3_HOME'])
+    self.tcl.eval("source $::env(Slicer3_HOME)/bin/Python/tpycl/tpycl.tcl")
 
   def usage(self):
     print "tpycl [options] [file.tcl] [arg] [arg]"
@@ -55,6 +55,13 @@ class tpycl(object):
     """ imports a vtk-wrapped python package 
     """
     self.dprint ("importing %s as a package" % packageName)
+
+    if packageName == 'vtk':
+      from slicer import vtk
+      globals()[packageName] = vtk
+      for name in dir(vtk):
+        self.tcl.eval("::tpycl::registerClass %s %s.%s" % (name, packageName, name) )
+      return
 
     package = globals()[packageName] = __import__(packageName)
     for name in dir(package):

@@ -47,9 +47,15 @@ def getNodes():
 def tcl(cmd):
   global _tpycl
   try:
+    os.environ['Slicer3_HOME']
+  except KeyError:
+    home = os.path.dirname(os.path.dirname(sys.executable))
+    os.environ['Slicer3_HOME'] = home
+  try:
     _tpycl
   except NameError:
     # no tcl yet, so first bring in the adapters, then the actual code
+    from slicer import vtk
     import tpycl
     _tpycl = tpycl.tpycl()
     _tpycl.tcl_eval("""
@@ -58,7 +64,6 @@ def tcl(cmd):
         ::Slicer3Adapters::Initialize
       """)
     
-    import os
     # TODO: not clear why package require is not working 
     # - instead, source the pkgIndex directly
     _tpycl.tcl_eval("""
