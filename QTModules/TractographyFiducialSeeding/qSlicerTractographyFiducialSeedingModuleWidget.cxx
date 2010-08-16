@@ -28,7 +28,7 @@ qSlicerTractographyFiducialSeedingModuleWidget::qSlicerTractographyFiducialSeedi
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  qSlicerWidget::setMRMLScene(scene);
+  this->Superclass::setMRMLScene(scene);
 
   // find parameters node or create it if there is no one in the scene
   if (this->TractographyFiducialSeedingNode == 0)
