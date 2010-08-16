@@ -570,6 +570,22 @@ double* vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double
 }
 
 //---------------------------------------------------------------------------
+/// Convert world to display coordinates
+double* vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r, double a, double s)
+{
+
+  double * displayCoordinates;
+
+  this->GetRenderer()->SetWorldPoint(r,a,s,1);
+  this->GetRenderer()->WorldToView();
+  this->GetRenderer()->GetViewPoint(displayCoordinates);
+  this->GetRenderer()->ViewToDisplay();
+  this->GetRenderer()->GetDisplayPoint(displayCoordinates);
+
+  return displayCoordinates;
+}
+
+//---------------------------------------------------------------------------
 /// Check if it is the correct displayableManager
 bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 {

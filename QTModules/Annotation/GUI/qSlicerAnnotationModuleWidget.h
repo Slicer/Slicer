@@ -42,7 +42,6 @@ public:
     typedef qSlicerAbstractModuleWidget Superclass;
     qSlicerAnnotationModuleWidget(QWidget *parent=0);
     ~qSlicerAnnotationModuleWidget();
-    typedef enum { FiducialPoint=0, Angle=1, Ruler=2 } AnnotationType;
 
 
     // Add a new annotation node to the list
@@ -60,6 +59,7 @@ public:
         AngleNode,
         StickyNode,
         SplineNode,
+        RulerNode,
       };
 
 protected:
@@ -156,6 +156,8 @@ protected slots:
   // Spline Node
   void onSplineNodeButtonClicked();
 
+  // Ruler Node
+  void onRulerNodeButtonClicked();
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);

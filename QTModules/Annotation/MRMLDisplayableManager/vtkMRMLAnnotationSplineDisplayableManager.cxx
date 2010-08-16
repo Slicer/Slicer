@@ -13,6 +13,7 @@
 #include <vtkSplineWidget2.h>
 #include <vtkRenderer.h>
 #include <vtkHandleRepresentation.h>
+#include <vtkSplineRepresentation.h>
 #include <vtkInteractorEventRecorder.h>
 
 // std includes
@@ -42,6 +43,11 @@ public:
     }
   }
   vtkAnnotationSplineWidgetCallback(){}
+  ~vtkAnnotationSplineWidgetCallback()
+  {
+    this->m_Widget = 0;
+    this->m_Node = 0;
+  }
 
   vtkSplineWidget2 * m_Widget;
   vtkMRMLAnnotationSplineNode * m_Node;
@@ -83,47 +89,26 @@ vtkAbstractWidget * vtkMRMLAnnotationSplineDisplayableManager::CreateWidget(vtkM
   vtkSplineWidget2 * splineWidget = vtkSplineWidget2::New();
 
   splineWidget->SetInteractor(this->GetInteractor());
-  //splineWidget->SetCurrentRenderer(this->GetRenderer());
-/*
+  splineWidget->SetCurrentRenderer(this->GetRenderer());
+
   // add observer for end interaction
   vtkAnnotationSplineWidgetCallback *myCallback = vtkAnnotationSplineWidgetCallback::New();
   myCallback->m_Node = splineNode;
   myCallback->m_Widget = splineWidget;
   splineWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   myCallback->Delete();
-*/
+
   splineWidget->On();
-  /*
-  vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
-  vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
-  vtkHandleWidget *h3 = this->m_HandleWidgetList[2];
-  vtkHandleWidget *h4 = this->m_HandleWidgetList[3];
-  vtkHandleWidget *h5 = this->m_HandleWidgetList[4];
 
-  double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+  splineWidget->CreateDefaultRepresentation();
+  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetNumberOfHandles(5);
 
-  double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
+  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(0,splineNode->GetControlPointCoordinates(0));
+  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(1,splineNode->GetControlPointCoordinates(1));
+  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(2,splineNode->GetControlPointCoordinates(2));
+  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(3,splineNode->GetControlPointCoordinates(3));
+  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(4,splineNode->GetControlPointCoordinates(4));
 
-  double* position3 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
-
-  double* position4 = vtkHandleRepresentation::SafeDownCast(h4->GetRepresentation())->GetDisplayPosition();
-
-  double* position5 = vtkHandleRepresentation::SafeDownCast(h5->GetRepresentation())->GetDisplayPosition();
-
-
-  splineWidget->SetHandlePosition(0,position1);
-  splineWidget->SetHandlePosition(1,position2);
-  splineWidget->SetHandlePosition(2,position3);
-  splineWidget->SetHandlePosition(3,position4);
-  splineWidget->SetHandlePosition(4,position5);
-
-  // save the world coordinates of the points to MRML
-  splineNode->SetControlPoint(this->GetDisplayToWorldCoordinates(position1[0],position1[1]),0);
-  splineNode->SetControlPoint(this->GetDisplayToWorldCoordinates(position2[0],position2[1]),1);
-  splineNode->SetControlPoint(this->GetDisplayToWorldCoordinates(position3[0],position3[1]),2);
-  splineNode->SetControlPoint(this->GetDisplayToWorldCoordinates(position4[0],position4[1]),3);
-  splineNode->SetControlPoint(this->GetDisplayToWorldCoordinates(position5[0],position5[1]),4);
-*/
   vtkDebugMacro("CreateWidget: Widget was set up")
 
   return splineWidget;
@@ -154,38 +139,13 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnWidgetCreated()
     return;
     }
 
-  VTK_CREATE(vtkInteractorEventRecorder, recorder);
-  recorder->SetInteractor(this->GetInteractor());
-  recorder->ReadFromInputStringOn();
-
-  vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
-  vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
-  vtkHandleWidget *h3 = this->m_HandleWidgetList[2];
-  vtkHandleWidget *h4 = this->m_HandleWidgetList[3];
-  vtkHandleWidget *h5 = this->m_HandleWidgetList[4];
-
-  double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
-
-  double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
-
-  double* position3 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
-
-  double* position4 = vtkHandleRepresentation::SafeDownCast(h4->GetRepresentation())->GetDisplayPosition();
-
-  double* position5 = vtkHandleRepresentation::SafeDownCast(h5->GetRepresentation())->GetDisplayPosition();
-
-  std::ostringstream o;
-
-  // HACK TO DO!!
-
+  // nothing yet
 }
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
 void vtkMRMLAnnotationSplineDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
-
-  std::cout << "sppppline1" << std::endl;
 
   if (!this->IsCorrectDisplayableManager())
     {
@@ -196,12 +156,29 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInThreeDRenderWindow(doub
   // place the seed where the user clicked
   this->PlaceSeed(x,y);
 
-  std::cout << "sppppline2" << std::endl;
-
   if (this->m_ClickCounter->HasEnoughClicks(5))
     {
 
+    vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
+    vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
+    vtkHandleWidget *h3 = this->m_HandleWidgetList[2];
+    vtkHandleWidget *h4 = this->m_HandleWidgetList[3];
+    vtkHandleWidget *h5 = this->m_HandleWidgetList[4];
+
+    double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetWorldPosition();
+    double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetWorldPosition();
+    double* position3 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetWorldPosition();
+    double* position4 = vtkHandleRepresentation::SafeDownCast(h4->GetRepresentation())->GetWorldPosition();
+    double* position5 = vtkHandleRepresentation::SafeDownCast(h5->GetRepresentation())->GetWorldPosition();
+
     vtkMRMLAnnotationSplineNode *splineNode = vtkMRMLAnnotationSplineNode::New();
+
+    // save the world coordinates of the points to MRML
+    splineNode->SetControlPoint(position1,0);
+    splineNode->SetControlPoint(position2,1);
+    splineNode->SetControlPoint(position3,2);
+    splineNode->SetControlPoint(position4,3);
+    splineNode->SetControlPoint(position5,4);
 
     splineNode->Initialize(this->GetMRMLScene());
 

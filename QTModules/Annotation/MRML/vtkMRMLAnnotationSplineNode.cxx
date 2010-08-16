@@ -98,7 +98,7 @@ vtkMRMLAnnotationSplineNode::~vtkMRMLAnnotationSplineNode()
   vtkDebugMacro("Destructing...." << (this->GetID() != NULL ? this->GetID() : "null id"));
   if (this->DistanceAnnotationFormat)
     {
-      delete [] this->DistanceAnnotationFormat;
+      //delete [] this->DistanceAnnotationFormat;
       this->DistanceAnnotationFormat = NULL;
     }
 }

@@ -164,17 +164,12 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInThreeDRenderWindow(doub
 
     double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
 
-    double coordinates[3];
-    coordinates[0] = worldCoordinates[0];
-    coordinates[1] = worldCoordinates[1];
-    coordinates[2] = worldCoordinates[2];
-
     // Create the node
     vtkMRMLAnnotationStickyNode *stickyNode = vtkMRMLAnnotationStickyNode::New();
 
     stickyNode->Initialize(this->GetMRMLScene());
 
-    stickyNode->SetStickyCoordinates(coordinates);
+    stickyNode->SetStickyCoordinates(worldCoordinates);
 
     stickyNode->SetName(stickyNode->GetScene()->GetUniqueNameByString("AnnotationStickyNote"));
 

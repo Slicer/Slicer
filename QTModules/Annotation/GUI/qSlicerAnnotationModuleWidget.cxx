@@ -664,8 +664,6 @@ void qSlicerAnnotationModuleWidget::setup()
   CTK_D(qSlicerAnnotationModuleWidget);
   d->setupUi(
       this);
-  //this->connect(d->rulerTypeButton, SIGNAL(clicked()),    this, SLOT(onCreateMeasurementRulerButtonClicked()));
-  //this->connect(d->angleTypeButton, SIGNAL(toggled(bool)),    this, SLOT(onCreateMeasurementAngleButtonToggled(bool)));
   this->connect(
       d->fiducialTypeButton,
       SIGNAL(clicked()),
@@ -701,6 +699,11 @@ void qSlicerAnnotationModuleWidget::setup()
       SIGNAL(clicked()),
       this,
       SLOT(onSplineNodeButtonClicked()));
+  this->connect(
+      d->rulerTypeButton,
+      SIGNAL(clicked()),
+      this,
+      SLOT(onRulerNodeButtonClicked()));
 
   this->connect(
       d->moveDownSelectedButton,
@@ -2372,6 +2375,9 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
     case qSlicerAnnotationModuleWidget::SplineNode:
       d->logic()->AddAnnotationNode("vtkMRMLAnnotationSplineNode");
       break;
+    case qSlicerAnnotationModuleWidget::RulerNode:
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationRulerNode");
+      break;
     }
 
   /*if ( toggle )
@@ -2615,7 +2621,7 @@ void qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-// Text Node
+// Spline Node
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onSplineNodeButtonClicked()
 {
@@ -2633,6 +2639,30 @@ void qSlicerAnnotationModuleWidget::onSplineNodeButtonClicked()
   this->disableAllAnnotationTools();
 
   d->splineTypeButton->setChecked(
+      true);
+  d->resumeButton->setChecked(
+      true);
+}
+
+//-----------------------------------------------------------------------------
+// Ruler Node
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onRulerNodeButtonClicked()
+{
+  CTK_D(qSlicerAnnotationModuleWidget);
+
+  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::RulerNode;
+
+  d->logic()->SetAndObserveWidget(
+      this);
+
+  this->enableMouseModeButtons();
+  this->onResumeButtonClicked();
+
+
+  this->disableAllAnnotationTools();
+
+  d->rulerTypeButton->setChecked(
       true);
   d->resumeButton->setChecked(
       true);

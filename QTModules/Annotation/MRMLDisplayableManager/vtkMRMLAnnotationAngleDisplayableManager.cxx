@@ -123,6 +123,7 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
   vtkAngleWidget *angleWidget = vtkAngleWidget::New();
   angleWidget->CreateDefaultRepresentation();
   angleWidget->SetRepresentation(rep);
+
   angleWidget->SetInteractor(this->GetInteractor());
   angleWidget->SetCurrentRenderer(this->GetRenderer());
   //angleWidget->Modified();
@@ -208,7 +209,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated()
   o << "LeftButtonPressEvent " << position3[0] << " " << position3[1] << " 0 0 0 0\n";
   o << "RenderEvent " << position3[0] << " " << position3[1] << " 0 0 0 0\n";
   o << "LeftButtonReleaseEvent " << position3[0] << " " << position3[1] << " 0 0 0 0 t\n";
-  o << "EnterEvent 192 173 0 0 113 1 q\n";
+  o << "ExitEvent 192 173 0 0 113 1 q\n";
 
   recorder->SetInputString(o.str().c_str());
   recorder->Play();

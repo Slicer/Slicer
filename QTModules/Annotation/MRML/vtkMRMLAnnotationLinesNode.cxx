@@ -571,7 +571,7 @@ int vtkMRMLAnnotationLinesNode::SetControlPoint(int id, double newControl[3],int
   // cout << "vtkMRMLAnnotationLinesNode::SetControlPoint "<< id << " " << result << endl;
   if (result && this->GetAnnotationLineDisplayNode())
     {
-      // This is needed bc otherwise the bounding box of ruler is not correvtly updated 
+      // This is needed bc otherwise the bounding box of ruler is not correctly updated
       this->GetAnnotationTextDisplayNode()->SetVisibility(1);
       this->GetAnnotationTextDisplayNode()->SetVisibility(0);
       this->GetAnnotationPointDisplayNode()->SetVisibility(1);

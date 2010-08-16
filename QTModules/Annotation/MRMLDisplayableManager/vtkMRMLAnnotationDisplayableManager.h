@@ -105,6 +105,9 @@ protected:
   // Convert display to world coordinates
   virtual double * GetDisplayToWorldCoordinates(double x, double y);
 
+  // Convert display to world coordinates
+  virtual double * GetWorldToDisplayCoordinates(double r, double a, double s);
+
   /// Focus of this displayableManager
   const char* m_Focus;
 
