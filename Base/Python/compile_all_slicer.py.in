@@ -1,7 +1,0 @@
-
-# Based on paraview/VTK/Wrapping/Python/compile_all_vtk.py.in
-
-import compileall
-compileall.compile_dir('@Slicer_PYTHON_MODULE_BINARY_DIR@')
-file = open('@CMAKE_CURRENT_BINARY_DIR@/slicer_python_compile_complete', 'w')
-file.write('Done')
