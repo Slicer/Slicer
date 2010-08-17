@@ -106,7 +106,7 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
 
   if (!bidimensionalNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get spline node!")
+    vtkErrorMacro("CreateWidget: Could not get bidimensional node!")
     return 0;
     }
 

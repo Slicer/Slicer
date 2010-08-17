@@ -61,6 +61,7 @@ public:
         SplineNode,
         RulerNode,
         BidimensionalNode,
+        ROINode,
       };
 
 protected:

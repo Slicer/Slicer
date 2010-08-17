@@ -1678,7 +1678,7 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
 /*
   foreach(int i, selectedRows)
       {
-      /*vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(
+      vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(
        d->logic()->GetMRMLScene()->GetNodeByID(
        m_IDs[i]));
        if (fNode != NULL && fNode->IsA(
@@ -1727,7 +1727,7 @@ void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
   std::cout << "Selected:" << selectedRows.size() << std::endl;
 /*
   foreach(int i, selectedRows)
-      {/*
+      {
        vtkMRMLAnnotationNode* node = vtkMRMLAnnotationNode::SafeDownCast(
        d->logic()->GetMRMLScene()->GetNodeByID(
        m_IDs[i]));
@@ -2232,7 +2232,7 @@ void qSlicerAnnotationModuleWidget::onItemSelectionChanged()
 void qSlicerAnnotationModuleWidget::AddAngleCompleted(vtkObject* object,
                                                       void* call_data)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  //CTK_D(qSlicerAnnotationModuleWidget);
   /*
    d->angleTypeButton->setChecked(
    false);
@@ -2381,6 +2381,9 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
     case qSlicerAnnotationModuleWidget::BidimensionalNode:
       d->logic()->AddAnnotationNode("vtkMRMLAnnotationBidimensionalNode");
       break;
+    case qSlicerAnnotationModuleWidget::ROINode:
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationROINode");
+      break;
     }
 
   /*if ( toggle )
@@ -2440,6 +2443,7 @@ void qSlicerAnnotationModuleWidget::cancelOrRemoveLastAddedAnnotationNode()
 
     d->logic()->CancelCurrentOrRemoveLastAddedAnnotationNode();
 
+    // TODO
     this->m_IDs.pop_back();
     d->tableWidget->removeRow(
         this->m_lastAddedIndex);
@@ -2723,46 +2727,24 @@ void qSlicerAnnotationModuleWidget::onBidimensionalNodeButtonClicked()
 // ROI Node
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
-{/*
- CTK_D(qSlicerAnnotationModuleWidget);
+{
+  CTK_D(qSlicerAnnotationModuleWidget);
 
- const char *newROINodeID = d->logic()->AddROINode();
- if (!newROINodeID)
- {
- std::cerr << "Could not add ROI Node" << std::endl;
- return;
- }
+  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::ROINode;
 
- m_IDs.push_back(
- newROINodeID);
- m_index++;
+  d->logic()->SetAndObserveWidget(
+      this);
 
- vtkMRMLAnnotationROINode* node = vtkMRMLAnnotationROINode::SafeDownCast(
- d->logic()->GetMRMLScene()->GetNodeByID(
- newROINodeID));
+  this->enableMouseModeButtons();
+  this->onResumeButtonClicked();
 
- std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement(
- d->logic()->GetMRMLScene()->GetNodeByID(
- newROINodeID));
- char* format = node->GetROIAnnotationFormat();
- QString valueString;
- qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
- format,
- thevalue,
- valueString);
- this->updateAnnotationTable(
- m_index,
- thevalue,
- format);
- this->selectRowByIndex(
- m_index);
 
- qvtkConnect(
- node,
- vtkMRMLAnnotationROINode::ValueModifiedEvent,
- this,
- SLOT(updateValue(vtkObject*, void*)));
- */
+  this->disableAllAnnotationTools();
+
+  d->roiTypeButton->setChecked(
+      true);
+  d->resumeButton->setChecked(
+      true);
 }
 
 

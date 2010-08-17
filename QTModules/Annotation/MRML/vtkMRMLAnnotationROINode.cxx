@@ -92,7 +92,7 @@ vtkMRMLAnnotationROINode::~vtkMRMLAnnotationROINode()
   vtkDebugMacro("Destructing...." << (this->GetID() != NULL ? this->GetID() : "null id"));
   if (this->ROIAnnotationFormat)
     {
-      delete [] this->ROIAnnotationFormat;
+      //delete [] this->ROIAnnotationFormat;
       this->ROIAnnotationFormat = NULL;
     }
 }

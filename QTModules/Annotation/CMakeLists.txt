@@ -28,7 +28,8 @@ SET(DisplayableManager_SRCS
   MRMLDisplayableManager/vtkMRMLAnnotationAngleDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationSplineDisplayableManager.cxx  
   MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.cxx   
-  MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalDisplayableManager.cxx     
+  MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
+  MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx     
   MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationClickCounter.cxx
   )
