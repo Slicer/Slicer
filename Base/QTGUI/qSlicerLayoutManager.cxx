@@ -177,7 +177,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(vtkMRMLSliceNode* sliceNod
     logger.trace(
         QString("createSliceView - instantiated new qMRMLSliceWidget: %1").arg(sliceViewName));
 
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
     // Note: Python code shouldn't be added to the layout manager itself !
     // TODO: move this functionality to the scripted displayable manager...
 
