@@ -21,8 +21,11 @@
 // SlicerQt includes
 #include "qSlicerLayoutManager.h"
 #include "qSlicerLayoutManager_p.h"
+
+#ifdef Slicer3_USE_PYTHONQT
 #include "qSlicerPythonManager.h"
 #include "qSlicerApplication.h"
+#endif
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
@@ -251,11 +254,6 @@ QWidget* qSlicerLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* viewNode
     threeDView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
     threeDView->setMRMLScene(this->MRMLScene);
     threeDView->setMRMLViewNode(viewNode);
-
-    //QObject::connect(qSlicerApplication::application(),
-    //                SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-    //                threeDView,
-    //                SLOT(setMRMLScene(vtkMRMLScene*)));
 
     this->ThreeDViewList.push_back(threeDView);
     this->MRMLViewNodeList.push_back(viewNode);
