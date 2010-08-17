@@ -184,18 +184,24 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(vtkMRMLSliceNode* sliceNod
     // Register this slice view with the python layer
     qSlicerPythonManager *py = qSlicerApplication::application()->pythonManager();
     py->executeString(QString("slicer.sliceView%1 = _sliceView()").arg(sliceViewName));
-    QString instName = QString("slicer.sliceView%1_%2");
+
+    QString pythonInstanceName = QString("slicer.sliceView%1_%2");
+
     py->addVTKObjectToPythonMain(
-      instName.arg(sliceViewName, "sliceLogic").toLatin1().constData(),
+      pythonInstanceName.arg(sliceViewName, "sliceLogic"),
       sliceView->sliceController()->sliceLogic());
+
     py->addVTKObjectToPythonMain(
-      instName.arg(sliceViewName, "interactorStyle").toLatin1().constData(),
+      pythonInstanceName.arg(sliceViewName, "interactorStyle"),
       sliceView->interactorStyle());
+
     // TODO: need to access the corner annotation
     //py->addVTKObjectToPythonMain(
-      //instName.arg(sliceViewName, "cornerAnnotation").toLatin1().constData(),
+      //instName.arg(sliceViewName, "cornerAnnotation"),
       //sliceView->cornerAnnotation());
+
     py->executeString(QString("registerScriptedDisplayableManagers('%1')").arg(sliceViewName));
+
     logger.trace(
         QString("createSliceView - %1 registered with python").arg(sliceViewName));
 #endif
