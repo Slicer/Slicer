@@ -340,7 +340,7 @@ IF(Slicer3_USE_QT)
     # Include convenient script allowing to copy and compile python scripts
     INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3CompilePythonScripts.cmake)
     # Enable qMRMLWidgets python wrapping
-    SET(qMRMLWidgets_WRAP_PYTHON ON)
+    SET(qMRMLWidgets_WRAP_PYTHON OFF)
   ENDIF(Slicer3_USE_PYTHONQT)
 ENDIF(Slicer3_USE_QT)  
 

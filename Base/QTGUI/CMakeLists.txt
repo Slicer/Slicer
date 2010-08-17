@@ -119,8 +119,12 @@ IF(Slicer3_USE_PYTHONQT)
     CTKScriptingPythonWidgets
     CTKWidgetsPythonQt
     CTKVisualizationVTKWidgetsPythonQt
-    qMRMLWidgetsPythonQt
     )
+  IF(qMRMLWidgets_WRAP_PYTHON)
+    LIST(APPEND KIT_target_libraries
+      qMRMLWidgetsPythonQt
+    )
+  ENDIF()
 ENDIF()
 
 # Resources
