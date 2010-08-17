@@ -17,6 +17,7 @@ SET(Slicer_PYTHON_RESOURCES
   
 IF(Slicer3_USE_PYTHONQT_WITH_TCL)
   LIST(APPEND Slicer_PYTHON_SCRIPTS
+    slicer/slicerqt-with-tcl
     tpycl/__init__
     tpycl/tpycl
     )

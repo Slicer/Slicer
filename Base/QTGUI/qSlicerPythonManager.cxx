@@ -74,6 +74,10 @@ void qSlicerPythonManager::preInitialization()
   this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt.py");
 
 #ifdef Slicer3_USE_PYTHONQT_WITH_TCL
+  // Evaluate application script specific to the TCL layer
+  // Note that it should be sourced after slicerqt.py
+  this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt-with-tcl.py");
+
   // -- event broker
   // - script handler to pass callback strings to the tcl interpeter
   // - synchronous mode so that redundant events do not get collapsed

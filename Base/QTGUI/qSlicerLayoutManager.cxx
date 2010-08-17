@@ -22,7 +22,7 @@
 #include "qSlicerLayoutManager.h"
 #include "qSlicerLayoutManager_p.h"
 
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
 #include "qSlicerPythonManager.h"
 #include "qSlicerApplication.h"
 #endif
