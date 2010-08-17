@@ -281,6 +281,9 @@ namespace eval Slicer3Adapters {
     method GetNumberOfRenderers {} {
       return [[[$_interactor GetRenderWindow] GetRenderers] GetNumberOfItems]
     }
+    method GetNthRenderer {n} {
+      return [[[$_interactor GetRenderWindow] GetRenderers] GetItemAsObject $n]
+    }
   }
 
   itcl::class CornerAnnotation {
