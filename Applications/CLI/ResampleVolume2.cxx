@@ -1007,11 +1007,15 @@ int TransformGradients( itk::MetaDataDictionary &dico ,
                      std::cerr << "Error reading a DWMRI gradient value" << std::endl ;
                   }
                }
-               //We transform the gradient vector with the measurement frame and then apply the inverse transform
-               transformedVector = inverseTransform->TransformVector( measurementFrame * vec ) ;
-               if( transformedVector.GetNorm() > .00001 ) //gradient not null
+               //gradient null
+               if( vec.GetNorm() <= .00001 )
                {
-                  transformedVector.Normalize() ;
+                  transformedVector = vec ;
+               }
+               else
+               {
+               //We transform the gradient vector with the measurement frame and then apply the inverse transform
+                  transformedVector = inverseTransform->TransformVector( measurementFrame * vec ) ;
                }
                std::ostringstream oss ;
                //write the new gradient values (after transformation) in the metadatadictionary
