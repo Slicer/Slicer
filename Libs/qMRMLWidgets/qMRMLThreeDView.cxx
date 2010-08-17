@@ -164,7 +164,6 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
       << "vtkMRMLModelDisplayableManager";
 #ifdef MRMLDisplayableManager_USE_PYTHON
   QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
-  Q_ASSERT(dirInfo.isDir());
   if (dirInfo.isDir())
     {
     displayableManagers << QString("%1/vtkScriptedExampleDisplayableManager.py").arg(

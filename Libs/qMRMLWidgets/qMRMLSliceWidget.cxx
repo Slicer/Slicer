@@ -118,7 +118,6 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
 
 #ifdef MRMLDisplayableManager_USE_PYTHON
   QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
-  Q_ASSERT(dirInfo.isDir());
   if (dirInfo.isDir())
     {
     //displayableManagers<< QString("%1/vtkScriptedExampleDisplayableManager.py").
