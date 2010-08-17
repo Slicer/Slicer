@@ -38,7 +38,7 @@ public:
   void setScriptedDisplayableManagerDirectory(const QString& scriptedDisplayableManagerDirectory);
 
   /// Get SliceViewWidget identified by \a name
-  qMRMLSliceWidget* sliceView(const QString& name);
+  qMRMLSliceWidget* sliceWidget(const QString& name)const;
 
   /// Return the number of instantiated ThreeDRenderView
   int threeDViewCount();

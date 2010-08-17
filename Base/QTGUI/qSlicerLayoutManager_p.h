@@ -39,7 +39,7 @@ public:
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
 
   /// If needed, instantiate a slice viewer corresponding to \a sliceViewName
-  QWidget* createSliceView(vtkMRMLSliceNode* sliceNode);
+  QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
 
   /// Delete slice viewer associated with \a sliceNode
   void removeSliceView(vtkMRMLSliceNode* sliceNode);
@@ -63,14 +63,6 @@ public:
   /// Hide and remove all widgets from the current layout
   void clearLayout(QLayout* layout);
 
-  /// Convenient function allowing to get a reference to the renderView widget
-  /// identified by \a renderViewName
-  qMRMLThreeDView* threeDView(int id);
-
-  /// Convenient function allowing to get a reference to the sliceView widget
-  /// identified by \a sliceViewName
-  qMRMLSliceWidget* sliceView(const QString& sliceViewName);
-
   void setLayoutInternal(int layout);
   void setConventionalView();
   void setOneUp3DView();
@@ -83,6 +75,16 @@ public:
   void setSideBySideCompareView();
   void setDual3DView();
   void setNone();
+
+  /// Convenient function allowing to get a reference to the renderView widget
+  /// identified by \a renderViewName
+  qMRMLThreeDView* threeDView(vtkMRMLViewNode* node)const;
+  qMRMLThreeDView* threeDView(int id)const;
+
+  /// Convenient function allowing to get a reference to the sliceView widget
+  /// identified by \a sliceViewName
+  qMRMLSliceWidget* sliceWidget(const QString& sliceLayoutName)const;
+  qMRMLSliceWidget* sliceWidget(vtkMRMLSliceNode* node)const;
 
 public slots:
   /// Handle MRML scene event
@@ -107,10 +109,7 @@ public:
   vtkCollection*     MRMLSliceLogics;
 
   QList<qMRMLThreeDView*>           ThreeDViewList;
-  QList<vtkMRMLViewNode*>           MRMLViewNodeList;
-
-  QHash<QString, qMRMLSliceWidget*> SliceViewMap;
-  QHash<vtkMRMLSliceNode*, QString> MRMLSliceNodeToSliceViewName;
+  QList<qMRMLSliceWidget*>          SliceWidgetList;
 };
 
 #endif

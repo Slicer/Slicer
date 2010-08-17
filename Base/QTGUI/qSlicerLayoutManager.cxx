@@ -78,6 +78,55 @@ qSlicerLayoutManagerPrivate::~qSlicerLayoutManagerPrivate()
     }
 }
 
+
+//------------------------------------------------------------------------------
+qMRMLThreeDView* qSlicerLayoutManagerPrivate::threeDView(int id)const
+{
+  qDebug() << "want the id: " << id << this->ThreeDViewList.size();
+  Q_ASSERT(id >=0 && id < this->ThreeDViewList.size());
+  return this->ThreeDViewList.at(id);
+}
+
+//------------------------------------------------------------------------------
+qMRMLThreeDView* qSlicerLayoutManagerPrivate::threeDView(vtkMRMLViewNode* node)const
+{
+  foreach(qMRMLThreeDView* view, this->ThreeDViewList)
+    {
+    if (view->mrmlViewNode() == node)
+      {
+      return view;
+      }
+    }
+  return 0;
+}
+
+//------------------------------------------------------------------------------
+qMRMLSliceWidget* qSlicerLayoutManagerPrivate::sliceWidget(vtkMRMLSliceNode* node)const
+{
+  foreach(qMRMLSliceWidget* slice, this->SliceWidgetList)
+    {
+    if (slice->mrmlSliceNode() == node)
+      {
+      return slice;
+      }
+    }
+  return 0;
+}
+
+//------------------------------------------------------------------------------
+qMRMLSliceWidget* qSlicerLayoutManagerPrivate::sliceWidget(const QString& name)const
+{
+  foreach(qMRMLSliceWidget* slice, this->SliceWidgetList)
+    {
+    if (slice->sliceViewName() == name)
+      {
+      return slice;
+      }
+    }
+  return 0;
+}
+
+
 //------------------------------------------------------------------------------
 void qSlicerLayoutManagerPrivate::setMRMLScene(vtkMRMLScene* scene)
 {
@@ -115,7 +164,7 @@ void qSlicerLayoutManagerPrivate::setMRMLScene(vtkMRMLScene* scene)
   this->MRMLLayoutNode = 0;
 
   // update all the slice views and the 3D views
-  foreach (qMRMLSliceWidget* sliceWidget, this->SliceViewMap.values() )
+  foreach (qMRMLSliceWidget* sliceWidget, this->SliceWidgetList )
     {
     sliceWidget->setMRMLScene(this->MRMLScene);
     }
@@ -137,45 +186,31 @@ void qSlicerLayoutManagerPrivate::setMRMLLayoutNode(vtkMRMLLayoutNode* layoutNod
 
 
 // --------------------------------------------------------------------------
-QWidget* qSlicerLayoutManagerPrivate::createSliceView(vtkMRMLSliceNode* sliceNode)
+QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNode)
 {
-  Q_ASSERT(this->MRMLScene);
-  Q_ASSERT(sliceNode);
-
-  if (!this->TargetWidget)
-    {
+  if (!this->TargetWidget || !sliceNode || !this->MRMLScene)
+    {// can't create a slice widget if there is no parent widget
+    Q_ASSERT(this->MRMLScene);
+    Q_ASSERT(sliceNode);
     return 0;
     }
 
   logger.setTrace();
 
-  qMRMLSliceWidget * sliceView = 0;
-  const QString sliceViewName = sliceNode->GetLayoutName();
+  // there is a unique slice widget per node
+  Q_ASSERT(!this->sliceWidget(sliceNode));
 
-  if (this->SliceViewMap.contains(sliceViewName))
-    {
-    sliceView = this->SliceViewMap[sliceViewName];
+  qMRMLSliceWidget * sliceWidget =  new qMRMLSliceWidget(this->TargetWidget);
+  sliceWidget->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
+  sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
+  QString sliceLayoutName(sliceNode->GetLayoutName());
+  sliceWidget->setSliceViewName(sliceLayoutName);
+  sliceWidget->setMRMLScene(this->MRMLScene);
+  sliceWidget->setMRMLSliceNode(sliceNode);
 
-    if (sliceView->mrmlSliceNode() != sliceNode)
-      {
-      sliceView->setMRMLSliceNode(sliceNode);
-      }
-    logger.trace(
-        QString("createSliceView - return existing qMRMLSliceWidget: %1").arg(sliceViewName));
-    }
-  else
-    {
-    sliceView = new qMRMLSliceWidget(this->TargetWidget);
-    sliceView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
-    sliceView->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
-    sliceView->setSliceViewName(sliceViewName);
-    sliceView->setMRMLScene(this->MRMLScene);
-    sliceView->setMRMLSliceNode(sliceNode);
-
-    this->SliceViewMap[sliceViewName] = sliceView;
-    this->MRMLSliceLogics->AddItem(sliceView->sliceLogic());
-    logger.trace(
-        QString("createSliceView - instantiated new qMRMLSliceWidget: %1").arg(sliceViewName));
+  this->SliceWidgetList.push_back(sliceWidget);
+  logger.trace(QString("createSliceWidget - instantiated new qMRMLSliceWidget: %1")
+               .arg(sliceLayoutName));
 
 #ifdef Slicer3_USE_PYTHONQT_WITH_TCL
     // Note: Python code shouldn't be added to the layout manager itself !
@@ -183,115 +218,81 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceView(vtkMRMLSliceNode* sliceNod
 
     // Register this slice view with the python layer
     qSlicerPythonManager *py = qSlicerApplication::application()->pythonManager();
-    py->executeString(QString("slicer.sliceView%1 = _sliceView()").arg(sliceViewName));
+    py->executeString(QString("slicer.sliceWidget%1 = _sliceWidget()").arg(sliceLayoutName));
 
-    QString pythonInstanceName = QString("slicer.sliceView%1_%2");
-
-    py->addVTKObjectToPythonMain(
-      pythonInstanceName.arg(sliceViewName, "sliceLogic"),
-      sliceView->sliceController()->sliceLogic());
+    QString pythonInstanceName = QString("slicer.sliceWidget%1_%2");
 
     py->addVTKObjectToPythonMain(
-      pythonInstanceName.arg(sliceViewName, "interactorStyle"),
-      sliceView->interactorStyle());
+      pythonInstanceName.arg(sliceLayoutName, "sliceLogic"),
+      sliceWidget->sliceController()->sliceLogic());
+
+    py->addVTKObjectToPythonMain(
+      pythonInstanceName.arg(sliceLayoutName, "interactorStyle"),
+      sliceWidget->interactorStyle());
 
     // TODO: need to access the corner annotation
     //py->addVTKObjectToPythonMain(
-      //instName.arg(sliceViewName, "cornerAnnotation"),
-      //sliceView->cornerAnnotation());
+      //instName.arg(sliceLayoutName, "cornerAnnotation"),
+      //sliceWidget->cornerAnnotation());
 
-    py->executeString(QString("registerScriptedDisplayableManagers('%1')").arg(sliceViewName));
+    py->executeString(QString("registerScriptedDisplayableManagers('%1')").arg(sliceLayoutName));
 
     logger.trace(
-        QString("createSliceView - %1 registered with python").arg(sliceViewName));
+        QString("createSliceWidget - %1 registered with python").arg(sliceLayoutName));
+
 #endif
-    }
-
-  return sliceView;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
-{
-  // removeSliceView doesn't delete anything, it just removes the node from the view
-  Q_ASSERT(sliceNode);
-
-  QString sliceViewName = QString::fromLatin1(sliceNode->GetLayoutName());
-  Q_ASSERT(!sliceViewName.isEmpty());
-
-  if (!this->SliceViewMap.contains(sliceViewName))
-    {
-    return;
-    }
-  qMRMLSliceWidget * sliceViewWidget = this->SliceViewMap.value(sliceViewName);
-  Q_ASSERT(sliceViewWidget);
-
-  sliceViewWidget->setMRMLSliceNode(0);
+  return sliceWidget;
 }
 
 // --------------------------------------------------------------------------
 QWidget* qSlicerLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* viewNode)
 {
-  Q_ASSERT(this->MRMLScene);
-  Q_ASSERT(viewNode);
-
-  if (!this->TargetWidget)
+  if (!this->TargetWidget || !this->MRMLScene || !viewNode)
     {
+    Q_ASSERT(this->MRMLScene);
+    Q_ASSERT(viewNode);
     return 0;
     }
 
-  qMRMLThreeDView* threeDView = 0;
-  
-  int viewNodeIndex = this->MRMLViewNodeList.indexOf(viewNode);
-  if (viewNodeIndex != -1)
-    {
-    Q_ASSERT(0 >= viewNodeIndex && viewNodeIndex < this->ThreeDViewList.size());
-    threeDView = this->ThreeDViewList[viewNodeIndex];
-    logger.trace("createThreeDView - return existing qMRMLThreeDView");
-    if (threeDView->mrmlViewNode() != viewNode)
-      {
-      threeDView->setMRMLViewNode(viewNode);
-      }
-    }
-  else
-    {
-    logger.trace("createThreeDView - instantiated new qMRMLThreeDView");
-    threeDView = new qMRMLThreeDView(this->TargetWidget);
-    threeDView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
-    threeDView->setMRMLScene(this->MRMLScene);
-    threeDView->setMRMLViewNode(viewNode);
+  // There must be a unique threedview per node
+  Q_ASSERT(!this->threeDView(viewNode));
 
-    this->ThreeDViewList.push_back(threeDView);
-    this->MRMLViewNodeList.push_back(viewNode);
-    }
+  qMRMLThreeDView* threeDView = 0;
+
+  logger.trace("createThreeDView - instantiated new qMRMLThreeDView");
+  threeDView = new qMRMLThreeDView(this->TargetWidget);
+  threeDView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
+  threeDView->setMRMLScene(this->MRMLScene);
+  threeDView->setMRMLViewNode(viewNode);
+
+  this->ThreeDViewList.push_back(threeDView);
 
   return threeDView;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
+{
+  Q_ASSERT(sliceNode);
+
+  qMRMLSliceWidget * sliceWidgetToDelete = this->sliceWidget(sliceNode);
+  Q_ASSERT(sliceWidgetToDelete);
+
+  // Remove slice widget
+  this->SliceWidgetList.removeAll(sliceWidgetToDelete);
+  delete sliceWidgetToDelete;
+
 }
 
 // --------------------------------------------------------------------------
 void qSlicerLayoutManagerPrivate::removeThreeDView(vtkMRMLViewNode* viewNode)
 {
   Q_ASSERT(viewNode);
-  int indexViewNode = this->MRMLViewNodeList.indexOf(viewNode);
-
-  // The MRMLViewNode is expected to be in the list
-  if (indexViewNode < 0)
-    {
-    return;
-    }
-
-  // The 'indexViewNode' should also be a valid ThreeDViewList index
-  Q_ASSERT(indexViewNode < this->ThreeDViewList.size());
-
-  qMRMLThreeDView * threeDView = this->ThreeDViewList.at(indexViewNode);
-
-  // The MRMLViewNode associated with the corresponding ThreeRenderView should match
-  Q_ASSERT(viewNode == threeDView->mrmlViewNode());
+  qMRMLThreeDView * threeDViewToDelete = this->threeDView(viewNode);
 
   // Remove threeDView
-  this->MRMLViewNodeList.removeAt(indexViewNode);
-  this->ThreeDViewList.removeAt(indexViewNode);
-  delete threeDView;
+  this->ThreeDViewList.removeAll(threeDViewToDelete);
+  delete threeDViewToDelete;
 }
 
 // --------------------------------------------------------------------------
@@ -328,7 +329,7 @@ void qSlicerLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* 
     QString layoutName = sliceNode->GetLayoutName();
     logger.trace(QString("onSliceNodeAddedEvent - layoutName: %1").arg(layoutName));
     Q_ASSERT(layoutName == "Red" || layoutName == "Yellow" || layoutName == "Green");
-    this->createSliceView(sliceNode);
+    this->createSliceWidget(sliceNode);
     }
 }
 
@@ -416,7 +417,10 @@ void qSlicerLayoutManagerPrivate::onSceneImportedEvent()
 void qSlicerLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* layoutNode)
 {
   CTK_P(qSlicerLayoutManager);
-
+  if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
+    {
+    return;
+    }
   vtkMRMLLayoutNode * mrmlLayoutNode = vtkMRMLLayoutNode::SafeDownCast(layoutNode);
 
   if (!mrmlLayoutNode)
@@ -486,8 +490,7 @@ void qSlicerLayoutManagerPrivate::initialize()
     for (unsigned int i = 0; i < viewNodes.size();++i)
       {
       vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(viewNodes[i]);
-      int index = this->MRMLViewNodeList.indexOf(viewNode);
-      if (index < 0 && viewNode->GetVisibility())
+      if (!this->threeDView(viewNode))
         {
         this->createThreeDView(viewNode);
         }
@@ -517,10 +520,9 @@ void qSlicerLayoutManagerPrivate::initialize()
     for (unsigned int i = 0; i < sliceNodes.size();++i)
       {
       vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
-      QString sliceViewName = QString::fromLatin1(sliceNode->GetLayoutName());
-      if (!this->SliceViewMap.contains(sliceViewName))
+      if (!this->sliceWidget(sliceNode))
         {
-        this->createSliceView(sliceNode);
+        this->createSliceWidget(sliceNode);
         }
       }
     }
@@ -601,22 +603,6 @@ void qSlicerLayoutManagerPrivate::clearLayout(QLayout* layout)
 }
 
 //------------------------------------------------------------------------------
-qMRMLThreeDView* qSlicerLayoutManagerPrivate::threeDView(int id)
-{
-  Q_ASSERT(id >=0 && id < this->ThreeDViewList.size());
-  return this->ThreeDViewList.at(id);
-}
-
-//------------------------------------------------------------------------------
-qMRMLSliceWidget* qSlicerLayoutManagerPrivate::sliceView(const QString& name)
-{
-  Q_ASSERT(this->SliceViewMap.contains(name));
-  qMRMLSliceWidget* sliceView = this->SliceViewMap[name];
-  Q_ASSERT(sliceView);
-  return sliceView;
-}
-
-//------------------------------------------------------------------------------
 void qSlicerLayoutManagerPrivate::setLayoutInternal(int layout)
 {
   bool updatesEnabled = true;
@@ -694,17 +680,17 @@ void qSlicerLayoutManagerPrivate::setConventionalView()
   renderView->setVisible(true);
 
   // Red Slice Viewer
-  qMRMLSliceWidget* redSliceView = this->sliceView("Red");
+  qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
   this->GridLayout->addWidget(redSliceView, 1, 0);
   redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
-  qMRMLSliceWidget* yellowSliceView = this->sliceView("Yellow");
+  qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
   this->GridLayout->addWidget(yellowSliceView, 1, 1);
   yellowSliceView->setVisible(true);
 
   // Green Slice Viewer
-  qMRMLSliceWidget* greenSliceView = this->sliceView("Green");
+  qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
   this->GridLayout->addWidget(greenSliceView, 1, 2);
   greenSliceView->setVisible(true);
 }
@@ -720,20 +706,20 @@ void qSlicerLayoutManagerPrivate::setOneUp3DView()
 }
 
 //------------------------------------------------------------------------------
-void qSlicerLayoutManagerPrivate::setOneUpSliceView(const QString& sliceViewName)
+void qSlicerLayoutManagerPrivate::setOneUpSliceView(const QString& sliceLayoutName)
 {
-  logger.trace(QString("switch to OneUpSlice%1").arg(sliceViewName));
+  logger.trace(QString("switch to OneUpSlice%1").arg(sliceLayoutName));
   // Sanity checks
-  Q_ASSERT(sliceViewName == "Red" || sliceViewName == "Yellow" || sliceViewName == "Green");
-  if (sliceViewName != "Red" && sliceViewName != "Yellow" && sliceViewName != "Green")
+  Q_ASSERT(sliceLayoutName == "Red" || sliceLayoutName == "Yellow" || sliceLayoutName == "Green");
+  if (sliceLayoutName != "Red" && sliceLayoutName != "Yellow" && sliceLayoutName != "Green")
     {
-    qWarning() << "Slicer viewer name" << sliceViewName << "invalid !";
+    qWarning() << "Slicer viewer name" << sliceLayoutName << "invalid !";
     return;
     }
   // Slice viewer
-  qMRMLSliceWidget* sliceView = this->sliceView(sliceViewName);
-  sliceView->setVisible(true);
-  this->GridLayout->addWidget(sliceView, 1, 0);
+  qMRMLSliceWidget* sliceWidget = this->sliceWidget(sliceLayoutName);
+  sliceWidget->setVisible(true);
+  this->GridLayout->addWidget(sliceWidget, 1, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -746,17 +732,17 @@ void qSlicerLayoutManagerPrivate::setFourUpView()
   renderView->setVisible(true);
 
   // Red Slice Viewer
-  qMRMLSliceWidget* redSliceView = this->sliceView("Red");
+  qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
   this->GridLayout->addWidget(redSliceView, 0, 0);
   redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
-  qMRMLSliceWidget* yellowSliceView = this->sliceView("Yellow");
+  qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
   this->GridLayout->addWidget(yellowSliceView, 1, 0);
   yellowSliceView->setVisible(true);
 
   // Green Slice Viewer
-  qMRMLSliceWidget* greenSliceView = this->sliceView("Green");
+  qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
   this->GridLayout->addWidget(greenSliceView, 1, 1);
   greenSliceView->setVisible(true);
 }
@@ -825,23 +811,23 @@ void qSlicerLayoutManagerPrivate::setDual3DView()
   this->GridLayout->addWidget(renderView2, 0, 1);
   renderView2->setVisible(true);
 
-  // Add an horizontal layout to group the 3 sliceViews
-  QHBoxLayout * sliceViewLayout = new QHBoxLayout();
-  this->GridLayout->addLayout(sliceViewLayout, 1, 0, 1, 2); // fromRow, fromColumn, rowSpan, columnSpan
+  // Add an horizontal layout to group the 3 sliceWidgets
+  QHBoxLayout * sliceWidgetLayout = new QHBoxLayout();
+  this->GridLayout->addLayout(sliceWidgetLayout, 1, 0, 1, 2); // fromRow, fromColumn, rowSpan, columnSpan
 
   // Red Slice Viewer
-  qMRMLSliceWidget* redSliceView = this->sliceView("Red");
-  sliceViewLayout->addWidget(redSliceView);
+  qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
+  sliceWidgetLayout->addWidget(redSliceView);
   redSliceView->setVisible(true);
 
   // Yellow Slice Viewer
-  qMRMLSliceWidget* yellowSliceView = this->sliceView("Yellow");
-  sliceViewLayout->addWidget(yellowSliceView);
+  qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
+  sliceWidgetLayout->addWidget(yellowSliceView);
   yellowSliceView->setVisible(true);
 
   // Green Slice Viewer
-  qMRMLSliceWidget* greenSliceView = this->sliceView("Green");
-  sliceViewLayout->addWidget(greenSliceView);
+  qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
+  sliceWidgetLayout->addWidget(greenSliceView);
   greenSliceView->setVisible(true);
 }
 
@@ -888,7 +874,7 @@ void qSlicerLayoutManager::setViewport(QWidget* widget)
       gridLayout = d->GridLayout;
       }
     }
-  foreach (qMRMLSliceWidget* sliceWidget, d->SliceViewMap.values())
+  foreach (qMRMLSliceWidget* sliceWidget, d->SliceWidgetList)
     {
     sliceWidget->sliceController()->setControllerButtonGroup(buttonGroup);
     }
@@ -922,14 +908,10 @@ QWidget* qSlicerLayoutManager::viewport()const
 }
 
 //------------------------------------------------------------------------------
-qMRMLSliceWidget* qSlicerLayoutManager::sliceView(const QString& name)
+qMRMLSliceWidget* qSlicerLayoutManager::sliceWidget(const QString& name)const
 {
-  CTK_D(qSlicerLayoutManager);
-  if (!d->SliceViewMap.contains(name))
-    {
-    return 0;
-    }
-  return d->SliceViewMap[name];
+  CTK_D(const qSlicerLayoutManager);
+  return d->sliceWidget(name);
 }
 
 //------------------------------------------------------------------------------
@@ -1004,22 +986,22 @@ void qSlicerLayoutManager::setLayout(int layout)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerLayoutManager::switchToOneUpSliceView(const QString& sliceViewName)
+void qSlicerLayoutManager::switchToOneUpSliceView(const QString& sliceLayoutName)
 {
-  if (sliceViewName == "Red")
+  if (sliceLayoutName == "Red")
     {
     this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
     }
-  else if (sliceViewName == "Green")
+  else if (sliceLayoutName == "Green")
     {
     this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
     }
-  else if (sliceViewName == "Yellow")
+  else if (sliceLayoutName == "Yellow")
     {
     this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
     }
   else
     {
-    logger.warn(QString("Unknown view : %1").arg(sliceViewName));
+    logger.warn(QString("Unknown view : %1").arg(sliceLayoutName));
     }
 }
