@@ -971,11 +971,13 @@ vtkMRMLScene* qSlicerLayoutManager::mrmlScene()const
 void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
     const QString& scriptedDisplayableManagerDirectory)
 {
-#ifdef MRMLDisplayableManager_USE_PYTHON
+#ifdef Slicer3_USE_PYTHONQT
   CTK_D(qSlicerLayoutManager);
 
   Q_ASSERT(QFileInfo(scriptedDisplayableManagerDirectory).isDir());
   d->ScriptedDisplayableManagerDirectory = scriptedDisplayableManagerDirectory;
+#else
+  Q_UNUSED(scriptedDisplayableManagerDirectory);
 #endif
 }
 

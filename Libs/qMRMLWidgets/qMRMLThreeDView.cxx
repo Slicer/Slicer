@@ -162,7 +162,8 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
   displayableManagers << "vtkMRMLCameraDisplayableManager"
       << "vtkMRMLViewDisplayableManager"
       << "vtkMRMLModelDisplayableManager";
-#ifdef MRMLDisplayableManager_USE_PYTHON
+
+#ifdef Slicer3_USE_PYTHONQT
   QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
   if (dirInfo.isDir())
     {
