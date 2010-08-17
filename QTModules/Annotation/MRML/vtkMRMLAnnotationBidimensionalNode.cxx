@@ -64,6 +64,7 @@ void vtkMRMLAnnotationBidimensionalNode::Initialize(vtkMRMLScene* mrmlScene)
     this->CreateAnnotationLineDisplayNode();
     
   // default starting position
+    /*
   {
     double pos[3] = {-20.0, 0.0, -20.0};
     this->SetControlPoint(pos, 0);
@@ -80,7 +81,7 @@ void vtkMRMLAnnotationBidimensionalNode::Initialize(vtkMRMLScene* mrmlScene)
     double pos[3] = {0.0, -20.0, 0.0};
     this->SetControlPoint(pos, 3);
   }
-
+*/
     this->AddText(" ",1,1);
 
     this->InvokeEvent(vtkMRMLAnnotationBidimensionalNode::BidimensionalNodeAddedEvent);

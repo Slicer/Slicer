@@ -169,7 +169,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::SetWidget(vtkMRMLAnnotationNode* 
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated()
+void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())

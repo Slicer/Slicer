@@ -366,7 +366,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
 
   this->m_DisableInteractorStyleEventsProcessing = 1;
   // tear down widget creation
-  this->OnWidgetCreated();
+  this->OnWidgetCreated(newWidget, annotationNode);
   this->m_DisableInteractorStyleEventsProcessing = 0;
 
   // Remove all placed seeds
@@ -558,15 +558,12 @@ double* vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double
   coordinates[1]=(double)y;
   coordinates[2]=0;
 
-  double * worldCoordinates;
-
   this->GetRenderer()->SetDisplayPoint(coordinates);
   this->GetRenderer()->DisplayToView();
   this->GetRenderer()->GetViewPoint(coordinates);
   this->GetRenderer()->ViewToWorld();
-  this->GetRenderer()->GetWorldPoint(worldCoordinates);
+  return this->GetRenderer()->GetWorldPoint();
 
-  return worldCoordinates;
 }
 
 //---------------------------------------------------------------------------
@@ -578,11 +575,11 @@ double* vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double
 
   this->GetRenderer()->SetWorldPoint(r,a,s,1);
   this->GetRenderer()->WorldToView();
-  this->GetRenderer()->GetViewPoint(displayCoordinates);
+  displayCoordinates = this->GetRenderer()->GetViewPoint();
   this->GetRenderer()->ViewToDisplay();
-  this->GetRenderer()->GetDisplayPoint(displayCoordinates);
 
-  return displayCoordinates;
+  return this->GetRenderer()->GetDisplayPoint();
+
 }
 
 //---------------------------------------------------------------------------
@@ -630,7 +627,7 @@ void vtkMRMLAnnotationDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnWidgetCreated()
+void vtkMRMLAnnotationDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
   // Actions after a widget was created should be executed here.
   vtkErrorMacro("OnWidgetCreated should be overloaded!");

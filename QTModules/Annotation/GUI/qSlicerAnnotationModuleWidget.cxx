@@ -690,10 +690,10 @@ void qSlicerAnnotationModuleWidget::setup()
       this,
       SLOT(onROINodeButtonClicked()));
   this->connect(
-      d->polylineTypeButton,
+      d->bidimensionalTypeButton,
       SIGNAL(clicked()),
       this,
-      SLOT(onPolylineButtonClicked()));
+      SLOT(onBidimensionalNodeButtonClicked()));
   this->connect(
       d->splineTypeButton,
       SIGNAL(clicked()),
@@ -1675,7 +1675,7 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
     {
     return;
     }
-
+/*
   foreach(int i, selectedRows)
       {
       /*vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(
@@ -1698,9 +1698,9 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
        node->SetVisible(
        (int) isVisible);
        }
-       */
 
-      }
+
+      }*/
 
   d->setInvisibleItemIcon(
       isVisible);
@@ -1725,7 +1725,7 @@ void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
     }
 
   std::cout << "Selected:" << selectedRows.size() << std::endl;
-
+/*
   foreach(int i, selectedRows)
       {/*
        vtkMRMLAnnotationNode* node = vtkMRMLAnnotationNode::SafeDownCast(
@@ -1759,8 +1759,8 @@ void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
        m_IDs[i])->UpdateLockUnlockStatus(
        isLocked);
        }
-       */
-      }
+
+      }*/
 
   d->setLockUnLockIcon(
       isLocked);
@@ -2378,6 +2378,9 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
     case qSlicerAnnotationModuleWidget::RulerNode:
       d->logic()->AddAnnotationNode("vtkMRMLAnnotationRulerNode");
       break;
+    case qSlicerAnnotationModuleWidget::BidimensionalNode:
+      d->logic()->AddAnnotationNode("vtkMRMLAnnotationBidimensionalNode");
+      break;
     }
 
   /*if ( toggle )
@@ -2469,7 +2472,7 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
   d->splineTypeButton->setChecked(false);
   d->stickyTypeButton->setChecked(false);
   d->rulerTypeButton->setChecked(false);
-  d->polylineTypeButton->setChecked(false);
+  d->bidimensionalTypeButton->setChecked(false);
 
   d->logic()->StopPlaceMode();
 
@@ -2489,7 +2492,7 @@ void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
   d->splineTypeButton->setEnabled(false);
   d->stickyTypeButton->setEnabled(false);
   d->rulerTypeButton->setEnabled(false);
-  d->polylineTypeButton->setEnabled(false);
+  d->bidimensionalTypeButton->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -2504,7 +2507,7 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
   d->splineTypeButton->setEnabled(true);
   d->stickyTypeButton->setEnabled(true);
   d->rulerTypeButton->setEnabled(true);
-  d->polylineTypeButton->setEnabled(true);
+  d->bidimensionalTypeButton->setEnabled(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -2691,47 +2694,30 @@ void qSlicerAnnotationModuleWidget::onFiducialNodeButtonClicked()
   d->resumeButton->setChecked(
       true);
 }
-/*
+
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::AddTextNodeCompleted(vtkObject* object,
-                                                         void* call_data)
+// Angle Node
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onBidimensionalNodeButtonClicked()
 {
-  std::cout << "SFSFSFDADDA" << std::endl;
+  CTK_D(qSlicerAnnotationModuleWidget);
 
-  /*
-   CTK_D(qSlicerAnnotationModuleWidget);
+  this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::BidimensionalNode;
 
-   d->textTypeButton->setChecked(false);
-   vtkMRMLAnnotationTextNode* node = vtkMRMLAnnotationTextNode::SafeDownCast(
-   d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[m_index]));
+  d->logic()->SetAndObserveWidget(
+      this);
 
-   const char* newTextNodeID = node->GetID();
-   std::vector<double> thevalue;
-   thevalue.push_back(0.0);
-   thevalue = d->logic()->GetAnnotationMeasurement(
-   d->logic()->GetMRMLScene()->GetNodeByID(newTextNodeID));
+  this->enableMouseModeButtons();
+  this->onResumeButtonClicked();
 
-   char* format = const_cast<char*> (" ");
-   QString valueString;
-   qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format,
-   thevalue, valueString);
-   this->updateAnnotationTable(m_index, thevalue, format);
-   this->selectRowByIndex(m_index);
 
-   // watch for the control points being modified
-   //qvtkConnect(d->logic()->GetAngleNodeByID( newAngleNodeID),  vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)) );
-   qvtkConnect(d->logic()->GetAngleNodeByID(newTextNodeID),
-   vtkMRMLAnnotationAngleNode::ValueModifiedEvent, this,
-   SLOT(updateValue(vtkObject*, void*)));
-   // watch for transform modified events
-   qvtkConnect(d->logic()->GetAngleNodeByID(newTextNodeID),
-   vtkMRMLTransformableNode::TransformModifiedEvent, this,
-   SLOT(updateValue(vtkObject*, void*)));
-   // watch for general modified events
-   qvtkConnect(d->logic()->GetAngleNodeByID(newTextNodeID),
-   vtkCommand::ModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)));
+  this->disableAllAnnotationTools();
 
-}*/
+  d->bidimensionalTypeButton->setChecked(
+      true);
+  d->resumeButton->setChecked(
+      true);
+}
 
 //-----------------------------------------------------------------------------
 // ROI Node
@@ -2779,83 +2765,9 @@ void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
  */
 }
 
-//-----------------------------------------------------------------------------
-// Polyline Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onPolylineButtonClicked()
-{
 
-  /*
-   CTK_D(qSlicerAnnotationModuleWidget);
 
-   const char *newNodeID = d->logic()->AddBidLineNode();
-   if (!newNodeID)
-   {
-   std::cerr << "Could not add ROI Node" << std::endl;
-   return;
-   }
 
-   m_IDs.push_back( newNodeID );
-   m_index++;
-
-   vtkMRMLAnnotationBidimensionalNode* node = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(d->logic()->GetMRMLScene()->GetNodeByID(newNodeID));
-
-   std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newNodeID) );
-   char* format = node->GetAnnotationFormat();;
-   QString valueString;
-   qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
-   this->updateAnnotationTable( m_index, thevalue, format );
-   this->selectRowByIndex( m_index );
-
-   qvtkConnect(node, vtkMRMLAnnotationBidimensionalNode::ValueModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)) );
-   */
-}
-
-//-----------------------------------------------------------------------------
-// Spline Node
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onSplineButtonClicked()
-{/*
- CTK_D(qSlicerAnnotationModuleWidget);
-
- const char *newNodeID = d->logic()->AddSplineNode();
- if (!newNodeID)
- {
- std::cerr << "Could not add ROI Node" << std::endl;
- return;
- }
-
- m_IDs.push_back(
- newNodeID);
- m_index++;
-
- vtkMRMLAnnotationSplineNode* node = vtkMRMLAnnotationSplineNode::SafeDownCast(
- d->logic()->GetMRMLScene()->GetNodeByID(
- newNodeID));
-
- std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement(
- d->logic()->GetMRMLScene()->GetNodeByID(
- newNodeID));
- char* format = node->GetDistanceAnnotationFormat();
- QString valueString;
- qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
- format,
- thevalue,
- valueString);
- this->updateAnnotationTable(
- m_index,
- thevalue,
- format);
- this->selectRowByIndex(
- m_index);
-
- qvtkConnect(
- node,
- vtkMRMLAnnotationSplineNode::ValueModifiedEvent,
- this,
- SLOT(updateValue(vtkObject*, void*)));
- */
-}
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)

@@ -133,7 +133,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::SetWidget(vtkMRMLAnnotationNode*
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationStickyDisplayableManager::OnWidgetCreated()
+void vtkMRMLAnnotationStickyDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())

@@ -90,7 +90,7 @@ protected:
   /// Propagate properties of MRML node to widgets.
   virtual void SetWidget(vtkMRMLAnnotationNode* node);
   /// Gets called when widget was created
-  virtual void OnWidgetCreated();
+  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node);
 
   /// SeedWidget for point placement
   vtkSeedWidget * m_SeedWidget;

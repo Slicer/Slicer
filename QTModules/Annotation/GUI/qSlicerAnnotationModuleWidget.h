@@ -60,6 +60,7 @@ public:
         StickyNode,
         SplineNode,
         RulerNode,
+        BidimensionalNode,
       };
 
 protected:
@@ -89,11 +90,6 @@ protected slots:
   // ROI Node
   void onROINodeButtonClicked();
 
-  // Polyline
-  void onPolylineButtonClicked();
-
-  // Spline
-  void onSplineButtonClicked();
 
     // Table and Property Modify
     void moveDownSelected();
@@ -158,6 +154,9 @@ protected slots:
 
   // Ruler Node
   void onRulerNodeButtonClicked();
+
+  // Bidimensional Node
+  void onBidimensionalNodeButtonClicked();
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);

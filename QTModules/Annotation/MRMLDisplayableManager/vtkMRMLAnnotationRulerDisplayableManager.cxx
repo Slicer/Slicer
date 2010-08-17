@@ -48,7 +48,6 @@ public:
 
       double position1[3];
       double position2[3];
-      double position3[3];
 
       rep->GetPoint1WorldPosition(position1);
       rep->GetPoint2WorldPosition(position2);
@@ -141,7 +140,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::SetWidget(vtkMRMLAnnotationNode* 
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated()
+void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())

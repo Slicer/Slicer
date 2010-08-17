@@ -109,6 +109,7 @@ vtkAbstractWidget * vtkMRMLAnnotationSplineDisplayableManager::CreateWidget(vtkM
   vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(3,splineNode->GetControlPointCoordinates(3));
   vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(4,splineNode->GetControlPointCoordinates(4));
 
+
   vtkDebugMacro("CreateWidget: Widget was set up")
 
   return splineWidget;
@@ -130,7 +131,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::SetWidget(vtkMRMLAnnotationNode*
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationSplineDisplayableManager::OnWidgetCreated()
+void vtkMRMLAnnotationSplineDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())

@@ -130,7 +130,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::SetWidget(vtkMRMLAnnotationNod
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationFiducialDisplayableManager::OnWidgetCreated()
+void vtkMRMLAnnotationFiducialDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())

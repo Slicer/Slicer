@@ -151,7 +151,7 @@ void vtkMRMLAnnotationTextDisplayableManager::SetWidget(vtkMRMLAnnotationNode* n
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated()
+void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())
