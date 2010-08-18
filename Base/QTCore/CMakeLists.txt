@@ -83,6 +83,7 @@ IF(Slicer3_USE_PYTHONQT)
 
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonCore
+    ${PYTHONQT_LIBRARY}
     vtkCommonPythonD # For vtkPythonUtils
     )
   # Sources
