@@ -74,11 +74,9 @@ vtkEMSegmentMRMLManager::~vtkEMSegmentMRMLManager()
 }
 
 //----------------------------------------------------------------------------
-void 
-vtkEMSegmentMRMLManager::
-ProcessMRMLEvents(vtkObject* caller,
-                  unsigned long event,
-                  void* callData)
+void vtkEMSegmentMRMLManager:: ProcessMRMLEvents(vtkObject* caller,
+                                                 unsigned long event,
+                                                 void* callData)
 {
   vtkDebugMacro("vtkEMSegmentMRMLManager::ProcessMRMLEvents: got an event " 
                 << event);
@@ -88,14 +86,9 @@ ProcessMRMLEvents(vtkObject* caller,
     return;
     }
 
-  vtkMRMLNode *node = (vtkMRMLNode*)(callData);
-  if (node == NULL)
-    {
-    return;
-    }
-
   if (event == vtkMRMLScene::NodeAddedEvent)
     {
+    vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode*>(callData);
     if (node->IsA("vtkMRMLEMSTreeNode"))
       {
       vtkIdType newID = this->GetNewVTKNodeID();
@@ -109,6 +102,7 @@ ProcessMRMLEvents(vtkObject* caller,
     }
   else if (event == vtkMRMLScene::NodeRemovedEvent)
     {
+    vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode*>(callData);
     if (node->IsA("vtkMRMLEMSTreeNode"))
       {
       this->IDMapRemovePair(node->GetID());
