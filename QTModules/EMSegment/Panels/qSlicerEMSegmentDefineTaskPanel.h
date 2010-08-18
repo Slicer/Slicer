@@ -24,6 +24,9 @@ public:
   
   virtual void printAdditionalInfo();
 
+protected slots:
+  void selectTask(vtkMRMLNode* mrmlNode);
+
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentDefineTaskPanel);
 };
