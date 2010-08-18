@@ -6,22 +6,170 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>657</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QPushButton" name="PopulateTreeButton">
+     <property name="text">
+      <string>PopulateTree</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
+     <property name="title">
+      <string>Anatomical Tree</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
+        <property name="structureNameEditable">
+         <bool>true</bool>
+        </property>
+        <property name="labelColumnVisible">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="IntensityDistributionTab">
+      <attribute name="title">
+       <string>Intensity Distribution</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="ManualSamplingTab">
+      <attribute name="title">
+       <string>Manual Sampling</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PlotDistributionButton">
+       <property name="text">
+        <string>Plot Distributions</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerEMSegmentAnatomicalTreeWidget</class>
+   <extends>qSlicerEMSegmentWidget</extends>
+   <header>qSlicerEMSegmentAnatomicalTreeWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>PopulateTreeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>407</x>
+     <y>26</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>407</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentSpecifyIntensityDistributionPanel</sender>
+   <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>573</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>522</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentSpecifyIntensityDistributionPanel</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>557</x>
+     <y>4</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>482</x>
+     <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

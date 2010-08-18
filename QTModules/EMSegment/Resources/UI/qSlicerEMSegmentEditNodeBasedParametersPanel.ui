@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>523</width>
-    <height>332</height>
+    <width>691</width>
+    <height>534</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,6 +38,33 @@
         <property name="alphaColumnVisible">
          <bool>true</bool>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="BasicTab">
+         <attribute name="title">
+          <string>Basic</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="StoppingConditionsTab">
+         <attribute name="title">
+          <string>Stopping Conditions</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="PrintTab">
+         <attribute name="title">
+          <string>Print</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="AdvancedTab">
+         <attribute name="title">
+          <string>Advanced</string>
+         </attribute>
+        </widget>
        </widget>
       </item>
      </layout>
