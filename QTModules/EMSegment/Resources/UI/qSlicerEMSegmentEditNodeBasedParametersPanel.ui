@@ -6,13 +6,44 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>523</width>
+    <height>332</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QPushButton" name="PopulateTreeButton">
+     <property name="text">
+      <string>PopulateTree</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
+     <property name="title">
+      <string>Anatomical Tree</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
+        <property name="classWeightColumnVisible">
+         <bool>true</bool>
+        </property>
+        <property name="atlasWeightColumnVisible">
+         <bool>true</bool>
+        </property>
+        <property name="alphaColumnVisible">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>
@@ -22,12 +53,72 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qSlicerEMSegmentAnatomicalTreeWidget</class>
+   <extends>qSlicerEMSegmentWidget</extends>
+   <header>qSlicerEMSegmentAnatomicalTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>PopulateTreeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>404</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>407</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentEditNodeBasedParametersPanel</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>518</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentEditNodeBasedParametersPanel</sender>
+   <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>3</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>32</x>
+     <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

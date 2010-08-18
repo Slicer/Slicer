@@ -6,16 +6,38 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>81</height>
+    <width>572</width>
+    <height>463</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QPushButton" name="PopulateTreeButton">
+     <property name="text">
+      <string>PopulateTree</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
+     <property name="title">
+      <string>Anatomical Tree</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="title">
       <string>Probability Map</string>
      </property>
@@ -52,12 +74,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -69,9 +85,20 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qSlicerEMSegmentAnatomicalTreeWidget</class>
+   <extends>qSlicerEMSegmentWidget</extends>
+   <header>qSlicerEMSegmentAnatomicalTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -88,8 +115,88 @@
      <y>7</y>
     </hint>
     <hint type="destinationlabel">
-     <x>327</x>
-     <y>40</y>
+     <x>456</x>
+     <y>442</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PopulateTreeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>351</x>
+     <y>26</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>360</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>EMSegmentAnatomicalTreeWidget</sender>
+   <signal>currentSpatialPriorVolumeNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>MRMLNodeComboBox</receiver>
+   <slot>setCurrentNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>213</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>218</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentDefineAtlasPanel</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>563</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>465</x>
+     <y>85</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentDefineAtlasPanel</sender>
+   <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>3</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>33</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>EMSegmentAnatomicalTreeWidget</sender>
+   <signal>currentSpatialPriorVolumeNodeChanged(bool)</signal>
+   <receiver>CollapsibleGroupBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>503</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>506</x>
+     <y>400</y>
     </hint>
    </hints>
   </connection>
