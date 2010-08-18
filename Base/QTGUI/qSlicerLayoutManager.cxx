@@ -19,6 +19,7 @@
 #include <qMRMLNodeFactory.h>
 
 // SlicerQt includes
+#include "vtkSlicerConfigure.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerLayoutManager_p.h"
 
@@ -241,6 +242,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
         QString("createSliceWidget - %1 registered with python").arg(sliceLayoutName));
 
 #endif
+  logger.trace(QString("created %1").arg(sliceLayoutName));
   return sliceWidget;
 }
 
