@@ -127,7 +127,7 @@ namespace eval Slicer3Adapters {
       # - observe the interactor style
       # -- need to give AddObservation the python name of the interactor style
       set layoutName [[$this GetSliceNode] GetLayoutName]
-      set pyname [format "slicer.sliceView%s_interactorStyle" $layoutName]
+      set pyname [format "slicer.sliceWidget%s_interactorStyle" $layoutName]
       set script "$this SetGrabID {}; $script"
       py_eval [format "slicer.broker.AddObservation(%s,'%s','%s')" $pyname $event $script]
     }

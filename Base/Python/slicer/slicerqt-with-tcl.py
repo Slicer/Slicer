@@ -31,20 +31,20 @@ def tcl(cmd):
 
   return _tpycl.tcl_eval(cmd)
 
-class _sliceView(object):
+class _sliceWidget(object):
   """ an empty class that can be instanced as a place to store 
-  references to sliceView components
+  references to sliceWidget components
   """
   def __init__(self):
     pass
 
-def registerScriptedDisplayableManagers(sliceView):
+def registerScriptedDisplayableManagers(sliceWidget):
   """ called from qSlicerLayoutManager::createSliceView
       after it creates python wrappers for the vtk parts of
-      the sliceView
+      the sliceWidget
   """
   # create an instance of the adapter class
-  sliceGUIName = 'sliceGUI%s' % sliceView
+  sliceGUIName = 'sliceGUI%s' % sliceWidget
   tcl('::Slicer3Adapters::SliceGUI %s' % sliceGUIName)
   # create procs for the elements and set them in the adapter
   #    leave out interactor and renderWindow,
@@ -53,12 +53,12 @@ def registerScriptedDisplayableManagers(sliceView):
   for key,method in (
       ('sliceLogic', 'SetLogic'),
       ('interactorStyle', 'SetInteractorStyle')):
-    instName = 'slicer.sliceView%s_%s' % (sliceView, key)
+    instName = 'slicer.sliceWidget%s_%s' % (sliceWidget, key)
     evalString = '%s.GetClassName()' % instName
     instClass = eval(evalString)
     # creat a proc that represents the instance
     tcl('set procName [::tpycl::uniqueInstanceName %s]' % instClass)
-    tclCmd = 'proc $procName {args} {::tpycl::methodCaller slicer.sliceView%s_%s $args}' % (sliceView, key)
+    tclCmd = 'proc $procName {args} {::tpycl::methodCaller slicer.sliceWidget%s_%s $args}' % (sliceWidget, key)
     tcl(tclCmd)
     # set the new tcl instance into the sliceGUI instance for this slice
     tcl('%s %s $procName' % (sliceGUIName, method))
@@ -68,13 +68,13 @@ def registerScriptedDisplayableManagers(sliceView):
     try:
       slicer.mrmlScene
     except AttributeError:
-      slicer.mrmlScene = eval("slicer.sliceView%s_sliceLogic.GetMRMLScene()" % sliceView)
+      slicer.mrmlScene = eval("slicer.sliceWidget%s_sliceLogic.GetMRMLScene()" % sliceWidget)
   tcl('SliceSWidget #auto %s' % sliceGUIName)
   
 
 if __name__ == "__main__":
 
-  # Initialize global slicer.sliceViews dict
+  # Initialize global slicer.sliceWidgets dict
   # -- it gets populated in qSlicerLayoutManagerPrivate::createSliceView
   #    and then used by the scripted code that needs to access the slice views
-  slicer.sliceViews = {}
+  slicer.sliceWidgets = {}
