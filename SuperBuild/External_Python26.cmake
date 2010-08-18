@@ -112,6 +112,13 @@ if(WIN32)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PC/pyconfig.h ${CMAKE_BINARY_DIR}/python-build/Include/pyconfig.h
     DEPENDEES install
     )
+
+  if(Slicer3_USE_KWWIDGETS OR Slicer3_USE_PYTHONQT_WITH_TCL)
+    ExternalProject_Add_Step(${proj} Copy_tkinterPyd
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_tkinter.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_tkinter.pyd
+      DEPENDEES install
+      )
+  endif()
     
 elseif(UNIX)
   set(python_BUILD_IN_SOURCE 1)
