@@ -41,6 +41,5 @@ void qSlicerEMSegmentDefineTaskPanel::printAdditionalInfo()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineTaskPanel::selectTask(vtkMRMLNode* mrmlNode)
 {
-  Q_ASSERT(vtkMRMLEMSNode::SafeDownCast(mrmlNode));
   this->mrmlManager()->SetNode(vtkMRMLEMSNode::SafeDownCast(mrmlNode));
 }
