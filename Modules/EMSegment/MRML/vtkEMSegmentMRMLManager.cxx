@@ -1486,7 +1486,7 @@ GetTreeNodeFirstIDWithChildProbabilityError()
   for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
     {
     if (!this->GetTreeNodeIsLeaf(*i) && 
-        (this->GetTreeNodeChildrenSumClassProbability(*i) != 1.0))
+        (fabs(1- this->GetTreeNodeChildrenSumClassProbability(*i) ) > 0.0005))
       {
       return *i;
       }

@@ -7,10 +7,10 @@ class vtkKWFrameWithLabel;
 class vtkKWMenuButtonWithLabel;
 class vtkKWScaleWithEntry;
 class vtkKWNotebook;
-class vtkKWMultiColumnListWithScrollbarsWithLabel;
 class vtkKWFrame;
 class vtkKWEntryWithLabel;
 class vtkKWCheckButtonWithLabel;
+class vtkKWCheckButton;
 class vtkKWWidget;
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentNodeParametersStep : public vtkEMSegmentStep
 {
@@ -30,10 +30,8 @@ public:
     vtkIdType, double value);
   virtual void NodeParametersSpatialPriorWeightChangedCallback(
     vtkIdType, double value);
-  virtual void RightClickOnInputChannelWeightsListCallback(
-    int row, int col, int x, int y);
-  virtual void NodeParametersInputChannelWeightChangedCallback(
-    vtkIdType, int row, int col, const char *value);
+
+  virtual void NodeParametersInputChannelWeightChangedCallback(vtkIdType sel_vol_id, int row, double value);
   virtual void NodeParametersAlphaChangedCallback(vtkIdType, double value);
   virtual void StoppingConditionsEMCallback(vtkIdType, int type);
   virtual void StoppingConditionsEMIterationsCallback(
@@ -66,12 +64,7 @@ public:
 
   int ClassOverviewWeightAutomaticRecalculateFlag;
   void ClassWeightChangedCallback(vtkIdType sel_tree_class_id, vtkIdType  sel_class_id, double value);
-
-  vtkKWMultiColumnListWithScrollbarsWithLabel *ClassOverviewWeightList;
-  virtual void RightClickOnClassOverviewWeightListCallback(int row, int col, int x, int y);
-  virtual void ClassOverviewWeightChangedCallback(vtkIdType sel_vol_id, int row, int col, const char *value);
-  const char* WeightFormatCallback(const char *text);
-
+  void ClassWeightAutoChangedCallback(vtkIdType sel_tree_class_id, vtkIdType  sel_class_id, int state);
 
 protected:
   vtkEMSegmentNodeParametersStep();
@@ -80,8 +73,6 @@ protected:
   vtkKWNotebook                      *NodeParametersNotebook;
   vtkKWScaleWithEntry                *NodeParametersGlobalPriorScale;
   vtkKWScaleWithEntry                *NodeParametersSpatialPriorWeightScale;
-  vtkKWMultiColumnListWithScrollbarsWithLabel 
-                                     *NodeParametersInputChannelWeightsList;
   vtkKWScaleWithEntry                *NodeParametersAlphaScale;
   vtkKWMenuButtonWithLabel           *StoppingConditionsEMMenuButton;
   vtkKWEntryWithLabel                *StoppingConditionsEMIterationsEntry;
@@ -109,7 +100,22 @@ protected:
   vtkKWCheckButtonWithLabel          *NodeParametersExcludeIncompleteEStepCheckButton;
   vtkKWCheckButtonWithLabel          *NodeParametersGenerateBackgroundProbabilityCheckButton;
   vtkKWFrameWithLabel                *NodeParametersInhomogeneityFrame;
-  
+
+  vtkKWFrameWithLabel                *NodeParametersInputChannelWeightFrame;
+  vtkKWFrameWithLabel                *NodeParametersClassOverviewWeightGlobalFrame;
+   
+  //BTX
+  vtkstd::vector<vtkKWScaleWithEntry*>  NodeParametersInputChannelWeight;
+  vtkstd::vector<vtkKWScaleWithEntry*>  NodeParametersClassOverviewWeightEntry;
+  vtkstd::vector<vtkKWFrame*>           NodeParametersClassOverviewWeightFrame;
+  vtkstd::vector<vtkKWCheckButton*>     NodeParametersClassOverviewWeightAuto;
+
+ //ETX
+
+  void DefineInputChannelWeightOverviewWindow(int enabled);
+
+  void DefineClassOverviewWeightWindow(vtkIdType sel_tree_class_id, int enabled); 
+
 private:
   vtkEMSegmentNodeParametersStep(const vtkEMSegmentNodeParametersStep&);
   void operator=(const vtkEMSegmentNodeParametersStep&);
