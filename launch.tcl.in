@@ -307,12 +307,12 @@ proc launch_SetEnvironment {} {
       if {$::env(BUILD) == $::WINDOWS} {
         foreach buildType {"." Debug RelWithDebInfo Release MinSizeRel} {
           set slicer3Real "$::Slicer3_HOME/bin/$buildType/Slicer3-real.exe"
-		  set slicerQTReal "$::Slicer3_HOME/bin/$buildType/SlicerQT-real.exe"
+          set slicerQTReal "$::Slicer3_HOME/bin/$buildType/SlicerQT-real.exe"
           if { [file exists "$slicer3Real"] } {
             set ::Slicer3_REAL $slicer3Real
             set ::BUILD_SUBDIR $buildType
           } elseif { [file exists "$slicerQTReal"] } {
-			set ::Slicer3_REAL $slicerQTReal
+            set ::Slicer3_REAL $slicerQTReal
             set ::BUILD_SUBDIR $buildType
           }
           if { [file exists "@VTK_DIR@/bin/$buildType/vtkCommon.dll"] } {
@@ -695,9 +695,18 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(BatchMake_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(bmModuleDescriptionParser_DIR)\;$::env(Path)
             set ::env(Path) $::env(ITK_BIN_DIR)\;$::env(Path)
+
+            # TODO: TCL_DIR for super-build is not calculated correctly 
+            # - specify both version so tkinter can load on windows where there is no rpath
+            #   and on traditional non-rpath slicer builds
             set ::env(Path) $::env(TCL_DIR)/bin\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/lib/itk@INCR_TCL_VERSION_DOT@\;$::env(Path)
+
+            set ::env(Path) $::env(TCL_DIR)/../tcl-build/bin\;$::env(Path)
+            set ::env(Path) $::env(TCL_DIR)/../lib/itcl@INCR_TCL_VERSION_DOT@\;$::env(Path)
+            set ::env(Path) $::env(TCL_DIR)/../lib/itk@INCR_TCL_VERSION_DOT@\;$::env(Path)
+
             set ::env(Path) $::env(Teem_DIR)\;$::env(Path)
             set ::env(Path) $::env(PYTHON_DIR)\;$::env(Path)
             set ::env(Path) $::env(VTK_DIR)\;$::env(Path)
@@ -783,6 +792,7 @@ proc launch_SetPaths {} {
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/site-packages/numpy/lib$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.6/site-packages/numpy/core$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Python$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(VTK_BIN_DIR)$SEP$::env(PYTHONPATH)"
     }
 }
 
@@ -1082,6 +1092,11 @@ proc launch_ImportModulePaths {} {
 
     if { ![info exists ::Slicer3_REAL] || ![file exists $::Slicer3_REAL] } {
       puts "No Slicer3-real executable, so not adding module paths"
+      return
+    }
+
+    if { [string match "*QT*" $::Slicer3_REAL] } {
+      # TODO: qt version doesn't respond to the --print-module-paths
       return
     }
 
