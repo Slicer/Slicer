@@ -121,6 +121,7 @@ proc launch_SetEnvironment {} {
     # Indicate if Slicer was build with QT support
     #
     set ::Slicer3_USE_QT "@Slicer3_USE_QT@"
+    set ::Slicer3_USE_PYTHONQT "@Slicer3_USE_PYTHONQT@"
     
     #
     # set up variables for the OS Builds
@@ -212,6 +213,8 @@ proc launch_SetEnvironment {} {
       
       set ::env(CTK_DIR)            $::env(Slicer3_HOME)/lib/ctk-@CTK_MAJOR_VERSION@.@CTK_MINOR_VERSION@
       set ::env(CTK_BIN_DIR)        $::env(Slicer3_HOME)/bin
+      # TODO: where will PythonQt be in the install tree?
+      set ::env(PYTHONQT_BIN_DIR)   $::env(Slicer3_HOME)/bin
     
       set ::env(KWWidgets_DIR)      $::env(Slicer3_HOME)/lib/KWWidgets
       set ::env(KWWidgets_LIB_DIR)  $::env(Slicer3_HOME)/lib/KWWidgets
@@ -368,6 +371,7 @@ proc launch_SetEnvironment {} {
         set ::env(CTK_DIR)         "$::Slicer3_HOME/bin"
       }
       set ::env(CTK_BIN_DIR)        [file normalize "@CTK_DIR@/CTK-build/bin/$::CTK_BUILD_SUBDIR"]
+      set ::env(PYTHONQT_BIN_DIR)        [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
     
       set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
       set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
@@ -579,6 +583,7 @@ proc launch_SetPaths {} {
         # add vtk, slicer, and tcl bins
             set ::env(LD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(CTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(PYTHONQT_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(QT_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(LD_LIBRARY_PATH)
@@ -632,6 +637,7 @@ proc launch_SetPaths {} {
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(CTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(PYTHONQT_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(QT_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -682,6 +688,7 @@ proc launch_SetPaths {} {
             # add vtk, slicer, and tcl bins
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(CTK_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(PYTHONQT_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(KWWidgets_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(QT_LIB_DIR)\;$::env(Path)
             set ::env(Path) $::env(OpenIGTLink_BIN_DIR)\;$::env(Path)
