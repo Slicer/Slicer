@@ -44,5 +44,6 @@ void qSlicerEMSegmentWidget::setMRMLManager(vtkEMSegmentMRMLManager* newMRMLMana
     return;
     }
   d->MRMLManager = newMRMLManager;
+  this->setMRMLScene(newMRMLManager ? newMRMLManager->GetMRMLScene() : 0);
   emit mrmlManagerChanged(newMRMLManager);
 }

@@ -74,6 +74,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -88,12 +94,6 @@
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -112,22 +112,6 @@
     <hint type="destinationlabel">
      <x>407</x>
      <y>79</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerEMSegmentEditNodeBasedParametersPanel</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>518</x>
-     <y>44</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>456</x>
-     <y>80</y>
     </hint>
    </hints>
   </connection>
