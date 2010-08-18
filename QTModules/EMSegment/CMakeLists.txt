@@ -25,9 +25,13 @@ SET(qt_module_include_directories
 SET(widget_SRCS
   Widgets/qSlicerEMSegmentWidget.cxx
   Widgets/qSlicerEMSegmentWidget.h
+  Widgets/qSlicerEMSegmentAnatomicalTreeWidget.cxx
+  Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
   )
+
 SET(widget_MOC_SRCS
   Widgets/qSlicerEMSegmentWidget.h
+  Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
   )
 
 # Panel source files
@@ -86,6 +90,9 @@ SET(qt_module_MOC_SRCS
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerEMSegmentModule.ui
 
+  # Widgets
+  #Resources/UI/qMRMLEMSegmentAnatomicalTreeWidget.ui
+
   # Workflow: MRI Human brain
   Resources/UI/qSlicerEMSegmentDefineAnatomicalTreePanel.ui           # Step 3
   Resources/UI/qSlicerEMSegmentDefineAtlasPanel.ui                    # Step 4
@@ -125,5 +132,5 @@ Slicer3_build_qtmodule(
 ADD_SUBDIRECTORY(Widgets/Plugins)
 
 if(BUILD_TESTING)
-  #add_subdirectory(Testing)
+  #ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)

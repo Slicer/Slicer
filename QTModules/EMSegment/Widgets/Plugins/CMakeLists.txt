@@ -13,6 +13,8 @@ SET(designer_plugin_SRCS
   qSlicerEMSegmentWidgetsPlugin.cxx
   qSlicerEMSegmentWidgetsPlugin.h
 
+  qSlicerEMSegmentAnatomicalTreeWidgetPlugin.cxx
+  qSlicerEMSegmentAnatomicalTreeWidgetPlugin.h
   qSlicerEMSegmentWidgetPlugin.cxx
   qSlicerEMSegmentWidgetPlugin.h
   )
@@ -22,6 +24,7 @@ SET(designer_plugin_MOC_SRCS
   qSlicerEMSegmentWidgetPlugin.h
   qSlicerEMSegmentWidgetsPlugin.h
 
+  qSlicerEMSegmentAnatomicalTreeWidgetPlugin.h
   qSlicerEMSegmentWidgetPlugin.h
   )
 

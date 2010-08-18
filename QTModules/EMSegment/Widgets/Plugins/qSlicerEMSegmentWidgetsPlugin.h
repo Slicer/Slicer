@@ -1,6 +1,7 @@
 #ifndef __qSlicerEMSegmentWidgetsPlugin_h
 #define __qSlicerEMSegmentWidgetsPlugin_h
 
+#include "qSlicerEMSegmentAnatomicalTreeWidgetPlugin.h"
 #include "qSlicerEMSegmentWidgetPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
@@ -18,6 +19,7 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
+    plugins << new qSlicerEMSegmentAnatomicalTreeWidgetPlugin;
     plugins << new qSlicerEMSegmentWidgetPlugin;
     return plugins;
     }

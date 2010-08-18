@@ -63,5 +63,8 @@
     <file>Icons/MousePlaceMode.png</file>
     <file>Icons/MouseSinglePlaceMode.png</file>
     <file>Icons/MouseRotateMode.png</file>
+    
+    <file>Icons/TreeClose.png</file>
+    <file>Icons/TreeOpen.png</file>
   </qresource>
 </RCC>
