@@ -122,7 +122,6 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     switch $event {
       "KeyPressEvent" { 
         set key [$_interactor GetKeySym]
-  puts "$this processing key $key"
         set activeKeys "grave quoteleft BackSpace Delete p"
         if { [lsearch $activeKeys $key] != -1 } {
           $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
