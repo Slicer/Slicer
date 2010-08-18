@@ -11,7 +11,8 @@ from vtk import *
 # Qt-based libs
 from PythonQt.CTKWidgets import *
 from PythonQt.CTKVisualizationVTKWidgets import *
-from PythonQt.qMRMLWidgets import *
+# TODO: this is stubbed out until windows build issues are fixed
+#from PythonQt.qMRMLWidgets import *
 
 def quit():
   exit()
