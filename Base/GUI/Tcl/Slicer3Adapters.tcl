@@ -36,8 +36,9 @@ namespace eval Slicer3Adapters {
       switch $method {
         "AddObservation" {
           set subject [lindex $args 1]
-          if { [catch "$subject IsA vtkObject"] } {
+          if { [catch "$subject GetMTime"] } {
             # call AddObservation directly on subject
+            # (rely on only wrapped vtkObjects having a GetMTime method)
             set event [lindex $args 2]
             set script [lindex $args 3]
             $subject AddObservation $event $script
@@ -102,6 +103,19 @@ namespace eval Slicer3Adapters {
     method SetMRMLScene {arg} { set ::slicer3::MRMLScene $arg}
     method GetMRMLScene {} { return $::slicer3::MRMLScene }
     method GetSliceNode {} { return [$_logic GetSliceNode]}
+    method GetActiveLeftButtonTool {} { 
+      #TODO: will need to adapt this to slicer4's version of mouse 'ownership'
+      return ""
+    }
+
+    method IsA {arg} {
+      # only admit to being a slice gui (not a vtk object)
+      if { $arg == "vtkSlicerSliceGUI" } {
+        return 1
+      } else {
+        return 0
+      }
+    }
 
     # stub out this call - not needed if grabID is set correctly
     method SetGUICommandAbortFlag {arg} {}
