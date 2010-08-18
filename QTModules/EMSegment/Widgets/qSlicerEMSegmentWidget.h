@@ -22,6 +22,10 @@ public:
 public slots:
   void setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager);
 
+  virtual void setup(){}
+
+  //virtual void cleanup(){}
+
 signals:
   void mrmlManagerChanged(vtkEMSegmentMRMLManager* newMRMLManager);
 

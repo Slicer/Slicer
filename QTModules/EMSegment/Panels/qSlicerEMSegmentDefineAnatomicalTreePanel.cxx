@@ -30,3 +30,10 @@ void qSlicerEMSegmentDefineAnatomicalTreePanel::printAdditionalInfo()
 {
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentDefineAnatomicalTreePanel::setup()
+{
+  CTK_D(qSlicerEMSegmentDefineAnatomicalTreePanel);
+  d->EMSegmentAnatomicalTreeWidget->setup();
+}
+

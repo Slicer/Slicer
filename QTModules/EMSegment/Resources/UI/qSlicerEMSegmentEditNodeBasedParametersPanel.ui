@@ -6,21 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
-    <height>534</height>
+    <width>570</width>
+    <height>340</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
-    <widget class="QPushButton" name="PopulateTreeButton">
-     <property name="text">
-      <string>PopulateTree</string>
-     </property>
-    </widget>
-   </item>
    <item>
     <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
      <property name="title">
@@ -42,6 +35,12 @@
       </item>
       <item>
        <widget class="QTabWidget" name="tabWidget">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>150</height>
+         </size>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -99,22 +98,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>PopulateTreeButton</sender>
-   <signal>clicked()</signal>
-   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
-   <slot>setup()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>404</x>
-     <y>15</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>407</x>
-     <y>79</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>qSlicerEMSegmentEditNodeBasedParametersPanel</sender>
    <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>

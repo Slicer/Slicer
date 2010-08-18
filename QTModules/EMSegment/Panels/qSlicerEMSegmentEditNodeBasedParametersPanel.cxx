@@ -29,3 +29,11 @@ Superclass(newParent)
 void qSlicerEMSegmentEditNodeBasedParametersPanel::printAdditionalInfo()
 {
 }
+
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentEditNodeBasedParametersPanel::setup()
+{
+  CTK_D(qSlicerEMSegmentEditNodeBasedParametersPanel);
+  d->EMSegmentAnatomicalTreeWidget->setup();
+}

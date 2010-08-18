@@ -29,3 +29,10 @@ Superclass(newParent)
 void qSlicerEMSegmentDefineAtlasPanel::printAdditionalInfo()
 {
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentDefineAtlasPanel::setup()
+{
+  CTK_D(qSlicerEMSegmentDefineAtlasPanel);
+  d->EMSegmentAnatomicalTreeWidget->setup();
+}

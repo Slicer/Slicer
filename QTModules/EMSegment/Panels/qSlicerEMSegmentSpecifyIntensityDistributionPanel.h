@@ -23,6 +23,8 @@ public:
   
   virtual void printAdditionalInfo();
 
+  virtual void setup();
+
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentSpecifyIntensityDistributionPanel);
 };

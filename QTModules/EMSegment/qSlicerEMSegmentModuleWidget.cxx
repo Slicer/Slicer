@@ -99,4 +99,5 @@ void qSlicerEMSegmentModuleWidget::showPanel(int panelId)
 {
   CTK_D(qSlicerEMSegmentModuleWidget);
   d->PanelStack->setCurrentIndex(panelId);
+  d->Panels.at(panelId)->setup();
 }

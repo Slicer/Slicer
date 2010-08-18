@@ -29,3 +29,11 @@ Superclass(newParent)
 void qSlicerEMSegmentSpecifyIntensityDistributionPanel::printAdditionalInfo()
 {
 }
+
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentSpecifyIntensityDistributionPanel::setup()
+{
+  CTK_D(qSlicerEMSegmentSpecifyIntensityDistributionPanel);
+  d->EMSegmentAnatomicalTreeWidget->setup();
+}

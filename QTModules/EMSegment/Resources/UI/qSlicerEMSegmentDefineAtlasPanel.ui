@@ -7,20 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>572</width>
-    <height>463</height>
+    <height>426</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
-    <widget class="QPushButton" name="PopulateTreeButton">
-     <property name="text">
-      <string>PopulateTree</string>
-     </property>
-    </widget>
-   </item>
    <item>
     <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
      <property name="title">
@@ -57,6 +50,9 @@
          </stringlist>
         </property>
         <property name="showHidden">
+         <bool>true</bool>
+        </property>
+        <property name="noneEnabled">
          <bool>true</bool>
         </property>
         <property name="addEnabled">
@@ -117,22 +113,6 @@
     <hint type="destinationlabel">
      <x>456</x>
      <y>442</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>PopulateTreeButton</sender>
-   <signal>clicked()</signal>
-   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
-   <slot>setup()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>351</x>
-     <y>26</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>360</x>
-     <y>86</y>
     </hint>
    </hints>
   </connection>
