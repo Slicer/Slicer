@@ -103,6 +103,9 @@ namespace eval Slicer3Adapters {
     method GetMRMLScene {} { return $::slicer3::MRMLScene }
     method GetSliceNode {} { return [$_logic GetSliceNode]}
 
+    # stub out this call - not needed if grabID is set correctly
+    method SetGUICommandAbortFlag {arg} {}
+
     # access to locally instanced classes
     method GetSliceViewer {} {
       return $_sliceViewer
@@ -181,6 +184,10 @@ namespace eval Slicer3Adapters {
         set _viewerWarning "done"
       }
       return ""
+    }
+
+    method GetGUILayoutNode {} {
+      return [$::slicer3::MRMLScene GetNthNodeByClass 0 "vtkMRMLLayoutNode"]
     }
   }
 
@@ -309,7 +316,7 @@ namespace eval Slicer3Adapters {
     method GetTextProperty {} {return $_textProperty}
     method SetText {corner text} {
       #puts "TODO: SetText $corner $text"
-      puts -nonewline "t";flush stdout
+      #puts -nonewline "t";flush stdout
     }
   }
 
@@ -328,3 +335,38 @@ namespace eval Slicer3Adapters {
     method AddBinding {args} {puts "TODO: ignoring AddBinding $args"}
   }
 }
+
+# a handy utility, copied from tkcon.tcl
+## lremove - remove items from a list
+# OPTS:
+#   -all        remove all instances of each item
+#   -glob        remove all instances matching glob pattern
+#   -regexp        remove all instances matching regexp pattern
+# ARGS:        l        a list to remove items from
+#        args        items to remove (these are 'join'ed together)
+##
+proc lremove {args} {
+    array set opts {-all 0 pattern -exact}
+    while {[string match -* [lindex $args 0]]} {
+        switch -glob -- [lindex $args 0] {
+            -a*        { set opts(-all) 1 }
+            -g*        { set opts(pattern) -glob }
+            -r*        { set opts(pattern) -regexp }
+            --        { set args [lreplace $args 0 0]; break }
+            default {return -code error "unknown option \"[lindex $args 0]\""}
+        }
+        set args [lreplace $args 0 0]
+    }
+    set l [lindex $args 0]
+    foreach i [join [lreplace $args 0 0]] {
+        if {[set ix [lsearch $opts(pattern) $l $i]] == -1} continue
+        set l [lreplace $l $ix $ix]
+        if {$opts(-all)} {
+            while {[set ix [lsearch $opts(pattern) $l $i]] != -1} {
+                set l [lreplace $l $ix $ix]
+            }
+        }
+    }
+    return $l
+}
+
