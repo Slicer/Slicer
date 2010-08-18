@@ -6,8 +6,9 @@
 #include "ui_qSlicerEMSegmentDefineInputChannelsPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineInputChannelsPanelPrivate : public ctkPrivate<qSlicerEMSegmentDefineInputChannelsPanel>,
-                                              public Ui_qSlicerEMSegmentDefineInputChannelsPanel
+class qSlicerEMSegmentDefineInputChannelsPanelPrivate :
+    public ctkPrivate<qSlicerEMSegmentDefineInputChannelsPanel>,
+    public Ui_qSlicerEMSegmentDefineInputChannelsPanel
 {
 public:
   qSlicerEMSegmentDefineInputChannelsPanelPrivate()
@@ -16,8 +17,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentDefineInputChannelsPanel::qSlicerEMSegmentDefineInputChannelsPanel(QWidget *_parent):
-Superclass(_parent)
+qSlicerEMSegmentDefineInputChannelsPanel::qSlicerEMSegmentDefineInputChannelsPanel(QWidget *newParent):
+Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefineInputChannelsPanel);
   CTK_D(qSlicerEMSegmentDefineInputChannelsPanel);

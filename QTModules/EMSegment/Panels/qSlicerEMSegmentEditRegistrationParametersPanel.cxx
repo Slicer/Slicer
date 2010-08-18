@@ -6,8 +6,9 @@
 #include "ui_qSlicerEMSegmentEditRegistrationParametersPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentEditRegistrationParametersPanelPrivate : public ctkPrivate<qSlicerEMSegmentEditRegistrationParametersPanel>,
-                                              public Ui_qSlicerEMSegmentEditRegistrationParametersPanel
+class qSlicerEMSegmentEditRegistrationParametersPanelPrivate :
+    public ctkPrivate<qSlicerEMSegmentEditRegistrationParametersPanel>,
+    public Ui_qSlicerEMSegmentEditRegistrationParametersPanel
 {
 public:
   qSlicerEMSegmentEditRegistrationParametersPanelPrivate()
@@ -16,8 +17,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentEditRegistrationParametersPanel::qSlicerEMSegmentEditRegistrationParametersPanel(QWidget *_parent):
-Superclass(_parent)
+qSlicerEMSegmentEditRegistrationParametersPanel::qSlicerEMSegmentEditRegistrationParametersPanel(QWidget *newParent):
+Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentEditRegistrationParametersPanel);
   CTK_D(qSlicerEMSegmentEditRegistrationParametersPanel);

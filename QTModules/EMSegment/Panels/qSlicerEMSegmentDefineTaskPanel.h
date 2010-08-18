@@ -4,21 +4,23 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerQt includes
-#include "qSlicerWidget.h"
+// EMSegment includes
+#include "qSlicerEMSegmentWidget.h"
 
 #include "qSlicerEMSegmentModuleExport.h"
 
 class qSlicerEMSegmentDefineTaskPanelPrivate;
+class vtkMRMLNode;
 
-class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineTaskPanel : public qSlicerWidget
+class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineTaskPanel :
+    public qSlicerEMSegmentWidget
 { 
   Q_OBJECT
 
 public:
 
-  typedef qSlicerWidget Superclass;
-  qSlicerEMSegmentDefineTaskPanel(QWidget *parent=0);
+  typedef qSlicerEMSegmentWidget Superclass;
+  qSlicerEMSegmentDefineTaskPanel(QWidget *newParent=0);
   
   virtual void printAdditionalInfo();
 

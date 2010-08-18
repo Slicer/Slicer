@@ -6,8 +6,9 @@
 #include "ui_qSlicerEMSegmentDefineAtlasPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineAtlasPanelPrivate : public ctkPrivate<qSlicerEMSegmentDefineAtlasPanel>,
-                                              public Ui_qSlicerEMSegmentDefineAtlasPanel
+class qSlicerEMSegmentDefineAtlasPanelPrivate :
+    public ctkPrivate<qSlicerEMSegmentDefineAtlasPanel>,
+    public Ui_qSlicerEMSegmentDefineAtlasPanel
 {
 public:
   qSlicerEMSegmentDefineAtlasPanelPrivate()
@@ -16,8 +17,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentDefineAtlasPanel::qSlicerEMSegmentDefineAtlasPanel(QWidget *_parent):
-Superclass(_parent)
+qSlicerEMSegmentDefineAtlasPanel::qSlicerEMSegmentDefineAtlasPanel(QWidget *newParent):
+Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefineAtlasPanel);
   CTK_D(qSlicerEMSegmentDefineAtlasPanel);

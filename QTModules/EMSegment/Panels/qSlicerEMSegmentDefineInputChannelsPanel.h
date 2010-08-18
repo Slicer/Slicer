@@ -4,21 +4,22 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerQt includes
-#include "qSlicerWidget.h"
+// EMSegment includes
+#include "qSlicerEMSegmentWidget.h"
 
 #include "qSlicerEMSegmentModuleExport.h"
 
 class qSlicerEMSegmentDefineInputChannelsPanelPrivate;
 
-class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineInputChannelsPanel : public qSlicerWidget
+class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineInputChannelsPanel :
+    public qSlicerEMSegmentWidget
 { 
   Q_OBJECT
 
 public:
 
-  typedef qSlicerWidget Superclass;
-  qSlicerEMSegmentDefineInputChannelsPanel(QWidget *parent=0);
+  typedef qSlicerEMSegmentWidget Superclass;
+  qSlicerEMSegmentDefineInputChannelsPanel(QWidget *newParent=0);
   
   virtual void printAdditionalInfo();
 

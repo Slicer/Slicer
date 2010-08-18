@@ -61,6 +61,10 @@
 #include <cmath>
 #include <exception>
 
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
 //----------------------------------------------------------------------------
 // A helper class to compare two maps
 template <class T>
@@ -113,7 +117,18 @@ void vtkSlicerEMSegmentLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerEMSegmentLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  this->SetAndObserveMRMLSceneInternal(newScene);
+  // MRMLManager is an helper class instanciated by the Logic
+  // The logic is in charge of both:
+  //  - listening the scene for NodeAdded and NodeRemoved events
+  //  - calling the ProcessMRMLEvents function on the MRMLManager class
+
+  VTK_CREATE(vtkIntArray, sceneEvents);
+  sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+
+  // Logic will observe the scene events
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+
   this->MRMLManager->SetMRMLScene(newScene);
 }
 

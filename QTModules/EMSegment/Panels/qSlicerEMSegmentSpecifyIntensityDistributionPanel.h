@@ -4,21 +4,22 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-// SlicerQt includes
-#include "qSlicerWidget.h"
+// EMSegment includes
+#include "qSlicerEMSegmentWidget.h"
 
 #include "qSlicerEMSegmentModuleExport.h"
 
 class qSlicerEMSegmentSpecifyIntensityDistributionPanelPrivate;
 
-class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentSpecifyIntensityDistributionPanel : public qSlicerWidget
+class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentSpecifyIntensityDistributionPanel :
+    public qSlicerEMSegmentWidget
 { 
   Q_OBJECT
 
 public:
 
-  typedef qSlicerWidget Superclass;
-  qSlicerEMSegmentSpecifyIntensityDistributionPanel(QWidget *parent=0);
+  typedef qSlicerEMSegmentWidget Superclass;
+  qSlicerEMSegmentSpecifyIntensityDistributionPanel(QWidget *newParent=0);
   
   virtual void printAdditionalInfo();
 

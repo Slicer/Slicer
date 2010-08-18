@@ -6,8 +6,9 @@
 #include "ui_qSlicerEMSegmentEditNodeBasedParametersPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentEditNodeBasedParametersPanelPrivate : public ctkPrivate<qSlicerEMSegmentEditNodeBasedParametersPanel>,
-                                              public Ui_qSlicerEMSegmentEditNodeBasedParametersPanel
+class qSlicerEMSegmentEditNodeBasedParametersPanelPrivate :
+    public ctkPrivate<qSlicerEMSegmentEditNodeBasedParametersPanel>,
+    public Ui_qSlicerEMSegmentEditNodeBasedParametersPanel
 {
 public:
   qSlicerEMSegmentEditNodeBasedParametersPanelPrivate()
@@ -16,8 +17,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentEditNodeBasedParametersPanel::qSlicerEMSegmentEditNodeBasedParametersPanel(QWidget *_parent):
-Superclass(_parent)
+qSlicerEMSegmentEditNodeBasedParametersPanel::qSlicerEMSegmentEditNodeBasedParametersPanel(QWidget *newParent):
+Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentEditNodeBasedParametersPanel);
   CTK_D(qSlicerEMSegmentEditNodeBasedParametersPanel);

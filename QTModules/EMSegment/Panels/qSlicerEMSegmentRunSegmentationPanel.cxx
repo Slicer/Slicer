@@ -6,8 +6,9 @@
 #include "ui_qSlicerEMSegmentRunSegmentationPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentRunSegmentationPanelPrivate : public ctkPrivate<qSlicerEMSegmentRunSegmentationPanel>,
-                                              public Ui_qSlicerEMSegmentRunSegmentationPanel
+class qSlicerEMSegmentRunSegmentationPanelPrivate :
+    public ctkPrivate<qSlicerEMSegmentRunSegmentationPanel>,
+    public Ui_qSlicerEMSegmentRunSegmentationPanel
 {
 public:
   qSlicerEMSegmentRunSegmentationPanelPrivate()
@@ -16,8 +17,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentRunSegmentationPanel::qSlicerEMSegmentRunSegmentationPanel(QWidget *_parent):
-Superclass(_parent)
+qSlicerEMSegmentRunSegmentationPanel::qSlicerEMSegmentRunSegmentationPanel(QWidget *newParent):
+Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentRunSegmentationPanel);
   CTK_D(qSlicerEMSegmentRunSegmentationPanel);

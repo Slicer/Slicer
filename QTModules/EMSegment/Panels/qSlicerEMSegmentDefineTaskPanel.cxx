@@ -6,8 +6,9 @@
 #include "ui_qSlicerEMSegmentDefineTaskPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineTaskPanelPrivate : public ctkPrivate<qSlicerEMSegmentDefineTaskPanel>,
-                                              public Ui_qSlicerEMSegmentDefineTaskPanel
+class qSlicerEMSegmentDefineTaskPanelPrivate :
+    public ctkPrivate<qSlicerEMSegmentDefineTaskPanel>,
+    public Ui_qSlicerEMSegmentDefineTaskPanel
 {
 public:
   qSlicerEMSegmentDefineTaskPanelPrivate()
@@ -16,8 +17,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentDefineTaskPanel::qSlicerEMSegmentDefineTaskPanel(QWidget *_parent):
-Superclass(_parent)
+qSlicerEMSegmentDefineTaskPanel::qSlicerEMSegmentDefineTaskPanel(QWidget *newParent):
+Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefineTaskPanel);
   CTK_D(qSlicerEMSegmentDefineTaskPanel);

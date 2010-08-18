@@ -2,11 +2,9 @@
 #include <QDebug>
 #include <QList>
 
-// SlicerQt includes
+// EMSegment QTModule includes
 #include "qSlicerEMSegmentModuleWidget.h"
 #include "ui_qSlicerEMSegmentModule.h"
-
-// EMSegment QTModule includes
 #include "qSlicerEMSegmentDefineAnatomicalTreePanel.h"
 #include "qSlicerEMSegmentDefineAtlasPanel.h"
 #include "qSlicerEMSegmentDefineInputChannelsPanel.h"
@@ -17,14 +15,33 @@
 #include "qSlicerEMSegmentSpecifyIntensityDistributionPanel.h"
 #include "qSlicerEMSegmentRunSegmentationPanel.h"
 
+// EMSegment/Logic includes
+#include <vtkSlicerEMSegmentLogic.h>
+
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentModuleWidgetPrivate: public ctkPrivate<qSlicerEMSegmentModuleWidget>,
-                                         public Ui_qSlicerEMSegmentModule
+                                           public Ui_qSlicerEMSegmentModule
 {
 public:
-  QList<QWidget*> Panels;
+
+  vtkSlicerEMSegmentLogic* logic() const;
+
+  QList<qSlicerEMSegmentWidget*> Panels;
 
 };
+
+//-----------------------------------------------------------------------------
+// qSlicerEMSegmentModuleWidgetPrivate methods
+
+//-----------------------------------------------------------------------------
+vtkSlicerEMSegmentLogic* qSlicerEMSegmentModuleWidgetPrivate::logic()const
+{
+  CTK_P(const qSlicerEMSegmentModuleWidget);
+  return vtkSlicerEMSegmentLogic::SafeDownCast(p->logic());
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerEMSegmentModuleWidget methods
 
 //-----------------------------------------------------------------------------
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerEMSegmentModuleWidget, QWidget*);
@@ -54,19 +71,20 @@ void qSlicerEMSegmentModuleWidget::setup()
       << new qSlicerEMSegmentEditNodeBasedParametersPanel
       << new qSlicerEMSegmentRunSegmentationPanel;
 
-  foreach(QWidget* w, d->Panels)
+  foreach(qSlicerEMSegmentWidget* w, d->Panels)
     {
     // Add Panels to Stack
     d->PanelStack->addWidget(w);
 
+    // Set MRML manager instance
+    w->setMRMLManager(d->logic()->GetMRMLManager());
+
     // Connect mrmlSceneChanged signal
-    qSlicerWidget * slicerWidget = qobject_cast<qSlicerWidget*>(w);
-    Q_ASSERT(slicerWidget);
     this->connect(this, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                  slicerWidget, SLOT(setMRMLScene(vtkMRMLScene*)));
+                  w, SLOT(setMRMLScene(vtkMRMLScene*)));
 
     // Set scene
-    slicerWidget->setMRMLScene(this->mrmlScene());
+    w->setMRMLScene(this->mrmlScene());
     }
 
   this->connect(d->TestPanelsComboBox, SIGNAL(currentIndexChanged(int)),

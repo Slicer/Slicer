@@ -21,6 +21,15 @@ SET(qt_module_include_directories
   ${EMSegmentMRML_BINARY_DIR}
   )
 
+# Widget source files
+SET(widget_SRCS
+  Widgets/qSlicerEMSegmentWidget.cxx
+  Widgets/qSlicerEMSegmentWidget.h
+  )
+SET(widget_MOC_SRCS
+  Widgets/qSlicerEMSegmentWidget.h
+  )
+
 # Panel source files
 SET(panel_SRCS
   Panels/qSlicerEMSegmentDefineAnatomicalTreePanel.cxx           # Step 3
@@ -58,6 +67,7 @@ SET(panel_MOC_SRCS
 # Source files
 SET(qt_module_SRCS
   ${panel_SRCS}
+  ${widget_SRCS}
   qSlicerEMSegmentModule.cxx
   qSlicerEMSegmentModule.h
   qSlicerEMSegmentModuleWidget.cxx
@@ -67,6 +77,7 @@ SET(qt_module_SRCS
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
   ${panel_MOC_SRCS}
+  ${widget_MOC_SRCS}
   qSlicerEMSegmentModule.h
   qSlicerEMSegmentModuleWidget.h
   )
@@ -108,6 +119,10 @@ Slicer3_build_qtmodule(
   RESOURCES ${qt_module_resources}
   )
 
+# --------------------------------------------------------------------------
+# Sub directories
+#
+ADD_SUBDIRECTORY(Widgets/Plugins)
 
 if(BUILD_TESTING)
   #add_subdirectory(Testing)

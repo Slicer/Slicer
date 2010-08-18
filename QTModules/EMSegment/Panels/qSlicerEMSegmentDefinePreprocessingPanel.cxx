@@ -6,8 +6,9 @@
 #include "ui_qSlicerEMSegmentDefinePreprocessingPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefinePreprocessingPanelPrivate : public ctkPrivate<qSlicerEMSegmentDefinePreprocessingPanel>,
-                                              public Ui_qSlicerEMSegmentDefinePreprocessingPanel
+class qSlicerEMSegmentDefinePreprocessingPanelPrivate :
+    public ctkPrivate<qSlicerEMSegmentDefinePreprocessingPanel>,
+    public Ui_qSlicerEMSegmentDefinePreprocessingPanel
 {
 public:
   qSlicerEMSegmentDefinePreprocessingPanelPrivate()
@@ -16,8 +17,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentDefinePreprocessingPanel::qSlicerEMSegmentDefinePreprocessingPanel(QWidget *_parent):
-Superclass(_parent)
+qSlicerEMSegmentDefinePreprocessingPanel::qSlicerEMSegmentDefinePreprocessingPanel(QWidget *newParent):
+Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefinePreprocessingPanel);
   CTK_D(qSlicerEMSegmentDefinePreprocessingPanel);

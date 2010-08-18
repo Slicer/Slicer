@@ -1,13 +1,14 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentDefineAnatomicalTreePanel.h" 
 #include "ui_qSlicerEMSegmentDefineAnatomicalTreePanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineAnatomicalTreePanelPrivate : public ctkPrivate<qSlicerEMSegmentDefineAnatomicalTreePanel>,
-                                              public Ui_qSlicerEMSegmentDefineAnatomicalTreePanel
+class qSlicerEMSegmentDefineAnatomicalTreePanelPrivate :
+    public ctkPrivate<qSlicerEMSegmentDefineAnatomicalTreePanel>,
+    public Ui_qSlicerEMSegmentDefineAnatomicalTreePanel
 {
 public:
   qSlicerEMSegmentDefineAnatomicalTreePanelPrivate()
@@ -16,8 +17,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentDefineAnatomicalTreePanel::qSlicerEMSegmentDefineAnatomicalTreePanel(QWidget *_parent):
-Superclass(_parent)
+qSlicerEMSegmentDefineAnatomicalTreePanel::qSlicerEMSegmentDefineAnatomicalTreePanel(QWidget *newParent):
+Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefineAnatomicalTreePanel);
   CTK_D(qSlicerEMSegmentDefineAnatomicalTreePanel);
@@ -28,3 +29,4 @@ Superclass(_parent)
 void qSlicerEMSegmentDefineAnatomicalTreePanel::printAdditionalInfo()
 {
 }
+
