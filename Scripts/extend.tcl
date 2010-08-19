@@ -677,5 +677,8 @@ if { [llength $::EXTEND(FAILED)] != 0 } {
   }
 }
 
-vputs "\n[format %3.1f [expr 100 * (1.*[llength $::EXTEND(BUILT)] / [llength $::EXTEND(s3extFiles)])]]% succeeded" 
-
+if { [llength $::EXTEND(s3extFiles)] != 0 } {
+  vputs "\n[format %3.1f [expr 100 * (1.*[llength $::EXTEND(BUILT)] / [llength $::EXTEND(s3extFiles)])]]% succeeded" 
+} else {
+  vputs "\nNo .s3ext files found."
+}
