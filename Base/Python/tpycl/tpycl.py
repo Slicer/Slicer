@@ -127,7 +127,12 @@ class tpycl(object):
     (only prints error messages)
     """
     self.dprint("callback command is <%s>" % cmd)
-    result = self.tcl.eval(cmd)
+    try:
+      result = self.tcl.eval(cmd)
+    except Tkinter.TclError,error:
+      print (error)
+      errorInfo = self.tcl.eval("set ::errorInfo")
+      print (errorInfo)
 
   def tcl_eval(self, cmd):
     """ evaluate tcl code string and return the result
