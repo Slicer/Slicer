@@ -196,6 +196,7 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
     }
 
   if ( this->SliceNode != 0 && node != 0 &&
+        this->SliceCompositeNode &&
        (this->SliceCompositeNode->GetID() == 0 ||
         strcmp(this->SliceNode->GetID(), node->GetID()) != 0 ))
     {
