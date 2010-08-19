@@ -1605,7 +1605,7 @@ itcl::body LoadVolume::organizeDICOMSeries {arrayName {includeSubseries 0} {prog
             set distNminus1 $tree($patient,$study,$series,$fileNminus1,dist)
             set spacingN [expr $distN - $distNminus1]
             set spaceError [expr $spacingN - $spacing0]
-            if { $spaceError > $epsilon } {
+            if { [expr abs($spaceError)] > $epsilon } {
               incr spaceWarnings
               set tree($patient,$study,$series,warning) "images are not equally spaced (a difference of $spaceError in spacings was detected).  Slicer will load this series as if it had a spacing of $spacing0.  Please use caution."
               break
