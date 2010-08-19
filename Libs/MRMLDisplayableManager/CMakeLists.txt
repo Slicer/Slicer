@@ -90,6 +90,13 @@ SET(KIT_SRCS
   vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx
   )
+SET_SOURCE_FILES_PROPERTIES(
+  vtkMRMLDisplayableManagerGroup.cxx
+  vtkMRMLDisplayableManagerFactory.cxx
+  vtkMRMLThreeDViewDisplayableManagerFactory.cxx
+  vtkMRMLSliceViewDisplayableManagerFactory.cxx
+  WRAP_EXCLUDE
+)
 
 IF(MRMLDisplayableManager_USE_PYTHON)
   LIST(APPEND KIT_SRCS
