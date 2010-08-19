@@ -96,6 +96,7 @@ namespace eval Slicer3Adapters {
     method SetLogic {arg} {
       set _logic $arg
       $this SetMRMLScene [$_logic GetMRMLScene]
+      $_sliceViewer SetSliceLogic $_logic
     }
     method GetLogic {} {return $_logic}
     method SetGrabID {arg} {set _grabID $arg}
@@ -216,12 +217,20 @@ namespace eval Slicer3Adapters {
     }
 
     variable _renderWidget ""
+    variable _sliceLogic ""
 
     # methods
     method GetRenderWidget {} {return $_renderWidget}
+    method SetSliceLogic {arg} {set _sliceLogic $arg}
+    method GetSliceLogic {} {return $_sliceLogic}
     method RequestRender {} {
       # TODO: need to have a request render methodology in Qt
-      #puts "please render"
+      # - for now, trigger a modified event on the image data
+      #   as if it had been recalculated
+      set imageData [$_sliceLogic GetImageData]
+      if { $imageData != "" } {
+        $imageData Modified
+      }
       #[[$_renderWidget GetRenderWindowInteractor] GetRenderWindow] Render
     }
     method GetHighlightColor {} {

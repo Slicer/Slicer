@@ -107,6 +107,9 @@ itcl::body ModelSWidget::destructor {} {
 # when told what model to observe...
 #
 itcl::configbody ModelSWidget::modelID {
+  if { $modelID == "" } {
+    return
+  }
   # find the model node
   set modelNode [$::slicer3::MRMLScene GetNodeByID $modelID]
   if { $modelNode == "" } {
@@ -163,6 +166,11 @@ itcl::body ModelSWidget::positionActors { } {
 }
 
 itcl::body ModelSWidget::highlight { } {
+
+  if { $modelID == "" } {
+    $o(actor) SetVisibility 0
+    return
+  }
 
   set property [$o(actor) GetProperty]
 

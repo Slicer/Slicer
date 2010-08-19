@@ -428,7 +428,6 @@ itcl::body SWidget::cancelDelayedAnnotation { } {
         after cancel $_annotationTaskID
         set _annotationTaskID ""
         [$sliceGUI GetSliceViewer] RequestRender
-        #puts "requesting a render on $this [expr rand()]"
     }
 }
 
