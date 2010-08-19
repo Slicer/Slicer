@@ -122,13 +122,31 @@ namespace eval tpycl {
           set tuple 1
         }
 
+        if { $types == "''" } {
+          set types ""
+        }
+        if { [llength $args] != [llength $types] } {
+          # TODO: check for non matching args here
+          # - complication is multiple sinatures
+          # error "$instanceName $method called with \"$args\" but method needs \"$types\" (according to $doc)"
+        }
+
         # avoid trying to set "$var(" as tcl will 
         # try to treat it as an array reference
         set pycmd [format "$instanceName.$method%s" "("]
         foreach arg $args { 
+          set type [lindex $types 0]
+          set types [lrange $types 1 end]
           if { ![py_type $arg] } {
-            # python doesn't understand the argument, so assume it is a string
-            set arg '$arg'
+            if { [string match "'vtk*" $type] && $arg == "" } {
+              set arg "None"
+            } else {
+              # python doesn't understand the argument, and we don't know what type it is,
+              # so assume it is a string
+              if { $arg != "" } {
+                set arg '$arg'
+              }
+            }
           }
           if { [string index $pycmd end] != "(" } {
             # if not at start of arg list, add a comma
@@ -142,7 +160,7 @@ namespace eval tpycl {
           set pycmd "$pycmd$arg"
         }
         set pycmd "$pycmd)"
-        if { $tuple } {
+        if { $args != "" && $tuple } {
           set pycmd "$pycmd)"
         }
       }
