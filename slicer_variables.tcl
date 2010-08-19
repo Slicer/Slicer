@@ -586,6 +586,13 @@ switch $::tcl_platform(os) {
             set ::MSSDK_PATH "c:/Program Files/Microsoft SDKs/Windows/v6.0A"
         }
 
+        if { [file exists "C:/Program Files/Microsoft Visual Studio 10.0/Common7/IDE/VCExpress.exe"] } {
+            set ::GENERATOR "Visual Studio 10"
+            set ::MAKE "C:/Program Files/Microsoft Visual Studio 10.0/Common7/IDE/VCExpress.exe"
+            set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 10.0/VC/bin"
+            set ::MSSDK_PATH "c:/Program Files/Microsoft SDKs/Windows/v7.0A"
+        }
+
         set ::COMPILER "cl"
         set ::SERIAL_MAKE $::MAKE
 
