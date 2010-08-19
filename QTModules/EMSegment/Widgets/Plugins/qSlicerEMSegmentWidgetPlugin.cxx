@@ -2,15 +2,15 @@
 #include "qSlicerEMSegmentWidget.h"
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentWidgetPlugin::qSlicerEMSegmentWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
+qSlicerEMSegmentWidgetPlugin::qSlicerEMSegmentWidgetPlugin(QObject *newParent)
+        : QObject(newParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qSlicerEMSegmentWidgetPlugin::createWidget(QWidget *_parent)
+QWidget *qSlicerEMSegmentWidgetPlugin::createWidget(QWidget *newParent)
 {
-  qSlicerEMSegmentWidget* _widget = new qSlicerEMSegmentWidget(_parent);
+  qSlicerEMSegmentWidget* _widget = new qSlicerEMSegmentWidget(newParent);
   return _widget;
 }
 

@@ -10,9 +10,9 @@ class Q_SLICER_QTMODULES_EMSEGMENT_WIDGETS_PLUGIN_EXPORT qSlicerEMSegmentWidgetP
   Q_OBJECT
 
 public:
-  qSlicerEMSegmentWidgetPlugin(QObject *_parent = 0);
+  qSlicerEMSegmentWidgetPlugin(QObject *newParent = 0);
   
-  QWidget *createWidget(QWidget *_parent);
+  QWidget *createWidget(QWidget *newParent);
   QString  domXml() const;
   QIcon    icon() const;
   QString  includeFile() const;

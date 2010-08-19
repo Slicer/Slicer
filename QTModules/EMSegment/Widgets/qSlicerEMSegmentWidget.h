@@ -7,10 +7,12 @@
 // SlicerQt includes
 #include "qSlicerWidget.h"
 
+#include "qSlicerEMSegmentModuleExport.h"
+
 class qSlicerEMSegmentWidgetPrivate;
 class vtkEMSegmentMRMLManager;
 
-class qSlicerEMSegmentWidget : public qSlicerWidget
+class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentWidget : public qSlicerWidget
 {
   Q_OBJECT
 public:
