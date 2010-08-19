@@ -85,6 +85,14 @@ IF(Slicer3_USE_PYTHONQT)
     CTKScriptingPythonCore
     vtkCommonPythonD # For vtkPythonUtils
     )
+  IF(WIN32)
+    # TODO: this resolves link errors on windows, but shouldn't be
+    # needed - issue may lie with ctk external library macros?
+    LIST(APPEND KIT_target_libraries
+      ${PYTHONQT_LIBRARY}
+      )
+  ENDIF(WIN32)
+
   # Sources
   LIST(APPEND KIT_SRCS
     qSlicerCorePythonManager.cxx
