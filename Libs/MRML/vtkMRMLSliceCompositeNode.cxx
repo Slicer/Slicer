@@ -377,30 +377,4 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "DoPropagateVolumeSelection: " << this->DoPropagateVolumeSelection << "\n";
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLSliceCompositeNode::UpdateScene(vtkMRMLScene* scene)
-{
-  if (scene == NULL)
-    {
-    vtkErrorMacro("UpdateScene: input scene is null!");
-    return;
-    }
-  vtkMRMLSliceCompositeNode *node= NULL;
-  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  for (int n=0; n<nnodes; n++)
-    {
-    node = vtkMRMLSliceCompositeNode::SafeDownCast (
-          scene->GetNthNodeByClass(n, "vtkMRMLSliceCompositeNode"));
-    if (node != this && !strcmp(node->GetLayoutName(), this->GetLayoutName()))
-      {
-      break;
-      }
-    node = NULL;
-    }
-  if (node != NULL)
-    {
-    //scene->RemoveNodeNoNotify(node);
-    scene->RemoveNode(node);
-    }
-}
 // End

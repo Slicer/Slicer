@@ -196,7 +196,8 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
     }
 
   if ( this->SliceNode != 0 && node != 0 &&
-    strcmp(this->SliceNode->GetID(), node->GetID()) != 0 )
+       (this->SliceCompositeNode->GetID() == 0 ||
+        strcmp(this->SliceNode->GetID(), node->GetID()) != 0 ))
     {
     // local SliceNode is out of sync with the scene
     this->SetSliceNode (0);
@@ -230,6 +231,7 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
     this->SetSliceNode (node);
     node->UnRegister(this);
     }
+
 }
 
 //----------------------------------------------------------------------------
@@ -273,7 +275,8 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
     }
 
   if ( this->SliceCompositeNode != 0 && node != 0 &&
-        strcmp(this->SliceCompositeNode->GetID(), node->GetID()) != 0 )
+       (this->SliceCompositeNode->GetID() == 0 ||
+        strcmp(this->SliceCompositeNode->GetID(), node->GetID()) != 0) )
     {
     // local SliceCompositeNode is out of sync with the scene
     this->SetSliceCompositeNode (0);
@@ -304,6 +307,7 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
     this->SetSliceCompositeNode(node);
     node->UnRegister(this);
     }
+
 }
 
 //----------------------------------------------------------------------------

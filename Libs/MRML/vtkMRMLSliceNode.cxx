@@ -754,34 +754,6 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
                                << this->PrescribedSliceSpacing[2] << ")\n";
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLSliceNode::UpdateScene(vtkMRMLScene* scene)
-{
-  if (scene == NULL)
-    {
-    vtkErrorMacro("UpdateScene: input scene is null!");
-    return;
-    }
-  vtkMRMLSliceNode *node= NULL;
-  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-  for (int n=0; n<nnodes; n++)
-    {
-    node = vtkMRMLSliceNode::SafeDownCast (
-          scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
-    if (node != this && !strcmp(node->GetLayoutName(), this->GetLayoutName()))
-      {
-      break;
-      }
-    node = NULL;
-    }
-  if (node != NULL)
-    {
-    //scene->RemoveNodeNoNotify(node);
-    scene->RemoveNode(node);
-    }
-}
-// End
-
 void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
 {
   if (this->JumpMode == CenteredJumpSlice)
