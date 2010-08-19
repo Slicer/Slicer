@@ -300,9 +300,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
           $w == $nodeW && $h == $nodeH && [expr abs($sliceStep - ($nodefovz / (1. * $nodeD)))] < $epsilon} {
       return
     }
-    #puts "node parameters changed"
     set disabled [$_sliceNode GetDisableModifiedEvent]
-    #puts "$_sliceNode $disabled"
     $_sliceNode DisableModifiedEventOn
     $_sliceNode SetDimensions $w $h $nodeD
     $_sliceNode SetFieldOfView $fovx $fovy $fovz
@@ -412,7 +410,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   if { [itcl::find class ::SliceSWidget] == "::SliceSWidget"} {
       set swidgets [itcl::find objects -class ::SliceSWidget]
       foreach sw $swidgets {
-          # does this cause us to render every widget every event?
           $sw cancelDelayedAnnotation
       }
   }
@@ -425,11 +422,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   set annotationsUpdated false
   set link [$_sliceCompositeNode GetLinkedControl]
   if { $link == 1 && [$this isCompareViewMode] == 1 && ([$this isCompareViewer] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
-      #puts "annnotations"
       $this updateAnnotations $r $a $s
       set annotationsUpdated true
   } else {
-      #puts "just one annotation"
       $this updateAnnotation $r $a $s
       set annotationsUpdated true
   }
@@ -680,7 +675,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $this resizeSliceNode
     }
     "EnterEvent" { 
-      #puts "Enter"
       set _inWidget 1
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
@@ -703,7 +697,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           $snode DisableModifiedEventOn
       }
       # modify each slice node
-      #puts "Current node $_sliceNode Current gui $sliceGUI Current SliceWidget $this"
       $_sliceNode SetSliceSpacingModeToAutomatic
       foreach gui $sliceGUIs {
           set snode [$gui GetSliceNode]
@@ -726,7 +719,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       }
     }
     "LeaveEvent" { 
-      #puts "Leave"
       set _inWidget 0
  
       set sliceGUIs [$this getLinkedSliceGUIs]
@@ -878,14 +870,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
     "ExitEvent" { }
   }
-
-
-#  if { $annotationsUpdated == false && [$this getInWidget] } {
-#      set xyToRAS [$_sliceNode GetXYToRAS]
-#      set ras [$xyToRAS MultiplyPoint $x $y $z 1]
-#      foreach {r a s t} $ras {}
-#      $this updateAnnotation $r $a $s
-#  }
 }
 
 
