@@ -209,7 +209,6 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
       node = vtkMRMLSliceNode::New();
       node->SetName(this->GetName());
       node->SetLayoutName(this->GetName());
-      node->SetSingletonTag(this->GetName());
       this->SetSliceNode (node);
       this->UpdateSliceNodeFromLayout();
       node->Delete();
@@ -286,7 +285,6 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
       {
       node = vtkMRMLSliceCompositeNode::New();
       node->SetLayoutName(this->GetName());
-      node->SetSingletonTag(this->GetName());
       this->SetSliceCompositeNode (node);
       node->Delete();
       }
