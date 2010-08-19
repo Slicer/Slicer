@@ -248,6 +248,7 @@ double ConvertWeightUnits (double count, const char *fromunits, const char *toun
 double ConvertRadioactivityUnits (double count, const char *fromunits, const char *tounits )
 {
 
+
   double conversion = count;
   if ( fromunits == NULL )
     {
@@ -259,7 +260,6 @@ double ConvertRadioactivityUnits (double count, const char *fromunits, const cha
     std::cout << "Got NULL parameter in tounits. A bad parameter was probably specified." << std::endl;
     return (-1.0);
     }
-
 
 /*
   possibilities include:
@@ -716,6 +716,7 @@ double ConvertRadioactivityUnits (double count, const char *fromunits, const cha
       return ( conversion);      
       }
     }
+  
   return (conversion);
 }
   
@@ -895,6 +896,7 @@ double DecayCorrection (parameters &list, double inVal )
     if ( voxNumber > 0 )
       {
       NumberOfVOIs++;
+
       double CPETmin = (labelstat->GetMin())[0];
       double CPETmax = (labelstat->GetMax())[0];
       double CPETmean = (labelstat->GetMean())[0];
@@ -1163,7 +1165,7 @@ int main( int argc, char * argv[] )
         //--- hopefully...
         if ( units.find ( "BQML") != std::string::npos )
           {
-          list.radioactivityUnits = "BQ";
+          list.radioactivityUnits = "Bq";
           list.volumeUnits = "ml";
           list.calibrationFactor = 1.0;
           }
@@ -1202,7 +1204,7 @@ int main( int argc, char * argv[] )
       //...
       // PATIENT WEIGHT
       //...
-      else if ( line.find ("Patient's_Weight: ") != std::string::npos )
+      else if ( line.find ("Patients_Weight: ") != std::string::npos )
         {
         // initialize
         numchars = 0;
@@ -1409,7 +1411,7 @@ int main( int argc, char * argv[] )
           std::cout << "radionuclideHalfLife = " << list.radionuclideHalfLife.c_str() << std::endl;
           }
         // catch any failure to extract parameter value
-        if ( list.radionuclideHalfLife.find ("MODULE_INIT_NO_VALUE") == std::string::npos)
+        if ( list.radionuclideHalfLife.find ("MODULE_INIT_NO_VALUE") != std::string::npos)
           {
           std::cerr << "Unable to extract radionuclide half life." << std::endl;
           }
