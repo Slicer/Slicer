@@ -284,7 +284,7 @@ double vtkMimxApplyImageBasedMaterialProperties::
 {
     int i, j, k;
     double *PixelIntensity;
-    double AccumulatedIntensity = 0.0;
+    //double AccumulatedIntensity = 0.0;
     double CurrentIndex[3];
 
     // calculate how many pixels we will accumulate
@@ -330,7 +330,7 @@ double vtkMimxApplyImageBasedMaterialProperties::
 {
     int i, j, k;
     double *PixelIntensity;
-    double MaximumIntensity = -9999999.0;
+    //double MaximumIntensity = -9999999.0;
     double CurrentIndex[3];
 
     // calculate how many pixels we will accumulate
