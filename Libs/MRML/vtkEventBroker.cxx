@@ -842,8 +842,11 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation, void *call
   //     example it could be the interpreter to use)
   if ( observation->GetScript() != NULL )
     {
-    (*(this->ScriptHandler)) ( 
-        observation->GetScript(), this->ScriptHandlerClientData );
+    if ( this->ScriptHandler )
+      {
+      (*(this->ScriptHandler)) ( 
+          observation->GetScript(), this->ScriptHandlerClientData );
+      }
     }
   else
     {

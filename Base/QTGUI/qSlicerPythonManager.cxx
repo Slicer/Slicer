@@ -44,6 +44,7 @@ qSlicerPythonManager::qSlicerPythonManager(QObject* _parent) : Superclass(_paren
 //-----------------------------------------------------------------------------
 qSlicerPythonManager::~qSlicerPythonManager()
 {
+  vtkEventBroker::GetInstance()->SetScriptHandler(NULL, NULL);
 }
 
 //-----------------------------------------------------------------------------
