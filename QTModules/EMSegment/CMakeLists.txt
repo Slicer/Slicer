@@ -27,11 +27,14 @@ SET(widget_SRCS
   Widgets/qSlicerEMSegmentWidget.h
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.cxx
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
+  Widgets/qSlicerEMSegmentInputChannelListWidget.cxx
+  Widgets/qSlicerEMSegmentInputChannelListWidget.h
   )
 
 SET(widget_MOC_SRCS
   Widgets/qSlicerEMSegmentWidget.h
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
+  Widgets/qSlicerEMSegmentInputChannelListWidget.h
   )
 
 # Panel source files

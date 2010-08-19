@@ -2,6 +2,7 @@
 #define __qSlicerEMSegmentWidgetsPlugin_h
 
 #include "qSlicerEMSegmentAnatomicalTreeWidgetPlugin.h"
+#include "qSlicerEMSegmentInputChannelListWidgetPlugin.h"
 #include "qSlicerEMSegmentWidgetPlugin.h"
 
 #include <QDesignerCustomWidgetCollectionInterface>
@@ -20,6 +21,7 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qSlicerEMSegmentAnatomicalTreeWidgetPlugin;
+    plugins << new qSlicerEMSegmentInputChannelListWidgetPlugin;
     plugins << new qSlicerEMSegmentWidgetPlugin;
     return plugins;
     }
