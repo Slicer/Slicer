@@ -18,7 +18,7 @@ QWidget *qSlicerEMSegmentAnatomicalTreeWidgetPlugin::createWidget(QWidget *_pare
 QString qSlicerEMSegmentAnatomicalTreeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerEMSegmentAnatomicalTreeWidget\" \
-          name=\"SlicerEMSegmentAnatomicalTreeWidget\">\n"
+          name=\"EMSegmentAnatomicalTreeWidget\">\n"
           " <property name=\"geometry\">\n"
           "  <rect>\n"
           "   <x>0</x>\n"

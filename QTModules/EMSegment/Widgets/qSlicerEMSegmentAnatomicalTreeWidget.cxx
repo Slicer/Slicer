@@ -84,15 +84,18 @@ qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidge
 }
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentAnatomicalTreeWidget::qSlicerEMSegmentAnatomicalTreeWidget(QWidget *_parent):
-Superclass(_parent)
+// qSlicerEMSegmentAnatomicalTreeWidget methods
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentAnatomicalTreeWidget::qSlicerEMSegmentAnatomicalTreeWidget(QWidget *newParent):
+Superclass(newParent)
 {
   logger.setDebug();
   CTK_INIT_PRIVATE(qSlicerEMSegmentAnatomicalTreeWidget);
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
 
   // Layout (TreeView and (control buttons)) and DisplayMRMLIDsCheckBox vertically
-  QVBoxLayout * mainVerticalLayout = new QVBoxLayout(this);
+  QVBoxLayout * mainLayout = new QVBoxLayout(this);
 
   // Layout TreeView and (control buttons) horizontally
   QHBoxLayout * horizontalLayout = new QHBoxLayout();
@@ -105,28 +108,27 @@ Superclass(_parent)
   horizontalLayout->addWidget(d->TreeView);
 
   // Layout control buttons vertically
-  QVBoxLayout * verticalLayout = new QVBoxLayout();
+  QVBoxLayout * controlButtonsLayout = new QVBoxLayout();
 
   d->ExpandAllButton = new QToolButton(this);
   d->ExpandAllButton->setIcon(QIcon(":/Icons/TreeOpen.png"));
-  verticalLayout->addWidget(d->ExpandAllButton);
+  controlButtonsLayout->addWidget(d->ExpandAllButton);
 
   d->CollapseAllButton = new QToolButton(this);
   d->CollapseAllButton->setIcon(QIcon(":/Icons/TreeClose.png"));
-  verticalLayout->addWidget(d->CollapseAllButton);
+  controlButtonsLayout->addWidget(d->CollapseAllButton);
 
-  QSpacerItem * verticalSpacer =
-      new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-  verticalLayout->addItem(verticalSpacer);
+  controlButtonsLayout->addItem(
+      new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
   // Add control buttons to the horizontal layout
-  horizontalLayout->addLayout(verticalLayout);
+  horizontalLayout->addLayout(controlButtonsLayout);
 
   // Add (TreeView and (control buttons)) to the layout
-  mainVerticalLayout->addLayout(horizontalLayout);
+  mainLayout->addLayout(horizontalLayout);
 
   d->DisplayMRMLIDsCheckBox = new QCheckBox("Display MRML ID's", this);
-  mainVerticalLayout->addWidget(d->DisplayMRMLIDsCheckBox);
+  mainLayout->addWidget(d->DisplayMRMLIDsCheckBox);
 
   // Connect Display MRML Id checkbox
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)), SLOT(setMRMLIDsColumnVisible(bool)));
@@ -151,11 +153,6 @@ Superclass(_parent)
   this->setClassWeightColumnVisible(false);
   this->setAtlasWeightColumnVisible(false);
   this->setAlphaColumnVisible(false);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentAnatomicalTreeWidget::printAdditionalInfo()
-{
 }
 
 //-----------------------------------------------------------------------------

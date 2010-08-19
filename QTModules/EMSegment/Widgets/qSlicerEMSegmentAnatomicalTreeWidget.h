@@ -33,9 +33,7 @@ class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentAnatomicalTreeWidget :
 public:
 
   typedef qSlicerEMSegmentWidget Superclass;
-  qSlicerEMSegmentAnatomicalTreeWidget(QWidget *parent=0);
-  
-  virtual void printAdditionalInfo();
+  explicit qSlicerEMSegmentAnatomicalTreeWidget(QWidget *newParent = 0);
 
   virtual void setMRMLScene(vtkMRMLScene *newScene);
 
