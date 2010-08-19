@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>441</width>
-    <height>586</height>
+    <height>765</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -517,10 +517,19 @@ p, li { white-space: pre-wrap; }
    <item>
     <widget class="ctkDynamicSpacer" name="DynamicSpacer">
      <property name="activeSizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="inactiveSizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="activate" stdset="0">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

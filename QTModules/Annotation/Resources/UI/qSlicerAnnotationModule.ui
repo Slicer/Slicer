@@ -7,23 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>524</width>
-    <height>541</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Annotation</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
+     <property name="text">
       <string>Annotation</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -568,18 +568,40 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
-     <property name="activeSizePolicy" stdset="0">
+    <widget class="ctkDynamicSpacer" name="CTKSpacer">
+     <property name="activeSizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy" stdset="0">
+     <property name="inactiveSizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="activate" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
+     <property name="activeSizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="inactiveSizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="activate" stdset="0">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -631,8 +653,24 @@ p, li { white-space: pre-wrap; }
      <y>30</y>
     </hint>
     <hint type="destinationlabel">
-     <x>211</x>
-     <y>1052</y>
+     <x>220</x>
+     <y>571</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CTKCollapsibleGroupBox_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DynamicSpacer</receiver>
+   <slot>activate(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>556</y>
     </hint>
    </hints>
   </connection>
