@@ -17,7 +17,7 @@ See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 Assumptions:
 
-1) Uses left-posterior-superior (Dicom default) as default space for philips and siemens.  
+1) Uses left-posterior-superior (Dicom default) as default space for philips and siemens.
 This is the default space for NRRD header.
 2) For GE data, Dicom data are arranged in volume interleaving order.
 3) For Siemens data, images are arranged in mosaic form.
@@ -127,9 +127,9 @@ namespace {
   const gdcm::DictEntry PhilipsDictDiffusionDirectionAP( 0x2005, 0x10b1, "FL", "4", "Diffusion Direction A/P" );
   const gdcm::DictEntry PhilipsDictDiffusionDirectionFH( 0x2005, 0x10b2, "FL", "4", "Diffusion Direction F/H" );
 
-#if 0 
+#if 0
   //Defined in gdcm dicomV3.dic
-  // Tags defined in Supplement 49 
+  // Tags defined in Supplement 49
   // 0018 9075 CS 1 Diffusion Directionality
   // 0018 9076 SQ 1 Diffusion Gradient Direction Sequence
   // 0018 9087 FD 1 Diffusion b-value
@@ -156,17 +156,17 @@ namespace {
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
 
 
-  bool ExtractBinValEntry( gdcm::File * header, uint16_t group, uint16_t elem, std::string& tag )
+  static bool ExtractBinValEntry( gdcm::File * const header, const uint16_t group, const uint16_t elem, std::string& tag )
   {
     tag.clear();
     if ( header->GetBinEntry(group, elem) )
     {
       gdcm::BinEntry* binEntry = header->GetBinEntry(group, elem);
-      int binLength = binEntry->GetFullLength();
+      const unsigned int binLength = binEntry->GetFullLength();
       tag.resize( binLength );
-      uint8_t * tagString = binEntry->GetBinArea();
+      uint8_t const * const tagString = binEntry->GetBinArea();
 
-      for (int n = 0; n < binLength; n++)
+      for (unsigned int n = 0; n < binLength; n++)
       {
         tag[n] = *(tagString+n);
       }
@@ -180,7 +180,7 @@ namespace {
     return false;
   }
 
-  int ExtractSiemensDiffusionInformation( std::string tagString, std::string nameString, std::vector<double>& valueArray )
+  static unsigned int ExtractSiemensDiffusionInformation( const std::string tagString, const std::string nameString, std::vector<double>& valueArray )
     {
     ::size_t atPosition = tagString.find( nameString );
     if ( atPosition == std::string::npos)
@@ -192,7 +192,7 @@ namespace {
       std::string infoAsString = tagString.substr( atPosition, tagString.size()-atPosition+1 );
       const char * infoAsCharPtr = infoAsString.c_str();
 
-      int vm = *(infoAsCharPtr+64);
+      unsigned int vm = *(infoAsCharPtr+64);
         {
         std::string vr = infoAsString.substr( 68, 2 );
         int syngodt = *(infoAsCharPtr+72);
@@ -237,29 +237,28 @@ namespace {
         //std::cout << "\tArray Length: " << vm << std::endl;
         }
 
-      int offset = 84;
-      for (int k = 0; k < vm; k++)
+      unsigned int offset = 84;
+      for (unsigned int k = 0; k < vm; k++)
         {
-        int itemLength = *(infoAsCharPtr+offset+4);
-        int strideSize = static_cast<int> (ceil(static_cast<double>(itemLength)/4) * 4);
-        std::string valueString = infoAsString.substr( offset+16, itemLength );
+        const int itemLength = *(infoAsCharPtr+offset+4);
+        const int strideSize = static_cast<int> (ceil(static_cast<double>(itemLength)/4) * 4);
+        const std::string valueString = infoAsString.substr( offset+16, itemLength );
         valueArray.push_back( atof(valueString.c_str()) );
         offset += 16+strideSize;
         }
       return vm;
       }
     }
-
 } // end of anonymous namespace
 
 
-int WriteVolume( VolumeType::Pointer img, std::string fname )
+static int WriteVolume( VolumeType::Pointer img, const std::string fname )
 {
   itk::ImageFileWriter< VolumeType >::Pointer imgWriter = itk::ImageFileWriter< VolumeType >::New();
 
   imgWriter->SetInput( img );
   imgWriter->SetFileName( fname.c_str() );
-  try 
+  try
     {
       imgWriter->Update();
     }
@@ -308,7 +307,7 @@ int main(int argc, char* argv[])
   {
     nhdrname = outputVolume;
   }
-  else 
+  else
   {
     nhdrname = outputDirectory + "/" + outputVolume;
   }
@@ -316,8 +315,8 @@ int main(int argc, char* argv[])
   std::cout << nhdrname << std::endl;
   std::string dataname;
     {
-    ::size_t i = nhdrname.find(".nhdr");
-    ::size_t j = nhdrname.find(".nrrd");
+    const ::size_t i = nhdrname.find(".nhdr");
+    const ::size_t j = nhdrname.find(".nrrd");
     if (i == std::string::npos && j == std::string::npos)
       {
         // not a valid nrrd extension
@@ -357,7 +356,7 @@ int main(int argc, char* argv[])
   // of diffusion weighted image.
   if ( filenamesInSeries.size() > 1 )
     {
-    ::size_t nFiles = filenamesInSeries.size();
+    const ::size_t nFiles = filenamesInSeries.size();
     filenames.resize( 0 );
     for (::size_t k = 0; k < nFiles; k++)
       {
@@ -379,7 +378,7 @@ int main(int argc, char* argv[])
       std::string subdirectory( inputDicomDirectory.c_str() );
       subdirectory = subdirectory + "/" + directory.GetFile(k);
 
-      std::string sqDir( directory.GetFile(k) );
+      const std::string sqDir( directory.GetFile(k) );
       if (sqDir.length() == 1 && directory.GetFile(k)[0] == '.')   // skip self
         {
         continue;
@@ -408,7 +407,7 @@ int main(int argc, char* argv[])
   headerLite->SetLoadMode( gdcm::LD_NOSEQ );
   headerLite->Load();
 
-  // 
+  //
   std::vector<int> ignorePhilipsSliceMultiFrame;
 
   // check the tag 0008|0070 for vendor information
@@ -426,33 +425,33 @@ int main(int argc, char* argv[])
   {
     modality[k] =  toupper( modality[k] );
   }
-  if (  modality.find("PT") != std::string::npos 
+  if (  modality.find("PT") != std::string::npos
         || modality.find("ST") != std::string::npos )
     {
       typedef itk::Image<float, 3> USVolumeType;
-      itk::ImageSeriesReader<USVolumeType>::Pointer seriesReader = 
+      itk::ImageSeriesReader<USVolumeType>::Pointer seriesReader =
         itk::ImageSeriesReader<USVolumeType>::New();
       seriesReader->SetFileNames( filenamesInSeries );
 
-      itk::ImageFileWriter<USVolumeType>::Pointer nrrdImageWriter = 
+      itk::ImageFileWriter<USVolumeType>::Pointer nrrdImageWriter =
         itk::ImageFileWriter<USVolumeType>::New();
 
       nrrdImageWriter->SetFileName( nhdrname );
       nrrdImageWriter->SetInput( seriesReader->GetOutput() );
-      try 
-        { 
-          nrrdImageWriter->Update(); 
-        } 
-      catch( itk::ExceptionObject & err ) 
-        { 
-          std::cerr << "ExceptionObject caught !" << std::endl; 
-          std::cerr << err << std::endl; 
+      try
+        {
+          nrrdImageWriter->Update();
+        }
+      catch( itk::ExceptionObject & err )
+        {
+          std::cerr << "ExceptionObject caught !" << std::endl;
+          std::cerr << err << std::endl;
           return EXIT_FAILURE;
-        } 
+        }
       return EXIT_SUCCESS;
     }
 
-  
+
   std::string ImageType;
   ExtractBinValEntry( headerLite, 0x0008, 0x0008, ImageType );
   std::cout << ImageType << std::endl;
@@ -601,12 +600,12 @@ int main(int argc, char* argv[])
           R.SetSize(2,1);
           std::vector<VolumeType::PixelType> v(nSlice);
           std::vector<VolumeType::PixelType> w(nSlice);
-          
+
           itk::ImageRegionIteratorWithIndex<VolumeType> I( reader->GetOutput(), R );
           for (I.GoToBegin(); !I.IsAtEnd(); ++I)
             {
               VolumeType::IndexType idx = I.GetIndex();
-              
+
               // extract all values in one "column"
               for (unsigned int k = 0; k < nSlice; k++)
                 {
@@ -628,7 +627,7 @@ int main(int argc, char* argv[])
                 {
                   idx[2] = k;
                   reader->GetOutput()->SetPixel( idx, w[k] );
-                }              
+                }
             }
         }
       else
@@ -753,7 +752,7 @@ int main(int argc, char* argv[])
       }
     std::cout << "Mosaic in " << mMosaic << " X " << nMosaic << " blocks (total number of blocks = " << valueArray[0] << ").\n";
     }
-  else if ( vendor.find("PHILIPS") != std::string::npos 
+  else if ( vendor.find("PHILIPS") != std::string::npos
     && nSlice > 1) // so this is not a philips multi-frame single dicom file
     {
     MeasurementFrame=LPSDirCos; //Philips oblique scans list the gradients with respect to the ImagePatientOrientation.
@@ -782,10 +781,10 @@ int main(int argc, char* argv[])
       SliceOrderIS = false;
       }
     }
-  else if ( vendor.find("PHILIPS") != std::string::npos 
+  else if ( vendor.find("PHILIPS") != std::string::npos
     && nSlice == 1)
   {
-    // special handling for philips multi-frame dicom later. 
+    // special handling for philips multi-frame dicom later.
   }
   else
     {
@@ -870,7 +869,7 @@ int main(int argc, char* argv[])
         DiffusionVectors.push_back(vect3d);
         }
 
-      std::cout << "B-value: " << b << 
+      std::cout << "B-value: " << b <<
         "; diffusion direction: " << vect3d[0] << ", " << vect3d[1] << ", " << vect3d[2] << std::endl;
       }
     }
@@ -1176,7 +1175,7 @@ int main(int argc, char* argv[])
     std::cout << "Total number of slices: " << nItems << std::endl;
     gdcm::SQItem * sqi = sq->GetFirstSQItem();
 
-    // figure out 
+    // figure out
     // 1. size
     // 2. space directions
     // 3. space origin
@@ -1188,7 +1187,7 @@ int main(int argc, char* argv[])
 
       gdcm::SeqEntry* volEntry;
       gdcm::SQItem * innerSqi;
-      gdcm::ValEntry* valEntry; 
+      gdcm::ValEntry* valEntry;
 
       if ( k == 0 )
       {
@@ -1300,7 +1299,7 @@ int main(int argc, char* argv[])
     nVolume = nItems/nSliceInVolume;
     nIgnoreVolume = ignorePhilipsSliceMultiFrame.size()/nSliceInVolume;
 
-    for( unsigned int k2 = 0; k2 < bValues.size(); k2++ ) 
+    for( unsigned int k2 = 0; k2 < bValues.size(); k2++ )
     {
       std::cout << k2 << ": direction: " <<  DiffusionVectors[k2][0] << ", " << DiffusionVectors[k2][1] << ", " << DiffusionVectors[k2][2] << ", b-value: " << bValues[k2] << std::endl;
     }
@@ -1320,7 +1319,7 @@ int main(int argc, char* argv[])
   itk::RawImageIO<PixelValueType, 3>::Pointer rawIO = itk::RawImageIO<PixelValueType, 3>::New();
   //std::string rawFileName = outputDir + "/" + dataname;
   if ( !NrrdFormat )
-    { 
+    {
       rawWriter->SetFileName( dataname.c_str() );
       rawWriter->SetImageIO( rawIO );
       rawIO->SetByteOrderToLittleEndian();
@@ -1328,7 +1327,7 @@ int main(int argc, char* argv[])
 
   // imgWriter is used to write out image in case it is not a dicom DWI image
   itk::ImageFileWriter< VolumeType >::Pointer imgWriter = itk::ImageFileWriter< VolumeType >::New();
-  
+
   ///////////////////////////////////////////////
   // Update the number of volumes based on the
   // number to ignore from the header information
@@ -1357,7 +1356,7 @@ int main(int argc, char* argv[])
     else
       {
         if ( !NrrdFormat )
-          { 
+          {
             rawWriter->SetInput( reader->GetOutput() );
             try
               {
@@ -1430,7 +1429,7 @@ int main(int argc, char* argv[])
         {
         dmIt.Set( imIt.Get() );
         }
-      
+
       }
     if (nUsableVolumes == 1)
       {
@@ -1451,7 +1450,7 @@ int main(int argc, char* argv[])
     else
       {
         if ( !NrrdFormat )
-          { 
+          {
             rawWriter->SetInput( dmImage );
             try
               {
@@ -1534,7 +1533,7 @@ int main(int argc, char* argv[])
     else
       {
         if ( !NrrdFormat )
-          { 
+          {
             rawWriter->SetInput( reader->GetOutput() );
             try
               {
@@ -1585,7 +1584,7 @@ int main(int argc, char* argv[])
 
     header.open (nhdrname.c_str(), std::ios::out | std::ios::binary);
     header << "NRRD0005" << std::endl;
-    
+
     if (!NrrdFormat)
       {
         header << "content: exists(" << itksys::SystemTools::GetFilenameName(dataname) << ",0)" << std::endl;
@@ -1603,7 +1602,7 @@ int main(int argc, char* argv[])
     header << "space directions: "
       << "(" << (NRRDSpaceDirection[0][0]) << ","<< (NRRDSpaceDirection[1][0]) << ","<< (NRRDSpaceDirection[2][0]) << ") "
       << "(" << (NRRDSpaceDirection[0][1]) << ","<< (NRRDSpaceDirection[1][1]) << ","<< (NRRDSpaceDirection[2][1]) << ") "
-      << "(" << (NRRDSpaceDirection[0][2]) << ","<< (NRRDSpaceDirection[1][2]) << ","<< (NRRDSpaceDirection[2][2]) 
+      << "(" << (NRRDSpaceDirection[0][2]) << ","<< (NRRDSpaceDirection[1][2]) << ","<< (NRRDSpaceDirection[2][2])
       << ") none" << std::endl;
     header << "centerings: cell cell cell ???" << std::endl;
     header << "kinds: space space space list" << std::endl;
@@ -1618,7 +1617,7 @@ int main(int argc, char* argv[])
         header << "data file: " << itksys::SystemTools::GetFilenameName(dataname) << std::endl;
       }
 
-    // For scanners, the measurement frame for the gradient directions is the same as the 
+    // For scanners, the measurement frame for the gradient directions is the same as the
     // Excerpt from http://teem.sourceforge.net/nrrd/format.html definition of "measurement frame:"
     // There is also the possibility that a measurement frame
     // should be recorded for an image even though it is storing
@@ -1731,11 +1730,11 @@ int main(int argc, char* argv[])
       << LPSDirCos[0][0] << "\\" << LPSDirCos[1][0] << "\\" << LPSDirCos[2][0] << "\\"
       << LPSDirCos[0][1] << "\\" << LPSDirCos[1][1] << "\\" << LPSDirCos[2][1] << "\\"
       << std::endl;
-    protocolGradientsFile << "==================================" << std::endl; 
+    protocolGradientsFile << "==================================" << std::endl;
     protocolGradientsFile << "Direction Cosines: \n" << LPSDirCos << std::endl;
-    protocolGradientsFile << "==================================" << std::endl; 
+    protocolGradientsFile << "==================================" << std::endl;
     protocolGradientsFile << "MeasurementFrame: \n" << MeasurementFrame << std::endl;
-    protocolGradientsFile << "==================================" << std::endl; 
+    protocolGradientsFile << "==================================" << std::endl;
     for (unsigned int k = 0; k < nUsableVolumes; k++)
       {
       float scaleFactor = 0;
@@ -1748,7 +1747,7 @@ int main(int argc, char* argv[])
         << DiffusionVectors[k-nBaseline][1] * scaleFactor << ";"
         << DiffusionVectors[k-nBaseline][2] * scaleFactor << "]" <<std::endl;
       }
-    protocolGradientsFile << "==================================" << std::endl; 
+    protocolGradientsFile << "==================================" << std::endl;
     for (unsigned int k = 0; k < nUsableVolumes; k++)
       {
       float scaleFactor = 0;
@@ -1762,7 +1761,7 @@ int main(int argc, char* argv[])
         << ProtocolGradient[1] * scaleFactor << ";"
         << ProtocolGradient[2] * scaleFactor << "]" <<std::endl;
       }
-    protocolGradientsFile << "==================================" << std::endl; 
+    protocolGradientsFile << "==================================" << std::endl;
     protocolGradientsFile.close();
     }
   return EXIT_SUCCESS;
