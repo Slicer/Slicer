@@ -13,6 +13,11 @@
 #ifndef __qSlicerCLIModuleUIHelper_h
 #define __qSlicerCLIModuleUIHelper_h
 
+// Qt includes
+#include <QButtonGroup>
+#include <QObject>
+#include <QWidget>
+
 // CTK includes
 #include <ctkPimpl.h>
 
@@ -26,8 +31,69 @@ class qSlicerCLIModuleWidget;
 class vtkMRMLCommandLineModuleNode; 
 class qSlicerCLIModuleUIHelperPrivate;
 
-class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleUIHelper
+//-----------------------------------------------------------------------------
+class Q_SLICER_BASE_QTCLI_EXPORT qSlicerWidgetValueWrapper: public QObject
 {
+  Q_OBJECT
+public:
+  qSlicerWidgetValueWrapper(const QString& _name, const QString& _label, QObject* parent);
+  virtual ~qSlicerWidgetValueWrapper();
+  virtual QVariant value() = 0;
+  QString label(){ return this->Label; }
+  QString name(){ return this->Name; }
+
+  virtual void setValue(const QString& _value) = 0;
+
+  static QString toString(const QString& _value)
+    {
+    return _value;
+    }
+
+  static bool toBool(const QString& _value)
+    {
+    return (_value.compare("true", Qt::CaseInsensitive) == 0); 
+    }
+
+  static int toInt(const QString& _value)
+    {
+    return _value.toInt();
+    }
+
+  static double toDouble(const QString& _value)
+    {
+    return _value.toDouble(); 
+    }
+
+signals:
+  void valueChanged();
+
+protected:
+  QString Name;
+  QString Label;
+};
+
+//-----------------------------------------------------------------------------
+class Q_SLICER_BASE_QTCLI_EXPORT ButtonGroupWidgetWrapper: public QWidget
+{
+  Q_OBJECT
+public:
+  ButtonGroupWidgetWrapper(QWidget* _parent, QButtonGroup* buttonGroup);
+
+  QString checkedValue();
+
+  void setCheckedValue(const QString& value);
+
+signals:
+  void valueChanged();
+
+private:
+  QButtonGroup* ButtonGroup;
+};
+
+//-----------------------------------------------------------------------------
+class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleUIHelper: public QObject
+{
+  Q_OBJECT
 public:
 
   qSlicerCLIModuleUIHelper(qSlicerCLIModuleWidget* cliModuleWidget);
@@ -46,6 +112,19 @@ public:
   ///
   /// Update user interface using the given \a commandLineModuleNode parameters
   void updateUi(vtkMRMLCommandLineModuleNode* commandLineModuleNode);
+
+  ///
+  /// Set parameter to the command line module node
+  void setCommandLineModuleParameter(vtkMRMLCommandLineModuleNode* node,
+                                     const QString& name,
+                                     const QVariant& value);
+  void setValue(const QString& name, const QVariant& type);
+
+signals:
+  void valueChanged(const QString& tag, const QVariant& value);
+
+protected slots:
+  void onValueChanged();
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerCLIModuleUIHelper);

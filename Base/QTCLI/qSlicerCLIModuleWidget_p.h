@@ -71,8 +71,8 @@ public:
   /// 
   /// Calling this method will loop trough the structure resulting
   /// from the XML parsing and generate the corresponding UI.
-  void setupUi(qSlicerWidget* widget);
-                                 
+  virtual void setupUi(qSlicerWidget* widget);
+
   /// 
   void addParameterGroups();
   void addParameterGroup(QBoxLayout* layout,
@@ -83,15 +83,14 @@ public:
   void addParameter(QFormLayout* layout, const ModuleParameter& moduleParameter);
 
 public slots:
-  void onApplyButtonPressed();
-  void onCancelButtonPressed();
-  void onDefaultButtonPressed();
-
   void enableCommandButtonState(bool enable);
 
-  void updateUi(vtkObject* commandLineModuleNode);
+  /// Update the ui base on the command line module node
+  void updateUiFromCommandLineModuleNode(vtkObject* commandLineModuleNode);
+  void updateCommandLineModuleNodeFromUi(vtkObject* commandLineModuleNode);
 
   void setDefaultNodeValue(vtkMRMLNode* commandLineModuleNode);
+  void onValueChanged(const QString& name, const QVariant& type);
 
 public:
 

@@ -43,6 +43,7 @@ SET(KIT_SRCS
 SET(KIT_MOC_SRCS
   qSlicerCLIModuleWidget.h
   qSlicerCLIModuleWidget_p.h
+  qSlicerCLIModuleUIHelper.h
   )
 
 # UI files

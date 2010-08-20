@@ -29,6 +29,7 @@
 
 typedef enum { CommandLineModule, SharedObjectModule, PythonModule } CommandLineModuleType;
 
+/// Historically was vtkCommandLineModuleLogic
 class Q_SLICER_BASE_QTCLI_EXPORT vtkSlicerCLIModuleLogic :
   public vtkSlicerModuleLogic
 {
