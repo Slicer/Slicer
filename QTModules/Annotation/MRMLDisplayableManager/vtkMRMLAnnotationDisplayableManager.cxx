@@ -27,6 +27,7 @@
 #include <vtkPointHandleRepresentation3D.h>
 #include <vtkSeedRepresentation.h>
 #include <vtkSeedWidget.h>
+#include <vtkRenderWindow.h>
 #include <vtkProperty2D.h>
 #include <vtkHandleWidget.h>
 #include <vtkSphereWidget.h>
@@ -254,6 +255,11 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::Create()
 {
+
+  // hack to force initialization of the renderview
+  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
+  this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
+
 }
 
 //---------------------------------------------------------------------------
