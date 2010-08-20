@@ -89,6 +89,12 @@ void vtkEMSegmentMRMLManager:: ProcessMRMLEvents(vtkObject* caller,
   if (event == vtkMRMLScene::NodeAddedEvent)
     {
     vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode*>(callData);
+    if ( node == NULL )
+      {
+      vtkWarningMacro ( "Got NULL node." );
+      return;
+      }
+
     if (node->IsA("vtkMRMLEMSTreeNode"))
       {
       vtkIdType newID = this->GetNewVTKNodeID();
@@ -103,6 +109,12 @@ void vtkEMSegmentMRMLManager:: ProcessMRMLEvents(vtkObject* caller,
   else if (event == vtkMRMLScene::NodeRemovedEvent)
     {
     vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode*>(callData);
+    if ( node == NULL )
+      {
+      vtkWarningMacro ( "Got NULL node." );
+      return;
+      }
+
     if (node->IsA("vtkMRMLEMSTreeNode"))
       {
       this->IDMapRemovePair(node->GetID());
@@ -609,8 +621,11 @@ void vtkEMSegmentMRMLManager::CopyTreeNodeAutoLogDistToLogDist()
       if (this->GetTreeNodeIsLeaf(*i)) 
     {      
       vtkMRMLEMSTreeParametersLeafNode* leafNode = this->GetTreeNode(*i)->GetParametersNode()->GetLeafParametersNode();  
-      leafNode->CopyAutoLogMeanToLogMean();
-      leafNode->CopyAutoLogCovarianceToLogCovariance();
+      if ( leafNode )
+        {
+        leafNode->CopyAutoLogMeanToLogMean();
+        leafNode->CopyAutoLogCovarianceToLogCovariance();
+        }
     }
     }
 }
@@ -880,6 +895,11 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
   vtkMRMLEMSTreeParametersLeafNode* leafNode = 
     this->
     GetTreeNode(nodeID)->GetParametersNode()->GetLeafParametersNode();
+  if ( leafNode == NULL )
+    {
+    vtkWarningMacro ( "Got null leafNode" );
+    return;
+    }
 
   for (r = 0; r < numTargetImages; ++r)
     {
