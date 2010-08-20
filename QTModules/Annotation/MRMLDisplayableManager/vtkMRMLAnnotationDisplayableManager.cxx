@@ -225,6 +225,7 @@ vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
   this->m_SeedWidget = 0;
   this->m_DisableInteractorStyleEventsProcessing = 0;
   this->m_Focus = 0;
+  this->m_ClickCounter->Delete();
 }
 
 //---------------------------------------------------------------------------
