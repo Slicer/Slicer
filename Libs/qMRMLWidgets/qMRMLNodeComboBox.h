@@ -30,6 +30,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
   Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
   Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
   Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
+  Q_PROPERTY(QString baseName READ baseName WRITE setBaseName)
 
 public:
   /// Superclass typedef
@@ -82,6 +83,14 @@ public:
   void addAttribute(const QString& nodeType,
                     const QString& attributeName,
                     const QVariant& attributeValue);
+
+  ///
+  /// BaseName is the name used to generate a node name for all the new created
+  /// nodes.
+  /// TODO: Support different basename depending on the node type
+  void setBaseName(const QString& baseName);
+  QString baseName()const;
+
   ///
   /// return the number of nodes. it can be different from count()
   /// as count includes the "AddNode", "Remove Node"... items

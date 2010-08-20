@@ -20,9 +20,10 @@ class qMRMLNodeFactoryPrivate: public ctkPrivate<qMRMLNodeFactory>
 public:
   qMRMLNodeFactoryPrivate()
     {
-    this->MRMLScene = 0; 
+    this->MRMLScene = 0;
     }
   vtkMRMLScene * MRMLScene;
+  QHash<QString, QString> BaseNames;
   QHash<QString, QString> Attributes;
 };
 
@@ -57,8 +58,17 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
     }
   
   node->SetScene( d->MRMLScene );
-  node->SetName( d->MRMLScene->GetUniqueNameByString(
-    d->MRMLScene->GetTagByClassName(className.toLatin1().data()) ) );
+  QString baseName;
+  if (d->BaseNames.contains(className) &&
+      !d->BaseNames[className].isEmpty())
+    {
+    baseName = d->BaseNames[className];
+    }
+  else
+    {
+    baseName = d->MRMLScene->GetTagByClassName(className.toLatin1());
+    }
+  node->SetName(d->MRMLScene->GetUniqueNameByString(baseName.toLatin1()));
 
   if (node->GetSingletonTag() != 0 && node->GetID() == 0)
     {
@@ -74,11 +84,10 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
   Q_ASSERT(nodeCreated);
   
   // Set node attributes
-  QHashIterator<QString, QString> i(d->Attributes);
-  while (i.hasNext())
+  foreach (QString attributeName, d->Attributes)
     {
-    i.next();
-    nodeCreated->SetAttribute(i.key().toLatin1(), i.value().toLatin1());
+    nodeCreated->SetAttribute(attributeName.toLatin1(),
+                              d->Attributes[attributeName].toLatin1());
     }
   return nodeCreated; 
 }
@@ -105,4 +114,18 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
 void qMRMLNodeFactory::addAttribute(const QString& name, const QString& value)
 {
   ctk_d()->Attributes.insert(name, value);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLNodeFactory::setBaseName(const QString& className, const QString& baseName)
+{
+  CTK_D(qMRMLNodeFactory);
+  d->BaseNames[className] = baseName;
+}
+
+//------------------------------------------------------------------------------
+QString qMRMLNodeFactory::baseName(const QString& className)const
+{
+  CTK_D(const qMRMLNodeFactory);
+  return d->BaseNames.contains(className) ? d->BaseNames[className] : QString();
 }

@@ -16,7 +16,7 @@ class qMRMLNodeFactoryPrivate;
 
 ///
 /// vtkMRMLNodeInitializer is a default functor that should be dervied
-/// in case specific initialization steps are required
+/// in case specific node initialization steps are required
 struct QMRML_WIDGETS_EXPORT vtkMRMLNodeInitializer
 {
   virtual ~vtkMRMLNodeInitializer(){}
@@ -26,7 +26,9 @@ struct QMRML_WIDGETS_EXPORT vtkMRMLNodeInitializer
     }
 };
 
-
+/// Node factory that can be used by qMRML widgets to easily create nodes
+/// If you want more control over the node creation, you can add attributes,
+/// specify a base node name or reimplement a vtkMRMLNodeInitializer
 class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 {
   Q_OBJECT
@@ -46,7 +48,8 @@ public:
 
   /// 
   /// Create and add a node given its \a className to the scene associated with the factory
-  /// Note: The scene has the ownership of the node and is responsible to delete it.
+  /// The attributes will be applied to the node after being initialized
+  /// Note: The scene takes the ownership of the node and is responsible to delete it.
   vtkMRMLNode* createNode(const QString& className,
                           const vtkMRMLNodeInitializer & initializer = vtkMRMLNodeInitializer());
 
@@ -57,9 +60,16 @@ public:
     const AttributeType& attributes = AttributeType());
 
   /// 
-  /// Add attribute
+  /// Add attribute that will be passed to any new created node.
+  /// TODO: Support attributes for more than 1 node class
   /// Note: If an attribute already exist, it's value will be overwritten.
   void addAttribute(const QString& name, const QString& value);
+
+  ///
+  /// Base name used to generate a name for create node.
+  void setBaseName(const QString& className, const QString& baseName);
+  QString baseName(const QString& className)const;
+
 public slots:
   /// 
   /// Set/Get MRML scene

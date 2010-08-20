@@ -224,13 +224,37 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeComboBox::addAttribute(const QString& nodeType, 
+void qMRMLNodeComboBox::addAttribute(const QString& nodeType,
                                      const QString& attributeName,
                                      const QVariant& attributeValue)
 {
   CTK_D(qMRMLNodeComboBox);
   d->MRMLNodeFactory->addAttribute(attributeName, attributeValue.toString());
   this->sortFilterProxyModel()->addAttribute(nodeType, attributeName, attributeValue);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeComboBox::setBaseName(const QString& baseName)
+{
+  CTK_D(qMRMLNodeComboBox);
+  QStringList nodeClasses = this->nodeTypes();
+  if (nodeClasses.isEmpty())
+    {
+    return;
+    }
+  d->MRMLNodeFactory->setBaseName(nodeClasses[0], baseName);
+}
+
+//-----------------------------------------------------------------------------
+QString qMRMLNodeComboBox::baseName()const
+{
+  CTK_D(const qMRMLNodeComboBox);
+  QStringList nodeClasses = this->nodeTypes();
+  if (nodeClasses.isEmpty())
+    {
+    return QString();
+    }
+  return d->MRMLNodeFactory->baseName(nodeClasses[0]);
 }
 
 // --------------------------------------------------------------------------
