@@ -86,6 +86,8 @@ qSlicerAnnotationModuleAnnotationPropertyDialog::qSlicerAnnotationModuleAnnotati
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode * node)
 {
+
+  /*
   this->setWindowTitle(
       "Annotation Properties");
   this->SaveStateForUndo(
@@ -479,11 +481,12 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::Initialize(vtkMRMLNode * n
       value);
   ui.lineSpecularSliderSpinBoxWidget->setValue(
       value);
-
+*/
 }
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::createConnection()
 {
+  /*
   this->connect(
       ui.annotationTextEdit,
       SIGNAL(textChanged()),
@@ -593,7 +596,7 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::createConnection()
       SIGNAL(clicked()),
       this,
       SLOT(onCollapsibleGroupBoxClicked()));
-
+*/
 }
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::onCoordinateChanged(QString text)
@@ -650,6 +653,7 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::onCoordinateChanged(QStrin
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::onTextChanged()
 {
+  /*
   QString text = ui.annotationTextEdit->toPlainText();
   ui.annotationTextEdit->moveCursor(
       QTextCursor::End,
@@ -657,14 +661,14 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::onTextChanged()
   emit textChanged(
       text,
       m_nodeId);
-
+*/
 }
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::updateTextFromTable(QString text)
 {
   // Text Properties
-  ui.annotationTextEdit->setText(
-      text);
+ // ui.annotationTextEdit->setText(
+  //    text);
 }
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::updateValue(QString valueString)
@@ -674,8 +678,8 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::updateValue(QString valueS
       "<p>Value: <b>").append(
       valueString).append(
       "</b></p>");
-  ui.annotationValueBrowser->setHtml(
-      valueStr);
+ // ui.annotationValueBrowser->setHtml(
+  //    valueStr);
 
 }
 
@@ -884,10 +888,10 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::onDialogRejected()
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::onDialogAccepted()
 {
-  QString text = ui.annotationTextEdit->toPlainText();
-  emit dialogAccepted(
-      m_nodeId,
-      text);
+ // QString text = ui.annotationTextEdit->toPlainText();
+//  emit dialogAccepted(
+ //     m_nodeId,
+  //    text);
 }
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::SetButtonText(int type)
@@ -1013,11 +1017,11 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::onPointOpacityChanged(doub
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::onPointAmbientChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(
-          m_nodeId),
-      this->m_logic->POINT_AMBIENT,
-      &value);
+//  this->m_logic->ModifyPropertiesAndWidget(
+ //     this->m_logic->GetMRMLScene()->GetNodeByID(
+  //        m_nodeId),
+   //   this->m_logic->POINT_AMBIENT,
+    //  &value);
 }
 void qSlicerAnnotationModuleAnnotationPropertyDialog::onPointDiffuseChanged(double value)
 {
@@ -1114,7 +1118,7 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::onLineSpecularChanged(doub
 
 void qSlicerAnnotationModuleAnnotationPropertyDialog::UpdateLockUnlockStatus(bool isLock)
 {
-  if (isLock)
+ /* if (isLock)
     {
     ui.annotationTextEdit->setEnabled(
         false);
@@ -1123,12 +1127,12 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::UpdateLockUnlockStatus(boo
       m_lineEditList[i]->setEnabled(
           false);
       }
-    ui.textTab->setEnabled(
-        false);
-    ui.pointTab->setEnabled(
-        false);
-    ui.lineTab->setEnabled(
-        false);
+ //   ui.textTab->setEnabled(
+ //       false);
+ //   ui.pointTab->setEnabled(
+ //       false);
+  //  ui.lineTab->setEnabled(
+    //    false);
     }
   else
     {
@@ -1145,7 +1149,7 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::UpdateLockUnlockStatus(boo
         true);
     ui.lineTab->setEnabled(
         true);
-    }
+    }*/
 
 }
 
@@ -1201,13 +1205,13 @@ void qSlicerAnnotationModuleAnnotationPropertyDialog::onCollapsibleGroupBoxClick
       "vtkMRMLAnnotationFiducialNode") || node->IsA(
       "vtkMRMLAnnotationTextNode"))
     {
-    ui.coordinatesLabel->setVisible(
+/*    ui.coordinatesLabel->setVisible(
         false);
     ui.annotationValueBrowser->setVisible(
         false);
     ui.displayPropertiesCTKCollapsibleGroupBox->setEnabled(
         false);
     ui.displayPropertiesCTKCollapsibleGroupBox->setVisible(
-        false);
+        false);*/
     }
 }

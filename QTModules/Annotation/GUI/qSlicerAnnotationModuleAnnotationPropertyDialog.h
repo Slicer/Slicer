@@ -80,7 +80,7 @@ signals:
 
 private:
 
-    Ui::qSlicerAnnotationModuleAnnotationPropertyDialog ui;
+    Ui::qSlicerAnnotationModulePropertyDialog ui;
     QVector<QLineEdit*> m_lineEditList;
     QGridLayout* m_gridLayout;
 

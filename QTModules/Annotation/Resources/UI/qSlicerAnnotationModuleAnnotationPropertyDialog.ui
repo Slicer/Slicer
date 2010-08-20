@@ -1,492 +1,513 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerAnnotationModuleAnnotationPropertyDialog</class>
- <widget class="QDialog" name="qSlicerAnnotationModuleAnnotationPropertyDialog">
+ <class>qSlicerAnnotationModulePropertyDialog</class>
+ <widget class="QDialog" name="qSlicerAnnotationModulePropertyDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>304</width>
-    <height>660</height>
+    <width>769</width>
+    <height>464</height>
    </rect>
   </property>
-  <property name="maximumSize">
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
    <size>
-    <width>16777215</width>
-    <height>16777215</height>
+    <width>769</width>
+    <height>464</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Modify Annotation Properties</string>
   </property>
-  <property name="sizeGripEnabled">
-   <bool>false</bool>
-  </property>
-  <widget class="ctkCollapsibleGroupBox" name="displayPropertiesCTKCollapsibleGroupBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>290</y>
-     <width>281</width>
-     <height>321</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Display Properties</string>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <widget class="QTabWidget" name="propertyTabWidget">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>20</y>
-      <width>281</width>
-      <height>301</height>
-     </rect>
-    </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <property name="documentMode">
-     <bool>false</bool>
-    </property>
-    <property name="tabsClosable">
-     <bool>false</bool>
-    </property>
-    <widget class="QWidget" name="textTab">
-     <attribute name="title">
-      <string>Text</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>12</x>
-        <y>18</y>
-        <width>251</width>
-        <height>104</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="ctkColorPickerButton" name="textUnselectedColorPickerButton">
-           <property name="text">
-            <string>Selected Text Color</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="ctkColorPickerButton" name="textSelectedColorPickerButton">
-           <property name="text">
-            <string>Unselected Text Color</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLabel" name="textScaleLabel">
-           <property name="text">
-            <string>Text Scale:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget">
-           <property name="maximum">
-            <double>40.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="pointTab">
-     <attribute name="title">
-      <string>Point</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>18</y>
-        <width>251</width>
-        <height>236</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="ctkColorPickerButton" name="pointUnselectedColorPickerButton">
-           <property name="text">
-            <string>Selected Point Color</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="ctkColorPickerButton" name="pointSelectedColorPickerButton">
-           <property name="text">
-            <string>Unselected Line Color</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="glyphScaleLabel">
-           <property name="text">
-            <string>Point Size:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="opacityLabel">
-           <property name="text">
-            <string>Opacity:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="ambientLabel">
-           <property name="text">
-            <string>Ambient:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="diffuseLabel">
-           <property name="text">
-            <string>Diffuse:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="specularLabel">
-           <property name="text">
-            <string>Specular:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="ctkSliderWidget" name="pointOpacitySliderSpinBoxWidget">
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget">
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget">
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget"/>
-         </item>
-         <item row="0" column="1">
-          <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget"/>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <zorder>layoutWidget</zorder>
-     <zorder>pointSizeSliderSpinBoxWidget</zorder>
-    </widget>
-    <widget class="QWidget" name="lineTab">
-     <attribute name="title">
-      <string>Line</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>19</y>
-        <width>251</width>
-        <height>236</height>
-       </rect>
-      </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>General</string>
+      </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="ctkColorPickerButton" name="lineUnselectedColorPickerButton">
-           <property name="text">
-            <string>Selected Line Color</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="ctkColorPickerButton" name="lineSelectedColorPickerButton">
-           <property name="text">
-            <string>Unselected Line Color</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <item row="0" column="0">
-          <widget class="QLabel" name="widthLabel">
-           <property name="text">
-            <string>Line Width:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="ctkSliderWidget" name="lineWidthSliderSpinBoxWidget">
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-          </widget>
-         </item>
+        <layout class="QGridLayout" name="gridLayout">
          <item row="1" column="0">
-          <widget class="QLabel" name="opacityLabel_2">
+          <widget class="QLabel" name="textLabel_2">
            <property name="text">
-            <string>Opacity:</string>
+            <string>Text:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="typeLabel">
+           <property name="text">
+            <string>Annotation Type:</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="ctkSliderWidget" name="lineOpacitySliderSpinBoxWidget">
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="ambientLabel_2">
-           <property name="text">
-            <string>Ambient:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="ctkSliderWidget" name="lineAmbientSliderSpinBoxWidget">
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="diffuseLabel_2">
-           <property name="text">
-            <string>Diffuse:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="ctkSliderWidget" name="lineDiffuseSliderSpinBoxWidget">
-           <property name="maximum">
-            <double>10.000000000000000</double>
+          <widget class="QTextEdit" name="annotationTextEdit_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
-          <widget class="QLabel" name="specularLabel_2">
+          <widget class="QLabel" name="label">
            <property name="text">
-            <string>Specular:</string>
+            <string>Measurement:</string>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="ctkSliderWidget" name="lineSpecularSliderSpinBoxWidget">
-           <property name="maximum">
-            <double>10.000000000000000</double>
+          <widget class="QLineEdit" name="lineEdit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
+         </item>
+         <item row="2" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="ctkColorPickerButton" name="textUnselectedColorPickerButton">
+             <property name="text">
+              <string>Selected Text Color</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ctkColorPickerButton" name="textSelectedColorPickerButton">
+             <property name="text">
+              <string>Unselected Text Color</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLabel" name="textScaleLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Text Scale:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget" native="true">
+               <property name="maximum" stdset="0">
+                <double>40.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Advanced</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_12">
+       <item>
+        <widget class="QToolBox" name="toolBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="page">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>699</width>
+            <height>287</height>
+           </rect>
+          </property>
+          <attribute name="label">
+           <string>Points</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_17">
+           <item row="0" column="0" rowspan="3">
+            <widget class="QTableWidget" name="pointsTableWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>4</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>4</number>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Name</string>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>X</string>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Y</string>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Z</string>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="ctkColorPickerButton" name="pointUnselectedColorPickerButton">
+             <property name="text">
+              <string>Selected Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="ctkColorPickerButton" name="pointSelectedColorPickerButton">
+             <property name="text">
+              <string>Unselected Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0">
+              <widget class="QLabel" name="glyphScaleLabel">
+               <property name="text">
+                <string>Size:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="opacityLabel">
+               <property name="text">
+                <string>Opacity:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="ambientLabel">
+               <property name="text">
+                <string>Ambient:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="diffuseLabel">
+               <property name="text">
+                <string>Diffuse:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="specularLabel">
+               <property name="text">
+                <string>Specular:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="ctkSliderWidget" name="pointOpacitySliderSpinBoxWidget" native="true">
+               <property name="maximum" stdset="0">
+                <double>1.000000000000000</double>
+               </property>
+               <property name="singleStep" stdset="0">
+                <double>0.100000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget" native="true">
+               <property name="maximum" stdset="0">
+                <double>10.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget" native="true">
+               <property name="maximum" stdset="0">
+                <double>10.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget" native="true"/>
+             </item>
+             <item row="0" column="1">
+              <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget" native="true"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>699</width>
+            <height>287</height>
+           </rect>
+          </property>
+          <attribute name="label">
+           <string>Lines</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_18">
+           <item row="0" column="0" rowspan="3">
+            <widget class="QTableWidget" name="pointsTableWidget_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="showGrid">
+              <bool>true</bool>
+             </property>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>4</number>
+             </attribute>
+             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>4</number>
+             </attribute>
+             <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Name</string>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="ctkColorPickerButton" name="lineUnselectedColorPickerButton">
+             <property name="text">
+              <string>Selected Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="ctkColorPickerButton" name="lineSelectedColorPickerButton">
+             <property name="text">
+              <string>Unselected Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="0" column="0">
+              <widget class="QLabel" name="widthLabel">
+               <property name="text">
+                <string>Width:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="ctkSliderWidget" name="lineWidthSliderSpinBoxWidget" native="true">
+               <property name="singleStep" stdset="0">
+                <double>0.100000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="opacityLabel_2">
+               <property name="text">
+                <string>Opacity:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="ctkSliderWidget" name="lineOpacitySliderSpinBoxWidget" native="true">
+               <property name="maximum" stdset="0">
+                <double>1.000000000000000</double>
+               </property>
+               <property name="singleStep" stdset="0">
+                <double>0.100000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="ambientLabel_2">
+               <property name="text">
+                <string>Ambient:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="ctkSliderWidget" name="lineAmbientSliderSpinBoxWidget" native="true">
+               <property name="maximum" stdset="0">
+                <double>10.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="diffuseLabel_2">
+               <property name="text">
+                <string>Diffuse:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="ctkSliderWidget" name="lineDiffuseSliderSpinBoxWidget" native="true">
+               <property name="maximum" stdset="0">
+                <double>10.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="specularLabel_2">
+               <property name="text">
+                <string>Specular:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="ctkSliderWidget" name="lineSpecularSliderSpinBoxWidget" native="true">
+               <property name="maximum" stdset="0">
+                <double>10.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
-   </widget>
-  </widget>
-  <widget class="QDialogButtonBox" name="fiducialPropertyButtonBox">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>620</y>
-     <width>257</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_7">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>261</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Modify Annotation Properties</string>
-   </property>
-  </widget>
-  <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_4">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>30</y>
-     <width>281</width>
-     <height>251</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Display Annotation</string>
-   </property>
-   <widget class="QLabel" name="coordinatesLabel">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>170</y>
-      <width>73</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Coordinates:</string>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="annotationTypeBrowser">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>30</y>
-      <width>259</width>
-      <height>39</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>271</width>
-      <height>39</height>
-     </size>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="annotationValueBrowser">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>140</y>
-      <width>259</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>271</width>
-      <height>29</height>
-     </size>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>76</y>
-      <width>259</width>
-      <height>63</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="textLabel">
-       <property name="text">
-        <string>Text:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTextEdit" name="annotationTextEdit"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>ctkColorPickerButton</class>
    <extends>QPushButton</extends>
@@ -498,19 +519,17 @@
    <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../qSlicerAnnotationModule.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
-   <sender>fiducialPropertyButtonBox</sender>
+   <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>qSlicerAnnotationModuleAnnotationPropertyDialog</receiver>
+   <receiver>qSlicerAnnotationModulePropertyDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>220</x>
-     <y>600</y>
+     <x>248</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -519,14 +538,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>fiducialPropertyButtonBox</sender>
+   <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>qSlicerAnnotationModuleAnnotationPropertyDialog</receiver>
+   <receiver>qSlicerAnnotationModulePropertyDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>600</y>
+     <x>316</x>
+     <y>260</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
