@@ -7,9 +7,8 @@
 #include "vtkMRMLEMS.h"
 #include "vtkMRMLEMSSegmenterNode.h"
 
-// Description: 
-// The scripted module node is simply a MRMLNode container for 
-// an arbitrary keyword value pair map
+/// The scripted module node is simply a MRMLNode container for
+/// an arbitrary keyword value pair map
 
 class VTK_MRMLEMS_EXPORT vtkMRMLEMSNode : 
   public vtkMRMLNode
@@ -21,30 +20,24 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
     {return "EMS";}
 
-  // Description:
-  // Updates this node if it depends on other nodes
-  // when the node is deleted in the scene
+  /// Updates this node if it depends on other nodes
+  /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
   
   vtkGetStringMacro (SegmenterNodeID);
@@ -57,32 +50,32 @@ public:
   vtkGetMacro(SaveTemplateAfterSegmentation, int);
   vtkSetMacro(SaveTemplateAfterSegmentation, int);
 
+  /// \deprecated { These methods are kept for backward compatiblity with
+  /// EMSegment KWWidget module and will be removed in SlicerQt}
   vtkGetStringMacro(TclTaskFilename);
   vtkSetStringMacro(TclTaskFilename);
+  static const char* GetDefaultTclTaskFilename() { return "GenericTask.tcl"; }
 
   vtkGetStringMacro(TaskPreprocessingSetting);
   vtkSetStringMacro(TaskPreprocessingSetting);
 
-  static const char* GetDefaultTclTaskFilename() { return "GenericTask.tcl"; }
-
 protected:
+  vtkMRMLEMSNode();
+  virtual ~vtkMRMLEMSNode();
+
   char *SegmenterNodeID;
 
   int   SaveTemplateAfterSegmentation;
 
   char* TemplateFilename;
 
-  char* TclTaskFilename;
+  char* TclTaskFilename; // deprecated
 
   char* TaskPreprocessingSetting; 
 
-
-
 private:
-  vtkMRMLEMSNode();
-  ~vtkMRMLEMSNode();
-  vtkMRMLEMSNode(const vtkMRMLEMSNode&);
-  void operator=(const vtkMRMLEMSNode&);
+  vtkMRMLEMSNode(const vtkMRMLEMSNode&); // Not implemented
+  void operator=(const vtkMRMLEMSNode&); // Not implemented
 
 };
 
