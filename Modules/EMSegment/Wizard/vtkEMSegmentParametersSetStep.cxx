@@ -363,8 +363,15 @@ int vtkEMSegmentParametersSetStep::SettingSegmentationMode(int flag)
   dlg2->SetOptions(vtkKWMessageDialog::InvokeAtPointer | vtkKWMessageDialog::Beep | vtkKWMessageDialog::YesDefault);
   dlg2->SetTitle("What Segmentation Mode To Proceed?");
   dlg2->SetStyleToOkOtherCancel();
-  dlg2->SetOKButtonText("Advanced");
-  dlg2->SetOtherButtonText("Simple");
+  dlg2->SetOKButtonText("Adjust Parameters");                   // Advanced
+  dlg2->SetOtherButtonText("Segment with Existing Parameters"); // Simple
+  dlg2->Create();
+  dlg2->SetSize(400, 150);
+  dlg2->GetOKButton()->SetWidth(17);
+  dlg2->GetOtherButton()->SetWidth(32);
+  dlg2->GetCancelButton()->SetWidth(6);
+  this->Script("pack %s -side left -expand yes -padx 2", 
+               dlg2->GetOtherButton()->GetWidgetName());
 
   if (flag)
     {
