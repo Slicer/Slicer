@@ -579,7 +579,10 @@ itcl::body Labeler::rotateSliceToImage { } {
   set dir(S) {  0  0  1 }
   set dir(I) {  0  0 -1 }
 
-  # find the closest major direction for each index vector
+  # find the dot products for each index vector and max
+  set maxdot -1
+  set principleIndex -1
+  set principleDirection -1
   foreach index {i j k} {
     set dir($index,closestAxisDot) -1
     foreach direction $dir(directions) {
@@ -588,9 +591,51 @@ itcl::body Labeler::rotateSliceToImage { } {
         set dot [expr $dot + $comp0 * $comp1] 
       }
       set dir(dot,$index,$direction) $dot
+      if { $dot > $maxdot } {
+        set maxdot $dot
+        set principleIndex $index
+        set principleDirection $direction
+      }
+    }
+  }
+  set dir($principleIndex,closestAxisDot) $maxdot
+  set dir($principleIndex,closestAxis) $principleDirection
+
+  # find the closest major direction for each index vector
+  foreach index {i j k} {
+    if { $index == $principleIndex } {
+      continue
+    }
+    set dir($index,closestAxisDot) -1
+    foreach direction $dir(directions) {
+      if { $direction == $principleDirection } {
+        continue
+      }
       if { $dot > $dir($index,closestAxisDot) } {
         set dir($index,closestAxis) $direction
         set dir($index,closestAxisDot) $dot
+      }
+    }
+  }
+
+  set minorAxes [lremove {i j k} $principleIndex]
+  foreach {m0 m1} $minorAxes {}
+  if { $dir($m0,closestAxis) == $dir($m1,closestAxis) } {
+    if { $dir($m0,closestAxisDot) > $dir($m1,closestAxisDot) } {
+      set minor $m1
+      set middle $m0
+    } else {
+      set minor $m0
+      set middle $m1
+    }
+    set candidateAxes [lremove $dir(directions) $dir($principleIndex,closestAxis) $dir($middle,closestAxis)]
+    # of the remaining axes not 'claimed' by the principle and middle indices, find the best fit to minor
+    set maxdot -1
+    set dir($minor,closestAxisDot) -1
+    foreach direction $candidateAxes {
+      if { $dir(dot,$minor,$direction) > $dir($minor,closestAxisDot) } {
+        set dir($minor,closestAxis) $direction
+        set dir($minor,closestAxisDot) $dir(dot,$minor,$direction)
       }
     }
   }

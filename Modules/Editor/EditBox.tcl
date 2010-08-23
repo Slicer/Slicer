@@ -333,6 +333,7 @@ itcl::body EditBox::selectEffect { effect } {
 
       set ret [catch "EffectSWidget::Add $_effects($effect,class)" res]
       if { $ret } {
+        puts $::errorInfo
         EditorErrorDialog $res
       } else {
         EffectSWidget::ConfigureAll $_effects($effect,class) -exitCommand "EditorSetActiveToolLabel DefaultTool"
