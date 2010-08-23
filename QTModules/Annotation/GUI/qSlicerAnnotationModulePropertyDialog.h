@@ -1,8 +1,8 @@
-#ifndef __qSlicerAnnotationModuleAnnotationPropertyDialog_h
-#define __qSlicerAnnotationModuleAnnotationPropertyDialog_h
+#ifndef __qSlicerAnnotationModulePropertyDialog_h
+#define __qSlicerAnnotationModulePropertyDialog_h
 
 #include <QLineEdit>
-#include "ui_qSlicerAnnotationModuleAnnotationPropertyDialog.h"
+#include "ui_qSlicerAnnotationModulePropertyDialog.h"
 
 #include "qSlicerAbstractModuleWidget.h"
 
@@ -19,13 +19,13 @@ class vtkMRMLAnnotationAngleNode;
 class vtkMRMLAnnotationFiducialNode;
 
 
-class qSlicerAnnotationModuleAnnotationPropertyDialog : public QDialog
+class qSlicerAnnotationModulePropertyDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  qSlicerAnnotationModuleAnnotationPropertyDialog(vtkMRMLNode* node, vtkSlicerAnnotationModuleLogic* logic);
-  ~qSlicerAnnotationModuleAnnotationPropertyDialog();
+  qSlicerAnnotationModulePropertyDialog(vtkMRMLNode* node, vtkSlicerAnnotationModuleLogic* logic);
+  ~qSlicerAnnotationModulePropertyDialog();
 
   void Initialize(vtkMRMLNode* node);
   void updateTextFromTable(QString text);

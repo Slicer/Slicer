@@ -26,7 +26,7 @@
 // GUI includes
 #include "GUI/qSlicerAnnotationModulePushButton.h"
 #include "GUI/qSlicerAnnotationModuleReportDialog.h"
-#include "GUI/qSlicerAnnotationModuleAnnotationPropertyDialog.h"
+#include "GUI/qSlicerAnnotationModulePropertyDialog.h"
 #include "GUI/qSlicerAnnotationModuleImageUtil.h"
 #include "GUI/qSlicerAnnotationModuleScreenShotDialog.h"
 
@@ -644,7 +644,7 @@ qSlicerAnnotationModuleWidget::~qSlicerAnnotationModuleWidget()
     m_ScreenShotDialog = NULL;
     }
 
-  std::map<std::string, qSlicerAnnotationModuleAnnotationPropertyDialog*>::iterator iter;
+  std::map<std::string, qSlicerAnnotationModulePropertyDialog*>::iterator iter;
   for (iter = this->m_PropertyDialogs.begin(); iter != this->m_PropertyDialogs.end(); ++iter)
     {
     if (iter->second != NULL)
@@ -1080,7 +1080,7 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
   if (this->GetPropertyDialog(
       mrmlnode->GetID()) == NULL)
     {
-    qSlicerAnnotationModuleAnnotationPropertyDialog* propertyDialog = new qSlicerAnnotationModuleAnnotationPropertyDialog(
+    qSlicerAnnotationModulePropertyDialog* propertyDialog = new qSlicerAnnotationModulePropertyDialog(
         mrmlnode,
         d->logic());
 
@@ -1108,7 +1108,7 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
     return;
     }
 
-  qSlicerAnnotationModuleAnnotationPropertyDialog* propertyDialog = this->m_PropertyDialogs[mrmlnode->GetID()];
+  qSlicerAnnotationModulePropertyDialog* propertyDialog = this->m_PropertyDialogs[mrmlnode->GetID()];
 
   this->connect(
       propertyDialog,
@@ -1149,7 +1149,7 @@ void qSlicerAnnotationModuleWidget::propertyRestored(char* nodeID)
           d->logic()->GetAnnotationTextProperty(
               node)));
   QString valueString;
-  qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
+  qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
       d->logic()->GetAnnotationTextFormatProperty(
           node),
       d->logic()->GetAnnotationMeasurement(
@@ -1348,7 +1348,7 @@ void qSlicerAnnotationModuleWidget::onGenerateReportButtonClicked()
       const char* format = d->logic()->GetAnnotationTextFormatProperty(
           d->logic()->GetMRMLScene()->GetNodeByID(
               m_IDs[i]));
-      qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
+      qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
           format,
           thevalue,
           valueString);
@@ -1936,7 +1936,7 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
               thevalue,
               format);
           QString valueString;
-          qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
+          qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
               format,
               thevalue,
               valueString);
@@ -2014,7 +2014,7 @@ void qSlicerAnnotationModuleWidget::onCreateMeasurementRulerButtonClicked()
 
  char* format = node->GetDistanceAnnotationFormat();
  QString valueString;
- qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(format, thevalue, valueString);
+ qSlicerAnnotationModulePropertyDialog::FormatValueToChar(format, thevalue, valueString);
  this->updateAnnotationTable( m_index, thevalue, format );
  this->selectRowByIndex( m_index );
 
@@ -2046,7 +2046,7 @@ void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index,
       QString::number(
           m_index));
   QString valueString;
-  qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
+  qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
       format,
       thevalue,
       valueString);
@@ -2080,7 +2080,7 @@ void qSlicerAnnotationModuleWidget::updateAnnotationInTableByID(const char* id,
     }
 
   QString valueString;
-  qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
+  qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
       format,
       value,
       valueString);
@@ -2093,7 +2093,7 @@ void qSlicerAnnotationModuleWidget::updateAnnotationInTableByID(const char* id,
       valueString);
 
   // update property dialog
-  qSlicerAnnotationModuleAnnotationPropertyDialog* pdialog = this->GetPropertyDialog(id);
+  qSlicerAnnotationModulePropertyDialog* pdialog = this->GetPropertyDialog(id);
   if (pdialog != NULL)
     {
     if (pdialog->isVisible())
@@ -2250,7 +2250,7 @@ void qSlicerAnnotationModuleWidget::AddAngleCompleted(vtkObject* object,
 
    char* format = node->GetLabelFormat();
    QString valueString;
-   qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
+   qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
    format,
    thevalue,
    valueString);
@@ -2515,10 +2515,10 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAnnotationModuleAnnotationPropertyDialog*
+qSlicerAnnotationModulePropertyDialog*
 qSlicerAnnotationModuleWidget::GetPropertyDialog(const char* id)
 {
-  std::map<std::string, qSlicerAnnotationModuleAnnotationPropertyDialog*>::iterator iter;
+  std::map<std::string, qSlicerAnnotationModulePropertyDialog*>::iterator iter;
   for (iter = this->m_PropertyDialogs.begin(); iter != this->m_PropertyDialogs.end(); iter++)
     {
     if (iter->first.c_str() && !strcmp(
@@ -2780,7 +2780,7 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 
   char* format = const_cast<char*> (" ");
   QString valueString;
-  qSlicerAnnotationModuleAnnotationPropertyDialog::FormatValueToChar(
+  qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
       format,
       thevalue,
       valueString);

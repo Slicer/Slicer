@@ -52,8 +52,8 @@ SET(Logic_SRCS
 SET(GUI_SRCS
   GUI/qSlicerAnnotationModuleWidget.cxx
   GUI/qSlicerAnnotationModuleWidget.h
-  GUI/qSlicerAnnotationModuleAnnotationPropertyDialog.cxx
-  GUI/qSlicerAnnotationModuleAnnotationPropertyDialog.h
+  GUI/qSlicerAnnotationModulePropertyDialog.cxx
+  GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.cxx
   GUI/qSlicerAnnotationModuleReportDialog.h
   GUI/qSlicerAnnotationModulePushButton.cxx
@@ -188,7 +188,7 @@ ENDFOREACH()
 SET(qt_module_MOC_SRCS
   qSlicerAnnotationModule.h
   GUI/qSlicerAnnotationModuleWidget.h
-  GUI/qSlicerAnnotationModuleAnnotationPropertyDialog.h
+  GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.h
   GUI/qSlicerAnnotationModulePushButton.h
   GUI/qSlicerAnnotationModuleScreenShotDialog.h
@@ -201,7 +201,7 @@ SET(qt_module_MOC_SRCS
 #-----------------------------------------------------------------------
 SET(qt_module_UI_SRCS
   Resources/UI/qSlicerAnnotationModule.ui
-  Resources/UI/qSlicerAnnotationModuleAnnotationPropertyDialog.ui
+  Resources/UI/qSlicerAnnotationModulePropertyDialog.ui
   Resources/UI/qSlicerAnnotationModuleReportDialog.ui
   Resources/UI/qSlicerAnnotationModuleScreenShotDialog.ui
   )

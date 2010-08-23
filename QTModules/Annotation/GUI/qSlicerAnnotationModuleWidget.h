@@ -4,7 +4,7 @@
 // SlicerQT includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerAnnotationModuleExport.h"
-#include "GUI/qSlicerAnnotationModuleAnnotationPropertyDialog.h"
+#include "GUI/qSlicerAnnotationModulePropertyDialog.h"
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -162,12 +162,12 @@ protected slots:
 private:
   CTK_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);
 
-  qSlicerAnnotationModuleAnnotationPropertyDialog* GetPropertyDialog(const char* id);
+  qSlicerAnnotationModulePropertyDialog* GetPropertyDialog(const char* id);
   void RemovePropertyDialog(const char* id);
   virtual void setup();
   QString getAnnotationIconName(int index, bool isEdit=false);
 
-  std::map<std::string, qSlicerAnnotationModuleAnnotationPropertyDialog*> m_PropertyDialogs;
+  std::map<std::string, qSlicerAnnotationModulePropertyDialog*> m_PropertyDialogs;
   qSlicerAnnotationModuleReportDialog* m_ReportDialog;
   qSlicerAnnotationModuleScreenShotDialog *m_ScreenShotDialog;
   QString m_report;
