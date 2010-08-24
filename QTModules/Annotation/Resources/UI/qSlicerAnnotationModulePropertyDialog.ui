@@ -25,8 +25,56 @@
   <property name="windowTitle">
    <string>Modify Annotation Properties</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="typeLabel">
+     <property name="text">
+      <string>Annotation:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="visibleInvisibleButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Toggle visibility</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerAnnotationModule.qrc">
+       <normaloff>:/Icons/AnnotationVisibility.png</normaloff>
+       <normalon>:/Icons/AnnotationInvisible.png</normalon>:/Icons/AnnotationVisibility.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="lockUnlockButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Toggle un-/locked</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerAnnotationModule.qrc">
+       <normaloff>:/Icons/AnnotationLock.png</normaloff>:/Icons/AnnotationLock.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4">
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -51,13 +99,6 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="typeLabel">
-           <property name="text">
-            <string>Annotation:</string>
            </property>
           </widget>
          </item>
@@ -142,14 +183,14 @@
        <item row="0" column="0" rowspan="3" colspan="2">
         <widget class="QTableWidget" name="pointsTableWidget">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>467</width>
+           <width>457</width>
            <height>0</height>
           </size>
          </property>
@@ -216,12 +257,6 @@
        </item>
        <item row="0" column="2">
         <widget class="ctkColorPickerButton" name="pointUnselectedColorPickerButton">
-         <property name="maximumSize">
-          <size>
-           <width>350</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="text">
           <string>Selected Color</string>
          </property>
@@ -229,12 +264,6 @@
        </item>
        <item row="1" column="2">
         <widget class="ctkColorPickerButton" name="pointSelectedColorPickerButton">
-         <property name="maximumSize">
-          <size>
-           <width>350</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="text">
           <string>Unselected Color</string>
          </property>
@@ -244,12 +273,6 @@
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">
           <widget class="QLabel" name="glyphScaleLabel">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Size:</string>
            </property>
@@ -257,12 +280,6 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="opacityLabel">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Opacity:</string>
            </property>
@@ -270,12 +287,6 @@
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="ambientLabel">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Ambient:</string>
            </property>
@@ -283,12 +294,6 @@
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="diffuseLabel">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Diffuse:</string>
            </property>
@@ -296,12 +301,6 @@
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="specularLabel">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Specular:</string>
            </property>
@@ -349,14 +348,14 @@
        <item row="0" column="0" rowspan="3">
         <widget class="QTableWidget" name="pointsTableWidget_2">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>467</width>
+           <width>457</width>
            <height>0</height>
           </size>
          </property>
@@ -411,12 +410,6 @@
        </item>
        <item row="0" column="1">
         <widget class="ctkColorPickerButton" name="lineUnselectedColorPickerButton">
-         <property name="maximumSize">
-          <size>
-           <width>350</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="text">
           <string>Selected Color</string>
          </property>
@@ -424,12 +417,6 @@
        </item>
        <item row="1" column="1">
         <widget class="ctkColorPickerButton" name="lineSelectedColorPickerButton">
-         <property name="maximumSize">
-          <size>
-           <width>350</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="text">
           <string>Unselected Color</string>
          </property>
@@ -439,12 +426,6 @@
         <layout class="QGridLayout" name="gridLayout_6">
          <item row="0" column="0">
           <widget class="QLabel" name="widthLabel_2">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Width:</string>
            </property>
@@ -459,12 +440,6 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="opacityLabel_3">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Opacity:</string>
            </property>
@@ -482,12 +457,6 @@
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="ambientLabel_3">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Ambient:</string>
            </property>
@@ -502,12 +471,6 @@
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="diffuseLabel_3">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Diffuse:</string>
            </property>
@@ -522,12 +485,6 @@
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="specularLabel_3">
-           <property name="maximumSize">
-            <size>
-             <width>112</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="text">
             <string>Specular:</string>
            </property>
@@ -546,7 +503,7 @@
      </widget>
     </widget>
    </item>
-   <item>
+   <item row="3" column="0" colspan="4">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -565,6 +522,26 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="deleteButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Delete this annotation</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerAnnotationModule.qrc">
+       <normaloff>:/Icons/AnnotationDelete.png</normaloff>:/Icons/AnnotationDelete.png</iconset>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -579,7 +556,9 @@
    <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qSlicerAnnotationModule.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
