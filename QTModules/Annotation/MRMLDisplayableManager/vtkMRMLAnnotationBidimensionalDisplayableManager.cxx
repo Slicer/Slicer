@@ -64,6 +64,8 @@ public:
       this->m_Node->SetControlPoint(position3,2);
       this->m_Node->SetControlPoint(position4,3);
 
+      this->m_Node->SetBidimensionalMeasurement(bidimensionalRep->GetLength1(),bidimensionalRep->GetLength2());
+
     }
   }
   vtkAnnotationBidimensionalWidgetCallback(){}

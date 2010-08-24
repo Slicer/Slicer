@@ -64,6 +64,7 @@ public:
         ROINode,
       };
 
+
 protected:
 
 
@@ -100,9 +101,8 @@ protected slots:
     void visibleSelectedButtonClicked();
     void lockSelectedButtonClicked();
     void deleteSelectedButtonClicked();
-    void propertyEditButtonClicked();
-    void propertyRestored(char* nodeID);
-    void propertyAccepted(char* nodeID, QString text);
+
+
     void annotationTextChanged(QString text, char* nodeId);
     void annotationCoordinateChanged(QString valueString, char* nodeId);
     void selectRowByIndex(int index);
@@ -124,6 +124,12 @@ protected slots:
 
   //------------------------------------------------------------------
   // Daniel's approved code starting here
+
+  // Property dialog
+  void propertyRestored();
+  void propertyAccepted();
+  void propertyEditButtonClicked();
+
   // Mouse Mode Operation
   void enableMouseModeButtons();
   void disableMouseModeButtons();
@@ -162,12 +168,10 @@ protected slots:
 private:
   CTK_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);
 
-  qSlicerAnnotationModulePropertyDialog* GetPropertyDialog(const char* id);
-  void RemovePropertyDialog(const char* id);
   virtual void setup();
   QString getAnnotationIconName(int index, bool isEdit=false);
 
-  std::map<std::string, qSlicerAnnotationModulePropertyDialog*> m_PropertyDialogs;
+  qSlicerAnnotationModulePropertyDialog* m_PropertyDialog;
   qSlicerAnnotationModuleReportDialog* m_ReportDialog;
   qSlicerAnnotationModuleScreenShotDialog *m_ScreenShotDialog;
   QString m_report;

@@ -24,7 +24,7 @@ class qSlicerAnnotationModulePropertyDialog : public QDialog
   Q_OBJECT
 
 public:
-  qSlicerAnnotationModulePropertyDialog(vtkMRMLNode* node, vtkSlicerAnnotationModuleLogic* logic);
+  qSlicerAnnotationModulePropertyDialog(vtkSlicerAnnotationModuleLogic* logic);
   ~qSlicerAnnotationModulePropertyDialog();
 
   void Initialize(vtkMRMLNode* node);
@@ -72,8 +72,8 @@ protected slots:
 signals:
     void coordinateChanged(QString, char*);
     void textChanged(QString text, char*);
-    void dialogRejected(char*);
-    void dialogAccepted(char*, QString);
+    void dialogRejected();
+    void dialogAccepted();
     void doublePropertyChanged(double, char*, int);
     void colorPropertyChanged(QColor, char*, int);
 
