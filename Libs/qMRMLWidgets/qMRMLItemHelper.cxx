@@ -427,7 +427,7 @@ public:
   vtkTypeMacro(vtkWeakObject, vtkObject);
   vtkObject* GetPointer()const
   { 
-    return this->WeakPointer.GetPointer();
+    return vtkObject::SafeDownCast(this->WeakPointer.GetPointer());
   }
   // TBD: not sure it
   vtkWeakPointerBase WeakPointer;
