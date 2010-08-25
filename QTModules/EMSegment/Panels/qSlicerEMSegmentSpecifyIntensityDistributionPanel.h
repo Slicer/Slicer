@@ -25,6 +25,9 @@ public:
 
   virtual void setup();
 
+public slots:
+  void openGraphDialog();
+
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentSpecifyIntensityDistributionPanel);
 };
