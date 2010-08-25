@@ -172,6 +172,12 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
       return
   }
 
+  if { [$_crosshairNode GetCrosshairMode] == 0 } {
+      # don't bother to calculate anything if we aren't visible anyway...
+      $o(crosshairActor) VisibilityOff
+      return
+  }
+
   if { $caller == $_sliceNode } {
       # Slice node changed. How we respond depends who initiated the change.  
       #

@@ -225,13 +225,18 @@ namespace eval Slicer3Adapters {
     method GetSliceLogic {} {return $_sliceLogic}
     method RequestRender {} {
       # TODO: need to have a request render methodology in Qt
-      # - for now, trigger a modified event on the image data
-      #   as if it had been recalculated
+      # - for now, do nothing, as observers on the Qt side seem
+      #   to be handling this
       set imageData [$_sliceLogic GetImageData]
       if { $imageData != "" } {
-        $imageData Modified
+        # - trigger a modified event on the image data
+        #   as if it had been recalculated
+        #$imageData Modified
       }
       #[[$_renderWidget GetRenderWindowInteractor] GetRenderWindow] Render
+    }
+    method Render {} {
+      [[$_renderWidget GetRenderWindowInteractor] GetRenderWindow] Render
     }
     method GetHighlightColor {} {
       # TODO: need to figure out how these resources map to Qt
@@ -315,7 +320,7 @@ namespace eval Slicer3Adapters {
       return [[[$_interactor GetRenderWindow] GetRenderers] GetItemAsObject $n]
     }
     method RemoveAllRenderers {} {
-      return [[$_interactor GetRenderWindow] GetRenderers] RemoveAllItems
+      [[$_interactor GetRenderWindow] GetRenderers] RemoveAllItems
     }
   }
 

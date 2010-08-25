@@ -139,11 +139,10 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
   $gridSWidget configure -layer "label"
   lappend _swidgets $gridSWidget
   lappend _swidgets [CrosshairSWidget #auto $sliceGUI]
-  lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
   lappend _swidgets [VolumeDisplaySWidget #auto $sliceGUI]
+  lappend _swidgets [SlicePlaneSWidget #auto $sliceGUI]
 
   #lappend _swidgets [RegionsSWidget #auto $sliceGUI] ;# not used
-
 }
 
 
@@ -403,6 +402,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     $this resizeSliceNode
   } 
 
+  # TODO: the annotations seem to be very time consuming to calculate
+  # but most of the time they will not be displayed - instead we should
+  # move the calculation into the DelayedAnnotation method
 
   #
   # cancel any scheduled annotations
@@ -429,7 +431,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set annotationsUpdated true
   }
 
-
   #
   # if another widget has the grab, let this go unless
   # it is a focus event, in which case we want to update
@@ -447,7 +448,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       }
     }
   }
-
 
   switch $event {
 

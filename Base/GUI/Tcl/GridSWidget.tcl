@@ -109,6 +109,13 @@ itcl::body GridSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  if { ![$_sliceCompositeNode GetLabelGrid] || [$_sliceCompositeNode GetLabelVolumeID] == "" } {
+    # avoid any computation if we are not currently visible
+    $o(gridActor) SetVisibility 0
+    [$sliceGUI GetSliceViewer] RequestRender
+    return
+  }
+
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
   set xyToRAS [$_sliceNode GetXYToRAS]
@@ -177,13 +184,14 @@ itcl::body GridSWidget::addGridLine { startPoint endPoint } {
 #
 itcl::body GridSWidget::updateGrid { } {
 
-  $this resetGrid
 
   if { ![$_sliceCompositeNode GetLabelGrid] || [$_sliceCompositeNode GetLabelVolumeID] == "" } {
     $o(gridActor) SetVisibility 0
     [$sliceGUI GetSliceViewer] RequestRender
     return
   }
+
+  $this resetGrid
 
   #
   # check the size cutoff

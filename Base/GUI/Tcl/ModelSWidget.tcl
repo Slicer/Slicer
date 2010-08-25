@@ -172,9 +172,13 @@ itcl::body ModelSWidget::highlight { } {
     return
   }
 
-  set property [$o(actor) GetProperty]
-
   $o(actor) SetVisibility $visibility
+
+  if { !$visibility } {
+    return
+  }
+
+  set property [$o(actor) GetProperty]
 
   #
   # set color (extracted from the display node)
@@ -254,6 +258,16 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  set displayNode [$_modelNode GetDisplayNode]
+  if { $displayNode != "" } {
+    $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
+  }
+
+  if { !$visibility } {
+    # we're not visible, there's no reason to do the calculations...
+    return
+  }
+
   set transformToWorld [vtkMatrix4x4 New]
   $transformToWorld Identity
 
@@ -261,7 +275,6 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
   # transform based on transform node
   if { $_modelNode != "" && [$_modelNode GetPolyData] != "" } { 
     $o(cutter) SetInput [$_modelNode GetPolyData]
-    set displayNode [$_modelNode GetDisplayNode]
 
     # handle model transform to world space
     set tnode [$_modelNode GetParentTransformNode]
@@ -269,9 +282,6 @@ itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
         $tnode GetMatrixTransformToWorld $transformToWorld
     }
 
-    if { $displayNode != "" } {
-      $this configure -visibility [$displayNode GetSliceIntersectionVisibility]
-    }
   }
 
 
