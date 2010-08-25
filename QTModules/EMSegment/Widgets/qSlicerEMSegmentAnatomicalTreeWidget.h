@@ -45,6 +45,8 @@ public:
 
   bool classWeightColumnVisible() const;
 
+  bool updateClassWeightColumnVisible() const;
+
   bool atlasWeightColumnVisible() const;
 
   bool alphaColumnVisible() const;
@@ -62,6 +64,8 @@ public slots:
   void setLabelColumnVisible(bool visible);
 
   void setClassWeightColumnVisible(bool visible);
+
+  void setUpdateClassWeightColumnVisible(bool visible);
 
   void setAtlasWeightColumnVisible(bool visible);
 

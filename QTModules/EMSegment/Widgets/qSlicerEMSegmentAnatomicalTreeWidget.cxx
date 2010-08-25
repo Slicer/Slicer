@@ -2,11 +2,14 @@
 #include <QDebug>
 #include <QTreeView>
 #include <QStandardItemModel>
+#include <QItemEditorFactory>
+#include <QStyledItemDelegate>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QToolButton>
 #include <QCheckBox>
+#include <QDoubleSpinBox>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -31,6 +34,7 @@ class qSlicerEMSegmentAnatomicalTreeWidgetPrivate :
     public ctkPrivate<qSlicerEMSegmentAnatomicalTreeWidget>
 {
 public:
+  typedef qSlicerEMSegmentAnatomicalTreeWidgetPrivate Self;
   qSlicerEMSegmentAnatomicalTreeWidgetPrivate();
 
   enum
@@ -45,8 +49,20 @@ public:
     LabelItemType,
     MRMLIDItemType,
     ClassWeightItemType,
+    UpdateClassWeightItemType,
     AtlasWeightItemType,
     AlphaItemType
+    };
+
+  enum ColumnIds
+    {
+    StructureColumn = 0,
+    IdColumn,
+    LabelColumn,
+    ClassWeightColumn,
+    UpdateClassWeightColumn,
+    AtlasWeightColumn,
+    AlphaColumn
     };
 
   QTreeView *              TreeView;
@@ -54,6 +70,7 @@ public:
   bool                     StructureNameEditable;
   bool                     LabelColumnVisible;
   bool                     ClassWeightColumnVisible;
+  bool                     UpdateClassWeightColumnVisible;
   bool                     AtlasWeightColumnVisible;
   bool                     AlphaColumnVisible;
 
@@ -74,13 +91,39 @@ qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidge
   this->StructureNameEditable = false;
   this->LabelColumnVisible = false;
   this->ClassWeightColumnVisible = false;
+  this->UpdateClassWeightColumnVisible = false;
   this->AtlasWeightColumnVisible = false;
   this->AlphaColumnVisible = false;
 
   QStringList headerNames;
-  headerNames << "Structure" << "Id" << "Label"
-      << "Class Weight" << "Atlas Weight" << "Alpha";
+  headerNames.insert(Self::StructureColumn, "Structure");
+  headerNames.insert(Self::IdColumn, "Id");
+  headerNames.insert(Self::LabelColumn, "Label");
+  headerNames.insert(Self::ClassWeightColumn, "Class Weight");
+  headerNames.insert(Self::UpdateClassWeightColumn, "Update");
+  headerNames.insert(Self::AtlasWeightColumn, "Atlas Weight");
+  headerNames.insert(Self::AlphaColumn, "Alpha");
   this->TreeModel->setHorizontalHeaderLabels(headerNames);
+}
+
+//-----------------------------------------------------------------------------
+// Custom item editors
+
+namespace
+{
+
+//-----------------------------------------------------------------------------
+class CustomDoubleSpinBox : public QDoubleSpinBox
+{
+public:
+  CustomDoubleSpinBox(QWidget * newParent):QDoubleSpinBox(newParent)
+    {
+    this->setMinimum(0);
+    this->setMaximum(1.0);
+    this->setDecimals(2);
+    this->setSingleStep(0.01);
+    }
+};
 }
 
 //-----------------------------------------------------------------------------
@@ -106,6 +149,20 @@ Superclass(newParent)
   d->TreeView->setModel(d->TreeModel);
   d->TreeView->setRootIsDecorated(false);
   horizontalLayout->addWidget(d->TreeView);
+
+  // Register custom editors
+  QItemEditorFactory *editorFactory = new QItemEditorFactory;
+  editorFactory->registerEditor(
+      QVariant::Double, new QStandardItemEditorCreator<CustomDoubleSpinBox>());
+  editorFactory->registerEditor(
+      QVariant::Bool, new QStandardItemEditorCreator<QCheckBox>());
+  QStyledItemDelegate* defaultItemDelegate =
+      qobject_cast<QStyledItemDelegate*>(d->TreeView->itemDelegate());
+  Q_ASSERT(defaultItemDelegate);
+  defaultItemDelegate->setItemEditorFactory(editorFactory);
+
+  //QStyledItemDelegate * AtlasWeightDelegate = new QStyledItemDelegate(this);
+  //d->TreeView->setItemDelegateForColumn(ctkPimpl::AtlasWeightColumn, AtlasWeightDelegate);
 
   // Layout control buttons vertically
   QVBoxLayout * controlButtonsLayout = new QVBoxLayout();
@@ -151,6 +208,7 @@ Superclass(newParent)
   this->setMRMLIDsColumnVisible(false);
   this->setLabelColumnVisible(false);
   this->setClassWeightColumnVisible(false);
+  this->setUpdateClassWeightColumnVisible(false);
   this->setAtlasWeightColumnVisible(false);
   this->setAlphaColumnVisible(false);
 }
@@ -200,10 +258,21 @@ void qSlicerEMSegmentAnatomicalTreeWidget::onTreeItemChanged(QStandardItem * tre
     {
     this->mrmlManager()->SetTreeNodeName(treeNodeId, treeItem->text().toLatin1());
     }
-//  else if (treeItem == ctkPimpl::MRMLIDItemType)
-//    {
-
-//    }
+  else if (treeItemType == ctkPimpl::ClassWeightItemType)
+    {
+    this->mrmlManager()->SetTreeNodeClassProbability(
+        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
+    }
+  else if (treeItemType == ctkPimpl::AtlasWeightItemType)
+    {
+    this->mrmlManager()->SetTreeNodeSpatialPriorWeight(
+        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
+    }
+  else if (treeItemType == ctkPimpl::AlphaItemType)
+    {
+    this->mrmlManager()->SetTreeNodeAlpha(
+        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -275,7 +344,7 @@ bool qSlicerEMSegmentAnatomicalTreeWidget::mrmlIDsColumnVisible() const
 void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLIDsColumnVisible(bool visible)
 {
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  d->TreeView->header()->setSectionHidden(1, !visible);
+  d->TreeView->header()->setSectionHidden(ctkPimpl::IdColumn, !visible);
   d->DisplayMRMLIDsCheckBox->setChecked(visible);
 }
 
@@ -286,7 +355,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool, labelColumnVisible, Labe
 void qSlicerEMSegmentAnatomicalTreeWidget::setLabelColumnVisible(bool visible)
 {
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  d->TreeView->header()->setSectionHidden(2, !visible);
+  d->TreeView->header()->setSectionHidden(ctkPimpl::LabelColumn, !visible);
   d->LabelColumnVisible = visible;
 }
 
@@ -298,8 +367,20 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
 void qSlicerEMSegmentAnatomicalTreeWidget::setClassWeightColumnVisible(bool visible)
 {
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  d->TreeView->header()->setSectionHidden(3, !visible);
+  d->TreeView->header()->setSectionHidden(ctkPimpl::ClassWeightColumn, !visible);
   d->ClassWeightColumnVisible = visible;
+}
+
+//-----------------------------------------------------------------------------
+CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
+            updateClassWeightColumnVisible, UpdateClassWeightColumnVisible);
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidget::setUpdateClassWeightColumnVisible(bool visible)
+{
+  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  d->TreeView->header()->setSectionHidden(ctkPimpl::UpdateClassWeightColumn, !visible);
+  d->UpdateClassWeightColumnVisible = visible;
 }
 
 //-----------------------------------------------------------------------------
@@ -310,7 +391,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
 void qSlicerEMSegmentAnatomicalTreeWidget::setAtlasWeightColumnVisible(bool visible)
 {
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  d->TreeView->header()->setSectionHidden(4, !visible);
+  d->TreeView->header()->setSectionHidden(ctkPimpl::AtlasWeightColumn, !visible);
   d->AtlasWeightColumnVisible = visible;
 }
 
@@ -321,7 +402,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool, alphaColumnVisible, Alph
 void qSlicerEMSegmentAnatomicalTreeWidget::setAlphaColumnVisible(bool visible)
 {
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  d->TreeView->header()->setSectionHidden(5, !visible);
+  d->TreeView->header()->setSectionHidden(ctkPimpl::AlphaColumn, !visible);
   d->AlphaColumnVisible = visible;
 }
 
@@ -383,17 +464,28 @@ void qSlicerEMSegmentAnatomicalTreeWidget::populateTreeModel(
   itemList << labelItem;
 
   // ClassWeight item
-  QStandardItem * classWeightItem = new QStandardItem(QString("%1").arg(
-      treeNode->GetParametersNode()->GetClassProbability()));
-  classWeightItem->setEditable(false); // TODO class weight should be editable
+  QStandardItem * classWeightItem = new QStandardItem();
+  classWeightItem->setData(
+      QVariant(treeNode->GetParametersNode()->GetClassProbability()), Qt::DisplayRole);
+  classWeightItem->setEditable(true);
   classWeightItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
   classWeightItem->setData(QVariant(ctkPimpl::ClassWeightItemType), ctkPimpl::TreeItemTypeRole);
   itemList << classWeightItem;
 
+  // UpdateClassWeight item
+  QStandardItem * updateClassWeightItem = new QStandardItem();
+  updateClassWeightItem->setData(QVariant(false), Qt::DisplayRole);
+  updateClassWeightItem->setEditable(true);
+  updateClassWeightItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
+  updateClassWeightItem->setData(QVariant(ctkPimpl::UpdateClassWeightItemType),
+                                 ctkPimpl::TreeItemTypeRole);
+  itemList << updateClassWeightItem;
+
   // AtlasWeight item
-  QStandardItem * atlasWeightItem = new QStandardItem(QString("%1").arg(
-      treeNode->GetParametersNode()->GetSpatialPriorWeight()));
-  atlasWeightItem->setEditable(false); // TODO atlas weight should be editable
+  QStandardItem * atlasWeightItem = new QStandardItem();
+  atlasWeightItem->setData(
+      QVariant(treeNode->GetParametersNode()->GetSpatialPriorWeight()), Qt::DisplayRole);
+  atlasWeightItem->setEditable(true);
   atlasWeightItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
   atlasWeightItem->setData(QVariant(ctkPimpl::AtlasWeightItemType), ctkPimpl::TreeItemTypeRole);
   itemList << atlasWeightItem;
@@ -407,7 +499,10 @@ void qSlicerEMSegmentAnatomicalTreeWidget::populateTreeModel(
     Q_ASSERT(treeNode->GetParametersNode()->GetParentParametersNode());
     alphaItem->setText(QString("%1").arg(
         treeNode->GetParametersNode()->GetParentParametersNode()->GetAlpha()));
-    // TODO alpha should be editable
+    atlasWeightItem->setData(
+        QVariant(treeNode->GetParametersNode()->GetParentParametersNode()->GetAlpha()),
+        Qt::DisplayRole);
+    alphaItem->setEditable(true);
     alphaItem->setData(QVariant(ctkPimpl::AlphaItemType), ctkPimpl::TreeItemTypeRole);
     }
   itemList << alphaItem;
