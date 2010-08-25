@@ -27,6 +27,8 @@ SET(widget_SRCS
   Widgets/qSlicerEMSegmentWidget.h
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.cxx
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
+  Widgets/qSlicerEMSegmentGraphWidget.cxx
+  Widgets/qSlicerEMSegmentGraphWidget.h
   Widgets/qSlicerEMSegmentInputChannelListWidget.cxx
   Widgets/qSlicerEMSegmentInputChannelListWidget.h
   Widgets/vtkPlotGaussian.cxx
@@ -36,6 +38,7 @@ SET(widget_SRCS
 SET(widget_MOC_SRCS
   Widgets/qSlicerEMSegmentWidget.h
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
+  Widgets/qSlicerEMSegmentGraphWidget.h
   Widgets/qSlicerEMSegmentInputChannelListWidget.h
   )
 
@@ -97,6 +100,7 @@ SET(qt_module_UI_SRCS
 
   # Widgets
   #Resources/UI/qMRMLEMSegmentAnatomicalTreeWidget.ui
+  Resources/UI/qSlicerEMSegmentGraphWidget.ui
 
   # Workflow: MRI Human brain
   Resources/UI/qSlicerEMSegmentDefineAnatomicalTreePanel.ui           # Step 3

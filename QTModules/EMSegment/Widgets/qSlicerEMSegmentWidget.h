@@ -22,7 +22,7 @@ public:
   vtkEMSegmentMRMLManager* mrmlManager() const;
 
 public slots:
-  void setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager);
+  virtual void setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager);
 
   virtual void setup(){}
 
