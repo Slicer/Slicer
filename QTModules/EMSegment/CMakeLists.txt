@@ -29,6 +29,8 @@ SET(widget_SRCS
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
   Widgets/qSlicerEMSegmentInputChannelListWidget.cxx
   Widgets/qSlicerEMSegmentInputChannelListWidget.h
+  Widgets/vtkPlotGaussian.cxx
+  Widgets/vtkPlotGaussian.h
   )
 
 SET(widget_MOC_SRCS
@@ -111,6 +113,7 @@ SET(qt_module_UI_SRCS
 # Additional Target libraries
 SET(qt_module_target_libraries
   vtkSlicerEMSegmentModuleLogic
+  vtkCharts
   )
 
 # Resources
@@ -135,5 +138,5 @@ Slicer3_build_qtmodule(
 ADD_SUBDIRECTORY(Widgets/Plugins)
 
 if(BUILD_TESTING)
-  #ADD_SUBDIRECTORY(Testing)
+  ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)
