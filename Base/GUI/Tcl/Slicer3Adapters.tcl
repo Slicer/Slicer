@@ -146,7 +146,7 @@ namespace eval Slicer3Adapters {
       # -- need to give AddObservation the python name of the interactor style
       set layoutName [[$this GetSliceNode] GetLayoutName]
       set pyname [format "slicer.sliceWidget%s_interactorStyle" $layoutName]
-      set script "$this SetGrabID {}; $script"
+      #set script "$this SetGrabID {}; $script"
       py_eval [format "slicer.broker.AddObservation(%s,'%s','%s')" $pyname $event $script]
     }
 
@@ -313,6 +313,9 @@ namespace eval Slicer3Adapters {
     }
     method GetNthRenderer {n} {
       return [[[$_interactor GetRenderWindow] GetRenderers] GetItemAsObject $n]
+    }
+    method RemoveAllRenderers {} {
+      return [[$_interactor GetRenderWindow] GetRenderers] RemoveAllItems
     }
   }
 
