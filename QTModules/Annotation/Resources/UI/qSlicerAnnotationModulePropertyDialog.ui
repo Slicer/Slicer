@@ -26,55 +26,26 @@
    <string>Modify Annotation Properties</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="typeLabel">
-     <property name="text">
-      <string>Annotation:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="visibleInvisibleButton">
+   <item row="5" column="0" colspan="5">
+    <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="toolTip">
-      <string>Toggle visibility</string>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="text">
-      <string/>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
-     <property name="icon">
-      <iconset resource="../qSlicerAnnotationModule.qrc">
-       <normaloff>:/Icons/AnnotationVisibility.png</normaloff>
-       <normalon>:/Icons/AnnotationInvisible.png</normalon>:/Icons/AnnotationVisibility.png</iconset>
+     <property name="centerButtons">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="lockUnlockButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>Toggle un-/locked</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../qSlicerAnnotationModule.qrc">
-       <normaloff>:/Icons/AnnotationLock.png</normaloff>:/Icons/AnnotationLock.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="4">
+   <item row="4" column="0" colspan="5">
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -89,85 +60,76 @@
       <attribute name="title">
        <string>Text</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="1" column="0">
-          <widget class="QLabel" name="textLabel_2">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0" rowspan="4" colspan="2">
+        <widget class="QTextEdit" name="annotationTextEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="ctkColorPickerButton" name="textUnselectedColorPickerButton">
+         <property name="text">
+          <string>Selected Color</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="ctkColorPickerButton" name="textSelectedColorPickerButton">
+         <property name="text">
+          <string>Unselected Color</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Measurement value:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="textScaleLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>Text:</string>
+            <string>Text Scale:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QTextEdit" name="annotationTextEdit_2">
+         <item>
+          <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Measurement:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="ctkColorPickerButton" name="textUnselectedColorPickerButton">
-             <property name="text">
-              <string>Selected Text Color</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ctkColorPickerButton" name="textSelectedColorPickerButton">
-             <property name="text">
-              <string>Unselected Text Color</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="textScaleLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Text Scale:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget" native="true">
-               <property name="maximum" stdset="0">
-                <double>40.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="lineEdit">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+           <property name="maximum" stdset="0">
+            <double>40.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -257,15 +219,14 @@
        </item>
        <item row="0" column="2">
         <widget class="ctkColorPickerButton" name="pointUnselectedColorPickerButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Selected Color</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="ctkColorPickerButton" name="pointSelectedColorPickerButton">
-         <property name="text">
-          <string>Unselected Color</string>
          </property>
         </widget>
        </item>
@@ -337,6 +298,19 @@
           <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget" native="true"/>
          </item>
         </layout>
+       </item>
+       <item row="1" column="2">
+        <widget class="ctkColorPickerButton" name="pointSelectedColorPickerButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Unselected Color</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -503,44 +477,110 @@
      </widget>
     </widget>
    </item>
-   <item row="3" column="0" colspan="4">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-     <property name="centerButtons">
-      <bool>false</bool>
-     </property>
-    </widget>
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_7">
+     <item row="0" column="0">
+      <widget class="QLabel" name="typeLabel">
+       <property name="text">
+        <string>Name: AnnotationText (vtkMRMLAnnotationTextNode1)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="typeIcon">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../qSlicerAnnotationModule.qrc">:/Icons/AnnotationText.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="deleteButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>Delete this annotation</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../qSlicerAnnotationModule.qrc">
-       <normaloff>:/Icons/AnnotationDelete.png</normaloff>:/Icons/AnnotationDelete.png</iconset>
-     </property>
-    </widget>
+   <item row="0" column="4">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="visibleInvisibleButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Toggle visibility</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../qSlicerAnnotationModule.qrc">
+         <normaloff>:/Icons/AnnotationVisibility.png</normaloff>
+         <normalon>:/Icons/AnnotationInvisible.png</normalon>:/Icons/AnnotationVisibility.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="lockUnlockButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Toggle un-/locked</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../qSlicerAnnotationModule.qrc">
+         <normaloff>:/Icons/AnnotationLock.png</normaloff>:/Icons/AnnotationLock.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

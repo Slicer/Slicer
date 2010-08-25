@@ -70,29 +70,6 @@ protected:
 
 protected slots:
 
-    // Fiducial
-    void StartAddingFiducials();
-    void StopAddingFiducials();
-    void onAddFiducialsButtonToggled(bool toggle);
-    void onFiducialNodeAdded(vtkObject* fiducialList);
-    void onFiducialNodeModified(vtkObject* fiducialList, void* call_data);
-    void updateFiducialTable(int index = -1);
-    void onFiducialNodeRemoved(vtkObject* fiducialList);
-  void AddFiducialCompleted(vtkObject* object, void* call_data);
-
-    // Ruler
-    void onCreateMeasurementRulerButtonClicked();
-
-    // Angle
-    void onCreateMeasurementAngleButtonToggled(bool toggle);
-    void AddAngleCompleted(vtkObject* object, void* call_data);
-
-
-
-  // ROI Node
-  void onROINodeButtonClicked();
-
-
     // Table and Property Modify
     void moveDownSelected();
     void moveUpSelected();  
@@ -119,8 +96,6 @@ protected slots:
     void onGenerateReportButtonClicked();
     bool saveAnnotationReport();
     bool saveScreenShot();
-
-    //void AddTextNodeCompleted(vtkObject* object, void* call_data);
 
   //------------------------------------------------------------------
   // Daniel's approved code starting here
@@ -164,6 +139,9 @@ protected slots:
 
   // Bidimensional Node
   void onBidimensionalNodeButtonClicked();
+
+  // ROI Node
+  void onROINodeButtonClicked();
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);

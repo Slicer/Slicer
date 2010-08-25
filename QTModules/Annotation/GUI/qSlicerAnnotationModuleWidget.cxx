@@ -490,6 +490,8 @@ void qSlicerAnnotationModuleWidget::setup()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
   d->setupUi(this);
+
+  // annotation tools
   this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
       SLOT(onFiducialNodeButtonClicked()));
   this->connect(d->stickyTypeButton, SIGNAL(clicked()), this,
@@ -506,6 +508,16 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(onSplineNodeButtonClicked()));
   this->connect(d->rulerTypeButton, SIGNAL(clicked()), this,
       SLOT(onRulerNodeButtonClicked()));
+
+  // mouse modes
+  this->connect(d->pauseButton, SIGNAL(clicked()), this,
+      SLOT(onPauseButtonClicked()));
+  this->connect(d->resumeButton, SIGNAL(clicked()), this,
+      SLOT(onResumeButtonClicked()));
+  this->connect(d->cancelButton, SIGNAL(clicked()), this,
+      SLOT(onCancelButtonClicked()));
+  this->connect(d->doneButton, SIGNAL(clicked()), this,
+      SLOT(onDoneButtonClicked()));
 
   this->connect(d->moveDownSelectedButton, SIGNAL(clicked()),
       SLOT(moveDownSelected()));
@@ -529,14 +541,9 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(onScreenShotButtonClicked()));
   this->connect(d->lockUnlockAllButton, SIGNAL(clicked()), this,
       SLOT(onLockUnlockAllButtonClicked()));
-  this->connect(d->pauseButton, SIGNAL(clicked()), this,
-      SLOT(onPauseButtonClicked()));
-  this->connect(d->resumeButton, SIGNAL(clicked()), this,
-      SLOT(onResumeButtonClicked()));
-  this->connect(d->cancelButton, SIGNAL(clicked()), this,
-      SLOT(onCancelButtonClicked()));
-  this->connect(d->doneButton, SIGNAL(clicked()), this,
-      SLOT(onDoneButtonClicked()));
+
+
+
   this->connect(d->tableWidget, SIGNAL(itemSelectionChanged()), this,
       SLOT(onItemSelectionChanged()));
 
@@ -568,23 +575,6 @@ void qSlicerAnnotationModuleWidget::updateAnnotationText(int row, int col)
 
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onFiducialNodeAdded(vtkObject* object)
-{
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onFiducialNodeModified(vtkObject* object, void* call_data)
-{
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::updateFiducialTable(int index)
-{
-
-}
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::moveDownSelected()
@@ -600,68 +590,6 @@ void qSlicerAnnotationModuleWidget::moveUpSelected()
   d->moveSelectedRow(true);
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::StartAddingFiducials()
-{
-  CTK_D(qSlicerAnnotationModuleWidget);
-
-  d->logic()->StartAddingFiducials();
-
-  const char *newFiducialNodeID = d->logic()->AddFiducial();
-  if (!newFiducialNodeID)
-    {
-    std::cerr << "Could not add Fiducial" << std::endl;
-    return;
-    }
-
-  m_IDs.push_back(newFiducialNodeID);
-  m_index++;
-  /*
-   //qvtkConnect(d->logic()->GetFiducialManager(),  vtkMRMLAnnotationFiducialDisplayableManager::AddFiducialCompletedEvent,
-   //  this, SLOT(AddFiducialCompleted(vtkObject*, void*)) );
-   */
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::StopAddingFiducials()
-{
-  //CTK_D(qSlicerAnnotationModuleWidget);
-  //d->logic()->StopAddingFiducials();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onAddFiducialsButtonToggled(bool toggle)
-{
-  if (toggle)
-    {
-    //this->StartAddingFiducials();
-    }
-  else
-    {
-    //this->StopAddingFiducials();
-    }
-}
-
-void qSlicerAnnotationModuleWidget::AddFiducialCompleted(vtkObject* object, void* call_data)
-{
-  CTK_D(qSlicerAnnotationModuleWidget);
-
-  d->fiducialTypeButton->setChecked(false);
-
-  std::vector<vtkMRMLNode*> nodevector;
-  d->logic()->GetMRMLScene()->GetNodesByClass("vtkMRMLFiducialListNode",
-      nodevector);
-
-  m_IDs.push_back(nodevector[nodevector.size() - 1]->GetID());
-  m_index++;
-
-  std::vector<double> thevalue;
-  thevalue.push_back(0.0);
-  QString valueString = "";
-  char format[4] = " ";
-  this->updateAnnotationTable(m_index, thevalue, format);
-  this->selectRowByIndex(m_index);
-}
 
 void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 {
@@ -683,11 +611,6 @@ void qSlicerAnnotationModuleWidgetPrivate::removeAnnotation(int num)
 
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onFiducialNodeRemoved(vtkObject* object)
-{
-
-}
 
 void qSlicerAnnotationModuleWidgetPrivate::updateSelection(int totalitems)
 {
@@ -722,11 +645,11 @@ void qSlicerAnnotationModuleWidgetPrivate::updateSelection(int totalitems)
 
 std::vector<int> qSlicerAnnotationModuleWidgetPrivate::updateSingleSelection()
 {
-  std::vector<int> seletedRows;
+  std::vector<int> selectedRows;
 
   if (this->tableWidget->selectedItems().count() == 0)
     {
-    return seletedRows;
+    return selectedRows;
     }
 
   int totalselected = this->tableWidget->selectedItems().count();
@@ -736,10 +659,10 @@ std::vector<int> qSlicerAnnotationModuleWidgetPrivate::updateSingleSelection()
     {
     int currentSelectedRow = this->tableWidget->row(
         this->tableWidget->selectedItems().at(i));
-    seletedRows.push_back(currentSelectedRow);
+    selectedRows.push_back(currentSelectedRow);
     }
 
-  return seletedRows;
+  return selectedRows;
 
 }
 
@@ -783,9 +706,11 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
     return;
     }
 
+  const char * mrmlId = this->m_IDs[d->tableWidget->row(d->tableWidget->selectedItems().at(0))];
+
   d->setItemEditable(d->tableWidget->selectedItems(), false);
 
-  qSlicerAnnotationModulePropertyDialog* propertyDialog = new qSlicerAnnotationModulePropertyDialog(d->logic());
+  qSlicerAnnotationModulePropertyDialog* propertyDialog = new qSlicerAnnotationModulePropertyDialog(mrmlId,d->logic());
 
   this->m_PropertyDialog = propertyDialog;
 
@@ -1413,6 +1338,7 @@ void qSlicerAnnotationModuleWidget::selectRowByIndex(int index)
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
+  // loop and deselect everything
   int totalitems = m_IDs.size();
   for (int i = 0; i < totalitems; ++i)
     {
@@ -1422,6 +1348,7 @@ void qSlicerAnnotationModuleWidget::selectRowByIndex(int index)
       }
     }
 
+  // select the row with index
   for (int j = 0; j < d->tableWidget->columnCount(); ++j)
     {
     d->tableWidget->item(index, j)->setSelected(true);
@@ -1492,67 +1419,6 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 
 }
 
-void qSlicerAnnotationModuleWidget::onCreateMeasurementAngleButtonToggled(bool toggle)
-{
-  /* CTK_D(qSlicerAnnotationModuleWidget);
-
-   if ( toggle )
-   {
-   const char *newAngleNodeID = d->logic()->AddAngle();
-
-   if (!newAngleNodeID)
-   {
-   std::cerr << "Could not add Angle" << std::endl;
-   return;
-   }
-
-   // please make sure to initialize the variable in the constructor and empty it in the destructor
-   m_IDs.push_back( newAngleNodeID );
-   m_index++;
-
-   qvtkConnect(d->logic(),  vtkSlicerAnnotationModuleLogic::AddAngleCompletedEvent,
-   this, SLOT(AddAngleCompleted(vtkObject*, void*)) );
-
-
-   }
-   */
-}
-
-void qSlicerAnnotationModuleWidget::onCreateMeasurementRulerButtonClicked()
-{/*
- CTK_D(qSlicerAnnotationModuleWidget);
- const char *newRulerNodeID = d->logic()->AddRuler();
- if (!newRulerNodeID)
- {
- std::cerr << "Could not add Ruler" << std::endl;
- return;
- }
-
- std::vector<double> thevalue = d->logic()->GetAnnotationMeasurement( d->logic()->GetMRMLScene()->GetNodeByID(newRulerNodeID) );
-
- m_IDs.push_back( newRulerNodeID );
- m_index++;
-
- //vtkMRMLAnnotationRulerNode* node = d->logic()->GetRulerNodeByID( newRulerNodeID );
-
- char* format = node->GetDistanceAnnotationFormat();
- QString valueString;
- qSlicerAnnotationModulePropertyDialog::FormatValueToChar(format, thevalue, valueString);
- this->updateAnnotationTable( m_index, thevalue, format );
- this->selectRowByIndex( m_index );
-
- // watch for the control points being modified
- //qvtkConnect(d->logic()->GetRulerNodeByID( newRulerNodeID),  vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)) );
- //qvtkConnect(d->logic()->GetRulerNodeByID( newRulerNodeID),  vtkMRMLAnnotationRulerNode::ValueModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)) );
- // watch for transform modified events
- //qvtkConnect(d->logic()->GetRulerNodeByID( newRulerNodeID),  vtkMRMLTransformableNode::TransformModifiedEvent,
- ///   this, SLOT(updateValue(vtkObject*, void*)) );
- // watch for general modified events
- //qvtkConnect(d->logic()->GetRulerNodeByID( newRulerNodeID),  vtkCommand::ModifiedEvent,
- //  this, SLOT(updateValue(vtkObject*, void*)) );
- */
-}
-
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index, std::vector<
     double> thevalue, const char* format)
@@ -1560,7 +1426,7 @@ void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index, std::vector
   CTK_D(qSlicerAnnotationModuleWidget);
 
   QString textString = QString(
-      d->logic()->GetTextOfNodeByID(this->m_IDs[index]));
+      d->logic()->GetAnnotationText(this->m_IDs[index]));
 
   QString labelString = QString("Seed %1").arg(QString::number(m_index));
   QString valueString;
@@ -1575,7 +1441,6 @@ void qSlicerAnnotationModuleWidget::updateAnnotationInTableByID(const char* id, 
     double> value, const char* format)
 {
 
-  std::cout << "ENTERING: " << value[0] << std::endl;
   CTK_D(qSlicerAnnotationModuleWidget);
 
   int index = this->getIndexByNodeID(id);
@@ -1589,8 +1454,6 @@ void qSlicerAnnotationModuleWidget::updateAnnotationInTableByID(const char* id, 
   QString valueString;
   qSlicerAnnotationModulePropertyDialog::FormatValueToChar(format, value,
       valueString);
-
-  std::cout << "here: " << valueString.toStdString() << std::endl;
 
   d->updateValueItem(index, valueString);
 
@@ -1698,61 +1561,6 @@ void qSlicerAnnotationModuleWidget::onItemSelectionChanged()
  */
 }
 
-void qSlicerAnnotationModuleWidget::AddAngleCompleted(vtkObject* object, void* call_data)
-{
-  //CTK_D(qSlicerAnnotationModuleWidget);
-  /*
-   d->angleTypeButton->setChecked(
-   false);
-   vtkMRMLAnnotationAngleNode* node = vtkMRMLAnnotationAngleNode::SafeDownCast(
-   d->logic()->GetMRMLScene()->GetNodeByID(
-   m_IDs[m_index]));
-
-   const char* newAngleNodeID = node->GetID();
-   std::vector<double> thevalue;
-   thevalue.push_back(
-   0.0);
-   thevalue = d->logic()->GetAnnotationMeasurement(
-   d->logic()->GetMRMLScene()->GetNodeByID(
-   newAngleNodeID));
-
-   char* format = node->GetLabelFormat();
-   QString valueString;
-   qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
-   format,
-   thevalue,
-   valueString);
-   this->updateAnnotationTable(
-   m_index,
-   thevalue,
-   format);
-   this->selectRowByIndex(
-   m_index);
-
-   // watch for the control points being modified
-   //qvtkConnect(d->logic()->GetAngleNodeByID( newAngleNodeID),  vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent, this, SLOT(updateValue(vtkObject*, void*)) );
-   qvtkConnect(
-   d->logic()->GetAngleNodeByID(
-   newAngleNodeID),
-   vtkMRMLAnnotationAngleNode::ValueModifiedEvent,
-   this,
-   SLOT(updateValue(vtkObject*, void*)));
-   // watch for transform modified events
-   qvtkConnect(
-   d->logic()->GetAngleNodeByID(
-   newAngleNodeID),
-   vtkMRMLTransformableNode::TransformModifiedEvent,
-   this,
-   SLOT(updateValue(vtkObject*, void*)));
-   // watch for general modified events
-   qvtkConnect(
-   d->logic()->GetAngleNodeByID(
-   newAngleNodeID),
-   vtkCommand::ModifiedEvent,
-   this,
-   SLOT(updateValue(vtkObject*, void*)));*/
-
-}
 
 QString qSlicerAnnotationModuleWidget::getAnnotationIconName(int index, bool isEdit)
 {
@@ -1834,18 +1642,6 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
       break;
     }
 
-  /*if ( toggle )
-   {
-   d->resumeButton->setChecked(false);
-   vtkMRMLInteractionNode *interactionNode = NULL;
-   interactionNode = d->logic()->GetApplicationLogic()->GetInteractionNode();
-   //this->SetInteractionNode ( interactionNode );
-
-   interactionNode->NormalizeAllMouseModes();
-   interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
-   interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
-   }*/
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1856,18 +1652,6 @@ void qSlicerAnnotationModuleWidget::onPauseButtonClicked()
   d->resumeButton->setChecked(false);
   d->pauseButton->setChecked(true);
   d->logic()->StopPlaceMode();
-
-  /*if ( toggle )
-   {
-   d->resumeButton->setChecked(false);
-   vtkMRMLInteractionNode *interactionNode = NULL;
-   interactionNode = d->logic()->GetApplicationLogic()->GetInteractionNode();
-   //this->SetInteractionNode ( interactionNode );
-
-   interactionNode->NormalizeAllMouseModes();
-   interactionNode->SetLastInteractionMode ( interactionNode->GetCurrentInteractionMode() );
-   interactionNode->SetCurrentInteractionMode ( vtkMRMLInteractionNode::ViewTransform );
-   }*/
 
 }
 
@@ -1881,6 +1665,7 @@ void qSlicerAnnotationModuleWidget::onCancelButtonClicked()
   this->resetAllAnnotationTools();
 }
 
+//-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::cancelOrRemoveLastAddedAnnotationNode()
 {
   CTK_D(qSlicerAnnotationModuleWidget);
@@ -1960,6 +1745,16 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
   d->bidimensionalTypeButton->setEnabled(true);
 }
 
+
+//-----------------------------------------------------------------------------
+//
+//
+// Add methods for the annotation tools
+//
+//
+//-----------------------------------------------------------------------------
+
+
 //-----------------------------------------------------------------------------
 // Sticky Node
 //-----------------------------------------------------------------------------
@@ -1979,7 +1774,7 @@ void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
   // this is a hack to export the sticky note icon
   // *sigh*
   QIcon icon = QIcon(":/Icons/AnnotationNote.png");
-  QPixmap pixmap = icon.pixmap(16, 16);
+  QPixmap pixmap = icon.pixmap(32, 32);
   //QString tempdir = QString(std::getenv("TMPDIR"));
   QString tempdir = QString("/tmp/");
   tempdir.append("sticky.png");
@@ -2134,6 +1929,7 @@ void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
 
 //-----------------------------------------------------------------------------
 // Add an annotation to the table
+// After a mrml node was added, this method gets called to update the table in the GUI
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 {

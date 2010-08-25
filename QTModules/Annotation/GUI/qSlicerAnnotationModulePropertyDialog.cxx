@@ -21,67 +21,50 @@
 
 qSlicerAnnotationModulePropertyDialog::~qSlicerAnnotationModulePropertyDialog()
 {
-  if (this->m_rulerCopy)
-    {
-    this->m_rulerCopy->Delete();
-    this->m_rulerCopy = NULL;
-    }
-  if (this->m_angleCopy)
-    {
-    this->m_angleCopy->Delete();
-    this->m_angleCopy = NULL;
-    }
-  if (this->m_textDispCopy)
-    {
-    this->m_textDispCopy->Delete();
-    this->m_textDispCopy = NULL;
-    }
-  if (this->m_lineDispCopy)
-    {
-    this->m_lineDispCopy->Delete();
-    this->m_lineDispCopy = NULL;
-    }
-  if (this->m_pointDispCopy)
-    {
-    this->m_pointDispCopy->Delete();
-    this->m_pointDispCopy = NULL;
-    }
 
-  for (int i = 0; i < this->m_lineEditList.size(); ++i)
-    {
-    if (this->m_lineEditList[i] != NULL)
-      {
-      delete this->m_lineEditList[i];
-      }
-    }
-  this->m_lineEditList.clear();
-
-  if (m_gridLayout != NULL)
-    {
-    delete m_gridLayout;
-    }
+  this->m_id = 0;
+  this->m_logic = 0;
 
 }
-qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(vtkSlicerAnnotationModuleLogic* logic)
-{
-  this->m_rulerCopy = NULL;
-  this->m_angleCopy = NULL;
-  this->m_textDispCopy = NULL;
-  this->m_lineDispCopy = NULL;
-  this->m_pointDispCopy = NULL;
 
+qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(const char * id, vtkSlicerAnnotationModuleLogic* logic)
+{
+  this->m_id = id;
   this->m_logic = logic;
 
-  this->m_isUpdated = false;
-
+  // now build the user interfce
   ui.setupUi(this);
 
-  createConnection();
+  // create the slot and signal connections
+  this->createConnection();
+
+
+  this->initialize();
 
 }
 
-void qSlicerAnnotationModulePropertyDialog::Initialize(vtkMRMLNode * node)
+void qSlicerAnnotationModulePropertyDialog::initialize()
 {
+
+  // build the typeLabelText including name and id of the annotation
+  QString * typeLabelText = new QString("Name: ");
+  typeLabelText->append(this->m_logic->GetAnnotationName(this->m_id));
+  typeLabelText->append(" (");
+  typeLabelText->append(this->m_id);
+  typeLabelText->append(")");
+
+  ui.typeLabel->setText(*typeLabelText);
+
+  // update the typeIcon according to the annotation type
+  QIcon icon = QIcon(this->m_logic->GetAnnotationIcon(this->m_id));
+  QPixmap pixmap = icon.pixmap(32, 32);
+
+  ui.typeIcon->setPixmap(pixmap);
+
+  // load the current annotation text
+  vtkStdString text = this->m_logic->GetAnnotationText(this->m_id);
+
+  ui.annotationTextEdit->setText(text.c_str());
 
   /*
    this->setWindowTitle(
@@ -609,6 +592,7 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
 
 void qSlicerAnnotationModulePropertyDialog::onCoordinateChanged(QString text)
 {
+  /*
   if (this->m_isUpdated)
     {
     return;
@@ -643,7 +627,7 @@ void qSlicerAnnotationModulePropertyDialog::onCoordinateChanged(QString text)
   this->updateValue(valueString);
 
   emit coordinateChanged(valueString, m_nodeId);
-
+*/
 }
 
 void qSlicerAnnotationModulePropertyDialog::onTextChanged()
@@ -684,7 +668,7 @@ void qSlicerAnnotationModulePropertyDialog::updateCoordinates(double* pos, int i
     {
     QString posString("");
     posString.append(QString("%1").arg(QString::number(double(pos[i]), 'f', 2)));
-    m_lineEditList[i + id * 3]->setText(posString);
+    //m_lineEditList[i + id * 3]->setText(posString);
     }
 
   // turn on onCoordinateChanged
@@ -692,7 +676,7 @@ void qSlicerAnnotationModulePropertyDialog::updateCoordinates(double* pos, int i
 }
 
 void qSlicerAnnotationModulePropertyDialog::SaveLinesNode(vtkMRMLAnnotationLinesNode* node)
-{
+{/*
   if (!node)
     {
     return;
@@ -705,11 +689,12 @@ void qSlicerAnnotationModulePropertyDialog::SaveLinesNode(vtkMRMLAnnotationLines
   node->CreateAnnotationLineDisplayNode();
   this->m_lineDispCopy->Copy(node->GetAnnotationLineDisplayNode());
   this->SaveControlPoints(node);
-
+*/
 }
 
 void qSlicerAnnotationModulePropertyDialog::SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
+  /*
   if (!node)
     {
     return;
@@ -722,10 +707,12 @@ void qSlicerAnnotationModulePropertyDialog::SaveControlPoints(vtkMRMLAnnotationC
   node->CreateAnnotationPointDisplayNode();
   this->m_pointDispCopy->Copy(node->GetAnnotationPointDisplayNode());
   this->SaveAnnotationNode((vtkMRMLAnnotationNode*) node);
+  */
 }
 
 void qSlicerAnnotationModulePropertyDialog::SaveAnnotationNode(vtkMRMLAnnotationNode* node)
 {
+  /*
   if (!node)
     {
     return;
@@ -737,10 +724,12 @@ void qSlicerAnnotationModulePropertyDialog::SaveAnnotationNode(vtkMRMLAnnotation
     }
   node->CreateAnnotationTextDisplayNode();
   this->m_textDispCopy->Copy(node->GetAnnotationTextDisplayNode());
+  */
 }
 
 void qSlicerAnnotationModulePropertyDialog::SaveStateForUndo(vtkMRMLNode* node)
 {
+  /*
   if (node->IsA("vtkMRMLAnnotationAngleNode"))
     {
     vtkMRMLAnnotationAngleNode* mynode =
@@ -775,11 +764,12 @@ void qSlicerAnnotationModulePropertyDialog::SaveStateForUndo(vtkMRMLNode* node)
     fiducialNode->GetAnnotationPointDisplayNode()->GetScene()->SaveStateForUndo(
         fiducialNode->GetAnnotationPointDisplayNode());
     }
-
+*/
 }
 
 void qSlicerAnnotationModulePropertyDialog::UndoLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
+  /*
   if (!node)
     {
     return;
@@ -787,10 +777,12 @@ void qSlicerAnnotationModulePropertyDialog::UndoLinesNode(vtkMRMLAnnotationLines
   node->CreateAnnotationLineDisplayNode();
   node->GetAnnotationLineDisplayNode()->Copy(m_lineDispCopy);
   this->UndoControlPoints(node);
+  */
 }
 
 void qSlicerAnnotationModulePropertyDialog::UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
+  /*
   if (!node)
     {
     return;
@@ -798,20 +790,25 @@ void qSlicerAnnotationModulePropertyDialog::UndoControlPoints(vtkMRMLAnnotationC
   node->CreateAnnotationPointDisplayNode();
   node->GetAnnotationPointDisplayNode()->Copy(m_pointDispCopy);
   this->UndoAnnotationNode((vtkMRMLAnnotationNode*) node);
+  */
 }
 
 void qSlicerAnnotationModulePropertyDialog::UndoAnnotationNode(vtkMRMLAnnotationNode* node)
 {
+  /*
   if (!node)
     {
     return;
     }
   node->CreateAnnotationTextDisplayNode();
   node->GetAnnotationTextDisplayNode()->Copy(m_textDispCopy);
+  */
 }
 
 void qSlicerAnnotationModulePropertyDialog::Undo(vtkMRMLNode* node)
 {
+
+  /*
   if (node->IsA("vtkMRMLAnnotationAngleNode"))
     {
     vtkMRMLAnnotationAngleNode* anode =
@@ -830,24 +827,10 @@ void qSlicerAnnotationModulePropertyDialog::Undo(vtkMRMLNode* node)
     {
     //ToDo
     }
-
+*/
 }
 
-void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
-{
 
-  emit dialogRejected();
-}
-
-void qSlicerAnnotationModulePropertyDialog::onDialogAccepted()
-{
-
-  emit dialogAccepted();
-  // QString text = ui.annotationTextEdit->toPlainText();
-  //  emit dialogAccepted(
-  //     m_nodeId,
-  //    text);
-}
 
 void qSlicerAnnotationModulePropertyDialog::SetButtonText(int type)
 {
@@ -1101,4 +1084,23 @@ void qSlicerAnnotationModulePropertyDialog::onCollapsibleGroupBoxClicked()
      ui.displayPropertiesCTKCollapsibleGroupBox->setVisible(
      false);*/
     }
+}
+
+
+//-----------------------------------------------------------------------------
+// Methods for closing the property dialog
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
+{
+
+  emit dialogRejected();
+
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onDialogAccepted()
+{
+
+  emit dialogAccepted();
+
 }

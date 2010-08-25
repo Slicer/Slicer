@@ -24,10 +24,10 @@ class qSlicerAnnotationModulePropertyDialog : public QDialog
   Q_OBJECT
 
 public:
-  qSlicerAnnotationModulePropertyDialog(vtkSlicerAnnotationModuleLogic* logic);
+  qSlicerAnnotationModulePropertyDialog(const char * id, vtkSlicerAnnotationModuleLogic* logic);
   ~qSlicerAnnotationModulePropertyDialog();
 
-  void Initialize(vtkMRMLNode* node);
+
   void updateTextFromTable(QString text);
   void updateValue(QString valueString);
   void updateCoordinates(double* pos, int id);
@@ -80,29 +80,28 @@ signals:
 
 private:
 
-    Ui::qSlicerAnnotationModulePropertyDialog ui;
-    QVector<QLineEdit*> m_lineEditList;
-    QGridLayout* m_gridLayout;
-
-    vtkSlicerAnnotationModuleLogic* m_logic;
-
-    vtkMRMLAnnotationRulerNode* m_rulerCopy;
-    vtkMRMLAnnotationAngleNode* m_angleCopy;
-    vtkMRMLAnnotationDisplayNode* m_textDispCopy;
-    vtkMRMLAnnotationLineDisplayNode* m_lineDispCopy;
-    vtkMRMLAnnotationPointDisplayNode* m_pointDispCopy;
-
-    char* m_nodeId;
-    bool m_isUpdated;
-
-    void createConnection();
-
     void SaveLinesNode(vtkMRMLAnnotationLinesNode* node);
     void SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node);
     void SaveAnnotationNode(vtkMRMLAnnotationNode* node);
     void UndoLinesNode(vtkMRMLAnnotationLinesNode* node);
     void UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node);
     void UndoAnnotationNode(vtkMRMLAnnotationNode* node);
+
+    // approved code starts here
+    Ui::qSlicerAnnotationModulePropertyDialog ui;
+
+    const char * m_id;
+    vtkSlicerAnnotationModuleLogic* m_logic;
+
+
+    char* m_nodeId;
+    bool m_isUpdated;
+
+    // create the slot and signal connections
+    void createConnection();
+
+    // initialize the GUI in respect to values from the logic
+    void initialize();
 
 };
 

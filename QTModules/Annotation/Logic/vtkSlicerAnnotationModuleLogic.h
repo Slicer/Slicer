@@ -109,6 +109,14 @@ public:
   void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
 
+  // Annotation Properties (interface to MRML)
+  /// Get the name of an Annotation MRML node
+  const char * GetAnnotationName(const char * id);
+  /// Return the text of an Annotation MRML node
+  vtkStdString GetAnnotationText(const char* id);
+  /// Get the icon name of an Annotation MRML node
+  const char * GetAnnotationIcon(const char * id);
+
   // ^^^^ end of Daniel approved code
 
 
@@ -116,59 +124,9 @@ public:
 
 
 
-  // Return
-  vtkMRMLAnnotationTextNode* GetTextNodeByID(const char* id);
 
 
 
-  // Fiducial Related Public Functions
-  const char* AddFiducial();
-  const char* AddFiducialPicked();
-  double GetFiducialValue(const char* cpID);
-  std::vector<double> GetFiducialPositionsByNodeID(const char* cpID);
-  void SetFiducialPositionsByNodeID(const char* cpID, std::vector<double> positions);
-  void RemoveFiducial(const char* id);
-  vtkMRMLAnnotationFiducialNode* GetFiducialNodeByID(const char* id);
-  void Update3DFiducial(vtkMRMLAnnotationFiducialNode *activeCPNode);
-  void StartAddingFiducials();
-  void StopAddingFiducials();
-
-  // Ruler Related Public Functions
-  const char* AddRuler();
-  void RemoveRuler(const char* id);
-  vtkMRMLAnnotationRulerNode* GetRulerNodeByID(const char* id);
-
-  // Angle Related Public Functions
-  const char* AddAngle();
-  void RemoveAngle(const char* id);
-  vtkMRMLAnnotationAngleNode* GetAngleNodeByID(const char* id);
-  void AddAngleCompleted();
-
-  // Sticky Node
-  const char* AddStickyNode();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // ROI Node
-  const char* AddROINode();
-
-  // BiDimentional Line Node
-  const char* AddBidLineNode();
-
-  // SplineNode
-  const char* AddSplineNode();
 
   // Common Widget Public Function
   void ModifyPropertiesAndWidget(vtkMRMLNode* node, int type, void*data);
@@ -215,12 +173,9 @@ public:
 
   void AddRulerNodeObserver(vtkMRMLAnnotationRulerNode* rnode) ;
 
-  vtkMRMLAnnotationFiducialDisplayableManager* GetFiducialManager(){ return m_FiducialManager; }
-
   int TestReceivedMessage; 
 
-  /// Return the text of an Annotation MRML node
-  vtkStdString GetTextOfNodeByID(const char* id);
+
 
   /// Return the number of Control Points
   int GetNumberOfControlPoints(vtkMRMLNode* mrmlnode);
@@ -239,19 +194,6 @@ protected:
 
 private:
   CTK_DECLARE_PRIVATE(vtkSlicerAnnotationModuleLogic);
-
-  // Fiducial Related Private Functions
-  vtkSlicerFiducialListWidget* GetFiducialWidget(const char *nodeID);
-  void AddFiducialWidget(vtkMRMLAnnotationFiducialNode *cpNode);
-  void RemoveFiducialWidget(vtkMRMLAnnotationFiducialNode *cpNode);
-
-  vtkSlicerAnnotationRulerManager *m_RulerManager;
-  vtkSlicerAnnotationAngleManager *m_AngleManager;
-  vtkMRMLAnnotationFiducialDisplayableManager *m_FiducialManager;
-  vtkSlicerAnnotationROIManager *m_ROIManager;
-  vtkSlicerAnnotationSplineManager *m_SplineManager;
-  vtkSlicerAnnotationBidimensionalManager *m_BidimensionalManager;
-  //vtkMRMLAnnotationTextDisplayableManager *m_TextManager;
 
   qSlicerAnnotationModuleWidget *m_Widget;
 
