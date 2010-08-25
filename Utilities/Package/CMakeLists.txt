@@ -198,7 +198,7 @@ if(EXISTS "${BatchMake_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${BatchMake_DIR};BatchMake;ALL;/")
 endif(EXISTS "${BatchMake_DIR}/CMakeCache.txt")
 if(EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${OpenIGTLink_DIR};OpenIGTLink;ALL;/")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${OpenIGTLink_DIR};igtl;ALL;/")
 endif(EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
 
 if(APPLE)
