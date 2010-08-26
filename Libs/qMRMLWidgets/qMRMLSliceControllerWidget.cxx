@@ -52,7 +52,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate()
 qMRMLSliceControllerWidgetPrivate::~qMRMLSliceControllerWidgetPrivate()
 {
 }
-
+/*
 //-----------------------------------------------------------------------------
 class qMRMLSliceCollapsibleButtonStyle:public QProxyStyle
 {
@@ -79,7 +79,7 @@ public:
       }
   }
 };
-
+*/
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 {
@@ -88,7 +88,7 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->Ui_qMRMLSliceControllerWidget::setupUi(widget);
 
   // Set a ProxyStyle responsible for drawing the arrow
-  this->SliceCollapsibleButton->setStyle(new qMRMLSliceCollapsibleButtonStyle(p->style()));
+  //this->SliceCollapsibleButton->setStyle(new qMRMLSliceCollapsibleButtonStyle(p->style()));
   
   // Set selector attributes
   this->LabelMapSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
@@ -140,7 +140,10 @@ void qMRMLSliceControllerWidgetPrivate::onImageDataModifiedEvent()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::toggleControllerWidgetGroupVisibility()
 {
-  this->ControllerWidgetGroup->setVisible(!this->ControllerWidgetGroup->isVisible());
+  this->ControllerWidgetGroup->setVisible(
+    !this->ControllerWidgetGroup->isVisible());
+  this->SliceCollapsibleButton->setArrowType(
+    this->ControllerWidgetGroup->isVisible() ? Qt::UpArrow : Qt::DownArrow);
 }
 
 // --------------------------------------------------------------------------
