@@ -42,8 +42,10 @@ proc ::after {args} {
   }
   set option [lindex $args 1]
   set args [lrange $args 1 end]
-  if { $option != "cancel" } {
+  if { $option == "idle" } {
     eval $args
+  } else {
+    return 'after0'
   }
 }
 
