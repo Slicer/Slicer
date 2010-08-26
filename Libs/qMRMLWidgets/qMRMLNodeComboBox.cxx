@@ -68,6 +68,8 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   p->setLayout(new QHBoxLayout);
   p->layout()->addWidget(this->ComboBox);
   p->layout()->setContentsMargins(0,0,0,0);
+  p->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed, QSizePolicy::ComboBox));
+  this->ComboBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding, QSizePolicy::DefaultType));
 
   this->MRMLNodeFactory = new qMRMLNodeFactory(p);
 
