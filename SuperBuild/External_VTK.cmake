@@ -122,7 +122,8 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   ExternalProject_Add(${proj}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
-    GIT_REPOSITORY "${git_protocol}://github.com/pieper/SlicerVTK.git"
+    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/VTK.git"
+    GIT_TAG "slicer-4.0"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}

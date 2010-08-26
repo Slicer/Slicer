@@ -19,39 +19,35 @@
 #ifndef __vtkFSIO_h
 #define __vtkFSIO_h
 
+#include "vtkFreeSurferWin32Header.h"
 #include "vtkConfigure.h"
 #if ( (VTK_MAJOR_VERSION >= 5) || ( VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 5 ) )
 #include "vtk_zlib.h"
 #else
 #include "zlib.h"
 #endif
-#include <stdio.h>
+#include <cstdio>
 
-
-class  vtkFSIO {
- public:
-
-  static vtkFSIO *New () { return NULL; }
+namespace vtkFSIO {
 
   /// These use FILE types instead of file streams for no good reason,
-  /// simply because the old code from which this is adapted is
-  /// C-based.
-  static int ReadShort (FILE* iFile, short& oShort);
-  static int ReadInt (FILE* iFile, int& oInt);
-  static int ReadInt3 (FILE* iFile, int& oInt);
-  static int ReadInt2 (FILE* iFile, int& oInt);
-  static int ReadFloat (FILE* iFile, float& oFloat);
+  /// simply because the old code from which this is adapted is C-based.
+  int VTK_FreeSurfer_EXPORT ReadShort (FILE* iFile, short& oShort);
+  int VTK_FreeSurfer_EXPORT ReadInt (FILE* iFile, int& oInt);
+  int VTK_FreeSurfer_EXPORT ReadInt3 (FILE* iFile, int& oInt);
+  int VTK_FreeSurfer_EXPORT ReadInt2 (FILE* iFile, int& oInt);
+  int VTK_FreeSurfer_EXPORT ReadFloat (FILE* iFile, float& oFloat);
 
-  static int ReadShortZ (gzFile iFile, short& oShort);
-  static int ReadIntZ (gzFile iFile, int& oInt);
- static int ReadInt3Z (gzFile iFile, int& oInt);
- static int ReadInt2Z (gzFile iFile, int& oInt);
-  static int ReadFloatZ (gzFile iFile, float& oFloat);
+  int VTK_FreeSurfer_EXPORT ReadShortZ (gzFile iFile, short& oShort);
+  int VTK_FreeSurfer_EXPORT ReadIntZ (gzFile iFile, int& oInt);
+  int VTK_FreeSurfer_EXPORT ReadInt3Z (gzFile iFile, int& oInt);
+  int VTK_FreeSurfer_EXPORT ReadInt2Z (gzFile iFile, int& oInt);
+  int VTK_FreeSurfer_EXPORT ReadFloatZ (gzFile iFile, float& oFloat);
 
-    /// for testing purposes
-    static int WriteInt (FILE* iFile, int iInt);
-    static int WriteInt3 (FILE* iFile, int iInt);
-    static int WriteInt2 (FILE* iFile, int iInt);
-};
+  /// For testing purposes
+  int VTK_FreeSurfer_EXPORT WriteInt (FILE* iFile, int iInt);
+  int VTK_FreeSurfer_EXPORT WriteInt3 (FILE* iFile, int iInt);
+  int VTK_FreeSurfer_EXPORT WriteInt2 (FILE* iFile, int iInt);
+}
 
 #endif

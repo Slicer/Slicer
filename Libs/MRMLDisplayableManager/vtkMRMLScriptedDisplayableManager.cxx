@@ -135,7 +135,7 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
   if (method)
     {
     sceneEventsAsPointer = vtkIntArray::SafeDownCast(
-        vtkPythonGetPointerFromObject(PyObject_CallObject(method, 0), "vtkIntArray"));
+        vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, 0), "vtkIntArray"));
     }
   vtkSmartPointer<vtkIntArray> sceneEvents;
   sceneEvents.TakeReference(sceneEventsAsPointer);
@@ -158,10 +158,10 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
     }
 
   PyObject * arguments = PyTuple_New(3);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonGetObjectFromPointer(caller));
+  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
   PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(event));
   PyTuple_SET_ITEM(arguments, 2,
-                   vtkPythonGetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
+                   vtkPythonUtil::GetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
 
   PyObject_CallObject(method, arguments);
 
@@ -220,7 +220,7 @@ void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkOb
     }
 
   PyObject * arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonGetObjectFromPointer(caller));
+  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
 
   PyObject_CallObject(method, arguments);
 
@@ -265,7 +265,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   //std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
 
   PyObject * arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, vtkPythonGetObjectFromPointer(this));
+  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(this));
 
   // Attempt to instantiate the associated python class
   PyObject * self = PyInstance_New(classToInstantiate, arguments, 0);

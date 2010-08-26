@@ -14,6 +14,7 @@
 #include "vtkFSIO.h"
 #include "vtkByteSwap.h"
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadShort (FILE* iFile, short& oShort) {
 
   short s = 0;
@@ -27,6 +28,7 @@ int vtkFSIO::ReadShort (FILE* iFile, short& oShort) {
   return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadShortZ (gzFile iFile, short& oShort) {
 
   short s = 0;
@@ -40,6 +42,7 @@ int vtkFSIO::ReadShortZ (gzFile iFile, short& oShort) {
   return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadInt (FILE* iFile, int& oInt) {
 
   int i = 0;
@@ -53,6 +56,7 @@ int vtkFSIO::ReadInt (FILE* iFile, int& oInt) {
   return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadIntZ (gzFile iFile, int& oInt) {
   int i = 0;
   int result;
@@ -63,6 +67,7 @@ int vtkFSIO::ReadIntZ (gzFile iFile, int& oInt) {
   return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadInt3 (FILE* iFile, int& oInt) {
 
   int i = 0;
@@ -77,6 +82,7 @@ int vtkFSIO::ReadInt3 (FILE* iFile, int& oInt) {
   return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadInt3Z (gzFile iFile, int& oInt) {
 
   int i = 0;
@@ -91,7 +97,7 @@ int vtkFSIO::ReadInt3Z (gzFile iFile, int& oInt) {
   return result;
 }
 
-
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadInt2 (FILE* iFile, int& oInt) {
 
   int i = 0;
@@ -105,6 +111,7 @@ int vtkFSIO::ReadInt2 (FILE* iFile, int& oInt) {
   return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadInt2Z (gzFile iFile, int& oInt) {
 
   int i = 0;
@@ -118,6 +125,7 @@ int vtkFSIO::ReadInt2Z (gzFile iFile, int& oInt) {
   return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadFloat (FILE* iFile, float& oFloat) {
 
   float f = 0;
@@ -131,6 +139,7 @@ int vtkFSIO::ReadFloat (FILE* iFile, float& oFloat) {
   return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::ReadFloatZ (gzFile iFile, float& oFloat) {
 
   float f = 0;
@@ -144,9 +153,10 @@ int vtkFSIO::ReadFloatZ (gzFile iFile, float& oFloat) {
   return result;
 }
 
-//
+//------------------------------------------------------------------------------
 // Utility methods for writing test files
-//
+
+//------------------------------------------------------------------------------
 int vtkFSIO::WriteInt (FILE* iFile, int iInt)
 {
     int i = iInt;
@@ -159,6 +169,7 @@ int vtkFSIO::WriteInt (FILE* iFile, int iInt)
     return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::WriteInt3 (FILE* oFile, int iInt)
 {
     // swap if we need to, then write three bytes
@@ -172,6 +183,7 @@ int vtkFSIO::WriteInt3 (FILE* oFile, int iInt)
     return result;
 }
 
+//------------------------------------------------------------------------------
 int vtkFSIO::WriteInt2 (FILE* oFile, int iInt)
 {
 

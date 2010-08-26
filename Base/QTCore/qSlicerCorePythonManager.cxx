@@ -110,7 +110,7 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
 
   // Add the object to the imported module
   int ret = PyModule_AddObject(module, varName.toLatin1(),
-                               vtkPythonGetObjectFromPointer(object));
+                               vtkPythonUtil::GetObjectFromPointer(object));
   Q_ASSERT(ret == 0);
   if (ret != 0)
     {
