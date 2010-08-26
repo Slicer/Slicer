@@ -345,13 +345,17 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   
   // The Add button is valid only if the scene is non-empty
   //this->setAddEnabled(scene != 0);
+  QVariant currentNode = d->ComboBox->itemData(d->ComboBox->currentIndex(), qMRML::UIDRole);
   
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
   d->MRMLSceneModel->setMRMLScene(scene);
   d->updateNoneItem();
   d->updateActionItems();
+  // setting the rootmodel index looses the current item
   d->ComboBox->setRootModelIndex(this->model()->index(0, 0));
+  // try to set the current item back
+  this->setCurrentNode(currentNode.toString());
 
   this->setEnabled(scene != 0);
 }
