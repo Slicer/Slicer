@@ -834,6 +834,9 @@ void vtkSlicerVolumeTextureMapper3D::ComputePolygons( vtkRenderer *ren,
   minDistance = (minDistance < offset)?(offset):(minDistance);
  
   double stepSize = this->ActualSampleDistance;
+
+//  std::cout<<"Step size: "<<stepSize<<endl;
+//  std::cout.flush();
  
   // Determine the number of polygons
   int numPolys = (int)((maxDistance - minDistance)/(double)stepSize);

@@ -119,7 +119,17 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *v
     {
     this->Initialize(ren->GetRenderWindow());
     }
-    
+
+  // If the timer is not accurate enough, set it to a small
+  // time so that it is not zero
+  if ( this->TimeToDraw == 0.0 )
+    {
+    this->TimeToDraw = 0.0001;
+    }   
+
+  //adjust ray steps based on requrestd frame rate
+  this->AdaptivePerformanceControl();
+  
   // Start the timer now for more accurate overall rendering time (needed for performance control)
   this->Timer->StartTimer();
     
@@ -204,48 +214,43 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *v
   this->Timer->StopTimer();      
 
   this->TimeToDraw = static_cast<float>(this->Timer->GetElapsedTime());
-
-  // If the timer is not accurate enough, set it to a small
-  // time so that it is not zero
-  if ( this->TimeToDraw == 0.0 )
-    {
-    this->TimeToDraw = 0.0001;
-    }   
-
-  //adjust ray steps based on requrestd frame rate
-  this->AdaptivePerformanceControl();
 }
 
 void vtkSlicerOpenGLVolumeTextureMapper3D::AdaptivePerformanceControl()
 {
   //do automatic performance control
-  if(this->Framerate <= 0.0f)
+  if(this->Framerate <= 0.01f)
     this->Framerate = 1.0f;
 
+  float targetTime = 1.0/this->Framerate;
+
+  if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
+    return;
+    
   float spacing[3];
   this->GetVolumeSpacing(spacing);
 
   float minSampleDistance = spacing[0];
   minSampleDistance = minSampleDistance < spacing[1] ? minSampleDistance : spacing[1];  
   minSampleDistance = minSampleDistance < spacing[2] ? minSampleDistance : spacing[2];  
-  minSampleDistance /= 32; //each slice blending maximumlly 32 polygons
+  minSampleDistance /= 2; //each slice blending maximumlly 2 polygons
   
   float maxSampleDistance = spacing[0];
   maxSampleDistance = maxSampleDistance > spacing[1] ? maxSampleDistance : spacing[1];  
   maxSampleDistance = maxSampleDistance > spacing[2] ? maxSampleDistance : spacing[2];  
-  maxSampleDistance *= 2;                          
+  maxSampleDistance *= 16;                          
 
-  float targetTime = 1.0/this->Framerate;
-
-  if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
-    return;
+//  std::cout << "sample dist. before adjust: " << this->SampleDistance << " min dist:" << minSampleDistance << " max dist:" << maxSampleDistance << endl;
   
-  this->SampleDistance *= this->TimeToDraw/targetTime;
+  this->SampleDistance *= 1.5f*this->TimeToDraw/targetTime;
   
-//  printf("%f %f %f\n", this->Framerate, this->TimeToDraw, 1.0/this->TimeToDraw);
   // add clamp
   if (this->SampleDistance < minSampleDistance) this->SampleDistance = minSampleDistance;
   if (this->SampleDistance > maxSampleDistance) this->SampleDistance = maxSampleDistance;
+
+//  std::cout <<"framerate: " << this->Framerate << " actual framerate: " << 1.0f / this->TimeToDraw
+//            << " sample dist.: " << this->SampleDistance << "ratio: " << this->TimeToDraw/targetTime << endl;
+//  std::cout.flush();
 }
 
 void vtkSlicerOpenGLVolumeTextureMapper3D::RenderFP( vtkRenderer *ren, vtkVolume *vol )
