@@ -303,6 +303,10 @@ void qSlicerLayoutManagerPrivate::removeThreeDView(vtkMRMLViewNode* viewNode)
 void qSlicerLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* node)
 {
   Q_ASSERT(scene);
+  if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
+    {
+    return;
+    }
 
   // Layout node
   vtkMRMLLayoutNode * layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);

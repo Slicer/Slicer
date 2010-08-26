@@ -331,6 +331,11 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 {
   CTK_P(qMRMLSliceControllerWidget);
+  if (!p->mrmlScene() || p->mrmlScene()->GetIsUpdating())
+    {// when we are loading, the scene might be in an inconsistent mode, where
+    // the volumes pointed by the slice composite node don't exist yet
+    return;
+    }
   Q_ASSERT(this->MRMLSliceCompositeNode);
 
   logger.trace("updateWidgetFromMRMLSliceCompositeNode");
@@ -344,7 +349,6 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
       p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetBackgroundVolumeID()));
 
   // Update "label map" node selector
-  qDebug() << "update from slice composite node:" << this->MRMLSliceCompositeNode->GetLabelVolumeID();
   this->LabelMapSelector->setCurrentNode(
       p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
 
@@ -411,7 +415,6 @@ void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * nod
 {
   CTK_P(qMRMLSliceControllerWidget);
   logger.trace(QString("sliceView: %1 - LabelMapNodeSelected").arg(p->sliceOrientation()));
-
   if (!this->MRMLSliceCompositeNode)
     {
     return;
@@ -586,6 +589,8 @@ void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
     {
     return;
     }
+  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::SceneImportedEvent,
+                   d, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
 
   d->SliceLogic->SetMRMLScene(newScene);
 
@@ -859,7 +864,6 @@ void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
 void qMRMLSliceControllerWidget::fitSliceToBackground()
 {
   CTK_D(qMRMLSliceControllerWidget);
-  qDebug() << "Fit slice to background";
   if (!d->SliceLogic->GetSliceNode())
     {
     logger.warn("fitSliceToBackground - Failed because SliceLogic->GetSliceNode() is NULL");
