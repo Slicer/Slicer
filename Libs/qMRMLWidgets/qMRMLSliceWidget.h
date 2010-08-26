@@ -16,6 +16,7 @@
 class ctkVTKSliceView;
 class qMRMLSliceWidgetPrivate;
 class qMRMLSliceControllerWidget;
+class vtkCollection;
 class vtkMRMLScene;
 class vtkMRMLNode;
 class vtkMRMLSliceLogic;
@@ -71,7 +72,11 @@ public:
   /// \sa sliceViewName()
   void setSliceViewName(const QString& newSliceViewName);
 
+  /// Returns the interactor style of the view
   vtkInteractorObserver* interactorStyle()const;
+
+  /// propagates the logics to the qMRMLSliceControllerWidget
+  void setSliceLogics(vtkCollection* logics);
 
 public slots:
 

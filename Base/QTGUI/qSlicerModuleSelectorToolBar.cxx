@@ -96,7 +96,6 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->PreviousButton->setIcon(previousIcon);
   this->PreviousButton->setText(QObject::tr("Previous"));
   this->PreviousButton->setMenu(this->PreviousHistoryMenu);
-  this->PreviousButton->setArrowType(Qt::NoArrow);
   // selectPreviousModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
   QObject::connect(this->PreviousButton, SIGNAL(clicked(bool)),
@@ -110,7 +109,6 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->NextButton->setIcon(nextIcon);
   this->NextButton->setText(QObject::tr("Next"));
   this->NextButton->setMenu(this->NextHistoryMenu);
-  this->NextButton->setArrowType(Qt::NoArrow);
   // selectNextModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
   QObject::connect(this->NextButton, SIGNAL(clicked(bool)),

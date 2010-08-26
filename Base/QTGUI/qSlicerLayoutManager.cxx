@@ -208,6 +208,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
   sliceWidget->setSliceViewName(sliceLayoutName);
   sliceWidget->setMRMLScene(this->MRMLScene);
   sliceWidget->setMRMLSliceNode(sliceNode);
+  sliceWidget->setSliceLogics(this->MRMLSliceLogics);
 
   this->SliceWidgetList.push_back(sliceWidget);
   this->MRMLSliceLogics->AddItem(sliceWidget->sliceLogic());

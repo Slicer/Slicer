@@ -1,7 +1,7 @@
 #ifndef __qMRMLSliceControllerWidget_p_h
 #define __qMRMLSliceControllerWidget_p_h
 
-/// CTK includes
+// CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
@@ -13,11 +13,13 @@
 #include <vtkMRMLSliceLogic.h>
 
 /// VTK includes
+#include <vtkCollection.h>
+#include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
-#include <vtkImageData.h>
 
-class QAction;
+class QSpinBox;
+class QDoubleSpinBox;
 class ctkVTKSliceView;
 class vtkMRMLSliceNode;
 class vtkObject;
@@ -36,8 +38,15 @@ public:
 
   void setupUi(qMRMLWidget* widget);
 
-  void setupMoreOptionMenu();
+  void setupMoreOptionsMenu();
 
+  vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
+
+  vtkMRMLSliceLogic* compositeNodeLogic(vtkMRMLSliceCompositeNode* node);
+  vtkMRMLSliceLogic* sliceNodeLogic(vtkMRMLSliceNode* node);
+
+  void setForegroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
+  void setBackgroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
 public slots:
   /// Update widget state using the associated MRML slice node
   void updateWidgetFromMRMLSliceNode();
@@ -56,7 +65,7 @@ public slots:
   /// Called after a backgound layer volume node is selected
   /// using the associated qMRMLNodeComboBox
   void onLabelMapNodeSelected(vtkMRMLNode* node);
-  
+
   /// Called after the SliceLogic is modified
   void onSliceLogicModifiedEvent();
 
@@ -65,44 +74,29 @@ public slots:
 
   void toggleControllerWidgetGroupVisibility();
 
+  void toggleLabelOpacity(bool toggle);
+
+  void applyCustomLightbox();
+
 public:
   vtkMRMLSliceNode*                   MRMLSliceNode;
   vtkMRMLSliceCompositeNode*          MRMLSliceCompositeNode;
   vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
+  vtkCollection*                      SliceLogics;
   vtkWeakPointer<vtkImageData>        ImageData;
   QString                             SliceOrientation;
   QHash<QString, QString>             SliceOrientationToDescription;
   QString                             SliceViewName;
   QButtonGroup*                       ControllerButtonGroup;
 
-  QAction* actionFitToWindow;
-  QAction* actionTotateToVolumePlane;
-  QAction* actionAdjustLabelMapOpacity;
-  QAction* actionShowLabelVolumeOutlines;
-  QAction* actionShowReformatWidget;
-  
-  QAction* actionCompositingAlphaBlend;
-  QAction* actionCompositingRevserseAlphaBlend;
-  QAction* actionCompositingAdd;
-  QAction* actionCompositingSubtract;
+  ctkSliderWidget*                    LabelOpacitySlider;
+  QToolButton*                        LabelOpacityToggleButton;
+  double                              LastLabelOpacity;
 
-  QAction* actionSliceSpacingModeAutomatic;
-  QAction* actionSliceSpacingModeManual;
+  QDoubleSpinBox*                     SliceSpacingSpinBox;
 
-  QAction* actionLightView1x1;
-  QAction* actionLightView1x2;
-  QAction* actionLightView1x3;
-  QAction* actionLightView1x4;
-  QAction* actionLightView1x6;
-  QAction* actionLightView1x8;
-  QAction* actionLightView2x2;
-  QAction* actionLightView3x3;
-  QAction* actionLightView6x6;
-  
-  QAction* actionAdjustDisplayForegroundVolume;
-  QAction* actionAdjustDisplayBackgroundVolume;
-  QAction* actionAdjustDisplayLabelMapVolume;
-  
+  QSpinBox*                           LightBoxRowsSpinBox;
+  QSpinBox*                           LightBoxColumnsSpinBox;
 };
 
 #endif

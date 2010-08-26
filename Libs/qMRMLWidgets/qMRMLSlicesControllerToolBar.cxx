@@ -753,8 +753,8 @@ void qMRMLSlicesControllerToolBar::fitToWindow()
 void qMRMLSlicesControllerToolBar::setLabelOpacity(double value)
 {
   CTK_D(qMRMLSlicesControllerToolBar);
-  // LabelOpacityToggleButton doesn't fire the clicked(bool) signal here because
-  // it's check state is set programatically.
+  // LabelOpacityToggleButton won't fire the clicked(bool) signal here because
+  // its check state is set programatically.
   d->LabelOpacityToggleButton->setChecked(value == 0.);
   vtkSmartPointer<vtkCollection> nodes = d->saveSliceCompositeNodes();
   if (!nodes.GetPointer())

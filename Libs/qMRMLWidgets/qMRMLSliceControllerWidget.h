@@ -13,16 +13,20 @@
 #include "qMRMLWidgetsExport.h"
 
 class QButtonGroup;
-class qMRMLSliceControllerWidgetPrivate;
-class vtkMRMLScene;
-class vtkMRMLNode;
-class vtkMRMLSliceNode;
-class vtkMRMLSliceCompositeNode;
-class vtkImageData;
 class ctkVTKSliceView;
-
+class qMRMLSliceControllerWidgetPrivate;
+class vtkCollection;
+class vtkImageData;
+class vtkMRMLNode;
+class vtkMRMLScene;
+class vtkMRMLSliceCompositeNode;
 class vtkMRMLSliceLogic;
+class vtkMRMLSliceNode;
 
+///
+/// qMRMLSliceControllerWidget offers controls to a slice view (vtkMRMLSliceNode
+///  and vtkMRMLSliceCompositeNode). It internally creates a slice logic that
+/// be changed. 
 class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget : public qMRMLWidget
 {
   Q_OBJECT
@@ -34,6 +38,12 @@ public:
   /// Constructors
   explicit qMRMLSliceControllerWidget(QWidget* parent = 0);
   virtual ~qMRMLSliceControllerWidget(){}
+
+  /// Are the slices linked to each other
+  bool isLinked()const;
+
+  /// Is the view a compare view
+  bool isCompareView()const;
 
   /// Get slice orientation
   /// \sa setSliceOrientation(QString);
@@ -75,6 +85,11 @@ public:
   /// one of the sliceCollapsibleButton of the group is clicked.
   void setControllerButtonGroup(QButtonGroup* group);
 
+  /// TODO:
+  /// Ideally the slice logics should be retrieved by the sliceLogic
+  /// until then, we manually set them.
+  void setSliceLogics(vtkCollection* logics);
+
 public slots:
 
   virtual void setMRMLScene(vtkMRMLScene* newScene);
@@ -105,6 +120,38 @@ public slots:
   /// Link/Unlink the slice controls across all slice viewer
   void setSliceLink(bool linked);
 
+  // Advanced options
+  /// Rotate to volume plane
+  void rotateSliceToBackground();
+  /// Label opacity
+  void setLabelOpacity(double opacity);
+  /// Label outline
+  void showLabelOutline(bool show);
+  /// Reformat widget
+  void showReformatWidget(bool show);
+  /// Compositing
+  void setCompositing(int mode);
+  void setCompositingToAlphaBlend();
+  void setCompositingToReverseAlphaBlend();
+  void setCompositingToAdd();
+  void setCompositingToSubtract();
+  /// Slice spacing
+  void setSliceSpacingMode(bool automatic);
+  void setSliceSpacing(double);
+  // Lightbox
+  void setLightbox(int rows, int columns);
+  void setLightboxTo1x1();
+  void setLightboxTo1x2();
+  void setLightboxTo1x3();
+  void setLightboxTo1x4();
+  void setLightboxTo1x6();
+  void setLightboxTo1x8();
+  void setLightboxTo2x2();
+  void setLightboxTo3x3();
+  void setLightboxTo6x6();
+  // interpolation
+  void setForegroundInterpolation(bool);
+  void setBackgroundInterpolation(bool);
 signals:
 
   /// This signal is emitted when the giben \a imageData is modified.

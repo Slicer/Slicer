@@ -261,3 +261,8 @@ void qMRMLSliceWidget::fitSliceToBackground()
 CTK_GET_CXX(qMRMLSliceWidget, ctkVTKSliceView*, sliceView, VTKSliceView);
 CTK_GET_CXX(qMRMLSliceWidget, qMRMLSliceControllerWidget*, sliceController, SliceController);
 
+// --------------------------------------------------------------------------
+void qMRMLSliceWidget::setSliceLogics(vtkCollection* logics)
+{
+  ctk_d()->SliceController->setSliceLogics(logics);
+}

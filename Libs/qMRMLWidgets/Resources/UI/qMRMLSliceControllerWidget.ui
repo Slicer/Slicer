@@ -237,6 +237,9 @@
          <iconset resource="../qMRMLWidgets.qrc">
           <normaloff>:/Icons/SliceViewerBG.png</normaloff>:/Icons/SliceViewerBG.png</iconset>
         </property>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
        </widget>
       </item>
       <item row="1" column="3">
@@ -272,7 +275,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QToolButton" name="SliceLinkToggle">
+         <widget class="QToolButton" name="SliceLinkButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -299,7 +302,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="SliceVisibilityToggle">
+         <widget class="QToolButton" name="SliceVisibilityButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -339,6 +342,9 @@
           <property name="icon">
            <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
           </property>
          </widget>
         </item>
@@ -394,25 +400,16 @@ Use this display to cross-reference to filmed images or other displays.</string>
     <string>Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
    </property>
   </action>
-  <action name="actionRotate_to_Volume_Plane">
+  <action name="actionRotate_to_volume_plane">
    <property name="icon">
     <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicerRotateToPixelSpace.png</normaloff>:/Icons/SlicerRotateToPixelSpace.png</iconset>
    </property>
    <property name="text">
-    <string>Rotate to Volume Plane</string>
-   </property>
-  </action>
-  <action name="actionAdjust_labelmap_opacity">
-   <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicesLabelOpacity.png</normaloff>:/Icons/SlicesLabelOpacity.png</iconset>
-   </property>
-   <property name="text">
-    <string>Adjust labelmap opacity</string>
+    <string>Rotate to volume vlane</string>
    </property>
    <property name="toolTip">
-    <string>Popup scale to adjust opacity of label layer.</string>
+    <string>Rotate to volume plane</string>
    </property>
   </action>
   <action name="actionShow_label_volume_outline">
@@ -679,5 +676,347 @@ Use this display to cross-reference to filmed images or other displays.</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionFit_to_window</sender>
+   <signal>activated()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>fitSliceToBackground()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRotate_to_volume_plane</sender>
+   <signal>activated()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>rotateSliceToBackground()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_label_volume_outline</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>showLabelOutline(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_reformat_widget</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>showReformatWidget(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCompositingAlpha_blend</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setCompositingToAlphaBlend()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCompositingReverse_alpha_blend</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setCompositingToReverseAlphaBlend()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCompositingAdd</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setCompositingToAdd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCompositingSubtract</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setCompositingToSubtract()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSliceSpacingModeAutomatic</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setSliceSpacingMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox1x1_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo1x1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox1x2_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo1x2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox1x3_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo1x3()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox1x4_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo1x4()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox1x6_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo1x6()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox1x8_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo1x8()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox2x2_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo2x2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox3x3_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo3x3()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLightbox6x6_view</sender>
+   <signal>triggered()</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setLightboxTo6x6()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionForegroundInterpolation</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setForegroundInterpolation(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionBackgroundInterpolation</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>qMRMLSliceControllerWidget</receiver>
+   <slot>setBackgroundInterpolation(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>fitSliceToBackground()</slot>
+  <slot>rotateSliceToBackground()</slot>
+  <slot>showLabelOutline(bool)</slot>
+  <slot>showReformatWidget(bool)</slot>
+  <slot>setCompositingToAlphaBlend()</slot>
+  <slot>setCompositingToReverseAlphaBlend()</slot>
+  <slot>setCompositingToAdd()</slot>
+  <slot>setCompositingToSubtract()</slot>
+  <slot>setSliceSpacingMode(bool)</slot>
+  <slot>setLightboxTo1x1()</slot>
+  <slot>setLightboxTo1x2()</slot>
+  <slot>setLightboxTo1x4()</slot>
+  <slot>setLightboxTo1x6()</slot>
+  <slot>setLightboxTo1x8()</slot>
+  <slot>setLightboxTo2x2()</slot>
+  <slot>setLightboxTo3x3()</slot>
+  <slot>setLightboxTo6x6()</slot>
+  <slot>setLightboxTo1x3()</slot>
+  <slot>setForegroundInterpolation(bool)</slot>
+  <slot>setBackgroundInterpolation(bool)</slot>
+ </slots>
 </ui>
