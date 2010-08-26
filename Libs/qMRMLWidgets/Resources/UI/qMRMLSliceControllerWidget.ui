@@ -9,9 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>370</width>
-    <height>111</height>
+    <width>392</width>
+    <height>109</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -56,6 +62,12 @@
       </property>
       <item row="0" column="0">
        <widget class="QToolButton" name="OrientationToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select options for the Viewer's orientation (not yet implemented).</string>
         </property>
@@ -70,6 +82,12 @@
       </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="SliceOrientationSelector">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Slice orientation (Axial, Sagittal, Coronal, Reformat).</string>
         </property>
@@ -96,7 +114,13 @@
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QToolButton" name="ForgroundLayerOptionButton">
+       <widget class="QToolButton" name="ForegroundLayerOptionButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select options for the Foreground Layer</string>
         </property>
@@ -114,6 +138,12 @@
       </item>
       <item row="0" column="3">
        <widget class="qMRMLNodeComboBox" name="ForegroundLayerNodeSelector">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select the foreground</string>
         </property>
@@ -138,6 +168,12 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select options for the Label Layer (not yet implemented).</string>
         </property>
@@ -152,6 +188,12 @@
       </item>
       <item row="1" column="1">
        <widget class="qMRMLNodeComboBox" name="LabelMapSelector">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select the label map</string>
         </property>
@@ -173,6 +215,12 @@
       </item>
       <item row="1" column="2">
        <widget class="QToolButton" name="BackgroundLayerOptionButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select options for the Background Layer</string>
         </property>
@@ -187,6 +235,12 @@
       </item>
       <item row="1" column="3">
        <widget class="qMRMLNodeComboBox" name="BackgroundLayerNodeSelector">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select the background</string>
         </property>
@@ -213,6 +267,12 @@
         </property>
         <item>
          <widget class="QToolButton" name="SliceLinkToggle">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
            <string>Links/Unlinks the slice controls (except scales) across all Slice Viewers.</string>
           </property>
@@ -234,6 +294,12 @@
         </item>
         <item>
          <widget class="QToolButton" name="SliceVisibilityToggle">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
            <string>Toggles slice visibility in the MainViewer.</string>
           </property>
@@ -255,6 +321,12 @@
         </item>
         <item>
          <widget class="QToolButton" name="SliceMoreOptionButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -266,6 +338,12 @@
         </item>
         <item>
          <widget class="ctkSliderWidget" name="SliceOffsetSlider">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
            <string>Slice distance from RAS origin</string>
           </property>
@@ -273,6 +351,12 @@
         </item>
         <item>
          <widget class="QLabel" name="SliceIndexLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
            <string>Slice number display
 Integer: slice number starting from 1 (not 0)
