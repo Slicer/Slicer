@@ -37,10 +37,14 @@ proc ::after {args} {
   # an alternate event queue (probably Qt)
   if { $::after_warning == "" } {
     puts "TODO: need to handle after events"
-    puts "TODO: not hanlding: \"$args\""
+    puts "TODO: not handling: \"$args\""
     set ::after_warning "done"
   }
-  return "after0"
+  set option [lindex $args 1]
+  set args [lrange $args 1 end]
+  if { $option != "cancel" } {
+    eval $args
+  }
 }
 
 namespace eval tpycl {
@@ -98,6 +102,10 @@ namespace eval tpycl {
     set method [lindex $args 0]
     set args [lrange $args 1 end]
 
+    if { $args == "{}" || $args == "\"\"" } {
+      set args "''"
+    }
+
     # construct a python command with the args
     # TODO: deal with special cases in a more general way
     switch $method {
@@ -137,10 +145,11 @@ namespace eval tpycl {
         foreach arg $args { 
           set type [lindex $types 0]
           set types [lrange $types 1 end]
-          if { ![py_type $arg] } {
-            if { [string match "'vtk*" $type] && $arg == "" } {
-              set arg "None"
-            } else {
+          if { [string match "'vtk*" $type] && ($arg == "" || $arg == "''")  } {
+            # if it's a vtk object, python wants None, not empty string
+            set arg "None"
+          } else {
+            if { ![py_type $arg] } {
               # python doesn't understand the argument, and we don't know what type it is,
               # so assume it is a string
               if { $arg != "" } {
