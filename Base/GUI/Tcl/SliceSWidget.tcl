@@ -881,6 +881,9 @@ itcl::body SliceSWidget::updateAnnotations {r a s} {
   $this queryLayers $x $y $z
 
   set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+  if { $ssgui == "" } {
+    return
+  }
   set numsgui [$ssgui GetNumberOfSliceGUI]
   for { set i 0 } { $i < $numsgui } { incr i } {
     if { $i == 0} {
@@ -1287,8 +1290,8 @@ itcl::body SliceSWidget::moveSlice { delta } {
 
     set logics ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    if { $link == 1 } {
-        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+    set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+    if { $link == 1 && $ssgui != "" } {
         set numsgui [$ssgui GetNumberOfSliceGUI]
 
         for { set i 0 } { $i < $numsgui } { incr i } {
@@ -1370,8 +1373,8 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
 
     set logics ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    if { $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
-        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+    set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+    if { $ssgui != "" && $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
 
@@ -1417,8 +1420,8 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
 
     set guis ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    if { $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
-        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+    set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+    if { $ssgui != "" && $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
 
