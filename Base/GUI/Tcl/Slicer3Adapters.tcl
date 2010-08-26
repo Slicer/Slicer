@@ -62,6 +62,7 @@ namespace eval Slicer3Adapters {
     # create instances of the application level adapter classes
     set ::slicer3::Application [namespace current]::[::Slicer3Adapters::Application #auto]
     set ::slicer3::ApplicationGUI [namespace current]::[::Slicer3Adapters::ApplicationGUI #auto]
+    $::slicer3::ApplicationGUI SetApplication $::slicer3::Application
 
   }
 }
@@ -170,6 +171,10 @@ namespace eval Slicer3Adapters {
     # parts of the application
 
     # methods
+    method GetModuleGUIByName {args} {
+      #TODO: will scripted modules be able to access other modules in slicer4
+      return ""
+    }
   }
 
   itcl::class ApplicationGUI {
@@ -184,12 +189,15 @@ namespace eval Slicer3Adapters {
 
     # parts of the application
     variable _slicerWindow ""
+    variable _application ""
 
     # to limit printouts
     variable _viewerWarning ""
 
     # methods
     # access to locally instanced classes
+    method SetApplication {arg} {set _application $arg}
+    method GetApplication {} {return $_application}
     method GetMainSlicerWindow {} {
       return $_slicerWindow
     }
