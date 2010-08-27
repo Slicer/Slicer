@@ -3,6 +3,7 @@
 
 #include "qMRMLCollapsibleButtonPlugin.h"
 #include "qMRMLColorTableComboBoxPlugin.h"
+#include "qMRMLLabelComboBoxPlugin.h"
 #include "qMRMLLinearTransformSliderPlugin.h"
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
@@ -38,6 +39,7 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qMRMLCollapsibleButtonPlugin
             << new qMRMLColorTableComboBoxPlugin
+            << new qMRMLLabelComboBoxPlugin
             << new qMRMLLinearTransformSliderPlugin
             << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin

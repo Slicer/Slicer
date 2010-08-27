@@ -10,6 +10,8 @@ SET(designer_plugin_SRCS
   qMRMLCollapsibleButtonPlugin.h
   qMRMLColorTableComboBoxPlugin.cxx
   qMRMLColorTableComboBoxPlugin.h
+  qMRMLLabelComboBoxPlugin.cxx
+  qMRMLLabelComboBoxPlugin.h 
   qMRMLLinearTransformSliderPlugin.cxx
   qMRMLLinearTransformSliderPlugin.h
   qMRMLListWidgetPlugin.cxx
@@ -58,6 +60,7 @@ SET(designer_plugin_MOC_SRCS
 
   qMRMLCollapsibleButtonPlugin.h
   qMRMLColorTableComboBoxPlugin.h
+  qMRMLLabelComboBoxPlugin.h
   qMRMLLinearTransformSliderPlugin.h
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.h

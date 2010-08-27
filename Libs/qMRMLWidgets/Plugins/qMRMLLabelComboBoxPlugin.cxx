@@ -1,25 +1,25 @@
-#include "qMRMLColorTableComboBoxPlugin.h"
-#include "qMRMLColorTableComboBox.h"
+
+// qMRML includes
+#include "qMRMLLabelComboBoxPlugin.h"
+#include "qMRMLLabelComboBox.h"
 
 //-----------------------------------------------------------------------------
-qMRMLColorTableComboBoxPlugin
-::qMRMLColorTableComboBoxPlugin(QObject *parentObject)
-  : QObject(parentObject)
+qMRMLLabelComboBoxPlugin::qMRMLLabelComboBoxPlugin(QObject *_parent):QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLColorTableComboBoxPlugin::createWidget(QWidget *parentWidget)
+QWidget *qMRMLLabelComboBoxPlugin::createWidget(QWidget *_parent)
 {
-  qMRMLColorTableComboBox* widget = new qMRMLColorTableComboBox(parentWidget);
-  return widget;
+  qMRMLLabelComboBox* _widget = new qMRMLLabelComboBox(_parent);
+  return _widget;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLColorTableComboBoxPlugin::domXml() const
+QString qMRMLLabelComboBoxPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLColorTableComboBox\" \
-          name=\"ColorTableComboBox\">\n"
+  return "<widget class=\"qMRMLLabelComboBox\" \
+          name=\"MRMLLabelComboBox\">\n"
           " <property name=\"geometry\">\n"
           "  <rect>\n"
           "   <x>0</x>\n"
@@ -32,25 +32,25 @@ QString qMRMLColorTableComboBoxPlugin::domXml() const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qMRMLColorTableComboBoxPlugin::icon() const
+QIcon qMRMLLabelComboBoxPlugin::icon() const
 {
-  return QIcon(":/Icons/combobox.png");
+  return QIcon(":/Icons/combox.png");
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLColorTableComboBoxPlugin::includeFile() const
+QString qMRMLLabelComboBoxPlugin::includeFile() const
 {
-  return "qMRMLColorTableComboBox.h";
+  return "qMRMLLabelComboBox.h";
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLColorTableComboBoxPlugin::isContainer() const
+bool qMRMLLabelComboBoxPlugin::isContainer() const
 {
-  return false;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLColorTableComboBoxPlugin::name() const
+QString qMRMLLabelComboBoxPlugin::name() const
 {
-  return "qMRMLColorTableComboBox";
+  return "qMRMLLabelComboBox";
 }

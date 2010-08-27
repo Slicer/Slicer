@@ -28,6 +28,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLCollapsibleButton.h
   qMRMLColorTableComboBox.cxx
   qMRMLColorTableComboBox.h
+  qMRMLLabelComboBox.h
+  qMRMLLabelComboBox.cxx
   qMRMLEventLogger.cxx
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.cxx
@@ -96,6 +98,7 @@ SET(qMRMLWidgets_SRCS
 # Headers that should run through moc
 SET(qMRMLWidgets_MOC_SRCS
   qMRMLCollapsibleButton.h
+  qMRMLLabelComboBox.h 
   qMRMLColorTableComboBox.h
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.h
