@@ -63,6 +63,7 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   CTK_P(qMRMLNodeComboBox);
   Q_ASSERT(this->MRMLNodeFactory == 0);
   ctkComboBox* comboBox = new ctkComboBox(p);
+  comboBox->setDefaultText(QObject::tr("Select a node..."));
   comboBox->setElideMode(Qt::ElideMiddle);
   this->ComboBox = comboBox;
   p->setLayout(new QHBoxLayout);
