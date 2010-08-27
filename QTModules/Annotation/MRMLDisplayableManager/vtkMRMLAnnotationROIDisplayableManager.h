@@ -47,10 +47,14 @@ protected:
   virtual void OnClickInThreeDRenderWindow(double x, double y);
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
-  /// Propagate properties of MRML node to widgets.
-  virtual void SetWidget(vtkMRMLAnnotationNode* node);
+
   /// Gets called when widget was created
   virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node);
+
+  /// Propagate properties of MRML node to widget.
+  virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
+  /// Propagate properties of widget to MRML node.
+  virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
 
 private:
 

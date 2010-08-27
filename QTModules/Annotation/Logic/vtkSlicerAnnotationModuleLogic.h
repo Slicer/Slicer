@@ -116,6 +116,8 @@ public:
   vtkStdString GetAnnotationText(const char* id);
   /// Get the icon name of an Annotation MRML node
   const char * GetAnnotationIcon(const char * id);
+  /// Toggle the lock flag of an Annotation MRML node and return the updated flag
+  int ToggleAnnotationLockUnlock(const char * id);
 
   // ^^^^ end of Daniel approved code
 

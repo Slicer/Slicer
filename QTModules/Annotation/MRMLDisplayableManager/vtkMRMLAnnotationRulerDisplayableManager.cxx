@@ -4,6 +4,8 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -15,6 +17,7 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkDistanceRepresentation2D.h>
 #include <vtkInteractorEventRecorder.h>
+#include <vtkAbstractWidget.h>
 
 // std includes
 #include <string>
@@ -35,39 +38,50 @@ public:
   static vtkAnnotationRulerWidgetCallback *New()
   { return new vtkAnnotationRulerWidgetCallback; }
 
+  vtkAnnotationRulerWidgetCallback(){}
+
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
-    if (event == vtkCommand::HoverEvent)
-    {
-      std::cout << "HoverEvent\n";
-    }
     if (event == vtkCommand::EndInteractionEvent)
       {
-      std::cout << "EndInteraction" << std::endl;
-      vtkDistanceRepresentation2D *rep = vtkDistanceRepresentation2D::SafeDownCast(this->m_Widget->GetRepresentation());
 
-      double position1[3];
-      double position2[3];
+      // sanity checks
+      if (!this->m_DisplayableManager)
+        {
+        return;
+        }
+      if (!this->m_Node)
+        {
+        return;
+        }
+      if (!this->m_Widget)
+        {
+        return;
+        }
+      // sanity checks end
 
-      rep->GetPoint1WorldPosition(position1);
-      rep->GetPoint2WorldPosition(position2);
+      // the interaction with the widget ended, now propagate the changes to MRML
+      this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
 
-      this->m_Node->SetPosition1(position1);
-      this->m_Node->SetPosition2(position2);
-
-      this->m_Node->SetDistanceMeasurement(rep->GetDistance());
-      this->m_Node->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent,this->m_Node);
       }
   }
-  vtkAnnotationRulerWidgetCallback(){}
-  ~vtkAnnotationRulerWidgetCallback()
+
+  void SetWidget(vtkAbstractWidget *w)
   {
-    this->m_Widget = 0;
-    this->m_Node = 0;
+    this->m_Widget = w;
+  }
+  void SetNode(vtkMRMLAnnotationNode *n)
+  {
+    this->m_Node = n;
+  }
+  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
+  {
+    this->m_DisplayableManager = dm;
   }
 
-  vtkDistanceWidget * m_Widget;
-  vtkMRMLAnnotationRulerNode * m_Node;
+  vtkAbstractWidget * m_Widget;
+  vtkMRMLAnnotationNode * m_Node;
+  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
@@ -108,14 +122,15 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
   rulerWidget->SetInteractor(this->GetInteractor());
   rulerWidget->SetCurrentRenderer(this->GetRenderer());
 
+  rulerWidget->CreateDefaultRepresentation();
+
   // add observer for end interaction
   vtkAnnotationRulerWidgetCallback *myCallback = vtkAnnotationRulerWidgetCallback::New();
-  myCallback->m_Node = rulerNode;
-  myCallback->m_Widget = rulerWidget;
+  myCallback->SetNode(rulerNode);
+  myCallback->SetWidget(rulerWidget);
+  myCallback->SetDisplayableManager(this);
   rulerWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   myCallback->Delete();
-
-  rulerWidget->CreateDefaultRepresentation();
 
   rulerWidget->On();
 
@@ -123,19 +138,6 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
   return rulerWidget;
 
-}
-
-//---------------------------------------------------------------------------
-/// Propagate MRML properties to an existing text widget.
-void vtkMRMLAnnotationRulerDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
-{
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
-
-  // nothing yet
 }
 
 //---------------------------------------------------------------------------
@@ -155,10 +157,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   recorder->ReadFromInputStringOn();
 
   std::ostringstream o;
-  VTK_CREATE(vtkHandleWidget, h1);
-  h1 = this->m_HandleWidgetList[0];
-  VTK_CREATE(vtkHandleWidget, h2);
-  h2 = this->m_HandleWidgetList[1];
+  vtkHandleWidget * h1 = this->m_HandleWidgetList[0];
+  vtkHandleWidget * h2 = this->m_HandleWidgetList[1];
 
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 
@@ -177,6 +177,177 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   recorder->SetInputString(o.str().c_str());
   recorder->Play();
+
+  // no need to set anything - the mrml node will be updated by the callback
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of MRML node to widget.
+void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkDistanceWidget* rulerWidget = vtkDistanceWidget::SafeDownCast(widget);
+
+  if (!rulerWidget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ruler widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
+
+  if (!rulerNode)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ruler node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the widget will be set to modified
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkDistanceRepresentation2D * rep = vtkDistanceRepresentation2D::SafeDownCast(rulerWidget->GetRepresentation());
+
+  double position1[3];
+  double position2[3];
+
+  rep->GetPoint1WorldPosition(position1);
+  rep->GetPoint2WorldPosition(position2);
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to widget
+  //
+  if (rulerNode->GetPosition1()[0] != position1[0] || rulerNode->GetPosition1()[1] != position1[1] || rulerNode->GetPosition1()[2] != position1[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetPoint1WorldPosition(rulerNode->GetPosition1());
+    hasChanged = true;
+    }
+
+  if (rulerNode->GetPosition2()[0] != position2[0] || rulerNode->GetPosition2()[1] != position2[1] || rulerNode->GetPosition2()[2] != position2[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetPoint2WorldPosition(rulerNode->GetPosition2());
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so set the widget to modified
+    rep->NeedToRenderOn();
+    rulerWidget->Modified();
+    }
+
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of widget to MRML node.
+void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkDistanceWidget* rulerWidget = vtkDistanceWidget::SafeDownCast(widget);
+
+  if (!rulerWidget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get ruler widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
+
+  if (!rulerNode)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get ruler node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the modified event gets fired
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
+  vtkDistanceRepresentation2D * rep = vtkDistanceRepresentation2D::SafeDownCast(rulerWidget->GetRepresentation());
+
+  double position1[3];
+  double position2[3];
+
+  rep->GetPoint1WorldPosition(position1);
+  rep->GetPoint2WorldPosition(position2);
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the mrml node
+  //
+  if (rulerNode->GetPosition1()[0] != position1[0] || rulerNode->GetPosition1()[1] != position1[1] || rulerNode->GetPosition1()[2] != position1[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    rulerNode->SetPosition1(position1);
+    hasChanged = true;
+    }
+
+  if (rulerNode->GetPosition2()[0] != position2[0] || rulerNode->GetPosition2()[1] != position2[1] || rulerNode->GetPosition2()[2] != position2[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    rulerNode->SetPosition2(position2);
+    hasChanged = true;
+    }
+
+  //
+  // Check if the measurement value of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the mrml node
+  if (rulerNode->GetDistanceMeasurement() != rep->GetDistance())
+    {
+    // the measurement has changes, so update the mrml property
+    rulerNode->SetDistanceMeasurement(rep->GetDistance());
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so fire the modified event
+    rulerNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, rulerNode);
+    }
+
 }
 
 //---------------------------------------------------------------------------

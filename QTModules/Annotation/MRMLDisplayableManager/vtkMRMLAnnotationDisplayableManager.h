@@ -48,6 +48,12 @@ public:
   // Get the coordinates of a click in the RenderWindow
   void OnClickInThreeDRenderWindowGetCoordinates();
 
+  // the following functions must be public to be accessible by the callback
+  /// Propagate properties of MRML node to widget.
+  virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
+  /// Propagate properties of widget to MRML node.
+  virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
+
 
 protected:
 
@@ -87,8 +93,6 @@ protected:
 
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
-  /// Propagate properties of MRML node to widgets.
-  virtual void SetWidget(vtkMRMLAnnotationNode* node);
   /// Gets called when widget was created
   virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node);
 

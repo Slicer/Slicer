@@ -313,7 +313,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
-  this->DebugOn();
+  //this->DebugOn();
 
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
   std::cout << node->GetID() << std::endl;
@@ -429,14 +429,17 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
     {
-    vtkErrorMacro("OnMRMLAnnotationNodeModifiedEvent - Can not access node.")
+    vtkErrorMacro("OnMRMLAnnotationNodeModifiedEvent: Can not access node.")
     return;
     }
+
   // Update the standard settings of all widgets.
   this->Internal->UpdateWidget(annotationNode);
 
-  // Set individual properties of the widget.
-  this->SetWidget(annotationNode);
+  vtkAbstractWidget * widget = this->Internal->GetWidget(annotationNode);
+
+  // Propagate MRML changes to widget
+  this->PropagateMRMLToWidget(annotationNode, widget);
 
   this->RequestRender();
 }
@@ -627,15 +630,22 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::CreateWidget(vtkMRMLAnn
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
-{
-  // The properties of a widget should be set here.
-  vtkErrorMacro("SetWidget should be overloaded!");
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
   // Actions after a widget was created should be executed here.
   vtkErrorMacro("OnWidgetCreated should be overloaded!");
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+{
+  // The properties of a widget should be set here.
+  vtkErrorMacro("PropagateMRMLToWidget should be overloaded!");
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+{
+  // The properties of a widget should be set here.
+  vtkErrorMacro("PropagateWidgetToMRML should be overloaded!");
 }

@@ -453,6 +453,27 @@ void vtkMRMLAnnotationROINode::SetRadiusXYZ(double* radiusXYZ)
   return;
 }
 
+//-----------------------------------------------------------------------------
+void vtkMRMLAnnotationROINode::SetBounds(double* bounds)
+{
+  this->SetBounds(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLAnnotationROINode::SetBounds(double boundsX1, double boundsX2, double boundsY1, double boundsY2, double boundsZ1, double boundsZ2)
+{
+  this->Bounds[0] = boundsX1;
+  this->Bounds[1] = boundsX2;
+  this->Bounds[2] = boundsY1;
+  this->Bounds[3] = boundsY2;
+  this->Bounds[4] = boundsZ1;
+  this->Bounds[5] = boundsZ2;
+
+  this->Modified();
+  return;
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::SetROIMeasurement(double val1, double val2, double val3)
 {

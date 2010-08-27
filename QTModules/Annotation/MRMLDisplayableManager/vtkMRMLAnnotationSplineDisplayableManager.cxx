@@ -4,6 +4,8 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationSplineNode.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -15,6 +17,7 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkSplineRepresentation.h>
 #include <vtkInteractorEventRecorder.h>
+#include <vtkAbstractWidget.h>
 
 // std includes
 #include <string>
@@ -35,22 +38,50 @@ public:
   static vtkAnnotationSplineWidgetCallback *New()
   { return new vtkAnnotationSplineWidgetCallback; }
 
+  vtkAnnotationSplineWidgetCallback(){}
+
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
-    if (event == vtkCommand::HoverEvent)
-    {
-      std::cout << "HoverEvent\n";
-    }
-  }
-  vtkAnnotationSplineWidgetCallback(){}
-  ~vtkAnnotationSplineWidgetCallback()
-  {
-    this->m_Widget = 0;
-    this->m_Node = 0;
+    if (event == vtkCommand::EndInteractionEvent)
+      {
+
+      // sanity checks
+      if (!this->m_DisplayableManager)
+        {
+        return;
+        }
+      if (!this->m_Node)
+        {
+        return;
+        }
+      if (!this->m_Widget)
+        {
+        return;
+        }
+      // sanity checks end
+
+      // the interaction with the widget ended, now propagate the changes to MRML
+      this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
+
+      }
   }
 
-  vtkSplineWidget2 * m_Widget;
-  vtkMRMLAnnotationSplineNode * m_Node;
+  void SetWidget(vtkAbstractWidget *w)
+  {
+    this->m_Widget = w;
+  }
+  void SetNode(vtkMRMLAnnotationNode *n)
+  {
+    this->m_Node = n;
+  }
+  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
+  {
+    this->m_DisplayableManager = dm;
+  }
+
+  vtkAbstractWidget * m_Widget;
+  vtkMRMLAnnotationNode * m_Node;
+  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
@@ -91,43 +122,33 @@ vtkAbstractWidget * vtkMRMLAnnotationSplineDisplayableManager::CreateWidget(vtkM
   splineWidget->SetInteractor(this->GetInteractor());
   splineWidget->SetCurrentRenderer(this->GetRenderer());
 
-  // add observer for end interaction
-  vtkAnnotationSplineWidgetCallback *myCallback = vtkAnnotationSplineWidgetCallback::New();
-  myCallback->m_Node = splineNode;
-  myCallback->m_Widget = splineWidget;
-  splineWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
-
   splineWidget->On();
 
   splineWidget->CreateDefaultRepresentation();
-  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetNumberOfHandles(5);
 
-  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(0,splineNode->GetControlPointCoordinates(0));
-  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(1,splineNode->GetControlPointCoordinates(1));
-  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(2,splineNode->GetControlPointCoordinates(2));
-  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(3,splineNode->GetControlPointCoordinates(3));
-  vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation())->SetHandlePosition(4,splineNode->GetControlPointCoordinates(4));
+  vtkSplineRepresentation * rep = vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation());
+  rep->SetNumberOfHandles(5);
 
-  splineWidget->GetRepresentation()->EndWidgetInteraction(splineNode->GetControlPointCoordinates(4));
+  rep->SetHandlePosition(0,splineNode->GetControlPointCoordinates(0));
+  rep->SetHandlePosition(1,splineNode->GetControlPointCoordinates(1));
+  rep->SetHandlePosition(2,splineNode->GetControlPointCoordinates(2));
+  rep->SetHandlePosition(3,splineNode->GetControlPointCoordinates(3));
+  rep->SetHandlePosition(4,splineNode->GetControlPointCoordinates(4));
+
+  rep->EndWidgetInteraction(splineNode->GetControlPointCoordinates(4));
+
+  // add observer for end interaction
+  vtkAnnotationSplineWidgetCallback *myCallback = vtkAnnotationSplineWidgetCallback::New();
+  myCallback->SetNode(splineNode);
+  myCallback->SetWidget(splineWidget);
+  myCallback->SetDisplayableManager(this);
+  splineWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
 
   vtkDebugMacro("CreateWidget: Widget was set up")
 
   return splineWidget;
 
-}
-
-//---------------------------------------------------------------------------
-/// Propagate MRML properties to an existing text widget.
-void vtkMRMLAnnotationSplineDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
-{
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
-
-  // nothing yet
 }
 
 //---------------------------------------------------------------------------
@@ -142,6 +163,222 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnWidgetCreated(vtkAbstractWidge
     }
 
   // nothing yet
+}
+
+
+//---------------------------------------------------------------------------
+/// Propagate properties of MRML node to widget.
+void vtkMRMLAnnotationSplineDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkSplineWidget2 * splineWidget = vtkSplineWidget2::SafeDownCast(widget);
+
+  if (!splineWidget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get spline widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationSplineNode * splineNode = vtkMRMLAnnotationSplineNode::SafeDownCast(node);
+
+  if (!splineNode)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get spline node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the widget will be set to modified
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkSplineRepresentation * rep = vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation());
+
+  double position1[3];
+  double position2[3];
+  double position3[3];
+  double position4[3];
+  double position5[3];
+
+
+  rep->GetHandlePosition(0,position1);
+  rep->GetHandlePosition(1,position2);
+  rep->GetHandlePosition(2,position3);
+  rep->GetHandlePosition(3,position4);
+  rep->GetHandlePosition(4,position5);
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to widget
+  //
+  if (splineNode->GetControlPointCoordinates(0)[0] != position1[0] || splineNode->GetControlPointCoordinates(0)[1] != position1[1] || splineNode->GetControlPointCoordinates(0)[2] != position1[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetHandlePosition(0,splineNode->GetControlPointCoordinates(0));
+    hasChanged = true;
+    }
+
+  if (splineNode->GetControlPointCoordinates(1)[0] != position2[0] || splineNode->GetControlPointCoordinates(1)[1] != position2[1] || splineNode->GetControlPointCoordinates(1)[2] != position2[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetHandlePosition(1,splineNode->GetControlPointCoordinates(1));
+    hasChanged = true;
+    }
+
+  if (splineNode->GetControlPointCoordinates(2)[0] != position3[0] || splineNode->GetControlPointCoordinates(2)[1] != position3[1] || splineNode->GetControlPointCoordinates(2)[2] != position3[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetHandlePosition(2,splineNode->GetControlPointCoordinates(2));
+    hasChanged = true;
+    }
+
+  if (splineNode->GetControlPointCoordinates(3)[0] != position4[0] || splineNode->GetControlPointCoordinates(3)[1] != position4[1] || splineNode->GetControlPointCoordinates(3)[2] != position4[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetHandlePosition(3,splineNode->GetControlPointCoordinates(3));
+    hasChanged = true;
+    }
+
+  if (splineNode->GetControlPointCoordinates(4)[0] != position5[0] || splineNode->GetControlPointCoordinates(4)[1] != position5[1] || splineNode->GetControlPointCoordinates(4)[2] != position5[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetHandlePosition(4,splineNode->GetControlPointCoordinates(4));
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so set the widget to modified
+    rep->NeedToRenderOn();
+    splineWidget->Modified();
+    }
+
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of widget to MRML node.
+void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkSplineWidget2 * splineWidget = vtkSplineWidget2::SafeDownCast(widget);
+
+  if (!splineWidget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get spline widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationSplineNode * splineNode = vtkMRMLAnnotationSplineNode::SafeDownCast(node);
+
+  if (!splineNode)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get spline node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the modified event gets fired
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
+  vtkSplineRepresentation * rep = vtkSplineRepresentation::SafeDownCast(splineWidget->GetRepresentation());
+
+  double position1[3];
+  double position2[3];
+  double position3[3];
+  double position4[3];
+  double position5[3];
+
+
+  rep->GetHandlePosition(0,position1);
+  rep->GetHandlePosition(1,position2);
+  rep->GetHandlePosition(2,position3);
+  rep->GetHandlePosition(3,position4);
+  rep->GetHandlePosition(4,position5);
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the mrml node
+  //
+  if (splineNode->GetControlPointCoordinates(0)[0] != position1[0] || splineNode->GetControlPointCoordinates(0)[1] != position1[1] || splineNode->GetControlPointCoordinates(0)[2] != position1[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    splineNode->SetControlPoint(position1, 0);
+    hasChanged = true;
+    }
+
+  if (splineNode->GetControlPointCoordinates(1)[0] != position2[0] || splineNode->GetControlPointCoordinates(1)[1] != position2[1] || splineNode->GetControlPointCoordinates(1)[2] != position2[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    splineNode->SetControlPoint(position2,1);
+    hasChanged = true;
+    }
+
+  if (splineNode->GetControlPointCoordinates(2)[0] != position3[0] || splineNode->GetControlPointCoordinates(2)[1] != position3[1] || splineNode->GetControlPointCoordinates(2)[2] != position3[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    splineNode->SetControlPoint(position3,2);
+    hasChanged = true;
+    }
+
+  if (splineNode->GetControlPointCoordinates(3)[0] != position4[0] || splineNode->GetControlPointCoordinates(3)[1] != position4[1] || splineNode->GetControlPointCoordinates(3)[2] != position4[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    splineNode->SetControlPoint(position4,3);
+    hasChanged = true;
+    }
+
+  if (splineNode->GetControlPointCoordinates(4)[0] != position5[0] || splineNode->GetControlPointCoordinates(4)[1] != position5[1] || splineNode->GetControlPointCoordinates(4)[2] != position5[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    splineNode->SetControlPoint(position5,3);
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so fire the modified event
+    splineNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, splineNode);
+    }
+
 }
 
 //---------------------------------------------------------------------------

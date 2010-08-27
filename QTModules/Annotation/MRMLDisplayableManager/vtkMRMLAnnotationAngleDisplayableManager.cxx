@@ -4,6 +4,8 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationAngleNode.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -16,6 +18,7 @@
 #include <vtkHandleWidget.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkInteractorEventRecorder.h>
+#include <vtkAbstractWidget.h>
 
 // Math includes
 #define _USE_MATH_DEFINES
@@ -37,46 +40,50 @@ public:
   static vtkAnnotationAngleWidgetCallback *New()
   { return new vtkAnnotationAngleWidgetCallback; }
 
-  virtual void Execute (vtkObject *caller, unsigned long event, void*)
-  {
-    if (event == vtkCommand::HoverEvent)
-      {
-      std::cout << "HoverEvent\n";
-      }
-    if (event == vtkCommand::EndInteractionEvent)
-      {
-      //std::cout << "EndInteraction" << std::endl;
-      vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::SafeDownCast(this->m_Widget->GetRepresentation());
-
-      double position1[3];
-      double position2[3];
-      double position3[3];
-
-      rep->GetPoint1WorldPosition(position1);
-      rep->GetPoint2WorldPosition(position2);
-      rep->GetCenterWorldPosition(position3);
-
-      this->m_Node->SetPosition1(position1);
-      this->m_Node->SetPosition2(position2);
-      this->m_Node->SetPositionCenter(position3);
-
-      this->m_Node->SetAngleMeasurement(rep->GetAngle() / M_PI * 180.0);
-      this->m_Node->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent,this->m_Node);
-      }
-  }
   vtkAnnotationAngleWidgetCallback(){}
 
-  void SetWidget(vtkAngleWidget *w)
+  virtual void Execute (vtkObject *caller, unsigned long event, void*)
+  {
+    if (event == vtkCommand::EndInteractionEvent)
+      {
+
+      // sanity checks
+      if (!this->m_DisplayableManager)
+        {
+        return;
+        }
+      if (!this->m_Node)
+        {
+        return;
+        }
+      if (!this->m_Widget)
+        {
+        return;
+        }
+      // sanity checks end
+
+      // the interaction with the widget ended, now propagate the changes to MRML
+      this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
+
+      }
+  }
+
+  void SetWidget(vtkAbstractWidget *w)
   {
     this->m_Widget = w;
   }
-  void SetNode(vtkMRMLAnnotationAngleNode *n)
+  void SetNode(vtkMRMLAnnotationNode *n)
   {
     this->m_Node = n;
   }
+  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
+  {
+    this->m_DisplayableManager = dm;
+  }
 
-  vtkAngleWidget * m_Widget;
-  vtkMRMLAnnotationAngleNode * m_Node;
+  vtkAbstractWidget * m_Widget;
+  vtkMRMLAnnotationNode * m_Node;
+  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
@@ -126,13 +133,12 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
 
   angleWidget->SetInteractor(this->GetInteractor());
   angleWidget->SetCurrentRenderer(this->GetRenderer());
-  //angleWidget->Modified();
-  //angleWidget->ProcessEventsOff();
 
   // add observer for end interaction
   vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
-  myCallback->m_Node = angleNode;
-  myCallback->m_Widget = angleWidget;
+  myCallback->SetNode(angleNode);
+  myCallback->SetWidget(angleWidget);
+  myCallback->SetDisplayableManager(this);
   angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   myCallback->Delete();
 
@@ -141,29 +147,6 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
   vtkDebugMacro("CreateWidget: Widget was set up")
 
   return angleWidget;
-
-}
-
-//---------------------------------------------------------------------------
-/// Propagate MRML properties to an existing angle widget.
-void vtkMRMLAnnotationAngleDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
-{
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
-
-  vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
-
-  vtkAbstractWidget* angleWidget = this->GetWidget(angleNode);
-  if (!angleWidget) {
-    vtkErrorMacro("Widget was not found!");
-    return;
-  }
-
-  // not yet
-
 
 }
 
@@ -213,6 +196,197 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   recorder->SetInputString(o.str().c_str());
   recorder->Play();
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of MRML node to widget.
+void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkAngleWidget* angleWidget = vtkAngleWidget::SafeDownCast(widget);
+
+  if (!angleWidget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get angle widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
+
+  if (!angleNode)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get angle node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the widget will be set to modified
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::SafeDownCast(angleWidget->GetRepresentation());
+
+  double position1[3];
+  double position2[3];
+  double position3[3];
+
+  rep->GetPoint1WorldPosition(position1);
+  rep->GetPoint2WorldPosition(position2);
+  rep->GetCenterWorldPosition(position3);
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the widget
+  //
+  if (angleNode->GetPosition1()[0] != position1[0] || angleNode->GetPosition1()[1] != position1[1] || angleNode->GetPosition1()[2] != position1[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetPoint1WorldPosition(angleNode->GetPosition1());
+    hasChanged = true;
+    }
+
+  if (angleNode->GetPosition2()[0] != position2[0] || angleNode->GetPosition2()[1] != position2[1] || angleNode->GetPosition2()[2] != position2[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetPoint2WorldPosition(angleNode->GetPosition2());
+    hasChanged = true;
+    }
+
+  if (angleNode->GetPositionCenter()[0] != position3[0] || angleNode->GetPositionCenter()[1] != position3[1] || angleNode->GetPositionCenter()[2] != position3[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetCenterWorldPosition(angleNode->GetPositionCenter());
+    hasChanged = true;
+    }
+
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so set the widget to modified
+    rep->NeedToRenderOn();
+    angleWidget->Modified();
+    }
+
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of widget to MRML node.
+void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkAngleWidget* angleWidget = vtkAngleWidget::SafeDownCast(widget);
+
+  if (!angleWidget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get angle widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
+
+  if (!angleNode)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get angle node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the modified event gets fired
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
+  vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::SafeDownCast(angleWidget->GetRepresentation());
+
+  double position1[3];
+  double position2[3];
+  double position3[3];
+
+  rep->GetPoint1WorldPosition(position1);
+  rep->GetPoint2WorldPosition(position2);
+  rep->GetCenterWorldPosition(position3);
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the mrml node
+  //
+  if (angleNode->GetPosition1()[0] != position1[0] || angleNode->GetPosition1()[1] != position1[1] || angleNode->GetPosition1()[2] != position1[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    angleNode->SetPosition1(position1);
+    hasChanged = true;
+    }
+
+  if (angleNode->GetPosition2()[0] != position2[0] || angleNode->GetPosition2()[1] != position2[1] || angleNode->GetPosition2()[2] != position2[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    angleNode->SetPosition2(position2);
+    hasChanged = true;
+    }
+
+  if (angleNode->GetPositionCenter()[0] != position3[0] || angleNode->GetPositionCenter()[1] != position3[1] || angleNode->GetPositionCenter()[2] != position3[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    angleNode->SetPositionCenter(position3);
+    hasChanged = true;
+    }
+
+  //
+  // Check if the measurement value of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the mrml node
+  //
+  double angleInDegrees = rep->GetAngle() / M_PI * 180.0;
+
+  if (angleNode->GetAngleMeasurement() != angleInDegrees)
+    {
+    // the angle has changes, so update the mrml property
+    angleNode->SetAngleMeasurement(angleInDegrees);
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so fire the modified event
+    angleNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, angleNode);
+    }
+
 }
 
 //---------------------------------------------------------------------------

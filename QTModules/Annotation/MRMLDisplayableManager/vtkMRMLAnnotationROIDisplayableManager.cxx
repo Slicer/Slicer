@@ -4,6 +4,8 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -14,6 +16,7 @@
 #include <vtkBoxWidget2.h>
 #include <vtkRenderer.h>
 #include <vtkHandleRepresentation.h>
+#include <vtkAbstractWidget.h>
 
 // std includes
 #include <string>
@@ -35,14 +38,51 @@ public:
   static vtkAnnotationROIWidgetCallback *New()
   { return new vtkAnnotationROIWidgetCallback; }
 
+  vtkAnnotationROIWidgetCallback(){}
+
+
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
-    if (event == vtkCommand::HoverEvent)
-    {
-      std::cout << "HoverEvent\n";
-    }
+    if (event == vtkCommand::EndInteractionEvent)
+      {
+
+      // sanity checks
+      if (!this->m_DisplayableManager)
+        {
+        return;
+        }
+      if (!this->m_Node)
+        {
+        return;
+        }
+      if (!this->m_Widget)
+        {
+        return;
+        }
+      // sanity checks end
+
+      // the interaction with the widget ended, now propagate the changes to MRML
+      this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
+
+      }
   }
-  vtkAnnotationROIWidgetCallback(){}
+
+  void SetWidget(vtkAbstractWidget *w)
+  {
+    this->m_Widget = w;
+  }
+  void SetNode(vtkMRMLAnnotationNode *n)
+  {
+    this->m_Node = n;
+  }
+  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
+  {
+    this->m_DisplayableManager = dm;
+  }
+
+  vtkAbstractWidget * m_Widget;
+  vtkMRMLAnnotationNode * m_Node;
+  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
@@ -85,9 +125,7 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
 
   boxWidget->CreateDefaultRepresentation();
 
-  VTK_CREATE(vtkBoxRepresentation,boxRepresentation);
-
-  boxRepresentation = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+  vtkBoxRepresentation * boxRepresentation = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
   double * origin = roiNode->GetXYZ();
   double * radius = roiNode->GetRadiusXYZ();
@@ -105,25 +143,21 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
   boxRepresentation->PlaceWidget(bounds);
 
 
-  boxWidget->ProcessEventsOff();
+  //boxWidget->ProcessEventsOff();
 
   boxRepresentation->EndWidgetInteraction(origin);
 
+  vtkAnnotationROIWidgetCallback *myCallback = vtkAnnotationROIWidgetCallback::New();
+  myCallback->SetNode(roiNode);
+  myCallback->SetWidget(boxWidget);
+  myCallback->SetDisplayableManager(this);
+  boxWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
+
+  // the callback
+
   return boxWidget;
 
-}
-
-//---------------------------------------------------------------------------
-/// Propagate MRML properties to an existing text widget.
-void vtkMRMLAnnotationROIDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
-{
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
-
-  // nothing yet
 }
 
 //---------------------------------------------------------------------------
@@ -138,6 +172,144 @@ void vtkMRMLAnnotationROIDisplayableManager::OnWidgetCreated(vtkAbstractWidget *
     }
 
   // nothing yet
+}
+
+
+//---------------------------------------------------------------------------
+/// Propagate properties of MRML node to widget.
+void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkBoxWidget2* boxWidget = vtkBoxWidget2::SafeDownCast(widget);
+
+  if (!boxWidget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get box widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
+
+  if (!roiNode)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get ROI node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the widget will be set to modified
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkBoxRepresentation * rep = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+
+  double * bounds = rep->GetBounds();
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the widget
+  //
+  if (roiNode->GetBounds()[0] != bounds[0] || roiNode->GetBounds()[1] != bounds[1] || roiNode->GetBounds()[2] != bounds[2] || roiNode->GetBounds()[3] != bounds[3] || roiNode->GetBounds()[4] != bounds[4] || roiNode->GetBounds()[5] != bounds[5])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->PlaceWidget(roiNode->GetBounds());
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so set the widget to modified
+    rep->NeedToRenderOn();
+    boxWidget->Modified();
+    }
+
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of widget to MRML node.
+void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkBoxWidget2* boxWidget = vtkBoxWidget2::SafeDownCast(widget);
+
+  if (!boxWidget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get box widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationROINode* roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
+
+  if (!roiNode)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get ROI node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the modified event gets fired
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
+  vtkBoxRepresentation * rep = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
+
+  double * bounds = rep->GetBounds();
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the mrml node
+  //
+  if (roiNode->GetBounds()[0] != bounds[0] || roiNode->GetBounds()[1] != bounds[1] || roiNode->GetBounds()[2] != bounds[2] || roiNode->GetBounds()[3] != bounds[3] || roiNode->GetBounds()[4] != bounds[4] || roiNode->GetBounds()[5] != bounds[5])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    roiNode->SetBounds(bounds);
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so fire the modified event
+    roiNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, roiNode);
+    }
+
 }
 
 //---------------------------------------------------------------------------

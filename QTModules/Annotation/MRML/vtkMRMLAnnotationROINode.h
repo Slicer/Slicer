@@ -134,6 +134,12 @@ public:
   void SetRadiusXYZ(double* RadiusXYZ);
   vtkGetVectorMacro(RadiusXYZ,double,3);
 
+  ///
+  /// Get/Set for the bounds in RAS coordinates
+  void SetBounds(double boundsX1, double boundsX2, double boundsY1, double boundsY2, double boundsZ1, double boundsZ2);
+  void SetBounds(double * bounds);
+  vtkGetVectorMacro(Bounds, double, 6);
+
   std::vector<double> GetROIMeasurement();
   void SetROIMeasurement(double val1, double val2, double val3);
 
@@ -180,6 +186,9 @@ protected:
   /// 
   /// The radius of the ROI box in IJK space
   double RadiusIJK[3];
+
+  /// The bounds of the box in RAS coordinates
+  double Bounds[6];
 
   /// Control the orientation of the normals
   int InsideOut;

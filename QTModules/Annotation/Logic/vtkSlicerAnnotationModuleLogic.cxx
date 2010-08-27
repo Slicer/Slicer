@@ -26,7 +26,6 @@
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLTransformNode.h> // for ruler
 #include <vtkMRMLLinearTransformNode.h> // for ruler
-#include <vtkMRMLFiducial.h>
 #include <vtkMRMLBSplineTransformNode.h>
 
 // VTK includes
@@ -1451,5 +1450,27 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
 
   return 0;
 
+}
+
+//---------------------------------------------------------------------------
+// Toggle the lock flag of an annotation MRML Node and return the updated flag
+//---------------------------------------------------------------------------
+int vtkSlicerAnnotationModuleLogic::ToggleAnnotationLockUnlock(const char * id)
+{
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationIcon: Could not get the MRML node.")
+    return 0;
+    }
+
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
+      node);
+
+  // toggle the lock flag on the mrml node
+  annotationNode->SetLocked(!annotationNode->GetLocked());
+
+  return annotationNode->GetLocked();
 }
 

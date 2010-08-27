@@ -4,6 +4,8 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationBidimensionalNode.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -15,6 +17,7 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkBiDimensionalRepresentation2D.h>
 #include <vtkInteractorEventRecorder.h>
+#include <vtkAbstractWidget.h>
 
 // std includes
 #include <string>
@@ -35,48 +38,50 @@ public:
   static vtkAnnotationBidimensionalWidgetCallback *New()
   { return new vtkAnnotationBidimensionalWidgetCallback; }
 
+  vtkAnnotationBidimensionalWidgetCallback(){}
+
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
-    if (event == vtkCommand::HoverEvent)
-      {
-      std::cout << "HoverEvent\n";
-      }
     if (event == vtkCommand::EndInteractionEvent)
       {
 
-      // sync MRML Node to widget
+      // sanity checks
+      if (!this->m_DisplayableManager)
+        {
+        return;
+        }
+      if (!this->m_Node)
+        {
+        return;
+        }
+      if (!this->m_Widget)
+        {
+        return;
+        }
+      // sanity checks end
 
-      vtkWidgetRepresentation * rep = this->m_Widget->GetRepresentation();
-      vtkBiDimensionalRepresentation2D * bidimensionalRep = vtkBiDimensionalRepresentation2D::SafeDownCast(rep);
+      // the interaction with the widget ended, now propagate the changes to MRML
+      this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
 
-      double position1[3];
-      double position2[3];
-      double position3[3];
-      double position4[3];
-
-      bidimensionalRep->GetPoint1WorldPosition(position1);
-      bidimensionalRep->GetPoint2WorldPosition(position2);
-      bidimensionalRep->GetPoint3WorldPosition(position3);
-      bidimensionalRep->GetPoint4WorldPosition(position4);
-
-      this->m_Node->SetControlPoint(position1,0);
-      this->m_Node->SetControlPoint(position2,1);
-      this->m_Node->SetControlPoint(position3,2);
-      this->m_Node->SetControlPoint(position4,3);
-
-      this->m_Node->SetBidimensionalMeasurement(bidimensionalRep->GetLength1(),bidimensionalRep->GetLength2());
-
-    }
+      }
   }
-  vtkAnnotationBidimensionalWidgetCallback(){}
-  ~vtkAnnotationBidimensionalWidgetCallback()
+
+  void SetWidget(vtkAbstractWidget *w)
   {
-    this->m_Widget = 0;
-    this->m_Node = 0;
+    this->m_Widget = w;
+  }
+  void SetNode(vtkMRMLAnnotationNode *n)
+  {
+    this->m_Node = n;
+  }
+  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
+  {
+    this->m_DisplayableManager = dm;
   }
 
-  vtkBiDimensionalWidget * m_Widget;
-  vtkMRMLAnnotationBidimensionalNode * m_Node;
+  vtkAbstractWidget * m_Widget;
+  vtkMRMLAnnotationNode * m_Node;
+  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
@@ -125,19 +130,6 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
 
   return bidimensionalWidget;
 
-}
-
-//---------------------------------------------------------------------------
-/// Propagate MRML properties to an existing text widget.
-void vtkMRMLAnnotationBidimensionalDisplayableManager::SetWidget(vtkMRMLAnnotationNode* node)
-{
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
-
-  // nothing yet
 }
 
 //---------------------------------------------------------------------------
@@ -226,12 +218,219 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
 
   // finally we add observer for end interaction, what a dirty hack!! if we added it before, it would all be crazy
   vtkAnnotationBidimensionalWidgetCallback *myCallback = vtkAnnotationBidimensionalWidgetCallback::New();
-  myCallback->m_Node = bidimensionalNode;
-  myCallback->m_Widget = bidimensionalWidget;
+  myCallback->SetNode(bidimensionalNode);
+  myCallback->SetWidget(bidimensionalWidget);
+  myCallback->SetDisplayableManager(this);
   bidimensionalWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   myCallback->Delete();
 
   // we do not have to update the coordinates here, we already did during creation of the MRML node
+  // in the future, the callback handles the update of the MRML node
+
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of MRML node to widget.
+void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkBiDimensionalWidget* bidimensionalWidget = vtkBiDimensionalWidget::SafeDownCast(widget);
+
+  if (!bidimensionalWidget)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationBidimensionalNode* bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node);
+
+  if (!bidimensionalNode)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the widget will be set to modified
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkBiDimensionalRepresentation2D * rep = vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation());
+
+  double position1[3];
+  double position2[3];
+  double position3[3];
+  double position4[3];
+
+  rep->GetPoint1WorldPosition(position1);
+  rep->GetPoint2WorldPosition(position2);
+  rep->GetPoint3WorldPosition(position3);
+  rep->GetPoint4WorldPosition(position4);
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to widget
+  //
+  if (bidimensionalNode->GetControlPointCoordinates(0)[0] != position1[0] || bidimensionalNode->GetControlPointCoordinates(0)[1] != position1[1] || bidimensionalNode->GetControlPointCoordinates(0)[2] != position1[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetPoint1WorldPosition(bidimensionalNode->GetControlPointCoordinates(0));
+    hasChanged = true;
+    }
+
+  if (bidimensionalNode->GetControlPointCoordinates(1)[0] != position2[0] || bidimensionalNode->GetControlPointCoordinates(1)[1] != position2[1] || bidimensionalNode->GetControlPointCoordinates(1)[2] != position2[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetPoint2WorldPosition(bidimensionalNode->GetControlPointCoordinates(1));
+    hasChanged = true;
+    }
+
+  if (bidimensionalNode->GetControlPointCoordinates(2)[0] != position3[0] || bidimensionalNode->GetControlPointCoordinates(2)[1] != position3[1] || bidimensionalNode->GetControlPointCoordinates(2)[2] != position3[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetPoint3WorldPosition(bidimensionalNode->GetControlPointCoordinates(2));
+    hasChanged = true;
+    }
+
+  if (bidimensionalNode->GetControlPointCoordinates(3)[0] != position4[0] || bidimensionalNode->GetControlPointCoordinates(3)[1] != position4[1] || bidimensionalNode->GetControlPointCoordinates(3)[2] != position4[2])
+    {
+    // at least one coordinate has changed, so update the widget
+    rep->SetPoint4WorldPosition(bidimensionalNode->GetControlPointCoordinates(3));
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so set the widget to modified
+    rep->NeedToRenderOn();
+    bidimensionalWidget->Modified();
+    }
+
+}
+
+//---------------------------------------------------------------------------
+/// Propagate properties of widget to MRML node.
+void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+{
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkBiDimensionalWidget* bidimensionalWidget = vtkBiDimensionalWidget::SafeDownCast(widget);
+
+  if (!bidimensionalWidget)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get bidimensional widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationBidimensionalNode* bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node);
+
+  if (!bidimensionalNode)
+    {
+    vtkErrorMacro("PropagateWidgetToMRML: Could not get bidimensional node!")
+    return;
+    }
+
+  // if this flag is true after the checks below, the modified event gets fired
+  bool hasChanged = false;
+
+  // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
+  vtkBiDimensionalRepresentation2D * rep = vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation());
+
+  double position1[3];
+  double position2[3];
+  double position3[3];
+  double position4[3];
+
+  rep->GetPoint1WorldPosition(position1);
+  rep->GetPoint2WorldPosition(position2);
+  rep->GetPoint3WorldPosition(position3);
+  rep->GetPoint4WorldPosition(position4);
+
+  //
+  // Check if the position of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the mrml node
+  //
+  if (bidimensionalNode->GetControlPointCoordinates(0)[0] != position1[0] || bidimensionalNode->GetControlPointCoordinates(0)[1] != position1[1] || bidimensionalNode->GetControlPointCoordinates(0)[2] != position1[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    bidimensionalNode->SetControlPoint(position1,0);
+    hasChanged = true;
+    }
+
+  if (bidimensionalNode->GetControlPointCoordinates(1)[0] != position2[0] || bidimensionalNode->GetControlPointCoordinates(1)[1] != position2[1] || bidimensionalNode->GetControlPointCoordinates(1)[2] != position2[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    bidimensionalNode->SetControlPoint(position2,1);
+    hasChanged = true;
+    }
+
+  if (bidimensionalNode->GetControlPointCoordinates(2)[0] != position3[0] || bidimensionalNode->GetControlPointCoordinates(2)[1] != position3[1] || bidimensionalNode->GetControlPointCoordinates(2)[2] != position3[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    bidimensionalNode->SetControlPoint(position3,2);
+    hasChanged = true;
+    }
+
+  if (bidimensionalNode->GetControlPointCoordinates(3)[0] != position4[0] || bidimensionalNode->GetControlPointCoordinates(3)[1] != position4[1] || bidimensionalNode->GetControlPointCoordinates(3)[2] != position4[2])
+    {
+    // at least one coordinate has changed, so update the mrml property
+    bidimensionalNode->SetControlPoint(position4,3);
+    hasChanged = true;
+    }
+
+  //
+  // Check if the measurement value of the widget is different than the saved one in the mrml node
+  // If yes, propagate the changes to the mrml node
+  if (bidimensionalNode->GetBidimensionalMeasurement()[0] != rep->GetLength1() || bidimensionalNode->GetBidimensionalMeasurement()[1] != rep->GetLength2())
+    {
+    // the measurement has changes, so update the mrml property
+    bidimensionalNode->SetBidimensionalMeasurement(rep->GetLength1(), rep->GetLength2());
+    hasChanged = true;
+    }
+
+  if (hasChanged)
+    {
+    // at least one value has changed, so fire the modified event
+    bidimensionalNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, bidimensionalNode);
+    }
 
 }
 

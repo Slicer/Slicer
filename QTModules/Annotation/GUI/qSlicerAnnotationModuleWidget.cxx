@@ -614,6 +614,8 @@ void qSlicerAnnotationModuleWidgetPrivate::removeAnnotation(int num)
 
 void qSlicerAnnotationModuleWidgetPrivate::updateSelection(int totalitems)
 {
+
+
   if (isSelectAll)
     {
     for (int i = 0; i < totalitems; ++i)
@@ -1232,7 +1234,6 @@ void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
     return;
     }
 
-  std::cout << "Selected:" << selectedRows.size() << std::endl;
   /*
    foreach(int i, selectedRows)
    {
