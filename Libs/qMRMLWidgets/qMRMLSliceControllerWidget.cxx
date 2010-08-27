@@ -214,6 +214,11 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   compositingMenu->addAction(this->actionCompositingReverse_alpha_blend);
   compositingMenu->addAction(this->actionCompositingAdd);
   compositingMenu->addAction(this->actionCompositingSubtract);
+  QActionGroup* compositingGroup = new QActionGroup(compositingMenu);
+  compositingGroup->addAction(this->actionCompositingAlpha_blend);
+  compositingGroup->addAction(this->actionCompositingReverse_alpha_blend);
+  compositingGroup->addAction(this->actionCompositingAdd);
+  compositingGroup->addAction(this->actionCompositingSubtract);
   advancedMenu->addMenu(compositingMenu);
   // Spacing mode
   QMenu* sliceSpacingMode = new QMenu(tr("Slice spacing mode"), advancedMenu);
@@ -325,6 +330,31 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 
   // Update slice visibility toggle
   this->SliceVisibilityButton->setChecked(this->MRMLSliceNode->GetSliceVisible());
+
+  // Label Outline
+  bool showOutline = this->MRMLSliceNode->GetUseLabelOutline();
+  this->actionShow_label_volume_outline->setChecked(showOutline);
+  this->actionShow_label_volume_outline->setText(showOutline ?
+    tr("Hide label volume outlines") : tr("Show label volume outlines"));
+  // Reformat
+  bool showReformat = this->MRMLSliceNode->GetWidgetVisible();
+  this->actionShow_reformat_widget->setChecked(showReformat);
+  this->actionShow_reformat_widget->setText(
+    showReformat ? tr("Hide reformat widget"): tr("Show reformat widget"));
+  // Slice spacing mode
+  this->actionSliceSpacingModeAutomatic->setChecked(
+    this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode);
+  int rows = this->MRMLSliceNode->GetLayoutGridRows();
+  int columns = this->MRMLSliceNode->GetLayoutGridColumns();
+  this->actionLightbox1x1_view->setChecked(rows == 1 && columns == 1);
+  this->actionLightbox1x2_view->setChecked(rows == 1 && columns == 2);
+  this->actionLightbox1x3_view->setChecked(rows == 1 && columns == 3);
+  this->actionLightbox1x4_view->setChecked(rows == 1 && columns == 4);
+  this->actionLightbox1x6_view->setChecked(rows == 1 && columns == 6);
+  this->actionLightbox1x8_view->setChecked(rows == 1 && columns == 8);
+  this->actionLightbox2x2_view->setChecked(rows == 2 && columns == 2);
+  this->actionLightbox3x3_view->setChecked(rows == 3 && columns == 3);
+  this->actionLightbox6x6_view->setChecked(rows == 6 && columns == 6);
 }
 
 // --------------------------------------------------------------------------
@@ -354,6 +384,26 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 
   // Update slice link toggle
   this->SliceLinkButton->setChecked(this->MRMLSliceCompositeNode->GetLinkedControl());
+
+  // Label opacity
+  this->LabelOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetLabelOpacity());
+  // Compositing
+  switch(this->MRMLSliceCompositeNode->GetCompositing())
+    {
+    case vtkMRMLSliceCompositeNode::Alpha:
+      this->actionCompositingAlpha_blend->setChecked(true);
+      break;
+    case vtkMRMLSliceCompositeNode::ReverseAlpha:
+      this->actionCompositingReverse_alpha_blend->setChecked(true);
+      break;
+    case vtkMRMLSliceCompositeNode::Add:
+      this->actionCompositingAdd->setChecked(true);
+      break;
+    case vtkMRMLSliceCompositeNode::Subtract:
+      this->actionCompositingSubtract->setChecked(true);
+      break;
+    }
+  
 }
 
 // --------------------------------------------------------------------------
@@ -525,6 +575,7 @@ void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceL
   if (displayNode)
     {
     p->mrmlScene()->SaveStateForUndo(displayNode);
+    // TODO, update the QAction when the display node is modified
     displayNode->SetInterpolate(interpolate);
     vtkMRMLVolumeNode* volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode();
     if (volumeNode)
@@ -543,6 +594,7 @@ void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceL
   if (displayNode)
     {
     p->mrmlScene()->SaveStateForUndo(displayNode);
+    // TODO, update the QAction when the display node is modified
     displayNode->SetInterpolate(interpolate);
     vtkMRMLVolumeNode* volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode();
     if (volumeNode)

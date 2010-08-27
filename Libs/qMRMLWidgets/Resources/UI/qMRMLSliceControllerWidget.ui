@@ -422,7 +422,7 @@ Use this display to cross-reference to filmed images or other displays.</string>
      <normalon>:/Icons/SlicesLabelOutline.png</normalon>:/Icons/SlicesLabelNoOutline.png</iconset>
    </property>
    <property name="text">
-    <string>Don't show label volume outlines</string>
+    <string>Hide label volume outlines</string>
    </property>
    <property name="toolTip">
     <string>Toggle between showing label map volume with regions outlined or filled.</string>
@@ -442,21 +442,33 @@ Use this display to cross-reference to filmed images or other displays.</string>
    </property>
   </action>
   <action name="actionCompositingAlpha_blend">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Alpha blend</string>
    </property>
   </action>
   <action name="actionCompositingReverse_alpha_blend">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Reverse alpha blend</string>
    </property>
   </action>
   <action name="actionCompositingAdd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Add</string>
    </property>
   </action>
   <action name="actionCompositingSubtract">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Subtract</string>
    </property>
@@ -471,18 +483,6 @@ Use this display to cross-reference to filmed images or other displays.</string>
    </property>
    <property name="text">
     <string>Automatic</string>
-   </property>
-  </action>
-  <action name="actionSliceSpacingModeManual">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
-   </property>
-   <property name="text">
-    <string>Manual</string>
    </property>
   </action>
   <action name="actionLightbox1x1_view">
@@ -555,14 +555,6 @@ Use this display to cross-reference to filmed images or other displays.</string>
    </property>
    <property name="text">
     <string>6x6 view</string>
-   </property>
-  </action>
-  <action name="actionLightboxCustomized_view">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>customized view</string>
    </property>
   </action>
   <action name="actionAdjustDisplayForeground_volume">
