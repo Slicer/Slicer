@@ -106,36 +106,45 @@ public:
   QString currentNodeId()const;
 
   ///
-  /// Set/Get SelectNodeUponCreation flags
+  /// if true, when the user create a node using "Add node", the node will be
+  /// automatically selected. It doesn't apply if the node is programatically
+  /// added (when the combobox is populated by the scene).
   bool selectNodeUponCreation()const;
   void setSelectNodeUponCreation(bool value);
 
   ///
   /// Set/Get NoneEnabled flags
+  /// An additional item is added into the menu list, where the user can select
+  /// "None".
   bool noneEnabled()const;
   void setNoneEnabled(bool enable);
 
   ///
-  /// Set/Get AddEnabled flags
+  /// Allow the user to create a new node. An "Add node" item is added into the
+  /// menu list.
   bool addEnabled()const;
   void setAddEnabled(bool enable);
 
   ///
-  /// Set/Get AddEnabled flags
+  /// Allow the user to delete the currently selected node. A "Remove node" item
+  /// is added to the menu list.
   bool removeEnabled()const;
   void setRemoveEnabled(bool enable);
 
-  ///
-  /// Set/Get AddEnabled flags
+  /// TODO
+  /// Allow the user to modify the properties of the currently selected.
+  /// Basic properties like the node name can be changed.
   bool editEnabled()const;
   void setEditEnabled(bool enable);
 
-  /// 
-  /// Model associated to the combobox
+  ///
+  /// Internal model associated to the combobox
   QAbstractItemModel* model()const;
+
 public slots:
   ///
-  /// Set the scene the NodeSelector listens to.
+  /// Set the scene the combobox listens to. The scene is observed and when new
+  /// nodes are added to the scene, the menu list is populated.
   virtual void setMRMLScene(vtkMRMLScene* scene);
 
   ///
@@ -147,6 +156,13 @@ public slots:
   void setCurrentNode(const QString& nodeID);
 
   ///
+  /// Select the current node by index. The index refers to the order of the nodes
+  /// into the list. If index is 0, the first node will be selected (even if
+  /// "NoneEnabled" is true).
+  /// \sa nodeCount, setCurrentNode(vtkMRMLNode* ), setCurrentNode(const QString&)
+  void setCurrentNode(int index);
+
+  ///
   /// Create a node of the same type than on the "node types" properties
   virtual void addNode();
 
@@ -155,7 +171,7 @@ public slots:
   virtual void removeCurrentNode();
 
   ///
-  /// Edit the current node
+  /// Edit the currently selected node.
   virtual void editCurrentNode();
 
 signals:
