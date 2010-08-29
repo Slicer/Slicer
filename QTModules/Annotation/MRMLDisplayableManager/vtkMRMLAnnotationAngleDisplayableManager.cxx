@@ -462,6 +462,9 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInThreeDRenderWindow(doubl
 
     // we can't set coordinates here to MRML, we will do it later
 
+    // switch to updating state to avoid events mess
+    this->m_Updating = 1;
+
     // create MRML node
     vtkMRMLAnnotationAngleNode *angleNode = vtkMRMLAnnotationAngleNode::New();
     angleNode->Initialize(this->GetMRMLScene());
@@ -469,6 +472,9 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInThreeDRenderWindow(doubl
     angleNode->SetName(angleNode->GetScene()->GetUniqueNameByString("AnnotationAngle"));
 
     angleNode->Delete();
+
+    // reset updating state
+    this->m_Updating = 0;
 
     } // has enough clicks
 
