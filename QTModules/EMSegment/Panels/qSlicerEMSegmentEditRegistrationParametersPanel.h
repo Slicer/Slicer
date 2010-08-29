@@ -23,6 +23,14 @@ public:
 
   void updateWidgetFromMRML();
 
+  void updateMRMLFromWidget();
+
+private slots:
+
+  void onCurrentAffineRegistrationIndexChanged(int index);
+  void onCurrentDeformableRegistrationIndexChanged(int index);
+  void onCurrentInterpolationIndexChanged(int index);
+
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentEditRegistrationParametersPanel);
 };
