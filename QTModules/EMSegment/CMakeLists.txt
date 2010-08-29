@@ -98,6 +98,8 @@ SET(workflow_SRCS
   Workflow/qSlicerEMSegmentEditNodeBasedParametersStep.h
   Workflow/qSlicerEMSegmentEditRegistrationParametersStep.cxx     # Step 5
   Workflow/qSlicerEMSegmentEditRegistrationParametersStep.h
+  Workflow/qSlicerEMSegmentSegmentationLogicStep.cxx              # Step 10
+  Workflow/qSlicerEMSegmentSegmentationLogicStep.h
   Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.cxx   # Step 7
   Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.h
   Workflow/qSlicerEMSegmentRunSegmentationStep.cxx                # Step 9
@@ -115,6 +117,7 @@ SET(workflow_MOC_SRCS
   Workflow/qSlicerEMSegmentDefineTaskStep.h                     # Step 1
   Workflow/qSlicerEMSegmentEditNodeBasedParametersStep.h        # Step 8
   Workflow/qSlicerEMSegmentEditRegistrationParametersStep.h     # Step 5
+  Workflow/qSlicerEMSegmentSegmentationLogicStep.h              # Step 10
   Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.h   # Step 7
   Workflow/qSlicerEMSegmentRunSegmentationStep.h                # Step 9
 

@@ -23,6 +23,7 @@
 #include "qSlicerEMSegmentSpecifyIntensityDistributionStep.h"
 #include "qSlicerEMSegmentEditNodeBasedParametersStep.h"
 #include "qSlicerEMSegmentRunSegmentationStep.h"
+#include "qSlicerEMSegmentSegmentationLogicStep.h"
 
 // STD includes
 #include <cstdlib>
@@ -115,24 +116,21 @@ void qSlicerEMSegmentModuleWidget::setup()
 
   // Step specific to "simple" mode
   qSlicerEMSegmentWorkflowWidgetStep * defineInputChannelsSimpleStep =
-      new qSlicerEMSegmentDefineInputChannelsStep(
-          qSlicerEMSegmentDefineInputChannelsStep::Simple, d->Workflow);
+    new qSlicerEMSegmentDefineInputChannelsStep(
+                                                qSlicerEMSegmentDefineInputChannelsStep::Simple, d->Workflow);
   allSteps << defineInputChannelsSimpleStep;
 
   // The following steps are common to "simple" and "advanced" modes
   QList<qSlicerEMSegmentWorkflowWidgetStep*> commonSteps;
   commonSteps << new qSlicerEMSegmentDefineAnatomicalTreeStep(d->Workflow)
-      << new qSlicerEMSegmentDefineAtlasStep(d->Workflow)
-      << new qSlicerEMSegmentEditRegistrationParametersStep(d->Workflow)
-      << new qSlicerEMSegmentDefinePreprocessingStep(d->Workflow)
-      << new qSlicerEMSegmentSpecifyIntensityDistributionStep(d->Workflow)
-      << new qSlicerEMSegmentEditNodeBasedParametersStep(d->Workflow);
-  allSteps << commonSteps;
-
-  qSlicerEMSegmentWorkflowWidgetStep * runSegmentationStep =
-      new qSlicerEMSegmentRunSegmentationStep(d->Workflow);
-  commonSteps << runSegmentationStep;
-  allSteps << runSegmentationStep;
+              << new qSlicerEMSegmentDefineAtlasStep(d->Workflow)
+              << new qSlicerEMSegmentEditRegistrationParametersStep(d->Workflow)
+              << new qSlicerEMSegmentDefinePreprocessingStep(d->Workflow)
+              << new qSlicerEMSegmentSpecifyIntensityDistributionStep(d->Workflow)
+              << new qSlicerEMSegmentEditNodeBasedParametersStep(d->Workflow)
+              << new qSlicerEMSegmentRunSegmentationStep(d->Workflow)
+              << new qSlicerEMSegmentSegmentationLogicStep(d->Workflow);
+  allSteps << commonSteps;  
 
   // Initial step
   d->Workflow->setInitialStep(defineTaskStep);
@@ -156,10 +154,11 @@ void qSlicerEMSegmentModuleWidget::setup()
                                commonSteps.value(i + 1));
     }
 
-  // Assign MRML manager to all steps
+  // Assign MRML manager and EMSegment logic to all steps
   foreach(qSlicerEMSegmentWorkflowWidgetStep * step, allSteps)
     {
     step->setMRMLManager(d->logic()->GetMRMLManager());
+    step->setEMSegmentLogic(d->logic());
     }
 
   d->WorkflowWidget->buttonBoxWidget()->setBackButtonDefaultText("");

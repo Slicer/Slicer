@@ -19,6 +19,7 @@
 
 // MRML includes
 #include <vtkMRMLScalarVolumeNode.h>
+#include <vtkMRMLEMSWorkingDataNode.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger(
@@ -184,6 +185,17 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
     return;
     }
 
+  // Update whether the AlignedTargetNode and AlignedAtlasNode is valid in the MRML manager,
+  // according to whether we are in simple or advanced modes.
+  if (this->id() == Self::SimpleStepId)
+    {
+    // TODO Original code calls tcl script here for customized EM Segment workflows
+    // TODO Original code calls:
+    //this->UpdateTaskPreprocessingSetting();
+    this->mrmlManager()->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(0);
+    this->mrmlManager()->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(0);
+    }
+
   // Check
   emit validationComplete(true);
 }
@@ -203,7 +215,6 @@ void qSlicerEMSegmentDefineInputChannelsStep::onExit(
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
   Q_UNUSED(goingTo);
-  Q_UNUSED(transitionType);
 
   CTK_D(qSlicerEMSegmentDefineInputChannelsStep);
 

@@ -73,7 +73,7 @@ public:
 //  virtual int       SourceTclFile(vtkKWApplication*app,const char *tclFile);
 //  virtual int       SourceTaskFiles(vtkKWApplication* app);
 //  virtual int       SourcePreprocessingTclFiles(vtkKWApplication* app);
-//  virtual void      StartSegmentationWithoutPreprocessing();
+  virtual void      StartSegmentationWithoutPreprocessing();
 //  int               ComputeIntensityDistributionsFromSpatialPrior(vtkKWApplication* app);
 
 

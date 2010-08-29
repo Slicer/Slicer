@@ -24,7 +24,7 @@ qSlicerEMSegmentRunSegmentationStepPrivate::qSlicerEMSegmentRunSegmentationStepP
 // qSlicerEMSegmentRunSegmentationStep methods
 
 //-----------------------------------------------------------------------------
-const QString qSlicerEMSegmentRunSegmentationStep::StepId = "Segment";
+const QString qSlicerEMSegmentRunSegmentationStep::StepId = "RunSegmentation";
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentRunSegmentationStep::qSlicerEMSegmentRunSegmentationStep(
@@ -33,6 +33,7 @@ qSlicerEMSegmentRunSegmentationStep::qSlicerEMSegmentRunSegmentationStep(
   CTK_INIT_PRIVATE(qSlicerEMSegmentRunSegmentationStep);
   this->setName("9/9. Run Segmentation");
   this->setDescription("Apply EM algorithm to segment target image.");
+  this->setButtonBoxHints(ctkWorkflowWidgetStep::NextButtonDisabled);
 }
 
 //-----------------------------------------------------------------------------

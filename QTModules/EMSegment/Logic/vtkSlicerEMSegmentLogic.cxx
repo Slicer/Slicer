@@ -1718,143 +1718,146 @@ double vtkSlicerEMSegmentLogic::GuessRegistrationBackgroundLevel(vtkMRMLVolumeNo
 //  this->StartSegmentationWithoutPreprocessing();
 //}
 
-////----------------------------------------------------------------------------
-//void vtkSlicerEMSegmentLogic::StartSegmentationWithoutPreprocessing()
-//{
-//  if (!this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNodeIsValid() ||
-//      !this->MRMLManager->GetWorkingDataNode()->GetAlignedAtlasNodeIsValid())
-//    {
-//    vtkErrorMacro("Preprocessing pipeline not up to date!  Aborting Segmentation.");
-//    return;
-//    }
-//
-//  //
-//  // make sure we're ready to start
-//  //
-//
-//  // find output volume
-//  if (!this->MRMLManager->GetSegmenterNode())
-//    {
-//    vtkErrorMacro("Segmenter node is null---aborting segmentation.");
-//    return;
-//    }
-//  vtkMRMLScalarVolumeNode *outVolume =
-//    this->MRMLManager->GetOutputVolumeNode();
-//  if (outVolume == NULL)
-//    {
-//    vtkErrorMacro("No output volume found---aborting segmentation.");
-//    return;
-//    }
-//
-//  //
-//  // Copy RASToIJK matrix, and other attributes from input to
-//  // output. Use first target volume as source for this data.
-//  //
-//
-//  // get attributes from first target input volume
-//  const char* inMRLMID =
-//    this->MRMLManager->GetTargetInputNode()->GetNthVolumeNodeID(0);
-//  vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
-//    SafeDownCast(this->GetMRMLScene()->GetNodeByID(inMRLMID));
-//  if (inVolume == NULL)
-//    {
-//    vtkErrorMacro("Can't get first target image.");
-//    return;
-//    }
-//
-//  outVolume->CopyOrientation(inVolume);
-//  outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-//
-//  //
-//  // create segmenter class
-//  //
-//  vtkImageEMLocalSegmenter* segmenter = vtkImageEMLocalSegmenter::New();
-//  if (segmenter == NULL)
-//    {
-//    vtkErrorMacro("Could not create vtkImageEMLocalSegmenter pointer");
-//    return;
-//    }
-//
-//  //
-//  // copy mrml data to segmenter class
-//  //
-//  vtkstd::cerr << "EMSEG: Copying data to algorithm class...";
-//  this->CopyDataToSegmenter(segmenter);
-//  vtkstd::cerr << "DONE" << vtkstd::endl;
-//
-//  if (this->GetDebug())
-//  {
-//    vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
-//    vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
-//    vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
-//    vtkIndent indent;
-//    segmenter->PrintSelf(vtkstd::cerr, indent);
-//    vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
-//    vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
-//    vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
-//  }
-//
-//  //
-//  // start segmentation
-//  //
-//  try
-//    {
-//    vtkstd::cerr << "[Start] Segmentation algorithm..."
-//                 << vtkstd::endl;
-//    segmenter->Update();
-//    vtkstd::cerr << "[Done]  Segmentation algorithm." << vtkstd::endl;
-//    }
-//  catch (std::exception e)
-//    {
-//    vtkErrorMacro("Exception thrown during segmentation: " << e.what());
-//    }
-//
-//  if (this->GetDebug())
-//  {
-//    vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
-//    vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
-//    vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
-//    segmenter->PrintSelf(vtkstd::cerr, static_cast<vtkIndent>(0));
-//    vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
-//    vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
-//    vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
-//  }
-//
-//  //
-//  // copy result to output volume
-//  //
-//
-//  // set ouput of the filter to VolumeNode's ImageData
-//  vtkImageData* image = vtkImageData::New();
-//  image->ShallowCopy(segmenter->GetOutput());
-//  outVolume->SetAndObserveImageData(image);
-//  image->Delete();
-//  // make sure the output volume is a labelmap
-//  if (!outVolume->GetLabelMap())
-//  {
-//    vtkWarningMacro("Changing output image to labelmap");
-//    outVolume->LabelMapOn();
-//  }
-//  outVolume->SetModifiedSinceRead(1);
-//
-//  //
-//  // clean up
-//  //
-//  segmenter->Delete();
-//
-//  //
-//  // save intermediate results
-//  if (this->MRMLManager->GetSaveIntermediateResults())
-//    {
-//    std::cerr << "Saving intermediate results...";
-//    bool savedResults = this->SaveIntermediateResults();
-//    std::cerr << "DONE" << std::endl;
-//    if (!savedResults)
-//      {
-//      vtkErrorMacro("Error writing intermediate results");
-//      }
-//    }
-//}
+//----------------------------------------------------------------------------
+void vtkSlicerEMSegmentLogic::StartSegmentationWithoutPreprocessing()
+{
+  // TODO put back
+ // if (!this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNodeIsValid() ||
+ //     !this->MRMLManager->GetWorkingDataNode()->GetAlignedAtlasNodeIsValid())
+ //   {
+ //   vtkErrorMacro("Preprocessing pipeline not up to date!  Aborting Segmentation.");
+ //   return;
+ //   }
+
+ //
+ // make sure we're ready to start
+ //
+
+ // find output volume
+ if (!this->MRMLManager->GetSegmenterNode())
+   {
+   vtkErrorMacro("Segmenter node is null---aborting segmentation.");
+   return;
+   }
+ vtkMRMLScalarVolumeNode *outVolume =
+   this->MRMLManager->GetOutputVolumeNode();
+ if (outVolume == NULL)
+   {
+   vtkErrorMacro("No output volume found---aborting segmentation.");
+   return;
+   }
+
+ //
+ // Copy RASToIJK matrix, and other attributes from input to
+ // output. Use first target volume as source for this data.
+ //
+
+ // get attributes from first target input volume
+ const char* inMRLMID =
+   this->MRMLManager->GetTargetInputNode()->GetNthVolumeNodeID(0);
+ vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
+   SafeDownCast(this->GetMRMLScene()->GetNodeByID(inMRLMID));
+ if (inVolume == NULL)
+   {
+   vtkErrorMacro("Can't get first target image.");
+   return;
+   }
+
+ outVolume->CopyOrientation(inVolume);
+ outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
+
+ //
+ // create segmenter class
+ //
+ vtkImageEMLocalSegmenter* segmenter = vtkImageEMLocalSegmenter::New();
+ if (segmenter == NULL)
+   {
+   vtkErrorMacro("Could not create vtkImageEMLocalSegmenter pointer");
+   return;
+   }
+
+ //
+ // copy mrml data to segmenter class
+ //
+ //vtkstd::cerr << "EMSEG: Copying data to algorithm class...";
+ 
+ // TODO - put back!
+ // this->CopyDataToSegmenter(segmenter);
+ vtkstd::cerr << "DONE" << vtkstd::endl;
+
+ if (this->GetDebug())
+ {
+   vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
+   vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
+   vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
+   vtkIndent indent;
+   segmenter->PrintSelf(vtkstd::cerr, indent);
+   vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
+   vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
+   vtkstd::cerr << "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" << vtkstd::endl;
+ }
+
+ //
+ // start segmentation
+ //
+ try
+   {
+   vtkstd::cerr << "[Start] Segmentation algorithm..."
+                << vtkstd::endl;
+   segmenter->Update();
+   vtkstd::cerr << "[Done]  Segmentation algorithm." << vtkstd::endl;
+   }
+ catch (std::exception e)
+   {
+   vtkErrorMacro("Exception thrown during segmentation: " << e.what());
+   }
+
+ if (this->GetDebug())
+ {
+   vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
+   vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
+   vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
+   segmenter->PrintSelf(vtkstd::cerr, static_cast<vtkIndent>(0));
+   vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
+   vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
+   vtkstd::cerr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << vtkstd::endl;
+ }
+
+ //
+ // copy result to output volume
+ //
+
+ // set ouput of the filter to VolumeNode's ImageData
+ vtkImageData* image = vtkImageData::New();
+ image->ShallowCopy(segmenter->GetOutput());
+ outVolume->SetAndObserveImageData(image);
+ image->Delete();
+ // make sure the output volume is a labelmap
+ if (!outVolume->GetLabelMap())
+ {
+   vtkWarningMacro("Changing output image to labelmap");
+   outVolume->LabelMapOn();
+ }
+ outVolume->SetModifiedSinceRead(1);
+
+ //
+ // clean up
+ //
+ segmenter->Delete();
+
+ //
+ // save intermediate results
+ if (this->MRMLManager->GetSaveIntermediateResults())
+   {
+   std::cerr << "Saving intermediate results...";
+   bool savedResults = this->SaveIntermediateResults();
+   std::cerr << "DONE" << std::endl;
+   if (!savedResults)
+     {
+     vtkErrorMacro("Error writing intermediate results");
+     }
+   }
+}
 
 //-----------------------------------------------------------------------------
 void
@@ -2019,6 +2022,7 @@ CopyTargetDataToSegmenter(vtkImageEMLocalSegmenter* segmenter)
   // !!! todo: TESTING HERE!!!
   vtkMRMLEMSTargetNode* workingTarget =
     this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNode();
+
   unsigned int numTargetImages = workingTarget->GetNumberOfVolumes();
   std::cerr << "Setting number of target images: " << numTargetImages
             << std::endl;

@@ -12,6 +12,7 @@
 class qSlicerEMSegmentWorkflowWidgetStepPrivate;
 class qSlicerEMSegmentWorkflowWidget;
 class vtkEMSegmentMRMLManager;
+class vtkSlicerEMSegmentLogic;
 
 class qSlicerEMSegmentWorkflowWidgetStep : public ctkWorkflowWidgetStep
 {
@@ -25,6 +26,8 @@ public:
   vtkMRMLScene *           mrmlScene() const;
   vtkEMSegmentMRMLManager* mrmlManager() const;
 
+  void setEMSegmentLogic(vtkSlicerEMSegmentLogic* logic);
+
 public slots:
   void setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager);
 
@@ -33,6 +36,10 @@ signals:
   void mrmlSceneChanged(vtkMRMLScene* newMRMLScene);
 
   void mrmlManagerChanged(vtkEMSegmentMRMLManager* newMRMLManager);
+
+protected:
+
+  vtkSlicerEMSegmentLogic* emSegmentLogic()const;
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentWorkflowWidgetStep);
