@@ -662,10 +662,10 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
   std::vector<vtkMRMLDisplayableNode *> slices;
 
   // find volume slices
-  bool clearDisplayedModels = false;
+  bool clearDisplayedModels = scene ? false : true;
   
   std::vector<vtkMRMLNode *> dnodes;
-  int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", dnodes);
+  int nnodes = scene ? scene->GetNodesByClass("vtkMRMLDisplayableNode", dnodes) : 0;
   for (int n=0; n<nnodes; n++)
     {
     node = dnodes[n];

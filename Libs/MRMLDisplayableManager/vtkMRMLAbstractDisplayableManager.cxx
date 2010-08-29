@@ -504,6 +504,9 @@ void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLDisplayableNode(
     }
   this->SetMRMLScene(sceneToObserve);
   vtkSetAndObserveMRMLNodeMacro(this->Internal->MRMLDisplayableNode, newMRMLDisplayableNode);
+  this->SetUpdateFromMRMLRequested(true);
+  this->CreateIfPossible();
+  this->RequestRender();
 }
 
 //---------------------------------------------------------------------------
@@ -530,7 +533,10 @@ void vtkMRMLAbstractDisplayableManager::RequestRender()
     }
 
   this->InvokeEvent(vtkCommand::UpdateEvent);
-  this->GetDisplayableManagerGroup()->RequestRender();
+  if (this->Internal->DisplayableManagerGroup)
+    {
+    this->Internal->DisplayableManagerGroup->RequestRender();
+    }
 }
 
 //---------------------------------------------------------------------------

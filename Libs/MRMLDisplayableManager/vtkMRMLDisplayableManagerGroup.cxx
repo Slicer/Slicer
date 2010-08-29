@@ -181,7 +181,6 @@ void vtkMRMLDisplayableManagerGroup::AddAndInitialize(
     {
     displayableManager->Initialize(this, this->Internal->Renderer);
     displayableManager->SetAndObserveMRMLDisplayableNode(this->GetMRMLDisplayableNode());
-    displayableManager->CreateIfPossible();
     }
 
   displayableManager->Register(this);
@@ -295,8 +294,6 @@ void vtkMRMLDisplayableManagerGroup::SetMRMLDisplayableNode(
     vtkMRMLAbstractDisplayableManager * displayableManager = this->Internal->DisplayableManagers[i];
 
     displayableManager->SetAndObserveMRMLDisplayableNode(newMRMLDisplayableNode);
-
-    displayableManager->CreateIfPossible();
     }
   vtkSetObjectBodyMacro(Internal->MRMLDisplayableNode, vtkMRMLNode, newMRMLDisplayableNode);
 }
