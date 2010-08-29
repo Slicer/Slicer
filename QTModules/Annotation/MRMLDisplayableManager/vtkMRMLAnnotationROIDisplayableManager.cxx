@@ -171,7 +171,8 @@ void vtkMRMLAnnotationROIDisplayableManager::OnWidgetCreated(vtkAbstractWidget *
     return;
     }
 
-  // nothing yet
+  // just propagate the bounds to the MRML node, because before we use only origin and radius
+  this->PropagateWidgetToMRML(widget,node);
 }
 
 
@@ -216,6 +217,15 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
     return;
     }
 
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the widget will be set to modified
   bool hasChanged = false;
 
@@ -223,6 +233,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
   vtkBoxRepresentation * rep = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
   double * bounds = rep->GetBounds();
+
+  // Check if the MRML node has position set at all
+  if (!roiNode->GetBounds())
+    {
+    roiNode->SetBounds(bounds);
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -241,6 +258,9 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
     rep->NeedToRenderOn();
     boxWidget->Modified();
     }
+
+  // enable processing of modified events
+  this->m_Updating = 0;
 
 }
 
@@ -285,6 +305,15 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
     return;
     }
 
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the modified event gets fired
   bool hasChanged = false;
 
@@ -292,6 +321,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   vtkBoxRepresentation * rep = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
   double * bounds = rep->GetBounds();
+
+  // Check if the MRML node has position set at all
+  if (!roiNode->GetBounds())
+    {
+    roiNode->SetBounds(bounds);
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -309,6 +345,9 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
     // at least one value has changed, so fire the modified event
     roiNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, roiNode);
     }
+
+  // enable processing of modified events
+  this->m_Updating = 0;
 
 }
 
@@ -329,6 +368,9 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInThreeDRenderWindow(double 
   if (this->m_ClickCounter->HasEnoughClicks(2))
     {
 
+    // switch to updating state to avoid events mess
+    this->m_Updating = 1;
+
     vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
     vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
 
@@ -346,6 +388,9 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInThreeDRenderWindow(double 
     roiNode->SetName(roiNode->GetScene()->GetUniqueNameByString("AnnotationROI"));
 
     roiNode->Delete();
+
+    // reset updating state
+    this->m_Updating = 0;
 
     }
 

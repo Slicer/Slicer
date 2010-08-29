@@ -162,7 +162,8 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnWidgetCreated(vtkAbstractWidge
     return;
     }
 
-  // nothing yet
+  // propagate the widget to the MRML node
+  this->PropagateWidgetToMRML(widget, node);
 }
 
 
@@ -207,6 +208,15 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
     return;
     }
 
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the widget will be set to modified
   bool hasChanged = false;
 
@@ -225,6 +235,37 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
   rep->GetHandlePosition(2,position3);
   rep->GetHandlePosition(3,position4);
   rep->GetHandlePosition(4,position5);
+
+  // Check if the MRML node has position set at all
+  if (!splineNode->GetControlPointCoordinates(0))
+    {
+    splineNode->SetControlPoint(position1, 0);
+    hasChanged = true;
+    }
+
+  if (!splineNode->GetControlPointCoordinates(1))
+    {
+    splineNode->SetControlPoint(position2, 1);
+    hasChanged = true;
+    }
+
+  if (!splineNode->GetControlPointCoordinates(2))
+    {
+    splineNode->SetControlPoint(position3, 2);
+    hasChanged = true;
+    }
+
+  if (!splineNode->GetControlPointCoordinates(3))
+    {
+    splineNode->SetControlPoint(position4, 3);
+    hasChanged = true;
+    }
+
+  if (!splineNode->GetControlPointCoordinates(4))
+    {
+    splineNode->SetControlPoint(position5, 4);
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -272,6 +313,9 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
     splineWidget->Modified();
     }
 
+  // enable processing of modified events
+  this->m_Updating = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -315,6 +359,15 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
     return;
     }
 
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the modified event gets fired
   bool hasChanged = false;
 
@@ -333,6 +386,38 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
   rep->GetHandlePosition(2,position3);
   rep->GetHandlePosition(3,position4);
   rep->GetHandlePosition(4,position5);
+
+  // Check if the MRML node has position set at all
+  if (!splineNode->GetControlPointCoordinates(0))
+    {
+    splineNode->SetControlPoint(position1, 0);
+    hasChanged = true;
+    }
+
+  if (!splineNode->GetControlPointCoordinates(1))
+    {
+    splineNode->SetControlPoint(position2, 1);
+    hasChanged = true;
+    }
+
+  if (!splineNode->GetControlPointCoordinates(2))
+    {
+    splineNode->SetControlPoint(position3, 2);
+    hasChanged = true;
+    }
+
+  if (!splineNode->GetControlPointCoordinates(3))
+    {
+    splineNode->SetControlPoint(position4, 3);
+    hasChanged = true;
+    }
+
+  if (!splineNode->GetControlPointCoordinates(4))
+    {
+    splineNode->SetControlPoint(position5, 4);
+    hasChanged = true;
+    }
+
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -379,6 +464,9 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
     splineNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, splineNode);
     }
 
+  // enable processing of modified events
+  this->m_Updating = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -397,6 +485,9 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInThreeDRenderWindow(doub
 
   if (this->m_ClickCounter->HasEnoughClicks(5))
     {
+
+    // switch to updating state to avoid events mess
+    this->m_Updating = 1;
 
     vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
     vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
@@ -424,6 +515,9 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInThreeDRenderWindow(doub
     splineNode->SetName(splineNode->GetScene()->GetUniqueNameByString("AnnotationSpline"));
 
     splineNode->Delete();
+
+    // reset updating state
+    this->m_Updating = 0;
 
     }
 

@@ -265,6 +265,19 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   rep->GetPoint1WorldPosition(position1);
   rep->GetPoint2WorldPosition(position2);
 
+  // Check if the MRML node has position set at all
+  if (!rulerNode->GetPosition1())
+    {
+    rulerNode->SetPosition1(position1);
+    hasChanged = true;
+    }
+
+  if (!rulerNode->GetPosition2())
+    {
+    rulerNode->SetPosition2(position2);
+    hasChanged = true;
+    }
+
   //
   // Check if the position of the widget is different than the saved one in the mrml node
   // If yes, propagate the changes to widget

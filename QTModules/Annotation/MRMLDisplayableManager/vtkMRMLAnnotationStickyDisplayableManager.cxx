@@ -175,7 +175,8 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnWidgetCreated(vtkAbstractWidge
     return;
     }
 
-  //this->m_DisableModifiedEvents = 0;
+  // propagate the widget to the MRML node
+  this->PropagateWidgetToMRML(widget, node);
 }
 
 
@@ -220,6 +221,15 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
    return;
    }
 
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the widget will be set to modified
   bool hasChanged = false;
 
@@ -238,6 +248,13 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
 
   double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
   // now we have world coordinates :)
+
+  // Check if the MRML node has position set at all
+  if (!stickyNode->GetControlPointCoordinates(0))
+    {
+    stickyNode->SetStickyCoordinates(worldCoordinates);
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -268,6 +285,9 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
     rep->NeedToRenderOn();
     logoWidget->Modified();
     }
+
+  // enable processing of modified events
+  this->m_Updating = 0;
 
 }
 
@@ -312,6 +332,15 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
      return;
      }
 
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the modified event gets fired
   bool hasChanged = false;
 
@@ -331,6 +360,13 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
   double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
   // now we have world coordinates :)
 
+  // Check if the MRML node has position set at all
+  if (!stickyNode->GetControlPointCoordinates(0))
+    {
+    stickyNode->SetStickyCoordinates(worldCoordinates);
+    hasChanged = true;
+    }
+
   //
   // Check if the position of the widget is different than the saved one in the mrml node
   // If yes, propagate the changes to the mrml node
@@ -347,6 +383,9 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
     // at least one value has changed, so fire the modified event
     stickyNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, stickyNode);
     }
+
+  // enable processing of modified events
+  this->m_Updating = 0;
 
 }
 
@@ -367,6 +406,9 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInThreeDRenderWindow(doub
   if (this->m_ClickCounter->HasEnoughClicks(1))
     {
 
+    // switch to updating state to avoid events mess
+    this->m_Updating = 1;
+
     double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
 
     // Create the node
@@ -379,6 +421,9 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInThreeDRenderWindow(doub
     stickyNode->SetName(stickyNode->GetScene()->GetUniqueNameByString("AnnotationStickyNote"));
 
     stickyNode->Delete();
+
+    // reset updating state
+    this->m_Updating = 0;
 
     }
 

@@ -216,6 +216,15 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     return;
     }
 
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the widget will be set to modified
   bool hasChanged = false;
 
@@ -225,6 +234,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   double position1[3];
 
   rep->GetWorldPosition(position1);
+
+  // Check if the MRML node has position set at all
+  if (!fiducialNode->GetFiducialCoordinates())
+    {
+    fiducialNode->SetFiducialCoordinates(position1);
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -243,6 +259,10 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     rep->NeedToRenderOn();
     seedWidget->Modified();
     }
+
+  // enable processing of modified events
+  this->m_Updating = 0;
+
 
 }
 
@@ -270,22 +290,32 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
     }
 
   // cast to the specific widget
-   vtkSeedWidget* seedWidget = vtkSeedWidget::SafeDownCast(widget);
+  vtkSeedWidget* seedWidget = vtkSeedWidget::SafeDownCast(widget);
 
-   if (!seedWidget)
-     {
-     vtkErrorMacro("PropagateWidgetToMRML: Could not get seed widget!")
-     return;
-     }
+  if (!seedWidget)
+   {
+   vtkErrorMacro("PropagateWidgetToMRML: Could not get seed widget!")
+   return;
+   }
 
-   // cast to the specific mrml node
-   vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
+  // cast to the specific mrml node
+  vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
 
-   if (!fiducialNode)
-     {
-     vtkErrorMacro("PropagateWidgetToMRML: Could not get fiducial node!")
-     return;
-     }
+  if (!fiducialNode)
+   {
+   vtkErrorMacro("PropagateWidgetToMRML: Could not get fiducial node!")
+   return;
+   }
+
+
+  if (this->m_Updating)
+   {
+   vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+   return;
+   }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
 
   // if this flag is true after the checks below, the modified event gets fired
   bool hasChanged = false;
@@ -296,6 +326,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
   double position1[3];
 
   rep->GetWorldPosition(position1);
+
+  // Check if the MRML node has position set at all
+  if (!fiducialNode->GetFiducialCoordinates())
+    {
+    fiducialNode->SetFiducialCoordinates(position1);
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -313,6 +350,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
     // at least one value has changed, so fire the modified event
     fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
     }
+
+  // enable processing of modified events
+  this->m_Updating = 0;
 
 }
 
@@ -333,6 +373,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInThreeDRenderWindow(do
   if (this->m_ClickCounter->HasEnoughClicks(1))
     {
 
+    // switch to updating state to avoid events mess
+    this->m_Updating = 1;
+
     double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
 
     // create the MRML node
@@ -345,6 +388,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInThreeDRenderWindow(do
     fiducialNode->SetName(fiducialNode->GetScene()->GetUniqueNameByString("AnnotationFiducial"));
 
     fiducialNode->Delete();
+
+    // reset updating state
+    this->m_Updating = 0;
 
     }
 

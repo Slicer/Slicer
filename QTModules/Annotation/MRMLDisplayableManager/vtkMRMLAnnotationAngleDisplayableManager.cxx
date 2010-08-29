@@ -290,6 +290,25 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   rep->GetPoint2WorldPosition(position2);
   rep->GetCenterWorldPosition(position3);
 
+  // Check if the MRML node has position set at all
+  if (!angleNode->GetPosition1())
+    {
+    angleNode->SetPosition1(position1);
+    hasChanged = true;
+    }
+
+  if (!angleNode->GetPosition2())
+    {
+    angleNode->SetPosition2(position2);
+    hasChanged = true;
+    }
+
+  if (!angleNode->GetPositionCenter())
+    {
+    angleNode->SetPositionCenter(position3);
+    hasChanged = true;
+    }
+
   //
   // Check if the position of the widget is different than the saved one in the mrml node
   // If yes, propagate the changes to the widget
