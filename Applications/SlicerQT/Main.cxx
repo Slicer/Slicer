@@ -22,10 +22,6 @@
 #include "qSlicerCLIExecutableModuleFactory.h"
 #include "qSlicerApplication.h"
 
-// QT includes
-#include <QSplashScreen>
-#include <QDebug>
-
 // VTK includes
 //#include <vtkObject.h>
 
