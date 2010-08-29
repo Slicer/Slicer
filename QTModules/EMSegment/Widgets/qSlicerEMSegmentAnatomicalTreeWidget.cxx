@@ -14,6 +14,9 @@
 // CTK includes
 #include <ctkLogger.h>
 
+// qMRMLWidgets includes
+#include <qMRMLLabelComboBox.h>
+
 // EMSegment includes
 #include "qSlicerEMSegmentAnatomicalTreeWidget.h"
 #include "qSlicerEMSegmentAnatomicalTreeWidget_p.h"
@@ -24,6 +27,7 @@
 
 // MRML includes
 #include <vtkMRMLVolumeNode.h>
+#include <vtkMRMLColorTableNode.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger(
@@ -37,6 +41,7 @@ static ctkLogger logger(
 qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidgetPrivate()
 {
   this->EMSNode = 0;
+  this->CurrentColorTableNode = 0;
 
   this->TreeView = 0;
   this->TreeModel = new QStandardItemModel;
@@ -89,8 +94,8 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::populateTreeModel(
     }
   Q_ASSERT(treeNode->GetParametersNode());
 
-  logger.debug(QString("populateTreeModel - treeNodeId:%1, treeNodeName: %2").
-               arg(treeNodeId).arg(treeNode->GetName()));
+  //logger.debug(QString("populateTreeModel - treeNodeId:%1, treeNodeName: %2").
+               //arg(treeNodeId).arg(treeNode->GetName()));
 
   QStandardItem * structureItem = this->insertTreeRow(item, treeNodeId, treeNode);
 
@@ -107,7 +112,10 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::populateTreeModel(
 QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
     QStandardItem * parentItem, vtkIdType treeNodeId, vtkMRMLEMSTreeNode * treeNode)
 {
+  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
   Q_ASSERT(treeNode);
+
+  bool isLeaf = treeNode->GetNumberOfChildNodes() == 0;
 
   QList<QStandardItem*> itemList;
 
@@ -129,12 +137,11 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
   QStandardItem * labelItem = new QStandardItem();
   labelItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
   labelItem->setEditable(false);
-  if (treeNode->GetNumberOfChildNodes() == 0) // Is treeNode a leaf ?
+  if (isLeaf) // Is treeNode a leaf ?
     {
-    Q_ASSERT(treeNode->GetParametersNode()->GetLeafParametersNode());
-    // TODO label should be editable
-    labelItem->setText(QString("%1").arg(
-        treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel()));
+    //Q_ASSERT(treeNode->GetParametersNode()->GetLeafParametersNode());
+    //labelItem->setText(QString("%1").arg(
+    //    treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel()));
     labelItem->setData(QVariant(Self::LabelItemType), Self::TreeItemTypeRole);
     }
   itemList << labelItem;
@@ -171,7 +178,7 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
   QStandardItem * alphaItem = new QStandardItem();
   alphaItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
   alphaItem->setEditable(false);
-  if (treeNode->GetNumberOfChildNodes() != 0) // Is treeNode NOT a leaf ?
+  if (!isLeaf) // Is treeNode NOT a leaf ?
     {
     Q_ASSERT(treeNode->GetParametersNode()->GetParentParametersNode());
     alphaItem->setData(
@@ -184,6 +191,22 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
 
   parentItem->appendRow(itemList);
 
+  // Set widget associated with labelItem
+  if (isLeaf)
+    {
+    Q_ASSERT(treeNode->GetParametersNode()->GetLeafParametersNode());
+    qMRMLLabelComboBox * labelComboBox = new qMRMLLabelComboBox;
+    labelComboBox->setMaximumColorCount(10);
+    labelComboBox->setMRMLScene(p->mrmlScene());
+    labelComboBox->setMRMLColorNode(this->CurrentColorTableNode);
+    logger.debug(QString("insertTreeRow - IntensityLabel: %1").
+                 arg(treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel()));
+    labelComboBox->setCurrentColor(
+        treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel());
+    this->TreeView->setIndexWidget(
+        this->TreeModel->indexFromItem(labelItem), labelComboBox);
+    }
+
   return structureItem;
 }
 
@@ -194,7 +217,7 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemChanged(QStandardIte
 
   CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
 
-  logger.debug(QString("onTreeItemChanged - DisplayRole: %1").arg(treeItem->text()));
+  //logger.debug(QString("onTreeItemChanged - DisplayRole: %1").arg(treeItem->text()));
   int treeItemType = treeItem->data(Self::TreeItemTypeRole).toInt();
   int treeNodeId = treeItem->data(Self::TreeNodeIDRole).toInt();
 
@@ -210,7 +233,7 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemChanged(QStandardIte
   else if (treeItemType == Self::UpdateClassWeightItemType)
     {
     bool update = (treeItem->checkState() == Qt::Checked);
-    logger.debug(QString("onTreeItemChanged - CheckStateRole: %1").arg(update));
+    //logger.debug(QString("onTreeItemChanged - CheckStateRole: %1").arg(update));
     }
   else if (treeItemType == Self::AtlasWeightItemType)
     {
@@ -255,7 +278,6 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemSelected(const QMode
 
 namespace
 {
-
 //-----------------------------------------------------------------------------
 class CustomDoubleSpinBox : public QDoubleSpinBox
 {
@@ -277,7 +299,6 @@ public:
 qSlicerEMSegmentAnatomicalTreeWidget::qSlicerEMSegmentAnatomicalTreeWidget(QWidget *newParent):
 Superclass(newParent)
 {
-  logger.setDebug();
   CTK_INIT_PRIVATE(qSlicerEMSegmentAnatomicalTreeWidget);
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
 
@@ -298,15 +319,10 @@ Superclass(newParent)
   QItemEditorFactory *editorFactory = new QItemEditorFactory;
   editorFactory->registerEditor(
       QVariant::Double, new QStandardItemEditorCreator<CustomDoubleSpinBox>());
-//  editorFactory->registerEditor(
-//      QVariant::Bool, new QStandardItemEditorCreator<QCheckBox>());
   QStyledItemDelegate* defaultItemDelegate =
       qobject_cast<QStyledItemDelegate*>(d->TreeView->itemDelegate());
   Q_ASSERT(defaultItemDelegate);
   defaultItemDelegate->setItemEditorFactory(editorFactory);
-
-  //QStyledItemDelegate * AtlasWeightDelegate = new QStyledItemDelegate(this);
-  //d->TreeView->setItemDelegateForColumn(ctkPimpl::AtlasWeightColumn, AtlasWeightDelegate);
 
   // Layout control buttons vertically
   QVBoxLayout * controlButtonsLayout = new QVBoxLayout();
@@ -378,6 +394,13 @@ void qSlicerEMSegmentAnatomicalTreeWidget::updateWidgetFromMRML()
     return;
     }
 
+  d->CurrentColorTableNode = vtkMRMLColorTableNode::SafeDownCast(
+      this->mrmlScene()->GetNodeByID(this->mrmlManager()->GetColormap()?
+                                     this->mrmlManager()->GetColormap():
+                                     "vtkMRMLColorTableNodeLabels"));
+
+  this->setUpdatesEnabled(false);
+
   // Clear model
   d->TreeModel->invisibleRootItem()->removeRows(0, d->TreeModel->invisibleRootItem()->rowCount());
 
@@ -385,6 +408,8 @@ void qSlicerEMSegmentAnatomicalTreeWidget::updateWidgetFromMRML()
                        d->TreeModel->invisibleRootItem());
 
   d->TreeView->expandAll();
+
+  this->setUpdatesEnabled(true);
 }
 
 //-----------------------------------------------------------------------------

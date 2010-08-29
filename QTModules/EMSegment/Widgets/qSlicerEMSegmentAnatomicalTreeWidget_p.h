@@ -21,9 +21,10 @@ class QStandardItemModel;
 class QToolButton;
 class QCheckBox;
 class QTreeView;
-class vtkMRMLNode;
 class vtkMRMLEMSNode;
 class vtkMRMLEMSTreeNode;
+class vtkMRMLNode;
+class vtkMRMLColorTableNode;
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentAnatomicalTreeWidgetPrivate :
@@ -81,6 +82,8 @@ public slots:
 public:
 
   vtkMRMLEMSNode *         EMSNode;
+
+  vtkMRMLColorTableNode *  CurrentColorTableNode;
 
   QTreeView *              TreeView;
   QStandardItemModel *     TreeModel;
