@@ -304,6 +304,7 @@ Superclass(newParent)
 
   // Layout (TreeView and (control buttons)) and DisplayMRMLIDsCheckBox vertically
   QVBoxLayout * mainLayout = new QVBoxLayout(this);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
 
   // Layout TreeView and (control buttons) horizontally
   QHBoxLayout * horizontalLayout = new QHBoxLayout();
