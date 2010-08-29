@@ -23,23 +23,27 @@ SET(qt_module_include_directories
 
 # Widget source files
 SET(widget_SRCS
-  Widgets/qSlicerEMSegmentWidget.cxx
-  Widgets/qSlicerEMSegmentWidget.h
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.cxx
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
+  Widgets/qSlicerEMSegmentAnatomicalTreeWidget_p.h
   Widgets/qSlicerEMSegmentGraphWidget.cxx
   Widgets/qSlicerEMSegmentGraphWidget.h
   Widgets/qSlicerEMSegmentInputChannelListWidget.cxx
   Widgets/qSlicerEMSegmentInputChannelListWidget.h
   Widgets/vtkPlotGaussian.cxx
   Widgets/vtkPlotGaussian.h
+
+  Widgets/qSlicerEMSegmentWidget.cxx
+  Widgets/qSlicerEMSegmentWidget.h
   )
 
 SET(widget_MOC_SRCS
-  Widgets/qSlicerEMSegmentWidget.h
   Widgets/qSlicerEMSegmentAnatomicalTreeWidget.h
+  Widgets/qSlicerEMSegmentAnatomicalTreeWidget_p.h
   Widgets/qSlicerEMSegmentGraphWidget.h
   Widgets/qSlicerEMSegmentInputChannelListWidget.h
+
+  Widgets/qSlicerEMSegmentWidget.h
   )
 
 # Panel source files

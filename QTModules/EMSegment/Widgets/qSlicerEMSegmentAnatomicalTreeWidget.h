@@ -27,6 +27,7 @@ class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentAnatomicalTreeWidget :
   Q_PROPERTY(bool mrmlIDsColumnVisible READ mrmlIDsColumnVisible WRITE setMRMLIDsColumnVisible)
   Q_PROPERTY(bool labelColumnVisible READ labelColumnVisible WRITE setLabelColumnVisible)
   Q_PROPERTY(bool classWeightColumnVisible READ classWeightColumnVisible WRITE setClassWeightColumnVisible)
+  Q_PROPERTY(bool updateClassWeightColumnVisible READ updateClassWeightColumnVisible WRITE setUpdateClassWeightColumnVisible)
   Q_PROPERTY(bool atlasWeightColumnVisible READ atlasWeightColumnVisible WRITE setAtlasWeightColumnVisible)
   Q_PROPERTY(bool alphaColumnVisible READ alphaColumnVisible WRITE setAlphaColumnVisible)
 
@@ -34,8 +35,6 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   explicit qSlicerEMSegmentAnatomicalTreeWidget(QWidget *newParent = 0);
-
-  virtual void setMRMLScene(vtkMRMLScene *newScene);
 
   bool structureNameEditable() const;
 
@@ -53,6 +52,7 @@ public:
 
 public slots:
 
+  virtual void setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager);
 
   void updateWidgetFromMRML();
 
@@ -70,6 +70,10 @@ public slots:
 
   void setAlphaColumnVisible(bool visible);
 
+protected slots:
+
+  void collapseToDepthZero();
+
 signals:
 
   void currentTreeNodeChanged(vtkMRMLNode* node);
@@ -78,17 +82,7 @@ signals:
 
   void currentSpatialPriorVolumeNodeChanged(bool validNode);
 
-protected slots:
-
-  void onTreeItemChanged(QStandardItem * treeItem);
-
-  void onTreeItemSelected(const QModelIndex & index);
-
-  void collapseToDepthZero();
-
 private:
-
-  void populateTreeModel(vtkIdType treeNodeId, QStandardItem *item);
 
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentAnatomicalTreeWidget);
   typedef qSlicerEMSegmentAnatomicalTreeWidgetPrivate ctkPimpl;

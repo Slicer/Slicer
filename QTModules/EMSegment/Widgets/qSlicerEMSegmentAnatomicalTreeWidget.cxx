@@ -16,6 +16,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentAnatomicalTreeWidget.h"
+#include "qSlicerEMSegmentAnatomicalTreeWidget_p.h"
 
 // EMSegment/MRML includes
 #include <vtkEMSegmentMRMLManager.h>
@@ -30,61 +31,13 @@ static ctkLogger logger(
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentAnatomicalTreeWidgetPrivate :
-    public ctkPrivate<qSlicerEMSegmentAnatomicalTreeWidget>
-{
-public:
-  typedef qSlicerEMSegmentAnatomicalTreeWidgetPrivate Self;
-  qSlicerEMSegmentAnatomicalTreeWidgetPrivate();
-
-  enum
-    {
-    TreeNodeIDRole = Qt::UserRole + 1,
-    TreeItemTypeRole
-    };
-
-  enum TreeItemType
-    {
-    StructureNameItemType = 0,
-    LabelItemType,
-    MRMLIDItemType,
-    ClassWeightItemType,
-    UpdateClassWeightItemType,
-    AtlasWeightItemType,
-    AlphaItemType
-    };
-
-  enum ColumnIds
-    {
-    StructureColumn = 0,
-    IdColumn,
-    LabelColumn,
-    ClassWeightColumn,
-    UpdateClassWeightColumn,
-    AtlasWeightColumn,
-    AlphaColumn
-    };
-
-  QTreeView *              TreeView;
-  QStandardItemModel *     TreeModel;
-  bool                     StructureNameEditable;
-  bool                     LabelColumnVisible;
-  bool                     ClassWeightColumnVisible;
-  bool                     UpdateClassWeightColumnVisible;
-  bool                     AtlasWeightColumnVisible;
-  bool                     AlphaColumnVisible;
-
-  QCheckBox *              DisplayMRMLIDsCheckBox;
-  QToolButton *            CollapseAllButton;
-  QToolButton *            ExpandAllButton;
-};
-
-//-----------------------------------------------------------------------------
 // qSlicerEMSegmentAnatomicalTreeWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidgetPrivate()
 {
+  this->EMSNode = 0;
+
   this->TreeView = 0;
   this->TreeModel = new QStandardItemModel;
 
@@ -95,6 +48,12 @@ qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidge
   this->AtlasWeightColumnVisible = false;
   this->AlphaColumnVisible = false;
 
+  this->initializeHorizontalHeader();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::initializeHorizontalHeader()
+{
   QStringList headerNames;
   headerNames.insert(Self::StructureColumn, "Structure");
   headerNames.insert(Self::IdColumn, "Id");
@@ -104,6 +63,191 @@ qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidge
   headerNames.insert(Self::AtlasWeightColumn, "Atlas Weight");
   headerNames.insert(Self::AlphaColumn, "Alpha");
   this->TreeModel->setHorizontalHeaderLabels(headerNames);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::populateTreeModel(
+    vtkIdType treeNodeId, QStandardItem * item)
+{
+  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_ASSERT(p->mrmlManager());
+  Q_ASSERT(item);
+
+  // Return if no valid treeNodeId is given
+  if (treeNodeId == 0)
+    {
+    return;
+    }
+
+  // Get a reference to the associated treeNode
+  vtkMRMLEMSTreeNode * treeNode = p->mrmlManager()->GetTreeNode(treeNodeId);
+  Q_ASSERT(treeNode);
+  if (!treeNode)
+    {
+    logger.error(QString("populateTreeModel - No treeNode associated with id: %1").arg(treeNodeId));
+    return;
+    }
+  Q_ASSERT(treeNode->GetParametersNode());
+
+  logger.debug(QString("populateTreeModel - treeNodeId:%1, treeNodeName: %2").
+               arg(treeNodeId).arg(treeNode->GetName()));
+
+  QStandardItem * structureItem = this->insertTreeRow(item, treeNodeId, treeNode);
+
+  // Loop through current node children and recursively call ourself
+  int numberOfChildren = p->mrmlManager()->GetTreeNodeNumberOfChildren(treeNodeId);
+  for (int i = 0; i < numberOfChildren; i++)
+    {
+    this->populateTreeModel(
+      p->mrmlManager()->GetTreeNodeChildNodeID(treeNodeId, i), structureItem);
+    }
+}
+
+//-----------------------------------------------------------------------------
+QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
+    QStandardItem * parentItem, vtkIdType treeNodeId, vtkMRMLEMSTreeNode * treeNode)
+{
+  Q_ASSERT(treeNode);
+
+  QList<QStandardItem*> itemList;
+
+  // Structure item
+  QStandardItem * structureItem = new QStandardItem(QString("%1").arg(treeNode->GetName()));
+  structureItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
+  structureItem->setData(QVariant(Self::StructureNameItemType), Self::TreeItemTypeRole);
+  structureItem->setEditable(this->StructureNameEditable);
+  itemList << structureItem;
+
+  // MRML ID item
+  QStandardItem * mrmlIDItem = new QStandardItem(QString("%1").arg(treeNode->GetID()));
+  mrmlIDItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
+  mrmlIDItem->setData(QVariant(Self::MRMLIDItemType), Self::TreeItemTypeRole);
+  mrmlIDItem->setEditable(false);
+  itemList << mrmlIDItem;
+
+  // Label item - Available only for tree leaf
+  QStandardItem * labelItem = new QStandardItem();
+  labelItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
+  labelItem->setEditable(false);
+  if (treeNode->GetNumberOfChildNodes() == 0) // Is treeNode a leaf ?
+    {
+    Q_ASSERT(treeNode->GetParametersNode()->GetLeafParametersNode());
+    // TODO label should be editable
+    labelItem->setText(QString("%1").arg(
+        treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel()));
+    labelItem->setData(QVariant(Self::LabelItemType), Self::TreeItemTypeRole);
+    }
+  itemList << labelItem;
+
+  // ClassWeight item
+  QStandardItem * classWeightItem = new QStandardItem();
+  classWeightItem->setData(
+      QVariant(treeNode->GetParametersNode()->GetClassProbability()), Qt::DisplayRole);
+  classWeightItem->setEditable(true);
+  classWeightItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
+  classWeightItem->setData(QVariant(Self::ClassWeightItemType), Self::TreeItemTypeRole);
+  itemList << classWeightItem;
+
+  // UpdateClassWeight item
+  QStandardItem * updateClassWeightItem = new QStandardItem();
+  //updateClassWeightItem->setData(QVariant(false), Qt::DisplayRole);
+  updateClassWeightItem->setCheckable(true);
+  updateClassWeightItem->setCheckState(Qt::Unchecked);
+  updateClassWeightItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
+  updateClassWeightItem->setData(QVariant(Self::UpdateClassWeightItemType),
+                                 Self::TreeItemTypeRole);
+  itemList << updateClassWeightItem;
+
+  // AtlasWeight item
+  QStandardItem * atlasWeightItem = new QStandardItem();
+  atlasWeightItem->setData(
+      QVariant(treeNode->GetParametersNode()->GetSpatialPriorWeight()), Qt::DisplayRole);
+  atlasWeightItem->setEditable(true);
+  atlasWeightItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
+  atlasWeightItem->setData(QVariant(Self::AtlasWeightItemType), Self::TreeItemTypeRole);
+  itemList << atlasWeightItem;
+
+  // Alpha item - Available only for none tree leaf
+  QStandardItem * alphaItem = new QStandardItem();
+  alphaItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
+  alphaItem->setEditable(false);
+  if (treeNode->GetNumberOfChildNodes() != 0) // Is treeNode NOT a leaf ?
+    {
+    Q_ASSERT(treeNode->GetParametersNode()->GetParentParametersNode());
+    alphaItem->setData(
+        QVariant(treeNode->GetParametersNode()->GetParentParametersNode()->GetAlpha()),
+        Qt::DisplayRole);
+    alphaItem->setEditable(true);
+    alphaItem->setData(QVariant(Self::AlphaItemType), Self::TreeItemTypeRole);
+    }
+  itemList << alphaItem;
+
+  parentItem->appendRow(itemList);
+
+  return structureItem;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemChanged(QStandardItem * treeItem)
+{
+  Q_ASSERT(treeItem);
+
+  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+
+  logger.debug(QString("onTreeItemChanged - DisplayRole: %1").arg(treeItem->text()));
+  int treeItemType = treeItem->data(Self::TreeItemTypeRole).toInt();
+  int treeNodeId = treeItem->data(Self::TreeNodeIDRole).toInt();
+
+  if (treeItemType == Self::StructureNameItemType)
+    {
+    p->mrmlManager()->SetTreeNodeName(treeNodeId, treeItem->text().toLatin1());
+    }
+  else if (treeItemType == Self::ClassWeightItemType)
+    {
+    p->mrmlManager()->SetTreeNodeClassProbability(
+        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
+    }
+  else if (treeItemType == Self::UpdateClassWeightItemType)
+    {
+    bool update = (treeItem->checkState() == Qt::Checked);
+    logger.debug(QString("onTreeItemChanged - CheckStateRole: %1").arg(update));
+    }
+  else if (treeItemType == Self::AtlasWeightItemType)
+    {
+    p->mrmlManager()->SetTreeNodeSpatialPriorWeight(
+        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
+    }
+  else if (treeItemType == Self::AlphaItemType)
+    {
+    p->mrmlManager()->SetTreeNodeAlpha(
+        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemSelected(const QModelIndex & index)
+{
+  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+  QStandardItem * item = this->TreeModel->itemFromIndex(index);
+  Q_ASSERT(item);
+
+  int treeNodeId = item->data(Self::TreeNodeIDRole).toInt();
+
+  // Get a reference to the associated treeNode
+  vtkMRMLEMSTreeNode * currentTreeNode = p->mrmlManager()->GetTreeNode(treeNodeId);
+  Q_ASSERT(currentTreeNode);
+  if (!currentTreeNode)
+    {
+    logger.error(QString("onTreeItemSelected - No treeNode associated with id: %1").arg(treeNodeId));
+    return;
+    }
+
+  emit p->currentTreeNodeChanged(currentTreeNode);
+
+  vtkIdType volumeId = p->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
+  vtkMRMLVolumeNode * volumeNode = p->mrmlManager()->GetVolumeNode(volumeId);
+  emit p->currentSpatialPriorVolumeNodeChanged(volumeNode);
+  emit p->currentSpatialPriorVolumeNodeChanged(volumeNode != 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -154,8 +298,8 @@ Superclass(newParent)
   QItemEditorFactory *editorFactory = new QItemEditorFactory;
   editorFactory->registerEditor(
       QVariant::Double, new QStandardItemEditorCreator<CustomDoubleSpinBox>());
-  editorFactory->registerEditor(
-      QVariant::Bool, new QStandardItemEditorCreator<QCheckBox>());
+//  editorFactory->registerEditor(
+//      QVariant::Bool, new QStandardItemEditorCreator<QCheckBox>());
   QStyledItemDelegate* defaultItemDelegate =
       qobject_cast<QStyledItemDelegate*>(d->TreeView->itemDelegate());
   Q_ASSERT(defaultItemDelegate);
@@ -196,13 +340,11 @@ Superclass(newParent)
 
   // Connect TreeModel
   connect(d->TreeModel, SIGNAL(itemChanged(QStandardItem*)),
-          SLOT(onTreeItemChanged(QStandardItem*)));
+          d, SLOT(onTreeItemChanged(QStandardItem*)));
 
   // Connect TreeView
-//  connect(d->TreeView, SIGNAL(activated(QModelIndex)),
-//          SLOT(onTreeItemSelected(QModelIndex)));
   connect(d->TreeView, SIGNAL(clicked(QModelIndex)),
-          SLOT(onTreeItemSelected(QModelIndex)));
+          d, SLOT(onTreeItemSelected(QModelIndex)));
 
   this->setStructureNameEditable(false);
   this->setMRMLIDsColumnVisible(false);
@@ -214,80 +356,35 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLScene(vtkMRMLScene *newScene)
+void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager)
 {
+  // Listen if the current EMSNode changes
+  this->qvtkReconnect(this->mrmlManager(), newMRMLManager, vtkCommand::ModifiedEvent,
+                      this, SLOT(updateWidgetFromMRML()));
 
-}
+  this->Superclass::setMRMLManager(newMRMLManager);
 
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentAnatomicalTreeWidget::collapseToDepthZero()
-{
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  d->TreeView->setUpdatesEnabled(false);
-  d->TreeView->collapseAll();
-  d->TreeView->expandToDepth(0);
-  d->TreeView->setUpdatesEnabled(true);
+  this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::updateWidgetFromMRML()
 {
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentAnatomicalTreeWidget::onTreeItemChanged(QStandardItem * treeItem)
-{
-  Q_ASSERT(treeItem);
-  logger.debug(QString("onTreeItemChanged - %1").arg(treeItem->text()));
-  int treeItemType = treeItem->data(ctkPimpl::TreeItemTypeRole).toInt();
-  int treeNodeId = treeItem->data(ctkPimpl::TreeNodeIDRole).toInt();
-
-  if (treeItemType == ctkPimpl::StructureNameItemType)
-    {
-    this->mrmlManager()->SetTreeNodeName(treeNodeId, treeItem->text().toLatin1());
-    }
-  else if (treeItemType == ctkPimpl::ClassWeightItemType)
-    {
-    this->mrmlManager()->SetTreeNodeClassProbability(
-        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
-    }
-  else if (treeItemType == ctkPimpl::AtlasWeightItemType)
-    {
-    this->mrmlManager()->SetTreeNodeSpatialPriorWeight(
-        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
-    }
-  else if (treeItemType == ctkPimpl::AlphaItemType)
-    {
-    this->mrmlManager()->SetTreeNodeAlpha(
-        treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentAnatomicalTreeWidget::onTreeItemSelected(const QModelIndex & index)
-{
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  QStandardItem * item = d->TreeModel->itemFromIndex(index);
-  Q_ASSERT(item);
 
-  int treeNodeId = item->data(ctkPimpl::TreeNodeIDRole).toInt();
-
-  // Get a reference to the associated treeNode
-  vtkMRMLEMSTreeNode * currentTreeNode = this->mrmlManager()->GetTreeNode(treeNodeId);
-  Q_ASSERT(currentTreeNode);
-  if (!currentTreeNode)
+  if (!this->mrmlManager())
     {
-    logger.error(QString("onTreeItemSelected - No treeNode associated with id: %1").arg(treeNodeId));
+    logger.warn("updateWidgetFromMRML - MRMLManager is NULL");
     return;
     }
 
-  emit this->currentTreeNodeChanged(currentTreeNode);
+  // Clear model
+  d->TreeModel->invisibleRootItem()->removeRows(0, d->TreeModel->invisibleRootItem()->rowCount());
 
-  vtkIdType volumeId = this->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
-  vtkMRMLVolumeNode * volumeNode = this->mrmlManager()->GetVolumeNode(volumeId);
-  emit this->currentSpatialPriorVolumeNodeChanged(volumeNode);
-  emit this->currentSpatialPriorVolumeNodeChanged(volumeNode != 0);
+  d->populateTreeModel(this->mrmlManager()->GetTreeRootNodeID(),
+                       d->TreeModel->invisibleRootItem());
+
+  d->TreeView->expandAll();
 }
 
 //-----------------------------------------------------------------------------
@@ -396,114 +493,12 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setAlphaColumnVisible(bool visible)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentAnatomicalTreeWidget::populateTreeModel(
-    vtkIdType treeNodeId, QStandardItem * item)
+void qSlicerEMSegmentAnatomicalTreeWidget::collapseToDepthZero()
 {
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  Q_ASSERT(this->mrmlManager());
-  Q_ASSERT(item);
 
-  // Return if no valid treeNodeId is given
-  if (treeNodeId == 0)
-    {
-    return;
-    }
-
-  // Get a reference to the associated treeNode
-  vtkMRMLEMSTreeNode * treeNode = this->mrmlManager()->GetTreeNode(treeNodeId);
-  Q_ASSERT(treeNode);
-  if (!treeNode)
-    {
-    logger.error(QString("populateTreeModel - No treeNode associated with id: %1").arg(treeNodeId));
-    return;
-    }
-  Q_ASSERT(treeNode->GetParametersNode());
-
-  logger.debug(QString("populateTreeModel - treeNodeId:%1, treeNodeName: %2").
-               arg(treeNodeId).arg(treeNode->GetName()));
-
-  QList<QStandardItem*> itemList;
-
-  // Structure item
-  QStandardItem * structureItem = new QStandardItem(QString("%1").arg(treeNode->GetName()));
-  structureItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
-  structureItem->setData(QVariant(ctkPimpl::StructureNameItemType), ctkPimpl::TreeItemTypeRole);
-  structureItem->setEditable(d->StructureNameEditable);
-  itemList << structureItem;
-
-  // MRML ID item
-  QStandardItem * mrmlIDItem = new QStandardItem(QString("%1").arg(treeNode->GetID()));
-  mrmlIDItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
-  mrmlIDItem->setData(QVariant(ctkPimpl::MRMLIDItemType), ctkPimpl::TreeItemTypeRole);
-  mrmlIDItem->setEditable(false);
-  itemList << mrmlIDItem;
-
-  // Label item - Available only for tree leaf
-  QStandardItem * labelItem = new QStandardItem();
-  labelItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
-  labelItem->setEditable(false);
-  if (treeNode->GetNumberOfChildNodes() == 0) // Is treeNode a leaf ?
-    {
-    Q_ASSERT(treeNode->GetParametersNode()->GetLeafParametersNode());
-    // TODO label should be editable
-    labelItem->setText(QString("%1").arg(
-        treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel()));
-    labelItem->setData(QVariant(ctkPimpl::LabelItemType), ctkPimpl::TreeItemTypeRole);
-    }
-  itemList << labelItem;
-
-  // ClassWeight item
-  QStandardItem * classWeightItem = new QStandardItem();
-  classWeightItem->setData(
-      QVariant(treeNode->GetParametersNode()->GetClassProbability()), Qt::DisplayRole);
-  classWeightItem->setEditable(true);
-  classWeightItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
-  classWeightItem->setData(QVariant(ctkPimpl::ClassWeightItemType), ctkPimpl::TreeItemTypeRole);
-  itemList << classWeightItem;
-
-  // UpdateClassWeight item
-  QStandardItem * updateClassWeightItem = new QStandardItem();
-  updateClassWeightItem->setData(QVariant(false), Qt::DisplayRole);
-  updateClassWeightItem->setEditable(true);
-  updateClassWeightItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
-  updateClassWeightItem->setData(QVariant(ctkPimpl::UpdateClassWeightItemType),
-                                 ctkPimpl::TreeItemTypeRole);
-  itemList << updateClassWeightItem;
-
-  // AtlasWeight item
-  QStandardItem * atlasWeightItem = new QStandardItem();
-  atlasWeightItem->setData(
-      QVariant(treeNode->GetParametersNode()->GetSpatialPriorWeight()), Qt::DisplayRole);
-  atlasWeightItem->setEditable(true);
-  atlasWeightItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
-  atlasWeightItem->setData(QVariant(ctkPimpl::AtlasWeightItemType), ctkPimpl::TreeItemTypeRole);
-  itemList << atlasWeightItem;
-
-  // Alpha item - Available only for none tree leaf
-  QStandardItem * alphaItem = new QStandardItem();
-  alphaItem->setData(QVariant(treeNodeId), ctkPimpl::TreeNodeIDRole);
-  alphaItem->setEditable(false);
-  if (treeNode->GetNumberOfChildNodes() != 0) // Is treeNode NOT a leaf ?
-    {
-    Q_ASSERT(treeNode->GetParametersNode()->GetParentParametersNode());
-    alphaItem->setText(QString("%1").arg(
-        treeNode->GetParametersNode()->GetParentParametersNode()->GetAlpha()));
-    atlasWeightItem->setData(
-        QVariant(treeNode->GetParametersNode()->GetParentParametersNode()->GetAlpha()),
-        Qt::DisplayRole);
-    alphaItem->setEditable(true);
-    alphaItem->setData(QVariant(ctkPimpl::AlphaItemType), ctkPimpl::TreeItemTypeRole);
-    }
-  itemList << alphaItem;
-
-
-  item->appendRow(itemList);
-
-  // Loop through current node children and recursively call ourself
-  int numberOfChildren = this->mrmlManager()->GetTreeNodeNumberOfChildren(treeNodeId);
-  for (int i = 0; i < numberOfChildren; i++)
-    {
-    this->populateTreeModel(
-      this->mrmlManager()->GetTreeNodeChildNodeID(treeNodeId, i), structureItem);
-    }
+  d->TreeView->setUpdatesEnabled(false);
+  d->TreeView->collapseAll();
+  d->TreeView->expandToDepth(0);
+  d->TreeView->setUpdatesEnabled(true);
 }
