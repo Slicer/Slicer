@@ -6,20 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>602</width>
-    <height>361</height>
+    <width>423</width>
+    <height>298</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+    <widget class="QGroupBox" name="DefineInputChannelsGroupBox">
      <property name="title">
       <string>Define Input Channels</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="qSlicerEMSegmentInputChannelListWidget" name="EMSegmentInputChannelListWidget"/>
       </item>
@@ -27,11 +30,14 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox_2">
+    <widget class="QGroupBox" name="InputToInputChannelRegistrationGroupBox">
      <property name="title">
       <string>Input-to-Input Channel Registration</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QCheckBox" name="AlignInputScansCheckBox">
         <property name="text">
@@ -60,12 +66,6 @@
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

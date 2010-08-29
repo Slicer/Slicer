@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
-    <height>340</height>
+    <width>668</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,14 +15,20 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
+    <widget class="QGroupBox" name="AnatomicalTreeGroupBox">
      <property name="title">
       <string>Anatomical Tree</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
         <property name="classWeightColumnVisible">
+         <bool>true</bool>
+        </property>
+        <property name="updateClassWeightColumnVisible">
          <bool>true</bool>
         </property>
         <property name="atlasWeightColumnVisible">
@@ -33,51 +39,35 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>150</height>
-         </size>
-        </property>
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="BasicTab">
-         <attribute name="title">
-          <string>Basic</string>
-         </attribute>
-        </widget>
-        <widget class="QWidget" name="StoppingConditionsTab">
-         <attribute name="title">
-          <string>Stopping Conditions</string>
-         </attribute>
-        </widget>
-        <widget class="QWidget" name="PrintTab">
-         <attribute name="title">
-          <string>Print</string>
-         </attribute>
-        </widget>
-        <widget class="QWidget" name="AdvancedTab">
-         <attribute name="title">
-          <string>Advanced</string>
-         </attribute>
-        </widget>
-       </widget>
-      </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>150</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="BasicTab">
+      <attribute name="title">
+       <string>Basic</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="StoppingConditionsTab">
+      <attribute name="title">
+       <string>Stopping Conditions</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>

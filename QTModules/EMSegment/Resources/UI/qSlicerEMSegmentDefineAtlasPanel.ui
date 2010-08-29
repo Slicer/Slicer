@@ -6,20 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>426</height>
+    <width>483</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
+    <widget class="QGroupBox" name="AnatomicalTreeGroupBox">
      <property name="title">
       <string>Anatomical Tree</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget"/>
       </item>
@@ -27,14 +30,17 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+    <widget class="QGroupBox" name="ProbabilityMapGroupBox">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="title">
       <string>Probability Map</string>
      </property>
-     <layout class="QFormLayout" name="formLayout">
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
@@ -69,12 +75,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
@@ -111,8 +111,8 @@
      <y>7</y>
     </hint>
     <hint type="destinationlabel">
-     <x>456</x>
-     <y>442</y>
+     <x>464</x>
+     <y>347</y>
     </hint>
    </hints>
   </connection>
@@ -127,8 +127,8 @@
      <y>176</y>
     </hint>
     <hint type="destinationlabel">
-     <x>218</x>
-     <y>416</y>
+     <x>347</x>
+     <y>347</y>
     </hint>
    </hints>
   </connection>
@@ -151,16 +151,16 @@
   <connection>
    <sender>EMSegmentAnatomicalTreeWidget</sender>
    <signal>currentSpatialPriorVolumeNodeChanged(bool)</signal>
-   <receiver>CollapsibleGroupBox</receiver>
+   <receiver>ProbabilityMapGroupBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>503</x>
-     <y>317</y>
+     <x>257</x>
+     <y>252</y>
     </hint>
     <hint type="destinationlabel">
-     <x>506</x>
-     <y>400</y>
+     <x>243</x>
+     <y>302</y>
     </hint>
    </hints>
   </connection>

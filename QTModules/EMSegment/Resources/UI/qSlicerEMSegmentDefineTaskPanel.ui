@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>165</height>
+    <width>328</width>
+    <height>177</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,14 +15,14 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+    <widget class="QGroupBox" name="SelectTaskGroupBox">
      <property name="title">
       <string>Select Task</string>
      </property>
-     <layout class="QFormLayout" name="formLayout">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
@@ -55,14 +55,17 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox_2">
+    <widget class="QGroupBox" name="ChooseModeGroupBox">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="title">
       <string>Choose Mode</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QPushButton" name="SimpleModeButton">
         <property name="text">
@@ -97,12 +100,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -129,28 +126,28 @@
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>311</x>
+     <x>193</x>
      <y>7</y>
     </hint>
     <hint type="destinationlabel">
-     <x>271</x>
-     <y>38</y>
+     <x>213</x>
+     <y>43</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>TaskSelectorComboBox</sender>
    <signal>currentNodeChanged(bool)</signal>
-   <receiver>CollapsibleGroupBox_2</receiver>
+   <receiver>ChooseModeGroupBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>406</x>
-     <y>53</y>
+     <x>113</x>
+     <y>54</y>
     </hint>
     <hint type="destinationlabel">
-     <x>403</x>
-     <y>80</y>
+     <x>119</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>

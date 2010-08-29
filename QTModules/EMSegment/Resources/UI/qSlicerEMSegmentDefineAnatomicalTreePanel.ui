@@ -6,20 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>366</height>
+    <width>467</width>
+    <height>338</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
+    <widget class="QGroupBox" name="AnatomicalTreeGroupBox">
      <property name="title">
       <string>Anatomical Tree</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
         <property name="structureNameEditable">
@@ -36,12 +39,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
@@ -69,12 +66,12 @@
    <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>6</x>
-     <y>69</y>
+     <x>422</x>
+     <y>7</y>
     </hint>
     <hint type="destinationlabel">
-     <x>36</x>
-     <y>109</y>
+     <x>382</x>
+     <y>50</y>
     </hint>
    </hints>
   </connection>
