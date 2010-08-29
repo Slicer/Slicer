@@ -175,7 +175,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnWidgetCreated(vtkAbstractWidge
     return;
     }
 
-  // nothing yet
+  //this->m_DisableModifiedEvents = 0;
 }
 
 

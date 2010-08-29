@@ -214,6 +214,7 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
   this->m_ClickCounter = vtkMRMLAnnotationClickCounter::New();
   this->m_SeedWidget = 0;
   this->m_DisableInteractorStyleEventsProcessing = 0;
+  this->m_Updating = 0;
 
   this->m_Focus = "vtkMRMLAnnotationNode";
 }
@@ -224,6 +225,7 @@ vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
   delete this->Internal;
   this->m_SeedWidget = 0;
   this->m_DisableInteractorStyleEventsProcessing = 0;
+  this->m_Updating = 0;
   this->m_Focus = 0;
   this->m_ClickCounter->Delete();
 }
@@ -313,7 +315,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
-  //this->DebugOn();
+  this->DebugOn();
 
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
   std::cout << node->GetID() << std::endl;
@@ -426,6 +428,13 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNod
 void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent");
+
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    return;
+    }
+
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
     {
@@ -498,6 +507,7 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::GetWidget(vtkMRMLAnnota
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordinates()
 {
+
   double x = this->GetInteractor()->GetEventPosition()[0];
   //int rawY = this->GetInteractor()->GetEventPosition()[1];
   //this->GetInteractor()->SetEventPositionFlipY(x, rawY);

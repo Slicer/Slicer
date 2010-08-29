@@ -134,14 +134,6 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
   angleWidget->SetInteractor(this->GetInteractor());
   angleWidget->SetCurrentRenderer(this->GetRenderer());
 
-  // add observer for end interaction
-  vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
-  myCallback->SetNode(angleNode);
-  myCallback->SetWidget(angleWidget);
-  myCallback->SetDisplayableManager(this);
-  angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
-
   angleWidget->On();
 
   vtkDebugMacro("CreateWidget: Widget was set up")
@@ -158,6 +150,36 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   if (!this->IsCorrectDisplayableManager())
     {
     // jump out
+    return;
+    }
+
+  if (!widget)
+    {
+    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkAngleWidget* angleWidget = vtkAngleWidget::SafeDownCast(widget);
+
+  if (!angleWidget)
+    {
+    vtkErrorMacro("OnWidgetCreated: Could not get angle widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
+
+  if (!angleNode)
+    {
+    vtkErrorMacro("OnWidgetCreated: Could not get angle node!")
     return;
     }
 
@@ -196,6 +218,14 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   recorder->SetInputString(o.str().c_str());
   recorder->Play();
+
+  // add observer for end interaction
+  vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
+  myCallback->SetNode(angleNode);
+  myCallback->SetWidget(angleWidget);
+  myCallback->SetDisplayableManager(this);
+  angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -238,6 +268,15 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     vtkErrorMacro("PropagateMRMLToWidget: Could not get angle node!")
     return;
     }
+
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
 
   // if this flag is true after the checks below, the widget will be set to modified
   bool hasChanged = false;
@@ -286,6 +325,8 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     angleWidget->Modified();
     }
 
+  this->m_Updating = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -328,6 +369,15 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     vtkErrorMacro("PropagateWidgetToMRML: Could not get angle node!")
     return;
     }
+
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
 
   // if this flag is true after the checks below, the modified event gets fired
   bool hasChanged = false;
@@ -386,6 +436,9 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     // at least one value has changed, so fire the modified event
     angleNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, angleNode);
     }
+
+  // enable processing of modified events
+  this->m_Updating = 0;
 
 }
 

@@ -285,14 +285,14 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNo
     {
     return;
     }
-
+/*
   std::vector<double> value = this->GetAnnotationMeasurement(annotationNode);
   const char* format = this->GetAnnotationTextFormatProperty(annotationNode);
 
   std::cout << "HERE:" << value[0] << std::endl;
   this->m_Widget->updateAnnotationInTableByID(annotationNode->GetID(), value,
       format);
-
+*/
   /*vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
    if (!annotationNode)
    {

@@ -124,14 +124,6 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
   rulerWidget->CreateDefaultRepresentation();
 
-  // add observer for end interaction
-  vtkAnnotationRulerWidgetCallback *myCallback = vtkAnnotationRulerWidgetCallback::New();
-  myCallback->SetNode(rulerNode);
-  myCallback->SetWidget(rulerWidget);
-  myCallback->SetDisplayableManager(this);
-  rulerWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
-
   rulerWidget->On();
 
   vtkDebugMacro("CreateWidget: Widget was set up")
@@ -151,6 +143,35 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     return;
     }
 
+  if (!widget)
+    {
+    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    return;
+    }
+
+  // cast to the specific widget
+  vtkDistanceWidget* rulerWidget = vtkDistanceWidget::SafeDownCast(widget);
+
+  if (!rulerWidget)
+    {
+    vtkErrorMacro("OnWidgetCreated: Could not get ruler widget!")
+    return;
+    }
+
+  // cast to the specific mrml node
+  vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
+
+  if (!rulerNode)
+    {
+    vtkErrorMacro("OnWidgetCreated: Could not get ruler node!")
+    return;
+    }
 
   VTK_CREATE(vtkInteractorEventRecorder, recorder);
   recorder->SetInteractor(this->GetInteractor());
@@ -177,6 +198,14 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   recorder->SetInputString(o.str().c_str());
   recorder->Play();
+
+  // add observer for end interaction
+  vtkAnnotationRulerWidgetCallback *myCallback = vtkAnnotationRulerWidgetCallback::New();
+  myCallback->SetNode(rulerNode);
+  myCallback->SetWidget(rulerWidget);
+  myCallback->SetDisplayableManager(this);
+  rulerWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
 
   // no need to set anything - the mrml node will be updated by the callback
 }
