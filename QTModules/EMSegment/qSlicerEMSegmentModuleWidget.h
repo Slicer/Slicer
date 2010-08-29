@@ -12,6 +12,7 @@
 
 class qSlicerEMSegmentModuleWidgetPrivate;
 class vtkMRMLNode;
+class ctkWorkflowStep;
 
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentModuleWidget :
   public qSlicerAbstractModuleWidget
@@ -20,14 +21,17 @@ class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentModuleWidget :
 
 public:
 
+  const static QString SimpleMode;
+  const static QString AdvancedMode;
+
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerEMSegmentModuleWidget(QWidget *parent=0);
 
-public slots:
-  void showPanel(int panelId);
-
 protected:
   virtual void setup();
+
+protected slots:
+  void onCurrentStepChanged(ctkWorkflowStep* currentStep);
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentModuleWidget);

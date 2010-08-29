@@ -11,14 +11,16 @@ SET(qt_module_export_directive "Q_SLICER_QTMODULES_EMSEGMENT_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer3_{Libs,Base} already included
 SET(qt_module_include_directories
+  ${EMSegmentMRML_SOURCE_DIR}
+  ${EMSegmentMRML_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/Panels
   ${CMAKE_CURRENT_BINARY_DIR}/Panels
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
-  ${EMSegmentMRML_SOURCE_DIR}
-  ${EMSegmentMRML_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/Workflow
+  ${CMAKE_CURRENT_BINARY_FIR}/Workflow
   )
 
 # Widget source files
@@ -80,10 +82,50 @@ SET(panel_MOC_SRCS
   Panels/qSlicerEMSegmentRunSegmentationPanel.h                # Step 9
   )
 
+# Workflow source files
+SET(workflow_SRCS
+  Workflow/qSlicerEMSegmentDefineAnatomicalTreeStep.cxx           # Step 3
+  Workflow/qSlicerEMSegmentDefineAnatomicalTreeStep.h
+  Workflow/qSlicerEMSegmentDefineAtlasStep.cxx                    # Step 4
+  Workflow/qSlicerEMSegmentDefineAtlasStep.h
+  Workflow/qSlicerEMSegmentDefineInputChannelsStep.cxx            # Step 2
+  Workflow/qSlicerEMSegmentDefineInputChannelsStep.h
+  Workflow/qSlicerEMSegmentDefinePreprocessingStep.cxx            # Step 6
+  Workflow/qSlicerEMSegmentDefinePreprocessingStep.h
+  Workflow/qSlicerEMSegmentDefineTaskStep.cxx                     # Step 1
+  Workflow/qSlicerEMSegmentDefineTaskStep.h
+  Workflow/qSlicerEMSegmentEditNodeBasedParametersStep.cxx        # Step 8
+  Workflow/qSlicerEMSegmentEditNodeBasedParametersStep.h
+  Workflow/qSlicerEMSegmentEditRegistrationParametersStep.cxx     # Step 5
+  Workflow/qSlicerEMSegmentEditRegistrationParametersStep.h
+  Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.cxx   # Step 7
+  Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.h
+  Workflow/qSlicerEMSegmentRunSegmentationStep.cxx                # Step 9
+  Workflow/qSlicerEMSegmentRunSegmentationStep.h
+
+  Workflow/qSlicerEMSegmentWorkflowWidgetStep.cxx
+  Workflow/qSlicerEMSegmentWorkflowWidgetStep.h
+  )
+
+SET(workflow_MOC_SRCS
+  Workflow/qSlicerEMSegmentDefineAnatomicalTreeStep.h           # Step 3
+  Workflow/qSlicerEMSegmentDefineAtlasStep.h                    # Step 4
+  Workflow/qSlicerEMSegmentDefineInputChannelsStep.h            # Step 2
+  Workflow/qSlicerEMSegmentDefinePreprocessingStep.h            # Step 6
+  Workflow/qSlicerEMSegmentDefineTaskStep.h                     # Step 1
+  Workflow/qSlicerEMSegmentEditNodeBasedParametersStep.h        # Step 8
+  Workflow/qSlicerEMSegmentEditRegistrationParametersStep.h     # Step 5
+  Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.h   # Step 7
+  Workflow/qSlicerEMSegmentRunSegmentationStep.h                # Step 9
+
+  Workflow/qSlicerEMSegmentWorkflowWidgetStep.h
+  )
+
 # Source files
 SET(qt_module_SRCS
   ${panel_SRCS}
   ${widget_SRCS}
+  ${workflow_SRCS}
   qSlicerEMSegmentModule.cxx
   qSlicerEMSegmentModule.h
   qSlicerEMSegmentModuleWidget.cxx
@@ -94,6 +136,7 @@ SET(qt_module_SRCS
 SET(qt_module_MOC_SRCS
   ${panel_MOC_SRCS}
   ${widget_MOC_SRCS}
+  ${workflow_MOC_SRCS}
   qSlicerEMSegmentModule.h
   qSlicerEMSegmentModuleWidget.h
   )
