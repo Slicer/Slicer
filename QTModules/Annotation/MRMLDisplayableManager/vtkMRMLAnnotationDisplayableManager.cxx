@@ -318,7 +318,13 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   this->DebugOn();
 
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
-  std::cout << node->GetID() << std::endl;
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
+
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   if (!annotationNode)
     {
@@ -428,6 +434,12 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNod
 void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent");
+
+  if (!this->IsCorrectDisplayableManager())
+    {
+    // jump out
+    return;
+    }
 
   if (this->m_Updating)
     {
