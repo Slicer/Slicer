@@ -327,6 +327,13 @@ int qMRMLNodeComboBox::nodeCount()const
 }
 
 // --------------------------------------------------------------------------
+vtkMRMLNode* qMRMLNodeComboBox::nodeFromIndex(int index)const
+{
+  CTK_D(const qMRMLNodeComboBox);
+  return d->mrmlNode(d->NoneEnabled ? index + 1 : index);
+}
+
+// --------------------------------------------------------------------------
 void qMRMLNodeComboBox::removeCurrentNode()
 {
   qDebug() << __FUNCTION__ << this->currentNode();

@@ -97,6 +97,12 @@ public:
   int nodeCount()const;
 
   ///
+  /// return the vtkMRMLNode* at the corresponding index. 0 if the index is
+  /// invalid
+  /// \sa nodeCount(), setCurrentNode(int)
+  vtkMRMLNode* nodeFromIndex(int index)const;
+
+  ///
   /// Return the currently selected node. 0 if no node is selected
   vtkMRMLNode* currentNode()const;
 
