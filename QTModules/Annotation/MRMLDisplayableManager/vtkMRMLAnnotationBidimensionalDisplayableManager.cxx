@@ -224,8 +224,9 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   bidimensionalWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   myCallback->Delete();
 
-  // we do not have to update the coordinates here, we already did during creation of the MRML node
+  // we want to manually propagate the widget to the MRML node now
   // in the future, the callback handles the update of the MRML node
+  this->PropagateWidgetToMRML(bidimensionalWidget, bidimensionalNode);
 
 }
 
@@ -269,6 +270,15 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
     vtkErrorMacro("PropagateMRMLToWidget: Could not get bidimensional node!")
     return;
     }
+
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
 
   // if this flag is true after the checks below, the widget will be set to modified
   bool hasChanged = false;
@@ -325,6 +335,9 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
     bidimensionalWidget->Modified();
     }
 
+  // enable processing of modified events
+  this->m_Updating = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -368,6 +381,15 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
     return;
     }
 
+  if (this->m_Updating)
+    {
+    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    return;
+    }
+
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the modified event gets fired
   bool hasChanged = false;
 
@@ -383,6 +405,38 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
   rep->GetPoint2WorldPosition(position2);
   rep->GetPoint3WorldPosition(position3);
   rep->GetPoint4WorldPosition(position4);
+
+  // Check if the MRML node has position set at all
+  if (!bidimensionalNode->GetControlPointCoordinates(0))
+    {
+    bidimensionalNode->SetControlPoint(position1,0);
+    hasChanged = true;
+    }
+
+  if (!bidimensionalNode->GetControlPointCoordinates(1))
+    {
+    bidimensionalNode->SetControlPoint(position2,1);
+    hasChanged = true;
+    }
+
+  if (!bidimensionalNode->GetControlPointCoordinates(2))
+    {
+    bidimensionalNode->SetControlPoint(position3,2);
+    hasChanged = true;
+    }
+
+  if (!bidimensionalNode->GetControlPointCoordinates(3))
+    {
+    bidimensionalNode->SetControlPoint(position4,3);
+    hasChanged = true;
+    }
+
+  if (!bidimensionalNode->GetBidimensionalMeasurement().size()==0)
+    {
+    bidimensionalNode->SetBidimensionalMeasurement(rep->GetLength1(), rep->GetLength2());
+    hasChanged = true;
+    }
+
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -432,6 +486,9 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
     bidimensionalNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, bidimensionalNode);
     }
 
+  // enable processing of modified events
+  this->m_Updating = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -450,6 +507,9 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInThreeDRenderWind
 
   if (this->m_ClickCounter->HasEnoughClicks(4))
     {
+
+    // switch to updating state to avoid events mess
+    this->m_Updating = 1;
 
     vtkMRMLAnnotationBidimensionalNode *bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::New();
 
@@ -474,6 +534,9 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInThreeDRenderWind
     bidimensionalNode->SetName(bidimensionalNode->GetScene()->GetUniqueNameByString("AnnotationBidimensional"));
 
     bidimensionalNode->Delete();
+
+    // reset updating state
+    this->m_Updating = 0;
 
     }
 

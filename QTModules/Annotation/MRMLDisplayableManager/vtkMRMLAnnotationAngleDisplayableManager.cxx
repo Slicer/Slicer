@@ -134,6 +134,14 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
   angleWidget->SetInteractor(this->GetInteractor());
   angleWidget->SetCurrentRenderer(this->GetRenderer());
 
+  // add observer for end interaction, will not fire now
+  vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
+  myCallback->SetNode(angleNode);
+  myCallback->SetWidget(angleWidget);
+  myCallback->SetDisplayableManager(this);
+  angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
+
   angleWidget->On();
 
   vtkDebugMacro("CreateWidget: Widget was set up")
@@ -188,12 +196,9 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   recorder->ReadFromInputStringOn();
 
   std::ostringstream o;
-  VTK_CREATE(vtkHandleWidget, h1);
-  h1 = this->m_HandleWidgetList[0];
-  VTK_CREATE(vtkHandleWidget, h2);
-  h2 = this->m_HandleWidgetList[1];
-  VTK_CREATE(vtkHandleWidget, h3);
-  h3 = this->m_HandleWidgetList[2];
+  vtkHandleWidget * h1 = this->m_HandleWidgetList[0];
+  vtkHandleWidget * h2 = this->m_HandleWidgetList[1];
+  vtkHandleWidget * h3 = this->m_HandleWidgetList[2];
 
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 
@@ -219,13 +224,6 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   recorder->SetInputString(o.str().c_str());
   recorder->Play();
 
-  // add observer for end interaction
-  vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
-  myCallback->SetNode(angleNode);
-  myCallback->SetWidget(angleWidget);
-  myCallback->SetDisplayableManager(this);
-  angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -325,6 +323,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     angleWidget->Modified();
     }
 
+  // enable processing of modified events
   this->m_Updating = 0;
 
 }
@@ -392,6 +391,25 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
   rep->GetPoint1WorldPosition(position1);
   rep->GetPoint2WorldPosition(position2);
   rep->GetCenterWorldPosition(position3);
+
+  // Check if the MRML node has position set at all
+  if (!angleNode->GetPosition1())
+    {
+    angleNode->SetPosition1(position1);
+    hasChanged = true;
+    }
+
+  if (!angleNode->GetPosition2())
+    {
+    angleNode->SetPosition2(position2);
+    hasChanged = true;
+    }
+
+  if (!angleNode->GetPositionCenter())
+    {
+    angleNode->SetPositionCenter(position3);
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node

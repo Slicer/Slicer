@@ -124,6 +124,14 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
   rulerWidget->CreateDefaultRepresentation();
 
+  // add observer for end interaction
+  vtkAnnotationRulerWidgetCallback *myCallback = vtkAnnotationRulerWidgetCallback::New();
+  myCallback->SetNode(rulerNode);
+  myCallback->SetWidget(rulerWidget);
+  myCallback->SetDisplayableManager(this);
+  rulerWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
+
   rulerWidget->On();
 
   vtkDebugMacro("CreateWidget: Widget was set up")
@@ -199,15 +207,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   recorder->SetInputString(o.str().c_str());
   recorder->Play();
 
-  // add observer for end interaction
-  vtkAnnotationRulerWidgetCallback *myCallback = vtkAnnotationRulerWidgetCallback::New();
-  myCallback->SetNode(rulerNode);
-  myCallback->SetWidget(rulerWidget);
-  myCallback->SetDisplayableManager(this);
-  rulerWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
-
-  // no need to set anything - the mrml node will be updated by the callback
 }
 
 //---------------------------------------------------------------------------
@@ -251,6 +250,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     return;
     }
 
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the widget will be set to modified
   bool hasChanged = false;
 
@@ -287,6 +289,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     rep->NeedToRenderOn();
     rulerWidget->Modified();
     }
+
+  // enable processing of modified events
+  this->m_Updating = 0;
 
 }
 
@@ -331,6 +336,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     return;
     }
 
+  // disable processing of modified events
+  this->m_Updating = 1;
+
   // if this flag is true after the checks below, the modified event gets fired
   bool hasChanged = false;
 
@@ -342,6 +350,19 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   rep->GetPoint1WorldPosition(position1);
   rep->GetPoint2WorldPosition(position2);
+
+  // Check if the MRML node has position set at all
+  if (!rulerNode->GetPosition1())
+    {
+    rulerNode->SetPosition1(position1);
+    hasChanged = true;
+    }
+
+  if (!rulerNode->GetPosition2())
+    {
+    rulerNode->SetPosition2(position2);
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -377,6 +398,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     rulerNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, rulerNode);
     }
 
+  // enable processing of modified events
+  this->m_Updating = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -396,6 +420,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInThreeDRenderWindow(doubl
   if (this->m_ClickCounter->HasEnoughClicks(2))
     {
 
+    // switch to updating state to avoid events mess
+    this->m_Updating = 1;
+
     vtkMRMLAnnotationRulerNode *rulerNode = vtkMRMLAnnotationRulerNode::New();
 
     // we can't set coordinates here to MRML, we will do it later
@@ -405,6 +432,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInThreeDRenderWindow(doubl
     rulerNode->SetName(rulerNode->GetScene()->GetUniqueNameByString("AnnotationRuler"));
 
     rulerNode->Delete();
+
+    // reset updating state
+    this->m_Updating = 0;
 
     }
 
