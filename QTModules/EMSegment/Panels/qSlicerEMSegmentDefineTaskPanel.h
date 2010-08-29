@@ -21,8 +21,6 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   qSlicerEMSegmentDefineTaskPanel(QWidget *newParent=0);
-  
-  virtual void printAdditionalInfo();
 
 protected slots:
   void selectTask(vtkMRMLNode* mrmlNode);

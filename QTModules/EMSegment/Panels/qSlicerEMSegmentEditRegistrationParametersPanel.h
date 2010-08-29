@@ -20,8 +20,8 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   qSlicerEMSegmentEditRegistrationParametersPanel(QWidget *newParent=0);
-  
-  virtual void printAdditionalInfo();
+
+  void updateWidgetFromMRML();
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentEditRegistrationParametersPanel);

@@ -220,17 +220,6 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLScene(vtkMRMLScene *newScene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentAnatomicalTreeWidget::setup()
-{
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
-  Q_ASSERT(this->mrmlManager());
-  this->populateTreeModel(this->mrmlManager()->GetTreeRootNodeID(),
-                          d->TreeModel->invisibleRootItem());
-
-  d->TreeView->expandAll();
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::collapseToDepthZero()
 {
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);

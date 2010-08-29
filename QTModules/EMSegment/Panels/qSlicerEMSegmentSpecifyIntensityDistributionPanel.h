@@ -20,10 +20,8 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   qSlicerEMSegmentSpecifyIntensityDistributionPanel(QWidget *newParent=0);
-  
-  virtual void printAdditionalInfo();
 
-  virtual void setup();
+  void updateWidgetFromMRML();
 
 public slots:
   void openGraphDialog();

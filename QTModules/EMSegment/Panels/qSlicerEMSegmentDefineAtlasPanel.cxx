@@ -1,7 +1,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentDefineAtlasPanel.h" 
 #include "ui_qSlicerEMSegmentDefineAtlasPanel.h"
 
@@ -26,13 +26,8 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineAtlasPanel::printAdditionalInfo()
-{
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineAtlasPanel::setup()
+void qSlicerEMSegmentDefineAtlasPanel::updateWidgetFromMRML()
 {
   CTK_D(qSlicerEMSegmentDefineAtlasPanel);
-  d->EMSegmentAnatomicalTreeWidget->setup();
+  d->EMSegmentAnatomicalTreeWidget->updateWidgetFromMRML();
 }

@@ -1,7 +1,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentDefineTaskPanel.h" 
 #include "ui_qSlicerEMSegmentDefineTaskPanel.h"
 
@@ -31,11 +31,7 @@ Superclass(newParent)
   // Connect TaskSelector
   connect(d->TaskSelectorComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           SLOT(selectTask(vtkMRMLNode*)));
-}
 
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineTaskPanel::printAdditionalInfo()
-{
 }
 
 //-----------------------------------------------------------------------------

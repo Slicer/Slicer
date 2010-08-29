@@ -3,6 +3,7 @@
 
 // CTK includes
 #include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 // SlicerQt includes
 #include "qSlicerWidget.h"
@@ -15,6 +16,8 @@ class vtkEMSegmentMRMLManager;
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentWidget : public qSlicerWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
+
 public:
   typedef qSlicerWidget Superclass;
   explicit qSlicerEMSegmentWidget(QWidget *newParent = 0);
@@ -23,10 +26,6 @@ public:
 
 public slots:
   virtual void setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager);
-
-  virtual void setup(){}
-
-  //virtual void cleanup(){}
 
 signals:
   void mrmlManagerChanged(vtkEMSegmentMRMLManager* newMRMLManager);

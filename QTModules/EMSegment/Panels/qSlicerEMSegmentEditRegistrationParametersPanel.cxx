@@ -1,7 +1,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentEditRegistrationParametersPanel.h" 
 #include "ui_qSlicerEMSegmentEditRegistrationParametersPanel.h"
 
@@ -26,6 +26,6 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentEditRegistrationParametersPanel::printAdditionalInfo()
+void qSlicerEMSegmentEditRegistrationParametersPanel::updateWidgetFromMRML()
 {
 }

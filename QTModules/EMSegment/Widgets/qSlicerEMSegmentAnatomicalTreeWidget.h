@@ -53,7 +53,6 @@ public:
 
 public slots:
 
-  void setup();
 
   void updateWidgetFromMRML();
 

@@ -1,9 +1,10 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentDefineInputChannelsPanel.h" 
 #include "ui_qSlicerEMSegmentDefineInputChannelsPanel.h"
+#include "qSlicerEMSegmentInputChannelListWidget.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentDefineInputChannelsPanelPrivate :
@@ -26,6 +27,12 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineInputChannelsPanel::printAdditionalInfo()
+void qSlicerEMSegmentDefineInputChannelsPanel::updateMRMLFromWidget()
 {
+  CTK_D(qSlicerEMSegmentDefineInputChannelsPanel);
+  d->EMSegmentInputChannelListWidget->updateMRMLFromWidget();
 }
+
+//-----------------------------------------------------------------------------
+CTK_GET_CXX(qSlicerEMSegmentDefineInputChannelsPanel, qSlicerEMSegmentInputChannelListWidget*,
+            inputChannelListWidget, EMSegmentInputChannelListWidget);

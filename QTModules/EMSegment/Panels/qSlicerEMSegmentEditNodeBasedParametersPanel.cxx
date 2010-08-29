@@ -1,7 +1,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentEditNodeBasedParametersPanel.h" 
 #include "ui_qSlicerEMSegmentEditNodeBasedParametersPanel.h"
 
@@ -26,14 +26,8 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentEditNodeBasedParametersPanel::printAdditionalInfo()
-{
-}
-
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentEditNodeBasedParametersPanel::setup()
+void qSlicerEMSegmentEditNodeBasedParametersPanel::updateWidgetFromMRML()
 {
   CTK_D(qSlicerEMSegmentEditNodeBasedParametersPanel);
-  d->EMSegmentAnatomicalTreeWidget->setup();
+  d->EMSegmentAnatomicalTreeWidget->updateWidgetFromMRML();
 }

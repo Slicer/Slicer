@@ -10,6 +10,7 @@
 #include "qSlicerEMSegmentModuleExport.h"
 
 class qSlicerEMSegmentDefineInputChannelsPanelPrivate;
+class qSlicerEMSegmentInputChannelListWidget;
 
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineInputChannelsPanel :
     public qSlicerEMSegmentWidget
@@ -20,8 +21,10 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   qSlicerEMSegmentDefineInputChannelsPanel(QWidget *newParent=0);
-  
-  virtual void printAdditionalInfo();
+
+  void updateMRMLFromWidget();
+
+  qSlicerEMSegmentInputChannelListWidget * inputChannelListWidget()const;
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentDefineInputChannelsPanel);

@@ -1,7 +1,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentDefinePreprocessingPanel.h" 
 #include "ui_qSlicerEMSegmentDefinePreprocessingPanel.h"
 
@@ -25,7 +25,3 @@ Superclass(newParent)
   d->setupUi(this);
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefinePreprocessingPanel::printAdditionalInfo()
-{
-}

@@ -20,10 +20,8 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   qSlicerEMSegmentDefineAnatomicalTreePanel(QWidget *newParent=0);
-  
-  virtual void printAdditionalInfo();
 
-  virtual void setup();
+  void updateWidgetFromMRML();
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentDefineAnatomicalTreePanel);

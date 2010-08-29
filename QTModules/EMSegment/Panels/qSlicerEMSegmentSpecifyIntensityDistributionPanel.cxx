@@ -3,7 +3,7 @@
 #include <QDialog>
 #include <QVBoxLayout>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentSpecifyIntensityDistributionPanel.h" 
 #include "ui_qSlicerEMSegmentSpecifyIntensityDistributionPanel.h"
 #include "qSlicerEMSegmentGraphWidget.h"
@@ -39,15 +39,10 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentSpecifyIntensityDistributionPanel::printAdditionalInfo()
-{
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentSpecifyIntensityDistributionPanel::setup()
+void qSlicerEMSegmentSpecifyIntensityDistributionPanel::updateWidgetFromMRML()
 {
   CTK_D(qSlicerEMSegmentSpecifyIntensityDistributionPanel);
-  d->EMSegmentAnatomicalTreeWidget->setup();
+  d->EMSegmentAnatomicalTreeWidget->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------

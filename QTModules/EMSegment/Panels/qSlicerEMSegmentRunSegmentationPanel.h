@@ -20,8 +20,6 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   qSlicerEMSegmentRunSegmentationPanel(QWidget *newParent=0);
-  
-  virtual void printAdditionalInfo();
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentRunSegmentationPanel);

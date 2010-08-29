@@ -26,14 +26,9 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineAnatomicalTreePanel::printAdditionalInfo()
-{
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineAnatomicalTreePanel::setup()
+void qSlicerEMSegmentDefineAnatomicalTreePanel::updateWidgetFromMRML()
 {
   CTK_D(qSlicerEMSegmentDefineAnatomicalTreePanel);
-  d->EMSegmentAnatomicalTreeWidget->setup();
+  d->EMSegmentAnatomicalTreeWidget->updateWidgetFromMRML();
 }
 

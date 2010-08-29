@@ -1,7 +1,7 @@
 // Qt includes
 #include <QDebug>
 
-// SlicerQt includes
+// EMSegment includes
 #include "qSlicerEMSegmentRunSegmentationPanel.h" 
 #include "ui_qSlicerEMSegmentRunSegmentationPanel.h"
 
@@ -23,9 +23,4 @@ Superclass(newParent)
   CTK_INIT_PRIVATE(qSlicerEMSegmentRunSegmentationPanel);
   CTK_D(qSlicerEMSegmentRunSegmentationPanel);
   d->setupUi(this);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentRunSegmentationPanel::printAdditionalInfo()
-{
 }
