@@ -320,8 +320,8 @@ int qMRMLNodeComboBox::nodeCount()const
 {
   CTK_D(const qMRMLNodeComboBox);
   int extraItemsCount =
-      d->MRMLSceneModel->preItems(this->mrmlScene()).count()
-    + (d->MRMLSceneModel->postItems(this->mrmlScene()).count() ? d->MRMLSceneModel->postItems(this->mrmlScene()).count(): 0);
+    d->MRMLSceneModel->preItems(this->mrmlScene()).count()
+    + d->MRMLSceneModel->postItems(this->mrmlScene()).count();
   Q_ASSERT(!this->mrmlScene() || d->ComboBox->count() >= extraItemsCount);
   return this->mrmlScene() ? d->ComboBox->count() - extraItemsCount : 0;
 }
@@ -378,7 +378,11 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
 {
   CTK_D(qMRMLNodeComboBox);
   int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRML::UIDRole) : -1;
-  this->setCurrentNode(index);
+  if (index == -1 && d->NoneEnabled)
+    {
+    index = 0;
+    }
+  d->ComboBox->setCurrentIndex(index);
 }
 
 // --------------------------------------------------------------------------
