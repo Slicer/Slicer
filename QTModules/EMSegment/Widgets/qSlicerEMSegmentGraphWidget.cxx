@@ -62,10 +62,10 @@ qSlicerEMSegmentGraphWidgetPrivate::qSlicerEMSegmentGraphWidgetPrivate()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentGraphWidgetPrivate::setupUi(qSlicerEMSegmentWidget* widget)
+void qSlicerEMSegmentGraphWidgetPrivate::setupUi(qSlicerEMSegmentWidget* newParent)
 {
   CTK_P(qSlicerEMSegmentGraphWidget);
-  this->Ui_qSlicerEMSegmentGraphWidget::setupUi(widget);
+  this->Ui_qSlicerEMSegmentGraphWidget::setupUi(newParent);
   this->Chart0View->SetInteractor(this->Graph0Widget->GetInteractor());
   this->Graph0Widget->SetRenderWindow(this->Chart0View->GetRenderWindow());
   this->Chart1View->SetInteractor(this->Graph1Widget->GetInteractor());

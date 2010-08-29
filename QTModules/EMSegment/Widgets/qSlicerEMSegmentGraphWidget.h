@@ -17,7 +17,7 @@ class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentGraphWidget : public q
 
 public:
   typedef qSlicerEMSegmentWidget Superclass;
-  qSlicerEMSegmentGraphWidget(QWidget *parent=0);
+  explicit qSlicerEMSegmentGraphWidget(QWidget * newParent=0);
 
 public slots:
   virtual void setMRMLManager(vtkEMSegmentMRMLManager* manager);
