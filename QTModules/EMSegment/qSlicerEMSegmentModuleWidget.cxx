@@ -94,8 +94,6 @@ void qSlicerEMSegmentModuleWidget::setup()
 
   // create the workflow and workflow widget if necessary
   d->Workflow = new ctkWorkflow;
-  connect(d->Workflow, SIGNAL(currentStepChanged(ctkWorkflowStep*)),
-          SLOT(onCurrentStepChanged(ctkWorkflowStep*)));
 
   d->WorkflowWidget = new ctkWorkflowStackedWidget(this);
   d->WorkflowWidget->setWorkflow(d->Workflow);
@@ -117,7 +115,7 @@ void qSlicerEMSegmentModuleWidget::setup()
   // Step specific to "simple" mode
   qSlicerEMSegmentWorkflowWidgetStep * defineInputChannelsSimpleStep =
     new qSlicerEMSegmentDefineInputChannelsStep(
-                                                qSlicerEMSegmentDefineInputChannelsStep::Simple, d->Workflow);
+        qSlicerEMSegmentDefineInputChannelsStep::Simple, d->Workflow);
   allSteps << defineInputChannelsSimpleStep;
 
   // The following steps are common to "simple" and "advanced" modes
@@ -165,20 +163,5 @@ void qSlicerEMSegmentModuleWidget::setup()
   d->WorkflowWidget->buttonBoxWidget()->setNextButtonDefaultText("");
 
   d->Workflow->start();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerEMSegmentModuleWidget::onCurrentStepChanged(ctkWorkflowStep* currentStep)
-{
-  CTK_D(qSlicerEMSegmentModuleWidget);
-
-  // Default state
-  d->WorkflowWidget->buttonBoxWidget()->setVisible(true);
-
-  // Hide buttonBox if current step is "DefineTask"
-  if (currentStep->id() == qSlicerEMSegmentDefineTaskStep::StepId)
-    {
-    d->WorkflowWidget->buttonBoxWidget()->setVisible(false);
-    }
 }
 

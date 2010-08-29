@@ -38,6 +38,7 @@ qSlicerEMSegmentDefineTaskStep::qSlicerEMSegmentDefineTaskStep(
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefineTaskStep);
   this->setName("1/9. Define Task");
   this->setDescription("Select a (new) task.");
+  this->setButtonBoxHints(ctkWorkflowWidgetStep::ButtonBoxHidden);
 }
 
 //-----------------------------------------------------------------------------

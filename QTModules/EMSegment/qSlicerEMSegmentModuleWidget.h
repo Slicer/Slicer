@@ -30,9 +30,6 @@ public:
 protected:
   virtual void setup();
 
-protected slots:
-  void onCurrentStepChanged(ctkWorkflowStep* currentStep);
-
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentModuleWidget);
 };
