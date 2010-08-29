@@ -10,6 +10,7 @@
 #include "qSlicerEMSegmentModuleExport.h"
 
 class qSlicerEMSegmentSpecifyIntensityDistributionPanelPrivate;
+class vtkMRMLNode;
 
 class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentSpecifyIntensityDistributionPanel :
     public qSlicerEMSegmentWidget
@@ -24,7 +25,14 @@ public:
   void updateWidgetFromMRML();
 
 public slots:
+
   void openGraphDialog();
+
+private slots:
+
+  void onCurrentTreeNodeChanged(vtkMRMLNode* node);
+
+  void onCurrentDistributionSpecificationMethodCombBoxIndexChanged(int currentIndex);
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentSpecifyIntensityDistributionPanel);

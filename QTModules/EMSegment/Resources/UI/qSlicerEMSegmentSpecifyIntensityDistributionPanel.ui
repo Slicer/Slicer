@@ -6,25 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>657</width>
-    <height>410</height>
+    <width>554</width>
+    <height>469</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="AnatomicalTreeCollapsibleGroupBox">
+    <widget class="QGroupBox" name="AnatomicalTreeGroupBox">
      <property name="title">
       <string>Anatomical Tree</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
-        <property name="structureNameEditable">
-         <bool>true</bool>
-        </property>
         <property name="labelColumnVisible">
          <bool>true</bool>
         </property>
@@ -48,11 +48,131 @@
       <attribute name="title">
        <string>Intensity Distribution</string>
       </attribute>
-     </widget>
-     <widget class="QWidget" name="ManualSamplingTab">
-      <attribute name="title">
-       <string>Manual Sampling</string>
-      </attribute>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="DistributionSpecificationMethodLabel">
+         <property name="text">
+          <string>Specification:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="DistributionSpecificationMethodComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="MeanLabel">
+         <property name="text">
+          <string>Mean:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="ctkMatrixWidget" name="MeanMatrixWidget">
+         <property name="toolTip">
+          <string>Double-click to set the intensity distribution mean.</string>
+         </property>
+         <property name="rowCount">
+          <number>1</number>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+         <property name="minimum">
+          <double>-1000.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>1000.000000000000000</double>
+         </property>
+         <property name="decimals">
+          <number>5</number>
+         </property>
+         <property name="singleStep">
+          <double>2.000000000000000</double>
+         </property>
+         <row/>
+         <column/>
+         <column/>
+         <item row="0" column="0">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          </property>
+         </item>
+         <item row="0" column="1">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="CovarianceLabel">
+         <property name="text">
+          <string>Covariance:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="ctkMatrixWidget" name="CovarianceMatrixWidget">
+         <property name="toolTip">
+          <string>Double-click to set the intensity distribution covariance.</string>
+         </property>
+         <property name="rowCount">
+          <number>2</number>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+         <row/>
+         <row/>
+         <column/>
+         <column/>
+         <item row="0" column="0">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          </property>
+         </item>
+         <item row="0" column="1">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          </property>
+         </item>
+         <item row="1" column="0">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          </property>
+         </item>
+         <item row="1" column="1">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -97,10 +217,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>ctkCollapsibleGroupBox.h</header>
-   <container>1</container>
+   <class>ctkMatrixWidget</class>
+   <extends>QTableWidget</extends>
+   <header>ctkMatrixWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -129,12 +248,12 @@
    <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>573</x>
-     <y>52</y>
+     <x>302</x>
+     <y>4</y>
     </hint>
     <hint type="destinationlabel">
-     <x>522</x>
-     <y>74</y>
+     <x>305</x>
+     <y>42</y>
     </hint>
    </hints>
   </connection>
