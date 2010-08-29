@@ -31,7 +31,6 @@ public:
   qSlicerEMSegmentSpecifyIntensityDistributionPanelPrivate()
     {
     this->CurrentTreeNodeId = 0;
-    logger.setDebug();
     }
   void setupUi(qSlicerEMSegmentWidget* widget);
 

@@ -65,8 +65,6 @@ void qSlicerEMSegmentDefineAnatomicalTreeStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
-
   // Signals that we are finished
   emit onEntryComplete();
 }

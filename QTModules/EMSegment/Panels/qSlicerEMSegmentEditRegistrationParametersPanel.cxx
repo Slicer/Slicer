@@ -35,7 +35,6 @@ public:
 
   qSlicerEMSegmentEditRegistrationParametersPanelPrivate()
     {
-    logger.setDebug();
     }
 
   void setupUi(qSlicerEMSegmentEditRegistrationParametersPanel *widget);

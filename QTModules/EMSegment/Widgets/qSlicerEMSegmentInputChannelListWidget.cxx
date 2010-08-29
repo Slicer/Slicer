@@ -124,7 +124,6 @@ public:
 qSlicerEMSegmentInputChannelListWidget::qSlicerEMSegmentInputChannelListWidget(QWidget *newParent):
 Superclass(newParent)
 {
-  logger.setDebug();
   CTK_INIT_PRIVATE(qSlicerEMSegmentInputChannelListWidget);
   CTK_D(qSlicerEMSegmentInputChannelListWidget);
 
