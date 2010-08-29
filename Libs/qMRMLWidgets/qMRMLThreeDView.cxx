@@ -37,8 +37,6 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDView");
 //---------------------------------------------------------------------------
 qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate()
 {
-  logger.setTrace();
-
   this->DisplayableManagerGroup = 0;
   this->MRMLScene = 0;
   this->MRMLViewNode = 0;
