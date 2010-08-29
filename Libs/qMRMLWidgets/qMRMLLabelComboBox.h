@@ -17,8 +17,9 @@ class QMRML_WIDGETS_EXPORT qMRMLLabelComboBox : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY( DisplayOption option READ displayOption WRITE setDisplayOption USER true)
-  Q_ENUMS( DisplayOption )
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
+  Q_PROPERTY(int currentColor READ currentColor WRITE setCurrentColor USER true)
+  Q_PROPERTY(int maximumColorCount READ maximumColorCount WRITE setMaximumColorCount)
 
 public:
 
@@ -29,29 +30,37 @@ public:
   explicit qMRMLLabelComboBox(QWidget* newParent = 0);
   virtual ~qMRMLLabelComboBox(){}
 
-  enum DisplayOption { WithNone, OnlyColors };
+  /// Set/Get NoneEnabled flags
+  /// An additional item is added into the menu list, where the user can select "None".
+  bool noneEnabled()const;
+  void setNoneEnabled(bool enable);
 
-  void setMRMLColorNode(vtkMRMLColorNode *newNode);
-  
-  void setCurrentColor(int index); 
+  virtual void printAdditionalInfo();
 
-  void setDisplayOption(qMRMLLabelComboBox::DisplayOption newOption);
-  DisplayOption displayOption();
+  vtkMRMLColorNode* mrmlColorNode()const;
+
+  int currentColor()const;
+
+  int maximumColorCount()const;
+  void setMaximumColorCount(int maximum);
 
 public slots:
 
-  void setMRMLColorNode(vtkMRMLNode *newNode);
+  void setMRMLColorNode(vtkMRMLNode * newMRMLColorNode);
+
+  void setCurrentColor(int index);
+
+  void updateWidgetFromMRML();
   
 signals:
 
-  void currentlabelChanged(QColor color);
-  void currentlabelChanged(const QString &name);
-  void currentlabelChanged(int index);
+  void currentColorChanged(const QColor& color);
+  void currentColorChanged(const QString& name);
+  void currentColorChanged(int index);
 
-protected slots:
+private slots:
 
-  void colorSelected(int index); 
-  void updateWidgetFromMRML();
+  void onCurrentIndexChanged(int index);
 
 private:
 

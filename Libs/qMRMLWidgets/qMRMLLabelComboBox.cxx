@@ -1,9 +1,11 @@
 // Qt includes
 #include <QVBoxLayout>
 #include <QPainter>
+#include <QDebug>
 
 // CTK includes
 #include <ctkComboBox.h>
+#include <ctkLogger.h>
 
 // qMRML includes
 #include "qMRMLLabelComboBox.h"
@@ -12,18 +14,27 @@
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLNode.h>
 
+//--------------------------------------------------------------------------
+static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLLabelComboBox");
+//--------------------------------------------------------------------------
+
 //-----------------------------------------------------------------------------
 class qMRMLLabelComboBoxPrivate: public ctkPrivate<qMRMLLabelComboBox>
 {
 public:
   qMRMLLabelComboBoxPrivate();
 
+  void setMRMLColorNode(vtkMRMLColorNode *newMRMLColorNode);
+
   QColor colorFromIndex(int index) const;
-  void addColor(const QColor &color, const QString &name);
+
+  QIcon createIcon(const QColor &color);
   
-  ctkComboBox *ComboBox;
-  qMRMLLabelComboBox::DisplayOption Option;
-  vtkMRMLColorNode *ColorNode;
+  ctkComboBox *       ComboBox;
+  bool                NoneEnabled;
+  vtkMRMLColorNode *  ColorNode;
+  int                 CurrentColor;
+  int                 MaximumColorCount;
 };
 
 // --------------------------------------------------------------------------
@@ -32,9 +43,75 @@ public:
 // --------------------------------------------------------------------------
 qMRMLLabelComboBoxPrivate::qMRMLLabelComboBoxPrivate()
 {
-  this->ComboBox = NULL;
-  this->Option = qMRMLLabelComboBox::OnlyColors;
-  this->ColorNode = NULL;
+  this->ComboBox = 0;
+  this->NoneEnabled = false;
+  this->ColorNode = 0;
+  this->CurrentColor = -1;
+  this->MaximumColorCount = 0;
+}
+
+// ------------------------------------------------------------------------------
+void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode * newMRMLColorNode)
+{
+  CTK_P(qMRMLLabelComboBox);
+
+  p->qvtkReconnect(this->ColorNode, newMRMLColorNode, vtkCommand::ModifiedEvent,
+                      p, SLOT(updateWidgetFromMRML()));
+  p->setEnabled(newMRMLColorNode != 0);
+  this->ColorNode = newMRMLColorNode;
+
+  if (this->ColorNode)
+    {
+    p->updateWidgetFromMRML();
+    }
+  else
+    {
+    this->ComboBox->clear();
+    }
+}
+
+// ------------------------------------------------------------------------------
+QColor qMRMLLabelComboBoxPrivate::colorFromIndex(int index) const
+{
+  //logger.debug(QString("colorFromIndex - index: %1").arg(index));
+  if (index < 0)
+    {
+    return QColor::Invalid;
+    }
+
+  double colorTable[4];
+  vtkLookupTable *table = this->ColorNode->GetLookupTable();
+
+  table->GetTableValue(index, colorTable);
+
+  // HACK - The alpha associated with Black was 0
+  if (colorTable[0] == 0 && colorTable[1] == 0 && colorTable[2] == 0)
+    {
+    colorTable[3] = 1;
+    }
+
+  return QColor::fromRgbF(colorTable[0], colorTable[1], colorTable[2], colorTable[3]);
+}
+
+// ----------------------------------------------------------------
+QIcon qMRMLLabelComboBoxPrivate::createIcon(const QColor &color)
+{
+  CTK_P(qMRMLLabelComboBox);
+  // Create a pixmap
+  const int size = p->style()->pixelMetric(QStyle::PM_SmallIconSize) - 5;
+  QPixmap colorFieldPixmap(size, size);
+
+  // Fill it with the color
+  colorFieldPixmap.fill(color);
+
+  // Make a black rectangle on the border
+  QPainter painter(&colorFieldPixmap);
+  painter.drawRect(0, 0, size - 1, size - 1);
+
+  // Which finally allows to create this icon
+  QIcon colorField(colorFieldPixmap);
+
+  return colorField;
 }
 
 // --------------------------------------------------------------------------
@@ -53,161 +130,158 @@ qMRMLLabelComboBox::qMRMLLabelComboBox(QWidget* newParent)
   this->layout()->addWidget(d->ComboBox);
   this->layout()->setContentsMargins(0, 0, 0, 0);
 
-  // /!\ the index of the combo ComboBox  can have 2 start point for the color, depending or not if the NoColorMode is activated:
-  // NoColorMode == true implies the index for the colors starts at 1
-  // NoColorMode == false implies the index for the colors starts at 0
-
-  //N.B. if the comboBox is up-to-date, (and in NoColorMode == false)
-  //Then the index of the combo box is the same as the index of the ColorNode, and its lookup table
-
   this->connect(d->ComboBox, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(colorSelected(int)));
+                this, SLOT(onCurrentIndexChanged(int)));
 
   this->setEnabled(false);
-  }
+}
 
 // ----------------------------------------------------------------
-void qMRMLLabelComboBoxPrivate::addColor(const QColor &color, const QString &name)
+void qMRMLLabelComboBox::printAdditionalInfo()
 {
-  CTK_P(qMRMLLabelComboBox);
-  //Create a pixmap
-  const int size = p->style()->pixelMetric(QStyle::PM_SmallIconSize) - 5;
-  QPixmap colorFieldPixmap(size, size);
-  
-  //Fill it with the color
-  colorFieldPixmap.fill(color);
-  
-  //Make a black rectangle on the border
-  QPainter painter(&colorFieldPixmap);
-  painter.drawRect(0, 0, size-1, size-1);
- 
-  //Which finally allows me to create this icon
-  QIcon colorField(colorFieldPixmap);
-
-  this->ComboBox->addItem(colorField,name);
+  CTK_D(qMRMLLabelComboBox);
+  qDebug().nospace() << "qMRMLLabelComboBox:" << this << endl
+      << " MRMLColorNode:" << d->ColorNode << endl
+      << "  ClassName:" << (d->ColorNode ? d->ColorNode->GetClassName() : "null") << endl
+      << "  ID:" << (d->ColorNode ? d->ColorNode->GetID() : "null") << endl
+      << "  Type:" << (d->ColorNode ? d->ColorNode->GetTypeAsString() : "null") << endl
+      << " CurrentColor:" << d->CurrentColor << endl
+      << " NoneEnabled:" << d->NoneEnabled << endl;
 }
+
+// ---------------------------------------------------------------------------------
+CTK_GET_CXX(qMRMLLabelComboBox, vtkMRMLColorNode*, mrmlColorNode, ColorNode);
 
 // ------------------------------------------------------------------------------
-void qMRMLLabelComboBox::setMRMLColorNode(vtkMRMLColorNode *newNode)
-{
-  CTK_D(qMRMLLabelComboBox);
-
-  this->qvtkReconnect(d->ColorNode,newNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
-  d->ColorNode = newNode;
-  this->setEnabled(newNode != 0);
-  this->updateWidgetFromMRML();
-}
-
-// ----------------------------------------------------------------------------------
-qMRMLLabelComboBox::DisplayOption qMRMLLabelComboBox::displayOption()
-{
-  CTK_D(qMRMLLabelComboBox);
-  return d->Option;
-}
+CTK_GET_CXX(qMRMLLabelComboBox, int, currentColor, CurrentColor);
 
 // ------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setCurrentColor(int index)
 {
   CTK_D(qMRMLLabelComboBox);
+  //logger.debug(QString("setCurrentColor - index: %1").arg(index));
 
-  if ((index == -1 && d->Option != qMRMLLabelComboBox::WithNone) 
-      || index < -1
-      || index > d->ComboBox->count())
+  if (index == d->CurrentColor)
     {
     return;
     }
+
+  if (d->NoneEnabled)
+    {
+    if (index < -1 || index >= (d->ComboBox->count() - 1) )
+      {
+      return;
+      }
+    index++;
+    }
+  else
+    {
+    if (index < 0 || index >= d->ComboBox->count())
+      {
+      return;
+      }
+    }
   
-  this->colorSelected(index);
+  // Will trigger onCurrentIndexChanged
+  d->ComboBox->setCurrentIndex(index);
 }
 
+// ------------------------------------------------------------------------------
+CTK_GET_CXX(qMRMLLabelComboBox, bool, noneEnabled, NoneEnabled);
+
 // -------------------------------------------------------------------------------
-void qMRMLLabelComboBox::setDisplayOption(qMRMLLabelComboBox::DisplayOption newOption)
+void qMRMLLabelComboBox::setNoneEnabled(bool enabled)
 {
   CTK_D(qMRMLLabelComboBox);
-  
-  if (d->Option == newOption)
-    {
-    return ;
-    }
-  d->Option = newOption;
 
-  if (newOption == qMRMLLabelComboBox::WithNone)
-    {  
+  if (d->NoneEnabled == enabled)
+    {
+    return;
+    }
+  d->NoneEnabled = enabled;
+
+  if (enabled)
+    {
     d->ComboBox->insertItem(0, "None");
     }
   else
     {
-    d->ComboBox->removeItem(d->ComboBox->findText("None", Qt::MatchExactly));
+    d->ComboBox->removeItem(0);
     }
 }
 
-// ------------------------------------------------------------------------------
-QColor qMRMLLabelComboBoxPrivate::colorFromIndex(int index) const
+// ---------------------------------------------------------------------------------
+void qMRMLLabelComboBox::setMaximumColorCount(int maximum)
 {
-  if ( index < 0 )
-    {
-    return QColor::Invalid;
-    }
-
-  double colorTable[4];
-  vtkLookupTable *table = this->ColorNode->GetLookupTable();
-
-  table->GetTableValue(index, colorTable);
-
-  return QColor::fromRgbF(colorTable[0], colorTable[1], colorTable[2], colorTable[3]);
+  CTK_D(qMRMLLabelComboBox);
+  d->MaximumColorCount = maximum <= 0 ? 0 : maximum;
 }
+
+// ---------------------------------------------------------------------------------
+CTK_GET_CXX(qMRMLLabelComboBox, int, maximumColorCount, MaximumColorCount);
 
 // ---------------------------------------------------------------------------------
 // qMRMLLabelComboBox Slots
 
 // ---------------------------------------------------------------------------------
-void qMRMLLabelComboBox::setMRMLColorNode(vtkMRMLNode *newNode)
+void qMRMLLabelComboBox::setMRMLColorNode(vtkMRMLNode *newMRMLColorNode)
 {
-  this->setMRMLColorNode(vtkMRMLColorNode::SafeDownCast(newNode));
+  CTK_D(qMRMLLabelComboBox);
+  d->setMRMLColorNode(vtkMRMLColorNode::SafeDownCast(newMRMLColorNode));
 }
 
 // ------------------------------------------------------------------------------
-void qMRMLLabelComboBox::colorSelected(int index)
+void qMRMLLabelComboBox::onCurrentIndexChanged(int index)
 {
   CTK_D(qMRMLLabelComboBox);
-  
-  //two case, depending on the NoColorMode
-  if (d->Option == qMRMLLabelComboBox::WithNone)
+  //logger.debug(QString("onCurrentIndexChanged - index: %1").arg(index));
+  if (d->NoneEnabled)
     {
-    --index;
+    index--;
     }
- 
-  emit currentlabelChanged(d->colorFromIndex(index));
-  emit currentlabelChanged(d->ComboBox->itemText(index));
-  emit currentlabelChanged(index); 
 
+  d->CurrentColor = index;
+ 
+  emit currentColorChanged(d->colorFromIndex(index));
+  emit currentColorChanged(d->ComboBox->itemText(index));
+  emit currentColorChanged(index);
 }
 
 // ---------------------------------------------------------------------------------
 void qMRMLLabelComboBox::updateWidgetFromMRML()
 {
   CTK_D(qMRMLLabelComboBox);
+  Q_ASSERT(d->ColorNode);
   
+  //logger.debug("updateWidgetFromMRML");
+
   d->ComboBox->clear();
   
   if (!d->ColorNode->GetNamesInitialised())
     {
+    logger.error("updateWidgetFromMRML - ColorNode names are NOT initialized !");
     return;
     }
 
-  if(d->Option == qMRMLLabelComboBox::WithNone)
+  if(d->NoneEnabled)
     {
-    d->ComboBox->insertItem(0,"No color");
+    d->ComboBox->insertItem(0, "None");
     }
 
-  vtkLookupTable *table = d->ColorNode->GetLookupTable();
+  vtkLookupTable * lookupTable = d->ColorNode->GetLookupTable();
+  Q_ASSERT(lookupTable);
 
-  const int count = table->GetNumberOfColors();
-  QString name;
+  const int numberOfColors = lookupTable->GetNumberOfColors();
+  //logger.debug(QString("updateWidgetFromMRML - NumberOfColors: %1").arg(numberOfColors));
 
-  for (int i = 0 ; i < count ; ++i)
+  int actualMax = d->MaximumColorCount > 0 ? d->MaximumColorCount : numberOfColors;
+  for (int i = 0 ; i < actualMax ; ++i)
     {
-    name = d->ColorNode->GetColorName(i);
-    d->addColor(d->colorFromIndex(i), name);
+    QString colorName = QLatin1String(d->ColorNode->GetColorName(i));
+    //logger.debug(QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName));
+    QIcon colorIcon = d->createIcon(d->colorFromIndex(i));
+    d->ComboBox->addItem(colorIcon, colorName);
     }
+
+  d->CurrentColor = -1;
 }
