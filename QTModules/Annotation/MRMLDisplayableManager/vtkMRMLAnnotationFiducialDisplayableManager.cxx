@@ -229,11 +229,11 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   bool hasChanged = false;
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkPointHandleRepresentation3D * rep = vtkPointHandleRepresentation3D::SafeDownCast(seedWidget->GetRepresentation());
+  vtkSeedRepresentation * rep = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
   double position1[3];
 
-  rep->GetWorldPosition(position1);
+  rep->GetSeedWorldPosition(0,position1);
 
   // Check if the MRML node has position set at all
   if (!fiducialNode->GetFiducialCoordinates())
@@ -249,7 +249,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   if (fiducialNode->GetFiducialCoordinates()[0] != position1[0] || fiducialNode->GetFiducialCoordinates()[1] != position1[1] || fiducialNode->GetFiducialCoordinates()[2] != position1[2])
     {
     // at least one coordinate has changed, so update the widget
-    rep->SetWorldPosition(fiducialNode->GetFiducialCoordinates());
+    // we need display coordinates here
+    double * displayCoordinates = this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates()[0],fiducialNode->GetFiducialCoordinates()[1],fiducialNode->GetFiducialCoordinates()[2]);
+    rep->SetSeedDisplayPosition(0,displayCoordinates);
     hasChanged = true;
     }
 
@@ -321,11 +323,11 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
   bool hasChanged = false;
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkPointHandleRepresentation3D * rep = vtkPointHandleRepresentation3D::SafeDownCast(seedWidget->GetRepresentation());
+  vtkSeedRepresentation * rep = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
   double position1[3];
 
-  rep->GetWorldPosition(position1);
+  rep->GetSeedWorldPosition(0,position1);
 
   // Check if the MRML node has position set at all
   if (!fiducialNode->GetFiducialCoordinates())
