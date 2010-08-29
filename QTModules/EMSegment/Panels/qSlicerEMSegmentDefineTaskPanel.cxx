@@ -1,9 +1,11 @@
 // Qt includes
 #include <QDebug>
+#include <QSignalMapper>
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineTaskPanel.h" 
 #include "ui_qSlicerEMSegmentDefineTaskPanel.h"
+#include "qSlicerEMSegmentModuleWidget.h"
 
 // EMSegment/MRML includes
 #include <vtkEMSegmentMRMLManager.h>
@@ -18,6 +20,7 @@ public:
   qSlicerEMSegmentDefineTaskPanelPrivate()
     {
     }
+  QSignalMapper Mapper;
 };
 
 //-----------------------------------------------------------------------------
@@ -32,6 +35,15 @@ Superclass(newParent)
   connect(d->TaskSelectorComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           SLOT(selectTask(vtkMRMLNode*)));
 
+  // Each button is mapped with the corresponding branch name
+  d->Mapper.setMapping(d->SimpleModeButton, qSlicerEMSegmentModuleWidget::SimpleMode);
+  d->Mapper.setMapping(d->AdvancedModeButton, qSlicerEMSegmentModuleWidget::AdvancedMode);
+
+  // Connect buttons
+  connect(d->SimpleModeButton, SIGNAL(clicked()), &d->Mapper, SLOT(map()));
+  connect(d->AdvancedModeButton, SIGNAL(clicked()), &d->Mapper,SLOT(map()));
+
+  connect(&d->Mapper, SIGNAL(mapped(const QString)), SIGNAL(modeChanged(const QString&)));
 }
 
 //-----------------------------------------------------------------------------
