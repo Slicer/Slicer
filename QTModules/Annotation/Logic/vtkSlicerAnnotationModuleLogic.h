@@ -130,15 +130,26 @@ public:
   /// Set the selected text color of an Annotation MRML node
   void SetAnnotationTextSelectedColor(const char* id, double * color);
 
+  /// Get the selected text color of an Annotation MRML node
+  double * GetAnnotationTextUnselectedColor(const char* id);
+  /// Set the selected text color of an Annotation MRML node
+  void SetAnnotationTextUnselectedColor(const char* id, double * color);
+
   /// Get the measurement value of an Annotation MRML node
   const char * GetAnnotationMeasurement(const char * id, bool showUnits);
 
   /// Get the icon name of an Annotation MRML node
   const char * GetAnnotationIcon(const char * id);
 
-  /// Toggle the lock flag of an Annotation MRML node and return the updated flag
-  int ToggleAnnotationLockUnlock(const char * id);
+  /// Get the lock flag of an Annotation MRML node
+  int GetAnnotationLockedUnlocked(const char * id);
+  /// Toggle the lock flag of an Annotation MRML node
+  void SetAnnotationLockedUnlocked(const char * id);
 
+  /// Get the visibility flag of an Annotation MRML node
+  int GetAnnotationVisibility(const char * id);
+  /// Toggle the visibility flag of an Annotation MRML node
+  void SetAnnotationVisibility(const char * id);
 
   /// Backup an Annotation MRML node
   void BackupAnnotationNode(const char * id);

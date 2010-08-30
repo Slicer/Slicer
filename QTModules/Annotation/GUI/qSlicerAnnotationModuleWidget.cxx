@@ -45,7 +45,7 @@ public:
   void
   setupUi(qSlicerWidget* widget);
   void
-      updateAnnotation(int index, const QString& value, const QString& text);
+  updateAnnotation(int index, const QString& value, const QString& text);
   void
   moveSelectedRow(bool up);
   vtkSlicerAnnotationModuleLogic*
@@ -240,7 +240,7 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     lockwidget->setIcon(QIcon(":/Icons/AnnotationUnlock.png"));
     tableWidget->resizeColumnToContents(LockColumn);
     p->connect(this->lockwidget, SIGNAL(buttonClickedWithIndex(int)), p,
-        SLOT(selectRowByIndex(int)));
+      SLOT(selectRowByIndex(int)));
     p->connect(this->lockwidget, SIGNAL(clicked()), p,
         SLOT(lockSelectedButtonClicked()));
     lockwidget->setToolTip(
@@ -300,7 +300,7 @@ void qSlicerAnnotationModuleWidgetPrivate::updateTextItem(int index, const QStri
 }
 
 //-----------------------------------------------------------------------------
-// en-/disable editing of the table items passed
+// en-/disable editing of the table items
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidgetPrivate::setItemEditable(QList<
     QTableWidgetItem*> items, bool isEditable)
@@ -565,7 +565,7 @@ void qSlicerAnnotationModuleWidget::updateAnnotationText(int row, int col)
     }
 
   QString text = d->tableWidget->item(row, col)->text();
-  d->logic()->SetAnnotationText(m_IDs[row],text.toLatin1().data());
+  d->logic()->SetAnnotationText(m_IDs[row], text.toLatin1().data());
 
 }
 
@@ -677,7 +677,7 @@ void qSlicerAnnotationModuleWidget::onLockUnlockAllButtonClicked()
 {
   this->selectedAllButtonClicked();
   this->lockSelectedButtonClicked();
-  //this->selectedAllButtonClicked();
+  this->selectedAllButtonClicked();
 }
 
 void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
@@ -784,7 +784,11 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
 void qSlicerAnnotationModuleWidget::propertyRestored()
 {
 
-  std::cout << "Property closed2." << std::endl;
+  //const char * mrmlID = this->m_PropertyDialog->GetID();
+  CTK_D(qSlicerAnnotationModuleWidget);
+
+  d->setItemEditable(d->tableWidget->selectedItems(), true);
+
   //delete this->m_PropertyDialog;
   this->m_PropertyDialog = 0;
 
@@ -808,15 +812,52 @@ void qSlicerAnnotationModuleWidget::propertyAccepted()
 {
 
   const char * mrmlID = this->m_PropertyDialog->GetID();
-
   CTK_D(qSlicerAnnotationModuleWidget);
 
-  this->updateAnnotationInTableByID(mrmlID,d->logic()->GetAnnotationMeasurement(mrmlID,false),d->logic()->GetAnnotationText(mrmlID));
+  int i = this->getIndexByNodeID(mrmlID);
+
+  // update value and text in the table
+  this->updateAnnotationInTableByID(mrmlID,
+      d->logic()->GetAnnotationMeasurement(mrmlID, false),
+      d->logic()->GetAnnotationText(mrmlID));
+
+  // TODO cleanup!!
+
+  qSlicerAnnotationModulePushButton* widget = qobject_cast<
+      qSlicerAnnotationModulePushButton*> (d->tableWidget->cellWidget(i,
+      d->LockColumn));
+
+  // update visibility and lock icons
+  if (d->logic()->GetAnnotationLockedUnlocked(this->m_IDs[i]))
+    {
+    widget->setIcon(QIcon(":/Icons/AnnotationLock.png"));
+    }
+  else
+    {
+    widget->setIcon(QIcon(":/Icons/AnnotationUnlock.png"));
+    }
+
+   widget = qobject_cast<
+      qSlicerAnnotationModulePushButton*> (d->tableWidget->cellWidget(i,
+      d->VisibleColumn));
+
+  if (d->logic()->GetAnnotationVisibility(this->m_IDs[i]))
+    {
+    widget->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
+    }
+  else
+    {
+    widget->setIcon(QIcon(":/Icons/AnnotationInvisible.png"));
+    }
+
+  d->tableWidget->resizeColumnToContents(d->VisibleColumn);
+  d->tableWidget->resizeColumnToContents(d->TypeColumn);
+
+  // re-enable in table editing
+  d->setItemEditable(d->tableWidget->selectedItems(), true);
 
   //delete this->m_PropertyDialog;
   this->m_PropertyDialog = 0;
-
-
 
   /*
    this->RemovePropertyDialog(nodeID);
@@ -962,13 +1003,12 @@ void qSlicerAnnotationModuleWidget::onGenerateReportButtonClicked()
 
       thevalue = d->logic()->GetAnnotationMeasurement(m_IDs[i], false);
 
-
       report.append("<img src='") .append(d->logic()->GetIconName(
           d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]))) .append("'>");
       textString = d->logic()->GetAnnotationTextProperty(
           d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
-      report.append(TDend).append(TD).append(thevalue).append(TDend).append(
-          TD).append(textString).append(TDend).append("\n</tr>\n");
+      report.append(TDend).append(TD).append(thevalue).append(TDend).append(TD).append(
+          textString).append(TDend).append("\n</tr>\n");
       }
     }
   else
@@ -1172,7 +1212,6 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
   CTK_D(qSlicerAnnotationModuleWidget);
 
   std::vector<int> selectedRows;
-  bool isVisible = false;
 
   if (m_index >= 0)
     {
@@ -1183,53 +1222,89 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
     {
     return;
     }
-  /*
-   foreach(int i, selectedRows)
-   {
-   vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(
-   d->logic()->GetMRMLScene()->GetNodeByID(
-   m_IDs[i]));
-   if (fNode != NULL && fNode->IsA(
-   "vtkMRMLFiducialListNode"))
+
+  foreach(int i, selectedRows)
+    {
+
+    d->logic()->SetAnnotationVisibility(this->m_IDs[i]);
+
+    qSlicerAnnotationModulePushButton* widget = qobject_cast<
+        qSlicerAnnotationModulePushButton*> (d->tableWidget->cellWidget(i,
+        d->VisibleColumn));
+
+    if (d->logic()->GetAnnotationVisibility(this->m_IDs[i]))
+      {
+      widget->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
+      }
+    else
+      {
+      widget->setIcon(QIcon(":/Icons/AnnotationInvisible.png"));
+      }
+
+    d->tableWidget->resizeColumnToContents(d->VisibleColumn);
+    d->tableWidget->resizeColumnToContents(d->TypeColumn);
+    }
+  /*vtkMRMLFiducialListNode* fNode = vtkMRMLFiducialListNode::SafeDownCast(
+   d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
+   if (fNode != NULL && fNode->IsA("vtkMRMLFiducialListNode"))
    {
    isVisible = !fNode->GetVisibility();
-   fNode->SetVisibility(
-   (int) isVisible);
+   fNode->SetVisibility((int) isVisible);
    }
    else
    {
-   vtkMRMLAnnotationNode * node = (vtkMRMLAnnotationNode*) d->logic()->GetMRMLScene()->GetNodeByID(
+   vtkMRMLAnnotationNode * node =
+   (vtkMRMLAnnotationNode*) d->logic()->GetMRMLScene()->GetNodeByID(
    m_IDs[i]);
    if (node)
    {
    isVisible = !node->GetVisible();
-   node->SetVisible(
-   (int) isVisible);
+   node->SetVisible((int) isVisible);
    }
-
 
    }*/
 
-  d->setInvisibleItemIcon(isVisible);
+  //d->setInvisibleItemIcon(isVisible);
 
 }
 
 void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
-{
-  CTK_D(qSlicerAnnotationModuleWidget);
+{  CTK_D(qSlicerAnnotationModuleWidget);
 
-  std::vector<int> selectedRows;
-  bool isLocked = false;
+std::vector<int> selectedRows;
 
-  if (m_IDs.size() >= 1)
+if (m_index >= 0)
+  {
+  selectedRows = d->updateSingleSelection();
+  }
+
+if (selectedRows.size() == 0)
+  {
+  return;
+  }
+
+foreach(int i, selectedRows)
+  {
+
+  d->logic()->SetAnnotationLockedUnlocked(this->m_IDs[i]);
+
+  qSlicerAnnotationModulePushButton* widget = qobject_cast<
+      qSlicerAnnotationModulePushButton*> (d->tableWidget->cellWidget(i,
+      d->LockColumn));
+
+  if (d->logic()->GetAnnotationLockedUnlocked(this->m_IDs[i]))
     {
-    selectedRows = d->updateSingleSelection();
+    widget->setIcon(QIcon(":/Icons/AnnotationLock.png"));
+    }
+  else
+    {
+    widget->setIcon(QIcon(":/Icons/AnnotationUnlock.png"));
     }
 
-  if (selectedRows.size() == 0)
-    {
-    return;
-    }
+  d->tableWidget->resizeColumnToContents(d->VisibleColumn);
+  d->tableWidget->resizeColumnToContents(d->TypeColumn);
+
+  }
 
   /*
    foreach(int i, selectedRows)
@@ -1268,7 +1343,6 @@ void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
 
    }*/
 
-  d->setLockUnLockIcon(isLocked);
 
 }
 
@@ -1927,9 +2001,9 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 
   this->m_lastAddedIndex = this->m_index;
 
-  const char * measurementValue = d->logic()->GetAnnotationMeasurement(newNodeID, false);
+  const char * measurementValue = d->logic()->GetAnnotationMeasurement(
+      newNodeID, false);
   const char * textValue = d->logic()->GetAnnotationText(newNodeID);
-
 
   d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
   this->selectRowByIndex(m_index);

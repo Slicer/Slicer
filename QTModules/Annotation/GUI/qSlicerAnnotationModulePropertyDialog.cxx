@@ -80,6 +80,15 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
   ui.measurementLineEdit->setText(measurement);
 
+  // load the unselected text color
+  double * unselectedColor = this->m_logic->GetAnnotationTextSelectedColor(
+      this->m_id);
+  QColor unselectedQColor;
+  this->TurnColorArrayToQColor(unselectedColor,unselectedQColor);
+
+  ui.textUnselectedColorPickerButton->setColor(unselectedQColor);
+  ui.textUnselectedColorPickerButton->setText("Unselected Color");
+
   // load the selected text color
   double * selectedColor = this->m_logic->GetAnnotationTextSelectedColor(
       this->m_id);
@@ -88,6 +97,37 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
   ui.textSelectedColorPickerButton->setColor(selectedQColor);
   ui.textSelectedColorPickerButton->setText("Selected Color");
+
+  // load the lock/unlock status
+  int locked = this->m_logic->GetAnnotationLockedUnlocked(this->m_id);
+
+  if (!locked)
+    {
+    ui.lockUnlockButton->setIcon(QIcon(":/Icons/AnnotationUnlock.png"));
+    ui.lockUnlockButton->setToolTip(QString("Click to lock this annotation"));
+    }
+  else
+    {
+    ui.lockUnlockButton->setIcon(QIcon(":/Icons/AnnotationLock.png"));
+    ui.lockUnlockButton->setToolTip(QString("This annotation is locked. Click to unlock!"));
+    }
+
+  this->lockUnlockInterface(locked);
+
+  // load the visiblity status
+  int visible = this->m_logic->GetAnnotationVisibility(this->m_id);
+
+  if (!visible)
+    {
+    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationInvisible.png"));
+    ui.visibleInvisibleButton->setToolTip(QString("Click to show this annotation"));
+    }
+  else
+    {
+    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
+    ui.visibleInvisibleButton->setToolTip(QString("Click to hide this annotation"));
+    }
+
 
   /*
    this->setWindowTitle(
@@ -501,6 +541,12 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.textSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
       this, SLOT(onTextSelectedColorChanged(QColor)));
 
+  this->connect(ui.textUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
+      this, SLOT(onTextUnselectedColorChanged(QColor)));
+
+  this->connect(ui.lockUnlockButton, SIGNAL(clicked()), this, SLOT(onLockUnlockButtonClicked()));
+  this->connect(ui.visibleInvisibleButton, SIGNAL(clicked()), this, SLOT(onVisibleInvisibleButtonClicked()));
+
   /*
    this->connect(
    ui.annotationTextEdit,
@@ -878,14 +924,14 @@ void qSlicerAnnotationModulePropertyDialog::SetButtonText(int type)
     }
 }
 
-void qSlicerAnnotationModulePropertyDialog::onTextColorChanged(QColor qcolor)
+void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor qcolor)
 {
   double color[3];
   this->TurnQColorToColorArray(color, qcolor);
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->TEXT_COLOR, color);
-  this->SetButtonText(this->m_logic->TEXT_COLOR);
+
+  this->m_logic->SetAnnotationTextUnselectedColor(this->m_id,color);
+
+  ui.textUnselectedColorPickerButton->setText("Unselected Color");
 }
 
 void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qcolor)
@@ -903,6 +949,50 @@ void qSlicerAnnotationModulePropertyDialog::onTextScaleChanged(double value)
 {
 
   this->m_logic->SetAnnotationTextScale(this->m_id, value);
+
+}
+
+void qSlicerAnnotationModulePropertyDialog::onLockUnlockButtonClicked()
+{
+
+  // toggle the lock flag
+  this->m_logic->SetAnnotationLockedUnlocked(this->m_id);
+
+  int locked = this->m_logic->GetAnnotationLockedUnlocked(this->m_id);
+
+  if (!locked)
+    {
+    ui.lockUnlockButton->setIcon(QIcon(":/Icons/AnnotationUnlock.png"));
+    ui.lockUnlockButton->setToolTip(QString("Click to lock this annotation"));
+    }
+  else
+    {
+    ui.lockUnlockButton->setIcon(QIcon(":/Icons/AnnotationLock.png"));
+    ui.lockUnlockButton->setToolTip(QString("This annotation is locked. Click to unlock!"));
+    }
+
+  this->lockUnlockInterface(locked);
+
+}
+
+void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
+{
+
+  this->m_logic->SetAnnotationVisibility(this->m_id);
+
+  // load the visiblity status
+  int visible = this->m_logic->GetAnnotationVisibility(this->m_id);
+
+  if (!visible)
+    {
+    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationInvisible.png"));
+    ui.visibleInvisibleButton->setToolTip(QString("Click to show this annotation"));
+    }
+  else
+    {
+    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
+    ui.visibleInvisibleButton->setToolTip(QString("Click to hide this annotation"));
+    }
 
 }
 
@@ -1125,3 +1215,33 @@ void qSlicerAnnotationModulePropertyDialog::onDialogAccepted()
   emit dialogAccepted();
 
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
+{
+
+  lock = !lock;
+
+  ui.annotationTextEdit->setEnabled(lock);
+  ui.measurementLineEdit->setEnabled(lock);
+  ui.textSelectedColorPickerButton->setEnabled(lock);
+  ui.textUnselectedColorPickerButton->setEnabled(lock);
+  ui.textScaleSliderSpinBoxWidget->setEnabled(lock);
+  ui.visibleInvisibleButton->setEnabled(lock);
+  ui.pointSelectedColorPickerButton->setEnabled(lock);
+  ui.pointUnselectedColorPickerButton->setEnabled(lock);
+  ui.lineSelectedColorPickerButton->setEnabled(lock);
+  ui.lineUnselectedColorPickerButton->setEnabled(lock);
+  ui.pointAmbientSliderSpinBoxWidget->setEnabled(lock);
+  ui.pointDiffuseSliderSpinBoxWidget->setEnabled(lock);
+  ui.pointOpacitySliderSpinBoxWidget->setEnabled(lock);
+  ui.pointSizeSliderSpinBoxWidget->setEnabled(lock);
+  ui.pointSpecularSliderSpinBoxWidget->setEnabled(lock);
+  ui.lineAmbientSliderSpinBoxWidget_2->setEnabled(lock);
+  ui.lineDiffuseSliderSpinBoxWidget_2->setEnabled(lock);
+  ui.lineOpacitySliderSpinBoxWidget_2->setEnabled(lock);
+  ui.lineSpecularSliderSpinBoxWidget_2->setEnabled(lock);
+  ui.lineWidthSliderSpinBoxWidget_2->setEnabled(lock);
+
+}
+

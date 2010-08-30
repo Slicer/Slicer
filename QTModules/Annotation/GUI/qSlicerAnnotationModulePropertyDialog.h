@@ -48,12 +48,8 @@ protected:
 protected slots:
 
     void onCoordinateChanged(QString text);
-    void onTextChanged();
-    void onDialogRejected();
-    void onDialogAccepted();
-    void onTextColorChanged(QColor qcolor);
-    void onTextSelectedColorChanged(QColor qcolor);
-    void onTextScaleChanged(double value);
+
+
     void onPointColorChanged(QColor qcolor);
     void onPointSelectedColorChanged(QColor qcolor);
     void onPointSizeChanged(double value);
@@ -69,6 +65,16 @@ protected slots:
     void onLineDiffuseChanged(double value);
     void onLineSpecularChanged(double value);
   void onCollapsibleGroupBoxClicked();
+
+  void onTextChanged();
+  void onDialogRejected();
+  void onDialogAccepted();
+  void onTextUnselectedColorChanged(QColor qcolor);
+  void onTextSelectedColorChanged(QColor qcolor);
+  void onTextScaleChanged(double value);
+
+  void onLockUnlockButtonClicked();
+  void onVisibleInvisibleButtonClicked();
 
 
 signals:
@@ -105,6 +111,8 @@ private:
     // initialize the GUI in respect to values from the logic
     void initialize();
 
+    // lock/unlock the complete interface
+    void lockUnlockInterface(bool lock);
 };
 
 #endif
