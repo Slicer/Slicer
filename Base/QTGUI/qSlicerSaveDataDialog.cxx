@@ -128,9 +128,13 @@ void qSlicerSaveDataDialogPrivate::populateItems()
   // let's try to resize the columns according to their new contents
   this->FileWidget->resizeColumnsToContents();
   // let's try to show the whole table on screen
-  this->resize(this->FileWidget->horizontalHeader()->length()
-               + 2*this->FileWidget->frameWidth()
-               + this->contentsMargins().left() + this->contentsMargins().right(),
+  // TODO: find a function in Qt that does it automatically.
+  this->resize(this->layout()->contentsMargins().left()
+               + this->FileWidget->frameWidth()
+               + this->FileWidget->verticalHeader()->sizeHint().width()
+               + this->FileWidget->horizontalHeader()->length()
+               + this->FileWidget->frameWidth()
+               + this->layout()->contentsMargins().right(),
                this->sizeHint().height());
 }
 
