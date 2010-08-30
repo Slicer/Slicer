@@ -56,5 +56,5 @@ QString qSlicerDataModule::acknowledgementText()const
     "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>"
     "The Data module was contributed by Alex Yarmarkovich, Isomics Inc. with "
     "help from others at SPL, BWH (Ron Kikinis, Wendy Plesniak)";
-  return about.arg(this->slicerWikiUrl());
+  return about;
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>441</width>
-    <height>765</height>
+    <width>320</width>
+    <height>363</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,38 +28,32 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QGroupBox" name="MRMLTreeGroupBox">
-        <property name="title">
-         <string>MRML Tree</string>
+       <widget class="qMRMLTreeWidget" name="MRMLTreeWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <widget class="qMRMLTreeWidget" name="MRMLTreeWidget">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="indentation">
-            <number>10</number>
-           </property>
-           <property name="uniformRowHeights">
-            <bool>true</bool>
-           </property>
-           <property name="listenNodeModifiedEvent">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="DisplayMRMLIDsCheckBox">
-           <property name="text">
-            <string>Display MRML ID's</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <property name="indentation">
+         <number>10</number>
+        </property>
+        <property name="uniformRowHeights">
+         <bool>true</bool>
+        </property>
+        <property name="listenNodeModifiedEvent">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="DisplayMRMLIDsCheckBox">
+        <property name="text">
+         <string>Display MRML ID's</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>

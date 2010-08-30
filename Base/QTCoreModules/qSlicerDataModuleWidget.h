@@ -31,13 +31,14 @@ public slots:
   void addDTI();
 
   void setMRMLIDsVisible(bool visible);
+/* HIDDEN to the UI
   void setCurrentNodeName(const QString& name);
 
 protected slots:
   void onMRMLNodeChanged(vtkMRMLNode* node);
   void onMRMLNodeModified();
   void validateNodeName();
-
+*/
 protected:
   virtual void setup();
 

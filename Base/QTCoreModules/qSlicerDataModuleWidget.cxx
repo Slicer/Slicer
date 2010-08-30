@@ -42,14 +42,18 @@ void qSlicerDataModuleWidget::setup()
 
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setMRMLIDsVisible(bool)));
-  this->setMRMLIDsVisible(d->DisplayMRMLIDsCheckBox->isChecked());
+  // hide the IDs by default
+  d->DisplayMRMLIDsCheckBox->setChecked(false);
 
-  connect(d->MRMLTreeWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-          this, SLOT(onMRMLNodeChanged(vtkMRMLNode*)));
+  // Hide the node inspector as it is possible to edit nodes via the tree
+  d->MRMLNodeInspectorGroupBox->setVisible(false);
+  //   connect(d->MRMLTreeWidget, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+  //           this, SLOT(onMRMLNodeChanged(vtkMRMLNode*)));
   // Change the node name only when the Enter key is pressed or the line edit
   // looses the focus
-  connect(d->NodeNameLineEdit, SIGNAL(editingFinished()),
-          this, SLOT(validateNodeName()));
+  //connect(d->NodeNameLineEdit, SIGNAL(editingFinished()),
+  //        this, SLOT(validateNodeName()));
+
   // Connect the buttons to the associated slots
   connect(d->LoadSceneToolButton, SIGNAL(clicked()),
           this, SLOT(loadScene()));
@@ -102,7 +106,7 @@ void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)
     d->MRMLTreeWidget->resizeColumnToContents(i);
     }
 }
-
+/* Hidden to the UI
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::onMRMLNodeChanged(vtkMRMLNode* node)
 {
@@ -143,7 +147,7 @@ void qSlicerDataModuleWidget::setCurrentNodeName(const QString& name)
     }
   d->MRMLNode->SetName(name.toLatin1().data());
 }
-
+*/
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::loadScene()
 {
