@@ -401,7 +401,11 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     hasChanged = true;
     }
 
-
+  if (!textNode->GetAnnotationTextDisplayNode())
+    {
+    textNode->CreateAnnotationTextDisplayNode();
+    hasChanged = true;
+    }
 
   //
   // Check if the position of the widget is different than the saved one in the mrml node
@@ -431,7 +435,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     }
 
   // Propagate the selected text color to the MRML node
-  if (textNode->GetAnnotationTextDisplayNode()->GetSelectedColor() != rep->GetTextActor()->GetScaledTextProperty()->GetColor())
+  if (textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[0] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[0] || textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[1] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[1] || textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[2] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[2])
     {
     // widget font color is different then the mrml selected color property, so propagate to mrml
     textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
@@ -476,13 +480,9 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
     textNode->SetTextCoordinates(worldCoordinates);
     textNode->SetTextLabel("New text");
 
-    textNode->Initialize(this->GetMRMLScene());
-
     textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
 
-    textNode->CreateAnnotationTextDisplayNode();
-
-    textNode->SetTextScale(20);
+    textNode->Initialize(this->GetMRMLScene());
 
     textNode->Delete();
 
