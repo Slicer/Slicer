@@ -884,34 +884,24 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
     }
 
   QPalette palette;
+
   // If name matches either 'Red, 'Green' or 'Yellow' set the corresponding color
   // set Orange otherwise
+  QColor buttonColor;
+  buttonColor.setRgbF(0.882352941176, 0.439215686275, 0.0705882352941); // orange
   if (newSliceViewName == "Red")
     {
-    QColor red;
-    red.setRgbF(0.952941176471, 0.290196078431, 0.2);
-    palette = QPalette(red);
+    buttonColor.setRgbF(0.952941176471, 0.290196078431, 0.2); // red
     }
   else if (newSliceViewName == "Green")
     {
-    QColor green;
-    green.setRgbF(0.43137254902, 0.690196078431, 0.294117647059);
-    palette = QPalette(green);
+    buttonColor.setRgbF(0.43137254902, 0.690196078431, 0.294117647059); // green
     }
   else if (newSliceViewName == "Yellow")
     {
-    QColor yellow;
-    yellow.setRgbF(0.929411764706, 0.835294117647, 0.298039215686);
-    palette = QPalette(yellow);
+    buttonColor.setRgbF(0.929411764706, 0.835294117647, 0.298039215686); // yellow
     }
-  else
-    {
-    // Default slice view color
-    QColor orange;
-    orange.setRgbF(0.882352941176, 0.439215686275, 0.0705882352941);
-    palette = QPalette(orange);
-    }
-  d->SliceCollapsibleButton->setPalette(palette);
+  d->SliceCollapsibleButton->setPalette(QPalette(buttonColor));
 
   if (d->SliceLogic)
     {

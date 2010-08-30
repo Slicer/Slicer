@@ -110,6 +110,9 @@ qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
   CTK_D(qMRMLSliceWidget);
   d->setupUi(this);
 
+  // Highligh first RenderWindowItem
+  d->VTKSliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
+
   connect(d->VTKSliceView, SIGNAL(resized(const QSize&,const QSize&)),
           d->SliceController, SLOT(setSliceViewSize(const QSize&)));
 
@@ -224,7 +227,28 @@ vtkMRMLSliceCompositeNode* qMRMLSliceWidget::mrmlSliceCompositeNode()const
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
 {
-  ctk_d()->SliceController->setSliceViewName(newSliceViewName);
+  CTK_D(qMRMLSliceWidget);
+  d->SliceController->setSliceViewName(newSliceViewName);
+
+  // If name matches either 'Red, 'Green' or 'Yellow' set the corresponding color
+  // set Orange otherwise
+  QColor highlightedBoxColor;
+  highlightedBoxColor.setRgbF(0.882352941176, 0.439215686275, 0.0705882352941); // orange
+  if (newSliceViewName == "Red")
+    {
+    highlightedBoxColor.setRgbF(0.952941176471, 0.290196078431, 0.2); // red
+    }
+  else if (newSliceViewName == "Green")
+    {
+    highlightedBoxColor.setRgbF(0.43137254902, 0.690196078431, 0.294117647059); // green
+    }
+  else if (newSliceViewName == "Yellow")
+    {
+    highlightedBoxColor.setRgbF(0.929411764706, 0.835294117647, 0.298039215686); // yellow
+    }
+
+  // Set the color associated with the highlightedBox
+  d->VTKSliceView->setHighlightedBoxColor(highlightedBoxColor);
 }
 
 //---------------------------------------------------------------------------
