@@ -370,6 +370,10 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 
   logger.trace("updateWidgetFromMRMLSliceCompositeNode");
 
+  // Update slice link toggle. Must be done first as its state controls
+  // different behaviors when properties are set.
+  this->SliceLinkButton->setChecked(this->MRMLSliceCompositeNode->GetLinkedControl());
+
   // Update "foreground layer" node selector
   this->ForegroundLayerNodeSelector->setCurrentNode(
       p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
@@ -381,9 +385,6 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
   // Update "label map" node selector
   this->LabelMapSelector->setCurrentNode(
       p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
-
-  // Update slice link toggle
-  this->SliceLinkButton->setChecked(this->MRMLSliceCompositeNode->GetLinkedControl());
 
   // Label opacity
   this->LabelOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetLabelOpacity());
