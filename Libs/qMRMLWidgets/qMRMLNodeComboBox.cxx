@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QKeyEvent>
+#include <QListView>
 #include <QStandardItemModel>
 
 // CTK includes
@@ -29,7 +30,7 @@ class qMRMLNodeComboBoxPrivate: public ctkPrivate<qMRMLNodeComboBox>
 public:
   qMRMLNodeComboBoxPrivate();
   void init(QAbstractItemModel* model);
-  vtkMRMLNode* mrmlNode(int index)const;
+  vtkMRMLNode* mrmlNode(int row)const;
   vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
   void updateNoneItem();
   void updateActionItems();
@@ -91,7 +92,7 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   sortFilterModel->setSourceModel(model);
   this->setModel(sortFilterModel);
 
-  p->connect(this->ComboBox, SIGNAL(currentIndexChanged(int)), 
+  p->connect(this->ComboBox, SIGNAL(currentIndexChanged(int)),
              p, SLOT(emitCurrentNodeChanged(int)));
 
   p->setEnabled(p->mrmlScene() != 0);
@@ -109,10 +110,13 @@ void qMRMLNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int index)const
+vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int row)const
 {
+  QModelIndex modelIndex = this->ComboBox->model()->index(
+    row, this->ComboBox->modelColumn(), this->ComboBox->rootModelIndex());
+  /*
   CTK_P(const qMRMLNodeComboBox);
-  QString nodeId = 
+  QString nodeId =
     this->ComboBox->itemData(index, qMRML::UIDRole).toString();
   if (nodeId.isEmpty())
     {
@@ -120,6 +124,8 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int index)const
     }
   vtkMRMLScene* scene = p->mrmlScene();
   return scene ? scene->GetNodeByID(nodeId.toLatin1().data()) : 0;
+  */
+  return this->mrmlNodeFromIndex(modelIndex);
 }
 
 // --------------------------------------------------------------------------
@@ -305,7 +311,22 @@ void qMRMLNodeComboBox::editCurrentNode()
 void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
 {
   CTK_D(qMRMLNodeComboBox);
-  vtkMRMLNode* node = d->mrmlNode(currentIndex);
+  vtkMRMLNode*  node = 0;
+  if (qobject_cast<QListView*>(d->ComboBox->view()))
+    {
+    node = d->mrmlNode(currentIndex);
+    }
+  else
+    {// special case where the view can handle a tree... currentIndex could be
+    // from any parent, not only a top level..
+    QModelIndex currentViewIndex = d->ComboBox->view()->currentIndex();
+    if (currentViewIndex.row() != currentIndex)
+      {
+      currentViewIndex = d->ComboBox->model()->index(
+        currentIndex, d->ComboBox->modelColumn(), currentViewIndex.parent());
+      }
+    node = d->mrmlNodeFromIndex(currentViewIndex);
+    }
   emit currentNodeChanged(node);
   emit currentNodeChanged(node != 0);
 }
@@ -526,11 +547,20 @@ QAbstractItemModel* qMRMLNodeComboBox::rootModel()const
 void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 {
   CTK_D(qMRMLNodeComboBox);
+  if (comboBox == d->ComboBox)
+    {
+    return;
+    }
+
   QAbstractItemModel* oldModel = this->model();
   QComboBox* oldComboBox = d->ComboBox;
+
   this->layout()->addWidget(comboBox);
   d->ComboBox = comboBox;
   d->setModel(oldModel);
+
+  connect(d->ComboBox, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(emitCurrentNodeChanged(int)));
   delete oldComboBox;
 }
 
