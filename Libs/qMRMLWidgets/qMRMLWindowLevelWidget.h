@@ -87,11 +87,6 @@ public slots:
   void setMaximumValue(double max);
 
   /// 
-  /// Set min/max limits of the sliders
-  void setMinimum(double min);
-  void setMaximum(double max);
-
-  /// 
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* displayNode);
   void setMRMLVolumeNode(vtkMRMLNode* node);
