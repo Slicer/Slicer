@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>787</width>
-    <height>467</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../SlicerQT.qrc">
-    <normaloff>:/Icons/Medium/3DSlicer-DesktopIcon.gif</normaloff>:/Icons/Medium/3DSlicer-DesktopIcon.gif</iconset>
+    <normaloff>:/Icons/Medium/3DSlicer-DesktopIcon.png</normaloff>:/Icons/Medium/3DSlicer-DesktopIcon.png</iconset>
   </property>
   <widget class="QWidget" name="CentralWidget"/>
   <widget class="QMenuBar" name="menubar">
@@ -23,7 +23,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>787</width>
+     <width>800</width>
      <height>25</height>
     </rect>
    </property>
