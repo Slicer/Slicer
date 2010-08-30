@@ -45,7 +45,7 @@ public:
   void
   setupUi(qSlicerWidget* widget);
   void
-      updateAnnotation(int index, const QString& label, const QString& value, const QString& text);
+      updateAnnotation(int index, const QString& value, const QString& text);
   void
   moveSelectedRow(bool up);
   vtkSlicerAnnotationModuleLogic*
@@ -67,11 +67,8 @@ public:
   void
   setLockUnLockIcon(bool isLocked);
 
-
   // approved
   void setItemEditable(QList<QTableWidgetItem*> items, bool isEditable);
-
-
 
 protected slots:
 
@@ -138,10 +135,12 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QString& label, const QString& value, const QString& text)
+void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QString& value, const QString& text)
 {
   // warning, this function can be reentrant.
   CTK_P(qSlicerAnnotationModuleWidget);
+
+  // TODO REFACTOR!!!
 
   if (index >= tableWidget->rowCount())
     {
@@ -303,7 +302,8 @@ void qSlicerAnnotationModuleWidgetPrivate::updateTextItem(int index, const QStri
 //-----------------------------------------------------------------------------
 // en-/disable editing of the table items passed
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidgetPrivate::setItemEditable(QList<QTableWidgetItem*> items, bool isEditable)
+void qSlicerAnnotationModuleWidgetPrivate::setItemEditable(QList<
+    QTableWidgetItem*> items, bool isEditable)
 {
   if (items.size() == 0)
     {
@@ -311,23 +311,23 @@ void qSlicerAnnotationModuleWidgetPrivate::setItemEditable(QList<QTableWidgetIte
     }
 
   QList<QTableWidgetItem*>::iterator i = items.begin();
-  while(i!=items.end())
+  while (i != items.end())
     {
 
     if (isEditable)
       {
 
       // new QT iterator style
-      (*i)->setFlags(Qt::ItemIsSelectable
-          | Qt::ItemIsEnabled | Qt::ItemIsTristate | Qt::ItemIsUserCheckable
+      (*i)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled
+          | Qt::ItemIsTristate | Qt::ItemIsUserCheckable
           | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable);
       }
     else
       {
 
       // new QT iterator style
-      (*i)->setFlags(Qt::ItemIsSelectable
-          | Qt::ItemIsEnabled | Qt::ItemIsTristate | Qt::ItemIsUserCheckable
+      (*i)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled
+          | Qt::ItemIsTristate | Qt::ItemIsUserCheckable
           | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
       }
 
@@ -542,8 +542,6 @@ void qSlicerAnnotationModuleWidget::setup()
   this->connect(d->lockUnlockAllButton, SIGNAL(clicked()), this,
       SLOT(onLockUnlockAllButtonClicked()));
 
-
-
   this->connect(d->tableWidget, SIGNAL(itemSelectionChanged()), this,
       SLOT(onItemSelectionChanged()));
 
@@ -560,21 +558,16 @@ void qSlicerAnnotationModuleWidget::updateAnnotationText(int row, int col)
 
   QString textString;
 
-  textString = d->logic()->GetAnnotationTextProperty(
-      d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[row]));
+  textString = QString(d->logic()->GetAnnotationText(m_IDs[row]));
   if (textString.toLatin1().data() == d->tableWidget->item(row, col)->text())
     {
     return;
     }
 
   QString text = d->tableWidget->item(row, col)->text();
-  d->logic()->ModifyPropertiesAndWidget(
-      d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[row]), d->logic()->TEXT,
-      text.toLatin1().data());
-
+  d->logic()->SetAnnotationText(m_IDs[row],text.toLatin1().data());
 
 }
-
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::moveDownSelected()
@@ -589,7 +582,6 @@ void qSlicerAnnotationModuleWidget::moveUpSelected()
   CTK_D(qSlicerAnnotationModuleWidget);
   d->moveSelectedRow(true);
 }
-
 
 void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 {
@@ -611,10 +603,8 @@ void qSlicerAnnotationModuleWidgetPrivate::removeAnnotation(int num)
 
 }
 
-
 void qSlicerAnnotationModuleWidgetPrivate::updateSelection(int totalitems)
 {
-
 
   if (isSelectAll)
     {
@@ -696,23 +686,29 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
 
   if (d->tableWidget->selectedItems().size() != d->tableWidget->columnCount())
     {
-    QMessageBox::warning(d->tableWidget, QString("Modify Annotation Properties"), QString("Please select exactly one item in the table."));
+    QMessageBox::warning(d->tableWidget,
+        QString("Modify Annotation Properties"), QString(
+            "Please select exactly one item in the table."));
 
     return;
     }
 
   if (this->m_PropertyDialog)
     {
-    QMessageBox::warning(d->tableWidget, QString("Modify Annotation Properties"), QString("The property dialog is already open."));
+    QMessageBox::warning(d->tableWidget,
+        QString("Modify Annotation Properties"), QString(
+            "The property dialog is already open."));
 
     return;
     }
 
-  const char * mrmlId = this->m_IDs[d->tableWidget->row(d->tableWidget->selectedItems().at(0))];
+  const char * mrmlId = this->m_IDs[d->tableWidget->row(
+      d->tableWidget->selectedItems().at(0))];
 
   d->setItemEditable(d->tableWidget->selectedItems(), false);
 
-  qSlicerAnnotationModulePropertyDialog* propertyDialog = new qSlicerAnnotationModulePropertyDialog(mrmlId,d->logic());
+  qSlicerAnnotationModulePropertyDialog* propertyDialog =
+      new qSlicerAnnotationModulePropertyDialog(mrmlId, d->logic());
 
   this->m_PropertyDialog = propertyDialog;
 
@@ -724,114 +720,120 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
       SLOT(propertyAccepted()));
 
   /*
-  // if one and only one annotation is selected, go ahead to open the dialog
-  std::vector<int> selectedRows;
-  if (m_IDs.size() >= 1)
-    {
-    selectedRows = d->updateSingleSelection();
-    }
-  else
-    {
-    return;
-    }
+   // if one and only one annotation is selected, go ahead to open the dialog
+   std::vector<int> selectedRows;
+   if (m_IDs.size() >= 1)
+   {
+   selectedRows = d->updateSingleSelection();
+   }
+   else
+   {
+   return;
+   }
 
-  if (selectedRows.size() != 1)
-    {
-    std::cerr << "Select only one annotation to change property" << std::endl;
+   if (selectedRows.size() != 1)
+   {
+   std::cerr << "Select only one annotation to change property" << std::endl;
 
-    }
+   }
 
-  int index = selectedRows[0];
+   int index = selectedRows[0];
 
-  vtkMRMLNode* mrmlnode = d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[index]);
+   vtkMRMLNode* mrmlnode = d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[index]);
 
-  // Create the property dialog if not exist
-  if (this->GetPropertyDialog(mrmlnode->GetID()) == NULL)
-    {
-    qSlicerAnnotationModulePropertyDialog* propertyDialog =
-        new qSlicerAnnotationModulePropertyDialog(mrmlnode, d->logic());
+   // Create the property dialog if not exist
+   if (this->GetPropertyDialog(mrmlnode->GetID()) == NULL)
+   {
+   qSlicerAnnotationModulePropertyDialog* propertyDialog =
+   new qSlicerAnnotationModulePropertyDialog(mrmlnode, d->logic());
 
-    this->m_PropertyDialogs[mrmlnode->GetID()] = propertyDialog;
-    }
-  else
-    {
-    this->m_PropertyDialogs[mrmlnode->GetID()]->Initialize(mrmlnode);
+   this->m_PropertyDialogs[mrmlnode->GetID()] = propertyDialog;
+   }
+   else
+   {
+   this->m_PropertyDialogs[mrmlnode->GetID()]->Initialize(mrmlnode);
 
-    }
+   }
 
-  // Do not process if the property dialog is already visible
-  if (this->GetPropertyDialog(mrmlnode->GetID())->isVisible())
-    {
-    std::cerr << "The property Dialog is already open" << std::endl;
-    QMessageBox::warning(d->tableWidget, QString("Property Modifier"), QString(
-        "The property Dialog is already open"));
+   // Do not process if the property dialog is already visible
+   if (this->GetPropertyDialog(mrmlnode->GetID())->isVisible())
+   {
+   std::cerr << "The property Dialog is already open" << std::endl;
+   QMessageBox::warning(d->tableWidget, QString("Property Modifier"), QString(
+   "The property Dialog is already open"));
 
-    return;
-    }
+   return;
+   }
 
-  qSlicerAnnotationModulePropertyDialog* propertyDialog =
-      this->m_PropertyDialogs[mrmlnode->GetID()];
+   qSlicerAnnotationModulePropertyDialog* propertyDialog =
+   this->m_PropertyDialogs[mrmlnode->GetID()];
 
-  this->connect(propertyDialog, SIGNAL(dialogRejected(char*)), this,
-      SLOT(propertyRestored(char*)));
-  this->connect(propertyDialog, SIGNAL(dialogAccepted(char*, QString)), this,
-      SLOT(propertyAccepted(char*, QString)));
-  this->connect(propertyDialog, SIGNAL(coordinateChanged(QString, char*)),
-      this, SLOT(annotationCoordinateChanged(QString, char*)));
-  //this->connect(propertyDialog, SIGNAL(textChanged(QString, char*)), this, SLOT(annotationTextChanged(QString, char*)) );
+   this->connect(propertyDialog, SIGNAL(dialogRejected(char*)), this,
+   SLOT(propertyRestored(char*)));
+   this->connect(propertyDialog, SIGNAL(dialogAccepted(char*, QString)), this,
+   SLOT(propertyAccepted(char*, QString)));
+   this->connect(propertyDialog, SIGNAL(coordinateChanged(QString, char*)),
+   this, SLOT(annotationCoordinateChanged(QString, char*)));
+   //this->connect(propertyDialog, SIGNAL(textChanged(QString, char*)), this, SLOT(annotationTextChanged(QString, char*)) );
 
-  propertyDialog->setVisible(true);
+   propertyDialog->setVisible(true);
 
-*/
+   */
 }
 
 void qSlicerAnnotationModuleWidget::propertyRestored()
 {
 
   std::cout << "Property closed2." << std::endl;
-//delete this->m_PropertyDialog;
+  //delete this->m_PropertyDialog;
   this->m_PropertyDialog = 0;
 
   /*
-  CTK_D(qSlicerAnnotationModuleWidget);
+   CTK_D(qSlicerAnnotationModuleWidget);
 
-  vtkMRMLNode* node = d->logic()->GetMRMLScene()->GetNodeByID(nodeID);
-  d->updateTextItem(this->getIndexByNodeID(nodeID), QString(
-      d->logic()->GetAnnotationTextProperty(node)));
-  QString valueString;
-  qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
-      d->logic()->GetAnnotationTextFormatProperty(node),
-      d->logic()->GetAnnotationMeasurement(node), valueString);
-  d->updateValueItem(this->getIndexByNodeID(nodeID), valueString);
-  d->SetItemEditable(this->getIndexByNodeID(nodeID), d->TextColumn, true);
-  this->RemovePropertyDialog(nodeID);
-  */
+   vtkMRMLNode* node = d->logic()->GetMRMLScene()->GetNodeByID(nodeID);
+   d->updateTextItem(this->getIndexByNodeID(nodeID), QString(
+   d->logic()->GetAnnotationTextProperty(node)));
+   QString valueString;
+   qSlicerAnnotationModulePropertyDialog::FormatValueToChar(
+   d->logic()->GetAnnotationTextFormatProperty(node),
+   d->logic()->GetAnnotationMeasurement(node), valueString);
+   d->updateValueItem(this->getIndexByNodeID(nodeID), valueString);
+   d->SetItemEditable(this->getIndexByNodeID(nodeID), d->TextColumn, true);
+   this->RemovePropertyDialog(nodeID);
+   */
 }
 
 void qSlicerAnnotationModuleWidget::propertyAccepted()
 {
 
-  std::cout << "Property closed." << std::endl;
+  const char * mrmlID = this->m_PropertyDialog->GetID();
+
+  CTK_D(qSlicerAnnotationModuleWidget);
+
+  this->updateAnnotationInTableByID(mrmlID,d->logic()->GetAnnotationMeasurement(mrmlID,false),d->logic()->GetAnnotationText(mrmlID));
 
   //delete this->m_PropertyDialog;
   this->m_PropertyDialog = 0;
 
+
+
   /*
-  this->RemovePropertyDialog(nodeID);
+   this->RemovePropertyDialog(nodeID);
 
-  int index = this->getIndexByNodeID(nodeID);
-  if (text.toLatin1().data()
-      == d->tableWidget->item(index, d->TextColumn)->text())
-    {
-    return;
-    }
-  d->logic()->ModifyPropertiesAndWidget(
-      d->logic()->GetMRMLScene()->GetNodeByID(nodeID), d->logic()->TEXT,
-      text.toLatin1().data());
+   int index = this->getIndexByNodeID(nodeID);
+   if (text.toLatin1().data()
+   == d->tableWidget->item(index, d->TextColumn)->text())
+   {
+   return;
+   }
+   d->logic()->ModifyPropertiesAndWidget(
+   d->logic()->GetMRMLScene()->GetNodeByID(nodeID), d->logic()->TEXT,
+   text.toLatin1().data());
 
-  d->updateTextItem(index, text);
-  d->SetItemEditable(this->getIndexByNodeID(nodeID), d->TextColumn, true);
-  */
+   d->updateTextItem(index, text);
+   d->SetItemEditable(this->getIndexByNodeID(nodeID), d->TextColumn, true);
+   */
 }
 
 void qSlicerAnnotationModuleWidget::onSaveAnnotationButtonClicked()
@@ -954,23 +956,18 @@ void qSlicerAnnotationModuleWidget::onGenerateReportButtonClicked()
       {
       QString labelString = QString("Seed %1").arg(QString::number(i + 1));
 
-      std::vector<double> thevalue;
+      const char * thevalue;
       QString valueString, textString;
       report.append("<tr>\n").append(TD);
 
-      thevalue = d->logic()->GetAnnotationMeasurement(
-          d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
+      thevalue = d->logic()->GetAnnotationMeasurement(m_IDs[i], false);
 
-      const char* format = d->logic()->GetAnnotationTextFormatProperty(
-          d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
-      qSlicerAnnotationModulePropertyDialog::FormatValueToChar(format,
-          thevalue, valueString);
 
       report.append("<img src='") .append(d->logic()->GetIconName(
           d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]))) .append("'>");
       textString = d->logic()->GetAnnotationTextProperty(
           d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
-      report.append(TDend).append(TD).append(valueString).append(TDend).append(
+      report.append(TDend).append(TD).append(thevalue).append(TDend).append(
           TD).append(textString).append(TDend).append("\n</tr>\n");
       }
     }
@@ -1387,7 +1384,7 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 
       d->removeAnnotation(m_index + 2);
 
-      std::vector<double> thevalue;
+      const char * thevalue;
       // This is just a hack right now for fiducials
       char _format[4] = "%d";
       const char* format = _format;
@@ -1395,14 +1392,10 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
         {
         for (int i = 0; i <= m_index; ++i)
           {
-          thevalue = d->logic()->GetAnnotationMeasurement(
-              d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
+          thevalue = d->logic()->GetAnnotationMeasurement(m_IDs[i], false);
           format = d->logic()->GetAnnotationTextFormatProperty(
               d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
           this->updateAnnotationTable(i, thevalue, format);
-          QString valueString;
-          qSlicerAnnotationModulePropertyDialog::FormatValueToChar(format,
-              thevalue, valueString);
 
           }
 
@@ -1421,27 +1414,16 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index, std::vector<
-    double> thevalue, const char* format)
+void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index, const char * measurementValue, const char* textValue)
 {
   CTK_D(qSlicerAnnotationModuleWidget);
 
-  QString textString = QString(
-      d->logic()->GetAnnotationText(this->m_IDs[index]));
-
-  QString labelString = QString("Seed %1").arg(QString::number(m_index));
-  QString valueString;
-  qSlicerAnnotationModulePropertyDialog::FormatValueToChar(format, thevalue,
-      valueString);
-
-  d->updateAnnotation(index, labelString, valueString, textString);
+  d->updateAnnotation(index, QString(measurementValue), QString(textValue));
 
 }
 
-void qSlicerAnnotationModuleWidget::updateAnnotationInTableByID(const char* id, std::vector<
-    double> value, const char* format)
+void qSlicerAnnotationModuleWidget::updateAnnotationInTableByID(const char* id, const char * measurementValue, const char* textValue)
 {
-
   CTK_D(qSlicerAnnotationModuleWidget);
 
   int index = this->getIndexByNodeID(id);
@@ -1449,14 +1431,12 @@ void qSlicerAnnotationModuleWidget::updateAnnotationInTableByID(const char* id, 
   if (index < 0)
     {
     this->addNodeToTable(id);
-    index = this->getIndexByNodeID(id);
     }
-
-  QString valueString;
-  qSlicerAnnotationModulePropertyDialog::FormatValueToChar(format, value,
-      valueString);
-
-  d->updateValueItem(index, valueString);
+  else
+    {
+    d->updateValueItem(index, measurementValue);
+    d->updateTextItem(index, textValue);
+    }
 
 }
 
@@ -1561,7 +1541,6 @@ void qSlicerAnnotationModuleWidget::onItemSelectionChanged()
  d->logic()->SetAnnotationSelectedByIDs( seletedIDs, m_IDs );
  */
 }
-
 
 QString qSlicerAnnotationModuleWidget::getAnnotationIconName(int index, bool isEdit)
 {
@@ -1745,7 +1724,6 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
   d->rulerTypeButton->setEnabled(true);
   d->bidimensionalTypeButton->setEnabled(true);
 }
-
 
 //-----------------------------------------------------------------------------
 //
@@ -1949,16 +1927,11 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 
   this->m_lastAddedIndex = this->m_index;
 
-  std::vector<double> thevalue;
-  thevalue.push_back(0.0);
-  thevalue = d->logic()->GetAnnotationMeasurement(
-      d->logic()->GetMRMLScene()->GetNodeByID(newNodeID));
+  const char * measurementValue = d->logic()->GetAnnotationMeasurement(newNodeID, false);
+  const char * textValue = d->logic()->GetAnnotationText(newNodeID);
 
-  char* format = const_cast<char*> (" ");
-  QString valueString;
-  qSlicerAnnotationModulePropertyDialog::FormatValueToChar(format, thevalue,
-      valueString);
-  this->updateAnnotationTable(m_index, thevalue, format);
+
+  d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
   this->selectRowByIndex(m_index);
 
 }

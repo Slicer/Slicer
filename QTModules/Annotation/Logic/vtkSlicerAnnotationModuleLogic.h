@@ -109,15 +109,36 @@ public:
   void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
 
+  //
   // Annotation Properties (interface to MRML)
+  //
   /// Get the name of an Annotation MRML node
   const char * GetAnnotationName(const char * id);
+
   /// Return the text of an Annotation MRML node
   vtkStdString GetAnnotationText(const char* id);
+  /// Set the text of an Annotation MRML node
+  void SetAnnotationText(const char* id, const char * newtext);
+
+  /// Get the text scale of an Annotation MRML node
+  double GetAnnotationTextScale(const char* id);
+  /// Set the text scale of an Annotation MRML node
+  void SetAnnotationTextScale(const char* id, double textScale);
+
+  /// Get the measurement value of an Annotation MRML node
+  const char * GetAnnotationMeasurement(const char * id, bool showUnits);
+
   /// Get the icon name of an Annotation MRML node
   const char * GetAnnotationIcon(const char * id);
+
   /// Toggle the lock flag of an Annotation MRML node and return the updated flag
   int ToggleAnnotationLockUnlock(const char * id);
+
+
+  /// Backup an Annotation MRML node
+  void BackupAnnotationNode(const char * id);
+  /// Restore a backup of an Annotation MRML node
+  void RestoreAnnotationNode(const char * id);
 
   // ^^^^ end of Daniel approved code
 
@@ -146,7 +167,7 @@ public:
   int SetAnnotationLineDisplayProperties(vtkMRMLAnnotationLineDisplayNode* node, int type, void* data);
   vtkStdString GetAnnotationTextProperty(vtkMRMLNode* node);
   const char* GetAnnotationTextFormatProperty(vtkMRMLNode* node);
-  std::vector<double> GetAnnotationMeasurement(vtkMRMLNode* node);
+
 
   int SetAnnotationControlPointsCoordinate(vtkMRMLNode* mrmlnode, double* pos, vtkIdType coordId);
 

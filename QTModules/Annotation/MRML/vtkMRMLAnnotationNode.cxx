@@ -11,6 +11,7 @@
 #include "vtkPointData.h"
 #include "vtkStringArray.h"
 #include "vtkMRMLAnnotationStorageNode.h"
+#include <vtkSmartPointer.h>
 
 // KPs Todos 
 // - create specific event for node modification
@@ -52,6 +53,7 @@ vtkMRMLAnnotationNode::vtkMRMLAnnotationNode()
   this->ReferenceNodeID = NULL;
   this->Visible=1;  
   this->Locked = 0;
+  this->m_Backup = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -435,6 +437,14 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
   this->SetAnnotationAttribute(id, TEXT_SELECTED, selectedFlag);
   this->SetAnnotationAttribute(id, TEXT_VISIBLE, visibleFlag);
 
+  std::cout << "NEW TEXT: " << newText << std::endl;
+
+  if(!this->GetDisableModifiedEvent())
+  {
+    // invoke a display modified event
+    this->InvokeEvent(vtkCommand::ModifiedEvent);
+  }
+
 }
 
 void vtkMRMLAnnotationNode::SetAttributeSize(vtkIdType  id, vtkIdType n)
@@ -609,4 +619,26 @@ void vtkMRMLAnnotationNode::Initialize(vtkMRMLScene* mrmlScene)
 
   mrmlScene->AddNode(this);
   this->CreateAnnotationTextDisplayNode();
+}
+
+//----------------------------------------------------------------------------
+// Create a backup of this node and store it with the node.
+void vtkMRMLAnnotationNode::CreateBackup()
+{
+
+  vtkMRMLAnnotationNode * backupNode = vtkMRMLAnnotationNode::New();
+
+  backupNode->Copy(this);
+
+  this->m_Backup = backupNode;
+
+}
+
+//----------------------------------------------------------------------------
+// Returns the backup of this node.
+vtkMRMLAnnotationNode * vtkMRMLAnnotationNode::GetBackup()
+{
+
+  return this->m_Backup;
+
 }

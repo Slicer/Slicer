@@ -35,16 +35,18 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
   // now build the user interfce
   ui.setupUi(this);
 
+  this->initialize();
+
   // create the slot and signal connections
   this->createConnection();
-
-
-  this->initialize();
 
 }
 
 void qSlicerAnnotationModulePropertyDialog::initialize()
 {
+
+  // backup the current annotationNode
+  this->m_logic->BackupAnnotationNode(this->m_id);
 
   // build the typeLabelText including name and id of the annotation
   QString * typeLabelText = new QString("Name: ");
@@ -65,6 +67,17 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   vtkStdString text = this->m_logic->GetAnnotationText(this->m_id);
 
   ui.annotationTextEdit->setText(text.c_str());
+
+  // load the current annotation text scale
+  double textScale = this->m_logic->GetAnnotationTextScale(this->m_id);
+
+  ui.textScaleSliderSpinBoxWidget->setMaximum(120);
+  ui.textScaleSliderSpinBoxWidget->setValue(textScale);
+
+  // load the current measurement
+  const char * measurement = this->m_logic->GetAnnotationMeasurement(this->m_id,true);
+
+  ui.measurementLineEdit->setText(measurement);
 
   /*
    this->setWindowTitle(
@@ -466,16 +479,14 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 void qSlicerAnnotationModulePropertyDialog::createConnection()
 {
 
-  this->connect(
-  this,
-  SIGNAL(rejected()),
-  this,
-  SLOT(onDialogRejected()));
-  this->connect(
-  this,
-  SIGNAL(accepted()),
-  this,
-  SLOT(onDialogAccepted()));
+  this->connect(this, SIGNAL(rejected()), this, SLOT(onDialogRejected()));
+  this->connect(this, SIGNAL(accepted()), this, SLOT(onDialogAccepted()));
+
+  this->connect(ui.annotationTextEdit, SIGNAL(textChanged()), this,
+      SLOT(onTextChanged()));
+
+  this->connect(ui.textScaleSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
+      this, SLOT(onTextScaleChanged(double)));
 
   /*
    this->connect(
@@ -593,54 +604,50 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
 void qSlicerAnnotationModulePropertyDialog::onCoordinateChanged(QString text)
 {
   /*
-  if (this->m_isUpdated)
-    {
-    return;
-    }
+   if (this->m_isUpdated)
+   {
+   return;
+   }
 
-  std::vector<double> positions;
-  QString valueString;
-  std::vector<double> thevalue;
-  const char* format;
+   std::vector<double> positions;
+   QString valueString;
+   std::vector<double> thevalue;
+   const char* format;
 
-  for (int i = 0; i < m_lineEditList.size(); ++i)
-    {
-    positions.push_back(m_lineEditList[i]->text().toDouble());
-    }
+   for (int i = 0; i < m_lineEditList.size(); ++i)
+   {
+   positions.push_back(m_lineEditList[i]->text().toDouble());
+   }
 
-  // update widget
-  vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId);
-  int num = positions.size() / 3;
-  double pos[3];
-  for (int id = 0; id < num; ++id)
-    {
-    pos[0] = positions[id * 3];
-    pos[1] = positions[id * 3 + 1];
-    pos[2] = positions[id * 3 + 2];
-    this->m_logic->SetAnnotationControlPointsCoordinate(node, pos, id);
-    }
+   // update widget
+   vtkMRMLNode* node = this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId);
+   int num = positions.size() / 3;
+   double pos[3];
+   for (int id = 0; id < num; ++id)
+   {
+   pos[0] = positions[id * 3];
+   pos[1] = positions[id * 3 + 1];
+   pos[2] = positions[id * 3 + 2];
+   this->m_logic->SetAnnotationControlPointsCoordinate(node, pos, id);
+   }
 
-  // update value in the property dialog
-  thevalue = this->m_logic->GetAnnotationMeasurement(node);
-  format = this->m_logic->GetAnnotationTextFormatProperty(node);
-  this->FormatValueToChar(format, thevalue, valueString);
-  this->updateValue(valueString);
+   // update value in the property dialog
+   thevalue = this->m_logic->GetAnnotationMeasurement(node);
+   format = this->m_logic->GetAnnotationTextFormatProperty(node);
+   this->FormatValueToChar(format, thevalue, valueString);
+   this->updateValue(valueString);
 
-  emit coordinateChanged(valueString, m_nodeId);
-*/
+   emit coordinateChanged(valueString, m_nodeId);
+   */
 }
 
 void qSlicerAnnotationModulePropertyDialog::onTextChanged()
 {
-  /*
-   QString text = ui.annotationTextEdit->toPlainText();
-   ui.annotationTextEdit->moveCursor(
-   QTextCursor::End,
-   QTextCursor::MoveAnchor);
-   emit textChanged(
-   text,
-   m_nodeId);
-   */
+
+  QString text = ui.annotationTextEdit->toPlainText();
+  QByteArray bytes = text.toAscii();
+  this->m_logic->SetAnnotationText(this->m_id, bytes.data());
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::updateTextFromTable(QString text)
@@ -677,160 +684,158 @@ void qSlicerAnnotationModulePropertyDialog::updateCoordinates(double* pos, int i
 
 void qSlicerAnnotationModulePropertyDialog::SaveLinesNode(vtkMRMLAnnotationLinesNode* node)
 {/*
-  if (!node)
-    {
-    return;
-    }
-  if (!this->m_lineDispCopy)
-    {
-    this->m_lineDispCopy = vtkMRMLAnnotationLineDisplayNode::New();
-    }
+ if (!node)
+ {
+ return;
+ }
+ if (!this->m_lineDispCopy)
+ {
+ this->m_lineDispCopy = vtkMRMLAnnotationLineDisplayNode::New();
+ }
 
-  node->CreateAnnotationLineDisplayNode();
-  this->m_lineDispCopy->Copy(node->GetAnnotationLineDisplayNode());
-  this->SaveControlPoints(node);
-*/
+ node->CreateAnnotationLineDisplayNode();
+ this->m_lineDispCopy->Copy(node->GetAnnotationLineDisplayNode());
+ this->SaveControlPoints(node);
+ */
 }
 
 void qSlicerAnnotationModulePropertyDialog::SaveControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
   /*
-  if (!node)
-    {
-    return;
-    }
+   if (!node)
+   {
+   return;
+   }
 
-  if (!this->m_pointDispCopy)
-    {
-    this->m_pointDispCopy = vtkMRMLAnnotationPointDisplayNode::New();
-    }
-  node->CreateAnnotationPointDisplayNode();
-  this->m_pointDispCopy->Copy(node->GetAnnotationPointDisplayNode());
-  this->SaveAnnotationNode((vtkMRMLAnnotationNode*) node);
-  */
+   if (!this->m_pointDispCopy)
+   {
+   this->m_pointDispCopy = vtkMRMLAnnotationPointDisplayNode::New();
+   }
+   node->CreateAnnotationPointDisplayNode();
+   this->m_pointDispCopy->Copy(node->GetAnnotationPointDisplayNode());
+   this->SaveAnnotationNode((vtkMRMLAnnotationNode*) node);
+   */
 }
 
 void qSlicerAnnotationModulePropertyDialog::SaveAnnotationNode(vtkMRMLAnnotationNode* node)
 {
   /*
-  if (!node)
-    {
-    return;
-    }
+   if (!node)
+   {
+   return;
+   }
 
-  if (!this->m_textDispCopy)
-    {
-    this->m_textDispCopy = vtkMRMLAnnotationTextDisplayNode::New();
-    }
-  node->CreateAnnotationTextDisplayNode();
-  this->m_textDispCopy->Copy(node->GetAnnotationTextDisplayNode());
-  */
+   if (!this->m_textDispCopy)
+   {
+   this->m_textDispCopy = vtkMRMLAnnotationTextDisplayNode::New();
+   }
+   node->CreateAnnotationTextDisplayNode();
+   this->m_textDispCopy->Copy(node->GetAnnotationTextDisplayNode());
+   */
 }
 
 void qSlicerAnnotationModulePropertyDialog::SaveStateForUndo(vtkMRMLNode* node)
 {
   /*
-  if (node->IsA("vtkMRMLAnnotationAngleNode"))
-    {
-    vtkMRMLAnnotationAngleNode* mynode =
-        vtkMRMLAnnotationAngleNode::SafeDownCast(node);
-    if (!this->m_angleCopy)
-      {
-      this->m_angleCopy = vtkMRMLAnnotationAngleNode::New();
-      }
-    this->m_angleCopy->Copy(mynode);
-    this->SaveLinesNode(mynode);
-    }
-  else if (node->IsA("vtkMRMLAnnotationRulerNode"))
-    {
-    vtkMRMLAnnotationRulerNode* mynode =
-        vtkMRMLAnnotationRulerNode::SafeDownCast(node);
-    if (!this->m_rulerCopy)
-      {
-      this->m_rulerCopy = vtkMRMLAnnotationRulerNode::New();
-      }
-    this->m_rulerCopy->Copy(mynode);
-    this->SaveLinesNode(mynode);
-    }
-  else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    vtkMRMLAnnotationFiducialNode* fiducialNode =
-        vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
-    fiducialNode->CreateAnnotationTextDisplayNode();
-    fiducialNode->CreateAnnotationPointDisplayNode();
-    fiducialNode->GetScene()->SaveStateForUndo(fiducialNode);
-    fiducialNode->GetAnnotationTextDisplayNode()->GetScene()->SaveStateForUndo(
-        fiducialNode->GetAnnotationTextDisplayNode());
-    fiducialNode->GetAnnotationPointDisplayNode()->GetScene()->SaveStateForUndo(
-        fiducialNode->GetAnnotationPointDisplayNode());
-    }
-*/
+   if (node->IsA("vtkMRMLAnnotationAngleNode"))
+   {
+   vtkMRMLAnnotationAngleNode* mynode =
+   vtkMRMLAnnotationAngleNode::SafeDownCast(node);
+   if (!this->m_angleCopy)
+   {
+   this->m_angleCopy = vtkMRMLAnnotationAngleNode::New();
+   }
+   this->m_angleCopy->Copy(mynode);
+   this->SaveLinesNode(mynode);
+   }
+   else if (node->IsA("vtkMRMLAnnotationRulerNode"))
+   {
+   vtkMRMLAnnotationRulerNode* mynode =
+   vtkMRMLAnnotationRulerNode::SafeDownCast(node);
+   if (!this->m_rulerCopy)
+   {
+   this->m_rulerCopy = vtkMRMLAnnotationRulerNode::New();
+   }
+   this->m_rulerCopy->Copy(mynode);
+   this->SaveLinesNode(mynode);
+   }
+   else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
+   {
+   vtkMRMLAnnotationFiducialNode* fiducialNode =
+   vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
+   fiducialNode->CreateAnnotationTextDisplayNode();
+   fiducialNode->CreateAnnotationPointDisplayNode();
+   fiducialNode->GetScene()->SaveStateForUndo(fiducialNode);
+   fiducialNode->GetAnnotationTextDisplayNode()->GetScene()->SaveStateForUndo(
+   fiducialNode->GetAnnotationTextDisplayNode());
+   fiducialNode->GetAnnotationPointDisplayNode()->GetScene()->SaveStateForUndo(
+   fiducialNode->GetAnnotationPointDisplayNode());
+   }
+   */
 }
 
 void qSlicerAnnotationModulePropertyDialog::UndoLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
   /*
-  if (!node)
-    {
-    return;
-    }
-  node->CreateAnnotationLineDisplayNode();
-  node->GetAnnotationLineDisplayNode()->Copy(m_lineDispCopy);
-  this->UndoControlPoints(node);
-  */
+   if (!node)
+   {
+   return;
+   }
+   node->CreateAnnotationLineDisplayNode();
+   node->GetAnnotationLineDisplayNode()->Copy(m_lineDispCopy);
+   this->UndoControlPoints(node);
+   */
 }
 
 void qSlicerAnnotationModulePropertyDialog::UndoControlPoints(vtkMRMLAnnotationControlPointsNode* node)
 {
   /*
-  if (!node)
-    {
-    return;
-    }
-  node->CreateAnnotationPointDisplayNode();
-  node->GetAnnotationPointDisplayNode()->Copy(m_pointDispCopy);
-  this->UndoAnnotationNode((vtkMRMLAnnotationNode*) node);
-  */
+   if (!node)
+   {
+   return;
+   }
+   node->CreateAnnotationPointDisplayNode();
+   node->GetAnnotationPointDisplayNode()->Copy(m_pointDispCopy);
+   this->UndoAnnotationNode((vtkMRMLAnnotationNode*) node);
+   */
 }
 
 void qSlicerAnnotationModulePropertyDialog::UndoAnnotationNode(vtkMRMLAnnotationNode* node)
 {
   /*
-  if (!node)
-    {
-    return;
-    }
-  node->CreateAnnotationTextDisplayNode();
-  node->GetAnnotationTextDisplayNode()->Copy(m_textDispCopy);
-  */
+   if (!node)
+   {
+   return;
+   }
+   node->CreateAnnotationTextDisplayNode();
+   node->GetAnnotationTextDisplayNode()->Copy(m_textDispCopy);
+   */
 }
 
 void qSlicerAnnotationModulePropertyDialog::Undo(vtkMRMLNode* node)
 {
 
   /*
-  if (node->IsA("vtkMRMLAnnotationAngleNode"))
-    {
-    vtkMRMLAnnotationAngleNode* anode =
-        vtkMRMLAnnotationAngleNode::SafeDownCast(node);
-    anode->Copy(m_angleCopy);
-    this->UndoLinesNode(anode);
-    }
-  else if (node->IsA("vtkMRMLAnnotationRulerNode"))
-    {
-    vtkMRMLAnnotationRulerNode* rnode =
-        vtkMRMLAnnotationRulerNode::SafeDownCast(node);
-    rnode->Copy(m_rulerCopy);
-    this->UndoLinesNode(rnode);
-    }
-  else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    //ToDo
-    }
-*/
+   if (node->IsA("vtkMRMLAnnotationAngleNode"))
+   {
+   vtkMRMLAnnotationAngleNode* anode =
+   vtkMRMLAnnotationAngleNode::SafeDownCast(node);
+   anode->Copy(m_angleCopy);
+   this->UndoLinesNode(anode);
+   }
+   else if (node->IsA("vtkMRMLAnnotationRulerNode"))
+   {
+   vtkMRMLAnnotationRulerNode* rnode =
+   vtkMRMLAnnotationRulerNode::SafeDownCast(node);
+   rnode->Copy(m_rulerCopy);
+   this->UndoLinesNode(rnode);
+   }
+   else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
+   {
+   //ToDo
+   }
+   */
 }
-
-
 
 void qSlicerAnnotationModulePropertyDialog::SetButtonText(int type)
 {
@@ -882,9 +887,9 @@ void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qc
 
 void qSlicerAnnotationModulePropertyDialog::onTextScaleChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->TEXT_SCALE, &value);
+
+  this->m_logic->SetAnnotationTextScale(this->m_id, value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onPointColorChanged(QColor qcolor)
@@ -1086,12 +1091,14 @@ void qSlicerAnnotationModulePropertyDialog::onCollapsibleGroupBoxClicked()
     }
 }
 
-
 //-----------------------------------------------------------------------------
 // Methods for closing the property dialog
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
 {
+
+  // the user clicked cancel, now restore the backuped node
+  this->m_logic->RestoreAnnotationNode(this->m_id);
 
   emit dialogRejected();
 

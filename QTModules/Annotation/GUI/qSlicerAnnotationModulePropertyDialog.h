@@ -27,6 +27,8 @@ public:
   qSlicerAnnotationModulePropertyDialog(const char * id, vtkSlicerAnnotationModuleLogic* logic);
   ~qSlicerAnnotationModulePropertyDialog();
 
+  const char * GetID() { return this->m_id; }
+
 
   void updateTextFromTable(QString text);
   void updateValue(QString valueString);

@@ -4,6 +4,7 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationTextNode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
@@ -17,6 +18,8 @@
 #include <vtkRenderer.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkAbstractWidget.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 
 // std includes
 #include <string>
@@ -279,6 +282,23 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
     hasChanged = true;
     }
 
+  // Propagate the MRML text label to the widget
+  if (strcmp(textNode->GetText(0).c_str(),rep->GetText()))
+    {
+    // text in the mrml has changed, propagate to widget representation
+    rep->SetText(textNode->GetText(0).c_str());
+    hasChanged = true;
+    }
+
+  // Propagate the MRML text scale to the widget
+  if (textNode->GetTextScale() != rep->GetTextActor()->GetScaledTextProperty()->GetFontSize())
+    {
+    // text scale in the mrml node is different than the font size in the widget, so propagate
+    rep->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
+    //rep->GetTextActor()->GetTextProperty()->SetColor( 0.0, 1.0, 0.0 );
+    hasChanged = true;
+    }
+
   if (hasChanged)
     {
     // at least one value has changed, so set the widget to modified
@@ -378,6 +398,22 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     hasChanged = true;
     }
 
+  // Propagate the MRML text label to the widget
+  if (strcmp(textNode->GetText(0).c_str(),rep->GetText()))
+    {
+    // widget text has changed, update mrml
+    textNode->SetText(0,rep->GetText(),1,1);
+    hasChanged = true;
+    }
+
+  // Propagate the MRML text scale to the widget
+  if (textNode->GetTextScale() != rep->GetTextActor()->GetScaledTextProperty()->GetFontSize())
+    {
+    // widget font is different then the mrml textScale property, so propagate to mrml
+    textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
+    hasChanged = true;
+    }
+
   if (hasChanged)
     {
     // at least one value has changed, so fire the modified event
@@ -419,6 +455,10 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double
     textNode->Initialize(this->GetMRMLScene());
 
     textNode->SetName(textNode->GetScene()->GetUniqueNameByString("AnnotationText"));
+
+    textNode->CreateAnnotationTextDisplayNode();
+
+    textNode->SetTextScale(20);
 
     textNode->Delete();
 

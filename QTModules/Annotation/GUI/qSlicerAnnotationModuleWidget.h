@@ -48,7 +48,7 @@ public:
     void addNodeToTable(const char* newNodeID);
 
     // Update an existing annotation in the list
-    void updateAnnotationInTableByID(const char* id, std::vector<double> value, const char* format);
+    void updateAnnotationInTableByID(const char* id, const char * measurementValue, const char* textValue);
 
     //BTX
     /// Different Annotation Types
@@ -83,7 +83,7 @@ protected slots:
     void annotationTextChanged(QString text, char* nodeId);
     void annotationCoordinateChanged(QString valueString, char* nodeId);
     void selectRowByIndex(int index);
-    void updateAnnotationTable(int index, std::vector<double> thevalue, const char* format);
+    void updateAnnotationTable(int index, const char * thevalue, const char* format);
 
     int getIndexByNodeID(const char* nodeID);
     void updateAnnotationText(int row, int col);

@@ -11,6 +11,7 @@
 
 #include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLModelNode.h" 
+#include "vtkMRMLAnnotationTextDisplayNode.h"
 
 class vtkStringArray;
 class vtkMRMLStorageNode;
@@ -92,7 +93,13 @@ public:
   void CreateAnnotationTextDisplayNode();
 
   vtkMRMLAnnotationTextDisplayNode* GetAnnotationTextDisplayNode();
- 
+
+  /// Set the text scale of the associated text.
+  void SetTextScale(double textScale) {this->GetAnnotationTextDisplayNode()->SetTextScale(textScale); this->InvokeEvent(vtkCommand::ModifiedEvent);}
+  /// Get the text scale of the associated text.
+  double GetTextScale() {return this->GetAnnotationTextDisplayNode()->GetTextScale();}
+
+
   // Description:
   // Reference of this annotation - can be an image, model, scene ,  ... 
   vtkGetStringMacro (ReferenceNodeID);
@@ -112,6 +119,13 @@ public:
   void SetLocked(int init);
 
   void Initialize(vtkMRMLScene* mrmlScene);
+
+  // Functionality for backups of this node
+  /// Creates a backup of the current MRML state of this node and keeps a reference
+  void CreateBackup();
+  /// Returns the associated backup of this node
+  vtkMRMLAnnotationNode * GetBackup();
+
 
 protected:
   vtkMRMLAnnotationNode();
@@ -138,6 +152,8 @@ protected:
 
   int Visible;
   int Locked;
+
+  vtkMRMLAnnotationNode * m_Backup;
 
 };
 
