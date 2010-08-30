@@ -14,6 +14,7 @@
 #include "qSlicerVolumesModuleExport.h"
 
 class vtkMRMLNode;
+class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLScalarVolumeNode;
 class qSlicerScalarVolumeDisplayWidgetPrivate;
 
@@ -27,7 +28,8 @@ public:
   explicit qSlicerScalarVolumeDisplayWidget(QWidget* parent);
   virtual ~qSlicerScalarVolumeDisplayWidget(){}
 
-
+  vtkMRMLScalarVolumeNode* volumeNode()const;
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode()const;
 public slots:
 
   /// 
@@ -35,11 +37,15 @@ public slots:
   void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode);
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
+  void setInterpolate(bool interpolate);
+  void setColorNode(vtkMRMLNode* colorNode);
 
 protected slots:
+  void updateWidgetFromMRML();
+  void updateTransferFunction();
 
 protected:
-
+  void showEvent(QShowEvent * event);
 private:
   CTK_DECLARE_PRIVATE(qSlicerScalarVolumeDisplayWidget);
 };

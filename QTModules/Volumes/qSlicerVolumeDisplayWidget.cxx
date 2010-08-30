@@ -11,18 +11,18 @@ qSlicerVolumeDisplayWidget::qSlicerVolumeDisplayWidget(QWidget* _parent) : Super
   this->ScalarVolumeDisplayWidget = new qSlicerScalarVolumeDisplayWidget(this);
 
   this->addWidget(this->ScalarVolumeDisplayWidget);
-
 }
 
 // --------------------------------------------------------------------------
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
-{  
-  if (volumeNode == 0) 
+{
+  if (volumeNode == 0)
     {
     return;
     }
   if (volumeNode->IsA("vtkMRMLScalarVolumeNode"))
     {
+    this->ScalarVolumeDisplayWidget->setMRMLScene(volumeNode->GetScene());
     this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     this->setCurrentWidget(this->ScalarVolumeDisplayWidget);
     }

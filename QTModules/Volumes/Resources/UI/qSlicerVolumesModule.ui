@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>319</height>
+    <width>249</width>
+    <height>103</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,9 @@
     <normaloff>:/Icons/Volumes.png</normaloff>:/Icons/Volumes.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="ActiveVolumeLabel">
      <property name="text">
@@ -51,6 +54,19 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>208</width>
+       <height>15</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -89,11 +105,11 @@
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>424</x>
+     <x>248</x>
      <y>1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>422</x>
+     <x>230</x>
      <y>19</y>
     </hint>
    </hints>
@@ -105,12 +121,12 @@
    <slot>setMRMLVolumeNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>313</x>
-     <y>148</y>
+     <x>230</x>
+     <y>26</y>
     </hint>
     <hint type="destinationlabel">
-     <x>305</x>
-     <y>399</y>
+     <x>221</x>
+     <y>70</y>
     </hint>
    </hints>
   </connection>
