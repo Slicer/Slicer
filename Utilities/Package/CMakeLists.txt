@@ -126,6 +126,16 @@ if(Slicer3_USE_PYTHON)
       USE_SOURCE_PERMISSIONS
       )
   endif(EXISTS "${PYTHON_DIR}")
+  
+  #install python dll.
+  if(WIN32)
+    get_filename_component(PYTHON_LIB_BASE ${PYTHON_LIBRARY} NAME_WE)
+    get_filename_component(PYTHON_LIB_PATH ${PYTHON_LIBRARY} PATH)
+
+  install(FILES "${PYTHON_LIB_PATH}/${PYTHON_LIB_BASE}.dll"
+      DESTINATION bin
+      COMPONENT Runtime)
+  endif()
 endif(Slicer3_USE_PYTHON)
 
 # -------------------------------------------------------------------------
