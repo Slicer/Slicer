@@ -84,6 +84,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    this->MouseModeToolBar,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
 
+  // Hide the Layout toolbar by default
+  p->showUndoRedoToolBar(false);
+  p->showLayoutToolBar(false);
+
   // Instanciate and assign the layout manager to the slicer application
   qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(this->CentralWidget);
   layoutManager->setScriptedDisplayableManagerDirectory(
