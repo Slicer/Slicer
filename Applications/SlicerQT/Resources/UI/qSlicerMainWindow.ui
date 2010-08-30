@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>787</width>
-    <height>711</height>
+    <height>467</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SlicerQT</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../SlicerQT.qrc">
+    <normaloff>:/Icons/Medium/3DSlicer-DesktopIcon.gif</normaloff>:/Icons/Medium/3DSlicer-DesktopIcon.gif</iconset>
   </property>
   <widget class="QWidget" name="CentralWidget"/>
   <widget class="QMenuBar" name="menubar">
@@ -346,7 +350,7 @@
   </action>
   <action name="actionFileAddTransform">
    <property name="icon">
-    <iconset resource="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerAddTransform.png</normaloff>:/Icons/Medium/SlicerAddTransform.png</iconset>
    </property>
    <property name="text">
@@ -883,6 +887,7 @@
  </customwidgets>
  <resources>
   <include location="../../../../Base/QTCoreModules/Resources/qSlicerBaseQTCoreModules.qrc"/>
+  <include location="../SlicerQT.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>

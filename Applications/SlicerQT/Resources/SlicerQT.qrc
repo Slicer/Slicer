@@ -1,5 +1,9 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
+    <file>Icons/Small/3DSlicer-DesktopIcon.gif</file>
+    <file>Icons/Medium/3DSlicer-DesktopIcon.gif</file>
+    <file>Icons/Large/3DSlicer-DesktopIcon.gif</file>
+    <file>Icons/XLarge/3DSlicer-DesktopIcon.gif</file>
     <file>Images/SlicerSplashScreen.png</file>
   </qresource>
 </RCC>
