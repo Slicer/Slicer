@@ -431,6 +431,17 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
     {
     this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
     }
+  // ideally should be a reconnect but we might not be sure of what was the previous node
+  qvtkDisconnect(0, 0, this, SLOT(onForegroundDisplayNodeChanged(vtkObject*)));
+  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
+  vtkMRMLScalarVolumeDisplayNode* displayNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+      volumeNode ? volumeNode->GetVolumeDisplayNode(): 0);
+  if (displayNode)
+    {
+    qvtkConnect(displayNode, vtkCommand::ModifiedEvent, this, SLOT(onForegroundDisplayNodeChanged(vtkObject*)));
+    this->onForegroundDisplayNodeChanged(displayNode);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -457,6 +468,17 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
   else
     {
     this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
+    }
+  // ideally should be a reconnect but we might not be sure of what was the previous node
+  qvtkDisconnect(0, 0, this, SLOT(onBackgroundDisplayNodeChanged(vtkObject*)));
+  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
+  vtkMRMLScalarVolumeDisplayNode* displayNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+      volumeNode ? volumeNode->GetVolumeDisplayNode(): 0);
+  if (displayNode)
+    {
+    qvtkConnect(displayNode, vtkCommand::ModifiedEvent, this, SLOT(onBackgroundDisplayNodeChanged(vtkObject*)));
+    this->onBackgroundDisplayNodeChanged(displayNode);
     }
 }
 
@@ -527,6 +549,28 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::onForegroundDisplayNodeChanged(vtkObject* node)
+{
+  vtkMRMLScalarVolumeDisplayNode* displayNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node);
+  if (displayNode)
+    {
+    this->actionForegroundInterpolation->setChecked(displayNode->GetInterpolate());
+    }
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::onBackgroundDisplayNodeChanged(vtkObject* node)
+{
+  vtkMRMLScalarVolumeDisplayNode* displayNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node);
+  if (displayNode)
+    {
+    this->actionBackgroundInterpolation->setChecked(displayNode->GetInterpolate());
+    }
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::compositeNodeLogic(vtkMRMLSliceCompositeNode* node)
 {
   if (this->SliceLogics)
@@ -570,38 +614,56 @@ vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::sliceNodeLogic(vtkMRMLSlic
 void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool interpolate)
 {
   CTK_P(qMRMLSliceControllerWidget);
+  // TODO, update the QAction when the display node is modified
+  vtkMRMLVolumeNode* volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode();
   vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-    sliceLogic->GetForegroundLayer()->GetVolumeDisplayNode());
+    volumeNode->GetVolumeDisplayNode());
   if (displayNode)
     {
     p->mrmlScene()->SaveStateForUndo(displayNode);
-    // TODO, update the QAction when the display node is modified
     displayNode->SetInterpolate(interpolate);
-    vtkMRMLVolumeNode* volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode();
-    if (volumeNode)
-      {
-      volumeNode->Modified();
-      }
     }
+  // historic code that doesn't seem to work
+  // vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+  //   sliceLogic->GetForegroundLayer()->GetVolumeDisplayNode());
+  // if (displayNode)
+  //   {
+  //   p->mrmlScene()->SaveStateForUndo(displayNode);
+  //   displayNode->SetInterpolate(interpolate);
+  //   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode();
+  //   if (volumeNode)
+  //     {
+  //     volumeNode->Modified();
+  //     }
+  //   }
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool interpolate)
 {
   CTK_P(qMRMLSliceControllerWidget);
+  // TODO, update the QAction when the display node is modified
+  vtkMRMLVolumeNode* volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode();
   vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-    sliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode());
+    volumeNode->GetVolumeDisplayNode());
   if (displayNode)
     {
     p->mrmlScene()->SaveStateForUndo(displayNode);
-    // TODO, update the QAction when the display node is modified
     displayNode->SetInterpolate(interpolate);
-    vtkMRMLVolumeNode* volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode();
-    if (volumeNode)
-      {
-      volumeNode->Modified();
-      }
     }
+  // historic code that doesn't seem to work
+  // vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+  //   sliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode());
+  // if (displayNode)
+  //   {
+  //   p->mrmlScene()->SaveStateForUndo(displayNode);
+  //   displayNode->SetInterpolate(interpolate);
+  //   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode();
+  //   if (volumeNode)
+  //     {
+  //     volumeNode->Modified();
+  //     }
+  //   }
 }
 
 //---------------------------------------------------------------------------
