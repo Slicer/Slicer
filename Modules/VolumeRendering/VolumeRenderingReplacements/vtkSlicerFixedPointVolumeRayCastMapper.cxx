@@ -171,6 +171,8 @@ void vtkSlicerFixedPointVolumeRayCastMapperComputeGradients( T *dataPtr,
     unsigned char       *magPtr, *cmagPtr;
 
 
+
+
     me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsStartEvent, NULL );
 
     double avgSpacing = (spacing[0]+spacing[1]+spacing[2])/3.0;
@@ -244,6 +246,9 @@ void vtkSlicerFixedPointVolumeRayCastMapperComputeGradients( T *dataPtr,
         tolerance[c] = .00001 * (scalarRange[c][1] - scalarRange[c][0]);
     }
 
+
+    T *lastPixel = dataPtr + components*dim[0]*dim[1]*dim[2] - 1;
+
     // Loop through all the data and compute the encoded normal and
     // gradient magnitude for each scalar location
     //TODO LimitGradients in same way as done in Helper Classes
@@ -279,46 +284,59 @@ void vtkSlicerFixedPointVolumeRayCastMapperComputeGradients( T *dataPtr,
                         // otherwise use a forward or backward difference if
                         // we are on the edge
                         // Compute the X component
-                        if ( x < d )
+                        if ( x < d && (cdptr+d*xstep) <= lastPixel )
                         {
                             n[0] = 2.0*((float)*(cdptr) - (float)*(cdptr+d*xstep));
                         }
-                        else if ( x >= dim[0] - d )
+                        else if ( x >= dim[0] - d && (cdptr-d*xstep) >= dataPtr )
                         {
                             n[0] = 2.0*((float)*(cdptr-d*xstep) - (float)*(cdptr));
                         }
-                        else
+                        else if ( (cdptr+d*xstep) <= lastPixel && (cdptr-d*xstep) >= dataPtr )
                         {
                             n[0] = (float)*(cdptr-d*xstep) - (float)*(cdptr+d*xstep);
+                        } 
+                        else 
+                        {
+                            n[0] = 0;
                         }
 
                         // Compute the Y component
-                        if ( y < d )
+                        if ( y < d && (cdptr+d*ystep) <= lastPixel )
                         {
                             n[1] = 2.0*((float)*(cdptr) - (float)*(cdptr+d*ystep));
                         }
-                        else if ( y >= dim[1] - d )
+                        else if ( y >= dim[1] - d && (cdptr-d*ystep) >= dataPtr )
                         {
                             n[1] = 2.0*((float)*(cdptr-d*ystep) - (float)*(cdptr));
                         }
-                        else
+                        else if ( (cdptr+d*ystep) <= lastPixel && (cdptr-d*ystep) >= dataPtr )
                         {
                             n[1] = (float)*(cdptr-d*ystep) - (float)*(cdptr+d*ystep);
+                        } 
+                        else 
+                        {
+                            n[1] = 0;
                         }
 
                         // Compute the Z component
-                        if ( z < d )
+                        if ( z < d && (cdptr+d*zstep) <= lastPixel )
                         {
                             n[2] = 2.0*((float)*(cdptr) - (float)*(cdptr+d*zstep));
                         }
-                        else if ( z >= dim[2] - d )
+                        else if ( z >= dim[2] - d && (cdptr-d*zstep) >= dataPtr )
                         {
                             n[2] = 2.0*((float)*(cdptr-d*zstep) - (float)*(cdptr));
                         }
-                        else
+                        else if ( (cdptr+d*zstep) <= lastPixel && (cdptr-d*zstep) >= dataPtr )
                         {
                             n[2] = (float)*(cdptr-d*zstep) - (float)*(cdptr+d*zstep);
+                        } 
+                        else 
+                        {
+                            n[2] = 0;
                         }
+
 
                         // Take care of the aspect ratio of the data
                         // Scaling in the vtkVolume is isotropic, so this is the
