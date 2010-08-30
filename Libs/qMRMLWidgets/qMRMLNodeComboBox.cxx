@@ -1,10 +1,12 @@
 
 // Qt includes
+#include <QApplication>
 #include <QAbstractItemView>
 #include <QAbstractProxyModel>
 #include <QAction>
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QStandardItemModel>
 
 // CTK includes
@@ -377,12 +379,30 @@ void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* newCurrentNode)
 void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
 {
   CTK_D(qMRMLNodeComboBox);
-  int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRML::UIDRole) : -1;
-  if (index == -1 && d->NoneEnabled)
+  // a straight forward implementation of setCurrentNode would be:
+  //    int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRML::UIDRole) : -1;
+  //    if (index == -1 && d->NoneEnabled)
+  //      {
+  //      index = 0;
+  //      }
+  //    d->ComboBox->setCurrentIndex(index);
+  // However it doesn't work for custom comboxboxes that display non-flat lists
+  // (typically if it is a tree model/view)
+  // let's use a more generic one
+  QModelIndexList indexes = d->ComboBox->model()->match(
+    this->model()->index(0, 0), qMRML::UIDRole, nodeID, 1,
+    Qt::MatchRecursive | Qt::MatchExactly | Qt::MatchWrap);
+  if (indexes.size() == 0)
     {
-    index = 0;
+    d->ComboBox->setRootModelIndex(this->model()->index(0, 0));
+    d->ComboBox->setCurrentIndex(d->NoneEnabled ? 0 : -1);
+    return;
     }
-  d->ComboBox->setCurrentIndex(index);
+  //d->ComboBox->setRootModelIndex(indexes[0].parent());
+  //d->ComboBox->setCurrentIndex(indexes[0].row());
+  d->ComboBox->view()->setCurrentIndex(indexes[0]);
+  QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
+  QApplication::sendEvent(d->ComboBox->view(), &event);
 }
 
 // --------------------------------------------------------------------------
