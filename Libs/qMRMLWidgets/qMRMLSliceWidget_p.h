@@ -37,10 +37,13 @@ public slots:
   /// \sa qMRMLSliceControllerWidget::imageDataModified
   void onImageDataModified(vtkImageData * imageData);
 
+  void updateWidgetFromMRMLSliceNode();
+
 public:
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   QString                            ScriptDisplayableManagerDirectory;
+  vtkMRMLSliceNode*                  MRMLSliceNode;
 };
 
 #endif

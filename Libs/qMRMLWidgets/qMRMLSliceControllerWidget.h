@@ -154,7 +154,7 @@ public slots:
   void setBackgroundInterpolation(bool);
 signals:
 
-  /// This signal is emitted when the giben \a imageData is modified.
+  /// This signal is emitted when the given \a imageData is modified.
   void imageDataModified(vtkImageData * imageData);
 
 private:

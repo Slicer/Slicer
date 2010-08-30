@@ -37,6 +37,7 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceWidget");
 qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate()
 {
   this->DisplayableManagerGroup = 0;
+  this->MRMLSliceNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -88,6 +89,15 @@ void qMRMLSliceWidgetPrivate::onImageDataModified(vtkImageData * imageData)
   logger.trace("onImageDataModifiedEvent");
   this->VTKSliceView->setImageData(imageData);
   this->VTKSliceView->scheduleRender();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceWidgetPrivate::updateWidgetFromMRMLSliceNode()
+{
+  Q_ASSERT(this->MRMLSliceNode);
+  this->VTKSliceView->lightBoxRendererManager()->SetRenderWindowLayout(
+      this->MRMLSliceNode->GetLayoutGridRows(),
+      this->MRMLSliceNode->GetLayoutGridColumns());
 }
 
 // --------------------------------------------------------------------------
@@ -187,8 +197,22 @@ void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
 void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
   CTK_D(qMRMLSliceWidget);
+  if (newSliceNode == d->MRMLSliceNode)
+    {
+    return;
+    }
   d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
   d->SliceController->setMRMLSliceNode(newSliceNode);
+
+  d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
+                   d, SLOT(updateWidgetFromMRMLSliceNode()));
+
+  d->MRMLSliceNode = newSliceNode;
+
+  if (newSliceNode)
+    {
+    d->updateWidgetFromMRMLSliceNode();
+    }
 }
 
 //---------------------------------------------------------------------------
