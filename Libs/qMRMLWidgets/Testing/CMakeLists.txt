@@ -12,6 +12,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLNodeComboBoxTest1.cxx
   qMRMLNodeComboBoxTest2.cxx
   qMRMLNodeComboBoxTest3.cxx
+  qMRMLNodeComboBoxTest4.cxx
   qMRMLNodeFactoryTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
   qMRMLSceneModelTest1.cxx
@@ -60,6 +61,7 @@ SIMPLE_TEST( qMRMLLabelComboBoxTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest2 )
 SCENE_TEST ( qMRMLNodeComboBoxTest3 diffusionEditor.mrml)
+SIMPLE_TEST ( qMRMLNodeComboBoxTest4)
 SIMPLE_TEST( qMRMLNodeFactoryTest1 )
 SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )
 SIMPLE_TEST( qMRMLSceneModelTest1 )

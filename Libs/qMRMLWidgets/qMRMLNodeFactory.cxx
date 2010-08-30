@@ -79,16 +79,22 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
 
   // Extra initialization steps
   initializer(node);
-  
+
+  // Set node attributes
+  // Attributes must be set before adding the node into the scene as the node
+  // combobox filter might hide the node if the attributes are not set yet.
+  // Ideally the qMRMLSortFilterProxyModel should listen the all the nodes and
+  // when the attribute property is changed, make sure that it doesn't change
+  // it's visibility
+  foreach (const QString& attributeName, d->Attributes.keys())
+    {
+    node->SetAttribute(attributeName.toLatin1(),
+                       d->Attributes[attributeName].toLatin1());
+    }
+
   vtkMRMLNode * nodeCreated = d->MRMLScene->AddNode(node);
   Q_ASSERT(nodeCreated);
-  
-  // Set node attributes
-  foreach (QString attributeName, d->Attributes)
-    {
-    nodeCreated->SetAttribute(attributeName.toLatin1(),
-                              d->Attributes[attributeName].toLatin1());
-    }
+
   return nodeCreated; 
 }
 
