@@ -20,6 +20,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLabelComboBox : public qMRMLWidget
   Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
   Q_PROPERTY(int currentColor READ currentColor WRITE setCurrentColor USER true)
   Q_PROPERTY(int maximumColorCount READ maximumColorCount WRITE setMaximumColorCount)
+  Q_PROPERTY(bool colorNameVisible READ colorNameVisible WRITE setColorNameVisible)
 
 public:
 
@@ -34,6 +35,10 @@ public:
   /// An additional item is added into the menu list, where the user can select "None".
   bool noneEnabled()const;
   void setNoneEnabled(bool enable);
+
+  ///Display or not the colors names
+  bool colorNameVisible() const;
+  void setColorNameVisible(bool visible);
 
   virtual void printAdditionalInfo();
 

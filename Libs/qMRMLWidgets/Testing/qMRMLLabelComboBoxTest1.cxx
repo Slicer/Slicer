@@ -99,18 +99,25 @@ int qMRMLLabelComboBoxTest1( int argc, char * argv [] )
   ctkExerciseMethod(labelComboBox2, setCurrentColor, currentColor, 256, 256);
   ctkExerciseMethod(labelComboBox2, setCurrentColor, currentColor, 257, 256);
 
+  //Test7 - Check if the property colorNameVisible()/setColorNameVisible() 
+  //work properly when assigned
+  ctkCheckReturnValue(labelComboBox2, colorNameVisible, true);
+  ctkExerciseMethod(labelComboBox2, setColorNameVisible, colorNameVisible, false, false);
+
+  labelComboBox2.setColorNameVisible(false);
+
   // Show widgets
   labelComboBox.show();
   labelComboBox.printAdditionalInfo();
   labelComboBox2.show();
-  labelComboBox.printAdditionalInfo();
+  labelComboBox2.printAdditionalInfo();
   
-  QTimer autoExit;
+  /*QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(1000);
-    }
+    }*/
 
   return app.exec();
 }
