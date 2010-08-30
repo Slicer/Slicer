@@ -30,7 +30,13 @@ public:
   explicit qMRMLVolumeThresholdWidget(QWidget* parent);
   virtual ~qMRMLVolumeThresholdWidget(){}
 
+  /// 0: Manual
+  /// 1: Auto
+  /// 2: Off
   int autoThreshold() const;
+
+  /// Is the thresholding activated
+  bool isOff()const;
 
   /// 
   /// Get lowerThreshold
