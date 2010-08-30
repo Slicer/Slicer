@@ -626,7 +626,10 @@ bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
     vtkErrorMacro ( "OnClickInThreeDRenderWindow: No selection node in the scene." );
     return false;
     }
-
+  if ( selectionNode->GetActiveAnnotationID() == NULL)
+    {
+    return false;
+    }
   // the purpose of the displayableManager is hardcoded
   return !strcmp(selectionNode->GetActiveAnnotationID(), this->m_Focus);
 
