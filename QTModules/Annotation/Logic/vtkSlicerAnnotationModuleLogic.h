@@ -125,6 +125,11 @@ public:
   /// Set the text scale of an Annotation MRML node
   void SetAnnotationTextScale(const char* id, double textScale);
 
+  /// Get the selected text color of an Annotation MRML node
+  double * GetAnnotationTextSelectedColor(const char* id);
+  /// Set the selected text color of an Annotation MRML node
+  void SetAnnotationTextSelectedColor(const char* id, double * color);
+
   /// Get the measurement value of an Annotation MRML node
   const char * GetAnnotationMeasurement(const char * id, bool showUnits);
 

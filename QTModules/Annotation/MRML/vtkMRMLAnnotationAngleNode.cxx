@@ -239,12 +239,14 @@ void vtkMRMLAnnotationAngleNode::Copy(vtkMRMLNode *anode)
   //this->SetLineColour(node->GetLineColour());
   //this->SetLabelTextColour(node->GetLabelTextColour());
 
+  /*
   this->SetResolution(node->GetResolution());
   this->SetLabelFormat(node->GetLabelFormat());
 
   this->SetModelID1(node->GetModelID1());
   this->SetModelID2(node->GetModelID2());
   this->SetModelIDCenter(node->GetModelIDCenter());
+  */
 }
 
 //-----------------------------------------------------------

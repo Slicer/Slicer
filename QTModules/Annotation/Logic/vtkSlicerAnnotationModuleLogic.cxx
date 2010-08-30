@@ -1437,6 +1437,60 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationTextScale(const char* id, doub
 }
 
 //---------------------------------------------------------------------------
+// Get the selected text color of a MRML Annotation node
+//---------------------------------------------------------------------------
+double * vtkSlicerAnnotationModuleLogic::GetAnnotationTextSelectedColor(const char* id)
+{
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    vtkErrorMacro("GetAnnotationTextScale: Could not get the MRML node.")
+    return 0;
+    }
+
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
+      node);
+
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetAnnotationTextScale: Could not get the annotation MRML node.")
+    return 0;
+    }
+
+  return annotationNode->GetAnnotationTextDisplayNode()->GetSelectedColor();
+
+}
+
+//---------------------------------------------------------------------------
+// Set the selected text color of a MRML Annotation node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationTextSelectedColor(const char* id, double * color)
+{
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationTextScale: Could not get the MRML node.")
+    return;
+    }
+
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
+      node);
+
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationTextScale: Could not get the annotation MRML node.")
+    return;
+    }
+
+  annotationNode->GetAnnotationTextDisplayNode()->SetSelectedColor(color);
+
+  annotationNode->InvokeEvent(vtkCommand::ModifiedEvent);
+
+}
+
+//---------------------------------------------------------------------------
 // Get the measurement value of a MRML Annotation node
 //---------------------------------------------------------------------------
 const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char* id, bool showUnits)
@@ -1498,8 +1552,20 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
     }
   else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
     {
-    double measurement1 = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement()[0];
-    double measurement2 = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement()[1];
+    double measurement1;
+    double measurement2;
+    if (vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement().size() != 2)
+      {
+      // measurement is not ready
+      measurement1 = 0;
+      measurement2 = 0;
+      }
+    else
+      {
+      // measurement is ready
+      measurement1 = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement()[0];
+      measurement2 = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(node)->GetBidimensionalMeasurement()[1];
+      }
 
     std::ostringstream ss;
     ss << measurement1;
@@ -1636,7 +1702,7 @@ void vtkSlicerAnnotationModuleLogic::BackupAnnotationNode(const char * id)
 
   if (!node)
     {
-    vtkErrorMacro("RestoreAnnotationNode: Could not get the MRML node.")
+    vtkErrorMacro("BackupAnnotationNode: Could not get the MRML node.")
     return;
     }
 
@@ -1645,11 +1711,26 @@ void vtkSlicerAnnotationModuleLogic::BackupAnnotationNode(const char * id)
 
   if (!annotationNode)
     {
-    vtkErrorMacro("RestoreAnnotationNode: Could not get the annotationMRML node.")
+    vtkErrorMacro("BackupAnnotationNode: Could not get the annotationMRML node.")
     return;
     }
 
   annotationNode->CreateBackup();
+
+  for(int i=0; i<annotationNode->GetNumberOfDisplayNodes(); i++)
+    {
+
+    vtkMRMLAnnotationDisplayNode * displayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(annotationNode->GetNthDisplayNode(i));
+
+    if(!displayNode)
+      {
+      vtkErrorMacro("BackupAnnotationNode: Could not get the annotationMRMLDisplay node.")
+      return;
+      }
+
+    displayNode->CreateBackup();
+
+    }
 
 }
 
@@ -1675,6 +1756,34 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationNode(const char * id)
     {
     vtkErrorMacro("RestoreAnnotationNode: Could not get the annotationMRML node.")
     return;
+    }
+
+  for(int i=0; i<annotationNode->GetNumberOfDisplayNodes(); i++)
+    {
+
+    vtkMRMLAnnotationDisplayNode * displayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(annotationNode->GetNthDisplayNode(i));
+
+    if(!displayNode)
+      {
+      vtkErrorMacro("BackupAnnotationNode: Could not get the annotationMRMLDisplay node.")
+      return;
+      }
+
+    if (displayNode->IsA("vtkMRMLAnnotationTextDisplayNode"))
+      {
+      // restore display nodes, one by one
+       vtkMRMLAnnotationTextDisplayNode * backupDisplayNode = vtkMRMLAnnotationTextDisplayNode::SafeDownCast(displayNode->GetBackup());
+
+       if (!backupDisplayNode)
+         {
+         vtkErrorMacro("RestoreAnnotationNode: There was no backup display node.")
+         return;
+         }
+
+       // now restore
+       displayNode->Copy(backupDisplayNode);
+      }
+
     }
 
   vtkMRMLAnnotationNode * backupNode = annotationNode->GetBackup();

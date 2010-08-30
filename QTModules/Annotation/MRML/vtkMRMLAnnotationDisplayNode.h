@@ -53,11 +53,19 @@ class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayNode : publ
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
+  // Functionality for backups of this node
+  /// Creates a backup of the current MRML state of this node and keeps a reference
+  void CreateBackup();
+  /// Returns the associated backup of this node
+  vtkMRMLAnnotationDisplayNode * GetBackup();
+
  protected:
   vtkMRMLAnnotationDisplayNode();
   ~vtkMRMLAnnotationDisplayNode() { };
   vtkMRMLAnnotationDisplayNode( const vtkMRMLAnnotationDisplayNode& );
   void operator= ( const vtkMRMLAnnotationDisplayNode& );
+
+  vtkMRMLAnnotationDisplayNode * m_Backup;
 };
 
 #endif

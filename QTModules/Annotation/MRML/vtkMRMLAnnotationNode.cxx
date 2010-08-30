@@ -632,6 +632,7 @@ void vtkMRMLAnnotationNode::CreateBackup()
 
   this->m_Backup = backupNode;
 
+
 }
 
 //----------------------------------------------------------------------------

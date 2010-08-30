@@ -6,6 +6,7 @@
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLAnnotationDisplayNode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 //------------------------------------------------------------------------------
@@ -97,7 +98,32 @@ void vtkMRMLAnnotationDisplayNode::UpdateScene(vtkMRMLScene *scene)
    Superclass::UpdateScene(scene);
 }
 
+//----------------------------------------------------------------------------
+// Create a backup of this node and store it with the node.
+void vtkMRMLAnnotationDisplayNode::CreateBackup()
+{
 
+  if (this->IsA("vtkMRMLAnnotationTextDisplayNode"))
+    {
+    vtkMRMLAnnotationTextDisplayNode * backupNode = vtkMRMLAnnotationTextDisplayNode::New();
+
+    backupNode->Copy(this);
+
+    this->m_Backup = backupNode;
+    }
+
+  // TODO other displayNodes
+
+}
+
+//----------------------------------------------------------------------------
+// Returns the backup of this node.
+vtkMRMLAnnotationDisplayNode * vtkMRMLAnnotationDisplayNode::GetBackup()
+{
+
+  return this->m_Backup;
+
+}
 
 
 

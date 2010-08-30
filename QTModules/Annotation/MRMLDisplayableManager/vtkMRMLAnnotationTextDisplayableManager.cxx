@@ -179,6 +179,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated(vtkAbstractWidget 
     return;
     }
 
+  this->m_Updating = 0;
   // propagate the widget to the MRML node
   this->PropagateWidgetToMRML(widget, node);
 }
@@ -295,7 +296,14 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
     {
     // text scale in the mrml node is different than the font size in the widget, so propagate
     rep->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
-    //rep->GetTextActor()->GetTextProperty()->SetColor( 0.0, 1.0, 0.0 );
+    hasChanged = true;
+    }
+
+  // Propagate the MRML selected text color to the widget
+  if (textNode->GetAnnotationTextDisplayNode()->GetSelectedColor() != rep->GetTextActor()->GetScaledTextProperty()->GetColor())
+    {
+    // mrml selected color property is different then the widget font color, so propagate to widget
+    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
     hasChanged = true;
     }
 
@@ -387,6 +395,14 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     hasChanged = true;
     }
 
+  if (!textNode->GetText(0))
+    {
+    textNode->SetText(0,rep->GetText(),1,1);
+    hasChanged = true;
+    }
+
+
+
   //
   // Check if the position of the widget is different than the saved one in the mrml node
   // If yes, propagate the changes to the mrml node
@@ -398,7 +414,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     hasChanged = true;
     }
 
-  // Propagate the MRML text label to the widget
+  // Propagate the widget text to the MRML node
   if (strcmp(textNode->GetText(0).c_str(),rep->GetText()))
     {
     // widget text has changed, update mrml
@@ -406,11 +422,19 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     hasChanged = true;
     }
 
-  // Propagate the MRML text scale to the widget
+  // Propagate the widget font size to the MRML node
   if (textNode->GetTextScale() != rep->GetTextActor()->GetScaledTextProperty()->GetFontSize())
     {
     // widget font is different then the mrml textScale property, so propagate to mrml
     textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
+    hasChanged = true;
+    }
+
+  // Propagate the selected text color to the MRML node
+  if (textNode->GetAnnotationTextDisplayNode()->GetSelectedColor() != rep->GetTextActor()->GetScaledTextProperty()->GetColor())
+    {
+    // widget font color is different then the mrml selected color property, so propagate to mrml
+    textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
     hasChanged = true;
     }
 

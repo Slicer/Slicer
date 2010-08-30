@@ -32,7 +32,7 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
   this->m_id = id;
   this->m_logic = logic;
 
-  // now build the user interfce
+  // now build the user interface
   ui.setupUi(this);
 
   this->initialize();
@@ -75,9 +75,19 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   ui.textScaleSliderSpinBoxWidget->setValue(textScale);
 
   // load the current measurement
-  const char * measurement = this->m_logic->GetAnnotationMeasurement(this->m_id,true);
+  const char * measurement = this->m_logic->GetAnnotationMeasurement(
+      this->m_id, true);
 
   ui.measurementLineEdit->setText(measurement);
+
+  // load the selected text color
+  double * selectedColor = this->m_logic->GetAnnotationTextSelectedColor(
+      this->m_id);
+  QColor selectedQColor;
+  this->TurnColorArrayToQColor(selectedColor,selectedQColor);
+
+  ui.textSelectedColorPickerButton->setColor(selectedQColor);
+  ui.textSelectedColorPickerButton->setText("Selected Color");
 
   /*
    this->setWindowTitle(
@@ -488,6 +498,9 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   this->connect(ui.textScaleSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
       this, SLOT(onTextScaleChanged(double)));
 
+  this->connect(ui.textSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
+      this, SLOT(onTextSelectedColorChanged(QColor)));
+
   /*
    this->connect(
    ui.annotationTextEdit,
@@ -879,10 +892,11 @@ void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qc
 {
   double color[3];
   this->TurnQColorToColorArray(color, qcolor);
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->TEXT_SELECTED_COLOR, color);
-  this->SetButtonText(this->m_logic->TEXT_SELECTED_COLOR);
+
+  this->m_logic->SetAnnotationTextSelectedColor(this->m_id,color);
+
+  ui.textSelectedColorPickerButton->setText("Selected Color");
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onTextScaleChanged(double value)

@@ -226,6 +226,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
 
   // we want to manually propagate the widget to the MRML node now
   // in the future, the callback handles the update of the MRML node
+  this->m_Updating = 0;
   this->PropagateWidgetToMRML(bidimensionalWidget, bidimensionalNode);
 
 }

@@ -157,8 +157,8 @@ void vtkMRMLAnnotationROINode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLAnnotationROINode *node = (vtkMRMLAnnotationROINode *) anode;
 
-  this->SetResolution(node->GetResolution());
-  this->SetROIAnnotationFormat(node->GetROIAnnotationFormat());
+ // this->SetResolution(node->GetResolution());
+ // this->SetROIAnnotationFormat(node->GetROIAnnotationFormat());
 }
 
 //-----------------------------------------------------------

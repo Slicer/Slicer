@@ -196,10 +196,10 @@ void vtkMRMLAnnotationRulerNode::Copy(vtkMRMLNode *anode)
   vtkMRMLAnnotationRulerNode *node = (vtkMRMLAnnotationRulerNode *) anode;
 
 
-  this->SetResolution(node->GetResolution());
-  this->SetDistanceAnnotationFormat(node->GetDistanceAnnotationFormat());
-  this->SetModelID1(node->GetModelID1());
-  this->SetModelID2(node->GetModelID2());
+  //this->SetResolution(node->GetResolution());
+  //this->SetDistanceAnnotationFormat(node->GetDistanceAnnotationFormat());
+  //this->SetModelID1(node->GetModelID1());
+  //this->SetModelID2(node->GetModelID2());
 }
 
 //-----------------------------------------------------------
