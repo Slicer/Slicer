@@ -18,6 +18,7 @@
 
 // VTK includes
 #include <vtkVariantArray.h>
+#include <typeinfo>
 
 class qMRMLNodeItemHelperPrivate;
 
@@ -176,7 +177,8 @@ bool qMRMLNodeItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
     return true;
     }
   bool _canReparent = false;
-  if (dynamic_cast<qMRMLAbstractSceneItemHelper*>(newParent))
+  if (dynamic_cast<qMRMLAbstractSceneItemHelper*>(newParent) ||
+      dynamic_cast<qMRMLExtraItemsHelper*>(newParent))
     {
     _canReparent = qMRMLUtils::canReparent(this->mrmlNode(), 0);
     }
@@ -184,6 +186,10 @@ bool qMRMLNodeItemHelper::canReparent(qMRMLAbstractItemHelper* newParent)const
     {
     vtkMRMLNode*  newParentNode = dynamic_cast<qMRMLNodeItemHelper*>(newParent)->mrmlNode();
     _canReparent = qMRMLUtils::canReparent(this->mrmlNode(), newParentNode);
+    }
+  else
+    {
+    qDebug() << "Drag&Drop: item not supported yet" << newParent << typeid(*newParent).name();
     }
   return _canReparent;
 }

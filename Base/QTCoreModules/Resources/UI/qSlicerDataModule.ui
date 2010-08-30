@@ -35,6 +35,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
         <property name="indentation">
          <number>10</number>
         </property>
