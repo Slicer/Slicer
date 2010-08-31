@@ -585,6 +585,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   vectorNode->SetAndObserveDisplayNodeID(vdisplayNode->GetID());
 
   // set up the scalar node's support nodes
+  scalarNode->SetLabelMap(labelMap);
   this->GetMRMLScene()->AddNode(scalarNode);
   scalarNode->SetAndObserveStorageNodeID(storageNode2->GetID());
   if (labelMap)
@@ -653,7 +654,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
         {
         displayNode = sdisplayNode;
         }
-      scalarNode->SetLabelMap(labelMap);
       volumeNode = scalarNode;
       storageNode = storageNode2;
       nodeSetUsed = 5;
