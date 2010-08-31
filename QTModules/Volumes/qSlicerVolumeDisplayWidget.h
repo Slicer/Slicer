@@ -7,6 +7,7 @@
 #include "qSlicerVolumesModuleExport.h"
 
 class vtkMRMLNode;
+class qSlicerLabelMapVolumeDisplayWidget;
 class qSlicerScalarVolumeDisplayWidget;
 
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumeDisplayWidget : public QStackedWidget
@@ -27,8 +28,8 @@ public slots:
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
 private:
-  qSlicerScalarVolumeDisplayWidget* ScalarVolumeDisplayWidget;
-
+  qSlicerScalarVolumeDisplayWidget*   ScalarVolumeDisplayWidget;
+  qSlicerLabelMapVolumeDisplayWidget* LabelMapVolumeDisplayWidget;
 };
 
 #endif

@@ -15,6 +15,10 @@ SET(qt_module_include_directories
 
 # Source files
 SET(qt_module_SRCS
+  qSlicerLabelMapVolumeDisplayWidget.cxx
+  qSlicerLabelMapVolumeDisplayWidget.h
+  qSlicerScalarVolumeDisplayWidget.cxx
+  qSlicerScalarVolumeDisplayWidget.h
   qSlicerVolumesIO.cxx
   qSlicerVolumesIO.h
   qSlicerVolumesIOOptionsWidget.cxx
@@ -25,25 +29,25 @@ SET(qt_module_SRCS
   qSlicerVolumesModuleWidget.h
   qSlicerVolumeDisplayWidget.cxx
   qSlicerVolumeDisplayWidget.h
-  qSlicerScalarVolumeDisplayWidget.cxx
-  qSlicerScalarVolumeDisplayWidget.h
   )
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
+  qSlicerLabelMapVolumeDisplayWidget.h
+  qSlicerScalarVolumeDisplayWidget.h
   qSlicerVolumesIO.h
   qSlicerVolumesIOOptionsWidget.h
   qSlicerVolumesModule.h
   qSlicerVolumesModuleWidget.h
   qSlicerVolumeDisplayWidget.h
-  qSlicerScalarVolumeDisplayWidget.h
   )
 
 # UI files
 SET(qt_module_UI_SRCS
+  Resources/UI/qSlicerLabelMapVolumeDisplayWidget.ui
+  Resources/UI/qSlicerScalarVolumeDisplayWidget.ui
   Resources/UI/qSlicerVolumesIOOptionsWidget.ui
   Resources/UI/qSlicerVolumesModule.ui
-  Resources/UI/qSlicerScalarVolumeDisplayWidget.ui
 )
 
 # Additional Target libraries
