@@ -11,10 +11,7 @@
 
 // this is a test of the slicer slice logic resampling pipeline
 
-// qSlicer
-#include "qSlicerWidget.h"
-
-// Qt
+// Qt includes
 #include <QApplication>
 #include <QWidget>
 #include <QTimer>
@@ -24,17 +21,20 @@
 #include <QWebView>
 #include <QUrl>
 
-// QVTK
+// SlicerQt includes
+#include "qSlicerWidget.h"
+
+// QVTK includes
 #include <QVTKWidget.h>
 
-// VTK
+// VTK includes
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkImageMapper.h>
 #include <vtkProperty2D.h>
 #include <vtkActor2D.h>
 
-// MRML
+// MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
@@ -43,12 +43,11 @@
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLColorTableNode.h>
 
-// Slicer
+// Slicer includes
 #include <vtkMRMLSliceLogic.h>
 
-// STD
-#include <stdlib.h>
-
+// STD includes
+#include <cstdlib>
 
 #define WINDOW_WIDTH 600
 #define WINDOW_HEIGHT 900
