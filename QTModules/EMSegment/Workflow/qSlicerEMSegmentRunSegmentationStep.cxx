@@ -237,7 +237,10 @@ void qSlicerEMSegmentRunSegmentationStep::onExit(
     return;
     }
 
-  d->Panel->updateMRMLFromWidget();
+  if (d->Panel)
+    {
+    d->Panel->updateMRMLFromWidget();
+    }
 
   // Signals that we are finished
   emit onExitComplete();

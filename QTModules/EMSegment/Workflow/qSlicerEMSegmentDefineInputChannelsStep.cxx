@@ -227,8 +227,11 @@ void qSlicerEMSegmentDefineInputChannelsStep::onExit(
     return;
     }
 
-  // Update MRML with selected volumes
-  d->Panel->updateMRMLFromWidget();
+  if (d->Panel)
+    {
+    // Update MRML with selected volumes
+    d->Panel->updateMRMLFromWidget();
+    }
 
   // Make sure output volume is defined
   if(!this->mrmlManager()->GetOutputVolumeMRMLID())
