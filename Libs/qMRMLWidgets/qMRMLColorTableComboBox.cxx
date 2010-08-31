@@ -29,6 +29,13 @@ qMRMLColorTableComboBox::qMRMLColorTableComboBox(QWidget* parentWidget)
   nodeTypes << QString("vtkMRMLColorTableNode");
   nodeTypes << QString("vtkMRMLProceduralColorNode");
   this->setNodeTypes(nodeTypes);
+
+  QIcon defaultIcon(":blankLUT");
+  QList<QSize> iconSizes(defaultIcon.availableSizes());
+  if (iconSizes.size() > 0)
+    {
+    comboBox->setIconSize(iconSizes[0]);
+    }
 }
 
 // --------------------------------------------------------------------------

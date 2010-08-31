@@ -1,5 +1,6 @@
 // Qt includes
 #include <QDebug>
+#include <QFile>
 #include <QIcon>
 #include <QMap>
 #include <QMimeData>
@@ -16,6 +17,7 @@
 #include "qMRMLUtils.h"
 
 // MRML includes
+#include <vtkMRMLColorNode.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
@@ -55,7 +57,7 @@ qMRMLAbstractItemHelper* qMRMLColorTableItemHelperFactory
     Q_ASSERT(object);
     return 0;
     }
-  if (object->IsA("vtkMRMLColorTableNode"))
+  if (object->IsA("vtkMRMLColorNode"))
     {
     return new qMRMLColorTableNodeItemHelper(vtkMRMLNode::SafeDownCast(object), column, this, row);
     }
@@ -83,7 +85,13 @@ QVariant qMRMLColorTableNodeItemHelper::data(int role)const
 {
   if (role == Qt::DecorationRole)
     {
-    return QIcon(":Icons/VisibleOn");
+    vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(this->mrmlNode());
+    QString iconFileName(":" + QString(colorNode->GetName()));
+    if (!QFile::exists(iconFileName))
+      {
+      iconFileName = ":blankLUT";
+      }
+    return QIcon(iconFileName);
     }
   return qMRMLAbstractNodeItemHelper::data(role);
 }
