@@ -22,15 +22,15 @@ SET(qt_module_include_directories
 #
 #-----------------------------------------------------------------------
 SET(DisplayableManager_SRCS
-  MRMLDisplayableManager/vtkMRMLAnnotationTextDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationFiducialDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationStickyDisplayableManager.cxx  
-  MRMLDisplayableManager/vtkMRMLAnnotationAngleDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationSplineDisplayableManager.cxx  
-  MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.cxx   
-  MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx     
-  MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.cxx
+  MRMLDisplayableManager/vtkMRMLAnnotationTextThreeDViewDisplayableManager.cxx
+  MRMLDisplayableManager/vtkMRMLAnnotationFiducialThreeDViewDisplayableManager.cxx
+  MRMLDisplayableManager/vtkMRMLAnnotationStickyThreeDViewDisplayableManager.cxx  
+  MRMLDisplayableManager/vtkMRMLAnnotationAngleThreeDViewDisplayableManager.cxx
+  MRMLDisplayableManager/vtkMRMLAnnotationSplineThreeDViewDisplayableManager.cxx  
+  MRMLDisplayableManager/vtkMRMLAnnotationRulerThreeDViewDisplayableManager.cxx   
+  MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager.cxx
+  MRMLDisplayableManager/vtkMRMLAnnotationROIThreeDViewDisplayableManager.cxx     
+  MRMLDisplayableManager/vtkMRMLAnnotationThreeDViewDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationClickCounter.cxx
   )
   

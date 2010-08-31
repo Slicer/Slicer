@@ -32,28 +32,28 @@ void qSlicerAnnotationModule::setup()
 {
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationTextDisplayableManager");
+      "vtkMRMLAnnotationTextThreeDViewDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationAngleDisplayableManager");
+      "vtkMRMLAnnotationAngleThreeDViewDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationFiducialDisplayableManager");
+      "vtkMRMLAnnotationFiducialThreeDViewDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationStickyDisplayableManager");
+      "vtkMRMLAnnotationStickyThreeDViewDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationSplineDisplayableManager");
+      "vtkMRMLAnnotationSplineThreeDViewDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationRulerDisplayableManager");
+      "vtkMRMLAnnotationRulerThreeDViewDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationBidimensionalDisplayableManager");
+      "vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationROIDisplayableManager");
+      "vtkMRMLAnnotationROIThreeDViewDisplayableManager");
 
 }
 

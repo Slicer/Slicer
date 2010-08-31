@@ -7,7 +7,7 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationAngleDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationAngleThreeDViewDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
@@ -20,7 +20,7 @@
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
 class vtkMRMLAnnotationAngleNode;
 class vtkSlicerViewerWidget;
@@ -29,13 +29,13 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkAngleWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationAngleDisplayableManager :
-    public vtkMRMLAnnotationDisplayableManager
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationAngleThreeDViewDisplayableManager :
+    public vtkMRMLAnnotationThreeDViewDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationAngleDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationAngleDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  static vtkMRMLAnnotationAngleThreeDViewDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationAngleThreeDViewDisplayableManager, vtkMRMLAnnotationThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // the following functions must be public to be accessible by the callback
@@ -46,8 +46,8 @@ public:
 
 protected:
 
-  vtkMRMLAnnotationAngleDisplayableManager(){this->m_Focus="vtkMRMLAnnotationAngleNode";}
-  virtual ~vtkMRMLAnnotationAngleDisplayableManager(){}
+  vtkMRMLAnnotationAngleThreeDViewDisplayableManager(){this->m_Focus="vtkMRMLAnnotationAngleNode";}
+  virtual ~vtkMRMLAnnotationAngleThreeDViewDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInThreeDRenderWindow(double x, double y);
@@ -59,8 +59,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationAngleDisplayableManager(const vtkMRMLAnnotationAngleDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationAngleDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationAngleThreeDViewDisplayableManager(const vtkMRMLAnnotationAngleThreeDViewDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationAngleThreeDViewDisplayableManager&); /// Not Implemented
 
 };
 

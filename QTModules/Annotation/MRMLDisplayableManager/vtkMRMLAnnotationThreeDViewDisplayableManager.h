@@ -7,7 +7,7 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationThreeDViewDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.1 $
 
@@ -34,13 +34,13 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkAbstractWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManager :
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationThreeDViewDisplayableManager :
     public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
+  static vtkMRMLAnnotationThreeDViewDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationThreeDViewDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
@@ -57,8 +57,8 @@ public:
 
 protected:
 
-  vtkMRMLAnnotationDisplayableManager();
-  virtual ~vtkMRMLAnnotationDisplayableManager();
+  vtkMRMLAnnotationThreeDViewDisplayableManager();
+  virtual ~vtkMRMLAnnotationThreeDViewDisplayableManager();
 
   virtual void Create();
 
@@ -120,8 +120,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationThreeDViewDisplayableManager(const vtkMRMLAnnotationThreeDViewDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationThreeDViewDisplayableManager&); /// Not Implemented
 
   virtual void OnInteractorStyleEvent(int eventid);
 

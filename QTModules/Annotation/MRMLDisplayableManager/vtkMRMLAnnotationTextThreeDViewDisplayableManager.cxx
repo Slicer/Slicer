@@ -1,12 +1,12 @@
 // AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationTextDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationTextThreeDViewDisplayableManager.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationTextNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -29,11 +29,11 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkMRMLAnnotationTextThreeDViewDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLAnnotationTextThreeDViewDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationTextDisplayableManager Callback
+// vtkMRMLAnnotationTextThreeDViewDisplayableManager Callback
 class vtkAnnotationTextWidgetCallback : public vtkCommand
 {
 public:
@@ -76,28 +76,28 @@ public:
   {
     this->m_Node = n;
   }
-  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
+  void SetDisplayableManager(vtkMRMLAnnotationThreeDViewDisplayableManager * dm)
   {
     this->m_DisplayableManager = dm;
   }
 
   vtkAbstractWidget * m_Widget;
   vtkMRMLAnnotationNode * m_Node;
-  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
+  vtkMRMLAnnotationThreeDViewDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationTextDisplayableManager methods
+// vtkMRMLAnnotationTextThreeDViewDisplayableManager methods
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationTextDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
 /// Create a new text widget.
-vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+vtkAbstractWidget * vtkMRMLAnnotationTextThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
   if (!this->IsCorrectDisplayableManager())
     {
@@ -170,7 +170,7 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
+void vtkMRMLAnnotationTextThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -186,7 +186,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated(vtkAbstractWidget 
 
 //---------------------------------------------------------------------------
 /// Propagate properties of MRML node to widget.
-void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -341,7 +341,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
 
 //---------------------------------------------------------------------------
 /// Propagate properties of widget to MRML node.
-void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -483,7 +483,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationTextThreeDViewDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

@@ -35,7 +35,7 @@ class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationStickyNode;
 class vtkSlicerAnnotationRulerManager;
 class vtkSlicerAnnotationAngleManager;
-class vtkMRMLAnnotationFiducialDisplayableManager;
+class vtkMRMLAnnotationFiducialThreeDViewDisplayableManager;
 class vtkMRMLAnnotationTextNode;
 //class vtkSlicerSeedWidgetClass;
 class vtkTextWidget;
@@ -43,7 +43,7 @@ class vtkSlicerROIDisplayWidget;
 class vtkSlicerAnnotationROIManager;
 class vtkSlicerAnnotationSplineManager;
 class vtkSlicerAnnotationBidimensionalManager;
-class vtkMRMLAnnotationTextDisplayableManager;
+class vtkMRMLAnnotationTextThreeDViewDisplayableManager;
 
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicerAnnotationModuleLogic :

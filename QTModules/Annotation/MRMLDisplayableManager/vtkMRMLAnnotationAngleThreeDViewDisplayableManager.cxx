@@ -1,11 +1,11 @@
 // AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationAngleDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationAngleThreeDViewDisplayableManager.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -29,11 +29,11 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLAnnotationAngleDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationAngleDisplayableManager, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkMRMLAnnotationAngleThreeDViewDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLAnnotationAngleThreeDViewDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationAngleDisplayableManager Callback
+// vtkMRMLAnnotationAngleThreeDViewDisplayableManager Callback
 class vtkAnnotationAngleWidgetCallback : public vtkCommand
 {
 public:
@@ -76,28 +76,28 @@ public:
   {
     this->m_Node = n;
   }
-  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
+  void SetDisplayableManager(vtkMRMLAnnotationThreeDViewDisplayableManager * dm)
   {
     this->m_DisplayableManager = dm;
   }
 
   vtkAbstractWidget * m_Widget;
   vtkMRMLAnnotationNode * m_Node;
-  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
+  vtkMRMLAnnotationThreeDViewDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationAngleDisplayableManager methods
+// vtkMRMLAnnotationAngleThreeDViewDisplayableManager methods
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
 /// Create a new angle widget.
-vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+vtkAbstractWidget * vtkMRMLAnnotationAngleThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
   if (!this->IsCorrectDisplayableManager())
     {
@@ -152,7 +152,7 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleDisplayableManager::CreateWidget(vtkMR
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
+void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -228,7 +228,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
 //---------------------------------------------------------------------------
 /// Propagate properties of MRML node to widget.
-void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -349,7 +349,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
 //---------------------------------------------------------------------------
 /// Propagate properties of widget to MRML node.
-void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -481,7 +481,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
 //---------------------------------------------------------------------------
 /// Handle clicks in 3D Render Window
-void vtkMRMLAnnotationAngleDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

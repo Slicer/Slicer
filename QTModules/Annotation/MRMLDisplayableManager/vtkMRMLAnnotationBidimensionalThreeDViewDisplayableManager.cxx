@@ -1,11 +1,11 @@
 // AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationBidimensionalNode.h"
 #include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -27,11 +27,11 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLAnnotationBidimensionalDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationBidimensionalDisplayableManager, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationBidimensionalDisplayableManager Callback
+// vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager Callback
 class vtkAnnotationBidimensionalWidgetCallback : public vtkCommand
 {
 public:
@@ -74,28 +74,28 @@ public:
   {
     this->m_Node = n;
   }
-  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
+  void SetDisplayableManager(vtkMRMLAnnotationThreeDViewDisplayableManager * dm)
   {
     this->m_DisplayableManager = dm;
   }
 
   vtkAbstractWidget * m_Widget;
   vtkMRMLAnnotationNode * m_Node;
-  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
+  vtkMRMLAnnotationThreeDViewDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationBidimensionalDisplayableManager methods
+// vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager methods
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationBidimensionalDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
 /// Create a new text widget.
-vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+vtkAbstractWidget * vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
   if (!this->IsCorrectDisplayableManager())
     {
@@ -134,7 +134,7 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
+void vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -233,7 +233,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
 
 //---------------------------------------------------------------------------
 /// Propagate properties of MRML node to widget.
-void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+void vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -374,7 +374,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
 
 //---------------------------------------------------------------------------
 /// Propagate properties of widget to MRML node.
-void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -525,7 +525,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

@@ -7,7 +7,7 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationTextDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationTextThreeDViewDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
@@ -20,7 +20,7 @@
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
 class vtkMRMLAnnotationTextNode;
 class vtkSlicerViewerWidget;
@@ -29,19 +29,19 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextDisplayableManager :
-    public vtkMRMLAnnotationDisplayableManager
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationTextThreeDViewDisplayableManager :
+    public vtkMRMLAnnotationThreeDViewDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationTextDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationTextDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  static vtkMRMLAnnotationTextThreeDViewDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationTextThreeDViewDisplayableManager, vtkMRMLAnnotationThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
 
-  vtkMRMLAnnotationTextDisplayableManager(){this->m_Focus="vtkMRMLAnnotationTextNode";}
-  virtual ~vtkMRMLAnnotationTextDisplayableManager(){}
+  vtkMRMLAnnotationTextThreeDViewDisplayableManager(){this->m_Focus="vtkMRMLAnnotationTextNode";}
+  virtual ~vtkMRMLAnnotationTextThreeDViewDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInThreeDRenderWindow(double x, double y);
@@ -58,8 +58,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationTextDisplayableManager(const vtkMRMLAnnotationTextDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationTextDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationTextThreeDViewDisplayableManager(const vtkMRMLAnnotationTextThreeDViewDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationTextThreeDViewDisplayableManager&); /// Not Implemented
 
 };
 

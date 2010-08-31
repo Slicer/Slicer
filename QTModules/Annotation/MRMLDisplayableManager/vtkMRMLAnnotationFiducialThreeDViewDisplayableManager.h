@@ -7,41 +7,41 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationROIDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationFiducialThreeDViewDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
  =========================================================================auto=*/
 
-#ifndef __vtkMRMLAnnotationROIDisplayableManager_h
-#define __vtkMRMLAnnotationROIDisplayableManager_h
+#ifndef __vtkMRMLAnnotationFiducialDisplayableManager_h
+#define __vtkMRMLAnnotationFiducialDisplayableManager_h
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
-class vtkMRMLAnnotationROINode;
+class vtkMRMLAnnotationFiducialNode;
 class vtkSlicerViewerWidget;
-class vtkMRMLAnnotationROIDisplayNode;
+class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationROIDisplayableManager :
-    public vtkMRMLAnnotationDisplayableManager
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationFiducialThreeDViewDisplayableManager :
+    public vtkMRMLAnnotationThreeDViewDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationROIDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationROIDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  static vtkMRMLAnnotationFiducialThreeDViewDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationFiducialThreeDViewDisplayableManager, vtkMRMLAnnotationThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
 
-  vtkMRMLAnnotationROIDisplayableManager(){this->m_Focus="vtkMRMLAnnotationROINode";}
-  virtual ~vtkMRMLAnnotationROIDisplayableManager(){}
+  vtkMRMLAnnotationFiducialThreeDViewDisplayableManager(){this->m_Focus="vtkMRMLAnnotationFiducialNode";}
+  virtual ~vtkMRMLAnnotationFiducialThreeDViewDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInThreeDRenderWindow(double x, double y);
@@ -58,8 +58,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationROIDisplayableManager(const vtkMRMLAnnotationROIDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationROIDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationFiducialThreeDViewDisplayableManager(const vtkMRMLAnnotationFiducialThreeDViewDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationFiducialThreeDViewDisplayableManager&); /// Not Implemented
 
 };
 

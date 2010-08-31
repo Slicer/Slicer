@@ -7,7 +7,7 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationBidimensionalDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
@@ -20,7 +20,7 @@
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
 class vtkMRMLAnnotationBidimensionalNode;
 class vtkSlicerViewerWidget;
@@ -29,13 +29,13 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationBidimensionalDisplayableManager :
-    public vtkMRMLAnnotationDisplayableManager
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager :
+    public vtkMRMLAnnotationThreeDViewDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationBidimensionalDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationBidimensionalDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  static vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager, vtkMRMLAnnotationThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // the following functions must be public to be accessible by the callback
@@ -46,8 +46,8 @@ public:
 
 protected:
 
-  vtkMRMLAnnotationBidimensionalDisplayableManager(){this->m_Focus="vtkMRMLAnnotationBidimensionalNode";}
-  virtual ~vtkMRMLAnnotationBidimensionalDisplayableManager(){}
+  vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager(){this->m_Focus="vtkMRMLAnnotationBidimensionalNode";}
+  virtual ~vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInThreeDRenderWindow(double x, double y);
@@ -59,8 +59,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationBidimensionalDisplayableManager(const vtkMRMLAnnotationBidimensionalDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationBidimensionalDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager(const vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager&); /// Not Implemented
 
 };
 
