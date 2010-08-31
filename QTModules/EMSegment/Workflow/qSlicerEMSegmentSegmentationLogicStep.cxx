@@ -69,13 +69,13 @@ void qSlicerEMSegmentSegmentationLogicStep::onEntry(
   vtkSlicerEMSegmentLogic* logic = this->emSegmentLogic();
   Q_ASSERT(logic);
 
-  // TODO can catch this error case earlier?
   // make sure that data types are the same
   if (!this->mrmlManager()->DoTargetAndAtlasDataTypesMatch())
     {
-    // QMessageBox::warning("EMSegmenter",
-    //                      tr("Scalar type mismatch for input images.  All image scalar types must be the same (including input channels and atlas images)."));
-    emit onExitComplete();
+    QMessageBox::critical(this->stepArea(), "EMSegmenter",
+                         tr("Scalar type mismatch for input images.  All image scalar types must be the same (including input channels and atlas images)."));
+    emit onEntryComplete();
+    return;
     }
 
   // start the segmentation

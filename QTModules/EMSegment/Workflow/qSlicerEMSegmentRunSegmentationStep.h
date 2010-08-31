@@ -26,6 +26,8 @@ public slots:
 
   virtual void populateStepWidgetsList(QList<QWidget*>& stepWidgetsList);
 
+  virtual void showUserInterface();
+
   virtual void onEntry(const ctkWorkflowStep* comingFrom,
                        const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
