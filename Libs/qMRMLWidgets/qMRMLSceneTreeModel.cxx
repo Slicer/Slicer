@@ -922,6 +922,7 @@ bool qMRMLSceneTreeModel::dropMimeData(const QMimeData *dataValue, Qt::DropActio
 #endif
 
         this->endRemoveRows();
+
         // what's tricky here is that vparent might be invalid now. (if the 
         // moved row was at the same level than the parent, it shifted up the 
         // parent). we must recompute the parent new index.
@@ -937,8 +938,8 @@ bool qMRMLSceneTreeModel::dropMimeData(const QMimeData *dataValue, Qt::DropActio
         }
       }
     }
-  
-  //emit layoutChanged();
+  // Qt should work fine even without the layoutChanged... however
+  emit layoutChanged();
   return res;
 }
 
