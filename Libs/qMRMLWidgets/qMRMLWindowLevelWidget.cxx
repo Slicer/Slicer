@@ -38,7 +38,7 @@ qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_p
   this->VolumeNode = NULL;
   this->VolumeDisplayNode = NULL;
 
-  this->setAutoWindowLevel(1);
+  this->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
 
   this->connect(d->WindowLevelRangeSlider, SIGNAL(minimumValueChanged(double)),
                 this, SLOT(setMinimumValue(double)));
@@ -58,7 +58,7 @@ qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_p
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
+void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
 {
   //CTK_D(qMRMLWindowLevelWidget);
 
@@ -78,12 +78,34 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
 }
 
 // --------------------------------------------------------------------------
-int qMRMLWindowLevelWidget::autoWindowLevel() const
+void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
+{
+  switch(autoWindowLevel)
+    {
+    case qMRMLWindowLevelWidget::Manual:
+      this->setAutoWindowLevel(qMRMLWindowLevelWidget::Manual);
+      break;
+    case qMRMLWindowLevelWidget::Auto:
+      this->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
+      break;
+    default:
+      break;
+    }
+}
+
+// --------------------------------------------------------------------------
+qMRMLWindowLevelWidget::ControlMode qMRMLWindowLevelWidget::autoWindowLevel() const
 {
   CTK_D(const qMRMLWindowLevelWidget);
-
-  // Assumes settings of the sliders are all the same
-  return d->AutoManualComboBox->currentIndex();
+#ifndef _NDEBUG
+  if (this->VolumeDisplayNode)
+    {
+    Q_ASSERT(this->VolumeDisplayNode->GetAutoWindowLevel() ==
+             d->AutoManualComboBox->currentIndex());
+    }
+#endif
+  return d->AutoManualComboBox->currentIndex() == 0 ?
+    qMRMLWindowLevelWidget::Manual : qMRMLWindowLevelWidget::Auto;
 }
 
 // --------------------------------------------------------------------------
@@ -100,7 +122,7 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
     if (oldWindow != this->VolumeDisplayNode->GetWindow() ||
         oldLevel  != this->VolumeDisplayNode->GetLevel())
       {
-      this->setAutoWindowLevel(0);
+      this->setAutoWindowLevel(qMRMLWindowLevelWidget::Manual);
       emit this->windowLevelValuesChanged(window, level);
       }
     this->VolumeDisplayNode->EndModify(disabledModify);
@@ -120,20 +142,20 @@ void qMRMLWindowLevelWidget::setMinMaxRangeValue(double min, double max)
 void qMRMLWindowLevelWidget::setWindow(double window)
 {
   if (this->VolumeDisplayNode)
-  {
+    {
     double level  = this->VolumeDisplayNode->GetLevel();
     this->setWindowLevel(window, level);
-  }
+    }
 }
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setLevel(double level)
 {
   if (this->VolumeDisplayNode)
-  {
+    {
     double window = this->VolumeDisplayNode->GetWindow();
     this->setWindowLevel(window, level);
-  }
+    }
 }
 
 // --------------------------------------------------------------------------

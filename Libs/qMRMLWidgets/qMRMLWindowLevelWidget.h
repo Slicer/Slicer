@@ -20,19 +20,28 @@ class QMRML_WIDGETS_EXPORT qMRMLWindowLevelWidget : public QWidget
   Q_OBJECT
   QVTK_OBJECT
 
-  Q_PROPERTY(int autoWindowLevel READ autoWindowLevel WRITE setAutoWindowLevel)
+  Q_PROPERTY(ControlMode autoWindowLevel READ autoWindowLevel WRITE setAutoWindowLevel)
   Q_PROPERTY(double window READ window WRITE setWindow)
   Q_PROPERTY(double level READ level WRITE setLevel)
   Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue)
   Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue)
-
+  Q_ENUMS(ControlMode)
 public:
   /// Constructors
   typedef QWidget Superclass;
   explicit qMRMLWindowLevelWidget(QWidget* parent);
   virtual ~qMRMLWindowLevelWidget(){}
 
-  int autoWindowLevel() const;
+  enum ControlMode
+  {
+    Manual = 0,
+    Auto
+  };
+
+  ///
+  /// Set Auto/Manual mode
+  void setAutoWindowLevel(ControlMode autoWindowLevel);
+  ControlMode autoWindowLevel() const;
 
   /// 
   /// Get window
@@ -61,11 +70,9 @@ signals:
   void windowLevelValuesChanged(double window, double level);
   /// 
   /// Signal sent if the auto/manual value is updated
-  void autoWindowLevelValueChanged(int value);
+  void autoWindowLevelValueChanged(ControlMode value);
 
 public slots:
-  ///
-  /// Set Auto/Manual mode
   void setAutoWindowLevel(int autoWindowLevel);
 
   /// 
