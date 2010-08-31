@@ -4,6 +4,9 @@
 // CTK includes
 #include <ctkLogger.h>
 
+// qMRMLWidgets includes
+#include <qMRMLNodeFactory.h>
+
 // EMSegment includes
 #include "qSlicerEMSegmentRunSegmentationPanel.h" 
 #include "ui_qSlicerEMSegmentRunSegmentationPanel.h"
@@ -21,14 +24,6 @@
 static ctkLogger logger(
     "org.slicer.qtmodules.emsegment.panels.qSlicerEMSegmentRunSegmentationPanel");
 //--------------------------------------------------------------------------
-
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentRunSegmentationPanelPrivate :
@@ -52,13 +47,12 @@ void qSlicerEMSegmentRunSegmentationPanelPrivate::setupUi(
 {
   this->Ui_qSlicerEMSegmentRunSegmentationPanel::setupUi(widget);
 
-  // TODO: no attribute for now as the qMRMLNodeComboBox doesn't update correctly...
-  // set attributes on the qMRMLNodeComboBox to select the output label map
-  // (nodeTypes set to vtkMRMLScalarVolumeNode in .ui)
-  //this->OutputLabelMapComboBox->addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
+  // Set attributes on the qMRMLNodeComboBox to select the output label map
+  this->OutputLabelMapComboBox->addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
 
-  // setup connections
-  QObject::connect(this->Display2DVOIButton, SIGNAL(clicked(bool)), widget, SLOT(onShowROIMapChanged(bool)));
+  // Setup connections
+  QObject::connect(this->Display2DVOIButton, SIGNAL(clicked(bool)),
+                   widget, SLOT(display2DVOI(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -82,20 +76,21 @@ void qSlicerEMSegmentRunSegmentationPanel::setMRMLROINode(vtkMRMLROINode* node)
   Q_ASSERT(this->mrmlManager());
   Q_ASSERT(d->ROIWidget);
 
-  // finish setting up the ROI widget, now that we have a MRML manager
-  vtkMRMLVolumeNode* volumeNode = this->mrmlManager()->GetWorkingDataNode()->GetInputTargetNode()->GetNthVolumeNode(0);
+  // Finish setting up the ROI widget, now that we have a MRML manager
+  vtkMRMLVolumeNode* volumeNode =
+      this->mrmlManager()->GetWorkingDataNode()->GetInputTargetNode()->GetNthVolumeNode(0);
 
   double rasDimensions[3];
   double rasCenter[3];
   vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
 
   double rasBounds[6];
-  rasBounds[0] = min(rasCenter[0]-rasDimensions[0]/2.,rasCenter[0]+rasDimensions[0]/2.);
-  rasBounds[1] = min(rasCenter[1]-rasDimensions[1]/2.,rasCenter[1]+rasDimensions[1]/2.);
-  rasBounds[2] = min(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
-  rasBounds[3] = max(rasCenter[0]-rasDimensions[0]/2.,rasCenter[0]+rasDimensions[0]/2.);
-  rasBounds[4] = max(rasCenter[1]-rasDimensions[1]/2.,rasCenter[1]+rasDimensions[1]/2.);
-  rasBounds[5] = max(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
+  rasBounds[0] = qMin(rasCenter[0]-rasDimensions[0]/2.,rasCenter[0]+rasDimensions[0]/2.);
+  rasBounds[1] = qMin(rasCenter[1]-rasDimensions[1]/2.,rasCenter[1]+rasDimensions[1]/2.);
+  rasBounds[2] = qMin(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
+  rasBounds[3] = qMax(rasCenter[0]-rasDimensions[0]/2.,rasCenter[0]+rasDimensions[0]/2.);
+  rasBounds[4] = qMax(rasCenter[1]-rasDimensions[1]/2.,rasCenter[1]+rasDimensions[1]/2.);
+  rasBounds[5] = qMax(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
     
   // TODO
   // this->ROIWidget->SetXRangeExtent(rasBounds[0],rasBounds[3]);
@@ -107,7 +102,6 @@ void qSlicerEMSegmentRunSegmentationPanel::setMRMLROINode(vtkMRMLROINode* node)
   // this->ROIWidget->SetZResolution(fabs(rasBounds[5]-rasBounds[2])/100.);
 
   d->ROIWidget->setMRMLROINode(node);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -121,6 +115,7 @@ void qSlicerEMSegmentRunSegmentationPanel::updateWidgetFromMRML()
     return;
     }
 
+  // Disable widget if needed
   QList<QWidget*> widgets;
   widgets << d->SaveIntermediateResultsCheckBox
           << d->OutputLabelMapComboBox
@@ -147,13 +142,16 @@ void qSlicerEMSegmentRunSegmentationPanel::updateWidgetFromMRML()
     d->DirectoryButton->setCaption(tr("Select Working Directory"));
     }
 
-  // Output label map  
+  // Output label map
   if (!this->mrmlManager()->GetOutputVolumeMRMLID())
     {
-    d->OutputLabelMapComboBox->addNode();
+    qMRMLNodeFactory::AttributeType attributes;
+    attributes.insert("LabelMap", "1");
+    qMRMLNodeFactory::createNode(
+        this->mrmlScene(), "vtkMRMLScalarVolumeNode", vtkMRMLNodeInitializer(), attributes);
     }
 
-  d->OutputLabelMapComboBox->setCurrentNode(this->mrmlManager()->GetMRMLScene()->GetNodeByID(this->mrmlManager()->GetOutputVolumeMRMLID()));
+  d->OutputLabelMapComboBox->setCurrentNode(this->mrmlManager()->GetOutputVolumeMRMLID());
 
   // Define VOI
   // TODO: should call SetMRMLROINode above? Incase the working volume has changed?
@@ -184,7 +182,7 @@ void qSlicerEMSegmentRunSegmentationPanel::updateMRMLFromWidget()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentRunSegmentationPanel::onShowROIMapChanged(bool show)
+void qSlicerEMSegmentRunSegmentationPanel::display2DVOI(bool show)
 {
 
 }
@@ -199,9 +197,6 @@ void qSlicerEMSegmentRunSegmentationPanel::onShowROIMapChanged(bool show)
 *** search for "addObserver" / "guiobservers" / processGUIEvents / processMRMLEvents
 - ROIMRMLCallBack
 - WizardGUICallBack
-
-
-
 
  */
 //-----------------------------------------------------------------------------

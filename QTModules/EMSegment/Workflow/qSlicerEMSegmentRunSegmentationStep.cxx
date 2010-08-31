@@ -1,4 +1,7 @@
 
+// qMRMLWidgets includes
+#include <qMRMLNodeFactory.h>
+
 // EMSegment includes
 #include "qSlicerEMSegmentRunSegmentationStep.h"
 #include "qSlicerEMSegmentRunSegmentationPanel.h"
@@ -18,13 +21,15 @@ public:
   qSlicerEMSegmentRunSegmentationStepPrivate();
   qSlicerEMSegmentRunSegmentationPanel* Panel;
 
+  void setMRMLROINode(vtkMRMLROINode* newROINode);
+
   vtkMRMLROINode* ROINode;
 
   // Delete any ROI nodes named "SegmentationROI", and create a new ROI node
-  void createROINode();
+  vtkMRMLROINode* createROINode();
 
   // Propagate changes in ROINode MRML to EMSegmentRunSegmentationStep ROI MRML
-  void MRMLUpdateROINodeFromROI();
+  void updateMRMLROINodeUsingInputVolume();
 };
 
 //-----------------------------------------------------------------------------
@@ -37,45 +42,65 @@ qSlicerEMSegmentRunSegmentationStepPrivate::qSlicerEMSegmentRunSegmentationStepP
   this->ROINode = 0;
 }
 
+//------------------------------------------------------------------------------
+void qSlicerEMSegmentRunSegmentationStepPrivate::setMRMLROINode(vtkMRMLROINode* newROINode)
+{
+  this->ROINode = newROINode;
+}
+
+namespace
+{
+//------------------------------------------------------------------------------
+struct vtkMRMLROINodeInitializer : public vtkMRMLNodeInitializer
+{
+  vtkMRMLROINodeInitializer(const QString& nodeName):NodeName(nodeName){}
+  virtual void operator()(vtkMRMLNode* node)const
+    {
+    vtkMRMLROINode * roiNode = vtkMRMLROINode::SafeDownCast(node);
+    Q_ASSERT(roiNode);
+    roiNode->SetName(this->NodeName.toLatin1());
+    roiNode->SetVisibility(0);
+    }
+  QString NodeName;
+};
+}
+
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentRunSegmentationStepPrivate::createROINode()
+vtkMRMLROINode* qSlicerEMSegmentRunSegmentationStepPrivate::createROINode()
 {
   CTK_P(qSlicerEMSegmentRunSegmentationStep);
 
-  Q_ASSERT(!this->ROINode);
+  QString roiNodeName("SegmentationROI");
 
-  // First find out if ROI node in scene
+  // Look up existing ROI nodes
   vtkMRMLScene* scene = p->mrmlScene();
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLROINode");
-  const char nodeName[40] = "SegmentationROI";
 
   // Remove any ROI nodes named "SegmentationROI"
   for (int i = 0; i < numNodes; ++i)
     {
-    vtkMRMLROINode* node = (vtkMRMLROINode*)  scene->GetNthNodeByClass(i, "vtkMRMLROINode");
-    if (node && node->GetName() && !strcmp(node->GetName(), nodeName) )
+    vtkMRMLNode* node = scene->GetNthNodeByClass(i, "vtkMRMLROINode");
+    if (node && node->GetName() && !roiNodeName.compare(node->GetName()))
       {
-      // This does not work - so  have to delete it 
       scene->RemoveNode(node);
       }
     }
 
-  // Create new ROI if necessary
-  this->ROINode = static_cast<vtkMRMLROINode*>(scene->CreateNodeByClass("vtkMRMLROINode"));
-  this->ROINode->SetName("SegmentationROI");
-  scene->AddNode(this->ROINode);
-  this->ROINode->SetVisibility(0);
+  // Create a new ROI
+  return vtkMRMLROINode::SafeDownCast(qMRMLNodeFactory::createNode(
+      scene, "vtkMRMLROINode", vtkMRMLROINodeInitializer(roiNodeName)));
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentRunSegmentationStepPrivate::MRMLUpdateROINodeFromROI()
+void qSlicerEMSegmentRunSegmentationStepPrivate::updateMRMLROINodeUsingInputVolume()
 {
   CTK_P(qSlicerEMSegmentRunSegmentationStep);
 
   double ROIMinIJK[4], ROIMaxIJK[4], ROIMinRAS[4], ROIMaxRAS[4];
   double radius[3], center[3];
 
-  vtkMRMLVolumeNode* volumeNode =  p->mrmlManager()->GetWorkingDataNode()->GetInputTargetNode()->GetNthVolumeNode(0);
+  vtkMRMLVolumeNode* volumeNode =
+      p->mrmlManager()->GetWorkingDataNode()->GetInputTargetNode()->GetNthVolumeNode(0);
   if (!volumeNode)
     {
     return;
@@ -178,12 +203,12 @@ void qSlicerEMSegmentRunSegmentationStep::onEntry(
   // Create ROI MRML node
   if (!d->ROINode)
     {
-    d->createROINode();
+    d->setMRMLROINode(d->createROINode());
     }
 
-  // update the roiNode ROI to reflect what is stored in ROI MRML
+  // Update the roiNode ROI to reflect what is stored in ROI MRML
   // SegmentationBoundary sets ROI Node
-  d->MRMLUpdateROINodeFromROI();
+  d->updateMRMLROINodeUsingInputVolume();
 
   // TODO the node has to be connected to the ROIMRMLCallback
 

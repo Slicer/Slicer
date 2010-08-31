@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QGroupBox" name="WorkingDirectoryGroupBox">
      <property name="title">
@@ -51,44 +54,33 @@
      <property name="flat">
       <bool>true</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <layout class="QHBoxLayout" name="OutputLabelMapHorizontalLayout">
-        <item>
-         <widget class="QLabel" name="OutputLabelMapLabel">
-          <property name="text">
-           <string>Output Label Map</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="qMRMLNodeComboBox" name="OutputLabelMapComboBox">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="nodeTypes">
-           <stringlist>
-            <string>vtkMRMLScalarVolumeNode</string>
-           </stringlist>
-          </property>
-          <property name="showHidden">
-           <bool>true</bool>
-          </property>
-          <property name="addEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="removeEnabled">
-           <bool>false</bool>
-          </property>
-          <property name="editEnabled">
-           <bool>false</bool>
-          </property>
-          <property name="baseName">
-           <string>EMSegment</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="qMRMLNodeComboBox" name="OutputLabelMapComboBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLScalarVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="showHidden">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="editEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="baseName">
+         <string>EMSegment</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -162,6 +154,8 @@
        </layout>
       </item>
      </layout>
+     <zorder>ROIWidget</zorder>
+     <zorder>Display2DVOILabel</zorder>
     </widget>
    </item>
    <item>

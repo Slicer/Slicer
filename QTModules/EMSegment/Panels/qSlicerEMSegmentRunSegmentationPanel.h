@@ -29,10 +29,12 @@ public:
   void updateMRMLFromWidget();
 
 private:
+
   void setMRMLROINode(vtkMRMLROINode* node);
 
 private slots:
-  void onShowROIMapChanged(bool show);
+
+  void display2DVOI(bool show);
 
 private:
   CTK_DECLARE_PRIVATE(qSlicerEMSegmentRunSegmentationPanel);
