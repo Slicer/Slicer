@@ -24,7 +24,6 @@ bool qSlicerIOOptionsWidget::isValid()const
 //------------------------------------------------------------------------------
 void qSlicerIOOptionsWidget::setFileName(const QString& fileName)
 {
-  qDebug() << "setFileName:" << fileName;
   bool oldValid = this->isValid();
   // replace the old filename if any
   if (!fileName.isEmpty())
