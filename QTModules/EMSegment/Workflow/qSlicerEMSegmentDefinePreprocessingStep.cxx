@@ -1,7 +1,7 @@
 
 // Qt includes
 #include <QMessageBox>
-//#include <QObject>
+#include <QDebug>
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefinePreprocessingStep.h"
@@ -10,7 +10,6 @@
 // EMSegment/MRML includes
 #include <vtkEMSegmentMRMLManager.h>
 #include <vtkMRMLEMSWorkingDataNode.h>
-//#include <vtkMRMLEMSNode.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentDefinePreprocessingStepPrivate : public ctkPrivate<qSlicerEMSegmentDefinePreprocessingStep>
@@ -20,7 +19,7 @@ public:
 
   void setTaskPreprocessingSetting();
 
-  qSlicerEMSegmentDefinePreprocessingPanel* panel;
+  qSlicerEMSegmentDefinePreprocessingPanel* Panel;
 };
 
 //-----------------------------------------------------------------------------
@@ -29,7 +28,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefinePreprocessingStepPrivate::qSlicerEMSegmentDefinePreprocessingStepPrivate()
 {
-  this->panel = 0;
+  this->Panel = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -123,14 +122,14 @@ void qSlicerEMSegmentDefinePreprocessingStep::populateStepWidgetsList(QList<QWid
   // preprocessing widgets
   // see Modules/EMSegment/vtkEMSegmentPreProcessingStep::ShowUserInterface()
 
-  if (!d->panel)
+  if (!d->Panel)
     {
-    d->panel = new qSlicerEMSegmentDefinePreprocessingPanel;
+    d->Panel = new qSlicerEMSegmentDefinePreprocessingPanel;
     connect(this, SIGNAL(mrmlManagerChanged(vtkEMSegmentMRMLManager*)),
-            d->panel, SLOT(setMRMLManager(vtkEMSegmentMRMLManager*)));
-    d->panel->setMRMLManager(this->mrmlManager());
+            d->Panel, SLOT(setMRMLManager(vtkEMSegmentMRMLManager*)));
+    d->Panel->setMRMLManager(this->mrmlManager());
     }
-  stepWidgetsList << d->panel;
+  stepWidgetsList << d->Panel;
 
   emit populateStepWidgetsListComplete();
 }
@@ -153,9 +152,10 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
   if (mrmlManager->GetWorkingDataNode()->GetAlignedTargetNodeIsValid()
       && mrmlManager->GetWorkingDataNode()->GetAlignedAtlasNodeIsValid())
     {
-    if (QMessageBox::No == QMessageBox::question(d->panel, "EMSegmenter",
-                                                 tr("Do you want to redo preprocessing of input images?"),
-                                                 QMessageBox::Yes, QMessageBox::No))
+    if (QMessageBox::No == QMessageBox::question(
+        d->Panel, "EMSegmenter",
+        tr("Do you want to redo preprocessing of input images?"),
+        QMessageBox::Yes, QMessageBox::No))
       {
       emit validationComplete(true);
       return;
@@ -165,9 +165,11 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
   // if the user chooses not to do preprocessing, because we can't continue without it.
   else
     {
-    if (QMessageBox::No == QMessageBox::question(d->panel, "EMSegmenter",
-                                                 tr("Start preprocessing of images?  Preprocessing of images might take a while, but segmentation cannot continue without preprocessing"),
-                                                 QMessageBox::Yes, QMessageBox::Cancel))
+    if (QMessageBox::Cancel == QMessageBox::question(
+        d->Panel, "EMSegmenter",
+        tr("Start preprocessing of images?\nPreprocessing of images might take a while, "
+           "but segmentation cannot continue without preprocessing"),
+        QMessageBox::Yes, QMessageBox::Cancel))
       {
       emit validationComplete(false);
       return;
@@ -194,9 +196,9 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
   mrmlManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(1);
   mrmlManager->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(1);
 
-  cout << "=============================================" << endl;
-  cout << "Pre-processing completed successfully" << endl;
-  cout << "=============================================" << endl;
+  qDebug() << "=============================================";
+  qDebug() << "Pre-processing completed successfully";
+  qDebug() << "=============================================";
 
   emit validationComplete(true);
 }
@@ -206,8 +208,8 @@ void qSlicerEMSegmentDefinePreprocessingStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  // Don't forget to call the superclass's function
-  this->Superclass::onEntry(comingFrom, transitionType);
+  Q_UNUSED(comingFrom);
+  Q_UNUSED(transitionType);
 
   // Signals that we are finished
   emit onEntryComplete();
@@ -218,6 +220,9 @@ void qSlicerEMSegmentDefinePreprocessingStep::onExit(
     const ctkWorkflowStep* goingTo,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  Q_UNUSED(goingTo);
+  Q_UNUSED(transitionType);
+
   // Signals that we are finished
   emit onExitComplete();
 }
