@@ -22,6 +22,17 @@ public:
 
   /// Get current Interaction node
   vtkMRMLInteractionNode * GetInteractionNode()const;
+
+  /// All the slice logics in the application
+  void SetSliceLogics(vtkCollection* sliceLogics);
+  vtkCollection* GetSliceLogics()const;
+
+  /// Apply the active volumes in the SelectionNode to the slice composite nodes
+  void PropagateVolumeSelection();
+
+  /// Fit all the volumes into their views
+  void FitSliceToAll();
+
 protected:
 
   vtkMRMLApplicationLogic();

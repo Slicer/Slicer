@@ -311,7 +311,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
 
   // Create the application Logic object,
   VTK_CREATE(vtkSlicerApplicationLogic, _appLogic);
-  _appLogic->SetMRMLScene(scene);
+  d->AppLogic = _appLogic;
 
   // pass through event handling once without observing the scene
   // -- allows any dependent nodes to be created
@@ -323,7 +323,6 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
 
   // Create MRMLApplicationLogic
   d->MRMLApplicationLogic = vtkSmartPointer<vtkMRMLApplicationLogic>::New();
-  d->MRMLApplicationLogic->SetMRMLScene(scene);
 
   // --- First scene needs a crosshair to be added manually
   VTK_CREATE(vtkMRMLCrosshairNode, crosshair);
@@ -331,8 +330,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   scene->AddNode(crosshair);
 
   this->setMRMLScene(scene);
-  d->AppLogic = _appLogic;
-  
+
   // Initialization done !
   d->Initialized = true;
 
@@ -484,8 +482,16 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* _mrmlScene)
     return;
     }
 
+  if (d->AppLogic)
+    {
+    d->AppLogic->SetMRMLScene(_mrmlScene);
+    }
+  if (d->MRMLApplicationLogic)
+    {
+    d->MRMLApplicationLogic->SetMRMLScene(_mrmlScene);
+    }
   d->MRMLScene = _mrmlScene;
-  
+
   emit this->mrmlSceneChanged(_mrmlScene);
 }
 

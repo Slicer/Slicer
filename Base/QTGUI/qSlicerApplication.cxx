@@ -28,6 +28,9 @@
 # include "qSlicerPythonManager.h"
 #endif
 
+// MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
+
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerApplication");
 //--------------------------------------------------------------------------
@@ -250,8 +253,20 @@ qSlicerPythonManager* qSlicerApplication::pythonManager()
 #endif
 
 //-----------------------------------------------------------------------------
-CTK_SET_CXX(qSlicerApplication, qSlicerLayoutManager*, setLayoutManager, LayoutManager);
-CTK_GET_CXX(qSlicerApplication, qSlicerLayoutManager*, layoutManager, LayoutManager);
+void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
+{
+  CTK_D(qSlicerApplication);
+  d->LayoutManager = layoutManager;
+  this->mrmlApplicationLogic()->SetSliceLogics(
+    layoutManager? layoutManager->mrmlSliceLogics() : 0);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerLayoutManager* qSlicerApplication::layoutManager()const
+{
+  CTK_D(const qSlicerApplication);
+  return d->LayoutManager;
+}
 
 //-----------------------------------------------------------------------------
 CTK_SET_CXX(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);

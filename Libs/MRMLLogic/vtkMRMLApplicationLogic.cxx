@@ -1,10 +1,16 @@
 
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
-
+#include "vtkMRMLSliceLogic.h"
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceNode.h>
+
+// VTK includes
+#include <vtkCollection.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <cassert>
@@ -22,6 +28,7 @@ public:
 
   vtkMRMLSelectionNode *    SelectionNode;
   vtkMRMLInteractionNode *  InteractionNode;
+  vtkSmartPointer<vtkCollection> SliceLogics;
 };
 
 //----------------------------------------------------------------------------
@@ -81,6 +88,18 @@ vtkMRMLInteractionNode * vtkMRMLApplicationLogic::GetInteractionNode()const
 }
 
 //----------------------------------------------------------------------------
+vtkCollection* vtkMRMLApplicationLogic::GetSliceLogics()const
+{
+  return this->Internal->SliceLogics;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetSliceLogics(vtkCollection* sliceLogics)
+{
+  this->Internal->SliceLogics = sliceLogics;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
 {
   vtkMRMLSelectionNode * selectionNode = 0;
@@ -116,6 +135,7 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
     interactionNode->Register(this);
     }
   this->Internal->InteractionNode = interactionNode;
+  this->Superclass::SetMRMLSceneInternal(newScene);
 }
 
 ////----------------------------------------------------------------------------
@@ -177,3 +197,53 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
 //    this->SetAndObserveMRMLScene(this->GetMRMLScene());
 //    }
 //}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::PropagateVolumeSelection()
+{
+  std::cout<<"PROPAGATE ! "<< std::endl;
+  if ( !this->Internal->SelectionNode || !this->GetMRMLScene() )
+    {
+    std::cout << this->Internal->SelectionNode << "    " << this->GetMRMLScene() << std::endl;
+    return;
+    }
+
+  char *ID = this->Internal->SelectionNode->GetActiveVolumeID();
+  char *secondID = this->Internal->SelectionNode->GetSecondaryVolumeID();
+  char *labelID = this->Internal->SelectionNode->GetActiveLabelVolumeID();
+
+  vtkMRMLSliceCompositeNode *cnode;
+  const int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+  for (int i = 0; i < nnodes; i++)
+    {
+    cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+      this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+    if(!cnode->GetDoPropagateVolumeSelection())
+      {
+      continue;
+      }
+    cnode->SetBackgroundVolumeID( ID );
+    cnode->SetForegroundVolumeID( secondID );
+    cnode->SetLabelVolumeID( labelID );
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::FitSliceToAll()
+{
+  if (this->Internal->SliceLogics.GetPointer() == 0)
+    {
+    return;
+    }
+  vtkMRMLSliceLogic* sliceLogic = 0;
+  vtkCollectionSimpleIterator it;
+  for(this->Internal->SliceLogics->InitTraversal(it);
+      (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(
+        this->Internal->SliceLogics->GetNextItemAsObject(it)));)
+    {
+    vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
+    int *dims = sliceNode->GetDimensions();
+    sliceLogic->FitSliceToAll(dims[0], dims[1]);
+    }
+}

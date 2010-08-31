@@ -15,7 +15,11 @@
 // Logic includes
 #include "vtkSlicerVolumesLogic.h"
 
+// MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
+
 // MRML includes
+#include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 
@@ -107,13 +111,38 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
     fileList.GetPointer());
   if (node)
     {
-    vtkSlicerApplicationLogic* appLogic =
+    vtkMRMLApplicationLogic* mrmlAppLogic =
+      qSlicerCoreApplication::application()->mrmlApplicationLogic();
+    vtkSlicerApplicationLogic* slicerLogic =
       qSlicerCoreApplication::application()->appLogic();
-    vtkMRMLSelectionNode* selectedNode = appLogic->GetSelectionNode();
-    if (selectedNode)
+    vtkMRMLSelectionNode* selectionNode =
+      mrmlAppLogic ? mrmlAppLogic->GetSelectionNode() : 0;
+    if (!selectionNode)
       {
-      selectedNode->SetReferenceActiveVolumeID(node->GetID());
-      appLogic->PropagateVolumeSelection();
+      // support old way
+      selectionNode = slicerLogic ? slicerLogic->GetSelectionNode() : 0;
+      }
+    if (selectionNode)
+      {
+      if (vtkMRMLScalarVolumeNode::SafeDownCast(node) &&
+          vtkMRMLScalarVolumeNode::SafeDownCast(node)->GetLabelMap())
+        {
+        selectionNode->SetReferenceActiveLabelVolumeID(node->GetID());
+        }
+      else
+        {
+        selectionNode->SetReferenceActiveVolumeID(node->GetID());
+        }
+      if (mrmlAppLogic)
+        {
+        mrmlAppLogic->PropagateVolumeSelection();
+        // TODO: slices should probably be fitting automatically..
+        mrmlAppLogic->FitSliceToAll();
+        }
+      else if (slicerLogic)
+        {
+        slicerLogic->PropagateVolumeSelection();
+        }
       }
     this->setLoadedNodes(QStringList(QString(node->GetID())));
     }

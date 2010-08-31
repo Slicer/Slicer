@@ -645,8 +645,8 @@ void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceL
   CTK_P(qMRMLSliceControllerWidget);
   // TODO, update the QAction when the display node is modified
   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode();
-  vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-    volumeNode->GetVolumeDisplayNode());
+  vtkMRMLScalarVolumeDisplayNode *displayNode = volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+    volumeNode->GetVolumeDisplayNode()) : 0;
   if (displayNode)
     {
     p->mrmlScene()->SaveStateForUndo(displayNode);
