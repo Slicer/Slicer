@@ -19,6 +19,9 @@ public:
 
   virtual int pixelMetric(PixelMetric metric, const QStyleOption * option = 0,
                           const QWidget * widget = 0)const;
+
+  virtual QRect subControlRect(ComplexControl control, const QStyleOptionComplex *option,
+                               SubControl subControl, const QWidget *widget) const;
 };
 
 #endif
