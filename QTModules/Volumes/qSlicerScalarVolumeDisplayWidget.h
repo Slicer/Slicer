@@ -39,10 +39,12 @@ public slots:
 
   void setInterpolate(bool interpolate);
   void setColorNode(vtkMRMLNode* colorNode);
+  void setPreset(const QString& presetName);
 
 protected slots:
   void updateWidgetFromMRML();
   void updateTransferFunction();
+  void onPresetButtonClicked();
 
 protected:
   void showEvent(QShowEvent * event);

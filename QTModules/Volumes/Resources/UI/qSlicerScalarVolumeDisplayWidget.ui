@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>284</width>
-    <height>392</height>
+    <width>385</width>
+    <height>409</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -49,7 +49,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="WindowLevelPresetsLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -60,52 +60,6 @@
       <string>Window Level editor presets:</string>
      </property>
     </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QToolButton" name="PresetToolButton">
-       <property name="text">
-        <string>1</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="PresetToolButton3">
-       <property name="text">
-        <string>2</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="PresetToolButton6">
-       <property name="text">
-        <string>3</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="PresetToolButton5">
-       <property name="text">
-        <string>4</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="PresetToolButton4">
-       <property name="text">
-        <string>5</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="PresetToolButton2">
-       <property name="text">
-        <string>6</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
    <item row="4" column="0" colspan="2">
     <widget class="qMRMLWindowLevelWidget" name="MRMLWindowLevelWidget"/>
@@ -124,9 +78,187 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>150</height>
+       <height>120</height>
       </size>
      </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QWidget" name="PresetsWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetFixedSize</enum>
+      </property>
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QToolButton" name="CTBonePresetToolButton">
+        <property name="toolTip">
+         <string>CT-bone: Emphasize bone in a CT volume.</string>
+        </property>
+        <property name="accessibleName">
+         <string>CT-Bone</string>
+        </property>
+        <property name="text">
+         <string>CT-bone</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerVolumesModule.qrc">
+          <normaloff>:/Icons/WindowLevelPreset-CT-bone.png</normaloff>:/Icons/WindowLevelPreset-CT-bone.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>45</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="CTAirPresetToolButton">
+        <property name="toolTip">
+         <string>CT-air: Emphasize air in a CT volume.</string>
+        </property>
+        <property name="accessibleName">
+         <string>CT-Air</string>
+        </property>
+        <property name="text">
+         <string>CT-air</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerVolumesModule.qrc">
+          <normaloff>:/Icons/WindowLevelPreset-CT-air.png</normaloff>:/Icons/WindowLevelPreset-CT-air.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>45</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="PETPresetToolButton">
+        <property name="toolTip">
+         <string>PET: Preset for PET volume (use the Rainbow Color LUT).</string>
+        </property>
+        <property name="accessibleName">
+         <string>PET</string>
+        </property>
+        <property name="text">
+         <string>PET</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerVolumesModule.qrc">
+          <normaloff>:/Icons/WindowLevelPreset-PET.png</normaloff>:/Icons/WindowLevelPreset-PET.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>45</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="CTAbdomenPresetToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>CT-abdomen: View abdominal CT volume.</string>
+        </property>
+        <property name="accessibleName">
+         <string>CT-Abdomen</string>
+        </property>
+        <property name="text">
+         <string>CT-
+abdomen</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>45</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="CTBrainPresetToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>CT-brain: View brain CT volume.</string>
+        </property>
+        <property name="accessibleName">
+         <string>CT-Brain</string>
+        </property>
+        <property name="text">
+         <string>CT-brain</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>45</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="CTLungPresetToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>CT-lung: View lung CT volume.</string>
+        </property>
+        <property name="accessibleName">
+         <string>CT-Lung</string>
+        </property>
+        <property name="text">
+         <string>CT-lung</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>45</width>
+          <height>45</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -164,7 +296,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qSlicerVolumesModule.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>qSlicerScalarVolumeDisplayWidget</sender>

@@ -73,6 +73,8 @@ signals:
   void autoWindowLevelValueChanged(ControlMode value);
 
 public slots:
+  ///
+  /// Set Auto/Manual mode
   void setAutoWindowLevel(int autoWindowLevel);
 
   /// 
