@@ -2,6 +2,7 @@
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QDebug>
+#include <QTime>
 
 // CTK includes
 #include <ctkComboBox.h>
@@ -101,7 +102,7 @@ QIcon qMRMLLabelComboBoxPrivate::createIcon(const QColor &color)
   CTK_P(qMRMLLabelComboBox);
   // Create a pixmap
   
-  const int size = p->style()->pixelMetric(QStyle::PM_SmallIconSize) - 5; 
+  const int size = p->style()->pixelMetric(QStyle::PM_ButtonIconSize) - 5; 
 
   QPixmap colorFieldPixmap(size, size);
 
@@ -286,7 +287,8 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
     {
     d->ComboBox->insertItem(0, "None");
     }
-
+  
+  LookUpTabletime.start();
   vtkLookupTable * lookupTable = d->ColorNode->GetLookupTable();
   Q_ASSERT(lookupTable);
 
@@ -298,6 +300,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
     {
     QString colorName = QLatin1String(d->ColorNode->GetColorName(i));
     //logger.debug(QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName));
+    
     QIcon colorIcon = d->createIcon(d->colorFromIndex(i));
     
     if ( d->ColorNameVisible )
