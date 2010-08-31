@@ -46,6 +46,9 @@ int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
         }
       return 3; // 6 by default
       break;
+    case QStyle::PM_SliderLength:
+      return 12; // default to 27
+      break;
     default:
       return Superclass::pixelMetric(metric, option, widget);
       break;
@@ -126,6 +129,48 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
           }
         }
       break;
+#ifndef QT_NO_SLIDER
+      // Reimplemented to work around bug: http://bugreports.qt.nokia.com/browse/QTBUG-13318
+    case CC_Slider:
+        if (const QStyleOptionSlider *slider = qstyleoption_cast<const QStyleOptionSlider *>(option))
+          {
+          int tickSize = proxy()->pixelMetric(PM_SliderTickmarkOffset, option, widget);
+          if (subControl == SC_SliderHandle)
+            {
+            if (slider->orientation == Qt::Horizontal)
+              {
+              rect.setHeight(this->pixelMetric(PM_SliderThickness));
+              rect.setWidth(this->pixelMetric(PM_SliderLength));
+              int centerY = slider->rect.center().y() - rect.height() / 2;
+              if (slider->tickPosition & QSlider::TicksAbove)
+                {
+                centerY += tickSize;
+                }
+              if (slider->tickPosition & QSlider::TicksBelow)
+                {
+                centerY -= tickSize;
+                }
+              rect.moveTop(centerY);
+              }
+            else
+              {
+              rect.setWidth(this->pixelMetric(PM_SliderThickness));
+              rect.setHeight(this->pixelMetric(PM_SliderLength));
+              int centerX = slider->rect.center().x() - rect.width() / 2;
+              if (slider->tickPosition & QSlider::TicksAbove)
+                {
+                centerX += tickSize;
+                }
+              if (slider->tickPosition & QSlider::TicksBelow)
+                {
+                centerX -= tickSize;
+                }
+              rect.moveLeft(centerX);
+              }
+            break;
+            }
+          }
+#endif // QT_NO_SLIDER
     default:
       return Superclass::subControlRect(control, option, subControl, widget);
       break;
