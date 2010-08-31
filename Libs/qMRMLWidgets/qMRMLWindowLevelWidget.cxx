@@ -255,8 +255,11 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
     {
     double range[2];
     this->VolumeNode->GetImageData()->GetScalarRange(range);
+    //give us some space
+    range[0] = qMin(-1200., range[0]);
+    range[1] = qMax(900., range[1]);
     d->WindowLevelRangeSlider->setRange(range[0], range[1]);
-     d->WindowSpinBox->setRange(0, range[1] - range[0]);
+    d->WindowSpinBox->setRange(0, range[1] - range[0]);
     d->LevelSpinBox->setRange(range[0], range[1]);
     }
   double window = this->VolumeDisplayNode->GetWindow();
