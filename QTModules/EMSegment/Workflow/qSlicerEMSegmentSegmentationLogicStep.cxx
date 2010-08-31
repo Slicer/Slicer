@@ -1,6 +1,7 @@
 
 // Qt includes
 #include <QMessageBox>
+#include <QStyle>
 
 // EMSegment includes
 #include "qSlicerEMSegmentSegmentationLogicStep.h"
@@ -39,6 +40,7 @@ qSlicerEMSegmentSegmentationLogicStep::qSlicerEMSegmentSegmentationLogicStep(
   CTK_INIT_PRIVATE(qSlicerEMSegmentSegmentationLogicStep);
   this->setName("***Runs segmentation logic***");
   this->setDescription("***EM algorithm processing to segment target image.***");
+  this->setIcon(QIcon(":/Icons/Go.png"));
 }
 
 //-----------------------------------------------------------------------------

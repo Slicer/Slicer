@@ -57,6 +57,8 @@
 
     <file>Icons/CheckModified.png</file>
     <file>Icons/CheckModifiedData.png</file>
+    
+    <file>Icons/Go.png</file>
 
     <file>Icons/MousePickMode.png</file>
     <file>Icons/MouseSinglePickMode.png</file>
