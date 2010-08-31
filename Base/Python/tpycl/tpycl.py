@@ -57,7 +57,7 @@ class tpycl(object):
     self.dprint ("importing %s as a package" % packageName)
 
     if packageName == 'vtk':
-      from slicer import vtk
+      import vtk
       globals()[packageName] = vtk
       for name in dir(vtk):
         self.tcl.eval("::tpycl::registerClass %s %s.%s" % (name, packageName, name) )
