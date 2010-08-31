@@ -263,6 +263,7 @@ void vtkMRMLAnnotationDisplayableManager::Create()
   this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
   this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
 
+
 }
 
 //---------------------------------------------------------------------------

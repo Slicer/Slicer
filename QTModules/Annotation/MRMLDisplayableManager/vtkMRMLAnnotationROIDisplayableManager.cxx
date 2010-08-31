@@ -145,9 +145,9 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
 
   //boxWidget->ProcessEventsOff();
 
-  boxRepresentation->EndWidgetInteraction(origin);
-
   boxWidget->On();
+
+  boxRepresentation->EndWidgetInteraction(origin);
 
   vtkAnnotationROIWidgetCallback *myCallback = vtkAnnotationROIWidgetCallback::New();
   myCallback->SetNode(roiNode);
