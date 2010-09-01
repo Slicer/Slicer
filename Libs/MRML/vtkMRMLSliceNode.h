@@ -49,6 +49,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
+  ///
+  /// Reimplemented to preserve orientation when reset
+  virtual void Reset();
+
   /// 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Slice";};

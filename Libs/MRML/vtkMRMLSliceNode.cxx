@@ -348,8 +348,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
     vtkSmartPointer<vtkMatrix4x4> xyToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
     vtkSmartPointer<vtkMatrix4x4> xyToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
 
-    int modifiedWasDisabled = this->GetDisableModifiedEvent();
-    this->SetDisableModifiedEvent(1);
+    int disabledModify = this->StartModify();
 
     // the mapping from XY output slice pixels to Slice Plane coordinate
     xyToSlice->Identity();
@@ -435,8 +434,10 @@ void vtkMRMLSliceNode::UpdateMatrices()
 
     this->SetOrientationString( orientationString );
 
-    this->SetDisableModifiedEvent(modifiedWasDisabled);
-    this->InvokePendingModifiedEvent ();
+    // as UpdateMatrices can be called from CopyWithSceneWithoutModifiedEvent
+    // (typically when the scene is closed, slice nodes are reset but shouldn't
+    // fire events. We should respect the modifiedWasDisabled flag.
+    this->EndModify(disabledModify);
 }
 
 
@@ -703,6 +704,19 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 
   this->EndModify(disabledModify);
   
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::Reset()
+{
+  // The LayoutName is preserved by vtkMRMLNode::Reset, however the orientation
+  // (typically associated with the layoutName)is not preserved automatically.
+  // This require a custom behavior implemented here.
+  std::string orientation = this->GetOrientationString();
+  this->Superclass::Reset();
+  this->DisableModifiedEventOn();
+  this->SetOrientation(orientation.c_str());
+  this->DisableModifiedEventOff();
 }
 
 //----------------------------------------------------------------------------
