@@ -239,7 +239,7 @@ namespace eval Slicer3Adapters {
       if { $imageData != "" } {
         # - trigger a modified event on the image data
         #   as if it had been recalculated
-        #$imageData Modified
+        $imageData Modified
       }
       #[[$_renderWidget GetRenderWindowInteractor] GetRenderWindow] Render
     }
