@@ -78,5 +78,5 @@ QString qSlicerAnnotationModule::helpText() const
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModule::acknowledgementText() const
 {
-  return "This module was developed by Daniel Haehn, Kilian Pohl and Yong Zhang. ";
+  return "This module was developed by Daniel Haehn, Kilian Pohl and Yong Zhang. Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper and Ron Kikinis.";
 }

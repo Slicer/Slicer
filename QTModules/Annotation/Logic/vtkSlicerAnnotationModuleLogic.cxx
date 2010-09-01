@@ -723,11 +723,11 @@ const char* vtkSlicerAnnotationModuleLogic::GetIconName(vtkMRMLNode* node, bool 
     {
     if (isEdit)
       {
-      return ":/Icons/AnnotationEditPolyline.png";
+      return ":/Icons/AnnotationEditBidimensional.png";
       }
     else
       {
-      return ":/Icons/AnnotationPolyline.png";
+      return ":/Icons/AnnotationBidimensional.png";
       }
     }
   else if (node->IsA("vtkMRMLAnnotationSplineNode"))
@@ -1702,7 +1702,7 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
   else if (annotationNode->IsA("vtkMRMLAnnotationBidimensionalNode"))
     {
 
-    return ":/Icons/AnnotationPolyline.png";
+    return ":/Icons/AnnotationBidimensional.png";
 
     }
   else if (annotationNode->IsA("vtkMRMLAnnotationSplineNode"))

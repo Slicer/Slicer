@@ -18,12 +18,9 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Annotation</string>
-     </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -119,7 +116,7 @@
            </property>
            <property name="icon">
             <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationPolyline.png</normaloff>:/Icons/AnnotationPolyline.png</iconset>
+             <normaloff>:/Icons/AnnotationBidimensional.png</normaloff>:/Icons/AnnotationBidimensional.png</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -568,14 +565,14 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="ctkDynamicSpacer" name="CTKSpacer">
-     <property name="activeSizePolicy">
+    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
@@ -587,14 +584,14 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-     <property name="activeSizePolicy">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
