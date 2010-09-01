@@ -72,7 +72,6 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::setOrthographicModeEnabled(bool enabled)
 {
-  qDebug() << "setOrthographicModeEnabled" << enabled;
   this->OrthoButton->setChecked(enabled);
   this->ActiveMRMLThreeDViewNode->SetRenderMode(
       enabled ? vtkMRMLViewNode::Orthographic : vtkMRMLViewNode::Perspective);

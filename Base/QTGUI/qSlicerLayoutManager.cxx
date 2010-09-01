@@ -103,7 +103,6 @@ qSlicerLayoutManagerPrivate::~qSlicerLayoutManagerPrivate()
 //------------------------------------------------------------------------------
 qMRMLThreeDView* qSlicerLayoutManagerPrivate::threeDView(int id)const
 {
-  qDebug() << "want the id: " << id << this->ThreeDViewList.size();
   Q_ASSERT(id >=0 && id < this->ThreeDViewList.size());
   return this->ThreeDViewList.at(id);
 }
