@@ -277,9 +277,19 @@ itcl::body SWidget::queryLayers { x y {z 0} } {
   }
 }
 
+namespace eval SWidget set getTensorPixelWarning 0
+
 itcl::body SWidget::getTensorPixel { node i j k } {
 
   if { ![info exists o(dtiMath)] } {
+    # TODO: in slicer4 this class is not available - need to figure out why...
+    if { [info command vtkDiffusionTensorMathematicsSimple] == "" } {
+      if { !$::SWidget::getTensorPixelWarning } {
+        puts "$this: TODO: in slicer4 vtkDiffusionTensorMathematicsSimple class is not available - need to figure out why..."
+        set ::SWidget::getTensorPixelWarning 1
+      }
+      return
+    }
     set o(dtiMath) [vtkNew vtkDiffusionTensorMathematicsSimple]
     set o(dtiPixelImage) [vtkNew vtkImageData]
     set o(dtiPixelTensors) [vtkNew vtkDoubleArray]
