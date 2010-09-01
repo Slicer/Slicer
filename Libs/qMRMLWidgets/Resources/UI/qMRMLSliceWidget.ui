@@ -25,14 +25,8 @@
    </item>
    <item>
     <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
-     </property>
-     <property name="lineWidth">
-      <number>4</number>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
