@@ -396,7 +396,12 @@ proc launch_SetEnvironment {} {
     
       set ::env(ITK_BIN_DIR)        [file normalize "@ITK_DIR@/bin/$::ITK_BUILD_SUBDIR"]
     
-      set ::env(TCL_DIR)            [file normalize [file dirname [file dirname "@TCL_LIBRARY@"]]]
+      if { "@Slicer3_TCL_DIR@" != "" } {
+        # this is the variable used in superbuild
+        set ::env(TCL_DIR)          [file normalize "@Slicer3_TCL_DIR@"]
+      } else {
+        set ::env(TCL_DIR)          [file normalize [file dirname [file dirname "@TCL_LIBRARY@"]]]
+      }
       set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
     
       if {$::env(BUILD) == $::WINDOWS} {
