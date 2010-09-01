@@ -403,11 +403,21 @@ proc launch_SetEnvironment {} {
         set ::env(TCL_DIR)          [file normalize [file dirname [file dirname "@TCL_LIBRARY@"]]]
       }
       set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
-    
-      if {$::env(BUILD) == $::WINDOWS} {
-        set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_INCLUDE_PATH@"]/PCbuild]
-      } else {
-        set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_INCLUDE_PATH@"]]]
+
+      if { "@PYTHON_LIBRARY@" != "" } {
+        # this is the variable used in superbuild
+          if {$::env(BUILD) == $::WINDOWS} {
+              # TODO: figure out python dir for superbuild windows
+            set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_LIBRARY@"]/PCbuild]
+          } else {
+            set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_LIBRARY@"]]]
+          }
+      } else { 
+          if {$::env(BUILD) == $::WINDOWS} {
+            set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_INCLUDE_PATH@"]/PCbuild]
+          } else {
+            set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_INCLUDE_PATH@"]]]
+          }
       }
     
       set ::env(Teem_DIR)           [file normalize "@Teem_DIR@/bin/$::Teem_BUILD_SUBDIR"]
