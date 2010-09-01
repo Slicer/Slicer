@@ -20,7 +20,6 @@
 int vtkMRMLSliceLogicTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLSliceLogic > node1 = vtkSmartPointer< vtkMRMLSliceLogic >::New();
-
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
 #define TEST_SET_GET_OBJECT(object,prefix,variable) \
@@ -42,6 +41,7 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
     }
     
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  node1->SetName("Green");
   node1->SetMRMLScene(scene);
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceNode, SliceNode);
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, LabelLayer);
