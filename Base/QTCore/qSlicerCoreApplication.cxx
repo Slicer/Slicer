@@ -51,11 +51,14 @@
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkDataIOManagerLogic.h"
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
+#include "vtkCacheManager.h"
+#include "vtkDataIOManager.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLCommandLineModuleNode.h"
@@ -105,6 +108,10 @@ public:
   vtkSmartPointer< vtkMRMLScene >               MRMLScene;
   vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
   vtkSmartPointer< vtkMRMLApplicationLogic >    MRMLApplicationLogic;
+
+  /// Data manager
+  vtkSmartPointer< vtkDataIOManagerLogic>       DataIOManagerLogic;
+  vtkSmartPointer< vtkCacheManager>             CacheManager;
 
   /// SlicerBin doesn't contain Debug/Release/... (see IntDir)
   QString                                       SlicerBin;
@@ -337,6 +344,13 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   crosshair->SetCrosshairName("default");
   scene->AddNode(crosshair);
 
+  d->CacheManager = vtkSmartPointer<vtkCacheManager>::New();
+  VTK_CREATE(vtkDataIOManager, dataIOManager);
+  dataIOManager->SetCacheManager(d->CacheManager);
+  d->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
+  d->DataIOManagerLogic->SetApplicationLogic(d->AppLogic);
+  d->DataIOManagerLogic->SetAndObserveDataIOManager(dataIOManager);
+
   this->setMRMLScene(scene);
 
   // Initialization done !
@@ -482,25 +496,46 @@ void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* manager)
 #endif //Slicer3_USE_KWWIDGETS
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* _mrmlScene)
+void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 {
   CTK_D(qSlicerCoreApplication);
-  if (d->MRMLScene == _mrmlScene)
+  if (d->MRMLScene == newMRMLScene)
     {
     return;
     }
 
-  if (d->AppLogic)
+  if (d->AppLogic.GetPointer())
     {
-    d->AppLogic->SetMRMLScene(_mrmlScene);
+    d->AppLogic->SetMRMLScene(newMRMLScene);
     }
-  if (d->MRMLApplicationLogic)
+  if (d->MRMLApplicationLogic.GetPointer())
     {
-    d->MRMLApplicationLogic->SetMRMLScene(_mrmlScene);
+    d->MRMLApplicationLogic->SetMRMLScene(newMRMLScene);
     }
-  d->MRMLScene = _mrmlScene;
+  if (d->CacheManager.GetPointer())
+    {
+    d->CacheManager->SetMRMLScene(newMRMLScene);
+    }
+  if (d->DataIOManagerLogic.GetPointer())
+    {
+    d->DataIOManagerLogic->SetMRMLScene(newMRMLScene);
+    }
 
-  emit this->mrmlSceneChanged(_mrmlScene);
+  d->MRMLScene = newMRMLScene;
+
+  if (d->MRMLScene)
+    {
+    if (d->DataIOManagerLogic.GetPointer())
+      {
+      d->MRMLScene->SetDataIOManager(d->DataIOManagerLogic->GetDataIOManager());
+      }
+    if (d->CacheManager.GetPointer())
+      {
+      d->MRMLScene->SetCacheManager(d->CacheManager);
+      }
+    }
+
+  emit this->mrmlSceneChanged(newMRMLScene);
 }
 
 //-----------------------------------------------------------------------------
