@@ -420,6 +420,14 @@ IF (VTK_WRAP_TCL)
     set(INCR_TCL_VERSION_DOT "${INCR_TCL_MAJOR_VERSION}.${INCR_TCL_MINOR_VERSION}")
     set(INCR_TCL_VERSION "${INCR_TCL_MAJOR_VERSION}${INCR_TCL_MINOR_VERSION}")
   ENDIF(Slicer3_USE_KWWIDGETS)
+ELSE(VTK_WRAP_TCL)
+  # TODO: these should be passed in by SuperBuild
+  # For now, use 3.2 as a fallback - we haven't changed versions in years and probably 
+  # never will, so this is always likely to work.
+  # This is needed so the launcher can set the paths to the correct subdirectories
+  # for incrTcl and incrTk
+  set(INCR_TCL_VERSION_DOT "3.2")
+  set(INCR_TCL_VERSION "32")
 ENDIF (VTK_WRAP_TCL)
 
 #-----------------------------------------------------------------------------
