@@ -132,7 +132,7 @@ if(Slicer3_USE_PYTHON)
     get_filename_component(PYTHON_LIB_BASE ${PYTHON_LIBRARY} NAME_WE)
     get_filename_component(PYTHON_LIB_PATH ${PYTHON_LIBRARY} PATH)
 
-  install(FILES "${PYTHON_LIB_PATH}/${PYTHON_LIB_BASE}.dll"
+    install(FILES "${PYTHON_LIB_PATH}/${PYTHON_LIB_BASE}.dll"
       DESTINATION bin
       COMPONENT Runtime)
   endif()
@@ -164,6 +164,17 @@ if(Slicer3_USE_QT)
     ENDIF (NOT WIN32)
     
   ENDFOREACH(qtlib)
+  
+  IF(Slicer3_USE_PYTHONQT)
+    IF(WIN32)
+      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll DESTINATION bin COMPONENT Runtime)
+    ELSEIF(UNIX)
+      # needs to install symlink version named libraries as well.
+      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.so DESTINATION bin COMPONENT Runtime)
+    ELSEIF(APPLE)
+      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dylib DESTINATION bin COMPONENT Runtime)
+    ENDIF(WIN32)
+  ENDIF(Slicer3_USE_PYTHONQT)
 endif(Slicer3_USE_QT)
 
 # -------------------------------------------------------------------------
