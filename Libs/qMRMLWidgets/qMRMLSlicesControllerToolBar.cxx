@@ -134,7 +134,7 @@ void qMRMLSlicesControllerToolBarPrivate::setupUi(QWidget* widget)
   QToolButton* featuresButton = new QToolButton(p);
   featuresButton->setPopupMode(QToolButton::InstantPopup);
   featuresButton->setText("Features");
-  featuresButton->setIcon(QIcon(":Icons/SlicesFeaturesVisible.png"));
+  featuresButton->setIcon(QIcon(":Icons/VisibleOn.png"));
   featuresButton->setMenu(featuresMenu);
   p->addWidget(featuresButton);
 
