@@ -36,6 +36,7 @@ class qMRMLSliceWidget;
 class qSlicerLayoutManagerPrivate;
 class vtkCollection;
 class vtkMRMLScene;
+class vtkMRMLViewNode;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLayoutManager : public QObject
 {
@@ -74,6 +75,8 @@ public:
 
   int layout()const;
 
+  vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
+
 public slots:
 
   /// 
@@ -99,70 +102,87 @@ public slots:
 
   /// Generic function
   void setLayout(int);
+
+signals:
+  void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
   
 private:
   CTK_DECLARE_PRIVATE(qSlicerLayoutManager);
 };
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToConventionalView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
 }
+
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToOneUp3DView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToOneUpRedSliceView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToOneUpYellowSliceView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToOneUpGreenSliceView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToFourUpView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToTabbed3DView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToTabbedSliceView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToLightboxView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutLightboxView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToCompareView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutCompareView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToSideBySideCompareView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToDual3DView()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutDual3DView);
 }
 
+//------------------------------------------------------------------------------
 void qSlicerLayoutManager::switchToNone()
 {
   this->setLayout(vtkMRMLLayoutNode::SlicerLayoutNone);

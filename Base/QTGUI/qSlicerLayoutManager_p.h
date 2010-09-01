@@ -57,6 +57,7 @@ public:
 
   void setMRMLScene(vtkMRMLScene* scene);
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
+  void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
 
   /// If needed, instantiate a slice viewer corresponding to \a sliceViewName
   QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
@@ -121,6 +122,7 @@ public:
   QString            ScriptedDisplayableManagerDirectory;
   vtkMRMLScene*      MRMLScene;
   vtkMRMLLayoutNode* MRMLLayoutNode;
+  vtkMRMLViewNode*   ActiveMRMLThreeDViewNode;
   int                CurrentViewArrangement;
   int                SavedCurrentViewArrangement;
   QGridLayout*       GridLayout;

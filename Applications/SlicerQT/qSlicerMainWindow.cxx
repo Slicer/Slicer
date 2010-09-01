@@ -128,6 +128,15 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setMRMLScene(vtkMRMLScene*)));
   this->MRMLSlicesControllerToolBar->setMRMLSliceLogics(layoutManager->mrmlSliceLogics());
 
+  // ThreeDViews controller toolbar listens to LayoutManager
+  // TODO The current active view could be a property of the layoutNode ?
+  QObject::connect(layoutManager, SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
+                   this->MRMLThreeDViewsControllerWidget,
+                   SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
+  this->MRMLThreeDViewsControllerWidget->setActiveMRMLThreeDViewNode(
+      layoutManager->activeMRMLThreeDViewNode());
+
+
   // Populate the View ToolBar
   QToolButton* layoutButton = new QToolButton(p);
   layoutButton->setMenu(this->MenuLayout);

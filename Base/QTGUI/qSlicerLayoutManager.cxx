@@ -80,6 +80,7 @@ qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate()
 {
   this->MRMLScene = 0;
   this->MRMLLayoutNode = 0;
+  this->ActiveMRMLThreeDViewNode = 0;
   this->MRMLSliceLogics = vtkCollection::New();
   this->SliceControllerButtonGroup = 0;
   this->GridLayout = 0;
@@ -204,6 +205,17 @@ void qSlicerLayoutManagerPrivate::setMRMLLayoutNode(vtkMRMLLayoutNode* layoutNod
   this->MRMLLayoutNode = layoutNode;
 }
 
+// --------------------------------------------------------------------------
+void qSlicerLayoutManagerPrivate::setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node)
+{
+  CTK_P(qSlicerLayoutManager);
+  if (this->ActiveMRMLThreeDViewNode == node)
+    {
+    return;
+    }
+  this->ActiveMRMLThreeDViewNode = node;
+  emit p->activeMRMLThreeDViewNodeChanged(this->ActiveMRMLThreeDViewNode);
+}
 
 // --------------------------------------------------------------------------
 QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNode)
@@ -507,19 +519,28 @@ void qSlicerLayoutManagerPrivate::initialize()
     {
     vtkMRMLNode * node = qMRMLNodeFactory::createNode(this->MRMLScene, "vtkMRMLViewNode");
     Q_ASSERT(node);
-    Q_UNUSED(node);
+    // For now, the active view is the first one
+    // TODO It should be possible to change the activeview. For example,
+    // the one having the focus. The LayoutNode should also store the current
+    // active view
+    this->setActiveMRMLThreeDViewNode(vtkMRMLViewNode::SafeDownCast(node));
     }
   else
     {
-    // maybe the nodes have been created a while ago, we need to associate a view to each of them
+    // Maybe the nodes have been created a while ago, we need to associate a view to each of them
     std::vector<vtkMRMLNode*> viewNodes;
     this->MRMLScene->GetNodesByClass("vtkMRMLViewNode", viewNodes);
-    for (unsigned int i = 0; i < viewNodes.size();++i)
+    for (unsigned int i = 0; i < viewNodes.size(); ++i)
       {
       vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(viewNodes[i]);
       if (!this->threeDView(viewNode))
         {
         this->createThreeDView(viewNode);
+        }
+      // For now, the active view is the first one
+      if (i == 0)
+        {
+        this->setActiveMRMLThreeDViewNode(viewNode);
         }
       }
     }
@@ -541,7 +562,7 @@ void qSlicerLayoutManagerPrivate::initialize()
     }
   else
     {
-    // maybe the nodes have been created a while ago, we need to associate a view to each of them
+    // Maybe the nodes have been created a while ago, we need to associate a view to each of them
     std::vector<vtkMRMLNode*> sliceNodes;
     this->MRMLScene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
     for (unsigned int i = 0; i < sliceNodes.size();++i)
@@ -979,6 +1000,10 @@ vtkMRMLScene* qSlicerLayoutManager::mrmlScene()const
   CTK_D(const qSlicerLayoutManager);
   return d->MRMLScene;
 }
+
+//------------------------------------------------------------------------------
+CTK_GET_CXX(qSlicerLayoutManager, vtkMRMLViewNode*,
+            activeMRMLThreeDViewNode, ActiveMRMLThreeDViewNode)
 
 //------------------------------------------------------------------------------
 void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
