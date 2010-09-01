@@ -182,7 +182,7 @@ proc launch_SetEnvironment {} {
       set ext ".exe"
     }
     
-    if { [file exists $::env(Slicer3_HOME)/bin/vtk$ext] } {
+    if { [file exists $::env(Slicer3_HOME)/bin/vtkEncodeString$ext] } {
       set installed 1
     }
     
@@ -190,7 +190,13 @@ proc launch_SetEnvironment {} {
     
     
       # if installed, everything is in the local tree
-      set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real$ext
+      set slicer3Real "$::Slicer3_HOME/bin/Slicer3-real$ext"
+      set slicerQTReal "$::Slicer3_HOME/bin/SlicerQT-real$ext"
+      if { [file exists "$slicer3Real"] } {
+        set ::Slicer3_REAL $slicer3Real
+      } elseif { [file exists "$slicerQTReal"] } {
+        set ::Slicer3_REAL $slicerQTReal
+      }
     
       set ::env(SANDBOX_BIN_DIR)   ""
     
@@ -339,15 +345,12 @@ proc launch_SetEnvironment {} {
           }
         }
       } else {
-        #set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real
         set slicer3Real "$::Slicer3_HOME/bin/Slicer3-real"
         set slicerQTReal "$::Slicer3_HOME/bin/SlicerQT-real"
         if { [file exists "$slicer3Real"] } {
             set ::Slicer3_REAL $slicer3Real
-            #set ::BUILD_SUBDIR $buildType
         } elseif { [file exists "$slicerQTReal"] } {
             set ::Slicer3_REAL $slicerQTReal
-            #set ::BUILD_SUBDIR $buildType
         }
       }
       set ::env(SANDBOX_BIN_DIR)   ""
