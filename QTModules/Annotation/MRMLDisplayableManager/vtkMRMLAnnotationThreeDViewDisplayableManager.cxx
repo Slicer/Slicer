@@ -434,7 +434,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeRemovedEvent(
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node)
 {
-  this->DebugOn();
+  //this->DebugOn();
 
   vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent");
 
