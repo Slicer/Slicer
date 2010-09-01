@@ -47,15 +47,35 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
   this->ActiveMRMLThreeDViewNode = 0;
 }
 
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::updateWidgetFromMRML()
+{
+  Q_ASSERT(this->ActiveMRMLThreeDViewNode);
+  this->setOrthographicModeEnabled(
+      this->ActiveMRMLThreeDViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
+}
+
 //---------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 {
   this->Ui_qMRMLThreeDViewsControllerWidget::setupUi(widget);
 
-  // Pitch, Roll, Yaw button
+  // Pitch, Roll, Yaw buttons
   connect(this->PitchButton, SIGNAL(clicked()), SLOT(pitchActiveView()));
   connect(this->RollButton, SIGNAL(clicked()), SLOT(rollActiveView()));
   connect(this->YawButton, SIGNAL(clicked()), SLOT(yawActiveView()));
+
+  // Orthographic/perspective button
+  connect(this->OrthoButton, SIGNAL(toggled(bool)), SLOT(setOrthographicModeEnabled(bool)));
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::setOrthographicModeEnabled(bool enabled)
+{
+  qDebug() << "setOrthographicModeEnabled" << enabled;
+  this->OrthoButton->setChecked(enabled);
+  this->ActiveMRMLThreeDViewNode->SetRenderMode(
+      enabled ? vtkMRMLViewNode::Orthographic : vtkMRMLViewNode::Perspective);
 }
 
 // --------------------------------------------------------------------------

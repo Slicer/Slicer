@@ -68,6 +68,8 @@ public:
   void RollView();
   void YawView();
 
+  void UpdateRenderMode();
+
   std::vector<vtkSmartPointer<vtkFollower> > AxisLabelActors;
   vtkSmartPointer<vtkActor>                  BoxAxisActor;
   vtkBoundingBox*                            BoxAxisBoundingBox;
@@ -281,6 +283,8 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::PitchView()
 {
+  vtkDebugWithObjectMacro(this->External, << "PitchView");
+
   assert(this->External->GetRenderer()->IsActiveCameraCreated());
 
   vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
@@ -293,6 +297,8 @@ void vtkMRMLViewDisplayableManager::vtkInternal::PitchView()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::RollView()
 {
+  vtkDebugWithObjectMacro(this->External, << "RollView");
+
   assert(this->External->GetRenderer()->IsActiveCameraCreated());
 
   vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
@@ -305,6 +311,8 @@ void vtkMRMLViewDisplayableManager::vtkInternal::RollView()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::YawView()
 {
+  vtkDebugWithObjectMacro(this->External, << "YawView");
+
   assert(this->External->GetRenderer()->IsActiveCameraCreated());
 
   vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
@@ -312,6 +320,26 @@ void vtkMRMLViewDisplayableManager::vtkInternal::YawView()
   cam->OrthogonalizeViewUp();
   this->External->GetRenderer()->UpdateLightsGeometryToFollowCamera();
   this->External->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRenderMode()
+{
+  vtkDebugWithObjectMacro(this->External, << "UpdateRenderMode:" <<
+                this->External->GetMRMLViewNode()->GetRenderMode());
+
+  assert(this->External->GetRenderer()->IsActiveCameraCreated());
+
+  vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
+  if (this->External->GetMRMLViewNode()->GetRenderMode() == vtkMRMLViewNode::Perspective)
+    {
+    cam->ParallelProjectionOff();
+    }
+  else if (this->External->GetMRMLViewNode()->GetRenderMode() == vtkMRMLViewNode::Orthographic)
+    {
+    cam->ParallelProjectionOn();
+    cam->SetParallelScale(this->External->GetMRMLViewNode()->GetFieldOfView());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -341,6 +369,7 @@ void vtkMRMLViewDisplayableManager::AdditionnalInitializeStep()
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::PitchViewRequestedEvent);
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::RollViewRequestedEvent);
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::YawViewRequestedEvent);
+  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::RenderModeEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -372,8 +401,8 @@ void vtkMRMLViewDisplayableManager::Create()
 
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
-                                                          unsigned long event,
-                                                          void *vtkNotUsed(callData))
+                                                      unsigned long event,
+                                                      void *callData)
 {
   if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
     {
@@ -399,6 +428,11 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
       {
       vtkDebugMacro(<< "ProcessMRMLEvents - YawViewRequestedEvent");
       this->Internal->YawView();
+      }
+    else if (event == vtkMRMLViewNode::RenderModeEvent)
+      {
+      vtkDebugMacro(<< "ProcessMRMLEvents - RenderModeEvent");
+      this->Internal->UpdateRenderMode();
       }
     }
   // Default MRML Event handler is NOT needed

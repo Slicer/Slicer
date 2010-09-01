@@ -50,6 +50,10 @@ public:
 
 public slots:
 
+  void updateWidgetFromMRML();
+
+  void setOrthographicModeEnabled(bool enabled);
+
   void pitchActiveView();
   void rollActiveView();
   void yawActiveView();
