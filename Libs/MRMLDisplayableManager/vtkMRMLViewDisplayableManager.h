@@ -44,6 +44,8 @@ protected:
   vtkMRMLViewDisplayableManager();
   virtual ~vtkMRMLViewDisplayableManager();
 
+  virtual void AdditionnalInitializeStep();
+
   virtual void Create();
   
 private:
