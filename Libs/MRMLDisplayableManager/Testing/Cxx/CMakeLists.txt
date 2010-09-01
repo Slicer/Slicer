@@ -33,7 +33,7 @@ set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 #
 FOREACH (test ${TestsToRun})
   GET_FILENAME_COMPONENT(TName ${test} NAME_WE)
-  ADD_TEST(${TName} ${LAUNCH_EXE} ${CXX_TEST_PATH}/${KIT}CxxTests ${TName}
+  ADD_TEST(${TName} ${LAUNCH_EXE} ${KIT_TESTS} ${TName}
       -D ${CMAKE_CURRENT_SOURCE_DIR}/../
       -T ${TEMP}
       -V Baseline/${TName}.png
