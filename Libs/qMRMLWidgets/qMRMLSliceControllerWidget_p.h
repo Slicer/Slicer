@@ -120,6 +120,8 @@ public:
 
   QSpinBox*                           LightBoxRowsSpinBox;
   QSpinBox*                           LightBoxColumnsSpinBox;
+
+  QSize                               ViewSize;
 };
 
 #endif

@@ -877,14 +877,12 @@ void qMRMLSliceControllerWidget::setSliceViewSize(const QSize& newSize)
   CTK_D(qMRMLSliceControllerWidget);
   logger.trace(QString("setSliceViewSize - newSize(%1, %2)").
                arg(newSize.width()).arg(newSize.height()));
-  if (!d->MRMLSliceNode)
+  d->ViewSize = newSize;
+  if (!d->SliceLogic)
     {
     return;
     }
-  // be careful here, it might trigger rendering twice...
-  d->MRMLSliceNode->SetDimensions(
-    newSize.width(), newSize.height(), d->MRMLSliceNode->GetDimensions()[2]);
-  this->fitSliceToBackground();
+  d->SliceLogic->ResizeSliceNode(newSize.width(), newSize.height());
 }
 
 //---------------------------------------------------------------------------
@@ -1340,6 +1338,13 @@ void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
          QString(node->GetLayoutName()).startsWith("Compare")))
       {
       node->SetLayoutGrid(rows, columns);
+      vtkMRMLSliceLogic* sliceLogic = d->sliceNodeLogic(node);
+      if (sliceLogic)
+        {
+        // As the size (dimension+fov) of the slicenode depends on the
+        // viewport size and the layout, we need to recompute the size
+        sliceLogic->ResizeSliceNode(d->ViewSize.width(), d->ViewSize.height());
+        }
       }
     }
 }

@@ -249,6 +249,14 @@ public:
   /// the value fov will be applied to the smallest slice window dimension
   void FitFOVToBackground(double fov);
 
+  ///
+  /// Adjust dimensions and fov based on the new viewport size.
+  /// The size should be the viewport size (typically vtkRenderWindow), not the
+  /// size of the renderers (important if it's in a lightbox mode).
+  /// It must be called each time the renderwindow size is modified and each
+  /// time the lightbox configuration is changed.
+  void ResizeSliceNode(double newWidth, double newHeight);
+
   /// 
   /// Get the spacing of the volume, transformed to slice space 
   /// - to be used, for example, to set the slice increment for stepping a single 
