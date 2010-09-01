@@ -80,10 +80,10 @@ public:
   vtkSmartPointer<vtkCollection> saveSliceNodes()const;
   vtkMRMLSliceLogic* sliceLogicByName(const QString& name)const;
 
-  vtkMRMLScene*            MRMLScene;
+  vtkMRMLScene*                  MRMLScene;
   vtkSmartPointer<vtkCollection> MRMLSliceLogics;
 
-  ctkSliderWidget*  LabelOpacitySlider;
+  ctkSliderWidget*         LabelOpacitySlider;
   QToolButton*             LabelOpacityToggleButton;
   double                   LastLabelOpacity;
   ctkDoubleSlider*         ForegroundOpacitySlider;
