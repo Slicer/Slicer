@@ -234,9 +234,6 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateMRMLToWidget(vt
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the widget will be set to modified
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkTextRepresentation * rep = vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
 
@@ -257,82 +254,48 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateMRMLToWidget(vt
   if (!textNode->GetTextCoordinates())
     {
     textNode->SetTextCoordinates(worldCoordinates);
-    hasChanged = true;
     }
 
   if (!textNode->GetText(0))
     {
     textNode->SetText(0,rep->GetText(),1,1);
-    hasChanged = true;
     }
 
   if (!textNode->GetAnnotationTextDisplayNode())
     {
     textNode->CreateAnnotationTextDisplayNode();
-    hasChanged = true;
     }
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to widget
-  //
-  if (textNode->GetTextCoordinates()[0] != worldCoordinates[0] || textNode->GetTextCoordinates()[1] != worldCoordinates[1] || textNode->GetTextCoordinates()[2] != worldCoordinates[2])
-    {
-    // at least one coordinate has changed, so update the widget
 
-    // now we have to transfer again from world coordinates to normalized viewport coordinates
-    double * displayCoordinates = this->GetWorldToDisplayCoordinates(textNode->GetTextCoordinates()[0], textNode->GetTextCoordinates()[1], textNode->GetTextCoordinates()[2]);
+  // now we have to transfer again from world coordinates to normalized viewport coordinates
+  double * displayCoordinates = this->GetWorldToDisplayCoordinates(textNode->GetTextCoordinates()[0], textNode->GetTextCoordinates()[1], textNode->GetTextCoordinates()[2]);
 
-    double u = displayCoordinates[0];
-    double v = displayCoordinates[1];
+  double u = displayCoordinates[0];
+  double v = displayCoordinates[1];
 
-    this->GetRenderer()->DisplayToNormalizedDisplay(u,v);
-    this->GetRenderer()->NormalizedDisplayToViewport(u,v);
-    this->GetRenderer()->ViewportToNormalizedViewport(u,v);
-    // now we have transformed the world coordinates in the MRML node to normalized viewport coordinates and can really update the widget
+  this->GetRenderer()->DisplayToNormalizedDisplay(u,v);
+  this->GetRenderer()->NormalizedDisplayToViewport(u,v);
+  this->GetRenderer()->ViewportToNormalizedViewport(u,v);
+  // now we have transformed the world coordinates in the MRML node to normalized viewport coordinates and can really update the widget
 
-    rep->SetPosition(u,v);
-    hasChanged = true;
-    }
+  // update widget position
+  rep->SetPosition(u,v);
 
-  // Propagate the MRML text label to the widget
-  if (strcmp(textNode->GetText(0).c_str(),rep->GetText()))
-    {
-    // text in the mrml has changed, propagate to widget representation
-    rep->SetText(textNode->GetText(0).c_str());
-    hasChanged = true;
-    }
+  // update widget text
+  rep->SetText(textNode->GetText(0).c_str());
 
-  // Propagate the MRML text scale to the widget
-  if (textNode->GetTextScale() != rep->GetTextActor()->GetScaledTextProperty()->GetFontSize())
-    {
-    // text scale in the mrml node is different than the font size in the widget, so propagate
-    rep->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
-    hasChanged = true;
-    }
+  // update widget textscale
+  rep->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
 
-  // Propagate the MRML selected text color to the widget
-  if (textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[0] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[0] || textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[1] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[1] || textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[2] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[2])
-    {
-    // mrml selected color property is different then the widget font color, so propagate to widget
-    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
-    hasChanged = true;
-    }
+  // update widget selected color
+  rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
 
-  // Propagate the MRML unselected text color to the widget
-  if (textNode->GetAnnotationTextDisplayNode()->GetColor()[0] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[0] || textNode->GetAnnotationTextDisplayNode()->GetColor()[1] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[1] || textNode->GetAnnotationTextDisplayNode()->GetColor()[2] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[2])
-    {
-    // mrml selected color property is different then the widget font color, so propagate to widget
-    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetColor());
-    hasChanged = true;
-    }
+  // update widget color
+  rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetColor());
 
-  if (hasChanged)
-    {
-    // at least one value has changed, so set the widget to modified
-    rep->NeedToRenderOn();
-    textWidget->Modified();
-    }
+  // at least one value has changed, so set the widget to modified
+  rep->NeedToRenderOn();
+  textWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -389,9 +352,6 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateWidgetToMRML(vt
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the modified event gets fired
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkTextRepresentation * rep = vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
 
@@ -412,69 +372,35 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateWidgetToMRML(vt
   if (!textNode->GetTextCoordinates())
     {
     textNode->SetTextCoordinates(worldCoordinates);
-    hasChanged = true;
     }
 
   if (!textNode->GetText(0))
     {
     textNode->SetText(0,rep->GetText(),1,1);
-    hasChanged = true;
     }
 
   if (!textNode->GetAnnotationTextDisplayNode())
     {
     textNode->CreateAnnotationTextDisplayNode();
-    hasChanged = true;
     }
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to the mrml node
-  //
-  if (textNode->GetTextCoordinates()[0] != worldCoordinates[0] || textNode->GetTextCoordinates()[1] != worldCoordinates[1] || textNode->GetTextCoordinates()[2] != worldCoordinates[2])
-    {
-    // at least one coordinate has changed, so update the mrml property
-    textNode->SetTextCoordinates(worldCoordinates);
-    hasChanged = true;
-    }
+  // update mrml coordinates
+  textNode->SetTextCoordinates(worldCoordinates);
 
-  // Propagate the widget text to the MRML node
-  if (strcmp(textNode->GetText(0).c_str(),rep->GetText()))
-    {
-    // widget text has changed, update mrml
-    textNode->SetText(0,rep->GetText(),1,1);
-    hasChanged = true;
-    }
+  // update mrml text
+  textNode->SetText(0,rep->GetText(),1,1);
 
-  // Propagate the widget font size to the MRML node
-  if (textNode->GetTextScale() != rep->GetTextActor()->GetScaledTextProperty()->GetFontSize())
-    {
-    // widget font is different then the mrml textScale property, so propagate to mrml
-    textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
-    hasChanged = true;
-    }
+  // update mrml textscale
+  textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
 
-  // Propagate the selected text color to the MRML node
-  if (textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[0] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[0] || textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[1] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[1] || textNode->GetAnnotationTextDisplayNode()->GetSelectedColor()[2] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[2])
-    {
-    // widget font color is different then the mrml selected color property, so propagate to mrml
-    textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
-    hasChanged = true;
-    }
+  // update mrml selected color
+  textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
 
-  // Propagate the unselected text color to the MRML node
-  if (textNode->GetAnnotationTextDisplayNode()->GetColor()[0] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[0] || textNode->GetAnnotationTextDisplayNode()->GetColor()[1] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[1] || textNode->GetAnnotationTextDisplayNode()->GetColor()[2] != rep->GetTextActor()->GetScaledTextProperty()->GetColor()[2])
-    {
-    // widget font color is different then the mrml selected color property, so propagate to mrml
-    textNode->GetAnnotationTextDisplayNode()->SetColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
-    hasChanged = true;
-    }
+  // update mrml color
+  textNode->GetAnnotationTextDisplayNode()->SetColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
 
-  if (hasChanged)
-    {
-    // at least one value has changed, so fire the modified event
-    textNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, textNode);
-    }
+  // fire the modified event
+  textNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, textNode);
 
   // enable processing of modified events
   this->m_Updating = 0;
