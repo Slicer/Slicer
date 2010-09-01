@@ -135,9 +135,8 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
       assert(selectionNode);
       selectionNode->Delete();
       }
-    selectionNode->Register(this);
     }
-  this->Internal->SelectionNode = selectionNode;
+  this->SetSelectionNode(selectionNode);
 
   vtkMRMLInteractionNode * interactionNode = 0;
   if (newScene)
@@ -152,10 +151,48 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
       assert(interactionNode);
       interactionNode->Delete();
       }
-    interactionNode->Register(this);
+    }
+  this->SetInteractionNode(interactionNode);
+
+  this->Superclass::SetMRMLSceneInternal(newScene);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetSelectionNode(vtkMRMLSelectionNode *selectionNode)
+{
+  if (selectionNode == this->Internal->SelectionNode)
+    {
+    return;
+    }
+  if (this->Internal->SelectionNode)
+    {
+    this->Internal->SelectionNode->UnRegister(this);
+    }
+  this->Internal->SelectionNode = selectionNode;
+  if (this->Internal->SelectionNode)
+    {
+    this->Internal->SelectionNode->Register(this);
+    }
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetInteractionNode(vtkMRMLInteractionNode *interactionNode)
+{
+  if (interactionNode == this->Internal->InteractionNode)
+    {
+    return;
+    }
+  if (this->Internal->InteractionNode)
+    {
+    this->Internal->InteractionNode->UnRegister(this);
     }
   this->Internal->InteractionNode = interactionNode;
-  this->Superclass::SetMRMLSceneInternal(newScene);
+  if (this->Internal->InteractionNode)
+    {
+    this->Internal->InteractionNode->Register(this);
+    }
+  this->Modified();
 }
 
 ////----------------------------------------------------------------------------

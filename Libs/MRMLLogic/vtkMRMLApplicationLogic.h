@@ -59,7 +59,9 @@ protected:
   virtual ~vtkMRMLApplicationLogic();
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene *newScene);
-  
+
+  void SetSelectionNode(vtkMRMLSelectionNode* );
+  void SetInteractionNode(vtkMRMLInteractionNode* );
 private:
   
   vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&);
