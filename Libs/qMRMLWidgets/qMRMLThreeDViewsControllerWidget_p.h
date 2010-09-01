@@ -30,6 +30,7 @@
 #include "ui_qMRMLThreeDViewsControllerWidget.h"
 
 class QAction;
+class vtkMRMLViewNode;
 
 //-----------------------------------------------------------------------------
 class qMRMLThreeDViewsControllerWidgetPrivate: public QObject,
@@ -38,16 +39,24 @@ class qMRMLThreeDViewsControllerWidgetPrivate: public QObject,
 {
   Q_OBJECT
   QVTK_OBJECT
+
 public:
+
   CTK_DECLARE_PUBLIC(qMRMLThreeDViewsControllerWidget);
   qMRMLThreeDViewsControllerWidgetPrivate();
-  ~qMRMLThreeDViewsControllerWidgetPrivate();
+  ~qMRMLThreeDViewsControllerWidgetPrivate(){}
 
   void setupUi(qMRMLWidget* widget);
 
+public slots:
+
+  void pitchActiveView();
+  void rollActiveView();
+  void yawActiveView();
+
 public:
 
-  QAction* actionFitToWindow;
+  vtkMRMLViewNode*  ActiveMRMLThreeDViewNode;
   
 };
 

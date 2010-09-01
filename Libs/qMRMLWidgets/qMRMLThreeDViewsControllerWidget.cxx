@@ -31,6 +31,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLViewNode.h>
 
 
 //--------------------------------------------------------------------------
@@ -43,21 +44,48 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDViewsController
 //---------------------------------------------------------------------------
 qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate()
 {
-  
-}
-
-//---------------------------------------------------------------------------
-qMRMLThreeDViewsControllerWidgetPrivate::~qMRMLThreeDViewsControllerWidgetPrivate()
-{
+  this->ActiveMRMLThreeDViewNode = 0;
 }
 
 //---------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 {
-  //CTK_P(qMRMLThreeDViewsControllerWidget);
-
   this->Ui_qMRMLThreeDViewsControllerWidget::setupUi(widget);
 
+  // Pitch, Roll, Yaw button
+  connect(this->PitchButton, SIGNAL(clicked()), SLOT(pitchActiveView()));
+  connect(this->RollButton, SIGNAL(clicked()), SLOT(rollActiveView()));
+  connect(this->YawButton, SIGNAL(clicked()), SLOT(yawActiveView()));
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::pitchActiveView()
+{
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+  this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::PitchViewRequestedEvent);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::rollActiveView()
+{
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+  this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::RollViewRequestedEvent);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::yawActiveView()
+{
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+  this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::YawViewRequestedEvent);
 }
 
 // --------------------------------------------------------------------------
@@ -70,4 +98,8 @@ qMRMLThreeDViewsControllerWidget::qMRMLThreeDViewsControllerWidget(QWidget* _par
   CTK_D(qMRMLThreeDViewsControllerWidget);
   d->setupUi(this);
 }
+
+// --------------------------------------------------------------------------
+CTK_SET_CXX(qMRMLThreeDViewsControllerWidget, vtkMRMLViewNode*,
+            setActiveMRMLThreeDViewNode, ActiveMRMLThreeDViewNode);
 

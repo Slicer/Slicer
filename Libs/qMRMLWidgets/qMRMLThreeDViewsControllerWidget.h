@@ -33,6 +33,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLThreeDViewsControllerWidgetPrivate;
+class vtkMRMLViewNode;
 
 class QMRML_WIDGETS_EXPORT qMRMLThreeDViewsControllerWidget : public qMRMLWidget
 {
@@ -47,6 +48,7 @@ public:
 
 public slots:
 
+  void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
 
 private:
   CTK_DECLARE_PRIVATE(qMRMLThreeDViewsControllerWidget);
