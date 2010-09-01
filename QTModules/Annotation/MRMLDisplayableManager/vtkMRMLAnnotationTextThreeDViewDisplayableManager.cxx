@@ -99,11 +99,6 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PrintSelf(ostream& os, v
 /// Create a new text widget.
 vtkAbstractWidget * vtkMRMLAnnotationTextThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return 0;
-    }
 
   if (!node)
     {
@@ -165,9 +160,15 @@ vtkAbstractWidget * vtkMRMLAnnotationTextThreeDViewDisplayableManager::CreateWid
 void vtkMRMLAnnotationTextThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
-  if (!this->IsCorrectDisplayableManager())
+  if (!widget)
     {
-    // jump out
+    vtkErrorMacro("OnWidgetCreated: Widget was null!")
+    return;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
     return;
     }
 
@@ -188,12 +189,6 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstr
 /// Propagate properties of MRML node to widget.
 void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -277,12 +272,6 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateMRMLToWidget(vt
 void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
 
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
-
   if (!widget)
     {
     vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
@@ -344,14 +333,14 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateWidgetToMRML(vt
   // update mrml text
   textNode->SetText(0,rep->GetText(),1,1);
 
-  // update mrml textscale
-  textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
-
   if (!textNode->GetAnnotationTextDisplayNode())
     {
     // no display node yet, create one
     textNode->CreateAnnotationTextDisplayNode();
     }
+
+  // update mrml textscale
+  textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
 
   // update mrml selected color
   textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());

@@ -99,11 +99,6 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PrintSelf(ostream& os, 
 /// Create a new angle widget.
 vtkAbstractWidget * vtkMRMLAnnotationAngleThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return 0;
-    }
 
   if (!node)
     {
@@ -147,12 +142,6 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleThreeDViewDisplayableManager::CreateWi
 void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
-
   if (!widget)
     {
     vtkErrorMacro("OnWidgetCreated: Widget was null!")
@@ -162,24 +151,6 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::OnWidgetCreated(vtkAbst
   if (!node)
     {
     vtkErrorMacro("OnWidgetCreated: MRML node was null!")
-    return;
-    }
-
-  // cast to the specific widget
-  vtkAngleWidget* angleWidget = vtkAngleWidget::SafeDownCast(widget);
-
-  if (!angleWidget)
-    {
-    vtkErrorMacro("OnWidgetCreated: Could not get angle widget!")
-    return;
-    }
-
-  // cast to the specific mrml node
-  vtkMRMLAnnotationAngleNode* angleNode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
-
-  if (!angleNode)
-    {
-    vtkErrorMacro("OnWidgetCreated: Could not get angle node!")
     return;
     }
 
@@ -218,14 +189,14 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::OnWidgetCreated(vtkAbst
 
   // add observer for end interaction, will not fire now
   vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
-  myCallback->SetNode(angleNode);
-  myCallback->SetWidget(angleWidget);
+  myCallback->SetNode(node);
+  myCallback->SetWidget(widget);
   myCallback->SetDisplayableManager(this);
-  angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   myCallback->Delete();
 
   this->m_Updating = 0;
-  this->PropagateWidgetToMRML(angleWidget,angleNode);
+  this->PropagateWidgetToMRML(widget,node);
 
 }
 
@@ -233,12 +204,6 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::OnWidgetCreated(vtkAbst
 /// Propagate properties of MRML node to widget.
 void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -290,7 +255,6 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateMRMLToWidget(v
   rep->GetPoint2WorldPosition(position2);
   rep->GetCenterWorldPosition(position3);
 
-
   rep->SetPoint1WorldPosition(angleNode->GetPosition1());
 
   rep->SetPoint2WorldPosition(angleNode->GetPosition2());
@@ -309,12 +273,6 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateMRMLToWidget(v
 /// Propagate properties of widget to MRML node.
 void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -366,21 +324,14 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateWidgetToMRML(v
   rep->GetPoint2WorldPosition(position2);
   rep->GetCenterWorldPosition(position3);
 
-
   angleNode->SetPosition1(position1);
 
   angleNode->SetPosition2(position2);
 
   angleNode->SetPositionCenter(position3);
 
-  //
-  // Check if the measurement value of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to the mrml node
-  //
   double angleInDegrees = rep->GetAngle() / M_PI * 180.0;
-
   angleNode->SetAngleMeasurement(angleInDegrees);
-
 
   angleNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, angleNode);
 

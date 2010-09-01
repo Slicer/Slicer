@@ -99,11 +99,6 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PrintSelf(ostream& os,
 /// Create a new text widget.
 vtkAbstractWidget * vtkMRMLAnnotationStickyThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return 0;
-    }
 
   if (!node)
     {
@@ -150,14 +145,6 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyThreeDViewDisplayableManager::CreateW
   logoWidget->SetInteractor(this->GetInteractor());
   logoWidget->SetRepresentation(logoRepresentation);
 
-  // add the callback
-  vtkAnnotationStickyWidgetCallback *myCallback = vtkAnnotationStickyWidgetCallback::New();
-  myCallback->SetNode(stickyNode);
-  myCallback->SetWidget(logoWidget);
-  myCallback->SetDisplayableManager(this);
-  logoWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
-
   logoWidget->On();
 
   return logoWidget;
@@ -169,12 +156,27 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyThreeDViewDisplayableManager::CreateW
 void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
-  if (!this->IsCorrectDisplayableManager())
+  if (!widget)
     {
-    // jump out
+    vtkErrorMacro("OnWidgetCreated: Widget was null!")
     return;
     }
 
+  if (!node)
+    {
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    return;
+    }
+
+  // add the callback
+  vtkAnnotationStickyWidgetCallback *myCallback = vtkAnnotationStickyWidgetCallback::New();
+  myCallback->SetNode(node);
+  myCallback->SetWidget(widget);
+  myCallback->SetDisplayableManager(this);
+  widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
+
+  this->m_Updating = 0;
   // propagate the widget to the MRML node
   this->PropagateWidgetToMRML(widget, node);
 }
@@ -184,12 +186,6 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::OnWidgetCreated(vtkAbs
 /// Propagate properties of MRML node to widget.
 void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -230,61 +226,26 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateMRMLToWidget(
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the widget will be set to modified
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkLogoRepresentation * rep = vtkLogoRepresentation::SafeDownCast(logoWidget->GetRepresentation());
 
-  double * position1 = rep->GetPosition();
+  // now we have to transfer again from world coordinates to normalized viewport coordinates
+  double * displayCoordinates = this->GetWorldToDisplayCoordinates(stickyNode->GetControlPointCoordinates(0)[0],stickyNode->GetControlPointCoordinates(0)[1],stickyNode->GetControlPointCoordinates(0)[2]);
 
-  double x = position1[0];
-  double y = position1[1];
+  double u = displayCoordinates[0];
+  double v = displayCoordinates[1];
 
-  // we have normalized viewport coordinates but we need world coordinates
-  this->GetRenderer()->NormalizedViewportToViewport(x,y);
-  this->GetRenderer()->ViewportToNormalizedDisplay(x,y);
-  this->GetRenderer()->NormalizedDisplayToDisplay(x,y);
+  this->GetRenderer()->DisplayToNormalizedDisplay(u,v);
+  this->GetRenderer()->NormalizedDisplayToViewport(u,v);
+  this->GetRenderer()->ViewportToNormalizedViewport(u,v);
+  // now we have transformed the world coordinates in the MRML node to normalized viewport coordinates and can really update the widget
 
-  double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
-  // now we have world coordinates :)
+  rep->SetPosition(u,v);
 
-  // Check if the MRML node has position set at all
-  if (!stickyNode->GetControlPointCoordinates(0))
-    {
-    stickyNode->SetStickyCoordinates(worldCoordinates);
-    hasChanged = true;
-    }
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to widget
-  //
-  if (stickyNode->GetControlPointCoordinates(0)[0] != worldCoordinates[0] || stickyNode->GetControlPointCoordinates(0)[1] != worldCoordinates[1] || stickyNode->GetControlPointCoordinates(0)[2] != worldCoordinates[2])
-    {
-    // at least one coordinate has changed, so update the widget
-
-    // now we have to transfer again from world coordinates to normalized viewport coordinates
-    double * displayCoordinates = this->GetWorldToDisplayCoordinates(stickyNode->GetControlPointCoordinates(0)[0],stickyNode->GetControlPointCoordinates(0)[1],stickyNode->GetControlPointCoordinates(0)[2]);
-
-    double u = displayCoordinates[0];
-    double v = displayCoordinates[1];
-
-    this->GetRenderer()->DisplayToNormalizedDisplay(u,v);
-    this->GetRenderer()->NormalizedDisplayToViewport(u,v);
-    this->GetRenderer()->ViewportToNormalizedViewport(u,v);
-    // now we have transformed the world coordinates in the MRML node to normalized viewport coordinates and can really update the widget
-
-    rep->SetPosition(u,v);
-    hasChanged = true;
-    }
-
-  if (hasChanged)
-    {
-    // at least one value has changed, so set the widget to modified
-    rep->NeedToRenderOn();
-    logoWidget->Modified();
-    }
+  // at least one value has changed, so set the widget to modified
+  rep->NeedToRenderOn();
+  logoWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -295,12 +256,6 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateMRMLToWidget(
 /// Propagate properties of widget to MRML node.
 void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -341,9 +296,6 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateWidgetToMRML(
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the modified event gets fired
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkLogoRepresentation * rep = vtkLogoRepresentation::SafeDownCast(logoWidget->GetRepresentation());
 
@@ -360,29 +312,9 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateWidgetToMRML(
   double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
   // now we have world coordinates :)
 
-  // Check if the MRML node has position set at all
-  if (!stickyNode->GetControlPointCoordinates(0))
-    {
-    stickyNode->SetStickyCoordinates(worldCoordinates);
-    hasChanged = true;
-    }
+  stickyNode->SetStickyCoordinates(worldCoordinates);
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to the mrml node
-  //
-  if (stickyNode->GetControlPointCoordinates(0)[0] != worldCoordinates[0] || stickyNode->GetControlPointCoordinates(0)[1] != worldCoordinates[1] || stickyNode->GetControlPointCoordinates(0)[2] != worldCoordinates[2])
-    {
-    // at least one coordinate has changed, so update the mrml property
-    stickyNode->SetStickyCoordinates(worldCoordinates);
-    hasChanged = true;
-    }
-
-  if (hasChanged)
-    {
-    // at least one value has changed, so fire the modified event
-    stickyNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, stickyNode);
-    }
+  stickyNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, stickyNode);
 
   // enable processing of modified events
   this->m_Updating = 0;

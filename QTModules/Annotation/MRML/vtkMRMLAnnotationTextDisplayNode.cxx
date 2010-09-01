@@ -128,10 +128,7 @@ vtkMRMLAnnotationTextDisplayNode::UpdateScene(vtkMRMLScene *scene)
 void
 vtkMRMLAnnotationTextDisplayNode::SetTextScale(double scale)
 {
-  if (this->TextScale == scale)
-    {
-      return;
-    }
+
   //vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting TextScale to " << scale);
   this->TextScale = scale;
 

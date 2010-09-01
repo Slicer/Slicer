@@ -437,8 +437,6 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
   this->SetAnnotationAttribute(id, TEXT_SELECTED, selectedFlag);
   this->SetAnnotationAttribute(id, TEXT_VISIBLE, visibleFlag);
 
-  std::cout << "NEW TEXT: " << newText << std::endl;
-
   if(!this->GetDisableModifiedEvent())
   {
     // invoke a display modified event

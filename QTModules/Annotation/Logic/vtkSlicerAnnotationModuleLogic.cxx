@@ -161,8 +161,7 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
 {
 
-  std::cout << "vtkSlicerAnnotationModuleLogic ProcessMRMLEvents " << event
-      << std::endl;
+  vtkDebugMacro("ProcessMRMLEvents: Event "<< event);
 
   vtkMRMLAnnotationNode* annotationNode =
       reinterpret_cast<vtkMRMLAnnotationNode*> (callData);
@@ -1346,8 +1345,6 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetAnnotationText(const char* id)
     return 0;
     }
 
-  std::cout << annotationNode->GetText(0) << std::endl;
-
   return annotationNode->GetText(0);
 
 }
@@ -1379,6 +1376,8 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationText(const char* id, const cha
     vtkErrorMacro("SetAnnotationText: Could not get the text.")
     return;
     }
+
+  std::cout << "text" << std::endl;
 
   annotationNode->SetText(0,newtext,1,1);
 

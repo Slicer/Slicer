@@ -322,6 +322,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vt
   if (!this->IsCorrectDisplayableManager())
     {
     // jump out
+    vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Not the correct displayableManager, jumping out!")
     return;
     }
 
@@ -433,17 +434,13 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeRemovedEvent(
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node)
 {
-  vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent");
+  this->DebugOn();
 
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
+  vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent");
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+    vtkDebugMacro("OnMRMLAnnotationNodeModifiedEvent: Updating in progress.. Exit now.")
     return;
     }
 

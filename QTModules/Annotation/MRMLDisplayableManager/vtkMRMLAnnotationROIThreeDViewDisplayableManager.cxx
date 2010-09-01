@@ -98,11 +98,6 @@ void vtkMRMLAnnotationROIThreeDViewDisplayableManager::PrintSelf(ostream& os, vt
 /// Create a new text widget.
 vtkAbstractWidget * vtkMRMLAnnotationROIThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return 0;
-    }
 
   if (!node)
     {
@@ -149,15 +144,6 @@ vtkAbstractWidget * vtkMRMLAnnotationROIThreeDViewDisplayableManager::CreateWidg
 
   boxRepresentation->EndWidgetInteraction(origin);
 
-  vtkAnnotationROIWidgetCallback *myCallback = vtkAnnotationROIWidgetCallback::New();
-  myCallback->SetNode(roiNode);
-  myCallback->SetWidget(boxWidget);
-  myCallback->SetDisplayableManager(this);
-  boxWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
-
-  // the callback
-
   return boxWidget;
 
 }
@@ -167,14 +153,28 @@ vtkAbstractWidget * vtkMRMLAnnotationROIThreeDViewDisplayableManager::CreateWidg
 void vtkMRMLAnnotationROIThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
-  if (!this->IsCorrectDisplayableManager())
+  if (!widget)
     {
-    // jump out
+    vtkErrorMacro("OnWidgetCreated: Widget was null!")
     return;
     }
 
+  if (!node)
+    {
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    return;
+    }
+
+  vtkAnnotationROIWidgetCallback *myCallback = vtkAnnotationROIWidgetCallback::New();
+  myCallback->SetNode(node);
+  myCallback->SetWidget(widget);
+  myCallback->SetDisplayableManager(this);
+  widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
+
+ // this->m_Updating = 0;
   // just propagate the bounds to the MRML node, because before we use only origin and radius
-  this->PropagateWidgetToMRML(widget,node);
+  //this->PropagateWidgetToMRML(widget,node);
 }
 
 
@@ -182,12 +182,6 @@ void vtkMRMLAnnotationROIThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstra
 /// Propagate properties of MRML node to widget.
 void vtkMRMLAnnotationROIThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -228,38 +222,13 @@ void vtkMRMLAnnotationROIThreeDViewDisplayableManager::PropagateMRMLToWidget(vtk
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the widget will be set to modified
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkBoxRepresentation * rep = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
-  double * bounds = rep->GetBounds();
+  rep->PlaceWidget(roiNode->GetBounds());
 
-  // Check if the MRML node has position set at all
-  if (!roiNode->GetBounds())
-    {
-    roiNode->SetBounds(bounds);
-    hasChanged = true;
-    }
-
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to the widget
-  //
-  if (roiNode->GetBounds()[0] != bounds[0] || roiNode->GetBounds()[1] != bounds[1] || roiNode->GetBounds()[2] != bounds[2] || roiNode->GetBounds()[3] != bounds[3] || roiNode->GetBounds()[4] != bounds[4] || roiNode->GetBounds()[5] != bounds[5])
-    {
-    // at least one coordinate has changed, so update the widget
-    rep->PlaceWidget(roiNode->GetBounds());
-    hasChanged = true;
-    }
-
-  if (hasChanged)
-    {
-    // at least one value has changed, so set the widget to modified
-    rep->NeedToRenderOn();
-    boxWidget->Modified();
-    }
+  rep->NeedToRenderOn();
+  boxWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -270,12 +239,6 @@ void vtkMRMLAnnotationROIThreeDViewDisplayableManager::PropagateMRMLToWidget(vtk
 /// Propagate properties of widget to MRML node.
 void vtkMRMLAnnotationROIThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -316,37 +279,15 @@ void vtkMRMLAnnotationROIThreeDViewDisplayableManager::PropagateWidgetToMRML(vtk
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the modified event gets fired
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkBoxRepresentation * rep = vtkBoxRepresentation::SafeDownCast(boxWidget->GetRepresentation());
 
   double * bounds = rep->GetBounds();
 
-  // Check if the MRML node has position set at all
-  if (!roiNode->GetBounds())
-    {
-    roiNode->SetBounds(bounds);
-    hasChanged = true;
-    }
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to the mrml node
-  //
-  if (roiNode->GetBounds()[0] != bounds[0] || roiNode->GetBounds()[1] != bounds[1] || roiNode->GetBounds()[2] != bounds[2] || roiNode->GetBounds()[3] != bounds[3] || roiNode->GetBounds()[4] != bounds[4] || roiNode->GetBounds()[5] != bounds[5])
-    {
-    // at least one coordinate has changed, so update the mrml property
-    roiNode->SetBounds(bounds);
-    hasChanged = true;
-    }
+  roiNode->SetBounds(bounds);
 
-  if (hasChanged)
-    {
-    // at least one value has changed, so fire the modified event
-    roiNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, roiNode);
-    }
+  roiNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, roiNode);
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -385,9 +326,9 @@ void vtkMRMLAnnotationROIThreeDViewDisplayableManager::OnClickInThreeDRenderWind
     roiNode->SetXYZ(position1);
     roiNode->SetRadiusXYZ(position2);
 
-    roiNode->Initialize(this->GetMRMLScene());
+    roiNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationROI"));
 
-    roiNode->SetName(roiNode->GetScene()->GetUniqueNameByString("AnnotationROI"));
+    roiNode->Initialize(this->GetMRMLScene());
 
     roiNode->Delete();
 

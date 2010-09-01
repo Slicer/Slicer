@@ -97,11 +97,6 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PrintSelf(ostream& o
 /// Create a new text widget.
 vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return 0;
-    }
 
   if (!node)
     {
@@ -146,13 +141,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::Creat
   newhandle = seedWidget->CreateNewHandle();
   vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
 
-  // add the callback
-  vtkAnnotationFiducialWidgetCallback *myCallback = vtkAnnotationFiducialWidgetCallback::New();
-  myCallback->SetNode(fiducialNode);
-  myCallback->SetWidget(seedWidget);
-  myCallback->SetDisplayableManager(this);
-  seedWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
+  //seedWidget->CompleteInteraction();
 
   seedWidget->On();
 
@@ -165,13 +154,28 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::Creat
 void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
-  if (!this->IsCorrectDisplayableManager())
+  if (!widget)
     {
-    // jump out
+    vtkErrorMacro("OnWidgetCreated: Widget was null!")
     return;
     }
 
-  // nothing yet
+  if (!node)
+    {
+    vtkErrorMacro("OnWidgetCreated: MRML node was null!")
+    return;
+    }
+
+  // add the callback
+  vtkAnnotationFiducialWidgetCallback *myCallback = vtkAnnotationFiducialWidgetCallback::New();
+  myCallback->SetNode(node);
+  myCallback->SetWidget(widget);
+  myCallback->SetDisplayableManager(this);
+  widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
+
+  //this->m_Updating = 0;
+  //this->PropagateWidgetToMRML(widget, node);
 }
 
 
@@ -179,12 +183,6 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::OnWidgetCreated(vtkA
 /// Propagate properties of MRML node to widget.
 void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -225,9 +223,6 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateMRMLToWidge
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the widget will be set to modified
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkSeedRepresentation * rep = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
@@ -235,32 +230,11 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateMRMLToWidge
 
   rep->GetSeedWorldPosition(0,position1);
 
-  // Check if the MRML node has position set at all
-  if (!fiducialNode->GetFiducialCoordinates())
-    {
-    fiducialNode->SetFiducialCoordinates(position1);
-    hasChanged = true;
-    }
+  double * displayCoordinates = this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates()[0],fiducialNode->GetFiducialCoordinates()[1],fiducialNode->GetFiducialCoordinates()[2]);
+  rep->SetSeedDisplayPosition(0,displayCoordinates);
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to widget
-  //
-  if (fiducialNode->GetFiducialCoordinates()[0] != position1[0] || fiducialNode->GetFiducialCoordinates()[1] != position1[1] || fiducialNode->GetFiducialCoordinates()[2] != position1[2])
-    {
-    // at least one coordinate has changed, so update the widget
-    // we need display coordinates here
-    double * displayCoordinates = this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates()[0],fiducialNode->GetFiducialCoordinates()[1],fiducialNode->GetFiducialCoordinates()[2]);
-    rep->SetSeedDisplayPosition(0,displayCoordinates);
-    hasChanged = true;
-    }
-
-  if (hasChanged)
-    {
-    // at least one value has changed, so set the widget to modified
-    rep->NeedToRenderOn();
-    seedWidget->Modified();
-    }
+  rep->NeedToRenderOn();
+  seedWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -272,12 +246,6 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateMRMLToWidge
 /// Propagate properties of widget to MRML node.
 void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
-
-  if (!this->IsCorrectDisplayableManager())
-    {
-    // jump out
-    return;
-    }
 
   if (!widget)
     {
@@ -319,9 +287,6 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateWidgetToMRM
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the modified event gets fired
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkSeedRepresentation * rep = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
@@ -329,29 +294,9 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateWidgetToMRM
 
   rep->GetSeedWorldPosition(0,position1);
 
-  // Check if the MRML node has position set at all
-  if (!fiducialNode->GetFiducialCoordinates())
-    {
-    fiducialNode->SetFiducialCoordinates(position1);
-    hasChanged = true;
-    }
+  fiducialNode->SetFiducialCoordinates(position1);
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to the mrml node
-  //
-  if (fiducialNode->GetFiducialCoordinates()[0] != position1[0] || fiducialNode->GetFiducialCoordinates()[1] != position1[1] || fiducialNode->GetFiducialCoordinates()[2] != position1[2])
-    {
-    // at least one coordinate has changed, so update the mrml property
-    fiducialNode->SetFiducialCoordinates(position1);
-    hasChanged = true;
-    }
-
-  if (hasChanged)
-    {
-    // at least one value has changed, so fire the modified event
-    fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
-    }
+  fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -385,9 +330,9 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::OnClickInThreeDRende
 
     fiducialNode->SetFiducialCoordinates(worldCoordinates);
 
-    fiducialNode->Initialize(this->GetMRMLScene());
+    fiducialNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationFiducial"));
 
-    fiducialNode->SetName(fiducialNode->GetScene()->GetUniqueNameByString("AnnotationFiducial"));
+    fiducialNode->Initialize(this->GetMRMLScene());
 
     fiducialNode->Delete();
 
