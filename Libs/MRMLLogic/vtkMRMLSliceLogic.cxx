@@ -342,6 +342,10 @@ void vtkMRMLSliceLogic::ProcessMRMLEvents(vtkObject * caller,
       return;
       }
     }
+  if (this->GetMRMLScene()->GetIsClosing())
+    {
+    return;
+    }
 
   // Set up the nodes and models
   this->CreateSliceModel();
