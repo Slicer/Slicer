@@ -81,9 +81,9 @@ MACRO(qctk_build_designer_plugin)
 
   # Install the library
   INSTALL(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${CTK_INSTALL_BIN_DIR}/designer COMPONENT Runtime
-    LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Runtime
-    ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR}/designer COMPONENT Development)
+    RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR}/designer COMPONENT Runtime
+    LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR}/designer COMPONENT Runtime
+    ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR}/designer COMPONENT Development)
 
   # Install headers - Are headers required ?
   #FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
