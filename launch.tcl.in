@@ -339,7 +339,16 @@ proc launch_SetEnvironment {} {
           }
         }
       } else {
-        set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real
+        #set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real
+        set slicer3Real "$::Slicer3_HOME/bin/Slicer3-real"
+        set slicerQTReal "$::Slicer3_HOME/bin/SlicerQT-real"
+        if { [file exists "$slicer3Real"] } {
+            set ::Slicer3_REAL $slicer3Real
+            #set ::BUILD_SUBDIR $buildType
+        } elseif { [file exists "$slicerQTReal"] } {
+            set ::Slicer3_REAL $slicerQTReal
+            #set ::BUILD_SUBDIR $buildType
+        }
       }
       set ::env(SANDBOX_BIN_DIR)   ""
     
