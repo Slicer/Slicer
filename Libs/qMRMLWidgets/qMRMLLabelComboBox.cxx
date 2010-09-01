@@ -288,7 +288,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
     d->ComboBox->insertItem(0, "None");
     }
   
-  LookUpTabletime.start();
+  //LookUpTabletime.start();
   vtkLookupTable * lookupTable = d->ColorNode->GetLookupTable();
   Q_ASSERT(lookupTable);
 
