@@ -84,6 +84,7 @@ IF(Slicer3_USE_PYTHONQT)
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonCore
     vtkCommonPythonD # For vtkPythonUtils
+    PythonQt
     )
   IF(WIN32)
     # TODO: this resolves link errors on windows, but shouldn't be
