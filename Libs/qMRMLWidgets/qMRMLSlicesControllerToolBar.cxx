@@ -974,6 +974,17 @@ void qMRMLSlicesControllerToolBar::setRedSliceFOV(double fov)
     {
     return;
     }
+  // The pb with QDoubleSpinBox is that they truncate the resolution of the
+  // fov after 2 decimals. Don't fire new events if the new value is below
+  // 0.01
+  vtkMRMLSliceNode* snode = redSliceLogic->GetSliceNode();
+  double oldFov[3];
+  snode->GetFieldOfView(oldFov);
+  if (qAbs(qMin(oldFov[0], oldFov[1])- fov) < 0.01)
+    {
+    return;
+    }
+
   redSliceLogic->FitFOVToBackground(fov);
 }
 
@@ -986,6 +997,16 @@ void qMRMLSlicesControllerToolBar::setYellowSliceFOV(double fov)
     {
     return;
     }
+  // The pb with QDoubleSpinBox is that they truncate the resolution of the
+  // fov after 2 decimals. Don't fire new events if the new value is below
+  // 0.01
+  vtkMRMLSliceNode* snode = yellowSliceLogic->GetSliceNode();
+  double oldFov[3];
+  snode->GetFieldOfView(oldFov);
+  if (qAbs(qMin(oldFov[0], oldFov[1])- fov) < 0.01)
+    {
+    return;
+    }
   yellowSliceLogic->FitFOVToBackground(fov);
 }
 
@@ -995,6 +1016,16 @@ void qMRMLSlicesControllerToolBar::setGreenSliceFOV(double fov)
   CTK_D(qMRMLSlicesControllerToolBar);
   vtkMRMLSliceLogic* greenSliceLogic = d->sliceLogicByName("Green");
   if (!greenSliceLogic)
+    {
+    return;
+    }
+  // The pb with QDoubleSpinBox is that they truncate the resolution of the
+  // fov after 2 decimals. Don't fire new events if the new value is below
+  // 0.01
+  vtkMRMLSliceNode* snode = greenSliceLogic->GetSliceNode();
+  double oldFov[3];
+  snode->GetFieldOfView(oldFov);
+  if (qAbs(qMin(oldFov[0], oldFov[1])- fov) < 0.01)
     {
     return;
     }
