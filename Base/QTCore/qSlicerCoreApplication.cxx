@@ -361,7 +361,10 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
 
 #ifdef Slicer3_USE_PYTHONQT
   // Initialize Python
-  this->corePythonManager()->mainContext();
+  if (this->corePythonManager())
+    {
+    this->corePythonManager()->mainContext();
+    }
 #endif
 
   // Parse command line arguments
@@ -533,7 +536,7 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
       {
       d->MRMLScene->SetCacheManager(d->CacheManager);
       }
-    }
+      }
 
   emit this->mrmlSceneChanged(newMRMLScene);
 }
