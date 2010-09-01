@@ -151,8 +151,7 @@ if(Slicer3_USE_QT)
         GET_FILENAME_COMPONENT(QT_LIB_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
         INSTALL(DIRECTORY ${QT_LIB_DIR_tmp}/ DESTINATION lib/Qt
                 FILES_MATCHING PATTERN "${QT_LIB_NAME_tmp}*"
-                PATTERN "${QT_LIB_NAME_tmp}*.debug" EXCLUDE
-                COMPONENT Runtime)
+                PATTERN "${QT_LIB_NAME_tmp}*.debug" EXCLUDE)
       ENDIF (QT_${qtlib}_LIBRARY_RELEASE)
     ELSE (NOT WIN32)
       GET_FILENAME_COMPONENT(QT_DLL_PATH_tmp ${QT_QMAKE_EXECUTABLE} PATH)
