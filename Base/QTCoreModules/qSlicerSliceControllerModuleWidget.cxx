@@ -64,19 +64,22 @@ void qSlicerSliceControllerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
   // Red
   qMRMLSliceWidget * redSliceWidget = layoutManager->sliceWidget("Red");
   Q_ASSERT(redSliceWidget);
+  d->RedSliceControllerWidget->setSliceLogics(layoutManager->mrmlSliceLogics());
   d->RedSliceControllerWidget->setSliceLogic(
-      redSliceWidget->sliceController()->sliceLogic());
+    redSliceWidget->sliceController()->sliceLogic());
 
   // Yellow
   qMRMLSliceWidget * yellowSliceWidget = layoutManager->sliceWidget("Yellow");
   Q_ASSERT(yellowSliceWidget);
+  d->YellowSliceControllerWidget->setSliceLogics(layoutManager->mrmlSliceLogics());
   d->YellowSliceControllerWidget->setSliceLogic(
-      yellowSliceWidget->sliceController()->sliceLogic());
+    yellowSliceWidget->sliceController()->sliceLogic());
 
   // Green
   qMRMLSliceWidget * greenSliceWidget = layoutManager->sliceWidget("Green");
   Q_ASSERT(greenSliceWidget);
+  d->GreenSliceControllerWidget->setSliceLogics(layoutManager->mrmlSliceLogics());
   d->GreenSliceControllerWidget->setSliceLogic(
-      greenSliceWidget->sliceController()->sliceLogic());
+    greenSliceWidget->sliceController()->sliceLogic());
 }
 

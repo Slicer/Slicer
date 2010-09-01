@@ -61,6 +61,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate()
   
   this->MRMLSliceNode = 0;
   this->MRMLSliceCompositeNode = 0;
+  this->SliceLogics = 0;
 
   this->ControllerButtonGroup = 0;
   this->SliceOrientation = "Axial";
@@ -73,6 +74,9 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate()
   this->LabelOpacitySlider = 0;
   this->LabelOpacityToggleButton = 0;
   this->LastLabelOpacity = 1.;
+
+  this->LightBoxRowsSpinBox = 0;
+  this->LightBoxColumnsSpinBox = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -498,7 +502,8 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
       volumeNode ? volumeNode->GetVolumeDisplayNode(): 0);
   if (displayNode)
     {
-    qvtkConnect(displayNode, vtkCommand::ModifiedEvent, this, SLOT(onBackgroundDisplayNodeChanged(vtkObject*)));
+    qvtkConnect(displayNode, vtkCommand::ModifiedEvent,
+                this, SLOT(onBackgroundDisplayNodeChanged(vtkObject*)));
     this->onBackgroundDisplayNodeChanged(displayNode);
     }
 }
@@ -729,7 +734,20 @@ void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   d->SliceLogic->SetMRMLScene(newScene);
 
+  // Disable the node selectors as they would fire the signal currentIndexChanged(0)
+  // meaning that there is no current node anymore. It's not true, it just means that
+  // that the current node was not in the combo box list menu before
+  bool backgroundBlockSignals = d->BackgroundLayerNodeSelector->blockSignals(true);
+  bool foregroundBlockSignals = d->ForegroundLayerNodeSelector->blockSignals(true);
+  bool labelmapBlockSignals = d->LabelMapSelector->blockSignals(true);
+
   this->Superclass::setMRMLScene(newScene);
+
+  d->BackgroundLayerNodeSelector->blockSignals(backgroundBlockSignals);
+  d->ForegroundLayerNodeSelector->blockSignals(foregroundBlockSignals);
+  d->LabelMapSelector->blockSignals(labelmapBlockSignals);
+
+  d->updateWidgetFromMRMLSliceCompositeNode();
 }
 
 //---------------------------------------------------------------------------
@@ -1410,6 +1428,7 @@ void qMRMLSliceControllerWidget::setForegroundInterpolation(bool interpolate)
   if (!d->SliceLogics)
     {
     d->setForegroundInterpolation(d->SliceLogic, interpolate);
+    return;
     }
   vtkMRMLSliceLogic* sliceLogic = 0;
   vtkCollectionSimpleIterator it;
@@ -1430,6 +1449,7 @@ void qMRMLSliceControllerWidget::setBackgroundInterpolation(bool interpolate)
   if (!d->SliceLogics)
     {
     d->setBackgroundInterpolation(d->SliceLogic, interpolate);
+    return;
     }
   vtkMRMLSliceLogic* sliceLogic = 0;
   vtkCollectionSimpleIterator it;
