@@ -40,7 +40,7 @@ proc ::after {args} {
     puts "TODO: not handling: \"$args\""
     set ::after_warning "done"
   }
-  set option [lindex $args 1]
+  set option [lindex $args 0]
   set args [lrange $args 1 end]
   if { $option == "idle" } {
     eval $args
