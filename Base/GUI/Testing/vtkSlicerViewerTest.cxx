@@ -68,6 +68,7 @@ int vtkSlicerViewerTest( int argc, char *argv[] )
 
   EXERCISE_BASIC_OBJECT_METHODS( viewerWidget );
 
+  app->PromptBeforeExitOff();
   app->Script( "after 5000 %s Exit", app->GetTclName() );
   
   int res = app->StartApplication();
