@@ -147,20 +147,16 @@ if(Slicer3_USE_QT)
   FOREACH(qtlib ${QTLIBLIST})
     IF (NOT WIN32)
       IF (QT_${qtlib}_LIBRARY_RELEASE)
-        #INSTALL(FILES ${QT_${qtlib}_LIBRARY_RELEASE} DESTINATION ${PV_INSTALL_LIB_DIR})
         GET_FILENAME_COMPONENT(QT_LIB_DIR_tmp ${QT_${qtlib}_LIBRARY_RELEASE} PATH)
         GET_FILENAME_COMPONENT(QT_LIB_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
-        FILE(GLOB QT_LIB_LIST RELATIVE "${QT_LIB_DIR_tmp}" "${QT_${qtlib}_LIBRARY_RELEASE}*")
-        INSTALL(CODE "
-          MESSAGE(STATUS \"Installing lib/Slicer3/${QT_LIB_NAME_tmp}\")
-            EXECUTE_PROCESS (WORKING_DIRECTORY ${QT_LIB_DIR_tmp}
-            COMMAND tar c ${QT_LIB_LIST}
-            COMMAND tar -xC \${CMAKE_INSTALL_PREFIX}/lib/Slicer3)
-          " COMPONENT Runtime)
+        INSTALL(DIRECTORY ${QT_LIB_DIR_tmp}/ DESTINATION lib/Qt
+                FILES_MATCHING PATTERN "${QT_LIB_NAME_tmp}*"
+                PATTERN "${QT_LIB_NAME_tmp}*.debug" EXCLUDE
+                COMPONENT Runtime)
       ENDIF (QT_${qtlib}_LIBRARY_RELEASE)
     ELSE (NOT WIN32)
       GET_FILENAME_COMPONENT(QT_DLL_PATH_tmp ${QT_QMAKE_EXECUTABLE} PATH)
-      INSTALL(FILES ${QT_DLL_PATH_tmp}/${qtlib}4.dll DESTINATION bin COMPONENT Runtime)
+      INSTALL(FILES ${QT_DLL_PATH_tmp}/${qtlib}4.dll DESTINATION lib/Qt COMPONENT Runtime)
     ENDIF (NOT WIN32)
     
   ENDFOREACH(qtlib)
@@ -170,9 +166,9 @@ if(Slicer3_USE_QT)
       INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll DESTINATION bin COMPONENT Runtime)
     ELSEIF(UNIX)
       # needs to install symlink version named libraries as well.
-      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.so DESTINATION bin COMPONENT Runtime)
+      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/Slicer3/PythonQt.so DESTINATION bin COMPONENT Runtime)
     ELSEIF(APPLE)
-      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dylib DESTINATION bin COMPONENT Runtime)
+      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/Slicer3/PythonQt.dylib DESTINATION bin COMPONENT Runtime)
     ENDIF(WIN32)
   ENDIF(Slicer3_USE_PYTHONQT)
 endif(Slicer3_USE_QT)
