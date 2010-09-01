@@ -217,10 +217,10 @@ option(Slicer3_USE_KWWIDGETS "Build Slicer3 with KWWidgets." ON)
 # Since modules are KWWidgets based, unset there variables
 IF (NOT Slicer3_USE_KWWIDGETS)
   # Since the module Logic is shared between QTModules and regular Modules,
-  # the associated BIN and LIB directory shouldn't be unset
+  # the associated BIN, LIB and INCLUDE directory shouldn't be unset
   #UNSET(Slicer3_INSTALL_MODULES_BIN_DIR)
   #UNSET(Slicer3_INSTALL_MODULES_LIB_DIR)
-  UNSET(Slicer3_INSTALL_MODULES_INCLUDE_DIR)
+  #UNSET(Slicer3_INSTALL_MODULES_INCLUDE_DIR)
   UNSET(Slicer3_INSTALL_MODULES_SHARE_DIR)
 ENDIF (NOT Slicer3_USE_KWWIDGETS)
 
