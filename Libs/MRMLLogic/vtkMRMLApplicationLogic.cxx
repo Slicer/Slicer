@@ -221,7 +221,6 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagateVolumeSelection()
 {
-  std::cout<<"PROPAGATE ! "<< std::endl;
   if ( !this->Internal->SelectionNode || !this->GetMRMLScene() )
     {
     std::cout << this->Internal->SelectionNode << "    " << this->GetMRMLScene() << std::endl;
