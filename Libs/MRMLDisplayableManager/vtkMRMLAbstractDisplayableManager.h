@@ -95,7 +95,7 @@ protected:
   /// Called by Initialize();
   /// Sub-class could overload that function and perform additional initialization steps
   /// \note Initialization occurs before the MRMLDisplayableNode is set and observed
-  /// \warning That function should only be used directly !
+  /// \warning That function should NOT be used directly !
   /// \sa Initialize
   virtual void AdditionnalInitializeStep(){}
 
@@ -106,6 +106,11 @@ protected:
 
   /// Could be overloaded in DisplayableManager subclass
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* vtkNotUsed(caller)){}
+
+  /// \brief Allow to specify additonal events that the DisplayableNode will observe
+  /// \warning Should be called within AdditionnalInitializeStep() method
+  /// \sa AdditionnalInitializeStep()
+  void AddMRMLDisplayableManagerEvent(int eventId);
 
   /// Set MRML DisplayableNode
   /// Called by vtkMRMLDisplayableManagerFactory

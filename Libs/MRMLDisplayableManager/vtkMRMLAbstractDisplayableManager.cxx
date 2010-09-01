@@ -95,16 +95,17 @@ public:
   bool                                      Initialized;
   bool                                      Created;
   bool                                      UpdateFromMRMLRequested;
-  vtkRenderer *                             Renderer;
-  vtkMRMLNode *                             MRMLDisplayableNode;
+  vtkRenderer*                              Renderer;
+  vtkMRMLNode*                              MRMLDisplayableNode;
+  vtkSmartPointer<vtkIntArray>              MRMLDisplayableNodeObservableEvents;
   vtkMRMLSelectionNode*                     MRMLSelectionNode;
   vtkMRMLInteractionNode*                   MRMLInteractionNode;
   vtkSmartPointer<vtkCallbackCommand>       MRMLInteractionNodeCallBackCommand;
-  vtkMRMLDisplayableManagerGroup *          DisplayableManagerGroup;
+  vtkMRMLDisplayableManagerGroup*           DisplayableManagerGroup;
   vtkSmartPointer<vtkCallbackCommand>       DeleteCallBackCommand;
-  vtkRenderWindowInteractor *               RenderWindowInteractor;
+  vtkRenderWindowInteractor*                RenderWindowInteractor;
   vtkSmartPointer<vtkCallbackCommand>       RenderWindowInteractorCallBackCommand;
-  vtkInteractorObserver *                   InteractorStyle;
+  vtkInteractorObserver*                    InteractorStyle;
   vtkSmartPointer<vtkCallbackCommand>       InteractorStyleCallBackCommand;
   std::vector<int>                          InteractorStyleObservableEvents;
 };
@@ -121,6 +122,7 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::vtkInternal(
   this->UpdateFromMRMLRequested = false;
   this->Renderer = 0;
   this->MRMLDisplayableNode = 0;
+  this->MRMLDisplayableNodeObservableEvents = vtkSmartPointer<vtkIntArray>::New();
   this->DisplayableManagerGroup = 0;
 
   this->DeleteCallBackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
@@ -391,6 +393,9 @@ void vtkMRMLAbstractDisplayableManager::Initialize(vtkMRMLDisplayableManagerGrou
   this->Internal->Renderer = newRenderer;
   this->Internal->Renderer->Register(this);
 
+  // Default observable event associated with DisplayableNode
+  this->Internal->MRMLDisplayableNodeObservableEvents->InsertNextValue(vtkCommand::ModifiedEvent);
+
   this->AdditionnalInitializeStep();
 
   vtkDebugMacro("initializing with Group " << group << " and Renderer " << newRenderer);
@@ -484,6 +489,21 @@ void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAbstractDisplayableManager::AddMRMLDisplayableManagerEvent(int eventId)
+{
+  for(int i = 0; i < this->Internal->MRMLDisplayableNodeObservableEvents->GetSize(); ++i)
+    {
+    if (eventId == this->Internal->MRMLDisplayableNodeObservableEvents->GetValue(i))
+      {
+      vtkErrorMacro(<< "AddMRMLDisplayableManagerEvent - eventId:" << eventId
+                    << " already added");
+      return;
+      }
+    }
+  this->Internal->MRMLDisplayableNodeObservableEvents->InsertNextValue(eventId);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLDisplayableNode(
     vtkMRMLNode * newMRMLDisplayableNode)
 {
@@ -509,7 +529,9 @@ void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLDisplayableNode(
       }
     }
   this->SetMRMLScene(sceneToObserve);
-  vtkSetAndObserveMRMLNodeMacro(this->Internal->MRMLDisplayableNode, newMRMLDisplayableNode);
+  vtkSetAndObserveMRMLNodeEventsMacro(this->Internal->MRMLDisplayableNode,
+                                      newMRMLDisplayableNode,
+                                      this->Internal->MRMLDisplayableNodeObservableEvents);
   this->SetUpdateFromMRMLRequested(true);
   this->CreateIfPossible();
   this->RequestRender();
