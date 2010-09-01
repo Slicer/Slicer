@@ -84,6 +84,7 @@ void qSlicerCoreModuleFactory::registerItems()
 {
   CTK_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
+  // if you disable the color module, it would not initialize the color logic
   d->registerCoreModule<qSlicerColorsModule>();
   d->registerCoreModule<qSlicerDataModule>();
   //d->registerCoreModule<qSlicerMRMLTreeModule>();
