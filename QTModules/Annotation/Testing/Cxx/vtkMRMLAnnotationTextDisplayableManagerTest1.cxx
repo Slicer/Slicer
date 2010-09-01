@@ -116,26 +116,9 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  /*
-   *
-   * Create the DisplayableManager factory and register the DisplayableManager
-   *
-   * Perform some tests to ensure registration succeeded.
-   *
-   */
-  // Factory
-  vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::New();
 
-  // Check if GetRegisteredDisplayableManagerCount returns 0
-  if (factory->GetRegisteredDisplayableManagerCount() != 0)
-    {
-    std::cerr << "Expected RegisteredDisplayableManagerCount: 0" << std::endl;
-    std::cerr << "Current RegisteredDisplayableManagerCount:"
-        << factory->GetRegisteredDisplayableManagerCount() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  factory->RegisterDisplayableManager("vtkMRMLAnnotationTextDisplayableManager");
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+      "vtkMRMLAnnotationTextThreeDViewDisplayableManager");
 
   /*
    *
@@ -143,60 +126,16 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
    *
    */
   // Check if GetRegisteredDisplayableManagerCount returns 2
-  if (factory->GetRegisteredDisplayableManagerCount() != 1)
+  if (vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->GetRegisteredDisplayableManagerCount() != 1)
     {
     std::cerr << "Expected RegisteredDisplayableManagerCount: 1" << std::endl;
     std::cerr << "Current RegisteredDisplayableManagerCount:"
-        << factory->GetRegisteredDisplayableManagerCount() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
-      factory->InstantiateDisplayableManagers(rr);
-
-  if (!displayableManagerGroup)
-    {
-    std::cerr << "Failed to instantiate Displayable Managers using "
-        << "InstantiateDisplayableManagers" << std::endl;
+        << vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->GetRegisteredDisplayableManagerCount() << std::endl;
     return EXIT_FAILURE;
     }
 
 
-  if (displayableManagerGroup->GetDisplayableManagerCount() != 1)
-    {
-    std::cerr << "Check displayableManagerGroup->GetDisplayableManagerCount()" << std::endl;
-    std::cerr << "Expected DisplayableManagerCount: 1" << std::endl;
-    std::cerr << "Current DisplayableManagerCount:"
-      << displayableManagerGroup->GetDisplayableManagerCount() << std::endl;
-    return EXIT_FAILURE;
-    }
 
-  // RenderRequest Callback
-  vtkRenderRequestCallback * renderRequestCallback = vtkRenderRequestCallback::New();
-  renderRequestCallback->SetRenderer(rr);
-  displayableManagerGroup->AddObserver(vtkCommand::UpdateEvent, renderRequestCallback);
-
-  // Assign ViewNode
-  displayableManagerGroup->SetMRMLDisplayableNode(viewNode);
-
-  // Check if RenderWindowInteractor has NOT been changed
-  if (displayableManagerGroup->GetInteractor() != ri)
-    {
-    std::cerr << "Expected RenderWindowInteractor:" << ri << std::endl;
-    std::cerr << "Current RenderWindowInteractor:"
-        << displayableManagerGroup->GetInteractor() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  // Interactor style should be vtkThreeDViewInteractorStyle
-  vtkInteractorObserver * currentInteractoryStyle = ri->GetInteractorStyle();
-  if (!vtkThreeDViewInteractorStyle::SafeDownCast(currentInteractoryStyle))
-    {
-    std::cerr << "Expected interactorStyle: vtkThreeDViewInteractorStyle" << std::endl;
-    std::cerr << "Current RenderWindowInteractor: "
-      << (currentInteractoryStyle ? currentInteractoryStyle->GetClassName() : "Null") << std::endl;
-    return EXIT_FAILURE;
-    }
 
   /*
    *
@@ -226,10 +165,18 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkMRMLAnnotationTextNode* textNode1 = vtkMRMLAnnotationTextNode::New();
-  // the next line fires the event
+
+  // create the MRML node
+  vtkMRMLAnnotationTextNode *textNode1 = vtkMRMLAnnotationTextNode::New();
+
+  textNode1->SetTextLabel("New text");
+
+  textNode1->SetName(scene->GetUniqueNameByString("AnnotationText"));
+
   textNode1->Initialize(scene);
-  textNode1->SetName("AnnotationText1Testing");
+
+  textNode1->Delete();
+
 
   // fail if widget did not appear
   if (rr->GetViewProps()->GetNumberOfItems()!=1) {
@@ -363,9 +310,7 @@ int vtkMRMLAnnotationTextDisplayableManagerTest1(int argc, char* argv[])
   textNode2->Delete();
   textNode3->Delete();
   textNode4->Delete();
-  renderRequestCallback->Delete();
-  if (displayableManagerGroup) { displayableManagerGroup->Delete(); }
-  factory->Delete();
+
   applicationLogic->Delete();
   scene->Delete();
   rr->Delete();

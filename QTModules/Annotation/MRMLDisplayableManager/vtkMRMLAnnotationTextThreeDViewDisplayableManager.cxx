@@ -154,14 +154,6 @@ vtkAbstractWidget * vtkMRMLAnnotationTextThreeDViewDisplayableManager::CreateWid
   // we set normalized viewport coordinates
   textRep->SetPosition(x,y);
 
-  // add the callback
-  vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
-  myCallback->SetNode(textNode);
-  myCallback->SetWidget(textWidget);
-  myCallback->SetDisplayableManager(this);
-  textWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
-
   textWidget->On();
 
   return textWidget;
@@ -178,6 +170,14 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstr
     // jump out
     return;
     }
+
+  // add the callback
+  vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
+  myCallback->SetNode(node);
+  myCallback->SetWidget(widget);
+  myCallback->SetDisplayableManager(this);
+  widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
 
   this->m_Updating = 0;
   // propagate the widget to the MRML node
@@ -236,36 +236,6 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateMRMLToWidget(vt
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkTextRepresentation * rep = vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
-
-  double * position1 = rep->GetPosition();
-
-  double x = position1[0];
-  double y = position1[1];
-
-  // we have normalized viewport coordinates but we need world coordinates
-  this->GetRenderer()->NormalizedViewportToViewport(x,y);
-  this->GetRenderer()->ViewportToNormalizedDisplay(x,y);
-  this->GetRenderer()->NormalizedDisplayToDisplay(x,y);
-
-  double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
-  // now we have world coordinates :)
-
-  // Check if the MRML node has position set at all
-  if (!textNode->GetTextCoordinates())
-    {
-    textNode->SetTextCoordinates(worldCoordinates);
-    }
-
-  if (!textNode->GetText(0))
-    {
-    textNode->SetText(0,rep->GetText(),1,1);
-    }
-
-  if (!textNode->GetAnnotationTextDisplayNode())
-    {
-    textNode->CreateAnnotationTextDisplayNode();
-    }
-
 
   // now we have to transfer again from world coordinates to normalized viewport coordinates
   double * displayCoordinates = this->GetWorldToDisplayCoordinates(textNode->GetTextCoordinates()[0], textNode->GetTextCoordinates()[1], textNode->GetTextCoordinates()[2]);
@@ -368,22 +338,6 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateWidgetToMRML(vt
   double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
   // now we have world coordinates :)
 
-  // Check if the MRML node has position set at all
-  if (!textNode->GetTextCoordinates())
-    {
-    textNode->SetTextCoordinates(worldCoordinates);
-    }
-
-  if (!textNode->GetText(0))
-    {
-    textNode->SetText(0,rep->GetText(),1,1);
-    }
-
-  if (!textNode->GetAnnotationTextDisplayNode())
-    {
-    textNode->CreateAnnotationTextDisplayNode();
-    }
-
   // update mrml coordinates
   textNode->SetTextCoordinates(worldCoordinates);
 
@@ -392,6 +346,12 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateWidgetToMRML(vt
 
   // update mrml textscale
   textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
+
+  if (!textNode->GetAnnotationTextDisplayNode())
+    {
+    // no display node yet, create one
+    textNode->CreateAnnotationTextDisplayNode();
+    }
 
   // update mrml selected color
   textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());

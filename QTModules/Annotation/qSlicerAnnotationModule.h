@@ -23,9 +23,9 @@ public:
   qSlicerAnnotationModule(QObject *parent=0);
 
   // Description:
-  // Return the help text for the Annotation module.
+  // Return the help and acknowledgement text for the Annotation module.
   virtual QString helpText()const ;
-
+  virtual QString acknowledgementText()const;
 
   virtual ~qSlicerAnnotationModule(){}
 

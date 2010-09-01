@@ -134,14 +134,6 @@ vtkAbstractWidget * vtkMRMLAnnotationAngleThreeDViewDisplayableManager::CreateWi
   angleWidget->SetInteractor(this->GetInteractor());
   angleWidget->SetCurrentRenderer(this->GetRenderer());
 
-  // add observer for end interaction, will not fire now
-  vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
-  myCallback->SetNode(angleNode);
-  myCallback->SetWidget(angleWidget);
-  myCallback->SetDisplayableManager(this);
-  angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
-  myCallback->Delete();
-
   angleWidget->On();
 
   vtkDebugMacro("CreateWidget: Widget was set up")
@@ -224,6 +216,17 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::OnWidgetCreated(vtkAbst
   recorder->SetInputString(o.str().c_str());
   recorder->Play();
 
+  // add observer for end interaction, will not fire now
+  vtkAnnotationAngleWidgetCallback *myCallback = vtkAnnotationAngleWidgetCallback::New();
+  myCallback->SetNode(angleNode);
+  myCallback->SetWidget(angleWidget);
+  myCallback->SetDisplayableManager(this);
+  angleWidget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  myCallback->Delete();
+
+  this->m_Updating = 0;
+  this->PropagateWidgetToMRML(angleWidget,angleNode);
+
 }
 
 //---------------------------------------------------------------------------
@@ -276,9 +279,6 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateMRMLToWidget(v
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the widget will be set to modified
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::SafeDownCast(angleWidget->GetRepresentation());
 
@@ -290,57 +290,15 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateMRMLToWidget(v
   rep->GetPoint2WorldPosition(position2);
   rep->GetCenterWorldPosition(position3);
 
-  // Check if the MRML node has position set at all
-  if (!angleNode->GetPosition1())
-    {
-    angleNode->SetPosition1(position1);
-    hasChanged = true;
-    }
 
-  if (!angleNode->GetPosition2())
-    {
-    angleNode->SetPosition2(position2);
-    hasChanged = true;
-    }
+  rep->SetPoint1WorldPosition(angleNode->GetPosition1());
 
-  if (!angleNode->GetPositionCenter())
-    {
-    angleNode->SetPositionCenter(position3);
-    hasChanged = true;
-    }
+  rep->SetPoint2WorldPosition(angleNode->GetPosition2());
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to the widget
-  //
-  if (angleNode->GetPosition1()[0] != position1[0] || angleNode->GetPosition1()[1] != position1[1] || angleNode->GetPosition1()[2] != position1[2])
-    {
-    // at least one coordinate has changed, so update the widget
-    rep->SetPoint1WorldPosition(angleNode->GetPosition1());
-    hasChanged = true;
-    }
+  rep->SetCenterWorldPosition(angleNode->GetPositionCenter());
 
-  if (angleNode->GetPosition2()[0] != position2[0] || angleNode->GetPosition2()[1] != position2[1] || angleNode->GetPosition2()[2] != position2[2])
-    {
-    // at least one coordinate has changed, so update the widget
-    rep->SetPoint2WorldPosition(angleNode->GetPosition2());
-    hasChanged = true;
-    }
-
-  if (angleNode->GetPositionCenter()[0] != position3[0] || angleNode->GetPositionCenter()[1] != position3[1] || angleNode->GetPositionCenter()[2] != position3[2])
-    {
-    // at least one coordinate has changed, so update the widget
-    rep->SetCenterWorldPosition(angleNode->GetPositionCenter());
-    hasChanged = true;
-    }
-
-
-  if (hasChanged)
-    {
-    // at least one value has changed, so set the widget to modified
-    rep->NeedToRenderOn();
-    angleWidget->Modified();
-    }
+  rep->NeedToRenderOn();
+  angleWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -397,9 +355,6 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateWidgetToMRML(v
   // disable processing of modified events
   this->m_Updating = 1;
 
-  // if this flag is true after the checks below, the modified event gets fired
-  bool hasChanged = false;
-
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::SafeDownCast(angleWidget->GetRepresentation());
 
@@ -411,49 +366,12 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateWidgetToMRML(v
   rep->GetPoint2WorldPosition(position2);
   rep->GetCenterWorldPosition(position3);
 
-  // Check if the MRML node has position set at all
-  if (!angleNode->GetPosition1())
-    {
-    angleNode->SetPosition1(position1);
-    hasChanged = true;
-    }
 
-  if (!angleNode->GetPosition2())
-    {
-    angleNode->SetPosition2(position2);
-    hasChanged = true;
-    }
+  angleNode->SetPosition1(position1);
 
-  if (!angleNode->GetPositionCenter())
-    {
-    angleNode->SetPositionCenter(position3);
-    hasChanged = true;
-    }
+  angleNode->SetPosition2(position2);
 
-  //
-  // Check if the position of the widget is different than the saved one in the mrml node
-  // If yes, propagate the changes to the mrml node
-  //
-  if (angleNode->GetPosition1()[0] != position1[0] || angleNode->GetPosition1()[1] != position1[1] || angleNode->GetPosition1()[2] != position1[2])
-    {
-    // at least one coordinate has changed, so update the mrml property
-    angleNode->SetPosition1(position1);
-    hasChanged = true;
-    }
-
-  if (angleNode->GetPosition2()[0] != position2[0] || angleNode->GetPosition2()[1] != position2[1] || angleNode->GetPosition2()[2] != position2[2])
-    {
-    // at least one coordinate has changed, so update the mrml property
-    angleNode->SetPosition2(position2);
-    hasChanged = true;
-    }
-
-  if (angleNode->GetPositionCenter()[0] != position3[0] || angleNode->GetPositionCenter()[1] != position3[1] || angleNode->GetPositionCenter()[2] != position3[2])
-    {
-    // at least one coordinate has changed, so update the mrml property
-    angleNode->SetPositionCenter(position3);
-    hasChanged = true;
-    }
+  angleNode->SetPositionCenter(position3);
 
   //
   // Check if the measurement value of the widget is different than the saved one in the mrml node
@@ -461,18 +379,10 @@ void vtkMRMLAnnotationAngleThreeDViewDisplayableManager::PropagateWidgetToMRML(v
   //
   double angleInDegrees = rep->GetAngle() / M_PI * 180.0;
 
-  if (angleNode->GetAngleMeasurement() != angleInDegrees)
-    {
-    // the angle has changes, so update the mrml property
-    angleNode->SetAngleMeasurement(angleInDegrees);
-    hasChanged = true;
-    }
+  angleNode->SetAngleMeasurement(angleInDegrees);
 
-  if (hasChanged)
-    {
-    // at least one value has changed, so fire the modified event
-    angleNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, angleNode);
-    }
+
+  angleNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, angleNode);
 
   // enable processing of modified events
   this->m_Updating = 0;

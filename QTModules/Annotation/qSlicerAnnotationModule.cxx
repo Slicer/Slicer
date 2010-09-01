@@ -72,5 +72,11 @@ vtkSlicerLogic* qSlicerAnnotationModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModule::helpText() const
 {
-  return "The Annotation module.";
+  return "The Annotation module. Still under heavy development. For feedback please contact haehn@bwh.harvard.edu and pohl@csail.mit.edu.";
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerAnnotationModule::acknowledgementText() const
+{
+  return "This module was developed by Daniel Haehn, Kilian Pohl and Yong Zhang. ";
 }
