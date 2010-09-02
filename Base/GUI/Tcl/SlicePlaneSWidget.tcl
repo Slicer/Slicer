@@ -179,10 +179,19 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
+
+  if { $caller == $sliceNode } {
+    # if not visible, don't bother calculating anything
+    if { ![$sliceNode GetWidgetVisible] } {
+      $o(planeWidget) Off
+      return
+    }
+  }
+
   # catch any chagnes to the active viewer
   $this updateViewer
 
-  set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
 
   if { $caller == $sliceGUI } {
 
