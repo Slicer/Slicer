@@ -149,7 +149,7 @@ if(Slicer3_USE_QT)
       IF (QT_${qtlib}_LIBRARY_RELEASE)
         GET_FILENAME_COMPONENT(QT_LIB_DIR_tmp ${QT_${qtlib}_LIBRARY_RELEASE} PATH)
         GET_FILENAME_COMPONENT(QT_LIB_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
-        INSTALL(DIRECTORY ${QT_LIB_DIR_tmp}/ DESTINATION lib/Qt
+        INSTALL(DIRECTORY ${QT_LIB_DIR_tmp}/ DESTINATION lib/Qt COMPONENT Runtime
                 FILES_MATCHING PATTERN "${QT_LIB_NAME_tmp}*"
                 PATTERN "${QT_LIB_NAME_tmp}*.debug" EXCLUDE)
       ENDIF (QT_${qtlib}_LIBRARY_RELEASE)
@@ -165,9 +165,9 @@ if(Slicer3_USE_QT)
       INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll DESTINATION bin COMPONENT Runtime)
     ELSEIF(UNIX)
       # needs to install symlink version named libraries as well.
-      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/Slicer3/PythonQt.so DESTINATION bin COMPONENT Runtime)
+      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.so DESTINATION bin COMPONENT Runtime)
     ELSEIF(APPLE)
-      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/Slicer3/PythonQt.dylib DESTINATION bin COMPONENT Runtime)
+      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.dylib DESTINATION bin COMPONENT Runtime)
     ENDIF(WIN32)
   ENDIF(Slicer3_USE_PYTHONQT)
 endif(Slicer3_USE_QT)
