@@ -153,6 +153,13 @@ void qMRMLThreeDViewPrivate::onSceneImportedEvent()
 //}
 
 // --------------------------------------------------------------------------
+void qMRMLThreeDViewPrivate::onMRMLViewNodeModifiedEvent()
+{
+  CTK_P(qMRMLThreeDView);
+  p->setRotateDegrees(this->MRMLViewNode->GetRotateDegrees());
+}
+
+// --------------------------------------------------------------------------
 // qMRMLThreeDView methods
 
 // --------------------------------------------------------------------------
@@ -169,6 +176,10 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   this->setOrientationWidgetVisible(false);
 
   this->setZoomFactor(0.05);
+
+  this->setPitchDirection(ctkVTKRenderView::PitchUp);
+  this->setRollDirection(ctkVTKRenderView::RollRight);
+  this->setYawDirection(ctkVTKRenderView::YawLeft);
 
   this->setRenderEnabled(true);
 }
@@ -244,6 +255,22 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
   this->setDisabled(newViewNode == 0);
 
   d->DisplayableManagerGroup->SetMRMLDisplayableNode(newViewNode);
+
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkCommand::ModifiedEvent, d, SLOT(onMRMLViewNodeModifiedEvent()));
+
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkMRMLViewNode::PitchViewRequestedEvent, this, SLOT(pitch()));
+
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkMRMLViewNode::RollViewRequestedEvent, this, SLOT(roll()));
+
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkMRMLViewNode::YawViewRequestedEvent, this, SLOT(yaw()));
 
   d->qvtkReconnect(
     d->MRMLViewNode, newViewNode,

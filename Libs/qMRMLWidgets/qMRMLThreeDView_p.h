@@ -54,7 +54,9 @@ public slots:
   void onSceneAboutToBeClosedEvent();
   void onSceneAboutToBeImportedEvent();
   void onSceneImportedEvent();
-//  void onSceneRestoredEvent();
+  //  void onSceneRestoredEvent();
+
+  void onMRMLViewNodeModifiedEvent();
 
 public:
 

@@ -64,10 +64,6 @@ public:
   void AddAxis(vtkRenderer * renderer);
   void UpdateAxis(vtkRenderer * renderer, vtkMRMLViewNode * viewNode);
 
-  void PitchView();
-  void RollView();
-  void YawView();
-
   void UpdateRenderMode();
 
   std::vector<vtkSmartPointer<vtkFollower> > AxisLabelActors;
@@ -281,48 +277,6 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLViewDisplayableManager::vtkInternal::PitchView()
-{
-  vtkDebugWithObjectMacro(this->External, << "PitchView");
-
-  assert(this->External->GetRenderer()->IsActiveCameraCreated());
-
-  vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
-  cam->Elevation(-this->External->GetMRMLViewNode()->GetRotateDegrees());
-  cam->OrthogonalizeViewUp();
-  this->External->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-  this->External->RequestRender();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLViewDisplayableManager::vtkInternal::RollView()
-{
-  vtkDebugWithObjectMacro(this->External, << "RollView");
-
-  assert(this->External->GetRenderer()->IsActiveCameraCreated());
-
-  vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
-  cam->Roll(-this->External->GetMRMLViewNode()->GetRotateDegrees());
-  cam->OrthogonalizeViewUp();
-  this->External->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-  this->External->RequestRender();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLViewDisplayableManager::vtkInternal::YawView()
-{
-  vtkDebugWithObjectMacro(this->External, << "YawView");
-
-  assert(this->External->GetRenderer()->IsActiveCameraCreated());
-
-  vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
-  cam->Azimuth(this->External->GetMRMLViewNode()->GetRotateDegrees());
-  cam->OrthogonalizeViewUp();
-  this->External->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-  this->External->RequestRender();
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRenderMode()
 {
   vtkDebugWithObjectMacro(this->External, << "UpdateRenderMode:" <<
@@ -366,9 +320,6 @@ void vtkMRMLViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::AdditionnalInitializeStep()
 {
-  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::PitchViewRequestedEvent);
-  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::RollViewRequestedEvent);
-  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::YawViewRequestedEvent);
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::RenderModeEvent);
 }
 
@@ -414,22 +365,7 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
     }
   else if(vtkMRMLViewNode::SafeDownCast(caller))
     {
-    if (event == vtkMRMLViewNode::PitchViewRequestedEvent)
-      {
-      vtkDebugMacro(<< "ProcessMRMLEvents - PitchViewRequestedEvent");
-      this->Internal->PitchView();
-      }
-    else if (event == vtkMRMLViewNode::RollViewRequestedEvent)
-      {
-      vtkDebugMacro(<< "ProcessMRMLEvents - RollViewRequestedEvent");
-      this->Internal->RollView();
-      }
-    else if (event == vtkMRMLViewNode::YawViewRequestedEvent)
-      {
-      vtkDebugMacro(<< "ProcessMRMLEvents - YawViewRequestedEvent");
-      this->Internal->YawView();
-      }
-    else if (event == vtkMRMLViewNode::RenderModeEvent)
+    if (event == vtkMRMLViewNode::RenderModeEvent)
       {
       vtkDebugMacro(<< "ProcessMRMLEvents - RenderModeEvent");
       this->Internal->UpdateRenderMode();
