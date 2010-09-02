@@ -12,12 +12,11 @@
 // SlicerQt includes
 #include "qSlicerSaveDataDialog.h"
 #include "ui_qSlicerSaveDataDialog.h"
-#include "qSlicerBaseQTGUIExport.h"
 
 class vtkMRMLStorableNode;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSaveDataDialogPrivate
+class qSlicerSaveDataDialogPrivate
   : public QDialog
   , public ctkPrivate<qSlicerSaveDataDialog>
   , public Ui_qSlicerSaveDataDialog

@@ -12,10 +12,9 @@
 // SlicerQt includes
 #include "qSlicerDataDialog.h"
 #include "ui_qSlicerDataDialog.h"
-#include "qSlicerBaseQTGUIExport.h"
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerDataDialogPrivate
+class qSlicerDataDialogPrivate
   : public QDialog
   , public ctkPrivate<qSlicerDataDialog>
   , public Ui_qSlicerDataDialog

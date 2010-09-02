@@ -31,10 +31,9 @@
 // SlicerQt includes
 #include "qSlicerModelsDialog.h"
 #include "ui_qSlicerModelsDialog.h"
-#include "qSlicerBaseQTGUIExport.h"
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModelsDialogPrivate
+class qSlicerModelsDialogPrivate
   : public QDialog
   , public ctkPrivate<qSlicerModelsDialog>
   , public Ui_qSlicerModelsDialog
