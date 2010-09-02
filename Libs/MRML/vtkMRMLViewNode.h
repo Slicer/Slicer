@@ -201,7 +201,8 @@ public:
       RollViewRequestedEvent,
       YawViewRequestedEvent,
       ZoomInRequestedEvent,
-      ZoomOutRequestedEvent
+      ZoomOutRequestedEvent,
+      ResetFocalPointRequestedEvent
     };
   //ETX 
 

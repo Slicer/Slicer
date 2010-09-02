@@ -64,6 +64,9 @@ public:
   void AddAxis(vtkRenderer * renderer);
   void UpdateAxis(vtkRenderer * renderer, vtkMRMLViewNode * viewNode);
 
+  void UpdateAxisVisibility();
+  void UpdateAxisLabelVisibility();
+
   void UpdateRenderMode();
 
   std::vector<vtkSmartPointer<vtkFollower> > AxisLabelActors;
@@ -277,6 +280,26 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisVisibility()
+{
+  bool visible = this->External->GetMRMLViewNode()->GetBoxVisible();
+  vtkDebugWithObjectMacro(this->External, << "UpdateAxisVisibility:" << visible);
+  this->BoxAxisActor->SetVisibility(visible);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
+{
+  bool visible = this->External->GetMRMLViewNode()->GetAxisLabelsVisible();
+  vtkDebugWithObjectMacro(this->External, << "UpdateAxisLabelVisibility:" << visible);
+  for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
+    {
+    vtkFollower* actor = this->AxisLabelActors[i];
+    actor->SetVisibility(visible);
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRenderMode()
 {
   vtkDebugWithObjectMacro(this->External, << "UpdateRenderMode:" <<
@@ -321,6 +344,7 @@ void vtkMRMLViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLViewDisplayableManager::AdditionnalInitializeStep()
 {
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::RenderModeEvent);
+  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::VisibilityEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -369,6 +393,12 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
       {
       vtkDebugMacro(<< "ProcessMRMLEvents - RenderModeEvent");
       this->Internal->UpdateRenderMode();
+      }
+    else if (event == vtkMRMLViewNode::VisibilityEvent)
+      {
+      vtkDebugMacro(<< "ProcessMRMLEvents - VisibilityEvent");
+      this->Internal->UpdateAxisLabelVisibility();
+      this->Internal->UpdateAxisVisibility();
       }
     }
   // Default MRML Event handler is NOT needed

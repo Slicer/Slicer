@@ -58,6 +58,8 @@ public slots:
 
   void onMRMLViewNodeModifiedEvent();
 
+  void onResetFocalPointRequestedEvent();
+
 public:
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;

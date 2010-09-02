@@ -71,6 +71,9 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   // ZoomIn, ZoomOut button
   connect(this->ZoomInButton, SIGNAL(clicked()), SLOT(zoomIn()));
   connect(this->ZoomOutButton, SIGNAL(clicked()), SLOT(zoomOut()));
+
+  // ResetFocalPoint button
+  connect(this->CenterButton, SIGNAL(clicked()), SLOT(resetFocalPoint()));
 }
 
 // --------------------------------------------------------------------------
@@ -129,6 +132,16 @@ void qMRMLThreeDViewsControllerWidgetPrivate::zoomOut()
     return;
     }
   this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::ZoomOutRequestedEvent);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::resetFocalPoint()
+{
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+  this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
 }
 
 // --------------------------------------------------------------------------

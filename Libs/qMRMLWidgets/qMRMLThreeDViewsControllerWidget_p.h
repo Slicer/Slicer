@@ -61,6 +61,8 @@ public slots:
   void zoomIn();
   void zoomOut();
 
+  void resetFocalPoint();
+
 public:
 
   vtkMRMLViewNode*  ActiveMRMLThreeDViewNode;

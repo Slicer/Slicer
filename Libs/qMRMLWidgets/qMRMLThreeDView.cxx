@@ -160,6 +160,26 @@ void qMRMLThreeDViewPrivate::onMRMLViewNodeModifiedEvent()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLThreeDViewPrivate::onResetFocalPointRequestedEvent()
+{
+  CTK_P(qMRMLThreeDView);
+
+  // Save current visiblity state of Box and AxisLabel
+  bool savedBoxVisibile = this->MRMLViewNode->GetBoxVisible();
+  bool savedAxisLabelVisible = this->MRMLViewNode->GetAxisLabelsVisible();
+
+  // Hide Box and AxisLabel
+  this->MRMLViewNode->SetBoxVisible(0);
+  this->MRMLViewNode->SetAxisLabelsVisible(0);
+
+  p->resetFocalPoint();
+
+  // Restore visibility state
+  this->MRMLViewNode->SetBoxVisible(savedBoxVisibile);
+  this->MRMLViewNode->SetAxisLabelsVisible(savedAxisLabelVisible);
+}
+
+// --------------------------------------------------------------------------
 // qMRMLThreeDView methods
 
 // --------------------------------------------------------------------------
@@ -279,6 +299,10 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
   d->qvtkReconnect(
     d->MRMLViewNode, newViewNode,
     vtkMRMLViewNode::ZoomOutRequestedEvent, this, SLOT(zoomOut()));
+
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkMRMLViewNode::ResetFocalPointRequestedEvent, d, SLOT(onResetFocalPointRequestedEvent()));
 
   d->MRMLViewNode = newViewNode;
 }
