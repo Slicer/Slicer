@@ -235,8 +235,13 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidgetPrivate::onValueChanged(const QString& name, const QVariant& value)
 {
+  CTK_P(qSlicerCLIModuleWidget);
   // make sure a command line module node is created
-  if (this->CommandLineModuleNode != 0)
+  if (this->CommandLineModuleNode != 0 ||
+      // but if the scene is closing, then nevermind, values are changing
+      // because nodes are getting removed
+      !p->mrmlScene() ||
+      p->mrmlScene()->GetIsClosing())
     {
     return;
     }
