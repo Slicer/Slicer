@@ -18,6 +18,11 @@
 
 ==============================================================================*/
 
+// Qt includes
+#include <QFile>
+#include <QTextStream>
+
+// QtCLI includes
 #include "qSlicerCLIModuleFactoryHelper.h"
 
 // SlicerQT includes
@@ -35,7 +40,7 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
 
   // slicerHome shouldn't be empty
   Q_ASSERT(!app->slicerHome().isEmpty());
-  
+
   QStringList defaultCmdLineModulePaths;
 
   // On Win32, *both* paths have to be there, since scripts are installed
@@ -54,7 +59,19 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
     {
     app->addLibraryPath(path);
     }
-    
+  QFile file("qSlicerCLIModuleFactoryHelper.txt");
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+    QTextStream out(&file);
+    out << "Slicer_HOME: " << app->slicerHome() << "\n";
+    out << "Int: " << app->intDir() << "\n";
+    out << "Plugins bin: " << Slicer3_INSTALL_PLUGINS_BIN_DIR << "\n";
+    out << "Plugins bin: " << Slicer3_INSTALL_PLUGINS_LIB_DIR << "\n";
+    foreach(const QString& path, cmdLineModulePaths)
+      {
+      out << path << "\n";
+      }
+    }
   //qDebug() << "cmdLineModulePaths:" << cmdLineModulePaths;
   return cmdLineModulePaths; 
 }
