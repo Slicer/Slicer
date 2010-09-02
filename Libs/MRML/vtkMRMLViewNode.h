@@ -199,7 +199,9 @@ public:
       GraphicalResourcesCreatedEvent,
       PitchViewRequestedEvent,
       RollViewRequestedEvent,
-      YawViewRequestedEvent
+      YawViewRequestedEvent,
+      ZoomInRequestedEvent,
+      ZoomOutRequestedEvent
     };
   //ETX 
 

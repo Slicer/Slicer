@@ -168,6 +168,8 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   // Hide orientation widget
   this->setOrientationWidgetVisible(false);
 
+  this->setZoomFactor(0.05);
+
   this->setRenderEnabled(true);
 }
 
@@ -242,6 +244,15 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
   this->setDisabled(newViewNode == 0);
 
   d->DisplayableManagerGroup->SetMRMLDisplayableNode(newViewNode);
+
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkMRMLViewNode::ZoomInRequestedEvent, this, SLOT(zoomIn()));
+
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkMRMLViewNode::ZoomOutRequestedEvent, this, SLOT(zoomOut()));
+
   d->MRMLViewNode = newViewNode;
 }
 

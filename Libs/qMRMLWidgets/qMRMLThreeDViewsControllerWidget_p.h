@@ -58,6 +58,9 @@ public slots:
   void rollActiveView();
   void yawActiveView();
 
+  void zoomIn();
+  void zoomOut();
+
 public:
 
   vtkMRMLViewNode*  ActiveMRMLThreeDViewNode;

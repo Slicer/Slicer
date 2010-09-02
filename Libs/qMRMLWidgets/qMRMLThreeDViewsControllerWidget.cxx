@@ -67,6 +67,10 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // Orthographic/perspective button
   connect(this->OrthoButton, SIGNAL(toggled(bool)), SLOT(setOrthographicModeEnabled(bool)));
+
+  // ZoomIn, ZoomOut button
+  connect(this->ZoomInButton, SIGNAL(clicked()), SLOT(zoomIn()));
+  connect(this->ZoomOutButton, SIGNAL(clicked()), SLOT(zoomOut()));
 }
 
 // --------------------------------------------------------------------------
@@ -105,6 +109,26 @@ void qMRMLThreeDViewsControllerWidgetPrivate::yawActiveView()
     return;
     }
   this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::YawViewRequestedEvent);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::zoomIn()
+{
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+  this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::ZoomInRequestedEvent);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::zoomOut()
+{
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+  this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::ZoomOutRequestedEvent);
 }
 
 // --------------------------------------------------------------------------
