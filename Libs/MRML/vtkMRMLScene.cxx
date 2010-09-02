@@ -699,7 +699,11 @@ void vtkMRMLScene::SetIsImporting(bool importing)
   if (importing)
     {
     this->IsImporting++;
-    this->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, NULL);
+    if (this->IsImporting == 1)
+      {
+      this->InvokeEvent(vtkMRMLScene::SceneAboutToBeImportedEvent, NULL);
+      this->Modified();
+      }
     }
   else
     {
@@ -718,9 +722,12 @@ void vtkMRMLScene::SetIsImporting(bool importing)
 
     this->IsImporting--;
 
-    this->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
+    if (this->IsImporting == 0)
+      {
+      this->InvokeEvent(vtkMRMLScene::SceneImportedEvent, NULL);
+      this->Modified();
+      }
     }
-  this->Modified();
 }
 
 //------------------------------------------------------------------------------
