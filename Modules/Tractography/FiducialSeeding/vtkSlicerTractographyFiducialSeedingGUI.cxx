@@ -384,8 +384,10 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     this->FiducialSelector->GetSelected() != NULL) 
     {
     vtkMRMLTransformableNode *node = vtkMRMLTransformableNode::SafeDownCast(this->FiducialSelector->GetSelected());
-    this->AddTransformableNodeObserver(node);
-
+    if (node)
+      {
+      this->AddTransformableNodeObserver(node);
+      }
     vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(node);
     vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(node);
 
@@ -465,32 +467,55 @@ void vtkSlicerTractographyFiducialSeedingGUI::UpdateGUI ()
   if (n != NULL && this->GetMRMLScene() != NULL)
     {
     // set GUI widgest from parameter node
-    vtkMRMLNode *s = this->GetMRMLScene()->GetNodeByID(n->GetInputVolumeRef());
-    this->VolumeSelector->SetSelected(s);
-
-    s = this->GetMRMLScene()->GetNodeByID(n->GetInputFiducialRef());
-    this->FiducialSelector->SetSelected(s);
-
-    vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(s);
-    vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(s);
-
-    if (fiducialListNode)
+    
+    if (n->GetInputVolumeRef())
       {
-      this->MaxNumberOfSeedsEntry->SetEnabled(0);
-      this->RegionSampleSizeScale->SetEnabled(1);
-      this->RegionSizeScale->SetEnabled(1);
-      this->RegionSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale());
-      this->RegionSampleSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale()/3.0);
-      }
-    else if (modelNode)
-      {
-      this->MaxNumberOfSeedsEntry->SetEnabled(1);
-      this->RegionSampleSizeScale->SetEnabled(0);
-      this->RegionSizeScale->SetEnabled(0);
+      vtkMRMLNode *vol = NULL;
+      vol = this->GetMRMLScene()->GetNodeByID(n->GetInputVolumeRef());
+      if (vol)
+        {
+        this->VolumeSelector->SetSelected(vol);
+        }
       }
 
-    s = this->GetMRMLScene()->GetNodeByID(n->GetOutputFiberRef());
-    this->OutFiberSelector->SetSelected(s);
+    if (n->GetInputFiducialRef())
+      {
+      vtkMRMLNode *fid = NULL;
+      fid = this->GetMRMLScene()->GetNodeByID(n->GetInputFiducialRef());
+      if (fid)
+        {
+        this->FiducialSelector->SetSelected(fid);
+        }
+
+      vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(fid);
+      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(fid);
+
+      if (fiducialListNode)
+        {
+        this->MaxNumberOfSeedsEntry->SetEnabled(0);
+        this->RegionSampleSizeScale->SetEnabled(1);
+        this->RegionSizeScale->SetEnabled(1);
+        this->RegionSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale());
+        this->RegionSampleSizeScale->GetWidget()->SetValue(fiducialListNode->GetSymbolScale()/3.0);
+        }
+      else if (modelNode)
+        {
+        this->MaxNumberOfSeedsEntry->SetEnabled(1);
+        this->RegionSampleSizeScale->SetEnabled(0);
+        this->RegionSizeScale->SetEnabled(0);
+        }
+      }
+
+   
+    if (n->GetOutputFiberRef())
+      {
+      vtkMRMLNode *fibre = NULL;
+      fibre = this->GetMRMLScene()->GetNodeByID(n->GetOutputFiberRef());
+      if (fibre)
+        {
+        this->OutFiberSelector->SetSelected(fibre);
+        }
+      }
     
     if(n->GetStoppingMode() == 0)
       {
@@ -678,7 +703,10 @@ void vtkSlicerTractographyFiducialSeedingGUI::CreateTracts()
      istoppingMode = 1;
     }  
 
-  if(volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL) return;
+  if(volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL)
+    {
+    return;
+    }
 
   int displayMode = 0;
 
@@ -896,9 +924,12 @@ void vtkSlicerTractographyFiducialSeedingGUI::SetVolumeSelector(vtkMRMLNode *nod
   }
 
 void vtkSlicerTractographyFiducialSeedingGUI::SetFiducialSelector(vtkMRMLNode *node)
-  {
-  this->FiducialSelector->SetSelected(node);
-  }
+{
+  if (node)
+    {
+    this->FiducialSelector->SetSelected(node);
+    }
+}
 
 void vtkSlicerTractographyFiducialSeedingGUI::SetOutFiberSelector(vtkMRMLNode *node)
   {
