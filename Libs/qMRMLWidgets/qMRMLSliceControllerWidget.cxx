@@ -599,7 +599,7 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundDisplayNodeChanged(vtkObject
 //---------------------------------------------------------------------------
 vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::compositeNodeLogic(vtkMRMLSliceCompositeNode* node)
 {
-  if (this->SliceLogics)
+  if (!this->SliceLogics)
     {
     return 0;
     }
@@ -619,7 +619,7 @@ vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::compositeNodeLogic(vtkMRML
 //---------------------------------------------------------------------------
 vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::sliceNodeLogic(vtkMRMLSliceNode* node)
 {
-  if (this->SliceLogics)
+  if (!this->SliceLogics)
     {
     return 0;
     }
