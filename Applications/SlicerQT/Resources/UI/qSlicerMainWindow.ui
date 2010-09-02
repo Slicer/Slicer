@@ -45,13 +45,8 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionEditSetHome"/>
     <addaction name="actionEditUndo"/>
     <addaction name="actionEditRedo"/>
-    <addaction name="separator"/>
-    <addaction name="actionEditEditBox"/>
-    <addaction name="separator"/>
-    <addaction name="actionEditNewFiducialList"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -100,7 +95,6 @@
      <addaction name="actionWindowToolbarsMouseMode"/>
     </widget>
     <addaction name="actionWindowShowMainPanel"/>
-    <addaction name="actionWindowShowBottomPanel"/>
     <addaction name="menuWindowToolbars"/>
     <addaction name="separator"/>
     <addaction name="actionWindowErrorLog"/>
@@ -504,7 +498,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Main Panel</string>
+    <string>&amp;Module Panel</string>
    </property>
    <property name="toolTip">
     <string>Collapse/Expand the GUI panel and allows Slicer's viewers to occupy the entire application window</string>
