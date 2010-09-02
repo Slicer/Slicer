@@ -911,7 +911,7 @@ proc launch_SplashShow { {delayms 7000} } {
     set ycorner [expr [winfo screenheight .splash]/2-($height/2)]
     wm geometry .splash +$xcorner+$ycorner
 
-    label .splash.t1 -text "Slicer3 starting up..." -bg white -font $splashfontb
+    label .splash.t1 -text "3D Slicer starting up..." -bg white -font $splashfontb
     label .splash.t2 -text "" -bg white -fg red -font $splashfont
     label .splash.v -text "" -bg white -fg darkblue -font $splashfont
 
