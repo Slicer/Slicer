@@ -114,6 +114,8 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     return;
     }
   
+  this->GetMRMLScene()->SetIsImporting(1);
+
   vtkMRMLColorTableNode *basicNode = vtkMRMLColorTableNode::New();
 
   // add the labels first
@@ -497,6 +499,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     ctnode->Delete();
     }
   vtkDebugMacro("Done adding default color nodes");
+  this->GetMRMLScene()->SetIsImporting(0);
 }
 
 //----------------------------------------------------------------------------
