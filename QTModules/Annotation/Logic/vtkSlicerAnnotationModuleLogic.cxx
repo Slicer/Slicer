@@ -1622,11 +1622,15 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
 
     std::ostringstream ss;
     ss << measurement1;
+    if (showUnits)
+      {
+      ss << " [mm]";
+      }
     ss << " x ";
     ss << measurement2;
     if (showUnits)
       {
-      ss << " [mm^2]";
+      ss << " [mm]";
       }
 
     return ss.str().c_str();
