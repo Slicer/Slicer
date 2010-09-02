@@ -142,7 +142,7 @@ void vtkSlicerEMSegmentLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long
 //----------------------------------------------------------------------------
 void vtkSlicerEMSegmentLogic::RegisterNodes()
 {
-  std::cout << "vtkSlicerEMSegmentLogic - RegisterNodes" << std::endl;
+  //std::cout << "vtkSlicerEMSegmentLogic - RegisterNodes" << std::endl;
   this->MRMLManager->RegisterMRMLNodesWithScene();
 }
 
