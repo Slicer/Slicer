@@ -56,6 +56,8 @@ void qMRMLThreeDViewsControllerWidgetPrivate::updateWidgetFromMRML()
   this->setOrthographicModeEnabled(
       this->ActiveMRMLThreeDViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
   this->setStereoType(this->ActiveMRMLThreeDViewNode->GetStereoType());
+  this->set3DAxisVisible(this->ActiveMRMLThreeDViewNode->GetBoxVisible());
+  this->set3DAxisLabelVisible(this->ActiveMRMLThreeDViewNode->GetAxisLabelsVisible());
 }
 
 //---------------------------------------------------------------------------
@@ -90,19 +92,29 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
                                       vtkMRMLViewNode::Interlaced);
   this->StereoTypesMapper->setMapping(this->actionSwitchToRedBlueStereo,
                                       vtkMRMLViewNode::RedBlue);
-  QActionGroup* stereoModesActions = new QActionGroup(widget);
-  stereoModesActions->setExclusive(true);
-  stereoModesActions->addAction(this->actionNoStereo);
-  stereoModesActions->addAction(this->actionSwitchToRedBlueStereo);
-  stereoModesActions->addAction(this->actionSwitchToAnaglyphStereo);
-  stereoModesActions->addAction(this->actionSwitchToInterlacedStereo);
-  //stereoModesActions->addAction(this->actionSwitchToCrystalEyesStereo);
-  QMenu* stereoModesMenu = new QMenu("Stereo Modes", widget);
-  stereoModesMenu->addActions(stereoModesActions->actions());
-  this->StereoButton->setMenu(stereoModesMenu);
+  QActionGroup* stereoTypesActions = new QActionGroup(widget);
+  stereoTypesActions->setExclusive(true);
+  stereoTypesActions->addAction(this->actionNoStereo);
+  stereoTypesActions->addAction(this->actionSwitchToRedBlueStereo);
+  stereoTypesActions->addAction(this->actionSwitchToAnaglyphStereo);
+  stereoTypesActions->addAction(this->actionSwitchToInterlacedStereo);
+  //stereoTypesActions->addAction(this->actionSwitchToCrystalEyesStereo);
+  QMenu* stereoTypesMenu = new QMenu("Stereo Modes", widget);
+  stereoTypesMenu->addActions(stereoTypesActions->actions());
+  this->StereoButton->setMenu(stereoTypesMenu);
   connect(this->StereoTypesMapper, SIGNAL(mapped(int)), SLOT(setStereoType(int)));
-  connect(stereoModesActions, SIGNAL(triggered(QAction*)),
+  connect(stereoTypesActions, SIGNAL(triggered(QAction*)),
           this->StereoTypesMapper, SLOT(map(QAction*)));
+
+  // Show 3D Axis, 3D Axis label
+  QMenu* visibilityMenu = new QMenu("Visibility", widget);
+  visibilityMenu->addAction(this->actionSet3DAxisVisible);
+  visibilityMenu->addAction(this->actionSet3DAxisLabelVisible);
+  this->VisibilityButton->setMenu(visibilityMenu);
+  connect(this->actionSet3DAxisVisible, SIGNAL(triggered(bool)),
+          SLOT(set3DAxisVisible(bool)));
+  connect(this->actionSet3DAxisLabelVisible, SIGNAL(triggered(bool)),
+          SLOT(set3DAxisLabelVisible(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -188,6 +200,20 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setStereoType(int newStereoType)
   this->actionSwitchToRedBlueStereo->setChecked(newStereoType == vtkMRMLViewNode::RedBlue);
 
   this->ActiveMRMLThreeDViewNode->SetStereoType(newStereoType);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::set3DAxisVisible(bool visible)
+{
+  this->actionSet3DAxisVisible->setChecked(visible);
+  this->ActiveMRMLThreeDViewNode->SetBoxVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::set3DAxisLabelVisible(bool visible)
+{
+  this->actionSet3DAxisLabelVisible->setChecked(visible);
+  this->ActiveMRMLThreeDViewNode->SetAxisLabelsVisible(visible);
 }
 
 // --------------------------------------------------------------------------

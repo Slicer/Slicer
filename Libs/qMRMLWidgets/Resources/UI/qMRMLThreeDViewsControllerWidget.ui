@@ -327,6 +327,28 @@
     <string>Switch to Interlaced stereo mode</string>
    </property>
   </action>
+  <action name="actionSet3DAxisVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>3D cube</string>
+   </property>
+  </action>
+  <action name="actionSet3DAxisLabelVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>3D axis label</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

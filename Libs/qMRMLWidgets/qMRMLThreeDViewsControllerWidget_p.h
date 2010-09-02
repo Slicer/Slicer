@@ -66,6 +66,9 @@ public slots:
 
   void setStereoType(int newStereoType);
 
+  void set3DAxisVisible(bool visible);
+  void set3DAxisLabelVisible(bool visible);
+
 public:
 
   vtkMRMLViewNode*         ActiveMRMLThreeDViewNode;
