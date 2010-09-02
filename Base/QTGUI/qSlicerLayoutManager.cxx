@@ -243,8 +243,6 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
     return 0;
     }
 
-  logger.setTrace();
-
   // there is a unique slice widget per node
   Q_ASSERT(!this->sliceWidget(sliceNode));
 
