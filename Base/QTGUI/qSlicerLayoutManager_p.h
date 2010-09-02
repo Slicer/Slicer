@@ -59,14 +59,16 @@ public:
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
 
-  /// If needed, instantiate a slice viewer corresponding to \a sliceViewName
+  /// Instantiate a slice viewer corresponding to \a sliceViewName
   QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
 
   /// Delete slice viewer associated with \a sliceNode
   void removeSliceView(vtkMRMLSliceNode* sliceNode);
 
-  /// If needed, instantiate a 3D Viewer corresponding to \a viewNode
-  QWidget* createThreeDView(vtkMRMLViewNode* viewNode);
+  /// Instantiate a 3D Viewer corresponding to \a viewNode
+  qMRMLThreeDView* createThreeDView(vtkMRMLViewNode* viewNode);
+  /// Convenient function that creates a vtkMRMLViewNode and a qMRMLThreeDView
+  qMRMLThreeDView* createThreeDView();
 
   /// Delete 3D Viewer associated with \a viewNode
   void removeThreeDView(vtkMRMLViewNode* viewNode);
@@ -98,9 +100,10 @@ public:
   void setNone();
 
   /// Convenient function allowing to get a reference to the renderView widget
-  /// identified by \a renderViewName
+  /// identified by \a renderViewName.
   qMRMLThreeDView* threeDView(vtkMRMLViewNode* node)const;
   qMRMLThreeDView* threeDView(int id)const;
+  qMRMLThreeDView* threeDViewCreateIfNeeded(int id);
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName

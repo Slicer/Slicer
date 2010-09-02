@@ -62,13 +62,13 @@ public:
   qMRMLSliceWidget* sliceWidget(const QString& name)const;
 
   /// Return the number of instantiated ThreeDRenderView
-  int threeDViewCount();
+  int threeDViewCount()const;
   
   /// Get ThreeDRenderView identified by \a id
   /// where \a id is an integer ranging from 0 to N-1 with N being the number
   /// of instantiated qMRMLThreeDView (that should also be equal to the number
   /// of vtkMRMLViewNode)
-  qMRMLThreeDView* threeDView(int id);
+  qMRMLThreeDView* threeDView(int id)const;
 
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   vtkCollection* mrmlSliceLogics()const;
