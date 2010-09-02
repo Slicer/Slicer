@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>392</width>
-    <height>109</height>
+    <height>114</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -670,7 +670,7 @@ Use this display to cross-reference to filmed images or other displays.</string>
   </connection>
   <connection>
    <sender>actionFit_to_window</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>qMRMLSliceControllerWidget</receiver>
    <slot>fitSliceToBackground()</slot>
    <hints>
@@ -686,7 +686,7 @@ Use this display to cross-reference to filmed images or other displays.</string>
   </connection>
   <connection>
    <sender>actionRotate_to_volume_plane</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>qMRMLSliceControllerWidget</receiver>
    <slot>rotateSliceToBackground()</slot>
    <hints>
