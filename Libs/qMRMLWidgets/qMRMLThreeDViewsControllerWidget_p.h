@@ -30,6 +30,7 @@
 #include "ui_qMRMLThreeDViewsControllerWidget.h"
 
 class QAction;
+class qMRMLActionSignalMapper;
 class vtkMRMLViewNode;
 
 //-----------------------------------------------------------------------------
@@ -63,9 +64,12 @@ public slots:
 
   void resetFocalPoint();
 
+  void setStereoType(int newStereoType);
+
 public:
 
-  vtkMRMLViewNode*  ActiveMRMLThreeDViewNode;
+  vtkMRMLViewNode*         ActiveMRMLThreeDViewNode;
+  qMRMLActionSignalMapper* StereoTypesMapper;
   
 };
 

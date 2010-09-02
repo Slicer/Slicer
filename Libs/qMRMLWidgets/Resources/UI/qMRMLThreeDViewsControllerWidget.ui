@@ -217,6 +217,9 @@
         <iconset resource="../qMRMLWidgets.qrc">
          <normaloff>:/Icons/SlicesFeaturesVisible.png</normaloff>:/Icons/SlicesFeaturesVisible.png</iconset>
        </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
       </widget>
      </item>
      <item row="2" column="2">
@@ -231,6 +234,9 @@
         <iconset resource="../qMRMLWidgets.qrc">
          <normaloff>:/Icons/ViewCameraSelect.png</normaloff>:/Icons/ViewCameraSelect.png</iconset>
        </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
       </widget>
      </item>
      <item row="2" column="3">
@@ -244,6 +250,9 @@
        <property name="icon">
         <iconset resource="../qMRMLWidgets.qrc">
          <normaloff>:/Icons/ViewStereo.png</normaloff>:/Icons/ViewStereo.png</iconset>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
       </widget>
      </item>
@@ -272,6 +281,52 @@
     </widget>
    </item>
   </layout>
+  <action name="actionNoStereo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>No Stereo</string>
+   </property>
+  </action>
+  <action name="actionSwitchToRedBlueStereo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Red/blue</string>
+   </property>
+  </action>
+  <action name="actionSwitchToAnaglyphStereo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Anaglyph</string>
+   </property>
+  </action>
+  <action name="actionSwitchToCrystalEyesStereo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>CrystalEyes</string>
+   </property>
+  </action>
+  <action name="actionSwitchToInterlacedStereo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Interlaced</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to Interlaced stereo mode</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

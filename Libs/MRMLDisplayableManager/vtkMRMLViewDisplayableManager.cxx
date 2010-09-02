@@ -32,6 +32,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkRenderWindow.h>
 #include <vtkActor.h>
 #include <vtkBoundingBox.h>
 #include <vtkFollower.h>
@@ -68,6 +69,8 @@ public:
   void UpdateAxisLabelVisibility();
 
   void UpdateRenderMode();
+
+  void UpdateStereoType();
 
   std::vector<vtkSmartPointer<vtkFollower> > AxisLabelActors;
   vtkSmartPointer<vtkActor>                  BoxAxisActor;
@@ -320,6 +323,37 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRenderMode()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
+{
+  vtkDebugWithObjectMacro(this->External, << "UpdateStereoType:" <<
+                this->External->GetMRMLViewNode()->GetStereoType());
+
+  vtkRenderWindow * renderWindow = this->External->GetRenderer()->GetRenderWindow();
+  int stereoType = this->External->GetMRMLViewNode()->GetStereoType();
+
+  if (stereoType == vtkMRMLViewNode::RedBlue)
+    {
+    renderWindow->SetStereoTypeToRedBlue();
+    }
+  else if (stereoType == vtkMRMLViewNode::Anaglyph)
+    {
+    renderWindow->SetStereoTypeToAnaglyph();
+    //renderWindow->SetAnaglyphColorSaturation(0.1);
+    }
+  else if (stereoType == vtkMRMLViewNode::CrystalEyes)
+    {
+    renderWindow->SetStereoTypeToCrystalEyes();
+    }
+  else if (stereoType == vtkMRMLViewNode::Interlaced)
+    {
+    renderWindow->SetStereoTypeToInterlaced();
+    }
+
+  renderWindow->SetStereoRender(stereoType != vtkMRMLViewNode::NoStereo);
+  this->External->RequestRender();
+}
+
+//---------------------------------------------------------------------------
 // vtkMRMLViewDisplayableManager methods
 
 //---------------------------------------------------------------------------
@@ -345,6 +379,7 @@ void vtkMRMLViewDisplayableManager::AdditionnalInitializeStep()
 {
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::RenderModeEvent);
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::VisibilityEvent);
+  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::StereoModeEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -399,6 +434,11 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
       vtkDebugMacro(<< "ProcessMRMLEvents - VisibilityEvent");
       this->Internal->UpdateAxisLabelVisibility();
       this->Internal->UpdateAxisVisibility();
+      }
+    else if (event == vtkMRMLViewNode::StereoModeEvent)
+      {
+      vtkDebugMacro(<< "ProcessMRMLEvents - StereoModeEvent");
+      this->Internal->UpdateStereoType();
       }
     }
   // Default MRML Event handler is NOT needed

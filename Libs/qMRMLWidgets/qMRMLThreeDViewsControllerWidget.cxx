@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QMenu>
+#include <QActionGroup>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -28,6 +29,7 @@
 // qMRML includes
 #include "qMRMLThreeDViewsControllerWidget.h"
 #include "qMRMLThreeDViewsControllerWidget_p.h"
+#include "qMRMLActionSignalMapper.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -53,6 +55,7 @@ void qMRMLThreeDViewsControllerWidgetPrivate::updateWidgetFromMRML()
   Q_ASSERT(this->ActiveMRMLThreeDViewNode);
   this->setOrthographicModeEnabled(
       this->ActiveMRMLThreeDViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
+  this->setStereoType(this->ActiveMRMLThreeDViewNode->GetStereoType());
 }
 
 //---------------------------------------------------------------------------
@@ -74,6 +77,32 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // ResetFocalPoint button
   connect(this->CenterButton, SIGNAL(clicked()), SLOT(resetFocalPoint()));
+
+  // StereoType actions
+  this->StereoTypesMapper = new qMRMLActionSignalMapper(widget);
+  this->StereoTypesMapper->setMapping(this->actionNoStereo,
+                                      vtkMRMLViewNode::NoStereo);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToAnaglyphStereo,
+                                      vtkMRMLViewNode::Anaglyph);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToCrystalEyesStereo,
+                                      vtkMRMLViewNode::CrystalEyes);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToInterlacedStereo,
+                                      vtkMRMLViewNode::Interlaced);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToRedBlueStereo,
+                                      vtkMRMLViewNode::RedBlue);
+  QActionGroup* stereoModesActions = new QActionGroup(widget);
+  stereoModesActions->setExclusive(true);
+  stereoModesActions->addAction(this->actionNoStereo);
+  stereoModesActions->addAction(this->actionSwitchToRedBlueStereo);
+  stereoModesActions->addAction(this->actionSwitchToAnaglyphStereo);
+  stereoModesActions->addAction(this->actionSwitchToInterlacedStereo);
+  //stereoModesActions->addAction(this->actionSwitchToCrystalEyesStereo);
+  QMenu* stereoModesMenu = new QMenu("Stereo Modes", widget);
+  stereoModesMenu->addActions(stereoModesActions->actions());
+  this->StereoButton->setMenu(stereoModesMenu);
+  connect(this->StereoTypesMapper, SIGNAL(mapped(int)), SLOT(setStereoType(int)));
+  connect(stereoModesActions, SIGNAL(triggered(QAction*)),
+          this->StereoTypesMapper, SLOT(map(QAction*)));
 }
 
 // --------------------------------------------------------------------------
@@ -142,6 +171,23 @@ void qMRMLThreeDViewsControllerWidgetPrivate::resetFocalPoint()
     return;
     }
   this->ActiveMRMLThreeDViewNode->InvokeEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::setStereoType(int newStereoType)
+{
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+
+  this->actionNoStereo->setChecked(newStereoType == vtkMRMLViewNode::NoStereo);
+  this->actionSwitchToAnaglyphStereo->setChecked(newStereoType == vtkMRMLViewNode::Anaglyph);
+  this->actionSwitchToCrystalEyesStereo->setChecked(newStereoType == vtkMRMLViewNode::CrystalEyes);
+  this->actionSwitchToInterlacedStereo->setChecked(newStereoType == vtkMRMLViewNode::Interlaced);
+  this->actionSwitchToRedBlueStereo->setChecked(newStereoType == vtkMRMLViewNode::RedBlue);
+
+  this->ActiveMRMLThreeDViewNode->SetStereoType(newStereoType);
 }
 
 // --------------------------------------------------------------------------

@@ -188,6 +188,8 @@ public:
     };
 
   /// events
+  /// Ideally, the events defined below could be handle by
+  /// a MRMLViewNodeLogic
   enum
     {
       AnimationModeEvent = 19001,
