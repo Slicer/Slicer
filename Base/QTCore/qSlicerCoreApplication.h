@@ -122,7 +122,7 @@ public:
 
   ///
   /// Return true is this instance of Slicer is running from an installed directory
-  bool isInstalled();
+  bool isInstalled()const;
 
 #ifdef Slicer3_USE_PYTHONQT
   ///

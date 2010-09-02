@@ -41,6 +41,9 @@
 #include "qSlicerCLIExecutableModuleFactory.h"
 #include "qSlicerApplication.h"
 
+// Slicer includes
+#include "vtkSlicerVersionConfigure.h" // For Slicer3_VERSION_FULL
+
 // VTK includes
 //#include <vtkObject.h>
 
@@ -51,7 +54,7 @@ int main(int argc, char* argv[])
   ctkLogger::configure();
 
   qSlicerApplication app(argc, argv);
-  app.setApplicationName("Slicer");
+  app.setApplicationName("3D Slicer");
 
   //app.setApplicationVersion();
   //app.setWindowIcon(QIcon(":Icons/..."));
@@ -101,6 +104,7 @@ int main(int argc, char* argv[])
   
   // Create main window
   qSlicerMainWindow window;
+  window.setWindowTitle(window.windowTitle()+ " " + Slicer3_VERSION_FULL);
   
   // Load all available modules
   QStringList moduleNames = moduleManager->factoryManager()->moduleNames();

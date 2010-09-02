@@ -307,6 +307,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   CTK_D(qSlicerCoreApplication);
 
   this->setOrganizationName("NAMIC");
+  this->setApplicationVersion(Slicer3_VERSION_FULL);
 
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
@@ -427,7 +428,8 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     
   if (options->displayVersionAndExit())
     {
-    std::cout << qPrintable(this->applicationName()) << " " << Slicer3_VERSION_FULL << std::endl;
+    std::cout << qPrintable(this->applicationName() + " " +
+                            this->applicationVersion()) << std::endl;
     d->terminate();
     return;
     }
@@ -510,12 +512,13 @@ QSettings* qSlicerCoreApplication::newSettings(const QString& organization,
 CTK_GET_CXX(qSlicerCoreApplication, QString, intDir, IntDir);
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplication::isInstalled()
+bool qSlicerCoreApplication::isInstalled()const
 {
+  CTK_D(const qSlicerCoreApplication);
 #ifdef _WIN32
-  return QFile::exists(this->slicerHome()+"/bin/vtk.exe");
+  return QFile::exists(d->SlicerBin+"/vtk.exe");
 #else
-  return QFile::exists(this->slicerHome()+"/bin/vtk");
+  return QFile::exists(d->SlicerBin+"/vtk");
 #endif
 }
 
