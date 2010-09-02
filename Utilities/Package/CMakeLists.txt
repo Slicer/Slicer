@@ -114,7 +114,7 @@ endif(CMAKE_SYSTEM MATCHES "SunOS.*")
 # -------------------------------------------------------------------------
 # Find and install python
 
-if(Slicer3_USE_PYTHON)
+if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
   set(PYTHON_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/python-build")
   if(WIN32 AND NOT EXISTS "${PYTHON_DIR}" AND EXISTS "${PYTHON_INCLUDE_PATH}")
     get_filename_component(PYTHON_DIR "${PYTHON_INCLUDE_PATH}" PATH)
@@ -126,7 +126,7 @@ if(Slicer3_USE_PYTHON)
       USE_SOURCE_PERMISSIONS
       )
   endif(EXISTS "${PYTHON_DIR}")
-  
+
   #install python dll.
   if(WIN32)
     get_filename_component(PYTHON_LIB_BASE ${PYTHON_LIBRARY} NAME_WE)
@@ -157,7 +157,7 @@ if(Slicer3_USE_QT)
       GET_FILENAME_COMPONENT(QT_DLL_PATH_tmp ${QT_QMAKE_EXECUTABLE} PATH)
       INSTALL(FILES ${QT_DLL_PATH_tmp}/${qtlib}4.dll DESTINATION bin COMPONENT Runtime)
     ENDIF (NOT WIN32)
-    
+
   ENDFOREACH(qtlib)
   
   IF(Slicer3_USE_PYTHONQT)
