@@ -6,6 +6,7 @@
 def tcl(cmd):
   global _tpycl
   try:
+    import os
     os.environ['Slicer3_HOME']
   except KeyError:
     home = os.path.dirname(os.path.dirname(sys.executable))
