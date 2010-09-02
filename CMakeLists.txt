@@ -105,7 +105,7 @@ endif(APPLE)
 set(Slicer3_VERSION_MAJOR "4")
 set(Slicer3_VERSION_MINOR "0")
 if(NOT Slicer3_VERSION_PATCH)
-  set(Slicer3_VERSION_PATCH "0")
+  set(Slicer3_VERSION_PATCH "alpha")
 endif(NOT Slicer3_VERSION_PATCH)
 set(Slicer3_VERSION "${Slicer3_VERSION_MAJOR}.${Slicer3_VERSION_MINOR}")
 set(Slicer3_VERSION_FULL "${Slicer3_VERSION}.${Slicer3_VERSION_PATCH}")
@@ -244,10 +244,10 @@ set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
 #-----------------------------------------------------------------------------
 ## Python
 option(Slicer3_USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
-if(Slicer3_USE_PYTHON)
+if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
   find_package(PythonLibs)
   find_package(PythonInterp)
-endif(Slicer3_USE_PYTHON)
+endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
 
 #-----------------------------------------------------------------------------
 ## ITK
