@@ -26,6 +26,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     destructor {}
 
     public variable sliceStep 1  ;# the size of the slice increment/decrement
+    public variable calculateAnnotations 1  ;# include annotation calculation (turned off for slicer4)
 
     variable _actionStartRAS "0 0 0"
     variable _actionStartXY "0 0"
@@ -337,7 +338,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  
   # MRML Scene update probably means we need to create a new model intersection SWidget
   if { $caller == $::slicer3::MRMLScene && 
        ((($event == "NodeAddedEvent" || $event == "NodeRemovedEvent") && ![$::slicer3::MRMLScene GetIsUpdating]) || 
@@ -345,7 +345,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         $event == "SceneImportedEvent") } {
     $this updateSWidgets
   }
-
 
   #
   # get the current event info
@@ -410,33 +409,39 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     $this resizeSliceNode
   } 
 
-  # TODO: the annotations seem to be very time consuming to calculate
-  # but most of the time they will not be displayed - instead we should
-  # move the calculation into the DelayedAnnotation method
 
-  #
-  # cancel any scheduled annotations
-  #
-  if { [itcl::find class ::SliceSWidget] == "::SliceSWidget"} {
-      set swidgets [itcl::find objects -class ::SliceSWidget]
-      foreach sw $swidgets {
-          $sw cancelDelayedAnnotation
-      }
-  }
+  if { 0 } {
 
-  #
-  # update the annotations even if they aren't currently visible
-  # - this way the values will be correct when the corner annotation
-  #   are eventually made visible
-  #
-  set annotationsUpdated false
-  set link [$_sliceCompositeNode GetLinkedControl]
-  if { $link == 1 && [$this isCompareViewMode] == 1 && ([$this isCompareViewer] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
-      $this updateAnnotations $r $a $s
-      set annotationsUpdated true
-  } else {
-      $this updateAnnotation $r $a $s
-      set annotationsUpdated true
+    # TODO: the annotations seem to be very time consuming to calculate
+    # but most of the time they will not be displayed - instead we should
+    # move the calculation into the DelayedAnnotation method
+
+    #
+    # cancel any scheduled annotations
+    #
+    if { [itcl::find class ::SliceSWidget] == "::SliceSWidget"} {
+        set swidgets [itcl::find objects -class ::SliceSWidget]
+        foreach sw $swidgets {
+            $sw cancelDelayedAnnotation
+        }
+    }
+
+
+    #
+    # update the annotations even if they aren't currently visible
+    # - this way the values will be correct when the corner annotation
+    #   are eventually made visible
+    #
+    set annotationsUpdated false
+    set link [$_sliceCompositeNode GetLinkedControl]
+    if { $link == 1 && [$this isCompareViewMode] == 1 && 
+          ([$this isCompareViewer] == 1 || [$_sliceNode GetSingletonTag] == "Red") } {
+        $this updateAnnotations $r $a $s
+        set annotationsUpdated true
+    } else {
+        $this updateAnnotation $r $a $s
+        set annotationsUpdated true
+    }
   }
 
   #
