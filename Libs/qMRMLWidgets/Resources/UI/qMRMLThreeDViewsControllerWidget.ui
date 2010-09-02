@@ -71,6 +71,9 @@
      </item>
      <item row="0" column="2">
       <widget class="QToolButton" name="ThreeDViewGrabButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Capture a screenshot of the 3D view.</string>
        </property>
@@ -99,6 +102,9 @@
      </item>
      <item row="0" column="4">
       <widget class="QToolButton" name="SpinButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Spin the 3D view.</string>
        </property>
@@ -148,6 +154,9 @@
      </item>
      <item row="1" column="2">
       <widget class="QToolButton" name="SceneSnapshotButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Capture and name a scene snapshot.</string>
        </property>
@@ -176,6 +185,9 @@
      </item>
      <item row="1" column="4">
       <widget class="QToolButton" name="RockButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Rock the 3D view.</string>
        </property>
@@ -224,6 +236,9 @@
      </item>
      <item row="2" column="2">
       <widget class="QToolButton" name="SelectSceneSnapshotMenuButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Restore or delete saved scene snapshots.</string>
        </property>
