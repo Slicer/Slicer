@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------
 # Find and install Tcl
-IF (VTK_WRAP_TCL)
+IF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
   if(NOT Slicer3_TCL_DIR)
     if(TCL_INCLUDE_PATH)
       get_filename_component(Slicer3_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
@@ -15,7 +15,7 @@ IF (VTK_WRAP_TCL)
     set(Slicer3_TCL_DIR "")
   endif(NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
     NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
-ENDIF (VTK_WRAP_TCL)
+ENDIF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
 
 # Note: this is probably dangerous if Tcl is somewhere in /usr/local, as it
 # ends up installing the whole /usr/local to the Slicer3 install tree :(
@@ -25,7 +25,7 @@ ENDIF (VTK_WRAP_TCL)
 #  are doing (i.e. they have Tcl/Tk installed in a standalone directory 
 # like /opt/tcltk8.5.0)
 
-IF (VTK_WRAP_TCL)
+IF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
   if(Slicer3_TCL_DIR)
     install(DIRECTORY
       ${Slicer3_TCL_DIR}/
@@ -33,7 +33,7 @@ IF (VTK_WRAP_TCL)
       USE_SOURCE_PERMISSIONS
       )
   endif(Slicer3_TCL_DIR)
-ENDIF (VTK_WRAP_TCL)
+ENDIF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
 
 # In the following section we tell the packager to include libslicerlibcurl.so
 # in the CPACK package, because we build it as a .so on Solaris,
