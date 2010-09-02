@@ -92,6 +92,10 @@ const char* vtkMRMLViewNode::GetNodeTagName()
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetRenderMode ( int m )
 {
+  if (m == this->RenderMode)
+    {
+    return;
+    }
   switch (m)
     {
     case vtkMRMLViewNode::Perspective:
@@ -113,10 +117,13 @@ void vtkMRMLViewNode::SetRenderMode ( int m )
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetStereoType ( int m )
 {
+  if (m == this->StereoType)
+    {
+    return;
+    }
   switch ( m )
     {
     case vtkMRMLViewNode::NoStereo:
@@ -142,14 +149,15 @@ void vtkMRMLViewNode::SetStereoType ( int m )
     {
     this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
     }
-
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetAnimationMode ( int m )
 {
+  if (m == this->AnimationMode)
+    {
+    return;
+    }
   switch ( m )
     {
     case vtkMRMLViewNode::Off:
@@ -169,13 +177,15 @@ void vtkMRMLViewNode::SetAnimationMode ( int m )
     {
     this->InvokeEvent ( vtkMRMLViewNode::AnimationModeEvent );
     }
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetBoxVisible ( int m )
 {
+  if (m == this->BoxVisible)
+    {
+    return;
+    }
   switch ( m )
     {
     case 0:
@@ -197,10 +207,13 @@ void vtkMRMLViewNode::SetBoxVisible ( int m )
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetFiducialsVisible ( int m )
 {
+  if (m == this->FiducialsVisible)
+    {
+    return;
+    }
   switch ( m )
     {
     case 0:
@@ -217,14 +230,15 @@ void vtkMRMLViewNode::SetFiducialsVisible ( int m )
     {
     this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
     }
-
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetFiducialLabelsVisible ( int m )
 {
+  if (m == this->FiducialLabelsVisible)
+    {
+    return;
+    }
   switch ( m )
     {
     case 0:
@@ -241,13 +255,15 @@ void vtkMRMLViewNode::SetFiducialLabelsVisible ( int m )
     {
     this->InvokeEvent ( vtkMRMLViewNode::VisibilityEvent );
     }
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetAxisLabelsVisible ( int m )
 {
+  if (m == this->AxisLabelsVisible)
+    {
+    return;
+    }
   switch ( m )
     {
     case 0:
@@ -269,13 +285,17 @@ void vtkMRMLViewNode::SetAxisLabelsVisible ( int m )
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::SetBackgroundColor ( double *color )
 {
+  if (this->BackgroundColor[0] == color[0] &&
+      this->BackgroundColor[1] == color[1] &&
+      this->BackgroundColor[2] == color[2])
+    {
+    return;
+    }
   this->BackgroundColor[0] = color[0];
   this->BackgroundColor[1] = color[1];
   this->BackgroundColor[2] = color[2];
   this->InvokeEvent ( vtkMRMLViewNode::BackgroundColorEvent );
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
@@ -388,8 +408,6 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " renderMode=\"" << "Orthographic" << "\"";
     }
-
-
 }
 
 //----------------------------------------------------------------------------
@@ -472,7 +490,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->FiducialLabelsVisible = 0;
         }
       }
-
 
     else if (!strcmp(attName, "axisLabelsVisible")) 
       {
@@ -632,7 +649,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->Active = 0;
         }
       }
-
     else if (!strcmp(attName, "visibility")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -644,15 +660,10 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->Visibility = 0;
         }
       }
-
     }
-    
     
   this->EndModify(disabledModify);
 }
-
-
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
