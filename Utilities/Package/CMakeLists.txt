@@ -136,7 +136,7 @@ if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
       DESTINATION bin
       COMPONENT Runtime)
   endif()
-endif(Slicer3_USE_PYTHON)
+endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
 
 # -------------------------------------------------------------------------
 # Find and install QT
