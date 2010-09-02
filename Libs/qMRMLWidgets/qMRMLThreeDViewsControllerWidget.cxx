@@ -25,6 +25,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <ctkButtonGroup.h>
 
 // qMRML includes
 #include "qMRMLThreeDViewsControllerWidget.h"
@@ -52,12 +53,16 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::updateWidgetFromMRML()
 {
+  CTK_P(qMRMLThreeDViewsControllerWidget);
   Q_ASSERT(this->ActiveMRMLThreeDViewNode);
+
+  p->setEnabled(this->ActiveMRMLThreeDViewNode != 0); // Enable/disable widget
   this->setOrthographicModeEnabled(
       this->ActiveMRMLThreeDViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
   this->setStereoType(this->ActiveMRMLThreeDViewNode->GetStereoType());
   this->set3DAxisVisible(this->ActiveMRMLThreeDViewNode->GetBoxVisible());
   this->set3DAxisLabelVisible(this->ActiveMRMLThreeDViewNode->GetAxisLabelsVisible());
+  this->setAnimationMode(this->ActiveMRMLThreeDViewNode->GetAnimationMode());
 }
 
 //---------------------------------------------------------------------------
@@ -129,6 +134,16 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   connect(this->actionSetLightBlueBackground, SIGNAL(triggered()), SLOT(setLightBlueBackground()));
   connect(this->actionSetWhiteBackground, SIGNAL(triggered()), SLOT(setWhiteBackground()));
   connect(this->actionSetBlackBackground, SIGNAL(triggered()), SLOT(setBlackBackground()));
+
+  // SpinView, RockView buttons
+  this->AnimateViewButtonGroup = new ctkButtonGroup(widget);
+  this->AnimateViewButtonGroup->addButton(this->SpinButton, vtkMRMLViewNode::Spin);
+  this->AnimateViewButtonGroup->addButton(this->RockButton, vtkMRMLViewNode::Rock);
+  this->AnimateViewButtonGroup = new ctkButtonGroup(widget);
+  this->AnimateViewButtonGroup->addButton(this->SpinButton);
+  this->AnimateViewButtonGroup->addButton(this->RockButton);
+  connect(this->SpinButton, SIGNAL(toggled(bool)), SLOT(onSpinViewButtonToggled(bool)));
+  connect(this->RockButton, SIGNAL(toggled(bool)), SLOT(onRockViewButtonToggled(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -207,12 +222,6 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setStereoType(int newStereoType)
     return;
     }
 
-  this->actionNoStereo->setChecked(newStereoType == vtkMRMLViewNode::NoStereo);
-  this->actionSwitchToAnaglyphStereo->setChecked(newStereoType == vtkMRMLViewNode::Anaglyph);
-  this->actionSwitchToCrystalEyesStereo->setChecked(newStereoType == vtkMRMLViewNode::CrystalEyes);
-  this->actionSwitchToInterlacedStereo->setChecked(newStereoType == vtkMRMLViewNode::Interlaced);
-  this->actionSwitchToRedBlueStereo->setChecked(newStereoType == vtkMRMLViewNode::RedBlue);
-
   this->ActiveMRMLThreeDViewNode->SetStereoType(newStereoType);
 }
 
@@ -241,10 +250,6 @@ void qMRMLThreeDViewsControllerWidgetPrivate::set3DAxisLabelVisible(bool visible
 // --------------------------------------------------------------------------
 namespace
 {
-//bool isLightBlueColor(double color[3])
-//{
-//  return color[0] == 0.70196 && color[1] == 0.70196 && color[2] == 0.90588;
-//}
 bool isWhiteColor(double color[3])
 {
   return color[0] == 1.0 && color[1] == 1.0 && color[2] == 1.0;
@@ -293,6 +298,26 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setBackgroundColor(double newBackg
 }
 
 // --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::onSpinViewButtonToggled(bool enabled)
+{
+  this->setAnimationMode(enabled ? vtkMRMLViewNode::Spin : vtkMRMLViewNode::Off);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::onRockViewButtonToggled(bool enabled)
+{
+  this->setAnimationMode(enabled ? vtkMRMLViewNode::Rock : vtkMRMLViewNode::Off);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::setAnimationMode(int newAnimationMode)
+{
+  this->SpinButton->setChecked(newAnimationMode == vtkMRMLViewNode::Spin);
+  this->RockButton->setChecked(newAnimationMode == vtkMRMLViewNode::Rock);
+  this->ActiveMRMLThreeDViewNode->SetAnimationMode(newAnimationMode);
+}
+
+// --------------------------------------------------------------------------
 // qMRMLThreeDViewsControllerWidget methods
 
 // --------------------------------------------------------------------------
@@ -304,6 +329,22 @@ qMRMLThreeDViewsControllerWidget::qMRMLThreeDViewsControllerWidget(QWidget* _par
 }
 
 // --------------------------------------------------------------------------
-CTK_SET_CXX(qMRMLThreeDViewsControllerWidget, vtkMRMLViewNode*,
-            setActiveMRMLThreeDViewNode, ActiveMRMLThreeDViewNode);
+void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
+    vtkMRMLViewNode * newActiveMRMLThreeDViewNode)
+{
+  CTK_D(qMRMLThreeDViewsControllerWidget);
+
+  QList<int> events;
+  events << vtkMRMLViewNode::AnimationModeEvent << vtkMRMLViewNode::StereoModeEvent
+      << vtkMRMLViewNode::VisibilityEvent << vtkMRMLViewNode::RenderModeEvent;
+  foreach(int event, events)
+    {
+    d->qvtkReconnect(d->ActiveMRMLThreeDViewNode, newActiveMRMLThreeDViewNode, event,
+                     d, SLOT(updateWidgetFromMRML()));
+    }
+
+  d->ActiveMRMLThreeDViewNode = newActiveMRMLThreeDViewNode;
+
+  d->updateWidgetFromMRML();
+}
 

@@ -29,7 +29,11 @@
 #include "qMRMLThreeDViewsControllerWidget.h"
 #include "ui_qMRMLThreeDViewsControllerWidget.h"
 
+// VTK includes
+#include <vtkWeakPointer.h>
+
 class QAction;
+class ctkButtonGroup;
 class qMRMLActionSignalMapper;
 class vtkMRMLViewNode;
 
@@ -74,10 +78,17 @@ public slots:
   void setWhiteBackground();
   void setBackgroundColor(double newBackgroundColor[3]);
 
+  void onSpinViewButtonToggled(bool enabled);
+  void onRockViewButtonToggled(bool enabled);
+  void setAnimationMode(int newAnimationMode);
+
 public:
 
-  vtkMRMLViewNode*         ActiveMRMLThreeDViewNode;
-  qMRMLActionSignalMapper* StereoTypesMapper;
+  // TODO In LayoutManager, use GetActive/IsActive flag ...
+  vtkWeakPointer<vtkMRMLViewNode>  ActiveMRMLThreeDViewNode;
+
+  qMRMLActionSignalMapper*         StereoTypesMapper;
+  ctkButtonGroup*                  AnimateViewButtonGroup;
   
 };
 

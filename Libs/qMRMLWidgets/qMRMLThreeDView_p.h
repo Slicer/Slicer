@@ -60,6 +60,9 @@ public slots:
 
   void onResetFocalPointRequestedEvent();
 
+  void onAnimationModeEvent();
+  void rockView();
+
 public:
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;

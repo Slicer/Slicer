@@ -41,6 +41,7 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -156,7 +157,11 @@ void qMRMLThreeDViewPrivate::onSceneImportedEvent()
 void qMRMLThreeDViewPrivate::onMRMLViewNodeModifiedEvent()
 {
   CTK_P(qMRMLThreeDView);
-  p->setRotateDegrees(this->MRMLViewNode->GetRotateDegrees());
+  p->setAnimationIntervalMs(this->MRMLViewNode->GetAnimationMs());
+  p->setPitchRollYawIncrement(this->MRMLViewNode->GetRotateDegrees());
+  p->setSpinIncrement(this->MRMLViewNode->GetSpinDegrees());
+  p->setRockIncrement(this->MRMLViewNode->GetRockCount());
+  p->setRockLength(this->MRMLViewNode->GetRockLength());
 }
 
 // --------------------------------------------------------------------------
@@ -177,6 +182,31 @@ void qMRMLThreeDViewPrivate::onResetFocalPointRequestedEvent()
   // Restore visibility state
   this->MRMLViewNode->SetBoxVisible(savedBoxVisibile);
   this->MRMLViewNode->SetAxisLabelsVisible(savedAxisLabelVisible);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewPrivate::onAnimationModeEvent()
+{
+  CTK_P(qMRMLThreeDView);
+  if (this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin)
+    {
+    p->setSpinEnabled(true);
+    }
+  else if (this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock)
+    {
+    p->setRockEnabled(true);
+    }
+  else
+    {
+    p->setRockEnabled(false);
+    p->setSpinEnabled(false);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewPrivate::rockView()
+{
+  qDebug() << "rockView";
 }
 
 // --------------------------------------------------------------------------
@@ -304,7 +334,14 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
     d->MRMLViewNode, newViewNode,
     vtkMRMLViewNode::ResetFocalPointRequestedEvent, d, SLOT(onResetFocalPointRequestedEvent()));
 
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkMRMLViewNode::AnimationModeEvent, d, SLOT(onAnimationModeEvent()));
+
   d->MRMLViewNode = newViewNode;
+
+  d->onMRMLViewNodeModifiedEvent();
+  d->onAnimationModeEvent();
 }
 
 //---------------------------------------------------------------------------

@@ -123,9 +123,6 @@
      </item>
      <item row="0" column="4">
       <widget class="QToolButton" name="SpinButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="toolTip">
         <string>Spin the 3D view.</string>
        </property>
@@ -206,9 +203,6 @@
      </item>
      <item row="1" column="4">
       <widget class="QToolButton" name="RockButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="toolTip">
         <string>Rock the 3D view.</string>
        </property>
