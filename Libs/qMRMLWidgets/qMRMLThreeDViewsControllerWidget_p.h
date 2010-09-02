@@ -69,6 +69,11 @@ public slots:
   void set3DAxisVisible(bool visible);
   void set3DAxisLabelVisible(bool visible);
 
+  void setLightBlueBackground();
+  void setBlackBackground();
+  void setWhiteBackground();
+  void setBackgroundColor(double newBackgroundColor[3]);
+
 public:
 
   vtkMRMLViewNode*         ActiveMRMLThreeDViewNode;

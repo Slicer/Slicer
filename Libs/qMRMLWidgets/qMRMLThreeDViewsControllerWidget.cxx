@@ -106,15 +106,29 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   connect(stereoTypesActions, SIGNAL(triggered(QAction*)),
           this->StereoTypesMapper, SLOT(map(QAction*)));
 
-  // Show 3D Axis, 3D Axis label
   QMenu* visibilityMenu = new QMenu("Visibility", widget);
+  this->VisibilityButton->setMenu(visibilityMenu);
+
+  // Show 3D Axis, 3D Axis label
   visibilityMenu->addAction(this->actionSet3DAxisVisible);
   visibilityMenu->addAction(this->actionSet3DAxisLabelVisible);
-  this->VisibilityButton->setMenu(visibilityMenu);
   connect(this->actionSet3DAxisVisible, SIGNAL(triggered(bool)),
           SLOT(set3DAxisVisible(bool)));
   connect(this->actionSet3DAxisLabelVisible, SIGNAL(triggered(bool)),
           SLOT(set3DAxisLabelVisible(bool)));
+
+  // Background color
+  QActionGroup* backgroundColorActions = new QActionGroup(widget);
+  backgroundColorActions->setExclusive(true);
+  visibilityMenu->addAction(this->actionSetLightBlueBackground);
+  visibilityMenu->addAction(this->actionSetBlackBackground);
+  visibilityMenu->addAction(this->actionSetWhiteBackground);
+  backgroundColorActions->addAction(this->actionSetLightBlueBackground);
+  backgroundColorActions->addAction(this->actionSetBlackBackground);
+  backgroundColorActions->addAction(this->actionSetWhiteBackground);
+  connect(this->actionSetLightBlueBackground, SIGNAL(triggered()), SLOT(setLightBlueBackground()));
+  connect(this->actionSetWhiteBackground, SIGNAL(triggered()), SLOT(setWhiteBackground()));
+  connect(this->actionSetBlackBackground, SIGNAL(triggered()), SLOT(setBlackBackground()));
 }
 
 // --------------------------------------------------------------------------
@@ -205,6 +219,10 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setStereoType(int newStereoType)
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::set3DAxisVisible(bool visible)
 {
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
   this->actionSet3DAxisVisible->setChecked(visible);
   this->ActiveMRMLThreeDViewNode->SetBoxVisible(visible);
 }
@@ -212,8 +230,66 @@ void qMRMLThreeDViewsControllerWidgetPrivate::set3DAxisVisible(bool visible)
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::set3DAxisLabelVisible(bool visible)
 {
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
   this->actionSet3DAxisLabelVisible->setChecked(visible);
   this->ActiveMRMLThreeDViewNode->SetAxisLabelsVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+namespace
+{
+//bool isLightBlueColor(double color[3])
+//{
+//  return color[0] == 0.70196 && color[1] == 0.70196 && color[2] == 0.90588;
+//}
+bool isWhiteColor(double color[3])
+{
+  return color[0] == 1.0 && color[1] == 1.0 && color[2] == 1.0;
+}
+bool isBlackColor(double color[3])
+{
+  return color[0] == 0.0 && color[1] == 0.0 && color[2] == 0.0;
+}
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::setLightBlueBackground()
+{
+  double lightBlue[3] = {0.70196, 0.70196, 0.90588};
+  this->setBackgroundColor(lightBlue);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::setBlackBackground()
+{
+  double black[3] = {0.0, 0.0, 0.0};
+  this->setBackgroundColor(black);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::setWhiteBackground()
+{
+  double white[3] = {1.0, 1.0, 1.0};
+  this->setBackgroundColor(white);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::setBackgroundColor(double newBackgroundColor[3])
+{
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+
+  this->actionSetLightBlueBackground->setChecked(!isWhiteColor(newBackgroundColor)
+                                                 && !isBlackColor(newBackgroundColor));
+  this->actionSetWhiteBackground->setChecked(isWhiteColor(newBackgroundColor));
+  this->actionSetBlackBackground->setChecked(isBlackColor(newBackgroundColor));
+
+  this->ActiveMRMLThreeDViewNode->SetBackgroundColor(newBackgroundColor);
 }
 
 // --------------------------------------------------------------------------

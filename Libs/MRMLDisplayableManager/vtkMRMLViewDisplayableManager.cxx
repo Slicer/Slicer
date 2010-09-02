@@ -67,10 +67,13 @@ public:
 
   void UpdateAxisVisibility();
   void UpdateAxisLabelVisibility();
+  void SetAxisLabelColor(double newAxisLabelColor[3]);
 
   void UpdateRenderMode();
 
   void UpdateStereoType();
+
+  void UpdateBackgroundColor();
 
   std::vector<vtkSmartPointer<vtkFollower> > AxisLabelActors;
   vtkSmartPointer<vtkActor>                  BoxAxisActor;
@@ -126,7 +129,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
     axisActor->SetPickable(0);
     this->AxisLabelActors.push_back(axisActor);
 
-    axisActor->GetProperty()->SetColor(1, 1, 1);
+    axisActor->GetProperty()->SetColor(1, 1, 1); // White
     axisActor->GetProperty()->SetDiffuse(0.0);
     axisActor->GetProperty()->SetAmbient(1.0);
     axisActor->GetProperty()->SetSpecular(0.0);
@@ -305,6 +308,17 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::SetAxisLabelColor(double newAxisLabelColor[3])
+{
+  for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
+    {
+    vtkFollower* actor = this->AxisLabelActors[i];
+    actor->GetProperty()->SetColor(newAxisLabelColor);
+    }
+  this->External->RequestRender();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRenderMode()
 {
   vtkDebugWithObjectMacro(this->External, << "UpdateRenderMode:" <<
@@ -356,6 +370,31 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateBackgroundColor()
+{
+  double backgroundColor[3] = {0.0, 0.0, 0.0};
+  this->External->GetMRMLViewNode()->GetBackgroundColor(backgroundColor);
+  vtkDebugWithObjectMacro(this->External, << "UpdateBackgroundColor (" <<
+                backgroundColor[0] << ", " << backgroundColor[1] << ", "
+                << backgroundColor[2] << ")");
+  this->External->GetRenderer()->SetBackground(backgroundColor);
+
+  // If new background color is White, switch axis color label to black
+  if (backgroundColor[0] == 1.0 && backgroundColor[1] == 1.0 && backgroundColor[2] == 1.0)
+    {
+    double black[3] = {0.0, 0.0, 0.0};
+    this->SetAxisLabelColor(black);
+    }
+  else
+    {
+    double white[3] = {1.0, 1.0, 1.0};
+    this->SetAxisLabelColor(white);
+    }
+
+  this->External->RequestRender();
+}
+
+//---------------------------------------------------------------------------
 // vtkMRMLViewDisplayableManager methods
 
 //---------------------------------------------------------------------------
@@ -382,6 +421,7 @@ void vtkMRMLViewDisplayableManager::AdditionnalInitializeStep()
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::RenderModeEvent);
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::VisibilityEvent);
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::StereoModeEvent);
+  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::BackgroundColorEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -441,6 +481,11 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
       {
       vtkDebugMacro(<< "ProcessMRMLEvents - StereoModeEvent");
       this->Internal->UpdateStereoType();
+      }
+    else if (event == vtkMRMLViewNode::BackgroundColorEvent)
+      {
+      vtkDebugMacro(<< "ProcessMRMLEvents - BackgroundColorEvent");
+      this->Internal->UpdateBackgroundColor();
       }
     }
   // Default MRML Event handler is NOT needed

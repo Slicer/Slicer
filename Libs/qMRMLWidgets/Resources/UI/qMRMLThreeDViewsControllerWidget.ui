@@ -349,6 +349,42 @@
     <string>3D axis label</string>
    </property>
   </action>
+  <action name="actionSetLightBlueBackground">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Light blue background</string>
+   </property>
+   <property name="toolTip">
+    <string>Set light blue background</string>
+   </property>
+  </action>
+  <action name="actionSetBlackBackground">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Black background</string>
+   </property>
+   <property name="toolTip">
+    <string>Set black background</string>
+   </property>
+  </action>
+  <action name="actionSetWhiteBackground">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>White background</string>
+   </property>
+   <property name="toolTip">
+    <string>Set white background</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
