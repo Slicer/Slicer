@@ -85,8 +85,9 @@ class Q_SLICER_BASE_QTCLI_EXPORT ButtonGroupWidgetWrapper: public QWidget
 {
   Q_OBJECT
 public:
-  ButtonGroupWidgetWrapper(QWidget* _parent, QButtonGroup* buttonGroup);
+  ButtonGroupWidgetWrapper(QWidget* parentWidget = 0);
 
+  QButtonGroup* buttonGroup()const;
   QString checkedValue();
 
   void setCheckedValue(const QString& value);

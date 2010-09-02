@@ -120,17 +120,23 @@ WIDGET_VALUE_WRAPPER(Enumeration, ButtonGroupWidgetWrapper, checkedValue, setChe
   this->WidgetValueWrappers.push_back(wrapper);
 
 //-----------------------------------------------------------------------------
-ButtonGroupWidgetWrapper::ButtonGroupWidgetWrapper(QWidget* _parent, QButtonGroup* buttonGroup)
- :QWidget(_parent), ButtonGroup(buttonGroup)
+ButtonGroupWidgetWrapper::ButtonGroupWidgetWrapper(QWidget* _parent)
+ :QWidget(_parent)
 {
+  this->ButtonGroup = new QButtonGroup(this);
   this->connect(this->ButtonGroup, SIGNAL(buttonClicked(int)),
                 this, SIGNAL(valueChanged()));
 }
 
 //-----------------------------------------------------------------------------
+QButtonGroup* ButtonGroupWidgetWrapper::buttonGroup()const
+{
+  return this->ButtonGroup;
+}
+
+//-----------------------------------------------------------------------------
 QString ButtonGroupWidgetWrapper::checkedValue()
 {
-  Q_ASSERT(this->ButtonGroup);
   QAbstractButton* button = this->ButtonGroup->checkedButton();
   Q_ASSERT(button);
   return button->text();
@@ -723,22 +729,21 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createEnumerationTagWidget(const Modul
 
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  QWidget * widget = new QWidget;
-  QButtonGroup* buttonGroup = new QButtonGroup(widget); 
-  qCTKFlowLayout * _layout = new qCTKFlowLayout;
-  widget->setLayout(_layout);
+  ButtonGroupWidgetWrapper * widget = new ButtonGroupWidgetWrapper;
+  qCTKFlowLayout * _layout = new qCTKFlowLayout(widget);
+  widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 
   for (ElementConstIterator sIt = sBeginIt; sIt != sEndIt; ++sIt)
     {
     QString value = QString::fromStdString(*sIt); 
-    QRadioButton * radio = new QRadioButton(value);
+    QRadioButton * radio = new QRadioButton(value, widget);
     _layout->addWidget(radio);
     radio->setChecked(defaultValue == value);
     // Add radio button to button group 
-    buttonGroup->addButton(radio); 
+    widget->buttonGroup()->addButton(radio); 
     }
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Enumeration, _name, _label,
-    new ButtonGroupWidgetWrapper(widget, buttonGroup));
+  widget->setLayout(_layout);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Enumeration, _name, _label, widget);
   return widget;
 }
 
