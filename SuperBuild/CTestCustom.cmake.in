@@ -202,7 +202,9 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # Since NUMPY has test that return build errors, let's add the following exception
   "WARNING non-zero return value in ctest from"
-   
+  
+  #Weave 
+  "UserWarning: 'licence' distribution option is deprecated; use 'license'"
   )
   
 SET(CTEST_CUSTOM_ERROR_EXCEPTION
