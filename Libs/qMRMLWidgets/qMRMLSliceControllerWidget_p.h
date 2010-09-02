@@ -54,7 +54,6 @@ class qMRMLSliceControllerWidgetPrivate: public QObject,
 public:
   CTK_DECLARE_PUBLIC(qMRMLSliceControllerWidget);
   qMRMLSliceControllerWidgetPrivate();
-  ~qMRMLSliceControllerWidgetPrivate();
 
   void setupUi(qMRMLWidget* widget);
 
