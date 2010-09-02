@@ -37,6 +37,7 @@
 // qMRML includes
 #include "qMRMLSlicesControllerToolBar.h"
 #include "ui_qMRMLSlicesControllerToolBar.h"
+#include "qMRMLActionSignalMapper.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -52,18 +53,6 @@
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSlicesControllerToolBar");
 //--------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-qMRMLActionSignalMapper::qMRMLActionSignalMapper(QObject* parentObject)
-  :QSignalMapper(parentObject)
-{
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLActionSignalMapper::map(QAction* sender)
-{
-  this->QSignalMapper::map(qobject_cast<QObject*>(sender));
-}
 
 //-----------------------------------------------------------------------------
 class qMRMLSlicesControllerToolBarPrivate

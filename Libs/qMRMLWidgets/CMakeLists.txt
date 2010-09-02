@@ -24,6 +24,8 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${qMRMLWidgets_SOURCE_DIR}/CMake")
 SET(qMRMLWidgets_SRCS
   qCTKFlowLayout.cxx
   qCTKFlowLayout.h
+  qMRMLActionSignalMapper.cxx
+  qMRMLActionSignalMapper.h
   qMRMLCollapsibleButton.cxx
   qMRMLCollapsibleButton.h
   qMRMLColorTableComboBox.cxx
@@ -97,6 +99,7 @@ SET(qMRMLWidgets_SRCS
 
 # Headers that should run through moc
 SET(qMRMLWidgets_MOC_SRCS
+  qMRMLActionSignalMapper.h
   qMRMLCollapsibleButton.h
   qMRMLLabelComboBox.h 
   qMRMLColorTableComboBox.h

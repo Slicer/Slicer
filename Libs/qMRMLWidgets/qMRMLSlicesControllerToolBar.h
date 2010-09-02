@@ -39,11 +39,9 @@ class QMRML_WIDGETS_EXPORT qMRMLSlicesControllerToolBar : public QToolBar
 {
   Q_OBJECT
   QVTK_OBJECT
-public:
-  /// Superclass typedef
-  typedef QToolBar Superclass;
 
-  /// Constructors
+public:
+  typedef QToolBar Superclass;
   explicit qMRMLSlicesControllerToolBar(QWidget* parent = 0);
   virtual ~qMRMLSlicesControllerToolBar(){}
 
@@ -84,15 +82,6 @@ protected:
   void connectNode(vtkMRMLNode*);
 private:
   CTK_DECLARE_PRIVATE(qMRMLSlicesControllerToolBar);
-};
-
-class qMRMLActionSignalMapper: public QSignalMapper
-{
-  Q_OBJECT
-public:
-  qMRMLActionSignalMapper(QObject* parent=0);
-public slots:
-  void map(QAction* sender);
 };
 
 #endif
