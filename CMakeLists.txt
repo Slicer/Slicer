@@ -426,6 +426,8 @@ ELSE(VTK_WRAP_TCL)
   # never will, so this is always likely to work.
   # This is needed so the launcher can set the paths to the correct subdirectories
   # for incrTcl and incrTk
+  set(TCL_TK_VERSION_DOT "8.4")
+  set(TCL_TK_VERSION "84")
   set(INCR_TCL_VERSION_DOT "3.2")
   set(INCR_TCL_VERSION "32")
 ENDIF (VTK_WRAP_TCL)
