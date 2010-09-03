@@ -414,6 +414,12 @@ if(Slicer3_USE_KWWIDGETS)
   endif()
 endif()
 
+if (Slicer3_USE_PYTHONQT_WITH_TCL)
+  if(UNIX)
+    list(APPEND slicer_DEPENDENCIES itcl)
+  endif()
+endif()
+
 if(Slicer3_USE_QT)
   list(APPEND slicer_DEPENDENCIES CTK)
 endif()
