@@ -18,7 +18,7 @@ INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3QTModuleMacros.cmake)
 
 SET(qtmodules
   Annotation
-  EMSegment
+  #EMSegment
   #Measurements
   SlicerWelcome
   TractographyDisplay
