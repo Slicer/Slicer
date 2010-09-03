@@ -132,21 +132,17 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode
   d->MRMLWindowLevelWidget->setMRMLVolumeNode(volumeNode);
   d->MRMLVolumeThresholdWidget->setMRMLVolumeNode(volumeNode);
 
-  qvtkReconnect(oldVolumeDisplayNode, volumeNode->GetDisplayNode(), vtkCommand::ModifiedEvent,
+  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() :0,
+                vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
-
-  d->Histogram->setDataArray(volumeNode->GetImageData()->GetPointData()->GetScalars());
+  d->Histogram->setDataArray(volumeNode &&
+                             volumeNode->GetImageData() &&
+                             volumeNode->GetImageData()->GetPointData() ?
+                             volumeNode->GetImageData()->GetPointData()->GetScalars() :
+                             0);
   d->Histogram->build();
   this->setEnabled(volumeNode != 0);
-  /*
-  disconnect(0, 0, this, SLOT(updateTransferFunction()));
-  connect(d->MRMLWindowLevelWidget, SIGNAL(windowLevelValuesChanged(double, double)),
-          this, SLOT(updateTransferFunction()));
-  connect(d->MRMLVolumeThresholdWidget, SIGNAL(thresholdValuesChanged(double, double)),
-          this, SLOT(updateTransferFunction()));
-  connect(d->MRMLVolumeThresholdWidget, SIGNAL(autoThresholdValueChanged(int)),
-          this, SLOT(updateTransferFunction()));
-  */
+
   this->updateWidgetFromMRML();
 }
 
@@ -161,7 +157,10 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
     d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
     d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
     }
-  this->updateTransferFunction();
+  if (this->isVisible())
+    {
+    this->updateTransferFunction();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -169,10 +168,6 @@ void qSlicerScalarVolumeDisplayWidget::updateTransferFunction()
 {
   CTK_D(qSlicerScalarVolumeDisplayWidget);
   // from vtkKWWindowLevelThresholdEditor::UpdateTransferFunction
-  if (!this->isVisible())
-    {
-    return;
-    }
   vtkMRMLVolumeNode* volumeNode = d->MRMLWindowLevelWidget->mrmlVolumeNode();
   Q_ASSERT(volumeNode == d->MRMLVolumeThresholdWidget->mrmlVolumeNode());
   vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;

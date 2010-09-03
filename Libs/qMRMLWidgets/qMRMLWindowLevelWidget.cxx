@@ -222,11 +222,9 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
   this->VolumeNode = volumeNode;
-  if (volumeNode)
-    {
-    this->setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-                                     volumeNode->GetVolumeDisplayNode()));
-    }
+  this->setMRMLVolumeDisplayNode(
+    volumeNode ?vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+      volumeNode->GetVolumeDisplayNode()) : 0);
 }
 
 // --------------------------------------------------------------------------

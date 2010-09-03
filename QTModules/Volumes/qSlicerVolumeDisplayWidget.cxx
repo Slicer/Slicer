@@ -23,20 +23,25 @@ qSlicerVolumeDisplayWidget::qSlicerVolumeDisplayWidget(QWidget* _parent) : Super
 // --------------------------------------------------------------------------
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
 {
-  if (volumeNode == 0)
+  if (!volumeNode)
     {
+    this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
+    this->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     return;
     }
-  vtkMRMLScalarVolumeNode* scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
+
+  vtkMRMLScene* scene = volumeNode->GetScene();
+  vtkMRMLScalarVolumeNode* scalarVolumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
   if (scalarVolumeNode && !scalarVolumeNode->GetLabelMap())
     {
-    this->ScalarVolumeDisplayWidget->setMRMLScene(volumeNode->GetScene());
+    this->ScalarVolumeDisplayWidget->setMRMLScene(scene);
     this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     this->setCurrentWidget(this->ScalarVolumeDisplayWidget);
     }
   else if (scalarVolumeNode && scalarVolumeNode->GetLabelMap())
     {
-    this->LabelMapVolumeDisplayWidget->setMRMLScene(volumeNode->GetScene());
+    this->LabelMapVolumeDisplayWidget->setMRMLScene(scene);
     this->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     this->setCurrentWidget(this->LabelMapVolumeDisplayWidget);
     }
