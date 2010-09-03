@@ -152,8 +152,8 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& inde
 {
   CTK_P(const qMRMLNodeComboBox);
   Q_ASSERT(p->model());
-  QString nodeId = 
-    p->model()->data(index, qMRML::UIDRole).toString();
+  QString nodeId =
+    this->ComboBox->model()->data(index, qMRML::UIDRole).toString();
   if (nodeId.isEmpty())
     {
     return 0;
@@ -346,8 +346,15 @@ void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
       }
     node = d->mrmlNodeFromIndex(currentViewIndex);
     }
-  emit currentNodeChanged(node);
-  emit currentNodeChanged(node != 0);
+  if (!node && (currentIndex != -1 || (d->NoneEnabled && currentIndex != 0)) )
+    {
+    this->setCurrentNode(this->nodeFromIndex(this->nodeCount()-1));
+    }
+  else
+    {
+    emit currentNodeChanged(node);
+    emit currentNodeChanged(node != 0);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -378,7 +385,6 @@ vtkMRMLNode* qMRMLNodeComboBox::nodeFromIndex(int index)const
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::removeCurrentNode()
 {
-  qDebug() << __FUNCTION__ << this->currentNode();
   this->mrmlScene()->RemoveNode(this->currentNode());
 }
 
@@ -430,11 +436,11 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
   // (typically if it is a tree model/view)
   // let's use a more generic one
   QModelIndexList indexes = d->ComboBox->model()->match(
-    this->model()->index(0, 0), qMRML::UIDRole, nodeID, 1,
+    d->ComboBox->model()->index(0, 0), qMRML::UIDRole, nodeID, 1,
     Qt::MatchRecursive | Qt::MatchExactly | Qt::MatchWrap);
   if (indexes.size() == 0)
     {
-    d->ComboBox->setRootModelIndex(this->model()->index(0, 0));
+    d->ComboBox->setRootModelIndex(d->ComboBox->model()->index(0, 0));
     d->ComboBox->setCurrentIndex(d->NoneEnabled ? 0 : -1);
     return;
     }
@@ -443,6 +449,7 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
   d->ComboBox->view()->setCurrentIndex(indexes[0]);
   QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
   QApplication::sendEvent(d->ComboBox->view(), &event);
+  QApplication::processEvents();
 }
 
 // --------------------------------------------------------------------------
