@@ -21,6 +21,7 @@
 // QT includes
 #include <QStringList>
 #include <QFile>
+#include <QFileInfo>
 #include <QDebug>
 
 // SlicerQt includes
@@ -77,10 +78,8 @@ QString qSlicerUtils::executableExtension()
 //-----------------------------------------------------------------------------
 QString qSlicerUtils::extractModuleNameFromLibraryName(const QString& libraryName)
 {
-  QString moduleName = libraryName;
-  
-  // Truncate string before first dot "."
-  moduleName.truncate(moduleName.indexOf("."));
+  QFileInfo libraryPath(libraryName);
+  QString moduleName = libraryPath.baseName();
   
   // Remove prefix 'lib' if needed
   if (moduleName.indexOf("lib") == 0)
