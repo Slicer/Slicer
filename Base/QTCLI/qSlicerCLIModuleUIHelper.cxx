@@ -674,13 +674,14 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
     qWarning() << "TransformTag - Unknown channel:" << channel;
     return 0; 
     }
-    
+  QString index = QString::fromStdString(moduleParameter.GetIndex());
   // TODO - title + " Transform"
-  // TODO - SetNoneEnabled(noneEnabled);
 
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
+  widget->setNoneEnabled(index.isEmpty());
+  widget->setAddEnabled(nodeType != "vtkMRMLTransformNode");
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
