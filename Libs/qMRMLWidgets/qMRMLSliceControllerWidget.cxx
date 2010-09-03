@@ -517,11 +517,9 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
       }
     }
 
-  if (this->ImageData != this->SliceLogic->GetImageData())
-    {
-    p->setImageData(this->SliceLogic->GetImageData());
-    }
-  
+  // no op if they are the same
+  p->setImageData(this->SliceLogic->GetImageData());
+
   // Set the scale increments to match the z spacing (rotated into slice space)
   const double * sliceSpacing = 0;
   sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();

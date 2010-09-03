@@ -896,14 +896,12 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     //Models
 
     this->UpdateImageData();
-
-    if ( this->SliceModelNode && 
-          this->SliceModelNode->GetModelDisplayNode() &&
-            this->SliceNode ) 
+    vtkMRMLDisplayNode* displayNode = this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : 0;
+    if ( displayNode && this->SliceNode )
       {
-      if (this->SliceModelNode->GetModelDisplayNode()->GetVisibility() != this->SliceNode->GetSliceVisible() )
+      if (displayNode->GetVisibility() != this->SliceNode->GetSliceVisible() )
         {
-        this->SliceModelNode->GetModelDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
+        displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
         }
 
 
@@ -911,13 +909,13 @@ void vtkMRMLSliceLogic::UpdatePipeline()
                  (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageData() != 0) ||
                  (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageData() != 0) )  )
         {
-        this->SliceModelNode->GetModelDisplayNode()->SetAndObserveTextureImageData(0);
+        displayNode->SetAndObserveTextureImageData(0);
         }
-      else if (this->SliceModelNode->GetModelDisplayNode()->GetTextureImageData() != this->ExtractModelTexture->GetOutput())
+      else if (displayNode->GetTextureImageData() != this->ExtractModelTexture->GetOutput())
         {
         // upadte texture
         this->ExtractModelTexture->Update();
-        this->SliceModelNode->GetModelDisplayNode()->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
+        displayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
         }
        
       }
