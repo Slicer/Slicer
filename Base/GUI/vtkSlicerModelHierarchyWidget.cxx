@@ -303,9 +303,9 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
       this->ModelDisplayWidget->SetModelNode(model);
       this->ModelDisplayWidget->SetModelHierarchyNode(NULL);
       }
-    else if (hmodel != NULL && hmodel->GetDisplayNode() != NULL && this->ModelDisplayWidget)
+    else if (hmodel != NULL && hmodel->GetModelDisplayNode() != NULL && this->ModelDisplayWidget)
       {
-      this->ModelDisplayWidget->SetModelDisplayNode(hmodel->GetDisplayNode());
+      this->ModelDisplayWidget->SetModelDisplayNode(hmodel->GetModelDisplayNode());
       this->ModelDisplayWidget->SetModelNode(NULL);
       this->ModelDisplayWidget->SetModelHierarchyNode(hmodel);
       }
@@ -749,7 +749,7 @@ void vtkSlicerModelHierarchyWidget::NodeParentChangedCallback(
       vtkMRMLModelHierarchyNode *parentNode = this->ModelHierarchyLogic->GetModelHierarchyNode ( mnode->GetID());
       if (parentNode != NULL)
         {
-        vtkMRMLModelDisplayNode *dnode = parentNode->GetDisplayNode();
+        vtkMRMLDisplayNode *dnode = parentNode->GetDisplayNode();
         if (dnode)
           {
           this->GetMRMLScene()->RemoveNode(dnode);

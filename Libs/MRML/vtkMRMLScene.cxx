@@ -33,6 +33,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
@@ -298,6 +299,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLLayoutNode *layout = vtkMRMLLayoutNode::New();
   this->RegisterNodeClass ( layout );
   layout->Delete();
+
+  vtkMRMLDisplayableHierarchyNode *dhier = vtkMRMLDisplayableHierarchyNode::New();
+  this->RegisterNodeClass ( dhier );
+  dhier->Delete();
   
   vtkMRMLModelHierarchyNode *mhier = vtkMRMLModelHierarchyNode::New();
   this->RegisterNodeClass ( mhier );

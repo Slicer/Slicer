@@ -36,6 +36,8 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLGlyphVolumeDisplayPropertiesNodeTest1.cxx
   vtkMRMLGridTransformNodeTest1.cxx
   vtkMRMLHierarchyNodeTest1.cxx
+  vtkMRMLDisplayableHierarchyNodeTest1.cxx
+  vtkMRMLDisplayableHierarchyNodeTest2.cxx
   vtkMRMLInteractionNodeTest1.cxx
   vtkMRMLLabelMapVolumeDisplayNodeTest1.cxx
   vtkMRMLLayoutNodeTest1.cxx
@@ -139,6 +141,8 @@ SIMPLE_TEST( vtkMRMLGlyphableVolumeSliceDisplayNodeTest1 )
 SIMPLE_TEST( vtkMRMLGlyphVolumeDisplayPropertiesNodeTest1 )
 SIMPLE_TEST( vtkMRMLGridTransformNodeTest1 )
 SIMPLE_TEST( vtkMRMLHierarchyNodeTest1 )
+SIMPLE_TEST( vtkMRMLDisplayableHierarchyNodeTest1 )
+SIMPLE_TEST( vtkMRMLDisplayableHierarchyNodeTest2 )
 SIMPLE_TEST( vtkMRMLInteractionNodeTest1 )
 SIMPLE_TEST( vtkMRMLLabelMapVolumeDisplayNodeTest1 )
 SIMPLE_TEST( vtkMRMLLayoutNodeTest1 )

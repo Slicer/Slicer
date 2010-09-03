@@ -17,6 +17,7 @@
 
 #include "TestingMacros.h"
 
+
 class vtkMRMLHierarchyNodeTestHelper1 : public vtkMRMLHierarchyNode
 {
 public:
@@ -36,7 +37,7 @@ public:
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
 };
- 
+
 int vtkMRMLHierarchyNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 >::New();
@@ -45,5 +46,14 @@ int vtkMRMLHierarchyNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_MRML_METHODS(vtkMRMLHierarchyNodeTestHelper1, node1);
 
+  TEST_SET_GET_STRING(node1, ParentNodeID);
+
+  vtkSmartPointer<vtkMRMLHierarchyNode> pnode = node1->GetParentNode();
+  std::cout << "GetParentNode returned " << (pnode == NULL ? "null" : "not null") << std::endl;
+
+  node1->SetParentNodeIDReference("testingID");
+  pnode = node1->GetParentNode();
+  std::cout << "GetParentNode returned " << (pnode == NULL ? "null" : "not null") << std::endl;
+  
   return EXIT_SUCCESS;
 }
