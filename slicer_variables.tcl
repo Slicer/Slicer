@@ -46,13 +46,16 @@ set ::WINDOWS "win32"
 #
 switch $::tcl_platform(os) {
     "SunOS" { set ::env(BUILD) $::SOLARIS }
+    "GNU/kFreeBSD" {
+        set ::env(BUILD) $::LINUX
+    }   
     "Linux" {           
         if {$::tcl_platform(machine) == "x86_64"} {
             set ::env(BUILD) $::LINUX_64 
         } else {
             set ::env(BUILD) $::LINUX
         }
-    }       
+    }
     "Darwin" { 
         if {$::tcl_platform(machine) == "i386"} {
             set ::env(BUILD) $::DARWIN_X86
@@ -103,8 +106,13 @@ if {$tcl_platform(os) == "SunOS"} {
   set ::TCL_VERSION tcl85
   set ::TCL_MINOR_VERSION 5
 } else {
-  set ::TCL_VERSION tcl
-  set ::TCL_MINOR_VERSION 4
+    if {$tcl_platform(os) == "GNU/kFreeBSD"} {
+        set ::TCL_VERSION tcl85
+        set ::TCL_MINOR_VERSION 5
+    } else {
+        set ::TCL_VERSION tcl
+        set ::TCL_MINOR_VERSION 4
+    }
 }
 
 # Set library, binary, etc. paths...
@@ -181,6 +189,9 @@ set ::USE_OPENCV "OFF"
  
 switch $::tcl_platform(os) {
     "SunOS" {
+        set shared_lib_ext "so"
+    }
+    "GNU/kFreeBSD" {
         set shared_lib_ext "so"
     }
     "Linux" {
@@ -309,8 +320,43 @@ switch $::tcl_platform(os) {
         set ::OPENIGTLINK_TEST_FILE $::OpenIGTLink_DIR/bin/libOpenIGTLink.$shared_lib_ext
         set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
-
     }
+    "GNU/kFreeBSD" {
+        set ::VTK_BUILD_SUBDIR ""
+        set ::Teem_BIN_DIR  $::Teem_BUILD_DIR/bin
+
+        set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.5
+        set ::INCR_TCL_LIB $::TCL_LIB_DIR/itcl3.4/libitcl3.4.so
+        set ::INCR_TK_LIB $::TCL_LIB_DIR/itk3.4/libitk3.4.so
+        set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.2/iwidgets.tcl
+        set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish30
+        if { $::USE_SYSTEM_PYTHON } {
+          error "need to define system python path for $::tcl_platform(os)"
+        }
+        set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.6.so
+        set ::PYTHON_EXECUTABLE $::PYTHON_BIN_DIR/bin/python
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.6
+        set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/numpy/core/numeric.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.6/site-packages/scipy/version.pyc
+        set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.5
+        set ::ITCL_TEST_FILE $::TCL_LIB_DIR/itcl3.4/libitcl3.4.so
+        set ::Teem_TEST_FILE $::Teem_BIN_DIR/unu
+        set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
+        set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
+        set ::OpenCV_TEST_FILE $::OpenCV_DIR/lib/libcv.so
+        set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.5.$shared_lib_ext
+        set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.5.$shared_lib_ext
+        set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.5
+        set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
+        set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
+        set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
+        set ::OPENIGTLINK_TEST_FILE $::OpenIGTLink_DIR/bin/libOpenIGTLink.$shared_lib_ext
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
+        set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
+    }
+
     "Windows NT" {
     # Windows NT currently covers WinNT, Win2000, XP Home, XP Pro
 
@@ -422,10 +468,22 @@ switch $::tcl_platform(os) {
         set ::MAKE "gmake -j[expr $numCPUs]"        
         set ::SERIAL_MAKE "gmake"
     }
+    "GNU/kFreeBSD" {
+        set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
+        set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
+        set ::GENERATOR "Unix Makefiles"
+        set ::COMPILER_PATH "/usr/bin"
+        set ::COMPILER "g++"
+        set ::FORTRAN_COMPILER "gfortran"
+        set ::CMAKE $::CMAKE_PATH/bin/cmake
+        set numCPUs [lindex [exec grep processor /proc/cpuinfo | wc] 0]
+        set ::MAKE "make -j [expr $numCPUs]"
+        set ::SERIAL_MAKE "make"
+    }
     "Linux" {
         set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
         set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
-        set ::GENERATOR "Unix Makefiles" 
+        set ::GENERATOR "Unix Makefiles"
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
         set ::FORTRAN_COMPILER "gfortran"

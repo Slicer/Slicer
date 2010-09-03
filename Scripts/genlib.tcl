@@ -257,6 +257,12 @@ switch $tcl_platform(os) {
         set isDarwin 0
         set isLinux 0
     }
+    "GNU/kFreeBSD" {
+        set isSolaris 0
+        set isWindows 0
+        set isDarwin 0
+        set isLinux 1
+    }
     "Linux" { 
         set isSolaris 0
         set isWindows 0
@@ -1210,6 +1216,11 @@ if { [BuildThis $::Teem_TEST_FILE "teem"] == 1 } {
 
     switch $::tcl_platform(os) {
       "SunOS" -
+      "GNU/kFreeBSD" {
+          set ::env("LD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
+          set zlib "libvtkzlib.so"
+          set png "libvtkpng.so"
+      }
       "Linux" {
           set ::env("LD_LIBRARY_PATH") "$::Slicer3_LIB/VTK-build/bin"
           set zlib "libvtkzlib.so"
