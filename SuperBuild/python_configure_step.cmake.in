@@ -1,11 +1,15 @@
 
 if(UNIX)
-  set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+  set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
   set(ENV{CXX} "@CMAKE_CXX_COMPILER@")
   
   set(with_tcl_param)
   
+  set(Slicer3_USE_KWWIDGETS "@Slicer3_USE_KWWIDGETS@")
+  set(Slicer3_USE_PYTHONQT_WITH_TCL "@Slicer3_USE_PYTHONQT_WITH_TCL@")
+  
   if(Slicer3_USE_KWWIDGETS OR Slicer3_USE_PYTHONQT_WITH_TCL)
+    set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:$ENV{LD_LIBRARY_PATH}")
     set(ENV{LDFLAGS} "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
     set(ENV{CPPFLAGS} "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")
     set(with_tcl_param "--with-tcl=@CMAKE_CURRENT_BINARY_DIR@/tcl-build")
