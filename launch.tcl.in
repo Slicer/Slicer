@@ -818,6 +818,11 @@ proc launch_SetPaths {} {
       set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Python$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/site-packages$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(VTK_BIN_DIR)$SEP$::env(PYTHONPATH)"
+	  set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/FreeSurfer$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/MRML$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/MRMLLogic$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/RemoteIO$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(Slicer3_HOME)/lib/vtkTeem$SEP$::env(PYTHONPATH)"
     }
 }
 
