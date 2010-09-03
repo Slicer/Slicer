@@ -409,7 +409,7 @@ proc launch_SetEnvironment {} {
 
       if { "@PYTHON_LIBRARY@" != "" } {
         # this is the variable used in superbuild
-        set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_LIBRARY@"]]
+        set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_LIBRARY@"]]]
       } else { 
           if {$::env(BUILD) == $::WINDOWS} {
             set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_INCLUDE_PATH@"]/PCbuild]
