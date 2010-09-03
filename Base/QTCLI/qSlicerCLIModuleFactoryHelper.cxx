@@ -18,10 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QFile>
-#include <QTextStream>
-
 // QtCLI includes
 #include "qSlicerCLIModuleFactoryHelper.h"
 
@@ -59,19 +55,5 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
     {
     app->addLibraryPath(path);
     }
-  QFile file("qSlicerCLIModuleFactoryHelper.txt");
-  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-    QTextStream out(&file);
-    out << "Slicer_HOME: " << app->slicerHome() << "\n";
-    out << "Int: " << app->intDir() << "\n";
-    out << "Plugins bin: " << Slicer3_INSTALL_PLUGINS_BIN_DIR << "\n";
-    out << "Plugins bin: " << Slicer3_INSTALL_PLUGINS_LIB_DIR << "\n";
-    foreach(const QString& path, cmdLineModulePaths)
-      {
-      out << path << "\n";
-      }
-    }
-  //qDebug() << "cmdLineModulePaths:" << cmdLineModulePaths;
   return cmdLineModulePaths; 
 }
