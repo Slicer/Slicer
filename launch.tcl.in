@@ -181,7 +181,7 @@ proc launch_SetEnvironment {} {
     if { [string match -nocase "windows*" $::tcl_platform(os)] } {
       set ext ".exe"
     }
-    
+    # if you change something here, please change it in qSlicerCoreApplication too
     if { [file exists $::env(Slicer3_HOME)/bin/vtkEncodeString$ext] } {
       set installed 1
     }

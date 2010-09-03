@@ -515,10 +515,11 @@ CTK_GET_CXX(qSlicerCoreApplication, QString, intDir, IntDir);
 bool qSlicerCoreApplication::isInstalled()const
 {
   CTK_D(const qSlicerCoreApplication);
+  // TODO: make the check more robust (using an environment variable?)
 #ifdef _WIN32
-  return QFile::exists(d->SlicerBin+"/vtk.exe");
+  return QFile::exists(d->SlicerBin+"/vtkEncodeString.exe");
 #else
-  return QFile::exists(d->SlicerBin+"/vtk");
+  return QFile::exists(d->SlicerBin+"/vtkEncodeString");
 #endif
 }
 
