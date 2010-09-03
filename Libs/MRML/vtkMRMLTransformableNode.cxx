@@ -146,9 +146,15 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
                                                   unsigned long event, 
                                                   void *vtkNotUsed(callData) )
 {
+  // as retrieving the parent transform node can be costly (browse the scene)
+  // do some checks here to prevent retrieving the node for nothing.
+  if (caller == NULL ||
+      event != vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+    return;
+    }
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
-  if (tnode != NULL && tnode == vtkMRMLTransformNode::SafeDownCast(caller) &&
-      event ==  vtkMRMLTransformableNode::TransformModifiedEvent)
+  if (tnode == caller)
     {
     //TODO don't send even on the scene but rather have vtkMRMLSliceLayerLogic listen to
     // TransformModifiedEvent

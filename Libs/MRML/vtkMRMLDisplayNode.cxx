@@ -154,7 +154,7 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
     {
-    this->SetColorNodeID(newID);
+    this->SetAndObserveColorNodeID(ColorNodeID);
     }
 }
 
@@ -484,27 +484,36 @@ void vtkMRMLDisplayNode::UpdateReferences()
 //----------------------------------------------------------------------------
 vtkMRMLColorNode* vtkMRMLDisplayNode::GetColorNode()
 {
-  vtkMRMLColorNode* node = NULL;
-  if (this->GetScene() && this->GetColorNodeID() )
+  if (this->ColorNode || !this->ColorNodeID)
     {
-    vtkMRMLNode* cnode = this->GetScene()->GetNodeByID(this->ColorNodeID);
-    node = vtkMRMLColorNode::SafeDownCast(cnode);
+    return this->ColorNode;
     }
-  return node;
+  vtkMRMLColorNode* cnode = NULL;
+  if (this->GetScene())
+    {
+    cnode = vtkMRMLColorNode::SafeDownCast(
+      this->GetScene()->GetNodeByID(this->GetColorNodeID()));
+    }
+  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+  return cnode;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
 {
-  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, NULL);
-
   this->SetColorNodeID(colorNodeID);
 
-  vtkMRMLNode *cnode = this->GetColorNode();
+  vtkMRMLColorNode* cnode = NULL;
+  if (this->GetScene())
+    {
+    cnode = vtkMRMLColorNode::SafeDownCast(
+      this->GetScene()->GetNodeByID(this->GetColorNodeID()));
+    }
 
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const std::string& colorNodeID)
 {
   this->SetAndObserveColorNodeID( colorNodeID.c_str() );

@@ -810,10 +810,11 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       tempCast->SetOutputScalarTypeToUnsignedChar();
       }
 
+    vtkImageData* backgroundImage = this->BackgroundLayer ? this->BackgroundLayer->GetImageData() : 0;
+    vtkImageData* foregroundImage = this->ForegroundLayer ? this->ForegroundLayer->GetImageData() : 0;
     if (!alphaBlending)
       {
-      if (!(this->BackgroundLayer && this->BackgroundLayer->GetImageData())
-          || !(this->ForegroundLayer && this->ForegroundLayer->GetImageData()))
+      if (!backgroundImage || !foregroundImage)
         {
         // not enough inputs for add/subtract, so use alpha blending
         // pipeline
@@ -826,8 +827,8 @@ void vtkMRMLSliceLogic::UpdatePipeline()
 
     if (!alphaBlending)
       {
-      tempMath->SetInput1( this->ForegroundLayer->GetImageData() );
-      tempMath->SetInput2( this->BackgroundLayer->GetImageData() );
+      tempMath->SetInput1( foregroundImage );
+      tempMath->SetInput2( backgroundImage );
       tempCast->SetInput( tempMath->GetOutput() );
       
       tempBlend->AddInput( tempCast->GetOutput() );
@@ -837,27 +838,27 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       {
       if (sliceCompositing ==  vtkMRMLSliceCompositeNode::Alpha)
         {
-        if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
+        if ( backgroundImage )
           {
-          tempBlend->AddInput( this->BackgroundLayer->GetImageData() );
+          tempBlend->AddInput( backgroundImage );
           tempBlend->SetOpacity( layerIndex++, 1.0 );
           }
-        if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
+        if ( foregroundImage )
           {
-          tempBlend->AddInput( this->ForegroundLayer->GetImageData() );
+          tempBlend->AddInput( foregroundImage );
           tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         }
       else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
         {
-        if ( this->ForegroundLayer && this->ForegroundLayer->GetImageData() )
+        if ( foregroundImage )
           {
-          tempBlend->AddInput( this->ForegroundLayer->GetImageData() );
+          tempBlend->AddInput( foregroundImage );
           tempBlend->SetOpacity( layerIndex++, 1.0 );
           }
-        if ( this->BackgroundLayer && this->BackgroundLayer->GetImageData() )
+        if ( backgroundImage )
           {
-          tempBlend->AddInput( this->BackgroundLayer->GetImageData() );
+          tempBlend->AddInput( backgroundImage );
           tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         
@@ -865,9 +866,10 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       }
 
     // always blending the label layer
-    if ( this->LabelLayer && this->LabelLayer->GetImageData() )
+    vtkImageData* labelImage = this->LabelLayer ? this->LabelLayer->GetImageData() : 0;
+    if ( labelImage )
       {
-      tempBlend->AddInput( this->LabelLayer->GetImageData() );
+      tempBlend->AddInput( labelImage );
       tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
       }
 
@@ -904,10 +906,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
         }
 
-
-      if (!((this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageData() != 0) ||
-                 (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageData() != 0) ||
-                 (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageData() != 0) )  )
+      if (!((backgroundImage != 0) || (foregroundImage != 0) || (labelImage != 0) )  )
         {
         displayNode->SetAndObserveTextureImageData(0);
         }
