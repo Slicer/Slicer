@@ -340,8 +340,11 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 
   d->MRMLViewNode = newViewNode;
 
-  d->onMRMLViewNodeModifiedEvent();
-  d->onAnimationModeEvent();
+  if (d->MRMLViewNode)
+    {
+    d->onMRMLViewNodeModifiedEvent();
+    d->onAnimationModeEvent();
+    }
 }
 
 //---------------------------------------------------------------------------
