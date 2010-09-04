@@ -154,7 +154,7 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
     {
-    this->SetAndObserveColorNodeID(ColorNodeID);
+    this->SetAndObserveColorNodeID(newID);
     }
 }
 
@@ -327,8 +327,7 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "colorNodeID") ||
              !strcmp(attName, "colorNodeRef")) 
       {
-      this->ColorNode = NULL;
-      this->SetColorNodeID(attValue);
+      this->SetAndObserveColorNodeID(attValue);
       //this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
       }
     else if (!strcmp(attName, "activeScalarName"))
@@ -376,7 +375,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetClipping(node->Clipping);
   this->SetSliceIntersectionVisibility(node->SliceIntersectionVisibility);
   this->SetAndObserveTextureImageData(node->TextureImageData);
-  this->SetColorNodeID(node->ColorNodeID);
+  this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
 
   this->EndModify(disabledModify);
@@ -489,11 +488,12 @@ vtkMRMLColorNode* vtkMRMLDisplayNode::GetColorNode()
     {
     return this->ColorNode;
     }
+  vtkWarningMacro( << "vtkMRMLDisplayNode::GetColorNode(): Change of color node has not been synchronized.");
   vtkMRMLColorNode* cnode = NULL;
   if (this->GetScene())
     {
     cnode = vtkMRMLColorNode::SafeDownCast(
-      this->GetScene()->GetNodeByID(this->GetColorNodeID()));
+      this->GetScene()->GetNodeByID(this->ColorNodeID));
     }
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
   return cnode;
@@ -508,7 +508,6 @@ void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
     cnode = vtkMRMLColorNode::SafeDownCast(
       this->GetScene()->GetNodeByID(colorNodeID));
     }
-
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
   this->SetColorNodeID(colorNodeID);
 }
