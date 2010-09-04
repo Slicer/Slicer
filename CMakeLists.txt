@@ -746,6 +746,19 @@ IF(Slicer3_USE_QT)
   SET(designer_launcher_project_name SlicerQT)
   GET_TARGET_PROPERTY(output_directory ${designer_launcher_project_name} LIBRARY_OUTPUT_DIRECTORY)
   SET(Slicer3_QT_PLUGIN_PATH ${output_directory})
+
+  # on Mac we need to include the path of each Qt Framework in DYLD_LIBRARY_PATH in the launcher.
+  IF(APPLE)
+    SET (QTLIBLIST QTCORE QTGUI QTNETWORK QTXML QTTEST QTSQL QTOPENGL QTWEBKIT PHONON QTXMLPATTERNS)
+
+    FOREACH(qtlib ${QTLIBLIST})
+      IF (QT_${qtlib}_LIBRARY_RELEASE AND APPLE)
+          GET_FILENAME_COMPONENT(QT_FRAMEWORK_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
+          SET(Slicer3_QT_FRAMEWORK_DIRS "lib/Qt/${QT_FRAMEWORK_NAME_tmp}/Versions/4:${Slicer3_QT_FRAMEWORK_DIRS}")
+      ENDIF()
+    ENDFOREACH(qtlib)
+  ENDIF(APPLE)
+    
 ENDIF(Slicer3_USE_QT)
 
 CONFIGURE_FILE(
