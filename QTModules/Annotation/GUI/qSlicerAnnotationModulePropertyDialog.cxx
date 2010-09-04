@@ -86,8 +86,8 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   QColor unselectedQColor;
   this->TurnColorArrayToQColor(unselectedColor,unselectedQColor);
 
+  ui.textUnselectedColorPickerButton->setDisplayColorName(false);
   ui.textUnselectedColorPickerButton->setColor(unselectedQColor);
-  ui.textUnselectedColorPickerButton->setText("Unselected Color");
 
   // load the selected text color
   double * selectedColor = this->m_logic->GetAnnotationTextSelectedColor(
@@ -95,8 +95,8 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   QColor selectedQColor;
   this->TurnColorArrayToQColor(selectedColor,selectedQColor);
 
+  ui.textSelectedColorPickerButton->setDisplayColorName(false);
   ui.textSelectedColorPickerButton->setColor(selectedQColor);
-  ui.textSelectedColorPickerButton->setText("Selected Color");
 
   // load the lock/unlock status
   int locked = this->m_logic->GetAnnotationLockedUnlocked(this->m_id);
@@ -931,7 +931,6 @@ void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor 
 
   this->m_logic->SetAnnotationTextUnselectedColor(this->m_id,color);
 
-  ui.textUnselectedColorPickerButton->setText("Unselected Color");
 }
 
 void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qcolor)
@@ -941,7 +940,6 @@ void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qc
 
   this->m_logic->SetAnnotationTextSelectedColor(this->m_id,color);
 
-  ui.textSelectedColorPickerButton->setText("Selected Color");
 
 }
 

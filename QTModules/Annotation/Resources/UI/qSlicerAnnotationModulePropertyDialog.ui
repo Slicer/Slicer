@@ -74,14 +74,14 @@
        <item row="0" column="2">
         <widget class="ctkColorPickerButton" name="textUnselectedColorPickerButton">
          <property name="text">
-          <string>Selected Color</string>
+          <string>Unselected Color</string>
          </property>
         </widget>
        </item>
        <item row="1" column="2">
         <widget class="ctkColorPickerButton" name="textSelectedColorPickerButton">
          <property name="text">
-          <string>Unselected Color</string>
+          <string>Selected Color</string>
          </property>
         </widget>
        </item>
@@ -229,7 +229,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Selected Color</string>
+          <string>Unselected Color</string>
          </property>
         </widget>
        </item>
@@ -311,7 +311,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Unselected Color</string>
+          <string>Selected Color</string>
          </property>
         </widget>
        </item>
@@ -388,14 +388,14 @@
        <item row="0" column="1">
         <widget class="ctkColorPickerButton" name="lineUnselectedColorPickerButton">
          <property name="text">
-          <string>Selected Color</string>
+          <string>Unselected Color</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="ctkColorPickerButton" name="lineSelectedColorPickerButton">
          <property name="text">
-          <string>Unselected Color</string>
+          <string>Selected Color</string>
          </property>
         </widget>
        </item>
