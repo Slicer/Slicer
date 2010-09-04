@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>268</width>
+    <width>273</width>
     <height>110</height>
    </rect>
   </property>
@@ -242,7 +242,7 @@
        </property>
        <property name="icon">
         <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/SlicesFeaturesVisible.png</normaloff>:/Icons/SlicesFeaturesVisible.png</iconset>
+         <normaloff>:/Icons/VisibleOn.png</normaloff>:/Icons/VisibleOn.png</iconset>
        </property>
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>

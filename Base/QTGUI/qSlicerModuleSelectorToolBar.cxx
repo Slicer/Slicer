@@ -81,6 +81,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   // Modules pushbutton
   this->ModulesMenu = new QMenu(QObject::tr("Modules"),p);
   this->ModulesButton = new QPushButton(p);
+  this->ModulesButton->setToolTip(QObject::tr("Select a module from the module list"));
   this->ModulesButton->setMenu(this->ModulesMenu);
   QStyleOptionButton opt;
   this->ModulesButton->setFixedWidth(
@@ -95,6 +96,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->PreviousButton = new QToolButton(p);
   this->PreviousButton->setIcon(previousIcon);
   this->PreviousButton->setText(QObject::tr("Previous"));
+  this->PreviousButton->setToolTip(QObject::tr("Previous modules"));
   this->PreviousButton->setMenu(this->PreviousHistoryMenu);
   // selectPreviousModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
@@ -108,6 +110,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->NextButton = new QToolButton(p);
   this->NextButton->setIcon(nextIcon);
   this->NextButton->setText(QObject::tr("Next"));
+  this->NextButton->setToolTip(QObject::tr("Next modules"));
   this->NextButton->setMenu(this->NextHistoryMenu);
   // selectNextModule is called only if the toolbutton is clicked not if an
   // action in the history is triggered
@@ -120,6 +123,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->HistoryMenu = new QMenu(QObject::tr("Modules history"), p);
   this->HistoryButton = new QToolButton;
   this->HistoryButton->setIcon(historyIcon);
+  this->HistoryButton->setToolTip(QObject::tr("Modules history"));
   this->HistoryButton->setMenu(this->HistoryMenu);
   this->HistoryButton->setPopupMode(QToolButton::InstantPopup);
   p->addWidget(this->HistoryButton);
