@@ -13,36 +13,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+  This file was originally developed by Danielle Pace, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
-#ifndef __qSlicerEMSegmentDefinePreprocessingPanel_h
-#define __qSlicerEMSegmentDefinePreprocessingPanel_h 
+#ifndef __qSlicerEMSegmentWorkflowWidgetStepPlugin_h
+#define __qSlicerEMSegmentWorkflowWidgetStepPlugin_h
 
-// CTK includes
-#include <ctkPimpl.h>
+#include "qSlicerEMSegmentWorkflowWidgetsAbstractPlugin.h"
 
-// EMSegment includes
-#include "qSlicerEMSegmentWidget.h"
-
-#include "qSlicerEMSegmentModuleExport.h"
-
-class qSlicerEMSegmentDefinePreprocessingPanelPrivate;
-
-class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefinePreprocessingPanel :
-    public qSlicerEMSegmentWidget
-{ 
+class Q_SLICER_QTMODULES_EMSEGMENT_WORKFLOW_WIDGETS_PLUGIN_EXPORT qSlicerEMSegmentWorkflowWidgetStepPlugin :
+  public QObject,
+  public qSlicerEMSegmentWorkflowWidgetsAbstractPlugin
+{
   Q_OBJECT
 
 public:
-
-  typedef qSlicerEMSegmentWidget Superclass;
-  qSlicerEMSegmentDefinePreprocessingPanel(QWidget *newParent=0);
-
-private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentDefinePreprocessingPanel);
+  qSlicerEMSegmentWorkflowWidgetStepPlugin(QObject *newParent = 0);
+  
+  QWidget *createWidget(QWidget *newParent);
+  QString  domXml() const;
+  QIcon    icon() const;
+  QString  includeFile() const;
+  bool     isContainer() const;
+  QString  name() const;
+  
 };
 
 #endif

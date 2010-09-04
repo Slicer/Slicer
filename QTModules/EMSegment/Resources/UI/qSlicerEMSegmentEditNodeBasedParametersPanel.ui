@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qSlicerEMSegmentEditNodeBasedParametersPanel</class>
- <widget class="qSlicerEMSegmentWidget" name="qSlicerEMSegmentEditNodeBasedParametersPanel">
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentEditNodeBasedParametersPanel">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,12 @@
     <width>668</width>
     <height>520</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -35,7 +41,7 @@
          <bool>true</bool>
         </property>
         <property name="updateClassWeightColumnVisible">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="atlasWeightColumnVisible">
          <bool>true</bool>
@@ -91,6 +97,18 @@
    <header>qSlicerEMSegmentWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ctkWorkflowWidgetStep</class>
+   <extends>QWidget</extends>
+   <header>ctkWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerEMSegmentWorkflowWidgetStep</class>
+   <extends>ctkWorkflowWidgetStep</extends>
+   <header>qSlicerEMSegmentWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -107,6 +125,22 @@
     <hint type="destinationlabel">
      <x>32</x>
      <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentEditNodeBasedParametersPanel</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>333</x>
+     <y>259</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>136</y>
     </hint>
    </hints>
   </connection>

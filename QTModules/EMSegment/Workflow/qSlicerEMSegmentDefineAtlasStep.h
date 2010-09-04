@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
@@ -27,9 +28,11 @@
 // EMSegment includes
 #include "qSlicerEMSegmentWorkflowWidgetStep.h"
 
+#include "qSlicerEMSegmentModuleExport.h"
+
 class qSlicerEMSegmentDefineAtlasStepPrivate;
 
-class qSlicerEMSegmentDefineAtlasStep : public qSlicerEMSegmentWorkflowWidgetStep
+class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentDefineAtlasStep : public qSlicerEMSegmentWorkflowWidgetStep
 {
   Q_OBJECT
 
@@ -38,11 +41,14 @@ public:
   const static QString StepId;
 
   typedef qSlicerEMSegmentWorkflowWidgetStep Superclass;
-  explicit qSlicerEMSegmentDefineAtlasStep(ctkWorkflow* newWorkflow);
+  explicit qSlicerEMSegmentDefineAtlasStep(ctkWorkflow* newWorkflow, QWidget* parent = 0);
 
 public slots:
 
-  virtual void populateStepWidgetsList(QList<QWidget*>& stepWidgetsList);
+  virtual void createUserInterface();
+
+  virtual void onEntry(const ctkWorkflowStep* comingFrom,
+                       const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
   virtual void showUserInterface();
 

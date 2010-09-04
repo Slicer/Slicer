@@ -15,8 +15,6 @@ SET(qt_module_include_directories
   ${EMSegmentMRML_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
-  ${CMAKE_CURRENT_SOURCE_DIR}/Panels
-  ${CMAKE_CURRENT_BINARY_DIR}/Panels
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${CMAKE_CURRENT_SOURCE_DIR}/Workflow
@@ -48,40 +46,6 @@ SET(widget_MOC_SRCS
   Widgets/qSlicerEMSegmentWidget.h
   )
 
-# Panel source files
-SET(panel_SRCS
-  Panels/qSlicerEMSegmentDefineAnatomicalTreePanel.cxx           # Step 3
-  Panels/qSlicerEMSegmentDefineAnatomicalTreePanel.h
-  Panels/qSlicerEMSegmentDefineAtlasPanel.cxx                    # Step 4
-  Panels/qSlicerEMSegmentDefineAtlasPanel.h
-  Panels/qSlicerEMSegmentDefineInputChannelsPanel.cxx            # Step 2
-  Panels/qSlicerEMSegmentDefineInputChannelsPanel.h
-  Panels/qSlicerEMSegmentDefinePreprocessingPanel.cxx            # Step 6
-  Panels/qSlicerEMSegmentDefinePreprocessingPanel.h
-  Panels/qSlicerEMSegmentDefineTaskPanel.cxx                     # Step 1
-  Panels/qSlicerEMSegmentDefineTaskPanel.h
-  Panels/qSlicerEMSegmentEditNodeBasedParametersPanel.cxx        # Step 8
-  Panels/qSlicerEMSegmentEditNodeBasedParametersPanel.h
-  Panels/qSlicerEMSegmentEditRegistrationParametersPanel.cxx     # Step 5
-  Panels/qSlicerEMSegmentEditRegistrationParametersPanel.h
-  Panels/qSlicerEMSegmentSpecifyIntensityDistributionPanel.cxx   # Step 7
-  Panels/qSlicerEMSegmentSpecifyIntensityDistributionPanel.h
-  Panels/qSlicerEMSegmentRunSegmentationPanel.cxx                # Step 9
-  Panels/qSlicerEMSegmentRunSegmentationPanel.h
-  )
-
-SET(panel_MOC_SRCS
-  Panels/qSlicerEMSegmentDefineAnatomicalTreePanel.h           # Step 3
-  Panels/qSlicerEMSegmentDefineAtlasPanel.h                    # Step 4
-  Panels/qSlicerEMSegmentDefineInputChannelsPanel.h            # Step 2
-  Panels/qSlicerEMSegmentDefinePreprocessingPanel.h            # Step 6
-  Panels/qSlicerEMSegmentDefineTaskPanel.h                     # Step 1
-  Panels/qSlicerEMSegmentEditNodeBasedParametersPanel.h        # Step 8
-  Panels/qSlicerEMSegmentEditRegistrationParametersPanel.h     # Step 5
-  Panels/qSlicerEMSegmentSpecifyIntensityDistributionPanel.h   # Step 7
-  Panels/qSlicerEMSegmentRunSegmentationPanel.h                # Step 9
-  )
-
 # Workflow source files
 SET(workflow_SRCS
   Workflow/qSlicerEMSegmentDefineAnatomicalTreeStep.cxx           # Step 3
@@ -94,16 +58,20 @@ SET(workflow_SRCS
   Workflow/qSlicerEMSegmentDefinePreprocessingStep.h
   Workflow/qSlicerEMSegmentDefineTaskStep.cxx                     # Step 1
   Workflow/qSlicerEMSegmentDefineTaskStep.h
+  Workflow/qSlicerEMSegmentDefineTaskStep_p.h
   Workflow/qSlicerEMSegmentEditNodeBasedParametersStep.cxx        # Step 8
   Workflow/qSlicerEMSegmentEditNodeBasedParametersStep.h
   Workflow/qSlicerEMSegmentEditRegistrationParametersStep.cxx     # Step 5
   Workflow/qSlicerEMSegmentEditRegistrationParametersStep.h
+  Workflow/qSlicerEMSegmentEditRegistrationParametersStep_p.h
   Workflow/qSlicerEMSegmentSegmentationLogicStep.cxx              # Step 10
   Workflow/qSlicerEMSegmentSegmentationLogicStep.h
   Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.cxx   # Step 7
   Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.h
+  Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep_p.h
   Workflow/qSlicerEMSegmentRunSegmentationStep.cxx                # Step 9
   Workflow/qSlicerEMSegmentRunSegmentationStep.h
+  Workflow/qSlicerEMSegmentRunSegmentationStep_p.h
 
   Workflow/qSlicerEMSegmentWorkflowWidgetStep.cxx
   Workflow/qSlicerEMSegmentWorkflowWidgetStep.h
@@ -115,18 +83,21 @@ SET(workflow_MOC_SRCS
   Workflow/qSlicerEMSegmentDefineInputChannelsStep.h            # Step 2
   Workflow/qSlicerEMSegmentDefinePreprocessingStep.h            # Step 6
   Workflow/qSlicerEMSegmentDefineTaskStep.h                     # Step 1
+  Workflow/qSlicerEMSegmentDefineTaskStep_p.h
   Workflow/qSlicerEMSegmentEditNodeBasedParametersStep.h        # Step 8
   Workflow/qSlicerEMSegmentEditRegistrationParametersStep.h     # Step 5
+  Workflow/qSlicerEMSegmentEditRegistrationParametersStep_p.h
   Workflow/qSlicerEMSegmentSegmentationLogicStep.h              # Step 10
   Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep.h   # Step 7
+  Workflow/qSlicerEMSegmentSpecifyIntensityDistributionStep_p.h
   Workflow/qSlicerEMSegmentRunSegmentationStep.h                # Step 9
+  Workflow/qSlicerEMSegmentRunSegmentationStep_p.h
 
   Workflow/qSlicerEMSegmentWorkflowWidgetStep.h
   )
 
 # Source files
 SET(qt_module_SRCS
-  ${panel_SRCS}
   ${widget_SRCS}
   ${workflow_SRCS}
   qSlicerEMSegmentModule.cxx
@@ -137,7 +108,6 @@ SET(qt_module_SRCS
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
-  ${panel_MOC_SRCS}
   ${widget_MOC_SRCS}
   ${workflow_MOC_SRCS}
   qSlicerEMSegmentModule.h
@@ -190,6 +160,7 @@ Slicer3_build_qtmodule(
 # Sub directories
 #
 ADD_SUBDIRECTORY(Widgets/Plugins)
+ADD_SUBDIRECTORY(Workflow/Plugins)
 
 if(BUILD_TESTING)
   SET(EMSegment_TESTING_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Testing/Data)

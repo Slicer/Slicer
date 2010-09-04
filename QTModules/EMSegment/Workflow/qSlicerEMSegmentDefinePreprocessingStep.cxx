@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
@@ -24,21 +25,20 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefinePreprocessingStep.h"
-#include "qSlicerEMSegmentDefinePreprocessingPanel.h"
+#include "ui_qSlicerEMSegmentDefinePreprocessingPanel.h"
 
 // EMSegment/MRML includes
 #include <vtkEMSegmentMRMLManager.h>
 #include <vtkMRMLEMSWorkingDataNode.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefinePreprocessingStepPrivate : public ctkPrivate<qSlicerEMSegmentDefinePreprocessingStep>
+class qSlicerEMSegmentDefinePreprocessingStepPrivate : public ctkPrivate<qSlicerEMSegmentDefinePreprocessingStep>,
+                                                       public Ui_qSlicerEMSegmentDefinePreprocessingPanel
 {
 public:
   qSlicerEMSegmentDefinePreprocessingStepPrivate();
 
   void setTaskPreprocessingSetting();
-
-  qSlicerEMSegmentDefinePreprocessingPanel* Panel;
 };
 
 //-----------------------------------------------------------------------------
@@ -47,7 +47,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefinePreprocessingStepPrivate::qSlicerEMSegmentDefinePreprocessingStepPrivate()
 {
-  this->Panel = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -124,41 +123,31 @@ const QString qSlicerEMSegmentDefinePreprocessingStep::StepId = "DefinePreproces
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefinePreprocessingStep::qSlicerEMSegmentDefinePreprocessingStep(
-    ctkWorkflow* newWorkflow) : Superclass(newWorkflow, Self::StepId)
+    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefinePreprocessingStep);
+  CTK_D(qSlicerEMSegmentDefinePreprocessingStep);
+  d->setupUi(this);
+
   this->setName("6/9. Define Preprocessing");
   this->setDescription("Answer questions for preprocessing of input images.");
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefinePreprocessingStep::populateStepWidgetsList(QList<QWidget*>& stepWidgetsList)
+void qSlicerEMSegmentDefinePreprocessingStep::createUserInterface()
 {
-  CTK_D(qSlicerEMSegmentDefinePreprocessingStep);
-
   // TODO: would setup GUI for customized preprocessing here!
   // i.e. in current implementation the preprocessing tcl script is used to place custom
   // preprocessing widgets
   // see Modules/EMSegment/vtkEMSegmentPreProcessingStep::ShowUserInterface()
 
-  if (!d->Panel)
-    {
-    d->Panel = new qSlicerEMSegmentDefinePreprocessingPanel;
-    connect(this, SIGNAL(mrmlManagerChanged(vtkEMSegmentMRMLManager*)),
-            d->Panel, SLOT(setMRMLManager(vtkEMSegmentMRMLManager*)));
-    d->Panel->setMRMLManager(this->mrmlManager());
-    }
-  stepWidgetsList << d->Panel;
-
-  emit populateStepWidgetsListComplete();
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBranchId)
 {
   Q_UNUSED(desiredBranchId);
-
-  CTK_D(qSlicerEMSegmentDefinePreprocessingStep);
   Q_ASSERT(this->mrmlManager());
 
   vtkEMSegmentMRMLManager* mrmlManager = this->mrmlManager();
@@ -172,7 +161,7 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
       && mrmlManager->GetWorkingDataNode()->GetAlignedAtlasNodeIsValid())
     {
     if (QMessageBox::No == QMessageBox::question(
-        d->Panel, "EMSegmenter",
+        this, "EMSegmenter",
         tr("Do you want to redo preprocessing of input images?"),
         QMessageBox::Yes, QMessageBox::No))
       {
@@ -185,7 +174,7 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
   else
     {
     if (QMessageBox::Cancel == QMessageBox::question(
-        d->Panel, "EMSegmenter",
+        this, "EMSegmenter",
         tr("Start preprocessing of images?\nPreprocessing of images might take a while, "
            "but segmentation cannot continue without preprocessing"),
         QMessageBox::Yes, QMessageBox::Cancel))
@@ -230,6 +219,8 @@ void qSlicerEMSegmentDefinePreprocessingStep::onEntry(
   Q_UNUSED(comingFrom);
   Q_UNUSED(transitionType);
 
+  // TODO create updateWidgetFromMRML, as in other steps, and implement alongside customized preprocessing
+
   // Signals that we are finished
   emit onEntryComplete();
 }
@@ -241,6 +232,8 @@ void qSlicerEMSegmentDefinePreprocessingStep::onExit(
 {
   Q_UNUSED(goingTo);
   Q_UNUSED(transitionType);
+
+  // TODO create updateMRMLFromWidget, as in other steps, and implement alongside customized preprocessing
 
   // Signals that we are finished
   emit onExitComplete();

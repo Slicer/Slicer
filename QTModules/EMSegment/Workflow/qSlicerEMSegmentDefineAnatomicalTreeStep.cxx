@@ -13,24 +13,27 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineAnatomicalTreeStep.h"
-#include "qSlicerEMSegmentDefineAnatomicalTreePanel.h"
+#include "ui_qSlicerEMSegmentDefineAnatomicalTreePanel.h"
 
 // CTK includes
 #include "ctkWorkflowWidgetStep.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineAnatomicalTreeStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineAnatomicalTreeStep>
+class qSlicerEMSegmentDefineAnatomicalTreeStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineAnatomicalTreeStep>,
+                                                        public Ui_qSlicerEMSegmentDefineAnatomicalTreePanel
 {
 public:
   qSlicerEMSegmentDefineAnatomicalTreeStepPrivate();
-  qSlicerEMSegmentDefineAnatomicalTreePanel* panel;
+
+  void updateWidgetFromMRML();
 };
 
 //-----------------------------------------------------------------------------
@@ -39,7 +42,12 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineAnatomicalTreeStepPrivate::qSlicerEMSegmentDefineAnatomicalTreeStepPrivate()
 {
-  this->panel = 0;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentDefineAnatomicalTreeStepPrivate::updateWidgetFromMRML()
+{
+  this->EMSegmentAnatomicalTreeWidget->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
@@ -50,26 +58,20 @@ const QString qSlicerEMSegmentDefineAnatomicalTreeStep::StepId = "DefineAnatomic
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineAnatomicalTreeStep::qSlicerEMSegmentDefineAnatomicalTreeStep(
-    ctkWorkflow* newWorkflow) : Superclass(newWorkflow, Self::StepId)
+    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefineAnatomicalTreeStep);
-  this->setName("3/9. DefineAnatomicalTree");
+  CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
+  d->setupUi(this);
+
+  this->setName("3/9. Define Anatomical Tree");
   this->setDescription("Define a hierarchy of structures.");
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineAnatomicalTreeStep::populateStepWidgetsList(QList<QWidget*>& stepWidgetsList)
+void qSlicerEMSegmentDefineAnatomicalTreeStep::createUserInterface()
 {
-  CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
-  if (!d->panel)
-    {
-    d->panel = new qSlicerEMSegmentDefineAnatomicalTreePanel;
-    connect(this, SIGNAL(mrmlManagerChanged(vtkEMSegmentMRMLManager*)),
-            d->panel, SLOT(setMRMLManager(vtkEMSegmentMRMLManager*)));
-    d->panel->setMRMLManager(this->mrmlManager());
-    }
-  stepWidgetsList << d->panel;
-  emit populateStepWidgetsListComplete();
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -85,6 +87,9 @@ void qSlicerEMSegmentDefineAnatomicalTreeStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
+  d->updateWidgetFromMRML();
+
   // Signals that we are finished
   emit onEntryComplete();
 }
@@ -104,5 +109,5 @@ void qSlicerEMSegmentDefineAnatomicalTreeStep::showUserInterface()
 {
   CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
   this->Superclass::showUserInterface();
-  d->panel->updateWidgetFromMRML();
+  d->updateWidgetFromMRML();
 }

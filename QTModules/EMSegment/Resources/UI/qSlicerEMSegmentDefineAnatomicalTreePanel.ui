@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qSlicerEMSegmentDefineAnatomicalTreePanel</class>
- <widget class="qSlicerEMSegmentWidget" name="qSlicerEMSegmentDefineAnatomicalTreePanel">
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefineAnatomicalTreePanel">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,12 @@
     <width>467</width>
     <height>338</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -43,6 +49,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkWorkflowWidgetStep</class>
+   <extends>QWidget</extends>
+   <header>ctkWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -57,6 +69,12 @@
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerEMSegmentWorkflowWidgetStep</class>
+   <extends>ctkWorkflowWidgetStep</extends>
+   <header>qSlicerEMSegmentWorkflowWidgetStep.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -75,6 +93,22 @@
     <hint type="destinationlabel">
      <x>382</x>
      <y>50</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerEMSegmentDefineAnatomicalTreePanel</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>EMSegmentAnatomicalTreeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>233</x>
+     <y>168</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>237</x>
+     <y>175</y>
     </hint>
    </hints>
   </connection>

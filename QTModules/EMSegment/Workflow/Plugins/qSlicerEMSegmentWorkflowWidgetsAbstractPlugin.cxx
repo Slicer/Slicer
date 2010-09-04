@@ -13,41 +13,40 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+  This file was originally developed by Danielle Pace, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
-// Qt includes
-#include <QDebug>
-
-// EMSegment includes
-#include "qSlicerEMSegmentDefineAtlasPanel.h" 
-#include "ui_qSlicerEMSegmentDefineAtlasPanel.h"
+#include "qSlicerEMSegmentWorkflowWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineAtlasPanelPrivate :
-    public ctkPrivate<qSlicerEMSegmentDefineAtlasPanel>,
-    public Ui_qSlicerEMSegmentDefineAtlasPanel
+qSlicerEMSegmentWorkflowWidgetsAbstractPlugin::qSlicerEMSegmentWorkflowWidgetsAbstractPlugin()
 {
-public:
-  qSlicerEMSegmentDefineAtlasPanelPrivate()
-    {
-    }
-};
-
-//-----------------------------------------------------------------------------
-qSlicerEMSegmentDefineAtlasPanel::qSlicerEMSegmentDefineAtlasPanel(QWidget *newParent):
-Superclass(newParent)
-{
-  CTK_INIT_PRIVATE(qSlicerEMSegmentDefineAtlasPanel);
-  CTK_D(qSlicerEMSegmentDefineAtlasPanel);
-  d->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineAtlasPanel::updateWidgetFromMRML()
-{
-  CTK_D(qSlicerEMSegmentDefineAtlasPanel);
-  d->EMSegmentAnatomicalTreeWidget->updateWidgetFromMRML();
+QString qSlicerEMSegmentWorkflowWidgetsAbstractPlugin::group() const
+{ 
+  return "Slicer [EMSegment Workflow]";
 }
+
+//-----------------------------------------------------------------------------
+QIcon qSlicerEMSegmentWorkflowWidgetsAbstractPlugin::icon() const
+{
+  return QIcon(); 
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerEMSegmentWorkflowWidgetsAbstractPlugin::toolTip() const
+{ 
+  return QString(); 
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerEMSegmentWorkflowWidgetsAbstractPlugin::whatsThis() const
+{
+  return QString(); 
+}
+
+

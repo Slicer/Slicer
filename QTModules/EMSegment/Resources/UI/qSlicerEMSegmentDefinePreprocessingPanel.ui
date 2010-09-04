@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qSlicerEMSegmentDefinePreprocessingPanel</class>
- <widget class="qSlicerEMSegmentWidget" name="qSlicerEMSegmentDefinePreprocessingPanel">
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefinePreprocessingPanel">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,6 +19,12 @@
    </property>
    <item>
     <widget class="QGroupBox" name="CheckListGroupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Check List</string>
      </property>
@@ -55,6 +61,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkWorkflowWidgetStep</class>
+   <extends>QWidget</extends>
+   <header>ctkWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -64,6 +76,12 @@
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerEMSegmentWorkflowWidgetStep</class>
+   <extends>ctkWorkflowWidgetStep</extends>
+   <header>qSlicerEMSegmentWorkflowWidgetStep.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

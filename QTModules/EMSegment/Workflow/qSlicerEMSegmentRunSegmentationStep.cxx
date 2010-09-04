@@ -13,17 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
+
+// Qt includes
+#include <QDebug>
+
+// CTK includes
+#include <ctkLogger.h>
 
 // qMRMLWidgets includes
 #include <qMRMLNodeFactory.h>
 
 // EMSegment includes
 #include "qSlicerEMSegmentRunSegmentationStep.h"
-#include "qSlicerEMSegmentRunSegmentationPanel.h"
+#include "ui_qSlicerEMSegmentRunSegmentationPanel.h"
+#include "qSlicerEMSegmentRunSegmentationStep_p.h"
 #include "vtkSlicerEMSegmentLogic.h"
 
 // EMSegment/MRML includes
@@ -33,23 +41,13 @@
 #include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLROINode.h>
 
-//-----------------------------------------------------------------------------
-class qSlicerEMSegmentRunSegmentationStepPrivate : public ctkPrivate<qSlicerEMSegmentRunSegmentationStep>
-{
-public:
-  qSlicerEMSegmentRunSegmentationStepPrivate();
-  qSlicerEMSegmentRunSegmentationPanel* Panel;
+// VTKMRML includes
+#include "vtkMRMLSliceLogic.h"
 
-  void setMRMLROINode(vtkMRMLROINode* newROINode);
-
-  vtkMRMLROINode* ROINode;
-
-  // Delete any ROI nodes named "SegmentationROI", and create a new ROI node
-  vtkMRMLROINode* createROINode();
-
-  // Propagate changes in ROINode MRML to EMSegmentRunSegmentationStep ROI MRML
-  void updateMRMLROINodeUsingInputVolume();
-};
+//--------------------------------------------------------------------------
+static ctkLogger logger(
+    "org.slicer.qtmodules.emsegment.workflow.qSlicerEMSegmentRunSegmentationStep");
+//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // qSlicerEMSegmentRunSegmentationStepPrivate methods
@@ -57,14 +55,141 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentRunSegmentationStepPrivate::qSlicerEMSegmentRunSegmentationStepPrivate()
 {
-  this->Panel = 0;
   this->ROINode = 0;
 }
 
-//------------------------------------------------------------------------------
-void qSlicerEMSegmentRunSegmentationStepPrivate::setMRMLROINode(vtkMRMLROINode* newROINode)
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentRunSegmentationStepPrivate::setupUi(
+    qSlicerEMSegmentWorkflowWidgetStep* step)
 {
-  this->ROINode = newROINode;
+  this->Ui_qSlicerEMSegmentRunSegmentationPanel::setupUi(step);
+
+  // Set attributes on the qMRMLNodeComboBox to select the output label map
+  this->OutputLabelMapComboBox->addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
+
+  // Setup connections
+  QObject::connect(this->Display2DVOIButton, SIGNAL(clicked(bool)),
+                   this, SLOT(display2DVOI(bool)));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentRunSegmentationStepPrivate::setMRMLROINode(vtkMRMLROINode* node)
+{
+  CTK_P(qSlicerEMSegmentRunSegmentationStep);
+
+  Q_ASSERT(node);
+  Q_ASSERT(p->mrmlManager());
+  Q_ASSERT(this->ROIWidget);
+
+  // Finish setting up the ROI widget, now that we have a MRML manager
+  vtkMRMLVolumeNode* volumeNode =
+      p->mrmlManager()->GetWorkingDataNode()->GetInputTargetNode()->GetNthVolumeNode(0);
+
+  double rasDimensions[3];
+  double rasCenter[3];
+  vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
+
+  double rasBounds[6];
+  rasBounds[0] = qMin(rasCenter[0]-rasDimensions[0]/2.,rasCenter[0]+rasDimensions[0]/2.);
+  rasBounds[1] = qMin(rasCenter[1]-rasDimensions[1]/2.,rasCenter[1]+rasDimensions[1]/2.);
+  rasBounds[2] = qMin(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
+  rasBounds[3] = qMax(rasCenter[0]-rasDimensions[0]/2.,rasCenter[0]+rasDimensions[0]/2.);
+  rasBounds[4] = qMax(rasCenter[1]-rasDimensions[1]/2.,rasCenter[1]+rasDimensions[1]/2.);
+  rasBounds[5] = qMax(rasCenter[2]-rasDimensions[2]/2.,rasCenter[2]+rasDimensions[2]/2.);
+    
+  // TODO
+  // this->ROIWidget->SetXRangeExtent(rasBounds[0],rasBounds[3]);
+  // this->ROIWidget->SetYRangeExtent(rasBounds[1],rasBounds[4]);
+  // this->ROIWidget->SetZRangeExtent(rasBounds[2],rasBounds[5]);
+
+  // this->ROIWidget->SetXResolution(fabs(rasBounds[3]-rasBounds[0])/100.);
+  // this->ROIWidget->SetYResolution(fabs(rasBounds[4]-rasBounds[1])/100.);
+  // this->ROIWidget->SetZResolution(fabs(rasBounds[5]-rasBounds[2])/100.);
+
+  this->ROIWidget->setMRMLROINode(node);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentRunSegmentationStepPrivate::updateWidgetFromMRML()
+{
+  CTK_P(qSlicerEMSegmentRunSegmentationStep);
+
+  if (!p->mrmlManager())
+    {
+    logger.warn("updateWidgetFromMRML - MRMLManager is NULL");
+    return;
+    }
+
+  // Disable widget if needed
+  QList<QWidget*> widgets;
+  widgets << this->SaveIntermediateResultsCheckBox
+          << this->OutputLabelMapComboBox
+          << this->ROIWidget
+          << this->Display2DVOIButton
+          << this->MultithreadingCheckBox;
+
+  foreach(QWidget* w, widgets)
+    {
+    w->setEnabled(p->mrmlManager()->HasGlobalParametersNode());
+    }
+
+  // Working directory
+  this->SaveIntermediateResultsCheckBox->setChecked(
+      p->mrmlManager()->GetSaveIntermediateResults());
+
+  if (p->mrmlManager()->GetSaveWorkingDirectory())
+    {
+    this->DirectoryButton->setDirectory(
+        p->mrmlManager()->GetSaveWorkingDirectory());
+    }
+  else
+    {
+    this->DirectoryButton->setCaption(tr("Select Working Directory"));
+    }
+
+  // Output label map
+  if (!p->mrmlManager()->GetOutputVolumeMRMLID())
+    {
+    qMRMLNodeFactory::AttributeType attributes;
+    attributes.insert("LabelMap", "1");
+    qMRMLNodeFactory::createNode(
+        p->mrmlScene(), "vtkMRMLScalarVolumeNode", vtkMRMLNodeInitializer(), attributes);
+    }
+
+  this->OutputLabelMapComboBox->setCurrentNode(p->mrmlManager()->GetOutputVolumeMRMLID());
+
+  // Define VOI
+  // TODO: should call SetMRMLROINode above? Incase the working volume has changed?
+
+  // Miscellaneous
+  this->MultithreadingCheckBox->setChecked(p->mrmlManager()->GetEnableMultithreading());
+  
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentRunSegmentationStepPrivate::updateMRMLFromWidget()
+{
+  CTK_P(qSlicerEMSegmentRunSegmentationStep);
+
+  Q_ASSERT(p->mrmlManager());
+
+  // Working directory
+  p->mrmlManager()->SetSaveIntermediateResults(this->SaveIntermediateResultsCheckBox->isChecked());
+  p->mrmlManager()->SetSaveWorkingDirectory(this->DirectoryButton->directory().toLatin1());
+
+  // Output label map
+  p->mrmlManager()->SetOutputVolumeMRMLID(this->OutputLabelMapComboBox->currentNode()->GetID());
+  
+  // Define VOI
+
+  // Miscellaneous
+  p->mrmlManager()->SetEnableMultithreading(this->MultithreadingCheckBox->isChecked());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentRunSegmentationStepPrivate::display2DVOI(bool show)
+{
+
 }
 
 namespace
@@ -115,6 +240,8 @@ void qSlicerEMSegmentRunSegmentationStepPrivate::updateMRMLROINodeUsingInputVolu
 {
   CTK_P(qSlicerEMSegmentRunSegmentationStep);
 
+  Q_ASSERT(this->ROINode);
+
   double ROIMinIJK[4], ROIMaxIJK[4], ROIMinRAS[4], ROIMaxRAS[4];
   double radius[3], center[3];
 
@@ -154,7 +281,7 @@ void qSlicerEMSegmentRunSegmentationStepPrivate::updateMRMLROINodeUsingInputVolu
   radius[0] = fabs(ROIMaxRAS[0]-ROIMinRAS[0])/2.;
   radius[1] = fabs(ROIMaxRAS[1]-ROIMinRAS[1])/2.;
   radius[2] = fabs(ROIMaxRAS[2]-ROIMinRAS[2])/2.;
- 
+
   this->ROINode->SetXYZ(center[0], center[1], center[2]);
   this->ROINode->SetRadiusXYZ(radius[0], radius[1], radius[2]);
   this->ROINode->Modified();
@@ -168,29 +295,21 @@ const QString qSlicerEMSegmentRunSegmentationStep::StepId = "RunSegmentation";
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentRunSegmentationStep::qSlicerEMSegmentRunSegmentationStep(
-    ctkWorkflow* newWorkflow) : Superclass(newWorkflow, Self::StepId)
+    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentRunSegmentationStep);
+  CTK_D(qSlicerEMSegmentRunSegmentationStep);
+  d->setupUi(this);
+
   this->setName("9/9. Run Segmentation");
   this->setDescription("Apply EM algorithm to segment target image.");
   this->setButtonBoxHints(ctkWorkflowWidgetStep::NextButtonDisabled);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentRunSegmentationStep::populateStepWidgetsList(QList<QWidget*>& stepWidgetsList)
+void qSlicerEMSegmentRunSegmentationStep::createUserInterface()
 {
-  CTK_D(qSlicerEMSegmentRunSegmentationStep);
-  if (!d->Panel)
-    {
-    d->Panel = new qSlicerEMSegmentRunSegmentationPanel;
-    connect(this, SIGNAL(mrmlManagerChanged(vtkEMSegmentMRMLManager*)),
-            d->Panel, SLOT(setMRMLManager(vtkEMSegmentMRMLManager*)));
-    d->Panel->setMRMLManager(this->mrmlManager());
-    d->Panel->setMRMLROINode(d->ROINode);
-    }
-  stepWidgetsList << d->Panel;
-
-  emit populateStepWidgetsListComplete();
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -198,7 +317,7 @@ void qSlicerEMSegmentRunSegmentationStep::showUserInterface()
 {
   CTK_D(qSlicerEMSegmentRunSegmentationStep);
   this->Superclass::showUserInterface();
-  d->Panel->updateWidgetFromMRML();
+  d->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
@@ -219,19 +338,20 @@ void qSlicerEMSegmentRunSegmentationStep::onEntry(
 
   CTK_D(qSlicerEMSegmentRunSegmentationStep);
 
+  d->updateWidgetFromMRML();
+
   // Create ROI MRML node
   if (!d->ROINode)
     {
-    d->setMRMLROINode(d->createROINode());
+    d->ROINode = d->createROINode();
     }
+  d->setMRMLROINode(d->ROINode);
 
   // Update the roiNode ROI to reflect what is stored in ROI MRML
   // SegmentationBoundary sets ROI Node
   d->updateMRMLROINodeUsingInputVolume();
 
   // TODO the node has to be connected to the ROIMRMLCallback
-
-  
 
   // Signals that we are finished
   emit onEntryComplete();
@@ -256,10 +376,7 @@ void qSlicerEMSegmentRunSegmentationStep::onExit(
     return;
     }
 
-  if (d->Panel)
-    {
-    d->Panel->updateMRMLFromWidget();
-    }
+  d->updateMRMLFromWidget(); 
 
   // Signals that we are finished
   emit onExitComplete();

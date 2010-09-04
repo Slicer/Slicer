@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
@@ -29,7 +30,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineInputChannelsStep.h"
-#include "qSlicerEMSegmentDefineInputChannelsPanel.h"
+#include "ui_qSlicerEMSegmentDefineInputChannelsPanel.h"
 #include "qSlicerEMSegmentInputChannelListWidget.h"
 
 // EMSegment/MRML includes
@@ -38,20 +39,23 @@
 
 // MRML includes
 #include <vtkMRMLScalarVolumeNode.h>
+
 #include <vtkMRMLEMSWorkingDataNode.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger(
-    "org.slicer.qtmodules.emsegment.workflow.qSlicerEMSegmentDefineInputChannelsStep");
+                        "org.slicer.qtmodules.emsegment.workflow.qSlicerEMSegmentDefineInputChannelsStep");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineInputChannelsStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineInputChannelsStep>
+class qSlicerEMSegmentDefineInputChannelsStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineInputChannelsStep>,
+                                                       public Ui_qSlicerEMSegmentDefineInputChannelsPanel
 {
 public:
   qSlicerEMSegmentDefineInputChannelsStepPrivate();
 
-  qSlicerEMSegmentDefineInputChannelsPanel* Panel;
+  void updateMRMLFromWidget();
+
   qSlicerEMSegmentDefineInputChannelsStep::StepModeType StepMode;
 };
 
@@ -61,8 +65,13 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineInputChannelsStepPrivate::qSlicerEMSegmentDefineInputChannelsStepPrivate()
 {
-  this->Panel = 0;
   this->StepMode = qSlicerEMSegmentDefineInputChannelsStep::Advanced;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentDefineInputChannelsStepPrivate::updateMRMLFromWidget()
+{
+  this->EMSegmentInputChannelListWidget->updateMRMLFromWidget();
 }
 
 //-----------------------------------------------------------------------------
@@ -74,12 +83,12 @@ const QString qSlicerEMSegmentDefineInputChannelsStep::AdvancedStepId =
     "DefineInputChannelsAdvanced";
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentDefineInputChannelsStep::qSlicerEMSegmentDefineInputChannelsStep(
-    qSlicerEMSegmentDefineInputChannelsStep::StepModeType stepMode, ctkWorkflow* newWorkflow)
-      : Superclass(newWorkflow)
+qSlicerEMSegmentDefineInputChannelsStep::qSlicerEMSegmentDefineInputChannelsStep(ctkWorkflow* newWorkflow, qSlicerEMSegmentDefineInputChannelsStep::StepModeType stepMode, QWidget* newWidget)
+  : Superclass(newWorkflow, "", newWidget)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefineInputChannelsStep);
   CTK_D(qSlicerEMSegmentDefineInputChannelsStep);
+  d->setupUi(this);
 
   if (stepMode == qSlicerEMSegmentDefineInputChannelsStep::Advanced)
     {
@@ -99,18 +108,9 @@ qSlicerEMSegmentDefineInputChannelsStep::qSlicerEMSegmentDefineInputChannelsStep
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineInputChannelsStep::populateStepWidgetsList(QList<QWidget*>& stepWidgetsList)
+void qSlicerEMSegmentDefineInputChannelsStep::createUserInterface()
 {
-  CTK_D(qSlicerEMSegmentDefineInputChannelsStep);
-  if (!d->Panel)
-    {
-    d->Panel = new qSlicerEMSegmentDefineInputChannelsPanel;
-    connect(this, SIGNAL(mrmlManagerChanged(vtkEMSegmentMRMLManager*)),
-            d->Panel, SLOT(setMRMLManager(vtkEMSegmentMRMLManager*)));
-    d->Panel->setMRMLManager(this->mrmlManager());
-    }
-  stepWidgetsList << d->Panel;
-  emit populateStepWidgetsListComplete();
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -123,27 +123,22 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
   Q_ASSERT(this->mrmlManager());
   Q_ASSERT(this->mrmlManager()->GetTargetInputNode());
 
-  qSlicerEMSegmentInputChannelListWidget * inputChannelWidget =
-      d->Panel->inputChannelListWidget();
-
   int requiredInputChannelCount = 1;
 
   // Check required number of input
-  if (inputChannelWidget->inputChannelCount() < requiredInputChannelCount)
+  if (d->EMSegmentInputChannelListWidget->inputChannelCount() < requiredInputChannelCount)
     {
-    QMessageBox::warning(d->Panel, "EMSegmenter",
-                         tr("At least %1 image is required !").arg(requiredInputChannelCount));
+    QMessageBox::warning(this, "EMSegmenter", tr("At least %1 image is required !").arg(requiredInputChannelCount));
     emit validationComplete(false);
     return;
     }
 
-  int inputChannelCount = inputChannelWidget->inputChannelCount();
+  int inputChannelCount = d->EMSegmentInputChannelListWidget->inputChannelCount();
 
   // Check if number of input channels changed ...
   if (inputChannelCount != this->mrmlManager()->GetTargetInputNode()->GetNumberOfVolumes())
     {
-    if (QMessageBox::No == QMessageBox::question(
-        d->Panel, "EMSegmenter", tr("Are you sure you want to change the number of input images?"),
+    if (QMessageBox::No == QMessageBox::question(this, "EMSegmenter", tr("Are you sure you want to change the number of input images?"),
         QMessageBox::Yes, QMessageBox::No))
       {
       emit validationComplete(false);
@@ -156,8 +151,8 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
   // Loop though all volumes and check if ImageData is Null
   for(int rowId = 0; rowId < inputChannelCount; rowId++)
     {
-    QString inputChannelName = inputChannelWidget->inputChannelName(rowId);
-    vtkMRMLVolumeNode* volumeNode = inputChannelWidget->inputChannelVolume(rowId);
+    QString inputChannelName = d->EMSegmentInputChannelListWidget->inputChannelName(rowId);
+    vtkMRMLVolumeNode* volumeNode = d->EMSegmentInputChannelListWidget->inputChannelVolume(rowId);
 
     // Is ImageData Null ?
     if (volumeNode->GetImageData() == 0)
@@ -168,7 +163,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
 
   if (errors.count() > 0)
     {
-    QMessageBox::warning(d->Panel, "EMSegmenter", errors.join("<br/>"));
+    QMessageBox::warning(this, "EMSegmenter", errors.join("<br/>"));
     emit validationComplete(false);
     return;
     }
@@ -176,8 +171,8 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
   // Loop though all volumes and check if ImageData is Negative
   for(int rowId = 0; rowId < inputChannelCount; rowId++)
     {
-    QString inputChannelName = inputChannelWidget->inputChannelName(rowId);
-    vtkMRMLVolumeNode* volumeNode = inputChannelWidget->inputChannelVolume(rowId);
+    QString inputChannelName = d->EMSegmentInputChannelListWidget->inputChannelName(rowId);
+    vtkMRMLVolumeNode* volumeNode = d->EMSegmentInputChannelListWidget->inputChannelVolume(rowId);
 
     if (volumeNode->GetImageData()->GetScalarRange()[0] < 0)
       {
@@ -190,15 +185,15 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
     QString message = "EMSegmenter can currently only process non-negative input images. "
                     "The following images have negative values:<br/>";
 
-    QMessageBox::warning(d->Panel, "EMSegmenter", message.append(errors.join("<br/>")));
+    QMessageBox::warning(this, "EMSegmenter", message.append(errors.join("<br/>")));
     emit validationComplete(false);
     return;
     }
 
   // Check for identical selected input volumes
-  if (inputChannelWidget->identicalInputVolumes())
+  if (d->EMSegmentInputChannelListWidget->identicalInputVolumes())
     {
-    QMessageBox::warning(d->Panel, "EMSegmenter",
+    QMessageBox::warning(this, "EMSegmenter",
                          tr("No two Input volumes can be the same"));
     emit validationComplete(false);
     return;
@@ -246,11 +241,8 @@ void qSlicerEMSegmentDefineInputChannelsStep::onExit(
     return;
     }
 
-  if (d->Panel)
-    {
-    // Update MRML with selected volumes
-    d->Panel->updateMRMLFromWidget();
-    }
+  // Update MRML with selected volumes
+  d->updateMRMLFromWidget();
 
   // Make sure output volume is defined
   if(!this->mrmlManager()->GetOutputVolumeMRMLID())

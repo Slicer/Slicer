@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
@@ -41,7 +42,9 @@ class qSlicerEMSegmentWorkflowWidgetStep : public ctkWorkflowWidgetStep
 public:
 
   typedef ctkWorkflowWidgetStep Superclass;
-  explicit qSlicerEMSegmentWorkflowWidgetStep(ctkWorkflow* newWorkflow, const QString& newId = "");
+  explicit qSlicerEMSegmentWorkflowWidgetStep(ctkWorkflow* newWorkflow, 
+                                              const QString& newId, QWidget* newParent = 0);
+  explicit qSlicerEMSegmentWorkflowWidgetStep(QWidget* newParent = 0);
 
   vtkMRMLScene *           mrmlScene() const;
   vtkEMSegmentMRMLManager* mrmlManager() const;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qSlicerEMSegmentEditRegistrationParametersPanel</class>
- <widget class="qSlicerEMSegmentWidget" name="qSlicerEMSegmentEditRegistrationParametersPanel">
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentEditRegistrationParametersPanel">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,12 @@
     <width>570</width>
     <height>163</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -98,6 +104,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkWorkflowWidgetStep</class>
+   <extends>QWidget</extends>
+   <header>ctkWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -107,6 +119,12 @@
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerEMSegmentWorkflowWidgetStep</class>
+   <extends>ctkWorkflowWidgetStep</extends>
+   <header>qSlicerEMSegmentWorkflowWidgetStep.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qSlicerEMSegmentRunSegmentationPanel</class>
- <widget class="qSlicerEMSegmentWidget" name="qSlicerEMSegmentRunSegmentationPanel">
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentRunSegmentationPanel">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,12 @@
     <width>503</width>
     <height>578</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -40,6 +46,12 @@
        <widget class="ctkDirectoryButton" name="DirectoryButton">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
@@ -154,8 +166,6 @@
        </layout>
       </item>
      </layout>
-     <zorder>ROIWidget</zorder>
-     <zorder>Display2DVOILabel</zorder>
     </widget>
    </item>
    <item>
@@ -209,15 +219,15 @@
    <header>qMRMLROIWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>qSlicerWidget</class>
+   <class>ctkWorkflowWidgetStep</class>
    <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
+   <header>ctkWorkflowWidgetStep.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qSlicerEMSegmentWidget</class>
-   <extends>qSlicerWidget</extends>
-   <header>qSlicerEMSegmentWidget.h</header>
+   <class>qSlicerEMSegmentWorkflowWidgetStep</class>
+   <extends>ctkWorkflowWidgetStep</extends>
+   <header>qSlicerEMSegmentWorkflowWidgetStep.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

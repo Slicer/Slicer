@@ -128,14 +128,14 @@ void qSlicerEMSegmentModuleWidget::setup()
 
   // Step specific to "advanced" mode
   qSlicerEMSegmentWorkflowWidgetStep * defineInputChannelsAdvancedStep =
-      new qSlicerEMSegmentDefineInputChannelsStep(
-          qSlicerEMSegmentDefineInputChannelsStep::Advanced, d->Workflow);
+    new qSlicerEMSegmentDefineInputChannelsStep(d->Workflow,
+                                                qSlicerEMSegmentDefineInputChannelsStep::Advanced);
   allSteps << defineInputChannelsAdvancedStep;
 
   // Step specific to "simple" mode
   qSlicerEMSegmentWorkflowWidgetStep * defineInputChannelsSimpleStep =
-    new qSlicerEMSegmentDefineInputChannelsStep(
-        qSlicerEMSegmentDefineInputChannelsStep::Simple, d->Workflow);
+    new qSlicerEMSegmentDefineInputChannelsStep(d->Workflow,
+        qSlicerEMSegmentDefineInputChannelsStep::Simple);
   allSteps << defineInputChannelsSimpleStep;
 
   // The following steps are common to "simple" and "advanced" modes
@@ -148,7 +148,7 @@ void qSlicerEMSegmentModuleWidget::setup()
               << new qSlicerEMSegmentEditNodeBasedParametersStep(d->Workflow)
               << new qSlicerEMSegmentRunSegmentationStep(d->Workflow)
               << new qSlicerEMSegmentSegmentationLogicStep(d->Workflow);
-  allSteps << commonSteps;  
+  allSteps << commonSteps;
 
   // Initial step
   d->Workflow->setInitialStep(defineTaskStep);

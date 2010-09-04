@@ -13,21 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineAtlasStep.h"
-#include "qSlicerEMSegmentDefineAtlasPanel.h"
+#include "ui_qSlicerEMSegmentDefineAtlasPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineAtlasStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineAtlasStep>
+class qSlicerEMSegmentDefineAtlasStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineAtlasStep>,
+                                               public Ui_qSlicerEMSegmentDefineAtlasPanel
 {
 public:
   qSlicerEMSegmentDefineAtlasStepPrivate();
-  qSlicerEMSegmentDefineAtlasPanel* panel;
+
+  void updateWidgetFromMRML();
 };
 
 //-----------------------------------------------------------------------------
@@ -36,7 +39,12 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineAtlasStepPrivate::qSlicerEMSegmentDefineAtlasStepPrivate()
 {
-  this->panel = 0;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentDefineAtlasStepPrivate::updateWidgetFromMRML()
+{
+  this->EMSegmentAnatomicalTreeWidget->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
@@ -47,26 +55,20 @@ const QString qSlicerEMSegmentDefineAtlasStep::StepId = "DefineAtlas";
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineAtlasStep::qSlicerEMSegmentDefineAtlasStep(
-    ctkWorkflow* newWorkflow) : Superclass(newWorkflow, Self::StepId)
+    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentDefineAtlasStep);
-  this->setName("4/9. DefineAtlas");
+  CTK_D(qSlicerEMSegmentDefineAtlasStep);
+  d->setupUi(this);
+
+  this->setName("4/9. Define Atlas");
   this->setDescription("Define probability maps and image scans of atlas.");
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentDefineAtlasStep::populateStepWidgetsList(QList<QWidget*>& stepWidgetsList)
+void qSlicerEMSegmentDefineAtlasStep::createUserInterface()
 {
-  CTK_D(qSlicerEMSegmentDefineAtlasStep);
-  if (!d->panel)
-    {
-    d->panel = new qSlicerEMSegmentDefineAtlasPanel;
-    connect(this, SIGNAL(mrmlManagerChanged(vtkEMSegmentMRMLManager*)),
-            d->panel, SLOT(setMRMLManager(vtkEMSegmentMRMLManager*)));
-    d->panel->setMRMLManager(this->mrmlManager());
-    }
-  stepWidgetsList << d->panel;
-  emit populateStepWidgetsListComplete();
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -74,5 +76,16 @@ void qSlicerEMSegmentDefineAtlasStep::showUserInterface()
 {
   CTK_D(qSlicerEMSegmentDefineAtlasStep);
   this->Superclass::showUserInterface();
-  d->panel->updateWidgetFromMRML();
+  d->updateWidgetFromMRML();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentDefineAtlasStep::onEntry(const ctkWorkflowStep* comingFrom,
+   const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
+{
+  CTK_D(qSlicerEMSegmentDefineAtlasStep);
+  d->updateWidgetFromMRML();
+
+  // Signals that we are finished
+  emit onEntryComplete();
 }

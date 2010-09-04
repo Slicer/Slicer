@@ -252,7 +252,7 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemChanged(QStandardIte
     }
   else if (treeItemType == Self::UpdateClassWeightItemType)
     {
-    bool update = (treeItem->checkState() == Qt::Checked);
+    //bool update = (treeItem->checkState() == Qt::Checked);
     //logger.debug(QString("onTreeItemChanged - CheckStateRole: %1").arg(update));
     }
   else if (treeItemType == Self::AtlasWeightItemType)
@@ -367,6 +367,7 @@ Superclass(newParent)
 
   d->DisplayMRMLIDsCheckBox = new QCheckBox("Display MRML ID's", this);
   mainLayout->addWidget(d->DisplayMRMLIDsCheckBox);
+  d->DisplayMRMLIDsCheckBox->setVisible(false);
 
   // Connect Display MRML Id checkbox
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)), SLOT(setMRMLIDsColumnVisible(bool)));

@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
@@ -21,6 +22,7 @@
 // Qt includes
 #include <QMessageBox>
 #include <QStyle>
+#include <QDebug>
 
 // EMSegment includes
 #include "qSlicerEMSegmentSegmentationLogicStep.h"
@@ -54,18 +56,19 @@ const QString qSlicerEMSegmentSegmentationLogicStep::StepId = "Segment";
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentSegmentationLogicStep::qSlicerEMSegmentSegmentationLogicStep(
-    ctkWorkflow* newWorkflow) : Superclass(newWorkflow, Self::StepId)
+    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentSegmentationLogicStep);
+
   this->setName("***Runs segmentation logic***");
   this->setDescription("***EM algorithm processing to segment target image.***");
   this->setIcon(QIcon(":/Icons/Go.png"));
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentSegmentationLogicStep::populateStepWidgetsList(QList<QWidget*>& stepWidgetsList)
+void qSlicerEMSegmentSegmentationLogicStep::createUserInterface()
 {
-  emit populateStepWidgetsListComplete();
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------

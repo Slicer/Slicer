@@ -13,21 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Danielle Pace, Kitware Inc.
+  This file was originally developed by
+    Danielle Pace and Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
 // EMSegment includes
 #include "qSlicerEMSegmentEditNodeBasedParametersStep.h"
-#include "qSlicerEMSegmentEditNodeBasedParametersPanel.h"
+#include "ui_qSlicerEMSegmentEditNodeBasedParametersPanel.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentEditNodeBasedParametersStepPrivate : public ctkPrivate<qSlicerEMSegmentEditNodeBasedParametersStep>
+class qSlicerEMSegmentEditNodeBasedParametersStepPrivate : public ctkPrivate<qSlicerEMSegmentEditNodeBasedParametersStep>,
+                                                           public Ui_qSlicerEMSegmentEditNodeBasedParametersPanel
 {
 public:
   qSlicerEMSegmentEditNodeBasedParametersStepPrivate();
-  qSlicerEMSegmentEditNodeBasedParametersPanel* panel;
+
+  void updateWidgetFromMRML();
 };
 
 //-----------------------------------------------------------------------------
@@ -36,7 +39,12 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentEditNodeBasedParametersStepPrivate::qSlicerEMSegmentEditNodeBasedParametersStepPrivate()
 {
-  this->panel = 0;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentEditNodeBasedParametersStepPrivate::updateWidgetFromMRML()
+{
+  this->EMSegmentAnatomicalTreeWidget->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
@@ -47,26 +55,20 @@ const QString qSlicerEMSegmentEditNodeBasedParametersStep::StepId = "EditNodeBas
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentEditNodeBasedParametersStep::qSlicerEMSegmentEditNodeBasedParametersStep(
-    ctkWorkflow* newWorkflow) : Superclass(newWorkflow, Self::StepId)
+    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentEditNodeBasedParametersStep);
+  CTK_D(qSlicerEMSegmentEditNodeBasedParametersStep);
+  d->setupUi(this);
+
   this->setName("8/9. Edit Node-based Parameters");
   this->setDescription("Specify node-based segmentation parameters.");
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerEMSegmentEditNodeBasedParametersStep::populateStepWidgetsList(QList<QWidget*>& stepWidgetsList)
+void qSlicerEMSegmentEditNodeBasedParametersStep::createUserInterface()
 {
-  CTK_D(qSlicerEMSegmentEditNodeBasedParametersStep);
-  if (!d->panel)
-    {
-    d->panel = new qSlicerEMSegmentEditNodeBasedParametersPanel;
-    connect(this, SIGNAL(mrmlManagerChanged(vtkEMSegmentMRMLManager*)),
-            d->panel, SLOT(setMRMLManager(vtkEMSegmentMRMLManager*)));
-    d->panel->setMRMLManager(this->mrmlManager());
-    }
-  stepWidgetsList << d->panel;
-  emit populateStepWidgetsListComplete();
+  emit createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -82,6 +84,8 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  CTK_D(qSlicerEMSegmentEditNodeBasedParametersStep);
+  d->updateWidgetFromMRML();
 
   // Signals that we are finished
   emit onEntryComplete();
@@ -102,5 +106,5 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::showUserInterface()
 {
   CTK_D(qSlicerEMSegmentEditNodeBasedParametersStep);
   this->Superclass::showUserInterface();
-  d->panel->updateWidgetFromMRML();
+  d->updateWidgetFromMRML();
 }
