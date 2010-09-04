@@ -72,11 +72,17 @@ vtkSlicerLogic* qSlicerAnnotationModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModule::helpText() const
 {
-  return "The Annotation module. Still under heavy development. For feedback please contact haehn@bwh.harvard.edu and pohl@csail.mit.edu.";
+  return "The Annotation module. Still under heavy development. For feedback please contact the Slicer mailing list (slicer-users@bwh.harvard.edu).";
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModule::acknowledgementText() const
 {
-  return "This module was developed by Daniel Haehn, Kilian Pohl and Yong Zhang. Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper and Ron Kikinis.";
+  return "This module was developed by Daniel Haehn, Kilian Pohl and Yong Zhang. Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper and Ron Kikinis. The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).";
+}
+
+//-----------------------------------------------------------------------------
+QIcon qSlicerAnnotationModule::icon() const
+{
+  return QIcon(":/Icons/AnnotationReport.png");
 }

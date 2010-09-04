@@ -22,10 +22,14 @@ public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerAnnotationModule(QObject *parent=0);
 
-  // Description:
-  // Return the help and acknowledgement text for the Annotation module.
+  ///
+  /// Return the help and acknowledgement text for the Annotation module.
   virtual QString helpText()const ;
   virtual QString acknowledgementText()const;
+
+  ///
+  /// Return the icon of the Annotation module.
+  virtual QIcon icon()const;
 
   virtual ~qSlicerAnnotationModule(){}
 
