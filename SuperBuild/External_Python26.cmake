@@ -121,8 +121,13 @@ if(WIN32)
   endif()
     
 elseif(UNIX)
+  set(python_SOURCE_DIR python)
   set(python_BUILD_IN_SOURCE 1)
   
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_patch_step.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
+    @ONLY)
+    
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python_configure_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake
     @ONLY)
@@ -135,7 +140,7 @@ elseif(UNIX)
     ${CMAKE_CURRENT_BINARY_DIR}/python_install_step.cmake
     @ONLY)
 
-  set(python_SOURCE_DIR python)
+  set(python_PATCH_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake)
   set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake)
   set(python_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_make_step.cmake)
   set(python_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_install_step.cmake)
@@ -147,6 +152,7 @@ elseif(UNIX)
     #SVN_REVISION ${python_SVN_REVISION}
     SOURCE_DIR ${python_SOURCE_DIR}
     BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
+    PATCH_COMMAND ${python_PATCH_COMMAND}
     CONFIGURE_COMMAND ${python_CONFIGURE_COMMAND}
     BUILD_COMMAND ${python_BUILD_COMMAND}
     UPDATE_COMMAND ""
