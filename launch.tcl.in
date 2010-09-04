@@ -227,6 +227,7 @@ proc launch_SetEnvironment {} {
       set ::env(CTK_DIR)            $::env(Slicer3_HOME)/lib/ctk-@CTK_MAJOR_VERSION@.@CTK_MINOR_VERSION@
       set ::env(CTK_BIN_DIR)        $::env(Slicer3_HOME)/bin
       # TODO: where will PythonQt be in the install tree?
+      set ::env(PYTHONQT_DIR)       $::env(Slicer3_HOME)/lib/PythonQt
       set ::env(PYTHONQT_BIN_DIR)   $::env(Slicer3_HOME)/bin
     
       set ::env(KWWidgets_DIR)      $::env(Slicer3_HOME)/lib/KWWidgets
@@ -237,6 +238,11 @@ proc launch_SetEnvironment {} {
       set ::env(QT_LIB_DIR)         $::env(Slicer3_HOME)/lib/Qt
       # Let's make QT binaries available
       set ::env(QT_BINARY_DIR)         $::env(Slicer3_HOME)/bin
+
+      # On Mac each Qt library is a framework which needs DYLD_LIBRARY_PATH set for each
+      if {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
+        set ::env(QT_FRAMEWORK_DIRS)  [file normalize "@Slicer3_QT_FRAMEWORK_DIRS@"]
+      }
     
       set ::env(ITK_BIN_DIR)        $::env(Slicer3_HOME)/lib/InsightToolkit
     
@@ -403,6 +409,10 @@ proc launch_SetEnvironment {} {
       }
       # Let's make QT binaries available
       StoreDirInEnvVar QT_BINARY_DIR "@QT_BINARY_DIR@"
+      
+      if {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
+        set ::env(QT_FRAMEWORK_DIRS)  [file normalize "@QT_LIBRARY_DIR@"]
+      }
     
       set ::env(ITK_BIN_DIR)        [file normalize "@ITK_DIR@/bin/$::ITK_BUILD_SUBDIR"]
     
@@ -613,6 +623,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(CTK_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(CTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(PYTHONQT_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(PYTHONQT_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(QT_LIB_DIR):$::env(LD_LIBRARY_PATH)
@@ -668,9 +679,11 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(CTK_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(CTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(PYTHONQT_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(PYTHONQT_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(QT_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(QT_FRAMEWORK_DIRS)$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(BatchMake_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(bmModuleDescriptionParser_DIR):$::env(DYLD_LIBRARY_PATH)
