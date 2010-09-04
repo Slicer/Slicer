@@ -252,11 +252,16 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateMRMLToWidget(vt
   // update widget textscale
   rep->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
 
-  // update widget selected color
-  rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
-
-  // update widget color
-  rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetColor());
+  if (textNode->GetSelected())
+    {
+    // update widget selected color
+    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
+    }
+  else
+    {
+    // update widget color
+    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetColor());
+    }
 
   // at least one value has changed, so set the widget to modified
   rep->NeedToRenderOn();
@@ -343,10 +348,10 @@ void vtkMRMLAnnotationTextThreeDViewDisplayableManager::PropagateWidgetToMRML(vt
   textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
 
   // update mrml selected color
-  textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
+  //textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
 
   // update mrml color
-  textNode->GetAnnotationTextDisplayNode()->SetColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
+  //textNode->GetAnnotationTextDisplayNode()->SetColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
 
   // fire the modified event
   textNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, textNode);

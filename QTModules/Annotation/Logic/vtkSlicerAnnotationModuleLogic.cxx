@@ -1824,8 +1824,37 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationVisibility(const char * id)
     return;
     }
 
-  // lock this annotation
+  // show/hide this annotation
   annotationNode->SetVisible(!annotationNode->GetVisible());
+
+}
+
+//---------------------------------------------------------------------------
+// Toggles the selected flag of this annotation
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::SetAnnotationSelected(const char * id, bool selected)
+{
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    vtkErrorMacro("SetAnnotationSelected: Could not get the MRML node.")
+    return;
+    }
+
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
+      node);
+
+  if (!annotationNode)
+    {
+    vtkErrorMacro("SetAnnotationSelected: Could not get the annotationMRML node.")
+    return;
+    }
+
+  // select this annotation
+  annotationNode->SetSelected(selected);
+
+  annotationNode->InvokeEvent(vtkCommand::ModifiedEvent);
 
 }
 

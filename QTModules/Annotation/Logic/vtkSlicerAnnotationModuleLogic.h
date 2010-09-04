@@ -151,6 +151,9 @@ public:
   /// Toggle the visibility flag of an Annotation MRML node
   void SetAnnotationVisibility(const char * id);
 
+  /// Set the selected flag of an Annotation MRML node
+  void SetAnnotationSelected(const char * id, bool selected);
+
   /// Backup an Annotation MRML node
   void BackupAnnotationNode(const char * id);
   /// Restore a backup of an Annotation MRML node

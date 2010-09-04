@@ -81,7 +81,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   ui.measurementLineEdit->setText(measurement);
 
   // load the unselected text color
-  double * unselectedColor = this->m_logic->GetAnnotationTextSelectedColor(
+  double * unselectedColor = this->m_logic->GetAnnotationTextUnselectedColor(
       this->m_id);
   QColor unselectedQColor;
   this->TurnColorArrayToQColor(unselectedColor,unselectedQColor);

@@ -705,6 +705,8 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
   const char * mrmlId = this->m_IDs[d->tableWidget->row(
       d->tableWidget->selectedItems().at(0))];
 
+  d->logic()->SetAnnotationSelected(mrmlId, true);
+
   d->setItemEditable(d->tableWidget->selectedItems(), false);
 
   qSlicerAnnotationModulePropertyDialog* propertyDialog =
@@ -784,10 +786,12 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
 void qSlicerAnnotationModuleWidget::propertyRestored()
 {
 
-  //const char * mrmlID = this->m_PropertyDialog->GetID();
+  const char * mrmlID = this->m_PropertyDialog->GetID();
   CTK_D(qSlicerAnnotationModuleWidget);
 
   d->setItemEditable(d->tableWidget->selectedItems(), true);
+
+  d->logic()->SetAnnotationSelected(mrmlID, false);
 
   //delete this->m_PropertyDialog;
   this->m_PropertyDialog = 0;
@@ -855,6 +859,9 @@ void qSlicerAnnotationModuleWidget::propertyAccepted()
 
   // re-enable in table editing
   d->setItemEditable(d->tableWidget->selectedItems(), true);
+
+  d->logic()->SetAnnotationSelected(mrmlID,false);
+
 
   //delete this->m_PropertyDialog;
   this->m_PropertyDialog = 0;
@@ -1417,6 +1424,7 @@ void qSlicerAnnotationModuleWidget::selectRowByIndex(int index)
     for (int j = 0; j < d->tableWidget->columnCount(); ++j)
       {
       d->tableWidget->item(i, j)->setSelected(false);
+      d->logic()->SetAnnotationSelected(this->m_IDs[i],false);
       }
     }
 
@@ -1424,6 +1432,7 @@ void qSlicerAnnotationModuleWidget::selectRowByIndex(int index)
   for (int j = 0; j < d->tableWidget->columnCount(); ++j)
     {
     d->tableWidget->item(index, j)->setSelected(true);
+    d->logic()->SetAnnotationSelected(this->m_IDs[index],true);
     }
 
 }
