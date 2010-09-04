@@ -192,5 +192,6 @@ Slicer3_build_qtmodule(
 ADD_SUBDIRECTORY(Widgets/Plugins)
 
 if(BUILD_TESTING)
+  SET(EMSegment_TESTING_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Testing/Data)
   ADD_SUBDIRECTORY(Testing)
 endif(BUILD_TESTING)
