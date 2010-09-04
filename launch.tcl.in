@@ -138,13 +138,20 @@ proc launch_SetEnvironment {} {
     #
     switch $::tcl_platform(os) {
         "SunOS" { set ::env(BUILD) $::SOLARIS }
-        "Linux" {           
+        "GNU/kFreeBSD" {
             if {$::tcl_platform(machine) == "x86_64"} {
-                set ::env(BUILD) $::LINUX_64 
+                set ::env(BUILD) $::LINUX_64
             } else {
                 set ::env(BUILD) $::LINUX
             }
-        }       
+        }
+        "Linux" {
+            if {$::tcl_platform(machine) == "x86_64"} {
+                set ::env(BUILD) $::LINUX_64
+            } else {
+                set ::env(BUILD) $::LINUX
+            }
+        }
         "Darwin" { 
             if {$::tcl_platform(machine) == "i386"} {
                 set ::env(BUILD) $::DARWIN_X86
