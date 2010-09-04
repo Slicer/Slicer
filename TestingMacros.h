@@ -750,3 +750,46 @@
   }
 
 #endif
+
+// --------------------------------------------------------------------------
+// The ctkFail() macro print the line it's invoking from and an associated message
+//
+#define ctkFail(MSG) \
+  std::cerr << "line " << __LINE__ << " - " << MSG << std::endl;
+  
+// --------------------------------------------------------------------------
+// The ctkVerify2() macro behaves exactly like ctkVerify(), except that it outputs a verbose 
+// message when condition is false.
+//
+#define ctkVerify2(CONDITION, MSG)     \
+  if (!(CONDITION))                    \
+    {                                  \
+    ctkFail("Assert(" << #CONDITION    \
+      << ") " << MSG);                 \
+    return EXIT_FAILURE;               \
+    }
+
+// --------------------------------------------------------------------------
+// The ctkVerify() macro checks whether the condition is true or not. 
+// If it is true, execution continues.
+//
+#define ctkVerify(CONDITION)      \
+  ctkVerify2(CONDITION, "")
+
+// --------------------------------------------------------------------------
+// The ctkCompare macro compares an actual value to an expected value using the equals operator. 
+// If actual and expected are identical, execution continues.
+#define ctkCompare(ACTUAL_VALUE, EXPECTED_VALUE) \
+  if (ACTUAL_VALUE != EXPECTED_VALUE)                     \
+    {                                                     \
+    ctkFail("Compare failed (" << #ACTUAL_VALUE << "!="   \
+        << #EXPECTED_VALUE << ")" << std::endl            \
+        << "  Current:" << ACTUAL_VALUE << std::endl      \
+        << "  Expected:"<< EXPECTED_VALUE);               \
+    return EXIT_FAILURE;                                  \
+    }
+
+// --------------------------------------------------------------------------
+#define ctkExerciseMethod(OBJECT, SETTER, GETTER, VALUE_TO_SET, EXPECTED_VALUE) \
+  (OBJECT)->SETTER(VALUE_TO_SET);                                               \
+  ctkCompare((OBJECT)->GETTER(), EXPECTED_VALUE)
