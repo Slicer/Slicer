@@ -346,7 +346,7 @@ void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
       }
     node = d->mrmlNodeFromIndex(currentViewIndex);
     }
-  if (!node && (currentIndex != -1 || (d->NoneEnabled && currentIndex != 0)) )
+  if (!node && ((!d->NoneEnabled &&currentIndex != -1) || (d->NoneEnabled && currentIndex != 0)) )
     {
     this->setCurrentNode(this->nodeFromIndex(this->nodeCount()-1));
     }
@@ -449,7 +449,6 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
   d->ComboBox->view()->setCurrentIndex(indexes[0]);
   QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
   QApplication::sendEvent(d->ComboBox->view(), &event);
-  QApplication::processEvents();
 }
 
 // --------------------------------------------------------------------------
