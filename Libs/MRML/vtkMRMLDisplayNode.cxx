@@ -327,6 +327,7 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "colorNodeID") ||
              !strcmp(attName, "colorNodeRef")) 
       {
+      this->ColorNode = NULL;
       this->SetColorNodeID(attValue);
       //this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
       }
@@ -501,16 +502,15 @@ vtkMRMLColorNode* vtkMRMLDisplayNode::GetColorNode()
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
 {
-  this->SetColorNodeID(colorNodeID);
-
   vtkMRMLColorNode* cnode = NULL;
   if (this->GetScene())
     {
     cnode = vtkMRMLColorNode::SafeDownCast(
-      this->GetScene()->GetNodeByID(this->GetColorNodeID()));
+      this->GetScene()->GetNodeByID(colorNodeID));
     }
 
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+  this->SetColorNodeID(colorNodeID);
 }
 
 //----------------------------------------------------------------------------
