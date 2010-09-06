@@ -488,7 +488,6 @@ vtkMRMLColorNode* vtkMRMLDisplayNode::GetColorNode()
     {
     return this->ColorNode;
     }
-  vtkWarningMacro( << "vtkMRMLDisplayNode::GetColorNode(): Change of color node has not been synchronized.");
   vtkMRMLColorNode* cnode = NULL;
   if (this->GetScene())
     {
