@@ -18,9 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QTextStream>
-
 // SlicerQt includes
 #include "qSlicerCLILoadableModule.h"
 
@@ -63,9 +60,11 @@ void qSlicerCLILoadableModule::setup()
 QString qSlicerCLILoadableModule::entryPoint()const
 {
   CTK_D(const qSlicerCLILoadableModule);
-  QString str;
-  QTextStream(&str) << "slicer:" << (void*)(d->EntryPoint);
-  return str; 
+  char buffer[256];
+  // The entry point address must be encoded the same way it is decoded. As it
+  // is decoded using  sscanf, it must be encoded using sprintf
+  sprintf(buffer, "slicer:%p", d->EntryPoint);
+  return QString(buffer); 
 }
 
 //-----------------------------------------------------------------------------
