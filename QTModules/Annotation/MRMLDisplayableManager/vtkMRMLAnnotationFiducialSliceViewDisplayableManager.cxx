@@ -1,23 +1,21 @@
-
 // AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationFiducialThreeDViewDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationFiducialSliceViewDisplayableManager.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
-#include <vtkProperty2D.h>
+#include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkSeedWidget.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkSeedRepresentation.h>
-#include <vtkPointHandleRepresentation2D.h>
+#include <vtkPointHandleRepresentation3D.h>
 #include <vtkAbstractWidget.h>
 
 // std includes
@@ -28,18 +26,18 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLAnnotationFiducialThreeDViewDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationFiducialThreeDViewDisplayableManager, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkMRMLAnnotationFiducialSliceViewDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLAnnotationFiducialSliceViewDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationFiducialThreeDViewDisplayableManager Callback
-class vtkAnnotationFiducialWidgetCallback : public vtkCommand
+// vtkMRMLAnnotationFiducialSliceViewDisplayableManager Callback
+class vtkAnnotationFiducialSliceViewWidgetCallback : public vtkCommand
 {
 public:
-  static vtkAnnotationFiducialWidgetCallback *New()
-  { return new vtkAnnotationFiducialWidgetCallback; }
+  static vtkAnnotationFiducialSliceViewWidgetCallback *New()
+  { return new vtkAnnotationFiducialSliceViewWidgetCallback; }
 
-  vtkAnnotationFiducialWidgetCallback(){}
+  vtkAnnotationFiducialSliceViewWidgetCallback(){}
 
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
@@ -75,28 +73,28 @@ public:
   {
     this->m_Node = n;
   }
-  void SetDisplayableManager(vtkMRMLAnnotationThreeDViewDisplayableManager * dm)
+  void SetDisplayableManager(vtkMRMLAnnotationSliceViewDisplayableManager * dm)
   {
     this->m_DisplayableManager = dm;
   }
 
   vtkAbstractWidget * m_Widget;
   vtkMRMLAnnotationNode * m_Node;
-  vtkMRMLAnnotationThreeDViewDisplayableManager * m_DisplayableManager;
+  vtkMRMLAnnotationSliceViewDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationFiducialThreeDViewDisplayableManager methods
+// vtkMRMLAnnotationFiducialSliceViewDisplayableManager methods
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAnnotationFiducialSliceViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
 /// Create a new text widget.
-vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+vtkAbstractWidget * vtkMRMLAnnotationFiducialSliceViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
 
   if (!node)
@@ -113,7 +111,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::Creat
     return 0;
     }
 
-  VTK_CREATE(vtkPointHandleRepresentation2D, handle);
+  VTK_CREATE(vtkPointHandleRepresentation3D, handle);
   handle->GetProperty()->SetColor(1,0,0);
   handle->SetHandleSize(5);
 
@@ -140,6 +138,8 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::Creat
   newhandle = seedWidget->CreateNewHandle();
   vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
 
+
+
   //seedWidget->CompleteInteraction();
 
   seedWidget->On();
@@ -150,7 +150,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::Creat
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
+void vtkMRMLAnnotationFiducialSliceViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!widget)
@@ -166,7 +166,7 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::OnWidgetCreated(vtkA
     }
 
   // add the callback
-  vtkAnnotationFiducialWidgetCallback *myCallback = vtkAnnotationFiducialWidgetCallback::New();
+  vtkAnnotationFiducialSliceViewWidgetCallback *myCallback = vtkAnnotationFiducialSliceViewWidgetCallback::New();
   myCallback->SetNode(node);
   myCallback->SetWidget(widget);
   myCallback->SetDisplayableManager(this);
@@ -180,7 +180,7 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::OnWidgetCreated(vtkA
 
 //---------------------------------------------------------------------------
 /// Propagate properties of MRML node to widget.
-void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+void vtkMRMLAnnotationFiducialSliceViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
 
   if (!widget)
@@ -243,7 +243,7 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateMRMLToWidge
 
 //---------------------------------------------------------------------------
 /// Propagate properties of widget to MRML node.
-void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationFiducialSliceViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
 
   if (!widget)
@@ -304,7 +304,7 @@ void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::PropagateWidgetToMRM
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationFiducialSliceViewDisplayableManager::OnClickInSliceViewWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

@@ -114,7 +114,7 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyThreeDViewDisplayableManager::CreateW
     return 0;
     }
 
-  vtkHandleWidget * h1 = this->m_HandleWidgetList[0];
+  vtkHandleWidget * h1 = this->GetSeed(0);
 
   // we get display coordinates, we need normalized viewport
   // so we transform

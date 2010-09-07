@@ -47,9 +47,6 @@ public:
 
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
-  // Get the coordinates of a click in the RenderWindow
-  void OnClickInThreeDRenderWindowGetCoordinates();
-
   // the following functions must be public to be accessible by the callback
   /// Propagate properties of MRML node to widget.
   virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
@@ -84,7 +81,8 @@ protected:
   /// Get the widget of a node.
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
 
-
+  // Get the coordinates of a click in the RenderWindow
+  void OnClickInThreeDRenderWindowGetCoordinates();
   /// Callback for click in RenderWindow
   virtual void OnClickInThreeDRenderWindow(double x, double y);
   /// Counter for clicks in 3D Render Window
@@ -92,18 +90,13 @@ protected:
 
   /// Place a seed for widgets
   virtual void PlaceSeed(double x, double y);
+  /// Return the placed seeds
+  vtkHandleWidget * GetSeed(int index);
 
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Gets called when widget was created
   virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node);
-
-  /// SeedWidget for point placement
-  vtkSeedWidget * m_SeedWidget;
-  /// List of Handles for the SeedWidget
-  std::vector<vtkHandleWidget*> m_HandleWidgetList;
-  /// .. and its associated convenient typedef
-  typedef std::vector<vtkHandleWidget*>::iterator HandleWidgetListIt;
 
   /// Check if it is the right displayManager
   virtual bool IsCorrectDisplayableManager();
@@ -113,8 +106,9 @@ protected:
 
   /// Convert display to world coordinates
   virtual double * GetWorldToDisplayCoordinates(double r, double a, double s);
+  virtual double * GetWorldToDisplayCoordinates(double * worldPoints);
 
-  /// Focus of this displayableManager
+  /// Focus of this displayableManager is set to a specific annotation type when inherited
   const char* m_Focus;
 
   /// Disable processing when updating is in progress.
@@ -127,10 +121,7 @@ private:
 
   virtual void OnInteractorStyleEvent(int eventid);
 
-  //BTX
-  class vtkInternal;
   vtkMRMLAnnotationDisplayableManagerHelper * Helper;
-  //ETX
 
   int m_DisableInteractorStyleEventsProcessing;
 

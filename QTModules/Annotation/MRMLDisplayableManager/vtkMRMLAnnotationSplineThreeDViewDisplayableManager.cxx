@@ -335,11 +335,11 @@ void vtkMRMLAnnotationSplineThreeDViewDisplayableManager::OnClickInThreeDRenderW
     // switch to updating state to avoid events mess
     this->m_Updating = 1;
 
-    vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
-    vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
-    vtkHandleWidget *h3 = this->m_HandleWidgetList[2];
-    vtkHandleWidget *h4 = this->m_HandleWidgetList[3];
-    vtkHandleWidget *h5 = this->m_HandleWidgetList[4];
+    vtkHandleWidget *h1 = this->GetSeed(0);
+    vtkHandleWidget *h2 = this->GetSeed(1);
+    vtkHandleWidget *h3 = this->GetSeed(2);
+    vtkHandleWidget *h4 = this->GetSeed(3);
+    vtkHandleWidget *h5 = this->GetSeed(4);
 
     double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetWorldPosition();
     double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetWorldPosition();

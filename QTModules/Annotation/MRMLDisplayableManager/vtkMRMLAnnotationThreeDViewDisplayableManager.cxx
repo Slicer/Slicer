@@ -8,7 +8,7 @@
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLInteractionNode.h>
-#include "vtkMRMLSelectionNode.h"
+#include <vtkMRMLSelectionNode.h>
 
 // VTK includes
 #include <vtkObject.h>
@@ -19,18 +19,9 @@
 #include <vtkProperty.h>
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
-#include <vtkSphereHandleRepresentation.h>
-#include <vtkLineRepresentation.h>
-#include <vtkPolygonalSurfacePointPlacer.h>
-#include <vtkMath.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkPointHandleRepresentation3D.h>
-#include <vtkSeedRepresentation.h>
-#include <vtkSeedWidget.h>
 #include <vtkRenderWindow.h>
-#include <vtkProperty2D.h>
-#include <vtkHandleWidget.h>
-#include <vtkSphereWidget.h>
+#include <vtkMath.h>
 
 // STD includes
 #include <vector>
@@ -52,7 +43,6 @@ vtkMRMLAnnotationThreeDViewDisplayableManager::vtkMRMLAnnotationThreeDViewDispla
 {
   this->Helper = vtkMRMLAnnotationDisplayableManagerHelper::New();
   this->m_ClickCounter = vtkMRMLAnnotationClickCounter::New();
-  this->m_SeedWidget = 0;
   this->m_DisableInteractorStyleEventsProcessing = 0;
   this->m_Updating = 0;
 
@@ -62,11 +52,11 @@ vtkMRMLAnnotationThreeDViewDisplayableManager::vtkMRMLAnnotationThreeDViewDispla
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationThreeDViewDisplayableManager::~vtkMRMLAnnotationThreeDViewDisplayableManager()
 {
-  this->Helper->Delete();
-  this->m_SeedWidget = 0;
+
   this->m_DisableInteractorStyleEventsProcessing = 0;
   this->m_Updating = 0;
   this->m_Focus = 0;
+  this->Helper->Delete();
   this->m_ClickCounter->Delete();
 }
 
@@ -202,17 +192,6 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vt
   // Add the node to the list.
   this->Helper->AnnotationNodeList.push_back(annotationNode);
 
-  // Remove all placed seeds
-  while(!this->m_HandleWidgetList.empty())
-    {
-    this->m_HandleWidgetList.pop_back();
-    }
-  if (this->m_SeedWidget)
-    {
-    this->m_SeedWidget->Off();
-    this->m_SeedWidget = 0;
-    }
-
   // Refresh observers
   this->SetAndObserveNodes();
 
@@ -226,15 +205,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vt
   this->m_DisableInteractorStyleEventsProcessing = 0;
 
   // Remove all placed seeds
-  while(!this->m_HandleWidgetList.empty())
-    {
-    this->m_HandleWidgetList.pop_back();
-    }
-  if (this->m_SeedWidget)
-    {
-    this->m_SeedWidget->Off();
-    this->m_SeedWidget = 0;
-    }
+  this->Helper->RemoveSeeds();
 
   // and render again after seeds were removed
   this->RequestRender();
@@ -366,58 +337,32 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnClickInThreeDRenderWindowG
   this->OnClickInThreeDRenderWindow(x, y);
 }
 
+
+//---------------------------------------------------------------------------
+// Placement of widgets through seeds
+//---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 /// Place a seed for widgets
 void vtkMRMLAnnotationThreeDViewDisplayableManager::PlaceSeed(double x, double y)
 {
-  vtkDebugMacro("PlaceSeed: " << x << ":" << y)
 
-  if (!this->m_SeedWidget)
-    {
-
-    VTK_CREATE(vtkSphereHandleRepresentation, handle);
-    handle->GetProperty()->SetColor(1,0,0);
-    handle->SetHandleSize(5);
-
-    VTK_CREATE(vtkSeedRepresentation, rep);
-    rep->SetHandleRepresentation(handle);
-
-    //seed widget
-    vtkSeedWidget * seedWidget = vtkSeedWidget::New();
-    //seedWidget->CreateDefaultRepresentation();
-    seedWidget->SetRepresentation(rep);
-
-    seedWidget->SetInteractor(this->GetInteractor());
-    seedWidget->SetCurrentRenderer(this->GetRenderer());
-
-    seedWidget->ProcessEventsOff();
-    seedWidget->CompleteInteraction();
-
-    //seedWidget->On();
-
-    this->m_SeedWidget = seedWidget;
-
-    }
-
-  // Seed widget exists here, just add a new handle at the position x,y
-
-  double p[3];
-  p[0]=x;
-  p[1]=y;
-  p[2]=0;
-
-  //VTK_CREATE(vtkHandleWidget, newhandle);
-  vtkHandleWidget * newhandle = this->m_SeedWidget->CreateNewHandle();
-  vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(p);
-
-  this->m_HandleWidgetList.push_back(newhandle);
-
-  this->m_SeedWidget->On();
+  // place the seed
+  this->Helper->PlaceSeed(x,y,this->GetInteractor(),this->GetRenderer());
 
   this->RequestRender();
 
 }
 
+//---------------------------------------------------------------------------
+/// Get the handle of a placed seed
+vtkHandleWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::GetSeed(int index)
+{
+  return this->Helper->GetSeed(index);
+}
+
+//---------------------------------------------------------------------------
+// Coordinate conversions
 //---------------------------------------------------------------------------
 /// Convert display to world coordinates
 double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetDisplayToWorldCoordinates(double x, double y)
@@ -452,7 +397,24 @@ double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordina
 }
 
 //---------------------------------------------------------------------------
+/// Convert world to display coordinates
+double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordinates(double * worldPoints)
+{
+
+  double * displayCoordinates;
+
+  this->GetRenderer()->SetWorldPoint(worldPoints);
+  this->GetRenderer()->WorldToView();
+  displayCoordinates = this->GetRenderer()->GetViewPoint();
+  this->GetRenderer()->ViewToDisplay();
+
+  return this->GetRenderer()->GetDisplayPoint();
+
+}
+
+//---------------------------------------------------------------------------
 /// Check if it is the correct displayableManager
+//---------------------------------------------------------------------------
 bool vtkMRMLAnnotationThreeDViewDisplayableManager::IsCorrectDisplayableManager()
 {
 

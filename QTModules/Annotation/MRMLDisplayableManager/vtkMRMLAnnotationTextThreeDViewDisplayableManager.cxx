@@ -134,8 +134,7 @@ vtkAbstractWidget * vtkMRMLAnnotationTextThreeDViewDisplayableManager::CreateWid
 
   // we get display coordinates
   // we need normalized viewport coordinates, so we transform
-  VTK_CREATE(vtkHandleWidget, h1);
-  h1 = this->m_HandleWidgetList[0];
+  vtkHandleWidget * h1 = this->GetSeed(0);
 
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 

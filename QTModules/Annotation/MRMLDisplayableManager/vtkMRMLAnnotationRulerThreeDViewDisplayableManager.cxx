@@ -151,8 +151,8 @@ void vtkMRMLAnnotationRulerThreeDViewDisplayableManager::OnWidgetCreated(vtkAbst
   recorder->ReadFromInputStringOn();
 
   std::ostringstream o;
-  vtkHandleWidget * h1 = this->m_HandleWidgetList[0];
-  vtkHandleWidget * h2 = this->m_HandleWidgetList[1];
+  vtkHandleWidget * h1 = this->GetSeed(0);
+  vtkHandleWidget * h2 = this->GetSeed(1);
 
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 

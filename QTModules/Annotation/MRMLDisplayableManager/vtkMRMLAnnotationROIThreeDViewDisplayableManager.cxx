@@ -314,8 +314,8 @@ void vtkMRMLAnnotationROIThreeDViewDisplayableManager::OnClickInThreeDRenderWind
     // switch to updating state to avoid events mess
     this->m_Updating = 1;
 
-    vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
-    vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
+    vtkHandleWidget *h1 = this->GetSeed(0);
+    vtkHandleWidget *h2 = this->GetSeed(1);
 
     double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetWorldPosition();
     double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetWorldPosition();

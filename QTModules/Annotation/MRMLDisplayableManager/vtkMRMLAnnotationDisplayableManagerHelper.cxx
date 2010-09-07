@@ -8,6 +8,12 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkAbstractWidget.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSeedWidget.h>
+#include <vtkHandleWidget.h>
+#include <vtkSphereHandleRepresentation.h>
+#include <vtkSeedRepresentation.h>
+#include <vtkProperty.h>
 
 // STD includes
 #include <vector>
@@ -31,11 +37,13 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent
 vtkMRMLAnnotationDisplayableManagerHelper::vtkMRMLAnnotationDisplayableManagerHelper()
 {
 
+  this->SeedWidget = 0;
+
 }
 
 vtkMRMLAnnotationDisplayableManagerHelper::~vtkMRMLAnnotationDisplayableManagerHelper()
 {
-  // TODO Auto-generated destructor stub
+  this->SeedWidget = 0;
 }
 
 
@@ -158,3 +166,85 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidget(
 
   this->AnnotationNodeList.erase(it2);
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vtkRenderWindowInteractor * interactor, vtkRenderer * renderer)
+{
+  vtkDebugMacro("PlaceSeed: " << x << ":" << y)
+
+  if (!interactor)
+    {
+    vtkErrorMacro("PlaceSeed: No render interactor found.")
+    }
+
+  if (!renderer)
+    {
+    vtkErrorMacro("PlaceSeed: No render renderer found.")
+    }
+
+  if (!this->SeedWidget)
+    {
+
+    VTK_CREATE(vtkSphereHandleRepresentation, handle);
+    handle->GetProperty()->SetColor(1,0,0);
+    handle->SetHandleSize(5);
+
+    VTK_CREATE(vtkSeedRepresentation, rep);
+    rep->SetHandleRepresentation(handle);
+
+    //seed widget
+    vtkSeedWidget * seedWidget = vtkSeedWidget::New();
+    seedWidget->SetRepresentation(rep);
+
+    seedWidget->SetInteractor(interactor);
+    seedWidget->SetCurrentRenderer(renderer);
+
+    seedWidget->ProcessEventsOff();
+    seedWidget->CompleteInteraction();
+
+    this->SeedWidget = seedWidget;
+
+    }
+
+  // Seed widget exists here, just add a new handle at the position x,y
+
+  double p[3];
+  p[0]=x;
+  p[1]=y;
+  p[2]=0;
+
+  //VTK_CREATE(vtkHandleWidget, newhandle);
+  vtkHandleWidget * newhandle = this->SeedWidget->CreateNewHandle();
+  vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(p);
+
+  this->HandleWidgetList.push_back(newhandle);
+
+  this->SeedWidget->On();
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManagerHelper::RemoveSeeds()
+{
+  while(!this->HandleWidgetList.empty())
+    {
+    this->HandleWidgetList.pop_back();
+    }
+  if (this->SeedWidget)
+    {
+    this->SeedWidget->Off();
+    this->SeedWidget = 0;
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkHandleWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetSeed(int index)
+{
+  if (this->HandleWidgetList.empty())
+    {
+    return 0;
+    }
+
+  return this->HandleWidgetList[index];
+}
+

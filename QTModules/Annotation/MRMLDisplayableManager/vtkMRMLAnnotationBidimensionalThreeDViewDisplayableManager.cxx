@@ -157,14 +157,11 @@ void vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager::OnWidgetCreated
   recorder->ReadFromInputStringOn();
 
   std::ostringstream o;
-  VTK_CREATE(vtkHandleWidget, h1);
-  h1 = this->m_HandleWidgetList[0];
-  VTK_CREATE(vtkHandleWidget, h2);
-  h2 = this->m_HandleWidgetList[1];
-  VTK_CREATE(vtkHandleWidget, h3);
-  h3 = this->m_HandleWidgetList[2];
-  VTK_CREATE(vtkHandleWidget, h4);
-  h4 = this->m_HandleWidgetList[3];
+
+  vtkHandleWidget * h1 = this->GetSeed(0);
+  vtkHandleWidget * h2 = this->GetSeed(1);
+  vtkHandleWidget * h3 = this->GetSeed(2);
+  vtkHandleWidget * h4 = this->GetSeed(3);
 
 
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
@@ -382,10 +379,10 @@ void vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager::OnClickInThreeD
 
     vtkMRMLAnnotationBidimensionalNode *bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::New();
 
-    vtkHandleWidget *h1 = this->m_HandleWidgetList[0];
-    vtkHandleWidget *h2 = this->m_HandleWidgetList[1];
-    vtkHandleWidget *h3 = this->m_HandleWidgetList[2];
-    vtkHandleWidget *h4 = this->m_HandleWidgetList[3];
+    vtkHandleWidget *h1 = this->GetSeed(0);
+    vtkHandleWidget *h2 = this->GetSeed(1);
+    vtkHandleWidget *h3 = this->GetSeed(2);
+    vtkHandleWidget *h4 = this->GetSeed(3);
 
     double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetWorldPosition();
     double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetWorldPosition();

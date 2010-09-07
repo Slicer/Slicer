@@ -23,6 +23,8 @@
 // VTK include
 #include <vtkObject.h>
 #include <vtkAbstractWidget.h>
+#include <vtkSeedWidget.h>
+#include <vtkHandleWidget.h>
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManagerHelper :
     public vtkObject
@@ -33,8 +35,11 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManagerHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Lock/Unlock a widget
   void UpdateLocked(vtkMRMLAnnotationNode* node);
+  /// Hide/Show a widget
   void UpdateVisible(vtkMRMLAnnotationNode* node);
+  /// Update lock and visibility of a widget
   void UpdateWidget(vtkMRMLAnnotationNode* node);
 
   /// Get a vtkAbstractWidget* given a node
@@ -54,6 +59,17 @@ public:
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetsIt;
 
 
+  ///
+  /// Placement of seeds for widget placement
+  void PlaceSeed(double x, double y, vtkRenderWindowInteractor * interactor, vtkRenderer * renderer);
+
+  /// Get a placed seed
+  vtkHandleWidget * GetSeed(int index);
+
+  /// Remove all placed seeds
+  void RemoveSeeds();
+
+
 protected:
 
   vtkMRMLAnnotationDisplayableManagerHelper();
@@ -63,6 +79,16 @@ private:
 
   vtkMRMLAnnotationDisplayableManagerHelper(const vtkMRMLAnnotationDisplayableManagerHelper&); /// Not implemented
   void operator=(const vtkMRMLAnnotationDisplayableManagerHelper&); /// Not Implemented
+
+  ///
+  /// SeedWidget for point placement
+  vtkSeedWidget * SeedWidget;
+  ///
+  /// List of Handles for the SeedWidget
+  std::vector<vtkHandleWidget*> HandleWidgetList;
+  ///
+  /// .. and its associated convenient typedef
+  typedef std::vector<vtkHandleWidget*>::iterator HandleWidgetListIt;
 
 };
 

@@ -35,6 +35,7 @@ SET(DisplayableManager_SRCS
   MRMLDisplayableManager/vtkMRMLAnnotationThreeDViewDisplayableManager.cxx
   
   # 2D
+  MRMLDisplayableManager/vtkMRMLAnnotationFiducialSliceViewDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationSliceViewDisplayableManager.cxx
 
   MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManagerHelper.cxx

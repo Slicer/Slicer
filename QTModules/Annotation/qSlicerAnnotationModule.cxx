@@ -59,7 +59,7 @@ void qSlicerAnnotationModule::setup()
 
   // 2D
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationSliceViewDisplayableManager");
+      "vtkMRMLAnnotationFiducialSliceViewDisplayableManager");
 
 }
 
