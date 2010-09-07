@@ -17,7 +17,7 @@
 #include <vtkSeedWidget.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkSeedRepresentation.h>
-#include <vtkPointHandleRepresentation2D.h>
+#include <vtkPointHandleRepresentation3D.h>
 #include <vtkAbstractWidget.h>
 
 // std includes
@@ -113,7 +113,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::Creat
     return 0;
     }
 
-  VTK_CREATE(vtkPointHandleRepresentation2D, handle);
+  VTK_CREATE(vtkPointHandleRepresentation3D, handle);
   handle->GetProperty()->SetColor(1,0,0);
   handle->SetHandleSize(5);
 
