@@ -180,6 +180,8 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vt
     return;
     }
 
+  std::cout << "OnMRMLSceneNodeAddedEvent ThreeD -> CreateWidget" << std::endl;
+
   // Create the Widget and add it to the list.
   vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
   if (!newWidget) {
@@ -261,6 +263,8 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeModified
     vtkErrorMacro("OnMRMLAnnotationNodeModifiedEvent: Can not access node.")
     return;
     }
+
+  std::cout << "OnMRMLAnnotationNodeModifiedEvent ThreeD->PropagateMRMLToWidget" << std::endl;
 
   // Update the standard settings of all widgets.
   this->Helper->UpdateWidget(annotationNode);
@@ -401,6 +405,8 @@ double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordina
 double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordinates(double * worldPoints)
 {
 
+  vtkDebugMacro("GetWorldToDisplayCoordinates: RAS " << worldPoints[0] << ", " << worldPoints[1] << ", " << worldPoints[2])
+
   double * displayCoordinates;
 
   this->GetRenderer()->SetWorldPoint(worldPoints);
@@ -408,7 +414,11 @@ double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordina
   displayCoordinates = this->GetRenderer()->GetViewPoint();
   this->GetRenderer()->ViewToDisplay();
 
-  return this->GetRenderer()->GetDisplayPoint();
+  double * output = this->GetRenderer()->GetDisplayPoint();
+
+  vtkDebugMacro("GetWorldToDisplayCoordinates: Display " << output[0] << ", " << output[1])
+
+  return output;
 
 }
 

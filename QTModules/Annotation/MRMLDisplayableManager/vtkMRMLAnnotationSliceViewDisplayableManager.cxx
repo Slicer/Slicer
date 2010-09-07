@@ -22,10 +22,14 @@
 #include <vtkRenderWindow.h>
 #include <vtkMath.h>
 
+// STD includes
+#include <vector>
+#include <map>
+#include <algorithm>
+
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationSliceViewDisplayableManager);
@@ -43,7 +47,7 @@ vtkMRMLAnnotationSliceViewDisplayableManager::vtkMRMLAnnotationSliceViewDisplaya
 
   this->m_Focus = "vtkMRMLAnnotationNode";
 
-  this->DebugOn();
+  //this->DebugOn();
 
 }
 
@@ -179,11 +183,12 @@ void vtkMRMLAnnotationSliceViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vtk
     return;
     }
 
+  std::cout << "OnMRMLSceneNodeAddedEvent Slice -> CreateWidget" << std::endl;
+
   // Create the Widget and add it to the list.
   vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
   if (!newWidget) {
     vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Widget was not created!")
-    // Exit here, if this is not the right displayableManager
     return;
   }
   this->Helper->Widgets[annotationNode] = newWidget;
@@ -260,6 +265,8 @@ void vtkMRMLAnnotationSliceViewDisplayableManager::OnMRMLAnnotationNodeModifiedE
     vtkErrorMacro("OnMRMLAnnotationNodeModifiedEvent: Can not access node.")
     return;
     }
+
+  std::cout << "OnMRMLAnnotationNodeModifiedEvent Slice -> PropagateMRMLToWidget" << std::endl;
 
   // Update the standard settings of all widgets.
   this->Helper->UpdateWidget(annotationNode);
@@ -398,6 +405,8 @@ double* vtkMRMLAnnotationSliceViewDisplayableManager::GetWorldToDisplayCoordinat
 double* vtkMRMLAnnotationSliceViewDisplayableManager::GetWorldToDisplayCoordinates(double * worldPoints)
 {
 
+  vtkDebugMacro("GetWorldToDisplayCoordinates: RAS " << worldPoints[0] << ", " << worldPoints[1] << ", " << worldPoints[2])
+
   double * displayCoordinates;
 
   this->GetRenderer()->SetWorldPoint(worldPoints);
@@ -405,7 +414,11 @@ double* vtkMRMLAnnotationSliceViewDisplayableManager::GetWorldToDisplayCoordinat
   displayCoordinates = this->GetRenderer()->GetViewPoint();
   this->GetRenderer()->ViewToDisplay();
 
-  return this->GetRenderer()->GetDisplayPoint();
+  double * output = this->GetRenderer()->GetDisplayPoint();
+
+  vtkDebugMacro("GetWorldToDisplayCoordinates: Display " << output[0] << ", " << output[1])
+
+  return output;
 
 }
 

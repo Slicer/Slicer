@@ -168,6 +168,10 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidget(
 }
 
 //---------------------------------------------------------------------------
+// Seeds for widget placement
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vtkRenderWindowInteractor * interactor, vtkRenderer * renderer)
 {
   vtkDebugMacro("PlaceSeed: " << x << ":" << y)
@@ -247,4 +251,3 @@ vtkHandleWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetSeed(int index)
 
   return this->HandleWidgetList[index];
 }
-
