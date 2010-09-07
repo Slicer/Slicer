@@ -50,6 +50,7 @@ class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentAnatomicalTreeWidget :
   Q_PROPERTY(bool updateClassWeightColumnVisible READ updateClassWeightColumnVisible WRITE setUpdateClassWeightColumnVisible)
   Q_PROPERTY(bool atlasWeightColumnVisible READ atlasWeightColumnVisible WRITE setAtlasWeightColumnVisible)
   Q_PROPERTY(bool alphaColumnVisible READ alphaColumnVisible WRITE setAlphaColumnVisible)
+  Q_PROPERTY(bool probabilityMapColumnVisible READ probabilityMapColumnVisible WRITE setProbabilityMapColumnVisible)
 
 public:
 
@@ -69,6 +70,8 @@ public:
   bool atlasWeightColumnVisible() const;
 
   bool alphaColumnVisible() const;
+
+  bool probabilityMapColumnVisible() const;
 
 public slots:
 
@@ -90,6 +93,8 @@ public slots:
 
   void setAlphaColumnVisible(bool visible);
 
+  void setProbabilityMapColumnVisible(bool visible);
+
 protected slots:
 
   void collapseToDepthZero();
@@ -98,9 +103,9 @@ signals:
 
   void currentTreeNodeChanged(vtkMRMLNode* node);
 
-  void currentSpatialPriorVolumeNodeChanged(vtkMRMLNode* node);
+//  void currentSpatialPriorVolumeNodeChanged(vtkMRMLNode* node);
 
-  void currentSpatialPriorVolumeNodeChanged(bool validNode);
+//  void currentSpatialPriorVolumeNodeChanged(bool validNode);
 
 private:
 

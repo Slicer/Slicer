@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>368</height>
+    <width>453</width>
+    <height>254</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,48 +33,9 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="ProbabilityMapGroupBox">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="title">
-      <string>Probability Map</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Select Volume:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBox">
-        <property name="nodeTypes">
-         <stringlist>
-          <string>vtkMRMLVolumeNode</string>
-         </stringlist>
-        </property>
-        <property name="showHidden">
+       <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
+        <property name="probabilityMapColumnVisible">
          <bool>true</bool>
-        </property>
-        <property name="noneEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="addEnabled">
-         <bool>false</bool>
-        </property>
-        <property name="removeEnabled">
-         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -84,11 +45,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
   <customwidget>
    <class>ctkWorkflowWidgetStep</class>
    <extends>QWidget</extends>
@@ -123,38 +79,6 @@
  <connections>
   <connection>
    <sender>qSlicerEMSegmentDefineAtlasStep</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLNodeComboBox</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>341</x>
-     <y>7</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>464</x>
-     <y>347</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>EMSegmentAnatomicalTreeWidget</sender>
-   <signal>currentSpatialPriorVolumeNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>MRMLNodeComboBox</receiver>
-   <slot>setCurrentNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>213</x>
-     <y>176</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>347</x>
-     <y>347</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerEMSegmentDefineAtlasStep</sender>
    <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
    <receiver>EMSegmentAnatomicalTreeWidget</receiver>
    <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
@@ -166,22 +90,6 @@
     <hint type="destinationlabel">
      <x>33</x>
      <y>152</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>EMSegmentAnatomicalTreeWidget</sender>
-   <signal>currentSpatialPriorVolumeNodeChanged(bool)</signal>
-   <receiver>ProbabilityMapGroupBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>257</x>
-     <y>252</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>243</x>
-     <y>302</y>
     </hint>
    </hints>
   </connection>

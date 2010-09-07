@@ -36,6 +36,7 @@
 
 // qMRMLWidgets includes
 #include <qMRMLLabelComboBox.h>
+#include <qMRMLNodeComboBox.h>
 #include <qMRMLUtils.h>
 
 // EMSegment includes
@@ -73,6 +74,7 @@ qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidge
   this->UpdateClassWeightColumnVisible = false;
   this->AtlasWeightColumnVisible = false;
   this->AlphaColumnVisible = false;
+  this->ProbabilityMapColumnVisible = false;
 
   this->initializeHorizontalHeader();
 }
@@ -88,6 +90,7 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::initializeHorizontalHeader()
   headerNames.insert(Self::UpdateClassWeightColumn, "Update");
   headerNames.insert(Self::AtlasWeightColumn, "Atlas Weight");
   headerNames.insert(Self::AlphaColumn, "Alpha");
+  headerNames.insert(Self::ProbabilityMapColumn, "Probability map");
   this->TreeModel->setHorizontalHeaderLabels(headerNames);
 }
 
@@ -216,6 +219,16 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
     }
   itemList << alphaItem;
 
+  // ProbabilityMap item - Available only for tree leaf
+  QStandardItem * probabilityMapItem = new QStandardItem();
+  probabilityMapItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
+  probabilityMapItem->setEditable(false);
+  if (isLeaf) // Is treeNode a leaf ?
+    {
+    probabilityMapItem->setData(QVariant(Self::ProbabilityMapItemType), Self::TreeItemTypeRole);
+    }
+  itemList << probabilityMapItem;
+
   parentItem->appendRow(itemList);
 
   // Set widget associated with labelItem
@@ -232,6 +245,29 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
         treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel());
     this->TreeView->setIndexWidget(
         this->TreeModel->indexFromItem(labelItem), labelComboBox);
+    }
+
+  // Set widget associated with probabilityMapItem
+  if (isLeaf && this->ProbabilityMapColumnVisible)
+    {
+    vtkIdType volumeId = p->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
+    vtkMRMLVolumeNode * volumeNode = p->mrmlManager()->GetVolumeNode(volumeId);
+    qMRMLNodeComboBox * probabilityMapComboBox = new qMRMLNodeComboBox;
+    QStringList nodeTypes;
+    nodeTypes << "vtkMRMLVolumeNode";
+    // Set treeNodeId property so that "onProbabilityMapChanged" can retrieve it
+    probabilityMapComboBox->setProperty("treeNodeId", QVariant(treeNodeId));
+    probabilityMapComboBox->setNodeTypes(nodeTypes);
+    probabilityMapComboBox->setShowHidden(true);
+    probabilityMapComboBox->setAddEnabled(false);
+    probabilityMapComboBox->setRemoveEnabled(false);
+    probabilityMapComboBox->setEditEnabled(false);
+    probabilityMapComboBox->setMRMLScene(p->mrmlScene());
+    probabilityMapComboBox->setCurrentNode(volumeNode);
+    this->TreeView->setIndexWidget(
+        this->TreeModel->indexFromItem(probabilityMapItem), probabilityMapComboBox);
+    connect(probabilityMapComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+            this, SLOT(onProbabilityMapChanged(vtkMRMLNode*)));
     }
 
   return structureItem;
@@ -318,10 +354,21 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemSelected(const QMode
 
   emit p->currentTreeNodeChanged(currentTreeNode);
 
-  vtkIdType volumeId = p->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
-  vtkMRMLVolumeNode * volumeNode = p->mrmlManager()->GetVolumeNode(volumeId);
-  emit p->currentSpatialPriorVolumeNodeChanged(volumeNode);
-  emit p->currentSpatialPriorVolumeNodeChanged(volumeNode != 0);
+//  vtkIdType volumeId = p->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
+//  vtkMRMLVolumeNode * volumeNode = p->mrmlManager()->GetVolumeNode(volumeId);
+//  emit p->currentSpatialPriorVolumeNodeChanged(volumeNode);
+//  emit p->currentSpatialPriorVolumeNodeChanged(volumeNode != 0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onProbabilityMapChanged(vtkMRMLNode * node)
+{
+  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_ASSERT(node);
+  int treeNodeId = QObject::sender()->property("treeNodeId").toInt();
+  Q_ASSERT(treeNodeId > 0);
+  p->mrmlManager()->SetTreeNodeSpatialPriorVolumeID(
+      treeNodeId, p->mrmlManager()->MapMRMLNodeIDToVTKNodeID(node->GetID()));
 }
 
 //-----------------------------------------------------------------------------
@@ -422,6 +469,7 @@ Superclass(newParent)
   this->setUpdateClassWeightColumnVisible(false);
   this->setAtlasWeightColumnVisible(false);
   this->setAlphaColumnVisible(false);
+  this->setProbabilityMapColumnVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -459,6 +507,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::updateWidgetFromMRML()
 
   d->populateTreeModel(this->mrmlManager()->GetTreeRootNodeID(),
                        d->TreeModel->invisibleRootItem());
+
 
   d->TreeView->expandAll();
 
@@ -568,6 +617,18 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setAlphaColumnVisible(bool visible)
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::AlphaColumn, !visible);
   d->AlphaColumnVisible = visible;
+}
+
+//-----------------------------------------------------------------------------
+CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
+            probabilityMapColumnVisible, ProbabilityMapColumnVisible);
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidget::setProbabilityMapColumnVisible(bool visible)
+{
+  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  d->TreeView->header()->setSectionHidden(ctkPimpl::ProbabilityMapColumn, !visible);
+  d->ProbabilityMapColumnVisible = visible;
 }
 
 //-----------------------------------------------------------------------------

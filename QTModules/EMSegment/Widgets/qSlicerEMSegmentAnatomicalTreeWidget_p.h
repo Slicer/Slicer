@@ -72,7 +72,8 @@ public:
     ClassWeightItemType,
     UpdateClassWeightItemType,
     AtlasWeightItemType,
-    AlphaItemType
+    AlphaItemType,
+    ProbabilityMapItemType
     };
 
   enum ColumnIds
@@ -83,7 +84,8 @@ public:
     ClassWeightColumn,
     UpdateClassWeightColumn,
     AtlasWeightColumn,
-    AlphaColumn
+    AlphaColumn,
+    ProbabilityMapColumn
     };
 
   void initializeHorizontalHeader();
@@ -101,6 +103,8 @@ public slots:
 
   void onTreeItemSelected(const QModelIndex & index);
 
+  void onProbabilityMapChanged(vtkMRMLNode * node);
+
 public:
 
   vtkMRMLEMSNode *         EMSNode;
@@ -115,6 +119,7 @@ public:
   bool                     UpdateClassWeightColumnVisible;
   bool                     AtlasWeightColumnVisible;
   bool                     AlphaColumnVisible;
+  bool                     ProbabilityMapColumnVisible;
 
   QCheckBox *              DisplayMRMLIDsCheckBox;
   QToolButton *            CollapseAllButton;
