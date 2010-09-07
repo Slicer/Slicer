@@ -82,7 +82,7 @@
        <longflag>useCenterOfROIAlign</longflag>
        <label>Initialize with CenterOfROIAlign registration phase</label>
        <description>CenterOfROIAlign aligns the centroids of the ROIs (binary images)</description>
-       <default>false</default>
+       <default>true</default>
     </boolean>
 
     <boolean>
@@ -90,28 +90,28 @@
        <longflag>useRigid</longflag>
        <label>Include Rigid registration phase</label>
        <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
+       <default>true</default>
     </boolean>
     <boolean>
        <name>useScaleVersor3D</name>
        <longflag>useScaleVersor3D</longflag>
        <label>Include ScaleVersor3D registration phase</label>
        <description>Perform a ScaleVersor3D registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
+       <default>true</default>
     </boolean>
     <boolean>
        <name>useScaleSkewVersor3D</name>
        <longflag>useScaleSkewVersor3D</longflag>
        <label>Include ScaleSkewVersor3D registration phase</label>
        <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
+       <default>true</default>
     </boolean>
     <boolean>
        <name>useAffine</name>
        <longflag>useAffine</longflag>
        <label>Include Affine registration phase</label>
        <description>Perform a rigid registration as part of the sequential registration steps.  This family of options superceeds the use of transformType if any of them are set.</description>
-       <default>false</default>
+       <default>true</default>
     </boolean>
     <boolean>
        <name>useBSpline</name>
@@ -125,7 +125,7 @@
        <longflag>useROIBSpline</longflag>
        <label>Include ROI BSpline registration phase</label>
        <description>ROI BSpline registration will use the bounding box of the ROI for bspline grid initialization</description>
-       <default>false</default>
+       <default>true</default>
     </boolean>
 
     <!--
@@ -143,6 +143,56 @@
       <element>O</element>
     </string-enumeration>
   -->
+  </parameters>
+
+  <parameters>
+    <label>Control of Mask Processing</label>
+
+    <string-enumeration>
+      <name>maskProcessingMode</name>
+      <longflag>maskProcessingMode</longflag>
+      <description>What mode to use for using the masks.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. The Region Of Interest mode (choose ROI) uses the masks to define what parts of the image should be used for computing the transform.</description>
+      <label>Mask Processing Mode</label>
+      <default>ROI</default>
+      <element>NOMASK</element>
+      <element>ROIAUTO</element>
+      <element>ROI</element>
+    </string-enumeration>
+
+    <image type="label">
+      <name>outputFixedVolumeROI</name>
+      <longflag>outputFixedVolumeROI</longflag>
+      <label>Output Fixed Mask (ROIAUTO only)</label>
+      <description>The ROI automatically found in fixed image.</description>
+      <channel>output</channel>
+    </image>
+
+    <image type="label">
+      <name>outputMovingVolumeROI</name>
+      <longflag>outputMovingVolumeROI</longflag>
+      <label>Output Moving Mask (ROIAUTO only)</label>
+      <description>The ROI automatically found in moving image.</description>
+      <channel>output</channel>
+    </image>
+
+    <image type="label">
+      <name>fixedBinaryVolume</name>
+      <longflag>fixedBinaryVolume</longflag>
+      <label>Input Fixed Mask (ROI only)</label>
+      <description>Fixed Image binary mask volume.</description>
+      <default></default>
+      <channel>input</channel>
+    </image>
+
+    <image type="label">
+      <name>movingBinaryVolume</name>
+      <longflag>movingBinaryVolume</longflag>
+      <label>Input Moving Mask (ROI only)</label>
+      <description>Moving Image binary mask volume.</description>
+      <default></default>
+      <channel>input</channel>
+    </image>
+
   </parameters>
 
   <parameters advanced="false">
@@ -325,55 +375,6 @@
     </string-enumeration>
   </parameters>
   <!-- -->
-  <parameters advanced="true">
-    <label>Control of Mask Processing</label>
-
-    <string-enumeration>
-      <name>maskProcessingMode</name>
-      <longflag>maskProcessingMode</longflag>
-      <description>What mode to use for using the masks.  If ROIAUTO is choosen, then the mask is implicitly defined using a otsu forground and hole filling algorithm. The Region Of Interest mode (choose ROI) uses the masks to define what parts of the image should be used for computing the transform.</description>
-      <label>Mask Processing Mode</label>
-      <default>NOMASK</default>
-      <element>NOMASK</element>
-      <element>ROIAUTO</element>
-      <element>ROI</element>
-    </string-enumeration>
-
-    <image type="label">
-      <name>outputFixedVolumeROI</name>
-      <longflag>outputFixedVolumeROI</longflag>
-      <label>Output Fixed Mask (ROIAUTO only)</label>
-      <description>The ROI automatically found in fixed image.</description>
-      <channel>output</channel>
-    </image>
-
-    <image type="label">
-      <name>outputMovingVolumeROI</name>
-      <longflag>outputMovingVolumeROI</longflag>
-      <label>Output Moving Mask (ROIAUTO only)</label>
-      <description>The ROI automatically found in moving image.</description>
-      <channel>output</channel>
-    </image>
-
-    <image type="label">
-      <name>fixedBinaryVolume</name>
-      <longflag>fixedBinaryVolume</longflag>
-      <label>Input Fixed Mask (ROI only)</label>
-      <description>Fixed Image binary mask volume.</description>
-      <default></default>
-      <channel>input</channel>
-    </image>
-
-    <image type="label">
-      <name>movingBinaryVolume</name>
-      <longflag>movingBinaryVolume</longflag>
-      <label>Input Moving Mask (ROI only)</label>
-      <description>Moving Image binary mask volume.</description>
-      <default></default>
-      <channel>input</channel>
-    </image>
-
-  </parameters>
   <parameters advanced="true">
     <label>Special Input Image Parameters</label>
 
