@@ -45,11 +45,13 @@ class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentAnatomicalTreeWidget :
   Q_OBJECT
   Q_PROPERTY(bool structureNameEditable READ structureNameEditable WRITE setStructureNameEditable)
   Q_PROPERTY(bool mrmlIDsColumnVisible READ mrmlIDsColumnVisible WRITE setMRMLIDsColumnVisible)
+  Q_PROPERTY(bool displayMRMLIDsCheckBoxVisible READ isDisplayMRMLIDsCheckBoxVisible WRITE setDisplayMRMLIDsCheckBoxVisible)
   Q_PROPERTY(bool labelColumnVisible READ labelColumnVisible WRITE setLabelColumnVisible)
   Q_PROPERTY(bool classWeightColumnVisible READ classWeightColumnVisible WRITE setClassWeightColumnVisible)
   Q_PROPERTY(bool updateClassWeightColumnVisible READ updateClassWeightColumnVisible WRITE setUpdateClassWeightColumnVisible)
   Q_PROPERTY(bool atlasWeightColumnVisible READ atlasWeightColumnVisible WRITE setAtlasWeightColumnVisible)
   Q_PROPERTY(bool alphaColumnVisible READ alphaColumnVisible WRITE setAlphaColumnVisible)
+  Q_PROPERTY(bool displayAlphaCheckBoxVisible READ isDisplayAlphaCheckBoxVisible WRITE setDisplayAlphaCheckBoxVisible)
   Q_PROPERTY(bool probabilityMapColumnVisible READ probabilityMapColumnVisible WRITE setProbabilityMapColumnVisible)
 
 public:
@@ -61,6 +63,8 @@ public:
 
   bool mrmlIDsColumnVisible() const;
 
+  bool isDisplayMRMLIDsCheckBoxVisible() const;
+
   bool labelColumnVisible() const;
 
   bool classWeightColumnVisible() const;
@@ -70,6 +74,8 @@ public:
   bool atlasWeightColumnVisible() const;
 
   bool alphaColumnVisible() const;
+
+  bool isDisplayAlphaCheckBoxVisible() const;
 
   bool probabilityMapColumnVisible() const;
 
@@ -83,6 +89,8 @@ public slots:
 
   void setMRMLIDsColumnVisible(bool visible);
 
+  void setDisplayMRMLIDsCheckBoxVisible(bool visible);
+
   void setLabelColumnVisible(bool visible);
 
   void setClassWeightColumnVisible(bool visible);
@@ -92,6 +100,8 @@ public slots:
   void setAtlasWeightColumnVisible(bool visible);
 
   void setAlphaColumnVisible(bool visible);
+
+  void setDisplayAlphaCheckBoxVisible(bool visible);
 
   void setProbabilityMapColumnVisible(bool visible);
 

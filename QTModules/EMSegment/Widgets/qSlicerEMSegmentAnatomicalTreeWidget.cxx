@@ -57,6 +57,25 @@ static ctkLogger logger(
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+// Custom item editors
+
+namespace
+{
+//-----------------------------------------------------------------------------
+class CustomDoubleSpinBox : public QDoubleSpinBox
+{
+public:
+  CustomDoubleSpinBox(QWidget * newParent):QDoubleSpinBox(newParent)
+    {
+    this->setMinimum(0);
+    this->setMaximum(1.0);
+    this->setDecimals(2);
+    this->setSingleStep(0.01);
+    }
+};
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerEMSegmentAnatomicalTreeWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
@@ -77,6 +96,47 @@ qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidge
   this->ProbabilityMapColumnVisible = false;
 
   this->initializeHorizontalHeader();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::setupUi(qSlicerEMSegmentWidget * widget)
+{
+  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+
+  this->Ui_qSlicerEMSegmentAnatomicalTreeWidget::setupUi(widget);
+
+  // Initialize treeView
+  this->TreeView->setModel(this->TreeModel);
+  this->TreeView->header()->setResizeMode(QHeaderView::ResizeToContents);
+
+  // Register custom editors
+  QItemEditorFactory *editorFactory = new QItemEditorFactory;
+  editorFactory->registerEditor(
+      QVariant::Double, new QStandardItemEditorCreator<CustomDoubleSpinBox>());
+  QStyledItemDelegate* defaultItemDelegate =
+      qobject_cast<QStyledItemDelegate*>(this->TreeView->itemDelegate());
+  Q_ASSERT(defaultItemDelegate);
+  defaultItemDelegate->setItemEditorFactory(editorFactory);
+
+  // Connect Display MRML Id checkbox
+  connect(this->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
+          p, SLOT(setMRMLIDsColumnVisible(bool)));
+
+  // Connect Display Alpha checkbox
+  connect(this->DisplayAlphaCheckBox, SIGNAL(toggled(bool)),
+          p, SLOT(setAlphaColumnVisible(bool)));
+
+  // Connect control buttons
+  connect(this->CollapseAllButton, SIGNAL(clicked()), p, SLOT(collapseToDepthZero()));
+  connect(this->ExpandAllButton, SIGNAL(clicked()), this->TreeView, SLOT(expandAll()));
+
+  // Connect TreeModel
+  connect(this->TreeModel, SIGNAL(itemChanged(QStandardItem*)),
+          SLOT(onTreeItemChanged(QStandardItem*)));
+
+  // Connect TreeView
+  connect(this->TreeView, SIGNAL(clicked(QModelIndex)),
+          SLOT(onTreeItemSelected(QModelIndex)));
 }
 
 //-----------------------------------------------------------------------------
@@ -379,25 +439,6 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onProbabilityMapChanged(vtkMRM
 }
 
 //-----------------------------------------------------------------------------
-// Custom item editors
-
-namespace
-{
-//-----------------------------------------------------------------------------
-class CustomDoubleSpinBox : public QDoubleSpinBox
-{
-public:
-  CustomDoubleSpinBox(QWidget * newParent):QDoubleSpinBox(newParent)
-    {
-    this->setMinimum(0);
-    this->setMaximum(1.0);
-    this->setDecimals(2);
-    this->setSingleStep(0.01);
-    }
-};
-}
-
-//-----------------------------------------------------------------------------
 // qSlicerEMSegmentAnatomicalTreeWidget methods
 
 //-----------------------------------------------------------------------------
@@ -406,70 +447,9 @@ Superclass(newParent)
 {
   CTK_INIT_PRIVATE(qSlicerEMSegmentAnatomicalTreeWidget);
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  d->setupUi(this);
 
-  // Layout (TreeView and (control buttons)) and DisplayMRMLIDsCheckBox vertically
-  QVBoxLayout * mainLayout = new QVBoxLayout(this);
-  mainLayout->setContentsMargins(0, 0, 0, 0);
-
-  // Layout TreeView and (control buttons) horizontally
-  QHBoxLayout * horizontalLayout = new QHBoxLayout();
-  horizontalLayout->setSpacing(0);
-  horizontalLayout->setContentsMargins(0, 0, 0, 0);
-
-  d->TreeView = new QTreeView(this);
-  d->TreeView->setModel(d->TreeModel);
-  d->TreeView->setRootIsDecorated(false);
-  d->TreeView->header()->setResizeMode(QHeaderView::ResizeToContents);
-  horizontalLayout->addWidget(d->TreeView);
-
-  // Register custom editors
-  QItemEditorFactory *editorFactory = new QItemEditorFactory;
-  editorFactory->registerEditor(
-      QVariant::Double, new QStandardItemEditorCreator<CustomDoubleSpinBox>());
-  QStyledItemDelegate* defaultItemDelegate =
-      qobject_cast<QStyledItemDelegate*>(d->TreeView->itemDelegate());
-  Q_ASSERT(defaultItemDelegate);
-  defaultItemDelegate->setItemEditorFactory(editorFactory);
-
-  // Layout control buttons vertically
-  QVBoxLayout * controlButtonsLayout = new QVBoxLayout();
-
-  d->ExpandAllButton = new QToolButton(this);
-  d->ExpandAllButton->setIcon(QIcon(":/Icons/TreeOpen.png"));
-  controlButtonsLayout->addWidget(d->ExpandAllButton);
-
-  d->CollapseAllButton = new QToolButton(this);
-  d->CollapseAllButton->setIcon(QIcon(":/Icons/TreeClose.png"));
-  controlButtonsLayout->addWidget(d->CollapseAllButton);
-
-  controlButtonsLayout->addItem(
-      new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-
-  // Add control buttons to the horizontal layout
-  horizontalLayout->addLayout(controlButtonsLayout);
-
-  // Add (TreeView and (control buttons)) to the layout
-  mainLayout->addLayout(horizontalLayout);
-
-  d->DisplayMRMLIDsCheckBox = new QCheckBox("Display MRML ID's", this);
-  mainLayout->addWidget(d->DisplayMRMLIDsCheckBox);
-  d->DisplayMRMLIDsCheckBox->setVisible(false);
-
-  // Connect Display MRML Id checkbox
-  connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)), SLOT(setMRMLIDsColumnVisible(bool)));
-
-  // Connect control buttons
-  connect(d->CollapseAllButton, SIGNAL(clicked()), SLOT(collapseToDepthZero()));
-  connect(d->ExpandAllButton, SIGNAL(clicked()), d->TreeView, SLOT(expandAll()));
-
-  // Connect TreeModel
-  connect(d->TreeModel, SIGNAL(itemChanged(QStandardItem*)),
-          d, SLOT(onTreeItemChanged(QStandardItem*)));
-
-  // Connect TreeView
-  connect(d->TreeView, SIGNAL(clicked(QModelIndex)),
-          d, SLOT(onTreeItemSelected(QModelIndex)));
-
+  // Columns hidden by default
   this->setStructureNameEditable(false);
   this->setMRMLIDsColumnVisible(false);
   this->setLabelColumnVisible(false);
@@ -478,6 +458,10 @@ Superclass(newParent)
   this->setAtlasWeightColumnVisible(false);
   this->setAlphaColumnVisible(false);
   this->setProbabilityMapColumnVisible(false);
+
+  // Display checkboxes hidden by default
+  this->setDisplayMRMLIDsCheckBoxVisible(false);
+  this->setDisplayAlphaCheckBoxVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -570,6 +554,20 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLIDsColumnVisible(bool visible)
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerEMSegmentAnatomicalTreeWidget::isDisplayMRMLIDsCheckBoxVisible() const
+{
+  CTK_D(const qSlicerEMSegmentAnatomicalTreeWidget);
+  return d->DisplayMRMLIDsCheckBox->isVisible();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidget::setDisplayMRMLIDsCheckBoxVisible(bool visible)
+{
+  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  d->DisplayMRMLIDsCheckBox->setVisible(visible);
+}
+
+//-----------------------------------------------------------------------------
 CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool, labelColumnVisible, LabelColumnVisible);
 
 //-----------------------------------------------------------------------------
@@ -625,6 +623,21 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setAlphaColumnVisible(bool visible)
   CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::AlphaColumn, !visible);
   d->AlphaColumnVisible = visible;
+  d->DisplayAlphaCheckBox->setChecked(visible);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerEMSegmentAnatomicalTreeWidget::isDisplayAlphaCheckBoxVisible() const
+{
+  CTK_D(const qSlicerEMSegmentAnatomicalTreeWidget);
+  return d->DisplayAlphaCheckBox->isVisible();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentAnatomicalTreeWidget::setDisplayAlphaCheckBoxVisible(bool visible)
+{
+  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  d->DisplayAlphaCheckBox->setVisible(visible);
 }
 
 //-----------------------------------------------------------------------------

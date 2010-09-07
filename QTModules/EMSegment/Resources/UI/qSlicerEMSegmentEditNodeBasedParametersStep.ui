@@ -46,7 +46,7 @@
         <property name="atlasWeightColumnVisible">
          <bool>true</bool>
         </property>
-        <property name="alphaColumnVisible">
+        <property name="displayAlphaCheckBoxVisible">
          <bool>true</bool>
         </property>
        </widget>
@@ -81,6 +81,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkWorkflowWidgetStep</class>
+   <extends>QWidget</extends>
+   <header>ctkWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -95,12 +101,6 @@
    <class>qSlicerEMSegmentWidget</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerEMSegmentWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkWorkflowWidgetStep</class>
-   <extends>QWidget</extends>
-   <header>ctkWorkflowWidgetStep.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

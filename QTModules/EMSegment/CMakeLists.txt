@@ -119,7 +119,7 @@ SET(qt_module_UI_SRCS
   Resources/UI/qSlicerEMSegmentModule.ui
 
   # Widgets
-  #Resources/UI/qMRMLEMSegmentAnatomicalTreeWidget.ui
+  Resources/UI/qSlicerEMSegmentAnatomicalTreeWidget.ui
   Resources/UI/qSlicerEMSegmentGraphWidget.ui
 
   # Workflow: MRI Human brain

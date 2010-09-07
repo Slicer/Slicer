@@ -29,6 +29,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentAnatomicalTreeWidget.h"
+#include "ui_qSlicerEMSegmentAnatomicalTreeWidget.h"
 
 // VTK includes
 #include <vtkType.h> // For vtkIdType
@@ -48,7 +49,8 @@ class vtkMRMLColorTableNode;
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentAnatomicalTreeWidgetPrivate :
-    public QObject, public ctkPrivate<qSlicerEMSegmentAnatomicalTreeWidget>
+    public QObject, public ctkPrivate<qSlicerEMSegmentAnatomicalTreeWidget>,
+    public Ui_qSlicerEMSegmentAnatomicalTreeWidget
 {
   Q_OBJECT
 
@@ -88,6 +90,8 @@ public:
     ProbabilityMapColumn
     };
 
+  void setupUi(qSlicerEMSegmentWidget * widget);
+
   void initializeHorizontalHeader();
 
   void populateTreeModel(vtkIdType treeNodeId, QStandardItem *item);
@@ -111,7 +115,6 @@ public:
 
   vtkMRMLColorTableNode *  CurrentColorTableNode;
 
-  QTreeView *              TreeView;
   QStandardItemModel *     TreeModel;
   bool                     StructureNameEditable;
   bool                     LabelColumnVisible;
@@ -120,10 +123,6 @@ public:
   bool                     AtlasWeightColumnVisible;
   bool                     AlphaColumnVisible;
   bool                     ProbabilityMapColumnVisible;
-
-  QCheckBox *              DisplayMRMLIDsCheckBox;
-  QToolButton *            CollapseAllButton;
-  QToolButton *            ExpandAllButton;
 };
 
 #endif
