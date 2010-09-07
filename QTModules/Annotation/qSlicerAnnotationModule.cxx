@@ -32,6 +32,7 @@ CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAnnotationModule, QObject*);
 void qSlicerAnnotationModule::setup()
 {
 
+  // 3D
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationTextThreeDViewDisplayableManager");
 
@@ -56,6 +57,7 @@ void qSlicerAnnotationModule::setup()
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationROIThreeDViewDisplayableManager");
 
+  // 2D
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationSliceViewDisplayableManager");
 

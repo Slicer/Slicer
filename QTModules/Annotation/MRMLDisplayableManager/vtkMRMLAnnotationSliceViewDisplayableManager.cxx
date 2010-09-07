@@ -17,7 +17,7 @@ vtkCxxRevisionMacro (vtkMRMLAnnotationSliceViewDisplayableManager, "$Revision: 1
 vtkMRMLAnnotationSliceViewDisplayableManager::vtkMRMLAnnotationSliceViewDisplayableManager()
 {
 
-  this->DebugOn();
+  //this->DebugOn();
 
 }
 
