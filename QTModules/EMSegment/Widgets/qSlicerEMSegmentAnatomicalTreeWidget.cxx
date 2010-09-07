@@ -86,12 +86,19 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::initializeHorizontalHeader()
   headerNames.insert(Self::StructureColumn, "Structure");
   headerNames.insert(Self::IdColumn, "Id");
   headerNames.insert(Self::LabelColumn, "Label");
-  headerNames.insert(Self::ClassWeightColumn, "Class Weight");
+  headerNames.insert(Self::ClassWeightColumn, "Class");
   headerNames.insert(Self::UpdateClassWeightColumn, "Update");
-  headerNames.insert(Self::AtlasWeightColumn, "Atlas Weight");
+  headerNames.insert(Self::AtlasWeightColumn, "Atlas");
   headerNames.insert(Self::AlphaColumn, "Alpha");
   headerNames.insert(Self::ProbabilityMapColumn, "Probability map");
   this->TreeModel->setHorizontalHeaderLabels(headerNames);
+
+  this->TreeModel->setHeaderData(Self::ClassWeightColumn, Qt::Horizontal,
+                                 QVariant(QIcon(":/Icons/Weight.png")), Qt::DecorationRole);
+  this->TreeModel->setHeaderData(Self::AtlasWeightColumn, Qt::Horizontal,
+                                 QVariant(QIcon(":/Icons/Weight.png")), Qt::DecorationRole);
+  this->TreeModel->setHeaderData(Self::AlphaColumn, Qt::Horizontal,
+                                 QVariant(QIcon(":/Icons/Weight.png")), Qt::DecorationRole);
 }
 
 //-----------------------------------------------------------------------------
