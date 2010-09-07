@@ -45,172 +45,12 @@ typedef void (*fp)(void);
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationThreeDViewDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationThreeDViewDisplayableManager, "$Revision: 1.1 $");
-
-//---------------------------------------------------------------------------
-class vtkMRMLAnnotationThreeDViewDisplayableManager::vtkInternal
-{
-public:
-  vtkInternal();
-
-  void UpdateLocked(vtkMRMLAnnotationNode* node);
-  void UpdateVisible(vtkMRMLAnnotationNode* node);
-  void UpdateWidget(vtkMRMLAnnotationNode* node);
-
-  /// Get a vtkAbstractWidget* given \a node
-  vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
-  void RemoveWidget(vtkMRMLAnnotationNode *node);
-
-  /// List of Nodes managed by the DisplayableManager
-  std::vector<vtkMRMLAnnotationNode*> AnnotationNodeList;
-
-  /// .. and its associated convenient typedef
-  typedef std::vector<vtkMRMLAnnotationNode*>::iterator AnnotationNodeListIt;
-
-  /// Map of vtkWidget indexed using associated node ID
-  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *> Widgets;
-
-  /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetsIt;
-
-};
-
-//---------------------------------------------------------------------------
-// vtkInternal methods
-
-//---------------------------------------------------------------------------
-vtkMRMLAnnotationThreeDViewDisplayableManager::vtkInternal::vtkInternal()
-{
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::vtkInternal::UpdateLocked(
-    vtkMRMLAnnotationNode* node)
-{
-  // Sanity checks
-  if (node == 0)
-    {
-    return;
-    }
-
-  vtkAbstractWidget * widget = this->GetWidget(node);
-  // A widget is expected
-  if(widget == 0)
-    {
-    return;
-    }
-
-  if (node->GetLocked())
-    {
-    widget->ProcessEventsOff();
-    }
-  else
-    {
-    widget->ProcessEventsOn();
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::vtkInternal::UpdateVisible(
-    vtkMRMLAnnotationNode* node)
-{
-  // Sanity checks
-  if (node == 0)
-    {
-    return;
-    }
-
-  vtkAbstractWidget * widget = this->GetWidget(node);
-  // A widget is expected
-  if(widget == 0)
-    {
-    return;
-    }
-
-  if (node->GetVisible())
-    {
-    widget->EnabledOn();
-    }
-  else
-    {
-    widget->EnabledOff();
-    }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::vtkInternal::UpdateWidget(
-    vtkMRMLAnnotationNode *node)
-{
-  if (!node)
-    {
-      return;
-    }
-
-  vtkAbstractWidget * widget = this->GetWidget(node);
-  // Widget is expected to be valid
-  if (widget == 0)
-    {
-    return;
-    }
-
-  this->UpdateLocked(node);
-  this->UpdateVisible(node);
-
-}
-
-//---------------------------------------------------------------------------
-vtkAbstractWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::vtkInternal::GetWidget(
-    vtkMRMLAnnotationNode * node)
-{
-  if (!node)
-    {
-    return 0;
-    }
-
-  // Make sure the map contains a vtkWidget associated with this node
-  WidgetsIt it = this->Widgets.find(node);
-  if (it == this->Widgets.end())
-    {
-    return 0;
-    }
-
-  return it->second;
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::vtkInternal::RemoveWidget(
-    vtkMRMLAnnotationNode *node)
-{
-  if (!node)
-  {
-    return;
-  }
-
-  // Make sure the map contains a vtkWidget associated with this node
-  WidgetsIt it = this->Widgets.find(node);
-  if (it == this->Widgets.end()) {
-    return;
-  }
-
-  // Delete and Remove vtkWidget from the map
-  this->Widgets[node]->Delete();
-  this->Widgets.erase(node);
-
-  vtkInternal::AnnotationNodeListIt it2 = std::find(
-      this->AnnotationNodeList.begin(),
-      this->AnnotationNodeList.end(),
-      node);
-
-  this->AnnotationNodeList.erase(it2);
-}
-
-//---------------------------------------------------------------------------
-// vtkMRMLAnnotationThreeDViewDisplayableManager methods
+vtkCxxRevisionMacro (vtkMRMLAnnotationThreeDViewDisplayableManager, "$Revision: 1.2 $");
 
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationThreeDViewDisplayableManager::vtkMRMLAnnotationThreeDViewDisplayableManager()
 {
-  this->Internal = new vtkInternal;
+  this->Helper = vtkMRMLAnnotationDisplayableManagerHelper::New();
   this->m_ClickCounter = vtkMRMLAnnotationClickCounter::New();
   this->m_SeedWidget = 0;
   this->m_DisableInteractorStyleEventsProcessing = 0;
@@ -222,7 +62,7 @@ vtkMRMLAnnotationThreeDViewDisplayableManager::vtkMRMLAnnotationThreeDViewDispla
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationThreeDViewDisplayableManager::~vtkMRMLAnnotationThreeDViewDisplayableManager()
 {
-  delete this->Internal;
+  this->Helper->Delete();
   this->m_SeedWidget = 0;
   this->m_DisableInteractorStyleEventsProcessing = 0;
   this->m_Updating = 0;
@@ -246,9 +86,9 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::SetAndObserveNodes()
 
 
   // run through all associated nodes
-  vtkInternal::AnnotationNodeListIt it;
-  it = Internal->AnnotationNodeList.begin();
-  while(it != Internal->AnnotationNodeList.end())
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
+  it = this->Helper->AnnotationNodeList.begin();
+  while(it != this->Helper->AnnotationNodeList.end())
     {
     vtkSetAndObserveMRMLNodeEventsMacro(*it, *it, nodeEvents);
     ++it;
@@ -333,18 +173,18 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vt
     }
 
   // Node added should not be already managed
-  vtkInternal::AnnotationNodeListIt it = std::find(
-      this->Internal->AnnotationNodeList.begin(),
-      this->Internal->AnnotationNodeList.end(),
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it = std::find(
+      this->Helper->AnnotationNodeList.begin(),
+      this->Helper->AnnotationNodeList.end(),
       annotationNode);
-  if (it != this->Internal->AnnotationNodeList.end())
+  if (it != this->Helper->AnnotationNodeList.end())
     {
       vtkErrorMacro("OnMRMLSceneNodeAddedEvent: This node is already associated to the displayable manager!")
       return;
     }
 
   // There should not be a widget for the new node
-  if (this->Internal->GetWidget(annotationNode) != 0)
+  if (this->Helper->GetWidget(annotationNode) != 0)
     {
     vtkErrorMacro("OnMRMLSceneNodeAddedEvent: A widget is already associated to this node!");
     return;
@@ -357,10 +197,10 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vt
     // Exit here, if this is not the right displayableManager
     return;
   }
-  this->Internal->Widgets[annotationNode] = newWidget;
+  this->Helper->Widgets[annotationNode] = newWidget;
 
   // Add the node to the list.
-  this->Internal->AnnotationNodeList.push_back(annotationNode);
+  this->Helper->AnnotationNodeList.push_back(annotationNode);
 
   // Remove all placed seeds
   while(!this->m_HandleWidgetList.empty())
@@ -424,7 +264,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeRemovedEvent(
   */
 
   // Remove the widget from the list.
-  this->Internal->RemoveWidget(annotationNode);
+  this->Helper->RemoveWidget(annotationNode);
 
   // Refresh observers
   this->SetAndObserveNodes();
@@ -452,9 +292,9 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeModified
     }
 
   // Update the standard settings of all widgets.
-  this->Internal->UpdateWidget(annotationNode);
+  this->Helper->UpdateWidget(annotationNode);
 
-  vtkAbstractWidget * widget = this->Internal->GetWidget(annotationNode);
+  vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
 
   // Propagate MRML changes to widget
   this->PropagateMRMLToWidget(annotationNode, widget);
@@ -473,7 +313,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeTransfor
     return;
     }
   // Update the standard settings of all widgets.
-  this->Internal->UpdateWidget(annotationNode);
+  this->Helper->UpdateWidget(annotationNode);
 }
 
 //---------------------------------------------------------------------------
@@ -487,7 +327,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeLockModi
     return;
     }
   // Update the standard settings of all widgets.
-  this->Internal->UpdateWidget(annotationNode);
+  this->Helper->UpdateWidget(annotationNode);
 }
 
 //---------------------------------------------------------------------------
@@ -510,7 +350,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnInteractorStyleEvent(int e
 //---------------------------------------------------------------------------
 vtkAbstractWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::GetWidget(vtkMRMLAnnotationNode * node)
 {
-  return this->Internal->GetWidget(node);
+  return this->Helper->GetWidget(node);
 }
 
 //---------------------------------------------------------------------------

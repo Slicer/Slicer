@@ -47,6 +47,8 @@ private:
   vtkMRMLAnnotationSliceViewDisplayableManager(const vtkMRMLAnnotationSliceViewDisplayableManager&); /// Not implemented
   void operator=(const vtkMRMLAnnotationSliceViewDisplayableManager&); /// Not Implemented
 
+  virtual void OnInteractorStyleEvent(int eventid);
+
 };
 
 #endif

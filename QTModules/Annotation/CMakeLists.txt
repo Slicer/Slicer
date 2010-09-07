@@ -37,6 +37,7 @@ SET(DisplayableManager_SRCS
   # 2D
   MRMLDisplayableManager/vtkMRMLAnnotationSliceViewDisplayableManager.cxx
 
+  MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManagerHelper.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationClickCounter.cxx
   )
   

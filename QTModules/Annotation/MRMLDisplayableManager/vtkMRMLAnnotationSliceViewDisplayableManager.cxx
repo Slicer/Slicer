@@ -4,6 +4,9 @@
 // MRML includes
 #include "vtkMRMLSliceNode.h"
 
+// VTK includes
+#include <vtkRenderWindowInteractor.h>
+
 // Convenient macro
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
@@ -17,7 +20,7 @@ vtkCxxRevisionMacro (vtkMRMLAnnotationSliceViewDisplayableManager, "$Revision: 1
 vtkMRMLAnnotationSliceViewDisplayableManager::vtkMRMLAnnotationSliceViewDisplayableManager()
 {
 
-  //this->DebugOn();
+  this->DebugOn();
 
 }
 
@@ -53,5 +56,20 @@ void vtkMRMLAnnotationSliceViewDisplayableManager::OnMRMLDisplayableNodeModified
     }
 
   vtkDebugMacro("The event was fired by the " << sliceNode->GetName() << " slice viewer.");
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationSliceViewDisplayableManager::OnInteractorStyleEvent(int eventid)
+{
+
+  vtkDebugMacro("OnInteractorStyleEvent")
+
+  if (eventid == vtkCommand::LeftButtonReleaseEvent)
+    {
+    //double x = this->GetInteractor()->GetEventPosition()[0];
+    //double y = this->GetInteractor()->GetEventPosition()[1];
+    vtkDebugMacro("OnInteractorStyleEvent: Got a click")
+    }
 
 }

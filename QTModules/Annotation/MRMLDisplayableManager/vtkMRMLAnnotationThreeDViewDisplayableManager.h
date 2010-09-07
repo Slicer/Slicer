@@ -23,6 +23,7 @@
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 #include <vtkMRMLAbstractSliceViewDisplayableManager.h>
+#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManagerHelper.h"
 
 // VTK includes
 #include <vtkSeedWidget.h>
@@ -128,7 +129,7 @@ private:
 
   //BTX
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkMRMLAnnotationDisplayableManagerHelper * Helper;
   //ETX
 
   int m_DisableInteractorStyleEventsProcessing;
