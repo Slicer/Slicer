@@ -302,7 +302,7 @@ proc launch_SetEnvironment {} {
     
       set ::env(Slicer3_PLUGINS_DIR)            $::env(Slicer3_HOME)/@Slicer3_INSTALL_PLUGINS_LIB_DIR@
       set ::env(Slicer3_MODULES_DIR)            $::env(Slicer3_HOME)/@Slicer3_INSTALL_MODULES_LIB_DIR@
-      set ::env(Slicer3_QTLOADABLEMODULES_DIR)  $::env(Slicer3_HOME)/@Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR@
+      set ::env(Slicer3_QTLOADABLEMODULES_DIR)  $::env(Slicer3_HOME)/@Slicer3_INSTALL_QTLOADABLEMPYTHONQT_BIN_DIRODULES_LIB_DIR@
     
       # QtDesigner variable
       #
@@ -396,6 +396,7 @@ proc launch_SetEnvironment {} {
         set ::env(CTK_DIR)         "$::Slicer3_HOME/bin"
       }
       set ::env(CTK_BIN_DIR)        [file normalize "@CTK_DIR@/CTK-build/bin/$::CTK_BUILD_SUBDIR"]
+      set ::env(PYTHONQT_DIR)       [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
       set ::env(PYTHONQT_BIN_DIR)        [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
     
       set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
@@ -426,11 +427,11 @@ proc launch_SetEnvironment {} {
 
       if { "@PYTHON_LIBRARY@" != "" } {
         # this is the variable used in superbuild
-		if {$::env(BUILD) == $::WINDOWS} {
+        if {$::env(BUILD) == $::WINDOWS} {
           set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_LIBRARY@"]]
-		} else {
-		  set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_LIBRARY@"]]]
-		}
+        } else {
+          set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_LIBRARY@"]]]
+        }
       } else { 
           if {$::env(BUILD) == $::WINDOWS} {
             set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_INCLUDE_PATH@"]/PCbuild]
