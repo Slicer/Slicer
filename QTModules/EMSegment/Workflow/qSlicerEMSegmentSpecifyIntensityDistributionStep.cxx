@@ -224,7 +224,7 @@ ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::St
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentSpecifyIntensityDistributionStep::createUserInterface()
 {
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -232,7 +232,7 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStep::validate(const QString& d
 {
   Q_UNUSED(desiredBranchId);
 
-  emit validationComplete(true);
+  this->validationComplete(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -243,8 +243,8 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStep::onEntry(
   CTK_D(qSlicerEMSegmentSpecifyIntensityDistributionStep);
   d->updateWidgetFromMRML();
 
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -252,8 +252,8 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStep::onExit(
     const ctkWorkflowStep* goingTo,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  // Signals that we are finished
-  emit onExitComplete();
+  // Indicates that we are finished
+  this->onExitComplete();
 }
 
 //-----------------------------------------------------------------------------

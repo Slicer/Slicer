@@ -68,7 +68,7 @@ qSlicerEMSegmentDefineAtlasStep::qSlicerEMSegmentDefineAtlasStep(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineAtlasStep::createUserInterface()
 {
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -86,6 +86,6 @@ void qSlicerEMSegmentDefineAtlasStep::onEntry(const ctkWorkflowStep* comingFrom,
   CTK_D(qSlicerEMSegmentDefineAtlasStep);
   d->updateWidgetFromMRML();
 
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }

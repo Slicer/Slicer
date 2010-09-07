@@ -97,5 +97,5 @@ void qSlicerEMSegmentDefineTaskStep::createUserInterface()
   CTK_D(qSlicerEMSegmentDefineTaskStep);
   connect(d, SIGNAL(modeChanged(const QString&)), this->workflow(), SLOT(goForward(const QString&)));
 
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }

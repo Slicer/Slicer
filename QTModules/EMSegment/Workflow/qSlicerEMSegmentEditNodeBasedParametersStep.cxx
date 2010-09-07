@@ -68,7 +68,7 @@ qSlicerEMSegmentEditNodeBasedParametersStep::qSlicerEMSegmentEditNodeBasedParame
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditNodeBasedParametersStep::createUserInterface()
 {
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::validate(const QString& desire
 {
   Q_UNUSED(desiredBranchId);
 
-  emit validationComplete(true);
+  this->validationComplete(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -87,8 +87,8 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::onEntry(
   CTK_D(qSlicerEMSegmentEditNodeBasedParametersStep);
   d->updateWidgetFromMRML();
 
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -96,8 +96,8 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::onExit(
     const ctkWorkflowStep* goingTo,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  // Signals that we are finished
-  emit onExitComplete();
+  // Indicates that we are finished
+  this->onExitComplete();
 }
 
 

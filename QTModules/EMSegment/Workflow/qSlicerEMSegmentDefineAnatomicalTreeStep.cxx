@@ -71,7 +71,7 @@ qSlicerEMSegmentDefineAnatomicalTreeStep::qSlicerEMSegmentDefineAnatomicalTreeSt
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineAnatomicalTreeStep::createUserInterface()
 {
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ void qSlicerEMSegmentDefineAnatomicalTreeStep::validate(const QString& desiredBr
 {
   Q_UNUSED(desiredBranchId);
 
-  emit validationComplete(true);
+  this->validationComplete(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -90,8 +90,8 @@ void qSlicerEMSegmentDefineAnatomicalTreeStep::onEntry(
   CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
   d->updateWidgetFromMRML();
 
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -100,8 +100,8 @@ void qSlicerEMSegmentDefineAnatomicalTreeStep::onExit(
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
 
-  // Signals that we are finished
-  emit onExitComplete();
+  // Indicates that we are finished
+  this->onExitComplete();
 }
 
 //-----------------------------------------------------------------------------

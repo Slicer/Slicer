@@ -110,7 +110,7 @@ qSlicerEMSegmentDefineInputChannelsStep::qSlicerEMSegmentDefineInputChannelsStep
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineInputChannelsStep::createUserInterface()
 {
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
   if (d->EMSegmentInputChannelListWidget->inputChannelCount() < requiredInputChannelCount)
     {
     QMessageBox::warning(this, "EMSegmenter", tr("At least %1 image is required !").arg(requiredInputChannelCount));
-    emit validationComplete(false);
+    this->validationComplete(false);
     return;
     }
 
@@ -141,7 +141,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
     if (QMessageBox::No == QMessageBox::question(this, "EMSegmenter", tr("Are you sure you want to change the number of input images?"),
         QMessageBox::Yes, QMessageBox::No))
       {
-      emit validationComplete(false);
+      this->validationComplete(false);
       return;
       }
     }
@@ -164,7 +164,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
   if (errors.count() > 0)
     {
     QMessageBox::warning(this, "EMSegmenter", errors.join("\n"));
-    emit validationComplete(false);
+    this->validationComplete(false);
     return;
     }
 
@@ -186,7 +186,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
                     "The following images have negative values:<br/>";
 
     QMessageBox::warning(this, "EMSegmenter", message.append(errors.join("<br/>")));
-    emit validationComplete(false);
+    this->validationComplete(false);
     return;
     }
 
@@ -195,7 +195,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
     {
     QMessageBox::warning(this, "EMSegmenter",
                          tr("No two Input volumes can be the same"));
-    emit validationComplete(false);
+    this->validationComplete(false);
     return;
     }
 
@@ -211,7 +211,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
     }
 
   // Check
-  emit validationComplete(true);
+  this->validationComplete(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -219,8 +219,8 @@ void qSlicerEMSegmentDefineInputChannelsStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -237,7 +237,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::onExit(
   if (transitionType != ctkWorkflowInterstepTransition::TransitionToNextStep)
     {
     // Signals that we are finished
-    emit onExitComplete();
+    this->onExitComplete();
     return;
     }
 
@@ -256,5 +256,5 @@ void qSlicerEMSegmentDefineInputChannelsStep::onExit(
     }
 
   // Signals that we are finished
-  emit onExitComplete();
+  this->onExitComplete();
 }

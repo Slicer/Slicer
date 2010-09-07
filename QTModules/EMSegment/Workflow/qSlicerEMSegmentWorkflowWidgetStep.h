@@ -35,7 +35,8 @@ class qSlicerEMSegmentWorkflowWidget;
 class vtkEMSegmentMRMLManager;
 class vtkSlicerEMSegmentLogic;
 
-class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentWorkflowWidgetStep : public ctkWorkflowWidgetStep
+class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentWorkflowWidgetStep :
+    public ctkWorkflowWidgetStep
 {
   Q_OBJECT
 

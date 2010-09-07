@@ -375,7 +375,7 @@ void qSlicerEMSegmentEditRegistrationParametersStep::showUserInterface()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditRegistrationParametersStep::createUserInterface()
 {
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -383,7 +383,7 @@ void qSlicerEMSegmentEditRegistrationParametersStep::validate(const QString& des
 {
   Q_UNUSED(desiredBranchId);
 
-  emit validationComplete(true);
+  this->validationComplete(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -394,8 +394,8 @@ void qSlicerEMSegmentEditRegistrationParametersStep::onEntry(
   CTK_D(qSlicerEMSegmentEditRegistrationParametersStep);
   d->updateWidgetFromMRML();
 
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -413,12 +413,12 @@ void qSlicerEMSegmentEditRegistrationParametersStep::onExit(
   if (transitionType != ctkWorkflowInterstepTransition::TransitionToNextStep)
     {
     // Signals that we are finished
-    emit onExitComplete();
+    this->onExitComplete();
     return;
     }
 
   d->updateMRMLFromWidget();
  
   // Signals that we are finished
-  emit onExitComplete();
+  this->onExitComplete();
 }

@@ -309,7 +309,7 @@ qSlicerEMSegmentRunSegmentationStep::qSlicerEMSegmentRunSegmentationStep(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentRunSegmentationStep::createUserInterface()
 {
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -325,7 +325,7 @@ void qSlicerEMSegmentRunSegmentationStep::validate(const QString& desiredBranchI
 {
   Q_UNUSED(desiredBranchId);
 
-  emit validationComplete(true);
+  this->validationComplete(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -353,8 +353,8 @@ void qSlicerEMSegmentRunSegmentationStep::onEntry(
 
   // TODO the node has to be connected to the ROIMRMLCallback
 
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -371,13 +371,13 @@ void qSlicerEMSegmentRunSegmentationStep::onExit(
 
   if (transitionType != ctkWorkflowInterstepTransition::TransitionToNextStep)
     {
-    // Signals that we are finished
-    emit onExitComplete();
+    // Indicates that we are finished
+    this->onExitComplete();
     return;
     }
 
   d->updateMRMLFromWidget(); 
 
-  // Signals that we are finished
-  emit onExitComplete();
+  // Indicates that we are finished
+  this->onExitComplete();
 }

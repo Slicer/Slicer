@@ -68,7 +68,7 @@ qSlicerEMSegmentSegmentationLogicStep::qSlicerEMSegmentSegmentationLogicStep(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentSegmentationLogicStep::createUserInterface()
 {
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void qSlicerEMSegmentSegmentationLogicStep::validate(const QString& desiredBranc
 {
   Q_UNUSED(desiredBranchId);
 
-  emit validationComplete(true);
+  this->validationComplete(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -98,15 +98,15 @@ void qSlicerEMSegmentSegmentationLogicStep::onEntry(
     {
     QMessageBox::critical(this->stepArea(), "EMSegmenter",
                          tr("Scalar type mismatch for input images.  All image scalar types must be the same (including input channels and atlas images)."));
-    emit onEntryComplete();
+    this->onEntryComplete();
     return;
     }
 
   // start the segmentation
   logic->StartSegmentationWithoutPreprocessing();
 
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -114,6 +114,6 @@ void qSlicerEMSegmentSegmentationLogicStep::onExit(
     const ctkWorkflowStep* goingTo,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  // Signals that we are finished
-  emit onExitComplete();
+  // Indicates that we are finished
+  this->onExitComplete();
 }

@@ -141,7 +141,7 @@ void qSlicerEMSegmentDefinePreprocessingStep::createUserInterface()
   // preprocessing widgets
   // see Modules/EMSegment/vtkEMSegmentPreProcessingStep::ShowUserInterface()
 
-  emit createUserInterfaceComplete();
+  this->createUserInterfaceComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
         tr("Do you want to redo preprocessing of input images?"),
         QMessageBox::Yes, QMessageBox::No))
       {
-      emit validationComplete(true);
+      this->validationComplete(true);
       return;
       }
     }
@@ -179,7 +179,7 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
            "but segmentation cannot continue without preprocessing"),
         QMessageBox::Yes, QMessageBox::Cancel))
       {
-      emit validationComplete(false);
+      this->validationComplete(false);
       return;
       }
     }
@@ -196,7 +196,7 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
   // If the preprocessing fails: you probably need the following three lines of code:
   // mrmlManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(0);
   // mrmlManager->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(0);
-  // emit validationComplete(false);
+  // this->validationComplete(false);
   // If the preprocessing succeeds: the code at the end of this function performs the equivalent
   // already.
 
@@ -208,7 +208,7 @@ void qSlicerEMSegmentDefinePreprocessingStep::validate(const QString& desiredBra
   qDebug() << "Pre-processing completed successfully";
   qDebug() << "=============================================";
 
-  emit validationComplete(true);
+  this->validationComplete(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -221,8 +221,8 @@ void qSlicerEMSegmentDefinePreprocessingStep::onEntry(
 
   // TODO create updateWidgetFromMRML, as in other steps, and implement alongside customized preprocessing
 
-  // Signals that we are finished
-  emit onEntryComplete();
+  // Indicates that we are finished
+  this->onEntryComplete();
 }
 
 //-----------------------------------------------------------------------------
@@ -235,7 +235,7 @@ void qSlicerEMSegmentDefinePreprocessingStep::onExit(
 
   // TODO create updateMRMLFromWidget, as in other steps, and implement alongside customized preprocessing
 
-  // Signals that we are finished
-  emit onExitComplete();
+  // Indicates that we are finished
+  this->onExitComplete();
 }
 
