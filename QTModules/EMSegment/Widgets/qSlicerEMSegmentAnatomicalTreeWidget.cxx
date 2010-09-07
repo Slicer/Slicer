@@ -419,6 +419,7 @@ Superclass(newParent)
   d->TreeView = new QTreeView(this);
   d->TreeView->setModel(d->TreeModel);
   d->TreeView->setRootIsDecorated(false);
+  d->TreeView->header()->setResizeMode(QHeaderView::ResizeToContents);
   horizontalLayout->addWidget(d->TreeView);
 
   // Register custom editors
