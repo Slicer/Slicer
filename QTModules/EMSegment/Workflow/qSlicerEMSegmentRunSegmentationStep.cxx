@@ -30,7 +30,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentRunSegmentationStep.h"
-#include "ui_qSlicerEMSegmentRunSegmentationPanel.h"
+#include "ui_qSlicerEMSegmentRunSegmentationStep.h"
 #include "qSlicerEMSegmentRunSegmentationStep_p.h"
 #include "vtkSlicerEMSegmentLogic.h"
 
@@ -62,7 +62,7 @@ qSlicerEMSegmentRunSegmentationStepPrivate::qSlicerEMSegmentRunSegmentationStepP
 void qSlicerEMSegmentRunSegmentationStepPrivate::setupUi(
     qSlicerEMSegmentWorkflowWidgetStep* step)
 {
-  this->Ui_qSlicerEMSegmentRunSegmentationPanel::setupUi(step);
+  this->Ui_qSlicerEMSegmentRunSegmentationStep::setupUi(step);
 
   // Set attributes on the qMRMLNodeComboBox to select the output label map
   this->OutputLabelMapComboBox->addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");

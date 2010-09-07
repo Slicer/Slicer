@@ -28,7 +28,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentSpecifyIntensityDistributionStep.h"
-#include "ui_qSlicerEMSegmentSpecifyIntensityDistributionPanel.h"
+#include "ui_qSlicerEMSegmentSpecifyIntensityDistributionStep.h"
 #include "qSlicerEMSegmentSpecifyIntensityDistributionStep_p.h"
 #include "qSlicerEMSegmentGraphWidget.h"
 
@@ -57,7 +57,7 @@ qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::qSlicerEMSegmentSpecify
 void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::setupUi(qSlicerEMSegmentWorkflowWidgetStep* step)
 {
   CTK_P(qSlicerEMSegmentSpecifyIntensityDistributionStep);
-  this->Ui_qSlicerEMSegmentSpecifyIntensityDistributionPanel::setupUi(step);
+  this->Ui_qSlicerEMSegmentSpecifyIntensityDistributionStep::setupUi(step);
 
   this->DistributionSpecificationMethodComboBox->addItem(
       p->tr("Manual"),

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerEMSegmentDefinePreprocessingPanel</class>
- <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefinePreprocessingPanel">
+ <class>qSlicerEMSegmentDefinePreprocessingStep</class>
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefinePreprocessingStep">
   <property name="geometry">
    <rect>
     <x>0</x>

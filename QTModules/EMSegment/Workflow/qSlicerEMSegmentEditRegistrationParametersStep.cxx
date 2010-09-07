@@ -30,7 +30,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentEditRegistrationParametersStep.h"
-#include "ui_qSlicerEMSegmentEditRegistrationParametersPanel.h"
+#include "ui_qSlicerEMSegmentEditRegistrationParametersStep.h"
 #include "qSlicerEMSegmentEditRegistrationParametersStep_p.h"
 
 // EMSegment/MRML includes
@@ -62,7 +62,7 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::setupUi(
     qSlicerEMSegmentWorkflowWidgetStep* step)
 {
 
-  this->Ui_qSlicerEMSegmentEditRegistrationParametersPanel::setupUi(step);
+  this->Ui_qSlicerEMSegmentEditRegistrationParametersStep::setupUi(step);
 
   // Affine registration comboBox
   this->AffineRegistrationComboBox->addItem(

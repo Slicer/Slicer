@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerEMSegmentRunSegmentationPanel</class>
- <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentRunSegmentationPanel">
+ <class>qSlicerEMSegmentRunSegmentationStep</class>
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentRunSegmentationStep">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -252,7 +252,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerEMSegmentRunSegmentationPanel</sender>
+   <sender>qSlicerEMSegmentRunSegmentationStep</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>OutputLabelMapComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

@@ -25,7 +25,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefinePreprocessingStep.h"
-#include "ui_qSlicerEMSegmentDefinePreprocessingPanel.h"
+#include "ui_qSlicerEMSegmentDefinePreprocessingStep.h"
 
 // EMSegment/MRML includes
 #include <vtkEMSegmentMRMLManager.h>
@@ -33,7 +33,7 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentDefinePreprocessingStepPrivate : public ctkPrivate<qSlicerEMSegmentDefinePreprocessingStep>,
-                                                       public Ui_qSlicerEMSegmentDefinePreprocessingPanel
+                                                       public Ui_qSlicerEMSegmentDefinePreprocessingStep
 {
 public:
   qSlicerEMSegmentDefinePreprocessingStepPrivate();

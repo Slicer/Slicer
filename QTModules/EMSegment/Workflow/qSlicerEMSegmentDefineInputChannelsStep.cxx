@@ -30,7 +30,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineInputChannelsStep.h"
-#include "ui_qSlicerEMSegmentDefineInputChannelsPanel.h"
+#include "ui_qSlicerEMSegmentDefineInputChannelsStep.h"
 #include "qSlicerEMSegmentInputChannelListWidget.h"
 
 // EMSegment/MRML includes
@@ -49,7 +49,7 @@ static ctkLogger logger(
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentDefineInputChannelsStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineInputChannelsStep>,
-                                                       public Ui_qSlicerEMSegmentDefineInputChannelsPanel
+                                                       public Ui_qSlicerEMSegmentDefineInputChannelsStep
 {
 public:
   qSlicerEMSegmentDefineInputChannelsStepPrivate();

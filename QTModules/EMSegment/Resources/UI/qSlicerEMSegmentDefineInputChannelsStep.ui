@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerEMSegmentDefineInputChannelsPanel</class>
- <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefineInputChannelsPanel">
+ <class>qSlicerEMSegmentDefineInputChannelsStep</class>
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefineInputChannelsStep">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -96,7 +96,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerEMSegmentDefineInputChannelsPanel</sender>
+   <sender>qSlicerEMSegmentDefineInputChannelsStep</sender>
    <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
    <receiver>EMSegmentInputChannelListWidget</receiver>
    <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
@@ -112,7 +112,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerEMSegmentDefineInputChannelsPanel</sender>
+   <sender>qSlicerEMSegmentDefineInputChannelsStep</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>EMSegmentInputChannelListWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

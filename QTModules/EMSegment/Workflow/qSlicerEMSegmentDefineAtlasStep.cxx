@@ -21,11 +21,11 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineAtlasStep.h"
-#include "ui_qSlicerEMSegmentDefineAtlasPanel.h"
+#include "ui_qSlicerEMSegmentDefineAtlasStep.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentDefineAtlasStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineAtlasStep>,
-                                               public Ui_qSlicerEMSegmentDefineAtlasPanel
+                                               public Ui_qSlicerEMSegmentDefineAtlasStep
 {
 public:
   qSlicerEMSegmentDefineAtlasStepPrivate();

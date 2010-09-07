@@ -29,12 +29,12 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentEditRegistrationParametersStep.h"
-#include "ui_qSlicerEMSegmentEditRegistrationParametersPanel.h"
+#include "ui_qSlicerEMSegmentEditRegistrationParametersStep.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentEditRegistrationParametersStepPrivate : public QObject,
                                                               public ctkPrivate<qSlicerEMSegmentEditRegistrationParametersStep>,
-                                                              public Ui_qSlicerEMSegmentEditRegistrationParametersPanel
+                                                              public Ui_qSlicerEMSegmentEditRegistrationParametersStep
 {
   Q_OBJECT
   CTK_DECLARE_PUBLIC(qSlicerEMSegmentEditRegistrationParametersStep)

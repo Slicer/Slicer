@@ -23,7 +23,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentRunSegmentationStep.h"
-#include "ui_qSlicerEMSegmentRunSegmentationPanel.h"
+#include "ui_qSlicerEMSegmentRunSegmentationStep.h"
 
 // EMSegment/MRML includes
 class vtkMRMLROINode;
@@ -31,7 +31,7 @@ class vtkMRMLROINode;
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentRunSegmentationStepPrivate : public QObject,
                                                    public ctkPrivate<qSlicerEMSegmentRunSegmentationStep>,
-                                                   public Ui_qSlicerEMSegmentRunSegmentationPanel
+                                                   public Ui_qSlicerEMSegmentRunSegmentationStep
 {
   Q_OBJECT
   CTK_DECLARE_PUBLIC(qSlicerEMSegmentRunSegmentationStep)

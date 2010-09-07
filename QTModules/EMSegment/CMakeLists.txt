@@ -123,15 +123,15 @@ SET(qt_module_UI_SRCS
   Resources/UI/qSlicerEMSegmentGraphWidget.ui
 
   # Workflow: MRI Human brain
-  Resources/UI/qSlicerEMSegmentDefineAnatomicalTreePanel.ui           # Step 3
-  Resources/UI/qSlicerEMSegmentDefineAtlasPanel.ui                    # Step 4
-  Resources/UI/qSlicerEMSegmentDefineInputChannelsPanel.ui            # Step 2
-  Resources/UI/qSlicerEMSegmentDefinePreprocessingPanel.ui            # Step 6
-  Resources/UI/qSlicerEMSegmentDefineTaskPanel.ui                     # Step 1
-  Resources/UI/qSlicerEMSegmentEditNodeBasedParametersPanel.ui        # Step 8
-  Resources/UI/qSlicerEMSegmentEditRegistrationParametersPanel.ui     # Step 5
-  Resources/UI/qSlicerEMSegmentSpecifyIntensityDistributionPanel.ui   # Step 7
-  Resources/UI/qSlicerEMSegmentRunSegmentationPanel.ui                # Step 9
+  Resources/UI/qSlicerEMSegmentDefineAnatomicalTreeStep.ui           # Step 3
+  Resources/UI/qSlicerEMSegmentDefineAtlasStep.ui                    # Step 4
+  Resources/UI/qSlicerEMSegmentDefineInputChannelsStep.ui            # Step 2
+  Resources/UI/qSlicerEMSegmentDefinePreprocessingStep.ui            # Step 6
+  Resources/UI/qSlicerEMSegmentDefineTaskStep.ui                     # Step 1
+  Resources/UI/qSlicerEMSegmentEditNodeBasedParametersStep.ui        # Step 8
+  Resources/UI/qSlicerEMSegmentEditRegistrationParametersStep.ui     # Step 5
+  Resources/UI/qSlicerEMSegmentSpecifyIntensityDistributionStep.ui   # Step 7
+  Resources/UI/qSlicerEMSegmentRunSegmentationStep.ui                # Step 9
 )
 
 # Additional Target libraries

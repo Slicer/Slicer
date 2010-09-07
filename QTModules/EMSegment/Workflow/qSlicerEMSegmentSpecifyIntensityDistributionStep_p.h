@@ -29,7 +29,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentSpecifyIntensityDistributionStep.h"
-#include "ui_qSlicerEMSegmentSpecifyIntensityDistributionPanel.h"
+#include "ui_qSlicerEMSegmentSpecifyIntensityDistributionStep.h"
 
 // MRML includes
 class vtkMRMLNode;
@@ -37,7 +37,7 @@ class vtkMRMLNode;
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate : public QObject,
                                                                 public ctkPrivate<qSlicerEMSegmentSpecifyIntensityDistributionStep>,
-                                                                public Ui_qSlicerEMSegmentSpecifyIntensityDistributionPanel
+                                                                public Ui_qSlicerEMSegmentSpecifyIntensityDistributionStep
 {
   Q_OBJECT
   CTK_DECLARE_PUBLIC(qSlicerEMSegmentSpecifyIntensityDistributionStep)

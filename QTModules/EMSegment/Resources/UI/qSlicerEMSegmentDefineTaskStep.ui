@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerEMSegmentDefineTaskPanel</class>
- <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefineTaskPanel">
+ <class>qSlicerEMSegmentDefineTaskStep</class>
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefineTaskStep">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -135,7 +135,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerEMSegmentDefineTaskPanel</sender>
+   <sender>qSlicerEMSegmentDefineTaskStep</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TaskSelectorComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

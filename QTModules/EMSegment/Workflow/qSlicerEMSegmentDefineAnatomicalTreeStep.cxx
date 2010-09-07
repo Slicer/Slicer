@@ -21,14 +21,14 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineAnatomicalTreeStep.h"
-#include "ui_qSlicerEMSegmentDefineAnatomicalTreePanel.h"
+#include "ui_qSlicerEMSegmentDefineAnatomicalTreeStep.h"
 
 // CTK includes
 #include "ctkWorkflowWidgetStep.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentDefineAnatomicalTreeStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineAnatomicalTreeStep>,
-                                                        public Ui_qSlicerEMSegmentDefineAnatomicalTreePanel
+                                                        public Ui_qSlicerEMSegmentDefineAnatomicalTreeStep
 {
 public:
   qSlicerEMSegmentDefineAnatomicalTreeStepPrivate();

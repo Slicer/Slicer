@@ -33,7 +33,7 @@ class QString;
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineTaskStep.h"
-#include "ui_qSlicerEMSegmentDefineTaskPanel.h"
+#include "ui_qSlicerEMSegmentDefineTaskStep.h"
 
 // MRML includes
 class vtkMRMLNode;
@@ -41,7 +41,7 @@ class vtkMRMLNode;
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentDefineTaskStepPrivate : public QObject,
                                               public ctkPrivate<qSlicerEMSegmentDefineTaskStep>,
-                                              public Ui_qSlicerEMSegmentDefineTaskPanel
+                                              public Ui_qSlicerEMSegmentDefineTaskStep
 {
   Q_OBJECT
 

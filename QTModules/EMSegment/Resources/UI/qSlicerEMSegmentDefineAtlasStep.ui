@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerEMSegmentDefineAtlasPanel</class>
- <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefineAtlasPanel">
+ <class>qSlicerEMSegmentDefineAtlasStep</class>
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefineAtlasStep">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -122,7 +122,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerEMSegmentDefineAtlasPanel</sender>
+   <sender>qSlicerEMSegmentDefineAtlasStep</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -154,7 +154,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerEMSegmentDefineAtlasPanel</sender>
+   <sender>qSlicerEMSegmentDefineAtlasStep</sender>
    <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
    <receiver>EMSegmentAnatomicalTreeWidget</receiver>
    <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>

@@ -21,11 +21,11 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentEditNodeBasedParametersStep.h"
-#include "ui_qSlicerEMSegmentEditNodeBasedParametersPanel.h"
+#include "ui_qSlicerEMSegmentEditNodeBasedParametersStep.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentEditNodeBasedParametersStepPrivate : public ctkPrivate<qSlicerEMSegmentEditNodeBasedParametersStep>,
-                                                           public Ui_qSlicerEMSegmentEditNodeBasedParametersPanel
+                                                           public Ui_qSlicerEMSegmentEditNodeBasedParametersStep
 {
 public:
   qSlicerEMSegmentEditNodeBasedParametersStepPrivate();

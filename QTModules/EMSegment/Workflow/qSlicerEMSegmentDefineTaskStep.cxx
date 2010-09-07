@@ -28,7 +28,7 @@
 
 // EMSegment includes
 #include "qSlicerEMSegmentDefineTaskStep.h"
-#include "ui_qSlicerEMSegmentDefineTaskPanel.h"
+#include "ui_qSlicerEMSegmentDefineTaskStep.h"
 #include "qSlicerEMSegmentDefineTaskStep_p.h"
 #include "qSlicerEMSegmentModuleWidget.h"
 
@@ -47,7 +47,7 @@ qSlicerEMSegmentDefineTaskStepPrivate::qSlicerEMSegmentDefineTaskStepPrivate()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineTaskStepPrivate::setupUi(qSlicerEMSegmentWorkflowWidgetStep* step)
 {
-  this->Ui_qSlicerEMSegmentDefineTaskPanel::setupUi(step);
+  this->Ui_qSlicerEMSegmentDefineTaskStep::setupUi(step);
 
   // Connect TaskSelector
   connect(this->TaskSelectorComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this,

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerEMSegmentEditNodeBasedParametersPanel</class>
- <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentEditNodeBasedParametersPanel">
+ <class>qSlicerEMSegmentDefineAnatomicalTreeStep</class>
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentDefineAnatomicalTreeStep">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>520</height>
+    <width>467</width>
+    <height>338</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,10 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -34,19 +31,13 @@
      <property name="flat">
       <bool>true</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
-        <property name="classWeightColumnVisible">
+        <property name="structureNameEditable">
          <bool>true</bool>
         </property>
-        <property name="updateClassWeightColumnVisible">
-         <bool>false</bool>
-        </property>
-        <property name="atlasWeightColumnVisible">
-         <bool>true</bool>
-        </property>
-        <property name="alphaColumnVisible">
+        <property name="labelColumnVisible">
          <bool>true</bool>
         </property>
        </widget>
@@ -54,32 +45,15 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>150</height>
-      </size>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="BasicTab">
-      <attribute name="title">
-       <string>Basic</string>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="StoppingConditionsTab">
-      <attribute name="title">
-       <string>Stopping Conditions</string>
-      </attribute>
-     </widget>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkWorkflowWidgetStep</class>
+   <extends>QWidget</extends>
+   <header>ctkWorkflowWidgetStep.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
@@ -98,12 +72,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkWorkflowWidgetStep</class>
-   <extends>QWidget</extends>
-   <header>ctkWorkflowWidgetStep.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qSlicerEMSegmentWorkflowWidgetStep</class>
    <extends>ctkWorkflowWidgetStep</extends>
    <header>qSlicerEMSegmentWorkflowWidgetStep.h</header>
@@ -113,34 +81,34 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerEMSegmentEditNodeBasedParametersPanel</sender>
+   <sender>qSlicerEMSegmentDefineAnatomicalTreeStep</sender>
    <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
    <receiver>EMSegmentAnatomicalTreeWidget</receiver>
    <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>3</x>
-     <y>99</y>
+     <x>422</x>
+     <y>7</y>
     </hint>
     <hint type="destinationlabel">
-     <x>32</x>
-     <y>135</y>
+     <x>382</x>
+     <y>50</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerEMSegmentEditNodeBasedParametersPanel</sender>
+   <sender>qSlicerEMSegmentDefineAnatomicalTreeStep</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>EMSegmentAnatomicalTreeWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>333</x>
-     <y>259</y>
+     <x>233</x>
+     <y>168</y>
     </hint>
     <hint type="destinationlabel">
-     <x>337</x>
-     <y>136</y>
+     <x>237</x>
+     <y>175</y>
     </hint>
    </hints>
   </connection>

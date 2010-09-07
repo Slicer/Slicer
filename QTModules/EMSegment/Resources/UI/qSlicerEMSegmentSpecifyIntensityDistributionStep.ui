@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerEMSegmentSpecifyIntensityDistributionPanel</class>
- <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentSpecifyIntensityDistributionPanel">
+ <class>qSlicerEMSegmentSpecifyIntensityDistributionStep</class>
+ <widget class="qSlicerEMSegmentWorkflowWidgetStep" name="qSlicerEMSegmentSpecifyIntensityDistributionStep">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -266,7 +266,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerEMSegmentSpecifyIntensityDistributionPanel</sender>
+   <sender>qSlicerEMSegmentSpecifyIntensityDistributionStep</sender>
    <signal>mrmlManagerChanged(vtkEMSegmentMRMLManager*)</signal>
    <receiver>EMSegmentAnatomicalTreeWidget</receiver>
    <slot>setMRMLManager(vtkEMSegmentMRMLManager*)</slot>
@@ -282,7 +282,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerEMSegmentSpecifyIntensityDistributionPanel</sender>
+   <sender>qSlicerEMSegmentSpecifyIntensityDistributionStep</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>EMSegmentAnatomicalTreeWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
