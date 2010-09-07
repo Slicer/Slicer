@@ -94,7 +94,6 @@ qSlicerEMSegmentDefineTaskStep::qSlicerEMSegmentDefineTaskStep(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineTaskStep::createUserInterface()
 {
-  qDebug() << "qSlicerEMSegmentDefineTaskStep::populateStepWidgetsList";
   CTK_D(qSlicerEMSegmentDefineTaskStep);
   connect(d, SIGNAL(modeChanged(const QString&)), this->workflow(), SLOT(goForward(const QString&)));
 
