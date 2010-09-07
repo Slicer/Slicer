@@ -431,7 +431,10 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemSelected(const QMode
 void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onProbabilityMapChanged(vtkMRMLNode * node)
 {
   CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
-  Q_ASSERT(node);
+  if (!node)
+    {
+    return;
+    }
   int treeNodeId = QObject::sender()->property("treeNodeId").toInt();
   Q_ASSERT(treeNodeId > 0);
   p->mrmlManager()->SetTreeNodeSpatialPriorVolumeID(
