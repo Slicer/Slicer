@@ -4,6 +4,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 // QTGUI includes
@@ -54,6 +55,9 @@ void qSlicerAnnotationModule::setup()
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationROIThreeDViewDisplayableManager");
+
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+      "vtkMRMLAnnotationSliceViewDisplayableManager");
 
 }
 

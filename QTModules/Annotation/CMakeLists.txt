@@ -22,6 +22,8 @@ SET(qt_module_include_directories
 #
 #-----------------------------------------------------------------------
 SET(DisplayableManager_SRCS
+  
+  # 3D
   MRMLDisplayableManager/vtkMRMLAnnotationTextThreeDViewDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationFiducialThreeDViewDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationStickyThreeDViewDisplayableManager.cxx  
@@ -31,6 +33,10 @@ SET(DisplayableManager_SRCS
   MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager.cxx
   MRMLDisplayableManager/vtkMRMLAnnotationROIThreeDViewDisplayableManager.cxx     
   MRMLDisplayableManager/vtkMRMLAnnotationThreeDViewDisplayableManager.cxx
+  
+  # 2D
+  MRMLDisplayableManager/vtkMRMLAnnotationSliceViewDisplayableManager.cxx
+
   MRMLDisplayableManager/vtkMRMLAnnotationClickCounter.cxx
   )
   

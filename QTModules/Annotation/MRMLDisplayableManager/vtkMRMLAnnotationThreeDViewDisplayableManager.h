@@ -22,6 +22,7 @@
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
+#include <vtkMRMLAbstractSliceViewDisplayableManager.h>
 
 // VTK includes
 #include <vtkSeedWidget.h>
