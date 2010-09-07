@@ -24,9 +24,11 @@
 /// Qt includes
 #include <QString>
 #include <QVector>
+#include <QIcon>
 
 #include "qMRMLWidgetsExport.h"
 
+class QStyle;
 class vtkMRMLNode;
 class vtkMRMLLinearTransformNode;
 class vtkTransform;
@@ -53,6 +55,9 @@ public:
 
   /// Retrieve the number of visible view node associated with \a scene
   static int countVisibleViewNode(vtkMRMLScene* scene);
+
+  /// Create Icon using the given color
+  static QIcon createIcon(QStyle * style, const QColor& color);
   
   /// 
   /// Used by the qMRMLItemModel;

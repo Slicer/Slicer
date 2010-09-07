@@ -10,6 +10,7 @@
 
 // qMRML includes
 #include "qMRMLLabelComboBox.h"
+#include "qMRMLUtils.h"
 
 // MRML includes
 #include <vtkMRMLColorNode.h>
@@ -28,8 +29,6 @@ public:
   void setMRMLColorNode(vtkMRMLColorNode *newMRMLColorNode);
 
   QColor colorFromIndex(int index) const;
-
-  QIcon createIcon(const QColor &color);
   
   ctkComboBox *       ComboBox;
   bool                NoneEnabled;
@@ -94,29 +93,6 @@ QColor qMRMLLabelComboBoxPrivate::colorFromIndex(int index) const
     }
 
   return QColor::fromRgbF(colorTable[0], colorTable[1], colorTable[2], colorTable[3]);
-}
-
-// ----------------------------------------------------------------
-QIcon qMRMLLabelComboBoxPrivate::createIcon(const QColor &color)
-{
-  CTK_P(qMRMLLabelComboBox);
-  // Create a pixmap
-  
-  const int size = p->style()->pixelMetric(QStyle::PM_ButtonIconSize) - 5; 
-
-  QPixmap colorFieldPixmap(size, size);
-
-  // Fill it with the color
-  colorFieldPixmap.fill(color);
-
-  // Make a black rectangle on the border
-  QPainter painter(&colorFieldPixmap);
-  painter.drawRect(0, 0, size - 1, size - 1);
-
-  // Which finally allows to create this icon
-  QIcon colorField(colorFieldPixmap);
-
-  return colorField;
 }
 
 // --------------------------------------------------------------------------
@@ -301,7 +277,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
     QString colorName = QLatin1String(d->ColorNode->GetColorName(i));
     //logger.debug(QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName));
     
-    QIcon colorIcon = d->createIcon(d->colorFromIndex(i));
+    QIcon colorIcon = qMRMLUtils::createIcon(this->style(), d->colorFromIndex(i));
     
     if ( d->ColorNameVisible )
       {

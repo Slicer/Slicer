@@ -20,6 +20,9 @@
 
 // Qt includes
 #include <QDebug>
+#include <QColor>
+#include <QStyle>
+#include <QPainter>
 
 // qMRML includes
 #include "qMRMLUtils.h"
@@ -110,6 +113,32 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
       }
     }
   return numberOfVisibleNodes;
+}
+
+// ----------------------------------------------------------------
+QIcon qMRMLUtils::createIcon(QStyle * style, const QColor &color)
+{
+  if (!style)
+    {
+    return QIcon();
+    }
+
+  const int size = style->pixelMetric(QStyle::PM_ButtonIconSize) - 5;
+
+  // Create a pixmap
+  QPixmap colorFieldPixmap(size, size);
+
+  // Fill it with the color
+  colorFieldPixmap.fill(color);
+
+  // Make a black rectangle on the border
+  QPainter painter(&colorFieldPixmap);
+  painter.drawRect(0, 0, size - 1, size - 1);
+
+  // Which finally allows to create this icon
+  QIcon colorField(colorFieldPixmap);
+
+  return colorField;
 }
 
 //------------------------------------------------------------------------------
