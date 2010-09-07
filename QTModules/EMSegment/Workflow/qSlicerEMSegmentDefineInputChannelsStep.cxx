@@ -157,13 +157,13 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
     // Is ImageData Null ?
     if (volumeNode->GetImageData() == 0)
       {
-      errors << tr("Volume of %1th Input channel (%2) is empty !").arg(rowId).arg(inputChannelName);
+      errors << tr("Volume of %1th Input channel (%2) is empty !").arg(rowId + 1).arg(inputChannelName);
       }
     }
 
   if (errors.count() > 0)
     {
-    QMessageBox::warning(this, "EMSegmenter", errors.join("<br/>"));
+    QMessageBox::warning(this, "EMSegmenter", errors.join("\n"));
     emit validationComplete(false);
     return;
     }
