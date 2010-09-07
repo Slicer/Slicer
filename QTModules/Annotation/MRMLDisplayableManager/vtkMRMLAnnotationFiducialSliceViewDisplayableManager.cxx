@@ -10,7 +10,7 @@
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
-#include <vtkProperty.h>
+#include <vtkProperty2D.h>
 #include <vtkRenderer.h>
 #include <vtkSeedWidget.h>
 #include <vtkHandleRepresentation.h>
