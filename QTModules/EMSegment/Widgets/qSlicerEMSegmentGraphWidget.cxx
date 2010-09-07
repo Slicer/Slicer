@@ -265,11 +265,8 @@ void qSlicerEMSegmentGraphWidget::updateFromMRMLManager()
   // populate the combo boxes with the volumes names
   d->Input0ComboBox->addItems(d->VolumeList.values());
   d->Input0ComboBox->setCurrentIndex(0);
-  if (volumeCount > 1)
-    {
-    d->Input1ComboBox->addItems(d->VolumeList.values());
-    d->Input1ComboBox->setCurrentIndex(1);
-    }
+  d->Input1ComboBox->addItems(d->VolumeList.values());
+  d->Input1ComboBox->setCurrentIndex(1);
 
   // populate the class list
   foreach(vtkIdType classID, d->classNodeIDs(manager->GetTreeRootNodeID()))
@@ -289,12 +286,12 @@ void qSlicerEMSegmentGraphWidget::onCurrentInput0VolumeChanged(const QString& vo
 {
   CTK_D(qSlicerEMSegmentGraphWidget);
   QString input1 = d->Input1ComboBox->currentText();
-  if (input1 == volumeName)
-    {// the volume can't be selectable as Input1, select a different one
-    QStringList volumes = d->VolumeList.values();
-    volumes.removeAll(volumeName);
-    d->Input1ComboBox->setCurrentIndex(d->Input1ComboBox->findText(volumes.first()));
-    }
+  // if (input1 == volumeName)
+  //   {// the volume can't be selectable as Input1, select a different one
+  //   QStringList volumes = d->VolumeList.values();
+  //   volumes.removeAll(volumeName);
+  //   d->Input1ComboBox->setCurrentIndex(d->Input1ComboBox->findText(volumes.first()));
+  //   }
   foreach(vtkIdType classID, d->ClassPlotList[0].keys())
     {
     d->updateClass(classID, 0);
@@ -310,12 +307,12 @@ void qSlicerEMSegmentGraphWidget::onCurrentInput1VolumeChanged(const QString& vo
 {
   CTK_D(qSlicerEMSegmentGraphWidget);
   QString input0 = d->Input0ComboBox->currentText();
-  if (input0 == volumeName)
-    {// the volume can't be selectable as Input1, select a different one
-    QStringList volumes = d->VolumeList.values();
-    volumes.removeAll(volumeName);
-    d->Input0ComboBox->setCurrentIndex(d->Input0ComboBox->findText(volumes.first()));
-    }
+  // if (input0 == volumeName)
+  //   {// the volume can't be selectable as Input1, select a different one
+  //   QStringList volumes = d->VolumeList.values();
+  //   volumes.removeAll(volumeName);
+  //   d->Input0ComboBox->setCurrentIndex(d->Input0ComboBox->findText(volumes.first()));
+  //   }
   foreach(vtkIdType classID, d->ClassPlotList[1].keys())
     {
     d->updateClass(classID, 1);
