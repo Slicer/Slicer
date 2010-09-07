@@ -21,6 +21,9 @@
 // SlicerQt includes
 #include "qSlicerCLILoadableModule.h"
 
+// STD includes
+#include <cstdio>
+
 //-----------------------------------------------------------------------------
 class qSlicerCLILoadableModulePrivate: public ctkPrivate<qSlicerCLILoadableModule>
 {
