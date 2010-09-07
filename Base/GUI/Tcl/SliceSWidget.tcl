@@ -410,7 +410,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   } 
 
 
-  if { 0 } {
+  if { $calculateAnnotations } {
 
     # TODO: the annotations seem to be very time consuming to calculate
     # but most of the time they will not be displayed - instead we should
