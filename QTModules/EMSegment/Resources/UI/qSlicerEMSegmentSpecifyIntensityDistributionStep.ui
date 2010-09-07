@@ -36,11 +36,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget">
-        <property name="labelColumnVisible">
-         <bool>true</bool>
-        </property>
-       </widget>
+       <widget class="qSlicerEMSegmentAnatomicalTreeWidget" name="EMSegmentAnatomicalTreeWidget"/>
       </item>
      </layout>
     </widget>

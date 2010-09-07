@@ -36,6 +36,7 @@
 
 // qMRMLWidgets includes
 #include <qMRMLLabelComboBox.h>
+#include <qMRMLUtils.h>
 
 // EMSegment includes
 #include "qSlicerEMSegmentAnatomicalTreeWidget.h"
@@ -143,6 +144,12 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
   QStandardItem * structureItem = new QStandardItem(QString("%1").arg(treeNode->GetName()));
   structureItem->setData(QVariant(treeNodeId), Self::TreeNodeIDRole);
   structureItem->setData(QVariant(Self::StructureNameItemType), Self::TreeItemTypeRole);
+  if (isLeaf && !this->LabelColumnVisible)
+    {
+    int labelId = treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel();
+    structureItem->setData(
+        qMRMLUtils::createIcon(p->style(), this->colorFromLabelId(labelId)), Qt::DecorationRole);
+    }
   structureItem->setEditable(this->StructureNameEditable);
   itemList << structureItem;
 
@@ -212,7 +219,7 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
   parentItem->appendRow(itemList);
 
   // Set widget associated with labelItem
-  if (isLeaf)
+  if (isLeaf && this->LabelColumnVisible)
     {
     Q_ASSERT(treeNode->GetParametersNode()->GetLeafParametersNode());
     qMRMLLabelComboBox * labelComboBox = new qMRMLLabelComboBox;
@@ -228,6 +235,30 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
     }
 
   return structureItem;
+}
+
+//-----------------------------------------------------------------------------
+QColor qSlicerEMSegmentAnatomicalTreeWidgetPrivate::colorFromLabelId(int labelId)
+{
+  Q_ASSERT(this->CurrentColorTableNode);
+
+  if (labelId < 0)
+    {
+    return QColor::Invalid;
+    }
+
+  double color[4];
+  vtkLookupTable *table = this->CurrentColorTableNode->GetLookupTable();
+
+  table->GetTableValue(labelId, color);
+
+  // HACK - The alpha associated with Black was 0
+  if (color[0] == 0 && color[1] == 0 && color[2] == 0)
+    {
+    color[3] = 1;
+    }
+
+  return QColor::fromRgbF(color[0], color[1], color[2], color[3]);
 }
 
 //-----------------------------------------------------------------------------

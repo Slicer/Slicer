@@ -93,6 +93,8 @@ public:
   QStandardItem* insertTreeRow(QStandardItem * parentItem, vtkIdType treeNodeId,
                                vtkMRMLEMSTreeNode * treeNode);
 
+  QColor colorFromLabelId(int labelId);
+
 public slots:
 
   void onTreeItemChanged(QStandardItem * treeItem);
