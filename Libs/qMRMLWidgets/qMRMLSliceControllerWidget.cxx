@@ -1068,10 +1068,14 @@ void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
 bool qMRMLSliceControllerWidget::isLinked()const
 {
   CTK_D(const qMRMLSliceControllerWidget);
-  Q_ASSERT(!d->MRMLSliceCompositeNode ||
-           d->MRMLSliceCompositeNode->GetLinkedControl() ==
-           d->SliceLinkButton->isChecked());
-  return d->SliceLinkButton->isChecked();
+  // It is not really an assert here, what could have happen is that the
+  // mrml slice composite node LinkedControl property has been changed but the
+  // modified event has not been yet fired, updateWidgetFromMRMLSliceCompositeNode not having been
+  // called yet, the slicelinkbutton state is not uptodate.
+  //Q_ASSERT(!d->MRMLSliceCompositeNode ||
+  //        d->MRMLSliceCompositeNode->GetLinkedControl() ==
+  //         d->SliceLinkButton->isChecked());
+  return d->MRMLSliceCompositeNode ? d->MRMLSliceCompositeNode->GetLinkedControl() : d->SliceLinkButton->isChecked();
 }
 
 //---------------------------------------------------------------------------
