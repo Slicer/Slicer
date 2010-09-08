@@ -70,8 +70,25 @@ def registerScriptedDisplayableManagers(sliceWidget):
       slicer.mrmlScene
     except AttributeError:
       slicer.mrmlScene = eval("slicer.sliceWidget%s_sliceLogic.GetMRMLScene()" % sliceWidget)
-  tcl('SliceSWidget #auto %s' % sliceGUIName)
-  
+  sWidget = tcl('SliceSWidget #auto %s' % sliceGUIName)
+  tcl('%s configure -calculateAnnotations 0' % sWidget)
+  tcl('''
+    # turn off event processing for all swidget instances
+    foreach sw [itcl::find objects -isa SWidget] {
+      $sw configure -enabled false
+    }
+    # enable the specific instances that are working well currently (low overhead)
+    set enabledSWidget {SliceSWidget FiducialsSWidget VolumeDisplaySWidget}
+    foreach esw $enabledSWidget {
+      foreach sw [itcl::find objects -isa $esw] {
+        $sw configure -enabled true
+      }
+    }
+    # tell the SliceSWidget to create instances of only specific widget types
+    foreach sw [itcl::find objects -isa SliceSWidget] {
+      $sw configure -swidgetTypes  {}
+    }
+  ''')
 
 if __name__ == "__main__":
 

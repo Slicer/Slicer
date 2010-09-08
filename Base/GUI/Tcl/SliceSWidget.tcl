@@ -27,6 +27,14 @@ if { [itcl::find class SliceSWidget] == "" } {
 
     public variable sliceStep 1  ;# the size of the slice increment/decrement
     public variable calculateAnnotations 1  ;# include annotation calculation (turned off for slicer4)
+    #
+    # These are widgets that track the state of a node in the MRML Scene
+    # - for each of these we update things each time a node or scene is added
+    #
+    public variable swidgetTypes {
+      { ModelSWidget -modelID vtkMRMLModelNode }
+      { RulerSWidget -rulerID vtkMRMLMeasurementsRulerNode }
+    }
 
     variable _actionStartRAS "0 0 0"
     variable _actionStartXY "0 0"
@@ -170,16 +178,7 @@ itcl::body SliceSWidget::destructor {} {
 #
 itcl::body SliceSWidget::updateSWidgets {} {
 
-  #
-  # These are widgets that track the state of a node in the MRML Scene
-  # - for each of these we update things each time a node or scene is added
-  #
-  set swidgetTypes {
-    { ModelSWidget -modelID vtkMRMLModelNode }
-    { RulerSWidget -rulerID vtkMRMLMeasurementsRulerNode }
-  }
-
-  # this part is generic, based on the types listed above
+  # this part is generic, based on the types configured for this class to manage
   foreach swidgetType $swidgetTypes {
     foreach {swidgetClass configVar nodeClass} $swidgetType {}
     array set sws ""
@@ -317,6 +316,10 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 # handle interactor events
 #
 itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
+
+  if { $enabled != "true" } {
+    return
+  }
 
   if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 

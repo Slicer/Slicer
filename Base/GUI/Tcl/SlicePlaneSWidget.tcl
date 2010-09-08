@@ -168,6 +168,10 @@ itcl::body SlicePlaneSWidget::updateViewer { } {
 
 itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
 
+  if { $enabled != "true" } {
+    return
+  }
+
   if { [info command $caller] == ""} {
       return
   }

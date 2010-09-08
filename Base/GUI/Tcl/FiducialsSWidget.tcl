@@ -106,6 +106,10 @@ itcl::body FiducialsSWidget::destructor {} {
 
 itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
 
+  if { $enabled != "true" } {
+    return
+  }
+
   if { [info command $caller] == ""} {
       return
   }

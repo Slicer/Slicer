@@ -244,6 +244,10 @@ itcl::body ModelSWidget::highlight { } {
 
 itcl::body ModelSWidget::processEvent { {caller ""} {event ""} } {
 
+  if { $enabled != "true" } {
+    return
+  }
+
   if { [info command $sliceGUI] == "" || [$sliceGUI GetLogic] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
