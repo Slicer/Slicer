@@ -1,4 +1,3 @@
-
 // AnnotationModule includes
 #include "MRMLDisplayableManager/vtkMRMLAnnotationFiducialThreeDViewDisplayableManager.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
@@ -6,7 +5,6 @@
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationThreeDViewDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -115,7 +113,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialThreeDViewDisplayableManager::Creat
 
   VTK_CREATE(vtkPointHandleRepresentation3D, handle);
   handle->GetProperty()->SetColor(1,0,0);
-  handle->SetHandleSize(5);
+  handle->SetHandleSize(10);
 
   VTK_CREATE(vtkSeedRepresentation, rep);
   rep->SetHandleRepresentation(handle);
