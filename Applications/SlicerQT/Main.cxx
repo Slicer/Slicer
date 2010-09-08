@@ -21,6 +21,7 @@
 // Qt includes
 #include <QSplashScreen>
 #include <QDebug>
+#include <QMessageBox>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -132,7 +133,12 @@ int main(int argc, char* argv[])
     {
     splash.finish(&window);
     }
-
+  QMessageBox::information(0, "3D Slicer",
+                           "Thank you for trying 3D Slicer version 4 alpha!\n\n"
+                           "Please be aware that this software is under active "
+                           "development and has not been tested for accuracy. "
+                           "Many important features are still missing.\n\n"
+                           "This software is not intended for clinical use.");
 //  qMRMLEventLoggerWidget logger;
 //  logger.setConsoleOutputEnabled(false);
 //  logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
