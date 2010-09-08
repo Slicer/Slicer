@@ -307,7 +307,6 @@ itcl::body SliceSWidget::resizeSliceNode {} {
     if { $disabled == 0 } {
         $_sliceNode InvokePendingModifiedEvent
         $_sliceNode DisableModifiedEventOff
-        [$sliceGUI GetSliceViewer] RequestRender
     }
   }
 }
@@ -411,7 +410,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   if { $caller != $_sliceNode } {
     $this resizeSliceNode
   } 
-
 
   if { $calculateAnnotations } {
 
@@ -553,8 +551,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             $sliceGUI SetGUICommandAbortFlag 1
            }
           default {
-            # need to render to show the annotation
-            [$sliceGUI GetSliceViewer] RequestRender
+            # nothing needs to be done by default
           }
         }
       }
@@ -1465,7 +1462,6 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
     } else {
         lappend guis $sliceGUI
     }
-
   return $guis
 }
 
