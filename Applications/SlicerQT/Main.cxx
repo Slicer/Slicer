@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
     {
     splash.finish(&window);
     }
-  QMessageBox::information(0, "3D Slicer",
+  QMessageBox::information(&window, "3D Slicer",
                            "Thank you for trying 3D Slicer version 4 alpha!\n\n"
                            "Please be aware that this software is under active "
                            "development and has not been tested for accuracy. "
