@@ -1,25 +1,25 @@
 // AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationStickyThreeDViewDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationTextDisplayableManager.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationStickyNode.h"
+#include "vtkMRMLAnnotationTextNode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationThreeDViewDisplayableManager.h"
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 // VTK includes
 #include <vtkObject.h>
-#include <vtkPNGReader.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
-#include <vtkProperty2D.h>
+#include <vtkTextRepresentation.h>
+#include <vtkTextWidget.h>
 #include <vtkRenderer.h>
-#include <vtkLogoWidget.h>
 #include <vtkHandleRepresentation.h>
-#include <vtkLogoRepresentation.h>
 #include <vtkAbstractWidget.h>
-
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 
 // std includes
 #include <string>
@@ -29,18 +29,18 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLAnnotationStickyThreeDViewDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationStickyThreeDViewDisplayableManager, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationStickyThreeDViewDisplayableManager Callback
-class vtkAnnotationStickyWidgetCallback : public vtkCommand
+// vtkMRMLAnnotationTextDisplayableManager Callback
+class vtkAnnotationTextWidgetCallback : public vtkCommand
 {
 public:
-  static vtkAnnotationStickyWidgetCallback *New()
-  { return new vtkAnnotationStickyWidgetCallback; }
+  static vtkAnnotationTextWidgetCallback *New()
+  { return new vtkAnnotationTextWidgetCallback; }
 
-  vtkAnnotationStickyWidgetCallback(){}
+  vtkAnnotationTextWidgetCallback(){}
 
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
@@ -76,28 +76,28 @@ public:
   {
     this->m_Node = n;
   }
-  void SetDisplayableManager(vtkMRMLAnnotationThreeDViewDisplayableManager * dm)
+  void SetDisplayableManager(vtkMRMLAnnotationDisplayableManager * dm)
   {
     this->m_DisplayableManager = dm;
   }
 
   vtkAbstractWidget * m_Widget;
   vtkMRMLAnnotationNode * m_Node;
-  vtkMRMLAnnotationThreeDViewDisplayableManager * m_DisplayableManager;
+  vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
 };
 
 //---------------------------------------------------------------------------
-// vtkMRMLAnnotationStickyThreeDViewDisplayableManager methods
+// vtkMRMLAnnotationTextDisplayableManager methods
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAnnotationTextDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
 /// Create a new text widget.
-vtkAbstractWidget * vtkMRMLAnnotationStickyThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
 
   if (!node)
@@ -106,18 +106,36 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyThreeDViewDisplayableManager::CreateW
     return 0;
     }
 
-  vtkMRMLAnnotationStickyNode* stickyNode = vtkMRMLAnnotationStickyNode::SafeDownCast(node);
+  vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
 
-  if (!stickyNode)
+  if (!textNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get sticky node!")
+    vtkErrorMacro("CreateWidget: Could not get text node!")
     return 0;
     }
 
+  vtkTextWidget* textWidget = vtkTextWidget::New();
+  VTK_CREATE(vtkTextRepresentation, textRep);
+
+  textRep->SetMoving(1);
+
+  if (textNode->GetTextLabel())
+    {
+    textRep->SetText(textNode->GetTextLabel());
+    }
+  else
+    {
+    textRep->SetText("New text");
+    }
+
+  textWidget->SetRepresentation(textRep);
+
+  textWidget->SetInteractor(this->GetInteractor());
+
+  // we get display coordinates
+  // we need normalized viewport coordinates, so we transform
   vtkHandleWidget * h1 = this->GetSeed(0);
 
-  // we get display coordinates, we need normalized viewport
-  // so we transform
   double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 
   double x = position1[0];
@@ -127,33 +145,18 @@ vtkAbstractWidget * vtkMRMLAnnotationStickyThreeDViewDisplayableManager::CreateW
   this->GetRenderer()->NormalizedDisplayToViewport(x,y);
   this->GetRenderer()->ViewportToNormalizedViewport(x,y);
 
-  VTK_CREATE(vtkPNGReader,r);
+  // we set normalized viewport coordinates
+  textRep->SetPosition(x,y);
 
-  // a hack to get the icon
-  std::stringstream s;
-  //s << std::getenv("TMPDIR") << "sticky.png";
-  s << "/tmp/" << "sticky.png";
-  r->SetFileName(s.str().c_str());
+  textWidget->On();
 
-  VTK_CREATE(vtkLogoRepresentation,logoRepresentation);
-  logoRepresentation->SetImage(r->GetOutput());
-  logoRepresentation->SetPosition(x,y); // here we set normalized viewport
-  logoRepresentation->SetPosition2(.1, .1);
-  logoRepresentation->GetImageProperty()->SetOpacity(.7);
+  return textWidget;
 
-  vtkLogoWidget * logoWidget = vtkLogoWidget::New();
-  logoWidget->SetInteractor(this->GetInteractor());
-  logoWidget->SetRepresentation(logoRepresentation);
-
-  logoWidget->On();
-
-  return logoWidget;
-
-  }
+}
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
-void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
+void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
 
   if (!widget)
@@ -169,7 +172,7 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::OnWidgetCreated(vtkAbs
     }
 
   // add the callback
-  vtkAnnotationStickyWidgetCallback *myCallback = vtkAnnotationStickyWidgetCallback::New();
+  vtkAnnotationTextWidgetCallback *myCallback = vtkAnnotationTextWidgetCallback::New();
   myCallback->SetNode(node);
   myCallback->SetWidget(widget);
   myCallback->SetDisplayableManager(this);
@@ -181,10 +184,9 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::OnWidgetCreated(vtkAbs
   this->PropagateWidgetToMRML(widget, node);
 }
 
-
 //---------------------------------------------------------------------------
 /// Propagate properties of MRML node to widget.
-void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
 
   if (!widget)
@@ -200,20 +202,20 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateMRMLToWidget(
     }
 
   // cast to the specific widget
-  vtkLogoWidget* logoWidget = vtkLogoWidget::SafeDownCast(widget);
+  vtkTextWidget * textWidget = vtkTextWidget::SafeDownCast(widget);
 
-  if (!logoWidget)
+  if (!textWidget)
    {
-   vtkErrorMacro("PropagateMRMLToWidget: Could not get logo widget!")
+   vtkErrorMacro("PropagateMRMLToWidget: Could not get text widget!")
    return;
    }
 
   // cast to the specific mrml node
-  vtkMRMLAnnotationStickyNode* stickyNode = vtkMRMLAnnotationStickyNode::SafeDownCast(node);
+  vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
 
-  if (!stickyNode)
+  if (!textNode)
    {
-   vtkErrorMacro("PropagateMRMLToWidget: Could not get sticky node!")
+   vtkErrorMacro("PropagateMRMLToWidget: Could not get text node!")
    return;
    }
 
@@ -227,10 +229,10 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateMRMLToWidget(
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkLogoRepresentation * rep = vtkLogoRepresentation::SafeDownCast(logoWidget->GetRepresentation());
+  vtkTextRepresentation * rep = vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
 
   // now we have to transfer again from world coordinates to normalized viewport coordinates
-  double * displayCoordinates = this->GetWorldToDisplayCoordinates(stickyNode->GetControlPointCoordinates(0)[0],stickyNode->GetControlPointCoordinates(0)[1],stickyNode->GetControlPointCoordinates(0)[2]);
+  double * displayCoordinates = this->GetWorldToDisplayCoordinates(textNode->GetTextCoordinates()[0], textNode->GetTextCoordinates()[1], textNode->GetTextCoordinates()[2]);
 
   double u = displayCoordinates[0];
   double v = displayCoordinates[1];
@@ -240,12 +242,29 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateMRMLToWidget(
   this->GetRenderer()->ViewportToNormalizedViewport(u,v);
   // now we have transformed the world coordinates in the MRML node to normalized viewport coordinates and can really update the widget
 
+  // update widget position
   rep->SetPosition(u,v);
 
+  // update widget text
+  rep->SetText(textNode->GetText(0).c_str());
+
+  // update widget textscale
+  rep->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
+
+  if (textNode->GetSelected())
+    {
+    // update widget selected color
+    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
+    }
+  else
+    {
+    // update widget color
+    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetColor());
+    }
 
   // at least one value has changed, so set the widget to modified
   rep->NeedToRenderOn();
-  logoWidget->Modified();
+  textWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -254,7 +273,7 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateMRMLToWidget(
 
 //---------------------------------------------------------------------------
 /// Propagate properties of widget to MRML node.
-void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
 
   if (!widget)
@@ -270,34 +289,34 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateWidgetToMRML(
     }
 
   // cast to the specific widget
-   vtkLogoWidget* logoWidget = vtkLogoWidget::SafeDownCast(widget);
+   vtkTextWidget * textWidget = vtkTextWidget::SafeDownCast(widget);
 
-   if (!logoWidget)
+   if (!textWidget)
      {
-     vtkErrorMacro("PropagateWidgetToMRML: Could not get logo widget!")
+     vtkErrorMacro("PropagateWidgetToMRML: Could not get text widget!")
      return;
      }
 
    // cast to the specific mrml node
-   vtkMRMLAnnotationStickyNode* stickyNode = vtkMRMLAnnotationStickyNode::SafeDownCast(node);
+   vtkMRMLAnnotationTextNode* textNode = vtkMRMLAnnotationTextNode::SafeDownCast(node);
 
-   if (!stickyNode)
+   if (!textNode)
      {
-     vtkErrorMacro("PropagateWidgetToMRML: Could not get sticky node!")
+     vtkErrorMacro("PropagateWidgetToMRML: Could not get text node!")
      return;
      }
 
   if (this->m_Updating)
-    {
-    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
-    return;
-    }
+   {
+   vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
+   return;
+   }
 
   // disable processing of modified events
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkLogoRepresentation * rep = vtkLogoRepresentation::SafeDownCast(logoWidget->GetRepresentation());
+  vtkTextRepresentation * rep = vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
 
   double * position1 = rep->GetPosition();
 
@@ -312,9 +331,29 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateWidgetToMRML(
   double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
   // now we have world coordinates :)
 
-  stickyNode->SetStickyCoordinates(worldCoordinates);
+  // update mrml coordinates
+  textNode->SetTextCoordinates(worldCoordinates);
 
-  stickyNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, stickyNode);
+  // update mrml text
+  textNode->SetText(0,rep->GetText(),1,1);
+
+  if (!textNode->GetAnnotationTextDisplayNode())
+    {
+    // no display node yet, create one
+    textNode->CreateAnnotationTextDisplayNode();
+    }
+
+  // update mrml textscale
+  textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
+
+  // update mrml selected color
+  //textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
+
+  // update mrml color
+  //textNode->GetAnnotationTextDisplayNode()->SetColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
+
+  // fire the modified event
+  textNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, textNode);
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -323,7 +362,7 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::PropagateWidgetToMRML(
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationTextDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -343,16 +382,16 @@ void vtkMRMLAnnotationStickyThreeDViewDisplayableManager::OnClickInThreeDRenderW
 
     double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
 
-    // Create the node
-    vtkMRMLAnnotationStickyNode *stickyNode = vtkMRMLAnnotationStickyNode::New();
+    // create the MRML node
+    vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
+    textNode->SetTextCoordinates(worldCoordinates);
+    textNode->SetTextLabel("New text");
 
-    stickyNode->Initialize(this->GetMRMLScene());
+    textNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationText"));
 
-    stickyNode->SetStickyCoordinates(worldCoordinates);
+    textNode->Initialize(this->GetMRMLScene());
 
-    stickyNode->SetName(stickyNode->GetScene()->GetUniqueNameByString("AnnotationStickyNote"));
-
-    stickyNode->Delete();
+    textNode->Delete();
 
     // reset updating state
     this->m_Updating = 0;

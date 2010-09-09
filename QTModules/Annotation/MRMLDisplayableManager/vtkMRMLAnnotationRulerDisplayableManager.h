@@ -7,41 +7,41 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationSplineThreeDViewDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationRulerDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
  =========================================================================auto=*/
 
-#ifndef __vtkMRMLAnnotationSplineDisplayableManager_h
-#define __vtkMRMLAnnotationSplineDisplayableManager_h
+#ifndef __vtkMRMLAnnotationRulerDisplayableManager_h
+#define __vtkMRMLAnnotationRulerDisplayableManager_h
 
 // AnnotationModule includes
 #include "qSlicerAnnotationModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationThreeDViewDisplayableManager.h"
+#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
 
-class vtkMRMLAnnotationSplineNode;
+class vtkMRMLAnnotationRulerNode;
 class vtkSlicerViewerWidget;
-class vtkMRMLAnnotationSplineDisplayNode;
+class vtkMRMLAnnotationRulerDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationSplineThreeDViewDisplayableManager :
-    public vtkMRMLAnnotationThreeDViewDisplayableManager
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationRulerDisplayableManager :
+    public vtkMRMLAnnotationDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationSplineThreeDViewDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationSplineThreeDViewDisplayableManager, vtkMRMLAnnotationThreeDViewDisplayableManager);
+  static vtkMRMLAnnotationRulerDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationRulerDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
 
-  vtkMRMLAnnotationSplineThreeDViewDisplayableManager(){this->m_Focus="vtkMRMLAnnotationSplineNode";}
-  virtual ~vtkMRMLAnnotationSplineThreeDViewDisplayableManager(){}
+  vtkMRMLAnnotationRulerDisplayableManager(){this->m_Focus="vtkMRMLAnnotationRulerNode";}
+  virtual ~vtkMRMLAnnotationRulerDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInThreeDRenderWindow(double x, double y);
@@ -58,8 +58,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationSplineThreeDViewDisplayableManager(const vtkMRMLAnnotationSplineThreeDViewDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationSplineThreeDViewDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationRulerDisplayableManager(const vtkMRMLAnnotationRulerDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationRulerDisplayableManager&); /// Not Implemented
 
 };
 

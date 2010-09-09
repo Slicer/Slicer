@@ -7,7 +7,7 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationThreeDViewDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.1 $
 
@@ -21,7 +21,7 @@
 #include "vtkMRMLAnnotationClickCounter.h"
 
 // MRMLDisplayableManager includes
-#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
+#include <vtkMRMLAbstractDisplayableManager.h>
 #include <vtkMRMLAbstractSliceViewDisplayableManager.h>
 #include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManagerHelper.h"
 
@@ -36,13 +36,13 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkAbstractWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationThreeDViewDisplayableManager :
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManager :
     public vtkMRMLAbstractDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationThreeDViewDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationThreeDViewDisplayableManager, vtkMRMLAbstractDisplayableManager);
+  static vtkMRMLAnnotationDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
@@ -56,8 +56,8 @@ public:
 
 protected:
 
-  vtkMRMLAnnotationThreeDViewDisplayableManager();
-  virtual ~vtkMRMLAnnotationThreeDViewDisplayableManager();
+  vtkMRMLAnnotationDisplayableManager();
+  virtual ~vtkMRMLAnnotationDisplayableManager();
 
   virtual void Create();
 
@@ -116,8 +116,8 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationThreeDViewDisplayableManager(const vtkMRMLAnnotationThreeDViewDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationThreeDViewDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationDisplayableManager(const vtkMRMLAnnotationDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationDisplayableManager&); /// Not Implemented
 
   virtual void OnInteractorStyleEvent(int eventid);
 

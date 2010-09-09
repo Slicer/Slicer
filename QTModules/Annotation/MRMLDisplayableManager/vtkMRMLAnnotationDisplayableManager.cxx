@@ -1,5 +1,5 @@
 // AnnotationModule includes
-#include "vtkMRMLAnnotationThreeDViewDisplayableManager.h"
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationNode.h"
@@ -35,11 +35,11 @@
 typedef void (*fp)(void);
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLAnnotationThreeDViewDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationThreeDViewDisplayableManager, "$Revision: 1.2 $");
+vtkStandardNewMacro (vtkMRMLAnnotationDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLAnnotationDisplayableManager, "$Revision: 1.2 $");
 
 //---------------------------------------------------------------------------
-vtkMRMLAnnotationThreeDViewDisplayableManager::vtkMRMLAnnotationThreeDViewDisplayableManager()
+vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
 {
   this->Helper = vtkMRMLAnnotationDisplayableManagerHelper::New();
   this->m_ClickCounter = vtkMRMLAnnotationClickCounter::New();
@@ -50,7 +50,7 @@ vtkMRMLAnnotationThreeDViewDisplayableManager::vtkMRMLAnnotationThreeDViewDispla
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLAnnotationThreeDViewDisplayableManager::~vtkMRMLAnnotationThreeDViewDisplayableManager()
+vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
 {
 
   this->m_DisableInteractorStyleEventsProcessing = 0;
@@ -61,13 +61,13 @@ vtkMRMLAnnotationThreeDViewDisplayableManager::~vtkMRMLAnnotationThreeDViewDispl
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAnnotationDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::SetAndObserveNodes()
+void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
 {
   VTK_CREATE(vtkIntArray, nodeEvents);
   nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
@@ -86,7 +86,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::SetAndObserveNodes()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::Create()
+void vtkMRMLAnnotationDisplayableManager::Create()
 {
 
   // hack to force initialization of the renderview
@@ -97,7 +97,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                             unsigned long event,
                                                             void *callData)
 {
@@ -124,27 +124,27 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::ProcessMRMLEvents(vtkObject 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneClosedEvent()
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneAboutToBeImportedEvent()
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeImportedEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneImportedEvent()
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node)
 {
 
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
@@ -215,7 +215,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeAddedEvent(vt
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLSceneNodeRemovedEvent");
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
@@ -245,7 +245,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLSceneNodeRemovedEvent(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node)
+void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node)
 {
   //this->DebugOn();
 
@@ -278,7 +278,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeModified
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node)
+void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLAnnotationNodeTransformModifiedEvent");
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
@@ -292,7 +292,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeTransfor
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node)
+void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLAnnotationNodeLockModifiedEvent");
   vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
@@ -306,7 +306,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnMRMLAnnotationNodeLockModi
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnInteractorStyleEvent(int eventid)
+void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
   if (this->m_DisableInteractorStyleEventsProcessing == 1)
     {
@@ -323,13 +323,13 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnInteractorStyleEvent(int e
 }
 
 //---------------------------------------------------------------------------
-vtkAbstractWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::GetWidget(vtkMRMLAnnotationNode * node)
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::GetWidget(vtkMRMLAnnotationNode * node)
 {
   return this->Helper->GetWidget(node);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnClickInThreeDRenderWindowGetCoordinates()
+void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordinates()
 {
 
   double x = this->GetInteractor()->GetEventPosition()[0];
@@ -348,7 +348,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::OnClickInThreeDRenderWindowG
 
 //---------------------------------------------------------------------------
 /// Place a seed for widgets
-void vtkMRMLAnnotationThreeDViewDisplayableManager::PlaceSeed(double x, double y)
+void vtkMRMLAnnotationDisplayableManager::PlaceSeed(double x, double y)
 {
 
   // place the seed
@@ -360,7 +360,7 @@ void vtkMRMLAnnotationThreeDViewDisplayableManager::PlaceSeed(double x, double y
 
 //---------------------------------------------------------------------------
 /// Get the handle of a placed seed
-vtkHandleWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::GetSeed(int index)
+vtkHandleWidget * vtkMRMLAnnotationDisplayableManager::GetSeed(int index)
 {
   return this->Helper->GetSeed(index);
 }
@@ -369,7 +369,7 @@ vtkHandleWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::GetSeed(int ind
 // Coordinate conversions
 //---------------------------------------------------------------------------
 /// Convert display to world coordinates
-double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetDisplayToWorldCoordinates(double x, double y)
+double* vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x, double y)
 {
 
   double worldCoordinates[4];
@@ -382,7 +382,7 @@ double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetDisplayToWorldCoordina
 
 //---------------------------------------------------------------------------
 /// Convert world to display coordinates
-double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordinates(double r, double a, double s)
+double* vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r, double a, double s)
 {
 
   double displayCoordinates[3];
@@ -395,7 +395,7 @@ double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordina
 
 //---------------------------------------------------------------------------
 /// Convert world to display coordinates
-double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordinates(double * worldPoints)
+double* vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double * worldPoints)
 {
 
   return this->GetWorldToDisplayCoordinates(worldPoints[0], worldPoints[1], worldPoints[2]);
@@ -405,7 +405,7 @@ double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordina
 //---------------------------------------------------------------------------
 /// Check if it is the correct displayableManager
 //---------------------------------------------------------------------------
-bool vtkMRMLAnnotationThreeDViewDisplayableManager::IsCorrectDisplayableManager()
+bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 {
 
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -429,14 +429,14 @@ bool vtkMRMLAnnotationThreeDViewDisplayableManager::IsCorrectDisplayableManager(
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
 {
   // The user clicked in the renderWindow
   vtkErrorMacro("OnClickInThreeDRenderWindow should be overloaded!");
 }
 
 //---------------------------------------------------------------------------
-vtkAbstractWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
   // A widget should be created here.
   vtkErrorMacro("CreateWidget should be overloaded!");
@@ -444,21 +444,21 @@ vtkAbstractWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::CreateWidget(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
+void vtkMRMLAnnotationDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
 {
   // Actions after a widget was created should be executed here.
   vtkErrorMacro("OnWidgetCreated should be overloaded!");
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+void vtkMRMLAnnotationDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
 {
   // The properties of a widget should be set here.
   vtkErrorMacro("PropagateMRMLToWidget should be overloaded!");
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationThreeDViewDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
 {
   // The properties of a widget should be set here.
   vtkErrorMacro("PropagateWidgetToMRML should be overloaded!");
