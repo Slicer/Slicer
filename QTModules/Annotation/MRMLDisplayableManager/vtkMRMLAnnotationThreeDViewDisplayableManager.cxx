@@ -371,16 +371,12 @@ vtkHandleWidget * vtkMRMLAnnotationThreeDViewDisplayableManager::GetSeed(int ind
 /// Convert display to world coordinates
 double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetDisplayToWorldCoordinates(double x, double y)
 {
-  double coordinates[3];
-  coordinates[0]=(double)x;
-  coordinates[1]=(double)y;
-  coordinates[2]=0;
 
-  this->GetRenderer()->SetDisplayPoint(coordinates);
-  this->GetRenderer()->DisplayToView();
-  this->GetRenderer()->GetViewPoint(coordinates);
-  this->GetRenderer()->ViewToWorld();
-  return this->GetRenderer()->GetWorldPoint();
+  double worldCoordinates[4];
+
+  vtkInteractorObserver::ComputeDisplayToWorld(this->GetRenderer(),x,y,0,worldCoordinates);
+
+  return worldCoordinates;
 
 }
 
@@ -389,14 +385,11 @@ double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetDisplayToWorldCoordina
 double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordinates(double r, double a, double s)
 {
 
-  double * displayCoordinates;
+  double displayCoordinates[3];
 
-  this->GetRenderer()->SetWorldPoint(r,a,s,1);
-  this->GetRenderer()->WorldToView();
-  displayCoordinates = this->GetRenderer()->GetViewPoint();
-  this->GetRenderer()->ViewToDisplay();
+  vtkInteractorObserver::ComputeWorldToDisplay(this->GetRenderer(),r,a,s,displayCoordinates);
 
-  return this->GetRenderer()->GetDisplayPoint();
+  return displayCoordinates;
 
 }
 
@@ -405,20 +398,7 @@ double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordina
 double* vtkMRMLAnnotationThreeDViewDisplayableManager::GetWorldToDisplayCoordinates(double * worldPoints)
 {
 
-  vtkDebugMacro("GetWorldToDisplayCoordinates: RAS " << worldPoints[0] << ", " << worldPoints[1] << ", " << worldPoints[2])
-
-  double * displayCoordinates;
-
-  this->GetRenderer()->SetWorldPoint(worldPoints);
-  this->GetRenderer()->WorldToView();
-  displayCoordinates = this->GetRenderer()->GetViewPoint();
-  this->GetRenderer()->ViewToDisplay();
-
-  double * output = this->GetRenderer()->GetDisplayPoint();
-
-  vtkDebugMacro("GetWorldToDisplayCoordinates: Display " << output[0] << ", " << output[1])
-
-  return output;
+  return this->GetWorldToDisplayCoordinates(worldPoints[0], worldPoints[1], worldPoints[2]);
 
 }
 

@@ -37,12 +37,12 @@ class vtkMRMLAnnotationLineDisplayNode;
 class vtkAbstractWidget;
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationThreeDViewDisplayableManager :
-    public vtkMRMLAbstractThreeDViewDisplayableManager
+    public vtkMRMLAbstractDisplayableManager
 {
 public:
 
   static vtkMRMLAnnotationThreeDViewDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationThreeDViewDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeRevisionMacro(vtkMRMLAnnotationThreeDViewDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
