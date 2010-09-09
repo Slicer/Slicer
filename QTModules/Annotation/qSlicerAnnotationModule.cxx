@@ -59,7 +59,7 @@ void qSlicerAnnotationModule::setup()
 
   // 2D
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationFiducialSliceViewDisplayableManager");
+      "vtkMRMLAnnotationFiducialThreeDViewDisplayableManager");
 
 }
 
@@ -90,5 +90,5 @@ QString qSlicerAnnotationModule::acknowledgementText() const
 //-----------------------------------------------------------------------------
 QIcon qSlicerAnnotationModule::icon() const
 {
-  return QIcon(":/Icons/AnnotationReport.png");
+  return QIcon(":/Icons/Annotation.png");
 }

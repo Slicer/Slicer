@@ -27,7 +27,6 @@
         <file>Icons/AnnotationLine.png</file>
         <file>Icons/AnnotationText.png</file>
         <file>Icons/AnnotationReport.png</file>
-        <file>Icons/AnnotationInformation.png</file>
         <file>Icons/AnnotationInvisible.png</file>
         <file>Icons/AnnotationDistance.png</file>
         <file>Icons/AnnotationMouseModeTransform.png</file>
@@ -44,5 +43,6 @@
         <file>Icons/AnnotationVolumesModule.png</file>
         <file>Icons/AnnotationBidimensional.png</file>
         <file>Icons/AnnotationEditBidimensional.png</file>
+        <file>Icons/Annotation.png</file>
     </qresource>
 </RCC>
