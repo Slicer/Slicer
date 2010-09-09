@@ -48,6 +48,10 @@ public:
   /// Help to use the module
   virtual QString helpText()const;
 
+  ///
+  /// Return the icon of the EMSegment module.
+  virtual QIcon icon()const;
+
 protected:
   ///
   /// Initialize the module. Register the volumes reader/writer

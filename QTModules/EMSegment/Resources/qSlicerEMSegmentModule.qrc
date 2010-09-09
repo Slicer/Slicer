@@ -1,6 +1,6 @@
-<!DOCTYPE RCC><RCC version="1.0">
-  <qresource>
-    <file>Icons/EMSegment.png</file>
-    <file>Icons/Weight.png</file>
-  </qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/Weight.png</file>
+        <file>Icons/EMSegment.png</file>
+    </qresource>
 </RCC>

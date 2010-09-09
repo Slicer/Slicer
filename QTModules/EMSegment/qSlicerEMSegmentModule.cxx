@@ -82,3 +82,9 @@ vtkSlicerLogic* qSlicerEMSegmentModule::createLogic()
 {
   return vtkSlicerEMSegmentLogic::New();
 }
+
+//-----------------------------------------------------------------------------
+QIcon qSlicerEMSegmentModule::icon() const
+{
+  return QIcon(":/Icons/EMSegment.png");
+}
