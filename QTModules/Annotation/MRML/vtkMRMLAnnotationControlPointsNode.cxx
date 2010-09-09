@@ -520,5 +520,8 @@ void vtkMRMLAnnotationControlPointsNode::Initialize(vtkMRMLScene* mrmlScene)
     return;
   }
   Superclass::Initialize(mrmlScene);
+  // we need to disable the modified event which would get fired when we set the new displayNode
+  this->DisableModifiedEventOn();
   this->CreateAnnotationPointDisplayNode();
+  this->DisableModifiedEventOff();
 }

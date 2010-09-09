@@ -44,7 +44,7 @@ protected:
   virtual ~vtkMRMLAnnotationFiducialDisplayableManager(){}
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInThreeDRenderWindow(double x, double y);
+  virtual void OnClickInRenderWindow(double x, double y);
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
 

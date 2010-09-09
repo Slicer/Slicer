@@ -342,7 +342,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
 //---------------------------------------------------------------------------
 /// Handle clicks in 3D Render Window
-void vtkMRMLAnnotationAngleDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

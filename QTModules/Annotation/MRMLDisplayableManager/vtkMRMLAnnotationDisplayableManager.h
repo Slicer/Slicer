@@ -9,7 +9,7 @@
 
  Module:    $RCSfile: vtkMRMLAnnotationDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
- Version:   $Revision: 1.1 $
+ Version:   $Revision: 1.2 $
 
  =========================================================================auto=*/
 
@@ -70,6 +70,12 @@ protected:
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
+  /// Called after the corresponding MRML View container was modified
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+
+  /// Handler for specific SliceView actions
+  void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
+
   /// Observe all associated nodes.
   void SetAndObserveNodes();
 
@@ -78,39 +84,57 @@ protected:
   void OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node);
 
-  /// Get the widget of a node.
-  vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
+  //
+  // Handling of interaction within the RenderWindow
+  //
 
   // Get the coordinates of a click in the RenderWindow
-  void OnClickInThreeDRenderWindowGetCoordinates();
+  void OnClickInRenderWindowGetCoordinates();
   /// Callback for click in RenderWindow
-  virtual void OnClickInThreeDRenderWindow(double x, double y);
-  /// Counter for clicks in 3D Render Window
+  virtual void OnClickInRenderWindow(double x, double y);
+  /// Counter for clicks in Render Window
   vtkMRMLAnnotationClickCounter* m_ClickCounter;
+
+  //
+  // Seeds for widget placement
+  //
 
   /// Place a seed for widgets
   virtual void PlaceSeed(double x, double y);
   /// Return the placed seeds
   vtkHandleWidget * GetSeed(int index);
 
+  //
+  // Widget functionality
+  //
+
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
   /// Gets called when widget was created
   virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node);
+  /// Get the widget of a node.
+  vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
 
+  //
+  // Coordinate Conversions
+  //
+
+  /// Convert display to world coordinates
+  void GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates);
+
+  /// Convert display to world coordinates
+  void GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates);
+  void GetWorldToDisplayCoordinates(double * worldCoordinates, double * displayCoordinates);
+
+  ///
   /// Check if it is the right displayManager
   virtual bool IsCorrectDisplayableManager();
 
-  /// Convert display to world coordinates
-  virtual double * GetDisplayToWorldCoordinates(double x, double y);
-
-  /// Convert display to world coordinates
-  virtual double * GetWorldToDisplayCoordinates(double r, double a, double s);
-  virtual double * GetWorldToDisplayCoordinates(double * worldPoints);
-
+  ///
   /// Focus of this displayableManager is set to a specific annotation type when inherited
   const char* m_Focus;
 
+  ///
   /// Disable processing when updating is in progress.
   int m_Updating;
 
@@ -124,6 +148,8 @@ private:
   vtkMRMLAnnotationDisplayableManagerHelper * Helper;
 
   int m_DisableInteractorStyleEventsProcessing;
+
+  bool m_SliceViewDisplayableManager;
 
 };
 

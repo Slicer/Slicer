@@ -302,7 +302,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationRulerDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

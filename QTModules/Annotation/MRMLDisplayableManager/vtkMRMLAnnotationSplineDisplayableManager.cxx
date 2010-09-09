@@ -317,7 +317,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationSplineDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

@@ -323,7 +323,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationStickyDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

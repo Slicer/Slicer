@@ -2015,7 +2015,7 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
   const char * textValue = d->logic()->GetAnnotationText(newNodeID);
 
   d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
-  this->selectRowByIndex(m_index);
+  //this->selectRowByIndex(m_index);
 
 }
 

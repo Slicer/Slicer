@@ -33,15 +33,16 @@ void qSlicerAnnotationModule::setup()
 {
 
   // 3D
+  /*
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationTextThreeDViewDisplayableManager");
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationAngleThreeDViewDisplayableManager");
-
+*/
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationFiducialThreeDViewDisplayableManager");
-
+      "vtkMRMLAnnotationFiducialDisplayableManager");
+/*
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationStickyThreeDViewDisplayableManager");
 
@@ -56,10 +57,10 @@ void qSlicerAnnotationModule::setup()
 
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
       "vtkMRMLAnnotationROIThreeDViewDisplayableManager");
-
+*/
   // 2D
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationFiducialThreeDViewDisplayableManager");
+      "vtkMRMLAnnotationFiducialDisplayableManager");
 
 }
 

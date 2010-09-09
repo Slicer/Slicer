@@ -296,7 +296,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationROIDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())

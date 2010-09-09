@@ -9,6 +9,8 @@
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkObject.h>
@@ -47,6 +49,10 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
   this->m_Updating = 0;
 
   this->m_Focus = "vtkMRMLAnnotationNode";
+
+  // by default, this displayableManager handles a ThreeDView
+  this->m_SliceViewDisplayableManager = false;
+
 }
 
 //---------------------------------------------------------------------------
@@ -93,6 +99,7 @@ void vtkMRMLAnnotationDisplayableManager::Create()
   this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
   this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
 
+  this->DebugOn();
 
 }
 
@@ -306,6 +313,66 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeLockModifiedEvent(
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
+{
+
+  vtkDebugMacro("OnMRMLDisplayableNodeModifiedEvent");
+
+  if (!caller)
+    {
+    vtkErrorMacro("OnMRMLDisplayableNodeModifiedEvent: Could not get caller.")
+    return;
+    }
+
+  vtkMRMLSliceNode * sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
+
+  if (sliceNode)
+    {
+    // the associated renderWindow is a 2D SliceView
+    // this is the entry point for all events fired by one of the three sliceviews
+    // (f.e. change slice number, zoom etc.)
+
+    // we remember that this instance of the displayableManager deals with 2D
+    // this is important for widget creation etc.
+    // because during Slicer startup the SliceViews fire events, it will be always set correctly
+    this->m_SliceViewDisplayableManager = true;
+
+    // now we call the handle for specific sliceNode actions
+    this->OnMRMLSliceNodeModifiedEvent(sliceNode);
+
+    // and exit
+    return;
+    }
+
+  vtkMRMLViewNode * viewNode = vtkMRMLViewNode::SafeDownCast(caller);
+
+  if (viewNode)
+    {
+    // the associated renderWindow is a 3D View
+    vtkDebugMacro("OnMRMLDisplayableNodeModifiedEvent: This displayableManager handles a ThreeD view.")
+    return;
+    }
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode)
+{
+
+  if (!sliceNode)
+    {
+    vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: Could not get the sliceNode.")
+    return;
+    }
+
+  sliceNode->Print(cout);
+
+  // TODO Synchronization
+
+
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
   if (this->m_DisableInteractorStyleEventsProcessing == 1)
@@ -317,7 +384,7 @@ void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
     {
     if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
       {
-      this->OnClickInThreeDRenderWindowGetCoordinates();
+      this->OnClickInRenderWindowGetCoordinates();
       }
     }
 }
@@ -329,7 +396,7 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::GetWidget(vtkMRMLAnnota
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordinates()
+void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindowGetCoordinates()
 {
 
   double x = this->GetInteractor()->GetEventPosition()[0];
@@ -338,7 +405,7 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindowGetCoordina
   double y = this->GetInteractor()->GetEventPosition()[1];
 
 
-  this->OnClickInThreeDRenderWindow(x, y);
+  this->OnClickInRenderWindow(x, y);
 }
 
 
@@ -369,36 +436,28 @@ vtkHandleWidget * vtkMRMLAnnotationDisplayableManager::GetSeed(int index)
 // Coordinate conversions
 //---------------------------------------------------------------------------
 /// Convert display to world coordinates
-double* vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x, double y)
+void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates)
 {
-
-  double worldCoordinates[4];
 
   vtkInteractorObserver::ComputeDisplayToWorld(this->GetRenderer(),x,y,0,worldCoordinates);
 
-  return worldCoordinates;
-
 }
 
 //---------------------------------------------------------------------------
 /// Convert world to display coordinates
-double* vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r, double a, double s)
+void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates)
 {
-
-  double displayCoordinates[3];
 
   vtkInteractorObserver::ComputeWorldToDisplay(this->GetRenderer(),r,a,s,displayCoordinates);
 
-  return displayCoordinates;
-
 }
 
 //---------------------------------------------------------------------------
 /// Convert world to display coordinates
-double* vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double * worldPoints)
+void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double * worldCoordinates, double * displayCoordinates)
 {
 
-  return this->GetWorldToDisplayCoordinates(worldPoints[0], worldPoints[1], worldPoints[2]);
+  this->GetWorldToDisplayCoordinates(worldCoordinates[0], worldCoordinates[1], worldCoordinates[2], displayCoordinates);
 
 }
 
@@ -429,7 +488,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
   // The user clicked in the renderWindow
   vtkErrorMacro("OnClickInThreeDRenderWindow should be overloaded!");

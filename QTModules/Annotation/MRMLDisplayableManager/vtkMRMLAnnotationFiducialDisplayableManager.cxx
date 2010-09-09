@@ -132,7 +132,8 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   seedWidget->On();
 
-  double * position1 = this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates());
+  double position1[2];
+  this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates(), position1);
 
   VTK_CREATE(vtkHandleWidget, newhandle);
   newhandle = seedWidget->CreateNewHandle();
@@ -227,7 +228,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 
   rep->GetSeedWorldPosition(0,position1);
 
-  double * displayCoordinates = this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates()[0],fiducialNode->GetFiducialCoordinates()[1],fiducialNode->GetFiducialCoordinates()[2]);
+  double displayCoordinates[2];
+  this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates(),displayCoordinates);
+
   rep->SetSeedDisplayPosition(0,displayCoordinates);
 
   rep->NeedToRenderOn();
@@ -302,7 +305,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -320,7 +323,8 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInThreeDRenderWindow(do
     // switch to updating state to avoid events mess
     this->m_Updating = 1;
 
-    double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
+    double worldCoordinates[4];
+    this->GetDisplayToWorldCoordinates(x,y,worldCoordinates);
 
     // create the MRML node
     vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();

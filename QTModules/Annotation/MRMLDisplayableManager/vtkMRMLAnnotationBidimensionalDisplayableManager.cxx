@@ -359,7 +359,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInThreeDRenderWindow(double x, double y)
+void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(double x, double y)
 {
 
   if (!this->IsCorrectDisplayableManager())
