@@ -3198,6 +3198,8 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
       // axis labels, fiducial points, fiducial labels or 3Dcube?
       // does the menu match the node? if not update the menu
       this->MainViewVisibility ( );
+      // if an actor's visibility has changed, update the nav render.
+      this->RequestNavigationRender();
       }
     // render mode changed
     else if ( event == vtkMRMLViewNode::RenderModeEvent )

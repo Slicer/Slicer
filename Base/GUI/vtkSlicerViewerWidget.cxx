@@ -338,6 +338,11 @@ void vtkSlicerViewerWidget::AddAxisActors()
     if (this->BoxAxisActor)
       {
       this->MainViewer->AddViewProp( this->BoxAxisActor);
+      //--- handle the case where box visibility is set to 0
+      if ( this->ViewNode != NULL )
+        {
+        this->BoxAxisActor->SetVisibility ( this->ViewNode->GetBoxVisible() );
+        }
       }
     for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
       {
@@ -345,6 +350,11 @@ void vtkSlicerViewerWidget::AddAxisActors()
         this->MainViewer->GetRenderer()->GetActiveCamera() : NULL;
       this->AxisLabelActors[i]->SetCamera(camera);
       this->MainViewer->AddViewProp( this->AxisLabelActors[i]);
+      //--- handle the case where axis label visibility is set to 0
+      if ( this->ViewNode != NULL )
+        {
+        this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
+        }
       }
     }
 }
@@ -480,7 +490,6 @@ void vtkSlicerViewerWidget::UpdateAxis()
   this->BoxAxisActor->SetVisibility(this->ViewNode->GetBoxVisible());
   for (unsigned int i=0; i<AxisLabelActors.size(); i++)
     {
-    //WJPTEST
     if (this->MainViewer != NULL && this->MainViewer->GetRenderer() != NULL )
       {
       this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
@@ -490,7 +499,6 @@ void vtkSlicerViewerWidget::UpdateAxis()
       this->AxisLabelActors[i]->SetCamera(NULL );
       }
   
-    //WJPTEST
     this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
     }
   // Until we come up with a solution for all use cases, the resetting
