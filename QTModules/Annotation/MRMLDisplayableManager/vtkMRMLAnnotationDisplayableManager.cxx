@@ -51,7 +51,7 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
   this->m_Focus = "vtkMRMLAnnotationNode";
 
   // by default, this displayableManager handles a ThreeDView
-  this->m_SliceViewDisplayableManager = false;
+  this->m_SliceNode = 0;
 
 }
 
@@ -64,6 +64,8 @@ vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
   this->m_Focus = 0;
   this->Helper->Delete();
   this->m_ClickCounter->Delete();
+
+  this->m_SliceNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -99,7 +101,7 @@ void vtkMRMLAnnotationDisplayableManager::Create()
   this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelBackwardEvent);
   this->GetInteractor()->InvokeEvent(vtkCommand::MouseWheelForwardEvent);
 
-  this->DebugOn();
+  //this->DebugOn();
 
 }
 
@@ -187,7 +189,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     return;
     }
 
-  std::cout << "OnMRMLSceneNodeAddedEvent ThreeD -> CreateWidget" << std::endl;
+  //std::cout << "OnMRMLSceneNodeAddedEvent ThreeD -> CreateWidget" << std::endl;
 
   // Create the Widget and add it to the list.
   vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
@@ -271,7 +273,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
     return;
     }
 
-  std::cout << "OnMRMLAnnotationNodeModifiedEvent ThreeD->PropagateMRMLToWidget" << std::endl;
+  //std::cout << "OnMRMLAnnotationNodeModifiedEvent ThreeD->PropagateMRMLToWidget" << std::endl;
 
   // Update the standard settings of all widgets.
   this->Helper->UpdateWidget(annotationNode);
@@ -333,9 +335,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtk
     // (f.e. change slice number, zoom etc.)
 
     // we remember that this instance of the displayableManager deals with 2D
-    // this is important for widget creation etc.
+    // this is important for widget creation etc. and save the actual SliceNode
     // because during Slicer startup the SliceViews fire events, it will be always set correctly
-    this->m_SliceViewDisplayableManager = true;
+    this->m_SliceNode = sliceNode;
 
     // now we call the handle for specific sliceNode actions
     this->OnMRMLSliceNodeModifiedEvent(sliceNode);
@@ -356,6 +358,14 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtk
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLSliceNode * vtkMRMLAnnotationDisplayableManager::GetSliceNode()
+{
+
+  return this->m_SliceNode;
+
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode)
 {
 
@@ -365,10 +375,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     return;
     }
 
-  sliceNode->Print(cout);
+  //sliceNode->Print(cout);
 
   // TODO Synchronization
-
 
 }
 

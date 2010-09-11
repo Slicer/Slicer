@@ -5,6 +5,7 @@
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationNode.h"
+#include <vtkMRMLSliceNode.h>
 
 // VTK includes
 #include <vtkObject.h>
@@ -17,6 +18,7 @@
 #include <vtkSeedRepresentation.h>
 #include <vtkPointHandleRepresentation3D.h>
 #include <vtkAbstractWidget.h>
+#include <vtkMatrix4x4.h>
 
 // std includes
 #include <string>
@@ -133,7 +135,23 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   seedWidget->On();
 
   double position1[2];
-  this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates(), position1);
+
+  if (this->GetSliceNode())
+    {
+    // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
+
+    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
+
+    // we need to invert this matrix
+    xyToRasMatrix->Invert();
+
+    xyToRasMatrix->MultiplyPoint(fiducialNode->GetFiducialCoordinates(), position1);
+
+    }
+  else
+    {
+    this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates(), position1);
+    }
 
   VTK_CREATE(vtkHandleWidget, newhandle);
   newhandle = seedWidget->CreateNewHandle();
@@ -324,7 +342,28 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
     this->m_Updating = 1;
 
     double worldCoordinates[4];
-    this->GetDisplayToWorldCoordinates(x,y,worldCoordinates);
+
+    if (this->GetSliceNode())
+      {
+      // the click was inside a 2D SliceView
+      // we will get the transformation matrix to convert display coordinates to RAS
+
+      vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
+
+      double displayCoordinates[3];
+      displayCoordinates[0] = x;
+      displayCoordinates[1] = y;
+      displayCoordinates[2] = 0;
+
+      xyToRasMatrix->MultiplyPoint(displayCoordinates, worldCoordinates);
+
+      }
+    else
+      {
+      // the click was inside a 3D RenderView
+      // we can get the world coordinates by conversion
+      this->GetDisplayToWorldCoordinates(x,y,worldCoordinates);
+      }
 
     // create the MRML node
     vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();

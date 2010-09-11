@@ -76,6 +76,9 @@ protected:
   /// Handler for specific SliceView actions
   void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
 
+  /// Get the sliceNode, if registered
+  vtkMRMLSliceNode * GetSliceNode();
+
   /// Observe all associated nodes.
   void SetAndObserveNodes();
 
@@ -149,7 +152,7 @@ private:
 
   int m_DisableInteractorStyleEventsProcessing;
 
-  bool m_SliceViewDisplayableManager;
+  vtkMRMLSliceNode * m_SliceNode;
 
 };
 
