@@ -136,7 +136,7 @@ void vtkHTTPHandler::InitTransfer( )
 int vtkHTTPHandler::CloseTransfer( )
 {
   curl_easy_cleanup(this->CurlHandle);
-  return EXIT_SUCCESS;      
+  return EXIT_SUCCESS;
 }
 
 
@@ -156,10 +156,10 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
     this->LocalFile = NULL;
     }
   this->LocalFile = new std::ofstream(destination, std::ios::binary);
-*/
+  */
   this->InitTransfer( );
-  
-  
+
+
   if ( this->ForbidReuse )
     {
     curl_easy_setopt(this->CurlHandle, CURLOPT_FORBID_REUSE, 1);
@@ -175,6 +175,10 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
   curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+
+  // quick timeout during connection phase if URL is not accessible (e.g. blocked by a firewall)
+  curl_easy_setopt(this->CurlHandle, CURLOPT_CONNECTTIMEOUT, 3); // in seconds (type long)
+
   vtkDebugMacro("StageFileRead: about to do the curl download... source = " << source << ", dest = " << destination);
   CURLcode retval = curl_easy_perform(this->CurlHandle);
 
@@ -261,9 +265,9 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
       this->GetPermissionPrompter()->SetRemember ( 0 );
       }
     }
-   
+
   this->CloseTransfer();
-  
+
   fclose(this->LocalFile);
   /*
   this->LocalFile->close();
