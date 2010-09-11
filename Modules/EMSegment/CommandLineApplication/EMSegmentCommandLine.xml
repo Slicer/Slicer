@@ -83,7 +83,7 @@
     <boolean>
       <name>disableMultithreading</name>
       <longflag>disableMultithreading</longflag>
-      <description>Disable multithreading.</description>
+      <description>Disable multithreading for the EMSegmenter algorithm only! Preprocessing might still run in multi-threaded mode</description>
       <label>Disable Multithreading</label>
       <default>false</default>
     </boolean>
