@@ -194,6 +194,7 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets()
 
     if (name)
       {
+    
       sprintf(buffer, "%s %d", "SelectedParameterSetChangedCallback", index);
       menu->AddRadioButton(name, this, buffer);
       }
@@ -201,16 +202,19 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets()
  
     for (int i = 0 ; i < (int)this->pssDefaultTasksName.size(); i++)
     {
-      int index = 0; 
+      int index = 0;
+      // Check if the mrml file associated with the default parameter set is already loaded in the scene 
       while ((index < numSets) && strcmp(mrmlManager->GetNthParameterSetName(index),pssDefaultTasksName[i].c_str() ))
       {
       index++;
       }
-      
+
+      // If it is then do not add the item to the menu list bc it was already added in the previous AddRadioButton
+      // and jump over this step      
       if (index == numSets)
       {
-      sprintf(buffer, "SelectedDefaultTaskChangedCallback %d 1", i);
-      menu->AddRadioButton(pssDefaultTasksName[i].c_str(), this, buffer);
+        sprintf(buffer, "SelectedDefaultTaskChangedCallback %d 1", i);
+        menu->AddRadioButton(pssDefaultTasksName[i].c_str(), this, buffer);
       }
     }
 }
@@ -233,13 +237,16 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
   vtkKWMenuButton *menuButton = this->ParameterSetMenuButton->GetWidget();
   vtksys_stl::string sel_value = "";
 
+  // Store current selection
   if (menuButton->GetValue())
     {
     sel_value = menuButton->GetValue();
     }
 
+  // Update Mnue Task List 
   this->PopulateLoadedParameterSets();
 
+  // Reset selection to stored value 
   if (strcmp(sel_value.c_str(), "") != 0)
     {
     // Select the original
@@ -259,14 +266,13 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
 
   // if there is no previous selection, select the first loaded set,
   // or if there is no loaded set, leave it blank
+  //int numSets = mrmlManager->GetNumberOfParameterSets();
 
-  int numSets = mrmlManager->GetNumberOfParameterSets();
-
-  if (numSets > 0 &&
-     menuButton->GetMenu()->GetNumberOfItems() > 1)
-    {
-    this->ParameterSetMenuButton->GetWidget()->GetMenu()->SelectItem(1);
-    }
+  //if (numSets > 0 &&
+  //   menuButton->GetMenu()->GetNumberOfItems() > 1)
+  //  {
+  //  this->ParameterSetMenuButton->GetWidget()->GetMenu()->SelectItem(1);
+  //  }
 }
 
 
@@ -274,6 +280,7 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
 void vtkEMSegmentParametersSetStep::
 SelectedDefaultTaskChangedCallback(int index, bool warningFlag)
 {
+  // cout << "SelectedDefaultTaskChangedCallback " << index << " " << warningFlag << endl;
 
   if (index < 0 || index >  int(this->pssDefaultTasksName.size() -1) )
     {
@@ -293,7 +300,7 @@ SelectedDefaultTaskChangedCallback(int index, bool warningFlag)
       return;
     }
 
-  this->LoadTask(index, warningFlag);
+  this->LoadDefaultTask(index, warningFlag);
 }
 
 void vtkEMSegmentParametersSetStep::UpdateTaskListIndex(int index) 
@@ -322,6 +329,7 @@ void vtkEMSegmentParametersSetStep::UpdateTaskListIndex(int index)
 
 void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(int index, int flag)
 {
+  cout << "vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback " << index << " " <<  flag << endl;
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   // New Parameters
@@ -361,21 +369,23 @@ int vtkEMSegmentParametersSetStep::SettingSegmentationMode(int flag)
   dlg2->SetApplication( this->GetApplication());
   dlg2->SetMasterWindow(NULL);
   dlg2->SetOptions(vtkKWMessageDialog::InvokeAtPointer | vtkKWMessageDialog::Beep | vtkKWMessageDialog::YesDefault);
-  dlg2->SetTitle("What Segmentation Mode To Proceed?");
+  dlg2->SetTitle("How do you want to proceed?");
   dlg2->SetStyleToOkOtherCancel();
   dlg2->SetOKButtonText("Adjust Parameters");                   // Advanced
-  dlg2->SetOtherButtonText("Segment with Existing Parameters"); // Simple
+  dlg2->GetOKButton()->SetBalloonHelpString("Fine tune task specific parameters before segmenting the input scans");
+  dlg2->SetOtherButtonText("Use Existing Setting"); // Simple
+  dlg2->GetOtherButton()->SetBalloonHelpString("Simply use predefined setting of the selected task for segmenting images");
   dlg2->Create();
-  dlg2->SetSize(400, 150);
+  // dlg2->SetSize(400, 150);
   dlg2->GetOKButton()->SetWidth(17);
-  dlg2->GetOtherButton()->SetWidth(32);
+  dlg2->GetOtherButton()->SetWidth(20);
   dlg2->GetCancelButton()->SetWidth(6);
   this->Script("pack %s -side left -expand yes -padx 2", 
                dlg2->GetOtherButton()->GetWidgetName());
 
   if (flag)
     {
-      dlg2->SetText("In which mode do you want to proceed segmenting your data?\n Note, downloading the default setting might take a while!");
+      dlg2->SetText("In which mode do you want to proceed segmenting your data?\n\n Note, downloading the default setting will reset your slicer scene and might take time depending on your network connection !");
     }
   else
     {
@@ -503,9 +513,9 @@ void vtkEMSegmentParametersSetStep::PopUpRenameEntry(int index)
 }
 
 //----------------------------------------------------------------------------
-int vtkEMSegmentParametersSetStep::LoadTask(int index, bool warningFlag)
+int vtkEMSegmentParametersSetStep::LoadDefaultTask(int index, bool warningFlag)
 {
-
+  // cout << "vtkEMSegmentParametersSetStep::LoadDefaultTask " << index << " " << warningFlag << endl;
   if (index < 0 || index >  int(this->pssDefaultTasksName.size() -2) )
     {
       vtkErrorMacro("Index is not defined");
@@ -515,23 +525,28 @@ int vtkEMSegmentParametersSetStep::LoadTask(int index, bool warningFlag)
 
   // Load Task 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (!this->LoadDefaultData(pssDefaultTasksFile[index].c_str(),warningFlag))
+  if (this->LoadDefaultData(pssDefaultTasksFile[index].c_str(),warningFlag))
     {
-      // Remove the default selection entry from the menue, 
-      this->PopulateLoadedParameterSets();
+      // Error occured 
+      return 1;
+    }
 
-      // Figure out the index number
-      int numSets = mrmlManager->GetNumberOfParameterSets();
-      for(int index = 0; index < numSets; index++)
-      {
-        const char *name = mrmlManager->GetNthParameterSetName(index);
-        if (name && !strcmp(name,pssDefaultTasksName[index].c_str()))
-        {
-          // Select the Node 
-          this->SelectedParameterSetChangedCallback(index,0);
-          break;
-        }
-      }
+
+  // Remove the default selection entry from the menue, 
+  this->PopulateLoadedParameterSets();
+      
+  // Figure out the menu index number of the default task that was just loaded
+  // and go to the next step 
+  int numSets = mrmlManager->GetNumberOfParameterSets();
+  for(int i = 0; i < numSets; i++)
+    {
+      const char *name = mrmlManager->GetNthParameterSetName(i);
+      if (name && !strcmp(name,pssDefaultTasksName[index].c_str()))
+    {
+      // Select the Node 
+      this->SelectedParameterSetChangedCallback(i,0);
+      break;
+    }
     }
   return 0;
 }
@@ -548,9 +563,9 @@ int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *tclFile, bool war
     {
       // do not want to proceed
       if (!this->SettingSegmentationMode(1))
-    {
-      return 1;
-    }
+      {
+         return 1;
+      }
     }
 
   // Load MRML File whose location is defined in the tcl file 
@@ -559,7 +574,10 @@ int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *tclFile, bool war
   vtksys_stl::string mrmlFile(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication())->Script("::EMSegmenterParametersStepTcl::DefineMRMLFile"));
   scene->SetURL(mrmlFile.c_str());
  
-  if (!scene->Import()) 
+  // Kilian Sep 2010 : Do not use scene->Import() here otherwise the assignments get screewed up. Here is a simple example. Load in a single volume -> vtkMRMLScalarVolumeNode1 is created
+  // Now download a MRI Human Brain which also has vtkMRMLScalarVolumeNode1 (atlas_whitematter). Then when slicer is replacing  in the new scene  vtkMRMLScalarVolumeNode1 with  vtkMRMLScalarVolumeNode2. The nodes in the mrml file that referenced vtkMRMLScalarVolumeNode1 now will point to vtkMRMLScalarVolumeNode2. Now vtkMRMLScalarVolumeNode2 already existed in the mrml file  before the replacement (atlas_greymatter). Thus, slicer3 will replace the id of vtkMRMLScalarVolumeNode2 with vtkMRMLScalarVolumeNode3. In addition all the nodes in the mrml file that originally referenced vtkMRMLScalarVolumeNode1 will now reference vtkMRMLScalarVolumeNode3. Thus they will reference a different scalar volume node then originally disuccsed.
+  // reported in bug 971
+  if (!scene->Connect()) 
     {
       vtksys_stl::string msg= vtksys_stl::string("Could not load mrml file ") +  mrmlFile  ;
       vtkKWMessageDialog::PopupMessage(this->GetApplication(),NULL,"Load Error", msg.c_str(), vtkKWMessageDialog::ErrorIcon | vtkKWMessageDialog::InvokeAtPointer);
@@ -578,7 +596,7 @@ int vtkEMSegmentParametersSetStep::LoadDefaultData(const char *tclFile, bool war
   cout << "== Completed loading task data " << endl;
   cout << "==========================================================================" << endl;
 
- this->GetGUI()->GetApplicationGUI()->SelectModule("EMSegmenter");
+  this->GetGUI()->GetApplicationGUI()->SelectModule("EMSegmenter");
 
   return 0;
 }

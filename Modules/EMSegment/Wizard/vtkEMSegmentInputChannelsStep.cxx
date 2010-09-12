@@ -639,8 +639,10 @@ void vtkEMSegmentInputChannelsStep::UpdateInputChannelsfromMRML()
     }
 
   vtkMRMLEMSTargetNode *inputNodes = mrmlManager->GetTargetInputNode();
+
   if (!inputNodes) 
     {
+      cout << "UpdateInputChannelsfromMRML: no input node" << endl;
       return;
     }
 
