@@ -359,6 +359,10 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
     // switch to updating state to avoid events mess
     this->m_Updating = 1;
 
+    vtkHandleWidget *h1 = this->GetSeed(0);
+
+    double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+
     double worldCoordinates[4];
 
     if (this->GetSliceNode())
@@ -368,9 +372,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
 
       vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
 
-      double displayCoordinates[3];
-      displayCoordinates[0] = x;
-      displayCoordinates[1] = y;
+      double displayCoordinates[4];
+      displayCoordinates[0] = position1[0];
+      displayCoordinates[1] = position1[1];
       displayCoordinates[2] = 0;
       displayCoordinates[3] = 1;
 
@@ -383,7 +387,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
       {
       // the click was inside a 3D RenderView
       // we can get the world coordinates by conversion
-      this->GetDisplayToWorldCoordinates(x,y,worldCoordinates);
+      this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates);
       }
 
     // create the MRML node

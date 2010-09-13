@@ -3,6 +3,7 @@
 
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationControlPointsNode.h"
 
 // MRML includes
 #include <vtkMRMLTransformNode.h>
@@ -218,6 +219,14 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
   // Remove all placed seeds
   this->Helper->RemoveSeeds();
 
+  this->RequestRender();
+
+  if(this->m_SliceNode)
+    {
+    // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
+    this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
+    }
+
   // and render again after seeds were removed
   this->RequestRender();
 
@@ -375,9 +384,74 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     return;
     }
 
-  //sliceNode->Print(cout);
+  // set which coordinate index of the annotation node should be used as a reference
+  // to be compared against the active slice of the sliceNode
+  // default is the Z coordinate
+  int variableCoordinateIndex = 2;
 
-  // TODO Synchronization
+  if (!strcmp(sliceNode->GetName(),"redAxial"))
+    {
+    // axial: the z coordinate
+    variableCoordinateIndex = 2;
+    }
+  else if (!strcmp(sliceNode->GetName(),"yellowSagittal"))
+    {
+    // sagittal: the x coordinate
+    variableCoordinateIndex = 0;
+    }
+  else if (!strcmp(sliceNode->GetName(),"greenCoronal"))
+    {
+    // coronal: the y coordinate
+    variableCoordinateIndex = 1;
+    }
+
+  // run through all associated nodes
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
+  it = this->Helper->AnnotationNodeList.begin();
+  while(it != this->Helper->AnnotationNodeList.end())
+    {
+    // by default, we want to show the associated widget
+    bool showWidget = true;
+
+    // we loop through all nodes and down cast them as a controlpoints node to get the coordinate
+    vtkMRMLAnnotationNode * node = *it;
+    vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+
+    for (int i=0; i<controlPointsNode->GetNumberOfControlPoints(); i++)
+      {
+      // we loop through all controlpoints of each node
+      double * worldCoordinates = controlPointsNode->GetControlPointCoordinates(i);
+
+      // compare the activeSlice value against the coordinate at the variableCoordinateIndex
+      // for this, we normalize the difference by getting the absolute value
+      double normalizedDifference = abs(this->Helper->GetSliceOffset(sliceNode) - worldCoordinates[variableCoordinateIndex]);
+
+      if (normalizedDifference > 1.2)
+        {
+        // if the absolute value is more than 2, we know that at least one coordinate of the widget is outside the current activeSlice
+        // hence, we do not want to show this widget
+        showWidget = false;
+        // we don't even need to continue parsing the controlpoints, because we know the widget will not be shown
+        break;
+        }
+
+      } // end of for loop through control points
+
+    // now this is the magical part
+    // we know if all points of a widget are on the activeSlice of the sliceNode (including the tolerance)
+    // thus we will only enable the widget if they are
+    vtkAbstractWidget * widget = this->Helper->GetWidget(controlPointsNode);
+
+    if (!widget)
+      {
+      vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: We could not get the widget to the node: " << node->GetID());
+      return;
+      }
+
+    widget->SetEnabled(showWidget);
+
+    ++it;
+    }
 
 }
 

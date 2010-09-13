@@ -20,11 +20,14 @@
 
 #include "vtkMRMLAnnotationNode.h"
 
-// VTK include
+// VTK includes
 #include <vtkObject.h>
 #include <vtkAbstractWidget.h>
 #include <vtkSeedWidget.h>
 #include <vtkHandleWidget.h>
+
+// MRML includes
+#include <vtkMRMLSliceNode.h>
 
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManagerHelper :
     public vtkObject
@@ -58,6 +61,9 @@ public:
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetsIt;
 
+  /// Get the offset of a sliceNode
+  /// TODO: This does not really belong here
+  double GetSliceOffset(vtkMRMLSliceNode * sliceNode);
 
   ///
   /// Placement of seeds for widget placement
