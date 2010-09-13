@@ -134,32 +134,50 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   seedWidget->On();
 
-  double position1[2];
+  double worldCoordinates[4];
+  worldCoordinates[0] = fiducialNode->GetFiducialCoordinates()[0];
+  worldCoordinates[1] = fiducialNode->GetFiducialCoordinates()[1];
+  worldCoordinates[2] = fiducialNode->GetFiducialCoordinates()[2];
+  worldCoordinates[3] = 1;
+
+
+  double position1[4];
 
   if (this->GetSliceNode())
     {
     // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
 
     vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
+    vtkMatrix4x4 * rasToXyMatrix = vtkMatrix4x4::New();
 
     // we need to invert this matrix
-    xyToRasMatrix->Invert();
+    xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
 
-    xyToRasMatrix->MultiplyPoint(fiducialNode->GetFiducialCoordinates(), position1);
+    rasToXyMatrix->MultiplyPoint(worldCoordinates, position1);
+
+    //std::cout << this->GetSliceNode()->GetName() << ": "<<position1[0] << "," << position1[1] << "," << position1[2] << "," << position1[3] << std::endl;
+
+    VTK_CREATE(vtkHandleWidget, newhandle);
+    newhandle = seedWidget->CreateNewHandle();
+    vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
 
     }
   else
     {
-    this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates(), position1);
+
+    //std::cout << ": "<<worldCoordinates[0] << "," << worldCoordinates[1] << "," << worldCoordinates[2] <<  std::endl;
+
+    //this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates(), position1);
+    VTK_CREATE(vtkHandleWidget, newhandle);
+    newhandle = seedWidget->CreateNewHandle();
+    vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetWorldPosition(worldCoordinates);
+
     }
 
-  VTK_CREATE(vtkHandleWidget, newhandle);
-  newhandle = seedWidget->CreateNewHandle();
-  vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
-
-  //seedWidget->CompleteInteraction();
 
   seedWidget->On();
+
+  //seedWidget->CompleteInteraction();
 
   return seedWidget;
 
@@ -354,8 +372,11 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
       displayCoordinates[0] = x;
       displayCoordinates[1] = y;
       displayCoordinates[2] = 0;
+      displayCoordinates[3] = 1;
 
       xyToRasMatrix->MultiplyPoint(displayCoordinates, worldCoordinates);
+
+      std::cout << worldCoordinates[0] << "," << worldCoordinates[1] << "," << worldCoordinates[2] << "," << worldCoordinates[3] << std::endl;
 
       }
     else
