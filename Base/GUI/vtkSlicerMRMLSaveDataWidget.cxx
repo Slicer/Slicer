@@ -422,7 +422,7 @@ int vtkSlicerMRMLSaveDataWidget::SaveData(vtkIntArray* arrayRows)
       message->SetParent ( this->GetParent() );
       message->SetMasterWindow ( this->SaveDialog );
       message->SetStyleToYesNo();
-      std::string msg = "File, " + filePath + ", \n exists. Do you want to replace it?";
+      std::string msg = "File " + filePath + ", \n already exists. Do you want to replace it?";
       message->SetText(msg.c_str());
       message->Create();
       writeFile = message->Invoke();
@@ -501,21 +501,17 @@ int vtkSlicerMRMLSaveDataWidget::CheckUniqueFilenames(vtkIntArray* arrayRows)
 
     if (iter != fileNames.end())
       {
-      vtkKWMessageDialog *message = vtkKWMessageDialog::New();
-      message->SetParent ( this->GetParent() );      
-      message->SetMasterWindow ( this->SaveDialog );
-      message->SetStyleToOkCancel();
-      std::string msg = "Two or more files have the same name: " + filePath + " One will overwrite the other. \nDo you want to continue saving?";
-      message->SetText(msg.c_str());
-      message->Create();
-      int ok = message->Invoke();
-      message->Delete(); 
-      if (!ok)
+      std::string msg = "WARNING! Two or more files marked for have the same name: " + filePath + " One will overwrite the other. \nDo you want to continue saving?";
+      if (! (vtkKWMessageDialog::PopupOkCancel( 
+                                             this->GetApplication(), this->GetParent(), 
+                                             "Duplicate file names WARNING", msg.c_str(),
+            vtkKWMessageDialog::WarningIcon | 
+                                             vtkKWMessageDialog::InvokeAtPointer)) )
         {
         return 0;
         }
       }
-    else 
+    else
       {
       fileNames[filePath] = filePath;
       }
