@@ -1744,7 +1744,7 @@ double vtkMRMLSliceLogic::GetSliceOffset()
     }
 
   vtkSmartPointer<vtkMatrix4x4> sliceToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-  sliceToRAS->DeepCopy( this->SliceNode->GetSliceToRAS() );
+  sliceToRAS->DeepCopy( sliceNode->GetSliceToRAS() );
   for (int i = 0; i < 3; i++)
     {
     sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
