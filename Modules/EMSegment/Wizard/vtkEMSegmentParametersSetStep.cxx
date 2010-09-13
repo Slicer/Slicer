@@ -293,9 +293,7 @@ SelectedDefaultTaskChangedCallback(int index, bool warningFlag)
   // Create New task 
   if (index ==  int(this->pssDefaultTasksName.size() -1))
     {   
-      vtkWarningMacro("\n===========\n====Ignore message: vtkEMSegmentMRMLManager: Output volume is NULL\n===========");
       mrmlManager->CreateAndObserveNewParameterSet();
-      vtkWarningMacro("\n===End of Error=======");
       this->PopUpRenameEntry(mrmlManager->GetNumberOfParameterSets() - 1);
       return;
     }
@@ -329,7 +327,7 @@ void vtkEMSegmentParametersSetStep::UpdateTaskListIndex(int index)
 
 void vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback(int index, int flag)
 {
-  cout << "vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback " << index << " " <<  flag << endl;
+  // cout << "vtkEMSegmentParametersSetStep::SelectedParameterSetChangedCallback " << index << " " <<  flag << endl;
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
 
   // New Parameters

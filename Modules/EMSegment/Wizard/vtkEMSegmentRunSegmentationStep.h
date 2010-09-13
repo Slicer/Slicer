@@ -56,10 +56,9 @@ public:
 
   // Description:
   // Observers.
-  virtual void AddRunRegistrationOutputGUIObservers();
-  virtual void RemoveRunRegistrationOutputGUIObservers();
-  virtual void ProcessRunRegistrationOutputGUIEvents(
-    vtkObject *caller, unsigned long event, void *callData);
+  //virtual void AddRunRegistrationOutputGUIObservers();
+  // virtual void RemoveRunRegistrationOutputGUIObservers();
+  // virtual void ProcessRunRegistrationOutputGUIEvents( vtkObject *caller, unsigned long event, void *callData);
 
   static void WizardGUICallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
   static void ROIMRMLCallback(vtkObject*, unsigned long, void*, void*);
@@ -72,8 +71,8 @@ protected:
 
   vtkKWFrameWithLabel        *RunSegmentationSaveFrame;
   vtkKWFrameWithLabel        *RunSegmentationDirectoryFrame;
-  vtkKWFrameWithLabel        *RunSegmentationOutputFrame;
-  vtkSlicerNodeSelectorWidget* RunSegmentationOutVolumeSelector;
+  //vtkKWFrameWithLabel        *RunSegmentationOutputFrame;
+  //vtkSlicerNodeSelectorWidget* RunSegmentationOutVolumeSelector;
   vtkKWLoadSaveButton        *RunSegmentationSaveTemplateButton;
   vtkKWFrame                 *RunSegmentationDirectorySubFrame;
   vtkKWLoadSaveButton         *RunSegmentationDirectoryButton;

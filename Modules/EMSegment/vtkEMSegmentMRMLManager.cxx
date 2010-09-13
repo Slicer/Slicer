@@ -124,7 +124,7 @@ void vtkEMSegmentMRMLManager::SetNode(vtkMRMLEMSNode *n)
   
   if (n != NULL)
   {
-    int ok = this->CheckMRMLNodeStructure();
+    int ok = this->CheckMRMLNodeStructure(1);
     if (!ok)
     {
       vtkErrorMacro("Incomplete or invalid MRML node structure.");
@@ -3736,6 +3736,9 @@ CreateAndObserveNewParameterSet()
   templateNode->SetTreeNodeID(treeNode->GetID());
   templateNode->SetGlobalParametersNodeID(globalParametersNode->GetID());
 
+  // Create Output Volume node 
+  // const char* outputNodeID = this->CreateOutputVolumeNodeID("EM Map");
+
   // create segmenter node
   vtkMRMLEMSSegmenterNode* segmenterNode = vtkMRMLEMSSegmenterNode::New();
   segmenterNode->SetHideFromEditors(this->HideNodesFromEditors);
@@ -3744,6 +3747,8 @@ CreateAndObserveNewParameterSet()
   // add connections
   segmenterNode->SetTemplateNodeID(templateNode->GetID());
   segmenterNode->SetWorkingDataNodeID(workingNode->GetID());
+  // Output node has to be set explicitly bc templates do not have an output node - should be created when applying to the specific case !
+  // segmenterNode->SetOutputVolumeNodeID(outputNodeID);
   
   // create template builder node
   vtkMRMLEMSNode* templateBuilderNode = vtkMRMLEMSNode::New();
@@ -3752,7 +3757,6 @@ CreateAndObserveNewParameterSet()
   
   // add connections
   templateBuilderNode->SetSegmenterNodeID(segmenterNode->GetID());
-
   this->SetNode(templateBuilderNode);
 
   // add basic information for root node
@@ -4242,7 +4246,7 @@ UpdateMapsFromMRML()
 //-----------------------------------------------------------------------------
 int 
 vtkEMSegmentMRMLManager::
-CheckMRMLNodeStructure()
+CheckMRMLNodeStructure(int ignoreOutputFlag)
 {
   //
   // check global attributes
@@ -4288,12 +4292,14 @@ CheckMRMLNodeStructure()
     }
   
   // check output volume
-  vtkMRMLScalarVolumeNode *outVolume = this->GetOutputVolumeNode();
-  if (outVolume == NULL)
+  if (!ignoreOutputFlag) {
+    vtkMRMLScalarVolumeNode *outVolume = this->GetOutputVolumeNode();
+    if (outVolume == NULL)
     {
-    vtkErrorMacro("Output volume is NULL.");
-    return 0;
+      vtkErrorMacro("Output volume is NULL.");
+      return 0;
     }
+  }
 
   // check template node
   vtkMRMLEMSTemplateNode* templateNode = this->GetTemplateNode();
@@ -5223,4 +5229,19 @@ int  vtkEMSegmentMRMLManager::GetRegistrationTypeFromString(const char* type)
       return vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCCSlow ;
     }
   return -1;
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentMRMLManager::CreateOutputVolumeNode() 
+{
+ 
+  vtkMRMLScalarVolumeNode* outputNode = vtkMRMLScalarVolumeNode::New();
+  outputNode->SetLabelMap(1);
+  std::stringstream ss;
+  ss << this->MRMLScene->GetUniqueNameByString("EM_Map");
+  outputNode->SetName(ss.str().c_str());
+  this->GetMRMLScene()->AddNode(outputNode);
+  const char* ID = outputNode->GetID();
+  outputNode->Delete();
+  this->SetOutputVolumeMRMLID(ID);
 }

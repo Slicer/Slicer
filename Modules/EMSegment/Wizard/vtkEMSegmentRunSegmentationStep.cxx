@@ -40,6 +40,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkKWScale.h"
+#include "vtkSlicerSlicesControlGUI.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentRunSegmentationStep);
@@ -53,8 +54,8 @@ vtkEMSegmentRunSegmentationStep::vtkEMSegmentRunSegmentationStep()
 
   this->RunSegmentationSaveFrame                   = NULL;
   this->RunSegmentationDirectoryFrame              = NULL;
-  this->RunSegmentationOutputFrame                 = NULL;
-  this->RunSegmentationOutVolumeSelector           = NULL;
+  //  this->RunSegmentationOutputFrame                 = NULL;
+  //this->RunSegmentationOutVolumeSelector           = NULL;
   this->RunSegmentationSaveTemplateButton          = NULL;
   this->RunSegmentationDirectorySubFrame           = NULL;
   this->RunSegmentationDirectoryButton             = NULL;
@@ -120,17 +121,17 @@ vtkEMSegmentRunSegmentationStep::~vtkEMSegmentRunSegmentationStep()
     this->RunSegmentationDirectoryFrame = NULL;
     }
 
-  if (this->RunSegmentationOutVolumeSelector)
-    {
-    this->RunSegmentationOutVolumeSelector->Delete();
-    this->RunSegmentationOutVolumeSelector = NULL;
-    }
-
-  if (this->RunSegmentationOutputFrame)
-    {
-    this->RunSegmentationOutputFrame->Delete();
-    this->RunSegmentationOutputFrame = NULL;
-    }
+//   if (this->RunSegmentationOutVolumeSelector)
+//     {
+//     this->RunSegmentationOutVolumeSelector->Delete();
+//     this->RunSegmentationOutVolumeSelector = NULL;
+//     }
+// 
+//   if (this->RunSegmentationOutputFrame)
+//     {
+//     this->RunSegmentationOutputFrame->Delete();
+//     this->RunSegmentationOutputFrame = NULL;
+//     }
 
   if (this->RunSegmentationROIMaxMatrix)
     {
@@ -415,56 +416,55 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
   
   // Create the output image frame
 
-  if (!this->RunSegmentationOutputFrame)
-    {
-    this->RunSegmentationOutputFrame = vtkKWFrameWithLabel::New();
-    }
-  if (!this->RunSegmentationOutputFrame->IsCreated())
-    {
-    this->RunSegmentationOutputFrame->SetParent(parent);
-    this->RunSegmentationOutputFrame->Create();
-    this->RunSegmentationOutputFrame->SetLabelText("Output Labelmap");
-    }
-  this->Script(
-    "pack %s -side top -anchor nw -fill x -padx 0 -pady 2", 
-    this->RunSegmentationOutputFrame->GetWidgetName());
-  
-  // Create the output image frame
-
-  if (!this->RunSegmentationOutVolumeSelector)
-    {
-    this->RunSegmentationOutVolumeSelector = vtkSlicerNodeSelectorWidget::New();
-    }
-  if (!this->RunSegmentationOutVolumeSelector->IsCreated())
-    {
-    this->RunSegmentationOutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",  "LabelMap", "1",  "EMSegment");
-    this->RunSegmentationOutVolumeSelector->SetNewNodeEnabled(1);
-    this->RunSegmentationOutVolumeSelector->SetParent(this->RunSegmentationOutputFrame->GetFrame());
-    this->RunSegmentationOutVolumeSelector->Create();
-    this->RunSegmentationOutVolumeSelector->SetMRMLScene(mrmlManager->GetMRMLScene());
-
-    this->RunSegmentationOutVolumeSelector->SetBorderWidth(2);
-    this->RunSegmentationOutVolumeSelector->SetLabelText( "Output Label Map: ");
-    this->RunSegmentationOutVolumeSelector->SetBalloonHelpString("select an output label map from the current mrml scene.");
-    }
-
-  this->RunSegmentationOutVolumeSelector->UpdateMenu();
-  if(!mrmlManager->GetOutputVolumeMRMLID())
-    {
-      this->RunSegmentationOutVolumeSelector->ProcessNewNodeCommand("vtkMRMLScalarVolumeNode", "Label Map");
-    }
-  
-  // cout << "Trying to set selcted mrmlManager->GetOutputVolumeMRMLID())
-  this->RunSegmentationOutVolumeSelector->SetSelected(mrmlManager->GetMRMLScene()->GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
-
-  this->RunSegmentationOutVolumeSelector->SetEnabled(
-    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
-
-  this->Script(
-    "pack %s -side top -anchor nw -padx 2 -pady 2", 
-    this->RunSegmentationOutVolumeSelector->GetWidgetName());
-  
-  this->AddRunRegistrationOutputGUIObservers();
+  // if (!this->RunSegmentationOutputFrame)
+  //   {
+  //   this->RunSegmentationOutputFrame = vtkKWFrameWithLabel::New();
+  //   }
+  // if (!this->RunSegmentationOutputFrame->IsCreated())
+  //   {
+  //   this->RunSegmentationOutputFrame->SetParent(parent);
+  //   this->RunSegmentationOutputFrame->Create();
+  //   this->RunSegmentationOutputFrame->SetLabelText("Output Labelmap");
+  //   }
+  // this->Script(
+  //   "pack %s -side top -anchor nw -fill x -padx 0 -pady 2", 
+  //   this->RunSegmentationOutputFrame->GetWidgetName());
+  // 
+  // // Create the output image frame
+  // 
+  // if (!this->RunSegmentationOutVolumeSelector)
+  //   {
+  //   this->RunSegmentationOutVolumeSelector = vtkSlicerNodeSelectorWidget::New();
+  //   }
+  // if (!this->RunSegmentationOutVolumeSelector->IsCreated())
+  //   {
+  //   this->RunSegmentationOutVolumeSelector->SetNodeClass("vtkMRMLScalarVolumeNode",  "LabelMap", "1",  "EMSegment");
+  //   this->RunSegmentationOutVolumeSelector->SetNewNodeEnabled(1);
+  //   this->RunSegmentationOutVolumeSelector->SetParent(this->RunSegmentationOutputFrame->GetFrame());
+  //   this->RunSegmentationOutVolumeSelector->Create();
+  //   this->RunSegmentationOutVolumeSelector->SetMRMLScene(mrmlManager->GetMRMLScene());
+  // 
+  //   this->RunSegmentationOutVolumeSelector->SetBorderWidth(2);
+  //   this->RunSegmentationOutVolumeSelector->SetLabelText( "Output Label Map: ");
+  //   this->RunSegmentationOutVolumeSelector->SetBalloonHelpString("select an output label map from the current mrml scene.");
+  //   }
+  // 
+  // this->RunSegmentationOutVolumeSelector->UpdateMenu();
+  // //if(!mrmlManager->GetOutputVolumeNode())
+  // //  {
+  // //    this->RunSegmentationOutVolumeSelector->ProcessNewNodeCommand("vtkMRMLScalarVolumeNode", "EM Map");
+  // //  }
+  // 
+  // // cout << "Trying to set selcted mrmlManager->GetOutputVolumeMRMLID())
+  // this->RunSegmentationOutVolumeSelector->SetSelected(mrmlManager->GetMRMLScene()->GetNodeByID(mrmlManager->GetOutputVolumeMRMLID()));
+  // 
+  // this->RunSegmentationOutVolumeSelector->SetEnabled(
+  //   mrmlManager->HasGlobalParametersNode() ? enabled : 0);
+  // 
+  // this->Script(
+  //   "pack %s -side top -anchor nw -padx 2 -pady 2", 
+  //   this->RunSegmentationOutVolumeSelector->GetWidgetName());
+  // this->AddRunRegistrationOutputGUIObservers();
   
   // Create the boundary frame
 
@@ -543,7 +543,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
 void vtkEMSegmentRunSegmentationStep::HideUserInterface()
 {
   this->Superclass::HideUserInterface();
-  this->RemoveRunRegistrationOutputGUIObservers();
+  // this->RemoveRunRegistrationOutputGUIObservers();
 }
 
 //----------------------------------------------------------------------------
@@ -561,40 +561,40 @@ void vtkEMSegmentRunSegmentationStep::PopulateSegmentationROIMatrix(
     }
 }
 
-//---------------------------------------------------------------------------
-void vtkEMSegmentRunSegmentationStep::AddRunRegistrationOutputGUIObservers() 
-{
-  this->RunSegmentationOutVolumeSelector->AddObserver(
-    vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
-    this->GetGUI()->GetGUICallbackCommand());  
-}
+////---------------------------------------------------------------------------
+//void vtkEMSegmentRunSegmentationStep::AddRunRegistrationOutputGUIObservers() 
+//{
+  //  this->RunSegmentationOutVolumeSelector->AddObserver(
+  //  vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
+  //  this->GetGUI()->GetGUICallbackCommand());  
+//}
 
-//---------------------------------------------------------------------------
-void vtkEMSegmentRunSegmentationStep::RemoveRunRegistrationOutputGUIObservers()
-{
-  this->RunSegmentationOutVolumeSelector->RemoveObservers(
-    vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
-    this->GetGUI()->GetGUICallbackCommand());  
-}
-
-//---------------------------------------------------------------------------
-void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
-  vtkObject *caller,
-  unsigned long event,
-  void *vtkNotUsed(callData)) 
-{
-  if (caller == this->RunSegmentationOutVolumeSelector && 
-      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
-      this->RunSegmentationOutVolumeSelector->GetSelected() != NULL) 
-    { 
-    vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    if (mrmlManager)
-      {
-      mrmlManager->SetOutputVolumeMRMLID(
-        this->RunSegmentationOutVolumeSelector->GetSelected()->GetID());
-      }
-    }
-}
+// //---------------------------------------------------------------------------
+// void vtkEMSegmentRunSegmentationStep::RemoveRunRegistrationOutputGUIObservers()
+// {
+//   this->RunSegmentationOutVolumeSelector->RemoveObservers(
+//     vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
+//     this->GetGUI()->GetGUICallbackCommand());  
+// }
+// 
+// //---------------------------------------------------------------------------
+// void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
+//   vtkObject *caller,
+//   unsigned long event,
+//   void *vtkNotUsed(callData)) 
+// {
+//   if (caller == this->RunSegmentationOutVolumeSelector && 
+//       event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
+//       this->RunSegmentationOutVolumeSelector->GetSelected() != NULL) 
+//     { 
+//     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+//     if (mrmlManager)
+//       {
+//       mrmlManager->SetOutputVolumeMRMLID(
+//         this->RunSegmentationOutVolumeSelector->GetSelected()->GetID());
+//       }
+//     }
+// }
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentRunSegmentationStep::SelectTemplateFileCallback()
@@ -773,8 +773,24 @@ void vtkEMSegmentRunSegmentationStep::StartSegmentationCallback()
     return;
     }
 
+  // Create output volume 
+  this->GetGUI()->GetMRMLManager()->CreateOutputVolumeNode();
+
   // start the segmentation
   logic->StartSegmentationWithoutPreprocessing();
+
+  // display Results 
+  vtkSlicerApplicationGUI *applicationGUI  = this->GetGUI()->GetApplicationGUI();
+  vtkMRMLScalarVolumeNode* output = this->GetGUI()->GetMRMLManager()->GetOutputVolumeNode();
+  applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(output);
+  applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(output);
+  applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(output);
+  
+  // only the background is shown
+  if (!applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->GetValue())
+      {
+      applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.5);
+     }
 }
 
 //----------------------------------------------------------------------------
@@ -981,7 +997,7 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
     double rasCenter[3];
     double rasBounds[6];
 
-    vtkMRMLSliceLogic::GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
+    vtkSlicerSliceLogic::GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
     //cout << "Center : " << rasCenter[0] << " " << rasCenter[1] << " " << rasCenter[2] << endl;
     //cout << "Dimension: " << rasDimensions[0] << " " << rasDimensions[1] << " " << rasDimensions[2] << endl;
 

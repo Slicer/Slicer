@@ -254,25 +254,28 @@ void vtkEMSegmentInputChannelsStep::ShowUserInterface()
       this->SourceTaskFiles();
       
       int showCheckList = atoi(this->Script("::EMSegmenterSimpleTcl::CreateCheckList"));
+      // cout << "showCheckList: " <<  showCheckList << endl;
       if (showCheckList) 
-    {
-          if (!this->CheckListFrame)
       {
-         this->CheckListFrame = vtkKWFrameWithLabel::New();
+          if (!this->CheckListFrame)
+          {
+            this->CheckListFrame = vtkKWFrameWithLabel::New();
           }
           if (!this->CheckListFrame->IsCreated())
-      {
-         this->CheckListFrame->SetParent(parent);
-         this->CheckListFrame->Create();
-         this->CheckListFrame->SetLabelText("Check List");
-      }
+          {
+             this->CheckListFrame->SetParent(parent);
+             this->CheckListFrame->Create();
+             this->CheckListFrame->SetLabelText("Check List");
+          }
           this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2", this->CheckListFrame->GetWidgetName());
 
-      this->CreateEntryLists();
-      this->Script("::EMSegmenterSimpleTcl::ShowCheckList");
-    }
-    }
+          this->CreateEntryLists();
+          this->Script("::EMSegmenterSimpleTcl::ShowCheckList");
+      }
+   }
 }
+
+ 
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentInputChannelsStep::AlignTargetImagesCallback(int state)
@@ -429,9 +432,9 @@ void vtkEMSegmentInputChannelsStep::Validate()
    if (!this->GetGUI()->IsSegmentationModeAdvanced()) 
      {
        if (atoi(this->Script("::EMSegmenterSimpleTcl::ValidateCheckList")) )
-     {
-       return;
-     }
+       {
+         return;
+       }
        
        this->UpdateTaskPreprocessingSetting();
        mrmlManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(0);
@@ -448,20 +451,6 @@ void vtkEMSegmentInputChannelsStep::Validate()
        this->GetGUI()->GetPreProcessingStep()->askQuestionsBeforeRunningPreprocessingFlagOn();
      }
      }
-
-   // Make sure output volume is defined 
-   if(!mrmlManager->GetOutputVolumeMRMLID())
-    {
-      // Create New Volume Output Node 
-      // see Base/GUI/vtkSlicerNodeSelectorWidget.cxx:ProcessNewNodeCommand
-      vtkMRMLScene *scene = this->GetGUI()->GetLogic()->GetMRMLScene();
-      vtkMRMLScalarVolumeNode* node = static_cast<vtkMRMLScalarVolumeNode*>(scene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
-      node->SetName("EMSegment1");
-      node->LabelMapOn();
-      scene->AddNode(node);
-      mrmlManager->SetOutputVolumeMRMLID(node->GetID());
-      node->Delete();      
-    }
 
    // Check Values for 
    this->Superclass::Validate();
@@ -577,7 +566,7 @@ void vtkEMSegmentInputChannelsStep::CreateInputChannelFrame(int i, const char* n
       this->InputChannelDefineLineVolume[i]->Create();
       this->InputChannelDefineLineVolume[i]->SetLabelWidth(9);
       this->InputChannelDefineLineVolume[i]->SetLabelText(" Volume:");
-      this->InputChannelDefineLineVolume[i]->NoneEnabledOff();
+      this->InputChannelDefineLineVolume[i]->NoneEnabledOn();
       this->InputChannelDefineLineVolume[i]->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
       this->InputChannelDefineLineVolume[i]->SetMRMLScene(this->GetGUI()->GetLogic()->GetMRMLScene());
       this->InputChannelDefineLineVolume[i]->GetWidget()->SetWidth(20);
@@ -585,6 +574,7 @@ void vtkEMSegmentInputChannelsStep::CreateInputChannelFrame(int i, const char* n
     }
 
   this->InputChannelDefineLineVolume[i]->SetSelected(newVolumeNode);
+ 
   this->Script( "pack %s -side top -anchor nw -fill x -padx 0 -pady 2",  this->InputChannelDefineLineVolume[i]->GetWidgetName());
 }
 
@@ -655,8 +645,11 @@ void vtkEMSegmentInputChannelsStep::UpdateInputChannelsfromMRML()
   
   for (int i=0; i < inputNodes->GetNumberOfVolumes(); i++)
     {
-      // Still have to extend with the name 
-      this->CreateInputChannelFrame(i,inputNodes->GetNthInputChannelName(i),inputNodes->GetNthVolumeNode(i));
+      //if (this->GetGUI()->IsSegmentationModeAdvanced()) {
+    this->CreateInputChannelFrame(i,inputNodes->GetNthInputChannelName(i),inputNodes->GetNthVolumeNode(i));
+    //} else {
+    //    this->CreateInputChannelFrame(i,inputNodes->GetNthInputChannelName(i),NULL);
+    //}
     }
 }
 

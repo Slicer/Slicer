@@ -86,22 +86,6 @@ vtkEMSegmentGUI::vtkEMSegmentGUI()
 
   this->StartSegmentStep= NULL;
   this->SegmentationMode = SegmentationModeAdvanced;
-
-  // Try to load supporting libraries dynamically.  This is needed
-  // since the toplevel is a loadable module but the other libraries
-  // didn't get loaded
-  Tcl_Interp* interp = this->GetApplication()->GetMainInterp();
-  if (interp)
-    {
-    Emsegmentalgorithm_Init(interp);
-    Emsegmentmrml_Init(interp);
-    Emsegmentregistration_Init(interp);
-    Emsegmentgraph_Init(interp);
-    }
-  else
-    {
-    vtkErrorMacro("Failed to obtain reference to application TCL interpreter");
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -235,8 +219,7 @@ void vtkEMSegmentGUI::ProcessGUIEvents(vtkObject *caller,
 {
   this->IntensityDistributionsStep->ProcessManualIntensitySamplingGUIEvents(
     caller, event, callData);
-  this->RunSegmentationStep->ProcessRunRegistrationOutputGUIEvents(
-    caller, event, callData);
+  //this->RunSegmentationStep->ProcessRunRegistrationOutputGUIEvents(caller, event, callData);
 }
 
 //---------------------------------------------------------------------------
@@ -660,38 +643,36 @@ void vtkEMSegmentGUI::Init()
 //---------------------------------------------------------------------------
 void vtkEMSegmentGUI::StartSegmentation() 
   {
+    cout << "vtkEMSegmentGUI::StartSegmentation()  start"  << endl;
     vtkKWWizardWorkflow *wizard_workflow =  this->WizardWidget->GetWizardWorkflow();
     vtkKWWizardStep *currentStep =  wizard_workflow->GetCurrentStep();
 
     // It is called for the first time 
     if (!this->StartSegmentStep) 
       {
-    this->StartSegmentStep = currentStep;
+        this->StartSegmentStep = currentStep;    
       }
-
 
     if (currentStep ==  wizard_workflow->GetFinishStep())
       {
-    // At the final step execute the OK button
-    this->WizardWidget->GetOKButton()->CommandCallback(); 
+        // At the final step execute the OK button
+        this->WizardWidget->GetOKButton()->CommandCallback();       
         // Now go back to the location where the button was pressed 
-    if (this->StartSegmentStep) 
-      {
-        
-        while (this->StartSegmentStep != currentStep)
+        if (this->StartSegmentStep) 
+        {
+          while (this->StartSegmentStep != currentStep)
           {
-        wizard_workflow->AttemptToGoToPreviousStep();
-        if ((currentStep == wizard_workflow->GetCurrentStep()) ||  wizard_workflow->GetCurrentStep() == wizard_workflow->GetInitialStep())
-          {
-            break;
+            wizard_workflow->AttemptToGoToPreviousStep();
+            if ((currentStep == wizard_workflow->GetCurrentStep()) ||  wizard_workflow->GetCurrentStep() == wizard_workflow->GetInitialStep())
+            {
+                break;
+            }
+            currentStep = wizard_workflow->GetCurrentStep();
           }
-        currentStep = wizard_workflow->GetCurrentStep();
-          }
-        currentStep->ShowUserInterface();
-        this->StartSegmentStep = NULL;
-      }
-
-    return;
+          currentStep->ShowUserInterface();
+          this->StartSegmentStep = NULL;
+        }
+        return;
       }
 
     wizard_workflow->AttemptToGoToNextStep();

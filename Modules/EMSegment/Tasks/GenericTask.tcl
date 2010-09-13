@@ -1033,9 +1033,9 @@ namespace eval EMSegmenterSimpleTcl {
     proc InitVariables { {GUI ""} } {
        variable inputChannelGUI
        variable mrmlManager
-    if {$GUI == "" } {
-        set GUI  [$::slicer3::Application GetModuleGUIByName EMSegmenter]
-    }
+       if {$GUI == "" } {
+          set GUI  [$::slicer3::Application GetModuleGUIByName EMSegmenter]
+       }
         if { $GUI == "" } { 
           PrintError "InitVariables: GUI not defined"
           return 1 
@@ -1061,7 +1061,7 @@ namespace eval EMSegmenterSimpleTcl {
     # simply remove 
     # 1 = Create one - then also define ShowCheckList and 
     #     ValidateCheckList where results of checklist are transfered to Preprocessing  
-    proc CreateChecList { } { return 0 }
+    proc CreateCheckList { } { return 0 }
     proc ShowCheckList { } { return 0}
     proc ValidateCheckList { } { return 0 }
 }

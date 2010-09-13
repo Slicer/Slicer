@@ -283,6 +283,7 @@ void vtkEMSegmentAnatomicalStructureStep::ShowAnatomicalStructureTree(vtkKWFrame
 //----------------------------------------------------------------------------
 void vtkEMSegmentAnatomicalStructureStep::ShowUserInterface()
 {
+  //   cout << "vtkEMSegmentAnatomicalStructureStep::ShowUserInterface() start" << endl;
   this->Superclass::ShowUserInterface();
 
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
