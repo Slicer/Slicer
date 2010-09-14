@@ -217,6 +217,11 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetVector3Macro(PrescribedSliceSpacing, double);
 
   /// 
+  /// Get/Set the current distance from the origin to the slice plane
+  double GetSliceOffset();
+  void SetSliceOffset(double offset);
+
+  ///
   /// Set/get the active slice in the lightbox. The active slice is
   /// shown in the 3D scene
   vtkSetMacro(ActiveSlice, int);
