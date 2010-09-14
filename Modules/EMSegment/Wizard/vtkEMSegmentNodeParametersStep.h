@@ -61,10 +61,11 @@ public:
   // Description:
   // Reimplement the superclass's method.
   virtual void Validate();
+  virtual void HideUserInterface();
 
   int ClassOverviewWeightAutomaticRecalculateFlag;
-  void ClassWeightChangedCallback(vtkIdType sel_tree_class_id, vtkIdType  sel_class_id, double value);
-  void ClassWeightAutoChangedCallback(vtkIdType sel_tree_class_id, vtkIdType  sel_class_id, int state);
+  void ClassWeightChangedCallback(vtkIdType  sel_class_id, double value);
+  void ClassWeightAutoChangedCallback(vtkIdType  sel_class_id, int state);
 
 protected:
   vtkEMSegmentNodeParametersStep();

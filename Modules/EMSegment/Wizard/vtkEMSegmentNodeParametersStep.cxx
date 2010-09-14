@@ -381,8 +381,7 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
     this->NodeParametersGlobalPriorScale->SetBalloonHelpString("Probability that a voxel belonging to the parent structure will also belong to this structure.  The value must be in the range [0,1].  Class weights across siblings must sum to 1."); 
     }
 
-  this->Script("grid %s -column 0 -row 0 -sticky nw -padx 2 -pady 2", 
-               this->NodeParametersGlobalPriorScale->GetWidgetName());
+  this->Script("grid %s -column 0 -row 0 -sticky nw -padx 2 -pady 2",  this->NodeParametersGlobalPriorScale->GetWidgetName());
 
   // Create the spatial prior weight scale
 
@@ -931,6 +930,8 @@ void vtkEMSegmentNodeParametersStep::ShowUserInterface()
       this->NodeParametersClassOverviewWeightGlobalFrame->Create();
       this->NodeParametersClassOverviewWeightGlobalFrame->SetLabelText(" Overview of Class Weights");
     }
+   // Remember that we collapse the frame when going to another step to avoid the flicker bug ! 
+   this->NodeParametersClassOverviewWeightGlobalFrame->ExpandFrame();
    this->Script("pack %s -side top -padx 2 -pady 2",this->NodeParametersClassOverviewWeightGlobalFrame ->GetWidgetName());
 
 
@@ -978,8 +979,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
         static_cast<int>(sel_vol_id));
       this->NodeParametersGlobalPriorScale->SetEndCommand(this, buffer);
       this->NodeParametersGlobalPriorScale->SetEntryCommand(this, buffer);
-      this->NodeParametersGlobalPriorScale->SetValue(
-        mrmlManager->GetTreeNodeClassProbability(sel_vol_id));
+      this->NodeParametersGlobalPriorScale->SetValue(mrmlManager->GetTreeNodeClassProbability(sel_vol_id));
       }
     else
       {
@@ -1133,8 +1133,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
       sprintf(buffer, "StoppingConditionsEMIterationsCallback %d", 
               static_cast<int>(sel_vol_id));
       entry->SetCommand(this, buffer);
-      entry->SetValueAsInt(
-        mrmlManager->GetTreeNodeStoppingConditionEMIterations(sel_vol_id));
+      entry->SetValueAsInt(mrmlManager->GetTreeNodeStoppingConditionEMIterations(sel_vol_id));
       }
     else
       {
@@ -1659,7 +1658,7 @@ void vtkEMSegmentNodeParametersStep::DisplaySelectedNodeParametersCallback()
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::NodeParametersGlobalPriorChangedCallback(vtkIdType sel_class_id, double value)
 {
-  this->ClassWeightChangedCallback(sel_class_id,sel_class_id,value);
+  this->ClassWeightChangedCallback(sel_class_id,value);
 }
 
 //----------------------------------------------------------------------------
@@ -1679,7 +1678,6 @@ void vtkEMSegmentNodeParametersStep::NodeParametersSpatialPriorWeightChangedCall
 void vtkEMSegmentNodeParametersStep::NodeParametersInputChannelWeightChangedCallback(vtkIdType sel_vol_id, int row, double value)
 {
   // The input channel weight has changed because of user interaction
-  // cout << "NodeParametersInputChannelWeightChangedCallback " << sel_vol_id <<  " " << row << " " << value << endl;
   if (value >= 0 && value <= 1.0)
     {
       vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -1713,6 +1711,7 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsEMCallback(
   if (mrmlManager && value != mrmlManager->GetTreeNodeStoppingConditionEMType(sel_vol_id))
     {
     mrmlManager->SetTreeNodeStoppingConditionEMType(sel_vol_id, value);
+    // Needs to go there so that iterations field get disabled or enabled depending one the selection
     this->DisplaySelectedNodeParametersCallback();
     }
 }
@@ -1723,12 +1722,20 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsEMIterationsCallback(
 {
   // The EM iterations has changed because of user interaction
 
-  int v = (int)abs(atoi(value));
+  int v = atoi(value);
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   if (mrmlManager && v != mrmlManager->GetTreeNodeStoppingConditionEMIterations(sel_vol_id))
     {
-    mrmlManager->SetTreeNodeStoppingConditionEMIterations(sel_vol_id, v);
-    this->DisplaySelectedNodeParametersCallback(); // in case the value < 0
+      if (v < 0) 
+    {
+          mrmlManager->SetTreeNodeStoppingConditionEMIterations(sel_vol_id, 0);
+          // Update user interface accordingly 
+          this->DisplaySelectedNodeParametersCallback(); 
+    } 
+      else 
+    {
+      mrmlManager->SetTreeNodeStoppingConditionEMIterations(sel_vol_id, v);
+    } 
     }
 }
 
@@ -1739,9 +1746,11 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsEMValueCallback(
   // The EM value has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (mrmlManager)
+  if (mrmlManager && (atof(value) !=  mrmlManager->GetTreeNodeStoppingConditionEMValue(sel_vol_id)))
     {
-    mrmlManager->SetTreeNodeStoppingConditionEMValue(sel_vol_id, atof(value));
+      mrmlManager->SetTreeNodeStoppingConditionEMValue(sel_vol_id, atof(value));
+      // there is no such policy if v < 0 then iterations is not set to v !  
+      // this->DisplaySelectedNodeParametersCallback();
     }
 }
 
@@ -1755,6 +1764,8 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsMFACallback(
   if (mrmlManager && value != mrmlManager->GetTreeNodeStoppingConditionMFAType(sel_vol_id))
     {
     mrmlManager->SetTreeNodeStoppingConditionMFAType(sel_vol_id, value);
+
+    // Needs to go there so that iterations field get disabled or enabled depending one the selection
     this->DisplaySelectedNodeParametersCallback();
     }
 }
@@ -1770,11 +1781,19 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsMFAIterationsCallback(
     {
     return;
     }
-  int v = (int)abs(atoi(value));
+  int v = atoi(value);
   if (v != mrmlManager->GetTreeNodeStoppingConditionMFAIterations(sel_vol_id))
     {
-    mrmlManager->SetTreeNodeStoppingConditionMFAIterations(sel_vol_id, v);
-    this->DisplaySelectedNodeParametersCallback(); // in case the value < 0
+      if (v < 0) 
+    {
+          mrmlManager->SetTreeNodeStoppingConditionMFAIterations(sel_vol_id, 0);
+          // Update user interface accordingly 
+          this->DisplaySelectedNodeParametersCallback(); 
+    } 
+      else 
+    {
+      mrmlManager->SetTreeNodeStoppingConditionMFAIterations(sel_vol_id, v);
+    } 
     }
 }
 
@@ -1785,9 +1804,11 @@ void vtkEMSegmentNodeParametersStep::StoppingConditionsMFAValueCallback(
   // The MFA value has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if (mrmlManager)
+  if (mrmlManager && (atof(value) !=  mrmlManager->GetTreeNodeStoppingConditionMFAValue(sel_vol_id)))
     {
     mrmlManager->SetTreeNodeStoppingConditionMFAValue(sel_vol_id, atof(value));
+    // There is no such condition: if v < 0 then iterations is not set to v !  
+    // this->DisplaySelectedNodeParametersCallback();
     }
 }
 
@@ -1950,9 +1971,27 @@ void vtkEMSegmentNodeParametersStep::GenerateBackgroundProbabilityCallback(
     }
 }
 
+void vtkEMSegmentNodeParametersStep::HideUserInterface()
+{
+  this->Superclass::HideUserInterface();
+  // Need to do this bc otherwise when going back to the step from another one 
+  // the famous flicker bug appears when the frame is expanded and has three entries 
+  if (this->NodeParametersClassOverviewWeightGlobalFrame)
+    {
+      this->NodeParametersClassOverviewWeightGlobalFrame->CollapseFrame();
+    }
+}
+
+
 //----------------------------------------------------------------------------
 void vtkEMSegmentNodeParametersStep::Validate()
 {
+ 
+  if (this->NodeParametersClassOverviewWeightGlobalFrame)
+    {
+      this->NodeParametersClassOverviewWeightGlobalFrame->CollapseFrame();
+    }
+
   vtkKWWizardWorkflow *wizard_workflow = 
     this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
@@ -2014,30 +2053,33 @@ void vtkEMSegmentNodeParametersStep::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::ClassWeightAutoChangedCallback(vtkIdType sel_tree_class_id, vtkIdType  sel_class_id, int state)
+void vtkEMSegmentNodeParametersStep::ClassWeightAutoChangedCallback(vtkIdType  sel_class_id, int state)
 {
+
   if (state) 
-    {
-      this->ClassWeightChangedCallback(sel_tree_class_id, sel_class_id, 0);
+    {      
+      this->ClassWeightChangedCallback(sel_class_id, 0);
     }
 }
 //----------------------------------------------------------------------------
-void vtkEMSegmentNodeParametersStep::ClassWeightChangedCallback(vtkIdType sel_tree_class_id, vtkIdType  sel_class_id, double value)
+void vtkEMSegmentNodeParametersStep::ClassWeightChangedCallback(vtkIdType  sel_class_id, double value)
 {
   // General checks 
-  if (value < 0 && value > 1.0)
-    {
-      this->DisplaySelectedNodeParametersCallback();
-      return;
-    }
   if (this->ClassOverviewWeightAutomaticRecalculateFlag)
     {
       return;
     }
 
+  if (value < 0 && value > 1.0)
+    {
+      this->DisplaySelectedNodeParametersCallback();
+      return;
+    }
+
+
   // Define General Variables 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  vtkIdType parent = mrmlManager->GetTreeNodeParentNodeID( sel_tree_class_id);
+  vtkIdType parent = mrmlManager->GetTreeNodeParentNodeID(sel_class_id);
   if (!parent) {
     return;
   }
@@ -2046,7 +2088,6 @@ void vtkEMSegmentNodeParametersStep::ClassWeightChangedCallback(vtkIdType sel_tr
 
   // Check if we have to do anything 
   mrmlManager->SetTreeNodeClassProbability(sel_class_id, value);
-  // cout << "mrmlManager->SetTreeNodeClassProbability " << sel_class_id <<" v "  << value << endl;
   double NormProb = mrmlManager->GetTreeNodeChildrenSumClassProbability(parent);
 
   if (NormProb == 0.0 || (fabs(1 - NormProb) < 0.00005 ))
@@ -2066,16 +2107,18 @@ void vtkEMSegmentNodeParametersStep::ClassWeightChangedCallback(vtkIdType sel_tr
   std::vector<double> prob;
   prob.resize(numChildren);
 
+  int autoStateFlag =0 ;
   for (int index = 0; index < numChildren; index++)
     {
       if ((index < (int) this->NodeParametersClassOverviewWeightAuto.size()) && this->NodeParametersClassOverviewWeightAuto[index] &&  this->NodeParametersClassOverviewWeightAuto[index]->GetSelectedState())
-    {
-      autoState[index] = 1;
-    } 
+      {
+        autoState[index] = 1;
+        autoStateFlag = 1;
+      } 
       else 
-    {
-      autoState[index] = 0;
-    }
+      {
+        autoState[index] = 0;
+      }
 
       childID[index] = mrmlManager->GetTreeNodeChildNodeID(parent,index);
       prob[index] = mrmlManager->GetTreeNodeClassProbability(childID[index]);
@@ -2084,42 +2127,42 @@ void vtkEMSegmentNodeParametersStep::ClassWeightChangedCallback(vtkIdType sel_tr
       } else {
          FixedProb += prob[index];
       }
-    }    
-  double LeftProb = 1 - FixedProb; 
-  // cout << "LeftProb = " << LeftProb << " FlexProb " << FlexProb << endl;
-  if (LeftProb < 0) 
-    {
-      for (int index = 0; index < numChildren; index++)
-    {
-      if (autoState[index]) {
-        mrmlManager->SetTreeNodeClassProbability(childID[index],0.0);
-      }
     }
-    }
-  else if (FlexProb > 0 ) 
-    {
-      double norm = LeftProb/FlexProb;
-      //cout << "Norm " << norm << endl;
-      for (int index = 0; index < numChildren; index++)
+     
+  if (autoStateFlag)
+    {   
+    double LeftProb = 1 - FixedProb; 
+    if (LeftProb < 0) 
       {
-        if (autoState[index]) 
-        {
-          //cout << " Prob :" << norm*prob[index] << " Index " << index << endl;  
-          mrmlManager->SetTreeNodeClassProbability(childID[index],norm*prob[index]);
-          // cout << "mrmlManager->SetTreeNodeClassProbability child" << childID[index] <<" v "  << norm*prob[index]  << endl;
+        for (int index = 0; index < numChildren; index++)
+      {
+        if (autoState[index]) {
+          mrmlManager->SetTreeNodeClassProbability(childID[index],0.0);
         }
       }
-    }
-  else  if (LeftProb  > 0)
-    {
-      int index = 0;
-      while (!autoState[index] && (index < numChildren)) 
-    {
-      index++;
-    }
-      if (index < numChildren)
+      }
+    else if (FlexProb > 0 ) 
       {
-    mrmlManager->SetTreeNodeClassProbability(childID[index],LeftProb);
+        double norm = LeftProb/FlexProb;
+        for (int index = 0; index < numChildren; index++)
+        {
+          if (autoState[index]) 
+          {
+            mrmlManager->SetTreeNodeClassProbability(childID[index],norm*prob[index]);
+          }
+        }
+      }
+    else  if (LeftProb  > 0)
+      {
+        int index = 0;
+        while (!autoState[index] && (index < numChildren)) 
+      {
+        index++;
+      }
+        if (index < numChildren)
+        {
+      mrmlManager->SetTreeNodeClassProbability(childID[index],LeftProb);
+        }
       }
     }
   this->DisplaySelectedNodeParametersCallback();
@@ -2187,7 +2230,7 @@ void vtkEMSegmentNodeParametersStep::DefineInputChannelWeightOverviewWindow(int 
            this->NodeParametersInputChannelWeight[i]->PopupModeOn();
            this->NodeParametersInputChannelWeight[i]->Create();
            this->NodeParametersInputChannelWeight[i]->SetEntryWidth(4);
-       this->NodeParametersInputChannelWeight[i]->GetLabel()-> SetWidth(EMSEG_WIDGETS_LABEL_WIDTH - 9);
+       this->NodeParametersInputChannelWeight[i]->GetLabel()-> SetWidth(EMSEG_WIDGETS_LABEL_WIDTH - 13);
            this->NodeParametersInputChannelWeight[i]->SetRange(0.0, 1.0);
            this->NodeParametersInputChannelWeight[i]->SetResolution(0.01);
            this->NodeParametersInputChannelWeight[i]->GetEntry()->SetCommandTriggerToAnyChange();
@@ -2195,7 +2238,7 @@ void vtkEMSegmentNodeParametersStep::DefineInputChannelWeightOverviewWindow(int 
            this->Script( "pack %s -side top -anchor nw -padx 2 -pady 2", this->NodeParametersInputChannelWeight[i]->GetWidgetName());
     }
     this->NodeParametersInputChannelWeight[i]->SetLabelText(targetNode->GetNthInputChannelName(i));
-    this->NodeParametersInputChannelWeight[i]->GetEntry()->SetEnabled(enabled);      
+    this->NodeParametersInputChannelWeight[i]->SetEnabled(enabled);      
     }
 }
 
@@ -2226,11 +2269,11 @@ void vtkEMSegmentNodeParametersStep::DefineClassOverviewWeightWindow(vtkIdType s
       {
         if (this->NodeParametersClassOverviewWeightEntry[i])
         {
-      this->NodeParametersClassOverviewWeightEntry[i]->Unpack(); 
+          this->NodeParametersClassOverviewWeightEntry[i]->Unpack(); 
           this->NodeParametersClassOverviewWeightEntry[i]->Delete();
-      this->NodeParametersClassOverviewWeightAuto[i]->Unpack(); 
+          this->NodeParametersClassOverviewWeightAuto[i]->Unpack(); 
           this->NodeParametersClassOverviewWeightAuto[i]->Delete();
-      this->NodeParametersClassOverviewWeightFrame[i]->Unpack(); 
+          this->NodeParametersClassOverviewWeightFrame[i]->Unpack(); 
           this->NodeParametersClassOverviewWeightFrame[i]->Delete();
         }
       }  
@@ -2245,28 +2288,18 @@ void vtkEMSegmentNodeParametersStep::DefineClassOverviewWeightWindow(vtkIdType s
     {
       for (int i = oldSize ; i < newSize; i++) 
        {
-          this->NodeParametersClassOverviewWeightFrame[i] = NULL;
-          this->NodeParametersClassOverviewWeightEntry[i] = NULL;
-          this->NodeParametersClassOverviewWeightAuto[i] = NULL;
+          if (!this->NodeParametersClassOverviewWeightFrame[i])
+          {
+             this->NodeParametersClassOverviewWeightFrame[i] =  vtkKWFrame::New();
+          }
+          if (!this->NodeParametersClassOverviewWeightFrame[i]->IsCreated())
+          {
+            this->NodeParametersClassOverviewWeightFrame[i]->SetParent(this->NodeParametersClassOverviewWeightGlobalFrame->GetFrame());
+            this->NodeParametersClassOverviewWeightFrame[i]->Create();
+          }
+        this->Script( "pack %s -side top -anchor nw -padx 2 -pady 2", this->NodeParametersClassOverviewWeightFrame[i]->GetWidgetName());
 
-       }
-    }
-
-  for (int i = 0 ; i < newSize; i++)
-    {    
-       if (!this->NodeParametersClassOverviewWeightFrame[i])
-        {
-           this->NodeParametersClassOverviewWeightFrame[i] =  vtkKWFrame::New();
-        }
-        if (!this->NodeParametersClassOverviewWeightFrame[i]->IsCreated())
-        {
-      this->NodeParametersClassOverviewWeightFrame[i]->SetParent(this->NodeParametersClassOverviewWeightGlobalFrame->GetFrame());
-      this->NodeParametersClassOverviewWeightFrame[i]->Create();
-    }
-    this->Script( "pack %s -side top -anchor nw -padx 2 -pady 2", this->NodeParametersClassOverviewWeightFrame[i]->GetWidgetName());
-
-
-       if (!this->NodeParametersClassOverviewWeightEntry[i])
+         if (!this->NodeParametersClassOverviewWeightEntry[i])
         {
            this->NodeParametersClassOverviewWeightEntry[i] =  vtkKWScaleWithEntry::New();
         }
@@ -2279,188 +2312,67 @@ void vtkEMSegmentNodeParametersStep::DefineClassOverviewWeightWindow(vtkIdType s
            this->NodeParametersClassOverviewWeightEntry[i]->GetLabel()-> SetWidth(EMSEG_WIDGETS_LABEL_WIDTH - 9);
            this->NodeParametersClassOverviewWeightEntry[i]->SetRange(0.0, 1.0);
            this->NodeParametersClassOverviewWeightEntry[i]->SetResolution(0.01);
-           this->NodeParametersClassOverviewWeightEntry[i]->GetEntry()->SetCommandTriggerToAnyChange();
-           // this->NodeParametersClassOverviewWeightEntry[i]->SetBalloonHelpString("Weight of each channel in the segmentation decision.  Right-click or double-click to modify weights.  Weights should be in the range [0,1]; 0 indicates that the channel is ignored and 1 indicates the maximum channel weight.  The weights are not dependent on each other or any other weights.");   
-    }
-        vtkIdType class_id = mrmlManager->GetTreeNodeChildNodeID(parent,i);
-        this->NodeParametersClassOverviewWeightEntry[i]->SetLabelText(mrmlManager->GetTreeNodeName(class_id));
-     this->NodeParametersClassOverviewWeightEntry[i]->SetValue(mrmlManager->GetTreeNodeClassProbability(class_id));
-    this->NodeParametersClassOverviewWeightEntry[i]->GetEntry()->SetEnabled(enabled);
+           // this->NodeParametersClassOverviewWeightEntry[i]->GetEntry()->SetCommandTriggerToAnyChange();
+           // this->NodeParametersClassOverviewWeightEntry[i]->SetBalloonHelpString("Weight of each channel in the segmentation decision.  Right-click or double-click to modify weights.  Weights should be in the range [0,1]; 0 indicates that the channel is ignored and 1 indicates the maximum channel weight.  The weights are not dependent on each other or any other weights.");  
+           this->Script( "pack %s -side left ", this->NodeParametersClassOverviewWeightEntry[i]->GetWidgetName()); 
+        }
 
-        char buffer[256];
-    sprintf(buffer, "ClassWeightChangedCallback %d %d", static_cast<int>(sel_tree_class_id), static_cast<int>(class_id));
-    this->NodeParametersClassOverviewWeightEntry[i]->SetEndCommand(this, buffer);
-    this->NodeParametersClassOverviewWeightEntry[i]->SetEntryCommand(this, buffer);
-
-    if (!this->NodeParametersClassOverviewWeightAuto[i])
+        if (!this->NodeParametersClassOverviewWeightAuto[i])
         {
            this->NodeParametersClassOverviewWeightAuto[i] =  vtkKWCheckButton::New();
         }
-        if (!this->NodeParametersClassOverviewWeightAuto[i]->IsCreated())
+
+    if (!this->NodeParametersClassOverviewWeightAuto[i]->IsCreated())
         {
            this->NodeParametersClassOverviewWeightAuto[i]->SetParent(this->NodeParametersClassOverviewWeightFrame[i]);
            this->NodeParametersClassOverviewWeightAuto[i]->Create();
+       this->NodeParametersClassOverviewWeightAuto[i]->SetBalloonHelpString ("Automatically update class weight, so that class weight across siblings sums up to 1 !");
        this->NodeParametersClassOverviewWeightAuto[i]->SetSelectedState(0);
+           this->Script( "pack %s -side left ", this->NodeParametersClassOverviewWeightAuto[i]->GetWidgetName());
+
     }
-    sprintf(buffer, "ClassWeightAutoChangedCallback %d %d", static_cast<int>(sel_tree_class_id), static_cast<int>(class_id));
-    this->NodeParametersClassOverviewWeightAuto[i]->SetCommand(this,buffer);
-    this->NodeParametersClassOverviewWeightAuto[i]->SetBalloonHelpString ("Automatically update class weight, so that class weight across siblings sums up to 1 !");
-    this->Script( "pack %s %s -side left ", this->NodeParametersClassOverviewWeightEntry[i]->GetWidgetName(),this->NodeParametersClassOverviewWeightAuto[i]->GetWidgetName());
+
+        //  this->NodeParametersClassOverviewWeightFrame[i] = NULL;
+        //  this->NodeParametersClassOverviewWeightEntry[i] = NULL;
+        //  this->NodeParametersClassOverviewWeightAuto[i] = NULL;
+
+
+       }
     }
+
+  // Disable any callbacks as it otherwise can cause loops
+  for (int i = 0 ; i < newSize; i++)
+    {
+      this->NodeParametersClassOverviewWeightEntry[i]->DisableCommandsOn();
+    }
+
+  for (int i = 0 ; i < newSize; i++)
+    {    
+        char buffer[256];
+        // Important: First change callback before values
+        vtkIdType class_id = mrmlManager->GetTreeNodeChildNodeID(parent,i);
+       
+    this->NodeParametersClassOverviewWeightEntry[i]->SetLabelText(mrmlManager->GetTreeNodeName(class_id));
+        this->NodeParametersClassOverviewWeightEntry[i]->SetValue(mrmlManager->GetTreeNodeClassProbability(class_id));
+    this->NodeParametersClassOverviewWeightEntry[i]->GetEntry()->SetEnabled(enabled);
+
+        sprintf(buffer, "ClassWeightChangedCallback %d", static_cast<int>(class_id));
+        this->NodeParametersClassOverviewWeightEntry[i]->SetEndCommand(this, buffer);
+        this->NodeParametersClassOverviewWeightEntry[i]->SetEntryCommand(this, buffer);
+
+    this->NodeParametersClassOverviewWeightAuto[i]->SetEnabled(enabled);
+
+        sprintf(buffer, "ClassWeightAutoChangedCallback %d", static_cast<int>(class_id));
+        this->NodeParametersClassOverviewWeightAuto[i]->SetCommand(this,buffer);
+
+    }
+
+    // Reset AutoUpdate to previous setting
+
+    for (int i = 0 ; i <  newSize; i++) 
+    {
+      this->NodeParametersClassOverviewWeightEntry[i]->DisableCommandsOff();
+    }
+
 }
-
-
-  //const char* vtkEMSegmentNodeParametersStep::WeightFormatCallback(const char *text)
-  //{
-  //std::stringstream s;
-  //s << vtkMath::Round(atof(text)*1000)/1000.0;
-  //return s.str().c_str();
-  //}
-
-
-
-// Create the input channel weights list
-// 
-//   if (!this->NodeParametersNodeParametersInputChannelWeightsList)
-//     {
-//     this->NodeParametersInputChannelWeightsList = 
-//       vtkKWMultiColumnListWithScrollbarsWithLabel::New();
-//     }
-//   if (!this->NodeParametersInputChannelWeightsList->IsCreated())
-//     {
-//     this->NodeParametersInputChannelWeightsList->SetParent(basic_page);
-//     this->NodeParametersInputChannelWeightsList->Create();
-//     this->NodeParametersInputChannelWeightsList->SetLabelText(
-//       "Input Channel Weights:");
-//     this->NodeParametersInputChannelWeightsList->SetLabelPositionToTop();
-//   
-//     this->NodeParametersInputChannelWeightsList->GetWidget()->
-//       HorizontalScrollbarVisibilityOff();
-// 
-//     vtkKWMultiColumnList *list = 
-//       this->NodeParametersInputChannelWeightsList->GetWidget()->GetWidget();
-//     list->SetHeight(4);
-//     list->MovableColumnsOff();
-//     list->SetSelectionModeToSingle();
-//     list->ResizableColumnsOff();
-// 
-//     int col_id = list->AddColumn("Volume");
-//     list->SetColumnWidth(col_id, 10);
-//     list->SetColumnEditable(col_id, 0);
-//     col_id = list->AddColumn("Weight");
-//     list->SetColumnEditable(col_id, 1);
-//     list->SetColumnFormatCommand(col_id,this,"WeightFormatCallback");
-// 
-//     list->SetRightClickCommand
-//       (this, "RightClickOnInputChannelWeightsListCallback");
-//     list->SetBalloonHelpString
-//       ("Weight of each channel in the segmentation decision.  Right-click or double-click to modify weights.  Weights should be in the range [0,1]; 0 indicates that the channel is ignored and 1 indicates the maximum channel weight.  The weights are not dependent on each other or any other weights.");
-//     }
-// 
-//   this->Script(
-//     "grid %s -column 1 -row 0 -rowspan 3 -sticky news -padx 2 -pady 2", 
-//     this->NodeParametersInputChannelWeightsList->GetWidgetName());
-
-
-//if (!this->ClassOverviewWeightList)
-//    {
-//    this->ClassOverviewWeightList = vtkKWMultiColumnListWithScrollbarsWithLabel::New();
-//    }
-//  if (!this->ClassOverviewWeightList->IsCreated())
-//    {
-//    this->ClassOverviewWeightList->SetParent(parent);
-//    this->ClassOverviewWeightList->Create();
-//    this->ClassOverviewWeightList->SetLabelText(" Overview  of Class Weights:");
-//    this->ClassOverviewWeightList->SetLabelPositionToTop();
-//  
-//    this->ClassOverviewWeightList->GetWidget()->HorizontalScrollbarVisibilityOff();
-//
-//    vtkKWMultiColumnList *list = this->ClassOverviewWeightList->GetWidget()->GetWidget();
-//    list->SetHeight(4);
-//    list->MovableColumnsOff();
-//    list->SetSelectionModeToSingle();
-//    list->ResizableColumnsOff();
-//
-//    int col_id = list->AddColumn("Class");
-//    list->SetColumnWidth(col_id, 15);
-//    list->SetColumnEditable(col_id, 0);
-//    col_id = list->AddColumn("Weight");
-//    list->SetColumnEditable(col_id, 1);
-//    list->SetColumnFormatCommand(col_id,this,"WeightFormatCallback");
-//    col_id = list->AddColumn("Update");
-//    list->SetColumnEditWindowToCheckButton(col_id);
-//    list->SetColumnStretchable(col_id, 0);
-//    list->SetColumnResizable(col_id, 0);
-//    list->SetColumnWidth(col_id, 0);
-//    list->SetColumnFormatCommandToEmptyOutput(col_id); 
-//    list->SetColumnEditable(col_id, 1);
-//
-//    list->SetRightClickCommand(this, "RightClickOnClassOverviewWeightListCallback");
-//    list->SetBalloonHelpString ("Automatically update class weight, so that class weight across siblings sums up to 1 !");
-//    }
-//  //this->Script("grid %s -column 0 -row 3 -rowspan 3 -sticky news -padx 2 -pady 2", this->ClassOverviewWeightList->GetWidgetName());
-// 
-//  this->Script("pack %s -side top -padx 2 -pady 2", this->ClassOverviewWeightList->GetWidgetName());
-//
-//----
-//
-//if (this->ClassOverviewWeightList)
-//    {
-//    vtkKWMultiColumnList *list = this->ClassOverviewWeightList->GetWidget()->GetWidget();
-//    int rowNum = list->GetNumberOfRows();
-//    std::vector<int> autoState;
-//    autoState.resize(rowNum);
-//    for (int i = 0 ; i < rowNum; i++) {
-//      autoState[i] =  list->GetCellTextAsInt(i,2); 
-//    }
-//    
-//    list->DeleteAllRows();
-//
-//    if (has_valid_selection)
-//      {
-//      this->ClassOverviewWeightList->SetEnabled(enabled);
-//      char buffer[256];
-//      sprintf(buffer, "ClassOverviewWeightChangedCallback %d",static_cast<int>(sel_vol_id));
-//      list->SetCellUpdatedCommand(this, buffer);
-//
-//      vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-//      vtkIdType parent = mrmlManager->GetTreeNodeParentNodeID(sel_vol_id);
-//      if (!parent)
-//    {
-//      return;
-//    }
-//      int numChildren = mrmlManager->GetTreeNodeNumberOfChildren(parent);
-//      for (int row = 0; row < numChildren; row++)
-//        {
-//        list->AddRow();
-//        vtkIdType class_id = mrmlManager->GetTreeNodeChildNodeID(parent,row);
-//        list->SetCellText(row, 0, mrmlManager->GetTreeNodeName(class_id));
-//        list->SetCellTextAsDouble(row, 1, mrmlManager->GetTreeNodeClassProbability(class_id));
-//        // list->SetCellEditWindowToSpinBox(row,1);
-//    if (row < rowNum) 
-//      {
-//        list->SetCellTextAsInt(row, 2, autoState[row]);
-//      }
-//    else 
-//      {
-//        list->SetCellTextAsInt(row, 2, 0);
-//      }
-//    // Improtant : Every time the value of the check box is changed it has to be reset to the check box 
-//    list->SetCellWindowCommandToCheckButton(row,2);
-//        }
-//      }
-//    else
-//      {
-//      this->ClassOverviewWeightList->SetEnabled(0);
-//      list->SetCellUpdatedCommand(NULL, NULL);
-//      }
-//    }
-
-//----------------------------------------------------------------------------
-//void vtkEMSegmentNodeParametersStep::RightClickOnNodeParametersClassOverviewWeightEntryGlobalFrameCallback(int row, int col, int vtkNotUsed(x), int vtkNotUsed(y))
-//{
-// vtkKWMultiColumnList *list = 
-//    this->NodeParametersClassOverviewWeightEntryGlobalFrame->GetWidget()->GetWidget();
-//  list->EditCell(row, col);
-//}
 
