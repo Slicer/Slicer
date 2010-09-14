@@ -61,10 +61,6 @@ public:
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetsIt;
 
-  /// Get the offset of a sliceNode
-  /// TODO: This does not really belong here
-  double GetSliceOffset(vtkMRMLSliceNode * sliceNode);
-
   ///
   /// Placement of seeds for widget placement
   void PlaceSeed(double x, double y, vtkRenderWindowInteractor * interactor, vtkRenderer * renderer);

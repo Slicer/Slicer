@@ -171,41 +171,6 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidget(
 }
 
 //---------------------------------------------------------------------------
-double vtkMRMLAnnotationDisplayableManagerHelper::GetSliceOffset(vtkMRMLSliceNode * sliceNode)
-{
-  //
-  // - get the current translation in RAS space and convert it to Slice space
-  //   by transforming it by the inverse of the upper 3x3 of SliceToRAS
-  // - pull out the Z translation part
-  //
-
-  if ( !sliceNode )
-    {
-    vtkErrorMacro("GetSliceOffset: Could not get sliceNode.")
-    return 0;
-    }
-
-  vtkSmartPointer<vtkMatrix4x4> sliceToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-  sliceToRAS->DeepCopy( sliceNode->GetSliceToRAS() );
-  for (int i = 0; i < 3; i++)
-    {
-    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
-    }
-  sliceToRAS->Invert();
-  double v1[4], v2[4];
-  for (int i = 0; i < 4; i++)
-    { // get the translation back as a vector
-    v1[i] = sliceNode->GetSliceToRAS()->GetElement( i, 3 );
-    }
-  // bring the translation into slice space
-  // and overwrite the z part
-  sliceToRAS->MultiplyPoint(v1, v2);
-
-  return ( v2[2] );
-
-}
-
-//---------------------------------------------------------------------------
 // Seeds for widget placement
 //---------------------------------------------------------------------------
 

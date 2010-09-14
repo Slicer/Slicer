@@ -424,7 +424,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
       // compare the activeSlice value against the coordinate at the variableCoordinateIndex
       // for this, we normalize the difference by getting the absolute value
-      double normalizedDifference = abs(this->Helper->GetSliceOffset(sliceNode) - worldCoordinates[variableCoordinateIndex]);
+      double normalizedDifference = abs(sliceNode->GetSliceOffset() - worldCoordinates[variableCoordinateIndex]);
 
       if (normalizedDifference > 1.2)
         {
