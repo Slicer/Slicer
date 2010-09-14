@@ -4519,7 +4519,7 @@ CopyEMRelatedNodesToMRMLScene(vtkMRMLScene* newScene)
   while ((currentObject = emNodeCollection->GetNextItemAsObject()) &&
          (currentObject != NULL))
     {
-    vtkMRMLNode* n = dynamic_cast<vtkMRMLNode*>(currentObject);
+    vtkMRMLNode* n = vtkMRMLNode::SafeDownCast(currentObject);
     if (n == NULL)
       {
       continue;
@@ -4527,7 +4527,10 @@ CopyEMRelatedNodesToMRMLScene(vtkMRMLScene* newScene)
 
     vtkMRMLNode* node = n->CreateNodeInstance();
 
-    node->CopyWithScene(n);
+    // don't copy over the old scene, just id
+    node->Copy(n);
+    node->CopyID(n);
+
     newScene->AddNodeNoNotify(node);
     node->Delete();
     }
