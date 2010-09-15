@@ -18,13 +18,15 @@
 
 ==============================================================================*/
 
+// CTK includes
+#include <ctkPimpl.h>
+
 // SlicerQt includes
 #include "qSlicerMeasurementsModuleWidget.h"
 #include "ui_qSlicerMeasurementsModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerMeasurementsModuleWidgetPrivate: public ctkPrivate<qSlicerMeasurementsModuleWidget>,
-                                              public Ui_qSlicerMeasurementsModule
+class qSlicerMeasurementsModuleWidgetPrivate: public Ui_qSlicerMeasurementsModule
 {
 public:
 };
@@ -33,8 +35,13 @@ public:
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModuleWidget, QWidget*);
 
 //-----------------------------------------------------------------------------
+qSlicerMeasurementsModuleWidget::~qSlicerMeasurementsModuleWidget()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerMeasurementsModuleWidget::setup()
 {
-  CTK_D(qSlicerMeasurementsModuleWidget);
+  Q_D(qSlicerMeasurementsModuleWidget);
   d->setupUi(this);
 }

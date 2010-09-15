@@ -21,9 +21,6 @@
 #ifndef __qSlicerMeasurementsModuleWidget_h
 #define __qSlicerMeasurementsModuleWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
@@ -40,12 +37,17 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerMeasurementsModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerMeasurementsModuleWidget();
 
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerMeasurementsModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerMeasurementsModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerMeasurementsModuleWidget);
+  Q_DISABLE_COPY(qSlicerMeasurementsModuleWidget);
 };
 
 #endif

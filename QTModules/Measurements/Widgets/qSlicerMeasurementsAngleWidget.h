@@ -19,10 +19,7 @@
 ==============================================================================*/
 
 #ifndef __qSlicerMeasurementsAngleWidget_h
-#define __qSlicerMeasurementsAngleWidget_h 
-
-// CTK includes
-#include <ctkPimpl.h>
+#define __qSlicerMeasurementsAngleWidget_h
 
 // SlicerQt includes
 #include "qSlicerWidget.h"
@@ -39,11 +36,16 @@ public:
 
   typedef qSlicerWidget Superclass;
   qSlicerMeasurementsAngleWidget(QWidget *parent=0);
+  virtual ~qSlicerMeasurementsAngleWidget();
   
   virtual void printAdditionalInfo();
 
+protected:
+  QScopedPointer<qSlicerMeasurementsAngleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerMeasurementsAngleWidget);
+  Q_DECLARE_PRIVATE(qSlicerMeasurementsAngleWidget);
+  Q_DISABLE_COPY(qSlicerMeasurementsAngleWidget);
 };
 
 #endif

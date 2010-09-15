@@ -21,6 +21,9 @@
 // Qt includes
 #include <QtPlugin>
 
+// CTK includes
+#include <ctkPimpl.h>
+
 // SlicerQt includes
 #include "qSlicerMeasurementsModule.h"
 #include "qSlicerMeasurementsModuleWidget.h"
@@ -29,13 +32,18 @@
 Q_EXPORT_PLUGIN2(qSlicerMeasurementsModule, qSlicerMeasurementsModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerMeasurementsModulePrivate: public ctkPrivate<qSlicerMeasurementsModule>
+class qSlicerMeasurementsModulePrivate
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
 CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModule, QObject*);
+
+//-----------------------------------------------------------------------------
+qSlicerMeasurementsModule::~qSlicerMeasurementsModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerMeasurementsModule::icon()const

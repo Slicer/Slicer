@@ -19,10 +19,7 @@
 ==============================================================================*/
 
 #ifndef __qSlicerMeasurementsRulerWidget_h
-#define __qSlicerMeasurementsRulerWidget_h 
-
-// CTK includes
-#include <ctkPimpl.h>
+#define __qSlicerMeasurementsRulerWidget_h
 
 // SlicerQt includes
 #include "qSlicerWidget.h"
@@ -39,11 +36,16 @@ public:
 
   typedef qSlicerWidget Superclass;
   qSlicerMeasurementsRulerWidget(QWidget *parent=0);
+  virtual ~qSlicerMeasurementsRulerWidget();
   
   virtual void printAdditionalInfo();
 
+protected:
+  QScopedPointer<qSlicerMeasurementsRulerWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerMeasurementsRulerWidget);
+  Q_DECLARE_PRIVATE(qSlicerMeasurementsRulerWidget);
+  Q_DISABLE_COPY(qSlicerMeasurementsRulerWidget);
 };
 
 #endif

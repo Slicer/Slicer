@@ -21,13 +21,15 @@
 // Qt includes
 #include <QDebug>
 
+// CTK includes
+#include <ctkPimpl.h>
+
 // SlicerQt includes
 #include "qSlicerMeasurementsAngleWidget.h" 
 #include "ui_qSlicerMeasurementsAngleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerMeasurementsAngleWidgetPrivate : public ctkPrivate<qSlicerMeasurementsAngleWidget>,
-                                              public Ui_qSlicerMeasurementsAngleWidget
+class qSlicerMeasurementsAngleWidgetPrivate : public Ui_qSlicerMeasurementsAngleWidget
 {
 public:
   qSlicerMeasurementsAngleWidgetPrivate()
@@ -37,11 +39,15 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerMeasurementsAngleWidget::qSlicerMeasurementsAngleWidget(QWidget *_parent):
-Superclass(_parent)
+Superclass(_parent), d_ptr(new qSlicerMeasurementsAngleWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerMeasurementsAngleWidget);
-  CTK_D(qSlicerMeasurementsAngleWidget);
+  Q_D(qSlicerMeasurementsAngleWidget);
   d->setupUi(this);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerMeasurementsAngleWidget::~qSlicerMeasurementsAngleWidget()
+{
 }
 
 //-----------------------------------------------------------------------------
