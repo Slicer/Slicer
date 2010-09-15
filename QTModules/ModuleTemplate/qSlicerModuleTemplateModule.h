@@ -20,7 +20,8 @@ class Q_SLICER_QTMODULES_MODULETEMPLATE_EXPORT qSlicerModuleTemplateModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerModuleTemplateModule(QObject *parent=0);
+  explicit qSlicerModuleTemplateModule(QObject *parent=0);
+  virtual ~qSlicerModuleTemplateModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
   
@@ -45,8 +46,13 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerModuleTemplateModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerModuleTemplateModule);
+  Q_DECLARE_PRIVATE(qSlicerModuleTemplateModule);
+  Q_DISABLE_COPY(qSlicerModuleTemplateModule);
+
 };
 
 #endif

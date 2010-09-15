@@ -1,10 +1,6 @@
 #ifndef __qSlicerModuleTemplateModuleWidget_h
 #define __qSlicerModuleTemplateModuleWidget_h
 
-
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
@@ -22,15 +18,19 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerModuleTemplateModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerModuleTemplateModuleWidget();
 
 public slots:
 
 
 protected:
+  QScopedPointer<qSlicerModuleTemplateModuleWidgetPrivate> d_ptr;
+  
   virtual void setup();
 
 private:
-  CTK_DECLARE_PRIVATE(qSlicerModuleTemplateModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerModuleTemplateModuleWidget);
+  Q_DISABLE_COPY(qSlicerModuleTemplateModuleWidget);
 };
 
 #endif

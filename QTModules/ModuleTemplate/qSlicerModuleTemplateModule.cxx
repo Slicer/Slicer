@@ -16,16 +16,33 @@
 Q_EXPORT_PLUGIN2(qSlicerModuleTemplateModule, qSlicerModuleTemplateModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerModuleTemplateModulePrivate: public ctkPrivate<qSlicerModuleTemplateModule>
+class qSlicerModuleTemplateModulePrivate
 {
 public:
+  qSlicerModuleTemplateModulePrivate();
 };
 
 //-----------------------------------------------------------------------------
-qSlicerModuleTemplateModule::qSlicerModuleTemplateModule(QObject* _parent)
-  :Superclass(_parent)
+// qSlicerModuleTemplateModulePrivate methods
+
+//-----------------------------------------------------------------------------
+qSlicerModuleTemplateModulePrivate::qSlicerModuleTemplateModulePrivate()
 {
-  CTK_INIT_PRIVATE(qSlicerModuleTemplateModule);
+
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerModuleTemplateModule methods
+
+//-----------------------------------------------------------------------------
+qSlicerModuleTemplateModule::qSlicerModuleTemplateModule(QObject* _parent)
+  :Superclass(_parent), d_ptr(new qSlicerModuleTemplateModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerModuleTemplateModule::~qSlicerModuleTemplateModule()
+{
 }
 
 //-----------------------------------------------------------------------------
