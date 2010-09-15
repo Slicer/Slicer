@@ -32,11 +32,14 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerLabelMapVolumeDisplayWidgetPrivate: public ctkPrivate<qSlicerLabelMapVolumeDisplayWidget>,
+class qSlicerLabelMapVolumeDisplayWidgetPrivate:
                                           public Ui_qSlicerLabelMapVolumeDisplayWidget
 {
+  Q_DECLARE_PUBLIC(qSlicerLabelMapVolumeDisplayWidget);
+protected:
+  qSlicerLabelMapVolumeDisplayWidget* const q_ptr;
 public:
-  qSlicerLabelMapVolumeDisplayWidgetPrivate();
+  qSlicerLabelMapVolumeDisplayWidgetPrivate(qSlicerLabelMapVolumeDisplayWidget& object);
   ~qSlicerLabelMapVolumeDisplayWidgetPrivate();
   void init();
 
@@ -44,7 +47,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerLabelMapVolumeDisplayWidgetPrivate::qSlicerLabelMapVolumeDisplayWidgetPrivate()
+qSlicerLabelMapVolumeDisplayWidgetPrivate::qSlicerLabelMapVolumeDisplayWidgetPrivate(qSlicerLabelMapVolumeDisplayWidget& object)
+  : q_ptr(&object)
 {
   this->VolumeNode = 0;
 }
@@ -57,34 +61,39 @@ qSlicerLabelMapVolumeDisplayWidgetPrivate::~qSlicerLabelMapVolumeDisplayWidgetPr
 //-----------------------------------------------------------------------------
 void qSlicerLabelMapVolumeDisplayWidgetPrivate::init()
 {
-  CTK_P(qSlicerLabelMapVolumeDisplayWidget);
+  Q_Q(qSlicerLabelMapVolumeDisplayWidget);
 
-  this->setupUi(p);
+  this->setupUi(q);
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   p, SLOT(setColorNode(vtkMRMLNode*)));
+                   q, SLOT(setColorNode(vtkMRMLNode*)));
   // disable as there is not MRML Node associated with the widget
-  p->setEnabled(false);
+  q->setEnabled(false);
 }
 
 // --------------------------------------------------------------------------
 qSlicerLabelMapVolumeDisplayWidget::qSlicerLabelMapVolumeDisplayWidget(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new qSlicerLabelMapVolumeDisplayWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerLabelMapVolumeDisplayWidget);
-  CTK_D(qSlicerLabelMapVolumeDisplayWidget);
+  Q_D(qSlicerLabelMapVolumeDisplayWidget);
   d->init();
+}
+
+// --------------------------------------------------------------------------
+qSlicerLabelMapVolumeDisplayWidget::~qSlicerLabelMapVolumeDisplayWidget()
+{
 }
 
 // --------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* qSlicerLabelMapVolumeDisplayWidget::volumeNode()const
 {
-  CTK_D(const qSlicerLabelMapVolumeDisplayWidget);
+  Q_D(const qSlicerLabelMapVolumeDisplayWidget);
   return d->VolumeNode;
 }
 
 // --------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeDisplayNode* qSlicerLabelMapVolumeDisplayWidget::volumeDisplayNode()const
 {
-  CTK_D(const qSlicerLabelMapVolumeDisplayWidget);
+  Q_D(const qSlicerLabelMapVolumeDisplayWidget);
   return d->VolumeNode ? vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(
     d->VolumeNode->GetDisplayNode()) : 0;
 }
@@ -98,7 +107,7 @@ void qSlicerLabelMapVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qSlicerLabelMapVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  CTK_D(qSlicerLabelMapVolumeDisplayWidget);
+  Q_D(qSlicerLabelMapVolumeDisplayWidget);
   vtkMRMLLabelMapVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
   qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetDisplayNode() : 0,
@@ -112,7 +121,7 @@ void qSlicerLabelMapVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNo
 // --------------------------------------------------------------------------
 void qSlicerLabelMapVolumeDisplayWidget::updateWidgetFromMRML()
 {
-  CTK_D(qSlicerLabelMapVolumeDisplayWidget);
+  Q_D(qSlicerLabelMapVolumeDisplayWidget);
   vtkMRMLLabelMapVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (displayNode)

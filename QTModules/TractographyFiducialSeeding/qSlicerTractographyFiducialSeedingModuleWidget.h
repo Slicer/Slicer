@@ -22,6 +22,7 @@ class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyF
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent=0);
+  virtual ~qSlicerTractographyFiducialSeedingModuleWidget();
 
   /// Get current parameter node
   vtkMRMLTractographyFiducialSeedingNode* tractographyFiducialSeedingNode() {
@@ -97,8 +98,12 @@ protected:
 
   vtkMRMLTractographyFiducialSeedingNode* TractographyFiducialSeedingNode;
 
+protected:
+  QScopedPointer<qSlicerTractographyFiducialSeedingModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_DISABLE_COPY(qSlicerTractographyFiducialSeedingModuleWidget);
 };
 
 #endif

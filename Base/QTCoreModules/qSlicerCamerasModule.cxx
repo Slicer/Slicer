@@ -23,14 +23,22 @@
 #include "qSlicerCamerasModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerCamerasModulePrivate: public ctkPrivate<qSlicerCamerasModule>
+class qSlicerCamerasModulePrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerCamerasModule);
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCamerasModule, QObject*);
+qSlicerCamerasModule::qSlicerCamerasModule(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerCamerasModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCamerasModule::~qSlicerCamerasModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 QString qSlicerCamerasModule::category()const

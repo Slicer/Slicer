@@ -28,19 +28,27 @@
 #include "ui_qSlicerVolumesModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumesModuleWidgetPrivate: public ctkPrivate<qSlicerVolumesModuleWidget>,
-                                         public Ui_qSlicerVolumesModule
+class qSlicerVolumesModuleWidgetPrivate: public Ui_qSlicerVolumesModule
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerVolumesModuleWidget, QWidget*);
+qSlicerVolumesModuleWidget::qSlicerVolumesModuleWidget(QWidget* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerVolumesModuleWidgetPrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerVolumesModuleWidget::~qSlicerVolumesModuleWidget()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerVolumesModuleWidget::setup()
 {
-  CTK_D(qSlicerVolumesModuleWidget);
+  Q_D(qSlicerVolumesModuleWidget);
   d->setupUi(this);
 
   QObject::connect(d->ActiveVolumeNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, 
@@ -52,6 +60,6 @@ void qSlicerVolumesModuleWidget::setup()
 //-----------------------------------------------------------------------------
 void qSlicerVolumesModuleWidget::setActiveVolumeNode(vtkMRMLNode* node)
 {
-  CTK_D(qSlicerVolumesModuleWidget);
+  Q_D(qSlicerVolumesModuleWidget);
   d->VolumeDisplayWidget->setMRMLVolumeNode(node);
 }

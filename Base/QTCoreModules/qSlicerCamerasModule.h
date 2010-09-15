@@ -39,6 +39,7 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCamerasModule :
 public:
   typedef qSlicerCoreModule Superclass;
   qSlicerCamerasModule(QObject *parent=0);
+  virtual ~qSlicerCamerasModule();
 
   virtual QString category()const;
   virtual QIcon icon()const;
@@ -58,8 +59,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerCamerasModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCamerasModule);
+  Q_DECLARE_PRIVATE(qSlicerCamerasModule);
+  Q_DISABLE_COPY(qSlicerCamerasModule);
 };
 
 #endif

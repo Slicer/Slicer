@@ -106,7 +106,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleUIHelper: public QObject
 public:
 
   qSlicerCLIModuleUIHelper(qSlicerCLIModuleWidget* cliModuleWidget);
-  virtual ~qSlicerCLIModuleUIHelper(){}
+  virtual ~qSlicerCLIModuleUIHelper();
 
   /// Create the widget associated with the given \a moduleParameter
   /// The caller is responsible to delete the widget.
@@ -135,8 +135,12 @@ signals:
 protected slots:
   void onValueChanged();
 
+protected:
+  QScopedPointer<qSlicerCLIModuleUIHelperPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCLIModuleUIHelper);
+  Q_DECLARE_PRIVATE(qSlicerCLIModuleUIHelper);
+  Q_DISABLE_COPY(qSlicerCLIModuleUIHelper);
 };
 
 #endif

@@ -39,13 +39,17 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerWelcomeModuleWidget(QWidget *parent=0);
-  virtual ~qSlicerWelcomeModuleWidget(){}
+  virtual ~qSlicerWelcomeModuleWidget();
 
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerWelcomeModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerWelcomeModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerWelcomeModuleWidget);
+  Q_DISABLE_COPY(qSlicerWelcomeModuleWidget);
 };
 
 #endif

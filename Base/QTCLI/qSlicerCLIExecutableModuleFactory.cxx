@@ -52,19 +52,21 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 }
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIExecutableModuleFactoryPrivate:public ctkPrivate<qSlicerCLIExecutableModuleFactory>
+class qSlicerCLIExecutableModuleFactoryPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerCLIExecutableModuleFactory);
-  qSlicerCLIExecutableModuleFactoryPrivate()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
-qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory():Superclass()
+qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory()
+  : Superclass()
+  , d_ptr(new qSlicerCLIExecutableModuleFactoryPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerCLIExecutableModuleFactory);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCLIExecutableModuleFactory::~qSlicerCLIExecutableModuleFactory()
+{
 }
 
 //-----------------------------------------------------------------------------

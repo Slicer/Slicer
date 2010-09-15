@@ -41,6 +41,7 @@ class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentWidget : public qSlice
 public:
   typedef qSlicerWidget Superclass;
   explicit qSlicerEMSegmentWidget(QWidget *newParent = 0);
+  virtual ~qSlicerEMSegmentWidget();
 
   vtkEMSegmentMRMLManager* mrmlManager() const;
 
@@ -50,8 +51,12 @@ public slots:
 signals:
   void mrmlManagerChanged(vtkEMSegmentMRMLManager* newMRMLManager);
 
+protected:
+  QScopedPointer<qSlicerEMSegmentWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentWidget);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentWidget);
+  Q_DISABLE_COPY(qSlicerEMSegmentWidget);
 
 };
 

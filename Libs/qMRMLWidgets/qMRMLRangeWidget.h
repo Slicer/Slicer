@@ -78,6 +78,7 @@ class QMRML_WIDGETS_EXPORT qMRMLRangeSlider : public ctkRangeSlider
   Q_OBJECT;
 public:
   qMRMLRangeSlider(QWidget* parentWidget);
+  virtual ~qMRMLRangeSlider();
   QPalette minimumHandlePalette()const;
   QPalette maximumHandlePalette()const;
 
@@ -91,8 +92,12 @@ protected:
   virtual void initMinimumSliderStyleOption(QStyleOptionSlider* option) const;
   virtual void initMaximumSliderStyleOption(QStyleOptionSlider* option) const;
 
+protected:
+  QScopedPointer<qMRMLRangeSliderPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLRangeSlider);
+  Q_DECLARE_PRIVATE(qMRMLRangeSlider);
+  Q_DISABLE_COPY(qMRMLRangeSlider);
 };
 
 #endif

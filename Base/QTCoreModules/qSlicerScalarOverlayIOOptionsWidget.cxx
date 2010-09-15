@@ -30,23 +30,25 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerScalarOverlayIOOptionsWidgetPrivate:
-  public ctkPrivate<qSlicerScalarOverlayIOOptionsWidget>,
   public Ui_qSlicerScalarOverlayIOOptionsWidget
 {
-  CTK_DECLARE_PUBLIC(qSlicerScalarOverlayIOOptionsWidget);
 public:
 };
 
-
 //-----------------------------------------------------------------------------
 qSlicerScalarOverlayIOOptionsWidget::qSlicerScalarOverlayIOOptionsWidget(QWidget* parentWidget)
+  : d_ptr(new qSlicerScalarOverlayIOOptionsWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerScalarOverlayIOOptionsWidget);
-  CTK_D(qSlicerScalarOverlayIOOptionsWidget);
-  ctk_d()->setupUi(this);
+  Q_D(qSlicerScalarOverlayIOOptionsWidget);
+  d->setupUi(this);
 
   connect(d->ModelSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(updateProperties()));
+}
+
+//-----------------------------------------------------------------------------
+qSlicerScalarOverlayIOOptionsWidget::~qSlicerScalarOverlayIOOptionsWidget()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -59,7 +61,7 @@ bool qSlicerScalarOverlayIOOptionsWidget::isValid()const
 //-----------------------------------------------------------------------------
 void qSlicerScalarOverlayIOOptionsWidget::updateProperties()
 {
-  CTK_D(const qSlicerScalarOverlayIOOptionsWidget);
+  Q_D(const qSlicerScalarOverlayIOOptionsWidget);
   bool oldValid = this->isValid();
   vtkMRMLNode* modelNode = d->ModelSelector->currentNode();
   qDebug() << "::updateProperties" << modelNode;

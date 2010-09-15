@@ -41,6 +41,7 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerSliceControllerModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerSliceControllerModuleWidget();
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene *newScene);
@@ -48,8 +49,12 @@ public slots:
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerSliceControllerModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerSliceControllerModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerSliceControllerModuleWidget);
+  Q_DISABLE_COPY(qSlicerSliceControllerModuleWidget);
 };
 
 #endif

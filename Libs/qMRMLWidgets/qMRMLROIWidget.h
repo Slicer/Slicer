@@ -70,8 +70,12 @@ protected slots:
   /// Internal function to update the ROI node based on the sliders
   void updateROI();
 
+protected:
+  QScopedPointer<qMRMLROIWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLROIWidget);
+  Q_DECLARE_PRIVATE(qMRMLROIWidget);
+  Q_DISABLE_COPY(qMRMLROIWidget);
 };
 
 #endif

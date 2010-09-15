@@ -59,7 +59,7 @@ public:
   /// Construct an empty qMRMLNodeComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
   explicit qMRMLNodeComboBox(QWidget* parent = 0);
-  virtual ~qMRMLNodeComboBox(){}
+  virtual ~qMRMLNodeComboBox();
 
   ///
   /// Get MRML scene
@@ -249,8 +249,12 @@ protected slots:
   void emitNodesAdded(const QModelIndex & parent, int start, int end);
   void emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end);
 
+protected:
+  QScopedPointer<qMRMLNodeComboBoxPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLNodeComboBox);
+  Q_DECLARE_PRIVATE(qMRMLNodeComboBox);
+  Q_DISABLE_COPY(qMRMLNodeComboBox);
 };
 
 // --------------------------------------------------------------------------

@@ -23,13 +23,22 @@
 #include "qSlicerMRMLTreeModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerMRMLTreeModulePrivate: public ctkPrivate<qSlicerMRMLTreeModule>
+class qSlicerMRMLTreeModulePrivate
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMRMLTreeModule, QObject*);
+qSlicerMRMLTreeModule::qSlicerMRMLTreeModule(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerMRMLTreeModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerMRMLTreeModule::~qSlicerMRMLTreeModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerMRMLTreeModule::createWidgetRepresentation()

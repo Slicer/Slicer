@@ -38,6 +38,7 @@ class Q_SLICER_QTMODULES_EMSEGMENT_EXPORT qSlicerEMSegmentGraphWidget : public q
 public:
   typedef qSlicerEMSegmentWidget Superclass;
   explicit qSlicerEMSegmentGraphWidget(QWidget * newParent=0);
+  virtual ~qSlicerEMSegmentGraphWidget();
 
 public slots:
   virtual void setMRMLManager(vtkEMSegmentMRMLManager* manager);
@@ -48,8 +49,12 @@ protected slots:
   void onCurrentInput1VolumeChanged(const QString& volumeName);
   void onClassVisibilityToggled(bool);
 
+protected:
+  QScopedPointer<qSlicerEMSegmentGraphWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentGraphWidget);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentGraphWidget);
+  Q_DISABLE_COPY(qSlicerEMSegmentGraphWidget);
 };
 
 #endif

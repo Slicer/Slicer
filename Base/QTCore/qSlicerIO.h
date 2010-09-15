@@ -91,8 +91,12 @@ protected:
   void setLoadedNodes(const QStringList& nodes);
   void setSavedNodes(const QStringList& nodes);
   
+protected:
+  QScopedPointer<qSlicerIOPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerIO);
+  Q_DECLARE_PRIVATE(qSlicerIO);
+  Q_DISABLE_COPY(qSlicerIO);
 };
 
 #endif

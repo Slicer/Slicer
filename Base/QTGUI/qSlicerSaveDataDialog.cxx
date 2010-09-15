@@ -697,8 +697,8 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
 //-----------------------------------------------------------------------------
 qSlicerSaveDataDialog::qSlicerSaveDataDialog(QObject* _parent)
   :qSlicerFileDialog(_parent)
+  , d_ptr(new qSlicerSaveDataDialogPrivate(0))
 {
-  CTK_INIT_PRIVATE(qSlicerSaveDataDialog);
 }
 
 //-----------------------------------------------------------------------------
@@ -722,7 +722,7 @@ qSlicerFileDialog::IOAction qSlicerSaveDataDialog::action()const
 //-----------------------------------------------------------------------------
 bool qSlicerSaveDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
 {
-  CTK_D(qSlicerSaveDataDialog);
+  Q_D(qSlicerSaveDataDialog);
   Q_ASSERT(!readerProperties.contains("fileName"));
 #ifdef Slicer3_USE_KWWIDGETS
   d->setWindowFlags(d->windowFlags() | Qt::WindowStaysOnTopHint);

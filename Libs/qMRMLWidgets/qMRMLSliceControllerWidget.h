@@ -57,7 +57,7 @@ public:
   
   /// Constructors
   explicit qMRMLSliceControllerWidget(QWidget* parent = 0);
-  virtual ~qMRMLSliceControllerWidget(){}
+  virtual ~qMRMLSliceControllerWidget();
 
   /// Are the slices linked to each other
   bool isLinked()const;
@@ -67,7 +67,7 @@ public:
 
   /// Get slice orientation
   /// \sa setSliceOrientation(QString);
-  QString sliceOrientation();
+  QString sliceOrientation()const;
 
   /// Get imageData
   vtkImageData* imageData()const;
@@ -177,8 +177,12 @@ signals:
   /// This signal is emitted when the given \a imageData is modified.
   void imageDataModified(vtkImageData * imageData);
 
+protected:
+  QScopedPointer<qMRMLSliceControllerWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSliceControllerWidget);
+  Q_DECLARE_PRIVATE(qMRMLSliceControllerWidget);
+  Q_DISABLE_COPY(qMRMLSliceControllerWidget);
 };
 
 #endif

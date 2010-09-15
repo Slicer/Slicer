@@ -40,7 +40,8 @@
 // qSlicerEMSegmentDefineTaskStepPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentDefineTaskStepPrivate::qSlicerEMSegmentDefineTaskStepPrivate()
+qSlicerEMSegmentDefineTaskStepPrivate::qSlicerEMSegmentDefineTaskStepPrivate(qSlicerEMSegmentDefineTaskStep& object)
+  : q_ptr(&object)
 {
 }
 
@@ -67,9 +68,9 @@ void qSlicerEMSegmentDefineTaskStepPrivate::setupUi(qSlicerEMSegmentWorkflowWidg
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineTaskStepPrivate::selectTask(vtkMRMLNode* mrmlNode)
 {
-  CTK_P(qSlicerEMSegmentDefineTaskStep);
-  Q_ASSERT(p->mrmlManager());
-  p->mrmlManager()->SetNode(vtkMRMLEMSNode::SafeDownCast(mrmlNode));
+  Q_Q(qSlicerEMSegmentDefineTaskStep);
+  Q_ASSERT(q->mrmlManager());
+  q->mrmlManager()->SetNode(vtkMRMLEMSNode::SafeDownCast(mrmlNode));
 }
 
 //-----------------------------------------------------------------------------
@@ -80,10 +81,11 @@ const QString qSlicerEMSegmentDefineTaskStep::StepId = "DefineTask";
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineTaskStep::qSlicerEMSegmentDefineTaskStep(
-    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
+  ctkWorkflow* newWorkflow, QWidget* newWidget)
+  : Superclass(newWorkflow, qSlicerEMSegmentDefineTaskStep::StepId, newWidget)
+  , d_ptr(new qSlicerEMSegmentDefineTaskStepPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentDefineTaskStep);
-  CTK_D(qSlicerEMSegmentDefineTaskStep);
+  Q_D(qSlicerEMSegmentDefineTaskStep);
   d->setupUi(this);
 
   this->setName("1/9. Define Task");
@@ -92,9 +94,14 @@ qSlicerEMSegmentDefineTaskStep::qSlicerEMSegmentDefineTaskStep(
 }
 
 //-----------------------------------------------------------------------------
+qSlicerEMSegmentDefineTaskStep::~qSlicerEMSegmentDefineTaskStep()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineTaskStep::createUserInterface()
 {
-  CTK_D(qSlicerEMSegmentDefineTaskStep);
+  Q_D(qSlicerEMSegmentDefineTaskStep);
   connect(d, SIGNAL(modeChanged(const QString&)), this->workflow(), SLOT(goForward(const QString&)));
 
   this->createUserInterfaceComplete();

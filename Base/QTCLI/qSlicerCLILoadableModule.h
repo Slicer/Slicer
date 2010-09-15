@@ -40,7 +40,7 @@ public:
   typedef int (*ModuleEntryPointType)(int argc, char* argv[]);
   
   qSlicerCLILoadableModule(QWidget *parent=0);
-  virtual ~qSlicerCLILoadableModule(){}
+  virtual ~qSlicerCLILoadableModule();
 
   ///
   /// Set module entry point
@@ -59,8 +59,12 @@ protected:
   virtual void setup();
 
 
+protected:
+  QScopedPointer<qSlicerCLILoadableModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCLILoadableModule);
+  Q_DECLARE_PRIVATE(qSlicerCLILoadableModule);
+  Q_DISABLE_COPY(qSlicerCLILoadableModule);
 };
 
 #endif

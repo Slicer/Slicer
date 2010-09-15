@@ -29,13 +29,22 @@
 Q_EXPORT_PLUGIN2(qSlicerWelcomeModule, qSlicerWelcomeModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerWelcomeModulePrivate: public ctkPrivate<qSlicerWelcomeModule>
+class qSlicerWelcomeModulePrivate
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerWelcomeModule, QObject*);
+qSlicerWelcomeModule::qSlicerWelcomeModule(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerWelcomeModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerWelcomeModule::~qSlicerWelcomeModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 QString qSlicerWelcomeModule::helpText()const

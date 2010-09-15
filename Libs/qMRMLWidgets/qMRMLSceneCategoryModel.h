@@ -62,8 +62,6 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneCategoryModel : public qMRMLSceneTreeModel
 
 public:
   qMRMLSceneCategoryModel(QObject *parent=0);
-  virtual ~qMRMLSceneCategoryModel();
-
 };
 
 #endif

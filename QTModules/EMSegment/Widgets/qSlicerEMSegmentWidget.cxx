@@ -25,7 +25,7 @@
 #include <vtkEMSegmentMRMLManager.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentWidgetPrivate : public ctkPrivate<qSlicerEMSegmentWidget>
+class qSlicerEMSegmentWidgetPrivate
 {
 public:
   qSlicerEMSegmentWidgetPrivate();
@@ -48,8 +48,13 @@ qSlicerEMSegmentWidgetPrivate::qSlicerEMSegmentWidgetPrivate()
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentWidget::qSlicerEMSegmentWidget(QWidget *newParent) :
     Superclass(newParent)
+  , d_ptr(new qSlicerEMSegmentWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentWidget);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentWidget::~qSlicerEMSegmentWidget()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -58,7 +63,7 @@ CTK_GET_CXX(qSlicerEMSegmentWidget, vtkEMSegmentMRMLManager*, mrmlManager, MRMLM
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentWidget::setMRMLManager(vtkEMSegmentMRMLManager* newMRMLManager)
 {
-  CTK_D(qSlicerEMSegmentWidget);
+  Q_D(qSlicerEMSegmentWidget);
   if (d->MRMLManager == newMRMLManager)
     {
     return;

@@ -39,11 +39,13 @@
 #include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerMainWindowPrivate: public ctkPrivate<qSlicerMainWindow>, public Ui_qSlicerMainWindow
+class qSlicerMainWindowPrivate: public Ui_qSlicerMainWindow
 {
+  Q_DECLARE_PUBLIC(qSlicerMainWindow);
+protected:
+  qSlicerMainWindow* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qSlicerMainWindow);
-  qSlicerMainWindowPrivate();
+  qSlicerMainWindowPrivate(qSlicerMainWindow& object);
   void setupUi(QMainWindow * mainWindow);
 
   qSlicerMainWindowCore*        Core;
@@ -55,7 +57,8 @@ public:
 //-----------------------------------------------------------------------------
 // qSlicerMainWindowPrivate methods
 
-qSlicerMainWindowPrivate::qSlicerMainWindowPrivate()
+qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
+  : q_ptr(&object)
 {
   this->Core = 0;
   this->ModuleSelector = 0;
@@ -68,7 +71,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate()
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 {
-  CTK_P(qSlicerMainWindow);
+  Q_Q(qSlicerMainWindow);
   
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
@@ -79,19 +82,19 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   QObject::connect(moduleManager,
                    SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
-                   p, SLOT(onModuleLoaded(qSlicerAbstractCoreModule*)));
+                   q, SLOT(onModuleLoaded(qSlicerAbstractCoreModule*)));
 
   QObject::connect(moduleManager,
                    SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
-                   p, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule*)));
+                   q, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule*)));
 
   //QObject::connect(this->ModuleToolBarMapper, SIGNAL(mapped(const QString&)),
   //                 this->ModulePanel, SLOT(setModule(const QString&)));
 
   // Create a Module selector
-  this->ModuleSelector = new qSlicerModuleSelectorToolBar("Module Selector",p);
+  this->ModuleSelector = new qSlicerModuleSelectorToolBar("Module Selector",q);
   this->ModuleSelector->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
-  p->insertToolBar(this->ModuleToolBar, this->ModuleSelector);
+  q->insertToolBar(this->ModuleToolBar, this->ModuleSelector);
 
   // Connect the selector with the module panel
   QObject::connect(this->ModuleSelector, SIGNAL(moduleSelected(const QString&)),
@@ -105,8 +108,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setMRMLScene(vtkMRMLScene*)));
 
   // Hide the Layout toolbar by default
-  p->showUndoRedoToolBar(false);
-  p->showLayoutToolBar(false);
+  q->showUndoRedoToolBar(false);
+  q->showLayoutToolBar(false);
 
   // Instanciate and assign the layout manager to the slicer application
   qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(this->CentralWidget);
@@ -138,7 +141,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
 
   // Populate the View ToolBar
-  QToolButton* layoutButton = new QToolButton(p);
+  QToolButton* layoutButton = new QToolButton(q);
   layoutButton->setMenu(this->MenuLayout);
   layoutButton->setPopupMode(QToolButton::InstantPopup);
   layoutButton->setDefaultAction(this->actionViewLayoutConventional);
@@ -147,16 +150,16 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ViewToolBar->addWidget(layoutButton);
 
   // Listen to the scene
-  p->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
-                 p, SLOT(onMRMLSceneModified(vtkObject*)));
-  p->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
+  q->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
+                 q, SLOT(onMRMLSceneModified(vtkObject*)));
+  q->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
 
   // Customize QAction icons with standard pixmaps
-  QIcon networkIcon = p->style()->standardIcon(QStyle::SP_DriveNetIcon);
-  QIcon informationIcon = p->style()->standardIcon(QStyle::SP_MessageBoxInformation);
-  QIcon criticalIcon = p->style()->standardIcon(QStyle::SP_MessageBoxCritical);
-  QIcon warningIcon = p->style()->standardIcon(QStyle::SP_MessageBoxWarning);
-  QIcon questionIcon = p->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
+  QIcon networkIcon = q->style()->standardIcon(QStyle::SP_DriveNetIcon);
+  QIcon informationIcon = q->style()->standardIcon(QStyle::SP_MessageBoxInformation);
+  QIcon criticalIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
+  QIcon warningIcon = q->style()->standardIcon(QStyle::SP_MessageBoxWarning);
+  QIcon questionIcon = q->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
 
   this->actionHelpBrowseTutorials->setIcon(networkIcon);
   this->actionHelpInterfaceDocumentation->setIcon(networkIcon);
@@ -174,9 +177,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
 //-----------------------------------------------------------------------------
 qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
+  , d_ptr(new qSlicerMainWindowPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerMainWindow);
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   d->setupUi(this);
   
   // Main window core helps to coordinate various widgets and panels
@@ -186,12 +189,17 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
 }
 
 //-----------------------------------------------------------------------------
+qSlicerMainWindow::~qSlicerMainWindow()
+{
+}
+
+//-----------------------------------------------------------------------------
 CTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
 
 //-----------------------------------------------------------------------------
 qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const
 {
-  CTK_D(const qSlicerMainWindow);
+  Q_D(const qSlicerMainWindow);
   return d->ModuleSelector;
 }
 
@@ -207,7 +215,7 @@ qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::setupMenuActions()
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   
   this->connect(
     d->actionFileExit, SIGNAL(triggered()),
@@ -270,7 +278,7 @@ void qSlicerMainWindow::setupMenuActions()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
   if (!module)
     {
@@ -300,7 +308,7 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   if (!module)
     {
     return;
@@ -321,7 +329,7 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* mod
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sender);
   if (scene->GetIsUpdating())
@@ -335,7 +343,7 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::showMainToolBar(bool visible)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   // set the action state just in case the slot has been called by something
   // else than the toolbar QAction
   d->actionWindowToolbarsLoadSave->setChecked(visible);
@@ -345,7 +353,7 @@ void qSlicerMainWindow::showMainToolBar(bool visible)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::showUndoRedoToolBar(bool visible)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   // set the action state just in case the slot has been called by something
   // else than the toolbar QAction
   d->actionWindowToolbarsUndoRedo->setChecked(visible);
@@ -355,7 +363,7 @@ void qSlicerMainWindow::showUndoRedoToolBar(bool visible)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::showViewToolBar(bool visible)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   // set the action state just in case the slot has been called by something
   // else than the toolbar QAction
   d->actionWindowToolbarsView->setChecked(visible);
@@ -365,7 +373,7 @@ void qSlicerMainWindow::showViewToolBar(bool visible)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::showLayoutToolBar(bool visible)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   // set the action state just in case the slot has been called by something
   // else than the toolbar QAction
   d->actionWindowToolbarsLayout->setChecked(visible);
@@ -375,7 +383,7 @@ void qSlicerMainWindow::showLayoutToolBar(bool visible)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::showMouseModeToolBar(bool visible)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   // set the action state just in case the slot has been called by something
   // else than the toolbar QAction
   d->actionWindowToolbarsMouseMode->setChecked(visible);
@@ -385,7 +393,7 @@ void qSlicerMainWindow::showMouseModeToolBar(bool visible)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::showModuleToolBar(bool visible)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   // set the action state just in case the slot has been called by something
   // else than the toolbar QAction
   d->actionWindowToolbarsModules->setChecked(visible);
@@ -395,7 +403,7 @@ void qSlicerMainWindow::showModuleToolBar(bool visible)
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::showModuleSelectorToolBar(bool visible)
 {
-  CTK_D(qSlicerMainWindow);
+  Q_D(qSlicerMainWindow);
   // set the action state just in case the slot has been called by something
   // else than the toolbar QAction
   d->actionWindowToolbarsModuleSelector->setChecked(visible);

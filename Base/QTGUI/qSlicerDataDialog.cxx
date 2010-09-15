@@ -264,10 +264,10 @@ void qSlicerDataDialogPrivate::updateCheckBoxHeader(int itemRow, int itemColumn)
 
 //-----------------------------------------------------------------------------
 qSlicerDataDialog::qSlicerDataDialog(QObject* _parent)
-  :qSlicerFileDialog(_parent)
+  : qSlicerFileDialog(_parent)
+  , d_ptr(new qSlicerDataDialogPrivate(0))
 {
   // FIXME give qSlicerDataDialog as a parent of qSlicerDataDialogPrivate;
-  CTK_INIT_PRIVATE(qSlicerDataDialog);
 }
 
 //-----------------------------------------------------------------------------
@@ -291,7 +291,7 @@ qSlicerFileDialog::IOAction qSlicerDataDialog::action()const
 //-----------------------------------------------------------------------------
 bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
 {
-  CTK_D(qSlicerDataDialog);
+  Q_D(qSlicerDataDialog);
   Q_ASSERT(!readerProperties.contains("fileName"));
 #ifdef Slicer3_USE_KWWIDGETS
   d->setWindowFlags(d->windowFlags() | Qt::WindowStaysOnTopHint);

@@ -60,7 +60,7 @@ public:
   /// Constructors
   typedef QObject Superclass;
   explicit qMRMLNodeFactory(QObject* parent = 0);
-  virtual ~qMRMLNodeFactory(){}
+  virtual ~qMRMLNodeFactory();
   
   /// 
   /// Set/Get MRML scene
@@ -95,8 +95,12 @@ public slots:
   /// Set/Get MRML scene
   void setMRMLScene(vtkMRMLScene* mrmlScene);
   
+protected:
+  QScopedPointer<qMRMLNodeFactoryPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLNodeFactory);
+  Q_DECLARE_PRIVATE(qMRMLNodeFactory);
+  Q_DISABLE_COPY(qMRMLNodeFactory);
 }; 
 
 #endif

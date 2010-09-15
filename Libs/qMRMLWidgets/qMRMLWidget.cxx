@@ -28,7 +28,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qMRMLWidgetPrivate: public ctkPrivate<qMRMLWidget>
+class qMRMLWidgetPrivate
 {
 public:
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
@@ -39,8 +39,8 @@ public:
 
 //-----------------------------------------------------------------------------
 qMRMLWidget::qMRMLWidget(QWidget * _parent, Qt::WindowFlags f):Superclass(_parent, f)
+  , d_ptr(new qMRMLWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(qMRMLWidget);
 }
 
 //-----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ qMRMLWidget::~qMRMLWidget()
 //-----------------------------------------------------------------------------
 void qMRMLWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  CTK_D(qMRMLWidget);
+  Q_D(qMRMLWidget);
   if (scene == d->MRMLScene)
     {
     return ;
@@ -61,4 +61,8 @@ void qMRMLWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLWidget, vtkMRMLScene*, mrmlScene, MRMLScene);
+vtkMRMLScene* qMRMLWidget::mrmlScene() const
+{
+  Q_D(const qMRMLWidget);
+  return d->MRMLScene;
+}

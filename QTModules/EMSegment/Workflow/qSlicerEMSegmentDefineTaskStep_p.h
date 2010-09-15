@@ -40,14 +40,14 @@ class vtkMRMLNode;
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentDefineTaskStepPrivate : public QObject,
-                                              public ctkPrivate<qSlicerEMSegmentDefineTaskStep>,
                                               public Ui_qSlicerEMSegmentDefineTaskStep
 {
   Q_OBJECT
-
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentDefineTaskStep)
+protected:
+  qSlicerEMSegmentDefineTaskStep* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qSlicerEMSegmentDefineTaskStep)
-  qSlicerEMSegmentDefineTaskStepPrivate();
+  qSlicerEMSegmentDefineTaskStepPrivate(qSlicerEMSegmentDefineTaskStep& object);
 
   QSignalMapper Mapper;
 

@@ -25,7 +25,7 @@
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
 
-class qSlicerAbstractModulePrivate:public ctkPrivate<qSlicerAbstractModule>
+class qSlicerAbstractModulePrivate
 {
 public:
   qSlicerAbstractModulePrivate();
@@ -41,8 +41,13 @@ qSlicerAbstractModulePrivate::qSlicerAbstractModulePrivate()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModule::qSlicerAbstractModule(QObject* parentObject)
   :Superclass(parentObject)
+  , d_ptr(new qSlicerAbstractModulePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerAbstractModule);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModule::~qSlicerAbstractModule()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -63,7 +68,7 @@ QAction* qSlicerAbstractModule::createAction()
 //-----------------------------------------------------------------------------
 QAction* qSlicerAbstractModule::action()
 {
-  CTK_D(qSlicerAbstractModule);
+  Q_D(qSlicerAbstractModule);
   if (d->Action == 0)
     {
     d->Action = new QAction(this->icon(), this->title(), this);

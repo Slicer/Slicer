@@ -23,17 +23,21 @@
 #include "qSlicerROIModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerROIModulePrivate: public ctkPrivate<qSlicerROIModule>
+class qSlicerROIModulePrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerROIModule);
 };
 
 //-----------------------------------------------------------------------------
 qSlicerROIModule::qSlicerROIModule(QObject* parentObject)
   :Superclass(parentObject)
+  , d_ptr(new qSlicerROIModulePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerROIModule);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerROIModule::~qSlicerROIModule()
+{
 }
 
 //-----------------------------------------------------------------------------

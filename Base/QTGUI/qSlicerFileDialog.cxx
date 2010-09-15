@@ -35,10 +35,9 @@
 
 /*
 //-----------------------------------------------------------------------------
-class qSlicerFileDialogPrivate: public ctkPrivate<qSlicerFileDialog>
+class qSlicerFileDialogPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerFileDialog);
 };
 */
 
@@ -46,7 +45,6 @@ public:
 qSlicerFileDialog::qSlicerFileDialog(QObject* _parent)
   :QObject(_parent)
 {
-  //CTK_INIT_PRIVATE(qSlicerFileDialog);
 }
 
 //-----------------------------------------------------------------------------
@@ -72,10 +70,9 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
 }
 
 //-----------------------------------------------------------------------------
-class qSlicerStandardFileDialogPrivate: public ctkPrivate<qSlicerStandardFileDialog>
+class qSlicerStandardFileDialogPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerStandardFileDialog);
   qSlicerStandardFileDialogPrivate();
   qSlicerIO::IOFileType       FileType;
   qSlicerFileDialog::IOAction Action;
@@ -91,21 +88,26 @@ qSlicerStandardFileDialogPrivate::qSlicerStandardFileDialogPrivate()
 //-----------------------------------------------------------------------------
 qSlicerStandardFileDialog::qSlicerStandardFileDialog(QObject* _parent)
   :qSlicerFileDialog(_parent)
+  , d_ptr(new qSlicerStandardFileDialogPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerStandardFileDialog);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerStandardFileDialog::~qSlicerStandardFileDialog()
+{
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerStandardFileDialog::setFileType(qSlicerIO::IOFileType _fileType)
 {
-  CTK_D(qSlicerStandardFileDialog);
+  Q_D(qSlicerStandardFileDialog);
   d->FileType = _fileType;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerStandardFileDialog::fileType()const
 {
-  CTK_D(const qSlicerStandardFileDialog);
+  Q_D(const qSlicerStandardFileDialog);
   return d->FileType;
 }
 
@@ -113,21 +115,21 @@ qSlicerIO::IOFileType qSlicerStandardFileDialog::fileType()const
 //-----------------------------------------------------------------------------
 void qSlicerStandardFileDialog::setAction(qSlicerFileDialog::IOAction dialogAction)
 {
-  CTK_D(qSlicerStandardFileDialog);
+  Q_D(qSlicerStandardFileDialog);
   d->Action = dialogAction;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerFileDialog::IOAction qSlicerStandardFileDialog::action()const
 {
-  CTK_D(const qSlicerStandardFileDialog);
+  Q_D(const qSlicerStandardFileDialog);
   return d->Action;
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties)
 {
-  CTK_D(qSlicerStandardFileDialog);
+  Q_D(qSlicerStandardFileDialog);
   Q_ASSERT(!ioProperties.contains("fileName"));
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ctkFileDialog fileDialog(qobject_cast<QWidget*>(this->parent()));

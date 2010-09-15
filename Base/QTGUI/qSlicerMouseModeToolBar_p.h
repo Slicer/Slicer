@@ -45,14 +45,18 @@ class qSlicerMouseModeToolBarPrivate;
 class QAction;
 class QActionGroup;
 
-class qSlicerMouseModeToolBarPrivate: public QObject, public ctkPrivate<qSlicerMouseModeToolBar>
+class qSlicerMouseModeToolBarPrivate: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qSlicerMouseModeToolBar);
+
+protected:
+  qSlicerMouseModeToolBar* const q_ptr;
 
 public:
+  qSlicerMouseModeToolBarPrivate(qSlicerMouseModeToolBar& object);
 
-  qSlicerMouseModeToolBarPrivate();
   void init();
   void setMRMLScene(vtkMRMLScene* newScene);
   void updateWidgetFromMRML();

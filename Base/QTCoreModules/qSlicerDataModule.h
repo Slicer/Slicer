@@ -39,6 +39,7 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerDataModule :
 public:
   typedef qSlicerCoreModule Superclass;
   qSlicerDataModule(QObject *parent=0);
+  virtual ~qSlicerDataModule();
 
   virtual QIcon icon()const;
   qSlicerGetTitleMacro("Data");
@@ -57,8 +58,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerDataModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerDataModule);
+  Q_DECLARE_PRIVATE(qSlicerDataModule);
+  Q_DISABLE_COPY(qSlicerDataModule);
 };
 
 #endif

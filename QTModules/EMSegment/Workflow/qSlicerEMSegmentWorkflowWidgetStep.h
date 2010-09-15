@@ -46,6 +46,7 @@ public:
   explicit qSlicerEMSegmentWorkflowWidgetStep(ctkWorkflow* newWorkflow, 
                                               const QString& newId, QWidget* newParent = 0);
   explicit qSlicerEMSegmentWorkflowWidgetStep(QWidget* newParent = 0);
+  virtual ~qSlicerEMSegmentWorkflowWidgetStep();
 
   vtkMRMLScene *           mrmlScene() const;
   vtkEMSegmentMRMLManager* mrmlManager() const;
@@ -65,8 +66,12 @@ protected:
 
   vtkSlicerEMSegmentLogic* emSegmentLogic()const;
 
+protected:
+  QScopedPointer<qSlicerEMSegmentWorkflowWidgetStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentWorkflowWidgetStep);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentWorkflowWidgetStep);
+  Q_DISABLE_COPY(qSlicerEMSegmentWorkflowWidgetStep);
 
 };
 

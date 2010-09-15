@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerEMSegmentWorkflowWidgetStep Superclass;
   explicit qSlicerEMSegmentSpecifyIntensityDistributionStep(ctkWorkflow* newWorkflow, QWidget* parent = 0);
+  virtual ~qSlicerEMSegmentSpecifyIntensityDistributionStep();
 
 public slots:
 
@@ -57,8 +58,12 @@ public slots:
 
   virtual void showUserInterface();
 
+protected:
+  QScopedPointer<qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  Q_DISABLE_COPY(qSlicerEMSegmentSpecifyIntensityDistributionStep);
 
 };
 

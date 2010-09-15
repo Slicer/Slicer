@@ -71,7 +71,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-class qMRMLSceneModelItemHelperFactoryPrivate: public ctkPrivate<qMRMLSceneModelItemHelperFactory>
+class qMRMLSceneModelItemHelperFactoryPrivate
 {
 public:
   vtkSmartPointer<vtkCollection> PreItems;
@@ -80,8 +80,13 @@ public:
 
 //------------------------------------------------------------------------------
 qMRMLSceneModelItemHelperFactory::qMRMLSceneModelItemHelperFactory()
+  : d_ptr(new qMRMLSceneModelItemHelperFactoryPrivate)
 {
-  CTK_INIT_PRIVATE(qMRMLSceneModelItemHelperFactory);
+}
+
+//------------------------------------------------------------------------------
+qMRMLSceneModelItemHelperFactory::~qMRMLSceneModelItemHelperFactory()
+{
 }
 
 //------------------------------------------------------------------------------
@@ -116,28 +121,28 @@ qMRMLAbstractItemHelper* qMRMLSceneModelItemHelperFactory::createItem(vtkObject*
 //------------------------------------------------------------------------------
 void qMRMLSceneModelItemHelperFactory::setPostItems(vtkCollection* itemCollection)
 {
-  CTK_D(qMRMLSceneModelItemHelperFactory);
+  Q_D(qMRMLSceneModelItemHelperFactory);
   d->PostItems = itemCollection;
 }
 
 //------------------------------------------------------------------------------
 vtkCollection* qMRMLSceneModelItemHelperFactory::postItems()const
 {
-  CTK_D(const qMRMLSceneModelItemHelperFactory);
+  Q_D(const qMRMLSceneModelItemHelperFactory);
   return d->PostItems.GetPointer();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneModelItemHelperFactory::setPreItems(vtkCollection* itemCollection)
 {
-  CTK_D(qMRMLSceneModelItemHelperFactory);
+  Q_D(qMRMLSceneModelItemHelperFactory);
   d->PreItems = itemCollection;
 }
 
 //------------------------------------------------------------------------------
 vtkCollection* qMRMLSceneModelItemHelperFactory::preItems()const
 {
-  CTK_D(const qMRMLSceneModelItemHelperFactory);
+  Q_D(const qMRMLSceneModelItemHelperFactory);
   return d->PreItems.GetPointer();
 }
 
@@ -228,11 +233,13 @@ qMRMLAbstractItemHelper* qMRMLFlatNodeItemHelper::parent() const
 //------------------------------------------------------------------------------
 // qMRMLSceneModelPrivate
 //------------------------------------------------------------------------------
-class qMRMLSceneModelPrivate: public ctkPrivate<qMRMLSceneModel>
+class qMRMLSceneModelPrivate
 {
+  Q_DECLARE_PUBLIC(qMRMLSceneModel);
+protected:
+  qMRMLSceneModel* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLSceneModel);
-  qMRMLSceneModelPrivate();
+  qMRMLSceneModelPrivate(qMRMLSceneModel& object);
   ~qMRMLSceneModelPrivate();
   void init(qMRMLSceneModelItemHelperFactory*);
   
@@ -254,7 +261,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLSceneModelPrivate::qMRMLSceneModelPrivate()
+qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
+  : q_ptr(&object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->ListenNodeModifiedEvent = false;
@@ -277,8 +285,8 @@ qMRMLSceneModelPrivate::~qMRMLSceneModelPrivate()
 //------------------------------------------------------------------------------
 void qMRMLSceneModelPrivate::init(qMRMLSceneModelItemHelperFactory* factory)
 {
-  CTK_P(qMRMLSceneModel);
-  this->CallBack->SetClientData(p);
+  Q_Q(qMRMLSceneModel);
+  this->CallBack->SetClientData(q);
   this->CallBack->SetCallback(qMRMLSceneModel::DoCallback);
   this->ItemFactory = factory;
 }
@@ -292,8 +300,8 @@ vtkObject* qMRMLSceneModelPrivate::object(const QModelIndex &index)const
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLSceneModelPrivate::itemFromIndex(const QModelIndex &index)const
 {
-  CTK_P(const qMRMLSceneModel);
-  if ((index.row() < 0) || (index.column() < 0) || (index.model() != p))
+  Q_Q(const qMRMLSceneModel);
+  if ((index.row() < 0) || (index.column() < 0) || (index.model() != q))
     {
     //return new qMRMLFlatRootItemHelper(this->MRMLScene);
     return this->ItemFactory->createRootItem(this->MRMLScene);
@@ -305,7 +313,7 @@ qMRMLAbstractItemHelper* qMRMLSceneModelPrivate::itemFromIndex(const QModelIndex
 //------------------------------------------------------------------------------
 QModelIndex qMRMLSceneModelPrivate::indexFromItem(const qMRMLAbstractItemHelper* item)const
 {
-  CTK_P(const qMRMLSceneModel);
+  Q_Q(const qMRMLSceneModel);
   if (item == 0 || item->object() == 0)
     {
     return QModelIndex();
@@ -314,25 +322,25 @@ QModelIndex qMRMLSceneModelPrivate::indexFromItem(const qMRMLAbstractItemHelper*
     {
     return QModelIndex();
     }
-  return p->createIndex(item->row(), item->column(), 
+  return q->createIndex(item->row(), item->column(), 
                         reinterpret_cast<void*>(item->object()));
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
 {
-  CTK_P(qMRMLSceneModel);
-  p->qvtkDisconnect(0, vtkCommand::ModifiedEvent, p, SLOT(onMRMLNodeModified(vtkObject*)));
+  Q_Q(qMRMLSceneModel);
+  q->qvtkDisconnect(0, vtkCommand::ModifiedEvent, q, SLOT(onMRMLNodeModified(vtkObject*)));
   if (!this->ListenNodeModifiedEvent)
     {
     return;
     }
-  QModelIndex sceneIndex = p->mrmlSceneIndex();
-  const int count = p->rowCount(sceneIndex);
+  QModelIndex sceneIndex = q->mrmlSceneIndex();
+  const int count = q->rowCount(sceneIndex);
   for (int i = 0; i < count; ++i)
     {
-    p->qvtkConnect(p->mrmlNode(sceneIndex.child(i,0)),vtkCommand::ModifiedEvent,
-                   p, SLOT(onMRMLNodeModified(vtkObject*)));
+    q->qvtkConnect(q->mrmlNode(sceneIndex.child(i,0)),vtkCommand::ModifiedEvent,
+                   q, SLOT(onMRMLNodeModified(vtkObject*)));
     }
 }
 
@@ -341,17 +349,19 @@ void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
 //------------------------------------------------------------------------------
 qMRMLSceneModel::qMRMLSceneModel(QObject *_parent)
   :QAbstractItemModel(_parent)
+  , d_ptr(new qMRMLSceneModelPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLSceneModel);
-  ctk_d()->init(new qMRMLSceneModelItemHelperFactory);
+  Q_D(qMRMLSceneModel);
+  d->init(new qMRMLSceneModelItemHelperFactory);
 }
 
 //------------------------------------------------------------------------------
 qMRMLSceneModel::qMRMLSceneModel(qMRMLSceneModelItemHelperFactory* factory, QObject *parentObject)
   :QAbstractItemModel(parentObject)
+  , d_ptr(new qMRMLSceneModelPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLSceneModel);
-  ctk_d()->init(factory);
+  Q_D(qMRMLSceneModel);
+  d->init(factory);
 }
 
 //------------------------------------------------------------------------------
@@ -362,7 +372,7 @@ qMRMLSceneModel::~qMRMLSceneModel()
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::setPreItems(vtkObject* itemParent, const QStringList& extraItems)
 {
-  CTK_D(qMRMLSceneModel);
+  Q_D(qMRMLSceneModel);
   vtkCollection* collection = vtkCollection::New();
   vtkVariantArray* variantArray = 0;
 
@@ -385,7 +395,7 @@ void qMRMLSceneModel::setPreItems(vtkObject* itemParent, const QStringList& extr
 //------------------------------------------------------------------------------
 QStringList qMRMLSceneModel::preItems(vtkObject* itemParent)const 
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   QStringList res; 
 
   vtkCollection* collection = d->ItemFactory->preItems();
@@ -406,7 +416,7 @@ QStringList qMRMLSceneModel::preItems(vtkObject* itemParent)const
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::setPostItems(vtkObject* itemParent, const QStringList& extraItems)
 {
-  CTK_D(qMRMLSceneModel);
+  Q_D(qMRMLSceneModel);
   vtkCollection* collection = vtkCollection::New();
   foreach(const QString& extraItem, extraItems)
     {
@@ -427,7 +437,7 @@ void qMRMLSceneModel::setPostItems(vtkObject* itemParent, const QStringList& ext
 //------------------------------------------------------------------------------
 QStringList qMRMLSceneModel::postItems(vtkObject* itemParent)const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   QStringList res; 
 
   vtkCollection* collection = d->ItemFactory->postItems();
@@ -449,7 +459,7 @@ QStringList qMRMLSceneModel::postItems(vtkObject* itemParent)const
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
 {
-  CTK_D(qMRMLSceneModel);
+  Q_D(qMRMLSceneModel);
   /*
   // onMRMLSceneNodeAboutToBeAdded must be call as late as possible after 
   // vtkMRMLScene::NodeAboutToBeAddedEvent is fired. This fix the pb when a node
@@ -496,13 +506,14 @@ void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 vtkMRMLScene* qMRMLSceneModel::mrmlScene()const
 {
-  return ctk_d()->MRMLScene;
+  Q_D(const qMRMLSceneModel);
+  return d->MRMLScene;
 }
 
 //------------------------------------------------------------------------------
 QModelIndex qMRMLSceneModel::mrmlSceneIndex()const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   if (d->MRMLScene == 0)
     {
     return QModelIndex();
@@ -515,14 +526,14 @@ QModelIndex qMRMLSceneModel::mrmlSceneIndex()const
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneModel::mrmlNode(const QModelIndex &nodeIndex)const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   return vtkMRMLNode::SafeDownCast(d->object(nodeIndex));
 }
 
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node)const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   QModelIndexList nodeIndexList;
   if (node == 0)
     {
@@ -545,7 +556,7 @@ QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node)const
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::setListenNodeModifiedEvent(bool listen)
 {
-  CTK_D(qMRMLSceneModel);
+  Q_D(qMRMLSceneModel);
   if (d->ListenNodeModifiedEvent == listen)
     {
     return;
@@ -557,7 +568,7 @@ void qMRMLSceneModel::setListenNodeModifiedEvent(bool listen)
 //------------------------------------------------------------------------------
 bool qMRMLSceneModel::listenNodeModifiedEvent()const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   return d->ListenNodeModifiedEvent;
 }
 
@@ -571,12 +582,14 @@ int qMRMLSceneModel::columnCount(const QModelIndex &_parent)const
 //------------------------------------------------------------------------------
 QVariant qMRMLSceneModel::data(const QModelIndex &_index, int role)const
 {
-  //CTK_D(const qMRMLSceneModel);
+#ifndef _NDEBUG
+  Q_D(const qMRMLSceneModel);
+#endif
   if (!_index.isValid())
     {
     return QVariant();
     }
-  Q_ASSERT(ctk_d()->MRMLScene);
+  Q_ASSERT(d->MRMLScene);
 
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(_index));
@@ -589,7 +602,7 @@ QVariant qMRMLSceneModel::data(const QModelIndex &_index, int role)const
 //------------------------------------------------------------------------------
 Qt::ItemFlags qMRMLSceneModel::flags(const QModelIndex &_index)const
 {
-  //CTK_D(const qMRMLSceneModel);
+  //Q_D(const qMRMLSceneModel);
   if (!_index.isValid())
     {
     return Qt::NoItemFlags;
@@ -606,7 +619,7 @@ Qt::ItemFlags qMRMLSceneModel::flags(const QModelIndex &_index)const
 //------------------------------------------------------------------------------
 bool qMRMLSceneModel::hasChildren(const QModelIndex &_parent)const
 {
-  //CTK_D(const qMRMLSceneModel);
+  //Q_D(const qMRMLSceneModel);
 
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(_parent));
@@ -643,7 +656,7 @@ QVariant qMRMLSceneModel::headerData(int section, Qt::Orientation orientation, i
 //------------------------------------------------------------------------------
 QModelIndex qMRMLSceneModel::index(int row, int column, const QModelIndex &_parent)const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   if (d->MRMLScene == 0 || row < 0 || column < 0)
     {
     return QModelIndex();
@@ -696,28 +709,28 @@ QModelIndex qMRMLSceneModel::index(int row, int column, const QModelIndex &_pare
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLSceneModel::itemFromIndex(const QModelIndex &modelIndex)const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   return d->itemFromIndex(modelIndex);
 }
 
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLSceneModel::itemFromObject(vtkObject* object, int column)const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   return d->ItemFactory->createItem(object, column);
 }
 
 //------------------------------------------------------------------------------
 QModelIndex qMRMLSceneModel::indexFromItem(const qMRMLAbstractItemHelper* item)const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   return d->indexFromItem(item);
 }
 
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelperFactory* qMRMLSceneModel::itemFactory()const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   return d->ItemFactory;
 }
 
@@ -785,9 +798,11 @@ void qMRMLSceneModel::DoCallback(vtkObject* vtk_obj, unsigned long event,
 void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   Q_UNUSED(scene);
-  //CTK_D(qMRMLSceneModel);
+#ifndef _NDEBUG
+  Q_D(qMRMLSceneModel);
   Q_ASSERT(scene != 0);
-  Q_ASSERT(scene == ctk_d()->MRMLScene);
+  Q_ASSERT(scene == d->MRMLScene);
+#endif
   /*
   Q_ASSERT(d->MRMLNodeToBe == 0);
   Q_ASSERT(d->MRMLNodeToBeAdded == 0);
@@ -807,7 +822,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRML
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
-  CTK_D(qMRMLSceneModel);
+  Q_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
   //Q_ASSERT(d->MRMLNodeToBeAdded);
@@ -846,7 +861,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
 void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   Q_UNUSED(scene);
-  CTK_D(qMRMLSceneModel);
+  Q_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(d->MRMLNodeToBe == 0);
   Q_ASSERT(d->MRMLNodeToBeAdded == 0);
@@ -874,7 +889,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
   Q_UNUSED(scene);
   Q_UNUSED(node);
   
-  CTK_D(qMRMLSceneModel);
+  Q_D(qMRMLSceneModel);
   /*
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node) == d->MRMLNodeToBe);
@@ -901,7 +916,10 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
 void qMRMLSceneModel::onMRMLSceneDeleted(vtkObject* scene)
 {
   Q_UNUSED(scene);
-  Q_ASSERT(scene == ctk_d()->MRMLScene);
+#ifndef _NDEBUG
+  Q_D(qMRMLSceneModel);
+  Q_ASSERT(scene == d->MRMLScene);
+#endif
   this->setMRMLScene(0);
 }
 
@@ -952,7 +970,7 @@ void qMRMLSceneModel::onMRMLSceneClosed(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 QModelIndex qMRMLSceneModel::parent(const QModelIndex &_index)const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   if (!_index.isValid())
     {
     return QModelIndex();
@@ -988,7 +1006,7 @@ QModelIndex qMRMLSceneModel::parent(const QModelIndex &_index)const
 //------------------------------------------------------------------------------
 int qMRMLSceneModel::rowCount(const QModelIndex &_parent) const
 {
-  CTK_D(const qMRMLSceneModel);
+  Q_D(const qMRMLSceneModel);
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(_parent));
   Q_ASSERT(!item.isNull());
@@ -1018,12 +1036,14 @@ int qMRMLSceneModel::rowCount(const QModelIndex &_parent) const
 //------------------------------------------------------------------------------
 bool qMRMLSceneModel::setData(const QModelIndex &modelIndex, const QVariant &value, int role)
 {
-  //CTK_D(const qMRMLSceneModel);
+#ifndef _NDEBUG
+  Q_D(const qMRMLSceneModel);
+#endif
   if (!modelIndex.isValid())
     {
     return false;
     }
-  Q_ASSERT(ctk_d()->MRMLScene);
+  Q_ASSERT(d->MRMLScene);
   QSharedPointer<qMRMLAbstractItemHelper> item = 
     QSharedPointer<qMRMLAbstractItemHelper>(this->itemFromIndex(modelIndex));
   Q_ASSERT(!item.isNull());

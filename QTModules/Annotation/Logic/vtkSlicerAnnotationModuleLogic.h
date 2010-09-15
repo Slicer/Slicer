@@ -229,13 +229,14 @@ public:
 
 protected:
   vtkSlicerAnnotationModuleLogic();
-  ~vtkSlicerAnnotationModuleLogic();
-  // not implemented
-  vtkSlicerAnnotationModuleLogic(const vtkSlicerAnnotationModuleLogic&);
-  void operator=(const vtkSlicerAnnotationModuleLogic&);
+  virtual ~vtkSlicerAnnotationModuleLogic();
+
+protected:
+  QScopedPointer<vtkSlicerAnnotationModuleLogicPrivate> d_ptr;
 
 private:
-  CTK_DECLARE_PRIVATE(vtkSlicerAnnotationModuleLogic);
+  Q_DECLARE_PRIVATE(vtkSlicerAnnotationModuleLogic);
+  Q_DISABLE_COPY(vtkSlicerAnnotationModuleLogic);
 
   qSlicerAnnotationModuleWidget *m_Widget;
 

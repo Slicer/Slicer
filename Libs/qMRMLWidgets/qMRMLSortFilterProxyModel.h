@@ -95,8 +95,12 @@ protected:
   virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
   
   qMRMLAbstractItemHelper* sourceItem(const QModelIndex& index)const;
+protected:
+  QScopedPointer<qMRMLSortFilterProxyModelPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSortFilterProxyModel);
+  Q_DECLARE_PRIVATE(qMRMLSortFilterProxyModel);
+  Q_DISABLE_COPY(qMRMLSortFilterProxyModel);
 };
 
 #endif

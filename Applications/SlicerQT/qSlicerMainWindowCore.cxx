@@ -76,11 +76,16 @@ qSlicerMainWindowCorePrivate::~qSlicerMainWindowCorePrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent):Superclass(_parent)
+  , d_ptr(new qSlicerMainWindowCorePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerMainWindowCore);
-  CTK_D(qSlicerMainWindowCore);
+  Q_D(qSlicerMainWindowCore);
   
   d->ParentWidget = _parent;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerMainWindowCore::~qSlicerMainWindowCore()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -165,7 +170,7 @@ qSlicerMainWindowCore_onViewLayout_implementation(SideBySideCompare);
 void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
 {
 #ifdef Slicer3_USE_PYTHONQT
-  CTK_D(qSlicerMainWindowCore);
+  Q_D(qSlicerMainWindowCore);
   if (!d->PythonShell)
     {
     Q_ASSERT(qSlicerApplication::application()->pythonManager());

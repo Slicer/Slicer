@@ -64,7 +64,8 @@ public:
   static QStringList nameFilters(qSlicerIO::IOFileType fileType);
 
 //private:
-//  CTK_DECLARE_PRIVATE(qSlicerFileDialog);
+//  Q_DECLARE_PRIVATE(qSlicerFileDialog);
+  Q_DISABLE_COPY(qSlicerFileDialog);
 };
 
 class qSlicerStandardFileDialogPrivate;
@@ -74,6 +75,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog : public qSlicerFileD
 {
 public:
   qSlicerStandardFileDialog(QObject* parent=0);
+  virtual ~qSlicerStandardFileDialog();
 
   void setFileType(qSlicerIO::IOFileType fileType);
   virtual qSlicerIO::IOFileType fileType()const;
@@ -83,8 +85,12 @@ public:
 
   virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties());
+protected:
+  QScopedPointer<qSlicerStandardFileDialogPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerStandardFileDialog);
+  Q_DECLARE_PRIVATE(qSlicerStandardFileDialog);
+  Q_DISABLE_COPY(qSlicerStandardFileDialog);
 };
 
 #endif

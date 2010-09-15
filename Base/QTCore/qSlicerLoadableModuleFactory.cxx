@@ -32,14 +32,9 @@
 #include "vtkSlicerConfigure.h"
   
 //-----------------------------------------------------------------------------
-class qSlicerLoadableModuleFactoryPrivate: public ctkPrivate<qSlicerLoadableModuleFactory>
+class qSlicerLoadableModuleFactoryPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerLoadableModuleFactory);
-  qSlicerLoadableModuleFactoryPrivate()
-    {
-    }
-  
   ///
   /// Return a list of module paths
   QStringList modulePaths() const;
@@ -92,14 +87,19 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
 
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactory::qSlicerLoadableModuleFactory()
+  : d_ptr(new qSlicerLoadableModuleFactoryPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerLoadableModuleFactory);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerLoadableModuleFactory::~qSlicerLoadableModuleFactory()
+{
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerLoadableModuleFactory::registerItems()
 {
-  CTK_D(qSlicerLoadableModuleFactory);
+  Q_D(qSlicerLoadableModuleFactory);
 
   QStringList modulePaths = d->modulePaths();
   
@@ -153,7 +153,7 @@ void qSlicerLoadableModuleFactory::registerItems()
 //-----------------------------------------------------------------------------
 QString qSlicerLoadableModuleFactory::fileNameToKey(const QString& fileName)
 {
-  return Self::extractModuleName(fileName);
+  return qSlicerLoadableModuleFactory::extractModuleName(fileName);
 }
 
 //-----------------------------------------------------------------------------

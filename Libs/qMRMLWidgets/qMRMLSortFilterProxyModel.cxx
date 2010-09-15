@@ -42,10 +42,9 @@
 // qMRMLSortFilterProxyModelPrivate
 
 // -----------------------------------------------------------------------------
-class qMRMLSortFilterProxyModelPrivate: public ctkPrivate<qMRMLSortFilterProxyModel>
+class qMRMLSortFilterProxyModelPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qMRMLSortFilterProxyModel);
   qMRMLSortFilterProxyModelPrivate();
 
   QStringList                      NodeTypes;
@@ -69,8 +68,8 @@ qMRMLSortFilterProxyModelPrivate::qMRMLSortFilterProxyModelPrivate()
 //------------------------------------------------------------------------------
 qMRMLSortFilterProxyModel::qMRMLSortFilterProxyModel(QObject *vparent)
   :QSortFilterProxyModel(vparent)
+  , d_ptr(new qMRMLSortFilterProxyModelPrivate)
 {
-  CTK_INIT_PRIVATE(qMRMLSortFilterProxyModel);
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +106,7 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
                                      const QString& attributeName,
                                      const QVariant& attributeValue)
 {
-  CTK_D(qMRMLSortFilterProxyModel);
+  Q_D(qMRMLSortFilterProxyModel);
   if (!d->NodeTypes.contains(nodeType) ||
       (d->Attributes[nodeType].first == attributeName &&
        d->Attributes[nodeType].second == attributeValue))
@@ -125,7 +124,7 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
 //------------------------------------------------------------------------------
 bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent)const
 {
-  CTK_D(const qMRMLSortFilterProxyModel);
+  Q_D(const qMRMLSortFilterProxyModel);
   QSharedPointer<qMRMLAbstractItemHelper> parentItem =
     QSharedPointer<qMRMLAbstractItemHelper>(this->sourceItem(source_parent));
   if (parentItem == 0)
@@ -199,7 +198,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
 //-----------------------------------------------------------------------------
 QStringList qMRMLSortFilterProxyModel::hideChildNodeTypes()const
 {
-  CTK_D(const qMRMLSortFilterProxyModel);
+  Q_D(const qMRMLSortFilterProxyModel);
   return d->HideChildNodeTypes;
 }
 
@@ -212,14 +211,14 @@ bool qMRMLSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIn
 // --------------------------------------------------------------------------
 QStringList qMRMLSortFilterProxyModel::nodeTypes()const
 {
-  CTK_D(const qMRMLSortFilterProxyModel);
+  Q_D(const qMRMLSortFilterProxyModel);
   return d->NodeTypes;
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLSortFilterProxyModel::setHideChildNodeTypes(const QStringList& _nodeTypes)
 {
-  CTK_D(qMRMLSortFilterProxyModel);
+  Q_D(qMRMLSortFilterProxyModel);
   if (_nodeTypes == d->HideChildNodeTypes)
     {
     return;
@@ -231,7 +230,7 @@ void qMRMLSortFilterProxyModel::setHideChildNodeTypes(const QStringList& _nodeTy
 // --------------------------------------------------------------------------
 void qMRMLSortFilterProxyModel::setNodeTypes(const QStringList& _nodeTypes)
 {
-  CTK_D(qMRMLSortFilterProxyModel);
+  Q_D(qMRMLSortFilterProxyModel);
   if (d->NodeTypes == _nodeTypes)
     {
     return;
@@ -243,7 +242,7 @@ void qMRMLSortFilterProxyModel::setNodeTypes(const QStringList& _nodeTypes)
 //-----------------------------------------------------------------------------
 void qMRMLSortFilterProxyModel::setShowChildNodeTypes(bool _show)
 {
-  CTK_D(qMRMLSortFilterProxyModel);
+  Q_D(qMRMLSortFilterProxyModel);
   if (_show == d->ShowChildNodeTypes)
     {
     return;
@@ -255,7 +254,7 @@ void qMRMLSortFilterProxyModel::setShowChildNodeTypes(bool _show)
 // --------------------------------------------------------------------------
 void qMRMLSortFilterProxyModel::setShowHidden(bool enable)
 {
-  CTK_D(qMRMLSortFilterProxyModel);
+  Q_D(qMRMLSortFilterProxyModel);
   if (enable == d->ShowHidden)
     {
     return;
@@ -267,13 +266,13 @@ void qMRMLSortFilterProxyModel::setShowHidden(bool enable)
 // --------------------------------------------------------------------------
 bool qMRMLSortFilterProxyModel::showHidden()const
 {
-  CTK_D(const qMRMLSortFilterProxyModel);
+  Q_D(const qMRMLSortFilterProxyModel);
   return d->ShowHidden;
 }
 
 //-----------------------------------------------------------------------------
 bool qMRMLSortFilterProxyModel::showChildNodeTypes()const
 {
-  CTK_D(const qMRMLSortFilterProxyModel);
+  Q_D(const qMRMLSortFilterProxyModel);
   return d->ShowChildNodeTypes;
 }

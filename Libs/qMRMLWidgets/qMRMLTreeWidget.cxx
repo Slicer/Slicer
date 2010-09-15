@@ -31,11 +31,13 @@
 #include "qMRMLTreeWidget.h"
 
 //------------------------------------------------------------------------------
-class qMRMLTreeWidgetPrivate: public ctkPrivate<qMRMLTreeWidget>
+class qMRMLTreeWidgetPrivate
 {
+  Q_DECLARE_PUBLIC(qMRMLTreeWidget);
+protected:
+  qMRMLTreeWidget* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLTreeWidget);
-  qMRMLTreeWidgetPrivate();
+  qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object);
   void init();
 
   qMRMLSceneModel*           SceneModel;
@@ -43,7 +45,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate()
+qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object)
+  : q_ptr(&object)
 {
   this->SceneModel = 0;
   this->SortFilterModel = 0;
@@ -52,29 +55,30 @@ qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate()
 //------------------------------------------------------------------------------
 void qMRMLTreeWidgetPrivate::init()
 {
-  CTK_P(qMRMLTreeWidget);
+  Q_Q(qMRMLTreeWidget);
   //p->QTreeView::setModel(new qMRMLItemModel(p));
-  this->SceneModel = new qMRMLSceneTransformModel(p);
-  this->SortFilterModel = new qMRMLSortFilterProxyModel(p);
+  this->SceneModel = new qMRMLSceneTransformModel(q);
+  this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
   this->SortFilterModel->setSourceModel(this->SceneModel);
-  p->QTreeView::setModel(this->SortFilterModel);
+  q->QTreeView::setModel(this->SortFilterModel);
 
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
-  QObject::connect(p, SIGNAL(activated(const QModelIndex&)),
-                   p, SLOT(onActivated(const QModelIndex&)));
-  QObject::connect(p, SIGNAL(clicked(const QModelIndex&)),
-                   p, SLOT(onActivated(const QModelIndex&)));
+  QObject::connect(q, SIGNAL(activated(const QModelIndex&)),
+                   q, SLOT(onActivated(const QModelIndex&)));
+  QObject::connect(q, SIGNAL(clicked(const QModelIndex&)),
+                   q, SLOT(onActivated(const QModelIndex&)));
 
-  p->setUniformRowHeights(true);
+  q->setUniformRowHeights(true);
 }
 
 //------------------------------------------------------------------------------
 qMRMLTreeWidget::qMRMLTreeWidget(QWidget *_parent)
   :QTreeView(_parent)
+  , d_ptr(new qMRMLTreeWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLTreeWidget);
-  ctk_d()->init();
+  Q_D(qMRMLTreeWidget);
+  d->init();
 }
 
 //------------------------------------------------------------------------------
@@ -85,7 +89,7 @@ qMRMLTreeWidget::~qMRMLTreeWidget()
 //------------------------------------------------------------------------------
 void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 {
-  CTK_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeWidget);
   Q_ASSERT(d->SortFilterModel);
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
@@ -95,7 +99,7 @@ void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 vtkMRMLScene* qMRMLTreeWidget::mrmlScene()const
 {
-  CTK_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeWidget);
   Q_ASSERT(d->SceneModel); // can be removed
   return d->SceneModel->mrmlScene();
 }
@@ -103,7 +107,7 @@ vtkMRMLScene* qMRMLTreeWidget::mrmlScene()const
 //------------------------------------------------------------------------------
 void qMRMLTreeWidget::onActivated(const QModelIndex& index)
 {
-  CTK_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeWidget);
   Q_ASSERT(d->SortFilterModel);
   emit currentNodeChanged(d->SortFilterModel->mrmlNode(index));
 }
@@ -111,7 +115,7 @@ void qMRMLTreeWidget::onActivated(const QModelIndex& index)
 //------------------------------------------------------------------------------
 void qMRMLTreeWidget::setListenNodeModifiedEvent(bool listen)
 {
-  CTK_D(qMRMLTreeWidget);
+  Q_D(qMRMLTreeWidget);
   Q_ASSERT(d->SceneModel);
   d->SceneModel->setListenNodeModifiedEvent(listen);
 }
@@ -119,7 +123,7 @@ void qMRMLTreeWidget::setListenNodeModifiedEvent(bool listen)
 //------------------------------------------------------------------------------
 bool qMRMLTreeWidget::listenNodeModifiedEvent()const
 {
-  CTK_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeWidget);
   Q_ASSERT(d->SceneModel);
   return d->SceneModel->listenNodeModifiedEvent();
 }
@@ -127,7 +131,7 @@ bool qMRMLTreeWidget::listenNodeModifiedEvent()const
 //--------------------------------------------------------------------------
 qMRMLSortFilterProxyModel* qMRMLTreeWidget::sortFilterProxyModel()const
 {
-  CTK_D(const qMRMLTreeWidget);
+  Q_D(const qMRMLTreeWidget);
   Q_ASSERT(d->SortFilterModel);
   return d->SortFilterModel;
 }

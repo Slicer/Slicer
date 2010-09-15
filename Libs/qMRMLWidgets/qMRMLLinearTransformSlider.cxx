@@ -34,7 +34,7 @@
 #include "vtkMatrix4x4.h"
 
 //-----------------------------------------------------------------------------
-class qMRMLLinearTransformSliderPrivate: public ctkPrivate<qMRMLLinearTransformSlider>
+class qMRMLLinearTransformSliderPrivate
 {
 public:
   qMRMLLinearTransformSliderPrivate();
@@ -55,14 +55,19 @@ qMRMLLinearTransformSliderPrivate::qMRMLLinearTransformSliderPrivate()
 
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::qMRMLLinearTransformSlider(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new qMRMLLinearTransformSliderPrivate)
 {
-  CTK_INIT_PRIVATE(qMRMLLinearTransformSlider);
+}
+
+// --------------------------------------------------------------------------
+qMRMLLinearTransformSlider::~qMRMLLinearTransformSlider()
+{
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransform)
 {
-  CTK_D(qMRMLLinearTransformSlider);
+  Q_D(qMRMLLinearTransformSlider);
   d->TypeOfTransform = _typeOfTransform;
   this->onMRMLTransformNodeModified(d->MRMLTransformNode);
 }
@@ -70,7 +75,8 @@ void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransfo
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::TransformType qMRMLLinearTransformSlider::typeOfTransform() const
 {
-  return ctk_d()->TypeOfTransform;
+  Q_D(const qMRMLLinearTransformSlider);
+  return d->TypeOfTransform;
 }
 
 // --------------------------------------------------------------------------
@@ -93,7 +99,7 @@ bool qMRMLLinearTransformSlider::isTranslation()const
 void qMRMLLinearTransformSlider::
 setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
-  CTK_D(qMRMLLinearTransformSlider);
+  Q_D(qMRMLLinearTransformSlider);
   d->CoordinateReference = _coordinateReference;
   this->onMRMLTransformNodeModified(d->MRMLTransformNode);
 }
@@ -101,13 +107,14 @@ setCoordinateReference(CoordinateReferenceType _coordinateReference)
 // --------------------------------------------------------------------------
 qMRMLLinearTransformSlider::CoordinateReferenceType qMRMLLinearTransformSlider::coordinateReference() const
 {
-  return ctk_d()->CoordinateReference;
+  Q_D(const qMRMLLinearTransformSlider);
+  return d->CoordinateReference;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
 {
-  CTK_D(qMRMLLinearTransformSlider);
+  Q_D(qMRMLLinearTransformSlider);
   
   if (d->MRMLTransformNode == transformNode) { return; }
 
@@ -125,21 +132,25 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode
 // --------------------------------------------------------------------------
 vtkMRMLLinearTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode()const
 {
-  return ctk_d()->MRMLTransformNode;
+  Q_D(const qMRMLLinearTransformSlider);
+  return d->MRMLTransformNode;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 {
-  CTK_D(qMRMLLinearTransformSlider);
+  Q_D(qMRMLLinearTransformSlider);
   
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
-  if (!transformNode) { return; }
+  if (!transformNode)
+    {
+    return;
+    }
   Q_ASSERT(d->MRMLTransformNode == transformNode);
 
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
-    d->CoordinateReference == Self::GLOBAL, transform);
+    d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform);
 
   vtkMatrix4x4 * matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
@@ -174,10 +185,10 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 // --------------------------------------------------------------------------
 void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 {
-  CTK_D(qMRMLLinearTransformSlider);
+  Q_D(qMRMLLinearTransformSlider);
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
-    d->CoordinateReference == Self::GLOBAL, transform);
+    d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform);
 
   vtkMatrix4x4 * matrix = transform->GetMatrix();
   Q_ASSERT(matrix);

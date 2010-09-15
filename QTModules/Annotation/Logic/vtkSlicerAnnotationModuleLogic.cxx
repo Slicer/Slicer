@@ -66,8 +66,7 @@ vtkStandardNewMacro(vtkSlicerAnnotationModuleLogic)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class vtkSlicerAnnotationModuleLogicPrivate: public ctkPrivate<
-    vtkSlicerAnnotationModuleLogic>
+class vtkSlicerAnnotationModuleLogicPrivate
 {
 public:
   vtkSlicerAnnotationModuleLogicPrivate();
@@ -122,22 +121,18 @@ vtkSlicerAnnotationModuleLogicPrivate::~vtkSlicerAnnotationModuleLogicPrivate()
 
 //-----------------------------------------------------------------------------
 vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
+  : d_ptr(new vtkSlicerAnnotationModuleLogicPrivate)
 {
-  CTK_INIT_PRIVATE(vtkSlicerAnnotationModuleLogic);
-
   this->m_Widget = 0;
 
   this->m_LastAddedAnnotationNode = 0;
-
 }
 
 //-----------------------------------------------------------------------------
 vtkSlicerAnnotationModuleLogic::~vtkSlicerAnnotationModuleLogic()
 {
-
   this->m_Widget = 0;
   this->m_LastAddedAnnotationNode = 0;
-
 }
 
 void vtkSlicerAnnotationModuleLogic::SetAndObserveWidget(qSlicerAnnotationModuleWidget* widget)

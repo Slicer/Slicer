@@ -49,16 +49,17 @@ class vtkMRMLColorTableNode;
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentAnatomicalTreeWidgetPrivate :
-    public QObject, public ctkPrivate<qSlicerEMSegmentAnatomicalTreeWidget>,
+    public QObject,
     public Ui_qSlicerEMSegmentAnatomicalTreeWidget
 {
   Q_OBJECT
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentAnatomicalTreeWidget);
+protected:
+  qSlicerEMSegmentAnatomicalTreeWidget* const q_ptr;
 
 public:
-
-  CTK_DECLARE_PUBLIC(qSlicerEMSegmentAnatomicalTreeWidget);
+  qSlicerEMSegmentAnatomicalTreeWidgetPrivate(qSlicerEMSegmentAnatomicalTreeWidget& object);
   typedef qSlicerEMSegmentAnatomicalTreeWidgetPrivate Self;
-  qSlicerEMSegmentAnatomicalTreeWidgetPrivate();
 
   enum
     {

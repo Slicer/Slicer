@@ -82,8 +82,12 @@ protected:
   /// \sa qSlicerCoreCommandOptions::parse(const QStringList&)
   QHash<QString, QVariant> parsedArgs() const;
 
+protected:
+  QScopedPointer<qSlicerCoreCommandOptionsPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCoreCommandOptions);
+  Q_DECLARE_PRIVATE(qSlicerCoreCommandOptions);
+  Q_DISABLE_COPY(qSlicerCoreCommandOptions);
 
 };
 

@@ -31,29 +31,38 @@
 #include "qMRMLSceneTransformModel.h"
 
 //------------------------------------------------------------------------------
-class qMRMLListWidgetPrivate: public ctkPrivate<qMRMLListWidget>
+class qMRMLListWidgetPrivate
 {
+  Q_DECLARE_PUBLIC(qMRMLListWidget);
+protected:
+  qMRMLListWidget* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLListWidget);
+  qMRMLListWidgetPrivate(qMRMLListWidget& object);
   void init();
 };
 
 //------------------------------------------------------------------------------
+qMRMLListWidgetPrivate::qMRMLListWidgetPrivate(qMRMLListWidget& object)
+  : q_ptr(&object)
+{
+}
+
+//------------------------------------------------------------------------------
 void qMRMLListWidgetPrivate::init()
 {
-  CTK_P(qMRMLListWidget);
+  Q_Q(qMRMLListWidget);
   //p->QListView::setModel(new qMRMLItemModel(p));
   //p->QListView::setModel(new qMRMLSceneModel(p));
   ///new ctkModelTester(p->model(), p);
   
-  qMRMLSceneTransformModel* sceneModel = new qMRMLSceneTransformModel(p);
-  QSortFilterProxyModel* sortModel = new QSortFilterProxyModel(p);
+  qMRMLSceneTransformModel* sceneModel = new qMRMLSceneTransformModel(q);
+  QSortFilterProxyModel* sortModel = new QSortFilterProxyModel(q);
   sortModel->setSourceModel(sceneModel);
   sortModel->setDynamicSortFilter(true);
-  p->QListView::setModel(sortModel);
-  p->setWrapping(true);
-  p->setResizeMode(QListView::Adjust);
-  p->setFlow(QListView::TopToBottom);
+  q->QListView::setModel(sortModel);
+  q->setWrapping(true);
+  q->setResizeMode(QListView::Adjust);
+  q->setFlow(QListView::TopToBottom);
   // We have a problem when the model is reset (qMRMLSceneModel::setMRMLScene(0)), 
   // the QSortFilterProxyModel doesn't realize that the rows have disappeared 
   // and QSortFilterProxyModel::rowCount(QModelIndex) returns 1(the mrmlscene), which
@@ -67,16 +76,16 @@ void qMRMLListWidgetPrivate::init()
 
 //------------------------------------------------------------------------------
 qMRMLListWidget::qMRMLListWidget(QWidget *_parent)
-  :QListView(_parent)
+  : QListView(_parent)
+  , d_ptr(new qMRMLListWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLListWidget);
-  ctk_d()->init();
+  Q_D(qMRMLListWidget);
+  d->init();
 }
 
 //------------------------------------------------------------------------------
 qMRMLListWidget::~qMRMLListWidget()
 {
-
 }
 
 //------------------------------------------------------------------------------

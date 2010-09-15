@@ -26,7 +26,7 @@ public:
   /// Constructors
   typedef qSlicerWidget Superclass;
   explicit qSlicerScalarVolumeDisplayWidget(QWidget* parent);
-  virtual ~qSlicerScalarVolumeDisplayWidget(){}
+  virtual ~qSlicerScalarVolumeDisplayWidget();
 
   vtkMRMLScalarVolumeNode* volumeNode()const;
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode()const;
@@ -48,8 +48,12 @@ protected slots:
 
 protected:
   void showEvent(QShowEvent * event);
+protected:
+  QScopedPointer<qSlicerScalarVolumeDisplayWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerScalarVolumeDisplayWidget);
+  Q_DECLARE_PRIVATE(qSlicerScalarVolumeDisplayWidget);
+  Q_DISABLE_COPY(qSlicerScalarVolumeDisplayWidget);
 };
 
 #endif

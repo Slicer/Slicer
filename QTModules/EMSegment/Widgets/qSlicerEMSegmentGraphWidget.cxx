@@ -46,11 +46,14 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentGraphWidgetPrivate : public ctkPrivate<qSlicerEMSegmentGraphWidget>,
+class qSlicerEMSegmentGraphWidgetPrivate :
                                           public Ui_qSlicerEMSegmentGraphWidget
 {
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentGraphWidget);
+protected:
+  qSlicerEMSegmentGraphWidget* const q_ptr;
 public:
-  qSlicerEMSegmentGraphWidgetPrivate();
+  qSlicerEMSegmentGraphWidgetPrivate(qSlicerEMSegmentGraphWidget& object);
   virtual void setupUi(qSlicerEMSegmentWidget* widget);
   QList<vtkIdType> classNodeIDs(vtkIdType nodeID)const;
   void addClass(vtkIdType nodeID);
@@ -70,7 +73,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentGraphWidgetPrivate::qSlicerEMSegmentGraphWidgetPrivate()
+qSlicerEMSegmentGraphWidgetPrivate::qSlicerEMSegmentGraphWidgetPrivate(qSlicerEMSegmentGraphWidget& object)
+  : q_ptr(&object)
 {
   this->Chart0View = vtkSmartPointer<vtkContextView>::New();
   this->Chart0 = vtkSmartPointer<vtkChartXY>::New();
@@ -84,7 +88,7 @@ qSlicerEMSegmentGraphWidgetPrivate::qSlicerEMSegmentGraphWidgetPrivate()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentGraphWidgetPrivate::setupUi(qSlicerEMSegmentWidget* newParent)
 {
-  CTK_P(qSlicerEMSegmentGraphWidget);
+  Q_Q(qSlicerEMSegmentGraphWidget);
   this->Ui_qSlicerEMSegmentGraphWidget::setupUi(newParent);
   this->Chart0View->SetInteractor(this->Graph0Widget->GetInteractor());
   this->Graph0Widget->SetRenderWindow(this->Chart0View->GetRenderWindow());
@@ -95,25 +99,25 @@ void qSlicerEMSegmentGraphWidgetPrivate::setupUi(qSlicerEMSegmentWidget* newPare
   this->Input0Layout->addLayout(this->ClassListLayout);
 
   QObject::connect(this->Input0ComboBox, SIGNAL(currentIndexChanged(const QString&)),
-                   p, SLOT(onCurrentInput0VolumeChanged(const QString&)));
+                   q, SLOT(onCurrentInput0VolumeChanged(const QString&)));
   QObject::connect(this->Input1ComboBox, SIGNAL(currentIndexChanged(const QString&)),
-                   p, SLOT(onCurrentInput1VolumeChanged(const QString&)));
+                   q, SLOT(onCurrentInput1VolumeChanged(const QString&)));
 }
 
 //-----------------------------------------------------------------------------
 QList<vtkIdType> qSlicerEMSegmentGraphWidgetPrivate::classNodeIDs(vtkIdType nodeID)const
 {
-  CTK_P(const qSlicerEMSegmentGraphWidget);
-  Q_ASSERT(p->mrmlManager());
-  if (p->mrmlManager()->GetTreeNodeIsLeaf(nodeID))
+  Q_Q(const qSlicerEMSegmentGraphWidget);
+  Q_ASSERT(q->mrmlManager());
+  if (q->mrmlManager()->GetTreeNodeIsLeaf(nodeID))
     {
     return QList<vtkIdType>() << nodeID;
     }
   QList<vtkIdType> list;
-  const int childCount = p->mrmlManager()->GetTreeNodeNumberOfChildren(nodeID);
+  const int childCount = q->mrmlManager()->GetTreeNodeNumberOfChildren(nodeID);
   for(int i = 0; i < childCount; ++i)
     {
-    list += this->classNodeIDs(p->mrmlManager()->GetTreeNodeChildNodeID(nodeID, i));
+    list += this->classNodeIDs(q->mrmlManager()->GetTreeNodeChildNodeID(nodeID, i));
     }
   return list;
 }
@@ -121,23 +125,23 @@ QList<vtkIdType> qSlicerEMSegmentGraphWidgetPrivate::classNodeIDs(vtkIdType node
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentGraphWidgetPrivate::addClass(vtkIdType classID)
 {
-  CTK_P(qSlicerEMSegmentGraphWidget);
-  vtkMRMLEMSTreeNode* classNode = p->mrmlManager()->GetTreeNode(classID);
-  QCheckBox* checkBox = new QCheckBox(p);
+  Q_Q(qSlicerEMSegmentGraphWidget);
+  vtkMRMLEMSTreeNode* classNode = q->mrmlManager()->GetTreeNode(classID);
+  QCheckBox* checkBox = new QCheckBox(q);
   // ID
   checkBox->setAccessibleName(QString::number(classID));
   // name
   checkBox->setText(classNode->GetName());
   // color
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
-    p->mrmlScene()->GetNodeByID( p->mrmlManager()->GetColormap()?
-                                 p->mrmlManager()->GetColormap():
+    q->mrmlScene()->GetNodeByID( q->mrmlManager()->GetColormap()?
+                                 q->mrmlManager()->GetColormap():
                                  "vtkMRMLColorTableNodeLabels"));
   vtkLookupTable* lut = colorTableNode ? colorTableNode->GetLookupTable() : 0;
   double rgba[4] = {0., 0., 0., 1.};
   if (lut)
     {
-    lut->GetTableValue(p->mrmlManager()->GetTreeNodeIntensityLabel(classID),rgba);
+    lut->GetTableValue(q->mrmlManager()->GetTreeNodeIntensityLabel(classID),rgba);
     }
   QColor classColor = QColor::fromRgbF(rgba[0], rgba[1], rgba[2], 1.);
   if (classColor.lightnessF() < 0.4)
@@ -161,7 +165,7 @@ void qSlicerEMSegmentGraphWidgetPrivate::addClass(vtkIdType classID)
   this->ClassPlotList[0][classID] = plot;
   checkBox->setChecked(plot->GetVisible());
   QObject::connect(checkBox, SIGNAL(toggled(bool)),
-                   p, SLOT(onClassVisibilityToggled(bool)));
+                   q, SLOT(onClassVisibilityToggled(bool)));
   this->updateClass(classID, 0);
   // Plot gaussian, chart1
   plot = vtkSmartPointer<vtkPlotGaussian>::New();
@@ -172,19 +176,19 @@ void qSlicerEMSegmentGraphWidgetPrivate::addClass(vtkIdType classID)
   this->ClassPlotList[1][classID] = plot;
   checkBox->setChecked(plot->GetVisible());
   QObject::connect(checkBox, SIGNAL(toggled(bool)),
-                   p, SLOT(onClassVisibilityToggled(bool)));
+                   q, SLOT(onClassVisibilityToggled(bool)));
   this->updateClass(classID, 1);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentGraphWidgetPrivate::updateClass(vtkIdType classID, int input)
 {
-  CTK_P(qSlicerEMSegmentGraphWidget);
+  Q_Q(qSlicerEMSegmentGraphWidget);
   vtkPlotGaussian* plot = this->ClassPlotList[input][classID];
   int index = this->volumeIndex(this->volumeID(input));
-  plot->SetMean(p->mrmlManager()->GetTreeNodeDistributionLogMean(classID, index));
-  plot->SetCovariance(p->mrmlManager()->GetTreeNodeDistributionLogCovariance(classID, index, index));
-  plot->SetProbability(p->mrmlManager()->GetTreeNodeClassProbability(classID));
+  plot->SetMean(q->mrmlManager()->GetTreeNodeDistributionLogMean(classID, index));
+  plot->SetCovariance(q->mrmlManager()->GetTreeNodeDistributionLogCovariance(classID, index, index));
+  plot->SetProbability(q->mrmlManager()->GetTreeNodeClassProbability(classID));
   plot->SetLog(true);
   plot->GetScene()->SetDirty(true);
 }
@@ -213,11 +217,16 @@ int qSlicerEMSegmentGraphWidgetPrivate::volumeIndex(const QString& volumeID)cons
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentGraphWidget::qSlicerEMSegmentGraphWidget(QWidget *parentWidget)
-  :Superclass(parentWidget)
+  : Superclass(parentWidget)
+  , d_ptr(new qSlicerEMSegmentGraphWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentGraphWidget);
-  CTK_D(qSlicerEMSegmentGraphWidget);
+  Q_D(qSlicerEMSegmentGraphWidget);
   d->setupUi(this);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentGraphWidget::~qSlicerEMSegmentGraphWidget()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -234,7 +243,7 @@ void qSlicerEMSegmentGraphWidget::setMRMLManager(vtkEMSegmentMRMLManager* newMRM
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentGraphWidget::updateFromMRMLManager()
 {
-  CTK_D(qSlicerEMSegmentGraphWidget);
+  Q_D(qSlicerEMSegmentGraphWidget);
   d->VolumeList.clear();
   d->Input0ComboBox->clear();
   d->Input1ComboBox->clear();
@@ -284,7 +293,7 @@ void qSlicerEMSegmentGraphWidget::updateFromMRMLManager()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentGraphWidget::onCurrentInput0VolumeChanged(const QString& volumeName)
 {
-  CTK_D(qSlicerEMSegmentGraphWidget);
+  Q_D(qSlicerEMSegmentGraphWidget);
   QString input1 = d->Input1ComboBox->currentText();
   // if (input1 == volumeName)
   //   {// the volume can't be selectable as Input1, select a different one
@@ -305,7 +314,7 @@ void qSlicerEMSegmentGraphWidget::onCurrentInput0VolumeChanged(const QString& vo
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentGraphWidget::onCurrentInput1VolumeChanged(const QString& volumeName)
 {
-  CTK_D(qSlicerEMSegmentGraphWidget);
+  Q_D(qSlicerEMSegmentGraphWidget);
   QString input0 = d->Input0ComboBox->currentText();
   // if (input0 == volumeName)
   //   {// the volume can't be selectable as Input1, select a different one
@@ -325,7 +334,7 @@ void qSlicerEMSegmentGraphWidget::onCurrentInput1VolumeChanged(const QString& vo
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentGraphWidget::onClassVisibilityToggled(bool visible)
 {
-  CTK_D(qSlicerEMSegmentGraphWidget);
+  Q_D(qSlicerEMSegmentGraphWidget);
   QCheckBox* classCheckBox = qobject_cast<QCheckBox*>(this->sender());
   Q_ASSERT(classCheckBox);
   vtkIdType classID = classCheckBox->accessibleName().toInt();

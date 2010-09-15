@@ -66,8 +66,12 @@ protected slots:
   virtual void onSceneImportedEvent();
   virtual void onSceneRestoredEvent();
 
+protected:
+  QScopedPointer<qMRMLEventLoggerWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLEventLoggerWidget);
+  Q_DECLARE_PRIVATE(qMRMLEventLoggerWidget);
+  Q_DISABLE_COPY(qMRMLEventLoggerWidget);
 };
 
 #endif

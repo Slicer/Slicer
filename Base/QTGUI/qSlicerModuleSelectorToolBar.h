@@ -27,6 +27,7 @@ public:
   /// toolbar area)
   qSlicerModuleSelectorToolBar(const QString& title, QWidget* parent = 0);
   qSlicerModuleSelectorToolBar(QWidget* parent = 0);
+  virtual ~qSlicerModuleSelectorToolBar();
 
   ///
   /// Add a module by name. The module action will be inserted
@@ -65,8 +66,12 @@ protected slots:
   void actionSelected(QAction* action);
   void searchModule();
 
+protected:
+  QScopedPointer<qSlicerModuleSelectorToolBarPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerModuleSelectorToolBar);
+  Q_DECLARE_PRIVATE(qSlicerModuleSelectorToolBar);
+  Q_DISABLE_COPY(qSlicerModuleSelectorToolBar);
 };
 
 //---------------------------------------------------------------------------

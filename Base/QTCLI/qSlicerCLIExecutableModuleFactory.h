@@ -64,7 +64,7 @@ public:
   typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
   
   qSlicerCLIExecutableModuleFactory();
-  virtual ~qSlicerCLIExecutableModuleFactory(){}
+  virtual ~qSlicerCLIExecutableModuleFactory();
 
   ///
   virtual void registerItems();
@@ -81,8 +81,12 @@ public:
 protected:
   virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* createFactoryPluginItem(
     const QFileInfo& plugin)const;
+
+  QScopedPointer<qSlicerCLIExecutableModuleFactoryPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCLIExecutableModuleFactory);
+  Q_DECLARE_PRIVATE(qSlicerCLIExecutableModuleFactory);
+  Q_DISABLE_COPY(qSlicerCLIExecutableModuleFactory);
 };
 
 #endif

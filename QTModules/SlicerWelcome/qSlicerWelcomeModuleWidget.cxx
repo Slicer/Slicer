@@ -33,20 +33,28 @@
 #include "ctkButtonGroup.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerWelcomeModuleWidgetPrivate: public ctkPrivate<qSlicerWelcomeModuleWidget>,
-                                         public Ui_qSlicerWelcomeModule
+class qSlicerWelcomeModuleWidgetPrivate: public Ui_qSlicerWelcomeModule
 {
 public:
   void setupUi(qSlicerWidget* widget);
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerWelcomeModuleWidget, QWidget*);
+qSlicerWelcomeModuleWidget::qSlicerWelcomeModuleWidget(QWidget* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerWelcomeModuleWidgetPrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerWelcomeModuleWidget::~qSlicerWelcomeModuleWidget()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerWelcomeModuleWidget::setup()
 {
-  CTK_D(qSlicerWelcomeModuleWidget);
+  Q_D(qSlicerWelcomeModuleWidget);
   d->setupUi(this);
 }
 

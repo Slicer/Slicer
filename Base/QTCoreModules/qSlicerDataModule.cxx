@@ -23,17 +23,21 @@
 #include "qSlicerDataModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerDataModulePrivate: public ctkPrivate<qSlicerDataModule>
+class qSlicerDataModulePrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerDataModule);
 };
 
 //-----------------------------------------------------------------------------
 qSlicerDataModule::qSlicerDataModule(QObject* parentObject)
   :Superclass(parentObject)
+  , d_ptr(new qSlicerDataModulePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerDataModule);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerDataModule::~qSlicerDataModule()
+{
 }
 
 //-----------------------------------------------------------------------------

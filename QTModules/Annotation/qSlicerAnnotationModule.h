@@ -21,6 +21,7 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerAnnotationModule(QObject *parent=0);
+  virtual ~qSlicerAnnotationModule();
 
   ///
   /// Return the help and acknowledgement text for the Annotation module.
@@ -30,8 +31,6 @@ public:
   ///
   /// Return the icon of the Annotation module.
   virtual QIcon icon()const;
-
-  virtual ~qSlicerAnnotationModule(){}
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
@@ -49,8 +48,12 @@ protected:
   // Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerAnnotationModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerAnnotationModule);
+  Q_DECLARE_PRIVATE(qSlicerAnnotationModule);
+  Q_DISABLE_COPY(qSlicerAnnotationModule);
 };
 
 #endif

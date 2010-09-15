@@ -32,10 +32,9 @@
 #include <ModuleDescriptionParser.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIModulePrivate: public ctkPrivate<qSlicerCLIModule>
+class qSlicerCLIModulePrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerCLIModule);
   typedef qSlicerCLIModulePrivate Self;
   qSlicerCLIModulePrivate();
 
@@ -64,14 +63,19 @@ qSlicerCLIModulePrivate::qSlicerCLIModulePrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModule::qSlicerCLIModule(QWidget* _parent):Superclass(_parent)
+  , d_ptr(new qSlicerCLIModulePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerCLIModule);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCLIModule::~qSlicerCLIModule()
+{
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setup()
 {
-  CTK_D(qSlicerCLIModule);
+  Q_D(qSlicerCLIModule);
   
   // Temporary directory should be set before the module is initialized
   Q_ASSERT(!d->TempDirectory.isEmpty());
@@ -84,7 +88,7 @@ void qSlicerCLIModule::setup()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerCLIModule::createWidgetRepresentation()
 {
-  CTK_D(qSlicerCLIModule);
+  Q_D(qSlicerCLIModule);
   return new qSlicerCLIModuleWidget(&d->Desc);
 }
 
@@ -105,7 +109,7 @@ CTK_SET_CXX(qSlicerCLIModule, const QString&, setTempDirectory, TempDirectory);
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
 {
-  CTK_D(qSlicerCLIModule);
+  Q_D(qSlicerCLIModule);
   //qDebug() << "xmlModuleDescription:" << xmlModuleDescription;
   Q_ASSERT(!this->entryPoint().isEmpty());
 

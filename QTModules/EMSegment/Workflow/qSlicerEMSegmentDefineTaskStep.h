@@ -42,13 +42,18 @@ public:
 
   typedef qSlicerEMSegmentWorkflowWidgetStep Superclass;
   explicit qSlicerEMSegmentDefineTaskStep(ctkWorkflow* newWorkflow, QWidget* parent = 0);
+  virtual ~qSlicerEMSegmentDefineTaskStep();
 
 public slots:
 
   virtual void createUserInterface();
 
+protected:
+  QScopedPointer<qSlicerEMSegmentDefineTaskStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentDefineTaskStep);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentDefineTaskStep);
+  Q_DISABLE_COPY(qSlicerEMSegmentDefineTaskStep);
 
 };
 

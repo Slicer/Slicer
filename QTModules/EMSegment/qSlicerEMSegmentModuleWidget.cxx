@@ -52,13 +52,13 @@
 #include <vtkSlicerEMSegmentLogic.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentModuleWidgetPrivate: public ctkPrivate<qSlicerEMSegmentModuleWidget>,
-                                           public Ui_qSlicerEMSegmentModule
+class qSlicerEMSegmentModuleWidgetPrivate: public Ui_qSlicerEMSegmentModule
 {
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentModuleWidget);
+protected:
+  qSlicerEMSegmentModuleWidget* const q_ptr;
 public:
-
-  CTK_DECLARE_PUBLIC(qSlicerEMSegmentModuleWidget);
-  qSlicerEMSegmentModuleWidgetPrivate();
+  qSlicerEMSegmentModuleWidgetPrivate(qSlicerEMSegmentModuleWidget& object);
   ~qSlicerEMSegmentModuleWidgetPrivate();
 
   vtkSlicerEMSegmentLogic* logic() const;
@@ -72,7 +72,8 @@ public:
 // qSlicerEMSegmentModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentModuleWidgetPrivate::qSlicerEMSegmentModuleWidgetPrivate()
+qSlicerEMSegmentModuleWidgetPrivate::qSlicerEMSegmentModuleWidgetPrivate(qSlicerEMSegmentModuleWidget& object)
+  : q_ptr(&object)
 {
   this->Workflow = 0;
   this->WorkflowWidget = 0;
@@ -92,8 +93,8 @@ qSlicerEMSegmentModuleWidgetPrivate::~qSlicerEMSegmentModuleWidgetPrivate()
 //-----------------------------------------------------------------------------
 vtkSlicerEMSegmentLogic* qSlicerEMSegmentModuleWidgetPrivate::logic()const
 {
-  CTK_P(const qSlicerEMSegmentModuleWidget);
-  return vtkSlicerEMSegmentLogic::SafeDownCast(p->logic());
+  Q_Q(const qSlicerEMSegmentModuleWidget);
+  return vtkSlicerEMSegmentLogic::SafeDownCast(q->logic());
 }
 
 //-----------------------------------------------------------------------------
@@ -104,12 +105,21 @@ const QString qSlicerEMSegmentModuleWidget::SimpleMode = "simple";
 const QString qSlicerEMSegmentModuleWidget::AdvancedMode = "advanced";
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerEMSegmentModuleWidget, QWidget*);
+qSlicerEMSegmentModuleWidget::qSlicerEMSegmentModuleWidget(QWidget* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerEMSegmentModuleWidgetPrivate(*this))
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentModuleWidget::~qSlicerEMSegmentModuleWidget()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentModuleWidget::setup()
 {
-  CTK_D(qSlicerEMSegmentModuleWidget);
+  Q_D(qSlicerEMSegmentModuleWidget);
   d->setupUi(this);
 
   // create the workflow and workflow widget if necessary
@@ -154,13 +164,15 @@ void qSlicerEMSegmentModuleWidget::setup()
   d->Workflow->setInitialStep(defineTaskStep);
 
   // Add transition from DefineTask step to DefineInputChannelsAdvanced step
-  d->Workflow->addTransition(defineTaskStep, defineInputChannelsAdvancedStep, Self::AdvancedMode);
+  d->Workflow->addTransition(defineTaskStep, defineInputChannelsAdvancedStep,
+                             qSlicerEMSegmentModuleWidget::AdvancedMode);
 
   // ... and from DefineInputChannelsAdvanced step to DefineAnatomicalTree step
   d->Workflow->addTransition(defineInputChannelsAdvancedStep, commonSteps.first());
 
   // Add transition from DefineTask step to DefineInputChannelsSimple step
-  d->Workflow->addTransition(defineTaskStep, defineInputChannelsSimpleStep, Self::SimpleMode);
+  d->Workflow->addTransition(defineTaskStep, defineInputChannelsSimpleStep,
+                             qSlicerEMSegmentModuleWidget::SimpleMode);
 
   // ... and from DefineInputChannelsAdvanced to DefineAnatomicalTree step
   d->Workflow->addTransition(defineInputChannelsSimpleStep, commonSteps.first());

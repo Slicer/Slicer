@@ -44,8 +44,12 @@ public:
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
 
+protected:
+  QScopedPointer<qMRMLListWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLListWidget);
+  Q_DECLARE_PRIVATE(qMRMLListWidget);
+  Q_DISABLE_COPY(qMRMLListWidget);
 };
 
 #endif

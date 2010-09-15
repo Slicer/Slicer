@@ -40,6 +40,7 @@ public:
 
   typedef qSlicerCoreModule Superclass;
   qSlicerSliceControllerModule(QObject *parent=0);
+  virtual ~qSlicerSliceControllerModule();
 
   qSlicerGetTitleMacro("Slice Controllers");
 
@@ -56,8 +57,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerSliceControllerModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerSliceControllerModule);
+  Q_DECLARE_PRIVATE(qSlicerSliceControllerModule);
+  Q_DISABLE_COPY(qSlicerSliceControllerModule);
 };
 
 #endif

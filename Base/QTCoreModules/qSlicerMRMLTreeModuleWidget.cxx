@@ -26,22 +26,27 @@
 #include "ui_qSlicerMRMLTreeModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerMRMLTreeModuleWidgetPrivate: public ctkPrivate<qSlicerMRMLTreeModuleWidget>,
-                                          public Ui_qSlicerMRMLTreeModule
+class qSlicerMRMLTreeModuleWidgetPrivate: public Ui_qSlicerMRMLTreeModule
 {
 public:
-  qSlicerMRMLTreeModuleWidgetPrivate()
-    {
-    }
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMRMLTreeModuleWidget, QWidget*);
+qSlicerMRMLTreeModuleWidget::qSlicerMRMLTreeModuleWidget(QWidget* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerMRMLTreeModuleWidgetPrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerMRMLTreeModuleWidget::~qSlicerMRMLTreeModuleWidget()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerMRMLTreeModuleWidget::setup()
 {
-  CTK_D(qSlicerMRMLTreeModuleWidget);
+  Q_D(qSlicerMRMLTreeModuleWidget);
   d->setupUi(this);
 
 }

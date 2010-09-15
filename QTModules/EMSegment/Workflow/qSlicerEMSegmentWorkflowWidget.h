@@ -16,12 +16,15 @@ class qSlicerEMSegmentWorkflowWidget : public qMRMLWidget
 public:
   typedef qMRMLWidget Superclass;
   explicit qSlicerEMSegmentWorkflowWidget(QWidget *newParent = 0);
+  virtual ~qSlicerEMSegmentWorkflowWidget();
 
   virtual ctkWorkflowWidget* workflowWidget()const;
   virtual void setWorkflowWidget(ctkWorkflowWidget* workflowWidget);
-
+protected:
+  QScopedPointer<qSlicerEMSegmentWorkflowWidgetPrivate> d_ptr;
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentWorkflowWidget);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentWorkflowWidget);
+  Q_DISABLE_COPY(qSlicerEMSegmentWorkflowWidget);
 
 };
 

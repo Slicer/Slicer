@@ -35,13 +35,14 @@
 //-----------------------------------------------------------------------------
 class qSlicerModelsDialogPrivate
   : public QDialog
-  , public ctkPrivate<qSlicerModelsDialog>
   , public Ui_qSlicerModelsDialog
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(qSlicerModelsDialog);
+  Q_DECLARE_PUBLIC(qSlicerModelsDialog);
+protected:
+  qSlicerModelsDialog* const q_ptr;
 public:
-  explicit qSlicerModelsDialogPrivate(QWidget* parentWidget = 0);
+  explicit qSlicerModelsDialogPrivate(qSlicerModelsDialog& object, QWidget* parentWidget = 0);
   virtual ~qSlicerModelsDialogPrivate();
 
   void init();

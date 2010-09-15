@@ -38,12 +38,17 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerColorsModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerColorsModuleWidget();
 
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerColorsModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerColorsModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerColorsModuleWidget);
+  Q_DISABLE_COPY(qSlicerColorsModuleWidget);
 };
 
 #endif

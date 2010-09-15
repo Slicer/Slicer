@@ -48,8 +48,7 @@ static ctkLogger logger(
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineInputChannelsStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineInputChannelsStep>,
-                                                       public Ui_qSlicerEMSegmentDefineInputChannelsStep
+class qSlicerEMSegmentDefineInputChannelsStepPrivate : public Ui_qSlicerEMSegmentDefineInputChannelsStep
 {
 public:
   qSlicerEMSegmentDefineInputChannelsStepPrivate();
@@ -85,26 +84,31 @@ const QString qSlicerEMSegmentDefineInputChannelsStep::AdvancedStepId =
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineInputChannelsStep::qSlicerEMSegmentDefineInputChannelsStep(ctkWorkflow* newWorkflow, qSlicerEMSegmentDefineInputChannelsStep::StepModeType stepMode, QWidget* newWidget)
   : Superclass(newWorkflow, "", newWidget)
+  , d_ptr(new qSlicerEMSegmentDefineInputChannelsStepPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentDefineInputChannelsStep);
-  CTK_D(qSlicerEMSegmentDefineInputChannelsStep);
+  Q_D(qSlicerEMSegmentDefineInputChannelsStep);
   d->setupUi(this);
 
   if (stepMode == qSlicerEMSegmentDefineInputChannelsStep::Advanced)
     {
-    this->setId(Self::AdvancedStepId);
+    this->setId(qSlicerEMSegmentDefineInputChannelsStep::AdvancedStepId);
     this->setName("2/9. Define Input Channels");
     this->setDescription("Name the input channels and choose the set of scans for segmentation.");
     }
   else
     {
-    this->setId(Self::SimpleStepId);
+    this->setId(qSlicerEMSegmentDefineInputChannelsStep::SimpleStepId);
     this->setName("2/2. Define Input Channels");
     this->setDescription("Choose the set of scans for segmentation.");
     this->setButtonBoxHints(ctkWorkflowWidgetStep::NextButtonDisabled);
     }
 
   d->StepMode = stepMode;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentDefineInputChannelsStep::~qSlicerEMSegmentDefineInputChannelsStep()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -118,7 +122,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
 {
   Q_UNUSED(desiredBranchId);
 
-  CTK_D(qSlicerEMSegmentDefineInputChannelsStep);
+  Q_D(qSlicerEMSegmentDefineInputChannelsStep);
 
   Q_ASSERT(this->mrmlManager());
   Q_ASSERT(this->mrmlManager()->GetTargetInputNode());
@@ -201,7 +205,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::validate(const QString& desiredBra
 
   // Update whether the AlignedTargetNode and AlignedAtlasNode is valid in the MRML manager,
   // according to whether we are in simple or advanced modes.
-  if (this->id() == Self::SimpleStepId)
+  if (this->id() == qSlicerEMSegmentDefineInputChannelsStep::SimpleStepId)
     {
     // TODO Original code calls tcl script here for customized EM Segment workflows
     // TODO Original code calls:
@@ -230,7 +234,7 @@ void qSlicerEMSegmentDefineInputChannelsStep::onExit(
 {
   Q_UNUSED(goingTo);
 
-  CTK_D(qSlicerEMSegmentDefineInputChannelsStep);
+  Q_D(qSlicerEMSegmentDefineInputChannelsStep);
 
   Q_ASSERT(this->mrmlManager());
 

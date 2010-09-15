@@ -38,7 +38,8 @@
 // qSlicerCLIModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate()
+qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWidget& object)
+  :q_ptr(&object)
 {
   this->ProcessInformation = 0;
   this->Name = "NA";
@@ -49,8 +50,8 @@ qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate()
 //-----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic* qSlicerCLIModuleWidgetPrivate::logic()const
 {
-  CTK_P(const qSlicerCLIModuleWidget);
-  return vtkSlicerCLIModuleLogic::SafeDownCast(p->logic());
+  Q_Q(const qSlicerCLIModuleWidget);
+  return vtkSlicerCLIModuleLogic::SafeDownCast(q->logic());
 }
 
 //-----------------------------------------------------------------------------
@@ -63,7 +64,7 @@ vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidgetPrivate::commandLineModuleNo
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
-  CTK_P(qSlicerCLIModuleWidget);
+  Q_Q(qSlicerCLIModuleWidget);
   
   this->Ui_qSlicerCLIModule::setupUi(widget);
 
@@ -77,13 +78,13 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // Connect buttons
   this->connect(this->ApplyPushButton, SIGNAL(pressed()),
-                p, SLOT(apply()));
+                q, SLOT(apply()));
 
   this->connect(this->CancelPushButton, SIGNAL(pressed()),
-                p, SLOT(cancel()));
+                q, SLOT(cancel()));
 
   this->connect(this->DefaultPushButton, SIGNAL(pressed()),
-                p, SLOT(reset()));
+                q, SLOT(reset()));
 
   this->connect(this->MRMLCommandLineModuleNodeSelector,
                 SIGNAL(currentNodeChanged(bool)),
@@ -91,7 +92,7 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->connect(this->MRMLCommandLineModuleNodeSelector,
                 SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                p,SLOT(setCurrentCommandLineModuleNode(vtkMRMLNode*)));
+                q, SLOT(setCurrentCommandLineModuleNode(vtkMRMLNode*)));
 
   this->connect(this->MRMLCommandLineModuleNodeSelector,
                 SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
@@ -235,13 +236,13 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidgetPrivate::onValueChanged(const QString& name, const QVariant& value)
 {
-  CTK_P(qSlicerCLIModuleWidget);
+  Q_Q(qSlicerCLIModuleWidget);
   // make sure a command line module node is created
   if (this->CommandLineModuleNode != 0 ||
       // but if the scene is closing, then nevermind, values are changing
       // because nodes are getting removed
-      !p->mrmlScene() ||
-      p->mrmlScene()->GetIsClosing())
+      !q->mrmlScene() ||
+      q->mrmlScene()->GetIsClosing())
     {
     return;
     }
@@ -257,11 +258,12 @@ void qSlicerCLIModuleWidgetPrivate::onValueChanged(const QString& name, const QV
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(
-  ModuleDescription* desc, QWidget* _parent):Superclass(_parent)
+  ModuleDescription* desc, QWidget* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerCLIModuleWidgetPrivate(*this))
 {
   Q_ASSERT(desc);
-  CTK_INIT_PRIVATE(qSlicerCLIModuleWidget);
-  CTK_D(qSlicerCLIModuleWidget);
+  Q_D(qSlicerCLIModuleWidget);
 
   d->ModuleDescriptionObject = *desc;
 
@@ -281,9 +283,14 @@ qSlicerCLIModuleWidget::qSlicerCLIModuleWidget(
 }
 
 //-----------------------------------------------------------------------------
+qSlicerCLIModuleWidget::~qSlicerCLIModuleWidget()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::setup()
 {
-  CTK_D(qSlicerCLIModuleWidget);
+  Q_D(qSlicerCLIModuleWidget);
   d->setupUi(this);
 }
 
@@ -291,7 +298,7 @@ void qSlicerCLIModuleWidget::setup()
 void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
   vtkMRMLNode* commandLineModuleNode)
 {
-  CTK_D(qSlicerCLIModuleWidget);
+  Q_D(qSlicerCLIModuleWidget);
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   if (node == d->CommandLineModuleNode)
@@ -320,7 +327,7 @@ CTK_SET_CXX(qSlicerCLIModuleWidget, const QString&, setModuleEntryPoint, ModuleE
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::apply()
 {
-  CTK_D(qSlicerCLIModuleWidget);
+  Q_D(qSlicerCLIModuleWidget);
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);
   d->CLIModuleUIHelper->updateMRMLCommandLineModuleNode(node);
@@ -336,7 +343,7 @@ void qSlicerCLIModuleWidget::cancel()
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::reset()
 {
-  CTK_D(qSlicerCLIModuleWidget);
+  Q_D(qSlicerCLIModuleWidget);
   qDebug() << "qSlicerCLIModuleWidgetPrivate::onDefaultButtonPressed";
   vtkMRMLCommandLineModuleNode* node = d->commandLineModuleNode();
   Q_ASSERT(node);

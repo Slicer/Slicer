@@ -50,15 +50,15 @@ class qSlicerCLIModuleUIHelper;
 
 //-----------------------------------------------------------------------------
 class qSlicerCLIModuleWidgetPrivate: public QObject,
-                                     public ctkPrivate<qSlicerCLIModuleWidget>,
                                      public Ui_qSlicerCLIModule
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(qSlicerCLIModuleWidget);
-  
+  Q_DECLARE_PUBLIC(qSlicerCLIModuleWidget);
+protected:
+  qSlicerCLIModuleWidget* const q_ptr;
 public:
   typedef qSlicerCLIModuleWidgetPrivate Self;
-  qSlicerCLIModuleWidgetPrivate();
+  qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWidget& object);
   
   /// 
   /// Convenient function to cast vtkSlicerLogic into vtkSlicerCLIModuleLogic

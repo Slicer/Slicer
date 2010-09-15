@@ -152,9 +152,13 @@ vtkSlicerModelsLogic* modelsLogic()
 }
 */
 //-----------------------------------------------------------------------------
-class qSlicerSlicer2SceneReaderPrivate: public ctkPrivate<qSlicerSlicer2SceneReader>
+class qSlicerSlicer2SceneReaderPrivate
 {
+  Q_DECLARE_PUBLIC(qSlicerSlicer2SceneReader);
+protected:
+  qSlicerSlicer2SceneReader* const q_ptr;
 public:
+  qSlicerSlicer2SceneReaderPrivate(qSlicerSlicer2SceneReader& object);
   ///
   typedef QMap<QString, QString> NodeType;
   
@@ -183,6 +187,11 @@ protected:
   qSlicerCoreIOManager* ioManager()const;
 };
 
+//-----------------------------------------------------------------------------
+qSlicerSlicer2SceneReaderPrivate::qSlicerSlicer2SceneReaderPrivate(qSlicerSlicer2SceneReader& object)
+  :q_ptr(&object)
+{
+}
 
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManager* qSlicerSlicer2SceneReaderPrivate::ioManager()const
@@ -341,7 +350,7 @@ void qSlicerSlicer2SceneReaderPrivate::importTransformNode(NodeType& node)
 //proc ImportNodeMatrix {node} {
 void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
 {
-  CTK_P(qSlicerSlicer2SceneReader);
+  Q_Q(qSlicerSlicer2SceneReader);
   //upvar $node n
   //set transformNode [vtkMRMLLinearTransformNode New]
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::New();
@@ -371,7 +380,7 @@ void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
   matrix->DeepCopy(elements);
   
   //$::slicer3::MRMLScene AddNode $transformNode
-  p->mrmlScene()->AddNode(transformNode);
+  q->mrmlScene()->AddNode(transformNode);
   this->LoadedNodes << transformNode->GetID();
 
   //set parentTransform ""
@@ -406,7 +415,7 @@ void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
 //proc ImportNodeVolume {node} {
 void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
 {
-  CTK_P(qSlicerSlicer2SceneReader);
+  Q_Q(qSlicerSlicer2SceneReader);
   //upvar $node n
 
   //if { ![info exists n(fileType)] } {
@@ -687,8 +696,8 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     //$::slicer3::MRMLScene AddNode $volumeNode
     //$volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
     //$volumeNode SetModifiedSinceRead 1
-    p->mrmlScene()->AddNode(volumeNode);
-    p->mrmlScene()->AddNode(volumeDisplayNode);
+    q->mrmlScene()->AddNode(volumeNode);
+    q->mrmlScene()->AddNode(volumeDisplayNode);
     volumeNode->SetAndObserveDisplayNodeID(volumeDisplayNode->GetID());
     volumeNode->SetModifiedSinceRead(1);
     this->LoadedNodes << volumeNode->GetID() << volumeDisplayNode->GetID();
@@ -721,8 +730,8 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     }
 
   //set volumeNode [$::slicer3::MRMLScene GetNodeByID $volumeNodeID]
-  Q_ASSERT(volumeNode == p->mrmlScene()->GetNodeByID(volumeNodeID.toLatin1().data()));
-  volumeNode = vtkMRMLVolumeNode::SafeDownCast(p->mrmlScene()->GetNodeByID(volumeNodeID.toLatin1().data()));
+  Q_ASSERT(volumeNode == q->mrmlScene()->GetNodeByID(volumeNodeID.toLatin1().data()));
+  volumeNode = vtkMRMLVolumeNode::SafeDownCast(q->mrmlScene()->GetNodeByID(volumeNodeID.toLatin1().data()));
   Q_ASSERT(volumeNode);
   
   // use the current top of stack (might be "" if empty, but that's okay)
@@ -964,7 +973,7 @@ void qSlicerSlicer2SceneReaderPrivate::importHierarchyNode(NodeType& node)
 //proc ImportNodeModelGroup {node} {
 void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
 {
-  CTK_P(qSlicerSlicer2SceneReader);
+  Q_Q(qSlicerSlicer2SceneReader);
   //upvar $node n
   //set hnode [vtkMRMLModelHierarchyNode New]
   //set dnode [vtkMRMLModelDisplayNode New]
@@ -974,8 +983,8 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
     vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
   vtkSmartPointer<vtkMRMLModelDisplayNode> dnode =
     vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-  hnode->SetScene(p->mrmlScene());
-  dnode->SetScene(p->mrmlScene());
+  hnode->SetScene(q->mrmlScene());
+  dnode->SetScene(q->mrmlScene());
   
   // if { [info exists n(visibility)] } {
   //   if {$n(visibility) == "false"} {
@@ -1010,7 +1019,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
   if (node.contains("color"))
     {
     cnode = vtkMRMLColorTableNode::SafeDownCast(
-      p->mrmlScene()->GetNodeByID("vtkMRMLColorTableNodeSPLBrainAtlas"));
+      q->mrmlScene()->GetNodeByID("vtkMRMLColorTableNodeSPLBrainAtlas"));
     Q_ASSERT(cnode);
     for (int i = 0; i < cnode->GetNumberOfColors(); ++i)
       {
@@ -1023,10 +1032,10 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
   //set dnode [$::slicer3::MRMLScene AddNodeNoNotify $dnode]
   //set hnode [$::slicer3::MRMLScene AddNode $hnode]
   dnode = vtkMRMLModelDisplayNode::SafeDownCast(
-    p->mrmlScene()->AddNode(dnode));
+    q->mrmlScene()->AddNode(dnode));
   Q_ASSERT(dnode);
   hnode = vtkMRMLModelHierarchyNode::SafeDownCast(
-    p->mrmlScene()->AddNode(hnode));
+    q->mrmlScene()->AddNode(hnode));
   Q_ASSERT(hnode);
   this->LoadedNodes << dnode->GetID() << hnode->GetID();
 
@@ -1052,13 +1061,13 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
 //proc ImportNodeModelRef {node} {
 void qSlicerSlicer2SceneReaderPrivate::importModelRefNode(NodeType& node)
 {
-  CTK_P(qSlicerSlicer2SceneReader);
+  Q_Q(qSlicerSlicer2SceneReader);
   //upvar $node n
   //set hnode [vtkMRMLModelHierarchyNode New]
   //$hnode SetScene $::slicer3::MRMLScene
   vtkSmartPointer<vtkMRMLModelHierarchyNode> hnode = 
     vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
-  hnode->SetScene(p->mrmlScene());
+  hnode->SetScene(q->mrmlScene());
 
   //$hnode SetExpanded 1
   hnode->SetExpanded(1);
@@ -1069,12 +1078,12 @@ void qSlicerSlicer2SceneReaderPrivate::importModelRefNode(NodeType& node)
   QString id3 = this->ModelIDs[id2];
 
   //$hnode SetName [[$::slicer3::MRMLScene GetNodeByID $id3] GetName]
-  Q_ASSERT(p->mrmlScene()->GetNodeByID(id3.toLatin1().data()));
-  hnode->SetName(p->mrmlScene()->GetNodeByID(id3.toLatin1().data())->GetName());
+  Q_ASSERT(q->mrmlScene()->GetNodeByID(id3.toLatin1().data()));
+  hnode->SetName(q->mrmlScene()->GetNodeByID(id3.toLatin1().data())->GetName());
 
   //set hnode [$::slicer3::MRMLScene AddNode $hnode]
   hnode = vtkMRMLModelHierarchyNode::SafeDownCast(
-    p->mrmlScene()->AddNode(hnode));
+    q->mrmlScene()->AddNode(hnode));
   this->LoadedNodes << hnode->GetID();
 
   //if {$::S2_HParent_ID != ""} {
@@ -1096,7 +1105,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelRefNode(NodeType& node)
 //proc ImportNodeFiducials {node} {
 void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
 {  
-  CTK_P(qSlicerSlicer2SceneReader);
+  Q_Q(qSlicerSlicer2SceneReader);
   //upvar $node n
   //set fiducialNode [vtkMRMLFiducialListNode New]
   vtkSmartPointer<vtkMRMLFiducialListNode> fiducialNode =
@@ -1142,7 +1151,7 @@ void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
     fiducialNode->SetName(node["name"].toLatin1().data());
     }
   //$::slicer3::MRMLScene AddNode $fiducialNode
-  p->mrmlScene()->AddNode(fiducialNode);
+  q->mrmlScene()->AddNode(fiducialNode);
   this->LoadedNodes << fiducialNode->GetID();
   //set ::S2(fiducialListNode) $fiducialNode
   this->FiducialListNode = fiducialNode;
@@ -1194,7 +1203,7 @@ void qSlicerSlicer2SceneReaderPrivate::importPointNode(NodeType& node)
 //proc ImportNodeColor {node} {
 void qSlicerSlicer2SceneReaderPrivate::importColorNode(NodeType& node)
 {
-  CTK_P(qSlicerSlicer2SceneReader);
+  Q_Q(qSlicerSlicer2SceneReader);
   //upvar $node n
   //if { [info exists n(name)] } {
   if (!node.contains("name"))
@@ -1212,16 +1221,16 @@ void qSlicerSlicer2SceneReaderPrivate::importColorNode(NodeType& node)
   //foreach {r g b} $n(diffuseColor) {}
   QStringList rgb = node["diffuseColor"].split(' ');
   //$::slicer3::MRMLScene InitTraversal
-  p->mrmlScene()->InitTraversal();
+  q->mrmlScene()->InitTraversal();
   //set ndnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass vtkMRMLModelDisplayNode]
-  int ndnodes = p->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLModelDisplayNode");
+  int ndnodes = q->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLModelDisplayNode");
   //for {set i 0} {$i < $ndnodes} {incr i} {
   for (int i = 0; i < ndnodes; ++i)
     {
     //set dnode [$::slicer3::MRMLScene GetNthNodeByClass $i vtkMRMLModelDisplayNode]
     vtkMRMLModelDisplayNode* dnode = 
       vtkMRMLModelDisplayNode::SafeDownCast(
-        p->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLModelDisplayNode"));
+        q->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLModelDisplayNode"));
     // set cid [$dnode GetAttribute colorid]
     QString cid = dnode->GetAttribute("colorid");
     //if {$id == $cid} {
@@ -1238,14 +1247,12 @@ void qSlicerSlicer2SceneReaderPrivate::importColorNode(NodeType& node)
 //proc ImportNodeOptions {node} {
 void qSlicerSlicer2SceneReaderPrivate::importOptionsNode(NodeType& node)
 {
-  CTK_P(qSlicerSlicer2SceneReader);
+  Q_Q(qSlicerSlicer2SceneReader);
   //$::slicer3::MRMLScene SetErrorMessage "warning: option nodes cannot be imported"
   //$::slicer3::MRMLScene SetErrorCode 1
-  p->mrmlScene()->SetErrorMessage("Warning: option nodes cannot be imported");
-  p->mrmlScene()->SetErrorCode(1);
+  q->mrmlScene()->SetErrorMessage("Warning: option nodes cannot be imported");
+  q->mrmlScene()->SetErrorCode(1);
 }
-
-
 
 //-----------------------------------------------------------------------------
 qSlicerSlicer2SceneReader::qSlicerSlicer2SceneReader(QObject* _parent)
@@ -1274,7 +1281,7 @@ QString qSlicerSlicer2SceneReader::extensions()const
 //-----------------------------------------------------------------------------
 bool qSlicerSlicer2SceneReader::load(const IOProperties& properties)
 {
-  CTK_D(qSlicerSlicer2SceneReader);
+  Q_D(qSlicerSlicer2SceneReader);
   QString file = properties["fileName"].toString();
   Q_ASSERT(!file.isEmpty());
 

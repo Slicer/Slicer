@@ -21,10 +21,13 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLLabelComboBox");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class qMRMLLabelComboBoxPrivate: public ctkPrivate<qMRMLLabelComboBox>
+class qMRMLLabelComboBoxPrivate
 {
+  Q_DECLARE_PUBLIC(qMRMLLabelComboBox);
+protected:
+  qMRMLLabelComboBox* const q_ptr;
 public:
-  qMRMLLabelComboBoxPrivate();
+  qMRMLLabelComboBoxPrivate(qMRMLLabelComboBox& object);
 
   void setMRMLColorNode(vtkMRMLColorNode *newMRMLColorNode);
 
@@ -42,7 +45,8 @@ public:
 // qMRMLLabelComboBoxPrivate methods
 
 // --------------------------------------------------------------------------
-qMRMLLabelComboBoxPrivate::qMRMLLabelComboBoxPrivate()
+qMRMLLabelComboBoxPrivate::qMRMLLabelComboBoxPrivate(qMRMLLabelComboBox& object)
+  : q_ptr(&object)
 {
   this->ComboBox = 0;
   this->NoneEnabled = false;
@@ -55,16 +59,16 @@ qMRMLLabelComboBoxPrivate::qMRMLLabelComboBoxPrivate()
 // ------------------------------------------------------------------------------
 void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode * newMRMLColorNode)
 {
-  CTK_P(qMRMLLabelComboBox);
+  Q_Q(qMRMLLabelComboBox);
 
-  p->qvtkReconnect(this->ColorNode, newMRMLColorNode, vtkCommand::ModifiedEvent,
-                      p, SLOT(updateWidgetFromMRML()));
-  p->setEnabled(newMRMLColorNode != 0);
+  q->qvtkReconnect(this->ColorNode, newMRMLColorNode, vtkCommand::ModifiedEvent,
+                      q, SLOT(updateWidgetFromMRML()));
+  q->setEnabled(newMRMLColorNode != 0);
   this->ColorNode = newMRMLColorNode;
 
   if (this->ColorNode)
     {
-    p->updateWidgetFromMRML();
+    q->updateWidgetFromMRML();
     }
   else
     {
@@ -101,9 +105,9 @@ QColor qMRMLLabelComboBoxPrivate::colorFromIndex(int index) const
 // --------------------------------------------------------------------------
 qMRMLLabelComboBox::qMRMLLabelComboBox(QWidget* newParent)
   : Superclass(newParent)
+  , d_ptr(new qMRMLLabelComboBoxPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLLabelComboBox);
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
   
   d->ComboBox = new ctkComboBox(this);
   d->ComboBox->setDefaultText("None");
@@ -117,10 +121,15 @@ qMRMLLabelComboBox::qMRMLLabelComboBox(QWidget* newParent)
   this->setEnabled(false);
 }
 
+// --------------------------------------------------------------------------
+qMRMLLabelComboBox::~qMRMLLabelComboBox()
+{
+}
+
 // ----------------------------------------------------------------
 void qMRMLLabelComboBox::printAdditionalInfo()
 {
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
   qDebug().nospace() << "qMRMLLabelComboBox:" << this << endl
       << " MRMLColorNode:" << d->ColorNode << endl
       << "  ClassName:" << (d->ColorNode ? d->ColorNode->GetClassName() : "null") << endl
@@ -140,7 +149,7 @@ CTK_GET_CXX(qMRMLLabelComboBox, int, currentColor, CurrentColor);
 // ------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setCurrentColor(int index)
 {
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
   //logger.debug(QString("setCurrentColor - index: %1").arg(index));
 
   if (index == d->CurrentColor)
@@ -174,7 +183,7 @@ CTK_GET_CXX(qMRMLLabelComboBox, bool, noneEnabled, NoneEnabled);
 // -------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setNoneEnabled(bool enabled)
 {
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
 
   if (d->NoneEnabled == enabled)
     {
@@ -197,7 +206,7 @@ CTK_GET_CXX(qMRMLLabelComboBox, bool, colorNameVisible, ColorNameVisible);
 // -------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setColorNameVisible(bool visible)
 {
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
 
   if ( visible != d->ColorNameVisible )
     {
@@ -209,7 +218,7 @@ void qMRMLLabelComboBox::setColorNameVisible(bool visible)
 // ---------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setMaximumColorCount(int maximum)
 {
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
   d->MaximumColorCount = maximum <= 0 ? 0 : maximum;
 }
 
@@ -222,14 +231,14 @@ CTK_GET_CXX(qMRMLLabelComboBox, int, maximumColorCount, MaximumColorCount);
 // ---------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setMRMLColorNode(vtkMRMLNode *newMRMLColorNode)
 {
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
   d->setMRMLColorNode(vtkMRMLColorNode::SafeDownCast(newMRMLColorNode));
 }
 
 // ------------------------------------------------------------------------------
 void qMRMLLabelComboBox::onCurrentIndexChanged(int index)
 {
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
   //logger.debug(QString("onCurrentIndexChanged - index: %1").arg(index));
   if (d->NoneEnabled)
     {
@@ -246,7 +255,7 @@ void qMRMLLabelComboBox::onCurrentIndexChanged(int index)
 // ---------------------------------------------------------------------------------
 void qMRMLLabelComboBox::updateWidgetFromMRML()
 {
-  CTK_D(qMRMLLabelComboBox);
+  Q_D(qMRMLLabelComboBox);
   Q_ASSERT(d->ColorNode);
   
   //logger.debug("updateWidgetFromMRML");

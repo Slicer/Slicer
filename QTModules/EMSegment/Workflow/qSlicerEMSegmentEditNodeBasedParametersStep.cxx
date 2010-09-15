@@ -24,8 +24,7 @@
 #include "ui_qSlicerEMSegmentEditNodeBasedParametersStep.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentEditNodeBasedParametersStepPrivate : public ctkPrivate<qSlicerEMSegmentEditNodeBasedParametersStep>,
-                                                           public Ui_qSlicerEMSegmentEditNodeBasedParametersStep
+class qSlicerEMSegmentEditNodeBasedParametersStepPrivate: public Ui_qSlicerEMSegmentEditNodeBasedParametersStep
 {
 public:
   qSlicerEMSegmentEditNodeBasedParametersStepPrivate();
@@ -55,14 +54,20 @@ const QString qSlicerEMSegmentEditNodeBasedParametersStep::StepId = "EditNodeBas
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentEditNodeBasedParametersStep::qSlicerEMSegmentEditNodeBasedParametersStep(
-    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
+  ctkWorkflow* newWorkflow, QWidget* newWidget)
+  : Superclass(newWorkflow, qSlicerEMSegmentEditNodeBasedParametersStep::StepId, newWidget)
+  , d_ptr(new qSlicerEMSegmentEditNodeBasedParametersStepPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentEditNodeBasedParametersStep);
-  CTK_D(qSlicerEMSegmentEditNodeBasedParametersStep);
+  Q_D(qSlicerEMSegmentEditNodeBasedParametersStep);
   d->setupUi(this);
 
   this->setName("8/9. Edit Node-based Parameters");
   this->setDescription("Specify node-based segmentation parameters.");
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentEditNodeBasedParametersStep::~qSlicerEMSegmentEditNodeBasedParametersStep()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -84,7 +89,7 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  CTK_D(qSlicerEMSegmentEditNodeBasedParametersStep);
+  Q_D(qSlicerEMSegmentEditNodeBasedParametersStep);
   d->updateWidgetFromMRML();
 
   // Indicates that we are finished
@@ -104,7 +109,7 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::onExit(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditNodeBasedParametersStep::showUserInterface()
 {
-  CTK_D(qSlicerEMSegmentEditNodeBasedParametersStep);
+  Q_D(qSlicerEMSegmentEditNodeBasedParametersStep);
   this->Superclass::showUserInterface();
   d->updateWidgetFromMRML();
 }

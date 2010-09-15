@@ -34,13 +34,15 @@ class vtkMRMLCameraNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLThreeDViewPrivate: public QObject, public ctkPrivate<qMRMLThreeDView>
+class qMRMLThreeDViewPrivate: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qMRMLThreeDView);
+protected:
+  qMRMLThreeDView* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLThreeDView);
-  qMRMLThreeDViewPrivate();
+  qMRMLThreeDViewPrivate(qMRMLThreeDView& object);
   ~qMRMLThreeDViewPrivate();
 
   void setMRMLScene(vtkMRMLScene* scene);

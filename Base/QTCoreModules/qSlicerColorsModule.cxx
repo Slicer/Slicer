@@ -30,14 +30,22 @@
 #include "vtkSlicerColorLogic.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerColorsModulePrivate: public ctkPrivate<qSlicerColorsModule>
+class qSlicerColorsModulePrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerColorsModule);
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerColorsModule, QObject*);
+qSlicerColorsModule::qSlicerColorsModule(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerColorsModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerColorsModule::~qSlicerColorsModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerColorsModule::icon()const

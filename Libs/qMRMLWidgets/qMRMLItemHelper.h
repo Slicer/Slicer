@@ -89,15 +89,19 @@ protected:
   const qMRMLAbstractItemHelperFactory* factory()const;
   /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
+protected:
+  QScopedPointer<qMRMLAbstractItemHelperPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLAbstractItemHelper);
+  Q_DECLARE_PRIVATE(qMRMLAbstractItemHelper);
+  Q_DISABLE_COPY(qMRMLAbstractItemHelper);
 };
 
 //------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLAbstractSceneItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  virtual ~qMRMLAbstractSceneItemHelper(){}
+  virtual ~qMRMLAbstractSceneItemHelper();
   virtual QVariant data(int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags() const;
   virtual vtkObject* object()const;
@@ -105,15 +109,19 @@ public:
 
 protected: 
   qMRMLAbstractSceneItemHelper(vtkMRMLScene* scene, int column, const qMRMLAbstractItemHelperFactory* factory, int row);
+protected:
+  QScopedPointer<qMRMLAbstractSceneItemHelperPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLAbstractSceneItemHelper);
+  Q_DECLARE_PRIVATE(qMRMLAbstractSceneItemHelper);
+  Q_DISABLE_COPY(qMRMLAbstractSceneItemHelper);
 };
 
 //------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLAbstractNodeItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  virtual ~qMRMLAbstractNodeItemHelper(){}
+  virtual ~qMRMLAbstractNodeItemHelper();
   virtual QVariant data(int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags() const;
   virtual vtkObject* object() const;
@@ -123,8 +131,12 @@ public:
 protected:
   qMRMLAbstractNodeItemHelper(vtkMRMLNode* node, int column, const qMRMLAbstractItemHelperFactory* factory, int row);
 
+protected:
+  QScopedPointer<qMRMLAbstractNodeItemHelperPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLAbstractNodeItemHelper);
+  Q_DECLARE_PRIVATE(qMRMLAbstractNodeItemHelper);
+  Q_DISABLE_COPY(qMRMLAbstractNodeItemHelper);
 };
 
 // FIXME: doesn't need to be derived, does it ?
@@ -132,7 +144,7 @@ private:
 class QMRML_WIDGETS_EXPORT qMRMLRootItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  virtual ~qMRMLRootItemHelper(){}
+  virtual ~qMRMLRootItemHelper();
   virtual qMRMLAbstractItemHelper* child(int row, int column) const;
   virtual int childCount() const;
   virtual QVariant data(int role = Qt::DisplayRole) const;
@@ -149,15 +161,19 @@ protected:
   /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
   vtkMRMLScene* mrmlScene()const;
+protected:
+  QScopedPointer<qMRMLRootItemHelperPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLRootItemHelper);
+  Q_DECLARE_PRIVATE(qMRMLRootItemHelper);
+  Q_DISABLE_COPY(qMRMLRootItemHelper);
 };
 
 //------------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLProxyItemHelper : public qMRMLAbstractItemHelper
 {
 public:
-  virtual ~qMRMLProxyItemHelper(){}
+  virtual ~qMRMLProxyItemHelper();
   virtual bool canReparent(qMRMLAbstractItemHelper* newParent)const;
   virtual qMRMLAbstractItemHelper* child(int row, int column) const;
   virtual int childCount() const;
@@ -176,8 +192,12 @@ protected:
   /// here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
   qMRMLAbstractItemHelper* proxy()const;
+protected:
+  QScopedPointer<qMRMLProxyItemHelperPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLProxyItemHelper);
+  Q_DECLARE_PRIVATE(qMRMLProxyItemHelper);
+  Q_DISABLE_COPY(qMRMLProxyItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -185,6 +205,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVariantArrayItemHelper : public qMRMLAbstractIte
 {
 public:
   qMRMLVariantArrayItemHelper(vtkVariantArray* array, int column, const qMRMLAbstractItemHelperFactory* factory, int row);
+  virtual ~qMRMLVariantArrayItemHelper();
   virtual QVariant data(int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags() const;
   virtual qMRMLAbstractItemHelper* parent() const;
@@ -197,8 +218,12 @@ public:
 protected:
   vtkMRMLScene* mrmlScene()const;
 
+protected:
+  QScopedPointer<qMRMLVariantArrayItemHelperPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLVariantArrayItemHelper);
+  Q_DECLARE_PRIVATE(qMRMLVariantArrayItemHelper);
+  Q_DISABLE_COPY(qMRMLVariantArrayItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -214,8 +239,12 @@ public:
   vtkCollection* postItems()const;
 protected:
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
+protected:
+  QScopedPointer<qMRMLExtraItemsHelperPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLExtraItemsHelper);
+  Q_DECLARE_PRIVATE(qMRMLExtraItemsHelper);
+  Q_DISABLE_COPY(qMRMLExtraItemsHelper);
 };
 
 #endif

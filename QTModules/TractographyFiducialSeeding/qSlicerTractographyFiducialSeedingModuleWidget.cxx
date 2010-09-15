@@ -13,16 +13,21 @@
 #include "ui_qSlicerTractographyFiducialSeedingModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTractographyFiducialSeedingModuleWidgetPrivate: 
-  public ctkPrivate<qSlicerTractographyFiducialSeedingModuleWidget>,
+class qSlicerTractographyFiducialSeedingModuleWidgetPrivate:
   public Ui_qSlicerTractographyFiducialSeedingModule
 {
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTractographyFiducialSeedingModuleWidget::qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent):Superclass(_parent)
+qSlicerTractographyFiducialSeedingModuleWidget::qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerTractographyFiducialSeedingModuleWidgetPrivate)
 {
   this->TractographyFiducialSeedingNode = 0;
+}
+//-----------------------------------------------------------------------------
+qSlicerTractographyFiducialSeedingModuleWidget::~qSlicerTractographyFiducialSeedingModuleWidget()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -51,7 +56,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::setup()
 {
-  CTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
   d->setupUi(this);
 
 
@@ -226,7 +231,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLN
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetFromMRML()
 {
-  CTK_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
   
   vtkMRMLTractographyFiducialSeedingNode *paramNode = this->TractographyFiducialSeedingNode;
 

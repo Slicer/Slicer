@@ -46,13 +46,15 @@ class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
 
 //-----------------------------------------------------------------------------
-class qSlicerLayoutManagerPrivate: public QObject, public ctkPrivate<qSlicerLayoutManager>
+class qSlicerLayoutManagerPrivate: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qSlicerLayoutManager);
+protected:
+  qSlicerLayoutManager* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qSlicerLayoutManager);
-  qSlicerLayoutManagerPrivate();
+  qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object);
   ~qSlicerLayoutManagerPrivate();
 
   void setMRMLScene(vtkMRMLScene* scene);

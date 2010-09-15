@@ -40,12 +40,17 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerMRMLTreeModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerMRMLTreeModuleWidget();
 
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerMRMLTreeModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerMRMLTreeModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerMRMLTreeModuleWidget);
+  Q_DISABLE_COPY(qSlicerMRMLTreeModuleWidget);
 };
 
 #endif

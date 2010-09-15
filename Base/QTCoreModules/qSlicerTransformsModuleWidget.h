@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTransformsModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerTransformsModuleWidget();
 
 public slots:
   void loadTransform();
@@ -69,10 +70,14 @@ protected:
 
   /// 
   /// Convenient method to return the coordinate system currently selected
-  int coordinateReference();
+  int coordinateReference()const;
+
+protected:
+  QScopedPointer<qSlicerTransformsModuleWidgetPrivate> d_ptr;
 
 private:
-  CTK_DECLARE_PRIVATE(qSlicerTransformsModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerTransformsModuleWidget);
+  Q_DISABLE_COPY(qSlicerTransformsModuleWidget);
 };
 
 #endif

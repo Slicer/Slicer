@@ -40,7 +40,7 @@ public:
   
   /// Constructors
   explicit qMRMLThreeDView(QWidget* parent = 0);
-  virtual ~qMRMLThreeDView(){}
+  virtual ~qMRMLThreeDView();
 
   /// Register DisplayableManagers
   /// \a scriptedDisplayableManagerDirectory is the based directory from which
@@ -56,8 +56,12 @@ public slots:
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
   vtkMRMLViewNode* mrmlViewNode()const;
   
+protected:
+  QScopedPointer<qMRMLThreeDViewPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLThreeDView);
+  Q_DECLARE_PRIVATE(qMRMLThreeDView);
+  Q_DISABLE_COPY(qMRMLThreeDView);
 };
 
 #endif

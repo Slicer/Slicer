@@ -80,7 +80,11 @@ protected:
                           const qMRMLAbstractItemHelperFactory* factory, int row);
   // here we know for sure that child is a child of this.
   virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
-  CTK_DECLARE_PRIVATE(qMRMLCategoryItemHelper);
+
+  QScopedPointer<qMRMLCategoryItemHelperPrivate> d_ptr;
+private:
+  Q_DECLARE_PRIVATE(qMRMLCategoryItemHelper);
+  Q_DISABLE_COPY(qMRMLCategoryItemHelper);
 };
 
 //------------------------------------------------------------------------------
@@ -344,10 +348,9 @@ qMRMLAbstractItemHelper* qMRMLCategorySceneItemHelper::parent() const
 // qMRMLCategoryItemHelper
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-class qMRMLCategoryItemHelperPrivate: public ctkPrivate<qMRMLCategoryItemHelper>
+class qMRMLCategoryItemHelperPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qMRMLCategoryItemHelper);
   vtkCategory* Category;
 };
 
@@ -357,10 +360,10 @@ qMRMLCategoryItemHelper
                           int itemColumn,
                           const qMRMLAbstractItemHelperFactory* helperFactory, int itemRow)
   :qMRMLAbstractItemHelper(itemColumn, helperFactory, itemRow)
+  , d_ptr(new qMRMLCategoryItemHelperPrivate)
 {
-  CTK_INIT_PRIVATE(qMRMLCategoryItemHelper);
   Q_ASSERT(category);
-  CTK_D(qMRMLCategoryItemHelper);
+  Q_D(qMRMLCategoryItemHelper);
   d->Category = category;
 }
 
@@ -368,7 +371,7 @@ qMRMLCategoryItemHelper
 qMRMLAbstractItemHelper* qMRMLCategoryItemHelper
 ::child(int itemRow, int itemColumn) const
 {
-  CTK_D(const qMRMLCategoryItemHelper);
+  Q_D(const qMRMLCategoryItemHelper);
   vtkMRMLNode* node = 0;
   int index = -1;
   vtkCollectionSimpleIterator it;
@@ -393,7 +396,7 @@ qMRMLAbstractItemHelper* qMRMLCategoryItemHelper
 //------------------------------------------------------------------------------
 int qMRMLCategoryItemHelper::childCount() const
 {
-  CTK_D(const qMRMLCategoryItemHelper);
+  Q_D(const qMRMLCategoryItemHelper);
   if (this->column() != 0)
     {
     return 0;
@@ -417,7 +420,7 @@ int qMRMLCategoryItemHelper::childCount() const
 //------------------------------------------------------------------------------
 int qMRMLCategoryItemHelper::childIndex(const qMRMLAbstractItemHelper* childItem) const
 {
-  CTK_D(const qMRMLCategoryItemHelper);
+  Q_D(const qMRMLCategoryItemHelper);
   const qMRMLAbstractNodeItemHelper* nodeItemHelper =
     dynamic_cast<const qMRMLAbstractNodeItemHelper*>(childItem);
   Q_ASSERT(nodeItemHelper);
@@ -450,7 +453,7 @@ int qMRMLCategoryItemHelper::childIndex(const qMRMLAbstractItemHelper* childItem
 //------------------------------------------------------------------------------
 QVariant qMRMLCategoryItemHelper::data(int role) const
 {
-  CTK_D(const qMRMLCategoryItemHelper);
+  Q_D(const qMRMLCategoryItemHelper);
   switch(role)
     {
     case Qt::DisplayRole:
@@ -480,21 +483,21 @@ bool qMRMLCategoryItemHelper::hasChildren() const
 //------------------------------------------------------------------------------
 vtkObject* qMRMLCategoryItemHelper::object() const
 {
-  CTK_D(const qMRMLCategoryItemHelper);
+  Q_D(const qMRMLCategoryItemHelper);
   return d->Category;
 }
 
 //------------------------------------------------------------------------------
 qMRMLAbstractItemHelper* qMRMLCategoryItemHelper::parent() const
 {
-  CTK_D(const qMRMLCategoryItemHelper);
+  Q_D(const qMRMLCategoryItemHelper);
   return this->factory()->createItem(d->Category->MRMLScene, 0);
 }
 
 //------------------------------------------------------------------------------
 vtkCategory* qMRMLCategoryItemHelper::category() const
 {
-  CTK_D(const qMRMLCategoryItemHelper);
+  Q_D(const qMRMLCategoryItemHelper);
   return d->Category;
 }
 
@@ -534,9 +537,3 @@ qMRMLSceneCategoryModel::qMRMLSceneCategoryModel(QObject *vparent)
   :qMRMLSceneTreeModel(new qMRMLCategoryItemHelperFactory, vparent)
 {
 }
-
-//------------------------------------------------------------------------------
-qMRMLSceneCategoryModel::~qMRMLSceneCategoryModel()
-{
-}
-

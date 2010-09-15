@@ -47,7 +47,8 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerMouseModeToolBar");
 // qSlicerMouseModeToolBarPrivate methods
 
 //---------------------------------------------------------------------------
-qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate()
+qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeToolBar& object)
+  : q_ptr(&object)
 {
   logger.setTrace();
 
@@ -67,53 +68,53 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate()
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::init()
 {
-  CTK_P(qSlicerMouseModeToolBar);
+  Q_Q(qSlicerMouseModeToolBar);
 
   this->SinglePickModeAction = new QAction(QIcon(":/Icons/MouseSinglePickMode.png"),
-      "Use mouse to Pick-and-Manipulate one time.", p);
+      "Use mouse to Pick-and-Manipulate one time.", q);
   connect(this->SinglePickModeAction, SIGNAL(triggered()),
-          p, SLOT(switchToSinglePickMode()));
+          q, SLOT(switchToSinglePickMode()));
 
   this->PersistentPickModeAction = new QAction(QIcon(":/Icons/MousePickMode.png"),
-      "Use mouse to Pick-and-Manipulate persistently.", p);
+      "Use mouse to Pick-and-Manipulate persistently.", q);
   connect(this->PersistentPickModeAction, SIGNAL(triggered()),
-          p, SLOT(switchToPersistentPickMode()));
+          q, SLOT(switchToPersistentPickMode()));
 
   this->SinglePlaceModeAction = new QAction(QIcon(":/Icons/MouseSinglePlaceMode.png"),
-      "Use mouse to Create-and-Place one time.", p);
+      "Use mouse to Create-and-Place one time.", q);
   connect(this->SinglePlaceModeAction, SIGNAL(triggered()),
-          p, SLOT(switchToSinglePlaceMode()));
+          q, SLOT(switchToSinglePlaceMode()));
 
   this->PersistentPlaceModeAction = new QAction(QIcon(":/Icons/MousePlaceMode.png"),
-      "Use mouse to Create-and-Place persistently.", p);
+      "Use mouse to Create-and-Place persistently.", q);
   connect(this->PersistentPlaceModeAction, SIGNAL(triggered()),
-          p, SLOT(switchToPersistentPlaceMode()));
+          q, SLOT(switchToPersistentPlaceMode()));
 
   // RotateMode action
   this->ViewTransformModeAction = new QAction(QIcon(":/Icons/MouseRotateMode.png"),
-                                       "Set the 3DViewer mouse mode to transform view", p);
+                                       "Set the 3DViewer mouse mode to transform view", q);
   connect(this->ViewTransformModeAction, SIGNAL(triggered()),
-          p, SLOT(switchToViewTransformMode()));
+          q, SLOT(switchToViewTransformMode()));
 
   QList<QAction*> actionList;
   actionList << this->SinglePickModeAction << this->PersistentPickModeAction
       << this->SinglePlaceModeAction << this->PersistentPlaceModeAction
       << this->ViewTransformModeAction;
 
-  this->ActionGroup = new QActionGroup(p);
+  this->ActionGroup = new QActionGroup(q);
 
   foreach(QAction* action, actionList)
     {
     action->setCheckable(true);
     this->ActionGroup->addAction(action);
-    p->addAction(action);
+    q->addAction(action);
     }
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
-  CTK_P(qSlicerMouseModeToolBar);
+  Q_Q(qSlicerMouseModeToolBar);
 
   if (newScene == this->MRMLScene)
     {
@@ -129,7 +130,7 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   this->MRMLScene = newScene;
 
   // Update UI
-  p->setEnabled(this->MRMLScene != 0);
+  q->setEnabled(this->MRMLScene != 0);
   if (this->MRMLScene)
     {
     this->updateWidgetFromMRML();
@@ -139,7 +140,7 @@ void qSlicerMouseModeToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
 {
-  CTK_P(qSlicerMouseModeToolBar);
+  Q_Q(qSlicerMouseModeToolBar);
   Q_ASSERT(this->MRMLScene);
   vtkMRMLInteractionNode * interactionNode = this->MRMLAppLogic->GetInteractionNode();
   Q_ASSERT(interactionNode);
@@ -150,25 +151,25 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
     case vtkMRMLInteractionNode::PickManipulate:
       if (interactionNode->GetPickModePersistence())
         {
-        p->switchToPersistentPickMode();
+        q->switchToPersistentPickMode();
         }
       else
         {
-        p->switchToSinglePickMode();
+        q->switchToSinglePickMode();
         }
       break;
     case vtkMRMLInteractionNode::Place:
       if (interactionNode->GetPickModePersistence())
         {
-        p->switchToPersistentPlaceMode();
+        q->switchToPersistentPlaceMode();
         }
       else
         {
-        p->switchToSinglePlaceMode();
+        q->switchToSinglePlaceMode();
         }
       break;
     case vtkMRMLInteractionNode::ViewTransform:
-      p->switchToViewTransformMode();
+      q->switchToViewTransformMode();
       break;
     default:
       logger.warn(QString("updateWidgetFromMRML - Unknown MouseMode: %1").arg(currentMouseMode));
@@ -179,8 +180,8 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBarPrivate::onMRMLSceneAboutToBeClosedEvent()
 {
-  CTK_P(qSlicerMouseModeToolBar);
-  p->setEnabled(false);
+  Q_Q(qSlicerMouseModeToolBar);
+  q->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -195,31 +196,36 @@ void qSlicerMouseModeToolBarPrivate::onMRMLSceneImportedEvent()
 //---------------------------------------------------------------------------
 qSlicerMouseModeToolBar::qSlicerMouseModeToolBar(const QString& title, QWidget* parentWidget)
   :Superclass(title, parentWidget)
+  , d_ptr(new qSlicerMouseModeToolBarPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerMouseModeToolBar);
-  CTK_D(qSlicerMouseModeToolBar);
+  Q_D(qSlicerMouseModeToolBar);
   d->init();
 }
 
 //---------------------------------------------------------------------------
 qSlicerMouseModeToolBar::qSlicerMouseModeToolBar(QWidget* parentWidget):Superclass(parentWidget)
+  , d_ptr(new qSlicerMouseModeToolBarPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerMouseModeToolBar);
-  CTK_D(qSlicerMouseModeToolBar);
+  Q_D(qSlicerMouseModeToolBar);
   d->init();
+}
+
+//---------------------------------------------------------------------------
+qSlicerMouseModeToolBar::~qSlicerMouseModeToolBar()
+{
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::setMRMLScene(vtkMRMLScene* newScene)
 {
-  CTK_D(qSlicerMouseModeToolBar);
+  Q_D(qSlicerMouseModeToolBar);
   d->setMRMLScene(newScene);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToPersistentPickMode()
 {
-  CTK_D(qSlicerMouseModeToolBar);
+  Q_D(qSlicerMouseModeToolBar);
   // TODO Add function vtkMRMLInteractionNode::switchToPersistentPickMode
 
   logger.trace("switchToPersistentPickMode");
@@ -236,7 +242,7 @@ void qSlicerMouseModeToolBar::switchToPersistentPickMode()
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToSinglePickMode()
 {
-  CTK_D(qSlicerMouseModeToolBar);
+  Q_D(qSlicerMouseModeToolBar);
   // TODO Add function vtkMRMLInteractionNode::switchToSinglePickMode
 
   logger.trace("switchToSinglePickMode");
@@ -253,7 +259,7 @@ void qSlicerMouseModeToolBar::switchToSinglePickMode()
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToPersistentPlaceMode()
 {
-  CTK_D(qSlicerMouseModeToolBar);
+  Q_D(qSlicerMouseModeToolBar);
   // TODO Add function vtkMRMLInteractionNode::switchToPersistentPlaceMode
 
   logger.trace("switchToPersistentPlaceMode");
@@ -270,7 +276,7 @@ void qSlicerMouseModeToolBar::switchToPersistentPlaceMode()
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToSinglePlaceMode()
 {
-  CTK_D(qSlicerMouseModeToolBar);
+  Q_D(qSlicerMouseModeToolBar);
   // TODO Add function vtkMRMLInteractionNode::switchToSinglePlaceMode
 
   logger.trace("switchToSinglePlaceMode");
@@ -287,7 +293,7 @@ void qSlicerMouseModeToolBar::switchToSinglePlaceMode()
 //---------------------------------------------------------------------------
 void qSlicerMouseModeToolBar::switchToViewTransformMode()
 {
-  CTK_D(qSlicerMouseModeToolBar);
+  Q_D(qSlicerMouseModeToolBar);
   // TODO Add function vtkMRMLInteractionNode::switchToRotateMode
 
   logger.trace("switchToViewTransformMode");

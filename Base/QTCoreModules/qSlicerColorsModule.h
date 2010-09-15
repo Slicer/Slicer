@@ -38,6 +38,7 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerColorsModule :
 public:
   typedef qSlicerCoreModule Superclass;
   qSlicerColorsModule(QObject *parent=0);
+  virtual ~qSlicerColorsModule();
 
   virtual QIcon icon()const;
   qSlicerGetTitleMacro("Color");
@@ -58,8 +59,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerColorsModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerColorsModule);
+  Q_DECLARE_PRIVATE(qSlicerColorsModule);
+  Q_DISABLE_COPY(qSlicerColorsModule);
 };
 
 #endif

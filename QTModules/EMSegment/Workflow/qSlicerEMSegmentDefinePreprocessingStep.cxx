@@ -32,11 +32,14 @@
 #include <vtkMRMLEMSWorkingDataNode.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefinePreprocessingStepPrivate : public ctkPrivate<qSlicerEMSegmentDefinePreprocessingStep>,
+class qSlicerEMSegmentDefinePreprocessingStepPrivate :
                                                        public Ui_qSlicerEMSegmentDefinePreprocessingStep
 {
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentDefinePreprocessingStep);
+protected:
+  qSlicerEMSegmentDefinePreprocessingStep* const q_ptr;
 public:
-  qSlicerEMSegmentDefinePreprocessingStepPrivate();
+  qSlicerEMSegmentDefinePreprocessingStepPrivate(qSlicerEMSegmentDefinePreprocessingStep& object);
 
   void setTaskPreprocessingSetting();
 };
@@ -45,15 +48,16 @@ public:
 // qSlicerEMSegmentDefinePreprocessingStepPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentDefinePreprocessingStepPrivate::qSlicerEMSegmentDefinePreprocessingStepPrivate()
+qSlicerEMSegmentDefinePreprocessingStepPrivate::qSlicerEMSegmentDefinePreprocessingStepPrivate(qSlicerEMSegmentDefinePreprocessingStep& object)
+  : q_ptr(&object)
 {
 }
 
 //----------------------------------------------------------------------------
 void qSlicerEMSegmentDefinePreprocessingStepPrivate::setTaskPreprocessingSetting()
 {
-  CTK_P(qSlicerEMSegmentDefinePreprocessingStep);
-  Q_ASSERT(p->mrmlManager());
+  Q_Q(qSlicerEMSegmentDefinePreprocessingStep);
+  Q_ASSERT( q->mrmlManager());
 
   // TODO this needs to be ported to Qt/CTK, depending on how the tcl files will be dealt with
 
@@ -123,14 +127,20 @@ const QString qSlicerEMSegmentDefinePreprocessingStep::StepId = "DefinePreproces
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefinePreprocessingStep::qSlicerEMSegmentDefinePreprocessingStep(
-    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
+  ctkWorkflow* newWorkflow, QWidget* newWidget)
+  : Superclass(newWorkflow, qSlicerEMSegmentDefinePreprocessingStep::StepId, newWidget)
+  , d_ptr(new qSlicerEMSegmentDefinePreprocessingStepPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentDefinePreprocessingStep);
-  CTK_D(qSlicerEMSegmentDefinePreprocessingStep);
+  Q_D(qSlicerEMSegmentDefinePreprocessingStep);
   d->setupUi(this);
 
   this->setName("6/9. Define Preprocessing");
   this->setDescription("Answer questions for preprocessing of input images.");
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentDefinePreprocessingStep::~qSlicerEMSegmentDefinePreprocessingStep()
+{
 }
 
 //-----------------------------------------------------------------------------

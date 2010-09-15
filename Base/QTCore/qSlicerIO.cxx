@@ -32,7 +32,7 @@
 #include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerIOPrivate: public ctkPrivate<qSlicerIO>
+class qSlicerIOPrivate
 {
 public:
   vtkWeakPointer<vtkMRMLScene> MRMLScene;
@@ -44,8 +44,8 @@ public:
 //----------------------------------------------------------------------------
 qSlicerIO::qSlicerIO(QObject* _parent)
   :QObject(_parent)
+  , d_ptr(new qSlicerIOPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerIO);
 }
 
 //----------------------------------------------------------------------------
@@ -107,21 +107,21 @@ qSlicerIOOptions* qSlicerIO::options()const
 //----------------------------------------------------------------------------
 void qSlicerIO::setMRMLScene(vtkMRMLScene* scene)
 {
-  CTK_D(qSlicerIO);
+  Q_D(qSlicerIO);
   d->MRMLScene = scene;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScene* qSlicerIO::mrmlScene()const
 {
-  CTK_D(const qSlicerIO);
+  Q_D(const qSlicerIO);
   return d->MRMLScene;
 }
 
 //----------------------------------------------------------------------------
 bool qSlicerIO::load(const IOProperties& properties)
 {
-  CTK_D(qSlicerIO);
+  Q_D(qSlicerIO);
   d->LoadedNodes.clear();
   return false;
 }
@@ -135,27 +135,27 @@ bool qSlicerIO::save(const IOProperties& properties)
 //----------------------------------------------------------------------------
 void qSlicerIO::setLoadedNodes(const QStringList& nodes)
 {
-  CTK_D(qSlicerIO);
+  Q_D(qSlicerIO);
   d->LoadedNodes = nodes;
 }
 
 //----------------------------------------------------------------------------
 QStringList qSlicerIO::loadedNodes()const
 {
-  CTK_D(const qSlicerIO);
+  Q_D(const qSlicerIO);
   return d->LoadedNodes;
 }
 
 //----------------------------------------------------------------------------
 void qSlicerIO::setSavedNodes(const QStringList& nodes)
 {
-  CTK_D(qSlicerIO);
+  Q_D(qSlicerIO);
   d->SavedNodes = nodes;
 }
 
 //----------------------------------------------------------------------------
 QStringList qSlicerIO::savedNodes()const
 {
-  CTK_D(const qSlicerIO);
+  Q_D(const qSlicerIO);
   return d->SavedNodes;
 }

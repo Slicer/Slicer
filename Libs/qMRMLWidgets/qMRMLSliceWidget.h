@@ -56,7 +56,7 @@ public:
   
   /// Constructors
   explicit qMRMLSliceWidget(QWidget* parent = 0);
-  virtual ~qMRMLSliceWidget(){}
+  virtual ~qMRMLSliceWidget();
 
   /// Register DisplayableManagers
   /// \a scriptedDisplayableManagerDirectory is the based directory from which
@@ -122,8 +122,12 @@ protected:
   /// Get a reference to the underlying Slice View
   ctkVTKSliceView * sliceView()const;
 
+protected:
+  QScopedPointer<qMRMLSliceWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSliceWidget);
+  Q_DECLARE_PRIVATE(qMRMLSliceWidget);
+  Q_DISABLE_COPY(qMRMLSliceWidget);
 };
 
 #endif

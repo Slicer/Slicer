@@ -41,6 +41,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWidget : public QWidget, public virtual 
   QVTK_OBJECT
 public:
   qSlicerWidget(QWidget *parent=0, Qt::WindowFlags f=0);
+  virtual ~qSlicerWidget();
 
   ///
   /// Convenient windows to return parent widget or Null if any
@@ -53,12 +54,12 @@ public:
 
   ///
   /// Tell if the parent container is a QScrollArea
-  bool isParentContainerScrollArea();
+  bool isParentContainerScrollArea()const;
 
   ///
   /// Convenient method to Set/Get the parent container as a QScrollArea
   /// Note: Method mainly used while porting the application from KwWidget to Qt
-  QScrollArea* getScrollAreaParentContainer();
+  QScrollArea* getScrollAreaParentContainer()const;
   void setScrollAreaAsParentContainer(bool enable);
 
   ///
@@ -72,8 +73,12 @@ public slots:
 signals:
   void mrmlSceneChanged(vtkMRMLScene*);
 
+protected:
+  QScopedPointer<qSlicerWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerWidget);
+  Q_DECLARE_PRIVATE(qSlicerWidget);
+  Q_DISABLE_COPY(qSlicerWidget);
 };
 
 #endif

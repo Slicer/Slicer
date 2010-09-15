@@ -55,7 +55,8 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDView");
 // qMRMLThreeDViewPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate()
+qMRMLThreeDViewPrivate::qMRMLThreeDViewPrivate(qMRMLThreeDView& object)
+  : q_ptr(&object)
 {
   this->DisplayableManagerGroup = 0;
   this->MRMLScene = 0;
@@ -126,24 +127,24 @@ void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 void qMRMLThreeDViewPrivate::onSceneAboutToBeClosedEvent()
 {
   logger.trace("onSceneAboutToBeClosedEvent");
-  CTK_P(qMRMLThreeDView);
-  p->setRenderEnabled(false);
+  Q_Q(qMRMLThreeDView);
+  q->setRenderEnabled(false);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::onSceneAboutToBeImportedEvent()
 {
   logger.trace("onSceneAboutToBeImportedEvent");
-  CTK_P(qMRMLThreeDView);
-  p->setRenderEnabled(false);
+  Q_Q(qMRMLThreeDView);
+  q->setRenderEnabled(false);
 }
 //
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::onSceneImportedEvent()
 {
   logger.trace("onSceneImportedEvent");
-  CTK_P(qMRMLThreeDView);
-  p->setRenderEnabled(true);
+  Q_Q(qMRMLThreeDView);
+  q->setRenderEnabled(true);
   //p->scheduleRender();
 }
 //
@@ -156,18 +157,18 @@ void qMRMLThreeDViewPrivate::onSceneImportedEvent()
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::onMRMLViewNodeModifiedEvent()
 {
-  CTK_P(qMRMLThreeDView);
-  p->setAnimationIntervalMs(this->MRMLViewNode->GetAnimationMs());
-  p->setPitchRollYawIncrement(this->MRMLViewNode->GetRotateDegrees());
-  p->setSpinIncrement(this->MRMLViewNode->GetSpinDegrees());
-  p->setRockIncrement(this->MRMLViewNode->GetRockCount());
-  p->setRockLength(this->MRMLViewNode->GetRockLength());
+  Q_Q(qMRMLThreeDView);
+  q->setAnimationIntervalMs(this->MRMLViewNode->GetAnimationMs());
+  q->setPitchRollYawIncrement(this->MRMLViewNode->GetRotateDegrees());
+  q->setSpinIncrement(this->MRMLViewNode->GetSpinDegrees());
+  q->setRockIncrement(this->MRMLViewNode->GetRockCount());
+  q->setRockLength(this->MRMLViewNode->GetRockLength());
 }
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::onResetFocalPointRequestedEvent()
 {
-  CTK_P(qMRMLThreeDView);
+  Q_Q(qMRMLThreeDView);
 
   // Save current visiblity state of Box and AxisLabel
   bool savedBoxVisibile = this->MRMLViewNode->GetBoxVisible();
@@ -177,7 +178,7 @@ void qMRMLThreeDViewPrivate::onResetFocalPointRequestedEvent()
   this->MRMLViewNode->SetBoxVisible(0);
   this->MRMLViewNode->SetAxisLabelsVisible(0);
 
-  p->resetFocalPoint();
+  q->resetFocalPoint();
 
   // Restore visibility state
   this->MRMLViewNode->SetBoxVisible(savedBoxVisibile);
@@ -187,19 +188,19 @@ void qMRMLThreeDViewPrivate::onResetFocalPointRequestedEvent()
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewPrivate::onAnimationModeEvent()
 {
-  CTK_P(qMRMLThreeDView);
+  Q_Q(qMRMLThreeDView);
   if (this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin)
     {
-    p->setSpinEnabled(true);
+    q->setSpinEnabled(true);
     }
   else if (this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock)
     {
-    p->setRockEnabled(true);
+    q->setRockEnabled(true);
     }
   else
     {
-    p->setRockEnabled(false);
-    p->setSpinEnabled(false);
+    q->setRockEnabled(false);
+    q->setSpinEnabled(false);
     }
 }
 
@@ -214,8 +215,8 @@ void qMRMLThreeDViewPrivate::rockView()
 
 // --------------------------------------------------------------------------
 qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new qMRMLThreeDViewPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLThreeDView);
   VTK_CREATE(vtkThreeDViewInteractorStyle, interactorStyle);
   this->interactor()->SetInteractorStyle(interactorStyle);
 
@@ -234,10 +235,15 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   this->setRenderEnabled(true);
 }
 
+// --------------------------------------------------------------------------
+qMRMLThreeDView::~qMRMLThreeDView()
+{
+}
+
 //------------------------------------------------------------------------------
 void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory)
 {
-  CTK_D(qMRMLThreeDView);
+  Q_D(qMRMLThreeDView);
 
   QStringList displayableManagers;
   displayableManagers << "vtkMRMLCameraDisplayableManager"
@@ -279,7 +285,7 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
 //------------------------------------------------------------------------------
 void qMRMLThreeDView::setMRMLScene(vtkMRMLScene* newScene)
 {
-  CTK_D(qMRMLThreeDView);
+  Q_D(qMRMLThreeDView);
   if (d->MRMLScene == newScene)
     {
     return;
@@ -295,7 +301,7 @@ void qMRMLThreeDView::setMRMLScene(vtkMRMLScene* newScene)
 //---------------------------------------------------------------------------
 void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 {
-  CTK_D(qMRMLThreeDView);
+  Q_D(qMRMLThreeDView);
   if (d->MRMLViewNode == newViewNode)
     {
     return;
@@ -348,5 +354,9 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLThreeDView, vtkMRMLViewNode*, mrmlViewNode, MRMLViewNode);
+vtkMRMLViewNode* qMRMLThreeDView::mrmlViewNode()const
+{
+  Q_D(const qMRMLThreeDView);
+  return d->MRMLViewNode;
+}
 

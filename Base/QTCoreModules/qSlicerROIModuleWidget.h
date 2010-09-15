@@ -36,12 +36,17 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerROIModuleWidget :
   Q_OBJECT
 public:
   qSlicerROIModuleWidget(QWidget *parentWidget = 0);
+  virtual ~qSlicerROIModuleWidget();
 
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerROIModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerROIModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerROIModuleWidget);
+  Q_DISABLE_COPY(qSlicerROIModuleWidget);
 };
 
 #endif

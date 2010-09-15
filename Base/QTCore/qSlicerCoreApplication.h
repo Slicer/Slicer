@@ -185,8 +185,12 @@ protected slots:
 signals:
   void mrmlSceneChanged(vtkMRMLScene* mrmlScene);
 
+protected:
+  QScopedPointer<qSlicerCoreApplicationPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCoreApplication);
+  Q_DECLARE_PRIVATE(qSlicerCoreApplication);
+  Q_DISABLE_COPY(qSlicerCoreApplication);
 };
 
 #endif

@@ -32,10 +32,9 @@
 #include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerModuleManagerPrivate: public ctkPrivate<qSlicerModuleManager>
+class qSlicerModuleManagerPrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerModuleManager);
 
   ///
   /// Handle post-load initialization
@@ -52,9 +51,9 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerModuleManager::qSlicerModuleManager()
+  : d_ptr(new qSlicerModuleManagerPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerModuleManager);
-  //CTK_D(qSlicerModuleManager);
+  //Q_D(qSlicerModuleManager);
 
   // The module manager should be instanciated only if a qSlicerCoreApplication exists
   Q_ASSERT(qSlicerCoreApplication::application());
@@ -71,7 +70,7 @@ qSlicerModuleManager::~qSlicerModuleManager()
 //-----------------------------------------------------------------------------
 void qSlicerModuleManager::printAdditionalInfo()
 {
-  CTK_D(qSlicerModuleManager);
+  Q_D(qSlicerModuleManager);
   qDebug() << "qSlicerModuleManager (" << this << ")";
   qDebug() << "ModuleList";
 
@@ -88,14 +87,14 @@ void qSlicerModuleManager::printAdditionalInfo()
 //---------------------------------------------------------------------------
 qSlicerModuleFactoryManager* qSlicerModuleManager::factoryManager()const
 {
-  CTK_D(const qSlicerModuleManager);
+  Q_D(const qSlicerModuleManager);
   return const_cast<qSlicerModuleFactoryManager*>(&d->ModuleFactoryManager);
 }
 
 //---------------------------------------------------------------------------
 bool qSlicerModuleManager::isLoaded(const QString& name)const
 {
-  CTK_D(const qSlicerModuleManager);
+  Q_D(const qSlicerModuleManager);
   // If a module is not registered, we consider it isn't loaded
   if (!d->ModuleFactoryManager.isRegistered(name))
     {
@@ -107,7 +106,7 @@ bool qSlicerModuleManager::isLoaded(const QString& name)const
 //---------------------------------------------------------------------------
 bool qSlicerModuleManager::loadModule(const QString& name)
 {
-  CTK_D(qSlicerModuleManager);
+  Q_D(qSlicerModuleManager);
 
   // A module should be registered when attempting to load it
   //Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
@@ -164,7 +163,7 @@ bool qSlicerModuleManager::loadModule(const QString& name)
 //---------------------------------------------------------------------------
 bool qSlicerModuleManager::unLoadModule(const QString& name)
 {
-  CTK_D(qSlicerModuleManager);
+  Q_D(qSlicerModuleManager);
 
   // A module should be registered when attempting to unload it
   //Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
@@ -198,7 +197,7 @@ bool qSlicerModuleManager::unLoadModule(const QString& name)
 //---------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerModuleManager::module(const QString& name)
 {
-  CTK_D(qSlicerModuleManager);
+  Q_D(qSlicerModuleManager);
 
   // A module should be registered when attempting to obtain it
   // assert causes a crash on linux64 when this check fails
@@ -224,17 +223,20 @@ qSlicerAbstractCoreModule* qSlicerModuleManager::module(const QString& name)
 //---------------------------------------------------------------------------
 QString qSlicerModuleManager::moduleTitle(const QString& name) const
 {
-  return ctk_d()->ModuleFactoryManager.moduleTitle(name);
+  Q_D(const qSlicerModuleManager);
+  return d->ModuleFactoryManager.moduleTitle(name);
 }
 
 //---------------------------------------------------------------------------
 QString qSlicerModuleManager::moduleName(const QString& title) const
 {
-  return ctk_d()->ModuleFactoryManager.moduleName(title);
+  Q_D(const qSlicerModuleManager);
+  return d->ModuleFactoryManager.moduleName(title);
 }
 
 //---------------------------------------------------------------------------
 QStringList qSlicerModuleManager::moduleList() const
 {
-  return ctk_d()->ModuleFactoryManager.moduleNames();
+  Q_D(const qSlicerModuleManager);
+  return d->ModuleFactoryManager.moduleNames();
 }

@@ -62,8 +62,12 @@ protected:
 
   const qSlicerAbstractCoreModule* module()const;
 
+protected:
+  QScopedPointer<qSlicerAbstractModuleRepresentationPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerAbstractModuleRepresentation);
+  Q_DECLARE_PRIVATE(qSlicerAbstractModuleRepresentation);
+  Q_DISABLE_COPY(qSlicerAbstractModuleRepresentation);
 
   /// Give access to qSlicerAbstractModule to the method
   /// qSlicerAbstractModuleRepresentation::setModule

@@ -34,14 +34,15 @@ class QResizeEvent;
 
 //-----------------------------------------------------------------------------
 class qMRMLSliceWidgetPrivate: public QObject,
-                                   public ctkPrivate<qMRMLSliceWidget>,
                                    public Ui_qMRMLSliceWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qMRMLSliceWidget);
+protected:
+  qMRMLSliceWidget* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLSliceWidget);
-  qMRMLSliceWidgetPrivate();
+  qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object);
   ~qMRMLSliceWidgetPrivate();
 
 public slots:

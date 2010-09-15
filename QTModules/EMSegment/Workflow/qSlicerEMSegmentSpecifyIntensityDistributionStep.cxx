@@ -48,7 +48,8 @@ static ctkLogger logger(
 // qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate()
+qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate(qSlicerEMSegmentSpecifyIntensityDistributionStep& object)
+  : q_ptr(&object)
 {
   this->CurrentTreeNodeId = 0;
 }
@@ -56,19 +57,19 @@ qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::qSlicerEMSegmentSpecify
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::setupUi(qSlicerEMSegmentWorkflowWidgetStep* step)
 {
-  CTK_P(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  Q_Q(qSlicerEMSegmentSpecifyIntensityDistributionStep);
   this->Ui_qSlicerEMSegmentSpecifyIntensityDistributionStep::setupUi(step);
 
   this->DistributionSpecificationMethodComboBox->addItem(
-      p->tr("Manual"),
+      q->tr("Manual"),
       QVariant(vtkEMSegmentMRMLManager::DistributionSpecificationManual));
 
 //  this->DistributionSpecificationMethodComboBox->addItem(
-//      p->tr("Manual Sampling"),
+//      q->tr("Manual Sampling"),
 //      QVariant(vtkEMSegmentMRMLManager::DistributionSpecificationManuallySample));
 
 //  this->DistributionSpecificationMethodComboBox->addItem(
-//      p->tr("Auto Sampling"),
+//      q->tr("Auto Sampling"),
 //      QVariant(vtkEMSegmentMRMLManager::DistributionSpecificationAutoSample));
 
   QObject::connect(this->PlotDistributionButton, SIGNAL(clicked()),
@@ -103,13 +104,13 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::updateWidgetFromMR
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::openGraphDialog()
 {
-  CTK_P(qSlicerEMSegmentSpecifyIntensityDistributionStep);
-  QDialog dialog(p);
+  Q_Q(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  QDialog dialog(q);
   qSlicerEMSegmentGraphWidget* graph = new qSlicerEMSegmentGraphWidget(&dialog);
   QVBoxLayout* boxLayout = new QVBoxLayout;
   boxLayout->addWidget(graph);
   dialog.setLayout(boxLayout);
-  graph->setMRMLManager(p->mrmlManager());
+  graph->setMRMLManager(q->mrmlManager());
   dialog.exec();
 }
 
@@ -117,8 +118,8 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::openGraphDialog()
 void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::onCurrentTreeNodeChanged(
     vtkMRMLNode* node)
 {
-  CTK_P(qSlicerEMSegmentSpecifyIntensityDistributionStep);
-  Q_ASSERT(p->mrmlManager());
+  Q_Q(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  Q_ASSERT(q->mrmlManager());
 
   vtkMRMLEMSTreeNode * treeNode = vtkMRMLEMSTreeNode::SafeDownCast(node);
   Q_ASSERT(treeNode);
@@ -127,7 +128,7 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::onCurrentTreeNodeC
 
   this->IntensityDistributionTab->setEnabled(isLeaf);
 
-  int targetVolumeCount = p->mrmlManager()->GetTargetNumberOfSelectedVolumes();
+  int targetVolumeCount = q->mrmlManager()->GetTargetNumberOfSelectedVolumes();
 
   // MeanMatrix
   this->MeanMatrixWidget->setColumnCount(targetVolumeCount);
@@ -142,10 +143,10 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::onCurrentTreeNodeC
 
   if (isLeaf)
     {
-    treeNodeId = p->mrmlManager()->MapMRMLNodeIDToVTKNodeID(treeNode->GetID());
+    treeNodeId = q->mrmlManager()->MapMRMLNodeIDToVTKNodeID(treeNode->GetID());
 
     int distribution =
-        p->mrmlManager()->GetTreeNodeDistributionSpecificationMethod(treeNodeId);
+        q->mrmlManager()->GetTreeNodeDistributionSpecificationMethod(treeNodeId);
     Q_ASSERT(
         distribution == vtkEMSegmentMRMLManager::DistributionSpecificationManuallySample ||
         distribution == vtkEMSegmentMRMLManager::DistributionSpecificationManual ||
@@ -159,7 +160,7 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::onCurrentTreeNodeC
     // MeanMatrix
     for(int colId = 0; colId < targetVolumeCount; colId++)
       {
-      meanValues << p->mrmlManager()->GetTreeNodeDistributionMean(treeNodeId, colId);
+      meanValues << q->mrmlManager()->GetTreeNodeDistributionMean(treeNodeId, colId);
       }
 
     // CovarianceMatrix
@@ -167,7 +168,7 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::onCurrentTreeNodeC
       {
       for(int colId = 0; colId < targetVolumeCount; colId++)
         {
-        covarianceValues << p->mrmlManager()->GetTreeNodeDistributionCovariance(
+        covarianceValues << q->mrmlManager()->GetTreeNodeDistributionCovariance(
             treeNodeId, rowId, colId);
         }
       }
@@ -188,7 +189,7 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::onCurrentTreeNodeC
 void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::
     onCurrentDistributionSpecificationMethodComboBoxIndexChanged(int currentIndex)
 {
-  CTK_P(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  Q_Q(qSlicerEMSegmentSpecifyIntensityDistributionStep);
 
   int distribution = this->DistributionSpecificationMethodComboBox->itemData(currentIndex).toInt();
   Q_ASSERT(
@@ -196,7 +197,7 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate::
       distribution == vtkEMSegmentMRMLManager::DistributionSpecificationManual ||
       distribution == vtkEMSegmentMRMLManager::DistributionSpecificationAutoSample);
 
-  p->mrmlManager()->SetTreeNodeDistributionSpecificationMethod(
+  q->mrmlManager()->SetTreeNodeDistributionSpecificationMethod(
       this->CurrentTreeNodeId, distribution);
 
   this->updateMeanAndCovarianceMatrixWidget(distribution);
@@ -211,14 +212,20 @@ const QString qSlicerEMSegmentSpecifyIntensityDistributionStep::StepId =
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentSpecifyIntensityDistributionStep::qSlicerEMSegmentSpecifyIntensityDistributionStep(
-ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
+  ctkWorkflow* newWorkflow, QWidget* newWidget)
+  : Superclass(newWorkflow, qSlicerEMSegmentSpecifyIntensityDistributionStep::StepId, newWidget)
+  , d_ptr(new qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentSpecifyIntensityDistributionStep);
-  CTK_D(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  Q_D(qSlicerEMSegmentSpecifyIntensityDistributionStep);
   d->setupUi(this);
 
   this->setName("7/9. Specify Intensity Distributions");
   this->setDescription("Define intensity distribution for each anatomical structure.");
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentSpecifyIntensityDistributionStep::~qSlicerEMSegmentSpecifyIntensityDistributionStep()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -240,7 +247,7 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  CTK_D(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  Q_D(qSlicerEMSegmentSpecifyIntensityDistributionStep);
   d->updateWidgetFromMRML();
 
   // Indicates that we are finished
@@ -259,7 +266,7 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStep::onExit(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentSpecifyIntensityDistributionStep::showUserInterface()
 {
-  CTK_D(qSlicerEMSegmentSpecifyIntensityDistributionStep);
+  Q_D(qSlicerEMSegmentSpecifyIntensityDistributionStep);
   this->Superclass::showUserInterface();
   d->updateWidgetFromMRML();
 }

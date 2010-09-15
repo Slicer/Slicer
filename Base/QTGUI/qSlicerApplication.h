@@ -99,8 +99,12 @@ public:
   //virtual void commitData(QSessionManager & manager);
 protected:
   QSettings* newSettings(const QString& organization, const QString& application);
+protected:
+  QScopedPointer<qSlicerApplicationPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerApplication);
+  Q_DECLARE_PRIVATE(qSlicerApplication);
+  Q_DISABLE_COPY(qSlicerApplication);
 };
 
 /// Apply the Slicer palette to the \c palette

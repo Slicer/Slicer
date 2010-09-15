@@ -116,7 +116,8 @@ WIDGET_VALUE_WRAPPER(Enumeration, ButtonGroupWidgetWrapper, checkedValue, setChe
 #define INSTANCIATE_WIDGET_VALUE_WRAPPER(_NAME, _PARAM_NAME, _LABEL, _WIDGET_INSTANCE) \
   qSlicerWidgetValueWrapper* wrapper =                                                 \
     new _NAME##WidgetValueWrapper(_PARAM_NAME, _LABEL, _WIDGET_INSTANCE);              \
-  QObject::connect(wrapper, SIGNAL(valueChanged()), ctk_p(), SLOT(onValueChanged())); \
+  Q_Q(qSlicerCLIModuleUIHelper);                                                       \
+  QObject::connect(wrapper, SIGNAL(valueChanged()), q, SLOT(onValueChanged()));        \
   this->WidgetValueWrappers.push_back(wrapper);
 
 //-----------------------------------------------------------------------------
@@ -156,11 +157,14 @@ void ButtonGroupWidgetWrapper::setCheckedValue(const QString& value)
 }
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIModuleUIHelperPrivate: public ctkPrivate<qSlicerCLIModuleUIHelper>
+class qSlicerCLIModuleUIHelperPrivate
 {
+  Q_DECLARE_PUBLIC(qSlicerCLIModuleUIHelper);
+protected:
+  qSlicerCLIModuleUIHelper* const q_ptr;
 public:
   typedef qSlicerCLIModuleUIHelperPrivate Self;
-  qSlicerCLIModuleUIHelperPrivate();
+  qSlicerCLIModuleUIHelperPrivate(qSlicerCLIModuleUIHelper& object);
 
   /// Convenient typedefs
   typedef std::vector<std::string>::const_iterator ElementConstIterator;
@@ -227,7 +231,8 @@ QHash<QString, QString> qSlicerCLIModuleUIHelperPrivate::TransformTypeAttributeT
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModuleUIHelperPrivate::
-  qSlicerCLIModuleUIHelperPrivate()
+  qSlicerCLIModuleUIHelperPrivate(qSlicerCLIModuleUIHelper& object)
+  : q_ptr(&object)
 {
   this->CLIModuleWidget = 0;
   Self::initializeMaps();
@@ -765,18 +770,23 @@ bool qSlicerCLIModuleUIHelperPrivate::shouldEnableNone(const ModuleParameter& mo
 //-----------------------------------------------------------------------------
 qSlicerCLIModuleUIHelper::qSlicerCLIModuleUIHelper(qSlicerCLIModuleWidget* cliModuleWidget)
   :QObject(cliModuleWidget)
+  , d_ptr(new qSlicerCLIModuleUIHelperPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerCLIModuleUIHelper);
-  CTK_D(qSlicerCLIModuleUIHelper);
+  Q_D(qSlicerCLIModuleUIHelper);
 
   Q_ASSERT(cliModuleWidget);
   d->CLIModuleWidget = cliModuleWidget;
 }
 
 //-----------------------------------------------------------------------------
+qSlicerCLIModuleUIHelper::~qSlicerCLIModuleUIHelper()
+{
+}
+
+//-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& moduleParameter)
 {
-  CTK_D(qSlicerCLIModuleUIHelper);
+  Q_D(qSlicerCLIModuleUIHelper);
   
   Q_ASSERT(moduleParameter.GetHidden() != "true");
 
@@ -859,7 +869,7 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
 void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
   vtkMRMLCommandLineModuleNode* commandLineModuleNode)
 {
-  CTK_D(qSlicerCLIModuleUIHelper);
+  Q_D(qSlicerCLIModuleUIHelper);
   Q_ASSERT(commandLineModuleNode);
 
   int disabledModify = commandLineModuleNode->StartModify();
@@ -910,7 +920,7 @@ void qSlicerCLIModuleUIHelper::setCommandLineModuleParameter(vtkMRMLCommandLineM
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLineModuleNode)
 {
-  CTK_D(qSlicerCLIModuleUIHelper);
+  Q_D(qSlicerCLIModuleUIHelper);
 
   if (!commandLineModuleNode)
     {
@@ -928,7 +938,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleUIHelper::setValue(const QString& name, const QVariant& value)
 {
-  CTK_D(qSlicerCLIModuleUIHelper);
+  Q_D(qSlicerCLIModuleUIHelper);
   foreach(qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
     {
     if (name == valueWrapper->name())

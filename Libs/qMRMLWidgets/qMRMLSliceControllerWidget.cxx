@@ -52,7 +52,8 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceControllerWidget
 // qMRMLSliceViewPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate()
+qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object)
+  : q_ptr(&object)
 {
   this->SliceLogic = vtkSmartPointer<vtkMRMLSliceLogic>::New();
   
@@ -82,7 +83,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate()
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 {
-  CTK_P(qMRMLSliceControllerWidget);
+  Q_Q(qMRMLSliceControllerWidget);
 
   this->Ui_qMRMLSliceControllerWidget::setupUi(widget);
   
@@ -105,7 +106,7 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // Connect Orientation selector
   this->connect(this->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)),
-                p, SLOT(setSliceOrientation(QString)));
+                q, SLOT(setSliceOrientation(QString)));
 
   // Connect Foreground layer selector
   this->connect(this->ForegroundLayerNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -121,7 +122,7 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // Connect Slice offset slider
   this->connect(this->SliceOffsetSlider, SIGNAL(valueChanged(double)),
-                p, SLOT(setSliceOffsetValue(double)));
+                q, SLOT(setSliceOffsetValue(double)));
 
   // Connect SliceCollapsibleButton
   // See qMRMLSliceControllerWidget::setControllerButtonGroup()
@@ -130,19 +131,19 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   // Connect Slice visibility toggle
   this->connect(this->SliceVisibilityButton, SIGNAL(clicked(bool)),
-                p, SLOT(setSliceVisible(bool)));
+                q, SLOT(setSliceVisible(bool)));
 
   // Connect link toggle
   this->connect(this->SliceLinkButton, SIGNAL(clicked(bool)),
-                p, SLOT(setSliceLink(bool)));
+                q, SLOT(setSliceLink(bool)));
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onImageDataModifiedEvent()
 {
-  CTK_P(qMRMLSliceControllerWidget);
+  Q_Q(qMRMLSliceControllerWidget);
   logger.trace("onImageDataModifiedEvent");
-  emit p->imageDataModified(this->ImageData);
+  emit q->imageDataModified(this->ImageData);
 }
 
 // --------------------------------------------------------------------------
@@ -157,7 +158,7 @@ void qMRMLSliceControllerWidgetPrivate::toggleControllerWidgetGroupVisibility()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
 {
-  CTK_P(qMRMLSliceControllerWidget);
+  Q_Q(qMRMLSliceControllerWidget);
   QMenu* advancedMenu = new QMenu(tr("Advanced"),this->SliceMoreOptionButton);
   // Fit to window
   advancedMenu->addAction(this->actionFit_to_window);
@@ -169,13 +170,13 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   QWidget* labelOpacityWidget = new QWidget(labelOpacityMenu);
   QHBoxLayout* labelOpacityLayout = new QHBoxLayout(labelOpacityWidget);
   labelOpacityLayout->setContentsMargins(0,0,0,0);
-  this->LabelOpacitySlider = new ctkSliderWidget(p);
+  this->LabelOpacitySlider = new ctkSliderWidget(q);
   this->LabelOpacitySlider->setRange(0., 1.);
   this->LabelOpacitySlider->setSingleStep(0.05);
   this->LabelOpacitySlider->setValue(this->LastLabelOpacity);
   QObject::connect(this->LabelOpacitySlider, SIGNAL(valueChanged(double)),
-                   p, SLOT(setLabelOpacity(double)));
-  this->LabelOpacityToggleButton = new QToolButton(p);
+                   q, SLOT(setLabelOpacity(double)));
+  this->LabelOpacityToggleButton = new QToolButton(q);
   this->LabelOpacityToggleButton->setText("Toggle label opacity");
   QIcon visibilityIcon;
   visibilityIcon.addFile(":Icons/VisibleOn.png", QSize(), QIcon::Normal, QIcon::Off);
@@ -221,7 +222,7 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   this->SliceSpacingSpinBox->setSingleStep(0.001);
   this->SliceSpacingSpinBox->setValue(1.);
   QObject::connect(this->SliceSpacingSpinBox, SIGNAL(valueChanged(double)),
-                   p, SLOT(setSliceSpacing(double)));
+                   q, SLOT(setSliceSpacing(double)));
   QWidgetAction* sliceSpacingAction = new QWidgetAction(sliceSpacingManualMode);
   sliceSpacingAction->setDefaultWidget(this->SliceSpacingSpinBox);
   sliceSpacingManualMode->addAction(sliceSpacingAction);
@@ -285,16 +286,16 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
 // --------------------------------------------------------------------------
 vtkSmartPointer<vtkCollection> qMRMLSliceControllerWidgetPrivate::saveNodesForUndo(const QString& nodeTypes)
 {
-  CTK_P(qMRMLSliceControllerWidget);
+  Q_Q(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes;
-  if (p->mrmlScene())
+  if (q->mrmlScene())
     {
     nodes.TakeReference(
-      p->mrmlScene()->GetNodesByClass(nodeTypes.toLatin1()));
+      q->mrmlScene()->GetNodesByClass(nodeTypes.toLatin1()));
     }
   if (nodes.GetPointer())
     {
-    p->mrmlScene()->SaveStateForUndo(nodes);
+    q->mrmlScene()->SaveStateForUndo(nodes);
     }
   return nodes;
 }
@@ -349,8 +350,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 {
-  CTK_P(qMRMLSliceControllerWidget);
-  if (!p->mrmlScene() || p->mrmlScene()->GetIsUpdating())
+  Q_Q(qMRMLSliceControllerWidget);
+  if (!q->mrmlScene() || q->mrmlScene()->GetIsUpdating())
     {// when we are loading, the scene might be in an inconsistent mode, where
     // the volumes pointed by the slice composite node don't exist yet
     return;
@@ -365,15 +366,15 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 
   // Update "foreground layer" node selector
   this->ForegroundLayerNodeSelector->setCurrentNode(
-      p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
+      q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
 
   // Update "background layer" node selector
   this->BackgroundLayerNodeSelector->setCurrentNode(
-      p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetBackgroundVolumeID()));
+      q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetBackgroundVolumeID()));
 
   // Update "label map" node selector
   this->LabelMapSelector->setCurrentNode(
-      p->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
+      q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
 
   // Label opacity
   this->LabelOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetLabelOpacity());
@@ -399,8 +400,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNode * node)
 {
-  CTK_P(qMRMLSliceControllerWidget);
-  logger.trace(QString("sliceView: %1 - ForegroundLayerNodeSelected").arg(p->sliceOrientation()));
+  Q_Q(qMRMLSliceControllerWidget);
+  logger.trace(QString("sliceView: %1 - ForegroundLayerNodeSelected").arg(q->sliceOrientation()));
 
   if (!this->MRMLSliceCompositeNode)
     {
@@ -409,11 +410,11 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
 
   if (this->MRMLSliceCompositeNode->GetLinkedControl())
     {
-    int nnodes = p->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    int nnodes = q->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
     for (int i = 0; i < nnodes; ++i)
       {
       vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
-        p->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+        q->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
       cnode->SetForegroundVolumeID(node ? node->GetID() : 0);
       }
     }
@@ -437,8 +438,8 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNode * node)
 {
-  CTK_P(qMRMLSliceControllerWidget);
-  logger.trace(QString("sliceView: %1 - BackgroundLayerNodeSelected").arg(p->sliceOrientation()));
+  Q_Q(qMRMLSliceControllerWidget);
+  logger.trace(QString("sliceView: %1 - BackgroundLayerNodeSelected").arg(q->sliceOrientation()));
 
   if (!this->MRMLSliceCompositeNode)
     {
@@ -447,11 +448,11 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
 
   if (this->MRMLSliceCompositeNode->GetLinkedControl())
     {
-    int nnodes = p->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    int nnodes = q->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
     for (int i = 0; i < nnodes; ++i)
       {
       vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
-        p->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+        q->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
       cnode->SetBackgroundVolumeID(node ? node->GetID() : 0);
       }
     }
@@ -476,19 +477,19 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * node)
 {
-  CTK_P(qMRMLSliceControllerWidget);
-  logger.trace(QString("sliceView: %1 - LabelMapNodeSelected").arg(p->sliceOrientation()));
+  Q_Q(qMRMLSliceControllerWidget);
+  logger.trace(QString("sliceView: %1 - LabelMapNodeSelected").arg(q->sliceOrientation()));
   if (!this->MRMLSliceCompositeNode)
     {
     return;
     }
   if (this->MRMLSliceCompositeNode->GetLinkedControl())
     {
-    int nnodes = p->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+    int nnodes = q->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
     for (int i = 0; i < nnodes; ++i)
       {
       vtkMRMLSliceCompositeNode * cnode = vtkMRMLSliceCompositeNode::SafeDownCast(
-        p->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
+        q->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
       cnode->SetLabelVolumeID(node ? node->GetID() : 0);
       }
     }
@@ -501,7 +502,7 @@ void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * nod
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 {
-  CTK_P(qMRMLSliceControllerWidget);
+  Q_Q(qMRMLSliceControllerWidget);
 
   if (this->MRMLSliceCompositeNode != this->SliceLogic->GetSliceCompositeNode())
     {
@@ -518,20 +519,20 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
     }
 
   // no op if they are the same
-  p->setImageData(this->SliceLogic->GetImageData());
+  q->setImageData(this->SliceLogic->GetImageData());
 
   // Set the scale increments to match the z spacing (rotated into slice space)
   const double * sliceSpacing = 0;
   sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
   Q_ASSERT(sliceSpacing);
   double offsetResolution = sliceSpacing[2];
-  p->setSliceOffsetResolution(offsetResolution);
+  q->setSliceOffsetResolution(offsetResolution);
 
   // Set slice offset range to match the field of view
   // Calculate the number of slices in the current range
   double sliceBounds[6] = {0, 0, 0, 0, 0, 0};
   this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds);
-  p->setSliceOffsetRange(sliceBounds[4], sliceBounds[5]);
+  q->setSliceOffsetRange(sliceBounds[4], sliceBounds[5]);
 
   // Update slider position
   this->SliceOffsetSlider->setValue(this->SliceLogic->GetSliceOffset());
@@ -602,14 +603,14 @@ vtkMRMLSliceLogic* qMRMLSliceControllerWidgetPrivate::sliceNodeLogic(vtkMRMLSlic
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool interpolate)
 {
-  CTK_P(qMRMLSliceControllerWidget);
+  Q_Q(qMRMLSliceControllerWidget);
   // TODO, update the QAction when the display node is modified
   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode();
   vtkMRMLScalarVolumeDisplayNode *displayNode = volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
     volumeNode->GetVolumeDisplayNode()) : 0;
   if (displayNode)
     {
-    p->mrmlScene()->SaveStateForUndo(displayNode);
+    q->mrmlScene()->SaveStateForUndo(displayNode);
     displayNode->SetInterpolate(interpolate);
     }
   // historic code that doesn't seem to work
@@ -617,7 +618,7 @@ void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceL
   //   sliceLogic->GetForegroundLayer()->GetVolumeDisplayNode());
   // if (displayNode)
   //   {
-  //   p->mrmlScene()->SaveStateForUndo(displayNode);
+  //   q->mrmlScene()->SaveStateForUndo(displayNode);
   //   displayNode->SetInterpolate(interpolate);
   //   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode();
   //   if (volumeNode)
@@ -630,14 +631,14 @@ void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceL
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceLogic* sliceLogic, bool interpolate)
 {
-  CTK_P(qMRMLSliceControllerWidget);
+  Q_Q(qMRMLSliceControllerWidget);
   // TODO, update the QAction when the display node is modified
   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode();
   vtkMRMLScalarVolumeDisplayNode *displayNode = volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
     volumeNode->GetVolumeDisplayNode()) : 0;
   if (displayNode)
     {
-    p->mrmlScene()->SaveStateForUndo(displayNode);
+    q->mrmlScene()->SaveStateForUndo(displayNode);
     displayNode->SetInterpolate(interpolate);
     }
   // historic code that doesn't seem to work
@@ -645,7 +646,7 @@ void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceL
   //   sliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode());
   // if (displayNode)
   //   {
-  //   p->mrmlScene()->SaveStateForUndo(displayNode);
+  //   q->mrmlScene()->SaveStateForUndo(displayNode);
   //   displayNode->SetInterpolate(interpolate);
   //   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode();
   //   if (volumeNode)
@@ -664,8 +665,8 @@ void qMRMLSliceControllerWidgetPrivate::toggleLabelOpacity(bool hide)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::applyCustomLightbox()
 {
-  CTK_P(qMRMLSliceControllerWidget);
-  p->setLightbox(this->LightBoxRowsSpinBox->value(), this->LightBoxColumnsSpinBox->value());
+  Q_Q(qMRMLSliceControllerWidget);
+  q->setLightbox(this->LightBoxRowsSpinBox->value(), this->LightBoxColumnsSpinBox->value());
 }
 
 // --------------------------------------------------------------------------
@@ -673,20 +674,29 @@ void qMRMLSliceControllerWidgetPrivate::applyCustomLightbox()
 
 // --------------------------------------------------------------------------
 qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new qMRMLSliceControllerWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLSliceControllerWidget);
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   d->setupUi(this);
   this->setSliceViewName("Red");
 }
 
+// --------------------------------------------------------------------------
+qMRMLSliceControllerWidget::~qMRMLSliceControllerWidget()
+{
+}
+
 //---------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLSliceControllerWidget, vtkMRMLSliceNode*, mrmlSliceNode, MRMLSliceNode);
+vtkMRMLSliceNode* qMRMLSliceControllerWidget::mrmlSliceNode()const
+{
+  Q_D(const qMRMLSliceControllerWidget);
+  return d->MRMLSliceNode;
+}
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
 
   if (this->mrmlScene() == newScene)
     {
@@ -716,7 +726,7 @@ void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
 
   if (this->mrmlScene() == 0)
     {
@@ -776,7 +786,7 @@ CTK_GET_CXX(qMRMLSliceControllerWidget, vtkMRMLSliceLogic*, sliceLogic, SliceLog
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   if (d->SliceLogic == newSliceLogic)
     {
     return;
@@ -796,14 +806,14 @@ void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceLogics(vtkCollection* sliceLogics)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   d->SliceLogics = sliceLogics;
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setControllerButtonGroup(QButtonGroup* newButtonGroup)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
 
   if (d->ControllerButtonGroup == newButtonGroup)
     {
@@ -855,7 +865,7 @@ CTK_GET_CXX(qMRMLSliceControllerWidget, vtkMRMLSliceCompositeNode*,
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceViewSize(const QSize& newSize)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   logger.trace(QString("setSliceViewSize - newSize(%1, %2)").
                arg(newSize.width()).arg(newSize.height()));
   d->ViewSize = newSize;
@@ -869,7 +879,7 @@ void qMRMLSliceControllerWidget::setSliceViewSize(const QSize& newSize)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewName)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
 
   if (d->MRMLSliceNode)
     {
@@ -916,7 +926,7 @@ CTK_GET_CXX(qMRMLSliceControllerWidget, QString, sliceViewName, SliceViewName);
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
 
   if (d->ImageData == newImageData)
     {
@@ -943,19 +953,21 @@ CTK_GET_CXX(qMRMLSliceControllerWidget, vtkImageData*, imageData, ImageData);
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceOffsetRange(double min, double max)
 {
-  ctk_d()->SliceOffsetSlider->setRange(min, max);
+  Q_D(qMRMLSliceControllerWidget);
+  d->SliceOffsetSlider->setRange(min, max);
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
 {
-  ctk_d()->SliceOffsetSlider->setSingleStep(resolution);
+  Q_D(qMRMLSliceControllerWidget);
+  d->SliceOffsetSlider->setSingleStep(resolution);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   if (!d->SliceLogic)
     {
     return;
@@ -967,7 +979,7 @@ void qMRMLSliceControllerWidget::setSliceOffsetValue(double offset)
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::fitSliceToBackground()
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   if (!d->SliceLogic->GetSliceNode())
     {
     logger.warn("fitSliceToBackground - Failed because SliceLogic->GetSliceNode() is NULL");
@@ -979,15 +991,16 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceControllerWidget::sliceOrientation()
+QString qMRMLSliceControllerWidget::sliceOrientation()const
 {
-  return ctk_d()->SliceOrientationSelector->currentText();
+  Q_D(const qMRMLSliceControllerWidget);
+  return d->SliceOrientationSelector->currentText();
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
 
 #ifndef QT_NO_DEBUG
   QStringList expectedOrientation;
@@ -1024,7 +1037,7 @@ void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
 
   if (!d->MRMLSliceNode  || !d->MRMLSliceCompositeNode || !this->mrmlScene())
     {
@@ -1067,7 +1080,7 @@ void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
 //---------------------------------------------------------------------------
 bool qMRMLSliceControllerWidget::isLinked()const
 {
-  CTK_D(const qMRMLSliceControllerWidget);
+  Q_D(const qMRMLSliceControllerWidget);
   // It is not really an assert here, what could have happen is that the
   // mrml slice composite node LinkedControl property has been changed but the
   // modified event has not been yet fired, updateWidgetFromMRMLSliceCompositeNode not having been
@@ -1081,7 +1094,7 @@ bool qMRMLSliceControllerWidget::isLinked()const
 //---------------------------------------------------------------------------
 bool qMRMLSliceControllerWidget::isCompareView()const
 {
-  CTK_D(const qMRMLSliceControllerWidget);
+  Q_D(const qMRMLSliceControllerWidget);
   return d->MRMLSliceNode && QString(d->MRMLSliceNode->GetLayoutName()).startsWith("Compare");
 }
 
@@ -1107,7 +1120,7 @@ void qMRMLSliceControllerWidget::setSliceLink(bool linked)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::rotateSliceToBackground()
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
   if(!nodes.GetPointer())
     {
@@ -1130,7 +1143,7 @@ void qMRMLSliceControllerWidget::rotateSliceToBackground()
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLabelOpacity(double opacity)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceCompositeNode");
   if (!nodes.GetPointer())
     {
@@ -1158,7 +1171,7 @@ void qMRMLSliceControllerWidget::setLabelOpacity(double opacity)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::showLabelOutline(bool show)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
   if (!nodes.GetPointer())
     {
@@ -1179,7 +1192,7 @@ void qMRMLSliceControllerWidget::showLabelOutline(bool show)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::showReformatWidget(bool show)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
   if (!nodes.GetPointer())
     {
@@ -1203,7 +1216,7 @@ void qMRMLSliceControllerWidget::showReformatWidget(bool show)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setCompositing(int mode)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceCompositeNode");
   if (!nodes.GetPointer())
     {
@@ -1251,7 +1264,7 @@ void qMRMLSliceControllerWidget::setCompositingToSubtract()
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceSpacingMode(bool automatic)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
   if (!nodes.GetPointer())
     {
@@ -1279,7 +1292,7 @@ void qMRMLSliceControllerWidget::setSliceSpacingMode(bool automatic)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceSpacing(double sliceSpacing)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   this->setSliceSpacingMode(false);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
   if (!nodes.GetPointer())
@@ -1306,7 +1319,7 @@ void qMRMLSliceControllerWidget::setSliceSpacing(double sliceSpacing)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
   if (!nodes.GetPointer())
     {
@@ -1391,7 +1404,7 @@ void qMRMLSliceControllerWidget::setLightboxTo6x6()
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setForegroundInterpolation(bool interpolate)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   if (!d->SliceLogics)
     {
     d->setForegroundInterpolation(d->SliceLogic, interpolate);
@@ -1412,7 +1425,7 @@ void qMRMLSliceControllerWidget::setForegroundInterpolation(bool interpolate)
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setBackgroundInterpolation(bool interpolate)
 {
-  CTK_D(qMRMLSliceControllerWidget);
+  Q_D(qMRMLSliceControllerWidget);
   if (!d->SliceLogics)
     {
     d->setBackgroundInterpolation(d->SliceLogic, interpolate);

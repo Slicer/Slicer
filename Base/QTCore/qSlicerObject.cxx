@@ -29,16 +29,15 @@
 #include "vtkSmartPointer.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerObjectPrivate: public ctkPrivate<qSlicerObject>
+class qSlicerObjectPrivate
 {
 public:
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerObject::qSlicerObject()
+qSlicerObject::qSlicerObject(): d_ptr(new qSlicerObjectPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerObject);
 }
 
 //-----------------------------------------------------------------------------
@@ -49,11 +48,12 @@ qSlicerObject::~qSlicerObject()
 //-----------------------------------------------------------------------------
 void qSlicerObject::setMRMLScene(vtkMRMLScene* scene)
 {
-  if (scene == ctk_d()->MRMLScene)
+  Q_D(qSlicerObject);
+  if (scene == d->MRMLScene)
     {
     return ;
     }
-  ctk_d()->MRMLScene = scene;
+  d->MRMLScene = scene;
 }
 
 //-----------------------------------------------------------------------------

@@ -73,6 +73,7 @@ public:
   /// is initialized (module manager, iomanager...). Most of the
   /// initialization must be done in qSlicerAbstractCoreModule::setup()
   qSlicerAbstractCoreModule(QObject *parent=0);
+  virtual ~qSlicerAbstractCoreModule();
 
   virtual void printAdditionalInfo();
 
@@ -155,8 +156,12 @@ protected:
   virtual vtkSlicerLogic* createLogic() = 0;
 
 
+protected:
+  QScopedPointer<qSlicerAbstractCoreModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerAbstractCoreModule);
+  Q_DECLARE_PRIVATE(qSlicerAbstractCoreModule);
+  Q_DISABLE_COPY(qSlicerAbstractCoreModule);
   friend class qSlicerAbstractModuleRepresentation;
   void representationDeleted();
   ///

@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSlicesControllerToolBar : public QToolBar
 public:
   typedef QToolBar Superclass;
   explicit qMRMLSlicesControllerToolBar(QWidget* parent = 0);
-  virtual ~qMRMLSlicesControllerToolBar(){}
+  virtual ~qMRMLSlicesControllerToolBar();
 
   vtkMRMLScene* mrmlScene()const;
 
@@ -80,8 +80,12 @@ protected slots:
   void updateFromSliceNode(vtkObject*);
 protected:
   void connectNode(vtkMRMLNode*);
+protected:
+  QScopedPointer<qMRMLSlicesControllerToolBarPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSlicesControllerToolBar);
+  Q_DECLARE_PRIVATE(qMRMLSlicesControllerToolBar);
+  Q_DISABLE_COPY(qMRMLSlicesControllerToolBar);
 };
 
 #endif

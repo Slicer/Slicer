@@ -36,11 +36,9 @@ class qSlicerAbstractModule;
 class ctkPythonShell;
 
 //-----------------------------------------------------------------------------
-class qSlicerMainWindowCorePrivate: public QObject,
-                                    public ctkPrivate<qSlicerMainWindowCore>
+class qSlicerMainWindowCorePrivate: public QObject
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(qSlicerMainWindowCore);
 
 public:
   explicit qSlicerMainWindowCorePrivate();

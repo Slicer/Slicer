@@ -39,6 +39,7 @@ class Q_SLICERQT_EXPORT qSlicerMainWindowCore : public QObject
 public:
   typedef QObject Superclass;
   qSlicerMainWindowCore(qSlicerMainWindow *parent);
+  virtual ~qSlicerMainWindowCore();
 
 public slots: 
   /// 
@@ -79,8 +80,12 @@ public slots:
 protected:
   qSlicerMainWindow* widget() const;
 
+protected:
+  QScopedPointer<qSlicerMainWindowCorePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerMainWindowCore);
+  Q_DECLARE_PRIVATE(qSlicerMainWindowCore);
+  Q_DISABLE_COPY(qSlicerMainWindowCore);
 };
 
 #endif

@@ -29,12 +29,14 @@
 // MRML includes 
 #include <vtkMRMLScene.h>
 
-class qMRMLSceneFactoryWidgetPrivate: public ctkPrivate<qMRMLSceneFactoryWidget>,
+class qMRMLSceneFactoryWidgetPrivate:
                                       public Ui_qMRMLSceneFactoryWidget
 {
+  Q_DECLARE_PUBLIC(qMRMLSceneFactoryWidget);
+protected:
+  qMRMLSceneFactoryWidget* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLSceneFactoryWidget);
-  qMRMLSceneFactoryWidgetPrivate();
+  qMRMLSceneFactoryWidgetPrivate(qMRMLSceneFactoryWidget& object);
   void init();
   void setNodeActionsEnabled(bool enable);
  
@@ -42,7 +44,8 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLSceneFactoryWidgetPrivate::qMRMLSceneFactoryWidgetPrivate()
+qMRMLSceneFactoryWidgetPrivate::qMRMLSceneFactoryWidgetPrivate(qMRMLSceneFactoryWidget& object)
+  : q_ptr(&object)
 {
   this->MRMLScene = 0;
 }
@@ -50,12 +53,12 @@ qMRMLSceneFactoryWidgetPrivate::qMRMLSceneFactoryWidgetPrivate()
 // --------------------------------------------------------------------------
 void qMRMLSceneFactoryWidgetPrivate::init()
 {
-  CTK_P(qMRMLSceneFactoryWidget);
-  this->setupUi(p);
-  QObject::connect(this->NewSceneButton, SIGNAL(clicked()), p, SLOT(generateScene()));
-  QObject::connect(this->DeleteSceneButton, SIGNAL(clicked()), p, SLOT(deleteScene()));
-  QObject::connect(this->NewNodeButton, SIGNAL(clicked()), p, SLOT(generateNode()));
-  QObject::connect(this->DeleteNodeButton, SIGNAL(clicked()), p, SLOT(deleteNode()));
+  Q_Q(qMRMLSceneFactoryWidget);
+  this->setupUi(q);
+  QObject::connect(this->NewSceneButton, SIGNAL(clicked()), q, SLOT(generateScene()));
+  QObject::connect(this->DeleteSceneButton, SIGNAL(clicked()), q, SLOT(deleteScene()));
+  QObject::connect(this->NewNodeButton, SIGNAL(clicked()), q, SLOT(generateNode()));
+  QObject::connect(this->DeleteNodeButton, SIGNAL(clicked()), q, SLOT(deleteNode()));
 }
 
 // --------------------------------------------------------------------------
@@ -72,10 +75,11 @@ void qMRMLSceneFactoryWidgetPrivate::setNodeActionsEnabled(bool enable)
 
 // --------------------------------------------------------------------------
 qMRMLSceneFactoryWidget::qMRMLSceneFactoryWidget(QWidget* _parent)
-  :QWidget(_parent)
+  : QWidget(_parent)
+  , d_ptr(new qMRMLSceneFactoryWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLSceneFactoryWidget);
-  ctk_d()->init();
+  Q_D(qMRMLSceneFactoryWidget);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -87,7 +91,7 @@ qMRMLSceneFactoryWidget::~qMRMLSceneFactoryWidget()
 // --------------------------------------------------------------------------
 void qMRMLSceneFactoryWidget::generateScene()
 {
-  CTK_D(qMRMLSceneFactoryWidget);
+  Q_D(qMRMLSceneFactoryWidget);
   
   if (d->MRMLScene)
     {
@@ -102,7 +106,7 @@ void qMRMLSceneFactoryWidget::generateScene()
 // --------------------------------------------------------------------------
 void qMRMLSceneFactoryWidget::deleteScene()
 {
-  CTK_D(qMRMLSceneFactoryWidget);
+  Q_D(qMRMLSceneFactoryWidget);
   if (!d->MRMLScene)
     {
     return;
@@ -117,14 +121,14 @@ void qMRMLSceneFactoryWidget::deleteScene()
 // --------------------------------------------------------------------------
 vtkMRMLScene* qMRMLSceneFactoryWidget::mrmlScene()const
 {
-  CTK_D(const qMRMLSceneFactoryWidget);
+  Q_D(const qMRMLSceneFactoryWidget);
   return d->MRMLScene;
 }
 
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
 {
-  CTK_D(qMRMLSceneFactoryWidget);
+  Q_D(qMRMLSceneFactoryWidget);
   Q_ASSERT(d->MRMLScene != 0);
   QString nodeClassName = d->NewNodeLineEdit->text();
   if (nodeClassName.isEmpty())
@@ -152,7 +156,7 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode(const QString& className)
 {
-  CTK_D(qMRMLSceneFactoryWidget);
+  Q_D(qMRMLSceneFactoryWidget);
   Q_ASSERT(!className.isEmpty());
   Q_ASSERT(d->MRMLScene != 0);
   vtkMRMLNode* node = qMRMLNodeFactory::createNode(d->MRMLScene, className);
@@ -167,7 +171,7 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode(const QString& className)
 // --------------------------------------------------------------------------
 void qMRMLSceneFactoryWidget::deleteNode()
 {
-  CTK_D(qMRMLSceneFactoryWidget);
+  Q_D(qMRMLSceneFactoryWidget);
   Q_ASSERT(d->MRMLScene != 0);
   QString nodeClassName = d->DeleteNodeLineEdit->text();
   if (!nodeClassName.isEmpty())
@@ -189,7 +193,7 @@ void qMRMLSceneFactoryWidget::deleteNode()
 // --------------------------------------------------------------------------
 void qMRMLSceneFactoryWidget::deleteNode(const QString& className)
 {
-  CTK_D(qMRMLSceneFactoryWidget);
+  Q_D(qMRMLSceneFactoryWidget);
   Q_ASSERT(!className.isEmpty());
   Q_ASSERT(d->MRMLScene != 0);
   int numNodes = d->MRMLScene->GetNumberOfNodesByClass(className.toLatin1().data());

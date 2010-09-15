@@ -20,13 +20,22 @@
 Q_EXPORT_PLUGIN2(qSlicerAnnotationModule, qSlicerAnnotationModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerAnnotationModulePrivate: public ctkPrivate<qSlicerAnnotationModule>
+class qSlicerAnnotationModulePrivate
 {
   public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerAnnotationModule, QObject*);
+qSlicerAnnotationModule::qSlicerAnnotationModule(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerAnnotationModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerAnnotationModule::~qSlicerAnnotationModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModule::setup()

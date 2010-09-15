@@ -24,8 +24,7 @@
 #include "ui_qSlicerEMSegmentDefineAtlasStep.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineAtlasStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineAtlasStep>,
-                                               public Ui_qSlicerEMSegmentDefineAtlasStep
+class qSlicerEMSegmentDefineAtlasStepPrivate: public Ui_qSlicerEMSegmentDefineAtlasStep
 {
 public:
   qSlicerEMSegmentDefineAtlasStepPrivate();
@@ -55,14 +54,20 @@ const QString qSlicerEMSegmentDefineAtlasStep::StepId = "DefineAtlas";
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineAtlasStep::qSlicerEMSegmentDefineAtlasStep(
-    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
+  ctkWorkflow* newWorkflow, QWidget* newWidget)
+  : Superclass(newWorkflow, qSlicerEMSegmentDefineAtlasStep::StepId, newWidget)
+  , d_ptr(new qSlicerEMSegmentDefineAtlasStepPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentDefineAtlasStep);
-  CTK_D(qSlicerEMSegmentDefineAtlasStep);
+  Q_D(qSlicerEMSegmentDefineAtlasStep);
   d->setupUi(this);
 
   this->setName("4/9. Define Atlas");
   this->setDescription("Define probability maps and image scans of atlas.");
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentDefineAtlasStep::~qSlicerEMSegmentDefineAtlasStep()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -74,7 +79,7 @@ void qSlicerEMSegmentDefineAtlasStep::createUserInterface()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineAtlasStep::showUserInterface()
 {
-  CTK_D(qSlicerEMSegmentDefineAtlasStep);
+  Q_D(qSlicerEMSegmentDefineAtlasStep);
   this->Superclass::showUserInterface();
   d->updateWidgetFromMRML();
 }
@@ -83,7 +88,7 @@ void qSlicerEMSegmentDefineAtlasStep::showUserInterface()
 void qSlicerEMSegmentDefineAtlasStep::onEntry(const ctkWorkflowStep* comingFrom,
    const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  CTK_D(qSlicerEMSegmentDefineAtlasStep);
+  Q_D(qSlicerEMSegmentDefineAtlasStep);
   d->updateWidgetFromMRML();
 
   // Indicates that we are finished

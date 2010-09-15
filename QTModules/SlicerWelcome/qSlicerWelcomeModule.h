@@ -41,7 +41,7 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerWelcomeModule(QObject *parent=0);
-  virtual ~qSlicerWelcomeModule(){}
+  virtual ~qSlicerWelcomeModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
@@ -62,8 +62,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerWelcomeModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerWelcomeModule);
+  Q_DECLARE_PRIVATE(qSlicerWelcomeModule);
+  Q_DISABLE_COPY(qSlicerWelcomeModule);
 };
 
 #endif

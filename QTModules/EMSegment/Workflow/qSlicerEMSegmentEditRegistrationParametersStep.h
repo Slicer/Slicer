@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerEMSegmentWorkflowWidgetStep Superclass;
   explicit qSlicerEMSegmentEditRegistrationParametersStep(ctkWorkflow* newWorkflow, QWidget* parent = 0);
+  virtual ~qSlicerEMSegmentEditRegistrationParametersStep();
 
 public slots:
 
@@ -57,8 +58,12 @@ public slots:
   virtual void onExit(const ctkWorkflowStep* goingTo,
                       const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
+protected:
+  QScopedPointer<qSlicerEMSegmentEditRegistrationParametersStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_DISABLE_COPY(qSlicerEMSegmentEditRegistrationParametersStep);
 
 };
 

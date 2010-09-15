@@ -23,23 +23,26 @@
 #include "ui_qSlicerROIModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerROIModuleWidgetPrivate: public ctkPrivate<qSlicerROIModuleWidget>,
-                                         public Ui_qSlicerROIModule
+class qSlicerROIModuleWidgetPrivate: public Ui_qSlicerROIModule
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerROIModuleWidget);
 };
 
 //-----------------------------------------------------------------------------
 qSlicerROIModuleWidget::qSlicerROIModuleWidget(QWidget* parentWidget)
   :qSlicerAbstractModuleWidget(parentWidget)
+  , d_ptr(new qSlicerROIModuleWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerROIModuleWidget);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerROIModuleWidget::~qSlicerROIModuleWidget()
+{
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerROIModuleWidget::setup()
 {
-  CTK_D(qSlicerROIModuleWidget);
+  Q_D(qSlicerROIModuleWidget);
   d->setupUi(this);
 }

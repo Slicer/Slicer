@@ -47,7 +47,7 @@ public:
   
   /// Constructors
   explicit qMRMLSliceInformationWidget(QWidget* parent = 0);
-  virtual ~qMRMLSliceInformationWidget(){}
+  virtual ~qMRMLSliceInformationWidget();
 
   /// Get \a sliceNode
   /// \sa setMRMLSliceCompositeNode();
@@ -84,8 +84,12 @@ public slots:
   /// Set prescribed spacing
   void setPrescribedSliceSpacing(double spacing);
 
+protected:
+  QScopedPointer<qMRMLSliceInformationWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSliceInformationWidget);
+  Q_DECLARE_PRIVATE(qMRMLSliceInformationWidget);
+  Q_DISABLE_COPY(qMRMLSliceInformationWidget);
 };
 
 #endif

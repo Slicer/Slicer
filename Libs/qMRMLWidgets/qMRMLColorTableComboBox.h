@@ -46,8 +46,12 @@ public:
 protected:
   QAbstractItemModel* createSceneModel();
 
+protected:
+  QScopedPointer<qMRMLColorTableComboBoxPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLColorTableComboBox);
+  Q_DECLARE_PRIVATE(qMRMLColorTableComboBox);
+  Q_DISABLE_COPY(qMRMLColorTableComboBox);
 };
 
 #endif

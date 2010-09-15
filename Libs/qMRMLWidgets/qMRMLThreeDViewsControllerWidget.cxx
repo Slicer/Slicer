@@ -45,7 +45,8 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLThreeDViewsController
 // qMRMLThreeDViewsControllerWidgetPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate()
+qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate(qMRMLThreeDViewsControllerWidget& object)
+  : q_ptr(&object)
 {
   this->ActiveMRMLThreeDViewNode = 0;
 }
@@ -53,10 +54,10 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::updateWidgetFromMRML()
 {
-  CTK_P(qMRMLThreeDViewsControllerWidget);
+  Q_Q(qMRMLThreeDViewsControllerWidget);
   Q_ASSERT(this->ActiveMRMLThreeDViewNode);
 
-  p->setEnabled(this->ActiveMRMLThreeDViewNode != 0); // Enable/disable widget
+  q->setEnabled(this->ActiveMRMLThreeDViewNode != 0); // Enable/disable widget
   this->setOrthographicModeEnabled(
       this->ActiveMRMLThreeDViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
   this->setStereoType(this->ActiveMRMLThreeDViewNode->GetStereoType());
@@ -322,17 +323,22 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setAnimationMode(int newAnimationM
 
 // --------------------------------------------------------------------------
 qMRMLThreeDViewsControllerWidget::qMRMLThreeDViewsControllerWidget(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new qMRMLThreeDViewsControllerWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLThreeDViewsControllerWidget);
-  CTK_D(qMRMLThreeDViewsControllerWidget);
+  Q_D(qMRMLThreeDViewsControllerWidget);
   d->setupUi(this);
+}
+
+// --------------------------------------------------------------------------
+qMRMLThreeDViewsControllerWidget::~qMRMLThreeDViewsControllerWidget()
+{
 }
 
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
     vtkMRMLViewNode * newActiveMRMLThreeDViewNode)
 {
-  CTK_D(qMRMLThreeDViewsControllerWidget);
+  Q_D(qMRMLThreeDViewsControllerWidget);
 
   QList<int> events;
   events << vtkMRMLViewNode::AnimationModeEvent << vtkMRMLViewNode::StereoModeEvent

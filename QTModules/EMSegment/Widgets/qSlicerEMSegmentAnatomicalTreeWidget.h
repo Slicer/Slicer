@@ -58,6 +58,7 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   explicit qSlicerEMSegmentAnatomicalTreeWidget(QWidget *newParent = 0);
+  virtual ~qSlicerEMSegmentAnatomicalTreeWidget();
 
   bool structureNameEditable() const;
 
@@ -116,10 +117,12 @@ signals:
 //  void currentSpatialPriorVolumeNodeChanged(vtkMRMLNode* node);
 
 //  void currentSpatialPriorVolumeNodeChanged(bool validNode);
+protected:
+  QScopedPointer<qSlicerEMSegmentAnatomicalTreeWidgetPrivate> d_ptr;
 
 private:
-
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_DISABLE_COPY(qSlicerEMSegmentAnatomicalTreeWidget);
   typedef qSlicerEMSegmentAnatomicalTreeWidgetPrivate ctkPimpl;
 };
 

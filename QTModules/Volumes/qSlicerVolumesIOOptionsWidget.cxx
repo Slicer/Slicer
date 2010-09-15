@@ -31,21 +31,18 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerVolumesIOOptionsWidgetPrivate:
-  public ctkPrivate<qSlicerVolumesIOOptionsWidget>,
   public Ui_qSlicerVolumesIOOptionsWidget
 {
-  CTK_DECLARE_PUBLIC(qSlicerVolumesIOOptionsWidget);
 public:
   //void init();
 };
 
-
 //-----------------------------------------------------------------------------
 qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidget)
+  : d_ptr(new qSlicerVolumesIOOptionsWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerVolumesIOOptionsWidget);
-  CTK_D(qSlicerVolumesIOOptionsWidget);
-  ctk_d()->setupUi(this);
+  Q_D(qSlicerVolumesIOOptionsWidget);
+  d->setupUi(this);
 
   // Replace the horizontal layout with a flow layout
   qCTKFlowLayout* flowLayout = new qCTKFlowLayout;
@@ -78,9 +75,14 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
 }
 
 //-----------------------------------------------------------------------------
+qSlicerVolumesIOOptionsWidget::~qSlicerVolumesIOOptionsWidget()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerVolumesIOOptionsWidget::updateProperties()
 {
-  CTK_D(const qSlicerVolumesIOOptionsWidget);
+  Q_D(const qSlicerVolumesIOOptionsWidget);
   if (!d->NameLineEdit->text().isEmpty())
     {
     this->Properties["name"] = d->NameLineEdit->text();
@@ -98,7 +100,7 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
 //-----------------------------------------------------------------------------
 void qSlicerVolumesIOOptionsWidget::setFileName(const QString& fileName)
 {
-  CTK_D(qSlicerVolumesIOOptionsWidget);
+  Q_D(qSlicerVolumesIOOptionsWidget);
   QFileInfo fileInfo(fileName);
   if (fileInfo.isFile())
     {
@@ -110,7 +112,7 @@ void qSlicerVolumesIOOptionsWidget::setFileName(const QString& fileName)
 //-----------------------------------------------------------------------------
 void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
 {
-  CTK_D(qSlicerVolumesIOOptionsWidget);
+  Q_D(qSlicerVolumesIOOptionsWidget);
   d->NameLineEdit->setText("");
   this->qSlicerIOOptionsWidget::setFileNames(fileNames);
 }

@@ -39,6 +39,7 @@ public:
 
   typedef qSlicerCoreModule Superclass;
   qSlicerMRMLTreeModule(QObject *parent=0);
+  virtual ~qSlicerMRMLTreeModule();
 
   ///
   /// Display name for the module
@@ -61,10 +62,10 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+  QScopedPointer<qSlicerMRMLTreeModulePrivate> d_ptr;
 private:
-  ///
-  /// Pimpl declaration
-  CTK_DECLARE_PRIVATE(qSlicerMRMLTreeModule);
+  Q_DECLARE_PRIVATE(qSlicerMRMLTreeModule);
+  Q_DISABLE_COPY(qSlicerMRMLTreeModule);
 };
 
 #endif

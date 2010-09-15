@@ -51,11 +51,13 @@ static ctkLogger logger(
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentInputChannelListWidgetPrivate :
-    public ctkPrivate<qSlicerEMSegmentInputChannelListWidget>
+class qSlicerEMSegmentInputChannelListWidgetPrivate
 {
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentInputChannelListWidget);
+protected:
+  qSlicerEMSegmentInputChannelListWidget* const q_ptr;
 public:
-  qSlicerEMSegmentInputChannelListWidgetPrivate();
+  qSlicerEMSegmentInputChannelListWidgetPrivate(qSlicerEMSegmentInputChannelListWidget& object);
 
   void insertInputChannel(int rowId, const QString& inputChannelName = QString(),
                           vtkMRMLVolumeNode * volumeNodeToSelect = 0);
@@ -73,7 +75,8 @@ public:
 // qSlicerEMSegmentInputChannelListWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentInputChannelListWidgetPrivate::qSlicerEMSegmentInputChannelListWidgetPrivate()
+qSlicerEMSegmentInputChannelListWidgetPrivate::qSlicerEMSegmentInputChannelListWidgetPrivate(qSlicerEMSegmentInputChannelListWidget& object)
+  : q_ptr(&object)
 {
   this->TableWidget = 0;
   this->AddInputChannelButton = 0;
@@ -85,7 +88,7 @@ void qSlicerEMSegmentInputChannelListWidgetPrivate::insertInputChannel(
     int rowId, const QString& inputChannelName,
     vtkMRMLVolumeNode * volumeNodeToSelect)
 {
-  CTK_P(qSlicerEMSegmentInputChannelListWidget);
+  Q_Q(qSlicerEMSegmentInputChannelListWidget);
 
   //int rowId = this->TableWidget->rowCount();
   this->TableWidget->insertRow(rowId);
@@ -102,7 +105,7 @@ void qSlicerEMSegmentInputChannelListWidgetPrivate::insertInputChannel(
   volumeNodeComboBox->setNoneEnabled(false);
   volumeNodeComboBox->setAddEnabled(false);
   volumeNodeComboBox->setRemoveEnabled(false);
-  volumeNodeComboBox->setMRMLScene(p->mrmlScene());
+  volumeNodeComboBox->setMRMLScene(q->mrmlScene());
   volumeNodeComboBox->setCurrentNode(volumeNodeToSelect);
   this->TableWidget->setCellWidget(rowId, 1, volumeNodeComboBox);
 }
@@ -140,11 +143,11 @@ public:
 // qSlicerEMSegmentInputChannelListWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentInputChannelListWidget::qSlicerEMSegmentInputChannelListWidget(QWidget *newParent):
-Superclass(newParent)
+qSlicerEMSegmentInputChannelListWidget::qSlicerEMSegmentInputChannelListWidget(QWidget *newParent)
+  : Superclass(newParent)
+  , d_ptr(new qSlicerEMSegmentInputChannelListWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentInputChannelListWidget);
-  CTK_D(qSlicerEMSegmentInputChannelListWidget);
+  Q_D(qSlicerEMSegmentInputChannelListWidget);
 
   // Layout TableWidget + (control buttons) horizontally
   QHBoxLayout * mainLayout = new QHBoxLayout(this);
@@ -207,16 +210,21 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
+qSlicerEMSegmentInputChannelListWidget::~qSlicerEMSegmentInputChannelListWidget()
+{
+}
+
+//-----------------------------------------------------------------------------
 int qSlicerEMSegmentInputChannelListWidget::inputChannelCount()const
 {
-  CTK_D(const qSlicerEMSegmentInputChannelListWidget);
+  Q_D(const qSlicerEMSegmentInputChannelListWidget);
   return d->TableWidget->rowCount();
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerEMSegmentInputChannelListWidget::inputChannelName(int rowId) const
 {
-  CTK_D(const qSlicerEMSegmentInputChannelListWidget);
+  Q_D(const qSlicerEMSegmentInputChannelListWidget);
 
   QTableWidgetItem * item = d->TableWidget->item(rowId, 0);
   if (!item)
@@ -230,7 +238,7 @@ QString qSlicerEMSegmentInputChannelListWidget::inputChannelName(int rowId) cons
 //-----------------------------------------------------------------------------
 vtkMRMLVolumeNode* qSlicerEMSegmentInputChannelListWidget::inputChannelVolume(int rowId) const
 {
-  CTK_D(const qSlicerEMSegmentInputChannelListWidget);
+  Q_D(const qSlicerEMSegmentInputChannelListWidget);
 
   qMRMLNodeComboBox * volumeNodeComboBox =
       qobject_cast<qMRMLNodeComboBox*>(d->TableWidget->cellWidget(rowId, 1));
@@ -260,7 +268,7 @@ void qSlicerEMSegmentInputChannelListWidget::setMRMLManager(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentInputChannelListWidget::updateMRMLFromWidget()
 {
-  CTK_D(qSlicerEMSegmentInputChannelListWidget);
+  Q_D(qSlicerEMSegmentInputChannelListWidget);
 
   if (!this->mrmlManager())
     {
@@ -300,7 +308,7 @@ void qSlicerEMSegmentInputChannelListWidget::updateMRMLFromWidget()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentInputChannelListWidget::updateWidgetFromMRML()
 {
-  CTK_D(qSlicerEMSegmentInputChannelListWidget);
+  Q_D(qSlicerEMSegmentInputChannelListWidget);
 
   if (!this->mrmlManager())
     {
@@ -359,7 +367,7 @@ void qSlicerEMSegmentInputChannelListWidget::updateWidgetFromMRML()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentInputChannelListWidget::addInputChannel()
 {
-  CTK_D(qSlicerEMSegmentInputChannelListWidget);
+  Q_D(qSlicerEMSegmentInputChannelListWidget);
 
   d->insertInputChannel(d->TableWidget->rowCount());
 
@@ -374,7 +382,7 @@ void qSlicerEMSegmentInputChannelListWidget::addInputChannel()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentInputChannelListWidget::removeInputChannel()
 {
-  CTK_D(qSlicerEMSegmentInputChannelListWidget);
+  Q_D(qSlicerEMSegmentInputChannelListWidget);
 
   QList<QTableWidgetSelectionRange> selectionRangeList = d->TableWidget->selectedRanges();
   while(selectionRangeList.count())
@@ -395,7 +403,7 @@ void qSlicerEMSegmentInputChannelListWidget::removeInputChannel()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentInputChannelListWidget::onCellChanged(int row, int column)
 {
-  CTK_D(qSlicerEMSegmentInputChannelListWidget);
+  Q_D(qSlicerEMSegmentInputChannelListWidget);
   QTableWidgetItem * item = d->TableWidget->item(row, column);
   if (item->text().isEmpty())
     {
@@ -406,7 +414,7 @@ void qSlicerEMSegmentInputChannelListWidget::onCellChanged(int row, int column)
 //-----------------------------------------------------------------------------
 bool qSlicerEMSegmentInputChannelListWidget::identicalInputVolumes() const
 {
-  CTK_D(const qSlicerEMSegmentInputChannelListWidget);
+  Q_D(const qSlicerEMSegmentInputChannelListWidget);
 
   for(int i = 0; i < d->TableWidget->rowCount(); i++)
     {

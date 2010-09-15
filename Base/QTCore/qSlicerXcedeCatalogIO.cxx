@@ -54,9 +54,14 @@
 #include <vtkXMLDataElement.h>
 #include <vtkXMLDataParser.h>
 
-class qSlicerXcedeCatalogIOPrivate: public ctkPrivate<qSlicerXcedeCatalogIO>
+class qSlicerXcedeCatalogIOPrivate
 {
+  Q_DECLARE_PUBLIC(qSlicerXcedeCatalogIO);
+protected:
+  qSlicerXcedeCatalogIO* const q_ptr;
 public:
+  qSlicerXcedeCatalogIOPrivate(qSlicerXcedeCatalogIO& object);
+
   typedef QMap<QString, QString> NodeType;
   int     GetNumberOfElements(vtkXMLDataElement* parent);
   QString nodeType(const QString& format)const;
@@ -87,6 +92,12 @@ public:
 protected:
   qSlicerCoreIOManager* ioManager()const;
 };
+
+//-----------------------------------------------------------------------------
+qSlicerXcedeCatalogIOPrivate::qSlicerXcedeCatalogIOPrivate(qSlicerXcedeCatalogIO& object)
+  : q_ptr(&object)
+{
+}
 
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManager* qSlicerXcedeCatalogIOPrivate::ioManager()const
@@ -312,7 +323,7 @@ int qSlicerXcedeCatalogIOPrivate::checkFormat(const QString& format)const
 //proc XcedeCatalogImportGetEntry {element } {
 void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
 {
-  CTK_P(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogIO);
   //--- is this a catalog entry that contains a file or reference?
   //set elementType [$element GetName]
   //if { $elementType != "entry" && $elementType != "Entry" } {
@@ -388,7 +399,7 @@ void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
 
   //--- check to see if it's a remote file
   //set cacheManager [$::slicer3::MRMLScene GetCacheManager]
-  vtkCacheManager* cacheManager = p->mrmlScene()->GetCacheManager();
+  vtkCacheManager* cacheManager = q->mrmlScene()->GetCacheManager();
 
   //--- get the file format
   //set gotformat 0
@@ -515,7 +526,7 @@ void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
 //      }
 //          }
 //      }
-      uriHandler = p->mrmlScene()->FindURIHandler(node[uriAttName].toLatin1().data());
+      uriHandler = q->mrmlScene()->FindURIHandler(node[uriAttName].toLatin1().data());
       if (uriHandler)
         {
         uriHandler->StageFileRead(node[uriAttName].toLatin1().data(), node["localFileName"].toLatin1().data());
@@ -889,7 +900,7 @@ void qSlicerXcedeCatalogIOPrivate::importModelNode(NodeType node)
 //proc XcedeCatalogImportEntryTransform {node} {
 void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
 {
-  CTK_P(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogIO);
   //upvar $node n
 
 
@@ -932,7 +943,7 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
   vtkSmartPointer<vtkMRMLLinearTransformNode> tnode = 
     vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
   tnode->SetName(node["name"].toLatin1().data());
-  p->mrmlScene()->AddNode(tnode);
+  q->mrmlScene()->AddNode(tnode);
   QString tid = tnode->GetID();
   if (tid.isNull())
     {
@@ -1031,7 +1042,7 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
 //proc XcedeCatalogImportEntryOverlay {node} {
 void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
 {
-  CTK_P(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogIO);
   //upvar $node n
 
   // //--- not really a node, per se...
@@ -1067,7 +1078,7 @@ void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
       }
     mid = this->MRMLIdLHModel;
     mnode = vtkMRMLModelNode::SafeDownCast(
-      p->mrmlScene()->GetNodeByID(mid.toLatin1().data()));
+      q->mrmlScene()->GetNodeByID(mid.toLatin1().data()));
     }
 
   // if { [ string first "rh." $n(uri) ] >= 0 } {
@@ -1087,7 +1098,7 @@ void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
       }
     mid = this->MRMLIdRHModel;
     mnode = vtkMRMLModelNode::SafeDownCast(
-      p->mrmlScene()->GetNodeByID(mid.toLatin1().data()));
+      q->mrmlScene()->GetNodeByID(mid.toLatin1().data()));
     }
 
   // if { $mnode == "" } {
@@ -1130,7 +1141,7 @@ void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
 //proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
 bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
 {
-  CTK_P(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogIO);
   // if { $::XcedeCatalog_MrmlID(anat2exf) == "" } {
   //     return
   // }
@@ -1154,12 +1165,12 @@ bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
   //set v2 [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(ExampleFunc) ]
   //set anat2exfT [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(anat2exf) ]
   vtkMRMLVolumeNode* v1 = vtkMRMLVolumeNode::SafeDownCast(
-    p->mrmlScene()->GetNodeByID(this->MRMLIdFSBrain.toLatin1().data()));
+    q->mrmlScene()->GetNodeByID(this->MRMLIdFSBrain.toLatin1().data()));
   vtkMRMLVolumeNode* v2 = vtkMRMLVolumeNode::SafeDownCast(
-    p->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1().data()));
+    q->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1().data()));
   vtkMRMLLinearTransformNode* anat2exfT = 
     vtkMRMLLinearTransformNode::SafeDownCast(
-      p->mrmlScene()->GetNodeByID(this->MRMLIdAnat2Exf.toLatin1().data()));
+      q->mrmlScene()->GetNodeByID(this->MRMLIdAnat2Exf.toLatin1().data()));
 
   //--- get FSregistration matrix from node
   //set anat2exf [ $anat2exfT GetMatrixTransformToParent ]
@@ -1172,7 +1183,7 @@ bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
   vtkSmartPointer<vtkMRMLLinearTransformNode> ras2rasT =
     vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
   ras2rasT->SetName("StatisticsToBrainXform");
-  p->mrmlScene()->AddNode(ras2rasT);
+  q->mrmlScene()->AddNode(ras2rasT);
   this->LoadedNodes << ras2rasT->GetID();
   
   //set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) [ $ras2rasT GetID ]
@@ -1220,7 +1231,7 @@ bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
 //proc XcedeCatalogImportApplyFIPS2SlicerTransformCorrection { } {
 void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
 {
-  CTK_P(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogIO);
   //if { $::XcedeCatalog_RAS2RASTransformCreated == 1 } {
   //$::XcedeCatalog_mainWindow SetStatusText "Applying registration matrix to statistics volumes"
   //--- move all the detected stats files under the new registration xform
@@ -1232,7 +1243,7 @@ void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
   foreach(QString id, this->MRMLIdStatFileList)
     {
     vtkMRMLVolumeNode* vnode = vtkMRMLVolumeNode::SafeDownCast(
-      p->mrmlScene()->GetNodeByID(id.toLatin1().data()));
+      q->mrmlScene()->GetNodeByID(id.toLatin1().data()));
     vnode->SetAndObserveTransformNodeID(this->MRMLIdStatisticsToBrainXform.toLatin1().data());
     vnode->Modified();
     }
@@ -1241,7 +1252,7 @@ void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
   // $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform) 
   // $vnode Modified
   vtkMRMLVolumeNode* vnode = vtkMRMLVolumeNode::SafeDownCast(
-    p->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1().data()));
+    q->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1().data()));
   vnode->SetAndObserveTransformNodeID(this->MRMLIdStatisticsToBrainXform.toLatin1().data());
   vnode->Modified();
 }
@@ -1249,8 +1260,13 @@ void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
 //------------------------------------------------------------------------------
 qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(QObject* _parent)
   :qSlicerIO(_parent)
+  , d_ptr(new qSlicerXcedeCatalogIOPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerXcedeCatalogIO);
+}
+
+//------------------------------------------------------------------------------
+qSlicerXcedeCatalogIO::~qSlicerXcedeCatalogIO()
+{
 }
 
 //------------------------------------------------------------------------------
@@ -1274,7 +1290,7 @@ QString qSlicerXcedeCatalogIO::extensions()const
 //------------------------------------------------------------------------------
 bool qSlicerXcedeCatalogIO::load(const qSlicerIO::IOProperties& properties)
 {
-  CTK_D(qSlicerXcedeCatalogIO);
+  Q_D(qSlicerXcedeCatalogIO);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 

@@ -19,14 +19,15 @@
 class vtkMRMLScene;
 
 //------------------------------------------------------------------------------
-class qMRMLEventLoggerPrivate: public QObject, public ctkPrivate<qMRMLEventLogger>
+class qMRMLEventLoggerPrivate: public QObject
 {
   QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qMRMLEventLogger);
+protected:
+  qMRMLEventLogger* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLEventLogger);
-
+  qMRMLEventLoggerPrivate(qMRMLEventLogger& object);
   typedef QObject Superclass;
-  qMRMLEventLoggerPrivate();
 
   void init();
 

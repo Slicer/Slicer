@@ -49,7 +49,7 @@ public:
   /// Construct an empty qMRMLColorTableComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
   explicit qMRMLLabelComboBox(QWidget* newParent = 0);
-  virtual ~qMRMLLabelComboBox(){}
+  virtual ~qMRMLLabelComboBox();
 
   /// Set/Get NoneEnabled flags
   /// An additional item is added into the menu list, where the user can select "None".
@@ -87,9 +87,11 @@ private slots:
 
   void onCurrentIndexChanged(int index);
 
+protected:
+  QScopedPointer<qMRMLLabelComboBoxPrivate> d_ptr;
 private:
-
-  CTK_DECLARE_PRIVATE(qMRMLLabelComboBox);
+  Q_DECLARE_PRIVATE(qMRMLLabelComboBox);
+  Q_DISABLE_COPY(qMRMLLabelComboBox);
 };
 
 #endif

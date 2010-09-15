@@ -41,6 +41,7 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerEMSegmentModule(QObject *parent=0);
+  virtual ~qSlicerEMSegmentModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
@@ -65,8 +66,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerEMSegmentModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentModule);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentModule);
+  Q_DISABLE_COPY(qSlicerEMSegmentModule);
 };
 
 #endif

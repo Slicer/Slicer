@@ -41,6 +41,7 @@ public:
 
   typedef qSlicerCoreModule Superclass;
   qSlicerTransformsModule(QObject *parent=0);
+  virtual ~qSlicerTransformsModule();
 
   ///
   /// Icon of the transform module
@@ -67,10 +68,10 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+  QScopedPointer<qSlicerTransformsModulePrivate> d_ptr;
 private:
-  ///
-  /// Pimpl declaration
-  CTK_DECLARE_PRIVATE(qSlicerTransformsModule);
+  Q_DECLARE_PRIVATE(qSlicerTransformsModule);
+  Q_DISABLE_COPY(qSlicerTransformsModule);
 };
 
 #endif

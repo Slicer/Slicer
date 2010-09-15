@@ -36,14 +36,19 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerScalarOverlayIOOptionsWidget :
   Q_OBJECT
 public:
   qSlicerScalarOverlayIOOptionsWidget(QWidget *parent=0);
+  virtual ~qSlicerScalarOverlayIOOptionsWidget();
 
   virtual bool isValid()const;
 
 protected slots:
   void updateProperties();
 
+protected:
+  QScopedPointer<qSlicerScalarOverlayIOOptionsWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerScalarOverlayIOOptionsWidget);
+  Q_DECLARE_PRIVATE(qSlicerScalarOverlayIOOptionsWidget);
+  Q_DISABLE_COPY(qSlicerScalarOverlayIOOptionsWidget);
 };
 
 #endif

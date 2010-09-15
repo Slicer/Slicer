@@ -115,8 +115,12 @@ protected:
   /// Returns the list of registered readers or writers associated with \a fileType
   QList<qSlicerIO*> ios(const qSlicerIO::IOFileType& fileType)const;
   
+protected:
+  QScopedPointer<qSlicerCoreIOManagerPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCoreIOManager);
+  Q_DECLARE_PRIVATE(qSlicerCoreIOManager);
+  Q_DISABLE_COPY(qSlicerCoreIOManager);
 };
 
 qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& file)const

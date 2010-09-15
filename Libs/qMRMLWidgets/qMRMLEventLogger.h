@@ -109,8 +109,12 @@ signals:
   void signalSceneImportedEvent();
   void signalSceneRestoredEvent();
 
+protected:
+  QScopedPointer<qMRMLEventLoggerPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLEventLogger);
+  Q_DECLARE_PRIVATE(qMRMLEventLogger);
+  Q_DISABLE_COPY(qMRMLEventLogger);
 };
 
 #endif

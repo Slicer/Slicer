@@ -78,11 +78,12 @@ signals:
   void moduleLoaded(qSlicerAbstractCoreModule* module);
   void moduleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
 
-private:
-  qSlicerModuleManager(const qSlicerModuleManager&);  /// Not implemented.
-  void operator=(const qSlicerModuleManager&);  /// Not implemented.
+protected:
+  QScopedPointer<qSlicerModuleManagerPrivate> d_ptr;
 
-  CTK_DECLARE_PRIVATE(qSlicerModuleManager);
+private:
+  Q_DECLARE_PRIVATE(qSlicerModuleManager);
+  Q_DISABLE_COPY(qSlicerModuleManager);
 };
 
 #endif

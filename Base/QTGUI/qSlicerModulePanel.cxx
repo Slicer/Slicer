@@ -42,8 +42,7 @@
 #include "qSlicerAbstractModuleWidget.h"
 
 //---------------------------------------------------------------------------
-class qSlicerModulePanelPrivate: public ctkPrivate<qSlicerModulePanel>
-                               , public Ui_qSlicerModulePanel
+class qSlicerModulePanelPrivate: public Ui_qSlicerModulePanel
 {
 public:
   /*
@@ -60,16 +59,21 @@ public:
 //---------------------------------------------------------------------------
 qSlicerModulePanel::qSlicerModulePanel(QWidget* _parent, Qt::WindowFlags f)
   :qSlicerAbstractModulePanel(_parent, f)
+  , d_ptr(new qSlicerModulePanelPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerModulePanel);
-  CTK_D(qSlicerModulePanel);
+  Q_D(qSlicerModulePanel);
   d->setupUi(this);
+}
+
+//---------------------------------------------------------------------------
+qSlicerModulePanel::~qSlicerModulePanel()
+{
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModulePanel::setModule(const QString& moduleName)
 {
-  CTK_D(qSlicerModulePanel);
+  Q_D(qSlicerModulePanel);
 
   qSlicerAbstractCoreModule * module = 0;
 
@@ -129,7 +133,7 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
 
   Q_ASSERT(!moduleWidget->moduleName().isEmpty());
 
-  CTK_D(qSlicerModulePanel);
+  Q_D(qSlicerModulePanel);
 
   // Update module layout
   if (moduleWidget->layout())
@@ -171,7 +175,7 @@ void qSlicerModulePanel::removeModule(const QString& moduleName)
     dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
   Q_ASSERT(moduleWidget);
 
-  CTK_D(qSlicerModulePanel);
+  Q_D(qSlicerModulePanel);
 
   QBoxLayout* scrollAreaLayout =
     qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());

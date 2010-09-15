@@ -38,9 +38,14 @@ class Q_SLICERQT_EXPORT qSlicerAboutDialog :
   Q_OBJECT
 public:
   qSlicerAboutDialog(QWidget *parentWidget = 0);
+  virtual ~qSlicerAboutDialog();
+
+protected:
+  QScopedPointer<qSlicerAboutDialogPrivate> d_ptr;
 
 private:
-  CTK_DECLARE_PRIVATE(qSlicerAboutDialog);
+  Q_DECLARE_PRIVATE(qSlicerAboutDialog);
+  Q_DISABLE_COPY(qSlicerAboutDialog);
 };
 
 #endif

@@ -38,11 +38,14 @@
 // endofFIXME
   
 //-----------------------------------------------------------------------------
-class qSlicerCoreModuleFactoryPrivate: public ctkPrivate<qSlicerCoreModuleFactory>
+class qSlicerCoreModuleFactoryPrivate
 {
+  Q_DECLARE_PUBLIC(qSlicerCoreModuleFactory);
+protected:
+  qSlicerCoreModuleFactory* const q_ptr;
+
 public:
-  CTK_DECLARE_PUBLIC(qSlicerCoreModuleFactory);
-  qSlicerCoreModuleFactoryPrivate(){}
+  qSlicerCoreModuleFactoryPrivate(qSlicerCoreModuleFactory& object);
 
   ///
   /// Add a module class to the core module factory
@@ -54,15 +57,21 @@ public:
 // qSlicerModuleFactoryPrivate methods
 
 //-----------------------------------------------------------------------------
+qSlicerCoreModuleFactoryPrivate::qSlicerCoreModuleFactoryPrivate(qSlicerCoreModuleFactory& object)
+  : q_ptr(&object)
+{
+}
+
+//-----------------------------------------------------------------------------
 template<typename ClassType>
 void qSlicerCoreModuleFactoryPrivate::registerCoreModule()
 {
-  CTK_P(qSlicerCoreModuleFactory);
+  Q_Q(qSlicerCoreModuleFactory);
   
   QString _moduleName;
-  if (!p->registerQObject<ClassType>(_moduleName))
+  if (!q->registerQObject<ClassType>(_moduleName))
     {
-    if (p->verbose())
+    if (q->verbose())
       {
       qDebug() << "Failed to register module: " << _moduleName;
       }
@@ -74,15 +83,20 @@ void qSlicerCoreModuleFactoryPrivate::registerCoreModule()
 // qSlicerCoreModuleFactory methods
 
 //-----------------------------------------------------------------------------
-qSlicerCoreModuleFactory::qSlicerCoreModuleFactory():Superclass()
+qSlicerCoreModuleFactory::qSlicerCoreModuleFactory()
+  : d_ptr(new qSlicerCoreModuleFactoryPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerCoreModuleFactory);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCoreModuleFactory::~qSlicerCoreModuleFactory()
+{
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreModuleFactory::registerItems()
 {
-  CTK_D(qSlicerCoreModuleFactory);
+  Q_D(qSlicerCoreModuleFactory);
   d->registerCoreModule<qSlicerCamerasModule>();
   // if you disable the color module, it would not initialize the color logic
   d->registerCoreModule<qSlicerColorsModule>();
@@ -114,7 +128,7 @@ void qSlicerCoreModuleFactory::registerItems()
 //-----------------------------------------------------------------------------
 QString qSlicerCoreModuleFactory::objectNameToKey(const QString& objectName)
 {
-  return Self::extractModuleName(objectName);
+  return qSlicerCoreModuleFactory::extractModuleName(objectName);
 }
 
 //-----------------------------------------------------------------------------

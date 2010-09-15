@@ -16,11 +16,9 @@
 //-----------------------------------------------------------------------------
 class qSlicerDataDialogPrivate
   : public QDialog
-  , public ctkPrivate<qSlicerDataDialog>
   , public Ui_qSlicerDataDialog
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(qSlicerDataDialog);
 public:
   explicit qSlicerDataDialogPrivate(QWidget* _parent=0);
   virtual ~qSlicerDataDialogPrivate();

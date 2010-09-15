@@ -34,7 +34,7 @@
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-class qMRMLNodeFactoryPrivate: public ctkPrivate<qMRMLNodeFactory>
+class qMRMLNodeFactoryPrivate
 {
 public:
   qMRMLNodeFactoryPrivate()
@@ -47,7 +47,16 @@ public:
 };
 
 //------------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qMRMLNodeFactory, QObject*);
+qMRMLNodeFactory::qMRMLNodeFactory(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qMRMLNodeFactoryPrivate)
+{
+}
+
+//------------------------------------------------------------------------------
+qMRMLNodeFactory::~qMRMLNodeFactory()
+{
+}
 
 //------------------------------------------------------------------------------
 CTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
@@ -57,7 +66,7 @@ CTK_GET_CXX(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
                                           const vtkMRMLNodeInitializer & initializer)
 {
-  CTK_D(qMRMLNodeFactory);
+  Q_D(qMRMLNodeFactory);
   
   Q_ASSERT(d->MRMLScene);
   Q_ASSERT(!className.isEmpty());
@@ -138,19 +147,20 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
 //------------------------------------------------------------------------------
 void qMRMLNodeFactory::addAttribute(const QString& name, const QString& value)
 {
-  ctk_d()->Attributes.insert(name, value);
+  Q_D(qMRMLNodeFactory);
+  d->Attributes.insert(name, value);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLNodeFactory::setBaseName(const QString& className, const QString& baseName)
 {
-  CTK_D(qMRMLNodeFactory);
+  Q_D(qMRMLNodeFactory);
   d->BaseNames[className] = baseName;
 }
 
 //------------------------------------------------------------------------------
 QString qMRMLNodeFactory::baseName(const QString& className)const
 {
-  CTK_D(const qMRMLNodeFactory);
+  Q_D(const qMRMLNodeFactory);
   return d->BaseNames.contains(className) ? d->BaseNames[className] : QString();
 }

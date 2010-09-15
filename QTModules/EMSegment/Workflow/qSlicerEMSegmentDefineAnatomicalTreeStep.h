@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerEMSegmentWorkflowWidgetStep Superclass;
   explicit qSlicerEMSegmentDefineAnatomicalTreeStep(ctkWorkflow* newWorkflow, QWidget* parent = 0);
+  virtual ~qSlicerEMSegmentDefineAnatomicalTreeStep();
 
 public slots:
 
@@ -57,8 +58,12 @@ public slots:
 
   virtual void showUserInterface();
 
+protected:
+  QScopedPointer<qSlicerEMSegmentDefineAnatomicalTreeStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentDefineAnatomicalTreeStep);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentDefineAnatomicalTreeStep);
+  Q_DISABLE_COPY(qSlicerEMSegmentDefineAnatomicalTreeStep);
 
 };
 

@@ -100,8 +100,12 @@ public:
   /// Enable/Disable verbose output during module discovery process
   void setVerboseModuleDiscovery(bool value);
 
+protected:
+  QScopedPointer<qSlicerModuleFactoryManagerPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerModuleFactoryManager);
+  Q_DECLARE_PRIVATE(qSlicerModuleFactoryManager);
+  Q_DISABLE_COPY(qSlicerModuleFactoryManager);
 };
 
 #endif

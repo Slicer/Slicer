@@ -36,14 +36,14 @@ class vtkMRMLNode;
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate : public QObject,
-                                                                public ctkPrivate<qSlicerEMSegmentSpecifyIntensityDistributionStep>,
                                                                 public Ui_qSlicerEMSegmentSpecifyIntensityDistributionStep
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(qSlicerEMSegmentSpecifyIntensityDistributionStep)
-
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentSpecifyIntensityDistributionStep)
+protected:
+  qSlicerEMSegmentSpecifyIntensityDistributionStep* const q_ptr;
 public:
-  qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate();
+  qSlicerEMSegmentSpecifyIntensityDistributionStepPrivate(qSlicerEMSegmentSpecifyIntensityDistributionStep& object);
   
   void setupUi(qSlicerEMSegmentWorkflowWidgetStep* step);
 

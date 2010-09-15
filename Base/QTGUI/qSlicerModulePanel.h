@@ -37,6 +37,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel: public qSlicerAbstractModul
   Q_OBJECT
 public:
   qSlicerModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
+  virtual ~qSlicerModulePanel();
 
   void clear();
 
@@ -48,8 +49,12 @@ protected slots:
   virtual void removeModule(const QString& moduleName);
   virtual void removeAllModule();
 
+protected:
+  QScopedPointer<qSlicerModulePanelPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerModulePanel);
+  Q_DECLARE_PRIVATE(qSlicerModulePanel);
+  Q_DISABLE_COPY(qSlicerModulePanel);
 };
 
 #endif

@@ -30,7 +30,7 @@ public:
   /// Constructors
   typedef QWidget Superclass;
   explicit qMRMLWindowLevelWidget(QWidget* parent);
-  virtual ~qMRMLWindowLevelWidget(){}
+  virtual ~qMRMLWindowLevelWidget();
 
   enum ControlMode
   {
@@ -117,8 +117,12 @@ protected:
   void setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* displayNode);
 
 
+protected:
+  QScopedPointer<qMRMLWindowLevelWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLWindowLevelWidget);
+  Q_DECLARE_PRIVATE(qMRMLWindowLevelWidget);
+  Q_DISABLE_COPY(qMRMLWindowLevelWidget);
 
   vtkMRMLScalarVolumeNode* VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;

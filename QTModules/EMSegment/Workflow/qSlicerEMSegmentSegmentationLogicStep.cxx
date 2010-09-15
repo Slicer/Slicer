@@ -34,7 +34,7 @@
 #include <vtkSlicerEMSegmentLogic.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentSegmentationLogicStepPrivate : public ctkPrivate<qSlicerEMSegmentSegmentationLogicStep>
+class qSlicerEMSegmentSegmentationLogicStepPrivate
 {
 public:
   qSlicerEMSegmentSegmentationLogicStepPrivate();
@@ -56,13 +56,19 @@ const QString qSlicerEMSegmentSegmentationLogicStep::StepId = "Segment";
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentSegmentationLogicStep::qSlicerEMSegmentSegmentationLogicStep(
-    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
+  ctkWorkflow* newWorkflow, QWidget* newWidget)
+  : Superclass(newWorkflow, qSlicerEMSegmentSegmentationLogicStep::StepId, newWidget)
+  , d_ptr(new qSlicerEMSegmentSegmentationLogicStepPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentSegmentationLogicStep);
 
   this->setName("***Runs segmentation logic***");
   this->setDescription("***EM algorithm processing to segment target image.***");
   this->setIcon(QIcon(":/Icons/Go.png"));
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentSegmentationLogicStep::~qSlicerEMSegmentSegmentationLogicStep()
+{
 }
 
 //-----------------------------------------------------------------------------

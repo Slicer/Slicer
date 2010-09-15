@@ -21,14 +21,11 @@
 #include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerAbstractModuleRepresentationPrivate: public ctkPrivate<qSlicerAbstractModuleRepresentation>
+class qSlicerAbstractModuleRepresentationPrivate
 {
 public:
   qSlicerAbstractModuleRepresentationPrivate();
-  vtkWeakPointer<vtkSlicerLogic>  Logic;
-
-private:
-  CTK_DECLARE_PUBLIC(qSlicerAbstractModuleRepresentation);
+  vtkWeakPointer<vtkSlicerLogic>      Logic;
   qSlicerAbstractCoreModule*          Module;
 };
 
@@ -41,14 +38,14 @@ qSlicerAbstractModuleRepresentationPrivate
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation::qSlicerAbstractModuleRepresentation()
+  : d_ptr(new qSlicerAbstractModuleRepresentationPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerAbstractModuleRepresentation);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation::~qSlicerAbstractModuleRepresentation()
 {
-  CTK_D(qSlicerAbstractModuleRepresentation);
+  Q_D(qSlicerAbstractModuleRepresentation);
   if (d->Module)
     {
     d->Module->representationDeleted();
@@ -64,28 +61,28 @@ QAction* qSlicerAbstractModuleRepresentation::createAction()
 //-----------------------------------------------------------------------------
 QString qSlicerAbstractModuleRepresentation::moduleName()const
 {
-  CTK_D(const qSlicerAbstractModuleRepresentation);
+  Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Module->name();
 }
 
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerAbstractModuleRepresentation::logic()const
 {
-  CTK_D(const qSlicerAbstractModuleRepresentation);
+  Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
 const qSlicerAbstractCoreModule* qSlicerAbstractModuleRepresentation::module()const
 {
-  CTK_D(const qSlicerAbstractModuleRepresentation);
+  Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Module;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractCoreModule* module)
 {
-  CTK_D(qSlicerAbstractModuleRepresentation);
+  Q_D(qSlicerAbstractModuleRepresentation);
   d->Module = module;
   d->Logic = module ? module->logic() : 0;
 }

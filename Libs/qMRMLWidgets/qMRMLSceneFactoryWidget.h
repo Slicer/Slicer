@@ -60,8 +60,12 @@ signals:
   void mrmlNodeAdded(vtkMRMLNode* node);
   void mrmlNodeRemoved(vtkMRMLNode* node);
 
+protected:
+  QScopedPointer<qMRMLSceneFactoryWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSceneFactoryWidget);
+  Q_DECLARE_PRIVATE(qMRMLSceneFactoryWidget);
+  Q_DISABLE_COPY(qMRMLSceneFactoryWidget);
 };
 
 #endif

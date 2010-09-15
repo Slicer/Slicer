@@ -32,26 +32,34 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerSliceControllerModuleWidgetPrivate:
-    public ctkPrivate<qSlicerSliceControllerModuleWidget>,
     public Ui_qSlicerSliceControllerModule
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerSliceControllerModuleWidget, QWidget*);
+qSlicerSliceControllerModuleWidget::qSlicerSliceControllerModuleWidget(QWidget* _parentWidget)
+  : Superclass(_parentWidget)
+  , d_ptr(new qSlicerSliceControllerModuleWidgetPrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSliceControllerModuleWidget::~qSlicerSliceControllerModuleWidget()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerSliceControllerModuleWidget::setup()
 {
-  CTK_D(qSlicerSliceControllerModuleWidget);
+  Q_D(qSlicerSliceControllerModuleWidget);
   d->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSliceControllerModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
 {
-  CTK_D(qSlicerSliceControllerModuleWidget);
+  Q_D(qSlicerSliceControllerModuleWidget);
 
   this->Superclass::setMRMLScene(newScene);
 

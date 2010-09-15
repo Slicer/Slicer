@@ -18,11 +18,9 @@ class vtkMRMLStorableNode;
 //-----------------------------------------------------------------------------
 class qSlicerSaveDataDialogPrivate
   : public QDialog
-  , public ctkPrivate<qSlicerSaveDataDialog>
   , public Ui_qSlicerSaveDataDialog
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(qSlicerSaveDataDialog);
 public:
   explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=0);
   virtual ~qSlicerSaveDataDialogPrivate();

@@ -25,13 +25,22 @@
 #include "qSlicerTransformsModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsModulePrivate: public ctkPrivate<qSlicerTransformsModule>
+class qSlicerTransformsModulePrivate
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerTransformsModule, QObject*);
+qSlicerTransformsModule::qSlicerTransformsModule(QObject* _parentObject)
+  : Superclass(_parentObject)
+  , d_ptr(new qSlicerTransformsModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerTransformsModule::~qSlicerTransformsModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerTransformsModule::icon()const

@@ -42,7 +42,7 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerCLIModuleWidget(ModuleDescription* desc, QWidget *parent=0);
-  virtual ~qSlicerCLIModuleWidget(){}
+  virtual ~qSlicerCLIModuleWidget();
 
   ///
   /// Set the \a entryPoint associated with the module
@@ -61,8 +61,12 @@ protected:
   /// 
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerCLIModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCLIModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerCLIModuleWidget);
+  Q_DISABLE_COPY(qSlicerCLIModuleWidget);
 };
 
 #endif

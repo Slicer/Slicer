@@ -32,8 +32,9 @@
 #include "qSlicerModelsDialog_p.h"
 
 //-----------------------------------------------------------------------------
-qSlicerModelsDialogPrivate::qSlicerModelsDialogPrivate(QWidget* parentWidget)
-  :QDialog(parentWidget)
+qSlicerModelsDialogPrivate::qSlicerModelsDialogPrivate(qSlicerModelsDialog& object, QWidget* _parentWidget)
+  : QDialog(_parentWidget)
+  , q_ptr(&object)
 {
 }
 
@@ -45,6 +46,7 @@ qSlicerModelsDialogPrivate::~qSlicerModelsDialogPrivate()
 //-----------------------------------------------------------------------------
 void qSlicerModelsDialogPrivate::init()
 {
+  Q_Q(qSlicerModelsDialog);
   this->setupUi(this);
   this->AddModelToolButton->setIcon(this->style()->standardIcon(QStyle::SP_FileIcon));
   this->AddModelDirectoryToolButton->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));
@@ -63,8 +65,8 @@ QStringList qSlicerModelsDialogPrivate::selectedFiles()const
 //-----------------------------------------------------------------------------
 void qSlicerModelsDialogPrivate::openAddModelFileDialog()
 {
-  CTK_P(qSlicerModelsDialog);
-  QStringList filters = qSlicerFileDialog::nameFilters(p->fileType());
+  Q_Q(qSlicerModelsDialog);
+  QStringList filters = qSlicerFileDialog::nameFilters(q->fileType());
   // TODO add last open directory
   this->SelectedFiles = QFileDialog::getOpenFileNames(
     this, "Select Model file(s)", "", filters.join(", "));
@@ -78,7 +80,7 @@ void qSlicerModelsDialogPrivate::openAddModelFileDialog()
 //-----------------------------------------------------------------------------
 void qSlicerModelsDialogPrivate::openAddModelDirectoryDialog()
 {
-  CTK_P(qSlicerModelsDialog);
+  Q_Q(qSlicerModelsDialog);
   // TODO add last open directory.
   QString modelDirectory = QFileDialog::getExistingDirectory(
     this, "Select a Model directory", "", QFileDialog::ReadOnly);
@@ -87,18 +89,18 @@ void qSlicerModelsDialogPrivate::openAddModelDirectoryDialog()
     return;
     }
 
-  QStringList filters = qSlicerFileDialog::nameFilters(p->fileType());
+  QStringList filters = qSlicerFileDialog::nameFilters(q->fileType());
   this->SelectedFiles = QDir(modelDirectory).entryList(filters);
   this->accept();
 }
 
 //-----------------------------------------------------------------------------
 qSlicerModelsDialog::qSlicerModelsDialog(QObject* _parent)
-  :qSlicerFileDialog(_parent)
+  : qSlicerFileDialog(_parent)
+  , d_ptr(new qSlicerModelsDialogPrivate(*this, 0))
 {
   // FIXME give qSlicerModelsDialog as a parent of qSlicerModelsDialogPrivate;
-  CTK_INIT_PRIVATE(qSlicerModelsDialog);
-  CTK_D(qSlicerModelsDialog);
+  Q_D(qSlicerModelsDialog);
   d->init();
 }
 
@@ -122,7 +124,7 @@ qSlicerFileDialog::IOAction qSlicerModelsDialog::action()const
 //-----------------------------------------------------------------------------
 bool qSlicerModelsDialog::exec(const qSlicerIO::IOProperties& readerProperties)
 {
-  CTK_D(qSlicerModelsDialog);
+  Q_D(qSlicerModelsDialog);
   Q_ASSERT(!readerProperties.contains("fileName"));
 #ifdef Slicer3_USE_KWWIDGETS
   d->setWindowFlags(d->windowFlags() | Qt::WindowStaysOnTopHint);

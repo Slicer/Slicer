@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerAbstractModule(QObject *parent=0);
+  virtual ~qSlicerAbstractModule();
 
   virtual QIcon icon()const;
 
@@ -49,8 +50,12 @@ public:
   /// Returns a QAction if the module would like to be added in a toolbar.
   /// By default, returns no QAction.
   QAction * action();
+protected:
+  QScopedPointer<qSlicerAbstractModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerAbstractModule);
+  Q_DECLARE_PRIVATE(qSlicerAbstractModule);
+  Q_DISABLE_COPY(qSlicerAbstractModule);
 };
 
 #endif

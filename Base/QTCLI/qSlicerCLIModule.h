@@ -36,7 +36,7 @@ public:
 
   typedef qSlicerAbstractModule Superclass;
   qSlicerCLIModule(QWidget *parent=0);
-  virtual ~qSlicerCLIModule(){}
+  virtual ~qSlicerCLIModule();
 
   /// 
   /// Assign the module XML description.
@@ -76,8 +76,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerCLIModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCLIModule);
+  Q_DECLARE_PRIVATE(qSlicerCLIModule);
+  Q_DISABLE_COPY(qSlicerCLIModule);
 };
 
 #endif

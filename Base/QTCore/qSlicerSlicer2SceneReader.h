@@ -40,8 +40,12 @@ public:
   virtual QString extensions()const;
 
   virtual bool load(const IOProperties& properties);
+protected:
+  QScopedPointer<qSlicerSlicer2SceneReaderPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerSlicer2SceneReader);
+  Q_DECLARE_PRIVATE(qSlicerSlicer2SceneReader);
+  Q_DISABLE_COPY(qSlicerSlicer2SceneReader);
 };
 
 #endif

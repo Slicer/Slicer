@@ -46,7 +46,7 @@ public:
   /// Constructors
   typedef qSlicerWidget Superclass;
   explicit qSlicerLabelMapVolumeDisplayWidget(QWidget* parent);
-  virtual ~qSlicerLabelMapVolumeDisplayWidget(){}
+  virtual ~qSlicerLabelMapVolumeDisplayWidget();
 
   vtkMRMLScalarVolumeNode* volumeNode()const;
   vtkMRMLLabelMapVolumeDisplayNode* volumeDisplayNode()const;
@@ -62,8 +62,12 @@ public slots:
 protected slots:
   void updateWidgetFromMRML();
 
+protected:
+  QScopedPointer<qSlicerLabelMapVolumeDisplayWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerLabelMapVolumeDisplayWidget);
+  Q_DECLARE_PRIVATE(qSlicerLabelMapVolumeDisplayWidget);
+  Q_DISABLE_COPY(qSlicerLabelMapVolumeDisplayWidget);
 };
 
 #endif

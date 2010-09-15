@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerEMSegmentWorkflowWidgetStep Superclass;
   explicit qSlicerEMSegmentDefinePreprocessingStep(ctkWorkflow* newWorkflow, QWidget* parent = 0);
+  virtual ~qSlicerEMSegmentDefinePreprocessingStep();
 
 public slots:
 
@@ -55,8 +56,12 @@ public slots:
   virtual void onExit(const ctkWorkflowStep* goingTo,
                       const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType);
 
+protected:
+  QScopedPointer<qSlicerEMSegmentDefinePreprocessingStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentDefinePreprocessingStep);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentDefinePreprocessingStep);
+  Q_DISABLE_COPY(qSlicerEMSegmentDefinePreprocessingStep);
 
 };
 

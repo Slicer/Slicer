@@ -45,6 +45,7 @@ public:
   /// Title is the name of the toolbar (can appear using right click on the toolbar area)
   qSlicerMouseModeToolBar(const QString& title, QWidget* parent = 0);
   qSlicerMouseModeToolBar(QWidget* parent = 0);
+  virtual ~qSlicerMouseModeToolBar();
 
 public slots:
 
@@ -57,8 +58,12 @@ public slots:
   void switchToViewTransformMode();
 
 
+protected:
+  QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerMouseModeToolBar);
+  Q_DECLARE_PRIVATE(qSlicerMouseModeToolBar);
+  Q_DISABLE_COPY(qSlicerMouseModeToolBar);
 };
 
 #endif

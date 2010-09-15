@@ -45,7 +45,7 @@ public:
   /// Constructors
   typedef ctkVTKAbstractMatrixWidget Superclass;
   explicit qMRMLMatrixWidget(QWidget* parent);
-  virtual ~qMRMLMatrixWidget(){}
+  virtual ~qMRMLMatrixWidget();
   
   /// 
   /// Set/Get Coordinate system
@@ -66,8 +66,12 @@ protected slots:
   /// Triggered upon MRML transform node updates
   void updateMatrix();
 
+protected:
+  QScopedPointer<qMRMLMatrixWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLMatrixWidget);
+  Q_DECLARE_PRIVATE(qMRMLMatrixWidget);
+  Q_DISABLE_COPY(qMRMLMatrixWidget);
 }; 
 
 #endif

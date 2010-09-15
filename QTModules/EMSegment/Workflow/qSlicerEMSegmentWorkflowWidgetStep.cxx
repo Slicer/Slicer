@@ -37,7 +37,7 @@
 #include <vtkEMSegmentMRMLManager.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentWorkflowWidgetStepPrivate : public ctkPrivate<qSlicerEMSegmentWorkflowWidgetStep>
+class qSlicerEMSegmentWorkflowWidgetStepPrivate
 {
 public:
   qSlicerEMSegmentWorkflowWidgetStepPrivate();
@@ -63,15 +63,20 @@ qSlicerEMSegmentWorkflowWidgetStepPrivate::qSlicerEMSegmentWorkflowWidgetStepPri
 qSlicerEMSegmentWorkflowWidgetStep::qSlicerEMSegmentWorkflowWidgetStep(
   ctkWorkflow* newWorkflow, const QString& newId, QWidget* newParent) : 
 Superclass(newWorkflow, newId, newParent)
+  , d_ptr(new qSlicerEMSegmentWorkflowWidgetStepPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentWorkflowWidgetStep);
 }
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentWorkflowWidgetStep::qSlicerEMSegmentWorkflowWidgetStep(QWidget* newParent) : 
 Superclass(newParent)
+  , d_ptr(new qSlicerEMSegmentWorkflowWidgetStepPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentWorkflowWidgetStep);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentWorkflowWidgetStep::~qSlicerEMSegmentWorkflowWidgetStep()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -82,14 +87,14 @@ CTK_SET_CXX(qSlicerEMSegmentWorkflowWidgetStep, vtkSlicerEMSegmentLogic*, setEMS
 //-----------------------------------------------------------------------------
 vtkMRMLScene * qSlicerEMSegmentWorkflowWidgetStep::mrmlScene()const
 {
-  CTK_D(const qSlicerEMSegmentWorkflowWidgetStep);
+  Q_D(const qSlicerEMSegmentWorkflowWidgetStep);
   return d->MRMLManager ? d->MRMLManager->GetMRMLScene() : 0;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentWorkflowWidgetStep::setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager)
 {
-  CTK_D(qSlicerEMSegmentWorkflowWidgetStep);
+  Q_D(qSlicerEMSegmentWorkflowWidgetStep);
   if (d->MRMLManager == newMRMLManager)
     {
     return;

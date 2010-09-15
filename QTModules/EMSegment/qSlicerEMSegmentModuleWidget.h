@@ -45,12 +45,17 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerEMSegmentModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerEMSegmentModuleWidget();
 
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerEMSegmentModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentModuleWidget);
+  Q_DISABLE_COPY(qSlicerEMSegmentModuleWidget);
 };
 
 #endif

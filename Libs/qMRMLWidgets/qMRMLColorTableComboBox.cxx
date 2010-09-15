@@ -31,7 +31,7 @@
 #include "qMRMLSceneColorTableModel.h"
 
 //-----------------------------------------------------------------------------
-class qMRMLColorTableComboBoxPrivate: public ctkPrivate<qMRMLColorTableComboBox>
+class qMRMLColorTableComboBoxPrivate
 {
 public:
 };
@@ -39,8 +39,8 @@ public:
 // --------------------------------------------------------------------------
 qMRMLColorTableComboBox::qMRMLColorTableComboBox(QWidget* parentWidget)
   : Superclass(this->createSceneModel(), parentWidget)
+  , d_ptr(new qMRMLColorTableComboBoxPrivate)
 {
-  CTK_INIT_PRIVATE(qMRMLColorTableComboBox);
   this->rootModel()->setParent(this);
   ctkTreeComboBox* comboBox = new ctkTreeComboBox;
   this->setComboBox(comboBox);

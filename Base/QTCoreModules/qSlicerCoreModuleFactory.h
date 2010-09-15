@@ -38,7 +38,7 @@ public:
 
   typedef ctkAbstractQObjectFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCoreModuleFactory();
-  virtual ~qSlicerCoreModuleFactory(){}
+  virtual ~qSlicerCoreModuleFactory();
 
   ///
   virtual void registerItems();
@@ -52,8 +52,12 @@ public:
   ///  qSlicerTransformsModule -> transforms
   static QString extractModuleName(const QString& className);
 
+protected:
+  QScopedPointer<qSlicerCoreModuleFactoryPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCoreModuleFactory);
+  Q_DECLARE_PRIVATE(qSlicerCoreModuleFactory);
+  Q_DISABLE_COPY(qSlicerCoreModuleFactory);
 };
 
 #endif

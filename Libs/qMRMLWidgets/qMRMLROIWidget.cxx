@@ -30,18 +30,21 @@
 #include <vtkMRMLROINode.h>
 
 // --------------------------------------------------------------------------
-class qMRMLROIWidgetPrivate: public ctkPrivate<qMRMLROIWidget>,
+class qMRMLROIWidgetPrivate:
                              public Ui_qMRMLROIWidget
 {
+  Q_DECLARE_PUBLIC(qMRMLROIWidget);
+protected:
+  qMRMLROIWidget* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLROIWidget);
-  qMRMLROIWidgetPrivate();
+  qMRMLROIWidgetPrivate(qMRMLROIWidget& object);
   void init();
   vtkMRMLROINode* ROINode;
 };
 
 // --------------------------------------------------------------------------
-qMRMLROIWidgetPrivate::qMRMLROIWidgetPrivate()
+qMRMLROIWidgetPrivate::qMRMLROIWidgetPrivate(qMRMLROIWidget& object)
+  : q_ptr(&object)
 {
   this->ROINode = 0;
 }
@@ -49,19 +52,19 @@ qMRMLROIWidgetPrivate::qMRMLROIWidgetPrivate()
 // --------------------------------------------------------------------------
 void qMRMLROIWidgetPrivate::init()
 {
-  CTK_P(qMRMLROIWidget);
-  this->setupUi(p);
+  Q_Q(qMRMLROIWidget);
+  this->setupUi(q);
   QObject::connect(this->DisplayClippingBoxButton, SIGNAL(toggled(bool)),
-                   p, SLOT(setDisplayClippingBox(bool)));
+                   q, SLOT(setDisplayClippingBox(bool)));
   QObject::connect(this->InteractiveModeCheckBox, SIGNAL(toggled(bool)),
-                   p, SLOT(setInteractiveMode(bool)));
+                   q, SLOT(setInteractiveMode(bool)));
   QObject::connect(this->LRRangeWidget, SIGNAL(valuesChanged(double, double)),
-                   p, SLOT(updateROI()));
+                   q, SLOT(updateROI()));
   QObject::connect(this->PARangeWidget, SIGNAL(valuesChanged(double, double)),
-                   p, SLOT(updateROI()));
+                   q, SLOT(updateROI()));
   QObject::connect(this->ISRangeWidget, SIGNAL(valuesChanged(double, double)),
-                   p, SLOT(updateROI()));
-  p->setEnabled(this->ROINode != 0);
+                   q, SLOT(updateROI()));
+  q->setEnabled(this->ROINode != 0);
 }
 
 // --------------------------------------------------------------------------
@@ -69,10 +72,11 @@ void qMRMLROIWidgetPrivate::init()
 
 // --------------------------------------------------------------------------
 qMRMLROIWidget::qMRMLROIWidget(QWidget* _parent)
-  :QWidget(_parent)
+  : QWidget(_parent)
+  , d_ptr(new qMRMLROIWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLROIWidget);
-  ctk_d()->init();
+  Q_D(qMRMLROIWidget);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -83,14 +87,14 @@ qMRMLROIWidget::~qMRMLROIWidget()
 // --------------------------------------------------------------------------
 vtkMRMLROINode* qMRMLROIWidget::mrmlROINode()const
 {
-  CTK_D(const qMRMLROIWidget);
+  Q_D(const qMRMLROIWidget);
   return d->ROINode;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLROIWidget::setMRMLROINode(vtkMRMLROINode* roiNode)
 {
-  CTK_D(qMRMLROIWidget);
+  Q_D(qMRMLROIWidget);
   qvtkReconnect(d->ROINode, roiNode, vtkCommand::ModifiedEvent,
                 this, SLOT(onMRMLNodeModified()));
 
@@ -108,7 +112,7 @@ void qMRMLROIWidget::setMRMLROINode(vtkMRMLNode* roiNode)
 // --------------------------------------------------------------------------
 void qMRMLROIWidget::onMRMLNodeModified()
 {
-  CTK_D(qMRMLROIWidget);
+  Q_D(qMRMLROIWidget);
   if (!d->ROINode)
     {
     return;
@@ -140,7 +144,7 @@ void qMRMLROIWidget::onMRMLNodeModified()
 // --------------------------------------------------------------------------
 void qMRMLROIWidget::setExtent(double min, double max)
 {
-  CTK_D(qMRMLROIWidget);
+  Q_D(qMRMLROIWidget);
   d->LRRangeWidget->setRange(min, max);
   d->PARangeWidget->setRange(min, max);
   d->ISRangeWidget->setRange(min, max);
@@ -149,21 +153,21 @@ void qMRMLROIWidget::setExtent(double min, double max)
 // --------------------------------------------------------------------------
 void qMRMLROIWidget::setDisplayClippingBox(bool visible)
 {
-  CTK_D(qMRMLROIWidget);
+  Q_D(qMRMLROIWidget);
   d->ROINode->SetVisibility(visible);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLROIWidget::setInteractiveMode(bool interactive)
 {
-  CTK_D(qMRMLROIWidget);
+  Q_D(qMRMLROIWidget);
   d->ROINode->SetInteractiveMode(interactive);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLROIWidget::updateROI()
 {
-  CTK_D(qMRMLROIWidget);
+  Q_D(qMRMLROIWidget);
   double bounds[6];
   d->LRRangeWidget->values(bounds[0],bounds[1]);
   d->PARangeWidget->values(bounds[2],bounds[3]);

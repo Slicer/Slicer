@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerEMSegmentWorkflowWidgetStep Superclass;
   explicit qSlicerEMSegmentDefineAtlasStep(ctkWorkflow* newWorkflow, QWidget* parent = 0);
+  virtual ~qSlicerEMSegmentDefineAtlasStep();
 
 public slots:
 
@@ -52,8 +53,12 @@ public slots:
 
   virtual void showUserInterface();
 
+protected:
+  QScopedPointer<qSlicerEMSegmentDefineAtlasStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentDefineAtlasStep);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentDefineAtlasStep);
+  Q_DISABLE_COPY(qSlicerEMSegmentDefineAtlasStep);
 
 };
 

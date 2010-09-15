@@ -96,7 +96,7 @@ void qMRMLDoubleRangeSlider::setMaximumHandlePalette(const QPalette& palette)
 }
 
 // --------------------------------------------------------------------------
-class qMRMLRangeSliderPrivate: public ctkPrivate<qMRMLRangeSlider>
+class qMRMLRangeSliderPrivate
 {
 public:
   QPalette MinimumPalette;
@@ -110,23 +110,28 @@ qMRMLRangeSlider::qMRMLRangeSlider(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
+qMRMLRangeSlider::~qMRMLRangeSlider()
+{
+}
+
+// --------------------------------------------------------------------------
 QPalette qMRMLRangeSlider::minimumHandlePalette()const
 {
-  CTK_D(const qMRMLRangeSlider);
+  Q_D(const qMRMLRangeSlider);
   return d->MinimumPalette;
 }
 
 // --------------------------------------------------------------------------
 QPalette qMRMLRangeSlider::maximumHandlePalette()const
 {
-  CTK_D(const qMRMLRangeSlider);
+  Q_D(const qMRMLRangeSlider);
   return d->MaximumPalette;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLRangeSlider::setMinimumHandlePalette(const QPalette& palette)
 {
-  CTK_D(qMRMLRangeSlider);
+  Q_D(qMRMLRangeSlider);
   d->MinimumPalette = palette;
   this->update();
 }
@@ -134,7 +139,7 @@ void qMRMLRangeSlider::setMinimumHandlePalette(const QPalette& palette)
 // --------------------------------------------------------------------------
 void qMRMLRangeSlider::setMaximumHandlePalette(const QPalette& palette)
 {
-  CTK_D(qMRMLRangeSlider);
+  Q_D(qMRMLRangeSlider);
   d->MaximumPalette = palette;
   this->update();
 }
@@ -142,7 +147,7 @@ void qMRMLRangeSlider::setMaximumHandlePalette(const QPalette& palette)
 //---------------------------------------------------------------------------
 void qMRMLRangeSlider::initMinimumSliderStyleOption(QStyleOptionSlider* option) const
 {
-  CTK_D(const qMRMLRangeSlider);
+  Q_D(const qMRMLRangeSlider);
   this->ctkRangeSlider::initStyleOption(option);
   option->palette = d->MinimumPalette;
 }
@@ -150,7 +155,7 @@ void qMRMLRangeSlider::initMinimumSliderStyleOption(QStyleOptionSlider* option) 
 //---------------------------------------------------------------------------
 void qMRMLRangeSlider::initMaximumSliderStyleOption(QStyleOptionSlider* option) const
 {
-  CTK_D(const qMRMLRangeSlider);
+  Q_D(const qMRMLRangeSlider);
   this->ctkRangeSlider::initStyleOption(option);
   option->palette = d->MaximumPalette;
 }

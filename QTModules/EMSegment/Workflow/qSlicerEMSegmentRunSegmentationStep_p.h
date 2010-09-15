@@ -30,14 +30,15 @@ class vtkMRMLROINode;
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentRunSegmentationStepPrivate : public QObject,
-                                                   public ctkPrivate<qSlicerEMSegmentRunSegmentationStep>,
                                                    public Ui_qSlicerEMSegmentRunSegmentationStep
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(qSlicerEMSegmentRunSegmentationStep)
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentRunSegmentationStep)
+protected:
+  qSlicerEMSegmentRunSegmentationStep* const q_ptr;
 
 public:
-  qSlicerEMSegmentRunSegmentationStepPrivate();
+  qSlicerEMSegmentRunSegmentationStepPrivate(qSlicerEMSegmentRunSegmentationStep& object);
 
   void setupUi(qSlicerEMSegmentWorkflowWidgetStep *step);
 

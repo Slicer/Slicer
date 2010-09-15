@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerVolumesModule(QObject *parent=0);
+  virtual ~qSlicerVolumesModule();
 
   virtual QIcon icon()const;
   qSlicerGetTitleMacro(QTMODULE_TITLE);
@@ -59,8 +60,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerVolumesModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerVolumesModule);
+  Q_DECLARE_PRIVATE(qSlicerVolumesModule);
+  Q_DISABLE_COPY(qSlicerVolumesModule);
 };
 
 #endif

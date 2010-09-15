@@ -50,7 +50,9 @@ static ctkLogger logger(
 // qSlicerEMSegmentEditRegistrationParametersStepPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentEditRegistrationParametersStepPrivate::qSlicerEMSegmentEditRegistrationParametersStepPrivate()
+qSlicerEMSegmentEditRegistrationParametersStepPrivate
+::qSlicerEMSegmentEditRegistrationParametersStepPrivate(qSlicerEMSegmentEditRegistrationParametersStep& object)
+  : q_ptr(&object)
 {
 }
 
@@ -122,10 +124,10 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::setupUi(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateAtlasScansToInputChannelsLayoutFromMRML()
 {
-  CTK_P(qSlicerEMSegmentEditRegistrationParametersStep);
-  Q_ASSERT(p->mrmlManager());
+  Q_Q(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_ASSERT(q->mrmlManager());
 
-  vtkMRMLEMSTargetNode *inputNodes = p->mrmlManager()->GetTargetInputNode();
+  vtkMRMLEMSTargetNode *inputNodes = q->mrmlManager()->GetTargetInputNode();
   Q_ASSERT(inputNodes);
 
   // Loop over inputChannels
@@ -141,7 +143,7 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateAtlasScansToIn
     logger.debug(QString("updateAtlasScansToInputChannelsLayoutFromMRML - volumeId: %1").
                  arg(volumeId));
 
-    vtkIdType atlasNodeIDToSelect = p->mrmlManager()->GetRegistrationAtlasVolumeID(volumeId);
+    vtkIdType atlasNodeIDToSelect = q->mrmlManager()->GetRegistrationAtlasVolumeID(volumeId);
     logger.debug(QString("updateAtlasScansToInputChannelsLayoutFromMRML - atlasNodeIDToSelect: %1").
                  arg(atlasNodeIDToSelect));
 
@@ -151,7 +153,7 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateAtlasScansToIn
 //      QStringList nodeTypes;
 //      nodeTypes << "vtkMRMLVolumeNode";
 //      atlasNodeComboBox->setToolTip(
-//          p->tr("Select atlas volume representing the %1Nth channel.").arg(inputVolumeId));
+//          q->tr("Select atlas volume representing the %1Nth channel.").arg(inputVolumeId));
 //      atlasNodeComboBox->setNodeTypes(nodeTypes);
 //      atlasNodeComboBox->setNoneEnabled(true);
 //      atlasNodeComboBox->setAddEnabled(false);
@@ -161,14 +163,14 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateAtlasScansToIn
 
       // Since couldn't convert atlasNodeIDToSelect <-> MRMLId, let's use a
       // QComboBox instead of qMRMLNodeComboBox
-      QComboBox * atlasNodeComboBox = new QComboBox(p);
+      QComboBox * atlasNodeComboBox = new QComboBox(q);
       atlasNodeComboBox->setToolTip(
-          p->tr("Select atlas volume representing the %1Nth channel.").arg(inputVolumeId));
+          q->tr("Select atlas volume representing the %1Nth channel.").arg(inputVolumeId));
       atlasNodeComboBox->addItem("None"); // index:0 -> ERROR_NODE_VTKID
-      for(int i = 0; i < p->mrmlManager()->GetVolumeNumberOfChoices(); i++)
+      for(int i = 0; i < q->mrmlManager()->GetVolumeNumberOfChoices(); i++)
         {
-        vtkIdType volumeId = p->mrmlManager()->GetVolumeNthID(i);
-        atlasNodeComboBox->addItem(p->mrmlManager()->GetVolumeName(volumeId),
+        vtkIdType volumeId = q->mrmlManager()->GetVolumeNthID(i);
+        atlasNodeComboBox->addItem(q->mrmlManager()->GetVolumeName(volumeId),
                                    QVariant(volumeId));
         }
       int index = atlasNodeComboBox->findData(QVariant(atlasNodeIDToSelect));
@@ -220,8 +222,8 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateAtlasScansToIn
 void qSlicerEMSegmentEditRegistrationParametersStepPrivate::
     updateMRMLFromAtlasScansToInputChannelsLayout()
 {
-  CTK_P(qSlicerEMSegmentEditRegistrationParametersStep);
-  Q_ASSERT(p->mrmlManager());
+  Q_Q(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_ASSERT(q->mrmlManager());
 
   for(int inputVolumeId = 0; inputVolumeId < this->AtlasScansToInputChannelsLayout->rowCount(); inputVolumeId++)
     {
@@ -236,16 +238,16 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::
     logger.debug(QString(
             "updateMRMLFromAtlasScansToInputChannelsLayout - inputVolumeId:%1, atlasVolumeId:%2").
                  arg(inputVolumeId).arg(atlasVolumeId));
-    p->mrmlManager()->SetRegistrationAtlasVolumeID(inputVolumeId, atlasVolumeId);
+    q->mrmlManager()->SetRegistrationAtlasVolumeID(inputVolumeId, atlasVolumeId);
     }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateWidgetFromMRML()
 {
-  CTK_P(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_Q(qSlicerEMSegmentEditRegistrationParametersStep);
 
-  if (!p->mrmlManager())
+  if (!q->mrmlManager())
     {
     logger.warn("updateWidgetFromMRML - MRMLManager is NULL");
     return;
@@ -258,20 +260,20 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateWidgetFromMRML
 
   foreach(QWidget* w, widgets)
     {
-    w->setEnabled(p->mrmlManager()->HasGlobalParametersNode());
+    w->setEnabled(q->mrmlManager()->HasGlobalParametersNode());
     }
 
   this->AffineRegistrationComboBox->setCurrentIndex(
       this->AffineRegistrationComboBox->findData(
-          QVariant(p->mrmlManager()->GetRegistrationAffineType())));
+          QVariant(q->mrmlManager()->GetRegistrationAffineType())));
 
   this->DeformableRegistrationComboBox->setCurrentIndex(
       this->DeformableRegistrationComboBox->findData(
-          QVariant(p->mrmlManager()->GetRegistrationDeformableType())));
+          QVariant(q->mrmlManager()->GetRegistrationDeformableType())));
 
   this->InterpolationComboBox->setCurrentIndex(
       this->InterpolationComboBox->findData(
-          QVariant(p->mrmlManager()->GetRegistrationInterpolationType())));
+          QVariant(q->mrmlManager()->GetRegistrationInterpolationType())));
 
   this->updateAtlasScansToInputChannelsLayoutFromMRML();
 }
@@ -279,9 +281,9 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateWidgetFromMRML
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateMRMLFromWidget()
 {
-  CTK_P(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_Q(qSlicerEMSegmentEditRegistrationParametersStep);
 
-  if (!p->mrmlManager())
+  if (!q->mrmlManager())
     {
     logger.warn("updateMRMLFromWidget - MRMLManager is NULL");
     return;
@@ -294,8 +296,8 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::updateMRMLFromWidget
 void qSlicerEMSegmentEditRegistrationParametersStepPrivate::
     onCurrentAffineRegistrationIndexChanged(int index)
 {
-  CTK_P(qSlicerEMSegmentEditRegistrationParametersStep);
-  Q_ASSERT(p->mrmlManager());
+  Q_Q(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_ASSERT(q->mrmlManager());
 
   int type = this->AffineRegistrationComboBox->itemData(index).toInt();
   Q_ASSERT(type == vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationOff ||
@@ -308,15 +310,15 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::
            type == vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCSlow);
   logger.debug(QString("onCurrentAffineRegistrationIndexChanged - type: %1").
                arg(type));
-  p->mrmlManager()->SetRegistrationAffineType(type);
+  q->mrmlManager()->SetRegistrationAffineType(type);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditRegistrationParametersStepPrivate::
     onCurrentDeformableRegistrationIndexChanged(int index)
 {
-  CTK_P(qSlicerEMSegmentEditRegistrationParametersStep);
-  Q_ASSERT(p->mrmlManager());
+  Q_Q(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_ASSERT(q->mrmlManager());
 
   int type = this->DeformableRegistrationComboBox->itemData(index).toInt();
   Q_ASSERT(type == vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationOff ||
@@ -328,14 +330,14 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::
            type == vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCCSlow);
   logger.debug(QString("onCurrentDeformableRegistrationIndexChanged - type: %1").
                arg(type));
-  p->mrmlManager()->SetRegistrationDeformableType(type);
+  q->mrmlManager()->SetRegistrationDeformableType(type);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditRegistrationParametersStepPrivate::onCurrentInterpolationIndexChanged(int index)
 {
-  CTK_P(qSlicerEMSegmentEditRegistrationParametersStep);
-  Q_ASSERT(p->mrmlManager());
+  Q_Q(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_ASSERT(q->mrmlManager());
 
   int type = this->InterpolationComboBox->itemData(index).toInt();
   Q_ASSERT(type == vtkEMSegmentMRMLManager::InterpolationLinear ||
@@ -343,7 +345,7 @@ void qSlicerEMSegmentEditRegistrationParametersStepPrivate::onCurrentInterpolati
            type == vtkEMSegmentMRMLManager::InterpolationCubic);
   logger.debug(QString("onCurrentInterpolationIndexChanged - type: %1").
                arg(type));
-  p->mrmlManager()->SetRegistrationInterpolationType(type);
+  q->mrmlManager()->SetRegistrationInterpolationType(type);
 }
 
 //-----------------------------------------------------------------------------
@@ -354,10 +356,11 @@ const QString qSlicerEMSegmentEditRegistrationParametersStep::StepId = "EditRegi
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentEditRegistrationParametersStep::qSlicerEMSegmentEditRegistrationParametersStep(
-    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
+  ctkWorkflow* newWorkflow, QWidget* newWidget)
+  : Superclass(newWorkflow, qSlicerEMSegmentEditRegistrationParametersStep::StepId, newWidget)
+  , d_ptr(new qSlicerEMSegmentEditRegistrationParametersStepPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentEditRegistrationParametersStep);
-  CTK_D(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_D(qSlicerEMSegmentEditRegistrationParametersStep);
   d->setupUi(this);
 
   this->setName("5/9. Edit Registration Parameters");
@@ -365,9 +368,14 @@ qSlicerEMSegmentEditRegistrationParametersStep::qSlicerEMSegmentEditRegistration
 }
 
 //-----------------------------------------------------------------------------
+qSlicerEMSegmentEditRegistrationParametersStep::~qSlicerEMSegmentEditRegistrationParametersStep()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerEMSegmentEditRegistrationParametersStep::showUserInterface()
 {
-  CTK_D(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_D(qSlicerEMSegmentEditRegistrationParametersStep);
   this->Superclass::showUserInterface();
   d->updateWidgetFromMRML();
 }
@@ -391,7 +399,7 @@ void qSlicerEMSegmentEditRegistrationParametersStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  CTK_D(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_D(qSlicerEMSegmentEditRegistrationParametersStep);
   d->updateWidgetFromMRML();
 
   // Indicates that we are finished
@@ -406,7 +414,7 @@ void qSlicerEMSegmentEditRegistrationParametersStep::onExit(
   Q_UNUSED(goingTo);
   Q_UNUSED(transitionType);
 
-  CTK_D(qSlicerEMSegmentEditRegistrationParametersStep);
+  Q_D(qSlicerEMSegmentEditRegistrationParametersStep);
 
   Q_ASSERT(this->mrmlManager());
 

@@ -25,18 +25,28 @@
 #include "qSlicerLoadableModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerLoadableModulePrivate: public ctkPrivate<qSlicerLoadableModule>
+class qSlicerLoadableModulePrivate
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerLoadableModule, QObject*);
+qSlicerLoadableModule::qSlicerLoadableModule(QObject* _parentObject)
+  : Superclass(_parentObject)
+  , d_ptr(new qSlicerLoadableModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerLoadableModule::~qSlicerLoadableModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerLoadableModule::setup()
 {
-  Q_ASSERT(ctk_d() != 0);
+  Q_D(qSlicerLoadableModule);
+  Q_ASSERT(d != 0);
 }
 
 //-----------------------------------------------------------------------------

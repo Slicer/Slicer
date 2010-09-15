@@ -39,16 +39,17 @@ class vtkMRMLViewNode;
 
 //-----------------------------------------------------------------------------
 class qMRMLThreeDViewsControllerWidgetPrivate: public QObject,
-                                   public ctkPrivate<qMRMLThreeDViewsControllerWidget>,
                                    public Ui_qMRMLThreeDViewsControllerWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qMRMLThreeDViewsControllerWidget);
+
+protected:
+  qMRMLThreeDViewsControllerWidget* const q_ptr;
 
 public:
-
-  CTK_DECLARE_PUBLIC(qMRMLThreeDViewsControllerWidget);
-  qMRMLThreeDViewsControllerWidgetPrivate();
+  qMRMLThreeDViewsControllerWidgetPrivate(qMRMLThreeDViewsControllerWidget& object);
   ~qMRMLThreeDViewsControllerWidgetPrivate(){}
 
   void setupUi(qMRMLWidget* widget);

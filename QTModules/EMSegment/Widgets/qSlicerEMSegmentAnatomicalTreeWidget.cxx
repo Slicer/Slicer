@@ -79,7 +79,8 @@ public:
 // qSlicerEMSegmentAnatomicalTreeWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidgetPrivate()
+qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidgetPrivate(qSlicerEMSegmentAnatomicalTreeWidget& object)
+  : q_ptr(&object)
 {
   this->EMSNode = 0;
   this->CurrentColorTableNode = 0;
@@ -101,7 +102,7 @@ qSlicerEMSegmentAnatomicalTreeWidgetPrivate::qSlicerEMSegmentAnatomicalTreeWidge
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::setupUi(qSlicerEMSegmentWidget * widget)
 {
-  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_Q(qSlicerEMSegmentAnatomicalTreeWidget);
 
   this->Ui_qSlicerEMSegmentAnatomicalTreeWidget::setupUi(widget);
 
@@ -120,14 +121,14 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::setupUi(qSlicerEMSegmentWidget
 
   // Connect Display MRML Id checkbox
   connect(this->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
-          p, SLOT(setMRMLIDsColumnVisible(bool)));
+          q, SLOT(setMRMLIDsColumnVisible(bool)));
 
   // Connect Display Alpha checkbox
   connect(this->DisplayAlphaCheckBox, SIGNAL(toggled(bool)),
-          p, SLOT(setAlphaColumnVisible(bool)));
+          q, SLOT(setAlphaColumnVisible(bool)));
 
   // Connect control buttons
-  connect(this->CollapseAllButton, SIGNAL(clicked()), p, SLOT(collapseToDepthZero()));
+  connect(this->CollapseAllButton, SIGNAL(clicked()), q, SLOT(collapseToDepthZero()));
   connect(this->ExpandAllButton, SIGNAL(clicked()), this->TreeView, SLOT(expandAll()));
 
   // Connect TreeModel
@@ -165,8 +166,8 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::initializeHorizontalHeader()
 void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::populateTreeModel(
     vtkIdType treeNodeId, QStandardItem * item)
 {
-  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
-  Q_ASSERT(p->mrmlManager());
+  Q_Q(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_ASSERT(q->mrmlManager());
   Q_ASSERT(item);
 
   // Return if no valid treeNodeId is given
@@ -176,7 +177,7 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::populateTreeModel(
     }
 
   // Get a reference to the associated treeNode
-  vtkMRMLEMSTreeNode * treeNode = p->mrmlManager()->GetTreeNode(treeNodeId);
+  vtkMRMLEMSTreeNode * treeNode = q->mrmlManager()->GetTreeNode(treeNodeId);
   Q_ASSERT(treeNode);
   if (!treeNode)
     {
@@ -191,11 +192,11 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::populateTreeModel(
   QStandardItem * structureItem = this->insertTreeRow(item, treeNodeId, treeNode);
 
   // Loop through current node children and recursively call ourself
-  int numberOfChildren = p->mrmlManager()->GetTreeNodeNumberOfChildren(treeNodeId);
+  int numberOfChildren = q->mrmlManager()->GetTreeNodeNumberOfChildren(treeNodeId);
   for (int i = 0; i < numberOfChildren; i++)
     {
     this->populateTreeModel(
-      p->mrmlManager()->GetTreeNodeChildNodeID(treeNodeId, i), structureItem);
+      q->mrmlManager()->GetTreeNodeChildNodeID(treeNodeId, i), structureItem);
     }
 }
 
@@ -203,7 +204,7 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::populateTreeModel(
 QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
     QStandardItem * parentItem, vtkIdType treeNodeId, vtkMRMLEMSTreeNode * treeNode)
 {
-  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_Q(qSlicerEMSegmentAnatomicalTreeWidget);
   Q_ASSERT(treeNode);
 
   bool isLeaf = treeNode->GetNumberOfChildNodes() == 0;
@@ -218,7 +219,7 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
     {
     int labelId = treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel();
     structureItem->setData(
-        qMRMLUtils::createIcon(p->style(), this->colorFromLabelId(labelId)), Qt::DecorationRole);
+        qMRMLUtils::createIcon(q->style(), this->colorFromLabelId(labelId)), Qt::DecorationRole);
     }
   structureItem->setEditable(this->StructureNameEditable);
   itemList << structureItem;
@@ -304,7 +305,7 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
     Q_ASSERT(treeNode->GetParametersNode()->GetLeafParametersNode());
     qMRMLLabelComboBox * labelComboBox = new qMRMLLabelComboBox;
     labelComboBox->setMaximumColorCount(10);
-    labelComboBox->setMRMLScene(p->mrmlScene());
+    labelComboBox->setMRMLScene(q->mrmlScene());
     labelComboBox->setMRMLColorNode(this->CurrentColorTableNode);
     logger.debug(QString("insertTreeRow - IntensityLabel: %1").
                  arg(treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel()));
@@ -317,8 +318,8 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
   // Set widget associated with probabilityMapItem
   if (isLeaf && this->ProbabilityMapColumnVisible)
     {
-    vtkIdType volumeId = p->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
-    vtkMRMLVolumeNode * volumeNode = p->mrmlManager()->GetVolumeNode(volumeId);
+    vtkIdType volumeId = q->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
+    vtkMRMLVolumeNode * volumeNode = q->mrmlManager()->GetVolumeNode(volumeId);
     qMRMLNodeComboBox * probabilityMapComboBox = new qMRMLNodeComboBox;
     QStringList nodeTypes;
     nodeTypes << "vtkMRMLVolumeNode";
@@ -329,7 +330,7 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
     probabilityMapComboBox->setAddEnabled(false);
     probabilityMapComboBox->setRemoveEnabled(false);
     probabilityMapComboBox->setEditEnabled(false);
-    probabilityMapComboBox->setMRMLScene(p->mrmlScene());
+    probabilityMapComboBox->setMRMLScene(q->mrmlScene());
     probabilityMapComboBox->setCurrentNode(volumeNode);
     this->TreeView->setIndexWidget(
         this->TreeModel->indexFromItem(probabilityMapItem), probabilityMapComboBox);
@@ -369,7 +370,7 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemChanged(QStandardIte
 {
   Q_ASSERT(treeItem);
 
-  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_Q(qSlicerEMSegmentAnatomicalTreeWidget);
 
   //logger.debug(QString("onTreeItemChanged - DisplayRole: %1").arg(treeItem->text()));
   int treeItemType = treeItem->data(Self::TreeItemTypeRole).toInt();
@@ -377,11 +378,11 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemChanged(QStandardIte
 
   if (treeItemType == Self::StructureNameItemType)
     {
-    p->mrmlManager()->SetTreeNodeName(treeNodeId, treeItem->text().toLatin1());
+    q->mrmlManager()->SetTreeNodeName(treeNodeId, treeItem->text().toLatin1());
     }
   else if (treeItemType == Self::ClassWeightItemType)
     {
-    p->mrmlManager()->SetTreeNodeClassProbability(
+    q->mrmlManager()->SetTreeNodeClassProbability(
         treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
     }
   else if (treeItemType == Self::UpdateClassWeightItemType)
@@ -391,12 +392,12 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemChanged(QStandardIte
     }
   else if (treeItemType == Self::AtlasWeightItemType)
     {
-    p->mrmlManager()->SetTreeNodeSpatialPriorWeight(
+    q->mrmlManager()->SetTreeNodeSpatialPriorWeight(
         treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
     }
   else if (treeItemType == Self::AlphaItemType)
     {
-    p->mrmlManager()->SetTreeNodeAlpha(
+    q->mrmlManager()->SetTreeNodeAlpha(
         treeNodeId, treeItem->data(Qt::DisplayRole).toDouble());
     }
 }
@@ -404,14 +405,14 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemChanged(QStandardIte
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemSelected(const QModelIndex & index)
 {
-  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_Q(qSlicerEMSegmentAnatomicalTreeWidget);
   QStandardItem * item = this->TreeModel->itemFromIndex(index);
   Q_ASSERT(item);
 
   int treeNodeId = item->data(Self::TreeNodeIDRole).toInt();
 
   // Get a reference to the associated treeNode
-  vtkMRMLEMSTreeNode * currentTreeNode = p->mrmlManager()->GetTreeNode(treeNodeId);
+  vtkMRMLEMSTreeNode * currentTreeNode = q->mrmlManager()->GetTreeNode(treeNodeId);
   Q_ASSERT(currentTreeNode);
   if (!currentTreeNode)
     {
@@ -419,37 +420,37 @@ void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onTreeItemSelected(const QMode
     return;
     }
 
-  emit p->currentTreeNodeChanged(currentTreeNode);
+  emit q->currentTreeNodeChanged(currentTreeNode);
 
-//  vtkIdType volumeId = p->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
-//  vtkMRMLVolumeNode * volumeNode = p->mrmlManager()->GetVolumeNode(volumeId);
-//  emit p->currentSpatialPriorVolumeNodeChanged(volumeNode);
-//  emit p->currentSpatialPriorVolumeNodeChanged(volumeNode != 0);
+//  vtkIdType volumeId = q->mrmlManager()->GetTreeNodeSpatialPriorVolumeID(treeNodeId);
+//  vtkMRMLVolumeNode * volumeNode = q->mrmlManager()->GetVolumeNode(volumeId);
+//  emit q->currentSpatialPriorVolumeNodeChanged(volumeNode);
+//  emit q->currentSpatialPriorVolumeNodeChanged(volumeNode != 0);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidgetPrivate::onProbabilityMapChanged(vtkMRMLNode * node)
 {
-  CTK_P(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_Q(qSlicerEMSegmentAnatomicalTreeWidget);
   if (!node)
     {
     return;
     }
   int treeNodeId = QObject::sender()->property("treeNodeId").toInt();
   Q_ASSERT(treeNodeId > 0);
-  p->mrmlManager()->SetTreeNodeSpatialPriorVolumeID(
-      treeNodeId, p->mrmlManager()->MapMRMLNodeIDToVTKNodeID(node->GetID()));
+  q->mrmlManager()->SetTreeNodeSpatialPriorVolumeID(
+      treeNodeId, q->mrmlManager()->MapMRMLNodeIDToVTKNodeID(node->GetID()));
 }
 
 //-----------------------------------------------------------------------------
 // qSlicerEMSegmentAnatomicalTreeWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentAnatomicalTreeWidget::qSlicerEMSegmentAnatomicalTreeWidget(QWidget *newParent):
-Superclass(newParent)
+qSlicerEMSegmentAnatomicalTreeWidget::qSlicerEMSegmentAnatomicalTreeWidget(QWidget *newParent)
+  : Superclass(newParent)
+  , d_ptr(new qSlicerEMSegmentAnatomicalTreeWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentAnatomicalTreeWidget);
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->setupUi(this);
 
   // Columns hidden by default
@@ -468,6 +469,11 @@ Superclass(newParent)
 }
 
 //-----------------------------------------------------------------------------
+qSlicerEMSegmentAnatomicalTreeWidget::~qSlicerEMSegmentAnatomicalTreeWidget()
+{
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLManager(vtkEMSegmentMRMLManager * newMRMLManager)
 {
   // Listen if the current EMSNode changes
@@ -482,7 +488,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLManager(vtkEMSegmentMRMLManage
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::updateWidgetFromMRML()
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
 
   if (!this->mrmlManager())
     {
@@ -530,7 +536,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setStructureNameEditable(bool editable)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   if (d->StructureNameEditable == editable)
     {
     return;
@@ -544,14 +550,14 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setStructureNameEditable(bool editabl
 //-----------------------------------------------------------------------------
 bool qSlicerEMSegmentAnatomicalTreeWidget::mrmlIDsColumnVisible() const
 {
-  CTK_D(const qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(const qSlicerEMSegmentAnatomicalTreeWidget);
   return (d->DisplayMRMLIDsCheckBox->checkState() == Qt::Checked);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLIDsColumnVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::IdColumn, !visible);
   d->DisplayMRMLIDsCheckBox->setChecked(visible);
 }
@@ -559,14 +565,14 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setMRMLIDsColumnVisible(bool visible)
 //-----------------------------------------------------------------------------
 bool qSlicerEMSegmentAnatomicalTreeWidget::isDisplayMRMLIDsCheckBoxVisible() const
 {
-  CTK_D(const qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(const qSlicerEMSegmentAnatomicalTreeWidget);
   return d->DisplayMRMLIDsCheckBox->isVisible();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setDisplayMRMLIDsCheckBoxVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->DisplayMRMLIDsCheckBox->setVisible(visible);
 }
 
@@ -576,7 +582,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool, labelColumnVisible, Labe
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setLabelColumnVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::LabelColumn, !visible);
   d->LabelColumnVisible = visible;
 }
@@ -588,7 +594,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setClassWeightColumnVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::ClassWeightColumn, !visible);
   d->ClassWeightColumnVisible = visible;
 }
@@ -600,7 +606,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setUpdateClassWeightColumnVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::UpdateClassWeightColumn, !visible);
   d->UpdateClassWeightColumnVisible = visible;
 }
@@ -612,7 +618,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setAtlasWeightColumnVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::AtlasWeightColumn, !visible);
   d->AtlasWeightColumnVisible = visible;
 }
@@ -623,7 +629,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool, alphaColumnVisible, Alph
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setAlphaColumnVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::AlphaColumn, !visible);
   d->AlphaColumnVisible = visible;
   d->DisplayAlphaCheckBox->setChecked(visible);
@@ -632,14 +638,14 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setAlphaColumnVisible(bool visible)
 //-----------------------------------------------------------------------------
 bool qSlicerEMSegmentAnatomicalTreeWidget::isDisplayAlphaCheckBoxVisible() const
 {
-  CTK_D(const qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(const qSlicerEMSegmentAnatomicalTreeWidget);
   return d->DisplayAlphaCheckBox->isVisible();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setDisplayAlphaCheckBoxVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->DisplayAlphaCheckBox->setVisible(visible);
 }
 
@@ -650,7 +656,7 @@ CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setProbabilityMapColumnVisible(bool visible)
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
   d->TreeView->header()->setSectionHidden(ctkPimpl::ProbabilityMapColumn, !visible);
   d->ProbabilityMapColumnVisible = visible;
 }
@@ -658,7 +664,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setProbabilityMapColumnVisible(bool v
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::collapseToDepthZero()
 {
-  CTK_D(qSlicerEMSegmentAnatomicalTreeWidget);
+  Q_D(qSlicerEMSegmentAnatomicalTreeWidget);
 
   d->TreeView->setUpdatesEnabled(false);
   d->TreeView->collapseAll();

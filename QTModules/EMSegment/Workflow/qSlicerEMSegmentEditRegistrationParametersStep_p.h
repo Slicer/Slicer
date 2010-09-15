@@ -33,14 +33,14 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerEMSegmentEditRegistrationParametersStepPrivate : public QObject,
-                                                              public ctkPrivate<qSlicerEMSegmentEditRegistrationParametersStep>,
                                                               public Ui_qSlicerEMSegmentEditRegistrationParametersStep
 {
   Q_OBJECT
-  CTK_DECLARE_PUBLIC(qSlicerEMSegmentEditRegistrationParametersStep)
-
+  Q_DECLARE_PUBLIC(qSlicerEMSegmentEditRegistrationParametersStep)
+protected:
+  qSlicerEMSegmentEditRegistrationParametersStep* const q_ptr;
 public:
-  qSlicerEMSegmentEditRegistrationParametersStepPrivate();
+  qSlicerEMSegmentEditRegistrationParametersStepPrivate(qSlicerEMSegmentEditRegistrationParametersStep& object);
 
   void updateWidgetFromMRML();
 

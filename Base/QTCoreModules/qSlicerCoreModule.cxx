@@ -25,13 +25,22 @@
 #include "qSlicerCoreModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerCoreModulePrivate: public ctkPrivate<qSlicerCoreModule>
+class qSlicerCoreModulePrivate
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerCoreModule, QObject*);
+qSlicerCoreModule::qSlicerCoreModule(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerCoreModulePrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCoreModule::~qSlicerCoreModule()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreModule::setup()

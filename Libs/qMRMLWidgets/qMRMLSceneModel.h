@@ -49,15 +49,19 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModelItemHelperFactory : public qMRMLAbstra
 {
 public:
   qMRMLSceneModelItemHelperFactory();
-  virtual ~qMRMLSceneModelItemHelperFactory(){}
+  virtual ~qMRMLSceneModelItemHelperFactory();
   virtual qMRMLAbstractItemHelper* createItem(vtkObject* object,int column, int row = -1) const;
 
   void setPreItems(vtkCollection* itemCollection);
   vtkCollection* preItems()const;
   void setPostItems(vtkCollection* itemCollection);
   vtkCollection* postItems()const;
+protected:
+  QScopedPointer<qMRMLSceneModelItemHelperFactoryPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSceneModelItemHelperFactory);
+  Q_DECLARE_PRIVATE(qMRMLSceneModelItemHelperFactory);
+  Q_DISABLE_COPY(qMRMLSceneModelItemHelperFactory);
 };
 
 class qMRMLSceneModelPrivate;
@@ -144,8 +148,12 @@ protected:
   virtual QModelIndex indexFromItem(const qMRMLAbstractItemHelper* item)const;
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);
+protected:
+  QScopedPointer<qMRMLSceneModelPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLSceneModel);
+  Q_DECLARE_PRIVATE(qMRMLSceneModel);
+  Q_DISABLE_COPY(qMRMLSceneModel);
 };
 
 #endif

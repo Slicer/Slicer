@@ -27,8 +27,7 @@
 #include "ctkWorkflowWidgetStep.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentDefineAnatomicalTreeStepPrivate : public ctkPrivate<qSlicerEMSegmentDefineAnatomicalTreeStep>,
-                                                        public Ui_qSlicerEMSegmentDefineAnatomicalTreeStep
+class qSlicerEMSegmentDefineAnatomicalTreeStepPrivate: public Ui_qSlicerEMSegmentDefineAnatomicalTreeStep
 {
 public:
   qSlicerEMSegmentDefineAnatomicalTreeStepPrivate();
@@ -58,14 +57,20 @@ const QString qSlicerEMSegmentDefineAnatomicalTreeStep::StepId = "DefineAnatomic
 
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentDefineAnatomicalTreeStep::qSlicerEMSegmentDefineAnatomicalTreeStep(
-    ctkWorkflow* newWorkflow, QWidget* newWidget) : Superclass(newWorkflow, Self::StepId, newWidget)
+  ctkWorkflow* newWorkflow, QWidget* newWidget)
+  : Superclass(newWorkflow, qSlicerEMSegmentDefineAnatomicalTreeStep::StepId, newWidget)
+  , d_ptr(new qSlicerEMSegmentDefineAnatomicalTreeStepPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentDefineAnatomicalTreeStep);
-  CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
+  Q_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
   d->setupUi(this);
 
   this->setName("3/9. Define Anatomical Tree");
   this->setDescription("Define a hierarchy of structures.");
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentDefineAnatomicalTreeStep::~qSlicerEMSegmentDefineAnatomicalTreeStep()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -87,7 +92,7 @@ void qSlicerEMSegmentDefineAnatomicalTreeStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
-  CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
+  Q_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
   d->updateWidgetFromMRML();
 
   // Indicates that we are finished
@@ -107,7 +112,7 @@ void qSlicerEMSegmentDefineAnatomicalTreeStep::onExit(
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentDefineAnatomicalTreeStep::showUserInterface()
 {
-  CTK_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
+  Q_D(qSlicerEMSegmentDefineAnatomicalTreeStep);
   this->Superclass::showUserInterface();
   d->updateWidgetFromMRML();
 }

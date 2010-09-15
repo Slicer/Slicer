@@ -29,7 +29,7 @@
 #include "qSlicerSliceControllerModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSliceControllerModulePrivate: public ctkPrivate<qSlicerSliceControllerModule>
+class qSlicerSliceControllerModulePrivate
 {
 public:
 };
@@ -37,8 +37,13 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSliceControllerModule::qSlicerSliceControllerModule(QObject* _parent)
   :Superclass(_parent)
+  , d_ptr(new qSlicerSliceControllerModulePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerSliceControllerModule);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSliceControllerModule::~qSlicerSliceControllerModule()
+{
 }
 
 //-----------------------------------------------------------------------------

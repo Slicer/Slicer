@@ -88,9 +88,11 @@ protected:
   virtual void onMRMLSceneAboutToBeClosed(vtkMRMLScene* scene);
   virtual void onMRMLSceneClosed(vtkMRMLScene* scene);
   virtual QModelIndex indexFromItem(const qMRMLAbstractItemHelper* item)const;
+
+  QScopedPointer<qMRMLSceneTreeModelPrivate> d_ptr;
 private:
-  //qMRMLAbstractItemHelperFactory* sourceItemFactory()const;
-  CTK_DECLARE_PRIVATE(qMRMLSceneTreeModel);
+  Q_DECLARE_PRIVATE(qMRMLSceneTreeModel);
+  Q_DISABLE_COPY(qMRMLSceneTreeModel);
 };
 
 #endif

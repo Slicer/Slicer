@@ -45,7 +45,7 @@ public:
   /// Constructors
   typedef ctkSliderWidget Superclass;
   explicit qMRMLLinearTransformSlider(QWidget* parent);
-  virtual ~qMRMLLinearTransformSlider(){}
+  virtual ~qMRMLLinearTransformSlider();
 
   /// 
   /// Set/Get Transform type
@@ -89,8 +89,12 @@ protected slots:
   /// Triggered upon MRML scene updates
   void onMRMLTransformNodeModified(vtkObject* caller);
 
+protected:
+  QScopedPointer<qMRMLLinearTransformSliderPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLLinearTransformSlider);
+  Q_DECLARE_PRIVATE(qMRMLLinearTransformSlider);
+  Q_DISABLE_COPY(qMRMLLinearTransformSlider);
 
 };
 

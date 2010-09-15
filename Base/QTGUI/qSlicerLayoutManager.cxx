@@ -76,7 +76,8 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerLayoutManager");
 // qSlicerLayoutManagerPrivate methods
 
 //------------------------------------------------------------------------------
-qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate()
+qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object)
+  : q_ptr(&object)
 {
   this->MRMLScene = 0;
   this->MRMLLayoutNode = 0;
@@ -224,13 +225,13 @@ void qSlicerLayoutManagerPrivate::setMRMLLayoutNode(vtkMRMLLayoutNode* layoutNod
 // --------------------------------------------------------------------------
 void qSlicerLayoutManagerPrivate::setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node)
 {
-  CTK_P(qSlicerLayoutManager);
+  Q_Q(qSlicerLayoutManager);
   if (this->ActiveMRMLThreeDViewNode == node)
     {
     return;
     }
   this->ActiveMRMLThreeDViewNode = node;
-  emit p->activeMRMLThreeDViewNodeChanged(this->ActiveMRMLThreeDViewNode);
+  emit q->activeMRMLThreeDViewNodeChanged(this->ActiveMRMLThreeDViewNode);
 }
 
 // --------------------------------------------------------------------------
@@ -489,7 +490,7 @@ void qSlicerLayoutManagerPrivate::onSceneImportedEvent()
 //------------------------------------------------------------------------------
 void qSlicerLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* layoutNode)
 {
-  CTK_P(qSlicerLayoutManager);
+  Q_Q(qSlicerLayoutManager);
   if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
     {
     return;
@@ -501,7 +502,7 @@ void qSlicerLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* layoutNod
     Q_ASSERT(mrmlLayoutNode);
     return;
     }
-  p->setLayout(mrmlLayoutNode->GetViewArrangement());
+  q->setLayout(mrmlLayoutNode->GetViewArrangement());
 }
 
 namespace
@@ -917,15 +918,20 @@ void qSlicerLayoutManagerPrivate::setNone()
 
 // --------------------------------------------------------------------------
 qSlicerLayoutManager::qSlicerLayoutManager(QWidget* widget) : Superclass(widget)
+  , d_ptr(new qSlicerLayoutManagerPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerLayoutManager);
   this->setViewport(widget);
+}
+
+// --------------------------------------------------------------------------
+qSlicerLayoutManager::~qSlicerLayoutManager()
+{
 }
 
 // --------------------------------------------------------------------------
 void qSlicerLayoutManager::setViewport(QWidget* widget)
 {
-  CTK_D(qSlicerLayoutManager);
+  Q_D(qSlicerLayoutManager);
   if (widget == d->TargetWidget)
     {
     return;
@@ -978,28 +984,28 @@ void qSlicerLayoutManager::setViewport(QWidget* widget)
 // --------------------------------------------------------------------------
 QWidget* qSlicerLayoutManager::viewport()const
 {
-  CTK_D(const qSlicerLayoutManager);
+  Q_D(const qSlicerLayoutManager);
   return d->TargetWidget;
 }
 
 //------------------------------------------------------------------------------
 qMRMLSliceWidget* qSlicerLayoutManager::sliceWidget(const QString& name)const
 {
-  CTK_D(const qSlicerLayoutManager);
+  Q_D(const qSlicerLayoutManager);
   return d->sliceWidget(name);
 }
 
 //------------------------------------------------------------------------------
 int qSlicerLayoutManager::threeDViewCount()const
 {
-  CTK_D(const qSlicerLayoutManager);
+  Q_D(const qSlicerLayoutManager);
   return d->ThreeDViewList.size();
 }
 
 //------------------------------------------------------------------------------
 qMRMLThreeDView* qSlicerLayoutManager::threeDView(int id)const
 {
-  CTK_D(const qSlicerLayoutManager);
+  Q_D(const qSlicerLayoutManager);
   if(id < 0 || id >= d->ThreeDViewList.size())
     {
     return 0;
@@ -1010,21 +1016,21 @@ qMRMLThreeDView* qSlicerLayoutManager::threeDView(int id)const
 //------------------------------------------------------------------------------
 vtkCollection* qSlicerLayoutManager::mrmlSliceLogics()const
 {
-  CTK_D(const qSlicerLayoutManager);
+  Q_D(const qSlicerLayoutManager);
   return d->MRMLSliceLogics;
 }
 
 //------------------------------------------------------------------------------
 void qSlicerLayoutManager::setMRMLScene(vtkMRMLScene* scene)
 {
-  CTK_D(qSlicerLayoutManager);
+  Q_D(qSlicerLayoutManager);
   d->setMRMLScene(scene);
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLScene* qSlicerLayoutManager::mrmlScene()const
 {
-  CTK_D(const qSlicerLayoutManager);
+  Q_D(const qSlicerLayoutManager);
   return d->MRMLScene;
 }
 
@@ -1037,7 +1043,7 @@ void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
     const QString& scriptedDisplayableManagerDirectory)
 {
 #ifdef Slicer3_USE_PYTHONQT
-  CTK_D(qSlicerLayoutManager);
+  Q_D(qSlicerLayoutManager);
 
   Q_ASSERT(QFileInfo(scriptedDisplayableManagerDirectory).isDir());
   d->ScriptedDisplayableManagerDirectory = scriptedDisplayableManagerDirectory;
@@ -1049,14 +1055,14 @@ void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
 //------------------------------------------------------------------------------
 int qSlicerLayoutManager::layout()const
 {
-  CTK_D(const qSlicerLayoutManager);
+  Q_D(const qSlicerLayoutManager);
   return d->CurrentViewArrangement;
 }
 
 //------------------------------------------------------------------------------
 void qSlicerLayoutManager::setLayout(int layout)
 {
-  CTK_D(qSlicerLayoutManager);
+  Q_D(qSlicerLayoutManager);
   if (d->CurrentViewArrangement == layout)
     {
     return;

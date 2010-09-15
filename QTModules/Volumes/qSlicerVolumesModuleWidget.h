@@ -41,6 +41,7 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerVolumesModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerVolumesModuleWidget();
 
 public slots:
 
@@ -49,8 +50,12 @@ public slots:
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerVolumesModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerVolumesModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerVolumesModuleWidget);
+  Q_DISABLE_COPY(qSlicerVolumesModuleWidget);
 };
 
 #endif

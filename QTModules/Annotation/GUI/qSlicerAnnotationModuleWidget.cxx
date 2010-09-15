@@ -31,16 +31,18 @@
 #include "GUI/qSlicerAnnotationModuleScreenShotDialog.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerAnnotationModuleWidgetPrivate: public ctkPrivate<
-    qSlicerAnnotationModuleWidget> , public Ui_qSlicerAnnotationModule
+class qSlicerAnnotationModuleWidgetPrivate: public Ui_qSlicerAnnotationModule
 {
+  Q_DECLARE_PUBLIC(qSlicerAnnotationModuleWidget);
+protected:
+  qSlicerAnnotationModuleWidget* const q_ptr;
 public:
   typedef enum
   {
     VisibleColumn = 0, LockColumn, TypeColumn, ValueColumn, TextColumn
   } TableColumnType;
 
-  qSlicerAnnotationModuleWidgetPrivate();
+  qSlicerAnnotationModuleWidgetPrivate(qSlicerAnnotationModuleWidget& object);
   ~qSlicerAnnotationModuleWidgetPrivate();
   void
   setupUi(qSlicerWidget* widget);
@@ -93,12 +95,13 @@ private:
 vtkSlicerAnnotationModuleLogic*
 qSlicerAnnotationModuleWidgetPrivate::logic() const
 {
-  CTK_P(const qSlicerAnnotationModuleWidget);
-  return vtkSlicerAnnotationModuleLogic::SafeDownCast(p->logic());
+  Q_Q(const qSlicerAnnotationModuleWidget);
+  return vtkSlicerAnnotationModuleLogic::SafeDownCast(q->logic());
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAnnotationModuleWidgetPrivate::qSlicerAnnotationModuleWidgetPrivate()
+qSlicerAnnotationModuleWidgetPrivate::qSlicerAnnotationModuleWidgetPrivate(qSlicerAnnotationModuleWidget& object)
+  : q_ptr(&object)
 {
   isSelectAll = true;
   isLockAll = true;
@@ -138,7 +141,7 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QString& value, const QString& text)
 {
   // warning, this function can be reentrant.
-  CTK_P(qSlicerAnnotationModuleWidget);
+  Q_Q(qSlicerAnnotationModuleWidget);
 
   // TODO REFACTOR!!!
 
@@ -170,9 +173,9 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     tableWidget->setCellWidget(index, VisibleColumn, visibilitywidget);
     visibilitywidget->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
     tableWidget->resizeColumnToContents(VisibleColumn);
-    p->connect(this->visibilitywidget, SIGNAL(buttonClickedWithIndex(int)), p,
+    q->connect(this->visibilitywidget, SIGNAL(buttonClickedWithIndex(int)), q,
         SLOT(selectRowByIndex(int)));
-    p->connect(this->visibilitywidget, SIGNAL(clicked()), p,
+    q->connect(this->visibilitywidget, SIGNAL(clicked()), q,
         SLOT(visibleSelectedButtonClicked()));
     visibilitywidget->setToolTip("Click to Hide/Unhide this annotation.");
 
@@ -202,18 +205,18 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     typewidget->resize(size);
     tableWidget->setCellWidget(index, TypeColumn, typewidget);
 
-    typewidget->setIcon(QIcon(p->getAnnotationIconName(index, true)));
+    typewidget->setIcon(QIcon(q->getAnnotationIconName(index, true)));
     tableWidget->resizeColumnToContents(TypeColumn);
-    p->connect(this->typewidget, SIGNAL(buttonClickedWithIndex(int)), p,
+    q->connect(this->typewidget, SIGNAL(buttonClickedWithIndex(int)), q,
         SLOT(selectRowByIndex(int)));
-    p->connect(this->typewidget, SIGNAL(clicked()), p,
+    q->connect(this->typewidget, SIGNAL(clicked()), q,
         SLOT(propertyEditButtonClicked()));
     typewidget->setToolTip("Click to edit the properties of this annotation.");
 
     }
   else
     {
-    typewidget->setIcon(QIcon(p->getAnnotationIconName(index, true)));
+    typewidget->setIcon(QIcon(q->getAnnotationIconName(index, true)));
     typewidget->setButtonIndex(index);
     tableWidget->resizeColumnToContents(TypeColumn);
     }
@@ -239,9 +242,9 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     tableWidget->setCellWidget(index, LockColumn, lockwidget);
     lockwidget->setIcon(QIcon(":/Icons/AnnotationUnlock.png"));
     tableWidget->resizeColumnToContents(LockColumn);
-    p->connect(this->lockwidget, SIGNAL(buttonClickedWithIndex(int)), p,
+    q->connect(this->lockwidget, SIGNAL(buttonClickedWithIndex(int)), q,
       SLOT(selectRowByIndex(int)));
-    p->connect(this->lockwidget, SIGNAL(clicked()), p,
+    q->connect(this->lockwidget, SIGNAL(clicked()), q,
         SLOT(lockSelectedButtonClicked()));
     lockwidget->setToolTip(
         "Click to lock/unlock the edition of the properties.");
@@ -272,7 +275,7 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
   if (tableWidget->item(index, TextColumn) == 0)
     {
     tableWidget->setItem(index, TextColumn, new QTableWidgetItem(text));
-    p->connect(tableWidget, SIGNAL(cellChanged(int, int)), p,
+    q->connect(tableWidget, SIGNAL(cellChanged(int, int)), q,
         SLOT(updateAnnotationText(int, int)));
     }
   else
@@ -371,11 +374,11 @@ void qSlicerAnnotationModuleWidgetPrivate::moveSelectedRow(bool up)
     return;
     }
   // change TypeList and IDList for angles and rulers
-  CTK_P(qSlicerAnnotationModuleWidget);
+  Q_Q(qSlicerAnnotationModuleWidget);
 
-  const char* tempid = p->m_IDs[sourceRow];
-  p->m_IDs[sourceRow] = p->m_IDs[destRow];
-  p->m_IDs[destRow] = tempid;
+  const char* tempid = q->m_IDs[sourceRow];
+  q->m_IDs[sourceRow] = q->m_IDs[destRow];
+  q->m_IDs[destRow] = tempid;
 
   // Read whole rows
   QList<QTableWidgetItem*> sourceItems = this->takeRow(sourceRow);
@@ -448,8 +451,8 @@ void qSlicerAnnotationModuleWidgetPrivate::setRow(int row, const QList<
 //-----------------------------------------------------------------------------
 qSlicerAnnotationModuleWidget::qSlicerAnnotationModuleWidget(QWidget* parent) :
   qSlicerAbstractModuleWidget(parent)
+  , d_ptr(new qSlicerAnnotationModuleWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerAnnotationModuleWidget);
   m_index = -1;
   m_lastAddedIndex = -1;
   m_ReportDialog = NULL;
@@ -488,7 +491,7 @@ qSlicerAnnotationModuleWidget::~qSlicerAnnotationModuleWidget()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::setup()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
   d->setupUi(this);
 
   // annotation tools
@@ -550,7 +553,7 @@ void qSlicerAnnotationModuleWidget::setup()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::updateAnnotationText(int row, int col)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
   if (col != d->TextColumn)
     {
     return;
@@ -572,20 +575,20 @@ void qSlicerAnnotationModuleWidget::updateAnnotationText(int row, int col)
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::moveDownSelected()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
   d->moveSelectedRow(false);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::moveUpSelected()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
   d->moveSelectedRow(true);
 }
 
 void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->logic()->SaveMRMLScene();
 }
@@ -660,7 +663,7 @@ std::vector<int> qSlicerAnnotationModuleWidgetPrivate::updateSingleSelection()
 
 void qSlicerAnnotationModuleWidget::selectedAllButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   int totalAnnotations = d->tableWidget->rowCount();
 
@@ -682,7 +685,7 @@ void qSlicerAnnotationModuleWidget::onLockUnlockAllButtonClicked()
 
 void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   if (d->tableWidget->selectedItems().size() != d->tableWidget->columnCount())
     {
@@ -787,7 +790,7 @@ void qSlicerAnnotationModuleWidget::propertyRestored()
 {
 
   const char * mrmlID = this->m_PropertyDialog->GetID();
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->setItemEditable(d->tableWidget->selectedItems(), true);
 
@@ -797,7 +800,7 @@ void qSlicerAnnotationModuleWidget::propertyRestored()
   this->m_PropertyDialog = 0;
 
   /*
-   CTK_D(qSlicerAnnotationModuleWidget);
+   Q_D(qSlicerAnnotationModuleWidget);
 
    vtkMRMLNode* node = d->logic()->GetMRMLScene()->GetNodeByID(nodeID);
    d->updateTextItem(this->getIndexByNodeID(nodeID), QString(
@@ -816,7 +819,7 @@ void qSlicerAnnotationModuleWidget::propertyAccepted()
 {
 
   const char * mrmlID = this->m_PropertyDialog->GetID();
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   int i = this->getIndexByNodeID(mrmlID);
 
@@ -911,7 +914,7 @@ void qSlicerAnnotationModuleWidget::onSaveAnnotationButtonClicked()
 
 void qSlicerAnnotationModuleWidget::onGenerateReportButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   if (m_ReportDialog == NULL)
     {
@@ -1216,7 +1219,7 @@ bool qSlicerAnnotationModuleWidget::saveAnnotationReport()
 
 void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   std::vector<int> selectedRows;
 
@@ -1276,7 +1279,7 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
 }
 
 void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
-{  CTK_D(qSlicerAnnotationModuleWidget);
+{  Q_D(qSlicerAnnotationModuleWidget);
 
 std::vector<int> selectedRows;
 
@@ -1409,13 +1412,13 @@ void qSlicerAnnotationModuleWidgetPrivate::setLockUnLockIcon(bool isLocked)
 
 void qSlicerAnnotationModuleWidget::annotationCoordinateChanged(QString valueString, char* nodeId)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
   d->updateValueItem(this->getIndexByNodeID(nodeId), valueString);
 }
 
 void qSlicerAnnotationModuleWidget::selectRowByIndex(int index)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   // loop and deselect everything
   int totalitems = m_IDs.size();
@@ -1439,7 +1442,7 @@ void qSlicerAnnotationModuleWidget::selectRowByIndex(int index)
 
 void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   std::vector<int> selectedRows;
 
@@ -1499,7 +1502,7 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index, const char * measurementValue, const char* textValue)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->updateAnnotation(index, QString(measurementValue), QString(textValue));
 
@@ -1507,7 +1510,7 @@ void qSlicerAnnotationModuleWidget::updateAnnotationTable(int index, const char 
 
 void qSlicerAnnotationModuleWidget::updateAnnotationInTableByID(const char* id, const char * measurementValue, const char* textValue)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   int index = this->getIndexByNodeID(id);
 
@@ -1540,7 +1543,7 @@ int qSlicerAnnotationModuleWidget::getIndexByNodeID(const char* nodeID)
 
 void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text, char* nodeId)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
   d->logic()->ModifyPropertiesAndWidget(
       d->logic()->GetMRMLScene()->GetNodeByID(nodeId), d->logic()->TEXT,
       text.toLatin1().data());
@@ -1549,7 +1552,7 @@ void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text, char* no
 
 void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
 {
-  //CTK_D(qSlicerAnnotationModuleWidget);
+  //Q_D(qSlicerAnnotationModuleWidget);
   /*
    vtkImageData* image = vtkImageData::New();
    //image = d->logic()->SaveScreenShot();
@@ -1609,7 +1612,7 @@ bool qSlicerAnnotationModuleWidget::saveScreenShot()
 
 void qSlicerAnnotationModuleWidget::onItemSelectionChanged()
 {/*
- CTK_D(qSlicerAnnotationModuleWidget);
+ Q_D(qSlicerAnnotationModuleWidget);
 
  std::vector<const char*> seletedIDs;
  int totalselected = d->tableWidget->selectedItems().count();
@@ -1627,7 +1630,7 @@ void qSlicerAnnotationModuleWidget::onItemSelectionChanged()
 
 QString qSlicerAnnotationModuleWidget::getAnnotationIconName(int index, bool isEdit)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
   return d->logic()->GetIconName(d->logic()->GetMRMLScene()->GetNodeByID(
       m_IDs[index]), isEdit);
 }
@@ -1639,7 +1642,7 @@ QString qSlicerAnnotationModuleWidget::getAnnotationIconName(int index, bool isE
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::enableMouseModeButtons()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->pauseButton->setChecked(false);
   d->resumeButton->setChecked(false);
@@ -1655,7 +1658,7 @@ void qSlicerAnnotationModuleWidget::enableMouseModeButtons()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::disableMouseModeButtons()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->pauseButton->setChecked(false);
   d->resumeButton->setChecked(false);
@@ -1672,7 +1675,7 @@ void qSlicerAnnotationModuleWidget::disableMouseModeButtons()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->pauseButton->setChecked(false);
   d->resumeButton->setChecked(true);
@@ -1710,7 +1713,7 @@ void qSlicerAnnotationModuleWidget::onResumeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onPauseButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->resumeButton->setChecked(false);
   d->pauseButton->setChecked(true);
@@ -1731,7 +1734,7 @@ void qSlicerAnnotationModuleWidget::onCancelButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::cancelOrRemoveLastAddedAnnotationNode()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   if (this->m_lastAddedIndex != -1)
     {
@@ -1759,7 +1762,7 @@ void qSlicerAnnotationModuleWidget::onDoneButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType = 0;
 
@@ -1781,7 +1784,7 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->textTypeButton->setEnabled(false);
   d->angleTypeButton->setEnabled(false);
@@ -1796,7 +1799,7 @@ void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   d->textTypeButton->setEnabled(true);
   d->angleTypeButton->setEnabled(true);
@@ -1822,7 +1825,7 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::StickyNode;
 
@@ -1853,7 +1856,7 @@ void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onAngleNodeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::AngleNode;
 
@@ -1873,7 +1876,7 @@ void qSlicerAnnotationModuleWidget::onAngleNodeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::TextNode;
 
@@ -1893,7 +1896,7 @@ void qSlicerAnnotationModuleWidget::onTextNodeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onSplineNodeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::SplineNode;
 
@@ -1913,7 +1916,7 @@ void qSlicerAnnotationModuleWidget::onSplineNodeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onRulerNodeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::RulerNode;
 
@@ -1933,7 +1936,7 @@ void qSlicerAnnotationModuleWidget::onRulerNodeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onFiducialNodeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::FiducialNode;
 
@@ -1953,7 +1956,7 @@ void qSlicerAnnotationModuleWidget::onFiducialNodeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onBidimensionalNodeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType
       = qSlicerAnnotationModuleWidget::BidimensionalNode;
@@ -1974,7 +1977,7 @@ void qSlicerAnnotationModuleWidget::onBidimensionalNodeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   this->m_CurrentAnnotationType = qSlicerAnnotationModuleWidget::ROINode;
 
@@ -1995,7 +1998,7 @@ void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 {
-  CTK_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
   int index = this->getIndexByNodeID(newNodeID);
 

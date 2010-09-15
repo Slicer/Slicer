@@ -47,7 +47,7 @@ public:
   
   /// Constructors
   explicit qSlicerLayoutManager(QWidget* widget);
-  virtual ~qSlicerLayoutManager(){}
+  virtual ~qSlicerLayoutManager();
 
   void setViewport(QWidget* widget);
   QWidget* viewport()const;
@@ -106,8 +106,12 @@ public slots:
 signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
   
+protected:
+  QScopedPointer<qSlicerLayoutManagerPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerLayoutManager);
+  Q_DECLARE_PRIVATE(qSlicerLayoutManager);
+  Q_DISABLE_COPY(qSlicerLayoutManager);
 };
 
 //------------------------------------------------------------------------------

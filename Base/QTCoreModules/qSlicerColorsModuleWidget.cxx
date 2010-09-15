@@ -23,19 +23,26 @@
 #include "ui_qSlicerColorsModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerColorsModuleWidgetPrivate: public ctkPrivate<qSlicerColorsModuleWidget>,
-                                         public Ui_qSlicerColorsModule
+class qSlicerColorsModuleWidgetPrivate: public Ui_qSlicerColorsModule
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerColorsModuleWidget);
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerColorsModuleWidget, QWidget*);
+qSlicerColorsModuleWidget::qSlicerColorsModuleWidget(QWidget* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerColorsModuleWidgetPrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerColorsModuleWidget::~qSlicerColorsModuleWidget()
+{
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerColorsModuleWidget::setup()
 {
-  CTK_D(qSlicerColorsModuleWidget);
+  Q_D(qSlicerColorsModuleWidget);
   d->setupUi(this);
 }

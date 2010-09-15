@@ -44,14 +44,18 @@ public:
 
   /// Constructors
   explicit qMRMLThreeDViewsControllerWidget(QWidget* parent = 0);
-  virtual ~qMRMLThreeDViewsControllerWidget(){}
+  virtual ~qMRMLThreeDViewsControllerWidget();
 
 public slots:
 
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
 
+protected:
+  QScopedPointer<qMRMLThreeDViewsControllerWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLThreeDViewsControllerWidget);
+  Q_DECLARE_PRIVATE(qMRMLThreeDViewsControllerWidget);
+  Q_DISABLE_COPY(qMRMLThreeDViewsControllerWidget);
 };
 
 #endif

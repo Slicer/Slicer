@@ -28,7 +28,7 @@ public:
   /// Constructors
   typedef QWidget Superclass;
   explicit qMRMLVolumeThresholdWidget(QWidget* parent);
-  virtual ~qMRMLVolumeThresholdWidget(){}
+  virtual ~qMRMLVolumeThresholdWidget();
 
   /// 0: Manual
   /// 1: Auto
@@ -103,8 +103,12 @@ protected:
   void setMaximum(double max);
 
 
+protected:
+  QScopedPointer<qMRMLVolumeThresholdWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLVolumeThresholdWidget);
+  Q_DECLARE_PRIVATE(qMRMLVolumeThresholdWidget);
+  Q_DISABLE_COPY(qMRMLVolumeThresholdWidget);
 
   vtkMRMLScalarVolumeNode* VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;

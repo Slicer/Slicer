@@ -48,8 +48,12 @@ public:
   virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
                     qSlicerIO::IOProperties());
 
+protected:
+  QScopedPointer<qSlicerDataDialogPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerDataDialog);
+  Q_DECLARE_PRIVATE(qSlicerDataDialog);
+  Q_DISABLE_COPY(qSlicerDataDialog);
 };
 
 #endif

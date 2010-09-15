@@ -57,7 +57,7 @@ public:
   /// Constructors
   typedef QWidget Superclass;
   explicit qMRMLTransformSliders(QWidget* parent);
-  virtual ~qMRMLTransformSliders(){}
+  virtual ~qMRMLTransformSliders();
 
   /// 
   /// Set/Get Coordinate system
@@ -143,8 +143,12 @@ protected slots:
   void onMinimumChanged(double min);
   void onMaximumChanged(double max);
 
+protected:
+  QScopedPointer<qMRMLTransformSlidersPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLTransformSliders);
+  Q_DECLARE_PRIVATE(qMRMLTransformSliders);
+  Q_DISABLE_COPY(qMRMLTransformSliders);
 };
 
 #endif

@@ -35,13 +35,19 @@ class qSlicerXcedeCatalogIO: public qSlicerIO
   Q_OBJECT
 public: 
   qSlicerXcedeCatalogIO(QObject* parent = 0);
+  virtual ~qSlicerXcedeCatalogIO();
+
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QString extensions()const;
 
   virtual bool load(const IOProperties& properties);
+protected:
+  QScopedPointer<qSlicerXcedeCatalogIOPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerXcedeCatalogIO);
+  Q_DECLARE_PRIVATE(qSlicerXcedeCatalogIO);
+  Q_DISABLE_COPY(qSlicerXcedeCatalogIO);
 };
 
 #endif

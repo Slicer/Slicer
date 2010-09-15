@@ -35,7 +35,7 @@
 Q_EXPORT_PLUGIN2(qSlicerEMSegmentModule, qSlicerEMSegmentModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerEMSegmentModulePrivate: public ctkPrivate<qSlicerEMSegmentModule>
+class qSlicerEMSegmentModulePrivate
 {
 public:
 };
@@ -43,8 +43,13 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerEMSegmentModule::qSlicerEMSegmentModule(QObject* _parent)
   :Superclass(_parent)
+  , d_ptr(new qSlicerEMSegmentModulePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentModule);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerEMSegmentModule::~qSlicerEMSegmentModule()
+{
 }
 
 //-----------------------------------------------------------------------------

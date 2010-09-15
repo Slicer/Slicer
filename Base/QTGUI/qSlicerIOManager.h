@@ -59,8 +59,12 @@ public:
 protected:
   friend class qSlicerFileDialog;
   using qSlicerCoreIOManager::ios;
+protected:
+  QScopedPointer<qSlicerIOManagerPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerIOManager);
+  Q_DECLARE_PRIVATE(qSlicerIOManager);
+  Q_DISABLE_COPY(qSlicerIOManager);
 };
 
 //------------------------------------------------------------------------------

@@ -23,11 +23,14 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-class qSlicerScalarVolumeDisplayWidgetPrivate: public ctkPrivate<qSlicerScalarVolumeDisplayWidget>,
+class qSlicerScalarVolumeDisplayWidgetPrivate:
                                           public Ui_qSlicerScalarVolumeDisplayWidget
 {
+  Q_DECLARE_PUBLIC(qSlicerScalarVolumeDisplayWidget);
+protected:
+  qSlicerScalarVolumeDisplayWidget* const q_ptr;
 public:
-  qSlicerScalarVolumeDisplayWidgetPrivate();
+  qSlicerScalarVolumeDisplayWidgetPrivate(qSlicerScalarVolumeDisplayWidget& object);
   ~qSlicerScalarVolumeDisplayWidgetPrivate();
   void init();
 
@@ -36,7 +39,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerScalarVolumeDisplayWidgetPrivate::qSlicerScalarVolumeDisplayWidgetPrivate()
+qSlicerScalarVolumeDisplayWidgetPrivate::qSlicerScalarVolumeDisplayWidgetPrivate(qSlicerScalarVolumeDisplayWidget& object)
+  : q_ptr(&object)
 {
   this->Histogram = new ctkVTKHistogram();
   this->ColorTransferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
@@ -50,15 +54,15 @@ qSlicerScalarVolumeDisplayWidgetPrivate::~qSlicerScalarVolumeDisplayWidgetPrivat
 //-----------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidgetPrivate::init()
 {
-  CTK_P(qSlicerScalarVolumeDisplayWidget);
+  Q_Q(qSlicerScalarVolumeDisplayWidget);
 
-  this->setupUi(p);
+  this->setupUi(q);
 
   ctkTransferFunctionScene* scene = qobject_cast<ctkTransferFunctionScene*>(
     this->TransferFunctionView->scene());
   // Transfer Function
   ctkVTKColorTransferFunction* transferFunction =
-    new ctkVTKColorTransferFunction(this->ColorTransferFunction, p);
+    new ctkVTKColorTransferFunction(this->ColorTransferFunction, q);
 
   ctkTransferFunctionGradientItem* gradientItem =
     new ctkTransferFunctionGradientItem(transferFunction);
@@ -71,29 +75,30 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
   scene->addItem(barsItem);
 
   QObject::connect(this->InterpolateCheckbox, SIGNAL(toggled(bool)),
-                   p, SLOT(setInterpolate(bool)));
+                   q, SLOT(setInterpolate(bool)));
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   p, SLOT(setColorNode(vtkMRMLNode*)));
+                   q, SLOT(setColorNode(vtkMRMLNode*)));
 
   QObject::connect(this->CTBonePresetToolButton, SIGNAL(clicked()),
-                   p, SLOT(onPresetButtonClicked()));
+                   q, SLOT(onPresetButtonClicked()));
   QObject::connect(this->CTAirPresetToolButton, SIGNAL(clicked()),
-                   p, SLOT(onPresetButtonClicked()));
+                   q, SLOT(onPresetButtonClicked()));
   QObject::connect(this->PETPresetToolButton, SIGNAL(clicked()),
-                   p, SLOT(onPresetButtonClicked()));
+                   q, SLOT(onPresetButtonClicked()));
   QObject::connect(this->CTAbdomenPresetToolButton, SIGNAL(clicked()),
-                   p, SLOT(onPresetButtonClicked()));
+                   q, SLOT(onPresetButtonClicked()));
   QObject::connect(this->CTBrainPresetToolButton, SIGNAL(clicked()),
-                   p, SLOT(onPresetButtonClicked()));
+                   q, SLOT(onPresetButtonClicked()));
   QObject::connect(this->CTLungPresetToolButton, SIGNAL(clicked()),
-                   p, SLOT(onPresetButtonClicked()));
+                   q, SLOT(onPresetButtonClicked()));
 }
 
 // --------------------------------------------------------------------------
-qSlicerScalarVolumeDisplayWidget::qSlicerScalarVolumeDisplayWidget(QWidget* _parent) : Superclass(_parent)
+qSlicerScalarVolumeDisplayWidget::qSlicerScalarVolumeDisplayWidget(QWidget* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerScalarVolumeDisplayWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qSlicerScalarVolumeDisplayWidget);
-  CTK_D(qSlicerScalarVolumeDisplayWidget);
+  Q_D(qSlicerScalarVolumeDisplayWidget);
   d->init();
 
   // disable as there is not MRML Node associated with the widget
@@ -101,9 +106,14 @@ qSlicerScalarVolumeDisplayWidget::qSlicerScalarVolumeDisplayWidget(QWidget* _par
 }
 
 // --------------------------------------------------------------------------
+qSlicerScalarVolumeDisplayWidget::~qSlicerScalarVolumeDisplayWidget()
+{
+}
+
+// --------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* qSlicerScalarVolumeDisplayWidget::volumeNode()const
 {
-  CTK_D(const qSlicerScalarVolumeDisplayWidget);
+  Q_D(const qSlicerScalarVolumeDisplayWidget);
   return vtkMRMLScalarVolumeNode::SafeDownCast(
     d->MRMLWindowLevelWidget->mrmlVolumeNode());
 }
@@ -125,7 +135,7 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 // --------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  CTK_D(qSlicerScalarVolumeDisplayWidget);
+  Q_D(qSlicerScalarVolumeDisplayWidget);
 
   vtkMRMLScalarVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
@@ -149,7 +159,7 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode
 // --------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
 {
-  CTK_D(qSlicerScalarVolumeDisplayWidget);
+  Q_D(qSlicerScalarVolumeDisplayWidget);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
   if (displayNode)
@@ -166,7 +176,7 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
 //----------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidget::updateTransferFunction()
 {
-  CTK_D(qSlicerScalarVolumeDisplayWidget);
+  Q_D(qSlicerScalarVolumeDisplayWidget);
   // from vtkKWWindowLevelThresholdEditor::UpdateTransferFunction
   vtkMRMLVolumeNode* volumeNode = d->MRMLWindowLevelWidget->mrmlVolumeNode();
   Q_ASSERT(volumeNode == d->MRMLVolumeThresholdWidget->mrmlVolumeNode());
@@ -275,7 +285,7 @@ void qSlicerScalarVolumeDisplayWidget::onPresetButtonClicked()
 // --------------------------------------------------------------------------
 void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetName)
 {
-  CTK_D(qSlicerScalarVolumeDisplayWidget);
+  Q_D(qSlicerScalarVolumeDisplayWidget);
   QString colorNodeID;
   double window = -1.;
   double level = std::numeric_limits<double>::max();

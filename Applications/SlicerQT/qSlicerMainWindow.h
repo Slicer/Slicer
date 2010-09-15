@@ -44,7 +44,8 @@ public:
   
   typedef QMainWindow Superclass;
   qSlicerMainWindow(QWidget *parent=0);
-  
+  virtual ~qSlicerMainWindow();
+
   // Description:
   // Return the main window core.
   qSlicerMainWindowCore* core()const;
@@ -72,8 +73,12 @@ protected:
   // Connect MainWindow action with slots defined in MainWindowCore
   void setupMenuActions();
 
+protected:
+  QScopedPointer<qSlicerMainWindowPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerMainWindow);
+  Q_DECLARE_PRIVATE(qSlicerMainWindow);
+  Q_DISABLE_COPY(qSlicerMainWindow);
 };
 
 #endif

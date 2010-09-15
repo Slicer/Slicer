@@ -39,6 +39,7 @@ public:
 
   typedef qSlicerAbstractModule Superclass;
   qSlicerLoadableModule(QObject *parent=0);
+  virtual ~qSlicerLoadableModule();
 
   ///
   /// Return help/acknowledgement text
@@ -48,8 +49,12 @@ public:
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerLoadableModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerLoadableModule);
+  Q_DECLARE_PRIVATE(qSlicerLoadableModule);
+  Q_DISABLE_COPY(qSlicerLoadableModule);
 };
 
 Q_DECLARE_INTERFACE(qSlicerLoadableModule,

@@ -39,12 +39,17 @@ public:
 
   typedef qSlicerAbstractModule Superclass;
   qSlicerCoreModule(QObject *parent=0);
+  virtual ~qSlicerCoreModule();
 
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerCoreModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCoreModule);
+  Q_DECLARE_PRIVATE(qSlicerCoreModule);
+  Q_DISABLE_COPY(qSlicerCoreModule);
 };
 
 #endif

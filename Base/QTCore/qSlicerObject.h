@@ -46,8 +46,12 @@ public:
   /// Set the current MRML scene to the widget
   virtual void setMRMLScene(vtkMRMLScene*);
 
+protected:
+  QScopedPointer<qSlicerObjectPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerObject);
+  Q_DECLARE_PRIVATE(qSlicerObject);
+  Q_DISABLE_COPY(qSlicerObject);
 };
 
 #endif

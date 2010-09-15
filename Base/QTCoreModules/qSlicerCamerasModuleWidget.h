@@ -41,6 +41,7 @@ public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerCamerasModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerCamerasModuleWidget();
 
 public slots:
   /// 
@@ -58,8 +59,12 @@ protected slots:
   void onCameraNodeRemoved(vtkMRMLNode*);
   void synchronizeCameraWithView();
 
+protected:
+  QScopedPointer<qSlicerCamerasModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerCamerasModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerCamerasModuleWidget);
+  Q_DISABLE_COPY(qSlicerCamerasModuleWidget);
 };
 
 #endif

@@ -30,7 +30,7 @@
 #include "vtkSmartPointer.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerWidgetPrivate: public ctkPrivate<qSlicerWidget>
+class qSlicerWidgetPrivate
 {
 public:
   QPointer<QWidget>                          ParentContainer;
@@ -39,8 +39,13 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerWidget::qSlicerWidget(QWidget * _parent, Qt::WindowFlags f)
   :QWidget(_parent, f)
+  , d_ptr(new qSlicerWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerWidget);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerWidget::~qSlicerWidget()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -54,21 +59,23 @@ QWidget* qSlicerWidget::parentWidget()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerWidget::isParentContainerScrollArea()
+bool qSlicerWidget::isParentContainerScrollArea()const
 {
-  return (qobject_cast<QScrollArea*>(ctk_d()->ParentContainer)!=0);
+  Q_D(const qSlicerWidget);
+  return (qobject_cast<QScrollArea*>(d->ParentContainer)!=0);
 }
 
 //-----------------------------------------------------------------------------
-QScrollArea* qSlicerWidget::getScrollAreaParentContainer()
+QScrollArea* qSlicerWidget::getScrollAreaParentContainer()const
 {
-  return qobject_cast<QScrollArea*>(ctk_d()->ParentContainer);
+  Q_D(const qSlicerWidget);
+  return qobject_cast<QScrollArea*>(d->ParentContainer);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
 {
-  CTK_D(qSlicerWidget);
+  Q_D(qSlicerWidget);
   if (enable)
     {
     if (this->getScrollAreaParentContainer())
@@ -120,7 +127,7 @@ void qSlicerWidget::setScrollAreaAsParentContainer(bool enable)
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setWindowFlags(Qt::WindowFlags type)
 {
-  CTK_D(qSlicerWidget);
+  Q_D(qSlicerWidget);
   if (d->ParentContainer)
     {
     d->ParentContainer->setWindowFlags(type);

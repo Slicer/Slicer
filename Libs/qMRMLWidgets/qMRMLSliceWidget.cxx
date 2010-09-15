@@ -53,7 +53,8 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceWidget");
 // qMRMLSliceViewPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate()
+qMRMLSliceWidgetPrivate::qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object)
+  : q_ptr(&object)
 {
   this->DisplayableManagerGroup = 0;
   this->MRMLSliceNode = 0;
@@ -77,8 +78,8 @@ void qMRMLSliceWidgetPrivate::onSceneAboutToBeClosedEvent()
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::onSceneClosedEvent()
 {
-  CTK_P(qMRMLSliceWidget);
-  if (!p->mrmlScene()->GetIsUpdating())
+  Q_Q(qMRMLSliceWidget);
+  if (!q->mrmlScene()->GetIsUpdating())
     {
     this->VTKSliceView->setRenderEnabled(true);
     }
@@ -124,9 +125,9 @@ void qMRMLSliceWidgetPrivate::updateWidgetFromMRMLSliceNode()
 
 // --------------------------------------------------------------------------
 qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
+  , d_ptr(new qMRMLSliceWidgetPrivate(*this))
 {
-  CTK_INIT_PRIVATE(qMRMLSliceWidget);
-  CTK_D(qMRMLSliceWidget);
+  Q_D(qMRMLSliceWidget);
   d->setupUi(this);
 
   // Highligh first RenderWindowItem
@@ -140,10 +141,15 @@ qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
           SLOT(onImageDataModified(vtkImageData*)));
 }
 
+// --------------------------------------------------------------------------
+qMRMLSliceWidget::~qMRMLSliceWidget()
+{
+}
+
 //------------------------------------------------------------------------------
 void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory)
 {
-  CTK_D(qMRMLSliceWidget);
+  Q_D(qMRMLSliceWidget);
 
   QStringList displayableManagers;
   //displayableManagers << "vtkSliceDisplayableManager";
@@ -186,7 +192,7 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
-  CTK_D(qMRMLSliceWidget);
+  Q_D(qMRMLSliceWidget);
   if (newScene == this->mrmlScene())
     {
     return;
@@ -218,7 +224,7 @@ void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
-  CTK_D(qMRMLSliceWidget);
+  Q_D(qMRMLSliceWidget);
   if (newSliceNode == d->MRMLSliceNode)
     {
     return;
@@ -240,13 +246,14 @@ void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 //---------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode* qMRMLSliceWidget::mrmlSliceCompositeNode()const
 {
-  return ctk_d()->SliceController->mrmlSliceCompositeNode();
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->mrmlSliceCompositeNode();
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
 {
-  CTK_D(qMRMLSliceWidget);
+  Q_D(qMRMLSliceWidget);
   d->SliceController->setSliceViewName(newSliceViewName);
 
   // If name matches either 'Red, 'Green' or 'Yellow' set the corresponding color
@@ -273,31 +280,36 @@ void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
 //---------------------------------------------------------------------------
 QString qMRMLSliceWidget::sliceViewName()const
 {
-  return ctk_d()->SliceController->sliceViewName();
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->sliceViewName();
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setSliceOrientation(const QString& orientation)
 {
-  ctk_d()->SliceController->setSliceOrientation(orientation);
+  Q_D(qMRMLSliceWidget);
+  d->SliceController->setSliceOrientation(orientation);
 }
 
 //---------------------------------------------------------------------------
 QString qMRMLSliceWidget::sliceOrientation()const
 {
-  return ctk_d()->SliceController->sliceOrientation();
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->sliceOrientation();
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceWidget::setImageData(vtkImageData* newImageData)
 {
-  ctk_d()->SliceController->setImageData(newImageData);
+  Q_D(qMRMLSliceWidget);
+  d->SliceController->setImageData(newImageData);
 }
 
 //---------------------------------------------------------------------------
 vtkImageData* qMRMLSliceWidget::imageData() const
 {
-  return ctk_d()->SliceController->imageData();
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->imageData();
 }
 
 //---------------------------------------------------------------------------
@@ -309,27 +321,41 @@ vtkInteractorObserver* qMRMLSliceWidget::interactorStyle()const
 //---------------------------------------------------------------------------
 vtkMRMLSliceNode* qMRMLSliceWidget::mrmlSliceNode()const
 {
-  return ctk_d()->SliceController->mrmlSliceNode();
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->mrmlSliceNode();
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLSliceLogic* qMRMLSliceWidget::sliceLogic()const
 {
-  return ctk_d()->SliceController->sliceLogic();
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->sliceLogic();
 }
 
 // --------------------------------------------------------------------------
 void qMRMLSliceWidget::fitSliceToBackground()
 {
-  ctk_d()->SliceController->fitSliceToBackground();
+  Q_D(qMRMLSliceWidget);
+  d->SliceController->fitSliceToBackground();
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLSliceWidget, ctkVTKSliceView*, sliceView, VTKSliceView);
-CTK_GET_CXX(qMRMLSliceWidget, qMRMLSliceControllerWidget*, sliceController, SliceController);
+ctkVTKSliceView* qMRMLSliceWidget::sliceView()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return d->VTKSliceView;
+}
+
+// --------------------------------------------------------------------------
+qMRMLSliceControllerWidget* qMRMLSliceWidget::sliceController()const
+{
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController;
+}
 
 // --------------------------------------------------------------------------
 void qMRMLSliceWidget::setSliceLogics(vtkCollection* logics)
 {
-  ctk_d()->SliceController->setSliceLogics(logics);
+  Q_D(qMRMLSliceWidget);
+  d->SliceController->setSliceLogics(logics);
 }

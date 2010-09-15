@@ -37,6 +37,7 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerDataModuleWidget :
   Q_OBJECT
 public:
   qSlicerDataModuleWidget(QWidget *parentWidget = 0);
+  virtual ~qSlicerDataModuleWidget();
 
 public slots:
   void loadScene();
@@ -62,8 +63,12 @@ protected slots:
 protected:
   virtual void setup();
 
+protected:
+  QScopedPointer<qSlicerDataModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerDataModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerDataModuleWidget);
+  Q_DISABLE_COPY(qSlicerDataModuleWidget);
 };
 
 #endif

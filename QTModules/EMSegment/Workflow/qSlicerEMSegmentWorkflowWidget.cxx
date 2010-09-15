@@ -26,10 +26,10 @@ qSlicerEMSegmentWorkflowWidgetPrivate::qSlicerEMSegmentWorkflowWidgetPrivate()
 // qSlicerEMSegmentWorkflowWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerEMSegmentWorkflowWidget::qSlicerEMSegmentWorkflowWidget(QWidget *newParent) :
-    Superclass(newParent)
+qSlicerEMSegmentWorkflowWidget::qSlicerEMSegmentWorkflowWidget(QWidget *newParent)
+  : Superclass(newParent)
+  , d_ptr(new qSlicerEMSegmentWorkflowWidgetPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerEMSegmentWorkflowWidget);
 }
 
 //-----------------------------------------------------------------------------

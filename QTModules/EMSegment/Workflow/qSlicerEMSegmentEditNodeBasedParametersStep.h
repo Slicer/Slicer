@@ -42,6 +42,7 @@ public:
 
   typedef qSlicerEMSegmentWorkflowWidgetStep Superclass;
   explicit qSlicerEMSegmentEditNodeBasedParametersStep(ctkWorkflow* newWorkflow, QWidget* parent = 0);
+  virtual ~qSlicerEMSegmentEditNodeBasedParametersStep();
 
 public slots:
 
@@ -57,8 +58,12 @@ public slots:
 
   virtual void showUserInterface();
 
+protected:
+  QScopedPointer<qSlicerEMSegmentEditNodeBasedParametersStepPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentEditNodeBasedParametersStep);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentEditNodeBasedParametersStep);
+  Q_DISABLE_COPY(qSlicerEMSegmentEditNodeBasedParametersStep);
 
 };
 

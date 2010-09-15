@@ -46,14 +46,15 @@ class vtkObject;
 
 //-----------------------------------------------------------------------------
 class qMRMLSliceControllerWidgetPrivate: public QObject,
-                                   public ctkPrivate<qMRMLSliceControllerWidget>,
                                    public Ui_qMRMLSliceControllerWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qMRMLSliceControllerWidget);
+protected:
+  qMRMLSliceControllerWidget* const q_ptr;
 public:
-  CTK_DECLARE_PUBLIC(qMRMLSliceControllerWidget);
-  qMRMLSliceControllerWidgetPrivate();
+  qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object);
 
   void setupUi(qMRMLWidget* widget);
 

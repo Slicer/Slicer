@@ -37,7 +37,7 @@
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumesModulePrivate: public ctkPrivate<qSlicerVolumesModule>
+class qSlicerVolumesModulePrivate
 {
 public:
 };
@@ -45,8 +45,13 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerVolumesModule::qSlicerVolumesModule(QObject* _parent)
   :Superclass(_parent)
+  , d_ptr(new qSlicerVolumesModulePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerVolumesModule);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerVolumesModule::~qSlicerVolumesModule()
+{
 }
 
 //-----------------------------------------------------------------------------

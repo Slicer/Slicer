@@ -39,6 +39,7 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerROIModule :
 public:
   typedef qSlicerCoreModule Superclass;
   qSlicerROIModule(QObject *parent=0);
+  virtual ~qSlicerROIModule();
 
   qSlicerGetTitleMacro("ROI");
 
@@ -56,8 +57,12 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkSlicerLogic* createLogic();
 
+protected:
+  QScopedPointer<qSlicerROIModulePrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerROIModule);
+  Q_DECLARE_PRIVATE(qSlicerROIModule);
+  Q_DISABLE_COPY(qSlicerROIModule);
 };
 
 #endif

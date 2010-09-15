@@ -28,7 +28,7 @@
 #include "qSlicerCoreApplication.h" // For disableCurrentSettings()
 
 //-----------------------------------------------------------------------------
-class qSlicerCoreCommandOptionsPrivate: public ctkPrivate<qSlicerCoreCommandOptions>
+class qSlicerCoreCommandOptionsPrivate
 {
 public:
   qSlicerCoreCommandOptionsPrivate();
@@ -51,9 +51,9 @@ qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptions::qSlicerCoreCommandOptions(QSettings* _settings):Superclass(_settings)
+  , d_ptr(new qSlicerCoreCommandOptionsPrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerCoreCommandOptions);
-  CTK_D(qSlicerCoreCommandOptions);
+  Q_D(qSlicerCoreCommandOptions);
   d->Settings = _settings;
   // Use Unix-style argument names
   this->setArgumentPrefix("--", "-");
@@ -69,7 +69,7 @@ qSlicerCoreCommandOptions::~qSlicerCoreCommandOptions()
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
 {
-  CTK_D(qSlicerCoreCommandOptions);
+  Q_D(qSlicerCoreCommandOptions);
 
   this->addArguments();
 
@@ -91,70 +91,70 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::displayHelpAndExit()const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("help").toBool();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::ignoreRest() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("ignore-rest").toBool();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::disableCLIModule() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("disable-cli-module").toBool();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::disableLoadableModule() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("disable-loadable-module").toBool();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::displayVersionAndExit() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("version").toBool();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::displayProgramPathAndExit() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("program-path").toBool();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::displayHomePathAndExit() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("home").toBool();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::displaySettingsPathAndExit() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("settings-path").toBool();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::verboseModuleDiscovery() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("verbose-module-discovery").toBool();
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreCommandOptions::tempDirectory() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   if (d->Settings)
     {
     return d->Settings->value("temp-directory", QVariant(QDir::tempPath())).toString();
@@ -200,6 +200,6 @@ void qSlicerCoreCommandOptions::addArguments()
 //-----------------------------------------------------------------------------
 QHash<QString, QVariant> qSlicerCoreCommandOptions::parsedArgs() const
 {
-  CTK_D(const qSlicerCoreCommandOptions);
+  Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs;
 }

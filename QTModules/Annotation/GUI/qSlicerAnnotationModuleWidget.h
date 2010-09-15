@@ -143,8 +143,12 @@ protected slots:
   // ROI Node
   void onROINodeButtonClicked();
 
+protected:
+  QScopedPointer<qSlicerAnnotationModuleWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerAnnotationModuleWidget);
+  Q_DISABLE_COPY(qSlicerAnnotationModuleWidget);
 
   virtual void setup();
   QString getAnnotationIconName(int index, bool isEdit=false);

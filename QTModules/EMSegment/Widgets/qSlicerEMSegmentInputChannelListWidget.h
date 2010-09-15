@@ -41,6 +41,7 @@ public:
 
   typedef qSlicerEMSegmentWidget Superclass;
   explicit qSlicerEMSegmentInputChannelListWidget(QWidget *newParent = 0);
+  virtual ~qSlicerEMSegmentInputChannelListWidget();
 
   int inputChannelCount() const;
 
@@ -66,8 +67,12 @@ private slots:
 
   void onCellChanged(int row, int column);
 
+protected:
+  QScopedPointer<qSlicerEMSegmentInputChannelListWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qSlicerEMSegmentInputChannelListWidget);
+  Q_DECLARE_PRIVATE(qSlicerEMSegmentInputChannelListWidget);
+  Q_DISABLE_COPY(qSlicerEMSegmentInputChannelListWidget);
 };
 
 #endif // __qSlicerEMSegmentInputChannelListWidget_h

@@ -25,12 +25,11 @@
 #include <cstdio>
 
 //-----------------------------------------------------------------------------
-class qSlicerCLILoadableModulePrivate: public ctkPrivate<qSlicerCLILoadableModule>
+class qSlicerCLILoadableModulePrivate
 {
 public:
-  CTK_DECLARE_PUBLIC(qSlicerCLILoadableModule);
-  typedef qSlicerCLILoadableModulePrivate Self;
   qSlicerCLILoadableModulePrivate();
+  typedef qSlicerCLILoadableModulePrivate Self;
 
   qSlicerCLILoadableModule::ModuleEntryPointType EntryPoint; 
 };
@@ -49,8 +48,13 @@ qSlicerCLILoadableModulePrivate::qSlicerCLILoadableModulePrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerCLILoadableModule::qSlicerCLILoadableModule(QWidget* _parent):Superclass(_parent)
+  , d_ptr(new qSlicerCLILoadableModulePrivate)
 {
-  CTK_INIT_PRIVATE(qSlicerCLILoadableModule);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCLILoadableModule::~qSlicerCLILoadableModule()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -62,7 +66,7 @@ void qSlicerCLILoadableModule::setup()
 //-----------------------------------------------------------------------------
 QString qSlicerCLILoadableModule::entryPoint()const
 {
-  CTK_D(const qSlicerCLILoadableModule);
+  Q_D(const qSlicerCLILoadableModule);
   char buffer[256];
   // The entry point address must be encoded the same way it is decoded. As it
   // is decoded using  sscanf, it must be encoded using sprintf

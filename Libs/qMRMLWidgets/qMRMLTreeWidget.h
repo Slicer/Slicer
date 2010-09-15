@@ -64,8 +64,12 @@ protected slots:
   void onActivated(const QModelIndex& index);
 protected:
   virtual void updateGeometries();
+protected:
+  QScopedPointer<qMRMLTreeWidgetPrivate> d_ptr;
+
 private:
-  CTK_DECLARE_PRIVATE(qMRMLTreeWidget);
+  Q_DECLARE_PRIVATE(qMRMLTreeWidget);
+  Q_DISABLE_COPY(qMRMLTreeWidget);
 };
 
 #endif
