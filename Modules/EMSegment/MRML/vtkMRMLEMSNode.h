@@ -56,6 +56,10 @@ public:
   vtkSetStringMacro(TclTaskFilename);
   static const char* GetDefaultTclTaskFilename() { return "GenericTask.tcl"; }
 
+  /// \brief Get the task file associated with this node
+  vtkGetStringMacro(PyTaskFilename);
+  vtkSetStringMacro(PyTaskFilename);
+
   vtkGetStringMacro(TaskPreprocessingSetting);
   vtkSetStringMacro(TaskPreprocessingSetting);
 
@@ -70,6 +74,8 @@ protected:
   char* TemplateFilename;
 
   char* TclTaskFilename; // deprecated
+
+  char* PyTaskFilename;
 
   char* TaskPreprocessingSetting; 
 
