@@ -35,6 +35,7 @@ class qSlicerSlicer2SceneReader: public qSlicerIO
   Q_OBJECT
 public: 
   qSlicerSlicer2SceneReader(QObject* parent = 0);
+  virtual ~qSlicerSlicer2SceneReader();
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QString extensions()const;

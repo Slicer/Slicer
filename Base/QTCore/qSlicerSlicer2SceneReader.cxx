@@ -332,18 +332,21 @@ void qSlicerSlicer2SceneReaderPrivate::importNode(vtkXMLDataElement* element)
     }
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeMRML {node} {
 void qSlicerSlicer2SceneReaderPrivate::importMRMLNode(NodeType& node)
 {
   // no op, just a marker
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeTransform {node} {
 void qSlicerSlicer2SceneReaderPrivate::importTransformNode(NodeType& node)
 {
   // no op - handled by ImportElement
 }
 
+//-----------------------------------------------------------------------------
 //
 // a slicer2 matrix corresponds to a slicer3 Transform
 //
@@ -411,7 +414,7 @@ void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
   transformNode->Delete();
 }
 
-
+//-----------------------------------------------------------------------------
 //proc ImportNodeVolume {node} {
 void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
 {
@@ -815,6 +818,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
   qSlicerCoreApplication::application()->appLogic()->PropagateVolumeSelection();
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeModel {node} {
 void qSlicerSlicer2SceneReaderPrivate::importModelNode(NodeType& node)
 {
@@ -963,6 +967,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelNode(NodeType& node)
   }
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeHierarchy {node} {
 void qSlicerSlicer2SceneReaderPrivate::importHierarchyNode(NodeType& node)
 {
@@ -970,6 +975,7 @@ void qSlicerSlicer2SceneReaderPrivate::importHierarchyNode(NodeType& node)
   this->ParentID = "";
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeModelGroup {node} {
 void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
 {
@@ -1058,6 +1064,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
   this->ParentID = hnode->GetID();
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeModelRef {node} {
 void qSlicerSlicer2SceneReaderPrivate::importModelRefNode(NodeType& node)
 {
@@ -1102,6 +1109,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelRefNode(NodeType& node)
   hnode->SetSelectable(0);
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeFiducials {node} {
 void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
 {  
@@ -1171,6 +1179,7 @@ void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
     }
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodePoint {node} {
 void qSlicerSlicer2SceneReaderPrivate::importPointNode(NodeType& node)
 {
@@ -1200,6 +1209,7 @@ void qSlicerSlicer2SceneReaderPrivate::importPointNode(NodeType& node)
     }
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeColor {node} {
 void qSlicerSlicer2SceneReaderPrivate::importColorNode(NodeType& node)
 {
@@ -1244,6 +1254,7 @@ void qSlicerSlicer2SceneReaderPrivate::importColorNode(NodeType& node)
     }
 }
 
+//-----------------------------------------------------------------------------
 //proc ImportNodeOptions {node} {
 void qSlicerSlicer2SceneReaderPrivate::importOptionsNode(NodeType& node)
 {
@@ -1257,6 +1268,11 @@ void qSlicerSlicer2SceneReaderPrivate::importOptionsNode(NodeType& node)
 //-----------------------------------------------------------------------------
 qSlicerSlicer2SceneReader::qSlicerSlicer2SceneReader(QObject* _parent)
   :qSlicerIO(_parent)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSlicer2SceneReader::~qSlicerSlicer2SceneReader()
 {
 }
 
