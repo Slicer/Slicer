@@ -732,12 +732,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->SetEnableRender(1);
     this->MainViewer->SetRenderModeToInteractive();
-    ///WJPTEST
-    ///Scene has loaded, nodes have been added.
-    ///Since node added events occurred before the observers
-    ///were put on camera nodes, so camera setup may not have
-    //been completed when it got added.
-    //this->UpdateCameraNode();
     this->RequestRender();
     } 
   else 
@@ -947,6 +941,7 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
   vtkMRMLCameraNode *camera_node = NULL;
   vtkMRMLCameraNode *unassignedCamera = NULL;
   vtkMRMLCameraNode  *pruneDefaultCamera = NULL;
+  int foundDefaultCamera = 0;
   if (this->ViewNode && this->ViewNode->GetName())
     {
     std::vector<vtkMRMLNode *> cnodes;
@@ -961,19 +956,41 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
         if (node->GetActiveTag())
           {
           if (node->GetName() &&
-              !strcmp(node->GetName(), defaultCameraName))
-            {
-            vtkDebugMacro("UpdateCamera: found a default camera node pointing to my view node");
-            pruneDefaultCamera = node;
-            }
-          if (!strcmp(node->GetActiveTag(), this->ViewNode->GetID()))
+              !strcmp(node->GetName(), defaultCameraName) &&
+              !foundDefaultCamera)
             {
             // is this a default camera node that we created when the view
             // node was created?
+            vtkDebugMacro("UpdateCamera: found a default camera node pointing to my view node");
+            pruneDefaultCamera = node;
+            // If there is a new camera with a non-null ActiveTag,
+            // We want to be sure to null-ify the Active Tag of the
+            // camera created upon view node creation (given the
+            // default name = defaultCameraName.
+            //
+            // Logic here will deactivate this->ViewNode's original camera
+            // (the one with defaultCameraName) marked with ActiveTag 
+            // ONLY IF another camera node is found marked with a non-null ActiveTag
+            // matching this->ViewNode.
+            //
+            // BUT: a new scene may be loaded which has another camera with the
+            // name = defaultCameraName. If this is parameterized with a non-null
+            // ActiveTag, then we want to be sure NOT to deactivate it instead of
+            // the original camera by mistake.
+            //
+            // Add this flag once we find the first camera. Hacky: oh yes, but...
+            foundDefaultCamera = 1;
+            }
+          if (!strcmp(node->GetActiveTag(), this->ViewNode->GetID()))
+            {
+            // We found a node with a non-null ActiveTag. Might be original
+            // camera with defaultCameraName, or might be a new camera
+            // also with defaultCameraName, or might be a new camera
+            // with some unique name.
             vtkDebugMacro("UpdateCamera: found a camera pointing to me with id = " << (node->GetID() ? node->GetID() : "NULL"));
             camera_node = node;
-            // take out the break, find the last one pointing to me
-            //break;
+            // Whichever camera is the last found pointing at the view node
+            // will be the selected "ActiveCamera"
             }
           else
             {
@@ -1141,6 +1158,7 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     {
     // do not call if no camera otherwise it will create a new one without a node
     this->MainViewer->GetRenderer()->ResetCameraClippingRange();
+    // do we need to update axis actors etc?
     }
  
   vtkRenderWindowInteractor *rwi = 
@@ -1391,6 +1409,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateFromMRML()
 {
+  // not called anymore; code stubbed out.
   this->UpdateViewNode();
 
   this->AddCameraObservers();

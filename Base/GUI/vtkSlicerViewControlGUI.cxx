@@ -685,6 +685,56 @@ void vtkSlicerViewControlGUI::UpdateSliceGUIInteractorStyles ( )
     }
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateBehaviorFromMRML()
+{
+  vtkMRMLViewNode *vn = this->ViewNode;
+ if ( vn == NULL )
+    {
+    vtkErrorMacro ( "Got NULL ViewNode. Can't update navigation render's appearance." );
+    return;
+    }
+
+ if ( this->SpinButton == NULL || !this->SpinButton->IsCreated() )
+   {
+   vtkErrorMacro ( "No Spin Button Found. Not updating spin/rock behavior." );
+   return;
+   }
+ if ( this->RockButton == NULL || !this->RockButton->IsCreated() )
+   {
+   vtkErrorMacro ( "No Rock Button Found. Not updating spin/rock behavior." );
+   return;
+   }
+
+ // make sure GUI setting tracks MRML.
+ if (( vn->GetAnimationMode() == vtkMRMLViewNode::Off ) &&
+     ( this->SpinButton->GetSelectedState() == 1) )
+   {
+   this->SpinButton->Deselect();
+   }
+ else if (( vn->GetAnimationMode() == vtkMRMLViewNode::Off ) &&       
+          ( this->RockButton->GetSelectedState() == 1 ) )
+   {
+   this->RockButton->Deselect();
+   }
+ else if (( vn->GetAnimationMode() == vtkMRMLViewNode::Spin ) &&
+          ( this->RockButton->GetSelectedState() == 1) )
+   {
+   this->SpinButton->Select();
+   this->RockButton->Deselect();
+//   this->MainViewSpin();
+   }
+ else if (( vn->GetAnimationMode() == vtkMRMLViewNode::Rock ) &&
+          ( this->SpinButton->GetSelectedState() == 1) )
+   {
+   this->SpinButton->Deselect();
+   this->RockButton->Select();
+//   this->SetRockCount ( vn->GetRockCount ( ) );
+//   this->MainViewRock();
+   }
+}
+
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::UpdateAppearanceFromMRML()
 {
@@ -757,7 +807,6 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
 {
   this->UpdateSlicesFromMRML();
   this->UpdateSceneSnapshotsFromMRML();
-  this->UpdateAppearanceFromMRML();
   this->RequestNavigationRender ( );
 }
 
@@ -2485,7 +2534,7 @@ void vtkSlicerViewControlGUI::RockView ( )
         if (viewer_widget)
           {
           viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-          viewer_widget->GetMainViewer()->Render();
+          viewer_widget->RequestRender();
           }
         }
       }
@@ -2554,7 +2603,8 @@ void vtkSlicerViewControlGUI::SpinView ( int dir, double degrees )
         if (viewer_widget)
           {
           viewer_widget->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
-          viewer_widget->GetMainViewer()->Render();
+          viewer_widget->RequestRender();
+          vtkDebugMacro ( "Rendered a spin by " << degrees << "." );
           }
         }
       }  
@@ -3189,20 +3239,29 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
     return;
     }
 
-  //--- NOT GETTING NEWSCENE EVENT. WHY?
-  // has a node been added or deleted?
-  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
-       && ((event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent )
-           || (event == vtkMRMLScene::SceneClosedEvent) || (event == vtkMRMLScene::NewSceneEvent ) ) )
+  // has a node been added or deleted? Or has the scene closed or just opened??
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene)
     {
-    this->UpdateFromMRML();
-    this->UpdateNavigationWidgetViewActors ( );
+    if ((event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ))
+      {
+      this->UpdateFromMRML();
+      this->UpdateNavigationWidgetViewActors ( );
+      }
+    else if ((event == vtkMRMLScene::SceneClosedEvent) || (event == vtkMRMLScene::NewSceneEvent )) 
+      {
+      this->UpdateFromMRML();
+      this->UpdateAppearanceFromMRML();
+      this->UpdateBehaviorFromMRML();
+      this->UpdateNavigationWidgetViewActors ( );
+      }
     }
-
+  
   // has a new camera or view has been selected?
   if ( snode != NULL )
     {
      this->UpdateFromMRML();
+     this->UpdateAppearanceFromMRML();
+     this->UpdateBehaviorFromMRML();
      this->UpdateNavigationWidgetViewActors ( );
     }    
 
@@ -3218,6 +3277,10 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
           {
           this->RockButton->Deselect();
           }
+        if ( this->SpinButton->GetSelectedState() == 0 )
+          {
+          this->SpinButton->Select();
+          }
         this->MainViewSpin (  );
         }
       // handle the mode change
@@ -3226,6 +3289,10 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
         if ( this->SpinButton->GetSelectedState() == 1 )
           {
           this->SpinButton->Deselect();
+          }
+        if ( this->RockButton->GetSelectedState() == 0 )
+          {
+          this->RockButton->Select();
           }
         this->SetRockCount ( vnode->GetRockCount ( ) );
         this->MainViewRock ( );
