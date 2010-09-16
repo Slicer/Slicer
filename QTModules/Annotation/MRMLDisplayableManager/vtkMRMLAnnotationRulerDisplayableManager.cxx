@@ -45,7 +45,7 @@ public:
 
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
-    if (event == vtkCommand::EndInteractionEvent)
+    if ((event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
       {
 
       // sanity checks
@@ -235,6 +235,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   myCallback->SetWidget(widget);
   myCallback->SetDisplayableManager(this);
   widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  widget->AddObserver(vtkCommand::InteractionEvent,myCallback);
   myCallback->Delete();
 
   //this->m_Updating = 0;
@@ -260,7 +261,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     }
 
   // cast to the specific widget
-  vtkDistanceWidget* rulerWidget = vtkDistanceWidget::SafeDownCast(widget);
+  vtkAnnotationRulerWidget* rulerWidget = vtkAnnotationRulerWidget::SafeDownCast(widget);
 
   if (!rulerWidget)
     {
@@ -284,10 +285,41 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
 
-  rep->SetPoint1WorldPosition(rulerNode->GetPosition1());
+  double worldCoordinates1[4];
+  worldCoordinates1[0] = rulerNode->GetControlPointCoordinates(0)[0];
+  worldCoordinates1[1] = rulerNode->GetControlPointCoordinates(0)[1];
+  worldCoordinates1[2] = rulerNode->GetControlPointCoordinates(0)[2];
+  worldCoordinates1[3] = 1;
 
-  rep->SetPoint2WorldPosition(rulerNode->GetPosition2());
+  double worldCoordinates2[4];
+  worldCoordinates2[0] = rulerNode->GetControlPointCoordinates(1)[0];
+  worldCoordinates2[1] = rulerNode->GetControlPointCoordinates(1)[1];
+  worldCoordinates2[2] = rulerNode->GetControlPointCoordinates(1)[2];
+  worldCoordinates2[3] = 1;
 
+  double displayCoordinates1[4];
+  double displayCoordinates2[4];
+
+  // update the distance measurement
+  rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+
+  // update the location
+  if (this->GetSliceNode())
+    {
+    // change the 2D location
+    this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
+    this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
+
+    rep->SetPoint1DisplayPosition(displayCoordinates1);
+    rep->SetPoint2DisplayPosition(displayCoordinates2);
+
+    }
+  else
+    {
+    // change the 3D location
+    rep->SetPoint1WorldPosition(worldCoordinates1);
+    rep->SetPoint2WorldPosition(worldCoordinates2);
+    }
 
   rep->NeedToRenderOn();
   rulerWidget->Modified();
@@ -315,7 +347,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     }
 
   // cast to the specific widget
-  vtkDistanceWidget* rulerWidget = vtkDistanceWidget::SafeDownCast(widget);
+  vtkAnnotationRulerWidget* rulerWidget = vtkAnnotationRulerWidget::SafeDownCast(widget);
 
   if (!rulerWidget)
     {
@@ -334,26 +366,49 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   // disable processing of modified events
   this->m_Updating = 1;
+  rulerNode->DisableModifiedEventOn();
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
 
-  double position1[3];
-  double position2[3];
+  double worldCoordinates1[4];
+  double worldCoordinates2[4];
 
-  rep->GetPoint1WorldPosition(position1);
-  rep->GetPoint2WorldPosition(position2);
+  if (this->GetSliceNode())
+    {
+    // 2D widget was changed
 
-  rulerNode->SetPosition1(position1);
+    double displayCoordinates1[4];
+    double displayCoordinates2[4];
+    rep->GetPoint1DisplayPosition(displayCoordinates1);
+    rep->GetPoint2DisplayPosition(displayCoordinates2);
 
-  rulerNode->SetPosition2(position2);
+    this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
+    this->GetDisplayToWorldCoordinates(displayCoordinates2,worldCoordinates2);
 
-  rulerNode->SetDistanceMeasurement(rep->GetDistance());
+    }
+  else
+    {
+    rep->GetPoint1WorldPosition(worldCoordinates1);
+    rep->GetPoint2WorldPosition(worldCoordinates2);
+    }
 
-  rulerNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, rulerNode);
+  // save worldCoordinates to MRML
+  rulerNode->SetPosition1(worldCoordinates1);
+  rulerNode->SetPosition2(worldCoordinates2);
+
+  // save distance to MRML
+  double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+  rep->SetDistance(distance);
+  rulerNode->SetDistanceMeasurement(distance);
 
   // enable processing of modified events
   this->m_Updating = 0;
+  rulerNode->DisableModifiedEventOff();
+
+  //rulerNode->Modified();
+
+  rulerNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, rulerNode);
 
 }
 
@@ -391,11 +446,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates1);
     this->GetDisplayToWorldCoordinates(position2[0],position2[1],worldCoordinates2);
 
+    double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
 
     vtkMRMLAnnotationRulerNode *rulerNode = vtkMRMLAnnotationRulerNode::New();
 
     rulerNode->SetPosition1(worldCoordinates1);
     rulerNode->SetPosition2(worldCoordinates2);
+    rulerNode->SetDistanceMeasurement(distance);
 
     rulerNode->Initialize(this->GetMRMLScene());
 

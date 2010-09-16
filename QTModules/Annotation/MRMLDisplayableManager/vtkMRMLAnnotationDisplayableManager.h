@@ -76,6 +76,9 @@ protected:
   /// Handler for specific SliceView actions
   void OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode);
 
+  /// Check, if the widget is displayable in the current slice geometry
+  bool IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node);
+
   /// Get the sliceNode, if registered
   vtkMRMLSliceNode * GetSliceNode();
 
@@ -124,6 +127,7 @@ protected:
 
   /// Convert display to world coordinates
   void GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates);
+  void GetDisplayToWorldCoordinates(double * displayCoordinates, double * worldCoordinates);
 
   /// Convert display to world coordinates
   void GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates);

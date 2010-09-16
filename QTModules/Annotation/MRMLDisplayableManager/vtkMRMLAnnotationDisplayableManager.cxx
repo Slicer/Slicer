@@ -284,13 +284,26 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
 
   //std::cout << "OnMRMLAnnotationNodeModifiedEvent ThreeD->PropagateMRMLToWidget" << std::endl;
 
-  // Update the standard settings of all widgets.
-  this->Helper->UpdateWidget(annotationNode);
-
   vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
 
   // Propagate MRML changes to widget
   this->PropagateMRMLToWidget(annotationNode, widget);
+
+  if(this->m_SliceNode)
+    {
+    // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
+    this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
+
+    // Update the standard settings of all widgets if the widget is displayable in the current geoemtry
+    if (this->IsWidgetDisplayable(this->m_SliceNode, annotationNode))
+      {
+      this->Helper->UpdateWidget(annotationNode);
+      }
+    }
+  else
+    {
+    this->Helper->UpdateWidget(annotationNode);
+    }
 
   this->RequestRender();
 }
@@ -384,6 +397,59 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     return;
     }
 
+  // run through all associated nodes
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
+  it = this->Helper->AnnotationNodeList.begin();
+  while(it != this->Helper->AnnotationNodeList.end())
+    {
+    // by default, we want to show the associated widget
+    bool showWidget = true;
+
+    // we loop through all nodes
+    vtkMRMLAnnotationNode * annotationNode = *it;
+
+    // check if the widget is displayable
+    showWidget = this->IsWidgetDisplayable(sliceNode, annotationNode);
+
+    // now this is the magical part
+    // we know if all points of a widget are on the activeSlice of the sliceNode (including the tolerance)
+    // thus we will only enable the widget if they are
+    vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
+
+    if (!widget)
+      {
+      vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: We could not get the widget to the node: " << annotationNode->GetID());
+      return;
+      }
+
+    // check if the widget is visible according to its mrml node
+    if (annotationNode->GetVisible())
+      {
+      // only then update the visibility according to the geometry
+      widget->SetEnabled(showWidget);
+      }
+
+    ++it;
+    }
+
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node)
+{
+
+  if (!sliceNode)
+    {
+    vtkErrorMacro("IsWidgetDisplayable: Could not get the sliceNode.")
+    return 0;
+    }
+
+  if (!node)
+    {
+    vtkErrorMacro("IsWidgetDisplayable: Could not get the annotation node.")
+    return 0;
+    }
+
   // set which coordinate index of the annotation node should be used as a reference
   // to be compared against the active slice of the sliceNode
   // default is the Z coordinate
@@ -405,53 +471,39 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     variableCoordinateIndex = 1;
     }
 
-  // run through all associated nodes
-  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
-  it = this->Helper->AnnotationNodeList.begin();
-  while(it != this->Helper->AnnotationNodeList.end())
+
+  bool showWidget = true;
+
+  // down cast the node as a controlpoints node to get the coordinates
+  vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+
+  if (!controlPointsNode)
     {
-    // by default, we want to show the associated widget
-    bool showWidget = true;
+    vtkErrorMacro("IsWidgetDisplayable: Could not get the controlpoints node.")
+    return 0;
+    }
 
-    // we loop through all nodes and down cast them as a controlpoints node to get the coordinate
-    vtkMRMLAnnotationNode * node = *it;
-    vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+  for (int i=0; i<controlPointsNode->GetNumberOfControlPoints(); i++)
+    {
+    // we loop through all controlpoints of each node
+    double * worldCoordinates = controlPointsNode->GetControlPointCoordinates(i);
 
-    for (int i=0; i<controlPointsNode->GetNumberOfControlPoints(); i++)
+    // compare the activeSlice value against the coordinate at the variableCoordinateIndex
+    // for this, we normalize the difference by getting the absolute value
+    double normalizedDifference = abs(sliceNode->GetSliceOffset() - worldCoordinates[variableCoordinateIndex]);
+
+    if (normalizedDifference > 1.2)
       {
-      // we loop through all controlpoints of each node
-      double * worldCoordinates = controlPointsNode->GetControlPointCoordinates(i);
-
-      // compare the activeSlice value against the coordinate at the variableCoordinateIndex
-      // for this, we normalize the difference by getting the absolute value
-      double normalizedDifference = abs(sliceNode->GetSliceOffset() - worldCoordinates[variableCoordinateIndex]);
-
-      if (normalizedDifference > 1.2)
-        {
-        // if the absolute value is more than 2, we know that at least one coordinate of the widget is outside the current activeSlice
-        // hence, we do not want to show this widget
-        showWidget = false;
-        // we don't even need to continue parsing the controlpoints, because we know the widget will not be shown
-        break;
-        }
-
-      } // end of for loop through control points
-
-    // now this is the magical part
-    // we know if all points of a widget are on the activeSlice of the sliceNode (including the tolerance)
-    // thus we will only enable the widget if they are
-    vtkAbstractWidget * widget = this->Helper->GetWidget(controlPointsNode);
-
-    if (!widget)
-      {
-      vtkErrorMacro("OnMRMLSliceNodeModifiedEvent: We could not get the widget to the node: " << node->GetID());
-      return;
+      // if the absolute value is more than 1.2, we know that at least one coordinate of the widget is outside the current activeSlice
+      // hence, we do not want to show this widget
+      showWidget = false;
+      // we don't even need to continue parsing the controlpoints, because we know the widget will not be shown
+      break;
       }
 
-    widget->SetEnabled(showWidget);
+    } // end of for loop through control points
 
-    ++it;
-    }
+  return showWidget;
 
 }
 
@@ -543,6 +595,15 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x,
     {
     vtkInteractorObserver::ComputeDisplayToWorld(this->GetRenderer(),x,y,0,worldCoordinates);
     }
+}
+
+//---------------------------------------------------------------------------
+/// Convert display to world coordinates
+void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double * displayCoordinates, double * worldCoordinates)
+{
+
+  this->GetDisplayToWorldCoordinates(displayCoordinates[0], displayCoordinates[1], worldCoordinates);
+
 }
 
 //---------------------------------------------------------------------------

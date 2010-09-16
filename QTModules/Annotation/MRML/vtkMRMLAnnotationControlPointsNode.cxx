@@ -381,7 +381,7 @@ double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType
       return 0;
     }
 
-  return this->PolyData->GetPoint(id); 
+  return this->PolyData->GetPoint(id);
 }
 
 
