@@ -140,22 +140,12 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   worldCoordinates[2] = fiducialNode->GetFiducialCoordinates()[2];
   worldCoordinates[3] = 1;
 
-
   double position1[4];
 
   if (this->GetSliceNode())
     {
-    // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
 
-    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-    vtkMatrix4x4 * rasToXyMatrix = vtkMatrix4x4::New();
-
-    // we need to invert this matrix
-    xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
-
-    rasToXyMatrix->MultiplyPoint(worldCoordinates, position1);
-
-    //std::cout << this->GetSliceNode()->GetName() << ": "<<position1[0] << "," << position1[1] << "," << position1[2] << "," << position1[3] << std::endl;
+    this->GetWorldToDisplayCoordinates(worldCoordinates,position1);
 
     VTK_CREATE(vtkHandleWidget, newhandle);
     newhandle = seedWidget->CreateNewHandle();
@@ -165,9 +155,6 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   else
     {
 
-    //std::cout << ": "<<worldCoordinates[0] << "," << worldCoordinates[1] << "," << worldCoordinates[2] <<  std::endl;
-
-    //this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates(), position1);
     VTK_CREATE(vtkHandleWidget, newhandle);
     newhandle = seedWidget->CreateNewHandle();
     vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetWorldPosition(worldCoordinates);
@@ -365,30 +352,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
 
     double worldCoordinates[4];
 
-    if (this->GetSliceNode())
-      {
-      // the click was inside a 2D SliceView
-      // we will get the transformation matrix to convert display coordinates to RAS
-
-      vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-
-      double displayCoordinates[4];
-      displayCoordinates[0] = position1[0];
-      displayCoordinates[1] = position1[1];
-      displayCoordinates[2] = 0;
-      displayCoordinates[3] = 1;
-
-      xyToRasMatrix->MultiplyPoint(displayCoordinates, worldCoordinates);
-
-      std::cout << worldCoordinates[0] << "," << worldCoordinates[1] << "," << worldCoordinates[2] << "," << worldCoordinates[3] << std::endl;
-
-      }
-    else
-      {
-      // the click was inside a 3D RenderView
-      // we can get the world coordinates by conversion
-      this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates);
-      }
+    this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates);
 
     // create the MRML node
     vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();

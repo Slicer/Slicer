@@ -7,15 +7,18 @@
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
+// Annotation widget includes
+#include "Widgets/vtkAnnotationRulerWidget.h"
+#include "Widgets/vtkAnnotationRulerRepresentation.h"
+
 // VTK includes
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
-#include <vtkDistanceWidget.h>
+#include <vtkMath.h>
 #include <vtkRenderer.h>
 #include <vtkHandleRepresentation.h>
-#include <vtkDistanceRepresentation2D.h>
 #include <vtkInteractorEventRecorder.h>
 #include <vtkAbstractWidget.h>
 
@@ -112,14 +115,12 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     return 0;
     }
 
-  vtkDistanceWidget * rulerWidget = vtkDistanceWidget::New();
+  vtkAnnotationRulerWidget * rulerWidget = vtkAnnotationRulerWidget::New();
 
   rulerWidget->SetInteractor(this->GetInteractor());
   rulerWidget->SetCurrentRenderer(this->GetRenderer());
 
   rulerWidget->CreateDefaultRepresentation();
-
-
 
   rulerWidget->On();
 
@@ -146,7 +147,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     return;
     }
 
-  vtkDistanceWidget * rulerWidget = vtkDistanceWidget::SafeDownCast(widget);
+  vtkAnnotationRulerWidget * rulerWidget = vtkAnnotationRulerWidget::SafeDownCast(widget);
 
   if (!widget)
     {
@@ -171,27 +172,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   double position1[2];
   double position2[2];
 
-  if (this->GetSliceNode())
-    {
-    // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
-
-    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-    vtkMatrix4x4 * rasToXyMatrix = vtkMatrix4x4::New();
-
-    // we need to invert this matrix
-    xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
-
-    rasToXyMatrix->MultiplyPoint(rulerNode->GetControlPointCoordinates(0),position1);
-    rasToXyMatrix->MultiplyPoint(rulerNode->GetControlPointCoordinates(1),position2);
-
-    }
-  else
-    {
-
-    this->GetWorldToDisplayCoordinates(rulerNode->GetControlPointCoordinates(0),position1);
-    this->GetWorldToDisplayCoordinates(rulerNode->GetControlPointCoordinates(1),position2);
-
-    }
+  this->GetWorldToDisplayCoordinates(rulerNode->GetControlPointCoordinates(0),position1);
+  this->GetWorldToDisplayCoordinates(rulerNode->GetControlPointCoordinates(1),position2);
 
   o << "EnterEvent 2 184 0 0 0 0 0\n";
   o << "MouseMoveEvent " << position1[0] << " " << position1[1] << " 0 0 0 0\n";
@@ -224,30 +206,25 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   double displayCoordinates1[4];
   double displayCoordinates2[4];
 
+  //vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPositionsForDistanceCalculation(worldCoordinates1, worldCoordinates2);
+
+  vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+
   if (this->GetSliceNode())
     {
-    // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
 
-    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-    vtkMatrix4x4 * rasToXyMatrix = vtkMatrix4x4::New();
+    this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
+    this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
 
-    // we need to invert this matrix
-    xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
-
-    rasToXyMatrix->MultiplyPoint(worldCoordinates1, displayCoordinates1);
-    rasToXyMatrix->MultiplyPoint(worldCoordinates2, displayCoordinates2);
-
-    //std::cout << this->GetSliceNode()->GetName() << ": "<<position1[0] << "," << position1[1] << "," << position1[2] << "," << position1[3] << std::endl;
-
-    vtkDistanceRepresentation2D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1DisplayPosition(displayCoordinates1);
-    vtkDistanceRepresentation2D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2DisplayPosition(displayCoordinates2);
+    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1DisplayPosition(displayCoordinates1);
+    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2DisplayPosition(displayCoordinates2);
 
     }
   else
     {
 
-    vtkDistanceRepresentation2D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1WorldPosition(worldCoordinates1);
-    vtkDistanceRepresentation2D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
+    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1WorldPosition(worldCoordinates1);
+    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
 
     }
 
@@ -305,7 +282,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkDistanceRepresentation2D * rep = vtkDistanceRepresentation2D::SafeDownCast(rulerWidget->GetRepresentation());
+  vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
 
   rep->SetPoint1WorldPosition(rulerNode->GetPosition1());
 
@@ -359,7 +336,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkDistanceRepresentation2D * rep = vtkDistanceRepresentation2D::SafeDownCast(rulerWidget->GetRepresentation());
+  vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
 
   double position1[3];
   double position2[3];
@@ -404,43 +381,16 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     vtkHandleWidget *h1 = this->GetSeed(0);
     vtkHandleWidget *h2 = this->GetSeed(1);
 
+    // convert the coordinates
     double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
     double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
 
     double worldCoordinates1[4];
     double worldCoordinates2[4];
 
+    this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates1);
+    this->GetDisplayToWorldCoordinates(position2[0],position2[1],worldCoordinates2);
 
-    if (this->GetSliceNode())
-      {
-      // the click was inside a 2D SliceView
-      // we will get the transformation matrix to convert display coordinates to RAS
-
-      vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-
-      double displayCoordinates1[4];
-      displayCoordinates1[0] = position1[0];
-      displayCoordinates1[1] = position1[1];
-      displayCoordinates1[2] = 0;
-      displayCoordinates1[3] = 1;
-
-      double displayCoordinates2[4];
-      displayCoordinates2[0] = position2[0];
-      displayCoordinates2[1] = position2[1];
-      displayCoordinates2[2] = 0;
-      displayCoordinates2[3] = 1;
-
-      xyToRasMatrix->MultiplyPoint(displayCoordinates1, worldCoordinates1);
-      xyToRasMatrix->MultiplyPoint(displayCoordinates2, worldCoordinates2);
-
-      }
-    else
-      {
-      // the click was inside a 3D RenderView
-      // we can get the world coordinates by conversion
-      this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates1);
-      this->GetDisplayToWorldCoordinates(position2[0],position2[1],worldCoordinates2);
-      }
 
     vtkMRMLAnnotationRulerNode *rulerNode = vtkMRMLAnnotationRulerNode::New();
 

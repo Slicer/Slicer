@@ -522,8 +522,27 @@ vtkHandleWidget * vtkMRMLAnnotationDisplayableManager::GetSeed(int index)
 void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x, double y, double * worldCoordinates)
 {
 
-  vtkInteractorObserver::ComputeDisplayToWorld(this->GetRenderer(),x,y,0,worldCoordinates);
+  if (this->GetSliceNode())
+    {
+    // 2D case
 
+    // we will get the transformation matrix to convert display coordinates to RAS
+
+    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
+
+    double displayCoordinates[4];
+    displayCoordinates[0] = x;
+    displayCoordinates[1] = y;
+    displayCoordinates[2] = 0;
+    displayCoordinates[3] = 1;
+
+    xyToRasMatrix->MultiplyPoint(displayCoordinates, worldCoordinates);
+
+    }
+  else
+    {
+    vtkInteractorObserver::ComputeDisplayToWorld(this->GetRenderer(),x,y,0,worldCoordinates);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -531,7 +550,32 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x,
 void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates)
 {
 
-  vtkInteractorObserver::ComputeWorldToDisplay(this->GetRenderer(),r,a,s,displayCoordinates);
+  if (this->GetSliceNode())
+    {
+    // 2D case
+
+    // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
+
+    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
+    vtkMatrix4x4 * rasToXyMatrix = vtkMatrix4x4::New();
+
+    // we need to invert this matrix
+    xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
+
+    double worldCoordinates[4];
+    worldCoordinates[0] = r;
+    worldCoordinates[1] = a;
+    worldCoordinates[2] = s;
+    worldCoordinates[3] = 1;
+
+    rasToXyMatrix->MultiplyPoint(worldCoordinates,displayCoordinates);
+
+    }
+  else
+    {
+    vtkInteractorObserver::ComputeWorldToDisplay(this->GetRenderer(),r,a,s,displayCoordinates);
+    }
+
 
 }
 

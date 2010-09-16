@@ -7,15 +7,18 @@
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
+// Annotation widget includes
+#include "Widgets/vtkAnnotationBidimensionalWidget.h"
+#include "Widgets/vtkAnnotationBidimensionalRepresentation.h"
+
 // VTK includes
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
-#include <vtkBiDimensionalWidget.h>
 #include <vtkRenderer.h>
 #include <vtkHandleRepresentation.h>
-#include <vtkBiDimensionalRepresentation2D.h>
+#include <vtkMath.h>
 #include <vtkInteractorEventRecorder.h>
 #include <vtkAbstractWidget.h>
 
@@ -94,7 +97,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PrintSelf(ostream& os, vt
 }
 
 //---------------------------------------------------------------------------
-/// Create a new text widget.
+/// Create a new bidimensional widget.
 vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
 {
 
@@ -112,7 +115,7 @@ vtkAbstractWidget * vtkMRMLAnnotationBidimensionalDisplayableManager::CreateWidg
     return 0;
     }
 
-  vtkBiDimensionalWidget * bidimensionalWidget = vtkBiDimensionalWidget::New();
+  vtkAnnotationBidimensionalWidget * bidimensionalWidget = vtkAnnotationBidimensionalWidget::New();
 
   bidimensionalWidget->SetInteractor(this->GetInteractor());
   bidimensionalWidget->SetCurrentRenderer(this->GetRenderer());
@@ -144,7 +147,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
     return;
     }
 
-  vtkBiDimensionalWidget * bidimensionalWidget = vtkBiDimensionalWidget::SafeDownCast(widget);
+  vtkAnnotationBidimensionalWidget * bidimensionalWidget = vtkAnnotationBidimensionalWidget::SafeDownCast(widget);
 
   if (!bidimensionalWidget)
     {
@@ -171,31 +174,10 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   double position3[2];
   double position4[2];
 
-  if (this->GetSliceNode())
-    {
-    // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
-
-    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-    vtkMatrix4x4 * rasToXyMatrix = vtkMatrix4x4::New();
-
-    // we need to invert this matrix
-    xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
-
-    rasToXyMatrix->MultiplyPoint(bidimensionalNode->GetControlPointCoordinates(0),position1);
-    rasToXyMatrix->MultiplyPoint(bidimensionalNode->GetControlPointCoordinates(1),position2);
-    rasToXyMatrix->MultiplyPoint(bidimensionalNode->GetControlPointCoordinates(2),position3);
-    rasToXyMatrix->MultiplyPoint(bidimensionalNode->GetControlPointCoordinates(3),position4);
-
-    }
-  else
-    {
-
-    this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(0),position1);
-    this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(1),position2);
-    this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(2),position3);
-    this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(3),position4);
-
-    }
+  this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(0),position1);
+  this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(1),position2);
+  this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(2),position3);
+  this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(3),position4);
 
   o << "EnterEvent 2 184 0 0 0 0 0\n";
   o << "MouseMoveEvent " << position1[0] << " " << position1[1] << " 0 0 0 0\n";
@@ -246,36 +228,30 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   double displayCoordinates3[4];
   double displayCoordinates4[4];
 
+  vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetDistance1(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+  vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetDistance2(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates3,worldCoordinates4)));
+
   if (this->GetSliceNode())
     {
-    // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
 
-    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-    vtkMatrix4x4 * rasToXyMatrix = vtkMatrix4x4::New();
+    this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
+    this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
+    this->GetWorldToDisplayCoordinates(worldCoordinates3,displayCoordinates3);
+    this->GetWorldToDisplayCoordinates(worldCoordinates4,displayCoordinates4);
 
-    // we need to invert this matrix
-    xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
-
-    rasToXyMatrix->MultiplyPoint(worldCoordinates1, displayCoordinates1);
-    rasToXyMatrix->MultiplyPoint(worldCoordinates2, displayCoordinates2);
-    rasToXyMatrix->MultiplyPoint(worldCoordinates3, displayCoordinates3);
-    rasToXyMatrix->MultiplyPoint(worldCoordinates4, displayCoordinates4);
-
-    //std::cout << this->GetSliceNode()->GetName() << ": "<<position1[0] << "," << position1[1] << "," << position1[2] << "," << position1[3] << std::endl;
-
-    vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint1DisplayPosition(displayCoordinates1);
-    vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint2DisplayPosition(displayCoordinates2);
-    vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint3DisplayPosition(displayCoordinates3);
-    vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint4DisplayPosition(displayCoordinates4);
+    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint1DisplayPosition(displayCoordinates1);
+    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint2DisplayPosition(displayCoordinates2);
+    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint3DisplayPosition(displayCoordinates3);
+    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint4DisplayPosition(displayCoordinates4);
 
     }
   else
     {
 
-    vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint1WorldPosition(worldCoordinates1);
-    vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
-    vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint3WorldPosition(worldCoordinates3);
-    vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint4WorldPosition(worldCoordinates4);
+    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint1WorldPosition(worldCoordinates1);
+    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
+    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint3WorldPosition(worldCoordinates3);
+    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint4WorldPosition(worldCoordinates4);
 
     }
 
@@ -340,7 +316,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkBiDimensionalRepresentation2D * rep = vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation());
+  vtkAnnotationBidimensionalRepresentation * rep = vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation());
 
   double position1[3];
   double position2[3];
@@ -414,7 +390,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkBiDimensionalRepresentation2D * rep = vtkBiDimensionalRepresentation2D::SafeDownCast(bidimensionalWidget->GetRepresentation());
+  vtkAnnotationBidimensionalRepresentation * rep = vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation());
 
   double position1[3];
   double position2[3];
@@ -463,7 +439,6 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     // switch to updating state to avoid events mess
     this->m_Updating = 1;
 
-
     vtkHandleWidget *h1 = this->GetSeed(0);
     vtkHandleWidget *h2 = this->GetSeed(1);
     vtkHandleWidget *h3 = this->GetSeed(2);
@@ -479,54 +454,10 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     double worldCoordinates3[4];
     double worldCoordinates4[4];
 
-
-    if (this->GetSliceNode())
-      {
-      // the click was inside a 2D SliceView
-      // we will get the transformation matrix to convert display coordinates to RAS
-
-      vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-
-      double displayCoordinates1[4];
-      displayCoordinates1[0] = position1[0];
-      displayCoordinates1[1] = position1[1];
-      displayCoordinates1[2] = 0;
-      displayCoordinates1[3] = 1;
-
-      double displayCoordinates2[4];
-      displayCoordinates2[0] = position2[0];
-      displayCoordinates2[1] = position2[1];
-      displayCoordinates2[2] = 0;
-      displayCoordinates2[3] = 1;
-
-      double displayCoordinates3[4];
-      displayCoordinates3[0] = position3[0];
-      displayCoordinates3[1] = position3[1];
-      displayCoordinates3[2] = 0;
-      displayCoordinates3[3] = 1;
-
-      double displayCoordinates4[4];
-      displayCoordinates4[0] = position4[0];
-      displayCoordinates4[1] = position4[1];
-      displayCoordinates4[2] = 0;
-      displayCoordinates4[3] = 1;
-
-      xyToRasMatrix->MultiplyPoint(displayCoordinates1, worldCoordinates1);
-      xyToRasMatrix->MultiplyPoint(displayCoordinates2, worldCoordinates2);
-      xyToRasMatrix->MultiplyPoint(displayCoordinates3, worldCoordinates3);
-      xyToRasMatrix->MultiplyPoint(displayCoordinates4, worldCoordinates4);
-
-      }
-    else
-      {
-      // the click was inside a 3D RenderView
-      // we can get the world coordinates by conversion
-      this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates1);
-      this->GetDisplayToWorldCoordinates(position2[0],position2[1],worldCoordinates2);
-      this->GetDisplayToWorldCoordinates(position3[0],position3[1],worldCoordinates3);
-      this->GetDisplayToWorldCoordinates(position4[0],position4[1],worldCoordinates4);
-      }
-
+    this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates1);
+    this->GetDisplayToWorldCoordinates(position2[0],position2[1],worldCoordinates2);
+    this->GetDisplayToWorldCoordinates(position3[0],position3[1],worldCoordinates3);
+    this->GetDisplayToWorldCoordinates(position4[0],position4[1],worldCoordinates4);
 
     vtkMRMLAnnotationBidimensionalNode *bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::New();
 

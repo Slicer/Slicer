@@ -45,7 +45,26 @@ SET(Logic_SRCS
   Logic/vtkSlicerAnnotationModuleLogic.cxx
   Logic/vtkSlicerAnnotationModuleLogic.h
   )
-
+  
+#-----------------------------------------------------------------------
+#
+# WIDGETS
+#
+#-----------------------------------------------------------------------
+SET(Widget_SRCS
+  # our own ruler
+  Widgets/vtkAnnotationRulerWidget.cxx
+  Widgets/vtkAnnotationRulerWidget.h
+  Widgets/vtkAnnotationRulerRepresentation.cxx
+  Widgets/vtkAnnotationRulerRepresentation.h
+  
+  # our own bidimensional
+  Widgets/vtkAnnotationBidimensionalWidget.cxx
+  Widgets/vtkAnnotationBidimensionalWidget.h
+  Widgets/vtkAnnotationBidimensionalRepresentation.cxx
+  Widgets/vtkAnnotationBidimensionalRepresentation.h
+  )
+  
 #-----------------------------------------------------------------------
 #
 # GUI
@@ -104,6 +123,7 @@ SET(qt_module_SRCS
   ${DisplayableManager_SRCS}
   ${DisplayableManagerInstantiator_SRCS}
   ${Logic_SRCS}
+  ${Widget_SRCS}
   ${GUI_SRCS}
   #${DEPRECATED_SRCS}
   qSlicerAnnotationModule.cxx
