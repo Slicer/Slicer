@@ -129,6 +129,12 @@ public:
   /// return the current node ID corresponding to a given vtkProp3D
   const char *GetIDByActor (vtkProp3D *actor);
   
+  ///
+  /// Post a request to update Cameras in the scene, after a
+  /// node is added/deleted or a new scene with active camera is loaded.
+  void RequestCameraNodeUpdate();
+
+
   ///  
   /// Post a request for a render -- won't be done until the system is
   /// idle, and then only once....
@@ -255,6 +261,7 @@ protected:
 
   void CreateAxis();
   void AddAxisActors();
+  void UpdateAxisLabelActors();
   void UpdateAxis();
 
   int UpdateClipSlicesFromMRML();
@@ -360,6 +367,8 @@ protected:
   int UpdatingAxis;
 
   int IsRendering;
+  
+  int CameraNodeUpdatePending;
   
 private:
   

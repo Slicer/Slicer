@@ -125,6 +125,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->EnableRender = 1;
   this->UpdatingAxis = 0;
   this->IsRendering = 0;
+  this->CameraNodeUpdatePending = 0;
 
 }
 
@@ -359,6 +360,27 @@ void vtkSlicerViewerWidget::AddAxisActors()
     }
 }
 
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::UpdateAxisLabelActors()
+{
+  for (unsigned int i=0; i<AxisLabelActors.size(); i++)
+    {
+    if (this->MainViewer != NULL && this->MainViewer->GetRenderer() != NULL )
+      {
+      this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+      }
+    else
+      {
+      this->AxisLabelActors[i]->SetCamera(NULL );
+      }
+    this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
+    }
+}
+
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateAxis()
 {
@@ -367,7 +389,6 @@ void vtkSlicerViewerWidget::UpdateAxis()
     {
     return;
     }
-
   if (this->UpdatingAxis || this->IsRendering)
     {
     return;
@@ -488,19 +509,8 @@ void vtkSlicerViewerWidget::UpdateAxis()
 
   // Make the axis visible again
   this->BoxAxisActor->SetVisibility(this->ViewNode->GetBoxVisible());
-  for (unsigned int i=0; i<AxisLabelActors.size(); i++)
-    {
-    if (this->MainViewer != NULL && this->MainViewer->GetRenderer() != NULL )
-      {
-      this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
-      }
-    else
-      {
-      this->AxisLabelActors[i]->SetCamera(NULL );
-      }
-  
-    this->AxisLabelActors[i]->SetVisibility(this->ViewNode->GetAxisLabelsVisible());
-    }
+  this->UpdateAxisLabelActors();
+
   // Until we come up with a solution for all use cases, the resetting
   // of the camera is disabled
 #if 0
@@ -813,7 +823,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         {
         vtkEventBroker::GetInstance()->RemoveObservations ( 
           node, vtkMRMLCameraNode::ActiveTagModifiedEvent, this, this->MRMLCallbackCommand );
-        this->UpdateCameraNode();
+        this->RequestCameraNodeUpdate();
         }
       }
     }
@@ -822,7 +832,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
             event == vtkMRMLCameraNode::ActiveTagModifiedEvent))
     {
     vtkDebugMacro("ProcessingMRML: got a camera node modified event");
-    this->UpdateCameraNode();
+    this->RequestCameraNodeUpdate();
     this->RequestRender();
     }
   else if (vtkMRMLViewNode::SafeDownCast(caller) != NULL &&
@@ -912,6 +922,25 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::RequestCameraNodeUpdate()
+{
+  // Followers are not synched up with a new Camera
+  // if UpdateCameraNode (which calls UpdateAxis) is called during a
+  // Render. UpdateAxis does not complete under these circumstances
+  // and the scene is respecting multiple cameras. To avoid this, 
+  // this method schedules UpdateCameraNode for when render completes.
+  if (this->UpdatingAxis || this->IsRendering)
+    {
+    this->CameraNodeUpdatePending = 1;
+   }
+  else
+    {
+    this->UpdateCameraNode();
+    }
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateCameraNode()
 {
   if (this->SceneClosing)
@@ -923,11 +952,15 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
     vtkErrorMacro("UpdateCameraNode: viewer widget does not have a scene set, can't find camera nodes");
     return;
     }
-
   if (this->ViewNode == NULL)
     {
     vtkErrorMacro("UpdateCameraNode: viewer widget does not have a view node!");
     return;
+    }
+
+  if ( this->CameraNodeUpdatePending )
+    {
+    this->CameraNodeUpdatePending = 0;
     }
 
   const char *defaultCameraName = "Default Scene Camera";
@@ -1182,8 +1215,14 @@ void vtkSlicerViewerWidget::UpdateCameraNode()
 
   if (cam) 
     {
-    // do not call if no camera otherwise it will create a new one without a node
-    this->UpdateAxis(); // make sure the axis follow the new camera
+    // make sure the axis actors follow the new camera
+    // NOTE: 
+    // a call to this method is made asyncrhonously when processing
+    // an ActiveTagModifiedEvent triggered by the cameranode.
+    // But this can be called when IsRendering = 1. This causes
+    // the UpdateAxis method to dump out early, and the AxisLabelActors'
+    // camera is never set to synch up with a new ActiveCamera.
+    this->UpdateAxis();
     }
 
   this->InvokeEvent(vtkSlicerViewerWidget::ActiveCameraChangedEvent, NULL);
@@ -1413,7 +1452,7 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
   this->UpdateViewNode();
 
   this->AddCameraObservers();
-  this->UpdateCameraNode();
+  this->RequestCameraNodeUpdate();
 
   this->AddAxisActors();
 
@@ -1872,6 +1911,18 @@ void vtkSlicerViewerWidget::Render()
     vtkDebugMacro("vtkSlicerViewerWidget::Render called render" << endl);
     this->MainViewer->SetRenderState(currentRenderState);
     } 
+
+  //--- 
+  // Axis Label Followers are not synched up with a new Camera
+  // if UpdateCameraNode (which calls UpdateAxis) is called during a
+  // Render. UpdateAxis does not complete under these circumstances
+  // leaving axis actors in the scene respecting the wrong camera. To avoid this, 
+  // we schedule UpdateCameraNode for post-render, so that
+  // UpdateCameraNode and its call to UpdateAxis completes.
+  if ( this->CameraNodeUpdatePending )
+    {
+    this->RequestCameraNodeUpdate();
+    }
 }
 
 //---------------------------------------------------------------------------
