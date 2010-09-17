@@ -191,6 +191,33 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       name += filename;
       std::string collapsedFullPath = vtksys::SystemTools::CollapseFullPath(name.c_str());
       vtkDebugMacro("ReadXMLAttributes: collapsed path for " << attName << " = " << collapsedFullPath.c_str());
+      // check if this file exists
+      if (vtksys::SystemTools::FileExists(collapsedFullPath.c_str(), true) == false &&
+          this->GetFileName() != NULL)
+        {
+        vtkDebugMacro("ReadXMLAttributes: File list member " << filename << " is relative, but is not found relative to the mrml root directory. " << collapsedFullPath << " was not found. Trying to find it relative to the archetype: " << this->GetFileName());
+        // get the directory of the file name
+        std::string fileNameDirectory = vtksys::SystemTools::GetParentDirectory(this->GetFileName());
+        vtkDebugMacro("ReadXMLAttributes: Directory of archetype = " << fileNameDirectory);
+        // add a trailing slash if missing
+        if (fileNameDirectory[fileNameDirectory.size()-1]  != '/')
+          {
+          fileNameDirectory = fileNameDirectory + std::string("/");
+          }
+        fileNameDirectory += filename;
+        vtkDebugMacro("ReadXMLAttributes: New uncollapsed path = " << fileNameDirectory);
+        std::string secondCollapsedFullPath = vtksys::SystemTools::CollapseFullPath(fileNameDirectory.c_str());
+        vtkDebugMacro("ReadXMLAttributes: New collapsed path for " << attName << " = " << secondCollapsedFullPath.c_str());
+        if (vtksys::SystemTools::FileExists(secondCollapsedFullPath.c_str(), true) == false)
+          {
+          vtkWarningMacro("ReadXMLAttributes: file list member " << filename << " is relative, but not found relative to the mrml root directory. Trying to find the path relative to the archetype doesn't work either: " << secondCollapsedFullPath << " not found, going back to using path from mrml root dir of " << collapsedFullPath);
+          }
+        else
+          {
+          vtkWarningMacro("ReadXMLAttributes: file list member " << filename << " is relative, but not found relative to the mrml root directory: " << collapsedFullPath << " is invalid. Found the file relative to the archetype, so using path  " <<  secondCollapsedFullPath);
+          collapsedFullPath = secondCollapsedFullPath;
+          }
+        }
       this->AddFileName(collapsedFullPath.c_str());
       }
     else if (!strcmp(attName, "uri"))
