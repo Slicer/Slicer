@@ -46,6 +46,22 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Output filename (.nhdr or .nrrd)</description>
     </string>
 
+    <double>
+      <name>smallGradientThreshold</name>
+      <longflag>--smallGradientThreshold</longflag> 
+      <label>Small Gradient Threshold</label>
+      <description>If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DicomToNrrdConverter will display an error message and quit, unless the smallGradientFix flag is set.</description>
+      <default>0.2</default>
+    </double>
+    
+    <string-vector>
+      <name>smallGradientFix</name>
+      <longflag>--smallGradientFix</longflag>
+      <label>Small Gradient Fix</label>
+      <description>Small Gradient Fix: Rescale|Remove. Gives user options on how to handle gradient vectors whose magnitudes are unusually small: remove based on Small Gradient Threshold or rescale based on b values from the gradients.</description>
+      <default></default>
+    </string-vector>
+
   </parameters>
 
   <parameters advanced="true">
