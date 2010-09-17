@@ -729,8 +729,8 @@ void qSlicerLayoutManagerPrivate::setLayoutInternal(int layout)
       case vtkMRMLLayoutNode::SlicerLayoutCompareView:
         this->setCompareView();
         break;
-      case vtkMRMLLayoutNode::SlicerLayoutSideBySideCompareView:
-        this->setSideBySideCompareView();
+      case vtkMRMLLayoutNode::SlicerLayoutSideBySideLightboxView:
+        this->setSideBySideLightboxView();
         break;
       case vtkMRMLLayoutNode::SlicerLayoutDual3DView:
         this->setDual3DView();
@@ -866,11 +866,11 @@ void qSlicerLayoutManagerPrivate::setCompareView()
 }
 
 //------------------------------------------------------------------------------
-void qSlicerLayoutManagerPrivate::setSideBySideCompareView()
+void qSlicerLayoutManagerPrivate::setSideBySideLightboxView()
 {
-  logger.trace(QString("switch to SideBySideCompareView"));
-  qDebug() << "qSlicerLayoutManager::setSideBySideCompareView";
-  logger.debug("setSideBySideCompareView - Not Implemented");
+  logger.trace(QString("switch to SideBySideLightboxView"));
+  qDebug() << "qSlicerLayoutManager::setSideBySideLightboxView";
+  logger.debug("setSideBySideLightboxView - Not Implemented");
 }
 
 //------------------------------------------------------------------------------

@@ -97,7 +97,7 @@ public:
   void setTabbedSliceView();
   void setLightboxView();
   void setCompareView();
-  void setSideBySideCompareView();
+  void setSideBySideLightboxView();
   void setDual3DView();
   void setNone();
 
