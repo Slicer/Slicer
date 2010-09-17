@@ -63,7 +63,7 @@ public slots:
   void onViewLayoutTabbed3DActionTriggered();
   void onViewLayoutTabbedSliceActionTriggered();
   void onViewLayoutCompareActionTriggered();
-  void onViewLayoutSideBySideCompareActionTriggered();
+  void onViewLayoutSideBySideLightboxActionTriggered();
   void onWindowPythonInteractorActionTriggered();
 
   void onHelpKeyboardShortcutsActionTriggered();

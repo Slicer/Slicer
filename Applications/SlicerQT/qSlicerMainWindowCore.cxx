@@ -162,7 +162,7 @@ qSlicerMainWindowCore_onViewLayout_implementation(OneUpGreenSlice);
 qSlicerMainWindowCore_onViewLayout_implementation(Tabbed3D);
 qSlicerMainWindowCore_onViewLayout_implementation(TabbedSlice);
 qSlicerMainWindowCore_onViewLayout_implementation(Compare);
-qSlicerMainWindowCore_onViewLayout_implementation(SideBySideCompare);
+qSlicerMainWindowCore_onViewLayout_implementation(SideBySideLightbox);
 
 #undef qSlicerMainWindowCore_onViewLayout_implementation
 
