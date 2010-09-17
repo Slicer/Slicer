@@ -98,7 +98,10 @@ public:
       SlicerLayoutTabbedSliceView,
       SlicerLayoutLightboxView,
       SlicerLayoutCompareView,
-      SlicerLayoutSideBySideCompareView,
+      SlicerLayoutSingleLightboxView,
+      SlicerLayoutSideBySideLightboxView,
+      SlicerLayout3DPlusLightboxView,
+      SlicerLayoutTriple3DEndoscopyView,
       SlicerLayoutNone,
       SlicerLayoutDual3DView
     };
