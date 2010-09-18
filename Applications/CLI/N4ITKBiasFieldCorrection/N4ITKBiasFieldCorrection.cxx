@@ -81,6 +81,18 @@ int main(int argc, char** argv){
     maskreader->SetFileName( maskImageName.c_str() );
     maskreader->Update();
     maskImage = maskreader->GetOutput();
+    itk::ImageRegionConstIterator<MaskImageType> IM(
+      maskImage, maskImage->GetBufferedRegion());
+    MaskImageType::PixelType maskLabel = 0;
+    for(IM.GoToBegin();!IM.IsAtEnd();++IM)
+      if(IM.Get())
+        {
+        maskLabel = IM.Get();
+        break;
+        }
+    if(!maskLabel)
+      return EXIT_FAILURE;
+    correcter->SetMaskLabel(maskLabel);
   } 
   
   if( !maskImage ) {
