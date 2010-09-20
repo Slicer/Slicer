@@ -11,12 +11,12 @@
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
-#include <vtkProperty.h>
+#include <vtkProperty2D.h>
 #include <vtkRenderer.h>
 #include <vtkSeedWidget.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkSeedRepresentation.h>
-#include <vtkPointHandleRepresentation3D.h>
+#include <vtkPointHandleRepresentation2D.h>
 #include <vtkAbstractWidget.h>
 #include <vtkMatrix4x4.h>
 
@@ -43,7 +43,7 @@ public:
 
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
-    if (event == vtkCommand::EndInteractionEvent)
+    if ((event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
       {
 
       // sanity checks
@@ -113,7 +113,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     return 0;
     }
 
-  VTK_CREATE(vtkPointHandleRepresentation3D, handle);
+  VTK_CREATE(vtkPointHandleRepresentation2D, handle);
   handle->GetProperty()->SetColor(1,0,0);
   handle->SetHandleSize(10);
 
@@ -193,6 +193,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnWidgetCreated(vtkAbstractWid
   myCallback->SetWidget(widget);
   myCallback->SetDisplayableManager(this);
   widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  widget->AddObserver(vtkCommand::InteractionEvent,myCallback);
   myCallback->Delete();
 
   //this->m_Updating = 0;
@@ -235,28 +236,18 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     return;
     }
 
-  if (this->m_Updating)
-    {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
-    return;
-    }
-
   // disable processing of modified events
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkSeedRepresentation * rep = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
+  vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
-  double position1[3];
+  double displayCoordinates1[4];
 
-  rep->GetSeedWorldPosition(0,position1);
+  this->GetWorldToDisplayCoordinates(fiducialNode->GetControlPointCoordinates(0),displayCoordinates1);
+  seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
 
-  double displayCoordinates[2];
-  this->GetWorldToDisplayCoordinates(fiducialNode->GetFiducialCoordinates(),displayCoordinates);
-
-  rep->SetSeedDisplayPosition(0,displayCoordinates);
-
-  rep->NeedToRenderOn();
+  seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
 
   // enable processing of modified events
@@ -300,29 +291,39 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
    return;
    }
 
-
-  if (this->m_Updating)
-   {
-   vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
-   return;
-   }
-
   // disable processing of modified events
   this->m_Updating = 1;
+  fiducialNode->DisableModifiedEventOn();
 
-  // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkSeedRepresentation * rep = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
+  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+  vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
-  double position1[3];
+  double worldCoordinates1[4];
 
-  rep->GetSeedWorldPosition(0,position1);
+  if (this->GetSliceNode())
+    {
+    // 2D widget was changed
 
-  fiducialNode->SetFiducialCoordinates(position1);
+    double displayCoordinates1[4];
+    seedRepresentation->GetSeedDisplayPosition(0,displayCoordinates1);
+    this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
 
-  fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
+    }
+  else
+    {
+
+    seedRepresentation->GetSeedWorldPosition(0,worldCoordinates1);
+
+    }
+
+  fiducialNode->SetFiducialCoordinates(worldCoordinates1);
 
   // enable processing of modified events
   this->m_Updating = 0;
+  fiducialNode->DisableModifiedEventOff();
+
+  fiducialNode->Modified();
+  fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
 
 }
 
@@ -348,16 +349,16 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
 
     vtkHandleWidget *h1 = this->GetSeed(0);
 
-    double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+    double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
 
-    double worldCoordinates[4];
+    double worldCoordinates1[4];
 
-    this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates);
+    this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
 
     // create the MRML node
     vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
 
-    fiducialNode->SetFiducialCoordinates(worldCoordinates);
+    fiducialNode->SetFiducialCoordinates(worldCoordinates1);
 
     fiducialNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationFiducial"));
 

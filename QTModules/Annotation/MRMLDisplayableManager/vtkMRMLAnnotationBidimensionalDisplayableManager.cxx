@@ -45,7 +45,7 @@ public:
 
   virtual void Execute (vtkObject *caller, unsigned long event, void*)
   {
-    if (event == vtkCommand::EndInteractionEvent)
+    if ((event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
       {
 
       // sanity checks
@@ -262,6 +262,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   myCallback->SetWidget(widget);
   myCallback->SetDisplayableManager(this);
   widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
+  widget->AddObserver(vtkCommand::InteractionEvent,myCallback);
   myCallback->Delete();
 
   // we want to manually propagate the widget to the MRML node now
@@ -306,36 +307,68 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
     return;
     }
 
-  if (this->m_Updating)
-    {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
-    return;
-    }
-
   // disable processing of modified events
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkAnnotationBidimensionalRepresentation * rep = vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation());
 
-  double position1[3];
-  double position2[3];
-  double position3[3];
-  double position4[3];
+  double worldCoordinates1[4];
+  worldCoordinates1[0] = bidimensionalNode->GetControlPointCoordinates(0)[0];
+  worldCoordinates1[1] = bidimensionalNode->GetControlPointCoordinates(0)[1];
+  worldCoordinates1[2] = bidimensionalNode->GetControlPointCoordinates(0)[2];
+  worldCoordinates1[3] = 1;
 
-  rep->GetPoint1WorldPosition(position1);
-  rep->GetPoint2WorldPosition(position2);
-  rep->GetPoint3WorldPosition(position3);
-  rep->GetPoint4WorldPosition(position4);
+  double worldCoordinates2[4];
+  worldCoordinates2[0] = bidimensionalNode->GetControlPointCoordinates(1)[0];
+  worldCoordinates2[1] = bidimensionalNode->GetControlPointCoordinates(1)[1];
+  worldCoordinates2[2] = bidimensionalNode->GetControlPointCoordinates(1)[2];
+  worldCoordinates2[3] = 1;
 
-  // at least one coordinate has changed, so update the widget
-  rep->SetPoint1WorldPosition(bidimensionalNode->GetControlPointCoordinates(0));
+  double worldCoordinates3[4];
+  worldCoordinates3[0] = bidimensionalNode->GetControlPointCoordinates(2)[0];
+  worldCoordinates3[1] = bidimensionalNode->GetControlPointCoordinates(2)[1];
+  worldCoordinates3[2] = bidimensionalNode->GetControlPointCoordinates(2)[2];
+  worldCoordinates3[3] = 1;
 
-  rep->SetPoint2WorldPosition(bidimensionalNode->GetControlPointCoordinates(1));
+  double worldCoordinates4[4];
+  worldCoordinates4[0] = bidimensionalNode->GetControlPointCoordinates(3)[0];
+  worldCoordinates4[1] = bidimensionalNode->GetControlPointCoordinates(3)[1];
+  worldCoordinates4[2] = bidimensionalNode->GetControlPointCoordinates(3)[2];
+  worldCoordinates4[3] = 1;
 
-  rep->SetPoint3WorldPosition(bidimensionalNode->GetControlPointCoordinates(2));
+  double displayCoordinates1[4];
+  double displayCoordinates2[4];
+  double displayCoordinates3[4];
+  double displayCoordinates4[4];
 
-  rep->SetPoint4WorldPosition(bidimensionalNode->GetControlPointCoordinates(3));
+  // update the distance measurement
+  rep->SetDistance1(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+  rep->SetDistance2(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates3,worldCoordinates4)));
+
+  // update the location
+  if (this->GetSliceNode())
+    {
+    // change the 2D location
+    this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
+    this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
+    this->GetWorldToDisplayCoordinates(worldCoordinates3,displayCoordinates3);
+    this->GetWorldToDisplayCoordinates(worldCoordinates4,displayCoordinates4);
+
+    rep->SetPoint1DisplayPosition(displayCoordinates1);
+    rep->SetPoint2DisplayPosition(displayCoordinates2);
+    rep->SetPoint3DisplayPosition(displayCoordinates3);
+    rep->SetPoint4DisplayPosition(displayCoordinates4);
+
+    }
+  else
+    {
+    // change the 3D location
+    rep->SetPoint1WorldPosition(worldCoordinates1);
+    rep->SetPoint2WorldPosition(worldCoordinates2);
+    rep->SetPoint3WorldPosition(worldCoordinates3);
+    rep->SetPoint4WorldPosition(worldCoordinates4);
+    }
 
   rep->NeedToRenderOn();
   bidimensionalWidget->Modified();
@@ -380,42 +413,66 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
     return;
     }
 
-  if (this->m_Updating)
-    {
-    vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
-    return;
-    }
-
   // disable processing of modified events
   this->m_Updating = 1;
+  bidimensionalNode->DisableModifiedEventOn();
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
   vtkAnnotationBidimensionalRepresentation * rep = vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation());
 
-  double position1[3];
-  double position2[3];
-  double position3[3];
-  double position4[3];
+  double worldCoordinates1[4];
+  double worldCoordinates2[4];
+  double worldCoordinates3[4];
+  double worldCoordinates4[4];
 
-  rep->GetPoint1WorldPosition(position1);
-  rep->GetPoint2WorldPosition(position2);
-  rep->GetPoint3WorldPosition(position3);
-  rep->GetPoint4WorldPosition(position4);
+  if (this->GetSliceNode())
+    {
+    // 2D widget was changed
 
-  bidimensionalNode->SetControlPoint(position1,0);
+    double displayCoordinates1[4];
+    double displayCoordinates2[4];
+    double displayCoordinates3[4];
+    double displayCoordinates4[4];
+    rep->GetPoint1DisplayPosition(displayCoordinates1);
+    rep->GetPoint2DisplayPosition(displayCoordinates2);
+    rep->GetPoint3DisplayPosition(displayCoordinates3);
+    rep->GetPoint4DisplayPosition(displayCoordinates4);
 
-  bidimensionalNode->SetControlPoint(position2,1);
+    this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
+    this->GetDisplayToWorldCoordinates(displayCoordinates2,worldCoordinates2);
+    this->GetDisplayToWorldCoordinates(displayCoordinates3,worldCoordinates3);
+    this->GetDisplayToWorldCoordinates(displayCoordinates4,worldCoordinates4);
 
-  bidimensionalNode->SetControlPoint(position3,2);
+    }
+  else
+    {
+    rep->GetPoint1WorldPosition(worldCoordinates1);
+    rep->GetPoint2WorldPosition(worldCoordinates2);
+    rep->GetPoint3WorldPosition(worldCoordinates3);
+    rep->GetPoint4WorldPosition(worldCoordinates4);
+    }
 
-  bidimensionalNode->SetControlPoint(position4,3);
 
-  bidimensionalNode->SetBidimensionalMeasurement(rep->GetLength1(), rep->GetLength2());
+  bidimensionalNode->SetControlPoint(worldCoordinates1,0);
+  bidimensionalNode->SetControlPoint(worldCoordinates2,1);
+  bidimensionalNode->SetControlPoint(worldCoordinates3,2);
+  bidimensionalNode->SetControlPoint(worldCoordinates4,3);
 
-  bidimensionalNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, bidimensionalNode);
+  // save distance to MRML
+  double distance1 = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+  double distance2 = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates3,worldCoordinates4));
+  rep->SetDistance1(distance1);
+  rep->SetDistance2(distance2);
+
+  bidimensionalNode->SetBidimensionalMeasurement(distance1,distance2);
 
   // enable processing of modified events
   this->m_Updating = 0;
+  bidimensionalNode->DisableModifiedEventOff();
+
+  bidimensionalNode->Modified();
+  bidimensionalNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, bidimensionalNode);
+
 
 }
 
@@ -444,20 +501,23 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     vtkHandleWidget *h3 = this->GetSeed(2);
     vtkHandleWidget *h4 = this->GetSeed(3);
 
-    double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
-    double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
-    double* position3 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
-    double* position4 = vtkHandleRepresentation::SafeDownCast(h4->GetRepresentation())->GetDisplayPosition();
+    double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+    double* displayCoordinates2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
+    double* displayCoordinates3 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
+    double* displayCoordinates4 = vtkHandleRepresentation::SafeDownCast(h4->GetRepresentation())->GetDisplayPosition();
 
     double worldCoordinates1[4];
     double worldCoordinates2[4];
     double worldCoordinates3[4];
     double worldCoordinates4[4];
 
-    this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates1);
-    this->GetDisplayToWorldCoordinates(position2[0],position2[1],worldCoordinates2);
-    this->GetDisplayToWorldCoordinates(position3[0],position3[1],worldCoordinates3);
-    this->GetDisplayToWorldCoordinates(position4[0],position4[1],worldCoordinates4);
+    this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
+    this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);
+    this->GetDisplayToWorldCoordinates(displayCoordinates3[0],displayCoordinates3[1],worldCoordinates3);
+    this->GetDisplayToWorldCoordinates(displayCoordinates4[0],displayCoordinates4[1],worldCoordinates4);
+
+    double distance1 = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+    double distance2 = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates3,worldCoordinates4));
 
     vtkMRMLAnnotationBidimensionalNode *bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::New();
 
@@ -466,6 +526,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     bidimensionalNode->SetControlPoint(worldCoordinates2,1);
     bidimensionalNode->SetControlPoint(worldCoordinates3,2);
     bidimensionalNode->SetControlPoint(worldCoordinates4,3);
+    bidimensionalNode->SetBidimensionalMeasurement(distance1,distance2);
 
     bidimensionalNode->Initialize(this->GetMRMLScene());
 

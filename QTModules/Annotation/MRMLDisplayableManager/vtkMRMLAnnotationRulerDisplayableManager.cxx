@@ -406,8 +406,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
   this->m_Updating = 0;
   rulerNode->DisableModifiedEventOff();
 
-  //rulerNode->Modified();
-
+  rulerNode->Modified();
   rulerNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, rulerNode);
 
 }
@@ -437,14 +436,14 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     vtkHandleWidget *h2 = this->GetSeed(1);
 
     // convert the coordinates
-    double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
-    double* position2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
+    double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+    double* displayCoordinates2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
 
     double worldCoordinates1[4];
     double worldCoordinates2[4];
 
-    this->GetDisplayToWorldCoordinates(position1[0],position1[1],worldCoordinates1);
-    this->GetDisplayToWorldCoordinates(position2[0],position2[1],worldCoordinates2);
+    this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
+    this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);
 
     double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
 

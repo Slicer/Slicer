@@ -297,11 +297,13 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
     // Update the standard settings of all widgets if the widget is displayable in the current geoemtry
     if (this->IsWidgetDisplayable(this->m_SliceNode, annotationNode))
       {
+      // in 2D, the widget is displayable at this point so check its visibility or lock status from MRML
       this->Helper->UpdateWidget(annotationNode);
       }
     }
   else
     {
+    // in 3D, always update the widget according to the mrml settings of lock and visibility status
     this->Helper->UpdateWidget(annotationNode);
     }
 
