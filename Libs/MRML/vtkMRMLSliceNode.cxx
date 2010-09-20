@@ -67,6 +67,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->JumpMode = OffsetJumpSlice;
   
   this->OrientationString = NULL;
+  this->OrientationReference = NULL;
 
     // calculated by UpdateMatrices()
   this->XYToSlice = vtkMatrix4x4::New();
@@ -116,6 +117,10 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
   if ( this->OrientationString )
     {
     delete [] this->OrientationString;
+    }
+  if ( this->OrientationReference )
+    {
+    delete [] this->OrientationReference;
     }
   this->SetLayoutName(NULL);
 }
@@ -176,6 +181,7 @@ void vtkMRMLSliceNode::SetOrientationToAxial()
     this->SliceToRAS->SetElement(2, 2,  1.0);
 
     this->SetOrientationString( "Axial" );
+    this->SetOrientationReference( "Axial" );
     this->UpdateMatrices();
 }
 
@@ -196,6 +202,7 @@ void vtkMRMLSliceNode::SetOrientationToSagittal()
     this->SliceToRAS->SetElement(2, 2,  0.0);
 
     this->SetOrientationString( "Sagittal" );
+    this->SetOrientationReference( "Sagittal" );
     this->UpdateMatrices();
 }
 
@@ -217,6 +224,7 @@ void vtkMRMLSliceNode::SetOrientationToCoronal()
     this->SliceToRAS->SetElement(2, 2,  0.0);
 
     this->SetOrientationString( "Coronal" );
+    this->SetOrientationReference( "Coronal" );
     this->UpdateMatrices();
 }
 
@@ -490,6 +498,10 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " orientation=\"" << this->OrientationString << "\"";
     }
+  if (this->OrientationReference)
+    {
+    of << indent << " orientationReference=\"" << this->OrientationReference << "\"";
+    }
   of << indent << " jumpMode=\"" << this->JumpMode << "\"";
   of << indent << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
   of << indent << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
@@ -610,6 +622,10 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       {
       this->SetOrientationString( attValue );
       }
+   else if (!strcmp(attName, "orientationReference")) 
+      {
+      this->SetOrientationReference( attValue );
+      }
     else if (!strcmp(attName, "layoutName")) 
       {
       this->SetLayoutName( attValue );
@@ -681,6 +697,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   this->SetSliceVisible(node->GetSliceVisible());
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
   this->SetOrientationString(node->GetOrientationString());
+  this->SetOrientationReference(node->GetOrientationReference());
 
   this->JumpMode = node->JumpMode;
   this->ActiveSlice = node->ActiveSlice;
@@ -1297,7 +1314,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
 
   for (row = 0; row < 3; row++)
     {
-    if ( !strcmp(this->GetOrientationString(), "Sagittal") )
+    if ( !strcmp(this->GetOrientationReference(), "Sagittal") )
       {
       // first column is 'Posterior'
       this->SliceToRAS->SetElement(row, 0, alignedRAS[3][row]);
@@ -1306,7 +1323,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
       // third column is 'Right'
       this->SliceToRAS->SetElement(row, 2, alignedRAS[0][row]);
       }
-    else if ( !strcmp(this->GetOrientationString(), "Coronal") )
+    else if ( !strcmp(this->GetOrientationReference(), "Coronal") )
       {
       // first column is 'Left'
       this->SliceToRAS->SetElement(row, 0, alignedRAS[1][row]);
@@ -1315,9 +1332,18 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
       // third column is 'Anterior'
       this->SliceToRAS->SetElement(row, 2, alignedRAS[2][row]);
       }
+    else if ( !strcmp(this->GetOrientationReference(), "Axial") )
+      {
+      // first column is 'Left'
+      this->SliceToRAS->SetElement(row, 0, alignedRAS[1][row]);
+      // second column is 'Anterior'
+      this->SliceToRAS->SetElement(row, 1, alignedRAS[2][row]);
+      // third column is 'Superior'
+      this->SliceToRAS->SetElement(row, 2, alignedRAS[4][row]);
+      }
     else 
       {
-      // if not Sagittal or Coronal , then assume it is Axial (could also be 'Reformat')
+      // if not Axial, Sagittal, or Coronal, then assume it is Axial (could also be 'Reformat')
       // but since we don't have a plan for that, map it to Axial
       // first column is 'Left'
       this->SliceToRAS->SetElement(row, 0, alignedRAS[1][row]);

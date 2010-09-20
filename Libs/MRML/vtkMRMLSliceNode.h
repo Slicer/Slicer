@@ -104,6 +104,15 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetStringMacro (OrientationString);
   vtkSetStringMacro (OrientationString);
 
+  /// Description
+  /// The OrientationReference is a place to store the last orientation
+  /// that was explicitly selected.  This way if they RotateToVolumePlane
+  /// is called repeatedly it will always return the same plane
+  /// (without the hint, it would first try to match, say, Coronal, and then
+  /// try to match 'Reformat' but would not know what overall orientation to pick).
+  vtkGetStringMacro (OrientationReference);
+  vtkSetStringMacro (OrientationReference);
+
   /// 
   /// Size of the slice plane in millimeters
   vtkGetVector3Macro (FieldOfView, double);
@@ -255,6 +264,7 @@ protected:
   double FieldOfView[3];
   int Dimensions[3];
   char *OrientationString;
+  char *OrientationReference;
 
   int LayoutGridRows;
   int LayoutGridColumns;
