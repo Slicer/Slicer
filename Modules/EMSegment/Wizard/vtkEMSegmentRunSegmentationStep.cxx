@@ -996,8 +996,10 @@ void vtkEMSegmentRunSegmentationStep::ShowROIGUI(vtkKWWidget* parent)
     double rasDimensions[3];
     double rasCenter[3];
     double rasBounds[6];
-
-    vtkSlicerSliceLogic::GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
+   
+    // Kilian: Commented out next line bc vtkSlicerSliceLogic does not exist anymore
+    cout << "vtkEMSegmentRunSegmentationStep::ShowROIGUI:DOES not work corectly anymore ! "<< endl;
+    //vtkSlicerSliceLogic::GetVolumeRASBox(volumeNode, rasDimensions, rasCenter);
     //cout << "Center : " << rasCenter[0] << " " << rasCenter[1] << " " << rasCenter[2] << endl;
     //cout << "Dimension: " << rasDimensions[0] << " " << rasDimensions[1] << " " << rasDimensions[2] << endl;
 
