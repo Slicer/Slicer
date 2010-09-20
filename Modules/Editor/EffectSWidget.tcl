@@ -471,7 +471,9 @@ itcl::body EffectSWidget::postApply {} {
   set targetImage [$node GetImageData]
   switch $scope {
     "all" {
-      $targetImage DeepCopy $_outputLabel
+      if { $_outputLabel != "" } {
+        $targetImage DeepCopy $_outputLabel
+      }
     }
     "visible" {
       set slicePaint [vtkImageSlicePaint New]
@@ -627,6 +629,20 @@ proc EffectSWidget::Add {effect} {
     set sliceGUI [$sw cget -sliceGUI]
     if { [info command $sliceGUI] != "" } {
       $effect #auto $sliceGUI
+    }
+  }
+}
+
+proc EffectSWidget::RotateToVolumePlanes {} {
+  foreach sw [itcl::find objects -class SliceSWidget] {
+    set sliceGUI [$sw cget -sliceGUI]
+    if { [info command $sliceGUI] != "" } {
+      set logic [$sliceGUI GetLogic]
+      set sliceNode [$logic GetSliceNode]
+      set volumeNodeID [[$logic GetSliceCompositeNode] GetBackgroundVolumeID]
+      set volumeNode [$::slicer3::MRMLScene GetNodeByID $volumeNodeID]
+      $sliceNode RotateToVolumePlane $volumeNode
+      $sliceNode UpdateMatrices
     }
   }
 }

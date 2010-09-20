@@ -70,6 +70,7 @@ if { [itcl::find class HelperBox] == "" } {
     method createMerge { } {} ;# make a merge volume for the current selection
     method newMerge { } {} ;# prompt for a merge volume even if one exists
     method select {} {} ;# select the master volume node
+    method rotateSlicesToImage {} {} ;# make sure all slices are aligned with Bb/Label orientation
     method mergeVolume {} {} ;# helper to get the merge volume for the current selected master
     method setMergeVolume { {mergeVolume ""} } {} ;# let the user explicitly set merge volume or with dialog
     method setMasterVolume { masterVolume } {} ;# programmatically set the master (invokes the gui callback indirectly
@@ -174,9 +175,14 @@ itcl::body HelperBox::select { } {
       $this colorSelectDialog
     }
   }
+  EffectSWidget::RotateToVolumePlanes ;# make sure slices are aligned to volumes
   [$o(mergeName) GetWidget] SetText $mergeText
   $this updateStructures
 }
+
+itcl::body HelperBox::rotateSlicesToImage {} {
+}
+
 
 itcl::body HelperBox::setVolumes { masterVolume mergeVolume } {
   # set both volumes at the same time - trick the callback into 
