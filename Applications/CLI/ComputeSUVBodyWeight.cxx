@@ -31,6 +31,8 @@
 #include "vtkLookupTable.h"
 #include "vtkColorTransferFunction.h"
 
+#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLColorNode.h"
 
 //...
 //...............................................................................................
@@ -737,6 +739,86 @@ double DecayCorrection (parameters &list, double inVal )
   return ( correctedVal );
 }
 
+//...
+//...............................................................................................
+//...
+const char *MapLabelIDtoColorName ( int id )
+{
+
+  // This method is used with a hardcoded colormap for now
+  // for Horky PETCT project.
+  // TODO: finalize atlas to be used and take that from command line.
+  const char *name;
+  switch ( id )
+    {
+    case 0:
+      name = "Background";
+      break;
+    case 1:
+      name = "R_caudate_head";
+      break;
+    case 2:
+      name = "L_caudate_head";
+      break;
+    case 3:
+      name = "R_thalamus";
+      break;
+    case 4:
+      name = "L_thalamus";
+      break;
+    case 5:
+      name = "R_frontal_cortex";
+      break;
+    case 6:
+      name = "L_frontal_cortex";
+      break;
+    case 7:
+      name = "R_parietal_cortex";
+      break;
+    case 8:
+      name = "L_parietal_cortex";
+      break;
+    case 9:
+      name = "R_cerebellum";
+      break;
+    case 10:
+      name = "L_cerebellum";
+      break;
+    case 11:
+      name = "R_hippo";
+      break;
+    case 12:
+      name = "L_hippo";
+      break;
+    case 13:
+      name = "R_paraventric_WM";
+      break;
+    case 14:
+      name = "L_paraventric_WM";
+      break;
+    case 15:
+      name = "CC";
+      break;
+    case 16:
+      name = "R_olfactory_gyrus";
+      break;
+    case 17:
+      name = "L_olfactory_gyrus";
+      break;
+    case 18:
+      name = "All_CSF_space";
+      break;
+    case 19:
+      name = "All_white_matter";
+      break;
+    default:
+      name = "";
+      break;
+    }
+  return (name );
+}
+
+
 
 //...
 //...............................................................................................
@@ -853,6 +935,7 @@ double DecayCorrection (parameters &list, double inVal )
   int hi = static_cast<int>(stataccum->GetMax()[0]);
   stataccum->Delete();
 
+  std::string labelName;
   int NumberOfVOIs = 0;
   for(int i = lo; i <= hi; i++ ) 
     {
@@ -863,6 +946,16 @@ double DecayCorrection (parameters &list, double inVal )
       continue;
       }
 
+    labelName.clear();
+    labelName = MapLabelIDtoColorName(i);
+    if ( labelName.empty() )
+      {
+      labelName.clear();
+      labelName = "unknown";      
+      }
+
+    //--- get label name from labelID
+    
     suvmax = 0.0;
     suvmean = 0.0;
 
@@ -959,8 +1052,8 @@ double DecayCorrection (parameters &list, double inVal )
         }
       //--- for each value..
       //--- format looks like:
-      // patientID, studyDate, dose, blood glucose, labelID, suvmax, suvmean, chemoStartDate, chemoEndDate ...
-      ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmax << ", " << suvmean << ", " << ", " << ", " << ", " << ", "<<std::endl;
+      // patientID, studyDate, dose, blood glucose, labelID, suvmax, suvmean, chemoStartDate, chemoEndDate, labelName ...
+      ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmax << ", " << suvmean << ", " << labelName.c_str() << ", " << ", " << ", " << ", "<<std::endl;
       ofile << ss.str();
       ofile.close();
       ss.str("");
