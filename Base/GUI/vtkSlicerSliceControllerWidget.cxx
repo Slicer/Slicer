@@ -2159,14 +2159,17 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller,
       nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceNode");          
       
       // if compareview, send only compareview slices to 3D main viewer; otherwise, only send red, yellow, and green to 3D main viewer 
-      if ( layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView )
+      if ( layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView 
+           && ((strncmp(this->SliceNode->GetLayoutName(), "Compare", 7) == 0)
+               || (strcmp(this->SliceNode->GetLayoutName(), "Red") == 0)))
         {
         for ( i=0; i<nnodes; i++)
           {
           snode = vtkMRMLSliceNode::SafeDownCast (
             this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceNode"));
           
-          if (strncmp(snode->GetLayoutName(), "Compare", 7) == 0)
+          if ((strncmp(snode->GetLayoutName(), "Compare", 7) == 0)
+              || (strcmp(snode->GetLayoutName(), "Red") == 0))
             {
             this->MRMLScene->SaveStateForUndo ( snode );
             snode->SetSliceVisible ( !vis );
