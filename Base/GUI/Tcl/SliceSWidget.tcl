@@ -42,6 +42,7 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartWindowXY "0 0"
     variable _actionStartFOV "250 250 250"
     variable _actionLink 0
+    variable _actionStartOrientation ""
     variable _swidgets ""
     variable _inWidget 0
 
@@ -562,7 +563,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
 
       $this requestDelayedAnnotation
-      if { [$_sliceNode GetOrientationString] == "Reformat" && [$_interactor GetControlKey] } {
+      if { [$_interactor GetControlKey] } {
         set _actionState "Rotate"
       } else {
         set _actionState "Zoom"
@@ -571,6 +572,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       set _actionStartWindowXY "$windowx $windowy"
       set _actionStartViewportOrigin "$rox $roy"
       set _actionStartRAS $ras
+      set _actionStartOrientation [$_sliceNode GetOrientationString]
       set _actionLink [$_sliceCompositeNode GetLinkedControl]
       $_sliceCompositeNode SetLinkedControl 0
 
@@ -604,6 +606,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
       $this requestDelayedAnnotation
       set _actionState ""
+      set _actionStartOrientation ""
       $sliceGUI SetGrabID ""
       $sliceGUI SetGUICommandAbortFlag 1
     }
@@ -1301,38 +1304,7 @@ itcl::body SliceSWidget::moveSlice { delta } {
     set offset [$logic GetSliceOffset]
     set spacing [$logic GetLowestVolumeSliceSpacing]
 
-    set logics ""
-    set link [$_sliceCompositeNode GetLinkedControl]
-    set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
-    if { $link == 1 && $ssgui != "" } {
-        set numsgui [$ssgui GetNumberOfSliceGUI]
-
-        for { set i 0 } { $i < $numsgui } { incr i } {
-            if { $i == 0} {
-                set sgui [$ssgui GetFirstSliceGUI]
-                set lname [$ssgui GetFirstSliceGUILayoutName]
-            } else {
-                set sgui [$ssgui GetNextSliceGUI $lname]
-                set lname [$ssgui GetNextSliceGUILayoutName $lname]
-            }
-            
-            if { [string first "Compare" $lname] != 0 } {
-              continue
-            } 
-
-            set currSliceNode [$sgui GetSliceNode]
-            set currOrientString [$currSliceNode GetOrientationString]
-
-            if { [string compare $orientString $currOrientString] == 0 } {
-                lappend logics [$sgui GetLogic]
-            } 
-        }
-    } 
-    
-    set logic [$sliceGUI GetLogic]
-    if { [lsearch $logics $logic] == -1 } {
-        lappend logics $logic
-    }
+    set logics [$this getLinkedSliceLogics]
 
     # set the slice offset for all slice logics (there may be a flaw
     # in this logic as modifying a single logic may trigger a
@@ -1408,7 +1380,7 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
 
             set currSliceNode [$sgui GetSliceNode]
             set currOrientString [$currSliceNode GetOrientationString]
-            if { [string compare $orientString $currOrientString] == 0 } {
+            if { [string compare $orientString $currOrientString] == 0 || ($_actionStartOrientation != "" && [string compare $_actionStartOrientation $currOrientString] == 0) } {
                 lappend logics [$sgui GetLogic]
             }
         }
@@ -1455,7 +1427,7 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
 
             set currSliceNode [$sgui GetSliceNode]
             set currOrientString [$currSliceNode GetOrientationString]
-            if { [string compare $orientString $currOrientString] == 0 } {
+            if { [string compare $orientString $currOrientString] == 0 || ($_actionStartOrientation != "" && [string compare $_actionStartOrientation $currOrientString] == 0)  } {
                 lappend guis $sgui
             }
         }

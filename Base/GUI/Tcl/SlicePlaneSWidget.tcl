@@ -25,6 +25,7 @@ if { [itcl::find class SlicePlaneSWidget] == "" } {
     inherit SWidget
 
     variable _observations ""
+    variable _actionStartOrientation ""
 
     constructor {args} {}
     destructor {}
@@ -33,9 +34,10 @@ if { [itcl::find class SlicePlaneSWidget] == "" } {
     method updateViewer {} {}
     method processEvent {{caller ""} {event ""}} {}
     method updateWidgetFromNode {sliceNode planeRepresentation} {}
-    method updateNodeFromWidget {sliceNode planeRepresentation} {}
+    method updateNodeFromWidget {sliceNode planeRepresentation {updatelinked 0} } {}
     method getLinkedSliceLogics {} {}
-    method isCompareView {} {}
+    method isCompareViewMode {} {}
+    method isCompareViewer {} {}
   }
 }
 
@@ -127,7 +129,9 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
   $o(planeRepresentation) SetDrawPlane 0
   $o(planeRepresentation) PlaceWidget -100 100 -100 100 -100 100
 
-  $::slicer3::Broker AddObservation $o(planeWidget) InteractionEvent "::SWidget::ProtectedCallback $this processEvent $o(planeWidget) AnyEvent"
+  $::slicer3::Broker AddObservation $o(planeWidget) InteractionEvent "::SWidget::ProtectedCallback $this processEvent $o(planeWidget) InteractionEvent"
+  $::slicer3::Broker AddObservation $o(planeWidget) EndInteractionEvent "::SWidget::ProtectedCallback $this processEvent $o(planeWidget) EndInteractionEvent"
+  $::slicer3::Broker AddObservation $o(planeWidget) StartInteractionEvent "::SWidget::ProtectedCallback $this processEvent $o(planeWidget) StartInteractionEvent"
 }
 
 
@@ -193,7 +197,7 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
     }
   }
 
-  # catch any chagnes to the active viewer
+  # catch any changes to the active viewer
   $this updateViewer
 
 
@@ -241,7 +245,17 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
   # widget manipulated, so update the slice node to match
   #
   if { $caller == $o(planeWidget) } {
-    $this updateNodeFromWidget $sliceNode $o(planeRepresentation)
+    if { $event == "StartInteractionEvent" } {
+      set _actionStartOrientation [$_sliceNode GetOrientationString]
+    } elseif { $event == "InteractionEvent" } {
+      set tlink [$_sliceCompositeNode GetLinkedControl]
+      $_sliceCompositeNode SetLinkedControl 0  
+      $this updateNodeFromWidget $sliceNode $o(planeRepresentation)
+      $_sliceCompositeNode SetLinkedControl $tlink
+    } elseif { $event == "EndInteractionEvent" } {
+      $this updateNodeFromWidget $sliceNode $o(planeRepresentation) 1
+      set _actionStartOrientation ""
+    }
   }
 
   #
@@ -261,7 +275,7 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
 #-------------------------------------------------------------------------------
 #- update the slice node from the representation (it holds the geometry)
 
-itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeRepresentation} {
+itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeRepresentation {updatelinked 0} } {
 
   set sliceToRAS [$sliceNode GetSliceToRAS]
 
@@ -310,16 +324,26 @@ itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeRepresentatio
     set sliceLogics [$this getLinkedSliceLogics]
 
     if { [$sliceNode GetLayoutName] == "Red" } {
-      foreach logic $sliceLogics {
-        set snode [$logic GetSliceNode]
-        if { [$snode GetLayoutName] == "Yellow" } {
-          $o(scratchMatrix) Multiply4x4 [$sliceNode GetSliceToRAS] $o(redToYellowMatrix) $o(scratchMatrix)
-          [$snode GetSliceToRAS] DeepCopy $o(scratchMatrix)
-          $snode UpdateMatrices
-        } elseif { [$snode GetLayoutName] == "Green" } {
-          $o(scratchMatrix) Multiply4x4 [$sliceNode GetSliceToRAS] $o(redToGreenMatrix) $o(scratchMatrix)
-          [$snode GetSliceToRAS] DeepCopy $o(scratchMatrix)
-          $snode UpdateMatrices
+      if { [$this isCompareViewMode] == 0} {
+        foreach logic $sliceLogics {
+          set snode [$logic GetSliceNode]
+          if { [$snode GetLayoutName] == "Yellow" } {
+            $o(scratchMatrix) Multiply4x4 [$sliceNode GetSliceToRAS] $o(redToYellowMatrix) $o(scratchMatrix)
+            [$snode GetSliceToRAS] DeepCopy $o(scratchMatrix)
+            $snode UpdateMatrices
+          } elseif { [$snode GetLayoutName] == "Green" } {
+            $o(scratchMatrix) Multiply4x4 [$sliceNode GetSliceToRAS] $o(redToGreenMatrix) $o(scratchMatrix)
+            [$snode GetSliceToRAS] DeepCopy $o(scratchMatrix)
+            $snode UpdateMatrices
+          }
+        }
+      } else {
+        if { $updatelinked == 1} {
+          foreach logic $sliceLogics {
+            set snode [$logic GetSliceNode]
+             [$snode GetSliceToRAS] DeepCopy [$sliceNode GetSliceToRAS]
+             $snode UpdateMatrices
+          }
         }
       }
     } elseif { [$sliceNode GetLayoutName] == "Yellow" } {
@@ -348,6 +372,14 @@ itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeRepresentatio
           $snode UpdateMatrices
         }
       }
+    } elseif { [$this isCompareViewer] == 1} {
+        if { $updatelinked == 1} {
+          foreach logic $sliceLogics {
+             set snode [$logic GetSliceNode]
+             [$snode GetSliceToRAS] DeepCopy [$sliceNode GetSliceToRAS]
+             $snode UpdateMatrices
+          }
+        }
     }
   }
 }
@@ -379,82 +411,68 @@ itcl::body SlicePlaneSWidget::updateWidgetFromNode {sliceNode planeRepresentatio
 # The list of linked logics either contains the current slice (because 
 # linking is off) or a list of logics (one for the current slice and others 
 # for linked slices).
-
 itcl::body SlicePlaneSWidget::getLinkedSliceLogics { } {
-  set logic [$sliceGUI GetLogic]
-  set sliceNode [$logic GetSliceNode]
-  set orientString [$sliceNode GetOrientationString]
+    set logic [$sliceGUI GetLogic]
+    set sliceNode [$logic GetSliceNode]
+    set orientString [$sliceNode GetOrientationString]
 
-  set logics ""
-  set link [$_sliceCompositeNode GetLinkedControl]
-  if { [$this isCompareView] == 1 && $link == 1 } {
-    set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
-    set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
-    set viewArrangement [$layout GetViewArrangement]
+    set logics ""
+    set link [$_sliceCompositeNode GetLinkedControl]
+    if { $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
+        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+        set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
+        set viewArrangement [$layout GetViewArrangement]
 
-    set numsgui [$ssgui GetNumberOfSliceGUI]
+        set numsgui [$ssgui GetNumberOfSliceGUI]
 
-    for { set i 0 } { $i < $numsgui } { incr i } {
-      if { $i == 0} {
-        set sgui [$ssgui GetFirstSliceGUI]
-        set lname [$ssgui GetFirstSliceGUILayoutName]
-          } else {
-            set sgui [$ssgui GetNextSliceGUI $lname]
-            set lname [$ssgui GetNextSliceGUILayoutName $lname]
-          }
+        for { set i 0 } { $i < $numsgui } { incr i } {
+            if { $i == 0} {
+                set sgui [$ssgui GetFirstSliceGUI]
+                set lname [$ssgui GetFirstSliceGUILayoutName]
+            } else {
+                set sgui [$ssgui GetNextSliceGUI $lname]
+                set lname [$ssgui GetNextSliceGUILayoutName $lname]
+            }
 
-          if { [string first "Compare" $lname] != 0 } {
-            continue
-          } 
+            if { $lname != "Red" && [string first "Compare" $lname] != 0 } {
+              continue
+            } 
 
-          set currSliceNode [$sgui GetSliceNode]
-          set currOrientString [$currSliceNode GetOrientationString]
-          if { [string compare $orientString $currOrientString] == 0 } {
-            lappend logics [$sgui GetLogic]
-          }
+            set currSliceNode [$sgui GetSliceNode]
+            set currOrientString [$currSliceNode GetOrientationString]
+            if { [string compare $orientString $currOrientString] == 0 || ($_actionStartOrientation != "" && [string compare $_actionStartOrientation $currOrientString] == 0) } {
+                lappend logics [$sgui GetLogic]
+            }
+        }
+    } else {
+        lappend logics [$sliceGUI GetLogic]
     }
-  } elseif { [$this isCompareView] == 0 && $link == 1} {
-    set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
-    set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
-    set viewArrangement [$layout GetViewArrangement]
-
-    set numsgui [$ssgui GetNumberOfSliceGUI]
-
-    for { set i 0 } { $i < $numsgui } { incr i } {
-      if { $i == 0} {
-        set sgui [$ssgui GetFirstSliceGUI]
-        set lname [$ssgui GetFirstSliceGUILayoutName]
-      } else {
-        set sgui [$ssgui GetNextSliceGUI $lname]
-        set lname [$ssgui GetNextSliceGUILayoutName $lname]
-      }
-
-      set currSliceNode [$sgui GetSliceNode]
-      set currOrientString [$currSliceNode GetOrientationString]
-      lappend logics [$sgui GetLogic]
-    }
-  } else {
-    lappend logics [$sliceGUI GetLogic]
-  }
 
   return $logics
 }
 
-
 # Are we in a compare view mode?
-itcl::body SlicePlaneSWidget::isCompareView { } {
+itcl::body SlicePlaneSWidget::isCompareViewMode { } {
+
   set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
   set viewArrangement [$layout GetViewArrangement]
 
   if { $viewArrangement == 12 } {
-    set lname [$_sliceNode GetSingletonTag]
-    if { [string first "Compare" $lname] != 0 } {
-      return 0
-    } 
     return 1
   } else {
     return 0
   }
+}
+
+# Is this a compare viewer? (not including the red viewer)
+itcl::body SlicePlaneSWidget::isCompareViewer { } {
+
+  set lname [$_sliceNode GetSingletonTag]
+  if { [string first "Compare" $lname] != 0 } {
+    return 0
+  } 
+
+  return 1
 }
 
 #-------------------------------------------------------------------------------
