@@ -740,12 +740,9 @@ int TestAnnAngleWidget3D( int argc, char *argv[] )
   // Remove the observers so we can go interactive. Without this the "-I"
   // testing option fails.
 
-  int retVal = vtkRegressionTestImage( renWin );
-  if ( retVal == vtkRegressionTester::DO_INTERACTOR)
-    {
+
     iren->Start();
-    }
-  recorder->Off();
+
 
   mapper->Delete();
   actor->Delete();
@@ -760,7 +757,6 @@ int TestAnnAngleWidget3D( int argc, char *argv[] )
   ren1->Delete();
   recorder->Delete();
   ss->Delete();
-  
-  return !retVal;
+  return true;
 }
 
