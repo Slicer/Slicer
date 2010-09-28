@@ -652,6 +652,19 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double * 
 }
 
 //---------------------------------------------------------------------------
+/// Check if there are real changes between two sets of displayCoordinates
+bool vtkMRMLAnnotationDisplayableManager::GetDisplayCoordinatesChanged(double * displayCoordinates1, double * displayCoordinates2)
+{
+  bool changed = false;
+
+  if (fabs(displayCoordinates1[0]-displayCoordinates2[0])>0.1 || fabs(displayCoordinates1[1]-displayCoordinates2[1])>0.1) {
+    changed = true;
+  }
+
+  return changed;
+}
+
+//---------------------------------------------------------------------------
 /// Check if it is the correct displayableManager
 //---------------------------------------------------------------------------
 bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()

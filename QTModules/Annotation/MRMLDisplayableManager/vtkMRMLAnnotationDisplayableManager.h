@@ -133,6 +133,9 @@ protected:
   void GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates);
   void GetWorldToDisplayCoordinates(double * worldCoordinates, double * displayCoordinates);
 
+  /// Check if there are real changes between two sets of displayCoordinates
+  bool GetDisplayCoordinatesChanged(double * displayCoordinates1, double * displayCoordinates2);
+
   ///
   /// Check if it is the right displayManager
   virtual bool IsCorrectDisplayableManager();

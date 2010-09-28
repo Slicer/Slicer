@@ -299,6 +299,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
   double displayCoordinates1[4];
   double displayCoordinates2[4];
+  double displayCoordinatesBuffer1[4];
+  double displayCoordinatesBuffer2[4];
 
   // update the distance measurement
   rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
@@ -310,8 +312,18 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
     this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
 
-    rep->SetPoint1DisplayPosition(displayCoordinates1);
-    rep->SetPoint2DisplayPosition(displayCoordinates2);
+    // only update the position, if coordinates really change
+    rep->GetPoint1DisplayPosition(displayCoordinatesBuffer1);
+    rep->GetPoint2DisplayPosition(displayCoordinatesBuffer2);
+
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+      {
+      rep->SetPoint1DisplayPosition(displayCoordinates1);
+      }
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+      {
+      rep->SetPoint2DisplayPosition(displayCoordinates2);
+      }
 
     }
   else

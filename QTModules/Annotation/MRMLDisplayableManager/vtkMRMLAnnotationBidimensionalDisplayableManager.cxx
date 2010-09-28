@@ -341,6 +341,10 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
   double displayCoordinates2[4];
   double displayCoordinates3[4];
   double displayCoordinates4[4];
+  double displayCoordinatesBuffer1[4];
+  double displayCoordinatesBuffer2[4];
+  double displayCoordinatesBuffer3[4];
+  double displayCoordinatesBuffer4[4];
 
   // update the distance measurement
   rep->SetDistance1(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
@@ -355,10 +359,29 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
     this->GetWorldToDisplayCoordinates(worldCoordinates3,displayCoordinates3);
     this->GetWorldToDisplayCoordinates(worldCoordinates4,displayCoordinates4);
 
-    rep->SetPoint1DisplayPosition(displayCoordinates1);
-    rep->SetPoint2DisplayPosition(displayCoordinates2);
-    rep->SetPoint3DisplayPosition(displayCoordinates3);
-    rep->SetPoint4DisplayPosition(displayCoordinates4);
+
+    // only update the position, if coordinates really change
+    rep->GetPoint1DisplayPosition(displayCoordinatesBuffer1);
+    rep->GetPoint2DisplayPosition(displayCoordinatesBuffer2);
+    rep->GetPoint3DisplayPosition(displayCoordinatesBuffer3);
+    rep->GetPoint4DisplayPosition(displayCoordinatesBuffer4);
+
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+      {
+      rep->SetPoint1DisplayPosition(displayCoordinates1);
+      }
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+      {
+      rep->SetPoint2DisplayPosition(displayCoordinates2);
+      }
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+      {
+      rep->SetPoint3DisplayPosition(displayCoordinates3);
+      }
+    if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+      {
+      rep->SetPoint4DisplayPosition(displayCoordinates4);
+      }
 
     }
   else
