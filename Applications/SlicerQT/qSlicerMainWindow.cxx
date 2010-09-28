@@ -242,7 +242,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindow_connect(ViewLayoutTabbed3D);
   qSlicerMainWindow_connect(ViewLayoutTabbedSlice);
   qSlicerMainWindow_connect(ViewLayoutCompare);
-  qSlicerMainWindow_connect(ViewLayoutSideBySideCompare);
+  qSlicerMainWindow_connect(ViewLayoutSideBySideLightbox);
   
   qSlicerMainWindow_connect(WindowPythonInteractor);
 

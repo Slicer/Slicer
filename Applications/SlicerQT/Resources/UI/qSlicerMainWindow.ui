@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -70,7 +70,7 @@
      <addaction name="actionViewLayoutTabbed3D"/>
      <addaction name="actionViewLayoutTabbedSlice"/>
      <addaction name="actionViewLayoutCompare"/>
-     <addaction name="actionViewLayoutSideBySideCompare"/>
+     <addaction name="actionViewLayoutSideBySideLightbox"/>
     </widget>
     <addaction name="actionViewExtensionManager"/>
     <addaction name="actionViewCacheRemoteIOManager"/>
@@ -168,11 +168,11 @@
       </widget>
      </item>
      <item>
-      <widget class="qSlicerModulePanel" name="ModulePanel"/>
+      <widget class="qSlicerModulePanel" name="ModulePanel" native="true"/>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="SliceControlsCollapsibleWidget">
-       <property name="text">
+      <widget class="ctkCollapsibleButton" name="SliceControlsCollapsibleWidget" native="true">
+       <property name="text" stdset="0">
         <string>Manipulate Slice Views</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -196,16 +196,13 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget">
-       <property name="text">
+      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget" native="true">
+       <property name="text" stdset="0">
         <string>Manipulate 3D View</string>
-       </property>
-       <property name="contentsFrameShape">
-        <enum>QFrame::StyledPanel</enum>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget"/>
+         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget" native="true"/>
         </item>
        </layout>
       </widget>
@@ -281,7 +278,7 @@
    <addaction name="actionViewLayoutTabbed3D"/>
    <addaction name="actionViewLayoutTabbedSlice"/>
    <addaction name="actionViewLayoutCompare"/>
-   <addaction name="actionViewLayoutSideBySideCompare"/>
+   <addaction name="actionViewLayoutSideBySideLightbox"/>
   </widget>
   <widget class="qSlicerMouseModeToolBar" name="MouseModeToolBar">
    <property name="enabled">
@@ -807,13 +804,16 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutSideBySideCompare">
+  <action name="actionViewLayoutSideBySideLightbox">
    <property name="icon">
     <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
    </property>
    <property name="text">
-    <string>Side-by-side Compare</string>
+    <string>Side-by-side Lightbox</string>
+   </property>
+   <property name="toolTip">
+    <string>Side-by-side Lightbox</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -861,11 +861,6 @@
    <header>qMRMLSlicesControllerToolBar.h</header>
   </customwidget>
   <customwidget>
-   <class>qMRMLThreeDViewsControllerWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLThreeDViewsControllerWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
@@ -881,11 +876,18 @@
    <class>qSlicerModulePanel</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerModulePanel.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerMouseModeToolBar</class>
    <extends>QToolBar</extends>
    <header>qSlicerMouseModeToolBar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLThreeDViewsControllerWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLThreeDViewsControllerWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
