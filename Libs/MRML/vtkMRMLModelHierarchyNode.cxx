@@ -181,9 +181,9 @@ vtkMRMLModelNode* vtkMRMLModelHierarchyNode::GetModelNode()
 vtkMRMLModelDisplayNode* vtkMRMLModelHierarchyNode::GetModelDisplayNode()
 {
   vtkMRMLModelDisplayNode* node = NULL;
-  if (this->GetScene() && this->GetDisplayNodeID() )
+  vtkMRMLNode* snode = Superclass::GetDisplayNode();
+  if (snode)
     {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->GetDisplayNodeID());
     node = vtkMRMLModelDisplayNode::SafeDownCast(snode);
     }
   return node;
@@ -211,21 +211,10 @@ void vtkMRMLModelHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
 vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetUnExpandedParentNode()
 {
   vtkMRMLModelHierarchyNode *node = NULL;
-  if (!this->GetExpanded()) 
+  vtkMRMLDisplayableHierarchyNode *dhnode = Superclass::GetUnExpandedParentNode();
+  if (dhnode != NULL)
     {
-    node = this;
-    }
-  else 
-    {
-    vtkMRMLModelHierarchyNode *parent = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetParentNode());
-    if (parent)
-      {
-      node =  parent->GetUnExpandedParentNode();
-      }
-    else
-      {
-      node =  NULL;
-      }
+    node = vtkMRMLModelHierarchyNode::SafeDownCast(dhnode);
     }
   return node;
 }
@@ -234,15 +223,11 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetUnExpandedParentNode()
 vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetTopParentNode()
 {
   vtkMRMLModelHierarchyNode *node = NULL;
-  vtkMRMLModelHierarchyNode *parent = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetParentNode());
-  if (parent == NULL) 
+  vtkMRMLDisplayableHierarchyNode *dhnode = Superclass::GetTopParentNode();
+  if (dhnode)
     {
-    node = this;
-    }
-  else 
-    {
-    node =  parent->GetTopParentNode();
-    }
+    node = vtkMRMLModelHierarchyNode::SafeDownCast(dhnode);
+    }  
   return node;
 }
 
