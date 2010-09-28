@@ -51,7 +51,13 @@ int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
    std::cout << "Top parent node = " << (hnode2 == NULL ? "NULL" : hnode2->GetID()) << std::endl;
   vtkSmartPointer<vtkCollection> col =  vtkSmartPointer<vtkCollection>::New();
   node1->GetChildrenModelNodes(col);
-  std::cout << "Number of children model nodes = " << col->GetNumberOfItems() << std::endl;
+  int numChildren =  col->GetNumberOfItems();
+  std::cout << "Number of children model nodes = " << numChildren << std::endl;
+  if (numChildren != 1)
+    {
+    std::cerr << "Expected 1 child, got " << numChildren << std::endl;
+    return EXIT_FAILURE;
+    }
   vtkSmartPointer<vtkMRMLModelHierarchyNode> hnode3 = node1->GetModelHierarchyNode(scene, "myid");
    std::cout << "Model hierarchy node = " << (hnode3 == NULL ? "NULL" : hnode3->GetID()) << std::endl;
   
