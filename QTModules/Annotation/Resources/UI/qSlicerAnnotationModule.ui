@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>524</width>
-    <height>547</height>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -390,6 +390,28 @@
           </layout>
          </item>
          <item>
+          <widget class="qMRMLTreeWidget" name="mrmlTreeWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::InternalMove</enum>
+           </property>
+           <property name="indentation">
+            <number>10</number>
+           </property>
+           <property name="uniformRowHeights">
+            <bool>true</bool>
+           </property>
+           <property name="listenNodeModifiedEvent" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QTableWidget" name="tableWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -627,6 +649,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
