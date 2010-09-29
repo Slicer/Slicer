@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>524</width>
+    <width>616</width>
     <height>662</height>
    </rect>
   </property>
@@ -109,7 +109,7 @@
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Polyline</string>
+            <string>Bidimensional measurement</string>
            </property>
            <property name="text">
             <string/>
@@ -370,6 +370,13 @@
              <property name="icon">
               <iconset resource="../qSlicerAnnotationModule.qrc">
                <normaloff>:/Icons/AnnotationMoveDown.png</normaloff>:/Icons/AnnotationMoveDown.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addHierarchyButton">
+             <property name="text">
+              <string>+H</string>
              </property>
             </widget>
            </item>

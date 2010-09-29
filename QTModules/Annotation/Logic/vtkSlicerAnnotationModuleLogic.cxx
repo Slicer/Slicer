@@ -126,6 +126,7 @@ vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
   this->m_Widget = 0;
 
   this->m_LastAddedAnnotationNode = 0;
+
 }
 
 //-----------------------------------------------------------------------------
@@ -265,7 +266,24 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
     return;
     }
 
-  this->AddNodeCompleted(annotationNode);
+  if (!this->m_HierarchyHelper)
+    {
+    // no helper exists yet, configure it
+    this->m_HierarchyHelper = vtkMRMLAnnotationHierarchyHelper::New();
+    this->m_HierarchyHelper->SetMRMLScene(this->GetMRMLScene());
+    }
+
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = this->m_HierarchyHelper->AddNewHierarchyNode();
+  if (!hierarchyNode)
+    {
+    vtkErrorMacro("OnMRMLSceneNodeAddedEvent: No hierarchyNode found.")
+    return;
+    }
+  hierarchyNode->SetDisplayableNodeID(annotationNode->GetID());
+  hierarchyNode->Modified();
+
+  // we pass the hierarchy node along - it includes the pointer to the actual annotationNode
+  this->AddNodeCompleted(hierarchyNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -1220,10 +1238,10 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
 //---------------------------------------------------------------------------
 // called after a new annotation node was added, now add it to the table in the GUI
 //---------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode * node)
+void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationHierarchyNode* hierarchyNode)
 {
 
-  if (!node)
+  if (!hierarchyNode)
     {
     return;
     }
@@ -1233,8 +1251,16 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationNode * no
     return;
     }
 
-  this->m_Widget->addNodeToTable(node->GetID());
-  this->m_LastAddedAnnotationNode = node;
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(hierarchyNode->GetDisplayableNode());
+
+  if (!annotationNode)
+    {
+    vtkErrorMacro("AddNodeCompleted: Could not get annotationNode.")
+    return;
+    }
+
+  this->m_Widget->addNodeToTable(annotationNode->GetID());
+  this->m_LastAddedAnnotationNode = annotationNode;
 
 }
 

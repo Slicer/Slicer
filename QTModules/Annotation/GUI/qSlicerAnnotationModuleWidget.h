@@ -50,6 +50,8 @@ public:
     // Update an existing annotation in the list
     void updateAnnotationInTableByID(const char* id, const char * measurementValue, const char* textValue);
 
+    void addNodeToTree(const char* hierarchyNodeID, const char* annotationNodeID);
+
     //BTX
     /// Different Annotation Types
     enum

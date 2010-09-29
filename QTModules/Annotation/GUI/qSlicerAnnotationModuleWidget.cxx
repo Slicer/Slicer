@@ -494,6 +494,9 @@ void qSlicerAnnotationModuleWidget::setup()
   Q_D(qSlicerAnnotationModuleWidget);
   d->setupUi(this);
 
+  this->disableAllAnnotationTools();
+  this->enableAllAnnotationTools();
+
   // annotation tools
   this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
       SLOT(onFiducialNodeButtonClicked()));
@@ -1802,11 +1805,11 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
   Q_D(qSlicerAnnotationModuleWidget);
 
   d->textTypeButton->setEnabled(true);
-  d->angleTypeButton->setEnabled(true);
-  d->roiTypeButton->setEnabled(true);
+  //d->angleTypeButton->setEnabled(true);
+  //d->roiTypeButton->setEnabled(true);
   d->fiducialTypeButton->setEnabled(true);
-  d->splineTypeButton->setEnabled(true);
-  d->stickyTypeButton->setEnabled(true);
+  //d->splineTypeButton->setEnabled(true);
+  //d->stickyTypeButton->setEnabled(true);
   d->rulerTypeButton->setEnabled(true);
   d->bidimensionalTypeButton->setEnabled(true);
 }
@@ -2022,3 +2025,39 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 
 }
 
+
+//-----------------------------------------------------------------------------
+// Add an annotation to the tree
+// After a mrml node was added, this method gets called to update the table in the GUI
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, const char* annotationNodeID)
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+
+  // add hierarchy, if not exists
+  //d->mrmlTreeWidget->
+
+
+  // add annotation node
+  int index = this->getIndexByNodeID(annotationNodeID);
+
+  if (index >= 0)
+    {
+    // node already exists
+    return;
+    }
+
+  m_IDs.push_back(annotationNodeID);
+  m_index++;
+
+  this->m_lastAddedIndex = this->m_index;
+
+  const char * measurementValue = d->logic()->GetAnnotationMeasurement(
+      annotationNodeID, false);
+  const char * textValue = d->logic()->GetAnnotationText(annotationNodeID);
+
+  //d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
+  //this->selectRowByIndex(m_index);
+
+}

@@ -4,6 +4,9 @@
 // Annotation QT includes
 #include "GUI/qSlicerAnnotationModuleWidget.h"
 
+// Annotation MRML includes
+#include "MRML/vtkMRMLAnnotationHierarchyHelper.h"
+
 // Slicer Logic includes
 #include "vtkSlicerModuleLogic.h"
 
@@ -96,7 +99,7 @@ public:
   void AddAnnotationNode(const char * nodeDescriptor);
 
   // After a node was added, propagate to widget
-  void AddNodeCompleted(vtkMRMLAnnotationNode* node);
+  void AddNodeCompleted(vtkMRMLAnnotationHierarchyNode* hierarchyNode);
 
   // Cancel the current annotation placement or remove last annotation node
   void CancelCurrentOrRemoveLastAddedAnnotationNode();
@@ -238,9 +241,11 @@ private:
   Q_DECLARE_PRIVATE(vtkSlicerAnnotationModuleLogic);
   Q_DISABLE_COPY(vtkSlicerAnnotationModuleLogic);
 
-  qSlicerAnnotationModuleWidget *m_Widget;
+  qSlicerAnnotationModuleWidget* m_Widget;
 
-  vtkMRMLAnnotationNode *m_LastAddedAnnotationNode;
+  vtkMRMLAnnotationNode* m_LastAddedAnnotationNode;
+
+  vtkMRMLAnnotationHierarchyHelper* m_HierarchyHelper;
 
 };
 
