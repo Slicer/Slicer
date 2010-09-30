@@ -45,9 +45,11 @@ public:
   typedef typename SuperClassType::TCharImage TLabelImage;
   typedef typename TLabelImage::Pointer TLabelImagePointer;
 
+  typedef typename SuperClassType::TFloatImage TFloatImage;
+  typedef typename TFloatImage::Pointer TFloatImagePointer;
 
-  typedef typename SuperClassType::TDoubleImage TDoubleImage;
-  typedef typename TDoubleImage::Pointer TDoubleImagePointer;
+  // typedef typename SuperClassType::TDoubleImage TDoubleImage;
+  // typedef typename TDoubleImage::Pointer TDoubleImagePointer;
 
   typedef typename SuperClassType::MaskImageType TMaskImage;
 
@@ -86,7 +88,7 @@ protected:
      2. median absolute deviation (MAD)
   */
   TLabelImagePointer m_featureComputed; // if feature at this point is computed, then is 1
-  std::vector<TDoubleImagePointer> m_featureImageList;
+  std::vector<TFloatImagePointer> m_featureImageList;
 
 
   double m_kernelWidthFactor; // kernel_width = empirical_std/m_kernelWidthFactor, Eric has it at 10.0

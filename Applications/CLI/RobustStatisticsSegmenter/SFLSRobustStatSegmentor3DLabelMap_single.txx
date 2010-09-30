@@ -234,7 +234,9 @@ CSFLSRobustStatSegmentor3DLabelMap< TPixel >
 
   for (long ifeature = 0; ifeature < m_numberOfFeature; ++ifeature)
     {
-      TDoubleImagePointer fimg = TDoubleImage::New();
+      //TDoubleImagePointer fimg = TDoubleImage::New();
+
+      TFloatImagePointer fimg = TFloatImage::New();
       fimg->SetRegions(this->mp_img->GetLargestPossibleRegion() );
       fimg->Allocate();
       fimg->CopyInformation(this->mp_img);
@@ -829,9 +831,9 @@ CSFLSRobustStatSegmentor3DLabelMap< TPixel >
       m_kernelWidthFactor = 0.1;
     }
 
-  if (f > 20.0)
+  if (f > 60.0)
     {
-      m_kernelWidthFactor = 20.0;
+      m_kernelWidthFactor = 60.0;
     }
 
   m_kernelWidthFactor = f;
@@ -857,7 +859,7 @@ CSFLSRobustStatSegmentor3DLabelMap< TPixel >
 //   fil.close();
 
 
-  double f = h*(20.0 - 0.1) + 0.1;
+  double f = h*(60.0 - 0.1) + 0.1;
 
   setKernelWidthFactor(f);
 
