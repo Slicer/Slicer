@@ -56,7 +56,9 @@ qSlicerEMSegmentDefinePreprocessingStepPrivate::qSlicerEMSegmentDefinePreprocess
 //----------------------------------------------------------------------------
 void qSlicerEMSegmentDefinePreprocessingStepPrivate::setTaskPreprocessingSetting()
 {
+  #ifndef QT_NO_DEBUG
   Q_Q(qSlicerEMSegmentDefinePreprocessingStep);
+  #endif
   Q_ASSERT( q->mrmlManager());
 
   // TODO this needs to be ported to Qt/CTK, depending on how the tcl files will be dealt with
@@ -64,12 +66,12 @@ void qSlicerEMSegmentDefinePreprocessingStepPrivate::setTaskPreprocessingSetting
   // vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   // if (!mrmlManager)
   //   {
-  //     return;
+  //   return;
   //   }
 
   // if (! mrmlManager->GetNode()->GetTaskPreprocessingSetting()) 
   //   {
-  //     return;
+  //   return;
   //   }
 
   // std::string oldText = mrmlManager->GetNode()->GetTaskPreprocessingSetting();
@@ -87,33 +89,35 @@ void qSlicerEMSegmentDefinePreprocessingStepPrivate::setTaskPreprocessingSetting
 
   // for (int i =0 ; i < (int) volumeMenuButtonID.size() ; i++)
   //   {
-  //      defText << "|V";
-  //      if (this->volumeMenuButtonID[i]) {
-  //    vtkMRMLVolumeNode* volumeNode = mrmlManager->GetVolumeNode(this->volumeMenuButtonID[i]);
-  //    if (!volumeNode) 
-  //      {
-  //        vtkErrorMacro("Volume Node for ID " << this->volumeMenuButtonID[i] << " does not exists" );
-  //        defText << "NULL";
-  //      } 
-  //    else 
-  //      {
-  //        defText << volumeNode->GetID();
-  //      }
-  //      }
+  //   defText << "|V";
+  //   if (this->volumeMenuButtonID[i])
+  //     {
+  //     vtkMRMLVolumeNode* volumeNode = mrmlManager->GetVolumeNode(this->volumeMenuButtonID[i]);
+  //     if (!volumeNode) 
+  //       {
+  //       vtkErrorMacro("Volume Node for ID " << this->volumeMenuButtonID[i] << " does not exists" );
+  //       defText << "NULL";
+  //       } 
   //     else 
-  //   {
-  //     defText << "NULL";
-  //   }
+  //       {
+  //       defText << volumeNode->GetID();
+  //       }
+  //     }
+  //     else 
+  //       {
+  //       defText << "NULL";
+  //       }
+  //     }
   //   }
 
 
   // for (int i =0 ; i < (int)  this->textEntry.size(); i++)
   //   {
-  //     defText << "|E";
-  //     if (this->textEntry[i] && this->textEntry[i]->GetWidget())
-  //   {
+  //   defText << "|E";
+  //   if (this->textEntry[i] && this->textEntry[i]->GetWidget())
+  //     {
   //     defText << this->textEntry[i]->GetWidget()->GetValue();
-  //   } 
+  //     } 
   //   }
 
   // mrmlManager->GetNode()->SetTaskPreprocessingSetting(defText.str().c_str());

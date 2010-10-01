@@ -46,7 +46,6 @@ qSlicerModelsDialogPrivate::~qSlicerModelsDialogPrivate()
 //-----------------------------------------------------------------------------
 void qSlicerModelsDialogPrivate::init()
 {
-  Q_Q(qSlicerModelsDialog);
   this->setupUi(this);
   this->AddModelToolButton->setIcon(this->style()->standardIcon(QStyle::SP_FileIcon));
   this->AddModelDirectoryToolButton->setIcon(this->style()->standardIcon(QStyle::SP_DirIcon));

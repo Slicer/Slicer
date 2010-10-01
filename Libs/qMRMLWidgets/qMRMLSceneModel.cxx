@@ -582,7 +582,7 @@ int qMRMLSceneModel::columnCount(const QModelIndex &_parent)const
 //------------------------------------------------------------------------------
 QVariant qMRMLSceneModel::data(const QModelIndex &_index, int role)const
 {
-#ifndef _NDEBUG
+#ifndef QT_NO_DEBUG
   Q_D(const qMRMLSceneModel);
 #endif
   if (!_index.isValid())
@@ -798,7 +798,7 @@ void qMRMLSceneModel::DoCallback(vtkObject* vtk_obj, unsigned long event,
 void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   Q_UNUSED(scene);
-#ifndef _NDEBUG
+#ifndef QT_NO_DEBUG
   Q_D(qMRMLSceneModel);
   Q_ASSERT(scene != 0);
   Q_ASSERT(scene == d->MRMLScene);
@@ -916,7 +916,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
 void qMRMLSceneModel::onMRMLSceneDeleted(vtkObject* scene)
 {
   Q_UNUSED(scene);
-#ifndef _NDEBUG
+#ifndef QT_NO_DEBUG
   Q_D(qMRMLSceneModel);
   Q_ASSERT(scene == d->MRMLScene);
 #endif
@@ -1036,7 +1036,7 @@ int qMRMLSceneModel::rowCount(const QModelIndex &_parent) const
 //------------------------------------------------------------------------------
 bool qMRMLSceneModel::setData(const QModelIndex &modelIndex, const QVariant &value, int role)
 {
-#ifndef _NDEBUG
+#ifndef QT_NO_DEBUG
   Q_D(const qMRMLSceneModel);
 #endif
   if (!modelIndex.isValid())
