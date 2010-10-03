@@ -115,10 +115,14 @@ void vtkMRMLLogic::RemoveUnreferencedDisplayNodes()
       {
       continue;
       }
-    displayNode = displayableNode->GetDisplayNode();
-    if (displayNode)
+    int numDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+    for (int n=0; n<numDisplayNodes; n++) 
       {
-      referencedNodes.insert(displayNode);
+      displayNode = displayableNode->GetNthDisplayNode(n);
+      if (displayNode)
+        {
+        referencedNodes.insert(displayNode);
+        }
       }
     }  
   
