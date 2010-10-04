@@ -197,15 +197,15 @@ endif()
 # KWWidgets option
 #------------------------------------------------------------------------------  
 
-# KWWidgets on by default.
-option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" ON)
+# KWWidgets off by default.
+option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" OFF)
 
 
 #------------------------------------------------------------------------------
 # Qt option
 #------------------------------------------------------------------------------  
 
-option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" OFF)
+option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" ON)
 
 if(Slicer3_USE_QT)
   set(minimum_required_qt_version "4.6.2")
@@ -242,9 +242,8 @@ if(Slicer3_USE_QT)
     # Includes Qt headers
     INCLUDE(${QT_USE_FILE})
 
-    option(Slicer3_USE_PYTHONQT "Integrate a PythonQt interpreter into Slicer." OFF)
-    option(Slicer3_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" OFF)
-    mark_as_advanced(Slicer3_USE_PYTHONQT_WITH_TCL)
+    option(Slicer3_USE_PYTHONQT "Integrate a PythonQt interpreter into Slicer." ON)
+    option(Slicer3_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON)
   
   else()
     MESSAGE(FATAL_ERROR "error: Qt >= ${minimum_required_qt_version} was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
@@ -256,7 +255,7 @@ endif()
 # Python option
 #------------------------------------------------------------------------------  
 
-option(Slicer3_USE_PYTHON "Build Slicer with Python support" ON)
+option(Slicer3_USE_PYTHON "Build Slicer with Python support" OFF)
 
 if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
 

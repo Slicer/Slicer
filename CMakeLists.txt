@@ -209,9 +209,9 @@ option(USE_VALGRIND "Run tests through valgrind." OFF)
 ENDIF(Slicer3_BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
-# By default, build with KWWidget
+# By default, build without KWWidget (TODO: eliminate this option for slicer4)
 #
-option(Slicer3_USE_KWWIDGETS "Build Slicer3 with KWWidgets." ON)
+option(Slicer3_USE_KWWIDGETS "Build Slicer3 with KWWidgets." OFF)
 
 #-----------------------------------------------------------------------------
 # Since modules are KWWidgets based, unset there variables
