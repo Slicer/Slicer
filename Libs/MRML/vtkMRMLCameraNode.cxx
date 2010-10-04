@@ -70,17 +70,20 @@ vtkMRMLCameraNode::vtkMRMLCameraNode()
 
   this->SetAndObserveCamera(camera); 
   camera->Delete();
+
+  this->AppliedTransform = vtkMatrix4x4::New();
  }
 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode::~vtkMRMLCameraNode()
 {
-  if (this->Camera)
-    {
-    this->Camera->SetUserViewTransform(NULL);
-    }
   this->SetAndObserveCamera(NULL);
   delete [] this->InternalActiveTag;
+
+  if (this->AppliedTransform)
+    {
+    this->AppliedTransform->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -115,6 +118,28 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " activetag=\"" << this->GetActiveTag() << "\"";
     }
+
+  if (this->GetAppliedTransform()) 
+    {
+    std::stringstream ss;
+    for (int row=0; row<4; row++) 
+      {
+      for (int col=0; col<4; col++) 
+        {
+        ss << this->AppliedTransform->GetElement(row, col);
+        if (!(row==3 && col==3)) 
+          {
+          ss << " ";
+          }
+        }
+      if ( row != 3 )
+        {
+        ss << " ";
+        }
+      }
+    of << indent << " appliedTransform=\"" << ss.str() << "\"";
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -197,6 +222,20 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
         }
         }
       }
+    else if (!strcmp(attName, "appliedTransform")) 
+      {
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      for (int row=0; row<4; row++) 
+        {
+        for (int col=0; col<4; col++) 
+          {
+          ss >> val;
+          this->GetAppliedTransform()->SetElement(row, col, val);
+          }
+        }
+      }
     }  
     this->EndModify(disabledModify);
 
@@ -219,6 +258,7 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   this->SetViewUp(node->GetViewUp());
   this->SetParallelProjection(node->GetParallelProjection());
   this->SetParallelScale(node->GetParallelScale());
+  this->AppliedTransform->DeepCopy(node->GetAppliedTransform());
   // Important, do not call SetActiveTag() or the owner of the current tag
   // (node) will lose its tag, and the active camera will be untagged, and
   // a the active camera of the current view will be reset to NULL, and a 
@@ -254,6 +294,8 @@ void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << indent << "ActiveTag: " <<
     (this->GetActiveTag() ? this->GetActiveTag() : "(none)") << "\n";
+  os << indent << "AppliedTransform: " ;
+  this->GetAppliedTransform()->PrintSelf(os, indent.GetNextIndent());
 }
 
 //----------------------------------------------------------------------------
@@ -291,22 +333,55 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
       tnode == vtkMRMLTransformNode::SafeDownCast(caller) && 
       event == vtkMRMLTransformableNode::TransformModifiedEvent)
     {
-    vtkTransform *user_transform = 
-      vtkTransform::SafeDownCast(this->Camera->GetUserViewTransform());
-    if (!user_transform)
-      {
-      user_transform = vtkTransform::New();
-      this->Camera->SetUserViewTransform(user_transform);
-      user_transform->Delete();
-      }
+
+    /*
+     * calculate the delta transform Td, which is the incremental transform
+     * that has not yet been applied to the current camera paramters.
+     * 
+     * We started with Po (original parameter)
+     * We have Pa = param with Ta (AppliedTransform applied)
+     * we want Pn = param with new transform applied
+     * Since Pn = Tn * Po
+     * and Tn = Td * Ta
+     * then
+     * Td = Ta-1 * Tn
+     * and
+     * Pn = Td * Pa
+     * then we save Tn as Ta for next time
+     */
+    vtkSmartPointer<vtkMatrix4x4> deltaTransform = vtkSmartPointer<vtkMatrix4x4>::New();
     vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
     transformToWorld->Identity();
     tnode->GetMatrixTransformToWorld(transformToWorld);
-    double temp = transformToWorld->GetElement(1, 3);
-    transformToWorld->SetElement(1, 3, transformToWorld->GetElement(2, 3));
-    transformToWorld->SetElement(2, 3, temp);
-    user_transform->SetMatrix(transformToWorld);
-    user_transform->Modified(); // since, sadly, SetMatrix does not Modified()
+
+    this->AppliedTransform->Invert();
+    vtkMatrix4x4::Multiply4x4(transformToWorld, this->AppliedTransform, deltaTransform);
+
+    // transform the points and the vector through delta and store back to camera
+    double v[4];
+    // position is point - include translation with 1 in homogeneous coordinate
+    v[0] = this->Camera->GetPosition()[0];
+    v[1] = this->Camera->GetPosition()[1];
+    v[2] = this->Camera->GetPosition()[2];
+    v[3] = 1;
+    deltaTransform->MultiplyPoint(v,v);
+    this->Camera->SetPosition(v[0],v[1],v[2]);
+    // focal point is point - include translation with 1 in homogeneous coordinate
+    v[0] = this->Camera->GetFocalPoint()[0];
+    v[1] = this->Camera->GetFocalPoint()[1];
+    v[2] = this->Camera->GetFocalPoint()[2];
+    v[3] = 1;
+    deltaTransform->MultiplyPoint(v,v);
+    this->Camera->SetFocalPoint(v[0],v[1],v[2]);
+    // view up is vector - exclude translation with 0 in homogeneous coordinate
+    v[0] = this->Camera->GetViewUp()[0];
+    v[1] = this->Camera->GetViewUp()[1];
+    v[2] = this->Camera->GetViewUp()[2];
+    v[3] = 0;
+    deltaTransform->MultiplyPoint(v,v);
+    this->Camera->SetViewUp(v[0],v[1],v[2]);
+
+    this->GetAppliedTransform()->DeepCopy(transformToWorld);
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
 }

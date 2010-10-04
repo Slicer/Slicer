@@ -21,6 +21,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformableNode.h"
+#include "vtkMatrix4x4.h"
 #include "vtkCamera.h"
 
 class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
@@ -139,6 +140,14 @@ public:
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
+  ///
+  /// This is the transform that was last applied
+  /// to the position, focal point, and up vector
+  /// (for any new transforms, the incremental difference
+  /// is calculated and applied to the parameters)
+  vtkGetObjectMacro(AppliedTransform, vtkMatrix4x4);
+  vtkSetObjectMacro(AppliedTransform, vtkMatrix4x4);
+
   /// 
   /// Events
   //BTX
@@ -179,6 +188,8 @@ protected:
 
   vtkSetReferenceStringMacro(InternalActiveTag);
   char *InternalActiveTag;
+
+  vtkMatrix4x4 *AppliedTransform;
 };
 
 #endif
