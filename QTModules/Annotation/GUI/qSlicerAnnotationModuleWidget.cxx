@@ -591,9 +591,9 @@ void qSlicerAnnotationModuleWidget::moveUpSelected()
 
 void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 {
-  Q_D(qSlicerAnnotationModuleWidget);
+  //Q_D(qSlicerAnnotationModuleWidget);
 
-  d->logic()->SaveMRMLScene();
+  //d->logic()->SaveMRMLScene();
 }
 
 //-----------------------------------------------------------------------------
@@ -917,6 +917,8 @@ void qSlicerAnnotationModuleWidget::onSaveAnnotationButtonClicked()
 
 void qSlicerAnnotationModuleWidget::onGenerateReportButtonClicked()
 {
+
+  /*
   Q_D(qSlicerAnnotationModuleWidget);
 
   if (m_ReportDialog == NULL)
@@ -1065,7 +1067,7 @@ void qSlicerAnnotationModuleWidget::onGenerateReportButtonClicked()
   m_ReportDialog, SIGNAL(filenameSelected()), this,
       SLOT(saveAnnotationReport()));
   this->m_report = report;
-
+*/
 }
 
 bool qSlicerAnnotationModuleWidget::saveAnnotationReport()
@@ -1466,7 +1468,7 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
       for (int i = selectedRows.size() - 1; i >= 0; --i)
         {
 
-        d->logic()->RemoveAnnotationByID(m_IDs[selectedRows[i]]);
+        //d->logic()->RemoveAnnotationByID(m_IDs[selectedRows[i]]);
         m_IDs.erase(m_IDs.begin() + selectedRows[i]);
         m_index--;
         }
@@ -1481,9 +1483,9 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
         {
         for (int i = 0; i <= m_index; ++i)
           {
-          thevalue = d->logic()->GetAnnotationMeasurement(m_IDs[i], false);
-          format = d->logic()->GetAnnotationTextFormatProperty(
-              d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
+          //thevalue = d->logic()->GetAnnotationMeasurement(m_IDs[i], false);
+          //format = d->logic()->GetAnnotationTextFormatProperty(
+           //   d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
           this->updateAnnotationTable(i, thevalue, format);
 
           }
@@ -1546,11 +1548,11 @@ int qSlicerAnnotationModuleWidget::getIndexByNodeID(const char* nodeID)
 
 void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text, char* nodeId)
 {
-  Q_D(qSlicerAnnotationModuleWidget);
+/*  Q_D(qSlicerAnnotationModuleWidget);
   d->logic()->ModifyPropertiesAndWidget(
       d->logic()->GetMRMLScene()->GetNodeByID(nodeId), d->logic()->TEXT,
       text.toLatin1().data());
-  d->updateTextItem(this->getIndexByNodeID(nodeId), text);
+  d->updateTextItem(this->getIndexByNodeID(nodeId), text);*/
 }
 
 void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
@@ -1634,8 +1636,7 @@ void qSlicerAnnotationModuleWidget::onItemSelectionChanged()
 QString qSlicerAnnotationModuleWidget::getAnnotationIconName(int index, bool isEdit)
 {
   Q_D(qSlicerAnnotationModuleWidget);
-  return d->logic()->GetIconName(d->logic()->GetMRMLScene()->GetNodeByID(
-      m_IDs[index]), isEdit);
+  return d->logic()->GetAnnotationIcon(m_IDs[index]);
 }
 
 //-----------------------------------------------------------------------------
@@ -2028,7 +2029,7 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 
 //-----------------------------------------------------------------------------
 // Add an annotation to the tree
-// After a mrml node was added, this method gets called to update the table in the GUI
+// After a mrml node was added, this method gets called to update the tree in the GUI
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, const char* annotationNodeID)
 {
@@ -2036,7 +2037,7 @@ void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, c
 
 
   // add hierarchy, if not exists
-  //d->mrmlTreeWidget->
+
 
 
   // add annotation node

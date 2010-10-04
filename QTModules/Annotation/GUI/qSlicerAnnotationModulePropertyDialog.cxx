@@ -896,34 +896,6 @@ void qSlicerAnnotationModulePropertyDialog::Undo(vtkMRMLNode* node)
    */
 }
 
-void qSlicerAnnotationModulePropertyDialog::SetButtonText(int type)
-{
-  switch (type)
-    {
-    case vtkSlicerAnnotationModuleLogic::TEXT_COLOR:
-      this->ui.textUnselectedColorPickerButton->setText("Selected Text Color");
-      return;
-    case vtkSlicerAnnotationModuleLogic::TEXT_SELECTED_COLOR:
-      this->ui.textSelectedColorPickerButton->setText("Text Color");
-      return;
-    case vtkSlicerAnnotationModuleLogic::POINT_COLOR:
-      this->ui.pointUnselectedColorPickerButton->setText("Selected Point Color");
-      return;
-    case vtkSlicerAnnotationModuleLogic::POINT_SELECTED_COLOR:
-      this->ui.pointSelectedColorPickerButton->setText("Point Color");
-      return;
-    case vtkSlicerAnnotationModuleLogic::LINE_COLOR:
-      this->ui.lineUnselectedColorPickerButton->setText("Selected Line Color");
-      return;
-    case vtkSlicerAnnotationModuleLogic::LINE_SELECTED_COLOR:
-      this->ui.lineSelectedColorPickerButton->setText("Line Color");
-      return;
-    default:
-      std::cout << "SetButtonText type invalid" << std::endl;
-      return;
-    }
-}
-
 void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor qcolor)
 {
   double color[3];
@@ -996,36 +968,22 @@ void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
 
 void qSlicerAnnotationModulePropertyDialog::onPointColorChanged(QColor qcolor)
 {
-  double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->POINT_COLOR, color);
-  this->SetButtonText(this->m_logic->POINT_COLOR);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onPointSelectedColorChanged(QColor qcolor)
 {
-  double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->POINT_SELECTED_COLOR, color);
-  this->SetButtonText(this->m_logic->POINT_SELECTED_COLOR);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onPointSizeChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->POINT_SIZE, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onPointOpacityChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->POINT_OPACITY, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onPointAmbientChanged(double value)
@@ -1038,71 +996,47 @@ void qSlicerAnnotationModulePropertyDialog::onPointAmbientChanged(double value)
 }
 void qSlicerAnnotationModulePropertyDialog::onPointDiffuseChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->POINT_DIFFUSE, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->POINT_SPECULAR, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onLineColorChanged(QColor qcolor)
 {
-  double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->LINE_COLOR, color);
-  this->SetButtonText(this->m_logic->LINE_COLOR);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onLineSelectedColorChanged(QColor qcolor)
 {
-  double color[3];
-  this->TurnQColorToColorArray(color, qcolor);
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->LINE_SELECTED_COLOR, color);
-  this->SetButtonText(this->m_logic->LINE_SELECTED_COLOR);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onLineWidthChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->LINE_WIDTH, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onLineOpacityChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->LINE_OPACITY, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onLineAmbientChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->LINE_AMBIENT, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onLineDiffuseChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->LINE_DIFFUSE, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::onLineSpecularChanged(double value)
 {
-  this->m_logic->ModifyPropertiesAndWidget(
-      this->m_logic->GetMRMLScene()->GetNodeByID(m_nodeId),
-      this->m_logic->LINE_SPECULAR, &value);
+
 }
 
 void qSlicerAnnotationModulePropertyDialog::UpdateLockUnlockStatus(bool isLock)

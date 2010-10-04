@@ -153,10 +153,6 @@ ENDFOREACH()
 #
 #-----------------------------------------------------------------------
 SET(MODULE_MRML_SRCS
-  vtkMRMLAnnotationHierarchyHelper.cxx
-  vtkMRMLAnnotationHierarchyHelper.h
-
-
   vtkMRMLAnnotationHierarchyNode.cxx
   vtkMRMLAnnotationHierarchyNode.h
   vtkMRMLAnnotationNode.cxx
