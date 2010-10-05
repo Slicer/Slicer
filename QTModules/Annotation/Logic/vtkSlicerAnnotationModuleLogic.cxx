@@ -299,6 +299,90 @@ void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNod
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
+// Register the MRML node classes to the attached scene.
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::RegisterNodes()
+{
+  if(!this->GetMRMLScene())
+    {
+    return;
+    }
+
+  //
+  // The core nodes
+  //
+
+  // base nodes
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationNode);
+  annotationNode->Delete();
+
+  vtkMRMLAnnotationDisplayNode* annotationDisplayNode = vtkMRMLAnnotationDisplayNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationDisplayNode);
+  annotationDisplayNode->Delete();
+
+  vtkMRMLAnnotationStorageNode* annotationStorageNode = vtkMRMLAnnotationStorageNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationStorageNode);
+  annotationStorageNode->Delete();
+
+  // Control Points
+  vtkMRMLAnnotationControlPointsNode* annotationControlPointsNode = vtkMRMLAnnotationControlPointsNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationControlPointsNode);
+  annotationControlPointsNode->Delete();
+
+  vtkMRMLAnnotationControlPointsStorageNode* annotationControlPointsStorageNode = vtkMRMLAnnotationControlPointsStorageNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationControlPointsStorageNode);
+  annotationControlPointsStorageNode->Delete();
+
+  vtkMRMLAnnotationPointDisplayNode* annotationControlPointsDisplayNode = vtkMRMLAnnotationPointDisplayNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationControlPointsDisplayNode);
+  annotationControlPointsDisplayNode->Delete();
+
+  // Lines
+  vtkMRMLAnnotationLinesNode* annotationLinesNode = vtkMRMLAnnotationLinesNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationLinesNode);
+  annotationLinesNode->Delete();
+
+  vtkMRMLAnnotationLinesStorageNode* annotationLinesStorageNode = vtkMRMLAnnotationLinesStorageNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationLinesStorageNode);
+  annotationLinesStorageNode->Delete();
+
+  vtkMRMLAnnotationLineDisplayNode* annotationLinesDisplayNode = vtkMRMLAnnotationLineDisplayNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationLinesDisplayNode);
+  annotationLinesDisplayNode->Delete();
+
+  // Text
+  vtkMRMLAnnotationTextDisplayNode* annotationTextDisplayNode = vtkMRMLAnnotationTextDisplayNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationTextDisplayNode);
+  annotationTextDisplayNode->Delete();
+
+  //
+  // Now the actual Annotation tool nodes
+  //
+
+  // Text annotation
+  vtkMRMLAnnotationTextNode* annotationTextNode = vtkMRMLAnnotationTextNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationTextNode);
+  annotationTextNode->Delete();
+
+  // Ruler annotation
+  vtkMRMLAnnotationRulerNode* annotationRulerNode = vtkMRMLAnnotationRulerNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationRulerNode);
+  annotationRulerNode->Delete();
+
+  // Bidimensional annotation
+  vtkMRMLAnnotationBidimensionalNode* annotationBidimensionalNode = vtkMRMLAnnotationBidimensionalNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationBidimensionalNode);
+  annotationBidimensionalNode->Delete();
+
+  // Fiducial annotation
+  vtkMRMLAnnotationFiducialNode* annotationFiducialNode = vtkMRMLAnnotationFiducialNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationFiducialNode);
+  annotationFiducialNode->Delete();
+
+}
+
+//---------------------------------------------------------------------------
 // Return the name of an annotation MRML Node
 //---------------------------------------------------------------------------
 const char * vtkSlicerAnnotationModuleLogic::GetAnnotationName(const char * id)

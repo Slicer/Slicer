@@ -61,7 +61,7 @@ void vtkMRMLAnnotationStickyNode::Initialize(vtkMRMLScene* mrmlScene)
     }
 
     mrmlScene->AddNode(this);
-    mrmlScene->RegisterNodeClass(this);
+
     this->CreateAnnotationTextDisplayNode();
     this->AddText("",1,1);
 

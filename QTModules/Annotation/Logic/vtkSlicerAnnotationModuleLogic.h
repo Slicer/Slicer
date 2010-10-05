@@ -48,6 +48,10 @@ public:
   //
   // Annotation Properties (interface to MRML)
   //
+
+  /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
+  virtual void RegisterNodes();
+
   /// Get the name of an Annotation MRML node
   const char * GetAnnotationName(const char * id);
 
