@@ -963,12 +963,12 @@ int vtkSlicerColorLogic::LoadColorFile(const char *fileName, const char *nodeNam
     }
   else
     {
-    vtkWarningMacro("Unable to read color file " << fileName << ", removing node from scene");
+    vtkWarningMacro("Unable to read color file " << fileName << ", removing storage node from scene");
     if (this->GetMRMLScene())
       {
       node->SetAndObserveStorageNodeID(NULL);
+      node->SetScene(NULL);
       this->GetMRMLScene()->RemoveNode(colorStorageNode);
-      this->GetMRMLScene()->RemoveNode(node);
       }
     }
   vtkDebugMacro("LoadColorFile: failed to reaad color file " << fileName << ", returning null");
