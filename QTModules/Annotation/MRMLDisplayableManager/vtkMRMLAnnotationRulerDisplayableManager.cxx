@@ -166,6 +166,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   VTK_CREATE(vtkInteractorEventRecorder, recorder);
   recorder->SetInteractor(this->GetInteractor());
   recorder->ReadFromInputStringOn();
+
   {
   std::stringstream o;
 

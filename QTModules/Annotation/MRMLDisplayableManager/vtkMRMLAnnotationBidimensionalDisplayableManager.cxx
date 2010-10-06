@@ -167,6 +167,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   recorder->SetInteractor(this->GetInteractor());
   recorder->ReadFromInputStringOn();
 
+  {
   std::ostringstream o;
 
   double position1[2];
@@ -193,13 +194,9 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   o << "LeftButtonReleaseEvent " << position4[0] << " " << position4[1] << " 0 0 0 0 t\n";
   o << "ExitEvent " << position4[0] << " " << position4[1] << " 0 0 113 1 q\n";
 
-  std::string commandstr = o.str();
-  const char* commandstr2 = commandstr.c_str();
-
-  recorder->SetInputString(commandstr2);
+  recorder->SetInputString(o.str().c_str());
   recorder->Play();
-
-
+  }
 
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4];
