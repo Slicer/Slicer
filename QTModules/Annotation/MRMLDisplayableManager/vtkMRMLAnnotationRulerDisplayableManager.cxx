@@ -166,7 +166,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   VTK_CREATE(vtkInteractorEventRecorder, recorder);
   recorder->SetInteractor(this->GetInteractor());
   recorder->ReadFromInputStringOn();
-
+  {
   std::stringstream o;
 
   double position1[2];
@@ -192,7 +192,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   recorder->SetInputString(commandstr2);
   recorder->Play();
-  std::cout << commandstr2 << std::endl;
+  }
 
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4];
