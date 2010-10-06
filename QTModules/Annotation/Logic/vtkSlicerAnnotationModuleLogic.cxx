@@ -649,20 +649,20 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
     return 0;
     }
 
-  if (node->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    return "";
-    }
-  else if (node->IsA("vtkMRMLAnnotationRulerNode"))
+  // reset stringHolder
+  this->m_StringHolder = "";
+
+  if (node->IsA("vtkMRMLAnnotationRulerNode"))
     {
     std::ostringstream ss;
     ss << vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode)->GetDistanceMeasurement();
+
     if (showUnits)
       {
       ss << " [mm]";
       }
 
-    return ss.str().c_str();
+    this->m_StringHolder = ss.str();
     }
   else if (node->IsA("vtkMRMLAnnotationAngleNode"))
     {
@@ -673,19 +673,7 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
       ss << " [degrees]";
       }
 
-    return ss.str().c_str();
-    }
-  else if (node->IsA("vtkMRMLAnnotationStickyNode"))
-    {
-    return "";
-    }
-  else if (node->IsA("vtkMRMLAnnotationTextNode"))
-    {
-    return "";
-    }
-  else if (node->IsA("vtkMRMLAnnotationROINode"))
-    {
-    return "";
+    this->m_StringHolder = ss.str();
     }
   else if (node->IsA("vtkMRMLAnnotationBidimensionalNode"))
     {
@@ -717,14 +705,10 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
       ss << " [mm]";
       }
 
-    return ss.str().c_str();
-    }
-  else if (node->IsA("vtkMRMLAnnotationSplineNode"))
-    {
-    return "";
+    this->m_StringHolder = ss.str();
     }
 
-  return "";
+  return this->m_StringHolder.c_str();
 
 }
 

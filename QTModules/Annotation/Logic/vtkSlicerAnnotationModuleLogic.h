@@ -17,7 +17,6 @@ class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicerAnnotationModuleLogic :
 {
 public:
 
-  // starting Daniel approved code
   static vtkSlicerAnnotationModuleLogic *New();
   vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
@@ -48,7 +47,6 @@ public:
   //
   // Annotation Properties (interface to MRML)
   //
-
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
 
@@ -108,8 +106,6 @@ public:
   /// Add a new Annotation hierarchy node
   vtkMRMLAnnotationHierarchyNode* AddNewHierarchyNode();
 
-  // ^^^^ end of Daniel approved code
-
 protected:
 
   vtkSlicerAnnotationModuleLogic();
@@ -123,6 +119,8 @@ private:
   vtkMRMLAnnotationNode* m_LastAddedAnnotationNode;
 
   vtkMRMLAnnotationHierarchyNode* m_ActiveHierarchy;
+
+  vtksys_stl::string m_StringHolder;
 
 };
 

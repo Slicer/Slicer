@@ -256,6 +256,7 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     tableWidget->resizeColumnToContents(LockColumn);
     }
 
+
   if (tableWidget->item(index, ValueColumn) == 0)
     {
     tableWidget->setItem(index, ValueColumn, new QTableWidgetItem(value));
@@ -1556,9 +1557,9 @@ void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text, char* no
 }
 
 void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
-{
-  //Q_D(qSlicerAnnotationModuleWidget);
-  /*
+{/*
+  Q_D(qSlicerAnnotationModuleWidget);
+
    vtkImageData* image = vtkImageData::New();
    //image = d->logic()->SaveScreenShot();
 
@@ -2019,7 +2020,9 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 
   const char * measurementValue = d->logic()->GetAnnotationMeasurement(
       newNodeID, false);
+
   const char * textValue = d->logic()->GetAnnotationText(newNodeID);
+
 
   d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
   //this->selectRowByIndex(m_index);
@@ -2033,7 +2036,7 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, const char* annotationNodeID)
 {
-  Q_D(qSlicerAnnotationModuleWidget);
+ // Q_D(qSlicerAnnotationModuleWidget);
 
 
   // add hierarchy, if not exists
@@ -2054,9 +2057,9 @@ void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, c
 
   this->m_lastAddedIndex = this->m_index;
 
-  const char * measurementValue = d->logic()->GetAnnotationMeasurement(
-      annotationNodeID, false);
-  const char * textValue = d->logic()->GetAnnotationText(annotationNodeID);
+  //const char * measurementValue = d->logic()->GetAnnotationMeasurement(
+  //    annotationNodeID, false);
+  //const char * textValue = d->logic()->GetAnnotationText(annotationNodeID);
 
   //d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
   //this->selectRowByIndex(m_index);
