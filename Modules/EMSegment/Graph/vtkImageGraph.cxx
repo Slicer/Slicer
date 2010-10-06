@@ -33,7 +33,6 @@ GraphList::GraphList() {
 
 //------------------------------------------------------------------------------
 GraphEntryList::GraphEntryList() {
-  GraphList::GraphList();
   this->GraphEntry     = NULL; 
   this->Next           = NULL; 
   this->IgnoreGraphMinGraphMax = false;
