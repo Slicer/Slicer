@@ -167,7 +167,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   recorder->SetInteractor(this->GetInteractor());
   recorder->ReadFromInputStringOn();
 
-  std::ostringstream o;
+  std::stringstream o;
 
   double position1[2];
   double position2[2];
@@ -186,7 +186,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   o << "LeftButtonReleaseEvent " << position2[0] << " " << position2[1] << " 0 0 0 0 t\n";
   o << "ExitEvent 192 173 0 0 113 1 q\n";
 
-  std::string commandstr = o.str();
+  const std::string& commandstr = o.str();
   const char* commandstr2 = commandstr.c_str();
 
   recorder->SetInputString(commandstr2);
