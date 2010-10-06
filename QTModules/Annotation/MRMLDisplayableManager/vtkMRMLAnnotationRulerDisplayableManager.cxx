@@ -186,12 +186,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   o << "LeftButtonReleaseEvent " << position2[0] << " " << position2[1] << " 0 0 0 0 t\n";
   o << "ExitEvent 192 173 0 0 113 1 q\n";
 
+  {
   std::string commandstr(o.str());
   const char* commandstr2 = commandstr.c_str();
 
   recorder->SetInputString(commandstr2);
   recorder->Play();
-
+  }
 
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4];
