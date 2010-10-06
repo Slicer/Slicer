@@ -40,7 +40,6 @@ GraphEntryList::GraphEntryList() {
 
 //------------------------------------------------------------------------------
 GraphEntryList::~GraphEntryList() {
-   this->GraphList::~GraphList();
    this->GraphEntry = NULL; 
    if (this->Next != NULL) delete this->Next;
 } 
