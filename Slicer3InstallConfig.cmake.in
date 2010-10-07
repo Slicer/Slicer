@@ -46,7 +46,7 @@ set(Slicer3_HOME "${Slicer3_CONFIG_DIR}/../..")
 get_filename_component(Slicer3_HOME ${Slicer3_HOME} ABSOLUTE)
 
 # The CMake macros dir.
-set(Slicer3_CMAKE_DIR "${Slicer3_HOME}/@Slicer_INSTALL_LIB_DIR@/CMake")
+set(Slicer_CMAKE_DIR "${Slicer3_HOME}/@Slicer_INSTALL_LIB_DIR@/CMake")
 
 # Slicer3 Libs libraries.  Those listed here should
 # automatically pull in their dependencies.

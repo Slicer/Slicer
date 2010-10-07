@@ -129,24 +129,24 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Slicer3 macros
 #
-set(Slicer3_CMAKE_DIR "${Slicer3_SOURCE_DIR}/CMake" CACHE INTERNAL "")
+set(Slicer_CMAKE_DIR "${Slicer3_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 add_subdirectory(CMake)
 # Make sure VTK_CMAKE_DIR is at the beginning so that VTK's FindTCL is
 # used before CMake's FindTCL.
 set(CMAKE_MODULE_PATH
   "${VTK_CMAKE_DIR}"
-  "${Slicer3_CMAKE_DIR}"
+  "${Slicer_CMAKE_DIR}"
   ${Slicer3_BINARY_DIR}/CMake
   ${CMAKE_MODULE_PATH}
   )
 
-include("${Slicer3_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
+include("${Slicer_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
 
 # See http://www.cmake.org/Wiki/CMakeMacroParseArguments
-include("${Slicer3_CMAKE_DIR}/Slicer3ParseArgumentsMacro.cmake")
+include("${Slicer_CMAKE_DIR}/Slicer3ParseArgumentsMacro.cmake")
 
 ## QT
-INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3FindQT.cmake)
+INCLUDE(${Slicer_CMAKE_DIR}/Slicer3FindQT.cmake)
 
 #-----------------------------------------------------------------------------
 # Top level slicer3 configurations
@@ -181,7 +181,7 @@ slicer3_set_persistent_property(Slicer3_QTModules_INCLUDE_DIRS "")
 # Get sytem name and architecture
 #
 SET(Slicer3_BUILD NA)
-INCLUDE(${Slicer3_CMAKE_DIR}/DiscoverSystemNameAndBits.cmake)
+INCLUDE(${Slicer_CMAKE_DIR}/DiscoverSystemNameAndBits.cmake)
 MESSAGE(STATUS "Slicer3_BUILD:${Slicer3_BUILD}")
 
 #-----------------------------------------------------------------------------
@@ -339,7 +339,7 @@ IF(Slicer3_USE_QT)
       MESSAGE(FATAL_ERROR "Since both Slicer3_USE_QT and Slicer3_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer3_USE_PYTHONQT or re-configure VTK with python wrapping.")
     ENDIF(NOT VTK_WRAP_PYTHON)
     # Include convenient script allowing to copy and compile python scripts
-    INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3CompilePythonScripts.cmake)
+    INCLUDE(${Slicer_CMAKE_DIR}/Slicer3CompilePythonScripts.cmake)
     # Enable qMRMLWidgets python wrapping
     SET(qMRMLWidgets_WRAP_PYTHON OFF)
   ENDIF(Slicer3_USE_PYTHONQT)
@@ -571,7 +571,7 @@ INSTALL(FILES
 #-----------------------------------------------------------------------------
 # Generate Slicer3Version.txt
 
-INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3TodayMacro.cmake)
+INCLUDE(${Slicer_CMAKE_DIR}/Slicer3TodayMacro.cmake)
 
 # Get build time
 TODAY(Slicer3_BUILDDATE)
@@ -636,7 +636,7 @@ slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS Slicer3_Base_INCLUDE_D
 #-----------------------------------------------------------------------------
 # Module Logic
 
-INCLUDE("${Slicer3_CMAKE_DIR}/Slicer3ModuleLogicMacros.cmake")
+INCLUDE("${Slicer_CMAKE_DIR}/Slicer3ModuleLogicMacros.cmake")
 
 IF (NOT Slicer3_USE_KWWIDGETS)
   # KWWidgets and Qt modules share the same logics typically located in the
@@ -666,10 +666,10 @@ IF (Slicer3_USE_KWWIDGETS)
   option(Slicer3_BUILD_MODULES "Build Slicer3 Modules" ON)
 ENDIF (Slicer3_USE_KWWIDGETS)
 
-include("${Slicer3_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
+include("${Slicer_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
 
 IF (Slicer3_USE_KWWIDGETS)
-  include("${Slicer3_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
+  include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   
   if(Slicer3_BUILD_MODULES)
     add_subdirectory(Modules)
@@ -688,7 +688,7 @@ ENDIF (Slicer3_USE_KWWIDGETS)
 # CMakeLists.txt. Doing so allow to build these libraries also if Slicer3_USE_KWWIDGETS is OFF
 
 if(Slicer3_BUILD_MODULES OR Slicer3_BUILD_QTLOADABLEMODULES)
-  include("${Slicer3_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
+  include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   ADD_SUBDIRECTORY(Modules/EMSegment/Algorithm)
   ADD_SUBDIRECTORY(Modules/EMSegment/MRML)
   ADD_SUBDIRECTORY(Modules/EMSegment/Registration)
@@ -765,7 +765,7 @@ IF(Slicer3_USE_QT)
   # ctkAppLauncher for slicer
   IF(Slicer_USE_CTKAPPLAUNCHER)
     INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
-    INCLUDE(${Slicer3_CMAKE_DIR}/SlicerCTKAppLauncherSettings.cmake)
+    INCLUDE(${Slicer_CMAKE_DIR}/SlicerCTKAppLauncherSettings.cmake)
     ctkAppLauncherConfigure(
       APPLICATION_PATH ${Slicer3_BINARY_DIR}/bin/SlicerQT-real${CMAKE_EXECUTABLE_SUFFIX}
       APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}

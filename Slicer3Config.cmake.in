@@ -38,7 +38,7 @@ set(Slicer3_USE_OPENCV "@Slicer3_USE_OPENCV@")
 set(Slicer3_HOME "@Slicer3_HOME@")
 
 # The CMake macros dir.
-set(Slicer3_CMAKE_DIR "@Slicer3_CMAKE_DIR@")
+set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
 
 # Slicer3 Libs libraries.  Those listed here should
 # automatically pull in their dependencies.

@@ -8,7 +8,7 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 # Calling PROJECT() defines projectname_SOURCE_DIR and projectname_BINARY_DIR
 PROJECT(SlicerBase)
 
-INCLUDE(${Slicer3_CMAKE_DIR}/Slicer3QTBaseLibraryMacros.cmake)
+INCLUDE(${Slicer_CMAKE_DIR}/Slicer3QTBaseLibraryMacros.cmake)
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}
