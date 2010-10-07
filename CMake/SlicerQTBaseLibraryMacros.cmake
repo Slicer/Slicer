@@ -22,7 +22,7 @@
 #
 #
 
-MACRO(Slicer3_build_slicer_qtbase_library)
+MACRO(Slicer_build_slicer_qtbase_library)
   SLICER_PARSE_ARGUMENTS(SLICERQTBASELIB
     "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
     ""
@@ -32,11 +32,11 @@ MACRO(Slicer3_build_slicer_qtbase_library)
   # Sanity checks
   IF(NOT DEFINED SLICERQTBASELIB_NAME)
     MESSAGE(SEND_ERROR "NAME is mandatory")
-  ENDIF(NOT DEFINED SLICERQTBASELIB_NAME)
+  ENDIF()
 
   IF(NOT DEFINED SLICERQTBASELIB_EXPORT_DIRECTIVE)
     MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
-  ENDIF(NOT DEFINED SLICERQTBASELIB_EXPORT_DIRECTIVE)
+  ENDIF()
 
   # Define library name
   SET(lib_name ${SLICERQTBASELIB_NAME})
@@ -159,4 +159,4 @@ MACRO(Slicer3_build_slicer_qtbase_library)
     DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
     )
 
-ENDMACRO(Slicer3_build_slicer_qtbase_library)
+ENDMACRO()

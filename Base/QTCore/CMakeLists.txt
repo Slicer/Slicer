@@ -1,7 +1,7 @@
 PROJECT(qSlicerBaseQTCore)
 
 #
-# See CMake/Slicer3QTBaseLibraryMacros.cmake for details
+# See CMake/SlicerQTBaseLibraryMacros.cmake for details
 #
 
 SET(KIT_export_directive "Q_SLICER_BASE_QTCORE_EXPORT")
@@ -108,7 +108,7 @@ IF(Slicer3_USE_PYTHONQT)
 
 ENDIF(Slicer3_USE_PYTHONQT)
 
-Slicer3_build_slicer_qtbase_library(
+Slicer_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
