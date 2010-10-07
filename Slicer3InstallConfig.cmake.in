@@ -46,7 +46,7 @@ set(Slicer3_HOME "${Slicer3_CONFIG_DIR}/../..")
 get_filename_component(Slicer3_HOME ${Slicer3_HOME} ABSOLUTE)
 
 # The CMake macros dir.
-set(Slicer3_CMAKE_DIR "${Slicer3_HOME}/@Slicer3_INSTALL_LIB_DIR@/CMake")
+set(Slicer3_CMAKE_DIR "${Slicer3_HOME}/@Slicer_INSTALL_LIB_DIR@/CMake")
 
 # Slicer3 Libs libraries.  Those listed here should
 # automatically pull in their dependencies.
@@ -97,15 +97,15 @@ set(Slicer3_Base_LIBRARIES "@Slicer3_Base_LIBRARIES@")
 
 # Slicer3 Base library directories.
 set(Slicer3_Base_LIBRARY_DIRS 
-  "${Slicer3_HOME}/@Slicer3_INSTALL_LIB_DIR@"
+  "${Slicer3_HOME}/@Slicer_INSTALL_LIB_DIR@"
   )
 
 # Slicer3 Base include file directories.
 set(Slicer3_Base_INCLUDE_DIRS 
-  "${Slicer3_HOME}/@Slicer3_INSTALL_INCLUDE_DIR@" 
-  "${Slicer3_HOME}/@Slicer3_INSTALL_INCLUDE_DIR@/SlicerBaseCLI" 
-  "${Slicer3_HOME}/@Slicer3_INSTALL_INCLUDE_DIR@/SlicerBaseGUI" 
-  "${Slicer3_HOME}/@Slicer3_INSTALL_INCLUDE_DIR@/SlicerBaseLogic" 
+  "${Slicer3_HOME}/@Slicer_INSTALL_INCLUDE_DIR@" 
+  "${Slicer3_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseCLI" 
+  "${Slicer3_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseGUI" 
+  "${Slicer3_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseLogic" 
   )
 
 # The location of the UseSlicer3.cmake file.
@@ -116,22 +116,22 @@ set(Slicer3_BUILD_SETTINGS_FILE
   "${Slicer3_CONFIG_DIR}/Slicer3BuildSettings.cmake")
 
 # The Slicer3 relative install directories.
-set(Slicer3_INSTALL_BIN_DIR "@Slicer3_INSTALL_BIN_DIR@")
-set(Slicer3_INSTALL_LIB_DIR "@Slicer3_INSTALL_LIB_DIR@")
-set(Slicer3_INSTALL_INCLUDE_DIR "@Slicer3_INSTALL_INCLUDE_DIR@")
-set(Slicer3_INSTALL_SHARE_DIR "@Slicer3_INSTALL_SHARE_DIR@")
-set(Slicer3_INSTALL_ITKFACTORIES_DIR "@Slicer3_INSTALL_ITKFACTORIES_DIR@")
+set(Slicer_INSTALL_BIN_DIR "@Slicer_INSTALL_BIN_DIR@")
+set(Slicer_INSTALL_LIB_DIR "@Slicer_INSTALL_LIB_DIR@")
+set(Slicer_INSTALL_INCLUDE_DIR "@Slicer_INSTALL_INCLUDE_DIR@")
+set(Slicer_INSTALL_SHARE_DIR "@Slicer_INSTALL_SHARE_DIR@")
+set(Slicer_INSTALL_ITKFACTORIES_DIR "@Slicer_INSTALL_ITKFACTORIES_DIR@")
 
-set(Slicer3_INSTALL_PLUGINS_BIN_DIR "@Slicer3_INSTALL_PLUGINS_BIN_DIR@")
-set(Slicer3_INSTALL_PLUGINS_LIB_DIR "@Slicer3_INSTALL_PLUGINS_LIB_DIR@")
-set(Slicer3_INSTALL_PLUGINS_INCLUDE_DIR "@Slicer3_INSTALL_PLUGINS_INCLUDE_DIR@")
-set(Slicer3_INSTALL_PLUGINS_SHARE_DIR "@Slicer3_INSTALL_PLUGINS_SHARE_DIR@")
-set(Slicer3_INSTALL_PLUGINS_CACHE_DIR "@Slicer3_INSTALL_PLUGINS_CACHE_DIR@")
+set(Slicer_INSTALL_PLUGINS_BIN_DIR "@Slicer_INSTALL_PLUGINS_BIN_DIR@")
+set(Slicer_INSTALL_PLUGINS_LIB_DIR "@Slicer_INSTALL_PLUGINS_LIB_DIR@")
+set(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "@Slicer_INSTALL_PLUGINS_INCLUDE_DIR@")
+set(Slicer_INSTALL_PLUGINS_SHARE_DIR "@Slicer_INSTALL_PLUGINS_SHARE_DIR@")
+set(Slicer_INSTALL_PLUGINS_CACHE_DIR "@Slicer_INSTALL_PLUGINS_CACHE_DIR@")
 
-set(Slicer3_INSTALL_MODULES_BIN_DIR "@Slicer3_INSTALL_MODULES_BIN_DIR@")
-set(Slicer3_INSTALL_MODULES_LIB_DIR "@Slicer3_INSTALL_MODULES_LIB_DIR@")
-set(Slicer3_INSTALL_MODULES_INCLUDE_DIR "@Slicer3_INSTALL_MODULES_INCLUDE_DIR@")
-set(Slicer3_INSTALL_MODULES_SHARE_DIR "@Slicer3_INSTALL_MODULES_SHARE_DIR@")
+set(Slicer_INSTALL_MODULES_BIN_DIR "@Slicer_INSTALL_MODULES_BIN_DIR@")
+set(Slicer_INSTALL_MODULES_LIB_DIR "@Slicer_INSTALL_MODULES_LIB_DIR@")
+set(Slicer_INSTALL_MODULES_INCLUDE_DIR "@Slicer_INSTALL_MODULES_INCLUDE_DIR@")
+set(Slicer_INSTALL_MODULES_SHARE_DIR "@Slicer_INSTALL_MODULES_SHARE_DIR@")
 
 IF(Slicer3_USE_QT AND Slicer3_BUILD_QTLOADABLEMODULES)
   set(Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR "@Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR@")

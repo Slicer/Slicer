@@ -33,7 +33,7 @@ INSTALL(FILES
   vtkPluginFilterWatcher.h 
   vtkSlicerBaseCLIWin32Header.h
   ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerBaseCLIConfigure.h
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -68,8 +68,8 @@ IF(Slicer3_LIBRARY_PROPERTIES)
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
 

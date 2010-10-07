@@ -23,14 +23,14 @@ file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.tcl")
 foreach(file ${TCLFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
     COPYONLY
     )
 endforeach(file)
 
 install(
   FILES ${TCLFILES}
-  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}
+  DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}
   )
 
 
@@ -51,13 +51,13 @@ foreach(file
     )
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY
     )
 endforeach(file) 
 
 install(DIRECTORY
   Testing/TestData
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
   PATTERN ".svn" EXCLUDE
   )

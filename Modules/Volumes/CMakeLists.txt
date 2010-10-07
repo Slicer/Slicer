@@ -52,13 +52,13 @@ file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
   ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkVolumesConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
 install(FILES 
   ${files}
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -146,13 +146,13 @@ foreach(file
     )
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY
     )
 endforeach(file) 
 
 install(DIRECTORY
   Testing
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME} COMPONENT Development
   PATTERN ".svn" EXCLUDE
   )

@@ -53,7 +53,7 @@ if(BatchMake_DIR)
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridSend.bmm"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm" )
     install(FILES ${RUNTIME_SUPPORT_FILES} 
-      DESTINATION ${Slicer3_INSTALL_PLUGINS_SHARE_DIR})
+      DESTINATION ${Slicer_INSTALL_PLUGINS_SHARE_DIR})
 
   endif(Slicer3_SOURCE_DIR)
 endif( BatchMake_DIR)

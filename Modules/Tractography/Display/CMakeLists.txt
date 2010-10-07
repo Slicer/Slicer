@@ -41,13 +41,13 @@ file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
   ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographyDisplayConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
 install(FILES 
   ${headers} 
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   )
 
 # --------------------------------------------------------------------------

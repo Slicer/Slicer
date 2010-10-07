@@ -19,5 +19,5 @@ add_test(LMParser1Test1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/LMParser1Test ${TEST_D
 add_test(LMParser1Test2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/LMParser1Test ${TEST_DATA}/ParserTest2.xml)
 
 # commenting out until it runs faster via getbuildtest.tcl
-#ADD_TEST(LoadableModuleFactoryTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/LoadableModuleFactoryTest ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/)
+#ADD_TEST(LoadableModuleFactoryTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/LoadableModuleFactoryTest ${Slicer3_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/)
 

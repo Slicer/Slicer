@@ -30,8 +30,8 @@
 
 // For:
 //  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
-//  - Slicer3_INSTALL_PLUGINS_BIN_DIR
-//  - Slicer3_INSTALL_LIB_DIR
+//  - Slicer_INSTALL_PLUGINS_BIN_DIR
+//  - Slicer_INSTALL_LIB_DIR
 //  - Slicer3_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
 
@@ -230,12 +230,12 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
     return ;
     }
   QDir slicerLibDir = slicerBinDir;
-  if (slicerLibDir.cd( QString("../") + Slicer3_INSTALL_LIB_DIR))
+  if (slicerLibDir.cd( QString("../") + Slicer_INSTALL_LIB_DIR))
     {
     this->SlicerBin = slicerBinDir.absolutePath();
     return ;
     }
-  if (slicerLibDir.cd( QString("../../") + Slicer3_INSTALL_LIB_DIR))
+  if (slicerLibDir.cd( QString("../../") + Slicer_INSTALL_LIB_DIR))
     {
     this->IntDir = slicerBinDir.dirName();
     slicerBinDir.cdUp();
@@ -250,7 +250,7 @@ void qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
   QDir itkFactoriesDir (this->SlicerHome);
-  itkFactoriesDir.cd(Slicer3_INSTALL_ITKFACTORIES_DIR);
+  itkFactoriesDir.cd(Slicer_INSTALL_ITKFACTORIES_DIR);
   if (!this->IntDir.isEmpty())
     {
     itkFactoriesDir.cd(this->IntDir);

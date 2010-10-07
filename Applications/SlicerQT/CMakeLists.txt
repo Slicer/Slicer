@@ -21,7 +21,7 @@ PROJECT(SlicerQT)
 # endif(NOT WIN32)
 
 SET(SlicerQT_EXE_SUFFIX)
-SET(SlicerQT_EXE_INSTALL ${Slicer3_INSTALL_BIN_DIR})
+SET(SlicerQT_EXE_INSTALL ${Slicer_INSTALL_BIN_DIR})
 IF(BUILD_SHARED_LIBS)
   SET(SlicerQT_NEED_SHARED_FORWARD 1)
   SET(SlicerQT_EXE_SUFFIX -real)
@@ -52,22 +52,22 @@ IF(BUILD_SHARED_LIBS)
       SET(SlicerQT_FORWARD_PATH_INSTALL
         "\"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
 
-      # Since ModuleLogic are in Slicer3_INSTALL_MODULES_BIN_DIR, let's add it
+      # Since ModuleLogic are in Slicer_INSTALL_MODULES_BIN_DIR, let's add it
       SET(Slicer3_FORWARD_PATH_BUILD
         "${Slicer3_FORWARD_PATH_BUILD},            \\
-        \"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+        \"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     
     ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
      
     #IF(Slicer3_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
-    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     #ENDIF(Slicer3_BUILD_MODULES)
     
     IF(Slicer3_BUILD_CLI)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},            \\
-        \"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
+        \"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
     ENDIF(Slicer3_BUILD_CLI)
     
   ELSE(WIN32)
@@ -90,7 +90,7 @@ IF(BUILD_SHARED_LIBS)
     #\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",
     #\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",
     SET(SlicerQT_FORWARD_PATH_INSTALL
-      "\"../${Slicer3_INSTALL_LIB_DIR}\",                           \\
+      "\"../${Slicer_INSTALL_LIB_DIR}\",                           \\
        \"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",    \\
        \"../lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}\", \\
        \"../lib/FreeSurfer\",                                       \\
@@ -119,33 +119,33 @@ IF(BUILD_SHARED_LIBS)
         "${SlicerQT_FORWARD_PATH_INSTALL},         \\
         \"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
 
-      # Since ModuleLogic are in Slicer3_INSTALL_MODULES_BIN_DIR, let's add it
+      # Since ModuleLogic are in Slicer_INSTALL_MODULES_BIN_DIR, let's add it
       SET(Slicer3_FORWARD_PATH_BUILD
         "${Slicer3_FORWARD_PATH_BUILD},             \\
-        \"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+        \"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
         
     ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
     
     #IF(Slicer3_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
-    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
     #ENDIF(Slicer3_BUILD_MODULES)
     
     IF(Slicer3_BUILD_CLI)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},         \\
-         \"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
+         \"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
     ENDIF(Slicer3_BUILD_CLI)
   ENDIF(WIN32)
 
 #   IF(Slicer3_BUILD_MODULES)
 #     SET(Slicer3_FORWARD_PATH_INSTALL
-#       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+#       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
 #   ENDIF(Slicer3_BUILD_MODULES)
   
   IF(Slicer3_BUILD_CLI)
     SET(SlicerQT_FORWARD_PATH_INSTALL
-      "${SlicerQT_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
+      "${SlicerQT_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
   ENDIF(Slicer3_BUILD_CLI)
   
 ENDIF(BUILD_SHARED_LIBS)
@@ -173,7 +173,7 @@ IF(SlicerQT_NEED_SHARED_FORWARD)
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
     ADD_DEPENDENCIES(${slicer_exe} ${SlicerQT_FORWARD_EXE})
     INSTALL(TARGETS ${slicer_exe}
-      DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
       COMPONENT Runtime)
   ENDFOREACH(slicer_exe)
 ENDIF(SlicerQT_NEED_SHARED_FORWARD)
@@ -420,9 +420,9 @@ IF(Slicer3_LIBRARY_PROPERTIES)
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -453,7 +453,7 @@ SET(dynamicHeaders
 # Install
 #
 INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
-  DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+  DESTINATION ${Slicer_INSTALL_BIN_DIR}
   COMPONENT Runtime)
 
 # Install headers
@@ -461,7 +461,7 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 #INSTALL(FILES
 #  ${headers}
 #  ${dynamicHeaders}
-#  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+#  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
 #  )
     
 # --------------------------------------------------------------------------

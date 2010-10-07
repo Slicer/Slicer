@@ -25,7 +25,7 @@
 #include "qSlicerCoreApplication.h"
 
 // For:
-//  - Slicer3_INSTALL_PLUGINS_BIN_DIR
+//  - Slicer_INSTALL_PLUGINS_BIN_DIR
 #include "vtkSlicerConfigure.h"
 
 //-----------------------------------------------------------------------------
@@ -42,10 +42,10 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
   // On Win32, *both* paths have to be there, since scripts are installed
   // in the install location, and exec/libs are *automatically* installed
   // in intDir.
-  defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR;
+  defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_INSTALL_PLUGINS_BIN_DIR;
   if (!app->intDir().isEmpty())
      {
-     defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR + "/" + app->intDir();
+     defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_INSTALL_PLUGINS_BIN_DIR + "/" + app->intDir();
      }
 
   // add the default modules directory (based on the slicer

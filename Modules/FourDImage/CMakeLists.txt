@@ -46,13 +46,13 @@ file(GLOB headers
 install(FILES 
   ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkFourDImageConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
 install(FILES 
   ${files}
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -90,7 +90,7 @@ add_library(${lib_name}
 
 slicer3_set_modules_output_path(${lib_name})
 
-find_library( VolumesLib Volumes ${Slicer3_DIR}/${Slicer3_INSTALL_MODULES_BIN_DIR} )
+find_library( VolumesLib Volumes ${Slicer3_DIR}/${Slicer_INSTALL_MODULES_BIN_DIR} )
 if ( ${VolumesLib} MATCHES "NOTFOUND" )
    set ( VolumesLib Volumes )
 endif ( ${VolumesLib} MATCHES "NOTFOUND" )
@@ -106,9 +106,9 @@ target_link_libraries(${lib_name}
   )
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )
 
 slicer3_install_modules(${lib_name})

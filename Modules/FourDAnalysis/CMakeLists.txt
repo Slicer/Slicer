@@ -76,7 +76,7 @@ endif (FourDAnalysis_USE_SCIPY)
 install(FILES 
   ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkFourDAnalysisConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -131,17 +131,17 @@ add_library(${lib_name}
   )
 slicer3_set_modules_output_path(${lib_name})
 
-find_library( CommandLineModuleLib CommandLineModule ${Slicer3_DIR}/${Slicer3_INSTALL_MODULES_BIN_DIR} )
+find_library( CommandLineModuleLib CommandLineModule ${Slicer3_DIR}/${Slicer_INSTALL_MODULES_BIN_DIR} )
 if ( ${CommandLineModuleLib} MATCHES "NOTFOUND" )
    set ( CommandLineModuleLib CommandLineModule )
 endif ( ${CommandLineModuleLib} MATCHES "NOTFOUND" )
 
-find_library( VolumesLib Volumes ${Slicer3_DIR}/${Slicer3_INSTALL_MODULES_BIN_DIR} )
+find_library( VolumesLib Volumes ${Slicer3_DIR}/${Slicer_INSTALL_MODULES_BIN_DIR} )
 if ( ${VolumesLib} MATCHES "NOTFOUND" )
    set ( VolumesLib Volumes )
 endif ( ${VolumesLib} MATCHES "NOTFOUND" )
 
-find_library( FourDImageLib FourDImage ${Slicer3_DIR}/${Slicer3_INSTALL_MODULES_BIN_DIR} )
+find_library( FourDImageLib FourDImage ${Slicer3_DIR}/${Slicer_INSTALL_MODULES_BIN_DIR} )
 if ( ${FourDImageLib} MATCHES "NOTFOUND" )
    set ( FourDImageLib FourDImage )
 endif ( ${FourDImageLib} MATCHES "NOTFOUND" )
@@ -162,9 +162,9 @@ target_link_libraries(${lib_name}
   )
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${Slicer_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )
 
 
@@ -178,16 +178,16 @@ if (FourDAnalysis_USE_SCIPY)
 foreach(file ${FourDAnalysis_PYTHON_FILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${FourDAnalysis_PYTHON_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${file}
     COPYONLY)
 endforeach(file)
 
 install(
   FILES ${FourDAnalysis_PYTHON_DIR}/${FourDAnalysis_PYTHON_FILES}
-  DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR}
+  DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR}
 )
 
-message("PYTHON FILES ARE INSTALLED IN : ${Slicer3_INSTALL_PLUGINS_BIN_DIR}")
+message("PYTHON FILES ARE INSTALLED IN : ${Slicer_INSTALL_PLUGINS_BIN_DIR}")
 
 endif (FourDAnalysis_USE_SCIPY)
 

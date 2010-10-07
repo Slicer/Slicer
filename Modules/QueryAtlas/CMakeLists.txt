@@ -44,13 +44,13 @@ file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
   ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkQueryAtlasConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
 install(FILES 
   ${headers} 
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   ) 
 
 # --------------------------------------------------------------------------
@@ -136,13 +136,13 @@ file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl")
 foreach(file ${TCLFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY)
 endforeach(file)
 
 install(
   FILES ${TCLFILES}
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Tcl
+  DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Tcl
   )
 
 # Resources (CSV, txt, xls, .h)
@@ -159,7 +159,7 @@ foreach(file
   get_filename_component(filename "${file}" NAME)
   configure_file(
     ${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Resources/${filename}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Resources/${filename}
     COPYONLY)
 endforeach(file)
 
@@ -167,7 +167,7 @@ install(FILES
   ${CSVFILES} 
   ${TXTFILES} 
   ${XLSFILES}
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   ) 
 
 # ImageData
@@ -178,13 +178,13 @@ foreach(file ${IMAGEFILES})
   get_filename_component(filename "${file}" NAME)
   configure_file(
     ${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData/${filename}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData/${filename}
     COPYONLY)
 endforeach(file)
 
 install(FILES 
   ${IMAGEFILES}
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData COMPONENT Development
   ) 
 
 # Ontoviz
@@ -206,11 +206,11 @@ set(ONTOVIZFILES
 foreach(file ${ONTOVIZFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
     COPYONLY)
   get_filename_component(path "${file}" PATH)
   install(FILES 
     ${file} 
-    DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${path} COMPONENT Development
+    DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${path} COMPONENT Development
     ) 
 endforeach(file)

@@ -93,9 +93,9 @@ IF(Slicer3_LIBRARY_PROPERTIES)
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -112,11 +112,11 @@ file(GLOB PYTHONFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.py")
 foreach(pythonfile ${PYTHONFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${pythonfile}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/SlicerBaseGUI/Python/${pythonfile}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/SlicerBaseGUI/Python/${pythonfile}
     COPYONLY)
 endforeach(pythonfile)
 
 install(
   FILES ${PYTHONFILES}
-  DESTINATION ${Slicer3_INSTALL_LIB_DIR}/SlicerBaseGUI/Python
+  DESTINATION ${Slicer_INSTALL_LIB_DIR}/SlicerBaseGUI/Python
   )

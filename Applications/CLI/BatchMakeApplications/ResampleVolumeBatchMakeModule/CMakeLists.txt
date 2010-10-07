@@ -36,16 +36,16 @@ if(BatchMake_DIR)
       ${Slicer3_BINARY_DIR}/bin/debug
       ${Slicer3_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}
       ${Slicer3_BINARY_DIR}/bin
-      ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/relwithdebinfo
-      ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/release
-      ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/debug
-      ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${CMAKE_BUILD_TYPE}
-      ${Slicer3_INSTALL_PLUGINS_BIN_DIR}
-      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/relwithdebinfo
-      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/release
-      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/debug
-      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${CMAKE_BUILD_TYPE}
-      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR})
+      ${Slicer_INSTALL_PLUGINS_BIN_DIR}/relwithdebinfo
+      ${Slicer_INSTALL_PLUGINS_BIN_DIR}/release
+      ${Slicer_INSTALL_PLUGINS_BIN_DIR}/debug
+      ${Slicer_INSTALL_PLUGINS_BIN_DIR}/${CMAKE_BUILD_TYPE}
+      ${Slicer_INSTALL_PLUGINS_BIN_DIR}
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/relwithdebinfo
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/release
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/debug
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${CMAKE_BUILD_TYPE}
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR})
 
     set( Slicer3ExeModulePath ${${Slicer3ExeModule}Path} )
     if(WIN32)
@@ -95,7 +95,7 @@ if(BatchMake_DIR)
 #      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm"
 #      "${BatchMake_WRAPPED_APPLICATION_DIR}/${Slicer3ExeModule}.bmm")
     install(FILES ${RUNTIME_SUPPORT_FILES} 
-      DESTINATION ${Slicer3_INSTALL_PLUGINS_SHARE_DIR}/${PROJECT_NAME})
+      DESTINATION ${Slicer_INSTALL_PLUGINS_SHARE_DIR}/${PROJECT_NAME})
 
   endif(Slicer3_SOURCE_DIR)
 

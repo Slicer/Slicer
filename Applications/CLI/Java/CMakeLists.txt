@@ -53,17 +53,17 @@ IF ( Java_JAVAC_EXECUTABLE )
      ${Java_JAVAC_EXECUTABLE} -d ${CMAKE_CURRENT_BINARY_DIR} -classpath ${${CLP}_CLASSPATH} ${${CLP}_JAR_SRCS}
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} )
 
-# message (STATUS "Adding a custom target to jar it up into the plug ins directory ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}")
+# message (STATUS "Adding a custom target to jar it up into the plug ins directory ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}")
   ADD_CUSTOM_TARGET ( ${CLP}.jar ALL
-      ${Java_JAR_EXECUTABLE} cvf  ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.jar Examples
+      ${Java_JAR_EXECUTABLE} cvf  ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.jar Examples
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
 
   ADD_DEPENDENCIES ( ${CLP}.jar ${CLP}.jar.classes )
 
   # install the jar file
   install (
-     FILES ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.jar
-     DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR}
+     FILES ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.jar
+     DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR}
      )
 
   #####
@@ -82,17 +82,17 @@ IF ( Java_JAVAC_EXECUTABLE )
   foreach(file ${TARGETS})
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${file}
+      ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${file}
       COPYONLY
       )
   endforeach(file)
 #  install(
 #    FILES ${TARGETS}
-#    DESTINATION ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}
+#    DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}
 #   )
   install (
-     FILES ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.tcl
-     DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR}
+     FILES ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.tcl
+     DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR}
      )
   endif (Slicer3_SOURCE_DIR)
 
@@ -124,13 +124,13 @@ if (Slicer3_SOURCE_DIR)
 foreach(file ${TARGETS})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${file}
     COPYONLY
     )
 endforeach(file)
 install(
   FILES ${TARGETS}
-  DESTINATION ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}
+  DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}
   )
 endif (Slicer3_SOURCE_DIR)
 

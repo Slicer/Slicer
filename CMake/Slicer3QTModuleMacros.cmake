@@ -83,7 +83,7 @@ MACRO(Slicer3_build_qtmodule)
   #file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
   #install(FILES
   #  ${files}
-  #  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  #  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   #  )
 
   #-----------------------------------------------------------------------------

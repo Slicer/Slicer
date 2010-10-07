@@ -31,7 +31,7 @@ Slicer3_compile_python_scripts(
   SCRIPTS "${Slicer_PYTHON_SCRIPTS}"
   RESOURCES "${Slicer_PYTHON_RESOURCES}"
   DESTINATION_DIR ${Slicer3_BINARY_DIR}/bin/Python
-  INSTALL_DIR ${Slicer3_INSTALL_BIN_DIR}
+  INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}
   )
 
 #-----------------------------------------------------------------------------

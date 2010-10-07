@@ -776,7 +776,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->ModulePathsPresetSelector->UniqueDirectoriesOn();
 
   std::string help_str;
-  help_str = help_str + "Click on the \"Add a preset\" button to add one or more new user\nmodule paths. A typical Module path ends with " + Slicer3_INSTALL_MODULES_LIB_DIR + ",\nwhereas a Plugins/CLP path ends with " + Slicer3_INSTALL_PLUGINS_LIB_DIR + ".";
+  help_str = help_str + "Click on the \"Add a preset\" button to add one or more new user\nmodule paths. A typical Module path ends with " + Slicer_INSTALL_MODULES_LIB_DIR + ",\nwhereas a Plugins/CLP path ends with " + Slicer_INSTALL_PLUGINS_LIB_DIR + ".";
   this->ModulePathsPresetSelector->SetHelpLabelText(help_str.c_str());
 
   tk_cmd << "pack " << this->ModulePathsPresetSelector->GetWidgetName()

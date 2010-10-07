@@ -5,11 +5,11 @@ macro(slicer3_set_plugins_output_path)
   set_target_properties(${ARGN}
     PROPERTIES 
     RUNTIME_OUTPUT_DIRECTORY 
-    "${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}"
+    "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}"
     LIBRARY_OUTPUT_DIRECTORY 
-    "${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_LIB_DIR}"
+    "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_LIB_DIR}"
     ARCHIVE_OUTPUT_DIRECTORY 
-    "${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_LIB_DIR}"
+    "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_LIB_DIR}"
     )
 endmacro(slicer3_set_plugins_output_path)
 
@@ -18,8 +18,8 @@ endmacro(slicer3_set_plugins_output_path)
 # 
 macro(slicer3_install_plugins)
   install(TARGETS ${ARGN}
-    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+    RUNTIME DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${Slicer_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
     )
 endmacro(slicer3_install_plugins)
 
@@ -49,7 +49,7 @@ macro(slicer3_enable_plugins_testing)
   # CTest.cmake does, only manually.
 
   if(NOT DEFINED CTEST_DROP_SITE AND NOT EXISTS "${PROJECT_SOURCE_DIR}/CTestConfig.cmake")
-    include("${Slicer3_HOME}/${Slicer3_INSTALL_LIB_DIR}/CTestConfig.cmake")
+    include("${Slicer3_HOME}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake")
     set(NIGHTLY_START_TIME "${CTEST_NIGHTLY_START_TIME}")
     set(DROP_METHOD "${CTEST_DROP_METHOD}")
     set(DROP_SITE "${CTEST_DROP_SITE}")
@@ -130,6 +130,6 @@ IF (Slicer3_USE_KWWIDGETS)
       # first value in CMAKE_CONFIGURATION_TYPES (i.e. Debug)/
       kwwidgets_get_cmake_build_type(build_type)
     endif(WIN32 AND CMAKE_CONFIGURATION_TYPES)
-    add_test(${test_name} ${Slicer3_DIR}/Slicer3 --launch ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${clp_to_test} ${ARGN})
+    add_test(${test_name} ${Slicer3_DIR}/Slicer3 --launch ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${clp_to_test} ${ARGN})
   endmacro(slicer3_add_plugins_test)
 ENDIF (Slicer3_USE_KWWIDGETS)

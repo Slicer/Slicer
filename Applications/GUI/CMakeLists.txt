@@ -21,7 +21,7 @@ if(NOT WIN32)
 endif(NOT WIN32)
 
 set(Slicer3_EXE_SUFFIX)
-set(Slicer3_EXE_INSTALL ${Slicer3_INSTALL_BIN_DIR})
+set(Slicer3_EXE_INSTALL ${Slicer_INSTALL_BIN_DIR})
 if(BUILD_SHARED_LIBS)
   set(Slicer3_NEED_SHARED_FORWARD 1)
   set(Slicer3_EXE_SUFFIX -real)
@@ -35,33 +35,33 @@ if(BUILD_SHARED_LIBS)
       "\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
     if(Slicer3_BUILD_MODULES)
       set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     endif(Slicer3_BUILD_MODULES)
     if(Slicer3_BUILD_CLI)
       set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
     endif(Slicer3_BUILD_CLI)
   else(WIN32)
     set(Slicer3_FORWARD_PATH_BUILD 
       "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${Teem_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
     set(Slicer3_FORWARD_PATH_INSTALL
-      "\"../${Slicer3_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
+      "\"../${Slicer_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
     if(Slicer3_BUILD_MODULES)
       set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
     endif(Slicer3_BUILD_MODULES)
     if(Slicer3_BUILD_CLI)
       set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
     endif(Slicer3_BUILD_CLI)
   endif(WIN32)
   if(Slicer3_BUILD_MODULES)
     set(Slicer3_FORWARD_PATH_INSTALL
-      "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+      "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
   endif(Slicer3_BUILD_MODULES)
   if(Slicer3_BUILD_CLI)
     set(Slicer3_FORWARD_PATH_INSTALL
-      "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
+      "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
   endif(Slicer3_BUILD_CLI)
 endif(BUILD_SHARED_LIBS)
 
@@ -80,7 +80,7 @@ if(Slicer3_NEED_SHARED_FORWARD)
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
     add_dependencies(${slicer_exe} ${Slicer3_FORWARD_EXE})
     install(TARGETS ${slicer_exe}
-      DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
       COMPONENT Runtime)
   endforeach(slicer_exe)
 endif(Slicer3_NEED_SHARED_FORWARD)
@@ -266,7 +266,7 @@ endif(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
 # Install
 #
 install(TARGETS Slicer3${Slicer3_EXE_SUFFIX}
-  DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+  DESTINATION ${Slicer_INSTALL_BIN_DIR}
   COMPONENT Runtime)
 
 # --------------------------------------------------------------------------

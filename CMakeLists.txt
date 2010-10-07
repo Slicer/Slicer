@@ -10,22 +10,22 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
 #-----------------------------------------------------------------------------
 #
-set(Slicer3_INSTALL_BIN_DIR "bin")
-set(Slicer3_INSTALL_LIB_DIR "lib/Slicer3")
-set(Slicer3_INSTALL_INCLUDE_DIR "include/Slicer3")
-set(Slicer3_INSTALL_SHARE_DIR "share/Slicer3")
-set(Slicer3_INSTALL_ITKFACTORIES_DIR "${Slicer3_INSTALL_LIB_DIR}/ITKFactories")
+set(Slicer_INSTALL_BIN_DIR "bin")
+set(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
+set(Slicer_INSTALL_INCLUDE_DIR "include/Slicer3")
+set(Slicer_INSTALL_SHARE_DIR "share/Slicer3")
+set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 
-set(Slicer3_INSTALL_PLUGINS_BIN_DIR "${Slicer3_INSTALL_LIB_DIR}/Plugins")
-set(Slicer3_INSTALL_PLUGINS_LIB_DIR "${Slicer3_INSTALL_LIB_DIR}/Plugins")
-set(Slicer3_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer3_INSTALL_INCLUDE_DIR}/Plugins")
-set(Slicer3_INSTALL_PLUGINS_SHARE_DIR "${Slicer3_INSTALL_SHARE_DIR}/Plugins")
-set(Slicer3_INSTALL_PLUGINS_CACHE_DIR "${Slicer3_INSTALL_LIB_DIR}/PluginsCache")
+set(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
+set(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
+set(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Plugins")
+set(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Plugins")
+set(Slicer_INSTALL_PLUGINS_CACHE_DIR "${Slicer_INSTALL_LIB_DIR}/PluginsCache")
 
-set(Slicer3_INSTALL_MODULES_BIN_DIR "${Slicer3_INSTALL_LIB_DIR}/Modules")
-set(Slicer3_INSTALL_MODULES_LIB_DIR "${Slicer3_INSTALL_LIB_DIR}/Modules")
-set(Slicer3_INSTALL_MODULES_INCLUDE_DIR "${Slicer3_INSTALL_INCLUDE_DIR}/Modules")
-set(Slicer3_INSTALL_MODULES_SHARE_DIR "${Slicer3_INSTALL_SHARE_DIR}/Modules")
+set(Slicer_INSTALL_MODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
+set(Slicer_INSTALL_MODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
+set(Slicer_INSTALL_MODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Modules")
+set(Slicer_INSTALL_MODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Modules")
 
 set(Slicer3_HOME "${Slicer3_BINARY_DIR}")
 
@@ -218,10 +218,10 @@ option(Slicer3_USE_KWWIDGETS "Build Slicer3 with KWWidgets." OFF)
 IF (NOT Slicer3_USE_KWWIDGETS)
   # Since the module Logic is shared between QTModules and regular Modules,
   # the associated BIN, LIB and INCLUDE directory shouldn't be unset
-  #UNSET(Slicer3_INSTALL_MODULES_BIN_DIR)
-  #UNSET(Slicer3_INSTALL_MODULES_LIB_DIR)
-  #UNSET(Slicer3_INSTALL_MODULES_INCLUDE_DIR)
-  UNSET(Slicer3_INSTALL_MODULES_SHARE_DIR)
+  #UNSET(Slicer_INSTALL_MODULES_BIN_DIR)
+  #UNSET(Slicer_INSTALL_MODULES_LIB_DIR)
+  #UNSET(Slicer_INSTALL_MODULES_INCLUDE_DIR)
+  UNSET(Slicer_INSTALL_MODULES_SHARE_DIR)
 ENDIF (NOT Slicer3_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
@@ -443,10 +443,10 @@ IF (Slicer3_USE_KWWIDGETS)
     "${Teem_DIR}/bin"
     "${BatchMake_DIR}/bin"
     "${OpenIGTLink_DIR}/bin"
-    "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}"
-    "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_LIB_DIR}"
-    "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}"
-    "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_LIB_DIR}"
+    "${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}"
+    "${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_LIB_DIR}"
+    "${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}"
+    "${Slicer3_HOME}/${Slicer_INSTALL_MODULES_LIB_DIR}"
     )
   kwwidgets_generate_setup_paths_scripts(
     "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" "Slicer3SetupPaths"
@@ -503,10 +503,10 @@ IF(Slicer3_USE_QT)
   OPTION(Slicer3_BUILD_QTLOADABLEMODULES "Build Slicer3 QT Loadable Modules" ON)
   IF(Slicer3_BUILD_QTLOADABLEMODULES)
     ADD_DEFINITIONS(-DSlicer3_BUILD_QTLOADABLEMODULES)
-    set(Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer3_INSTALL_LIB_DIR}/QTLoadableModules")
-    set(Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer3_INSTALL_LIB_DIR}/QTLoadableModules")
-    set(Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer3_INSTALL_INCLUDE_DIR}/QTLoadableModules")
-    set(Slicer3_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer3_INSTALL_SHARE_DIR}/QTLoadableModules")
+    set(Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
+    set(Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
+    set(Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTLoadableModules")
+    set(Slicer3_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTLoadableModules")
   ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
 ENDIF(Slicer3_USE_QT)
 
@@ -560,12 +560,12 @@ INCLUDE_DIRECTORIES(
 
 INSTALL(FILES 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
   )
 
 INSTALL(FILES 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
   )
 
 #-----------------------------------------------------------------------------
@@ -728,7 +728,7 @@ endif(Slicer3_BUILD_TESTING)
 
 install(DIRECTORY
   Testing
-  DESTINATION ${Slicer3_INSTALL_SHARE_DIR} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Development
   PATTERN ".svn" EXCLUDE
   PATTERN "CMakeLists.txt" EXCLUDE
   )
@@ -768,10 +768,10 @@ IF(Slicer3_USE_QT)
     INCLUDE(${Slicer3_CMAKE_DIR}/SlicerCTKAppLauncherSettings.cmake)
     ctkAppLauncherConfigure(
       APPLICATION_PATH ${Slicer3_BINARY_DIR}/bin/SlicerQT-real${CMAKE_EXECUTABLE_SUFFIX}
-      APPLICATION_INSTALL_SUBDIR ${Slicer3_INSTALL_BIN_DIR}
+      APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
       APPLICATION_NAME Slicer
       SPLASH_IMAGE_PATH ${Slicer3_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png
-      SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer3_INSTALL_BIN_DIR}
+      SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
       SPLASHSCREEN_HIDE_DELAY_MS 3000
       ADDITIONAL_HELP_SHORT_ARG "-h"
       ADDITIONAL_HELP_LONG_ARG "--help"
@@ -787,11 +787,11 @@ IF(Slicer3_USE_QT)
     install(PROGRAMS "${Slicer3_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
     install(
       FILES "${Slicer3_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png" 
-      DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
       )
     install(
       FILES "${Slicer3_BINARY_DIR}/SlicerLauncherSettingsToInstall.ini" 
-      DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+      DESTINATION ${Slicer_INSTALL_BIN_DIR}
       RENAME SlicerLauncherSettings.ini
       )
   ENDIF()
@@ -800,11 +800,11 @@ ENDIF(Slicer3_USE_QT)
 
 CONFIGURE_FILE(
   ${Slicer3_SOURCE_DIR}/launch.tcl.in
-  "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
+  "${Slicer3_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/launch.tcl"
   )
 INSTALL(
-  FILES "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/launch.tcl"
-  DESTINATION ${Slicer3_INSTALL_LIB_DIR}
+  FILES "${Slicer3_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/launch.tcl"
+  DESTINATION ${Slicer_INSTALL_LIB_DIR}
   )
 
 #-----------------------------------------------------------------------------
@@ -843,7 +843,7 @@ CONFIGURE_FILE(
 include(${Slicer3_SOURCE_DIR}/GenerateSlicer3Config.cmake)
 
 configure_file(${Slicer3_SOURCE_DIR}/CTestConfig.cmake
-  ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/CTestConfig.cmake COPYONLY IMMEDIATE)
+  ${Slicer3_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake COPYONLY IMMEDIATE)
 
 configure_file(${Slicer3_SOURCE_DIR}/UseSlicer3.cmake.in
   ${Slicer3_BINARY_DIR}/UseSlicer3.cmake COPYONLY IMMEDIATE)
@@ -859,6 +859,6 @@ install(FILES
   ${Slicer3_BINARY_DIR}/UseSlicer3.cmake
   ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake
   ${Slicer3_BINARY_DIR}/lib/Slicer3/Slicer3Version.txt
-  DESTINATION ${Slicer3_INSTALL_LIB_DIR}
+  DESTINATION ${Slicer_INSTALL_LIB_DIR}
   COMPONENT Development
   )

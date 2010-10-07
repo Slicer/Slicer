@@ -53,7 +53,7 @@ file(GLOB headers
 install(FILES
   ${headers}
   "${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentAlgorithmConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -160,6 +160,6 @@ endif(BUILD_TESTING)
 
 #install(DIRECTORY
 #  Testing/TestData
-#  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
+#  DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
 #  PATTERN ".svn" EXCLUDE
 #  )

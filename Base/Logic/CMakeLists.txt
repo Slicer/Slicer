@@ -42,7 +42,7 @@ file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
   ${files}
   ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerBaseLogicConfigure.h
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -149,9 +149,9 @@ IF(Slicer3_LIBRARY_PROPERTIES)
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
   
 # --------------------------------------------------------------------------
@@ -183,9 +183,9 @@ IF(Slicer3_USE_PYTHONQT AND BUILD_SHARED_LIBS)
   ENDIF(WIN32 AND NOT CYGWIN)
 
   INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
-    RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT Runtime
-    LIBRARY DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT Runtime
-    ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development)
+    RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT Runtime
+    LIBRARY DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT Runtime
+    ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development)
 
 ENDIF(Slicer3_USE_PYTHONQT AND BUILD_SHARED_LIBS)
 
@@ -206,11 +206,11 @@ file(GLOB COLORFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/ColorFile
 foreach(colorfile ${COLORFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${colorfile}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${colorfile}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${colorfile}
     COPYONLY
     )
 endforeach(colorfile)
 install(
   FILES ${COLORFILES}
-  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources/ColorFiles
+  DESTINATION ${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources/ColorFiles
   )

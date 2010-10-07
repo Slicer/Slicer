@@ -35,7 +35,7 @@ file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
   ${headers} 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerDaemonConfigure.h"
-  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -101,13 +101,13 @@ foreach(file
     )
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
     COPYONLY)
 endforeach(file)
 
 install(DIRECTORY
   Matlab
-  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME} COMPONENT Development
   PATTERN ".svn" EXCLUDE
   )
 
@@ -117,13 +117,13 @@ file(GLOB PYTHONFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "Python/*.py")
 foreach(pythonfile ${PYTHONFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${pythonfile}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${pythonfile}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${pythonfile}
     COPYONLY)
 endforeach(pythonfile)
 
 install(
   FILES ${PYTHONFILES}
-  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Python
+  DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Python
   )
 
 # Tcl
@@ -136,27 +136,27 @@ foreach(file
     )
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
     COPYONLY)
 endforeach(file)
 
 install(DIRECTORY
   Tcl
-  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME} COMPONENT Development
   PATTERN ".svn" EXCLUDE
   )
 
 # custom install for slicerget/slicerput utility programs
-# that can't work. ${Slicer3_INSTALL_BIN_DIR} is relative.
+# that can't work. ${Slicer_INSTALL_BIN_DIR} is relative.
 # It's either a wrong CONFIGURE, or a should have been an INSTALL, who knows
 #configure_file(
 #  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerget.tcl
-#  ${Slicer3_INSTALL_BIN_DIR}/slicerget
+#  ${Slicer_INSTALL_BIN_DIR}/slicerget
 #  COPYONLY
 #  )
 #configure_file(
 #  ${CMAKE_CURRENT_SOURCE_DIR}/Tcl/slicerput.tcl
-#  ${Slicer3_INSTALL_BIN_DIR}/slicerput 
+#  ${Slicer_INSTALL_BIN_DIR}/slicerput 
 #  COPYONLY
 #  )
 
@@ -171,12 +171,12 @@ foreach(file
     )
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY)
 endforeach(file)
 
 install(DIRECTORY
   Testing
-  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME} COMPONENT Development
   PATTERN ".svn" EXCLUDE
   )

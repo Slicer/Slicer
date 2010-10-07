@@ -146,9 +146,9 @@ MACRO(Slicer3_build_slicer_qtbase_library)
 
   # Install rules
   INSTALL(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+    RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
 
   # Install headers
@@ -156,7 +156,7 @@ MACRO(Slicer3_build_slicer_qtbase_library)
   INSTALL(FILES
     ${headers}
     ${dynamicHeaders}
-    DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
     )
 
 ENDMACRO(Slicer3_build_slicer_qtbase_library)

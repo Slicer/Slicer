@@ -59,13 +59,13 @@ file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
   ${files}
   ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerBaseGUIQtConfigure.h
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
 install(FILES 
   ${files}
-  DESTINATION ${Slicer3_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   )
 
 # Helper classes
@@ -114,9 +114,9 @@ slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
 
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_LIB_DIR} COMPONENT Development
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 
@@ -132,12 +132,12 @@ file(GLOB PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/*.png")
 foreach(pngfile ${PNGFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${pngfile}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${pngfile}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${pngfile}
     COPYONLY
     )
 endforeach(pngfile)
 
 install(
   FILES ${PNGFILES}
-  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources
+  DESTINATION ${Slicer_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources
   )

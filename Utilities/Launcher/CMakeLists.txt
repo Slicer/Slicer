@@ -55,9 +55,9 @@ endif(EXISTS "${launcher_source}")
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
-  "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/Resources/slicer3.ico"
+  "${Slicer3_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/slicer3.ico"
   COPYONLY)
 install(
   FILES "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
-  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/Resources
+  DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Resources
   )

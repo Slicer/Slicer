@@ -35,7 +35,7 @@ set(${CLP}_SOURCE ${CLP}.cxx)
 generateclp(
   ${CLP}_SOURCE 
   ${CLP}.xml 
-  ${Slicer3_HOME}/${Slicer3_INSTALL_SHARE_DIR}/Resources/NAMICLogo.h
+  ${Slicer3_HOME}/${Slicer_INSTALL_SHARE_DIR}/Resources/NAMICLogo.h
 )
 
 # --------------------------------------------------------------------------
