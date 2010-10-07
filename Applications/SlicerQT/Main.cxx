@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
     }
 
   QPixmap pixmap(":Images/SlicerSplashScreen.png");
-  QSplashScreen splash(pixmap, Qt::WindowStaysOnTopHint);
+  QSplashScreen splash(pixmap/*, Qt::WindowStaysOnTopHint*/);
   bool enableSplash = !app.commandOptions()->noSplash(); 
   if (enableSplash)
     {
