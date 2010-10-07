@@ -1,7 +1,7 @@
 project(vtkSlicerVolumesModuleLogic)
 
 #
-# See CMake/Slicer3ModuleLogicMacros.cmake for details
+# See CMake/SlicerModuleLogicMacros.cmake for details
 #
 
 SET(module_logic_name "${PROJECT_NAME}")
@@ -24,7 +24,7 @@ SET(module_logic_target_libraries
   )
 
 
-Slicer3_build_module_logic(
+Slicer_build_module_logic(
   NAME ${module_logic_name}
   EXPORT_DIRECTIVE ${module_logic_export_directive}
   INCLUDE_DIRECTORIES ${module_logic_include_directories}

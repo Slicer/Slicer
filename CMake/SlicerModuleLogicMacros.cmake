@@ -19,10 +19,10 @@
 ################################################################################
 
 #
-# Slicer3_build_module_logic
+# Slicer_build_module_logic
 #
 
-MACRO(Slicer3_build_module_logic)
+MACRO(Slicer_build_module_logic)
   SLICER_PARSE_ARGUMENTS(MODULELOGIC
     "NAME;EXPORT_DIRECTIVE;SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES"
     ""
@@ -150,4 +150,4 @@ MACRO(Slicer3_build_module_logic)
     DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${MODULELOGIC_NAME} COMPONENT Development
     )
     
-ENDMACRO(Slicer3_build_module_logic)
+ENDMACRO(Slicer_build_module_logic)
