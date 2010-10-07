@@ -26,7 +26,7 @@ IF(Slicer3_USE_PYTHONQT_WITH_TCL)
     )
 ENDIF()
 
-Slicer3_compile_python_scripts(
+Slicer_compile_python_scripts(
   TARGET_NAME slicer
   SCRIPTS "${Slicer_PYTHON_SCRIPTS}"
   RESOURCES "${Slicer_PYTHON_RESOURCES}"

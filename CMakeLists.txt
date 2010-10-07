@@ -339,7 +339,7 @@ IF(Slicer3_USE_QT)
       MESSAGE(FATAL_ERROR "Since both Slicer3_USE_QT and Slicer3_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer3_USE_PYTHONQT or re-configure VTK with python wrapping.")
     ENDIF(NOT VTK_WRAP_PYTHON)
     # Include convenient script allowing to copy and compile python scripts
-    INCLUDE(${Slicer_CMAKE_DIR}/Slicer3CompilePythonScripts.cmake)
+    INCLUDE(${Slicer_CMAKE_DIR}/SlicerCompilePythonScripts.cmake)
     # Enable qMRMLWidgets python wrapping
     SET(qMRMLWidgets_WRAP_PYTHON OFF)
   ENDIF(Slicer3_USE_PYTHONQT)
