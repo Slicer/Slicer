@@ -36,7 +36,7 @@ SET(qt_module_target_libraries
 SET(qt_module_resources
 )
 
-Slicer3_build_qtmodule(
+Slicer_build_qtmodule(
   NAME ${qt_module_name}
   TITLE TractographyDisplay
   EXPORT_DIRECTIVE ${qt_module_export_directive}

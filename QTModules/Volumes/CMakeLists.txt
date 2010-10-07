@@ -60,7 +60,7 @@ SET(qt_module_resources
   Resources/qSlicerVolumesModule.qrc
 )
 
-Slicer3_build_qtmodule(
+Slicer_build_qtmodule(
   NAME ${qt_module_name}
   TITLE ${qt_module_title}
   EXPORT_DIRECTIVE ${qt_module_export_directive}

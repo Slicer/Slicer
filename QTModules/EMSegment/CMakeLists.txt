@@ -145,7 +145,7 @@ SET(qt_module_resources
   Resources/qSlicerEMSegmentModule.qrc
 )
 
-Slicer3_build_qtmodule(
+Slicer_build_qtmodule(
   NAME ${qt_module_name}
   EXPORT_DIRECTIVE ${qt_module_export_directive}
   INCLUDE_DIRECTORIES ${qt_module_include_directories}

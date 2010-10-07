@@ -22,7 +22,7 @@
 #
 #
 
-MACRO(Slicer3_build_qtmodule)
+MACRO(Slicer_build_qtmodule)
   SLICER_PARSE_ARGUMENTS(QTMODULE
     "NAME;TITLE;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
     ""
@@ -32,15 +32,15 @@ MACRO(Slicer3_build_qtmodule)
   # Sanity checks
   IF(NOT DEFINED QTMODULE_NAME)
     MESSAGE(SEND_ERROR "NAME is mandatory")
-  ENDIF(NOT DEFINED QTMODULE_NAME)
+  ENDIF()
 
   IF(NOT DEFINED QTMODULE_EXPORT_DIRECTIVE)
     MESSAGE(SEND_ERROR "EXPORT_DIRECTIVE is mandatory")
-  ENDIF(NOT DEFINED QTMODULE_EXPORT_DIRECTIVE)
+  ENDIF()
 
   IF(NOT DEFINED QTMODULE_TITLE)
     SET(QTMODULE_TITLE ${QTMODULE_NAME})
-  ENDIF(NOT DEFINED QTMODULE_TITLE)
+  ENDIF()
 
   # Define library name
   SET(lib_name qSlicer${QTMODULE_NAME}Module)
@@ -55,7 +55,7 @@ MACRO(Slicer3_build_qtmodule)
     FIND_PACKAGE(Slicer3 REQUIRED)
     INCLUDE(${Slicer3_USE_FILE})
     slicer3_set_default_install_prefix_for_external_projects()
-  ENDIF(NOT Slicer3_SOURCE_DIR)
+  ENDIF()
 
   # --------------------------------------------------------------------------
   # Include dirs
@@ -94,7 +94,7 @@ MACRO(Slicer3_build_qtmodule)
   QT4_WRAP_UI(QTMODULE_UI_CXX ${QTMODULE_UI_SRCS})
   IF(DEFINED QTMODULE_RESOURCES)
     QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${QTMODULE_RESOURCES})
-  ENDIF(DEFINED QTMODULE_RESOURCES)
+  ENDIF()
 
   QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${Slicer3_SOURCE_DIR}/Resources/qSlicerLogos.qrc)
   
@@ -151,7 +151,7 @@ MACRO(Slicer3_build_qtmodule)
     SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
       ${Slicer3_LIBRARY_PROPERTIES}
     )
-  ENDIF(Slicer3_LIBRARY_PROPERTIES)
+  ENDIF()
 
   # Install rules
   INSTALL(TARGETS ${lib_name}
@@ -168,4 +168,4 @@ MACRO(Slicer3_build_qtmodule)
     DESTINATION ${Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${QTMODULE_NAME} COMPONENT Development
     )
 
-ENDMACRO(Slicer3_build_qtmodule)
+ENDMACRO()

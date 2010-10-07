@@ -38,7 +38,7 @@ SET(qt_module_resources
   Resources/qSlicerTractographyFiducialSeedingModule.qrc
 )
 
-Slicer3_build_qtmodule(
+Slicer_build_qtmodule(
   NAME ${qt_module_name}
   TITLE TractographyFiducialSeeding
   EXPORT_DIRECTIVE ${qt_module_export_directive}
