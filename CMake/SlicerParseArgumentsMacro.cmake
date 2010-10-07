@@ -2,7 +2,7 @@
 #
 # See http://www.cmake.org/Wiki/CMakeMacroParseArguments
 #
-MACRO(SLICER3_PARSE_ARGUMENTS prefix arg_names option_names)
+MACRO(SLICER_PARSE_ARGUMENTS prefix arg_names option_names)
   SET(DEFAULT_ARGS)
   FOREACH(arg_name ${arg_names})
     SET(${prefix}_${arg_name})
@@ -31,4 +31,4 @@ MACRO(SLICER3_PARSE_ARGUMENTS prefix arg_names option_names)
     ENDIF (is_arg_name GREATER -1)
   ENDFOREACH(arg)
   SET(${prefix}_${current_arg_name} ${current_arg_list})
-ENDMACRO(SLICER3_PARSE_ARGUMENTS)
+ENDMACRO(SLICER_PARSE_ARGUMENTS)

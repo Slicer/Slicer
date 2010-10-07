@@ -143,7 +143,7 @@ set(CMAKE_MODULE_PATH
 include("${Slicer_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
 
 # See http://www.cmake.org/Wiki/CMakeMacroParseArguments
-include("${Slicer_CMAKE_DIR}/Slicer3ParseArgumentsMacro.cmake")
+include("${Slicer_CMAKE_DIR}/SlicerParseArgumentsMacro.cmake")
 
 ## QT
 INCLUDE(${Slicer_CMAKE_DIR}/Slicer3FindQT.cmake)
