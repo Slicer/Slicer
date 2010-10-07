@@ -571,7 +571,7 @@ INSTALL(FILES
 #-----------------------------------------------------------------------------
 # Generate Slicer3Version.txt
 
-INCLUDE(${Slicer_CMAKE_DIR}/Slicer3TodayMacro.cmake)
+INCLUDE(${Slicer_CMAKE_DIR}/SlicerTodayMacro.cmake)
 
 # Get build time
 TODAY(Slicer3_BUILDDATE)
