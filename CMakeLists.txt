@@ -146,7 +146,7 @@ include("${Slicer_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
 include("${Slicer_CMAKE_DIR}/SlicerParseArgumentsMacro.cmake")
 
 ## QT
-INCLUDE(${Slicer_CMAKE_DIR}/Slicer3FindQT.cmake)
+INCLUDE(${Slicer_CMAKE_DIR}/SlicerFindQT.cmake)
 
 #-----------------------------------------------------------------------------
 # Top level slicer3 configurations
@@ -311,9 +311,9 @@ mark_as_advanced(Slicer3_USE_VTK_CVSHEAD)
 
 #-----------------------------------------------------------------------------
 #
-# Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/Slicer3FindQT.cmake
+# Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/SlicerFindQT.cmake
 #
-SLICER3_SETUP_QT()
+SLICER_SETUP_QT()
 
 #-----------------------------------------------------------------------------
 # Alert the user if both Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are OFF
