@@ -73,16 +73,16 @@ IF(WIN32)
           -D_CRT_VCCLRIT_NO_DEPRECATE
           -D_SCL_SECURE_NO_DEPRECATE
           )
-      ENDIF(NOT MINGW)
-    ENDIF(NOT CYGWIN)
-  ENDIF(NOT BORLAND)
-ENDIF(WIN32)
+      ENDIF()
+    ENDIF()
+  ENDIF()
+ENDIF()
 
 # Disable warning C4996: [...] This function or variable may be unsafe. [...]
 # To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details
 if(MSVC90)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif(MSVC90)
+endif()
 
 # include a test for endianness (used to be done by default)
 
@@ -97,18 +97,18 @@ test_big_endian(CMAKE_WORDS_BIGENDIAN)
 if(APPLE)
   set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
   set(CMAKE_EXE_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
-endif(APPLE)
+endif()
 
 #-----------------------------------------------------------------------------
 # Slicer version number.
 #
-set(Slicer3_VERSION_MAJOR "4")
-set(Slicer3_VERSION_MINOR "0")
-if(NOT Slicer3_VERSION_PATCH)
-  set(Slicer3_VERSION_PATCH "alpha")
-endif(NOT Slicer3_VERSION_PATCH)
-set(Slicer3_VERSION "${Slicer3_VERSION_MAJOR}.${Slicer3_VERSION_MINOR}")
-set(Slicer3_VERSION_FULL "${Slicer3_VERSION}.${Slicer3_VERSION_PATCH}")
+set(Slicer_VERSION_MAJOR "4")
+set(Slicer_VERSION_MINOR "0")
+if(NOT Slicer_VERSION_PATCH)
+  set(Slicer_VERSION_PATCH "alpha")
+endif()
+set(Slicer_VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
 # Build shared lib by default
@@ -121,10 +121,10 @@ option(BUILD_SHARED_LIBS "Build Slicer3 with shared libraries." ON)
 OPTION(Slicer3_WITH_LIBRARY_VERSION "Build with library version information" OFF)
 IF(Slicer3_WITH_LIBRARY_VERSION)
   SET(Slicer3_LIBRARY_PROPERTIES ${Slicer3_LIBRARY_PROPERTIES}
-    VERSION ${Slicer3_VERSION_FULL}
-    SOVERSION ${Slicer3_VERSION}
+    VERSION ${Slicer_VERSION_FULL}
+    SOVERSION ${Slicer_VERSION}
   )
-ENDIF(Slicer3_WITH_LIBRARY_VERSION)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Slicer3 macros

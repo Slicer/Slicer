@@ -13,9 +13,9 @@ set(Slicer3_REQUIRED_CXX_FLAGS "@Slicer3_REQUIRED_CXX_FLAGS@")
 set(Slicer3_REQUIRED_LINK_FLAGS "@Slicer3_REQUIRED_LINK_FLAGS@")
 
 # The Slicer3 version number
-set(Slicer3_VERSION_MAJOR "@Slicer3_VERSION_MAJOR@")
-set(Slicer3_VERSION_MINOR "@Slicer3_VERSION_MINOR@")
-set(Slicer3_VERSION_PATCH "@Slicer3_VERSION_PATCH@")
+set(Slicer_VERSION_MAJOR "@Slicer_VERSION_MAJOR@")
+set(Slicer_VERSION_MINOR "@Slicer_VERSION_MINOR@")
+set(Slicer_VERSION_PATCH "@Slicer_VERSION_PATCH@")
 
 # Whether Slicer3 was built with modules and CLI support.
 set(Slicer3_BUILD_MODULES "@Slicer3_BUILD_MODULES@")

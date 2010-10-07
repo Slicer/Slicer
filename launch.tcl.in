@@ -493,7 +493,7 @@ proc launch_SetEnvironment {} {
       
     }
     
-    set ::env(Slicer3_VERSION)    @Slicer3_VERSION_PATCH@
+    set ::env(Slicer_VERSION)    @Slicer_VERSION_PATCH@
     
     # If reportVTKErrors is nonzero, then we check for VTK errors and
     # if a VTK error is found then launcher returns with error (causing the test to FAIL)

@@ -68,7 +68,7 @@
 #include <vtksys/SystemTools.hxx>
 
 // Slicer includes
-#include "vtkSlicerVersionConfigure.h" // For Slicer3_VERSION_{MINOR, MAJOR}, Slicer3_VERSION_FULL
+#include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_{MINOR, MAJOR}, Slicer_VERSION_FULL
 
 // Convenient macro
 #define VTK_CREATE(type, name) \
@@ -180,8 +180,8 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 
   QString settingsFileName = QString("%1-%2.%3%4").
     arg(qSlicerCoreApplication::applicationName().replace(":", "")).
-    arg(QString::number(Slicer3_VERSION_MAJOR)).
-    arg(QString::number(Slicer3_VERSION_MINOR)).
+    arg(QString::number(Slicer_VERSION_MAJOR)).
+    arg(QString::number(Slicer_VERSION_MINOR)).
     arg(suffix);
 
   if (useTmp)
@@ -310,7 +310,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   Q_D(qSlicerCoreApplication);
 
   this->setOrganizationName("NAMIC");
-  this->setApplicationVersion(Slicer3_VERSION_FULL);
+  this->setApplicationVersion(Slicer_VERSION_FULL);
 
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it

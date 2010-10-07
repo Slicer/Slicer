@@ -10,8 +10,8 @@
 
 =========================================================================auto=*/
 
-#define Slicer3_VERSION_MAJOR @Slicer3_VERSION_MAJOR@
-#define Slicer3_VERSION_MINOR @Slicer3_VERSION_MINOR@
-#define Slicer3_VERSION_PATCH @Slicer3_VERSION_PATCH@
-#define Slicer3_VERSION "@Slicer3_VERSION@"
-#define Slicer3_VERSION_FULL "@Slicer3_VERSION_FULL@"
+#define Slicer_VERSION_MAJOR @Slicer_VERSION_MAJOR@
+#define Slicer_VERSION_MINOR @Slicer_VERSION_MINOR@
+#define Slicer_VERSION_PATCH @Slicer_VERSION_PATCH@
+#define Slicer_VERSION "@Slicer_VERSION@"
+#define Slicer_VERSION_FULL "@Slicer_VERSION_FULL@"
