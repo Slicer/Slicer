@@ -244,6 +244,9 @@ if(Slicer3_USE_QT)
 
     option(Slicer3_USE_PYTHONQT "Integrate a PythonQt interpreter into Slicer." ON)
     option(Slicer3_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON)
+    
+    option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." OFF)
+    mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
   
   else()
     MESSAGE(FATAL_ERROR "error: Qt >= ${minimum_required_qt_version} was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
@@ -346,6 +349,7 @@ set(scipy_DEPENDENCIES NUMPY)
 set(weave_DEPENDENCIES python NUMPY)
 
 set(VTK_DEPENDENCIES)
+set(CTKAPPLAUNCHER_DEPENDENCIES)
 set(CTK_DEPENDENCIES VTK)
 if(Slicer3_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
@@ -388,6 +392,9 @@ include(External_VTK)
 
 if(Slicer3_USE_QT)
   include(External_CTK)
+  if (Slicer_USE_CTKAPPLAUNCHER)
+    include(External_CTKAPPLAUNCHER)
+  endif()
 endif()
 
 if(Slicer3_USE_KWWIDGETS)
@@ -421,6 +428,9 @@ endif()
 
 if(Slicer3_USE_QT)
   list(APPEND slicer_DEPENDENCIES CTK)
+  if (Slicer_USE_CTKAPPLAUNCHER)
+    list(APPEND slicer_DEPENDENCIES CTKAPPLAUNCHER)
+  endif()
 endif()
 
 if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
@@ -503,6 +513,8 @@ ExternalProject_Add(${proj}
     -DSlicer3_USE_QT:BOOL=${Slicer3_USE_QT}
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
     -DCTK_DIR:PATH=${CTK_DIR}
+    -DSlicer_USE_CTKAPPLAUNCHER:BOOL=${Slicer_USE_CTKAPPLAUNCHER}
+    -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR}
     # KWWidgets
     -DSlicer3_USE_KWWIDGETS:BOOL=${Slicer3_USE_KWWIDGETS}
     -DKWWidgets_DIR:PATH=${CMAKE_BINARY_DIR}/KWWidgets-build

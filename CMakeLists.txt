@@ -758,6 +758,43 @@ IF(Slicer3_USE_QT)
       ENDIF()
     ENDFOREACH(qtlib)
   ENDIF(APPLE)
+  
+  option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." OFF)
+  mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
+  
+  # ctkAppLauncher for slicer
+  IF(Slicer_USE_CTKAPPLAUNCHER)
+    INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
+    INCLUDE(${Slicer3_CMAKE_DIR}/SlicerCTKAppLauncherSettings.cmake)
+    ctkAppLauncherConfigure(
+      APPLICATION_PATH ${Slicer3_BINARY_DIR}/bin/SlicerQT-real${CMAKE_EXECUTABLE_SUFFIX}
+      APPLICATION_INSTALL_SUBDIR ${Slicer3_INSTALL_BIN_DIR}
+      APPLICATION_NAME Slicer
+      SPLASH_IMAGE_PATH ${Slicer3_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png
+      SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer3_INSTALL_BIN_DIR}
+      SPLASHSCREEN_HIDE_DELAY_MS 3000
+      ADDITIONAL_HELP_SHORT_ARG "-h"
+      ADDITIONAL_HELP_LONG_ARG "--help"
+      ADDITIONAL_NOSPLASH_LONG_ARG "--no-splash"
+      DESTINATION_DIR ${Slicer3_BINARY_DIR}
+      LIBRARY_PATHS_BUILD "${SLICER_LIBRARY_PATHS_BUILD}"
+      PATHS_BUILD "${SLICER_PATHS_BUILD}"
+      ENVVARS_BUILD "${SLICER_ENVVARS_BUILD}"
+      LIBRARY_PATHS_INSTALLED "${SLICER_LIBRARY_PATHS_INSTALLED}"
+      PATHS_INSTALLED "${SLICER_PATHS_INSTALLED}"
+      ENVVARS_INSTALLED "${SLICER_ENVVARS_INSTALLED}"
+      )
+    install(PROGRAMS "${Slicer3_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
+    install(
+      FILES "${Slicer3_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png" 
+      DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+      )
+    install(
+      FILES "${Slicer3_BINARY_DIR}/SlicerLauncherSettingsToInstall.ini" 
+      DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+      RENAME SlicerLauncherSettings.ini
+      )
+  ENDIF()
     
 ENDIF(Slicer3_USE_QT)
 
