@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   Slicer3
+  Program:   Slicer
   Language:  C++
   Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/GUI/Slicer3.cxx $
   Date:      $Date: 2009-04-15 06:29:13 -0400 (Wed, 15 Apr 2009) $

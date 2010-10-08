@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   Slicer3
+  Program:   Slicer
   Language:  C++
   Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/CLI/ConfidenceConnected.cxx $
   Date:      $Date: 2008-11-24 14:36:19 -0500 (Mon, 24 Nov 2008) $

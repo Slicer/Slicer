@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   Slicer3
+  Program:   Slicer
   Module:    $HeadURL$
   Language:  C++
   Date:      $Date$
