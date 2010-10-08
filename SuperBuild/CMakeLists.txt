@@ -276,7 +276,7 @@ endif()
 #------------------------------------------------------------------------------  
 
 # Enable VTK Debug Leaks
-option(Slicer3_USE_VTK_DEBUG_LEAKS 
+option(Slicer_USE_VTK_DEBUG_LEAKS 
   "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
   
 # Enable the build of Command line module
@@ -493,7 +493,7 @@ ExternalProject_Add(${proj}
     -DBatchMake_DIR:PATH=${CMAKE_BINARY_DIR}/BatchMake-build
     # VTK
     -DVTK_DIR:PATH=${VTK_DIR}
-    -DVTK_DEBUG_LEAKS:BOOL=${Slicer3_USE_VTK_DEBUG_LEAKS}
+    -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
     # TCL/Tk
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
