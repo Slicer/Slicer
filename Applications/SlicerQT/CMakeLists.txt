@@ -45,7 +45,7 @@ IF(BUILD_SHARED_LIBS)
     #   \"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",
     #   \"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
 
-    IF(Slicer3_BUILD_QTLOADABLEMODULES)
+    IF(Slicer_BUILD_QTLOADABLEMODULES)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},          \\
          \"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\" CONFIG_DIR_POST")
@@ -57,7 +57,7 @@ IF(BUILD_SHARED_LIBS)
         "${Slicer3_FORWARD_PATH_BUILD},            \\
         \"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     
-    ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
+    ENDIF(Slicer_BUILD_QTLOADABLEMODULES)
      
     #IF(Slicer3_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
@@ -111,7 +111,7 @@ IF(BUILD_SHARED_LIBS)
        \"../lib/vtkITK\",                                           \\
        \"../lib/vtkTeem\"")
 
-    IF(Slicer3_BUILD_QTLOADABLEMODULES)
+    IF(Slicer_BUILD_QTLOADABLEMODULES)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},                  \\
          \"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
@@ -124,7 +124,7 @@ IF(BUILD_SHARED_LIBS)
         "${Slicer3_FORWARD_PATH_BUILD},             \\
         \"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
         
-    ENDIF(Slicer3_BUILD_QTLOADABLEMODULES)
+    ENDIF(Slicer_BUILD_QTLOADABLEMODULES)
     
     #IF(Slicer3_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD

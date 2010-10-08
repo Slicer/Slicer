@@ -500,9 +500,9 @@ set(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
 # Qt Loadable Modules
 #
 IF(Slicer3_USE_QT)
-  OPTION(Slicer3_BUILD_QTLOADABLEMODULES "Build Slicer3 QT Loadable Modules" ON)
-  IF(Slicer3_BUILD_QTLOADABLEMODULES)
-    ADD_DEFINITIONS(-DSlicer3_BUILD_QTLOADABLEMODULES)
+  OPTION(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer3 QT Loadable Modules" ON)
+  IF(Slicer_BUILD_QTLOADABLEMODULES)
+    ADD_DEFINITIONS(-DSlicer_BUILD_QTLOADABLEMODULES)
     set(Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
     set(Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
     set(Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTLoadableModules")
@@ -689,7 +689,7 @@ ENDIF()
 # The EMSegment{Registration,Graph,Algorithm,MRML} libraries are built from the top-level
 # CMakeLists.txt. Doing so allow to build these libraries also if Slicer3_USE_KWWIDGETS is OFF
 
-IF(Slicer3_BUILD_MODULES OR Slicer3_BUILD_QTLOADABLEMODULES)
+IF(Slicer3_BUILD_MODULES OR Slicer_BUILD_QTLOADABLEMODULES)
   include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   ADD_SUBDIRECTORY(Modules/EMSegment/Algorithm)
   ADD_SUBDIRECTORY(Modules/EMSegment/MRML)
@@ -709,7 +709,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
 #
-IF(Slicer3_USE_QT AND Slicer3_BUILD_QTLOADABLEMODULES)
+IF(Slicer3_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
   add_subdirectory(QTModules)
 ENDIF()
 
