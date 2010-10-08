@@ -47,8 +47,8 @@ SET(QT_LIBRARIES
 set(include_dirs ${include_dirs} ${QT_INCLUDE_DIRS})
 include_directories(${include_dirs})
 
-slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer3_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
+slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerBaseGUIQtConfigure.h.in 
@@ -110,8 +110,8 @@ IF(Slicer3_LIBRARY_PROPERTIES)
 ENDIF(Slicer3_LIBRARY_PROPERTIES)
 
 
-slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
+slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} ${lib_name})
 
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 

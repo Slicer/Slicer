@@ -31,8 +31,8 @@ endif(NOT Slicer3_SOURCE_DIR)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   )
 
 # --------------------------------------------------------------------------
@@ -149,8 +149,8 @@ endif(NOT Slicer3_SOURCE_DIR)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   )
 
 # --------------------------------------------------------------------------

@@ -29,8 +29,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${vtkSlicerModelTransformModuleLogic_SOURCE_DIR}
   ${vtkSlicerModelTransformModuleLogic_BINARY_DIR}
-  ${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
   ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
@@ -78,8 +78,8 @@ add_library(${lib_name}
 slicer3_set_modules_output_path(${lib_name})
 
 target_link_libraries(${lib_name}
-  ${Slicer3_Libs_LIBRARIES}
-  ${Slicer3_Base_LIBRARIES}
+  ${Slicer_Libs_LIBRARIES}
+  ${Slicer_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   vtkSlicerModelTransformModuleLogic

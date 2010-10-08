@@ -56,8 +56,8 @@ MACRO(Slicer_build_module_logic)
   INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${Slicer3_Libs_INCLUDE_DIRS}
-    ${Slicer3_Base_INCLUDE_DIRS}
+    ${Slicer_Libs_INCLUDE_DIRS}
+    ${Slicer_Base_INCLUDE_DIRS}
     ${MODULELOGIC_INCLUDE_DIRECTORIES}
     )
 
@@ -113,7 +113,7 @@ MACRO(Slicer_build_module_logic)
 
   # HACK Since we don't depend on qSlicerBaseQT{Base, Core, CLI, CoreModules, GUI},
   # let's remove them from the list
-  SET(Slicer3_ModuleLogic_Base_LIBRARIES ${Slicer3_Base_LIBRARIES})
+  SET(Slicer3_ModuleLogic_Base_LIBRARIES ${Slicer_Base_LIBRARIES})
   LIST(REMOVE_ITEM Slicer3_ModuleLogic_Base_LIBRARIES qSlicerBaseQTBase)
   LIST(REMOVE_ITEM Slicer3_ModuleLogic_Base_LIBRARIES qSlicerBaseQTCore)
   LIST(REMOVE_ITEM Slicer3_ModuleLogic_Base_LIBRARIES qSlicerBaseQTCLI)
@@ -123,7 +123,7 @@ MACRO(Slicer_build_module_logic)
   LIST(REMOVE_ITEM Slicer3_ModuleLogic_Base_LIBRARIES SlicerBaseGUI)
 
   TARGET_LINK_LIBRARIES(${lib_name}
-    ${Slicer3_Libs_LIBRARIES}
+    ${Slicer_Libs_LIBRARIES}
     ${Slicer3_ModuleLogic_Base_LIBRARIES}
     ${MODULELOGIC_TARGET_LIBRARIES}
     )

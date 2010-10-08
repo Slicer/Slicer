@@ -67,8 +67,8 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
 
 # Add include directories needed to use Slicer3.
 include_directories(BEFORE 
-  ${Slicer3_Libs_INCLUDE_DIRS} 
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS} 
+  ${Slicer_Base_INCLUDE_DIRS}
   )
 
 # Add link directories needed to use Slicer3.

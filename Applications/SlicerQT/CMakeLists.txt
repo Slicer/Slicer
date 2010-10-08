@@ -230,8 +230,8 @@ QT4_ADD_RESOURCES(SlicerQT_QRC_SRCS ${qt_module_resources})
 set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  #${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  #${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   #${NAVITRACK_INC}
   #${IGSTK_INCLUDE_DIRS}
 #   ${Volumes_SOURCE_DIR}
@@ -343,8 +343,8 @@ INCLUDE_DIRECTORIES(${include_dirs})
 # STATIC, but that's fixed in 2.6.
 #
 #target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
-#  ${Slicer3_Libs_LIBRARIES}
-#  ${Slicer3_Base_LIBRARIES}
+#  ${Slicer_Libs_LIBRARIES}
+#  ${Slicer_Base_LIBRARIES}
 #   RemoteIO
 #   ${KWWidgets_LIBRARIES}
 #  ${SLICERLIBCURL_LIBRARIES}
@@ -393,8 +393,8 @@ INCLUDE_DIRECTORIES(${include_dirs})
 
 SET(lib_name "qSlicerQT")
 
-#slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
-#slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
+#slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
+#slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} ${lib_name})
 
 ADD_LIBRARY(${lib_name}
   ${SlicerQT_SRCS}
@@ -403,11 +403,11 @@ ADD_LIBRARY(${lib_name}
 )
 
 # HACK Since we don't depend on SlicerBaseGUI, remove it from the list
-SET(Slicer3_BaseQT_LIBRARIES ${Slicer3_Base_LIBRARIES})
-LIST(REMOVE_ITEM Slicer3_BaseQT_LIBRARIES SlicerBaseGUI)
+SET(Slicer_BaseQT_LIBRARIES ${Slicer_Base_LIBRARIES})
+LIST(REMOVE_ITEM Slicer_BaseQT_LIBRARIES SlicerBaseGUI)
 
 SET(SlicerQT_LIBRARIES 
-  ${Slicer3_BaseQT_LIBRARIES}
+  ${Slicer_BaseQT_LIBRARIES}
   )
   
 target_link_libraries(${lib_name} 

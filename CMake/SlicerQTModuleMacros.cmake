@@ -63,8 +63,8 @@ MACRO(Slicer_build_qtmodule)
   INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${Slicer3_Libs_INCLUDE_DIRS}
-    ${Slicer3_Base_INCLUDE_DIRS}
+    ${Slicer_Libs_INCLUDE_DIRS}
+    ${Slicer_Base_INCLUDE_DIRS}
     ${QTMODULE_INCLUDE_DIRECTORIES}
     )
 
@@ -140,8 +140,8 @@ MACRO(Slicer_build_qtmodule)
     )
 
   TARGET_LINK_LIBRARIES(${lib_name}
-    ${Slicer3_Libs_LIBRARIES}
-    ${Slicer3_Base_LIBRARIES}
+    ${Slicer_Libs_LIBRARIES}
+    ${Slicer_Base_LIBRARIES}
     ${QTMODULE_TARGET_LIBRARIES}
     #${ITK_LIBRARIES}
     )

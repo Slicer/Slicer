@@ -22,8 +22,8 @@ endif(NOT Slicer3_SOURCE_DIR)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   )
 
 
@@ -48,7 +48,7 @@ generateclp(
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries(${CLP}
-  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer_Libs_LIBRARIES}
   vtkIO
   ${ITK_LIBRARIES}
   )

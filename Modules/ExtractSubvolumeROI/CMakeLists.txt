@@ -21,8 +21,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard
   ${CMAKE_CURRENT_SOURCE_DIR}/Filters
-  ${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   ${vtkTeem_SOURCE_DIR} 
   ${vtkTeem_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
@@ -81,8 +81,8 @@ install(
 #add_library(${LIB_NAME} ${LIB_SRCS} ${LIB_TCL_SRCS})
 
 #target_link_libraries(${LIB_NAME}
-#  ${Slicer3_Libs_LIBRARIES}
-#  ${Slicer3_Base_LIBRARIES}
+#  ${Slicer_Libs_LIBRARIES}
+#  ${Slicer_Base_LIBRARIES}
 #  ${KWWidgets_LIBRARIES}
 #  )
 

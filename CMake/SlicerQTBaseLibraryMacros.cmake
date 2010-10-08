@@ -66,8 +66,8 @@ MACRO(Slicer_build_slicer_qtbase_library)
 
   INCLUDE_DIRECTORIES(${include_dirs})
 
-  slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS tmp)
-  slicer3_set_persistent_property(Slicer3_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
+  slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS tmp)
+  slicer3_set_persistent_property(Slicer_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
 
   #-----------------------------------------------------------------------------
   # Configure
@@ -117,8 +117,8 @@ MACRO(Slicer_build_slicer_qtbase_library)
   # --------------------------------------------------------------------------
   # Build the library
 
-  slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
-  slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
+  slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
+  slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} ${lib_name})
 
   ADD_LIBRARY(${lib_name}
     ${SLICERQTBASELIB_SRCS}

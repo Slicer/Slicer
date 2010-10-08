@@ -22,8 +22,8 @@ endif(NOT Slicer3_SOURCE_DIR)
 include_directories(
   ${ChangeTracker_SOURCE_DIR}
   ${ChangeTracker_SOURCE_DIR}/CommandLineApplication
-  ${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   ${vtkTeem_SOURCE_DIR} 
   ${vtkTeem_BINARY_DIR}
   )

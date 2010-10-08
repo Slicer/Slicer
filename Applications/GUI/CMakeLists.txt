@@ -104,8 +104,8 @@ include(${SLICERLIBCURL_USE_FILE})
 set(dir_list
   ${Slicer3_SOURCE_DIR}
   ${Slicer3_BINARY_DIR}
-  ${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   ${NAVITRACK_INC}
   ${IGSTK_INCLUDE_DIRS}
   ${Volumes_SOURCE_DIR}
@@ -217,8 +217,8 @@ endif(LABELSTATISTICS)
 # STATIC, but that's fixed in 2.6.
 #
 target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
-  ${Slicer3_Libs_LIBRARIES}
-  ${Slicer3_Base_LIBRARIES}
+  ${Slicer_Libs_LIBRARIES}
+  ${Slicer_Base_LIBRARIES}
   RemoteIO
   ${KWWidgets_LIBRARIES}
 #  ${SLICERLIBCURL_LIBRARIES}

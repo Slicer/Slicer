@@ -23,8 +23,8 @@ endif(NOT Slicer3_SOURCE_DIR)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${Slicer3_Libs_INCLUDE_DIRS}
-  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Slicer_Libs_INCLUDE_DIRS}
+  ${Slicer_Base_INCLUDE_DIRS}
   ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
   ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
@@ -96,8 +96,8 @@ if ( ${VolumesLib} MATCHES "NOTFOUND" )
 endif ( ${VolumesLib} MATCHES "NOTFOUND" )
 
 target_link_libraries(${lib_name}
-  ${Slicer3_Libs_LIBRARIES}
-  ${Slicer3_Base_LIBRARIES}
+  ${Slicer_Libs_LIBRARIES}
+  ${Slicer_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   ${CLP_MODULE}

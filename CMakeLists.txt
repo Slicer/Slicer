@@ -167,13 +167,13 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 #-----------------------------------------------------------------------------
 # Slicer include and libraries subdirectory
 #
-slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES "")
-slicer3_set_persistent_property(Slicer3_Base_LIBRARIES "")
+slicer3_set_persistent_property(Slicer_Libs_LIBRARIES "")
+slicer3_set_persistent_property(Slicer_Base_LIBRARIES "")
 slicer3_set_persistent_property(Slicer3_Modules_LIBRARIES "")
 slicer3_set_persistent_property(Slicer3_QTModules_LIBRARIES "")
 
-slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS "")
-slicer3_set_persistent_property(Slicer3_Base_INCLUDE_DIRS "")
+slicer3_set_persistent_property(Slicer_Libs_INCLUDE_DIRS "")
+slicer3_set_persistent_property(Slicer_Base_INCLUDE_DIRS "")
 slicer3_set_persistent_property(Slicer3_Modules_INCLUDE_DIRS "")
 slicer3_set_persistent_property(Slicer3_QTModules_INCLUDE_DIRS "")
 
@@ -621,11 +621,11 @@ add_subdirectory(Resources)
 # since they were collected in each subdir (which makes it impossible to
 # use normal variables, since a new scope is created in each subdir).
 #
-slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES Slicer3_Libs_LIBRARIES)
-slicer3_get_persistent_property(Slicer3_Base_LIBRARIES Slicer3_Base_LIBRARIES)
+slicer3_get_persistent_property(Slicer_Libs_LIBRARIES Slicer_Libs_LIBRARIES)
+slicer3_get_persistent_property(Slicer_Base_LIBRARIES Slicer_Base_LIBRARIES)
 
-slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS Slicer3_Libs_INCLUDE_DIRS)
-slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS Slicer3_Base_INCLUDE_DIRS)
+slicer3_get_persistent_property(Slicer_Libs_INCLUDE_DIRS Slicer_Libs_INCLUDE_DIRS)
+slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS Slicer_Base_INCLUDE_DIRS)
 
 
 #-----------------------------------------------------------------------------

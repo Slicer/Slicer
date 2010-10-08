@@ -101,8 +101,8 @@ endforeach(dir)
 # vtkITK contains tests that uses MRML's test data.
 set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
 
-slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+slicer3_get_persistent_property(Slicer_Libs_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
 # Inconsistent library name vs. project/dir name :(
 
 string(REPLACE ITKCommandIO CommandIO libs "${libs}")
@@ -116,8 +116,8 @@ string(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 
 list(REMOVE_ITEM libs GenerateLM slicerio)
 
-slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${libs})
+slicer3_get_persistent_property(Slicer_Libs_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer_Libs_LIBRARIES ${tmp} ${libs})
 
 FOREACH(dir ${dirs})
   ADD_SUBDIRECTORY(${dir})

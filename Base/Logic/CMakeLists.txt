@@ -30,8 +30,8 @@ set(include_dirs
 
 include_directories(${include_dirs})
 
-slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer3_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
+slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer_Base_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerBaseLogicConfigure.h.in 
@@ -138,8 +138,8 @@ IF (VTK_WRAP_TCL)
   ENDFOREACH(c)
 ENDIF()
 
-slicer3_get_persistent_property(Slicer3_Base_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Base_LIBRARIES ${tmp} ${lib_name})
+slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} ${lib_name})
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)
