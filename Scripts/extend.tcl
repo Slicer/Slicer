@@ -230,7 +230,7 @@ if { $::isWindows } {
 vputs "making with $::MAKE"
 
 # get the slicer version information
-loadArray $::Slicer3_BUILD/lib/Slicer3/Slicer3Version.txt slicerVersion
+loadArray $::Slicer3_BUILD/lib/Slicer3/SlicerVersion.txt slicerVersion
 set len [string length "http://svn.slicer.org/Slicer3/"]
 set ::EXTEND(slicerSVNSubpath) [string range $slicerVersion(svnurl) $len end]
 set ::EXTEND(slicerSVNRevision) $slicerVersion(svnrevision)

@@ -461,7 +461,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/ExternalProjectDependencies.txt "${ep_dep
 
 #-----------------------------------------------------------------------------
 # Configure and build Slicer
-# Note that the Slicer3Version.txt file will be created at configuration time
+# Note that the SlicerVersion.txt file will be created at configuration time
 #------------------------------------------------------------------------------
 
 set(proj Slicer3)

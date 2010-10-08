@@ -1172,7 +1172,7 @@ proc launch_ImportModulePaths {} {
     # we should have the module paths now
 
     # parse the svn revision of the version file
-    set dp [open "$::env(Slicer_HOME)/lib/Slicer3/Slicer3Version.txt" r]
+    set dp [open "$::env(Slicer_HOME)/lib/Slicer3/SlicerVersion.txt" r]
     set data [read $dp]
     close $dp
 

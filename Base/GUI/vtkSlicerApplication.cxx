@@ -1671,7 +1671,7 @@ void vtkSlicerApplication::InitializeSlicer3Version()
   txtfile += "/../";
   txtfile += Slicer_INSTALL_LIB_DIR;
   txtfile += "/";
-  txtfile += "Slicer3Version.txt";
+  txtfile += "SlicerVersion.txt";
 
   std::string platform("");
   std::string build_date("");

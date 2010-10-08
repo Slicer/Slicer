@@ -367,7 +367,7 @@ ENDIF()
 option(Slicer_USE_MIDAS "Build Slicer with MIDAS support." OFF)
 
 #-----------------------------------------------------------------------------
-## OpenIGTLink (Built in Slicer3-lib)
+## OpenIGTLink
 option(Slicer_USE_OPENIGTLINK "Build Slicer with OpenIGTLink support." OFF)
 IF(Slicer_USE_OPENIGTLINK)
   find_package(OpenIGTLink REQUIRED)
@@ -563,7 +563,7 @@ INSTALL(FILES
   )
 
 #-----------------------------------------------------------------------------
-# Generate Slicer3Version.txt
+# Generate SlicerVersion.txt
 
 INCLUDE(${Slicer_CMAKE_DIR}/SlicerTodayMacro.cmake)
 
@@ -585,8 +585,8 @@ ENDIF()
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
   Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
   CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Version.txt.in 
-    ${Slicer_HOME}/lib/Slicer3/Slicer3Version.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in 
+    ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt
     )
 ENDIF()
 
@@ -598,8 +598,8 @@ IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
   ENDIF(NOT Git_FOUND)
   Git_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
   CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Version.txt.in
-    ${Slicer_HOME}/lib/Slicer3/Slicer3Version.txt
+    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
+    ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt
     )
 ENDIF()
 
@@ -853,7 +853,7 @@ install(FILES
   ${Slicer3_SOURCE_DIR}/CTestConfig.cmake
   ${Slicer3_BINARY_DIR}/UseSlicer3.cmake
   ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake
-  ${Slicer3_BINARY_DIR}/lib/Slicer3/Slicer3Version.txt
+  ${Slicer3_BINARY_DIR}/lib/Slicer3/SlicerVersion.txt
   DESTINATION ${Slicer_INSTALL_LIB_DIR}
   COMPONENT Development
   )

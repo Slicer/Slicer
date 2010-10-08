@@ -6,7 +6,7 @@
 #
 # versioner.tcl
 #
-# adds a lib/Slicer3/Slicer3Version.txt file to the current build
+# adds a lib/Slicer3/SlicerVersion.txt file to the current build
 #
 # Usage: (no options)
 #   versioner 
@@ -62,7 +62,7 @@ set versionText "${versionText}buildDate $::Slicer3_BUILDDATE\n"
 set versionText "${versionText}svnurl $svn(URL)\n"
 set versionText "${versionText}svnrevision $svn(revision)\n"
 
-set versionFile $::Slicer3_BUILD/lib/Slicer3/Slicer3Version.txt
+set versionFile $::Slicer3_BUILD/lib/Slicer3/SlicerVersion.txt
 puts "Writing version information to $versionFile"
 puts $versionText
 set fp [open $versionFile "w"]
