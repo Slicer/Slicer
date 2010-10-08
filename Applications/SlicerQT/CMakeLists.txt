@@ -290,12 +290,12 @@ set(include_dirs
 #   add_definitions(-DSlicer_BUILD_CLI)
 # endif(Slicer_BUILD_CLI)
 
-# if(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
+# if(Slicer_USE_PYTHON AND PYTHON_INCLUDE_PATH)
 #   set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
 #   if(WIN32)
 #     set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH}/../PC)
 #   endif(WIN32)
-# endif(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
+# endif(Slicer_USE_PYTHON AND PYTHON_INCLUDE_PATH)
 
 INCLUDE_DIRECTORIES(${include_dirs})
 
@@ -369,7 +369,7 @@ INCLUDE_DIRECTORIES(${include_dirs})
 #   endif(Slicer_BUILD_CLI)
 # endif(Slicer3_BUILD_MODULES)
 
-# if(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
+# if(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
 #   target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} SlicerBaseGUIPython)
 #   if(WIN32 AND PYTHON_DEBUG_LIBRARIES)
 #     target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
@@ -386,7 +386,7 @@ INCLUDE_DIRECTORIES(${include_dirs})
 #       target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} util)
 #     endif(APPLE OR UNIX)
 #   endif(NOT WIN32)
-# endif(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
+# endif(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
     
 # --------------------------------------------------------------------------
 # Build the library

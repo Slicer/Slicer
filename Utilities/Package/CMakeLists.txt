@@ -114,7 +114,7 @@ endif(CMAKE_SYSTEM MATCHES "SunOS.*")
 # -------------------------------------------------------------------------
 # Find and install python
 
-if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   #assum get build test build tree
   get_filename_component(PARENT_BUILD_DIR "${Slicer3_BINARY_DIR}" PATH)
   set(PYTHON_DIR "${PARENT_BUILD_DIR}/Slicer3-lib/python-build")
@@ -145,7 +145,7 @@ if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
       DESTINATION bin
       COMPONENT Runtime)
   endif()
-endif(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
+endif(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
 
 # -------------------------------------------------------------------------
 # Find and install QT

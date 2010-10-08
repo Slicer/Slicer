@@ -87,7 +87,7 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
 #include "slicerPython.h"
 #endif
 
@@ -314,7 +314,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     // Disable stereo render capability by default
     this->SetStereoEnabled(0);
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
     this->PythonModule = NULL;
     this->PythonDictionary = NULL;
 #endif

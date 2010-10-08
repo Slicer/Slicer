@@ -91,9 +91,9 @@
 #include "vtkSlicerROIGUI.h"
 
 //---------------------------------------------------------------------------
-// Slicer3_USE_PYTHON
+// Slicer_USE_PYTHON
 //
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
 #include "slicerPython.h"
 
 extern "C" {
@@ -344,7 +344,7 @@ void printAllInfo(int argc, char **argv)
   fprintf(stdout, "<library version=\"%d.%d.%d\">TCL</library>\n", major, minor, patchLevel);
   //fprintf(stdout, "<library version=\"%d.%d.%d\">TK</library>\n", major,
   //minor, patchLevel);
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
   fprintf(stdout, "<library version=\"%s\">Python</library>\n", PY_VERSION);
 #endif
   fprintf(stdout, "<Repository>$HeadURL$</Repository>\n");
@@ -503,7 +503,7 @@ int Slicer3_main(int& argc, char *argv[])
   //
   vtkOpenGLRenderWindow::SetGlobalMaximumNumberOfMultiSamples(0);
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
   // Initialize Python
 
   // Set up the search path
@@ -1929,7 +1929,7 @@ int Slicer3_main(int& argc, char *argv[])
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     }
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
 
   vtkSlicerApplication::GetInstance()->InitializePython(
     (void*)PythonModule, (void*)PythonDictionary);
@@ -1978,7 +1978,7 @@ int Slicer3_main(int& argc, char *argv[])
 
   if ( EvalPython != "" )
     {
-#if defined(Slicer3_USE_PYTHON)
+#if defined(Slicer_USE_PYTHON)
     if ( !NoModules )
       {
       std::string pythonCmd = EvalPython + "\n";
@@ -2087,7 +2087,7 @@ int Slicer3_main(int& argc, char *argv[])
 
   if ( ExecPython != "" )
     {
-#if defined(Slicer3_USE_PYTHON)
+#if defined(Slicer_USE_PYTHON)
     if ( !NoModules )
       {
       std::string pythonCmd = ExecPython + "\n";
@@ -2278,7 +2278,7 @@ int Slicer3_main(int& argc, char *argv[])
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     }
 
-#if defined(Slicer3_USE_PYTHON)
+#if defined(Slicer_USE_PYTHON)
   if ( !NoModules )
     {
     v = PyRun_String( "SlicerScriptedModuleInfo.TearDownAllGUI();\n",
@@ -2394,7 +2394,7 @@ int Slicer3_main(int& argc, char *argv[])
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     }
 
-#if defined(Slicer3_USE_PYTHON)
+#if defined(Slicer_USE_PYTHON)
   if ( !NoModules )
     {
     v = PyRun_String( "SlicerScriptedModuleInfo.DeleteAllGUI();\n",
@@ -2509,7 +2509,7 @@ int Slicer3_main(int& argc, char *argv[])
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
     }
 
-#if defined(Slicer3_USE_PYTHON)
+#if defined(Slicer_USE_PYTHON)
   if ( !NoModules )
     {
     v = PyRun_String( "SlicerScriptedModuleInfo.DeleteAllLogic();\n",
@@ -2523,7 +2523,7 @@ int Slicer3_main(int& argc, char *argv[])
 #endif
 #endif
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
   // Shutdown python interpreter
   v = PyRun_String( "import Slicer;\nSlicer.slicer.deleteInstances()\n",
                     Py_file_input,

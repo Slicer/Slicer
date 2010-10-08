@@ -89,7 +89,7 @@ target_link_libraries(${lib_name}
 
 # Python settings
 
-if(Slicer3_USE_PYTHON)
+if(Slicer_USE_PYTHON)
   find_package(PythonLibs REQUIRED)
   include_directories(${PYTHON_INCLUDE_PATH})
   if(WIN32)
@@ -109,7 +109,7 @@ if(Slicer3_USE_PYTHON)
       target_link_libraries(${lib_name} ${PYTHON_LIBRARIES} util)
     endif(APPLE OR UNIX)
   endif(NOT WIN32)
-endif(Slicer3_USE_PYTHON)
+endif(Slicer_USE_PYTHON)
 
 # Apply user-defined properties to the library target.
 IF(Slicer3_LIBRARY_PROPERTIES)

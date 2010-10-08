@@ -19,7 +19,7 @@ endif(NOT Slicer3_SOURCE_DIR)
 # --------------------------------------------------------------------------
 # Copy over the Python files
 
-if(Slicer3_USE_PYTHON)
+if(Slicer_USE_PYTHON)
 
   file(GLOB PYTHONFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.py")
 
@@ -35,4 +35,4 @@ if(Slicer3_USE_PYTHON)
     DESTINATION ${Slicer_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}
     )
 
-endif(Slicer3_USE_PYTHON)
+endif(Slicer_USE_PYTHON)

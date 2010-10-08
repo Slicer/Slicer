@@ -34,7 +34,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
 #include "slicerPython.h"
 #endif
 
@@ -154,7 +154,7 @@ void vtkOpenGLScriptedActor::Render(vtkRenderer *ren, vtkMapper *vtkNotUsed(mapp
     {
     if (this->Language == vtkOpenGLScriptedActor::Python)
       {
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
       // Script actor renderer mapper
       vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance();
       vtkSlicerApplicationGUI *slicerAppGUI = slicerApp->GetApplicationGUI();

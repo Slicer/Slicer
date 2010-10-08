@@ -1,5 +1,5 @@
 
-//# ifdef Slicer3_USE_PYTHON
+//# ifdef Slicer_USE_PYTHON
 //#   include "PythonQt.h"
 //#   include "PythonQt_QtAll.h"
 //# endif

@@ -61,7 +61,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
 #include "slicerPython.h"
 #endif
 
@@ -1736,7 +1736,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     ExecuteModuleString += std::string(node0->GetID()) + "'\n";
     ExecuteModuleString += "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
 
-#ifdef Slicer3_USE_PYTHON    
+#ifdef Slicer_USE_PYTHON    
     PyObject* v;
     v = PyRun_String(
       ExecuteModuleString.c_str(),

@@ -69,7 +69,7 @@ class VTK_FourDAnalysis_EXPORT vtkCurveAnalysisPythonInterface : public vtkObjec
 
 #ifdef FourDAnalysis_USE_SCIPY
   PyObject *CompiledObject;
-#endif // Slicer3_USE_PYTHON
+#endif // Slicer_USE_PYTHON
 
 };
 

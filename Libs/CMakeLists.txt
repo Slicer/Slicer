@@ -3,7 +3,7 @@ project(SlicerLibs)
 ## Delegate the building of the SlicerExecutionModel to
 ## a bundled subdirectory that can easily be included in
 ## other packages.
-set(ModuleDescriptionParser_USE_PYTHON ${Slicer3_USE_PYTHON})
+set(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHON})
 ADD_SUBDIRECTORY(SlicerExecutionModel)
 
 set(dirs
@@ -80,7 +80,7 @@ ENDIF(CUDA_SUPPORT_ENABLED)
 set(include_dirs)
 set(libs)
 
-set(LoadableModule_USE_PYTHON ${Slicer3_USE_PYTHON})
+set(LoadableModule_USE_PYTHON ${Slicer_USE_PYTHON})
 
 set(IGT_USE_IGSTK ${Slicer3_USE_IGSTK})
 set(IGT_USE_NAVITRACK ${Slicer3_USE_NAVITRACK})

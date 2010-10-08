@@ -243,8 +243,8 @@ set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
 
 #-----------------------------------------------------------------------------
 ## Python
-option(Slicer3_USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
-IF(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
+option(Slicer_USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
+IF(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   find_package(PythonLibs)
   find_package(PythonInterp)
 ENDIF()

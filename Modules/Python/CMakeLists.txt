@@ -20,7 +20,7 @@ endif(NOT Slicer3_SOURCE_DIR)
 # --------------------------------------------------------------------------
 # Copy over the Python files
 
-if(Slicer3_USE_PYTHON)
+if(Slicer_USE_PYTHON)
 
   file(GLOB PYTHONFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.py")
 
@@ -87,4 +87,4 @@ if ( 0 )
   add_custom_target ( filtered1t_Library ALL DEPENDS ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/filtered_ext.so )
 endif()
 
-endif(Slicer3_USE_PYTHON)
+endif(Slicer_USE_PYTHON)

@@ -166,7 +166,7 @@ endif()
 # |---------------------------------------------------
 # | Slicer_USE_QT        |  OFF   |  ON    |  ON    |
 # |--------------------------------------------------|
-# | Slicer3_USE_PYTHON    | ON|OFF | ON|OFF |  OFF   |
+# | Slicer_USE_PYTHON    | ON|OFF | ON|OFF |  OFF   |
 # |--------------------------------------------------|
 # | Slicer_USE_PYTHONQT  |   OFF  |  OFF   | ON|OFF |
 # |---------------------------------------------------
@@ -190,7 +190,7 @@ endif()
 # Note:
 #   Tcl, Tk, and incrTcl are built in all cases
 #   blt and iwidgets are build only if Slicer3_USE_KWWIDGETS is ON
-#   Python is build if either Slicer3_USE_PYTHON or Slicer_USE_PYTHONQT are ON
+#   Python is build if either Slicer_USE_PYTHON or Slicer_USE_PYTHONQT are ON
 # 
 
 #------------------------------------------------------------------------------
@@ -258,9 +258,9 @@ endif()
 # Python option
 #------------------------------------------------------------------------------  
 
-option(Slicer3_USE_PYTHON "Build Slicer with Python support" OFF)
+option(Slicer_USE_PYTHON "Build Slicer with Python support" OFF)
 
-if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
 
   option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (builds CLapack)." ON)
 
@@ -302,8 +302,8 @@ Slicer_USE_QT = ON
   message(FATAL_ERROR "${err}")
 endif()
 
-if (Slicer3_USE_PYTHON AND Slicer_USE_PYTHONQT)
-  set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_PYTHON and Slicer_USE_PYTHONQT ON.")
+if (Slicer_USE_PYTHON AND Slicer_USE_PYTHONQT)
+  set(err "error: Slicer SuperBuild doesn't support Slicer_USE_PYTHON and Slicer_USE_PYTHONQT ON.")
   message(FATAL_ERROR "${err}")
 endif()
 
@@ -376,7 +376,7 @@ if(Slicer3_USE_KWWIDGETS)
   include(External_blt)
 endif()
 
-if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   include(External_Python26)
   if(Slicer3_BUILD_NUMPY)
     include(External_CLAPACK)
@@ -433,7 +433,7 @@ if(Slicer_USE_QT)
   endif()
 endif()
 
-if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   list(APPEND slicer_DEPENDENCIES python)
   if(Slicer3_BUILD_NUMPY)
     list(APPEND slicer_DEPENDENCIES NUMPY)
@@ -501,7 +501,7 @@ ExternalProject_Add(${proj}
     # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${CMAKE_BINARY_DIR}/cmcurl-build
     # Python
-    -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
+    -DSlicer_USE_PYTHON:BOOL=${Slicer_USE_PYTHON}
     -DSlicer_USE_PYTHONQT:BOOL=${Slicer_USE_PYTHONQT}
     -DSlicer_USE_PYTHONQT_WITH_TCL:BOOL=${Slicer_USE_PYTHONQT_WITH_TCL}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF

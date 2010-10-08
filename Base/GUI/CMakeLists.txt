@@ -218,7 +218,7 @@ IF (Slicer3_USE_KWWIDGETS)
 
   # Python settings
 
-  if(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
+  if(Slicer_USE_PYTHON AND PYTHON_INCLUDE_PATH)
     include_directories(${PYTHON_INCLUDE_PATH})
     if(WIN32)
       include_directories(${PYTHON_INCLUDE_PATH}/../PC)
@@ -237,7 +237,7 @@ IF (Slicer3_USE_KWWIDGETS)
         target_link_libraries(${lib_name} ${PYTHON_LIBRARIES} util)
       endif(APPLE OR UNIX)
     endif(NOT WIN32)
-  endif(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
+  endif(Slicer_USE_PYTHON AND PYTHON_INCLUDE_PATH)
 
   file(GLOB PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/*.png")
   foreach(pngfile ${PNGFILES})
@@ -256,9 +256,9 @@ IF (Slicer3_USE_KWWIDGETS)
   # --------------------------------------------------------------------------
   # Python support
 
-  IF(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
+  IF(Slicer_USE_PYTHON AND PYTHON_INCLUDE_PATH)
     ADD_SUBDIRECTORY(Python)
-  ENDIF(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
+  ENDIF(Slicer_USE_PYTHON AND PYTHON_INCLUDE_PATH)
 
   # --------------------------------------------------------------------------
   # Testing

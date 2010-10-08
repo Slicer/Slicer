@@ -36,9 +36,9 @@ vtkCurveAnalysisPythonInterface::vtkCurveAnalysisPythonInterface()
   this->ScriptName = "";
   this->CurveAnalysisNode = NULL;
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
   this->CompiledObject = NULL;
-#endif // Slicer3_USE_PYTHON
+#endif // Slicer_USE_PYTHON
 
 }
 
@@ -46,13 +46,13 @@ vtkCurveAnalysisPythonInterface::vtkCurveAnalysisPythonInterface()
 //---------------------------------------------------------------------------
 vtkCurveAnalysisPythonInterface::~vtkCurveAnalysisPythonInterface()
 {
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
   if (this->CompiledObject)
     {
     //free(this->CompiledObject);
     Py_DECREF(this->CompiledObject);
     }
-#endif // Slicer3_USE_PYTHON
+#endif // Slicer_USE_PYTHON
 }
 
 
@@ -127,7 +127,7 @@ int vtkCurveAnalysisPythonInterface::GetInfo()
     return 0;
     }
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
   PyObject* v;
   std::string pythonCmd;
 
@@ -193,12 +193,12 @@ int vtkCurveAnalysisPythonInterface::GetInfo()
 
   return 1;
 
-#else // Slicer3_USE_PYTHON
+#else // Slicer_USE_PYTHON
 
   // always retuns 0 if Python is not available.
   return 0;
 
-#endif // Slicer3_USE_PYTHON
+#endif // Slicer_USE_PYTHON
 
 
 
@@ -214,7 +214,7 @@ int vtkCurveAnalysisPythonInterface::Run()
     return 0;
     }
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
 
   if (this->CompiledObject) // if compiled object exists
     {
@@ -262,12 +262,12 @@ int vtkCurveAnalysisPythonInterface::Run()
     return 0;
     }
     
-#else // Slicer3_USE_PYTHON
+#else // Slicer_USE_PYTHON
 
   // always retuns 0 if Python is not available.
   return 0;
 
-#endif // Slicer3_USE_PYTHON
+#endif // Slicer_USE_PYTHON
 
 }
 
@@ -276,7 +276,7 @@ int vtkCurveAnalysisPythonInterface::Run()
 int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
 {
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
 
   if (this->CompiledObject)
     {
@@ -335,9 +335,9 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
   
   this->PythonCmd = pythonCmd;
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
   this->CompiledObject = NULL;
-#endif // Slicer3_USE_PYTHON
+#endif // Slicer_USE_PYTHON
 
   this->CompiledObject = Py_CompileString (this->PythonCmd.c_str(), "<stderr>", Py_file_input);
 
@@ -375,7 +375,7 @@ int vtkCurveAnalysisPythonInterface::GenerateFittingScript()
     
 #else
   return 0;
-#endif // Slicer3_USE_PYTHON
+#endif // Slicer_USE_PYTHON
 
 }
 

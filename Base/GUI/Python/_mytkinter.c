@@ -25,7 +25,7 @@ libraries.)
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef Slicer_USE_PYTHON
 #include "slicerPython.h"
 
 #include <ctype.h>
