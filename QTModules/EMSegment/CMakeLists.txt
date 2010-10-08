@@ -9,7 +9,7 @@ SET(qt_module_name "EMSegment")
 
 SET(qt_module_export_directive "Q_SLICER_QTMODULES_EMSEGMENT_EXPORT")
 
-# Additional includes - Current_{source,binary} and Slicer3_{Libs,Base} already included
+# Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 SET(qt_module_include_directories
   ${EMSegmentMRML_SOURCE_DIR}
   ${EMSegmentMRML_BINARY_DIR}
