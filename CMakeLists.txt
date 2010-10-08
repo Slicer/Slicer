@@ -113,13 +113,13 @@ set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 #-----------------------------------------------------------------------------
 # Build shared lib by default
 #
-option(BUILD_SHARED_LIBS "Build Slicer3 with shared libraries." ON)
+option(BUILD_SHARED_LIBS "Build Slicer with shared libraries." ON)
 
 #-----------------------------------------------------------------------------
 # Append the library version information to the library target properties.
 #
-OPTION(Slicer3_WITH_LIBRARY_VERSION "Build with library version information" OFF)
-IF(Slicer3_WITH_LIBRARY_VERSION)
+OPTION(Slicer_WITH_LIBRARY_VERSION "Build with library version information" OFF)
+IF(Slicer_WITH_LIBRARY_VERSION)
   SET(Slicer3_LIBRARY_PROPERTIES ${Slicer3_LIBRARY_PROPERTIES}
     VERSION ${Slicer_VERSION_FULL}
     SOVERSION ${Slicer_VERSION}
@@ -149,7 +149,7 @@ include("${Slicer_CMAKE_DIR}/SlicerParseArgumentsMacro.cmake")
 INCLUDE(${Slicer_CMAKE_DIR}/SlicerFindQT.cmake)
 
 #-----------------------------------------------------------------------------
-# Top level slicer3 configurations
+# Top level slicer configurations
 #
 # If CMake >= 2.6.0
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -211,7 +211,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # By default, build without KWWidget (TODO: eliminate this option for slicer4)
 #
-option(Slicer_USE_KWWIDGETS "Build Slicer3 with KWWidgets." OFF)
+option(Slicer_USE_KWWIDGETS "Build Slicer with KWWidgets." OFF)
 
 #-----------------------------------------------------------------------------
 # Since modules are KWWidgets based, unset there variables
@@ -304,9 +304,9 @@ ELSE()
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Slicer3 is built with cvs head
+# Slicer is built with cvs head
 #
-option(Slicer3_USE_VTK_CVSHEAD "Slicer3 is configurated with cvs head." OFF)
+option(Slicer3_USE_VTK_CVSHEAD "Slicer is configurated with cvs head." OFF)
 mark_as_advanced(Slicer3_USE_VTK_CVSHEAD)
 
 #-----------------------------------------------------------------------------
@@ -382,7 +382,7 @@ ENDIF()
 
 #-----------------------------------------------------------------------------
 ## OpenCV (Built in Slicer3-lib)
-option(Slicer_USE_OPENCV "Build Slicer3 with OpenCV support." OFF)
+option(Slicer_USE_OPENCV "Build Slicer with OpenCV support." OFF)
 IF(Slicer_USE_OPENCV)
   find_package(OpenCV REQUIRED)
 
@@ -487,7 +487,7 @@ IF(Slicer_USE_KWWIDGETS)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# These packages may exist within the Slicer3 source tree
+# These packages may exist within the Slicer source tree
 #
 set(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
 set(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
@@ -500,7 +500,7 @@ set(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
 # Qt Loadable Modules
 #
 IF(Slicer_USE_QT)
-  OPTION(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer3 QT Loadable Modules" ON)
+  OPTION(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
   IF(Slicer_BUILD_QTLOADABLEMODULES)
     ADD_DEFINITIONS(-DSlicer_BUILD_QTLOADABLEMODULES)
     set(Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
