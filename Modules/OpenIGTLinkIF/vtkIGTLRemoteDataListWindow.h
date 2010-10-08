@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Modules/OpenIGTLinkIF/vtkOpenIGTLinkIFGUI.h $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/OpenIGTLinkIF/vtkOpenIGTLinkIFGUI.h $
   Date:      $Date: 2010-04-01 11:42:15 -0400 (Thu, 01 Apr 2010) $
   Version:   $Revision: 12582 $
 

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/CLI/Threshold.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/CLI/Threshold.cxx $
   Language:  C++
   Date:      $Date: 2006-12-20 16:00:24 -0500 (Wed, 20 Dec 2006) $
   Version:   $Revision: 1892 $

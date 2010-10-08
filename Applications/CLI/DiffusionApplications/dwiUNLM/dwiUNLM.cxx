@@ -2,7 +2,7 @@
 
   Program:   Diffusion Applications
   Language:  C++
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/CLI/DiffusionApplications/dwiNoiseFilter/dwiNoiseFilter.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/CLI/DiffusionApplications/dwiNoiseFilter/dwiNoiseFilter.cxx $
   Date:      $Date: 2008-11-25 18:46:58 +0100 (Tue, 25 Nov 2008) $
   Version:   $Revision: 7972 $
 

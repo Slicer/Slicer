@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/CLI/Mask.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/CLI/Mask.cxx $
   Language:  C++
   Date:      $Date: 2009-04-10 13:33:12 -0400 (Fri, 10 Apr 2009) $
   Version:   $Revision: 9136 $

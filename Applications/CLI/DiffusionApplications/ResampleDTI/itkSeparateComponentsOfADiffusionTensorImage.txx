@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Diffusion Applications
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/CLI/DiffusionApplications/ResampleDTI/itkDiffusionTensor3DResample.txx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/CLI/DiffusionApplications/ResampleDTI/itkDiffusionTensor3DResample.txx $
   Language:  C++
   Date:      $Date: 2010/04/05 10:04:59 $
   Version:   $Revision: 1.1 $

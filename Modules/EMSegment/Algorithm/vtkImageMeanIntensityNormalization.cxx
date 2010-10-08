@@ -2,7 +2,7 @@
 
   Program:   Slicer3
   Language:  C++
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/GUI/Slicer3.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/GUI/Slicer3.cxx $
   Date:      $Date: 2009-04-15 06:29:13 -0400 (Wed, 15 Apr 2009) $
   Version:   $Revision: 9206 $
 

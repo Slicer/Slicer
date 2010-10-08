@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Modules/OpenIGTLinkIF/vtkRobotRegistration.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Modules/OpenIGTLinkIF/vtkRobotRegistration.cxx $
   Date:      $Date: 2009-01-05 13:28:20 -0500 (Mon, 05 Jan 2009) $
   Version:   $Revision: 8267 $
 

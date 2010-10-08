@@ -929,7 +929,7 @@ int Do( parameters list )
         if( !list.notbulk && transform->GetTransform()->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3"  && transformFile->GetTransformList()->size() )//Check if transform file contains a BSpline 
         {
           //transform = SetTransform< PixelType > ( list , image , transformFile , outputImageCenter ) ;
-          //order=3 for the BSpline seems to be standard among tools in Slicer3 and BRAINTools       
+          //order=3 for the BSpline seems to be standard among tools in Slicer and BRAINTools       
           typedef itk::BSplineDeformableTransform< double , 3  , 3 > BSplineDeformableTransformType ;
           BSplineDeformableTransformType::Pointer BSplineTransform ;
           BSplineTransform = dynamic_cast< BSplineDeformableTransformType* > (transform->GetTransform().GetPointer() ) ;

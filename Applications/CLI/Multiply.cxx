@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/CLI/Multiply.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/CLI/Multiply.cxx $
   Language:  C++
   Date:      $Date: 2009-05-13 17:16:00 -0400 (Wed, 13 May 2009) $
   Version:   $Revision: 9478 $

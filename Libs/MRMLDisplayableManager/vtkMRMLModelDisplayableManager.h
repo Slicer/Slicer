@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   SlicerViewerWidget
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Base/GUI/vtkMRMLModelDisplayableManager.h $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Base/GUI/vtkMRMLModelDisplayableManager.h $
   Date:      $Date: 2010-05-12 08:34:19 -0400 (Wed, 12 May 2010) $
   Version:   $Revision: 13332 $
 

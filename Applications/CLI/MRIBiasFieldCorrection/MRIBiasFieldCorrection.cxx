@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   MRI Bias Field Correction
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Applications/CLI/MRIBiasFieldCorrection/MRIBiasFieldCorrection.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/CLI/MRIBiasFieldCorrection/MRIBiasFieldCorrection.cxx $
   Language:  C++
   Date:      $Date: 2010-02-10 13:33:12 -0400 (Tue, 2 Feb 2010) $
   Version:   $Revision: 1 $
