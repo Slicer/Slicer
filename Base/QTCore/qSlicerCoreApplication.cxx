@@ -29,7 +29,7 @@
 #include <QVector>
 
 // For:
-//  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
+//  - Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
 //  - Slicer_INSTALL_PLUGINS_BIN_DIR
 //  - Slicer_INSTALL_LIB_DIR
 //  - Slicer_USE_PYTHONQT

@@ -48,9 +48,9 @@ IF(BUILD_SHARED_LIBS)
     IF(Slicer_BUILD_QTLOADABLEMODULES)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},          \\
-         \"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\" CONFIG_DIR_POST")
+         \"${Slicer3_HOME}/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\" CONFIG_DIR_POST")
       SET(SlicerQT_FORWARD_PATH_INSTALL
-        "\"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
+        "\"../${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
 
       # Since ModuleLogic are in Slicer_INSTALL_MODULES_BIN_DIR, let's add it
       SET(Slicer3_FORWARD_PATH_BUILD
@@ -114,10 +114,10 @@ IF(BUILD_SHARED_LIBS)
     IF(Slicer_BUILD_QTLOADABLEMODULES)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},                  \\
-         \"${Slicer3_HOME}/${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
+         \"${Slicer3_HOME}/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
       SET(SlicerQT_FORWARD_PATH_INSTALL
         "${SlicerQT_FORWARD_PATH_INSTALL},         \\
-        \"../${Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
+        \"../${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
 
       # Since ModuleLogic are in Slicer_INSTALL_MODULES_BIN_DIR, let's add it
       SET(Slicer3_FORWARD_PATH_BUILD

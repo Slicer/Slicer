@@ -28,7 +28,7 @@
 #include "qSlicerUtils.h"
 
 // For:
-//  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
+//  - Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
 #include "vtkSlicerConfigure.h"
   
 //-----------------------------------------------------------------------------
@@ -57,11 +57,11 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
   // in intDir.
   QStringList defaultQTModulePaths;
   defaultQTModulePaths << app->slicerHome() + "/"
-                                             + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR;
+                                             + Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR;
 
    if (!app->intDir().isEmpty())
      {
-     defaultQTModulePaths << app->slicerHome() + "/" + Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + app->intDir();
+     defaultQTModulePaths << app->slicerHome() + "/" + Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR + "/" + app->intDir();
      }
 
   // add the default modules directory (based on the slicer

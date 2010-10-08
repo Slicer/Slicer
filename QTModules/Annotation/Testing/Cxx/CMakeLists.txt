@@ -87,10 +87,10 @@ file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 #     )
 # In your code, you just need to include: vtkSlicerConfigure.h 
 #  Then, the following 'define' will be available:
-# Slicer3_INSTALL_QTLOADABLEMODULES_BIN_DIR
-# Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
-# Slicer3_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR
-# Slicer3_INSTALL_QTLOADABLEMODULES_SHARE_DIR 
+# Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR
+# Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR
+# Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR
+# Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR 
 #
 #   get_filename_component(filename "${file}" NAME)
 #   configure_file(

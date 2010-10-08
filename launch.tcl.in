@@ -484,7 +484,7 @@ proc launch_SetEnvironment {} {
     
       set ::env(Slicer3_PLUGINS_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer_INSTALL_PLUGINS_LIB_DIR@/$::BUILD_SUBDIR"]
       set ::env(Slicer3_MODULES_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer_INSTALL_MODULES_LIB_DIR@/$::BUILD_SUBDIR"]
-      set ::env(Slicer3_QTLOADABLEMODULES_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR@/$::BUILD_SUBDIR"]
+      set ::env(Slicer3_QTLOADABLEMODULES_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR@/$::BUILD_SUBDIR"]
     
     
       # QtDesigner variable  
