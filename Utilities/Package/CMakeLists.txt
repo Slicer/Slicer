@@ -1,20 +1,20 @@
 # -------------------------------------------------------------------------
 # Find and install Tcl
 IF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
-  if(NOT Slicer3_TCL_DIR)
+  if(NOT Slicer_TCL_DIR)
     if(TCL_INCLUDE_PATH)
-      get_filename_component(Slicer3_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
+      get_filename_component(Slicer_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
     else(TCL_INCLUDE_PATH)
-      set(Slicer3_TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
+      set(Slicer_TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
     endif(TCL_INCLUDE_PATH)
-  endif(NOT Slicer3_TCL_DIR)
+  endif(NOT Slicer_TCL_DIR)
 
-  if(NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
-      NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
-    message(STATUS "Not Packaging TCL (cannot found: ${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT} or ${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe)")
-    set(Slicer3_TCL_DIR "")
-  endif(NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
-    NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
+  if(NOT EXISTS "${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
+      NOT EXISTS "${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
+    message(STATUS "Not Packaging TCL (cannot found: ${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT} or ${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe)")
+    set(Slicer_TCL_DIR "")
+  endif(NOT EXISTS "${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
+    NOT EXISTS "${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
 ENDIF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
 
 # Note: this is probably dangerous if Tcl is somewhere in /usr/local, as it
@@ -26,13 +26,13 @@ ENDIF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
 # like /opt/tcltk8.5.0)
 
 IF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
-  if(Slicer3_TCL_DIR)
+  if(Slicer_TCL_DIR)
     install(DIRECTORY
-      ${Slicer3_TCL_DIR}/
+      ${Slicer_TCL_DIR}/
       DESTINATION lib/TclTk
       USE_SOURCE_PERMISSIONS
       )
-  endif(Slicer3_TCL_DIR)
+  endif(Slicer_TCL_DIR)
 ENDIF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
 
 # In the following section we tell the packager to include libslicerlibcurl.so

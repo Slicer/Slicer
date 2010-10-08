@@ -45,12 +45,12 @@ SET(SLICER_LIBRARY_PATHS_BUILD
 
 IF(Slicer_USE_PYTHONQT_WITH_TCL)
   LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${Slicer3_TCL_DIR}/lib
+    ${Slicer_TCL_DIR}/lib
     )
   IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
-      ${Slicer3_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}
-      ${Slicer3_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}
+      ${Slicer_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}
+      ${Slicer_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}
       )
   ENDIF()
 ENDIF()
@@ -86,7 +86,7 @@ SET(SLICER_PATHS_BUILD
   
 IF(Slicer_USE_PYTHONQT_WITH_TCL)
   LIST(APPEND SLICER_PATHS_BUILD
-    ${Slicer3_TCL_DIR}/bin
+    ${Slicer_TCL_DIR}/bin
     )
 ENDIF()
 
@@ -116,12 +116,12 @@ ENDIF()
   
 IF(Slicer_USE_PYTHONQT_WITH_TCL)
   # Search locations for TCL packages - space separated list
-  SET(TCLLIBPATH "${Slicer3_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}")
-  SET(TCLLIBPATH "${TCLLIBPATH} ${Slicer3_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}")
+  SET(TCLLIBPATH "${Slicer_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}")
+  SET(TCLLIBPATH "${TCLLIBPATH} ${Slicer_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}")
   
   LIST(APPEND SLICER_ENVVARS_BUILD
-    "TCL_LIBRARY=${Slicer3_TCL_DIR}/lib/tcl${TCL_TK_VERSION_DOT}"
-    "TK_LIBRARY=${Slicer3_TCL_DIR}/lib/tk${TCL_TK_VERSION_DOT}"
+    "TCL_LIBRARY=${Slicer_TCL_DIR}/lib/tcl${TCL_TK_VERSION_DOT}"
+    "TK_LIBRARY=${Slicer_TCL_DIR}/lib/tk${TCL_TK_VERSION_DOT}"
     "TCLLIBPATH=${TCLLIBPATH}"
     )
 ENDIF()

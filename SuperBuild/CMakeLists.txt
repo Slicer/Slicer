@@ -497,7 +497,7 @@ ExternalProject_Add(${proj}
     # TCL/Tk
     -DINCR_TCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
     -DINCR_TK_LIBRARY:FILEPATH=${slicer_TK_LIB}
-    -DSlicer3_TCL_DIR:PATH=${tcl_build}
+    -DSlicer_TCL_DIR:PATH=${tcl_build}
     # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${CMAKE_BINARY_DIR}/cmcurl-build
     # Python
