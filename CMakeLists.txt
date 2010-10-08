@@ -27,7 +27,7 @@ set(Slicer_INSTALL_MODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
 set(Slicer_INSTALL_MODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Modules")
 set(Slicer_INSTALL_MODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Modules")
 
-set(Slicer3_HOME "${Slicer3_BINARY_DIR}")
+set(Slicer_HOME "${Slicer3_BINARY_DIR}")
 
 #-----------------------------------------------------------------------------
 # Convenient macro allowing to download a file
@@ -443,10 +443,10 @@ IF(Slicer_USE_KWWIDGETS)
     "${Teem_DIR}/bin"
     "${BatchMake_DIR}/bin"
     "${OpenIGTLink_DIR}/bin"
-    "${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}"
-    "${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_LIB_DIR}"
-    "${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}"
-    "${Slicer3_HOME}/${Slicer_INSTALL_MODULES_LIB_DIR}"
+    "${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}"
+    "${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_LIB_DIR}"
+    "${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}"
+    "${Slicer_HOME}/${Slicer_INSTALL_MODULES_LIB_DIR}"
     )
   kwwidgets_generate_setup_paths_scripts(
     "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" "Slicer3SetupPaths"
@@ -592,7 +592,7 @@ IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
   Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Version.txt.in 
-    ${Slicer3_HOME}/lib/Slicer3/Slicer3Version.txt
+    ${Slicer_HOME}/lib/Slicer3/Slicer3Version.txt
     )
 ENDIF()
 
@@ -605,7 +605,7 @@ IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
   Git_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Version.txt.in
-    ${Slicer3_HOME}/lib/Slicer3/Slicer3Version.txt
+    ${Slicer_HOME}/lib/Slicer3/Slicer3Version.txt
     )
 ENDIF()
 

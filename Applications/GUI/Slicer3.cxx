@@ -438,13 +438,13 @@ int Slicer3_main(int& argc, char *argv[])
 
   slicerBinDir = vtksys::SystemTools::CollapseFullPath(slicerBinDir.c_str());
 
-  // set the Slicer3_HOME variable if it doesn't already exist from the launcher
+  // set the Slicer_HOME variable if it doesn't already exist from the launcher
   vtksys_stl::string slicerHome;
-  if ( !vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("Slicer_HOME", slicerHome) )
     {
     slicerHome = slicerBinDir + "/..";
     slicerHome = vtksys::SystemTools::CollapseFullPath(slicerHome.c_str());
-    std::string homeEnv = "Slicer3_HOME=" + slicerHome;
+    std::string homeEnv = "Slicer_HOME=" + slicerHome;
     cout << "Set environment: " << homeEnv.c_str() << endl;
     vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
     }
@@ -612,12 +612,12 @@ int Slicer3_main(int& argc, char *argv[])
   // TODO: get rid of fixed size buffer
   char cmd[2048];
 
-  // Make sure Slicer3_HOME is available
+  // Make sure Slicer_HOME is available
 
-  sprintf(cmd, "set ::env(Slicer3_HOME) {%s};", slicerHome.c_str());
+  sprintf(cmd, "set ::env(Slicer_HOME) {%s};", slicerHome.c_str());
   Slicer3_Tcl_Eval(interp, cmd);
 
-  sprintf(cmd, "set ::Slicer3_HOME {%s};", slicerHome.c_str());
+  sprintf(cmd, "set ::Slicer_HOME {%s};", slicerHome.c_str());
   Slicer3_Tcl_Eval(interp, cmd);
 
   // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10

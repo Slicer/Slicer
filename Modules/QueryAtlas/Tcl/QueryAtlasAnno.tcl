@@ -605,7 +605,7 @@ proc QueryAtlasAddNewLabelMapAnnotations { } {
             if { $name != "" } {
                 #--- is this a freesurfer LUT?
                 if {  [ string first "aseg" $name ] >= 0 } {
-                    set lutFile "$::Slicer3_HOME/share/FreeSurfer/FreeSurferColorLUT.txt"
+                    set lutFile "$::Slicer_HOME/share/FreeSurfer/FreeSurferColorLUT.txt"
                     if { [file exists $lutFile] } {
                         set fp [open $lutFile "r"]
                         while { ![eof $fp] } {

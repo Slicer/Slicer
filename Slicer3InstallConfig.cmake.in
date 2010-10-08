@@ -42,11 +42,11 @@ set(Slicer3_USE_OPENTRACKER "@Slicer3_USE_OPENTRACKER@")
 get_filename_component(Slicer3_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 # Slicer home (top of the tree)
-set(Slicer3_HOME "${Slicer3_CONFIG_DIR}/../..")
-get_filename_component(Slicer3_HOME ${Slicer3_HOME} ABSOLUTE)
+set(Slicer_HOME "${Slicer3_CONFIG_DIR}/../..")
+get_filename_component(Slicer_HOME ${Slicer_HOME} ABSOLUTE)
 
 # The CMake macros dir.
-set(Slicer_CMAKE_DIR "${Slicer3_HOME}/@Slicer_INSTALL_LIB_DIR@/CMake")
+set(Slicer_CMAKE_DIR "${Slicer_HOME}/@Slicer_INSTALL_LIB_DIR@/CMake")
 
 # Slicer3 Libs libraries.  Those listed here should
 # automatically pull in their dependencies.
@@ -54,41 +54,41 @@ set(Slicer3_Libs_LIBRARIES "@Slicer3_Libs_LIBRARIES@")
 
 # Slicer3 Libs library directories.
 set(Slicer3_Libs_LIBRARY_DIRS 
-  "${Slicer3_HOME}/lib/FreeSurfer"
-  "${Slicer3_HOME}/lib/IGT"
-  "${Slicer3_HOME}/lib/ITKCommandIO"
-  "${Slicer3_HOME}/lib/LoadableModule"
-  "${Slicer3_HOME}/lib/MGHImageIO"
-  "${Slicer3_HOME}/lib/MRML"
-  "${Slicer3_HOME}/lib/MRMLIDImageIO"
-  "${Slicer3_HOME}/lib/ModuleDescriptionParser"
-  "${Slicer3_HOME}/lib/Qdec"
-  "${Slicer3_HOME}/lib/RemoteIO"
-  "${Slicer3_HOME}/lib/SlicerIO"
-  "${Slicer3_HOME}/lib/tclap"
-  "${Slicer3_HOME}/lib/vtkITK"
-  "${Slicer3_HOME}/lib/vtkTeem"
-  "${Slicer3_HOME}/lib/TclTk/lib"
-  "${Slicer3_HOME}/lib/TclTk/lib/itcl@INCR_TCL_VERSION_DOT@"
-  "${Slicer3_HOME}/lib/TclTk/lib/itk@INCR_TCL_VERSION_DOT@"
+  "${Slicer_HOME}/lib/FreeSurfer"
+  "${Slicer_HOME}/lib/IGT"
+  "${Slicer_HOME}/lib/ITKCommandIO"
+  "${Slicer_HOME}/lib/LoadableModule"
+  "${Slicer_HOME}/lib/MGHImageIO"
+  "${Slicer_HOME}/lib/MRML"
+  "${Slicer_HOME}/lib/MRMLIDImageIO"
+  "${Slicer_HOME}/lib/ModuleDescriptionParser"
+  "${Slicer_HOME}/lib/Qdec"
+  "${Slicer_HOME}/lib/RemoteIO"
+  "${Slicer_HOME}/lib/SlicerIO"
+  "${Slicer_HOME}/lib/tclap"
+  "${Slicer_HOME}/lib/vtkITK"
+  "${Slicer_HOME}/lib/vtkTeem"
+  "${Slicer_HOME}/lib/TclTk/lib"
+  "${Slicer_HOME}/lib/TclTk/lib/itcl@INCR_TCL_VERSION_DOT@"
+  "${Slicer_HOME}/lib/TclTk/lib/itk@INCR_TCL_VERSION_DOT@"
   )
 
 # Slicer3 Libs include file directories.
 set(Slicer3_Libs_INCLUDE_DIRS 
-  "${Slicer3_HOME}/include/FreeSurfer"
-  "${Slicer3_HOME}/include/IGT"
-  "${Slicer3_HOME}/include/ITKCommandIO"
-  "${Slicer3_HOME}/include/LoadableModule"
-  "${Slicer3_HOME}/include/MGHImageIO"
-  "${Slicer3_HOME}/include/MRML"
-  "${Slicer3_HOME}/include/MRMLIDImageIO"
-  "${Slicer3_HOME}/include/ModuleDescriptionParser"
-  "${Slicer3_HOME}/include/Qdec"
-  "${Slicer3_HOME}/include/RemoteIO"
-  "${Slicer3_HOME}/include/SlicerIO"
-  "${Slicer3_HOME}/include/tclap"
-  "${Slicer3_HOME}/include/vtkITK"
-  "${Slicer3_HOME}/include/vtkTeem"
+  "${Slicer_HOME}/include/FreeSurfer"
+  "${Slicer_HOME}/include/IGT"
+  "${Slicer_HOME}/include/ITKCommandIO"
+  "${Slicer_HOME}/include/LoadableModule"
+  "${Slicer_HOME}/include/MGHImageIO"
+  "${Slicer_HOME}/include/MRML"
+  "${Slicer_HOME}/include/MRMLIDImageIO"
+  "${Slicer_HOME}/include/ModuleDescriptionParser"
+  "${Slicer_HOME}/include/Qdec"
+  "${Slicer_HOME}/include/RemoteIO"
+  "${Slicer_HOME}/include/SlicerIO"
+  "${Slicer_HOME}/include/tclap"
+  "${Slicer_HOME}/include/vtkITK"
+  "${Slicer_HOME}/include/vtkTeem"
   )
 
 # Slicer3 Base libraries.  Those listed here should
@@ -97,15 +97,15 @@ set(Slicer3_Base_LIBRARIES "@Slicer3_Base_LIBRARIES@")
 
 # Slicer3 Base library directories.
 set(Slicer3_Base_LIBRARY_DIRS 
-  "${Slicer3_HOME}/@Slicer_INSTALL_LIB_DIR@"
+  "${Slicer_HOME}/@Slicer_INSTALL_LIB_DIR@"
   )
 
 # Slicer3 Base include file directories.
 set(Slicer3_Base_INCLUDE_DIRS 
-  "${Slicer3_HOME}/@Slicer_INSTALL_INCLUDE_DIR@" 
-  "${Slicer3_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseCLI" 
-  "${Slicer3_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseGUI" 
-  "${Slicer3_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseLogic" 
+  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@" 
+  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseCLI" 
+  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseGUI" 
+  "${Slicer_HOME}/@Slicer_INSTALL_INCLUDE_DIR@/SlicerBaseLogic" 
   )
 
 # The location of the UseSlicer3.cmake file.
@@ -142,17 +142,17 @@ ENDIF(Slicer_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
 
 # Components needed to build modules from outside a Slicer3 build tree or 
 # from outside a Slicer3 installation tree
-set(TCLAP_DIR "${Slicer3_HOME}/lib/tclap")
-set(ModuleDescriptionParser_DIR "${Slicer3_HOME}/lib/ModuleDescriptionParser")
-set(GenerateCLP_DIR "${Slicer3_HOME}/lib/GenerateCLP")
-set(GenerateLM_DIR "${Slicer3_HOME}/lib/GenerateLM")
-set(ITK_DIR "${Slicer3_HOME}/lib/InsightToolkit")
-set(KWWidgets_DIR "${Slicer3_HOME}/lib/KWWidgets")
-set(LoadableModule_DIR "${Slicer3_HOME}/lib/LoadableModule")
-set(Teem_DIR "${Slicer3_HOME}/lib/Teem-@Teem_VERSION_MAJOR@.@Teem_VERSION_MINOR@.@Teem_VERSION_PATCH@")
-set(VTK_DIR "${Slicer3_HOME}/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@")
+set(TCLAP_DIR "${Slicer_HOME}/lib/tclap")
+set(ModuleDescriptionParser_DIR "${Slicer_HOME}/lib/ModuleDescriptionParser")
+set(GenerateCLP_DIR "${Slicer_HOME}/lib/GenerateCLP")
+set(GenerateLM_DIR "${Slicer_HOME}/lib/GenerateLM")
+set(ITK_DIR "${Slicer_HOME}/lib/InsightToolkit")
+set(KWWidgets_DIR "${Slicer_HOME}/lib/KWWidgets")
+set(LoadableModule_DIR "${Slicer_HOME}/lib/LoadableModule")
+set(Teem_DIR "${Slicer_HOME}/lib/Teem-@Teem_VERSION_MAJOR@.@Teem_VERSION_MINOR@.@Teem_VERSION_PATCH@")
+set(VTK_DIR "${Slicer_HOME}/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@")
 set(PYTHON_INCLUDE_PATH "@PYTHON_INCLUDE_PATH@")
 get_filename_component(PYTHON_LIB_FILE "${PYTHON_LIBRARY}" NAME)
-set(PYTHON_LIBRARIES "${Slicer3_HOME}/lib/Python/lib/${PYTHON_LIB_FILE}")
+set(PYTHON_LIBRARIES "${Slicer_HOME}/lib/Python/lib/${PYTHON_LIB_FILE}")
 get_filename_component(PYTHON_INCLUDE_DIR "${PYTHON_INCLUDE_PATH}" NAME)
-set(PYTHON_INCLUDE_PATH "${Slicer3_HOME}/lib/Python/include/${PYTHON_INCLUDE_DIR}")
+set(PYTHON_INCLUDE_PATH "${Slicer_HOME}/lib/Python/include/${PYTHON_INCLUDE_DIR}")

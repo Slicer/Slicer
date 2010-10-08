@@ -198,15 +198,15 @@ switch $tcl_platform(os) {
 set cwd [pwd]
 cd [file dirname [info script]]
 cd ..
-set ::Slicer3_HOME [pwd]
+set ::Slicer_HOME [pwd]
 cd $cwd
 if { $::isWindows } {
-  set ::Slicer3_HOME [file attributes $::Slicer3_HOME -shortname]
+  set ::Slicer_HOME [file attributes $::Slicer_HOME -shortname]
 }
 
-set ::Slicer3_LIB $::Slicer3_HOME/../Slicer3-lib
-set ::Slicer3_BUILD $::Slicer3_HOME/../Slicer3-build
-set ::Slicer3_EXT $::Slicer3_HOME/../Slicer3-ext
+set ::Slicer3_LIB $::Slicer_HOME/../Slicer3-lib
+set ::Slicer3_BUILD $::Slicer_HOME/../Slicer3-build
+set ::Slicer3_EXT $::Slicer_HOME/../Slicer3-ext
 
 #######
 #
@@ -214,7 +214,7 @@ set ::Slicer3_EXT $::Slicer3_HOME/../Slicer3-ext
 # - use it to set your local environment and then your change won't 
 #   be overwritten when this file is updated
 #
-set localvarsfile $::Slicer3_HOME/slicer_variables.tcl
+set localvarsfile $::Slicer_HOME/slicer_variables.tcl
 catch {set localvarsfile [file normalize $localvarsfile]}
 if { [file exists $localvarsfile] } {
   vputs "Sourcing $localvarsfile"
@@ -277,7 +277,7 @@ foreach f $extFiles {
 }
 
 # get the files from the Slicer3 source tree
-set extFiles [glob -nocomplain $::Slicer3_HOME/Extensions/*.s3ext]
+set extFiles [glob -nocomplain $::Slicer_HOME/Extensions/*.s3ext]
 foreach f $extFiles {
   file copy -force $f $::Slicer3_EXT/Extensions
 }
@@ -524,9 +524,9 @@ proc buildExtension {s3ext} {
 
   set dependPaths ""
   foreach dep $::ext(depends) {
-    if { [file exists $::Slicer3_HOME/Modules/$dep] } {
+    if { [file exists $::Slicer_HOME/Modules/$dep] } {
       # this is a module that comes with slicer
-      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$::Slicer3_HOME/Modules/$dep"
+      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$::Slicer_HOME/Modules/$dep"
       set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$::Slicer3_BUILD/Modules/$dep"
     } else {
       set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$::Slicer3_EXT/$dep/$dep"

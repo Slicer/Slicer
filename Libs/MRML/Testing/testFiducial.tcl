@@ -1,7 +1,7 @@
 catch "sc Delete"
 vtkMRMLScene sc
 
-sc SetURL $::Slicer3_HOME/share/MRML/Testing/fiducialTest.xml
+sc SetURL $::Slicer_HOME/share/MRML/Testing/fiducialTest.xml
 sc Connect
 
 puts "GetNumberOfNodesByClass vtkMRMLFiducialNode:  [sc GetNumberOfNodesByClass vtkMRMLFiducialNode]"

@@ -196,8 +196,8 @@ namespace eval EMSegmenterPreProcessingTcl {
     puts "=========================================="
     puts "== Generate ICC MASK (not yet implemented)"
     puts "=========================================="
-       set EXE_DIR "$::env(Slicer3_HOME)/bin"
-       set PLUGINS_DIR "$::env(Slicer3_HOME)/lib/Slicer3/Plugins"
+       set EXE_DIR "$::env(Slicer_HOME)/bin"
+       set PLUGINS_DIR "$::env(Slicer_HOME)/lib/Slicer3/Plugins"
 
     # set CMD "$PLUGINS_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
 

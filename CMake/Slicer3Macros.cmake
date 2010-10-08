@@ -6,7 +6,7 @@ macro(slicer3_set_default_install_prefix_for_external_projects)
     if(Slicer3_INSTALL_PREFIX)
       set(__install_prefix "${Slicer3_INSTALL_PREFIX}")
     else(Slicer3_INSTALL_PREFIX)
-      set(__install_prefix "${Slicer3_HOME}")
+      set(__install_prefix "${Slicer_HOME}")
     endif(Slicer3_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "${__install_prefix}"
       CACHE PATH "Install path prefix." FORCE)

@@ -49,7 +49,7 @@ macro(slicer3_enable_plugins_testing)
   # CTest.cmake does, only manually.
 
   if(NOT DEFINED CTEST_DROP_SITE AND NOT EXISTS "${PROJECT_SOURCE_DIR}/CTestConfig.cmake")
-    include("${Slicer3_HOME}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake")
+    include("${Slicer_HOME}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake")
     set(NIGHTLY_START_TIME "${CTEST_NIGHTLY_START_TIME}")
     set(DROP_METHOD "${CTEST_DROP_METHOD}")
     set(DROP_SITE "${CTEST_DROP_SITE}")

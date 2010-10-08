@@ -45,7 +45,7 @@ proc QueryAtlasAddBIRNLogo {} {
   if { [info command vtkLogoWidget] != "" } {
 
     # Logo
-    set logoFile $::Slicer3_HOME/share/FreeSurfer/Testing/birn-new-big.png
+    set logoFile $::Slicer_HOME/share/FreeSurfer/Testing/birn-new-big.png
     set logoRep [vtkLogoRepresentation New]
     set reader [vtkPNGReader New]
     $reader SetFileName $logoFile
@@ -107,7 +107,7 @@ proc QueryAtlasAddBIRNLogo {} {
   #
   # birn logo specific
   #
-  set logoFile $::Slicer3_HOME/share/FreeSurfer/Testing/birn-new-big.png
+  set logoFile $::Slicer_HOME/share/FreeSurfer/Testing/birn-new-big.png
   set ::QA(logo,actor) $textureActor
 
   set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget]
@@ -344,7 +344,7 @@ proc QueryAtlasAddAnnotations {} {
   #
   # read the freesurfer labels for the aseg+aparc
   #
-  set lutFile $::Slicer3_HOME/share/FreeSurfer/FreeSurferColorLUT.txt
+  set lutFile $::Slicer_HOME/share/FreeSurfer/FreeSurferColorLUT.txt
   if { [file exists $lutFile] } {
     set fp [open $lutFile "r"]
     while { ![eof $fp] } {

@@ -60,7 +60,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkSlicerLogic
   /// The resources directory will be computed from ModuleLocation
   /// if it was set (i.e. if Slicer3 is loading this module from a
   /// user defined location outside or even inside Slicer3), or relative to
-  /// Slicer3_HOME otherwise (i.e. if the module was built directory by
+  /// Slicer_HOME otherwise (i.e. if the module was built directory by
   /// Slicer3 and not dynamically loaded).
   virtual const char* GetModuleShareDirectory();
 
@@ -70,7 +70,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkSlicerLogic
   /// The lib directory will be computed from ModuleLocation
   /// if it was set (i.e. if Slicer3 is loading this module from a
   /// user defined location outside or even inside Slicer3), or relative to
-  /// Slicer3_HOME otherwise (i.e. if the module was built directory by
+  /// Slicer_HOME otherwise (i.e. if the module was built directory by
   /// Slicer3 and not dynamically loaded).
   virtual const char* GetModuleLibDirectory();
 

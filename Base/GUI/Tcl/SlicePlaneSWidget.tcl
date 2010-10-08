@@ -497,7 +497,7 @@ proc SlicePlaneSWidget::Dot { x y } {
 
 proc TestSlicePlaneSWidget {} {
   itcl::delete class SlicePlaneSWidget
-  source $::Slicer3_HOME/lib/Slicer3/SlicerBaseGUI/Tcl/SlicePlaneSWidget.tcl
+  source $::Slicer_HOME/lib/Slicer3/SlicerBaseGUI/Tcl/SlicePlaneSWidget.tcl
 
   set sliceGUI [lindex [vtkSlicerSliceGUI ListInstances] 0]
   SlicePlaneSWidget #auto $sliceGUI

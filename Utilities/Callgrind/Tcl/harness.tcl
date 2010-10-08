@@ -41,7 +41,7 @@ proc h2_body {} {
   catch "sc Delete"
   vtkMRMLScene sc
 
-  sc SetURL $::Slicer3_HOME/share/MRML/Testing/volScene3.xml
+  sc SetURL $::Slicer_HOME/share/MRML/Testing/volScene3.xml
   sc Connect
 
   puts "GetNumberOfNodesByClass [sc GetNumberOfNodesByClass vtkMRMLScalarVolumeNode]"

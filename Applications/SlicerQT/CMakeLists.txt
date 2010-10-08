@@ -48,26 +48,26 @@ IF(BUILD_SHARED_LIBS)
     IF(Slicer_BUILD_QTLOADABLEMODULES)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},          \\
-         \"${Slicer3_HOME}/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\" CONFIG_DIR_POST")
+         \"${Slicer_HOME}/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\" CONFIG_DIR_POST")
       SET(SlicerQT_FORWARD_PATH_INSTALL
         "\"../${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
 
       # Since ModuleLogic are in Slicer_INSTALL_MODULES_BIN_DIR, let's add it
       SET(Slicer3_FORWARD_PATH_BUILD
         "${Slicer3_FORWARD_PATH_BUILD},            \\
-        \"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+        \"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     
     ENDIF(Slicer_BUILD_QTLOADABLEMODULES)
      
     #IF(Slicer_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
-    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     #ENDIF(Slicer_BUILD_MODULES)
     
     IF(Slicer_BUILD_CLI)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},            \\
-        \"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
+        \"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
     ENDIF(Slicer_BUILD_CLI)
     
   ELSE(WIN32)
@@ -114,7 +114,7 @@ IF(BUILD_SHARED_LIBS)
     IF(Slicer_BUILD_QTLOADABLEMODULES)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},                  \\
-         \"${Slicer3_HOME}/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
+         \"${Slicer_HOME}/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
       SET(SlicerQT_FORWARD_PATH_INSTALL
         "${SlicerQT_FORWARD_PATH_INSTALL},         \\
         \"../${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
@@ -122,19 +122,19 @@ IF(BUILD_SHARED_LIBS)
       # Since ModuleLogic are in Slicer_INSTALL_MODULES_BIN_DIR, let's add it
       SET(Slicer3_FORWARD_PATH_BUILD
         "${Slicer3_FORWARD_PATH_BUILD},             \\
-        \"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
+        \"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
         
     ENDIF(Slicer_BUILD_QTLOADABLEMODULES)
     
     #IF(Slicer_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
-    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
+    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
     #ENDIF(Slicer_BUILD_MODULES)
     
     IF(Slicer_BUILD_CLI)
       SET(SlicerQT_FORWARD_PATH_BUILD
         "${SlicerQT_FORWARD_PATH_BUILD},         \\
-         \"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
+         \"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
     ENDIF(Slicer_BUILD_CLI)
   ENDIF(WIN32)
 
@@ -498,8 +498,8 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 # --------------------------------------------------------------------------
 # MRML Tests
 #
-# add_test(Slicer3MRMLUndo ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer3_HOME}/share/MRML/Testing/testUndo.tcl)
-# add_test(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer3_HOME}/share/MRML/Testing/testVolume.tcl)
+# add_test(Slicer3MRMLUndo ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testUndo.tcl)
+# add_test(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testVolume.tcl)
 
 # --------------------------------------------------------------------------
 # Testing

@@ -202,7 +202,7 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 {
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  this->SlicerHome = env.value("Slicer3_HOME");
+  this->SlicerHome = env.value("Slicer_HOME");
   if (!this->SlicerHome.isEmpty())
     {
     return;
@@ -214,7 +214,7 @@ void qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
     qDebug() << "Warning, can't cdUp in " << slicerBinDir;
     }
   this->SlicerHome = slicerBinDir.absolutePath();
-  env.insert("Slicer3_HOME", this->SlicerHome);
+  env.insert("Slicer_HOME", this->SlicerHome);
 }
 
 //-----------------------------------------------------------------------------
@@ -329,7 +329,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   // Qt can't set environment variables for child processes that are not QProcess.
   // As the command line modules are not QProcess and need ITK_AUTOLOAD_PATH to
   // be able to read Slicer volumes, we need to change the current process env.
-  QString setEnv = QString("Slicer3_HOME=") + d->SlicerHome;
+  QString setEnv = QString("Slicer_HOME=") + d->SlicerHome;
   vtksys::SystemTools::PutEnv(setEnv.toLatin1());
   setEnv = QString("ITK_AUTOLOAD_PATH=") + d->ITKFactoriesDir;
   vtksys::SystemTools::PutEnv(setEnv.toLatin1());

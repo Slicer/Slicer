@@ -35,9 +35,9 @@ if {[info exists ::env(SVN)]} {
 set cwd [pwd]
 cd [file dirname [info script]]
 cd ..
-set ::Slicer3_HOME [pwd]
+set ::Slicer_HOME [pwd]
 
-source $::Slicer3_HOME/slicer_variables.tcl
+source $::Slicer_HOME/slicer_variables.tcl
 
 set ::Slicer3_BUILDDATE [clock format [clock seconds] -format %Y-%m-%d]
 

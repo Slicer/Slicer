@@ -7,10 +7,10 @@ def tcl(cmd):
   global _tpycl
   try:
     import os
-    os.environ['Slicer3_HOME']
+    os.environ['Slicer_HOME']
   except KeyError:
     home = os.path.dirname(os.path.dirname(sys.executable))
-    os.environ['Slicer3_HOME'] = home
+    os.environ['Slicer_HOME'] = home
   try:
     _tpycl
   except NameError:
@@ -18,7 +18,7 @@ def tcl(cmd):
     import tpycl
     _tpycl = tpycl.tpycl()
     _tpycl.tcl_eval("""
-        set dir $::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
+        set dir $::env(Slicer_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
         source $dir/Slicer3Adapters.tcl
         ::Slicer3Adapters::Initialize
       """)
@@ -26,7 +26,7 @@ def tcl(cmd):
     # TODO: not clear why package require is not working 
     # - instead, source the pkgIndex directly
     _tpycl.tcl_eval("""
-        set dir $::env(Slicer3_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
+        set dir $::env(Slicer_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
         source $dir/pkgIndex.tcl
       """)
 

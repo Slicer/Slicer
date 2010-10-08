@@ -18,7 +18,7 @@ proc initMRML {} {
     # create the mrml scene
     set ::scene [vtkMRMLScene New]
 
-    set scenefile $::Slicer3_HOME/share/MRML/Testing/volScene3.xml
+    set scenefile $::Slicer_HOME/share/MRML/Testing/volScene3.xml
     $::scene SetURL $scenefile
     $::scene Connect
 }

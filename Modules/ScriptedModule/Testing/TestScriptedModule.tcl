@@ -10,13 +10,13 @@ proc ScriptedModulesCreate {} {
   #
 
   # TODO: this code should be updated to match what's in Slicer3.cxx, i.e.
-  # not just look inside $::Slicer3_HOME/lib/Slicer3/Modules/, but
+  # not just look inside $::Slicer_HOME/lib/Slicer3/Modules/, but
   # iterate over all the vtkSlicerApplication::GetModulePaths (since
-  # $::Slicer3_HOME/lib/Slicer3/Modules/ is already there, alongside any
+  # $::Slicer_HOME/lib/Slicer3/Modules/ is already there, alongside any
   # user modules)
 
   set ::Slicer3_PACKAGES(list) {}
-  set dirs [glob $::Slicer3_HOME/lib/Slicer3/Modules/*] 
+  set dirs [glob $::Slicer_HOME/lib/Slicer3/Modules/*] 
   foreach d $dirs { 
     if { [file exists $d/Tcl/pkgIndex.tcl] } {
       lappend ::Slicer3_PACKAGES(list) [file tail $d]

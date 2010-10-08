@@ -1664,11 +1664,11 @@ proc QueryAtlasLaunchFips2Mrml { } {
         fips2mrml_DisplayMessage "Please set your (Slicer data directory) Slicer3_DATA environment variable and try again."
         exit
     }
-    if { [ info exists ::env(Slicer3_HOME) ] } {
-        set slicer3Dir $::env(Slicer3_HOME)
+    if { [ info exists ::env(Slicer_HOME) ] } {
+        set slicer3Dir $::env(Slicer_HOME)
     } else {
-        tk_messageBox -message "Please set your (Slicer3 home directory) Slicer3_HOME environment variable and try again."
-        fips2mrml_DisplayMessage "Please set your (Slicer3 home directory) Slicer3_HOME environment variable and try again."
+        tk_messageBox -message "Please set your (Slicer3 home directory) Slicer_HOME environment variable and try again."
+        fips2mrml_DisplayMessage "Please set your (Slicer3 home directory) Slicer_HOME environment variable and try again."
         exit
     }
     
@@ -1714,8 +1714,8 @@ proc QueryAtlasLaunchFips2Mrml { } {
 
     #--- create logo frame
     set nowframe $f.fLogo
-    if { [ file exists "$::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ] } {
-        set logo [ image create photo -file "$::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ]
+    if { [ file exists "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ] } {
+        set logo [ image create photo -file "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ]
         label $nowframe.lLogo -image $logo
         pack $nowframe.lLogo -side top -anchor e -padx 4
     }

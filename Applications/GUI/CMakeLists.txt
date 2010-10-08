@@ -35,11 +35,11 @@ if(BUILD_SHARED_LIBS)
       "\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
     if(Slicer_BUILD_MODULES)
       set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     endif(Slicer_BUILD_MODULES)
     if(Slicer_BUILD_CLI)
       set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
     endif(Slicer_BUILD_CLI)
   else(WIN32)
     set(Slicer3_FORWARD_PATH_BUILD 
@@ -48,11 +48,11 @@ if(BUILD_SHARED_LIBS)
       "\"../${Slicer_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
     if(Slicer_BUILD_MODULES)
       set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
     endif(Slicer_BUILD_MODULES)
     if(Slicer_BUILD_CLI)
       set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
     endif(Slicer_BUILD_CLI)
   endif(WIN32)
   if(Slicer_BUILD_MODULES)

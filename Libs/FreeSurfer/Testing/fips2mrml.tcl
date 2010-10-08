@@ -1467,7 +1467,7 @@ set ::env(SLICER3HOME) "c:/pieper/bwh/slicer3/latest/Slicer3"
 #--- set some stuff
 set fipsDir $::env(FIPSHOME)
 set fsSubDir $::env(SUBJECTSDIR)
-set slicer3Dir $::env(Slicer3_HOME)
+set slicer3Dir $::env(Slicer_HOME)
 
 if { $fipsDir == "" } {
     puts "Please set your (FIPS) FIPSHOME environment variable and try again."

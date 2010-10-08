@@ -65,7 +65,7 @@ extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 vtksys_stl::string tgGetSLICER_HOME(char** argv)  
 { 
   vtksys_stl::string slicerHome = "";
-  if ( !vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("Slicer_HOME", slicerHome) )
   {
     std::string programPath;
     std::string errorMessage;
@@ -79,20 +79,20 @@ vtksys_stl::string tgGetSLICER_HOME(char** argv)
 int tgSetSLICER_HOME(char** argv)  
 { 
   vtksys_stl::string slicerHome = "";
-  if ( !vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("Slicer_HOME", slicerHome) )
   {
     std::string programPath;
     std::string errorMessage;
 
     if ( !vtksys::SystemTools::FindProgramPath(argv[0], programPath, errorMessage) ) return 1;
 
-    std::string homeEnv = "Slicer3_HOME=";
+    std::string homeEnv = "Slicer_HOME=";
     homeEnv += vtksys::SystemTools::GetFilenamePath(programPath.c_str()) + "/../../../";
    
     cout << "Set environment: " << homeEnv.c_str() << endl;
     vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
   } else {
-    cout << "Slicer3_HOME found: " << slicerHome << endl;
+    cout << "Slicer_HOME found: " << slicerHome << endl;
   }
   return 0;
 }
