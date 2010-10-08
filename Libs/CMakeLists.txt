@@ -53,11 +53,11 @@ SET(dirs ${dirs}
 #-----------------------------------------------------------------------------
 # QT related libraries
 #
-IF(Slicer3_USE_QT)
+IF(Slicer_USE_QT)
 set(dirs ${dirs}
   qMRMLWidgets
   )
-ENDIF(Slicer3_USE_QT)
+ENDIF(Slicer_USE_QT)
 
 #-----------------------------------------------------------------------------
 # CUDA

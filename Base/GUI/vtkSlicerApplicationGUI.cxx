@@ -15,7 +15,7 @@
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModulePanel.h"
@@ -397,7 +397,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
     vtkErrorMacro ( "ProcessLoadSceneCommand: Got NULL LoadSceneDialog." );
     return;
     }
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerApplication::application()->ioManager()->openLoadSceneDialog();
 #else
   if ( !this->LoadSceneDialog->IsCreated() )
@@ -551,7 +551,7 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
     vtkErrorMacro ( "ProcessImportSceneCommand: Got NULL SlicerWindow." );
     return;
     }
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerApplication::application()->ioManager()->openAddSceneDialog();
 #else
   if ( !this->LoadSceneDialog->IsCreated() )
@@ -804,7 +804,7 @@ void vtkSlicerApplicationGUI::DownloadSampleVolume(const char *uri)
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddDataCommand()
 {
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerApplication::application()->ioManager()->openAddDataDialog();
 #else
   this->GetApplication()->Script("::Loader::ShowDialog");
@@ -814,7 +814,7 @@ void vtkSlicerApplicationGUI::ProcessAddDataCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddVolumeCommand()
 {
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerApplication::application()->ioManager()->openAddVolumeDialog();
 #else
   this->GetApplication()->Script("::LoadVolume::ShowDialog");
@@ -824,7 +824,7 @@ void vtkSlicerApplicationGUI::ProcessAddVolumeCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddTransformCommand()
 {
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerApplication::application()->ioManager()->openAddTransformDialog();
 #else
   this->GetApplication()->Script("::LoadTransform::ShowDialog");
@@ -1301,7 +1301,7 @@ vtkMRMLLayoutNode *vtkSlicerApplicationGUI::GetGUILayoutNode()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 {
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerApplication::application()->ioManager()->openSaveDataDialog();
 #else
   this->SaveDataWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
@@ -1348,7 +1348,7 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
   this->MainSlicerWindow->SetBinding("<Unmap>", this, "UnMapCallback %W");
   this->MainSlicerWindow->SetBinding("<Map>", this, "MapCallback %W");
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   this->MainSlicerWindow->AddObserver(vtkKWTopLevel::SlaveDisplayEvent, (vtkCommand*)this->GUICallbackCommand);
   this->MainSlicerWindow->AddObserver(vtkKWTopLevel::SlaveWithdrawEvent, (vtkCommand*)this->GUICallbackCommand);
 #endif
@@ -1535,7 +1535,7 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
   if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
     {
     }
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 
   if (event == vtkKWTopLevel::SlaveDisplayEvent)
     {
@@ -4856,7 +4856,7 @@ void vtkSlicerApplicationGUI::SetExternalProgress(char *message, float progress)
 //-------------------------------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::SetCurrentQtModule(const char* moduleTitle)
 {
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
 
@@ -4885,7 +4885,7 @@ void vtkSlicerApplicationGUI::SetCurrentQtModule(const char* moduleTitle)
 //-------------------------------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ReposModulePanel()
 {
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   if (!this->GetMainSlicerWindow() ||
       !this->GetMainSlicerWindow()->GetMainNotebook())
     {
@@ -4915,7 +4915,7 @@ void vtkSlicerApplicationGUI::ConfigureCallback(char* widgetName)
     return;
     }
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   //this->SetCurrentQtModuleVisible(true);
   this->ReposModulePanel();
 #endif
@@ -4929,7 +4929,7 @@ void vtkSlicerApplicationGUI::UnMapCallback(char * widgetName)
     {
     return;
     }
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   //this->SetCurrentQtModuleVisible(false);
   qSlicerApplication::application()->setTopLevelWidgetsVisible(false);
 #endif
@@ -4943,7 +4943,7 @@ void vtkSlicerApplicationGUI::MapCallback(char * widgetName)
     {
     return;
     }
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   //this->SetCurrentQtModuleVisible(true);
   qSlicerApplication::application()->setTopLevelWidgetsVisible(true);
   this->ReposModulePanel();

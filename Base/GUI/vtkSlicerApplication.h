@@ -3,7 +3,7 @@
 
 #include "vtkSlicerConfigure.h"
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 // QT includes
 #include <QStringList>
 #endif
@@ -16,7 +16,7 @@
 
 #include "vtkSlicerApplicationGUI.h"
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 //BTX
 class qSlicerApplication;
 class qSlicerModulePanel;
@@ -77,7 +77,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     void SetMRMLScene( vtkMRMLScene* scene);
     vtkMRMLScene* GetMRMLScene();
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
     /// 
     /// Initialize qt core Modules
     //BTX

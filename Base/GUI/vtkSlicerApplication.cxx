@@ -3,7 +3,7 @@
 //
 // SlicerQT
 //
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 # ifdef Slicer3_USE_PYTHONQT
 #   include "PythonQt.h"
 #   include "PythonQt_QtAll.h"
@@ -195,7 +195,7 @@ class vtkSlicerApplication::vtkInternal
 public:
   vtkInternal()
     {
-    #ifdef Slicer3_USE_QT
+    #ifdef Slicer_USE_QT
     this->qApplication = 0;
     this->RegisteredDialogCount = 0;
     this->ModulePanel = 0; 
@@ -206,7 +206,7 @@ public:
 
   vtkMRMLScene*       MRMLScene;
 
-  #ifdef Slicer3_USE_QT
+  #ifdef Slicer_USE_QT
   qSlicerApplication*                    qApplication;
   int                                    RegisteredDialogCount;
   qSlicerModulePanel*                    ModulePanel;
@@ -326,7 +326,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 //---------------------------------------------------------------------------
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   if (this->Internal->ModulePanel)
     {
     delete this->Internal->ModulePanel;
@@ -629,7 +629,7 @@ vtkMRMLScene* vtkSlicerApplication::GetMRMLScene()
 //---------------------------------------------------------------------------
 void vtkSlicerApplication::RegisterDialogUp(vtkKWWidget *ptr)
 {
-  #ifdef Slicer3_USE_QT
+  #ifdef Slicer_USE_QT
   if (this->GetApplicationGUI())
     {
     if (this->Internal->RegisteredDialogCount == 0)
@@ -647,7 +647,7 @@ void vtkSlicerApplication::UnRegisterDialogUp(vtkKWWidget *ptr)
 {
   this->Superclass::UnRegisterDialogUp(ptr);
 
-  #ifdef Slicer3_USE_QT
+  #ifdef Slicer_USE_QT
   if (this->GetApplicationGUI())
     {
     if (this->Internal->RegisteredDialogCount == 1)
@@ -727,7 +727,7 @@ void vtkSlicerApplication::DoOneTclEvent ( )
     Tcl_ServiceAll();
     broker->ProcessEventQueue();
     }
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   this->Internal->qApplication->processEvents();
 #endif
 }
@@ -2437,7 +2437,7 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 // Temporary test method
 // void vtkSlicerApplication::TestQtSlicerWebKit(const char *url)
 // {
-// #ifdef Slicer3_USE_QT
+// #ifdef Slicer_USE_QT
 //   QtSlicerWebKit *webKit = new QtSlicerWebKit(NULL, this);
 //   if ( url )
 //     {
@@ -2449,7 +2449,7 @@ vtkKWColorPickerDialog* vtkSlicerApplication::GetColorPickerDialog()
 // }
 
 //----------------------------------------------------------------------------
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::InitializeQtCoreModules()

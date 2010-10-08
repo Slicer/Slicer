@@ -15,9 +15,9 @@
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 //---------------------------------------------------------------------------
-// Slicer3_USE_QT
+// Slicer_USE_QT
 //
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 
 // SlicerQT includes
 #include "qSlicerApplication.h"
@@ -791,7 +791,7 @@ int Slicer3_main(int& argc, char *argv[])
   Slicer3_Tcl_Eval( interp, tclCmd.c_str() );
   }
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   static int slicerAppArgc = 1;
   qSlicerApplication* qApplication = new qSlicerApplication(slicerAppArgc, argv);
   Q_CHECK_PTR(qApplication);
@@ -948,7 +948,7 @@ int Slicer3_main(int& argc, char *argv[])
   scene->SetRootDirectory(root.c_str());
   vtkMRMLScene::SetActiveScene( scene );
   slicerApp->SetMRMLScene( scene );
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerApplication::application()->setMRMLScene( scene );
 #endif
 
@@ -961,7 +961,7 @@ int Slicer3_main(int& argc, char *argv[])
   appLogic->SetAndObserveMRMLScene ( scene );
   appLogic->CreateProcessingThread();
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   qSlicerApplication::application()->setAppLogic( appLogic );
   qSlicerApplication::application()->setInitialized(true);
 
@@ -1310,7 +1310,7 @@ int Slicer3_main(int& argc, char *argv[])
   if (slicerApp->GetLoadModules() && !NoModules)
     {
     loadableModuleFactory.Scan();
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
     moduleFactoryManager->registerModules("qSlicerLoadableModuleFactory");
     moduleFactoryManager->instantiateModules("qSlicerLoadableModuleFactory");
 #endif
@@ -1328,7 +1328,7 @@ int Slicer3_main(int& argc, char *argv[])
     {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
     loadableModules->InsertNextValue(desc.GetName());
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
     qDebug() << "Initialize loadable module:" << desc.GetName().c_str();
 #endif
     if (ignoreModules->LookupValue(desc.GetName().c_str()) < 0)
@@ -1404,7 +1404,7 @@ int Slicer3_main(int& argc, char *argv[])
 
 #ifndef MODELS_DEBUG
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   moduleFactoryManager->registerModules("qSlicerCoreModuleFactory");
   moduleFactoryManager->instantiateModules("qSlicerCoreModuleFactory");
 #endif
@@ -1568,7 +1568,7 @@ int Slicer3_main(int& argc, char *argv[])
   appGUI->InitializeViewControlGUI();
   //    appGUI->InitializeNavigationWidget();
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 //   // --- Empty module
 //   slicerApp->SplashMessage("Initializing Empty Module...");
 //
@@ -1664,7 +1664,7 @@ int Slicer3_main(int& argc, char *argv[])
       moduleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
       }
     moduleFactory.Scan();
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
     moduleFactoryManager->registerModules("qSlicerCLILoadableModuleFactory");
     moduleFactoryManager->instantiateModules("qSlicerCLILoadableModuleFactory");
 
@@ -1684,7 +1684,7 @@ int Slicer3_main(int& argc, char *argv[])
       {
       ModuleDescription desc = moduleFactory.GetModuleDescription(*mit);
       // slicerCerr(desc << endl);
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
       //qDebug() << "Initialize command line module:" << mit->c_str()
       //         << "/" << desc.GetTitle().c_str()
       //         << "/" <<desc.GetLocation().c_str() ;
@@ -1740,7 +1740,7 @@ int Slicer3_main(int& argc, char *argv[])
 
     }
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
   slicerApp->InitializeQtCommandLineModules();
 #endif
 

@@ -43,11 +43,11 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   # On Mac, since:
   #    - Qt can't be build with X11 support
   #    - KWWidgets only support X11
-  # the case where both Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are ON is *NOT* supported
+  # the case where both Slicer_USE_QT and Slicer3_USE_KWWIDGETS are ON is *NOT* supported
 
   set(VTK_QT_ARGS)
   if(NOT APPLE)
-    if(Slicer3_USE_QT)
+    if(Slicer_USE_QT)
       set(VTK_QT_ARGS
         -DDESIRED_QT_VERSION:STRING=4
         -DVTK_USE_GUISUPPORT:BOOL=ON
@@ -57,7 +57,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
         )
     endif()
   else()
-    if(Slicer3_USE_KWWIDGETS AND NOT Slicer3_USE_QT)
+    if(Slicer3_USE_KWWIDGETS AND NOT Slicer_USE_QT)
       set(VTK_QT_ARGS
         -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
         -DCMAKE_EXE_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
@@ -70,7 +70,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
         -DVTK_USE_QVTK_QTOPENGL:BOOL=OFF
         -DVTK_USE_QT:BOOL=OFF
         )
-    elseif(NOT Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT)
+    elseif(NOT Slicer3_USE_KWWIDGETS AND Slicer_USE_QT)
       set(VTK_QT_ARGS
         -DVTK_USE_CARBON:BOOL=OFF
         -DVTK_USE_COCOA:BOOL=ON # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
@@ -82,8 +82,8 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
         -DVTK_USE_QT:BOOL=ON
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         )
-    elseif(Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT)
-      MESSAGE(FATAL_ERROR "Case where Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are ON is not supported on MAC")
+    elseif(Slicer3_USE_KWWIDGETS AND Slicer_USE_QT)
+      MESSAGE(FATAL_ERROR "Case where Slicer_USE_QT and Slicer3_USE_KWWIDGETS are ON is not supported on MAC")
     endif()
   endif()
 

@@ -164,7 +164,7 @@ endif()
 # ----------------------------------------------------
 # | Slicer3_USE_KWWIDGETS |  ON    |  ON    |  OFF   |
 # |---------------------------------------------------
-# | Slicer3_USE_QT        |  OFF   |  ON    |  ON    |
+# | Slicer_USE_QT        |  OFF   |  ON    |  ON    |
 # |--------------------------------------------------|
 # | Slicer3_USE_PYTHON    | ON|OFF | ON|OFF |  OFF   |
 # |--------------------------------------------------|
@@ -172,17 +172,17 @@ endif()
 # |---------------------------------------------------
 
 #
-# Case 1: [Slicer3_USE_KWWIDGETS: ON, Slicer3_USE_QT: OFF, VTK_WRAP_TCL:ON]
+# Case 1: [Slicer3_USE_KWWIDGETS: ON, Slicer_USE_QT: OFF, VTK_WRAP_TCL:ON]
 #   a) KwwOnly-NoPython  
 #   b) KwwOnly-Python    
 # 
-# Case 2: [Slicer3_USE_KWWIDGETS: ON, Slicer3_USE_QT: ON, VTK_WRAP_TCL:ON]
+# Case 2: [Slicer3_USE_KWWIDGETS: ON, Slicer_USE_QT: ON, VTK_WRAP_TCL:ON]
 #   a) KwwAndQt-NoPython-NoPythonQt
 #   b) KwwAndQt-Python
 #   c) KwwAndQt-PythonQt          [VTK_WRAP_PYTHON: ON]  -> NOT SUPPORTED
 #   d) KwwAndQt-Python-PythonQt                          -> NOT SUPPORTED
 #
-# Case 3: [Slicer3_USE_KWWIDGETS: OFF, Slicer3_USE_QT: ON,  VTK_WRAP_TCL:OFF]
+# Case 3: [Slicer3_USE_KWWIDGETS: OFF, Slicer_USE_QT: ON,  VTK_WRAP_TCL:OFF]
 #   a) QtOnly-NoPythonQt
 #   b) QtOnly-PythonQt            [VTK_WRAP_PYTHON: ON]
 #
@@ -205,9 +205,9 @@ option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" OFF)
 # Qt option
 #------------------------------------------------------------------------------  
 
-option(Slicer3_USE_QT  "Build Slicer3 Qt GUI" ON)
+option(Slicer_USE_QT  "Build Slicer3 Qt GUI" ON)
 
-if(Slicer3_USE_QT)
+if(Slicer_USE_QT)
   set(minimum_required_qt_version "4.6.2")
   # For Mac OS X 10.6, Apple has started recommending developers to build their applications 64-bit.
   # The main reason is that there is a small speed increase due to the extra registers on Intel 
@@ -286,16 +286,16 @@ option(Slicer_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
 # Validate options
 #------------------------------------------------------------------------------  
 
-if (NOT Slicer3_USE_KWWIDGETS AND NOT Slicer3_USE_QT)
-  set(err "error: Slicer SuperBuild requires at least Slicer3_USE_KWWIDGETS or Slicer3_USE_QT to be ON.
+if (NOT Slicer3_USE_KWWIDGETS AND NOT Slicer_USE_QT)
+  set(err "error: Slicer SuperBuild requires at least Slicer3_USE_KWWIDGETS or Slicer_USE_QT to be ON.
 
 Slicer3_USE_KWWIDGETS = ON
  -> Means Slicer will be built only with KWWidgets support.
  
-Slicer3_USE_KWWIDGETS = ON and Slicer3_USE_QT = ON
+Slicer3_USE_KWWIDGETS = ON and Slicer_USE_QT = ON
  -> Means Slicer will be built with both KWWidgets and QT support. Note: NOT supported on Mac
  
-Slicer3_USE_QT = ON
+Slicer_USE_QT = ON
  -> Means Slicer will be build only with QT support.
 ")
 
@@ -312,8 +312,8 @@ if (Slicer3_USE_KWWIDGETS AND Slicer3_USE_PYTHONQT)
   message(FATAL_ERROR "${err}")
 endif()
 
-if (Slicer3_USE_KWWIDGETS AND Slicer3_USE_QT AND APPLE)
-  set(err "error: Slicer SuperBuild on Mac doesn't support Slicer3_USE_KWWIDGETS and Slicer3_USE_QT ON")
+if (Slicer3_USE_KWWIDGETS AND Slicer_USE_QT AND APPLE)
+  set(err "error: Slicer SuperBuild on Mac doesn't support Slicer3_USE_KWWIDGETS and Slicer_USE_QT ON")
   message(FATAL_ERROR "${err}")
 endif()
 
@@ -390,7 +390,7 @@ endif()
 
 include(External_VTK)
 
-if(Slicer3_USE_QT)
+if(Slicer_USE_QT)
   include(External_CTK)
   if (Slicer_USE_CTKAPPLAUNCHER)
     include(External_CTKAPPLAUNCHER)
@@ -426,7 +426,7 @@ if (Slicer3_USE_PYTHONQT_WITH_TCL)
   endif()
 endif()
 
-if(Slicer3_USE_QT)
+if(Slicer_USE_QT)
   list(APPEND slicer_DEPENDENCIES CTK)
   if (Slicer_USE_CTKAPPLAUNCHER)
     list(APPEND slicer_DEPENDENCIES CTKAPPLAUNCHER)
@@ -510,7 +510,7 @@ ExternalProject_Add(${proj}
     -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
     -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
     # Qt
-    -DSlicer3_USE_QT:BOOL=${Slicer3_USE_QT}
+    -DSlicer_USE_QT:BOOL=${Slicer_USE_QT}
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
     -DCTK_DIR:PATH=${CTK_DIR}
     -DSlicer_USE_CTKAPPLAUNCHER:BOOL=${Slicer_USE_CTKAPPLAUNCHER}

@@ -288,7 +288,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::ProcessMRMLEvents ( vtkObject *ca
 //---------------------------------------------------------------------------
 void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( ) 
 {
-// #ifdef Slicer3_USE_QT
+// #ifdef Slicer_USE_QT
 //   QtGADModule *QtGAD = new QtGADModule();
 //   QtGAD->SetMRMLScene(this->GetMRMLScene());
 //   QtGAD->BuildGUI();

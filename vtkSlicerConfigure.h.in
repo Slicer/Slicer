@@ -28,7 +28,7 @@
 #cmakedefine Slicer3_USE_PYTHONQT
 #cmakedefine Slicer3_USE_PYTHONQT_WITH_TCL
 #cmakedefine Slicer3_USE_OPENTRACKER
-#cmakedefine Slicer3_USE_QT
+#cmakedefine Slicer_USE_QT
 #cmakedefine Slicer3_USE_KWWIDGETS
 #cmakedefine Slicer3_USE_VTK_CVSHEAD
 
@@ -69,8 +69,8 @@
 #define Slicer3_INCR_TCL_MINOR_VERSION "@INCR_TCL_MINOR_VERSION@"
 
 // Convenient macro to print info provided as argument
-// Note: No-op is Slicer3_USE_QT OFF
-#ifdef Slicer3_USE_QT
+// Note: No-op is Slicer_USE_QT OFF
+#ifdef Slicer_USE_QT
 #define SlicerQDebug(_arg) {qDebug() << _arg;}
 #else
 #define SlicerQDebug(_arg)

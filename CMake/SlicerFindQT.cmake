@@ -4,11 +4,11 @@
 #  if so, use it, 
 #  otherwise, complain. 
 #
-OPTION(Slicer3_USE_QT  "Use Qt as an extra GUI library" OFF)
+OPTION(Slicer_USE_QT  "Use Qt as an extra GUI library" OFF)
 
 MACRO(SLICER_SETUP_QT)
 
-  IF(Slicer3_USE_QT)
+  IF(Slicer_USE_QT)
     SET(minimum_required_qt_version "4.6.2")
     IF(VTK_USE_QVTK)
 

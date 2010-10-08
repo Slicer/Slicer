@@ -262,7 +262,7 @@ include(${ITK_USE_FILE})
 #
 SET(git_repo http://github.com/commontk/CTK/raw/master/)
 
-IF(Slicer3_USE_QT)
+IF(Slicer_USE_QT)
   SET(file Utilities/CMake/FindCTK.cmake)
   downloadFile(${git_repo}/${file} ${Slicer3_BINARY_DIR}/CMake/FindCTK.cmake)
 
@@ -316,27 +316,27 @@ mark_as_advanced(Slicer3_USE_VTK_CVSHEAD)
 SLICER_SETUP_QT()
 
 #-----------------------------------------------------------------------------
-# Alert the user if both Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are OFF
-IF(NOT Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
-  MESSAGE(FATAL_ERROR "Both Slicer3_USE_QT and Slicer3_USE_KWWIDGETS are OFF. Please, choose one")
+# Alert the user if both Slicer_USE_QT and Slicer3_USE_KWWIDGETS are OFF
+IF(NOT Slicer_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
+  MESSAGE(FATAL_ERROR "Both Slicer_USE_QT and Slicer3_USE_KWWIDGETS are OFF. Please, choose one")
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# If Slicer3_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, complain if VTK_WRAP_TCL is ON
+# If Slicer_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, complain if VTK_WRAP_TCL is ON
 # Note: Later on we will expect VTK_WRAP_PYTHON to be ON
-IF(Slicer3_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
   IF(VTK_WRAP_TCL)
-    MESSAGE(FATAL_ERROR "For now, if Slicer3_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, we expect VTK_WRAP_TCL to be OFF")
+    MESSAGE(FATAL_ERROR "For now, if Slicer_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, we expect VTK_WRAP_TCL to be OFF")
   ENDIF()
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Add Slicer3_USE_PYTHONQT option if Slicer3_USE_QT is ON
-IF(Slicer3_USE_QT)
+# Add Slicer3_USE_PYTHONQT option if Slicer_USE_QT is ON
+IF(Slicer_USE_QT)
   option(Slicer3_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." OFF)
   IF(Slicer3_USE_PYTHONQT)
     IF(NOT VTK_WRAP_PYTHON)
-      MESSAGE(FATAL_ERROR "Since both Slicer3_USE_QT and Slicer3_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer3_USE_PYTHONQT or re-configure VTK with python wrapping.")
+      MESSAGE(FATAL_ERROR "Since both Slicer_USE_QT and Slicer3_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer3_USE_PYTHONQT or re-configure VTK with python wrapping.")
     ENDIF()
     # Include convenient script allowing to copy and compile python scripts
     INCLUDE(${Slicer_CMAKE_DIR}/SlicerCompilePythonScripts.cmake)
@@ -499,7 +499,7 @@ set(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
 #
-IF(Slicer3_USE_QT)
+IF(Slicer_USE_QT)
   OPTION(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer3 QT Loadable Modules" ON)
   IF(Slicer_BUILD_QTLOADABLEMODULES)
     ADD_DEFINITIONS(-DSlicer_BUILD_QTLOADABLEMODULES)
@@ -709,7 +709,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
 #
-IF(Slicer3_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
+IF(Slicer_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
   add_subdirectory(QTModules)
 ENDIF()
 
@@ -744,7 +744,7 @@ ADD_SUBDIRECTORY(Utilities/Launcher)
 
 # Compute Slicer3_QT_PLUGIN_PATH used to configure launch.tcl.in
 SET(Slicer3_QT_PLUGIN_PATH "")
-IF(Slicer3_USE_QT)
+IF(Slicer_USE_QT)
   SET(designer_launcher_project_name SlicerQT)
   GET_TARGET_PROPERTY(output_directory ${designer_launcher_project_name} LIBRARY_OUTPUT_DIRECTORY)
   SET(Slicer3_QT_PLUGIN_PATH ${output_directory})
@@ -798,7 +798,7 @@ IF(Slicer3_USE_QT)
       )
   ENDIF()
 
-ENDIF(Slicer3_USE_QT)
+ENDIF(Slicer_USE_QT)
 
 CONFIGURE_FILE(
   ${Slicer3_SOURCE_DIR}/launch.tcl.in
@@ -813,7 +813,7 @@ INSTALL(
 # Launcher for QTDesigner
 #
 
-IF(Slicer3_USE_QT)
+IF(Slicer_USE_QT)
   add_subdirectory(Utilities/Designer)
 ENDIF()
 

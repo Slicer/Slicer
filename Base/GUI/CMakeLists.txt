@@ -191,13 +191,13 @@ IF (Slicer3_USE_KWWIDGETS)
     RemoteIO
     )
 
-  IF(Slicer3_USE_QT)
+  IF(Slicer_USE_QT)
     set(libraries 
       ${libraries} 
       ${QT_LIBRARIES}
       qSlicerBaseQTGUI
       )
-  ENDIF(Slicer3_USE_QT)
+  ENDIF(Slicer_USE_QT)
 
   target_link_libraries(${lib_name} ${libraries})
 

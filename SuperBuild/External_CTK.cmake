@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------------
 # Get and build CTK
-if (Slicer3_USE_QT)
+if (Slicer_USE_QT)
 
   # Sanity checks
   if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})

@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-// #ifdef Slicer3_USE_QT
+// #ifdef Slicer_USE_QT
 // #include <QApplication>
 // #include <QGroupBox>
 // #include <QVBoxLayout>
@@ -59,7 +59,7 @@ void vtkKWTextWithHyperlinksWithScrollbars::SetText(const char *s)
 void vtkKWTextWithHyperlinksWithScrollbars::OpenLink(const char *url)
 {
 
-// #ifdef Slicer3_USE_QT
+// #ifdef Slicer_USE_QT
 //   QGroupBox *group = new QGroupBox();
 //   group->setTitle("WebView");
 //   QVBoxLayout *box = new QVBoxLayout(group);

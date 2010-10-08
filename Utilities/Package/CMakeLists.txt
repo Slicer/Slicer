@@ -150,7 +150,7 @@ endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
 # -------------------------------------------------------------------------
 # Find and install QT
 
-if(Slicer3_USE_QT)
+if(Slicer_USE_QT)
 
   SET (QTLIBLIST QTCORE QTGUI QTNETWORK QTXML QTTEST QTSQL QTOPENGL QTWEBKIT PHONON QTXMLPATTERNS)
   IF(UNIX OR APPLE)
@@ -184,7 +184,7 @@ if(Slicer3_USE_QT)
       INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.so DESTINATION lib/PythonQt COMPONENT Runtime)
     ENDIF(WIN32)
   ENDIF(Slicer3_USE_PYTHONQT)
-endif(Slicer3_USE_QT)
+endif(Slicer_USE_QT)
 
 # -------------------------------------------------------------------------
 # CPack

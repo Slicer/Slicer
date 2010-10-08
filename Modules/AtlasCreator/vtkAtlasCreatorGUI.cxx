@@ -304,7 +304,7 @@ void vtkAtlasCreatorGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkAtlasCreatorGUI::BuildGUI ( ) 
 {
-// #ifdef Slicer3_USE_QT
+// #ifdef Slicer_USE_QT
 //   QtGADModule *QtGAD = new QtGADModule();
 //   QtGAD->SetMRMLScene(this->GetMRMLScene());
 //   QtGAD->BuildGUI();

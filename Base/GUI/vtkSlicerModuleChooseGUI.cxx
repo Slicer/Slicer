@@ -1,7 +1,7 @@
 
 #include "vtkSlicerConfigure.h"
 
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
 // SlicerQT includes
 #include "qSlicerAbstractModule.h"
 #include "qSlicerApplication.h"
@@ -233,7 +233,7 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
       if (currentModule != NULL )
         {
         currentModule->Exit ( );
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
         //qDebug() << "Attempt to hide Qt module:" << currentModuleName;
         //this->GetApplicationGUI()->SetQtModuleVisible(currentModuleName, false);
 #endif
@@ -275,7 +275,7 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
       if (currentModule != NULL )
         {
         currentModule->Exit ( );
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
         //qDebug() << "Attempting to hide Qt module:" << currentModuleName;
         //this->GetApplicationGUI()->SetQtModuleVisible(currentModuleName, false);
 #endif
@@ -372,7 +372,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
 
       if (!m)
         {
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
         // we are here only if the module has not been found
         // Check if the module is in Qt only.
         qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager(); 
@@ -400,7 +400,7 @@ void vtkSlicerModuleChooseGUI::RaiseModule ( const char *moduleName )
         }
       p->GetMainSlicerWindow()->SetStatusText ( moduleName );
       this->GetModulesMenuButton()->SetValue( moduleName );
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
       this->GetApplicationGUI()->SetCurrentQtModule( moduleName );
 #endif
       //--- feedback to user
@@ -479,7 +479,7 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
             }
           // Enter selected module.
           vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( moduleName );
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
           QString moduleTitle = QString(moduleName);
           qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
           Q_ASSERT(moduleManager);
@@ -496,7 +496,7 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName, vtkMRMLNod
                 {
                 currentModule->Enter ( );
                 }
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
               }
 #endif
             vtkMRMLLayoutNode *lnode = this->GetApplicationGUI()->GetGUILayoutNode ( );
@@ -884,7 +884,7 @@ void vtkSlicerModuleChooseGUI::Populate( )
 
         m = vtkSlicerModuleGUI::SafeDownCast( app->GetModuleGUICollection( )->GetNextItemAsObject( ));
         }
-#ifdef Slicer3_USE_QT
+#ifdef Slicer_USE_QT
       // Here we process the modules that are QT only.
       qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
       Q_ASSERT(moduleManager);
