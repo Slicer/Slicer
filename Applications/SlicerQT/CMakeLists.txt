@@ -59,10 +59,10 @@ IF(BUILD_SHARED_LIBS)
     
     ENDIF(Slicer_BUILD_QTLOADABLEMODULES)
      
-    #IF(Slicer3_BUILD_MODULES)
+    #IF(Slicer_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
     #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
-    #ENDIF(Slicer3_BUILD_MODULES)
+    #ENDIF(Slicer_BUILD_MODULES)
     
     IF(Slicer_BUILD_CLI)
       SET(SlicerQT_FORWARD_PATH_BUILD
@@ -126,10 +126,10 @@ IF(BUILD_SHARED_LIBS)
         
     ENDIF(Slicer_BUILD_QTLOADABLEMODULES)
     
-    #IF(Slicer3_BUILD_MODULES)
+    #IF(Slicer_BUILD_MODULES)
     #  SET(Slicer3_FORWARD_PATH_BUILD
     #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
-    #ENDIF(Slicer3_BUILD_MODULES)
+    #ENDIF(Slicer_BUILD_MODULES)
     
     IF(Slicer_BUILD_CLI)
       SET(SlicerQT_FORWARD_PATH_BUILD
@@ -138,10 +138,10 @@ IF(BUILD_SHARED_LIBS)
     ENDIF(Slicer_BUILD_CLI)
   ENDIF(WIN32)
 
-#   IF(Slicer3_BUILD_MODULES)
+#   IF(Slicer_BUILD_MODULES)
 #     SET(Slicer3_FORWARD_PATH_INSTALL
 #       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
-#   ENDIF(Slicer3_BUILD_MODULES)
+#   ENDIF(Slicer_BUILD_MODULES)
   
   IF(Slicer_BUILD_CLI)
     SET(SlicerQT_FORWARD_PATH_INSTALL
@@ -282,9 +282,9 @@ set(include_dirs
 #   ${SlicerDaemon_Init_BINARY_DIR}
   )
 
-# if(Slicer3_BUILD_MODULES)
-#   add_definitions(-DSlicer3_BUILD_MODULES)
-# endif(Slicer3_BUILD_MODULES)
+# if(Slicer_BUILD_MODULES)
+#   add_definitions(-DSlicer_BUILD_MODULES)
+# endif(Slicer_BUILD_MODULES)
 # 
 # if(Slicer_BUILD_CLI)
 #   add_definitions(-DSlicer_BUILD_CLI)
@@ -350,7 +350,7 @@ INCLUDE_DIRECTORIES(${include_dirs})
 #  ${SLICERLIBCURL_LIBRARIES}
 #  )
 
-# if(Slicer3_BUILD_MODULES)
+# if(Slicer_BUILD_MODULES)
 #   target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
 #     Volumes
 #     CommandLineModule
@@ -359,7 +359,7 @@ INCLUDE_DIRECTORIES(${include_dirs})
 #     SlicerTractographyDisplay
 #     SlicerTractographyFiducialSeeding
 #     )
-# else(Slicer3_BUILD_MODULES)
+# else(Slicer_BUILD_MODULES)
 #   # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
 #   # so that we can have CLI, without all the other modules
 #   if(Slicer_BUILD_CLI)
@@ -367,7 +367,7 @@ INCLUDE_DIRECTORIES(${include_dirs})
 #       CommandLineModule
 #       )
 #   endif(Slicer_BUILD_CLI)
-# endif(Slicer3_BUILD_MODULES)
+# endif(Slicer_BUILD_MODULES)
 
 # if(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
 #   target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} SlicerBaseGUIPython)

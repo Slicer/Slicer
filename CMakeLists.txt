@@ -665,7 +665,7 @@ ENDIF()
 #
 option(Slicer_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
 IF(Slicer_USE_KWWIDGETS)
-  option(Slicer3_BUILD_MODULES "Build Slicer3 Modules" ON)
+  option(Slicer_BUILD_MODULES "Build Slicer3 Modules" ON)
 ENDIF()
 
 include("${Slicer_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
@@ -673,15 +673,15 @@ include("${Slicer_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
 IF(Slicer_USE_KWWIDGETS)
   include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   
-  IF(Slicer3_BUILD_MODULES)
+  IF(Slicer_BUILD_MODULES)
     add_subdirectory(Modules)
-  else(Slicer3_BUILD_MODULES)
+  else(Slicer_BUILD_MODULES)
     # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
     # so that we can have CLI, without all the other modules
     IF(Slicer_BUILD_CLI)
       add_subdirectory(Modules/CommandLineModule)
     ENDIF(Slicer_BUILD_CLI)
-  ENDIF(Slicer3_BUILD_MODULES)
+  ENDIF(Slicer_BUILD_MODULES)
 ENDIF()
 
 #-----------------------------------------------------------------------------
@@ -689,7 +689,7 @@ ENDIF()
 # The EMSegment{Registration,Graph,Algorithm,MRML} libraries are built from the top-level
 # CMakeLists.txt. Doing so allow to build these libraries also if Slicer_USE_KWWIDGETS is OFF
 
-IF(Slicer3_BUILD_MODULES OR Slicer_BUILD_QTLOADABLEMODULES)
+IF(Slicer_BUILD_MODULES OR Slicer_BUILD_QTLOADABLEMODULES)
   include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   ADD_SUBDIRECTORY(Modules/EMSegment/Algorithm)
   ADD_SUBDIRECTORY(Modules/EMSegment/MRML)
@@ -701,7 +701,7 @@ ENDIF()
 # built beforehand,let's enfore that by building EMSegment here.
 # Note that EMSegment has been commented in Modules/CMakeLists.txt
 IF(Slicer_USE_KWWIDGETS)
-  IF(Slicer3_BUILD_MODULES)
+  IF(Slicer_BUILD_MODULES)
     ADD_SUBDIRECTORY(Modules/EMSegment)
   ENDIF()
 ENDIF()

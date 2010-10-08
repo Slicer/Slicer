@@ -33,10 +33,10 @@ if(BUILD_SHARED_LIBS)
       "\"${Slicer3_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST,\"${Teem_DIR}/bin\" CONFIG_DIR_POST,\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
     set(Slicer3_FORWARD_PATH_INSTALL
       "\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
-    if(Slicer3_BUILD_MODULES)
+    if(Slicer_BUILD_MODULES)
       set(Slicer3_FORWARD_PATH_BUILD 
         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
-    endif(Slicer3_BUILD_MODULES)
+    endif(Slicer_BUILD_MODULES)
     if(Slicer_BUILD_CLI)
       set(Slicer3_FORWARD_PATH_BUILD 
         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
@@ -46,19 +46,19 @@ if(BUILD_SHARED_LIBS)
       "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${Teem_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
     set(Slicer3_FORWARD_PATH_INSTALL
       "\"../${Slicer_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
-    if(Slicer3_BUILD_MODULES)
+    if(Slicer_BUILD_MODULES)
       set(Slicer3_FORWARD_PATH_BUILD 
         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
-    endif(Slicer3_BUILD_MODULES)
+    endif(Slicer_BUILD_MODULES)
     if(Slicer_BUILD_CLI)
       set(Slicer3_FORWARD_PATH_BUILD 
         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
     endif(Slicer_BUILD_CLI)
   endif(WIN32)
-  if(Slicer3_BUILD_MODULES)
+  if(Slicer_BUILD_MODULES)
     set(Slicer3_FORWARD_PATH_INSTALL
       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
-  endif(Slicer3_BUILD_MODULES)
+  endif(Slicer_BUILD_MODULES)
   if(Slicer_BUILD_CLI)
     set(Slicer3_FORWARD_PATH_INSTALL
       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
@@ -156,9 +156,9 @@ set(dir_list
   ${SlicerDaemon_Init_BINARY_DIR}
   )
 
-if(Slicer3_BUILD_MODULES)
-  add_definitions(-DSlicer3_BUILD_MODULES)
-endif(Slicer3_BUILD_MODULES)
+if(Slicer_BUILD_MODULES)
+  add_definitions(-DSlicer_BUILD_MODULES)
+endif(Slicer_BUILD_MODULES)
 
 if(Slicer_BUILD_CLI)
   add_definitions(-DSlicer_BUILD_CLI)
@@ -224,7 +224,7 @@ target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
 #  ${SLICERLIBCURL_LIBRARIES}
   )
 
-if(Slicer3_BUILD_MODULES)
+if(Slicer_BUILD_MODULES)
   target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
     Volumes
     CommandLineModule
@@ -233,7 +233,7 @@ if(Slicer3_BUILD_MODULES)
     SlicerTractographyDisplay
     SlicerTractographyFiducialSeeding
     )
-else(Slicer3_BUILD_MODULES)
+else(Slicer_BUILD_MODULES)
   # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
   # so that we can have CLI, without all the other modules
   if(Slicer_BUILD_CLI)
@@ -241,7 +241,7 @@ else(Slicer3_BUILD_MODULES)
       CommandLineModule
       )
   endif(Slicer_BUILD_CLI)
-endif(Slicer3_BUILD_MODULES)
+endif(Slicer_BUILD_MODULES)
 
 if(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
   target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} SlicerBaseGUIPython)
