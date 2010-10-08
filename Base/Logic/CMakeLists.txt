@@ -128,7 +128,7 @@ SET(libs
   )
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   TARGET_LINK_LIBRARIES(${lib_name} ${KWWidgets_LIBRARIES})
 ENDIF()
 

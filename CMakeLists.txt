@@ -211,11 +211,11 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # By default, build without KWWidget (TODO: eliminate this option for slicer4)
 #
-option(Slicer3_USE_KWWIDGETS "Build Slicer3 with KWWidgets." OFF)
+option(Slicer_USE_KWWIDGETS "Build Slicer3 with KWWidgets." OFF)
 
 #-----------------------------------------------------------------------------
 # Since modules are KWWidgets based, unset there variables
-IF(NOT Slicer3_USE_KWWIDGETS)
+IF(NOT Slicer_USE_KWWIDGETS)
   # Since the module Logic is shared between QTModules and regular Modules,
   # the associated BIN, LIB and INCLUDE directory shouldn't be unset
   #UNSET(Slicer_INSTALL_MODULES_BIN_DIR)
@@ -234,7 +234,7 @@ ENDIF()
 # preventing people from using the same compiler but with a different generator,
 # or just the same compiler installed in a non-standard location.
 
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
 ENDIF()
 set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
@@ -280,7 +280,7 @@ IF(Slicer_USE_QT)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   ## KWWidgets
   FIND_PACKAGE(KWWidgets REQUIRED)
   IF(NOT KWWidgets_FOUND)
@@ -316,17 +316,17 @@ mark_as_advanced(Slicer3_USE_VTK_CVSHEAD)
 SLICER_SETUP_QT()
 
 #-----------------------------------------------------------------------------
-# Alert the user if both Slicer_USE_QT and Slicer3_USE_KWWIDGETS are OFF
-IF(NOT Slicer_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
-  MESSAGE(FATAL_ERROR "Both Slicer_USE_QT and Slicer3_USE_KWWIDGETS are OFF. Please, choose one")
+# Alert the user if both Slicer_USE_QT and Slicer_USE_KWWIDGETS are OFF
+IF(NOT Slicer_USE_QT AND NOT Slicer_USE_KWWIDGETS)
+  MESSAGE(FATAL_ERROR "Both Slicer_USE_QT and Slicer_USE_KWWIDGETS are OFF. Please, choose one")
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# If Slicer_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, complain if VTK_WRAP_TCL is ON
+# If Slicer_USE_QT is ON and Slicer_USE_KWWIDGETS is OFF, complain if VTK_WRAP_TCL is ON
 # Note: Later on we will expect VTK_WRAP_PYTHON to be ON
-IF(Slicer_USE_QT AND NOT Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_QT AND NOT Slicer_USE_KWWIDGETS)
   IF(VTK_WRAP_TCL)
-    MESSAGE(FATAL_ERROR "For now, if Slicer_USE_QT is ON and Slicer3_USE_KWWIDGETS is OFF, we expect VTK_WRAP_TCL to be OFF")
+    MESSAGE(FATAL_ERROR "For now, if Slicer_USE_QT is ON and Slicer_USE_KWWIDGETS is OFF, we expect VTK_WRAP_TCL to be OFF")
   ENDIF()
 ENDIF()
 
@@ -414,7 +414,7 @@ IF(VTK_WRAP_TCL)
   VTK_GET_TCL_TK_VERSION(TCL_TK_MAJOR_VERSION TCL_TK_MINOR_VERSION)
   set(TCL_TK_VERSION_DOT "${TCL_TK_MAJOR_VERSION}.${TCL_TK_MINOR_VERSION}")
   set(TCL_TK_VERSION "${TCL_TK_MAJOR_VERSION}${TCL_TK_MINOR_VERSION}")
-  IF(Slicer3_USE_KWWIDGETS)
+  IF(Slicer_USE_KWWIDGETS)
     include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
     incr_tcl_get_version(INCR_TCL_MAJOR_VERSION INCR_TCL_MINOR_VERSION)
     set(INCR_TCL_VERSION_DOT "${INCR_TCL_MAJOR_VERSION}.${INCR_TCL_MINOR_VERSION}")
@@ -437,7 +437,7 @@ ENDIF()
 # Generate some useful scripts that can be used to setup various environment 
 # variables and launch the executable properly against external packages.
 #
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   include("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
   set(extra_dirs
     "${Teem_DIR}/bin"
@@ -461,7 +461,7 @@ ENDIF()
 #  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
 #  KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
 #
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   IF(NOT VTK_CMAKE_DIR)
     set(VTK_CMAKE_DIR "${VTK_SOURCE_DIR}/CMake")
   ENDIF()
@@ -471,7 +471,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Check versions of VTK to track CVS HEAD
 #
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   find_package(VTK REQUIRED)
   IF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
     include(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
@@ -640,7 +640,7 @@ slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS Slicer3_Base_INCLUDE_D
 
 INCLUDE("${Slicer_CMAKE_DIR}/SlicerModuleLogicMacros.cmake")
 
-IF(NOT Slicer3_USE_KWWIDGETS)
+IF(NOT Slicer_USE_KWWIDGETS)
   # KWWidgets and Qt modules share the same logics typically located in the
   # kwwdigets modules. When KWWidgets is not build, the logic are missing for Qt
   # we need to manually add them:
@@ -664,13 +664,13 @@ ENDIF()
 # Modules and CLI
 #
 option(Slicer_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   option(Slicer3_BUILD_MODULES "Build Slicer3 Modules" ON)
 ENDIF()
 
 include("${Slicer_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
 
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   
   IF(Slicer3_BUILD_MODULES)
@@ -687,7 +687,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Module EMSegment libraries
 # The EMSegment{Registration,Graph,Algorithm,MRML} libraries are built from the top-level
-# CMakeLists.txt. Doing so allow to build these libraries also if Slicer3_USE_KWWIDGETS is OFF
+# CMakeLists.txt. Doing so allow to build these libraries also if Slicer_USE_KWWIDGETS is OFF
 
 IF(Slicer3_BUILD_MODULES OR Slicer_BUILD_QTLOADABLEMODULES)
   include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
@@ -700,7 +700,7 @@ ENDIF()
 # Since EMSegment module expects Volume module and its associated library to be
 # built beforehand,let's enfore that by building EMSegment here.
 # Note that EMSegment has been commented in Modules/CMakeLists.txt
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   IF(Slicer3_BUILD_MODULES)
     ADD_SUBDIRECTORY(Modules/EMSegment)
   ENDIF()

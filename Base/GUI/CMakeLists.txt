@@ -7,7 +7,7 @@ ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
 
-IF (Slicer3_USE_KWWIDGETS)
+IF (Slicer_USE_KWWIDGETS)
 
   # --------------------------------------------------------------------------
   # Include dirs
@@ -267,7 +267,7 @@ IF (Slicer3_USE_KWWIDGETS)
     ADD_SUBDIRECTORY(Testing)
   ENDIF(BUILD_TESTING)
 
-ENDIF (Slicer3_USE_KWWIDGETS)
+ENDIF (Slicer_USE_KWWIDGETS)
 
 
 

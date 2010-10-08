@@ -25,7 +25,7 @@
 #include "qSlicerCoreCommandOptions.h"
 
 // Slicer includes
-#include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS
+#include "vtkSlicerConfigure.h" // For Slicer_USE_KWWIDGETS
 #include "vtkSlicerApplicationLogic.h"
 
 // MRML includes
@@ -123,7 +123,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-#ifdef Slicer3_USE_KWWIDGETS
+#ifdef Slicer_USE_KWWIDGETS
 
   app.setModuleManager(0);
 
@@ -147,7 +147,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
     
-#endif // Slicer3_USE_KWWIDGETS
+#endif // Slicer_USE_KWWIDGETS
 
   QString homeDirectory = app.slicerHome();
 
@@ -167,7 +167,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-#ifdef Slicer3_USE_KWWIDGETS
+#ifdef Slicer_USE_KWWIDGETS
 
   vtkSmartPointer< vtkSlicerApplicationLogic > logic = 
     vtkSmartPointer< vtkSlicerApplicationLogic >::New();
@@ -181,7 +181,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     std::cerr << "Error in setAppLogic()/appLogic() " << std::endl;
     return EXIT_FAILURE;
     }
-#endif //Slicer3_USE_KWWIDGETS
+#endif //Slicer_USE_KWWIDGETS
 
   vtkMRMLScene * scene1 = app.mrmlScene();
 

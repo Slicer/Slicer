@@ -526,7 +526,7 @@ bool qSlicerCoreApplication::isInstalled()const
 #endif
 }
 
-#ifdef Slicer3_USE_KWWIDGETS
+#ifdef Slicer_USE_KWWIDGETS
 
 //-----------------------------------------------------------------------------
 CTK_SET_CXX(qSlicerCoreApplication, bool, setInitialized, Initialized);
@@ -541,7 +541,7 @@ void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* manager)
   d->ModuleManager = QSharedPointer<qSlicerModuleManager>(manager);
 }
 
-#endif //Slicer3_USE_KWWIDGETS
+#endif //Slicer_USE_KWWIDGETS
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)

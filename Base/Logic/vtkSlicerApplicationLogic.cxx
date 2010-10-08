@@ -65,7 +65,7 @@
 #include "vtkMRMLSliceLogic.h"
 
 // KWWidgets includes
-#ifdef Slicer3_USE_KWWIDGETS
+#ifdef Slicer_USE_KWWIDGETS
 # include "vtkKWTkUtilities.h"
 # include "vtkKWApplication.h"
 #endif
@@ -780,14 +780,14 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
     this->WriteDataQueueActive = true;
     this->WriteDataQueueActiveLock->Unlock();
 
-#if defined(Slicer3_USE_KWWIDGETS)
+#if defined(Slicer_USE_KWWIDGETS)
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessModified");
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessReadData");
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessWriteData");
-#endif //defined(Slicer3_USE_KWWIDGETS)
+#endif //defined(Slicer_USE_KWWIDGETS)
     }
 }
 
@@ -1150,7 +1150,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
       }
     this->ModifiedQueueLock->Unlock();
     
-#if defined(Slicer3_USE_KWWIDGETS)
+#if defined(Slicer_USE_KWWIDGETS)
     // if this is a string array, try to evaluate the entries in the interp
     //  - this allows threads to indirectly access the interpreter
     vtkStringArray *stringArray = vtkStringArray::SafeDownCast( obj );
@@ -1174,7 +1174,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
           }
         }
       }
-#endif //defined(Slicer3_USE_KWWIDGETS)
+#endif //defined(Slicer_USE_KWWIDGETS)
 
     // Modify the object
     //  - decrement reference count that was increased when it was added to the queue
@@ -1186,7 +1186,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
       }
   }
 
-#if defined(Slicer3_USE_KWWIDGETS)
+#if defined(Slicer_USE_KWWIDGETS)
   // schedule the next timer
   if ((*this->InternalModifiedQueue).size() > 0)
     {
@@ -1200,7 +1200,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessModified");
     }
-#endif //defined(Slicer3_USE_KWWIDGETS)
+#endif //defined(Slicer_USE_KWWIDGETS)
 }
 
 void vtkSlicerApplicationLogic::ProcessReadData()
@@ -1238,7 +1238,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
       }
     }
 
-#if defined(Slicer3_USE_KWWIDGETS)
+#if defined(Slicer_USE_KWWIDGETS)
   // schedule the next timer
   if ((*this->InternalReadDataQueue).size() > 0)
     {
@@ -1252,7 +1252,7 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessReadData");
     }
-#endif //defined(Slicer3_USE_KWWIDGETS)
+#endif //defined(Slicer_USE_KWWIDGETS)
 }
 
 void vtkSlicerApplicationLogic::ProcessWriteData()
@@ -1290,7 +1290,7 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
       }
     }
 
-#if defined(Slicer3_USE_KWWIDGETS)
+#if defined(Slicer_USE_KWWIDGETS)
   // schedule the next timer
   if ((*this->InternalWriteDataQueue).size() > 0)
     {
@@ -1304,7 +1304,7 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessWriteData");
     }
-#endif //defined(Slicer3_USE_KWWIDGETS)
+#endif //defined(Slicer_USE_KWWIDGETS)
 }
 
 

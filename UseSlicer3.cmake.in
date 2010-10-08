@@ -19,7 +19,7 @@ if(GenerateCLP_FOUND)
 endif(GenerateCLP_FOUND)
 
 
-if(Slicer3_USE_KWWIDGETS)
+if(Slicer_USE_KWWIDGETS)
   find_package(GenerateLM REQUIRED)
   if(GenerateLM_FOUND)
     include(${GenerateLM_USE_FILE})
@@ -29,7 +29,7 @@ if(Slicer3_USE_KWWIDGETS)
   if(KWWidgets_FOUND)
     include(${KWWidgets_USE_FILE})
   endif(KWWidgets_FOUND)
-endif(Slicer3_USE_KWWIDGETS)
+endif(Slicer_USE_KWWIDGETS)
 
 find_package(Teem REQUIRED)
 if(Teem_FOUND)

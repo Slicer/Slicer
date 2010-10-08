@@ -10,11 +10,11 @@ set(dirs
 # FileWatcher
   )
 
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   SET(dirs ${dirs}
     LoadableModule
     )
-ENDIF(Slicer3_USE_KWWIDGETS)
+ENDIF(Slicer_USE_KWWIDGETS)
 
 # Note: Order of of SUBDIRS is important if your projects depend
 # on code in other projects (put dependent project later).
@@ -32,13 +32,13 @@ SET(dirs ${dirs}
   MRMLDisplayableManager
   )
 
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   SET(dirs ${dirs}
     GenerateLM
     SlicerIO
     ITKCommandIO
     )
-ENDIF(Slicer3_USE_KWWIDGETS)
+ENDIF(Slicer_USE_KWWIDGETS)
 
 SET(dirs ${dirs}
   MRMLIDImageIO
@@ -106,9 +106,9 @@ slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs}
 # Inconsistent library name vs. project/dir name :(
 
 string(REPLACE ITKCommandIO CommandIO libs "${libs}")
-IF(Slicer3_USE_KWWIDGETS)
+IF(Slicer_USE_KWWIDGETS)
   string(REPLACE SlicerIO slicerio libs "${libs}")
-ENDIF(Slicer3_USE_KWWIDGETS)
+ENDIF(Slicer_USE_KWWIDGETS)
 string(REPLACE MGHImageIO MGHIO libs "${libs}")
 string(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 

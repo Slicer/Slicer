@@ -162,7 +162,7 @@ endif()
 # | Linux{32,64}          |  OK    |  OK    |  OK    |
 # ----------------------------------------------------
 # ----------------------------------------------------
-# | Slicer3_USE_KWWIDGETS |  ON    |  ON    |  OFF   |
+# | Slicer_USE_KWWIDGETS |  ON    |  ON    |  OFF   |
 # |---------------------------------------------------
 # | Slicer_USE_QT        |  OFF   |  ON    |  ON    |
 # |--------------------------------------------------|
@@ -172,24 +172,24 @@ endif()
 # |---------------------------------------------------
 
 #
-# Case 1: [Slicer3_USE_KWWIDGETS: ON, Slicer_USE_QT: OFF, VTK_WRAP_TCL:ON]
+# Case 1: [Slicer_USE_KWWIDGETS: ON, Slicer_USE_QT: OFF, VTK_WRAP_TCL:ON]
 #   a) KwwOnly-NoPython  
 #   b) KwwOnly-Python    
 # 
-# Case 2: [Slicer3_USE_KWWIDGETS: ON, Slicer_USE_QT: ON, VTK_WRAP_TCL:ON]
+# Case 2: [Slicer_USE_KWWIDGETS: ON, Slicer_USE_QT: ON, VTK_WRAP_TCL:ON]
 #   a) KwwAndQt-NoPython-NoPythonQt
 #   b) KwwAndQt-Python
 #   c) KwwAndQt-PythonQt          [VTK_WRAP_PYTHON: ON]  -> NOT SUPPORTED
 #   d) KwwAndQt-Python-PythonQt                          -> NOT SUPPORTED
 #
-# Case 3: [Slicer3_USE_KWWIDGETS: OFF, Slicer_USE_QT: ON,  VTK_WRAP_TCL:OFF]
+# Case 3: [Slicer_USE_KWWIDGETS: OFF, Slicer_USE_QT: ON,  VTK_WRAP_TCL:OFF]
 #   a) QtOnly-NoPythonQt
 #   b) QtOnly-PythonQt            [VTK_WRAP_PYTHON: ON]
 #
 #
 # Note:
 #   Tcl, Tk, and incrTcl are built in all cases
-#   blt and iwidgets are build only if Slicer3_USE_KWWIDGETS is ON
+#   blt and iwidgets are build only if Slicer_USE_KWWIDGETS is ON
 #   Python is build if either Slicer_USE_PYTHON or Slicer_USE_PYTHONQT are ON
 # 
 
@@ -198,7 +198,7 @@ endif()
 #------------------------------------------------------------------------------  
 
 # KWWidgets off by default.
-option(Slicer3_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" OFF)
+option(Slicer_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" OFF)
 
 
 #------------------------------------------------------------------------------
@@ -286,13 +286,13 @@ option(Slicer_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
 # Validate options
 #------------------------------------------------------------------------------  
 
-if (NOT Slicer3_USE_KWWIDGETS AND NOT Slicer_USE_QT)
-  set(err "error: Slicer SuperBuild requires at least Slicer3_USE_KWWIDGETS or Slicer_USE_QT to be ON.
+if (NOT Slicer_USE_KWWIDGETS AND NOT Slicer_USE_QT)
+  set(err "error: Slicer SuperBuild requires at least Slicer_USE_KWWIDGETS or Slicer_USE_QT to be ON.
 
-Slicer3_USE_KWWIDGETS = ON
+Slicer_USE_KWWIDGETS = ON
  -> Means Slicer will be built only with KWWidgets support.
  
-Slicer3_USE_KWWIDGETS = ON and Slicer_USE_QT = ON
+Slicer_USE_KWWIDGETS = ON and Slicer_USE_QT = ON
  -> Means Slicer will be built with both KWWidgets and QT support. Note: NOT supported on Mac
  
 Slicer_USE_QT = ON
@@ -307,13 +307,13 @@ if (Slicer_USE_PYTHON AND Slicer_USE_PYTHONQT)
   message(FATAL_ERROR "${err}")
 endif()
 
-if (Slicer3_USE_KWWIDGETS AND Slicer_USE_PYTHONQT)
-  set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_KWWIDGETS and Slicer_USE_PYTHONQT ON.")
+if (Slicer_USE_KWWIDGETS AND Slicer_USE_PYTHONQT)
+  set(err "error: Slicer SuperBuild doesn't support Slicer_USE_KWWIDGETS and Slicer_USE_PYTHONQT ON.")
   message(FATAL_ERROR "${err}")
 endif()
 
-if (Slicer3_USE_KWWIDGETS AND Slicer_USE_QT AND APPLE)
-  set(err "error: Slicer SuperBuild on Mac doesn't support Slicer3_USE_KWWIDGETS and Slicer_USE_QT ON")
+if (Slicer_USE_KWWIDGETS AND Slicer_USE_QT AND APPLE)
+  set(err "error: Slicer SuperBuild on Mac doesn't support Slicer_USE_KWWIDGETS and Slicer_USE_QT ON")
   message(FATAL_ERROR "${err}")
 endif()
 
@@ -336,7 +336,7 @@ set(incrTcl_DEPENDENCIES tcl tk)
 set(iwidgets_DEPENDENCIES tcl itcl)
 set(blt_DEPENDENCIES tcl tk)
 set(python_DEPENDENCIES)
-if(Slicer3_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
     set(python_DEPENDENCIES tcl)
   else()
@@ -366,12 +366,12 @@ set(slicer_DEPENDENCIES VTK Insight BatchMake OpenIGTLink teem cmcurl)
 # Conditionnaly include ExternalProject Target
 #------------------------------------------------------------------------------
 
-if(Slicer3_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
   include(External_Tcl)
   include(External_Tk)
   include(External_incrTcl)
 endif()
-if(Slicer3_USE_KWWIDGETS)
+if(Slicer_USE_KWWIDGETS)
   include(External_iwidgets)
   include(External_blt)
 endif()
@@ -397,7 +397,7 @@ if(Slicer_USE_QT)
   endif()
 endif()
 
-if(Slicer3_USE_KWWIDGETS)
+if(Slicer_USE_KWWIDGETS)
   include(External_KWWidgets)
 endif()
 
@@ -411,8 +411,8 @@ include(External_cmcurl)
 # Update external project dependencies
 #------------------------------------------------------------------------------
 
-# For now, tk and itcl are used only when Slicer3_USE_KWWIDGETS is ON
-if(Slicer3_USE_KWWIDGETS)
+# For now, tk and itcl are used only when Slicer_USE_KWWIDGETS is ON
+if(Slicer_USE_KWWIDGETS)
   if(WIN32)
     list(APPEND slicer_DEPENDENCIES tcl KWWidgets)
   else()
@@ -516,7 +516,7 @@ ExternalProject_Add(${proj}
     -DSlicer_USE_CTKAPPLAUNCHER:BOOL=${Slicer_USE_CTKAPPLAUNCHER}
     -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR}
     # KWWidgets
-    -DSlicer3_USE_KWWIDGETS:BOOL=${Slicer3_USE_KWWIDGETS}
+    -DSlicer_USE_KWWIDGETS:BOOL=${Slicer_USE_KWWIDGETS}
     -DKWWidgets_DIR:PATH=${CMAKE_BINARY_DIR}/KWWidgets-build
   INSTALL_COMMAND ""
 )

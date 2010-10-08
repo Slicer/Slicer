@@ -27,7 +27,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-#include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS, Slicer_USE_PYTHONQT
+#include "vtkSlicerConfigure.h" // For Slicer_USE_KWWIDGETS, Slicer_USE_PYTHONQT
 
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -80,7 +80,7 @@ public:
   /// moved as a protected member.
   void setMRMLScene(vtkMRMLScene * scene);
 
-#ifdef Slicer3_USE_KWWIDGETS
+#ifdef Slicer_USE_KWWIDGETS
 
   ///
   /// Convenient method allowing to set the initialized flag
@@ -102,7 +102,7 @@ public:
   /// removed once the QT GUI is functional.
   void setModuleManager(qSlicerModuleManager* moduleManager);
 
-#endif //Slicer3_USE_KWWIDGETS
+#endif //Slicer_USE_KWWIDGETS
 
   /// Get application logic
   vtkSlicerApplicationLogic* appLogic() const;
