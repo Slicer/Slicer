@@ -127,7 +127,7 @@ IF(Slicer_WITH_LIBRARY_VERSION)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Slicer3 macros
+# Slicer macros
 #
 set(Slicer_CMAKE_DIR "${Slicer3_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 add_subdirectory(CMake)
@@ -188,9 +188,9 @@ MESSAGE(STATUS "Slicer3_BUILD:${Slicer3_BUILD}")
 # Add the testing directories
 #
 OPTION(BUILD_TESTING "Test the project" ON)
-SET(Slicer3_BUILD_TESTING ${BUILD_TESTING})
+SET(Slicer_BUILD_TESTING ${BUILD_TESTING})
 SET(LAUNCH_EXE ${Slicer3_BINARY_DIR}/Slicer3 --launch)
-IF(Slicer3_BUILD_TESTING)
+IF(Slicer_BUILD_TESTING)
   #IF(NOT BUILDNAME)
   #  SET(BUILDNAME "${Slicer3_BUILD}" CACHE STRING "Name of build on the dashboard")
   #ELSE()
@@ -722,7 +722,7 @@ add_subdirectory(Applications)
 #-----------------------------------------------------------------------------
 # Testing
 #
-IF(Slicer3_BUILD_TESTING)
+IF(Slicer_BUILD_TESTING)
   add_subdirectory(Testing)
 ENDIF()
 

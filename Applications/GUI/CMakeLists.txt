@@ -291,6 +291,6 @@ generateclp(${SRC} Slicer3.xml)
 # --------------------------------------------------------------------------
 # Testing
 #
-IF(Slicer3_BUILD_TESTING)
+IF(Slicer_BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-ENDIF(Slicer3_BUILD_TESTING)
+ENDIF(Slicer_BUILD_TESTING)
