@@ -7,7 +7,7 @@
 # test script to identify which (if any) of slicer's loadable modules is causing a leak
 #
 # - update the global modules list with all suspect modules
-# - run this script from the Slicer3-build directory
+# - run this script from the Slicer-build directory
 #
 ################################################################################
 

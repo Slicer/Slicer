@@ -7,7 +7,7 @@ set volumeNode [$volLogic AddArchetypeVolume $::env(Slicer_HOME)/../Slicer3/Test
 
 # get the models logic
 set modLogic [$::slicer3::ModelsGUI GetLogic]
-# add the testing model, can I get it from $::env(Slicer3_MODULES_DIR)
+# add the testing model, can I get it from $::env(Slicer_MODULES_DIR)
 set modelNode [$modLogic AddModel $::env(Slicer_HOME)/../Slicer3/Modules/ModelIntoLabelVolume/Testing/TestData/Neck.vtk]
 
 # do it

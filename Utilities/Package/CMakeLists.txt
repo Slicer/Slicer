@@ -5,7 +5,7 @@ IF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
     if(TCL_INCLUDE_PATH)
       get_filename_component(Slicer_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
     else(TCL_INCLUDE_PATH)
-      set(Slicer_TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
+      set(Slicer_TCL_DIR "${Slicer_BINARY_DIR}/../Slicer3-lib/tcl-build")
     endif(TCL_INCLUDE_PATH)
   endif(NOT Slicer_TCL_DIR)
 
@@ -40,7 +40,7 @@ ENDIF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
 # and need it run-time. And we find and package a few more libs too.
 
 if(CMAKE_SYSTEM MATCHES "SunOS.*")
-  FIND_PATH(CURL_DIR libslicerlibcurl.so ${Slicer3_BINARY_DIR}/../Slicer3-lib/cmcurl-build/bin)
+  FIND_PATH(CURL_DIR libslicerlibcurl.so ${Slicer_BINARY_DIR}/../Slicer3-lib/cmcurl-build/bin)
   FIND_PATH(SFW_LIB_DIR libgcc_s.so.1 /usr/sfw/lib)
   FIND_PATH(SFW_LIB_DIR_64 libgcc_s.so.1 /usr/sfw/lib/amd64)
   FIND_PATH(SUN_CC_LIB_DIR libCrun.so.1 /usr/lib)
@@ -116,12 +116,12 @@ endif(CMAKE_SYSTEM MATCHES "SunOS.*")
 
 if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   #assum get build test build tree
-  get_filename_component(PARENT_BUILD_DIR "${Slicer3_BINARY_DIR}" PATH)
+  get_filename_component(PARENT_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
   set(PYTHON_DIR "${PARENT_BUILD_DIR}/Slicer3-lib/python-build")
 
   #try superbuild tree
   if(NOT EXISTS ${PYTHON_DIR})
-    get_filename_component(SUPER_BUILD_DIR "${Slicer3_BINARY_DIR}" PATH)
+    get_filename_component(SUPER_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
     set(PYTHON_DIR "${SUPER_BUILD_DIR}/python-build")
   endif()
   if(WIN32 AND NOT EXISTS "${PYTHON_DIR}" AND EXISTS "${PYTHON_INCLUDE_PATH}")
@@ -191,7 +191,7 @@ endif(Slicer_USE_QT)
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.in"
-  "${Slicer3_BINARY_DIR}/PackageLibraries/CMakeLists.txt"
+  "${Slicer_BINARY_DIR}/PackageLibraries/CMakeLists.txt"
   @ONLY)
 
 include(InstallRequiredSystemLibraries)
@@ -203,13 +203,13 @@ SET(CPACK_MONOLITHIC_INSTALL ON)
 #SET(CPACK_COMPONENTS_ALL "Development;Runtime;RuntimeLibraries;Unspecified;RuntimeExecutables;")
 
 set(CPACK_PACKAGE_VENDOR "NA-MIC")
-set(CPACK_PACKAGE_DESCRIPTION_FILE "${Slicer3_SOURCE_DIR}/README.txt")
-set(CPACK_RESOURCE_FILE_LICENSE "${Slicer3_SOURCE_DIR}/License.txt")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${Slicer_SOURCE_DIR}/README.txt")
+set(CPACK_RESOURCE_FILE_LICENSE "${Slicer_SOURCE_DIR}/License.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR "${Slicer_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${Slicer_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${Slicer_VERSION_PATCH}")
 set(CPACK_INSTALL_CMAKE_PROJECTS
-  "${Slicer3_BINARY_DIR};Slicer3;ALL;/")
+  "${Slicer_BINARY_DIR};Slicer3;ALL;/")
 if(EXISTS "${VTK_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;ALL;/")
 endif(EXISTS "${VTK_DIR}/CMakeCache.txt")
@@ -234,7 +234,7 @@ if(EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;ALL;/")
 endif(EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
 if(APPLE)
-  set(CPACK_PACKAGE_ICON "${Slicer3_SOURCE_DIR}/Utilities/Package/Slicer3.icns")
+  set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer3.icns")
 endif(APPLE)
 
 # slicer3 does _not_ require setting the windows path

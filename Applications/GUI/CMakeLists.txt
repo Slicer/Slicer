@@ -23,45 +23,45 @@ endif(NOT WIN32)
 set(Slicer_EXE_SUFFIX)
 set(Slicer_EXE_INSTALL ${Slicer_INSTALL_BIN_DIR})
 if(BUILD_SHARED_LIBS)
-  set(Slicer3_NEED_SHARED_FORWARD 1)
+  set(Slicer_NEED_SHARED_FORWARD 1)
   set(Slicer_EXE_SUFFIX -real)
   set(Slicer_EXE_INSTALL ".")
-  set(Slicer3_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-  set(Slicer3_FORWARD_DIR_INSTALL "${Slicer_EXE_INSTALL}")
+  set(Slicer_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+  set(Slicer_FORWARD_DIR_INSTALL "${Slicer_EXE_INSTALL}")
   if(WIN32)
-    set(Slicer3_FORWARD_PATH_BUILD 
-      "\"${Slicer3_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST,\"${Teem_DIR}/bin\" CONFIG_DIR_POST,\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
-    set(Slicer3_FORWARD_PATH_INSTALL
+    set(Slicer_FORWARD_PATH_BUILD 
+      "\"${Slicer_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST,\"${Teem_DIR}/bin\" CONFIG_DIR_POST,\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
+    set(Slicer_FORWARD_PATH_INSTALL
       "\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
     if(Slicer_BUILD_MODULES)
-      set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+      set(Slicer_FORWARD_PATH_BUILD 
+        "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     endif(Slicer_BUILD_MODULES)
     if(Slicer_BUILD_CLI)
-      set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
+      set(Slicer_FORWARD_PATH_BUILD 
+        "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
     endif(Slicer_BUILD_CLI)
   else(WIN32)
-    set(Slicer3_FORWARD_PATH_BUILD 
-      "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${Teem_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
-    set(Slicer3_FORWARD_PATH_INSTALL
+    set(Slicer_FORWARD_PATH_BUILD 
+      "\"${Slicer_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${Teem_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
+    set(Slicer_FORWARD_PATH_INSTALL
       "\"../${Slicer_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
     if(Slicer_BUILD_MODULES)
-      set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
+      set(Slicer_FORWARD_PATH_BUILD 
+        "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
     endif(Slicer_BUILD_MODULES)
     if(Slicer_BUILD_CLI)
-      set(Slicer3_FORWARD_PATH_BUILD 
-        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
+      set(Slicer_FORWARD_PATH_BUILD 
+        "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
     endif(Slicer_BUILD_CLI)
   endif(WIN32)
   if(Slicer_BUILD_MODULES)
-    set(Slicer3_FORWARD_PATH_INSTALL
-      "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
+    set(Slicer_FORWARD_PATH_INSTALL
+      "${Slicer_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
   endif(Slicer_BUILD_MODULES)
   if(Slicer_BUILD_CLI)
-    set(Slicer3_FORWARD_PATH_INSTALL
-      "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
+    set(Slicer_FORWARD_PATH_INSTALL
+      "${Slicer_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
   endif(Slicer_BUILD_CLI)
 endif(BUILD_SHARED_LIBS)
 
@@ -69,21 +69,21 @@ endif(BUILD_SHARED_LIBS)
 set(Slicer_EXE_LIST Slicer3)
 
 # Add shared link forwarding executables if necessary.
-if(Slicer3_NEED_SHARED_FORWARD)
+if(Slicer_NEED_SHARED_FORWARD)
   foreach(slicer_exe ${Slicer_EXE_LIST})
-    set(Slicer3_FORWARD_EXE ${slicer_exe}${Slicer_EXE_SUFFIX})
+    set(Slicer_FORWARD_EXE ${slicer_exe}${Slicer_EXE_SUFFIX})
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3-forward.c.in
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c
       @ONLY IMMEDIATE)
     add_executable(${slicer_exe} WIN32
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
-    add_dependencies(${slicer_exe} ${Slicer3_FORWARD_EXE})
+    add_dependencies(${slicer_exe} ${Slicer_FORWARD_EXE})
     install(TARGETS ${slicer_exe}
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
       COMPONENT Runtime)
   endforeach(slicer_exe)
-endif(Slicer3_NEED_SHARED_FORWARD)
+endif(Slicer_NEED_SHARED_FORWARD)
 
 # --------------------------------------------------------------------------
 # Sources
@@ -102,8 +102,8 @@ include(${SLICERLIBCURL_USE_FILE})
 # Include dirs
 #
 set(dir_list
-  ${Slicer3_SOURCE_DIR}
-  ${Slicer3_BINARY_DIR}
+  ${Slicer_SOURCE_DIR}
+  ${Slicer_BINARY_DIR}
   ${Slicer_Libs_INCLUDE_DIRS}
   ${Slicer_Base_INCLUDE_DIRS}
   ${NAVITRACK_INC}
@@ -213,7 +213,7 @@ endif(LABELSTATISTICS)
 # --------------------------------------------------------------------------
 # Link
 # Important: remove RemoteIO when using CMake 2.6. Couldn't be part of 
-# Slicer3_LIBRARIES right now because of the Curl lib RemoteIO is using is
+# Slicer_LIBRARIES right now because of the Curl lib RemoteIO is using is
 # STATIC, but that's fixed in 2.6.
 #
 target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
@@ -275,7 +275,7 @@ install(TARGETS Slicer3${Slicer_EXE_SUFFIX}
 # against a Tcl/Tk static library.
 
 include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
-kwwidgets_copy_tcl_tk_support_files("${Slicer3_BINARY_DIR}/lib")
+kwwidgets_copy_tcl_tk_support_files("${Slicer_BINARY_DIR}/lib")
 kwwidgets_install_tcl_tk_support_files("/lib")
 
 # --------------------------------------------------------------------------

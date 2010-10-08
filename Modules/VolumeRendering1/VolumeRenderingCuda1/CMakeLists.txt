@@ -18,11 +18,11 @@ INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 # --------------------------------------------------------------------------
 # Find Slicer3
 
-if(NOT Slicer3_SOURCE_DIR)
+if(NOT Slicer_SOURCE_DIR)
   find_package(Slicer3 REQUIRED)
-  include(${Slicer3_USE_FILE})
+  include(${Slicer_USE_FILE})
   slicer3_set_default_install_prefix_for_external_projects()
-endif(NOT Slicer3_SOURCE_DIR)
+endif(NOT Slicer_SOURCE_DIR)
 
 
 # --------------------------------------------------------------------------
@@ -136,11 +136,11 @@ ELSE(CUDA_SUPPORT_ENABLED)
 # --------------------------------------------------------------------------
 # Find Slicer3
 
-if(NOT Slicer3_SOURCE_DIR)
+if(NOT Slicer_SOURCE_DIR)
   find_package(Slicer3 REQUIRED)
-  include(${Slicer3_USE_FILE})
+  include(${Slicer_USE_FILE})
   slicer3_set_default_install_prefix_for_external_projects()
-endif(NOT Slicer3_SOURCE_DIR)
+endif(NOT Slicer_SOURCE_DIR)
 
 
 # --------------------------------------------------------------------------

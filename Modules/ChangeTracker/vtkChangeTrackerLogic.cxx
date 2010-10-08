@@ -804,10 +804,10 @@ void vtkChangeTrackerLogic::SourceAnalyzeTclScripts(vtkKWApplication *app) {
  app->LoadScript(TCL_FILE); 
 
  //   cout << "SourceAnalyzeTclScripts: This is just for debugging right now" << endl;
- //   sprintf(TCL_FILE,"/home/pohl/slicer3/Slicer3-build/share/Slicer3/Modules/ChangeTracker/Tcl/ChangeTrackerFct.tcl");
+ //   sprintf(TCL_FILE,"/home/pohl/slicer3/Slicer-build/share/Slicer/Modules/ChangeTracker/Tcl/ChangeTrackerFct.tcl");
  //   app->LoadScript(TCL_FILE); 
  // 
- //   sprintf(TCL_FILE,"/home/pohl/slicer3/Slicer3-build/share/Slicer3/Modules/ChangeTracker/Tcl/ChangeTrackerReg.tcl");
+ //   sprintf(TCL_FILE,"/home/pohl/slicer3/Slicer-build/share/Slicer/Modules/ChangeTracker/Tcl/ChangeTrackerReg.tcl");
  //   app->LoadScript(TCL_FILE); 
  
 }

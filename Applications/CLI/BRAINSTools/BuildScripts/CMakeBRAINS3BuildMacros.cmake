@@ -103,8 +103,8 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
   endif(WIN32)
   target_link_libraries (${PROGNAME} BRAINSCommonLib ${BRAINS_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
 
-  if (Slicer3_SOURCE_DIR)
-    ### If building as part of the Slicer3_SOURCE_DIR, then only build the shared object, and not the command line program.
+  if (Slicer_SOURCE_DIR)
+    ### If building as part of the Slicer_SOURCE_DIR, then only build the shared object, and not the command line program.
 
     add_library(${PROGNAME}Lib SHARED ${CLP_SOURCES} ${PROGCLI_HEADER})
     set_target_properties (${PROGNAME}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -117,7 +117,7 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
     slicer3_set_plugins_output_path(${PROGNAME})
     set(TARGETS ${PROGNAME}Lib ${PROGNAME})
     slicer3_install_plugins(${TARGETS})
-  else (Slicer3_SOURCE_DIR)
+  else (Slicer_SOURCE_DIR)
     ### If building outside of Slicer3, then only build the command line executable.
     IF(BRAINS_BUILD)
       BRAINSGENERATEMODULESCRIPT(${PROGNAME})
@@ -126,7 +126,7 @@ macro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES EXTRA_LIBS)
       RUNTIME DESTINATION bin
       LIBRARY DESTINATION lib
       ARCHIVE DESTINATION lib)
-  endif (Slicer3_SOURCE_DIR)
+  endif (Slicer_SOURCE_DIR)
 
 endmacro(CONFIGUREBRAINSORSLICERPROPERTIES PROGNAME PROGCLI PROGSOURCES)
 endif(NOT CONFIGUREBRAINSORSLICERPROPERTIES)
@@ -157,15 +157,15 @@ macro(CONFIGUREBRAINSORSLICERLIBRARY LIBNAME LIBCLI LIBSOURCES EXTRA_LIBS)
   add_library( ${LIBNAME} ${CLP_SOURCES} ${LIBCLI_HEADER})
   target_link_libraries (${LIBNAME} BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} ${EXTRA_LIBS} )
 
-  if (Slicer3_SOURCE_DIR)
-    ### If building as part of the Slicer3_SOURCE_DIR, then only build the shared object, and not the command line program.
+  if (Slicer_SOURCE_DIR)
+    ### If building as part of the Slicer_SOURCE_DIR, then only build the shared object, and not the command line program.
     # install each target in the production area (where it would appear in an
     # installation) and install each target in the developer area (for running
     # from a build)
     slicer3_set_plugins_output_path(${LIBNAME})
     set(TARGETS ${LIBNAME})
     slicer3_install_plugins(${TARGETS})
-  else (Slicer3_SOURCE_DIR)
+  else (Slicer_SOURCE_DIR)
     ### If building outside of Slicer3, then only build the command line executable.
     IF(BRAINS_BUILD)
       BRAINSGENERATEMODULESCRIPT(${LIBNAME})
@@ -174,7 +174,7 @@ macro(CONFIGUREBRAINSORSLICERLIBRARY LIBNAME LIBCLI LIBSOURCES EXTRA_LIBS)
       RUNTIME DESTINATION bin
       LIBRARY DESTINATION lib
       ARCHIVE DESTINATION lib)
-  endif (Slicer3_SOURCE_DIR)
+  endif (Slicer_SOURCE_DIR)
 
 endmacro(CONFIGUREBRAINSORSLICERLIBRARY LIBNAME LIBCLI LIBSOURCES)
 endif(NOT CONFIGUREBRAINSORSLICERLIBRARY)

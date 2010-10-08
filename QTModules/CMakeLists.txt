@@ -8,11 +8,11 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 # Calling PROJECT() defines projectname_SOURCE_DIR and projectname_BINARY_DIR
 PROJECT(QTModules)
 
-IF(NOT Slicer3_SOURCE_DIR)
+IF(NOT Slicer_SOURCE_DIR)
   FIND_PACKAGE(Slicer3 REQUIRED)
-  INCLUDE(${Slicer3_USE_FILE})
+  INCLUDE(${Slicer_USE_FILE})
   slicer3_set_default_install_prefix_for_external_projects()
-ENDIF(NOT Slicer3_SOURCE_DIR)
+ENDIF(NOT Slicer_SOURCE_DIR)
 
 INCLUDE(${Slicer_CMAKE_DIR}/SlicerQTModuleMacros.cmake)
 

@@ -9,12 +9,12 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 # --------------------------------------------------------------------------
 # Find Slicer3
 
-#if(NOT Slicer3_SOURCE_DIR)
+#if(NOT Slicer_SOURCE_DIR)
 #  find_package(Slicer3 REQUIRED)
-#  #include(${Slicer3_USE_FILE})
+#  #include(${Slicer_USE_FILE})
 #  include(${Slicer_CMAKE_DIR}/Slicer3Macros.cmake)
 #  slicer3_set_default_install_prefix_for_external_projects()
-#endif(NOT Slicer3_SOURCE_DIR)
+#endif(NOT Slicer_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
 # Find VTK
@@ -98,11 +98,11 @@ target_link_libraries(${lib_name}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
+IF(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-    ${Slicer3_LIBRARY_PROPERTIES}
+    ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
+ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 slicer3_install_modules(${lib_name})
 

@@ -33,9 +33,9 @@ add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrappe
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ${CLP}Module)
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
 
   set(TARGETS ExtractSkeletonModule ExtractSkeleton)
   slicer3_install_plugins(${TARGETS})
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)

@@ -63,9 +63,9 @@ slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} SlicerBaseCLI)
 
 # Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer3_LIBRARY_PROPERTIES})
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
+IF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 INSTALL(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 

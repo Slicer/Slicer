@@ -70,7 +70,7 @@ IF ( Java_JAVAC_EXECUTABLE )
   # install the tcl file that runs the jar file like an executable CLI
   #####
  
-  if (Slicer3_SOURCE_DIR)
+  if (Slicer_SOURCE_DIR)
     # install each target in the production area (where it would appear in an 
     # installation) and install each target in the developer area (for running 
     # from a build)
@@ -94,7 +94,7 @@ IF ( Java_JAVAC_EXECUTABLE )
      FILES ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${CLP}.tcl
      DESTINATION ${Slicer_INSTALL_PLUGINS_BIN_DIR}
      )
-  endif (Slicer3_SOURCE_DIR)
+  endif (Slicer_SOURCE_DIR)
 
 ELSE ( Java_JAVAC_EXECUTABLE)
    message (STATUS "Unable to compile java code, skipping installation of ${CLP}.jar and .tcl")
@@ -111,7 +111,7 @@ set (CLP SPECTRE)
 # install the tcl file that runs the jar file like an executable CLI
 #####
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
   # installation) and install each target in the developer area (for running 
   # from a build)
@@ -132,7 +132,7 @@ install(
   FILES ${TARGETS}
   DESTINATION ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}
   )
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)
 
 
 endif (0)

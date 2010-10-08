@@ -10,9 +10,9 @@ include(${ITK_USE_FILE})
 
 
 set (CLP ResampleDTI )
-if (Slicer3_SOURCE_DIR)
-   SET(LOGOFILE ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
-endif (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
+   SET(LOGOFILE ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
+endif (Slicer_SOURCE_DIR)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx )
 generateclp(${CLP}_SOURCE ${CLP}.xml ${LOGOFILE})
@@ -25,9 +25,9 @@ dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
 )
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE} ${dtiProcessFiles} )
-if(Slicer3_SOURCE_DIR)
+if(Slicer_SOURCE_DIR)
   slicer3_set_plugins_output_path(${CLP}Lib)
-endif(Slicer3_SOURCE_DIR)
+endif(Slicer_SOURCE_DIR)
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 target_link_libraries (${CLP}Lib
   ModuleDescriptionParser
@@ -37,12 +37,12 @@ target_link_libraries (${CLP}Lib
 )
 
 add_executable(${CLP} ResampleDTIApp.cxx)
-if(Slicer3_SOURCE_DIR)
+if(Slicer_SOURCE_DIR)
   slicer3_set_plugins_output_path(${CLP})
-endif(Slicer3_SOURCE_DIR)
+endif(Slicer_SOURCE_DIR)
 target_link_libraries (${CLP} ${CLP}Lib)
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
   # install each target in the production area (where it would appear in an
   # installation) and install each target in the developer area (for running
   # from a build)
@@ -52,7 +52,7 @@ if (Slicer3_SOURCE_DIR)
     )
   slicer3_install_plugins(${TARGETS})
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)
 
 if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)

@@ -799,7 +799,7 @@ proc fips2mrml_WriteMRML2File {  } {
 
 
     set cwd [ pwd ]
-    set ::fips2mrml_mrmlFilename [format "%s/%s%s%s" $::env(Slicer3_DATA) $::fips2mrml_MRMLFile "_MRML2" ".xml" ]
+    set ::fips2mrml_mrmlFilename [format "%s/%s%s%s" $::env(Slicer_DATA) $::fips2mrml_MRMLFile "_MRML2" ".xml" ]
     puts "Writing $::fips2mrml_mrmlFilename"
     fips2mrml_DisplayMessage "Writing $::fips2mrml_mrmlFilename"
     set fid [ open $::fips2mrml_mrmlFilename "w" ]
@@ -1316,7 +1316,7 @@ proc fips2mrml_WriteMRML3File { } {
 
     #--- open a new mrmlFile
     set cwd [ pwd ]
-    set ::fips2mrml_mrmlFilename [format "%s/%s%s%s" $::env(Slicer3_DATA) $::fips2mrml_MRMLFile "_MRML3" ".mrml" ]
+    set ::fips2mrml_mrmlFilename [format "%s/%s%s%s" $::env(Slicer_DATA) $::fips2mrml_MRMLFile "_MRML3" ".mrml" ]
     puts "Writing $::fips2mrml_mrmlFilename"
     fips2mrml_DisplayMessage "Writing $::fips2mrml_mrmlFilename"
     set fid [ open $::fips2mrml_mrmlFilename "w+" ]
@@ -1657,11 +1657,11 @@ proc QueryAtlasLaunchFips2Mrml { } {
         fips2mrml_DisplayMessage "Please set your (FreeSurfer) SUBJECTS_DIR environment variable and try again."
         exit
     }
-    if { [ info exists ::env(Slicer3_DATA) ] } {
-        set dataDir $::env(Slicer3_DATA)
+    if { [ info exists ::env(Slicer_DATA) ] } {
+        set dataDir $::env(Slicer_DATA)
     } else {
-        tk_messageBox -message "Please set your (Slicer data directory) Slicer3_DATA environment variable and try again."
-        fips2mrml_DisplayMessage "Please set your (Slicer data directory) Slicer3_DATA environment variable and try again."
+        tk_messageBox -message "Please set your (Slicer data directory) Slicer_DATA environment variable and try again."
+        fips2mrml_DisplayMessage "Please set your (Slicer data directory) Slicer_DATA environment variable and try again."
         exit
     }
     if { [ info exists ::env(Slicer_HOME) ] } {
@@ -1714,8 +1714,8 @@ proc QueryAtlasLaunchFips2Mrml { } {
 
     #--- create logo frame
     set nowframe $f.fLogo
-    if { [ file exists "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ] } {
-        set logo [ image create photo -file "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ]
+    if { [ file exists "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ] } {
+        set logo [ image create photo -file "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ]
         label $nowframe.lLogo -image $logo
         pack $nowframe.lLogo -side top -anchor e -padx 4
     }

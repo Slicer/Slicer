@@ -6,9 +6,9 @@
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasVocabularyInit { term sourceTermSet targetTermSet } {
 
-    set ::QA(controlledVocabulary) "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/Resources/controlledVocabulary.csv"
-    set ::QA(braininfoSynonyms) "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/Resources/NN2002-2-synonyms.csv"
-    set ::QA(braininfoURI) "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/Resources/NN2002-3-BrainInfoURI.csv"
+    set ::QA(controlledVocabulary) "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/Resources/controlledVocabulary.csv"
+    set ::QA(braininfoSynonyms) "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/Resources/NN2002-2-synonyms.csv"
+    set ::QA(braininfoURI) "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/Resources/NN2002-3-BrainInfoURI.csv"
 }
 
 
@@ -95,7 +95,7 @@ proc QueryAtlasParseNeuroNamesSynonyms { } {
     set ::QA(Synonyms) ""
 
     #--- The controlled vocabulary must be a CSV file
-    set synonyms "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/Resources/NN2002-2-synonyms.csv"
+    set synonyms "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/Resources/NN2002-2-synonyms.csv"
 
     #--- get number of columns each entry should have
     set fp [ open $synonyms r ]
@@ -133,7 +133,7 @@ proc QueryAtlasParseBrainInfoURIs { } {
     set ::QA(BrainInfoURIs) ""
 
     #--- The controlled vocabulary must be a CSV file
-    set uris "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/Resources/NN2002-3-BrainInfoURI.csv"
+    set uris "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/Resources/NN2002-3-BrainInfoURI.csv"
 
     #--- get number of columns each entry should have
     set fp [ open $uris r ]
@@ -172,7 +172,7 @@ proc QueryAtlasParseControlledVocabulary { } {
     set ::QA(CV) ""
 
     #--- The controlled vocabulary must be a CSV file
-    set controlledVocabulary "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/Resources/controlledVocabulary.csv"
+    set controlledVocabulary "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/Resources/controlledVocabulary.csv"
 
     #--- get number of columns each entry should have
     set fp [ open $controlledVocabulary r ]
@@ -545,7 +545,7 @@ proc QueryAtlasFreeSurferLabelsToBirnLexLabels { label } {
     
     set retLabel ""
     
-    set labelTable "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/Resources/FreeSurferLabels2BirnLexLabels.txt"
+    set labelTable "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/Resources/FreeSurferLabels2BirnLexLabels.txt"
 
     set fp [ open $labelTable r ]
 

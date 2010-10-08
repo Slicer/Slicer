@@ -18,17 +18,17 @@
 #
 #
 
-SET(TCLAP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
-SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
-SET(GenerateCLP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
-SET(Slicer3_USE_FILE_CONFIG ${Slicer3_BINARY_DIR}/UseSlicer3.cmake)
-SET(LoadableModule_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
+SET(TCLAP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
+SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
+SET(GenerateCLP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
+SET(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer3.cmake)
+SET(LoadableModule_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/LoadableModule)
 
 SET(Slicer_Libs_INCLUDE_DIRS_CONFIG ${Slicer_Libs_INCLUDE_DIRS})
-SET(Slicer3_Libs_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin ${Slicer3_BINARY_DIR}/lib)
+SET(Slicer_Libs_LIBRARY_DIRS_CONFIG ${Slicer_BINARY_DIR}/bin ${Slicer_BINARY_DIR}/lib)
 
 SET(Slicer_Base_INCLUDE_DIRS_CONFIG ${Slicer_Base_INCLUDE_DIRS})
-SET(Slicer3_Base_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
+SET(Slicer_Base_LIBRARY_DIRS_CONFIG ${Slicer_BINARY_DIR}/bin)
 
 SET(ITK_DIR_CONFIG ${ITK_DIR})
 SET(VTK_DIR_CONFIG ${VTK_DIR})
@@ -43,8 +43,8 @@ SET(OpenCV_DIR_CONFIG ${OpenCV_DIR})
 
 # Configure Slicer3Config.cmake for the install tree.
 CONFIGURE_FILE(
-  ${Slicer3_SOURCE_DIR}/Slicer3Config.cmake.in
-  ${Slicer3_BINARY_DIR}/Slicer3Config.cmake @ONLY IMMEDIATE)
+  ${Slicer_SOURCE_DIR}/Slicer3Config.cmake.in
+  ${Slicer_BINARY_DIR}/Slicer3Config.cmake @ONLY IMMEDIATE)
 
 # Settings specific for installation trees      
 #      
@@ -52,5 +52,5 @@ CONFIGURE_FILE(
 
 # Configure Slicer3Config.cmake for the install tree.      
 CONFIGURE_FILE(
-  ${Slicer3_SOURCE_DIR}/Slicer3InstallConfig.cmake.in      
-  ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake @ONLY IMMEDIATE)      
+  ${Slicer_SOURCE_DIR}/Slicer3InstallConfig.cmake.in      
+  ${Slicer_BINARY_DIR}/Utilities/Slicer3Config.cmake @ONLY IMMEDIATE)      

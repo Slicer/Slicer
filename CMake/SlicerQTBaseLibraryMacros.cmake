@@ -77,7 +77,7 @@ MACRO(Slicer_build_slicer_qtbase_library)
   SET(MY_LIBNAME ${lib_name})
 
   CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/qSlicerExport.h.in
+    ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   SET(dynamicHeaders
@@ -93,7 +93,7 @@ MACRO(Slicer_build_slicer_qtbase_library)
     QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${SLICERQTBASELIB_RESOURCES})
   ENDIF(DEFINED SLICERQTBASELIB_RESOURCES)
 
-  QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer3_SOURCE_DIR}/Resources/qSlicerLogos.qrc)
+  QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc)
 
   SET_SOURCE_FILES_PROPERTIES(
     ${SLICERQTBASELIB_UI_CXX}
@@ -103,7 +103,7 @@ MACRO(Slicer_build_slicer_qtbase_library)
 
   SOURCE_GROUP("Resources" FILES
     ${SLICERQTBASELIB_UI_SRCS}
-    ${Slicer3_SOURCE_DIR}/Resources/qSlicerLogos.qrc
+    ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc
     ${SLICERQTBASELIB_RESOURCES}
   )
 
@@ -128,9 +128,9 @@ MACRO(Slicer_build_slicer_qtbase_library)
     )
 
   # Apply user-defined properties to the library target.
-  IF(Slicer3_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer3_LIBRARY_PROPERTIES})
-  ENDIF(Slicer3_LIBRARY_PROPERTIES)
+  IF(Slicer_LIBRARY_PROPERTIES)
+    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+  ENDIF(Slicer_LIBRARY_PROPERTIES)
 
   SET(QT_LIBRARIES
     ${QT_QTCORE_LIBRARY}

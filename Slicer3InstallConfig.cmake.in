@@ -8,9 +8,9 @@
 #
 
 # The C and C++ flags added by Slicer3 to the cmake-configured flags.
-set(Slicer3_REQUIRED_C_FLAGS "@Slicer3_REQUIRED_C_FLAGS@")
-set(Slicer3_REQUIRED_CXX_FLAGS "@Slicer3_REQUIRED_CXX_FLAGS@")
-set(Slicer3_REQUIRED_LINK_FLAGS "@Slicer3_REQUIRED_LINK_FLAGS@")
+set(Slicer_REQUIRED_C_FLAGS "@Slicer_REQUIRED_C_FLAGS@")
+set(Slicer_REQUIRED_CXX_FLAGS "@Slicer_REQUIRED_CXX_FLAGS@")
+set(Slicer_REQUIRED_LINK_FLAGS "@Slicer_REQUIRED_LINK_FLAGS@")
 
 # The Slicer3 version number
 set(Slicer_VERSION_MAJOR "@Slicer_VERSION_MAJOR@")
@@ -25,7 +25,7 @@ IF(Slicer_USE_QT)
 ENDIF(Slicer_USE_QT)
 
 # Whether Slicer3 was built with shared libraries.
-set(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+set(Slicer_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 
 # Slicer3 options
 set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
@@ -39,10 +39,10 @@ set(Slicer_USE_OPENTRACKER "@Slicer_USE_OPENTRACKER@")
 # Slicer could be installed anywhere, so set all paths based on where 
 # this file was found (which should be the lib/Slicer3 directory of the 
 # installation)
-get_filename_component(Slicer3_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(Slicer_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 # Slicer home (top of the tree)
-set(Slicer_HOME "${Slicer3_CONFIG_DIR}/../..")
+set(Slicer_HOME "${Slicer_CONFIG_DIR}/../..")
 get_filename_component(Slicer_HOME ${Slicer_HOME} ABSOLUTE)
 
 # The CMake macros dir.
@@ -53,7 +53,7 @@ set(Slicer_CMAKE_DIR "${Slicer_HOME}/@Slicer_INSTALL_LIB_DIR@/CMake")
 set(Slicer_Libs_LIBRARIES "@Slicer_Libs_LIBRARIES@")
 
 # Slicer3 Libs library directories.
-set(Slicer3_Libs_LIBRARY_DIRS 
+set(Slicer_Libs_LIBRARY_DIRS 
   "${Slicer_HOME}/lib/FreeSurfer"
   "${Slicer_HOME}/lib/IGT"
   "${Slicer_HOME}/lib/ITKCommandIO"
@@ -64,7 +64,7 @@ set(Slicer3_Libs_LIBRARY_DIRS
   "${Slicer_HOME}/lib/ModuleDescriptionParser"
   "${Slicer_HOME}/lib/Qdec"
   "${Slicer_HOME}/lib/RemoteIO"
-  "${Slicer_HOME}/lib/SlicerIO"
+  "${Slicer_HOME}/lib/Slicer3IO"
   "${Slicer_HOME}/lib/tclap"
   "${Slicer_HOME}/lib/vtkITK"
   "${Slicer_HOME}/lib/vtkTeem"
@@ -96,7 +96,7 @@ set(Slicer_Libs_INCLUDE_DIRS
 set(Slicer_Base_LIBRARIES "@Slicer_Base_LIBRARIES@")
 
 # Slicer3 Base library directories.
-set(Slicer3_Base_LIBRARY_DIRS 
+set(Slicer_Base_LIBRARY_DIRS 
   "${Slicer_HOME}/@Slicer_INSTALL_LIB_DIR@"
   )
 
@@ -109,11 +109,11 @@ set(Slicer_Base_INCLUDE_DIRS
   )
 
 # The location of the UseSlicer3.cmake file.
-set(Slicer3_USE_FILE "${Slicer3_CONFIG_DIR}/UseSlicer3.cmake")
+set(Slicer_USE_FILE "${Slicer_CONFIG_DIR}/UseSlicer3.cmake")
 
 # The build settings file.
-set(Slicer3_BUILD_SETTINGS_FILE 
-  "${Slicer3_CONFIG_DIR}/Slicer3BuildSettings.cmake")
+set(Slicer_BUILD_SETTINGS_FILE 
+  "${Slicer_CONFIG_DIR}/Slicer3BuildSettings.cmake")
 
 # The Slicer3 relative install directories.
 set(Slicer_INSTALL_BIN_DIR "@Slicer_INSTALL_BIN_DIR@")

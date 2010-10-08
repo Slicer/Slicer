@@ -165,7 +165,7 @@ SET(MY_EXPORT_HEADER_PREFIX qSlicerIconEnginePlugin)
 SET(MY_LIBNAME qSlicerIconEnginePlugin)
 
 CONFIGURE_FILE(
-  ${Slicer3_SOURCE_DIR}/qSlicerExport.h.in
+  ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
   )
 QT4_WRAP_CPP(MOC_qSlicerIconEnginePlugin qSlicerIconEnginePlugin.h)

@@ -53,15 +53,15 @@ IF(BUILD_SHARED_LIBS)
         "\"../${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
 
       # Since ModuleLogic are in Slicer_INSTALL_MODULES_BIN_DIR, let's add it
-      SET(Slicer3_FORWARD_PATH_BUILD
-        "${Slicer3_FORWARD_PATH_BUILD},            \\
+      SET(Slicer_FORWARD_PATH_BUILD
+        "${Slicer_FORWARD_PATH_BUILD},            \\
         \"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     
     ENDIF(Slicer_BUILD_QTLOADABLEMODULES)
      
     #IF(Slicer_BUILD_MODULES)
-    #  SET(Slicer3_FORWARD_PATH_BUILD
-    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+    #  SET(Slicer_FORWARD_PATH_BUILD
+    #    "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     #ENDIF(Slicer_BUILD_MODULES)
     
     IF(Slicer_BUILD_CLI)
@@ -78,7 +78,7 @@ IF(BUILD_SHARED_LIBS)
     #\"${INCR_TCL_LIBRARY_PATH}\",
     #\"${INCR_TK_LIBRARY_PATH}\",
     SET(SlicerQT_FORWARD_PATH_BUILD
-      "\"${Slicer3_FORWARD_DIR_BUILD}\",  \\
+      "\"${Slicer_FORWARD_DIR_BUILD}\",  \\
        \"${VTK_DIR}/bin\",                \\
        \"${ITK_DIR}/bin\",                \\
        \"${Teem_DIR}/bin\",               \\
@@ -120,15 +120,15 @@ IF(BUILD_SHARED_LIBS)
         \"../${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}\"")
 
       # Since ModuleLogic are in Slicer_INSTALL_MODULES_BIN_DIR, let's add it
-      SET(Slicer3_FORWARD_PATH_BUILD
-        "${Slicer3_FORWARD_PATH_BUILD},             \\
+      SET(Slicer_FORWARD_PATH_BUILD
+        "${Slicer_FORWARD_PATH_BUILD},             \\
         \"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
         
     ENDIF(Slicer_BUILD_QTLOADABLEMODULES)
     
     #IF(Slicer_BUILD_MODULES)
-    #  SET(Slicer3_FORWARD_PATH_BUILD
-    #    "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
+    #  SET(Slicer_FORWARD_PATH_BUILD
+    #    "${Slicer_FORWARD_PATH_BUILD},\"${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
     #ENDIF(Slicer_BUILD_MODULES)
     
     IF(Slicer_BUILD_CLI)
@@ -139,8 +139,8 @@ IF(BUILD_SHARED_LIBS)
   ENDIF(WIN32)
 
 #   IF(Slicer_BUILD_MODULES)
-#     SET(Slicer3_FORWARD_PATH_INSTALL
-#       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
+#     SET(Slicer_FORWARD_PATH_INSTALL
+#       "${Slicer_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
 #   ENDIF(Slicer_BUILD_MODULES)
   
   IF(Slicer_BUILD_CLI)
@@ -339,7 +339,7 @@ INCLUDE_DIRECTORIES(${include_dirs})
 # --------------------------------------------------------------------------
 # Link
 # Important: remove RemoteIO when using CMake 2.6. Couldn't be part of 
-# Slicer3_LIBRARIES right now because of the Curl lib RemoteIO is using is
+# Slicer_LIBRARIES right now because of the Curl lib RemoteIO is using is
 # STATIC, but that's fixed in 2.6.
 #
 #target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
@@ -415,9 +415,9 @@ target_link_libraries(${lib_name}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer3_LIBRARY_PROPERTIES})
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
+IF(Slicer_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 
@@ -443,7 +443,7 @@ SET(MY_EXPORT_HEADER_PREFIX ${lib_name})
 SET(MY_LIBNAME ${lib_name})
 
 CONFIGURE_FILE(
-  ${Slicer3_SOURCE_DIR}/qSlicerExport.h.in
+  ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
   )
 SET(dynamicHeaders
@@ -470,7 +470,7 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 # against a Tcl/Tk static library.
 
 # include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
-# kwwidgets_copy_tcl_tk_support_files("${Slicer3_BINARY_DIR}/lib")
+# kwwidgets_copy_tcl_tk_support_files("${Slicer_BINARY_DIR}/lib")
 # kwwidgets_install_tcl_tk_support_files("/lib")
 
 # --------------------------------------------------------------------------
@@ -486,20 +486,20 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 # --------------------------------------------------------------------------
 # Command line parsing tests
 #
-# add_test(Slicer3CLTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --help)
-# add_test(Slicer3CLTest2 ${Slicer3_BINARY_DIR}/Slicer3 --xml --test-mode)
-# add_test(Slicer3CLTest3 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-# add_test(Slicer3CLTest4 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --eval "puts testing ,. exit 0")
-# add_test(Slicer3CLTest5 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --exec "puts testing ,. exit 0")
-# add_test(Slicer3CLTest6 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
-# add_test(Slicer3CLTest7 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
-# add_test(Slicer3ScrollTest ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/ScrollTesting.tcl)
+# add_test(Slicer3CLTest1 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --help)
+# add_test(Slicer3CLTest2 ${Slicer_BINARY_DIR}/Slicer3 --xml --test-mode)
+# add_test(Slicer3CLTest3 ${Slicer_BINARY_DIR}/Slicer3 --test-mode -f ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+# add_test(Slicer3CLTest4 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --eval "puts testing ,. exit 0")
+# add_test(Slicer3CLTest5 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --exec "puts testing ,. exit 0")
+# add_test(Slicer3CLTest6 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
+# add_test(Slicer3CLTest7 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
+# add_test(Slicer3ScrollTest ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/GUI/Testing/ScrollTesting.tcl)
 
 # --------------------------------------------------------------------------
 # MRML Tests
 #
-# add_test(Slicer3MRMLUndo ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testUndo.tcl)
-# add_test(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testVolume.tcl)
+# add_test(Slicer3MRMLUndo ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testUndo.tcl)
+# add_test(Slicer3MRMLVolume ${Slicer_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer_HOME}/share/MRML/Testing/testVolume.tcl)
 
 # --------------------------------------------------------------------------
 # Testing

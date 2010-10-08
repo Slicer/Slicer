@@ -51,9 +51,9 @@ MACRO(Slicer_build_qtmodule)
   # --------------------------------------------------------------------------
   # Find Slicer3
 
-  IF(NOT Slicer3_SOURCE_DIR)
+  IF(NOT Slicer_SOURCE_DIR)
     FIND_PACKAGE(Slicer3 REQUIRED)
-    INCLUDE(${Slicer3_USE_FILE})
+    INCLUDE(${Slicer_USE_FILE})
     slicer3_set_default_install_prefix_for_external_projects()
   ENDIF()
 
@@ -73,7 +73,7 @@ MACRO(Slicer_build_qtmodule)
   SET(MY_LIBNAME ${lib_name})
 
   CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/qSlicerExport.h.in
+    ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   SET(dynamicHeaders
@@ -96,7 +96,7 @@ MACRO(Slicer_build_qtmodule)
     QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${QTMODULE_RESOURCES})
   ENDIF()
 
-  QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${Slicer3_SOURCE_DIR}/Resources/qSlicerLogos.qrc)
+  QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc)
   
   SET_SOURCE_FILES_PROPERTIES(
     ${QTMODULE_UI_CXX}
@@ -106,7 +106,7 @@ MACRO(Slicer_build_qtmodule)
 
   SOURCE_GROUP("Resources" FILES
     ${QTMODULE_UI_SRCS}
-    ${Slicer3_SOURCE_DIR}/Resources/qSlicerLogos.qrc
+    ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc
     ${QTMODULE_RESOURCES}
     )
 
@@ -147,9 +147,9 @@ MACRO(Slicer_build_qtmodule)
     )
 
   # Apply user-defined properties to the library target.
-  IF(Slicer3_LIBRARY_PROPERTIES)
+  IF(Slicer_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-      ${Slicer3_LIBRARY_PROPERTIES}
+      ${Slicer_LIBRARY_PROPERTIES}
     )
   ENDIF()
 

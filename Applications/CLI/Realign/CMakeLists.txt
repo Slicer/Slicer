@@ -17,7 +17,7 @@ include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 set (CLP Realign)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_executable(${CLP} ${${CLP}_SOURCE} vtkPrincipalAxesAlign.cxx)
 slicer3_set_plugins_output_path(${CLP})
@@ -38,7 +38,7 @@ include_directories(
 
 
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
   # installation) and install each target in the developer area (for running 
   # from a build)
@@ -48,4 +48,4 @@ if (Slicer3_SOURCE_DIR)
     )
   slicer3_install_plugins(${TARGETS})
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)

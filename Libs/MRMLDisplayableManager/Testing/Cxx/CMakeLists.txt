@@ -24,7 +24,7 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
-set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 #SIMPLE_TEST( vtkMRMLCameraDisplayableManagerTest1 )
 

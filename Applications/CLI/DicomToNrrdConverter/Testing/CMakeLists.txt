@@ -5,10 +5,10 @@ include_regular_expression("^.*$")
 
 enable_testing()
 
-if(NOT Slicer3_SOURCE_DIR)
+if(NOT Slicer_SOURCE_DIR)
   find_package(Slicer3 REQUIRED)
-  include(${Slicer3_USE_FILE})
-endif(NOT Slicer3_SOURCE_DIR)
+  include(${Slicer_USE_FILE})
+endif(NOT Slicer_SOURCE_DIR)
 
 find_package(GenerateCLP REQUIRED)
 if(GenerateCLP_FOUND)
@@ -23,9 +23,9 @@ include_directories (${TCLAP_SOURCE_DIR}/include)
 #
 # Slicer3 is needed to resolve shared libraries
 #
-set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
-set(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
-set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
+set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 ##################################
 # DicomToNrrdConverter tests

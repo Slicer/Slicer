@@ -14,5 +14,5 @@ Analysis based on Deformable Map
   Jacobian Metric:     715.171mm^3 (581 Voxels)
 
 
-PWD:      /home/pohl/slicer3/Slicer3-build/Modules/TumorGrowth/Testing
+PWD:      /home/pohl/slicer3/Slicer-build/Modules/TumorGrowth/Testing
 CMD:      ../../../lib/Slicer3/Plugins/TumorGrowthCommandLine --scan1 scan1.nhdr --scan2 scan2.nhdr --sensitivity 0.5 --threshold 140,441 --roi_min 145,172,75 --roi_max 185,207,92 --intensity_analysis --deformable_analysis 

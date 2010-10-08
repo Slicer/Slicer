@@ -44,11 +44,11 @@ MACRO(Slicer_build_module_logic)
   # --------------------------------------------------------------------------
   # Find Slicer3
 
-  IF(NOT Slicer3_SOURCE_DIR)
+  IF(NOT Slicer_SOURCE_DIR)
     FIND_PACKAGE(Slicer3 REQUIRED)
-    INCLUDE(${Slicer3_USE_FILE})
+    INCLUDE(${Slicer_USE_FILE})
     slicer3_set_default_install_prefix_for_external_projects()
-  ENDIF(NOT Slicer3_SOURCE_DIR)
+  ENDIF(NOT Slicer_SOURCE_DIR)
 
   # --------------------------------------------------------------------------
   # Include dirs
@@ -66,7 +66,7 @@ MACRO(Slicer_build_module_logic)
   SET(MY_LIBNAME ${lib_name})
 
   CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/qSlicerExport.h.in
+    ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   SET(dynamicHeaders
@@ -129,11 +129,11 @@ MACRO(Slicer_build_module_logic)
     )
 
   # Apply user-defined properties to the library target.
-  IF(Slicer3_LIBRARY_PROPERTIES)
+  IF(Slicer_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-      ${Slicer3_LIBRARY_PROPERTIES}
+      ${Slicer_LIBRARY_PROPERTIES}
     )
-  ENDIF(Slicer3_LIBRARY_PROPERTIES)
+  ENDIF(Slicer_LIBRARY_PROPERTIES)
   
   # Install rules
   INSTALL(TARGETS ${lib_name}

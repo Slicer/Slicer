@@ -46,7 +46,7 @@ proc SetupGlyphs {} {
 
   set ::logic [$::gui GetLogic]
 
-  # TODO: $::env(Slicer_HOME)/share/Slicer3/Modules should be avoided, since
+  # TODO: $::env(Slicer_HOME)/share/Slicer/Modules should be avoided, since
   # the module could have been loaded from the user module paths (see
   # vtkSlicerApplication::GetModulePaths), therefore its testing data are
   # not inside env(Slicer_HOME). Fix this by using 
@@ -54,7 +54,7 @@ proc SetupGlyphs {} {
   # module reference, its logic, and call this method to retrive the full
   # path to the share/ directory for this module)
 
-  set testData $::env(Slicer_HOME)/share/Slicer3/Modules/Tractography/Testing/TestData/twoFibers.vtk
+  set testData $::env(Slicer_HOME)/share/Slicer/Modules/Tractography/Testing/TestData/twoFibers.vtk
   #set testData c:/data/tracts/Seeding1.vtp
 
   set ::fbNode [$::logic AddFiberBundle $testData 1]

@@ -2,9 +2,9 @@ include_directories( ${RegisterImagesMultiResApplications_SOURCE_DIR} )
 
 link_directories( ${RegisterImagesMultiResApplications_BUILD_DIR} )
 
-set(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
-set(MRML_TEST_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
-set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
+set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Testing/TestData")
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 set(RegisterImagesMultiResApplicationsTests_SOURCE
     FixedRotationSimilarity3DTransformTest.cxx

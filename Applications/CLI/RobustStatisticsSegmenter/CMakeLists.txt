@@ -18,7 +18,7 @@ include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 set(CLP SFLSRobustStat3DTest)
 set(RSS_SOURCE SFLSRobustStat3DTest.cxx SFLSRobustStat3DTestConsole.cxx labelMapPreprocessor.h SFLS.h SFLSSegmentor3D.h SFLSSegmentor3D.txx SFLSRobustStatSegmentor3DLabelMap_single.h SFLSRobustStatSegmentor3DLabelMap_single.txx)
 
-generateclp(RSS_SOURCE SFLSRobustStat3DTest.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(RSS_SOURCE SFLSRobustStat3DTest.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 # add_executable( ${CLP} ${RSS_SOURCE})
 # target_link_libraries( ${CLP} ITKCommon ITKBasicFilters ITKIO itkvnl)
@@ -41,7 +41,7 @@ include_directories(
 
 
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
   # installation) and install each target in the developer area (for running 
   # from a build)
@@ -51,7 +51,7 @@ if (Slicer3_SOURCE_DIR)
     )
   slicer3_install_plugins(${TARGETS})
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)
 
 
 # set(TARGETS ${CLP})
@@ -66,7 +66,7 @@ add_executable( SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
 target_link_libraries( SFLSRobustStat3DTestConsole ITKCommon ITKBasicFilters ITKIO itkvnl)
 
 enable_testing()
-set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
 # message (STATUS "cmake current source dir = '${CMAKE_CURRENT_SOURCE_DIR}'")
 # message (STATUS "cmake current bin dir = '${CMAKE_CURRENT_BINARY_DIR}'")
 # message (STATUS "slicer3 exe = '${Slicer_EXE}'")

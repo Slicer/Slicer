@@ -20,7 +20,7 @@ PROJECT( RegisterImagesMultiResApplications )
     ) 
   GENERATECLP( RegisterImagesMultiRes_SOURCE
                RegisterImagesMultiRes.xml 
-               ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+               ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
   INCLUDE_DIRECTORIES( ${RegisterImagesMultiResApplications_BINARY_DIR} )
   INCLUDE_DIRECTORIES( ${RegisterImagesMultiResApplications_SOURCE_DIR} )
 
@@ -41,7 +41,7 @@ PROJECT( RegisterImagesMultiResApplications )
   ADD_EXECUTABLE( RegisterImagesMultiRes ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
   TARGET_LINK_LIBRARIES( RegisterImagesMultiRes RegisterImagesMultiResModule )
 
-  IF( Slicer3_SOURCE_DIR )
+  IF( Slicer_SOURCE_DIR )
     slicer3_set_plugins_output_path( RegisterImagesMultiResModule )
     slicer3_set_plugins_output_path( RegisterImagesMultiRes )
 
@@ -50,7 +50,7 @@ PROJECT( RegisterImagesMultiResApplications )
          RegisterImagesMultiRes
          )
     slicer3_install_plugins( ${TARGETS} )
-  ENDIF( Slicer3_SOURCE_DIR )
+  ENDIF( Slicer_SOURCE_DIR )
   
   #
   # Setup testing

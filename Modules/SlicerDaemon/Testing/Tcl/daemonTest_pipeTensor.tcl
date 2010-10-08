@@ -4,7 +4,7 @@ global state
 # Write tcl output to a file
 #
 
-# TODO: $::env(Slicer_HOME)/share/Slicer3/Modules should be avoided, since
+# TODO: $::env(Slicer_HOME)/share/Slicer/Modules should be avoided, since
 # the module could have been loaded from the user module paths (see
 # vtkSlicerApplication::GetModulePaths), therefore its testing data are
 # not inside env(Slicer_HOME). Fix this by using 
@@ -12,7 +12,7 @@ global state
 # module reference, its logic, and call this method to retrive the full
 # path to the share/ directory for this module)
 
-set outfile [open "$::env(Slicer_HOME)/share/Slicer3/Modules/SlicerDaemon/Testing/DaemonTest_pipeTensor.txt" w]
+set outfile [open "$::env(Slicer_HOME)/share/Slicer/Modules/SlicerDaemon/Testing/DaemonTest_pipeTensor.txt" w]
 puts  $outfile "This is a Slicer Daemon tensor test"
 puts  $outfile "-------------------------------------\n"
 
@@ -43,7 +43,7 @@ proc launch_FileEvent {fp} {
     }
 }
 
-# TODO: $::env(Slicer_HOME)/share/Slicer3/Modules should be avoided, since
+# TODO: $::env(Slicer_HOME)/share/Slicer/Modules should be avoided, since
 # the module could have been loaded from the user module paths (see
 # vtkSlicerApplication::GetModulePaths), therefore its testing data are
 # not inside env(Slicer_HOME). Fix this by using 
@@ -51,7 +51,7 @@ proc launch_FileEvent {fp} {
 # module reference, its logic, and call this method to retrive the full
 # path to the share/ directory for this module)
 
-$::slicer3::MRMLScene SetURL  $::env(Slicer_HOME)/share/Slicer3/Modules/SlicerDaemon/Testing/slicerDaemonTensorTestData.mrml
+$::slicer3::MRMLScene SetURL  $::env(Slicer_HOME)/share/Slicer/Modules/SlicerDaemon/Testing/slicerDaemonTensorTestData.mrml
 $::slicer3::MRMLScene Connect
 
 set tensor_name "helix-DTI.nhdr"
@@ -64,7 +64,7 @@ tclsh $::env(Slicer_HOME)/lib/Slicer3/Modules/SlicerDaemon/Tcl/slicerput.tcl $pi
 update
 set ::SLICERD(approved) "yes"
 
-# TODO: $::env(Slicer_HOME)/share/Slicer3/Modules should be avoided, since
+# TODO: $::env(Slicer_HOME)/share/Slicer/Modules should be avoided, since
 # the module could have been loaded from the user module paths (see
 # vtkSlicerApplication::GetModulePaths), therefore its testing data are
 # not inside env(Slicer_HOME). Fix this by using 

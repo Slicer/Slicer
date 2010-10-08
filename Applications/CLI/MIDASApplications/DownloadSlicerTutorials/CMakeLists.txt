@@ -53,9 +53,9 @@ target_link_libraries(DownloadSlicerTutorials
 
 #
 # Move exec and module to where Slicer can find them
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
 
   set(TARGETS DownloadSlicerTutorials DownloadSlicerTutorialsModule)
   slicer3_install_plugins(${TARGETS})
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)

@@ -112,11 +112,11 @@ TARGET_LINK_LIBRARIES(${lib_name}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
+IF(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
+     ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
+ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 INSTALL(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
@@ -151,14 +151,14 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   ENDIF(WIN32 AND NOT CYGWIN)
 
   # Apply user-defined properties to the library target.
-  IF(Slicer3_LIBRARY_PROPERTIES)
+  IF(Slicer_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES
-       ${Slicer3_LIBRARY_PROPERTIES}
+       ${Slicer_LIBRARY_PROPERTIES}
     )
     SET_TARGET_PROPERTIES(${lib_name}PythonD PROPERTIES
-       ${Slicer3_LIBRARY_PROPERTIES}
+       ${Slicer_LIBRARY_PROPERTIES}
     )
-  ENDIF(Slicer3_LIBRARY_PROPERTIES)
+  ENDIF(Slicer_LIBRARY_PROPERTIES)
 
   INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
     RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 

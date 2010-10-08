@@ -18,13 +18,13 @@ include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 set (CLP DemonsRegistration )
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 target_link_libraries (${CLP}Lib ITKIO ITKStatistics)
 
-add_executable(${CLP} ${Slicer3_SOURCE_DIR}/Applications/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
+add_executable(${CLP} ${Slicer_SOURCE_DIR}/Applications/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
 target_link_libraries (${CLP} ${CLP}Lib)
 
 #the following line is an example of how to add a test to your project.

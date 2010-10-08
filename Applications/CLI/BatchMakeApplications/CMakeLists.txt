@@ -29,8 +29,8 @@ if(BatchMake_DIR)
   set( bmGridStore ${BatchMake_GRID_STORE_EXE} )
   set( bmGridExtractor ${BatchMake_SLICE_EXTRACTOR_EXE} )
 
-  find_path(Slicer3_BINARY_DIR NAMES Base/Logic/SlicerBaseLogicInit.cxx)
-  if(Slicer3_BINARY_DIR)
+  find_path(Slicer_BINARY_DIR NAMES Base/Logic/SlicerBaseLogicInit.cxx)
+  if(Slicer_BINARY_DIR)
     if(WIN32)
       set(BatchMake_WRAPPED_APPLICATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
     else(WIN32)
@@ -45,9 +45,9 @@ if(BatchMake_DIR)
     configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/bmGridStore.bmm.in"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridStore.bmm")
 
-  endif(Slicer3_BINARY_DIR)
+  endif(Slicer_BINARY_DIR)
 
-  if (Slicer3_SOURCE_DIR)
+  if (Slicer_SOURCE_DIR)
     set(RUNTIME_SUPPORT_FILES 
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmSliceExtractor.bmm"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/bmGridSend.bmm"
@@ -55,7 +55,7 @@ if(BatchMake_DIR)
     install(FILES ${RUNTIME_SUPPORT_FILES} 
       DESTINATION ${Slicer_INSTALL_PLUGINS_SHARE_DIR})
 
-  endif(Slicer3_SOURCE_DIR)
+  endif(Slicer_SOURCE_DIR)
 endif( BatchMake_DIR)
 
 SET(batchmake_modules

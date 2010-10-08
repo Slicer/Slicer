@@ -7,7 +7,7 @@
 
 # --------------------------------------------------------------
 SET(designer_launcher_project_name SlicerQT)
-SET(designer_launcher_directory ${Slicer3_BINARY_DIR})
+SET(designer_launcher_directory ${Slicer_BINARY_DIR})
 # --------------------------------------------------------------
 
 GET_TARGET_PROPERTY(output_directory ${designer_launcher_project_name} LIBRARY_OUTPUT_DIRECTORY)

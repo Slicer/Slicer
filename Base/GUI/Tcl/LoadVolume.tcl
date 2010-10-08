@@ -1081,11 +1081,11 @@ itcl::body LoadVolume::loadDICOMDictionary {} {
   }
   set dicomDict ""
   set dicomDictCandidates [list \
-    $::Slicer3_BUILD/include/InsightToolkit/gdcm/Dicts/gdcm.dic \
+    $::Slicer_BUILD/include/InsightToolkit/gdcm/Dicts/gdcm.dic \
     $itkBinDir/../../include/InsightToolkit/gdcm/Dicts/gdcm.dic \
     $itkBinDir/../Utilities/gdcm/Dicts/gdcm.dic \
     $itkBinDir/../../Utilities/gdcm/Dicts/gdcm.dic \
-    $::Slicer3_BUILD/../Slicer3-lib/Insight-build/Utilities/gdcm/Dicts/gdcm.dic \
+    $::Slicer_BUILD/../Slicer3-lib/Insight-build/Utilities/gdcm/Dicts/gdcm.dic \
     ]
   foreach dictFile $dicomDictCandidates {
     if { [file exists $dictFile] } {

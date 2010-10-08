@@ -10,10 +10,10 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 # --------------------------------------------------------------------------
 # Find Slicer3
 
-if(NOT Slicer3_SOURCE_DIR)
+if(NOT Slicer_SOURCE_DIR)
   find_package(Slicer3 REQUIRED)
-  include(${Slicer3_USE_FILE})
-endif(NOT Slicer3_SOURCE_DIR)
+  include(${Slicer_USE_FILE})
+endif(NOT Slicer_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
 

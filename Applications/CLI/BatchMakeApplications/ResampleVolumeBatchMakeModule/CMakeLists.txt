@@ -27,15 +27,15 @@ include(${BatchMake_USE_FILE})
 
 if(BatchMake_DIR)
   
-  find_path(Slicer3_BINARY_DIR NAMES Base/Logic/SlicerBaseLogicInit.cxx)
-  if(Slicer3_BINARY_DIR)
+  find_path(Slicer_BINARY_DIR NAMES Base/Logic/SlicerBaseLogicInit.cxx)
+  if(Slicer_BINARY_DIR)
     find_program( ${Slicer3ExeModule}Path
       NAMES ${Slicer3ExeModule}.exe ${Slicer3ExeModule}
-      PATHS ${Slicer3_BINARY_DIR}/bin/relwithdebinfo
-      ${Slicer3_BINARY_DIR}/bin/release
-      ${Slicer3_BINARY_DIR}/bin/debug
-      ${Slicer3_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}
-      ${Slicer3_BINARY_DIR}/bin
+      PATHS ${Slicer_BINARY_DIR}/bin/relwithdebinfo
+      ${Slicer_BINARY_DIR}/bin/release
+      ${Slicer_BINARY_DIR}/bin/debug
+      ${Slicer_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}
+      ${Slicer_BINARY_DIR}/bin
       ${Slicer_INSTALL_PLUGINS_BIN_DIR}/relwithdebinfo
       ${Slicer_INSTALL_PLUGINS_BIN_DIR}/release
       ${Slicer_INSTALL_PLUGINS_BIN_DIR}/debug
@@ -58,7 +58,7 @@ if(BatchMake_DIR)
     configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/../GenericBatchMakeModule/BatchMakeModuleConfig.h.in"
       "${CMAKE_CURRENT_BINARY_DIR}/BatchMakeModuleConfig.h")
 
-  endif(Slicer3_BINARY_DIR)
+  endif(Slicer_BINARY_DIR)
 
   # Find GenerateCLP
   find_package(GenerateCLP REQUIRED)
@@ -81,7 +81,7 @@ if(BatchMake_DIR)
   add_dependencies(${Slicer3BatchModule} ${Slicer3ExeModule})
 
 
-  if (Slicer3_SOURCE_DIR)
+  if (Slicer_SOURCE_DIR)
     # install each target in the production area (where it would appear in an 
     # installation) and install each target in the developer area (for running 
     # from a build)
@@ -97,6 +97,6 @@ if(BatchMake_DIR)
     install(FILES ${RUNTIME_SUPPORT_FILES} 
       DESTINATION ${Slicer_INSTALL_PLUGINS_SHARE_DIR}/${PROJECT_NAME})
 
-  endif(Slicer3_SOURCE_DIR)
+  endif(Slicer_SOURCE_DIR)
 
 endif(BatchMake_DIR)

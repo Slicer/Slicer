@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-project(Slicer3)
+project(Slicer)
 #-----------------------------------------------------------------------------
 
 enable_language(C)
@@ -63,7 +63,7 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_SOURCE_DIR}/CMake
   ${CMAKE_BINARY_DIR}/CMake
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../CMake # Slicer3 CMake directory
+  ${CMAKE_CURRENT_SOURCE_DIR}/../CMake # Slicer CMake directory
   ${CMAKE_MODULE_PATH}
   )
 
@@ -198,14 +198,14 @@ endif()
 #------------------------------------------------------------------------------  
 
 # KWWidgets off by default.
-option(Slicer_USE_KWWIDGETS "Build Slicer3 KWWidgets GUI" OFF)
+option(Slicer_USE_KWWIDGETS "Build Slicer KWWidgets GUI" OFF)
 
 
 #------------------------------------------------------------------------------
 # Qt option
 #------------------------------------------------------------------------------  
 
-option(Slicer_USE_QT  "Build Slicer3 Qt GUI" ON)
+option(Slicer_USE_QT  "Build Slicer Qt GUI" ON)
 
 if(Slicer_USE_QT)
   set(minimum_required_qt_version "4.6.2")
@@ -280,7 +280,7 @@ option(Slicer_USE_VTK_DEBUG_LEAKS
   "Turn on VTKs Debug Leaks functionality in both VTK and Slicer." ON)
   
 # Enable the build of Command line module
-option(Slicer_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
+option(Slicer_BUILD_CLI "Build Slicer CLI Plugins" ON)
   
 #------------------------------------------------------------------------------
 # Validate options
@@ -323,7 +323,7 @@ endif()
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/../SuperBuild/CTestCustom.cmake.in
-  ${Slicer3_BINARY_DIR}/CTestCustom.cmake
+  ${Slicer_BINARY_DIR}/CTestCustom.cmake
   @ONLY IMMEDIATE)
 
 #------------------------------------------------------------------------------
@@ -464,12 +464,12 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/ExternalProjectDependencies.txt "${ep_dep
 # Note that the SlicerVersion.txt file will be created at configuration time
 #------------------------------------------------------------------------------
 
-set(proj Slicer3)
+set(proj Slicer)
 ExternalProject_Add(${proj}
   DEPENDS ${slicer_DEPENDENCIES}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..
-  BINARY_DIR Slicer3-build
+  BINARY_DIR Slicer-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}

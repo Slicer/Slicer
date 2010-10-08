@@ -4,7 +4,7 @@ PROJECT(MIMXCommon)
 # Include dirs
 #
 #INCLUDE_DIRECTORIES(
-#  ${Slicer3_INCLUDE_DIRS}
+#  ${Slicer_INCLUDE_DIRS}
 #  ${SlicerBase_SOURCE_DIR}
 #  ${SlicerBase_BINARY_DIR}
 #  ${SlicerBaseLogic_SOURCE_DIR}
@@ -154,11 +154,11 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
+IF(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
+     ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
+ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${LIB_NAME}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 

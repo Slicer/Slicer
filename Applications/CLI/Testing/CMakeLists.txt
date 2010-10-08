@@ -8,8 +8,8 @@ if(GenerateCLP_FOUND)
   include(${GenerateCLP_USE_FILE})
 endif(GenerateCLP_FOUND)
 
-include_directories(${Slicer3_SOURCE_DIR}/Applications/CLI)
-include_directories(${Slicer3_BINARY_DIR}/Applications/CLI)
+include_directories(${Slicer_SOURCE_DIR}/Applications/CLI)
+include_directories(${Slicer_BINARY_DIR}/Applications/CLI)
 include_directories(${ModuleDescriptionParser_SOURCE_DIR})
 include_directories (${TCLAP_SOURCE_DIR}/include)
 
@@ -24,22 +24,22 @@ mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 #
 # Slicer3 is needed to resolve shared libraries
 #
-set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
 
-set(ValgrindScript "${Slicer3_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
+set(ValgrindScript "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
 
 if(USE_VALGRIND)
   set(Launcher_Command ${ValgrindScript})
-  set(TestLocation "${Slicer3_BINARY_DIR}/bin/")
+  set(TestLocation "${Slicer_BINARY_DIR}/bin/")
 else(USE_VALGRIND)
   set(Launcher_Command ${Slicer_EXE} --launch)
   set(TestLocation "")
 endif(USE_VALGRIND)
 
-set(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
-set(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
-set(MRML_TEST_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
-set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
+set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
+set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Testing/TestData")
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 
@@ -381,7 +381,7 @@ add_executable(BSplineWarping3DTest BSplineWarping3DTest.cxx)
 target_link_libraries(BSplineWarping3DTest ITKIO ITKNumerics)
 
 add_test(BSplineWarping3DTest00 
-  ${Slicer3_BINARY_DIR}/bin/BSplineWarping3DTest
+  ${Slicer_BINARY_DIR}/bin/BSplineWarping3DTest
   ${TEST_DATA}/BSplineDisplacements3D_00.txt
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb1e1a10f20.mha
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb1e1a10f20.mha
@@ -890,7 +890,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 
 ##################################
 
-set(TRANSFORMS_DIR ${Slicer3_SOURCE_DIR}/Applications/CLI/DiffusionApplications/ResampleDTI/Testing/TestData )
+set(TRANSFORMS_DIR ${Slicer_SOURCE_DIR}/Applications/CLI/DiffusionApplications/ResampleDTI/Testing/TestData )
 # ResampleVolume2 tests
 add_test(ResampleVolume2Test ${Launcher_Command} ${TestLocation}ResampleVolume2Test
   --compare 
@@ -939,7 +939,7 @@ add_test(ResampleVolume2RotationAndAffineTest ${Launcher_Command} ${TestLocation
     --transform_order input-to-output
   )
 
-set(BSplineFile ${Slicer3_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledBSplineTransform.tfm)
+set(BSplineFile ${Slicer_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledBSplineTransform.tfm)
 add_test(ResampleVolume2BSplineWSInterpolationTest ${Launcher_Command} ${TestLocation}ResampleVolume2Test
   --compare
     ${TEST_DATA}/MRHeadResampledBSplineWSInterpolationTest.nrrd
@@ -967,7 +967,7 @@ add_test(ResampleVolume2BSplineInterpolationTest ${Launcher_Command} ${TestLocat
   )
 
 
-set(HFieldFile ${Slicer3_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledHField.nrrd)
+set(HFieldFile ${Slicer_SOURCE_DIR}/Testing/Data/Input/MRHeadResampledHField.nrrd)
 add_test(ResampleVolume2HFieldTest ${Launcher_Command} ${TestLocation}ResampleVolume2Test
   --compare
     ${TEST_DATA}/MRHeadResampledHFieldTest.nrrd
@@ -1179,7 +1179,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 # SparseFieldLevelSetContour tests
 
 # leaks from tcl file
-# add_test(SparseFieldLevelSetContourTest2 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp ${TEMP}/SparseFieldLevelSetContourTest.vtp ${BASELINE}/SparseFieldLevelSetContourTest.vtp)
+# add_test(SparseFieldLevelSetContourTest2 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Applications/CLI/SparseFieldLevelSetContour/Testing/SparseFieldLevelSetContourTest.tcl  ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp ${TEMP}/SparseFieldLevelSetContourTest.vtp ${BASELINE}/SparseFieldLevelSetContourTest.vtp)
 
 # use a helper to compare the baseline and output, running it from the launcher to set up the paths
 
@@ -1198,7 +1198,7 @@ add_test(SparseFieldLevelSetContourTest1 ${Launcher_Command}  ${CMAKE_COMMAND}
   -Doutput_model=${TEMP}/SparseFieldLevelSetContourTest.vtp
   -Doutput_baseline=${BASELINE}/SparseFieldLevelSetContourTest.vtp
   -Doutput_test=${TEMP}/SparseFieldLevelSetContourTest.vtp
-  -P ${Slicer3_SOURCE_DIR}/Applications/CLI/Testing/run_SparseFieldLevelSetContourTest.cmake
+  -P ${Slicer_SOURCE_DIR}/Applications/CLI/Testing/run_SparseFieldLevelSetContourTest.cmake
 )
 
 set (CLP SparseFieldLevelSetContour1)
@@ -1240,7 +1240,7 @@ add_test(MergeModelsTestCompare  ${Launcher_Command} ${CMAKE_COMMAND}
   -Doutput_model=${TEMP}/sphereCube.vtp
   -Doutput_baseline=${BASELINE}/sphereCube.vtp
   -Doutput_test=${TEMP}/sphereCube.vtp
-  -P  ${Slicer3_SOURCE_DIR}/Applications/CLI/Testing/run_MergeModelsTest.cmake
+  -P  ${Slicer_SOURCE_DIR}/Applications/CLI/Testing/run_MergeModelsTest.cmake
 )
 
 set (CLP MergeModels)

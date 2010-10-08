@@ -29,7 +29,7 @@ add_test(Parser1Test1 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/Parse
 
 add_test(Parser1Test2 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest2.xml)
 
-if(Slicer3_BINARY_DIR)
-  add_test(ModuleFactoryTest ${LAUNCH_EXE} ${EXE_PREFIX}/ModuleFactoryTest ${Slicer3_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/)
-endif(Slicer3_BINARY_DIR)
+if(Slicer_BINARY_DIR)
+  add_test(ModuleFactoryTest ${LAUNCH_EXE} ${EXE_PREFIX}/ModuleFactoryTest ${Slicer_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/)
+endif(Slicer_BINARY_DIR)
 

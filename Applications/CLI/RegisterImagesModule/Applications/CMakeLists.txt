@@ -18,7 +18,7 @@ PROJECT( RegisterImagesModuleApplications )
   SET( RegisterImagesSlicer_SOURCE RegisterImagesSlicer.cxx )
   GENERATECLP( RegisterImagesSlicer_SOURCE 
                RegisterImagesSlicer.xml
-               ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h )
+               ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h )
   INCLUDE_DIRECTORIES( ${RegisterImagesModuleApplications_BINARY_DIR} )
 
   # Build the library / plugin
@@ -43,7 +43,7 @@ PROJECT( RegisterImagesModuleApplications )
   SET( TransformFromFiducials_SOURCE TransformFromFiducials.cxx )
   GENERATECLP( TransformFromFiducials_SOURCE 
                TransformFromFiducials.xml
-               ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h )
+               ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h )
   INCLUDE_DIRECTORIES( ${RegisterImagesModuleApplications_BINARY_DIR} )
 
   # Build the library / plugin
@@ -58,7 +58,7 @@ PROJECT( RegisterImagesModuleApplications )
   ADD_EXECUTABLE( TransformFromFiducials ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
   TARGET_LINK_LIBRARIES( TransformFromFiducials TransformFromFiducialsModule )
 
-  IF( Slicer3_SOURCE_DIR )
+  IF( Slicer_SOURCE_DIR )
     slicer3_set_plugins_output_path( RegisterImagesModule )
     slicer3_set_plugins_output_path( RegisterImages )
 
@@ -72,7 +72,7 @@ PROJECT( RegisterImagesModuleApplications )
          TransformFromFiducials
          )
     slicer3_install_plugins( ${TARGETS} )
-  ENDIF( Slicer3_SOURCE_DIR )
+  ENDIF( Slicer_SOURCE_DIR )
 
   IF( Maverick_SOURCE_DIR )
 

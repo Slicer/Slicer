@@ -103,11 +103,11 @@ target_link_libraries(${lib_name}
   )
 
 # Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
+IF(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
+     ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
+ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 
 slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
@@ -125,7 +125,7 @@ install(TARGETS ${lib_name}
 
 if(BUILD_TESTING)
   # no tests yet...
-  #  add_test(Slicer3GUITest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
+  #  add_test(Slicer3GUITest1 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
 endif(BUILD_TESTING)
 
 file(GLOB PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/*.png")

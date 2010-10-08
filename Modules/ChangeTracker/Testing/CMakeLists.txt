@@ -43,8 +43,8 @@ if(GenerateCLP_FOUND)
   include(${GenerateCLP_USE_FILE})
   endif(GenerateCLP_FOUND)
 
-  include_directories(${Slicer3_SOURCE_DIR}/Applications/CLI)
-  include_directories(${Slicer3_BINARY_DIR}/Applications/CLI)
+  include_directories(${Slicer_SOURCE_DIR}/Applications/CLI)
+  include_directories(${Slicer_BINARY_DIR}/Applications/CLI)
   include_directories(${ModuleDescriptionParser_SOURCE_DIR})
   include_directories (${TCLAP_SOURCE_DIR}/include)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../CommandLineApplication
@@ -55,12 +55,12 @@ if(GenerateCLP_FOUND)
 #
 # Slicer3 is needed to resolve shared libraries
 #
-set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
 
-set(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
-set(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
-set(MRML_TEST_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
-set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
+set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
+set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Testing/TestData")
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 
@@ -75,11 +75,11 @@ target_link_libraries(ChangeTrackerTest
 )
 
 add_test(ChangeTrackerCL_Help 
-   ${Slicer3_BINARY_DIR}/Slicer3 --launch ChangeTrackerTest 
+   ${Slicer_BINARY_DIR}/Slicer3 --launch ChangeTrackerTest 
    ChangeTrackerTest --help)
 
 add_test(ChangeTrackerCL_TestFull_Intensity
-   ${Slicer3_BINARY_DIR}/Slicer3 --launch ChangeTrackerTest
+   ${Slicer_BINARY_DIR}/Slicer3 --launch ChangeTrackerTest
    ChangeTrackerTest --sensitivity 0.95
    --roi_xyz -4,27,28
    --roi_radius 21,22,24

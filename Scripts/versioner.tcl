@@ -39,7 +39,7 @@ set ::Slicer_HOME [pwd]
 
 source $::Slicer_HOME/slicer_variables.tcl
 
-set ::Slicer3_BUILDDATE [clock format [clock seconds] -format %Y-%m-%d]
+set ::Slicer_BUILDDATE [clock format [clock seconds] -format %Y-%m-%d]
 
 set ::ENV(LANG) "C"
 set svninfo [split [exec svn info] "\n"]
@@ -58,11 +58,11 @@ cd $cwd
 
 set versionText ""
 set versionText "${versionText}build $::env(BUILD)\n"
-set versionText "${versionText}buildDate $::Slicer3_BUILDDATE\n"
+set versionText "${versionText}buildDate $::Slicer_BUILDDATE\n"
 set versionText "${versionText}svnurl $svn(URL)\n"
 set versionText "${versionText}svnrevision $svn(revision)\n"
 
-set versionFile $::Slicer3_BUILD/lib/Slicer3/SlicerVersion.txt
+set versionFile $::Slicer_BUILD/lib/Slicer3/SlicerVersion.txt
 puts "Writing version information to $versionFile"
 puts $versionText
 set fp [open $versionFile "w"]

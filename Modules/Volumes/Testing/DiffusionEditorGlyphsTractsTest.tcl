@@ -1,5 +1,5 @@
 
-# TODO: $::env(Slicer_HOME)/share/Slicer3/Modules should be avoided, since
+# TODO: $::env(Slicer_HOME)/share/Slicer/Modules should be avoided, since
 # the module could have been loaded from the user module paths (see
 # vtkSlicerApplication::GetModulePaths), therefore its testing data are
 # not inside env(Slicer_HOME). Fix this by using 

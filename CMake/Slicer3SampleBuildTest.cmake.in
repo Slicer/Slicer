@@ -4,7 +4,7 @@
 # The file should be copied, edited if necessary and moved to another location
 # 
 # This file was generated from
-# @Slicer3_SOURCE_DIR@/CMake/Slicer3SampleBuildTest.cmake
+# @Slicer_SOURCE_DIR@/CMake/Slicer3SampleBuildTest.cmake
 #
 
 ######################
@@ -31,8 +31,8 @@ ENDIF("@CMAKE_BUILD_TYPE@" STREQUAL "")
 
 
 # These are the the locations of the source and binary directory
-SET(CTEST_SOURCE_DIRECTORY "@Slicer3_SOURCE_DIR@")
-SET(CTEST_BINARY_DIRECTORY "@Slicer3_BINARY_DIR@")
+SET(CTEST_SOURCE_DIRECTORY "@Slicer_SOURCE_DIR@")
+SET(CTEST_BINARY_DIRECTORY "@Slicer_BINARY_DIR@")
 
 # The ctest command to use for running the dashboard
 SET(CTEST_COMMAND

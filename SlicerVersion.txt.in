@@ -1,4 +1,4 @@
-build @Slicer3_BUILD@
-buildDate @Slicer3_BUILDDATE@
-svnurl @Slicer3_WC_URL@
-svnrevision @Slicer3_WC_REVISION@
+build @Slicer_BUILD@
+buildDate @Slicer_BUILDDATE@
+svnurl @Slicer_WC_URL@
+svnrevision @Slicer_WC_REVISION@

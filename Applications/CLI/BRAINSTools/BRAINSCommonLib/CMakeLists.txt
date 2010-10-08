@@ -46,7 +46,7 @@ add_library(BRAINSCommonLib ${BRAINSCommonLib_SRCS})
 target_link_libraries(BRAINSCommonLib ITKAlgorithms ITKIO)
 
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
 
   # install each target in the production area (where it would appear in an
   # installation) and install each target in the developer area (for running
@@ -56,7 +56,7 @@ if (Slicer3_SOURCE_DIR)
     )
   slicer3_install_plugins(${TARGETS})
 
-else (Slicer3_SOURCE_DIR)
+else (Slicer_SOURCE_DIR)
 
   INSTALL(TARGETS BRAINSCommonLib
       RUNTIME DESTINATION bin
@@ -72,7 +72,7 @@ else (Slicer3_SOURCE_DIR)
       COMPONENT Development)
   ENDIF(NOT BRAINSCommonLibProject_INSTALL_NO_DEVELOPMENT)
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)
 
 ##HACK NEED BETTER TESTS add_directory( TestLargestForegroundFilledMaskImageFilter )
 ##HACK NEED BETTER TESTSadd_directory( Test_FindCenterOfBrainFilter )

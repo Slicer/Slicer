@@ -94,11 +94,11 @@ target_link_libraries(MGHIOPlugin
 )
 
 # Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
+IF(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
+     ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
+ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS MGHIOPlugin
   RUNTIME DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries

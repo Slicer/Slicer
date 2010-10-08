@@ -13,4 +13,4 @@ valgrind \
  --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp                   \
  --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp       \
  --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp           \
- ../Slicer3-build/bin/Slicer3-real $* |& tee /tmp/slicerval
+ ../Slicer-build/bin/Slicer3-real $* |& tee /tmp/slicerval

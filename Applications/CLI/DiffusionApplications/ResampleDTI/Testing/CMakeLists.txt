@@ -9,22 +9,22 @@ include( CTest )
 
 
 # ResampleDTI tests
-set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
 
-set(ValgrindScript "${Slicer3_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
+set(ValgrindScript "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
 
 if(USE_VALGRIND)
   set(Launcher_Command ${ValgrindScript})
-  set(TestLocation "${Slicer3_BINARY_DIR}/bin/")
+  set(TestLocation "${Slicer_BINARY_DIR}/bin/")
 else(USE_VALGRIND)
   set(Launcher_Command ${Slicer_EXE} --launch)
   set(TestLocation "")
 endif(USE_VALGRIND)
 
-set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 set(ResampleTest ${CLP}Test)
 set(TransformedImage ${TEMP}/dt-helix-transformed.nrrd )
-set(SOURCE_DIR ${Slicer3_SOURCE_DIR}/Applications/CLI/DiffusionApplications/ResampleDTI/Testing/TestData )
+set(SOURCE_DIR ${Slicer_SOURCE_DIR}/Applications/CLI/DiffusionApplications/ResampleDTI/Testing/TestData )
 set(OriginalImage ${SOURCE_DIR}/dt-helix.nrrd )
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
@@ -121,7 +121,7 @@ add_test(${CLP}HFieldTest ${Launcher_Command} ${TestLocation}${ResampleTest}
 
 #Test itkTestMainExtended.h
 #copy scalar file to binary directory so that if an error occurs the output files will be created in the binary directory
-set(SourceScalarFile ${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI/AddTest_DOUBLE.mha )
+set(SourceScalarFile ${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI/AddTest_DOUBLE.mha )
 file( COPY ${SourceScalarFile} DESTINATION ${TEMP} )
 set( BinaryScalarFile ${TEMP}/AddTest_DOUBLE.mha )
 

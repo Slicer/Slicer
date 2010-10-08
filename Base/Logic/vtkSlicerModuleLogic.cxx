@@ -25,7 +25,7 @@
 #include <errno.h>
 #endif
 
-#include "vtkSlicerConfigure.h" /* for Slicer3_INSTALL_* */
+#include "vtkSlicerConfigure.h" /* for Slicer_INSTALL_* */
 
 vtkCxxRevisionMacro(vtkSlicerModuleLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModuleLogic);

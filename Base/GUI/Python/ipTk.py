@@ -20,7 +20,7 @@ cd Slicer3-lib
 wget http://ipython.scipy.org/dist/ipython-0.10.tar.gz
 tar xvfz ipython-0.10.tar.gz
 cd ipython-0.10
-../../Slicer3-build/Slicer3 --launch ../python-build/bin/python setup.py install
+../../Slicer-build/Slicer3 --launch ../python-build/bin/python setup.py install
 
 """
 

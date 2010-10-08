@@ -204,9 +204,9 @@ if { $::isWindows } {
   set ::Slicer_HOME [file attributes $::Slicer_HOME -shortname]
 }
 
-set ::Slicer3_LIB $::Slicer_HOME/../Slicer3-lib
-set ::Slicer3_BUILD $::Slicer_HOME/../Slicer3-build
-set ::Slicer3_EXT $::Slicer_HOME/../Slicer3-ext
+set ::Slicer_LIB $::Slicer_HOME/../Slicer3-lib
+set ::Slicer_BUILD $::Slicer_HOME/../Slicer-build
+set ::Slicer_EXT $::Slicer_HOME/../Slicer3-ext
 
 #######
 #
@@ -230,7 +230,7 @@ if { $::isWindows } {
 vputs "making with $::MAKE"
 
 # get the slicer version information
-loadArray $::Slicer3_BUILD/lib/Slicer3/SlicerVersion.txt slicerVersion
+loadArray $::Slicer_BUILD/lib/Slicer3/SlicerVersion.txt slicerVersion
 set len [string length "http://svn.slicer.org/Slicer3/"]
 set ::EXTEND(slicerSVNSubpath) [string range $slicerVersion(svnurl) $len end]
 set ::EXTEND(slicerSVNRevision) $slicerVersion(svnrevision)
@@ -250,10 +250,10 @@ set ::EXTEND(slicerSVNRevision) $slicerVersion(svnrevision)
 # since the exact build is specified by the files under svn control.  The extensions 
 # layer on top of that.
 
-if { ![file exists $::Slicer3_EXT] } {
-  file mkdir $::Slicer3_EXT
+if { ![file exists $::Slicer_EXT] } {
+  file mkdir $::Slicer_EXT
 }
-cd $::Slicer3_EXT
+cd $::Slicer_EXT
 if { ![file exists Extensions] } {
   file mkdir Extensions
 }
@@ -271,15 +271,15 @@ if { [string match "branches*" $::EXTEND(slicerSVNSubpath)] } {
 }
 
 # get the files from the checked out Extensions branch
-set extFiles [glob -nocomplain $::Slicer3_EXT/Extensions-checkout/*.s3ext]
+set extFiles [glob -nocomplain $::Slicer_EXT/Extensions-checkout/*.s3ext]
 foreach f $extFiles {
-  file copy -force $f $::Slicer3_EXT/Extensions
+  file copy -force $f $::Slicer_EXT/Extensions
 }
 
 # get the files from the Slicer3 source tree
 set extFiles [glob -nocomplain $::Slicer_HOME/Extensions/*.s3ext]
 foreach f $extFiles {
-  file copy -force $f $::Slicer3_EXT/Extensions
+  file copy -force $f $::Slicer_EXT/Extensions
 }
 
 
@@ -292,7 +292,7 @@ foreach f $extFiles {
 #
 
 set ::EXTEND(s3extFiles) ""
-set candidates [glob -nocomplain $::Slicer3_EXT/Extensions/*.s3ext]
+set candidates [glob -nocomplain $::Slicer_EXT/Extensions/*.s3ext]
 foreach c $candidates {
   if { $::EXTEND(buildList) == "" } {
     lappend ::EXTEND(s3extFiles) $c
@@ -387,8 +387,8 @@ foreach s3ext $::EXTEND(s3extFiles) {
   }
   set ::depends($s3ext) ""
   foreach dependency $::ext(depends) {
-    set dependFile $::Slicer3_EXT/Extensions/$dependency.s3ext
-    if { ![file exists $dependFile] && ![file exists $::Slicer3_BUILD/Modules/$dependency] } {
+    set dependFile $::Slicer_EXT/Extensions/$dependency.s3ext
+    if { ![file exists $dependFile] && ![file exists $::Slicer_BUILD/Modules/$dependency] } {
       puts stderr "$s3ext depends on non-existent extension $dependency - it will not be built"
       set index [lsearch $::newExtFiles $s3ext]
       set ::newExtFiles [lreplace $::newExtFiles $index $index]
@@ -446,7 +446,7 @@ while { $rearranged } {
 # the actual build and test commands for each module
 # - load the s3ext file parameters into array "ext"
 # - checkout the source code
-# - configure the project to point to ::Slicer3_BUILD
+# - configure the project to point to ::Slicer_BUILD
 # - build the project
 # - run the tests
 # - run the install target
@@ -472,7 +472,7 @@ proc buildExtension {s3ext} {
 
   # make dirs, delete if asked for clean build
   foreach suffix {"" -build -install} {
-    set dir $::Slicer3_EXT/$::ext(name)$suffix
+    set dir $::Slicer_EXT/$::ext(name)$suffix
     if { $suffix != "" } {
       vputs "Deleting $dir..."
       file delete -force $dir
@@ -484,13 +484,13 @@ proc buildExtension {s3ext} {
 
   # check out code
   # - set array variable srcDir
-  cd $::Slicer3_EXT/$::ext(name)
+  cd $::Slicer_EXT/$::ext(name)
   switch $::ext(scm) {
     "cvs" {
       if { $::EXTEND(no-extension-update) == "" } {
         runcmd $::CVS -d $::ext(cvsroot) co $::ext(cvsmodule)
       }
-      set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(cvsmodule)
+      set ::ext(srcDir) $::Slicer_EXT/$::ext(name)/$::ext(cvsmodule)
     }
     "svn" {
       set svncmd "yes t | $::SVN co"
@@ -504,7 +504,7 @@ proc buildExtension {s3ext} {
       if { $::EXTEND(no-extension-update) == ""} {
         eval runcmd $svncmd
       }
-      set ::ext(srcDir) $::Slicer3_EXT/$::ext(name)/$::ext(name)
+      set ::ext(srcDir) $::Slicer_EXT/$::ext(name)/$::ext(name)
     }
     default {
       puts stderr "No source code control tool specified in $s3ext"
@@ -527,10 +527,10 @@ proc buildExtension {s3ext} {
     if { [file exists $::Slicer_HOME/Modules/$dep] } {
       # this is a module that comes with slicer
       set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$::Slicer_HOME/Modules/$dep"
-      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$::Slicer3_BUILD/Modules/$dep"
+      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$::Slicer_BUILD/Modules/$dep"
     } else {
-      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$::Slicer3_EXT/$dep/$dep"
-      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$::Slicer3_EXT/$dep-build"
+      set dependPaths "$dependPaths -D${dep}_SOURCE_DIR=$::Slicer_EXT/$dep/$dep"
+      set dependPaths "$dependPaths -D${dep}_BINARY_DIR=$::Slicer_EXT/$dep-build"
     }
   }
 
@@ -541,14 +541,14 @@ proc buildExtension {s3ext} {
   }
 
   # configure project and make
-  cd $::Slicer3_EXT/$::ext(name)-build
+  cd $::Slicer_EXT/$::ext(name)-build
   set cmakeCmd [list $::CMAKE \
     -G$::GENERATOR \
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=$::EXTEND(verbose) \
-    -DSlicer3_DIR:PATH=$::Slicer3_BUILD \
+    -DSlicer_DIR:PATH=$::Slicer_BUILD \
     -DBUILD_AGAINST_SLICER3:BOOL=ON \
     -DMAKECOMMAND:STRING=$makeCmd \
-    -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer3_EXT/$::ext(name)-install]
+    -DCMAKE_INSTALL_PREFIX:PATH=$::Slicer_EXT/$::ext(name)-install]
   if { $::EXTEND(release) != "" } {
     lappend cmakeCmd -DCMAKE_BUILD_TYPE:STRING=Release
   } else {
@@ -564,7 +564,7 @@ proc buildExtension {s3ext} {
   eval runcmd $cmakeCmd
 
   # build the project
-  cd $::Slicer3_EXT/$::ext(name)-build
+  cd $::Slicer_EXT/$::ext(name)-build
   if { $::isWindows } {
     runcmd "$::MAKE" $::ext(cmakeproject).sln /out buildlog-allbuild.txt /build $::VTK_BUILD_TYPE /project ALL_BUILD
   } else {
@@ -573,7 +573,7 @@ proc buildExtension {s3ext} {
 
   # run the tests
   # - not all modules have tests, so allow make to fail gracefully with catch
-  cd $::Slicer3_EXT/$::ext(name)-build
+  cd $::Slicer_EXT/$::ext(name)-build
   set ret 0
   if { $::EXTEND(test-type) != "" } {
     if { $::isWindows } {
@@ -591,7 +591,7 @@ proc buildExtension {s3ext} {
   }
 
   # run the install target
-  cd $::Slicer3_EXT/$::ext(name)-build
+  cd $::Slicer_EXT/$::ext(name)-build
   if { $::isWindows } {
     runcmd $::MAKE $::ext(cmakeproject).sln /out buildlog-install.txt /build $::VTK_BUILD_TYPE /project INSTALL
   } else {
@@ -622,7 +622,7 @@ proc buildExtension {s3ext} {
 
   # make the zip file
   # - TODO: first, write a config file that describes the build machine
-  set dir $::Slicer3_EXT/$::ext(name)-install/lib/Slicer3
+  set dir $::Slicer_EXT/$::ext(name)-install/lib/Slicer3
   foreach dirType {Modules Plugins} {
     if { [file exists $dir/$dirType] } {
       set dir $dir/$dirType

@@ -26,7 +26,7 @@
 #include "vtkSlicerViewControlGUI.h"
 #include "vtkKWCheckBoxSelectionDialog.h"
 
-#include "vtkSlicerConfigure.h" // Slicer3_INSTALL_* 
+#include "vtkSlicerConfigure.h" // Slicer_INSTALL_* 
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerApplicationSettingsInterface );

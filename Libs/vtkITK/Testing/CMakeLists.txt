@@ -17,7 +17,7 @@ ENDIF ( ITK_FOUND )
 # The test is a stand-alone executable.  However, the Slicer3
 # launcher is needed to set up shared library paths correctly.
 ############################################################################ 
-SET( Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+SET( Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
 
 SET( WRAPPED_EXE_PREFIX ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 IF (WIN32)

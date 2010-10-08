@@ -39,7 +39,7 @@ endif (WIN32)
 set(${PROJECT_NAME}_SOURCE ${PROJECT_NAME}.cxx)
 
 generateclp(${PROJECT_NAME}_SOURCE ${PROJECT_NAME}.xml
-  ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_Logo.h)
+  ${Slicer_SOURCE_DIR}/Resources/MIT_NAMIC_Logo.h)
 
 
 #-----------------------------------------------------------------------------
@@ -82,23 +82,23 @@ target_link_libraries(ImageCompare
 #-----------------------------------------------------------------------------
 # Install
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
 
   set(TARGETS ${PROJECT_NAME}Module ${PROJECT_NAME})
 
   slicer3_install_plugins(${TARGETS})
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)
 
 
 #-----------------------------------------------------------------------------
 # Testing
 
-set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3)
+set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3)
 
 set(TEST_DATA_DIR ${PROJECT_SOURCE_DIR}/TestData)
 set(BASELINE_DIR ${PROJECT_SOURCE_DIR}/Baseline)
-set(OUTPUT_DIR ${Slicer3_BINARY_DIR}/Testing)
+set(OUTPUT_DIR ${Slicer_BINARY_DIR}/Testing)
 
 if (BUILD_TESTING)
 

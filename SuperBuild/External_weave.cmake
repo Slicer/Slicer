@@ -18,7 +18,7 @@ configure_file(
 # create an external project to download weave,
 # and configure and build it
 ExternalProject_Add(weave
-  # URL ${Slicer3_SOURCE_DIR}/Modules/Python/FilteredTractography/weave
+  # URL ${Slicer_SOURCE_DIR}/Modules/Python/FilteredTractography/weave
   SVN_REPOSITORY http://svn.slicer.org/Slicer3-lib-mirrors/trunk/weave
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/weave
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/weave

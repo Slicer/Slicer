@@ -104,7 +104,7 @@ if(WIN32)
     )
 
   ExternalProject_Add_Step(${proj} CopyPythonDll
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer3-build/bin/${CMAKE_CFG_INTDIR}/python26.dll
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/python26.dll ${CMAKE_BINARY_DIR}/Slicer-build/bin/${CMAKE_CFG_INTDIR}/python26.dll
     DEPENDEES install
     )
 

@@ -130,6 +130,6 @@ IF (Slicer_USE_KWWIDGETS)
       # first value in CMAKE_CONFIGURATION_TYPES (i.e. Debug)/
       kwwidgets_get_cmake_build_type(build_type)
     endif(WIN32 AND CMAKE_CONFIGURATION_TYPES)
-    add_test(${test_name} ${Slicer3_DIR}/Slicer3 --launch ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${clp_to_test} ${ARGN})
+    add_test(${test_name} ${Slicer_DIR}/Slicer3 --launch ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${build_type}/${clp_to_test} ${ARGN})
   endmacro(slicer3_add_plugins_test)
 ENDIF (Slicer_USE_KWWIDGETS)

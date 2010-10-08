@@ -202,9 +202,9 @@ IF (Slicer_USE_KWWIDGETS)
   target_link_libraries(${lib_name} ${libraries})
 
   # Apply user-defined properties to the library target.
-  IF(Slicer3_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer3_LIBRARY_PROPERTIES})
-  ENDIF(Slicer3_LIBRARY_PROPERTIES)
+  IF(Slicer_LIBRARY_PROPERTIES)
+    SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+  ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 
   slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)

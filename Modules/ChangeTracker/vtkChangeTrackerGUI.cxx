@@ -530,8 +530,8 @@ void vtkChangeTrackerGUI::BuildGUI()
     vtkSlicerApplicationGUI *applicationGUI = this->GetApplicationGUI();
     if (!applicationGUI) return; 
   
-    // char fileName[1024] = "/home/pohl/Slicer/Slicer3-build/blub.mrml";
-    char fileName[1024] = "/home/pohl/Slicer/Slicer3-build/Modules/ChangeTracker/Testing/test.mrml";
+    // char fileName[1024] = "/home/pohl/Slicer/Slicer-build/blub.mrml";
+    char fileName[1024] = "/home/pohl/Slicer/Slicer-build/Modules/ChangeTracker/Testing/test.mrml";
     std::string fl(fileName);
     applicationGUI->GetMRMLScene()->SetURL(fileName);
     applicationGUI->GetMRMLScene()->Connect();

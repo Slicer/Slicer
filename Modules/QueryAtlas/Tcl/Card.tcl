@@ -61,7 +61,7 @@ proc Slicer3TestCards {} {
 
 proc TestCards {} {
   set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
-  set icondir $::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData
+  set icondir $::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/ImageData
   foreach icon [glob $icondir/*.png] {
     set card [Card #auto $renderWidget]
     set ras [list [randRange -200 200] [randRange -200 200] [randRange -200 200]]
@@ -120,7 +120,7 @@ if { [itcl::find class Card] == "" } {
     public variable text ""  ;# the text to display - can contain line breaks
     public variable follow 1  ;# make this a follower or not
     public variable font "default"  ;# what font to use (default means arial).
-    # public variable fontDir "$::env(Slicer_HOME)/share/Slicer3/Modules/QueryAtlas/Fonts/"  ;# where to find the fonts
+    # public variable fontDir "$::env(Slicer_HOME)/share/Slicer/Modules/QueryAtlas/Fonts/"  ;# where to find the fonts
     public variable fontDir "c:/windows/fonts"  ;# where to find the fonts
     public variable ras "0 0 0"  ;# what font to use (default means arial).
     public variable anchor "0 0 0"  ;# where to draw the anchor line to 

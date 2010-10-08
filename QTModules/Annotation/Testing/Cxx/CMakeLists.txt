@@ -45,7 +45,7 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
-set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 #SIMPLE_TEST( vtkMRMLAnnotationNodeTest1 )
 #SIMPLE_TEST( vtkMRMLAnnotationStorageNodeTest1 )
@@ -67,7 +67,7 @@ set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 #SIMPLE_TEST( qSlicerAnnotationModuleAnnotationPropertyDialogTest1 )
 
 
-#ADD_TEST(Slicer3AnnotationRulerTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
+#ADD_TEST(Slicer3AnnotationRulerTest1 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/QTModules/Annotation/Testing/TestAddRuler.tcl)
 
 # SIMPLE_TEST( vtkMRMLAnnotationFiducialStorageNodeTest1 )
 # Install the testing data

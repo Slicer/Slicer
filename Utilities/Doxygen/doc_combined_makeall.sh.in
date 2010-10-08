@@ -32,24 +32,24 @@ export WGET_PROG="@WGET@"              # wget (remote file retrieval)
 # Example: 
 #   PROJECT_NAME=VTK
 #
-export PROJECT_NAME=VTK_Slicer3_Combined
+export PROJECT_NAME=VTK_Slicer_Combined
 
-# PATH_TO_Slicer3_DOX_SCRIPTS:
+# PATH_TO_Slicer_DOX_SCRIPTS:
 # Path to the directory holding the Perl scripts used to produce the VTK doc
 # in Doxygen format. You need the VTK source files or a local copy of 
 # these scripts.
 # Example: 
-#   PATH_TO_Slicer3_DOX_SCRIPTS=@Slicer3_SOURCE_DIR@/Utilities/Doxygen
+#   PATH_TO_Slicer_DOX_SCRIPTS=@Slicer_SOURCE_DIR@/Utilities/Doxygen
 #
-export PATH_TO_Slicer3_DOX_SCRIPTS="@Slicer3_SOURCE_DIR@/Utilities/Doxygen"
+export PATH_TO_Slicer_DOX_SCRIPTS="@Slicer_SOURCE_DIR@/Utilities/Doxygen"
 
 # SOURCE_DIR:
 # Source directory. The top directory of the source files.
 # Example: 
-#   SOURCE_DIR=@Slicer3_SOURCE_DIR@
+#   SOURCE_DIR=@Slicer_SOURCE_DIR@
 #
 export VTK="@VTK_SOURCE_DIR@"
-export Slicer3="@Slicer3_SOURCE_DIR@"
+export Slicer3="@Slicer_SOURCE_DIR@"
 
 # REL_PATH_TO_TOP:
 # Relative path from the top directory of the source files to the directory
@@ -68,18 +68,18 @@ export REL_PATH_TO_TOP=.
 # the corresponding line.
 # DOXTEMP might be used to simplify the syntax.
 # Example: 
-#   DOXTEMP=DOXTEMP=@Slicer3_BINARY_DIR@/Utilities/Doxygen
+#   DOXTEMP=DOXTEMP=@Slicer_BINARY_DIR@/Utilities/Doxygen
 #   INTERMEDIATE_DOX_DIR=$DOXTEMP/dox
 #
-export DOXTEMP="@Slicer3_BINARY_DIR@/Utilities/Doxygen"
+export DOXTEMP="@Slicer_BINARY_DIR@/Utilities/Doxygen"
 export INTERMEDIATE_DOX_DIR="$DOXTEMP/dox"
 
 # DATA_ROOT:
 # Data directory. The root directory of the data files.
 # Example: 
-#   DATA_ROOT=@Slicer3_DATA_ROOT@
+#   DATA_ROOT=@Slicer_DATA_ROOT@
 #
-export DATA_ROOT="@Slicer3_DATA_ROOT@"
+export DATA_ROOT="@Slicer_DATA_ROOT@"
 
 # CVSWEB, CVSWEB_SUFFIX, CVSWEB__CHECKOUT, 
 # CVSWEB_DATA, CVSWEB_DATA_SUFFIX, CVSWEB_DATA_CHECKOUT:
@@ -153,24 +153,24 @@ export RESULTING_HTML_HELP_FILE="$DOXTEMP/vtk4.chm"
 export CREATE_HTML_TARZ_ARCHIVE=@DOCUMENTATION_HTML_TARZ@
 export RESULTING_HTML_TARZ_ARCHIVE_FILE="$DOXTEMP/vtk4-html.tar.gz"
 
-# DOWNLOAD_Slicer3_TAGFILE Slicer3_TAGFILE Slicer3_TAGFILE_REMOTE_DIR Slicer3_TAGFILE_DEST_DIR:
+# DOWNLOAD_Slicer_TAGFILE Slicer_TAGFILE Slicer_TAGFILE_REMOTE_DIR Slicer_TAGFILE_DEST_DIR:
 # Download the VTK tag file, name, remote location and destination dir of this
 # tag file. If set to ON, the tag file is retrieved from its remote location
 # using wget and stored in the destination dir. It will be automatically 
 # deleted at the end of this script.
 # Note: your doxyfile must be tailored to make use-of or create this tag file.
 #    (using TAGFILES = vtk4-nightly.tag=http://www.vtk.org/doc/nightly/html
-#        or GENERATE_TAGFILE = "@Slicer3_BINARY_DIR@/Utilities/Doxygen/vtk4.tag")
+#        or GENERATE_TAGFILE = "@Slicer_BINARY_DIR@/Utilities/Doxygen/vtk4.tag")
 # Example: 
-#   DOWNLOAD_Slicer3_TAGFILE=OFF
-#   Slicer3_TAGFILE=vtk4-nightly.tag
-#   Slicer3_TAGFILE_REMOTE_DIR=http://www.vtk.org/doc/nightly/html
-#   Slicer3_TAGFILE_DEST_DIR=$DOXTEMP
+#   DOWNLOAD_Slicer_TAGFILE=OFF
+#   Slicer_TAGFILE=vtk4-nightly.tag
+#   Slicer_TAGFILE_REMOTE_DIR=http://www.vtk.org/doc/nightly/html
+#   Slicer_TAGFILE_DEST_DIR=$DOXTEMP
 #
-export DOWNLOAD_Slicer3_TAGFILE=OFF
-export Slicer3_TAGFILE=vtk-Slicer3-combined-nightly.tag
-export Slicer3_TAGFILE_REMOTE_DIR=http://www.vtk.org/doc/nightly
-export Slicer3_TAGFILE_DEST_DIR="$DOXTEMP"
+export DOWNLOAD_Slicer_TAGFILE=OFF
+export Slicer_TAGFILE=vtk-Slicer3-combined-nightly.tag
+export Slicer_TAGFILE_REMOTE_DIR=http://www.vtk.org/doc/nightly
+export Slicer_TAGFILE_DEST_DIR="$DOXTEMP"
 
 # ----------------------------------------------------------------------------
 # Convert the VTK headers to the Doxygen format.
@@ -179,7 +179,7 @@ export Slicer3_TAGFILE_DEST_DIR="$DOXTEMP"
 # to run the script twice: once for each repository.  
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_header2doxygen.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_header2doxygen.pl \
         --to "$INTERMEDIATE_DOX_DIR" \
         --verbose \
         --relativeto "$VTK/.." \
@@ -193,7 +193,7 @@ if test "x$PERL_PROG" != "xNOTFOUND" ; then
         "$VTK/Patented" \
         "$VTK/Rendering"
 
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_header2doxygen.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_header2doxygen.pl \
         --to "$INTERMEDIATE_DOX_DIR" \
         --verbose \
         --relativeto "$Slicer3/.." \
@@ -212,7 +212,7 @@ fi
 # Build the Events invocation list.
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_codematch.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_codematch.pl \
         --codematch "\w(?:->|\.)InvokeEvent\s*\(\s*(vtkCommand::\w+)[\s,]" \
         --label "Events" \
         --project "$PROJECT_NAME" \
@@ -248,9 +248,9 @@ fi
 # Build the full-text index.
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_index.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_index.pl \
         --project "$PROJECT_NAME" \
-        --stop  "$PATH_TO_Slicer3_DOX_SCRIPTS/doc_index.stop" \
+        --stop  "$PATH_TO_Slicer_DOX_SCRIPTS/doc_index.stop" \
         --store "doc_""$PROJECT_NAME""_index.dox" \
         --to "$INTERMEDIATE_DOX_DIR" \
         --verbose \
@@ -278,10 +278,10 @@ fi
 # Build the contributors list.  Combine authors for VTK and Slicer3.
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
-    cat $VTK/Utilities/Doxygen/authors.txt $Slicer3/Utilities/Doxygen/authors.txt > $PATH_TO_Slicer3_DOX_SCRIPTS/combined_authors.txt
+    cat $VTK/Utilities/Doxygen/authors.txt $Slicer3/Utilities/Doxygen/authors.txt > $PATH_TO_Slicer_DOX_SCRIPTS/combined_authors.txt
    
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_contributors.pl \
-        --authors  "$PATH_TO_Slicer3_DOX_SCRIPTS/combined_authors.txt" \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_contributors.pl \
+        --authors  "$PATH_TO_Slicer_DOX_SCRIPTS/combined_authors.txt" \
         --cachedir "$DOXTEMP/cache" \
         --class_group '^(vtk[A-Z0-9][A-Za-z0-9]+)\.(?:c|cpp|cxx|h|mm|txx)$' \
         --files_in '(?:^hints|^README|\.(?:c|cmake|cpp|cxx|h|html|in|java|mm|pl|py|tcl|txt|txx))$' \
@@ -319,10 +319,10 @@ fi
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
     echo "*** Running doc_version"
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_version.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_version.pl \
         --version_file "$VTK/CMakeLists.txt" \
         --revision_file "$VTK/Common/vtkVersion.h" \
-        --logo "$PATH_TO_Slicer3_DOX_SCRIPTS/Slicer3-logo.gif" \
+        --logo "$PATH_TO_Slicer_DOX_SCRIPTS/Slicer3-logo.gif" \
         --store "doc_""$PROJECT_NAME""_version.dox" \
         --to "$INTERMEDIATE_DOX_DIR"
     echo "*** Done running doc_version"
@@ -333,12 +333,12 @@ fi
 # examples that use that class.
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_class2example.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_class2example.pl \
         --baselinedir "$DATA_ROOT/Baseline" \
         --baselineicon "pic.gif" \
         --baselinelink "$CVSWEB_DATA_CHECKOUT/Baseline" \
         --baselinelinksuffix "$CVSWEB_DATA_SUFFIX" \
-        --datamatch "\W(Slicer3_DATA_ROOT|VTKData|(vtk)?GetDataRoot|ExpandDataFileName)\W" \
+        --datamatch "\W(Slicer_DATA_ROOT|VTKData|(vtk)?GetDataRoot|ExpandDataFileName)\W" \
         --dataicon "paper-clip.gif" \
         --dirmatch "^Examples\$" \
         --label "Examples" \
@@ -358,12 +358,12 @@ fi
 # tests that use that class.
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_class2example.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_class2example.pl \
         --baselinedir "$DATA_ROOT/Baseline" \
         --baselineicon "pic.gif" \
         --baselinelink "$CVSWEB_DATA_CHECKOUT/Baseline" \
         --baselinelinksuffix "$CVSWEB_DATA_SUFFIX" \
-        --datamatch "\W(Slicer3_DATA_ROOT|VTKData|(vtk)?GetDataRoot|ExpandDataFileName)\W" \
+        --datamatch "\W(Slicer_DATA_ROOT|VTKData|(vtk)?GetDataRoot|ExpandDataFileName)\W" \
         --dataicon "paper-clip.gif" \
         --dirmatch "^Testing$" \
         --label "Tests" \
@@ -381,12 +381,12 @@ fi
 # ----------------------------------------------------------------------------
 # Retrieve the VTK 4 tag file.
 
-if test "x$DOWNLOAD_Slicer3_TAGFILE" == "xON" ; then
-  if test "x$Slicer3_TAGFILE" != "x" ; then
+if test "x$DOWNLOAD_Slicer_TAGFILE" == "xON" ; then
+  if test "x$Slicer_TAGFILE" != "x" ; then
       if test "x$WGET_PROG" != "xNOTFOUND" ; then
           $WGET_PROG -nd -nH \
-              "$Slicer3_TAGFILE_REMOTE_DIR/$Slicer3_TAGFILE" \
-              -O "$Slicer3_TAGFILE_DEST_DIR/$Slicer3_TAGFILE"
+              "$Slicer_TAGFILE_REMOTE_DIR/$Slicer_TAGFILE" \
+              -O "$Slicer_TAGFILE_DEST_DIR/$Slicer_TAGFILE"
       fi        
   fi
 fi
@@ -409,7 +409,7 @@ fi
 # Clean the HTML pages to remove the path to the intermediate Doxygen dir.
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_rmpath.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_rmpath.pl \
         --to "$INTERMEDIATE_DOX_DIR" \
         --html "$OUTPUT_DIRECTORY/html"
 fi
@@ -418,7 +418,7 @@ fi
 # clean the HTML pages to remove layout pbs
 
 if test "x$PERL_PROG" != "xNOTFOUND" ; then
-    $PERL_PROG $PATH_TO_Slicer3_DOX_SCRIPTS/doc_cleanhtml.pl \
+    $PERL_PROG $PATH_TO_Slicer_DOX_SCRIPTS/doc_cleanhtml.pl \
         --html "$OUTPUT_DIRECTORY/html"
 fi
 
@@ -465,9 +465,9 @@ fi
 if test "x$RM_PROG" != "xNOTFOUND" ; then
 #    $RM_PROG -fr $INTERMEDIATE_DOX_DIR  # XXX 
 
-    if test "x$DOWNLOAD_Slicer3_TAGFILE" == "xON" ; then
-        if test "x$Slicer3_TAGFILE" != "x" ; then
-            $RM_PROG -f $Slicer3_TAGFILE_DEST_DIR/$Slicer3_TAGFILE
+    if test "x$DOWNLOAD_Slicer_TAGFILE" == "xON" ; then
+        if test "x$Slicer_TAGFILE" != "x" ; then
+            $RM_PROG -f $Slicer_TAGFILE_DEST_DIR/$Slicer_TAGFILE
         fi
     fi
 

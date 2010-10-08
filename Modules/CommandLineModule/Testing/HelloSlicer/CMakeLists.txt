@@ -10,10 +10,10 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 # We need Slicer3
 
 find_package(Slicer3 REQUIRED)
-include(${Slicer3_USE_FILE})
+include(${Slicer_USE_FILE})
 
 # Set reasonable default install prefix and output paths
-# (after setting Slicer3_DIR, delete CMAKE_INSTALL_PREFIX and re-configure)
+# (after setting Slicer_DIR, delete CMAKE_INSTALL_PREFIX and re-configure)
 
 slicer3_set_default_install_prefix_for_external_projects()
 

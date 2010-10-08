@@ -13,11 +13,11 @@
 #  --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp                   \
 #  --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp       \
 #  --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp           \
-#  ../Slicer3-build/bin/Slicer3-real |& tee /tmp/slicerval
+#  ../Slicer-build/bin/Slicer3-real |& tee /tmp/slicerval
 #
 # or, on one line for easy cut and paste:
 #
-#   valgrind -v --gen-suppressions=all --suppressions=./CMake/Slicer3ValgrindSuppressions.supp --suppressions=../Slicer3-lib/VTK/CMake/VTKValgrindSuppressions.supp --suppressions=../Slicer3-lib/KWWidgets/CMake/KWWidgetsValgrindSuppressions.supp --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp ../Slicer3-build/bin/Slicer3-real --no-modules | & tee /tmp/slicerval
+#   valgrind -v --gen-suppressions=all --suppressions=./CMake/Slicer3ValgrindSuppressions.supp --suppressions=../Slicer3-lib/VTK/CMake/VTKValgrindSuppressions.supp --suppressions=../Slicer3-lib/KWWidgets/CMake/KWWidgetsValgrindSuppressions.supp --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp ../Slicer-build/bin/Slicer3-real --no-modules | & tee /tmp/slicerval
 #
 # add --leak-check=full to get report on leaks (not as useful as the VTK leak tool)
 # 
@@ -450,7 +450,7 @@
    fun:_ZN19vtkKWOptionDataBase17AddEntryAsDouble3EPKcS1_Pd
    fun:_ZN14vtkSlicerTheme7InstallEv
    fun:_ZN16vtkKWApplication8SetThemeEP10vtkKWTheme
-   fun:_Z12Slicer3_mainiPPc
+   fun:_Z12Slicer_mainiPPc
    fun:__libc_start_main
 }
 {
@@ -583,7 +583,7 @@
    fun:_ZN25vtkSlicerImageCrossHair2D3NewEv
    fun:_ZN23vtkSlicerViewControlGUI8BuildGUIEP10vtkKWFrame
    fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
-   fun:_Z12Slicer3_mainiPPc
+   fun:_Z12Slicer_mainiPPc
    fun:main
 }
 {
@@ -595,7 +595,7 @@
    fun:_ZN25vtkSlicerImageCrossHair2D3NewEv
    fun:_ZN23vtkSlicerViewControlGUI8BuildGUIEP10vtkKWFrame
    fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
-   fun:_Z12Slicer3_mainiPPc
+   fun:_Z12Slicer_mainiPPc
    fun:main
 }
 {
@@ -607,7 +607,7 @@
    fun:_ZN25vtkSlicerImageCrossHair2D3NewEv
    fun:_ZN23vtkSlicerViewControlGUI8BuildGUIEP10vtkKWFrame
    fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
-   fun:_Z12Slicer3_mainiPPc
+   fun:_Z12Slicer_mainiPPc
    fun:main
 }
 {
@@ -617,7 +617,7 @@
    fun:_ZN25vtkSlicerImageCrossHair2D17IntersectCrossOffEv
    fun:_ZN23vtkSlicerViewControlGUI8BuildGUIEP10vtkKWFrame
    fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
-   fun:_Z12Slicer3_mainiPPc
+   fun:_Z12Slicer_mainiPPc
    fun:main
 }
 {
@@ -630,7 +630,7 @@
    fun:_ZN23vtkSlicerApplicationGUI18CreateMain3DViewerEi
    fun:_ZN23vtkSlicerApplicationGUI15BuildMainViewerEi
    fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
-   fun:_Z12Slicer3_mainiPPc
+   fun:_Z12Slicer_mainiPPc
    fun:main
 }
 {
@@ -643,7 +643,7 @@
    fun:_ZN23vtkSlicerApplicationGUI18CreateMain3DViewerEi
    fun:_ZN23vtkSlicerApplicationGUI15BuildMainViewerEi
    fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
-   fun:_Z12Slicer3_mainiPPc
+   fun:_Z12Slicer_mainiPPc
    fun:main
 }
 {

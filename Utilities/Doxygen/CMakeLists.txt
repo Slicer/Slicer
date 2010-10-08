@@ -14,14 +14,14 @@ IF (BUILD_DOCUMENTATION)
   SET(DOXYGEN_EXTRA_TAGFILE_REMOTE_DIR1 "http://www.itk.org/Doxygen/")
   SET(DOXYGEN_PROJECT_NAME "Slicer3")
   SET(DOXYGEN_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-  SET(DOXYGEN_PROJECT_SOURCE_DIR "${Slicer3_SOURCE_DIR}")
+  SET(DOXYGEN_PROJECT_SOURCE_DIR "${Slicer_SOURCE_DIR}")
   SET(VTK_DOXYGEN_HOME "${CMAKE_CURRENT_SOURCE_DIR}")
   #SET(DOXYGEN_CVSWEB_CHECKOUT "http://public.kitware.com/cgi-bin/cvsweb.cgi/~checkout~/Slicer3/")
   #SET(DOXYGEN_CVSWEB_CHECKOUT_SUFFIX "?cvsroot=Slicer3")
-  SET(DOXYGEN_SOURCE_LOCATIONS_DIR "${Slicer3_SOURCE_DIR}")
+  SET(DOXYGEN_SOURCE_LOCATIONS_DIR "${Slicer_SOURCE_DIR}")
 
-  FILE(GLOB_RECURSE modules_glob RELATIVE "${Slicer3_SOURCE_DIR}"
-    "${Slicer3_SOURCE_DIR}/*/*.h")
+  FILE(GLOB_RECURSE modules_glob RELATIVE "${Slicer_SOURCE_DIR}"
+    "${Slicer_SOURCE_DIR}/*/*.h")
   SET(modules)
   SET(modules_paths)
   FOREACH(mod ${modules_glob})
@@ -40,7 +40,7 @@ IF (BUILD_DOCUMENTATION)
   FOREACH(module ${modules})
     SET(DOXYGEN_SOURCE_LOCATIONS
       "${DOXYGEN_SOURCE_LOCATIONS} \\
-        \"${Slicer3_SOURCE_DIR}/${module}\"")
+        \"${Slicer_SOURCE_DIR}/${module}\"")
   ENDFOREACH(module)
   SET(DOXYGEN_PARSED_INPUT_DIRS)
   FOREACH(module ${modules})
@@ -90,4 +90,4 @@ IF (BUILD_DOCUMENTATION)
 
 ENDIF (BUILD_DOCUMENTATION)
 
-INCLUDE (${Slicer3_SOURCE_DIR}/Utilities/Doxygen/LocalUserOptions.cmake OPTIONAL)
+INCLUDE (${Slicer_SOURCE_DIR}/Utilities/Doxygen/LocalUserOptions.cmake OPTIONAL)

@@ -92,7 +92,7 @@ ENDIF (VTK_WRAP_TCL)
 #   Instantiator_SRCS
 #   "${SlicerBaseLogic_SRCS}"
 #   "VTK_SLICER_BASE_LOGIC_EXPORT"
-#   ${Slicer3_BINARY_DIR}
+#   ${Slicer_BINARY_DIR}
 #   "vtkSlicerBaseLogic.h")
 
 # --------------------------------------------------------------------------
@@ -142,11 +142,11 @@ slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} ${lib_name})
 
 # Apply user-defined properties to the library target.
-IF(Slicer3_LIBRARY_PROPERTIES)
+IF(Slicer_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(${lib_name} PROPERTIES
-     ${Slicer3_LIBRARY_PROPERTIES}
+     ${Slicer_LIBRARY_PROPERTIES}
   )
-ENDIF(Slicer3_LIBRARY_PROPERTIES)
+ENDIF(Slicer_LIBRARY_PROPERTIES)
 
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries 

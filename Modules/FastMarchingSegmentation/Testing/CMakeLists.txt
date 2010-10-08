@@ -15,7 +15,7 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 
 SET(SHORT_TEST_TIMEOUT 300)  ## Sometimes when the GUI crashes, it won't exit properly, and then the tests have to wait until they reach 1500 seconds before they time out
 
-INCLUDE_DIRECTORIES(${Slicer3_SOURCE_DIR}/Base/Logic)
+INCLUDE_DIRECTORIES(${Slicer_SOURCE_DIR}/Base/Logic)
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests 
   ${lib_name} 
@@ -23,14 +23,14 @@ TARGET_LINK_LIBRARIES(${KIT}CxxTests
   )
 
 SET( BaseGUI_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
-SET(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
-SET(TEMP_DIR "${Slicer3_BINARY_DIR}/Testing/Temporary")
+SET(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
+SET(TEMP_DIR "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 IF(WIN32)
   SET(BaseGUI_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
 ENDIF(WIN32)
 
-ADD_TEST(FastMarchingTest1 ${Slicer3_BINARY_DIR}/Slicer3 --launch ${KIT}CxxTests vtkPichonFastMarchingTest)
-ADD_TEST(FastMarchingTest2 ${Slicer3_BINARY_DIR}/Slicer3 --launch ${KIT}CxxTests vtkPichonFastMarchingTest
+ADD_TEST(FastMarchingTest1 ${Slicer_BINARY_DIR}/Slicer3 --launch ${KIT}CxxTests vtkPichonFastMarchingTest)
+ADD_TEST(FastMarchingTest2 ${Slicer_BINARY_DIR}/Slicer3 --launch ${KIT}CxxTests vtkPichonFastMarchingTest
   ${TEST_DATA}/MRMeningioma0.nrrd 132 101 72 10 ${TEMP_DIR}/FastMarchingTest2Output.nrrd)
 

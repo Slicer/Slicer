@@ -1,4 +1,4 @@
-PROJECT(Slicer3)
+PROJECT(Slicer)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 IF(COMMAND CMAKE_POLICY)
@@ -12,8 +12,8 @@ MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 #
 set(Slicer_INSTALL_BIN_DIR "bin")
 set(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
-set(Slicer_INSTALL_INCLUDE_DIR "include/Slicer3")
-set(Slicer_INSTALL_SHARE_DIR "share/Slicer3")
+set(Slicer_INSTALL_INCLUDE_DIR "include/Slicer")
+set(Slicer_INSTALL_SHARE_DIR "share/Slicer")
 set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 
 set(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
@@ -27,7 +27,7 @@ set(Slicer_INSTALL_MODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
 set(Slicer_INSTALL_MODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Modules")
 set(Slicer_INSTALL_MODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Modules")
 
-set(Slicer_HOME "${Slicer3_BINARY_DIR}")
+set(Slicer_HOME "${Slicer_BINARY_DIR}")
 
 #-----------------------------------------------------------------------------
 # Convenient macro allowing to download a file
@@ -120,7 +120,7 @@ option(BUILD_SHARED_LIBS "Build Slicer with shared libraries." ON)
 #
 OPTION(Slicer_WITH_LIBRARY_VERSION "Build with library version information" OFF)
 IF(Slicer_WITH_LIBRARY_VERSION)
-  SET(Slicer3_LIBRARY_PROPERTIES ${Slicer3_LIBRARY_PROPERTIES}
+  SET(Slicer_LIBRARY_PROPERTIES ${Slicer_LIBRARY_PROPERTIES}
     VERSION ${Slicer_VERSION_FULL}
     SOVERSION ${Slicer_VERSION}
   )
@@ -129,14 +129,14 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Slicer macros
 #
-set(Slicer_CMAKE_DIR "${Slicer3_SOURCE_DIR}/CMake" CACHE INTERNAL "")
+set(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 add_subdirectory(CMake)
 # Make sure VTK_CMAKE_DIR is at the beginning so that VTK's FindTCL is
 # used before CMake's FindTCL.
 set(CMAKE_MODULE_PATH
   "${VTK_CMAKE_DIR}"
   "${Slicer_CMAKE_DIR}"
-  ${Slicer3_BINARY_DIR}/CMake
+  ${Slicer_BINARY_DIR}/CMake
   ${CMAKE_MODULE_PATH}
   )
 
@@ -169,30 +169,30 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 #
 slicer3_set_persistent_property(Slicer_Libs_LIBRARIES "")
 slicer3_set_persistent_property(Slicer_Base_LIBRARIES "")
-slicer3_set_persistent_property(Slicer3_Modules_LIBRARIES "")
-slicer3_set_persistent_property(Slicer3_QTModules_LIBRARIES "")
+slicer3_set_persistent_property(Slicer_Modules_LIBRARIES "")
+slicer3_set_persistent_property(Slicer_QTModules_LIBRARIES "")
 
 slicer3_set_persistent_property(Slicer_Libs_INCLUDE_DIRS "")
 slicer3_set_persistent_property(Slicer_Base_INCLUDE_DIRS "")
-slicer3_set_persistent_property(Slicer3_Modules_INCLUDE_DIRS "")
-slicer3_set_persistent_property(Slicer3_QTModules_INCLUDE_DIRS "")
+slicer3_set_persistent_property(Slicer_Modules_INCLUDE_DIRS "")
+slicer3_set_persistent_property(Slicer_QTModules_INCLUDE_DIRS "")
 
 #-----------------------------------------------------------------------------
 # Get sytem name and architecture
 #
-SET(Slicer3_BUILD NA)
+SET(Slicer_BUILD NA)
 INCLUDE(${Slicer_CMAKE_DIR}/DiscoverSystemNameAndBits.cmake)
-MESSAGE(STATUS "Slicer3_BUILD:${Slicer3_BUILD}")
+MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
 # Add the testing directories
 #
 OPTION(BUILD_TESTING "Test the project" ON)
 SET(Slicer_BUILD_TESTING ${BUILD_TESTING})
-SET(LAUNCH_EXE ${Slicer3_BINARY_DIR}/Slicer3 --launch)
+SET(LAUNCH_EXE ${Slicer_BINARY_DIR}/Slicer3 --launch)
 IF(Slicer_BUILD_TESTING)
   #IF(NOT BUILDNAME)
-  #  SET(BUILDNAME "${Slicer3_BUILD}" CACHE STRING "Name of build on the dashboard")
+  #  SET(BUILDNAME "${Slicer_BUILD}" CACHE STRING "Name of build on the dashboard")
   #ELSE()
   #  SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Name of build on the dashboard")
   #ENDIF()
@@ -264,7 +264,7 @@ SET(git_repo http://github.com/commontk/CTK/raw/master/)
 
 IF(Slicer_USE_QT)
   SET(file Utilities/CMake/FindCTK.cmake)
-  downloadFile(${git_repo}/${file} ${Slicer3_BINARY_DIR}/CMake/FindCTK.cmake)
+  downloadFile(${git_repo}/${file} ${Slicer_BINARY_DIR}/CMake/FindCTK.cmake)
 
   FIND_PACKAGE(CTK REQUIRED)
   IF(CTK_FOUND)
@@ -471,7 +471,7 @@ IF(Slicer_USE_KWWIDGETS)
     include(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
   else()
     #MESSAGE("Using local version of VTKVersionMacros for compatibility.")
-    include(${Slicer3_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
+    include(${Slicer_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
   ENDIF()
 
   vtk_get_source_revision_and_date(VTKsource_revision VTKsource_date)
@@ -483,12 +483,12 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # These packages may exist within the Slicer source tree
 #
-set(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
-set(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
-set(GenerateCLP_DIR ${Slicer3_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
-set(GenerateLM_DIR ${Slicer3_BINARY_DIR}/Libs/GenerateLM)
-set(LoadableModule_DIR ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
-set(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
+set(TCLAP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
+set(ModuleDescriptionParser_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
+set(GenerateCLP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
+set(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
+set(LoadableModule_DIR ${Slicer_BINARY_DIR}/Libs/LoadableModule)
+set(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
@@ -568,12 +568,12 @@ INSTALL(FILES
 INCLUDE(${Slicer_CMAKE_DIR}/SlicerTodayMacro.cmake)
 
 # Get build time
-TODAY(Slicer3_BUILDDATE)
+TODAY(Slicer_BUILDDATE)
 
 # Note that Slicer_BUILD is set above
 
-SET(Slicer3_WC_URL NA)
-SET(Slicer3_WC_REVISION 0)
+SET(Slicer_WC_URL NA)
+SET(Slicer_WC_REVISION 0)
 
 # Get SVN info
 FIND_PACKAGE(Subversion)
@@ -614,7 +614,7 @@ add_subdirectory(Resources)
 #-----------------------------------------------------------------------------
 # At this point, let's not have the applications and modules guess which
 # include paths or libraries they need, but use Slicer3_*_LIBRARIES and
-# Slicer3_*_INCLUDE_DIRS instead. As far as modules are concerned, both
+# Slicer_*_INCLUDE_DIRS instead. As far as modules are concerned, both
 # variables are actually set automatically by the import script when building
 # against a Slicer build or installed tree. When in-source, we need to
 # set both variables now. Retrieve them from the persistent property cache
@@ -736,12 +736,12 @@ install(DIRECTORY
 # let's build the launcher for Kww, KwwAndQt and also QtOnly slicer ...
 ADD_SUBDIRECTORY(Utilities/Launcher)
 
-# Compute Slicer3_QT_PLUGIN_PATH used to configure launch.tcl.in
-SET(Slicer3_QT_PLUGIN_PATH "")
+# Compute Slicer_QT_PLUGIN_PATH used to configure launch.tcl.in
+SET(Slicer_QT_PLUGIN_PATH "")
 IF(Slicer_USE_QT)
   SET(designer_launcher_project_name SlicerQT)
   GET_TARGET_PROPERTY(output_directory ${designer_launcher_project_name} LIBRARY_OUTPUT_DIRECTORY)
-  SET(Slicer3_QT_PLUGIN_PATH ${output_directory})
+  SET(Slicer_QT_PLUGIN_PATH ${output_directory})
 
   # on Mac we need to include the path of each Qt Framework in DYLD_LIBRARY_PATH in the launcher.
   IF(APPLE)
@@ -750,7 +750,7 @@ IF(Slicer_USE_QT)
     FOREACH(qtlib ${QTLIBLIST})
       IF(QT_${qtlib}_LIBRARY_RELEASE AND APPLE)
           GET_FILENAME_COMPONENT(QT_FRAMEWORK_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
-          SET(Slicer3_QT_FRAMEWORK_DIRS "lib/Qt/${QT_FRAMEWORK_NAME_tmp}/Versions/4:${Slicer3_QT_FRAMEWORK_DIRS}")
+          SET(Slicer_QT_FRAMEWORK_DIRS "lib/Qt/${QT_FRAMEWORK_NAME_tmp}/Versions/4:${Slicer_QT_FRAMEWORK_DIRS}")
       ENDIF()
     ENDFOREACH()
   ENDIF()
@@ -763,16 +763,16 @@ IF(Slicer_USE_QT)
     INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
     INCLUDE(${Slicer_CMAKE_DIR}/SlicerCTKAppLauncherSettings.cmake)
     ctkAppLauncherConfigure(
-      APPLICATION_PATH ${Slicer3_BINARY_DIR}/bin/SlicerQT-real${CMAKE_EXECUTABLE_SUFFIX}
+      APPLICATION_PATH ${Slicer_BINARY_DIR}/bin/SlicerQT-real${CMAKE_EXECUTABLE_SUFFIX}
       APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
       APPLICATION_NAME Slicer
-      SPLASH_IMAGE_PATH ${Slicer3_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png
+      SPLASH_IMAGE_PATH ${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png
       SPLASH_IMAGE_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
       SPLASHSCREEN_HIDE_DELAY_MS 3000
       ADDITIONAL_HELP_SHORT_ARG "-h"
       ADDITIONAL_HELP_LONG_ARG "--help"
       ADDITIONAL_NOSPLASH_LONG_ARG "--no-splash"
-      DESTINATION_DIR ${Slicer3_BINARY_DIR}
+      DESTINATION_DIR ${Slicer_BINARY_DIR}
       LIBRARY_PATHS_BUILD "${SLICER_LIBRARY_PATHS_BUILD}"
       PATHS_BUILD "${SLICER_PATHS_BUILD}"
       ENVVARS_BUILD "${SLICER_ENVVARS_BUILD}"
@@ -780,13 +780,13 @@ IF(Slicer_USE_QT)
       PATHS_INSTALLED "${SLICER_PATHS_INSTALLED}"
       ENVVARS_INSTALLED "${SLICER_ENVVARS_INSTALLED}"
       )
-    install(PROGRAMS "${Slicer3_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
+    install(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
     install(
-      FILES "${Slicer3_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png" 
+      FILES "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png" 
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
       )
     install(
-      FILES "${Slicer3_BINARY_DIR}/SlicerLauncherSettingsToInstall.ini" 
+      FILES "${Slicer_BINARY_DIR}/SlicerLauncherSettingsToInstall.ini" 
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
       RENAME SlicerLauncherSettings.ini
       )
@@ -795,11 +795,11 @@ IF(Slicer_USE_QT)
 ENDIF(Slicer_USE_QT)
 
 CONFIGURE_FILE(
-  ${Slicer3_SOURCE_DIR}/launch.tcl.in
-  "${Slicer3_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/launch.tcl"
+  ${Slicer_SOURCE_DIR}/launch.tcl.in
+  "${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/launch.tcl"
   )
 INSTALL(
-  FILES "${Slicer3_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/launch.tcl"
+  FILES "${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/launch.tcl"
   DESTINATION ${Slicer_INSTALL_LIB_DIR}
   )
 
@@ -827,33 +827,33 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Setup file for setting custom ctest vars
 CONFIGURE_FILE(
-  ${Slicer3_SOURCE_DIR}/CTestCustom.cmake.in
-  ${Slicer3_BINARY_DIR}/CTestCustom.cmake
+  ${Slicer_SOURCE_DIR}/CTestCustom.cmake.in
+  ${Slicer_BINARY_DIR}/CTestCustom.cmake
   @ONLY
   )
 
 #-----------------------------------------------------------------------------
 # Set up for building against a Slicer build tree and a Slicer installation 
 #
-include(${Slicer3_SOURCE_DIR}/GenerateSlicer3Config.cmake)
+include(${Slicer_SOURCE_DIR}/GenerateSlicer3Config.cmake)
 
-configure_file(${Slicer3_SOURCE_DIR}/CTestConfig.cmake
-  ${Slicer3_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake COPYONLY IMMEDIATE)
+configure_file(${Slicer_SOURCE_DIR}/CTestConfig.cmake
+  ${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake COPYONLY IMMEDIATE)
 
-configure_file(${Slicer3_SOURCE_DIR}/UseSlicer3.cmake.in
-  ${Slicer3_BINARY_DIR}/UseSlicer3.cmake COPYONLY IMMEDIATE)
+configure_file(${Slicer_SOURCE_DIR}/UseSlicer3.cmake.in
+  ${Slicer_BINARY_DIR}/UseSlicer3.cmake COPYONLY IMMEDIATE)
 
-configure_file(${Slicer3_SOURCE_DIR}/CMake/RemoveTemporaryFiles.cmake.in
-  ${Slicer3_BINARY_DIR}/CMake/RemoveTemporaryFiles.cmake @ONLY IMMEDIATE)
-configure_file(${Slicer3_SOURCE_DIR}/CMake/Slicer3SampleBuildTest.cmake.in
-  ${Slicer3_BINARY_DIR}/CMake/Slicer3SampleBuildTest.cmake @ONLY)
+configure_file(${Slicer_SOURCE_DIR}/CMake/RemoveTemporaryFiles.cmake.in
+  ${Slicer_BINARY_DIR}/CMake/RemoveTemporaryFiles.cmake @ONLY IMMEDIATE)
+configure_file(${Slicer_SOURCE_DIR}/CMake/Slicer3SampleBuildTest.cmake.in
+  ${Slicer_BINARY_DIR}/CMake/Slicer3SampleBuildTest.cmake @ONLY)
 
 install(FILES
-  #   ${Slicer3_BINARY_DIR}/Slicer3BuildSettings.cmake
-  ${Slicer3_SOURCE_DIR}/CTestConfig.cmake
-  ${Slicer3_BINARY_DIR}/UseSlicer3.cmake
-  ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake
-  ${Slicer3_BINARY_DIR}/lib/Slicer3/SlicerVersion.txt
+  #   ${Slicer_BINARY_DIR}/Slicer3BuildSettings.cmake
+  ${Slicer_SOURCE_DIR}/CTestConfig.cmake
+  ${Slicer_BINARY_DIR}/UseSlicer3.cmake
+  ${Slicer_BINARY_DIR}/Utilities/Slicer3Config.cmake
+  ${Slicer_BINARY_DIR}/lib/Slicer3/SlicerVersion.txt
   DESTINATION ${Slicer_INSTALL_LIB_DIR}
   COMPONENT Development
   )

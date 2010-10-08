@@ -8,9 +8,9 @@
 #
 
 # The C and C++ flags added by Slicer3 to the cmake-configured flags.
-set(Slicer3_REQUIRED_C_FLAGS "@Slicer3_REQUIRED_C_FLAGS@")
-set(Slicer3_REQUIRED_CXX_FLAGS "@Slicer3_REQUIRED_CXX_FLAGS@")
-set(Slicer3_REQUIRED_LINK_FLAGS "@Slicer3_REQUIRED_LINK_FLAGS@")
+set(Slicer_REQUIRED_C_FLAGS "@Slicer_REQUIRED_C_FLAGS@")
+set(Slicer_REQUIRED_CXX_FLAGS "@Slicer_REQUIRED_CXX_FLAGS@")
+set(Slicer_REQUIRED_LINK_FLAGS "@Slicer_REQUIRED_LINK_FLAGS@")
 
 # The Slicer3 version number
 set(Slicer_VERSION_MAJOR "@Slicer_VERSION_MAJOR@")
@@ -25,7 +25,7 @@ IF(Slicer_USE_QT)
 ENDIF(Slicer_USE_QT)
 
 # Whether Slicer3 was built with shared libraries.
-set(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+set(Slicer_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 
 # Slicer3 options
 set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
@@ -45,7 +45,7 @@ set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
 set(Slicer_Libs_LIBRARIES "@Slicer_Libs_LIBRARIES@")
 
 # Slicer3 Libs library directories.
-set(Slicer3_Libs_LIBRARY_DIRS "@Slicer3_Libs_LIBRARY_DIRS_CONFIG@")
+set(Slicer_Libs_LIBRARY_DIRS "@Slicer_Libs_LIBRARY_DIRS_CONFIG@")
 
 # Slicer3 Libs include file directories.
 set(Slicer_Libs_INCLUDE_DIRS "@Slicer_Libs_INCLUDE_DIRS_CONFIG@")
@@ -55,16 +55,16 @@ set(Slicer_Libs_INCLUDE_DIRS "@Slicer_Libs_INCLUDE_DIRS_CONFIG@")
 set(Slicer_Base_LIBRARIES "@Slicer_Base_LIBRARIES@")
 
 # Slicer3 Base library directories.
-set(Slicer3_Base_LIBRARY_DIRS "@Slicer3_Base_LIBRARY_DIRS_CONFIG@")
+set(Slicer_Base_LIBRARY_DIRS "@Slicer_Base_LIBRARY_DIRS_CONFIG@")
 
 # Slicer3 Base include file directories.
-set(Slicer_Base_INCLUDE_DIRS "@Slicer3_BINARY_DIR@" "@Slicer_Base_INCLUDE_DIRS_CONFIG@")
+set(Slicer_Base_INCLUDE_DIRS "@Slicer_BINARY_DIR@" "@Slicer_Base_INCLUDE_DIRS_CONFIG@")
 
 # The location of the UseSlicer3.cmake file.
-set(Slicer3_USE_FILE "@Slicer3_USE_FILE_CONFIG@")
+set(Slicer_USE_FILE "@Slicer_USE_FILE_CONFIG@")
 
 # The build settings file.
-set(Slicer3_BUILD_SETTINGS_FILE "@Slicer3_BUILD_SETTINGS_FILE@")
+set(Slicer_BUILD_SETTINGS_FILE "@Slicer_BUILD_SETTINGS_FILE@")
 
 # The Slicer3 relative install directories.
 set(Slicer_INSTALL_BIN_DIR "@Slicer_INSTALL_BIN_DIR@")
@@ -92,7 +92,7 @@ IF(Slicer_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
 ENDIF(Slicer_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
 
 # The Slicer3 install prefix (*not* defined in the install tree)
-set(Slicer3_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
+set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 
 # Components needed to build modules from outside a Slicer3 build tree or 
 # from outside a Slicer3 installation tree

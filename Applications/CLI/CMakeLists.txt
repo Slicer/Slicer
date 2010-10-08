@@ -24,7 +24,7 @@ if(BUILD_TESTING)
   set (CLP CLIModule4Test)
 
   set ( ${CLP}_SOURCE ${CLP}.cxx)
-  generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+  generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
   add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
   set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -40,7 +40,7 @@ endif()
 set (CLP DiffusionTensorTest)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -55,7 +55,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 #set (CLP DiffusionWeightedTest)
 
 #set ( ${CLP}_SOURCE ${CLP}.cxx)
-#generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+#generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 #add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 #set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -71,7 +71,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP DiffusionTensorEstimation)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 link_directories(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR} ${SlicerBaseLogic_SOURCE_DIR}
@@ -87,7 +87,7 @@ include_directories(
 set (CLP DiffusionTensorMathematics)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 link_directories(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR})
@@ -100,7 +100,7 @@ include_directories(
 set (CLP OrientImage)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -116,7 +116,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP LinearRegistration)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -130,7 +130,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP RigidRegistration)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -145,7 +145,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP AffineRegistration)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -160,7 +160,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP BSplineDeformableRegistration)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -175,7 +175,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP TestGridTransformRegistration)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -190,7 +190,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP CheckerBoard)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml  ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml  ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
@@ -204,7 +204,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP ResampleVolume)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -219,7 +219,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP PolyDataToLabelmap)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -234,7 +234,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP GaussianBlurImageFilter)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -250,7 +250,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP ConfidenceConnected)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -265,7 +265,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP ExecutionModelTour)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/BillsLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/BillsLogo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} MRML)
@@ -276,7 +276,7 @@ target_link_libraries (${CLP} MRML)
 set (CLP ImageReadDicomWrite)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp (${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp (${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -291,7 +291,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP CurvatureAnisotropicDiffusion)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -306,7 +306,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP GradientAnisotropicDiffusion)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -320,7 +320,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP MedianImageFilter)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -336,7 +336,7 @@ add_subdirectory(DicomToNrrdConverter)
 # set (CLP DWIDicomLoad)
 
 # set ( ${CLP}_SOURCE ${CLP}.cxx)
-# generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+# generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 # add_executable(${CLP} ${${CLP}_SOURCE})
 # slicer3_set_plugins_output_path(${CLP})
 # target_link_libraries (${CLP} ITKIO ITKBasicFilters)
@@ -350,7 +350,7 @@ add_subdirectory(DicomToNrrdConverter)
 set (CLP HistogramMatching)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -365,7 +365,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP OtsuThresholdImageFilter)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -380,7 +380,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP OtsuThresholdSegmentation)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -395,7 +395,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP Subtract)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -410,7 +410,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP Multiply)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -425,7 +425,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP Add)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -440,7 +440,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP Threshold)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -455,7 +455,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP Mask)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -470,7 +470,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP Cast)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -485,7 +485,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP VotingBinaryHoleFillingImageFilter)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -501,7 +501,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP ModelMaker)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 link_directories(${vtkITK_LIB_DIR})
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
@@ -524,7 +524,7 @@ include_directories(
 set (CLP MultipleModelsExample)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 link_directories(${vtkITK_LIB_DIR})
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
@@ -547,7 +547,7 @@ include_directories(
 set (CLP GrayscaleModelMaker)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 link_directories(${vtkITK_LIB_DIR})
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
@@ -564,7 +564,7 @@ include_directories(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 set (CLP MergeModels)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 link_directories(${vtkITK_LIB_DIR})
 include_directories(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
@@ -585,7 +585,7 @@ target_link_libraries (${CLP} ${CLP}Lib
 set (CLP GrayscaleFillHoleImageFilter)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -600,7 +600,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP GrayscaleGrindPeakImageFilter)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -615,7 +615,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP LabelMapSmoothing)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -630,7 +630,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 set (CLP ImageLabelCombine)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ITKIO ITKBasicFilters)
@@ -640,7 +640,7 @@ target_link_libraries (${CLP} ITKIO ITKBasicFilters)
 set (CLP ComputeSUVBodyWeight)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer3_SOURCE_DIR}/Resources/CTSCLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer_SOURCE_DIR}/Resources/CTSCLogo.h)
 
 link_directories(${vtkITK_LIB_DIR})
 add_executable(${CLP} ${${CLP}_SOURCE})
@@ -677,7 +677,7 @@ DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldIma
 )
 
 set ( ${CLP}_SOURCE ${CLP}.cxx ${TRANSFORM_SOURCE} )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -694,7 +694,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 #set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
 #
 #set ( ${CLP}_SOURCE ${CLP}.cxx)
-#generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+#generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
 #
 #add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 #slicer3_set_plugins_output_path(${CLP}Lib)
@@ -717,7 +717,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 #slicer3_set_plugins_output_path(${CLP})
 #target_link_libraries (${CLP} ITKIO ITKBasicFilters)
 #
-#set( Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+#set( Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
 
 ###################
 
@@ -779,7 +779,7 @@ FOREACH(cli_module ${cli_modules})
   ADD_SUBDIRECTORY(${cli_module})
 ENDFOREACH(cli_module)
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
   # installation) and install each target in the developer area (for running 
   # from a build)
@@ -853,7 +853,7 @@ if (Slicer3_SOURCE_DIR)
 
   slicer3_install_plugins(${TARGETS})
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)
 
 #
 

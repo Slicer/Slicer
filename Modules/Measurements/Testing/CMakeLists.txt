@@ -29,4 +29,4 @@ SIMPLE_TEST( vtkMRMLMeasurementsRulerNodeTest1 )
 SIMPLE_TEST( vtkMRMLMeasurementsAngleNodeTest1 )
 
 # add a tcl test 
-# ADD_TEST(MeasurementsTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Modules/Measurements/Testing/Tcl/MeasurementsTest1.tcl)
+# ADD_TEST(MeasurementsTest1 ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Modules/Measurements/Testing/Tcl/MeasurementsTest1.tcl)

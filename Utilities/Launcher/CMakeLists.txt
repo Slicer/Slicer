@@ -39,7 +39,7 @@ set(launcher_source
   "${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}")
 
 SET(launcher_binary
-  "${Slicer3_BINARY_DIR}/Slicer3${CMAKE_EXECUTABLE_SUFFIX}")
+  "${Slicer_BINARY_DIR}/Slicer3${CMAKE_EXECUTABLE_SUFFIX}")
 
 # MESSAGE(STATUS "launcher_platform: ${launcher_platform}")
 # MESSAGE(STATUS "launcher_name: ${launcher_name}")
@@ -55,7 +55,7 @@ endif(EXISTS "${launcher_source}")
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
-  "${Slicer3_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/slicer3.ico"
+  "${Slicer_BINARY_DIR}/${Slicer_INSTALL_SHARE_DIR}/Resources/slicer3.ico"
   COPYONLY)
 install(
   FILES "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"

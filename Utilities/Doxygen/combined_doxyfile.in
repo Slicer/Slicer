@@ -3,7 +3,7 @@
 # modified by S. Barre (Time-stamp: <2002-10-28 15:58:53 barre>
 # -------------------------------------------------------------------------
 
-PROJECT_NAME         = VTK_Slicer3_Combined
+PROJECT_NAME         = VTK_Slicer_Combined
 
 FULL_PATH_NAMES      = YES
 WARN_IF_UNDOCUMENTED = NO
@@ -16,7 +16,7 @@ GENERATE_HTMLHELP    = YES
 GENERATE_LATEX       = NO
 GENERATE_MAN         = NO
 GENERATE_RTF         = NO
-GENERATE_TAGFILE     = "@Slicer3_BINARY_DIR@/Utilities/Doxygen/vtk4.tag"
+GENERATE_TAGFILE     = "@Slicer_BINARY_DIR@/Utilities/Doxygen/vtk4.tag"
 
 PDF_HYPERLINKS       = YES
 
@@ -34,71 +34,71 @@ GRAPHICAL_HIERARCHY  = YES
 
 ALLEXTERNALS         = NO
 
-IMAGE_PATH           = "@Slicer3_SOURCE_DIR@/Utilities/Doxygen" "@Slicer3_BINARY_DIR@/Utilities/Doxygen/contrib" "@Slicer3_SOURCE_DIR@/docs" "@Slicer3_BINARY_DIR@/docs"
+IMAGE_PATH           = "@Slicer_SOURCE_DIR@/Utilities/Doxygen" "@Slicer_BINARY_DIR@/Utilities/Doxygen/contrib" "@Slicer_SOURCE_DIR@/docs" "@Slicer_BINARY_DIR@/docs"
 
-OUTPUT_DIRECTORY     = "@Slicer3_BINARY_DIR@/Utilities/Doxygen/doc"
+OUTPUT_DIRECTORY     = "@Slicer_BINARY_DIR@/Utilities/Doxygen/doc"
 
 INPUT           = \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK" \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3" \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer3_Combined_contributors.dox" \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer3_Combined_version.dox" \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer3_Combined_class2examples.dox" \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer3_Combined_class2tests.dox" \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer3_Combined_events.dox" \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer3_Combined_events2.dox" \
-        "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer3_Combined_index.dox" 
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK" \
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3" \
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer_Combined_contributors.dox" \
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer_Combined_version.dox" \
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer_Combined_class2examples.dox" \
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer_Combined_class2tests.dox" \
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer_Combined_events.dox" \
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer_Combined_events2.dox" \
+        "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_VTK_Slicer_Combined_index.dox" 
 
 #INPUT                = \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Filtering" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Graphics" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Hybrid" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Imaging" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/IO" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Parallel" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Patented" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Rendering" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Common" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Graphics" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Imaging" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/IO" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Parallel" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Rendering"
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Filtering" \
-#          "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Utilities/QVTK" \
-          #"@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer3_contributors.dox" \
-          #"@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer3_version.dox" \
-          #"@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer3_class2examples.dox" \
-          #"@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer3_class2tests.dox" \
-          #"@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer3_events2.dox" \
-          #"@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer3_events.dox" \
-          #"@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer3_index.dox"
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Filtering" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Graphics" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Hybrid" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Imaging" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/IO" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Parallel" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Patented" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Rendering" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Common" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Graphics" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Imaging" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/IO" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Parallel" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Rendering"
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Filtering" \
+#          "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Utilities/QVTK" \
+          #"@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer_contributors.dox" \
+          #"@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer_version.dox" \
+          #"@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer_class2examples.dox" \
+          #"@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer_class2tests.dox" \
+          #"@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer_events2.dox" \
+          #"@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer_events.dox" \
+          #"@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/doc_Slicer_index.dox"
 
 EXCLUDE_PATTERNS     =
 EXCLUDE              = \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkSetGet.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkMarchingSquaresCases.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkMarchingCubesCases.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkWinCE.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkJavaUtil.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkPythonUtil.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkTclUtil.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Hybrid/vtk3DS.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/IO/vtkPLY.h" \
-    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Rendering/vtkFreeTypeFontCache.h"
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Common/vtkSetGet.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/vtCommon/vtkMarchingSquaresCases.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkMarchingCubesCases.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkWinCE.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkJavaUtil.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkPythonUtil.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkTclUtil.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Hybrid/vtk3DS.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/IO/vtkPLY.h" \
-#    "@Slicer3_BINARY_DIR@/Utilities/Doxygen/dox/Rendering/vtkFreeTypeFontCache.h"
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkSetGet.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkMarchingSquaresCases.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkMarchingCubesCases.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkWinCE.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkJavaUtil.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkPythonUtil.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Common/vtkTclUtil.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Hybrid/vtk3DS.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/IO/vtkPLY.h" \
+    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/VTK/Rendering/vtkFreeTypeFontCache.h"
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Slicer3/Common/vtkSetGet.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/vtCommon/vtkMarchingSquaresCases.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkMarchingCubesCases.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkWinCE.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkJavaUtil.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkPythonUtil.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Common/vtkTclUtil.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Hybrid/vtk3DS.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/IO/vtkPLY.h" \
+#    "@Slicer_BINARY_DIR@/Utilities/Doxygen/dox/Rendering/vtkFreeTypeFontCache.h"
 
-# TAGFILES           = "@Slicer3_BINARY_DIR@/Utilities/Doxygen/vtk4-nightly.tag"=http://www.vtk.org/doc/nightly/html
+# TAGFILES           = "@Slicer_BINARY_DIR@/Utilities/Doxygen/vtk4-nightly.tag"=http://www.vtk.org/doc/nightly/html
 
 EXTRACT_ALL          = YES
 EXTRACT_PRIVATE      = NO
@@ -123,9 +123,9 @@ FILE_PATTERNS        = *.h
 RECURSIVE            = YES
 
 HTML_ALIGN_MEMBERS   = YES
-HTML_HEADER          = "@Slicer3_SOURCE_DIR@/Utilities/Doxygen/header.html"
-HTML_FOOTER          = "@Slicer3_SOURCE_DIR@/Utilities/Doxygen/footer.html"
-HTML_STYLESHEET      = "@Slicer3_SOURCE_DIR@/Utilities/Doxygen/doxygen.css"
+HTML_HEADER          = "@Slicer_SOURCE_DIR@/Utilities/Doxygen/header.html"
+HTML_FOOTER          = "@Slicer_SOURCE_DIR@/Utilities/Doxygen/footer.html"
+HTML_STYLESHEET      = "@Slicer_SOURCE_DIR@/Utilities/Doxygen/doxygen.css"
 
 ALPHABETICAL_INDEX   = YES
 COLS_IN_ALPHA_INDEX  = 3

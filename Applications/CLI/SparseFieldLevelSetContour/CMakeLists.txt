@@ -21,7 +21,7 @@ MeshEnergy.cpp MeshEnergy.h MeanCurvatureEnergy.cpp MeanCurvatureEnergy.h Module
 ModuleEntry.cxx vtkComputeLocalGeometry.h vtkComputeLocalGeometry.cxx vtkInitClosedPath.h
 vtkInitClosedPath.cxx vtkLevelSetMeshEvolver.h vtkLevelSetMeshEvolver.cxx)
 
-generateclp(SparseFieldLevelSetContour_SOURCE SparseFieldLevelSetContour.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+generateclp(SparseFieldLevelSetContour_SOURCE SparseFieldLevelSetContour.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_library(${CLP}Lib SHARED ${SparseFieldLevelSetContour_SOURCE})
 slicer3_set_plugins_output_path(${CLP}Lib)
@@ -38,7 +38,7 @@ include_directories(
 
 
 
-if (Slicer3_SOURCE_DIR)
+if (Slicer_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
   # installation) and install each target in the developer area (for running 
   # from a build)
@@ -48,4 +48,4 @@ if (Slicer3_SOURCE_DIR)
     )
   slicer3_install_plugins(${TARGETS})
 
-endif (Slicer3_SOURCE_DIR)
+endif (Slicer_SOURCE_DIR)

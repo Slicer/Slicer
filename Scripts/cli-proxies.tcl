@@ -25,7 +25,7 @@ proc Usage { {msg ""} } {
     
     set msg "$msg\nusage: cli-proxy \[options\] <dir>"
     set msg "$msg\n  <dir> is the the directory to operate on."
-    set msg "$msg\n             Typically Slicer3-build/lib/Slicer3/Plugins"
+    set msg "$msg\n             Typically Slicer-build/lib/Slicer3/Plugins"
     set msg "$msg\n  \[options\] is one of the following:"
     set msg "$msg\n   --slicer <arg>: slicer launcher to use (default ./Slicer3"
     set msg "$msg\n   --tcl : makes tcl proxy scripts (default)"

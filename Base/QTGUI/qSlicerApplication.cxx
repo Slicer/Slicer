@@ -160,7 +160,7 @@ void qSlicerApplicationPrivate::initStyle()
 
   // Init the style of the icons
   // The plugin qSlicerIconEnginePlugin is located in the iconengines
-  // subdirectory of Slicer lib dir (typically lib/Slicer).
+  // subdirectory of Slicer lib dir (typically lib/Slicer3).
   // By adding the path to the lib dir, Qt automatically loads the icon engine
   // plugin
   q->addLibraryPath(q->slicerHome() + "/" + Slicer_INSTALL_LIB_DIR);
