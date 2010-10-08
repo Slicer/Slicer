@@ -374,8 +374,8 @@ option(Slicer_USE_MIDAS "Build Slicer with MIDAS support." OFF)
 
 #-----------------------------------------------------------------------------
 ## OpenIGTLink (Built in Slicer3-lib)
-option(Slicer3_USE_OPENIGTLINK "Build Slicer3 with OpenIGTLink support." OFF)
-IF(Slicer3_USE_OPENIGTLINK)
+option(Slicer_USE_OPENIGTLINK "Build Slicer with OpenIGTLink support." OFF)
+IF(Slicer_USE_OPENIGTLINK)
   find_package(OpenIGTLink REQUIRED)
   include(${OpenIGTLink_USE_FILE})
 ENDIF()

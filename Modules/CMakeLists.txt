@@ -86,7 +86,7 @@ SET(modules
   IGTToolSelector
   )
 
-if(Slicer3_USE_OPENIGTLINK)
+if(Slicer_USE_OPENIGTLINK)
   SET(modules
     ${modules}
     OpenIGTLinkIF
@@ -96,7 +96,7 @@ if(Slicer3_USE_OPENIGTLINK)
     # IGTNavigation
     # OpenCV
     )
-endif(Slicer3_USE_OPENIGTLINK)
+endif(Slicer_USE_OPENIGTLINK)
 
 FOREACH(module ${modules})
   ADD_SUBDIRECTORY(${module})

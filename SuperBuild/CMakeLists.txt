@@ -486,7 +486,7 @@ ExternalProject_Add(${proj}
     # Teem
     -DTeem_DIR:PATH=${CMAKE_BINARY_DIR}/teem-build
     # OpenIGTLink
-    -DSlicer3_USE_OPENIGTLINK:BOOL=ON
+    -DSlicer_USE_OPENIGTLINK:BOOL=ON
     -DOpenIGTLink_DIR:PATH=${CMAKE_BINARY_DIR}/OpenIGTLink-build
     # BatchMake
     -DSlicer_USE_BatchMake=ON
