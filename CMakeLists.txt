@@ -622,7 +622,7 @@ add_subdirectory(Resources)
 # include paths or libraries they need, but use Slicer3_*_LIBRARIES and
 # Slicer3_*_INCLUDE_DIRS instead. As far as modules are concerned, both
 # variables are actually set automatically by the import script when building
-# against a Slicer3 build or installed tree. When in-source, we need to
+# against a Slicer build or installed tree. When in-source, we need to
 # set both variables now. Retrieve them from the persistent property cache
 # since they were collected in each subdir (which makes it impossible to
 # use normal variables, since a new scope is created in each subdir).
@@ -663,9 +663,9 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Modules and CLI
 #
-option(Slicer_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
+option(Slicer_BUILD_CLI "Build Slicer CLI Plugins" ON)
 IF(Slicer_USE_KWWIDGETS)
-  option(Slicer_BUILD_MODULES "Build Slicer3 Modules" ON)
+  option(Slicer_BUILD_MODULES "Build Slicer Modules" ON)
 ENDIF()
 
 include("${Slicer_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
@@ -825,7 +825,7 @@ add_subdirectory(Utilities/Package)
 #-----------------------------------------------------------------------------
 # Documentation
 #
-option(BUILD_DOCUMENTATION "Build Slicer3 Documentation" OFF)
+option(BUILD_DOCUMENTATION "Build Slicer Documentation" OFF)
 IF(BUILD_DOCUMENTATION)
   add_subdirectory(Utilities/Doxygen)
 ENDIF()
@@ -839,7 +839,7 @@ CONFIGURE_FILE(
   )
 
 #-----------------------------------------------------------------------------
-# Set up for building against a Slicer3 build tree and a Slicer3 installation 
+# Set up for building against a Slicer build tree and a Slicer installation 
 #
 include(${Slicer3_SOURCE_DIR}/GenerateSlicer3Config.cmake)
 

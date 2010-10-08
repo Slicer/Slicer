@@ -24,12 +24,12 @@
 #include <Python.h>
 #endif
 
-#ifdef Slicer3_USE_NUMPY
+#ifdef Slicer_USE_NUMPY
 #include "arrayobject.h"
 #endif
 
 
-#ifdef Slicer3_USE_NUMPY
+#ifdef Slicer_USE_NUMPY
 
 static NPY_TYPES getNumpyDataTypeFromVTKDataType( int dataType, bool& success )
 {

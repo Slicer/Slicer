@@ -23,7 +23,7 @@
 #cmakedefine Slicer3_USE_IGSTK
 #cmakedefine Slicer_USE_MIDAS
 #cmakedefine Slicer3_USE_NAVITRACK
-#cmakedefine Slicer3_USE_NUMPY
+#cmakedefine Slicer_USE_NUMPY
 #cmakedefine Slicer_USE_PYTHON
 #cmakedefine Slicer_USE_PYTHONQT
 #cmakedefine Slicer_USE_PYTHONQT_WITH_TCL

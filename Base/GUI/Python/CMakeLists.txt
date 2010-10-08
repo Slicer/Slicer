@@ -24,9 +24,9 @@ endif(WIN32)
 # --------------------------------------------------------------------------
 # Numpy?
 
-option(Slicer3_USE_NUMPY "Enable Numpy/Scipy support in Python" OFF) 
+option(Slicer_USE_NUMPY "Enable Numpy/Scipy support in Python" OFF) 
 
-if(Slicer3_USE_NUMPY)
+if(Slicer_USE_NUMPY)
   find_path(PYTHON_NUMPY arrayobject.h
     PATHS
     ${PYTHON_INCLUDE_PATH}
@@ -47,16 +47,16 @@ if(Slicer3_USE_NUMPY)
     DOC "Path to arrayobject.h for numpy module"
     NO_SYSTEM_ENVIRONMENT_PATH
     )
-endif(Slicer3_USE_NUMPY)
+endif(Slicer_USE_NUMPY)
 
-if(Slicer3_USE_NUMPY)
+if(Slicer_USE_NUMPY)
   include_directories(
     ${PYTHON_NUMPY}
     ${PYTHON_NUMPY}/../
     ${PYTHON_NUMPY}/../../../numarray/numpy
     ${PYTHON_NUMPY}/include/numpy
     )
-endif(Slicer3_USE_NUMPY)
+endif(Slicer_USE_NUMPY)
 
 
 # --------------------------------------------------------------------------

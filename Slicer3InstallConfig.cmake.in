@@ -32,7 +32,7 @@ set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
 set(Slicer3_USE_IGSTK "@Slicer3_USE_IGSTK@")
 set(Slicer_USE_MIDAS "@Slicer_USE_MIDAS@")
 set(Slicer3_USE_NAVITRACK "@Slicer3_USE_NAVITRACK@")
-set(Slicer3_USE_NUMPY "@Slicer3_USE_NUMPY@")
+set(Slicer_USE_NUMPY "@Slicer_USE_NUMPY@")
 set(Slicer_USE_PYTHON "@Slicer_USE_PYTHON@")
 set(Slicer3_USE_OPENTRACKER "@Slicer3_USE_OPENTRACKER@")
 
