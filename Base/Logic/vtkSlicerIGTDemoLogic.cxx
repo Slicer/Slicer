@@ -111,7 +111,7 @@ void vtkSlicerIGTDemoLogic::SetNumberOfPoints(int no)
 void vtkSlicerIGTDemoLogic::Init(char *configfile)
 {
 
-#ifdef Slicer3_USE_OPENTRACKER
+#ifdef Slicer_USE_OPENTRACKER
     fprintf(stderr,"config file: %s\n",configfile);
     this->context = new Context(1); 
     // get callback module from the context
@@ -133,7 +133,7 @@ void vtkSlicerIGTDemoLogic::Init(char *configfile)
 
 void vtkSlicerIGTDemoLogic::CloseConnection()
 {
-#ifdef Slicer3_USE_OPENTRACKER
+#ifdef Slicer_USE_OPENTRACKER
     context->close();
 #endif
 
@@ -163,7 +163,7 @@ void vtkSlicerIGTDemoLogic::quaternion2xyz(float* orientation, float *normal, fl
 
 void vtkSlicerIGTDemoLogic::PollRealtime()
 {
-#ifdef Slicer3_USE_OPENTRACKER
+#ifdef Slicer_USE_OPENTRACKER
     context->pushEvents();       // push event and
     context->pullEvents();       // pull event 
     context->stop();
@@ -171,7 +171,7 @@ void vtkSlicerIGTDemoLogic::PollRealtime()
 }
 
 
-#ifdef Slicer3_USE_OPENTRACKER
+#ifdef Slicer_USE_OPENTRACKER
 void vtkSlicerIGTDemoLogic::callbackF(const Node&, const Event &event, void *data)
 {
     float position[3];

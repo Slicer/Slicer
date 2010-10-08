@@ -30,7 +30,7 @@
 
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-#ifdef Slicer3_USE_OPENTRACKER
+#ifdef Slicer_USE_OPENTRACKER
 #include "OpenTracker/OpenTracker.h"
 #include "OpenTracker/common/CallbackModule.h"
 using namespace ot;
@@ -62,7 +62,7 @@ public:
     void CloseConnection();
     void PollRealtime();
 
-#ifdef Slicer3_USE_OPENTRACKER
+#ifdef Slicer_USE_OPENTRACKER
     static void callbackF(const Node&, const Event &event, void *data);
 #endif
 
@@ -88,7 +88,7 @@ protected:
     vtkSlicerIGTDemoLogic(const vtkSlicerIGTDemoLogic&);
     void operator=(const vtkSlicerIGTDemoLogic&);
 
-#ifdef Slicer3_USE_OPENTRACKER
+#ifdef Slicer_USE_OPENTRACKER
     Context *context;
 #endif
 

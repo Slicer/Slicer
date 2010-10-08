@@ -27,7 +27,7 @@
 #cmakedefine Slicer_USE_PYTHON
 #cmakedefine Slicer_USE_PYTHONQT
 #cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
-#cmakedefine Slicer3_USE_OPENTRACKER
+#cmakedefine Slicer_USE_OPENTRACKER
 #cmakedefine Slicer_USE_QT
 #cmakedefine Slicer_USE_KWWIDGETS
 #cmakedefine Slicer3_USE_VTK_CVSHEAD
