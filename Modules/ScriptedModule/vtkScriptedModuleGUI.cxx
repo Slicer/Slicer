@@ -18,7 +18,7 @@ Version:   $Revision: 979 $
 // KWWidgets includes
 #include "vtkKWApplication.h"
 
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+#include "vtkSlicerConfigure.h" /* Slicer_USE_* */
 
 // VTK includes
 #include <vtkObjectFactory.h>

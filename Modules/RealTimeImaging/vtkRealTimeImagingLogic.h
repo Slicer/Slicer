@@ -38,7 +38,7 @@
 #include "vtkPointData.h"
 #include "vtkSlicerColorLogic.h"
 
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+#include "vtkSlicerConfigure.h" /* Slicer_USE_* */
 
 #ifdef Slicer_USE_NAVITRACK
 #include "OpenTracker/OpenTracker.h"

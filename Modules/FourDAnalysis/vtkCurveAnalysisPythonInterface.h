@@ -21,7 +21,7 @@
 
 #include "vtkMRMLCurveAnalysisNode.h"
 
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+#include "vtkSlicerConfigure.h" /* Slicer_USE_* */
 
 
 #ifdef FourDAnalysis_USE_SCIPY

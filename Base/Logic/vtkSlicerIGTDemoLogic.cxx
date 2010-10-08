@@ -21,7 +21,7 @@
 #include "vtkLandmarkTransform.h"
 #include "vtkCylinderSource.h"
 
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+#include "vtkSlicerConfigure.h" /* Slicer_USE_* */
 
 vtkCxxRevisionMacro(vtkSlicerIGTDemoLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerIGTDemoLogic);

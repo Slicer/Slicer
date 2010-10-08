@@ -29,7 +29,7 @@
 // and build options to be part of the module
 //
 #include "vtkScriptedModuleGUI.h"
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+#include "vtkSlicerConfigure.h" /* Slicer_USE_* */
 
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationGUI.h"

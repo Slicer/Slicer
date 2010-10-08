@@ -1,4 +1,4 @@
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+#include "vtkSlicerConfigure.h" /* Slicer_USE_* */
 
 
 #include "vtkType.h"

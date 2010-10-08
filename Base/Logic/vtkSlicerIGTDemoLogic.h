@@ -28,7 +28,7 @@
 #include "vtkPoints.h"
 #include "vtkMatrix4x4.h"
 
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+#include "vtkSlicerConfigure.h" /* Slicer_USE_* */
 
 #ifdef Slicer_USE_OPENTRACKER
 #include "OpenTracker/OpenTracker.h"
