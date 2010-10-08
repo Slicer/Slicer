@@ -28,7 +28,7 @@ ENDIF(Slicer3_USE_QT)
 set(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 
 # Slicer3 options
-set(Slicer3_USE_BatchMake "@Slicer3_USE_BatchMake@")
+set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
 set(Slicer3_USE_MIDAS "@Slicer3_USE_MIDAS@")
 set(Slicer3_USE_NUMPY "@Slicer3_USE_NUMPY@")
 set(Slicer3_USE_PYTHON "@Slicer3_USE_PYTHON@")

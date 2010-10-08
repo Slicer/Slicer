@@ -362,8 +362,8 @@ ENDIF()
 
 #-----------------------------------------------------------------------------
 ## BatchMake
-option(Slicer3_USE_BatchMake "Build Slicer3 with BatchMake support." OFF)
-IF(Slicer3_USE_BatchMake)
+option(Slicer_USE_BatchMake "Build Slicer with BatchMake support." OFF)
+IF(Slicer_USE_BatchMake)
   find_package(BatchMake REQUIRED)
   include(${BatchMake_USE_FILE})
 ENDIF()

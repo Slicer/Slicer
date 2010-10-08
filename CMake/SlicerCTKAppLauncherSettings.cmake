@@ -55,7 +55,7 @@ IF(Slicer3_USE_PYTHONQT_WITH_TCL)
   ENDIF()
 ENDIF()
 
-IF(Slicer3_USE_BatchMake)
+IF(Slicer_USE_BatchMake)
   LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${BatchMake_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
     )
@@ -174,7 +174,7 @@ IF(Slicer3_USE_OPENIGTLINK)
     )
 ENDIF()
 
-IF(Slicer3_USE_BatchMake)
+IF(Slicer_USE_BatchMake)
   LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     ./lib/BatchMake
     ./lib/bmModuleDescriptionParser

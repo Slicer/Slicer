@@ -769,9 +769,9 @@ if(Slicer3_USE_MIDAS)
   SET(cli_modules ${cli_modules} MIDASApplications)
 endif(Slicer3_USE_MIDAS)
 
-if(Slicer3_USE_BatchMake)
+if(Slicer_USE_BatchMake)
   SET(cli_modules ${cli_modules} BatchMakeApplications)
-endif(Slicer3_USE_BatchMake)
+endif(Slicer_USE_BatchMake)
 
 #SET(cli_modules ${cli_modules} Utah)
 
