@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Applications/CLI/OrientImage.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Applications/CLI/OrientImage.cxx $
   Language:  C++
   Date:      $Date: 2007-12-20 18:30:38 -0500 (Thu, 20 Dec 2007) $
   Version:   $Revision: 5310 $

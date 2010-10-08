@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesVectorReaderFile.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesVectorReaderFile.cxx $
   Date:      $Date: 2007-08-15 17:04:27 -0400 (Wed, 15 Aug 2007) $
   Version:   $Revision: 4068 $
 

@@ -9,7 +9,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkSlicerGPURayCastVolumeTextureMapper3D
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/ $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/ $
   Date:      $Date: 2009-01-07 09:26:53 -0500 (Tue, 30 Jan 2009) $
   Version:   $Revision:  $
 

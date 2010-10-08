@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   Loadable Module
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/branches/tgl_loadable_modules/Libs/LoadableModuleDescriptionParser/LoadableModuleDescriptionParser.cxx $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer4/branches/tgl_loadable_modules/Libs/LoadableModuleDescriptionParser/LoadableModuleDescriptionParser.cxx $
   Date:      $Date: 2007-12-19 08:55:14 -0500 (Wed, 19 Dec 2007) $
   Version:   $Revision: 5275 $
 
