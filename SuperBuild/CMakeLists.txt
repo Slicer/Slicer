@@ -262,11 +262,11 @@ option(Slicer_USE_PYTHON "Build Slicer with Python support" OFF)
 
 if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
 
-  option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (builds CLapack)." ON)
+  option(Slicer_BUILD_NUMPY "Build Slicer with NumPy (builds CLapack)." ON)
 
   # Work in progress ...
-  #if(Slicer3_BUILD_NUMPY)
-  #  option(Slicer3_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
+  #if(Slicer_BUILD_NUMPY)
+  #  option(Slicer_BUILD_SCIPY "Build Slicer with SciPy (requires NumPy)" ON)
   #endif()
   
 endif()
@@ -378,13 +378,13 @@ endif()
 
 if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   include(External_Python26)
-  if(Slicer3_BUILD_NUMPY)
+  if(Slicer_BUILD_NUMPY)
     include(External_CLAPACK)
     include(External_NUMPY)
     include(External_weave)
-    if(Slicer3_BUILD_SCIPY)
+    if(Slicer_BUILD_SCIPY)
       include(External_SciPy)
-    endif(Slicer3_BUILD_SCIPY)
+    endif(Slicer_BUILD_SCIPY)
   endif()
 endif()
 
@@ -435,9 +435,9 @@ endif()
 
 if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   list(APPEND slicer_DEPENDENCIES python)
-  if(Slicer3_BUILD_NUMPY)
+  if(Slicer_BUILD_NUMPY)
     list(APPEND slicer_DEPENDENCIES NUMPY)
-    if(Slicer3_BUILD_SCIPY)
+    if(Slicer_BUILD_SCIPY)
       list(APPEND slicer_DEPENDENCIES scipy)
     endif()
   endif()
@@ -505,7 +505,7 @@ ExternalProject_Add(${proj}
     -DSlicer_USE_PYTHONQT:BOOL=${Slicer_USE_PYTHONQT}
     -DSlicer_USE_PYTHONQT_WITH_TCL:BOOL=${Slicer_USE_PYTHONQT_WITH_TCL}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF
-    -DSlicer3_USE_NUMPY:BOOL=${Slicer3_BUILD_NUMPY}
+    -DSlicer3_USE_NUMPY:BOOL=${Slicer_BUILD_NUMPY}
     -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
     -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
     -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
