@@ -24,7 +24,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
   # We create a prefix for the test executable that accomplishes this
   # wrapping.
   ############################################################################
-  set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+  set( Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
   set( WRAPPED_EXE_PREFIX --launch ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   if(WIN32)
     set(WRAPPED_EXE_PREFIX ${WRAPPED_EXE_PREFIX}/${CMAKE_BUILD_TYPE})
@@ -34,14 +34,14 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
 #  target_link_libraries(vtkRebinMaterialPropertyTest mimxFilter
 #    vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon 
 #    ITKIO ITKBasicFilters ITKCommon itkvnl_algo itkvnl)
-#  add_test(vtkRebinMaterialPropertyTest ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/vtkRebinMaterialPropertyTest)
+#  add_test(vtkRebinMaterialPropertyTest ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/vtkRebinMaterialPropertyTest)
 
 
   add_executable(itkImageToVtkUnstructuredGridTest itkImageToVtkUnstructuredGridTest.cxx)
   target_link_libraries(itkImageToVtkUnstructuredGridTest mimxFilter 
     vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon 
     ITKIO ITKBasicFilters ITKCommon itkvnl_algo itkvnl)
-  add_test(MimxitkImageToVtkUnstructuredGridTest ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/itkImageToVtkUnstructuredGridTest)
+  add_test(MimxitkImageToVtkUnstructuredGridTest ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/itkImageToVtkUnstructuredGridTest)
 
 
   add_executable(MainAddUnstructuredHexahedronGridCellTest MainAddUnstructuredHexahedronGridCellTest.cxx)
@@ -49,7 +49,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxAddUnstructuredHexahedronGridCellTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainAddUnstructuredHexahedronGridCellTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainAddUnstructuredHexahedronGridCellTest
     ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk
     )
 
@@ -58,7 +58,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxDeleteUnstructuredHexahedronGridCellTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainDeleteUnstructuredHexahedronGridCellTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainDeleteUnstructuredHexahedronGridCellTest
     ${MimxTesting_SOURCE_DIR}/Data/BBox6.vtk
     )
 
@@ -67,7 +67,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxMirrorUnstructuredHexahedronGridCellTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainMirrorUnstructuredHexahedronGridCellTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainMirrorUnstructuredHexahedronGridCellTest
     ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk
     )
 
@@ -76,7 +76,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxUnstructuredHexahedronGridCellTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainSplitUnstructuredHexahedronGridCellTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainSplitUnstructuredHexahedronGridCellTest
     ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk
     )
 ############## Re-Enable when Meshing Integratation is completed
@@ -85,7 +85,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
 #                      vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
 #  add_test(
 #    MimxApplyImageBasedMaterialPropertiesTest
-#    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainApplyImageBasedMaterialPropertiesTest
+#    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainApplyImageBasedMaterialPropertiesTest
 #    ${MimxTesting_SOURCE_DIR}/Data/CA05042124RFinal.hdr 
 #    ${MimxTesting_SOURCE_DIR}/Data/CAfemesh.vtk
 #    )
@@ -96,7 +96,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxBoundingBoxFromUnstructuredGridTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainBoundingBoxFromUnstructuredGridTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainBoundingBoxFromUnstructuredGridTest
     ${MimxTesting_SOURCE_DIR}/Data/dividedbb.vtk 
     ${MimxTesting_SOURCE_DIR}/Data/dividedmorphsmooth.vtk
     )
@@ -107,7 +107,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxEquivalancePointsTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainEquivalancePointsTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainEquivalancePointsTest
     ${MimxTesting_SOURCE_DIR}/Data/Clubfoot_Link_38_Mesh.vtk
     )
 
@@ -117,7 +117,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxExtractSurfaceTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainExtractSurfaceTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainExtractSurfaceTest
     ${MimxTesting_SOURCE_DIR}/Data/BBox2.vtk
     )
 
@@ -126,7 +126,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxBoundingBoxFromBoundsTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainBoundingBoxFromBoundsTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainBoundingBoxFromBoundsTest
     ${MimxTesting_SOURCE_DIR}/Data/bbox2_modified.vtk
     )
 
@@ -136,7 +136,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxExtractStructuredGridEdgeTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainExtractStructuredGridEdgeTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainExtractStructuredGridEdgeTest
     ${MimxTesting_SOURCE_DIR}/Data/sgrid.vtk
     )
 
@@ -145,7 +145,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxExtractStructuredGridFaceTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainExtractStructuredGridFaceTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainExtractStructuredGridFaceTest
     ${MimxTesting_SOURCE_DIR}/Data/sgrid.vtk
     )
 
@@ -155,7 +155,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxGeometryFilterTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainGeometryFilterTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainGeometryFilterTest
     ${MimxTesting_SOURCE_DIR}/Data/Vert_Bod.vtk
     )
 
@@ -164,7 +164,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxBoundingBoxToStructuredGridsTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainBoundingBoxToStructuredGridsTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainBoundingBoxToStructuredGridsTest
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_seeds.vtk
     )
 
@@ -173,7 +173,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxMorphStructuredGridTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainMorphStructuredGridTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainMorphStructuredGridTest
     ${MimxTesting_SOURCE_DIR}/Data/BoundingBox1.vtk
     ${MimxTesting_SOURCE_DIR}/Data/lumbar_smoothed_04075.stl
     )
@@ -183,7 +183,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxUnstructuredToStructuredGridTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainUnstructuredToStructuredGridTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainUnstructuredToStructuredGridTest
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_mesh.vtk
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_seeds.vtk
     )
@@ -193,7 +193,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxMergePointsTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainMergePointsTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainMergePointsTest
     ${MimxTesting_SOURCE_DIR}/Data/BBoxMerge.vtk
     )
 
@@ -202,7 +202,7 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon )
   add_test(
     MimxRecalculateInteriorNodesTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/MainRecalculateInteriorNodesTest
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/MainRecalculateInteriorNodesTest
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_mesh.vtk
     ${MimxTesting_SOURCE_DIR}/Data/1P-MD05010306R_2Box_seeds.vtk
     )

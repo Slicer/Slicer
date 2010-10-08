@@ -717,7 +717,7 @@ target_link_libraries (${CLP} ${CLP}Lib)
 #slicer3_set_plugins_output_path(${CLP})
 #target_link_libraries (${CLP} ITKIO ITKBasicFilters)
 #
-#set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+#set( Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 ###################
 

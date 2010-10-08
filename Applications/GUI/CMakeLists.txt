@@ -20,14 +20,14 @@ if(NOT WIN32)
   endforeach(dependency)
 endif(NOT WIN32)
 
-set(Slicer3_EXE_SUFFIX)
-set(Slicer3_EXE_INSTALL ${Slicer_INSTALL_BIN_DIR})
+set(Slicer_EXE_SUFFIX)
+set(Slicer_EXE_INSTALL ${Slicer_INSTALL_BIN_DIR})
 if(BUILD_SHARED_LIBS)
   set(Slicer3_NEED_SHARED_FORWARD 1)
-  set(Slicer3_EXE_SUFFIX -real)
-  set(Slicer3_EXE_INSTALL ".")
+  set(Slicer_EXE_SUFFIX -real)
+  set(Slicer_EXE_INSTALL ".")
   set(Slicer3_FORWARD_DIR_BUILD "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-  set(Slicer3_FORWARD_DIR_INSTALL "${Slicer3_EXE_INSTALL}")
+  set(Slicer3_FORWARD_DIR_INSTALL "${Slicer_EXE_INSTALL}")
   if(WIN32)
     set(Slicer3_FORWARD_PATH_BUILD 
       "\"${Slicer3_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST,\"${Teem_DIR}/bin\" CONFIG_DIR_POST,\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
@@ -66,12 +66,12 @@ if(BUILD_SHARED_LIBS)
 endif(BUILD_SHARED_LIBS)
 
 # Add main server executables.
-set(Slicer3_EXE_LIST Slicer3)
+set(Slicer_EXE_LIST Slicer3)
 
 # Add shared link forwarding executables if necessary.
 if(Slicer3_NEED_SHARED_FORWARD)
-  foreach(slicer_exe ${Slicer3_EXE_LIST})
-    set(Slicer3_FORWARD_EXE ${slicer_exe}${Slicer3_EXE_SUFFIX})
+  foreach(slicer_exe ${Slicer_EXE_LIST})
+    set(Slicer3_FORWARD_EXE ${slicer_exe}${Slicer_EXE_SUFFIX})
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3-forward.c.in
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c
@@ -183,13 +183,13 @@ option(Slicer3_BUILD_WIN32_CONSOLE
   )
 
 if(Slicer3_BUILD_WIN32_CONSOLE)
-  add_executable(Slicer3${Slicer3_EXE_SUFFIX} 
+  add_executable(Slicer3${Slicer_EXE_SUFFIX} 
     ${SRC} 
     ${RC_FILENAME}
     )
 else(Slicer3_BUILD_WIN32_CONSOLE)
   add_executable(
-    Slicer3${Slicer3_EXE_SUFFIX} WIN32 
+    Slicer3${Slicer_EXE_SUFFIX} WIN32 
     ${SRC} 
     ${RC_FILENAME}
     )
@@ -216,7 +216,7 @@ endif(LABELSTATISTICS)
 # Slicer3_LIBRARIES right now because of the Curl lib RemoteIO is using is
 # STATIC, but that's fixed in 2.6.
 #
-target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
+target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
   ${Slicer_Libs_LIBRARIES}
   ${Slicer_Base_LIBRARIES}
   RemoteIO
@@ -225,7 +225,7 @@ target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
   )
 
 if(Slicer_BUILD_MODULES)
-  target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
+  target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
     Volumes
     CommandLineModule
     ScriptedModule
@@ -237,27 +237,27 @@ else(Slicer_BUILD_MODULES)
   # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
   # so that we can have CLI, without all the other modules
   if(Slicer_BUILD_CLI)
-    target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
+    target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
       CommandLineModule
       )
   endif(Slicer_BUILD_CLI)
 endif(Slicer_BUILD_MODULES)
 
 if(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
-  target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} SlicerBaseGUIPython)
+  target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} SlicerBaseGUIPython)
   if(WIN32 AND PYTHON_DEBUG_LIBRARIES)
-    target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
+    target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
       debug ${PYTHON_DEBUG_LIBRARIES}
       optimized ${PYTHON_LIBRARIES})
   else(WIN32 AND PYTHON_DEBUG_LIBRARIES)
-    target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} ${PYTHON_LIBRARIES})
+    target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} ${PYTHON_LIBRARIES})
   endif(WIN32 AND PYTHON_DEBUG_LIBRARIES)
   if(NOT WIN32)
     # Linux/Unix requires util library, but mac doesn't
     if(APPLE OR UNIX)
-      target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX})
+      target_link_libraries(Slicer3${Slicer_EXE_SUFFIX})
     else(APPLE OR UNIX)
-      target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} util)
+      target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} util)
     endif(APPLE OR UNIX)
   endif(NOT WIN32)
 endif(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
@@ -265,7 +265,7 @@ endif(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
 # --------------------------------------------------------------------------
 # Install
 #
-install(TARGETS Slicer3${Slicer3_EXE_SUFFIX}
+install(TARGETS Slicer3${Slicer_EXE_SUFFIX}
   DESTINATION ${Slicer_INSTALL_BIN_DIR}
   COMPONENT Runtime)
 

@@ -9,7 +9,7 @@ include( CTest )
 
 
 # ResampleDTI tests
-set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 set(ValgrindScript "${Slicer3_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
 
@@ -17,7 +17,7 @@ if(USE_VALGRIND)
   set(Launcher_Command ${ValgrindScript})
   set(TestLocation "${Slicer3_BINARY_DIR}/bin/")
 else(USE_VALGRIND)
-  set(Launcher_Command ${Slicer3_EXE} --launch)
+  set(Launcher_Command ${Slicer_EXE} --launch)
   set(TestLocation "")
 endif(USE_VALGRIND)
 

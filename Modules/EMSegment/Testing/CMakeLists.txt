@@ -98,7 +98,7 @@ if(NOT DISABLE_CXX_TESTING)
   # WRAPPED_EXE_PREFIX: path to command line utilities that install with
   # slicer
   ############################################################################
-  set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3)
+  set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3)
   set(WRAPPED_TEST_EXE_PREFIX --launch ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   set(WRAPPED_EXE_PREFIX --launch ${Slicer3_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR})
   if(WIN32)
@@ -115,7 +115,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does the mrml manager's api function correctly?
   add_test(
     vtkEMSegmentMRMLManagerTest
-    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentMRMLManagerTest
+    ${Slicer_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentMRMLManagerTest
     ${EMSegment_TUTORIAL_DIR}/Template_small_normalizationOn.mrml
     "EMSegment Tutorial Template"
     )
@@ -123,7 +123,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does the preprocessing function correctly?
   #add_test(
   #  vtkEMSegmentPreprocessingManagerTest
-  #  ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentPreprocessingManagerTest
+  #  ${Slicer_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentPreprocessingManagerTest
   #  ${EMSegment_TUTORIAL_DIR}/Template_small_normalizationOn.mrml
   #  "EMSegment Tutorial Template"
   #  )
@@ -132,7 +132,7 @@ if(NOT DISABLE_CXX_TESTING)
   # results.  This is a legacy test that should not be removed.
   add_test(
     vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmallRead
-    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
+    ${Slicer_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     ${EMSegment_TUTORIAL_DIR}
     "EMSegment Tutorial Template"
@@ -142,7 +142,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Build parameters from scratch and run the segmentation
   #add_test(
   #  vtkEMSegmentBuildAndRunNewSegmentationParameters001
-  #  ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentationParameters001
+  #  ${Slicer_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentationParameters001
   #  ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/R.mhd
   #  ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/G.mhd
   #  ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/B.mhd
@@ -152,7 +152,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does help work right?
   add_test(
     EMSegCL_Help
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --help
     )
   set_tests_properties(
@@ -164,7 +164,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does the version argument work right?
   add_test(
     EMSegCL_Version
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --version
     )
   set_tests_properties(
@@ -177,7 +177,7 @@ if(NOT DISABLE_CXX_TESTING)
     # Does the segmenter work and give the correct answer using the
     # Tutorial2 default parameters (this includes registration)?
     set(test_name        "EMSegCL_RunReg")
-    set(test_exe         "${Slicer3_EXE}")
+    set(test_exe         "${Slicer_EXE}")
     set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
     set(test_cmp_file    "${test_file_prefix}.raw.gz")
     set(test_std_file    "${EMSegment_TUTORIAL2_DIR}/StandardData/Segmentation_med.raw.gz")
@@ -203,7 +203,7 @@ if(NOT DISABLE_CXX_TESTING)
     # Does the segmenter work and give the correct answer using the
     # Tutorial2 default parameters with no registration?
     set(test_name        "EMSegCL_RunRegNoReg")
-    set(test_exe         "${Slicer3_EXE}")
+    set(test_exe         "${Slicer_EXE}")
     set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
     set(test_cmp_file    "${test_file_prefix}.raw.gz")
     set(test_std_file    "${EMSegment_TUTORIAL2_DIR}/StandardData/Segmentation_NoReg_med.raw.gz")
@@ -229,7 +229,7 @@ if(NOT DISABLE_CXX_TESTING)
     # Does the segmenter work and give the correct answer using the
     # Tutorial2 default parameters with only T2T registration?
     set(test_name        "EMSegCL_RunRegT2T")
-    set(test_exe         "${Slicer3_EXE}")
+    set(test_exe         "${Slicer_EXE}")
     set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
     set(test_cmp_file    "${test_file_prefix}.raw.gz")
     set(test_std_file    "${EMSegment_TUTORIAL2_DIR}/StandardData/Segmentation_T2TReg_med.raw.gz")
@@ -255,7 +255,7 @@ if(NOT DISABLE_CXX_TESTING)
     # Does the segmenter work and give the correct answer using the
     # Tutorial2 default parameters with only A2T registration?
     set(test_name        "EMSegCL_RunRegA2T")
-    set(test_exe         "${Slicer3_EXE}")
+    set(test_exe         "${Slicer_EXE}")
     set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
     set(test_cmp_file    "${test_file_prefix}.raw.gz")
     set(test_std_file    "${EMSegment_TUTORIAL2_DIR}/StandardData/Segmentation_A2TReg_med.raw.gz")
@@ -282,7 +282,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does the segmenter work and give the correct answer using the
   # default parameters from the small template scene.
   set(test_name        "EMSegCL_RunDefaultNodes")
-  set(test_exe         "${Slicer3_EXE}")
+  set(test_exe         "${Slicer_EXE}")
   set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
   set(test_cmp_file    "${test_file_prefix}.raw")
   set(test_std_file    "${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw")
@@ -309,7 +309,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does the segmenter work and give the correct answer when
   # normalization is turned on?
   set(test_name        "EMSegCL_RunNormalize")
-  set(test_exe         "${Slicer3_EXE}")
+  set(test_exe         "${Slicer_EXE}")
   set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
   set(test_cmp_file    "${test_file_prefix}.raw")
   set(test_std_file    "${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small_normalizationOn.raw")
@@ -336,7 +336,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does the segmenter work and give the correct answer when
   # everything is specified on the command line?
   set(test_name        "EMSegCL_RunSetEverything")
-  set(test_exe         "${Slicer3_EXE}")
+  set(test_exe         "${Slicer_EXE}")
   set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
   set(test_cmp_file    "${test_file_prefix}.raw")
   set(test_std_file    "${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.raw")
@@ -368,7 +368,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Is multithreading disabled when the command line flag is given?
   add_test(
     EMSegCL_DisableMultithreading
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
     --disableMultithreading 
@@ -382,7 +382,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does it fail elegently when a bogus parameter node is specified?
   add_test(
     EMSegCL_EFBogusParameterNode
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
@@ -397,7 +397,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does it fail elegently when a bogus mrml scene is specified?
   add_test(
     EMSegCL_EFBogusMRMLScene
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName /tmp/bogus_file_scene.mrml
     )
@@ -410,7 +410,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does it fail elegently when a bogus target images are specified?
   add_test(
     EMSegCL_EFBogusTargetImages
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
@@ -426,7 +426,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does it fail elegently when too many target images are specified?
   add_test(
     EMSegCL_EFTooManyImages
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
@@ -442,7 +442,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does it fail elegently when too few target images are specified?
   add_test(
     EMSegCL_EFTooFewImages
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
@@ -458,7 +458,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does it fail elegently when a bogus result standard is specified?
   add_test(
     EMSegCL_EFBogusResultStandardImage
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
     --no-error-popup
     --verbose --dontWriteResults --mrmlSceneFileName 
     ${EMSegment_TUTORIAL_DIR}/Template_small.mrml
@@ -474,7 +474,7 @@ if(NOT DISABLE_CXX_TESTING)
   if(EMSEG_RUN_EXTRA_LONG_TESTS)
     # run tutorial data
     set(test_name        "EMSegCL_RunTutorialData")
-    set(test_exe         "${Slicer3_EXE}")
+    set(test_exe         "${Slicer_EXE}")
     set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
     set(test_cmp_file    "${test_file_prefix}.raw")
     set(test_std_file    "${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult.raw")
@@ -511,7 +511,7 @@ if(NOT DISABLE_CXX_TESTING)
   if(EMSEG_RUN_EXTRA_SHORT_TESTS)
     # Make sure the default parameter set has not changed
     set(test_name        "EMSegMRML_DiffDefaultNodes")
-    set(test_exe         "${Slicer3_EXE}")
+    set(test_exe         "${Slicer_EXE}")
     set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
     set(test_cmp_file    "${test_file_prefix}.mrml")
     set(test_std_file    "${EMSegment_SOURCE_DIR}/Testing/TestData/DefaultMRMLNodes.mrml")
@@ -534,7 +534,7 @@ if(NOT DISABLE_CXX_TESTING)
     
     # Test that the mrml readers/writers work.
     set(test_name        "EMSegMRML_DiffReadWriteNodes")
-    set(test_exe         "${Slicer3_EXE}")
+    set(test_exe         "${Slicer_EXE}")
     set(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
     set(test_cmp_file    "${test_file_prefix}.mrml")
     set(test_std_file    "${EMSegment_TUTORIAL_DIR}/Template_small_normalizationOn_noImages.mrml")

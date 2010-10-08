@@ -309,13 +309,13 @@ INCLUDE_DIRECTORIES(${include_dirs})
 #   )
 # 
 # if(Slicer3_BUILD_WIN32_CONSOLE)
-#   add_executable(Slicer3${Slicer3_EXE_SUFFIX} 
+#   add_executable(Slicer3${Slicer_EXE_SUFFIX} 
 #     ${SRC} 
 #     ${RC_FILENAME}
 #     )
 # else(Slicer3_BUILD_WIN32_CONSOLE)
 #   add_executable(
-#     Slicer3${Slicer3_EXE_SUFFIX} WIN32 
+#     Slicer3${Slicer_EXE_SUFFIX} WIN32 
 #     ${SRC} 
 #     ${RC_FILENAME}
 #     )
@@ -342,7 +342,7 @@ INCLUDE_DIRECTORIES(${include_dirs})
 # Slicer3_LIBRARIES right now because of the Curl lib RemoteIO is using is
 # STATIC, but that's fixed in 2.6.
 #
-#target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
+#target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
 #  ${Slicer_Libs_LIBRARIES}
 #  ${Slicer_Base_LIBRARIES}
 #   RemoteIO
@@ -351,7 +351,7 @@ INCLUDE_DIRECTORIES(${include_dirs})
 #  )
 
 # if(Slicer_BUILD_MODULES)
-#   target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
+#   target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
 #     Volumes
 #     CommandLineModule
 #     ScriptedModule
@@ -363,27 +363,27 @@ INCLUDE_DIRECTORIES(${include_dirs})
 #   # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
 #   # so that we can have CLI, without all the other modules
 #   if(Slicer_BUILD_CLI)
-#     target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
+#     target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
 #       CommandLineModule
 #       )
 #   endif(Slicer_BUILD_CLI)
 # endif(Slicer_BUILD_MODULES)
 
 # if(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
-#   target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} SlicerBaseGUIPython)
+#   target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} SlicerBaseGUIPython)
 #   if(WIN32 AND PYTHON_DEBUG_LIBRARIES)
-#     target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
+#     target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
 #       debug ${PYTHON_DEBUG_LIBRARIES}
 #       optimized ${PYTHON_LIBRARIES})
 #   else(WIN32 AND PYTHON_DEBUG_LIBRARIES)
-#     target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} ${PYTHON_LIBRARIES})
+#     target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} ${PYTHON_LIBRARIES})
 #   endif(WIN32 AND PYTHON_DEBUG_LIBRARIES)
 #   if(NOT WIN32)
 #     # Linux/Unix requires util library, but mac doesn't
 #     if(APPLE OR UNIX)
-#       target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX})
+#       target_link_libraries(Slicer3${Slicer_EXE_SUFFIX})
 #     else(APPLE OR UNIX)
-#       target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} util)
+#       target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} util)
 #     endif(APPLE OR UNIX)
 #   endif(NOT WIN32)
 # endif(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)

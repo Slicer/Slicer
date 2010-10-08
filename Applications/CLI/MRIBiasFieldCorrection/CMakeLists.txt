@@ -94,7 +94,7 @@ endif (Slicer3_SOURCE_DIR)
 #-----------------------------------------------------------------------------
 # Testing
 
-set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3)
+set(Slicer_EXE ${Slicer3_BINARY_DIR}/Slicer3)
 
 set(TEST_DATA_DIR ${PROJECT_SOURCE_DIR}/TestData)
 set(BASELINE_DIR ${PROJECT_SOURCE_DIR}/Baseline)
@@ -103,7 +103,7 @@ set(OUTPUT_DIR ${Slicer3_BINARY_DIR}/Testing)
 if (BUILD_TESTING)
 
   add_test(${PROJECT_NAME}_N3_Brain2D
-    ${Slicer3_EXE}
+    ${Slicer_EXE}
     --launch
     ${PROJECT_NAME}
     --inputImage
@@ -130,7 +130,7 @@ if (BUILD_TESTING)
   #  ${BASELINE_DIR}/t81biasfield.nii.gz)
 
   add_test(${PROJECT_NAME}_N3_Lungs3D
-    ${Slicer3_EXE}
+    ${Slicer_EXE}
     --launch
     ${PROJECT_NAME}
     --inputImage
@@ -156,7 +156,7 @@ if (BUILD_TESTING)
   #  ${BASELINE_DIR}/he3biasfield.nii.gz)
 
   add_test(${PROJECT_NAME}_N4_Brain2D
-    ${Slicer3_EXE}
+    ${Slicer_EXE}
     --launch
     ${PROJECT_NAME}
     --inputImage

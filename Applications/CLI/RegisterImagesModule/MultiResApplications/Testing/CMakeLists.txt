@@ -64,8 +64,8 @@ add_test(CountSamplesTest
 add_executable(RegisterImagesMultiResTest RegisterImagesMultiResTest.cxx)
 target_link_libraries(RegisterImagesMultiResTest RegisterImagesMultiResModule)
 
-IF( Slicer3_EXE )
-add_test(RegisterImagesMultiResTest ${Slicer3_EXE} --launch RegisterImagesMultiResTest
+IF( Slicer_EXE )
+add_test(RegisterImagesMultiResTest ${Slicer_EXE} --launch RegisterImagesMultiResTest
   --compare   ${BASELINE}/RegisterImagesMultiResTest.nrrd
   ${TEMP}/RegisterImagesMultiResResult.nrrd
   --compareIntensityTolerance 20
@@ -76,4 +76,4 @@ add_test(RegisterImagesMultiResTest ${Slicer3_EXE} --launch RegisterImagesMultiR
   ${MRML_TEST_DATA}/moving.nrrd
   --resampledImage   ${TEMP}/RegisterImagesMultiResResult.nrrd
   )
-ENDIF( Slicer3_EXE )
+ENDIF( Slicer_EXE )
