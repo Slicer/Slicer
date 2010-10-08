@@ -177,23 +177,23 @@ include_directories(${dir_list})
 # with the WIN32_CONSOLE you can see diagnostic output on in a DOS-style
 # cmd window
 #
-option(Slicer3_BUILD_WIN32_CONSOLE 
+option(Slicer_BUILD_WIN32_CONSOLE 
   "Build Slicer3 executable as a console app on windows (allows debug output)" 
   OFF
   )
 
-if(Slicer3_BUILD_WIN32_CONSOLE)
+if(Slicer_BUILD_WIN32_CONSOLE)
   add_executable(Slicer3${Slicer_EXE_SUFFIX} 
     ${SRC} 
     ${RC_FILENAME}
     )
-else(Slicer3_BUILD_WIN32_CONSOLE)
+else(Slicer_BUILD_WIN32_CONSOLE)
   add_executable(
     Slicer3${Slicer_EXE_SUFFIX} WIN32 
     ${SRC} 
     ${RC_FILENAME}
     )
-endif(Slicer3_BUILD_WIN32_CONSOLE)
+endif(Slicer_BUILD_WIN32_CONSOLE)
 
 # --------------------------------------------------------------------------
 # Options
