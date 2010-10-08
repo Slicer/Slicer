@@ -30,7 +30,7 @@ set(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 # Slicer3 options
 set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
 set(Slicer3_USE_IGSTK "@Slicer3_USE_IGSTK@")
-set(Slicer3_USE_MIDAS "@Slicer3_USE_MIDAS@")
+set(Slicer_USE_MIDAS "@Slicer_USE_MIDAS@")
 set(Slicer3_USE_NAVITRACK "@Slicer3_USE_NAVITRACK@")
 set(Slicer3_USE_NUMPY "@Slicer3_USE_NUMPY@")
 set(Slicer3_USE_PYTHON "@Slicer3_USE_PYTHON@")

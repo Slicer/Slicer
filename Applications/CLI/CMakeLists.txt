@@ -765,9 +765,9 @@ endif ( ${ITK_VERSION_MAJOR} GREATER 3 )
   # DiffeomorphicDemonsRegistration
 #  )
 
-if(Slicer3_USE_MIDAS)
+if(Slicer_USE_MIDAS)
   SET(cli_modules ${cli_modules} MIDASApplications)
-endif(Slicer3_USE_MIDAS)
+endif(Slicer_USE_MIDAS)
 
 if(Slicer_USE_BatchMake)
   SET(cli_modules ${cli_modules} BatchMakeApplications)

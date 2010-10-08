@@ -370,7 +370,7 @@ ENDIF()
 
 #-----------------------------------------------------------------------------
 ## MIDAS
-option(Slicer3_USE_MIDAS "Build Slicer3 with MIDAS support." OFF)
+option(Slicer_USE_MIDAS "Build Slicer with MIDAS support." OFF)
 
 #-----------------------------------------------------------------------------
 ## OpenIGTLink (Built in Slicer3-lib)
