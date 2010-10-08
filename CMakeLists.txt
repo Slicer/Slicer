@@ -663,7 +663,7 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Modules and CLI
 #
-option(Slicer3_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
+option(Slicer_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
 IF(Slicer3_USE_KWWIDGETS)
   option(Slicer3_BUILD_MODULES "Build Slicer3 Modules" ON)
 ENDIF()
@@ -676,11 +676,11 @@ IF(Slicer3_USE_KWWIDGETS)
   IF(Slicer3_BUILD_MODULES)
     add_subdirectory(Modules)
   else(Slicer3_BUILD_MODULES)
-    # if Slicer3_BUILD_CLI is ON, we still need at least the CommandLineModule
+    # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
     # so that we can have CLI, without all the other modules
-    IF(Slicer3_BUILD_CLI)
+    IF(Slicer_BUILD_CLI)
       add_subdirectory(Modules/CommandLineModule)
-    ENDIF(Slicer3_BUILD_CLI)
+    ENDIF(Slicer_BUILD_CLI)
   ENDIF(Slicer3_BUILD_MODULES)
 ENDIF()
 

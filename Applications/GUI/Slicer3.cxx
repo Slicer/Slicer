@@ -136,7 +136,7 @@ extern "C" {
 #include "vtkScriptedModuleGUI.h"
 #endif
 
-#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkCommandLineModuleGUI.h"
 #endif
@@ -192,7 +192,7 @@ extern "C" int Vtkteem_Init(Tcl_Interp *interp);
 #if !defined(DAEMON_DEBUG) && defined(Slicer3_BUILD_MODULES)
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 #endif
-#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
 extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 #endif
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
@@ -740,7 +740,7 @@ int Slicer3_main(int& argc, char *argv[])
 #if !defined(DAEMON_DEBUG) && defined(Slicer3_BUILD_MODULES)
   Slicerdaemon_Init(interp);
 #endif
-#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
   Commandlinemodule_Init(interp);
 #endif
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
@@ -1617,7 +1617,7 @@ int Slicer3_main(int& argc, char *argv[])
     }
 #endif
 
-#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
   std::vector<std::string> moduleNames;
   std::vector<std::string>::const_iterator mit;
   if ( slicerApp->GetLoadCommandLineModules()
@@ -1837,7 +1837,7 @@ int Slicer3_main(int& argc, char *argv[])
   slicerApp->Script ("namespace eval slicer3 set Broker [vtkEventBroker New]");
   //slicerApp->Script ("namespace eval slicer3 set Broker [vtkEventBroker GetInstance]");
 
-#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
   mit = moduleNames.begin();
   while ( mit != moduleNames.end() )
     {
@@ -2240,7 +2240,7 @@ int Slicer3_main(int& argc, char *argv[])
   appGUI->RemoveGUIObservers ( );
   appGUI->SetAndObserveMainSliceLogic ( NULL, NULL, NULL );
 
-#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
   // remove the observers from the factory discovered modules
   // (as we remove the observers, cache the GUIs in a vector so we
   // can delete them later).
@@ -2415,7 +2415,7 @@ int Slicer3_main(int& argc, char *argv[])
   // cout << "vtkSlicerApplicationGUI deleting app GUI\n";
   // appGUI->Delete ();
 
-#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
   // delete the factory discovered module GUIs (as we delete the
   // GUIs, cache the associated logic instances so we can delete
   std::vector<vtkSlicerModuleGUI*>::iterator git;
@@ -2483,7 +2483,7 @@ int Slicer3_main(int& argc, char *argv[])
   appLogic->TerminateProcessingThread();
   appLogic->Delete ();
 
-#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
   // delete the factory discovered module Logics
   std::vector<vtkSlicerModuleLogic*>::iterator lit;
   for (lit = moduleLogics.begin(); lit != moduleLogics.end(); ++lit)

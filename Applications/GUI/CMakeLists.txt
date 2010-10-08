@@ -37,10 +37,10 @@ if(BUILD_SHARED_LIBS)
       set(Slicer3_FORWARD_PATH_BUILD 
         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
     endif(Slicer3_BUILD_MODULES)
-    if(Slicer3_BUILD_CLI)
+    if(Slicer_BUILD_CLI)
       set(Slicer3_FORWARD_PATH_BUILD 
         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
-    endif(Slicer3_BUILD_CLI)
+    endif(Slicer_BUILD_CLI)
   else(WIN32)
     set(Slicer3_FORWARD_PATH_BUILD 
       "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${Teem_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
@@ -50,19 +50,19 @@ if(BUILD_SHARED_LIBS)
       set(Slicer3_FORWARD_PATH_BUILD 
         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}\"")
     endif(Slicer3_BUILD_MODULES)
-    if(Slicer3_BUILD_CLI)
+    if(Slicer_BUILD_CLI)
       set(Slicer3_FORWARD_PATH_BUILD 
         "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
-    endif(Slicer3_BUILD_CLI)
+    endif(Slicer_BUILD_CLI)
   endif(WIN32)
   if(Slicer3_BUILD_MODULES)
     set(Slicer3_FORWARD_PATH_INSTALL
       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_MODULES_BIN_DIR}\"")
   endif(Slicer3_BUILD_MODULES)
-  if(Slicer3_BUILD_CLI)
+  if(Slicer_BUILD_CLI)
     set(Slicer3_FORWARD_PATH_INSTALL
       "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer_INSTALL_PLUGINS_BIN_DIR}\"")
-  endif(Slicer3_BUILD_CLI)
+  endif(Slicer_BUILD_CLI)
 endif(BUILD_SHARED_LIBS)
 
 # Add main server executables.
@@ -160,9 +160,9 @@ if(Slicer3_BUILD_MODULES)
   add_definitions(-DSlicer3_BUILD_MODULES)
 endif(Slicer3_BUILD_MODULES)
 
-if(Slicer3_BUILD_CLI)
-  add_definitions(-DSlicer3_BUILD_CLI)
-endif(Slicer3_BUILD_CLI)
+if(Slicer_BUILD_CLI)
+  add_definitions(-DSlicer_BUILD_CLI)
+endif(Slicer_BUILD_CLI)
 
 if(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
   set(dir_list ${dir_list} ${PYTHON_INCLUDE_PATH})
@@ -234,13 +234,13 @@ if(Slicer3_BUILD_MODULES)
     SlicerTractographyFiducialSeeding
     )
 else(Slicer3_BUILD_MODULES)
-  # if Slicer3_BUILD_CLI is ON, we still need at least the CommandLineModule
+  # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
   # so that we can have CLI, without all the other modules
-  if(Slicer3_BUILD_CLI)
+  if(Slicer_BUILD_CLI)
     target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
       CommandLineModule
       )
-  endif(Slicer3_BUILD_CLI)
+  endif(Slicer_BUILD_CLI)
 endif(Slicer3_BUILD_MODULES)
 
 if(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)

@@ -19,7 +19,7 @@ set(Slicer_VERSION_PATCH "@Slicer_VERSION_PATCH@")
 
 # Whether Slicer3 was built with modules and CLI support.
 set(Slicer3_BUILD_MODULES "@Slicer3_BUILD_MODULES@")
-set(Slicer3_BUILD_CLI "@Slicer3_BUILD_CLI@")
+set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
 IF(Slicer3_USE_QT)
   set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
 ENDIF(Slicer3_USE_QT)
