@@ -814,7 +814,7 @@ proc launch_SetPaths {} {
     # add the default search locations for python packages for a slicer build of python
     #
 
-    if { "@Slicer3_USE_SYSTEM_PYTHON@" != "ON" } {
+    if { "@Slicer_USE_SYSTEM_PYTHON@" != "ON" } {
       if {$::env(BUILD) == $::WINDOWS} {
         set SEP ";"
         set ::env(PYTHON_DIR) "$::env(PYTHON_DIR)/.."
