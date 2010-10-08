@@ -382,8 +382,8 @@ ENDIF()
 
 #-----------------------------------------------------------------------------
 ## OpenCV (Built in Slicer3-lib)
-option(Slicer3_USE_OPENCV "Build Slicer3 with OpenCV support." OFF)
-IF(Slicer3_USE_OPENCV)
+option(Slicer_USE_OPENCV "Build Slicer3 with OpenCV support." OFF)
+IF(Slicer_USE_OPENCV)
   find_package(OpenCV REQUIRED)
 
   IF(OPENCV_BUILD_SETTINGS_FILE AND NOT SKIP_OPENCV_BUILD_SETTINGS_FILE)

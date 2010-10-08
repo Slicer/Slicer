@@ -32,7 +32,7 @@ set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
 set(Slicer_USE_MIDAS "@Slicer_USE_MIDAS@")
 set(Slicer3_USE_NUMPY "@Slicer3_USE_NUMPY@")
 set(Slicer3_USE_PYTHON "@Slicer3_USE_PYTHON@")
-set(Slicer3_USE_OPENCV "@Slicer3_USE_OPENCV@")
+set(Slicer_USE_OPENCV "@Slicer_USE_OPENCV@")
 
 # Slicer home (top of the tree)
 set(Slicer3_HOME "@Slicer3_HOME@")
