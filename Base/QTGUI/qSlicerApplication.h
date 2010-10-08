@@ -36,7 +36,7 @@
 class qSlicerApplicationPrivate;
 class qSlicerCommandOptions;
 class qSlicerIOManager;
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 class qSlicerPythonManager;
 #endif
 class qSlicerLayoutManager;
@@ -67,7 +67,7 @@ public:
   /// Get IO Manager
   qSlicerIOManager* ioManager();
 
-  #ifdef Slicer3_USE_PYTHONQT
+  #ifdef Slicer_USE_PYTHONQT
   /// Get Python Manager
   qSlicerPythonManager * pythonManager();
   #endif

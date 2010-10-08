@@ -21,7 +21,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerBaseQTGUIPythonQtDecorators.h"
 
-#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
 // SlicerVTK includes
 #include "vtkEventBroker.h"
 #endif
@@ -44,7 +44,7 @@ qSlicerPythonManager::qSlicerPythonManager(QObject* _parent) : Superclass(_paren
 //-----------------------------------------------------------------------------
 qSlicerPythonManager::~qSlicerPythonManager()
 {
-#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
   vtkEventBroker::GetInstance()->SetScriptHandler(0, 0);
 #endif
 }
@@ -76,7 +76,7 @@ void qSlicerPythonManager::preInitialization()
   // Evaluate application script
   this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt.py");
 
-#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
   // Evaluate application script specific to the TCL layer
   // Note that it should be sourced after slicerqt.py
   this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt-with-tcl.py");
@@ -97,7 +97,7 @@ void qSlicerPythonManager::preInitialization()
 //-----------------------------------------------------------------------------
 void qSlicerPythonManager::eventBrokerScriptHandler(const char *script, void *clientData)
 {
-#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
   QString pythonScript = QString("global _tpycl; _tpycl.tcl_callback('%1')").arg(script);
   qSlicerPythonManager * self = reinterpret_cast<qSlicerPythonManager*>(clientData);
   Q_ASSERT(self);

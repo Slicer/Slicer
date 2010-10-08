@@ -155,10 +155,10 @@ install(TARGETS ${lib_name}
   )
   
 # --------------------------------------------------------------------------
-# Create Python wrappers if Slicer3_USE_PYTHONQT is ON and if VTK is wrapped in Python
+# Create Python wrappers if Slicer_USE_PYTHONQT is ON and if VTK is wrapped in Python
 #
 
-IF(Slicer3_USE_PYTHONQT AND BUILD_SHARED_LIBS)
+IF(Slicer_USE_PYTHONQT AND BUILD_SHARED_LIBS)
 
   SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
 
@@ -187,7 +187,7 @@ IF(Slicer3_USE_PYTHONQT AND BUILD_SHARED_LIBS)
     LIBRARY DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT Runtime
     ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development)
 
-ENDIF(Slicer3_USE_PYTHONQT AND BUILD_SHARED_LIBS)
+ENDIF(Slicer_USE_PYTHONQT AND BUILD_SHARED_LIBS)
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)

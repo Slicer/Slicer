@@ -25,8 +25,8 @@
 #cmakedefine Slicer3_USE_NAVITRACK
 #cmakedefine Slicer3_USE_NUMPY
 #cmakedefine Slicer3_USE_PYTHON
-#cmakedefine Slicer3_USE_PYTHONQT
-#cmakedefine Slicer3_USE_PYTHONQT_WITH_TCL
+#cmakedefine Slicer_USE_PYTHONQT
+#cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
 #cmakedefine Slicer3_USE_OPENTRACKER
 #cmakedefine Slicer_USE_QT
 #cmakedefine Slicer3_USE_KWWIDGETS

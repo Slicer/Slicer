@@ -810,7 +810,7 @@ int Slicer3_main(int& argc, char *argv[])
     Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
 #endif
   slicerApp->SetModulePanel(new qSlicerModulePanel(0, qApplication->defaultWindowFlags()));
- #ifdef Slicer3_USE_PYTHONQT
+ #ifdef Slicer_USE_PYTHONQT
   PythonQt::init(PythonQt::DoNotInitializePython);
   PythonQt_QtAll::init();
  #endif

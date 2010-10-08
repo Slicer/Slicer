@@ -23,10 +23,10 @@
 #include <QDesktopServices>
 #include <QUrl>
 
-#include "vtkSlicerConfigure.h" // For Slicer3_USE_PYTHONQT
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 // CTK includes
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 #include <ctkPythonShell.h>
 #endif
 
@@ -42,7 +42,7 @@
 #include "qSlicerMainWindowCore_p.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModulePanel.h"
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 #include "qSlicerPythonManager.h"
 #endif
 
@@ -55,7 +55,7 @@
 //---------------------------------------------------------------------------
 qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
   {
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   this->PythonShell = 0; 
 #endif
   }
@@ -63,7 +63,7 @@ qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
 //---------------------------------------------------------------------------
 qSlicerMainWindowCorePrivate::~qSlicerMainWindowCorePrivate()
 {
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   if (this->PythonShell)
     {
     delete this->PythonShell;
@@ -169,7 +169,7 @@ qSlicerMainWindowCore_onViewLayout_implementation(SideBySideLightbox);
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
 {
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   Q_D(qSlicerMainWindowCore);
   if (!d->PythonShell)
     {

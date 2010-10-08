@@ -27,7 +27,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 
-#include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS, Slicer3_USE_PYTHONQT
+#include "vtkSlicerConfigure.h" // For Slicer3_USE_KWWIDGETS, Slicer_USE_PYTHONQT
 
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -36,7 +36,7 @@ class qSlicerCoreIOManager;
 class qSlicerCoreCommandOptions;
 class qSlicerCoreApplicationPrivate;
 class qSlicerModuleManager;
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 class qSlicerCorePythonManager;
 #endif
 class vtkSlicerApplicationLogic;
@@ -124,7 +124,7 @@ public:
   /// Return true is this instance of Slicer is running from an installed directory
   bool isInstalled()const;
 
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   ///
   /// Get python manager
   qSlicerCorePythonManager* corePythonManager()const;

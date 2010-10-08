@@ -121,7 +121,7 @@ proc launch_SetEnvironment {} {
     # Indicate if Slicer was build with QT support
     #
     set ::Slicer_USE_QT "@Slicer_USE_QT@"
-    set ::Slicer3_USE_PYTHONQT "@Slicer3_USE_PYTHONQT@"
+    set ::Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@"
     
     #
     # set up variables for the OS Builds

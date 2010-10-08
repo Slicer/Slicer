@@ -42,7 +42,7 @@
 #include "qSlicerLayoutManager.h"
 #include "qSlicerLayoutManager_p.h"
 
-#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
 #include "qSlicerPythonManager.h"
 #include "qSlicerApplication.h"
 #endif
@@ -261,7 +261,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
   logger.trace(QString("createSliceWidget - instantiated new qMRMLSliceWidget: %1")
                .arg(sliceLayoutName));
 
-#ifdef Slicer3_USE_PYTHONQT_WITH_TCL
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
     // Note: Python code shouldn't be added to the layout manager itself !
     // TODO: move this functionality to the scripted displayable manager...
 
@@ -1042,7 +1042,7 @@ CTK_GET_CXX(qSlicerLayoutManager, vtkMRMLViewNode*,
 void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
     const QString& scriptedDisplayableManagerDirectory)
 {
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   Q_D(qSlicerLayoutManager);
 
   Q_ASSERT(QFileInfo(scriptedDisplayableManagerDirectory).isDir());

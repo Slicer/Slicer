@@ -250,7 +250,7 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
       << "vtkMRMLViewDisplayableManager"
       << "vtkMRMLModelDisplayableManager";
 
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   QFileInfo dirInfo(scriptedDisplayableManagerDirectory);
   if (dirInfo.isDir())
     {

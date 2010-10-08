@@ -4,7 +4,7 @@
 // SlicerQT
 //
 #ifdef Slicer_USE_QT
-# ifdef Slicer3_USE_PYTHONQT
+# ifdef Slicer_USE_PYTHONQT
 #   include "PythonQt.h"
 #   include "PythonQt_QtAll.h"
 # endif

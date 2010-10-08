@@ -15,7 +15,7 @@ SET(Slicer_PYTHON_SCRIPTS
 SET(Slicer_PYTHON_RESOURCES
   )
   
-IF(Slicer3_USE_PYTHONQT_WITH_TCL)
+IF(Slicer_USE_PYTHONQT_WITH_TCL)
   LIST(APPEND Slicer_PYTHON_SCRIPTS
     slicer/slicerqt-with-tcl
     tpycl/__init__
@@ -38,7 +38,7 @@ Slicer_compile_python_scripts(
 # Testing
 #
 if(Slicer3_BUILD_TESTING)
-  IF(Slicer3_USE_PYTHONQT_WITH_TCL)
+  IF(Slicer_USE_PYTHONQT_WITH_TCL)
     add_subdirectory(tpycl/Testing)
   ENDIF()
 endif(Slicer3_BUILD_TESTING)

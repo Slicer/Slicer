@@ -168,7 +168,7 @@ endif()
 # |--------------------------------------------------|
 # | Slicer3_USE_PYTHON    | ON|OFF | ON|OFF |  OFF   |
 # |--------------------------------------------------|
-# | Slicer3_USE_PYTHONQT  |   OFF  |  OFF   | ON|OFF |
+# | Slicer_USE_PYTHONQT  |   OFF  |  OFF   | ON|OFF |
 # |---------------------------------------------------
 
 #
@@ -190,7 +190,7 @@ endif()
 # Note:
 #   Tcl, Tk, and incrTcl are built in all cases
 #   blt and iwidgets are build only if Slicer3_USE_KWWIDGETS is ON
-#   Python is build if either Slicer3_USE_PYTHON or Slicer3_USE_PYTHONQT are ON
+#   Python is build if either Slicer3_USE_PYTHON or Slicer_USE_PYTHONQT are ON
 # 
 
 #------------------------------------------------------------------------------
@@ -242,8 +242,8 @@ if(Slicer_USE_QT)
     # Includes Qt headers
     INCLUDE(${QT_USE_FILE})
 
-    option(Slicer3_USE_PYTHONQT "Integrate a PythonQt interpreter into Slicer." ON)
-    option(Slicer3_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON)
+    option(Slicer_USE_PYTHONQT "Integrate a PythonQt interpreter into Slicer." ON)
+    option(Slicer_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON)
     
     option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." OFF)
     mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
@@ -260,7 +260,7 @@ endif()
 
 option(Slicer3_USE_PYTHON "Build Slicer with Python support" OFF)
 
-if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
 
   option(Slicer3_BUILD_NUMPY "Build Slicer with NumPy (builds CLapack)." ON)
 
@@ -302,13 +302,13 @@ Slicer_USE_QT = ON
   message(FATAL_ERROR "${err}")
 endif()
 
-if (Slicer3_USE_PYTHON AND Slicer3_USE_PYTHONQT)
-  set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_PYTHON and Slicer3_USE_PYTHONQT ON.")
+if (Slicer3_USE_PYTHON AND Slicer_USE_PYTHONQT)
+  set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_PYTHON and Slicer_USE_PYTHONQT ON.")
   message(FATAL_ERROR "${err}")
 endif()
 
-if (Slicer3_USE_KWWIDGETS AND Slicer3_USE_PYTHONQT)
-  set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_KWWIDGETS and Slicer3_USE_PYTHONQT ON.")
+if (Slicer3_USE_KWWIDGETS AND Slicer_USE_PYTHONQT)
+  set(err "error: Slicer SuperBuild doesn't support Slicer3_USE_KWWIDGETS and Slicer_USE_PYTHONQT ON.")
   message(FATAL_ERROR "${err}")
 endif()
 
@@ -336,7 +336,7 @@ set(incrTcl_DEPENDENCIES tcl tk)
 set(iwidgets_DEPENDENCIES tcl itcl)
 set(blt_DEPENDENCIES tcl tk)
 set(python_DEPENDENCIES)
-if(Slicer3_USE_KWWIDGETS OR Slicer3_USE_PYTHONQT_WITH_TCL)
+if(Slicer3_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
     set(python_DEPENDENCIES tcl)
   else()
@@ -351,7 +351,7 @@ set(weave_DEPENDENCIES python NUMPY)
 set(VTK_DEPENDENCIES)
 set(CTKAPPLAUNCHER_DEPENDENCIES)
 set(CTK_DEPENDENCIES VTK)
-if(Slicer3_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
 endif()
 set(KWWidgets_DEPENDENCIES VTK)
@@ -366,7 +366,7 @@ set(slicer_DEPENDENCIES VTK Insight BatchMake OpenIGTLink teem cmcurl)
 # Conditionnaly include ExternalProject Target
 #------------------------------------------------------------------------------
 
-if(Slicer3_USE_KWWIDGETS OR Slicer3_USE_PYTHONQT_WITH_TCL)
+if(Slicer3_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
   include(External_Tcl)
   include(External_Tk)
   include(External_incrTcl)
@@ -376,7 +376,7 @@ if(Slicer3_USE_KWWIDGETS)
   include(External_blt)
 endif()
 
-if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
   include(External_Python26)
   if(Slicer3_BUILD_NUMPY)
     include(External_CLAPACK)
@@ -420,7 +420,7 @@ if(Slicer3_USE_KWWIDGETS)
   endif()
 endif()
 
-if (Slicer3_USE_PYTHONQT_WITH_TCL)
+if (Slicer_USE_PYTHONQT_WITH_TCL)
   if(UNIX)
     list(APPEND slicer_DEPENDENCIES itcl)
   endif()
@@ -433,7 +433,7 @@ if(Slicer_USE_QT)
   endif()
 endif()
 
-if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
   list(APPEND slicer_DEPENDENCIES python)
   if(Slicer3_BUILD_NUMPY)
     list(APPEND slicer_DEPENDENCIES NUMPY)
@@ -502,8 +502,8 @@ ExternalProject_Add(${proj}
     -DSLICERLIBCURL_DIR:PATH=${CMAKE_BINARY_DIR}/cmcurl-build
     # Python
     -DSlicer3_USE_PYTHON:BOOL=${Slicer3_USE_PYTHON}
-    -DSlicer3_USE_PYTHONQT:BOOL=${Slicer3_USE_PYTHONQT}
-    -DSlicer3_USE_PYTHONQT_WITH_TCL:BOOL=${Slicer3_USE_PYTHONQT_WITH_TCL}
+    -DSlicer_USE_PYTHONQT:BOOL=${Slicer_USE_PYTHONQT}
+    -DSlicer_USE_PYTHONQT_WITH_TCL:BOOL=${Slicer_USE_PYTHONQT_WITH_TCL}
     -DSlicer3_USE_SYSTEM_PYTHON:BOOL=OFF
     -DSlicer3_USE_NUMPY:BOOL=${Slicer3_BUILD_NUMPY}
     -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}

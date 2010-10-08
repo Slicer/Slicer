@@ -32,10 +32,10 @@
 //  - Slicer3_INSTALL_QTLOADABLEMODULES_LIB_DIR
 //  - Slicer_INSTALL_PLUGINS_BIN_DIR
 //  - Slicer_INSTALL_LIB_DIR
-//  - Slicer3_USE_PYTHONQT
+//  - Slicer_USE_PYTHONQT
 #include "vtkSlicerConfigure.h"
 
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 // PythonQt includes
 #include <PythonQt.h>
 #endif
@@ -45,7 +45,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerCoreCommandOptions.h"
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCorePythonManager.h"
 #endif
 
@@ -146,7 +146,7 @@ public:
   /// Indicate if initialize() method has been called.
   bool               Initialized;
 
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   ///
   /// CorePythonManager - It should exist only one instance of the CorePythonManager
   QSharedPointer<qSlicerCorePythonManager> CorePythonManager;
@@ -400,7 +400,7 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   // Instanciate moduleManager
   d->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
 
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   // Initialize Python
   if (this->corePythonManager())
     {
@@ -605,7 +605,7 @@ QString qSlicerCoreApplication::slicerHome() const
 }
 
 //-----------------------------------------------------------------------------
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setCorePythonManager(qSlicerCorePythonManager* manager)

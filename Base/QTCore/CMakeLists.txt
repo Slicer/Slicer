@@ -79,7 +79,7 @@ SET(KIT_resources
 )
 
 # Python wrap
-IF(Slicer3_USE_PYTHONQT)
+IF(Slicer_USE_PYTHONQT)
 
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonCore
@@ -106,7 +106,7 @@ IF(Slicer3_USE_PYTHONQT)
     qSlicerBaseQTCorePythonQtDecorators.h
     )
 
-ENDIF(Slicer3_USE_PYTHONQT)
+ENDIF(Slicer_USE_PYTHONQT)
 
 Slicer_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}

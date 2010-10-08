@@ -93,9 +93,9 @@ SET(KIT_MOC_SRCS
   )
   
 # PythonQt decorator
-IF(Slicer3_USE_PYTHONQT)
+IF(Slicer_USE_PYTHONQT)
   LIST(APPEND KIT_MOC_SRCS qSlicerBaseQTGUIPythonQtDecorators.h)
-ENDIF(Slicer3_USE_PYTHONQT)
+ENDIF(Slicer_USE_PYTHONQT)
 
 # UI files
 SET(KIT_UI_SRCS
@@ -114,7 +114,7 @@ SET(KIT_target_libraries
   )
 
 # Python wrap
-IF(Slicer3_USE_PYTHONQT)
+IF(Slicer_USE_PYTHONQT)
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
     CTKWidgetsPythonQt
@@ -133,7 +133,7 @@ SET(KIT_resources
 )
 
 # Python wrap
-IF(Slicer3_USE_PYTHONQT)
+IF(Slicer_USE_PYTHONQT)
 
   # Sources
   LIST(APPEND KIT_SRCS
@@ -146,7 +146,7 @@ IF(Slicer3_USE_PYTHONQT)
     qSlicerPythonManager.h
     )
 
-ENDIF(Slicer3_USE_PYTHONQT)
+ENDIF(Slicer_USE_PYTHONQT)
 
 Slicer_build_slicer_qtbase_library(
   NAME ${PROJECT_NAME}

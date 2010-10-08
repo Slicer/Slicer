@@ -27,13 +27,13 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
     set(VTK_WRAP_TCL ON)
   endif()
 
-  if (Slicer3_USE_PYTHONQT)
+  if (Slicer_USE_PYTHONQT)
     set(VTK_WRAP_PYTHON ON)
     list(APPEND VTK_DEPENDENCIES python)
   endif()
 
   set(VTK_PYTHON_ARGS)
-  if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+  if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
     set(VTK_PYTHON_ARGS
       -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
       -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
@@ -88,7 +88,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   endif()
 
   # Disable Tk when Python wrapping is enabled
-  if (Slicer3_USE_PYTHONQT)
+  if (Slicer_USE_PYTHONQT)
     list(APPEND VTK_QT_ARGS -DVTK_USE_TK:BOOL=OFF)
   endif()
 

@@ -44,7 +44,7 @@
 #include "qSlicerCommandOptions.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerStyle.h"
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif
 
@@ -136,7 +136,7 @@ void qSlicerApplicationPrivate::init()
   // will be responsible to delete it
   q->setCoreIOManager(new qSlicerIOManager);
   
-  #ifdef Slicer3_USE_PYTHONQT
+  #ifdef Slicer_USE_PYTHONQT
   // Note: qSlicerCoreApplication class takes ownership of the pythonManager and
   // will be responsible to delete it
   q->setCorePythonManager(new qSlicerPythonManager());
@@ -263,7 +263,7 @@ qSlicerIOManager* qSlicerApplication::ioManager()
   return _ioManager;
 }
 
-#ifdef Slicer3_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
 //-----------------------------------------------------------------------------
 qSlicerPythonManager* qSlicerApplication::pythonManager()
 {

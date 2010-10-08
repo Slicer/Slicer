@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------
 # Find and install Tcl
-IF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
+IF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
   if(NOT Slicer3_TCL_DIR)
     if(TCL_INCLUDE_PATH)
       get_filename_component(Slicer3_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
@@ -15,7 +15,7 @@ IF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
     set(Slicer3_TCL_DIR "")
   endif(NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
     NOT EXISTS "${Slicer3_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
-ENDIF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
+ENDIF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
 
 # Note: this is probably dangerous if Tcl is somewhere in /usr/local, as it
 # ends up installing the whole /usr/local to the Slicer3 install tree :(
@@ -25,7 +25,7 @@ ENDIF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
 #  are doing (i.e. they have Tcl/Tk installed in a standalone directory 
 # like /opt/tcltk8.5.0)
 
-IF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
+IF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
   if(Slicer3_TCL_DIR)
     install(DIRECTORY
       ${Slicer3_TCL_DIR}/
@@ -33,7 +33,7 @@ IF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
       USE_SOURCE_PERMISSIONS
       )
   endif(Slicer3_TCL_DIR)
-ENDIF (VTK_WRAP_TCL OR Slicer3_USE_PYTHONQT_WITH_TCL)
+ENDIF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
 
 # In the following section we tell the packager to include libslicerlibcurl.so
 # in the CPACK package, because we build it as a .so on Solaris,
@@ -114,7 +114,7 @@ endif(CMAKE_SYSTEM MATCHES "SunOS.*")
 # -------------------------------------------------------------------------
 # Find and install python
 
-if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+if(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
   #assum get build test build tree
   get_filename_component(PARENT_BUILD_DIR "${Slicer3_BINARY_DIR}" PATH)
   set(PYTHON_DIR "${PARENT_BUILD_DIR}/Slicer3-lib/python-build")
@@ -145,7 +145,7 @@ if(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
       DESTINATION bin
       COMPONENT Runtime)
   endif()
-endif(Slicer3_USE_PYTHON OR Slicer3_USE_PYTHONQT)
+endif(Slicer3_USE_PYTHON OR Slicer_USE_PYTHONQT)
 
 # -------------------------------------------------------------------------
 # Find and install QT
@@ -174,7 +174,7 @@ if(Slicer_USE_QT)
     ENDIF (QT_${qtlib}_LIBRARY_RELEASE)
   ENDFOREACH(qtlib)
   
-  IF(Slicer3_USE_PYTHONQT)
+  IF(Slicer_USE_PYTHONQT)
     IF(WIN32)
       INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll DESTINATION bin COMPONENT Runtime)
     ELSEIF(APPLE)
@@ -183,7 +183,7 @@ if(Slicer_USE_QT)
     ELSEIF(UNIX)
       INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.so DESTINATION lib/PythonQt COMPONENT Runtime)
     ENDIF(WIN32)
-  ENDIF(Slicer3_USE_PYTHONQT)
+  ENDIF(Slicer_USE_PYTHONQT)
 endif(Slicer_USE_QT)
 
 # -------------------------------------------------------------------------

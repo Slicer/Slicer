@@ -6,7 +6,7 @@ IF(COMMAND CMAKE_POLICY)
 ENDIF(COMMAND CMAKE_POLICY)
 MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
 
-SET(MRMLDisplayableManager_USE_PYTHON ${Slicer3_USE_PYTHONQT})
+SET(MRMLDisplayableManager_USE_PYTHON ${Slicer_USE_PYTHONQT})
 # --------------------------------------------------------------------------
 # Include dirs
 
