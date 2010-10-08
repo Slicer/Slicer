@@ -304,12 +304,6 @@ ELSE()
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Slicer is built with cvs head
-#
-option(Slicer3_USE_VTK_CVSHEAD "Slicer is configurated with cvs head." OFF)
-mark_as_advanced(Slicer3_USE_VTK_CVSHEAD)
-
-#-----------------------------------------------------------------------------
 #
 # Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/SlicerFindQT.cmake
 #
