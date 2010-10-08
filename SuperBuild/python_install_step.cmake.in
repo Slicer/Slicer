@@ -1,12 +1,17 @@
 
 if(UNIX)
-  execute_process(
+
+  SET(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+  
+  EXECUTE_PROCESS(
     COMMAND make install
     WORKING_DIRECTORY "@python_base@"
     )
+    
   EXECUTE_PROCESS( 
     COMMAND @CMAKE_CURRENT_BINARY_DIR@/python-build/bin/python setup.py install 
     WORKING_DIRECTORY "@python_base@"
     RESULT_VARIABLE rv
     )
+    
 endif()
