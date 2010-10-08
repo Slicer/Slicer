@@ -1,4 +1,4 @@
-# Generate the Slicer3Config.cmake file in the build tree and configure one
+# Generate the SlicerConfig.cmake file in the build tree and configure one
 # for the installation tree.  This file tells external project how to use
 # Slicer.  This provides a mechanism for third party developers to build 
 # modules against a Slicer installation.
@@ -21,7 +21,7 @@
 SET(TCLAP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
 SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
 SET(GenerateCLP_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
-SET(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer3.cmake)
+SET(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer.cmake)
 SET(LoadableModule_DIR_CONFIG ${Slicer_BINARY_DIR}/Libs/LoadableModule)
 
 SET(Slicer_Libs_INCLUDE_DIRS_CONFIG ${Slicer_Libs_INCLUDE_DIRS})
@@ -41,16 +41,16 @@ SET(PYTHON_LIBRARIES_CONFIG ${PYTHON_LIBRARIES})
 SET(BatchMake_DIR_CONFIG ${BatchMake_DIR})
 SET(OpenCV_DIR_CONFIG ${OpenCV_DIR})
 
-# Configure Slicer3Config.cmake for the install tree.
+# Configure SlicerConfig.cmake for the install tree.
 CONFIGURE_FILE(
-  ${Slicer_SOURCE_DIR}/Slicer3Config.cmake.in
-  ${Slicer_BINARY_DIR}/Slicer3Config.cmake @ONLY IMMEDIATE)
+  ${Slicer_SOURCE_DIR}/SlicerConfig.cmake.in
+  ${Slicer_BINARY_DIR}/SlicerConfig.cmake @ONLY IMMEDIATE)
 
 # Settings specific for installation trees      
 #      
 # (Note we configure from a different file than use for the build tree)      
 
-# Configure Slicer3Config.cmake for the install tree.      
+# Configure SlicerConfig.cmake for the install tree.      
 CONFIGURE_FILE(
-  ${Slicer_SOURCE_DIR}/Slicer3InstallConfig.cmake.in      
-  ${Slicer_BINARY_DIR}/Utilities/Slicer3Config.cmake @ONLY IMMEDIATE)      
+  ${Slicer_SOURCE_DIR}/SlicerInstallConfig.cmake.in      
+  ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake @ONLY IMMEDIATE)      

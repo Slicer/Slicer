@@ -835,13 +835,13 @@ CONFIGURE_FILE(
 #-----------------------------------------------------------------------------
 # Set up for building against a Slicer build tree and a Slicer installation 
 #
-include(${Slicer_SOURCE_DIR}/GenerateSlicer3Config.cmake)
+include(${Slicer_SOURCE_DIR}/GenerateSlicerConfig.cmake)
 
 configure_file(${Slicer_SOURCE_DIR}/CTestConfig.cmake
   ${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake COPYONLY IMMEDIATE)
 
-configure_file(${Slicer_SOURCE_DIR}/UseSlicer3.cmake.in
-  ${Slicer_BINARY_DIR}/UseSlicer3.cmake COPYONLY IMMEDIATE)
+configure_file(${Slicer_SOURCE_DIR}/UseSlicer.cmake.in
+  ${Slicer_BINARY_DIR}/UseSlicer.cmake COPYONLY IMMEDIATE)
 
 configure_file(${Slicer_SOURCE_DIR}/CMake/RemoveTemporaryFiles.cmake.in
   ${Slicer_BINARY_DIR}/CMake/RemoveTemporaryFiles.cmake @ONLY IMMEDIATE)
@@ -851,8 +851,8 @@ configure_file(${Slicer_SOURCE_DIR}/CMake/Slicer3SampleBuildTest.cmake.in
 install(FILES
   #   ${Slicer_BINARY_DIR}/Slicer3BuildSettings.cmake
   ${Slicer_SOURCE_DIR}/CTestConfig.cmake
-  ${Slicer_BINARY_DIR}/UseSlicer3.cmake
-  ${Slicer_BINARY_DIR}/Utilities/Slicer3Config.cmake
+  ${Slicer_BINARY_DIR}/UseSlicer.cmake
+  ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake
   ${Slicer_BINARY_DIR}/lib/Slicer3/SlicerVersion.txt
   DESTINATION ${Slicer_INSTALL_LIB_DIR}
   COMPONENT Development
