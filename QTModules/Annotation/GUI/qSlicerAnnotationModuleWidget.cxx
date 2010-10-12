@@ -1476,7 +1476,7 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 
       d->removeAnnotation(m_index + 2);
 
-      const char * thevalue;
+      const char * thevalue = "";
       // This is just a hack right now for fiducials
       char _format[4] = "%d";
       const char* format = _format;

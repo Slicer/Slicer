@@ -221,7 +221,7 @@ void vtkMRMLAnnotationAngleNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLAnnotationAngleNode *node = (vtkMRMLAnnotationAngleNode *) anode;
+  //vtkMRMLAnnotationAngleNode *node = (vtkMRMLAnnotationAngleNode *) anode;
 
   //this->SetPosition1 ( node->GetPosition1() );
   //this->SetPosition2 ( node->GetPosition2() );

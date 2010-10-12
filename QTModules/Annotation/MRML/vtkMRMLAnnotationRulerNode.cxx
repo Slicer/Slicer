@@ -193,7 +193,7 @@ void vtkMRMLAnnotationRulerNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLAnnotationRulerNode *node = (vtkMRMLAnnotationRulerNode *) anode;
+  //vtkMRMLAnnotationRulerNode *node = (vtkMRMLAnnotationRulerNode *) anode;
 
 
   //this->SetResolution(node->GetResolution());
