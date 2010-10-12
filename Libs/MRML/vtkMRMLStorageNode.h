@@ -231,6 +231,18 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   /// method on the scene depending on whether the scene pointer is valid.
   /// returns 0 if it's not relative or the input is null, 1 if it is relative
   int IsFilePathRelative(const char * filepath);
+
+  ///
+  /// Calcualtes and the absolute path to the input file if the input path is
+  /// relative and the scene is defined with a root directory. Sets and then
+  /// return TempFileName. Returns null if the input path is null or the path
+  /// is relative and the scene is not defined. Returns inputPath if it's absolute.
+  const char *GetAbsoluteFilePath(const char *inputPath);
+  
+  /// 
+  /// A temporary file name used to calculate absolute paths
+  vtkSetStringMacro(TempFileName);
+  vtkGetStringMacro(TempFileName);
   
 protected:
   vtkMRMLStorageNode();
@@ -239,6 +251,7 @@ protected:
   void operator=(const vtkMRMLStorageNode&);
   
   char *FileName;
+  char *TempFileName;
   char *URI;
   vtkURIHandler *URIHandler;
   int UseCompression;
