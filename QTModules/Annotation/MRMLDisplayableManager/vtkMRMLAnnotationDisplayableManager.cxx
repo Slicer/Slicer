@@ -440,6 +440,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node)
 {
 
+  this->Print(cout);
+
   if (!sliceNode)
     {
     vtkErrorMacro("IsWidgetDisplayable: Could not get the sliceNode.")
@@ -452,27 +454,21 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode *
     return 0;
     }
 
-  // set which coordinate index of the annotation node should be used as a reference
-  // to be compared against the active slice of the sliceNode
-  // default is the Z coordinate
-  int variableCoordinateIndex = 2;
+  vtkMatrix4x4* transformMatrix = vtkMatrix4x4::New();
+  transformMatrix->Identity();
 
-  if (!strcmp(sliceNode->GetName(),"redAxial"))
+  if (node->GetTransformNodeID())
     {
-    // axial: the z coordinate
-    variableCoordinateIndex = 2;
-    }
-  else if (!strcmp(sliceNode->GetName(),"yellowSagittal"))
-    {
-    // sagittal: the x coordinate
-    variableCoordinateIndex = 0;
-    }
-  else if (!strcmp(sliceNode->GetName(),"greenCoronal"))
-    {
-    // coronal: the y coordinate
-    variableCoordinateIndex = 1;
-    }
+    // if annotation is under transform, get the transformation matrix
 
+    vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(node->GetTransformNodeID()));
+
+    if (transformNode)
+      {
+      transformNode->GetMatrixTransformToWorld(transformMatrix);
+      }
+
+    }
 
   bool showWidget = true;
 
@@ -490,13 +486,30 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode *
     // we loop through all controlpoints of each node
     double * worldCoordinates = controlPointsNode->GetControlPointCoordinates(i);
 
-    // compare the activeSlice value against the coordinate at the variableCoordinateIndex
-    // for this, we normalize the difference by getting the absolute value
-    double normalizedDifference = abs(sliceNode->GetSliceOffset() - worldCoordinates[variableCoordinateIndex]);
+    double extendedWorldCoordinates[4];
+    extendedWorldCoordinates[0] = worldCoordinates[0];
+    extendedWorldCoordinates[1] = worldCoordinates[1];
+    extendedWorldCoordinates[2] = worldCoordinates[2];
+    extendedWorldCoordinates[3] = 1;
 
-    if (normalizedDifference > 1.2)
+    double transformedWorldCoordinates[4];
+
+    double displayCoordinates[4];
+
+    // now multiply with the transformMatrix
+    // if there is a valid transform, the coordinates get transformed else the transformMatrix is the identity matrix and
+    // does not change the coordinates
+    transformMatrix->MultiplyPoint(extendedWorldCoordinates,transformedWorldCoordinates);
+
+    // now get the displayCoordinates for the transformed worldCoordinates
+    this->GetWorldToDisplayCoordinates(transformedWorldCoordinates,displayCoordinates);
+
+    // the third coordinate of the displayCoordinates is the distance to the slice
+    float distanceToSlice = displayCoordinates[2];
+
+    if (distanceToSlice < -1.2 || distanceToSlice >= (1.2+this->m_SliceNode->GetDimensions()[2]-1))
       {
-      // if the absolute value is more than 1.2, we know that at least one coordinate of the widget is outside the current activeSlice
+      // if the distance to the slice is more than 1.2mm, we know that at least one coordinate of the widget is outside the current activeSlice
       // hence, we do not want to show this widget
       showWidget = false;
       // we don't even need to continue parsing the controlpoints, because we know the widget will not be shown
@@ -537,12 +550,15 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindowGetCoordinates()
 {
 
   double x = this->GetInteractor()->GetEventPosition()[0];
-  //int rawY = this->GetInteractor()->GetEventPosition()[1];
-  //this->GetInteractor()->SetEventPositionFlipY(x, rawY);
   double y = this->GetInteractor()->GetEventPosition()[1];
 
+  double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
+  double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
 
-  this->OnClickInRenderWindow(x, y);
+  if (x < windowWidth && y < windowHeight)
+    {
+    this->OnClickInRenderWindow(x, y);
+    }
 }
 
 
@@ -582,12 +598,25 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x,
 
     // we will get the transformation matrix to convert display coordinates to RAS
 
+    double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
+    double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
+
+    int numberOfColumns = this->GetSliceNode()->GetLayoutGridColumns();
+    int numberOfRows = this->GetSliceNode()->GetLayoutGridRows();
+
+    float tempX = x / windowWidth;
+    float tempY = (windowHeight - y) / windowHeight;
+
+    float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
+
+    vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x,y);
+
     vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
 
     double displayCoordinates[4];
-    displayCoordinates[0] = x;
-    displayCoordinates[1] = y;
-    displayCoordinates[2] = 0;
+    displayCoordinates[0] = x - pokedRenderer->GetOrigin()[0];
+    displayCoordinates[1] = y - pokedRenderer->GetOrigin()[1];
+    displayCoordinates[2] = z;
     displayCoordinates[3] = 1;
 
     xyToRasMatrix->MultiplyPoint(displayCoordinates, worldCoordinates);

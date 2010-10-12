@@ -243,9 +243,17 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
   double displayCoordinates1[4];
+  double displayCoordinatesBuffer1[4];
+
+  seedRepresentation->GetSeedDisplayPosition(0,displayCoordinatesBuffer1);
 
   this->GetWorldToDisplayCoordinates(fiducialNode->GetControlPointCoordinates(0),displayCoordinates1);
-  seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
+
+  if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
+    {
+    // only update when really changed
+    seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
+    }
 
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
