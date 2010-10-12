@@ -288,7 +288,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisVisibility()
 {
-  bool visible = this->External->GetMRMLViewNode()->GetBoxVisible();
+  int visible = this->External->GetMRMLViewNode()->GetBoxVisible();
   vtkDebugWithObjectMacro(this->External, << "UpdateAxisVisibility:" << visible);
   this->BoxAxisActor->SetVisibility(visible);
   this->External->RequestRender();
@@ -297,7 +297,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisVisibility()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 {
-  bool visible = this->External->GetMRMLViewNode()->GetAxisLabelsVisible();
+  int visible = this->External->GetMRMLViewNode()->GetAxisLabelsVisible();
   vtkDebugWithObjectMacro(this->External, << "UpdateAxisLabelVisibility:" << visible);
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
     {
