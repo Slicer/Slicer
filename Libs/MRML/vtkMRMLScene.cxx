@@ -798,6 +798,11 @@ int vtkMRMLScene::Import()
     for (scene->InitTraversal(it); 
          (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
       {
+      this->AddReservedID(node->GetID());
+      }
+    for (scene->InitTraversal(it); 
+         (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
+      {
       //this->AddNodeNoNotify(node);
       this->AddNode(node);
       }
@@ -805,6 +810,8 @@ int vtkMRMLScene::Import()
     // fix node refrences that may be not unique in the imported scene.
     this->UpdateNodeReferences(scene);
     
+    this->RemoveReservedIDs();
+
     this->InvokeEvent(this->NewSceneEvent, NULL);
     for (scene->InitTraversal(it); 
          (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
@@ -1833,7 +1840,11 @@ int vtkMRMLScene::GetUniqueIDIndexByClassFromIndex(const char* className, int hi
     ss >> candidateName;
     if ( this->GetNodeByID( candidateName.c_str() ) == NULL )
       {
-      break;
+      // check reserved ID's
+      if (this->ReservedIDs.find(candidateName) == this->ReservedIDs.end())
+        {
+        break;
+        }      
       }
     }
   return index;
@@ -1905,6 +1916,19 @@ const char* vtkMRMLScene::GetUniqueNameByString(const char* className)
   return UniqueIDs[UniqueIDs.size()-1].c_str();
 }
 
+void vtkMRMLScene::AddReservedID(const char *id)
+{
+  if (id == NULL) 
+    {
+    return;
+    }
+  else 
+    {
+    this->ReservedIDs[std::string(id)] = 0;
+    }
+}
+
+//------------
 //------------------------------------------------------------------------------
 // Pushes the current scene onto the undo stack, and makes a backup copy of the 
 // passed node so that changes to the node are undoable; several signatures to handle 
