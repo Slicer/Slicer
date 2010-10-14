@@ -98,14 +98,27 @@ void qMRMLDoubleRangeSlider::setMaximumHandlePalette(const QPalette& palette)
 // --------------------------------------------------------------------------
 class qMRMLRangeSliderPrivate
 {
+  Q_DECLARE_PUBLIC(qMRMLRangeSlider);
+protected:
+  qMRMLRangeSlider* const q_ptr;
+
 public:
+  qMRMLRangeSliderPrivate(qMRMLRangeSlider* widget);
+
   QPalette MinimumPalette;
   QPalette MaximumPalette;
 };
 
 // --------------------------------------------------------------------------
+qMRMLRangeSliderPrivate::qMRMLRangeSliderPrivate(qMRMLRangeSlider* pub)
+  : q_ptr(pub)
+{
+}
+
+// --------------------------------------------------------------------------
 qMRMLRangeSlider::qMRMLRangeSlider(QWidget* parentWidget)
   :ctkRangeSlider(parentWidget)
+   ,d_ptr(new qMRMLRangeSliderPrivate(this))
 {
 }
 
