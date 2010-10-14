@@ -18,18 +18,18 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerLayoutManager_p_h
-#define __qSlicerLayoutManager_p_h
+#ifndef __qMRMLLayoutWidget_p_h
+#define __qMRMLLayoutWidget_p_h
 
 /// Qt includes
 #include <QHash>
+#include <QObject>
 
 /// CTK includes
-#include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
 // qMRML includes
-#include "qSlicerLayoutManager.h"
+#include "qMRMLLayoutWidget.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -46,29 +46,29 @@ class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
 
 //-----------------------------------------------------------------------------
-class qSlicerLayoutManagerPrivate: public QObject
+class qMRMLLayoutWidgetPrivate: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_DECLARE_PUBLIC(qSlicerLayoutManager);
+  Q_DECLARE_PUBLIC(qMRMLLayoutWidget);
 protected:
-  qSlicerLayoutManager* const q_ptr;
+  qMRMLLayoutWidget* const q_ptr;
 public:
-  qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object);
-  ~qSlicerLayoutManagerPrivate();
+  qMRMLLayoutWidgetPrivate(qMRMLLayoutWidget& object);
+  ~qMRMLLayoutWidgetPrivate();
 
   void setMRMLScene(vtkMRMLScene* scene);
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
 
   /// Instantiate a slice viewer corresponding to \a sliceViewName
-  QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
+  virtual QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
 
   /// Delete slice viewer associated with \a sliceNode
   void removeSliceView(vtkMRMLSliceNode* sliceNode);
 
   /// Instantiate a 3D Viewer corresponding to \a viewNode
-  qMRMLThreeDView* createThreeDView(vtkMRMLViewNode* viewNode);
+  virtual qMRMLThreeDView* createThreeDView(vtkMRMLViewNode* viewNode);
   /// Convenient function that creates a vtkMRMLViewNode and a qMRMLThreeDView
   qMRMLThreeDView* createThreeDView();
 
