@@ -27,6 +27,10 @@
 #include "vtkMRML.h"
 #include "vtkMRMLGlyphableVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+#include "vtkImageShiftScale.h"
+#include "vtkImageExtractComponents.h"
+#include "vtkImageMathematics.h"
+#include "vtkImageCast.h"
 
 class vtkMRMLGlyphableVolumeSliceDisplayNode;
 class vtkDiffusionTensorMathematicsSimple;
@@ -150,6 +154,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   vtkGetObjectMacro(DTIMathematics, vtkDiffusionTensorMathematicsSimple);
   vtkGetObjectMacro(DTIMathematicsAlpha, vtkDiffusionTensorMathematicsSimple);
+  vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
+
 
 //BTX
   /// 
@@ -179,6 +185,14 @@ protected:
   vtkDiffusionTensorMathematicsSimple *DTIMathematics;
   /// used for calculating single component magnitude for color images
   vtkDiffusionTensorMathematicsSimple *DTIMathematicsAlpha;
+
+  vtkImageShiftScale *ShiftScale;
+
+  vtkImageExtractComponents *ExtractComponents;
+
+  vtkImageMathematics *ImageMath;
+
+  vtkImageCast *ImageCast;
 
    /// Scalar display parameters
   int ScalarInvariant;

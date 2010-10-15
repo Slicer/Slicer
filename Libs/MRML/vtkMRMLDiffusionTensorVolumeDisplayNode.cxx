@@ -66,6 +66,20 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
  this->Threshold->SetInput( this->DTIMathematics->GetOutput());
  this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
 
+ this->ShiftScale = vtkImageShiftScale::New();
+ this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
+ this->ShiftScale->SetClampOverflow(1);
+
+ this->ExtractComponents = vtkImageExtractComponents::New();
+ this->ExtractComponents->SetComponents(0,1,2);
+
+ this->ImageCast = vtkImageCast::New();
+ this->ImageCast->SetOutputScalarTypeToUnsignedChar();
+
+ this->ImageMath  = vtkImageMathematics::New();
+ this->ImageMath->SetOperationToMultiplyByK();
+ this->ImageMath->SetConstantK(255);
+
  this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
  vtkSphereSource *sphere = vtkSphereSource::New();
  sphere->Update();
@@ -82,6 +96,10 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::~vtkMRMLDiffusionTensorVolumeDisplayNod
   this->DTIMathematicsAlpha->Delete();
 
   this->DiffusionTensorGlyphFilter->Delete();
+  this->ShiftScale->Delete();
+  this->ExtractComponents->Delete();
+  this->ImageMath->Delete();
+  this->ImageCast->Delete();
 }
 
 
@@ -183,11 +201,13 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::SetImageData(vtkImageData *imageDa
 {
   this->DTIMathematics->SetInput(0, imageData);
   this->DTIMathematicsAlpha->SetInput(0, imageData);
+  //this->ShiftScale->SetInput(0, imageData );
+  //this->AppendComponents->SetInput(0, this->ShiftScale->GetOutput());
+
 }
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
 {
-
   int operation = this->GetScalarInvariant();
   this->DTIMathematics->SetOperation(operation);
   switch (operation)
@@ -196,15 +216,32 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
     case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
+      {
+      // alpha
       this->DTIMathematics->SetScaleFactor(1000.0);
       this->DTIMathematicsAlpha->SetOperation(
         vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
-      this->Threshold->SetInput( this->DTIMathematicsAlpha->GetOutput());
-      this->AppendComponents->RemoveAllInputs();
-      this->AppendComponents->SetInputConnection(0, this->DTIMathematics->GetOutput()->GetProducerPort() );
-      //this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
-      break;
+      this->ImageMath->SetInput( this->DTIMathematicsAlpha->GetOutput());
+      this->ImageCast->SetInput( this->ImageMath->GetOutput());
+      this->Threshold->SetInput( this->ImageCast->GetOutput());
 
+      // window/level
+      this->ShiftScale->SetInput(this->DTIMathematics->GetOutput());
+      double halfWindow = (this->Window / 2.);
+      double min = this->Level - halfWindow;
+      this->ShiftScale->SetShift ( -min );
+      this->ShiftScale->SetScale ( 255. / (this->Window) );
+
+      this->ExtractComponents->SetInput(this->ShiftScale->GetOutput());
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutput()->GetProducerPort() ||
+          this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutput()->GetProducerPort())
+        {
+        this->AppendComponents->RemoveAllInputs();
+        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutput()->GetProducerPort());
+        this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutput()->GetProducerPort() );
+        }
+      break;
+      }
     default:
       this->DTIMathematics->SetScaleFactor(1.0);
       this->Threshold->SetInput( this->DTIMathematics->GetOutput());
@@ -216,6 +253,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
     }
 
   Superclass::UpdateImageDataPipeline();
+
 }
 
 //----------------------------------------------------------------------------
