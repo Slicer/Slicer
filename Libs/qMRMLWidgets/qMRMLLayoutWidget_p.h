@@ -30,6 +30,7 @@
 
 // qMRML includes
 #include "qMRMLLayoutWidget.h"
+#include "qMRMLWidgetsExport.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -46,7 +47,7 @@ class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
 
 //-----------------------------------------------------------------------------
-class qMRMLLayoutWidgetPrivate: public QObject
+class QMRML_WIDGETS_EXPORT qMRMLLayoutWidgetPrivate: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
