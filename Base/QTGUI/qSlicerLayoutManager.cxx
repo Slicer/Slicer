@@ -109,8 +109,10 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
     logger.trace(
         QString("createSliceWidget - %1 registered with python").arg(sliceLayoutName));
     }
-#endif
   return sliceWidget;
+#else
+  return this->qMRMLLayoutWidgetPrivate::createSliceWidget(sliceNode);
+#endif
 }
 
 //------------------------------------------------------------------------------
