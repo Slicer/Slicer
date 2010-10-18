@@ -36,43 +36,7 @@ int qSlicerLayoutManagerTest1(int argc, char * argv[] )
 {
   QApplication app(argc, argv);
   qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(0);
-
-  vtkMRMLScene* scene = vtkMRMLScene::New();
-  layoutManager->setMRMLScene(scene);
-  if (layoutManager->mrmlScene() != scene)
-    {
-    std::cerr << "scene incorrectly set." << std::endl;
-    return EXIT_FAILURE;
-    }
-  layoutManager->setMRMLScene(0);
-  scene->Delete();
-  scene = vtkMRMLScene::New();
-  layoutManager->setMRMLScene(scene);
-  QWidget* viewport = new QWidget(0);
-  viewport->setWindowTitle("Old widget");
-  layoutManager->setViewport(viewport);
-  viewport->show();
-
-  layoutManager->setViewport(0);
-  layoutManager->setViewport(viewport);
-
-  QWidget* viewport2 = new QWidget(0);
-  viewport2->setWindowTitle("New widget");
-  layoutManager->setViewport(viewport2);
-  viewport2->show();
-
-  QTimer autoExit;
-  if (argc < 2 || QString(argv[1]) != "-I")
-    {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
-    }
-  int res = app.exec();
-
-  scene->Delete();
   delete layoutManager;
-  delete viewport;
-  delete viewport2;
-  return res;
+  return EXIT_SUCCESS;
 }
 

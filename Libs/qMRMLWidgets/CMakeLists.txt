@@ -38,9 +38,11 @@ SET(qMRMLWidgets_SRCS
   qMRMLEventLoggerWidget.h
   qMRMLItemHelper.cxx
   qMRMLItemHelper.h
+  qMRMLLayoutManager.cxx
+  qMRMLLayoutManager.h
+  qMRMLLayoutManager_p.h
   qMRMLLayoutWidget.cxx
   qMRMLLayoutWidget.h
-  qMRMLLayoutWidget_p.h
   qMRMLLinearTransformSlider.cxx
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.cxx
@@ -108,8 +110,9 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.h
   qMRMLLabelComboBox.h
+  qMRMLLayoutManager.h
+  qMRMLLayoutManager_p.h
   qMRMLLayoutWidget.h
-  qMRMLLayoutWidget_p.h
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h

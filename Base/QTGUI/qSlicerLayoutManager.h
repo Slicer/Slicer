@@ -25,11 +25,11 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 // qMRMLWidgets includes
-#include <qMRMLLayoutWidget.h>
+#include <qMRMLLayoutManager.h>
 
 class qSlicerLayoutManagerPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLayoutManager : public qMRMLLayoutWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLayoutManager : public qMRMLLayoutManager
 {
   Q_OBJECT
 public:

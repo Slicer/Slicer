@@ -22,7 +22,7 @@
 #define __qMRMLLayoutWidget_h
 
 // Qt includes
-#include <QObject>
+#include <QWidget>
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
@@ -30,167 +30,60 @@
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
 
-class qMRMLThreeDView;
-class qMRMLSliceWidget;
 class qMRMLLayoutWidgetPrivate;
-class vtkCollection;
+class qMRMLLayoutManager;
 class vtkMRMLScene;
-class vtkMRMLViewNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLLayoutWidget : public QObject
+class QMRML_WIDGETS_EXPORT qMRMLLayoutWidget : public QWidget
 {
   Q_OBJECT
 public:
   /// Superclass typedef
-  typedef QObject Superclass;
+  typedef QWidget Superclass;
 
   /// Constructors
   explicit qMRMLLayoutWidget(QWidget* widget);
   virtual ~qMRMLLayoutWidget();
 
-  void setViewport(QWidget* widget);
-  QWidget* viewport()const;
-
+  /// Layout manager
+  qMRMLLayoutManager* layoutManager()const;
+  /// Utility function that returns the mrml scene of the layout manager
   vtkMRMLScene* mrmlScene()const;
-
-  /// Set the directory from which build-in scripted
-  /// displayableManagers should be sourced from.
-  void setScriptedDisplayableManagerDirectory(const QString& scriptedDisplayableManagerDirectory);
-
-  /// Get SliceViewWidget identified by \a name
-  qMRMLSliceWidget* sliceWidget(const QString& name)const;
-
-  /// Return the number of instantiated ThreeDRenderView
-  int threeDViewCount()const;
-
-  /// Get ThreeDRenderView identified by \a id
-  /// where \a id is an integer ranging from 0 to N-1 with N being the number
-  /// of instantiated qMRMLThreeDView (that should also be equal to the number
-  /// of vtkMRMLViewNode)
-  qMRMLThreeDView* threeDView(int id)const;
-
-  /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
-  vtkCollection* mrmlSliceLogics()const;
-
+  /// Utility function that returns the current layout of the layout manager
   int layout()const;
 
-  vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
-
 public slots:
-
   ///
-  /// Set the MRML \a scene that should be listened for events
+  /// Set the MRML \a scene to the layout manager
   void setMRMLScene(vtkMRMLScene* scene);
 
   /// Switch to the different layout
-  /// TODO A better way would be to register layout classes with the manager
-  inline void switchToConventionalView();
-  inline void switchToOneUp3DView();
-  inline void switchToOneUpRedSliceView();
-  inline void switchToOneUpYellowSliceView();
-  inline void switchToOneUpGreenSliceView();
+  /// propagate to the layout manager
+  void switchToConventionalView();
+  void switchToOneUp3DView();
+  void switchToOneUpRedSliceView();
+  void switchToOneUpYellowSliceView();
+  void switchToOneUpGreenSliceView();
   void switchToOneUpSliceView(const QString& sliceViewName);
-  inline void switchToFourUpView();
-  inline void switchToTabbed3DView();
-  inline void switchToTabbedSliceView();
-  inline void switchToLightboxView();
-  inline void switchToCompareView();
-  inline void switchToSideBySideLightboxView();
-  inline void switchToDual3DView();
-  inline void switchToNone();
+  void switchToFourUpView();
+  void switchToTabbed3DView();
+  void switchToTabbedSliceView();
+  void switchToLightboxView();
+  void switchToCompareView();
+  void switchToSideBySideLightboxView();
+  void switchToDual3DView();
+  void switchToNone();
 
-  /// Generic function
+  /// Propagate to the layoutmanager
   void setLayout(int);
-
-signals:
-  void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
 
 protected:
   qMRMLLayoutWidget(qMRMLLayoutWidgetPrivate* obj, QWidget* widget);
-
   QScopedPointer<qMRMLLayoutWidgetPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLLayoutWidget);
   Q_DISABLE_COPY(qMRMLLayoutWidget);
 };
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToConventionalView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToOneUp3DView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToOneUpRedSliceView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToOneUpYellowSliceView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToOneUpGreenSliceView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToFourUpView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToTabbed3DView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToTabbedSliceView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToLightboxView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutLightboxView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToCompareView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutCompareView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToSideBySideLightboxView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutSideBySideLightboxView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToDual3DView()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutDual3DView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutWidget::switchToNone()
-{
-  this->setLayout(vtkMRMLLayoutNode::SlicerLayoutNone);
-}
 
 #endif

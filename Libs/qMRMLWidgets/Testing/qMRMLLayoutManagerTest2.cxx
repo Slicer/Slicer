@@ -24,7 +24,7 @@
 #include <QWidget>
 
 // SlicerQt includes
-#include "qSlicerLayoutManager.h"
+#include "qMRMLLayoutManager.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -40,12 +40,12 @@
 #define VTK_CREATE(type, name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
-int qSlicerLayoutManagerTest2(int argc, char * argv[] )
+int qMRMLLayoutManagerTest2(int argc, char * argv[] )
 {
   QApplication app(argc, argv);
   QWidget w;
   w.show();
-  qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(&w);
+  qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w);
 
   vtkMRMLScene* scene = vtkMRMLScene::New();
   layoutManager->setMRMLScene(scene);

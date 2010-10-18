@@ -4,7 +4,6 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qSlicerAbstractModuleTest1.cxx
   qSlicerAbstractModuleWidgetTest1.cxx
   qSlicerLayoutManagerTest1.cxx
-  qSlicerLayoutManagerTest2.cxx
   qSlicerLoadableModuleTest1.cxx
   qSlicerWidgetTest1.cxx
   qSlicerWidgetTest2.cxx
@@ -40,7 +39,6 @@ ENDMACRO( SIMPLE_TEST  )
 SIMPLE_TEST( qSlicerAbstractModuleTest1 )
 SIMPLE_TEST( qSlicerAbstractModuleWidgetTest1 )
 SIMPLE_TEST( qSlicerLayoutManagerTest1 )
-SIMPLE_TEST( qSlicerLayoutManagerTest2 )
 SIMPLE_TEST( qSlicerLoadableModuleTest1 )
 SIMPLE_TEST( qSlicerWidgetTest1 )
 SIMPLE_TEST( qSlicerWidgetTest2 )

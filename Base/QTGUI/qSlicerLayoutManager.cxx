@@ -43,7 +43,7 @@
 #endif
 
 // qMRMLSlicer
-#include <qMRMLLayoutWidget_p.h>
+#include <qMRMLLayoutManager_p.h>
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
@@ -57,10 +57,10 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerLayoutManager");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class qSlicerLayoutManagerPrivate: public qMRMLLayoutWidgetPrivate
+class qSlicerLayoutManagerPrivate: public qMRMLLayoutManagerPrivate
 {
 public:
-  qSlicerLayoutManagerPrivate(qMRMLLayoutWidget& object);
+  qSlicerLayoutManagerPrivate(qMRMLLayoutManager& object);
   /// Instantiate a slice viewer corresponding to \a sliceViewName
   virtual QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
 
@@ -68,19 +68,21 @@ public:
   QString            ScriptedDisplayableManagerDirectory;
 };
 
-qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate(qMRMLLayoutWidget& object)
-  :qMRMLLayoutWidgetPrivate(object)
+qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate(qMRMLLayoutManager& object)
+  :qMRMLLayoutManagerPrivate(object)
 {
 }
 
 // --------------------------------------------------------------------------
 QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNode)
 {
-#ifdef Slicer_USE_PYTHONQT_WITH_TCL
   qMRMLSliceWidget* sliceWidget = dynamic_cast<qMRMLSliceWidget*>(
-    this->qMRMLLayoutWidgetPrivate::createSliceWidget(sliceNode));
+    this->qMRMLLayoutManagerPrivate::createSliceWidget(sliceNode));
+
   if (sliceWidget)
     {
+    sliceWidget->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
     QString sliceLayoutName(sliceNode->GetLayoutName());
     // Note: Python code shouldn't be added to the layout manager itself !
     // TODO: move this functionality to the scripted displayable manager...
@@ -120,8 +122,8 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
 
 // -----------------------------------------------------------------------------
 qSlicerLayoutManager::qSlicerLayoutManager(QWidget* widget)
-  : qMRMLLayoutWidget(new qSlicerLayoutManagerPrivate(
-                        *static_cast<qMRMLLayoutWidget*>(this)), widget)
+  : qMRMLLayoutManager(new qSlicerLayoutManagerPrivate(
+                        *static_cast<qMRMLLayoutManager*>(this)), widget)
 {
 }
 

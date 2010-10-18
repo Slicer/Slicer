@@ -4,6 +4,7 @@
 #include "qMRMLCollapsibleButtonPlugin.h"
 #include "qMRMLColorTableComboBoxPlugin.h"
 #include "qMRMLLabelComboBoxPlugin.h"
+#include "qMRMLLayoutWidgetPlugin.h"
 #include "qMRMLLinearTransformSliderPlugin.h"
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
@@ -40,6 +41,7 @@ public:
     plugins << new qMRMLCollapsibleButtonPlugin
             << new qMRMLColorTableComboBoxPlugin
             << new qMRMLLabelComboBoxPlugin
+            << new qMRMLLayoutWidgetPlugin
             << new qMRMLLinearTransformSliderPlugin
             << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin

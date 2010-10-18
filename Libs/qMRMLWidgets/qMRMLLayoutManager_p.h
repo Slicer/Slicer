@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLLayoutWidget_p_h
-#define __qMRMLLayoutWidget_p_h
+#ifndef __qMRMLLayoutManager_p_h
+#define __qMRMLLayoutManager_p_h
 
 /// Qt includes
 #include <QHash>
@@ -29,8 +29,7 @@
 #include <ctkVTKObject.h>
 
 // qMRML includes
-#include "qMRMLLayoutWidget.h"
-#include "qMRMLWidgetsExport.h"
+#include "qMRMLLayoutManager.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -47,16 +46,16 @@ class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
 
 //-----------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLLayoutWidgetPrivate: public QObject
+class qMRMLLayoutManagerPrivate: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_DECLARE_PUBLIC(qMRMLLayoutWidget);
+  Q_DECLARE_PUBLIC(qMRMLLayoutManager);
 protected:
-  qMRMLLayoutWidget* const q_ptr;
+  qMRMLLayoutManager* const q_ptr;
 public:
-  qMRMLLayoutWidgetPrivate(qMRMLLayoutWidget& object);
-  ~qMRMLLayoutWidgetPrivate();
+  qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object);
+  ~qMRMLLayoutManagerPrivate();
 
   void setMRMLScene(vtkMRMLScene* scene);
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
@@ -85,7 +84,7 @@ public:
 
   /// Actually set the layout type to the node
   void updateLayoutNode(int layout);
-  
+
   /// Hide and remove all widgets from the current layout
   void clearLayout(QLayout* layout);
 
