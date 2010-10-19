@@ -18,6 +18,12 @@
 #include "N4ITKBiasFieldCorrectionCLP.h"
 #include "itkPluginUtilities.h"
 
+namespace {
+
+typedef float RealType;
+const int ImageDimension = 3;
+typedef itk::Image<RealType, ImageDimension> ImageType;
+
 template<class TFilter>
 class CommandIterationUpdate : public itk::Command
 {
@@ -47,14 +53,30 @@ public:
 };
 
 
+template<class T> int SaveIt(ImageType::Pointer img, const char* fname, T)
+{
+  typedef itk::Image<T,3> OutputImageType;
+  typedef itk::CastImageFilter<ImageType,OutputImageType> CastType;
+
+  typename CastType::Pointer caster = CastType::New();
+  caster->SetInput(img);
+
+  typedef  itk::ImageFileWriter<OutputImageType> WriterType;
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->SetInput( caster->GetOutput() );
+  writer->SetFileName( fname );
+  writer->SetUseCompression(1);
+  writer->Update();
+
+  return EXIT_SUCCESS;
+}
+
+};
+
 int main(int argc, char** argv){
 
   PARSE_ARGS;
 
-  typedef float RealType;
-  const int ImageDimension = 3;
-
-  typedef itk::Image<RealType, ImageDimension> ImageType;
   ImageType::Pointer inputImage = NULL;
 
   typedef itk::Image<unsigned char, ImageDimension> MaskImageType;
@@ -340,19 +362,70 @@ int main(int argc, char** argv){
     biasFieldCropper->SetExtractionRegion( inputRegion );
     biasFieldCropper->Update();
 
-    typedef  itk::ImageFileWriter<ImageType> WriterType;
-    WriterType::Pointer writer = WriterType::New();
-    writer->SetInput( cropper->GetOutput() );
-    writer->SetFileName( outputImageName.c_str() );
-    writer->Update();
-
     if(outputBiasFieldName != "" ){
       typedef itk::ImageFileWriter<ImageType> WriterType;
       WriterType::Pointer writer = WriterType::New();
       writer->SetFileName( outputBiasFieldName.c_str() );
       writer->SetInput( biasFieldCropper->GetOutput() );
+      writer->SetUseCompression(1);
       writer->Update();
     }
+
+    try
+      {
+    
+      itk::ImageIOBase::IOPixelType pixelType;
+      itk::ImageIOBase::IOComponentType componentType;
+
+      itk::GetImageType (inputImageName, pixelType, componentType);
+
+      // This filter handles all types on input, but only produces
+      // signed types
+      const char *fname = outputImageName.c_str();
+      switch (componentType)
+        {
+      case itk::ImageIOBase::UCHAR:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<unsigned char>(0));
+        break;
+      case itk::ImageIOBase::CHAR:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<char>(0));
+        break;
+      case itk::ImageIOBase::USHORT:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<unsigned short>(0));
+        break;
+      case itk::ImageIOBase::SHORT:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<short>(0));
+        break;
+      case itk::ImageIOBase::UINT:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<unsigned int>(0));
+        break;
+      case itk::ImageIOBase::INT:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<int>(0));
+        break;
+      case itk::ImageIOBase::ULONG:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<unsigned long>(0));
+        break;
+      case itk::ImageIOBase::LONG:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<long>(0));
+        break;
+      case itk::ImageIOBase::FLOAT:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<float>(0));
+        break;
+      case itk::ImageIOBase::DOUBLE:
+        return SaveIt( cropper->GetOutput(), fname, static_cast<double>(0));
+        break;
+      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+        std::cerr << "Cannot saved the result using the requested pixel type" << std::endl;
+        return EXIT_FAILURE;
+      default:
+        std::cout << "unknown component type" << std::endl;
+        break;
+        }
+      } catch(itk::ExceptionObject &e){
+        std::cerr << "Failed to save the data: " << e << std::endl;
+        return EXIT_FAILURE;
+      }
+
   }
 
   return EXIT_SUCCESS;
