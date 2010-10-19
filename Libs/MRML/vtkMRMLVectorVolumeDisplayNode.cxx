@@ -62,10 +62,6 @@ vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
  this->RGBToHSI = vtkImageRGBToHSI::New();
  this->ExtractIntensity = vtkImageExtractComponents::New();
 
- // TODO: hook this into the Alpha Logic of the superclass
- // so that the thresholds can apply to RGB images
- // - for now just pass on RGB
-
  this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
  this->ShiftScale->SetClampOverflow(1);
 

@@ -246,9 +246,13 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->DTIMathematics->SetScaleFactor(1.0);
       this->Threshold->SetInput( this->DTIMathematics->GetOutput());
       this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
-      this->AppendComponents->RemoveAllInputs();
-      this->AppendComponents->SetInputConnection(0, this->MapToColors->GetOutput()->GetProducerPort() );
-      this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->MapToColors->GetOutput()->GetProducerPort() ||
+          this->AppendComponents->GetInputConnection(0, 1) != this->AlphaLogic->GetOutput()->GetProducerPort())
+        {
+        this->AppendComponents->RemoveAllInputs();
+        this->AppendComponents->SetInputConnection(0, this->MapToColors->GetOutput()->GetProducerPort() );
+        this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
+        }
       break;
     }
 

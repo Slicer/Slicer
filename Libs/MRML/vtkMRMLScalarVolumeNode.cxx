@@ -406,6 +406,30 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
       vtkDebugMacro("CalculateScalarAutoLevels: set display node window to " << this->Bimodal->GetWindow() << ", level to " << this->Bimodal->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << ", displayNode id = " << displayNode->GetID());
       }
     }
+    else if (imageDataScalar->GetNumberOfScalarComponents() >=3)
+      {
+      double range[2];
+      imageDataScalar->GetScalarRange(range);
+      if (fabs(range[0]) < 0.000001 && fabs(range[1]) < 0.000001) 
+        {
+        range[0] = 0;
+        range[1] = 255;
+        }
+      double min = range[0];
+      double max = range[1];
+      //std::cout << "CalculateScalarAutoLevels: Window and Level are 0, or type is not int, using image scalar range, " << min << ", " << max << std::endl);
+      if (displayNode->GetAutoWindowLevel())
+        {    
+        displayNode->SetWindow (max-min);
+        displayNode->SetLevel (0.5*(max+min));
+        }
+      if (displayNode->GetAutoThreshold())
+        {
+        displayNode->SetLowerThreshold (displayNode->GetLevel());
+        displayNode->SetUpperThreshold (range[1]);
+        }
+
+    }
 
     displayNode->EndModify(disabledModify);
 
