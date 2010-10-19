@@ -184,6 +184,8 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
       d->VTKSliceView->lightBoxRendererManager()->GetRenderer(0));
   Q_ASSERT(d->DisplayableManagerGroup);
 
+  d->DisplayableManagerGroup->SetMRMLDisplayableNode(d->MRMLSliceNode);
+
   // Observe displayable manager group to catch RequestRender events
   d->qvtkConnect(d->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                  d->VTKSliceView, SLOT(scheduleRender()));
@@ -229,7 +231,10 @@ void qMRMLSliceWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
     {
     return;
     }
-  d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
+  if (d->DisplayableManagerGroup)
+    {
+    d->DisplayableManagerGroup->SetMRMLDisplayableNode(newSliceNode);
+    }
   d->SliceController->setMRMLSliceNode(newSliceNode);
 
   d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
