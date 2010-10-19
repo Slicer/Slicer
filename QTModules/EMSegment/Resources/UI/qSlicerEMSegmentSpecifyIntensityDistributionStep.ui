@@ -79,11 +79,11 @@
          <property name="toolTip">
           <string>Double-click to set the intensity distribution mean.</string>
          </property>
-         <property name="rowCount">
-          <number>1</number>
-         </property>
          <property name="columnCount">
           <number>2</number>
+         </property>
+         <property name="rowCount">
+          <number>1</number>
          </property>
          <property name="editable">
           <bool>true</bool>
@@ -100,25 +100,6 @@
          <property name="singleStep">
           <double>2.000000000000000</double>
          </property>
-         <row/>
-         <column/>
-         <column/>
-         <item row="0" column="0">
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-          </property>
-         </item>
-         <item row="0" column="1">
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-          </property>
-         </item>
         </widget>
        </item>
        <item row="2" column="0">
@@ -133,51 +114,12 @@
          <property name="toolTip">
           <string>Double-click to set the intensity distribution covariance.</string>
          </property>
-         <property name="rowCount">
-          <number>2</number>
-         </property>
          <property name="columnCount">
           <number>2</number>
          </property>
-         <property name="editable">
-          <bool>true</bool>
+         <property name="rowCount">
+          <number>2</number>
          </property>
-         <row/>
-         <row/>
-         <column/>
-         <column/>
-         <item row="0" column="0">
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-          </property>
-         </item>
-         <item row="0" column="1">
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-          </property>
-         </item>
-         <item row="1" column="0">
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-          </property>
-         </item>
-         <item row="1" column="1">
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-          </property>
-         </item>
         </widget>
        </item>
       </layout>
@@ -226,7 +168,7 @@
  <customwidgets>
   <customwidget>
    <class>ctkMatrixWidget</class>
-   <extends>QTableWidget</extends>
+   <extends>QWidget</extends>
    <header>ctkMatrixWidget.h</header>
   </customwidget>
   <customwidget>

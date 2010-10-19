@@ -120,94 +120,9 @@
          </property>
          <item>
           <widget class="qMRMLMatrixWidget" name="MatrixWidget">
-           <row/>
-           <row/>
-           <row/>
-           <row/>
-           <column/>
-           <column/>
-           <column/>
-           <column/>
-           <item row="0" column="0">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="0" column="1">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="0" column="2">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="0" column="3">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="1" column="0">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="1" column="1">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="1" column="2">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="1" column="3">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="2" column="0">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="2" column="1">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="2" column="2">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="2" column="3">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="3" column="0">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="3" column="1">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="3" column="2">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
-           <item row="3" column="3">
-            <property name="textAlignment">
-             <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-            </property>
-           </item>
+           <property name="editable">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -331,7 +246,7 @@
   </customwidget>
   <customwidget>
    <class>ctkMatrixWidget</class>
-   <extends>QTableWidget</extends>
+   <extends>QWidget</extends>
    <header>ctkMatrixWidget.h</header>
   </customwidget>
   <customwidget>
