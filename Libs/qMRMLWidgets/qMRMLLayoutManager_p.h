@@ -46,7 +46,7 @@ class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
 
 //-----------------------------------------------------------------------------
-class qMRMLLayoutManagerPrivate: public QObject
+class QMRML_WIDGETS_EXPORT qMRMLLayoutManagerPrivate: public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
