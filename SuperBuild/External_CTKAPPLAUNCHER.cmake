@@ -23,7 +23,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
     
     SET(launcher_version "0.1.0")
     ExternalProject_Add(${proj}
-      URL http://github.com/downloads/commontk/AppLauncher/CTKAppLauncher-${launcher_version}-${launcher_suffix}.zip
+      URL http://cloud.github.com/downloads/commontk/AppLauncher/CTKAppLauncher-${launcher_version}-${launcher_suffix}.tar.gz
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
