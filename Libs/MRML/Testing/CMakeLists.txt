@@ -220,8 +220,10 @@ FOREACH( SceneToTest ${ScenesToTest} )
   TEST_SCENE( ${SceneToTest} )
 ENDFOREACH( SceneToTest )
 
-# add a tcl test to check that colour files get loaded and saved properly to mrml files and loaded again
-ADD_TEST(Slicer3ColorStorageNodeSceneTest ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestColorStorageNodeInScene.tcl)
+IF(Slicer_USE_KWWIDGETS)
+  # add a tcl test to check that colour files get loaded and saved properly to mrml files and loaded again
+  ADD_TEST(Slicer3ColorStorageNodeSceneTest ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestColorStorageNodeInScene.tcl)
 
-# add a tcl test to check that scene clear is working okay
-ADD_TEST(Slicer3SceneClearTest ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestSceneClear.tcl)
+  # add a tcl test to check that scene clear is working okay
+  ADD_TEST(Slicer3SceneClearTest ${Slicer_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer_SOURCE_DIR}/Libs/MRML/Testing/Tcl/TestSceneClear.tcl)
+ENDIF()
