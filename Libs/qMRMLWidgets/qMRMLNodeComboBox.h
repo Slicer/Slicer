@@ -73,8 +73,8 @@ public:
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
-  inline QStringList nodeTypes()const;
-  inline void setNodeTypes(const QStringList& nodeTypes);
+  QStringList nodeTypes()const;
+  void setNodeTypes(const QStringList& nodeTypes);
 
   ///
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
@@ -256,18 +256,6 @@ private:
   Q_DECLARE_PRIVATE(qMRMLNodeComboBox);
   Q_DISABLE_COPY(qMRMLNodeComboBox);
 };
-
-// --------------------------------------------------------------------------
-QStringList qMRMLNodeComboBox::nodeTypes()const
-{
-  return this->sortFilterProxyModel()->nodeTypes();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLNodeComboBox::setNodeTypes(const QStringList& _nodeTypes)
-{
-  this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
-}
 
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::setShowHidden(bool enable)

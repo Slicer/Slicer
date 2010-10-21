@@ -53,8 +53,10 @@ public:
   void init(QAbstractItemModel* model);
   vtkMRMLNode* mrmlNode(int row)const;
   vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
+  void updateDefaultText();
   void updateNoneItem();
   void updateActionItems();
+  QString nodeTypeLabel()const;
 
   QComboBox*        ComboBox;
   qMRMLNodeFactory* MRMLNodeFactory;
@@ -75,7 +77,7 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   this->ComboBox = 0;
   this->MRMLNodeFactory = 0;
   this->MRMLSceneModel = 0;
-  this->SelectNodeUponCreation = true; 
+  this->SelectNodeUponCreation = true;
   this->NoneEnabled = false;
   this->AddEnabled = true;
   this->RemoveEnabled = true;
@@ -88,19 +90,23 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   Q_Q(qMRMLNodeComboBox);
   Q_ASSERT(this->MRMLNodeFactory == 0);
   ctkComboBox* comboBox = new ctkComboBox(q);
-  comboBox->setDefaultText(QObject::tr("Select a node..."));
   comboBox->setElideMode(Qt::ElideMiddle);
   this->ComboBox = comboBox;
+
   q->setLayout(new QHBoxLayout);
   q->layout()->addWidget(this->ComboBox);
   q->layout()->setContentsMargins(0,0,0,0);
-  q->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed, QSizePolicy::ComboBox));
-  this->ComboBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding, QSizePolicy::DefaultType));
+  q->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
+                               QSizePolicy::Fixed,
+                               QSizePolicy::ComboBox));
+  this->ComboBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+                                            QSizePolicy::Expanding,
+                                            QSizePolicy::DefaultType));
 
   this->MRMLNodeFactory = new qMRMLNodeFactory(q);
 
   QAbstractItemModel* rootModel = model;
-  while (qobject_cast<QAbstractProxyModel*>(rootModel) && 
+  while (qobject_cast<QAbstractProxyModel*>(rootModel) &&
          qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel())
     {
     rootModel = qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel();
@@ -113,6 +119,9 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   qMRMLSortFilterProxyModel* sortFilterModel = new qMRMLSortFilterProxyModel(q);
   sortFilterModel->setSourceModel(model);
   this->setModel(sortFilterModel);
+
+  // nodeTypeLabel() works only when the model is set.
+  this->updateDefaultText();
 
   q->connect(this->ComboBox, SIGNAL(currentIndexChanged(int)),
              q, SLOT(emitCurrentNodeChanged(int)));
@@ -166,6 +175,16 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& inde
 }
 
 // --------------------------------------------------------------------------
+void qMRMLNodeComboBoxPrivate::updateDefaultText()
+{
+  ctkComboBox* cb = qobject_cast<ctkComboBox*>(this->ComboBox);
+  if (cb)
+    {
+    cb->setDefaultText(QObject::tr("Select a ") + this->nodeTypeLabel());
+    }
+}
+
+// --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::updateNoneItem()
 {
   Q_Q(qMRMLNodeComboBox);
@@ -188,28 +207,49 @@ void qMRMLNodeComboBoxPrivate::updateActionItems()
     this->MRMLSceneModel->setPostItems(q->mrmlScene(), extraItems);
     return;
     }
-  
+
   if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled)
     {
     extraItems.append("separator");
     }
   if (this->AddEnabled)
     {
-    extraItems.append("Add Node");
+    extraItems.append(QObject::tr("Create new ") + this->nodeTypeLabel());
     }
   if (this->RemoveEnabled)
     {
-    extraItems.append("Remove Node");
+    extraItems.append(QObject::tr("Delete current ")  + this->nodeTypeLabel());
     }
   if (this->EditEnabled)
     {
-    extraItems.append("Edit Node");
+    extraItems.append(QObject::tr("Edit current ")  + this->nodeTypeLabel());
     }
   this->MRMLSceneModel->setPostItems(q->mrmlScene(), extraItems);
 
   QObject::connect(this->ComboBox->view(), SIGNAL(clicked(const QModelIndex& )),
-                   q, SLOT(activateExtraItem(const QModelIndex& )), 
+                   q, SLOT(activateExtraItem(const QModelIndex& )),
                    Qt::UniqueConnection);
+}
+
+// --------------------------------------------------------------------------
+QString qMRMLNodeComboBoxPrivate::nodeTypeLabel()const
+{
+  Q_Q(const qMRMLNodeComboBox);
+  QStringList nodeTypes = q->nodeTypes();
+  QString label;
+  if (q->mrmlScene() && !nodeTypes.isEmpty())
+    {
+    label = q->mrmlScene()->GetTagByClassName(nodeTypes[0].toLatin1());
+    if (label.isEmpty() && nodeTypes[0] == "vtkMRMLVolumeNode")
+      {
+      label = QObject::tr("Volume");
+      }
+    }
+  if (label.isEmpty())
+    {
+    label = QObject::tr("Node");
+    }
+  return label;
 }
 
 // --------------------------------------------------------------------------
@@ -244,17 +284,17 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
   Q_D(qMRMLNodeComboBox);
   // FIXME: check the type of the item on a different role instead of the display role
   QString data = this->model()->data(index, Qt::DisplayRole).toString();
-  if (data == "Add Node")
+  if (data.startsWith(QObject::tr("Create new ")))
     {
     d->ComboBox->hidePopup();
     this->addNode();
     }
-  else if (data == "Remove Node")
+  else if (data.startsWith(QObject::tr("Delete current ")))
     {
     d->ComboBox->hidePopup();
     this->removeCurrentNode();
     }
-  else if (data == "Edit Node")
+  else if (data.startsWith(QObject::tr("Edit current ")))
     {
     d->ComboBox->hidePopup();
     this->editCurrentNode();
@@ -302,9 +342,9 @@ void qMRMLNodeComboBox::addNode()
   // Create the MRML node via the MRML Scene
   // FIXME, for the moment we create only nodes of the first type, but we should
   // be able to add a node of any type in NodeTypes
-  vtkMRMLNode * _node = 
+  vtkMRMLNode * _node =
     d->MRMLNodeFactory->createNode(this->nodeTypes()[0]);
-  // The created node is appended at the bottom of the current list  
+  // The created node is appended at the bottom of the current list
   Q_ASSERT(_node);
   if (_node && this->selectNodeUponCreation())
     {// select the created node.
@@ -400,19 +440,20 @@ void qMRMLNodeComboBox::removeCurrentNode()
 void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLNodeComboBox);
-  
+
   //if (d->MRMLSceneModel->mrmlScene() == scene)
-  //  { 
+  //  {
   //  return ;
   //  }
-  
+
   // The Add button is valid only if the scene is non-empty
   //this->setAddEnabled(scene != 0);
   QVariant currentNode = d->ComboBox->itemData(d->ComboBox->currentIndex(), qMRML::UIDRole);
-  
+
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
   d->MRMLSceneModel->setMRMLScene(scene);
+  d->updateDefaultText();
   d->updateNoneItem();
   d->updateActionItems();
   // setting the rootmodel index looses the current item
@@ -478,6 +519,22 @@ void qMRMLNodeComboBox::setCurrentNode(int index)
 //--------------------------------------------------------------------------
 CTK_SET_CXX(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
 CTK_GET_CXX(qMRMLNodeComboBox, bool, selectNodeUponCreation, SelectNodeUponCreation);
+
+// --------------------------------------------------------------------------
+QStringList qMRMLNodeComboBox::nodeTypes()const
+{
+  qMRMLSortFilterProxyModel* m = this->sortFilterProxyModel();
+  return m ? m->nodeTypes() : QStringList();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLNodeComboBox::setNodeTypes(const QStringList& _nodeTypes)
+{
+  Q_D(qMRMLNodeComboBox);
+  this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
+  d->updateDefaultText();
+  d->updateActionItems();
+}
 
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::setNoneEnabled(bool enable)
@@ -566,7 +623,7 @@ qMRMLSortFilterProxyModel* qMRMLNodeComboBox::sortFilterProxyModel()const
 QAbstractItemModel* qMRMLNodeComboBox::model()const
 {
   Q_D(const qMRMLNodeComboBox);
-  return d->ComboBox->model();
+  return d->ComboBox ? d->ComboBox->model() : 0;
 }
 
 //----------------------------------=---------------------------------------
@@ -616,7 +673,7 @@ void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex & parent, int start, in
     emit nodeAdded(node);
     }
 }
- 
+
 //--------------------------------------------------------------------------
 void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end)
 {
