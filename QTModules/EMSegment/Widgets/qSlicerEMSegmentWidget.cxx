@@ -58,7 +58,7 @@ qSlicerEMSegmentWidget::~qSlicerEMSegmentWidget()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentWidget, vtkEMSegmentMRMLManager*, mrmlManager, MRMLManager);
+CTK_GET_CPP(qSlicerEMSegmentWidget, vtkEMSegmentMRMLManager*, mrmlManager, MRMLManager);
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentWidget::setMRMLManager(vtkEMSegmentMRMLManager* newMRMLManager)

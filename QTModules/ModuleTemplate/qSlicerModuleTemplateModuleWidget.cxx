@@ -27,7 +27,7 @@ qSlicerModuleTemplateModuleWidgetPrivate::qSlicerModuleTemplateModuleWidgetPriva
 // qSlicerModuleTemplateModuleWidget methods
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerModuleTemplateModuleWidget, QWidget*);
+CTK_CONSTRUCTOR_1_ARG_CPP(qSlicerModuleTemplateModuleWidget, QWidget*);
 
 //-----------------------------------------------------------------------------
 qSlicerModuleTemplateModuleWidget::~qSlicerModuleTemplateModuleWidget()

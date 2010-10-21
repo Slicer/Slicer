@@ -161,7 +161,7 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLTransformSliders, vtkMRMLLinearTransformNode*, mrmlTransformNode, MRMLTransformNode);
+CTK_GET_CPP(qMRMLTransformSliders, vtkMRMLLinearTransformNode*, mrmlTransformNode, MRMLTransformNode);
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setTitle(const QString& _title)

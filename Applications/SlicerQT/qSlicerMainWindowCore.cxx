@@ -89,7 +89,7 @@ qSlicerMainWindowCore::~qSlicerMainWindowCore()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
+CTK_GET_CPP(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onFileAddDataActionTriggered()

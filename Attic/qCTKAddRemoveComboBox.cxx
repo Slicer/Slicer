@@ -297,19 +297,19 @@ void qCTKAddRemoveComboBox::setEmptyText(const QString& text)
 }
 
 // --------------------------------------------------------------------------
-QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, emptyText, EmptyText);
+QCTK_GET_CPP(qCTKAddRemoveComboBox, QString, emptyText, EmptyText);
 
 // --------------------------------------------------------------------------
-QCTK_SET_CXX(qCTKAddRemoveComboBox, const QString&, setAddText, AddText);
-QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, addText, AddText);
+QCTK_SET_CPP(qCTKAddRemoveComboBox, const QString&, setAddText, AddText);
+QCTK_GET_CPP(qCTKAddRemoveComboBox, QString, addText, AddText);
 
 // --------------------------------------------------------------------------
-QCTK_SET_CXX(qCTKAddRemoveComboBox, const QString&, setRemoveText, RemoveText);
-QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, removeText, RemoveText);
+QCTK_SET_CPP(qCTKAddRemoveComboBox, const QString&, setRemoveText, RemoveText);
+QCTK_GET_CPP(qCTKAddRemoveComboBox, QString, removeText, RemoveText);
 
 // --------------------------------------------------------------------------
-QCTK_SET_CXX(qCTKAddRemoveComboBox, const QString&, setEditText, EditText);
-QCTK_GET_CXX(qCTKAddRemoveComboBox, QString, editText, EditText);
+QCTK_SET_CPP(qCTKAddRemoveComboBox, const QString&, setEditText, EditText);
+QCTK_GET_CPP(qCTKAddRemoveComboBox, QString, editText, EditText);
 
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::onRowsInserted(const QModelIndex & _parent, int start, int end)
@@ -546,7 +546,7 @@ void qCTKAddRemoveComboBox::setPushButtonsEnabled(bool enabled)
 }
 
 // --------------------------------------------------------------------------
-QCTK_GET_CXX(qCTKAddRemoveComboBox, bool, pushButtonsEnabled, PushButtonEnabled)
+QCTK_GET_CPP(qCTKAddRemoveComboBox, bool, pushButtonsEnabled, PushButtonEnabled)
 
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::onAdd()
@@ -576,7 +576,7 @@ int qCTKAddRemoveComboBox::count()const
 }
 
 // --------------------------------------------------------------------------
-QCTK_GET_CXX(qCTKAddRemoveComboBox, bool, empty, HasEmptyItem);
+QCTK_GET_CPP(qCTKAddRemoveComboBox, bool, empty, HasEmptyItem);
 
 // --------------------------------------------------------------------------
 void qCTKAddRemoveComboBox::setCurrentIndex(int index)

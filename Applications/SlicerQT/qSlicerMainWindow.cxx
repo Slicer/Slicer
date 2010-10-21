@@ -194,7 +194,7 @@ qSlicerMainWindow::~qSlicerMainWindow()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
+CTK_GET_CPP(qSlicerMainWindow, qSlicerMainWindowCore*, core, Core);
 
 //-----------------------------------------------------------------------------
 qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const

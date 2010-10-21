@@ -57,4 +57,4 @@ void qSlicerObject::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerObject, vtkMRMLScene*, mrmlScene, MRMLScene);
+CTK_GET_CPP(qSlicerObject, vtkMRMLScene*, mrmlScene, MRMLScene);

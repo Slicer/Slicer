@@ -59,7 +59,7 @@ qVTKConnection::qVTKConnection(qVTKObjectEventsObserver* parentVariable):
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qVTKConnection, QString, GetId, Id);
+QCTK_GET_CPP(qVTKConnection, QString, GetId, Id);
 
 //-----------------------------------------------------------------------------
 void qVTKConnection::printAdditionalInfo()
@@ -288,7 +288,7 @@ bool qVTKConnection::IsEqual(vtkObject* vtk_obj, unsigned long vtk_event,
 }
 
 //-----------------------------------------------------------------------------
-QCTK_GET_CXX(qVTKConnection, int, GetSlotType, SlotType);
+QCTK_GET_CPP(qVTKConnection, int, GetSlotType, SlotType);
 
 //-----------------------------------------------------------------------------
 void qVTKConnection::DoCallback(vtkObject* vtk_obj, unsigned long event,

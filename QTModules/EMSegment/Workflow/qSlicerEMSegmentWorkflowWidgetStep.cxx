@@ -80,9 +80,9 @@ qSlicerEMSegmentWorkflowWidgetStep::~qSlicerEMSegmentWorkflowWidgetStep()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentWorkflowWidgetStep, vtkEMSegmentMRMLManager*, mrmlManager, MRMLManager);
-CTK_GET_CXX(qSlicerEMSegmentWorkflowWidgetStep, vtkSlicerEMSegmentLogic*, emSegmentLogic, EMSegmentLogic);
-CTK_SET_CXX(qSlicerEMSegmentWorkflowWidgetStep, vtkSlicerEMSegmentLogic*, setEMSegmentLogic, EMSegmentLogic);
+CTK_GET_CPP(qSlicerEMSegmentWorkflowWidgetStep, vtkEMSegmentMRMLManager*, mrmlManager, MRMLManager);
+CTK_GET_CPP(qSlicerEMSegmentWorkflowWidgetStep, vtkSlicerEMSegmentLogic*, emSegmentLogic, EMSegmentLogic);
+CTK_SET_CPP(qSlicerEMSegmentWorkflowWidgetStep, vtkSlicerEMSegmentLogic*, setEMSegmentLogic, EMSegmentLogic);
 
 //-----------------------------------------------------------------------------
 vtkMRMLScene * qSlicerEMSegmentWorkflowWidgetStep::mrmlScene()const

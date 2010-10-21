@@ -781,7 +781,7 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLSliceControllerWidget, vtkMRMLSliceLogic*, sliceLogic, SliceLogic);
+CTK_GET_CPP(qMRMLSliceControllerWidget, vtkMRMLSliceLogic*, sliceLogic, SliceLogic);
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic)
@@ -859,7 +859,7 @@ void qMRMLSliceControllerWidget::setControllerButtonGroup(QButtonGroup* newButto
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLSliceControllerWidget, vtkMRMLSliceCompositeNode*,
+CTK_GET_CPP(qMRMLSliceControllerWidget, vtkMRMLSliceCompositeNode*,
             mrmlSliceCompositeNode, MRMLSliceCompositeNode);
 
 //---------------------------------------------------------------------------
@@ -921,7 +921,7 @@ void qMRMLSliceControllerWidget::setSliceViewName(const QString& newSliceViewNam
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLSliceControllerWidget, QString, sliceViewName, SliceViewName);
+CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewName, SliceViewName);
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)
@@ -948,7 +948,7 @@ void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLSliceControllerWidget, vtkImageData*, imageData, ImageData);
+CTK_GET_CPP(qMRMLSliceControllerWidget, vtkImageData*, imageData, ImageData);
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceOffsetRange(double min, double max)

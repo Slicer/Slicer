@@ -99,12 +99,12 @@ vtkSlicerLogic* qSlicerCLIModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerCLIModule, QString, title, Title);
-CTK_GET_CXX(qSlicerCLIModule, QString, category, Category);
-CTK_GET_CXX(qSlicerCLIModule, QString, contributor, Contributor);
-CTK_GET_CXX(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
-CTK_GET_CXX(qSlicerCLIModule, QString, helpText, Help);
-CTK_SET_CXX(qSlicerCLIModule, const QString&, setTempDirectory, TempDirectory);
+CTK_GET_CPP(qSlicerCLIModule, QString, title, Title);
+CTK_GET_CPP(qSlicerCLIModule, QString, category, Category);
+CTK_GET_CPP(qSlicerCLIModule, QString, contributor, Contributor);
+CTK_GET_CPP(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
+CTK_GET_CPP(qSlicerCLIModule, QString, helpText, Help);
+CTK_SET_CPP(qSlicerCLIModule, const QString&, setTempDirectory, TempDirectory);
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)

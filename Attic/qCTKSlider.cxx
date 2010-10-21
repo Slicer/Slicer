@@ -102,7 +102,7 @@ void qCTKSlider::setSliderPosition(double position)
 }
 
 // -------------------------------------------------------------------------
-QCTK_GET_CXX(qCTKSlider, double, previousSliderPosition, PreviousPosition);
+QCTK_GET_CPP(qCTKSlider, double, previousSliderPosition, PreviousPosition);
 
 // --------------------------------------------------------------------------
 double qCTKSlider::valueAsDbl()const
@@ -119,7 +119,7 @@ void qCTKSlider::setValue(double _value)
 }
 
 // --------------------------------------------------------------------------
-QCTK_GET_CXX(qCTKSlider, double, singleStepAsDbl, SingleStep);
+QCTK_GET_CPP(qCTKSlider, double, singleStepAsDbl, SingleStep);
 
 // --------------------------------------------------------------------------
 void qCTKSlider::setSingleStep(double step)

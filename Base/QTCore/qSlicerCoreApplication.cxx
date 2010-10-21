@@ -348,7 +348,7 @@ qSlicerCoreApplication* qSlicerCoreApplication::application()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerCoreApplication, bool, initialized, Initialized);
+CTK_GET_CPP(qSlicerCoreApplication, bool, initialized, Initialized);
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::initialize(bool& exitWhenDone)
@@ -512,7 +512,7 @@ QSettings* qSlicerCoreApplication::newSettings(const QString& organization,
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerCoreApplication, QString, intDir, IntDir);
+CTK_GET_CPP(qSlicerCoreApplication, QString, intDir, IntDir);
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isInstalled()const
@@ -529,10 +529,10 @@ bool qSlicerCoreApplication::isInstalled()const
 #ifdef Slicer_USE_KWWIDGETS
 
 //-----------------------------------------------------------------------------
-CTK_SET_CXX(qSlicerCoreApplication, bool, setInitialized, Initialized);
+CTK_SET_CPP(qSlicerCoreApplication, bool, setInitialized, Initialized);
 
 //-----------------------------------------------------------------------------
-CTK_SET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+CTK_SET_CPP(qSlicerCoreApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* manager)
@@ -587,13 +587,13 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerCoreApplication, vtkMRMLScene*, mrmlScene, MRMLScene);
+CTK_GET_CPP(qSlicerCoreApplication, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerCoreApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+CTK_GET_CPP(qSlicerCoreApplication, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerCoreApplication, vtkMRMLApplicationLogic*,
+CTK_GET_CPP(qSlicerCoreApplication, vtkMRMLApplicationLogic*,
             mrmlApplicationLogic, MRMLApplicationLogic);
 
 //-----------------------------------------------------------------------------

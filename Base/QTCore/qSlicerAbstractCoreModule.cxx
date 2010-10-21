@@ -135,7 +135,7 @@ QString qSlicerAbstractCoreModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerAbstractCoreModule, vtkMRMLScene*, mrmlScene, MRMLScene);
+CTK_GET_CPP(qSlicerAbstractCoreModule, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //-----------------------------------------------------------------------------
 void qSlicerAbstractCoreModule::setMRMLScene(vtkMRMLScene* _mrmlScene)
@@ -174,11 +174,11 @@ void qSlicerAbstractCoreModule::setAppLogic(vtkSlicerApplicationLogic* newAppLog
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerAbstractCoreModule, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+CTK_GET_CPP(qSlicerAbstractCoreModule, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerAbstractCoreModule, bool, isEnabled, Enabled);
-CTK_SET_CXX(qSlicerAbstractCoreModule, bool, setEnabled, Enabled);
+CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isEnabled, Enabled);
+CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setEnabled, Enabled);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresentation()

@@ -1014,7 +1014,7 @@ vtkMRMLScene* qMRMLLayoutManager::mrmlScene()const
 }
 
 //------------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLLayoutManager, vtkMRMLViewNode*,
+CTK_GET_CPP(qMRMLLayoutManager, vtkMRMLViewNode*,
             activeMRMLThreeDViewNode, ActiveMRMLThreeDViewNode)
 
 //------------------------------------------------------------------------------

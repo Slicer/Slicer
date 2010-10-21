@@ -162,8 +162,8 @@ void qSlicerWidget::setParentVisible(bool visible)
      }
 }
 //-----------------------------------------------------------------------------
-//CTK_SET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
-//CTK_GET_CXX(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);
+//CTK_SET_CPP(qSlicerWidget, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
+//CTK_GET_CPP(qSlicerWidget, vtkSlicerApplicationLogic*, appLogic, AppLogic);
 //-----------------------------------------------------------------------------
 void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 {

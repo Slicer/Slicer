@@ -322,7 +322,7 @@ void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
 }
 
 //-----------------------------------------------------------------------------
-CTK_SET_CXX(qSlicerCLIModuleWidget, const QString&, setModuleEntryPoint, ModuleEntryPoint);
+CTK_SET_CPP(qSlicerCLIModuleWidget, const QString&, setModuleEntryPoint, ModuleEntryPoint);
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::apply()

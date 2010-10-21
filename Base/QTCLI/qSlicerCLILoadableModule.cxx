@@ -75,7 +75,7 @@ QString qSlicerCLILoadableModule::entryPoint()const
 }
 
 //-----------------------------------------------------------------------------
-CTK_SET_CXX(qSlicerCLILoadableModule, ModuleEntryPointType, setEntryPoint, EntryPoint);
+CTK_SET_CPP(qSlicerCLILoadableModule, ModuleEntryPointType, setEntryPoint, EntryPoint);
 
 //-----------------------------------------------------------------------------
 QString qSlicerCLILoadableModule::moduleType()const

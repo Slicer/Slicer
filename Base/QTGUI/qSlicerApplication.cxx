@@ -292,8 +292,8 @@ qSlicerLayoutManager* qSlicerApplication::layoutManager()const
 }
 
 //-----------------------------------------------------------------------------
-CTK_SET_CXX(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);
-CTK_GET_CXX(qSlicerApplication, Qt::WindowFlags, defaultWindowFlags, DefaultWindowFlags);
+CTK_SET_CPP(qSlicerApplication, Qt::WindowFlags, setDefaultWindowFlags, DefaultWindowFlags);
+CTK_GET_CPP(qSlicerApplication, Qt::WindowFlags, defaultWindowFlags, DefaultWindowFlags);
 
 //-----------------------------------------------------------------------------
 void qSlicerApplication::setTopLevelWidgetsVisible(bool visible)

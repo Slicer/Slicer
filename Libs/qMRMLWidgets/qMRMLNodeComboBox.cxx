@@ -517,8 +517,8 @@ void qMRMLNodeComboBox::setCurrentNode(int index)
 }
 
 //--------------------------------------------------------------------------
-CTK_SET_CXX(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
-CTK_GET_CXX(qMRMLNodeComboBox, bool, selectNodeUponCreation, SelectNodeUponCreation);
+CTK_SET_CPP(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
+CTK_GET_CPP(qMRMLNodeComboBox, bool, selectNodeUponCreation, SelectNodeUponCreation);
 
 // --------------------------------------------------------------------------
 QStringList qMRMLNodeComboBox::nodeTypes()const

@@ -33,5 +33,5 @@ qSlicerEMSegmentWorkflowWidget::qSlicerEMSegmentWorkflowWidget(QWidget *newParen
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentWorkflowWidget, ctkWorkflowWidget*, workflowWidget, workflowWidget);
-CTK_SET_CXX(qSlicerEMSegmentWorkflowWidget, ctkWorkflowWidget*, setWorkflowWidget, workflowWidget);
+CTK_GET_CPP(qSlicerEMSegmentWorkflowWidget, ctkWorkflowWidget*, workflowWidget, workflowWidget);
+CTK_SET_CPP(qSlicerEMSegmentWorkflowWidget, ctkWorkflowWidget*, setWorkflowWidget, workflowWidget);

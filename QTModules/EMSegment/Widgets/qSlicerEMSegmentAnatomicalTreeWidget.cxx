@@ -530,7 +530,7 @@ void setStructureNameEditableRecursively(QStandardItem * item, bool editable)
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
+CTK_GET_CPP(qSlicerEMSegmentAnatomicalTreeWidget, bool,
             structureNameEditable, StructureNameEditable);
 
 //-----------------------------------------------------------------------------
@@ -577,7 +577,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setDisplayMRMLIDsCheckBoxVisible(bool
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool, labelColumnVisible, LabelColumnVisible);
+CTK_GET_CPP(qSlicerEMSegmentAnatomicalTreeWidget, bool, labelColumnVisible, LabelColumnVisible);
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setLabelColumnVisible(bool visible)
@@ -588,7 +588,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setLabelColumnVisible(bool visible)
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
+CTK_GET_CPP(qSlicerEMSegmentAnatomicalTreeWidget, bool,
             classWeightColumnVisible, ClassWeightColumnVisible);
 
 //-----------------------------------------------------------------------------
@@ -600,7 +600,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setClassWeightColumnVisible(bool visi
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
+CTK_GET_CPP(qSlicerEMSegmentAnatomicalTreeWidget, bool,
             updateClassWeightColumnVisible, UpdateClassWeightColumnVisible);
 
 //-----------------------------------------------------------------------------
@@ -612,7 +612,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setUpdateClassWeightColumnVisible(boo
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
+CTK_GET_CPP(qSlicerEMSegmentAnatomicalTreeWidget, bool,
             atlasWeightColumnVisible, AtlasWeightColumnVisible);
 
 //-----------------------------------------------------------------------------
@@ -624,7 +624,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setAtlasWeightColumnVisible(bool visi
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool, alphaColumnVisible, AlphaColumnVisible);
+CTK_GET_CPP(qSlicerEMSegmentAnatomicalTreeWidget, bool, alphaColumnVisible, AlphaColumnVisible);
 
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentAnatomicalTreeWidget::setAlphaColumnVisible(bool visible)
@@ -650,7 +650,7 @@ void qSlicerEMSegmentAnatomicalTreeWidget::setDisplayAlphaCheckBoxVisible(bool v
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CXX(qSlicerEMSegmentAnatomicalTreeWidget, bool,
+CTK_GET_CPP(qSlicerEMSegmentAnatomicalTreeWidget, bool,
             probabilityMapColumnVisible, ProbabilityMapColumnVisible);
 
 //-----------------------------------------------------------------------------

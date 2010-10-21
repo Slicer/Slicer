@@ -141,10 +141,10 @@ void qMRMLLabelComboBox::printAdditionalInfo()
 }
 
 // ---------------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLLabelComboBox, vtkMRMLColorNode*, mrmlColorNode, ColorNode);
+CTK_GET_CPP(qMRMLLabelComboBox, vtkMRMLColorNode*, mrmlColorNode, ColorNode);
 
 // ------------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLLabelComboBox, int, currentColor, CurrentColor);
+CTK_GET_CPP(qMRMLLabelComboBox, int, currentColor, CurrentColor);
 
 // ------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setCurrentColor(int index)
@@ -178,7 +178,7 @@ void qMRMLLabelComboBox::setCurrentColor(int index)
 }
 
 // ------------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLLabelComboBox, bool, noneEnabled, NoneEnabled);
+CTK_GET_CPP(qMRMLLabelComboBox, bool, noneEnabled, NoneEnabled);
 
 // -------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setNoneEnabled(bool enabled)
@@ -201,7 +201,7 @@ void qMRMLLabelComboBox::setNoneEnabled(bool enabled)
     }
 }
 // ------------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLLabelComboBox, bool, colorNameVisible, ColorNameVisible);
+CTK_GET_CPP(qMRMLLabelComboBox, bool, colorNameVisible, ColorNameVisible);
 
 // -------------------------------------------------------------------------------
 void qMRMLLabelComboBox::setColorNameVisible(bool visible)
@@ -223,7 +223,7 @@ void qMRMLLabelComboBox::setMaximumColorCount(int maximum)
 }
 
 // ---------------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLLabelComboBox, int, maximumColorCount, MaximumColorCount);
+CTK_GET_CPP(qMRMLLabelComboBox, int, maximumColorCount, MaximumColorCount);
 
 // ---------------------------------------------------------------------------------
 // qMRMLLabelComboBox Slots

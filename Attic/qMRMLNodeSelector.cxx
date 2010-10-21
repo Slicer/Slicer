@@ -146,16 +146,16 @@ void qMRMLNodeSelector::setNodeTypes(const QStringList& _nodeTypes)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLNodeSelector, QStringList, nodeTypes, NodeTypes);
+CTK_GET_CPP(qMRMLNodeSelector, QStringList, nodeTypes, NodeTypes);
 
 // --------------------------------------------------------------------------
-CTK_SET_CXX(qMRMLNodeSelector, bool, setShowHidden, ShowHidden);
-CTK_GET_CXX(qMRMLNodeSelector, bool, showHidden, ShowHidden);
+CTK_SET_CPP(qMRMLNodeSelector, bool, setShowHidden, ShowHidden);
+CTK_GET_CPP(qMRMLNodeSelector, bool, showHidden, ShowHidden);
 
 // --------------------------------------------------------------------------
-CTK_SET_CXX(qMRMLNodeSelector, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
-CTK_GET_CXX(qMRMLNodeSelector, bool, selectNodeUponCreation, SelectNodeUponCreation);
-CTK_GET_CXX(qMRMLNodeSelector, vtkMRMLScene*, mrmlScene, MRMLScene);
+CTK_SET_CPP(qMRMLNodeSelector, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
+CTK_GET_CPP(qMRMLNodeSelector, bool, selectNodeUponCreation, SelectNodeUponCreation);
+CTK_GET_CPP(qMRMLNodeSelector, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeSelector::currentNode()const
@@ -192,7 +192,7 @@ void qMRMLNodeSelector::setMRMLNodeFactory(qMRMLNodeFactory* _factory)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CXX(qMRMLNodeSelector, qMRMLNodeFactory*, factory, MRMLNodeFactory);
+CTK_GET_CPP(qMRMLNodeSelector, qMRMLNodeFactory*, factory, MRMLNodeFactory);
 
 // --------------------------------------------------------------------------
 void qMRMLNodeSelector::addNode(vtkMRMLNode* mrmlNode)

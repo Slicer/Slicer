@@ -32,7 +32,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CXX(qSlicerMeasurementsModuleWidget, QWidget*);
+CTK_CONSTRUCTOR_1_ARG_CPP(qSlicerMeasurementsModuleWidget, QWidget*);
 
 //-----------------------------------------------------------------------------
 qSlicerMeasurementsModuleWidget::~qSlicerMeasurementsModuleWidget()

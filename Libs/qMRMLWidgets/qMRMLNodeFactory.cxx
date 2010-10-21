@@ -59,8 +59,8 @@ qMRMLNodeFactory::~qMRMLNodeFactory()
 }
 
 //------------------------------------------------------------------------------
-CTK_SET_CXX(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
-CTK_GET_CXX(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
+CTK_SET_CPP(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
+CTK_GET_CPP(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
