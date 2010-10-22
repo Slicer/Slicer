@@ -54,8 +54,8 @@ public:
   vtkMRMLNode* mrmlNode(int row)const;
   vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
   void updateDefaultText();
-  void updateNoneItem();
-  void updateActionItems();
+  void updateNoneItem(bool resetRootIndex = true);
+  void updateActionItems(bool resetRootIndex = true);
   QString nodeTypeLabel()const;
 
   QComboBox*        ComboBox;
@@ -113,8 +113,9 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
     }
   this->MRMLSceneModel = qobject_cast<qMRMLSceneModel*>(rootModel);
   Q_ASSERT(this->MRMLSceneModel);
-  this->updateNoneItem();
-  this->updateActionItems();
+  // no need to reset the root model index here as the model is not yet set
+  this->updateNoneItem(false);
+  this->updateActionItems(false);
 
   qMRMLSortFilterProxyModel* sortFilterModel = new qMRMLSortFilterProxyModel(q);
   sortFilterModel->setSourceModel(model);
@@ -185,7 +186,7 @@ void qMRMLNodeComboBoxPrivate::updateDefaultText()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxPrivate::updateNoneItem()
+void qMRMLNodeComboBoxPrivate::updateNoneItem(bool resetRootIndex)
 {
   Q_Q(qMRMLNodeComboBox);
   QStringList noneItem;
@@ -193,42 +194,79 @@ void qMRMLNodeComboBoxPrivate::updateNoneItem()
     {
     noneItem.append("None");
     }
+  QVariant currentNode =
+    this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRML::UIDRole);
   this->MRMLSceneModel->setPreItems(q->mrmlScene(), noneItem);
+  if (resetRootIndex)
+    {
+    this->ComboBox->setRootModelIndex(q->model()->index(0, 0));
+    // setting the rootmodel index looses the current item
+    // try to set the current item back
+    q->setCurrentNode(currentNode.toString());
+    }
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxPrivate::updateActionItems()
+void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
 {
   Q_Q(qMRMLNodeComboBox);
+
+  QVariant currentNode =
+    this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRML::UIDRole);
+
   QStringList extraItems;
-
-  if (q->mrmlScene() == 0)
+  if (q->mrmlScene())
     {
-    this->MRMLSceneModel->setPostItems(q->mrmlScene(), extraItems);
-    return;
-    }
-
-  if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled)
-    {
-    extraItems.append("separator");
-    }
-  if (this->AddEnabled)
-    {
-    extraItems.append(QObject::tr("Create new ") + this->nodeTypeLabel());
-    }
-  if (this->RemoveEnabled)
-    {
-    extraItems.append(QObject::tr("Delete current ")  + this->nodeTypeLabel());
-    }
-  if (this->EditEnabled)
-    {
-    extraItems.append(QObject::tr("Edit current ")  + this->nodeTypeLabel());
+    if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled)
+      {
+      extraItems.append("separator");
+      }
+    if (this->AddEnabled)
+      {
+      extraItems.append(QObject::tr("Create new ") + this->nodeTypeLabel());
+      }
+    if (this->RemoveEnabled)
+      {
+      extraItems.append(QObject::tr("Delete current ")  + this->nodeTypeLabel());
+      }
+    if (this->EditEnabled)
+      {
+      extraItems.append(QObject::tr("Edit current ")  + this->nodeTypeLabel());
+      }
     }
   this->MRMLSceneModel->setPostItems(q->mrmlScene(), extraItems);
 
   QObject::connect(this->ComboBox->view(), SIGNAL(clicked(const QModelIndex& )),
                    q, SLOT(activateExtraItem(const QModelIndex& )),
                    Qt::UniqueConnection);
+  if (resetRootIndex)
+    {
+    this->ComboBox->setRootModelIndex(q->model()->index(0, 0));
+    // setting the rootmodel index looses the current item
+    // try to set the current item back
+    q->setCurrentNode(currentNode.toString());
+    }
+}
+
+// --------------------------------------------------------------------------
+QString qMRMLNodeComboBoxPrivate::nodeTypeLabel()const
+{
+  Q_Q(const qMRMLNodeComboBox);
+  QStringList nodeTypes = q->nodeTypes();
+  QString label;
+  if (q->mrmlScene() && !nodeTypes.isEmpty())
+    {
+    label = q->mrmlScene()->GetTagByClassName(nodeTypes[0].toLatin1());
+    if (label.isEmpty() && nodeTypes[0] == "vtkMRMLVolumeNode")
+      {
+      label = QObject::tr("Volume");
+      }
+    }
+  if (label.isEmpty())
+    {
+    label = QObject::tr("Node");
+    }
+  return label;
 }
 
 // --------------------------------------------------------------------------
@@ -454,8 +492,9 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   d->MRMLNodeFactory->setMRMLScene(scene);
   d->MRMLSceneModel->setMRMLScene(scene);
   d->updateDefaultText();
-  d->updateNoneItem();
-  d->updateActionItems();
+  d->updateNoneItem(false);
+  d->updateActionItems(false);
+  // updating the action items reset the root model index. Set it back
   // setting the rootmodel index looses the current item
   d->ComboBox->setRootModelIndex(this->model()->index(0, 0));
   // try to set the current item back
@@ -519,6 +558,22 @@ void qMRMLNodeComboBox::setCurrentNode(int index)
 //--------------------------------------------------------------------------
 CTK_SET_CPP(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
 CTK_GET_CPP(qMRMLNodeComboBox, bool, selectNodeUponCreation, SelectNodeUponCreation);
+
+// --------------------------------------------------------------------------
+QStringList qMRMLNodeComboBox::nodeTypes()const
+{
+  qMRMLSortFilterProxyModel* m = this->sortFilterProxyModel();
+  return m ? m->nodeTypes() : QStringList();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLNodeComboBox::setNodeTypes(const QStringList& _nodeTypes)
+{
+  Q_D(qMRMLNodeComboBox);
+  this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
+  d->updateDefaultText();
+  d->updateActionItems();
+}
 
 // --------------------------------------------------------------------------
 QStringList qMRMLNodeComboBox::nodeTypes()const
