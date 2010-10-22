@@ -270,27 +270,6 @@ QString qMRMLNodeComboBoxPrivate::nodeTypeLabel()const
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLNodeComboBoxPrivate::nodeTypeLabel()const
-{
-  Q_Q(const qMRMLNodeComboBox);
-  QStringList nodeTypes = q->nodeTypes();
-  QString label;
-  if (q->mrmlScene() && !nodeTypes.isEmpty())
-    {
-    label = q->mrmlScene()->GetTagByClassName(nodeTypes[0].toLatin1());
-    if (label.isEmpty() && nodeTypes[0] == "vtkMRMLVolumeNode")
-      {
-      label = QObject::tr("Volume");
-      }
-    }
-  if (label.isEmpty())
-    {
-    label = QObject::tr("Node");
-    }
-  return label;
-}
-
-// --------------------------------------------------------------------------
 // qMRMLNodeComboBox
 
 // --------------------------------------------------------------------------
@@ -558,22 +537,6 @@ void qMRMLNodeComboBox::setCurrentNode(int index)
 //--------------------------------------------------------------------------
 CTK_SET_CPP(qMRMLNodeComboBox, bool, setSelectNodeUponCreation, SelectNodeUponCreation);
 CTK_GET_CPP(qMRMLNodeComboBox, bool, selectNodeUponCreation, SelectNodeUponCreation);
-
-// --------------------------------------------------------------------------
-QStringList qMRMLNodeComboBox::nodeTypes()const
-{
-  qMRMLSortFilterProxyModel* m = this->sortFilterProxyModel();
-  return m ? m->nodeTypes() : QStringList();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLNodeComboBox::setNodeTypes(const QStringList& _nodeTypes)
-{
-  Q_D(qMRMLNodeComboBox);
-  this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
-  d->updateDefaultText();
-  d->updateActionItems();
-}
 
 // --------------------------------------------------------------------------
 QStringList qMRMLNodeComboBox::nodeTypes()const
