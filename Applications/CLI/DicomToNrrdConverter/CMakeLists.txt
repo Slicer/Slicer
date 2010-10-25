@@ -7,7 +7,6 @@ enable_testing()
 if(COMMAND CMAKE_POLICY)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND CMAKE_POLICY)
-mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
 if (Slicer_SOURCE_DIR)
   ##The current testing suite only works from within Slicer3.  Other packages

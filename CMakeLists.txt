@@ -5,7 +5,7 @@ PROJECT(Slicer)
 #-----------------------------------------------------------------------------
 
 SET(project_policies
-  #CMP0001 # NEW: CMAKE_BACKWARDS_COMPATIBILITY should no longer be used.
+  CMP0001 # NEW: CMAKE_BACKWARDS_COMPATIBILITY should no longer be used.
   #CMP0002 # NEW: Logical target names must be globally unique.
   CMP0003 # NEW: Libraries linked via full path no longer produce linker search paths.
   #CMP0004 # NEW: Libraries linked may NOT have leading or trailing whitespace.
