@@ -27,7 +27,7 @@ SET(project_policies
   #CMP0010 # NEW: Bad variable reference syntax is an error.
   #CMP0011 # NEW: Included scripts do automatic cmake_policy PUSH and POP.
   CMP0012 # NEW: if() recognizes numbers and boolean constants.
-  #CMP0013 # NEW: Duplicate binary directories are not allowed.
+  CMP0013 # NEW: Duplicate binary directories are not allowed.
   #CMP0014 # NEW: Input directories must have CMakeLists.txt
   )
 FOREACH(policy ${project_policies})
