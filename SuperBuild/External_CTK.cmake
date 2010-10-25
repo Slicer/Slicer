@@ -36,7 +36,7 @@ if (Slicer_USE_QT)
         -DCTK_WRAP_PYTHONQT_LIGHT:BOOL=${Slicer_USE_PYTHONQT}
         -DCTK_LIB_PluginFramework:BOOL=OFF
         -DCTK_PLUGIN_org.commontk.eventbus:BOOL=OFF
-        -Dgit_EXECUTABLE:FILEPATH=${git_EXECUTABLE}
+        -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
       INSTALL_COMMAND ""
       DEPENDS 
         ${CTK_DEPENDENCIES}

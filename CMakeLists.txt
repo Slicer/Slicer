@@ -615,11 +615,11 @@ ENDIF()
 
 # Case where Slicer is checkout using Git-SVN
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
-  FIND_PACKAGE(Git)
-  IF(NOT Git_FOUND)
+  FIND_PACKAGE(GIT)
+  IF(NOT GIT_FOUND)
     MESSAGE(FATAL_ERROR "error: Failed to locate Git")
-  ENDIF(NOT Git_FOUND)
-  Git_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
+  ENDIF(NOT GIT_FOUND)
+  GIT_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
     ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt

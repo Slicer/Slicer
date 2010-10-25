@@ -2,31 +2,31 @@
 # FindGit
 #
 
-SET(Git_FOUND FALSE)
+SET(GIT_FOUND FALSE)
  
-FIND_PROGRAM(Git_EXECUTABLE git
+FIND_PROGRAM(GIT_EXECUTABLE git
   DOC "git command line client")
-MARK_AS_ADVANCED(Git_EXECUTABLE)
+MARK_AS_ADVANCED(GIT_EXECUTABLE)
  
-IF(Git_EXECUTABLE)
-  SET(Git_FOUND TRUE)
-  MACRO(Git_WC_INFO dir prefix)
-    EXECUTE_PROCESS(COMMAND ${Git_EXECUTABLE} rev-list -n 1 HEAD
+IF(GIT_EXECUTABLE)
+  SET(GIT_FOUND TRUE)
+  MACRO(GIT_WC_INFO dir prefix)
+    EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} rev-list -n 1 HEAD
        WORKING_DIRECTORY ${dir}
-       ERROR_VARIABLE Git_error
+       ERROR_VARIABLE GIT_error
        OUTPUT_VARIABLE ${prefix}_WC_REVISION_HASH
        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(NOT ${Git_error} EQUAL 0)
-      MESSAGE(SEND_ERROR "Command \"${Git_EXECUTBALE} rev-list -n 1 HEAD\" in directory ${dir} failed with output:\n${Git_error}")
-    ELSE(NOT ${Git_error} EQUAL 0)
-      EXECUTE_PROCESS(COMMAND ${Git_EXECUTABLE} name-rev ${${prefix}_WC_REVISION_HASH}
+    if(NOT ${GIT_error} EQUAL 0)
+      MESSAGE(SEND_ERROR "Command \"${GIT_EXECUTBALE} rev-list -n 1 HEAD\" in directory ${dir} failed with output:\n${GIT_error}")
+    ELSE(NOT ${GIT_error} EQUAL 0)
+      EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} name-rev ${${prefix}_WC_REVISION_HASH}
          WORKING_DIRECTORY ${dir}
          OUTPUT_VARIABLE ${prefix}_WC_REVISION_NAME
           OUTPUT_STRIP_TRAILING_WHITESPACE)
-    ENDIF(NOT ${Git_error} EQUAL 0)
+    ENDIF(NOT ${GIT_error} EQUAL 0)
 
     # In case, git-svn is used, attempt to extract svn info
-    EXECUTE_PROCESS(COMMAND ${Git_EXECUTABLE} svn info
+    EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} svn info
       WORKING_DIRECTORY ${dir}
       ERROR_VARIABLE git_svn_info_error
       OUTPUT_VARIABLE ${prefix}_WC_INFO
@@ -34,7 +34,7 @@ IF(Git_EXECUTABLE)
       OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     IF(NOT ${git_svn_info_result} EQUAL 0)
-      #MESSAGE(SEND_ERROR "Command \"${Git_SVN_EXECUTABLE} info ${dir}\" failed with output:\n${git_svn_info_error}")
+      #MESSAGE(SEND_ERROR "Command \"${GIT_SVN_EXECUTABLE} info ${dir}\" failed with output:\n${git_svn_info_error}")
     ELSE(NOT ${git_svn_info_result} EQUAL 0)
 
       STRING(REGEX REPLACE "^(.*\n)?URL: ([^\n]+).*"
@@ -50,5 +50,5 @@ IF(Git_EXECUTABLE)
 
     ENDIF(NOT ${git_svn_info_result} EQUAL 0)
     
-  ENDMACRO(Git_WC_INFO)
-ENDIF(Git_EXECUTABLE)
+  ENDMACRO(GIT_WC_INFO)
+ENDIF(GIT_EXECUTABLE)
