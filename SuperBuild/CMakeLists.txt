@@ -24,7 +24,7 @@ SET(project_policies
   #CMP0007 # NEW: List command no longer ignores empty elements.
   #CMP0008 # NEW: Libraries linked by full-path must have a valid library file name.
   #CMP0009 # NEW: FILE GLOB_RECURSE calls should not follow symlinks by default.
-  #CMP0010 # NEW: Bad variable reference syntax is an error.
+  CMP0010 # NEW: Bad variable reference syntax is an error.
   #CMP0011 # NEW: Included scripts do automatic cmake_policy PUSH and POP.
   CMP0012 # NEW: if() recognizes numbers and boolean constants.
   CMP0013 # NEW: Duplicate binary directories are not allowed.
