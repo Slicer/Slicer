@@ -431,6 +431,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       widget->SetEnabled(showWidget);
       }
 
+    this->PropagateMRMLToWidget(annotationNode,widget);
+
     ++it;
     }
 
@@ -439,8 +441,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 //---------------------------------------------------------------------------
 bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node)
 {
-
-  this->Print(cout);
 
   if (!sliceNode)
     {
@@ -471,6 +471,36 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode *
     }
 
   bool showWidget = true;
+
+/*
+ *
+ *
+  # determine the xyz location of the fiducial
+  set xyzw [$this rasToXYZ $_currentPosition]
+  foreach {x y z w} $xyzw {}
+  $o(actor) SetPosition $x $y
+  set x [expr $x + $scale]
+  set y [expr $y + $scale]
+  $o(textActor) SetPosition $x $y
+
+  # determine which renderer based on z position
+  set k [expr int($z + 0.5)]
+
+  # remove the seed from the old renderer and add it to the new one
+  if { [info command $_renderer] != ""} {
+    $_renderer RemoveActor2D $o(actor)
+    $_renderer RemoveActor2D $o(textActor)
+  }
+
+  if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
+    set _renderer [$_renderWidget GetNthRenderer $k]
+    if { [info command $_renderer] != ""} {
+      $_renderer AddActor2D $o(actor)
+      $_renderer AddActor2D $o(textActor)
+    }
+  }
+ */
+
 
   // down cast the node as a controlpoints node to get the coordinates
   vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
@@ -507,9 +537,9 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode *
     // the third coordinate of the displayCoordinates is the distance to the slice
     float distanceToSlice = displayCoordinates[2];
 
-    if (distanceToSlice < -1.2 || distanceToSlice >= (1.2+this->m_SliceNode->GetDimensions()[2]-1))
+    if (distanceToSlice < -0.5 || distanceToSlice >= (0.5+this->m_SliceNode->GetDimensions()[2]-1))
       {
-      // if the distance to the slice is more than 1.2mm, we know that at least one coordinate of the widget is outside the current activeSlice
+      // if the distance to the slice is more than 0.5mm, we know that at least one coordinate of the widget is outside the current activeSlice
       // hence, we do not want to show this widget
       showWidget = false;
       // we don't even need to continue parsing the controlpoints, because we know the widget will not be shown
