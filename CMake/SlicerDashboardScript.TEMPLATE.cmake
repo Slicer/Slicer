@@ -53,9 +53,9 @@ set(SCRIPT_MODE "nightly") # "experimental", "continuous", "nightly"
 #  ctest -S karakoram_Slicer4_nightly.cmake -V
 
 #
-# Additionnal CMakeCache options
+# Additional CMakeCache options
 #
-set(ADDITIONNAL_CMAKECACHE_OPTION "
+set(ADDITIONAL_CMAKECACHE_OPTION "
   Slicer_USE_QT:BOOL=ON
   Slicer_USE_PYTHONQT:BOOL=ON
   Slicer_USE_PYTHONQT_WITH_TCL:BOOL=ON
