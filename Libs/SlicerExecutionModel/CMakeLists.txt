@@ -1,7 +1,10 @@
 PROJECT( SlicerExecutionModel )
 set(LOCAL_PROJECT_NAME SlicerExecutionModel)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.2)
+#-----------------------------------------------------------------------------
+cmake_minimum_required(VERSION 2.8.2)
+#-----------------------------------------------------------------------------
+
 
 ##NOTE:  Only build these items if they have not already been identified.
 ##       This allows for these items to be skipped if building against Slicer versions
