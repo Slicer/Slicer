@@ -68,19 +68,6 @@ set(CMAKE_MODULE_PATH
   )
 
 #-----------------------------------------------------------------------------
-# Convenient macro allowing to download a file
-#------------------------------------------------------------------------------
-
-FUNCTION(downloadFile url dest)
-  FILE(DOWNLOAD ${url} ${dest} STATUS status)
-  LIST(GET status 0 error_code)
-  LIST(GET status 1 error_msg)
-  IF(error_code OR NOT EXISTS ${dest})
-    MESSAGE(FATAL_ERROR "error: Failed to download ${url}")
-  ENDIF()
-ENDFUNCTION()
-
-#-----------------------------------------------------------------------------
 # Prerequisites
 #------------------------------------------------------------------------------
 
@@ -90,10 +77,6 @@ set(git_protocol "git")
 if(NOT Slicer_USE_GIT_PROTOCOL)
   set(git_protocol "http")
 endif()
-
-set(git_repo http://github.com/commontk/CTK/raw/master/)
-set(file CMake/ExternalProject.cmake)
-downloadFile(${git_repo}/${file} ${CMAKE_BINARY_DIR}/${file})
 
 #-----------------------------------------------------------------------------
 # Include External project module
