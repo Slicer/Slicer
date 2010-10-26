@@ -5,6 +5,9 @@
 SET(GIT_FOUND FALSE)
  
 FIND_PROGRAM(GIT_EXECUTABLE git
+  PATHS
+    "C:/Program Files/Git/bin"
+    "C:/Program Files (x86)/Git/bin"
   DOC "git command line client")
 MARK_AS_ADVANCED(GIT_EXECUTABLE)
  
