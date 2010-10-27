@@ -85,9 +85,9 @@ include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 vtk_wrap_tcl3(NeuroNav NeuroNav_TCL_SRCS "${NeuroNav_SRCS}" "")
 
 # --------------------------------------------------------------------------
-if(Slicer_BUILD_TESTING)
+if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(Slicer_BUILD_TESTING)
+endif(BUILD_TESTING)
 
 
 #---------------------------------------------------------------------------

@@ -208,17 +208,11 @@ INCLUDE(${Slicer_CMAKE_DIR}/DiscoverSystemNameAndBits.cmake)
 MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
-# Add the testing directories
+# Testing
 #
 OPTION(BUILD_TESTING "Test the project" ON)
-SET(Slicer_BUILD_TESTING ${BUILD_TESTING})
 SET(LAUNCH_EXE ${Slicer_BINARY_DIR}/Slicer3 --launch)
-IF(Slicer_BUILD_TESTING)
-  #IF(NOT BUILDNAME)
-  #  SET(BUILDNAME "${Slicer_BUILD}" CACHE STRING "Name of build on the dashboard")
-  #ELSE()
-  #  SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Name of build on the dashboard")
-  #ENDIF()
+IF(BUILD_TESTING)
   ENABLE_TESTING()
   INCLUDE(CTest)
   SET(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -739,7 +733,7 @@ add_subdirectory(Applications)
 #-----------------------------------------------------------------------------
 # Testing
 #
-IF(Slicer_BUILD_TESTING)
+IF(BUILD_TESTING)
   add_subdirectory(Testing)
 ENDIF()
 

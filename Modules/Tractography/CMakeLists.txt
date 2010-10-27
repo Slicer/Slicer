@@ -53,9 +53,9 @@ FOREACH(lib ${Tractography_libs})
 ENDFOREACH(lib)
 
 # --------------------------------------------------------------------------
-if(Slicer_BUILD_TESTING)
+if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(Slicer_BUILD_TESTING)
+endif(BUILD_TESTING)
 
 # Install testing data
 

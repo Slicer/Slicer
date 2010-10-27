@@ -504,6 +504,6 @@ INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
 # --------------------------------------------------------------------------
 # Testing
 #
-IF(Slicer_BUILD_TESTING)
+IF(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-ENDIF(Slicer_BUILD_TESTING)
+ENDIF(BUILD_TESTING)

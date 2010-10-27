@@ -37,8 +37,8 @@ Slicer_compile_python_scripts(
 #-----------------------------------------------------------------------------
 # Testing
 #
-if(Slicer_BUILD_TESTING)
+if(BUILD_TESTING)
   IF(Slicer_USE_PYTHONQT_WITH_TCL)
     add_subdirectory(tpycl/Testing)
   ENDIF()
-endif(Slicer_BUILD_TESTING)
+endif(BUILD_TESTING)

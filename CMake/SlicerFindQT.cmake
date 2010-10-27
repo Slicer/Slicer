@@ -30,7 +30,7 @@ MACRO(SLICER_SETUP_QT)
         ENDIF()
         # Enable modules
         SET(QT_USE_QTNETWORK ON)
-        SET(QT_USE_QTTEST ${Slicer_BUILD_TESTING})
+        SET(QT_USE_QTTEST ${BUILD_TESTING})
 
         # Includes Qt headers
         INCLUDE(${QT_USE_FILE})
