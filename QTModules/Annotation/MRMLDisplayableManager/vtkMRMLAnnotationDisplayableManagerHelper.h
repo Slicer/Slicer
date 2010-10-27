@@ -47,7 +47,7 @@ public:
 
   /// Get a vtkAbstractWidget* given a node
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
-  void RemoveWidget(vtkMRMLAnnotationNode *node);
+  void RemoveWidgetAndNode(vtkMRMLAnnotationNode *node);
 
   /// List of Nodes managed by the DisplayableManager
   std::vector<vtkMRMLAnnotationNode*> AnnotationNodeList;

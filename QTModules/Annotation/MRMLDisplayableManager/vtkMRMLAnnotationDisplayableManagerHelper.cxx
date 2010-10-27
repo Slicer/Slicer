@@ -77,8 +77,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateLocked(vtkMRMLAnnotationNo
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(
-    vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationNode* node)
 {
   // Sanity checks
   if (node == 0)
@@ -144,7 +143,7 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetWidget(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidget(
+void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
     vtkMRMLAnnotationNode *node)
 {
   if (!node)
@@ -167,7 +166,14 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidget(
       this->AnnotationNodeList.end(),
       node);
 
+  // Make sure the map contains the annotationNode
+  if (it2 == this->AnnotationNodeList.end())
+    {
+    return;
+    }
+
   this->AnnotationNodeList.erase(it2);
+
 }
 
 //---------------------------------------------------------------------------
@@ -181,12 +187,12 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
 
   if (!interactor)
     {
-    vtkErrorMacro("PlaceSeed: No render interactor found.")
+    vtkErrorMacro("PlaceSeed: No renderInteractor found.")
     }
 
   if (!renderer)
     {
-    vtkErrorMacro("PlaceSeed: No render renderer found.")
+    vtkErrorMacro("PlaceSeed: No renderer found.")
     }
 
   if (!this->SeedWidget)

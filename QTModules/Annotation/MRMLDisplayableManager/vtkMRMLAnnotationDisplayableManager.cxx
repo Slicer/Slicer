@@ -245,21 +245,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNod
     {
     return;
     }
-  /*
-  // Remove the node from the list.
-  vtkInternal::AnnotationNodeListIt it = std::find(
-      this->Internal->AnnotationNodeList.begin(),
-      this->Internal->AnnotationNodeList.end(),
-      annotationNode);
-  if (it == this->Internal->AnnotationNodeList.end())
-    {
-    return;
-    }
-  this->Internal->AnnotationNodeList.erase(it);
-  */
 
-  // Remove the widget from the list.
-  this->Helper->RemoveWidget(annotationNode);
+  // Remove the widget and the MRMLnode from the internal lists.
+  this->Helper->RemoveWidgetAndNode(annotationNode);
 
   // Refresh observers
   this->SetAndObserveNodes();
@@ -458,7 +446,8 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode *
     return 0;
     }
 
-  vtkMatrix4x4* transformMatrix = vtkMatrix4x4::New();
+  VTK_CREATE(vtkMatrix4x4, transformMatrix);
+
   transformMatrix->Identity();
 
   if (node->GetTransformNodeID())
@@ -690,7 +679,7 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double r,
     // we will get the transformation matrix to convert world coordinates to the display coordinates of the specific sliceNode
 
     vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-    vtkMatrix4x4 * rasToXyMatrix = vtkMatrix4x4::New();
+    VTK_CREATE(vtkMatrix4x4, rasToXyMatrix);
 
     // we need to invert this matrix
     xyToRasMatrix->Invert(xyToRasMatrix,rasToXyMatrix);
