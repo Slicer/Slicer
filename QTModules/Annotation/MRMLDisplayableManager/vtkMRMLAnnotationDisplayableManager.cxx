@@ -25,6 +25,10 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderWindow.h>
 #include <vtkMath.h>
+#include <vtkRendererCollection.h>
+#include <vtkPropCollection.h>
+#include <vtkWidgetRepresentation.h>
+#include <vtkHandleRepresentation.h>
 
 // STD includes
 #include <vector>
@@ -472,36 +476,6 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode *
 
   bool showWidget = true;
 
-/*
- *
- *
-  # determine the xyz location of the fiducial
-  set xyzw [$this rasToXYZ $_currentPosition]
-  foreach {x y z w} $xyzw {}
-  $o(actor) SetPosition $x $y
-  set x [expr $x + $scale]
-  set y [expr $y + $scale]
-  $o(textActor) SetPosition $x $y
-
-  # determine which renderer based on z position
-  set k [expr int($z + 0.5)]
-
-  # remove the seed from the old renderer and add it to the new one
-  if { [info command $_renderer] != ""} {
-    $_renderer RemoveActor2D $o(actor)
-    $_renderer RemoveActor2D $o(textActor)
-  }
-
-  if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
-    set _renderer [$_renderWidget GetNthRenderer $k]
-    if { [info command $_renderer] != ""} {
-      $_renderer AddActor2D $o(actor)
-      $_renderer AddActor2D $o(textActor)
-    }
-  }
- */
-
-
   // down cast the node as a controlpoints node to get the coordinates
   vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
 
@@ -533,6 +507,43 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode *
 
     // now get the displayCoordinates for the transformed worldCoordinates
     this->GetWorldToDisplayCoordinates(transformedWorldCoordinates,displayCoordinates);
+
+    //
+    // Lightbox specific code
+    //
+
+    // get the right renderer index by checking the z coordinate
+    int rendererIndex = (int)(displayCoordinates[2]+0.5);
+
+    // get all renderers associated with this renderWindow
+    // when lightbox mode is enabled, there will be different renderers associated with the renderWindow of the sliceView
+    vtkRendererCollection* rendererCollection = this->GetInteractor()->GetRenderWindow()->GetRenderers();
+
+    // check if the rendererIndex is valid for the current lightbox view
+    if (rendererIndex >= 0 && rendererIndex < rendererCollection->GetNumberOfItems())
+      {
+
+      vtkRenderer* currentRenderer = vtkRenderer::SafeDownCast(rendererCollection->GetItemAsObject(rendererIndex));
+
+      // now we get the widget..
+      vtkAbstractWidget* widget = this->GetWidget(node);
+
+      // ..and turn it off..
+      widget->Off();
+      // ..place it and its representation to the right renderer..
+      widget->SetCurrentRenderer(currentRenderer);
+      widget->GetRepresentation()->SetRenderer(currentRenderer);
+      // ..and turn it on again!
+      widget->On();
+
+      // we need to render again
+      currentRenderer->Render();
+
+      }
+
+    //
+    // End of Lightbox specific code
+    //
 
     // the third coordinate of the displayCoordinates is the distance to the slice
     float distanceToSlice = displayCoordinates[2];
