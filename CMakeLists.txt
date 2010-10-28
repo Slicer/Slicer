@@ -30,8 +30,15 @@ FOREACH(policy ${project_policies})
   ENDIF()
 ENDFOREACH()
 
+#-----------------------------------------------------------------------------
+# Output directories.
+#
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/lib)
 
 #-----------------------------------------------------------------------------
+# Install directories
 #
 set(Slicer_INSTALL_BIN_DIR "bin")
 set(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
@@ -150,35 +157,32 @@ IF(Slicer_WITH_LIBRARY_VERSION)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Slicer macros
+# Update CMake module path
 #
-set(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
-add_subdirectory(CMake)
+
 # Make sure VTK_CMAKE_DIR is at the beginning so that VTK's FindTCL is
 # used before CMake's FindTCL.
 set(CMAKE_MODULE_PATH
-  "${VTK_CMAKE_DIR}"
-  "${Slicer_CMAKE_DIR}"
+  ${VTK_CMAKE_DIR}
+  ${Slicer_SOURCE_DIR}/CMake
   ${Slicer_BINARY_DIR}/CMake
   ${CMAKE_MODULE_PATH}
   )
+  
+set(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 
-include("${Slicer_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
+#-----------------------------------------------------------------------------
+# CMake Function(s) and Macro(s)
+#
+include(CMake/Slicer3PersistenceMacros.cmake)
+include(CMake/SlicerParseArgumentsMacro.cmake)
+include(CMake/SlicerFindQT.cmake)
 
-# See http://www.cmake.org/Wiki/CMakeMacroParseArguments
-include("${Slicer_CMAKE_DIR}/SlicerParseArgumentsMacro.cmake")
-
-## QT
-INCLUDE(${Slicer_CMAKE_DIR}/SlicerFindQT.cmake)
+# Add CMake directory so that install rules associated with *.cmake files are evaluated
+add_subdirectory(CMake)
 
 #-----------------------------------------------------------------------------
 # Top level slicer configurations
-#
-# If CMake >= 2.6.0
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
-
 
 # Do NOT force into the cache, as plugins need to override locally and scoping
 # becomes an issue.
@@ -204,7 +208,7 @@ slicer3_set_persistent_property(Slicer_QTModules_INCLUDE_DIRS "")
 # Get sytem name and architecture
 #
 SET(Slicer_BUILD NA)
-INCLUDE(${Slicer_CMAKE_DIR}/DiscoverSystemNameAndBits.cmake)
+INCLUDE(CMake/DiscoverSystemNameAndBits.cmake)
 MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
