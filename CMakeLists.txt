@@ -38,6 +38,7 @@ INCLUDE(CMake/Slicer3PersistenceMacros.cmake)
 INCLUDE(CMake/SlicerParseArgumentsMacro.cmake)
 INCLUDE(CMake/Slicer3PluginsMacros.cmake)
 INCLUDE(CMake/SlicerMacroEmptyExternalProject.cmake)
+INCLUDE(CMake/SlicerFunctionCheckCompilerFlags.cmake)
 
 #-----------------------------------------------------------------------------
 # Platform check
@@ -168,8 +169,21 @@ MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
 #-----------------------------------------------------------------------------
 SET(Slicer_C_FLAGS "${ADDITIONAL_C_FLAGS}")
 SET(Slicer_CXX_FLAGS "${ADDITIONAL_CXX_FLAGS}")
+
+IF(CMAKE_COMPILER_IS_GNUCXX)
+  SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
+  SlicerFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
+  SlicerFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
+  IF(MINGW)
+    # suppress warnings about auto imported symbols
+    SET(Slicer_CXX_FLAGS "-Wl,--enable-auto-import ${Slicer_CXX_FLAGS}")
+  ENDIF()
+  
+  SET(Slicer_C_FLAGS "${cflags} ${Slicer_C_FLAGS}")
+  SET(Slicer_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${Slicer_CXX_FLAGS}")
 ENDIF()
 
+#-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
 
