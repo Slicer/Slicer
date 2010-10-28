@@ -60,7 +60,6 @@ set(SCRIPT_MODE "nightly") # "experimental", "continuous", "nightly"
 # Additional CMakeCache options
 #
 set(ADDITIONAL_CMAKECACHE_OPTION "
-  Slicer_USE_QT:BOOL=ON
   Slicer_USE_PYTHONQT:BOOL=ON
   Slicer_USE_PYTHONQT_WITH_TCL:BOOL=ON
   Slicer_BUILD_CLI:BOOL=OFF
