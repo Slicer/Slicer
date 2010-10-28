@@ -613,7 +613,7 @@ IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
 ENDIF()
 
 # Case where Slicer is checkout using Git-SVN
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git/svn/refs/remotes/trunk)
   FIND_PACKAGE(Git)
   IF(NOT GIT_FOUND)
     MESSAGE(FATAL_ERROR "error: Failed to locate Git")
