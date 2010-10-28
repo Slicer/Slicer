@@ -16,7 +16,7 @@ if(APPLE)
   set(itcl_configure_find "*.c | *.o | *.obj) \;\;")
   set(itcl_configure_replace "*.c | *.o | *.obj | *.dSYM | *.gnoc ) \;\;")
 
-  set(script ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/StringFindReplace.cmake)
+  set(script ${CMAKE_CURRENT_SOURCE_DIR}/CMake/StringFindReplace.cmake)
   set(in ${itcl_configure})
   set(out ${itcl_configure})
 

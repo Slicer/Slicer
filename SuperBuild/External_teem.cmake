@@ -1,7 +1,4 @@
 
-#-----------------------------------------------------------------------------
-# Get and build teem
-
 set(proj teem)
 
 if(WIN32)
@@ -22,12 +19,12 @@ ExternalProject_Add(${proj}
   BINARY_DIR teem-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
+    ${ep_common_args}
+    -DBUILD_SHARED_LIBS:BOOL=ON
+    -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-    -DBUILD_SHARED_LIBS:BOOL=ON
-    -DBUILD_TESTING:BOOL=ON
     -DTeem_PTHREAD:BOOL=OFF
     -DTeem_BZIP2:BOOL=OFF
     -DTeem_ZLIB:BOOL=ON
@@ -41,8 +38,9 @@ ExternalProject_Add(${proj}
     -DPNG_PNG_INCLUDE_DIR:PATH=${VTK_SOURCE_DIR}/Utilities/vtkpng
     -DTeem_PNG_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
     -DPNG_LIBRARY:FILEPATH=${teem_PNG_LIBRARY}
-    -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON
   INSTALL_COMMAND ""
   DEPENDS 
     ${teem_DEPENDENCIES}
 )
+
+SET(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)

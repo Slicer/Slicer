@@ -6,13 +6,13 @@ set(weave_binary "${CMAKE_CURRENT_BINARY_DIR}/weave/")
 # the script will create a site.cfg file
 # then run python setup.py config to verify setup
 # configure_file(
-#   ${CMAKE_CURRENT_SOURCE_DIR}/weave_configure_step.cmake.in
+#   SuperBuild/weave_configure_step.cmake.in
 #   ${CMAKE_CURRENT_BINARY_DIR}/weave_configure_step.cmake @ONLY)
 # to build weave we also run a cmake -P script.
 # the script will set LD_LIBRARY_PATH so that 
 # python can run after it is built on linux
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/weave_make_step.cmake.in
+  SuperBuild/weave_make_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/weave_make_step.cmake @ONLY)
 
 # create an external project to download weave,

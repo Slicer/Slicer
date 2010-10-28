@@ -13,7 +13,8 @@ if (UNIX)
 
   if(APPLE)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/blt_download_tcl84_patch.cmake.in
+    configure_file(
+      SuperBuild/blt_download_tcl84_patch.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/blt_download_tcl84_patch.cmake
       @ONLY)
       
@@ -31,7 +32,8 @@ if (UNIX)
     set(blt_CONFIGURE sh configure --with-tcl=${tcl_base}/tcl/unix --with-tk=${tcl_build} --prefix=${tcl_build} --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=${configure_cflags})
     set(blt_BUILD make)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/blt_install_step.cmake.in
+    configure_file(
+      SuperBuild/blt_install_step.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/blt_install_step.cmake
       @ONLY)
 

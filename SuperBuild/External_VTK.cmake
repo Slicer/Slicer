@@ -126,12 +126,11 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
     GIT_TAG "slicer-4.0"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
+      ${ep_common_args}
+      -DBUILD_EXAMPLES:BOOL=OFF
+      -DBUILD_SHARED_LIBS:BOOL=ON
       -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
       -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-      -DBUILD_SHARED_LIBS:BOOL=ON
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DBUILD_TESTING:BOOL=OFF
       -DVTK_USE_PARALLEL:BOOL=ON
       -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
       -DVTK_WRAP_TCL:BOOL=${VTK_WRAP_TCL}
@@ -152,14 +151,5 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
 else()
   # The project is provided using VTK_DIR and VTK_SOURCE_DIR, nevertheless since other 
   # project may depend on VTK, let's add an 'empty' one
-  ExternalProject_Add(${proj}
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-    BINARY_DIR ${proj}-build
-    DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    DEPENDS 
-      ${VTK_DEPENDENCIES}
-    )
+  SlicerMacroEmptyExternalProject(${proj} "${VTK_DEPENDENCIES}")
 endif()

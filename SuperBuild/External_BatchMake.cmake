@@ -1,7 +1,4 @@
 
-#-----------------------------------------------------------------------------
-# Get and build BatchMake
-
 set(proj BatchMake)
 
 ExternalProject_Add(${proj}
@@ -11,15 +8,16 @@ ExternalProject_Add(${proj}
   BINARY_DIR BatchMake-build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
+    ${ep_common_args}
     -DBUILD_SHARED_LIBS:BOOL=ON
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DBUILD_TESTING:BOOL=OFF
     -DUSE_FLTK:BOOL=OFF
     -DDASHBOARD_SUPPORT:BOOL=OFF
     -DGRID_SUPPORT:BOOL=ON
     -DUSE_SPLASHSCREEN:BOOL=OFF
-    -DITK_DIR:FILEPATH=${ITK_DIR}
+    -DITK_DIR:PATH=${ITK_DIR}
   INSTALL_COMMAND ""
   DEPENDS 
     ${BatchMake_DEPENDENCIES}
 )
+
+set(BatchMake_DIR ${CMAKE_BINARY_DIR}/BatchMake-build)

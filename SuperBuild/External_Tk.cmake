@@ -18,19 +18,22 @@ if(NOT WIN32)
   # doesn't provide any way to set the working directory for each step so we do so by
   # configuring a script that has an execute_process command that has the correct working
   # directory
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tk_configure_step.cmake.in
+  configure_file(
+    SuperBuild/tk_configure_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/tk_configure_step.cmake
     @ONLY)
 
   set(tk_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_configure_step.cmake)
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tk_make_step.cmake.in
+  configure_file(
+    SuperBuild/tk_make_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/tk_make_step.cmake
     @ONLY)
 
   set(tk_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_make_step.cmake)
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tk_install_step.cmake.in
+  configure_file(
+    SuperBuild/tk_install_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/tk_install_step.cmake
     @ONLY)
 

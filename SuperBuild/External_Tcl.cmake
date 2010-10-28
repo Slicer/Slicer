@@ -26,19 +26,22 @@ else()
   # doesn't provide any way to set the working directory for each step so we do so by
   # configuring a script that has an execute_process command that has the correct working
   # directory   
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tcl_configure_step.cmake.in
+  configure_file(
+    SuperBuild/tcl_configure_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/tcl_configure_step.cmake
     @ONLY)
 
   set(tcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcl_configure_step.cmake)
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tcl_make_step.cmake.in
+  configure_file(
+    SuperBuild/tcl_make_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/tcl_make_step.cmake
     @ONLY)
 
   set(tcl_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcl_make_step.cmake)
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tcl_install_step.cmake.in
+  configure_file(
+    SuperBuild/tcl_install_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/tcl_install_step.cmake
     @ONLY)
 

@@ -4,7 +4,7 @@ if(UNIX)
   # It basically force the list of possible tcl/tk dir to: '8.4', '84' 
   # Doing so will make sure tkinter is linked against the provided Tcl/Tk8.4
   CONFIGURE_FILE(
-    "@CMAKE_CURRENT_SOURCE_DIR@/python_setup.py.in"
+    "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_setup.py.in"
     "@CMAKE_CURRENT_BINARY_DIR@/@python_SOURCE_DIR@/setup.py"
     COPY)
 ENDIF()

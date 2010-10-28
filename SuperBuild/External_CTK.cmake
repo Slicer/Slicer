@@ -17,11 +17,10 @@ if (Slicer_USE_QT)
       BINARY_DIR ${proj}-build
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
-        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-        -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+        ${ep_common_args}
+        #-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+        #-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
         -DCTK_USE_GIT_PROTOCOL:BOOL=${Slicer_USE_GIT_PROTOCOL}
-        -DBUILD_TESTING:BOOL=OFF
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         -DVTK_DIR:PATH=${VTK_DIR}
         -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
@@ -46,15 +45,6 @@ if (Slicer_USE_QT)
   else()
     # The project is provided using CTK_DIR, nevertheless since other project may depend on CTK, 
     # let's add an 'empty' one
-    ExternalProject_Add(${proj}
-      SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-      BINARY_DIR ${proj}-build
-      DOWNLOAD_COMMAND "" 
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND ""
-      INSTALL_COMMAND ""
-      DEPENDS 
-        ${CTK_DEPENDENCIES}
-      )
+    SlicerMacroEmptyExternalProject(${proj} "${CTK_DEPENDENCIES}")
   endif()
 endif()

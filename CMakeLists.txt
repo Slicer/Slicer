@@ -31,37 +31,185 @@ FOREACH(policy ${project_policies})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
+# CMake Function(s) and Macro(s)
+#-----------------------------------------------------------------------------
+
+INCLUDE(CMake/Slicer3PersistenceMacros.cmake)
+INCLUDE(CMake/SlicerParseArgumentsMacro.cmake)
+INCLUDE(CMake/Slicer3PluginsMacros.cmake)
+INCLUDE(CMake/SlicerMacroEmptyExternalProject.cmake)
+
+#-----------------------------------------------------------------------------
+# Platform check
+#-----------------------------------------------------------------------------
+
+SET(PLATFORM_CHECK true)
+
+if(PLATFORM_CHECK)
+  # See CMake/Modules/Platform/Darwin.cmake)
+  #   6.x == Mac OSX 10.2 (Jaguar)
+  #   7.x == Mac OSX 10.3 (Panther)
+  #   8.x == Mac OSX 10.4 (Tiger)
+  #   9.x == Mac OSX 10.5 (Leopard)
+  #  10.x == Mac OSX 10.6 (Snow Leopard)
+  if (DARWIN_MAJOR_VERSION LESS "8")
+    message(FATAL_ERROR "Only Mac OSX >= 10.4 are supported !")
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# Determine endian type
+#-----------------------------------------------------------------------------
+
+INCLUDE(TestBigEndian)
+test_big_endian(CMAKE_WORDS_BIGENDIAN)
+
+#-----------------------------------------------------------------------------
+# Prerequisites
+#-----------------------------------------------------------------------------
+
+FIND_PACKAGE(Subversion)
+IF(NOT Subversion_FOUND)
+  MESSAGE(FATAL_ERROR "error: Install SVN and try to re-configure")
+ENDIF()
+
+FIND_PACKAGE(Git)
+IF(NOT GIT_FOUND)
+  MESSAGE(FATAL_ERROR "error: Install Git and try to re-configure")
+ENDIF()
+
+SET(minimum_required_qt_version "4.6.2")
+
+#-----------------------------------------------------------------------------
+# Superbuild Option - Enabled by default
+#-----------------------------------------------------------------------------
+
+OPTION(Slicer_SUPERBUILD "Build Slicer and the projects it depends on via SuperBuild.cmake." ON)
+MARK_AS_ADVANCED(Slicer_SUPERBUILD)
+
+#-----------------------------------------------------------------------------
+# Build shared lib by default
+#------------------------------------------------------------------------------
+# option(BUILD_SHARED_LIBS "Build Slicer with shared libraries." ON)
+SET(BUILD_SHARED_LIBS ON)
+
+#-----------------------------------------------------------------------------
+# Append the library version information to the library target properties.
+#------------------------------------------------------------------------------
+OPTION(Slicer_WITH_LIBRARY_VERSION "Build with library version information" OFF)
+MARK_AS_ADVANCED(Slicer_WITH_LIBRARY_VERSION)
+IF(Slicer_WITH_LIBRARY_VERSION)
+  SET(Slicer_LIBRARY_PROPERTIES ${Slicer_LIBRARY_PROPERTIES}
+    VERSION ${Slicer_VERSION_FULL}
+    SOVERSION ${Slicer_VERSION}
+  )
+ENDIF()
+
+#-----------------------------------------------------------------------------
+# Additional Slicer Options
+#-----------------------------------------------------------------------------
+OPTION(BUILD_DOCUMENTATION "Build Slicer Documentation" OFF)
+OPTION(BUILD_TESTING "Test the project" ON)
+OPTION(WITH_MEMCHECK "Run tests through valgrind." OFF)
+OPTION(WITH_COVERAGE "Enable/Disable coverage" OFF)
+OPTION(Slicer_USE_VTK_DEBUG_LEAKS "Enable VTKs Debug Leaks functionality in both VTK and Slicer." ON)
+OPTION(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
+MARK_AS_ADVANCED(Slicer_BUILD_QTLOADABLEMODULES)
+OPTION(Slicer_BUILD_CLI       "Build Slicer CLI Plugins" ON)
+OPTION(Slicer_USE_PYTHONQT    "Integrate a python-QT interpreter into Slicer." ON)
+OPTION(Slicer_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON)
+#MARK_AS_ADVANCED(Slicer_USE_PYTHONQT_WITH_TCL)
+OPTION(Slicer_USE_BatchMake   "Build Slicer with BatchMake support." ON)
+OPTION(Slicer_USE_MIDAS       "Build Slicer with MIDAS support." OFF)
+OPTION(Slicer_USE_OPENIGTLINK "Build Slicer with OpenIGTLink support." ON)
+OPTION(Slicer_USE_OPENCV      "Build Slicer with OpenCV support." OFF)
+OPTION(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." OFF)
+MARK_AS_ADVANCED(Slicer_USE_CTKAPPLAUNCHER)
+
+# Slicer implicitly uses Qt
+SET(Slicer_USE_QT ON CACHE INTERNAL "Build Slicer with Qt")
+
+# The following options are deprecated and will be removed 
+# when the port is complete
+OPTION(Slicer_USE_KWWIDGETS "Deprecated - Build Slicer with KWWidgets" OFF)
+MARK_AS_ADVANCED(Slicer_USE_KWWIDGETS)
+if(Slicer_USE_KWWIDGETS)
+  OPTION(Slicer_USE_PYTHON "Deprecated - Integrate a python interpreter into Slicer." OFF)
+  OPTION(Slicer_BUILD_MODULES "Deprecated - Build Slicer Modules" ON)
+  MARK_AS_ADVANCED(Slicer_USE_PYTHON Slicer_BUILD_MODULES)
+endif()
+
+#-----------------------------------------------------------------------------
+# Update CMake module path
+#------------------------------------------------------------------------------
+
+# Make sure VTK_CMAKE_DIR is at the beginning so that VTK's FindTCL is
+# used before CMake's FindTCL.
+SET(CMAKE_MODULE_PATH
+  ${VTK_CMAKE_DIR}
+  ${Slicer_SOURCE_DIR}/CMake
+  ${Slicer_BINARY_DIR}/CMake
+  ${CMAKE_MODULE_PATH}
+  )
+  
+SET(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
+
+#-----------------------------------------------------------------------------
+# Superbuild script
+#-----------------------------------------------------------------------------
+
+IF(Slicer_SUPERBUILD)
+  INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
+  RETURN()
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # Output directories.
-#
+#------------------------------------------------------------------------------
+
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/bin)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Slicer_BINARY_DIR}/lib)
 
 #-----------------------------------------------------------------------------
+# Slicer version number.
+#-----------------------------------------------------------------------------
+
+SET(Slicer_VERSION_MAJOR "4")
+SET(Slicer_VERSION_MINOR "0")
+IF(NOT Slicer_VERSION_PATCH)
+  SET(Slicer_VERSION_PATCH "alpha")
+ENDIF()
+SET(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
+
+#-----------------------------------------------------------------------------
 # Install directories
-#
-set(Slicer_INSTALL_BIN_DIR "bin")
-set(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
-set(Slicer_INSTALL_INCLUDE_DIR "include/Slicer")
-set(Slicer_INSTALL_SHARE_DIR "share/Slicer")
-set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
+#------------------------------------------------------------------------------
 
-set(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
-set(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
-set(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Plugins")
-set(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Plugins")
-set(Slicer_INSTALL_PLUGINS_CACHE_DIR "${Slicer_INSTALL_LIB_DIR}/PluginsCache")
+SET(Slicer_INSTALL_BIN_DIR "bin")
+SET(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
+SET(Slicer_INSTALL_INCLUDE_DIR "include/Slicer")
+SET(Slicer_INSTALL_SHARE_DIR "share/Slicer")
+SET(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 
-set(Slicer_INSTALL_MODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
-set(Slicer_INSTALL_MODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
-set(Slicer_INSTALL_MODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Modules")
-set(Slicer_INSTALL_MODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Modules")
+SET(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
+SET(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
+SET(Slicer_INSTALL_PLUGINS_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Plugins")
+SET(Slicer_INSTALL_PLUGINS_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Plugins")
+SET(Slicer_INSTALL_PLUGINS_CACHE_DIR "${Slicer_INSTALL_LIB_DIR}/PluginsCache")
 
-set(Slicer_HOME "${Slicer_BINARY_DIR}")
+SET(Slicer_INSTALL_MODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
+SET(Slicer_INSTALL_MODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Modules")
+SET(Slicer_INSTALL_MODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/Modules")
+SET(Slicer_INSTALL_MODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Modules")
+
+SET(Slicer_HOME "${Slicer_BINARY_DIR}")
 
 #-----------------------------------------------------------------------------
 # Convenient macro allowing to download a file
-#
+#------------------------------------------------------------------------------
+
 MACRO(downloadFile url dest)
   IF(NOT EXISTS ${dest})
     FILE(DOWNLOAD ${url} ${dest} STATUS status)
@@ -114,82 +262,14 @@ IF(MSVC90)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 ENDIF()
 
-# include a test for endianness (used to be done by default)
-
-include(${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
-test_big_endian(CMAKE_WORDS_BIGENDIAN)
-
 #-----------------------------------------------------------------------------
-# avoid linker bug in Mac OS 10.5
-# see:
-# http://wiki.finkproject.org/index.php/Fink:Packaging:Preparing_for_10.5#OpenGL_Bug
+# Avoid linker bug in Mac OS 10.5
+# See http://wiki.finkproject.org/index.php/Fink:Packaging:Preparing_for_10.5#OpenGL_Bug
 #
 IF(APPLE)
-  set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
-  set(CMAKE_EXE_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
+  SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
 ENDIF()
-
-#-----------------------------------------------------------------------------
-# Slicer version number.
-#
-set(Slicer_VERSION_MAJOR "4")
-set(Slicer_VERSION_MINOR "0")
-IF(NOT Slicer_VERSION_PATCH)
-  set(Slicer_VERSION_PATCH "alpha")
-ENDIF()
-set(Slicer_VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
-set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
-
-#-----------------------------------------------------------------------------
-# Build shared lib by default
-#
-option(BUILD_SHARED_LIBS "Build Slicer with shared libraries." ON)
-
-#-----------------------------------------------------------------------------
-# Append the library version information to the library target properties.
-#
-OPTION(Slicer_WITH_LIBRARY_VERSION "Build with library version information" OFF)
-IF(Slicer_WITH_LIBRARY_VERSION)
-  SET(Slicer_LIBRARY_PROPERTIES ${Slicer_LIBRARY_PROPERTIES}
-    VERSION ${Slicer_VERSION_FULL}
-    SOVERSION ${Slicer_VERSION}
-  )
-ENDIF()
-
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#
-
-# Make sure VTK_CMAKE_DIR is at the beginning so that VTK's FindTCL is
-# used before CMake's FindTCL.
-set(CMAKE_MODULE_PATH
-  ${VTK_CMAKE_DIR}
-  ${Slicer_SOURCE_DIR}/CMake
-  ${Slicer_BINARY_DIR}/CMake
-  ${CMAKE_MODULE_PATH}
-  )
-  
-set(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
-
-#-----------------------------------------------------------------------------
-# CMake Function(s) and Macro(s)
-#
-include(CMake/Slicer3PersistenceMacros.cmake)
-include(CMake/SlicerParseArgumentsMacro.cmake)
-include(CMake/SlicerFindQT.cmake)
-
-# Add CMake directory so that install rules associated with *.cmake files are evaluated
-add_subdirectory(CMake)
-
-#-----------------------------------------------------------------------------
-# Top level slicer configurations
-
-# Do NOT force into the cache, as plugins need to override locally and scoping
-# becomes an issue.
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ 
-#  CACHE PATH "Single output directory for building all libraries." FORCE)
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ 
-#  CACHE PATH "Single output directory for building all executables." FORCE)
 
 #-----------------------------------------------------------------------------
 # Slicer include and libraries subdirectory
@@ -206,34 +286,47 @@ slicer3_set_persistent_property(Slicer_QTModules_INCLUDE_DIRS "")
 
 #-----------------------------------------------------------------------------
 # Get sytem name and architecture
-#
+#-----------------------------------------------------------------------------
+
 SET(Slicer_BUILD NA)
 INCLUDE(CMake/DiscoverSystemNameAndBits.cmake)
 MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
 # Testing
-#
-OPTION(BUILD_TESTING "Test the project" ON)
-SET(LAUNCH_EXE ${Slicer_BINARY_DIR}/Slicer3 --launch)
+#-----------------------------------------------------------------------------
 IF(BUILD_TESTING)
+  
+  SET(LAUNCH_EXE ${Slicer_BINARY_DIR}/Slicer3 --launch)
+  
   ENABLE_TESTING()
+  
   INCLUDE(CTest)
+  
   SET(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
-
-  #-----------------------------------------------------------------------------
-  # Run test through valgrind: particularly useful for testing modules.
-  #
-  option(USE_VALGRIND "Run tests through valgrind." OFF)
-
+  
+  CONFIGURE_FILE(
+    CMake/CTestCustom.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake 
+    @ONLY)
+    
+  CONFIGURE_FILE(
+    ${Slicer_SOURCE_DIR}/CTestConfig.cmake
+    ${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake 
+    COPYONLY)
+  
+  CONFIGURE_FILE(
+    ${Slicer_SOURCE_DIR}/CMake/RemoveTemporaryFiles.cmake.in
+    ${Slicer_BINARY_DIR}/CMake/RemoveTemporaryFiles.cmake
+    @ONLY)
+    
+  CONFIGURE_FILE(
+    ${Slicer_SOURCE_DIR}/CMake/Slicer3SampleBuildTest.cmake.in
+    ${Slicer_BINARY_DIR}/CMake/Slicer3SampleBuildTest.cmake 
+    @ONLY)
+    
 ENDIF()
-
-#-----------------------------------------------------------------------------
-# By default, build without KWWidget (TODO: eliminate this option for slicer4)
-#
-option(Slicer_USE_KWWIDGETS "Deprecated - Build Slicer with KWWidgets" OFF)
-MARK_AS_ADVANCED(Slicer_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
 # Since modules are KWWidgets based, unset there variables
@@ -246,42 +339,92 @@ IF(NOT Slicer_USE_KWWIDGETS)
   UNSET(Slicer_INSTALL_MODULES_SHARE_DIR)
 ENDIF()
 
-#-----------------------------------------------------------------------------
-# Libs
-# - ITK
-# - KWWidgets (pulls in VTK)
-#
-
 # Relax some constraints related to the build settings file. This was
 # preventing people from using the same compiler but with a different generator,
 # or just the same compiler installed in a non-standard location.
-
 IF(Slicer_USE_KWWIDGETS)
-  set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
+  SET(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
 ENDIF()
-set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
-set(SKIP_ITK_BUILD_SETTINGS_FILE 1)
-set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
+SET(SKIP_VTK_BUILD_SETTINGS_FILE 1)
+SET(SKIP_ITK_BUILD_SETTINGS_FILE 1)
+SET(SKIP_Teem_BUILD_SETTINGS_FILE 1)
 
 #-----------------------------------------------------------------------------
-## Python
-option(Slicer_USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
+# Python
+#-----------------------------------------------------------------------------
+
 IF(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
-  find_package(PythonLibs)
-  find_package(PythonInterp)
+  FIND_PACKAGE(PythonLibs)
+  FIND_PACKAGE(PythonInterp)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-## ITK
-find_package(ITK REQUIRED)
+# ITK
+#-----------------------------------------------------------------------------
+FIND_PACKAGE(ITK REQUIRED)
 IF(NOT ITK_FOUND)
   message(FATAL_ERROR "Need ITK to build")
 ENDIF()
-include(${ITK_USE_FILE})
+INCLUDE(${ITK_USE_FILE})
+
+IF(Slicer_USE_KWWIDGETS)
+#-----------------------------------------------------------------------------
+# Deprecated - KWWidgets 
+#-----------------------------------------------------------------------------
+  FIND_PACKAGE(KWWidgets REQUIRED)
+  IF(NOT KWWidgets_FOUND)
+    MESSAGE(FATAL_ERROR "Need KWWidgets to build")
+  ENDIF()
+  INCLUDE(${KWWidgets_USE_FILE})
+  
+ELSE()
+#-----------------------------------------------------------------------------
+# VTK
+#-----------------------------------------------------------------------------
+  FIND_PACKAGE(VTK REQUIRED)
+  IF(NOT VTK_FOUND)
+    MESSAGE(FATAL_ERROR "Need VTK to build")
+  ENDIF()
+  IF(NOT VTK_USE_QVTK)
+    MESSAGE(FATAL_ERROR "error: VTK was not configured to use QT, you probably need to recompile it with VTK_USE_GUISUPPORT ON, VTK_USE_QVTK ON, DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. Note that Qt >= ${minimum_required_qt_version} is *required*")
+  ENDIF()
+  INCLUDE(${VTK_USE_FILE})
+  
+ENDIF()
 
 #-----------------------------------------------------------------------------
-# FindCTK
-#
+# Qt 
+#-----------------------------------------------------------------------------
+IF(Slicer_USE_QT)
+  SET(extra_error_message)
+  IF(NOT DEFINED QT_QMAKE_EXECUTABLE AND EXISTS "${VTK_QT_QMAKE_EXECUTABLE}")
+    SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE})
+    SET(extra_error_message "You should probably reconfigure VTK.")
+  ENDIF()
+  
+  FIND_PACKAGE(Qt4)
+  IF(NOT QT4_FOUND)
+    MESSAGE(FATAL_ERROR "error: Qt >= ${minimum_required_qt_version} was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable.")
+  ENDIF()
+  
+  # Check version, note that ${QT_VERSION_PATCH} could also be used
+  IF("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}" VERSION_LESS "${minimum_required_qt_version}")
+    MESSAGE(FATAL_ERROR "error: Slicer requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}. ${extra_error_message}")
+  ENDIF()
+  
+  MESSAGE(STATUS "Configuring Slicer with Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
+  
+  # Enable modules
+  SET(QT_USE_QTNETWORK ON)
+  SET(QT_USE_QTTEST ${BUILD_TESTING})
+
+  # Includes Qt headers
+  INCLUDE(${QT_USE_FILE})
+ENDIF()
+
+#-----------------------------------------------------------------------------
+# CTK
+#-----------------------------------------------------------------------------
 SET(git_repo http://github.com/commontk/CTK/raw/master/)
 
 IF(Slicer_USE_QT)
@@ -302,54 +445,9 @@ IF(Slicer_USE_QT)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-IF(Slicer_USE_KWWIDGETS)
-  ## KWWidgets
-  FIND_PACKAGE(KWWidgets REQUIRED)
-  IF(NOT KWWidgets_FOUND)
-    MESSAGE(FATAL_ERROR "Need KWWidgets to build")
-  ENDIF()
-  INCLUDE(${KWWidgets_USE_FILE})
-  
-ELSE()
-
-  # VTK
-  FIND_PACKAGE(VTK REQUIRED)
-  IF(NOT VTK_FOUND)
-    MESSAGE(FATAL_ERROR "Need VTK to build")
-  ELSE()
-    IF(NOT VTK_USE_QVTK)
-      MESSAGE("Please make sure VTK is build with VTK_USE_GUISUPPORT and VTK_USE_QVTK enabled")
-    ENDIF()
-  ENDIF()
-  INCLUDE(${VTK_USE_FILE})
-  
-ENDIF()
-
+# PythonQt
 #-----------------------------------------------------------------------------
-#
-# Call macro defined in ${PROJECT_SOURCE_DIR}/CMake/SlicerFindQT.cmake
-#
-SLICER_SETUP_QT()
-
-#-----------------------------------------------------------------------------
-# Alert the user if both Slicer_USE_QT and Slicer_USE_KWWIDGETS are OFF
-IF(NOT Slicer_USE_QT AND NOT Slicer_USE_KWWIDGETS)
-  MESSAGE(FATAL_ERROR "Both Slicer_USE_QT and Slicer_USE_KWWIDGETS are OFF. Please, choose one")
-ENDIF()
-
-#-----------------------------------------------------------------------------
-# If Slicer_USE_QT is ON and Slicer_USE_KWWIDGETS is OFF, complain if VTK_WRAP_TCL is ON
-# Note: Later on we will expect VTK_WRAP_PYTHON to be ON
-IF(Slicer_USE_QT AND NOT Slicer_USE_KWWIDGETS)
-  IF(VTK_WRAP_TCL)
-    MESSAGE(FATAL_ERROR "For now, if Slicer_USE_QT is ON and Slicer_USE_KWWIDGETS is OFF, we expect VTK_WRAP_TCL to be OFF")
-  ENDIF()
-ENDIF()
-
-#-----------------------------------------------------------------------------
-# Add Slicer_USE_PYTHONQT option if Slicer_USE_QT is ON
 IF(Slicer_USE_QT)
-  option(Slicer_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." OFF)
   IF(Slicer_USE_PYTHONQT)
     IF(NOT VTK_WRAP_PYTHON)
       MESSAGE(FATAL_ERROR "Since both Slicer_USE_QT and Slicer_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer_USE_PYTHONQT or re-configure VTK with python wrapping.")
@@ -362,45 +460,43 @@ IF(Slicer_USE_QT)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-## Teem
-find_package(Teem REQUIRED)
+# Teem
+#-----------------------------------------------------------------------------
+FIND_PACKAGE(Teem REQUIRED)
 IF(NOT Teem_FOUND)
   message(FATAL_ERROR "Need Teem to build")
 ENDIF()
-include(${Teem_USE_FILE})
+INCLUDE(${Teem_USE_FILE})
 
 #-----------------------------------------------------------------------------
-## SlicerLibCurl
-find_package(SLICERLIBCURL REQUIRED)
+# SlicerLibCurl
+#-----------------------------------------------------------------------------
+FIND_PACKAGE(SLICERLIBCURL REQUIRED)
 IF(SLICERLIBCURL_FOUND)
-  include(${SLICERLIBCURL_USE_FILE})
+  INCLUDE(${SLICERLIBCURL_USE_FILE})
 ENDIF()
 
 #-----------------------------------------------------------------------------
-## BatchMake
-option(Slicer_USE_BatchMake "Build Slicer with BatchMake support." OFF)
+# BatchMake
+#-----------------------------------------------------------------------------
 IF(Slicer_USE_BatchMake)
-  find_package(BatchMake REQUIRED)
-  include(${BatchMake_USE_FILE})
+  FIND_PACKAGE(BatchMake REQUIRED)
+  INCLUDE(${BatchMake_USE_FILE})
 ENDIF()
 
 #-----------------------------------------------------------------------------
-## MIDAS
-option(Slicer_USE_MIDAS "Build Slicer with MIDAS support." OFF)
-
+# OpenIGTLink
 #-----------------------------------------------------------------------------
-## OpenIGTLink
-option(Slicer_USE_OPENIGTLINK "Build Slicer with OpenIGTLink support." OFF)
 IF(Slicer_USE_OPENIGTLINK)
-  find_package(OpenIGTLink REQUIRED)
-  include(${OpenIGTLink_USE_FILE})
+  FIND_PACKAGE(OpenIGTLink REQUIRED)
+  INCLUDE(${OpenIGTLink_USE_FILE})
 ENDIF()
 
 #-----------------------------------------------------------------------------
-## OpenCV (Built in Slicer3-lib)
-option(Slicer_USE_OPENCV "Build Slicer with OpenCV support." OFF)
+# OpenCV (Built in Slicer3-lib)
+#-----------------------------------------------------------------------------
 IF(Slicer_USE_OPENCV)
-  find_package(OpenCV REQUIRED)
+  FIND_PACKAGE(OpenCV REQUIRED)
 
   IF(OPENCV_BUILD_SETTINGS_FILE AND NOT SKIP_OPENCV_BUILD_SETTINGS_FILE)
     INCLUDE(${CMAKE_ROOT}/Modules/CMakeImportBuildSettings.cmake)
@@ -419,22 +515,23 @@ IF(Slicer_USE_OPENCV)
   
   # Add link directories needed to use OPENCV.
   LINK_DIRECTORIES(${OPENCV_LIBRARY_DIRS})
-  #include(${OPENCV_USE_FILE})
+  #INCLUDE(${OPENCV_USE_FILE})
 ENDIF()
 
 
 #-----------------------------------------------------------------------------
 # Need some Tcl/Tk info
+#-----------------------------------------------------------------------------
 IF(VTK_WRAP_TCL)
-  include("${VTK_CMAKE_DIR}/vtkTclTkMacros.cmake")
+  INCLUDE("${VTK_CMAKE_DIR}/vtkTclTkMacros.cmake")
   VTK_GET_TCL_TK_VERSION(TCL_TK_MAJOR_VERSION TCL_TK_MINOR_VERSION)
-  set(TCL_TK_VERSION_DOT "${TCL_TK_MAJOR_VERSION}.${TCL_TK_MINOR_VERSION}")
-  set(TCL_TK_VERSION "${TCL_TK_MAJOR_VERSION}${TCL_TK_MINOR_VERSION}")
+  SET(TCL_TK_VERSION_DOT "${TCL_TK_MAJOR_VERSION}.${TCL_TK_MINOR_VERSION}")
+  SET(TCL_TK_VERSION "${TCL_TK_MAJOR_VERSION}${TCL_TK_MINOR_VERSION}")
   IF(Slicer_USE_KWWIDGETS)
-    include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
+    INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
     incr_tcl_get_version(INCR_TCL_MAJOR_VERSION INCR_TCL_MINOR_VERSION)
-    set(INCR_TCL_VERSION_DOT "${INCR_TCL_MAJOR_VERSION}.${INCR_TCL_MINOR_VERSION}")
-    set(INCR_TCL_VERSION "${INCR_TCL_MAJOR_VERSION}${INCR_TCL_MINOR_VERSION}")
+    SET(INCR_TCL_VERSION_DOT "${INCR_TCL_MAJOR_VERSION}.${INCR_TCL_MINOR_VERSION}")
+    SET(INCR_TCL_VERSION "${INCR_TCL_MAJOR_VERSION}${INCR_TCL_MINOR_VERSION}")
   ENDIF()
 ELSE()
   # TODO: these should be passed in by SuperBuild
@@ -442,20 +539,22 @@ ELSE()
   # never will, so this is always likely to work.
   # This is needed so the launcher can set the paths to the correct subdirectories
   # for incrTcl and incrTk
-  set(TCL_TK_VERSION_DOT "8.4")
-  set(TCL_TK_VERSION "84")
-  set(INCR_TCL_VERSION_DOT "3.2")
-  set(INCR_TCL_VERSION "32")
+  SET(TCL_TK_VERSION_DOT "8.4")
+  SET(TCL_TK_VERSION "84")
+  SET(INCR_TCL_VERSION_DOT "3.2")
+  SET(INCR_TCL_VERSION "32")
 ENDIF()
 
+#-----------------------------------------------------------------------------
+# DEPRECATED - Remove the following section when port to Qt is completed
 #-----------------------------------------------------------------------------
 # Generate the default setup paths scripts.
 # Generate some useful scripts that can be used to setup various environment 
 # variables and launch the executable properly against external packages.
-#
+#-----------------------------------------------------------------------------
 IF(Slicer_USE_KWWIDGETS)
-  include("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
-  set(extra_dirs
+  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
+  SET(extra_dirs
     "${Teem_DIR}/bin"
     "${BatchMake_DIR}/bin"
     "${OpenIGTLink_DIR}/bin"
@@ -471,29 +570,34 @@ IF(Slicer_USE_KWWIDGETS)
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# DEPRECATED - Remove the following section when port to Qt is completed
+#-----------------------------------------------------------------------------
 # VTK 5.0 does not have VTK_CMAKE_DIR
 # Alternatively you could use KWWidget's wrapping, which encapsulate
 # the differences between various VTK versions:
 #  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
 #  KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
-#
+#-----------------------------------------------------------------------------
 IF(Slicer_USE_KWWIDGETS)
   IF(NOT VTK_CMAKE_DIR)
-    set(VTK_CMAKE_DIR "${VTK_SOURCE_DIR}/CMake")
+    SET(VTK_CMAKE_DIR "${VTK_SOURCE_DIR}/CMake")
   ENDIF()
-  include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 ENDIF()
 
+
+#-----------------------------------------------------------------------------
+# DEPRECATED - Remove the following section when port to Qt is completed
 #-----------------------------------------------------------------------------
 # Check versions of VTK to track CVS HEAD
-#
+#-----------------------------------------------------------------------------
 IF(Slicer_USE_KWWIDGETS)
-  find_package(VTK REQUIRED)
+  FIND_PACKAGE(VTK REQUIRED)
   IF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
-    include(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
+    INCLUDE(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
   else()
     #MESSAGE("Using local version of VTKVersionMacros for compatibility.")
-    include(${Slicer_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
+    INCLUDE(${Slicer_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
   ENDIF()
 
   vtk_get_source_revision_and_date(VTKsource_revision VTKsource_date)
@@ -503,91 +607,59 @@ IF(Slicer_USE_KWWIDGETS)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# These packages may exist within the Slicer source tree
-#
-set(TCLAP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
-set(ModuleDescriptionParser_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
-set(GenerateCLP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
-set(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
-set(LoadableModule_DIR ${Slicer_BINARY_DIR}/Libs/LoadableModule)
-set(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
+# Set Slicer buildin libraries *_DIR variables
+#-----------------------------------------------------------------------------
+SET(TCLAP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/tclap)
+SET(ModuleDescriptionParser_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/ModuleDescriptionParser)
+SET(GenerateCLP_DIR ${Slicer_BINARY_DIR}/Libs/SlicerExecutionModel/GenerateCLP)
+SET(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
+SET(LoadableModule_DIR ${Slicer_BINARY_DIR}/Libs/LoadableModule)
+SET(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
-#
+#-----------------------------------------------------------------------------
 IF(Slicer_USE_QT)
-  OPTION(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
   IF(Slicer_BUILD_QTLOADABLEMODULES)
     ADD_DEFINITIONS(-DSlicer_BUILD_QTLOADABLEMODULES)
-    set(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
-    set(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
-    set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTLoadableModules")
-    set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTLoadableModules")
+    SET(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
+    SET(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
+    SET(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTLoadableModules")
+    SET(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTLoadableModules")
   ENDIF()
 ENDIF()
 
 # --------------------------------------------------------------------------
 # Configure and install headers
-
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h
+# --------------------------------------------------------------------------
+SET(files 
+  vtkSlicerConfigure.h
+  vtkSlicerVersionConfigure.h
+  Scripts/runValgrind.sh
+  Scripts/runValgrindForOneModule.sh
+  Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh
+  Scripts/computeCodeCoverageLocally.sh
+  Scripts/computeCodeCoverageForOneTest.sh
+  Scripts/runExperimentalOffScreen.sh
   )
-
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerVersionConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h
-  )
-
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runValgrind.sh.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runValgrind.sh
-  )
-
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runValgrindForOneModule.sh.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runValgrindForOneModule.sh
-  )
-
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runValgrindForOneModuleWithSlicer4AndQT.sh
-  )
-
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/computeCodeCoverageLocally.sh.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/computeCodeCoverageLocally.sh
-  )
-
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/computeCodeCoverageForOneTest.sh.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/computeCodeCoverageForOneTest.sh
-  )
-
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Scripts/runExperimentalOffScreen.sh.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/Scripts/runExperimentalOffScreen.sh
-  )
-
-INCLUDE_DIRECTORIES(
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_CURRENT_BINARY_DIR}"
-  )
+FOREACH(f ${files})
+  CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${f}.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${f}
+    )
+ENDFOREACH()
 
 INSTALL(FILES 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
-  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
-  )
-
-INSTALL(FILES 
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
   DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
   )
-
+  
 #-----------------------------------------------------------------------------
 # Generate SlicerVersion.txt
+#-----------------------------------------------------------------------------
 
-INCLUDE(${Slicer_CMAKE_DIR}/SlicerTodayMacro.cmake)
+INCLUDE(CMake/SlicerTodayMacro.cmake)
 
 # Get build time
 TODAY(Slicer_BUILDDATE)
@@ -596,12 +668,6 @@ TODAY(Slicer_BUILDDATE)
 
 SET(Slicer_WC_URL NA)
 SET(Slicer_WC_REVISION 0)
-
-# Get SVN info
-FIND_PACKAGE(Subversion)
-IF(NOT Subversion_FOUND)
-  MESSAGE(FATAL_ERROR "error: Install SVN and try to re-configure")
-ENDIF()
 
 # Case where Slicer is checkout using SVN
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
@@ -627,11 +693,21 @@ ENDIF()
 
 
 #-----------------------------------------------------------------------------
+# Includes
+#-----------------------------------------------------------------------------
+
+INCLUDE_DIRECTORIES(
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_CURRENT_BINARY_DIR}"
+  )
+  
+#-----------------------------------------------------------------------------
 # Subdirectories
-#
-add_subdirectory(Libs)
-add_subdirectory(Base)
-add_subdirectory(Resources)
+#-----------------------------------------------------------------------------
+
+ADD_SUBDIRECTORY(Libs)
+ADD_SUBDIRECTORY(Base)
+ADD_SUBDIRECTORY(Resources)
 
 #-----------------------------------------------------------------------------
 # At this point, let's not have the applications and modules guess which
@@ -652,7 +728,7 @@ slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS Slicer_Base_INCLUDE_DIR
 
 #-----------------------------------------------------------------------------
 # Module Logic
-#
+#-----------------------------------------------------------------------------
 
 INCLUDE("${Slicer_CMAKE_DIR}/SlicerModuleLogicMacros.cmake")
 
@@ -677,36 +753,32 @@ ENDIF()
 
 
 #-----------------------------------------------------------------------------
+# DEPRECATED - Remove the following section when port to Qt is completed
+#-----------------------------------------------------------------------------
 # Modules and CLI
-#
-option(Slicer_BUILD_CLI "Build Slicer CLI Plugins" ON)
+#-----------------------------------------------------------------------------
 IF(Slicer_USE_KWWIDGETS)
-  option(Slicer_BUILD_MODULES "Build Slicer Modules" ON)
-ENDIF()
-
-include("${Slicer_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
-
-IF(Slicer_USE_KWWIDGETS)
-  include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
+  INCLUDE("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   
   IF(Slicer_BUILD_MODULES)
-    add_subdirectory(Modules)
+    ADD_SUBDIRECTORY(Modules)
   else(Slicer_BUILD_MODULES)
     # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
     # so that we can have CLI, without all the other modules
     IF(Slicer_BUILD_CLI)
-      add_subdirectory(Modules/CommandLineModule)
+      ADD_SUBDIRECTORY(Modules/CommandLineModule)
     ENDIF(Slicer_BUILD_CLI)
   ENDIF(Slicer_BUILD_MODULES)
 ENDIF()
 
 #-----------------------------------------------------------------------------
 # Module EMSegment libraries
+#-----------------------------------------------------------------------------
 # The EMSegment{Registration,Graph,Algorithm,MRML} libraries are built from the top-level
 # CMakeLists.txt. Doing so allow to build these libraries also if Slicer_USE_KWWIDGETS is OFF
 
 IF(Slicer_BUILD_MODULES OR Slicer_BUILD_QTLOADABLEMODULES)
-  include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
+  INCLUDE("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   ADD_SUBDIRECTORY(Modules/EMSegment/Algorithm)
   ADD_SUBDIRECTORY(Modules/EMSegment/MRML)
   ADD_SUBDIRECTORY(Modules/EMSegment/Registration)
@@ -724,27 +796,29 @@ ENDIF()
 
 #-----------------------------------------------------------------------------
 # Qt Loadable Modules
-#
+#-----------------------------------------------------------------------------
+
 IF(Slicer_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
-  add_subdirectory(QTModules)
+  ADD_SUBDIRECTORY(QTModules)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Applications need to be built after Modules to capture the TractTracing in
-# the correct ordering.
-#
-add_subdirectory(Applications)
+# Applications - Added after Modules to capture the TractTracing in the correct ordering.
+#-----------------------------------------------------------------------------
+
+ADD_SUBDIRECTORY(Applications)
 
 #-----------------------------------------------------------------------------
 # Testing
-#
+#-----------------------------------------------------------------------------
+
 IF(BUILD_TESTING)
-  add_subdirectory(Testing)
+  ADD_SUBDIRECTORY(Testing)
 ENDIF()
 
 # Install testing data
 
-install(DIRECTORY
+INSTALL(DIRECTORY
   Testing
   DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Development
   PATTERN ".svn" EXCLUDE
@@ -753,7 +827,7 @@ install(DIRECTORY
 
 #-----------------------------------------------------------------------------
 # Launcher for slicer
-#
+#-----------------------------------------------------------------------------
 
 # let's build the launcher for Kww, KwwAndQt and also QtOnly slicer ...
 ADD_SUBDIRECTORY(Utilities/Launcher)
@@ -777,9 +851,6 @@ IF(Slicer_USE_QT)
     ENDFOREACH()
   ENDIF()
   
-  option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." OFF)
-  mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
-  
   # ctkAppLauncher for slicer
   IF(Slicer_USE_CTKAPPLAUNCHER)
     INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
@@ -802,12 +873,12 @@ IF(Slicer_USE_QT)
       PATHS_INSTALLED "${SLICER_PATHS_INSTALLED}"
       ENVVARS_INSTALLED "${SLICER_ENVVARS_INSTALLED}"
       )
-    install(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
-    install(
+    INSTALL(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
+    INSTALL(
       FILES "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Images/SlicerSplashScreen.png" 
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
       )
-    install(
+    INSTALL(
       FILES "${Slicer_BINARY_DIR}/SlicerLauncherSettingsToInstall.ini" 
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
       RENAME SlicerLauncherSettings.ini
@@ -827,52 +898,39 @@ INSTALL(
 
 #-----------------------------------------------------------------------------
 # Launcher for QTDesigner
-#
+#-----------------------------------------------------------------------------
 
 IF(Slicer_USE_QT)
-  add_subdirectory(Utilities/Designer)
+  ADD_SUBDIRECTORY(Utilities/Designer)
 ENDIF()
 
 #-----------------------------------------------------------------------------
 # Package slicer
-#
-add_subdirectory(Utilities/Package)
+#-----------------------------------------------------------------------------
+
+ADD_SUBDIRECTORY(Utilities/Package)
 
 #-----------------------------------------------------------------------------
 # Documentation
-#
-option(BUILD_DOCUMENTATION "Build Slicer Documentation" OFF)
+#-----------------------------------------------------------------------------
+
 IF(BUILD_DOCUMENTATION)
-  add_subdirectory(Utilities/Doxygen)
+  ADD_SUBDIRECTORY(Utilities/Doxygen)
 ENDIF()
 
-#-----------------------------------------------------------------------------
-# Setup file for setting custom ctest vars
-CONFIGURE_FILE(
-  ${Slicer_SOURCE_DIR}/CTestCustom.cmake.in
-  ${Slicer_BINARY_DIR}/CTestCustom.cmake
-  @ONLY
-  )
+# Add CMake directory so that install rules associated with *.cmake files are evaluated
+ADD_SUBDIRECTORY(CMake)
 
 #-----------------------------------------------------------------------------
 # Set up for building against a Slicer build tree and a Slicer installation 
 #
-include(${Slicer_SOURCE_DIR}/GenerateSlicerConfig.cmake)
+INCLUDE(${Slicer_SOURCE_DIR}/GenerateSlicerConfig.cmake)
 
-configure_file(${Slicer_SOURCE_DIR}/CTestConfig.cmake
-  ${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake COPYONLY IMMEDIATE)
-
-configure_file(${Slicer_SOURCE_DIR}/UseSlicer.cmake.in
+CONFIGURE_FILE(${Slicer_SOURCE_DIR}/UseSlicer.cmake.in
   ${Slicer_BINARY_DIR}/UseSlicer.cmake COPYONLY IMMEDIATE)
 
-configure_file(${Slicer_SOURCE_DIR}/CMake/RemoveTemporaryFiles.cmake.in
-  ${Slicer_BINARY_DIR}/CMake/RemoveTemporaryFiles.cmake @ONLY IMMEDIATE)
-configure_file(${Slicer_SOURCE_DIR}/CMake/Slicer3SampleBuildTest.cmake.in
-  ${Slicer_BINARY_DIR}/CMake/Slicer3SampleBuildTest.cmake @ONLY)
-
-install(FILES
+INSTALL(FILES
   #   ${Slicer_BINARY_DIR}/Slicer3BuildSettings.cmake
-  ${Slicer_SOURCE_DIR}/CTestConfig.cmake
   ${Slicer_BINARY_DIR}/UseSlicer.cmake
   ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake
   ${Slicer_BINARY_DIR}/lib/Slicer3/SlicerVersion.txt

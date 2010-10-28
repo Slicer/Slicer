@@ -502,4 +502,4 @@ ExternalProject_Add(${proj}
     -DSlicer_USE_KWWIDGETS:BOOL=${Slicer_USE_KWWIDGETS}
     -DKWWidgets_DIR:PATH=${CMAKE_BINARY_DIR}/KWWidgets-build
   INSTALL_COMMAND ""
-)
+  )

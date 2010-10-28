@@ -229,7 +229,7 @@ proc launch_SetEnvironment {} {
       # TODO: where will PythonQt be in the install tree?
       set ::env(PYTHONQT_DIR)       $::env(Slicer_HOME)/lib/PythonQt
       set ::env(PYTHONQT_BIN_DIR)   $::env(Slicer_HOME)/bin
-    
+      
       set ::env(KWWidgets_DIR)      $::env(Slicer_HOME)/lib/KWWidgets
       set ::env(KWWidgets_LIB_DIR)  $::env(Slicer_HOME)/lib/KWWidgets
       set ::env(KWWidgets_BIN_DIR)  $::env(Slicer_HOME)/bin
@@ -399,9 +399,16 @@ proc launch_SetEnvironment {} {
       set ::env(PYTHONQT_DIR)       [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
       set ::env(PYTHONQT_BIN_DIR)        [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
     
-      set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
-      set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
-      set ::env(KWWidgets_BIN_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
+      if { "@KWWidgets_DIR@" != "" } {
+        set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
+        set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
+        set ::env(KWWidgets_BIN_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
+      } else {
+        set ::env(KWWidgets_DIR)      $::env(Slicer_HOME)/lib/KWWidgets
+        set ::env(KWWidgets_LIB_DIR)  $::env(Slicer_HOME)/lib/KWWidgets
+        set ::env(KWWidgets_BIN_DIR)  $::env(Slicer_HOME)/bin
+      }
+      
     
       if { "@QT_LIBRARY_DIR@" != "" } {
         set ::env(QT_LIB_DIR)         [file normalize "@QT_LIBRARY_DIR@"]
@@ -738,7 +745,7 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(CTK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(PYTHONQT_BIN_DIR)\;$::env(Path)
-            set ::env(Path) $::env(KWWidgets_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(KWWidgets_BIN_DIR)\;$::env(Path)              
             set ::env(Path) $::env(QT_LIB_DIR)\;$::env(Path)
             set ::env(Path) $::env(OpenIGTLink_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(BatchMake_BIN_DIR)\;$::env(Path)
