@@ -187,9 +187,10 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     # suppress warnings about auto imported symbols
     SET(Slicer_CXX_FLAGS "-Wl,--enable-auto-import ${Slicer_CXX_FLAGS}")
   ENDIF()
-  
+
+  # Note: -Wold-style-cast is too verbose
   SET(Slicer_C_FLAGS "${cflags} ${Slicer_C_FLAGS}")
-  SET(Slicer_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${Slicer_CXX_FLAGS}")
+  SET(Slicer_CXX_FLAGS "${cflags} -Wsign-promo -Woverloaded-virtual -Wstrict-null-sentinel ${Slicer_CXX_FLAGS}")
 ENDIF()
 
 #-----------------------------------------------------------------------------
