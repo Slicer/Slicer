@@ -352,7 +352,7 @@ IF(BUILD_TESTING)
     @ONLY)
     
   CONFIGURE_FILE(
-    ${Slicer_SOURCE_DIR}/CTestConfig.cmake.in
+    ${Slicer_SOURCE_DIR}/CTestConfig.cmake
     ${Slicer_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/CTestConfig.cmake 
     COPYONLY)
   
