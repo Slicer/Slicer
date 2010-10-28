@@ -394,17 +394,14 @@ SET(SKIP_Teem_BUILD_SETTINGS_FILE 1)
 #-----------------------------------------------------------------------------
 
 IF(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
-  FIND_PACKAGE(PythonLibs)
-  FIND_PACKAGE(PythonInterp)
+  FIND_PACKAGE(PythonLibs REQUIRED)
+  FIND_PACKAGE(PythonInterp REQUIRED)
 ENDIF()
 
 #-----------------------------------------------------------------------------
 # ITK
 #-----------------------------------------------------------------------------
 FIND_PACKAGE(ITK REQUIRED)
-IF(NOT ITK_FOUND)
-  message(FATAL_ERROR "Need ITK to build")
-ENDIF()
 INCLUDE(${ITK_USE_FILE})
 
 IF(Slicer_USE_KWWIDGETS)
@@ -412,9 +409,6 @@ IF(Slicer_USE_KWWIDGETS)
 # Deprecated - KWWidgets 
 #-----------------------------------------------------------------------------
   FIND_PACKAGE(KWWidgets REQUIRED)
-  IF(NOT KWWidgets_FOUND)
-    MESSAGE(FATAL_ERROR "Need KWWidgets to build")
-  ENDIF()
   INCLUDE(${KWWidgets_USE_FILE})
   
 ELSE()
@@ -422,9 +416,6 @@ ELSE()
 # VTK
 #-----------------------------------------------------------------------------
   FIND_PACKAGE(VTK REQUIRED)
-  IF(NOT VTK_FOUND)
-    MESSAGE(FATAL_ERROR "Need VTK to build")
-  ENDIF()
   IF(NOT VTK_USE_QVTK)
     MESSAGE(FATAL_ERROR "error: VTK was not configured to use QT, you probably need to recompile it with VTK_USE_GUISUPPORT ON, VTK_USE_QVTK ON, DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. Note that Qt >= ${minimum_required_qt_version} is *required*")
   ENDIF()
@@ -472,15 +463,13 @@ IF(Slicer_USE_QT)
   downloadFile(${git_repo}/${file} ${Slicer_BINARY_DIR}/CMake/FindCTK.cmake)
 
   FIND_PACKAGE(CTK REQUIRED)
-  IF(CTK_FOUND)
-    INCLUDE(${CTK_USE_FILE})
-    # Update CMake module path
-    SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CTK_CMAKE_UTILITIES_DIR})
-    IF(Slicer_USE_PYTHONQT)
-      SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
-      LINK_DIRECTORIES(${PYTHONQT_INSTALL_DIR}/lib)
-      INCLUDE(${CTK_CMAKE_DIR}/ctkMacroWrapPythonQt.cmake)
-    ENDIF()
+  INCLUDE(${CTK_USE_FILE})
+  # Update CMake module path
+  SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CTK_CMAKE_UTILITIES_DIR})
+  IF(Slicer_USE_PYTHONQT)
+    SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
+    LINK_DIRECTORIES(${PYTHONQT_INSTALL_DIR}/lib)
+    INCLUDE(${CTK_CMAKE_DIR}/ctkMacroWrapPythonQt.cmake)
   ENDIF()
 ENDIF()
 
@@ -503,18 +492,13 @@ ENDIF()
 # Teem
 #-----------------------------------------------------------------------------
 FIND_PACKAGE(Teem REQUIRED)
-IF(NOT Teem_FOUND)
-  message(FATAL_ERROR "Need Teem to build")
-ENDIF()
 INCLUDE(${Teem_USE_FILE})
 
 #-----------------------------------------------------------------------------
 # SlicerLibCurl
 #-----------------------------------------------------------------------------
 FIND_PACKAGE(SLICERLIBCURL REQUIRED)
-IF(SLICERLIBCURL_FOUND)
-  INCLUDE(${SLICERLIBCURL_USE_FILE})
-ENDIF()
+INCLUDE(${SLICERLIBCURL_USE_FILE})
 
 #-----------------------------------------------------------------------------
 # BatchMake
@@ -726,10 +710,6 @@ ENDIF()
 
 # Case where Slicer is checkout using Git-SVN
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git/svn/refs/remotes/trunk)
-  FIND_PACKAGE(Git)
-  IF(NOT GIT_FOUND)
-    MESSAGE(FATAL_ERROR "error: Failed to locate Git")
-  ENDIF(NOT GIT_FOUND)
   GIT_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
