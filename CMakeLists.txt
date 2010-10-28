@@ -165,10 +165,21 @@ SET(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional CXX Flags")
 MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
 
 #-----------------------------------------------------------------------------
+# Set coverage Flags
+#-----------------------------------------------------------------------------
+IF(WITH_COVERAGE)
+  IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    SET(coverage_flags "-g -fprofile-arcs -ftest-coverage -O0 -DNDEBUG")
+    SET(COVERAGE_CXX_FLAGS ${coverage_flags})
+    SET(COVERAGE_C_FLAGS ${coverage_flags})
+  ENDIF()
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # Slicer C/CXX Flags
 #-----------------------------------------------------------------------------
-SET(Slicer_C_FLAGS "${ADDITIONAL_C_FLAGS}")
-SET(Slicer_CXX_FLAGS "${ADDITIONAL_CXX_FLAGS}")
+SET(Slicer_C_FLAGS "${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}")
+SET(Slicer_CXX_FLAGS "${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}")
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
