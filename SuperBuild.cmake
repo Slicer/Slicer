@@ -256,6 +256,8 @@ ExternalProject_Add(${proj}
     -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
     -DSlicer_SUPERBUILD:BOOL=OFF
+    -DSlicer_C_FLAGS:STRING=${Slicer_C_FLAGS}
+    -DSlicer_CXX_FLAGS:STRING=${Slicer_CXX_FLAGS}
     # ITK
     -DITK_DIR:PATH=${ITK_DIR}
     # Teem

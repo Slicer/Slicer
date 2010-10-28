@@ -155,6 +155,21 @@ SET(CMAKE_MODULE_PATH
 SET(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 
 #-----------------------------------------------------------------------------
+# Additional CXX/C Flags
+#-----------------------------------------------------------------------------
+
+SET(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C Flags")
+MARK_AS_ADVANCED(ADDITIONAL_C_FLAGS)
+SET(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional CXX Flags")
+MARK_AS_ADVANCED(ADDITIONAL_CXX_FLAGS)
+
+#-----------------------------------------------------------------------------
+# Slicer C/CXX Flags
+#-----------------------------------------------------------------------------
+SET(Slicer_C_FLAGS "${ADDITIONAL_C_FLAGS}")
+SET(Slicer_CXX_FLAGS "${ADDITIONAL_CXX_FLAGS}")
+ENDIF()
+
 # Superbuild script
 #-----------------------------------------------------------------------------
 
@@ -654,7 +669,13 @@ INSTALL(FILES
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
   DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
   )
-  
+
+#-----------------------------------------------------------------------------
+# Set C/CXX Flags
+#-----------------------------------------------------------------------------
+SET(CMAKE_CXX_FLAGS ${Slicer_CXX_FLAGS} CACHE STRING "CMake C Flags" FORCE)
+SET(CMAKE_C_FLAGS ${Slicer_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
+
 #-----------------------------------------------------------------------------
 # Generate SlicerVersion.txt
 #-----------------------------------------------------------------------------
