@@ -179,7 +179,7 @@ endif(BUILD_TESTING)
 include(GenerateModuleDescriptionParserConfig.cmake) 
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseModuleDescriptionParser.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake COPYONLY IMMEDIATE)
+  ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake COPYONLY)
 
 install(FILES 
   ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake 

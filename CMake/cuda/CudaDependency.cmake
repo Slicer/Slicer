@@ -54,7 +54,7 @@ MACRO(CUDA_INCLUDE_NVCC_DEPENDENCIES dependency_file)
     IF(NOT EXISTS ${dependency_file})
       CONFIGURE_FILE(
         ${CMAKE_SOURCE_DIR}/CMake/cuda/empty.depend.in
-        ${dependency_file} IMMEDIATE)
+        ${dependency_file})
     ENDIF(NOT EXISTS ${dependency_file})
     # Always include this file to force CMake to run again next
     # invocation and rebuild the dependencies.
@@ -93,7 +93,7 @@ MACRO(CUDA_INCLUDE_NVCC_DEPENDENCIES dependency_file)
     # Force CMake to run again next build
     CONFIGURE_FILE(
       ${CMAKE_SOURCE_DIR}/CMake/cuda/empty.depend.in
-      ${dependency_file} IMMEDIATE)
+      ${dependency_file})
   ENDIF(CUDA_NVCC_DEPEND_REGENERATE)
       
 ENDMACRO(CUDA_INCLUDE_NVCC_DEPENDENCIES)

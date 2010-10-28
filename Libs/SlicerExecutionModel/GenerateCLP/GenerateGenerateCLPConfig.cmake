@@ -20,7 +20,7 @@ endif(GenerateCLP_EXE_PATH)
 set(GenerateCLP_USE_FILE_CONFIG ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake)
 configure_file(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake.in
   ${GenerateCLP_USE_FILE_CONFIG}
-  @ONLY IMMEDIATE)
+  @ONLY)
 
 set(GenerateCLP_INCLUDE_DIRS_CONFIG ${GenerateCLP_BINARY_DIR} ${GenerateCLP_SOURCE_DIR})
 set(GenerateCLP_LIBRARY_DIRS_CONFIG ${GenerateCLP_BINARY_DIR})
@@ -30,7 +30,7 @@ if(NOT WIN32)
 endif(NOT WIN32)
 set(ITK_DIR_CONFIG ${ITK_DIR})
 configure_file(${GenerateCLP_SOURCE_DIR}/GenerateCLPConfig.cmake.in
-  ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake @ONLY IMMEDIATE)
+  ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake @ONLY)
 
 
 # Settings specific for installation trees
@@ -38,7 +38,7 @@ configure_file(${GenerateCLP_SOURCE_DIR}/GenerateCLPConfig.cmake.in
 #
 configure_file(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake.in
   ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
-  @ONLY IMMEDIATE)
+  @ONLY)
 
 configure_file(${GenerateCLP_SOURCE_DIR}/GenerateCLPInstallConfig.cmake.in
-  ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install @ONLY IMMEDIATE)
+  ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install @ONLY)

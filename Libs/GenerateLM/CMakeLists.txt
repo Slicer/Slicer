@@ -108,7 +108,7 @@ if(NOT WIN32)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/GenerateLMLauncher.c.in
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c
-    @ONLY IMMEDIATE)
+    @ONLY)
   add_executable(GenerateLMLauncher
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c)
   add_dependencies(GenerateLMLauncher GenerateLM)

@@ -38,7 +38,7 @@ ENDFOREACH()
 include(GenerateTCLAPConfig.cmake)
 
 configure_file(${TCLAP_SOURCE_DIR}/UseTCLAP.cmake.in
-  ${TCLAP_BINARY_DIR}/UseTCLAP.cmake COPYONLY IMMEDIATE)
+  ${TCLAP_BINARY_DIR}/UseTCLAP.cmake COPYONLY)
 
 
 file(GLOB __files1 "${TCLAP_SOURCE_DIR}/include/tclap/*.h")

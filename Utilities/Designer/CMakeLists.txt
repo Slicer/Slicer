@@ -24,7 +24,6 @@ IF(CMAKE_CONFIGURATION_TYPES)
     CONFIGURE_FILE(
       ${CMAKE_CURRENT_SOURCE_DIR}/Designer.py.in
       ${CMAKE_CURRENT_BINARY_DIR}/Designer.py
-      IMMEDIATE
       )
     FILE(COPY ${CMAKE_CURRENT_BINARY_DIR}/Designer.py
       DESTINATION ${designer_launcher_directory}
@@ -39,7 +38,6 @@ ELSE(CMAKE_CONFIGURATION_TYPES)
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/Designer.py.in
     ${CMAKE_CURRENT_BINARY_DIR}/Designer.py
-    IMMEDIATE
     )
   FILE(COPY ${CMAKE_CURRENT_BINARY_DIR}/Designer.py
     DESTINATION ${designer_launcher_directory}

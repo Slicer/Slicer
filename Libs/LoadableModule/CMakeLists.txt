@@ -168,7 +168,7 @@ include(GenerateLoadableModuleConfig.cmake)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/UseLoadableModule.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/UseLoadableModule.cmake COPYONLY IMMEDIATE)
+  ${CMAKE_CURRENT_BINARY_DIR}/UseLoadableModule.cmake COPYONLY)
 
 install(FILES 
   ${CMAKE_CURRENT_BINARY_DIR}/UseLoadableModule.cmake 

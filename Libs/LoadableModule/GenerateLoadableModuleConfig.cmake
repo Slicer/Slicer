@@ -22,7 +22,7 @@ set(ITK_DIR_CONFIG ${ITK_DIR})
 configure_file(
   ${LoadableModule_SOURCE_DIR}/LoadableModuleConfig.cmake.in
   ${LoadableModule_BINARY_DIR}/LoadableModuleConfig.cmake 
-  @ONLY IMMEDIATE
+  @ONLY
   )
 
 # Settings specific for installation trees
@@ -34,5 +34,5 @@ configure_file(
 configure_file(
   ${LoadableModule_SOURCE_DIR}/LoadableModuleInstallConfig.cmake.in
   ${LoadableModule_BINARY_DIR}/install/LoadableModuleConfig.cmake 
-  @ONLY IMMEDIATE
+  @ONLY
   )

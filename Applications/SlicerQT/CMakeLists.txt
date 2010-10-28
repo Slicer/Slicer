@@ -168,7 +168,7 @@ IF(SlicerQT_NEED_SHARED_FORWARD)
     CONFIGURE_FILE(
       ${CMAKE_CURRENT_SOURCE_DIR}/SlicerQT-forward.c.in
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c
-      @ONLY IMMEDIATE)
+      @ONLY)
     ADD_EXECUTABLE(${slicer_exe} WIN32
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
     ADD_DEPENDENCIES(${slicer_exe} ${SlicerQT_FORWARD_EXE})

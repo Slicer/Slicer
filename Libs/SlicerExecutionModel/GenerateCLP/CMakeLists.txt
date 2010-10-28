@@ -103,7 +103,7 @@ if(NOT WIN32)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/GenerateCLPLauncher.c.in
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c
-    @ONLY IMMEDIATE)
+    @ONLY)
   add_executable(GenerateCLPLauncher
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c)
   add_dependencies(GenerateCLPLauncher GenerateCLP)

@@ -792,7 +792,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 # ModelMaker tests
 
 CONFIGURE_FILE(${TEST_DATA}/ModelMakerTest.mrml
-    ${TEMP}/ModelMakerTest.mrml IMMEDIATE) 
+    ${TEMP}/ModelMakerTest.mrml) 
 add_test(ModelMakerTest ${Launcher_Command} ${TestLocation}ModelMakerTest
   ModelMakerTest
     --labels 2

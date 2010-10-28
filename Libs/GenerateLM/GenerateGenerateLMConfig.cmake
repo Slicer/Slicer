@@ -20,7 +20,7 @@ endif(GenerateLM_EXE_PATH)
 set(GenerateLM_USE_FILE_CONFIG ${GenerateLM_BINARY_DIR}/UseGenerateLM.cmake)
 configure_file(${GenerateLM_SOURCE_DIR}/UseGenerateLM.cmake.in
   ${GenerateLM_USE_FILE_CONFIG}
-  @ONLY IMMEDIATE)
+  @ONLY)
 
 set(GenerateLM_INCLUDE_DIRS_CONFIG ${GenerateLM_BINARY_DIR} ${GenerateLM_SOURCE_DIR})
 set(GenerateLM_LIBRARY_DIRS_CONFIG ${GenerateLM_BINARY_DIR})
@@ -30,14 +30,14 @@ if(NOT WIN32)
 endif(NOT WIN32)
 set(ITK_DIR_CONFIG ${ITK_DIR})
 configure_file(${GenerateLM_SOURCE_DIR}/GenerateLMConfig.cmake.in
-  ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake @ONLY IMMEDIATE)
+  ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake @ONLY)
 
 # Settings specific for installation trees
 #
 #
 configure_file(${GenerateLM_SOURCE_DIR}/UseGenerateLM.cmake.in
   ${GenerateLM_BINARY_DIR}/UseGenerateLM.cmake_install
-  @ONLY IMMEDIATE)
+  @ONLY)
 
 configure_file(${GenerateLM_SOURCE_DIR}/GenerateLMInstallConfig.cmake.in
-  ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake_install @ONLY IMMEDIATE)
+  ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake_install @ONLY)

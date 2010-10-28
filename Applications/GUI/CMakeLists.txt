@@ -75,7 +75,7 @@ if(Slicer_NEED_SHARED_FORWARD)
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/Slicer3-forward.c.in
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c
-      @ONLY IMMEDIATE)
+      @ONLY)
     add_executable(${slicer_exe} WIN32
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
     add_dependencies(${slicer_exe} ${Slicer_FORWARD_EXE})

@@ -44,7 +44,7 @@ SET(OpenCV_DIR_CONFIG ${OpenCV_DIR})
 # Configure SlicerConfig.cmake for the install tree.
 CONFIGURE_FILE(
   ${Slicer_SOURCE_DIR}/SlicerConfig.cmake.in
-  ${Slicer_BINARY_DIR}/SlicerConfig.cmake @ONLY IMMEDIATE)
+  ${Slicer_BINARY_DIR}/SlicerConfig.cmake @ONLY)
 
 # Settings specific for installation trees      
 #      
@@ -53,4 +53,4 @@ CONFIGURE_FILE(
 # Configure SlicerConfig.cmake for the install tree.      
 CONFIGURE_FILE(
   ${Slicer_SOURCE_DIR}/SlicerInstallConfig.cmake.in      
-  ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake @ONLY IMMEDIATE)      
+  ${Slicer_BINARY_DIR}/Utilities/SlicerConfig.cmake @ONLY)      

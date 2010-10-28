@@ -22,7 +22,7 @@ set(ITK_DIR_CONFIG ${ITK_DIR})
 configure_file(
   ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfig.cmake.in
   ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfig.cmake 
-  @ONLY IMMEDIATE
+  @ONLY
   )
 
 # Settings specific for installation trees
@@ -34,5 +34,5 @@ configure_file(
 configure_file(
   ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserInstallConfig.cmake.in
   ${ModuleDescriptionParser_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake 
-  @ONLY IMMEDIATE
+  @ONLY
   )
