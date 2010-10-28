@@ -41,6 +41,19 @@ INCLUDE(CMake/SlicerMacroEmptyExternalProject.cmake)
 INCLUDE(CMake/SlicerFunctionCheckCompilerFlags.cmake)
 
 #-----------------------------------------------------------------------------
+# Update CMake module path
+#------------------------------------------------------------------------------
+
+SET(CMAKE_MODULE_PATH
+  ${VTK_CMAKE_DIR}
+  ${Slicer_SOURCE_DIR}/CMake
+  ${Slicer_BINARY_DIR}/CMake
+  ${CMAKE_MODULE_PATH}
+  )
+  
+SET(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
+
+#-----------------------------------------------------------------------------
 # Platform check
 #-----------------------------------------------------------------------------
 
@@ -139,21 +152,6 @@ if(Slicer_USE_KWWIDGETS)
   OPTION(Slicer_BUILD_MODULES "Deprecated - Build Slicer Modules" ON)
   MARK_AS_ADVANCED(Slicer_USE_PYTHON Slicer_BUILD_MODULES)
 endif()
-
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#------------------------------------------------------------------------------
-
-# Make sure VTK_CMAKE_DIR is at the beginning so that VTK's FindTCL is
-# used before CMake's FindTCL.
-SET(CMAKE_MODULE_PATH
-  ${VTK_CMAKE_DIR}
-  ${Slicer_SOURCE_DIR}/CMake
-  ${Slicer_BINARY_DIR}/CMake
-  ${CMAKE_MODULE_PATH}
-  )
-  
-SET(Slicer_CMAKE_DIR "${Slicer_SOURCE_DIR}/CMake" CACHE INTERNAL "")
 
 #-----------------------------------------------------------------------------
 # Additional CXX/C Flags
