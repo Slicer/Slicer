@@ -4,6 +4,7 @@
 // AnnotationModule/MRML includes
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
+#include "vtkMRMLAnnotationRulerNode.h"
 
 // MRML includes
 #include <vtkMRMLTransformNode.h>
@@ -382,7 +383,7 @@ vtkMRMLSliceNode * vtkMRMLAnnotationDisplayableManager::GetSliceNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode * sliceNode)
+void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSliceNode* sliceNode)
 {
 
   if (!sliceNode)
@@ -408,7 +409,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     // now this is the magical part
     // we know if all points of a widget are on the activeSlice of the sliceNode (including the tolerance)
     // thus we will only enable the widget if they are
-    vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
+    vtkAbstractWidget* widget = this->Helper->GetWidget(annotationNode);
 
     if (!widget)
       {
@@ -423,6 +424,93 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       widget->SetEnabled(showWidget);
       }
 
+    // if the widget is not displayable, show at least the intersection
+    if (!showWidget)
+      {
+
+      vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
+      if (rulerNode)
+        {
+        double* p1 = rulerNode->GetPosition1();
+        double* p2 = rulerNode->GetPosition2();
+
+
+        VTK_CREATE(vtkMatrix4x4, transformMatrix);
+
+        transformMatrix->Identity();
+
+        if (annotationNode->GetTransformNodeID())
+          {
+          // if annotation is under transform, get the transformation matrix
+
+          vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(annotationNode->GetTransformNodeID()));
+
+          if (transformNode)
+            {
+            transformNode->GetMatrixTransformToWorld(transformMatrix);
+            }
+
+          }
+
+
+        double extendedP1[4];
+        extendedP1[0] = p1[0];
+        extendedP1[1] = p1[1];
+        extendedP1[2] = p1[2];
+        extendedP1[3] = 1;
+
+        double transformedP1[4];
+
+        double displayP1[4];
+
+        double extendedP2[4];
+        extendedP2[0] = p2[0];
+        extendedP2[1] = p2[1];
+        extendedP2[2] = p2[2];
+        extendedP2[3] = 1;
+
+        double transformedP2[4];
+
+        double displayP2[4];
+
+
+        // now multiply with the transformMatrix
+        // if there is a valid transform, the coordinates get transformed else the transformMatrix is the identity matrix and
+        // does not change the coordinates
+        transformMatrix->MultiplyPoint(extendedP1,transformedP1);
+        transformMatrix->MultiplyPoint(extendedP2,transformedP2);
+
+        // now get the displayCoordinates for the transformed worldCoordinates
+        this->GetWorldToDisplayCoordinates(transformedP1,displayP1);
+        this->GetWorldToDisplayCoordinates(transformedP2,displayP2);
+
+
+        // get line between p1 and p2
+        // g(x) = p1 + r*(p2-p1)
+        //
+        // compute intersection with slice plane
+        // if !=0: mark the intersection
+
+        //double this->m_SliceNode->GetSliceOffset() = p1[2] + (p2[2]-p1[2])*t;
+        double t = (this->m_SliceNode->GetSliceOffset()-displayP1[2]) / (displayP2[2]-displayP1[2]);
+
+        // p2-p1
+        double sub[3];
+        vtkMath::Subtract(displayP2,displayP1,sub);
+
+        // (p2-p1)*t
+        vtkMath::MultiplyScalar(sub,t);
+
+        // p1 + ((p2-p1)*t)
+        double add[3];
+        vtkMath::Add(displayP1,displayP2,add);
+
+        std::cout << this->m_SliceNode->GetName() << this->m_SliceNode->GetSliceOffset() << " t: "<<  t <<": " << add[0] << "," << add[1] << "," << add[2] << std::endl;
+
+        }
+
+      }
+
     this->PropagateMRMLToWidget(annotationNode,widget);
 
     ++it;
@@ -431,7 +519,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node)
+bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* sliceNode, vtkMRMLAnnotationNode* node)
 {
 
   if (!sliceNode)
@@ -477,7 +565,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode *
   for (int i=0; i<controlPointsNode->GetNumberOfControlPoints(); i++)
     {
     // we loop through all controlpoints of each node
-    double * worldCoordinates = controlPointsNode->GetControlPointCoordinates(i);
+    double* worldCoordinates = controlPointsNode->GetControlPointCoordinates(i);
 
     double extendedWorldCoordinates[4];
     extendedWorldCoordinates[0] = worldCoordinates[0];

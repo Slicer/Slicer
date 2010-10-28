@@ -281,12 +281,13 @@ void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNod
     return;
     }
 
-  if (this->m_LastAddedAnnotationNode->IsA("vtkMRMLAnnotationTextNode"))
+  if (this->m_LastAddedAnnotationNode->IsA("vtkMRMLAnnotationTextNode") || this->m_LastAddedAnnotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
     {
-    // for text annotations, just remove the last node
+    // for text annotations or fiducials, just remove the last node
     this->GetMRMLScene()->RemoveNode(this->m_LastAddedAnnotationNode);
     this->m_LastAddedAnnotationNode = 0;
     }
+
 
 }
 
