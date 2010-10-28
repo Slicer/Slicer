@@ -232,7 +232,8 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # By default, build without KWWidget (TODO: eliminate this option for slicer4)
 #
-option(Slicer_USE_KWWIDGETS "Build Slicer with KWWidgets." OFF)
+option(Slicer_USE_KWWIDGETS "Deprecated - Build Slicer with KWWidgets" OFF)
+MARK_AS_ADVANCED(Slicer_USE_KWWIDGETS)
 
 #-----------------------------------------------------------------------------
 # Since modules are KWWidgets based, unset there variables

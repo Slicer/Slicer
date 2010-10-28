@@ -181,7 +181,7 @@ endif()
 #------------------------------------------------------------------------------  
 
 # KWWidgets off by default.
-option(Slicer_USE_KWWIDGETS "Build Slicer KWWidgets GUI" OFF)
+option(Slicer_USE_KWWIDGETS "Deprecated - Build Slicer KWWidgets GUI" OFF)
 
 
 #------------------------------------------------------------------------------
