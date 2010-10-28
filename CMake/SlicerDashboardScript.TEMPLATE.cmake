@@ -37,6 +37,10 @@ set(CTEST_BUILD_CONFIGURATION "Release")
 set(CTEST_TEST_TIMEOUT 100)
 set(CTEST_BUILD_FLAGS "-j4") # Use multiple CPU cores to build
 
+find_program(CTEST_SVN_COMMAND NAMES svn)
+find_program(CTEST_GIT_COMMAND NAMES git)
+find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
+find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
 # experimental: 
 #     - run_ctest() macro will be called *ONE* time
 #     - binary directory will *NOT* be cleaned
@@ -81,9 +85,6 @@ if(UNIX)
   set(ENV{DISPLAY} ":0")
 endif()
 
-find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
-find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
-find_program(CTEST_SVN_COMMAND NAMES svn)
 
 ##########################################
 # WARNING: DO NOT EDIT BEYOND THIS POINT #
