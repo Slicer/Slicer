@@ -189,8 +189,9 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   ENDIF()
 
   # Note: -Wold-style-cast is too verbose
+  #       Let's postpone the use of -Wsign-promo 
   SET(Slicer_C_FLAGS "${cflags} ${Slicer_C_FLAGS}")
-  SET(Slicer_CXX_FLAGS "${cflags} -Wno-deprecated -Wsign-promo -Woverloaded-virtual -Wstrict-null-sentinel ${Slicer_CXX_FLAGS}")
+  SET(Slicer_CXX_FLAGS "${cflags} -Wno-deprecated -Woverloaded-virtual -Wstrict-null-sentinel ${Slicer_CXX_FLAGS}")
 ENDIF()
 
 #-----------------------------------------------------------------------------
