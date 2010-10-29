@@ -352,5 +352,17 @@ void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
   d->ActiveMRMLThreeDViewNode = newActiveMRMLThreeDViewNode;
 
   d->updateWidgetFromMRML();
+
+  // Enable buttons
+  QList<QWidget*> widgets;
+  widgets << d->PitchButton << d->RollButton << d->YawButton
+      << d->CenterButton << d->OrthoButton << d->VisibilityButton
+      /*<< d->ScreenshotButton << d->SceneSnapshotButton << d->SelectSceneSnapshotMenuButton*/
+      << d->ZoomInButton << d->ZoomOutButton << d->StereoButton
+      << d->RockButton << d->SpinButton;
+  foreach(QWidget* w, widgets)
+    {
+    w->setEnabled(newActiveMRMLThreeDViewNode != 0);
+    }
 }
 
