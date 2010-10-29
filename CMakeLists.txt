@@ -192,6 +192,10 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   #       Let's postpone the use of -Wsign-promo 
   SET(Slicer_C_FLAGS "${cflags} ${Slicer_C_FLAGS}")
   SET(Slicer_CXX_FLAGS "${cflags} -Wno-deprecated -Woverloaded-virtual -Wstrict-null-sentinel ${Slicer_CXX_FLAGS}")
+ELSEIF(MSVC)
+  SET(cflags "/Zm1000 /W3")
+  SET(Slicer_C_FLAGS "${cflags} ${Slicer_C_FLAGS}")
+  SET(Slicer_CXX_FLAGS "${cflags} /EHsc /GR ${Slicer_CXX_FLAGS}")
 ENDIF()
 
 #-----------------------------------------------------------------------------
