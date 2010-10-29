@@ -58,8 +58,8 @@ SET(ep_common_args
   -DBUILD_TESTING:BOOL=OFF
   )
 
-SET(ep_common_c_flags)
-SET(ep_common_cxx_flags)
+SET(ep_common_c_flags ${ADDITIONAL_C_FLAGS})
+SET(ep_common_cxx_flags ${ADDITIONAL_CXX_FLAGS})
 if(MSVC)
   SET(ep_common_c_flags "/Zm1000 ${ep_common_c_flags}")
   SET(ep_common_cxx_flags "/Zm1000 /EHsc /GR ${ep_common_cxx_flags}")
