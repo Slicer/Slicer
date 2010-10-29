@@ -58,12 +58,8 @@ SET(ep_common_args
   -DBUILD_TESTING:BOOL=OFF
   )
 
-SET(ep_common_c_flags ${ADDITIONAL_C_FLAGS})
-SET(ep_common_cxx_flags ${ADDITIONAL_CXX_FLAGS})
-if(MSVC)
-  SET(ep_common_c_flags "/Zm1000 ${ep_common_c_flags}")
-  SET(ep_common_cxx_flags "/Zm1000 /EHsc /GR ${ep_common_cxx_flags}")
-endif()
+SET(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
+SET(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
   
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)

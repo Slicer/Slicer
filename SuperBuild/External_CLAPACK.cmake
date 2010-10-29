@@ -10,13 +10,19 @@ set(CLAPACK_file http://svn.slicer.org/Slicer3-lib-mirrors/trunk/clapack-${CLAPA
 set(CLAPACK_source "${CMAKE_CURRENT_BINARY_DIR}/CLAPACK")
 set(CLAPACK_binary "${CMAKE_CURRENT_BINARY_DIR}/CLAPACK-build")
 
+# Turn off the warnings for CLAPACK on windows
+string(REPLACE "/W3" "/W0" CMAKE_CXX_FLAGS_CLAPACK "${ep_common_cxx_flags}")
+string(REPLACE "/W4" "/W0" CMAKE_CXX_FLAGS_CLAPACK "${CMAKE_CXX_FLAGS_CLAPACK}")
+string(REPLACE "/W3" "/W0" CMAKE_C_FLAGS_CLAPACK "${ep_common_c_flags}")
+string(REPLACE "/W4" "/W0" CMAKE_C_FLAGS_CLAPACK "${CMAKE_C_FLAGS_CLAPACK}")
+
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
 # used when making a shared object; recompile with -fPIC
 # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
 #
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-  set(CMAKE_C_FLAGS_CLAPACK "-fPIC")
+  set(CMAKE_C_FLAGS_CLAPACK "-fPIC ${CMAKE_C_FLAGS_CLAPACK}")
 endif()
   
 ExternalProject_Add(CLAPACK
@@ -27,8 +33,8 @@ ExternalProject_Add(CLAPACK
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-    -DCMAKE_C_FLAGS:STRING="${ep_common_c_flags} ${CMAKE_C_FLAGS_CLAPACK}"
+    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS_CLAPACK}
+    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS_CLAPACK}
     -DBUILD_SHARED_LIBS:BOOL=OFF
   INSTALL_COMMAND ""
   DEPENDS 
