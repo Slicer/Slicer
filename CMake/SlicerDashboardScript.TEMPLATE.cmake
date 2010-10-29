@@ -58,10 +58,12 @@ set(SCRIPT_MODE "nightly") # "experimental", "continuous", "nightly"
 
 #
 # Additional CMakeCache options
+# For example:
+#   ADDITIONAL_{C/CXX}_FLAGS: /MP -> Multi process build with MSVC
 #
 set(ADDITIONAL_CMAKECACHE_OPTION "
-  ADDITIONAL_C_FLAGS:STRING=      # For example: /MP -> Multi process build with MSVC
-  ADDITIONAL_CXX_FLAGS:STRING=    # For example: /MP -> Multi process build with MSVC
+  ADDITIONAL_C_FLAGS:STRING=
+  ADDITIONAL_CXX_FLAGS:STRING=
   Slicer_USE_PYTHONQT:BOOL=ON
   Slicer_USE_PYTHONQT_WITH_TCL:BOOL=ON
   Slicer_BUILD_CLI:BOOL=OFF
