@@ -685,10 +685,14 @@ int vtkMRMLFiducialListStorageNode::SupportedFileType(const char *fileName)
   std::string extension = name.substr(loc);
 
   vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".fcsv") == 0 ||
-      extension.compare(".txt") == 0)
+  if (extension.compare(".fcsv") == 0)
     {
     return 1;
+    }
+  else if (extension.compare(".txt") == 0)
+    {
+    vtkErrorMacro("SupportedFileType: extension .txt no longer supported, please use .fcsv");
+    return 0;
     }
   else
     {
@@ -700,5 +704,5 @@ int vtkMRMLFiducialListStorageNode::SupportedFileType(const char *fileName)
 void vtkMRMLFiducialListStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Fiducial List CSV (.fcsv)");
-  this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+  //this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
 }
