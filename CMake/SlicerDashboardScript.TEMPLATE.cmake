@@ -35,7 +35,7 @@ set(WITH_DOCUMENTATION FALSE)
 #set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ) # for example: $ENV{HOME}/Projects/Doxygen
 set(CTEST_BUILD_CONFIGURATION "Release")
 set(CTEST_TEST_TIMEOUT 100)
-set(CTEST_BUILD_FLAGS "-j4") # Use multiple CPU cores to build
+set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j4" on unix
 
 find_program(CTEST_SVN_COMMAND NAMES svn)
 find_program(CTEST_GIT_COMMAND NAMES git)
@@ -60,6 +60,8 @@ set(SCRIPT_MODE "nightly") # "experimental", "continuous", "nightly"
 # Additional CMakeCache options
 #
 set(ADDITIONAL_CMAKECACHE_OPTION "
+  ADDITIONAL_C_FLAGS:STRING=      # For example: /MP -> Multi process build with MSVC
+  ADDITIONAL_CXX_FLAGS:STRING=    # For example: /MP -> Multi process build with MSVC
   Slicer_USE_PYTHONQT:BOOL=ON
   Slicer_USE_PYTHONQT_WITH_TCL:BOOL=ON
   Slicer_BUILD_CLI:BOOL=OFF
