@@ -327,6 +327,8 @@ qMRMLThreeDViewsControllerWidget::qMRMLThreeDViewsControllerWidget(QWidget* _par
 {
   Q_D(qMRMLThreeDViewsControllerWidget);
   d->setupUi(this);
+
+  connect(d->ScreenshotButton, SIGNAL(clicked()), SIGNAL(screenshotButtonClicked()));
 }
 
 // --------------------------------------------------------------------------
@@ -357,7 +359,7 @@ void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
   QList<QWidget*> widgets;
   widgets << d->PitchButton << d->RollButton << d->YawButton
       << d->CenterButton << d->OrthoButton << d->VisibilityButton
-      /*<< d->ScreenshotButton << d->SceneSnapshotButton << d->SelectSceneSnapshotMenuButton*/
+      << d->ScreenshotButton /*<< d->SceneSnapshotButton << d->SelectSceneSnapshotMenuButton*/
       << d->ZoomInButton << d->ZoomOutButton << d->StereoButton
       << d->RockButton << d->SpinButton;
   foreach(QWidget* w, widgets)

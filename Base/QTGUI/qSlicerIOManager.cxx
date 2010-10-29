@@ -7,12 +7,17 @@
 #include <QString>
 #include <QUrl>
 
+// CTK includes
+#include "ctkScreenshotDialog.h"
+
 /// SlicerQt includes
 #include "qSlicerIOManager.h"
 #include "qSlicerFileDialog.h"
 #include "qSlicerDataDialog.h"
 #include "qSlicerModelsDialog.h"
 #include "qSlicerSaveDataDialog.h"
+#include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h"
 
 /// MRML includes
 #include <vtkMRMLScene.h>
@@ -34,6 +39,8 @@ public:
   QList<QUrl>                   Favorites;
   QMap<int, qSlicerFileDialog*> ReadDialogs;
   QMap<int, qSlicerFileDialog*> WriteDialogs;
+
+  QSharedPointer<ctkScreenshotDialog> ScreenshotDialog;
 };
 
 //-----------------------------------------------------------------------------
@@ -163,4 +170,18 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
              dialog->action() == qSlicerFileDialog::Write);
     }
   dialog->setParent(this);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerIOManager::openScreenshotDialog()
+{
+  Q_D(qSlicerIOManager);
+  if (!d->ScreenshotDialog)
+    {
+    d->ScreenshotDialog = QSharedPointer<ctkScreenshotDialog>(
+        new ctkScreenshotDialog());
+    d->ScreenshotDialog->setWidgetToGrab(
+        qSlicerApplication::application()->layoutManager()->viewport());
+    }
+  d->ScreenshotDialog->show();
 }

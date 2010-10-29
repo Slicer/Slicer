@@ -50,6 +50,10 @@ public slots:
 
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
 
+signals:
+
+  void screenshotButtonClicked();
+
 protected:
   QScopedPointer<qMRMLThreeDViewsControllerWidgetPrivate> d_ptr;
 

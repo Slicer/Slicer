@@ -56,6 +56,10 @@ public:
   /// fileType (only 1 dialog per filetype) is overriden.
   void registerDialog(qSlicerFileDialog* dialog);
 
+public slots:
+
+  void openScreenshotDialog();
+
 protected:
   friend class qSlicerFileDialog;
   using qSlicerCoreIOManager::ios;

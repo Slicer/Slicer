@@ -34,6 +34,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerMainWindowCore.h"
 #include "qSlicerModuleSelectorToolBar.h"
+#include "qSlicerIOManager.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -139,6 +140,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->MRMLThreeDViewsControllerWidget->setActiveMRMLThreeDViewNode(
       layoutManager->activeMRMLThreeDViewNode());
 
+  QObject::connect(this->MRMLThreeDViewsControllerWidget,
+                   SIGNAL(screenshotButtonClicked()),
+                   qSlicerApplication::application()->ioManager(),
+                   SLOT(openScreenshotDialog()));
 
   // Populate the View ToolBar
   QToolButton* layoutButton = new QToolButton(q);
@@ -165,7 +170,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionHelpInterfaceDocumentation->setIcon(networkIcon);
   this->actionHelpSlicerPublications->setIcon(networkIcon);
   this->actionHelpAboutSlicerQT->setIcon(informationIcon);
-
   this->actionFeedbackReportBug->setIcon(criticalIcon);
   this->actionFeedbackReportUsabilityIssue->setIcon(warningIcon);
   this->actionFeedbackMakeFeatureRequest->setIcon(questionIcon);
