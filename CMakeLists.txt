@@ -154,6 +154,16 @@ if(Slicer_USE_KWWIDGETS)
 endif()
 
 #-----------------------------------------------------------------------------
+# CTestCustom
+#-----------------------------------------------------------------------------
+IF(BUILD_TESTING)
+  CONFIGURE_FILE(
+    CMake/CTestCustom.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake 
+    @ONLY)
+ENDIF()
+
+#-----------------------------------------------------------------------------
 # Additional CXX/C Flags
 #-----------------------------------------------------------------------------
 
@@ -349,11 +359,6 @@ IF(BUILD_TESTING)
   
   SET(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
-  
-  CONFIGURE_FILE(
-    CMake/CTestCustom.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake 
-    @ONLY)
     
   CONFIGURE_FILE(
     ${Slicer_SOURCE_DIR}/CTestConfig.cmake
