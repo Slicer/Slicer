@@ -18,8 +18,8 @@ if (Slicer_USE_QT)
       CMAKE_GENERATOR ${gen}
       CMAKE_ARGS
         ${ep_common_args}
-        #-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-        #-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+        -DADDITIONAL_CXX_FLAGS=${ep_common_cxx_flags}
+        -DADDITIONAL_C_FLAGS=${ep_common_c_flags}
         -DCTK_USE_GIT_PROTOCOL:BOOL=${Slicer_USE_GIT_PROTOCOL}
         -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
         -DVTK_DIR:PATH=${VTK_DIR}

@@ -10,8 +10,8 @@ ExternalProject_Add(${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_args}
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+    -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+    -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     -DBUILD_SHARED_LIBS:BOOL=ON
   INSTALL_COMMAND ""
   DEPENDS 

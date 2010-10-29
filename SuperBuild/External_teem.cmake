@@ -22,8 +22,8 @@ ExternalProject_Add(${proj}
     ${ep_common_args}
     -DBUILD_SHARED_LIBS:BOOL=ON
     -DTeem_USE_LIB_INSTALL_SUBDIR:BOOL=ON
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+    -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+    -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
     -DTeem_PTHREAD:BOOL=OFF
     -DTeem_BZIP2:BOOL=OFF

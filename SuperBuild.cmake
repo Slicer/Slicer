@@ -57,6 +57,13 @@ SET(ep_common_args
   -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
   -DBUILD_TESTING:BOOL=OFF
   )
+
+SET(ep_common_c_flags)
+SET(ep_common_cxx_flags)
+if(MSVC)
+  SET(ep_common_c_flags "/Zm1000 ${ep_common_c_flags}")
+  SET(ep_common_cxx_flags "/Zm1000 /EHsc /GR ${ep_common_cxx_flags}")
+endif()
   
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
