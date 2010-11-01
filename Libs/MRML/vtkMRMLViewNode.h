@@ -204,7 +204,8 @@ public:
       YawViewRequestedEvent,
       ZoomInRequestedEvent,
       ZoomOutRequestedEvent,
-      ResetFocalPointRequestedEvent
+      ResetFocalPointRequestedEvent,
+      LookFromAxisRequestedEvent
     };
   //ETX 
 

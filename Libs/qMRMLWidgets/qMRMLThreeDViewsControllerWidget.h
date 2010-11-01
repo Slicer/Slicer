@@ -25,7 +25,7 @@
 #include <QWidget>
 
 // CTK includes
-#include <ctkPimpl.h>
+#include <ctkAxesWidget.h>
 
 // qMRMLWidget includes
 #include "qMRMLWidget.h"
@@ -49,6 +49,7 @@ public:
 public slots:
 
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
+  void lookFromAxis(const ctkAxesWidget::Axis& axis);
 
 signals:
 

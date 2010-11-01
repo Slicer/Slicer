@@ -69,7 +69,12 @@ void qMRMLThreeDViewsControllerWidgetPrivate::updateWidgetFromMRML()
 //---------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
 {
+  Q_Q(qMRMLThreeDViewsControllerWidget);
   this->Ui_qMRMLThreeDViewsControllerWidget::setupUi(widget);
+  
+  // Look from axes
+  connect(this->AxesWidget, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
+          q, SLOT(lookFromAxis(const ctkAxesWidget::Axis&)));
 
   // Pitch, Roll, Yaw buttons
   connect(this->PitchButton, SIGNAL(clicked()), SLOT(pitchActiveView()));
@@ -368,3 +373,15 @@ void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
     }
 }
 
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidget::lookFromAxis(const ctkAxesWidget::Axis& axis)
+{
+  Q_D(qMRMLThreeDViewsControllerWidget);
+  if (!d->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
+  d->ActiveMRMLThreeDViewNode->InvokeEvent(
+    vtkMRMLViewNode::LookFromAxisRequestedEvent,
+    const_cast<void*>(reinterpret_cast<const void*>(&axis)));
+}

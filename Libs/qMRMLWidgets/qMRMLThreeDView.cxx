@@ -24,6 +24,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <ctkAxesWidget.h>
 
 // qMRML includes
 #include "qMRMLThreeDView.h"
@@ -211,6 +212,24 @@ void qMRMLThreeDViewPrivate::rockView()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLThreeDViewPrivate::onLookFromAxisEvent(vtkObject* node, void* axis)
+{
+  Q_Q(qMRMLThreeDView);
+  Q_ASSERT(this->MRMLViewNode == node);
+  ctkAxesWidget::Axis lookFrom = *reinterpret_cast<ctkAxesWidget::Axis*>(axis);
+  Q_ASSERT(lookFrom == ctkAxesWidget::None ||
+           lookFrom == ctkAxesWidget::Right ||
+           lookFrom == ctkAxesWidget::Left ||
+           lookFrom == ctkAxesWidget::Anterior ||
+           lookFrom == ctkAxesWidget::Posterior ||
+           lookFrom == ctkAxesWidget::Superior ||
+           lookFrom == ctkAxesWidget::Inferior);
+  double fov = this->MRMLViewNode->GetFieldOfView();
+  Q_ASSERT(fov >= 0.0);
+  q->lookFromAxis(lookFrom, fov);
+}
+
+// --------------------------------------------------------------------------
 // qMRMLThreeDView methods
 
 // --------------------------------------------------------------------------
@@ -343,6 +362,10 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
   d->qvtkReconnect(
     d->MRMLViewNode, newViewNode,
     vtkMRMLViewNode::AnimationModeEvent, d, SLOT(onAnimationModeEvent()));
+
+  d->qvtkReconnect(
+    d->MRMLViewNode, newViewNode,
+    vtkMRMLViewNode::LookFromAxisRequestedEvent, d, SLOT(onLookFromAxisEvent(vtkObject*, void*)));
 
   d->MRMLViewNode = newViewNode;
 

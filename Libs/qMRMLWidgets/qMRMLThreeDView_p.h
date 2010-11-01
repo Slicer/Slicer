@@ -64,6 +64,7 @@ public slots:
 
   void onAnimationModeEvent();
   void rockView();
+  void onLookFromAxisEvent(vtkObject* node, void* axis);
 
 public:
 
