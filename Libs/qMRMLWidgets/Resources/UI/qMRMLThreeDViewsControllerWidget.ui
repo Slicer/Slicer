@@ -45,14 +45,8 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../qMRMLWidgets.qrc">:/Icons/ViewAxis.png</pixmap>
-        </property>
-        <property name="scaledContents">
+       <widget class="ctkAxesWidget" name="AxesWidget">
+        <property name="autoReset">
          <bool>true</bool>
         </property>
        </widget>
@@ -442,6 +436,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkAxesWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkAxesWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
@@ -449,6 +448,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../qMRMLWidgets.qrc"/>
   <include location="../qMRMLWidgets.qrc"/>
  </resources>
  <connections/>
