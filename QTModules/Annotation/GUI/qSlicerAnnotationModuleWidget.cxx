@@ -205,7 +205,7 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     typewidget->resize(size);
     tableWidget->setCellWidget(index, TypeColumn, typewidget);
 
-    typewidget->setIcon(QIcon(q->getAnnotationIconName(index, true)));
+    typewidget->setIcon(QIcon(q->getAnnotationIconName(index)));
     tableWidget->resizeColumnToContents(TypeColumn);
     q->connect(this->typewidget, SIGNAL(buttonClickedWithIndex(int)), q,
         SLOT(selectRowByIndex(int)));
@@ -216,7 +216,7 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     }
   else
     {
-    typewidget->setIcon(QIcon(q->getAnnotationIconName(index, true)));
+    typewidget->setIcon(QIcon(q->getAnnotationIconName(index)));
     typewidget->setButtonIndex(index);
     tableWidget->resizeColumnToContents(TypeColumn);
     }
@@ -1549,6 +1549,8 @@ int qSlicerAnnotationModuleWidget::getIndexByNodeID(const char* nodeID)
 
 void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text, char* nodeId)
 {
+  Q_UNUSED(text)
+  Q_UNUSED(nodeId)
 /*  Q_D(qSlicerAnnotationModuleWidget);
   d->logic()->ModifyPropertiesAndWidget(
       d->logic()->GetMRMLScene()->GetNodeByID(nodeId), d->logic()->TEXT,
@@ -1634,7 +1636,7 @@ void qSlicerAnnotationModuleWidget::onItemSelectionChanged()
  */
 }
 
-QString qSlicerAnnotationModuleWidget::getAnnotationIconName(int index, bool isEdit)
+QString qSlicerAnnotationModuleWidget::getAnnotationIconName(int index)
 {
   Q_D(qSlicerAnnotationModuleWidget);
   return d->logic()->GetAnnotationIcon(m_IDs[index]);
@@ -2040,8 +2042,10 @@ void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, c
 
 
   // add hierarchy, if not exists
+  //("addNodeToTree: HierarchyNodeID: "<< hierarchyNodeID << " AnnotationNodeID: " << annotationNodeID)
 
-
+  Q_UNUSED(hierarchyNodeID)
+  Q_UNUSED(annotationNodeID)
 
   // add annotation node
   int index = this->getIndexByNodeID(annotationNodeID);

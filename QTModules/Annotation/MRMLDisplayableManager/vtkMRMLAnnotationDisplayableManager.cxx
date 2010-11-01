@@ -30,6 +30,10 @@
 #include <vtkPropCollection.h>
 #include <vtkWidgetRepresentation.h>
 #include <vtkHandleRepresentation.h>
+#include <vtkPointHandleRepresentation2D.h>
+#include <vtkSeedWidget.h>
+#include <vtkSeedRepresentation.h>
+#include <vtkProperty2D.h>
 
 // STD includes
 #include <vector>
@@ -431,9 +435,15 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
       if (rulerNode)
         {
-        double* p1 = rulerNode->GetPosition1();
-        double* p2 = rulerNode->GetPosition2();
 
+        double* tmpPtr = rulerNode->GetControlPointCoordinates(0);
+        double p1[3] = { tmpPtr[0], tmpPtr[1], tmpPtr[2] };
+
+        tmpPtr = rulerNode->GetControlPointCoordinates(1);
+        double p2[3] = { tmpPtr[0], tmpPtr[1], tmpPtr[2] };
+
+        //std::cout << this->m_SliceNode->GetName() << " original ras1: " << p1[0] << "," << p1[1] << "," << p1[2] << std::endl;
+        //std::cout << this->m_SliceNode->GetName() << " original ras2: " << p2[0] << "," << p2[1] << "," << p2[2] << std::endl;
 
         VTK_CREATE(vtkMatrix4x4, transformMatrix);
 
@@ -484,6 +494,13 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         this->GetWorldToDisplayCoordinates(transformedP1,displayP1);
         this->GetWorldToDisplayCoordinates(transformedP2,displayP2);
 
+        //std::cout << this->m_SliceNode->GetName() << " ras1: " << p1[0] << "," << p1[1] << "," << p1[2] << std::endl;
+        //std::cout << this->m_SliceNode->GetName() << " ras2: " << p2[0] << "," << p2[1] << "," << p2[2] << std::endl;
+
+        //std::cout << this->m_SliceNode->GetName() << " display1: " << displayP1[0] << "," << displayP1[1] << "," << displayP1[2] << std::endl;
+        //std::cout << this->m_SliceNode->GetName() << " display2: " << displayP2[0] << "," << displayP2[1] << "," << displayP2[2] << std::endl;
+
+
 
         // get line between p1 and p2
         // g(x) = p1 + r*(p2-p1)
@@ -492,20 +509,48 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         // if !=0: mark the intersection
 
         //double this->m_SliceNode->GetSliceOffset() = p1[2] + (p2[2]-p1[2])*t;
+        // t = (this->m_SliceNode->GetSliceOffset() - p1[2]) / (p2[2]-p1[2])
         double t = (this->m_SliceNode->GetSliceOffset()-displayP1[2]) / (displayP2[2]-displayP1[2]);
 
         // p2-p1
-        double sub[3];
-        vtkMath::Subtract(displayP2,displayP1,sub);
+        double P2minusP1[3];
+        vtkMath::Subtract(displayP2,displayP1,P2minusP1);
 
         // (p2-p1)*t
-        vtkMath::MultiplyScalar(sub,t);
+        vtkMath::MultiplyScalar(P2minusP1,t);
 
         // p1 + ((p2-p1)*t)
-        double add[3];
-        vtkMath::Add(displayP1,displayP2,add);
+        double P1plusP2minusP1[3];
+        vtkMath::Add(displayP1,P2minusP1,P1plusP2minusP1);
 
-        std::cout << this->m_SliceNode->GetName() << this->m_SliceNode->GetSliceOffset() << " t: "<<  t <<": " << add[0] << "," << add[1] << "," << add[2] << std::endl;
+        VTK_CREATE(vtkPointHandleRepresentation2D, handle);
+        handle->GetProperty()->SetColor(1,0,0);
+        handle->SetHandleSize(10);
+
+        VTK_CREATE(vtkSeedRepresentation, rep);
+        rep->SetHandleRepresentation(handle);
+
+        //seed widget
+        vtkSeedWidget* seedWidget = vtkSeedWidget::New();
+        seedWidget->CreateDefaultRepresentation();
+
+        seedWidget->SetRepresentation(rep);
+
+        seedWidget->SetInteractor(this->GetInteractor());
+        seedWidget->SetCurrentRenderer(this->GetRenderer());
+
+        //seedWidget->ProcessEventsOff();
+        seedWidget->CompleteInteraction();
+
+        seedWidget->On();
+
+        VTK_CREATE(vtkHandleWidget, newhandle);
+        newhandle = seedWidget->CreateNewHandle();
+        vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(P1plusP2minusP1);
+
+        seedWidget->On();
+
+        std::cout << this->m_SliceNode->GetName() << ": " << P1plusP2minusP1[0] << "," << P1plusP2minusP1[1] << "," << P1plusP2minusP1[2] << std::endl;
 
         }
 
@@ -596,25 +641,32 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     // when lightbox mode is enabled, there will be different renderers associated with the renderWindow of the sliceView
     vtkRendererCollection* rendererCollection = this->GetInteractor()->GetRenderWindow()->GetRenderers();
 
-    // check if the rendererIndex is valid for the current lightbox view
-    if (rendererIndex >= 0 && rendererIndex < rendererCollection->GetNumberOfItems())
+    // check if lightbox is enabled
+    if (rendererCollection->GetNumberOfItems()>1)
       {
+      // check if the rendererIndex is valid for the current lightbox view
+      if (rendererIndex >= 0 && rendererIndex < rendererCollection->GetNumberOfItems())
+        {
 
-      vtkRenderer* currentRenderer = vtkRenderer::SafeDownCast(rendererCollection->GetItemAsObject(rendererIndex));
+        vtkRenderer* currentRenderer = vtkRenderer::SafeDownCast(rendererCollection->GetItemAsObject(rendererIndex));
 
-      // now we get the widget..
-      vtkAbstractWidget* widget = this->GetWidget(node);
+        // now we get the widget..
+        vtkAbstractWidget* widget = this->GetWidget(node);
 
-      // ..and turn it off..
-      widget->Off();
-      // ..place it and its representation to the right renderer..
-      widget->SetCurrentRenderer(currentRenderer);
-      widget->GetRepresentation()->SetRenderer(currentRenderer);
-      // ..and turn it on again!
-      widget->On();
+        // TODO this code blocks the movement of the widget in lightbox mode
 
-      // we need to render again
-      currentRenderer->Render();
+        // ..and turn it off..
+        widget->Off();
+        // ..place it and its representation to the right renderer..
+        widget->SetCurrentRenderer(currentRenderer);
+        widget->GetRepresentation()->SetRenderer(currentRenderer);
+        // ..and turn it on again!
+        widget->On();
+
+        // we need to render again
+        currentRenderer->Render();
+
+        }
 
       }
 
@@ -838,37 +890,42 @@ bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindow(double x, double y)
+void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindow(double vtkNotUsed(x), double vtkNotUsed(y))
 {
+
   // The user clicked in the renderWindow
   vtkErrorMacro("OnClickInThreeDRenderWindow should be overloaded!");
 }
 
 //---------------------------------------------------------------------------
-vtkAbstractWidget * vtkMRMLAnnotationDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* node)
+vtkAbstractWidget* vtkMRMLAnnotationDisplayableManager::CreateWidget(vtkMRMLAnnotationNode* vtkNotUsed(node))
 {
+
   // A widget should be created here.
   vtkErrorMacro("CreateWidget should be overloaded!");
   return 0;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node)
+void vtkMRMLAnnotationDisplayableManager::OnWidgetCreated(vtkAbstractWidget* vtkNotUsed(widget), vtkMRMLAnnotationNode* vtkNotUsed(node))
 {
+
   // Actions after a widget was created should be executed here.
   vtkErrorMacro("OnWidgetCreated should be overloaded!");
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget)
+void vtkMRMLAnnotationDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnotationNode* vtkNotUsed(node), vtkAbstractWidget* vtkNotUsed(widget))
 {
+
   // The properties of a widget should be set here.
   vtkErrorMacro("PropagateMRMLToWidget should be overloaded!");
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node)
+void vtkMRMLAnnotationDisplayableManager::PropagateWidgetToMRML(vtkAbstractWidget* vtkNotUsed(widget), vtkMRMLAnnotationNode* vtkNotUsed(node))
 {
+
   // The properties of a widget should be set here.
   vtkErrorMacro("PropagateWidgetToMRML should be overloaded!");
 }

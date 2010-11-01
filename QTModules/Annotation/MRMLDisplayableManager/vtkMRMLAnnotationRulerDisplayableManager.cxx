@@ -43,8 +43,9 @@ public:
 
   vtkAnnotationRulerWidgetCallback(){}
 
-  virtual void Execute (vtkObject *caller, unsigned long event, void*)
+  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*)
   {
+
     if ((event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
       {
 

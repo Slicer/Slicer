@@ -153,7 +153,7 @@ private:
   Q_DISABLE_COPY(qSlicerAnnotationModuleWidget);
 
   virtual void setup();
-  QString getAnnotationIconName(int index, bool isEdit=false);
+  QString getAnnotationIconName(int index);
 
   qSlicerAnnotationModulePropertyDialog* m_PropertyDialog;
   qSlicerAnnotationModuleReportDialog* m_ReportDialog;

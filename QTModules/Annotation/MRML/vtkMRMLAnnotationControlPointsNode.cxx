@@ -373,6 +373,9 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
 
 
 //---------------------------------------------------------------------------
+/// Return the RAS coordinates of point ID.
+/// Try to limit calling this function because it is performance critical.
+/// Also, when queried again it resets all former pointers. Copying is therefore necessary.
 double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType id)
 {
 
