@@ -190,7 +190,7 @@ void qSlicerEMSegmentRunSegmentationStepPrivate::updateMRMLFromWidget()
 //-----------------------------------------------------------------------------
 void qSlicerEMSegmentRunSegmentationStepPrivate::display2DVOI(bool show)
 {
-
+  Q_UNUSED(show);
 }
 
 namespace

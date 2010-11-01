@@ -120,6 +120,8 @@ void qSlicerEMSegmentSegmentationLogicStep::onExit(
     const ctkWorkflowStep* goingTo,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  Q_UNUSED(goingTo);
+  Q_UNUSED(transitionType);
   // Indicates that we are finished
   this->onExitComplete();
 }

@@ -30,12 +30,12 @@
 
 class VTK_SLICER_MODELTRANSFORM_MODULE_LOGIC_EXPORT vtkModelTransformLogic : public vtkSlicerModuleLogic
 {
-  public:
+public:
   static vtkModelTransformLogic *New();
   vtkTypeMacro(vtkModelTransformLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent){};
+  void PrintSelf(ostream& os, vtkIndent indent){ this->Superclass::PrintSelf(os, indent); }
   
- protected:
+protected:
   vtkModelTransformLogic();
   ~vtkModelTransformLogic();
   vtkModelTransformLogic(const vtkModelTransformLogic&);

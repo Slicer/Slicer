@@ -82,9 +82,9 @@ void vtkSlicerAnnotationModuleLogic::SetAndObserveWidget(qSlicerAnnotationModule
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(
+  vtkObject * vtkNotUsed(caller), unsigned long event, void *callData)
 {
-
   vtkDebugMacro("ProcessMRMLEvents: Event "<< event);
 
   vtkMRMLAnnotationNode* annotationNode =
@@ -104,9 +104,6 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(vtkObject *caller, unsign
       break;
 
     }
-
-
-
 }
 
 //-----------------------------------------------------------------------------

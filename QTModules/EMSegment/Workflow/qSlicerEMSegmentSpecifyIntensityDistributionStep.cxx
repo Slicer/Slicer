@@ -247,6 +247,8 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  Q_UNUSED(comingFrom);
+  Q_UNUSED(transitionType);
   Q_D(qSlicerEMSegmentSpecifyIntensityDistributionStep);
   d->updateWidgetFromMRML();
 
@@ -259,6 +261,8 @@ void qSlicerEMSegmentSpecifyIntensityDistributionStep::onExit(
     const ctkWorkflowStep* goingTo,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  Q_UNUSED(goingTo);
+  Q_UNUSED(transitionType);
   // Indicates that we are finished
   this->onExitComplete();
 }

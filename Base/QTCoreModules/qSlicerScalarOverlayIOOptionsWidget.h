@@ -35,6 +35,7 @@ class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerScalarOverlayIOOptionsWidget :
 {
   Q_OBJECT
 public:
+  typedef qSlicerIOOptionsWidget Superclass;
   qSlicerScalarOverlayIOOptionsWidget(QWidget *parent=0);
   virtual ~qSlicerScalarOverlayIOOptionsWidget();
 

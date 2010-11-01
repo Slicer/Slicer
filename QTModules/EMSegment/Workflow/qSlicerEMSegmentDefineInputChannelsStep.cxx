@@ -223,6 +223,8 @@ void qSlicerEMSegmentDefineInputChannelsStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  Q_UNUSED(comingFrom);
+  Q_UNUSED(transitionType);
   // Indicates that we are finished
   this->onEntryComplete();
 }

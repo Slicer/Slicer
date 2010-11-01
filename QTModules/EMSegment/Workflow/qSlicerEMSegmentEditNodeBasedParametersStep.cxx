@@ -89,6 +89,8 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::onEntry(
     const ctkWorkflowStep* comingFrom,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  Q_UNUSED(comingFrom);
+  Q_UNUSED(transitionType);
   Q_D(qSlicerEMSegmentEditNodeBasedParametersStep);
   d->updateWidgetFromMRML();
 
@@ -101,6 +103,8 @@ void qSlicerEMSegmentEditNodeBasedParametersStep::onExit(
     const ctkWorkflowStep* goingTo,
     const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  Q_UNUSED(goingTo);
+  Q_UNUSED(transitionType);
   // Indicates that we are finished
   this->onExitComplete();
 }

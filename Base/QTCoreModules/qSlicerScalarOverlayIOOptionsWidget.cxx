@@ -37,7 +37,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerScalarOverlayIOOptionsWidget::qSlicerScalarOverlayIOOptionsWidget(QWidget* parentWidget)
-  : d_ptr(new qSlicerScalarOverlayIOOptionsWidgetPrivate)
+  : Superclass(parentWidget), d_ptr(new qSlicerScalarOverlayIOOptionsWidgetPrivate)
 {
   Q_D(qSlicerScalarOverlayIOOptionsWidget);
   d->setupUi(this);

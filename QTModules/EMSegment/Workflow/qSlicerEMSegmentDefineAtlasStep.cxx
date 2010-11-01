@@ -88,6 +88,8 @@ void qSlicerEMSegmentDefineAtlasStep::showUserInterface()
 void qSlicerEMSegmentDefineAtlasStep::onEntry(const ctkWorkflowStep* comingFrom,
    const ctkWorkflowInterstepTransition::InterstepTransitionType transitionType)
 {
+  Q_UNUSED(comingFrom);
+  Q_UNUSED(transitionType);
   Q_D(qSlicerEMSegmentDefineAtlasStep);
   d->updateWidgetFromMRML();
 

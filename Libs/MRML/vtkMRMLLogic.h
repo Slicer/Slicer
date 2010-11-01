@@ -33,7 +33,7 @@ class VTK_MRML_EXPORT vtkMRMLLogic : public vtkObject
   /// The Usual vtk class functions
   static vtkMRMLLogic *New();
   vtkTypeMacro(vtkMRMLLogic,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent){};
+  void PrintSelf(ostream& os, vtkIndent indent){ this->Superclass::PrintSelf(os, indent); }
 
   vtkMRMLScene* GetScene() {return this->Scene;};
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
