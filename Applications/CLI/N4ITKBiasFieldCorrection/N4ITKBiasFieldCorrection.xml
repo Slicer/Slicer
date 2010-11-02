@@ -131,7 +131,8 @@
       <name>histogramSharpening</name>
       <longflag>histogramsharpening</longflag>
       <label>Histogram sharpening</label>
-      <default>0</default>
+      <description>A vector of up to three values. Non-zero values correspond to Bias Field Full Width at Half Maximum, Wiener filter noise, and Number of histogram bins.</description>
+      <default>0,0,0</default>
     </float-vector>
 
   </parameters>
