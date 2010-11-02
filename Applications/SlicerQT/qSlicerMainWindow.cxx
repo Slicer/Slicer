@@ -134,6 +134,12 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // ThreeDViews controller toolbar listens to LayoutManager
   // TODO The current active view could be a property of the layoutNode ?
+  QObject::connect(qSlicerApplication::application(),
+                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->MRMLThreeDViewsControllerWidget,
+                   SLOT(setMRMLScene(vtkMRMLScene*)));
+  this->MRMLThreeDViewsControllerWidget->setMRMLScene(
+      qSlicerApplication::application()->mrmlScene());
   QObject::connect(layoutManager, SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
                    this->MRMLThreeDViewsControllerWidget,
                    SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));

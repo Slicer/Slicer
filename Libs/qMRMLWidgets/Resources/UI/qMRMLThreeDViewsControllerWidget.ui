@@ -187,9 +187,6 @@
      </item>
      <item row="1" column="2">
       <widget class="QToolButton" name="SceneSnapshotButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="toolTip">
         <string>Capture and name a scene snapshot.</string>
        </property>
@@ -278,9 +275,6 @@
      </item>
      <item row="2" column="2">
       <widget class="QToolButton" name="SelectSceneSnapshotMenuButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="toolTip">
         <string>Restore or delete saved scene snapshots.</string>
        </property>

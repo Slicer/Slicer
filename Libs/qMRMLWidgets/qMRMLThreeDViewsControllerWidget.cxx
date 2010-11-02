@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QMenu>
 #include <QActionGroup>
+#include <QInputDialog>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -31,10 +32,13 @@
 #include "qMRMLThreeDViewsControllerWidget.h"
 #include "qMRMLThreeDViewsControllerWidget_p.h"
 #include "qMRMLActionSignalMapper.h"
+#include "qMRMLNodeFactory.h"
+#include "qMRMLSceneSnapshotMenu.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
+#include <vtkMRMLSceneSnapshotNode.h>
 
 
 //--------------------------------------------------------------------------
@@ -49,6 +53,7 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
   : q_ptr(&object)
 {
   this->ActiveMRMLThreeDViewNode = 0;
+  this->SceneSnapshotMenu = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -140,6 +145,13 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   connect(this->actionSetLightBlueBackground, SIGNAL(triggered()), SLOT(setLightBlueBackground()));
   connect(this->actionSetWhiteBackground, SIGNAL(triggered()), SLOT(setWhiteBackground()));
   connect(this->actionSetBlackBackground, SIGNAL(triggered()), SLOT(setBlackBackground()));
+
+  // Snapshot buttons
+  connect(this->SceneSnapshotButton, SIGNAL(clicked()), SLOT(createSceneSnaphot()));
+  this->SceneSnapshotMenu = new qMRMLSceneSnapshotMenu(widget);
+  connect(widget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+          this->SceneSnapshotMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
+  this->SelectSceneSnapshotMenuButton->setMenu(this->SceneSnapshotMenu);
 
   // SpinView, RockView buttons
   this->AnimateViewButtonGroup = new ctkButtonGroup(widget);
@@ -303,6 +315,51 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setBackgroundColor(double newBackg
   this->ActiveMRMLThreeDViewNode->SetBackgroundColor(newBackgroundColor);
 }
 
+namespace
+{
+// --------------------------------------------------------------------------
+struct vtkMRMLSnapshotNodeInitializer : public vtkMRMLNodeInitializer
+{
+  vtkMRMLSnapshotNodeInitializer(vtkMRMLScene * scene, const QString& snapshotBaseName):
+      MRMLScene(scene), SnapshotBaseName(snapshotBaseName){}
+  virtual void operator()(vtkMRMLNode* node)const
+    {
+    vtkMRMLSceneSnapshotNode * snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast(node);
+    Q_ASSERT(snapshotNode);
+    Q_ASSERT(!this->SnapshotBaseName.isEmpty());
+    Q_ASSERT(this->MRMLScene);
+
+    snapshotNode->SetName(
+        this->MRMLScene->GetUniqueNameByString(this->SnapshotBaseName.toLatin1()));
+    }
+  vtkMRMLScene * MRMLScene;
+  QString        SnapshotBaseName;
+};
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidgetPrivate::createSceneSnaphot()
+{
+  Q_Q(qMRMLThreeDViewsControllerWidget);
+
+  // Ask user for a name
+  bool ok = false;
+  QString snapshotName = QInputDialog::getText(q, tr("Scene Snapshot Name"),
+                                               tr("Snapshot Name:"), QLineEdit::Normal,
+                                               "View", &ok);
+  if (!ok || snapshotName.isEmpty())
+    {
+    return;
+    }
+
+  // Create snapshot
+  vtkMRMLNode * newNode = qMRMLNodeFactory::createNode(
+      q->mrmlScene(), "vtkMRMLSceneSnapshotNode",
+      vtkMRMLSnapshotNodeInitializer(q->mrmlScene(), snapshotName));
+  vtkMRMLSceneSnapshotNode * newSnapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast(newNode);
+  newSnapshotNode->StoreScene();
+}
+
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::onSpinViewButtonToggled(bool enabled)
 {
@@ -339,6 +396,16 @@ qMRMLThreeDViewsControllerWidget::qMRMLThreeDViewsControllerWidget(QWidget* _par
 // --------------------------------------------------------------------------
 qMRMLThreeDViewsControllerWidget::~qMRMLThreeDViewsControllerWidget()
 {
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
+{
+  Q_D(qMRMLThreeDViewsControllerWidget);
+
+  this->Superclass::setMRMLScene(newScene);
+
+  d->SceneSnapshotMenu->setMRMLScene(newScene);
 }
 
 // --------------------------------------------------------------------------
