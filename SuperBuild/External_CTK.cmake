@@ -13,6 +13,7 @@ if (Slicer_USE_QT)
 #    message(STATUS "Adding project:${proj}")
     ExternalProject_Add(${proj}
       GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
+      GIT_TAG "origin/master"
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       BINARY_DIR ${proj}-build
       CMAKE_GENERATOR ${gen}
