@@ -50,7 +50,7 @@ public slots:
 
   /// 
   /// Set the MRML \a scene associated with the widget
-  virtual void setMRMLScene(vtkMRMLScene* scene);
+  virtual void setMRMLScene(vtkMRMLScene* newScene);
 
 signals:
   void mrmlSceneChanged(vtkMRMLScene*);

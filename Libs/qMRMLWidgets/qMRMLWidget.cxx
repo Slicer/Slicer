@@ -49,15 +49,15 @@ qMRMLWidget::~qMRMLWidget()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLWidget::setMRMLScene(vtkMRMLScene* scene)
+void qMRMLWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLWidget);
-  if (scene == d->MRMLScene)
+  if (newScene == d->MRMLScene)
     {
     return ;
     }
-  d->MRMLScene = scene;
-  emit mrmlSceneChanged(scene);
+  d->MRMLScene = newScene;
+  emit mrmlSceneChanged(newScene);
 }
 
 //-----------------------------------------------------------------------------
