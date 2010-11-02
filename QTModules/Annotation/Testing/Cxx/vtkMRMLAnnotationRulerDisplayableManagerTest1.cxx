@@ -1,0 +1,356 @@
+/*=auto=========================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  All Rights Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+
+=========================================================================auto=*/
+
+// MRMLDisplayableManager includes
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include <vtkMRMLSliceViewDisplayableManagerFactory.h>
+#include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLViewDisplayableManager.h>
+#include <vtkMRMLCameraDisplayableManager.h>
+#include <vtkThreeDViewInteractorStyle.h>
+
+// MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
+
+// MRML includes
+#include <vtkMRMLScene.h>
+#include <vtkMRMLViewNode.h>
+#include <vtkMRMLAnnotationRulerNode.h>
+
+// VTK includes
+#include <vtkRegressionTestImage.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h> 
+#include <vtkSmartPointer.h>
+#include <vtkErrorCode.h>
+#include <vtkInteractorEventRecorder.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkPNGWriter.h>
+
+#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
+
+// STD includes
+#include <cstdlib>
+#include <iterator>
+
+#include "TestingMacros.h"
+
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
+
+//----------------------------------------------------------------------------
+class vtkRenderRequestCallback : public vtkCommand
+{
+public:
+  static vtkRenderRequestCallback *New()
+    { return new vtkRenderRequestCallback; }
+  void SetRenderer(vtkRenderer *renderer)
+    { this->Renderer =  renderer; }
+  int GetRenderRequestCount()
+    { return this->RenderRequestCount; }
+  virtual void Execute(vtkObject*, unsigned long , void* )
+    {
+    this->Renderer->GetRenderWindow()->Render();
+    this->RenderRequestCount++;
+    //std::cout << "RenderRequestCount [" << this->RenderRequestCount << "]" << std::endl;
+    }
+protected:
+  vtkRenderRequestCallback():Renderer(0), RenderRequestCount(0){}
+  vtkRenderer * Renderer;
+  int           RenderRequestCount;
+};
+
+//----------------------------------------------------------------------------
+int vtkMRMLAnnotationRulerDisplayableManagerTest1(int argc, char* argv[])
+{
+
+
+  /*
+   *
+   * Setup the test scenario.
+   *
+   */
+  // Renderer, RenderWindow and Interactor
+   vtkRenderer* rr = vtkRenderer::New();
+   vtkRenderWindow* rw = vtkRenderWindow::New();
+   vtkRenderWindowInteractor* ri = vtkRenderWindowInteractor::New();
+   rw->SetSize(600, 600);
+
+   rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
+
+   rw->AddRenderer(rr);
+   rw->SetInteractor(ri);
+
+   // Set Interactor Style
+   vtkThreeDViewInteractorStyle * iStyle = vtkThreeDViewInteractorStyle::New();
+   ri->SetInteractorStyle(iStyle);
+   iStyle->Delete();
+
+   // MRML scene
+   vtkMRMLScene* scene = vtkMRMLScene::New();
+
+   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
+   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
+   applicationLogic->SetMRMLScene(scene);
+   // Pass through event handling once without observing the scene
+   // allows any dependent nodes to be created
+   applicationLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, 0);
+   applicationLogic->SetAndObserveMRMLScene(scene);
+
+   // Add ViewNode
+   vtkMRMLViewNode * viewNode = vtkMRMLViewNode::New();
+   vtkMRMLNode * nodeAdded = scene->AddNode(viewNode);
+   viewNode->Delete();
+   if (!nodeAdded)
+     {
+     std::cerr << "Failed to add vtkMRMLViewNode" << std::endl;
+     return EXIT_FAILURE;
+     }
+  // Factory
+  vtkMRMLThreeDViewDisplayableManagerFactory * factoryThreeDView = vtkMRMLThreeDViewDisplayableManagerFactory::New();
+  vtkMRMLSliceViewDisplayableManagerFactory * factorySliceView = vtkMRMLSliceViewDisplayableManagerFactory::New();
+
+  // Check if GetRegisteredDisplayableManagerCount returns 0
+  if (factoryThreeDView->GetRegisteredDisplayableManagerCount() != 0)
+    {
+    std::cerr << "Expected RegisteredDisplayableManagerCount: 0" << std::endl;
+    std::cerr << "Current RegisteredDisplayableManagerCount:"
+        << factoryThreeDView->GetRegisteredDisplayableManagerCount() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (factorySliceView->GetRegisteredDisplayableManagerCount() != 0)
+    {
+    std::cerr << "Expected RegisteredDisplayableManagerCount: 0" << std::endl;
+    std::cerr << "Current RegisteredDisplayableManagerCount:"
+        << factorySliceView->GetRegisteredDisplayableManagerCount() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+  factoryThreeDView->RegisterDisplayableManager(
+      "vtkMRMLAnnotationRulerDisplayableManager");
+  factorySliceView->RegisterDisplayableManager(
+      "vtkMRMLAnnotationRulerDisplayableManager");
+
+
+  /*
+   *
+   * Check if factory registered the displayable Managers
+   *
+   */
+  // Check if GetRegisteredDisplayableManagerCount returns 1
+  if (factoryThreeDView->GetRegisteredDisplayableManagerCount() != 1)
+    {
+    std::cerr << "Expected RegisteredDisplayableManagerCount: 1" << std::endl;
+    std::cerr << "Current RegisteredDisplayableManagerCount:"
+        << factoryThreeDView->GetRegisteredDisplayableManagerCount() << std::endl;
+    return EXIT_FAILURE;
+    }
+  // Check if GetRegisteredDisplayableManagerCount returns 1
+  if (factorySliceView->GetRegisteredDisplayableManagerCount() != 1)
+    {
+    std::cerr << "Expected RegisteredDisplayableManagerCount: 1" << std::endl;
+    std::cerr << "Current RegisteredDisplayableManagerCount:"
+        << factorySliceView->GetRegisteredDisplayableManagerCount() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+  vtkMRMLDisplayableManagerGroup * displayableManagerGroupThreeDView =
+      factoryThreeDView->InstantiateDisplayableManagers(rr);
+
+  if (!displayableManagerGroupThreeDView)
+    {
+    std::cerr << "Failed to instantiate Displayable Managers using "
+        << "InstantiateDisplayableManagers" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  //vtkMRMLDisplayableManagerGroup * displayableManagerGroupSliceView =
+   //   factorySliceView->InstantiateDisplayableManagers(rr);
+
+  /*
+   *
+   * Start testing the actual functionality.
+   *
+   * Testing plan
+   * 1. Create ruler annotation and fire vtkMRMLScene::NodeAddedEvent events through MRMLScene->AddNode
+   * 2. Delete ruler annotations and fire vtkMRMLScene::NodeRemovedEvent events through MRMLScene->RemoveNode
+   * 3. Close MRML Scene
+   *
+   */
+
+  //--------------------------------------------------------------------------------------
+  // TEST 1:
+  // Add one TextNode to scene and see if widget appears!
+  //
+
+  // fail if widgets are in Renderwindow
+  if (rr->GetViewProps()->GetNumberOfItems()>0) {
+    std::cerr << "Expected number of items in renderer: 0" << std::endl;
+    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  double worldCoordinates1[4];
+  double worldCoordinates2[4];
+
+  worldCoordinates1[0] = 10;
+  worldCoordinates1[1] = 10;
+  worldCoordinates1[2] = 0;
+  worldCoordinates1[3] = 1;
+
+  worldCoordinates1[0] = 30;
+  worldCoordinates1[1] = 30;
+  worldCoordinates1[2] = 0;
+  worldCoordinates1[3] = 1;
+
+
+
+  // create the MRML node
+  double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+
+  vtkMRMLAnnotationRulerNode *rulerNode = vtkMRMLAnnotationRulerNode::New();
+
+  rulerNode->SetPosition1(worldCoordinates1);
+  rulerNode->SetPosition2(worldCoordinates2);
+  rulerNode->SetDistanceMeasurement(distance);
+
+  rulerNode->Initialize(scene);
+
+  rulerNode->SetName(rulerNode->GetScene()->GetUniqueNameByString("AnnotationRuler"));
+
+  rulerNode->Delete();
+
+
+  // fail if widget did not appear
+  if (rr->GetViewProps()->GetNumberOfItems()!=1) {
+    std::cerr << "Expected number of items in renderer: 1" << std::endl;
+    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+/*
+  // fail if widget did not appear
+  if (rr->GetViewProps()->GetNumberOfItems()!=4) {
+    std::cerr << "Expected number of items in renderer: 4" << std::endl;
+    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  //--------------------------------------------------------------------------------------
+  // TEST 3:
+  // Hide the added TextNodes and see if change gets propagated!
+  //
+  // fires OnMRMLAnnotationTextNodeModifiedEvent
+  textNode4->SetVisible(0);
+  // fail if widget did not appear
+  if (rr->GetViewProps()->GetNumberOfItems()!=3) {
+    std::cerr << "Expected number of items in renderer: 3" << std::endl;
+    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // fires OnMRMLAnnotationTextNodeModifiedEvent
+  textNode3->SetVisible(0);
+  // fail if widget did not appear
+  if (rr->GetViewProps()->GetNumberOfItems()!=2) {
+    std::cerr << "Expected number of items in renderer: 2" << std::endl;
+    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // fires OnMRMLAnnotationTextNodeModifiedEvent
+  textNode2->SetVisible(0);
+  // fail if widget did not appear
+  if (rr->GetViewProps()->GetNumberOfItems()!=1) {
+    std::cerr << "Expected number of items in renderer: 1" << std::endl;
+    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // fires OnMRMLAnnotationTextNodeModifiedEvent
+  textNode1->SetVisible(0);
+  // fail if widget did not appear
+  if (rr->GetViewProps()->GetNumberOfItems()!=0) {
+    std::cerr << "Expected number of items in renderer: 0" << std::endl;
+    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+
+*/
+  /*
+  // get the fourth widget
+  vtkPropCollection* props = rr->GetViewProps();
+  props->InitTraversal();
+  vtkProp* curProp = 0;
+  for(int i = 0; i < props->GetNumberOfItems(); i++)
+    {
+    std::cout << props->GetNumberOfItems();
+    curProp = props->GetNextProp();
+    //std::cout << curProp->GetPickable() << std::endl;
+    //std::cout << curProp->GetDragable() << std::endl;
+    std::cout << i << curProp->GetVisibility() << std::endl;
+    }
+
+  // fail if fourth widget did not hide
+  if (curProp->GetVisibility()!=0) {
+    std::cerr << "Expected visibility of last text node in renderer: 0" << std::endl;
+    std::cerr << "Current visibility of last text node in renderer: " << curProp->GetVisibility() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+
+
+
+  vtkPropCollection* props = rr->GetViewProps();
+  props->InitTraversal();
+  for(int i = 0; i < props->GetNumberOfItems(); i++)
+    {
+    vtkProp* curProp = props->GetNextProp();
+    //std::cout << curProp->GetPickable() << std::endl;
+    //std::cout << curProp->GetDragable() << std::endl;
+    std::cout << curProp->GetVisibility() << std::endl;
+    }
+
+
+  textNode1->SetVisible(0);
+  //textNode1->SetLocked(1);
+  textNode2->SetVisible(0);
+  //textNode2->SetLocked(1);
+  textNode3->SetVisible(0);
+  //textNode3->SetLocked(1);
+*/
+  // cleanup
+
+  scene->RemoveNode(rulerNode);
+
+  rulerNode->Delete();
+
+  applicationLogic->Delete();
+  scene->Delete();
+  rr->Delete();
+  rw->Delete();
+  ri->Delete();
+
+
+  return EXIT_SUCCESS;
+}
+
