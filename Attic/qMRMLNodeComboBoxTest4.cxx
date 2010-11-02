@@ -23,7 +23,7 @@
 #include <QTimer>
 
 // qMRML includes
-#include "qMRMLNodeComboBox2.h"
+#include "qMRMLNodeComboBox.h"
 
 // MRML includes
 #include "vtkMRMLScene.h"
@@ -35,25 +35,27 @@
 #include <stdlib.h>
 #include <iostream>
 
-int qMRMLNodeComboBox2Test3( int argc, char * argv [] )
+int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
 {
-  if (argc < 2)
-    {
-    std::cerr<< "Wrong number of arguments." << std::endl;
-    return EXIT_FAILURE;
-    }
   QApplication app(argc, argv);
 
-  qMRMLNodeComboBox2 nodeSelector;
-  nodeSelector.show();
-  nodeSelector.setNodeTypes(QStringList("vtkMRMLViewNode"));
+  qMRMLNodeComboBox nodeSelector;
+  nodeSelector.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));
+  nodeSelector.addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
+
   vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
   nodeSelector.setMRMLScene(scene);
-  scene->SetURL(argv[1]);
-  scene->Connect();
 
+  nodeSelector.addNode();
+  if (nodeSelector.nodeCount() != 1)
+    {
+    std::cerr << "qMRMLNodeComboBox::addAttribute is broken" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  nodeSelector.show();
   QTimer autoExit;
-  if (argc < 3 || QString(argv[2]) != "-I")
+  if (argc < 2 || QString(argv[1]) != "-I")
     {
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(1000);

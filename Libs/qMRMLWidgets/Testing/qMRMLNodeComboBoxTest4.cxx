@@ -46,12 +46,14 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
   vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
   nodeSelector.setMRMLScene(scene);
 
-  nodeSelector.addNode();
+  vtkMRMLNode* node = nodeSelector.addNode();
   if (nodeSelector.nodeCount() != 1)
     {
     std::cerr << "qMRMLNodeComboBox::addAttribute is broken" << std::endl;
     return EXIT_FAILURE;
     }
+
+  node->SetName("foo");
 
   nodeSelector.show();
   QTimer autoExit;

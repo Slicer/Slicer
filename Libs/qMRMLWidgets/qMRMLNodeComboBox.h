@@ -24,9 +24,6 @@
 // Qt includes
 #include <QComboBox>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 #include "qMRMLSortFilterProxyModel.h"
@@ -36,7 +33,6 @@ class vtkMRMLScene;
 
 class qMRMLNodeFactory;
 class qMRMLNodeComboBoxPrivate;
-//class qMRMLSortFilterProxyModel;
 
 class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
 {
@@ -190,7 +186,7 @@ public slots:
 
   ///
   /// Create a node of the same type than on the "node types" properties
-  virtual void addNode();
+  virtual vtkMRMLNode* addNode();
 
   ///
   /// Remove the current node from the scene

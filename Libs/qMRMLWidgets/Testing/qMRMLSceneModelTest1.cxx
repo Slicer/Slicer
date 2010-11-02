@@ -23,7 +23,7 @@
 #include <QTreeView>
 
 // qMRML includes
-#include "qMRMLSceneModel2.h"
+#include "qMRMLSceneModel.h"
 #include "qMRMLSceneFactoryWidget.h"
 
 // MRML includes
@@ -37,11 +37,11 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  qMRMLSceneModel2   sceneModel;
+  qMRMLSceneModel   sceneModel;
 
   if (sceneModel.rowCount() != 0)
     {
-    std::cerr << "qMRMLSceneModel2: wrong row count" << std::endl;
+    std::cerr << "qMRMLSceneModel: wrong row count" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -50,7 +50,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   sceneModel.setMRMLScene(sceneFactory.mrmlScene());
   if (sceneModel.rowCount() != 1)
     {
-    std::cerr << "qMRMLSceneModel2:setScene() failed" << std::endl;
+    std::cerr << "qMRMLSceneModel:setScene() failed" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -72,7 +72,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
 
   if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 11)
     {
-    std::cerr << "qMRMLSceneModel2 wrong number of children: "
+    std::cerr << "qMRMLSceneModel wrong number of children: "
               << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
     return EXIT_FAILURE;
     }
@@ -82,7 +82,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   sceneModel.setPostItems(postNodes, sceneModel.mrmlSceneItem());
   if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 12)
     {
-    std::cerr << "qMRMLSceneModel2 wrong number of children after post: "
+    std::cerr << "qMRMLSceneModel wrong number of children after post: "
               << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
     return EXIT_FAILURE;
     }
@@ -102,7 +102,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
 
   if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 18)
     {
-    std::cerr << "qMRMLSceneModel2 wrong number of children after pre/post: "
+    std::cerr << "qMRMLSceneModel wrong number of children after pre/post: "
               << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
     return EXIT_FAILURE;
     }
@@ -113,7 +113,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
 
   if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 21)
     {
-    std::cerr << "qMRMLSceneModel2 wrong number of children after adding nodes: "
+    std::cerr << "qMRMLSceneModel wrong number of children after adding nodes: "
               << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
     return EXIT_FAILURE;
     }

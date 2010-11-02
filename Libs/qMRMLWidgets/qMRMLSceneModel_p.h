@@ -18,14 +18,14 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSceneModel2_p_h
-#define __qMRMLSceneModel2_p_h
+#ifndef __qMRMLSceneModel_p_h
+#define __qMRMLSceneModel_p_h
 
 // Qt includes
 class QStandardItemModel;
 
 // qMRML includes
-#include "qMRMLSceneModel2.h"
+#include "qMRMLSceneModel.h"
 
 // MRML includes
 class vtkMRMLScene;
@@ -35,16 +35,16 @@ class vtkMRMLScene;
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-// qMRMLSceneModel2Private
+// qMRMLSceneModelPrivate
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLSceneModel2Private
+class QMRML_WIDGETS_EXPORT qMRMLSceneModelPrivate
 {
-  Q_DECLARE_PUBLIC(qMRMLSceneModel2);
+  Q_DECLARE_PUBLIC(qMRMLSceneModel);
 protected:
-  qMRMLSceneModel2* const q_ptr;
+  qMRMLSceneModel* const q_ptr;
 public:
-  qMRMLSceneModel2Private(qMRMLSceneModel2& object);
-  virtual ~qMRMLSceneModel2Private();
+  qMRMLSceneModelPrivate(qMRMLSceneModel& object);
+  virtual ~qMRMLSceneModelPrivate();
   void init();
   QStringList extraItems(QStandardItem* parent, const QString extraType)const;
   void removeAllExtraItems(QStandardItem* parent, const QString extraType);

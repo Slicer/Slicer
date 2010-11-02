@@ -18,18 +18,19 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSceneModel2_h
-#define __qMRMLSceneModel2_h
+#ifndef __qMRMLSceneModel_h
+#define __qMRMLSceneModel_h
 
 // Qt includes
-#include <QStandardItemModel>
+#include <QAbstractListModel>
 
-// CTK includes
+// CTK includes 
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
+#include "qMRMLItemHelper.h"
 
 class vtkMRMLNode;
 class vtkMRMLScene;
@@ -38,17 +39,17 @@ class QAction;
 namespace qMRML
 {
  enum ItemDataRole {
-   UIDRole = Qt::UserRole + 1
+   UIDRole = Qt::UserRole
  };
 };
-/*
-class qMRMLSceneModel2ItemHelperFactoryPrivate;
+
+class qMRMLSceneModelItemHelperFactoryPrivate;
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLSceneModel2ItemHelperFactory : public qMRMLAbstractItemHelperFactory
+class QMRML_WIDGETS_EXPORT qMRMLSceneModelItemHelperFactory : public qMRMLAbstractItemHelperFactory
 {
 public:
-  qMRMLSceneModel2ItemHelperFactory();
-  virtual ~qMRMLSceneModel2ItemHelperFactory();
+  qMRMLSceneModelItemHelperFactory();
+  virtual ~qMRMLSceneModelItemHelperFactory();
   virtual qMRMLAbstractItemHelper* createItem(vtkObject* object,int column, int row = -1) const;
 
   void setPreItems(vtkCollection* itemCollection);
@@ -56,37 +57,34 @@ public:
   void setPostItems(vtkCollection* itemCollection);
   vtkCollection* postItems()const;
 protected:
-  QScopedPointer<qMRMLSceneModel2ItemHelperFactoryPrivate> d_ptr;
+  QScopedPointer<qMRMLSceneModelItemHelperFactoryPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLSceneModel2ItemHelperFactory);
-  Q_DISABLE_COPY(qMRMLSceneModel2ItemHelperFactory);
+  Q_DECLARE_PRIVATE(qMRMLSceneModelItemHelperFactory);
+  Q_DISABLE_COPY(qMRMLSceneModelItemHelperFactory);
 };
-*/
-class qMRMLSceneModel2Private;
+
+class qMRMLSceneModelPrivate;
+
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLSceneModel2 : public QStandardItemModel
+class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QAbstractItemModel
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
 public:
   typedef QAbstractItemModel Superclass;
-  qMRMLSceneModel2(QObject *parent=0);
-  virtual ~qMRMLSceneModel2();
+  qMRMLSceneModel(QObject *parent=0);
+  virtual ~qMRMLSceneModel();
 
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
-
-  QStandardItem* mrmlSceneItem()const;
   QModelIndex mrmlSceneIndex()const;
 
   /// Return the vtkMRMLNode associated to the node index.
   /// 0 if the node index is not a MRML node (i.e. vtkMRMLScene, extra item...)
-  inline vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex &nodeIndex)const;
-  vtkMRMLNode* mrmlNodeFromItem(QStandardItem* nodeItem)const;
-  QStandardItem* itemFromNode(vtkMRMLNode* node, int column = 0)const;
+  vtkMRMLNode* mrmlNode(const QModelIndex &nodeIndex)const;
   QModelIndexList indexes(vtkMRMLNode* node)const;
 
   /// Option that activates the expensive listening of the vtkMRMLNode Modified
@@ -98,15 +96,15 @@ public:
   ///
   /// Extra items that are prepended to the node list
   /// Warning, setPreItems() resets the model, the currently selected item is lost
-  void setPreItems(const QStringList& extraItems, QStandardItem* parent);
-  QStringList preItems(QStandardItem* parent)const;
+  void setPreItems(vtkObject* parent, const QStringList& extraItems);
+  QStringList preItems(vtkObject* parent)const;
 
   ///
   /// Extra items that are appended to the node list
   /// Warning, setPostItems() resets the model, the currently selected item is lost
-  void setPostItems(const QStringList& extraItems, QStandardItem* parent);
-  QStringList postItems(QStandardItem* parent)const;
-/*
+  void setPostItems(vtkObject* parent, const QStringList& extraItems);
+  QStringList postItems(vtkObject* parent)const;
+
   virtual int columnCount(const QModelIndex &parent=QModelIndex())const;
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole)const;
   //virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
@@ -124,11 +122,9 @@ public:
   virtual int rowCount(const QModelIndex &parent=QModelIndex()) const;
   virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
   //virtual bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles);
-*/
   virtual Qt::DropActions supportedDropActions()const;
-  virtual QMimeData* mimeData(const QModelIndexList& indexes)const;
-protected slots:
 
+protected slots:
   virtual void onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);
   virtual void onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node);
   virtual void onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);
@@ -142,40 +138,22 @@ protected slots:
   void onMRMLSceneDeleted(vtkObject* scene);
 
   void onMRMLNodeModified(vtkObject* node);
-  void onItemChanged(QStandardItem * item);
-
 protected:
-
-  qMRMLSceneModel2(qMRMLSceneModel2Private* pimpl, QObject *parent=0);
-/*  friend class qMRMLSortFilterProxyModel;
+  qMRMLSceneModel(qMRMLSceneModelItemHelperFactory* factory, QObject *parent=0);
+  friend class qMRMLSortFilterProxyModel;
   friend class qMRMLTreeProxyModel;
   virtual qMRMLAbstractItemHelperFactory* itemFactory()const;
   virtual qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &modelIndex)const;
   virtual qMRMLAbstractItemHelper* itemFromObject(vtkObject* object, int column)const;
   virtual QModelIndex indexFromItem(const qMRMLAbstractItemHelper* item)const;
-*/
-  virtual void insertNode(vtkMRMLNode* node);
-  virtual void insertNode(vtkMRMLNode* node, QStandardItem* parent, int row = -1);
-  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
-  virtual void updateScene();
-  virtual void populateScene();
-
-  static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
-                               void* client_data, void* call_data);
+  static void DoCallback(vtkObject* vtk_obj, unsigned long event,
+                         void* client_data, void* call_data);
 protected:
-  QScopedPointer<qMRMLSceneModel2Private> d_ptr;
+  QScopedPointer<qMRMLSceneModelPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLSceneModel2);
-  Q_DISABLE_COPY(qMRMLSceneModel2);
+  Q_DECLARE_PRIVATE(qMRMLSceneModel);
+  Q_DISABLE_COPY(qMRMLSceneModel);
 };
-void printStandardItem(QStandardItem* item, const QString& offset);
-
-// -----------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneModel2::mrmlNodeFromIndex(const QModelIndex &nodeIndex)const
-{
-  return this->mrmlNodeFromItem(this->itemFromIndex(nodeIndex));
-}
 
 #endif

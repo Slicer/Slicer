@@ -25,9 +25,6 @@
 #include <QSortFilterProxyModel>
 #include <QStringList>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 
@@ -35,6 +32,7 @@ class vtkMRMLNode;
 class vtkMRMLScene;
 class qMRMLAbstractItemHelper;
 class qMRMLSortFilterProxyModelPrivate;
+class QStandardItem;
 
 class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyModel
 {
@@ -54,14 +52,14 @@ public:
   /// Retrive the associated vtkMRMLNode
   vtkMRMLNode* mrmlNode(const QModelIndex& index)const;
 
-  /// 
+  ///
   /// Set/Get node types to display in the list
-  /// NodeTypes are the class names, i.e. vtkMRMLViewNode, 
+  /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
   QStringList nodeTypes()const;
   void setNodeTypes(const QStringList& nodeTypes);
 
-  /// 
+  ///
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   void setShowHidden(bool);
@@ -70,7 +68,7 @@ public:
   ///
   /// Add node type attribute that filter the nodes to
   /// display
-  void addAttribute(const QString& nodeType, 
+  void addAttribute(const QString& nodeType,
                     const QString& attributeName,
                     const QVariant& attributeValue);
 
@@ -82,8 +80,8 @@ public:
   bool showChildNodeTypes()const;
 
   ///
-  /// If a node is a nodeType, hide the node if it is also 
-  /// a ExcludedChildNodeType. (this can happen if nodeType is a 
+  /// If a node is a nodeType, hide the node if it is also
+  /// a ExcludedChildNodeType. (this can happen if nodeType is a
   /// mother class of ExcludedChildNodeType)
   void setHideChildNodeTypes(const QStringList& nodeTypes);
   QStringList hideChildNodeTypes()const;
@@ -92,9 +90,9 @@ public:
 protected:
   //virtual bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
   virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;
-  virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
-  
-  qMRMLAbstractItemHelper* sourceItem(const QModelIndex& index)const;
+  //virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
+
+  QStandardItem* sourceItem(const QModelIndex& index)const;
 protected:
   QScopedPointer<qMRMLSortFilterProxyModelPrivate> d_ptr;
 

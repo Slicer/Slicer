@@ -28,8 +28,9 @@
 #include <QVector>
 
 // qMRML includes
-#include "qMRMLSceneTransformModel2.h"
-#include "qMRMLSceneModel2_p.h"
+#include "qMRMLItemHelper.h"
+#include "qMRMLSceneTransformModel.h"
+#include "qMRMLSceneModel.h"
 #include "qMRMLUtils.h"
 
 // MRML includes
@@ -38,7 +39,7 @@
 // VTK includes
 #include <vtkVariantArray.h>
 #include <typeinfo>
-/*
+
 class qMRMLNodeItemHelperPrivate;
 
 //------------------------------------------------------------------------------
@@ -295,132 +296,19 @@ bool qMRMLNodeItemHelper::reparent(qMRMLAbstractItemHelper* newParent)
     newParent ? vtkMRMLNode::SafeDownCast(newParent->object()) : 0;
   return qMRMLUtils::reparent(this->mrmlNode(), newParentNode);
 }
-*/
 
 //------------------------------------------------------------------------------
-class qMRMLSceneTransformModel2Private: public qMRMLSceneModel2Private
-{
-protected:
-  Q_DECLARE_PUBLIC(qMRMLSceneTransformModel2);
-public:
-  qMRMLSceneTransformModel2Private(qMRMLSceneTransformModel2& object);
-
-};
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-qMRMLSceneTransformModel2Private
-::qMRMLSceneTransformModel2Private(qMRMLSceneTransformModel2& object)
-  : qMRMLSceneModel2Private(object)
+qMRMLSceneTransformModel::qMRMLSceneTransformModel(QObject *vparent)
+  :qMRMLSceneTreeModel(new qMRMLTransformItemHelperFactory, vparent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-qMRMLSceneTransformModel2::qMRMLSceneTransformModel2(QObject *vparent)
-  :qMRMLSceneModel2(new qMRMLSceneTransformModel2Private(*this), vparent)
+qMRMLSceneTransformModel::~qMRMLSceneTransformModel()
 {
-}
-
-//------------------------------------------------------------------------------
-qMRMLSceneTransformModel2::~qMRMLSceneTransformModel2()
-{
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneTransformModel2::populateScene()
-{
-  Q_D(qMRMLSceneTransformModel2);
-  Q_ASSERT(d->MRMLScene);
-  // Add nodes
-  vtkMRMLNode *node = 0;
-  vtkCollectionSimpleIterator it;
-  for (d->MRMLScene->GetCurrentScene()->InitTraversal(it);
-       (node = (vtkMRMLNode*)d->MRMLScene->GetCurrentScene()->GetNextItemAsObject(it)) ;)
-    {
-    // WARNING: works only if the nodes are in the scene in the correct order:
-    // parents are before children
-    this->insertNode(node);
-    }
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneTransformModel2::insertNode(vtkMRMLNode* node)
-{
-  vtkMRMLNode* parentNode = qMRMLUtils::parentNode(node);
-  QStandardItem* parentItem =
-    parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();
-  Q_ASSERT(parentItem);
-  int min = this->preItems(parentItem).count();
-  int max = parentItem->rowCount() - this->postItems(parentItem).count();
-  this->insertNode(node, parentItem, qMin(min + qMRMLUtils::nodeIndex(node), max));
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneTransformModel2::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
-{
-  this->qMRMLSceneModel2::updateItemFromNode(item, node, column);
-  bool oldBlock = this->blockSignals(true);
-  if (qMRMLUtils::canBeAChild(node))
-    {
-    item->setFlags(item->flags() | Qt::ItemIsDragEnabled);
-    }
-  if (qMRMLUtils::canBeAParent(node))
-    {
-    item->setFlags(item->flags() | Qt::ItemIsDropEnabled);
-    }
-  this->blockSignals(oldBlock);
-  QStandardItem* parentItem = item->parent();
-  QStandardItem* newParentItem = this->itemFromNode(qMRMLUtils::parentNode(node));
-  if (newParentItem == 0)
-    {
-    newParentItem = this->mrmlSceneItem();
-    }
-  // if the item has no parent, then it means it hasn't been put into the scene yet.
-  // and it will do it automatically.
-  if (parentItem != 0 && (parentItem != newParentItem || qMRMLUtils::nodeIndex(node) != item->row()))
-    {
-    QList<QStandardItem*> children = parentItem->takeRow(item->row());
-    int min = this->preItems(newParentItem).count();
-    int max = newParentItem->rowCount() - this->postItems(newParentItem).count();
-    int pos = qMin(min + qMRMLUtils::nodeIndex(node), max);
-    newParentItem->insertRow(pos, children);
-    }
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneTransformModel2::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
-{
-  this->qMRMLSceneModel2::updateNodeFromItem(node, item);
-  Q_ASSERT(node != this->mrmlNodeFromItem(item->parent()));
-
-  // Don't do the following if the row is not complete (reparenting an
-  // incomplete row might lead to errors). updateNodeFromItem is typically
-  // called for every item changed, so it should be
-  QStandardItem* parentItem = item->parent();
-  for (int i = 0; i < parentItem->columnCount(); ++i)
-    {
-    if (parentItem->child(item->row(), i) == 0)
-      {
-      return;
-      }
-    }
-  vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
-  if (qMRMLUtils::parentNode(node) != parent)
-    {
-    qMRMLUtils::reparent(node, parent);
-    }
-  else if (qMRMLUtils::nodeIndex(node) != item->row())
-    {
-    this->updateItemFromNode(item, node, item->column());
-    }
-}
-
-//------------------------------------------------------------------------------
-Qt::DropActions qMRMLSceneTransformModel2::supportedDropActions()const
-{
-  return Qt::MoveAction;
 }

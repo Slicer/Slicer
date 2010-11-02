@@ -18,34 +18,18 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSceneColorTableModel2_h
-#define __qMRMLSceneColorTableModel2_h
+#ifndef __qMRMLSceneTransformModel_h
+#define __qMRMLSceneTransformModel_h
 
-// qMRML includes
-#include "qMRMLSceneCategoryModel2.h"
+#include "qMRMLSceneTreeModel.h"
 
-// MRML includes
-class vtkMRMLColorTableNode;
-
-class qMRMLSceneColorTableModel2Private;
-
-class QMRML_WIDGETS_EXPORT qMRMLSceneColorTableModel2 : public qMRMLSceneCategoryModel2
+class QMRML_WIDGETS_EXPORT qMRMLSceneTransformModel : public qMRMLSceneTreeModel
 {
   Q_OBJECT
 
 public:
-  qMRMLSceneColorTableModel2(QObject *parent=0);
-  virtual ~qMRMLSceneColorTableModel2();
-
-protected:
-  QScopedPointer<qMRMLSceneColorTableModel2Private> d_ptr;
-
-  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-  bool updateGradientFromNode(vtkMRMLColorTableNode* node)const;
-
-private:
-  Q_DECLARE_PRIVATE(qMRMLSceneColorTableModel2);
-  Q_DISABLE_COPY(qMRMLSceneColorTableModel2);
+  qMRMLSceneTransformModel(QObject *parent=0);
+  virtual ~qMRMLSceneTransformModel();
 };
 
 #endif

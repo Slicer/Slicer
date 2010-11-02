@@ -21,15 +21,30 @@
 #ifndef __qMRMLSceneTransformModel_h
 #define __qMRMLSceneTransformModel_h
 
-#include "qMRMLSceneTreeModel.h"
+#include "qMRMLSceneModel.h"
 
-class QMRML_WIDGETS_EXPORT qMRMLSceneTransformModel : public qMRMLSceneTreeModel
+class qMRMLSceneTransformModelPrivate;
+
+class QMRML_WIDGETS_EXPORT qMRMLSceneTransformModel : public qMRMLSceneModel
 {
   Q_OBJECT
 
 public:
   qMRMLSceneTransformModel(QObject *parent=0);
   virtual ~qMRMLSceneTransformModel();
+
+  virtual Qt::DropActions supportedDropActions()const;
+
+protected:
+  virtual void populateScene();
+  virtual void insertNode(vtkMRMLNode* node);
+  using qMRMLSceneModel::insertNode;
+  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
+
+private:
+  Q_DECLARE_PRIVATE(qMRMLSceneTransformModel);
+  Q_DISABLE_COPY(qMRMLSceneTransformModel);
 };
 
 #endif

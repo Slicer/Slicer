@@ -21,9 +21,15 @@
 #ifndef __qMRMLSceneColorTableModel_h
 #define __qMRMLSceneColorTableModel_h
 
-#include "qMRMLSceneTreeModel.h"
+// qMRML includes
+#include "qMRMLSceneCategoryModel.h"
 
-class QMRML_WIDGETS_EXPORT qMRMLSceneColorTableModel : public qMRMLSceneTreeModel
+// MRML includes
+class vtkMRMLColorTableNode;
+
+class qMRMLSceneColorTableModelPrivate;
+
+class QMRML_WIDGETS_EXPORT qMRMLSceneColorTableModel : public qMRMLSceneCategoryModel
 {
   Q_OBJECT
 
@@ -31,6 +37,15 @@ public:
   qMRMLSceneColorTableModel(QObject *parent=0);
   virtual ~qMRMLSceneColorTableModel();
 
+protected:
+  QScopedPointer<qMRMLSceneColorTableModelPrivate> d_ptr;
+
+  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  bool updateGradientFromNode(vtkMRMLColorTableNode* node)const;
+
+private:
+  Q_DECLARE_PRIVATE(qMRMLSceneColorTableModel);
+  Q_DISABLE_COPY(qMRMLSceneColorTableModel);
 };
 
 #endif

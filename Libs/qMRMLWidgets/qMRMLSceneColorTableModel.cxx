@@ -20,100 +20,40 @@
 
 // Qt includes
 #include <QDebug>
-#include <QFile>
 #include <QIcon>
-#include <QMap>
-#include <QMimeData>
-#include <QSharedPointer>
-#include <QStack>
-#include <QStringList>
-#include <QVariant>
-#include <QVector>
+#include <QFile>
+#include <QPainter>
+
+// CTK includes
+#include <ctkVTKLookupTable.h>
+#include <ctkTransferFunctionRepresentation.h>
 
 // qMRML includes
-#include "qMRMLItemHelper.h"
 #include "qMRMLSceneColorTableModel.h"
-#include "qMRMLSceneCategoryModel.h"
-#include "qMRMLUtils.h"
 
 // MRML includes
-#include <vtkMRMLColorNode.h>
-#include <vtkMRMLNode.h>
-#include <vtkMRMLScene.h>
+#include <vtkMRMLColorTableNode.h>
 
-// VTK includes
-#include <vtkVariantArray.h>
-
-class qMRMLCategoryItemHelperPrivate;
-class vtkCategory;
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLColorTableItemHelperFactory : public qMRMLCategoryItemHelperFactory
+class qMRMLSceneColorTableModelPrivate
 {
 public:
-  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object, int column, int row = -1)const;
+  struct ColorGradient
+  {
+    ColorGradient();
+    unsigned long MTime;
+    QGradient     Gradient;
+    QPixmap       Pixmap;
+  };
+  mutable QMap<QString, ColorGradient> GradientCache;
 };
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLColorTableNodeItemHelper
-  :public qMRMLCategoryNodeItemHelper
+qMRMLSceneColorTableModelPrivate::ColorGradient::ColorGradient()
 {
-public:
-  virtual QVariant data(int role)const;
-protected:
-  friend class qMRMLColorTableItemHelperFactory;
-  qMRMLColorTableNodeItemHelper(vtkMRMLNode* node, int column,
-                                const qMRMLAbstractItemHelperFactory* factory, int row);
-};
-
-// qMRMLColorTableItemHelperFactory
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLColorTableItemHelperFactory
-::createItem(vtkObject* object, int column, int row)const
-{
-  if (!object)
-    {
-    Q_ASSERT(object);
-    return 0;
-    }
-  if (object->IsA("vtkMRMLColorNode"))
-    {
-    return new qMRMLColorTableNodeItemHelper(vtkMRMLNode::SafeDownCast(object), column, this, row);
-    }
-  else
-    {
-    return this->qMRMLCategoryItemHelperFactory::createItem(object, column, row);
-    }
-  return 0;
-}
-
-// qMRMLColorTableNodeItemHelper
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-qMRMLColorTableNodeItemHelper
-::qMRMLColorTableNodeItemHelper(vtkMRMLNode* node,
-                                int itemColumn,
-                                const qMRMLAbstractItemHelperFactory* _factory, int _row)
-  :qMRMLCategoryNodeItemHelper(node, itemColumn, _factory, _row)
-{
-  Q_ASSERT(node);
-}
-
-//------------------------------------------------------------------------------
-QVariant qMRMLColorTableNodeItemHelper::data(int role)const
-{
-  if (role == Qt::DecorationRole)
-    {
-    vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(this->mrmlNode());
-    QString iconFileName(":" + QString(colorNode->GetName()));
-    if (!QFile::exists(iconFileName))
-      {
-      iconFileName = ":blankLUT";
-      }
-    return QIcon(iconFileName);
-    }
-  return qMRMLAbstractNodeItemHelper::data(role);
+  this->MTime = 0;
+  this->Pixmap = QPixmap(50, 31);
 }
 
 //------------------------------------------------------------------------------
@@ -122,7 +62,8 @@ QVariant qMRMLColorTableNodeItemHelper::data(int role)const
 
 //------------------------------------------------------------------------------
 qMRMLSceneColorTableModel::qMRMLSceneColorTableModel(QObject *vparent)
-  :qMRMLSceneTreeModel(new qMRMLColorTableItemHelperFactory, vparent)
+  : qMRMLSceneCategoryModel(vparent)
+  , d_ptr(new qMRMLSceneColorTableModelPrivate)
 {
 }
 
@@ -131,3 +72,66 @@ qMRMLSceneColorTableModel::~qMRMLSceneColorTableModel()
 {
 }
 
+//------------------------------------------------------------------------------
+void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
+{
+  Q_D(const qMRMLSceneColorTableModel);
+  this->qMRMLSceneModel::updateItemFromNode(item, node, column);
+  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
+  if (colorNode && column == 0)
+    {
+    /*
+    QString iconFileName(":" + QString(colorNode->GetName()));
+    if (!QFile::exists(iconFileName))
+      {
+      iconFileName = ":" + QString(colorNode->GetTypeAsString());
+      }
+    if (!QFile::exists(iconFileName))
+      {
+      iconFileName = ":blankLUT";
+      }
+    QPixmap lutPixmap(iconFileName);
+    item->setIcon(QIcon(lutPixmap));
+    */
+    if (updateGradientFromNode(colorNode))
+      {
+      qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient =
+        d->GradientCache[colorNode->GetID()];
+      item->setBackground(colorGradient.Gradient);
+      item->setIcon(colorGradient.Pixmap);
+      }
+    }
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorTableNode* node)const
+{
+  Q_D(const qMRMLSceneColorTableModel);
+  Q_ASSERT(node);
+  Q_ASSERT(node->GetLookupTable());
+  qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[node->GetID()];
+  if (colorGradient.MTime >= node->GetLookupTable()->GetMTime())
+    {
+    return false;
+    }
+  qDebug() << " calculate gradient for lookup table: " << node->GetLookupTable();
+  ctkVTKLookupTable lt(node->GetLookupTable());
+  ctkTransferFunctionRepresentation  tfr(&lt);
+  colorGradient.Gradient = tfr.gradient();
+  qDebug() << " end calculate gradient for lookup table: " << node->GetLookupTable();
+  colorGradient.Gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
+  QPainter pixmapPainter(&colorGradient.Pixmap);
+  pixmapPainter.fillRect(0,0,
+                         colorGradient.Pixmap.width(),
+                         colorGradient.Pixmap.height(),
+                         colorGradient.Gradient);
+  QGradientStops gradientStops = colorGradient.Gradient.stops();
+  int count = gradientStops.count();
+  for (int i = 0; i < count; ++i)
+    {
+    gradientStops[i].second.setAlpha(128);
+    }
+  colorGradient.Gradient.setStops(gradientStops);
+  colorGradient.MTime = node->GetLookupTable()->GetMTime();
+  return true;
+}

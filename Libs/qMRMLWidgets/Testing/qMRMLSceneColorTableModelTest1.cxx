@@ -30,10 +30,12 @@
 
 // qMRML includes
 #include "qMRMLNodeFactory.h"
-#include "qMRMLSceneCategoryModel2.h"
+#include "qMRMLSceneColorTableModel.h"
 
 #include "TestingMacros.h"
+// MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLColorTableNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -42,43 +44,25 @@
 #include <cstdlib>
 #include <iostream>
 
-int qMRMLSceneCategoryModel2Test1(int argc, char * argv [])
+int qMRMLSceneColorTableModelTest1(int argc, char * argv [])
 {
   QApplication app(argc, argv);
 
-  qMRMLSceneCategoryModel2 model;
+  qMRMLSceneColorTableModel model;
   model.setListenNodeModifiedEvent(true);
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   qMRMLNodeFactory nodeFactory(0);
   nodeFactory.setMRMLScene(scene);
-  nodeFactory.createNode("vtkMRMLROINode");
-  nodeFactory.addAttribute("Category", "First Category");
-  nodeFactory.createNode("vtkMRMLCameraNode");
-  nodeFactory.createNode("vtkMRMLViewNode");
-  nodeFactory.createNode("vtkMRMLLinearTransformNode");
-  nodeFactory.removeAttribute("Category");
-  nodeFactory.createNode("vtkMRMLDoubleArrayNode");
-  model.setMRMLScene(scene);
-  nodeFactory.createNode("vtkMRMLVolumePropertyNode");
-  nodeFactory.addAttribute("Category", "Second Category");
-  nodeFactory.createNode("vtkMRMLSliceNode");
-  nodeFactory.createNode("vtkMRMLSliceNode");
-  nodeFactory.addAttribute("Category", "Third Category");
-  nodeFactory.createNode("vtkMRMLViewNode");
-  nodeFactory.createNode("vtkMRMLViewNode");
-
-  QStringList scenePreItems =
-    QStringList() << "pre 1" << "pre 2" << "separator";
-  model.setPreItems(scenePreItems, 0);
-  model.setPreItems(scenePreItems, model.mrmlSceneItem());
-  if (model.itemFromCategory("Second Category") == 0 ||
-      model.itemFromCategory("Second Category") == model.mrmlSceneItem())
+  nodeFactory.addAttribute("Category", "First category");
+  vtkMRMLNode* node = nodeFactory.createNode("vtkMRMLColorTableNode");
+  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
+  if (colorNode)
     {
-    std::cerr << "Wrong category" << std::endl;
-    return EXIT_FAILURE;
+    colorNode->SetTypeToWarmShade1();
     }
-  model.setPreItems(scenePreItems, model.itemFromCategory("Second Category"));
+  model.setMRMLScene(scene);
+  colorNode->SetTypeToCool1();
 
   QTreeView* view = new QTreeView(0);
   view->setModel(&model);

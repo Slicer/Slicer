@@ -15,19 +15,14 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLNodeComboBoxTest2.cxx
   qMRMLNodeComboBoxTest3.cxx
   qMRMLNodeComboBoxTest4.cxx
-  qMRMLNodeComboBox2Test1.cxx
-  qMRMLNodeComboBox2Test2.cxx
-  qMRMLNodeComboBox2Test3.cxx
-  qMRMLNodeComboBox2Test4.cxx
   qMRMLNodeFactoryTest1.cxx
-  qMRMLSceneCategoryModel2Test1.cxx
-  qMRMLSceneColorTableModel2Test1.cxx
+  qMRMLSceneCategoryModelTest1.cxx
+  qMRMLSceneColorTableModelTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
   qMRMLSceneModelTest1.cxx
   #qMRMLTransformProxyModelTest1.cxx
   qMRMLSceneTransformModelTest1.cxx
   qMRMLSceneTransformModelTest2.cxx
-  qMRMLSceneTransformModel2Test1.cxx
   qMRMLTransformSlidersTest1.cxx
   qMRMLThreeDViewTest1.cxx
   qMRMLTreeWidgetTest1.cxx
@@ -73,18 +68,13 @@ SIMPLE_TEST( qMRMLNodeComboBoxTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest2 )
 SCENE_TEST ( qMRMLNodeComboBoxTest3 diffusionEditor.mrml)
 SIMPLE_TEST ( qMRMLNodeComboBoxTest4)
-SIMPLE_TEST( qMRMLNodeComboBox2Test1 )
-SIMPLE_TEST( qMRMLNodeComboBox2Test2 )
-SCENE_TEST ( qMRMLNodeComboBox2Test3 diffusionEditor.mrml)
-SIMPLE_TEST ( qMRMLNodeComboBox2Test4)
 SIMPLE_TEST( qMRMLNodeFactoryTest1 )
-SIMPLE_TEST( qMRMLSceneCategoryModel2Test1 )
-SIMPLE_TEST( qMRMLSceneColorTableModel2Test1 )
+SIMPLE_TEST( qMRMLSceneCategoryModelTest1 )
+SIMPLE_TEST( qMRMLSceneColorTableModelTest1 )
 SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )
 SIMPLE_TEST( qMRMLSceneModelTest1 )
 SIMPLE_TEST( qMRMLSceneTransformModelTest1 )
 SCENE_TEST( qMRMLSceneTransformModelTest2 vol_and_cube.mrml)
-SIMPLE_TEST( qMRMLSceneTransformModel2Test1 )
 SIMPLE_TEST( qMRMLTransformSlidersTest1 )
 SIMPLE_TEST( qMRMLThreeDViewTest1)
 SCENE_TEST( qMRMLTreeWidgetTest1 vol_and_cube.mrml)

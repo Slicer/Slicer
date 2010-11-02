@@ -20,8 +20,10 @@
 
 // QT includes
 #include <QApplication>
+#include <QDebug>
 #include <QString>
 #include <QStringList>
+#include <QTreeView>
 
 // CTK includes
 #include <ctkModelTester.h>
@@ -29,6 +31,7 @@
 // qMRML includes
 #include "qMRMLSceneFactoryWidget.h"
 #include "qMRMLSceneTransformModel.h"
+#include "qMRMLUtils.h"
 
 #include "TestingMacros.h"
 #include <vtkEventBroker.h>
@@ -37,16 +40,19 @@
 #include <cstdlib>
 #include <iostream>
 
-int qMRMLSceneTransformModelTest1(int argc, char * argv [] )
+int qMRMLSceneTransformModelTest1(int argc, char * argv [])
 {
   QApplication app(argc, argv);
 
+  qMRMLSceneTransformModel model;
+  model.setListenNodeModifiedEvent(true);
+  //qMRMLSceneModel model;
+  qMRMLSceneFactoryWidget sceneFactory(0);
+
   try
     {
-    qMRMLSceneTransformModel model;
     ctkModelTester tester(&model);
 
-    qMRMLSceneFactoryWidget sceneFactory(0);
     sceneFactory.generateScene();
 
     model.setMRMLScene(sceneFactory.mrmlScene());
@@ -88,12 +94,50 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [] )
       {
       sceneFactory.deleteNode();
       }
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+    sceneFactory.generateNode();
+
+    vtkMRMLNode* node1 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
+    vtkMRMLNode* node2 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
+    qDebug() << "startReparent";
+    qMRMLUtils::reparent(node1, node2);
+    qDebug() << "endReparent";
     }
   catch (const char* error)
     {
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
     }
-  return EXIT_SUCCESS;
+
+  QStandardItemModel m;
+  m.setColumnCount(2);
+  QStandardItem* item = new QStandardItem("titi");
+  m.insertRow(0, item);
+  QList<QStandardItem*> items;
+  items << new QStandardItem("toto");
+  items << new QStandardItem("tata");
+  items[0]->setBackground(QLinearGradient());
+  item->insertRow(0,items);
+
+  QTreeView* view = new QTreeView(0);
+  //view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  view->setDragDropMode(QAbstractItemView::InternalMove);
+  //view->setModel(&model);
+  view->setModel(&m);
+  view->show();
+  view->resize(500, 800);
+
+  return app.exec();
 }
 

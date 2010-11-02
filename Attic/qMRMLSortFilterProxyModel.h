@@ -18,12 +18,15 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSortFilterProxyModel2_h
-#define __qMRMLSortFilterProxyModel2_h
+#ifndef __qMRMLSortFilterProxyModel_h
+#define __qMRMLSortFilterProxyModel_h
 
 // Qt includes
 #include <QSortFilterProxyModel>
 #include <QStringList>
+
+// CTK includes
+#include <ctkPimpl.h>
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
@@ -31,10 +34,9 @@
 class vtkMRMLNode;
 class vtkMRMLScene;
 class qMRMLAbstractItemHelper;
-class qMRMLSortFilterProxyModel2Private;
-class QStandardItem;
+class qMRMLSortFilterProxyModelPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel2 : public QSortFilterProxyModel
+class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
@@ -43,8 +45,8 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel2 : public QSortFilterProxyM
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
 public:
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterProxyModel2(QObject *parent=0);
-  virtual ~qMRMLSortFilterProxyModel2();
+  qMRMLSortFilterProxyModel(QObject *parent=0);
+  virtual ~qMRMLSortFilterProxyModel();
 
   /// Retrive the associated vtkMRMLNode
   vtkMRMLScene* mrmlScene()const;
@@ -52,14 +54,14 @@ public:
   /// Retrive the associated vtkMRMLNode
   vtkMRMLNode* mrmlNode(const QModelIndex& index)const;
 
-  ///
+  /// 
   /// Set/Get node types to display in the list
-  /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
+  /// NodeTypes are the class names, i.e. vtkMRMLViewNode, 
   /// vtkMRMLTransformNode
   QStringList nodeTypes()const;
   void setNodeTypes(const QStringList& nodeTypes);
 
-  ///
+  /// 
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   void setShowHidden(bool);
@@ -68,7 +70,7 @@ public:
   ///
   /// Add node type attribute that filter the nodes to
   /// display
-  void addAttribute(const QString& nodeType,
+  void addAttribute(const QString& nodeType, 
                     const QString& attributeName,
                     const QVariant& attributeValue);
 
@@ -80,8 +82,8 @@ public:
   bool showChildNodeTypes()const;
 
   ///
-  /// If a node is a nodeType, hide the node if it is also
-  /// a ExcludedChildNodeType. (this can happen if nodeType is a
+  /// If a node is a nodeType, hide the node if it is also 
+  /// a ExcludedChildNodeType. (this can happen if nodeType is a 
   /// mother class of ExcludedChildNodeType)
   void setHideChildNodeTypes(const QStringList& nodeTypes);
   QStringList hideChildNodeTypes()const;
@@ -90,15 +92,15 @@ public:
 protected:
   //virtual bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
   virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;
-  //virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
-
-  QStandardItem* sourceItem(const QModelIndex& index)const;
+  virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
+  
+  qMRMLAbstractItemHelper* sourceItem(const QModelIndex& index)const;
 protected:
-  QScopedPointer<qMRMLSortFilterProxyModel2Private> d_ptr;
+  QScopedPointer<qMRMLSortFilterProxyModelPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLSortFilterProxyModel2);
-  Q_DISABLE_COPY(qMRMLSortFilterProxyModel2);
+  Q_DECLARE_PRIVATE(qMRMLSortFilterProxyModel);
+  Q_DISABLE_COPY(qMRMLSortFilterProxyModel);
 };
 
 #endif

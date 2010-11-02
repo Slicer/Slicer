@@ -52,6 +52,9 @@ public slots:
   void addDTI();
 
   void setMRMLIDsVisible(bool visible);
+
+  /// Reimplemented for internal reasons
+  virtual void setMRMLScene(vtkMRMLScene* scene);
 /* HIDDEN to the UI
   void setCurrentNodeName(const QString& name);
 

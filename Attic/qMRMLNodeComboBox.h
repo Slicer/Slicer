@@ -18,23 +18,27 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLNodeComboBox2_h
-#define __qMRMLNodeComboBox2_h
+#ifndef __qMRMLNodeComboBox_h
+#define __qMRMLNodeComboBox_h
 
 // Qt includes
 #include <QComboBox>
 
+// CTK includes
+#include <ctkPimpl.h>
+
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
-#include "qMRMLSortFilterProxyModel2.h"
+#include "qMRMLSortFilterProxyModel.h"
 
 class vtkMRMLNode;
 class vtkMRMLScene;
 
 class qMRMLNodeFactory;
-class qMRMLNodeComboBox2Private;
+class qMRMLNodeComboBoxPrivate;
+//class qMRMLSortFilterProxyModel;
 
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox2 : public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
@@ -52,10 +56,10 @@ public:
   /// Superclass typedef
   typedef QWidget Superclass;
 
-  /// Construct an empty qMRMLNodeComboBox2 with a null scene,
+  /// Construct an empty qMRMLNodeComboBox with a null scene,
   /// no nodeType, where the hidden nodes are not forced on display.
-  explicit qMRMLNodeComboBox2(QWidget* parent = 0);
-  virtual ~qMRMLNodeComboBox2();
+  explicit qMRMLNodeComboBox(QWidget* parent = 0);
+  virtual ~qMRMLNodeComboBox();
 
   ///
   /// Get MRML scene
@@ -63,7 +67,7 @@ public:
   ///
   /// Retrieve the sortFilterProxyModel used to filter/sort
   /// the nodes
-  qMRMLSortFilterProxyModel2* sortFilterProxyModel()const;
+  qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
 
   ///
   /// Set/Get node types to display in the list
@@ -232,8 +236,8 @@ signals:
   /// TBD:
   /// void nodeRemoved(vtkMRMLNode*);
 protected:
-  /// qMRMLNodeComboBox2 will not take ownership on the model.
-  qMRMLNodeComboBox2(QAbstractItemModel* model, QWidget* parent = 0);
+  /// qMRMLNodeComboBox will not take ownership on the model.
+  qMRMLNodeComboBox(QAbstractItemModel* model, QWidget* parent = 0);
   QAbstractItemModel* rootModel()const;
 
   void setComboBox(QComboBox* comboBox);
@@ -246,45 +250,45 @@ protected slots:
   void emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end);
 
 protected:
-  QScopedPointer<qMRMLNodeComboBox2Private> d_ptr;
+  QScopedPointer<qMRMLNodeComboBoxPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLNodeComboBox2);
-  Q_DISABLE_COPY(qMRMLNodeComboBox2);
+  Q_DECLARE_PRIVATE(qMRMLNodeComboBox);
+  Q_DISABLE_COPY(qMRMLNodeComboBox);
 };
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBox2::setShowHidden(bool enable)
+void qMRMLNodeComboBox::setShowHidden(bool enable)
 {
   this->sortFilterProxyModel()->setShowHidden(enable);
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLNodeComboBox2::showHidden()const
+bool qMRMLNodeComboBox::showHidden()const
 {
   return this->sortFilterProxyModel()->showHidden();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBox2::setShowChildNodeTypes(bool show)
+void qMRMLNodeComboBox::setShowChildNodeTypes(bool show)
 {
   this->sortFilterProxyModel()->setShowChildNodeTypes(show);
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLNodeComboBox2::showChildNodeTypes()const
+bool qMRMLNodeComboBox::showChildNodeTypes()const
 {
   return this->sortFilterProxyModel()->showChildNodeTypes();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBox2::setHideChildNodeTypes(const QStringList& _nodeTypes)
+void qMRMLNodeComboBox::setHideChildNodeTypes(const QStringList& _nodeTypes)
 {
   this->sortFilterProxyModel()->setHideChildNodeTypes(_nodeTypes);
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLNodeComboBox2::hideChildNodeTypes()const
+QStringList qMRMLNodeComboBox::hideChildNodeTypes()const
 {
   return this->sortFilterProxyModel()->hideChildNodeTypes();
 }

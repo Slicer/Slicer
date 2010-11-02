@@ -28,7 +28,6 @@
 #include <QVector>
 
 // qMRML includes
-#include "qMRMLItemHelper.h"
 #include "qMRMLSceneModel.h"
 #include "qMRMLUtils.h"
 
@@ -78,11 +77,11 @@ qMRMLSortFilterProxyModel::~qMRMLSortFilterProxyModel()
 }
 
 // -----------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIndex)const
+QStandardItem* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIndex)const
 {
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   Q_ASSERT(sceneModel);
-  return sceneModel->itemFromIndex(sourceIndex);
+  return sourceIndex.isValid() ? sceneModel->itemFromIndex(sourceIndex) : sceneModel->invisibleRootItem();
 }
 
 //-----------------------------------------------------------------------------
@@ -95,16 +94,14 @@ vtkMRMLScene* qMRMLSortFilterProxyModel::mrmlScene()const
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNode(const QModelIndex& proxyIndex)const
 {
-  QSharedPointer<qMRMLAbstractItemHelper> item =
-    QSharedPointer<qMRMLAbstractItemHelper>(
-      this->sourceItem(this->mapToSource(proxyIndex)));
-  return vtkMRMLNode::SafeDownCast(item->object());
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  return sceneModel->mrmlNodeFromIndex(this->mapToSource(proxyIndex));
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType, 
-                                     const QString& attributeName,
-                                     const QVariant& attributeValue)
+void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
+                                              const QString& attributeName,
+                                              const QVariant& attributeValue)
 {
   Q_D(qMRMLSortFilterProxyModel);
   if (!d->NodeTypes.contains(nodeType) ||
@@ -113,7 +110,7 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
     {
     return;
     }
-  d->Attributes[nodeType] = 
+  d->Attributes[nodeType] =
     qMRMLSortFilterProxyModelPrivate::AttributeType(attributeName, attributeValue);
   this->invalidateFilter();
 }
@@ -125,22 +122,20 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
 bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent)const
 {
   Q_D(const qMRMLSortFilterProxyModel);
-  QSharedPointer<qMRMLAbstractItemHelper> parentItem =
-    QSharedPointer<qMRMLAbstractItemHelper>(this->sourceItem(source_parent));
+  QStandardItem* parentItem = this->sourceItem(source_parent);
   if (parentItem == 0)
     {
     Q_ASSERT(parentItem);
     return false;
     }
-  QSharedPointer<qMRMLAbstractItemHelper> item = 
-    QSharedPointer<qMRMLAbstractItemHelper>(parentItem->child(source_row, 0));
-  if (item.data() == 0)
+  QStandardItem* item = parentItem->child(source_row, 0);
+  if (item == 0)
     {
     Q_ASSERT(item);
     return false;
     }
-  vtkObject* object = item->object();
-  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(object);
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  vtkMRMLNode* node = sceneModel->mrmlNodeFromItem(item);
   if (!node)
     {
     return true;
@@ -176,23 +171,21 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
           return false;
           }
         }
-      } 
+      }
     // filter by attributes
     if (d->Attributes.contains(nodeType))
       {
-      QString nodeAttribute = 
+      QString nodeAttribute =
         node->GetAttribute(d->Attributes[nodeType].first.toLatin1().data());
-      if (!nodeAttribute.isEmpty() && 
+      if (!nodeAttribute.isEmpty() &&
            nodeAttribute != d->Attributes[nodeType].second.toString())
         {
         return false;
         }
       }
-    
     return true;
     }
   return false;
-  
 }
 
 //-----------------------------------------------------------------------------
@@ -200,12 +193,6 @@ QStringList qMRMLSortFilterProxyModel::hideChildNodeTypes()const
 {
   Q_D(const qMRMLSortFilterProxyModel);
   return d->HideChildNodeTypes;
-}
-
-//------------------------------------------------------------------------------
-bool qMRMLSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right)const
-{
-  return Superclass::lessThan(left, right);
 }
 
 // --------------------------------------------------------------------------

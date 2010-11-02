@@ -22,7 +22,7 @@
 #include <QApplication>
 
 // qMRML includes
-#include "qMRMLNodeComboBox2.h"
+#include "qMRMLNodeComboBox.h"
 #include "qMRMLSceneFactoryWidget.h"
 
 // MRML includes
@@ -32,11 +32,11 @@
 #include <stdlib.h>
 #include <iostream>
 
-int qMRMLNodeComboBox2Test2( int argc, char * argv [] )
+int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  qMRMLNodeComboBox2 nodeSelector;
+  qMRMLNodeComboBox nodeSelector;
   qMRMLSceneFactoryWidget sceneFactory;
 
   sceneFactory.generateScene();

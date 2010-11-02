@@ -18,33 +18,19 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSceneTransformModel2_h
-#define __qMRMLSceneTransformModel2_h
+#ifndef __qMRMLSceneColorTableModel_h
+#define __qMRMLSceneColorTableModel_h
 
-#include "qMRMLSceneModel2.h"
+#include "qMRMLSceneTreeModel.h"
 
-class qMRMLSceneTransformModel2Private;
-
-class QMRML_WIDGETS_EXPORT qMRMLSceneTransformModel2 : public qMRMLSceneModel2
+class QMRML_WIDGETS_EXPORT qMRMLSceneColorTableModel : public qMRMLSceneTreeModel
 {
   Q_OBJECT
 
 public:
-  qMRMLSceneTransformModel2(QObject *parent=0);
-  virtual ~qMRMLSceneTransformModel2();
+  qMRMLSceneColorTableModel(QObject *parent=0);
+  virtual ~qMRMLSceneColorTableModel();
 
-  virtual Qt::DropActions supportedDropActions()const;
-
-protected:
-  virtual void populateScene();
-  virtual void insertNode(vtkMRMLNode* node);
-  using qMRMLSceneModel2::insertNode;
-  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
-
-private:
-  Q_DECLARE_PRIVATE(qMRMLSceneTransformModel2);
-  Q_DISABLE_COPY(qMRMLSceneTransformModel2);
 };
 
 #endif

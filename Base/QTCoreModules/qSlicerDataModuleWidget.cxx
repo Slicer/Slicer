@@ -115,20 +115,24 @@ void qSlicerDataModuleWidget::setup()
 void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)
 {
   Q_D(qSlicerDataModuleWidget);
-  if (visible)
-    {
-    d->MRMLTreeWidget->showColumn(1);
-    }
-  else
-    {
-    d->MRMLTreeWidget->hideColumn(1);
-    }
+
+  d->MRMLTreeWidget->setColumnHidden(1, !visible);
   const int columnCount = d->MRMLTreeWidget->header()->count();
   for(int i = 0; i < columnCount; ++i)
     {
     d->MRMLTreeWidget->resizeColumnToContents(i);
     }
+  d->DisplayMRMLIDsCheckBox->setChecked(visible);
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerDataModuleWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  Q_D(qSlicerDataModuleWidget);
+  this->qSlicerAbstractModuleWidget::setMRMLScene(scene);
+  this->setMRMLIDsVisible(d->DisplayMRMLIDsCheckBox->isChecked());
+}
+
 /* Hidden to the UI
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::onMRMLNodeChanged(vtkMRMLNode* node)
