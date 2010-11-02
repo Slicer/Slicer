@@ -143,6 +143,25 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetWidget(
 }
 
 //---------------------------------------------------------------------------
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetIntersectionWidget(
+    vtkMRMLAnnotationNode * node)
+{
+  if (!node)
+    {
+    return 0;
+    }
+
+  // Make sure the map contains a vtkWidget associated with this node
+  WidgetIntersectionsIt it = this->WidgetIntersections.find(node);
+  if (it == this->WidgetIntersections.end())
+    {
+    return 0;
+    }
+
+  return it->second;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
     vtkMRMLAnnotationNode *node)
 {
@@ -152,8 +171,8 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
   }
 
   // Make sure the map contains a vtkWidget associated with this node
-  WidgetsIt it = this->Widgets.find(node);
-  if (it == this->Widgets.end()) {
+  WidgetsIt widgetIterator = this->Widgets.find(node);
+  if (widgetIterator == this->Widgets.end()) {
     return;
   }
 
@@ -161,18 +180,27 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
   this->Widgets[node]->Delete();
   this->Widgets.erase(node);
 
-  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it2 = std::find(
+  WidgetIntersectionsIt widgetIntersectionIterator = this->WidgetIntersections.find(node);
+  if (widgetIntersectionIterator != this->WidgetIntersections.end()) {
+    // we have a vtkAbstractWidget to represent the slice intersections for this node
+    // now delete it!
+    this->WidgetIntersections[node]->Delete();
+    this->WidgetIntersections.erase(node);
+  }
+
+
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt nodeIterator = std::find(
       this->AnnotationNodeList.begin(),
       this->AnnotationNodeList.end(),
       node);
 
   // Make sure the map contains the annotationNode
-  if (it2 == this->AnnotationNodeList.end())
+  if (nodeIterator == this->AnnotationNodeList.end())
     {
     return;
     }
 
-  this->AnnotationNodeList.erase(it2);
+  this->AnnotationNodeList.erase(nodeIterator);
 
 }
 

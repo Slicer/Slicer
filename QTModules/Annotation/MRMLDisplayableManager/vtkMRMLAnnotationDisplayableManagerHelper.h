@@ -47,7 +47,20 @@ public:
 
   /// Get a vtkAbstractWidget* given a node
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
+  /// ...an its associated vtkAbstractWidget* for Slice intersection representation
+  vtkAbstractWidget * GetIntersectionWidget(vtkMRMLAnnotationNode * node);
+  /// Remove a node, its widget and its intersection widget
   void RemoveWidgetAndNode(vtkMRMLAnnotationNode *node);
+
+
+  //----------------------------------------------------------------------------------
+  // The Lists!!
+  //
+  // An annotation which is managed by a displayableManager consists of
+  //   a) the Annotation MRML Node (AnnotationNodeList)
+  //   b) the vtkWidget to show this annotation (Widgets)
+  //   c) a vtkWidget to represent sliceIntersections in the slice viewers (WidgetIntersections)
+  //
 
   /// List of Nodes managed by the DisplayableManager
   std::vector<vtkMRMLAnnotationNode*> AnnotationNodeList;
@@ -60,6 +73,18 @@ public:
 
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetsIt;
+
+  /// Map of vtkWidgets to reflect the Slice intersections indexed using associated node ID
+  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *> WidgetIntersections;
+
+  /// .. and its associated convenient typedef
+  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetIntersectionsIt;
+
+  //
+  // End of The Lists!!
+  //
+  //----------------------------------------------------------------------------------
+
 
   ///
   /// Placement of seeds for widget placement

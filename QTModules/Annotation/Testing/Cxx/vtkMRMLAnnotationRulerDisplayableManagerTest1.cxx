@@ -189,7 +189,6 @@ int vtkMRMLAnnotationRulerDisplayableManagerTest1(int argc, char* argv[])
    * Testing plan
    * 1. Create ruler annotation and fire vtkMRMLScene::NodeAddedEvent events through MRMLScene->AddNode
    * 2. Delete ruler annotations and fire vtkMRMLScene::NodeRemovedEvent events through MRMLScene->RemoveNode
-   * 3. Close MRML Scene
    *
    */
 
@@ -233,118 +232,36 @@ int vtkMRMLAnnotationRulerDisplayableManagerTest1(int argc, char* argv[])
 
   rulerNode->SetName(rulerNode->GetScene()->GetUniqueNameByString("AnnotationRuler"));
 
-  rulerNode->Delete();
-
-
   // fail if widget did not appear
   if (rr->GetViewProps()->GetNumberOfItems()!=1) {
     std::cerr << "Expected number of items in renderer: 1" << std::endl;
-    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
-    return EXIT_FAILURE;
-  }
-
-
-/*
-  // fail if widget did not appear
-  if (rr->GetViewProps()->GetNumberOfItems()!=4) {
-    std::cerr << "Expected number of items in renderer: 4" << std::endl;
     std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
     return EXIT_FAILURE;
   }
 
   //--------------------------------------------------------------------------------------
-  // TEST 3:
-  // Hide the added TextNodes and see if change gets propagated!
+  // TEST 2:
+  // Delete ruler annotations and fire vtkMRMLScene::NodeRemovedEvent events through MRMLScene->RemoveNode
   //
-  // fires OnMRMLAnnotationTextNodeModifiedEvent
-  textNode4->SetVisible(0);
-  // fail if widget did not appear
-  if (rr->GetViewProps()->GetNumberOfItems()!=3) {
-    std::cerr << "Expected number of items in renderer: 3" << std::endl;
-    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
-    return EXIT_FAILURE;
-  }
+  scene->RemoveNode(rulerNode);
 
-  // fires OnMRMLAnnotationTextNodeModifiedEvent
-  textNode3->SetVisible(0);
-  // fail if widget did not appear
-  if (rr->GetViewProps()->GetNumberOfItems()!=2) {
-    std::cerr << "Expected number of items in renderer: 2" << std::endl;
-    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  // fires OnMRMLAnnotationTextNodeModifiedEvent
-  textNode2->SetVisible(0);
-  // fail if widget did not appear
-  if (rr->GetViewProps()->GetNumberOfItems()!=1) {
-    std::cerr << "Expected number of items in renderer: 1" << std::endl;
-    std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  // fires OnMRMLAnnotationTextNodeModifiedEvent
-  textNode1->SetVisible(0);
-  // fail if widget did not appear
+  // fail if widget did not disappear
   if (rr->GetViewProps()->GetNumberOfItems()!=0) {
     std::cerr << "Expected number of items in renderer: 0" << std::endl;
     std::cerr << "Current number of items in renderer: " << rr->GetViewProps()->GetNumberOfItems() << std::endl;
     return EXIT_FAILURE;
   }
 
-
-
-*/
-  /*
-  // get the fourth widget
-  vtkPropCollection* props = rr->GetViewProps();
-  props->InitTraversal();
-  vtkProp* curProp = 0;
-  for(int i = 0; i < props->GetNumberOfItems(); i++)
-    {
-    std::cout << props->GetNumberOfItems();
-    curProp = props->GetNextProp();
-    //std::cout << curProp->GetPickable() << std::endl;
-    //std::cout << curProp->GetDragable() << std::endl;
-    std::cout << i << curProp->GetVisibility() << std::endl;
-    }
-
-  // fail if fourth widget did not hide
-  if (curProp->GetVisibility()!=0) {
-    std::cerr << "Expected visibility of last text node in renderer: 0" << std::endl;
-    std::cerr << "Current visibility of last text node in renderer: " << curProp->GetVisibility() << std::endl;
-    return EXIT_FAILURE;
-  }
-
-
-
-
-
-  vtkPropCollection* props = rr->GetViewProps();
-  props->InitTraversal();
-  for(int i = 0; i < props->GetNumberOfItems(); i++)
-    {
-    vtkProp* curProp = props->GetNextProp();
-    //std::cout << curProp->GetPickable() << std::endl;
-    //std::cout << curProp->GetDragable() << std::endl;
-    std::cout << curProp->GetVisibility() << std::endl;
-    }
-
-
-  textNode1->SetVisible(0);
-  //textNode1->SetLocked(1);
-  textNode2->SetVisible(0);
-  //textNode2->SetLocked(1);
-  textNode3->SetVisible(0);
-  //textNode3->SetLocked(1);
-*/
   // cleanup
-
-  scene->RemoveNode(rulerNode);
-
   rulerNode->Delete();
 
   applicationLogic->Delete();
+  scene->RemoveNode(viewNode);
+  viewNode->Delete();
+
+  factoryThreeDView->Delete();
+  factorySliceView->Delete();
+
   scene->Delete();
   rr->Delete();
   rw->Delete();

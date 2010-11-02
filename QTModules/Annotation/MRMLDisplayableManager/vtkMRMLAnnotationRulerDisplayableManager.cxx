@@ -21,6 +21,8 @@
 #include <vtkHandleRepresentation.h>
 #include <vtkInteractorEventRecorder.h>
 #include <vtkAbstractWidget.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderWindow.h>
 
 // std includes
 #include <string>
@@ -388,6 +390,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
   double worldCoordinates1[4];
   double worldCoordinates2[4];
 
+  bool allowMovement = true;
+
   if (this->GetSliceNode())
     {
     // 2D widget was changed
@@ -400,11 +404,37 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
     this->GetDisplayToWorldCoordinates(displayCoordinates2,worldCoordinates2);
 
+    if (displayCoordinates1[0] < 0 || displayCoordinates1[0] > this->GetInteractor()->GetRenderWindow()->GetSize()[0])
+      {
+      allowMovement = false;
+      }
+
+    if (displayCoordinates1[1] < 0 || displayCoordinates1[1] > this->GetInteractor()->GetRenderWindow()->GetSize()[1])
+      {
+      allowMovement = false;
+      }
+
+    if (displayCoordinates2[0] < 0 || displayCoordinates2[0] > this->GetInteractor()->GetRenderWindow()->GetSize()[0])
+      {
+      allowMovement = false;
+      }
+
+    if (displayCoordinates2[1] < 0 || displayCoordinates2[1] > this->GetInteractor()->GetRenderWindow()->GetSize()[1])
+      {
+      allowMovement = false;
+      }
+
     }
   else
     {
     rep->GetPoint1WorldPosition(worldCoordinates1);
     rep->GetPoint2WorldPosition(worldCoordinates2);
+    }
+
+  // if movement is not allowed, jump out
+  if (!allowMovement)
+    {
+    return;
     }
 
   // save worldCoordinates to MRML

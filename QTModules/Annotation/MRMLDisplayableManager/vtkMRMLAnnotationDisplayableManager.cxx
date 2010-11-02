@@ -523,32 +523,54 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         double P1plusP2minusP1[3];
         vtkMath::Add(displayP1,P2minusP1,P1plusP2minusP1);
 
-        VTK_CREATE(vtkPointHandleRepresentation2D, handle);
-        handle->GetProperty()->SetColor(1,0,0);
-        handle->SetHandleSize(10);
+        // Since we have the position of the intersection now,
+        // we want to show it using a marker inside the sliceViews.
+        //
+        // We query the list if we already have a marker for this special widget.
+        // If not, we create a new marker.
+        // In any case, we will move the marker (either the newly created or the old).
 
-        VTK_CREATE(vtkSeedRepresentation, rep);
-        rep->SetHandleRepresentation(handle);
+        vtkSeedWidget* marker = vtkSeedWidget::SafeDownCast(this->Helper->GetIntersectionWidget(rulerNode));
 
-        //seed widget
-        vtkSeedWidget* seedWidget = vtkSeedWidget::New();
-        seedWidget->CreateDefaultRepresentation();
+        if (!marker)
+          {
+          // we create a new marker.
 
-        seedWidget->SetRepresentation(rep);
+          VTK_CREATE(vtkPointHandleRepresentation2D, handle);
+          handle->GetProperty()->SetColor(1,0,0);
+          handle->SetHandleSize(10);
 
-        seedWidget->SetInteractor(this->GetInteractor());
-        seedWidget->SetCurrentRenderer(this->GetRenderer());
+          VTK_CREATE(vtkSeedRepresentation, rep);
+          rep->SetHandleRepresentation(handle);
 
-        //seedWidget->ProcessEventsOff();
-        seedWidget->CompleteInteraction();
+          marker = vtkSeedWidget::New();
 
-        seedWidget->On();
+          marker->CreateDefaultRepresentation();
 
+          marker->SetRepresentation(rep);
+
+          marker->SetInteractor(this->GetInteractor());
+          marker->SetCurrentRenderer(this->GetRenderer());
+
+          marker->ProcessEventsOff();
+          marker->CompleteInteraction();
+
+          marker->On();
+
+          // we save the marker in our WidgetIntersection list associated to this node
+          this->Helper->WidgetIntersections[rulerNode] = marker;
+
+          }
+
+        // remove all old markers associated with this node
+        marker->DeleteSeed(0);
+
+        // .. and create a new one at the intersection location
         VTK_CREATE(vtkHandleWidget, newhandle);
-        newhandle = seedWidget->CreateNewHandle();
+        newhandle = marker->CreateNewHandle();
         vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(P1plusP2minusP1);
 
-        seedWidget->On();
+        marker->On();
 
         std::cout << this->m_SliceNode->GetName() << ": " << P1plusP2minusP1[0] << "," << P1plusP2minusP1[1] << "," << P1plusP2minusP1[2] << std::endl;
 
