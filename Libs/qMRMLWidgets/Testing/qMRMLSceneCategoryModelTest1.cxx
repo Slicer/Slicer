@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QString>
 #include <QStringList>
+#include <QTimer>
 #include <QTreeView>
 
 // CTK includes
@@ -72,10 +73,13 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
     QStringList() << "pre 1" << "pre 2" << "separator";
   model.setPreItems(scenePreItems, 0);
   model.setPreItems(scenePreItems, model.mrmlSceneItem());
+
   if (model.itemFromCategory("Second Category") == 0 ||
       model.itemFromCategory("Second Category") == model.mrmlSceneItem())
     {
-    std::cerr << "Wrong category" << std::endl;
+    std::cerr << "Wrong category. Item: "
+              << model.itemFromCategory("Second Category")
+              << " scene item: " << model.mrmlSceneItem() << std::endl;
     return EXIT_FAILURE;
     }
   model.setPreItems(scenePreItems, model.itemFromCategory("Second Category"));
@@ -84,6 +88,11 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
   view->setModel(&model);
   view->show();
   view->resize(500, 800);
+
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
 
   return app.exec();
 }

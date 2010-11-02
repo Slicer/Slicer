@@ -514,7 +514,7 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem()const
     {
     QStandardItem* child = this->invisibleRootItem()->child(i);
     QVariant uid = child->data(qMRML::UIDRole);
-    if (uid.type() == QVariant::String ||
+    if (uid.type() == QVariant::String &&
         uid.toString() == "scene")
       {
       return child;

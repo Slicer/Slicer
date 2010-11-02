@@ -52,11 +52,9 @@ int qMRMLNodeComboBoxTest3( int argc, char * argv [] )
   scene->SetURL(argv[1]);
   scene->Connect();
 
-  QTimer autoExit;
   if (argc < 3 || QString(argv[2]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    QTimer::singleShot(200, &app, SLOT(quit()));
     }
 
   return app.exec();

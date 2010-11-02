@@ -56,11 +56,10 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
   node->SetName("foo");
 
   nodeSelector.show();
-  QTimer autoExit;
+
   if (argc < 2 || QString(argv[1]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    QTimer::singleShot(200, &app, SLOT(quit()));
     }
 
   return app.exec();

@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QString>
 #include <QStringList>
+#include <QTimer>
 #include <QTreeView>
 
 // CTK includes
@@ -46,12 +47,12 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
 
   qMRMLSceneTransformModel model;
   model.setListenNodeModifiedEvent(true);
-  //qMRMLSceneModel model;
   qMRMLSceneFactoryWidget sceneFactory(0);
 
   try
     {
     ctkModelTester tester(&model);
+    tester.setTestDataEnabled(false);
 
     sceneFactory.generateScene();
 
@@ -110,16 +111,16 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
 
     vtkMRMLNode* node1 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
     vtkMRMLNode* node2 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
-    qDebug() << "startReparent";
+    std::cout << "start reparenting node" << std::endl;
     qMRMLUtils::reparent(node1, node2);
-    qDebug() << "endReparent";
+    std::cout << "end reparenting node" << std::endl;
     }
   catch (const char* error)
     {
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
     }
-
+  /*
   QStandardItemModel m;
   m.setColumnCount(2);
   QStandardItem* item = new QStandardItem("titi");
@@ -129,14 +130,19 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
   items << new QStandardItem("tata");
   items[0]->setBackground(QLinearGradient());
   item->insertRow(0,items);
-
+  */
   QTreeView* view = new QTreeView(0);
   //view->setSelectionBehavior(QAbstractItemView::SelectRows);
   view->setDragDropMode(QAbstractItemView::InternalMove);
-  //view->setModel(&model);
-  view->setModel(&m);
+  view->setModel(&model);
+  //view->setModel(&m);
   view->show();
   view->resize(500, 800);
+
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
 
   return app.exec();
 }

@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QTimer>
 #include <QTreeView>
 
 // qMRML includes
@@ -132,6 +133,11 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   view->setDragDropMode(QAbstractItemView::InternalMove);
   view->setModel(&sceneModel);
   view->show();
+
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
 
   return app.exec();
 }
