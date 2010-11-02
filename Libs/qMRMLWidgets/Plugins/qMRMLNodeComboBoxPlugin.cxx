@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 #include "qMRMLNodeComboBoxPlugin.h"
-#include "qMRMLNodeComboBox.h"
+#include "qMRMLNodeComboBox2.h"
 
 qMRMLNodeComboBoxPlugin::qMRMLNodeComboBoxPlugin(QObject *_parent)
         : QObject(_parent)
@@ -28,22 +28,14 @@ qMRMLNodeComboBoxPlugin::qMRMLNodeComboBoxPlugin(QObject *_parent)
 
 QWidget *qMRMLNodeComboBoxPlugin::createWidget(QWidget *_parent)
 {
-  qMRMLNodeComboBox* _widget = new qMRMLNodeComboBox(_parent);
+  qMRMLNodeComboBox2* _widget = new qMRMLNodeComboBox2(_parent);
   return _widget;
 }
 
 QString qMRMLNodeComboBoxPlugin::domXml() const
 {
-  return "<widget class=\"qMRMLNodeComboBox\" \
-          name=\"MRMLNodeComboBox\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>20</height>\n"
-          "  </rect>\n"
-          " </property>\n"
+  return "<widget class=\"qMRMLNodeComboBox2\" \
+                  name=\"MRMLNodeComboBox\">\n"
           "</widget>\n";
 }
 
@@ -54,7 +46,7 @@ QIcon qMRMLNodeComboBoxPlugin::icon() const
 
 QString qMRMLNodeComboBoxPlugin::includeFile() const
 {
-  return "qMRMLNodeComboBox.h";
+  return "qMRMLNodeComboBox2.h";
 }
 
 bool qMRMLNodeComboBoxPlugin::isContainer() const
@@ -64,5 +56,5 @@ bool qMRMLNodeComboBoxPlugin::isContainer() const
 
 QString qMRMLNodeComboBoxPlugin::name() const
 {
-  return "qMRMLNodeComboBox";
+  return "qMRMLNodeComboBox2";
 }

@@ -75,6 +75,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLMatrixWidget.h
   qMRMLNodeComboBox.cxx
   qMRMLNodeComboBox.h
+  qMRMLNodeComboBox2.cxx
+  qMRMLNodeComboBox2.h
   qMRMLNodeFactory.cxx
   qMRMLNodeFactory.h
   qMRMLRangeWidget.cxx
@@ -83,17 +85,26 @@ SET(qMRMLWidgets_SRCS
   qMRMLROIWidget.h
   qMRMLSceneCategoryModel.cxx
   qMRMLSceneCategoryModel.h
+  qMRMLSceneCategoryModel2.cxx
+  qMRMLSceneCategoryModel2.h
   qMRMLSceneColorTableModel.cxx
   qMRMLSceneColorTableModel.h
+  qMRMLSceneColorTableModel2.cxx
+  qMRMLSceneColorTableModel2.h
   qMRMLSceneFactoryWidget.cxx
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
   qMRMLSceneModel.h
+  qMRMLSceneModel2.cxx
+  qMRMLSceneModel2.h
+  qMRMLSceneModel2_p.h
   qMRMLSceneSnapshotMenu.cxx
   qMRMLSceneSnapshotMenu.h
   qMRMLSceneSnapshotMenu_p.h
   qMRMLSceneTransformModel.cxx
   qMRMLSceneTransformModel.h
+  qMRMLSceneTransformModel2.cxx
+  qMRMLSceneTransformModel2.h
   qMRMLSceneTreeModel.cxx
   qMRMLSceneTreeModel.h
   qMRMLSliceControllerWidget.cxx
@@ -109,6 +120,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLSlicesControllerToolBar.h
   qMRMLSortFilterProxyModel.cxx
   qMRMLSortFilterProxyModel.h
+  qMRMLSortFilterProxyModel2.cxx
+  qMRMLSortFilterProxyModel2.h
   qMRMLThreeDView.cxx
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h
@@ -144,16 +157,21 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
   qMRMLNodeComboBox.h
+  qMRMLNodeComboBox2.h
   qMRMLNodeFactory.h
   qMRMLRangeWidget.h
   qMRMLROIWidget.h
   qMRMLSceneCategoryModel.h
+  qMRMLSceneCategoryModel2.h
   qMRMLSceneColorTableModel.h
+  qMRMLSceneColorTableModel2.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
+  qMRMLSceneModel2.h
   qMRMLSceneSnapshotMenu.h
   qMRMLSceneSnapshotMenu_p.h
   qMRMLSceneTransformModel.h
+  qMRMLSceneTransformModel2.h
   qMRMLSceneTreeModel.h
   qMRMLSliceControllerWidget.h
   qMRMLSliceControllerWidget_p.h
@@ -163,6 +181,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSliceWidget_p.h
   qMRMLSlicesControllerToolBar.h
   qMRMLSortFilterProxyModel.h
+  qMRMLSortFilterProxyModel2.h
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h
   qMRMLThreeDViewsControllerWidget.h

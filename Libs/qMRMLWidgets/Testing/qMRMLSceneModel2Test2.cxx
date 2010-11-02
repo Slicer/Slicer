@@ -54,44 +54,6 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  //sceneFactory.deleteScene();
-  //sceneFactory.generateScene();
-  //sceneModel.setMRMLScene(sceneFactory.mrmlScene());
-
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-  sceneFactory.generateNode();
-
-  if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 11)
-    {
-    std::cerr << "qMRMLSceneModel2 wrong number of children: "
-              << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  QStringList postNodes;
-  postNodes << QString("temporary item");
-  sceneModel.setPostItems(postNodes, sceneModel.mrmlSceneItem());
-  if (sceneModel.rowCount(sceneModel.mrmlSceneIndex()) != 12)
-    {
-    std::cerr << "qMRMLSceneModel2 wrong number of children after post: "
-              << sceneModel.rowCount(sceneModel.mrmlSceneIndex()) << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  // test if it can be replaced
-  postNodes.clear();
-  postNodes << "separator" << "post item 1" << "post item 2" << "post item 3";
-  sceneModel.setPostItems(postNodes, sceneModel.mrmlSceneItem());
-
   QStringList preNodes;
   preNodes << "pre item 1" << "pre item 2"  << "separator";
   sceneModel.setPreItems(preNodes, sceneModel.mrmlSceneItem());

@@ -337,12 +337,13 @@ bool qMRMLUtils::canBeAParent(vtkMRMLNode* node)
 bool qMRMLUtils::reparent(vtkMRMLNode* node, vtkMRMLNode* newParent)
 {
   Q_ASSERT(node);
-  if (!node)
+  if (!node || qMRMLUtils::parentNode(node) == newParent)
     {
     return false;
     }
+  Q_ASSERT(newParent != node);
   // MRML Transformable Nodes
-  vtkMRMLTransformableNode* transformableNode = 
+  vtkMRMLTransformableNode* transformableNode =
     vtkMRMLTransformableNode::SafeDownCast(node);
   if (transformableNode)
     {

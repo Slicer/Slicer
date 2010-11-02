@@ -152,6 +152,13 @@ void qMRMLNodeFactory::addAttribute(const QString& name, const QString& value)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLNodeFactory::removeAttribute(const QString& name)
+{
+  Q_D(qMRMLNodeFactory);
+  d->Attributes.remove(name);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLNodeFactory::setBaseName(const QString& className, const QString& baseName)
 {
   Q_D(qMRMLNodeFactory);

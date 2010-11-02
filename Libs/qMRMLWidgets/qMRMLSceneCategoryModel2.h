@@ -1,0 +1,54 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) 2010 Kitware Inc.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Julien Finet, Kitware Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
+
+#ifndef __qMRMLSceneCategoryModel2_h
+#define __qMRMLSceneCategoryModel2_h
+
+#include "qMRMLSceneModel2.h"
+
+class qMRMLSceneCategoryModel2Private;
+
+class QMRML_WIDGETS_EXPORT qMRMLSceneCategoryModel2 : public qMRMLSceneModel2
+{
+  Q_OBJECT
+
+public:
+  qMRMLSceneCategoryModel2(QObject *parent=0);
+  virtual ~qMRMLSceneCategoryModel2();
+
+  QStandardItem* itemFromCategory(const QString& category)const;
+  int categoryCount()const;
+
+protected:
+  virtual void populateScene();
+  virtual void insertNode(vtkMRMLNode* node);
+  using qMRMLSceneModel2::insertNode;
+  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
+
+  virtual void updateItemFromCategory(QStandardItem* item, const QString& category);
+  virtual QStandardItem* insertCategory(const QString& category, int row);
+
+private:
+  Q_DECLARE_PRIVATE(qMRMLSceneCategoryModel2);
+  Q_DISABLE_COPY(qMRMLSceneCategoryModel2);
+};
+
+#endif

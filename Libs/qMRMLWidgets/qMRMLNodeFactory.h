@@ -84,6 +84,7 @@ public:
   /// TODO: Support attributes for more than 1 node class
   /// Note: If an attribute already exist, it's value will be overwritten.
   void addAttribute(const QString& name, const QString& value);
+  void removeAttribute(const QString& name);
 
   ///
   /// Base name used to generate a name for create node.
