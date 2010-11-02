@@ -46,6 +46,9 @@
       </property>
       <item>
        <widget class="ctkAxesWidget" name="AxesWidget">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="autoReset">
          <bool>true</bool>
         </property>
@@ -448,7 +451,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qMRMLWidgets.qrc"/>
   <include location="../qMRMLWidgets.qrc"/>
  </resources>
  <connections/>
