@@ -195,7 +195,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnnotationLinesNode *refNode, char line[1024], int &typeColumn, 
+int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnnotationLinesNode *vtkNotUsed(refNode), char line[1024], int &typeColumn,
                                     int& startIDColumn,    int& endIDColumn, int& selColumn, int& visColumn, int& numColumns)
 {
  if (line[0] != '#' || line[1] != ' ') 

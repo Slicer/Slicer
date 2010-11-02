@@ -24,7 +24,7 @@ class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationFiducialsStorageNo
   // Read data and set it in the referenced node
   // NOTE: Subclasses should implement this method
   int ReadData(); 
-  virtual int ReadData(vtkMRMLNode *refNode) {return  this->ReadData();  }
+  virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) {return this->ReadData();  }
 
   // Description:
   // Get node XML tag name (like Storage, Model)
