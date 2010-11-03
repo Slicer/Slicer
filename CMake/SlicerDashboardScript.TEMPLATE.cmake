@@ -72,7 +72,7 @@ set(ADDITIONAL_CMAKECACHE_OPTION "
 # Update the following variable to match the chosen build options. This variable is used to 
 # generate both the build directory and the build name.
 # See http://www.cdash.org/CDash/index.php?project=Slicer4 for examples
-set(BUILD_OPTIONS_STRING "QT${MY_QT_VERSION}-PythonQt-With-Tcl-NoCLI") 
+set(BUILD_OPTIONS_STRING "PythonQt-With-Tcl-NoCLI") 
 
 #
 # Project specific properties
@@ -99,7 +99,7 @@ set(CTEST_NOTES_FILES "${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}")
 # Project specific properties
 #
 set(CTEST_PROJECT_NAME "Slicer4")
-set(CTEST_BUILD_NAME "${MY_OPERATING_SYSTEM}-${MY_COMPILER}-${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
+set(CTEST_BUILD_NAME "${MY_OPERATING_SYSTEM}-${MY_COMPILER}-QT${MY_QT_VERSION}-${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
 
 #
 # Display build info
