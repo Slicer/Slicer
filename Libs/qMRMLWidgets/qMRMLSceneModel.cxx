@@ -28,7 +28,6 @@
 #include <QMap>
 
 // qMRML includes
-#include "qMRMLItemHelper.h"
 #include "qMRMLSceneModel.h"
 #include "qMRMLSceneModel_p.h"
 #include "qMRMLUtils.h"
