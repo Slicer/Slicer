@@ -33,6 +33,16 @@ public:
   qMRMLSceneTransformModel(QObject *parent=0);
   virtual ~qMRMLSceneTransformModel();
 
+  ///
+  static vtkMRMLNode* parentNode(vtkMRMLNode* node);
+  static int          nodeIndex(vtkMRMLNode* node);
+  /// fast function that only check the type of the node to know if it can be a child.
+  static bool         canBeAChild(vtkMRMLNode* node);
+  /// fast function that only check the type of the node to know if it can be a parent.
+  static bool         canBeAParent(vtkMRMLNode* node);
+  /// if newParent == 0, set the node into the vtkMRMLScene
+  static bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
+
   virtual Qt::DropActions supportedDropActions()const;
 
 protected:
