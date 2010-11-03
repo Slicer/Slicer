@@ -22,6 +22,8 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   #qMRMLTransformProxyModelTest1.cxx
   qMRMLSceneTransformModelTest1.cxx
   qMRMLSceneTransformModelTest2.cxx
+  qMRMLSceneDisplayableModelTest1.cxx
+  qMRMLSceneDisplayableModelTest2.cxx
   qMRMLTransformSlidersTest1.cxx
   qMRMLThreeDViewTest1.cxx
   qMRMLTreeWidgetTest1.cxx
@@ -73,6 +75,8 @@ SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )
 SIMPLE_TEST( qMRMLSceneModelTest1 )
 SIMPLE_TEST( qMRMLSceneTransformModelTest1 )
 SCENE_TEST( qMRMLSceneTransformModelTest2 vol_and_cube.mrml)
+SIMPLE_TEST( qMRMLSceneDisplayableModelTest1 )
+SCENE_TEST( qMRMLSceneDisplayableModelTest2 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLTransformSlidersTest1 )
 SIMPLE_TEST( qMRMLThreeDViewTest1)
 SCENE_TEST( qMRMLTreeWidgetTest1 vol_and_cube.mrml)

@@ -82,7 +82,7 @@ SET(qMRMLWidgets_SRCS
   qMRMLSceneCategoryModel.cxx
   qMRMLSceneCategoryModel.h
   qMRMLSceneColorTableModel.cxx
-  qMRMLSceneColorTableModel.h
+  qMRMLSceneColorTableModel.h 
   qMRMLSceneFactoryWidget.cxx
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
@@ -92,6 +92,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLSceneSnapshotMenu_p.h
   qMRMLSceneTransformModel.cxx
   qMRMLSceneTransformModel.h
+  qMRMLSceneDisplayableModel.cxx
+  qMRMLSceneDisplayableModel.h
   qMRMLSliceControllerWidget.cxx
   qMRMLSliceControllerWidget.h
   qMRMLSliceControllerWidget_p.h
@@ -150,6 +152,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSceneSnapshotMenu.h
   qMRMLSceneSnapshotMenu_p.h
   qMRMLSceneTransformModel.h
+  qMRMLSceneDisplayableModel.h
   qMRMLSliceControllerWidget.h
   qMRMLSliceControllerWidget_p.h
   qMRMLSliceInformationWidget.h
