@@ -271,6 +271,7 @@ ENDIF(Slicer_LIBRARY_PROPERTIES)
 # PythonQt wrapping
 #
 IF(qMRMLWidgets_WRAP_PYTHON)
+  SET(KIT_PYTHONQT_SRCS) # Clear variable
   ctkMacroWrapPythonQt("org.slicer.libs" ${lib_name}
     KIT_PYTHONQT_SRCS "${qMRMLWidgets_SRCS}" FALSE)
   ADD_LIBRARY(${lib_name}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
