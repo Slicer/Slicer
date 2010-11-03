@@ -60,8 +60,6 @@ SET(qMRMLWidgets_SRCS
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.cxx
   qMRMLEventLoggerWidget.h
-  qMRMLItemHelper.cxx
-  qMRMLItemHelper.h
   qMRMLLayoutManager.cxx
   qMRMLLayoutManager.h
   qMRMLLayoutManager_p.h

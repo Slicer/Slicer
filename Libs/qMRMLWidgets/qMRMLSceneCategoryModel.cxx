@@ -28,7 +28,6 @@
 #include <QVector>
 
 // qMRML includes
-#include "qMRMLItemHelper.h"
 #include "qMRMLSceneCategoryModel.h"
 #include "qMRMLSceneModel_p.h"
 #include "qMRMLUtils.h"
