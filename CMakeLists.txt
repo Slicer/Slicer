@@ -261,29 +261,6 @@ SET(Slicer_INSTALL_MODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/Modules")
 SET(Slicer_HOME "${Slicer_BINARY_DIR}")
 
 #-----------------------------------------------------------------------------
-# Convenient macro allowing to download a file
-#------------------------------------------------------------------------------
-
-MACRO(downloadFile url dest)
-  IF(NOT EXISTS ${dest})
-    FILE(DOWNLOAD ${url} ${dest} STATUS status)
-    LIST(GET status 0 error_code)
-    LIST(GET status 1 error_msg)
-    IF(error_code)
-      MESSAGE(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
-    ENDIF()
-  ELSE()
-    # Make sure the file is not empty
-    FILE(READ ${dest} dest_content LIMIT 4)
-    STRING(LENGTH "${dest_content}" dest_length)
-    IF(NOT "${dest_length}" EQUAL 4)
-      FILE(REMOVE ${dest})
-      downloadFile(${url} ${dest})
-    ENDIF()
-  ENDIF()
-ENDMACRO()
-
-#-----------------------------------------------------------------------------
 # Disable the warnings that DevStudio 2005 emits wrt to sprintf, strcpu, etc.
 #
 # On Visual Studio 8 MS deprecated C. This removes all 1.276E1265 security
@@ -468,9 +445,6 @@ ENDIF()
 SET(git_repo http://github.com/commontk/CTK/raw/master/)
 
 IF(Slicer_USE_QT)
-  SET(file Utilities/CMake/FindCTK.cmake)
-  downloadFile(${git_repo}/${file} ${Slicer_BINARY_DIR}/CMake/FindCTK.cmake)
-
   FIND_PACKAGE(CTK REQUIRED)
   INCLUDE(${CTK_USE_FILE})
   # Update CMake module path
