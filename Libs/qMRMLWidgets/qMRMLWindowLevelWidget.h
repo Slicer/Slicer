@@ -61,8 +61,11 @@ public:
 
   /// 
   /// Return the current MRML node of interest
-  vtkMRMLScalarVolumeNode* mrmlVolumeNode()const
-    { return this->VolumeNode; };
+  vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
+  
+  ///
+  /// Set the range of the slider
+  void setRange(double min, double max);
 
 signals:
   /// 
@@ -106,16 +109,19 @@ protected slots:
   /// update widget GUI from MRML node
   void updateWidgetFromMRML();
 
+  void updateSpinBoxRange(double min, double max);
+  void updateRange();
+
 protected:
   /// 
   /// Return the current MRML display node
-  vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode()const 
-    { return this->VolumeDisplayNode;};
+  vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode()const;
 
   /// 
   /// Set current MRML display node
   void setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* displayNode);
 
+  void setupMoreOptions();
 
 protected:
   QScopedPointer<qMRMLWindowLevelWidgetPrivate> d_ptr;
@@ -123,9 +129,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLWindowLevelWidget);
   Q_DISABLE_COPY(qMRMLWindowLevelWidget);
-
-  vtkMRMLScalarVolumeNode* VolumeNode;
-  vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
 };
 
 #endif

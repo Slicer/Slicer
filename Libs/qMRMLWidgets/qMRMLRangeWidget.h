@@ -30,6 +30,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLRangeSliderPrivate;
+class QDoubleSpinBox;
 
 /// qMRMLRangeWidget is a wrapper around a ctkRangeWidget
 class QMRML_WIDGETS_EXPORT qMRMLRangeWidget : public ctkRangeWidget
@@ -53,6 +54,14 @@ public slots:
 
   /// Set the palette of the minimum handle
   void setMaximumHandlePalette(const QPalette& palette);
+
+protected slots:
+  void updateSpinBoxRange(double min, double max);
+  void updateRange();
+
+protected:
+  QDoubleSpinBox* MinSpinBox;
+  QDoubleSpinBox* MaxSpinBox;
 };
 
 /// qMRMLDoubleRangeSlider is a wrapper around a ctkDoubleRangeSlider

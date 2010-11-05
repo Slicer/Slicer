@@ -30,7 +30,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2" colspan="2">
+   <item row="0" column="2" colspan="3">
     <widget class="QComboBox" name="AutoManualComboBox">
      <item>
       <property name="text">
@@ -44,7 +44,7 @@
      </item>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QDoubleSpinBox" name="WindowSpinBox">
      <property name="prefix">
       <string>W: </string>
@@ -57,14 +57,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
+   <item row="2" column="1" colspan="2">
     <widget class="ctkDoubleRangeSlider" name="WindowLevelRangeSlider">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
+   <item row="2" column="3">
     <widget class="QDoubleSpinBox" name="LevelSpinBox">
      <property name="prefix">
       <string>L: </string>
@@ -77,6 +77,14 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="4">
+    <widget class="QToolButton" name="MoreOptionsButton">
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -86,6 +94,8 @@
    <header>ctkDoubleRangeSlider.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qMRMLWidgets.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -20,7 +20,12 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDoubleSpinBox>
+#include <QHBoxLayout>
+#include <QMenu>
 #include <QStyleOptionSlider>
+#include <QToolButton>
+#include <QWidgetAction>
 
 // CTK includes
 #include "qMRMLRangeWidget.h"
@@ -30,6 +35,40 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   : ctkRangeWidget(parentWidget)
 {
   this->setSlider(new qMRMLDoubleRangeSlider(0));
+  
+  QWidget* rangeWidget = new QWidget;
+  this->MinSpinBox = new QDoubleSpinBox;
+  this->MaxSpinBox = new QDoubleSpinBox;
+  this->MinSpinBox->setPrefix("Min: ");
+  this->MinSpinBox->setRange(-1000000., 1000000.);
+  this->MinSpinBox->setValue(this->minimum());
+  this->MaxSpinBox->setPrefix("Max: ");
+  this->MaxSpinBox->setRange(-1000000., 1000000.);
+  this->MaxSpinBox->setValue(this->maximum());
+  connect(this->MinSpinBox, SIGNAL(valueChanged(double)),
+          this, SLOT(updateRange()));
+  connect(this->MaxSpinBox, SIGNAL(valueChanged(double)),
+          this, SLOT(updateRange()));
+  connect(this->slider(), SIGNAL(rangeChanged(double, double)),
+          this, SLOT(updateSpinBoxRange(double, double)));
+  QHBoxLayout* rangeLayout = new QHBoxLayout;
+  rangeLayout->addWidget(this->MinSpinBox);
+  rangeLayout->addWidget(this->MaxSpinBox);
+  rangeLayout->setContentsMargins(0,0,0,0);
+  rangeWidget->setLayout(rangeLayout);
+  
+  QWidgetAction* rangeAction = new QWidgetAction(0);
+  rangeAction->setDefaultWidget(rangeWidget);
+  
+  QMenu* optionsMenu = new QMenu;
+  optionsMenu->addAction(rangeAction);
+  
+  QToolButton* optionsButton = new QToolButton(this);
+  optionsButton->setIcon(QIcon(":Icons/SliceMoreOptions.png"));
+  optionsButton->setMenu(optionsMenu);
+  optionsButton->setPopupMode(QToolButton::InstantPopup);
+  QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
+  gridLayout->addWidget(optionsButton,0,3);
 }
 
 // --------------------------------------------------------------------------
@@ -58,6 +97,20 @@ void qMRMLRangeWidget::setMaximumHandlePalette(const QPalette& palette)
 {
   qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())
     ->setMaximumHandlePalette(palette);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLRangeWidget::updateSpinBoxRange(double min, double max)
+{
+  this->MinSpinBox->setValue(min);
+  this->MaxSpinBox->setValue(max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLRangeWidget::updateRange()
+{
+  this->setRange(this->MinSpinBox->value(),
+                 this->MaxSpinBox->value());
 }
 
 // --------------------------------------------------------------------------
