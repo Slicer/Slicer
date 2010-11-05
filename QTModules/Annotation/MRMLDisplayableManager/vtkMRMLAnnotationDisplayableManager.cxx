@@ -873,6 +873,52 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double * 
 }
 
 //---------------------------------------------------------------------------
+/// Check if the displayCoordinates are inside the viewport and if not, correct the displayCoordinates
+void vtkMRMLAnnotationDisplayableManager::RestrictDisplayCoordinatesToViewport(double* displayCoordinates)
+{
+  double coords[2] = {displayCoordinates[0], displayCoordinates[1]};
+
+  vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(coords[0],coords[1]);
+  if (!pokedRenderer)
+    {
+    vtkErrorMacro("RestrictDisplayCoordinatesToViewport: Could not find the poked renderer!")
+    return;
+    }
+
+  pokedRenderer->DisplayToNormalizedDisplay(coords[0],coords[1]);
+  pokedRenderer->NormalizedDisplayToViewport(coords[0],coords[1]);
+  pokedRenderer->ViewportToNormalizedViewport(coords[0],coords[1]);
+
+  if (coords[0]<0.001)
+    {
+    coords[0] = 0.001;
+    }
+  else if (coords[0]>0.999)
+    {
+    coords[0] = 0.999;
+    }
+
+  if (coords[1]<0.001)
+    {
+    coords[1] = 0.001;
+    }
+  else if (coords[1]>0.999)
+    {
+    coords[1] = 0.999;
+    }
+
+  pokedRenderer->NormalizedViewportToViewport(coords[0],coords[1]);
+  pokedRenderer->ViewportToNormalizedDisplay(coords[0],coords[1]);
+  pokedRenderer->NormalizedDisplayToDisplay(coords[0],coords[1]);
+
+//  if (this->GetDisplayCoordinatesChanged(displayCoordinates,coords))
+//    {
+  displayCoordinates[0] = coords[0];
+  displayCoordinates[1] = coords[1];
+//    }
+}
+
+//---------------------------------------------------------------------------
 /// Check if there are real changes between two sets of displayCoordinates
 bool vtkMRMLAnnotationDisplayableManager::GetDisplayCoordinatesChanged(double * displayCoordinates1, double * displayCoordinates2)
 {

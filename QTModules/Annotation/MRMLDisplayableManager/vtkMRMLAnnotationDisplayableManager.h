@@ -52,7 +52,14 @@ public:
   virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
+  /// Get the sliceNode, if registered. This would mean it is a 2D SliceView displayableManager.
+  vtkMRMLSliceNode * GetSliceNode();
 
+  /// Check if the displayCoordinates are inside the viewport and if not, correct the displayCoordinates
+  void RestrictDisplayCoordinatesToViewport(double* displayCoordinates);
+
+  /// Check if there are real changes between two sets of displayCoordinates
+  bool GetDisplayCoordinatesChanged(double * displayCoordinates1, double * displayCoordinates2);
 
 protected:
 
@@ -78,9 +85,6 @@ protected:
 
   /// Check, if the widget is displayable in the current slice geometry
   bool IsWidgetDisplayable(vtkMRMLSliceNode * sliceNode, vtkMRMLAnnotationNode* node);
-
-  /// Get the sliceNode, if registered
-  vtkMRMLSliceNode * GetSliceNode();
 
   /// Observe all associated nodes.
   void SetAndObserveNodes();
@@ -111,17 +115,6 @@ protected:
   vtkHandleWidget * GetSeed(int index);
 
   //
-  // Widget functionality
-  //
-
-  /// Create a widget.
-  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
-  /// Gets called when widget was created
-  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node);
-  /// Get the widget of a node.
-  vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
-
-  //
   // Coordinate Conversions
   //
 
@@ -133,8 +126,16 @@ protected:
   void GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates);
   void GetWorldToDisplayCoordinates(double * worldCoordinates, double * displayCoordinates);
 
-  /// Check if there are real changes between two sets of displayCoordinates
-  bool GetDisplayCoordinatesChanged(double * displayCoordinates1, double * displayCoordinates2);
+  //
+  // Widget functionality
+  //
+
+  /// Create a widget.
+  virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
+  /// Gets called when widget was created
+  virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLAnnotationNode * node);
+  /// Get the widget of a node.
+  vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
 
   ///
   /// Check if it is the right displayManager

@@ -162,7 +162,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
     }
 
-
+  seedWidget->CompleteInteraction();
   seedWidget->On();
 
   //seedWidget->CompleteInteraction();
