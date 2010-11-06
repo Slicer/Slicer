@@ -66,6 +66,43 @@ public:
         }
       // sanity checks end
 
+      if (this->m_DisplayableManager->GetSliceNode())
+        {
+
+        // if this is a 2D SliceView displayableManager, restrict the widget to the renderer
+
+        // we need the widgetRepresentation
+        vtkAnnotationRulerRepresentation* representation = vtkAnnotationRulerRepresentation::SafeDownCast(this->m_Widget->GetRepresentation());
+
+        double displayCoordinates1[4];
+        double displayCoordinates2[4];
+
+        // first, we get the current displayCoordinates of the points
+        representation->GetPoint1DisplayPosition(displayCoordinates1);
+        representation->GetPoint2DisplayPosition(displayCoordinates2);
+
+        // second, we copy these to restrictedDisplayCoordinates
+        double restrictedDisplayCoordinates1[4] = {displayCoordinates1[0], displayCoordinates1[1], displayCoordinates1[2], displayCoordinates1[3]};
+        double restrictedDisplayCoordinates2[4] = {displayCoordinates2[0], displayCoordinates2[1], displayCoordinates2[2], displayCoordinates2[3]};
+
+        // modify restrictedDisplayCoordinates 1 and 2, if these are outside the viewport of the current renderer
+        this->m_DisplayableManager->RestrictDisplayCoordinatesToViewport(restrictedDisplayCoordinates1);
+        this->m_DisplayableManager->RestrictDisplayCoordinatesToViewport(restrictedDisplayCoordinates2);
+
+        // only if we had to restrict the coordinates aka. if the coordinates changed, we update the positions
+        if (this->m_DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates1,restrictedDisplayCoordinates1))
+          {
+          representation->SetPoint1DisplayPosition(restrictedDisplayCoordinates1);
+          }
+
+
+        if (this->m_DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates2,restrictedDisplayCoordinates2))
+          {
+          representation->SetPoint2DisplayPosition(restrictedDisplayCoordinates2);
+          }
+
+        }
+
       // the interaction with the widget ended, now propagate the changes to MRML
       this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
 

@@ -62,6 +62,34 @@ public:
         }
       // sanity checks end
 
+
+      if (this->m_DisplayableManager->GetSliceNode())
+        {
+
+        // if this is a 2D SliceView displayableManager, restrict the widget to the renderer
+
+        // we need the widgetRepresentation
+        vtkSeedRepresentation * representation = vtkSeedRepresentation::SafeDownCast(this->m_Widget->GetRepresentation());
+
+        double displayCoordinates1[4];
+
+        // first, we get the current displayCoordinates of the points
+        representation->GetSeedDisplayPosition(0,displayCoordinates1);
+
+        // second, we copy these to restrictedDisplayCoordinates
+        double restrictedDisplayCoordinates1[4] = {displayCoordinates1[0], displayCoordinates1[1], displayCoordinates1[2], displayCoordinates1[3]};
+
+        // modify restrictedDisplayCoordinates 1 and 2, if these are outside the viewport of the current renderer
+        this->m_DisplayableManager->RestrictDisplayCoordinatesToViewport(restrictedDisplayCoordinates1);
+
+        // only if we had to restrict the coordinates aka. if the coordinates changed, we update the positions
+        if (this->m_DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates1,restrictedDisplayCoordinates1))
+          {
+          representation->SetSeedDisplayPosition(0,restrictedDisplayCoordinates1);
+          }
+
+        }
+
       // the interaction with the widget ended, now propagate the changes to MRML
       this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
 
