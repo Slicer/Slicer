@@ -29,40 +29,6 @@
          <string>Create</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QPushButton" name="roiTypeButton">
-           <property name="toolTip">
-            <string>Region of interest</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QPushButton" name="textTypeButton">
-           <property name="toolTip">
-            <string>Text annotation</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationText.png</normaloff>:/Icons/AnnotationText.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="2">
           <widget class="QPushButton" name="rulerTypeButton">
            <property name="toolTip">
@@ -74,75 +40,6 @@
            <property name="icon">
             <iconset resource="../qSlicerAnnotationModule.qrc">
              <normaloff>:/Icons/AnnotationDistance.png</normaloff>:/Icons/AnnotationDistance.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QPushButton" name="fiducialTypeButton">
-           <property name="toolTip">
-            <string>Fiducial point</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationPoint.png</normaloff>:/Icons/AnnotationPoint.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="bidimensionalTypeButton">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Bidimensional measurement</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationBidimensional.png</normaloff>:/Icons/AnnotationBidimensional.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QPushButton" name="splineTypeButton">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Spline</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationSpline.png</normaloff>:/Icons/AnnotationSpline.png</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -227,8 +124,42 @@
            </item>
           </layout>
          </item>
-         <item row="1" column="3">
-          <widget class="QPushButton" name="stickyTypeButton">
+         <item row="0" column="0">
+          <widget class="QPushButton" name="textTypeButton">
+           <property name="toolTip">
+            <string>Text annotation</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../qSlicerAnnotationModule.qrc">
+             <normaloff>:/Icons/AnnotationText.png</normaloff>:/Icons/AnnotationText.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="fiducialTypeButton">
+           <property name="toolTip">
+            <string>Fiducial point</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../qSlicerAnnotationModule.qrc">
+             <normaloff>:/Icons/AnnotationPoint.png</normaloff>:/Icons/AnnotationPoint.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QPushButton" name="bidimensionalTypeButton">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -239,31 +170,14 @@
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Sticky Note</string>
+            <string>Bidimensional measurement</string>
            </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
             <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationNote.png</normaloff>:/Icons/AnnotationNote.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
-          <widget class="QPushButton" name="angleTypeButton">
-           <property name="toolTip">
-            <string>Angle measurement</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../qSlicerAnnotationModule.qrc">
-             <normaloff>:/Icons/AnnotationAngle.png</normaloff>:/Icons/AnnotationAngle.png</iconset>
+             <normaloff>:/Icons/AnnotationBidimensional.png</normaloff>:/Icons/AnnotationBidimensional.png</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>

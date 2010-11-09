@@ -501,7 +501,7 @@ void qSlicerAnnotationModuleWidget::setup()
   // annotation tools
   this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
       SLOT(onFiducialNodeButtonClicked()));
-  this->connect(d->stickyTypeButton, SIGNAL(clicked()), this,
+  /*this->connect(d->stickyTypeButton, SIGNAL(clicked()), this,
       SLOT(onStickyNodeButtonClicked()));
   this->connect(d->textTypeButton, SIGNAL(clicked()), this,
       SLOT(onTextNodeButtonClicked()));
@@ -509,10 +509,10 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(onAngleNodeButtonClicked()));
   this->connect(d->roiTypeButton, SIGNAL(clicked()), this,
       SLOT(onROINodeButtonClicked()));
+  this->connect(d->splineTypeButton, SIGNAL(clicked()), this,
+      SLOT(onSplineNodeButtonClicked()));*/
   this->connect(d->bidimensionalTypeButton, SIGNAL(clicked()), this,
       SLOT(onBidimensionalNodeButtonClicked()));
-  this->connect(d->splineTypeButton, SIGNAL(clicked()), this,
-      SLOT(onSplineNodeButtonClicked()));
   this->connect(d->rulerTypeButton, SIGNAL(clicked()), this,
       SLOT(onRulerNodeButtonClicked()));
 
@@ -1774,11 +1774,11 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
   this->m_CurrentAnnotationType = 0;
 
   d->textTypeButton->setChecked(false);
-  d->angleTypeButton->setChecked(false);
-  d->roiTypeButton->setChecked(false);
+  //d->angleTypeButton->setChecked(false);
+  //d->roiTypeButton->setChecked(false);
   d->fiducialTypeButton->setChecked(false);
-  d->splineTypeButton->setChecked(false);
-  d->stickyTypeButton->setChecked(false);
+  //d->splineTypeButton->setChecked(false);
+  //d->stickyTypeButton->setChecked(false);
   d->rulerTypeButton->setChecked(false);
   d->bidimensionalTypeButton->setChecked(false);
 
@@ -1794,11 +1794,11 @@ void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
   Q_D(qSlicerAnnotationModuleWidget);
 
   d->textTypeButton->setEnabled(false);
-  d->angleTypeButton->setEnabled(false);
-  d->roiTypeButton->setEnabled(false);
+  //d->angleTypeButton->setEnabled(false);
+  //d->roiTypeButton->setEnabled(false);
   d->fiducialTypeButton->setEnabled(false);
-  d->splineTypeButton->setEnabled(false);
-  d->stickyTypeButton->setEnabled(false);
+  //d->splineTypeButton->setEnabled(false);
+  //d->stickyTypeButton->setEnabled(false);
   d->rulerTypeButton->setEnabled(false);
   d->bidimensionalTypeButton->setEnabled(false);
 }
@@ -1853,7 +1853,7 @@ void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
   pixmap.save(tempdir);
   // end of hack
 
-  d->stickyTypeButton->setChecked(true);
+  //d->stickyTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
 
 }
@@ -1874,7 +1874,7 @@ void qSlicerAnnotationModuleWidget::onAngleNodeButtonClicked()
 
   this->disableAllAnnotationTools();
 
-  d->angleTypeButton->setChecked(true);
+  //d->angleTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
 }
 
@@ -1914,7 +1914,7 @@ void qSlicerAnnotationModuleWidget::onSplineNodeButtonClicked()
 
   this->disableAllAnnotationTools();
 
-  d->splineTypeButton->setChecked(true);
+  //d->splineTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
 }
 
@@ -1995,7 +1995,7 @@ void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
 
   this->disableAllAnnotationTools();
 
-  d->roiTypeButton->setChecked(true);
+  //d->roiTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
 }
 
@@ -2038,7 +2038,7 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, const char* annotationNodeID)
 {
- // Q_D(qSlicerAnnotationModuleWidget);
+  //Q_D(qSlicerAnnotationModuleWidget);
 
 
   // add hierarchy, if not exists
