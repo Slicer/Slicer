@@ -185,11 +185,27 @@ SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLTransformSliders.ui
   Resources/UI/qMRMLVolumeThresholdWidget.ui
   Resources/UI/qMRMLWindowLevelWidget.ui
-)
+  )
 
-QT4_WRAP_CPP(qMRMLWidgets_SRCS ${qMRMLWidgets_MOC_SRCS})
+SET(qMRMLWidgets_QRC_SRCS
+  Resources/qMRMLWidgets.qrc
+  )
+
+QT4_WRAP_CPP(qMRMLWidgets_MOC_CXX ${qMRMLWidgets_MOC_SRCS})
 QT4_WRAP_UI(qMRMLWidgets_UI_CXX ${qMRMLWidgets_UI_SRCS})
-QT4_ADD_RESOURCES(qMRMLWidgets_QRC_SRCS Resources/qMRMLWidgets.qrc)
+QT4_ADD_RESOURCES(qMRMLWidgets_QRC_CXX ${qMRMLWidgets_QRC_SRCS})
+
+SOURCE_GROUP("Resources" FILES
+  ${qMRMLWidgets_UI_SRCS}
+  ${qMRMLWidgets_QRC_SRCS}
+  )
+
+SOURCE_GROUP("Generated" FILES
+  ${qMRMLWidgets_MOC_CXX}
+  ${qMRMLWidgets_UI_CXX}
+  ${qMRMLWidgets_QRC_CXX}
+  )
+  
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -247,9 +263,10 @@ SET(lib_name "qMRMLWidgets")
 
 ADD_LIBRARY(${lib_name}
   ${qMRMLWidgets_SRCS}
+  ${qMRMLWidgets_MOC_CXX}
   ${qMRMLWidgets_UI_CXX}
-  ${qMRMLWidgets_QRC_SRCS}
-)
+  ${qMRMLWidgets_QRC_CXX}
+  )
 
 SET(qMRMLWidgets_LIBRARIES
   ${QT_LIBRARIES}
