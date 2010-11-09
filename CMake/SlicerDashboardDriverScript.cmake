@@ -109,6 +109,8 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
   endif()
   
   if (FILES_UPDATED GREATER 0 OR force_build)
+
+    set(force_build 0)
     
     ctest_submit(PARTS Update)
     
