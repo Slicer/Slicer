@@ -149,6 +149,8 @@ int main(int argc, char* argv[])
 //                   SLOT(setMRMLScene(vtkMRMLScene*)));
 //
 //  logger.show();
-  
+
+  // Look at QApplication::exec() documentation, it is recommended to connect
+  // clean up code to the aboutToQuit() signal
   return app.exec();
 }
