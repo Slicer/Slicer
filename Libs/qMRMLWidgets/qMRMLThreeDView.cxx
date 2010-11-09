@@ -251,7 +251,7 @@ qMRMLThreeDView::qMRMLThreeDView(QWidget* _parent) : Superclass(_parent)
   this->setRollDirection(ctkVTKRenderView::RollRight);
   this->setYawDirection(ctkVTKRenderView::YawLeft);
 
-  this->setRenderEnabled(true);
+  // true by default this->setRenderEnabled(true);
 }
 
 // --------------------------------------------------------------------------
@@ -329,7 +329,10 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
   // Enable/disable widget
   this->setDisabled(newViewNode == 0);
 
-  d->DisplayableManagerGroup->SetMRMLDisplayableNode(newViewNode);
+  if (d->DisplayableManagerGroup)
+    {
+    d->DisplayableManagerGroup->SetMRMLDisplayableNode(newViewNode);
+    }
 
   d->qvtkReconnect(
     d->MRMLViewNode, newViewNode,
