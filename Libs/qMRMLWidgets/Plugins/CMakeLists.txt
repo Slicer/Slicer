@@ -20,6 +20,8 @@ SET(designer_plugin_SRCS
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.cxx
   qMRMLMatrixWidgetPlugin.h
+  qMRMLNavigationViewPlugin.cxx
+  qMRMLNavigationViewPlugin.h
   qMRMLNodeComboBoxPlugin.cxx
   qMRMLNodeComboBoxPlugin.h
   qMRMLRangeWidgetPlugin.cxx
@@ -67,6 +69,7 @@ SET(designer_plugin_MOC_SRCS
   qMRMLLinearTransformSliderPlugin.h
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.h
+  qMRMLNavigationViewPlugin.h
   qMRMLNodeComboBoxPlugin.h
   qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.h

@@ -34,6 +34,7 @@
 
 class qMRMLThreeDViewsControllerWidgetPrivate;
 class vtkMRMLViewNode;
+class vtkRenderer;
 
 class QMRML_WIDGETS_EXPORT qMRMLThreeDViewsControllerWidget : public qMRMLWidget
 {
@@ -51,6 +52,7 @@ public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);
 
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
+  void setActiveThreeDRenderer(vtkRenderer* newActiveRenderer);
   void lookFromAxis(const ctkAxesWidget::Axis& axis);
 
 signals:

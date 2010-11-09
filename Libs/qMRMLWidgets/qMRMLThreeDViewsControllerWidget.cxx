@@ -425,6 +425,7 @@ void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
 
   d->ActiveMRMLThreeDViewNode = newActiveMRMLThreeDViewNode;
 
+  d->NavigationView->setMRMLViewNode(newActiveMRMLThreeDViewNode);
   d->updateWidgetFromMRML();
 
   // Enable buttons
@@ -439,6 +440,14 @@ void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
     {
     w->setEnabled(newActiveMRMLThreeDViewNode != 0);
     }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewsControllerWidget::setActiveThreeDRenderer(
+    vtkRenderer* renderer)
+{
+  Q_D(qMRMLThreeDViewsControllerWidget);
+  d->NavigationView->setRendererToListen(renderer);
 }
 
 // --------------------------------------------------------------------------

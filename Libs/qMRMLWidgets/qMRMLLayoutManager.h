@@ -36,6 +36,7 @@ class qMRMLLayoutManagerPrivate;
 class vtkCollection;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
+class vtkRenderer;
 
 class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public QObject
 {
@@ -71,6 +72,7 @@ public:
   int layout()const;
 
   vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
+  vtkRenderer* activeThreeDRenderer()const;
 
 public slots:
 
@@ -100,6 +102,7 @@ public slots:
 
 signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
+  void activeThreeDRendererChanged(vtkRenderer* newRenderer);
 
 protected:
   qMRMLLayoutManager(qMRMLLayoutManagerPrivate* obj, QWidget* widget);

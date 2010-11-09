@@ -145,7 +145,12 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
   this->MRMLThreeDViewsControllerWidget->setActiveMRMLThreeDViewNode(
       layoutManager->activeMRMLThreeDViewNode());
-
+  QObject::connect(layoutManager, SIGNAL(activeThreeDRendererChanged(vtkRenderer*)),
+                   this->MRMLThreeDViewsControllerWidget,
+                   SLOT(setActiveThreeDRenderer(vtkRenderer*)));
+  this->MRMLThreeDViewsControllerWidget->setActiveThreeDRenderer(
+      layoutManager->activeThreeDRenderer());
+  
   QObject::connect(this->MRMLThreeDViewsControllerWidget,
                    SIGNAL(screenshotButtonClicked()),
                    qSlicerApplication::application()->ioManager(),

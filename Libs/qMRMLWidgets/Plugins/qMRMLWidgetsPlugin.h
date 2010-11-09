@@ -8,6 +8,7 @@
 #include "qMRMLLinearTransformSliderPlugin.h"
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
+#include "qMRMLNavigationViewPlugin.h"
 #include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLRangeWidgetPlugin.h"
 #include "qMRMLROIWidgetPlugin.h"
@@ -45,6 +46,7 @@ public:
             << new qMRMLLinearTransformSliderPlugin
             << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin
+            << new qMRMLNavigationViewPlugin
             << new qMRMLNodeComboBoxPlugin
             << new qMRMLRangeWidgetPlugin
             << new qMRMLROIWidgetPlugin

@@ -71,6 +71,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLListWidget.h
   qMRMLMatrixWidget.cxx
   qMRMLMatrixWidget.h
+  qMRMLNavigationView.cxx
+  qMRMLNavigationView.h
   qMRMLNodeComboBox.cxx
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.cxx
@@ -141,6 +143,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
+  qMRMLNavigationView.h
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.h
   qMRMLRangeWidget.h

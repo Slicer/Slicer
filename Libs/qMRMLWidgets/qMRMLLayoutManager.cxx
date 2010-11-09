@@ -225,7 +225,10 @@ void qMRMLLayoutManagerPrivate::setActiveMRMLThreeDViewNode(vtkMRMLViewNode * no
     {
     return;
     }
+
   this->ActiveMRMLThreeDViewNode = node;
+
+  emit q->activeThreeDRendererChanged(q->activeThreeDRenderer());
   emit q->activeMRMLThreeDViewNodeChanged(this->ActiveMRMLThreeDViewNode);
 }
 
@@ -1016,6 +1019,14 @@ vtkMRMLScene* qMRMLLayoutManager::mrmlScene()const
 //------------------------------------------------------------------------------
 CTK_GET_CPP(qMRMLLayoutManager, vtkMRMLViewNode*,
             activeMRMLThreeDViewNode, ActiveMRMLThreeDViewNode)
+
+//------------------------------------------------------------------------------
+vtkRenderer* qMRMLLayoutManager::activeThreeDRenderer()const
+{
+  Q_D(const qMRMLLayoutManager);
+  qMRMLThreeDView* activeThreeDView = d->threeDView(d->ActiveMRMLThreeDViewNode);
+  return activeThreeDView ? activeThreeDView->renderer() : 0;
+}
 
 //------------------------------------------------------------------------------
 int qMRMLLayoutManager::layout()const
