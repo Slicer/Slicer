@@ -12,11 +12,13 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty2D.h>
+#include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkSeedWidget.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkSeedRepresentation.h>
 #include <vtkPointHandleRepresentation2D.h>
+#include <vtkPointHandleRepresentation3D.h>
 #include <vtkAbstractWidget.h>
 #include <vtkMatrix4x4.h>
 
@@ -142,12 +144,26 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     return 0;
     }
 
-  VTK_CREATE(vtkPointHandleRepresentation2D, handle);
-  handle->GetProperty()->SetColor(1,0,0);
-  handle->SetHandleSize(10);
-
   VTK_CREATE(vtkSeedRepresentation, rep);
-  rep->SetHandleRepresentation(handle);
+
+  // use different representations for 2D and 3D
+  if (this->GetSliceNode())
+    {
+    VTK_CREATE(vtkPointHandleRepresentation2D, handle);
+    handle->GetProperty()->SetColor(1,0,0);
+    handle->SetHandleSize(10);
+
+    rep->SetHandleRepresentation(handle);
+    }
+  else
+    {
+    VTK_CREATE(vtkPointHandleRepresentation3D, handle);
+    handle->GetProperty()->SetColor(1,0,0);
+    handle->SetHandleSize(10);
+
+    rep->SetHandleRepresentation(handle);
+    }
+
 
   //seed widget
   vtkSeedWidget * seedWidget = vtkSeedWidget::New();
@@ -163,11 +179,9 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
   seedWidget->On();
 
-  double worldCoordinates[4];
-  worldCoordinates[0] = fiducialNode->GetFiducialCoordinates()[0];
-  worldCoordinates[1] = fiducialNode->GetFiducialCoordinates()[1];
-  worldCoordinates[2] = fiducialNode->GetFiducialCoordinates()[2];
-  worldCoordinates[3] = 1;
+  // Use tmpPtr to query only one time for the coordinates
+  double* tmpPtr = fiducialNode->GetFiducialCoordinates();
+  double worldCoordinates[4] = {tmpPtr[0],tmpPtr[1],tmpPtr[2],1};
 
   double position1[4];
 
@@ -176,16 +190,14 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
 
     this->GetWorldToDisplayCoordinates(worldCoordinates,position1);
 
-    VTK_CREATE(vtkHandleWidget, newhandle);
-    newhandle = seedWidget->CreateNewHandle();
+    vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
     vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(position1);
 
     }
   else
     {
 
-    VTK_CREATE(vtkHandleWidget, newhandle);
-    newhandle = seedWidget->CreateNewHandle();
+    vtkHandleWidget* newhandle = seedWidget->CreateNewHandle();
     vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetWorldPosition(worldCoordinates);
 
     }
