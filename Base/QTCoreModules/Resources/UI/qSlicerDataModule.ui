@@ -525,7 +525,7 @@ p, li { white-space: pre-wrap; }
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="activate" stdset="0">
+     <property name="active" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
@@ -746,7 +746,7 @@ p, li { white-space: pre-wrap; }
    <sender>DisplayModifiyButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>DynamicSpacer</receiver>
-   <slot>activate(bool)</slot>
+   <slot>setActive(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>229</x>
