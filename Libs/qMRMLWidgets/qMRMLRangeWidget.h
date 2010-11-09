@@ -58,6 +58,7 @@ public slots:
 protected slots:
   void updateSpinBoxRange(double min, double max);
   void updateRange();
+  void updateSymmetricMoves(bool symmetric);
 
 protected:
   QDoubleSpinBox* MinSpinBox;

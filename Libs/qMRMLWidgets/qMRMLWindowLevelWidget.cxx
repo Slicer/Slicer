@@ -101,8 +101,15 @@ void qMRMLWindowLevelWidget::setupMoreOptions()
   QWidgetAction* rangeAction = new QWidgetAction(0);
   rangeAction->setDefaultWidget(rangeWidget);
   
+  QAction* symmetricAction = new QAction(tr("Symmetric handles"),0);
+  symmetricAction->setCheckable(true);
+  connect(symmetricAction, SIGNAL(toggled(bool)),
+          this, SLOT(updateSymmetricMoves(bool)));
+  symmetricAction->setChecked(true);
+  
   QMenu* optionsMenu = new QMenu;
   optionsMenu->addAction(rangeAction);
+  optionsMenu->addAction(symmetricAction);
   
   d->MoreOptionsButton->setMenu(optionsMenu);
   d->MoreOptionsButton->setPopupMode(QToolButton::InstantPopup);
@@ -361,4 +368,11 @@ void qMRMLWindowLevelWidget::setRange(double min, double max)
   d->WindowLevelRangeSlider->setRange(min, max);
   d->WindowSpinBox->setRange(0, max - min);
   d->LevelSpinBox->setRange(min, max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::updateSymmetricMoves(bool symmetric)
+{
+  Q_D(qMRMLWindowLevelWidget);
+  d->WindowLevelRangeSlider->setSymmetricMoves(symmetric);
 }

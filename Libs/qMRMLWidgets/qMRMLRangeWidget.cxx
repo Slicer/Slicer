@@ -60,8 +60,15 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   QWidgetAction* rangeAction = new QWidgetAction(0);
   rangeAction->setDefaultWidget(rangeWidget);
   
+  QAction* symmetricAction = new QAction(tr("Symmetric handles"),0);
+  symmetricAction->setCheckable(true);
+  connect(symmetricAction, SIGNAL(toggled(bool)),
+          this, SLOT(updateSymmetricMoves(bool)));
+  symmetricAction->setChecked(this->symmetricMoves());
+  
   QMenu* optionsMenu = new QMenu;
   optionsMenu->addAction(rangeAction);
+  optionsMenu->addAction(symmetricAction);
   
   QToolButton* optionsButton = new QToolButton(this);
   optionsButton->setIcon(QIcon(":Icons/SliceMoreOptions.png"));
@@ -111,6 +118,12 @@ void qMRMLRangeWidget::updateRange()
 {
   this->setRange(this->MinSpinBox->value(),
                  this->MaxSpinBox->value());
+}
+
+// --------------------------------------------------------------------------
+void qMRMLRangeWidget::updateSymmetricMoves(bool symmetric)
+{
+  this->setSymmetricMoves(symmetric);
 }
 
 // --------------------------------------------------------------------------
