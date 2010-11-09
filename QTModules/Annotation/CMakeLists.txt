@@ -79,8 +79,8 @@ SET(GUI_SRCS
   GUI/qSlicerAnnotationModuleReportDialog.h
   GUI/qSlicerAnnotationModulePushButton.cxx
   GUI/qSlicerAnnotationModulePushButton.h
-  GUI/qSlicerAnnotationModuleScreenShotDialog.cxx
-  GUI/qSlicerAnnotationModuleScreenShotDialog.h
+  GUI/qSlicerAnnotationModuleSnapShotDialog.cxx
+  GUI/qSlicerAnnotationModuleSnapShotDialog.h
   GUI/qSlicerAnnotationModuleImageUtil.cxx
   GUI/qSlicerAnnotationModuleImageUtil.h
   )
@@ -153,6 +153,8 @@ ENDFOREACH()
 #
 #-----------------------------------------------------------------------
 SET(MODULE_MRML_SRCS
+  vtkMRMLAnnotationSnapshotNode.cxx
+  vtkMRMLAnnotationSnapshotNode.h
   vtkMRMLAnnotationHierarchyNode.cxx
   vtkMRMLAnnotationHierarchyNode.h
   vtkMRMLAnnotationNode.cxx
@@ -215,7 +217,7 @@ SET(qt_module_MOC_SRCS
   GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.h
   GUI/qSlicerAnnotationModulePushButton.h
-  GUI/qSlicerAnnotationModuleScreenShotDialog.h
+  GUI/qSlicerAnnotationModuleSnapShotDialog.h
   )
 
 #-----------------------------------------------------------------------
@@ -227,7 +229,7 @@ SET(qt_module_UI_SRCS
   Resources/UI/qSlicerAnnotationModule.ui
   Resources/UI/qSlicerAnnotationModulePropertyDialog.ui
   Resources/UI/qSlicerAnnotationModuleReportDialog.ui
-  Resources/UI/qSlicerAnnotationModuleScreenShotDialog.ui
+  Resources/UI/qSlicerAnnotationModuleSnapShotDialog.ui
   )
  
 # Resources

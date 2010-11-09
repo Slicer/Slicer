@@ -2,6 +2,8 @@
 #include "ui_qSlicerAnnotationModule.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
+
+
 // CTK includes
 #include "ctkCollapsibleButton.h"
 // QT includes
@@ -23,12 +25,14 @@
 
 #include "vtkObserverManager.h"
 
+#include "qMRMLSceneDisplayableModel.h";
+
 // GUI includes
 #include "GUI/qSlicerAnnotationModulePushButton.h"
 #include "GUI/qSlicerAnnotationModuleReportDialog.h"
 #include "GUI/qSlicerAnnotationModulePropertyDialog.h"
 #include "GUI/qSlicerAnnotationModuleImageUtil.h"
-#include "GUI/qSlicerAnnotationModuleScreenShotDialog.h"
+#include "GUI/qSlicerAnnotationModuleSnapShotDialog.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerAnnotationModuleWidgetPrivate: public Ui_qSlicerAnnotationModule
@@ -457,11 +461,13 @@ qSlicerAnnotationModuleWidget::qSlicerAnnotationModuleWidget(QWidget* parent) :
   m_index = -1;
   m_lastAddedIndex = -1;
   m_ReportDialog = NULL;
-  m_ScreenShotDialog = NULL;
+  m_SnapShotDialog = NULL;
   m_report = "";
 
   this->m_PropertyDialog = 0;
   this->m_CurrentAnnotationType = 0;
+
+
 }
 
 //-----------------------------------------------------------------------------
@@ -472,10 +478,10 @@ qSlicerAnnotationModuleWidget::~qSlicerAnnotationModuleWidget()
     delete m_ReportDialog;
     m_ReportDialog = NULL;
     }
-  if (m_ScreenShotDialog != NULL)
+  if (m_SnapShotDialog != NULL)
     {
-    delete m_ScreenShotDialog;
-    m_ScreenShotDialog = NULL;
+    delete m_SnapShotDialog;
+    m_SnapShotDialog = NULL;
     }
 
   if (m_PropertyDialog)
@@ -1559,18 +1565,30 @@ void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text, char* no
 }
 
 void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
-{/*
+{
+
+
+  if (!this->m_SnapShotDialog)
+    {
+    this->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog();
+    }
+
+  this->m_SnapShotDialog->setVisible(true);
+
+
+
+  /*
   Q_D(qSlicerAnnotationModuleWidget);
 
    vtkImageData* image = vtkImageData::New();
    //image = d->logic()->SaveScreenShot();
 
-   if (m_ScreenShotDialog == NULL)
+   if (m_SnapShotDialog == NULL)
    {
-   m_ScreenShotDialog = new qSlicerAnnotationModuleScreenShotDialog();
+   m_SnapShotDialog =
    }
 
-   Ui::qSlicerAnnotationModuleScreenShotDialog ui = m_ScreenShotDialog->getScreenShotDialogUi();
+   Ui::qSlicerAnnotationModuleScreenShotDialog ui = m_SnapShotDialog->getScreenShotDialogUi();
 
    QImage img;
    qSlicerAnnotationModuleImageUtil::fromImageData(
@@ -1584,11 +1602,11 @@ void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
    ui.screenShotLabel->setScaledContents(
    true);
 
-   m_ScreenShotDialog->setVisible(
+   m_SnapShotDialog->setVisible(
    true);
 
    this->connect(
-   m_ScreenShotDialog,
+   m_SnapShotDialog,
    SIGNAL(filenameSelected()),
    this,
    SLOT(saveScreenShot()));*/
@@ -1596,7 +1614,8 @@ void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
 
 bool qSlicerAnnotationModuleWidget::saveScreenShot()
 {
-  QString filename = m_ScreenShotDialog->getFileName();
+  /*
+  QString filename = m_SnapShotDialog->getFileName();
 
   QFile file(filename);
   if (!file.open(QFile::WriteOnly))
@@ -1610,12 +1629,13 @@ bool qSlicerAnnotationModuleWidget::saveScreenShot()
   writer.write(m_screenshot.toImage());
   file.close();
 
-  m_ScreenShotDialog->close();
+  m_SnapShotDialog->close();
 
   m_screenshotList.push_back(filename);
 
   return true;
-
+*/
+  return false;
 }
 
 void qSlicerAnnotationModuleWidget::onItemSelectionChanged()

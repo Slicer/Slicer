@@ -12,7 +12,7 @@
 
 
 class qSlicerAnnotationModuleReportDialog;
-class qSlicerAnnotationModuleScreenShotDialog;
+class qSlicerAnnotationModuleSnapShotDialog;
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLAnnotationRulerNode;
 class vtkMRMLAnnotationAngleNode;
@@ -157,7 +157,7 @@ private:
 
   qSlicerAnnotationModulePropertyDialog* m_PropertyDialog;
   qSlicerAnnotationModuleReportDialog* m_ReportDialog;
-  qSlicerAnnotationModuleScreenShotDialog *m_ScreenShotDialog;
+
   QString m_report;
   int m_index;
   int m_lastAddedIndex;
@@ -165,6 +165,8 @@ private:
   QPixmap m_screenshot;
   QStringList m_screenshotList;
 
+
+  qSlicerAnnotationModuleSnapShotDialog* m_SnapShotDialog;
 
   /// Type of current Annotations - described by enum
   int m_CurrentAnnotationType;

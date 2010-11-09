@@ -1,4 +1,4 @@
-// .NAME vtkMRMLAnnotationFiducialNode - MRML node to represent a fiber bundle from tractography in DTI data.
+// .NAME vtkMRMLAnnotationTextNode - MRML node to represent a text.
 // .SECTION Description
 // Annotation nodes contains control points, internally represented as vtkPolyData.
 // A Annotation node contains many control points  and forms the smallest logical unit of tractography 
@@ -11,7 +11,6 @@
 
 #include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
-#include "vtkMRMLFiducial.h" 
 
 
 class vtkStringArray;
@@ -49,8 +48,6 @@ protected:
   ~vtkMRMLAnnotationTextNode() { }
   vtkMRMLAnnotationTextNode(const vtkMRMLAnnotationTextNode&);
   void operator=(const vtkMRMLAnnotationTextNode&);
-
-  void SetTextFromID();
 
 };
 
