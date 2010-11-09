@@ -12,9 +12,8 @@ set(proj Insight)
 if(NOT DEFINED ITK_DIR)
 #  message(STATUS "Adding project:${proj}")
   ExternalProject_Add(${proj}
-    CVS_REPOSITORY ":pserver:anonymous:insight@public.kitware.com:/cvsroot/Insight"
-    CVS_MODULE "Insight"
-    CVS_TAG -r ITK-3-20
+    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/ITK.git"
+    GIT_TAG "origin/slicer-4.0"
     UPDATE_COMMAND ""
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
