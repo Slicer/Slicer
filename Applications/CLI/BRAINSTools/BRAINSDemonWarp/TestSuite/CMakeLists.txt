@@ -8,7 +8,6 @@
 
 if(WIN32)
   set(BRAINSWARP_ITK_LIBS "")
-  set(BUILD_SUBDIR ${CMAKE_BUILD_TYPE}/)
 else(WIN32)
   set(BRAINSWARP_ITK_LIBS ITKAlgorithms ITKIO)
 endif(WIN32)
@@ -16,15 +15,15 @@ endif(WIN32)
 add_executable( BRAINSDemonWarpCLPTests BRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/BRAINSDemonWarpPrimary.cxx)
 target_link_libraries(BRAINSDemonWarpCLPTests BRAINSDemonWarpCommonLib ${BRAINSWARP_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 set_target_properties(BRAINSDemonWarpCLPTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSDemonWarp_BINARY_DIR})
-set(BRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} ${BRAINSDemonWarp_BINARY_DIR}/${BUILD_SUBDIR}BRAINSDemonWarpCLPTests )
+set(BRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} $<TARGET_FILE:BRAINSDemonWarpCLPTests> )
 
 add_executable( VBRAINSDemonWarpCLPTests VBRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/VBRAINSDemonWarpPrimary.cxx)
 target_link_libraries(VBRAINSDemonWarpCLPTests BRAINSDemonWarpCommonLib ${BRAINSWARP_ITK_LIBS} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 set_target_properties(VBRAINSDemonWarpCLPTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSDemonWarp_BINARY_DIR})
-set(VBRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} ${BRAINSDemonWarp_BINARY_DIR}/${BUILD_SUBDIR}VBRAINSDemonWarpCLPTests )
+set(VBRAINS_Demon_Warp_TESTS ${LAUNCH_EXE} $<TARGET_FILE:VBRAINSDemonWarpCLPTests> )
 
 #1
-add_test(ValidateBRAINSDemonsWarpTest_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateBRAINSDemonsWarpTest_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/thirionDemons.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_test.nii.gz
@@ -45,7 +44,7 @@ add_test(ValidateBRAINSDemonsWarpTest_nii ${BRAINS_Demon_Warp_TESTS}
 )
 
 #2
-add_test(ValidateFastSymmetricForcesTest_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateFastSymmetricForcesTest_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/fastSymmetricForcesDemons.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_test.nii.gz
@@ -68,7 +67,7 @@ add_test(ValidateFastSymmetricForcesTest_nii ${BRAINS_Demon_Warp_TESTS}
 )
 
 #3
-add_test(ValidateDiffeomorphicTest1_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateDiffeomorphicTest1_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons1.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons1_test.nii.gz
@@ -95,7 +94,7 @@ add_test(ValidateDiffeomorphicTest1_nii ${BRAINS_Demon_Warp_TESTS}
 )
 
 #4
-add_test(ValidateDiffeomorphicTest2_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateDiffeomorphicTest2_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons2.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons2_test.nii.gz
@@ -123,7 +122,7 @@ add_test(ValidateDiffeomorphicTest2_nii ${BRAINS_Demon_Warp_TESTS}
 )
 
 #5
-add_test(ValidateDiffeomorphicTest3_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateDiffeomorphicTest3_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons3.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons3_test.nii.gz
@@ -153,7 +152,7 @@ add_test(ValidateDiffeomorphicTest3_nii ${BRAINS_Demon_Warp_TESTS}
 )
 
 #6
-add_test(ValidateDiffeomorphicTest4_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateDiffeomorphicTest4_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons4.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemons4_test.nii.gz
@@ -178,7 +177,7 @@ add_test(ValidateDiffeomorphicTest4_nii ${BRAINS_Demon_Warp_TESTS}
 )
 
 ### Need to add more test to get better code coverage of this test suite.  Need to make sure that all the command line options are tested.
-add_test(ValidateOrientedImagesTest5_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateOrientedImagesTest5_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/ValidateOrientedImagesTest5.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/ValidateOrientedImagesTest5.nii.gz
@@ -198,7 +197,7 @@ add_test(ValidateOrientedImagesTest5_nii ${BRAINS_Demon_Warp_TESTS}
     --registrationFilterType Diffeomorphic
 )
 
-add_test(ValidateVectorBRAINSDemonWarpTest_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorBRAINSDemonWarpTest_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/thirionDemons.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/thirionDemons_V_test.nii.gz
@@ -219,7 +218,7 @@ add_test(ValidateVectorBRAINSDemonWarpTest_nii ${VBRAINS_Demon_Warp_TESTS}
 )
 
 
-add_test(ValidateVectorFastSymmetricForcesTest_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorFastSymmetricForcesTest_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/fastSymmetricForcesDemons.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/fastSymmetricForcesDemons_V_test.nii.gz
@@ -241,7 +240,7 @@ add_test(ValidateVectorFastSymmetricForcesTest_nii ${VBRAINS_Demon_Warp_TESTS}
     --registrationFilterType FastSymmetricForces
 )
 
-add_test(ValidateVectorDiffeomorphicTest1_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorDiffeomorphicTest1_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons1.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons1_test.nii.gz
@@ -268,7 +267,7 @@ add_test(ValidateVectorDiffeomorphicTest1_nii ${VBRAINS_Demon_Warp_TESTS}
 )
 
 
-add_test(ValidateVectorDiffeomorphicTest2_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorDiffeomorphicTest2_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons2.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons2_test.nii.gz
@@ -293,7 +292,7 @@ add_test(ValidateVectorDiffeomorphicTest2_nii ${VBRAINS_Demon_Warp_TESTS}
     --registrationFilterType Diffeomorphic
 )
 
-add_test(ValidateVectorDiffeomorphicTest3_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorDiffeomorphicTest3_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons3.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons3_test.nii.gz
@@ -323,7 +322,7 @@ add_test(ValidateVectorDiffeomorphicTest3_nii ${VBRAINS_Demon_Warp_TESTS}
 )
 
 
-add_test(ValidateVectorDiffeomorphicTest4_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorDiffeomorphicTest4_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons4.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons4_test.nii.gz
@@ -348,7 +347,7 @@ add_test(ValidateVectorDiffeomorphicTest4_nii ${VBRAINS_Demon_Warp_TESTS}
     --outputDisplacementFieldPrefix ${BRAINSDemonWarp_BINARY_DIR}/displacement.nii.gz
 )
 
-add_test(ValidateVectorDiffeomorphicTest5_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorDiffeomorphicTest5_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons5.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons5_test.nii.gz
@@ -374,7 +373,7 @@ add_test(ValidateVectorDiffeomorphicTest5_nii ${VBRAINS_Demon_Warp_TESTS}
     --registrationFilterType Diffeomorphic
 )
 
-add_test(ValidateVectorDiffeomorphicTest6_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorDiffeomorphicTest6_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons3.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/vectordiffeomorphicDemons6_test.nii.gz
@@ -405,7 +404,7 @@ add_test(ValidateVectorDiffeomorphicTest6_nii ${VBRAINS_Demon_Warp_TESTS}
 
 
 
-add_test(ValidateVectorOrientedImagesTest6_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorOrientedImagesTest6_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/ValidateVectorOrientedImagesTest6.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest6.nii.gz
@@ -424,7 +423,7 @@ add_test(ValidateVectorOrientedImagesTest6_nii ${VBRAINS_Demon_Warp_TESTS}
     --registrationFilterType Diffeomorphic
 )
 
-add_test(ValidateVectorOrientedImagesTest7_nii ${VBRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateVectorOrientedImagesTest7_nii COMMAND ${VBRAINS_Demon_Warp_TESTS}
  --compare
     ${BRAINSCommonLib_DATA_DIRS}/ValidateVectorOrientedImagesTest7.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/ValidateVectorOrientedImagesTest7.nii.gz
@@ -444,7 +443,7 @@ add_test(ValidateVectorOrientedImagesTest7_nii ${VBRAINS_Demon_Warp_TESTS}
     --registrationFilterType Diffeomorphic
 )
 
-add_test(ValidateDiffeomorphicWithAUTOMask_Test_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateDiffeomorphicWithAUTOMask_Test_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemons_AutoMask.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithAutoMask_test.nii.gz
@@ -470,7 +469,7 @@ add_test(ValidateDiffeomorphicWithAUTOMask_Test_nii ${BRAINS_Demon_Warp_TESTS}
     --registrationFilterType Diffeomorphic
 )
 
-add_test(ValidateDiffeomorphicWithMask_Test_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateDiffeomorphicWithMask_Test_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/diffeomorphicDemonsWithMask.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/diffeomorphicDemonsWithMask_test.nii.gz
@@ -499,7 +498,7 @@ add_test(ValidateDiffeomorphicWithMask_Test_nii ${BRAINS_Demon_Warp_TESTS}
 )
 
 #Test for initial Transform
-add_test(ValidateInitialTransform_Test_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateInitialTransform_Test_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/ValidateInitialTransform_Test.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/ValidateInitialTransform_Test.nii.gz
@@ -521,7 +520,7 @@ add_test(ValidateInitialTransform_Test_nii ${BRAINS_Demon_Warp_TESTS}
 )
 
 #Test for Log Domain
-add_test(ValidateLogDemons_Test_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateLogDemons_Test_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/logDemons.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/logDemons_test.nii.gz
@@ -543,7 +542,7 @@ add_test(ValidateLogDemons_Test_nii ${BRAINS_Demon_Warp_TESTS}
     --registrationFilterType LogDemons
 )
 
-add_test(ValidateSymmetricLogDemons_Test1_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateSymmetricLogDemons_Test1_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/symmetricLogDemons1.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test1.nii.gz
@@ -565,7 +564,7 @@ add_test(ValidateSymmetricLogDemons_Test1_nii ${BRAINS_Demon_Warp_TESTS}
     --registrationFilterType SymmetricLogDemons
 )
 
-add_test(ValidateSymmetricLogDemons_Test2_nii ${BRAINS_Demon_Warp_TESTS}
+add_test(NAME ValidateSymmetricLogDemons_Test2_nii COMMAND ${BRAINS_Demon_Warp_TESTS}
   --compare
     ${BRAINSCommonLib_DATA_DIRS}/symmetricLogDemons2.nii.gz
     ${BRAINSDemonWarp_BINARY_DIR}/symmetricLogDemons_test2.nii.gz

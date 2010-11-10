@@ -43,17 +43,21 @@ include_directories(
   ${ModuleDescriptionParser_SOURCE_DIR}
   )
 
-set(EXE_PREFIX ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
-if(WIN32)
-  set(EXE_PREFIX ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
-endif(WIN32)
-
 set(TEST_DATA ${ModuleDescriptionParserTesting_SOURCE_DIR}/TestData)
-add_test(Parser1Test1 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest1.xml)
+add_test(
+  NAME Parser1Test1 
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Parser1Test> ${TEST_DATA}/ParserTest1.xml
+  )
 
-add_test(Parser1Test2 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest2.xml)
+add_test(
+  NAME Parser1Test2 
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Parser1Test> ${TEST_DATA}/ParserTest2.xml)
 
 if(Slicer_BINARY_DIR)
-  add_test(ModuleFactoryTest ${LAUNCH_EXE} ${EXE_PREFIX}/ModuleFactoryTest ${Slicer_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/)
-endif(Slicer_BINARY_DIR)
+  add_test(
+    NAME ModuleFactoryTest 
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:ModuleFactoryTest> 
+      ${Slicer_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/
+    )
+endif()
 

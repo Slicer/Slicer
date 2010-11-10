@@ -17,14 +17,9 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME})
 
-SET( KIT_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
-IF(WIN32)
-  SET(KIT_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
-ENDIF(WIN32)
-
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${LAUNCH_EXE} ${KIT_TESTS} ${TESTNAME} )
-ENDMACRO( SIMPLE_TEST  )
+MACRO(SIMPLE_TEST TESTNAME)
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
+ENDMACRO()
 
 #
 # Add Tests
@@ -32,15 +27,16 @@ ENDMACRO( SIMPLE_TEST  )
 
 # Remark: qSlicerModuleFactoryManager class is tested within Applications/SlicerQT/Testing
 
-ADD_TEST( qSlicerCoreApplicationTest1
-  ${LAUNCH_EXE}
-  ${KIT_TESTS} qSlicerCoreApplicationTest1
+ADD_TEST(
+  NAME qSlicerCoreApplicationTest1
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> qSlicerCoreApplicationTest1
   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SlicerQT )
 
-ADD_TEST( qSlicerCoreIOManagerTest1
-  ${LAUNCH_EXE}
-  ${KIT_TESTS} qSlicerCoreIOManagerTest1
-  ${CMAKE_SOURCE_DIR}/Libs/MRML/Testing/name.mrml)
+ADD_TEST(
+  NAME qSlicerCoreIOManagerTest1
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> qSlicerCoreIOManagerTest1
+    ${CMAKE_SOURCE_DIR}/Libs/MRML/Testing/name.mrml
+  )
 
 SIMPLE_TEST( qSlicerAbstractCoreModuleTest1 )
 SIMPLE_TEST( qSlicerLoadableModuleFactoryTest1 )

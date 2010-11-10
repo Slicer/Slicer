@@ -318,10 +318,10 @@ INSTALL(TARGETS ${lib_name}
 # Testing
 #
 IF(BUILD_TESTING)
+  ADD_SUBDIRECTORY(Testing)
 ENDIF(BUILD_TESTING)
 
 # --------------------------------------------------------------------------
 # Sub directories
 #
 ADD_SUBDIRECTORY(Plugins)
-ADD_SUBDIRECTORY(Testing)

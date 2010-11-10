@@ -20,24 +20,29 @@ include_directories(${DicomToNrrdConverter_BINARY_DIR})
 include_directories(${ModuleDescriptionParser_SOURCE_DIR})
 include_directories (${TCLAP_SOURCE_DIR}/include)
 
+set (CLP DicomToNrrdConverter)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ${CLP}Lib)
+
+
+#-----------------------------------------------------------------------------
+# Testing
+#-----------------------------------------------------------------------------
+
 #
 # Slicer3 is needed to resolve shared libraries
 #
-set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
 set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
-##################################
 # DicomToNrrdConverter tests
-add_test(DicomToNrrdConverterTest ${Slicer_EXE} --launch DicomToNrrdConverterTest
+add_test(
+    NAME ${CLP}Test 
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --inputDicomDirectory ${TEST_DATA}/DWIDicom
     --outputDirectory ${TEMP}
     --outputVolume DWIDicom.nhdr
   )
-
-set (CLP DicomToNrrdConverter)
-add_executable(${CLP}Test ${CLP}Test.cxx)
-add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ${CLP}Lib)
 

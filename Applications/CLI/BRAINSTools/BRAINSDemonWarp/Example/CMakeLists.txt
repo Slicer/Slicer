@@ -5,10 +5,6 @@ cmake_minimum_required(VERSION 2.8.2)
 #-----------------------------------------------------------------------------
 
 
-if (WIN32)
-  set(BUILD_SUBDIR ${CMAKE_BUILD_TYPE}/)
-endif (WIN32)
-
 if(0)
 if(BUILD_SHARED_LIBS)
 ## The dynamicly loadable slicer module can be built
@@ -32,13 +28,13 @@ set(SimpleDiffeomorphicRegistration_SOURCE lib_test.cxx)
 add_executable( SimpleDiffeomorphicRegistrationCLP ${SimpleDiffeomorphicRegistration_SOURCE} )
 target_link_libraries(SimpleDiffeomorphicRegistrationCLP BRAINSDemonWarpLIB)
 
-set(LIB_TEST ${LAUNCH_EXE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${BUILD_SUBDIR}SimpleDiffeomorphicRegistrationCLP)
+add_test(
+   NAME ValidateLIB 
+   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:SimpleDiffeomorphicRegistrationCLP>
+     ${BRAINSDemonWarp_SOURCE_DIR}/TestingBRAINSDemonWarp/ANON0006_20_T1_dbg_splayed.nii.gz
+     ${BRAINSDemonWarp_SOURCE_DIR}/TestingBRAINSDemonWarp/ANON0006_20_T1_sag_twisted.nii.gz
+     ${BRAINSDemonWarp_BINARY_DIR}/orientedImagesDemons_lib_test.nii.gz
+   )
 
-add_test(ValidateLIB ${LIB_TEST}
-   ${BRAINSDemonWarp_SOURCE_DIR}/TestingBRAINSDemonWarp/ANON0006_20_T1_dbg_splayed.nii.gz
-   ${BRAINSDemonWarp_SOURCE_DIR}/TestingBRAINSDemonWarp/ANON0006_20_T1_sag_twisted.nii.gz
-   ${BRAINSDemonWarp_BINARY_DIR}/orientedImagesDemons_lib_test.nii.gz
-)
 
-
-endif(0)
+endif()

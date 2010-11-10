@@ -48,6 +48,13 @@ if(BatchMake_DIR)
       ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR}/${CMAKE_BUILD_TYPE}
       ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR})
     
+    #
+    # TODO The following code will have to be updated to copy the file at build time
+    # using a command like:
+    #  execute_process(${CMAKE_COMMAND} -E copy ...) and using 
+    # CMAKE_CFG_INTDIR instead of CMAKE_BUILD_TYPE
+    #
+    
     if(WIN32)
       set(BatchMake_WRAPPED_APPLICATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
     else(WIN32)

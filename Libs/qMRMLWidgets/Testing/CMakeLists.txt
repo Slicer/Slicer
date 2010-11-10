@@ -41,21 +41,16 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME})
 
-SET( qMRMLWidgets_TESTS ${CXX_TEST_PATH}/${KIT}CxxTests)
-IF(WIN32)
-  SET(qMRMLWidgets_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/${KIT}CxxTests)
-ENDIF(WIN32)
+MACRO(SIMPLE_TEST TESTNAME)
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME})
+ENDMACRO()
 
-MACRO( SIMPLE_TEST  TESTNAME )
-  ADD_TEST( ${TESTNAME} ${LAUNCH_EXE} ${qMRMLWidgets_TESTS} ${TESTNAME} )
-ENDMACRO( SIMPLE_TEST  )
-
-MACRO( SCENE_TEST  TEST SCENENAME )
-ADD_TEST( ${TEST}_${SCENENAME}
-  ${LAUNCH_EXE}  ${qMRMLWidgets_TESTS} ${TEST}
-  ${MRML_SOURCE_DIR}/Testing/${SCENENAME}
-  )
-ENDMACRO( SCENE_TEST )
+MACRO(SCENE_TEST TESTNAME SCENEFILENAME)
+  ADD_TEST(
+    NAME ${TESTNAME}_${SCENENAME} 
+    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${MRML_SOURCE_DIR}/Testing/${SCENEFILENAME}
+    )
+ENDMACRO()
 
 SIMPLE_TEST( qMRMLColorTableComboBoxTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest1 )
@@ -68,19 +63,20 @@ SIMPLE_TEST( qMRMLLabelComboBoxTest1 )
 SIMPLE_TEST( qMRMLNavigationViewTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest2 )
-SCENE_TEST ( qMRMLNodeComboBoxTest3 diffusionEditor.mrml)
-SIMPLE_TEST ( qMRMLNodeComboBoxTest4)
+SCENE_TEST(  qMRMLNodeComboBoxTest3 diffusionEditor.mrml )
+SIMPLE_TEST( qMRMLNodeComboBoxTest4 )
 SIMPLE_TEST( qMRMLNodeFactoryTest1 )
 SIMPLE_TEST( qMRMLSceneCategoryModelTest1 )
 SIMPLE_TEST( qMRMLSceneColorTableModelTest1 )
 SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )
 SIMPLE_TEST( qMRMLSceneModelTest1 )
 SIMPLE_TEST( qMRMLSceneTransformModelTest1 )
-SCENE_TEST( qMRMLSceneTransformModelTest2 vol_and_cube.mrml)
+SCENE_TEST(  qMRMLSceneTransformModelTest2 vol_and_cube.mrml )
 SIMPLE_TEST( qMRMLSceneDisplayableModelTest1 )
-SCENE_TEST( qMRMLSceneDisplayableModelTest2 vol_and_cube.mrml)
+SCENE_TEST(  qMRMLSceneDisplayableModelTest2 vol_and_cube.mrml )
 SIMPLE_TEST( qMRMLTransformSlidersTest1 )
-SIMPLE_TEST( qMRMLThreeDViewTest1)
-SCENE_TEST( qMRMLTreeWidgetTest1 vol_and_cube.mrml)
+SIMPLE_TEST( qMRMLThreeDViewTest1 )
+SCENE_TEST(  qMRMLTreeWidgetTest1 vol_and_cube.mrml )
 SIMPLE_TEST( qMRMLUtilsTest1 )
 SIMPLE_TEST( qMRMLWidgetsExportTest1 )
+

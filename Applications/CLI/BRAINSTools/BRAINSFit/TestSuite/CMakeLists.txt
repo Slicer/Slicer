@@ -10,8 +10,6 @@ target_link_libraries(BRAINSFitTest BRAINSCommonLib ITKAlgorithms ITKIO ITKBasic
 set_target_properties(BRAINSFitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
 add_dependencies(BRAINSFitTest BRAINSFit)
 
-set(BRAINSFitTest_EXEC ${LAUNCH_EXE} ${BRAINSFit_BINARY_DIR}/${BUILD_SUBDIR}BRAINSFitTest)
-
 if(0)  ## These were programs needed to create the test suite, but are not needed for actual testing!
   # The following program was used to generate TestData/test2.nii.gz
   # from test.nii.gz
@@ -28,9 +26,11 @@ if(0)  ## These were programs needed to create the test suite, but are not neede
   endif()
 endif()
 
+set(BRAINSFitTest_EXEC ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>)
+
 #  if(NOT XXXNO_BRAINSFIT_TESTING)  #When BRAINSFit is a sub project, it should not be tested.
   set(BRAINSFitTestName BRAINSFitTest_AffineRotationMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -57,7 +57,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_AffineRotationNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -80,7 +80,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_AffineScaleMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -106,7 +106,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_AffineScaleNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -129,7 +129,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_AffineTranslationMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -155,7 +155,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_AffineTranslationNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -179,7 +179,7 @@ endif()
 
 
   set(BRAINSFitTestName BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -205,7 +205,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_BSplineOnlyRescaleHeadMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -235,7 +235,7 @@ endif()
 ## NOTE: 7.3 above was computed explicitly through testing.
 
   set(BRAINSFitTestName BRAINSFitTest_BSplineBSplineRescaleHeadMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -261,7 +261,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationRescaleHeadMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -288,7 +288,7 @@ endif()
 
 
   set(BRAINSFitTestName BRAINSFitTest_BSplineScaleRotationHistogramHeadMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -317,7 +317,7 @@ endif()
 
 
   set(BRAINSFitTestName BRAINSFitTest_RigidAnisotropicMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
   ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -336,7 +336,7 @@ endif()
     )
 
   set(BRAINSFitTestName BRAINSFitTest_RigidMedianRotationNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -360,7 +360,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_RigidRotGeomNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -383,7 +383,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_RigidRotaRotaRotNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -406,7 +406,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_RigidRotationHeadMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -430,7 +430,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_RigidRotationMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -456,7 +456,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_RigidRotationNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -480,7 +480,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleRotationRescaleHeadMasksNoInit)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -504,7 +504,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 11
@@ -530,7 +530,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorRotationNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 11
@@ -553,7 +553,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -579,7 +579,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleSkewVersorScaleNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -602,7 +602,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -627,7 +627,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleTranslationRescaleHeadMasksInit)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 7
@@ -652,7 +652,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 11
@@ -678,7 +678,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleVersorRotationNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 11
@@ -701,7 +701,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -727,7 +727,7 @@ endif()
   )
 
   set(BRAINSFitTestName BRAINSFitTest_ScaleVersorScaleNoMasks)
-  add_test(${BRAINSFitTestName} ${BRAINSFitTest_EXEC}
+  add_test(NAME ${BRAINSFitTestName} COMMAND ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/${BRAINSFitTestName}.result.nii.gz
               ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
     --compareIntensityTolerance 9
@@ -750,7 +750,7 @@ endif()
   )
 
   if(Test_SignedDistanceData)
-  add_test(BRAINSFitTest_SignedDistanceData ${BRAINSFitTest_EXEC}
+  add_test(NAME BRAINSFitTest_SignedDistanceData ${BRAINSFitTest_EXEC}
     --compare ${BRAINSCommonLib_DATA_DIRS}/TEST_output.nii.gz ${BRAINSFit_BINARY_DIR}/Testing/TEST_output.nii.gz
     BRAINSFitTest
     --failureExitCode 1

@@ -49,11 +49,6 @@ if(BatchMake_DIR)
       ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_PLUGINS_BIN_DIR})
     #message( >>>>>>> Slicer3ExeModulePath ${AppPath} )
     set( Slicer3ExeModulePath ${${Slicer3ExeModule}Path} )
-    if(WIN32)
-      set(BatchMake_WRAPPED_APPLICATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
-    else(WIN32)
-      set(BatchMake_WRAPPED_APPLICATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-    endif(WIN32)
 
     # Configure a header
     #configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/SlicerBatchMakeConfig.h.in"
@@ -90,7 +85,20 @@ if(BatchMake_DIR)
     # from a build)
     set(TARGETS ${Slicer3BatchModule})
     slicer3_install_plugins(${TARGETS})
-
+    
+    #
+    # TODO The following code will have to be updated to copy the file at build time
+    # using a command like:
+    #  execute_process(${CMAKE_COMMAND} -E copy ...) and using 
+    # CMAKE_CFG_INTDIR instead of CMAKE_BUILD_TYPE
+    #
+    
+    if(WIN32)
+      set(BatchMake_WRAPPED_APPLICATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
+    else(WIN32)
+      set(BatchMake_WRAPPED_APPLICATION_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    endif(WIN32)
+    
     set(RUNTIME_SUPPORT_FILES 
       "${CMAKE_CURRENT_SOURCE_DIR}/${Slicer3BatchModule}.xml" )
 #      "${BatchMake_WRAPPED_APPLICATION_DIR}/bmSliceExtractor.bmm"

@@ -14,11 +14,11 @@ target_link_libraries(BRAINSResampleTest BRAINSCommonLib ITKAlgorithms ITKIO)
 set_target_properties(BRAINSResampleTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_dependencies(BRAINSResampleTest BRAINSResample)
 
-set(BRAINSResample_TESTS ${LAUNCH_EXE} ${CMAKE_CURRENT_BINARY_DIR}/${BUILD_SUBDIR}BRAINSResampleTest )
+set(BRAINSResample_TESTS ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTest>)
 
 
 ## Should provide exactly the same result as BRAINSFitTest_AffineRotationMasks
-add_test(ValidateBRAINSResampleTest4_nii ${BRAINSResample_TESTS}
+add_test(NAME ValidateBRAINSResampleTest4_nii COMMAND ${BRAINSResample_TESTS}
  --compare
      ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_AffineRotationMasks.result.nii.gz
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
@@ -34,7 +34,7 @@ add_test(ValidateBRAINSResampleTest4_nii ${BRAINSResample_TESTS}
 )
 
 ## Should provide exactly the same result as BRAINSFit BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks test
-add_test(ValidateBRAINSResampleTest5_nii ${BRAINSResample_TESTS}
+add_test(NAME ValidateBRAINSResampleTest5_nii COMMAND ${BRAINSResample_TESTS}
  --compare
      ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.result.nii.gz
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test5.nii.gz
@@ -49,7 +49,7 @@ add_test(ValidateBRAINSResampleTest5_nii ${BRAINSResample_TESTS}
     --warpTransform ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat
 )
 
-add_test(ValidateBRAINSResampleTest6_nii ${BRAINSResample_TESTS}
+add_test(NAME ValidateBRAINSResampleTest6_nii COMMAND ${BRAINSResample_TESTS}
  --compare
      ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationNoMasks.result.nii.gz
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
@@ -65,7 +65,7 @@ add_test(ValidateBRAINSResampleTest6_nii ${BRAINSResample_TESTS}
     --warpTransform ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationNoMasks.mat
 )
 
-add_test(ValidateBRAINSResampleTest7_nii ${BRAINSResample_TESTS}
+add_test(NAME ValidateBRAINSResampleTest7_nii COMMAND ${BRAINSResample_TESTS}
  --compare
      ${BRAINSCommonLib_DATA_DIRS}/ValidateBRAINSResampleTest7.result.nii.gz
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test7.nii.gz
@@ -81,7 +81,7 @@ add_test(ValidateBRAINSResampleTest7_nii ${BRAINSResample_TESTS}
     --warpTransform ${BRAINSCommonLib_DATA_DIRS}/applyWarp_BSpline.mat
 )
 
-add_test(ValidateBRAINSResampleTest1_nii ${BRAINSResample_TESTS}
+add_test(NAME ValidateBRAINSResampleTest1_nii COMMAND ${BRAINSResample_TESTS}
  --compare
      ${BRAINSCommonLib_DATA_DIRS}/applyWarp1.nii.gz
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test1.nii.gz
@@ -94,7 +94,7 @@ add_test(ValidateBRAINSResampleTest1_nii ${BRAINSResample_TESTS}
     --deformationVolume ${BRAINSCommonLib_DATA_DIRS}/OutDefField.nii.gz
     --pixelType short --interpolationMode NearestNeighbor
 )
-add_test(ValidateBRAINSResampleTest2_nii ${BRAINSResample_TESTS}
+add_test(NAME ValidateBRAINSResampleTest2_nii COMMAND ${BRAINSResample_TESTS}
  --compare
      ${BRAINSCommonLib_DATA_DIRS}/applyWarp2.nii.gz
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test2.nii.gz
@@ -108,7 +108,7 @@ add_test(ValidateBRAINSResampleTest2_nii ${BRAINSResample_TESTS}
     --interpolationMode BSpline --pixelType float
 )
 
-add_test(ValidateBRAINSResampleTest3_nii ${BRAINSResample_TESTS}
+add_test(NAME ValidateBRAINSResampleTest3_nii COMMAND ${BRAINSResample_TESTS}
  --compare
      ${BRAINSCommonLib_DATA_DIRS}/orientedImagesDemons_test.nii.gz
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test3.nii.gz
@@ -122,7 +122,7 @@ add_test(ValidateBRAINSResampleTest3_nii ${BRAINSResample_TESTS}
 )
 
 if(0) ##This functionality does not work yet
-add_test(ValidateBRAINSResampleInvertTest ${BRAINSResample_TESTS}
+add_test(NAME ValidateBRAINSResampleInvertTest COMMAND ${BRAINSResample_TESTS}
  --compare
      ${BRAINSCommonLib_DATA_DIRS}/BRAINSResampleTest_Invert.output.nii.gz
      ${CMAKE_CURRENT_BINARY_DIR}/InvertTransform_Test.nii.gz

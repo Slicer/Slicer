@@ -23,49 +23,23 @@ create_test_sourcelist(RegisterImagesMultiResApplicationsTestsList
 ADD_EXECUTABLE(RegisterImagesMultiResApplicationsTests ${RegisterImagesMultiResApplicationsTestsList} )
 TARGET_LINK_LIBRARIES(RegisterImagesMultiResApplicationsTests RegisterImagesMultiResModule)
 
+MACRO(SIMPLE_TEST TESTNAME)
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:RegisterImagesMultiResApplicationsTests> ${TESTNAME})
+ENDMACRO()
 
-set(RegisterImagesMultiRes_TESTS ${CXX_TEST_PATH}/RegisterImagesMultiResApplicationsTests)
-if(WIN32)
-  set(RegisterImagesMultiRes_TESTS ${CXX_TEST_PATH}/${CMAKE_BUILD_TYPE}/RegisterImagesMultiResApplicationsTests)  
-endif(WIN32)
-
-add_test(FixedRotationSimilarity3DTransformTest
-         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
-         FixedRotationSimilarity3DTransformTest)
-
-add_test(EulerSimilarity3DTransformTest
-         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
-         EulerSimilarity3DTransformTest)
-
-add_test(EulerAnisotropicSimilarity3DTransformTest
-         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
-         EulerAnisotropicSimilarity3DTransformTest)
-
-add_test(DecomposedAffine3DTransformTest
-         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
-         DecomposedAffine3DTransformTest)
-
-add_test(DownsampleHeuristicsTest
-         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS} 
-         DownsampleHeuristicsTest)
-
-add_test(ScalingHeuristicsTest
-         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
-         ScalingHeuristicsTest)
-
-add_test(ConvertSlicerROIToRegionTest
-         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
-         ConvertSlicerROIToRegionTest)
-  
-add_test(CountSamplesTest
-         ${LAUNCH_EXE} ${RegisterImagesMultiRes_TESTS}
-         CountSamplesTest)
+SIMPLE_TEST( FixedRotationSimilarity3DTransformTest )
+SIMPLE_TEST( EulerSimilarity3DTransformTest )
+SIMPLE_TEST( EulerAnisotropicSimilarity3DTransformTest )
+SIMPLE_TEST( DecomposedAffine3DTransformTest )
+SIMPLE_TEST( DownsampleHeuristicsTest )
+SIMPLE_TEST( ScalingHeuristicsTest )
+SIMPLE_TEST( ConvertSlicerROIToRegionTest )
+SIMPLE_TEST( CountSamplesTest )
 
 add_executable(RegisterImagesMultiResTest RegisterImagesMultiResTest.cxx)
 target_link_libraries(RegisterImagesMultiResTest RegisterImagesMultiResModule)
 
-IF( Slicer_EXE )
-add_test(RegisterImagesMultiResTest ${Slicer_EXE} --launch RegisterImagesMultiResTest
+add_test(RegisterImagesMultiResTest ${LAUNCH_EXE} RegisterImagesMultiResTest
   --compare   ${BASELINE}/RegisterImagesMultiResTest.nrrd
   ${TEMP}/RegisterImagesMultiResResult.nrrd
   --compareIntensityTolerance 20
@@ -76,4 +50,3 @@ add_test(RegisterImagesMultiResTest ${Slicer_EXE} --launch RegisterImagesMultiRe
   ${MRML_TEST_DATA}/moving.nrrd
   --resampledImage   ${TEMP}/RegisterImagesMultiResResult.nrrd
   )
-ENDIF( Slicer_EXE )
