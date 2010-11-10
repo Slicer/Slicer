@@ -56,6 +56,7 @@ public:
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
+  void setSceneModel(const QString& modelName);
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);

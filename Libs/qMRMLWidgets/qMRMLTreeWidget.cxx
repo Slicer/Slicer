@@ -28,6 +28,7 @@
 #include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLSceneTransformModel.h"
+#include "qMRMLSceneDisplayableModel.h"
 #include "qMRMLTreeWidget.h"
 
 //------------------------------------------------------------------------------
@@ -94,6 +95,37 @@ void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
   this->expandToDepth(2);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeWidget::setSceneModel(const QString& modelName)
+{
+  Q_D(qMRMLTreeWidget);
+  // get the scene from the old model
+  vtkMRMLScene *scene = NULL;
+  if (d->SceneModel)
+    {
+    scene = d->SceneModel->mrmlScene();
+    }
+  bool switched = false;
+  // switch on the incoming model name
+  if (modelName == QString("Transform"))
+    {
+    d->SceneModel = new qMRMLSceneTransformModel();
+    switched = true;
+    }
+  else if (modelName == QString("Displayable"))
+    {
+    d->SceneModel = new qMRMLSceneDisplayableModel();
+    switched = true;
+    }
+  if (switched)
+    {
+    //std::cout << "Switched scene models, new value is " << modelName.toAscii().data() << ", scene is " << (scene == NULL ? "null" : "not null") << std::endl;
+    d->SceneModel->setMRMLScene(scene);
+    d->SortFilterModel->setSourceModel(d->SceneModel);
+    this->expandToDepth(2);
+    }
 }
 
 //------------------------------------------------------------------------------

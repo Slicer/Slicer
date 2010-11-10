@@ -258,11 +258,21 @@ void qMRMLSceneDisplayableModel::populateScene()
 void qMRMLSceneDisplayableModel::insertNode(vtkMRMLNode* node)
 {
   vtkMRMLNode* parentNode = qMRMLSceneDisplayableModel::parentNode(node);
+  //std::cout << "insertNode: parentNode is " << (parentNode == NULL ? "null" : "not null") << ", mrml scene item is " << (this->mrmlSceneItem() == NULL ? "null" : "not null") << std::endl;
   QStandardItem* parentItem =
     parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();
-  Q_ASSERT(parentItem);
-  int min = this->preItems(parentItem).count();
-  int max = parentItem->rowCount() - this->postItems(parentItem).count();
+  if (parentItem == NULL)
+    {
+    //std::cout << "insertNode: parent item is null, node id = " << node->GetID() << ", parent node id is " << (parentNode == NULL ? "null" : parentNode->GetID()) << std::endl;
+    }
+  int min = 0;
+  int max = 0;
+  if (parentItem)
+    {
+    //Q_ASSERT(parentItem);
+    min = this->preItems(parentItem).count();
+    max = parentItem->rowCount() - this->postItems(parentItem).count();
+    }
   this->insertNode(node, parentItem, qMin(min + qMRMLSceneDisplayableModel::nodeIndex(node), max));
 }
 

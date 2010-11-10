@@ -703,8 +703,15 @@ void qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int r
   QList<QStandardItem*> items;
   items.append(newNodeItem);
   items.append(newNodeIDItem);
-  parent->insertRow(row, items);
-  Q_ASSERT(parent->columnCount() == 2);
+  if (parent)
+    {
+    parent->insertRow(row, items);
+    Q_ASSERT(parent->columnCount() == 2);
+    }
+  else
+    {
+    this->insertRow(row,items);
+    }
   if (d->ListenNodeModifiedEvent)
     {
     qvtkConnect(node, vtkCommand::ModifiedEvent,

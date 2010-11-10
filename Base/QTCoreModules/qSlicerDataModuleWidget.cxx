@@ -63,6 +63,11 @@ void qSlicerDataModuleWidget::setup()
   Q_D(qSlicerDataModuleWidget);
   d->setupUi(this);
 
+  d->MRMLSceneModelComboBox->addItem(QString("Transform"));
+  d->MRMLSceneModelComboBox->addItem(QString("Displayable"));
+//  connect(d->MRMLSceneModelComboBox, SIGNAL(currentIndexChanged(QString)),
+//          d->MRMLTreeWidget, SLOT(setSceneModel(QString*)));
+          
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setMRMLIDsVisible(bool)));
   // hide the IDs by default

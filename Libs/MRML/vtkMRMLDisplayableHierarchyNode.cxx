@@ -328,22 +328,32 @@ void vtkMRMLDisplayableHierarchyNode::GetChildrenDisplayableNodes(vtkCollection 
     }
   vtkMRMLNode *mnode = NULL;
   vtkMRMLDisplayableHierarchyNode *hnode = NULL;
-  for (int n=0; n < scene->GetNumberOfNodes(); n++) 
+  int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLDisplayableNode");
+  for (int n=0; n < numNodes; n++) 
     {
-    mnode = scene->GetNthNode(n);
-    if (mnode->IsA("vtkMRMLDisplayableNode"))
+    mnode = scene->GetNthNodeByClass(n, "vtkMRMLDisplayableNode");
+    vtkDebugMacro("GetChildrenDisplayableNodes: displayable node " << n << " has id " << mnode->GetID());
+
+    // check for a hierarchy node for this displayble node
+    hnode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(scene, mnode->GetID());
+    while (hnode)
       {
-      hnode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(scene, mnode->GetID());
-      while (hnode)
+      // hnode == this
+      if (hnode->GetID() && this->GetID() &&
+          strcmp(hnode->GetID(), this->GetID()) == 0) 
         {
-        if (hnode == this) 
-          {
-          children->AddItem(mnode);
-          break;
-          }
-          hnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(this->GetParentNode());
-        }// end while
-      }// end if
+        children->AddItem(mnode);
+        vtkDebugMacro("GetChildrenDisplayableNodes: found a hierarchy node " << hnode->GetID() << " for displayable node " << mnode->GetID() << " and it's this one " << this->GetID());
+        break;
+        }
+      // the hierarchy node for this node may not be the one we're checking
+      // against, go up the tree
+      hnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(hnode->GetParentNode());
+      if (hnode)
+        {
+        vtkDebugMacro("GetChildrenDisplayableNodes: checking parent " << hnode->GetID());
+        }
+      }// end while
     }// end for
 }
 
