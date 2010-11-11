@@ -94,7 +94,7 @@ protected slots:
     // Save
     void onSaveMRMLSceneButtonClicked();
     void onSaveAnnotationButtonClicked();
-    void onScreenShotButtonClicked();
+
     void onGenerateReportButtonClicked();
     bool saveAnnotationReport();
     bool saveScreenShot();
@@ -106,6 +106,11 @@ protected slots:
   void propertyRestored();
   void propertyAccepted();
   void propertyEditButtonClicked();
+
+  // Snapshot dialog
+  void snapshotRejected();
+  void snapshotAccepted();
+  void onSnapShotButtonClicked();
 
   // Mouse Mode Operation
   void enableMouseModeButtons();

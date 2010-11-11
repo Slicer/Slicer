@@ -551,7 +551,7 @@ void qSlicerAnnotationModuleWidget::setup()
   this->connect(d->saveAnnotation, SIGNAL(clicked()), this,
       SLOT(onSaveAnnotationButtonClicked()));
   this->connect(d->screenShot, SIGNAL(clicked()), this,
-      SLOT(onScreenShotButtonClicked()));
+      SLOT(onSnapShotButtonClicked()));
   this->connect(d->lockUnlockAllButton, SIGNAL(clicked()), this,
       SLOT(onLockUnlockAllButtonClicked()));
 
@@ -1564,18 +1564,29 @@ void qSlicerAnnotationModuleWidget::annotationTextChanged(QString text, char* no
   d->updateTextItem(this->getIndexByNodeID(nodeId), text);*/
 }
 
-void qSlicerAnnotationModuleWidget::onScreenShotButtonClicked()
+void qSlicerAnnotationModuleWidget::onSnapShotButtonClicked()
 {
 
+  Q_D(qSlicerAnnotationModuleWidget);
 
   if (!this->m_SnapShotDialog)
     {
     this->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog();
+
+    // pass a pointer to the logic class
+    this->m_SnapShotDialog->setLogic(d->logic());
+
+    // create slots which listen to events fired by the OK and CANCEL button on the dialog
+    this->connect(this->m_SnapShotDialog, SIGNAL(dialogRejected()), this,
+        SLOT(snapshotRejected()));
+    this->connect(this->m_SnapShotDialog, SIGNAL(dialogAccepted()), this,
+        SLOT(snapshotAccepted()));
+
     }
 
+  // show the dialog
   this->m_SnapShotDialog->setVisible(true);
-
-
+  this->m_SnapShotDialog->reset();
 
   /*
   Q_D(qSlicerAnnotationModuleWidget);
@@ -2088,4 +2099,23 @@ void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, c
   //d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
   //this->selectRowByIndex(m_index);
 
+}
+
+
+//-----------------------------------------------------------------------------
+// Annotation SnapShot functionality
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Signal callback when the OK button of the snapshot dialog was clicked
+void qSlicerAnnotationModuleWidget::snapshotAccepted()
+{
+  //std::cout << "Snapshot accepted" << std::endl;
+}
+
+//-----------------------------------------------------------------------------
+// Signal callback when the CANCEL button of the snapshot dialog was clicked
+void qSlicerAnnotationModuleWidget::snapshotRejected()
+{
+  //std::cout << "Snapshot rejected" << std::endl;
 }

@@ -106,6 +106,15 @@ public:
   /// Add a new Annotation hierarchy node
   vtkMRMLAnnotationHierarchyNode* AddNewHierarchyNode();
 
+  //
+  // SnapShot functionality
+  //
+  /// Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
+  /// a multiline text description and the creation of a Scene SnapShot.
+  void CreateSnapShot(const char* description, vtkImageData* screenshot);
+  /// Convert a QImage to vtkImageData
+  bool QImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
+
 protected:
 
   vtkSlicerAnnotationModuleLogic();

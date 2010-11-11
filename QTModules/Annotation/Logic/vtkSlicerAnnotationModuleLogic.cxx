@@ -14,6 +14,7 @@
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLAnnotationBidimensionalNode.h"
 #include "vtkMRMLAnnotationSplineNode.h"
+#include "vtkMRMLAnnotationSnapshotNode.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -1098,4 +1099,78 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddNewHierarchyN
 
   return hierarchyNode;
 
+}
+
+
+//---------------------------------------------------------------------------
+//
+//
+// Annotation SnapShot Functionality
+//
+//
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+// Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
+// a multiline text description and the creation of a Scene SnapShot.
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* description, vtkImageData* screenshot)
+{
+
+  if(!description)
+    {
+    vtkErrorMacro("CreateSnapShot: No description was set.")
+    return;
+    }
+
+  if (!screenshot)
+    {
+    vtkErrorMacro("CreateSnapShot: No screenshot was set.")
+    return;
+    }
+
+
+  vtkMRMLAnnotationSnapshotNode * newSnapshotNode = vtkMRMLAnnotationSnapshotNode::New();
+  newSnapshotNode->SetScene(this->GetMRMLScene());
+  newSnapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationSnapshot"));
+  newSnapshotNode->SetDescription(description);
+  newSnapshotNode->SetScreenshot(screenshot);
+  newSnapshotNode->StoreScene();
+  this->GetMRMLScene()->AddNode(newSnapshotNode);
+}
+
+//---------------------------------------------------------------------------
+// Convert QImage to vtkImageData
+//---------------------------------------------------------------------------
+bool vtkSlicerAnnotationModuleLogic::QImageToVtkImageData(const QImage& img, vtkImageData* vtkimage)
+{
+  int height = img.height();
+  int width = img.width();
+  int numcomponents = img.hasAlphaChannel() ? 4 : 3;
+
+  vtkimage->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
+  vtkimage->SetSpacing(1.0, 1.0, 1.0);
+  vtkimage->SetOrigin(0.0, 0.0, 0.0);
+  vtkimage->SetNumberOfScalarComponents(numcomponents);
+  vtkimage->SetScalarType(VTK_UNSIGNED_CHAR);
+  vtkimage->SetExtent(vtkimage->GetWholeExtent());
+  vtkimage->AllocateScalars();
+  for(int i=0; i<height; i++)
+    {
+    unsigned char* row;
+    row = static_cast<unsigned char*>(vtkimage->GetScalarPointer(0, height-i-1, 0));
+    const QRgb* linePixels = reinterpret_cast<const QRgb*>(img.scanLine(i));
+    for(int j=0; j<width; j++)
+      {
+      const QRgb& col = linePixels[j];
+      row[j*numcomponents] = qRed(col);
+      row[j*numcomponents+1] = qGreen(col);
+      row[j*numcomponents+2] = qBlue(col);
+      if(numcomponents == 4)
+        {
+        row[j*numcomponents+3] = qAlpha(col);
+        }
+      }
+    }
+  return true;
 }
