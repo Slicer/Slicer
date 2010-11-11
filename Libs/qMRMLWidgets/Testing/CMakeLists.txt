@@ -25,20 +25,31 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLSceneTransformModelTest2.cxx
   qMRMLSceneDisplayableModelTest1.cxx
   qMRMLSceneDisplayableModelTest2.cxx
+  qMRMLSliceWidgetTest1.cxx
   qMRMLTransformSlidersTest1.cxx
   qMRMLThreeDViewTest1.cxx
   qMRMLTreeWidgetTest1.cxx
   qMRMLUtilsTest1.cxx
+  qMRMLVolumeThresholdWidgetTest1.cxx
+  qMRMLVolumeThresholdWidgetTest2.cxx
   qMRMLWidgetsExportTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
+
+SET(Tests_MOC_SRCS qMRMLNodeObject.h)
+SET(Tests_UtilityFiles 
+    qMRMLNodeObject.cxx
+    qMRMLNodeObject.h
+    )
+
+QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
 
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CxxTests.cxx)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
+ADD_EXECUTABLE(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${LIBRARY_NAME})
 
 MACRO(SIMPLE_TEST TESTNAME)
@@ -74,9 +85,12 @@ SIMPLE_TEST( qMRMLSceneTransformModelTest1 )
 SCENE_TEST(  qMRMLSceneTransformModelTest2 vol_and_cube.mrml )
 SIMPLE_TEST( qMRMLSceneDisplayableModelTest1 )
 SCENE_TEST(  qMRMLSceneDisplayableModelTest2 vol_and_cube.mrml )
+SCENE_TEST( qMRMLSliceWidgetTest1 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLTransformSlidersTest1 )
 SIMPLE_TEST( qMRMLThreeDViewTest1 )
 SCENE_TEST(  qMRMLTreeWidgetTest1 vol_and_cube.mrml )
 SIMPLE_TEST( qMRMLUtilsTest1 )
+SCENE_TEST( qMRMLVolumeThresholdWidgetTest1 vol_and_cube.mrml)
+SCENE_TEST( qMRMLVolumeThresholdWidgetTest2 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLWidgetsExportTest1 )
 

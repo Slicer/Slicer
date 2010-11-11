@@ -27,7 +27,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget : public QWidget
 public:
   /// Constructors
   typedef QWidget Superclass;
-  explicit qMRMLVolumeThresholdWidget(QWidget* parent);
+  explicit qMRMLVolumeThresholdWidget(QWidget* parent=0);
   virtual ~qMRMLVolumeThresholdWidget();
 
   /// 0: Manual
@@ -80,7 +80,6 @@ public slots:
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* displayNode);
   void setMRMLVolumeNode(vtkMRMLNode* node);
-
 
 protected slots:
 
