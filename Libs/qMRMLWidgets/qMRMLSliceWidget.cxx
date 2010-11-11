@@ -364,3 +364,11 @@ void qMRMLSliceWidget::setSliceLogics(vtkCollection* logics)
   Q_D(qMRMLSliceWidget);
   d->SliceController->setSliceLogics(logics);
 }
+
+// --------------------------------------------------------------------------
+ctkVTKSliceView* qMRMLSliceWidget::getSliceView()
+{
+
+  return this->sliceView();
+
+}

@@ -98,6 +98,9 @@ public:
   /// propagates the logics to the qMRMLSliceControllerWidget
   void setSliceLogics(vtkCollection* logics);
 
+  /// Returns the renderer as a QT widget
+  ctkVTKSliceView* getSliceView();
+
 public slots:
 
   void setMRMLScene(vtkMRMLScene * newScene);
