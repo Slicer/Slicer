@@ -32,7 +32,7 @@ public:
 
 
   void GetSnapshotDescription(const char* newDescription) {this->m_Description = newDescription;}
-  vtkStdString GetSnapshotDescription() {return this->m_Description;}
+  const char* GetSnapshotDescription() {return this->m_Description;}
 
   //void SetSceneSnapshot(vtkMRMLSceneSnapshotNode* snapshot) {this->m_SnapShot = snapshot;}
   //vtkMRMLSceneSnapshotNode* GetSceneSnapshot() {return this->m_SnapShot;}

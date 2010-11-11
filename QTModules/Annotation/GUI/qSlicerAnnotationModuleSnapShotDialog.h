@@ -30,6 +30,9 @@ protected slots:
   void onYellowSliceViewRadioClicked();
   void onGreenSliceViewRadioClicked();
 
+  /// Slots for the restore button
+  void onRestoreButtonClicked();
+
 signals:
   void dialogRejected();
   void dialogAccepted();
@@ -46,6 +49,10 @@ private:
     vtkSlicerAnnotationModuleLogic* m_Logic;
 
     vtkImageData* m_vtkImageData;
+
+    /// The ID of the associated snapshot node.
+    /// This is NULL if the dialog has no associated snapshot node (== new snapshot mode).
+    const char* m_Id;
 
 };
 

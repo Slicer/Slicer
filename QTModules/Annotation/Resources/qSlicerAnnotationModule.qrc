@@ -44,5 +44,7 @@
         <file>Icons/AnnotationBidimensional.png</file>
         <file>Icons/AnnotationEditBidimensional.png</file>
         <file>Icons/Annotation.png</file>
+        <file>Icons/ViewCamera.png</file>
+        <file>Icons/SnapshotRestore.png</file>
     </qresource>
 </RCC>

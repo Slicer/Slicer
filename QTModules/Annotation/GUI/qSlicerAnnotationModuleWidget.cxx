@@ -1571,6 +1571,14 @@ void qSlicerAnnotationModuleWidget::onSnapShotButtonClicked()
 
   if (!this->m_SnapShotDialog)
     {
+
+    d->logic()->SetAndObserveWidget(this);
+
+    // be sure to listen to the mrml events
+    // this only has to be called if no real annotations were placed yet
+    // double call does not hurt..
+    d->logic()->InitializeEventListeners();
+
     this->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog();
 
     // pass a pointer to the logic class
@@ -2110,6 +2118,8 @@ void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, c
 // Signal callback when the OK button of the snapshot dialog was clicked
 void qSlicerAnnotationModuleWidget::snapshotAccepted()
 {
+
+  this->m_SnapShotDialog->setVisible(false);
   //std::cout << "Snapshot accepted" << std::endl;
 }
 
@@ -2117,5 +2127,6 @@ void qSlicerAnnotationModuleWidget::snapshotAccepted()
 // Signal callback when the CANCEL button of the snapshot dialog was clicked
 void qSlicerAnnotationModuleWidget::snapshotRejected()
 {
+  this->m_SnapShotDialog->setVisible(false);
   //std::cout << "Snapshot rejected" << std::endl;
 }

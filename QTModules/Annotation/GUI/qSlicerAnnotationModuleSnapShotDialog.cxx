@@ -27,6 +27,8 @@ qSlicerAnnotationModuleSnapShotDialog::qSlicerAnnotationModuleSnapShotDialog()
 
   this->m_vtkImageData = 0;
 
+  this->m_Id = 0;
+
   ui.setupUi(this);
   createConnection();
 
@@ -46,6 +48,12 @@ qSlicerAnnotationModuleSnapShotDialog::~qSlicerAnnotationModuleSnapShotDialog()
     {
     this->m_vtkImageData->Delete();
     this->m_vtkImageData = 0;
+    }
+
+  if(this->m_Id)
+    {
+    delete this->m_Id;
+    this->m_Id = 0;
     }
 
 }
@@ -76,6 +84,8 @@ void qSlicerAnnotationModuleSnapShotDialog::createConnection()
   this->connect(ui.yellowSliceViewRadio, SIGNAL(clicked()), this, SLOT(onYellowSliceViewRadioClicked()));
   this->connect(ui.greenSliceViewRadio, SIGNAL(clicked()), this, SLOT(onGreenSliceViewRadioClicked()));
 
+  this->connect(ui.restoreButton, SIGNAL(clicked()), this, SLOT(onRestoreButtonClicked()));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -91,12 +101,15 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogRejected()
 void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
 {
 
+  // name
+  QString name = ui.nameEdit->text();
+  QByteArray nameBytes = name.toAscii();
 
-  QString text = ui.descriptionTextEdit->toPlainText();
-  QByteArray bytes = text.toAscii();
+  // description
+  QString description = ui.descriptionTextEdit->toPlainText();
+  QByteArray descriptionBytes = description.toAscii();
 
-  this->m_Logic->CreateSnapShot(bytes.data(),this->m_vtkImageData);
-
+  this->m_Logic->CreateSnapShot(nameBytes.data(),descriptionBytes.data(),this->m_vtkImageData);
 
   // emit an event which gets caught by main GUI window
   emit dialogAccepted();
@@ -128,6 +141,14 @@ void qSlicerAnnotationModuleSnapShotDialog::onGreenSliceViewRadioClicked()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleSnapShotDialog::onRestoreButtonClicked()
+{
+  this->m_Logic->RestoreSnapShot(this->m_Id);
+
+  emit dialogAccepted();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::reset()
 {
   this->ui.threeDViewRadio->setChecked(true);
@@ -136,6 +157,7 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   this->ui.greenSliceViewRadio->setChecked(false);
   this->grabScreenShot("");
   this->ui.descriptionTextEdit->clear();
+  this->ui.nameEdit->clear();
 }
 
 //-----------------------------------------------------------------------------

@@ -9,6 +9,7 @@
 
 // MRML includes
 #include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationSnapshotNode.h"
 
 #include "qSlicerAnnotationModuleExport.h"
 
@@ -20,6 +21,9 @@ public:
   static vtkSlicerAnnotationModuleLogic *New();
   vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
+
+  // Initialize listening to MRML events
+  void InitializeEventListeners();
 
   // Start the place mode for annotations
   void StartPlaceMode();
@@ -111,9 +115,13 @@ public:
   //
   /// Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
   /// a multiline text description and the creation of a Scene SnapShot.
-  void CreateSnapShot(const char* description, vtkImageData* screenshot);
+  void CreateSnapShot(const char* name, const char* description, vtkImageData* screenshot);
   /// Convert a QImage to vtkImageData
   bool QImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
+  /// Restore an annotation snapShot.
+  void RestoreSnapShot(const char* id);
+  /// Callback when an annotation snapShot node was added.
+  void OnMRMLSceneSnapShotNodeAdded(vtkMRMLAnnotationSnapshotNode* snapshotNode);
 
 protected:
 
