@@ -582,7 +582,11 @@ int vtkDiffusionTensorGlyph::RequestData(
       // a separate glyph for each (or two loops per eigenvector
       // allowing two symmetric glyphs for each)
       
-      int flipNormals = this->TensorRotationMatrix->Determinant() < 0;
+      int flipNormals = 0;
+      if ( this->TensorRotationMatrix && this->TensorRotationMatrix->Determinant() < 0 )
+        {
+        flipNormals = 1;
+        }
 
       for (dir=0; dir < numDirs; dir++) 
         {
