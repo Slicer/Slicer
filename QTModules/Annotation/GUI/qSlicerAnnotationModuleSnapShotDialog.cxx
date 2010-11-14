@@ -121,6 +121,13 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
       this->ui.threeDViewRadio->setChecked(true);
     }
 
+  // we want to disable the modification of the screenshot since this snapshot was created earlier
+  // to change a screenshot of an old snapshot, there is a workaround by restoring it, deleting it and creating a new one
+  this->ui.threeDViewRadio->setEnabled(false);
+  this->ui.redSliceViewRadio->setEnabled(false);
+  this->ui.yellowSliceViewRadio->setEnabled(false);
+  this->ui.greenSliceViewRadio->setEnabled(false);
+
   // get the actual screenshot..
   this->m_vtkImageData = this->m_Logic->GetSnapShotScreenshot(this->m_Id);
 
@@ -155,6 +162,8 @@ void qSlicerAnnotationModuleSnapShotDialog::createConnection()
   this->connect(ui.greenSliceViewRadio, SIGNAL(clicked()), this, SLOT(onGreenSliceViewRadioClicked()));
 
   this->connect(ui.restoreButton, SIGNAL(clicked()), this, SLOT(onRestoreButtonClicked()));
+
+  this->connect(ui.screenshotPlaceholder, SIGNAL(clicked()), this, SLOT(onScreenshotPlaceholderClicked()));
 
 }
 
@@ -206,8 +215,7 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
     this->m_Logic->CreateSnapShot(nameBytes.data(),descriptionBytes.data(),screenshotType,this->m_vtkImageData);
 
     QMessageBox::information(this, "Annotation Snap Shot created",
-                               "A new annotation snap shot was created and "
-                               "the current scene was attached.");
+                               "A new annotation snap shot was created and the current scene was attached.");
 
     }
   else
@@ -216,8 +224,7 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
     this->m_Logic->ModifySnapShot(this->m_Id,nameBytes.data(),descriptionBytes.data(),screenshotType,this->m_vtkImageData);
 
     QMessageBox::information(this, "Annotation Snap Shot updated",
-                                   "The annotation snap shot was updated without "
-                                   "changing the attached scene.");
+                                   "The annotation snap shot was updated without changing the attached scene.");
 
     }
 
@@ -251,13 +258,27 @@ void qSlicerAnnotationModuleSnapShotDialog::onGreenSliceViewRadioClicked()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleSnapShotDialog::onScreenshotPlaceholderClicked()
+{
+  // convert the screenshot from vtkImageData to QImage..
+  QImage qimage;
+  this->m_Logic->VtkImageDataToQImage(this->m_vtkImageData,qimage);
+
+  // ..and then to QPixmap..
+  QPixmap screenshot;
+  screenshot.convertFromImage(qimage, Qt::AutoColor);
+
+  // ..and set it to the gui..
+  ui.screenshotPlaceholder->setPixmap(screenshot);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::onRestoreButtonClicked()
 {
   this->m_Logic->RestoreSnapShot(this->m_Id);
 
   QMessageBox::information(this, "Annotation Snap Shot restored.",
-                                 "The annotation snap shot was restored "
-                                 "including the attached scene.");
+                                 "The annotation snap shot was restored including the attached scene.");
 
   emit dialogAccepted();
 }
@@ -265,6 +286,10 @@ void qSlicerAnnotationModuleSnapShotDialog::onRestoreButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::reset()
 {
+  this->ui.threeDViewRadio->setEnabled(true);
+  this->ui.redSliceViewRadio->setEnabled(true);
+  this->ui.yellowSliceViewRadio->setEnabled(true);
+  this->ui.greenSliceViewRadio->setEnabled(true);
   this->ui.threeDViewRadio->setChecked(true);
   this->ui.redSliceViewRadio->setChecked(false);
   this->ui.yellowSliceViewRadio->setChecked(false);

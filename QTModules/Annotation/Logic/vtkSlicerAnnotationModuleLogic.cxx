@@ -1202,7 +1202,7 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
 
   vtkMRMLAnnotationSnapshotNode * newSnapshotNode = vtkMRMLAnnotationSnapshotNode::New();
   newSnapshotNode->SetScene(this->GetMRMLScene());
-  if (nameString)
+  if (strcmp(nameString,""))
     {
     // a name was specified
     newSnapshotNode->SetName(nameString.c_str());
@@ -1210,7 +1210,7 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
   else
     {
     // if no name is specified, generate a new unique one
-    newSnapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationSnapshot"));
+    newSnapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Snapshot"));
     }
   newSnapshotNode->SetSnapshotDescription(description);
   newSnapshotNode->SetScreenshotType(screenshotType);
@@ -1249,7 +1249,7 @@ void vtkSlicerAnnotationModuleLogic::ModifySnapShot(const char* id, const char* 
 
   vtkStdString nameString = vtkStdString(name);
 
-  if (nameString)
+  if (strcmp(nameString,""))
     {
     // a name was specified
     snapshotNode->SetName(nameString.c_str());
@@ -1257,7 +1257,7 @@ void vtkSlicerAnnotationModuleLogic::ModifySnapShot(const char* id, const char* 
   else
     {
     // if no name is specified, generate a new unique one
-    snapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationSnapshot"));
+    snapshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Snapshot"));
     }
   snapshotNode->SetSnapshotDescription(description);
   snapshotNode->SetScreenshotType(screenshotType);
