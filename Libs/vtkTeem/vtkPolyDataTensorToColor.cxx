@@ -131,8 +131,6 @@ int vtkPolyDataTensorToColor::RequestData(
   }
 
 
-
-
   outPD = output->GetPointData();
   //outPD->CopyAllocate(pd);
   //verts = vtkCellArray::New();
@@ -375,6 +373,20 @@ int vtkPolyDataTensorToColor::RequestData(
   } // for all points
 
   vtkDebugMacro(<< "Extracted " << output->GetNumberOfPoints() << " points.");
+
+  // copy normals
+  vtkDataArray *inNormals = pd->GetNormals();
+  if (inNormals)
+  {
+    vtkFloatArray *newNormals = vtkFloatArray::New();
+    newNormals->SetNumberOfComponents(3);
+    newNormals->SetNumberOfTuples(numPts);
+    newNormals->SetName("Normals");
+    //newNormals->Allocate(numPts*3);
+    newNormals->DeepCopy(inNormals);
+    outPD->SetNormals(newNormals);
+    newNormals->Delete();
+  }
 
   // Update ourselves and release memory
   //

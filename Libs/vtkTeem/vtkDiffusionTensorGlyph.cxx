@@ -231,6 +231,31 @@ int vtkDiffusionTensorGlyph::RequestData(
     return 1;
     }
 
+  // Compute steps along dimensions
+  // and real number of input points
+  int numInputPts = numPts;
+  int skipRows = 0;
+  int skipCols = this->Resolution;
+  int rowLength = numPts;
+  int colLength = 1;
+  int row = 0;
+  int col = 0;
+  if (this->Dimensions[0] > 1 && this->Dimensions[1] > 1)
+    {
+    skipRows = DimensionResolution[1];
+    skipCols = DimensionResolution[0];
+    rowLength = Dimensions[0];
+    colLength = Dimensions[1];
+    if (skipCols) 
+      {
+      numInputPts = (numInputPts+1)/skipCols;
+      }
+    if (skipRows) 
+      {
+      numInputPts = (numInputPts+1)/skipRows;
+      }
+    }
+
   //
   // Allocate storage for output PolyData
   //
@@ -242,34 +267,34 @@ int vtkDiffusionTensorGlyph::RequestData(
   // Allocate as if we will glyph every point
   // If some are masked/skipped for Resolution this will be fixed later with Squeeze
   // TO DO allocate less for lower resolution
-  newPts->Allocate(numDirs*numPts*numSourcePts);
+  newPts->Allocate(numDirs*numInputPts*numSourcePts);
 
   // Setting up for calls to PolyData::InsertNextCell()
   if ( (sourceCells=source->GetVerts())->GetNumberOfCells() > 0 )
     {
     cells = vtkCellArray::New();
-    cells->Allocate(numDirs*numPts*sourceCells->GetSize());
+    cells->Allocate(numDirs*numInputPts*sourceCells->GetSize());
     output->SetVerts(cells);
     cells->Delete();
     }
   if ( (sourceCells=this->GetSource()->GetLines())->GetNumberOfCells() > 0 )
     {
     cells = vtkCellArray::New();
-    cells->Allocate(numDirs*numPts*sourceCells->GetSize());
+    cells->Allocate(numDirs*numInputPts*sourceCells->GetSize());
     output->SetLines(cells);
     cells->Delete();
     }
   if ( (sourceCells=this->GetSource()->GetPolys())->GetNumberOfCells() > 0 )
     {
     cells = vtkCellArray::New();
-    cells->Allocate(numDirs*numPts*sourceCells->GetSize());
+    cells->Allocate(numDirs*numInputPts*sourceCells->GetSize());
     output->SetPolys(cells);
     cells->Delete();
     }
   if ( (sourceCells=this->GetSource()->GetStrips())->GetNumberOfCells() > 0 )
     {
     cells = vtkCellArray::New();
-    cells->Allocate(numDirs*numPts*sourceCells->GetSize());
+    cells->Allocate(numDirs*numInputPts*sourceCells->GetSize());
     output->SetStrips(cells);
     cells->Delete();
     }
@@ -284,7 +309,7 @@ int vtkDiffusionTensorGlyph::RequestData(
        (inScalars && (this->ColorMode == COLOR_BY_SCALARS)) ) )
     {
     newScalars = vtkFloatArray::New();
-    newScalars->Allocate(numDirs*numPts*numSourcePts);
+    newScalars->Allocate(numDirs*numInputPts*numSourcePts);
     }
   else
     {
@@ -292,13 +317,13 @@ int vtkDiffusionTensorGlyph::RequestData(
     // (superclass does this but why? if user has not asked for ColorGlyphs)
     outPD->CopyAllOff();
     outPD->CopyScalarsOn();
-    outPD->CopyAllocate(pd,numDirs*numPts*numSourcePts);
+    outPD->CopyAllocate(pd,numDirs*numInputPts*numSourcePts);
     }
   if ( (sourceNormals = pd->GetNormals()) )
     {
     newNormals = vtkFloatArray::New();
     newNormals->SetNumberOfComponents(3);
-    newNormals->Allocate(numDirs*3*numPts*numSourcePts);
+    newNormals->Allocate(numDirs*3*numInputPts*numSourcePts);
     }
 
   // Don't copy all topology here as in superclass because
@@ -339,21 +364,6 @@ int vtkDiffusionTensorGlyph::RequestData(
   // those not masked and included by this->Resolution.)
   //
   trans->PreMultiply();
-
-  // Compute steps along dimensions
-  int skipRows = 0;
-  int skipCols = this->Resolution;
-  int rowLength = numPts;
-  int colLength = 1;
-  int row = 0;
-  int col = 0;
-  if (this->Dimensions[0] > 1 && this->Dimensions[1] > 1)
-    {
-    skipRows = DimensionResolution[1];
-    skipCols = DimensionResolution[0];
-    rowLength = Dimensions[0];
-    colLength = Dimensions[1];
-    }
 
   for (inPtId=0; inPtId < numPts; inPtId += skipCols)
     {
@@ -720,7 +730,7 @@ int vtkDiffusionTensorGlyph::RequestData(
 
 
 
-  vtkDebugMacro(<<"Generated " << numPts <<" tensor glyphs");
+  vtkDebugMacro(<<"Generated " << numInputPts <<" tensor glyphs");
 
   //
   // Update output and release memory
