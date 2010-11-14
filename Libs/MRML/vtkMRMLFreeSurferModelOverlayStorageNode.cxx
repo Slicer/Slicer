@@ -193,6 +193,11 @@ void vtkMRMLFreeSurferModelOverlayStorageNode::ProcessParentNode(vtkMRMLNode *pa
 //----------------------------------------------------------------------------
 int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
+    {
+    return 1;
+    }
+
   if (refNode == NULL)
     {
     vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData: Reference node is null.");

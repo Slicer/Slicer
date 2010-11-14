@@ -346,6 +346,11 @@ public:
   /// Return collection of all nodes referenced directly or indirectly by a node.
   vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
 
+  ///
+  /// Get a sub-scene containing all nodes directly or indirectly reference by
+  /// the input node
+  void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene, int loadData);
+
 //BTX
   /// 
   /// Get/Set the active Scene 
@@ -379,6 +384,14 @@ public:
   vtkSetMacro(ErrorCode,unsigned long);
   vtkGetMacro(ErrorCode,unsigned long);
 
+  vtkSetMacro(LoadFromXMLString,int);
+  vtkGetMacro(LoadFromXMLString,int);
+
+  vtkSetMacro(SaveToXMLString,int);
+  vtkGetMacro(SaveToXMLString,int);
+
+  vtkSetMacro(ReadDataOnLoad,int);
+  vtkGetMacro(ReadDataOnLoad,int);
 
 //BTX
   void SetErrorMessage(const std::string &error) {
@@ -389,6 +402,14 @@ public:
     return this->ErrorMessage;
   };
 //ETX
+
+  void SetSceneXMLString(const std::string &xmlString) {
+    this->SceneXMLString = xmlString;
+  };
+
+  std::string GetSceneXMLString() {
+    return this->SceneXMLString;
+  };
 
   void SetErrorMessage(const char * message)
     {
@@ -483,6 +504,8 @@ public:
   vtkSetStringMacro(Version);
 
 
+  void CopyRegisteredNodesToScene(vtkMRMLScene *scene);
+
 protected:
 
   vtkMRMLScene();
@@ -536,8 +559,16 @@ protected:
   std::map<std::string, int> ReservedIDs;
 
   std::string ErrorMessage;
+
+  std::string SceneXMLString;
   //ETX
   
+  int LoadFromXMLString;
+
+  int SaveToXMLString;
+
+  int ReadDataOnLoad;
+
   void UpdateNodeIDs();
 
   unsigned long NodeIDsMTime;

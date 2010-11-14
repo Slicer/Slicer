@@ -114,13 +114,13 @@ void vtkMRMLFiducialListStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 //----------------------------------------------------------------------------
 int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
   // do not read if if we are not in the scene (for example inside snapshot)
   if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+    {
+    return 1;
+    }
+
+  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
     {
     return 1;
     }
@@ -560,11 +560,7 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
+
   // test whether refNode is a valid node to hold a volume
   if ( !( refNode->IsA("vtkMRMLFiducialListNode") ) )
     {
@@ -704,5 +700,4 @@ int vtkMRMLFiducialListStorageNode::SupportedFileType(const char *fileName)
 void vtkMRMLFiducialListStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Fiducial List CSV (.fcsv)");
-  //this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
 }

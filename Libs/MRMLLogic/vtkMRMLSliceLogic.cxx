@@ -921,6 +921,10 @@ void vtkMRMLSliceLogic::UpdatePipeline()
 
     if ( modified )
       {
+      if (this->SliceModelNode && this->SliceModelNode->GetPolyData())
+        {
+        this->SliceModelNode->GetPolyData()->Modified();
+        }
       this->Modified();
       }
     }

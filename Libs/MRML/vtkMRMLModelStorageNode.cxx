@@ -118,47 +118,47 @@ void vtkMRMLModelStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 //----------------------------------------------------------------------------
 int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
   // do not read if if we are not in the scene (for example inside snapshot)
   if ( !refNode->GetAddToScene() )
-  {
+    {
     return 1;
-  }
+    }
+
+  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
+    {
+    return 1;
+    }
 
   if (!refNode->IsA("vtkMRMLModelNode") ) 
-  {
+    {
     //vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
     return 0;
-  }
+    }
 
   Superclass::StageReadData(refNode);
   if ( this->GetReadState() != this->TransferDone )
-  {
+    {
     // remote file download hasn't finished
     return 0;
-  }
+    }
 
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
-  {
+    {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
-  }
+    }
 
   // compute file prefix
   std::string name(fullName);
   std::string::size_type loc = name.find_last_of(".");
   if( loc == std::string::npos ) 
-  {
+    {
     vtkErrorMacro("ReadData: no file extension specified: " << name.c_str());
     return 0;
-  }
+    }
   std::string extension = name.substr(loc);
 
   vtkDebugMacro("ReadData: extension = " << extension.c_str());
@@ -284,19 +284,9 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 
   this->SetReadStateIdle();
   if (modelNode->GetPolyData() != NULL) 
-    {
-    // is there an active scalar array?
-    if (modelNode->GetDisplayNode())
-      {
-      double *scalarRange =  modelNode->GetPolyData()->GetScalarRange();
-      if (scalarRange)
-        {
-        vtkDebugMacro("ReadData: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
-        modelNode->GetDisplayNode()->SetScalarRange(scalarRange);
-        }
-      }
+  {
     modelNode->GetPolyData()->Modified();
-    } 
+  }
   modelNode->SetModifiedSinceRead(0);
   return result;
 }
@@ -304,11 +294,6 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
   // test whether refNode is a valid node to hold a model
   if (!refNode->IsA("vtkMRMLModelNode") ) 
   {

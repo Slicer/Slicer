@@ -338,13 +338,13 @@ void vtkMRMLVolumeHeaderlessStorageNode::ProcessParentNode(vtkMRMLNode *parentNo
 
 int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
   // do not read if if we are not in the scene (for example inside snapshot)
   if (  !refNode->GetAddToScene() )
+    {
+    return 1;
+    }
+
+  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
     {
     return 1;
     }
@@ -494,11 +494,6 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
   // test whether refNode is a valid node to hold a volume
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
@@ -589,17 +584,13 @@ int vtkMRMLVolumeHeaderlessStorageNode::SupportedFileType(const char *fileName)
 void vtkMRMLVolumeHeaderlessStorageNode::InitializeSupportedWriteFileTypes()
 {
   Superclass::InitializeSupportedWriteFileTypes();
-
-  if (this->GetScene() &&
-      this->GetScene()->GetDataIOManager() &&
-      this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
+  vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
+    GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
+  for(int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
     {
-    vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
-      GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
-    for(int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
-      {
-      this->SupportedWriteFileTypes->InsertNextValue(
-              supportedFormats->GetValue(i));
-      }
+    this->SupportedWriteFileTypes->InsertNextValue(
+      supportedFormats->GetValue(i));
     }
 }
+
+

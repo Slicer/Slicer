@@ -174,13 +174,14 @@ void vtkMRMLVolumeArchetypeStorageNode::ProcessParentNode(vtkMRMLNode *parentNod
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
+
   // do not read if if we are not in the scene (for example inside snapshot)
   if ( !refNode->GetAddToScene() )
+    {
+    return 1;
+    }
+
+  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
     {
     return 1;
     }
@@ -266,14 +267,14 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     }
   else 
-    #endif
+#endif
     if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
-    {
-    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
-    reader = vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader>::New();  
-    reader->SetSingleFile( this->GetSingleFile() );
-    reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
-    }
+      {
+      volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+      reader = vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader>::New();  
+      reader->SetSingleFile( this->GetSingleFile() );
+      reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
+      }
 
   reader->AddObserver( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
 
@@ -410,12 +411,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
-  
   int result = 1;
 
   // test whether refNode is a valid node to hold a volume
@@ -584,17 +579,12 @@ int vtkMRMLVolumeArchetypeStorageNode::SupportedFileType(const char *fileName)
 void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
 {
   Superclass::InitializeSupportedWriteFileTypes();
-  if (this->GetScene() &&
-      this->GetScene()->GetDataIOManager() &&
-      this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
+  vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
+    GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
+  for(int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
     {
-    vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
-      GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
-    for(int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
-      {
-      this->SupportedWriteFileTypes->InsertNextValue(
-                                                     supportedFormats->GetValue(i));
-      }
+    this->SupportedWriteFileTypes->InsertNextValue(
+      supportedFormats->GetValue(i));
     }
 }
 
