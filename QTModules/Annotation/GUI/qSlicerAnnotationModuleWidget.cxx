@@ -175,6 +175,10 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     size.setWidth(size.height());
     visibilitywidget->resize(size);
     tableWidget->setCellWidget(index, VisibleColumn, visibilitywidget);
+    if(this->logic()->IsSnapshotNode(q->m_IDs[index]))
+      {
+      visibilitywidget->setEnabled(false);
+      }
     visibilitywidget->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
     tableWidget->resizeColumnToContents(VisibleColumn);
     q->connect(this->visibilitywidget, SIGNAL(buttonClickedWithIndex(int)), q,
@@ -245,6 +249,10 @@ void qSlicerAnnotationModuleWidgetPrivate::updateAnnotation(int index, const QSt
     lockwidget->resize(size);
     tableWidget->setCellWidget(index, LockColumn, lockwidget);
     lockwidget->setIcon(QIcon(":/Icons/AnnotationUnlock.png"));
+    if(this->logic()->IsSnapshotNode(q->m_IDs[index]))
+      {
+      lockwidget->setEnabled(false);
+      }
     tableWidget->resizeColumnToContents(LockColumn);
     q->connect(this->lockwidget, SIGNAL(buttonClickedWithIndex(int)), q,
       SLOT(selectRowByIndex(int)));
@@ -706,6 +714,56 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
     return;
     }
 
+  const char * mrmlId = this->m_IDs[d->tableWidget->row(
+      d->tableWidget->selectedItems().at(0))];
+
+  // special case for snapshots
+  if (d->logic()->IsSnapshotNode(mrmlId))
+    {
+
+    // the selected entry is a snapshot node,
+    // we check if we have to create a new dialog..
+
+    if (!this->m_SnapShotDialog)
+      {
+
+      // no snapshot dialog exists yet..
+
+      // just make sure the logic knows about this widget
+      d->logic()->SetAndObserveWidget(this);
+
+      // be sure to listen to the mrml events
+      // this only has to be called if no real annotations were placed yet
+      // double call does not hurt..
+      d->logic()->InitializeEventListeners();
+
+      this->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog();
+
+      // pass a pointer to the logic class
+      this->m_SnapShotDialog->setLogic(d->logic());
+
+      // create slots which listen to events fired by the OK and CANCEL button on the dialog
+      this->connect(this->m_SnapShotDialog, SIGNAL(dialogRejected()), this,
+          SLOT(snapshotRejected()));
+      this->connect(this->m_SnapShotDialog, SIGNAL(dialogAccepted()), this,
+          SLOT(snapshotAccepted()));
+
+      }
+
+    // in any case, show the dialog
+    this->m_SnapShotDialog->setVisible(true);
+
+    // reset all fields of the dialog
+    this->m_SnapShotDialog->reset();
+
+    // now we initialize it with existing values
+    this->m_SnapShotDialog->initialize(mrmlId);
+
+    // bail out, everything below is not for snapshots
+    return;
+    }
+  // end of special case for snapshots
+
   if (this->m_PropertyDialog)
     {
     QMessageBox::warning(d->tableWidget,
@@ -714,9 +772,6 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
 
     return;
     }
-
-  const char * mrmlId = this->m_IDs[d->tableWidget->row(
-      d->tableWidget->selectedItems().at(0))];
 
   d->logic()->SetAnnotationSelected(mrmlId, true);
 

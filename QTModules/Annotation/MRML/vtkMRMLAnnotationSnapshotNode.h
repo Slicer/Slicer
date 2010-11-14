@@ -31,14 +31,14 @@ public:
 
 
 
-  void GetSnapshotDescription(const char* newDescription) {this->m_Description = newDescription;}
-  const char* GetSnapshotDescription() {return this->m_Description;}
-
-  //void SetSceneSnapshot(vtkMRMLSceneSnapshotNode* snapshot) {this->m_SnapShot = snapshot;}
-  //vtkMRMLSceneSnapshotNode* GetSceneSnapshot() {return this->m_SnapShot;}
+  void SetSnapshotDescription(vtkStdString newDescription) {this->m_Description = newDescription;}
+  vtkStdString GetSnapshotDescription() {return this->m_Description;}
 
   void SetScreenshot(vtkImageData* screenshot) {this->m_ScreenShot = screenshot;}
   vtkImageData* GetScreenshot() {return this->m_ScreenShot;}
+
+  void SetScreenshotType(int type) {this->m_ScreenShotType = type;}
+  int GetScreenshotType() {return this->m_ScreenShotType;}
 
   enum
   {
@@ -52,11 +52,18 @@ protected:
   vtkMRMLAnnotationSnapshotNode(const vtkMRMLAnnotationSnapshotNode&);
   void operator=(const vtkMRMLAnnotationSnapshotNode&);
 
-  vtkMRMLSceneSnapshotNode* m_SnapShot;
+  /// The associated Description
+  vtkStdString m_Description;
 
-  const char* m_Description;
-
+  /// The vtkImageData of the screenshot
   vtkImageData* m_ScreenShot;
+
+  /// The type of the screenshot
+  /// 0: 3D View
+  /// 1: Red Slice View
+  /// 2: Yellow Slice View
+  /// 3: Green Slice View
+  int m_ScreenShotType;
 
 };
 

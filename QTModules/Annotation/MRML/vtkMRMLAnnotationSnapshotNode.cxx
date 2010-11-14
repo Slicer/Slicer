@@ -13,17 +13,13 @@
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationSnapshotNode::vtkMRMLAnnotationSnapshotNode()
 {
-  this->m_SnapShot = 0;
+
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationSnapshotNode::~vtkMRMLAnnotationSnapshotNode()
 {
-  if (this->m_SnapShot)
-    {
-    this->m_SnapShot->Delete();
-    this->m_SnapShot = 0;
-    }
+
 }
 
 //------------------------------------------------------------------------------

@@ -14,6 +14,9 @@ public:
   /// Set the Annotation module logic.
   void setLogic(vtkSlicerAnnotationModuleLogic* logic);
 
+  /// Initialize this dialog with values from an existing annotation Snapshot node.
+  void initialize(const char* nodeId);
+
   /// Reset the dialog.
   void reset();
 
