@@ -33,9 +33,6 @@ protected slots:
   void onYellowSliceViewRadioClicked();
   void onGreenSliceViewRadioClicked();
 
-  /// Slot for the screenshot
-  void onScreenshotPlaceholderClicked();
-
   /// Slots for the restore button
   void onRestoreButtonClicked();
 

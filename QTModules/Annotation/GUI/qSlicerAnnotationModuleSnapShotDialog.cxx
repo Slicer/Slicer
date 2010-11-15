@@ -163,8 +163,6 @@ void qSlicerAnnotationModuleSnapShotDialog::createConnection()
 
   this->connect(ui.restoreButton, SIGNAL(clicked()), this, SLOT(onRestoreButtonClicked()));
 
-  this->connect(ui.screenshotPlaceholder, SIGNAL(clicked()), this, SLOT(onScreenshotPlaceholderClicked()));
-
 }
 
 //-----------------------------------------------------------------------------
@@ -255,21 +253,6 @@ void qSlicerAnnotationModuleSnapShotDialog::onYellowSliceViewRadioClicked()
 void qSlicerAnnotationModuleSnapShotDialog::onGreenSliceViewRadioClicked()
 {
   this->grabScreenShot("Green");
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onScreenshotPlaceholderClicked()
-{
-  // convert the screenshot from vtkImageData to QImage..
-  QImage qimage;
-  this->m_Logic->VtkImageDataToQImage(this->m_vtkImageData,qimage);
-
-  // ..and then to QPixmap..
-  QPixmap screenshot;
-  screenshot.convertFromImage(qimage, Qt::AutoColor);
-
-  // ..and set it to the gui..
-  ui.screenshotPlaceholder->setPixmap(screenshot);
 }
 
 //-----------------------------------------------------------------------------
