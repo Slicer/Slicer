@@ -109,7 +109,10 @@ qMRMLThreeDView* qMRMLLayoutManagerPrivate::threeDView(int id)const
 //------------------------------------------------------------------------------
 qMRMLThreeDView* qMRMLLayoutManagerPrivate::threeDView(vtkMRMLViewNode* node)const
 {
-  Q_ASSERT(node);
+  if (!node)
+    {
+    return 0;
+    }
   foreach(qMRMLThreeDView* view, this->ThreeDViewList)
     {
     if (view->mrmlViewNode() == node)
@@ -395,6 +398,10 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
   vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(node);
   if (viewNode)
     {
+    if (viewNode == this->ActiveMRMLThreeDViewNode)
+      {
+      this->setActiveMRMLThreeDViewNode(0); 
+      }
     this->removeThreeDView(viewNode);
     }
 

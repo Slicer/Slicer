@@ -60,9 +60,12 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
 void qMRMLThreeDViewsControllerWidgetPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLThreeDViewsControllerWidget);
-  Q_ASSERT(this->ActiveMRMLThreeDViewNode);
 
   q->setEnabled(this->ActiveMRMLThreeDViewNode != 0); // Enable/disable widget
+  if (!this->ActiveMRMLThreeDViewNode)
+    {
+    return;
+    }
   this->setOrthographicModeEnabled(
       this->ActiveMRMLThreeDViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
   this->setStereoType(this->ActiveMRMLThreeDViewNode->GetStereoType());

@@ -44,6 +44,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLNavigationView");
@@ -60,7 +61,7 @@ public:
   ~qMRMLNavigationViewPrivate();
 
   vtkMRMLScene*                      MRMLScene;
-  vtkMRMLViewNode*                   MRMLViewNode;
+  vtkWeakPointer<vtkMRMLViewNode>    MRMLViewNode;
 };
 
 //--------------------------------------------------------------------------
@@ -71,7 +72,6 @@ qMRMLNavigationViewPrivate::qMRMLNavigationViewPrivate(qMRMLNavigationView& obje
   : q_ptr(&object)
 {
   this->MRMLScene = 0;
-  this->MRMLViewNode = 0;
 }
 
 //---------------------------------------------------------------------------
