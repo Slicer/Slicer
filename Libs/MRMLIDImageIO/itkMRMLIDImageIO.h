@@ -70,6 +70,10 @@ public:
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */
   virtual bool CanReadFile(const char*);
+
+  virtual bool CanUseOwnBuffer();
+  virtual void ReadUsingOwnBuffer();
+  virtual void * GetOwnBuffer();
   
   /** Set the spacing and dimension information for the set filename. */
   virtual void ReadImageInformation();
