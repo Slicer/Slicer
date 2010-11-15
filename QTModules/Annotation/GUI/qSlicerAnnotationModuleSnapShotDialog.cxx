@@ -137,7 +137,7 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
 
   // ..and then to QPixmap..
   QPixmap screenshot;
-  screenshot.convertFromImage(qimage, Qt::AutoColor);
+  screenshot = QPixmap::fromImage(qimage, Qt::AutoColor);
 
   // ..and set it to the gui..
   ui.screenshotPlaceholder->setPixmap(screenshot.scaled(this->ui.screenshotPlaceholder->width(),this->ui.screenshotPlaceholder->height(),
@@ -296,9 +296,15 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   this->ui.greenSliceViewRadio->setChecked(false);
   this->grabScreenShot("");
   this->ui.descriptionTextEdit->clear();
-  this->ui.nameEdit->clear();
 
   this->ui.restoreButton->setEnabled(false);
+
+  // we want a default name which is easily overwritable by just typing
+  this->ui.nameEdit->setText(this->m_Logic->GetMRMLScene()->GetUniqueNameByString("Snapshot"));
+  this->ui.nameEdit->setFocus();
+  this->ui.nameEdit->selectAll();
+
+
 
   // reset the id
   this->m_Id = 0;
