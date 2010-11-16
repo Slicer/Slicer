@@ -323,13 +323,15 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLFreeSurferModelStorageNode::WriteData(vtkMRMLNode *refNode)
 {
-//  vtkErrorMacro("Model Writing not supported for FreeSurfer models. For RemoteIO, please see the CopyData method as a possible workaround.");
-//  return 0;
-  
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("WriteData: Reference node is null!");
+    return 0;
+    }
   // test whether refNode is a valid node to hold a model
   if (!refNode->IsA("vtkMRMLModelNode") ) 
     {
-    vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
+    vtkErrorMacro("WriteData: Reference node is not a vtkMRMLModelNode");
     return 0;
     }
   
@@ -338,7 +340,7 @@ int vtkMRMLFreeSurferModelStorageNode::WriteData(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
-    vtkErrorMacro("File name not specified");
+    vtkErrorMacro("WriteData: File name not specified");
     return 0;
     }
 
@@ -378,7 +380,7 @@ int vtkMRMLFreeSurferModelStorageNode::WriteData(vtkMRMLNode *refNode)
   else
     {
     result = 0;
-    vtkErrorMacro("No Writer for file extension: '" << extension.c_str() << "', use VTK model extensions .vtk or .vtp" );
+    vtkErrorMacro("WriteData: No Writer for file extension: '" << extension.c_str() << "', use VTK model extensions .vtk or .vtp" );
     }
   
   if (result != 0)
@@ -388,7 +390,6 @@ int vtkMRMLFreeSurferModelStorageNode::WriteData(vtkMRMLNode *refNode)
   
   return result;
 }
-
 
 //----------------------------------------------------------------------------
 int vtkMRMLFreeSurferModelStorageNode::CopyData(vtkMRMLNode *refNode,
