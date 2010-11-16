@@ -349,7 +349,7 @@ public:
   ///
   /// Get a sub-scene containing all nodes directly or indirectly reference by
   /// the input node
-  void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene, int loadData);
+  void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
 
 //BTX
   /// 
