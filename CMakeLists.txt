@@ -137,7 +137,7 @@ OPTION(Slicer_USE_BatchMake   "Build Slicer with BatchMake support." ON)
 OPTION(Slicer_USE_MIDAS       "Build Slicer with MIDAS support." OFF)
 OPTION(Slicer_USE_OPENIGTLINK "Build Slicer with OpenIGTLink support." ON)
 OPTION(Slicer_USE_OPENCV      "Build Slicer with OpenCV support." OFF)
-OPTION(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." OFF)
+OPTION(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 MARK_AS_ADVANCED(Slicer_USE_CTKAPPLAUNCHER)
 
 # Slicer implicitly uses Qt
