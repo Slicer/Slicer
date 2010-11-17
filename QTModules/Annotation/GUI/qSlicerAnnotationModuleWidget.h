@@ -102,6 +102,8 @@ protected slots:
   //------------------------------------------------------------------
   // Daniel's approved code starting here
 
+  void onRestoreViewButtonClicked();
+
   // Property dialog
   void propertyRestored();
   void propertyAccepted();

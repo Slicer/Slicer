@@ -1109,6 +1109,35 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationNode(const char * id)
 }
 
 //---------------------------------------------------------------------------
+// Restore the view when it was last modified of an AnnotationMRML node
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::RestoreAnnotationView(const char * id)
+{
+
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    vtkErrorMacro("RestoreAnnotationView: Could not get the MRML node.")
+    return;
+    }
+
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
+      node);
+
+  if (!annotationNode)
+    {
+    vtkErrorMacro("RestoreAnnotationView: Could not get the annotationMRML node.")
+    return;
+    }
+
+  this->GetMRMLScene()->SaveStateForUndo();
+
+  annotationNode->RestoreView();
+
+}
+
+//---------------------------------------------------------------------------
 //
 //
 // Annotation Hierarchy Functionality

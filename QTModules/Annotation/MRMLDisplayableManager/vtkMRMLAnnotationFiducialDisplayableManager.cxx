@@ -237,8 +237,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnWidgetCreated(vtkAbstractWid
   widget->AddObserver(vtkCommand::InteractionEvent,myCallback);
   myCallback->Delete();
 
-  //this->m_Updating = 0;
-  //this->PropagateWidgetToMRML(widget, node);
+  // store the current view
+  node->SaveView();
+
 }
 
 
@@ -366,6 +367,8 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
     }
 
   fiducialNode->SetFiducialCoordinates(worldCoordinates1);
+
+  fiducialNode->SaveView();
 
   // enable processing of modified events
   this->m_Updating = 0;

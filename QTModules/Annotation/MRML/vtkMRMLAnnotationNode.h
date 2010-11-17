@@ -12,6 +12,8 @@
 #include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLModelNode.h" 
 #include "vtkMRMLAnnotationTextDisplayNode.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLCameraNode.h"
 
 class vtkStringArray;
 class vtkMRMLStorageNode;
@@ -126,6 +128,11 @@ public:
   /// Returns the associated backup of this node
   vtkMRMLAnnotationNode * GetBackup();
 
+  // Functionality to save the current view
+  /// Saves the current view.
+  void SaveView();
+  /// Restores a previously saved view.
+  void RestoreView();
 
 protected:
   vtkMRMLAnnotationNode();
@@ -145,15 +152,21 @@ protected:
   void ResetTextAttributesAll(); 
   void SetAttributeSize(vtkIdType  id, vtkIdType n);
 
+  void CreatePolyData();
+
+
   vtkStringArray *TextList;
   char *ReferenceNodeID; 
-
-  void CreatePolyData();
 
   int Visible;
   int Locked;
 
   vtkMRMLAnnotationNode * m_Backup;
+
+  vtkMRMLSliceNode* m_RedSliceNode;
+  vtkMRMLSliceNode* m_YellowSliceNode;
+  vtkMRMLSliceNode* m_GreenSliceNode;
+  vtkMRMLCameraNode* m_CameraNode;
 
 };
 

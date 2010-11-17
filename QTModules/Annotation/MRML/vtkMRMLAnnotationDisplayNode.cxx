@@ -50,6 +50,14 @@ vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()
   this->Diffuse = 1.0;
   this->Specular = 0;
   this->Power = 1;
+
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLAnnotationDisplayNode::~vtkMRMLAnnotationDisplayNode()
+{
+
+
 }
 
 
@@ -124,7 +132,6 @@ vtkMRMLAnnotationDisplayNode * vtkMRMLAnnotationDisplayNode::GetBackup()
   return this->m_Backup;
 
 }
-
 
 
 

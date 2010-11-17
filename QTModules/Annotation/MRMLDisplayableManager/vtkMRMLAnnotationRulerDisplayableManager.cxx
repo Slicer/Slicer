@@ -279,6 +279,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   widget->AddObserver(vtkCommand::InteractionEvent,myCallback);
   myCallback->Delete();
 
+  node->SaveView();
+
   //this->m_Updating = 0;
   //this->PropagateWidgetToMRML(widget, node);
 
@@ -482,6 +484,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
   double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
   rep->SetDistance(distance);
   rulerNode->SetDistanceMeasurement(distance);
+
+  // save the current view
+  rulerNode->SaveView();
 
   // enable processing of modified events
   this->m_Updating = 0;

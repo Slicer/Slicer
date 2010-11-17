@@ -322,6 +322,8 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   widget->AddObserver(vtkCommand::InteractionEvent,myCallback);
   myCallback->Delete();
 
+  node->SaveView();
+
   // we want to manually propagate the widget to the MRML node now
   // in the future, the callback handles the update of the MRML node
   //this->m_Updating = 0;
@@ -545,6 +547,8 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
   rep->SetDistance2(distance2);
 
   bidimensionalNode->SetBidimensionalMeasurement(distance1,distance2);
+
+  bidimensionalNode->SaveView();
 
   // enable processing of modified events
   this->m_Updating = 0;

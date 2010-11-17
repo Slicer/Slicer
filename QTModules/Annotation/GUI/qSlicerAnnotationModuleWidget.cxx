@@ -563,6 +563,11 @@ void qSlicerAnnotationModuleWidget::setup()
   this->connect(d->lockUnlockAllButton, SIGNAL(clicked()), this,
       SLOT(onLockUnlockAllButtonClicked()));
 
+  this->connect(d->restoreViewButton, SIGNAL(clicked()), this,
+      SLOT(onRestoreViewButtonClicked()));
+
+
+
   this->connect(d->tableWidget, SIGNAL(itemSelectionChanged()), this,
       SLOT(onItemSelectionChanged()));
 
@@ -849,6 +854,26 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked()
    propertyDialog->setVisible(true);
 
    */
+}
+
+void qSlicerAnnotationModuleWidget::onRestoreViewButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  if (d->tableWidget->selectedItems().size() != d->tableWidget->columnCount())
+    {
+    QMessageBox::warning(d->tableWidget,
+        QString("Modify Annotation Properties"), QString(
+            "Please select exactly one item in the table."));
+
+    return;
+    }
+
+  const char * mrmlId = this->m_IDs[d->tableWidget->row(
+      d->tableWidget->selectedItems().at(0))];
+
+  d->logic()->RestoreAnnotationView(mrmlId);
+
 }
 
 void qSlicerAnnotationModuleWidget::propertyRestored()
@@ -2185,3 +2210,4 @@ void qSlicerAnnotationModuleWidget::snapshotRejected()
   this->m_SnapShotDialog->setVisible(false);
   //std::cout << "Snapshot rejected" << std::endl;
 }
+

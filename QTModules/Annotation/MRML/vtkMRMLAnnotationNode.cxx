@@ -54,6 +54,10 @@ vtkMRMLAnnotationNode::vtkMRMLAnnotationNode()
   this->Visible=1;  
   this->Locked = 0;
   this->m_Backup = 0;
+
+  this->m_RedSliceNode = 0;
+  this->m_YellowSliceNode = 0;
+  this->m_GreenSliceNode = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -63,6 +67,24 @@ vtkMRMLAnnotationNode::~vtkMRMLAnnotationNode()
   if (this->ReferenceNodeID) 
     {
       delete [] this->ReferenceNodeID;
+    }
+
+  if (this->m_RedSliceNode)
+    {
+    this->m_RedSliceNode->Delete();
+    this->m_RedSliceNode = 0;
+    }
+
+  if (this->m_YellowSliceNode)
+    {
+    this->m_YellowSliceNode->Delete();
+    this->m_YellowSliceNode = 0;
+    }
+
+  if (this->m_GreenSliceNode)
+    {
+    this->m_GreenSliceNode->Delete();
+    this->m_GreenSliceNode = 0;
     }
 }
 
@@ -643,5 +665,75 @@ vtkMRMLAnnotationNode * vtkMRMLAnnotationNode::GetBackup()
 {
 
   return this->m_Backup;
+
+}
+
+
+//----------------------------------------------------------------------------
+// Save the views
+void vtkMRMLAnnotationNode::SaveView()
+{
+
+  // pointers to the current sliceNodes in the scene
+  vtkMRMLSliceNode* redSliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(0,"vtkMRMLSliceNode"));
+  vtkMRMLSliceNode* yellowSliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(1,"vtkMRMLSliceNode"));
+  vtkMRMLSliceNode* greenSliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(2,"vtkMRMLSliceNode"));
+
+  // the current camera
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(0,"vtkMRMLCameraNode"));
+
+  // TODO support dual 3D view layout
+
+  // initialize our copies of the current sliceNodes
+  this->m_RedSliceNode = vtkMRMLSliceNode::New();
+  this->m_YellowSliceNode = vtkMRMLSliceNode::New();
+  this->m_GreenSliceNode = vtkMRMLSliceNode::New();
+  this->m_CameraNode = vtkMRMLCameraNode::New();
+
+  // now copy the current ones over to our sliceNodes
+  this->m_RedSliceNode->Copy(redSliceNode);
+  this->m_YellowSliceNode->Copy(yellowSliceNode);
+  this->m_GreenSliceNode->Copy(greenSliceNode);
+  this->m_CameraNode->Copy(cameraNode);
+
+}
+
+//----------------------------------------------------------------------------
+// Restore the saved views
+void vtkMRMLAnnotationNode::RestoreView()
+{
+
+  // if we do not have stores views, exit now
+  if (!this->m_RedSliceNode)
+    {
+    return;
+    }
+
+  if (!this->m_YellowSliceNode)
+    {
+    return;
+    }
+
+  if (!this->m_GreenSliceNode)
+    {
+    return;
+    }
+
+
+  // pointers to the current sliceNodes in the scene
+  vtkMRMLSliceNode* redSliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(0,"vtkMRMLSliceNode"));
+  vtkMRMLSliceNode* yellowSliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(1,"vtkMRMLSliceNode"));
+  vtkMRMLSliceNode* greenSliceNode = vtkMRMLSliceNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(2,"vtkMRMLSliceNode"));
+
+  // the current camera
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(this->GetScene()->GetNthNodeByClass(0,"vtkMRMLCameraNode"));
+
+
+  // now copy our saved sliceNodes over the current ones
+  // this restores the view
+  redSliceNode->CopyWithSingleModifiedEvent(this->m_RedSliceNode);
+  yellowSliceNode->CopyWithSingleModifiedEvent(this->m_YellowSliceNode);
+  greenSliceNode->CopyWithSingleModifiedEvent(this->m_GreenSliceNode);
+  cameraNode->CopyWithSingleModifiedEvent(this->m_CameraNode);
 
 }

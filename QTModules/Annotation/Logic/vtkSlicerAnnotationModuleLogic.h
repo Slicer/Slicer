@@ -101,6 +101,9 @@ public:
   /// Restore a backup of an Annotation MRML node
   void RestoreAnnotationNode(const char * id);
 
+  /// Restore view of an Annotation MRML node
+  void RestoreAnnotationView(const char* id);
+
   //
   // Hierarchy functionality
   //

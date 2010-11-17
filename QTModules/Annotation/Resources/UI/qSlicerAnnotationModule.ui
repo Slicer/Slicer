@@ -246,9 +246,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="sceneEntryButton">
+            <widget class="QPushButton" name="restoreViewButton">
              <property name="toolTip">
-              <string>resets view to when annotation was set - only changes viewer not entire MRML scene</string>
+              <string>Resets 3D and slice views to when the selected annotation was last modified.</string>
              </property>
              <property name="text">
               <string/>

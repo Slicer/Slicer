@@ -61,11 +61,12 @@ class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayNode : publ
 
  protected:
   vtkMRMLAnnotationDisplayNode();
-  ~vtkMRMLAnnotationDisplayNode() { };
+  ~vtkMRMLAnnotationDisplayNode();
   vtkMRMLAnnotationDisplayNode( const vtkMRMLAnnotationDisplayNode& );
   void operator= ( const vtkMRMLAnnotationDisplayNode& );
 
-  vtkMRMLAnnotationDisplayNode * m_Backup;
+  vtkMRMLAnnotationDisplayNode* m_Backup;
+
 };
 
 #endif
