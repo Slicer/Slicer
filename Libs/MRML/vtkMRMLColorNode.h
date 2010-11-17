@@ -117,6 +117,15 @@ public:
   /// Set the 0th based nth name of this colour, replacing the subst character
   /// with spaces. Returns 1 on success, 0 on failure
   int SetColorNameWithSpaces(int ind, const char *name, const char *subst);
+  /// 
+  /// Get the number of colours in the table
+  virtual int GetNumberOfColors();
+  
+  ///
+  /// Retrieve the color associated to the index
+  /// Must be reimplemented in the derived classes
+  /// Return 1 if the color exists, 0 otherwise
+  virtual bool GetColor(int ind, double* color);
   
   /// 
   /// Name of the file name from which to read color information

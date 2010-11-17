@@ -1513,10 +1513,12 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
     {
     this->Names.resize(n);
     }
-  
+
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
+/*
 int vtkMRMLColorTableNode::GetNumberOfColors()
 {
   if (this->GetLookupTable() != NULL)
@@ -1528,6 +1530,8 @@ int vtkMRMLColorTableNode::GetNumberOfColors()
       return 0;
     }
 }
+*/
+
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::AddColor(const char *name, double r, double g, double b)
 {
@@ -1571,6 +1575,17 @@ int vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, doubl
   return 1;
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLColorTableNode::GetColor(int entry, double* color)
+{
+  if (entry < 0 || entry >= this->GetNumberOfColors())
+    {
+    vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
+    return false;
+    }
+  this->GetLookupTable()->GetTableValue(entry, color);
+  return true;
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::ClearNames()

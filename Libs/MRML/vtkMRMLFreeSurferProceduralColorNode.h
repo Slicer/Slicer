@@ -23,7 +23,6 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkFSLookupTable.h"
 #include "vtkMRMLProceduralColorNode.h"
 
 class vtkLookupTable;
@@ -66,7 +65,7 @@ public:
   /// vtkLookupTable or an vtkFSLookupTable
   vtkLookupTable *GetLookupTable();
   vtkFSLookupTable *GetFSLookupTable();
-  vtkSetObjectMacro(LookupTable, vtkFSLookupTable);
+  virtual void SetLookupTable(vtkFSLookupTable* newLookupTable);
 
   /// 
   /// Get/Set for Type
@@ -131,6 +130,9 @@ public:
   /// default file name for freesurfer labels
   vtkGetStringMacro(LabelsFileName);
   vtkSetStringMacro(LabelsFileName);
+  
+  virtual int GetNumberOfColors();
+  virtual bool GetColor(int entry, double* color);
 
 protected:
   vtkMRMLFreeSurferProceduralColorNode();

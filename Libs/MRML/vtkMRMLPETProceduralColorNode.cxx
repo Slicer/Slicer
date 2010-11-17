@@ -269,4 +269,3 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
   // invoke a type  modified event
   this->InvokeEvent(vtkMRMLProceduralColorNode::TypeModifiedEvent);
 }
-

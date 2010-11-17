@@ -102,6 +102,9 @@ public:
   /// set up some names, going from the points defined in the transfer function
   void SetNamesFromColors();
   
+  virtual int GetNumberOfColors();
+  virtual bool GetColor(int entry, double* color);
+
 protected:
   vtkMRMLProceduralColorNode();
   ~vtkMRMLProceduralColorNode();

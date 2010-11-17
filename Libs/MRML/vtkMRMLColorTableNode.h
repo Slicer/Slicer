@@ -206,9 +206,6 @@ public:
   /// 
   /// Set the size of the colour table if it's a User table
   void SetNumberOfColors(int n);
-  /// 
-  /// Get the number of colours in the table
-  int GetNumberOfColors();
 
   /// 
   /// keep track of where we last added a colour 
@@ -220,6 +217,10 @@ public:
   /// 
   /// Set a colour into the User colour table. Return 1 on success, 0 on failure.
   int SetColor(int entry, const char* name, double r, double g, double b);
+
+  /// Retrieve the color associated to the index
+  /// Return true if the color exists, false otherwise
+  virtual bool GetColor(int entry, double* color);
 
   /// 
   /// clear out the names list

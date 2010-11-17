@@ -25,6 +25,8 @@ Version:   $Revision: 1.0 $
 
 #include "vtkFSLookupTable.h"
 
+vtkCxxSetObjectMacro(vtkMRMLFreeSurferProceduralColorNode, LookupTable, vtkFSLookupTable);
+
 //------------------------------------------------------------------------------
 vtkMRMLFreeSurferProceduralColorNode* vtkMRMLFreeSurferProceduralColorNode::New()
 {
@@ -526,4 +528,39 @@ vtkLookupTable * vtkMRMLFreeSurferProceduralColorNode::GetLookupTable()
     vtkErrorMacro("GetLookupTable: error converting fs lookup table to vtk look up table.\n");
     }
   return vtkLookupTable::SafeDownCast(this->LookupTable);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLFreeSurferProceduralColorNode::GetNumberOfColors()
+{
+  double *range = this->GetLookupTable()->GetRange();
+  if (!range)
+    {
+    return 0;
+    }
+  int numPoints = static_cast<int>(floor(range[1] - range[0]));
+  if (range[0] < 0 && range[1] >= 0)
+    {
+    // add one for zero
+    numPoints++;
+    }
+  return numPoints;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLFreeSurferProceduralColorNode::GetColor(int entry, double* color)
+{
+  if (entry < 0 || entry >= this->GetNumberOfColors())
+    {
+    vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
+    return false;
+    }
+  double *range = this->GetFSLookupTable()->GetRange();
+  if (!range)
+    {
+    return false;
+    }
+  this->GetFSLookupTable()->GetColor(range[0] + entry, color);
+  color[3] = 1.;
+  return true;
 }

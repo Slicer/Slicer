@@ -378,6 +378,18 @@ void vtkMRMLColorNode::AddColorName(const char *name)
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLColorNode::GetNumberOfColors()
+{
+  return static_cast<int>(this->Names.size());
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLColorNode::GetColor(int index, double* color)
+{
+  return false;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLColorNode::Reset()
 {
   // don't need to call reset on color nodes, as all but the User color table
