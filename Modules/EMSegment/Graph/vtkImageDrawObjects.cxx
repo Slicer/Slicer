@@ -21,7 +21,6 @@
 
 //------------------------------------------------------------------------------
 ObjectList::ObjectList() {
-  GraphList::GraphList();
   this->Next           = NULL; 
   memset(this->Position,0,4*sizeof(int));
   this->Thickness = 0;
@@ -29,7 +28,6 @@ ObjectList::ObjectList() {
 
 //------------------------------------------------------------------------------
 ObjectList::~ObjectList() {
-   this->GraphList::~GraphList();
    if (this->Next != NULL) delete this->Next;
 } 
 
