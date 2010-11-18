@@ -461,7 +461,7 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
       case vtkCommand::ModifiedEvent:
       case vtkMRMLDisplayableNode::PolyDataModifiedEvent:
       case vtkMRMLDisplayableNode::DisplayModifiedEvent:
-        this->OnMRMLDisplayableNodeModifiedEvent(vtkMRMLDisplayableNode::SafeDownCast(caller));
+        this->OnMRMLDisplayableModelNodeModifiedEvent(vtkMRMLDisplayableNode::SafeDownCast(caller));
         break;
       default:
         this->SetUpdateFromMRMLRequested(1);
@@ -600,7 +600,7 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* no
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(
+void vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     vtkMRMLDisplayableNode * modelNode)
 {
   assert(modelNode);

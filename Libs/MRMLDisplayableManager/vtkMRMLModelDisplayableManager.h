@@ -149,7 +149,7 @@ protected:
   virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
 
-  void OnMRMLDisplayableNodeModifiedEvent(vtkMRMLDisplayableNode * modelNode);
+  void OnMRMLDisplayableModelNodeModifiedEvent(vtkMRMLDisplayableNode * modelNode);
 
   ///
   /// Updates Actors based on models in the scene
