@@ -454,7 +454,7 @@ void vtkMRMLViewDisplayableManager::Create()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
                                                       unsigned long event,
-                                                      void *callData)
+                                                      void *vtkNotUsed(callData))
 {
   if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
     {
