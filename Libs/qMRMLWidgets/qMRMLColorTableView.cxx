@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // QT includes
+#include <QDoubleSpinBox>
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
 
@@ -28,6 +29,45 @@
 
 // MRML includes
 #include <vtkMRMLColorNode.h>
+
+OpacityDelegate::OpacityDelegate(QObject *parent)
+  : QItemDelegate(parent)
+{
+}
+
+QWidget *OpacityDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                       const QModelIndex &index) const
+{
+  QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
+  editor->setSingleStep(0.1);
+  editor->setMinimum(0.);
+  editor->setMaximum(1.);
+  return editor;
+}
+
+void OpacityDelegate::setEditorData(QWidget *editor,
+                                    const QModelIndex &index) const
+{
+  double value = index.model()->data(index, Qt::EditRole).toDouble();
+
+  QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
+  spinBox->setValue(value);
+}
+
+void OpacityDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                   const QModelIndex &index) const
+{
+  QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
+  spinBox->interpretText();
+  double value = spinBox->value();
+  model->setData(index, value, Qt::EditRole);
+}
+
+void OpacityDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const
+{
+  editor->setGeometry(option.rect);
+}
 
 //------------------------------------------------------------------------------
 class qMRMLColorTableViewPrivate
@@ -58,6 +98,8 @@ void qMRMLColorTableViewPrivate::init()
   
   q->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::Stretch);
   q->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::ResizeToContents);
+  OpacityDelegate* delegate = new OpacityDelegate;
+  q->setItemDelegateForColumn(qMRMLColorModel::OpacityColumn, delegate);
 }
 
 //------------------------------------------------------------------------------
@@ -97,7 +139,14 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
 {
   qMRMLColorModel* mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
+  
+  this->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::Fixed);
+  this->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::Fixed);
+
   mrmlModel->setMRMLColorNode(node);
+
+  this->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::Stretch);
+  this->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::ResizeToContents);
 }
 
 //------------------------------------------------------------------------------
@@ -113,7 +162,7 @@ void qMRMLColorTableView::setShowOnlyNamedColors(bool enable)
 {
   if (enable)
     {
-    this->sortFilterProxyModel()->setFilterFixedString(QString("(none)"));
+    this->sortFilterProxyModel()->setFilterRegExp(QRegExp("^(?!\\(none\\))"));
     }
   else
     {

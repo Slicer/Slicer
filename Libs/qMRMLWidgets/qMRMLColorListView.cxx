@@ -114,7 +114,7 @@ void qMRMLColorListView::setShowOnlyNamedColors(bool enable)
 {
   if (enable)
     {
-    this->sortFilterProxyModel()->setFilterFixedString(QString(""));
+    this->sortFilterProxyModel()->setFilterRegExp(QRegExp("^(?!\\(none\\))"));
     }
   else
     {

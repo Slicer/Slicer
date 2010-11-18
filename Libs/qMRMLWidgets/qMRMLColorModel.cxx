@@ -272,7 +272,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   bool validColor = d->MRMLColorNode->GetColor(color, rgba);
   switch (column)
     {
-    case 0:
+    case qMRMLColorModel::ColorColumn:
     default:
       {
       item->setText(QString(d->MRMLColorNode->GetColorName(color)));
@@ -292,8 +292,8 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
         }
       break;
       }
-    case 1:
-      item->setText(QString::number(rgba[3]));
+    case qMRMLColorModel::OpacityColumn:
+      item->setData(rgba[3], Qt::DisplayRole);
       break;
     }
 }

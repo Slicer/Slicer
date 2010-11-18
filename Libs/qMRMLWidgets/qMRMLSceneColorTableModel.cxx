@@ -129,7 +129,7 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorTableNode* no
   int count = gradientStops.count();
   for (int i = 0; i < count; ++i)
     {
-    gradientStops[i].second.setAlpha(128);
+    gradientStops[i].second.setAlpha(64);
     }
   colorGradient.Gradient.setStops(gradientStops);
   colorGradient.MTime = node->GetLookupTable()->GetMTime();

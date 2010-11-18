@@ -119,6 +119,10 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     d->CopyColorNodeButton->setEnabled(false);
     return;
     }
+  d->ColorView->setEditTriggers(
+    (colorNode->GetType() == vtkMRMLColorTableNode::User) ?
+      QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed :
+      QAbstractItemView::NoEditTriggers);
   d->CopyColorNodeButton->setEnabled(true);
   d->NumberOfColorsSpinBox->setEnabled(
     colorNode->GetType() == vtkMRMLColorTableNode::User);
@@ -170,6 +174,7 @@ void qSlicerColorsModuleWidget::setLookupTableRange(double min, double max)
   colorNode->GetLookupTable()->SetRange(min, max);
 }
 
+//-----------------------------------------------------------------------------
 void qSlicerColorsModuleWidget::copyCurrentColorNode()
 {
   Q_D(qSlicerColorsModuleWidget);

@@ -711,6 +711,7 @@ void qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int r
     {
     this->insertRow(row,items);
     }
+  // TODO: don't listen to nodes that are hidden from editors ?
   if (d->ListenNodeModifiedEvent)
     {
     qvtkConnect(node, vtkCommand::ModifiedEvent,
@@ -865,12 +866,11 @@ void printStandardItem(QStandardItem* item, const QString& offset)
 {
   if (!item)
     {
-    qDebug() << offset << item;
     return;
     }
-  qDebug() << offset << item << item->index() << item->text()
-           << item->data(qMRML::UIDRole).toString() << item->row()
-           << item->column() << item->rowCount() << item->columnCount();
+  //qDebug() << offset << item << item->index() << item->text()
+  //         << item->data(qMRML::UIDRole).toString() << item->row()
+  //         << item->column() << item->rowCount() << item->columnCount();
   for(int i = 0; i < item->rowCount(); ++i )
     {
     for (int j = 0; j < item->columnCount(); ++j)

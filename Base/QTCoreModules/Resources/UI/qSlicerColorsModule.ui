@@ -248,7 +248,7 @@
      <y>24</y>
     </hint>
     <hint type="destinationlabel">
-     <x>222</x>
+     <x>231</x>
      <y>470</y>
     </hint>
    </hints>
@@ -282,6 +282,22 @@
     <hint type="destinationlabel">
      <x>205</x>
      <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>HideInvalidColorsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ColorView</receiver>
+   <slot>setShowOnlyNamedColors(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>127</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>128</x>
+     <y>238</y>
     </hint>
    </hints>
   </connection>

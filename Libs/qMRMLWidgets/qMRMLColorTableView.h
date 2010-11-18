@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QTableView>
+#include <QItemDelegate>
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
@@ -61,5 +62,22 @@ private:
   Q_DECLARE_PRIVATE(qMRMLColorTableView);
   Q_DISABLE_COPY(qMRMLColorTableView);
 };
+
+class OpacityDelegate: public QItemDelegate
+{
+  Q_OBJECT
+public:
+  OpacityDelegate(QObject *parent = 0);
+  
+  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const;
+
+  void setEditorData(QWidget *editor, const QModelIndex &index) const;
+  void setModelData(QWidget *editor, QAbstractItemModel *model,
+                    const QModelIndex &index) const;
+
+  void updateEditorGeometry(QWidget *editor,
+    const QStyleOptionViewItem &option, const QModelIndex &index) const;
+ };
 
 #endif
