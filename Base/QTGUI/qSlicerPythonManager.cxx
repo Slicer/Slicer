@@ -104,6 +104,9 @@ void qSlicerPythonManager::eventBrokerScriptHandler(const char *script, void *cl
   //logger.setTrace();
   logger.trace(QString("Running broker observation script: %1").arg(script));
   self->executeString(pythonScript);
+#else
+  Q_UNUSED(script);
+  Q_UNUSED(clientData);
 #endif
 }
 
