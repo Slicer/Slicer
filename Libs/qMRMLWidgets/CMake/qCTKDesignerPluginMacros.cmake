@@ -43,7 +43,7 @@ MACRO(qctk_build_designer_plugin)
   SET(MY_QRC_SRCS)
 
   # Wrap
-  QT4_WRAP_CPP(MY_SRCS ${MY_MOC_SRCS})
+  QT4_WRAP_CPP(MY_MOC_CXX ${MY_MOC_SRCS})
   QT4_WRAP_UI(MY_UI_CXX ${MY_UI_FORMS})
   SET(MY_QRC_SRCS "")
   IF(DEFINED MY_RESOURCES)
@@ -56,13 +56,14 @@ MACRO(qctk_build_designer_plugin)
     )
 
   SOURCE_GROUP("Generated" FILES
-    ${MY_MOC_SRCS}
+    ${MY_MOC_CXX}
     ${MY_QRC_SRCS}
     ${MY_UI_CXX}
     )
 
   ADD_LIBRARY(${lib_name} ${MY_LIBRARY_TYPE}
     ${MY_SRCS}
+    ${MY_MOC_CXX}
     ${MY_UI_CXX}
     ${MY_QRC_SRCS}
     )
