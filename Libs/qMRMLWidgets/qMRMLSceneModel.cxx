@@ -695,14 +695,13 @@ void qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int r
   Q_D(qMRMLSceneModel);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
 
-  QStandardItem* newNodeItem = new QStandardItem();
-  this->updateItemFromNode(newNodeItem, node, 0);
-  QStandardItem* newNodeIDItem = new QStandardItem();
-  this->updateItemFromNode(newNodeIDItem, node, 1);
-
   QList<QStandardItem*> items;
-  items.append(newNodeItem);
-  items.append(newNodeIDItem);
+  for (int i= 0; i < this->columnCount(); ++i)
+    {
+    QStandardItem* newNodeItem = new QStandardItem();
+    this->updateItemFromNode(newNodeItem, node, i);
+    items.append(newNodeItem);
+    }
   if (parent)
     {
     parent->insertRow(row, items);

@@ -286,7 +286,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
     QString colorName = QLatin1String(d->ColorNode->GetColorName(i));
     //logger.debug(QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName));
     
-    QIcon colorIcon = qMRMLUtils::createIcon(this->style(), d->colorFromIndex(i));
+    QIcon colorIcon(qMRMLUtils::createColorPixmap(this->style(), d->colorFromIndex(i)));
     
     if ( d->ColorNameVisible )
       {

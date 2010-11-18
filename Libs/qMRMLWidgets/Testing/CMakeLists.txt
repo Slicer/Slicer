@@ -2,7 +2,11 @@
 SET(KIT qMRMLWidgets)
 SET(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  qMRMLColorListViewTest1.cxx
+  qMRMLColorModelTest1.cxx
+  qMRMLColorModelTest2.cxx
   qMRMLColorTableComboBoxTest1.cxx
+  qMRMLColorTableViewTest1.cxx
   qMRMLLayoutManagerTest1.cxx
   qMRMLLayoutManagerTest2.cxx
   qMRMLLinearTransformSliderTest1.cxx
@@ -63,7 +67,11 @@ MACRO(SCENE_TEST TESTNAME SCENEFILENAME)
     )
 ENDMACRO()
 
+SIMPLE_TEST( qMRMLColorListViewTest1 )
+SIMPLE_TEST( qMRMLColorModelTest1 )
+SIMPLE_TEST( qMRMLColorModelTest2 )
 SIMPLE_TEST( qMRMLColorTableComboBoxTest1 )
+SIMPLE_TEST( qMRMLColorTableViewTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest2 )
 SIMPLE_TEST( qMRMLLinearTransformSliderTest1 )

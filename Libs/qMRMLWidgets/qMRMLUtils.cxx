@@ -116,14 +116,14 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
 }
 
 // ----------------------------------------------------------------
-QIcon qMRMLUtils::createIcon(QStyle * style, const QColor &color)
+QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
 {
   if (!style)
     {
-    return QIcon();
+    return QPixmap();
     }
 
-  const int size = style->pixelMetric(QStyle::PM_ButtonIconSize) - 5;
+  const int size = style->pixelMetric(QStyle::PM_SmallIconSize) - 4;
 
   // Create a pixmap
   QPixmap colorFieldPixmap(size, size);
@@ -135,8 +135,5 @@ QIcon qMRMLUtils::createIcon(QStyle * style, const QColor &color)
   QPainter painter(&colorFieldPixmap);
   painter.drawRect(0, 0, size - 1, size - 1);
 
-  // Which finally allows to create this icon
-  QIcon colorField(colorFieldPixmap);
-
-  return colorField;
+  return colorFieldPixmap;
 }

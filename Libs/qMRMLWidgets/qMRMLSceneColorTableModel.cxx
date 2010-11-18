@@ -114,11 +114,11 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorTableNode* no
     {
     return false;
     }
-  qDebug() << " calculate gradient for lookup table: " << node->GetLookupTable();
+  //qDebug() << " calculate gradient for lookup table: " << node->GetLookupTable();
   ctkVTKLookupTable lt(node->GetLookupTable());
   ctkTransferFunctionRepresentation  tfr(&lt);
   colorGradient.Gradient = tfr.gradient();
-  qDebug() << " end calculate gradient for lookup table: " << node->GetLookupTable();
+  //qDebug() << " end calculate gradient for lookup table: " << node->GetLookupTable();
   colorGradient.Gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
   QPainter pixmapPainter(&colorGradient.Pixmap);
   pixmapPainter.fillRect(0,0,

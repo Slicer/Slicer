@@ -219,7 +219,7 @@ QStandardItem* qSlicerEMSegmentAnatomicalTreeWidgetPrivate::insertTreeRow(
     {
     int labelId = treeNode->GetParametersNode()->GetLeafParametersNode()->GetIntensityLabel();
     structureItem->setData(
-        qMRMLUtils::createIcon(q->style(), this->colorFromLabelId(labelId)), Qt::DecorationRole);
+        qMRMLUtils::createColorPixmap(q->style(), this->colorFromLabelId(labelId)), Qt::DecorationRole);
     }
   structureItem->setEditable(this->StructureNameEditable);
   itemList << structureItem;

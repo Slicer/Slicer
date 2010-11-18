@@ -52,8 +52,14 @@ SET(qMRMLWidgets_SRCS
   qMRMLActionSignalMapper.h
   qMRMLCollapsibleButton.cxx
   qMRMLCollapsibleButton.h
+  qMRMLColorListView.cxx
+  qMRMLColorListView.h
+  qMRMLColorModel.cxx
+  qMRMLColorModel.h
   qMRMLColorTableComboBox.cxx
   qMRMLColorTableComboBox.h
+  qMRMLColorTableView.cxx
+  qMRMLColorTableView.h
   qMRMLLabelComboBox.h
   qMRMLLabelComboBox.cxx
   qMRMLEventLogger.cxx
@@ -133,7 +139,10 @@ SET(qMRMLWidgets_SRCS
 SET(qMRMLWidgets_MOC_SRCS
   qMRMLActionSignalMapper.h
   qMRMLCollapsibleButton.h
+  qMRMLColorListView.h
   qMRMLColorTableComboBox.h
+  qMRMLColorTableView.h
+  qMRMLColorModel.h
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.h
   qMRMLLabelComboBox.h

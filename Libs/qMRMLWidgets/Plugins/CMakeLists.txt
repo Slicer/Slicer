@@ -8,8 +8,12 @@ PROJECT(qMRMLWidgetsPlugin)
 SET(designer_plugin_SRCS
   qMRMLCollapsibleButtonPlugin.cxx
   qMRMLCollapsibleButtonPlugin.h
+  qMRMLColorListViewPlugin.cxx
+  qMRMLColorListViewPlugin.h
   qMRMLColorTableComboBoxPlugin.cxx
   qMRMLColorTableComboBoxPlugin.h
+  qMRMLColorTableViewPlugin.cxx
+  qMRMLColorTableViewPlugin.h
   qMRMLLabelComboBoxPlugin.cxx
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.cxx
@@ -63,7 +67,9 @@ SET(designer_plugin_MOC_SRCS
   qMRMLWidgetsPlugin.h
 
   qMRMLCollapsibleButtonPlugin.h
+  qMRMLColorListViewPlugin.h
   qMRMLColorTableComboBoxPlugin.h
+  qMRMLColorTableViewPlugin.h
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.h
   qMRMLLinearTransformSliderPlugin.h

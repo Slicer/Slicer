@@ -57,7 +57,7 @@ public:
   static int countVisibleViewNode(vtkMRMLScene* scene);
 
   /// Create Icon using the given color
-  static QIcon createIcon(QStyle * style, const QColor& color);
+  static QPixmap createColorPixmap(QStyle * style, const QColor& color);
 
 private:
   /// Not implemented
