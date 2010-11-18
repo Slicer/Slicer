@@ -74,7 +74,7 @@ void qSlicerColorsModule::setup()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerColorsModule::createWidgetRepresentation()
 {
-  return 0;//new qSlicerColorsModuleWidget;
+  return new qSlicerColorsModuleWidget;
 }
 
 //-----------------------------------------------------------------------------

@@ -29,6 +29,7 @@
 #include "qSlicerBaseQTCoreModulesExport.h"
 
 class qSlicerColorsModuleWidgetPrivate;
+class vtkMRMLNode;
 
 class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerColorsModuleWidget :
   public qSlicerAbstractModuleWidget
@@ -39,6 +40,14 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerColorsModuleWidget(QWidget *parent=0);
   virtual ~qSlicerColorsModuleWidget();
+
+public slots:
+  void setNumberOfColors(int);
+  void setLookupTableRange(double min, double max);
+  void copyCurrentColorNode();
+
+protected slots:
+  void onMRMLColorNodeChanged(vtkMRMLNode* newColorNode);
 
 protected:
   virtual void setup();
