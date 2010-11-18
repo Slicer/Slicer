@@ -64,6 +64,8 @@ public slots:
   /// Remove menu entry corresponding to \a snapshotNode
   void removeMenuItem(vtkMRMLNode * snapshotNode);
 
+  void onMRMLSceneSnaphodeNodeModified(vtkObject * mrmlNode);
+
   bool hasNoSnapshotItem()const;
 
   void restoreSnapshot(const QString& snapshotNodeId);
