@@ -56,7 +56,7 @@ protected:
 
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
 
-  /// Could be overloaded if DisplayableManager subclass
+  /// Could be overloaded in DisplayableManager subclass
   virtual void OnMRMLViewNodeModifiedEvent(){}
   
 private:
