@@ -111,7 +111,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double regionSize, double sampleStep,
                                                             int maxNumberOfSeeds,
                                                             int seedSelectedFiducials,
-                                                            int displayMode)
+                                                            int vtkNotUsed(displayMode))
 {
   // 0. check inputs
   if (volumeNode == NULL || transformableNode == NULL || fiberNode == NULL ||

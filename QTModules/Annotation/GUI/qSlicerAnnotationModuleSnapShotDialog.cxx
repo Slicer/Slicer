@@ -188,7 +188,7 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
 
 
   // we need to know of which type the screenshot is
-  int screenshotType;
+  int screenshotType = -1;
 
   if (this->ui.threeDViewRadio->isChecked())
     {

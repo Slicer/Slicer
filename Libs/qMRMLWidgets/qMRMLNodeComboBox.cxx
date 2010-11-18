@@ -145,7 +145,6 @@ void qMRMLNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int row)const
 {
-  Q_Q(const qMRMLNodeComboBox);
   QModelIndex modelIndex;
   if (qobject_cast<QListView*>(this->ComboBox->view()))
     {

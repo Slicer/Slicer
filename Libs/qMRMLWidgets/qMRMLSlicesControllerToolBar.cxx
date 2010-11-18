@@ -510,6 +510,7 @@ void qMRMLSlicesControllerToolBar::onMRMLSceneChanged(
 {
   Q_D(qMRMLSlicesControllerToolBar);
   Q_UNUSED(receiver);
+  Q_UNUSED(sender);
   Q_ASSERT(d->MRMLScene == sender);
   if (d->MRMLScene->GetIsImporting())
     {

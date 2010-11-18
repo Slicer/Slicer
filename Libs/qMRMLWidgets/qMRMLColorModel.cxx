@@ -320,11 +320,10 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
 
 //-----------------------------------------------------------------------------
 void qMRMLColorModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
-                                        void* client_data, void* call_data)
+                                      void* client_data, void* vtkNotUsed(call_data))
 {
   vtkMRMLColorNode* colorNode = reinterpret_cast<vtkMRMLColorNode*>(vtk_obj);
   qMRMLColorModel* colorModel = reinterpret_cast<qMRMLColorModel*>(client_data);
-  int color = reinterpret_cast<int>(call_data);
   Q_ASSERT(colorNode);
   Q_ASSERT(colorModel);
   switch(event)
@@ -341,6 +340,8 @@ void qMRMLColorModel::onMRMLColorNodeModified(vtkObject* node)
 {
   Q_D(qMRMLColorModel);
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(node);
+  Q_UNUSED(colorNode);
+  Q_UNUSED(d);
   Q_ASSERT(colorNode == d->MRMLColorNode);
   this->updateNode();
 }

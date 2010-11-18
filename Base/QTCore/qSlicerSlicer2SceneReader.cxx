@@ -336,6 +336,7 @@ void qSlicerSlicer2SceneReaderPrivate::importNode(vtkXMLDataElement* element)
 //proc ImportNodeMRML {node} {
 void qSlicerSlicer2SceneReaderPrivate::importMRMLNode(NodeType& node)
 {
+  Q_UNUSED(node);
   // no op, just a marker
 }
 
@@ -343,6 +344,7 @@ void qSlicerSlicer2SceneReaderPrivate::importMRMLNode(NodeType& node)
 //proc ImportNodeTransform {node} {
 void qSlicerSlicer2SceneReaderPrivate::importTransformNode(NodeType& node)
 {
+  Q_UNUSED(node);
   // no op - handled by ImportElement
 }
 
@@ -971,6 +973,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelNode(NodeType& node)
 //proc ImportNodeHierarchy {node} {
 void qSlicerSlicer2SceneReaderPrivate::importHierarchyNode(NodeType& node)
 {
+  Q_UNUSED(node);
   //set ::S2_HParent_ID ""
   this->ParentID = "";
 }
@@ -1258,6 +1261,7 @@ void qSlicerSlicer2SceneReaderPrivate::importColorNode(NodeType& node)
 //proc ImportNodeOptions {node} {
 void qSlicerSlicer2SceneReaderPrivate::importOptionsNode(NodeType& node)
 {
+  Q_UNUSED(node);
   Q_Q(qSlicerSlicer2SceneReader);
   //$::slicer3::MRMLScene SetErrorMessage "warning: option nodes cannot be imported"
   //$::slicer3::MRMLScene SetErrorCode 1

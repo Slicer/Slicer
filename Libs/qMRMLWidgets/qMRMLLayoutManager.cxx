@@ -335,7 +335,9 @@ void qMRMLLayoutManagerPrivate::removeThreeDView(vtkMRMLViewNode* viewNode)
 // --------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* node)
 {
+  Q_UNUSED(scene);
   Q_ASSERT(scene);
+  Q_ASSERT(scene == this->MRMLScene);
   if (!this->MRMLScene || this->MRMLScene->GetIsUpdating())
     {
     return;
@@ -383,8 +385,9 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
 // --------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* node)
 {
+  Q_UNUSED(scene);
   Q_ASSERT(scene);
-
+  Q_ASSERT(scene == this->MRMLScene);
   // Layout node
   vtkMRMLLayoutNode * layoutNode = vtkMRMLLayoutNode::SafeDownCast(node);
   if (layoutNode)

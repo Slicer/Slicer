@@ -73,7 +73,7 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerDisplayableManagerTest1(int argc, char* argv[])
+int vtkMRMLAnnotationRulerDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
 
 

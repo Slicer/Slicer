@@ -25,7 +25,7 @@
 
 #include "vtkObserverManager.h"
 
-#include "qMRMLSceneDisplayableModel.h";
+#include "qMRMLSceneDisplayableModel.h"
 
 // GUI includes
 #include "GUI/qSlicerAnnotationModulePushButton.h"
