@@ -512,6 +512,9 @@ void qSlicerAnnotationModuleWidget::setup()
   this->disableAllAnnotationTools();
   this->enableAllAnnotationTools();
 
+  d->hierarchyTreeWidget->setMRMLScene(this->logic()->GetMRMLScene());
+  d->hierarchyTreeWidget->setSceneModel(QString("Displayable"));
+
   // annotation tools
   this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
       SLOT(onFiducialNodeButtonClicked()));
@@ -2188,7 +2191,6 @@ void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, c
   //this->selectRowByIndex(m_index);
 
 }
-
 
 //-----------------------------------------------------------------------------
 // Annotation SnapShot functionality

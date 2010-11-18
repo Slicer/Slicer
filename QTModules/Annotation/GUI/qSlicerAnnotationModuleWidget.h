@@ -66,7 +66,6 @@ public:
         ROINode,
       };
 
-
 protected:
 
 

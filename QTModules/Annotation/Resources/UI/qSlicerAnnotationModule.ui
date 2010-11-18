@@ -7,17 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>616</width>
-    <height>681</height>
+    <height>705</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Annotation</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="margin">
-    <number>0</number>
-   </property>
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
     <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
      <property name="text">
       <string>Annotation</string>
@@ -311,6 +308,28 @@
           </layout>
          </item>
          <item>
+          <widget class="qMRMLTreeWidget" name="hierarchyTreeWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::InternalMove</enum>
+           </property>
+           <property name="indentation">
+            <number>10</number>
+           </property>
+           <property name="uniformRowHeights">
+            <bool>true</bool>
+           </property>
+           <property name="listenNodeModifiedEvent" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QTableWidget" name="tableWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -485,7 +504,7 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="ctkDynamicSpacer" name="CTKSpacer">
      <property name="activeSizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
@@ -504,7 +523,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="ctkDynamicSpacer" name="DynamicSpacer">
      <property name="activeSizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
@@ -548,6 +567,14 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLTreeWidget.h</header>
+   <slots>
+    <slot>setSceneModel(int)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources>
