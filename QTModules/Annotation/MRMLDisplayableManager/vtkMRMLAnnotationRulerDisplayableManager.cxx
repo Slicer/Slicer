@@ -210,8 +210,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   {
   std::stringstream o;
 
-  double position1[2];
-  double position2[2];
+  double position1[4];
+  double position2[4];
 
   this->GetWorldToDisplayCoordinates(rulerNode->GetControlPointCoordinates(0),position1);
   this->GetWorldToDisplayCoordinates(rulerNode->GetControlPointCoordinates(1),position2);

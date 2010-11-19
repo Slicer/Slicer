@@ -227,10 +227,10 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   {
   std::ostringstream o;
 
-  double position1[2];
-  double position2[2];
-  double position3[2];
-  double position4[2];
+  double position1[4];
+  double position2[4];
+  double position3[4];
+  double position4[4];
 
   this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(0),position1);
   this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(1),position2);
