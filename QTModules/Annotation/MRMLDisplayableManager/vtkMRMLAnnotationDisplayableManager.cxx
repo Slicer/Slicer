@@ -537,8 +537,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           // we create a new marker.
 
           VTK_CREATE(vtkPointHandleRepresentation2D, handle);
-          handle->GetProperty()->SetColor(1,0,0);
-          handle->SetHandleSize(10);
+          handle->GetProperty()->SetColor(0,1,0);
+          handle->SetHandleSize(3);
 
           VTK_CREATE(vtkSeedRepresentation, rep);
           rep->SetHandleRepresentation(handle);
@@ -572,7 +572,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
         marker->On();
 
-        std::cout << this->m_SliceNode->GetName() << ": " << P1plusP2minusP1[0] << "," << P1plusP2minusP1[1] << "," << P1plusP2minusP1[2] << std::endl;
+        //std::cout << this->m_SliceNode->GetName() << ": " << P1plusP2minusP1[0] << "," << P1plusP2minusP1[1] << "," << P1plusP2minusP1[2] << std::endl;
 
         }
 
