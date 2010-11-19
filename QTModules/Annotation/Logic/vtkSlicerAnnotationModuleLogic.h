@@ -108,10 +108,11 @@ public:
   // Hierarchy functionality
   //
   /// Get the toplevel Annotation hierarchy node
-  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode();
+  /// If no toplevel hierarchy node exists, insert it before the annotationNode
+  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLAnnotationNode* annotationNode);
 
-  /// Add a new Annotation hierarchy node
-  vtkMRMLAnnotationHierarchyNode* AddNewHierarchyNode();
+  /// Add a new Annotation hierarchy node before the annotation node in the scene order
+  vtkMRMLAnnotationHierarchyNode* AddNewHierarchyNode(vtkMRMLAnnotationNode* annotationNode);
 
   //
   // SnapShot functionality
