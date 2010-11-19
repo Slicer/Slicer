@@ -166,6 +166,8 @@ void qMRMLSliceWidget::registerDisplayableManagers(const QString& scriptedDispla
     logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
                  arg(scriptedDisplayableManagerDirectory));
     }
+#else
+  Q_UNUSED(scriptedDisplayableManagerDirectory);
 #endif
 
   // Register Displayable Managers

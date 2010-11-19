@@ -86,8 +86,6 @@ qMRMLNavigationViewPrivate::~qMRMLNavigationViewPrivate()
 qMRMLNavigationView::qMRMLNavigationView(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new qMRMLNavigationViewPrivate(*this))
 {
-  Q_D(qMRMLNavigationView);
-
   // Set default background color
   this->setBackgroundColor(QColor::fromRgbF(0.701960784314, 0.701960784314, 0.905882352941));
 }

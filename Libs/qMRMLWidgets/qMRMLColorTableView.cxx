@@ -38,6 +38,8 @@ OpacityDelegate::OpacityDelegate(QObject *parent)
 QWidget *OpacityDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                                        const QModelIndex &index) const
 {
+  Q_UNUSED(option);
+  Q_UNUSED(index);
   QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
   editor->setSingleStep(0.1);
   editor->setMinimum(0.);
@@ -66,6 +68,7 @@ void OpacityDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
 void OpacityDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const
 {
+  Q_UNUSED(index);
   editor->setGeometry(option.rect);
 }
 

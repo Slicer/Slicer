@@ -39,7 +39,8 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidget)
-  : d_ptr(new qSlicerVolumesIOOptionsWidgetPrivate)
+  : qSlicerIOOptionsWidget(parentWidget)
+  , d_ptr(new qSlicerVolumesIOOptionsWidgetPrivate)
 {
   Q_D(qSlicerVolumesIOOptionsWidget);
   d->setupUi(this);

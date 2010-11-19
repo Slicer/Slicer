@@ -80,7 +80,7 @@ public:
 
 protected:
   virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* createFactoryPluginItem(
-    const QFileInfo& plugin)const;
+    const QFileInfo& plugin);
 
   QScopedPointer<qSlicerCLIExecutableModuleFactoryPrivate> d_ptr;
 

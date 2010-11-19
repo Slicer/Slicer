@@ -77,7 +77,7 @@ void qSlicerCLIExecutableModuleFactory::registerItems()
 
 //-----------------------------------------------------------------------------
 ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLIExecutableModuleFactory
-::createFactoryPluginItem(const QFileInfo& plugin)const
+::createFactoryPluginItem(const QFileInfo& plugin)
 {
   return new qSlicerCLIExecutableModuleFactoryItem(plugin.filePath());
 }

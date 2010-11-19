@@ -815,6 +815,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRML
 void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
   Q_D(qMRMLSceneModel);
+  Q_UNUSED(d);
+  Q_UNUSED(scene);
   Q_ASSERT(scene == d->MRMLScene);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
 
@@ -824,8 +826,9 @@ void qMRMLSceneModel::onMRMLSceneNodeAdded(vtkMRMLScene* scene, vtkMRMLNode* nod
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMRMLNode* node)
 {
-  Q_UNUSED(scene);
   Q_D(qMRMLSceneModel);
+  Q_UNUSED(d);
+  Q_UNUSED(scene);
   Q_ASSERT(scene == d->MRMLScene);
 
   qvtkDisconnect(node, vtkCommand::ModifiedEvent,

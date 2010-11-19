@@ -215,6 +215,7 @@ void qMRMLThreeDViewPrivate::rockView()
 void qMRMLThreeDViewPrivate::onLookFromAxisEvent(vtkObject* node, void* axis)
 {
   Q_Q(qMRMLThreeDView);
+  Q_UNUSED(node);
   Q_ASSERT(this->MRMLViewNode == node);
   ctkAxesWidget::Axis lookFrom = *reinterpret_cast<ctkAxesWidget::Axis*>(axis);
   Q_ASSERT(lookFrom == ctkAxesWidget::None ||
@@ -281,6 +282,8 @@ void qMRMLThreeDView::registerDisplayableManagers(const QString& scriptedDisplay
     logger.error(QString("registerDisplayableManagers - directory %1 doesn't exists !").
                  arg(scriptedDisplayableManagerDirectory));
     }
+#else
+  Q_UNUSED(scriptedDisplayableManagerDirectory);
 #endif
 
   // Register Displayable Managers

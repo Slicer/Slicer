@@ -122,6 +122,7 @@ vtkMRMLScene* qSlicerIO::mrmlScene()const
 bool qSlicerIO::load(const IOProperties& properties)
 {
   Q_D(qSlicerIO);
+  Q_UNUSED(properties);
   d->LoadedNodes.clear();
   return false;
 }
@@ -129,6 +130,7 @@ bool qSlicerIO::load(const IOProperties& properties)
 //----------------------------------------------------------------------------
 bool qSlicerIO::save(const IOProperties& properties)
 {
+  Q_UNUSED(properties);
   return false;
 }
 
