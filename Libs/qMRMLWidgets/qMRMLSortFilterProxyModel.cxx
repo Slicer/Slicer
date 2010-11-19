@@ -80,8 +80,15 @@ qMRMLSortFilterProxyModel::~qMRMLSortFilterProxyModel()
 QStandardItem* qMRMLSortFilterProxyModel::sourceItem(const QModelIndex& sourceIndex)const
 {
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
-  Q_ASSERT(sceneModel);
+  if (sceneModel == NULL)
+    {
+    //Q_ASSERT(sceneModel);
+    return NULL;
+    }
+  else
+    {
   return sourceIndex.isValid() ? sceneModel->itemFromIndex(sourceIndex) : sceneModel->invisibleRootItem();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -125,13 +132,13 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
   QStandardItem* parentItem = this->sourceItem(source_parent);
   if (parentItem == 0)
     {
-    Q_ASSERT(parentItem);
+    //Q_ASSERT(parentItem);
     return false;
     }
   QStandardItem* item = parentItem->child(source_row, 0);
   if (item == 0)
     {
-    Q_ASSERT(item);
+    //Q_ASSERT(item);
     return false;
     }
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
