@@ -46,7 +46,14 @@ vtkMRMLAnnotationDisplayableManagerHelper::vtkMRMLAnnotationDisplayableManagerHe
 
 vtkMRMLAnnotationDisplayableManagerHelper::~vtkMRMLAnnotationDisplayableManagerHelper()
 {
-  this->SeedWidget = 0;
+
+  if(this->SeedWidget)
+    {
+    this->RemoveSeeds();
+    this->SeedWidget->Delete();
+    this->SeedWidget = 0;
+    }
+
 }
 
 

@@ -72,6 +72,7 @@ vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
   this->m_DisableInteractorStyleEventsProcessing = 0;
   this->m_Updating = 0;
   this->m_Focus = 0;
+
   this->Helper->Delete();
   this->m_ClickCounter->Delete();
 
@@ -150,6 +151,14 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
 {
+  // run through all nodes and remove node and widget
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
+  it = this->Helper->AnnotationNodeList.begin();
+  while(it != this->Helper->AnnotationNodeList.end())
+    {
+    this->Helper->RemoveWidgetAndNode(*it);
+    ++it;
+    }
 }
 
 //---------------------------------------------------------------------------
