@@ -114,19 +114,35 @@ vtkMRMLNode* qMRMLSceneDisplayableModel::childNode(vtkMRMLNode* node, int childI
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node)
 {
+  if (node == NULL)
+    {
+    return 0;
+    }
+  
   // MRML Displayable nodes (inherits from transformable)
   vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  vtkMRMLDisplayableHierarchyNode * displayableHierarchyNode = NULL; 
   if (displayableNode &&
       displayableNode->GetScene() &&
       displayableNode->GetID())
     {
     // get the displayable hierarchy node associated with this displayable node
-    vtkMRMLDisplayableHierarchyNode * displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
+    displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
     if (displayableHierarchyNode)
       {
-      // return it's parent
-      return displayableHierarchyNode->GetParentNode();
+      return displayableHierarchyNode;
       }
+    }
+  if (displayableHierarchyNode == NULL)
+    {
+    // the passed in node might have been a hierarchy node instead, try to
+    // cast it
+    displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+    }
+  if (displayableHierarchyNode)
+    {
+    // return it's parent
+    return displayableHierarchyNode->GetParentNode();
     }
   return 0;
 }
@@ -173,6 +189,10 @@ bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node)
     {
     return true;
     }
+  if (node->IsA("vtkMRMLDisplayableHierarchyNode"))
+    {
+    return true;
+    }
   return false;
 }
 
@@ -187,13 +207,16 @@ bool qMRMLSceneDisplayableModel::canBeAParent(vtkMRMLNode* node)
     {
     return true;
     }
+  if (node->IsA("vtkMRMLDisplayableHierarchyNode"))
+    {
+    return true;
+    }
   return false;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneDisplayableModel::reparent(vtkMRMLNode* node, vtkMRMLNode* vtkNotUsed(newParent))
+bool qMRMLSceneDisplayableModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParent)
 {
-  Q_ASSERT(node);
   if (!node)
     {
     return false;
@@ -201,39 +224,62 @@ bool qMRMLSceneDisplayableModel::reparent(vtkMRMLNode* node, vtkMRMLNode* vtkNot
 
   // MRML Displayable nodes (inherits from transformable)
   vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
-  if (displayableNode)
+  vtkMRMLDisplayableNode *displayableParentNode = vtkMRMLDisplayableNode::SafeDownCast(newParent);
+  vtkMRMLDisplayableHierarchyNode *hierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+  vtkMRMLDisplayableHierarchyNode *hierarchyParentNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(newParent);
+
+  // we can be reparenting a hierarchy node to another hierarchy node, or a
+  // displayable node (under it's hierarchy)
+  if (hierarchyNode)
     {
-    vtkMRMLDisplayableNode *displayableParentNode = vtkMRMLDisplayableNode::SafeDownCast(node);
-    if (displayableParentNode)
+    if (displayableParentNode &&
+        displayableParentNode->GetScene() &&
+        displayableParentNode->GetID())
       {
-      // get the hierarchy nodes associated with each node
-      if (displayableNode->GetScene() &&
-          displayableNode->GetID() &&
-          displayableParentNode->GetScene() &&
-          displayableParentNode->GetID())
-        {
-        vtkMRMLDisplayableHierarchyNode * displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
-        vtkMRMLDisplayableHierarchyNode * displayableHierarchyParentNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableParentNode->GetScene(), displayableParentNode->GetID());
-        if (displayableHierarchyNode)
-          {
-          if (displayableHierarchyParentNode)
-            {
-            displayableHierarchyNode->SetParentNodeID(displayableHierarchyParentNode->GetID());
-            }
-          else
-            {
-            // reparenting to top with null parent id
-            displayableHierarchyNode->SetParentNodeID(NULL);
-            }
-          return true;
-          }
-        }
+      // get it's hierarchy node
+      hierarchyParentNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableParentNode->GetScene(), displayableParentNode->GetID());
+      }
+    // else use the safe down cast of the parent node
+    if (hierarchyParentNode &&
+        hierarchyParentNode->GetID())
+      {
+      hierarchyNode->SetParentNodeID(hierarchyParentNode->GetID());
       }
     else
       {
-      std::cout << "reparent: can only reparent to another displayable node\n";
+      // reparenting to top with null parent id
+      hierarchyNode->SetParentNodeID(NULL);
       }
-    }  
+    return true;
+    }
+  // we can be reparenting a displayable node to another displayable node or a
+  // hierarchy node.
+  else if (displayableNode)
+    {
+    if (displayableNode->GetScene() &&
+        displayableNode->GetID())
+      {
+      hierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
+      }
+    if (displayableParentNode && displayableParentNode->GetScene() &&  displayableParentNode->GetID())
+      {
+      hierarchyParentNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableParentNode->GetScene(), displayableParentNode->GetID());
+      }
+    // else it uses the safe down cast to a hierarchy node of the newParent
+    if (hierarchyNode)
+      {
+      if (hierarchyParentNode && hierarchyParentNode->GetID())
+        {
+        hierarchyNode->SetParentNodeID(hierarchyParentNode->GetID());
+        }
+      else
+        {
+        // reparenting to top with null parent id
+        hierarchyNode->SetParentNodeID(NULL);
+        }
+      return true;
+      }
+    }
   return false;
 }
 
