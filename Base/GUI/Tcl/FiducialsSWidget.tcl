@@ -367,10 +367,14 @@ itcl::body FiducialsSWidget::seedMovingCallback {seed fidListNode fidIndex} {
 #
 proc FiducialsSWidget::AddFiducial { r a s } {
 
-  set fidLogic [$::slicer3::FiducialsGUI GetLogic]
-  # the logic handles saving the state for undo
-  set fidIndex [$fidLogic AddFiducialPicked $r $a $s 1]
-  $::slicer3::MRMLScene Modified
+    if { [info exists ::slicer3::FiducialsGUI] } {
+        set fidLogic [$::slicer3::FiducialsGUI GetLogic]
+        # the logic handles saving the state for undo
+        set fidIndex [$fidLogic AddFiducialPicked $r $a $s 1]
+        $::slicer3::MRMLScene Modified
+    } else {
+        puts "AddFiducial: No Fiducials GUI found."
+    }
 }
 
 #
