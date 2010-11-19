@@ -245,6 +245,7 @@ SET(qt_module_resources
 # Additional Target libraries
 SET(qt_module_target_libraries
   qSlicerBaseQTCore
+  qMRMLWidgets
 )
 
 #-----------------------------------------------------------------------
