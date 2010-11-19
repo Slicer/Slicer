@@ -248,7 +248,7 @@ public:
   void InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
   /// 
   /// insert a node in the scene before a specified node
-  void InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
+  vtkMRMLNode* InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
   
   /// 
   /// Ger transformation between two nodes

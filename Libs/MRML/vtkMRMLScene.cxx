@@ -1796,9 +1796,85 @@ void vtkMRMLScene::InsertAfterNode(vtkMRMLNode * vtkNotUsed(item), vtkMRMLNode *
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::InsertBeforeNode(vtkMRMLNode * vtkNotUsed(item), vtkMRMLNode * vtkNotUsed(n))
+vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
 {
-  vtkErrorMacro("NOT IMPLEMENTEED YET");
+  if (!n)
+    {
+    vtkErrorMacro("AddNode: unable to add a null node to the scene");
+    return NULL;
+    }
+  if (!n->GetAddToScene())
+    {
+    return NULL;
+    }
+  if (n->GetSingletonTag() != NULL)
+    {
+    vtkDebugMacro("InsertBeforeNode: node is a singleton, not inserting before item, just calling AddNode");
+    return this->AddNode(n);
+    }
+
+  this->InvokeEvent(this->NodeAboutToBeAddedEvent, n);
+  
+  // code from add node no notify
+  if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL) 
+    {
+    std::string oldID;
+    if (n->GetID())
+      {
+      oldID = n->GetID();
+      }
+    int modifyStatus = n->GetDisableModifiedEvent();
+    n->SetDisableModifiedEvent(1);
+    n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
+    n->SetDisableModifiedEvent(modifyStatus);
+    std::string newID(n->GetID());
+    if (oldID != newID)
+      {
+      this->ReferencedIDChanges[oldID] = newID;
+      }
+    }
+
+  int modifyStatus = n->GetDisableModifiedEvent();
+  n->SetDisableModifiedEvent(1);
+
+  n->SetSceneRootDir(this->RootDirectory.c_str());
+  if (n->GetName() == NULL|| n->GetName()[0] == '\0')
+    {
+    n->SetName(n->GetID());
+    }
+  n->SetScene( this );
+
+  // this is the major difference from AddNodeNoNotify, instead of AddItem,
+  // use InsertItem (it inserts the passed object after the index passed, so
+  // use the index of the item before the item to insert before
+  int index = 0;
+  int itemIndex = 0;
+  // find the index of the item to insert before
+  itemIndex = this->IsNodePresent(item);
+  if (itemIndex == 0)
+    {
+    // it wasn't found, just add
+    this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
+    }
+  else
+    {
+    // the object was found, the location is the return value-1.
+    // then go one more up to get before it
+    index = itemIndex - 2;
+    vtkDebugMacro("InsertBeforeNode: item index = " << itemIndex-1 << ", inserting after index = " << index);
+    this->CurrentScene->vtkCollection::InsertItem(index, (vtkObject *)n);
+    }
+  // cache the node so the whole scene cache stays up-todate
+  this->NodeIDs[std::string(n->GetID())] = n;
+  this->NodeIDsMTime = this->CurrentScene->GetMTime();
+
+  n->SetDisableModifiedEvent(modifyStatus);
+
+  this->InvokeEvent(this->NodeAddedEvent, n);
+  
+  this->Modified();
+  //return node;
+  return n;
 }
 
 //------------------------------------------------------------------------------
