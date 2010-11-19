@@ -15,8 +15,8 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Annotation</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -308,7 +308,7 @@
           </layout>
          </item>
          <item>
-          <widget class="qMRMLTreeWidget" name="hierarchyTreeWidget">
+          <widget class="qMRMLAnnotationTreeWidget" name="hierarchyTreeWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
              <horstretch>0</horstretch>
@@ -505,14 +505,14 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="ctkDynamicSpacer" name="CTKSpacer">
-     <property name="activeSizePolicy">
+    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
@@ -524,14 +524,14 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-     <property name="activeSizePolicy">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy">
+     <property name="inactiveSizePolicy" stdset="0">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
@@ -569,12 +569,9 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLTreeWidget</class>
+   <class>qMRMLAnnotationTreeWidget</class>
    <extends>QTreeView</extends>
-   <header>qMRMLTreeWidget.h</header>
-   <slots>
-    <slot>setSceneModel(int)</slot>
-   </slots>
+   <header>GUI/qMRMLAnnotationTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

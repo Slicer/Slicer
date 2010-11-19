@@ -513,7 +513,6 @@ void qSlicerAnnotationModuleWidget::setup()
   this->enableAllAnnotationTools();
 
   d->hierarchyTreeWidget->setMRMLScene(this->logic()->GetMRMLScene());
-  d->hierarchyTreeWidget->setSceneModel(QString("Annotation"));
 
   // annotation tools
   this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
