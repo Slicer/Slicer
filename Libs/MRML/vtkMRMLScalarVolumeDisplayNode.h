@@ -32,7 +32,6 @@
 #include "vtkImageMapToWindowLevelColors.h"
 
 
-
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
   public:
@@ -125,7 +124,10 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
     this->Threshold->SetInput( imageData);
     this->MapToWindowLevelColors->SetInput( imageData);
     };
-
+  virtual vtkImageData* GetInput()
+    {
+    return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
+    }
   /// 
   /// Sets ImageData for background mask 
   virtual void SetBackgroundImageData(vtkImageData *imageData)

@@ -59,6 +59,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
+  virtual vtkImageData* GetInput() {return NULL;};
   /// 
   /// Sets vtkImageData to be converted to displayable vtkImageData
   virtual void SetImageData(vtkImageData *vtkNotUsed(imageData)) {};

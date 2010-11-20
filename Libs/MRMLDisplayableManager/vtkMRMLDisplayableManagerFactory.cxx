@@ -192,7 +192,7 @@ void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* 
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableManagerFactory::GetRegisteredDisplayableManagerCount()
 {
-  return this->Internal->DisplayableManagerClassNames.size();
+  return static_cast<int>(this->Internal->DisplayableManagerClassNames.size());
 }
 
 //----------------------------------------------------------------------------

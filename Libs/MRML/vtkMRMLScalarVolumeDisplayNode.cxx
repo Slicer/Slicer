@@ -407,7 +407,7 @@ void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPreset(double window, double 
 //---------------------------------------------------------------------------
 int vtkMRMLScalarVolumeDisplayNode::GetNumberOfWindowLevelPresets()
 {
-  return this->WindowLevelPresets.size();
+  return static_cast<int>(this->WindowLevelPresets.size());
 }
 
 //---------------------------------------------------------------------------
