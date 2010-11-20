@@ -64,6 +64,8 @@ int qMRMLColorListViewTest1(int argc, char * argv [])
     std::cerr << "qMRMLColorListView::setMRMLColorNode() failed" << std::endl;
     return EXIT_FAILURE;
     }
+  // for some reasons it generate a warning if the type is changed.
+  colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
   
   vtkSmartPointer<vtkMRMLFreeSurferProceduralColorNode> colorFreeSurferNode =
