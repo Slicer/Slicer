@@ -43,7 +43,7 @@
 int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 {
 //  vtkMultiThreader::SetGlobalMaximumNumberOfThreads(1);
-  /*
+  
   if( argc < 2 )
     {
     std::cerr << "Error: missing arguments" << std::endl;
@@ -51,21 +51,12 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     std::cerr << argv[0] << "  inputURL_scene.mrml " << std::endl;
     return EXIT_FAILURE;
     }
-  */
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   vtkSmartPointer< vtkMRMLSliceLogic > sliceLogic = vtkSmartPointer< vtkMRMLSliceLogic >::New();
   sliceLogic->SetName("Green");
   sliceLogic->SetMRMLScene(scene);
   
-  //vtkSmartPointer< vtkMRMLSliceNode > sliceNode = vtkSmartPointer< vtkMRMLSliceNode >::New();
-  //sliceLogic->SetSliceNode(sliceNode);
-  
-  //vtkSmartPointer<vtkMRMLSliceCompositeNode> sliceCompositeNode =
-  //  vtkSmartPointer<vtkMRMLSliceCompositeNode>::New();
-  /// Oddities: sliceCompositeNode must be added to the scene
-  //scene->AddNode(sliceCompositeNode);
-  //sliceLogic->SetSliceCompositeNode(sliceCompositeNode);
   vtkMRMLSliceNode* sliceNode =sliceLogic->GetSliceNode();
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode(); 
   
@@ -110,19 +101,10 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   sliceLogic->GetImageData();
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
   vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
-  
-  vtkImageData* imageData = vtkImageData::New();
-  imageData->DeepCopy(displayNode2->GetInput());
-  vtkImageMapToWindowLevelColors* mapToWindow = vtkImageMapToWindowLevelColors::New();
-  mapToWindow->SetInput(imageData);
-  mapToWindow->Update();
-  imageData->Modified();
-  //displayNode2->GetInput()->SetScalarComponentFromFloat(0, 0, 0, 0, 10.);
-  mapToWindow->Update();
-  
+
   for (int i = 0; i < 10; ++i)
     {
-    vtkTimerLog* timerLog = vtkTimerLog::New();
+    vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
     timerLog->StartTimer();
     displayNode->Modified();
     timerLog->StopTimer();
@@ -140,15 +122,100 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     sliceLayerLogic->GetImageData();
     timerLog->StopTimer();
     std::cout << "vtkMRMLSliceLayerLogic::UpdateImageData(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
-    timerLog->Delete();
     }
-
-  vtkImageViewer2* viewer = vtkImageViewer2::New();
+  
+  // Duplicate the pipeline of vtkMRMLScalarVolumeDisplayNode
+  vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
+  imageData->DeepCopy(displayNode2->GetInput());
+  vtkSmartPointer<vtkImageResliceMask> reslice = vtkSmartPointer<vtkImageResliceMask>::New();
+  reslice->SetBackgroundColor(0, 0, 0, 0); // only first two are used
+  reslice->AutoCropOutputOff();
+  reslice->SetOptimization(1);
+  reslice->SetOutputOrigin( 0, 0, 0 );
+  reslice->SetOutputSpacing( 1, 1, 1 );
+  reslice->SetOutputDimensionality( 3 );
+  int dimensions[3];
+  sliceNode->GetDimensions(dimensions);
+  
+  reslice->SetOutputExtent( 0, dimensions[0]-1,
+                            0, dimensions[1]-1,
+                            0, dimensions[2]-1);
+  reslice->SetInput(imageData);
+  //reslice->SetResliceTransform(sliceLayerLogic->GetXYToIJKTransform());
+  vtkSmartPointer<vtkImageMapToWindowLevelColors> mapToWindow = vtkSmartPointer<vtkImageMapToWindowLevelColors>::New();
+  mapToWindow->SetInput(reslice->GetOutput());
+  
+  vtkSmartPointer<vtkImageMapToColors> mapToColors = vtkSmartPointer<vtkImageMapToColors>::New();
+  mapToColors->SetOutputFormatToRGB();
+  if (colorNode->GetLookupTable() == 0)
+    {
+    return EXIT_FAILURE;
+    }
+  mapToColors->SetLookupTable(colorNode->GetLookupTable());
+  mapToColors->SetInput(mapToWindow->GetOutput());
+  //mapToWindow->Update();
+  
+  vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
+  threshold->SetOutputScalarTypeToUnsignedChar();
+  threshold->SetInput(reslice->GetOutput());
+  threshold->ThresholdBetween( 1, 0 ); 
+  threshold->ReplaceInOn();
+  threshold->SetInValue(255);
+  threshold->ReplaceOutOn();
+  threshold->SetOutValue(255); 
+  
+  vtkSmartPointer<vtkImageCast> resliceAlphaCast = vtkSmartPointer<vtkImageCast>::New();
+  resliceAlphaCast->SetInput(reslice->GetBackgroundMask());
+  resliceAlphaCast->SetOutputScalarTypeToUnsignedChar();
+  
+  vtkSmartPointer<vtkImageLogic> alphaLogic = vtkSmartPointer<vtkImageLogic>::New();
+  alphaLogic->SetOperationToAnd();
+  alphaLogic->SetOutputTrueValue(255);
+  alphaLogic->SetInput1(threshold->GetOutput());
+  alphaLogic->SetInput2(resliceAlphaCast->GetOutput());
+  
+  vtkSmartPointer<vtkImageAppendComponents> appendComponents = vtkSmartPointer<vtkImageAppendComponents>::New();
+  appendComponents->RemoveAllInputs();
+  appendComponents->SetInputConnection(0, mapToColors->GetOutput()->GetProducerPort() );
+  appendComponents->AddInputConnection(0, alphaLogic->GetOutput()->GetProducerPort() );
+  
+  //displayNode2->GetInput()->SetScalarComponentFromFloat(0, 0, 0, 0, 10.);
+  vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
+  timerLog->StartTimer();
+  appendComponents->Update();
+  timerLog->StopTimer();
+  std::cout << "vtkMRMLScalarVolumeDisplayNode::pipeline: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
+  for (int i = 0; i < 4; ++i)
+    {
+    imageData->Modified();
+    timerLog->StartTimer();
+    appendComponents->Update();
+    timerLog->StopTimer();
+    std::cout << "vtkMRMLScalarVolumeDisplayNode::pipeline updated: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
+    
+    timerLog->StartTimer();
+    mapToWindow->SetWindow(mapToWindow->GetWindow() + 1);
+    appendComponents->Update();
+    timerLog->StopTimer();
+    std::cout << "vtkMRMLScalarVolumeDisplayNode::window updated: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
+    
+    timerLog->StartTimer();
+    threshold->SetOutValue(threshold->GetOutValue()-1);
+    appendComponents->Update();
+    timerLog->StopTimer();
+    std::cout << "vtkMRMLScalarVolumeDisplayNode::threshold updated: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
+    
+    timerLog->StartTimer();
+    alphaLogic->SetOutputTrueValue(alphaLogic->GetOutputTrueValue()-1);
+    appendComponents->Update();
+    timerLog->StopTimer();
+    std::cout << "vtkMRMLScalarVolumeDisplayNode::alpha updated: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
+    }
+  vtkSmartPointer<vtkImageViewer2> viewer = vtkSmartPointer<vtkImageViewer2>::New();
   viewer->SetInput(sliceLogic->GetImageData());
+  //viewer->SetInput(appendComponents->GetOutput());
   
   // Renderer, RenderWindow and Interactor
-  //vtkRenderer* rr = vtkRenderer::New();
-  //vtkRenderWindow* rw = vtkRenderWindow::New();
   vtkRenderWindow* rw = viewer->GetRenderWindow();
   rw->SetSize(600, 600);
   rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
@@ -162,10 +229,8 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     ri->Start();
     }
 
-  viewer->Delete();
-  //rr->Delete();
-  //rw->Delete();
   ri->Delete();
+
   return EXIT_SUCCESS;
 }
 
