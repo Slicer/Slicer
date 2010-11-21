@@ -27,6 +27,9 @@
 #include "qSlicerColorsModuleWidget.h"
 #include "ui_qSlicerColorsModule.h"
 
+// qMRMLWidget includes
+#include "qMRMLThreeDView.h"
+
 // MRML includes
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLColorTableNode.h>
@@ -89,8 +92,9 @@ void qSlicerColorsModuleWidget::setup()
 {
   Q_D(qSlicerColorsModuleWidget);
   d->setupUi(this);
-  QIcon copyIcon = this->style()->standardIcon(QStyle::SP_FileIcon);
+  QIcon copyIcon = this->style()->standardIcon(QStyle::SP_FileDialogNewFolder);
   d->CopyColorNodeButton->setIcon(copyIcon);
+  qMRMLThreeDView* threeDView = qSlicerApplication::application()->layoutManager()->threeDView(0);
   vtkRenderer* activeRenderer = qSlicerApplication::application()->layoutManager()->activeThreeDRenderer();
   if (activeRenderer)
     {
@@ -105,6 +109,7 @@ void qSlicerColorsModuleWidget::setup()
           this, SLOT(setLookupTableRange(double, double)));
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
           this, SLOT(copyCurrentColorNode()));
+  connect(d->VTKScalarBar, SIGNAL(modified()), threeDView, SLOT(scheduleRender()));
 }
 
 //-----------------------------------------------------------------------------

@@ -103,9 +103,6 @@
         <property name="text">
          <string>Lookup Range:</string>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-        </property>
        </widget>
       </item>
       <item row="3" column="1">
@@ -120,10 +117,10 @@
          <double>1.000000000000000</double>
         </property>
         <property name="minimum">
-         <double>-10000.000000000000000</double>
+         <double>-1024.000000000000000</double>
         </property>
         <property name="maximum">
-         <double>10000.000000000000000</double>
+         <double>3071.000000000000000</double>
         </property>
         <property name="spinBoxAlignment">
          <set>Qt::AlignTop|Qt::AlignVCenter</set>

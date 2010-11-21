@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // QT includes
+#include <QDebug>
 #include <QDoubleSpinBox>
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
@@ -147,6 +148,7 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
   this->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::Fixed);
 
   mrmlModel->setMRMLColorNode(node);
+  this->sortFilterProxyModel()->invalidate();
 
   this->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::Stretch);
   this->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::ResizeToContents);
