@@ -158,6 +158,9 @@ namespace eval tpycl {
                 set arg '$arg'
               }
             }
+            if { [string match "string*" $type] } {
+              set arg "str($arg)"
+            }
           }
           if { [string index $pycmd end] != "(" } {
             # if not at start of arg list, add a comma
