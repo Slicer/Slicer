@@ -90,7 +90,6 @@ SET(modules
   VolumeRendering
 #  VolumeRendering1 <- merged into VolumeRendering
 # WFEngineModule  <- can't work with 2.6 and Win32??
-# MRAblation <- not working either
   ModelMirror
   ModelTransform
   # EMSegment # EMSegment is build from the top-level cmake
@@ -116,8 +115,6 @@ if(Slicer_USE_OPENIGTLINK)
     NeuroNav
     ProstateNav
     BrainlabModule
-    # IGTNavigation
-    # OpenCV
     )
 endif(Slicer_USE_OPENIGTLINK)
 
@@ -136,8 +133,6 @@ ENDFOREACH(module)
 ## FIDUCIALS_DEBUG
 ## CAMERA_DEBUG
 ## EMSEG_DEBUG
-## REALTIMEIMAGING_DEBUG
-## MRABLATION_DEBUG
 ## TRACTOGRAPHY_DEBUG
 ## COMMANDLINE_DEBUG
 ## DEAMON_DEBUG

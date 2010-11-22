@@ -568,9 +568,17 @@ int vtkMRMLIGTLConnectorNode::ReceiveController()
 
     // Deserialize the header
     headerMsg->Unpack();
-
+    
     //----------------------------------------------------------------
-    // Check Device Name if device name is restricted
+    // Check Device Name 
+    if (strnlen(headerMsg->GetDeviceName(), 20) == 0)
+      {
+      this->Skip(headerMsg->GetBodySizeToRead());
+      continue; //  while (!this->ServerStopFlag)
+      }
+      
+    //----------------------------------------------------------------
+    // If device name is restricted
     if (this->RestrictDeviceName)
       {
       // Check if the node has already been registered.

@@ -1,2 +1,0 @@
-Name: IGTNavigation
-GUIName: IGT Navigation 
