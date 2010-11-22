@@ -106,180 +106,94 @@ install(FILES
 
 set(MRML_SRCS
   vtkEventBroker.cxx
-  vtkEventBroker.h
   vtkImageAccumulateDiscrete.cxx
-  vtkImageAccumulateDiscrete.h
   vtkImageBimodalAnalysis.cxx
-  vtkImageBimodalAnalysis.h
   vtkDataFileFormatHelper.cxx
-  vtkDataFileFormatHelper.h
   vtkMRMLLogic.cxx
-  vtkMRMLLogic.h
   vtkMRMLCameraNode.cxx
-  vtkMRMLCameraNode.h
   vtkMRMLClipModelsNode.cxx
-  vtkMRMLClipModelsNode.h
   vtkMRMLColorNode.cxx
-  vtkMRMLColorNode.h
   vtkMRMLColorTableNode.cxx
-  vtkMRMLColorTableNode.h
   vtkMRMLColorTableStorageNode.cxx
-  vtkMRMLColorTableStorageNode.h
   vtkMRMLCrosshairNode.cxx
-  vtkMRMLCrosshairNode.h
   vtkMRMLDiffusionTensorDisplayPropertiesNode.cxx
-  vtkMRMLDiffusionTensorDisplayPropertiesNode.h
   vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
-  vtkMRMLDiffusionWeightedVolumeDisplayNode.h
   vtkMRMLDiffusionWeightedVolumeNode.cxx
-  vtkMRMLDiffusionWeightedVolumeNode.h
   vtkMRMLDisplayNode.cxx
-  vtkMRMLDisplayNode.h
   vtkMRMLDisplayableNode.cxx
-  vtkMRMLDisplayableNode.h
   vtkMRMLFiberBundleDisplayNode.cxx
-  vtkMRMLFiberBundleDisplayNode.h
   vtkMRMLFiducial.cxx
-  vtkMRMLFiducial.h
   vtkMRMLFiducialListNode.cxx
-  vtkMRMLFiducialListNode.h
   vtkMRMLFiducialListStorageNode.cxx
-  vtkMRMLFiducialListStorageNode.h
   vtkMRMLFreeSurferModelOverlayStorageNode.cxx
-  vtkMRMLFreeSurferModelOverlayStorageNode.h
   vtkMRMLFreeSurferModelStorageNode.cxx
-  vtkMRMLFreeSurferModelStorageNode.h
   vtkMRMLFreeSurferProceduralColorNode.cxx
-  vtkMRMLFreeSurferProceduralColorNode.h
   vtkMRMLHierarchyNode.cxx
-  vtkMRMLHierarchyNode.h
   vtkMRMLDisplayableHierarchyNode.cxx
-  vtkMRMLDisplayableHierarchyNode.h
   vtkMRMLInteractionNode.cxx
-  vtkMRMLInteractionNode.h
   vtkMRMLLabelMapVolumeDisplayNode.cxx
-  vtkMRMLLabelMapVolumeDisplayNode.h
   vtkMRMLLinearTransformNode.cxx
-  vtkMRMLLinearTransformNode.h
   vtkMRMLModelDisplayNode.cxx
-  vtkMRMLModelDisplayNode.h
   vtkMRMLModelHierarchyNode.cxx
-  vtkMRMLModelHierarchyNode.h
   vtkMRMLModelNode.cxx
-  vtkMRMLModelNode.h
   vtkMRMLModelStorageNode.cxx
-  vtkMRMLModelStorageNode.h
   vtkMRMLNode.cxx
-  vtkMRMLNode.h
   vtkMRMLParser.cxx
-  vtkMRMLParser.h
   vtkMRMLProceduralColorNode.cxx
-  vtkMRMLProceduralColorNode.h
   vtkMRMLROIListNode.cxx
-  vtkMRMLROIListNode.h
   vtkMRMLROINode.cxx
-  vtkMRMLROINode.h
   vtkMRMLScalarVolumeDisplayNode.cxx
-  vtkMRMLScalarVolumeDisplayNode.h
   vtkMRMLScalarVolumeNode.cxx
-  vtkMRMLScalarVolumeNode.h
   vtkMRMLScene.cxx
-  vtkMRMLScene.h
   vtkMRMLSceneSnapshotNode.cxx
-  vtkMRMLSceneSnapshotNode.h
   vtkMRMLSelectionNode.cxx
-  vtkMRMLSelectionNode.h
   vtkMRMLSliceCompositeNode.cxx
-  vtkMRMLSliceCompositeNode.h
   vtkMRMLSliceNode.cxx
-  vtkMRMLSliceNode.h
   vtkMRMLSnapshotClipNode.cxx
-  vtkMRMLSnapshotClipNode.h
   vtkMRMLStorableNode.cxx
-  vtkMRMLStorableNode.h
   vtkMRMLStorageNode.cxx
-  vtkMRMLStorageNode.h
   vtkMRMLTimeSeriesVolumeNode.cxx
-  vtkMRMLTimeSeriesVolumeNode.h
   vtkMRMLTransformNode.cxx
-  vtkMRMLTransformNode.h
   vtkMRMLTransformStorageNode.cxx
-  vtkMRMLTransformStorageNode.h
   vtkMRMLTransformableNode.cxx
-  vtkMRMLTransformableNode.h
   vtkMRMLUnstructuredGridDisplayNode.cxx
-  vtkMRMLUnstructuredGridDisplayNode.h
   vtkMRMLUnstructuredGridNode.cxx
-  vtkMRMLUnstructuredGridNode.h
   vtkMRMLUnstructuredGridStorageNode.cxx
-  vtkMRMLUnstructuredGridStorageNode.h
   vtkMRMLVectorVolumeDisplayNode.cxx
-  vtkMRMLVectorVolumeDisplayNode.h
   vtkMRMLViewNode.cxx
-  vtkMRMLViewNode.h
   vtkMRMLVolumeArchetypeStorageNode.cxx
-  vtkMRMLVolumeArchetypeStorageNode.h
   vtkMRMLVolumeDisplayNode.cxx
-  vtkMRMLVolumeDisplayNode.h
   vtkMRMLGlyphableVolumeDisplayNode.cxx
-  vtkMRMLGlyphableVolumeDisplayNode.h
   vtkMRMLGlyphableVolumeSliceDisplayNode.cxx
-  vtkMRMLGlyphableVolumeSliceDisplayNode.h
   vtkMRMLGlyphableVolumeDisplayPropertiesNode.cxx
-  vtkMRMLGlyphableVolumeDisplayPropertiesNode.h
   vtkMRMLVolumeHeaderlessStorageNode.cxx
-  vtkMRMLVolumeHeaderlessStorageNode.h
   vtkMRMLVolumeNode.cxx
-  vtkMRMLVolumeNode.h
   vtkObservation.cxx
-  vtkObservation.h
   vtkObserverManager.cxx
-  vtkObserverManager.h
   vtkMRMLLayoutNode.cxx
-  vtkMRMLLayoutNode.h
   # Classes for remote data handling:
   vtkCacheManager.cxx
-  vtkCacheManager.h
   vtkDataIOManager.cxx
-  vtkDataIOManager.h
   vtkDataTransfer.cxx
-  vtkDataTransfer.h
   vtkMRMLBSplineTransformNode.cxx
-  vtkMRMLBSplineTransformNode.h
   vtkMRMLGridTransformNode.cxx
-  vtkMRMLGridTransformNode.h
   vtkMRMLNonlinearTransformNode.cxx
-  vtkMRMLNonlinearTransformNode.h
   vtkPermissionPrompter.cxx
-  vtkPermissionPrompter.h
   vtkURIHandler.cxx
-  vtkURIHandler.h
   vtkTagTableCollection.cxx
-  vtkTagTableCollection.h
   vtkTagTable.cxx
-  vtkTagTable.h
   vtkMRMLVolumePropertyNode.cxx
-  vtkMRMLVolumePropertyNode.h
   vtkMRMLVolumePropertyStorageNode.cxx
-  vtkMRMLVolumePropertyStorageNode.h
   vtkMRMLdGEMRICProceduralColorNode.cxx
-  vtkMRMLdGEMRICProceduralColorNode.h
   vtkMRMLPETProceduralColorNode.cxx
-  vtkMRMLPETProceduralColorNode.h
   # Classes for 2D Plotting
   vtkMRMLArrayPlotNode.cxx
-  vtkMRMLArrayPlotNode.h
   vtkMRMLXYPlotManagerNode.cxx
-  vtkMRMLXYPlotManagerNode.h
   vtkMRMLDoubleArrayNode.cxx
-  vtkMRMLDoubleArrayNode.h
   vtkMRMLPlotNode.cxx
-  vtkMRMLPlotNode.h
   vtkMRMLOrthogonalLinePlotNode.cxx
-  vtkMRMLOrthogonalLinePlotNode.h
   #
   vtkMRMLDoubleArrayStorageNode.cxx
-  vtkMRMLDoubleArrayStorageNode.h
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
@@ -316,6 +230,9 @@ set_source_files_properties(
   vtkMRMLFiberBundleDisplayNode.cxx
   ABSTRACT
   )
+
+STRING(REGEX REPLACE "cxx$" "h" MRML_SRCS_HEADERS ${MRML_SRCS})
+SOURCE_GROUP("Header Files" FILES ${MRML_SRCS_HEADERS})
 
 #-----------------------------------------------------------------------------
 # Wrapping hints used by all Tcl, Python and Java wrapping.
