@@ -47,6 +47,7 @@ vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
   this->m_Widget = 0;
   this->m_LastAddedAnnotationNode = 0;
   this->m_ActiveHierarchy = 0;
+
 }
 
 //-----------------------------------------------------------------------------
@@ -227,8 +228,6 @@ void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescript
 void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
 {
 
-  this->InitializeEventListeners();
-
   vtkMRMLInteractionNode *interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(
           this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
@@ -237,6 +236,8 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode()
     vtkErrorMacro ( "StartPlaceMode: No interaction node in the scene." );
     return;
     }
+
+  this->InitializeEventListeners();
 
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
   interactionNode->SetPlaceModePersistence(1);
@@ -1587,5 +1588,60 @@ bool vtkSlicerAnnotationModuleLogic::IsSnapshotNode(const char* id)
     }
 
   return node->IsA("vtkMRMLAnnotationSnapshotNode");
+
+}
+
+//---------------------------------------------------------------------------
+//
+//
+// Place Annotations programmatically
+//
+//
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+// Place a fiducial annotation at the given world position. If the hierarchyNode is valid,
+// add the fiducial to this hierarchy.
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::PlaceFiducial(double r, double a, double s, vtkMRMLAnnotationHierarchyNode* hierarchy)
+{
+  if(hierarchy)
+    {
+    this->m_ActiveHierarchy = hierarchy;
+    }
+
+  // we use the selectionNode to tell the displayableManagers which annotation is coming
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (!selectionNode)
+    {
+    vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
+    return;
+    }
+
+  selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
+
+  // activate the event listening of this class
+  this->InitializeEventListeners();
+
+  // worldCoordinates as an array
+  double worldCoordinates1[4];
+
+  // set the coordinates which were passed to this function to this array
+  worldCoordinates1[0] = r;
+  worldCoordinates1[1] = a;
+  worldCoordinates1[2] = s;
+  worldCoordinates1[3] = 1;
+
+  // create the MRML node
+  vtkMRMLAnnotationFiducialNode *fiducialNode = vtkMRMLAnnotationFiducialNode::New();
+
+  fiducialNode->SetFiducialCoordinates(worldCoordinates1);
+
+  fiducialNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationFiducial"));
+
+  fiducialNode->Initialize(this->GetMRMLScene());
+
+  fiducialNode->Delete();
 
 }
