@@ -582,9 +582,13 @@ void
 vtkITKBSplineTransform
 ::SetSwitchCoordinateSystem( bool v )
 {
-  if (Helper)
+  if( Helper != NULL )
     {
     Helper->SetSwitchCoordinateSystem( v );
+    }
+  else
+    {
+    vtkErrorMacro( "need to call SetSplineOrder before SetSwitchCoordinateSystem" );
     }
 }
 
