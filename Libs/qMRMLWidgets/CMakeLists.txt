@@ -56,6 +56,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLColorListView.h
   qMRMLColorModel.cxx
   qMRMLColorModel.h
+  qMRMLColorPickerWidget.cxx
+  qMRMLColorPickerWidget.h
   qMRMLColorTableComboBox.cxx
   qMRMLColorTableComboBox.h
   qMRMLColorTableView.cxx
@@ -140,6 +142,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLActionSignalMapper.h
   qMRMLCollapsibleButton.h
   qMRMLColorListView.h
+  qMRMLColorPickerWidget.h
   qMRMLColorTableComboBox.h
   qMRMLColorTableView.h
   qMRMLColorModel.h
@@ -186,6 +189,7 @@ SET(qMRMLWidgets_MOC_SRCS
 
 # UI files
 SET(qMRMLWidgets_UI_SRCS
+  Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLEventLoggerWidget.ui
   Resources/UI/qMRMLROIWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui

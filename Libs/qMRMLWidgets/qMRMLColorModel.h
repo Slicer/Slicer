@@ -38,7 +38,7 @@ class QAction;
 namespace qMRML
 {
  enum ItemDataRole {
-   UIDRole = Qt::UserRole + 1,
+   ColorEntryRole = Qt::UserRole,
    PointerRole,
    ColorRole
  };
@@ -79,8 +79,13 @@ public:
   /// -1 if the node index is not a MRML node (i.e. vtkMRMLScene, extra item...)
   inline int colorFromIndex(const QModelIndex &nodeIndex)const;
   int colorFromItem(QStandardItem* nodeItem)const;
+  
   QStandardItem* itemFromColor(int color, int column = 0)const;
   QModelIndexList indexes(int color)const;
+  
+  inline QColor qcolorFromIndex(const QModelIndex& nodeIndex)const;
+  inline QColor qcolorFromItem(QStandardItem* nodeItem)const;
+  QColor qcolorFromColor(int color)const;
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);
   void onItemChanged(QStandardItem * item);
@@ -108,6 +113,18 @@ private:
 int qMRMLColorModel::colorFromIndex(const QModelIndex &nodeIndex)const
 {
   return this->colorFromItem(this->itemFromIndex(nodeIndex));
+}
+
+// -----------------------------------------------------------------------------
+QColor qMRMLColorModel::qcolorFromIndex(const QModelIndex &nodeIndex)const
+{
+  return this->qcolorFromItem(this->itemFromIndex(nodeIndex));
+}
+
+// -----------------------------------------------------------------------------
+QColor qMRMLColorModel::qcolorFromItem(QStandardItem* nodeItem)const
+{
+  return this->qcolorFromColor(this->colorFromItem(nodeItem));
 }
 
 #endif

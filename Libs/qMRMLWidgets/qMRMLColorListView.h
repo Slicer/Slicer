@@ -54,6 +54,13 @@ public slots:
   
   void setShowOnlyNamedColors(bool);
 
+signals:
+  void colorSelected(int index);
+  void colorSelected(QColor color);
+
+protected slots:
+  void onItemActivated(const QModelIndex&);
+
 protected:
   QScopedPointer<qMRMLColorListViewPrivate> d_ptr;
 

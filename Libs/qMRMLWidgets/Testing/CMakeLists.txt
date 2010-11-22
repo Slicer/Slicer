@@ -5,6 +5,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLColorListViewTest1.cxx
   qMRMLColorModelTest1.cxx
   qMRMLColorModelTest2.cxx
+  qMRMLColorPickerWidgetTest1.cxx
   qMRMLColorTableComboBoxTest1.cxx
   qMRMLColorTableViewTest1.cxx
   qMRMLLayoutManagerTest1.cxx
@@ -70,6 +71,7 @@ ENDMACRO()
 SIMPLE_TEST( qMRMLColorListViewTest1 )
 SIMPLE_TEST( qMRMLColorModelTest1 )
 SIMPLE_TEST( qMRMLColorModelTest2 )
+SIMPLE_TEST( qMRMLColorPickerWidgetTest1 )
 SIMPLE_TEST( qMRMLColorTableComboBoxTest1 )
 SIMPLE_TEST( qMRMLColorTableViewTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest1 )

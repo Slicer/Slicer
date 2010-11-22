@@ -182,7 +182,7 @@ int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
     {
     return -1;
     }
-  QVariant colorIndex = colorItem->data(Qt::UserRole);
+  QVariant colorIndex = colorItem->data(qMRML::ColorEntryRole);
   if (!colorIndex.isValid())
     {
     return -1;
@@ -198,7 +198,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
     {
     return 0;
     }
-  QModelIndexList indexes = this->match(QModelIndex(), Qt::UserRole,
+  QModelIndexList indexes = this->match(QModelIndex(), qMRML::ColorEntryRole,
                                       color, 1,
                                       Qt::MatchExactly | Qt::MatchRecursive);
   while (indexes.size())
@@ -207,7 +207,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
       {
       return this->itemFromIndex(indexes[0]);
       }
-    indexes = this->match(indexes[0], Qt::UserRole, color, 1,
+    indexes = this->match(indexes[0], qMRML::ColorEntryRole, color, 1,
                           Qt::MatchExactly | Qt::MatchRecursive);
     }
   return 0;
@@ -216,8 +216,21 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLColorModel::indexes(int color)const
 {
-  return this->match(QModelIndex(), Qt::UserRole, color, -1,
+  return this->match(QModelIndex(), qMRML::ColorEntryRole, color, -1,
                      Qt::MatchExactly | Qt::MatchRecursive);
+}
+
+//------------------------------------------------------------------------------
+QColor qMRMLColorModel::qcolorFromColor(int entry)const
+{
+  Q_D(const qMRMLColorModel);
+  if (d->MRMLColorNode == 0 || entry < 0)
+    {
+    return QColor();
+    }
+  double rgba[4];
+  d->MRMLColorNode->GetColor(entry, rgba);
+  return QColor::fromRgbF(rgba[0], rgba[1], rgba[2], rgba[3]);
 }
 
 //------------------------------------------------------------------------------
@@ -295,7 +308,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
     {
     return;
     }
-  item->setData(color, Qt::UserRole);
+  item->setData(color, qMRML::ColorEntryRole);
   double rgba[4] = {0.,0.,0.,1.};
   bool validColor = d->MRMLColorNode->GetColor(color, rgba);
   QString colorName = d->MRMLColorNode->GetNamesInitialised() ?

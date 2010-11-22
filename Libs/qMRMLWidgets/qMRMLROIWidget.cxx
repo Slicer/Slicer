@@ -30,8 +30,7 @@
 #include <vtkMRMLROINode.h>
 
 // --------------------------------------------------------------------------
-class qMRMLROIWidgetPrivate:
-                             public Ui_qMRMLROIWidget
+class qMRMLROIWidgetPrivate: public Ui_qMRMLROIWidget
 {
   Q_DECLARE_PUBLIC(qMRMLROIWidget);
 protected:

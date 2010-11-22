@@ -62,6 +62,9 @@ void qMRMLColorListViewPrivate::init()
   //q->setResizeMode(QListView::Adjust);
   //q->setFlow(QListView::TopToBottom);
   //q->setRootIndex(sortFilterModel->mapFromSource(colorModel->mrmlColorNodeIndex()));
+  
+  QObject::connect(q, SIGNAL(activated(const QModelIndex &)),
+                   q, SLOT(onItemActivated(const QModelIndex &)));
 }
 
 //------------------------------------------------------------------------------
@@ -130,4 +133,14 @@ void qMRMLColorListView::setShowOnlyNamedColors(bool enable)
 bool qMRMLColorListView::showOnlyNamedColors()const
 {
   return this->sortFilterProxyModel()->filterRegExp().isEmpty();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorListView::onItemActivated(const QModelIndex& index)
+{
+  QModelIndex colorIndex = this->sortFilterProxyModel()->mapToSource(index);
+  int colorEntry = this->colorModel()->colorFromIndex(colorIndex);
+  emit this->colorSelected(colorEntry);
+  QColor color = this->colorModel()->qcolorFromColor(colorEntry);
+  emit this->colorSelected(color);
 }
