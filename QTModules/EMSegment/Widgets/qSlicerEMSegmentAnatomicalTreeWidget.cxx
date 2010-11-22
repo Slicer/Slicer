@@ -51,6 +51,9 @@
 #include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLColorTableNode.h>
 
+// VTK includes
+#include <vtkLookupTable.h>
+
 //--------------------------------------------------------------------------
 static ctkLogger logger(
     "org.slicer.qtmodules.emsegment.widgets.qSlicerEMSegmentAnatomicalTreeWidget");

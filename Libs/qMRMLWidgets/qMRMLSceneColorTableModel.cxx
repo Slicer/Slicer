@@ -34,6 +34,8 @@
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 
+// VTK includes
+#include <vtkLookupTable.h>
 
 //------------------------------------------------------------------------------
 class qMRMLSceneColorTableModelPrivate

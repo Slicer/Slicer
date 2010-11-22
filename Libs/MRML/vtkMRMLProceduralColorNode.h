@@ -100,7 +100,7 @@ public:
 
   /// 
   /// set up some names, going from the points defined in the transfer function
-  void SetNamesFromColors();
+  bool SetNameFromColor(int index);
   
   virtual int GetNumberOfColors();
   virtual bool GetColor(int entry, double* color);

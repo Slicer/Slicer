@@ -177,10 +177,10 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
     {
     if (valueX.size() == valueY.size() && valueY.size() == valueYErr.size())
       {
-      int n = valueX.size();
+      size_t n = valueX.size();
       this->Array->SetNumberOfComponents(3);
       this->Array->SetNumberOfTuples(n);
-      for (int i = 0; i < n; i ++)
+      for (size_t i = 0; i < n; i ++)
         {
         double xy[3];
         xy[0] = valueX[i];
@@ -194,10 +194,10 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
     {
     if (valueX.size() == valueY.size())
       {
-      int n = valueX.size();
+      size_t n = valueX.size();
       this->Array->SetNumberOfComponents(3);
       this->Array->SetNumberOfTuples(n);
-      for (int i = 0; i < n; i ++)
+      for (size_t i = 0; i < n; i ++)
         {
         double xy[3];
         xy[0] = valueX[i];

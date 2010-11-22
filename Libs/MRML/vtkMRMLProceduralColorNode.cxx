@@ -11,17 +11,19 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.0 $
 
 =========================================================================auto=*/
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkColorTransferFunction.h"
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkColorTransferFunction.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLProceduralColorNode* vtkMRMLProceduralColorNode::New()
@@ -146,59 +148,26 @@ void vtkMRMLProceduralColorNode::SetType(int type)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLProceduralColorNode::SetNamesFromColors()
+bool vtkMRMLProceduralColorNode::SetNameFromColor(int index)
 {
-  // get the transfer function's range and iterate over them
-  if (this->ColorTransferFunction == NULL)
+  double colour[4];
+  this->GetColor(index, colour);
+  //this->ColorTransferFunction->GetColor(index, colour);
+  std::stringstream ss;
+  ss.precision(3);
+  ss.setf(std::ios::fixed, std::ios::floatfield);
+  ss << "R=";
+  ss << colour[0];
+  ss << " G=";
+  ss << colour[1];
+  ss << " B=";
+  ss << colour[2];
+  if (this->SetColorName(index, ss.str().c_str()) == 0)
     {
-    return;
+    vtkErrorMacro("SetNamesFromColors: error setting name " <<  ss.str().c_str() << " for color index " << index);
+    return false;
     }
-  double *range = this->ColorTransferFunction->GetRange();
-  int numPoints = 0;
-  double index = 0;
-  if (range)
-    {
-    numPoints = (int)floor(range[1] - range[0]);
-    if (range[0] < 0 && range[1] >= 0)
-      {
-      // add one for zero
-      numPoints++;
-      }
-    index = range[0];
-    }
-  // reset the names
-  this->Names.clear();
-  this->Names.resize(numPoints);
-
-  bool errorCondition = false;
-  for (int i = 0; i < numPoints; i++)
-    {
-    double colour[3];
-    double r = 0.0, g = 0.0, b = 0.0;
-    this->GetColor(i, colour);
-    //this->ColorTransferFunction->GetColor(index, colour);
-    r = colour[0]; //this->ColorTransferFunction->GetRedValue(i);
-    g = colour[1]; //this->ColorTransferFunction->GetGreenValue(i);
-    b = colour[2]; //this->ColorTransferFunction->GetBlueValue(i);
-    std::stringstream ss;
-    ss << "R=";
-    ss << r;
-    ss << " G=";
-    ss << g;
-    ss << " B=";
-    ss << b;
-    if (this->SetColorName(i, ss.str().c_str()) == 0)
-      {
-      vtkErrorMacro("SetNamesFromColors: error setting name " <<  ss.str().c_str() << " for color index " << i);
-      errorCondition = true;
-      break;
-      }
-    index++;
-    }
-  if (!errorCondition)
-    {
-    this->NamesInitialisedOn();
-    }
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -223,7 +192,7 @@ bool vtkMRMLProceduralColorNode::GetColor(int entry, double* color)
 {
   if (entry < 0 || entry >= this->GetNumberOfColors())
     {
-    vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
+    vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetNumberOfColors() << ", call SetNumberOfColors" << endl);
     return false;
     }
   double *range = this->ColorTransferFunction->GetRange();

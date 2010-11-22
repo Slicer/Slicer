@@ -12,15 +12,20 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
+// MRML include
+#include "vtkMRMLColorTableStorageNode.h"
+#include "vtkMRMLColorTableNode.h"
+
+// VTK include
+#include <vtkImageChangeInformation.h>
+#include <vtkLookupTable.h>
+#include <vtkObjectFactory.h>
+#include <vtkStringArray.h>
+
+// STD include
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkImageChangeInformation.h"
-#include "vtkMRMLColorTableStorageNode.h"
-#include "vtkMRMLColorTableNode.h"
-#include "vtkStringArray.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode* vtkMRMLColorTableStorageNode::New()

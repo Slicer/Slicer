@@ -468,7 +468,7 @@ int vtkTagTable::CheckTableForTag ( const char *attribute )
 //----------------------------------------------------------------------------
 int vtkTagTable::GetNumberOfTags ()
 {
-  return ( this->TagTable.size() );
+  return static_cast<int>( this->TagTable.size() );
 }
 
 

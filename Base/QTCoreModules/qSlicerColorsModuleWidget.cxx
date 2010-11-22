@@ -37,6 +37,7 @@
 
 // VTK includes
 #include <vtkColorTransferFunction.h>
+#include <vtkLookupTable.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkScalarBarActor.h>
@@ -124,10 +125,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     d->CopyColorNodeButton->setEnabled(false);
     return;
     }
-  d->ColorView->setEditTriggers(
-    (colorNode->GetType() == vtkMRMLColorTableNode::User) ?
-      QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed :
-      QAbstractItemView::NoEditTriggers);
+
   d->CopyColorNodeButton->setEnabled(true);
   d->NumberOfColorsSpinBox->setEnabled(
     colorNode->GetType() == vtkMRMLColorTableNode::User);

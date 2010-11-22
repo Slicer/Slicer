@@ -16,6 +16,9 @@
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLNode.h>
 
+// VTK includes
+#include <vtkLookupTable.h>
+
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLLabelComboBox");
 //--------------------------------------------------------------------------

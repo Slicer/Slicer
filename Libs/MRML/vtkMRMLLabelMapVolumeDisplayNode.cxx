@@ -12,16 +12,19 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLProceduralColorNode.h"
+
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkLookupTable.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeDisplayNode* vtkMRMLLabelMapVolumeDisplayNode::New()

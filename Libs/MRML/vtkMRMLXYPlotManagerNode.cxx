@@ -356,7 +356,7 @@ void vtkMRMLXYPlotManagerNode::ClearPlotNodes()
 //----------------------------------------------------------------------------
 unsigned int vtkMRMLXYPlotManagerNode::GetNumberOfPlotNodes()
 {
-  return (this->Data.size());
+  return static_cast<unsigned int>(this->Data.size());
 }
 
 

@@ -50,6 +50,7 @@
 
 /// VTK includes
 #include <vtkImageReader.h>
+#include <vtkLookupTable.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkXMLDataParser.h>

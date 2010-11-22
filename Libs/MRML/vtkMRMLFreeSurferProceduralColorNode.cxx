@@ -459,52 +459,9 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLFreeSurferProceduralColorNode::SetNamesFromColors()
+bool vtkMRMLFreeSurferProceduralColorNode::SetNameFromColor(int index)
 {
-  //int size = this->GetFSLookupTable()->GetNumberOfColors();
-  double *range = this->GetFSLookupTable()->GetRange();
-  int size = 0;
-  double index = 0;
-  if (range)
-    {
-    size = (int)floor(range[1] - range[0]);
-    if (range[0] < 0 && range[1] >= 0)
-      {
-      // add one for zero
-      size++;
-      }
-    index = range[0];
-    }
-  double rgb[3];
-  // reset the names
-  this->Names.clear();
-  this->Names.resize(size);
-  bool errorCondition = false;
-  for (int i = 0; i < size; i++)
-    {
-    this->GetFSLookupTable()->GetColor((double)index, rgb);
-    std::stringstream ss;
-    ss << "R=";
-    ss << rgb[0];
-    ss << " G=";
-    ss << rgb[1];
-    ss << " B=";
-    ss << rgb[2];
-    ss << " A=";
-    ss << 1.0;
-    vtkDebugMacro("SetNamesFromColors: i = " << i << ", index = " << index << ", Name = " << ss.str().c_str());
-    if (this->SetColorName(i, ss.str().c_str()) == 0)
-      {
-      vtkWarningMacro("SetNamesFromColors: Error setting color i = " << i << ", index = " << index << ", Name = " << ss.str().c_str());
-      errorCondition = true;
-      break;
-      }
-    index++;
-    }
-  if (!errorCondition)
-    {
-    this->NamesInitialisedOn();
-    }
+  return vtkMRMLColorNode::SetNameFromColor(index);
 }
 
 //---------------------------------------------------------------------------

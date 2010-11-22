@@ -22,14 +22,16 @@
 #ifndef __vtkMRMLColorNode_h
 #define __vtkMRMLColorNode_h
 
+// MRML includes
+//#include "vtkMRML.h"
+//#include "vtkMRMLNode.h"
+#include "vtkMRMLStorableNode.h"
+
+// Std includes
 #include <string>
 #include <vector>
 
-#include "vtkMRML.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLStorableNode.h"
-
-#include "vtkLookupTable.h"
+class vtkLookupTable;
 
 class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 {
@@ -168,7 +170,8 @@ protected:
 
   /// 
   /// Set values in the names vector from the colours in the node
-  virtual void SetNamesFromColors();
+  void SetNamesFromColors();
+  virtual bool SetNameFromColor(int index);
   
   /// 
   /// Which type of look up table does this node hold? 

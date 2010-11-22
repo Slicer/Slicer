@@ -57,6 +57,7 @@
 #include <vtkPlane.h>
 #include <vtkClipPolyData.h>
 #include <vtkBoundingBox.h>
+#include <vtkLookupTable.h>
 
 // for picking
 #include <vtkWorldPointPicker.h>

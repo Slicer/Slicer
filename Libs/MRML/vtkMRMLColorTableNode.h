@@ -24,8 +24,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLColorNode.h"
-#include "vtkMRMLColorTableStorageNode.h"
-#include "vtkLookupTable.h"
+
 #include "vtkMRMLScene.h"
 
 class vtkLookupTable;
@@ -65,7 +64,7 @@ public:
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   vtkGetObjectMacro(LookupTable, vtkLookupTable);
-  vtkSetObjectMacro(LookupTable, vtkLookupTable);
+  virtual void SetLookupTable(vtkLookupTable* newLookupTable);
 
   /// 
   /// Get/Set for Type
@@ -208,16 +207,27 @@ public:
   void SetNumberOfColors(int n);
 
   /// 
+  /// Set the size of the colour table if it's a User table
+  virtual int GetNumberOfColors();
+
+  /// 
   /// keep track of where we last added a colour 
   int LastAddedColor;
 
   /// 
   /// Add a colour to the User colour table, at the end
-  void AddColor(const char* name, double r, double g, double b);
+  void AddColor(const char* name, double r, double g, double b, double a = 1.0);
+
   /// 
   /// Set a colour into the User colour table. Return 1 on success, 0 on failure.
-  int SetColor(int entry, const char* name, double r, double g, double b);
+  int SetColor(int entry, const char* name, double r, double g, double b, double a = 1.0);
 
+  ///
+  /// Set a colour into the User colour table. Return 1 on success, 0 on failure.
+  int SetColor(int entry, double r, double g, double b, double a);
+  int SetColor(int entry, double r, double g, double b);
+  int SetOpacity(int entry, double opacity);
+  
   /// Retrieve the color associated to the index
   /// Return true if the color exists, false otherwise
   virtual bool GetColor(int entry, double* color);
@@ -237,21 +247,13 @@ public:
  
   /// 
   /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-    return vtkMRMLColorTableStorageNode::New();
-    };
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
 protected:
   vtkMRMLColorTableNode();
   virtual ~vtkMRMLColorTableNode();
   vtkMRMLColorTableNode(const vtkMRMLColorTableNode&);
   void operator=(const vtkMRMLColorTableNode&);
-
-  /// 
-  /// Set values in the names vector from the colour rgba entries in the colour
-  /// table
-  virtual void SetNamesFromColors();
 
   ///  
   /// The look up table, constructed according to the Type

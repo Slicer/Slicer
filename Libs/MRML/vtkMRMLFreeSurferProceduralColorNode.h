@@ -143,7 +143,7 @@ protected:
   /// 
   /// Set values in the names vector from the colour rgba entries in the colour
   /// table
-  void SetNamesFromColors();
+  bool SetNameFromColor(int index);
 
   /// 
   /// a lookup table tailored with FreeSurfer colours, constructed according to Type

@@ -292,33 +292,72 @@ void vtkMRMLColorNode::SetType(int type)
 //---------------------------------------------------------------------------
 void vtkMRMLColorNode::SetNamesFromColors()
 {
-  vtkErrorMacro("Subclass has not defined SetNamesFromColors.");
+  int numPoints = this->GetNumberOfColors();
+  // reset the names
+  this->Names.clear();
+  this->Names.resize(numPoints);
+
+  bool res = false;
+  for (int i = 0; i < numPoints; ++i)
+    {
+    res = this->SetNameFromColor(i);
+    if (!res)
+      {
+      return;
+      }
+    }
+  this->NamesInitialisedOn();
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLColorNode::SetNameFromColor(int index)
+{
+  double rgba[4];
+  bool res = this->GetColor(index, rgba);
+  std::stringstream ss;
+  ss.precision(3);
+  ss.setf(std::ios::fixed, std::ios::floatfield);
+  ss << "R=";
+  ss << rgba[0];
+  ss << " G=";
+  ss << rgba[1];
+  ss << " B=";
+  ss << rgba[2];
+  ss << " A=";
+  ss << rgba[3];
+  vtkDebugMacro("SetNamesFromColors: " << index << " Name = " << ss.str().c_str());
+  if (this->SetColorName(index, ss.str().c_str()) == 0)
+    {
+    vtkErrorMacro("SetNamesFromColors: Error setting color name " << index << " Name = " << ss.str().c_str());
+    return false;
+    }
+  return res;
 }
 
 //---------------------------------------------------------------------------
 const char *vtkMRMLColorNode::GetColorName(int ind)
 {
-    if (!this->GetNamesInitialised())
+  if (!this->GetNamesInitialised())
+    {
+    this->SetNamesFromColors();
+    }
+  
+  if (ind < (int)this->Names.size() && ind >= 0)
+    {
+    if (strcmp(this->Names[ind].c_str(), "") == 0)
       {
-      this->SetNamesFromColors();
-      }
-    
-    if (ind < (int)this->Names.size() && ind >= 0)
-      {
-      if (strcmp(this->Names[ind].c_str(), "") == 0)
-        {
-        return this->NoName;
-        }
-      else
-        {
-        return this->Names[ind].c_str();
-        }
+      return this->NoName;
       }
     else
       {
-      vtkDebugMacro("vtkMRMLColorNode::GetColorName: index " << ind << " is out of range 0 - " << this->Names.size());
-      return "invalid";
+      return this->Names[ind].c_str();
       }
+    }
+  else
+    {
+    vtkDebugMacro("vtkMRMLColorNode::GetColorName: index " << ind << " is out of range 0 - " << this->Names.size());
+    return "invalid";
+    }
 }
 
 //---------------------------------------------------------------------------
