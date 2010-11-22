@@ -39,7 +39,8 @@ namespace qMRML
 {
  enum ItemDataRole {
    UIDRole = Qt::UserRole + 1,
-   PointerRole
+   PointerRole,
+   ColorRole
  };
 };
 class qMRMLColorModelPrivate;
@@ -58,7 +59,8 @@ public:
 
   enum Columns{
     ColorColumn = 0,
-    OpacityColumn = 1
+    LabelColumn = 1,
+    OpacityColumn = 2
   };
 
   void setMRMLColorNode(vtkMRMLColorNode* node);
@@ -68,6 +70,10 @@ public:
   /// An additional item is added into the menu list, where the user can select "None".
   void setNoneEnabled(bool enable);
   bool noneEnabled()const;
+
+  /// Control wether or not displaying the label in the color column
+  void setLabelInColorColumn(bool enable);
+  bool isLabelInColorColumn()const;
 
   /// Return the vtkMRMLNode associated to the node index.
   /// -1 if the node index is not a MRML node (i.e. vtkMRMLScene, extra item...)

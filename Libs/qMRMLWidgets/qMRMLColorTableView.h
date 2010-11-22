@@ -55,6 +55,9 @@ public slots:
   
   void setShowOnlyNamedColors(bool);
 
+protected slots:
+  void onDoubleClicked(const QModelIndex& index);
+
 protected:
   QScopedPointer<qMRMLColorTableViewPrivate> d_ptr;
 

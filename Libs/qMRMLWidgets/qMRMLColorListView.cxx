@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // QT includes
+#include <QDebug>
 #include <QSortFilterProxyModel>
 
 // qMRML includes
@@ -51,10 +52,12 @@ void qMRMLColorListViewPrivate::init()
   Q_Q(qMRMLColorListView);
 
   qMRMLColorModel* colorModel = new qMRMLColorModel(q);
+  colorModel->setLabelInColorColumn(true);
   QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
   
+  q->setEditTriggers(QAbstractItemView::NoEditTriggers);
   //q->setWrapping(true);
   //q->setResizeMode(QListView::Adjust);
   //q->setFlow(QListView::TopToBottom);
@@ -99,6 +102,7 @@ void qMRMLColorListView::setMRMLColorNode(vtkMRMLColorNode* node)
   qMRMLColorModel* mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
   mrmlModel->setMRMLColorNode(node);
+  this->sortFilterProxyModel()->invalidate();
 }
 
 //------------------------------------------------------------------------------

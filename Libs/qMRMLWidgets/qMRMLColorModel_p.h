@@ -50,6 +50,7 @@ public:
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   vtkSmartPointer<vtkMRMLColorNode>   MRMLColorNode;
   bool                                NoneEnabled;
+  bool                                LabelInColor;
 };
 
 #endif

@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // QT includes
+#include <QColorDialog>
 #include <QDebug>
 #include <QDoubleSpinBox>
 #include <QHeaderView>
@@ -30,12 +31,15 @@
 
 // MRML includes
 #include <vtkMRMLColorNode.h>
+#include <vtkMRMLColorTableNode.h>
 
+//------------------------------------------------------------------------------
 OpacityDelegate::OpacityDelegate(QObject *parent)
   : QItemDelegate(parent)
 {
 }
 
+//------------------------------------------------------------------------------
 QWidget *OpacityDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                                        const QModelIndex &index) const
 {
@@ -48,6 +52,7 @@ QWidget *OpacityDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
   return editor;
 }
 
+//------------------------------------------------------------------------------
 void OpacityDelegate::setEditorData(QWidget *editor,
                                     const QModelIndex &index) const
 {
@@ -57,6 +62,7 @@ void OpacityDelegate::setEditorData(QWidget *editor,
   spinBox->setValue(value);
 }
 
+//------------------------------------------------------------------------------
 void OpacityDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                    const QModelIndex &index) const
 {
@@ -66,6 +72,7 @@ void OpacityDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
   model->setData(index, value, Qt::EditRole);
 }
 
+//------------------------------------------------------------------------------
 void OpacityDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const
 {
@@ -97,13 +104,20 @@ void qMRMLColorTableViewPrivate::init()
 
   qMRMLColorModel* colorModel = new qMRMLColorModel(q);
   QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
+  sortFilterModel->setFilterKeyColumn(qMRMLColorModel::LabelColumn);
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
-  
-  q->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::Stretch);
+
+  q->setSelectionBehavior(QAbstractItemView::SelectRows);
+  q->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::ResizeToContents);
+  q->horizontalHeader()->setResizeMode(qMRMLColorModel::LabelColumn, QHeaderView::Stretch);
   q->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::ResizeToContents);
+
   OpacityDelegate* delegate = new OpacityDelegate;
   q->setItemDelegateForColumn(qMRMLColorModel::OpacityColumn, delegate);
+  
+  QObject::connect(q, SIGNAL(doubleClicked(const QModelIndex& )),
+                   q, SLOT(onDoubleClicked(const QModelIndex&)));
 }
 
 //------------------------------------------------------------------------------
@@ -145,13 +159,19 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
   Q_ASSERT(mrmlModel);
   
   this->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::Fixed);
+  this->horizontalHeader()->setResizeMode(qMRMLColorModel::LabelColumn, QHeaderView::Fixed);
   this->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::Fixed);
 
   mrmlModel->setMRMLColorNode(node);
   this->sortFilterProxyModel()->invalidate();
 
-  this->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::Stretch);
+  this->horizontalHeader()->setResizeMode(qMRMLColorModel::ColorColumn, QHeaderView::ResizeToContents);
+  this->horizontalHeader()->setResizeMode(qMRMLColorModel::LabelColumn, QHeaderView::Stretch);
   this->horizontalHeader()->setResizeMode(qMRMLColorModel::OpacityColumn, QHeaderView::ResizeToContents);
+
+  this->setEditTriggers( (node && node->GetType() == vtkMRMLColorTableNode::User) ?
+      QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed :
+      QAbstractItemView::NoEditTriggers);
 }
 
 //------------------------------------------------------------------------------
@@ -179,4 +199,21 @@ void qMRMLColorTableView::setShowOnlyNamedColors(bool enable)
 bool qMRMLColorTableView::showOnlyNamedColors()const
 {
   return this->sortFilterProxyModel()->filterRegExp().isEmpty();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorTableView::onDoubleClicked(const QModelIndex& index)
+{
+  if (index.column() != qMRMLColorModel::ColorColumn ||
+      this->editTriggers() == 0)
+    {
+    return;
+    }
+  QColor color = this->sortFilterProxyModel()->data(index, qMRML::ColorRole).value<QColor>();
+  QColor newColor = QColorDialog::getColor(color, this, "Select a new color", QColorDialog::DontUseNativeDialog );
+  if (!newColor.isValid())
+    {
+    return;
+    }
+  this->sortFilterProxyModel()->setData(index, newColor, qMRML::ColorRole);
 }

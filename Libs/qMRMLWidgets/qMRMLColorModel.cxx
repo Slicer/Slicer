@@ -35,6 +35,7 @@
 
 // MRML includes
 #include <vtkMRMLColorNode.h>
+#include <vtkMRMLColorTableNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -46,6 +47,7 @@ qMRMLColorModelPrivate::qMRMLColorModelPrivate(qMRMLColorModel& object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->NoneEnabled = false;
+  this->LabelInColor = false;
 }
 
 //------------------------------------------------------------------------------
@@ -63,11 +65,18 @@ void qMRMLColorModelPrivate::init()
   Q_Q(qMRMLColorModel);
   this->CallBack->SetClientData(q);
   this->CallBack->SetCallback(qMRMLColorModel::onMRMLNodeEvent);
-  q->setColumnCount(2);
-  q->setHorizontalHeaderLabels(QStringList() << "Color" << "Opacity");
-  
+  q->setColumnCount(3);
+  if (this->LabelInColor)
+    {
+    q->setHorizontalHeaderLabels(QStringList() << "Color" << "Label" << "Opacity");
+    }
+  else
+    {
+    q->setHorizontalHeaderLabels(QStringList() << "" << "Label" << "Opacity");
+    }
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
-                   q, SLOT(onItemChanged(QStandardItem*)));
+                   q, SLOT(onItemChanged(QStandardItem*)),
+                   Qt::UniqueConnection);
 }
 
 //------------------------------------------------------------------------------
@@ -143,6 +152,25 @@ bool qMRMLColorModel::noneEnabled()const
 {
   Q_D(const qMRMLColorModel);
   return d->NoneEnabled;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorModel::setLabelInColorColumn(bool enable)
+{
+  Q_D(qMRMLColorModel);
+  if (d->LabelInColor == enable)
+    {
+    return;
+    }
+  d->LabelInColor = enable;
+  this->updateNode();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLColorModel::isLabelInColorColumn()const
+{
+  Q_D(const qMRMLColorModel);
+  return d->LabelInColor;
 }
 
 //------------------------------------------------------------------------------
@@ -270,28 +298,46 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   item->setData(color, Qt::UserRole);
   double rgba[4] = {0.,0.,0.,1.};
   bool validColor = d->MRMLColorNode->GetColor(color, rgba);
+  QString colorName = d->MRMLColorNode->GetNamesInitialised() ?
+    d->MRMLColorNode->GetColorName(color) : "";
   switch (column)
     {
     case qMRMLColorModel::ColorColumn:
     default:
       {
-      item->setText(QString(d->MRMLColorNode->GetColorName(color)));
-      Q_ASSERT(!item->text().isEmpty());
+      QPixmap pixmap;
       if (validColor)
         {
         // it works to set just a QColor but if the model gets into a QComboBox,
         // the currently selected item doesn't get a decoration
         //item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), Qt::DecorationRole);
-        QIcon icon = qMRMLUtils::createColorPixmap(
+        pixmap = qMRMLUtils::createColorPixmap(
           qApp->style(), QColor::fromRgbF(rgba[0], rgba[1], rgba[2]));
-        item->setData(icon, Qt::DecorationRole);
+        item->setData(pixmap, Qt::DecorationRole);
+        item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), qMRML::ColorRole);
         }
       else
         {
         item->setData(QVariant(), Qt::DecorationRole);
+        item->setData(QColor(), qMRML::ColorRole);
         }
+      if (d->LabelInColor)
+        {
+        item->setText(colorName);
+        item->setData(QVariant(),Qt::SizeHintRole);
+        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+        }
+      else
+        {
+        item->setData((validColor ? pixmap.size() : QVariant()),Qt::SizeHintRole);
+        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+        }
+      item->setToolTip(colorName);
       break;
       }
+    case qMRMLColorModel::LabelColumn:
+      item->setText(colorName);
+      break;
     case qMRMLColorModel::OpacityColumn:
       item->setData(rgba[3], Qt::DisplayRole);
       break;
@@ -302,18 +348,25 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
 void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
 {
   Q_D(qMRMLColorModel);
-  if (color < 0)
+  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(d->MRMLColorNode);
+  if (color < 0 || !colorTableNode)
     {
     return;
     }
   switch(item->column())
     {
-    case 0:
-    default:
-      d->MRMLColorNode->SetColorName(color, item->text().toLatin1());
+    case qMRMLColorModel::ColorColumn:
+      {
+      QColor rgba(item->data(qMRML::ColorRole).value<QColor>());
+      colorTableNode->SetColor(color, rgba.redF(), rgba.greenF(), rgba.blueF(), rgba.alphaF());
+      }
+    case qMRMLColorModel::LabelColumn:
+      colorTableNode->SetColorName(color, item->text().toLatin1());
       break;
-    case 1:
-      //d->MRMLColor
+    case qMRMLColorModel::OpacityColumn:
+      colorTableNode->SetOpacity(color, item->data(Qt::DisplayRole).toDouble());
+      break;
+    default:
       break;
     }
 }
