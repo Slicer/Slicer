@@ -29,6 +29,7 @@ Version:   $Revision$
 #include "vtkSphereSource.h"
 #include "vtkPolyData.h"
 #include "vtkDebugLeaks.h"
+#include "vtkLookupTable.h"
 
 #include "vtksys/SystemTools.hxx"
 

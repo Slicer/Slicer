@@ -36,6 +36,7 @@ Version:   $Revision$
 #include "vtkPolyDataWriter.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkSmartPointer.h"
+#include "vtkLookupTable.h"
 
 #include "vtkPluginFilterWatcher.h"
 
