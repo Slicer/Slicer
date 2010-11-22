@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>385</width>
-    <height>409</height>
+    <width>314</width>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,6 +85,12 @@
    </item>
    <item row="3" column="0" colspan="2">
     <widget class="QWidget" name="PresetsWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
        <number>0</number>
@@ -176,7 +182,7 @@
       <item>
        <widget class="QToolButton" name="CTAbdomenPresetToolButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -188,8 +194,11 @@
          <string>CT-Abdomen</string>
         </property>
         <property name="text">
-         <string>CT-
-abdomen</string>
+         <string>CT-abd</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerVolumesModule.qrc">
+          <normaloff>:/Icons/WindowLevelPreset-Abdomen.png</normaloff>:/Icons/WindowLevelPreset-Abdomen.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -205,7 +214,7 @@ abdomen</string>
       <item>
        <widget class="QToolButton" name="CTBrainPresetToolButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -218,6 +227,10 @@ abdomen</string>
         </property>
         <property name="text">
          <string>CT-brain</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerVolumesModule.qrc">
+          <normaloff>:/Icons/WindowLevelPreset-Brain.png</normaloff>:/Icons/WindowLevelPreset-Brain.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -233,7 +246,7 @@ abdomen</string>
       <item>
        <widget class="QToolButton" name="CTLungPresetToolButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -246,6 +259,10 @@ abdomen</string>
         </property>
         <property name="text">
          <string>CT-lung</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerVolumesModule.qrc">
+          <normaloff>:/Icons/WindowLevelPreset-Lung.png</normaloff>:/Icons/WindowLevelPreset-Lung.png</iconset>
         </property>
         <property name="iconSize">
          <size>
