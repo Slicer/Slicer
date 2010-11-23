@@ -101,6 +101,31 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
   
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::ostringstream& ss, std::string prefix)
+{
+  Superclass::WriteCLI(ss, prefix);
+
+  if (this->PolyData &&  this->PolyData->GetPoints()) 
+    { 
+    vtkPoints *points = this->PolyData->GetPoints(); 
+    int n = points->GetNumberOfPoints();
+    
+    for (int i = 0; i < n; i++ ) 
+      {
+      double* ptr = points->GetPoint(i);
+      if (prefix.compare("") != 0)
+        {
+        ss << prefix << " ";
+        }
+      ss << ptr[0] << "," <<  ptr[1] << "," <<  ptr[2] ;
+      if (i < n-1) 
+        { 
+          ss << " ";
+        }
+      }
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsNode::ReadXMLAttributes(const char** atts)

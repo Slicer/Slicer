@@ -56,6 +56,11 @@ public:
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
+  ///
+  /// Write this node's information to a string for passing to a CLI, precede
+  /// each datum with the prefix if not an empty string
+  virtual void WriteCLI(std::ostringstream& vtkNotUsed(ss), std::string vtkNotUsed(prefix)) {};
+
   /// 
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);

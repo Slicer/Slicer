@@ -502,7 +502,11 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
-  widget->setNodeTypes(QStringList("vtkMRMLFiducialListNode"));
+  QStringList nodeTypes;
+  nodeTypes += "vtkMRMLFiducialListNode";
+  //TODO - specify to point hierarchy
+  nodeTypes += "vtkMRMLAnnotationHierarchyNode";
+  widget->setNodeTypes(nodeTypes);
   //TODO - title + " FiducialList"
   //TODO - tparameter->SetNewNodeEnabled(1);
   //TODO - tparameter->SetNoneEnabled(noneEnabled);

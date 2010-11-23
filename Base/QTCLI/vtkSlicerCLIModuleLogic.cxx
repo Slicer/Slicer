@@ -46,6 +46,9 @@
 #include <itksys/RegularExpression.hxx>
 #include <itksys/DynamicLoader.hxx>
 
+// Annotation module includes
+#include <vtkMRMLDisplayableHierarchyNode.h>
+
 // QT includes
 #include <QDebug>
 
@@ -1008,7 +1011,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             = this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str());
           vtkMRMLFiducialListNode *fiducials
             = vtkMRMLFiducialListNode::SafeDownCast(node);
-
+          vtkMRMLDisplayableHierarchyNode *points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
           if (fiducials)
             {
             // check to see if module can handle more than one point
@@ -1046,6 +1049,30 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               // Can't support this command line with this fiducial
               // list
               vtkErrorMacro("Module does not support multiple fiducials.");
+              }
+            }
+          else if (points)
+            {
+            // find the children of this hierarchy node
+            vtkSmartPointer<vtkCollection> col = vtkSmartPointer<vtkCollection>::New();
+            points->GetChildrenDisplayableNodes(col);
+            vtkDebugMacro("Getting children displayable nodes from points " << points->GetID());
+            if (col)
+              {
+              unsigned int numChildren = col->GetNumberOfItems();
+              vtkDebugMacro("Displayable hierarchy has " << numChildren << " child nodes");
+              for (unsigned int c = 0; c < numChildren; c++)
+                {
+                vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(col->GetItemAsObject(c));
+                if (displayableNode)
+                  {
+                  vtkDebugMacro("Found displayable node with id " << displayableNode->GetID());
+                  std::ostringstream ss;
+                  displayableNode->WriteCLI(ss, prefix+flag);
+                  vtkDebugMacro("WriteCL output = " << ss.str());
+                  commandLineAsString.push_back(ss.str());
+                  }
+                }
               }
             }
           continue;
