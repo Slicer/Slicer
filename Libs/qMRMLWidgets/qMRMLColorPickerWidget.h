@@ -36,7 +36,7 @@ public:
 
 signals:
   void colorSelected(int index);
-  void colorSelected(QColor color);
+  void colorSelected(const QColor& color);
 
 protected:
   QScopedPointer<qMRMLColorPickerWidgetPrivate> d_ptr;

@@ -52,8 +52,8 @@ void qMRMLColorPickerWidgetPrivate::init()
   this->setupUi(q);
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(int)),
                    q, SIGNAL(colorSelected(int)));
-  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QColor)),
-                   q, SIGNAL(colorSelected(QColor)));
+  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(const QColor&)),
+                   q, SIGNAL(colorSelected(const QColor&)));
 }
 
 //------------------------------------------------------------------------------

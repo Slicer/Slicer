@@ -56,7 +56,7 @@ public slots:
 
 signals:
   void colorSelected(int index);
-  void colorSelected(QColor color);
+  void colorSelected(const QColor& color);
 
 protected slots:
   void onItemActivated(const QModelIndex&);
