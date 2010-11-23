@@ -101,6 +101,10 @@ protected slots:
   //------------------------------------------------------------------
   // Daniel's approved code starting here
 
+  /// Add a new hierarchy.
+  void onAddHierarchyButtonClicked();
+
+  /// Restore the view to when the selected annotation was created.
   void onRestoreViewButtonClicked();
 
   // Property dialog

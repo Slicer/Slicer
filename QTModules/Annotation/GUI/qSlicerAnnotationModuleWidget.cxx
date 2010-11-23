@@ -517,10 +517,11 @@ void qSlicerAnnotationModuleWidget::setup()
   // annotation tools
   this->connect(d->fiducialTypeButton, SIGNAL(clicked()), this,
       SLOT(onFiducialNodeButtonClicked()));
-  /*this->connect(d->stickyTypeButton, SIGNAL(clicked()), this,
-      SLOT(onStickyNodeButtonClicked()));
   this->connect(d->textTypeButton, SIGNAL(clicked()), this,
       SLOT(onTextNodeButtonClicked()));
+  /*this->connect(d->stickyTypeButton, SIGNAL(clicked()), this,
+      SLOT(onStickyNodeButtonClicked()));
+
   this->connect(d->angleTypeButton, SIGNAL(clicked()), this,
       SLOT(onAngleNodeButtonClicked()));
   this->connect(d->roiTypeButton, SIGNAL(clicked()), this,
@@ -546,6 +547,9 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(moveDownSelected()));
   this->connect(d->moveUpSelectedButton, SIGNAL(clicked()),
       SLOT(moveUpSelected()));
+
+  this->connect(d->addHierarchyButton, SIGNAL(clicked()),
+      SLOT(onAddHierarchyButtonClicked()));
 
   // Save Panel
   this->connect(d->saveScene, SIGNAL(clicked()),
@@ -1937,6 +1941,14 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
   //d->stickyTypeButton->setEnabled(true);
   d->rulerTypeButton->setEnabled(true);
   d->bidimensionalTypeButton->setEnabled(true);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  d->logic()->PlaceFiducial(0,0,0);
 }
 
 //-----------------------------------------------------------------------------

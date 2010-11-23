@@ -539,9 +539,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     rulerNode->SetPosition2(worldCoordinates2);
     rulerNode->SetDistanceMeasurement(distance);
 
-    rulerNode->Initialize(this->GetMRMLScene());
-
     rulerNode->SetName(rulerNode->GetScene()->GetUniqueNameByString("AnnotationRuler"));
+
+    rulerNode->Initialize(this->GetMRMLScene());
 
     rulerNode->Delete();
 

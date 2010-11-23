@@ -13,13 +13,16 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
-#include <vtkTextRepresentation.h>
-#include <vtkTextWidget.h>
+#include <vtkCaptionWidget.h>
+#include <vtkCaptionRepresentation.h>
+#include <vtkCaptionActor2D.h>
 #include <vtkRenderer.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkAbstractWidget.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderWindow.h>
 
 // std includes
 #include <string>
@@ -42,9 +45,9 @@ public:
 
   vtkAnnotationTextWidgetCallback(){}
 
-  virtual void Execute (vtkObject *caller, unsigned long event, void*)
+  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*)
   {
-    if (event == vtkCommand::EndInteractionEvent)
+    if ((event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
       {
 
       // sanity checks
@@ -61,6 +64,38 @@ public:
         return;
         }
       // sanity checks end
+
+
+      if (this->m_DisplayableManager->GetSliceNode())
+        {
+
+        // if this is a 2D SliceView displayableManager, restrict the widget to the renderer
+
+        // we need the widgetRepresentation
+        vtkCaptionRepresentation* representation = vtkCaptionRepresentation::SafeDownCast(this->m_Widget->GetRepresentation());
+
+        double displayCoordinates1[4];
+
+        // first, we get the current displayCoordinates of the points
+        representation->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
+        representation->GetCaptionActor2D()->GetAttachmentPointCoordinate()->GetValue(displayCoordinates1);
+
+        // second, we copy these to restrictedDisplayCoordinates
+        double restrictedDisplayCoordinates1[4] = {displayCoordinates1[0], displayCoordinates1[1], displayCoordinates1[2], displayCoordinates1[3]};
+
+        // modify restrictedDisplayCoordinates 1 and 2, if these are outside the viewport of the current renderer
+        this->m_DisplayableManager->RestrictDisplayCoordinatesToViewport(restrictedDisplayCoordinates1);
+
+        // only if we had to restrict the coordinates aka. if the coordinates changed, we update the positions
+        if (this->m_DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates1,restrictedDisplayCoordinates1))
+          {
+
+          representation->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
+          representation->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
+
+          }
+
+        }
 
       // the interaction with the widget ended, now propagate the changes to MRML
       this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
@@ -114,43 +149,50 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
     return 0;
     }
 
-  vtkTextWidget* textWidget = vtkTextWidget::New();
-  VTK_CREATE(vtkTextRepresentation, textRep);
+  vtkCaptionWidget* captionWidget = vtkCaptionWidget::New();
+  VTK_CREATE(vtkCaptionRepresentation, captionRep);
 
-  textRep->SetMoving(1);
+  captionRep->SetMoving(1);
 
   if (textNode->GetTextLabel())
     {
-    textRep->SetText(textNode->GetTextLabel());
+    captionRep->GetCaptionActor2D()->SetCaption(textNode->GetTextLabel());
     }
   else
     {
-    textRep->SetText("New text");
+    captionRep->GetCaptionActor2D()->SetCaption("New text");
     }
 
-  textWidget->SetRepresentation(textRep);
 
-  textWidget->SetInteractor(this->GetInteractor());
+  double* tmpPtr = textNode->GetControlPointCoordinates(0);
+  double worldCoordinates1[4] = {tmpPtr[0], tmpPtr[1], tmpPtr[2], 1};
 
-  // we get display coordinates
-  // we need normalized viewport coordinates, so we transform
-  vtkHandleWidget * h1 = this->GetSeed(0);
+  double displayCoordinates1[4];
 
-  double* position1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+  if (this->GetSliceNode())
+     {
 
-  double x = position1[0];
-  double y = position1[1];
+     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
 
-  this->GetRenderer()->DisplayToNormalizedDisplay(x,y);
-  this->GetRenderer()->NormalizedDisplayToViewport(x,y);
-  this->GetRenderer()->ViewportToNormalizedViewport(x,y);
+     captionRep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
+     captionRep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
 
-  // we set normalized viewport coordinates
-  textRep->SetPosition(x,y);
+     }
+   else
+     {
+     captionRep->SetAnchorPosition(worldCoordinates1);
 
-  textWidget->On();
+     }
 
-  return textWidget;
+  captionWidget->SetInteractor(this->GetInteractor());
+
+  captionWidget->SetRepresentation(captionRep);
+
+  captionWidget->On();
+
+  vtkDebugMacro("CreateWidget: Widget was set up")
+
+  return captionWidget;
 
 }
 
@@ -179,9 +221,11 @@ void vtkMRMLAnnotationTextDisplayableManager::OnWidgetCreated(vtkAbstractWidget 
   widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   myCallback->Delete();
 
-  this->m_Updating = 0;
+  // store the current view
+  node->SaveView();
+
   // propagate the widget to the MRML node
-  this->PropagateWidgetToMRML(widget, node);
+  //this->PropagateWidgetToMRML(widget, node);
 }
 
 //---------------------------------------------------------------------------
@@ -202,11 +246,11 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
     }
 
   // cast to the specific widget
-  vtkTextWidget * textWidget = vtkTextWidget::SafeDownCast(widget);
+  vtkCaptionWidget * captionWidget = vtkCaptionWidget::SafeDownCast(widget);
 
-  if (!textWidget)
+  if (!captionWidget)
    {
-   vtkErrorMacro("PropagateMRMLToWidget: Could not get text widget!")
+   vtkErrorMacro("PropagateMRMLToWidget: Could not get caption widget!")
    return;
    }
 
@@ -219,52 +263,58 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
    return;
    }
 
-  if (this->m_Updating)
-    {
-    vtkDebugMacro("PropagateMRMLToWidget: Updating in progress.. Exit now.")
-    return;
-    }
-
   // disable processing of modified events
   this->m_Updating = 1;
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkTextRepresentation * rep = vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
+  vtkCaptionRepresentation * rep = vtkCaptionRepresentation::SafeDownCast(captionWidget->GetRepresentation());
 
-  // now we have to transfer again from world coordinates to normalized viewport coordinates
-  double * displayCoordinates = this->GetWorldToDisplayCoordinates(textNode->GetTextCoordinates()[0], textNode->GetTextCoordinates()[1], textNode->GetTextCoordinates()[2]);
+  double* tmpPtr = textNode->GetControlPointCoordinates(0);
+  double worldCoordinates1[4] = {tmpPtr[0], tmpPtr[1], tmpPtr[2], 1};
 
-  double u = displayCoordinates[0];
-  double v = displayCoordinates[1];
+  double displayCoordinates1[4];
 
-  this->GetRenderer()->DisplayToNormalizedDisplay(u,v);
-  this->GetRenderer()->NormalizedDisplayToViewport(u,v);
-  this->GetRenderer()->ViewportToNormalizedViewport(u,v);
-  // now we have transformed the world coordinates in the MRML node to normalized viewport coordinates and can really update the widget
+  if (this->GetSliceNode())
+     {
 
-  // update widget position
-  rep->SetPosition(u,v);
+     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
+
+     rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
+     rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
+
+     }
+   else
+     {
+     rep->SetAnchorPosition(worldCoordinates1);
+
+     }
 
   // update widget text
-  rep->SetText(textNode->GetText(0).c_str());
+  rep->GetCaptionActor2D()->SetCaption(textNode->GetText(0).c_str());
+
+  if (!textNode->GetAnnotationTextDisplayNode())
+    {
+    // no display node yet, create one
+    textNode->CreateAnnotationTextDisplayNode();
+    }
 
   // update widget textscale
-  rep->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
+  rep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetFontSize(textNode->GetTextScale());
 
   if (textNode->GetSelected())
     {
     // update widget selected color
-    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
+    rep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetSelectedColor());
     }
   else
     {
     // update widget color
-    rep->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetColor());
+    rep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->SetColor(textNode->GetAnnotationTextDisplayNode()->GetColor());
     }
 
   // at least one value has changed, so set the widget to modified
   rep->NeedToRenderOn();
-  textWidget->Modified();
+  captionWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
@@ -289,9 +339,9 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     }
 
   // cast to the specific widget
-   vtkTextWidget * textWidget = vtkTextWidget::SafeDownCast(widget);
+   vtkCaptionWidget * captionWidget = vtkCaptionWidget::SafeDownCast(widget);
 
-   if (!textWidget)
+   if (!captionWidget)
      {
      vtkErrorMacro("PropagateWidgetToMRML: Could not get text widget!")
      return;
@@ -306,36 +356,50 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
      return;
      }
 
-  if (this->m_Updating)
-   {
-   vtkDebugMacro("PropagateWidgetToMRML: Updating in progress.. Exit now.")
-   return;
-   }
-
   // disable processing of modified events
   this->m_Updating = 1;
+  textNode->DisableModifiedEventOn();
 
   // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkTextRepresentation * rep = vtkTextRepresentation::SafeDownCast(textWidget->GetRepresentation());
+  vtkCaptionRepresentation * rep = vtkCaptionRepresentation::SafeDownCast(captionWidget->GetRepresentation());
 
-  double * position1 = rep->GetPosition();
+  double worldCoordinates1[4];
+  double displayCoordinates1[4];
 
-  double x = position1[0];
-  double y = position1[1];
+  bool allowMovement = true;
 
-  // we have normalized viewport coordinates but we need world coordinates
-  this->GetRenderer()->NormalizedViewportToViewport(x,y);
-  this->GetRenderer()->ViewportToNormalizedDisplay(x,y);
-  this->GetRenderer()->NormalizedDisplayToDisplay(x,y);
+  if (this->GetSliceNode())
+    {
 
-  double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
-  // now we have world coordinates :)
+    rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
+    rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->GetValue(displayCoordinates1);
+
+    this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
+
+    if (displayCoordinates1[0] < 0 || displayCoordinates1[0] > this->GetInteractor()->GetRenderWindow()->GetSize()[0])
+      {
+      allowMovement = false;
+      }
+
+    }
+  else
+    {
+
+    rep->GetAnchorPosition(worldCoordinates1);
+
+    }
+
+  // if movement is not allowed, jump out
+  if (!allowMovement)
+    {
+    return;
+    }
 
   // update mrml coordinates
-  textNode->SetTextCoordinates(worldCoordinates);
+  textNode->SetTextCoordinates(worldCoordinates1);
 
   // update mrml text
-  textNode->SetText(0,rep->GetText(),1,1);
+  textNode->SetText(0,rep->GetCaptionActor2D()->GetCaption(),1,1);
 
   if (!textNode->GetAnnotationTextDisplayNode())
     {
@@ -344,7 +408,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     }
 
   // update mrml textscale
-  textNode->SetTextScale(rep->GetTextActor()->GetScaledTextProperty()->GetFontSize());
+  textNode->SetTextScale(rep->GetCaptionActor2D()->GetTextActor()->GetScaledTextProperty()->GetFontSize());
 
   // update mrml selected color
   //textNode->GetAnnotationTextDisplayNode()->SetSelectedColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
@@ -352,11 +416,16 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   // update mrml color
   //textNode->GetAnnotationTextDisplayNode()->SetColor(rep->GetTextActor()->GetScaledTextProperty()->GetColor());
 
-  // fire the modified event
-  textNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, textNode);
+
+  // save the current view
+  textNode->SaveView();
 
   // enable processing of modified events
   this->m_Updating = 0;
+  textNode->DisableModifiedEventOff();
+
+  textNode->Modified();
+  textNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, textNode);
 
 }
 
@@ -380,11 +449,12 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
     // switch to updating state to avoid events mess
     this->m_Updating = 1;
 
-    double* worldCoordinates = this->GetDisplayToWorldCoordinates(x,y);
+    double worldCoordinates1[4];
+    this->GetDisplayToWorldCoordinates(x,y,worldCoordinates1);
 
     // create the MRML node
     vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
-    textNode->SetTextCoordinates(worldCoordinates);
+    textNode->SetTextCoordinates(worldCoordinates1);
     textNode->SetTextLabel("New text");
 
     textNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationText"));
