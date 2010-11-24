@@ -1332,6 +1332,10 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
 
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
+  if (n->GetScene() == this) // extra precaution that might not be useful
+    {
+    n->SetScene(0);
+    }
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
   this->InvokeEvent(this->NodeRemovedEvent, n);
   n->UnRegister(this);
