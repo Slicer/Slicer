@@ -12,16 +12,26 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
+// MRML includes
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkImageAppendComponents.h>
+#include <vtkImageCast.h>
+#include <vtkImageData.h>
+#include <vtkImageExtractComponents.h>
+#include <vtkImageLogic.h>
+#include <vtkImageMapToColors.h>
+#include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageThreshold.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeDisplayNode* vtkMRMLDiffusionWeightedVolumeDisplayNode::New()

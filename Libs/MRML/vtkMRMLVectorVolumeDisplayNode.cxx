@@ -12,17 +12,26 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include "vtkImageExtractComponents.h"
-
+// MRML includes
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
+#include <vtkCallbackCommand.h>
+#include <vtkImageAppendComponents.h>
+#include <vtkImageCast.h>
+#include <vtkImageData.h>
+#include <vtkImageExtractComponents.h>
+#include <vtkImageLogic.h>
+#include <vtkImageMapToColors.h>
+#include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageThreshold.h>
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLVectorVolumeDisplayNode* vtkMRMLVectorVolumeDisplayNode::New()
@@ -81,11 +90,44 @@ vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLVectorVolumeDisplayNode::~vtkMRMLVectorVolumeDisplayNode()
 {
- this->ShiftScale->Delete();
- this->RGBToHSI->Delete();
- this->ExtractIntensity->Delete();
+  this->ShiftScale->Delete();
+  this->RGBToHSI->Delete();
+  this->ExtractIntensity->Delete();
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLVectorVolumeDisplayNode::SetImageData(vtkImageData *imageData)
+{
+  this->ShiftScale->SetInput( imageData );
+  this->RGBToHSI->SetInput( imageData );
+
+  this->AppendComponents->RemoveAllInputs();
+  //this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
+  //this->AppendComponents->SetInput(0, imageData);
+  this->AppendComponents->SetInput(0, this->ShiftScale->GetOutput());
+  this->AppendComponents->SetInput(1, this->Threshold->GetOutput());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageData)
+{
+  /// TODO: what is this for?  The comment above is unhelpful!
+  this->ResliceAlphaCast->SetInput(imageData);
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetImageData() 
+{
+  if ( this->RGBToHSI->GetInput() != NULL )
+    {
+    this->UpdateImageDataPipeline();
+    this->AppendComponents->Update();
+    return this->AppendComponents->GetOutput();
+    }
+  return NULL;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();

@@ -12,23 +12,33 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+// MRML includes
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLVolumeNode.h"
+
+// Teem includes
+#include <vtkDiffusionTensorGlyph.h>
+#include <vtkDiffusionTensorMathematicsSimple.h>
+
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkImageAppendComponents.h>
+#include <vtkImageCast.h>
+#include <vtkImageData.h>
+#include <vtkImageExtractComponents.h>
+#include <vtkImageLogic.h>
+#include <vtkImageMapToColors.h>
+#include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageThreshold.h>
+#include <vtkObjectFactory.h>
+#include <vtkSphereSource.h>
+
+// STD includes
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
-#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLScene.h"
-
-#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
-#include "vtkMRMLVolumeNode.h"
-#include "vtkDiffusionTensorGlyph.h"
-
-#include "vtkSphereSource.h"
-
-#include "vtkDiffusionTensorMathematicsSimple.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeDisplayNode::New()

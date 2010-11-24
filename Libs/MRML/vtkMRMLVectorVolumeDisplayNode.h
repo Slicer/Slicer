@@ -110,38 +110,15 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
                                    void * /*callData*/ );
   /// 
   /// Sets vtkImageData to be converted to displayable vtkImageData
-  virtual void SetImageData(vtkImageData *imageData)
-    {
-    this->ShiftScale->SetInput( imageData );
-    this->RGBToHSI->SetInput( imageData );
-
-    this->AppendComponents->RemoveAllInputs();
-    //this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
-    //this->AppendComponents->SetInput(0, imageData);
-    this->AppendComponents->SetInput(0, this->ShiftScale->GetOutput());
-    this->AppendComponents->SetInput(1, this->Threshold->GetOutput());
-    };
+  virtual void SetImageData(vtkImageData *imageData);
 
   /// 
   /// Sets ImageData for background mask 
-  virtual void SetBackgroundImageData(vtkImageData *imageData)
-    {
-    /// TODO: what is this for?  The comment above is unhelpful!
-    this->ResliceAlphaCast->SetInput(imageData);
-    };
+  virtual void SetBackgroundImageData(vtkImageData *imageData);
 
   /// 
   /// Gets ImageData converted from the real data in the node
-  virtual vtkImageData* GetImageData() 
-    {
-    if ( this->RGBToHSI->GetInput() != NULL )
-      {
-      this->UpdateImageDataPipeline();
-      this->AppendComponents->Update();
-      return this->AppendComponents->GetOutput();
-      }
-    return NULL;
-    };
+  virtual vtkImageData* GetImageData();
 
   virtual void UpdateImageDataPipeline();
 

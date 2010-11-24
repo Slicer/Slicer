@@ -23,14 +23,13 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
-#include "vtkImageData.h"
-#include "vtkImageCast.h"
-#include "vtkImageLogic.h"
-#include "vtkImageMapToColors.h"
-#include "vtkImageThreshold.h"
-#include "vtkImageAppendComponents.h"
-#include "vtkImageMapToWindowLevelColors.h"
-
+class vtkImageData;
+class vtkImageCast;
+class vtkImageLogic;
+class vtkImageMapToColors;
+class vtkImageThreshold;
+class vtkImageAppendComponents;
+class vtkImageMapToWindowLevelColors;
 
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
@@ -119,34 +118,15 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
                                    void * /*callData*/ );
   /// 
   /// Sets vtkImageData to be converted to displayable vtkImageData
-  virtual void SetImageData(vtkImageData *imageData)
-    {
-    this->Threshold->SetInput( imageData);
-    this->MapToWindowLevelColors->SetInput( imageData);
-    };
-  virtual vtkImageData* GetInput()
-    {
-    return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
-    }
+  virtual void SetImageData(vtkImageData *imageData);
+  virtual vtkImageData* GetInput();
   /// 
   /// Sets ImageData for background mask 
-  virtual void SetBackgroundImageData(vtkImageData *imageData)
-    {
-    this->ResliceAlphaCast->SetInput(imageData);
-    };
+  virtual void SetBackgroundImageData(vtkImageData *imageData);
 
   /// 
   /// Gets ImageData converted from the real data in the node
-  virtual vtkImageData* GetImageData() 
-    {
-    this->UpdateImageDataPipeline();
-    if (this->Threshold->GetInput() == NULL)
-      {
-      return NULL;
-      }
-    this->AppendComponents->Update();
-    return this->AppendComponents->GetOutput();
-    };
+  virtual vtkImageData* GetImageData();
 
   virtual void UpdateImageDataPipeline();
 
@@ -176,7 +156,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   
 protected:
   vtkMRMLScalarVolumeDisplayNode();
-  ~vtkMRMLScalarVolumeDisplayNode();
+  virtual ~vtkMRMLScalarVolumeDisplayNode();
   vtkMRMLScalarVolumeDisplayNode(const vtkMRMLScalarVolumeDisplayNode&);
   void operator=(const vtkMRMLScalarVolumeDisplayNode&);
 

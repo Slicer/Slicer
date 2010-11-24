@@ -18,6 +18,13 @@ Version:   $Revision: 1.2 $
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkImageAppendComponents.h>
+#include <vtkImageCast.h>
+#include <vtkImageData.h>
+#include <vtkImageLogic.h>
+#include <vtkImageMapToColors.h>
+#include <vtkImageMapToWindowLevelColors.h>
+#include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
 #include <vtkLookupTable.h>
 
@@ -113,6 +120,36 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
   this->AppendComponents->Delete();
   this->MapToWindowLevelColors->Delete();
 
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetImageData(vtkImageData *imageData)
+{
+  this->Threshold->SetInput( imageData);
+  this->MapToWindowLevelColors->SetInput( imageData);
+}
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInput()
+{
+  return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageData)
+{
+  this->ResliceAlphaCast->SetInput(imageData);
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetImageData() 
+{
+  this->UpdateImageDataPipeline();
+  if (this->Threshold->GetInput() == NULL)
+    {
+    return NULL;
+    }
+  this->AppendComponents->Update();
+  return this->AppendComponents->GetOutput();
 }
 
 //----------------------------------------------------------------------------
