@@ -459,15 +459,16 @@ void vtkMRMLVolumeNode::GetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirecti
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order, 
-                                                     double* spacing, int *dims,
+bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order, 
+                                                     const double* spacing,
+                                                     const int *dims,
                                                      bool centerImage,
                                                      vtkMatrix4x4 *IJKToRAS)
 {
   IJKToRAS->Identity();
   if (order == NULL) 
     {
-    return;
+    return false;
     }
 
   vtkSmartPointer<vtkMatrix4x4> scaleMat = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -536,6 +537,10 @@ void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order,
                         0,  0,  0,  1};   
     orientMat->DeepCopy(elems);
     }
+  else
+    {
+    return false;
+    }
 
   vtkMatrix4x4::Multiply4x4(orientMat, scaleMat, IJKToRAS);
 
@@ -550,6 +555,7 @@ void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order,
       IJKToRAS->SetElement(j, 3, pnt1[j]);
       }
     }
+  return true;
 }
 
 //----------------------------------------------------------------------------

@@ -81,8 +81,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   /// RL, AP, PA, IS, SI. This information is encoded in the rasToIJKMatrix.
   /// This matrix can be computed either from corner points, or just he
   /// scanOrder.
-  static void ComputeIJKToRASFromScanOrder(char *order, 
-                                           double* spacing, int *dims,
+  /// Return true on success, false otherwise
+  static bool ComputeIJKToRASFromScanOrder(const char *order, 
+                                           const double* spacing,
+                                           const int *dims,
                                            bool centerImage,
                                            vtkMatrix4x4 *IJKToRAS);
 
@@ -135,6 +137,9 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   /// 
   /// Associated ImageData
   vtkGetObjectMacro(ImageData, vtkImageData);
+  /// The origin and spacing of the vtkImageData is ignored. Only
+  /// vtkMRMLVolumeNode::Spacing and vtkMRMLVolumeNode::Origin is
+  /// taken into account.
   void SetAndObserveImageData(vtkImageData *ImageData);
 
   /// 
