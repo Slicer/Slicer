@@ -358,7 +358,7 @@ void qMRMLVolumeInfoWidget::setScalarType(int index)
     return;
     }
   int type = d->ScalarTypeComboBox->itemData(index).toInt();
-  imageData->SetScalarType(index);
+  imageData->SetScalarType(type);
 }
 
 //------------------------------------------------------------------------------
