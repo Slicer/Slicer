@@ -11,9 +11,30 @@ if(COMMAND CMAKE_POLICY)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND CMAKE_POLICY)
 
+SET(RUN_EXTENDED_LOCAL_TESTING OFF CACHE BOOL "Run extended tests? Only set to true if running at UIowa.")
+
+if (RUN_EXTENDED_LOCAL_TESTING)
+  ADD_SUBDIRECTORY(IowaTesting)
+endif (RUN_EXTENDED_LOCAL_TESTING)
+
+FIND_PACKAGE(ITK REQUIRED)
+
+if (NOT ITK_USE_REVIEW)
+  MESSAGE(FATAL_ERROR "ITK version was not built with ITK_USE_REVIEW true")
+endif (NOT ITK_USE_REVIEW)
+
+if (NOT ITK_USE_REVIEW_STATISTICS)
+  MESSAGE(FATAL_ERROR "ITK version was not built with ITK_USE_REVIEW_STATISTICS true")
+endif (NOT ITK_USE_REVIEW_STATISTICS)
+
+if (NOT ITK_USE_OPTIMIZED_REGISTRATION_METHODS)
+  MESSAGE(FATAL_ERROR "ITK version was not built with ITK_USE_OPTIMIZED_REGISTRATION_METHODS true")
+endif (NOT ITK_USE_OPTIMIZED_REGISTRATION_METHODS)
+
 if (Slicer_SOURCE_DIR)
-  ##The current testing suite only works from within Slicer3.  Other packages
-  ##that use this tool will not properly run the test
+  ##There's limited testing from within Slicer3.  There's extensive testing when run 
+  ##at UIowa but the testing data isn't publicly accessible yet.  Other packages that 
+  ##use this tool will not run either set of tests
   ADD_SUBDIRECTORY(Testing)
 endif (Slicer_SOURCE_DIR)
 

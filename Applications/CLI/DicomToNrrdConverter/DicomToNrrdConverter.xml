@@ -50,18 +50,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>smallGradientThreshold</name>
       <longflag>--smallGradientThreshold</longflag> 
       <label>Small Gradient Threshold</label>
-      <description>If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DicomToNrrdConverter will display an error message and quit, unless the smallGradientFix flag is set.</description>
+      <description>If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DicomToNrrdConverter will display an error message and quit, unless the useBMatrixGradientDirections option is set.</description>
       <default>0.2</default>
     </double>
     
-    <string-vector>
-      <name>smallGradientFix</name>
-      <longflag>--smallGradientFix</longflag>
-      <label>Small Gradient Fix</label>
-      <description>Small Gradient Fix: Rescale|Remove. Gives user options on how to handle gradient vectors whose magnitudes are unusually small: remove based on Small Gradient Threshold or rescale based on b values from the gradients.</description>
-      <default></default>
-    </string-vector>
-
   </parameters>
 
   <parameters advanced="true">
@@ -79,6 +71,12 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <longflag>--useIdentityMeaseurementFrame</longflag>
       <description>Adjust all the gradients so that the measurement frame is an identity matrix.</description>
       <default>false</default>
+    </boolean>
+    <boolean>
+       <name>useBMatrixGradientDirections</name>
+       <longflag>--useBMatrixGradientDirections</longflag>
+       <description>Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.</description>
+       <default>false</default> <!-- This does nothing as the default for booleans is always false -->
     </boolean>
   </parameters>
 
