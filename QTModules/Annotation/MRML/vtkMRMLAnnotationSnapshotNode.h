@@ -63,6 +63,7 @@ protected:
   /// 1: Red Slice View
   /// 2: Yellow Slice View
   /// 3: Green Slice View
+  /// 4: Full layout
   int m_ScreenShotType;
 
 };

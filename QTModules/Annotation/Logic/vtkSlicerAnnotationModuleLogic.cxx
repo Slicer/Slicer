@@ -1260,6 +1260,7 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
   newSnapshotNode->SetScreenshotType(screenshotType);
   newSnapshotNode->SetScreenshot(screenshot);
   newSnapshotNode->StoreScene();
+  newSnapshotNode->HideFromEditorsOff();
   this->GetMRMLScene()->AddNode(newSnapshotNode);
 }
 

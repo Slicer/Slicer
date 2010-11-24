@@ -20,8 +20,9 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLDisplayableNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLDisplayableNode
 {
   public:
   static vtkMRMLSceneSnapshotNode *New();
@@ -74,6 +75,10 @@ class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLNode
   vtkGetObjectMacro ( Nodes, vtkMRMLScene );
 
   void SetAbsentStorageFileNames();
+
+  bool CanApplyNonLinearTransforms() {return false;};
+  void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
+  void ApplyTransform(vtkAbstractTransform* vtkNotUsed(vtkUtransform)) {};
 
 protected:
   vtkMRMLSceneSnapshotNode();
