@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>610</width>
-    <height>417</height>
+    <width>607</width>
+    <height>428</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -58,16 +58,30 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
+        <widget class="QRadioButton" name="fullLayoutRadio">
+         <property name="text">
+          <string>Full layout</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerAnnotationModule.qrc">
+           <normaloff>:/Icons/AnnotationLayout.png</normaloff>:/Icons/AnnotationLayout.png</iconset>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QRadioButton" name="threeDViewRadio">
          <property name="text">
           <string>3D View</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../qSlicerAnnotationModule.qrc">
            <normaloff>:/Icons/LayoutOneUp3DView.png</normaloff>:/Icons/LayoutOneUp3DView.png</iconset>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -77,7 +91,7 @@
           <string>Red Slice View</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../qSlicerAnnotationModule.qrc">
            <normaloff>:/Icons/LayoutOneUpRedSliceView.png</normaloff>:/Icons/LayoutOneUpRedSliceView.png</iconset>
          </property>
         </widget>
@@ -88,7 +102,7 @@
           <string>Yellow Slice View</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../qSlicerAnnotationModule.qrc">
            <normaloff>:/Icons/LayoutOneUpYellowSliceView.png</normaloff>:/Icons/LayoutOneUpYellowSliceView.png</iconset>
          </property>
         </widget>
@@ -99,7 +113,7 @@
           <string>Green Slice View</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../qSlicerAnnotationModule.qrc">
            <normaloff>:/Icons/LayoutOneUpGreenSliceView.png</normaloff>:/Icons/LayoutOneUpGreenSliceView.png</iconset>
          </property>
         </widget>
@@ -135,42 +149,11 @@
     <widget class="QTextEdit" name="descriptionTextEdit"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="restoreButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Restore</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../qSlicerAnnotationModule.qrc">
-         <normaloff>:/Icons/SnapshotRestore.png</normaloff>
-         <normalon>:/Icons/SnapshotRestore.png</normalon>
-         <disabledoff>:/Icons/SnapshotRestore.png</disabledoff>
-         <disabledon>:/Icons/SnapshotRestore.png</disabledon>
-         <activeoff>:/Icons/SnapshotRestore.png</activeoff>
-         <activeon>:/Icons/SnapshotRestore.png</activeon>
-         <selectedoff>:/Icons/SnapshotRestore.png</selectedoff>
-         <selectedon>:/Icons/SnapshotRestore.png</selectedon>:/Icons/SnapshotRestore.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

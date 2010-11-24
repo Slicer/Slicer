@@ -46,5 +46,9 @@
         <file>Icons/Annotation.png</file>
         <file>Icons/ViewCamera.png</file>
         <file>Icons/SnapshotRestore.png</file>
+        <file>Icons/LayoutOneUpYellowSliceView.png</file>
+        <file>Icons/LayoutOneUpRedSliceView.png</file>
+        <file>Icons/LayoutOneUpGreenSliceView.png</file>
+        <file>Icons/LayoutOneUp3DView.png</file>
     </qresource>
 </RCC>
