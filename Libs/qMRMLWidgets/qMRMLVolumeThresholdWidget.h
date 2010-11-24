@@ -48,8 +48,7 @@ public:
 
   /// 
   /// Return the current MRML node of interest
-  vtkMRMLScalarVolumeNode* mrmlVolumeNode()const
-    { return this->VolumeNode; };
+  vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
 
 signals:
   /// 
@@ -82,6 +81,9 @@ public slots:
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
 protected slots:
+  /// the volume node has been modified, maybe its displayNode has been
+  /// changed
+  void updateDisplayNode();
 
   /// update widget GUI from MRML node
   void updateWidgetFromMRML();
@@ -89,8 +91,7 @@ protected slots:
 protected:
   /// 
   /// Return the current MRML display node
-  vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode()const 
-    { return this->VolumeDisplayNode;};
+  vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode()const;
 
   /// 
   /// Set current MRML display node
@@ -108,9 +109,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLVolumeThresholdWidget);
   Q_DISABLE_COPY(qMRMLVolumeThresholdWidget);
-
-  vtkMRMLScalarVolumeNode* VolumeNode;
-  vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
 };
 
 #endif

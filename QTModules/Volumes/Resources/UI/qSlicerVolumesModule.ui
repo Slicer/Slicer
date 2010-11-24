@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>249</width>
-    <height>103</height>
+    <width>208</width>
+    <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,8 +40,8 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
+   <item row="2" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
      <property name="text">
       <string>Display</string>
      </property>
@@ -55,7 +55,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -67,6 +67,24 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="InfoCollapsibleButton">
+     <property name="text">
+      <string>Volume Information</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="qMRMLVolumeInfoWidget" name="MRMLVolumeInfoWidget"/>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -81,6 +99,11 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLVolumeInfoWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLVolumeInfoWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -121,12 +144,28 @@
    <slot>setMRMLVolumeNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>230</x>
-     <y>26</y>
+     <x>302</x>
+     <y>19</y>
     </hint>
     <hint type="destinationlabel">
-     <x>221</x>
-     <y>70</y>
+     <x>230</x>
+     <y>414</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ActiveVolumeNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>MRMLVolumeInfoWidget</receiver>
+   <slot>setVolumeNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>152</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>133</y>
     </hint>
    </hints>
   </connection>

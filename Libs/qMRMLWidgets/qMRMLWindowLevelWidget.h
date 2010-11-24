@@ -105,6 +105,9 @@ public slots:
 
 
 protected slots:
+  /// the volume node has been modified, maybe its displayNode has been
+  /// changed
+  void updateDisplayNode();
 
   /// update widget GUI from MRML node
   void updateWidgetFromMRML();

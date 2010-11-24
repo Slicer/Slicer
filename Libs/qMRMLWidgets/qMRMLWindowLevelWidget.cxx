@@ -263,6 +263,11 @@ double qMRMLWindowLevelWidget::level() const
 void qMRMLWindowLevelWidget::setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* node)
 {
   Q_D(qMRMLWindowLevelWidget);
+  if (d->VolumeDisplayNode == node)
+    {
+    return;
+    }
+
   // each time the node is modified, the qt widgets are updated
   this->qvtkReconnect(d->VolumeDisplayNode, node,
                        vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
@@ -284,6 +289,14 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLNode* node)
 void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
   Q_D(qMRMLWindowLevelWidget);
+  if (volumeNode == d->VolumeNode)
+    {
+    return;
+    }
+
+  this->qvtkReconnect(d->VolumeNode, volumeNode, vtkCommand::ModifiedEvent,
+                      this, SLOT(updateDisplayNode()));
+
   d->VolumeNode = volumeNode;
   if (d->VolumeNode)
     {
@@ -294,9 +307,7 @@ void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNo
     range[1] = qMax(900., range[1]);
     this->setRange(range[0], range[1]);
     }
-  this->setMRMLVolumeDisplayNode(
-    volumeNode ?vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      volumeNode->GetVolumeDisplayNode()) : 0);
+  this->updateDisplayNode();
 }
 
 // --------------------------------------------------------------------------
@@ -323,6 +334,17 @@ void qMRMLWindowLevelWidget::setMinimumValue(double min)
 void qMRMLWindowLevelWidget::setMaximumValue(double max)
 {
   this->setMinMaxRangeValue(this->minimumValue(), max);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::updateDisplayNode()
+{
+  Q_D(qMRMLWindowLevelWidget);
+  
+  this->setMRMLVolumeDisplayNode( d->VolumeNode ? 
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+      d->VolumeNode->GetVolumeDisplayNode()) :
+    0);
 }
 
 // --------------------------------------------------------------------------
