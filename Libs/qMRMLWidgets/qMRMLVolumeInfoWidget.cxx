@@ -95,6 +95,9 @@ void qMRMLVolumeInfoWidgetPrivate::init()
   QObject::connect(this->LabelMapCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setLabelMap(bool)));
   // Window level presets are read-only
+  
+  q->setDataTypeEditable(false);
+  q->setLabelMapEditable(true);
   q->setEnabled(this->VolumeNode != 0);
 }
 
@@ -172,7 +175,7 @@ void qMRMLVolumeInfoWidget::setDataTypeEditable(bool enable)
 {
   Q_D(qMRMLVolumeInfoWidget);
   d->ScanOrderComboBox->setEnabled(enable);
-  d->NumberOfScalarsLabel->setEnabled(enable);
+  d->NumberOfScalarsSpinBox->setEnabled(enable);
   d->ScalarTypeComboBox->setEnabled(enable);
 }
 
@@ -181,7 +184,7 @@ bool qMRMLVolumeInfoWidget::isDataTypeEditable()const
 {
   Q_D(const qMRMLVolumeInfoWidget);
   Q_ASSERT(d->ScanOrderComboBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)) ==
-           d->NumberOfScalarsLabel->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)));
+           d->NumberOfScalarsSpinBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)));
   Q_ASSERT(d->ScanOrderComboBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)) ==
            d->ScalarTypeComboBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this)));
   return d->ScanOrderComboBox->isEnabledTo(const_cast<qMRMLVolumeInfoWidget*>(this));
