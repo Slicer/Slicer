@@ -30,6 +30,13 @@ qSlicerAnnotationModuleSnapShotDialog::qSlicerAnnotationModuleSnapShotDialog()
   this->m_Id = 0;
 
   ui.setupUi(this);
+
+  // The restore button has to be configured since it is the reset button in the buttonbox
+  // so we set Icons and Text here
+  QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
+  restoreButton->setText("Restore");
+  restoreButton->setIcon(QIcon(":/Icons/SnapshotRestore.png"));
+
   createConnection();
 
 }
@@ -116,9 +123,12 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
       // green Slice view
       this->ui.greenSliceViewRadio->setChecked(true);
       break;
+    case 4:
+      // full Layout
+      this->ui.fullLayoutRadio->setChecked(true);
     default:
-      // as fallback, just treat this case as a 3D view
-      this->ui.threeDViewRadio->setChecked(true);
+      // as fallback, just treat this case as a full layout
+      this->ui.fullLayoutRadio->setChecked(true);
     }
 
   // we want to disable the modification of the screenshot since this snapshot was created earlier
@@ -127,6 +137,7 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
   this->ui.redSliceViewRadio->setEnabled(false);
   this->ui.yellowSliceViewRadio->setEnabled(false);
   this->ui.greenSliceViewRadio->setEnabled(false);
+  this->ui.fullLayoutRadio->setEnabled(false);
 
   // get the actual screenshot..
   this->m_vtkImageData = this->m_Logic->GetSnapShotScreenshot(this->m_Id);
@@ -144,7 +155,8 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
         Qt::KeepAspectRatio,Qt::SmoothTransformation));
 
   // now we are able to restore a snapshot, so enable the button
-  this->ui.restoreButton->setEnabled(true);
+  QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
+  restoreButton->setVisible(true);
 
 }
 
@@ -160,8 +172,10 @@ void qSlicerAnnotationModuleSnapShotDialog::createConnection()
   this->connect(ui.redSliceViewRadio, SIGNAL(clicked()), this, SLOT(onRedSliceViewRadioClicked()));
   this->connect(ui.yellowSliceViewRadio, SIGNAL(clicked()), this, SLOT(onYellowSliceViewRadioClicked()));
   this->connect(ui.greenSliceViewRadio, SIGNAL(clicked()), this, SLOT(onGreenSliceViewRadioClicked()));
+  this->connect(ui.fullLayoutRadio, SIGNAL(clicked()), this, SLOT(onFullLayoutRadioClicked()));
 
-  this->connect(ui.restoreButton, SIGNAL(clicked()), this, SLOT(onRestoreButtonClicked()));
+  QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
+  this->connect(restoreButton, SIGNAL(clicked()), this, SLOT(onRestoreButtonClicked()));
 
 }
 
@@ -206,6 +220,10 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
     {
     screenshotType = 3;
     }
+  else if (this->ui.fullLayoutRadio->isChecked())
+    {
+    screenshotType = 4;
+    }
 
   if (!this->m_Id)
     {
@@ -234,7 +252,7 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::onThreeDViewRadioClicked()
 {
-  this->grabScreenShot("");
+  this->grabScreenShot("ThreeD");
 }
 
 //-----------------------------------------------------------------------------
@@ -256,6 +274,12 @@ void qSlicerAnnotationModuleSnapShotDialog::onGreenSliceViewRadioClicked()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleSnapShotDialog::onFullLayoutRadioClicked()
+{
+  this->grabScreenShot("");
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::onRestoreButtonClicked()
 {
   this->m_Logic->RestoreSnapShot(this->m_Id);
@@ -273,14 +297,16 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   this->ui.redSliceViewRadio->setEnabled(true);
   this->ui.yellowSliceViewRadio->setEnabled(true);
   this->ui.greenSliceViewRadio->setEnabled(true);
-  this->ui.threeDViewRadio->setChecked(true);
+  this->ui.threeDViewRadio->setChecked(false);
   this->ui.redSliceViewRadio->setChecked(false);
   this->ui.yellowSliceViewRadio->setChecked(false);
   this->ui.greenSliceViewRadio->setChecked(false);
+  this->ui.fullLayoutRadio->setChecked(true);
   this->grabScreenShot("");
   this->ui.descriptionTextEdit->clear();
 
-  this->ui.restoreButton->setEnabled(false);
+  QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
+  restoreButton->setVisible(false);
 
   // we want a default name which is easily overwritable by just typing
   this->ui.nameEdit->setText(this->m_Logic->GetMRMLScene()->GetUniqueNameByString("Snapshot"));
@@ -305,16 +331,31 @@ void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWin
 
   if(screenshotWindow.length()>0)
     {
-    // create a screenShot of a specific sliceView
-     widget = static_cast<QWidget*>(qSlicerApplication::application()->layoutManager()->sliceWidget(screenshotWindow)->getSliceView());
+    if (screenshotWindow=="ThreeD")
+      {
+      // create a screenShot of the first 3DView
+      widget = static_cast<QWidget*>(qSlicerApplication::application()->layoutManager()->threeDView(0));
+      }
+    else
+      {
+      // create a screenShot of a specific sliceView
+      widget = static_cast<QWidget*>(qSlicerApplication::application()->layoutManager()->sliceWidget(screenshotWindow)->getSliceView());
+      }
     }
   else
     {
-    // create a screenShot of the first 3DView
-    widget = static_cast<QWidget*>(qSlicerApplication::application()->layoutManager()->threeDView(0));
+    // create a screenShot of the full layout
+    widget = static_cast<QWidget*>(qSlicerApplication::application()->layoutManager()->viewport());
     }
 
+  // this is a hack right now for platforms other than mac
+  // the dialog sometimes blocked the screenshot so we hide it while we take the screenshot
+  this->setVisible(false);
+
   QPixmap screenShot = QPixmap::grabWidget(widget);
+
+  this->setVisible(true);
+
 
   ui.screenshotPlaceholder->setPixmap(screenShot.scaled(this->ui.screenshotPlaceholder->width(),this->ui.screenshotPlaceholder->height(),
       Qt::KeepAspectRatio,Qt::SmoothTransformation));

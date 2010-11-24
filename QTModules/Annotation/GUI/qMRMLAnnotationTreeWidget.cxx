@@ -62,6 +62,14 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
   //p->qMRMLTreeWidget::setModel(new qMRMLItemModel(p));
   this->SceneModel = new qMRMLSceneAnnotationModel(q);
   this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
+  // we only want to show vtkMRMLAnnotationNodes and vtkMRMLAnnotationHierarchyNodes
+  QStringList nodeTypes = QStringList();
+  nodeTypes.append("vtkMRMLAnnotationNode");
+  nodeTypes.append("vtkMRMLAnnotationHierarchyNode");
+  nodeTypes.append("vtkMRMLAnnotationSnapshotNode");
+
+  this->SortFilterModel->setNodeTypes(nodeTypes);
+
   this->SortFilterModel->setSourceModel(this->SceneModel);
   q->qMRMLTreeWidget::setModel(this->SortFilterModel);
 
@@ -97,7 +105,7 @@ void qMRMLAnnotationTreeWidget::setMRMLScene(vtkMRMLScene* scene)
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
   this->hideColumn(1);
-  this->expandToDepth(2);
+  this->expandAll();
 }
 
 //------------------------------------------------------------------------------

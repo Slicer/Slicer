@@ -32,6 +32,7 @@ protected slots:
   void onRedSliceViewRadioClicked();
   void onYellowSliceViewRadioClicked();
   void onGreenSliceViewRadioClicked();
+  void onFullLayoutRadioClicked();
 
   /// Slots for the restore button
   void onRestoreButtonClicked();

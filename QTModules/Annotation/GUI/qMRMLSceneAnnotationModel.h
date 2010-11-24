@@ -35,6 +35,8 @@ public:
   qMRMLSceneAnnotationModel(QObject *parent=0);
   virtual ~qMRMLSceneAnnotationModel();
 
+protected:
+
 private:
   Q_DISABLE_COPY(qMRMLSceneAnnotationModel);
 };
