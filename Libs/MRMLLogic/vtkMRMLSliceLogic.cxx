@@ -781,35 +781,12 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     //    with a non-0 foreground and label and everything will work with the
     //    label opacity
     //
-    // -- first make a temp blend instance and set it up according to the current 
-    //    parameters.  Then check if this is the same as the current 'real' blend,
-    //    and if not send a modified event
-    //
 
-    vtkImageMathematics *tempMath = vtkImageMathematics::New();
-    vtkImageCast *tempCast = vtkImageCast::New();
-    vtkImageBlend *tempBlend = vtkImageBlend::New();
-
-    int sliceCompositing = this->SliceCompositeNode->GetCompositing();
+    const int sliceCompositing = this->SliceCompositeNode->GetCompositing();
     // alpha blend or reverse alpha blend
     bool alphaBlending = (sliceCompositing == vtkMRMLSliceCompositeNode::Alpha ||
                           sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha);
     
-    if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
-      {
-      // add the foreground and background
-      tempMath->SetOperationToAdd();
-      tempMath->GetOutput()->SetScalarType(VTK_SHORT);
-      tempCast->SetOutputScalarTypeToUnsignedChar();
-      }
-    else if (sliceCompositing == vtkMRMLSliceCompositeNode::Subtract)
-      {
-      // subtract the foreground and background
-      tempMath->SetOperationToSubtract();
-      tempMath->GetOutput()->SetScalarType(VTK_SHORT);
-      tempCast->SetOutputScalarTypeToUnsignedChar();
-      }
-
     vtkImageData* backgroundImage = this->BackgroundLayer ? this->BackgroundLayer->GetImageData() : 0;
     vtkImageData* foregroundImage = this->ForegroundLayer ? this->ForegroundLayer->GetImageData() : 0;
     if (!alphaBlending)
@@ -821,18 +798,37 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         alphaBlending = true;
         }
       }
+    unsigned long int oldBlendMTime = this->Blend->GetMTime();
 
-    tempBlend->RemoveAllInputs ( );
     int layerIndex = 0;
 
     if (!alphaBlending)
       {
+      vtkImageMathematics *tempMath = vtkImageMathematics::New();
+      if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
+        {
+        // add the foreground and background
+        tempMath->SetOperationToAdd();
+        }
+      else if (sliceCompositing == vtkMRMLSliceCompositeNode::Subtract)
+        {
+        // subtract the foreground and background
+        tempMath->SetOperationToSubtract();
+        }
+      
       tempMath->SetInput1( foregroundImage );
       tempMath->SetInput2( backgroundImage );
-      tempCast->SetInput( tempMath->GetOutput() );
+      tempMath->GetOutput()->SetScalarType(VTK_SHORT);
       
-      tempBlend->AddInput( tempCast->GetOutput() );
-      tempBlend->SetOpacity( layerIndex++, 1.0 );
+      vtkImageCast *tempCast = vtkImageCast::New();
+      tempCast->SetInput( tempMath->GetOutput() );
+      tempCast->SetOutputScalarTypeToUnsignedChar();
+      
+      this->Blend->SetInput( layerIndex, tempCast->GetOutput() );
+      this->Blend->SetOpacity( layerIndex++, 1.0 );
+        
+      tempMath->Delete();  // Blend may still be holding a reference
+      tempCast->Delete();  // Blend may still be holding a reference
       }
     else
       {
@@ -840,63 +836,48 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         {
         if ( backgroundImage )
           {
-          tempBlend->AddInput( backgroundImage );
-          tempBlend->SetOpacity( layerIndex++, 1.0 );
+          this->Blend->SetInput( layerIndex, backgroundImage );
+          this->Blend->SetOpacity( layerIndex++, 1.0 );
           }
         if ( foregroundImage )
           {
-          tempBlend->AddInput( foregroundImage );
-          tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+          this->Blend->SetInput( layerIndex, foregroundImage );
+          this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         }
       else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
         {
         if ( foregroundImage )
           {
-          tempBlend->AddInput( foregroundImage );
-          tempBlend->SetOpacity( layerIndex++, 1.0 );
+          this->Blend->SetInput( layerIndex, foregroundImage );
+          this->Blend->SetOpacity( layerIndex++, 1.0 );
           }
         if ( backgroundImage )
           {
-          tempBlend->AddInput( backgroundImage );
-          tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
+          this->Blend->SetInput( layerIndex, backgroundImage );
+          this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetForegroundOpacity() );
           }
         
         }
       }
-
     // always blending the label layer
     vtkImageData* labelImage = this->LabelLayer ? this->LabelLayer->GetImageData() : 0;
     if ( labelImage )
       {
-      tempBlend->AddInput( labelImage );
-      tempBlend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
+      this->Blend->SetInput( layerIndex, labelImage );
+      this->Blend->SetOpacity( layerIndex++, this->SliceCompositeNode->GetLabelOpacity() );
       }
-
-    if ( tempBlend->GetNumberOfInputs() != this->Blend->GetNumberOfInputs() )
+    while (this->Blend->GetNumberOfInputs() > layerIndex)
       {
-      this->Blend->RemoveAllInputs();
+      // it decreases the number of inputs
+      this->Blend->SetInput(this->Blend->GetNumberOfInputs() - 1, 0);
       }
-    for (layerIndex = 0; layerIndex < tempBlend->GetNumberOfInputs(); layerIndex++)
+    if (this->Blend->GetMTime() > oldBlendMTime)
       {
-      if ( tempBlend->GetInput(layerIndex) != this->Blend->GetInput(layerIndex) )
-        {
-        this->Blend->SetInput(layerIndex, tempBlend->GetInput(layerIndex));
-        modified = 1;
-        }
-      if ( tempBlend->GetOpacity(layerIndex) != this->Blend->GetOpacity(layerIndex) )
-        {
-        this->Blend->SetOpacity(layerIndex, tempBlend->GetOpacity(layerIndex));
-        modified = 1;
-        }
+      modified = 1;
       }
-
-    tempBlend->Delete();
-    tempMath->Delete();  // Blend may still be holding a reference
-    tempCast->Delete();  // Blend may still be holding a reference
 
     //Models
-
     this->UpdateImageData();
     vtkMRMLDisplayNode* displayNode = this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : 0;
     if ( displayNode && this->SliceNode )
@@ -918,7 +899,6 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         }
        
       }
-
     if ( modified )
       {
       if (this->SliceModelNode && this->SliceModelNode->GetPolyData())
