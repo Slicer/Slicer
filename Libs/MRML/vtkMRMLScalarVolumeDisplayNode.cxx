@@ -18,6 +18,7 @@ Version:   $Revision: 1.2 $
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
@@ -65,12 +66,10 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   // Strings
   this->Interpolate = 1;
   this->AutoWindowLevel = 1;
-  this->Window = 256;
-  this->Level = 128;
   this->AutoThreshold = 0;
   this->ApplyThreshold = 0;
-  this->LowerThreshold = VTK_SHORT_MIN;
-  this->UpperThreshold = VTK_SHORT_MAX;
+  //this->LowerThreshold = VTK_SHORT_MIN;
+  //this->UpperThreshold = VTK_SHORT_MAX;
 
   // try setting a default greyscale color map
   //this->SetDefaultColorMap(0);
@@ -81,12 +80,21 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->MapToColors = vtkImageMapToColors::New();
   this->Threshold = vtkImageThreshold::New();
   this->AppendComponents = vtkImageAppendComponents::New();
+  
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
-
   this->MapToWindowLevelColors->SetOutputFormatToLuminance();
+  this->MapToWindowLevelColors->SetWindow(256.);
+  this->MapToWindowLevelColors->SetLevel(128.);
+
   this->MapToColors->SetOutputFormatToRGB();
   this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
+
+  this->Threshold->ReplaceInOn();
+  this->Threshold->SetInValue(255);
+  this->Threshold->ReplaceOutOn();
+  this->Threshold->SetOutValue(255);
   this->Threshold->SetOutputScalarTypeToUnsignedChar();
+  this->Threshold->ThresholdBetween(VTK_SHORT_MIN, VTK_SHORT_MAX);
   this->ResliceAlphaCast->SetOutputScalarTypeToUnsignedChar();
 
   this->AlphaLogic->SetOperationToAnd();
@@ -125,9 +133,10 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetImageData(vtkImageData *imageData)
 {
-  this->Threshold->SetInput( imageData);
-  this->MapToWindowLevelColors->SetInput( imageData);
+  this->Threshold->SetInput(imageData);
+  this->MapToWindowLevelColors->SetInput(imageData);
 }
+
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInput()
 {
@@ -153,54 +162,6 @@ vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetImageData()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::UpdateImageDataPipeline()
-{
-  Superclass::UpdateImageDataPipeline();
-
-  vtkScalarsToColors *lookupTable = NULL;
-  vtkMRMLColorNode* colorNode = this->GetColorNode();
-  if (colorNode)
-    {
-    lookupTable = colorNode->GetLookupTable();
-    if (lookupTable == NULL)
-      {
-      if (vtkMRMLProceduralColorNode::SafeDownCast(colorNode) != NULL)
-        {
-        vtkDebugMacro("UpdateImageDataPipeline: getting color transfer function");
-        lookupTable = (vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(colorNode)->GetColorTransferFunction());
-        }
-      }
-    }
-
-  if ( this->MapToColors && (lookupTable != this->MapToColors->GetLookupTable()) )
-    {
-    this->MapToColors->SetLookupTable(lookupTable);
-    }
-
-  this->MapToWindowLevelColors->SetWindow(this->GetWindow());
-  this->MapToWindowLevelColors->SetLevel(this->GetLevel());
-
-  if ( this->GetApplyThreshold() )
-    {
-    this->Threshold->ReplaceInOn();
-    this->Threshold->SetInValue(255);
-    this->Threshold->ReplaceOutOn();
-    this->Threshold->SetOutValue(0);
-    this->Threshold->ThresholdBetween( this->GetLowerThreshold(), 
-                                       this->GetUpperThreshold() );
-    }
-  else
-    {
-    // don't apply threshold - alpha channel becomes 255 everywhere
-    this->Threshold->ThresholdBetween( 1, 0 ); 
-    this->Threshold->ReplaceInOn();
-    this->Threshold->SetInValue(255);
-    this->Threshold->ReplaceOutOn();
-    this->Threshold->SetOutValue(255); 
-    }
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
@@ -209,22 +170,22 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 
   {
   std::stringstream ss;
-  ss << this->Window;
+  ss << this->GetWindow();
   of << indent << " window=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
-  ss << this->Level;
+  ss << this->GetLevel();
   of << indent << " level=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
-  ss << this->UpperThreshold;
+  ss << this->GetUpperThreshold();
   of << indent << " upperThreshold=\"" << ss.str() << "\"";
   }
   {    
   std::stringstream ss;
-  ss << this->LowerThreshold;
+  ss << this->GetLowerThreshold();
   of << indent << " lowerThreshold=\"" << ss.str() << "\"";
   }
   {   
@@ -277,25 +238,33 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->Window;
+      double window;
+      ss >> window;
+      this->SetWindow(window);
       }
     else if (!strcmp(attName, "level")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->Level;
+      double level;
+      ss >> level;
+      this->SetLevel(level);
       }
     else if (!strcmp(attName, "upperThreshold")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->UpperThreshold;
+      double threshold;
+      ss >> threshold;
+      this->SetUpperThreshold(threshold);
       }
     else if (!strcmp(attName, "lowerThreshold")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->LowerThreshold;
+      double threshold;
+      ss >> threshold;
+      this->SetLowerThreshold(threshold);
       }
     else if (!strcmp(attName, "interpolate")) 
       {
@@ -341,12 +310,12 @@ void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLScalarVolumeDisplayNode *node = (vtkMRMLScalarVolumeDisplayNode *) anode;
   
   this->SetAutoWindowLevel(node->AutoWindowLevel);
-  this->SetWindow(node->Window);
-  this->SetLevel(node->Level);
+  this->SetWindow(node->GetWindow());
+  this->SetLevel(node->GetLevel());
   this->SetAutoThreshold(node->AutoThreshold);
-  this->SetApplyThreshold(node->ApplyThreshold);
-  this->SetUpperThreshold(node->UpperThreshold);
-  this->SetLowerThreshold(node->LowerThreshold);
+  this->SetApplyThreshold(node->GetApplyThreshold());
+  this->SetUpperThreshold(node->GetUpperThreshold());
+  this->SetLowerThreshold(node->GetLowerThreshold());
   this->SetInterpolate(node->Interpolate);
   for (int p = 0; p < node->GetNumberOfWindowLevelPresets(); p++)
     {
@@ -364,17 +333,17 @@ void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   os << indent << "AutoWindowLevel:   " << this->AutoWindowLevel << "\n";
-  os << indent << "Window:            " << this->Window << "\n";
-  os << indent << "Level:             " << this->Level << "\n";
+  os << indent << "Window:            " << this->GetWindow() << "\n";
+  os << indent << "Level:             " << this->GetLevel() << "\n";
   os << indent << "Window Level Presets:\n";
   for (int p = 0; p < this->GetNumberOfWindowLevelPresets(); p++)
     {
     os << indent.GetNextIndent() << p << " Window: " << this->GetWindowPreset(p) << " | Level: " << this->GetLevelPreset(p) << "\n";
     }
   os << indent << "AutoThreshold:     " << this->AutoThreshold << "\n";
-  os << indent << "ApplyThreshold:    " << this->ApplyThreshold << "\n";
-  os << indent << "UpperThreshold:    " << this->UpperThreshold << "\n";
-  os << indent << "LowerThreshold:    " << this->LowerThreshold << "\n";
+  os << indent << "ApplyThreshold:    " << this->GetApplyThreshold() << "\n";
+  os << indent << "UpperThreshold:    " << this->GetUpperThreshold() << "\n";
+  os << indent << "LowerThreshold:    " << this->GetLowerThreshold() << "\n";
   os << indent << "Interpolate:       " << this->Interpolate << "\n";
 }
 
@@ -383,25 +352,132 @@ void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
                                            void *callData )
 {
+  vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
+  if (cnode && event == vtkCommand::ModifiedEvent)
+    {
+    this->UpdateLookupTable(cnode);
+    }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::SetAutoWindowLevel (int flag)
+double vtkMRMLScalarVolumeDisplayNode::GetWindow()
 {
-  if (this->AutoWindowLevel == flag)
+  return this->MapToWindowLevelColors->GetWindow();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetWindow(double window)
+{
+  if (this->MapToWindowLevelColors->GetWindow() == window)
     {
     return;
     }
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting AutoWindowLevel to " << flag);
-  this->AutoWindowLevel = flag;
-
-  // invoke a modified event
-  this->Modified();
-
-  // TODO: make sure trigger update of the auto win/level
   
-  return;
+  this->MapToWindowLevelColors->SetWindow(window);
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLScalarVolumeDisplayNode::GetLevel()
+{
+  return this->MapToWindowLevelColors->GetLevel();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetLevel(double level)
+{
+  if (this->MapToWindowLevelColors->GetLevel() == level)
+    {
+    return;
+    }
+
+  this->MapToWindowLevelColors->SetLevel(level);
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetApplyThreshold(int apply)
+{
+  if (this->ApplyThreshold == apply)
+    {
+    return;
+    }
+  this->ApplyThreshold = apply;
+  this->Threshold->SetOutValue(apply ? 0 : 255);
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetLowerThreshold(double threshold)
+{
+  if (this->GetLowerThreshold() == threshold)
+    {
+    return;
+    }
+  this->Threshold->ThresholdBetween( threshold, this->GetUpperThreshold() );
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLScalarVolumeDisplayNode::GetLowerThreshold()
+{
+  return this->Threshold->GetLowerThreshold();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetUpperThreshold(double threshold)
+{
+  if (this->GetUpperThreshold() == threshold)
+    {
+    return;
+    }
+  this->Threshold->ThresholdBetween( this->GetLowerThreshold(), threshold );
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLScalarVolumeDisplayNode::GetUpperThreshold()
+{
+  return this->Threshold->GetUpperThreshold();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetThreshold(double lowerThreshold, double upperThreshold)
+{
+  if (this->GetLowerThreshold() == lowerThreshold &&
+      this->GetUpperThreshold() == upperThreshold)
+    {
+    return;
+    }
+  this->Threshold->ThresholdBetween( lowerThreshold, upperThreshold );
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* newColorNode)
+{
+  this->Superclass::SetColorNodeInternal(newColorNode);
+  this->UpdateLookupTable(newColorNode);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::UpdateLookupTable(vtkMRMLColorNode* newColorNode)
+{
+  vtkScalarsToColors *lookupTable = NULL;
+  if (newColorNode)
+    {
+    lookupTable = newColorNode->GetLookupTable();
+    if (lookupTable == NULL)
+      {
+      if (vtkMRMLProceduralColorNode::SafeDownCast(newColorNode) != NULL)
+        {
+        vtkDebugMacro("UpdateImageDataPipeline: getting color transfer function");
+        lookupTable = vtkMRMLProceduralColorNode::SafeDownCast(newColorNode)->GetColorTransferFunction();
+        }
+      }
+    }
+  this->MapToColors->SetLookupTable(lookupTable);
 }
 
 //---------------------------------------------------------------------------

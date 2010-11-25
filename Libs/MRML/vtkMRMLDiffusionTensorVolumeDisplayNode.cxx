@@ -237,10 +237,10 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
 
       // window/level
       this->ShiftScale->SetInput(this->DTIMathematics->GetOutput());
-      double halfWindow = (this->Window / 2.);
-      double min = this->Level - halfWindow;
+      double halfWindow = (this->GetWindow() / 2.);
+      double min = this->GetLevel() - halfWindow;
       this->ShiftScale->SetShift ( -min );
-      this->ShiftScale->SetScale ( 255. / (this->Window) );
+      this->ShiftScale->SetScale ( 255. / (this->GetWindow()) );
 
       this->ExtractComponents->SetInput(this->ShiftScale->GetOutput());
       if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutput()->GetProducerPort() ||

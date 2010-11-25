@@ -227,7 +227,7 @@ int
 vtkMRMLEMSVolumeCollectionNode::
 GetNumberOfVolumes() const
 {
-  return this->KeyList.size();
+  return static_cast<int>(this->KeyList.size());
 }
 
 void

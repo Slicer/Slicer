@@ -204,7 +204,7 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   /// String ID of the color MRML node
   virtual void SetAndObserveColorNodeID(const char *ColorNodeID);
   //BTX
-  virtual void SetAndObserveColorNodeID(const std::string& ColorNodeID);
+  void SetAndObserveColorNodeID(const std::string& ColorNodeID);
   //ETX
   vtkGetStringMacro(ColorNodeID);
 
@@ -227,6 +227,8 @@ protected:
   ~vtkMRMLDisplayNode();
   vtkMRMLDisplayNode(const vtkMRMLDisplayNode&);
   void operator=(const vtkMRMLDisplayNode&);
+  
+  virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode);
   
   vtkSetObjectMacro(TextureImageData, vtkImageData);
   

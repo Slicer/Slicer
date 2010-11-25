@@ -132,10 +132,10 @@ void vtkMRMLVectorVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();
 
-  double halfWindow = (this->Window / 2.);
-  double min = this->Level - halfWindow;
+  double halfWindow = (this->GetWindow() / 2.);
+  double min = this->GetLevel() - halfWindow;
   this->ShiftScale->SetShift ( -min );
-  this->ShiftScale->SetScale ( 255. / (this->Window) );
+  this->ShiftScale->SetScale ( 255. / (this->GetWindow()) );
 }
 
 //----------------------------------------------------------------------------

@@ -63,29 +63,25 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   
   /// 
   /// Specifies whether windowing and leveling are to be performed automatically
-  //vtkBooleanMacro(AutoWindowLevel, int);
+  vtkBooleanMacro(AutoWindowLevel, int);
   vtkGetMacro(AutoWindowLevel, int);
-  //vtkSetMacro(AutoWindowLevel, int);
-  void SetAutoWindowLevel(int);
-  void AutoWindowLevelOn() { this->SetAutoWindowLevel(1); };
-  void AutoWindowLevelOff() { this->SetAutoWindowLevel(0); };
-
+  vtkSetMacro(AutoWindowLevel, int);
   
   /// 
   /// The window value to use when autoWindowLevel is 'no'
-  vtkGetMacro(Window, double);
-  vtkSetMacro(Window, double);
+  double GetWindow();
+  virtual void SetWindow(double);
 
   /// 
   /// The level value to use when autoWindowLevel is 'no'
-  vtkGetMacro(Level, double);
-  vtkSetMacro(Level, double);
+  double GetLevel();
+  virtual void SetLevel(double);
 
   /// 
   /// Specifies whether to apply the threshold
   vtkBooleanMacro(ApplyThreshold, int);
   vtkGetMacro(ApplyThreshold, int);
-  vtkSetMacro(ApplyThreshold, int);
+  virtual void SetApplyThreshold(int);
 
   /// 
   /// Specifies whether the threshold should be set automatically
@@ -94,14 +90,18 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   vtkSetMacro(AutoThreshold, int);
 
   /// 
-  /// The upper threshold value to use when autoThreshold is 'no'
-  vtkGetMacro(UpperThreshold, double);
-  vtkSetMacro(UpperThreshold, double);
+  /// The lower threshold value to use when autoThreshold is 'no'
+  /// Defaults to VTK_SHORT_MIN
+  virtual double GetLowerThreshold();
+  virtual void SetLowerThreshold(double lower);
 
   /// 
-  /// The lower threshold value to use when autoThreshold is 'no'
-  vtkGetMacro(LowerThreshold, double);
-  vtkSetMacro(LowerThreshold, double);
+  /// The upper threshold value to use when autoThreshold is 'no'
+  /// Defaults to VTK_SHORT_MAX
+  virtual double GetUpperThreshold();
+  virtual void SetUpperThreshold(double upper);
+  
+  virtual void SetThreshold(double lower, double upper);
 
   /// 
   /// Set/Get interpolate reformated slices
@@ -127,8 +127,6 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// 
   /// Gets ImageData converted from the real data in the node
   virtual vtkImageData* GetImageData();
-
-  virtual void UpdateImageDataPipeline();
 
   /// 
   /// Parse a string with window and level as double|double, and add a preset 
@@ -159,6 +157,9 @@ protected:
   virtual ~vtkMRMLScalarVolumeDisplayNode();
   vtkMRMLScalarVolumeDisplayNode(const vtkMRMLScalarVolumeDisplayNode&);
   void operator=(const vtkMRMLScalarVolumeDisplayNode&);
+  
+  virtual void SetColorNodeInternal(vtkMRMLColorNode* newColorNode);
+  void UpdateLookupTable(vtkMRMLColorNode* newColorNode);
 
   /// 
   /// To hold preset values for window and level, so can restore this display
@@ -173,10 +174,10 @@ protected:
     WindowLevelPreset() { this->Window = 0.0; this->Level = 0.0; };
   };
   //ETX
-  double Window;
-  double Level;
-  double UpperThreshold;
-  double LowerThreshold;
+  //double Window;
+  //double Level;
+  //double UpperThreshold;
+  //double LowerThreshold;
 
 
   /// Booleans
