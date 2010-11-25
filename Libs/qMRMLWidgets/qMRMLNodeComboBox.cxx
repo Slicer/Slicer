@@ -663,21 +663,21 @@ qMRMLSortFilterProxyModel* qMRMLNodeComboBox::sortFilterProxyModel()const
   return qobject_cast<qMRMLSortFilterProxyModel*>(this->model());
 }
 
-//----------------------------------=---------------------------------------
+//--------------------------------------------------------------------------
 QAbstractItemModel* qMRMLNodeComboBox::model()const
 {
   Q_D(const qMRMLNodeComboBox);
   return d->ComboBox ? d->ComboBox->model() : 0;
 }
 
-//----------------------------------=---------------------------------------
+//--------------------------------------------------------------------------
 QAbstractItemModel* qMRMLNodeComboBox::rootModel()const
 {
   Q_D(const qMRMLNodeComboBox);
   return d->MRMLSceneModel;
 }
 
-//----------------------------------=---------------------------------------
+//--------------------------------------------------------------------------
 void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 {
   Q_D(qMRMLNodeComboBox);
@@ -698,7 +698,7 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
   delete oldComboBox;
 }
 
-//----------------------------------=---------------------------------------
+//--------------------------------------------------------------------------
 QComboBox* qMRMLNodeComboBox::comboBox()const
 {
   Q_D(const qMRMLNodeComboBox);

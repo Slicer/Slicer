@@ -25,6 +25,9 @@
 #include <QSortFilterProxyModel>
 #include <QStringList>
 
+// CTK includes
+#include <ctkVTKObject.h>
+
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 
@@ -37,6 +40,7 @@ class QStandardItem;
 class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT
+  QVTK_OBJECT
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
   Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)

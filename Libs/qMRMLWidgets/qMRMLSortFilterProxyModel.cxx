@@ -179,11 +179,18 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
           }
         }
       }
+
     // filter by attributes
     if (d->Attributes.contains(nodeType))
       {
+      // can be optimized if the event is AttributeModifiedEvent instead of modifiedevent
+      const_cast<qMRMLSortFilterProxyModel*>(this)->qvtkConnect(
+        node, vtkCommand::ModifiedEvent,
+        const_cast<qMRMLSortFilterProxyModel*>(this),
+        SLOT(invalidate()));
+
       QString nodeAttribute =
-        node->GetAttribute(d->Attributes[nodeType].first.toLatin1().data());
+        node->GetAttribute(d->Attributes[nodeType].first.toLatin1());
       if (!nodeAttribute.isEmpty() &&
            nodeAttribute != d->Attributes[nodeType].second.toString())
         {
