@@ -95,22 +95,44 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyLogic::GetModelHierarchyNode(con
   
 }
 //----------------------------------------------------------------------------
-void vtkMRMLModelHierarchyLogic::GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode,
-                                                             std::vector< vtkMRMLModelHierarchyNode *> &childrenNodes)
+void vtkMRMLModelHierarchyLogic::GetHierarchyChildrenNodes(
+  vtkMRMLModelHierarchyNode *parentNode,
+  vtkMRMLModelHierarchyNodeList &childrenNodes)
 {
   this->UpdateHierarchyChildrenMap();
   
-  std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> >::iterator iter;
-  std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> > hierarchyChildrenNodes = this->HierarchyChildrenNodes;
-  iter = hierarchyChildrenNodes.find(std::string(parentNode->GetID()));
-  if (iter != hierarchyChildrenNodes.end()) 
+  HierarchyChildrenNodesType::iterator iter = 
+    this->HierarchyChildrenNodes.find(std::string(parentNode->GetID()));
+  if (iter == this->HierarchyChildrenNodes.end()) 
     {
-    for (unsigned int i=0; i<iter->second.size(); i++)
-      {
-      childrenNodes.push_back(iter->second[i]);
-      this->GetHierarchyChildrenNodes(iter->second[i], childrenNodes);
-      }
+    return;
     }
+  for (unsigned int i=0; i<iter->second.size(); i++)
+    {
+    childrenNodes.push_back(iter->second[i]);
+    this->GetHierarchyChildrenNodes(iter->second[i], childrenNodes);
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLModelHierarchyNodeList vtkMRMLModelHierarchyLogic
+::GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode)
+{
+  vtkMRMLModelHierarchyNodeList childrenNodes;
+  
+  this->UpdateHierarchyChildrenMap();
+  
+  HierarchyChildrenNodesType::iterator iter =
+    this->HierarchyChildrenNodes.find(std::string(parentNode->GetID()));
+  if (iter == this->HierarchyChildrenNodes.end()) 
+    {
+    return childrenNodes;
+    }
+  for (unsigned int i=0; i<iter->second.size(); i++)
+    {
+    childrenNodes.push_back(iter->second[i]);
+    }
+  return childrenNodes;
 }
 
 

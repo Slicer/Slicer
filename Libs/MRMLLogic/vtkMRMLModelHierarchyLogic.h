@@ -32,6 +32,10 @@
 
 #include "vtkMRMLLogicWin32Header.h"
 
+//BTX
+typedef std::vector< vtkMRMLModelHierarchyNode *> vtkMRMLModelHierarchyNodeList;
+//ETX
+
 class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractLogic 
 {
   public:
@@ -39,7 +43,6 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractL
   /// The Usual vtk class functions
   static vtkMRMLModelHierarchyLogic *New();
   vtkTypeRevisionMacro(vtkMRMLModelHierarchyLogic,vtkMRMLAbstractLogic);
-
   
   /// 
   /// Given model id return it's hierarchy 
@@ -58,7 +61,12 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractL
   /// 
   /// Given model hierarchy node returns all it's children recursively. 
   void GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode,
-                                 std::vector< vtkMRMLModelHierarchyNode *> &childrenNodes);
+                                 vtkMRMLModelHierarchyNodeList &childrenNodes);
+  /// 
+  /// Given model hierarchy node returns all it's 1st level children (not recursive). 
+  /// Note: Most compilers don't make a copy of the list if you call the function like that:
+  /// std::vector< vtkMRMLModelHierarchyNode > children = logic->GetHierarchyChildrenNodes(parent);
+  vtkMRMLModelHierarchyNodeList GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode);
 //ETX
 
   /// 
@@ -88,7 +96,8 @@ protected:
 
   //BTX
   std::map<std::string, vtkMRMLModelHierarchyNode *> ModelHierarchyNodes;
-  std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> > HierarchyChildrenNodes;
+  typedef std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> > HierarchyChildrenNodesType;
+  HierarchyChildrenNodesType HierarchyChildrenNodes;
   //ETX
   
   unsigned long ModelHierarchyNodesMTime;
