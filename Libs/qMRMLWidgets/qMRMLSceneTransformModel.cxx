@@ -20,26 +20,15 @@
 
 // Qt includes
 #include <QDebug>
-#include <QMap>
-#include <QMimeData>
-#include <QSharedPointer>
-#include <QStack>
-#include <QStringList>
-#include <QVector>
 
 // qMRML includes
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSceneModel_p.h"
-#include "qMRMLUtils.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLTransformableNode.h>
-
-// VTK includes
-#include <vtkVariantArray.h>
-#include <typeinfo>
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneTransformModel::parentNode(vtkMRMLNode* node)

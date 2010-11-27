@@ -77,7 +77,7 @@ public:
   qMRMLSceneModel(QObject *parent=0);
   virtual ~qMRMLSceneModel();
 
-  void setMRMLScene(vtkMRMLScene* scene);
+  virtual void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
 
   QStandardItem* mrmlSceneItem()const;

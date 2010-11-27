@@ -97,6 +97,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
   qMRMLSceneModel.h
+  qMRMLSceneModelHierarchyModel.cxx
+  qMRMLSceneModelHierarchyModel.h
   qMRMLSceneSnapshotMenu.cxx
   qMRMLSceneSnapshotMenu.h
   qMRMLSceneSnapshotMenu_p.h
@@ -166,6 +168,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSceneColorTableModel.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
+  qMRMLSceneModelHierarchyModel.h
   qMRMLSceneSnapshotMenu.h
   qMRMLSceneSnapshotMenu_p.h
   qMRMLSceneTransformModel.h

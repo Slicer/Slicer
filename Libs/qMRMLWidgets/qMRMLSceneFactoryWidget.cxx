@@ -29,8 +29,7 @@
 // MRML includes 
 #include <vtkMRMLScene.h>
 
-class qMRMLSceneFactoryWidgetPrivate:
-                                      public Ui_qMRMLSceneFactoryWidget
+class qMRMLSceneFactoryWidgetPrivate: public Ui_qMRMLSceneFactoryWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSceneFactoryWidget);
 protected:

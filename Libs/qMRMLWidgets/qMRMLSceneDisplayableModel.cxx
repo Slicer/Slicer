@@ -292,7 +292,7 @@ void qMRMLSceneDisplayableModel::populateScene()
   vtkMRMLNode *node = 0;
   vtkCollectionSimpleIterator it;
   for (d->MRMLScene->GetCurrentScene()->InitTraversal(it);
-       (node = (vtkMRMLNode*)d->MRMLScene->GetCurrentScene()->GetNextItemAsObject(it)) ;)
+       (node = static_cast<vtkMRMLNode*>(d->MRMLScene->GetCurrentScene()->GetNextItemAsObject(it))) ;)
     {
     // WARNING: works only if the nodes are in the scene in the correct order:
     // parents are before children
