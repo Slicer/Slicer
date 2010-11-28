@@ -115,3 +115,9 @@ void qMRMLAnnotationTreeWidget::onActivated(const QModelIndex& index)
   Q_ASSERT(d->SortFilterModel);
   emit currentNodeChanged(d->SortFilterModel->mrmlNode(index));
 }
+
+void qMRMLAnnotationTreeWidget::hideScene()
+{
+  Q_D(qMRMLAnnotationTreeWidget);
+  this->setRootIndex(d->SortFilterModel->mapFromSource(d->SceneModel->mrmlSceneIndex()));
+}

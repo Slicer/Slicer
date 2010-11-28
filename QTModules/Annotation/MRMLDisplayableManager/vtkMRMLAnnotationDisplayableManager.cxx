@@ -117,6 +117,15 @@ void vtkMRMLAnnotationDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+{
+  Superclass::SetMRMLSceneInternal(newScene);
+
+  // after a new scene got associated, we want to make sure everything old is gone
+  this->OnMRMLSceneClosedEvent();
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
                                                             unsigned long event,
                                                             void *callData)
@@ -146,19 +155,16 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
 {
+
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
 {
   // run through all nodes and remove node and widget
-  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
-  it = this->Helper->AnnotationNodeList.begin();
-  while(it != this->Helper->AnnotationNodeList.end())
-    {
-    this->Helper->RemoveWidgetAndNode(*it);
-    ++it;
-    }
+    for (int i=0; i<this->Helper->AnnotationNodeList.size(); i++) {
+      this->Helper->RemoveWidgetAndNode(this->Helper->AnnotationNodeList[i]);
+  }
 }
 
 //---------------------------------------------------------------------------

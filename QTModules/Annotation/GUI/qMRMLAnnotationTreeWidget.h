@@ -46,6 +46,8 @@ public:
   qMRMLAnnotationTreeWidget(QWidget *parent=0);
   virtual ~qMRMLAnnotationTreeWidget();
 
+  void hideScene();
+
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
 

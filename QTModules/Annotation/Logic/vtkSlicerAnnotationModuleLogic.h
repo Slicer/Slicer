@@ -47,6 +47,7 @@ public:
   void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
   void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
   void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
+  void OnMRMLSceneClosedEvent();
 
   //
   // Annotation Properties (interface to MRML)
@@ -113,6 +114,9 @@ public:
 
   /// Add a new Annotation hierarchy node before the annotation node in the scene order
   vtkMRMLAnnotationHierarchyNode* AddNewHierarchyNode(vtkMRMLAnnotationNode* annotationNode);
+
+  /// Set the active hierarchy node which will be used as a parent for new annotations
+  void SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode* hierarchyNode);
 
   //
   // SnapShot functionality

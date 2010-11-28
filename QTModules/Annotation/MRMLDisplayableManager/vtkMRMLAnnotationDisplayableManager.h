@@ -68,6 +68,8 @@ protected:
 
   virtual void Create();
 
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
   /// Called after the corresponding MRML event is triggered, from AbstractDisplayableManager
   /// \sa ProcessMRMLEvents
   virtual void OnMRMLSceneAboutToBeClosedEvent();

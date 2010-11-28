@@ -53,9 +53,25 @@ vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
 //-----------------------------------------------------------------------------
 vtkSlicerAnnotationModuleLogic::~vtkSlicerAnnotationModuleLogic()
 {
-  this->m_Widget = 0;
-  this->m_LastAddedAnnotationNode = 0;
-  this->m_ActiveHierarchy = 0;
+
+  if (this->m_Widget)
+    {
+    //delete this->m_Widget->;
+    this->m_Widget = 0;
+    }
+
+  if (this->m_LastAddedAnnotationNode)
+    {
+    this->m_LastAddedAnnotationNode->Delete();
+    this->m_LastAddedAnnotationNode = 0;
+    }
+
+  if (this->m_ActiveHierarchy)
+    {
+    this->m_ActiveHierarchy->Delete();
+    this->m_ActiveHierarchy = 0;
+    }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -93,6 +109,12 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLEvents(
   vtkDebugMacro("ProcessMRMLEvents: Event "<< event);
 
   vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*> (callData);
+
+  if (event==vtkMRMLScene::SceneClosedEvent)
+    {
+    this->OnMRMLSceneClosedEvent();
+    return;
+    }
 
   // special case for vtkMRMLAnnotationSnapshotNodes
   vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
@@ -180,6 +202,20 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNo
 
 }
 
+//-----------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::OnMRMLSceneClosedEvent()
+{
+  if (this->m_LastAddedAnnotationNode)
+    {
+    this->m_LastAddedAnnotationNode = 0;
+    }
+
+  if (this->m_ActiveHierarchy)
+    {
+    this->m_ActiveHierarchy = 0;
+    }
+}
+
 //---------------------------------------------------------------------------
 //
 //
@@ -198,6 +234,7 @@ void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
   events->Delete();
 }
@@ -1219,6 +1256,14 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddNewHierarchyN
   return hierarchyNode;
 
 }
+
+//---------------------------------------------------------------------------
+// Set the active hierarchy node which will be used as a parent for new annotations
+void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode* hierarchyNode)
+{
+  this->m_ActiveHierarchy = hierarchyNode;
+}
+
 
 
 //---------------------------------------------------------------------------

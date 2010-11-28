@@ -179,13 +179,11 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
 
   // Make sure the map contains a vtkWidget associated with this node
   WidgetsIt widgetIterator = this->Widgets.find(node);
-  if (widgetIterator == this->Widgets.end()) {
-    return;
+  if (widgetIterator != this->Widgets.end()) {
+    // Delete and Remove vtkWidget from the map
+    this->Widgets[node]->Delete();
+    this->Widgets.erase(node);
   }
-
-  // Delete and Remove vtkWidget from the map
-  this->Widgets[node]->Delete();
-  this->Widgets.erase(node);
 
   WidgetIntersectionsIt widgetIntersectionIterator = this->WidgetIntersections.find(node);
   if (widgetIntersectionIterator != this->WidgetIntersections.end()) {
@@ -202,12 +200,10 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
       node);
 
   // Make sure the map contains the annotationNode
-  if (nodeIterator == this->AnnotationNodeList.end())
+  if (nodeIterator != this->AnnotationNodeList.end())
     {
-    return;
+    this->AnnotationNodeList.erase(nodeIterator);
     }
-
-  this->AnnotationNodeList.erase(nodeIterator);
 
 }
 
