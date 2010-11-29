@@ -14,6 +14,8 @@ SET(designer_plugin_SRCS
   qMRMLColorTableComboBoxPlugin.h
   qMRMLColorTableViewPlugin.cxx
   qMRMLColorTableViewPlugin.h
+  qMRMLDisplayNodeWidgetPlugin.cxx
+  qMRMLDisplayNodeWidgetPlugin.h
   qMRMLLabelComboBoxPlugin.cxx
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.cxx
@@ -24,6 +26,8 @@ SET(designer_plugin_SRCS
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.cxx
   qMRMLMatrixWidgetPlugin.h
+  qMRMLModelInfoWidgetPlugin.cxx
+  qMRMLModelInfoWidgetPlugin.h
   qMRMLNavigationViewPlugin.cxx
   qMRMLNavigationViewPlugin.h
   qMRMLNodeComboBoxPlugin.cxx
@@ -72,11 +76,13 @@ SET(designer_plugin_MOC_SRCS
   qMRMLColorListViewPlugin.h
   qMRMLColorTableComboBoxPlugin.h
   qMRMLColorTableViewPlugin.h
+  qMRMLDisplayNodeWidgetPlugin.h
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.h
   qMRMLLinearTransformSliderPlugin.h
   qMRMLListWidgetPlugin.h
   qMRMLMatrixWidgetPlugin.h
+  qMRMLModelInfoWidgetPlugin.h
   qMRMLNavigationViewPlugin.h
   qMRMLNodeComboBoxPlugin.h
   qMRMLRangeWidgetPlugin.h

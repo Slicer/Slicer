@@ -9,12 +9,14 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLColorPickerWidgetTest2.cxx
   qMRMLColorTableComboBoxTest1.cxx
   qMRMLColorTableViewTest1.cxx
+  qMRMLDisplayNodeWidgetTest1.cxx
   qMRMLLayoutManagerTest1.cxx
   qMRMLLayoutManagerTest2.cxx
   qMRMLLinearTransformSliderTest1.cxx
   qMRMLListWidgetTest1.cxx
   qMRMLMatrixWidgetTest1.cxx
   qMRMLModelTest1.cxx
+  qMRMLModelInfoWidgetTest1.cxx
   qMRMLLabelComboBoxTest1.cxx
   qMRMLNavigationViewTest1.cxx
   qMRMLNodeComboBoxTest1.cxx
@@ -78,12 +80,14 @@ SIMPLE_TEST( qMRMLColorPickerWidgetTest1 )
 SIMPLE_TEST( qMRMLColorPickerWidgetTest2 )
 SIMPLE_TEST( qMRMLColorTableComboBoxTest1 )
 SIMPLE_TEST( qMRMLColorTableViewTest1 )
+SIMPLE_TEST( qMRMLDisplayNodeWidgetTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest2 )
 SIMPLE_TEST( qMRMLLinearTransformSliderTest1 )
 SIMPLE_TEST( qMRMLListWidgetTest1 )
 SIMPLE_TEST( qMRMLMatrixWidgetTest1 )
 SIMPLE_TEST( qMRMLModelTest1 )
+SIMPLE_TEST( qMRMLModelInfoWidgetTest1 )
 SIMPLE_TEST( qMRMLLabelComboBoxTest1 )
 SIMPLE_TEST( qMRMLNavigationViewTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest1 )

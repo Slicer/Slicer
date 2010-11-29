@@ -62,6 +62,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLColorTableComboBox.h
   qMRMLColorTableView.cxx
   qMRMLColorTableView.h
+  qMRMLDisplayNodeWidget.cxx
+  qMRMLDisplayNodeWidget.h
   qMRMLLabelComboBox.h
   qMRMLLabelComboBox.cxx
   qMRMLEventLogger.cxx
@@ -79,6 +81,8 @@ SET(qMRMLWidgets_SRCS
   qMRMLListWidget.h
   qMRMLMatrixWidget.cxx
   qMRMLMatrixWidget.h
+  qMRMLModelInfoWidget.cxx
+  qMRMLModelInfoWidget.h
   qMRMLNavigationView.cxx
   qMRMLNavigationView.h
   qMRMLNodeComboBox.cxx
@@ -150,6 +154,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLColorTableComboBox.h
   qMRMLColorTableView.h
   qMRMLColorModel.h
+  qMRMLDisplayNodeWidget.h
   qMRMLEventLogger.h
   qMRMLEventLoggerWidget.h
   qMRMLLabelComboBox.h
@@ -159,6 +164,7 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h
   qMRMLMatrixWidget.h
+  qMRMLModelInfoWidget.h
   qMRMLNavigationView.h
   qMRMLNodeComboBox.h
   qMRMLNodeFactory.h
@@ -196,7 +202,9 @@ SET(qMRMLWidgets_MOC_SRCS
 # UI files
 SET(qMRMLWidgets_UI_SRCS
   Resources/UI/qMRMLColorPickerWidget.ui
+  Resources/UI/qMRMLDisplayNodeWidget.ui
   Resources/UI/qMRMLEventLoggerWidget.ui
+  Resources/UI/qMRMLModelInfoWidget.ui
   Resources/UI/qMRMLROIWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLSliceControllerWidget.ui

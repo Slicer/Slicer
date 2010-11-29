@@ -25,11 +25,13 @@
 #include "qMRMLColorListViewPlugin.h"
 #include "qMRMLColorTableComboBoxPlugin.h"
 #include "qMRMLColorTableViewPlugin.h"
+#include "qMRMLDisplayNodeWidgetPlugin.h"
 #include "qMRMLLabelComboBoxPlugin.h"
 #include "qMRMLLayoutWidgetPlugin.h"
 #include "qMRMLLinearTransformSliderPlugin.h"
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLMatrixWidgetPlugin.h"
+#include "qMRMLModelInfoWidgetPlugin.h"
 #include "qMRMLNavigationViewPlugin.h"
 #include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLRangeWidgetPlugin.h"
@@ -68,10 +70,12 @@ public:
             << new qMRMLColorTableViewPlugin
             << new qMRMLLabelComboBoxPlugin
             << new qMRMLColorTableViewPlugin
+            << new qMRMLDisplayNodeWidgetPlugin
             << new qMRMLLayoutWidgetPlugin
             << new qMRMLLinearTransformSliderPlugin
             << new qMRMLListWidgetPlugin
             << new qMRMLMatrixWidgetPlugin
+            << new qMRMLModelInfoWidgetPlugin
             << new qMRMLNavigationViewPlugin
             << new qMRMLNodeComboBoxPlugin
             << new qMRMLRangeWidgetPlugin
