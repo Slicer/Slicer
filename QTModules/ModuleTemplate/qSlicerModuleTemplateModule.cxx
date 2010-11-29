@@ -2,9 +2,6 @@
 // Qt includes
 #include <QtPlugin>
 
-// SlicerQt includes
-#include <qSlicerCoreApplication.h>
-
 // ModuleTemplate Logic includes
 #include <vtkSlicerModuleTemplateLogic.h>
 
@@ -28,7 +25,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerModuleTemplateModulePrivate::qSlicerModuleTemplateModulePrivate()
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -36,7 +32,8 @@ qSlicerModuleTemplateModulePrivate::qSlicerModuleTemplateModulePrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerModuleTemplateModule::qSlicerModuleTemplateModule(QObject* _parent)
-  :Superclass(_parent), d_ptr(new qSlicerModuleTemplateModulePrivate)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerModuleTemplateModulePrivate)
 {
 }
 
@@ -55,6 +52,12 @@ QString qSlicerModuleTemplateModule::helpText()const
 QString qSlicerModuleTemplateModule::acknowledgementText()const
 {
   return "This work was supported by ...";
+}
+
+//-----------------------------------------------------------------------------
+QIcon qSlicerModuleTemplateModule::icon()const
+{
+  return QIcon(":/Icons/ModuleTemplate.png");
 }
 
 //-----------------------------------------------------------------------------

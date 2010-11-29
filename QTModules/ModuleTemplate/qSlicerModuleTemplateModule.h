@@ -32,6 +32,10 @@ public:
   ///
   /// Return acknowledgements
   virtual QString acknowledgementText()const;
+  
+  ///
+  /// Return a custom icon for the module
+  virtual QIcon icon()const;
 
 protected:
   ///

@@ -227,7 +227,6 @@ int qMRMLSceneModelHierarchyModel::nodeIndex(vtkMRMLNode* node)
     }
   else
     {
-    const char* nodeID = node->GetID();
     vtkMRMLModelNode* mnode = vtkMRMLModelNode::SafeDownCast(node);
     vtkMRMLModelHierarchyNode* hnode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
     vtkMRMLModelHierarchyNodeList children = d->ModelLogic->GetHierarchyChildrenNodes(parent);

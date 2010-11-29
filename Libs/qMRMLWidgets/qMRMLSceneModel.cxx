@@ -748,7 +748,7 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 {
-  if (item->column() == 0)
+  if (item->column() == qMRMLSceneModel::NameColumn)
     {
     node->SetName(item->text().toLatin1());
     }
@@ -890,9 +890,7 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
   vtkMRMLNode* modifiedNode = vtkMRMLNode::SafeDownCast(node);
   Q_ASSERT(modifiedNode && modifiedNode->GetScene());
   Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
-  QModelIndexList nodeIndexes = this->match(this->mrmlSceneIndex(), qMRML::UIDRole,
-                                            QString(modifiedNode->GetID()), -1,
-                                            Qt::MatchExactly | Qt::MatchRecursive);
+  QModelIndexList nodeIndexes = this->indexes(modifiedNode);
   //qDebug() << "onMRMLNodeModified" << modifiedNode->GetID() << nodeIndexes;
 
   foreach (QModelIndex index, nodeIndexes)

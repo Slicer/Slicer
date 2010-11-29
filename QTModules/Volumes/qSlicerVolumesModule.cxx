@@ -44,7 +44,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesModule::qSlicerVolumesModule(QObject* _parent)
-  :Superclass(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerVolumesModulePrivate)
 {
 }

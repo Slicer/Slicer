@@ -42,28 +42,7 @@ namespace qMRML
    PointerRole
  };
 };
-/*
-class qMRMLSceneModelItemHelperFactoryPrivate;
-//------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLSceneModelItemHelperFactory : public qMRMLAbstractItemHelperFactory
-{
-public:
-  qMRMLSceneModelItemHelperFactory();
-  virtual ~qMRMLSceneModelItemHelperFactory();
-  virtual qMRMLAbstractItemHelper* createItem(vtkObject* object,int column, int row = -1) const;
 
-  void setPreItems(vtkCollection* itemCollection);
-  vtkCollection* preItems()const;
-  void setPostItems(vtkCollection* itemCollection);
-  vtkCollection* postItems()const;
-protected:
-  QScopedPointer<qMRMLSceneModelItemHelperFactoryPrivate> d_ptr;
-
-private:
-  Q_DECLARE_PRIVATE(qMRMLSceneModelItemHelperFactory);
-  Q_DISABLE_COPY(qMRMLSceneModelItemHelperFactory);
-};
-*/
 class qMRMLSceneModelPrivate;
 
 //------------------------------------------------------------------------------
@@ -73,9 +52,15 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   QVTK_OBJECT
   Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
 public:
-  typedef QAbstractItemModel Superclass;
+  typedef QStandardItemModel Superclass;
   qMRMLSceneModel(QObject *parent=0);
   virtual ~qMRMLSceneModel();
+
+  enum ModelColumn
+  {
+    NameColumn = 0,
+    IDColumn
+  };
 
   virtual void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;

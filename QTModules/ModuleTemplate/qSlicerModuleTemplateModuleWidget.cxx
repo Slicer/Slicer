@@ -1,9 +1,6 @@
 // Qt includes
 #include <QDebug>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerModuleTemplateModuleWidget.h"
 #include "ui_qSlicerModuleTemplateModule.h"
@@ -27,7 +24,11 @@ qSlicerModuleTemplateModuleWidgetPrivate::qSlicerModuleTemplateModuleWidgetPriva
 // qSlicerModuleTemplateModuleWidget methods
 
 //-----------------------------------------------------------------------------
-CTK_CONSTRUCTOR_1_ARG_CPP(qSlicerModuleTemplateModuleWidget, QWidget*);
+qSlicerModuleTemplateModuleWidget::qSlicerModuleTemplateModuleWidget(QWidget* _parent)
+  : Superclass( _parent )
+  , d_ptr( new qSlicerModuleTemplateModuleWidgetPrivate )
+{
+}
 
 //-----------------------------------------------------------------------------
 qSlicerModuleTemplateModuleWidget::~qSlicerModuleTemplateModuleWidget()

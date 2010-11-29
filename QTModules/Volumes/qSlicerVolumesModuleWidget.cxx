@@ -22,7 +22,7 @@
 #include <QDebug>
 
 // CTK includes
-#include <ctkModelTester.h>
+//#include <ctkModelTester.h>
 
 #include "qSlicerVolumesModuleWidget.h"
 #include "ui_qSlicerVolumesModule.h"
