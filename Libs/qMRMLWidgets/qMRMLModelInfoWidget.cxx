@@ -59,6 +59,7 @@ qMRMLModelInfoWidgetPrivate::qMRMLModelInfoWidgetPrivate(qMRMLModelInfoWidget& o
 {
   this->MRMLModelNode = 0;
   this->TriangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+  this->TriangleFilter->SetPassLines(0);
   this->MassProperties = vtkSmartPointer<vtkMassProperties>::New();
   this->MassProperties->SetInput( this->TriangleFilter->GetOutput() );
 }
@@ -117,13 +118,20 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLModelInfoWidget);
   vtkPolyData *poly = d->MRMLModelNode ? d->MRMLModelNode->GetPolyData() : 0;
-  if (!poly)
+  if (poly)
     {
     d->TriangleFilter->SetInput(poly);
-    d->MassProperties->Update();
-
-    d->SurfaceAreaDoubleSpinBox->setValue(d->MassProperties->GetSurfaceArea());
-    d->VolumeAreaDoubleSpinBox->setValue(d->MassProperties->GetVolume());
+    d->TriangleFilter->Update();
+    if (d->TriangleFilter->GetOutput()->GetNumberOfCells() > 0)
+      {
+      d->SurfaceAreaDoubleSpinBox->setValue(d->MassProperties->GetSurfaceArea());
+      d->VolumeAreaDoubleSpinBox->setValue(d->MassProperties->GetVolume());
+      }
+    else
+      {
+      d->SurfaceAreaDoubleSpinBox->setValue(0);
+      d->VolumeAreaDoubleSpinBox->setValue(0);
+      }
 
     d->NumberOfPointsSpinBox->setValue(poly->GetNumberOfPoints());
     d->NumberOfCellsSpinBox->setValue(poly->GetNumberOfCells());
