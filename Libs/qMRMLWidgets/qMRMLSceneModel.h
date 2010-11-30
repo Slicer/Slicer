@@ -72,7 +72,10 @@ public:
   /// 0 if the node index is not a MRML node (i.e. vtkMRMLScene, extra item...)
   inline vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex &nodeIndex)const;
   vtkMRMLNode* mrmlNodeFromItem(QStandardItem* nodeItem)const;
+  QModelIndex indexFromNode(vtkMRMLNode* node, int column = 0)const;
+  // Utility function
   QStandardItem* itemFromNode(vtkMRMLNode* node, int column = 0)const;
+  // Return all the QModelIndex (all the columns) for a given node
   QModelIndexList indexes(vtkMRMLNode* node)const;
 
   /// Option that activates the expensive listening of the vtkMRMLNode Modified

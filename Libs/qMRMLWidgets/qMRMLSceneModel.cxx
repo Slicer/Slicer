@@ -355,10 +355,11 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
     q->match(start, qMRML::UIDRole, extraType, 1, Qt::MatchExactly);
   while (start != QModelIndex() && indexes.size())
     {
+    QModelIndex parentIndex = indexes[0].parent();
     int row = indexes[0].row();
-    q->removeRow(row, indexes[0].parent());
+    q->removeRow(row, parentIndex);
     // don't start the whole search from scratch, only from where we ended it
-    start = parent ? parent->index().child(row,0) : QModelIndex().child(row,0);
+    start = parentIndex.child(row,0);
     indexes = q->match(start, qMRML::UIDRole, extraType, 1, Qt::MatchExactly);
     }
 }
@@ -562,41 +563,68 @@ vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem)const
   Q_ASSERT(node);
   return node;
 }
-
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column)const
 {
-  //Q_D(const qMRMLSceneModel);
+  return this->itemFromIndex(this->indexFromNode(node, column));
+}
+
+//------------------------------------------------------------------------------
+QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
+{
   if (node == 0)
     {
-    return 0;
+    return QModelIndex();
     }
-  QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRML::UIDRole,
-                                      QString(node->GetID()), 1,
-                                      Qt::MatchExactly | Qt::MatchRecursive);
-  while (indexes.size())
+  // QAbstractItemModel::match doesn't browse through columns
+  // we need to do it manually
+  QModelIndexList nodeIndexes = this->match(
+    this->mrmlSceneIndex(), qMRML::UIDRole, QString(node->GetID()),
+    1, Qt::MatchExactly | Qt::MatchRecursive);
+  Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
+  if (nodeIndexes.size() == 0)
     {
-    if (indexes[0].column() == column)
-      {
-      return this->itemFromIndex(indexes[0]);
-      }
-    indexes = this->match(indexes[0], qMRML::UIDRole,
-                          QString(node->GetID()), 1,
-                          Qt::MatchExactly | Qt::MatchRecursive);
+    return QModelIndex();
     }
-  return 0;
+  if (column == 0)
+    {
+    // QAbstractItemModel::match only search through the first column
+    // (because scene is in the first column)
+    return nodeIndexes[0];
+    }
+  // Add the QModelIndexes from the other columns
+  const int row = nodeIndexes[0].row();
+  QModelIndex nodeParentIndex = nodeIndexes[0].parent();
+  Q_ASSERT( column < this->columnCount(nodeParentIndex) );
+  return nodeParentIndex.child(row, column);
 }
 
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node)const
 {
-  //Q_D(const qMRMLSceneModel);
   QModelIndex scene = this->mrmlSceneIndex();
   if (scene == QModelIndex())
     {
     return QModelIndexList();
     }
-  return this->match(scene, qMRML::UIDRole, QString(node->GetID()), -1, Qt::MatchExactly | Qt::MatchRecursive);
+  // QAbstractItemModel::match doesn't browse through columns
+  // we need to do it manually
+  QModelIndexList nodeIndexes = this->match(
+    scene, qMRML::UIDRole, QString(node->GetID()), 1, Qt::MatchExactly | Qt::MatchRecursive);
+  Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
+  if (nodeIndexes.size() == 0)
+    {
+    return nodeIndexes;
+    }
+  // Add the QModelIndexes from the other columns
+  const int row = nodeIndexes[0].row();
+  QModelIndex nodeParentIndex = nodeIndexes[0].parent();
+  const int sceneColumnCount = this->columnCount(nodeParentIndex);
+  for (int j = 1; j < sceneColumnCount; ++j)
+    {
+    nodeIndexes << nodeParentIndex.child(row, j);
+    }
+  return nodeIndexes;
 }
 
 //------------------------------------------------------------------------------
@@ -729,6 +757,11 @@ void qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int r
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
+  // Here we set the flags in multiple times (for code clarity), however it has
+  // the drawback of firing some itemChanged signals, we cascade useless and infinite loops
+  // a solution is to prevent ourself from firing any of these signals.
+  // Another solution is to create a virtual method that returns the desired flag and set
+  // it only once.
   bool oldBlock = this->blockSignals(true);
   item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
   this->blockSignals(oldBlock);
@@ -844,12 +877,9 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRML::UIDRole,
                                         QString(node->GetID()), 1,
                                         Qt::MatchExactly | Qt::MatchRecursive);
-  while (indexes.count())
+  if (indexes.count())
     {
     this->removeRow(indexes[0].row(), indexes[0].parent());
-    indexes = this->match(this->mrmlSceneIndex(), qMRML::UIDRole,
-                          QString(node->GetID()), 1,
-                          Qt::MatchExactly | Qt::MatchRecursive);
     }
 }
 

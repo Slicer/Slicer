@@ -157,7 +157,7 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
 
 
   // from qMRMLSceneDisplayableModel
-  this->blockSignals(oldBlock);
+  this->blockSignals(true);
   if (qMRMLSceneDisplayableModel::canBeAChild(node))
     {
     item->setFlags(item->flags() | Qt::ItemIsDragEnabled);
@@ -184,7 +184,7 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
     newParentItem->insertRow(pos, children);
     }
 
-  this->m_TreeView->refresh();
+  //this->m_TreeView->refresh();
 }
 
 //------------------------------------------------------------------------------
