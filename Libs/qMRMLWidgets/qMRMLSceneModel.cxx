@@ -473,6 +473,13 @@ QStringList qMRMLSceneModel::postItems(QStandardItem* parent)const
 void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLSceneModel);
+  /// it could go wrong if you try to set the same scene (specially because
+  /// while updating the scene your signals/slots might call setMRMLScene again
+  if (scene == d->MRMLScene)
+    {
+    return;
+    }
+
   if (d->MRMLScene)
     {
     d->MRMLScene->RemoveObserver(d->CallBack);
@@ -636,7 +643,7 @@ void qMRMLSceneModel::updateScene()
     }
 
   int oldColumnCount = this->columnCount();
-  this->clear();
+  this->setRowCount(0);
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
   this->setColumnCount(oldColumnCount);
 

@@ -481,10 +481,13 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLNodeComboBox);
 
-  //if (d->MRMLSceneModel->mrmlScene() == scene)
-  //  {
-  //  return ;
-  //  }
+  // Be careful when commenting that out. you really need a good reason for
+  // forcing a new set. You should probably expose 
+  // qMRMLSceneModel::UpdateScene() and make sure there is no nested calls
+  if (d->MRMLSceneModel->mrmlScene() == scene)
+    {
+    return ;
+    }
 
   // The Add button is valid only if the scene is non-empty
   //this->setAddEnabled(scene != 0);
