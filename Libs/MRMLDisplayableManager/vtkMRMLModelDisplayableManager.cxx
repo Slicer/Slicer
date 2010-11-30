@@ -1083,7 +1083,8 @@ void vtkMRMLModelDisplayableManager::RemoveModelProps()
   std::vector<std::string> removedIDs;
   for(iter=this->Internal->DisplayedActors.begin(); iter != this->Internal->DisplayedActors.end(); iter++)
     {
-    vtkMRMLDisplayNode *modelDisplayNode = vtkMRMLDisplayNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
+    vtkMRMLDisplayNode *modelDisplayNode = vtkMRMLDisplayNode::SafeDownCast(
+      this->GetMRMLScene() ? this->GetMRMLScene()->GetNodeByID(iter->first) : 0);
     if (modelDisplayNode == 0)
       {
       this->GetRenderer()->RemoveViewProp(iter->second);
