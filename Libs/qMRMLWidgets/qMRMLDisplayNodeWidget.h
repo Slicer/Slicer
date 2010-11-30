@@ -57,10 +57,13 @@ public:
   bool backfaceCulling()const;
 
 public slots:
-  /// Utility function to be connected with generic signals
-  void setMRMLDisplayNode(vtkMRMLNode *node);
   /// Set the volume node to display
   void setMRMLDisplayNode(vtkMRMLDisplayNode *node);
+  /// Utility function to be connected with generic signals
+  void setMRMLDisplayNode(vtkMRMLNode *node);
+  /// Utility function to be connected with generic signals,
+  /// it internally shows the 1st display node.
+  void setMRMLDisplayableNode(vtkMRMLNode* displayableNode);
 
   void setVisibility(bool);
   void setSelected(bool);

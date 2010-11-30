@@ -27,6 +27,7 @@
 #include "ui_qMRMLDisplayNodeWidget.h"
 
 // MRML includes
+#include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
 
 // VTK includes
@@ -105,6 +106,14 @@ vtkMRMLDisplayNode* qMRMLDisplayNodeWidget::mrmlDisplayNode()const
 {
   Q_D(const qMRMLDisplayNodeWidget);
   return d->MRMLDisplayNode;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setMRMLDisplayableNode(vtkMRMLNode* node)
+{
+  vtkMRMLDisplayableNode* displayableNode =
+    vtkMRMLDisplayableNode::SafeDownCast(node);
+  this->setMRMLDisplayNode(displayableNode ? displayableNode->GetDisplayNode() : 0);
 }
 
 //------------------------------------------------------------------------------
