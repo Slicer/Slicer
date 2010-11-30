@@ -30,6 +30,9 @@
 #include <vtkEMSegmentMRMLManager.h>
 #include <vtkMRMLEMSNode.h>
 
+// Slicer includes
+#include <vtkSlicerColorLogic.h>
+
 // MRML includes
 #include <vtkMRMLScene.h>
 
@@ -56,6 +59,10 @@ int qSlicerEMSegmentAnatomicalTreeWidgetTest1( int argc, char * argv [] )
   QApplication app(argc, argv);
 
   VTK_CREATE(vtkMRMLScene, scene);
+  VTK_CREATE(vtkSlicerColorLogic, colorLogic);
+  colorLogic->SetMRMLScene(scene);
+  colorLogic->AddDefaultColorNodes();
+
   VTK_CREATE(vtkSlicerEMSegmentLogic, logic);
   ctkVerify2(logic->GetMRMLManager(), "Problem with vtkSlicerEMSegmentLogic::GetMRMLManager");
 
