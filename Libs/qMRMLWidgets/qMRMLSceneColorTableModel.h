@@ -25,7 +25,7 @@
 #include "qMRMLSceneCategoryModel.h"
 
 // MRML includes
-class vtkMRMLColorTableNode;
+class vtkMRMLColorNode;
 
 class qMRMLSceneColorTableModelPrivate;
 
@@ -41,7 +41,7 @@ protected:
   QScopedPointer<qMRMLSceneColorTableModelPrivate> d_ptr;
 
   virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-  bool updateGradientFromNode(vtkMRMLColorTableNode* node)const;
+  bool updateGradientFromNode(vtkMRMLColorNode* node)const;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneColorTableModel);

@@ -25,6 +25,7 @@
 #include <QPainter>
 
 // CTK includes
+#include <ctkVTKColorTransferFunction.h>
 #include <ctkVTKLookupTable.h>
 #include <ctkTransferFunctionRepresentation.h>
 
@@ -33,8 +34,10 @@
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLProceduralColorNode.h>
 
 // VTK includes
+#include <vtkColorTransferFunction.h>
 #include <vtkLookupTable.h>
 
 //------------------------------------------------------------------------------
@@ -79,7 +82,7 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
 {
   Q_D(const qMRMLSceneColorTableModel);
   this->qMRMLSceneModel::updateItemFromNode(item, node, column);
-  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
+  vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(node);
   if (colorNode && column == 0)
     {
     /*
@@ -95,7 +98,7 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
     QPixmap lutPixmap(iconFileName);
     item->setIcon(QIcon(lutPixmap));
     */
-    if (updateGradientFromNode(colorNode))
+    if (this->updateGradientFromNode(colorNode))
       {
       qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient =
         d->GradientCache[colorNode->GetID()];
@@ -106,20 +109,32 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorTableNode* node)const
+bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)const
 {
   Q_D(const qMRMLSceneColorTableModel);
   Q_ASSERT(node);
-  Q_ASSERT(node->GetLookupTable());
   qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[node->GetID()];
-  if (colorGradient.MTime >= node->GetLookupTable()->GetMTime())
+  vtkMRMLProceduralColorNode* proceduralNode = vtkMRMLProceduralColorNode::SafeDownCast(node);
+  if ((node->GetLookupTable() &&
+       colorGradient.MTime >= node->GetLookupTable()->GetMTime()) ||
+      (proceduralNode &&
+       colorGradient.MTime >= proceduralNode->GetColorTransferFunction()->GetMTime()))
     {
     return false;
     }
   //qDebug() << " calculate gradient for lookup table: " << node->GetLookupTable();
-  ctkVTKLookupTable lt(node->GetLookupTable());
-  ctkTransferFunctionRepresentation  tfr(&lt);
+  ctkTransferFunction* lt = 0;
+  if (node->GetLookupTable())
+    {
+    lt = new ctkVTKLookupTable(node->GetLookupTable());
+    }
+  else
+    {
+    lt = new ctkVTKColorTransferFunction(proceduralNode->GetColorTransferFunction());
+    }
+  ctkTransferFunctionRepresentation  tfr(lt);
   colorGradient.Gradient = tfr.gradient();
+  delete lt;
   //qDebug() << " end calculate gradient for lookup table: " << node->GetLookupTable();
   colorGradient.Gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
   QPainter pixmapPainter(&colorGradient.Pixmap);
@@ -134,6 +149,7 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorTableNode* no
     gradientStops[i].second.setAlpha(64);
     }
   colorGradient.Gradient.setStops(gradientStops);
-  colorGradient.MTime = node->GetLookupTable()->GetMTime();
+  colorGradient.MTime = node->GetLookupTable() ? node->GetLookupTable()->GetMTime()
+    : proceduralNode->GetColorTransferFunction()->GetMTime();
   return true;
 }
