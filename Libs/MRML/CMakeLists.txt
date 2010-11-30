@@ -146,6 +146,8 @@ set(MRML_SRCS
   vtkMRMLScalarVolumeNode.cxx
   vtkMRMLScene.cxx
   vtkMRMLSceneSnapshotNode.cxx
+  vtkMRMLScriptedModuleNode.cxx
+  vtkMRMLScriptedModuleNode.h
   vtkMRMLSelectionNode.cxx
   vtkMRMLSliceCompositeNode.cxx
   vtkMRMLSliceNode.cxx
@@ -229,7 +231,7 @@ set_source_files_properties(
   vtkMRMLVolumeDisplayNode.cxx
   vtkMRMLFiberBundleDisplayNode.cxx
   ABSTRACT
-  )
+)
 
 STRING(REGEX REPLACE "cxx$" "h" MRML_SRCS_HEADERS ${MRML_SRCS})
 SOURCE_GROUP("Header Files" FILES ${MRML_SRCS_HEADERS})

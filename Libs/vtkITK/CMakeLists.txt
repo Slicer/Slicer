@@ -179,6 +179,55 @@ install(TARGETS ${lib_name}
   )
 
 # --------------------------------------------------------------------------
+# Create Python wrappers if VTK is wrapped in Python
+#
+
+SET(VTK_LIBRARIES
+    vtkImaging
+    vtkCommon
+    vtkFiltering
+  )
+
+IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+
+  SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
+
+  INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+  VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${vtkITK_SRCS}")
+  ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
+  ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
+  
+  TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
+  
+  FOREACH(c ${KIT_PYTHON_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)
+  ENDFOREACH(c)
+
+  TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD)
+
+  ## Python modules on Windows must have the extension ".pyd"
+  IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
+  ENDIF(WIN32 AND NOT CYGWIN)
+
+  # Apply user-defined properties to the library target.
+  IF(Slicer_LIBRARY_PROPERTIES)
+    SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES
+       ${Slicer_LIBRARY_PROPERTIES}
+    )
+    SET_TARGET_PROPERTIES(${lib_name}PythonD PROPERTIES
+       ${Slicer_LIBRARY_PROPERTIES}
+    )
+  ENDIF(Slicer_LIBRARY_PROPERTIES)
+
+  INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development)
+
+ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+
+# --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
 if(BUILD_TESTING)

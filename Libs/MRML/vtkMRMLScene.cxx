@@ -43,6 +43,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLSceneSnapshotNode.h"
+#include "vtkMRMLScriptedModuleNode.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
@@ -206,6 +207,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLSliceCompositeNode *scompn = vtkMRMLSliceCompositeNode::New(); 
   this->RegisterNodeClass( scompn );
   scompn->Delete();
+
+  vtkMRMLScriptedModuleNode *scriptedNode = vtkMRMLScriptedModuleNode::New(); 
+  this->RegisterNodeClass( scriptedNode );
+  scriptedNode->Delete();
   
   vtkMRMLSelectionNode *sseln = vtkMRMLSelectionNode::New(); 
   this->RegisterNodeClass( sseln );
