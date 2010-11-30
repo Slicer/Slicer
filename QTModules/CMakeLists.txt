@@ -44,6 +44,7 @@ SET(qtmodules
   Annotation
   EMSegment
   #Measurements
+  Models
   SlicerWelcome
   TractographyDisplay
   TractographyFiducialSeeding

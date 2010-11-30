@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qMRMLModelDisplayNodeWidget</class>
+ <widget class="QWidget" name="qMRMLModelDisplayNodeWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>319</width>
+    <height>126</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Model Display Node</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="qMRMLDisplayNodeWidget" name="MRMLDisplayNodeWidget"/>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleGroupBox" name="ScalarsGroupBox">
+     <property name="title">
+      <string>Scalars</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+      <item row="0" column="0">
+       <widget class="QLabel" name="ScalarsVisibilityLabel">
+        <property name="text">
+         <string>Visible:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="ScalarsVisibilityCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="ActiveScalarLabel">
+        <property name="text">
+         <string>Active Scalar:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="ScalarsColorTableLabel">
+        <property name="text">
+         <string>Color Table:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLColorTableComboBox" name="ScalarsColorTableComboBox"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkVTKDataSetArrayComboBox" name="ActiveScalarComboBox"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkVTKDataSetArrayComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkVTKDataSetArrayComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLColorTableComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLColorTableComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLDisplayNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLDisplayNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

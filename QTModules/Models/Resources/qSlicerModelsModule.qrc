@@ -1,0 +1,13 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>Icons/Small/SlicerAddModel.png</file>
+    <file>Icons/Medium/SlicerAddModel.png</file>
+    <file>Icons/Large/SlicerAddModel.png</file>
+    <file>Icons/XLarge/SlicerAddModel.png</file>
+
+    <file>Icons/Small/SlicerModels.png</file>
+    <file>Icons/Medium/SlicerModels.png</file>
+    <file>Icons/Large/SlicerModels.png</file>
+    <file>Icons/XLarge/SlicerModels.png</file>
+  </qresource>
+</RCC>
