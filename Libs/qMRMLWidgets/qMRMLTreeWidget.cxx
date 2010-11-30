@@ -22,13 +22,14 @@
 #include <QDebug>
 
 // CTK includes
-#include "ctkModelTester.h"
+//#include "ctkModelTester.h"
 
 // qMRML includes
 #include "qMRMLSceneModel.h"
-#include "qMRMLSortFilterProxyModel.h"
-#include "qMRMLSceneTransformModel.h"
 #include "qMRMLSceneDisplayableModel.h"
+#include "qMRMLSceneModelHierarchyModel.h"
+#include "qMRMLSceneTransformModel.h"
+#include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLTreeWidget.h"
 
 //------------------------------------------------------------------------------
@@ -40,9 +41,11 @@ protected:
 public:
   qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object);
   void init();
+  void setSceneModel(qMRMLSceneModel* newModel);
 
   qMRMLSceneModel*           SceneModel;
   qMRMLSortFilterProxyModel* SortFilterModel;
+  QString                    SceneModelType;
 };
 
 //------------------------------------------------------------------------------
@@ -57,10 +60,9 @@ qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object)
 void qMRMLTreeWidgetPrivate::init()
 {
   Q_Q(qMRMLTreeWidget);
-  //p->QTreeView::setModel(new qMRMLItemModel(p));
   this->SceneModel = new qMRMLSceneTransformModel(q);
   this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
-  this->SortFilterModel->setSourceModel(this->SceneModel);
+  q->setSceneModelType("Transform");
   q->QTreeView::setModel(this->SortFilterModel);
 
   //ctkModelTester * tester = new ctkModelTester(p);
@@ -71,6 +73,24 @@ void qMRMLTreeWidgetPrivate::init()
                    q, SLOT(onActivated(const QModelIndex&)));
 
   q->setUniformRowHeights(true);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeWidgetPrivate::setSceneModel(qMRMLSceneModel* newModel)
+{
+  Q_Q(qMRMLTreeWidget);
+  if (!newModel)
+    {
+    return;
+    }
+
+  newModel->setListenNodeModifiedEvent(q->listenNodeModifiedEvent());
+  newModel->setMRMLScene(q->mrmlScene());
+
+  this->SceneModel = newModel;
+  this->SortFilterModel->setSourceModel(this->SceneModel);
+
+  q->expandToDepth(2);
 }
 
 //------------------------------------------------------------------------------
@@ -98,42 +118,56 @@ void qMRMLTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::setSceneModel(const QString& modelName)
+QString qMRMLTreeWidget::sceneModelType()const
+{
+  Q_D(const qMRMLTreeWidget);
+  return d->SceneModelType;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeWidget::setSceneModelType(const QString& modelName)
 {
   Q_D(qMRMLTreeWidget);
-  // get the scene from the old model
-  vtkMRMLScene *scene = NULL;
-  if (d->SceneModel)
-    {
-    scene = d->SceneModel->mrmlScene();
-    }
-  bool switched = false;
+
+  qMRMLSceneModel* newModel = 0;
   // switch on the incoming model name
   if (modelName == QString("Transform"))
     {
-    d->SceneModel = new qMRMLSceneTransformModel();
-    switched = true;
+    newModel = new qMRMLSceneTransformModel(this);
     }
   else if (modelName == QString("Displayable"))
     {
-    d->SceneModel = new qMRMLSceneDisplayableModel();
-    switched = true;
+    newModel = new qMRMLSceneDisplayableModel(this);
     }
-  if (switched)
+  else if (modelName == QString("ModelHierarchy"))
     {
-    //std::cout << "Switched scene models, new value is " << modelName.toAscii().data() << ", scene is " << (scene == NULL ? "null" : "not null") << std::endl;
-    d->SceneModel->setMRMLScene(scene);
-    d->SortFilterModel->setSourceModel(d->SceneModel);
-    this->expandToDepth(2);
+    newModel = new qMRMLSceneModelHierarchyModel(this);
     }
+  if (newModel) 
+    {
+    d->SceneModelType = modelName;
+    }
+  d->setSceneModel(newModel);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeWidget::setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType)
+{
+  Q_D(qMRMLTreeWidget);
+
+  if (!newSceneModel) 
+    {
+    return;
+    }
+  d->SceneModelType = modelType;
+  d->setSceneModel(newSceneModel);
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLScene* qMRMLTreeWidget::mrmlScene()const
 {
   Q_D(const qMRMLTreeWidget);
-  Q_ASSERT(d->SceneModel); // can be removed
-  return d->SceneModel->mrmlScene();
+  return d->SceneModel ? d->SceneModel->mrmlScene() : 0;
 }
 
 //------------------------------------------------------------------------------
@@ -156,8 +190,20 @@ void qMRMLTreeWidget::setListenNodeModifiedEvent(bool listen)
 bool qMRMLTreeWidget::listenNodeModifiedEvent()const
 {
   Q_D(const qMRMLTreeWidget);
-  Q_ASSERT(d->SceneModel);
-  return d->SceneModel->listenNodeModifiedEvent();
+  return d->SceneModel ? d->SceneModel->listenNodeModifiedEvent() : false;
+}
+
+// --------------------------------------------------------------------------
+QStringList qMRMLTreeWidget::nodeTypes()const
+{
+  Q_D(const qMRMLTreeWidget);
+  return d->SortFilterModel->nodeTypes();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTreeWidget::setNodeTypes(const QStringList& _nodeTypes)
+{
+  this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
 }
 
 //--------------------------------------------------------------------------
@@ -169,8 +215,26 @@ qMRMLSortFilterProxyModel* qMRMLTreeWidget::sortFilterProxyModel()const
 }
 
 //--------------------------------------------------------------------------
+QSize qMRMLTreeWidget::sizeHint()const
+{
+  Q_D(const qMRMLTreeWidget);
+  QSize treeViewSizeHint = this->QTreeView::sizeHint();
+  QStandardItem* sceneItem = d->SceneModel->mrmlSceneItem();
+  if (!sceneItem)
+    {
+    return treeViewSizeHint;
+    }
+  treeViewSizeHint.setHeight(
+    this->frameWidth()
+    + (sceneItem->rowCount() + 1)* this->sizeHintForRow(0)
+    + this->frameWidth());
+  return treeViewSizeHint;
+}
+
+//--------------------------------------------------------------------------
 void qMRMLTreeWidget::updateGeometries()
 {
+  // don't update the geometries if it's not visible on screen
   if (!this->isVisible())
     {
     return;

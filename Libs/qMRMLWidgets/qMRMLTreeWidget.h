@@ -29,45 +29,69 @@
 
 #include "qMRMLWidgetsExport.h"
 
+class qMRMLSceneModel;
 class qMRMLSortFilterProxyModel;
 class qMRMLTreeWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
 
+// TODO: Rename to qMRMLSceneTreeWidget
 class QMRML_WIDGETS_EXPORT qMRMLTreeWidget : public QTreeView
 {
   Q_OBJECT
-  Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
+  Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
+
 public:
   qMRMLTreeWidget(QWidget *parent=0);
   virtual ~qMRMLTreeWidget();
 
   vtkMRMLScene* mrmlScene()const;
 
+  /// Could be Transform, Displayable, ModelHierarchy or ""
+  QString sceneModelType()const;
+
   /// \sa qMRMLSceneModel::setListenNodeModifiedEvent
   void setListenNodeModifiedEvent(bool listen);
   /// \sa qMRMLSceneModel::listenNodeModifiedEvent
   bool listenNodeModifiedEvent()const;
 
+  /// Customize the model
+  void setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType);
+  
+  ///
+  /// Set/Get node types to display in the list
+  /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
+  /// vtkMRMLTransformNode
+  QStringList nodeTypes()const;
+  void setNodeTypes(const QStringList& nodeTypes);
+
   ///
   /// Retrieve the sortFilterProxyModel used to filter/sort
-  /// the nodes
+  /// the nodes.
+  /// The returned value can't be null.
   qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
 
+  virtual QSize sizeHint()const;
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
-  void setSceneModel(const QString& modelName);
+
+  /// If the modelType doesn't match any known model, nothing
+  /// will happen
+  void setSceneModelType(const QString& modelType);
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
 
 protected slots:
   void onActivated(const QModelIndex& index);
-protected:
-  virtual void updateGeometries();
+  
 protected:
   QScopedPointer<qMRMLTreeWidgetPrivate> d_ptr;
 
+  // reimplemented for performance issues
+  virtual void updateGeometries();
 private:
   Q_DECLARE_PRIVATE(qMRMLTreeWidget);
   Q_DISABLE_COPY(qMRMLTreeWidget);
