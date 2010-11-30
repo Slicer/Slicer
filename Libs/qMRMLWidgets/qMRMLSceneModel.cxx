@@ -705,7 +705,7 @@ void qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int r
   if (parent)
     {
     parent->insertRow(row, items);
-    Q_ASSERT(parent->columnCount() == 2);
+    //Q_ASSERT(parent->columnCount() == 2);
     }
   else
     {
