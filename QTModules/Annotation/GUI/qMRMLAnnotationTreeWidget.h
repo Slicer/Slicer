@@ -23,6 +23,8 @@
 
 // Qt includes
 #include <QTreeView>
+// Annotation QT includes
+#include "GUI/qSlicerAnnotationModuleWidget.h"
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -32,6 +34,8 @@
 
 #include "qSlicerAnnotationModuleExport.h"
 
+// Logic includes
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 class qMRMLSortFilterProxyModel;
 class qMRMLAnnotationTreeWidgetPrivate;
@@ -48,6 +52,17 @@ public:
 
   void hideScene();
 
+  const char* getFirstSelectedNode();
+
+  // Register the widget
+  void setAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
+
+  // Register the logic
+  void setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic);
+
+  /// Refresh the view
+  void refresh();
+
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
 
@@ -56,13 +71,29 @@ signals:
 
 protected slots:
   void onActivated(const QModelIndex& index);
+  void onClicked(const QModelIndex& index);
+  void onDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight);
 
 protected:
   QScopedPointer<qMRMLAnnotationTreeWidgetPrivate> d_ptr;
+  #ifndef QT_NO_CURSOR
+    void mouseMoveEvent(QMouseEvent* e);
+    bool viewportEvent(QEvent* e);
+  #endif
 
 private:
   Q_DECLARE_PRIVATE(qMRMLAnnotationTreeWidget);
   Q_DISABLE_COPY(qMRMLAnnotationTreeWidget);
+
+  qSlicerAnnotationModuleWidget* m_Widget;
+  vtkSlicerAnnotationModuleLogic* m_Logic;
+
+  // toggle the visibility of an annotation
+  void onVisibilityColumnClicked(vtkMRMLNode* node);
+
+  // toggle un-/lock of an annotation
+  void onLockColumnClicked(vtkMRMLNode* node);
+
 };
 
 #endif

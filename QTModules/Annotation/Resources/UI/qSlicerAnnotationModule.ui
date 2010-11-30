@@ -287,7 +287,11 @@
            <item>
             <widget class="QPushButton" name="addHierarchyButton">
              <property name="text">
-              <string>+H</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerAnnotationModule.qrc">
+               <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
            </item>

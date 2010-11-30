@@ -512,6 +512,8 @@ void qSlicerAnnotationModuleWidget::setup()
   this->disableAllAnnotationTools();
   this->enableAllAnnotationTools();
 
+  d->hierarchyTreeWidget->setAndObserveWidget(this);
+  d->hierarchyTreeWidget->setAndObserveLogic(d->logic());
   d->hierarchyTreeWidget->setMRMLScene(this->logic()->GetMRMLScene());
   d->hierarchyTreeWidget->hideScene();
 
@@ -1949,7 +1951,8 @@ void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->logic()->PlaceFiducial(0,0,0);
+  d->logic()->SetActiveHierarchyNodeByID(d->hierarchyTreeWidget->getFirstSelectedNode());
+  d->logic()->AddHierarchy();
 }
 
 //-----------------------------------------------------------------------------
@@ -2160,6 +2163,7 @@ void qSlicerAnnotationModuleWidget::addNodeToTable(const char* newNodeID)
   const char * textValue = d->logic()->GetAnnotationText(newNodeID);
 
 
+
   d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
   //this->selectRowByIndex(m_index);
 
@@ -2202,6 +2206,13 @@ void qSlicerAnnotationModuleWidget::addNodeToTree(const char* hierarchyNodeID, c
   //d->updateAnnotation(m_index, QString(measurementValue), QString(textValue));
   //this->selectRowByIndex(m_index);
 
+}
+
+void qSlicerAnnotationModuleWidget::refreshTree()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+  d->hierarchyTreeWidget->setMRMLScene(d->logic()->GetMRMLScene());
+  d->hierarchyTreeWidget->hideScene();
 }
 
 //-----------------------------------------------------------------------------

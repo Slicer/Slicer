@@ -171,7 +171,7 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
     return;
     }
 
-  vtkMRMLAnnotationHierarchyNode* hierarchyNode = this->AddNewHierarchyNode(annotationNode);
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = this->AddHierarchyNodeForAnnotation(annotationNode);
   if (!hierarchyNode)
     {
     vtkErrorMacro("OnMRMLSceneNodeAddedEvent: No hierarchyNode found.")
@@ -313,7 +313,12 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationHierarchy
     return;
     }
 
+
   this->m_Widget->addNodeToTable(annotationNode->GetID());
+
+  // refresh the hierarchy tree
+  this->m_Widget->refreshTree();
+
   this->m_LastAddedAnnotationNode = annotationNode;
 
 }
@@ -462,6 +467,13 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   vtkMRMLAnnotationFiducialNode* annotationFiducialNode = vtkMRMLAnnotationFiducialNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationFiducialNode);
   annotationFiducialNode->Delete();
+
+  //
+  // Annotation hierarchies
+  //
+  vtkMRMLAnnotationHierarchyNode* annotationHierarchyNode = vtkMRMLAnnotationHierarchyNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyNode);
+  annotationHierarchyNode->Delete();
 
 }
 
@@ -889,6 +901,12 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
     return ":/Icons/ViewCamera.png";
 
     }
+  else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+    {
+
+    return ":/Icons/Data.png";
+
+    }
 
   return 0;
 
@@ -1186,16 +1204,12 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationView(const char * id)
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-// Return the toplevel Annotation hierarchy node or create one if there is none
+// Return the toplevel Annotation hierarchy node or create one if there is none.
+// If an optional annotationNode is given, insert the toplevel hierarchy before it. If not,
+// just add the toplevel hierarchy node.
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNode(vtkMRMLAnnotationNode* annotationNode)
 {
-
-  if (!annotationNode)
-    {
-    vtkErrorMacro("GetTopLevelHierarchyNode: We need the annotationNode here")
-    return 0;
-    }
 
   vtkMRMLAnnotationHierarchyNode* toplevelNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLAnnotationHierarchyNode"));
 
@@ -1204,34 +1218,47 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::GetTopLevelHiera
     // no annotation hierarchy node is currently in the scene, create a new one
     toplevelNode = vtkMRMLAnnotationHierarchyNode::New();
     toplevelNode->SetScene(this->GetMRMLScene());
+    // TODO we somehow have to hide this node
     toplevelNode->HideFromEditorsOff();
     toplevelNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationToplevelHierarchyNode"));
 
-    this->GetMRMLScene()->InsertBeforeNode(annotationNode,toplevelNode);
+    if (!annotationNode)
+      {
+      this->GetMRMLScene()->AddNode(toplevelNode);
+      }
+    else
+      {
+      this->GetMRMLScene()->InsertBeforeNode(annotationNode,toplevelNode);
+      }
     }
 
   return toplevelNode;
 }
 
 //---------------------------------------------------------------------------
-// Add a new annotation hierarchy node under the active hierarchy node. If there is no
+// Add a new annotation hierarchy node for a given annotationNode.
+// The active hierarchy node will be the parent. If there is no
 // active hierarchy node, use the top-level annotation hierarchy node as the parent.
 // If there is no top-level annotation hierarchy node, create additionally a top-level hierarchy node which serves as
 // a parent to the new hierarchy node. Return the new hierarchy node.
 //---------------------------------------------------------------------------
-vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddNewHierarchyNode(vtkMRMLAnnotationNode* annotationNode)
+vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNodeForAnnotation(vtkMRMLAnnotationNode* annotationNode)
 {
-
-  if (!annotationNode)
-    {
-    vtkErrorMacro("GetTopLevelHierarchyNode: We need the annotationNode here")
-    return 0;
-    }
 
   if (!this->m_ActiveHierarchy)
     {
     // no active hierarchy node, this means we create the new node directly under the top-level hierarchy node
-    vtkMRMLAnnotationHierarchyNode* toplevelHierarchyNode = this->GetTopLevelHierarchyNode(annotationNode);
+    vtkMRMLAnnotationHierarchyNode* toplevelHierarchyNode = 0;
+    if (!annotationNode)
+      {
+      // we just add a new toplevel hierarchy node
+      toplevelHierarchyNode = this->GetTopLevelHierarchyNode(0);
+      }
+    else
+      {
+      // we need to insert the new toplevel hierarchy before the given annotationNode
+      toplevelHierarchyNode = this->GetTopLevelHierarchyNode(annotationNode);
+      }
 
     this->m_ActiveHierarchy = toplevelHierarchyNode;
 
@@ -1248,12 +1275,36 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddNewHierarchyN
   hierarchyNode->SetScene(this->GetMRMLScene());
   hierarchyNode->SetParentNodeID(this->m_ActiveHierarchy->GetID());
   hierarchyNode->SetScene(this->GetMRMLScene());
-  hierarchyNode->HideFromEditorsOff();
-  hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationHierarchyNode"));
 
-  this->GetMRMLScene()->InsertBeforeNode(annotationNode,hierarchyNode);
+  hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationHierarchy"));
+
+  if (!annotationNode)
+    {
+    hierarchyNode->HideFromEditorsOff();
+    this->GetMRMLScene()->AddNode(hierarchyNode);
+    }
+  else
+    {
+    // TODO
+    hierarchyNode->HideFromEditorsOff();
+    this->GetMRMLScene()->InsertBeforeNode(annotationNode,hierarchyNode);
+    }
 
   return hierarchyNode;
+
+}
+
+//---------------------------------------------------------------------------
+// Add a new visible annotation hierarchy.
+// The active hierarchy node will be the parent. If there is no
+// active hierarchy node, use the top-level annotation hierarchy node as the parent.
+// If there is no top-level annotation hierarchy node, create additionally a top-level hierarchy node which serves as
+// a parent to the new hierarchy node. Return the new hierarchy node.
+//---------------------------------------------------------------------------
+vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchy()
+{
+
+  return this->AddHierarchyNodeForAnnotation(0);
 
 }
 
@@ -1264,6 +1315,28 @@ void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNode(vtkMRMLAnnotationHie
   this->m_ActiveHierarchy = hierarchyNode;
 }
 
+//---------------------------------------------------------------------------
+// Set the active hierarchy node which will be used as a parent for new annotations
+void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeByID(const char* id)
+{
+  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
+
+  if (!node)
+    {
+    vtkErrorMacro("SetActiveHierarchyNodeByID: Could not find node.")
+    return;
+    }
+
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+
+  if (!hierarchyNode)
+    {
+    vtkErrorMacro("SetActiveHierarchyNodeByID: Could not find hierarchy node.")
+    return;
+    }
+
+  this->m_ActiveHierarchy = hierarchyNode;
+}
 
 
 //---------------------------------------------------------------------------

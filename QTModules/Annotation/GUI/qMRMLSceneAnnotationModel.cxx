@@ -52,121 +52,212 @@ qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
 qMRMLSceneAnnotationModel::~qMRMLSceneAnnotationModel()
 {
 }
-/*
+
 //------------------------------------------------------------------------------
-void qMRMLSceneAnnotationModel::updateScene()
+void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
+{
+  this->qMRMLSceneDisplayableModel::updateNodeFromItem(node,item);
+
+  this->m_Widget->refreshTree();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
 
-  // save extra items
-  QStringList oldPreItems = this->preItems(0);
-  QStringList oldPostItems = this->postItems(0);
+  // from qMRMLSceneModel
+  bool oldBlock = this->blockSignals(true);
+  item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+  item->setData(QString(node->GetID()), qMRML::UIDRole);
+  item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRML::PointerRole);
+  this->blockSignals(oldBlock);
 
-  QStringList oldScenePreItems, oldScenePostItems;
-  QList<QStandardItem*> oldSceneItem = this->findItems("Scene");
-  if (oldSceneItem.size())
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+
+  switch (column)
     {
-    oldScenePreItems = this->preItems(oldSceneItem[0]);
-    oldScenePostItems = this->postItems(oldSceneItem[0]);
+    case qMRMLSceneAnnotationModel::VisibilityColumn:
+      // the visibility icon
+      this->blockSignals(true);
+      item->setFlags(item->flags() | Qt::ItemIsSelectable);
+      this->blockSignals(oldBlock);
+
+      if (annotationNode)
+        {
+        if (annotationNode->GetVisible())
+          {
+          item->setData(QPixmap(":/Icons/AnnotationVisibility.png"),Qt::DecorationRole);
+          }
+        else
+          {
+          item->setData(QPixmap(":/Icons/AnnotationInvisible.png"),Qt::DecorationRole);
+          }
+        break;
+        }
+      // TODO for hierarchies..
+      item->setData(QPixmap(":/Icons/AnnotationVisibility.png"),Qt::DecorationRole);
+      break;
+    case qMRMLSceneAnnotationModel::LockColumn:
+      // the lock/unlock icon
+      this->blockSignals(true);
+      item->setFlags(item->flags() | Qt::ItemIsSelectable);
+      this->blockSignals(oldBlock);
+
+      if (annotationNode)
+        {
+        if (annotationNode->GetLocked())
+          {
+          item->setData(QPixmap(":/Icons/AnnotationLock.png"),Qt::DecorationRole);
+          }
+        else
+          {
+          item->setData(QPixmap(":/Icons/AnnotationUnlock.png"),Qt::DecorationRole);
+          }
+        break;
+        }
+      // TODO for hierarchies..
+      item->setData(QPixmap(":/Icons/AnnotationUnlock.png"),Qt::DecorationRole);
+      break;
+    case qMRMLSceneAnnotationModel::EditColumn:
+        // the annotation type icon
+        this->blockSignals(true);
+        item->setFlags(item->flags() | Qt::ItemIsSelectable);
+        this->blockSignals(oldBlock);
+        item->setData(QPixmap(this->m_Logic->GetAnnotationIcon(node->GetID())),Qt::DecorationRole);
+        break;
+    case qMRMLSceneAnnotationModel::ValueColumn:
+      if (annotationNode)
+        {
+        // the annotation measurement
+        this->blockSignals(true);
+        item->setFlags(item->flags() | Qt::ItemIsSelectable);
+        this->blockSignals(oldBlock);
+        item->setText(QString(this->m_Logic->GetAnnotationMeasurement(annotationNode->GetID(),false)));
+        break;
+        }
+      else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+        {
+        this->blockSignals(true);
+        item->setFlags(item->flags() | Qt::ItemIsSelectable);
+        this->blockSignals(oldBlock);
+        item->setText(QString(node->GetName()));
+        break;
+        }
+    case qMRMLSceneAnnotationModel::TextColumn:
+      if (annotationNode)
+        {
+        // the annotation text
+        this->blockSignals(true);
+        item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsSelectable);
+        this->blockSignals(oldBlock);
+        item->setText(QString(this->m_Logic->GetAnnotationText(annotationNode->GetID())));
+        break;
+        }
     }
 
-  int oldColumnCount = this->columnCount();
-  this->clear();
-  this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
-  this->setColumnCount(oldColumnCount);
 
-  // restore extra items
-  this->setPreItems(oldPreItems, 0);
-  this->setPostItems(oldPostItems, 0);
-  if (this->mrmlScene == 0)
+  // from qMRMLSceneDisplayableModel
+  this->blockSignals(oldBlock);
+  if (qMRMLSceneDisplayableModel::canBeAChild(node))
+    {
+    item->setFlags(item->flags() | Qt::ItemIsDragEnabled);
+    }
+  if (qMRMLSceneDisplayableModel::canBeAParent(node))
+    {
+    item->setFlags(item->flags() | Qt::ItemIsDropEnabled);
+    }
+  this->blockSignals(oldBlock);
+  QStandardItem* parentItem = item->parent();
+  QStandardItem* newParentItem = this->itemFromNode(qMRMLSceneDisplayableModel::parentNode(node));
+  if (newParentItem == 0)
+    {
+    newParentItem = this->mrmlSceneItem();
+    }
+  // if the item has no parent, then it means it hasn't been put into the scene yet.
+  // and it will do it automatically.
+  if (parentItem != 0 && (parentItem != newParentItem || qMRMLSceneDisplayableModel::nodeIndex(node) != item->row()))
+    {
+    QList<QStandardItem*> children = parentItem->takeRow(item->row());
+    int min = this->preItems(newParentItem).count();
+    int max = newParentItem->rowCount() - this->postItems(newParentItem).count();
+    int pos = qMin(min + qMRMLSceneDisplayableModel::nodeIndex(node), max);
+    newParentItem->insertRow(pos, children);
+    }
+
+  this->m_TreeView->refresh();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneAnnotationModel::columnCount(const QModelIndex &_parent)const
+{
+  Q_UNUSED(_parent);
+  return 6;
+}
+
+//------------------------------------------------------------------------------
+QVariant qMRMLSceneAnnotationModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role == Qt::DisplayRole)
+    {
+        if (orientation == Qt::Horizontal) {
+            switch (section)
+            {
+            case 0:
+                return QString("");
+            case 1:
+                return QString("Vis");
+            case 2:
+                return QString("Lock");
+            case 3:
+                return QString("Edit");
+            case 4:
+                return QString("Value");
+            case 5:
+                return QString("Text");
+            }
+        }
+    }
+    return QVariant();
+}
+
+//-----------------------------------------------------------------------------
+/// Set and observe the GUI widget
+//-----------------------------------------------------------------------------
+void qMRMLSceneAnnotationModel::setAndObserveWidget(qSlicerAnnotationModuleWidget* widget)
+{
+  if (!widget)
     {
     return;
     }
 
-  // Add scene item
-  QList<QStandardItem*> sceneItems;
-  QStandardItem* sceneItem = new QStandardItem;
-  sceneItem->setFlags(Qt::ItemIsDropEnabled | Qt::ItemIsEnabled);
-  sceneItem->setText("Scene");
-  sceneItem->setData("scene", qMRML::UIDRole);
-  sceneItem->setData(QVariant::fromValue(reinterpret_cast<long long>(d->MRMLScene)), qMRML::PointerRole);
-  sceneItems << sceneItem;
-  sceneItems << new QStandardItem;
-  sceneItems[1]->setFlags(0);
-  this->insertRow(oldPreItems.count(), sceneItems);
-  this->setPreItems(oldScenePreItems, sceneItem);
-  this->setPostItems(oldScenePostItems, sceneItem);
+  this->m_Widget = widget;
 
-  // Populate scene with nodes
-  this->populateScene();
 }
 
-//------------------------------------------------------------------------------
-void qMRMLSceneAnnotationModel::populateScene()
+//-----------------------------------------------------------------------------
+/// Set and observe the logic
+//-----------------------------------------------------------------------------
+void qMRMLSceneAnnotationModel::setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic)
 {
-  // Add nodes
-  vtkMRMLNode *node = 0;
-  vtkCollectionSimpleIterator it;
-  int row = 0;
-  for (this->mrmlScene->GetCurrentScene()->InitTraversal(it);
-       (node = (vtkMRMLNode*)this->mrmlScene->GetCurrentScene()->GetNextItemAsObject(it)) ;)
+  if (!logic)
     {
-    if (!node->IsA("vtkMRMLAnnotationNode") && !node->IsA("vtkMRMLAnnotationHierarchyNode"))
-      {
-      break;
-      }
-
-    this->insertNode(node, this->invisibleRootItem(), row++);
+    return;
     }
+
+  this->m_Logic = logic;
+
 }
-*/
-//------------------------------------------------------------------------------
-/*vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)
+
+//-----------------------------------------------------------------------------
+/// Set and observe the treeView
+//-----------------------------------------------------------------------------
+void qMRMLSceneAnnotationModel::setAndObserveTreeView(qMRMLAnnotationTreeWidget* treeView)
 {
-  if (node == NULL)
+  if (!treeView)
     {
-    return 0;
+    return;
     }
 
-  // MRML Displayable nodes (inherits from transformable)
-  vtkMRMLAnnotationNode *displayableNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+  this->m_TreeView = treeView;
 
-  if (!displayableNode->IsA("vtkMRMLAnnotationLinesNode"))
-    {
-    return 0;
-    }
-  if (!displayableNode->IsA("vtkMRMLAnnotationControlPointsNode"))
-    {
-    return 0;
-    }
-  if (!displayableNode->IsA("vtkMRMLAnnotationTextNode"))
-    {
-    return 0;
-    }
-
-
-  vtkMRMLDisplayableHierarchyNode * displayableHierarchyNode = NULL;
-  if (displayableNode &&
-      displayableNode->GetScene() &&
-      displayableNode->GetID())
-    {
-    // get the displayable hierarchy node associated with this displayable node
-    displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
-    if (displayableHierarchyNode)
-      {
-      return displayableHierarchyNode;
-      }
-    }
-  if (displayableHierarchyNode == NULL)
-    {
-    // the passed in node might have been a hierarchy node instead, try to
-    // cast it
-    displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
-    }
-  if (displayableHierarchyNode)
-    {
-    // return it's parent
-    return displayableHierarchyNode->GetParentNode();
-    }
-  return 0;
 }
-*/

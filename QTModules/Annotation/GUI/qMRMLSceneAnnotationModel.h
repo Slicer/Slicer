@@ -23,7 +23,14 @@
 
 #include "qMRMLSceneDisplayableModel.h"
 
+// Annotation QT includes
+#include "GUI/qSlicerAnnotationModuleWidget.h"
+#include "GUI/qMRMLAnnotationTreeWidget.h"
+
 #include "qSlicerAnnotationModuleExport.h"
+
+// Logic includes
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 class qMRMLSceneAnnotationModelPrivate;
 class vtkMRMLNode;
@@ -35,10 +42,43 @@ public:
   qMRMLSceneAnnotationModel(QObject *parent=0);
   virtual ~qMRMLSceneAnnotationModel();
 
+  // Register the widget
+  void setAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
+
+  // Register the logic
+  void setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic);
+
+  // Register the treeView
+  void setAndObserveTreeView(qMRMLAnnotationTreeWidget* treeView);
+
+  // Enum for the different columns
+  enum Columns{
+    VisibilityColumn = 1,
+    LockColumn = 2,
+    EditColumn = 3,
+    ValueColumn = 4,
+    TextColumn = 5
+  };
+
+  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+
+
 protected:
+
+  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
+
+  virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+
+  virtual int columnCount(const QModelIndex &parent=QModelIndex())const;
 
 private:
   Q_DISABLE_COPY(qMRMLSceneAnnotationModel);
+
+  qSlicerAnnotationModuleWidget* m_Widget;
+  vtkSlicerAnnotationModuleLogic* m_Logic;
+
+  qMRMLAnnotationTreeWidget* m_TreeView;
+
 };
 
 #endif

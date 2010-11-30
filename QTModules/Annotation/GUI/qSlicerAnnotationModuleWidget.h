@@ -52,6 +52,8 @@ public:
 
     void addNodeToTree(const char* hierarchyNodeID, const char* annotationNodeID);
 
+    void refreshTree();
+
     //BTX
     /// Different Annotation Types
     enum

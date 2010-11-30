@@ -108,15 +108,18 @@ public:
   //
   // Hierarchy functionality
   //
-  /// Get the toplevel Annotation hierarchy node
-  /// If no toplevel hierarchy node exists, insert it before the annotationNode
-  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLAnnotationNode* annotationNode);
-
-  /// Add a new Annotation hierarchy node before the annotation node in the scene order
-  vtkMRMLAnnotationHierarchyNode* AddNewHierarchyNode(vtkMRMLAnnotationNode* annotationNode);
+  /// Add a new visible annotation hierarchy.
+  /// The active hierarchy node will be the parent. If there is no
+  /// active hierarchy node, use the top-level annotation hierarchy node as the parent.
+  /// If there is no top-level annotation hierarchy node, create additionally a top-level hierarchy node which serves as
+  /// a parent to the new hierarchy node. Return the new hierarchy node.
+  vtkMRMLAnnotationHierarchyNode* AddHierarchy();
 
   /// Set the active hierarchy node which will be used as a parent for new annotations
   void SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode* hierarchyNode);
+
+  /// Set the active hierarchy node which will be used as a parent for new annotations
+  void SetActiveHierarchyNodeByID(const char* id);
 
   //
   // SnapShot functionality
@@ -183,6 +186,23 @@ private:
   vtkMRMLAnnotationHierarchyNode* m_ActiveHierarchy;
 
   vtksys_stl::string m_StringHolder;
+
+  //
+  // Private hierarchy functionality.
+  //
+  /// Return the toplevel Annotation hierarchy node or create one if there is none:
+  /// If an optional annotationNode is given, insert the new toplevel hierarchy before it. If not,
+  /// just add the new toplevel hierarchy node.
+  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLAnnotationNode* annotationNode=0);
+
+  /// Add a new annotation hierarchy node for a given annotationNode.
+  /// If there is an optional annotationNode, insert the new hierarchy node before it else just add it.
+  /// The active hierarchy node will be the parent. If there is no
+  /// active hierarchy node, use the top-level annotation hierarchy node as the parent.
+  /// If there is no top-level annotation hierarchy node, create additionally a top-level hierarchy node which serves as
+  /// a parent to the new hierarchy node. Return the new hierarchy node.
+  vtkMRMLAnnotationHierarchyNode* AddHierarchyNodeForAnnotation(vtkMRMLAnnotationNode* annotationNode=0);
+
 
 };
 
