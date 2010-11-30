@@ -498,6 +498,11 @@ void qSlicerEMSegmentAnatomicalTreeWidget::updateWidgetFromMRML()
     logger.warn("updateWidgetFromMRML - MRMLManager is NULL");
     return;
     }
+  if (!this->mrmlScene())
+    {
+    logger.warn("updateWidgetFromMRML - MRML Scene is NULL");
+    return;
+    }
 
   d->CurrentColorTableNode = vtkMRMLColorTableNode::SafeDownCast(
       this->mrmlScene()->GetNodeByID(this->mrmlManager()->GetColormap()?

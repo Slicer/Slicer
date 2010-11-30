@@ -67,6 +67,8 @@ int qSlicerEMSegmentAnatomicalTreeWidgetTest1( int argc, char * argv [] )
   ctkVerify2(logic->GetMRMLManager(), "Problem with vtkSlicerEMSegmentLogic::GetMRMLManager");
 
   qSlicerEMSegmentAnatomicalTreeWidget anatomicalTreeWidget;
+  ctkExerciseMethod(&anatomicalTreeWidget, setMRMLScene, mrmlScene,
+                    scene, scene);
 
   // Set MRMLManager to the widget
   ctkExerciseMethod(&anatomicalTreeWidget, setMRMLManager, mrmlManager,
@@ -93,11 +95,9 @@ int qSlicerEMSegmentAnatomicalTreeWidgetTest1( int argc, char * argv [] )
   anatomicalTreeWidget.updateWidgetFromMRML();
   anatomicalTreeWidget.show();
 
-  QTimer autoExit;
   if (argc < 3 || QString(argv[2]) != "-I")
     {
-    QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
-    autoExit.start(1000);
+    QTimer::singleShot(200, &app, SLOT(quit()));
     }
 
   return app.exec();
