@@ -38,9 +38,6 @@
      <property name="resizeMode">
       <enum>QListView::Adjust</enum>
      </property>
-     <property name="layoutMode">
-      <enum>QListView::Batched</enum>
-     </property>
      <property name="uniformItemSizes">
       <bool>true</bool>
      </property>
