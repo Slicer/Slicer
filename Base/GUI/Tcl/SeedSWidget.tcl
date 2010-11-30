@@ -321,7 +321,7 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
     return 
   }
 
-  if { $_actionState != "dragging" } {
+  if { $_actionState != "dragging" && !$inactive } {
     # only check pick if we haven't grabbed (avoid 'dropping' the widget
     # when the mouse moves quickly)
     $this pick

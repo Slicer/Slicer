@@ -38,6 +38,9 @@ namespace eval SWidget {
         if { [catch "eval $instance $args" res] } {
           catch "puts $res"
           catch "puts $::errorInfo"
+          if { [string match "*bad alloc*" $res] } {
+            ::bgerror $res
+          }
         }
       }
     }
@@ -431,7 +434,7 @@ itcl::body SWidget::processUpdate {} {
 
 itcl::body SWidget::requestDelayedAnnotation { } {
     $this cancelDelayedAnnotation
-    set _annotationTaskID [after 300 $this processDelayedAnnotation]
+    set _annotationTaskID [after 300 ::SWidget::ProtectedCallback $this processDelayedAnnotation]
 }
 
 itcl::body SWidget::processDelayedAnnotation { } {

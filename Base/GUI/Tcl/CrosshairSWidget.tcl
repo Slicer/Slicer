@@ -36,7 +36,7 @@ if { [itcl::find class CrosshairSWidget] == "" } {
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
-    method updateCrosshair { } {}
+    method updateCrosshair { visible } {}
     method resetCrosshair { } {}
     method addCrosshairLine { startPoint endPoint } {}
 
@@ -45,6 +45,7 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     method unhighlight { } {}
 
     # set the position of the crosshair actor (does not modify the crosshair node)
+    # returns whether the crosshair is visible on in the viewer
     method setPosition { r a s } {}
   }
 }
@@ -137,7 +138,7 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
   # events do not call modified when resetting the SliceCompositeNodes
   $::slicer3::Broker AddObservation $::slicer3::MRMLScene 66003 "::SWidget::ProtectedCallback $this processEvent $::slicer3::MRMLScene SceneClosedEvent"
 
-  $this updateCrosshair
+  $this updateCrosshair 1
 }
 
 
@@ -175,6 +176,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
   if { [$_crosshairNode GetCrosshairMode] == 0 } {
       # don't bother to calculate anything if we aren't visible anyway...
       $o(crosshairActor) VisibilityOff
+      $o(crosshairHighlightActor) VisibilityOff
       [$sliceGUI GetSliceViewer] RequestRender
       return
   }
@@ -232,10 +234,10 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 
       # position crosshair actor
       foreach {r a s} [$_crosshairNode GetCrosshairRAS] {}
-      $this setPosition $r $a $s
+      set visible [$this setPosition $r $a $s]
       
       # update the design and properties of the crosshair
-      $this updateCrosshair
+      $this updateCrosshair $visible
 
 #      if { [$_crosshairNode GetNavigation] == 0 } {
 #          puts "call is crosshair node $this [expr rand()]"
@@ -247,7 +249,7 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 
 
   if { $caller == $::slicer3::MRMLScene && $event == "SceneClosedEvent" } {
-      $this updateCrosshair
+      $this updateCrosshair 1
       return
   }
 
@@ -276,9 +278,9 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
           "ConfigureEvent" {
               # need to rebuild the crosshairs that span the whole window and reposition to 
               # the same RAS position
-              $this setPosition [$_crosshairNode GetCrosshairRAS]
+              set visible [$this setPosition [$_crosshairNode GetCrosshairRAS]]
 
-              $this updateCrosshair
+              $this updateCrosshair $visible
               return
           }
           "LeaveEvent" {
@@ -479,8 +481,8 @@ itcl::body CrosshairSWidget::resetCrosshair { } {
   $o(crosshairHighlightLines) SetNumberOfCells 0
   $o(crosshairHighlightVerts) SetNumberOfCells 0
 
-  $o(crosshairActor) VisibilityOff
-  $o(crosshairHighlightActor) VisibilityOff
+#  $o(crosshairActor) VisibilityOff
+#  $o(crosshairHighlightActor) VisibilityOff
 
 }
 
@@ -504,7 +506,7 @@ itcl::body CrosshairSWidget::addCrosshairLine { startPoint endPoint } {
 #
 # make the crosshair object
 #
-itcl::body CrosshairSWidget::updateCrosshair { } {
+itcl::body CrosshairSWidget::updateCrosshair { visible } {
 
   $this resetCrosshair
 
@@ -573,8 +575,13 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
     }
   }
 
-  if { [$_crosshairNode GetCrosshairMode] != 0 } {
+  if { $visible && [$_crosshairNode GetCrosshairMode] != 0 } {
+      #puts "[$_sliceNode GetSingletonTag] is now visible"
       $o(crosshairActor) VisibilityOn
+  } else {
+      #puts "[$_sliceNode GetSingletonTag] is now hidden"
+      $o(crosshairActor) VisibilityOff
+      $o(crosshairHighlightActor) VisibilityOff
   }
 
   if { [$_crosshairNode GetCrosshairThickness] == 1 } {
@@ -626,7 +633,7 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
 
 itcl::body CrosshairSWidget::setPosition { r a s } {
 
-  set changed 0
+  set visible 0
 
   $this queryLayers 0 0
   foreach {x y z } [rasToXYZ "$r $a $s"] {}
@@ -644,8 +651,6 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
       # switching viewports
       $_renderer RemoveActor2D $o(crosshairActor)
       $_renderer RemoveActor2D $o(crosshairHighlightActor)
-
-      set changed 1
     }
 
     # get the new viewport
@@ -658,32 +663,21 @@ itcl::body CrosshairSWidget::setPosition { r a s } {
     }
   }
   
-  # position the actor (but don't set "changed", causes too many renders)
+  # position the actor 
   set oldPosition [$o(crosshairActor) GetPosition]
   if { [lindex $oldPosition 0] != $x || [lindex $oldPosition 1] != $y } {
-    # don't set "changed" just for moving the actor, it causes too
-    # many additional renders
     $o(crosshairActor) SetPosition $x $y
     $o(crosshairHighlightActor) SetPosition $x $y
   } 
 
-  # turn the actor on/off depending on whether it is NEWLY visible or not
   if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
-    # cursor is visible on the displayed slice, check if this is a state change
-    if { [$o(crosshairActor) GetVisibility] == 0} {
-      $o(crosshairActor) VisibilityOn
-      set changed 1
-    }
+      #puts "[$_sliceNode GetSingletonTag] should be visible"
+      set visible 1
   } else {
-    # cursor is not visible on any currently displayed slice, check if this is a state change
-    if { [$o(crosshairActor) GetVisibility] == 1} {
-      $o(crosshairActor) VisibilityOff
-      $o(crosshairHighlightActor) VisibilityOff
-      set changed 1
-    }
+      #puts "[$_sliceNode GetSingletonTag] should be hidden"
   }
 
-  return $changed
+  return $visible
 }
 
 itcl::body CrosshairSWidget::pick {} {

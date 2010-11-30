@@ -50,30 +50,6 @@ itcl::body VolumeDisplaySWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
  
-  if { 0 } {
-    # placeholder - may want to create a histogram and window/level display here
-    set o(glyph) [$this createGlyph]
-    set o(glyphTransform) [vtkNew vtkTransform]
-    set o(glyphTransformFilter) [vtkNew vtkTransformPolyDataFilter]
-    $o(glyphTransformFilter) SetInput $o(glyph)
-    $o(glyphTransformFilter) SetTransform $o(glyphTransform)
-    set o(mapper) [vtkNew vtkPolyDataMapper2D]
-    set o(actor) [vtkNew vtkActor2D]
-    $o(mapper) SetInput [$o(glyphTransformFilter) GetOutput]
-    $o(actor) SetMapper $o(mapper)
-    set _renderer [$_renderWidget GetRenderer]
-    $_renderer AddActor2D $o(actor)
-    lappend _actors $o(actor)
-
-    set o(textActor) [vtkNew vtkActor2D]
-    set o(textMapper) [vtkNew vtkTextMapper]
-    $o(textActor) SetMapper $o(textMapper)
-    $_renderer AddActor2D $o(textActor)
-    set textProperty [$o(textMapper) GetTextProperty]
-    $textProperty ShadowOn
-    lappend _actors $o(textActor)
-  }
-
   set _startPosition "0 0 0"
   set _currentPosition "0 0 0"
 
@@ -180,19 +156,19 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
           [$sliceGUI GetSliceViewer] RequestRender
           set window [format %.1f $window]
           set level [format %.1f $level]
-          # TODO: this is a hack - make up for the GUI not observing mrml by explicitly
-          # telling it to update from the changes we made to the mrml node
-          if { [info exists ::slicer3::VolumesGUI] } {
-            set widget [$::slicer3::VolumesGUI GetVolumeDisplayWidget]
-            if { $widget != "" } {
-              [$::slicer3::VolumesGUI GetVolumeDisplayWidget] UpdateWidgetFromMRML
-            }
-          }
           $this statusText "Window/Level: $window/$level for [$_layers(background,node) GetName]"
         }
       }
     }
     "LeftButtonReleaseEvent" {
+      # TODO: this is a hack - make up for the GUI not observing mrml by explicitly
+      # telling it to update from the changes we made to the mrml node
+      if { [info exists ::slicer3::VolumesGUI] } {
+        set widget [$::slicer3::VolumesGUI GetVolumeDisplayWidget]
+        if { $widget != "" } {
+          [$::slicer3::VolumesGUI GetVolumeDisplayWidget] UpdateWidgetFromMRML
+        }
+      }
       set _actionState ""
       $sliceGUI SetGrabID ""
       set _description ""

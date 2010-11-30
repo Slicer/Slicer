@@ -92,6 +92,7 @@ namespace eval Slicer3Adapters {
     variable _interactorStyle ""
     variable _slicerWindow ""
     variable _grabID ""
+    variable _activeLeftButtonTool ""
 
     # simple container methods
     method SetLogic {arg} {
@@ -105,9 +106,25 @@ namespace eval Slicer3Adapters {
     method SetMRMLScene {arg} { set ::slicer3::MRMLScene $arg}
     method GetMRMLScene {} { return $::slicer3::MRMLScene }
     method GetSliceNode {} { return [$_logic GetSliceNode]}
+
+    #TODO: DeleteEvent Observers on the sliceGUI are /probably/ not 
+    # needed since other parts of the infrastructure, like slice nodes,
+    # are already being observed and will also go away.  Also, most (all?)
+    # SWidgets self destruct cleanly if the sliceGUI instance is gone
+    method AddObserver {event script} {
+      # nothing
+      return "0"
+    }
+    method RemoveObserver {tag} {
+      # nothing
+    }
+
+    #TODO: will need to adapt this to slicer4's version of mouse 'ownership'
     method GetActiveLeftButtonTool {} { 
-      #TODO: will need to adapt this to slicer4's version of mouse 'ownership'
-      return ""
+      return $_activeLeftButtonTool
+    }
+    method SetActiveLeftButtonTool {arg} { 
+      set _activeLeftButtonTool $arg 
     }
 
     method IsA {arg} {
@@ -152,7 +169,7 @@ namespace eval Slicer3Adapters {
     }
 
     method GetCurrentGUIEvent {} {
-      puts "TODO: this method is deprecated - include event in observer command directly"
+      puts "TODO: GetCurrentGUIEvent is deprecated - include event in observer command directly"
     }
     method SetCurrentGUIEvent {args} {
       # do nothing
@@ -318,6 +335,9 @@ namespace eval Slicer3Adapters {
       $_cornerAnnotation VisibilityOn
     }
     method GetVTKWidget {} {return $_vtkWidget}
+    method GetRenderWindow {} {
+      return [$_interactor GetRenderWindow]
+    }
     method GetRenderer {} {
       return [[[$_interactor GetRenderWindow] GetRenderers] GetFirstRenderer]
     }
@@ -361,6 +381,21 @@ namespace eval Slicer3Adapters {
 
   itcl::class VTKWidget {
     # this is a stand-in for a kw wrapped tk widget
+
+    constructor {} {
+    }
+
+    destructor {
+    }
+
+    # parts of the application
+
+    # methods
+    method AddBinding {args} {puts "TODO: ignoring AddBinding $args"}
+  }
+
+  itcl::class vtkMRMLScriptedModuleNode {
+    # this is a stand-in for a mrml node
 
     constructor {} {
     }

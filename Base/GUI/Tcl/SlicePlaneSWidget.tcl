@@ -457,7 +457,7 @@ itcl::body SlicePlaneSWidget::isCompareViewMode { } {
   set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
   set viewArrangement [$layout GetViewArrangement]
 
-  if { $viewArrangement == 12 } {
+  if { $viewArrangement == 12 || $viewArrangement == 13 || $viewArrangement == 17 } {
     return 1
   } else {
     return 0

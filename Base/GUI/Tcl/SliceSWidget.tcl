@@ -43,8 +43,11 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartFOV "250 250 250"
     variable _actionLink 0
     variable _actionStartOrientation ""
+    variable _actionModifier ""
     variable _swidgets ""
     variable _inWidget 0
+    variable _lastLabelOpacity 1.0
+    variable _lastForegroundOpacity 1.0
 
     # methods
     method updateSWidgets {} {}
@@ -65,6 +68,8 @@ if { [itcl::find class SliceSWidget] == "" } {
     method isCompareViewMode {} {}
     method getSliceSWidgetForGUI { gui } {}
     method getInWidget {} {}
+    method startTranslate { x y  windowx windowy  rox roy  ras } {}
+    method endTranslate {} {}
   }
 }
 
@@ -250,6 +255,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
   set pokedRenderer [$_renderWidget GetRenderer]  
   foreach {w h} [$pokedRenderer GetSize] {}
 
+
   foreach {nodeW nodeH nodeD} [$_sliceNode GetDimensions] {}
   foreach {nodefovx nodefovy nodefovz} [$_sliceNode GetFieldOfView] {}
   if { [catch "expr $nodefovx"] } {
@@ -410,7 +416,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   #
   if { $caller != $_sliceNode } {
     $this resizeSliceNode
-  } 
+  }
 
   if { $calculateAnnotations } {
 
@@ -464,6 +470,14 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
   }
 
+  if { $_actionState == "Translate" && $_actionModifier == "Shift" } {
+    # need to check if the user has stopped doing a shift-drag
+    if { (![$_interactor GetShiftKey] && ![$_interactor GetControlKey]) || $event == "LeftButtonReleaseEvent" } {
+      $this endTranslate
+      set _actionModifier ""
+    }
+  }
+
   switch $event {
 
     "MouseMoveEvent" {
@@ -471,7 +485,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # Mouse move behavior governed by _actionState mode
       # - handle modifying the view
       #
-      if { [$_interactor GetShiftKey] } {
+      if { [$_interactor GetShiftKey] && $_actionState != "Translate" } {
         $this jumpOtherSlices $r $a $s
         # need to render to show the annotation
         [$sliceGUI GetSliceViewer] RequestRender
@@ -552,7 +566,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             $sliceGUI SetGUICommandAbortFlag 1
            }
           default {
-            # nothing needs to be done by default
+            # need to render to show the annotation
+            [$sliceGUI GetSliceViewer] RequestRender
           }
         }
       }
@@ -613,14 +628,26 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
         set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
+        set modeString ""
         if { $interactionNode != "" } {
-
           set mode [$interactionNode GetCurrentInteractionMode]
           set modeString [$interactionNode GetInteractionModeAsString $mode]
-          if { $modeString == "Place" } {
-            # AND PLACE FIDUCIAL.
-            FiducialsSWidget::AddFiducial $r $a $s
-          } 
+        }
+        if { $modeString == "Place" } {
+          # AND PLACE FIDUCIAL.
+          FiducialsSWidget::AddFiducial $r $a $s
+        } else {
+          if { [$_interactor GetShiftKey] || [$_interactor GetControlKey] } {
+            # shift-left-button is alias for middle mouse button to support 
+            # machines with no middle mouse button (e.g. macs)
+            # - shift+mouse move will also do jump all slices if no left button
+            #   is pressed.  This is unfortunate, but we use shift to be compatible
+            #   with the 3D viewer convention for pan
+            # - control key is also a translate modifier to make it easier
+            #   to avoid the jump slice issue.
+            $this startTranslate $x $y  $windowx $windowy  $rox $roy  $ras
+            set _actionModifier "Shift"
+          }
         }
       }
     }
@@ -629,7 +656,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         if { [$sliceGUI GetGrabID] == $this } {
             $sliceGUI SetGrabID ""
         }
-
         # RESET MOUSE MODE BACK TO
         # TRANSFORM, UNLESS USER HAS
         # SELECTED A PERSISTENT PICK OR
@@ -645,36 +671,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         }
     }
     "MiddleButtonPressEvent" {
-      $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
-
-      $this requestDelayedAnnotation
-      set _actionState "Translate"
-      set _actionStartXY "$x $y"
-      set _actionStartWindowXY "$windowx $windowy"
-      set _actionStartViewportOrigin "$rox $roy"
-      set _actionStartRAS $ras
-      set _actionLink [$_sliceCompositeNode GetLinkedControl]
-      $_sliceCompositeNode SetLinkedControl 0
-
-      $sliceGUI SetGrabID $this
-      $sliceGUI SetGUICommandAbortFlag 1
-
-      $o(storeXYToRAS) DeepCopy [$_sliceNode GetXYToRAS]
-      $o(storeSliceToRAS) DeepCopy [$_sliceNode GetSliceToRAS]
+        $this startTranslate $x $y  $windowx $windowy  $rox $roy  $ras
     }
     "MiddleButtonReleaseEvent" { 
-      $_sliceCompositeNode SetLinkedControl $_actionLink
-      set sliceLogics [$this getLinkedSliceLogics]
-      foreach logic $sliceLogics {
-          set snode [$logic GetSliceNode]
-          [$snode GetSliceToRAS] DeepCopy [$_sliceNode GetSliceToRAS]
-          $snode UpdateMatrices
-      }
-
-      $this requestDelayedAnnotation
-      set _actionState ""
-      $sliceGUI SetGrabID ""
-      $sliceGUI SetGUICommandAbortFlag 1
+        $this endTranslate
     }
     "MouseWheelForwardEvent" { 
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
@@ -691,6 +691,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $this resizeSliceNode
     }
     "EnterEvent" { 
+      #puts "Enter"
       set _inWidget 1
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
@@ -713,17 +714,22 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           $snode DisableModifiedEventOn
       }
       # modify each slice node
-      $_sliceNode SetSliceSpacingModeToAutomatic
-      foreach gui $sliceGUIs {
-          set snode [$gui GetSliceNode]
-          
-          # prescribe spacing for all guis
-          eval $snode SetPrescribedSliceSpacing $thisSliceSpacing
-          $snode SetSliceSpacingModeToPrescribed
+      #puts "Current node $_sliceNode Current gui $sliceGUI Current SliceWidget $this"
+      if { $sliceGUIs != $sliceGUI } {
+        # only adjust the spacing mode if there is something 
+        # linked to us
+        $_sliceNode SetSliceSpacingModeToAutomatic
+        foreach gui $sliceGUIs {
+            set snode [$gui GetSliceNode]
+            
+            # prescribe spacing for all guis
+            eval $snode SetPrescribedSliceSpacing $thisSliceSpacing
+            $snode SetSliceSpacingModeToPrescribed
 
-          # then tell them to reslice
-          set that [$this getSliceSWidgetForGUI $gui]
-          $that resizeSliceNode
+            # then tell them to reslice
+            set that [$this getSliceSWidgetForGUI $gui]
+            $that resizeSliceNode
+        }
       }
       # enable modifieds, don't invoke the pending events, 
       # request a render on each
@@ -735,8 +741,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       }
     }
     "LeaveEvent" { 
+      #puts "Leave"
       set _inWidget 0
- 
+
       set sliceGUIs [$this getLinkedSliceGUIs]
       # cancel annotation requests before doing anything else
       foreach gui $sliceGUIs {
@@ -759,12 +766,16 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "TimerEvent" { }
     "KeyPressEvent" { 
       set key [$_interactor GetKeySym]
-      if { [lsearch "v r b f space c e s S Up Down Left Right" $key] != -1 } {
+      if { [lsearch "v V r b f g G T space c e s S Up Down Left Right" $key] != -1 } {
         $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
         $sliceGUI SetGUICommandAbortFlag 1
         switch [$_interactor GetKeySym] {
           "v" {
             $_sliceNode SetSliceVisible [expr ![$_sliceNode GetSliceVisible]]
+          }
+          "V" {
+           # toggle all slices visibility
+           puts "Toggling all slices visibility not implemented yet"
           }
           "r" {
             # figure out the new field of view for the current slice
@@ -787,6 +798,33 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
               foreach {fx fy fz} [$snode GetFieldOfView] {}
               # new prescribed x fov, aspect corrected y fov, orig z fov
               $snode SetFieldOfView $nfx [expr $nfx*$fy/$fx] $fz
+            }
+          }
+          "g" {
+            # toggle the label opacity via the slice compoiste node
+              set opacity [$_sliceCompositeNode GetLabelOpacity]
+              if {$opacity != 0.0} {
+                  set _lastLabelOpacity $opacity
+              }
+              if { $opacity == 0.0 } {
+                  $_sliceCompositeNode SetLabelOpacity $_lastLabelOpacity
+              } else {
+                  $_sliceCompositeNode SetLabelOpacity 0.0
+              }
+          }
+          "G" {
+              puts "Toggling label opacity for all slices not implemented yet"
+          }
+          "T" {
+            # toggle opacity of foreground overlay       
+            set opacity [$_sliceCompositeNode GetForegroundOpacity]
+            if {$opacity != 0.0} {
+                set _lastForegroundOpacity $opacity
+            }
+            if { $opacity == 0.0 } {
+                $_sliceCompositeNode SetForegroundOpacity $_lastForegroundOpacity
+            } else {
+                $_sliceCompositeNode SetForegroundOpacity 0.0
             }
           }
           "b" - "Left" - "Down" {
@@ -1358,8 +1396,8 @@ itcl::body SliceSWidget::getLinkedSliceLogics { } {
 
     set logics ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
-    if { $ssgui != "" && $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
+    if { $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
+        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
 
@@ -1405,8 +1443,8 @@ itcl::body SliceSWidget::getLinkedSliceGUIs { } {
 
     set guis ""
     set link [$_sliceCompositeNode GetLinkedControl]
-    set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
-    if { $ssgui != "" && $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
+    if { $link == 1 && [$this isCompareViewMode] == 1 && ([$sliceNode GetSingletonTag] == "Red" || [$this isCompareViewer] == 1) } {
+        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
         set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
         set viewArrangement [$layout GetViewArrangement]
 
@@ -1444,7 +1482,7 @@ itcl::body SliceSWidget::isCompareViewMode { } {
   set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
   set viewArrangement [$layout GetViewArrangement]
 
-  if { $viewArrangement == 12 } {
+  if { $viewArrangement == 12 || $viewArrangement == 13 || $viewArrangement == 17 } {
     return 1
   } else {
     return 0
@@ -1486,4 +1524,36 @@ itcl::body SliceSWidget::getInWidget { } {
     return $_inWidget
 }
 
+itcl::body SliceSWidget::startTranslate { x y  windowx windowy  rox roy  ras } {
+    $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
 
+    $this requestDelayedAnnotation
+    set _actionState "Translate"
+    set _actionStartXY "$x $y"
+    set _actionStartWindowXY "$windowx $windowy"
+    set _actionStartViewportOrigin "$rox $roy"
+    set _actionStartRAS $ras
+    set _actionLink [$_sliceCompositeNode GetLinkedControl]
+    $_sliceCompositeNode SetLinkedControl 0
+
+    $sliceGUI SetGrabID $this
+    $sliceGUI SetGUICommandAbortFlag 1
+
+    $o(storeXYToRAS) DeepCopy [$_sliceNode GetXYToRAS]
+    $o(storeSliceToRAS) DeepCopy [$_sliceNode GetSliceToRAS]
+}
+
+itcl::body SliceSWidget::endTranslate { } {
+    $_sliceCompositeNode SetLinkedControl $_actionLink
+    set sliceLogics [$this getLinkedSliceLogics]
+    foreach logic $sliceLogics {
+        set snode [$logic GetSliceNode]
+        [$snode GetSliceToRAS] DeepCopy [$_sliceNode GetSliceToRAS]
+        $snode UpdateMatrices
+    }
+
+    $this requestDelayedAnnotation
+    set _actionState ""
+    $sliceGUI SetGrabID ""
+    $sliceGUI SetGUICommandAbortFlag 1
+}
