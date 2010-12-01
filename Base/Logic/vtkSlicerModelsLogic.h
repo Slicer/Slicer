@@ -37,7 +37,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic
   
   /// The Usual vtk class functions
   static vtkSlicerModelsLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerModelsLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerModelsLogic,vtkSlicerLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 
@@ -80,6 +80,10 @@ protected:
   ~vtkSlicerModelsLogic();
   vtkSlicerModelsLogic(const vtkSlicerModelsLogic&);
   void operator=(const vtkSlicerModelsLogic&);
+
+  /// Reimplemented to make sure the singleton vtkMRMLClipModelsNode is
+  /// instantiated
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// 
   //

@@ -12,25 +12,30 @@
 
 =========================================================================auto=*/
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include "vtkSmartPointer.h"
-#include "vtkGeneralTransform.h"
-#include "vtkPolyDataNormals.h"
-
-#include <itksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx> 
-
+/// Slicer logic includes
+#include "vtkSlicerColorLogic.h"
 #include "vtkSlicerModelsLogic.h"
 
-#include "vtkTagTable.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLModelStorageNode.h"
-#include "vtkMRMLModelDisplayNode.h"
-#include "vtkSlicerColorLogic.h"
-#include "vtkMRMLFreeSurferModelStorageNode.h"
-#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
-#include "vtkMRMLTransformNode.h"
+/// MRML includes
+#include <vtkMRMLClipModelsNode.h>
+#include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
+#include <vtkMRMLFreeSurferModelStorageNode.h>
+#include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLModelStorageNode.h>
+#include <vtkMRMLTransformNode.h>
+
+/// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkGeneralTransform.h>
+#include <vtkObjectFactory.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkSmartPointer.h>
+#include <vtkTagTable.h>
+
+/// ITK includes
+#include <itksys/Directory.hxx>
+#include <itksys/SystemTools.hxx>
 
 vtkCxxRevisionMacro(vtkSlicerModelsLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModelsLogic);
@@ -57,6 +62,19 @@ void vtkSlicerModelsLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
                                             void * /*callData*/)
 {
   // TODO: implement if needed
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+{
+  this->Superclass::SetMRMLSceneInternal(newScene);
+  if (newScene && newScene->GetNthNodeByClass(0, "vtkMRMLClipModelsNode") == 0)
+    {
+    // vtkMRMLClipModelsNode is a singleton
+    vtkMRMLClipModelsNode* clipNode = vtkMRMLClipModelsNode::New();
+    newScene->AddNode(clipNode);
+    clipNode->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>297</width>
-    <height>312</height>
+    <width>423</width>
+    <height>811</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,10 +70,33 @@
     </widget>
    </item>
    <item>
+    <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox">
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLClipModelsNode</string>
+      </stringlist>
+     </property>
+     <property name="showHidden">
+      <bool>true</bool>
+     </property>
+     <property name="addEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="removeEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="ctkCollapsibleButton" name="ClippingButton">
      <property name="text">
       <string>Clipping</string>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -99,9 +122,19 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLClipNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLClipNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLModelInfoWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLModelInfoWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLTreeWidget</class>
@@ -170,6 +203,38 @@
     <hint type="destinationlabel">
      <x>354</x>
      <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerModelsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ClipModelsNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>549</x>
+     <y>588</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>518</x>
+     <y>575</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ClipModelsNodeComboBox</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>MRMLClipNodeWidget</receiver>
+   <slot>setMRMLClipNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>255</x>
+     <y>578</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>256</x>
+     <y>673</y>
     </hint>
    </hints>
   </connection>
