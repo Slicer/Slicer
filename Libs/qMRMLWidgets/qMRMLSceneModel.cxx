@@ -765,8 +765,11 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
   bool oldBlock = this->blockSignals(true);
   item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
   this->blockSignals(oldBlock);
+  // set UIDRole and set PointerRole need to be atomic
+  this->blockSignals(true);
   item->setData(QString(node->GetID()), qMRML::UIDRole);
   item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRML::PointerRole);
+  this->blockSignals(oldBlock);
   switch (column)
     {
     case 0:
