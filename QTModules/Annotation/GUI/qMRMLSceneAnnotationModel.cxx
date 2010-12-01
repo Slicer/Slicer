@@ -184,7 +184,6 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
     newParentItem->insertRow(pos, children);
     }
 
-  //this->m_TreeView->refresh();
 }
 
 //------------------------------------------------------------------------------
@@ -245,19 +244,5 @@ void qMRMLSceneAnnotationModel::setAndObserveLogic(vtkSlicerAnnotationModuleLogi
     }
 
   this->m_Logic = logic;
-
-}
-
-//-----------------------------------------------------------------------------
-/// Set and observe the treeView
-//-----------------------------------------------------------------------------
-void qMRMLSceneAnnotationModel::setAndObserveTreeView(qMRMLAnnotationTreeWidget* treeView)
-{
-  if (!treeView)
-    {
-    return;
-    }
-
-  this->m_TreeView = treeView;
 
 }

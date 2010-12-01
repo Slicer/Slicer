@@ -45,23 +45,23 @@ class vtkMRMLScene;
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qMRMLAnnotationTreeWidget : public qMRMLTreeWidget
 {
   Q_OBJECT
-  Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
+  Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
+
 public:
   qMRMLAnnotationTreeWidget(QWidget *parent=0);
   virtual ~qMRMLAnnotationTreeWidget();
 
   void hideScene();
 
-  const char* getFirstSelectedNode();
+  const char* firstSelectedNode();
 
   // Register the widget
   void setAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
 
   // Register the logic
   void setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic);
-
-  /// Refresh the view
-  void refresh();
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
@@ -72,7 +72,6 @@ signals:
 protected slots:
   void onActivated(const QModelIndex& index);
   void onClicked(const QModelIndex& index);
-  void onDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight);
 
 protected:
   QScopedPointer<qMRMLAnnotationTreeWidgetPrivate> d_ptr;

@@ -25,6 +25,7 @@
 #include <vtkAbstractWidget.h>
 #include <vtkSeedWidget.h>
 #include <vtkHandleWidget.h>
+#include <vtkSmartPointer.h>
 
 // MRML includes
 #include <vtkMRMLSliceNode.h>
@@ -69,16 +70,16 @@ public:
   typedef std::vector<vtkMRMLAnnotationNode*>::iterator AnnotationNodeListIt;
 
   /// Map of vtkWidget indexed using associated node ID
-  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *> Widgets;
+  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> Widgets;
 
   /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetsIt;
+  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetsIt;
 
   /// Map of vtkWidgets to reflect the Slice intersections indexed using associated node ID
-  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *> WidgetIntersections;
+  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetIntersections;
 
   /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget *>::iterator WidgetIntersectionsIt;
+  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetIntersectionsIt;
 
   //
   // End of The Lists!!
@@ -109,13 +110,13 @@ private:
 
   ///
   /// SeedWidget for point placement
-  vtkSeedWidget * SeedWidget;
+  vtkSmartPointer<vtkSeedWidget> SeedWidget;
   ///
   /// List of Handles for the SeedWidget
-  std::vector<vtkHandleWidget*> HandleWidgetList;
+  std::vector<vtkSmartPointer<vtkHandleWidget> > HandleWidgetList;
   ///
   /// .. and its associated convenient typedef
-  typedef std::vector<vtkHandleWidget*>::iterator HandleWidgetListIt;
+  typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
 
 };
 

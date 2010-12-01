@@ -48,11 +48,9 @@ public:
   // Register the logic
   void setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic);
 
-  // Register the treeView
-  void setAndObserveTreeView(qMRMLAnnotationTreeWidget* treeView);
-
   // Enum for the different columns
   enum Columns{
+    DummyColumn = 0,
     VisibilityColumn = 1,
     LockColumn = 2,
     EditColumn = 3,
@@ -76,8 +74,6 @@ private:
 
   qSlicerAnnotationModuleWidget* m_Widget;
   vtkSlicerAnnotationModuleLogic* m_Logic;
-
-  qMRMLAnnotationTreeWidget* m_TreeView;
 
 };
 

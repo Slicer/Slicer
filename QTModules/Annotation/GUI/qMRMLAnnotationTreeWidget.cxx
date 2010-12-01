@@ -67,9 +67,7 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
   this->SceneModel = new qMRMLSceneAnnotationModel(q);
   this->SceneModel->setColumnCount(6);
 
-  this->SceneModel->setAndObserveTreeView(q);
-
-  //this->SceneModel->setListenNodeModifiedEvent(true);
+  this->SceneModel->setListenNodeModifiedEvent(true);
 
   this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
   // we only want to show vtkMRMLAnnotationNodes and vtkMRMLAnnotationHierarchyNodes
@@ -94,8 +92,22 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
   QObject::connect(q, SIGNAL(clicked(const QModelIndex& )),
                    q, SLOT(onClicked(const QModelIndex&)));
 
-  QObject::connect(this->SceneModel, SIGNAL(dataChanged ( const QModelIndex&, const QModelIndex&)),
-                   q, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
+
+  // set the column widths
+  q->header()->setResizeMode(qMRMLSceneAnnotationModel::DummyColumn, (QHeaderView::ResizeToContents));
+  q->header()->setResizeMode(qMRMLSceneAnnotationModel::VisibilityColumn, (QHeaderView::ResizeToContents));
+  q->header()->setResizeMode(qMRMLSceneAnnotationModel::LockColumn, (QHeaderView::ResizeToContents));
+  q->header()->setResizeMode(qMRMLSceneAnnotationModel::EditColumn, (QHeaderView::ResizeToContents));
+  q->header()->setResizeMode(qMRMLSceneAnnotationModel::ValueColumn, (QHeaderView::ResizeToContents));
+  q->header()->setResizeMode(qMRMLSceneAnnotationModel::TextColumn, (QHeaderView::ResizeToContents));
+
+  // hide the strange columns
+  q->hideColumn(6);
+  q->hideColumn(7);
+  q->hideColumn(8);
+  q->hideColumn(9);
+  q->hideColumn(10);
+  q->hideColumn(11);
 
   q->setUniformRowHeights(true);
 }
@@ -137,24 +149,6 @@ void qMRMLAnnotationTreeWidget::onActivated(const QModelIndex& index)
   emit currentNodeChanged(d->SortFilterModel->mrmlNode(index));
 }
 
-//------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::onDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight)
-{
-
-  Q_D(qMRMLAnnotationTreeWidget);
-  // loop through all columns and rows which fit to the modified MRML node
-  for (int i = topLeft.row(); i <= bottomRight.row(); ++i)
-    {
-    for (int j = topLeft.column(); j <= bottomRight.column(); ++j)
-      {
-
-      QStandardItem* newNodeItem = new QStandardItem();
-      d->SceneModel->updateItemFromNode(newNodeItem, d->SortFilterModel->mrmlNode(topLeft.sibling(i,j)), j);
-
-      }
-    }
-}
-
 
 //------------------------------------------------------------------------------
 //
@@ -187,7 +181,7 @@ void qMRMLAnnotationTreeWidget::onClicked(const QModelIndex& index)
 }
 
 //------------------------------------------------------------------------------
-const char* qMRMLAnnotationTreeWidget::getFirstSelectedNode()
+const char* qMRMLAnnotationTreeWidget::firstSelectedNode()
 {
   Q_D(qMRMLAnnotationTreeWidget);
   QModelIndexList selected = this->selectedIndexes();
@@ -254,35 +248,6 @@ void qMRMLAnnotationTreeWidget::mouseMoveEvent(QMouseEvent* e)
 // Layout and behavior customization
 //
 //------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::refresh()
-{
-  // the first and the columns with icons should be resized
-
-  this->resizeColumnToContents(0);
-  this->resizeColumnToContents(1);
-  this->resizeColumnToContents(2);
-  this->resizeColumnToContents(3);
-  this->resizeColumnToContents(4);
-  this->resizeColumnToContents(5);
-
-  this->header()->setResizeMode(0,QHeaderView::Fixed);
-  this->header()->setResizeMode(1,QHeaderView::Fixed);
-  this->header()->setResizeMode(2,QHeaderView::Fixed);
-  this->header()->setResizeMode(3,QHeaderView::Fixed);
-
-  // hide the strange columns
-  this->hideColumn(6);
-  this->hideColumn(7);
-  this->hideColumn(8);
-  this->hideColumn(9);
-  this->hideColumn(10);
-  this->hideColumn(11);
-
-
-
-}
 
 //------------------------------------------------------------------------------
 void qMRMLAnnotationTreeWidget::hideScene()

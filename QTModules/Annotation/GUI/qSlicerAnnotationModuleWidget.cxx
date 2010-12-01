@@ -1951,7 +1951,7 @@ void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->logic()->SetActiveHierarchyNodeByID(d->hierarchyTreeWidget->getFirstSelectedNode());
+  d->logic()->SetActiveHierarchyNodeByID(d->hierarchyTreeWidget->firstSelectedNode());
   d->logic()->AddHierarchy();
 }
 

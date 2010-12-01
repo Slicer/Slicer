@@ -50,8 +50,6 @@ vtkMRMLAnnotationDisplayableManagerHelper::~vtkMRMLAnnotationDisplayableManagerH
   if(this->SeedWidget)
     {
     this->RemoveSeeds();
-    this->SeedWidget->Delete();
-    this->SeedWidget = 0;
     }
 
 }
@@ -181,7 +179,10 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
   WidgetsIt widgetIterator = this->Widgets.find(node);
   if (widgetIterator != this->Widgets.end()) {
     // Delete and Remove vtkWidget from the map
-    this->Widgets[node]->Delete();
+    if (this->Widgets[node])
+      {
+      this->Widgets[node]->Delete();
+      }
     this->Widgets.erase(node);
   }
 
@@ -189,7 +190,10 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
   if (widgetIntersectionIterator != this->WidgetIntersections.end()) {
     // we have a vtkAbstractWidget to represent the slice intersections for this node
     // now delete it!
-    this->WidgetIntersections[node]->Delete();
+    if (this->WidgetIntersections[node])
+      {
+      this->WidgetIntersections[node]->Delete();
+      }
     this->WidgetIntersections.erase(node);
   }
 
@@ -202,6 +206,11 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
   // Make sure the map contains the annotationNode
   if (nodeIterator != this->AnnotationNodeList.end())
     {
+    //vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(*nodeIterator);
+    //if (annotationNode)
+     // {
+      //annotationNode->Delete();
+     // }
     this->AnnotationNodeList.erase(nodeIterator);
     }
 
@@ -276,7 +285,8 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveSeeds()
     }
   if (this->SeedWidget)
     {
-    this->SeedWidget->Off();
+    //this->SeedWidget->Off();
+    this->SeedWidget->Delete();
     this->SeedWidget = 0;
     }
 }

@@ -99,7 +99,10 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
   it = this->Helper->AnnotationNodeList.begin();
   while(it != this->Helper->AnnotationNodeList.end())
     {
+    //vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast((*it).GetPointer());
+
     vtkSetAndObserveMRMLNodeEventsMacro(*it, *it, nodeEvents);
+
     ++it;
     }
 }
@@ -162,8 +165,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeClosedEvent()
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
 {
   // run through all nodes and remove node and widget
-    for (int i=0; i<this->Helper->AnnotationNodeList.size(); i++) {
-      this->Helper->RemoveWidgetAndNode(this->Helper->AnnotationNodeList[i]);
+  for (unsigned int i=0; i<this->Helper->AnnotationNodeList.size(); i++) {
+    this->Helper->RemoveWidgetAndNode(this->Helper->AnnotationNodeList[i]);
   }
 }
 
