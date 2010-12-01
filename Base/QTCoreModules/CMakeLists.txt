@@ -40,9 +40,6 @@ SET(KIT_SRCS
   qSlicerFiducialsIO.cxx
   qSlicerFiducialsIO.h
 
-  qSlicerModelsIO.cxx
-  qSlicerModelsIO.h
-
   qSlicerMRMLTreeModule.cxx
   qSlicerMRMLTreeModule.h
   qSlicerMRMLTreeModuleWidget.cxx
@@ -86,8 +83,6 @@ SET(KIT_MOC_SRCS
   qSlicerDataModuleWidget.h
 
   qSlicerFiducialsIO.h
-
-  qSlicerModelsIO.h
 
   qSlicerMRMLTreeModule.h
   qSlicerMRMLTreeModuleWidget.h

@@ -24,6 +24,14 @@
 // Models includes
 #include "qSlicerModelsModule.h"
 #include "qSlicerModelsModuleWidget.h"
+#include "qSlicerModelsIO.h"
+
+// Slicer includes
+#include "qSlicerCoreApplication.h"
+#include "qSlicerCoreIOManager.h"
+
+// Slicer logic includes
+#include <vtkSlicerModelsLogic.h>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerModelsModule, qSlicerModelsModule);
@@ -61,7 +69,24 @@ qSlicerModelsModule::~qSlicerModelsModule()
 //-----------------------------------------------------------------------------
 QString qSlicerModelsModule::helpText()const
 {
-  return QString();
+  QString help =
+    "The Models Module loads and adjusts display parameters of models.\n"
+    "<a>%1/Modules:Models-Documentation-3.6</a>\n"
+    "Save models via the File menu, Save button.\n"
+    "The Add 3D model or a model directory button will allow you to load any "
+    "model that Slicer can read, as well as all the VTK models in a directory. "
+    "Add Scalar Overlay will load a scalar file and associate it with the "
+    "currently active model.\nYou can adjust the display properties of the "
+    "models in the Display pane. Select the model you wish to work on from the "
+    "model selector drop down menu. Scalar overlays are loaded with a default "
+    "colour look up table, but can be reassigned manually. Once a new scalar "
+    "overlay is chosen, currently the old color map is still used, so that "
+    "must be adjusted in conjunction with the overlay.\n"
+    "Clipping is turned on for a model in the Display pane, and the slice "
+    "planes that will clip the model are selected in the Clipping pane.\n"
+    "The Model Hierarchy pane allows you to group models together and set the "
+    "group's properties.";
+  return help.arg(this->slicerWikiUrl());
 }
 
 //-----------------------------------------------------------------------------
@@ -80,6 +105,8 @@ QIcon qSlicerModelsModule::icon()const
 void qSlicerModelsModule::setup()
 {
   this->Superclass::setup();
+  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
+    new qSlicerModelsIO(this));
 }
 
 //-----------------------------------------------------------------------------
@@ -91,5 +118,5 @@ qSlicerAbstractModuleRepresentation * qSlicerModelsModule::createWidgetRepresent
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerModelsModule::createLogic()
 {
-  return 0;
+  return vtkSlicerModelsLogic::New();
 }

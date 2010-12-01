@@ -32,7 +32,6 @@
 // FIXME:Move the following to the Models module (when it will be ready in Qt.)
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
-#include "qSlicerModelsIO.h"
 #include "qSlicerScalarOverlayIO.h"
 #include "qSlicerSliceControllerModule.h"
 // endofFIXME
@@ -118,8 +117,6 @@ void qSlicerCoreModuleFactory::registerItems()
     {
     return;
     }
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->registerIO(new qSlicerModelsIO());
   qSlicerCoreApplication::application()->coreIOManager()
     ->registerIO(new qSlicerScalarOverlayIO());
   // endofFIXME

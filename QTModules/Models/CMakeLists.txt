@@ -12,6 +12,8 @@ SET(qt_module_include_directories
 
 # Source files
 SET(qt_module_SRCS
+  qSlicerModelsIO.cxx
+  qSlicerModelsIO.h
   qSlicerModelsModule.cxx
   qSlicerModelsModule.h
   qSlicerModelsModuleWidget.cxx
@@ -22,6 +24,7 @@ SET(qt_module_SRCS
 
 # Headers that should run through moc
 SET(qt_module_MOC_SRCS
+  qSlicerModelsIO.h
   qSlicerModelsModule.h
   qSlicerModelsModuleWidget.h
   Widgets/qMRMLModelDisplayNodeWidget.h
