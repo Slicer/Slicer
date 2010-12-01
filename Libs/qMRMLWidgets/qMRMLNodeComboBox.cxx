@@ -491,7 +491,8 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 
   // The Add button is valid only if the scene is non-empty
   //this->setAddEnabled(scene != 0);
-  QVariant currentNode = d->ComboBox->itemData(d->ComboBox->currentIndex(), qMRML::UIDRole);
+  QString oldCurrentNode = d->ComboBox->itemData(d->ComboBox->currentIndex(), qMRML::UIDRole).toString();
+  bool nodeCount = this->nodeCount();
 
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
@@ -506,7 +507,15 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   d->ComboBox->setRootModelIndex(this->model()->index(0, 0));
 
   // try to set the current item back
-  this->setCurrentNode(currentNode.toString());
+  // if there was no node in the scene (or scene not set), then the
+  // oldCurrentNode was not meaningful and we probably don't want to
+  // set it back. Please consider make it a behavior property if it doesn't fit
+  // your need, as this behavior is currently wanted for some cases (
+  // vtkMRMLClipModels selector in the Models module)
+  if (nodeCount)
+    {
+    this->setCurrentNode(oldCurrentNode);
+    }
 
   this->setEnabled(scene != 0);
 }
