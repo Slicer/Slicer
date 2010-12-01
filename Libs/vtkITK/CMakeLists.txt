@@ -81,14 +81,8 @@ set(vtkITK_SRCS
   vtkITKArchetypeImageSeriesVectorReaderSeries.cxx
   vtkITKImageWriter.cxx
   vtkITKImageToImageFilter.h
-  vtkITKImageToImageFilter2DFF.h
   vtkITKImageToImageFilterFF.h
-  vtkITKImageToImageFilterFUL.h
-  vtkITKImageToImageFilterULUL.h
-  vtkITKImageToImageFilterUSUL.h
-  vtkITKImageToImageFilterUSUS.h
   vtkITKImageToImageFilterSS.h
-  vtkITKImageToImageFilterUSF.h
   vtkITKGradientAnisotropicDiffusionImageFilter.cxx
   vtkITKDistanceTransform.cxx
   vtkITKLevelTracingImageFilter.cxx
@@ -99,6 +93,18 @@ set(vtkITK_SRCS
   vtkITKTimeSeriesDatabase.cxx
   vtkITKIslandMath.cxx
   )
+
+# these types are never instantiated, so they don't 
+# get included in the vtkITK lib file (hence they 
+# can't be wrapped for python)
+set(vtkITK_SRCS_not_used
+  vtkITKImageToImageFilter2DFF.h
+  vtkITKImageToImageFilterFUL.h
+  vtkITKImageToImageFilterULUL.h
+  vtkITKImageToImageFilterUSUL.h
+  vtkITKImageToImageFilterUSUS.h
+  vtkITKImageToImageFilterUSF.h
+)
 
 # Abstract/pure virtual classes
 
@@ -184,8 +190,8 @@ install(TARGETS ${lib_name}
 
 SET(VTK_LIBRARIES
     vtkImaging
-    vtkCommon
     vtkFiltering
+    vtkCommon
   )
 
 IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
@@ -198,12 +204,13 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
   
   TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
+  TARGET_LINK_LIBRARIES(vtkITKPythonD vtkITK)
   
   FOREACH(c ${KIT_PYTHON_LIBRARIES})
-    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)
+    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD ${c}Python ${c})
   ENDFOREACH(c)
 
-  TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD)
+  TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD ${lib_name})
 
   ## Python modules on Windows must have the extension ".pyd"
   IF(WIN32 AND NOT CYGWIN)
