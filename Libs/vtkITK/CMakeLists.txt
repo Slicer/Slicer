@@ -207,7 +207,7 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   TARGET_LINK_LIBRARIES(vtkITKPythonD vtkITK)
   
   FOREACH(c ${KIT_PYTHON_LIBRARIES})
-    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD ${c}Python ${c})
+    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD ${c})
   ENDFOREACH(c)
 
   TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD ${lib_name})
