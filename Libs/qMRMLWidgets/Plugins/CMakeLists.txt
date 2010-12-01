@@ -6,6 +6,8 @@ PROJECT(qMRMLWidgetsPlugin)
 
 # Source files
 SET(designer_plugin_SRCS
+  qMRMLClipNodeWidgetPlugin.cxx
+  qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.cxx
   qMRMLCollapsibleButtonPlugin.h
   qMRMLColorListViewPlugin.cxx
@@ -72,6 +74,7 @@ SET(designer_plugin_SRCS
 SET(designer_plugin_MOC_SRCS
   qMRMLWidgetsPlugin.h
 
+  qMRMLClipNodeWidgetPlugin.h
   qMRMLCollapsibleButtonPlugin.h
   qMRMLColorListViewPlugin.h
   qMRMLColorTableComboBoxPlugin.h

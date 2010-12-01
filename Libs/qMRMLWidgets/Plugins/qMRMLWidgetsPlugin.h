@@ -21,6 +21,7 @@
 #ifndef __qMRMLWidgetsPlugin_h
 #define __qMRMLWidgetsPlugin_h
 
+#include "qMRMLClipNodeWidgetPlugin.h"
 #include "qMRMLCollapsibleButtonPlugin.h"
 #include "qMRMLColorListViewPlugin.h"
 #include "qMRMLColorTableComboBoxPlugin.h"
@@ -64,7 +65,8 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qMRMLCollapsibleButtonPlugin
+    plugins << new qMRMLClipNodeWidgetPlugin
+            << new qMRMLCollapsibleButtonPlugin
             << new qMRMLColorListViewPlugin
             << new qMRMLColorTableComboBoxPlugin
             << new qMRMLColorTableViewPlugin

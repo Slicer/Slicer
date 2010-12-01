@@ -67,6 +67,15 @@
     <file>Icons/ViewZoomIn.png</file>
     <file>Icons/ViewZoomOut.png</file>
 
+    <file>Icons/ClippingUnion.png</file>
+    <file>Icons/ClippingIntersection.png</file>
+    <file>Icons/RedSpacePositive.png</file>
+    <file>Icons/RedSpaceNegative.png</file>
+    <file>Icons/YellowSpacePositive.png</file>
+    <file>Icons/YellowSpaceNegative.png</file>
+    <file>Icons/GreenSpacePositive.png</file>
+    <file>Icons/GreenSpaceNegative.png</file>
+
     <file alias="AbdomenColors">Icons/LUTs/AbdomenColors.png</file>
     <file alias="blankLUT">Icons/LUTs/blankLUT.png</file>
     <file alias="dGEMRIC-3T">Icons/LUTs/cartilegeMIdGEMRIC-3T.png</file>

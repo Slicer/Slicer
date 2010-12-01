@@ -46,7 +46,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.isEnabled())
     {
-    std::cerr << "No vtkdisplayNode provided, should be disabled."
+    std::cerr << "No vtkMRMLDisplayNode provided, should be disabled."
               << std::endl;
     return EXIT_FAILURE;
     }
@@ -116,7 +116,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.color() != QColor::fromRgbF(1., 1., 1.))
     {
-    std::cerr << "vtkDisplayNode::SetColor() failed: " << displayNodeWidget.color().rgb() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetColor() failed: " << displayNodeWidget.color().rgb() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -133,7 +133,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.opacity() != 0.11)
     {
-    std::cerr << "vtkDisplayNode::SetOpacity() failed: " << displayNodeWidget.opacity() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetOpacity() failed: " << displayNodeWidget.opacity() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -150,7 +150,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.ambient() != 0.5)
     {
-    std::cerr << "vtkDisplayNode::SetAmbient() failed: " << displayNodeWidget.ambient() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetAmbient() failed: " << displayNodeWidget.ambient() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -167,7 +167,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.diffuse() != 1.)
     {
-    std::cerr << "vtkDisplayNode::SetDiffuse() failed: " << displayNodeWidget.diffuse() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetDiffuse() failed: " << displayNodeWidget.diffuse() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -184,7 +184,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.specular() != 0.99)
     {
-    std::cerr << "vtkDisplayNode::SetSpecular() failed: " << displayNodeWidget.specular() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetSpecular() failed: " << displayNodeWidget.specular() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -201,7 +201,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.specularPower() != 45)
     {
-    std::cerr << "vtkDisplayNode::SetPower() failed: " << displayNodeWidget.specularPower() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetPower() failed: " << displayNodeWidget.specularPower() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -218,7 +218,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 
   if (displayNodeWidget.backfaceCulling() != false)
     {
-    std::cerr << "vtkDisplayNode::SetBackfaceCulling() failed: " << displayNodeWidget.backfaceCulling() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetBackfaceCulling() failed: " << displayNodeWidget.backfaceCulling() << std::endl;
     return EXIT_FAILURE;
     }
 

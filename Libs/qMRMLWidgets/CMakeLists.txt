@@ -1,5 +1,6 @@
 PROJECT(qMRMLWidgets)
 
+
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.2)
 #-----------------------------------------------------------------------------
@@ -50,6 +51,8 @@ SET(qMRMLWidgets_SRCS
   qCTKFlowLayout.h
   qMRMLActionSignalMapper.cxx
   qMRMLActionSignalMapper.h
+  qMRMLClipNodeWidget.cxx
+  qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.cxx
   qMRMLCollapsibleButton.h
   qMRMLColorListView.cxx
@@ -148,6 +151,7 @@ SET(qMRMLWidgets_SRCS
 # Headers that should run through moc
 SET(qMRMLWidgets_MOC_SRCS
   qMRMLActionSignalMapper.h
+  qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.h
   qMRMLColorListView.h
   qMRMLColorPickerWidget.h
@@ -201,6 +205,7 @@ SET(qMRMLWidgets_MOC_SRCS
 
 # UI files
 SET(qMRMLWidgets_UI_SRCS
+  Resources/UI/qMRMLClipNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui
   Resources/UI/qMRMLEventLoggerWidget.ui

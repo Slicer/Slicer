@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qMRMLClipNodeWidget</class>
+ <widget class="QWidget" name="qMRMLClipNodeWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>404</width>
+    <height>134</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Clip</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="ClippingTypeLabel">
+     <property name="text">
+      <string>Clipping Type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QRadioButton" name="UnionRadioButton">
+     <property name="text">
+      <string>Union</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/ClippingUnion.png</normaloff>:/Icons/ClippingUnion.png</iconset>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QRadioButton" name="IntersectionRadioButton">
+     <property name="text">
+      <string>Intersection</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/ClippingIntersection.png</normaloff>:/Icons/ClippingIntersection.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="RedSliceClippingCheckBox">
+     <property name="text">
+      <string>Red Slice Clipping:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QRadioButton" name="RedPositiveRadioButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Positive</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/RedSpacePositive.png</normaloff>:/Icons/RedSpacePositive.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QRadioButton" name="RedNegativeRadioButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Negative</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/RedSpaceNegative.png</normaloff>:/Icons/RedSpaceNegative.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="YellowSliceClippingCheckBox">
+     <property name="text">
+      <string>Yellow Slice Clipping:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QRadioButton" name="YellowPositiveRadioButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Positive</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/YellowSpacePositive.png</normaloff>:/Icons/YellowSpacePositive.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QRadioButton" name="YellowNegativeRadioButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Negative</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/YellowSpaceNegative.png</normaloff>:/Icons/YellowSpaceNegative.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="GreenSliceClippingCheckBox">
+     <property name="text">
+      <string>Green Slice Clipping:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QRadioButton" name="GreenPositiveRadioButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Positive</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/GreenSpacePositive.png</normaloff>:/Icons/GreenSpacePositive.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QRadioButton" name="GreenNegativeRadioButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Negative</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qMRMLWidgets.qrc">
+       <normaloff>:/Icons/GreenSpaceNegative.png</normaloff>:/Icons/GreenSpaceNegative.png</iconset>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../qMRMLWidgets.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>RedSliceClippingCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>RedPositiveRadioButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>63</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RedSliceClippingCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>RedNegativeRadioButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>57</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>YellowSliceClippingCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>YellowPositiveRadioButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>28</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>YellowSliceClippingCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>YellowNegativeRadioButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>54</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>321</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GreenSliceClippingCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>GreenPositiveRadioButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>130</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>131</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GreenSliceClippingCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>GreenNegativeRadioButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>368</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
