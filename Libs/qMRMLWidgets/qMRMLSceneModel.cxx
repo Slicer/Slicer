@@ -932,9 +932,10 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
   Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
   QModelIndexList nodeIndexes = this->indexes(modifiedNode);
   //qDebug() << "onMRMLNodeModified" << modifiedNode->GetID() << nodeIndexes;
-
-  foreach (QModelIndex index, nodeIndexes)
+  
+  for (int i = 0; i < nodeIndexes.size(); ++i)
     {
+    QModelIndex index = nodeIndexes[i];
     if (d->LastMimeData.contains(index))
       {
       continue;
@@ -942,7 +943,10 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
     QStandardItem* item = this->itemFromIndex(index);
     //qDebug() << "onMRMLNodeModified" << index.column() << ": "<< item << ":" << item->text() << item->data(qMRML::UIDRole).toString() << "node:" << modifiedNode;
     //qDebug() << "  parent" << item->parent() << item->parent()->text();
+    int oldSize = nodeIndexes.size();
     this->updateItemFromNode(item, modifiedNode, item->column());
+    nodeIndexes = this->indexes(modifiedNode);
+    Q_ASSERT(oldSize == nodeIndexes.size());
     }
 }
 
