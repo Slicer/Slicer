@@ -58,7 +58,7 @@ void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardI
 {
   this->qMRMLSceneDisplayableModel::updateNodeFromItem(node,item);
 
-  this->m_Widget->refreshTree();
+  //this->m_Widget->refreshTree();
 }
 
 //------------------------------------------------------------------------------

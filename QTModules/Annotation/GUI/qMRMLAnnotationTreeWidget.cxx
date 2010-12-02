@@ -64,29 +64,32 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
 {
   Q_Q(qMRMLAnnotationTreeWidget);
   //p->qMRMLTreeWidget::setModel(new qMRMLItemModel(p));
+  //this->SceneModel = new qMRMLSceneAnnotationModel(q);
+  //this->SceneModel->setColumnCount(6);
+
+  //this->SceneModel->setListenNodeModifiedEvent(true);
   this->SceneModel = new qMRMLSceneAnnotationModel(q);
-  this->SceneModel->setColumnCount(6);
-
-  this->SceneModel->setListenNodeModifiedEvent(true);
-
-  this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
+  q->setSceneModel(this->SceneModel, "Annotation");
+  //this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
   // we only want to show vtkMRMLAnnotationNodes and vtkMRMLAnnotationHierarchyNodes
   QStringList nodeTypes = QStringList();
   nodeTypes.append("vtkMRMLAnnotationNode");
   nodeTypes.append("vtkMRMLAnnotationHierarchyNode");
   nodeTypes.append("vtkMRMLAnnotationSnapshotNode");
 
-  this->SortFilterModel->setNodeTypes(nodeTypes);
+  //this->SortFilterModel->setNodeTypes(nodeTypes);
+  q->setNodeTypes(nodeTypes);
+  this->SortFilterModel = q->sortFilterProxyModel();
 
-  this->SortFilterModel->setSourceModel(this->SceneModel);
-  q->qMRMLTreeWidget::setModel(this->SortFilterModel);
+  //this->SortFilterModel->setSourceModel(this->SceneModel);
+  //q->qMRMLTreeWidget::setModel(this->SortFilterModel);
 
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
-  QObject::connect(q, SIGNAL(activated(const QModelIndex&)),
-                   q, SLOT(onActivated(const QModelIndex&)));
-  QObject::connect(q, SIGNAL(clicked(const QModelIndex&)),
-                   q, SLOT(onActivated(const QModelIndex&)));
+  //QObject::connect(q, SIGNAL(activated(const QModelIndex&)),
+  //                 q, SLOT(onActivated(const QModelIndex&)));
+  //QObject::connect(q, SIGNAL(clicked(const QModelIndex&)),
+  //                 q, SLOT(onActivated(const QModelIndex&)));
 
 
   QObject::connect(q, SIGNAL(clicked(const QModelIndex& )),
@@ -143,10 +146,10 @@ void qMRMLAnnotationTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 void qMRMLAnnotationTreeWidget::onActivated(const QModelIndex& index)
 {
-  Q_D(qMRMLAnnotationTreeWidget);
-  Q_ASSERT(d->SortFilterModel);
-
-  emit currentNodeChanged(d->SortFilterModel->mrmlNode(index));
+  //Q_D(qMRMLAnnotationTreeWidget);
+  //Q_ASSERT(d->SortFilterModel);
+  this->qMRMLTreeWidget::onActivated(index);
+  //emit currentNodeChanged(d->SortFilterModel->mrmlNode(index));
 }
 
 

@@ -39,6 +39,7 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
   sceneFactory.generateScene();
 
   qMRMLAnnotationTreeWidget* view = new qMRMLAnnotationTreeWidget(0);
+
   //view->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   vtkSlicerAnnotationModuleLogic* logic = vtkSlicerAnnotationModuleLogic::New();
@@ -53,8 +54,12 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
 
   view->show();
   view->resize(500, 800);
-
-
+/*
+  qMRMLTreeWidget view2;
+  view2.setSceneModelType("Displayable");
+  view2.sceneModel()->setMRMLScene(sceneFactory.mrmlScene());
+  view2.show();
+*/
   double worldCoordinates1[3] = {0,0,0};
   double worldCoordinates2[3] = {50,50,50};
 
