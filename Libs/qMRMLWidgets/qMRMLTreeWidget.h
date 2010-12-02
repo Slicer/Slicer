@@ -72,6 +72,7 @@ public:
   /// the nodes.
   /// The returned value can't be null.
   qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
+  qMRMLSceneModel* sceneModel()const;
 
   virtual QSize sizeHint()const;
 public slots:
@@ -85,7 +86,7 @@ signals:
   void currentNodeChanged(vtkMRMLNode* node);
 
 protected slots:
-  void onActivated(const QModelIndex& index);
+  virtual void onActivated(const QModelIndex& index);
   
 protected:
   QScopedPointer<qMRMLTreeWidgetPrivate> d_ptr;

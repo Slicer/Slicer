@@ -215,18 +215,27 @@ qMRMLSortFilterProxyModel* qMRMLTreeWidget::sortFilterProxyModel()const
 }
 
 //--------------------------------------------------------------------------
+qMRMLSceneModel* qMRMLTreeWidget::sceneModel()const
+{
+  Q_D(const qMRMLTreeWidget);
+  Q_ASSERT(d->SceneModel);
+  return d->SceneModel;
+}
+
+//--------------------------------------------------------------------------
 QSize qMRMLTreeWidget::sizeHint()const
 {
   Q_D(const qMRMLTreeWidget);
   QSize treeViewSizeHint = this->QTreeView::sizeHint();
-  QStandardItem* sceneItem = d->SceneModel->mrmlSceneItem();
-  if (!sceneItem)
+  QModelIndex sceneIndex = d->SceneModel->mrmlSceneIndex();
+  if (!sceneIndex.isValid())
     {
     return treeViewSizeHint;
     }
+  sceneIndex = d->SortFilterModel->mapFromSource(sceneIndex);
   treeViewSizeHint.setHeight(
     this->frameWidth()
-    + (sceneItem->rowCount() + 1)* this->sizeHintForRow(0)
+    + (d->SortFilterModel->rowCount(sceneIndex) + 1)* this->sizeHintForRow(0)
     + this->frameWidth());
   return treeViewSizeHint;
 }
