@@ -497,7 +497,7 @@ vtkStdString  vtkMRMLAnnotationNode::GetText(int n)
 {
   if ((this->GetNumberOfTexts() <= n) || n < 0 )
     {
-      return vtkStdString::vtkStdString();
+      return vtkStdString();
     }
   return this->TextList->GetValue(n); 
 }
@@ -623,6 +623,7 @@ void vtkMRMLAnnotationNode::SetLocked(int locked)
       // invoke a display modified event
       std::cout << "Invoking LockModifiedEvent" << std::endl;
       this->InvokeEvent(vtkMRMLAnnotationNode::LockModifiedEvent);
+      this->Modified();
     }
     this->ModifiedSinceReadOn();
 }
