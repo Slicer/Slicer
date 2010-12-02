@@ -941,12 +941,19 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
       continue;
       }
     QStandardItem* item = this->itemFromIndex(index);
-    //qDebug() << "onMRMLNodeModified" << index.column() << ": "<< item << ":" << item->text() << item->data(qMRML::UIDRole).toString() << "node:" << modifiedNode;
-    //qDebug() << "  parent" << item->parent() << item->parent()->text();
-    int oldSize = nodeIndexes.size();
+    int oldRow = item->row();
+    QStandardItem* oldParent = item->parent();
+
     this->updateItemFromNode(item, modifiedNode, item->column());
-    nodeIndexes = this->indexes(modifiedNode);
-    Q_ASSERT(oldSize == nodeIndexes.size());
+    // maybe the item has been reparented, then we need to rescan the
+    // indexes again as may are wrong.
+    if (item->row() != oldRow || item->parent() != oldParent)
+      {
+      int oldSize = nodeIndexes.size();      
+      nodeIndexes = this->indexes(modifiedNode);
+      //the number of columns shouldn't change
+      Q_ASSERT(oldSize == nodeIndexes.size());
+      }
     }
 }
 
