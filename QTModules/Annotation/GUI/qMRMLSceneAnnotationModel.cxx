@@ -46,6 +46,7 @@
 qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
   :qMRMLSceneDisplayableModel(vparent)
 {
+  this->setListenNodeModifiedEvent(true);
 }
 
 //------------------------------------------------------------------------------

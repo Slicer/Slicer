@@ -84,7 +84,6 @@ void qMRMLTreeWidgetPrivate::setSceneModel(qMRMLSceneModel* newModel)
     return;
     }
 
-  newModel->setListenNodeModifiedEvent(q->listenNodeModifiedEvent());
   newModel->setMRMLScene(q->mrmlScene());
 
   this->SceneModel = newModel;
@@ -146,6 +145,7 @@ void qMRMLTreeWidget::setSceneModelType(const QString& modelName)
   if (newModel) 
     {
     d->SceneModelType = modelName;
+    newModel->setListenNodeModifiedEvent(this->listenNodeModifiedEvent());
     }
   d->setSceneModel(newModel);
 }
