@@ -45,6 +45,8 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
 
   logic->SetMRMLScene(sceneFactory.mrmlScene());
 
+  logic->InitializeEventListeners();
+
   view->setAndObserveLogic(logic);
   view->setMRMLScene(sceneFactory.mrmlScene());
   view->hideScene();
