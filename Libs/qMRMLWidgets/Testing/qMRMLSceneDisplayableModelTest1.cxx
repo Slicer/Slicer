@@ -133,7 +133,7 @@ int qMRMLSceneDisplayableModelTest1(int argc, char * argv [])
         }
       }
     std::cout << "start reparenting node" << std::endl;
-    qMRMLSceneDisplayableModel::reparent(node1, node2);
+    model.qMRMLSceneDisplayableModel::reparent(node1, node2);
     std::cout << "end reparenting node" << std::endl;
     }
   catch (const char* error)
