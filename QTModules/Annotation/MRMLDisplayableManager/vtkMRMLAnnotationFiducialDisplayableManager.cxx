@@ -300,6 +300,8 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
 
+  seedWidget->CompleteInteraction();
+
   // enable processing of modified events
   this->m_Updating = 0;
 
@@ -369,6 +371,8 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
   fiducialNode->SetFiducialCoordinates(worldCoordinates1);
 
   fiducialNode->SaveView();
+
+  seedWidget->CompleteInteraction();
 
   // enable processing of modified events
   this->m_Updating = 0;
