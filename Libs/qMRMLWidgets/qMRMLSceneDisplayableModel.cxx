@@ -157,7 +157,7 @@ int qMRMLSceneDisplayableModel::nodeIndex(vtkMRMLNode* node)
     }
   const char* nId = 0;
   int index = -1;
-  vtkMRMLNode* parent = qMRMLSceneDisplayableModel::parentNode(node);
+  vtkMRMLNode* parent = this->parentNode(node);
   vtkCollection* sceneCollection = node->GetScene()->GetCurrentScene();
   vtkMRMLNode* n = 0;
   vtkCollectionSimpleIterator it;
@@ -165,7 +165,7 @@ int qMRMLSceneDisplayableModel::nodeIndex(vtkMRMLNode* node)
        (n = (vtkMRMLNode*)sceneCollection->GetNextItemAsObject(it)) ;)
     {
     // note: parent can be NULL, it means that the scene is the parent
-    if (parent == qMRMLSceneDisplayableModel::parentNode(n))
+    if (parent == this->parentNode(n))
       {
       ++index;
       nId = n->GetID();
@@ -303,7 +303,7 @@ void qMRMLSceneDisplayableModel::populateScene()
 //------------------------------------------------------------------------------
 void qMRMLSceneDisplayableModel::insertNode(vtkMRMLNode* node)
 {
-  vtkMRMLNode* parentNode = qMRMLSceneDisplayableModel::parentNode(node);
+  vtkMRMLNode* parentNode = this->parentNode(node);
   //std::cout << "insertNode: parentNode is " << (parentNode == NULL ? "null" : "not null") << ", mrml scene item is " << (this->mrmlSceneItem() == NULL ? "null" : "not null") << std::endl;
   QStandardItem* parentItem =
     parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();
@@ -337,7 +337,7 @@ void qMRMLSceneDisplayableModel::updateItemFromNode(QStandardItem* item, vtkMRML
     }
   this->blockSignals(oldBlock);
   QStandardItem* parentItem = item->parent();
-  QStandardItem* newParentItem = this->itemFromNode(qMRMLSceneDisplayableModel::parentNode(node));
+  QStandardItem* newParentItem = this->itemFromNode(this->parentNode(node));
   if (newParentItem == 0)
     {
     newParentItem = this->mrmlSceneItem();
@@ -372,7 +372,7 @@ void qMRMLSceneDisplayableModel::updateNodeFromItem(vtkMRMLNode* node, QStandard
       }
     }
   vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
-  if (qMRMLSceneDisplayableModel::parentNode(node) != parent)
+  if (this->parentNode(node) != parent)
     {
     qMRMLSceneDisplayableModel::reparent(node, parent);
     }

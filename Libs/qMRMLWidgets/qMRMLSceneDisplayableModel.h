@@ -36,7 +36,7 @@ public:
   virtual Qt::DropActions supportedDropActions()const;
 
   /// 
-  static vtkMRMLNode* parentNode(vtkMRMLNode* node);
+  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node);
   static int          nodeIndex(vtkMRMLNode* node);
   /// fast function that only check the type of the node to know if it can be a child.
   static bool         canBeAChild(vtkMRMLNode* node);
