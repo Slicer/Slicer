@@ -319,7 +319,7 @@ void qMRMLSceneDisplayableModel::insertNode(vtkMRMLNode* node)
     min = this->preItems(parentItem).count();
     max = parentItem->rowCount() - this->postItems(parentItem).count();
     }
-  this->insertNode(node, parentItem, qMin(min + qMRMLSceneDisplayableModel::nodeIndex(node), max));
+  this->insertNode(node, parentItem, qMin(min + this->nodeIndex(node), max));
 }
 
 //------------------------------------------------------------------------------
@@ -327,11 +327,11 @@ void qMRMLSceneDisplayableModel::updateItemFromNode(QStandardItem* item, vtkMRML
 {
   this->qMRMLSceneModel::updateItemFromNode(item, node, column);
   bool oldBlock = this->blockSignals(true);
-  if (qMRMLSceneDisplayableModel::canBeAChild(node))
+  if (this->canBeAChild(node))
     {
     item->setFlags(item->flags() | Qt::ItemIsDragEnabled);
     }
-  if (qMRMLSceneDisplayableModel::canBeAParent(node))
+  if (this->canBeAParent(node))
     {
     item->setFlags(item->flags() | Qt::ItemIsDropEnabled);
     }
@@ -344,12 +344,12 @@ void qMRMLSceneDisplayableModel::updateItemFromNode(QStandardItem* item, vtkMRML
     }
   // if the item has no parent, then it means it hasn't been put into the scene yet.
   // and it will do it automatically.
-  if (parentItem != 0 && (parentItem != newParentItem || qMRMLSceneDisplayableModel::nodeIndex(node) != item->row()))
+  if (parentItem != 0 && (parentItem != newParentItem || this->nodeIndex(node) != item->row()))
     {
     QList<QStandardItem*> children = parentItem->takeRow(item->row());
     int min = this->preItems(newParentItem).count();
     int max = newParentItem->rowCount() - this->postItems(newParentItem).count();
-    int pos = qMin(min + qMRMLSceneDisplayableModel::nodeIndex(node), max);
+    int pos = qMin(min + this->nodeIndex(node), max);
     newParentItem->insertRow(pos, children);
     }
 }
@@ -374,9 +374,9 @@ void qMRMLSceneDisplayableModel::updateNodeFromItem(vtkMRMLNode* node, QStandard
   vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
   if (this->parentNode(node) != parent)
     {
-    qMRMLSceneDisplayableModel::reparent(node, parent);
+    this->reparent(node, parent);
     }
-  else if (qMRMLSceneDisplayableModel::nodeIndex(node) != item->row())
+  else if (this->nodeIndex(node) != item->row())
     {
     this->updateItemFromNode(item, node, item->column());
     }
