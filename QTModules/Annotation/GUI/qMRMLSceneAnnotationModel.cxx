@@ -141,9 +141,9 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
         this->blockSignals(true);
         item->setFlags(item->flags() | Qt::ItemIsSelectable);
         this->blockSignals(oldBlock);
-        item->setText(QString(node->GetName()));
-        break;
+        item->setText(QString(""));
         }
+      break;
     case qMRMLSceneAnnotationModel::TextColumn:
       if (annotationNode)
         {
@@ -154,6 +154,14 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
         item->setText(QString(this->m_Logic->GetAnnotationText(annotationNode->GetID())));
         break;
         }
+      else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+        {
+        this->blockSignals(true);
+        item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsSelectable);
+        this->blockSignals(oldBlock);
+        item->setText(QString(node->GetName()));
+        }
+      break;
     }
 
 

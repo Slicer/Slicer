@@ -54,6 +54,9 @@ public:
 
     void refreshTree();
 
+    /// User clicked on property edit button
+    void propertyEditButtonClicked(QString mrmlId);
+
     //BTX
     /// Different Annotation Types
     enum
@@ -70,7 +73,6 @@ public:
 
 protected:
 
-
 protected slots:
 
     // Table and Property Modify
@@ -82,23 +84,12 @@ protected slots:
     void lockSelectedButtonClicked();
     void deleteSelectedButtonClicked();
 
-
-    void annotationTextChanged(QString text, char* nodeId);
-    void annotationCoordinateChanged(QString valueString, char* nodeId);
-    void selectRowByIndex(int index);
-    void updateAnnotationTable(int index, const char * thevalue, const char* format);
-
-    int getIndexByNodeID(const char* nodeID);
-    void updateAnnotationText(int row, int col);
-    void onItemSelectionChanged();
-
     // Save
     void onSaveMRMLSceneButtonClicked();
     void onSaveAnnotationButtonClicked();
 
     void onGenerateReportButtonClicked();
     bool saveAnnotationReport();
-    bool saveScreenShot();
 
   //------------------------------------------------------------------
   // Daniel's approved code starting here
@@ -112,7 +103,6 @@ protected slots:
   // Property dialog
   void propertyRestored();
   void propertyAccepted();
-  void propertyEditButtonClicked();
 
   // Snapshot dialog
   void snapshotRejected();
@@ -165,19 +155,9 @@ private:
   Q_DISABLE_COPY(qSlicerAnnotationModuleWidget);
 
   virtual void setup();
-  QString getAnnotationIconName(int index);
 
   qSlicerAnnotationModulePropertyDialog* m_PropertyDialog;
   qSlicerAnnotationModuleReportDialog* m_ReportDialog;
-
-  QString m_report;
-  int m_index;
-  int m_lastAddedIndex;
-  std::vector<const char*> m_IDs;
-  QPixmap m_screenshot;
-  QStringList m_screenshotList;
-
-
   qSlicerAnnotationModuleSnapShotDialog* m_SnapShotDialog;
 
   /// Type of current Annotations - described by enum

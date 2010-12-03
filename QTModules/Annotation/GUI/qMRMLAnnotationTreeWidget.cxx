@@ -149,6 +149,16 @@ void qMRMLAnnotationTreeWidget::onClicked(const QModelIndex& index)
 
   Q_D(qMRMLAnnotationTreeWidget);
 
+  // if the user clicked on a hierarchy, set this as the active one
+  // this means, new annotations or new user-created hierarchies will be created
+  // as childs of this one
+
+  if(d->SortFilterModel->mrmlNode(index)->IsA("vtkMRMLAnnotationHierarchyNode"))
+    {
+    this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNode(index)));
+    }
+
+  // check if user clicked on icon, this can happen even after we marked a hierarchy as active
   if (index.column() == qMRMLSceneAnnotationModel::VisibilityColumn)
     {
     // user wants to toggle the visibility of the annotation
@@ -162,7 +172,7 @@ void qMRMLAnnotationTreeWidget::onClicked(const QModelIndex& index)
   else if (index.column() == qMRMLSceneAnnotationModel::EditColumn)
     {
     // user wants to edit the properties of this annotation
-
+    this->m_Widget->propertyEditButtonClicked(QString(d->SortFilterModel->mrmlNode(index)->GetID()));
     }
 
 }
@@ -172,15 +182,23 @@ const char* qMRMLAnnotationTreeWidget::firstSelectedNode()
 {
   Q_D(qMRMLAnnotationTreeWidget);
   QModelIndexList selected = this->selectedIndexes();
-  QModelIndex index = selected.first();
 
-  if (!d->SceneModel->mrmlNodeFromIndex(index))
+  // first, check if we selected anything
+  if (selected.isEmpty())
     {
-    //std::cout << "no node found" << std::endl;
     return 0;
     }
 
-  return d->SceneModel->mrmlNodeFromIndex(index)->GetID();
+  // now get the first selected item
+  QModelIndex index = selected.first();
+
+  // check if it is a valid node
+  if (!d->SortFilterModel->mrmlNode(index))
+    {
+    return 0;
+    }
+
+  return d->SortFilterModel->mrmlNode(index)->GetID();
 }
 
 //------------------------------------------------------------------------------
@@ -304,7 +322,29 @@ void qMRMLAnnotationTreeWidget::onVisibilityColumnClicked(vtkMRMLNode* node)
 
     }
 
-  // TODO handle hierarchies
+
+  // TODO move to logic
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+
+  if (hierarchyNode)
+    {
+    vtkCollection* children = vtkCollection::New();
+    hierarchyNode->GetChildrenDisplayableNodes(children);
+
+    children->InitTraversal();
+    for (int i=0; i<children->GetNumberOfItems(); ++i)
+      {
+      vtkMRMLAnnotationNode* childNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
+      if (childNode)
+        {
+        // this is a valid annotation child node
+        //
+        childNode->SetVisible(!childNode->GetVisible());
+        }
+      } // for loop
+
+    } // if hierarchyNode
+
 
 }
 
@@ -327,7 +367,29 @@ void qMRMLAnnotationTreeWidget::onLockColumnClicked(vtkMRMLNode* node)
 
     }
 
-  // TODO handle hierarchies
+
+  // TODO move to logic
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+
+  if (hierarchyNode)
+    {
+    vtkCollection* children = vtkCollection::New();
+    hierarchyNode->GetChildrenDisplayableNodes(children);
+
+    children->InitTraversal();
+    for (int i=0; i<children->GetNumberOfItems(); ++i)
+      {
+      vtkMRMLAnnotationNode* childNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
+      if (childNode)
+        {
+        // this is a valid annotation child node
+        //
+        childNode->SetLocked(!childNode->GetLocked());
+        }
+      } // for loop
+
+    } // if hierarchyNode
+
 
 }
 

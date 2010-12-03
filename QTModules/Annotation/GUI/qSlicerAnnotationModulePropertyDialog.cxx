@@ -46,7 +46,8 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 {
 
   // backup the current annotationNode
-  this->m_logic->BackupAnnotationNode(this->m_id);
+  // TODO does not work with displayableNodes
+  //this->m_logic->BackupAnnotationNode(this->m_id);
 
   // build the typeLabelText including name and id of the annotation
   QString * typeLabelText = new QString("Name: ");

@@ -196,10 +196,8 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNo
     return;
     }
 
-  const char * measurementValue = this->GetAnnotationMeasurement(node->GetID(),false);
-  const char* textValue = this->GetAnnotationText(node->GetID());
-
-  this->m_Widget->updateAnnotationInTableByID(annotationNode->GetID(), measurementValue, textValue);
+  // refresh the hierarchy tree
+  this->m_Widget->refreshTree();
 
 }
 
@@ -313,9 +311,6 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationHierarchy
     vtkErrorMacro("AddNodeCompleted: Could not get annotationNode.")
     return;
     }
-
-
-  this->m_Widget->addNodeToTable(annotationNode->GetID());
 
   // refresh the hierarchy tree
   this->m_Widget->refreshTree();
@@ -475,6 +470,22 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   vtkMRMLAnnotationHierarchyNode* annotationHierarchyNode = vtkMRMLAnnotationHierarchyNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyNode);
   annotationHierarchyNode->Delete();
+
+}
+
+//---------------------------------------------------------------------------
+// Check if the id points to an annotation node
+//---------------------------------------------------------------------------
+bool vtkSlicerAnnotationModuleLogic::IsAnnotationNode(const char* id)
+{
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+
+  if (annotationNode)
+    {
+    return true;
+    }
+
+  return false;
 
 }
 
@@ -1281,12 +1292,20 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNode
 
   if (!annotationNode)
     {
+    // this is a user created hierarchy!
+
+    // we want to see that!
     hierarchyNode->HideFromEditorsOff();
     this->GetMRMLScene()->AddNode(hierarchyNode);
+
+    // we want it to be the active hierarchy from now on
+    this->m_ActiveHierarchy = hierarchyNode;
     }
   else
     {
-    // TODO
+    // this is the 1-1 hierarchy node for a given annotation node
+
+    // we do not want to see that!
     hierarchyNode->HideFromEditorsOn();
     this->GetMRMLScene()->InsertBeforeNode(annotationNode,hierarchyNode);
     }
@@ -1320,19 +1339,22 @@ void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNode(vtkMRMLAnnotationHie
 // Set the active hierarchy node which will be used as a parent for new annotations
 void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeByID(const char* id)
 {
-  vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID(id);
-
-  if (!node)
-    {
-    vtkErrorMacro("SetActiveHierarchyNodeByID: Could not find node.")
-    return;
-    }
-
-  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
 
   if (!hierarchyNode)
     {
-    vtkErrorMacro("SetActiveHierarchyNodeByID: Could not find hierarchy node.")
+    // there was no node as input
+    // we then use the toplevel hierarchyNode
+    vtkMRMLAnnotationHierarchyNode* toplevelNode = this->GetTopLevelHierarchyNode();
+
+    if (!toplevelNode)
+      {
+      vtkErrorMacro("SetActiveHierarchyNodeByID: Could not find or create any hierarchy.")
+      return;
+      }
+
+    this->m_ActiveHierarchy = toplevelNode;
+
     return;
     }
 
@@ -1640,7 +1662,6 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneSnapShotNodeAdded(vtkMRMLAnnotat
     return;
     }
 
-  this->m_Widget->addNodeToTable(snapshotNode->GetID());
 }
 
 //---------------------------------------------------------------------------
@@ -1660,12 +1681,8 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneSnapShotNodeModified(vtkMRMLAnno
     return;
     }
 
-
-  const char * measurementValue = this->GetAnnotationMeasurement(snapshotNode->GetID(),false);
-  const char* textValue = this->GetAnnotationText(snapshotNode->GetID());
-
-  this->m_Widget->updateAnnotationInTableByID(snapshotNode->GetID(), measurementValue, textValue);
-
+  // refresh the hierarchy tree
+  this->m_Widget->refreshTree();
 }
 
 //---------------------------------------------------------------------------
@@ -1685,12 +1702,8 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneSnapShotNodeRemoved(vtkMRMLAnnot
     return;
     }
 
-
-  const char * measurementValue = this->GetAnnotationMeasurement(snapshotNode->GetID(),false);
-  const char* textValue = this->GetAnnotationText(snapshotNode->GetID());
-
-  this->m_Widget->updateAnnotationInTableByID(snapshotNode->GetID(), measurementValue, textValue);
-
+  // refresh the hierarchy tree
+  this->m_Widget->refreshTree();
 }
 
 //---------------------------------------------------------------------------

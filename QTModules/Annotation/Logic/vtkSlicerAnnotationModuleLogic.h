@@ -55,6 +55,9 @@ public:
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
 
+  /// Check if node id corresponds to an annotaton node
+  bool IsAnnotationNode(const char* id);
+
   /// Get the name of an Annotation MRML node
   const char * GetAnnotationName(const char * id);
 
