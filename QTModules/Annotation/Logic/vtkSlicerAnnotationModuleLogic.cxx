@@ -178,6 +178,7 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node
     return;
     }
   hierarchyNode->SetDisplayableNodeID(annotationNode->GetID());
+  annotationNode->Modified();
 
   // we pass the hierarchy node along - it includes the pointer to the actual annotationNode
   this->AddNodeCompleted(hierarchyNode);
@@ -1272,7 +1273,7 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNode
 
   // Create a hierarchy node
   vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::New();
-  hierarchyNode->SetScene(this->GetMRMLScene());
+
   hierarchyNode->SetParentNodeID(this->m_ActiveHierarchy->GetID());
   hierarchyNode->SetScene(this->GetMRMLScene());
 
@@ -1286,7 +1287,7 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNode
   else
     {
     // TODO
-    hierarchyNode->HideFromEditorsOff();
+    hierarchyNode->HideFromEditorsOn();
     this->GetMRMLScene()->InsertBeforeNode(annotationNode,hierarchyNode);
     }
 

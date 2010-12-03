@@ -96,22 +96,6 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
                    q, SLOT(onClicked(const QModelIndex&)));
 
 
-  // set the column widths
-  q->header()->setResizeMode(qMRMLSceneAnnotationModel::DummyColumn, (QHeaderView::ResizeToContents));
-  q->header()->setResizeMode(qMRMLSceneAnnotationModel::VisibilityColumn, (QHeaderView::ResizeToContents));
-  q->header()->setResizeMode(qMRMLSceneAnnotationModel::LockColumn, (QHeaderView::ResizeToContents));
-  q->header()->setResizeMode(qMRMLSceneAnnotationModel::EditColumn, (QHeaderView::ResizeToContents));
-  q->header()->setResizeMode(qMRMLSceneAnnotationModel::ValueColumn, (QHeaderView::ResizeToContents));
-  q->header()->setResizeMode(qMRMLSceneAnnotationModel::TextColumn, (QHeaderView::ResizeToContents));
-
-  // hide the strange columns
-  q->hideColumn(6);
-  q->hideColumn(7);
-  q->hideColumn(8);
-  q->hideColumn(9);
-  q->hideColumn(10);
-  q->hideColumn(11);
-
   q->setUniformRowHeights(true);
 }
 
@@ -274,6 +258,25 @@ void qMRMLAnnotationTreeWidget::hideScene()
     }
 
   this->setRootIndex(d->SortFilterModel->mapFromSource(root));
+
+
+  // set the column widths
+  this->header()->setResizeMode(qMRMLSceneAnnotationModel::DummyColumn, (QHeaderView::ResizeToContents));
+  this->header()->setResizeMode(qMRMLSceneAnnotationModel::VisibilityColumn, (QHeaderView::ResizeToContents));
+  this->header()->setResizeMode(qMRMLSceneAnnotationModel::LockColumn, (QHeaderView::ResizeToContents));
+  this->header()->setResizeMode(qMRMLSceneAnnotationModel::EditColumn, (QHeaderView::ResizeToContents));
+  this->header()->setResizeMode(qMRMLSceneAnnotationModel::ValueColumn, (QHeaderView::ResizeToContents));
+  this->header()->setResizeMode(qMRMLSceneAnnotationModel::TextColumn, (QHeaderView::ResizeToContents));
+
+  // hide the strange columns
+  this->hideColumn(6);
+  this->hideColumn(7);
+  this->hideColumn(8);
+  this->hideColumn(9);
+  this->hideColumn(10);
+  this->hideColumn(11);
+
+
 }
 
 //------------------------------------------------------------------------------

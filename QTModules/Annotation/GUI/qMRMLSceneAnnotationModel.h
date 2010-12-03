@@ -63,6 +63,8 @@ public:
 
 protected:
 
+  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node);
+
   virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
 
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;

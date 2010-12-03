@@ -323,7 +323,7 @@
             <enum>QAbstractItemView::InternalMove</enum>
            </property>
            <property name="selectionMode">
-            <enum>QAbstractItemView::MultiSelection</enum>
+            <enum>QAbstractItemView::ContiguousSelection</enum>
            </property>
            <property name="indentation">
             <number>10</number>

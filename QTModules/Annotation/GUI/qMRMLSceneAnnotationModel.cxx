@@ -59,7 +59,7 @@ void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardI
 {
   this->qMRMLSceneDisplayableModel::updateNodeFromItem(node,item);
 
-  //this->m_Widget->refreshTree();
+  this->m_Widget->refreshTree();
 }
 
 //------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
     }
   this->blockSignals(oldBlock);
   QStandardItem* parentItem = item->parent();
-  QStandardItem* newParentItem = this->itemFromNode(qMRMLSceneDisplayableModel::parentNode(node));
+  QStandardItem* newParentItem = this->itemFromNode(qMRMLSceneAnnotationModel::parentNode(node));
   if (newParentItem == 0)
     {
     newParentItem = this->mrmlSceneItem();
@@ -185,6 +185,49 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
     newParentItem->insertRow(pos, children);
     }
 
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)
+{
+  if (node == NULL)
+    {
+    return 0;
+    }
+
+  // MRML Displayable nodes (inherits from transformable)
+  vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  vtkMRMLDisplayableHierarchyNode * displayableHierarchyNode = NULL;
+  if (displayableNode &&
+      displayableNode->GetScene() &&
+      displayableNode->GetID())
+    {
+    // get the displayable hierarchy node associated with this displayable node
+    displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
+    if (displayableHierarchyNode)
+      {
+      if (displayableHierarchyNode->GetHideFromEditors())
+        {
+        // this is a hidden hierarchy node, so we do not want to display it
+        // instead, we will return the parent of the hidden hierarchy node
+        // to be used as the parent for the displayableNode
+        return displayableHierarchyNode->GetParentNode();
+        }
+      return displayableHierarchyNode;
+      }
+    }
+  if (displayableHierarchyNode == NULL)
+    {
+    // the passed in node might have been a hierarchy node instead, try to
+    // cast it
+    displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+    }
+  if (displayableHierarchyNode)
+    {
+    // return it's parent
+    return displayableHierarchyNode->GetParentNode();
+    }
+  return 0;
 }
 
 //------------------------------------------------------------------------------

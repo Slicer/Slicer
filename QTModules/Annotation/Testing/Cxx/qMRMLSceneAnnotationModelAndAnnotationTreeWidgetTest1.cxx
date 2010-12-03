@@ -54,6 +54,10 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
 
   view->show();
   view->resize(500, 800);
+
+  QTreeView view3;
+  view3.setModel(view->sceneModel());
+  view3.show();
 /*
   qMRMLTreeWidget view2;
   view2.setSceneModelType("Displayable");
@@ -78,6 +82,12 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
   rulerNode->Delete();
 
   std::cout << "Measurement in rulerNode: " << rulerNode->GetDistanceMeasurement() << std::endl;
+/*
+  QModelIndex index = view->d_func()->SceneModel->indexFromNode(sceneFactory.mrmlScene()->GetNthNodeByClass(0,"vtkMRMLAnnotationRulerNode"));
+
+  qMRMLAbstractItemHelper* helper = view->d_func()->SceneModel->itemFromIndex(index);
+  std::cout << helper->data(Qt::DisplayRole) << std::endl;
+*/
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
