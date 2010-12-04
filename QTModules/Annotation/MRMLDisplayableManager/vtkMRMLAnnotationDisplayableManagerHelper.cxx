@@ -181,6 +181,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
     // Delete and Remove vtkWidget from the map
     if (this->Widgets[node])
       {
+      this->Widgets[node]->Off();
       this->Widgets[node]->Delete();
       }
     this->Widgets.erase(node);
@@ -192,6 +193,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
     // now delete it!
     if (this->WidgetIntersections[node])
       {
+      this->WidgetIntersections[node]->Off();
       this->WidgetIntersections[node]->Delete();
       }
     this->WidgetIntersections.erase(node);
@@ -285,7 +287,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveSeeds()
     }
   if (this->SeedWidget)
     {
-    //this->SeedWidget->Off();
+    this->SeedWidget->Off();
     this->SeedWidget->Delete();
     this->SeedWidget = 0;
     }

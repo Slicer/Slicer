@@ -181,6 +181,7 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(selectedAllButtonClicked()));
   this->connect(d->visibleSelectedButton, SIGNAL(clicked()),
       SLOT(visibleSelectedButtonClicked()));
+
   this->connect(d->deleteSelectedButton, SIGNAL(clicked()),
       SLOT(deleteSelectedButtonClicked()));
   this->connect(d->generateReport, SIGNAL(clicked()), this,
@@ -189,8 +190,8 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(onSaveAnnotationButtonClicked()));
   this->connect(d->screenShot, SIGNAL(clicked()), this,
       SLOT(onSnapShotButtonClicked()));
-  this->connect(d->lockUnlockAllButton, SIGNAL(clicked()), this,
-      SLOT(onLockUnlockAllButtonClicked()));
+  this->connect(d->lockSelected, SIGNAL(clicked()), this,
+      SLOT(lockSelectedButtonClicked()));
 
   this->connect(d->restoreViewButton, SIGNAL(clicked()), this,
       SLOT(onRestoreViewButtonClicked()));
@@ -228,17 +229,12 @@ void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::selectedAllButtonClicked()
 {
-  //Q_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
-  // TODO
+  d->hierarchyTreeWidget->selectAll();
 
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onLockUnlockAllButtonClicked()
-{
-  // TODO
-}
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
@@ -724,9 +720,9 @@ bool qSlicerAnnotationModuleWidget::saveAnnotationReport()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
 {
-  //Q_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
-  // TODO
+  d->hierarchyTreeWidget->toggleVisibilityForSelected();
 
 }
 
@@ -734,19 +730,18 @@ void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
 void qSlicerAnnotationModuleWidget::lockSelectedButtonClicked()
 {
 
-  //Q_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
-  // TODO
-
+  d->hierarchyTreeWidget->toggleLockForSelected();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
 {
 
-  //Q_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
-  // TODO
+  d->hierarchyTreeWidget->deleteSelected();
 
 }
 

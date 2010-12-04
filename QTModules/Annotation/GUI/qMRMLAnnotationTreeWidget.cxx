@@ -202,6 +202,139 @@ const char* qMRMLAnnotationTreeWidget::firstSelectedNode()
 }
 
 //------------------------------------------------------------------------------
+void qMRMLAnnotationTreeWidget::toggleLockForSelected()
+{
+  Q_D(qMRMLAnnotationTreeWidget);
+  QModelIndexList selected = this->selectedIndexes();
+
+  // first, check if we selected anything
+  if (selected.isEmpty())
+    {
+    return;
+    }
+
+  for (int i = 0; i < selected.size(); ++i) {
+
+    // we need to prevent looping through all columns
+    // there we only update once a row
+    if (selected.at(i).column() == qMRMLSceneAnnotationModel::LockColumn)
+      {
+
+      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
+
+      if (annotationNode)
+        {
+        this->onLockColumnClicked(annotationNode);
+        }
+
+      }
+
+  }
+
+}
+
+//------------------------------------------------------------------------------
+void qMRMLAnnotationTreeWidget::toggleVisibilityForSelected()
+{
+  Q_D(qMRMLAnnotationTreeWidget);
+  QModelIndexList selected = this->selectedIndexes();
+
+  // first, check if we selected anything
+  if (selected.isEmpty())
+    {
+    return;
+    }
+
+  for (int i = 0; i < selected.size(); ++i) {
+
+    // we need to prevent looping through all columns
+    // there we only update once a row
+    if (selected.at(i).column() == qMRMLSceneAnnotationModel::VisibilityColumn)
+      {
+
+      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
+
+      if (annotationNode)
+        {
+        this->onVisibilityColumnClicked(annotationNode);
+        }
+
+      }
+  }
+
+}
+
+//------------------------------------------------------------------------------
+void qMRMLAnnotationTreeWidget::deleteSelected()
+{
+  Q_D(qMRMLAnnotationTreeWidget);
+  QModelIndexList selected = this->selectedIndexes();
+
+  QStringList markedForDeletion;
+
+  // first, check if we selected anything
+  if (selected.isEmpty())
+    {
+    return;
+    }
+
+  // case: delete a hierarchy only, if it is the only selection
+  // warning: all directly under this hierarchy laying annotation nodes will be lost
+  // if there are other hierarchies underneath the one which gets deleted, they will get reparented
+  if (selected.size()==1)
+    {
+    // only one item was selected, is this a hierarchy?
+    vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.first()));
+
+    if (hierarchyNode)
+      {
+      // this is exciting!!
+
+      // TODO
+
+      // all done, bail out
+      return;
+      }
+    // if this is not a hierarchyNode, treat this single selection as a normal case
+
+    }
+  // end hierarchy case
+
+
+  // case:: delete all selected annotationNodes but no hierarchies
+  for (int i = 0; i < selected.size(); ++i) {
+
+    // we need to prevent looping through all columns
+    // there we only update once a row
+    if (selected.at(i).column() == qMRMLSceneAnnotationModel::VisibilityColumn)
+      {
+
+      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
+
+      if (annotationNode)
+        {
+
+        // we mark this one for deletion
+        markedForDeletion.append(QString(annotationNode->GetID()));
+
+        }
+
+      }
+  } // for
+
+  // we parsed the complete selection and saved all mrmlIds to delete
+  // now, it is safe to delete
+  for (int j=0; j < markedForDeletion.size(); ++j)
+    {
+
+    vtkMRMLAnnotationNode* annotationNodeToDelete = vtkMRMLAnnotationNode::SafeDownCast(this->m_Logic->GetMRMLScene()->GetNodeByID(markedForDeletion.at(j).toLatin1()));
+    this->m_Logic->RemoveAnnotationNode(annotationNodeToDelete);
+
+    }
+
+}
+
+//------------------------------------------------------------------------------
 //
 // MouseMove event handling
 //

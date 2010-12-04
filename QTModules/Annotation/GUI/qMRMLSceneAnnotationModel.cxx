@@ -57,7 +57,46 @@ qMRMLSceneAnnotationModel::~qMRMLSceneAnnotationModel()
 //------------------------------------------------------------------------------
 void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 {
-  this->qMRMLSceneDisplayableModel::updateNodeFromItem(node,item);
+  // from qMRMLSceneDisplayableModel
+  Q_ASSERT(node != this->mrmlNodeFromItem(item->parent()));
+
+  // Don't do the following if the row is not complete (reparenting an
+  // incomplete row might lead to errors). updateNodeFromItem is typically
+  // called for every item changed, so it should be
+  QStandardItem* parentItem = item->parent();
+  for (int i = 0; i < parentItem->columnCount(); ++i)
+    {
+    if (parentItem->child(item->row(), i) == 0)
+      {
+      return;
+      }
+    }
+  vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
+  if (this->parentNode(node) != parent)
+    {
+    this->reparent(node, parent);
+    }
+  else if (this->nodeIndex(node) != item->row())
+    {
+    this->updateItemFromNode(item, node, item->column());
+    }
+
+  if (item->column() == qMRMLSceneAnnotationModel::TextColumn)
+    {
+    vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+    vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+
+    if (annotationNode)
+      {
+      // if we have an annotation node, the text can be changed by editing the textcolumn
+      annotationNode->SetText(0,item->text().toLatin1(),0,1);
+      }
+    else if (hierarchyNode)
+      {
+      // if we have a hierarchy node, the name can be changed by editing the textcolumn
+      hierarchyNode->SetName(item->text().toLatin1());
+      }
+    }
 
   this->m_Widget->refreshTree();
 }

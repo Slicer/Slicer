@@ -63,6 +63,13 @@ public:
   // Register the logic
   void setAndObserveLogic(vtkSlicerAnnotationModuleLogic* logic);
 
+
+  void toggleLockForSelected();
+
+  void toggleVisibilityForSelected();
+
+  void deleteSelected();
+
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
 

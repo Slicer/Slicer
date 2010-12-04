@@ -201,7 +201,7 @@
            <item>
             <widget class="QPushButton" name="selectedAllButton">
              <property name="toolTip">
-              <string>Selected/Deselect all annotations </string>
+              <string>Select all annotations and hierarchies</string>
              </property>
              <property name="text">
               <string/>
@@ -216,7 +216,7 @@
            <item>
             <widget class="QPushButton" name="visibleSelectedButton">
              <property name="toolTip">
-              <string>Makes selected annotations visible/ invisible </string>
+              <string>Toggle the visibility of selected Annotations. Hierarchies are ignored.</string>
              </property>
              <property name="text">
               <string/>
@@ -229,9 +229,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="lockUnlockAllButton">
+            <widget class="QPushButton" name="lockSelected">
              <property name="toolTip">
-              <string>Lock/ unlock property edition of selected annotations</string>
+              <string>Lock/ unlock selected annotations. Hierarchies are ignored.</string>
              </property>
              <property name="text">
               <string/>

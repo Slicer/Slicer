@@ -40,6 +40,9 @@ public:
   // Cancel the current annotation placement or remove last annotation node
   void CancelCurrentOrRemoveLastAddedAnnotationNode();
 
+  /// Remove an AnnotationNode and also its 1-1 IS-A hierarchyNode, if found.
+  void RemoveAnnotationNode(vtkMRMLAnnotationNode* annotationNode);
+
   // Register the widget
   void SetAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
 

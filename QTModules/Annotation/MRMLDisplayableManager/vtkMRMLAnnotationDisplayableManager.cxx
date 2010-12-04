@@ -275,6 +275,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemovedEvent(vtkMRMLNod
   // Refresh observers
   this->SetAndObserveNodes();
 
+  // and render again after seeds were removed
+  this->RequestRender();
+
 }
 
 //---------------------------------------------------------------------------

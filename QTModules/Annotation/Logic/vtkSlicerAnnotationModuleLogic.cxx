@@ -370,6 +370,30 @@ void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNod
 }
 
 //---------------------------------------------------------------------------
+/// Remove an AnnotationNode and also its 1-1 IS-A hierarchyNode, if found.
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::RemoveAnnotationNode(vtkMRMLAnnotationNode* annotationNode)
+{
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("RemoveAnnotationNode: No MRML Scene found.")
+    return;
+    }
+
+  // remove the 1-1 IS-A hierarchy node first
+  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(annotationNode->GetScene(), annotationNode->GetID());
+  if (displayableHierarchyNode)
+    {
+    // there is a parent
+    this->GetMRMLScene()->RemoveNodeNoNotify(displayableHierarchyNode);
+
+    }
+
+  this->GetMRMLScene()->RemoveNode(annotationNode);
+
+}
+
+//---------------------------------------------------------------------------
 //
 //
 // Annotation Properties as an interface to MRML
@@ -1288,14 +1312,15 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNode
   hierarchyNode->SetParentNodeID(this->m_ActiveHierarchy->GetID());
   hierarchyNode->SetScene(this->GetMRMLScene());
 
-  hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationHierarchy"));
-
   if (!annotationNode)
     {
     // this is a user created hierarchy!
 
     // we want to see that!
     hierarchyNode->HideFromEditorsOff();
+
+    hierarchyNode->SetName(" ");
+
     this->GetMRMLScene()->AddNode(hierarchyNode);
 
     // we want it to be the active hierarchy from now on
@@ -1307,6 +1332,9 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNode
 
     // we do not want to see that!
     hierarchyNode->HideFromEditorsOn();
+
+    hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationHierarchy"));
+
     this->GetMRMLScene()->InsertBeforeNode(annotationNode,hierarchyNode);
     }
 

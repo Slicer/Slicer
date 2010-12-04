@@ -57,6 +57,7 @@ public:
     /// User clicked on property edit button
     void propertyEditButtonClicked(QString mrmlId);
 
+
     //BTX
     /// Different Annotation Types
     enum
@@ -79,7 +80,6 @@ protected slots:
     void moveDownSelected();
     void moveUpSelected();  
     void selectedAllButtonClicked();
-    void onLockUnlockAllButtonClicked();
     void visibleSelectedButtonClicked();
     void lockSelectedButtonClicked();
     void deleteSelectedButtonClicked();
