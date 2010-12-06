@@ -465,7 +465,7 @@ IF(Slicer_USE_QT)
     INCLUDE(${CTK_CMAKE_DIR}/ctkMacroCompilePythonScript.cmake)
     
     # Enable qMRMLWidgets python wrapping
-    SET(qMRMLWidgets_WRAP_PYTHON OFF)
+    SET(qMRMLWidgets_WRAP_PYTHON ON)
   ENDIF()
 ENDIF()
 

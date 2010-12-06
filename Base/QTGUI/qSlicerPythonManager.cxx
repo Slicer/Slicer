@@ -29,7 +29,7 @@
 // PythonQt wrapper initialization methods
 void PythonQt_init_org_commontk_CTKWidgets(PyObject*);
 void PythonQt_init_org_commontk_CTKVisualizationVTKWidgets(PyObject*);
-//void PythonQt_init_org_slicer_libs_qMRMLWidgets(PyObject*);
+void PythonQt_init_org_slicer_libs_qMRMLWidgets(PyObject*);
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerPythonManager");
@@ -66,7 +66,7 @@ void qSlicerPythonManager::preInitialization()
   // Initialize wrappers
   PythonQt_init_org_commontk_CTKWidgets(0);
   PythonQt_init_org_commontk_CTKVisualizationVTKWidgets(0);
-  //PythonQt_init_org_slicer_libs_qMRMLWidgets(0);
+  PythonQt_init_org_slicer_libs_qMRMLWidgets(0);
 
   // Register decorators
   this->registerPythonQtDecorator(new qSlicerBaseQTGUIPythonQtDecorators(this));
