@@ -496,7 +496,7 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
     // at svn version 12553, the symbol type changed by one. There was a bit of
     // a time gap and then added a fcsv file version to also check against
     int glyphType = fiducialListNode->GetGlyphType();
-    if (this->GetScene())
+    if (this->GetScene() && this->GetScene()->GetLastLoadedVersion())
       {
       if (this->GetScene()->GetLastLoadedVersion() != std::string(""))
         {
