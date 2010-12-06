@@ -33,7 +33,12 @@
 // VTK includes
 #include <vtkPythonUtil.h>
 
-#include "vtkSlicerConfigure.h" // For VTK_DIR
+#include "vtkSlicerConfigure.h" // For VTK_DIR, CTK_DIR
+
+// PythonQt wrapper initialization methods
+void PythonQt_init_org_commontk_CTKCore(PyObject*);
+void PythonQt_init_org_commontk_CTKScriptingPythonCore(PyObject*);
+void PythonQt_init_org_commontk_CTKVisualizationVTKCore(PyObject*);
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtcore.qSlicerCorePythonManager");
@@ -66,6 +71,8 @@ QStringList qSlicerCorePythonManager::pythonPaths()
     paths << qSlicerUtils::searchTargetInIntDir(QLatin1String(VTK_DIR)+"/bin",
                                                 QString("vtk%1").arg(executableExtension));
     paths << QString("%1/Wrapping/Python").arg(VTK_DIR);
+
+    paths << QString("%1/CTK-build/bin/Python").arg(CTK_DIR);
     }
   else
     {
@@ -85,6 +92,11 @@ QStringList qSlicerCorePythonManager::pythonPaths()
 void qSlicerCorePythonManager::preInitialization()
 {
   Superclass::preInitialization();
+
+  // Initialize wrappers
+  PythonQt_init_org_commontk_CTKCore(0);
+  PythonQt_init_org_commontk_CTKScriptingPythonCore(0);
+  PythonQt_init_org_commontk_CTKVisualizationVTKCore(0);
 
   // Register decorators
   this->registerPythonQtDecorator(new qSlicerBaseQTBasePythonQtDecorators(this));

@@ -116,6 +116,7 @@ IF(Slicer_USE_PYTHONQT)
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
     CTKWidgetsPythonQt
+    CTKScriptingPythonWidgetsPythonQt
     CTKVisualizationVTKWidgetsPythonQt
     )
   IF(qMRMLWidgets_WRAP_PYTHON)

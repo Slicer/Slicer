@@ -77,4 +77,5 @@
 
 // Library sub-directory
 #define VTK_DIR "@VTK_DIR@"
+#define CTK_DIR "@CTK_DIR@"
 //#define Teem_DIR "@Teem_DIR@"

@@ -1,11 +1,7 @@
 import slicer
 import vtk
-
-# Qt-based libs
-from PythonQt.CTKWidgets import *
-from PythonQt.CTKVisualizationVTKWidgets import *
-# TODO: this is stubbed out until windows build issues are fixed
-#from PythonQt.qMRMLWidgets import *
+from ctk import *
+from qt import *
 
 def quit():
   exit()
