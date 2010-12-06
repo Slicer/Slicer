@@ -1,6 +1,10 @@
 import vtk, qt, ctk
 import slicer
 
+#
+# General
+#
+
 def quit():
   exit()
     
@@ -16,7 +20,56 @@ def mainWindow():
     if w.objectName == _objectName: return w
   print "Failed to obtain reference to '%s'" % _objectName
   return None
+
+#
+# IO
+#
+
+def loadColorTable(filename):
+  filetype = slicer.qSlicerIO.ColorTableFile
+  properties = {}
+  return app().coreIOManager().loadNodes(filetype, properties)
   
+def loadDTI(filename):
+  filetype = slicer.qSlicerIO.DTIFile
+  properties = {}
+  return app().coreIOManager().loadNodes(filetype, properties)
+  
+def loadFiducialList(filename):
+  filetype = slicer.qSlicerIO.FiducialListFile
+  properties = {'fileName':filename}
+  return app().coreIOManager().loadNodes(filetype, properties)
+  
+def loadModel(filename):
+  filetype = slicer.qSlicerIO.ModelFile
+  properties = {'fileName':filename}
+  return app().coreIOManager().loadNodes(filetype, properties)
+  
+def loadScalarOverlay(filename):
+  filetype = slicer.qSlicerIO.ScalarOverlayFile
+  properties = {'fileName':filename}
+  return app().coreIOManager().loadNodes(filetype, properties)
+
+# /home/jchris/Projects/Slicer3-Data/spl_pnl_brain_atlas_2007_slicer3/atlas-2007.mrml
+def loadScene(filename, clear = True):
+  filetype = slicer.qSlicerIO.SceneFile
+  properties = {'fileName':filename}
+  return app().coreIOManager().loadNodes(filetype, properties)
+  
+def loadTransform(filename):
+  filetype = slicer.qSlicerIO.TransformFile
+  properties = {'fileName':filename}
+  return app().coreIOManager().loadNodes(filetype, properties)
+  
+def loadVolume(filename):
+  filetype = slicer.qSlicerIO.VolumeFile
+  properties = {'fileName':filename}
+  return app().coreIOManager().loadNodes(filetype, properties)
+
+#
+# Module
+#
+
 def selectModule(module):
   moduleName = module
   if not isinstance(module, basestring):
@@ -45,6 +98,11 @@ def getModuleGui(moduleName):
     return None
   return widgetRepr
 
+
+#
+# MRML
+#
+
 def getNodes():
     nodes = {}
     scene = slicer.mrmlScene
@@ -55,8 +113,9 @@ def getNodes():
     return nodes
 
 #
-# __InternalInstance
+# Internal
 #
+
 class _Internal():
   def __init__(self):
     import imp

@@ -46,6 +46,8 @@ qSlicerIO::qSlicerIO(QObject* _parent)
   :QObject(_parent)
   , d_ptr(new qSlicerIOPrivate)
 {
+  qRegisterMetaType<qSlicerIO::IOFileType>("qSlicerIO::IOFileType");
+  qRegisterMetaType<qSlicerIO::IOProperties>("qSlicerIO::IOProperties");
 }
 
 //----------------------------------------------------------------------------

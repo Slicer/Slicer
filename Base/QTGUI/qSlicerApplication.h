@@ -63,7 +63,7 @@ public:
   qSlicerCommandOptions* commandOptions();
 
   /// Get IO Manager
-  qSlicerIOManager* ioManager();
+  Q_INVOKABLE qSlicerIOManager* ioManager();
 
   #ifdef Slicer_USE_PYTHONQT
   /// Get Python Manager

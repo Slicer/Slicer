@@ -223,7 +223,7 @@ vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType, 
+bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
                                      const qSlicerIO::IOProperties& parameters)
 { 
   Q_D(qSlicerCoreIOManager);

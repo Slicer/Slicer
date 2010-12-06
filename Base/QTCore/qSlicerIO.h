@@ -41,11 +41,13 @@ class qSlicerIOPrivate;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIO : public QObject
 {
   Q_OBJECT
+  Q_ENUMS(IOFileTypes)
 public:
   explicit qSlicerIO(QObject* parent = 0);
   virtual ~qSlicerIO();
 
-  typedef int IOFileType; 
+  typedef int IOFileType;
+
   enum IOFileTypes
   {
     NoFile = 0,
@@ -98,5 +100,8 @@ private:
   Q_DECLARE_PRIVATE(qSlicerIO);
   Q_DISABLE_COPY(qSlicerIO);
 };
+
+Q_DECLARE_METATYPE(qSlicerIO::IOFileType)
+Q_DECLARE_METATYPE(qSlicerIO::IOProperties)
 
 #endif

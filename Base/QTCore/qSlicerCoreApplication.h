@@ -138,9 +138,8 @@ public:
   /// Get the module manager
   qSlicerModuleManager* moduleManager()const;
 
-  ///
   /// Get the IO manager
-  qSlicerCoreIOManager* coreIOManager()const;
+  Q_INVOKABLE qSlicerCoreIOManager* coreIOManager()const;
 
   /// Set the IO manager
   /// Note that qSlicerCoreApplication takes ownership of the object
