@@ -26,7 +26,7 @@ IF(Slicer_USE_PYTHONQT_WITH_TCL)
 ENDIF()
 
 ctkMacroCompilePythonScript(
-  TARGET_NAME slicer
+  TARGET_NAME SlicerBase
   SCRIPTS "${Slicer_PYTHON_SCRIPTS}"
   RESOURCES "${Slicer_PYTHON_RESOURCES}"
   DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python
