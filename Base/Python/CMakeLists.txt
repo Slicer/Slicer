@@ -9,7 +9,6 @@ SET(Slicer_PYTHON_SCRIPTS
   teem
   freesurfer
   remoteio
-  vtk/__init__
   )
 
 SET(Slicer_PYTHON_RESOURCES

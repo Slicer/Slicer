@@ -65,11 +65,13 @@ QStringList qSlicerCorePythonManager::pythonPaths()
     {
     paths << qSlicerUtils::searchTargetInIntDir(QLatin1String(VTK_DIR)+"/bin",
                                                 QString("vtk%1").arg(executableExtension));
+    paths << QString("%1/Wrapping/Python").arg(VTK_DIR);
     }
   else
     {
     paths << app->slicerHome() + QString("/lib/vtk-%1.%2").arg(VTK_MAJOR_VERSION).
                                                            arg(VTK_MINOR_VERSION);
+    // TODO Figure out where the vtk and ctk python package is installed
     paths << app->slicerHome() + "/lib/MRML";
     paths << app->slicerHome() + "/lib/vtkTeem";
     paths << app->slicerHome() + "/lib/FreeSurfer";
