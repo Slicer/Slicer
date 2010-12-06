@@ -45,7 +45,6 @@ class qSlicerWidget;
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplication
 {
   Q_OBJECT
-
 public:
 
   typedef qSlicerCoreApplication Superclass;
@@ -63,18 +62,16 @@ public:
   /// Get commandOptions
   qSlicerCommandOptions* commandOptions();
 
-  ///
   /// Get IO Manager
   qSlicerIOManager* ioManager();
 
   #ifdef Slicer_USE_PYTHONQT
   /// Get Python Manager
-  qSlicerPythonManager * pythonManager();
+  Q_INVOKABLE qSlicerPythonManager * pythonManager();
   #endif
 
-  ///
   /// Set/Get layout manager
-  qSlicerLayoutManager* layoutManager()const;
+  Q_INVOKABLE qSlicerLayoutManager* layoutManager()const;
   void setLayoutManager(qSlicerLayoutManager* layoutManager);
 
   ///

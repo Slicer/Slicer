@@ -30,7 +30,6 @@
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerModuleManager.h"
-#include "qSlicerModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"
 
 #include "qSlicerBaseQTCoreExport.h"
