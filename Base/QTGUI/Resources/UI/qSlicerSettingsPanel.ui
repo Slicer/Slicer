@@ -17,7 +17,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="ShowToolTipsLabel">
      <property name="text">
-      <string>Show tooltips:</string>
+      <string>Don't show tooltips:</string>
      </property>
     </widget>
    </item>
@@ -25,9 +25,6 @@
     <widget class="QCheckBox" name="ShowToolTipsCheckBox">
      <property name="text">
       <string/>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -59,6 +56,9 @@
     <widget class="QCheckBox" name="RestoreUICheckBox">
      <property name="text">
       <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

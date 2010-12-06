@@ -111,7 +111,7 @@ public:
   QMap<QWidget*,bool>                 TopLevelWidgetsSavedVisibilityState;
   Qt::WindowFlags                     DefaultWindowFlags;
   qSlicerLayoutManager*               LayoutManager;
-  QScopedPointer<ctkToolTipTrapper>   ToolTipTrapper;
+  ctkToolTipTrapper*                  ToolTipTrapper;
 };
 
 
@@ -123,12 +123,14 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(qSlicerApplication& object)
   : q_ptr(&object)
 {
   this->LayoutManager = 0;
+  this->ToolTipTrapper = 0;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerApplicationPrivate::init()
 {
   Q_Q(qSlicerApplication);
+
   this->initStyle();
   this->initFont();
   this->initPalette();
@@ -138,11 +140,14 @@ void qSlicerApplicationPrivate::init()
   // will be responsible to delete it
   q->setCoreIOManager(new qSlicerIOManager);
   
-  #ifdef Slicer_USE_PYTHONQT
+#ifdef Slicer_USE_PYTHONQT
   // Note: qSlicerCoreApplication class takes ownership of the pythonManager and
   // will be responsible to delete it
   q->setCorePythonManager(new qSlicerPythonManager());
-  #endif
+#endif
+
+  this->ToolTipTrapper = new ctkToolTipTrapper(q);
+  this->ToolTipTrapper->setEnabled(false);
 }
 /*
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
@@ -358,10 +363,7 @@ void qSlicerApplication::handleCommandLineArguments()
   qSlicerCommandOptions* options = this->commandOptions();
   Q_ASSERT(options);
 
-  if (options->disableToolTips())
-    {
-    d->ToolTipTrapper.reset(new ctkToolTipTrapper(this));
-    }
+  this->setToolTipsEnabled(!options->disableToolTips());
 }
 
 //-----------------------------------------------------------------------------
@@ -373,4 +375,11 @@ QSettings* qSlicerApplication::newSettings(const QString& fileName)
     return new ctkSettings(fileName, QSettings::defaultFormat(), this);
     }
   return new ctkSettings(this);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::setToolTipsEnabled(bool enable)
+{
+  Q_D(qSlicerApplication);
+  d->ToolTipTrapper->setEnabled(!enable);
 }

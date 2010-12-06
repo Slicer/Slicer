@@ -94,7 +94,10 @@ public:
   /// See http://doc.trolltech.com/4.6/qapplication.html#commitData
   /// and http://doc.trolltech.com/4.6/qsessionmanager.html#allowsInteraction
   //virtual void commitData(QSessionManager & manager);
-
+  
+  ///
+  /// Enable/Disable tooltips
+  void setToolTipsEnabled(bool enable);
 protected slots:
 
   ///

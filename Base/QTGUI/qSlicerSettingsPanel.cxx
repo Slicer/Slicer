@@ -25,6 +25,7 @@
 #include "ctkLogger.h"
 
 // QtGUI includes
+#include "qSlicerApplication.h"
 #include "qSlicerSettingsPanel.h"
 #include "ui_qSlicerSettingsPanel.h"
 
@@ -57,6 +58,8 @@ void qSlicerSettingsPanelPrivate::init()
   this->setupUi(q);
   QObject::connect(this->FontButton, SIGNAL(currentFontChanged(const QFont&)),
                    q, SLOT(onFontChanged(const QFont&)));
+  QObject::connect(this->ShowToolTipsCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onShowToolTipsToggled(bool)));
 
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
                       SIGNAL(toggled(bool)));
@@ -88,4 +91,10 @@ qSlicerSettingsPanel::~qSlicerSettingsPanel()
 void qSlicerSettingsPanel::onFontChanged(const QFont& font)
 {
   qApp->setFont(font);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsPanel::onShowToolTipsToggled(bool disable)
+{
+  qSlicerApplication::application()->setToolTipsEnabled(!disable);
 }
