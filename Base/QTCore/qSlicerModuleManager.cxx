@@ -122,7 +122,7 @@ bool qSlicerModuleManager::loadModule(const QString& name)
     return true;
     }
 
-  // Instantiate the module
+  // Instantiate the module if needed
   qSlicerAbstractCoreModule * _module = d->ModuleFactoryManager.instantiateModule(name);
   if (!_module)
     {
@@ -204,7 +204,7 @@ qSlicerAbstractCoreModule* qSlicerModuleManager::module(const QString& name)
   //  Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
   if (!d->ModuleFactoryManager.isRegistered(name))
     {
-    qDebug() << "The module \"" << name << "\" has not been registered.";
+    qDebug() << "The module" << name << "has not been registered.";
     qDebug() << "The following modules have been registered:"
              << d->ModuleFactoryManager.moduleNames();
     return 0;
@@ -213,7 +213,7 @@ qSlicerAbstractCoreModule* qSlicerModuleManager::module(const QString& name)
   qSlicerModuleManagerPrivate::ModuleListConstIterator iter = d->ModuleList.find(name);
   if ( iter == d->ModuleList.constEnd() )
     {
-    qDebug()<< "The module \"" << name << "\" can not be found.";
+    qDebug()<< "The module" << name << "can not be found.";
     qDebug() << "The following modules exists:" << d->ModuleList.keys();
     return 0;
     }

@@ -42,36 +42,32 @@ public:
   qSlicerModuleManager(QObject* newParent = 0);
   virtual ~qSlicerModuleManager();
 
-  ///
+  /// Print internal state using qDebug()
   virtual void printAdditionalInfo();
 
-  ///
   /// Return a pointer to the current module factory manager
   Q_INVOKABLE qSlicerModuleFactoryManager * factoryManager()const;
 
-  ///
+  /// Load module identified by \a name
   Q_INVOKABLE bool loadModule(const QString& name);
 
-  ///
+  /// Unload module identified by \a name
   Q_INVOKABLE bool unLoadModule(const QString& name);
 
-  ///
+  /// Return True if module \a name has been loaded
   Q_INVOKABLE bool isLoaded(const QString& name)const;
 
-  ///
+  /// Return the loaded module identified by \a name
   Q_INVOKABLE qSlicerAbstractCoreModule* module(const QString& name);
 
-  ///
   /// Convenient method to get module title given its name
-  /// Deprecated
+  /// \deprecated
   QString moduleTitle(const QString& name) const;
 
-  ///
   /// Convenient method to get module name given its title
-  /// Deprecated
+  /// \deprecated
   QString moduleName(const QString& title) const;
 
-  ///
   /// Return the list of all the loaded modules
   QStringList moduleList()const;
 
