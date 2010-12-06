@@ -41,6 +41,7 @@ class vtkRenderer;
 class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(int layout READ layout WRITE setLayout DESIGNABLE false)
 public:
   /// Superclass typedef
   typedef QObject Superclass;
