@@ -142,7 +142,7 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
     }
   else
     {
-    qDebug() << "Warning, the module panel doesn't have a top-level layout.";
+    qWarning() << moduleWidget->moduleName() << "widget doesn't have a top-level layout.";
     }
 
   // Insert module in the panel
