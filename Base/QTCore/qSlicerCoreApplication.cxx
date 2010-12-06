@@ -170,6 +170,15 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(qSlicerCoreApplicat
 //-----------------------------------------------------------------------------
 qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 {
+  // - The ModuleManager deals with scripted module which internally work with
+  // python references. (I.e calling Py_DECREF, ...)
+  // - The PythonManager takes care of initializing and terminating the
+  // python embedded interpreter
+  // => Di facto, it's important to make sure PythonManager is destructed
+  // after the ModuleManager.
+  // To do so, the associated SharedPointer are cleared in the appropriate order
+  this->ModuleManager.clear();
+  this->CorePythonManager.clear();
 }
 
 //-----------------------------------------------------------------------------
