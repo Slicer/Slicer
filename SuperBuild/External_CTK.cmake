@@ -30,6 +30,8 @@ if (Slicer_USE_QT)
         -DCTK_LIB_Widgets:BOOL=ON
         -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON
         -DCTK_LIB_Scripting/Python/Core:BOOL=${Slicer_USE_PYTHONQT}
+        -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=${Slicer_USE_PYTHONQT}
+        -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE:BOOL=${Slicer_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI:BOOL=${Slicer_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTUITOOLS:BOOL=${Slicer_USE_PYTHONQT}
         -DCTK_LIB_Scripting/Python/Widgets:BOOL=${Slicer_USE_PYTHONQT}
