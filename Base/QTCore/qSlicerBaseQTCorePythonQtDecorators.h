@@ -52,7 +52,6 @@ public:
     {
     Q_ASSERT(pythonManager);
     pythonManager->registerClassForPythonQt(&qSlicerCoreApplication::staticMetaObject);
-    pythonManager->registerClassForPythonQt(&qSlicerModuleManager::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerAbstractCoreModule::staticMetaObject);
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }

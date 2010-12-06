@@ -50,8 +50,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerModuleManager::qSlicerModuleManager()
-  : d_ptr(new qSlicerModuleManagerPrivate)
+qSlicerModuleManager::qSlicerModuleManager(QObject* newParent)
+  : Superclass(newParent), d_ptr(new qSlicerModuleManagerPrivate)
 {
   //Q_D(qSlicerModuleManager);
 
