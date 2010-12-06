@@ -17,7 +17,10 @@ def mainWindow():
   print "Failed to obtain reference to '%s'" % _objectName
   return None
   
-def selectModule(moduleName):
+def selectModule(module):
+  moduleName = module
+  if not isinstance(module, basestring):
+    moduleName = module.name
   w = mainWindow()
   if not w: return
   w.moduleSelector().selectModule(moduleName)
