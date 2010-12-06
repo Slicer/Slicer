@@ -1,7 +1,4 @@
-import vtk
-from ctk import *
-from qt import *
-
+import vtk, qt, ctk
 import slicer
 
 def quit():
