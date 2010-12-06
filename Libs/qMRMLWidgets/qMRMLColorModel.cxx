@@ -182,7 +182,7 @@ int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
     {
     return -1;
     }
-  QVariant colorIndex = colorItem->data(qMRML::ColorEntryRole);
+  QVariant colorIndex = colorItem->data(qMRMLColorModel::ColorEntryRole);
   if (!colorIndex.isValid())
     {
     return -1;
@@ -198,7 +198,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
     {
     return 0;
     }
-  QModelIndexList indexes = this->match(QModelIndex(), qMRML::ColorEntryRole,
+  QModelIndexList indexes = this->match(QModelIndex(), qMRMLColorModel::ColorEntryRole,
                                       color, 1,
                                       Qt::MatchExactly | Qt::MatchRecursive);
   while (indexes.size())
@@ -207,7 +207,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
       {
       return this->itemFromIndex(indexes[0]);
       }
-    indexes = this->match(indexes[0], qMRML::ColorEntryRole, color, 1,
+    indexes = this->match(indexes[0], qMRMLColorModel::ColorEntryRole, color, 1,
                           Qt::MatchExactly | Qt::MatchRecursive);
     }
   return 0;
@@ -216,7 +216,7 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLColorModel::indexes(int color)const
 {
-  return this->match(QModelIndex(), qMRML::ColorEntryRole, color, -1,
+  return this->match(QModelIndex(), qMRMLColorModel::ColorEntryRole, color, -1,
                      Qt::MatchExactly | Qt::MatchRecursive);
 }
 
@@ -308,7 +308,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
     {
     return;
     }
-  item->setData(color, qMRML::ColorEntryRole);
+  item->setData(color, qMRMLColorModel::ColorEntryRole);
   double rgba[4] = {0.,0.,0.,1.};
   bool validColor = d->MRMLColorNode->GetColor(color, rgba);
   QString colorName = d->MRMLColorNode->GetNamesInitialised() ?
@@ -327,12 +327,12 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
         pixmap = qMRMLUtils::createColorPixmap(
           qApp->style(), QColor::fromRgbF(rgba[0], rgba[1], rgba[2]));
         item->setData(pixmap, Qt::DecorationRole);
-        item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), qMRML::ColorRole);
+        item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), qMRMLColorModel::ColorRole);
         }
       else
         {
         item->setData(QVariant(), Qt::DecorationRole);
-        item->setData(QColor(), qMRML::ColorRole);
+        item->setData(QColor(), qMRMLColorModel::ColorRole);
         }
       if (d->LabelInColor)
         {
@@ -370,7 +370,7 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
     {
     case qMRMLColorModel::ColorColumn:
       {
-      QColor rgba(item->data(qMRML::ColorRole).value<QColor>());
+      QColor rgba(item->data(qMRMLColorModel::ColorRole).value<QColor>());
       colorTableNode->SetColor(color, rgba.redF(), rgba.greenF(), rgba.blueF(), rgba.alphaF());
       }
     case qMRMLColorModel::LabelColumn:

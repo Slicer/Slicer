@@ -331,7 +331,7 @@ QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QStr
   for (int i = 0; i < rowCount; ++i)
     {
     QStandardItem* child = parent->child(i);
-    if (child && child->data(qMRML::UIDRole).toString() == extraType)
+    if (child && child->data(qMRMLSceneModel::UIDRole).toString() == extraType)
       {
       if (child->data(Qt::AccessibleDescriptionRole) == "separator")
         {
@@ -352,7 +352,7 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
   Q_Q(qMRMLSceneModel);
   QModelIndex start = parent ? parent->index().child(0,0) : QModelIndex().child(0,0);
   QModelIndexList indexes =
-    q->match(start, qMRML::UIDRole, extraType, 1, Qt::MatchExactly);
+    q->match(start, qMRMLSceneModel::UIDRole, extraType, 1, Qt::MatchExactly);
   while (start != QModelIndex() && indexes.size())
     {
     QModelIndex parentIndex = indexes[0].parent();
@@ -360,7 +360,7 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
     q->removeRow(row, parentIndex);
     // don't start the whole search from scratch, only from where we ended it
     start = parentIndex.child(row,0);
-    indexes = q->match(start, qMRML::UIDRole, extraType, 1, Qt::MatchExactly);
+    indexes = q->match(start, qMRMLSceneModel::UIDRole, extraType, 1, Qt::MatchExactly);
     }
 }
 
@@ -398,7 +398,7 @@ void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* 
   foreach(QString extraItem, extraItems)
     {
     QStandardItem* item = new QStandardItem;
-    item->setData(QString("preItem"), qMRML::UIDRole);
+    item->setData(QString("preItem"), qMRMLSceneModel::UIDRole);
     if (extraItem == "separator")
       {
       item->setData("separator", Qt::AccessibleDescriptionRole);
@@ -438,7 +438,7 @@ void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem*
   foreach(QString extraItem, extraItems)
     {
     QStandardItem* item = new QStandardItem;
-    item->setData(QString("postItem"), qMRML::UIDRole);
+    item->setData(QString("postItem"), qMRMLSceneModel::UIDRole);
     if (extraItem == "separator")
       {
       item->setData("separator", Qt::AccessibleDescriptionRole);
@@ -520,7 +520,7 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem()const
   for (int i = 0; i < count; ++i)
     {
     QStandardItem* child = this->invisibleRootItem()->child(i);
-    QVariant uid = child->data(qMRML::UIDRole);
+    QVariant uid = child->data(qMRMLSceneModel::UIDRole);
     if (uid.type() == QVariant::String &&
         uid.toString() == "scene")
       {
@@ -550,13 +550,13 @@ vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem)const
     {
     return 0;
     }
-  QVariant nodePointer = nodeItem->data(qMRML::PointerRole);
-  if (!nodePointer.isValid() || nodeItem->data(qMRML::UIDRole).toString() == "scene")
+  QVariant nodePointer = nodeItem->data(qMRMLSceneModel::PointerRole);
+  if (!nodePointer.isValid() || nodeItem->data(qMRMLSceneModel::UIDRole).toString() == "scene")
     {
     return 0;
     }
   //return nodeItem ? d->MRMLScene->GetNodeByID(
-  //  nodeItem->data(qMRML::UIDRole).toString().toLatin1()) : 0;
+  //  nodeItem->data(qMRMLSceneModel::UIDRole).toString().toLatin1()) : 0;
   vtkMRMLNode* node = static_cast<vtkMRMLNode*>(
     reinterpret_cast<void *>(
       nodePointer.toLongLong()));
@@ -579,7 +579,7 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
   // QAbstractItemModel::match doesn't browse through columns
   // we need to do it manually
   QModelIndexList nodeIndexes = this->match(
-    this->mrmlSceneIndex(), qMRML::UIDRole, QString(node->GetID()),
+    this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole, QString(node->GetID()),
     1, Qt::MatchExactly | Qt::MatchRecursive);
   Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
   if (nodeIndexes.size() == 0)
@@ -610,7 +610,7 @@ QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node)const
   // QAbstractItemModel::match doesn't browse through columns
   // we need to do it manually
   QModelIndexList nodeIndexes = this->match(
-    scene, qMRML::UIDRole, QString(node->GetID()), 1, Qt::MatchExactly | Qt::MatchRecursive);
+    scene, qMRMLSceneModel::UIDRole, QString(node->GetID()), 1, Qt::MatchExactly | Qt::MatchRecursive);
   Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
   if (nodeIndexes.size() == 0)
     {
@@ -688,8 +688,8 @@ void qMRMLSceneModel::updateScene()
   QStandardItem* sceneItem = new QStandardItem;
   sceneItem->setFlags(Qt::ItemIsDropEnabled | Qt::ItemIsEnabled);
   sceneItem->setText("Scene");
-  sceneItem->setData("scene", qMRML::UIDRole);
-  sceneItem->setData(QVariant::fromValue(reinterpret_cast<long long>(d->MRMLScene)), qMRML::PointerRole);
+  sceneItem->setData("scene", qMRMLSceneModel::UIDRole);
+  sceneItem->setData(QVariant::fromValue(reinterpret_cast<long long>(d->MRMLScene)), qMRMLSceneModel::PointerRole);
   sceneItems << sceneItem;
   sceneItems << new QStandardItem;
   sceneItems[1]->setFlags(0);
@@ -767,8 +767,8 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
   this->blockSignals(oldBlock);
   // set UIDRole and set PointerRole need to be atomic
   this->blockSignals(true);
-  item->setData(QString(node->GetID()), qMRML::UIDRole);
-  item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRML::PointerRole);
+  item->setData(QString(node->GetID()), qMRMLSceneModel::UIDRole);
+  item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRMLSceneModel::PointerRole);
   this->blockSignals(oldBlock);
   switch (column)
     {
@@ -877,7 +877,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   qvtkDisconnect(node, vtkCommand::ModifiedEvent,
                 this, SLOT(onMRMLNodeModified(vtkObject*)));
   // TODO: can be fasten by browsing the tree only once
-  QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRML::UIDRole,
+  QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole,
                                         QString(node->GetID()), 1,
                                         Qt::MatchExactly | Qt::MatchRecursive);
   if (indexes.count())
@@ -912,7 +912,7 @@ void printStandardItem(QStandardItem* item, const QString& offset)
     return;
     }
   //qDebug() << offset << item << item->index() << item->text()
-  //         << item->data(qMRML::UIDRole).toString() << item->row()
+  //         << item->data(qMRMLSceneModel::UIDRole).toString() << item->row()
   //         << item->column() << item->rowCount() << item->columnCount();
   for(int i = 0; i < item->rowCount(); ++i )
     {

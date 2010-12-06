@@ -161,7 +161,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int row)const
   /*
   Q_Q(const qMRMLNodeComboBox);
   QString nodeId =
-    this->ComboBox->itemData(index, qMRML::UIDRole).toString();
+    this->ComboBox->itemData(index, qMRMLSceneModel::UIDRole).toString();
   if (nodeId.isEmpty())
     {
     return 0;
@@ -178,7 +178,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& inde
   Q_Q(const qMRMLNodeComboBox);
   Q_ASSERT(q->model());
   QString nodeId =
-    this->ComboBox->model()->data(index, qMRML::UIDRole).toString();
+    this->ComboBox->model()->data(index, qMRMLSceneModel::UIDRole).toString();
   if (nodeId.isEmpty())
     {
     return 0;
@@ -208,7 +208,7 @@ void qMRMLNodeComboBoxPrivate::updateNoneItem(bool resetRootIndex)
     noneItem.append("None");
     }
   //QVariant currentNode =
-  //  this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRML::UIDRole);
+  //  this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRMLSceneModel::UIDRole);
   //qDebug() << "updateNoneItem: " << this->MRMLSceneModel->mrmlSceneItem();
   this->MRMLSceneModel->setPreItems(noneItem, this->MRMLSceneModel->mrmlSceneItem());
 /*  if (resetRootIndex)
@@ -228,7 +228,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
   Q_UNUSED(resetRootIndex);
 
   QVariant currentNode =
-    this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRML::UIDRole);
+    this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRMLSceneModel::UIDRole);
 
   QStringList extraItems;
   if (q->mrmlScene())
@@ -491,7 +491,7 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 
   // The Add button is valid only if the scene is non-empty
   //this->setAddEnabled(scene != 0);
-  QString oldCurrentNode = d->ComboBox->itemData(d->ComboBox->currentIndex(), qMRML::UIDRole).toString();
+  QString oldCurrentNode = d->ComboBox->itemData(d->ComboBox->currentIndex(), qMRMLSceneModel::UIDRole).toString();
   bool nodeCount = this->nodeCount();
 
   // Update factory
@@ -531,7 +531,7 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
 {
   Q_D(qMRMLNodeComboBox);
   // a straight forward implementation of setCurrentNode would be:
-  //    int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRML::UIDRole) : -1;
+  //    int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRMLSceneModel::UIDRole) : -1;
   //    if (index == -1 && d->NoneEnabled)
   //      {
   //      index = 0;
@@ -541,7 +541,7 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
   // (typically if it is a tree model/view)
   // let's use a more generic one
   QModelIndexList indexes = d->ComboBox->model()->match(
-    d->ComboBox->model()->index(0, 0), qMRML::UIDRole, nodeID, 1,
+    d->ComboBox->model()->index(0, 0), qMRMLSceneModel::UIDRole, nodeID, 1,
     Qt::MatchRecursive | Qt::MatchExactly | Qt::MatchWrap);
   if (indexes.size() == 0)
     {

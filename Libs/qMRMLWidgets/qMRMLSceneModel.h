@@ -35,14 +35,6 @@ class vtkMRMLNode;
 class vtkMRMLScene;
 class QAction;
 
-namespace qMRML
-{
- enum ItemDataRole {
-   UIDRole = Qt::UserRole + 1,
-   PointerRole
- };
-};
-
 class qMRMLSceneModelPrivate;
 
 //------------------------------------------------------------------------------
@@ -55,6 +47,11 @@ public:
   typedef QStandardItemModel Superclass;
   qMRMLSceneModel(QObject *parent=0);
   virtual ~qMRMLSceneModel();
+  
+  enum ItemDataRole{
+    UIDRole = Qt::UserRole + 1,
+    PointerRole
+    };
 
   enum ModelColumn
   {

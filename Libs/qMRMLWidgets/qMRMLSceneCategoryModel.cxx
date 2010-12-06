@@ -87,7 +87,7 @@ QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category
     {
     QStandardItem* child = this->mrmlSceneItem()->child(i,0);
     if (child &&
-        child->data(qMRML::UIDRole).toString() == "category" &&
+        child->data(qMRMLSceneModel::UIDRole).toString() == "category" &&
         child->text() == category)
       {
       return child;
@@ -100,7 +100,7 @@ QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category
 int qMRMLSceneCategoryModel::categoryCount()const
 {
   return this->match(this->mrmlSceneIndex().child(0,0),
-                     qMRML::UIDRole,
+                     qMRMLSceneModel::UIDRole,
                      QString("category"),
                      -1,
                      Qt::MatchExactly)
@@ -165,7 +165,7 @@ void qMRMLSceneCategoryModel::updateItemFromCategory(QStandardItem* item, const 
   bool oldBlock = this->blockSignals(true);
   item->setFlags(Qt::ItemIsEnabled);
   this->blockSignals(oldBlock);
-  item->setData(QString("category"), qMRML::UIDRole);
+  item->setData(QString("category"), qMRMLSceneModel::UIDRole);
   item->setText(category);
 }
 

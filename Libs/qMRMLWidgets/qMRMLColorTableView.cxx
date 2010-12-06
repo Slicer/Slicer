@@ -209,11 +209,11 @@ void qMRMLColorTableView::onDoubleClicked(const QModelIndex& index)
     {
     return;
     }
-  QColor color = this->sortFilterProxyModel()->data(index, qMRML::ColorRole).value<QColor>();
+  QColor color = this->sortFilterProxyModel()->data(index, qMRMLColorModel::ColorRole).value<QColor>();
   QColor newColor = QColorDialog::getColor(color, this, "Select a new color", QColorDialog::DontUseNativeDialog );
   if (!newColor.isValid())
     {
     return;
     }
-  this->sortFilterProxyModel()->setData(index, newColor, qMRML::ColorRole);
+  this->sortFilterProxyModel()->setData(index, newColor, qMRMLColorModel::ColorRole);
 }

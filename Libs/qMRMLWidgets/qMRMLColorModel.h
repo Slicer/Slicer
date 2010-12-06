@@ -35,14 +35,6 @@ class vtkMRMLNode;
 class vtkMRMLColorNode;
 class QAction;
 
-namespace qMRML
-{
- enum ItemDataRole {
-   ColorEntryRole = Qt::UserRole,
-   PointerRole,
-   ColorRole
- };
-};
 class qMRMLColorModelPrivate;
 
 //------------------------------------------------------------------------------
@@ -56,7 +48,13 @@ public:
   typedef QAbstractItemModel Superclass;
   qMRMLColorModel(QObject *parent=0);
   virtual ~qMRMLColorModel();
-
+  
+  enum ItemDataRole{
+    ColorEntryRole = Qt::UserRole,
+    PointerRole,
+    ColorRole
+  };
+ 
   enum Columns{
     ColorColumn = 0,
     LabelColumn = 1,

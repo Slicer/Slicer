@@ -108,8 +108,8 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
   // from qMRMLSceneModel
   bool oldBlock = this->blockSignals(true);
   item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-  item->setData(QString(node->GetID()), qMRML::UIDRole);
-  item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRML::PointerRole);
+  item->setData(QString(node->GetID()), qMRMLSceneModel::UIDRole);
+  item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRMLSceneModel::PointerRole);
   this->blockSignals(oldBlock);
 
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
