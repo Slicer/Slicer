@@ -53,7 +53,7 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
   view->hideScene();
 
   view->show();
-  view->resize(500, 800);
+  view->resize(500, 500);
 
   QTreeView view3;
   view3.setModel(view->sceneModel());
@@ -63,6 +63,10 @@ int qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1(int argc, char * argv 
   view2.setSceneModelType("Displayable");
   view2.sceneModel()->setMRMLScene(sceneFactory.mrmlScene());
   view2.show();
+
+  QTreeView view3;
+  view3.setModel(view->sceneModel());
+  view3.show();
 */
   double worldCoordinates1[3] = {0,0,0};
   double worldCoordinates2[3] = {50,50,50};
