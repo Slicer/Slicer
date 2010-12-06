@@ -131,6 +131,13 @@ QString qSlicerCoreCommandOptions::pythonCode() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::exitAppWhenTestsDone()const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("exit").toBool();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::displayVersionAndExit() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -185,6 +192,9 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("help", "h", QVariant::Bool,
                     "Display available command line arguments.");
+
+  this->addArgument("exit", "", QVariant::Bool,
+                    "Exit application when testing is done. Use for testing.");
 
 #ifdef Slicer_USE_PYTHONQT
   this->addArgument("python-script", "", QVariant::String,

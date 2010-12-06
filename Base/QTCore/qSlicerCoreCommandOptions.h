@@ -49,8 +49,14 @@ public:
   /// Return True if the loading of Command Line Modules should be disabled
   bool disableCLIModule()const;
 
+  /// Return path of the python script to execute after slicer is loaded
   QString pythonScript()const;
+
+  /// Return python code snippet to execute after slicer is loaded
   QString pythonCode()const;
+
+  /// Return True if application should exit after test are done
+  bool exitAppWhenTestsDone()const;
 
   /// Return True if the loading of Loadable Modules should be disabled
   bool disableLoadableModule()const;
