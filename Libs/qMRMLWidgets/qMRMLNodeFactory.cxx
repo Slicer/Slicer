@@ -20,7 +20,7 @@
 
 // Qt includes
 #include <QHash>
-#include <QSharedPointer>
+#include <QScopedPointer>
 #include <QDebug>
 
 // qMRML includes
@@ -132,8 +132,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
                                           const QHash<QString,QString>& attributes)
 {
   Q_ASSERT(scene);
-  QSharedPointer<qMRMLNodeFactory> factory =
-    QSharedPointer<qMRMLNodeFactory>(new qMRMLNodeFactory());
+  QScopedPointer<qMRMLNodeFactory> factory(new qMRMLNodeFactory());
   factory->setMRMLScene(scene);
   // Loop over attribute map and update the factory
   foreach(const QString& key, attributes.keys())
