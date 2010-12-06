@@ -1,7 +1,8 @@
-import slicer
 import vtk
 from ctk import *
 from qt import *
+
+import slicer
 
 def quit():
   exit()

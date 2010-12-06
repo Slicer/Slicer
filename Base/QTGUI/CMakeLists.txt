@@ -63,6 +63,17 @@ SET(KIT_SRCS
   qSlicerWidget.h
   )
 
+# Since the wrapper doesn't consider hierarchy of classes, let's exclude
+# classes deriving from pure abstract class and remaining abstract pure
+SET_SOURCE_FILES_PROPERTIES(
+  qSlicerAbstractModule.h
+  qSlicerAbstractModulePanel.h
+  qSlicerAbstractModuleWidget.h
+  qSlicerFileDialog.h
+  qSlicerLoadableModule.h
+  WRAP_EXCLUDE
+  )
+
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
   qSlicerAbstractModule.h
@@ -113,6 +124,16 @@ SET(KIT_target_libraries
 
 # Python wrap
 IF(Slicer_USE_PYTHONQT)
+
+  SET(KIT_PYTHONQT_SRCS) # Clear variable
+  ctkMacroWrapPythonQt("org.slicer.base" ${PROJECT_NAME}
+    KIT_PYTHONQT_SRCS "${KIT_SRCS}" FALSE)
+  ADD_LIBRARY(${PROJECT_NAME}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME}PythonQt ${PROJECT_NAME})
+  IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    SET_TARGET_PROPERTIES(${PROJECT_NAME}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
+  ENDIF()
+
   LIST(APPEND KIT_target_libraries
     CTKScriptingPythonWidgets
     CTKWidgetsPythonQt

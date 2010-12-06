@@ -48,6 +48,23 @@
 // VTK includes
 //#include <vtkObject.h>
 
+#ifdef Slicer_USE_PYTHONQT
+# include "qSlicerPythonManager.h"
+# include <dPython.h>
+
+// PythonQt wrapper initialization methods
+void PythonQt_init_org_slicer_base_qSlicerBaseQTCore(PyObject*);
+void PythonQt_init_org_slicer_base_qSlicerBaseQTGUI(PyObject*);
+
+//---------------------------------------------------------------------------
+void PythonPreInitialization()
+{
+  // Initialize wrappers
+  PythonQt_init_org_slicer_base_qSlicerBaseQTCore(0);
+  PythonQt_init_org_slicer_base_qSlicerBaseQTGUI(0);
+}
+#endif
+
 //----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -56,6 +73,10 @@ int main(int argc, char* argv[])
 
   qSlicerApplication app(argc, argv);
   app.setApplicationName("3D Slicer");
+
+#ifdef Slicer_USE_PYTHONQT
+  app.pythonManager()->setInitializationFunction(PythonPreInitialization);
+#endif
 
   //app.setApplicationVersion();
   //app.setWindowIcon(QIcon(":Icons/..."));

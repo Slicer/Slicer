@@ -43,7 +43,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerModulePanel.h"
 #ifdef Slicer_USE_PYTHONQT
-#include "qSlicerPythonManager.h"
+# include "qSlicerPythonManager.h"
 #endif
 
 // MRML includes

@@ -72,9 +72,13 @@ void qSlicerPythonManager::preInitialization()
 
   // Register decorators
   this->registerPythonQtDecorator(new qSlicerBaseQTGUIPythonQtDecorators(this));
-  
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerPythonManager::executeInitializationScripts()
+{
   qSlicerApplication* app = qSlicerApplication::application();
-  
+
   // Evaluate application script
   this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt.py");
 
@@ -93,7 +97,6 @@ void qSlicerPythonManager::preInitialization()
   vtkEventBroker::GetInstance()->SetEventModeToSynchronous();
   this->addVTKObjectToPythonMain("slicer.broker", vtkEventBroker::GetInstance());
 #endif
-
 }
 
 //-----------------------------------------------------------------------------
