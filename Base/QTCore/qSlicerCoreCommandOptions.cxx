@@ -117,6 +117,20 @@ bool qSlicerCoreCommandOptions::disableLoadableModule() const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreCommandOptions::pythonScript() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("python-script").toString();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreCommandOptions::pythonCode() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("python-code").toString();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::displayVersionAndExit() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -171,6 +185,14 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("help", "h", QVariant::Bool,
                     "Display available command line arguments.");
+
+#ifdef Slicer_USE_PYTHONQT
+  this->addArgument("python-script", "", QVariant::String,
+                    "Python script to execute after slicer loads.");
+
+  this->addArgument("python-code", "", QVariant::String,
+                    "Python code to execute after slicer loads.");
+#endif
 
   this->addArgument("disable-cli-module", "", QVariant::Bool,
                     "Disables the loading of Command Line Modules.");

@@ -49,6 +49,9 @@ public:
   /// Return True if the loading of Command Line Modules should be disabled
   bool disableCLIModule()const;
 
+  QString pythonScript()const;
+  QString pythonCode()const;
+
   /// Return True if the loading of Loadable Modules should be disabled
   bool disableLoadableModule()const;
 

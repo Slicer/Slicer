@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QSplashScreen>
+#include <QTimer>
 #include <QDebug>
 #include <QMessageBox>
 
@@ -123,7 +124,7 @@ int main(int argc, char* argv[])
   // Register and instanciate modules
   moduleFactoryManager->registerAllModules();
   moduleFactoryManager->instantiateAllModules();
-  
+
   // Create main window
   qSlicerMainWindow window;
   window.setWindowTitle(window.windowTitle()+ " " + Slicer_VERSION_FULL);
@@ -154,6 +155,10 @@ int main(int argc, char* argv[])
     {
     splash.finish(&window);
     }
+
+  // Process command line argument after the event loop is started
+  QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
+
   QMessageBox::information(&window, "3D Slicer",
                            "Thank you for trying 3D Slicer version 4 alpha!\n\n"
                            "Please be aware that this software is under active "

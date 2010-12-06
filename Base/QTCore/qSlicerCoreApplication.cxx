@@ -289,7 +289,6 @@ bool qSlicerCoreApplicationPrivate::parseArguments()
     }
 
   q->handlePreApplicationCommandLineArguments();
-  QTimer::singleShot(0, q, SLOT(handleCommandLineArguments()));
   
   return true; 
 }
@@ -470,7 +469,28 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 {
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
+
+#ifdef Slicer_USE_PYTHONQT
+  QString pythonScript = options->pythonScript();
+  if(!pythonScript.isEmpty())
+    {
+    if (QFile::exists(pythonScript))
+      {
+      this->corePythonManager()->executeFile(pythonScript);
+      }
+    else
+      {
+      qWarning() << "Specified python script doesn't exist:" << pythonScript;
+      }
+    }
+  QString pythonCode = options->pythonCode();
+  if(!pythonCode.isEmpty())
+    {
+    this->corePythonManager()->executeString(pythonCode);
+    }
+#else
   Q_UNUSED(options);
+#endif
 }
 
 //-----------------------------------------------------------------------------
