@@ -43,62 +43,52 @@ public:
   typedef QObject Superclass;
   qSlicerModuleFactoryManager(QObject * newParent = 0);
 
-  /// 
   /// Destructor, Deallocates resources
   virtual ~qSlicerModuleFactoryManager();
 
+  /// Print internal state using qDebug()
   virtual void printAdditionalInfo();
 
-  /// 
-  /// Register a module factory
+  /// \brief Register a \a factory
+  /// \a factoryName will be used to get the reference of the registered factory.
   void registerFactory(const QString& factoryName, qSlicerAbstractModuleFactory* factory);
 
-  /// 
   /// Register all modules
   void registerAllModules();
 
-  /// Register modules for the given factory
+  /// Register modules associated with factory identified by \a factoryName
   void registerModules(const QString& factoryName);
 
   /// Instanciate all modules
   void instantiateAllModules();
   
-  /// Instanciate modules for a given factory
+  /// Instanciate modules associated with factory identified by \a factoryName
   void instantiateModules(const QString& factoryName);
 
-  /// 
-  /// Get a moduleName given its title
+  /// Get a moduleName given its \a title
   QString moduleName(const QString & title) const;
 
-  /// 
-  /// Get a module title given its name
+  /// Get a module title given its \a name
   QString moduleTitle(const QString & name) const;
-  
-  /// 
+
   /// Convenient method returning the list of all module names
   Q_INVOKABLE QStringList moduleNames() const;
 
-  /// 
-  /// Convenient method returning the list of module names for a given factory
+  /// Convenient method returning the list of module names for the factory identified by \a factoryName
   Q_INVOKABLE QStringList moduleNames(const QString& factoryName) const;
 
-  /// 
-  /// Instantiate a module given its name
+  /// Instantiate a module given its \a name
   qSlicerAbstractCoreModule* instantiateModule(const QString& name);
 
-  /// 
-  /// Uninstantiate a module given its name
+  /// Uninstantiate a module given its \a name
   void uninstantiateModule(const QString& name);
 
-  /// 
   /// Uninstantiate all registered modules
   void uninstantiateAll();
 
-  /// 
   /// Indicate if a module has been registered
   Q_INVOKABLE bool isRegistered(const QString& name)const;
 
-  ///
   /// Enable/Disable verbose output during module discovery process
   void setVerboseModuleDiscovery(bool value);
 
