@@ -115,6 +115,22 @@ public:
   QString slicerHome() const;
 
   ///
+  /// Get slicer temporary directory
+  QString temporaryPath() const;
+
+  ///
+  /// Set slicer temporary directory
+  void setTemporaryPath(const QString& path);
+  
+  ///
+  /// Get slicer temporary directory
+  QString extensionsPath() const;
+
+  ///
+  /// Set slicer temporary directory
+  void setExtensionsPath(const QString& path);
+
+  ///
   /// If any, this method return the build intermediate directory
   /// See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
   QString intDir()const;
@@ -155,7 +171,7 @@ public:
   ///
   /// Get application settings
   /// Note that his method will also instanciate a QSettings object if required.
-  QSettings* settings();
+  QSettings* settings()const;
 
   ///
   /// Disable application settings
@@ -172,8 +188,10 @@ public:
 protected:
   ///
   virtual void handlePreApplicationCommandLineArguments();
-  ///
-  virtual QSettings* newSettings(const QString& organization, const QString& application);
+  /// If fileName is set (not empty), a custom fileName is used
+  /// otherwise it uses the default QSettings constructor.
+  /// \sa QSettings::QSettings(QObject* parent)
+  virtual QSettings* newSettings(const QString& fileName = QString());
 
 protected slots:
 

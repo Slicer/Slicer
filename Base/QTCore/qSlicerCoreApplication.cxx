@@ -187,18 +187,18 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 {
   Q_Q(qSlicerCoreApplication);
 
-  QString settingsFileName = QString("%1-%2.%3%4").
-    arg(qSlicerCoreApplication::applicationName().replace(":", "")).
-    arg(QString::number(Slicer_VERSION_MAJOR)).
-    arg(QString::number(Slicer_VERSION_MINOR)).
-    arg(suffix);
-
+  QString settingsFileName;
   if (useTmp)
     {
+    settingsFileName = QString("%1-%2.%3%4").
+      arg(qSlicerCoreApplication::applicationName().replace(":", "")).
+      arg(QString::number(Slicer_VERSION_MAJOR)).
+      arg(QString::number(Slicer_VERSION_MINOR)).
+      arg(suffix);
     settingsFileName += "-tmp";
     }
 
-  QSettings* settings = q->newSettings(q->organizationName(), settingsFileName);
+  QSettings* settings = q->newSettings(settingsFileName);
 
   if (useTmp)
     {
@@ -319,6 +319,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
 
   this->setOrganizationName("NAMIC");
   this->setApplicationVersion(Slicer_VERSION_FULL);
+  QSettings::setDefaultFormat(QSettings::IniFormat);
 
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
@@ -512,16 +513,17 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplication::settings()
+QSettings* qSlicerCoreApplication::settings()const
 {
-  Q_D(qSlicerCoreApplication);
-
+  Q_D(const qSlicerCoreApplication);
+  qSlicerCoreApplicationPrivate* mutable_d =
+    const_cast<qSlicerCoreApplicationPrivate*>(d);
   // If required, instanciate Settings
-  if(!d->Settings)
+  if(!mutable_d->Settings)
     {
-    d->Settings = d->instantiateSettings("", false);
+    mutable_d->Settings = mutable_d->instantiateSettings("", false);
     }
-  return d->Settings;
+  return mutable_d->Settings;
 }
 
 //-----------------------------------------------------------------------------
@@ -543,10 +545,14 @@ void qSlicerCoreApplication::clearSettings()
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplication::newSettings(const QString& organization,
-                                               const QString& application)
+QSettings* qSlicerCoreApplication::newSettings(const QString& fileName)
 {
-  return new QSettings(organization, application, this);
+  if (!fileName.isEmpty())
+    {
+    // Special case for tmp settings
+    return new QSettings(fileName, QSettings::defaultFormat(), this);
+    }
+  return new QSettings(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -640,6 +646,46 @@ QString qSlicerCoreApplication::slicerHome() const
   Q_D(const qSlicerCoreApplication);
   // TODO Use QCoreApplication::applicationDirPath
   return d->SlicerHome;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::temporaryPath() const
+{
+  Q_D(const qSlicerCoreApplication);
+  QSettings* appSettings = this->settings();
+  Q_ASSERT(appSettings);
+  QFileInfo defaultTemporaryPath(QDir::tempPath(), this->applicationName());
+  return appSettings->value("TemporaryPath", defaultTemporaryPath.absoluteFilePath()).toString();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setTemporaryPath(const QString& path)
+{
+  Q_D(const qSlicerCoreApplication);
+  QSettings* appSettings = this->settings();
+  Q_ASSERT(appSettings);
+  appSettings->setValue("TemporaryPath", path);
+}
+  
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::extensionsPath() const
+{
+  Q_D(const qSlicerCoreApplication);
+  QSettings* appSettings = this->settings();
+  Q_ASSERT(appSettings);
+  QFileInfo defaultExtensionsPath(appSettings->fileName());
+  defaultExtensionsPath = defaultExtensionsPath.absolutePath() + "/Extensions";
+  return appSettings->value("ExtensionsPath", defaultExtensionsPath.absoluteFilePath()).toString();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setExtensionsPath(const QString& path)
+{
+  Q_D(const qSlicerCoreApplication);
+  QSettings* appSettings = this->settings();
+  Q_ASSERT(appSettings);
+  appSettings->setValue("ExtensionsPath", path);
+  // TODO: rescan for new extensions
 }
 
 //-----------------------------------------------------------------------------

@@ -365,8 +365,12 @@ void qSlicerApplication::handleCommandLineArguments()
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerApplication::newSettings(const QString& organization,
-                                           const QString& application)
+QSettings* qSlicerApplication::newSettings(const QString& fileName)
 {
-  return new ctkSettings(organization, application, this);
+  if (!fileName.isEmpty())
+    {
+    // Special case for tmp settings
+    return new ctkSettings(fileName, QSettings::defaultFormat(), this);
+    }
+  return new ctkSettings(this);
 }

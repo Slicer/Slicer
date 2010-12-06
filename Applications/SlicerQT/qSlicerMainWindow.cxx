@@ -19,9 +19,15 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QCloseEvent>
 #include <QDebug>
+#include <QSettings>
 #include <QStringList>
 #include <QToolButton>
+
+// CTK includes
+#include <ctkConfirmExitDialog.h>
+#include <ctkSettingsDialog.h>
 
 // SlicerQt includes
 #include "qSlicerMainWindow.h" 
@@ -35,6 +41,8 @@
 #include "qSlicerMainWindowCore.h"
 #include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerIOManager.h"
+#include "qSlicerSettingsModulesPanel.h"
+#include "qSlicerSettingsPanel.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -48,11 +56,16 @@ protected:
 public:
   qSlicerMainWindowPrivate(qSlicerMainWindow& object);
   void setupUi(QMainWindow * mainWindow);
+  
+  void readSettings();
+  void writeSettings();
+  bool confirmClose();
 
   qSlicerMainWindowCore*        Core;
   qSlicerModuleSelectorToolBar* ModuleSelector;
   QStringList                   ModuleToolBarList;
   //QSignalMapper*                ModuleToolBarMapper;
+  ctkSettingsDialog*            SettingsDialog;
 };
 
 //-----------------------------------------------------------------------------
@@ -94,6 +107,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Create a Module selector
   this->ModuleSelector = new qSlicerModuleSelectorToolBar("Module Selector",q);
+  this->ModuleSelector->setObjectName(QString::fromUtf8("ModuleSelectorToolBar"));
   this->ModuleSelector->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
   q->insertToolBar(this->ModuleToolBar, this->ModuleSelector);
 
@@ -185,6 +199,58 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionFeedbackReportUsabilityIssue->setIcon(warningIcon);
   this->actionFeedbackMakeFeatureRequest->setIcon(questionIcon);
   this->actionFeedbackCommunitySlicerVisualBlog->setIcon(networkIcon);
+  
+  // Initialize the Settings widget
+  this->SettingsDialog = new ctkSettingsDialog(q);
+  this->SettingsDialog->addPanel("Application settings", new qSlicerSettingsPanel);
+  this->SettingsDialog->addPanel("Modules settings", new qSlicerSettingsModulesPanel);
+  this->SettingsDialog->setSettings(qSlicerCoreApplication::application()->settings());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindowPrivate::readSettings()
+{
+  Q_Q(qSlicerMainWindow);
+  QSettings settings;
+  settings.beginGroup("MainWindow");
+  bool restore = settings.value("RestoreGeometry", false).toBool();
+  if (restore)
+    {
+    q->restoreGeometry(settings.value("geometry").toByteArray());
+    q->restoreState(settings.value("windowState").toByteArray());
+    }
+  settings.endGroup();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMainWindowPrivate::writeSettings()
+{
+  Q_Q(qSlicerMainWindow);
+  QSettings settings;
+  settings.beginGroup("MainWindow");
+  bool restore = settings.value("RestoreGeometry", false).toBool();
+  if (restore)
+    {
+    settings.setValue("geometry", q->saveGeometry());
+    settings.setValue("windowState", q->saveState());
+    }
+  settings.endGroup();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMainWindowPrivate::confirmClose()
+{
+  Q_Q(qSlicerMainWindow);
+  bool close = true;
+  QSettings settings;
+  bool confirm = settings.value("MainWindow/ConfirmExit", true).toBool();
+  if (confirm)
+    {
+    ctkConfirmExitDialog dialog(q);
+    close = (dialog.exec() == QDialog::Accepted);
+    settings.setValue("MainWindow/ConfirmExit", !dialog.dontShowAnymore());
+    }
+  return close;
 }
 
 //-----------------------------------------------------------------------------
@@ -201,6 +267,7 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
   d->Core = new qSlicerMainWindowCore(this);
   
   this->setupMenuActions();
+  d->readSettings();
 }
 
 //-----------------------------------------------------------------------------
@@ -219,12 +286,32 @@ qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerMainWindow::closeEvent(QCloseEvent *event)
+{
+  Q_D(qSlicerMainWindow);
+  if (d->confirmClose())
+    {
+    d->writeSettings();
+    event->accept();
+    }
+  else
+    {
+    event->ignore();
+    }
+}
+
+//-----------------------------------------------------------------------------
 // Helper macro allowing to connect the MainWindow action with the corresponding
 // slot in MainWindowCore
-#define qSlicerMainWindow_connect(ACTION_NAME)   \
+#define qSlicerMainWindowCore_connect(ACTION_NAME)   \
   this->connect(                                 \
     d->action##ACTION_NAME, SIGNAL(triggered()), \
     this->core(),                                \
+    SLOT(on##ACTION_NAME##ActionTriggered()));
+#define qSlicerMainWindow_connect(ACTION_NAME)   \
+  this->connect(                                 \
+    d->action##ACTION_NAME, SIGNAL(triggered()), \
+    this,                                        \
     SLOT(on##ACTION_NAME##ActionTriggered()));
 
 //-----------------------------------------------------------------------------
@@ -232,45 +319,45 @@ void qSlicerMainWindow::setupMenuActions()
 {
   Q_D(qSlicerMainWindow);
   
-  this->connect(
-    d->actionFileExit, SIGNAL(triggered()),
-    qSlicerApplication::instance(), SLOT(quit()));
+  qSlicerMainWindowCore_connect(FileAddData);
+  qSlicerMainWindowCore_connect(FileImportScene);
+  qSlicerMainWindowCore_connect(FileLoadScene);
+  qSlicerMainWindowCore_connect(FileAddVolume);
+  qSlicerMainWindowCore_connect(FileAddTransform);
+  qSlicerMainWindowCore_connect(FileSaveScene);
+  qSlicerMainWindowCore_connect(FileCloseScene);
+  this->connect(d->actionFileExit, SIGNAL(triggered()),
+                this, SLOT(close()));
 
-  qSlicerMainWindow_connect(FileAddData);
-  qSlicerMainWindow_connect(FileImportScene);
-  qSlicerMainWindow_connect(FileLoadScene);
-  qSlicerMainWindow_connect(FileAddVolume);
-  qSlicerMainWindow_connect(FileAddTransform);
-  qSlicerMainWindow_connect(FileSaveScene);
-  qSlicerMainWindow_connect(FileCloseScene);
 
-  qSlicerMainWindow_connect(EditUndo);
-  qSlicerMainWindow_connect(EditRedo);
+  qSlicerMainWindowCore_connect(EditUndo);
+  qSlicerMainWindowCore_connect(EditRedo);
 
-  qSlicerMainWindow_connect(ViewLayoutConventional);
-  qSlicerMainWindow_connect(ViewLayoutFourUp);
-  qSlicerMainWindow_connect(ViewLayoutDual3D);
-  qSlicerMainWindow_connect(ViewLayoutOneUp3D);
-  qSlicerMainWindow_connect(ViewLayoutOneUpRedSlice);
-  qSlicerMainWindow_connect(ViewLayoutOneUpYellowSlice);
-  qSlicerMainWindow_connect(ViewLayoutOneUpGreenSlice);
-  qSlicerMainWindow_connect(ViewLayoutTabbed3D);
-  qSlicerMainWindow_connect(ViewLayoutTabbedSlice);
-  qSlicerMainWindow_connect(ViewLayoutCompare);
-  qSlicerMainWindow_connect(ViewLayoutSideBySideLightbox);
+  qSlicerMainWindow_connect(ViewApplicationSettings);
+  qSlicerMainWindowCore_connect(ViewLayoutConventional);
+  qSlicerMainWindowCore_connect(ViewLayoutFourUp);
+  qSlicerMainWindowCore_connect(ViewLayoutDual3D);
+  qSlicerMainWindowCore_connect(ViewLayoutOneUp3D);
+  qSlicerMainWindowCore_connect(ViewLayoutOneUpRedSlice);
+  qSlicerMainWindowCore_connect(ViewLayoutOneUpYellowSlice);
+  qSlicerMainWindowCore_connect(ViewLayoutOneUpGreenSlice);
+  qSlicerMainWindowCore_connect(ViewLayoutTabbed3D);
+  qSlicerMainWindowCore_connect(ViewLayoutTabbedSlice);
+  qSlicerMainWindowCore_connect(ViewLayoutCompare);
+  qSlicerMainWindowCore_connect(ViewLayoutSideBySideLightbox);
   
-  qSlicerMainWindow_connect(WindowPythonInteractor);
+  qSlicerMainWindowCore_connect(WindowPythonInteractor);
 
-  qSlicerMainWindow_connect(HelpKeyboardShortcuts);
-  qSlicerMainWindow_connect(HelpBrowseTutorials);
-  qSlicerMainWindow_connect(HelpInterfaceDocumentation);
-  qSlicerMainWindow_connect(HelpSlicerPublications);
-  qSlicerMainWindow_connect(HelpAboutSlicerQT);
+  qSlicerMainWindowCore_connect(HelpKeyboardShortcuts);
+  qSlicerMainWindowCore_connect(HelpBrowseTutorials);
+  qSlicerMainWindowCore_connect(HelpInterfaceDocumentation);
+  qSlicerMainWindowCore_connect(HelpSlicerPublications);
+  qSlicerMainWindowCore_connect(HelpAboutSlicerQT);
 
-  qSlicerMainWindow_connect(FeedbackReportBug);
-  qSlicerMainWindow_connect(FeedbackReportUsabilityIssue);
-  qSlicerMainWindow_connect(FeedbackMakeFeatureRequest);
-  qSlicerMainWindow_connect(FeedbackCommunitySlicerVisualBlog);
+  qSlicerMainWindowCore_connect(FeedbackReportBug);
+  qSlicerMainWindowCore_connect(FeedbackReportUsabilityIssue);
+  qSlicerMainWindowCore_connect(FeedbackMakeFeatureRequest);
+  qSlicerMainWindowCore_connect(FeedbackCommunitySlicerVisualBlog);
 
   //connect ToolBars actions
   connect(d->actionWindowToolbarsLoadSave, SIGNAL(toggled(bool)),
@@ -288,7 +375,14 @@ void qSlicerMainWindow::setupMenuActions()
   connect(d->actionWindowToolbarsModuleSelector, SIGNAL(toggled(bool)),
           this, SLOT(showModuleSelectorToolBar(bool)));
 }
-#undef qSlicerMainWindow_connect
+#undef qSlicerMainWindowCore_connect
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onViewApplicationSettingsActionTriggered()
+{
+  Q_D(qSlicerMainWindow);
+  d->SettingsDialog->exec();
+}
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)

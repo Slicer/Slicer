@@ -57,6 +57,10 @@ SET(KIT_SRCS
   qSlicerMouseModeToolBar_p.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
+  qSlicerSettingsModulesPanel.cxx
+  qSlicerSettingsModulesPanel.h
+  qSlicerSettingsPanel.cxx
+  qSlicerSettingsPanel.h
   qSlicerStyle.cxx
   qSlicerStyle.h
   qSlicerWidget.cxx
@@ -109,6 +113,8 @@ SET(KIT_MOC_SRCS
   qSlicerMouseModeToolBar_p.h
   qSlicerSaveDataDialog.h
   qSlicerSaveDataDialog_p.h
+  qSlicerSettingsModulesPanel.h
+  qSlicerSettingsPanel.h
   qSlicerWidget.h
   )
   
@@ -128,6 +134,8 @@ SET(KIT_UI_SRCS
   Resources/UI/qSlicerModelsDialog.ui
   Resources/UI/qSlicerModulePanel.ui
   Resources/UI/qSlicerSaveDataDialog.ui
+  Resources/UI/qSlicerSettingsModulesPanel.ui
+  Resources/UI/qSlicerSettingsPanel.ui
 )
 
 # Additional Target libraries (QT libs already included)

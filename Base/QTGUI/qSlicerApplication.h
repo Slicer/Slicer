@@ -101,7 +101,8 @@ protected slots:
   virtual void handleCommandLineArguments();
 
 protected:
-  QSettings* newSettings(const QString& organization, const QString& application);
+  QSettings* newSettings(const QString& fileName = QString());
+
 
   QScopedPointer<qSlicerApplicationPrivate> d_ptr;
 

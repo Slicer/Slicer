@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
 {
   //vtkObject::SetGlobalWarningDisplay(false);
   ctkLogger::configure();
+  QApplication::setDesktopSettingsAware(false);
 
   qSlicerApplication app(argc, argv);
   app.setApplicationName("3D Slicer");

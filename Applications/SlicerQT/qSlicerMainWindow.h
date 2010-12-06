@@ -64,6 +64,7 @@ public slots:
 protected slots:
   void onModuleLoaded(qSlicerAbstractCoreModule* module);
   void onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
+  void onViewApplicationSettingsActionTriggered();
 
   void onMRMLSceneModified(vtkObject*);
 protected:
@@ -71,6 +72,8 @@ protected:
   // Description:
   // Connect MainWindow action with slots defined in MainWindowCore
   void setupMenuActions();
+
+  virtual void closeEvent(QCloseEvent *event);
 
 protected:
   QScopedPointer<qSlicerMainWindowPrivate> d_ptr;
