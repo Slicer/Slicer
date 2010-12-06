@@ -22,7 +22,7 @@ def selectModule(moduleName):
   if not w: return
   w.moduleSelector().selectModule(moduleName)
 
-def getModuleNames():
+def moduleNames():
   return app().moduleManager().factoryManager().moduleNames()
 
 def getModule(moduleName):
