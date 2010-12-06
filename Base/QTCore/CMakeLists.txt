@@ -58,6 +58,7 @@ SET(KIT_MOC_SRCS
   qSlicerCoreApplication.h
   qSlicerCoreIOManager.h
   qSlicerIO.h
+  qSlicerModuleFactoryManager.h
   qSlicerModuleManager.h
   qSlicerSceneIO.h
   qSlicerSlicer2SceneReader.h

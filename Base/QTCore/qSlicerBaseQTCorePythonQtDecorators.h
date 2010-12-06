@@ -54,7 +54,7 @@ public:
     pythonManager->registerClassForPythonQt(&qSlicerCoreApplication::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerModuleManager::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerAbstractCoreModule::staticMetaObject);
-    pythonManager->registerCPPClassForPythonQt("qSlicerModuleFactoryManager");
+    // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }
 
 public slots:
@@ -82,16 +82,7 @@ public slots:
     {
     app->processEvents();
     }
-
-  //----------------------------------------------------------------------------
-  // qSlicerModuleFactoryManager
-
-  QStringList moduleNames(qSlicerModuleFactoryManager* _factoryManager)
-    {
-    return _factoryManager->moduleNames();
-    }
   
-
   //----------------------------------------------------------------------------
   // qSlicerModuleManager
 

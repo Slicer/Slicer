@@ -22,11 +22,11 @@
 #define __qSlicerModuleFactoryManager_h
 
 // Qt includes
+#include <QObject>
 #include <QString>
 
 // CTK includes
 #include <ctkAbstractFactory.h>
-#include <ctkPimpl.h>
 
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -34,12 +34,14 @@ class qSlicerAbstractCoreModule;
 
 class qSlicerModuleFactoryManagerPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager : public QObject
 {
+  Q_OBJECT
 public:
   typedef ctkAbstractFactory<qSlicerAbstractCoreModule> qSlicerAbstractModuleFactory;
  
-  qSlicerModuleFactoryManager();
+  typedef QObject Superclass;
+  qSlicerModuleFactoryManager(QObject * newParent = 0);
 
   /// 
   /// Destructor, Deallocates resources
@@ -74,11 +76,11 @@ public:
   
   /// 
   /// Convenient method returning the list of all module names
-  QStringList moduleNames() const;
+  Q_INVOKABLE QStringList moduleNames() const;
 
   /// 
   /// Convenient method returning the list of module names for a given factory
-  QStringList moduleNames(const QString& factoryName) const;
+  Q_INVOKABLE QStringList moduleNames(const QString& factoryName) const;
 
   /// 
   /// Instantiate a module given its name
@@ -94,11 +96,16 @@ public:
 
   /// 
   /// Indicate if a module has been registered
-  bool isRegistered(const QString& name)const;
+  Q_INVOKABLE bool isRegistered(const QString& name)const;
 
   ///
   /// Enable/Disable verbose output during module discovery process
   void setVerboseModuleDiscovery(bool value);
+
+signals:
+  /// \brief This signal is emitted when all the modules associated with the
+  /// registered factories have been loaded
+  void allModulesRegistered();
 
 protected:
   QScopedPointer<qSlicerModuleFactoryManagerPrivate> d_ptr;

@@ -149,8 +149,8 @@ void qSlicerModuleFactoryManagerPrivate::uninstantiateModule(const QString& name
 // qSlicerModuleFactoryManager methods
 
 //-----------------------------------------------------------------------------
-qSlicerModuleFactoryManager::qSlicerModuleFactoryManager()
-  : d_ptr(new qSlicerModuleFactoryManagerPrivate(*this))
+qSlicerModuleFactoryManager::qSlicerModuleFactoryManager(QObject * newParent)
+  : Superclass(newParent), d_ptr(new qSlicerModuleFactoryManagerPrivate(*this))
 {
 }
 
@@ -186,6 +186,7 @@ void qSlicerModuleFactoryManager::registerAllModules()
     {
     this->registerModules(factoryName);
     }
+  emit this->allModulesRegistered();
 }
 
 //-----------------------------------------------------------------------------
