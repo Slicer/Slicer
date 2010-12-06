@@ -92,7 +92,6 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
 
   virtual void ProcessTransferUpdates ( vtkObject *caller, unsigned long event, void *callData );
   
-  //BTX
   enum
     {
       RemoteReadEvent = 19001,
@@ -106,6 +105,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
       RefreshDisplayEvent
     };
 
+  //BTX
   /// function that gets called when a data transfer has been updated.
   static void TransferUpdateCallback ( vtkObject *__caller,
                                        unsigned long eid, void *__clientData, void *callData );

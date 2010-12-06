@@ -42,7 +42,7 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //----------------------------------------------------------------------------
-int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int argc, char* argv[])
+int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   if (!factory)

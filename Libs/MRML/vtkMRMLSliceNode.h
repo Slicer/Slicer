@@ -188,11 +188,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void JumpSliceByOffsetting(int k, double r, double a, double s);
   void JumpSliceByCentering(double r, double a, double s);
 
-  /// 
   /// Enum to specify the method of jumping slices
-  //BTX
   enum {CenteredJumpSlice=0, OffsetJumpSlice};
-  //ETX
 
   /// 
   /// Control how JumpSlice operates. CenteredJumpMode puts the
@@ -204,12 +201,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void SetJumpModeToCentered();
   void SetJumpModeToOffset();
   
-  /// 
   /// Enum to specify whether the slice spacing is automatically
   /// determined or prescribed
-  //BTX
   enum {AutomaticSliceSpacingMode=0, PrescribedSliceSpacingMode};
-  //ETX
   
   /// 
   /// Get/Set the slice spacing mode. Slice spacing can be

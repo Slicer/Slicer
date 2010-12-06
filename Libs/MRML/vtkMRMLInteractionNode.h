@@ -69,7 +69,6 @@ public:
   virtual void SetTransformModePersistence ( int val );
   virtual void NormalizeAllMouseModes();
   
-  //BTX
   /// mouse modes
   enum
     {
@@ -89,7 +88,6 @@ public:
       InteractionModeChangedEvent = 19001,
       TransientTimeoutEvent,
     };
-  //ETX 
 
   //BTX
   int PickModePersistence;

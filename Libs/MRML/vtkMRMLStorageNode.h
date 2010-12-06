@@ -106,7 +106,6 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   /// Transferring: data is remote, and the transfer is working to completion
   /// TransferDone: the data is on disk and ready to be read
   /// Cancelled: the user cancelled the remote data transfer
-  //BTX
   enum
   {
     Idle,
@@ -116,8 +115,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
     TransferDone,
     Cancelled
   };
-  //ETX
-  /// 
+
   /// Get/Set the state of reading 
   vtkGetMacro(ReadState,int);
   vtkSetMacro(ReadState,int);

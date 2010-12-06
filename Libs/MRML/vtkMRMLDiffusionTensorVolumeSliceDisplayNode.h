@@ -123,7 +123,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   /// 2) color by avg scalar invariant 3) color by other
   //--------------------------------------------------------------------------
 
-  //BTX
   enum
   {
     colorModeSolid = 0,
@@ -131,7 +130,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
     colorModeFunctionOfScalar = 2,
     colorModeUseCellScalars = 3
   };
-  //ETX
 
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for ALL nodes

@@ -174,12 +174,10 @@ public:
   /// In synchronous mode, observations are invoked immediately when the
   /// event takes place.  In asynchronous mode, observations are added
   /// to the event queue for later invocation.
-  //BTX
   enum EventMode {
     Synchronous,
     Asynchronous
   };
-  //ETX
   vtkGetMacro(EventMode, int);
   void SetEventMode(int eventMode)
   {

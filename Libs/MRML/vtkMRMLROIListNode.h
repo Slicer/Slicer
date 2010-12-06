@@ -97,9 +97,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     void RemoveAllROIs();
 
     void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-
-    //BTX
-    /// 
+ 
     /// DisplayModifiedEvent is generated when display node parameters is changed
     /// PolyDataModifiedEvent is generated when something else is changed
     enum
@@ -108,7 +106,6 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
       PolyDataModifiedEvent = 21001, 
       ROIModifiedEvent = 21002
       };
-    //ETX
 
     /// 
     /// Get/Set for list visibility 

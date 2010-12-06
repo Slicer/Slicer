@@ -149,7 +149,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
-  //BTX
   /// Modes for annotation space and mode
   enum
     {
@@ -173,7 +172,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
       Add,
       Subtract
     };
-  //ETX
 
 protected:
   vtkMRMLSliceCompositeNode();

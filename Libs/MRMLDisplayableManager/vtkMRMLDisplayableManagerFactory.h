@@ -43,13 +43,11 @@ public:
   vtkTypeRevisionMacro(vtkMRMLDisplayableManagerFactory,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  //BTX
   enum
   {
     DisplayableManagerFactoryRegisteredEvent     = 30100,
     DisplayableManagerFactoryUnRegisteredEvent   = 30101
   };
-  //ETX
 
   ///
   /// Return True if Displayable Manager identified by \a vtkClassName

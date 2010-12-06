@@ -67,16 +67,14 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
   /// Display Information
   //--------------------------------------------------------------------------
 
-   /// 
   /// Set/Get visualization Mode
-  //BTX
   enum 
     {
     visModeScalar = 0,
     visModeGlyph = 1,
     visModeBoth = 2
     };
-  //ETX 
+
   vtkGetMacro(VisualizationMode, int);
   vtkSetMacro(VisualizationMode, int);
 

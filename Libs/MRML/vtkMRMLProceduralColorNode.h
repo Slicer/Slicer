@@ -69,23 +69,17 @@ public:
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  //BTX
-  /// 
   /// The list of valid procedural types
   //enum
   //{
   ///  
   //};
-  //ETX
 
-  //BTX
-  /// 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {
       DisplayModifiedEvent = 20000
     };
-//ETX
 
   /// 
   /// Get the color transfer function for this node

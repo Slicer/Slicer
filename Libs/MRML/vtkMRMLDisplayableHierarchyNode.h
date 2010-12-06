@@ -125,14 +125,11 @@ public:
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-//BTX
-  /// 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {
       DisplayModifiedEvent = 17000
     };
-//ETX
 
 protected:
   vtkMRMLDisplayableHierarchyNode();

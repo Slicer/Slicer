@@ -63,13 +63,11 @@ public:
   vtkGetMacro(ClipType, int);
   vtkSetMacro(ClipType, int);
 
-  //BTX
   enum
     {
       ClipIntersection = 0,
       ClipUnion = 1
     };
-  //ETX
 
   /// 
   /// Indicates if the Red slice clipping is Off, 
@@ -89,14 +87,12 @@ public:
   vtkGetMacro(GreenSliceClipState, int);
   vtkSetMacro(GreenSliceClipState, int);
 
-  //BTX
   enum
     {
       ClipOff = 0,
       ClipPositiveSpace = 1,
       ClipNegativeSpace = 2,
     };
-  //ETX
   
 protected:
   vtkMRMLClipModelsNode();

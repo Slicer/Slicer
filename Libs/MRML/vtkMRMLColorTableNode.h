@@ -112,7 +112,6 @@ public:
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  //BTX
   /// 
   /// The list of valid table types
  
@@ -187,7 +186,6 @@ public:
       CoolTint2 = 37,
       CoolTint3 = 38
     };
-  //ETX
 
   /// 
   /// Return the lowest and highest integers, for use in looping

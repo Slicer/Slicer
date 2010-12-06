@@ -69,23 +69,17 @@ public:
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  //BTX
-  /// 
   /// The list of valid procedural types
   //enum
   //{
   ///  
   //};
-  //ETX
 
-  //BTX
-  /// 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {
       DisplayModifiedEvent = 20000
     };
-//ETX
 
   /// 
   /// Create default storage node or NULL if does not have one
@@ -94,8 +88,6 @@ public:
     return Superclass::CreateDefaultStorageNode();
     };
 
-  //BTX
-  /// 
   /// The list of valid types
   /// dGEMRIC-15T to display 1.5T dGEMRIC scans
   /// dGEMRIC-3T to display 3T dGEMRIC scans
@@ -104,8 +96,7 @@ public:
     dGEMRIC15T = 0,
     dGEMRIC3T = 1
   };
-  //ETX
-  /// 
+
   /// Return the lowest and the highest integers, for use in looping
   int GetFirstType() { return this->dGEMRIC15T; };
   int GetLastType() { return this->dGEMRIC3T; };

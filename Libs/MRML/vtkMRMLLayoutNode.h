@@ -72,17 +72,13 @@ public:
   vtkGetMacro( SecondaryPanelSize, int);
   vtkSetMacro( SecondaryPanelSize, int);
 
-
-  /// 
   /// Set/Get the size of the last selected module
   vtkGetStringMacro( SelectedModule);
   vtkSetStringMacro( SelectedModule);
   
-/// Description:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Layout";};
 
-  //BTX
   enum
     {
       SlicerLayoutInitialView = 0,
@@ -105,8 +101,6 @@ public:
       SlicerLayoutNone,
       SlicerLayoutDual3DView
     };
-  //ETX
-
 
 protected:
   vtkMRMLLayoutNode();

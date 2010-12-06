@@ -36,11 +36,9 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   //----------------------------------------------------------------
 
   /// Interpolation method
-  //BTX
   enum {
     INTERP_LINEAR = 0
   };
-  //ETX
 
   //----------------------------------------------------------------
   /// Standard methods for MRML nodes

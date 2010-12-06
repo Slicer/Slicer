@@ -68,9 +68,7 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   void SetModuleDescription(const ModuleDescription& description);
 
 
-  //BTX
   typedef enum { Idle=0, Scheduled=1, Running=2, Completed=3, CompletedWithErrors=4, Cancelled=5 } StatusType;
-  //ETX
 
   /// 
   /// Set the status of the node (Idle, Scheduled, Running,

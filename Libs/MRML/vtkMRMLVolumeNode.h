@@ -148,15 +148,12 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-//BTX
-  /// 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   /// PolyDataModifiedEvent is generated when PloyData is changed
   enum
     {
       ImageDataModifiedEvent = 18001
     };
-//ETX
 
 //BTX
   /// 

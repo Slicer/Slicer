@@ -81,7 +81,6 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
-  //BTX
   /// Modes for crosshair display and behavior
   enum
     {
@@ -104,7 +103,6 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
       Normal = 0,
       JumpSlice
     };
-  //ETX
 
 protected:
   vtkMRMLCrosshairNode();

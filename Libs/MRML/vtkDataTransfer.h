@@ -73,9 +73,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
     return "Unknown";
   }
 
-
-  //BTX
-  /// transfer status values
+  /// Transfer status values
   /// ready means ready to read into storage node
   enum
     {
@@ -99,7 +97,6 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       LocalSave,
       Unspecified
     };
-  //ETX
 
  private:
 

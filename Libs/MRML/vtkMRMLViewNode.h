@@ -143,7 +143,6 @@ public:
   vtkGetMacro (RenderMode, int );
   virtual void SetRenderMode ( int );
   
-  //BTX
   /// Modes for automatically controlling camera 
   enum
     {
@@ -207,8 +206,6 @@ public:
       ResetFocalPointRequestedEvent,
       LookFromAxisRequestedEvent
     };
-  //ETX 
-
 
 protected:
   vtkMRMLViewNode();

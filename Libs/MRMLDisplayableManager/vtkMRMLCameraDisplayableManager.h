@@ -47,14 +47,11 @@ public:
 //  void AddCameraObservers();
 //  void RemoveCameraObservers();
 
-  ///
   /// Events
-  //BTX
   enum
   {
     ActiveCameraChangedEvent   = 30000
   };
-  //ETX
 
 protected:
 

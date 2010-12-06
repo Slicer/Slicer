@@ -358,7 +358,6 @@ public:
   static vtkMRMLScene *GetActiveScene();
 //ETX
 
-//BTX
   enum
     {
       NodeAddedEvent = 66000,
@@ -377,7 +376,6 @@ public:
       NodeAboutToBeAddedEvent = 66012,
       NodeAboutToBeRemovedEvent = 66013
     };
-//ETX
 
   int IsFilePathRelative(const char * filepath);
 

@@ -82,14 +82,11 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );
 
-  //BTX
-  /// 
   /// TransformModifiedEvent is send when the parent transform is modidied
   enum
     {
       TransformModifiedEvent = 15000
     };
- //ETX
  
   virtual bool CanApplyNonLinearTransforms() = 0;
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix); 

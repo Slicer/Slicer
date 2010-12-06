@@ -109,9 +109,7 @@ public:
   vtkGetObjectMacro(ModelDisplayableManager, vtkMRMLModelDisplayableManager);
   virtual void SetModelDisplayableManager(vtkMRMLModelDisplayableManager *modelDisplayableManager);
 
-  /// 
   /// Events
-  //BTX
   enum
   {
       PickEvent,
@@ -119,7 +117,6 @@ public:
       SelectRegionEvent,
       PlotEvent,
   };
-  //ETX
     
 protected:
   vtkThreeDViewInteractorStyle();

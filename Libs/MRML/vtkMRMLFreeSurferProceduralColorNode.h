@@ -80,7 +80,6 @@ public:
   
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  //BTX
   /// 
   /// The list of valid table types
  
@@ -101,7 +100,6 @@ public:
     Labels = 6,
     Custom = 7
   };
-  //ETX
 
   /// 
   /// Return the lowest and the highest integers, for use in looping (don't
@@ -117,14 +115,12 @@ public:
   /// return a text string describing the class name and type name
   const char * GetTypeAsIDString();
   
-  //BTX
   /// 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {
       DisplayModifiedEvent = 20000
     };
-//ETX
 
   /// 
   /// default file name for freesurfer labels

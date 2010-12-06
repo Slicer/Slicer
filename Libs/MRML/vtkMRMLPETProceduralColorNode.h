@@ -49,33 +49,24 @@ public:
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  //BTX
-  /// 
   /// The list of valid procedural types
   //enum
   //{
   ///  
   //};
-  //ETX
 
-  //BTX
-  /// 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {
       DisplayModifiedEvent = 20000
     };
-//ETX
 
-  /// 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return Superclass::CreateDefaultStorageNode();
     };
 
-  //BTX
-  /// 
   /// The list of valid types
   /// PETheat to display PET overlay with red to orange to yellow to white.
   /// PETrainbow to display PET overlay with cool to warm to white.
@@ -86,8 +77,7 @@ public:
     PETrainbow = 1,
     PETMIP = 2
   };
-  //ETX
-  /// 
+
   /// Return the lowest and the highest integers, for use in looping
   int GetFirstType() { return this->PETheat; };
   int GetLastType() { return this->PETMIP; };

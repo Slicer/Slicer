@@ -125,8 +125,6 @@ public:
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
   
-//BTX
-  /// 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   /// PolyDataModifiedEvent is generated when PloyData is changed
   enum
@@ -134,7 +132,6 @@ public:
       DisplayModifiedEvent = 17000,
       PolyDataModifiedEvent = 17001
     };
-//ETX
 
   /// 
   /// Create default storage node or NULL if does not have one

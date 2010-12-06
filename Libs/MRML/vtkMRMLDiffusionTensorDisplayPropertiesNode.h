@@ -65,7 +65,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// Display Information: Types of scalars that may be generated from tensors.
   //--------------------------------------------------------------------------
 
-  //BTX
   enum
   {
     Trace = 0,
@@ -95,7 +94,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
     ColorOrientationMiddleEigenvector = 24,
     ColorOrientationMinEigenvector = 25
   };
-  //ETX
 
   //--------------------------------------------------------------------------
   /// Display Information: Functions to choose scalar invariant
@@ -163,7 +161,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// Display Information: Types of glyph geometry that can be displayed
   //--------------------------------------------------------------------------
 
-  //BTX
   enum
   {
     Lines = 0,
@@ -171,7 +168,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
     Ellipsoids = 2,
     Superquadrics = 3
   };
-  //ETX
 
   //--------------------------------------------------------------------------
   /// Display Information: Functions to choose the type of glyph geometry
@@ -240,14 +236,12 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// Display Information: Eigenvector to display for lines/tubes glyphs
   //--------------------------------------------------------------------------
 
-  //BTX
   enum
   {
     Major = 1,
     Middle = 2,
     Minor = 3
   };
-  //ETX
 
   /// Description
   /// Which eigenvector to display with lines or tubes glyphs

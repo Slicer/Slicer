@@ -34,12 +34,10 @@ class VTK_MRML_EXPORT vtkMRMLOrthogonalLinePlotNode : public vtkMRMLPlotNode
   //----------------------------------------------------------------
 
   /// Line direction
-  //BTX
   enum {
     VERTICAL = 0,
     HORIZONTAL
   };
-  //ETX
 
 
   //----------------------------------------------------------------

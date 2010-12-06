@@ -90,14 +90,11 @@ public:
   /// return a text string describing the colour look up table type
   virtual const char * GetTypeAsString();
 
-  //BTX
-  /// 
   /// TypeModifiedEvent is generated when the type of the colour look up table changes
   enum
     {
       TypeModifiedEvent = 20002
     };
-//ETX
 
   /// 
   /// Get the 0th based nth name of this colour

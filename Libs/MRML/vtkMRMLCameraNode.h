@@ -150,12 +150,10 @@ public:
 
   /// 
   /// Events
-  //BTX
   enum
   {
     ActiveTagModifiedEvent = 30000
   };
-  //ETX
 
   /// 
   /// Updates this node if it depends on other nodes 

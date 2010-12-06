@@ -174,7 +174,6 @@ public:
   /// Process events from the MRML scene
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  //BTX
   /// DisplayModifiedEvent is generated when display node parameters is changed
   /// PolyDataModifiedEvent is generated when something else is changed
   enum
@@ -184,7 +183,6 @@ public:
       FiducialModifiedEvent = 19002,
       FiducialIndexModifiedEvent = 19003
     };
-//ETX
 
   /// Opacity of the fiducial surface expressed as a number from 0 to 1
   void SetOpacity(double opacity);
@@ -210,7 +208,6 @@ public:
   void SetLocked(int locked);
   vtkGetMacro(Locked, int);
 
-  //BTX
   /// Which kind of glyph should be used to display this fiducial?
   /// Vertex2D is supposed to start at 1
   enum GlyphShapes
@@ -232,7 +229,7 @@ public:
     Diamond3D,
     GlyphMax = Diamond3D
   };
-  //ETX
+
   /// Return the min/max glyph types, for iterating over them in tcl
   int GetMinimumGlyphType() { return vtkMRMLFiducialListNode::GlyphMin; };
   int GetMaximumGlyphType() { return vtkMRMLFiducialListNode::GlyphMax; };
@@ -275,8 +272,7 @@ public:
   /// already on the ends of the labels.
   void RenameFiducials(const char *newName);
 
-  //BTX
-  /// flags to determine how the next fiducial added to the list is labelled
+  /// Flags to determine how the next fiducial added to the list is labelled
   enum NumberingSchemes
   {
       SchemeMin = 0,
@@ -285,7 +281,6 @@ public:
       UsePrevious,
       SchemeMax = UsePrevious
   };
-  //ETX
 
   /// Flag determining how to number the next added fiducial
   vtkSetMacro(NumberingScheme, int);

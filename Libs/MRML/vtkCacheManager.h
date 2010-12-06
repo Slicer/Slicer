@@ -139,6 +139,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 
   //BTX
   void MarkNode ( std::string );
+  //ETX
   /// in case we need these.
   enum
     {
@@ -158,6 +159,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       SettingsUpdateEvent,
     };
 
+  //BTX
   std::map<std::string, std::string> uriMap;
   const char *GetFileFromURIMap (const char *uri );
   //ETX
