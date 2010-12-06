@@ -1,13 +1,6 @@
 import slicer
 import vtk
 
-# VTK-based libs
-from freesurfer import *
-from mrml import *
-from mrmlLogic import *
-from remoteio import *
-from teem import *
-
 # Qt-based libs
 from PythonQt.CTKWidgets import *
 from PythonQt.CTKVisualizationVTKWidgets import *
