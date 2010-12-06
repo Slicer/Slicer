@@ -64,12 +64,7 @@ def registerScriptedDisplayableManagers(sliceWidget):
     # set the new tcl instance into the sliceGUI instance for this slice
     tcl('%s %s $procName' % (sliceGUIName, method))
     #
-    # if the mrmlScene is not yet set in python, set it here
-    # TODO: maybe should be done in python manager
-    try:
-      slicer.mrmlScene
-    except AttributeError:
-      slicer.mrmlScene = eval("slicer.sliceWidget%s_sliceLogic.GetMRMLScene()" % sliceWidget)
+      
   sWidget = tcl('SliceSWidget #auto %s' % sliceGUIName)
   tcl('%s configure -calculateAnnotations 0' % sWidget)
   tcl('''

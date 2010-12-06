@@ -70,9 +70,8 @@ public:
   /// Note: initialize() should be called only one time.
   bool initialized() const;
 
-  ///
   /// Get MRML Scene
-  vtkMRMLScene* mrmlScene() const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   ///
   /// Set MRML Scene

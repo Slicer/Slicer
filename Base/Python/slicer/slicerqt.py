@@ -70,6 +70,9 @@ class _Internal():
     _modules = imp.new_module('modules')
     setattr(slicer, _modules.__name__, _modules)
     
+    # Retrieve current instance of the scene and set 'slicer.mrmlScene'
+    setattr(slicer, 'mrmlScene', app().mrmlScene())
+    
     
   def setSlicerModuleNames(self):
     """Add module names as attributes of module slicer.moduleNames"""
