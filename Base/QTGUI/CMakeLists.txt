@@ -63,6 +63,17 @@ SET(KIT_SRCS
   qSlicerWidget.h
   )
 
+IF(Slicer_USE_PYTHONQT)
+  LIST(APPEND KIT_SRCS
+    qSlicerScriptedLoadableModuleFactory.cxx
+    qSlicerScriptedLoadableModuleFactory.h
+    qSlicerScriptedLoadableModuleWidget.cxx
+    qSlicerScriptedLoadableModuleWidget.h
+    qSlicerScriptedLoadableModule.cxx
+    qSlicerScriptedLoadableModule.h
+    )
+ENDIF()
+
 # Since the wrapper doesn't consider hierarchy of classes, let's exclude
 # classes deriving from pure abstract class and remaining abstract pure
 SET_SOURCE_FILES_PROPERTIES(
@@ -103,7 +114,11 @@ SET(KIT_MOC_SRCS
   
 # PythonQt decorator
 IF(Slicer_USE_PYTHONQT)
-  LIST(APPEND KIT_MOC_SRCS qSlicerBaseQTGUIPythonQtDecorators.h)
+  LIST(APPEND KIT_MOC_SRCS
+    qSlicerBaseQTGUIPythonQtDecorators.h
+    qSlicerScriptedLoadableModule.h
+    qSlicerScriptedLoadableModuleWidget.h
+    )
 ENDIF(Slicer_USE_PYTHONQT)
 
 # UI files

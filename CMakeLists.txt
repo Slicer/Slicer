@@ -129,6 +129,8 @@ OPTION(WITH_COVERAGE "Enable/Disable coverage" OFF)
 OPTION(Slicer_USE_VTK_DEBUG_LEAKS "Enable VTKs Debug Leaks functionality in both VTK and Slicer." ON)
 OPTION(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
 MARK_AS_ADVANCED(Slicer_BUILD_QTLOADABLEMODULES)
+OPTION(Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python QT Modules" ON)
+MARK_AS_ADVANCED(Slicer_BUILD_QTSCRIPTEDMODULES)
 OPTION(Slicer_BUILD_CLI       "Build Slicer CLI Plugins" ON)
 OPTION(Slicer_USE_PYTHONQT    "Integrate a python-QT interpreter into Slicer." ON)
 OPTION(Slicer_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON)
@@ -625,15 +627,20 @@ SET(LoadableModule_DIR ${Slicer_BINARY_DIR}/Libs/LoadableModule)
 SET(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 
 #-----------------------------------------------------------------------------
-# Qt Loadable Modules
+# Qt Loadable and Scripted Modules
 #-----------------------------------------------------------------------------
 IF(Slicer_USE_QT)
   IF(Slicer_BUILD_QTLOADABLEMODULES)
-    ADD_DEFINITIONS(-DSlicer_BUILD_QTLOADABLEMODULES)
     SET(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
     SET(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTLoadableModules")
     SET(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTLoadableModules")
     SET(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTLoadableModules")
+  ENDIF()
+  IF(Slicer_BUILD_QTSCRIPTEDMODULES)
+    SET(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/QTScriptedModules")
+    SET(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/QTScriptedModules")
+    SET(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_INCLUDE_DIR}/QTScriptedModules")
+    SET(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_SHARE_DIR}/QTScriptedModules")
   ENDIF()
 ENDIF()
 
@@ -810,6 +817,10 @@ ENDIF()
 
 IF(Slicer_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
   ADD_SUBDIRECTORY(QTModules)
+ENDIF()
+
+IF(Slicer_USE_PYTHONQT AND Slicer_BUILD_QTSCRIPTEDMODULES)
+  ADD_SUBDIRECTORY(QTScriptedModules)
 ENDIF()
 
 #-----------------------------------------------------------------------------

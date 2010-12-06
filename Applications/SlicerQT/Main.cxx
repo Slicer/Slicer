@@ -51,6 +51,7 @@
 
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
+# include "qSlicerScriptedLoadableModuleFactory.h"
 # include <dPython.h>
 
 // PythonQt wrapper initialization methods
@@ -109,6 +110,9 @@ int main(int argc, char* argv[])
     {
     moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory",
                                           new qSlicerLoadableModuleFactory());
+
+    moduleFactoryManager->registerFactory("qSlicerScriptedLoadableModuleFactory",
+                                          new qSlicerScriptedLoadableModuleFactory());
     }
 
   if (!app.commandOptions()->disableCLIModule())

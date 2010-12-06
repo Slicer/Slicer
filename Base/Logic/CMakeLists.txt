@@ -51,6 +51,11 @@ set(include_dirs
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
   )
+IF(Slicer_USE_PYTHONQT)
+  LIST(APPEND include_dirs
+    ${PYTHON_INCLUDE_DIR}
+    )
+ENDIF()
 
 include_directories(${include_dirs})
 
@@ -97,6 +102,12 @@ set(SlicerBaseLogic_SRCS
   vtkImageRectangularSource.cxx
   vtkSystemInformation.cxx
   )
+
+IF(Slicer_USE_PYTHONQT)
+  LIST(APPEND SlicerBaseLogic_SRCS
+    vtkSlicerScriptedLoadableModuleLogic.cxx
+    )
+ENDIF()
 
 SET_SOURCE_FILES_PROPERTIES(
   vtkPichonFastMarchingPDF.cxx
@@ -150,6 +161,14 @@ SET(libs
   FreeSurfer
   ${VTK_LIBRARIES}
   )
+
+IF(Slicer_USE_PYTHONQT)
+  LIST(APPEND libs
+    vtkCommonPythonD # For vtkPythonUtils
+    ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY
+    )
+ENDIF()
+
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 
 IF(Slicer_USE_KWWIDGETS)
