@@ -46,12 +46,11 @@ public:
   qSlicerMainWindow(QWidget *parent=0);
   virtual ~qSlicerMainWindow();
 
-  // Description:
-  // Return the main window core.
+  /// Return the main window core.
   qSlicerMainWindowCore* core()const;
 
   /// Return the module selector
-  qSlicerModuleSelectorToolBar* moduleSelector()const;
+  Q_INVOKABLE qSlicerModuleSelectorToolBar* moduleSelector()const;
 
 public slots:
   void showMainToolBar(bool visible);
