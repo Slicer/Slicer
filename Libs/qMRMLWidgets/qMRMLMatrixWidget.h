@@ -37,7 +37,7 @@ class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public ctkVTKAbstractMatrixWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(CoordinateReferenceType CoordinateReference READ coordinateReference WRITE setCoordinateReference)
+  Q_PROPERTY(CoordinateReferenceType coordinateReference READ coordinateReference WRITE setCoordinateReference)
   Q_ENUMS(CoordinateReferenceType)
   
 public:
