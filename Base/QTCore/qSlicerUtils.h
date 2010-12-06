@@ -34,7 +34,7 @@ public:
   /// 
   /// Return true if the string name ends with one of these executable extension:
   /// ".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".py", ".tcl", ".m", ".exe"
-  /// Note: The comparison is case insensitive
+  /// \note The comparison is case insensitive
   static bool isExecutableName(const QString& name);
 
   ///

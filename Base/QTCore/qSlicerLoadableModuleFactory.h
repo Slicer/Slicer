@@ -47,7 +47,6 @@ public:
   ///
   virtual QString fileNameToKey(const QString& fileName);
 
-  ///
   /// Extract module name given \a libraryName
   /// \sa qSlicerUtils::extractModuleNameFromLibraryName
   static QString extractModuleName(const QString& libraryName);

@@ -122,7 +122,6 @@ void qSlicerLoadableModuleFactory::registerItems()
       // Skip if item isn't a file
       if (!fileInfo.isFile()) { continue; }
       
-      //this->registerLibrary(factory, it.fileInfo());
       if (fileInfo.isSymLink())
         {
         // symLinkTarget() handles links pointing to symlinks.
