@@ -120,11 +120,13 @@ endif()
 
 if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   include(SuperBuild/External_Python26.cmake)
-  if(Slicer_BUILD_NUMPY)
+  if(Slicer_USE_NUMPY)
     include(SuperBuild/External_CLAPACK.cmake)
     include(SuperBuild/External_NUMPY.cmake)
-    include(SuperBuild/External_weave.cmake)
-    if(Slicer_BUILD_SCIPY)
+    if(Slicer_USE_WEAVE)
+      include(SuperBuild/External_weave.cmake)
+    endif()
+    if(Slicer_USE_SCIPY)
       include(SuperBuild/External_SciPy.cmake)
     endif()
   endif()
@@ -177,9 +179,9 @@ endif()
 
 if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   list(APPEND slicer_DEPENDENCIES python)
-  if(Slicer_BUILD_NUMPY)
+  if(Slicer_USE_NUMPY)
     list(APPEND slicer_DEPENDENCIES NUMPY)
-    if(Slicer_BUILD_SCIPY)
+    if(Slicer_USE_SCIPY)
       list(APPEND slicer_DEPENDENCIES scipy)
     endif()
   endif()
@@ -222,7 +224,8 @@ SET(slicer_cmake_boolean_args
   Slicer_USE_OPENIGTLINK
   Slicer_USE_OPENCV
   Slicer_WITH_LIBRARY_VERSION
-  #Slicer_BUILD_NUMPY
+  Slicer_USE_NUMPY
+  #Slicer_USE_WEAVE
   # Deprecated
   Slicer_USE_PYTHON
   Slicer_USE_KWWIDGETS
