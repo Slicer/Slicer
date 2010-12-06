@@ -178,7 +178,9 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
   // after the ModuleManager.
   // To do so, the associated SharedPointer are cleared in the appropriate order
   this->ModuleManager.clear();
+#ifdef Slicer_USE_PYTHONQT
   this->CorePythonManager.clear();
+#endif
 }
 
 //-----------------------------------------------------------------------------

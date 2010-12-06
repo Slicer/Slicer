@@ -112,8 +112,10 @@ int main(int argc, char* argv[])
     moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory",
                                           new qSlicerLoadableModuleFactory());
 
+#ifdef Slicer_USE_PYTHONQT
     moduleFactoryManager->registerFactory("qSlicerScriptedLoadableModuleFactory",
                                           new qSlicerScriptedLoadableModuleFactory());
+#endif
     }
 
   if (!app.commandOptions()->disableCLIModule())

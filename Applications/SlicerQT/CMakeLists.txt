@@ -408,10 +408,16 @@ LIST(REMOVE_ITEM Slicer_BaseQT_LIBRARIES SlicerBaseGUI)
 
 SET(SlicerQT_LIBRARIES 
   ${Slicer_BaseQT_LIBRARIES}
-  qSlicerBaseQTCorePythonQt
-  qSlicerBaseQTGUIPythonQt
   )
-  
+
+IF(Slicer_USE_PYTHONQT)
+  SET(SlicerQT_LIBRARIES 
+    ${SlicerQT_LIBRARIES}
+    qSlicerBaseQTCorePythonQt
+    qSlicerBaseQTGUIPythonQt
+    )
+ENDIF(Slicer_USE_PYTHONQT)
+
 target_link_libraries(${lib_name} 
   ${SlicerQT_LIBRARIES}
   )
