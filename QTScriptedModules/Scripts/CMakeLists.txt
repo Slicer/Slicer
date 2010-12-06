@@ -1,11 +1,10 @@
 
 SET(KIT_PYTHON_SCRIPTS
-  #qSlicerPythonModuleExample.py
   )
 
 IF(Slicer_USE_NUMPY)
   LIST(APPEND KIT_PYTHON_SCRIPTS
-    #Endoscopy.py
+    Endoscopy.py
     )
 ENDIF()
   
