@@ -9,6 +9,18 @@ def exit():
 
 def app():
   return _qSlicerCoreApplicationInstance
+  
+def mainWindow():
+  _objectName = 'qSlicerMainWindow'
+  for w in app().topLevelWidgets():
+    if w.objectName == _objectName: return w
+  print "Failed to obtain reference to '%s'" % _objectName
+  return None
+  
+def selectModule(moduleName):
+  w = mainWindow()
+  if not w: return
+  w.moduleSelector().selectModule(moduleName)
 
 def getModuleNames():
   return app().moduleManager().factoryManager().moduleNames()
