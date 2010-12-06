@@ -203,7 +203,7 @@ void vtkMRMLDisplayableManagerGroup::AddAndInitialize(
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableManagerGroup::GetDisplayableManagerCount()
 {
-  return this->Internal->DisplayableManagers.size();
+  return static_cast<int>(this->Internal->DisplayableManagers.size());
 }
 
 //----------------------------------------------------------------------------

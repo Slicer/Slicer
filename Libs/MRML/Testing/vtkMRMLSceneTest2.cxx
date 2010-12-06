@@ -440,7 +440,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   // If additional nodes have been instanciated, let's update expectedNumberOfNode
   if (static_cast<int>(nodeAddedClassNames.size()) > expectedNumberOfNode)
     {
-    expectedNumberOfNode = nodeAddedClassNames.size();
+    expectedNumberOfNode = static_cast<int>(nodeAddedClassNames.size());
     }
 
   SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::Connect()", "NumberOfNode",
