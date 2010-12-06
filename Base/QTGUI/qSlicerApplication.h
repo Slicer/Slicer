@@ -97,9 +97,15 @@ public:
   /// See http://doc.trolltech.com/4.6/qapplication.html#commitData
   /// and http://doc.trolltech.com/4.6/qsessionmanager.html#allowsInteraction
   //virtual void commitData(QSessionManager & manager);
+
+protected slots:
+
+  ///
+  virtual void handleCommandLineArguments();
+
 protected:
   QSettings* newSettings(const QString& organization, const QString& application);
-protected:
+
   QScopedPointer<qSlicerApplicationPrivate> d_ptr;
 
 private:

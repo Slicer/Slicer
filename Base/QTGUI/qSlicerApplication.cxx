@@ -36,6 +36,7 @@
 #include <ctkIconEnginePlugin.h>
 #include <ctkLogger.h>
 #include <ctkSettings.h>
+#include <ctkToolTipTrapper.h>
 
 // QTGUI includes
 #include "qSlicerApplication.h"
@@ -110,6 +111,7 @@ public:
   QMap<QWidget*,bool>                 TopLevelWidgetsSavedVisibilityState;
   Qt::WindowFlags                     DefaultWindowFlags;
   qSlicerLayoutManager*               LayoutManager;
+  QScopedPointer<ctkToolTipTrapper>   ToolTipTrapper;
 };
 
 
@@ -343,6 +345,22 @@ void qSlicerApplication::setTopLevelWidgetVisible(qSlicerWidget* widget, bool vi
   else
     {
     d->TopLevelWidgetsSavedVisibilityState[widget] = visible;
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::handleCommandLineArguments()
+{
+  Q_D(qSlicerApplication);
+
+  this->Superclass::handleCommandLineArguments();
+
+  qSlicerCommandOptions* options = this->commandOptions();
+  Q_ASSERT(options);
+
+  if (options->disableToolTips())
+    {
+    d->ToolTipTrapper.reset(new ctkToolTipTrapper(this));
     }
 }
 

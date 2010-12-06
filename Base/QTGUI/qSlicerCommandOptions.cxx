@@ -29,6 +29,12 @@ qSlicerCommandOptions::qSlicerCommandOptions(QSettings* _settings):Superclass(_s
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCommandOptions::disableToolTips()const
+{
+  return this->parsedArgs().value("disable-tooltips").toBool();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCommandOptions::noSplash() const
 {
   return this->parsedArgs().value("no-splash").toBool();
@@ -38,6 +44,9 @@ bool qSlicerCommandOptions::noSplash() const
 void qSlicerCommandOptions::addArguments()
 {
   this->Superclass::addArguments();
+
+  this->addArgument("disable-tooltips", "", QVariant::Bool,
+                    "Disable toolstips in the user interface.");
 
   this->addArgument("no-splash", "", QVariant::Bool,
                     "Disables the startup splash screen.");

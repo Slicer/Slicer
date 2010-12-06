@@ -38,6 +38,8 @@ public:
 
   bool noSplash()const;
 
+  bool disableToolTips()const;
+
 protected:
   virtual void addArguments();
 

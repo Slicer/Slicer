@@ -177,6 +177,7 @@ protected:
   virtual void handlePreApplicationCommandLineArguments();
   ///
   virtual QSettings* newSettings(const QString& organization, const QString& application);
+
 protected slots:
 
   ///
