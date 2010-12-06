@@ -63,6 +63,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   Q_PROPERTY(QString Title READ title)
   Q_PROPERTY(QString Category READ category)
   Q_PROPERTY(QString Contributor READ contributor)
+  Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
 
 public:
 
