@@ -47,6 +47,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
   Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
   Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
   Q_PROPERTY(QString baseName READ baseName WRITE setBaseName)
+  Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false)
 
 public:
   /// Superclass typedef
