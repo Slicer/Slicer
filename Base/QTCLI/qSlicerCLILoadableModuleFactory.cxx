@@ -40,7 +40,9 @@ qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 {
-  qSlicerCLILoadableModule * module = new qSlicerCLILoadableModule();
+  // Using a scoped pointer ensures the memory will be cleaned if instanciator
+  // fails before returning the module. See QScopedPointer::take()
+  QScopedPointer<qSlicerCLILoadableModule> module(new qSlicerCLILoadableModule());
 
   // Resolves symbol
   char* xmlDescription = reinterpret_cast<char*>(
@@ -55,7 +57,6 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
       {
       qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
       }
-    delete module; // Clean memory
     return 0;
     }
 
@@ -70,7 +71,6 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
       {
       qWarning() << "Failed to retrieve Module Entry Point - Path:" << this->path();
       }
-    delete module; // Clean memory
     return 0;
     }
   module->setEntryPoint(moduleEntryPoint);
@@ -80,7 +80,7 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   module->setTempDirectory(
     qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
 
-  return module;
+  return module.take();
 }
 
 //-----------------------------------------------------------------------------
