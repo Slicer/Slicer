@@ -29,7 +29,6 @@
 
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
 #include "qSlicerAbstractCoreModule.h"
 
 #include "qSlicerBaseQTCoreExport.h"
@@ -44,7 +43,6 @@
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerBaseQTBasePythonQtDecorators : public QObject
 {
   Q_OBJECT
-
 public:
 
   qSlicerBaseQTBasePythonQtDecorators(ctkAbstractPythonManager* pythonManager)
@@ -66,11 +64,6 @@ public slots:
   //----------------------------------------------------------------------------
   // qSlicerCoreApplication
 
-  qSlicerModuleManager* moduleManager(qSlicerCoreApplication* app)const
-    {
-    return app->moduleManager();
-    }
-
   void sendEvent(qSlicerCoreApplication* app, QObject* _receiver, QEvent* _event)
     {
     app->sendEvent(_receiver, _event);
@@ -80,7 +73,6 @@ public slots:
     {
     app->processEvents();
     }
-  
 };
 
 #endif

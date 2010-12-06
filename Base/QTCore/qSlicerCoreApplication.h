@@ -134,9 +134,8 @@ public:
 
 #endif
 
-  ///
   /// Get the module manager
-  qSlicerModuleManager* moduleManager()const;
+  Q_INVOKABLE qSlicerModuleManager* moduleManager()const;
 
   /// Get the IO manager
   Q_INVOKABLE qSlicerCoreIOManager* coreIOManager()const;
