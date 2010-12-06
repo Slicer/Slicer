@@ -442,7 +442,6 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # CTK
 #-----------------------------------------------------------------------------
-SET(git_repo http://github.com/commontk/CTK/raw/master/)
 
 IF(Slicer_USE_QT)
   FIND_PACKAGE(CTK REQUIRED)
