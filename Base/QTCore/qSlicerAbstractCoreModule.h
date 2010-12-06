@@ -59,10 +59,10 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
 
   /// The following property will be added to the meta-class
   /// and will also be available through PythonQt
-  Q_PROPERTY(QString Name READ name)
-  Q_PROPERTY(QString Title READ title)
-  Q_PROPERTY(QString Category READ category)
-  Q_PROPERTY(QString Contributor READ contributor)
+  Q_PROPERTY(QString name READ name)
+  Q_PROPERTY(QString title READ title)
+  Q_PROPERTY(QString category READ category)
+  Q_PROPERTY(QString contributor READ contributor)
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
 
 public:
