@@ -470,13 +470,18 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
 
+  bool testing = false;
+  bool success = true;
+
 #ifdef Slicer_USE_PYTHONQT
   QString pythonScript = options->pythonScript();
   if(!pythonScript.isEmpty())
     {
     if (QFile::exists(pythonScript))
       {
+      // TODO Retrieve test status ...
       this->corePythonManager()->executeFile(pythonScript);
+      testing = true;
       }
     else
       {
@@ -486,11 +491,15 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   QString pythonCode = options->pythonCode();
   if(!pythonCode.isEmpty())
     {
-    this->corePythonManager()->executeString(pythonCode);
+    success = this->corePythonManager()->executeString(pythonCode).toBool();
+    testing = true;
     }
-#else
-  Q_UNUSED(options);
 #endif
+
+  if (options->exitAppWhenTestsDone() && testing)
+    {
+    QApplication::instance()->exit(success? EXIT_SUCCESS : EXIT_FAILURE);
+    }
 }
 
 //-----------------------------------------------------------------------------
