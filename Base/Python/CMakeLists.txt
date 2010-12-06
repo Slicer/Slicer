@@ -26,7 +26,7 @@ IF(Slicer_USE_PYTHONQT_WITH_TCL)
     )
 ENDIF()
 
-Slicer_compile_python_scripts(
+ctkMacroCompilePythonScript(
   TARGET_NAME slicer
   SCRIPTS "${Slicer_PYTHON_SCRIPTS}"
   RESOURCES "${Slicer_PYTHON_RESOURCES}"

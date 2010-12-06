@@ -448,11 +448,6 @@ IF(Slicer_USE_QT)
   INCLUDE(${CTK_USE_FILE})
   # Update CMake module path
   SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CTK_CMAKE_UTILITIES_DIR})
-  IF(Slicer_USE_PYTHONQT)
-    SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
-    LINK_DIRECTORIES(${PYTHONQT_INSTALL_DIR}/lib)
-    INCLUDE(${CTK_CMAKE_DIR}/ctkMacroWrapPythonQt.cmake)
-  ENDIF()
 ENDIF()
 
 #-----------------------------------------------------------------------------
@@ -463,8 +458,12 @@ IF(Slicer_USE_QT)
     IF(NOT VTK_WRAP_PYTHON)
       MESSAGE(FATAL_ERROR "Since both Slicer_USE_QT and Slicer_USE_PYTHONQT are ON, VTK_WRAP_PYTHON is expected to be ON. Disable Slicer_USE_PYTHONQT or re-configure VTK with python wrapping.")
     ENDIF()
-    # Include convenient script allowing to copy and compile python scripts
-    INCLUDE(${Slicer_CMAKE_DIR}/SlicerCompilePythonScripts.cmake)
+
+    SET(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
+    LINK_DIRECTORIES(${PYTHONQT_INSTALL_DIR}/lib)
+    INCLUDE(${CTK_CMAKE_DIR}/ctkMacroWrapPythonQt.cmake)
+    INCLUDE(${CTK_CMAKE_DIR}/ctkMacroCompilePythonScript.cmake)
+    
     # Enable qMRMLWidgets python wrapping
     SET(qMRMLWidgets_WRAP_PYTHON OFF)
   ENDIF()
