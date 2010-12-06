@@ -51,3 +51,21 @@ def getNodes():
         nodes[node.GetName()] = node
     return nodes
 
+#
+# __InternalInstance
+#
+class _Internal():
+  def __init__(self):
+    factoryManager = app().moduleManager().factoryManager()
+    factoryManager.connect('allModulesRegistered()', self.setSlicerModuleNames)
+    
+  def setSlicerModuleNames(self):
+    import imp
+    # Add module names as attributes of module slicer.moduleNames
+    _moduleNames = imp.new_module('moduleNames')
+    for name in moduleNames():
+      setattr(_moduleNames, name, name)
+    setattr(slicer, _moduleNames.__name__, _moduleNames)
+    
+_internalInstance = _Internal()
+
