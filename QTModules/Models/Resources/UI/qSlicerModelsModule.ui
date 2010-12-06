@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>811</height>
+    <width>377</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -91,6 +91,9 @@
     <widget class="ctkCollapsibleButton" name="ClippingButton">
      <property name="text">
       <string>Clipping</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
