@@ -83,38 +83,6 @@ public slots:
     app->processEvents();
     }
   
-  //----------------------------------------------------------------------------
-  // qSlicerModuleManager
-
-  qSlicerModuleFactoryManager* factoryManager(qSlicerModuleManager* _moduleManager)
-    {
-    return _moduleManager->factoryManager();
-    }
-  
-  /// 
-  bool loadModule(qSlicerModuleManager* _moduleManager, const QString& name)
-    {
-    return _moduleManager->loadModule(name);
-    }
-
-  /// 
-  bool unLoadModule(qSlicerModuleManager* _moduleManager, const QString& name)
-    {
-    return _moduleManager->unLoadModule(name);
-    }
-
-  /// 
-  bool isLoaded(qSlicerModuleManager* _moduleManager, const QString& name)const
-    {
-    return _moduleManager->isLoaded(name);
-    }
-
-  /// 
-  qSlicerAbstractCoreModule* module(qSlicerModuleManager* _moduleManager, const QString& name)
-    {
-    return _moduleManager->module(name);
-    }
-  
 };
 
 #endif

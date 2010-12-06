@@ -46,19 +46,19 @@ public:
 
   ///
   /// Return a pointer to the current module factory manager
-  qSlicerModuleFactoryManager * factoryManager()const;
+  Q_INVOKABLE qSlicerModuleFactoryManager * factoryManager()const;
 
   ///
-  bool loadModule(const QString& name);
+  Q_INVOKABLE bool loadModule(const QString& name);
 
   ///
-  bool unLoadModule(const QString& name);
+  Q_INVOKABLE bool unLoadModule(const QString& name);
 
   ///
-  bool isLoaded(const QString& name)const;
+  Q_INVOKABLE bool isLoaded(const QString& name)const;
 
   ///
-  qSlicerAbstractCoreModule* module(const QString& name);
+  Q_INVOKABLE qSlicerAbstractCoreModule* module(const QString& name);
 
   ///
   /// Convenient method to get module title given its name
