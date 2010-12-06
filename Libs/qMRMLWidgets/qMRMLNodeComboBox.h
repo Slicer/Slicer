@@ -120,7 +120,7 @@ public:
 
   ///
   /// Return the currently selected node. 0 if no node is selected
-  vtkMRMLNode* currentNode()const;
+  Q_INVOKABLE vtkMRMLNode* currentNode()const;
 
   ///
   /// Return the currently selected node id . "" if no node is selected
