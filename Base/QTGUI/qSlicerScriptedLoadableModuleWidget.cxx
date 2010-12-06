@@ -91,6 +91,7 @@ qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
   Q_ASSERT(layout);
+  Q_UNUSED(layout);
 }
 
 //-----------------------------------------------------------------------------

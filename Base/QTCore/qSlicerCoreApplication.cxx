@@ -653,7 +653,6 @@ QString qSlicerCoreApplication::slicerHome() const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::temporaryPath() const
 {
-  Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
   QFileInfo defaultTemporaryPath(QDir::tempPath(), this->applicationName());
@@ -663,7 +662,6 @@ QString qSlicerCoreApplication::temporaryPath() const
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setTemporaryPath(const QString& path)
 {
-  Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
   appSettings->setValue("TemporaryPath", path);
@@ -672,7 +670,6 @@ void qSlicerCoreApplication::setTemporaryPath(const QString& path)
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::extensionsPath() const
 {
-  Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
   QFileInfo defaultExtensionsPath(appSettings->fileName());
@@ -683,7 +680,6 @@ QString qSlicerCoreApplication::extensionsPath() const
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setExtensionsPath(const QString& path)
 {
-  Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
   appSettings->setValue("ExtensionsPath", path);

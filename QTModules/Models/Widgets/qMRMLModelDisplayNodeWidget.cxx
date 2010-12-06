@@ -157,7 +157,6 @@ QString qMRMLModelDisplayNodeWidget::activeScalarName()const
 //------------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setScalarsColorTable(vtkMRMLNode* colorNode)
 {
-  Q_D(qMRMLModelDisplayNodeWidget);
   this->setScalarsColorTable(vtkMRMLColorTableNode::SafeDownCast(colorNode));
 }
 

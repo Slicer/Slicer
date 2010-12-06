@@ -192,8 +192,8 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
 //-----------------------------------------------------------------------------
 vtkSlicerLogic* qSlicerScriptedLoadableModule::createLogic()
 {
-  Q_D(qSlicerScriptedLoadableModule);
-
+//  Q_D(qSlicerScriptedLoadableModule);
+  
   vtkSlicerScriptedLoadableModuleLogic* logic = vtkSlicerScriptedLoadableModuleLogic::New();
 
 //  bool ret = logic->SetPythonSource(d->PythonSource.toStdString());

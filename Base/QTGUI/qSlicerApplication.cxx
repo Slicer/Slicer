@@ -356,8 +356,6 @@ void qSlicerApplication::setTopLevelWidgetVisible(qSlicerWidget* widget, bool vi
 //-----------------------------------------------------------------------------
 void qSlicerApplication::handleCommandLineArguments()
 {
-  Q_D(qSlicerApplication);
-
   this->Superclass::handleCommandLineArguments();
 
   qSlicerCommandOptions* options = this->commandOptions();

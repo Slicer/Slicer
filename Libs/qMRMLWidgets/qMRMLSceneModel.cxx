@@ -953,6 +953,7 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
       nodeIndexes = this->indexes(modifiedNode);
       //the number of columns shouldn't change
       Q_ASSERT(oldSize == nodeIndexes.size());
+      Q_UNUSED(oldSize);
       }
     }
 }
