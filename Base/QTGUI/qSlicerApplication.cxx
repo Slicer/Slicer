@@ -74,6 +74,7 @@ void qSlicerApplyPalette(QPalette& palette)
   palette.setColor(QPalette::Window, Qt::white);
   palette.setColor(QPalette::Shadow, "#5a5a5a");
   palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
+  palette.setColor(QPalette::Highlight, QColor("#a5bfda")); // light blue
 }
 
 
