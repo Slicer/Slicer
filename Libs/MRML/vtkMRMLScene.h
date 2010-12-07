@@ -245,7 +245,7 @@ public:
   
   /// 
   /// insert a node in the scene after a specified node
-  void InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
+  vtkMRMLNode* InsertAfterNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
   /// 
   /// insert a node in the scene before a specified node
   vtkMRMLNode* InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
