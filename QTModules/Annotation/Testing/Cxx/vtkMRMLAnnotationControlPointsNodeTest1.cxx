@@ -49,6 +49,7 @@ int vtkMRMLAnnotationControlPointsNodeTest1(int , char * [] )
   node2->Reset();
   node2->StartModify();
 
+  node2->SetScene(mrmlScene);
   node2->CreateAnnotationPointDisplayNode();
   if (!node2->GetAnnotationPointDisplayNode())
     {

@@ -68,6 +68,8 @@ int vtkMRMLAnnotationLinesNodeTest1(int , char * [] )
   node2->Reset();
   node2->StartModify();
 
+  node2->SetScene(mrmlScene);
+
   node2->CreateAnnotationLineDisplayNode();
   if (!node2->GetAnnotationLineDisplayNode())
     {
