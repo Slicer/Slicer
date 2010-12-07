@@ -1,338 +1,171 @@
-project( CLI )
+project(CLI)
 
-#
-
+# GenerateCLP
 find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
-find_package(vtkITK REQUIRED)
+include(${GenerateCLP_USE_FILE})
 
-link_directories(${ModuleDescriptionParser_BINARY_DIR})
-
+# ITK
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
+# VTK
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
-include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
-link_directories(${SlicerBaseCLI_BINARY_DIR})
+# vtkITK
+find_package(vtkITK REQUIRED)
 
-#####################
+include_directories(${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR})
+link_directories(${SlicerBaseCLI_BINARY_DIR} ${ModuleDescriptionParser_BINARY_DIR})
+
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
-  set (CLP CLIModule4Test)
-
-  set ( ${CLP}_SOURCE ${CLP}.cxx)
-  generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-  add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-  set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-  slicer3_set_plugins_output_path(${CLP}Lib)
-  target_link_libraries (${CLP}Lib)
-
-  add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-  slicer3_set_plugins_output_path(${CLP})
-  target_link_libraries (${CLP} ${CLP}Lib)
+  slicerMacroBuildCLI(
+    NAME CLIModule4Test
+    LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+    )
 endif()
-
-#####################
-set (CLP DiffusionTensorTest)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-#set (CLP DiffusionWeightedTest)
-
-#set ( ${CLP}_SOURCE ${CLP}.cxx)
-#generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-#add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-#set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-#slicer3_set_plugins_output_path(${CLP}Lib)
-#target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-#add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-#slicer3_set_plugins_output_path(${CLP})
-#target_link_libraries (${CLP} ${CLP}Lib)
-
-
-#####################
-set (CLP DiffusionTensorEstimation)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-link_directories(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR} ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR})
-target_link_libraries (${CLP} MRML vtkTeem SlicerBaseLogic)
-include_directories(
-  ${vtkITK_SOURCE_DIR} 
-  ${vtkITK_BINARY_DIR} 
-  ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
-  ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
-
-#####################
-set (CLP DiffusionTensorMathematics)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-link_directories(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR})
-target_link_libraries (${CLP} MRML vtkTeem)
-include_directories(
-  ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
-  ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
-
-#####################
-set (CLP OrientImage)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-
-#####################
-set (CLP LinearRegistration)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKNumerics)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP RigidRegistration)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKNumerics)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP AffineRegistration)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKNumerics)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP BSplineDeformableRegistration)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP TestGridTransformRegistration)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP CheckerBoard)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml  ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP ResampleVolume)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP PolyDataToLabelmap)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO vtkIO vtkGraphics ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP GaussianBlurImageFilter)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-
-#####################
-set (CLP ConfidenceConnected)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP ExecutionModelTour)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/BillsLogo.h)
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} MRML)
-
-#####################
-
-
-set (CLP ImageReadDicomWrite)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp (${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP CurvatureAnisotropicDiffusion)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP GradientAnisotropicDiffusion)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-#####################
-set (CLP MedianImageFilter)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-#####################
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME DiffusionTensorTest
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKStatistics ITKIO
+  )
+#-----------------------------------------------------------------------------
+#slicerMacroBuildCLI(
+#  NAME DiffusionWeightedTest
+#  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+#  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters)
+#  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME DiffusionTensorEstimation
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES MRML vtkTeem SlicerBaseLogic
+  LINK_DIRECTORIES 
+    ${MRML_LIB_DIR} 
+    ${vtkTeem_LIB_DIR} 
+    ${SlicerBaseLogic_SOURCE_DIR} 
+    ${SlicerBaseLogic_BINARY_DIR}
+  INCLUDE_DIRECTORIES 
+    ${vtkITK_SOURCE_DIR} 
+    ${vtkITK_BINARY_DIR} 
+    ${MRML_SOURCE_DIR} 
+    ${MRML_BINARY_DIR}
+    ${vtkTeem_SOURCE_DIR} 
+    ${vtkTeem_BINARY_DIR}
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME DiffusionTensorMathematics
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES MRML vtkTeem
+  LINK_DIRECTORIES 
+    ${MRML_LIB_DIR} 
+    ${vtkTeem_LIB_DIR}
+  INCLUDE_DIRECTORIES 
+    ${MRML_SOURCE_DIR}    ${MRML_BINARY_DIR}
+    ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR}
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME OrientImage
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME LinearRegistration
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME RigidRegistration
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME AffineRegistration
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME BSplineDeformableRegistration
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME TestGridTransformRegistration
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME CheckerBoard
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME ResampleVolume
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME PolyDataToLabelmap
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKIO vtkIO vtkGraphics ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME GaussianBlurImageFilter
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME ConfidenceConnected
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME ExecutionModelTour
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/BillsLogo.h
+  TARGET_LIBRARIES MRML
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME ImageReadDicomWrite
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME CurvatureAnisotropicDiffusion
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME GradientAnisotropicDiffusion
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME MedianImageFilter
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
 add_subdirectory(DicomToNrrdConverter)
-#####################
+#-----------------------------------------------------------------------------
 # set (CLP DWIDicomLoad)
 
 # set ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -346,379 +179,170 @@ add_subdirectory(DicomToNrrdConverter)
 # set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 # target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
 
-#####################
-set (CLP HistogramMatching)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKStatistics)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP OtsuThresholdImageFilter)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP OtsuThresholdSegmentation)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP Subtract)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP Multiply)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP Add)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP Threshold)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP Mask)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP Cast)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP VotingBinaryHoleFillingImageFilter)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-
-set (CLP ModelMaker)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-link_directories(${vtkITK_LIB_DIR})
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-# TODO: remove SlicerBaseLogic once pass in color node information
-target_link_libraries (${CLP}
-  vtkITK
-  ModuleDescriptionParser
-  MRML
-  SlicerBaseLogic
-  SlicerBaseCLI
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME HistogramMatching
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters ITKStatistics
   )
-include_directories(
-  ${vtkITK_SOURCE_DIR} 
-  ${vtkITK_BINARY_DIR} 
-  ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
-  ${SlicerBaseLogic_SOURCE_DIR}  ${SlicerBaseLogic_BINARY_DIR})
-
-#####################
-
-set (CLP MultipleModelsExample)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-link_directories(${vtkITK_LIB_DIR})
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-# TODO: remove SlicerBaseLogic once pass in color node information
-target_link_libraries (${CLP}
-  vtkITK
-  ModuleDescriptionParser
-  MRML
-  SlicerBaseLogic
-  SlicerBaseCLI
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME OtsuThresholdImageFilter
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
   )
-include_directories(
-  ${vtkITK_SOURCE_DIR} 
-  ${vtkITK_BINARY_DIR} 
-  ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
-  ${SlicerBaseLogic_SOURCE_DIR}  ${SlicerBaseLogic_BINARY_DIR})
-
-
-#####################
-set (CLP GrayscaleModelMaker)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-link_directories(${vtkITK_LIB_DIR})
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP}
-  vtkITK
-  ModuleDescriptionParser
-  SlicerBaseCLI
-  vtkHybrid
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME OtsuThresholdSegmentation
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
   )
-include_directories(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
-
-#####################
-
-set (CLP MergeModels)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-link_directories(${vtkITK_LIB_DIR})
-include_directories(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib vtkIO vtkGraphics)
-
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib
-  vtkIO
-  vtkGraphics
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME Subtract
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
   )
-
-#####################
-set (CLP GrayscaleFillHoleImageFilter)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP GrayscaleGrindPeakImageFilter)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP LabelMapSmoothing)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKAlgorithms ITKBasicFilters)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-set (CLP ImageLabelCombine)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx)
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ITKIO ITKBasicFilters)
-
-
-#####################
-set (CLP ComputeSUVBodyWeight)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer_SOURCE_DIR}/Resources/CTSCLogo.h)
-
-link_directories(${vtkITK_LIB_DIR})
-add_executable(${CLP} ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP}
-  vtkITK
-  ModuleDescriptionParser
-  MRML
-  SlicerBaseLogic
-  SlicerBaseCLI
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME Multiply
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
   )
-
-include_directories(
-  ${vtkITK_SOURCE_DIR} 
-  ${vtkITK_BINARY_DIR} 
-  ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
-  ${SlicerBaseLogic_SOURCE_DIR}  ${SlicerBaseLogic_BINARY_DIR}
-)
-
-
-#####################
-set (CLP ResampleVolume2)
-
-set( TRANSFORM_SOURCE 
-DiffusionApplications/ResampleDTI/itkWarpTransform3D.h
-DiffusionApplications/ResampleDTI/itkWarpTransform3D.txx
-DiffusionApplications/ResampleDTI/itkTransformDeformationFieldFilter.h
-DiffusionApplications/ResampleDTI/itkTransformDeformationFieldFilter.txx
-DiffusionApplications/ResampleDTI/dtiprocessFiles/deformationfieldio.h
-DiffusionApplications/ResampleDTI/dtiprocessFiles/deformationfieldio.cxx
-DiffusionApplications/ResampleDTI/dtiprocessFiles/dtitypes.h
-DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
-DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
-)
-
-set ( ${CLP}_SOURCE ${CLP}.cxx ${TRANSFORM_SOURCE} )
-generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
-
-add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-slicer3_set_plugins_output_path(${CLP}Lib)
-set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKAlgorithms)
-
-add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-slicer3_set_plugins_output_path(${CLP})
-target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME Add
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME Threshold
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME Mask
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME Cast
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME VotingBinaryHoleFillingImageFilter
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+# TODO: Remove SlicerBaseLogic once pass in color node information
+slicerMacroBuildCLI(
+  NAME ModelMaker
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
+  INCLUDE_DIRECTORIES
+    ${vtkITK_SOURCE_DIR}          ${vtkITK_BINARY_DIR}
+    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR} 
+    ${SlicerBaseLogic_SOURCE_DIR} ${SlicerBaseLogic_BINARY_DIR}
+  )
+#-----------------------------------------------------------------------------
+# TODO: Remove SlicerBaseLogic once pass in color node information
+slicerMacroBuildCLI(
+  NAME MultipleModelsExample
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
+  INCLUDE_DIRECTORIES
+    ${vtkITK_SOURCE_DIR}          ${vtkITK_BINARY_DIR}
+    ${MRML_SOURCE_DIR}            ${MRML_BINARY_DIR} 
+    ${SlicerBaseLogic_SOURCE_DIR} ${SlicerBaseLogic_BINARY_DIR}
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME GrayscaleModelMaker
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES vtkITK ModuleDescriptionParser SlicerBaseCLI vtkHybrid
+  INCLUDE_DIRECTORIES
+    ${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR}
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME MergeModels
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES vtkIO vtkGraphics
+  INCLUDE_DIRECTORIES
+    ${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR}
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME GrayscaleFillHoleImageFilter
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME GrayscaleGrindPeakImageFilter
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME LabelMapSmoothing
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKAlgorithms ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME ImageLabelCombine
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME ComputeSUVBodyWeight
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h 
+  # LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/CTSCLogo.h
+  TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRML SlicerBaseLogic SlicerBaseCLI
+  LINK_DIRECTORIES ${vtkITK_LIB_DIR}
+  INCLUDE_DIRECTORIES
+    ${vtkITK_SOURCE_DIR}           ${vtkITK_BINARY_DIR} 
+    ${MRML_SOURCE_DIR}             ${MRML_BINARY_DIR} 
+    ${SlicerBaseLogic_SOURCE_DIR}  ${SlicerBaseLogic_BINARY_DIR}
+  )
+#-----------------------------------------------------------------------------
+slicerMacroBuildCLI(
+  NAME ResampleVolume2
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  TARGET_LIBRARIES ITKIO ITKBasicFilters ITKAlgorithms
+  ADDITIONAL_SRCS
+    DiffusionApplications/ResampleDTI/itkWarpTransform3D.h
+    DiffusionApplications/ResampleDTI/itkWarpTransform3D.txx
+    DiffusionApplications/ResampleDTI/itkTransformDeformationFieldFilter.h
+    DiffusionApplications/ResampleDTI/itkTransformDeformationFieldFilter.txx
+    DiffusionApplications/ResampleDTI/dtiprocessFiles/deformationfieldio.h
+    DiffusionApplications/ResampleDTI/dtiprocessFiles/deformationfieldio.cxx
+    DiffusionApplications/ResampleDTI/dtiprocessFiles/dtitypes.h
+    DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
+    DiffusionApplications/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
+  )
+#-----------------------------------------------------------------------------
 # culled from Slicer 3.6 release
-#set (CLP ZeroCrossingBasedEdgeDetectionImageFilter)
-#
-#set ( ${CLP}_SOURCE ${CLP}.cxx)
-#generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h)
-#
-#add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
-#slicer3_set_plugins_output_path(${CLP}Lib)
-#set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-#target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-#
-#add_executable(${CLP} ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-#slicer3_set_plugins_output_path(${CLP})
-#target_link_libraries (${CLP} ${CLP}Lib)
-
-#####################
-
-
+#slicerMacroBuildCLI(
+#  NAME ZeroCrossingBasedEdgeDetectionImageFilter
+#  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+#  TARGET_LIBRARIES ITKIO ITKBasicFilters
+#  )
+#-----------------------------------------------------------------------------
 # culled from Slicer 3.6 release
-#set (CLP FreesurferSurfaceSectionExtraction)
-#set ( ${CLP}_SOURCE ${CLP}.cxx)
-#generateclp(${CLP}_SOURCE ${CLP}.xml)
-#
-#add_executable(${CLP} ${${CLP}_SOURCE})
-#slicer3_set_plugins_output_path(${CLP})
-#target_link_libraries (${CLP} ITKIO ITKBasicFilters)
-#
-#set( Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
-
+#slicerMacroBuildCLI(
+#  NAME FreesurferSurfaceSectionExtraction
+#  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+#  TARGET_LIBRARIES ITKIO ITKBasicFilters
+#  )
 ###################
 
 SET(cli_modules
@@ -726,142 +350,30 @@ SET(cli_modules
   SparseFieldLevelSetContour
   Realign
   DiffusionApplications
-  #EndoNavTracking
   ExtractSkeleton
   Java
   N4ITKBiasFieldCorrection
   RobustStatisticsSegmenter
+  RegisterImagesModule
   )
 
-if ( ${ITK_VERSION_MAJOR} GREATER 3 )
-
-  SET(cli_modules ${cli_modules} RegisterImagesModule)
-
-else ( ${ITK_VERSION_MAJOR} GREATER 3 )
-
-  if ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12 )
-
-    SET(cli_modules ${cli_modules} RegisterImagesModule)
-
-  else ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12 )
-
-    if ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6 )
-      if ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
-        SET(cli_modules ${cli_modules} RegisterImagesModule)
-      else ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
-        message ("RegisterImagesModule requires that the ITK_USE_OPTIMIZED_REGISTRATION_METHODS option be turned on when building ITK")
-      endif ( ITK_USE_OPTIMIZED_REGISTRATION_METHODS )
-    else ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6 )
-      message ("RegisterImagesModule requires ITK version 3.8 or higher")
-    endif ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 6 )
-
-  endif ( ${ITK_VERSION_MAJOR} MATCHES 3 AND ${ITK_VERSION_MINOR} GREATER 12 )
-
-endif ( ${ITK_VERSION_MAJOR} GREATER 3 )
-
-# culled from Slicer 3.6 release
-#SET(cli_modules ${cli_modules}
-  # UtahBSpline
-  # DiffeomorphicDemonsRegistration
-#  )
-
 if(Slicer_USE_MIDAS)
-  SET(cli_modules ${cli_modules} MIDASApplications)
-endif(Slicer_USE_MIDAS)
+  LIST(APPEND cli_modules MIDASApplications)
+endif()
 
 if(Slicer_USE_BatchMake)
-  SET(cli_modules ${cli_modules} BatchMakeApplications)
-endif(Slicer_USE_BatchMake)
-
-#SET(cli_modules ${cli_modules} Utah)
+  LIST(APPEND cli_modules BatchMakeApplications)
+endif()
 
 FOREACH(cli_module ${cli_modules})
   ADD_SUBDIRECTORY(${cli_module})
 ENDFOREACH(cli_module)
 
-if (Slicer_SOURCE_DIR)
-  # install each target in the production area (where it would appear in an 
-  # installation) and install each target in the developer area (for running 
-  # from a build)
-  set(TARGETS
-    ResampleVolume
-    ResampleVolumeLib
-    ResampleVolume2
-    ResampleVolume2Lib
-    ExecutionModelTour
-    ImageReadDicomWrite
-    ImageReadDicomWriteLib
-    Add
-    AddLib
-    Threshold
-    ThresholdLib
-    Mask
-    MaskLib
-    Cast
-    CastLib
-    ConfidenceConnected
-    ConfidenceConnectedLib
-    #CurvatureAnisotropicDiffusion
-    #CurvatureAnisotropicDiffusionLib
-    GradientAnisotropicDiffusion
-    GradientAnisotropicDiffusionLib
-    MedianImageFilter
-    MedianImageFilterLib
-    Multiply
-    MultiplyLib
-    OtsuThresholdImageFilter
-    OtsuThresholdImageFilterLib
-    OtsuThresholdSegmentation
-    OtsuThresholdSegmentationLib
-    Subtract
-    SubtractLib
-    VotingBinaryHoleFillingImageFilter
-    VotingBinaryHoleFillingImageFilterLib
-    ModelMaker
-    GrayscaleModelMaker
-    GrayscaleFillHoleImageFilter
-    GrayscaleFillHoleImageFilterLib
-    GrayscaleGrindPeakImageFilter
-    GrayscaleGrindPeakImageFilterLib
-    HistogramMatching
-    HistogramMatchingLib
-    RigidRegistration
-    RigidRegistrationLib
-    LinearRegistration
-    LinearRegistrationLib
-    AffineRegistration
-    AffineRegistrationLib
-    BSplineDeformableRegistration
-    BSplineDeformableRegistrationLib
-    ComputeSUVBodyWeight
-    LabelMapSmoothing
-    LabelMapSmoothingLib
-    ImageLabelCombine
-    OrientImage
-    OrientImageLib
-    CheckerBoardLib
-    GaussianBlurImageFilter
-    GaussianBlurImageFilterLib
-#    DWIDicomLoad
-#    DWIDicomLoadLib
-    #FreesurferSurfaceSectionExtraction
-    #ZeroCrossingBasedEdgeDetectionImageFilter
-    #ZeroCrossingBasedEdgeDetectionImageFilterLib
-    DiffusionTensorMathematics
-    DiffusionTensorEstimation
-    )
-
-  slicer3_install_plugins(${TARGETS})
-
-endif (Slicer_SOURCE_DIR)
-
-#
-
-option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registraiton and segmentation tools" ON)
+option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" ON)
 if(BUILD_BRAINSTOOLS)
   add_subdirectory(BRAINSTools)
-endif(BUILD_BRAINSTOOLS)
+endif()
 
 if(BUILD_TESTING)
   ADD_SUBDIRECTORY(Testing)
-endif(BUILD_TESTING)
+endif()

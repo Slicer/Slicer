@@ -53,5 +53,10 @@ MACRO(slicerMacroBuildCLI)
   
   # Set labels associated with the target.
   SET_TARGET_PROPERTIES(${CLP} PROPERTIES LABELS ${CLP})
+  
+  # Install each target in the production area (where it would appear in an installation) 
+  # and install each target in the developer area (for running from a build)
+  set(TARGETS ${CLP} ${CLP}Lib)
+  slicer3_install_plugins(${TARGETS})
 
 ENDMACRO()
