@@ -19,6 +19,7 @@ find_path(SLICER_BRAINWEB_DATA_ROOT brainweb165a10f17.mha
   DOC "Directory with data taken from http://public.kitware.com/pub/itk/Data/BrainWeb/")
 mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 
+SET(CLP N4ITKBiasFieldCorrection)
 
 #
 # Slicer3 is needed to resolve shared libraries
@@ -32,13 +33,15 @@ set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 
-add_test(N4ITKBiasFieldCorrection ${Slicer_EXE} --launch N4ITKBiasFieldCorrectionTest
+set(testname ${CLP}Test)
+add_test(${testname} ${Slicer_EXE} --launch N4ITKBiasFieldCorrectionTest
   --compare ${BASELINE}/he3corrected.nii.gz ${TEMP}/he3corrected.nii.gz
   ModuleEntryPoint
   --inputimage ${TEST_DATA}/he3volume.nii.gz --maskimage ${TEST_DATA}/he3mask.nii.gz 
   --outputimage ${TEMP}/he3corrected.nii.gz --outputbiasfield ${TEMP}/he3biasfield.nii.gz
   )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
-set (CLP N4ITKBiasFieldCorrection)
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
