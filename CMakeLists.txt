@@ -681,7 +681,7 @@ SET(CMAKE_C_FLAGS ${Slicer_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
 # Generate SlicerVersion.txt
 #-----------------------------------------------------------------------------
 
-INCLUDE(CMake/SlicerTodayMacro.cmake)
+INCLUDE(CMake/SlicerMacroToday.cmake)
 
 # Get build time
 TODAY(Slicer_BUILDDATE)
