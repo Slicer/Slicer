@@ -113,6 +113,7 @@ void qSlicerExtensionsWizardWelcomePage::initializePage()
   url += "-";
   url += qSlicerCoreApplication::application()->platform();
 
+  QSettings settings;
   QStringList urls = settings.value("Modules/ExtensionsUrls").toStringList();
 
   d->SearchURLComboBox->addItems(urls);
@@ -164,7 +165,7 @@ bool qSlicerExtensionsWizardWelcomePage::isComplete()const
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsWizardWelcomePage::deleteTemporaryZipFiles()
+void qSlicerExtensionsWizardWelcomePage::deleteTemporaryZipFiles()
 {
   Q_D(qSlicerExtensionsWizardWelcomePage);
   if (!qSlicerCoreApplication::application())
@@ -172,7 +173,7 @@ bool qSlicerExtensionsWizardWelcomePage::deleteTemporaryZipFiles()
     return;
     }
   QDir tempDir(qSlicerCoreApplication::application()->temporaryPath());
-  foreach(QString zipFile, tempDir.entryList("*.zip"))
+  foreach(QString zipFile, tempDir.entryList(QStringList() << "*.zip"))
     {
     tempDir.remove(zipFile);
     }
