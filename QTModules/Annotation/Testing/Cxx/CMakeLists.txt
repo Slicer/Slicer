@@ -2,7 +2,7 @@ SET(KIT Annotation)
 
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
-  qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1
+  #qMRMLSceneAnnotationModelAndAnnotationTreeWidgetTest1
   vtkMRMLAnnotationNodeTest1.cxx
   vtkMRMLAnnotationStorageNodeTest1.cxx
   vtkMRMLAnnotationDisplayNodeTest1.cxx

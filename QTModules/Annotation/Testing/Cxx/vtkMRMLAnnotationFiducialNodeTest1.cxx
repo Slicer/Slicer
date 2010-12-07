@@ -17,9 +17,11 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
   // ======================
   vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node2 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
+  node2->SetScene(mrmlScene);
   {
 
-    vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node1 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();  
+    vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node1 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
+    node1->SetScene(mrmlScene);
     EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
     node1->UpdateReferences();

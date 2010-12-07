@@ -37,9 +37,11 @@ int vtkMRMLAnnotationLinesNodeTest1(int , char * [] )
   // ======================
   vtkSmartPointer< vtkMRMLAnnotationLinesNode > node2 = vtkSmartPointer< vtkMRMLAnnotationLinesNode >::New();
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
+  node2->SetScene(mrmlScene);
   {
 
     vtkSmartPointer< vtkMRMLAnnotationLinesNode > node1 = vtkSmartPointer< vtkMRMLAnnotationLinesNode >::New();  
+    node1->SetScene(mrmlScene);
     EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
     node1->UpdateReferences();
