@@ -45,7 +45,7 @@ SET(qt_module_target_libraries
   )
 
 
-Slicer_build_qtmodule(
+slicerMacroBuildQtModule(
   NAME ${qt_module_name}
   TITLE ${qt_module_title}
   EXPORT_DIRECTIVE ${qt_module_export_directive}

@@ -45,7 +45,7 @@ SET(qt_module_resources
   Resources/qSlicerModelsModule.qrc
 )
 
-Slicer_build_qtmodule(
+slicerMacroBuildQtModule(
   NAME ${qt_module_name}
   EXPORT_DIRECTIVE ${qt_module_export_directive}
   INCLUDE_DIRECTORIES ${qt_module_include_directories}

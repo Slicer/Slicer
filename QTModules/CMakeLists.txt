@@ -38,7 +38,7 @@ IF(NOT Slicer_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 ENDIF(NOT Slicer_SOURCE_DIR)
 
-INCLUDE(${Slicer_CMAKE_DIR}/SlicerQTModuleMacros.cmake)
+INCLUDE(${Slicer_CMAKE_DIR}/SlicerMacroBuildQtModule.cmake)
 
 SET(qtmodules
   Annotation
