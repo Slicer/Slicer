@@ -37,6 +37,7 @@ ENDFOREACH()
 INCLUDE(CMake/Slicer3PersistenceMacros.cmake)
 INCLUDE(CMake/SlicerParseArgumentsMacro.cmake)
 INCLUDE(CMake/Slicer3PluginsMacros.cmake)
+INCLUDE(CMake/SlicerMacroBuildCLI.cmake)
 INCLUDE(CMake/SlicerMacroEmptyExternalProject.cmake)
 INCLUDE(CMake/SlicerFunctionCheckCompilerFlags.cmake)
 
