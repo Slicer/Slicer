@@ -32,7 +32,7 @@ ENDFOREACH()
 # Calling PROJECT() defines projectname_SOURCE_DIR and projectname_BINARY_DIR
 PROJECT(SlicerBase)
 
-INCLUDE(${Slicer_CMAKE_DIR}/SlicerQTBaseLibraryMacros.cmake)
+INCLUDE(${Slicer_CMAKE_DIR}/SlicerMacroBuildBaseQtLibrary.cmake)
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}

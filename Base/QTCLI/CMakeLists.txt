@@ -1,7 +1,7 @@
 PROJECT(qSlicerBaseQTCLI)
 
 #
-# See CMake/SlicerQTBaseLibraryMacros.cmake for details
+# See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
 
 SET(KIT_export_directive "Q_SLICER_BASE_QTCLI_EXPORT")
@@ -65,7 +65,7 @@ SET(KIT_target_libraries
   MRMLCLI
   )
 
-Slicer_build_slicer_qtbase_library(
+SlicerMacroBuildBaseQtLibrary(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   INCLUDE_DIRECTORIES ${KIT_include_directories}
