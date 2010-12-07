@@ -14,12 +14,7 @@ set(Slicer3BatchModule_SOURCE ../GenericBatchMakeModule/BatchMakeModule.cxx)
 
 # Disable MSVC 8 warnings
 if(WIN32)
-  option(DISABLE_MSVC8_DEPRECATED_WARNINGS 
-    "Disable Visual Studio 8 deprecated warnings" ON)
-  mark_as_advanced(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)  
-  if(DISABLE_MSVC8_DEPRECATED_WARNINGS)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-  endif(DISABLE_MSVC8_DEPRECATED_WARNINGS)
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif(WIN32)
 
 find_package(BatchMake REQUIRED)
@@ -85,7 +80,7 @@ if(BatchMake_DIR)
   slicer3_set_plugins_output_path(${Slicer3BatchModule})
   target_link_libraries(${Slicer3BatchModule} BatchMakeLib)
   add_dependencies(${Slicer3BatchModule} ${Slicer3ExeModule})
-
+  SET_TARGET_PROPERTIES(${Slicer3BatchModule} PROPERTIES LABELS ${Slicer3BatchModule})
 
   if (Slicer_SOURCE_DIR)
     # install each target in the production area (where it would appear in an 

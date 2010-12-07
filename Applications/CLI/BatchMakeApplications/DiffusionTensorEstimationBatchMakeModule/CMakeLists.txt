@@ -14,12 +14,7 @@ set(Slicer3BatchModule_LOGO DiffusionTensorEstimationBatchMakeModuleLogo.h)
 
 # Disable MSVC 8 warnings
 if(WIN32)
-  option(DISABLE_MSVC8_DEPRECATED_WARNINGS 
-    "Disable Visual Studio 8 deprecated warnings" ON)
-  mark_as_advanced(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)  
-  if(DISABLE_MSVC8_DEPRECATED_WARNINGS)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-  endif(DISABLE_MSVC8_DEPRECATED_WARNINGS)
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif(WIN32)
 
 find_package(BatchMake REQUIRED)
