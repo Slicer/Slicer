@@ -100,6 +100,8 @@ public:
 
   void discoverITKFactoriesDirectory();
 
+  void discoverRepository();
+
   ///
   /// Parse arguments
   bool parseArguments();
@@ -126,6 +128,11 @@ public:
   /// IntDir should be set to either Debug,
   /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   QString                                       IntDir;
+  
+  QString                                       RepositoryUrl;
+  QString                                       RepositoryRevision;
+  QString                                       Platform;
+  
   QSettings*                                    Settings;
 
   ///
@@ -280,6 +287,28 @@ void qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::discoverRepository()
+{
+  QDir libSlicerDir(this->SlicerHome);
+  libSlicerDir.cd(Slicer_INSTALL_LIB_DIR);
+  QFileInfo slicerVersion(libSlicerDir, "SlicerVersion.txt");
+  QFile slicerVersionFile(slicerVersion.absoluteFilePath());
+  if (!slicerVersionFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+    qWarning() << "Can't find SlicerVersion.txt at address:"
+               << slicerVersionFile.fileName();
+    return;
+    }
+
+  QTextStream slicerVersionStream(&slicerVersionFile);
+  QString build, buildDate, repositoryUrl, repositoryRevision;
+  slicerVersionStream >> build >> this->Platform;
+  slicerVersionStream >> buildDate >> buildDate;
+  slicerVersionStream >> repositoryUrl >> this->RepositoryUrl;
+  slicerVersionStream >> repositoryRevision >> this->RepositoryRevision;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreApplicationPrivate::parseArguments()
 {
   Q_Q(qSlicerCoreApplication);
@@ -320,6 +349,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   Q_D(qSlicerCoreApplication);
 
   this->setOrganizationName("NAMIC");
+  this->setApplicationName("3D Slicer");
   this->setApplicationVersion(Slicer_VERSION_FULL);
   QSettings::setDefaultFormat(QSettings::IniFormat);
 
@@ -336,6 +366,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
   // QCoreApplication::addLibraryPath (to handle the iconengines plugin) )
   d->discoverSlicerHomeDirectory();
   d->discoverITKFactoriesDirectory();
+  d->discoverRepository();
 
   // Qt can't set environment variables for child processes that are not QProcess.
   // As the command line modules are not QProcess and need ITK_AUTOLOAD_PATH to
@@ -760,4 +791,25 @@ QString qSlicerCoreApplication::copyrights()const
     "National Centers for Biomedical Computing can be obtained from "
     "http://nihroadmap.nih.gov/bioinformatics.\n\n");
   return copyrightsText;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::repositoryUrl()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->RepositoryUrl;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::repositoryRevision()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->RepositoryRevision;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::platform()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->Platform;
 }

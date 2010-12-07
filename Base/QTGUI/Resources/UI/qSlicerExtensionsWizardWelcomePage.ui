@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerExtensionsWizardWelcomePage</class>
+ <widget class="QWizardPage" name="qSlicerExtensionsWizardWelcomePage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>416</width>
+    <height>149</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WizardPage</string>
+  </property>
+  <property name="title">
+   <string>Welcome</string>
+  </property>
+  <property name="subTitle">
+   <string>This wizard lets you search for extensions to add to 3D slicer, download and install them and uninstall existing extensions. You will need a network connection to access remote extension repositories.</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="ExtensionsLabel">
+     <property name="text">
+      <string>Action:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="InstallPathLabel">
+     <property name="text">
+      <string>Install path:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="ctkDirectoryButton" name="InstallPathDirectoryButton"/>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="DeleteTempPushButton">
+     <property name="text">
+      <string>Delete zip files from temporary directory</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="SearchURLLabel">
+     <property name="text">
+      <string>Where to search:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QComboBox" name="SearchURLComboBox">
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QCheckBox" name="InstallExtensionsCheckBox">
+     <property name="text">
+      <string>Find &amp;&amp; install new extensions</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="UninstallExtensionsCheckBox">
+     <property name="text">
+      <string>Uninstall existing extensions</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

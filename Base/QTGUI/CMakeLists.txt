@@ -32,6 +32,14 @@ SET(KIT_SRCS
   qSlicerCommandOptions.h
   qSlicerDataDialog.cxx
   qSlicerDataDialog.h
+  
+  qSlicerExtensionsWizard.cxx
+  qSlicerExtensionsWizard.h
+  qSlicerExtensionsWizardOverviewPage.cxx
+  qSlicerExtensionsWizardOverviewPage.h
+  qSlicerExtensionsWizardWelcomePage.cxx
+  qSlicerExtensionsWizardWelcomePage.h
+
   qSlicerFileDialog.cxx
   qSlicerFileDialog.h
   qSlicerIOManager.cxx
@@ -98,6 +106,9 @@ SET(KIT_MOC_SRCS
   qSlicerApplication.h
   qSlicerDataDialog.h
   qSlicerDataDialog_p.h
+  qSlicerExtensionsWizard.h
+  qSlicerExtensionsWizardOverviewPage.h
+  qSlicerExtensionsWizardWelcomePage.h
   qSlicerFileDialog.h
   qSlicerIOManager.h
   qSlicerIOOptionsWidget.h
@@ -131,6 +142,9 @@ ENDIF(Slicer_USE_PYTHONQT)
 SET(KIT_UI_SRCS
   Resources/UI/qSlicerActionsDialog.ui 
   Resources/UI/qSlicerDataDialog.ui
+  Resources/UI/qSlicerExtensionsWizardWelcomePage.ui
+  Resources/UI/qSlicerExtensionsWizardOverviewPage.ui
+  Resources/UI/qSlicerExtensionsWizardRestartPage.ui
   Resources/UI/qSlicerModelsDialog.ui
   Resources/UI/qSlicerModulePanel.ui
   Resources/UI/qSlicerSaveDataDialog.ui

@@ -75,7 +75,6 @@ int main(int argc, char* argv[])
   QApplication::setDesktopSettingsAware(false);
 
   qSlicerApplication app(argc, argv);
-  app.setApplicationName("3D Slicer");
 
 #ifdef Slicer_USE_PYTHONQT
   app.pythonManager()->setInitializationFunction(PythonPreInitialization);
