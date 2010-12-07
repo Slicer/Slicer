@@ -1,5 +1,7 @@
 PROJECT( RegisterImagesModuleApplications )
 
+  SET(CLP RegisterImages)
+  
   # Find ITK
   FIND_PACKAGE( ITK REQUIRED )
   INCLUDE( ${ITK_USE_FILE} )
@@ -22,18 +24,19 @@ PROJECT( RegisterImagesModuleApplications )
   INCLUDE_DIRECTORIES( ${RegisterImagesModuleApplications_BINARY_DIR} )
 
   # Build the library / plugin
-  ADD_LIBRARY( RegisterImagesModule 
+  ADD_LIBRARY( ${CLP}Module 
                SHARED 
                ${RegisterImagesSlicer_SOURCE} )
   IF( SUPPORT_2D_IMAGES )
-    SET_TARGET_PROPERTIES( RegisterImagesModule 
+    SET_TARGET_PROPERTIES( ${CLP}Module 
                            PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint -DSUPPORT_2D_IMAGES" )
   ELSE( SUPPORT_2D_IMAGES )
-    SET_TARGET_PROPERTIES( RegisterImagesModule 
+    SET_TARGET_PROPERTIES( ${CLP}Module 
                            PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
   ENDIF( SUPPORT_2D_IMAGES )
 
-  TARGET_LINK_LIBRARIES( RegisterImagesModule ${ITK_LIBRARIES} )
+  SET_TARGET_PROPERTIES(${CLP}Module PROPERTIES LABELS ${CLP})
+  TARGET_LINK_LIBRARIES(${CLP}Module ${ITK_LIBRARIES})
 
   # Build the command line
   ADD_EXECUTABLE( RegisterImages ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
@@ -53,11 +56,13 @@ PROJECT( RegisterImagesModuleApplications )
   SET_TARGET_PROPERTIES( TransformFromFiducialsModule 
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
   TARGET_LINK_LIBRARIES( TransformFromFiducialsModule ${ITK_LIBRARIES} )
+  SET_TARGET_PROPERTIES(TransformFromFiducialsModule PROPERTIES LABELS ${CLP})
 
   # Build the command line
   ADD_EXECUTABLE( TransformFromFiducials ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
   TARGET_LINK_LIBRARIES( TransformFromFiducials TransformFromFiducialsModule )
-
+  SET_TARGET_PROPERTIES(TransformFromFiducials PROPERTIES LABELS ${CLP})
+  
   IF( Slicer_SOURCE_DIR )
     slicer3_set_plugins_output_path( RegisterImagesModule )
     slicer3_set_plugins_output_path( RegisterImages )
@@ -83,16 +88,20 @@ PROJECT( RegisterImagesModuleApplications )
 
     ADD_EXECUTABLE( InitialImageToImageRegistrationMethod InitialImageToImageRegistrationMethod.cxx )
     TARGET_LINK_LIBRARIES( InitialImageToImageRegistrationMethod ITKStatistics ITKIO ITKNumerics )
+    SET_TARGET_PROPERTIES(InitialImageToImageRegistrationMethod PROPERTIES LABELS ${CLP})
  
     ADD_EXECUTABLE( RigidImageToImageRegistrationMethod RigidImageToImageRegistrationMethod.cxx )
     TARGET_LINK_LIBRARIES( RigidImageToImageRegistrationMethod ITKStatistics ITKIO ITKNumerics )
+    SET_TARGET_PROPERTIES(RigidImageToImageRegistrationMethod PROPERTIES LABELS ${CLP})
   
     ADD_EXECUTABLE( AffineImageToImageRegistrationMethod AffineImageToImageRegistrationMethod.cxx )
     TARGET_LINK_LIBRARIES( AffineImageToImageRegistrationMethod ITKStatistics ITKIO ITKNumerics )
+    SET_TARGET_PROPERTIES(AffineImageToImageRegistrationMethod PROPERTIES LABELS ${CLP})
   
     ADD_EXECUTABLE( BSplineImageToImageRegistrationMethod BSplineImageToImageRegistrationMethod.cxx )
     TARGET_LINK_LIBRARIES( BSplineImageToImageRegistrationMethod ITKStatistics ITKIO ITKNumerics )
- 
+    SET_TARGET_PROPERTIES(BSplineImageToImageRegistrationMethod PROPERTIES LABELS ${CLP})
+    
     MOVE_TO_TOP_BINARY( InitialImageToImageRegistrationMethod
                         InitialImageToImageRegistrationMethod_EXE )
     MOVE_TO_TOP_BINARY( RigidImageToImageRegistrationMethod
@@ -106,6 +115,7 @@ PROJECT( RegisterImagesModuleApplications )
     TARGET_LINK_LIBRARIES( RegisterImagesModuleLogic
                            MaverickModule ${ITK_LIBRARIES} SlicerBaseLogic
                            ITKIO ITKCommon ITKStatistics ITKNumerics )
+    SET_TARGET_PROPERTIES(RegisterImagesModuleLogic PROPERTIES LABELS ${CLP})
     MOVE_TO_TOP_BINARY( RegisterImagesModuleLogic
                         RegisterImagesModuleLogic_LIB )
 
@@ -129,27 +139,35 @@ PROJECT( RegisterImagesModuleApplications )
   
       ADD_EXECUTABLE( GenerateRegisterImagesTestData GenerateRegisterImagesTestData.cxx )
       TARGET_LINK_LIBRARIES( GenerateRegisterImagesTestData ITKStatistics ITKIO ITKNumerics )
+      SET_TARGET_PROPERTIES(GenerateRegisterImagesTestData PROPERTIES LABELS ${CLP})
   
       ADD_TEST(GenerateFixedImageTestData
         ${CXX_TEST_PATH}/GenerateRegisterImagesTestData 
         50 ${TEST_TEMP}/RI_TestData.mha
         )
+      SET_PROPERTY(TEST GenerateFixedImageTestData PROPERTY LABELS ${CLP})
+      
       ADD_TEST(GenerateRigidTestData
         ${CXX_TEST_PATH}/GenerateRegisterImagesTestData 
         50 ${TEST_TEMP}/RI_RigidTestData.mha
         -t ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_RigidUNC24.tfm
         )
+      SET_PROPERTY(TEST GenerateRigidTestData PROPERTY LABELS ${CLP})
+      
       ADD_TEST(GenerateAffineTestData
         ${CXX_TEST_PATH}/GenerateRegisterImagesTestData 
         50 ${TEST_TEMP}/RI_AffineTestData.mha
         -t ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_AffineUNC24.tfm
         )
+      SET_PROPERTY(TEST GenerateAffineTestData PROPERTY LABELS ${CLP})
+      
       ADD_TEST(GenerateBSplineTestData
         ${CXX_TEST_PATH}/GenerateRegisterImagesTestData 
         50 ${TEST_TEMP}/RI_BSplineTestData.mha
         -t ${RegisterImagesModuleApplications_SOURCE_DIR}/Data/RI_BSplineUNC24.tfm
         )
-  
+      SET_PROPERTY(TEST GenerateBSplineTestData PROPERTY LABELS ${CLP})
+ 
       ADD_TEST(RegisterImages_RigidTestData
         ${CXX_TEST_PATH}/RegisterImages
         --baselineImage ${TEST_TEMP}/RI_RigidTestData.mha
@@ -165,6 +183,8 @@ PROJECT( RegisterImagesModuleApplications )
         ${TEST_TEMP}/RI_TestData.mha
         --resampledImage ${TEST_TEMP}/RI_RigidTestData_Results.mha
         )
+      SET_PROPERTY(TEST RegisterImages PROPERTY LABELS ${CLP})
+      
       ADD_TEST(RegisterImages_AffineTestData
         ${CXX_TEST_PATH}/RegisterImages
         --baselineImage ${TEST_TEMP}/RI_AffineTestData.mha
@@ -180,6 +200,8 @@ PROJECT( RegisterImagesModuleApplications )
         ${TEST_TEMP}/RI_TestData.mha
         --resampledImage ${TEST_TEMP}/RI_AffineTestData_Results.mha
         )
+      SET_PROPERTY(TEST RegisterImages_AffineTestData PROPERTY LABELS ${CLP})
+      
       ADD_TEST(RegisterImages_BSplineTestData
         ${CXX_TEST_PATH}/RegisterImages
         --baselineImage ${TEST_TEMP}/RI_BSplineTestData.mha
@@ -197,6 +219,7 @@ PROJECT( RegisterImagesModuleApplications )
         ${TEST_TEMP}/RI_TestData.mha
         --resampledImage ${TEST_TEMP}/RI_BSplineTestData_Results.mha
         )
+      SET_PROPERTY(TEST RegisterImages_BSplineTestData PROPERTY LABELS ${CLP})
 
       OPTION( BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING 
               "Build and download MRI data for testing the RegisterImagesModule" OFF )
@@ -338,6 +361,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           )
+        SET_PROPERTY(TEST InitialRegistrationTestUNC24 PROPERTY LABELS ${CLP})
         
         ADD_TEST(InitialRegistrationTestUNC24Stripped
           ${CXX_TEST_PATH}/RegisterImages 
@@ -348,6 +372,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           )
+        SET_PROPERTY(TEST InitialRegistrationTestUNC24Stripped PROPERTY LABELS ${CLP})
         
         ###################
         # Rigid
@@ -364,6 +389,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           )
+        SET_PROPERTY(TEST RigidRegistrationTestUNC24 PROPERTY LABELS ${CLP})
         
         ADD_TEST(RigidRegistrationTestUNC24Stripped
           ${CXX_TEST_PATH}/RegisterImages
@@ -377,6 +403,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           )
+        SET_PROPERTY(TEST RigidRegistrationTestUNC24Stripped PROPERTY LABELS ${CLP})
         
         ###################
         # Affine
@@ -393,6 +420,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           )
+        SET_PROPERTY(TEST AffineRegistrationTestUNC24 PROPERTY LABELS ${CLP})
         
         ADD_TEST(AffineRegistrationTestUNC24Stripped
           ${CXX_TEST_PATH}/RegisterImages
@@ -405,6 +433,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           )
+        SET_PROPERTY(TEST AffineRegistrationTestUNC24Stripped PROPERTY LABELS ${CLP})
         
         ###################
         # BSpline
@@ -421,6 +450,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC24StrippedC5
           ${CXX_TEST_PATH}/RegisterImages 
@@ -435,6 +465,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24StrippedC5 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC24StrippedC10
           ${CXX_TEST_PATH}/RegisterImages 
@@ -449,6 +480,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24StrippedC10 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC24StrippedC15
           ${CXX_TEST_PATH}/RegisterImages 
@@ -463,6 +495,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24StrippedC15 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC25
           ${CXX_TEST_PATH}/RegisterImages 
@@ -476,6 +509,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC25 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC25Stripped
           ${CXX_TEST_PATH}/RegisterImages 
@@ -489,6 +523,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC25Stripped PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC42
           ${CXX_TEST_PATH}/RegisterImages 
@@ -502,6 +537,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC42 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC42Stripped
           ${CXX_TEST_PATH}/RegisterImages 
@@ -515,6 +551,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC42Stripped PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC45
           ${CXX_TEST_PATH}/RegisterImages
@@ -528,6 +565,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC45 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC45Stripped
           ${CXX_TEST_PATH}/RegisterImages
@@ -541,6 +579,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC45Stripped PROPERTY LABELS ${CLP})
 
         ###################
         # Initial
@@ -553,6 +592,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           )
+        SET_PROPERTY(TEST InitialRegistrationTestUNC24 PROPERTY LABELS ${CLP})
         
         ADD_TEST(InitialRegistrationTestUNC24Stripped
           ${CXX_TEST_PATH}/InitialImageToImageRegistrationMethod 
@@ -562,6 +602,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           )
+        SET_PROPERTY(TEST InitialRegistrationTestUNC24Stripped PROPERTY LABELS ${CLP})
         
         ###################
         # Rigid
@@ -578,6 +619,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           )
+        SET_PROPERTY(TEST RigidRegistrationTestUNC24 PROPERTY LABELS ${CLP})
         
         ADD_TEST(RigidRegistrationTestUNC24Stripped
           ${CXX_TEST_PATH}/RigidImageToImageRegistrationMethod 
@@ -591,6 +633,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           )
+        SET_PROPERTY(TEST RigidRegistrationTestUNC24Stripped PROPERTY LABELS ${CLP})
         
         ###################
         # Affine
@@ -607,6 +650,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           )
+        SET_PROPERTY(TEST AffineRegistrationTestUNC24 PROPERTY LABELS ${CLP})
         
         ADD_TEST(AffineRegistrationTestUNC24Stripped
           ${CXX_TEST_PATH}/AffineImageToImageRegistrationMethod 
@@ -620,6 +664,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           )
+        SET_PROPERTY(TEST AffineRegistrationTestUNC24Stripped PROPERTY LABELS ${CLP})
         
         ###################
         # BSpline
@@ -637,6 +682,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC24StrippedC5
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -652,6 +698,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24StrippedC5 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC24Stripped
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -666,6 +713,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24Stripped PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC24StrippedC15
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -681,6 +729,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24StrippedC15 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC24StrippedC20
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -696,6 +745,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC24StrippedC20 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC25
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -710,6 +760,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC25 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC25Stripped
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -724,6 +775,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC25Stripped PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC42
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -738,6 +790,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC42 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC42Stripped
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -752,6 +805,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC42Stripped PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC45
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
@@ -766,6 +820,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC45 PROPERTY LABELS ${CLP})
         
         ADD_TEST(BSplineRegistrationTestUNC45Stripped
           ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod
@@ -780,6 +835,7 @@ PROJECT( RegisterImagesModuleApplications )
           ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
           ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Stripped-Affine.mha
           )
+        SET_PROPERTY(TEST BSplineRegistrationTestUNC45Stripped PROPERTY LABELS ${CLP})
 
       ENDIF( BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING )
     

@@ -1,5 +1,5 @@
-include_directories( ${RegisterImagesMultiResApplications_SOURCE_DIR} )
 
+include_directories( ${RegisterImagesMultiResApplications_SOURCE_DIR} )
 link_directories( ${RegisterImagesMultiResApplications_BUILD_DIR} )
 
 set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
@@ -7,14 +7,15 @@ set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Testing/TestData")
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 set(RegisterImagesMultiResApplicationsTests_SOURCE
-    FixedRotationSimilarity3DTransformTest.cxx
-    EulerSimilarity3DTransformTest.cxx
-    EulerAnisotropicSimilarity3DTransformTest.cxx
-    DecomposedAffine3DTransformTest.cxx
-    DownsampleHeuristicsTest.cxx
-    ScalingHeuristicsTest.cxx
-    ConvertSlicerROIToRegionTest.cxx
-    CountSamplesTest.cxx)
+  FixedRotationSimilarity3DTransformTest.cxx
+  EulerSimilarity3DTransformTest.cxx
+  EulerAnisotropicSimilarity3DTransformTest.cxx
+  DecomposedAffine3DTransformTest.cxx
+  DownsampleHeuristicsTest.cxx
+  ScalingHeuristicsTest.cxx
+  ConvertSlicerROIToRegionTest.cxx
+  CountSamplesTest.cxx
+  )
 
 create_test_sourcelist(RegisterImagesMultiResApplicationsTestsList
                        RegisterImagesMultiResApplicationsTests.cxx
@@ -22,9 +23,11 @@ create_test_sourcelist(RegisterImagesMultiResApplicationsTestsList
 
 ADD_EXECUTABLE(RegisterImagesMultiResApplicationsTests ${RegisterImagesMultiResApplicationsTestsList} )
 TARGET_LINK_LIBRARIES(RegisterImagesMultiResApplicationsTests RegisterImagesMultiResModule)
+SET_TARGET_PROPERTIES(RegisterImagesMultiResApplicationsTests PROPERTIES LABELS ${CLP})
 
 MACRO(SIMPLE_TEST TESTNAME)
   ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:RegisterImagesMultiResApplicationsTests> ${TESTNAME})
+  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${CLP})
 ENDMACRO()
 
 SIMPLE_TEST( FixedRotationSimilarity3DTransformTest )
@@ -38,8 +41,10 @@ SIMPLE_TEST( CountSamplesTest )
 
 add_executable(RegisterImagesMultiResTest RegisterImagesMultiResTest.cxx)
 target_link_libraries(RegisterImagesMultiResTest RegisterImagesMultiResModule)
+SET_TARGET_PROPERTIES(RegisterImagesMultiResTest PROPERTIES LABELS ${CLP})
 
-add_test(RegisterImagesMultiResTest ${LAUNCH_EXE} RegisterImagesMultiResTest
+set(testname ${CLP}Test)
+add_test(${testname} ${LAUNCH_EXE} RegisterImagesMultiResTest
   --compare   ${BASELINE}/RegisterImagesMultiResTest.nrrd
   ${TEMP}/RegisterImagesMultiResResult.nrrd
   --compareIntensityTolerance 20
@@ -50,3 +55,4 @@ add_test(RegisterImagesMultiResTest ${LAUNCH_EXE} RegisterImagesMultiResTest
   ${MRML_TEST_DATA}/moving.nrrd
   --resampledImage   ${TEMP}/RegisterImagesMultiResResult.nrrd
   )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})

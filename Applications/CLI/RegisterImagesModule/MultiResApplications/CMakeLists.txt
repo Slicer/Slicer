@@ -1,6 +1,8 @@
 
 PROJECT( RegisterImagesMultiResApplications )
 
+  SET(CLP RegisterImagesMultiRes)
+  
   # Find ITK
   FIND_PACKAGE( ITK REQUIRED )
   INCLUDE( ${ITK_USE_FILE} )
@@ -36,11 +38,13 @@ PROJECT( RegisterImagesMultiResApplications )
   SET_TARGET_PROPERTIES( RegisterImagesMultiResModule
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
   TARGET_LINK_LIBRARIES( RegisterImagesMultiResModule ITKAlgorithms ITKIO )
-
+  SET_TARGET_PROPERTIES(${CLP}Module PROPERTIES LABELS ${CLP})
+  
   # Build the command line 
   ADD_EXECUTABLE( RegisterImagesMultiRes ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx )
   TARGET_LINK_LIBRARIES( RegisterImagesMultiRes RegisterImagesMultiResModule )
-
+  SET_TARGET_PROPERTIES(${CLP} PROPERTIES LABELS ${CLP})
+  
   IF( Slicer_SOURCE_DIR )
     slicer3_set_plugins_output_path( RegisterImagesMultiResModule )
     slicer3_set_plugins_output_path( RegisterImagesMultiRes )
