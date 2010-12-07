@@ -126,6 +126,7 @@ MACRO(Slicer_build_slicer_qtbase_library)
     ${SLICERQTBASELIB_UI_CXX}
     ${SLICERQTBASELIB_QRC_SRCS}
     )
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
 
   # Apply user-defined properties to the library target.
   IF(Slicer_LIBRARY_PROPERTIES)

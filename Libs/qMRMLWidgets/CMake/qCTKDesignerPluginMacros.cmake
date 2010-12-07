@@ -67,6 +67,9 @@ MACRO(qctk_build_designer_plugin)
     ${MY_UI_CXX}
     ${MY_QRC_SRCS}
     )
+  # HACK - Replace Plugin with empty string to obtain Label name
+  string(REPLACE "Plugin" "" label ${lib_name})
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${label})
 
   # Apply properties to the library target.
   SET_TARGET_PROPERTIES(${lib_name}  PROPERTIES

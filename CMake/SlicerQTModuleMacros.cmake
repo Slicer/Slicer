@@ -138,6 +138,7 @@ MACRO(Slicer_build_qtmodule)
     ARCHIVE_OUTPUT_DIRECTORY
     "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}"
     )
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
 
   TARGET_LINK_LIBRARIES(${lib_name}
     ${Slicer_Libs_LIBRARIES}

@@ -170,6 +170,7 @@ IF(Slicer_USE_PYTHONQT)
 ENDIF()
 
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
+SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
 
 IF(Slicer_USE_KWWIDGETS)
   TARGET_LINK_LIBRARIES(${lib_name} ${KWWidgets_LIBRARIES})
@@ -208,7 +209,9 @@ IF(Slicer_USE_PYTHONQT AND BUILD_SHARED_LIBS)
   INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
   VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${SlicerBaseLogic_SRCS}")
   ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
+  SET_TARGET_PROPERTIES(${lib_name}PythonD PROPERTIES LABELS ${lib_name})
   ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
+  SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES LABELS ${lib_name})
   
   TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
   TARGET_LINK_LIBRARIES(${lib_name}PythonD MRMLLogicPythonD)

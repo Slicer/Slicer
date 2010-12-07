@@ -82,6 +82,7 @@ TARGET_LINK_LIBRARIES(${lib_name}
   vtkCommon 
   ModuleDescriptionParser
 )
+SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
 
 slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} SlicerBaseCLI)

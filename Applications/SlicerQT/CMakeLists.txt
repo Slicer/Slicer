@@ -172,6 +172,7 @@ IF(SlicerQT_NEED_SHARED_FORWARD)
     ADD_EXECUTABLE(${slicer_exe} WIN32
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
     ADD_DEPENDENCIES(${slicer_exe} ${SlicerQT_FORWARD_EXE})
+    SET_TARGET_PROPERTIES(${slicer_exe} PROPERTIES LABELS SlicerQT)
     INSTALL(TARGETS ${slicer_exe}
       DESTINATION ${Slicer_INSTALL_BIN_DIR}
       COMPONENT Runtime)
@@ -401,6 +402,7 @@ ADD_LIBRARY(${lib_name}
   ${SlicerQT_UI_CXX}
   ${SlicerQT_QRC_SRCS}
 )
+SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS SlicerQT)
 
 # HACK Since we don't depend on SlicerBaseGUI, remove it from the list
 SET(Slicer_BaseQT_LIBRARIES ${Slicer_Base_LIBRARIES})
@@ -438,7 +440,7 @@ install(TARGETS ${lib_name}
 
 ADD_EXECUTABLE(SlicerQT${SlicerQT_EXE_SUFFIX}
   Main.cxx)
-  
+SET_TARGET_PROPERTIES(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES LABELS SlicerQT)
 TARGET_LINK_LIBRARIES(SlicerQT${SlicerQT_EXE_SUFFIX}
   ${lib_name}
   )
