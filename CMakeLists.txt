@@ -748,7 +748,7 @@ slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS Slicer_Base_INCLUDE_DIR
 # Module Logic
 #-----------------------------------------------------------------------------
 
-INCLUDE("${Slicer_CMAKE_DIR}/SlicerModuleLogicMacros.cmake")
+INCLUDE("${Slicer_CMAKE_DIR}/SlicerMacroBuildModuleLogic.cmake")
 
 IF(NOT Slicer_USE_KWWIDGETS)
   # KWWidgets and Qt modules share the same logics typically located in the

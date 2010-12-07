@@ -1,7 +1,7 @@
 project(vtkSlicerModelTransformModuleLogic)
 
 #
-# See CMake/SlicerModuleLogicMacros.cmake for details
+# See CMake/SlicerMacroBuildModuleLogic.cmake for details
 #
 
 SET(module_logic_name "${PROJECT_NAME}")
@@ -25,7 +25,7 @@ SET(module_logic_target_libraries
   )
 
 
-Slicer_build_module_logic(
+SlicerMacroBuildModuleLogic(
   NAME ${module_logic_name}
   EXPORT_DIRECTIVE ${module_logic_export_directive}
   INCLUDE_DIRECTORIES ${module_logic_include_directories}
