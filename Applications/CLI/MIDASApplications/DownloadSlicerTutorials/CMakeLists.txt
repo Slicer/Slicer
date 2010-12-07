@@ -24,9 +24,8 @@ include(${SLICERLIBCURL_USE_FILE})
 #
 # Find GenerateCLP
 find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
+include(${GenerateCLP_USE_FILE})
+
 
 #
 # Set and generate source

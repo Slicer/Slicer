@@ -4,9 +4,8 @@
 include_regular_expression("^.*$")
 
 find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
+include(${GenerateCLP_USE_FILE})
+
 
 include_directories(${Slicer_SOURCE_DIR}/Applications/CLI)
 include_directories(${Slicer_BINARY_DIR}/Applications/CLI)

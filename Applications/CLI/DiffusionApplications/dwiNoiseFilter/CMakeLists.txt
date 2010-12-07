@@ -9,9 +9,8 @@ project( dwiNoiseFilter )
 #)
 
 find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
+include(${GenerateCLP_USE_FILE})
+
 
 link_directories(${ModuleDescriptionParser_BINARY_DIR})
 

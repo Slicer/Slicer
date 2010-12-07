@@ -11,9 +11,8 @@ if(NOT Slicer_SOURCE_DIR)
 endif(NOT Slicer_SOURCE_DIR)
 
 find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
+include(${GenerateCLP_USE_FILE})
+
 
 include_directories(${DicomToNrrdConverter_SOURCE_DIR})
 include_directories(${DicomToNrrdConverter_BINARY_DIR})

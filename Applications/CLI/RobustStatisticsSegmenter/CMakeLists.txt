@@ -1,9 +1,8 @@
 project(RobustStatisticsSegmentation)
 
 find_package(GenerateCLP REQUIRED)
-if(GenerateCLP_FOUND)
-  include(${GenerateCLP_USE_FILE})
-endif(GenerateCLP_FOUND)
+include(${GenerateCLP_USE_FILE})
+
 
 # copied from Peter's code, but I don't know if I need this line
 link_directories(${ModuleDescriptionParser_BINARY_DIR})
