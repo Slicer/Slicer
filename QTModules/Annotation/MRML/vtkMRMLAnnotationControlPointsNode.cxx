@@ -302,6 +302,7 @@ void vtkMRMLAnnotationControlPointsNode::CreateAnnotationPointDisplayNode()
     }
 
   node = vtkMRMLAnnotationPointDisplayNode::New();
+  node->SetScene(this->GetScene());
   this->GetScene()->AddNode(node);
   node->Delete();
   // vtkMRMLDisplayableNode stores the ids in DisplayNodeIDs 

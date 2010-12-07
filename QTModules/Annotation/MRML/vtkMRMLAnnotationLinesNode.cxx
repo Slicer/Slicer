@@ -300,6 +300,7 @@ void vtkMRMLAnnotationLinesNode::CreateAnnotationLineDisplayNode()
     }
 
   node = vtkMRMLAnnotationLineDisplayNode::New();
+  node->SetScene(this->GetScene());
   this->GetScene()->AddNode(node);
   node->Delete();
   this->AddAndObserveDisplayNodeID(node->GetID());

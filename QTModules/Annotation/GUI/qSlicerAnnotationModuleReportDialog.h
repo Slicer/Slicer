@@ -2,36 +2,48 @@
 #define __qSlicerAnnotationModuleReportDialog_h
 
 #include "ui_qSlicerAnnotationModuleReportDialog.h"
+#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+#include "vtkCollection.h"
 
 class qSlicerAnnotationModuleReportDialog : public QDialog
 {
   Q_OBJECT
 public:
   qSlicerAnnotationModuleReportDialog();
-  ~qSlicerAnnotationModuleReportDialog(){};
+  ~qSlicerAnnotationModuleReportDialog();
 
   Ui::qSlicerAnnotationModuleReportDialog getReportDialogUi();
-  QString getFileName();
 
+  /// Set the Annotation module logic.
+  void setLogic(vtkSlicerAnnotationModuleLogic* logic);
+
+  /// Set a collection of Annotations to be included in the report
+  void setAnnotations(vtkCollection* collection);
+
+  /// Update the report
+  void updateReport();
 
 protected:
   
 protected slots:
-  // Description:
-  // obsolete
-    void onSaveReportButtonClicked();
-    void onCancelReportButtonClicked();
-
+  void onDialogRejected();
+  void onDialogAccepted();
+  void onTextEdited();
 
 signals:
-    void filenameSelected();
+  void dialogRejected();
+  void dialogAccepted();
 
 private:
 
     Ui::qSlicerAnnotationModuleReportDialog ui;
     void createConnection();
 
-    QString m_filename;
+    QString generateReport();
+
+    vtkSlicerAnnotationModuleLogic* m_Logic;
+
+    vtkCollection* m_Annotations;
 
 };
 

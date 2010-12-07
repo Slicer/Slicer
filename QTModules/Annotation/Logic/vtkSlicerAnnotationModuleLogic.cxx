@@ -1429,6 +1429,7 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
   newSnapshotNode->SetScreenshotType(screenshotType);
   newSnapshotNode->SetScreenshot(screenshot);
   newSnapshotNode->StoreScene();
+
   newSnapshotNode->HideFromEditorsOff();
   this->GetMRMLScene()->AddNode(newSnapshotNode);
 }
@@ -1804,5 +1805,54 @@ void vtkSlicerAnnotationModuleLogic::PlaceFiducial(double r, double a, double s,
   fiducialNode->Initialize(this->GetMRMLScene());
 
   fiducialNode->Delete();
+
+}
+
+//---------------------------------------------------------------------------
+//
+//
+// Report functionality
+//
+//
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotationNode* annotationNode)
+{
+  if (!annotationNode)
+    {
+    vtkErrorMacro("GetHTMLRepresentation: We need an annotation Node here.")
+    return 0;
+    }
+
+  vtkStdString html = vtkStdString("<tr><td valign='middle'>");
+
+  // icon
+  html += "<img src='";
+  html += this->GetAnnotationIcon(annotationNode->GetID());
+  html += "'>";
+
+  html += "</td><td valign='middle'>";
+
+  // value
+  if (annotationNode->IsA("vtkMRMLAnnotationRulerNode") || annotationNode->IsA("vtkMRMLAnnotationBidimensionalNode"))
+    {
+    html += this->GetAnnotationMeasurement(annotationNode->GetID(),true);
+    }
+  else
+    {
+    html += "";
+    }
+
+  html += "</td><td valign='middle'>";
+
+  // text
+  html += this->GetAnnotationText(annotationNode->GetID());
+
+  html += "</td></tr>";
+
+  this->m_StringHolder = html;
+
+  return this->m_StringHolder.c_str();
 
 }

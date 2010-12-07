@@ -51,5 +51,6 @@
         <file>Icons/LayoutOneUpGreenSliceView.png</file>
         <file>Icons/LayoutOneUp3DView.png</file>
         <file>Icons/Data.png</file>
+        <file>Icons/AnnotationPrint.png</file>
     </qresource>
 </RCC>

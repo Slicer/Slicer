@@ -24,6 +24,8 @@
 #include <QImageWriter>
 
 #include "vtkObserverManager.h"
+#include "vtkCollection.h"
+#include "vtkSmartPointer.h"
 
 #include "qMRMLSceneDisplayableModel.h"
 
@@ -33,6 +35,11 @@
 #include "GUI/qSlicerAnnotationModulePropertyDialog.h"
 #include "GUI/qSlicerAnnotationModuleImageUtil.h"
 #include "GUI/qSlicerAnnotationModuleSnapShotDialog.h"
+
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
 
 //-----------------------------------------------------------------------------
 class qSlicerAnnotationModuleWidgetPrivate: public Ui_qSlicerAnnotationModule
@@ -102,9 +109,8 @@ qSlicerAnnotationModuleWidget::qSlicerAnnotationModuleWidget(QWidget* parent) :
   , d_ptr(new qSlicerAnnotationModuleWidgetPrivate(*this))
 {
 
-  m_ReportDialog = NULL;
-  m_SnapShotDialog = NULL;
-
+  this->m_ReportDialog = 0;
+  this->m_SnapShotDialog = 0;
   this->m_PropertyDialog = 0;
   this->m_CurrentAnnotationType = 0;
 
@@ -114,22 +120,25 @@ qSlicerAnnotationModuleWidget::qSlicerAnnotationModuleWidget(QWidget* parent) :
 //-----------------------------------------------------------------------------
 qSlicerAnnotationModuleWidget::~qSlicerAnnotationModuleWidget()
 {
-  if (m_ReportDialog)
+  if (this->m_ReportDialog)
     {
-    delete m_ReportDialog;
-    m_ReportDialog = NULL;
+    this->m_ReportDialog->close();
+    delete this->m_ReportDialog;
+    this->m_ReportDialog = 0;
     }
 
-  if (m_SnapShotDialog)
+  if (this->m_SnapShotDialog)
     {
-    delete m_SnapShotDialog;
-    m_SnapShotDialog = NULL;
+    this->m_SnapShotDialog->close();
+    delete this->m_SnapShotDialog;
+    this->m_SnapShotDialog = 0;
     }
 
-  if (m_PropertyDialog)
+  if (this->m_PropertyDialog)
     {
-    m_PropertyDialog->close();
-    delete m_PropertyDialog;
+    this->m_PropertyDialog->close();
+    delete this->m_PropertyDialog;
+    this->m_PropertyDialog = 0;
     }
 
 }
@@ -166,6 +175,17 @@ void qSlicerAnnotationModuleWidget::setup()
   this->connect(d->doneButton, SIGNAL(clicked()), this,
       SLOT(onDoneButtonClicked()));
 
+  // edit panel
+  this->connect(d->selectAllButton, SIGNAL(clicked()),
+        SLOT(selectAllButtonClicked()));
+  this->connect(d->visibleSelectedButton, SIGNAL(clicked()),
+      SLOT(visibleSelectedButtonClicked()));
+  this->connect(d->lockSelectedButton, SIGNAL(clicked()), this,
+      SLOT(lockSelectedButtonClicked()));
+
+  this->connect(d->restoreViewButton, SIGNAL(clicked()), this,
+      SLOT(onRestoreViewButtonClicked()));
+
   this->connect(d->moveDownSelectedButton, SIGNAL(clicked()),
       SLOT(moveDownSelected()));
   this->connect(d->moveUpSelectedButton, SIGNAL(clicked()),
@@ -173,29 +193,18 @@ void qSlicerAnnotationModuleWidget::setup()
 
   this->connect(d->addHierarchyButton, SIGNAL(clicked()),
       SLOT(onAddHierarchyButtonClicked()));
+  this->connect(d->deleteSelectedButton, SIGNAL(clicked()),
+      SLOT(deleteSelectedButtonClicked()));
 
   // Save Panel
   this->connect(d->saveScene, SIGNAL(clicked()),
       SLOT(onSaveMRMLSceneButtonClicked()));
-  this->connect(d->selectedAllButton, SIGNAL(clicked()),
-      SLOT(selectedAllButtonClicked()));
-  this->connect(d->visibleSelectedButton, SIGNAL(clicked()),
-      SLOT(visibleSelectedButtonClicked()));
-
-  this->connect(d->deleteSelectedButton, SIGNAL(clicked()),
-      SLOT(deleteSelectedButtonClicked()));
-  this->connect(d->generateReport, SIGNAL(clicked()), this,
-      SLOT(onGenerateReportButtonClicked()));
   this->connect(d->saveAnnotation, SIGNAL(clicked()), this,
       SLOT(onSaveAnnotationButtonClicked()));
   this->connect(d->screenShot, SIGNAL(clicked()), this,
       SLOT(onSnapShotButtonClicked()));
-  this->connect(d->lockSelected, SIGNAL(clicked()), this,
-      SLOT(lockSelectedButtonClicked()));
-
-  this->connect(d->restoreViewButton, SIGNAL(clicked()), this,
-      SLOT(onRestoreViewButtonClicked()));
-
+  this->connect(d->generateReport, SIGNAL(clicked()), this,
+      SLOT(onReportButtonClicked()));
 
 }
 
@@ -227,7 +236,7 @@ void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::selectedAllButtonClicked()
+void qSlicerAnnotationModuleWidget::selectAllButtonClicked()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
@@ -235,6 +244,22 @@ void qSlicerAnnotationModuleWidget::selectedAllButtonClicked()
 
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onRestoreViewButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  // TODO
+
+  d->logic()->RestoreAnnotationView(d->hierarchyTreeWidget->firstSelectedNode());
+
+}
+
+//-----------------------------------------------------------------------------
+//
+// Property dialog
+//
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
@@ -325,17 +350,6 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onRestoreViewButtonClicked()
-{
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  // TODO
-
-  d->logic()->RestoreAnnotationView(d->hierarchyTreeWidget->firstSelectedNode());
-
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::propertyRestored()
 {
 
@@ -398,167 +412,10 @@ void qSlicerAnnotationModuleWidget::onSaveAnnotationButtonClicked()
 
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onGenerateReportButtonClicked()
-{
-
-  // TODO
-
-  /*
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  if (m_ReportDialog == NULL)
-    {
-    m_ReportDialog = new qSlicerAnnotationModuleReportDialog();
-
-    }
-
-  Ui::qSlicerAnnotationModuleReportDialog ui =
-      m_ReportDialog->getReportDialogUi();
-
-  QString
-      report =
-          "<html>\n"
-            "<head><meta name=\"Author\" content=\"Daniel Haehn, Kilian Pohl, Yong Zhang\"><title>3D Slicer Report</title>\n"
-            "<style type=\"text/css\">\n"
-            "<!--\n"
-            "body {\n"
-            "font-family: Helvetica, Arial;\n"
-            "  padding-left: 0px;\n"
-            "  padding-right: 0px;\n"
-            "  padding-bottom: 0em;\n"
-            "  text-align: justify;\n"
-            "  margin-left: 0px;\n"
-            "  line-height: 110%; \n"
-            "}\n"
-            "\n"
-            "table.annotation  {\n"
-            "  cellpadding:2;\n"
-            "  cellspacing:0;\n"
-            "  width:700;\n"
-            "}\n"
-            "\n"
-            "table.title {\n"
-            "  cellpadding:0;\n"
-            "  cellspacing:0;\n"
-            "  width:700;\n"
-            "}\n"
-            "\n"
-            "table.title TH {\n"
-            "  font-size: 20.0pt; \n"
-            "  background: #ffffff\n"
-            "}\n"
-            "\n"
-            "table.annotation TH { \n"
-            "  font-size: 14.0pt;   \n"
-            "}\n"
-            "\n"
-            "table.annotation TD {\n"
-            "  font-size: 12.0pt; \n"
-            "  background: #eeeeee;\n"
-            "  vertical-align: top;\n"
-            "}\n"
-            "\n"
-            ".snapshot {\n"
-            "border: 10px #eeeeee solid;\n"
-            "}\n"
-            "\n"
-            ".textField {\n"
-            "text-align: left\n"
-            "}\n"
-            "\n"
-            "-->\n"
-            "</style>\n"
-            "</head>\n"
-            "\n"
-            "<body>\n"
-            "<table class=\"title\" WIDTH=700>\n"
-            "<tbody>\n"
-            "<TR><TH><font size=20 face=\"Helvetica\">3D Slicer Report</font></TH>\n"
-            "</TR>\n"
-            "</tbody>\n"
-            "</table>\n"
-            "<BR>\n";
-  // We define style sheet and old style bc QT does not interpret stylte sheets
-  QString TD = "<td  align=center  bgcolor=\"#eeeeee\">";
-  QString TDtext = "<td  align=left  bgcolor=\"#eeeeee\">";
-
-  QString TDend = "</TD>";
-  QString TH = "<TH bgcolor=\"#cccccc\" ";
-  QString THend = "</TH>";
-
-  report.append("<table class=\"annotation\" cellspacing=2>\n<tbody>\n<tr>\n");
-  report.append(TH).append("width=100 >&nbsp;Type").append(THend);
-  report.append(TH).append("width=100 >Value").append(THend);
-  report.append(TH).append("width=496 >Text").append(THend).append("\n</tr>\n");
-
-  if (m_IDs.size() > 0)
-    {
-    for (unsigned int i = 0; i < m_IDs.size(); ++i)
-      {
-      QString labelString = QString("Seed %1").arg(QString::number(i + 1));
-
-      const char * thevalue;
-      QString valueString, textString;
-      report.append("<tr>\n").append(TD);
-
-      thevalue = d->logic()->GetAnnotationMeasurement(m_IDs[i], false);
-
-      report.append("<img src='") .append(d->logic()->GetIconName(
-          d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]))) .append("'>");
-      textString = d->logic()->GetAnnotationTextProperty(
-          d->logic()->GetMRMLScene()->GetNodeByID(m_IDs[i]));
-      report.append(TDend).append(TD).append(thevalue).append(TDend).append(TD).append(
-          textString).append(TDend).append("\n</tr>\n");
-      }
-    }
-  else
-    {
-    report.append("<tr>\n").append(
-        "<td  ALIGN=center  bgcolor=\"#eeeeee\" colspan=3>There is no annotation information").append(
-        TDend).append("\n</tr>\n");
-    }
-
-  report.append("</table>\n<BR><BR>\n");
-
-  if (!m_screenshotList.isEmpty())
-    {
-    report.append("<table class=\"annotation\" cellspacing=2>\n<tbody>\n<tr>\n");
-    report.append(TH).append(" width=700>Screen Shots").append(THend).append(
-        "\n</TR>\n");
-
-    foreach(QString filename, m_screenshotList)
-        {
-        QFile file(filename);
-        QImage img(filename);
-        if (img.isNull())
-          {
-          std::cerr << "Error: Cannot open screen shot file " << std::endl;
-          return;
-          }
-        report.append("<TR>\n").append(TD).append(
-            "<img width=680 class=\"snapshot\" src=\"").append(filename).append(
-            "\">").append(TDend).append("\n</TR>\n");
-        }
-    report.append("</tbody>\n</TABLE>\n");
-    }
-
-  report.append("</body>");
-
-  ui.reportBrowser->setHtml(report);
-  m_ReportDialog->setVisible(true);
-
-  this->connect(
-
-  m_ReportDialog, SIGNAL(filenameSelected()), this,
-      SLOT(saveAnnotationReport()));
-  this->m_report = report;
-*/
-}
 
 //-----------------------------------------------------------------------------
-bool qSlicerAnnotationModuleWidget::saveAnnotationReport()
-{
+//bool qSlicerAnnotationModuleWidget::saveAnnotationReport()
+//{
 
   /*
   QString filename = m_ReportDialog->getFileName();
@@ -714,8 +571,8 @@ bool qSlicerAnnotationModuleWidget::saveAnnotationReport()
   // TODO
 
 
-  return false;
-}
+  //return false;
+//}
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
@@ -742,41 +599,6 @@ void qSlicerAnnotationModuleWidget::deleteSelectedButtonClicked()
   Q_D(qSlicerAnnotationModuleWidget);
 
   d->hierarchyTreeWidget->deleteSelected();
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleWidget::onSnapShotButtonClicked()
-{
-
-  Q_D(qSlicerAnnotationModuleWidget);
-
-  if (!this->m_SnapShotDialog)
-    {
-
-    d->logic()->SetAndObserveWidget(this);
-
-    // be sure to listen to the mrml events
-    // this only has to be called if no real annotations were placed yet
-    // double call does not hurt..
-    d->logic()->InitializeEventListeners();
-
-    this->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog();
-
-    // pass a pointer to the logic class
-    this->m_SnapShotDialog->setLogic(d->logic());
-
-    // create slots which listen to events fired by the OK and CANCEL button on the dialog
-    this->connect(this->m_SnapShotDialog, SIGNAL(dialogRejected()), this,
-        SLOT(snapshotRejected()));
-    this->connect(this->m_SnapShotDialog, SIGNAL(dialogAccepted()), this,
-        SLOT(snapshotAccepted()));
-
-    }
-
-  // show the dialog
-  this->m_SnapShotDialog->setVisible(true);
-  this->m_SnapShotDialog->reset();
 
 }
 
@@ -1166,5 +988,122 @@ void qSlicerAnnotationModuleWidget::snapshotRejected()
 {
   this->m_SnapShotDialog->setVisible(false);
   //std::cout << "Snapshot rejected" << std::endl;
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModuleWidget::onSnapShotButtonClicked()
+{
+
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  if (!this->m_SnapShotDialog)
+    {
+
+    d->logic()->SetAndObserveWidget(this);
+
+    // be sure to listen to the mrml events
+    // this only has to be called if no real annotations were placed yet
+    // double call does not hurt..
+    d->logic()->InitializeEventListeners();
+
+    this->m_SnapShotDialog = new qSlicerAnnotationModuleSnapShotDialog();
+
+    // pass a pointer to the logic class
+    this->m_SnapShotDialog->setLogic(d->logic());
+
+    // create slots which listen to events fired by the OK and CANCEL button on the dialog
+    this->connect(this->m_SnapShotDialog, SIGNAL(dialogRejected()), this,
+        SLOT(snapshotRejected()));
+    this->connect(this->m_SnapShotDialog, SIGNAL(dialogAccepted()), this,
+        SLOT(snapshotAccepted()));
+
+    }
+
+  // show the dialog
+  this->m_SnapShotDialog->setVisible(true);
+  this->m_SnapShotDialog->raise();
+  this->m_SnapShotDialog->activateWindow();
+  this->m_SnapShotDialog->reset();
+
+
+
+}
+
+//-----------------------------------------------------------------------------
+// Annotation Report functionality
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+// Show the report dialog
+void qSlicerAnnotationModuleWidget::onReportButtonClicked()
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+
+  if (!this->m_ReportDialog)
+    {
+
+    d->logic()->SetAndObserveWidget(this);
+
+    // be sure to listen to the mrml events
+    // this only has to be called if no real annotations were placed yet
+    // double call does not hurt..
+    d->logic()->InitializeEventListeners();
+
+    this->m_ReportDialog = new qSlicerAnnotationModuleReportDialog();
+
+    // pass a pointer to the logic class
+    this->m_ReportDialog->setLogic(d->logic());
+
+
+
+    // create slots which listen to events fired by the OK and CANCEL button on the dialog
+    this->connect(this->m_ReportDialog, SIGNAL(dialogRejected()), this,
+        SLOT(reportDialogRejected()));
+    this->connect(this->m_ReportDialog, SIGNAL(dialogAccepted()), this,
+        SLOT(reportDialogAccepted()));
+
+    }
+
+
+  VTK_CREATE(vtkCollection,collection);
+
+  d->hierarchyTreeWidget->selectedAsCollection(collection.GetPointer());
+
+  // if nothing was selected, select all
+  if(collection->GetNumberOfItems() == 0)
+    {
+    d->hierarchyTreeWidget->selectAll();
+    d->hierarchyTreeWidget->selectedAsCollection(collection.GetPointer());
+    }
+
+  this->m_ReportDialog->setAnnotations(collection.GetPointer());
+
+  this->m_ReportDialog->updateReport();
+
+  this->m_ReportDialog->setVisible(true);
+
+  this->m_ReportDialog->raise();
+  this->m_ReportDialog->activateWindow();
+
+}
+
+//-----------------------------------------------------------------------------
+// Report dialog closed after saving
+void qSlicerAnnotationModuleWidget::reportDialogAccepted()
+{
+
+  this->m_ReportDialog->setVisible(false);
+
+}
+
+//-----------------------------------------------------------------------------
+// Report dialog closed without saving
+void qSlicerAnnotationModuleWidget::reportDialogRejected()
+{
+
+  this->m_ReportDialog->setVisible(false);
+
 }
 

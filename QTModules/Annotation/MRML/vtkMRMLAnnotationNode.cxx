@@ -601,6 +601,7 @@ void vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode()
     }
 
   node = vtkMRMLAnnotationTextDisplayNode::New();
+  node->SetScene(this->GetScene());
   this->GetScene()->AddNode(node);
   node->Delete();
   this->AddAndObserveDisplayNodeID(node->GetID());
@@ -738,3 +739,4 @@ void vtkMRMLAnnotationNode::RestoreView()
   cameraNode->CopyWithSingleModifiedEvent(this->m_CameraNode);
 
 }
+

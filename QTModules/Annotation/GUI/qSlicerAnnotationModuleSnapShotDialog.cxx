@@ -47,7 +47,6 @@ qSlicerAnnotationModuleSnapShotDialog::~qSlicerAnnotationModuleSnapShotDialog()
 
   if(this->m_Logic)
     {
-    this->m_Logic->Delete();
     this->m_Logic = 0;
     }
 

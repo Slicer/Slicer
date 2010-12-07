@@ -245,7 +245,8 @@ void qMRMLAnnotationTreeWidget::toggleVisibilityForSelected()
     return;
     }
 
-  for (int i = 0; i < selected.size(); ++i) {
+  for (int i = 0; i < selected.size(); ++i)
+    {
 
     // we need to prevent looping through all columns
     // there we only update once a row
@@ -260,7 +261,8 @@ void qMRMLAnnotationTreeWidget::toggleVisibilityForSelected()
         }
 
       }
-  }
+
+    } // for loop
 
 }
 
@@ -302,7 +304,8 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
 
 
   // case:: delete all selected annotationNodes but no hierarchies
-  for (int i = 0; i < selected.size(); ++i) {
+  for (int i = 0; i < selected.size(); ++i)
+    {
 
     // we need to prevent looping through all columns
     // there we only update once a row
@@ -320,7 +323,7 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
         }
 
       }
-  } // for
+    } // for
 
   // we parsed the complete selection and saved all mrmlIds to delete
   // now, it is safe to delete
@@ -331,6 +334,47 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
     this->m_Logic->RemoveAnnotationNode(annotationNodeToDelete);
 
     }
+
+}
+
+//------------------------------------------------------------------------------
+// Return the selected annotations as a collection of mrmlNodes
+//------------------------------------------------------------------------------
+void qMRMLAnnotationTreeWidget::selectedAsCollection(vtkCollection* collection)
+{
+
+  if (!collection)
+    {
+    return;
+    }
+
+  Q_D(qMRMLAnnotationTreeWidget);
+  QModelIndexList selected = this->selectedIndexes();
+
+  // first, check if we selected anything
+  if (selected.isEmpty())
+    {
+    return;
+    }
+
+  for (int i = 0; i < selected.size(); ++i)
+    {
+
+      // we need to prevent looping through all columns
+      // there we only update once a row
+      if (selected.at(i).column() == qMRMLSceneAnnotationModel::VisibilityColumn)
+        {
+
+        vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
+
+        if (node->IsA("vtkMRMLAnnotationNode"))
+          {
+          collection->AddItem(node);
+          }
+
+        }
+
+    } // for
 
 }
 

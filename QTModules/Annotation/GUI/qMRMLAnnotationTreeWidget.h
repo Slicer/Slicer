@@ -70,6 +70,8 @@ public:
 
   void deleteSelected();
 
+  void selectedAsCollection(vtkCollection* collection);
+
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
 

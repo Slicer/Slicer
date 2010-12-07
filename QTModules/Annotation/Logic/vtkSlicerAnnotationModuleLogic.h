@@ -177,6 +177,12 @@ public:
   /// add the fiducial to this hierarchy.
   void PlaceFiducial(double r, double a, double s, vtkMRMLAnnotationHierarchyNode* hierarchy=0);
 
+  //
+  // Report functionality
+  //
+  /// Return HTML markup for a specific annotation node
+  const char* GetHTMLRepresentation(vtkMRMLAnnotationNode* annotationNode);
+
 protected:
 
   vtkSlicerAnnotationModuleLogic();

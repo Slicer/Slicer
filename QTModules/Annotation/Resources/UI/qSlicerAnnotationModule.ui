@@ -199,7 +199,7 @@
          <item>
           <layout class="QHBoxLayout" name="selectedLayout">
            <item>
-            <widget class="QPushButton" name="selectedAllButton">
+            <widget class="QPushButton" name="selectAllButton">
              <property name="toolTip">
               <string>Select all annotations and hierarchies</string>
              </property>
@@ -229,7 +229,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="lockSelected">
+            <widget class="QPushButton" name="lockSelectedButton">
              <property name="toolTip">
               <string>Lock/ unlock selected annotations. Hierarchies are ignored.</string>
              </property>

@@ -43,15 +43,6 @@ public:
     qSlicerAnnotationModuleWidget(QWidget *parent=0);
     ~qSlicerAnnotationModuleWidget();
 
-
-    // Add a new annotation node to the list
-    void addNodeToTable(const char* newNodeID);
-
-    // Update an existing annotation in the list
-    void updateAnnotationInTableByID(const char* id, const char * measurementValue, const char* textValue);
-
-    void addNodeToTree(const char* hierarchyNodeID, const char* annotationNodeID);
-
     void refreshTree();
 
     /// User clicked on property edit button
@@ -79,17 +70,12 @@ protected slots:
     // Table and Property Modify
     void moveDownSelected();
     void moveUpSelected();  
-    void selectedAllButtonClicked();
-    void visibleSelectedButtonClicked();
-    void lockSelectedButtonClicked();
-    void deleteSelectedButtonClicked();
+
 
     // Save
     void onSaveMRMLSceneButtonClicked();
     void onSaveAnnotationButtonClicked();
 
-    void onGenerateReportButtonClicked();
-    bool saveAnnotationReport();
 
   //------------------------------------------------------------------
   // Daniel's approved code starting here
@@ -100,6 +86,18 @@ protected slots:
   /// Restore the view to when the selected annotation was created.
   void onRestoreViewButtonClicked();
 
+  /// Select all annotations
+  void selectAllButtonClicked();
+
+  /// Toggle the visibility of selected Annotations
+  void visibleSelectedButtonClicked();
+
+  /// Un-/Lock selected Annotations
+  void lockSelectedButtonClicked();
+
+  /// Delete selected Annotations
+  void deleteSelectedButtonClicked();
+
   // Property dialog
   void propertyRestored();
   void propertyAccepted();
@@ -108,6 +106,11 @@ protected slots:
   void snapshotRejected();
   void snapshotAccepted();
   void onSnapShotButtonClicked();
+
+  // Report dialog
+  void reportDialogRejected();
+  void reportDialogAccepted();
+  void onReportButtonClicked();
 
   // Mouse Mode Operation
   void enableMouseModeButtons();
