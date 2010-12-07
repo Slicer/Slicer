@@ -21,75 +21,17 @@ project(MRIBiasFieldCorrection)
 # Disable MSVC 8 warnings
 
 if (WIN32)
-
-  option(DISABLE_MSVC8_DEPRECATED_WARNINGS
-    "Disable Visual Studio 8 deprecated warnings" ON)
-  mark_as_advanced(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)
-
-  if (DISABLE_MSVC8_DEPRECATED_WARNINGS)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-  endif (DISABLE_MSVC8_DEPRECATED_WARNINGS)
-
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif (WIN32)
 
-
 #-----------------------------------------------------------------------------
-# Source files
+# Build CLI library and executable
 
-set(${PROJECT_NAME}_SOURCE ${PROJECT_NAME}.cxx)
-
-generateclp(${PROJECT_NAME}_SOURCE ${PROJECT_NAME}.xml
-  ${Slicer_SOURCE_DIR}/Resources/MIT_NAMIC_Logo.h)
-
-
-#-----------------------------------------------------------------------------
-# Build library
-
-add_library(MRIBiasFieldCorrectionModule SHARED
-  ${${PROJECT_NAME}_SOURCE})
-
-slicer3_set_plugins_output_path(${PROJECT_NAME}Module)
-
-set_target_properties(${PROJECT_NAME}Module PROPERTIES
-  COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-
-target_link_libraries(${PROJECT_NAME}Module
-  ITKIO
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  vtkIO
-  vtkImaging)
-
-
-#-----------------------------------------------------------------------------
-# Build executable
-
-add_executable(${PROJECT_NAME}
-  ${CLI_SOURCE_DIR}/Templates/CommandLineSharedLibraryWrapper.cxx)
-
-slicer3_set_plugins_output_path(${PROJECT_NAME})
-
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Module)
-
-add_executable(ImageCompare ImageCompare.cxx) 
-
-target_link_libraries(ImageCompare
-  ITKIO
-  ITKNumerics
-  ITKStatistics)
-
-#-----------------------------------------------------------------------------
-# Install
-
-if (Slicer_SOURCE_DIR)
-
-  set(TARGETS ${PROJECT_NAME}Module ${PROJECT_NAME})
-
-  slicer3_install_plugins(${TARGETS})
-
-endif (Slicer_SOURCE_DIR)
-
+slicerMacroBuildCLI(
+  NAME ${PROJECT_NAME}
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/MIT_NAMIC_Logo.h
+  TARGET_LIBRARIES ITKIO ITKNumerics ITKStatistics ITKBasicFilters vtkIO vtkImaging
+  )
 
 #-----------------------------------------------------------------------------
 # Testing
@@ -101,8 +43,17 @@ set(BASELINE_DIR ${PROJECT_SOURCE_DIR}/Baseline)
 set(OUTPUT_DIR ${Slicer_BINARY_DIR}/Testing)
 
 if (BUILD_TESTING)
+  
+  #add_executable(ImageCompare ImageCompare.cxx) 
+  #target_link_libraries(ImageCompare
+  #  ITKIO
+  #  ITKNumerics
+  #  ITKStatistics
+  #  )
+  #SET_TARGET_PROPERTIES(ImageCompare PROPERTIES LABELS ${CLP})
 
-  add_test(${PROJECT_NAME}_N3_Brain2D
+  set(testname ${PROJECT_NAME}_N3_Brain2D)
+  add_test(${testname}
     ${Slicer_EXE}
     --launch
     ${PROJECT_NAME}
@@ -118,18 +69,24 @@ if (BUILD_TESTING)
     --shrinkFactor 2
     --maximumNumberOfIterations 50
     --numberOfFittingLevels 4)
-
-  #add_test(${PROJECT_NAME}_N3_Brain2D_CompareImage
+  SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
+  
+  #set(testname ${PROJECT_NAME}_N3_Brain2D_CompareImage)
+  #add_test(${testname}
   #  ImageCompare
   #  ${OUTPUT_DIR}/t81corrected.nii.gz 
   #  ${BASELINE_DIR}/t81corrected.nii.gz)
+  #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
-  #add_test(${PROJECT_NAME}_N3_Brain2D_CompareField
+  #set(testname ${PROJECT_NAME}_N3_Brain2D_CompareField)
+  #add_test(${testname}
   #  ImageCompare
   #  ${OUTPUT_DIR}/t81biasfield.nii.gz 
   #  ${BASELINE_DIR}/t81biasfield.nii.gz)
+  #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
-  add_test(${PROJECT_NAME}_N3_Lungs3D
+  set(testname ${PROJECT_NAME}_N3_Brain2D)
+  add_test(${testname}
     ${Slicer_EXE}
     --launch
     ${PROJECT_NAME}
@@ -144,18 +101,24 @@ if (BUILD_TESTING)
     --algorithmType N3
     --shrinkFactor 4
     --maximumNumberOfIterations 50)
+  SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
-  #add_test(${PROJECT_NAME}_N3_Lungs3D_CompareImage
+  #set(testname ${PROJECT_NAME}_N3_Lungs3D_CompareImage)
+  #add_test(${testname}
   #  ImageCompare
   #  ${OUTPUT_DIR}/he3corrected.nii.gz 
   #  ${BASELINE_DIR}/he3corrected.nii.gz)
+  #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
-  #add_test(${PROJECT_NAME}_N3_Lungs3D_CompareField
+  #set(testname ${PROJECT_NAME}_N3_Lungs3D_CompareField)
+  #add_test(${testname}
   #  ImageCompare
   #  ${OUTPUT_DIR}/he3biasfield.nii.gz 
   #  ${BASELINE_DIR}/he3biasfield.nii.gz)
+  #SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
-  add_test(${PROJECT_NAME}_N4_Brain2D
+  set(testname ${PROJECT_NAME}_N4_Brain2D)
+  add_test(${testname}
     ${Slicer_EXE}
     --launch
     ${PROJECT_NAME}
@@ -172,5 +135,6 @@ if (BUILD_TESTING)
     --numberOfFittingLevels 3
     --maximumNumberOfIterations 50
     --convergenceThreshold 0.001)
+  SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${PROJECT_NAME})
 
 endif (BUILD_TESTING)
