@@ -50,6 +50,7 @@ else (Slicer_SOURCE_DIR)
 endif (Slicer_SOURCE_DIR)
 add_executable(${CLP} ${${CLP}_SOURCE})
 target_link_libraries (${CLP} ITKIO ITKBasicFilters)
+SET_TARGET_PROPERTIES(${CLP} PROPERTIES LABELS ${CLP})
 
 if (Slicer_SOURCE_DIR)
   slicer3_set_plugins_output_path(${CLP})
@@ -58,7 +59,8 @@ if (Slicer_SOURCE_DIR)
   slicer3_set_plugins_output_path(${CLP}Lib)
   set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
   target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
-
+  SET_TARGET_PROPERTIES(${CLP}Lib PROPERTIES LABELS ${CLP})
+  
   set(TARGETS ${CLP}Lib ${CLP})
   slicer3_install_plugins(${TARGETS})
 else (Slicer_SOURCE_DIR)
