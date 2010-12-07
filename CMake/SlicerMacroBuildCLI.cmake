@@ -1,7 +1,7 @@
 
 #
 # Depends on:
-#  Slicer/CMake/SlicerParseArgumentsMacro.cmake
+#  Slicer/CMake/SlicerMacroParseArguments.cmake
 #
 
 MACRO(slicerMacroBuildCLI)
