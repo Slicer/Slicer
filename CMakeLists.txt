@@ -326,7 +326,7 @@ slicer3_set_persistent_property(Slicer_QTModules_INCLUDE_DIRS "")
 #-----------------------------------------------------------------------------
 
 SET(Slicer_BUILD NA)
-INCLUDE(CMake/DiscoverSystemNameAndBits.cmake)
+INCLUDE(CMake/SlicerDiscoverSystemNameAndBits.cmake)
 MESSAGE(STATUS "Slicer_BUILD:${Slicer_BUILD}")
 
 #-----------------------------------------------------------------------------
