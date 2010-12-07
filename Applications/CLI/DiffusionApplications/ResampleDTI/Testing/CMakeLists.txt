@@ -2,11 +2,7 @@
 # Test executable
 #
 
-
 include( CTest )
-
-
-
 
 # ResampleDTI tests
 set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )
@@ -29,11 +25,13 @@ set(OriginalImage ${SOURCE_DIR}/dt-helix.nrrd )
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
+SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(TransformFile ${SOURCE_DIR}/rotation.tfm )
 set(TransformedImage1 ${TEMP}/dt-helix-transformed1.nrrd )
 set(ReferenceImageRotationNN ${SOURCE_DIR}/dt-helix-ref-Rotated.nrrd)
-add_test(${CLP}RotationNNTest ${Launcher_Command} ${TestLocation}${ResampleTest}
+set(testname ${CLP}RotationNNTest)
+add_test(${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
   --compare
     ${ReferenceImageRotationNN}
     ${TransformedImage1}
@@ -46,11 +44,13 @@ add_test(${CLP}RotationNNTest ${Launcher_Command} ${TestLocation}${ResampleTest}
     ${TransformedImage1}
     -n 8
   )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(TransformedImage2 ${TEMP}/dt-helix-transformed2.nrrd )
 set(ReferenceImageRotationAndAffine ${SOURCE_DIR}/dt-helix-ref-RotationAndAffine.nrrd)
 set(RotationAndAffineFile ${SOURCE_DIR}/rotationAndAffine.tfm )
-add_test(${CLP}2RigidTransformsLinearTest ${Launcher_Command} ${TestLocation}${ResampleTest}
+set(testname ${CLP}2RigidTransformsLinearTest)
+add_test(${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
   --compare
     ${ReferenceImageRotationAndAffine}
     ${TransformedImage2}
@@ -65,11 +65,13 @@ add_test(${CLP}2RigidTransformsLinearTest ${Launcher_Command} ${TestLocation}${R
     --correction abs
     -n 8
   )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(TransformedImage3 ${TEMP}/dt-helix-transformed3.nrrd )
 set(ReferenceImageBSplineWS ${SOURCE_DIR}/dt-helix-ref-BS.nrrd)
 set(BSplineFile ${SOURCE_DIR}/FastNonrigidBSplineregistrationTransform.tfm)
-add_test(${CLP}BSplineWSInterpolationTest ${Launcher_Command} ${TestLocation}${ResampleTest}
+set(testname ${CLP}BSplineWSInterpolationTest)
+add_test(${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
   --compare
     ${ReferenceImageBSplineWS}
     ${TransformedImage3}
@@ -82,11 +84,13 @@ add_test(${CLP}BSplineWSInterpolationTest ${Launcher_Command} ${TestLocation}${R
     --correction nearest
     -n 8
   )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(TransformedImage4 ${TEMP}/dt-helix-transformed4.nrrd )
 set(ReferenceImageBSplineInterpolation ${SOURCE_DIR}/dt-helix-ref-BSInterpolation.nrrd)
 set(AffineFile ${SOURCE_DIR}/affine.tfm)
-add_test(${CLP}BSplineInterpolationTest ${Launcher_Command} ${TestLocation}${ResampleTest}
+set(testname ${CLP}BSplineInterpolationTest)
+add_test(${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
   --compare
     ${ReferenceImageBSplineInterpolation}
     ${TransformedImage4}
@@ -99,11 +103,13 @@ add_test(${CLP}BSplineInterpolationTest ${Launcher_Command} ${TestLocation}${Res
     --correction none
     -o 3
   )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(TransformedImage5 ${TEMP}/dt-helix-transformed5.nrrd )
 set(ReferenceImageHField ${SOURCE_DIR}/dt-helix-ref-HField.nrrd)
 set(HFieldFile ${SOURCE_DIR}/deformationField.nrrd)
-add_test(${CLP}HFieldTest ${Launcher_Command} ${TestLocation}${ResampleTest}
+set(testname ${CLP}HFieldTest)
+add_test(${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
   --compare
     ${ReferenceImageHField}
     ${TransformedImage5}
@@ -114,9 +120,7 @@ add_test(${CLP}HFieldTest ${Launcher_Command} ${TestLocation}${ResampleTest}
     ${TransformedImage5}
     -n 8
   )
-
-
-
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 #Test itkTestMainExtended.h
@@ -125,7 +129,8 @@ set(SourceScalarFile ${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI/AddTest_DOUB
 file( COPY ${SourceScalarFile} DESTINATION ${TEMP} )
 set( BinaryScalarFile ${TEMP}/AddTest_DOUBLE.mha )
 
-add_test( itkTestMainExtendedScalarTest ${Launcher_Command} ${TestLocation}${ResampleTest}
+set(testname itkTestMainExtendedScalarTest)
+add_test( ${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
  --compare
    ${BinaryScalarFile}
    ${BinaryScalarFile}
@@ -134,9 +139,11 @@ add_test( itkTestMainExtendedScalarTest ${Launcher_Command} ${TestLocation}${Res
     ${OriginalImage}
     ${TransformedImage}
   )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(TransformedImage6 ${TEMP}/dt-helix-transformed6.nrrd )
-add_test(itkTestMainExtendedFailedTest ${Launcher_Command} ${TestLocation}${ResampleTest}
+set(testname itkTestMainExtendedFailedTest)
+add_test(${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
   --compare
     ${ReferenceImageHField}
     ${TransformedImage6}
@@ -146,4 +153,5 @@ add_test(itkTestMainExtendedFailedTest ${Launcher_Command} ${TestLocation}${Resa
     ${OriginalImage}
     ${TransformedImage6}
   )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 set_tests_properties( itkTestMainExtendedFailedTest PROPERTIES WILL_FAIL true)

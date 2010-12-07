@@ -39,7 +39,7 @@
 #define DIMENSION 3
 
 
-template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
+template<class PixelType> int DoIt( int argc, char * argv[], PixelType )
 {
   PARSE_ARGS;
 
@@ -229,7 +229,7 @@ template<class PixelType> int DoIt( int argc, const char * argv[], PixelType )
 
 }
 
-int main( int argc, const char * argv[] )
+int main( int argc, char * argv[] )
 {
   
   PARSE_ARGS;
