@@ -24,11 +24,13 @@ public:
   void updateReport();
 
 protected:
-  
+
+
 protected slots:
   void onDialogRejected();
   void onDialogAccepted();
   void onTextEdited();
+  void onPrintButtonClicked();
 
 signals:
   void dialogRejected();
@@ -40,6 +42,7 @@ private:
     void createConnection();
 
     QString generateReport();
+    bool saveReport();
 
     vtkSlicerAnnotationModuleLogic* m_Logic;
 

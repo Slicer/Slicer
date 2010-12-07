@@ -1254,7 +1254,6 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::GetTopLevelHiera
     // no annotation hierarchy node is currently in the scene, create a new one
     toplevelNode = vtkMRMLAnnotationHierarchyNode::New();
     toplevelNode->SetScene(this->GetMRMLScene());
-    // TODO we somehow have to hide this node
     toplevelNode->HideFromEditorsOff();
     toplevelNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationToplevelHierarchyNode"));
 
@@ -1411,6 +1410,12 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
     return;
     }
 
+  if (!this->m_Widget)
+    {
+    vtkErrorMacro("CreateSnapShot: We need the widget here.")
+    return;
+    }
+
   vtkStdString nameString = vtkStdString(name);
 
   vtkMRMLAnnotationSnapshotNode * newSnapshotNode = vtkMRMLAnnotationSnapshotNode::New();
@@ -1429,9 +1434,37 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
   newSnapshotNode->SetScreenshotType(screenshotType);
   newSnapshotNode->SetScreenshot(screenshot);
   newSnapshotNode->StoreScene();
-
   newSnapshotNode->HideFromEditorsOff();
+
+  // now we need a hierarchy node
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::New();
+  hierarchyNode->HideFromEditorsOff();
+  hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationSnapshotHierarchy"));
+  // the parent is always the topLevelHierarchy node
+
+  vtkMRMLAnnotationHierarchyNode* toplevelNode = this->GetTopLevelHierarchyNode(0);
+
+  if (!toplevelNode)
+    {
+    vtkErrorMacro("CreateSnapShot: Where is the toplevel hierarchy node?")
+    return;
+    }
+
+  hierarchyNode->SetParentNodeID(toplevelNode->GetID());
+  hierarchyNode->SetScene(this->GetMRMLScene());
+
+  // .. now add the snapshotNode..
   this->GetMRMLScene()->AddNode(newSnapshotNode);
+
+  //.. and register it with hierarchyNode
+  hierarchyNode->SetDisplayableNodeID(newSnapshotNode->GetID());
+
+  // we need to insert the hierarchyNode first
+  this->GetMRMLScene()->InsertBeforeNode(newSnapshotNode,hierarchyNode);
+
+  // refresh the hierarchy tree
+  //this->m_Widget->refreshTree();
+
 }
 
 //---------------------------------------------------------------------------
