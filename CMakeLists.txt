@@ -215,6 +215,16 @@ ELSEIF(MSVC)
 ENDIF()
 
 #-----------------------------------------------------------------------------
+# Slicer install directories
+#------------------------------------------------------------------------------
+
+SET(Slicer_INSTALL_BIN_DIR "bin")
+SET(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
+SET(Slicer_INSTALL_INCLUDE_DIR "include/Slicer")
+SET(Slicer_INSTALL_SHARE_DIR "share/Slicer")
+SET(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
+
+#-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
 
@@ -244,14 +254,8 @@ SET(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 SET(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
-# Install directories
+# Plugins and Modules install directories
 #------------------------------------------------------------------------------
-
-SET(Slicer_INSTALL_BIN_DIR "bin")
-SET(Slicer_INSTALL_LIB_DIR "lib/Slicer3")
-SET(Slicer_INSTALL_INCLUDE_DIR "include/Slicer")
-SET(Slicer_INSTALL_SHARE_DIR "share/Slicer")
-SET(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 
 SET(Slicer_INSTALL_PLUGINS_BIN_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
 SET(Slicer_INSTALL_PLUGINS_LIB_DIR "${Slicer_INSTALL_LIB_DIR}/Plugins")
