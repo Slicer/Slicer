@@ -1,28 +1,23 @@
-project(SlicerLibs)
+PROJECT(SlicerLibs)
 
-## Delegate the building of the SlicerExecutionModel to
-## a bundled subdirectory that can easily be included in
-## other packages.
+#
+# Order of project directory is important. Project should be topologically ordered
+#
 
-set(dirs
-  SlicerExecutionModel
+SET(dirs
+  SlicerExecutionModel # Bundled subdirectory that can easily be included in other packages.
 # FileWatcher
   )
 
 IF(Slicer_USE_KWWIDGETS)
-  SET(dirs ${dirs}
-    LoadableModule
-    )
-ENDIF(Slicer_USE_KWWIDGETS)
+  LIST(APPEND dirs LoadableModule)
+ENDIF()
 
-# Note: Order of of SUBDIRS is important if your projects depend
-# on code in other projects (put dependent project later).
+IF(Teem_FOUND)
+  LIST(APPEND dirs vtkTeem)
+ENDIF()
 
-if(Teem_FOUND)
-  set(dirs ${dirs} vtkTeem)
-endif(Teem_FOUND)
-
-SET(dirs ${dirs}
+LIST(APPEND dirs
   vtkITK
   FreeSurfer
   MRML
@@ -32,14 +27,14 @@ SET(dirs ${dirs}
   )
 
 IF(Slicer_USE_KWWIDGETS)
-  SET(dirs ${dirs}
+  LIST(APPEND dirs
     GenerateLM
     SlicerIO
     ITKCommandIO
     )
-ENDIF(Slicer_USE_KWWIDGETS)
+ENDIF()
 
-SET(dirs ${dirs}
+LIST(APPEND dirs
   MRMLIDImageIO
   MGHImageIO
   IGT
@@ -47,81 +42,85 @@ SET(dirs ${dirs}
   #SIGN
   )
 
-
-
 #-----------------------------------------------------------------------------
-# QT related libraries
-#
+# QT libraries
+#-----------------------------------------------------------------------------
 IF(Slicer_USE_QT)
-set(dirs ${dirs}
-  qMRMLWidgets
-  )
-ENDIF(Slicer_USE_QT)
+  LIST(APPEND dirs qMRMLWidgets)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # CUDA
-#
+#-----------------------------------------------------------------------------
 INCLUDE(${CMAKE_SOURCE_DIR}/CMake/cuda/FindCuda.cmake)
 
 IF(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
    OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" ON)
-ELSE(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
+ELSE()
    OPTION(CUDA_SUPPORT_ENABLED "If Cuda Support should be integrated into Slicer. You have to configure once again to see the other availiable options" OFF)
-ENDIF(FOUND_CUDA AND FOUND_CUDART AND FOUND_CUT)
+ENDIF()
 
 IF(CUDA_SUPPORT_ENABLED)
-  set (dirs ${dirs} CudaSupport)
-ENDIF(CUDA_SUPPORT_ENABLED)
+  LIST(APPEND dirs CudaSupport)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 # Set library properties
-#
-set(include_dirs)
-set(libs)
+#-----------------------------------------------------------------------------
 
-set(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHON})
-set(LoadableModule_USE_PYTHON ${Slicer_USE_PYTHON})
+SET(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHON})
+SET(LoadableModule_USE_PYTHON ${Slicer_USE_PYTHON})
 
-set(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
-set(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
-set(ITKCommandIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
-set(MGHImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
-set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
+SET(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
+SET(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
+SET(ITKCommandIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
+SET(MGHImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
+SET(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
+# vtkITK contains tests that uses MRML's test data.
+SET(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
 
-foreach(dir ${dirs})
+#-----------------------------------------------------------------------------
+# Generate list of corresponding libraries and include directories
+#-----------------------------------------------------------------------------
 
-  set(include_dirs ${include_dirs}
+SET(libs)
+SET(include_dirs)
+FOREACH(dir ${dirs})
+  LIST(APPEND include_dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/${dir}
     ${CMAKE_CURRENT_BINARY_DIR}/${dir}
     )
+  LIST(APPEND libs ${dir})
+ENDFOREACH()
 
-  set(libs ${libs} ${dir})
-endforeach(dir)
+# Since there is inconsistency between library name and project/dir name, 
+# let's tweak the list of generated library names
 
-# vtkITK contains tests that uses MRML's test data.
-set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Testing/TestData)
-
-slicer3_get_persistent_property(Slicer_Libs_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
-# Inconsistent library name vs. project/dir name :(
-
-string(REPLACE ITKCommandIO CommandIO libs "${libs}")
+STRING(REPLACE ITKCommandIO CommandIO libs "${libs}")
 IF(Slicer_USE_KWWIDGETS)
-  string(REPLACE SlicerIO slicerio libs "${libs}")
-ENDIF(Slicer_USE_KWWIDGETS)
-string(REPLACE MGHImageIO MGHIO libs "${libs}")
-string(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
+  STRING(REPLACE SlicerIO slicerio libs "${libs}")
+  LIST(REMOVE_ITEM libs GenerateLM slicerio) # Those are not libs
+ENDIF()
+STRING(REPLACE MGHImageIO MGHIO libs "${libs}")
+STRING(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 LIST(REMOVE_ITEM libs SlicerExecutionModel) # Not a library
 
-# Those are not libs
-
-list(REMOVE_ITEM libs GenerateLM slicerio)
+#-----------------------------------------------------------------------------
+# Update variable Slicer_Libs_LIBRARIES and Slicer_Libs_INCLUDE_DIRS
+#-----------------------------------------------------------------------------
 
 slicer3_get_persistent_property(Slicer_Libs_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer_Libs_LIBRARIES ${tmp} ${libs})
+
+slicer3_get_persistent_property(Slicer_Libs_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+
+#-----------------------------------------------------------------------------
+# Loop over list of directories
+#-----------------------------------------------------------------------------
 
 FOREACH(dir ${dirs})
   SET(${dir}_INSTALL_BIN_DIR ${Slicer_INSTALL_LIB_DIR})
   SET(${dir}_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
   ADD_SUBDIRECTORY(${dir})
-ENDFOREACH(dir)
+ENDFOREACH()
