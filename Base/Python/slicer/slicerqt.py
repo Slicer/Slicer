@@ -1,5 +1,5 @@
 import vtk, qt, ctk
-import slicer
+import slicer, slicer.cli
 
 #
 # General

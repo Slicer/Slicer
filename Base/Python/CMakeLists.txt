@@ -2,6 +2,7 @@
 
 SET(Slicer_PYTHON_SCRIPTS
   slicer/__init__
+  slicer/cli
   slicer/logic
   slicer/slicerqt
   mrml
