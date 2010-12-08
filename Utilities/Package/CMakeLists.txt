@@ -1,5 +1,6 @@
 # -------------------------------------------------------------------------
 # Find and install Tcl
+# -------------------------------------------------------------------------
 IF (Slicer_USE_PYTHONQT_WITH_TCL)
   if(NOT Slicer_TCL_DIR)
     get_filename_component(Slicer_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
@@ -30,7 +31,7 @@ ENDIF()
 
 # -------------------------------------------------------------------------
 # Find and install python
-
+# -------------------------------------------------------------------------
 if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   #assum get build test build tree
   get_filename_component(PARENT_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
@@ -43,7 +44,7 @@ if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
   endif()
   if(WIN32 AND NOT EXISTS "${PYTHON_DIR}" AND EXISTS "${PYTHON_INCLUDE_PATH}")
     get_filename_component(PYTHON_DIR "${PYTHON_INCLUDE_PATH}" PATH)
-  endif(WIN32 AND NOT EXISTS "${PYTHON_DIR}" AND EXISTS "${PYTHON_INCLUDE_PATH}")
+  endif()
 
   if(EXISTS "${PYTHON_DIR}")
     install(DIRECTORY
@@ -51,7 +52,7 @@ if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
       DESTINATION lib/Python
       USE_SOURCE_PERMISSIONS
       )
-  endif(EXISTS "${PYTHON_DIR}")
+  endif()
 
   #install python dll.
   if(WIN32)
@@ -62,12 +63,14 @@ if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
       DESTINATION bin
       COMPONENT Runtime)
   endif()
-endif(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
+endif()
 
 # -------------------------------------------------------------------------
 # Find and install QT
-
+# -------------------------------------------------------------------------
 if(Slicer_USE_QT)
+
+  SET(QT_INSTALL_LIB_DIR "lib/Qt")
 
   SET (QTLIBLIST QTCORE QTGUI QTNETWORK QTXML QTTEST QTSQL QTOPENGL QTWEBKIT PHONON QTXMLPATTERNS)
   IF(UNIX OR APPLE)
@@ -76,35 +79,48 @@ if(Slicer_USE_QT)
   FOREACH(qtlib ${QTLIBLIST})
     IF (QT_${qtlib}_LIBRARY_RELEASE)
       IF(APPLE)
-        INSTALL(DIRECTORY "${QT_${qtlib}_LIBRARY_RELEASE}" DESTINATION lib/Qt COMPONENT Runtime)
+        INSTALL(DIRECTORY "${QT_${qtlib}_LIBRARY_RELEASE}" 
+          DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime)
       ELSEIF(UNIX)
         # Install .so and versioned .so.x.y
         GET_FILENAME_COMPONENT(QT_LIB_DIR_tmp ${QT_${qtlib}_LIBRARY_RELEASE} PATH)
         GET_FILENAME_COMPONENT(QT_LIB_NAME_tmp ${QT_${qtlib}_LIBRARY_RELEASE} NAME)
-        INSTALL(DIRECTORY ${QT_LIB_DIR_tmp}/ DESTINATION lib/Qt COMPONENT Runtime
-                FILES_MATCHING PATTERN "${QT_LIB_NAME_tmp}*"
-                PATTERN "${QT_LIB_NAME_tmp}*.debug" EXCLUDE)
+        INSTALL(DIRECTORY ${QT_LIB_DIR_tmp}/ 
+          DESTINATION ${QT_INSTALL_LIB_DIR} COMPONENT Runtime
+          FILES_MATCHING PATTERN "${QT_LIB_NAME_tmp}*"
+          PATTERN "${QT_LIB_NAME_tmp}*.debug" EXCLUDE)
       ELSEIF(WIN32)
         GET_FILENAME_COMPONENT(QT_DLL_PATH_tmp ${QT_QMAKE_EXECUTABLE} PATH)
-        INSTALL(FILES ${QT_DLL_PATH_tmp}/${qtlib}4.dll DESTINATION bin COMPONENT Runtime)
-      ENDIF(APPLE)
-    ENDIF (QT_${qtlib}_LIBRARY_RELEASE)
-  ENDFOREACH(qtlib)
+        INSTALL(FILES ${QT_DLL_PATH_tmp}/${qtlib}4.dll 
+          DESTINATION bin COMPONENT Runtime)
+      ENDIF()
+    ENDIF()
+  ENDFOREACH()
+endif()
+
+# -------------------------------------------------------------------------
+# Find and install PythonQt
+# -------------------------------------------------------------------------
+IF(Slicer_USE_PYTHONQT)
+
+  SET(PYTHONQT_INSTALL_LIB_DIR "lib/PythonQt")
   
-  IF(Slicer_USE_PYTHONQT)
-    IF(WIN32)
-      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll DESTINATION bin COMPONENT Runtime)
-    ELSEIF(APPLE)
-      # needs to install symlink version named libraries as well.
-      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.dylib DESTINATION lib/PythonQt COMPONENT Runtime)
-    ELSEIF(UNIX)
-      INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.so DESTINATION lib/PythonQt COMPONENT Runtime)
-    ENDIF(WIN32)
-  ENDIF(Slicer_USE_PYTHONQT)
-endif(Slicer_USE_QT)
+  IF(WIN32)
+    INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll 
+      DESTINATION bin COMPONENT Runtime)
+  ELSEIF(APPLE)
+    # needs to install symlink version named libraries as well.
+    INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.dylib 
+      DESTINATION ${PYTHONQT_INSTALL_LIB_DIR} COMPONENT Runtime)
+  ELSEIF(UNIX)
+    INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/lib/libPythonQt.so 
+      DESTINATION ${PYTHONQT_INSTALL_LIB_DIR} COMPONENT Runtime)
+  ENDIF()
+ENDIF()
 
 # -------------------------------------------------------------------------
 # CPack
+# -------------------------------------------------------------------------
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.in"
@@ -176,7 +192,7 @@ endif()
 
 if(APPLE)
   set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer3.icns")
-endif(APPLE)
+endif()
 
 # slicer3 does _not_ require setting the windows path
 set(CPACK_NSIS_MODIFY_PATH OFF)
@@ -212,10 +228,10 @@ if(FILE_EXTENSIONS)
             DeleteRegKey HKCR \\\" ${APPLICATION_NAME}\\\"
             DeleteRegKey HKCR \\\"${ext}\\\"
           ")
-    endforeach(ext)
-  endif(WIN32 AND NOT UNIX)
+    endforeach()
+  endif()
 
-endif(FILE_EXTENSIONS)
+endif()
 
 include(CPack)
 
