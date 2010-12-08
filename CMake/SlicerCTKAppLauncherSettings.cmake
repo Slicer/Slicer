@@ -138,37 +138,12 @@ SET(SLICER_LIBRARY_PATHS_INSTALLED
   ./${Slicer_INSTALL_LIB_DIR}
   ./${Slicer_INSTALL_PLUGINS_LIB_DIR}
   ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
-  # Slicer Libs
-  ./lib/FreeSurfer
-  ./lib/ITKCommandIO
-  ./lib/LoadableModule
-  ./lib/MGHImageIO
-  ./lib/MRML
-  ./lib/MRMLCLI
-  ./lib/MRMLLogic
-  ./lib/MRMLDisplayableManager
-  ./lib/ModuleDescriptionParser
-  ./lib/MRMLIDImageIO
-  ./lib/Qdec
-  ./lib/RemoteIO
-  ./lib/FileWatcher
-  ./lib/SlicerIO
-  ./lib/tclap
-  ./lib/vtkITK
-  ./lib/vtkTeem
-  ./lib/qMRMLWidgets
-  # External projects 
-  ./lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  # External projects
   ./lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
-  ./lib/InsightToolkit
-  ./lib/Qt
-  ./lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}
   )
 
 IF(Slicer_USE_OPENIGTLINK)
   LIST(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    # Slicer Libs
-    ./lib/IGT
     # External projects 
     ./lib/igtl
     )
@@ -214,7 +189,7 @@ SET(SLICER_PATHS_INSTALLED
 # ENVVARS
 #  
 SET(SLICER_ENVVARS_INSTALLED
-  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}<PATHSEP><APPLAUNCHER_DIR>/lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}"
+  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}"
   )
   
 IF(Slicer_USE_PYTHONQT)
@@ -223,16 +198,12 @@ IF(Slicer_USE_PYTHONQT)
     SET(pythonpath_subdir "")
   ENDIF()
   SET(PYTHONPATH "${SLICER_PYTHON_LIB_DIR}")
+  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/core")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/FreeSurfer")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/MRML")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/MRMLLogic")
-  SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/RemoteIO")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtkTeem")
   SET(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
   
