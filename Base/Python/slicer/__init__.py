@@ -4,6 +4,7 @@ __kits_to_load = [
 # slicer libs
 'freesurfer', 
 'mrml', 
+'mrmlcli',
 'mrmlLogic', 
 'remoteio', 
 'teem', 

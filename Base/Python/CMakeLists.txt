@@ -5,6 +5,7 @@ SET(Slicer_PYTHON_SCRIPTS
   slicer/logic
   slicer/slicerqt
   mrml
+  mrmlcli
   mrmlLogic
   teem
   freesurfer
