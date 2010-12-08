@@ -21,7 +21,7 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
       MESSAGE(FATAL_ERROR "Failed to download pre-built launcher - Unsupported platform: ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
     ENDIF()
     
-    SET(launcher_version "0.1.1")
+    SET(launcher_version "0.1.2")
     ExternalProject_Add(${proj}
       URL http://cloud.github.com/downloads/commontk/AppLauncher/CTKAppLauncher-${launcher_version}-${launcher_suffix}.tar.gz
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
