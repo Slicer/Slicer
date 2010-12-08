@@ -1,39 +1,32 @@
 # -------------------------------------------------------------------------
 # Find and install Tcl
-IF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
+IF (Slicer_USE_PYTHONQT_WITH_TCL)
   if(NOT Slicer_TCL_DIR)
-    if(TCL_INCLUDE_PATH)
-      get_filename_component(Slicer_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
-    else(TCL_INCLUDE_PATH)
-      set(Slicer_TCL_DIR "${Slicer_BINARY_DIR}/../Slicer3-lib/tcl-build")
-    endif(TCL_INCLUDE_PATH)
-  endif(NOT Slicer_TCL_DIR)
+    get_filename_component(Slicer_TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
+  endif()
 
   if(NOT EXISTS "${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
       NOT EXISTS "${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
     message(STATUS "Not Packaging TCL (cannot found: ${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT} or ${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe)")
     set(Slicer_TCL_DIR "")
-  endif(NOT EXISTS "${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
-    NOT EXISTS "${Slicer_TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
-ENDIF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
+  endif()
 
-# Note: this is probably dangerous if Tcl is somewhere in /usr/local, as it
-# ends up installing the whole /usr/local to the Slicer3 install tree :(
-# TODO: use VTK/KWWidgets macros to copy only the files that are known to
-# belong to Tcl/Tk; in the meantime only a few people are using external
-# VTK/KWWidgets/Teem/TclTk packages, so we will assume they know what they
-#  are doing (i.e. they have Tcl/Tk installed in a standalone directory 
-# like /opt/tcltk8.5.0)
+  # Note: this is probably dangerous if Tcl is somewhere in /usr/local, as it
+  # ends up installing the whole /usr/local to the Slicer3 install tree :(
+  # TODO: use VTK/KWWidgets macros to copy only the files that are known to
+  # belong to Tcl/Tk; in the meantime only a few people are using external
+  # VTK/KWWidgets/Teem/TclTk packages, so we will assume they know what they
+  #  are doing (i.e. they have Tcl/Tk installed in a standalone directory 
+  # like /opt/tcltk8.5.0)
 
-IF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
   if(Slicer_TCL_DIR)
     install(DIRECTORY
       ${Slicer_TCL_DIR}/
       DESTINATION lib/TclTk
       USE_SOURCE_PERMISSIONS
       )
-  endif(Slicer_TCL_DIR)
-ENDIF (VTK_WRAP_TCL OR Slicer_USE_PYTHONQT_WITH_TCL)
+  endif()
+ENDIF()
 
 # In the following section we tell the packager to include libslicerlibcurl.so
 # in the CPACK package, because we build it as a .so on Solaris,
