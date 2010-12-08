@@ -32,6 +32,10 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
         ${CTKAPPLAUNCHER_DEPENDENCIES}
       )
     SET(CTKAPPLAUNCHER_DIR ${CMAKE_BINARY_DIR}/${proj})
+  ELSE()
+    # The project is provided using CTKAPPLAUNCHER_DIR, nevertheless since other 
+    # project may depend on CTKAPPLAUNCHER, let's add an 'empty' one
+    SlicerMacroEmptyExternalProject(${proj} "${CTKAPPLAUNCHER_DEPENDENCIES}")
   ENDIF()
   
 ENDIF()
