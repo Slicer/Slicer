@@ -7,5 +7,5 @@ def createNode(module, parameters):
 def run(nodeOrModule, parameters = None):
   pass
   
-def cancel(node)
+def cancel(node):
   pass
