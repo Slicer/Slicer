@@ -147,15 +147,6 @@ if(EXISTS "${ITK_DIR}/CMakeCache.txt")
 endif()
 
 # 
-# KWWIDGETS
-#
-IF (Slicer_USE_KWWIDGETS)
-  if(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
-    set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${KWWidgets_DIR};KWWidgets;ALL;/")
-  endif()
-ENDIF()
-
-# 
 # Teem
 #
 if(EXISTS "${Teem_DIR}/CMakeCache.txt")
