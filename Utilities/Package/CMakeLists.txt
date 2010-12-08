@@ -59,6 +59,8 @@ if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
       "${PYTHON_DIR}/"
       DESTINATION lib/Python
       USE_SOURCE_PERMISSIONS
+      REGEX "include/" EXCLUDE
+      REGEX "share/man" EXCLUDE
       )
   endif()
 
