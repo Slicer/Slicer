@@ -125,31 +125,64 @@ set(CPACK_RESOURCE_FILE_LICENSE "${Slicer_SOURCE_DIR}/License.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR "${Slicer_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${Slicer_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${Slicer_VERSION_PATCH}")
+
+# 
+# Slicer
+#
 set(CPACK_INSTALL_CMAKE_PROJECTS
   "${Slicer_BINARY_DIR};Slicer;ALL;/")
+
+# 
+# VTK
+#
 if(EXISTS "${VTK_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;ALL;/")
-endif(EXISTS "${VTK_DIR}/CMakeCache.txt")
+endif()
+
+# 
+# ITK
+#
 if(EXISTS "${ITK_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;ALL;/")
-endif(EXISTS "${ITK_DIR}/CMakeCache.txt")
+endif()
+
+# 
+# KWWIDGETS
+#
 IF (Slicer_USE_KWWIDGETS)
   if(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
     set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${KWWidgets_DIR};KWWidgets;ALL;/")
-  endif(EXISTS "${KWWidgets_DIR}/CMakeCache.txt")
-ENDIF (Slicer_USE_KWWIDGETS)
+  endif()
+ENDIF()
+
+# 
+# Teem
+#
 if(EXISTS "${Teem_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Teem_DIR};teem;ALL;/")
-endif(EXISTS "${Teem_DIR}/CMakeCache.txt")
+endif()
+
+# 
+# BatchMake
+#
 if(EXISTS "${BatchMake_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${BatchMake_DIR};BatchMake;ALL;/")
-endif(EXISTS "${BatchMake_DIR}/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${BatchMake_DIR};BatchMake;Runtime;/")
+endif()
+
+# 
+# OpenIGTLink
+#
 if(EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${OpenIGTLink_DIR};igtl;ALL;/")
-endif(EXISTS "${OpenIGTLink_DIR}/CMakeCache.txt")
+endif()
+
+# 
+# CTK
+#
 if(EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;ALL;/")
-endif(EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
+endif()
+
 if(APPLE)
   set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Utilities/Package/Slicer3.icns")
 endif(APPLE)
