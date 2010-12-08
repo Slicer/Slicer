@@ -70,7 +70,7 @@ endif()
 # -------------------------------------------------------------------------
 if(Slicer_USE_QT)
 
-  SET(QT_INSTALL_LIB_DIR "lib/Qt")
+  SET(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
 
   SET (QTLIBLIST QTCORE QTGUI QTNETWORK QTXML QTTEST QTSQL QTOPENGL QTWEBKIT PHONON QTXMLPATTERNS)
   IF(UNIX OR APPLE)
@@ -103,7 +103,7 @@ endif()
 # -------------------------------------------------------------------------
 IF(Slicer_USE_PYTHONQT)
 
-  SET(PYTHONQT_INSTALL_LIB_DIR "lib/PythonQt")
+  SET(PYTHONQT_INSTALL_LIB_DIR "${Slicer_INSTALL_LIB_DIR}")
   
   IF(WIN32)
     INSTALL(FILES ${PYTHONQT_INSTALL_DIR}/bin/PythonQt.dll 
