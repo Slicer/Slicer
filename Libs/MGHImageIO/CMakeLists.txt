@@ -75,6 +75,7 @@ set(MGHImageIO_SRCS
 # --------------------------------------------------------------------------
 # Build and install the library
 
+# Note: Library name is different from the directory name !
 set(lib_name MGHIO)
 add_library(${lib_name} 
   ${MGHImageIO_SRCS}
@@ -84,10 +85,17 @@ target_link_libraries(${lib_name}
   ITKIO 
 )
 
-install(TARGETS ${lib_name} 
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
+  SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
+ENDIF()
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
+  SET(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+ENDIF()
+
+INSTALL(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # Shared library that when placed in ITK_AUTOLOAD_PATH, will add
@@ -126,7 +134,7 @@ ENDIF(Slicer_LIBRARY_PROPERTIES)
 install(TARGETS MGHIOPlugin
   RUNTIME DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # make a copy named '.so' for compatibility with the expectations

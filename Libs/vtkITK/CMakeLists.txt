@@ -129,7 +129,7 @@ ENDIF (VTK_WRAP_TCL)
 # --------------------------------------------------------------------------
 # Build the library
 
-set(lib_name vtkITK)
+set(lib_name ${PROJECT_NAME})
 
 SET(srcs
   ${vtkITK_SRCS}
@@ -178,10 +178,17 @@ IF(Slicer_LIBRARY_PROPERTIES)
   )
 ENDIF(Slicer_LIBRARY_PROPERTIES)
 
+IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
+  SET(${lib_name}_INSTALL_BIN_DIR bin)
+ENDIF()
+IF(NOT DEFINED ${lib_name}_INSTALL_LIB_DIR)
+  SET(${lib_name}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+ENDIF()
+
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -228,9 +235,10 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   ENDIF(Slicer_LIBRARY_PROPERTIES)
 
   INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-    LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development)
+    RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+    )
 
 ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 

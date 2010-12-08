@@ -295,7 +295,7 @@ INSTALL(FILES
 # Build the library
 #
 
-SET(lib_name "qMRMLWidgets")
+SET(lib_name ${PROJECT_NAME})
 
 ADD_LIBRARY(${lib_name}
   ${qMRMLWidgets_SRCS}
@@ -341,10 +341,17 @@ ENDIF()
 # Install
 #
 
+IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
+  SET(${lib_name}_INSTALL_BIN_DIR bin)
+ENDIF()
+IF(NOT DEFINED ${lib_name}_INSTALL_LIB_DIR)
+  SET(${lib_name}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+ENDIF()
+
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------

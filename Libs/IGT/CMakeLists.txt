@@ -137,7 +137,7 @@ ENDIF (VTK_WRAP_TCL)
 # --------------------------------------------------------------------------
 # Build and install the library
 
-set(lib_name IGT)
+set(lib_name ${PROJECT_NAME})
 SET(srcs
   ${IGT_SRCS} 
   )
@@ -178,10 +178,17 @@ IF(Slicer_LIBRARY_PROPERTIES)
   )
 ENDIF(Slicer_LIBRARY_PROPERTIES)
 
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
+  SET(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
+ENDIF()
+IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
+  SET(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+ENDIF()
+
+INSTALL(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------

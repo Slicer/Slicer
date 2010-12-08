@@ -116,7 +116,7 @@ IF (VTK_WRAP_TCL)
   SET(srcs ${srcs} ${vtkTeem_TCL_SRCS})
 ENDIF (VTK_WRAP_TCL)
 
-set(lib_name vtkTeem)
+set(lib_name ${PROJECT_NAME})
 add_library(${lib_name} ${srcs})
 
 # after teem 1.9, all the teem libraries are groups in one big libteem.so
@@ -158,10 +158,17 @@ IF(Slicer_LIBRARY_PROPERTIES)
   )
 ENDIF(Slicer_LIBRARY_PROPERTIES)
 
+IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
+  SET(${lib_name}_INSTALL_BIN_DIR bin)
+ENDIF()
+IF(NOT DEFINED ${lib_name}_INSTALL_LIB_DIR)
+  SET(${lib_name}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+ENDIF()
+
 install(TARGETS ${lib_name}
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -201,9 +208,10 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   ENDIF(Slicer_LIBRARY_PROPERTIES)
 
   INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-    LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development)
+    RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+    )
 
 ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 

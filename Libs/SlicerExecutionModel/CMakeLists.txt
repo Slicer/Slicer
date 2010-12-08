@@ -30,6 +30,17 @@ endmacro(SETIFEMPTY KEY VALUE)
 endif(NOT SETIFEMPTY)
 ###
 
+IF(DEFINED SlicerExecutionModel_INSTALL_BIN_DIR)
+  SET(GenerateCLP_INSTALL_BIN_DIR ${SlicerExecutionModel_INSTALL_BIN_DIR})
+  SET(ModuleDescriptionParser_INSTALL_BIN_DIR ${SlicerExecutionModel_INSTALL_BIN_DIR})
+  SET(tclap_INSTALL_BIN_DIR ${SlicerExecutionModel_INSTALL_BIN_DIR})
+ENDIF()
+
+IF(DEFINED SlicerExecutionModel_INSTALL_LIB_DIR)
+  SET(GenerateCLP_INSTALL_LIB_DIR ${SlicerExecutionModel_INSTALL_LIB_DIR})
+  SET(ModuleDescriptionParser_INSTALL_LIB_DIR ${SlicerExecutionModel_INSTALL_LIB_DIR})
+  SET(tclap_INSTALL_LIB_DIR ${SlicerExecutionModel_INSTALL_LIB_DIR})
+ENDIF()
 
 SETIFEMPTY(TCLAP_DIR ${CMAKE_CURRENT_BINARY_DIR}/tclap CACHE PATH "Location of TCLAPConfig.cmake" FORCE)
 ADD_SUBDIRECTORY(tclap)

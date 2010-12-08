@@ -162,7 +162,7 @@ endif()
 # --------------------------------------------------------------------------
 # Build and install the library
 
-SET(lib_name MRMLDisplayableManager)
+SET(lib_name ${PROJECT_NAME})
 ADD_LIBRARY(${lib_name} 
   ${srcs}
  )
@@ -202,10 +202,17 @@ IF(Slicer_LIBRARY_PROPERTIES)
   )
 ENDIF(Slicer_LIBRARY_PROPERTIES)
 
+IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
+  SET(${lib_name}_INSTALL_BIN_DIR bin)
+ENDIF()
+IF(NOT DEFINED ${lib_name}_INSTALL_LIB_DIR)
+  SET(${lib_name}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+ENDIF()
+
 INSTALL(TARGETS ${lib_name}
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
   )
   
 # --------------------------------------------------------------------------
@@ -246,9 +253,10 @@ IF(MRMLDisplayableManager_USE_PYTHON AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
   ENDIF(Slicer_LIBRARY_PROPERTIES)
 
   INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-    LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development)
+    RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
+    )
 
   ADD_SUBDIRECTORY(Python)
 

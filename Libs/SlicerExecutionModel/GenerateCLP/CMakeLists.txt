@@ -65,8 +65,12 @@ target_link_libraries(GenerateCLP
 
 include(GenerateGenerateCLPConfig.cmake)
 
+IF(NOT DEFINED GenerateCLP_INSTALL_BIN_DIR)
+  SET(GenerateCLP_INSTALL_BIN_DIR bin)
+ENDIF()
+
 install(TARGETS GenerateCLP RUNTIME 
-  DESTINATION bin COMPONENT Development
+  DESTINATION ${GenerateCLP_INSTALL_BIN_DIR} COMPONENT Development
   )
 install(FILES ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install
   DESTINATION lib/GenerateCLP

@@ -160,10 +160,17 @@ IF(Slicer_LIBRARY_PROPERTIES)
   )
 ENDIF(Slicer_LIBRARY_PROPERTIES)
 
-install(TARGETS ${lib_name} 
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+IF(NOT DEFINED ${lib_name}_INSTALL_BIN_DIR)
+  SET(${lib_name}_INSTALL_BIN_DIR bin)
+ENDIF()
+IF(NOT DEFINED ${lib_name}_INSTALL_LIB_DIR)
+  SET(${lib_name}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+ENDIF()
+
+INSTALL(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${${lib_name}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${${lib_name}_INSTALL_LIB_DIR} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -184,5 +191,5 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseModuleDescriptionParser.cmake.in
 install(FILES 
   ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake 
   ${CMAKE_CURRENT_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake 
-  DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  DESTINATION lib/${lib_name} COMPONENT Development
   )

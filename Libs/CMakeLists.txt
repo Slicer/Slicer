@@ -120,5 +120,7 @@ slicer3_get_persistent_property(Slicer_Libs_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer_Libs_LIBRARIES ${tmp} ${libs})
 
 FOREACH(dir ${dirs})
+  SET(${dir}_INSTALL_BIN_DIR ${Slicer_INSTALL_LIB_DIR})
+  SET(${dir}_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
   ADD_SUBDIRECTORY(${dir})
 ENDFOREACH(dir)
