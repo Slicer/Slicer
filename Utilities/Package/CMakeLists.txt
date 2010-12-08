@@ -19,12 +19,20 @@ IF (Slicer_USE_PYTHONQT_WITH_TCL)
   # VTK/KWWidgets/Teem/TclTk packages, so we will assume they know what they
   #  are doing (i.e. they have Tcl/Tk installed in a standalone directory 
   # like /opt/tcltk8.5.0)
-
+  
+  SET(TclTk_INSTALL_LIB_DIR lib/TclTk)
+  
   if(Slicer_TCL_DIR)
     install(DIRECTORY
       ${Slicer_TCL_DIR}/
-      DESTINATION lib/TclTk
+      DESTINATION ${TclTk_INSTALL_LIB_DIR}
       USE_SOURCE_PERMISSIONS
+      REGEX "man/" EXCLUDE
+      REGEX "include/" EXCLUDE
+      REGEX "bin/" EXCLUDE
+      REGEX "demos/" EXCLUDE
+      PATTERN "*.sh" EXCLUDE
+      PATTERN "*.c" EXCLUDE
       )
   endif()
 ENDIF()
