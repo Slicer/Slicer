@@ -31,17 +31,18 @@
 #include <qMRMLEventLoggerWidget.h>
 
 // SlicerQt includes
+#include "qSlicerApplication.h"
+#include "qSlicerCLIExecutableModuleFactory.h"
+#include "qSlicerCLILoadableModuleFactory.h"
 #include "qSlicerCommandOptions.h"
-#include "qSlicerModulePanel.h"
-#include "qSlicerMainWindow.h"
-#include "qSlicerModuleSelectorToolBar.h"
-#include "qSlicerModuleManager.h"
-#include "qSlicerModuleFactoryManager.h"
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerLoadableModuleFactory.h"
-#include "qSlicerCLILoadableModuleFactory.h"
-#include "qSlicerCLIExecutableModuleFactory.h"
-#include "qSlicerApplication.h"
+#include "qSlicerMainWindow.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerModuleManager.h"
+#include "qSlicerModulePanel.h"
+#include "qSlicerModuleSelectorToolBar.h"
+#include "qSlicerStyle.h"
 
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_FULL
@@ -71,8 +72,9 @@ void PythonPreInitialization()
 int main(int argc, char* argv[])
 {
   //vtkObject::SetGlobalWarningDisplay(false);
-  ctkLogger::configure();
   QApplication::setDesktopSettingsAware(false);
+  QApplication::setStyle(new qSlicerStyle);
+  ctkLogger::configure();
 
   qSlicerApplication app(argc, argv);
 

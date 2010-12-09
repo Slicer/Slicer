@@ -57,29 +57,6 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerApplication");
 //--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void qSlicerApplyPalette(QPalette& palette)
-{
-  /* Old palette that makes a high contrast in Windows.
-  palette.setColor(QPalette::Window, Qt::white);
-  palette.setColor(QPalette::Base, Qt::white);
-  palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
-  palette.setColor(QPalette::Button, Qt::white);
-  */
-  palette.setColor(QPalette::Button, "#fcfcfc");
-  palette.setColor(QPalette::Light, "#c8c8c8");
-  palette.setColor(QPalette::Midlight, "#e6e6e6");
-  palette.setColor(QPalette::Dark, "#aaaaaa");
-  palette.setColor(QPalette::Mid, "#c8c8c8");
-  palette.setColor(QPalette::Base, Qt::white);
-  palette.setColor(QPalette::Window, Qt::white);
-  palette.setColor(QPalette::Shadow, "#5a5a5a");
-  palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
-  palette.setColor(QPalette::Highlight, QColor("#a5bfda")); // light blue
-}
-
-
-
-//-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerApplication);
@@ -95,19 +72,6 @@ public:
   ///
   /// Initialize application style
   void initStyle();
-
-  ///
-  /// Initialize application palette
-  /// Note: the palette is reset to its default values by initStyle
-  void initPalette();
-
-  ///
-  /// Initialize application font
-  void initFont();
-
-  // Description:
-  // Load application styleSheet
-  void loadStyleSheet();
 
   QMap<QWidget*,bool>                 TopLevelWidgetsSavedVisibilityState;
   Qt::WindowFlags                     DefaultWindowFlags;
@@ -133,9 +97,6 @@ void qSlicerApplicationPrivate::init()
   Q_Q(qSlicerApplication);
 
   this->initStyle();
-  this->initFont();
-  this->initPalette();
-  this->loadStyleSheet();
 
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
   // will be responsible to delete it
@@ -160,7 +121,6 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loaderV2,
 void qSlicerApplicationPrivate::initStyle()
 {
   Q_Q(qSlicerApplication);
-  q->setStyle(new qSlicerStyle(new QCleanlooksStyle));
 
   // Force showing the icons in the menus despite the native OS style
   // discourages it
@@ -173,46 +133,6 @@ void qSlicerApplicationPrivate::initStyle()
   // plugin
   q->addLibraryPath(q->slicerHome() + "/" + Slicer_INSTALL_LIB_DIR);
 }
-
-//-----------------------------------------------------------------------------
-void qSlicerApplicationPrivate::initPalette()
-{
-  Q_Q(qSlicerApplication);
-  QPalette myPalette = q->palette();
-  qSlicerApplyPalette(myPalette);
-  q->setPalette(myPalette);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerApplicationPrivate::initFont()
-{
-  /*
-  Q_Q(qSlicerApplication);
-  QFont f("Verdana", 9);
-  QFontInfo ff(f);
-  QFontDatabase database;
-  foreach (QString family, database.families())
-    {
-    cout << family.toStdString() << endl;
-    }
-
-  cout << "Family: " << ff.family().toStdString() << endl;
-  cout << "Size: " << ff.pointSize() << endl;
-  q->setFont(f);
-  */
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerApplicationPrivate::loadStyleSheet()
-{
-//   Q_Q(qSlicerApplication);
-//   QString styleSheet =
-//     "background-color: white;"
-//     "alternate-background-color: #e4e4fe;";
-//
-//   q->setStyleSheet(styleSheet);
-}
-
 
 //-----------------------------------------------------------------------------
 // qSlicerApplication methods

@@ -34,7 +34,14 @@
 // qSlicerStyle methods
 
 // --------------------------------------------------------------------------
-qSlicerStyle::qSlicerStyle(QStyle* style) : Superclass(style)
+qSlicerStyle::qSlicerStyle()
+  : Superclass(new QCleanlooksStyle)
+{
+
+}
+
+// --------------------------------------------------------------------------
+qSlicerStyle::~qSlicerStyle()
 {
 
 }
@@ -200,4 +207,18 @@ QRect qSlicerStyle::subControlRect(ComplexControl control, const QStyleOptionCom
   return rect;
 }
 
-
+//------------------------------------------------------------------------------
+QPalette qSlicerStyle::standardPalette()const
+{
+  QPalette palette = this->Superclass::standardPalette();
+  palette.setColor(QPalette::Button, "#fcfcfc");
+  palette.setColor(QPalette::Light, "#c8c8c8");
+  palette.setColor(QPalette::Midlight, "#e6e6e6");
+  palette.setColor(QPalette::Dark, "#aaaaaa");
+  palette.setColor(QPalette::Mid, "#c8c8c8");
+  palette.setColor(QPalette::Base, Qt::white);
+  palette.setColor(QPalette::Window, Qt::white);
+  palette.setColor(QPalette::Shadow, "#5a5a5a");
+  palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
+  return palette;
+}
