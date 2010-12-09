@@ -687,7 +687,13 @@ QString qSlicerCoreApplication::temporaryPath() const
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
   QFileInfo defaultTemporaryPath(QDir::tempPath(), this->applicationName());
-  return appSettings->value("TemporaryPath", defaultTemporaryPath.absoluteFilePath()).toString();
+  QString temp = appSettings->value("TemporaryPath", defaultTemporaryPath.absoluteFilePath()).toString();
+  // make sure the path exists
+  if (!QDir(temp).exists())
+    {
+    QDir::root().mkpath(temp);
+    }
+  return temp;
 }
 
 //-----------------------------------------------------------------------------
@@ -697,7 +703,7 @@ void qSlicerCoreApplication::setTemporaryPath(const QString& path)
   Q_ASSERT(appSettings);
   appSettings->setValue("TemporaryPath", path);
 }
-  
+
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::extensionsPath() const
 {
@@ -705,7 +711,13 @@ QString qSlicerCoreApplication::extensionsPath() const
   Q_ASSERT(appSettings);
   QFileInfo defaultExtensionsPath(appSettings->fileName());
   defaultExtensionsPath = defaultExtensionsPath.absolutePath() + "/Extensions";
-  return appSettings->value("ExtensionsPath", defaultExtensionsPath.absoluteFilePath()).toString();
+  QString extensions = appSettings->value("ExtensionsPath", defaultExtensionsPath.absoluteFilePath()).toString();
+  // make sure the path exists
+  if (!QDir(extensions).exists())
+    {
+    QDir::root().mkpath(extensions);
+    }
+  return extensions;
 }
 
 //-----------------------------------------------------------------------------
