@@ -116,6 +116,9 @@ IF(BUILD_ARCHIVE_WITHIN_CMAKE)
   # and call the library cmlibarchive
   ADD_LIBRARY(cmlibarchive STATIC ${libarchive_SOURCES} ${include_HEADERS})
   TARGET_LINK_LIBRARIES(cmlibarchive ${ADDITIONAL_LIBS})
+  IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    SET_TARGET_PROPERTIES(cmlibarchive PROPERTIES COMPILE_FLAGS "-fPIC")
+  ENDIF()
 ELSE()
   # Libarchive is a shared library
   ADD_LIBRARY(archive SHARED ${libarchive_SOURCES} ${include_HEADERS})
