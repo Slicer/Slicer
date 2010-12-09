@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>699</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <string>Extensions</string>
   </property>
   <property name="subTitle">
-   <string>Select(check) extensions, then uninstall to remove them from your version of 3D Slicer, or click download to retrieve them</string>
+   <string>Select extensions, then uninstall to remove them from your version of 3D Slicer, or click download to retrieve them</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
@@ -36,13 +36,22 @@
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QTreeWidget" name="ExtensionsTreeWidget">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
-     <property name="rootIsDecorated">
-      <bool>false</bool>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
      <property name="uniformRowHeights">
+      <bool>true</bool>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="animated">
       <bool>true</bool>
      </property>
      <column>

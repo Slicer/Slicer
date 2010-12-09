@@ -27,6 +27,8 @@
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
+class QTreeWidgetItem;
+class QNetworkReply;
 class qSlicerExtensionsWizardOverviewPagePrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsWizardOverviewPage
@@ -44,8 +46,15 @@ public:
   virtual ~qSlicerExtensionsWizardOverviewPage();
 
   virtual void initializePage();
-  virtual bool isComplete()const;
   virtual bool validatePage();
+
+public slots:
+  void installSelectedItems();
+  void uninstallSelectedItems();
+
+protected slots:
+  void onItemClicked(QTreeWidgetItem* item, int column);
+  void downloadFinished(QNetworkReply*);
 
 protected:
   QScopedPointer<qSlicerExtensionsWizardOverviewPagePrivate> d_ptr;

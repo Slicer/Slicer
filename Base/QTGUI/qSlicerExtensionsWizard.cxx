@@ -29,7 +29,7 @@
 #include "qSlicerExtensionsWizard.h"
 #include "qSlicerExtensionsWizardWelcomePage.h"
 #include "qSlicerExtensionsWizardOverviewPage.h"
-#include "ui_qSlicerExtensionsWizardRestartPage.h"
+#include "qSlicerExtensionsWizardRestartPage.h"
 
 static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizard");
 
@@ -43,7 +43,6 @@ protected:
 public:
   qSlicerExtensionsWizardPrivate(qSlicerExtensionsWizard& object);
   void init();
-  Ui_qSlicerExtensionsWizardRestartPage RestartPageUi;
 };
 
 // --------------------------------------------------------------------------
@@ -57,16 +56,10 @@ void qSlicerExtensionsWizardPrivate::init()
 {
   Q_Q(qSlicerExtensionsWizard);
 
-  qSlicerExtensionsWizardWelcomePage* welcome = new qSlicerExtensionsWizardWelcomePage;
+  q->addPage(new qSlicerExtensionsWizardWelcomePage);
+  q->addPage(new qSlicerExtensionsWizardOverviewPage);
+  q->addPage(new qSlicerExtensionsWizardRestartPage);
 
-  qSlicerExtensionsWizardOverviewPage* overview = new qSlicerExtensionsWizardOverviewPage;
-
-  QWizardPage* restart = new QWizardPage;
-  this->RestartPageUi.setupUi(restart);
-
-  q->addPage(welcome);
-  q->addPage(overview);
-  q->addPage(restart);
   q->setWindowTitle("Slicer extensions management");
 }
 

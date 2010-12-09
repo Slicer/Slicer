@@ -20,19 +20,50 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDesktopServices>
+#include <QDir>
+#include <QDirIterator>
+#include <QFileInfo>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QProgressBar>
+#include <QProgressDialog>
 #include <QUrl>
 
 // CTK includes
-#include "ctkLogger.h"
+#include <ctkCheckableHeaderView.h>
+#include <ctkLogger.h>
 
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerExtensionsWizardOverviewPage.h"
 #include "ui_qSlicerExtensionsWizardOverviewPage.h"
 
+// Logic includes
+#include "vtkSlicerExtensionsLogic.h"
+#include "vtkArchive.h"
+
+// VTK includes
+#include <vtkSmartPointer.h>
+
 static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizardOverviewPage");
 
 // qSlicerExtensionsWizardOverviewPagePrivate
+
+enum Columns
+{
+  ExtensionColumn = 0,
+  StatusColumn,
+  DescriptionColumn,
+  HomepageColumn,
+  BinaryURLColumn
+};
+
+enum Roles
+{
+  IsExtensionRole = Qt::UserRole
+};
 
 //-----------------------------------------------------------------------------
 class qSlicerExtensionsWizardOverviewPagePrivate
@@ -45,12 +76,29 @@ protected:
 public:
   qSlicerExtensionsWizardOverviewPagePrivate(qSlicerExtensionsWizardOverviewPage& object);
   void init();
+
+  QStringList scanExistingExtensions()const;
+  
+  void addExtension(ManifestEntry* extension);
+  QTreeWidgetItem* categoryItem(const QString& category)const;
+  QIcon iconFromStatus(int status)const;
+  bool isExtensionInstalled(const QString& extension)const ;
+  QTreeWidgetItem* item(const QUrl& url)const;
+
+  void downloadExtension(QTreeWidgetItem* extensionItem);
+  void installExtension(QTreeWidgetItem* extensionItem, const QString& archive);
+  void uninstallExtension(QTreeWidgetItem* extensionItem);
+
+  vtkSmartPointer<vtkSlicerExtensionsLogic> Logic;
+  QNetworkAccessManager                     NetworkManager;
+  QDir                                      ExtensionsDir;
 };
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsWizardOverviewPagePrivate::qSlicerExtensionsWizardOverviewPagePrivate(qSlicerExtensionsWizardOverviewPage& object)
   :q_ptr(&object)
 {
+  this->Logic = vtkSmartPointer<vtkSlicerExtensionsLogic>::New();
 }
 
 // --------------------------------------------------------------------------
@@ -58,7 +106,252 @@ void qSlicerExtensionsWizardOverviewPagePrivate::init()
 {
   Q_Q(qSlicerExtensionsWizardOverviewPage);
   this->setupUi(q);
+  
+  //ctkCheckableHeaderView* headerView =
+  //  new ctkCheckableHeaderView(Qt::Horizontal, this->ExtensionsTreeWidget);  
+  //headerView->setPropagateToItems(true);
+
+  //this->ExtensionsTreeWidget->setHeader(headerView);
+  //this->ExtensionsTreeWidget->model()->setHeaderData(
+  //  ExtensionColumn, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  this->ExtensionsTreeWidget->setColumnHidden(DescriptionColumn, true);
+  this->ExtensionsTreeWidget->header()->setResizeMode(ExtensionColumn, QHeaderView::ResizeToContents);
+  this->ExtensionsTreeWidget->header()->setResizeMode(StatusColumn, QHeaderView::ResizeToContents);
+  
+  QObject::connect( this->ExtensionsTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
+                    q, SLOT(onItemClicked(QTreeWidgetItem*, int)));
+  QObject::connect( this->InstallPushButton, SIGNAL(clicked()),
+                    q, SLOT(installSelectedItems()));
+  QObject::connect( this->UninstallPushButton, SIGNAL(clicked()),
+                    q, SLOT(uninstallSelectedItems()));
+  QObject::connect(&this->NetworkManager, SIGNAL(finished(QNetworkReply*)),
+                   q, SLOT(downloadFinished(QNetworkReply*)));
+
+  q->setProperty("installedExtensions", QStringList());
+  q->registerField("installedExtensions", q, "installedExtensions");
 }
+
+// --------------------------------------------------------------------------
+QStringList qSlicerExtensionsWizardOverviewPagePrivate::scanExistingExtensions()const
+{
+  QStringList extensions;
+  QFileInfoList entries = this->ExtensionsDir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::Executable);
+  foreach(const QFileInfo& entry, entries)
+    {
+    extensions << entry.absoluteFilePath();
+    }
+  return extensions;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsWizardOverviewPagePrivate
+::isExtensionInstalled(const QString& extensionName)const
+{
+  QFileInfo extensionInfo(this->ExtensionsDir, extensionName);
+  return extensionInfo.exists();
+}
+
+// --------------------------------------------------------------------------
+QTreeWidgetItem* qSlicerExtensionsWizardOverviewPagePrivate::categoryItem(const QString& category)const
+{
+  if (category.isEmpty())
+    {
+    return this->ExtensionsTreeWidget->invisibleRootItem();
+    }
+  QList<QTreeWidgetItem*> matchingCategories =
+    this->ExtensionsTreeWidget->findItems(category, Qt::MatchExactly);
+  Q_ASSERT(matchingCategories.count() <= 1);
+  if (matchingCategories.count() == 0)
+    {
+    return 0;
+    }
+  return matchingCategories[0];
+}
+
+
+// --------------------------------------------------------------------------
+QTreeWidgetItem* qSlicerExtensionsWizardOverviewPagePrivate::item(const QUrl& url)const
+{
+  foreach(QTreeWidgetItem* item, this->ExtensionsTreeWidget->selectedItems())
+    {
+    if (item->text(BinaryURLColumn) == url.toString())
+      {
+      return item;
+      }
+    }
+  return 0;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsWizardOverviewPagePrivate::addExtension(ManifestEntry* extension)
+{
+  QTreeWidgetItem* category = this->categoryItem(extension->Category.c_str());
+  if (category == 0)
+    {
+    category = new QTreeWidgetItem(QStringList() << QString(extension->Category.c_str()));
+    //category->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsTristate | Qt::ItemIsEnabled);
+    this->ExtensionsTreeWidget->addTopLevelItem(category);
+    }
+  Q_ASSERT(category);
+
+  QTreeWidgetItem* extensionItem = new QTreeWidgetItem;
+  //extensionItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+  //extensionItem->setData(ExtensionColumn, Qt::CheckStateRole, Qt::Unchecked);
+  extensionItem->setData(ExtensionColumn, IsExtensionRole, true);
+  extensionItem->setText(ExtensionColumn, extension->Name.c_str());
+  extensionItem->setToolTip(ExtensionColumn, extension->Description.c_str());
+  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
+    this->isExtensionInstalled(extension->Name.c_str()) ? 
+      vtkSlicerExtensionsLogic::StatusFoundOnDisk : 
+      vtkSlicerExtensionsLogic::StatusNotFoundOnDisk));
+  extensionItem->setText(StatusColumn, extension->ExtensionStatus.c_str());
+  extensionItem->setText(DescriptionColumn, extension->Description.c_str());
+  extensionItem->setToolTip(DescriptionColumn, extension->Description.c_str());
+  extensionItem->setText(HomepageColumn, extension->Homepage.c_str());
+  extensionItem->setToolTip(HomepageColumn, "Click the address to open the page into your browser");
+  extensionItem->setText(BinaryURLColumn, extension->URL.c_str());
+  extensionItem->setToolTip(BinaryURLColumn, "Remote location of the extension");
+  category->addChild(extensionItem);
+}
+
+// ----------------------------------------------------------------------------
+QIcon qSlicerExtensionsWizardOverviewPagePrivate::iconFromStatus(int status)const
+{
+  Q_Q(const qSlicerExtensionsWizardOverviewPage);
+  switch(status)
+    {
+    case vtkSlicerExtensionsLogic::StatusSuccess:
+      return q->style()->standardIcon(QStyle::SP_DialogYesButton);
+      break;
+    case vtkSlicerExtensionsLogic::StatusDownloading:
+    case vtkSlicerExtensionsLogic::StatusInstalling:
+    case vtkSlicerExtensionsLogic::StatusUninstalling:
+      return q->style()->standardIcon(QStyle::SP_BrowserReload);
+      break;
+    case vtkSlicerExtensionsLogic::StatusCancelled:
+      return q->style()->standardIcon(QStyle::SP_DialogCancelButton);
+      break;
+    case vtkSlicerExtensionsLogic::StatusError:
+      return q->style()->standardIcon(QStyle::SP_MessageBoxWarning);
+      break;
+    case vtkSlicerExtensionsLogic::StatusFoundOnDisk:
+      return q->style()->standardIcon(QStyle::SP_DriveHDIcon);
+      break;
+    case vtkSlicerExtensionsLogic::StatusNotFoundOnDisk:
+      return q->style()->standardIcon(QStyle::SP_DriveNetIcon);
+      break;
+    case vtkSlicerExtensionsLogic::StatusUnknown:
+    default:
+      break;
+    };
+  return QIcon();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsWizardOverviewPagePrivate
+::downloadExtension(QTreeWidgetItem* extensionItem)
+{
+  Q_Q(qSlicerExtensionsWizardOverviewPage);
+  if (!extensionItem->data(ExtensionColumn, IsExtensionRole).toBool())
+    {
+    return;
+    }
+  QProgressBar* progressBar = new QProgressBar(q);
+  progressBar->setRange(0,0);
+  this->ExtensionsTreeWidget->setItemWidget(extensionItem, ExtensionColumn, progressBar);
+  
+  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
+    vtkSlicerExtensionsLogic::StatusDownloading));
+
+  QUrl manifestURL(extensionItem->text(BinaryURLColumn));
+  QNetworkRequest request(manifestURL);
+  this->NetworkManager.get(request);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsWizardOverviewPagePrivate
+::installExtension(QTreeWidgetItem* extensionItem, const QString& archive)
+{
+  Q_Q(qSlicerExtensionsWizardOverviewPage);
+
+  if (!extensionItem->data(ExtensionColumn, IsExtensionRole).toBool())
+    {
+    return;
+    }
+
+  this->uninstallExtension(extensionItem);
+
+  extensionItem->setIcon(ExtensionColumn, 
+    this->iconFromStatus(vtkSlicerExtensionsLogic::StatusInstalling));
+
+  QString extensionName = extensionItem->text(ExtensionColumn);
+  QString currentPath = QDir::currentPath();
+  QDir extensionsDir(qSlicerCoreApplication::application()->extensionsPath());
+  extensionsDir.mkdir(extensionName);
+  extensionsDir.cd(extensionName);
+  QDir::setCurrent(extensionsDir.absolutePath());
+  extract_tar(archive.toLatin1(), true, true);
+  QDir::setCurrent(currentPath);
+  
+  bool installed = this->isExtensionInstalled(extensionName);
+  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
+    installed ? vtkSlicerExtensionsLogic::StatusFoundOnDisk : 
+                vtkSlicerExtensionsLogic::StatusError));
+  if (installed)
+    {
+    this->UninstallPushButton->setEnabled(true);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsWizardOverviewPagePrivate
+::uninstallExtension(QTreeWidgetItem* extensionItem)
+{
+  Q_Q(qSlicerExtensionsWizardOverviewPage);
+  
+  if (!extensionItem->data(ExtensionColumn, IsExtensionRole).toBool())
+    {
+    return;
+    }
+
+  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(vtkSlicerExtensionsLogic::StatusUninstalling));
+  
+  QString extensionName = extensionItem->text(ExtensionColumn);
+  QDir extensionsDir(qSlicerCoreApplication::application()->extensionsPath());
+  QFileInfo extensionFileInfo(extensionsDir, extensionName);
+  QDir extensionDir(extensionFileInfo.absoluteFilePath());
+  // delete all files
+  QDirIterator fileIt (extensionDir.absolutePath(), QDir::Files, QDirIterator::Subdirectories);
+  while(fileIt.hasNext())
+    {
+    fileIt.next();
+    QFileInfo file(fileIt.fileInfo());
+    file.dir().remove(file.fileName());
+    }
+  // delete all empty directories
+  // delete all files
+  QDirIterator dirIt (extensionDir.absolutePath(), QDir::Dirs, QDirIterator::Subdirectories);
+  while(dirIt.hasNext())
+    {
+    qDebug() << dirIt.next();
+    QFileInfo dir(dirIt.fileInfo());
+    dir.dir().rmdir(dir.fileName());
+    }
+  qDebug() << "dir: " << extensionsDir.absolutePath() << extensionName;
+  bool res = extensionsDir.rmpath(extensionName);
+  
+  extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
+    this->isExtensionInstalled(extensionName) ? 
+      vtkSlicerExtensionsLogic::StatusError: 
+      vtkSlicerExtensionsLogic::StatusNotFoundOnDisk));
+
+  if (this->scanExistingExtensions().count() == 0)
+    {
+    this->UninstallPushButton->setEnabled(false);
+    }
+}
+
+// qSlicerExtensionsWizardOverviewPage
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsWizardOverviewPage::qSlicerExtensionsWizardOverviewPage(QWidget* _parent)
@@ -78,8 +371,63 @@ qSlicerExtensionsWizardOverviewPage::~qSlicerExtensionsWizardOverviewPage()
 // --------------------------------------------------------------------------
 void qSlicerExtensionsWizardOverviewPage::initializePage()
 {
-  QString installPath = this->field("installPath").toString();
+  Q_D(qSlicerExtensionsWizardOverviewPage);
+  
+  d->ExtensionsDir = QDir(this->field("installPath").toString());
   QString extensionsURL = this->field("extensionsURL").toString();
+  QString manifestFile = this->field("manifestFile").toString();
+  
+  bool install = this->field("installEnabled").toBool();
+  bool uninstall = this->field("uninstallEnabled").toBool();
+  
+  foreach(QTreeWidgetItem* item, d->ExtensionsTreeWidget->invisibleRootItem()->takeChildren())
+    {
+    delete item;
+    }
+  d->Logic->ClearModules();
+  d->Logic->SetRepositoryURL(extensionsURL.toLatin1());
+  d->Logic->SetTemporaryDirectory(qSlicerCoreApplication::application()->temporaryPath().toLatin1());
+  d->Logic->SetInstallPath(d->ExtensionsDir.absolutePath().toLatin1());
+
+  QProgressDialog progressDialog(this);
+  progressDialog.setLabelText("Populate server extensions");
+  progressDialog.setRange(0,0);
+  progressDialog.open();
+  if (install)
+    {
+    bool res = d->Logic->UpdateModulesFromRepository(manifestFile.toStdString());
+    if (!res)
+      {
+      qWarning() << "Failed to retrieve server modules";
+      }
+    d->InstallPushButton->setEnabled(res);
+    }
+  else
+    {
+    d->InstallPushButton->setEnabled(false);
+    }
+  qApp->processEvents();
+  if (uninstall)
+    {
+    QStringList extensions = d->scanExistingExtensions();
+    std::string extensionPaths = extensions.join(";").toStdString();
+    // maybe there are some extensions locally but not remotely
+    d->Logic->UpdateModulesFromDisk(extensionPaths);
+    d->UninstallPushButton->setEnabled(extensions.size() > 0);
+    }
+  else
+    {
+    d->UninstallPushButton->setEnabled(false);
+    }
+  qApp->processEvents();
+  const std::vector<ManifestEntry*>& modules = d->Logic->GetModules();
+  std::vector<ManifestEntry*>::const_iterator it;
+  for( it = modules.begin(); it != modules.end(); ++it)
+    {
+    d->addExtension(*it);
+    }
+  d->ExtensionsTreeWidget->expandAll();
+  progressDialog.close();
 }
 
 // --------------------------------------------------------------------------
@@ -87,13 +435,85 @@ bool qSlicerExtensionsWizardOverviewPage::validatePage()
 {
   Q_D(qSlicerExtensionsWizardOverviewPage);
 
+  this->setProperty("installedExtensions", d->scanExistingExtensions());
+
   return true;
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsWizardOverviewPage::isComplete()const
+void qSlicerExtensionsWizardOverviewPage::onItemClicked(QTreeWidgetItem* item, int column)
 {
-  Q_D(const qSlicerExtensionsWizardOverviewPage);
+  switch(column)
+    {
+    case HomepageColumn:
+      QDesktopServices::openUrl(item->text(HomepageColumn));
+      break;
+    default:
+      break;
+    };
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsWizardOverviewPage::installSelectedItems()
+{
+  Q_D(qSlicerExtensionsWizardOverviewPage);
   
-  return true;
+  QList<QTreeWidgetItem*> items = d->ExtensionsTreeWidget->selectedItems();
+  
+  foreach(QTreeWidgetItem* item, items)
+    {
+    d->downloadExtension(item);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsWizardOverviewPage::uninstallSelectedItems()
+{
+  Q_D(qSlicerExtensionsWizardOverviewPage);
+  
+  QList<QTreeWidgetItem*> items = d->ExtensionsTreeWidget->selectedItems();
+  
+  foreach(QTreeWidgetItem* item, items)
+    {
+    d->uninstallExtension(item);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsWizardOverviewPage::downloadFinished(QNetworkReply* reply)
+{
+  Q_D(qSlicerExtensionsWizardOverviewPage);
+
+  QUrl extensionUrl = reply->url();
+  QTreeWidgetItem* item = d->item(extensionUrl);
+
+  if (reply->error())
+    {
+    qWarning() << "Failed downloading: " << extensionUrl.toString();
+    d->ExtensionsTreeWidget->setItemWidget(item, ExtensionColumn,0);
+    item->setIcon(ExtensionColumn, d->iconFromStatus(
+      vtkSlicerExtensionsLogic::StatusError));
+    return;
+    }
+
+  QFileInfo urlFileInfo(extensionUrl.path());
+  QFileInfo fileInfo(qSlicerCoreApplication::application()->temporaryPath(),
+    urlFileInfo.fileName());
+  QFile file(fileInfo.absoluteFilePath());
+  if (!file.open(QIODevice::WriteOnly))
+    {
+    qWarning() << "Could not open " << fileInfo.absoluteFilePath() << " for writing: %s" << file.errorString();
+    // remove progress bar
+    d->ExtensionsTreeWidget->setItemWidget(item, ExtensionColumn, 0);
+    item->setIcon(ExtensionColumn, d->iconFromStatus(
+      vtkSlicerExtensionsLogic::StatusError));
+    return;
+    }
+
+  file.write(reply->readAll());
+  file.close();
+  // Delete the progress bar
+  d->ExtensionsTreeWidget->setItemWidget(item, ExtensionColumn,0);
+
+  d->installExtension(item, fileInfo.absoluteFilePath());
 }

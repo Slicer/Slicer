@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerExtensionsWizardWelcomePage_h
-#define __qSlicerExtensionsWizardWelcomePage_h
+#ifndef __qSlicerExtensionsWizardRestartPage_h
+#define __qSlicerExtensionsWizardRestartPage_h
 
 // Qt includes
 #include <QWizardPage>
@@ -27,10 +27,9 @@
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
-class qSlicerExtensionsWizardWelcomePagePrivate;
-class QNetworkReply;
+class qSlicerExtensionsWizardRestartPagePrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsWizardWelcomePage
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsWizardRestartPage
   : public QWizardPage
 {
   Q_OBJECT
@@ -39,27 +38,22 @@ public:
   typedef QWizardPage Superclass;
 
   /// Constructor
-  explicit qSlicerExtensionsWizardWelcomePage(QWidget* parent = 0);
+  explicit qSlicerExtensionsWizardRestartPage(QWidget* parent = 0);
 
   /// Destructor
-  virtual ~qSlicerExtensionsWizardWelcomePage();
-  
+  virtual ~qSlicerExtensionsWizardRestartPage();
+
   virtual void initializePage();
-  virtual bool isComplete()const;
-  virtual bool validatePage();
 
 public slots:
-  void deleteTemporaryZipFiles();
-
-protected slots:
-  void downloadFinished(QNetworkReply*);
+  void restart();
 
 protected:
-  QScopedPointer<qSlicerExtensionsWizardWelcomePagePrivate> d_ptr;
+  QScopedPointer<qSlicerExtensionsWizardRestartPagePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerExtensionsWizardWelcomePage);
-  Q_DISABLE_COPY(qSlicerExtensionsWizardWelcomePage);
+  Q_DECLARE_PRIVATE(qSlicerExtensionsWizardRestartPage);
+  Q_DISABLE_COPY(qSlicerExtensionsWizardRestartPage);
 };
 
 #endif

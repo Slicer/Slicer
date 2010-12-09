@@ -20,6 +20,11 @@
 
 // Qt includes
 #include <QDebug>
+#include <QFile>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QProgressDialog>
 #include <QSettings>
 #include <QUrl>
 
@@ -46,12 +51,16 @@ protected:
 public:
   qSlicerExtensionsWizardWelcomePagePrivate(qSlicerExtensionsWizardWelcomePage& object);
   void init();
+
+  QNetworkAccessManager NetworkManager;
+  QProgressDialog*      ProgressDialog;
 };
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsWizardWelcomePagePrivate::qSlicerExtensionsWizardWelcomePagePrivate(qSlicerExtensionsWizardWelcomePage& object)
   :q_ptr(&object)
 {
+  this->ProgressDialog = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -60,12 +69,18 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
   Q_Q(qSlicerExtensionsWizardWelcomePage);
 
   this->setupUi(q);
+  this->DeleteTempPushButton->setIcon(q->style()->standardIcon(QStyle::SP_TrashIcon));
+  this->ProgressDialog = new QProgressDialog(q);
+  this->ProgressDialog->setLabelText("Download manifest");
+  this->ProgressDialog->setRange(0,0);
 
   q->registerField("installEnabled", this->InstallExtensionsCheckBox);
   q->registerField("uninstallEnabled", this->UninstallExtensionsCheckBox);
   q->registerField("installPath", this->InstallPathDirectoryButton, "directory", SIGNAL(directoryChanged(const QString&)));
   q->registerField("extensionsURL", this->SearchURLComboBox, "currentText", SIGNAL(editTextChanged(const QString&)));
-  
+  q->setProperty("manifestFile", QString());
+  q->registerField("manifestFile", q, "manifestFile");
+
   QObject::connect(this->InstallExtensionsCheckBox, SIGNAL(toggled(bool)),
                    q, SIGNAL(completeChanged()));
   QObject::connect(this->UninstallExtensionsCheckBox, SIGNAL(toggled(bool)),
@@ -75,7 +90,10 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
   QObject::connect(this->SearchURLComboBox, SIGNAL(currentIndexChanged(const QString&)),
                    q, SIGNAL(completeChanged()));
   QObject::connect(this->DeleteTempPushButton, SIGNAL(clicked()),
-                   q, SIGNAL(deleteTemporaryZipFiles()));
+                   q, SLOT(deleteTemporaryZipFiles()));
+  
+  QObject::connect(&this->NetworkManager, SIGNAL(finished(QNetworkReply*)),
+                   q, SLOT(downloadFinished(QNetworkReply*)));
 }
 
 // --------------------------------------------------------------------------
@@ -105,7 +123,6 @@ void qSlicerExtensionsWizardWelcomePage::initializePage()
   d->InstallPathDirectoryButton->setDirectory(
     qSlicerCoreApplication::application()->extensionsPath());
 
-
   QString url("http://ext.slicer.org/ext/");
   url += qSlicerCoreApplication::application()->repositoryUrl();
   url += "/";
@@ -125,21 +142,46 @@ bool qSlicerExtensionsWizardWelcomePage::validatePage()
 {
   Q_D(qSlicerExtensionsWizardWelcomePage);
 
-  QUrl searchURL(d->SearchURLComboBox->currentText());
-  int index = d->SearchURLComboBox->findText(searchURL.toString());
-  if (index == -1 && searchURL.isValid())
+  // Make sure the Extensions directory exists.
+  QString extensionsPath = this->field("installPath").toString();
+  QDir::root().mkpath(extensionsPath);
+  
+  // Set manifestFile as a dynamic property
+  this->setProperty("manifestFile", extensionsPath + "/manifest.html");
+
+  // Download manifest file that contains the list of the remote extensions
+  QString manifestURL = d->SearchURLComboBox->currentText();
+  if (manifestURL.right(1) != "/")
     {
-    d->SearchURLComboBox->addItem(searchURL.toString());
+    manifestURL += "/";
+    }
+  QUrl manifestUrl(manifestURL);
+  QNetworkRequest request(manifestUrl);
+  // When the NetworkManager will be done, it will close the progress dialog
+  d->NetworkManager.get(request);
+  if (d->ProgressDialog->exec() == QDialog::Rejected)
+    {
+    // Failed to download the file
+    return false;
+    }
+  
+  // Save the url into the favorite box so it can be used next time
+  int index = d->SearchURLComboBox->findText(manifestURL);
+  if (index == -1)
+    {
+    d->SearchURLComboBox->addItem(manifestURL);
     }
 
+  // Save all the favorite urls for next sessions
   QStringList urls;
   for (int i = 0; i < d->SearchURLComboBox->count(); ++i)
     {
     urls << d->SearchURLComboBox->itemText(i);
     }
+
   QSettings settings;
-  settings.setValue("Modules/ExtensionsUrls", urls);
-  
+  settings.setValue("Modules/ExtensionsUrls", urls);  
+
   return true;
 }
 
@@ -177,4 +219,29 @@ void qSlicerExtensionsWizardWelcomePage::deleteTemporaryZipFiles()
     {
     tempDir.remove(zipFile);
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsWizardWelcomePage::downloadFinished(QNetworkReply* reply)
+{
+  Q_D(qSlicerExtensionsWizardWelcomePage);
+  if (reply->error())
+    {
+    qWarning() << "Failed downloading: " << reply->url().toString();
+    d->ProgressDialog->cancel();
+    return;
+    }
+  QString fileName = this->field("manifestFile").toString();
+  QFile file(fileName);
+  if (!file.open(QIODevice::WriteOnly))
+    {
+    qWarning() << "Could not open " << fileName << " for writing: %s" << file.errorString();
+    d->ProgressDialog->cancel();
+    return;
+    }
+
+  file.write(reply->readAll());
+  file.close();
+
+  d->ProgressDialog->accept();
 }

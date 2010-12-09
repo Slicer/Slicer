@@ -19,8 +19,9 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QStringList>
 #include <QDirIterator>
+#include <QSettings>
+#include <QStringList>
 
 // SlicerQt includes
 #include "qSlicerLoadableModuleFactory.h"
@@ -72,6 +73,11 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
     app->addLibraryPath(path);
     }
 
+  QSettings settings;
+  foreach(const QString& path, settings.value("Modules/Extensions", QStringList()).toStringList())
+    {
+    app->addLibraryPath(path);
+    }
 //   foreach (QString path, app->libraryPaths())
 //     {
 //     qDebug() << "libraryPath:" << path;

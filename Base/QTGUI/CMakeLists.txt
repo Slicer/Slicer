@@ -37,6 +37,8 @@ SET(KIT_SRCS
   qSlicerExtensionsWizard.h
   qSlicerExtensionsWizardOverviewPage.cxx
   qSlicerExtensionsWizardOverviewPage.h
+  qSlicerExtensionsWizardRestartPage.cxx
+  qSlicerExtensionsWizardRestartPage.h
   qSlicerExtensionsWizardWelcomePage.cxx
   qSlicerExtensionsWizardWelcomePage.h
 
@@ -108,6 +110,7 @@ SET(KIT_MOC_SRCS
   qSlicerDataDialog_p.h
   qSlicerExtensionsWizard.h
   qSlicerExtensionsWizardOverviewPage.h
+  qSlicerExtensionsWizardRestartPage.h
   qSlicerExtensionsWizardWelcomePage.h
   qSlicerFileDialog.h
   qSlicerIOManager.h

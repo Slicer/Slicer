@@ -27,13 +27,6 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QPushButton" name="RestartLaterPushButton">
-     <property name="text">
-      <string>Restart 3D Slicer later</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>
