@@ -40,7 +40,9 @@ public:
   virtual ~qSlicerScriptedLoadableModuleWidgetPrivate();
 
   enum {
-    SetupMethod = 0
+    SetupMethod = 0,
+    EnterMethod,
+    ExitMethod
     };
 
   static int          APIMethodCount;
@@ -55,12 +57,14 @@ public:
 // qSlicerScriptedLoadableModuleWidgetPrivate methods
 
 //---------------------------------------------------------------------------
-int qSlicerScriptedLoadableModuleWidgetPrivate::APIMethodCount = 1;
+int qSlicerScriptedLoadableModuleWidgetPrivate::APIMethodCount = 3;
 
 //---------------------------------------------------------------------------
 const char* qSlicerScriptedLoadableModuleWidgetPrivate::APIMethodNames[7] =
 {
   "setup",
+  "enter",
+  "exit"
 };
 
 //-----------------------------------------------------------------------------
@@ -184,6 +188,30 @@ void qSlicerScriptedLoadableModuleWidget::setup()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   PyObject * method = d->PythonAPIMethods[Pimpl::SetupMethod];
+  if (!method)
+    {
+    return;
+    }
+  PyObject_CallObject(method, 0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerScriptedLoadableModuleWidget::enter()
+{
+  Q_D(qSlicerScriptedLoadableModuleWidget);
+  PyObject * method = d->PythonAPIMethods[Pimpl::EnterMethod];
+  if (!method)
+    {
+    return;
+    }
+  PyObject_CallObject(method, 0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerScriptedLoadableModuleWidget::exit()
+{
+  Q_D(qSlicerScriptedLoadableModuleWidget);
+  PyObject * method = d->PythonAPIMethods[Pimpl::ExitMethod];
   if (!method)
     {
     return;

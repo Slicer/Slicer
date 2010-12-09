@@ -46,6 +46,13 @@ public:
   /// \sa QWidget
   qSlicerAbstractModuleWidget(QWidget *parent=0);
 
+  ///
+  /// The enter and exit methods are called when the module panel changes.
+  /// These give the module a chance to do any setup or shutdown operations
+  /// as it becomes active and inactive.
+  virtual void enter() {};
+  virtual void exit() {};
+
 protected:
   virtual void setup();
 };

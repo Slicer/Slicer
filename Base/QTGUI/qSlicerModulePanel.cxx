@@ -161,6 +161,8 @@ void qSlicerModulePanel::addModule(const QString& moduleName)
   QString acknowledgement = module->acknowledgementText();
   d->AcknowledgementLabel->setHtml(acknowledgement);
 
+  moduleWidget->enter();
+
   emit moduleAdded(module->name());
 }
 
@@ -185,6 +187,8 @@ void qSlicerModulePanel::removeModule(const QString& moduleName)
     {
     return;
     }
+
+  moduleWidget->exit();
 
   //emit moduleAboutToBeRemoved(moduleWidget->module());
 

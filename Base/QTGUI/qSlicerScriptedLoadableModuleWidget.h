@@ -41,6 +41,9 @@ public:
 
   bool setPythonSource(const QString& newPythonSource);
 
+  virtual void enter();
+  virtual void exit();
+
 protected:
   virtual void setup();
   
