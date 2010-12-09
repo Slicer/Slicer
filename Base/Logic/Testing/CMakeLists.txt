@@ -2,6 +2,7 @@ SET(KIT BaseLogic)
 
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  vtkArchiveTest1.cxx
   vtkDataIOManagerLogicTest1.cxx
   vtkSlicerTransformLogicTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
@@ -20,12 +21,12 @@ MACRO(SIMPLE_TEST TESTNAME)
   SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${LIBRARY_NAME})
 ENDMACRO()
 
+MACRO(PARAM_TEST TESTNAME PARAM)
+  ADD_TEST(NAME ${TESTNAME} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${PARAM})
+  SET_PROPERTY(TEST ${TESTNAME} PROPERTY LABELS ${LIBRARY_NAME})
+ENDMACRO()
+
+PARAM_TEST( vtkArchiveTest1 ${CMAKE_CURRENT_SOURCE_DIR}/vol.zip)
 SIMPLE_TEST( vtkDataIOManagerLogicTest1 )
 
-set(testname vtkSlicerTransformLogicTest1)
-ADD_TEST(
-  NAME ${testname}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:${KIT}CxxTests> vtkSlicerTransformLogicTest1
-    ${CMAKE_CURRENT_SOURCE_DIR}/affineTransform.txt
-  )
-SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${LIBRARY_NAME})
+PARAM_TEST( vtkSlicerTransformLogicTest1 ${CMAKE_CURRENT_SOURCE_DIR}/affineTransform.txt)
