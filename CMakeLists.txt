@@ -533,6 +533,17 @@ IF(Slicer_USE_OPENCV)
   #INCLUDE(${OPENCV_USE_FILE})
 ENDIF()
 
+#-----------------------------------------------------------------------------
+# libarchive
+#-----------------------------------------------------------------------------
+SET(HAVE_LIBZ TRUE)
+SET(HAVE_ZLIB_H TRUE)
+SET(ZLIB_INCLUDE_DIR ${VTK_SOURCE_DIR}/Utilities/vtkzLib)
+SET(ZLIB_LIBRARIES ${VTK_ZLIB_LIBRARIES})
+SET(ZLIB_LIBRARY ${VTK_ZLIB_LIBRARIES})
+SET(BUILD_ARCHIVE_WITHIN_CMAKE TRUE)
+ADD_DEFINITIONS(-DLIBARCHIVE_STATIC)
+ADD_SUBDIRECTORY(Utilities/libarchive)
 
 #-----------------------------------------------------------------------------
 # Need some Tcl/Tk info
