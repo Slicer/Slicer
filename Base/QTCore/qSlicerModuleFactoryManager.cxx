@@ -110,6 +110,10 @@ qSlicerAbstractCoreModule* qSlicerModuleFactoryManagerPrivate::instantiateModule
   qSlicerAbstractCoreModule* module = 0;
   // Try to instantiate a module
   module = factory->instantiate(name);
+  if ( !module )
+    {
+    return 0;
+    }
   Q_ASSERT(module);
   module->setName(name);
   
