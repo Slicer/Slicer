@@ -114,7 +114,7 @@ qSlicerExtensionsWizardWelcomePage::~qSlicerExtensionsWizardWelcomePage()
 void qSlicerExtensionsWizardWelcomePage::initializePage()
 {
   Q_D(qSlicerExtensionsWizardWelcomePage);
-  
+
   if (!qSlicerCoreApplication::application())
     {
     return;
@@ -124,7 +124,7 @@ void qSlicerExtensionsWizardWelcomePage::initializePage()
     qSlicerCoreApplication::application()->extensionsPath());
 
   QString url("http://ext.slicer.org/ext/");
-  url += qSlicerCoreApplication::application()->repositoryUrl();
+  url += qSlicerCoreApplication::application()->repositoryBranch();
   url += "/";
   url += qSlicerCoreApplication::application()->repositoryRevision();
   url += "-";
@@ -209,7 +209,6 @@ bool qSlicerExtensionsWizardWelcomePage::isComplete()const
 // --------------------------------------------------------------------------
 void qSlicerExtensionsWizardWelcomePage::deleteTemporaryZipFiles()
 {
-  Q_D(qSlicerExtensionsWizardWelcomePage);
   if (!qSlicerCoreApplication::application())
     {
     return;

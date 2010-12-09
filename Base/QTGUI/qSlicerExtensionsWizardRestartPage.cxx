@@ -87,10 +87,8 @@ qSlicerExtensionsWizardRestartPage::~qSlicerExtensionsWizardRestartPage()
 // --------------------------------------------------------------------------
 void qSlicerExtensionsWizardRestartPage::initializePage()
 {
-  Q_D(qSlicerExtensionsWizardRestartPage);
-  
   QStringList extensions = this->field("installedExtensions").toStringList();
-  
+
   QSettings settings;
   settings.setValue("Modules/Extensions", extensions);
 }
@@ -98,8 +96,6 @@ void qSlicerExtensionsWizardRestartPage::initializePage()
 // --------------------------------------------------------------------------
 void qSlicerExtensionsWizardRestartPage::restart()
 {
-  Q_D(qSlicerExtensionsWizardRestartPage);
-
   //QProcess::startDetached(qSlicerCoreApplication::application()->slicerHome() + "/Slicer3");
   //QProcess::startDetached("E:/work/Slicer/Slicer4/Slicer4-Superbuild-Debug/Slicer-build/Slicer3.exe");
   QStringList args = qSlicerCoreApplication::instance()->arguments();
