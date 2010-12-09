@@ -130,6 +130,7 @@ public:
   QString                                       IntDir;
   
   QString                                       RepositoryUrl;
+  QString                                       RepositoryBranch;
   QString                                       RepositoryRevision;
   QString                                       Platform;
   
@@ -306,6 +307,8 @@ void qSlicerCoreApplicationPrivate::discoverRepository()
   slicerVersionStream >> buildDate >> buildDate;
   slicerVersionStream >> repositoryUrl >> this->RepositoryUrl;
   slicerVersionStream >> repositoryRevision >> this->RepositoryRevision;
+
+  this->RepositoryBranch = QFileInfo(this->RepositoryUrl).fileName();
 }
 
 //-----------------------------------------------------------------------------
@@ -810,6 +813,13 @@ QString qSlicerCoreApplication::repositoryUrl()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->RepositoryUrl;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::repositoryBranch()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->RepositoryBranch;
 }
 
 //-----------------------------------------------------------------------------

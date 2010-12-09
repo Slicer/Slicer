@@ -184,9 +184,11 @@ public:
 
   /// Return the copyrights of Slicer
   virtual QString copyrights()const;
-  
-  /// 
+
+  ///
   QString repositoryUrl()const;
+  /// Extracted from the url
+  QString repositoryBranch()const;
   QString repositoryRevision()const;
   QString platform()const;
 
