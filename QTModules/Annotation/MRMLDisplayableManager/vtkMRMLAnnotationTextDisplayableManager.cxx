@@ -153,7 +153,7 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
   VTK_CREATE(vtkCaptionRepresentation, captionRep);
 
   captionRep->SetMoving(1);
-
+  
   if (textNode->GetTextLabel())
     {
     captionRep->GetCaptionActor2D()->SetCaption(textNode->GetTextLabel());
@@ -177,13 +177,25 @@ vtkAbstractWidget * vtkMRMLAnnotationTextDisplayableManager::CreateWidget(vtkMRM
      captionRep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
      captionRep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetValue(displayCoordinates1);
 
+     // turn off the three dimensional leader
+     captionRep->GetCaptionActor2D()->ThreeDimensionalLeaderOff();
+
      }
    else
      {
      captionRep->SetAnchorPosition(worldCoordinates1);
+     // turn on the three dimensional leader
+     captionRep->GetCaptionActor2D()->ThreeDimensionalLeaderOn();
 
      }
 
+  double *captionWorldCoordinates = textNode->GetControlPointCoordinates(1);
+  double captionViewportCoordinates[4];
+  double captionDisplayCoordinates[4];
+  this->GetWorldToDisplayCoordinates(captionWorldCoordinates,captionDisplayCoordinates);
+  this->GetDisplayToViewportCoordinates(captionDisplayCoordinates[0], captionDisplayCoordinates[1], captionViewportCoordinates);
+  captionRep->SetPosition(captionViewportCoordinates);
+  
   captionWidget->SetInteractor(this->GetInteractor());
 
   captionWidget->SetRepresentation(captionRep);
@@ -291,7 +303,9 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnot
 
   // update widget text
   rep->GetCaptionActor2D()->SetCaption(textNode->GetText(0).c_str());
+  // TODO: trigger resizing the boundary around it if it's on and text changed
 
+  
   if (!textNode->GetAnnotationTextDisplayNode())
     {
     // no display node yet, create one
@@ -366,6 +380,10 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   double worldCoordinates1[4];
   double displayCoordinates1[4];
 
+  // for the caption 
+  double worldCoordinates2[4];
+  double displayCoordinates2[4];
+
   bool allowMovement = true;
 
   if (this->GetSliceNode())
@@ -374,6 +392,7 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
     rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->SetCoordinateSystemToDisplay();
     rep->GetCaptionActor2D()->GetAttachmentPointCoordinate()->GetValue(displayCoordinates1);
 
+    
     this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
 
     if (displayCoordinates1[0] < 0 || displayCoordinates1[0] > this->GetInteractor()->GetRenderWindow()->GetSize()[0])
@@ -398,6 +417,18 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   // update mrml coordinates
   textNode->SetTextCoordinates(worldCoordinates1);
 
+  double *captionPosition = rep->GetPosition();
+  //rep->GetPosition(displayCoordinates2);
+  if (captionPosition)
+    {
+    displayCoordinates2[0] = captionPosition[0];
+    displayCoordinates2[1] = captionPosition[1];
+    displayCoordinates2[2] = 0.0;
+    displayCoordinates2[3] = 0.0;
+    }
+  this->GetDisplayToWorldCoordinates(displayCoordinates2,worldCoordinates2);
+  textNode->SetCaptionCoordinates(worldCoordinates2);
+  
   // update mrml text
   textNode->SetText(0,rep->GetCaptionActor2D()->GetCaption(),1,1);
 
@@ -449,12 +480,45 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
     // switch to updating state to avoid events mess
     this->m_Updating = 1;
 
+    vtkHandleWidget *h1 = this->GetSeed(0);
+
+    // convert the coordinates
+    double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
+    // offset the caption
+    double displayCoordinates2[4];
+    if (this->GetSliceNode())
+     {
+     // offset by 50
+     displayCoordinates2[0] = displayCoordinates1[0] - 50.0;
+     displayCoordinates2[1] = displayCoordinates1[1] - 50.0;
+     }
+    else
+      {
+      // offest by a bit more
+      displayCoordinates2[0] = displayCoordinates1[0] - 100.0;
+      displayCoordinates2[1] = displayCoordinates1[1] - 100.0;
+      }
+    displayCoordinates2[2] = 0.0;
+    displayCoordinates2[3] = 0.0;
+    
+    if (displayCoordinates1)
+      {
+      vtkDebugMacro("OnClickInRenderWindow: displaycoordinates1 (anchor) = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", 2 (caption) = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
+      }
     double worldCoordinates1[4];
-    this->GetDisplayToWorldCoordinates(x,y,worldCoordinates1);
+    double worldCoordinates2[4];
+      
+    this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
+
+    this->RestrictDisplayCoordinatesToViewport(displayCoordinates2);
+    vtkDebugMacro("OnClickInRenderWindow: restricted to viewport displaycoordinates2 = " << displayCoordinates2[0] << ", " << displayCoordinates2[1] << ", " << displayCoordinates2[2]);
+    this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);
 
     // create the MRML node
     vtkMRMLAnnotationTextNode *textNode = vtkMRMLAnnotationTextNode::New();
     textNode->SetTextCoordinates(worldCoordinates1);
+    textNode->SetCaptionCoordinates(worldCoordinates2);
+    
     textNode->SetTextLabel("New text");
 
     textNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationText"));

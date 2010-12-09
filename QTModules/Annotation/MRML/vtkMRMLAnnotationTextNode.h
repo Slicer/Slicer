@@ -34,6 +34,10 @@ public:
   int SetTextCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
   double* GetTextCoordinates() {return this->GetControlPointCoordinates(0);}
 
+  // coordinates of the text box for the caption widget
+  int SetCaptionCoordinates(double newCoord[3]) {return this->SetControlPoint(1,newCoord,1,1);}
+  double* GetCaptionCoordinates() {return this->GetControlPointCoordinates(1);}
+
   void SetTextLabel(const char* newLabel) {this->SetText(0, newLabel, 1, 1);}
   vtkStdString GetTextLabel() {return this->GetText(0);}
 

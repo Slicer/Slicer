@@ -128,6 +128,10 @@ protected:
   void GetWorldToDisplayCoordinates(double r, double a, double s, double * displayCoordinates);
   void GetWorldToDisplayCoordinates(double * worldCoordinates, double * displayCoordinates);
 
+  /// Convert display to viewport coordinates
+  void GetDisplayToViewportCoordinates(double x, double y, double * viewportCoordinates);
+  void GetDisplayToViewportCoordinates(double *displayCoordinates, double * viewportCoordinates);
+
   //
   // Widget functionality
   //

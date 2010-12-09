@@ -894,6 +894,73 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToDisplayCoordinates(double * 
 }
 
 //---------------------------------------------------------------------------
+/// Convert display to viewport coordinates
+void vtkMRMLAnnotationDisplayableManager::GetDisplayToViewportCoordinates(double x, double y, double * viewportCoordinates)
+{
+
+  if (viewportCoordinates == NULL)
+    {
+    return;
+    }
+  double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
+  double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
+  
+  if (this->GetSliceNode())
+    {
+    // 2D case
+
+    int numberOfColumns = this->GetSliceNode()->GetLayoutGridColumns();
+    int numberOfRows = this->GetSliceNode()->GetLayoutGridRows();
+
+    float tempX = x / windowWidth;
+    float tempY = (windowHeight - y) / windowHeight;
+
+    float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
+
+    vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x,y);
+
+
+    double displayCoordinates[4];
+    displayCoordinates[0] = x - pokedRenderer->GetOrigin()[0];
+    displayCoordinates[1] = y - pokedRenderer->GetOrigin()[1];
+    displayCoordinates[2] = z;
+    displayCoordinates[3] = 1;
+
+    if (windowWidth != 0.0)
+      {
+      viewportCoordinates[0] = displayCoordinates[0]/windowWidth;
+      }
+    if (windowHeight != 0.0)
+      {
+      viewportCoordinates[1] = displayCoordinates[1]/windowHeight;
+      }
+    vtkDebugMacro("GetDisplayToViewportCoordinates: x = " << x << ", y = " << y << ", display coords calc as " << displayCoordinates[0] << ", " << displayCoordinates[1] << ", returning viewport = " << viewportCoordinates[0] << ", " << viewportCoordinates[1]);
+    }
+  else
+    {
+    if (windowWidth != 0.0)
+      {
+      viewportCoordinates[0] = x/windowWidth;
+      }
+    if (windowHeight != 0.0)
+      {
+      viewportCoordinates[1] = y/windowHeight;
+      }
+    vtkDebugMacro("GetDisplayToViewportCoordinates: x = " << x << ", y = " << y << ", returning viewport = " << viewportCoordinates[0] << ", " << viewportCoordinates[1]);
+    }
+}
+
+//---------------------------------------------------------------------------
+/// Convert display to viewport coordinates
+void vtkMRMLAnnotationDisplayableManager::GetDisplayToViewportCoordinates(double * displayCoordinates, double * viewportCoordinates)
+{
+  if (displayCoordinates && viewportCoordinates)
+    {
+    this->GetDisplayToViewportCoordinates(displayCoordinates[0], displayCoordinates[1], viewportCoordinates);
+    }
+}
+
+//---------------------------------------------------------------------------
 /// Check if the displayCoordinates are inside the viewport and if not, correct the displayCoordinates
 void vtkMRMLAnnotationDisplayableManager::RestrictDisplayCoordinatesToViewport(double* displayCoordinates)
 {
