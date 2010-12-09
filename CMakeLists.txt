@@ -708,16 +708,16 @@ SET(Slicer_WC_REVISION 0)
 
 # Case where Slicer is checkout using SVN
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
-  Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
+  Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer)
   CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in 
+    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
     ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt
     )
 ENDIF()
 
 # Case where Slicer is checkout using Git-SVN
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git/svn/refs/remotes/trunk)
-  GIT_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer3)
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git/svn/refs/remotes)
+  GIT_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer)
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerVersion.txt.in
     ${Slicer_HOME}/lib/Slicer3/SlicerVersion.txt
