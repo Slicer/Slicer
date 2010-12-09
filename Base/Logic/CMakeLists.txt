@@ -50,7 +50,12 @@ set(include_dirs
   ${OPENTRACKER_INC_DIR}
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
+  ${RemoteIO_SOURCE_DIR}
+  ${RemoteIO_BINARY_DIR}
+  ${libarchive_SOURCE_DIR}
+  ${libarchive_BINARY_DIR}
   )
+
 IF(Slicer_USE_PYTHONQT)
   LIST(APPEND include_dirs
     ${PYTHON_INCLUDE_DIR}
@@ -80,7 +85,7 @@ install(FILES
 set(SlicerBaseLogic_SRCS
   # Logic classes (data management and calculation)
   vtkSlicerLogic.cxx 
-  vtkSlicerApplicationLogic.cxx 
+  vtkSlicerApplicationLogic.cxx
   vtkSlicerModuleLogic.cxx 
   vtkSlicerTask.cxx
   vtkSlicerModelsLogic.cxx 
@@ -89,6 +94,8 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerColorLogic.cxx
   vtkDataIOManagerLogic.cxx
   # slicer's vtk extensions (filters)
+  vtkSlicerExtensionsLogic.cxx
+  vtkArchive.cxx
   vtkImageSlicePaint.cxx
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
@@ -160,6 +167,8 @@ SET(libs
   ${OPENTRACKER_LIB}
   FreeSurfer
   ${VTK_LIBRARIES}
+  RemoteIO
+  cmlibarchive
   )
 
 IF(Slicer_USE_PYTHONQT)
