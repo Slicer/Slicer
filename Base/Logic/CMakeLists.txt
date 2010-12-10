@@ -92,6 +92,7 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerModelHierarchyLogic.cxx
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
+  vtkSlicerVolumesLogic.cxx
   vtkDataIOManagerLogic.cxx
   # slicer's vtk extensions (filters)
   vtkSlicerExtensionsLogic.cxx
@@ -108,6 +109,7 @@ set(SlicerBaseLogic_SRCS
   vtkPichonFastMarchingPDF.cxx
   vtkImageRectangularSource.cxx
   vtkSystemInformation.cxx
+  vtkImageStash.cxx
   )
 
 IF(Slicer_USE_PYTHONQT)
