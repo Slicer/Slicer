@@ -55,6 +55,32 @@ qSlicerVolumesModule::~qSlicerVolumesModule()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerVolumesModule::helpText()const
+{
+  QString help = QString(
+    "The Volumes Module loads and adjusts display parameters of volume data.\n"
+    "<a>%1/Documentation-3.6</a>\n\nThe Diffusion Editor allows modifying "
+    "parameters (gradients, bValues, measurement frame) of DWI data and "
+    "provides a quick way to interpret them. "
+    "For that it estimates a tensor and shows glyphs and tracts "
+    "for visual exploration. Help for Diffusion Editor: "
+    "<a>%1/Modules:Volumes:Diffusion_Editor-Documentation</a>");
+  return help.arg(this->slicerWikiUrl());
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerVolumesModule::acknowledgementText()const
+{
+  QString acknowledgement = QString(
+    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer "
+    "Community. See <a>http://www.slicer.org</a> for details.\n"
+    "The Volumes module was contributed by Alex Yarmarkovich, Isomics Inc. "
+    "(Steve Pieper) with help from others at SPL, BWH (Ron Kikinis). \n\n"
+    "The Diffusion Editor was developed by Kerstin Kessel.");
+  return acknowledgement;
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerVolumesModule::icon()const
 {
   return QIcon(":/Icons/Volumes.png");

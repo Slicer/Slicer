@@ -44,6 +44,8 @@ public:
   qSlicerVolumesModule(QObject *parent=0);
   virtual ~qSlicerVolumesModule();
 
+  virtual QString helpText()const;
+  virtual QString acknowledgementText()const;
   virtual QIcon icon()const;
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
