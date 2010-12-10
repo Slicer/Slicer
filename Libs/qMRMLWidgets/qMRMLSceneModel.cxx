@@ -319,13 +319,42 @@ void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
+                                             const QString& text,
+                                             const QString& extraType,
+                                             const Qt::ItemFlags& flags)
+{
+  Q_Q(const qMRMLSceneModel);
+  Q_ASSERT(parent);
+
+  QStandardItem* item = new QStandardItem;
+  item->setData(extraType, qMRMLSceneModel::UIDRole);
+  if (text == "separator")
+    {
+    item->setData("separator", Qt::AccessibleDescriptionRole);
+    }
+  else
+    {
+    item->setText(text);
+    }
+  item->setFlags(flags);
+  QList<QStandardItem*> items;
+  items << item;
+  items << new QStandardItem;
+  items[1]->setFlags(0);
+  parent->insertRow(row, items);
+}
+
+
+//------------------------------------------------------------------------------
 QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QString extraType)const
 {
   Q_Q(const qMRMLSceneModel);
   QStringList res;
   if (parent == 0)
     {
-    parent = q->invisibleRootItem();
+    //parent = q->invisibleRootItem();
+    return res;
     }
   int rowCount = parent->rowCount();
   for (int i = 0; i < rowCount; ++i)
@@ -393,33 +422,18 @@ qMRMLSceneModel::~qMRMLSceneModel()
 void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* parent)
 {
   Q_D(qMRMLSceneModel);
+
+  if (parent == 0)
+    {
+    return;
+    }
+
   d->removeAllExtraItems(parent, "preItem");
+
   int row = 0;
   foreach(QString extraItem, extraItems)
     {
-    QStandardItem* item = new QStandardItem;
-    item->setData(QString("preItem"), qMRMLSceneModel::UIDRole);
-    if (extraItem == "separator")
-      {
-      item->setData("separator", Qt::AccessibleDescriptionRole);
-      }
-    else
-      {
-      item->setText(extraItem);
-      }
-    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    QList<QStandardItem*> items;
-    items << item;
-    items << new QStandardItem;
-    items[1]->setFlags(0);
-    if (parent)
-      {
-      parent->insertRow(row++, items);
-      }
-    else
-      {
-      this->insertRow(row++, items);
-      }
+    d->insertExtraItem(row++, parent, extraItem, "preItem", Qt::ItemIsEnabled  | Qt::ItemIsSelectable);
     }
 }
 
@@ -427,39 +441,23 @@ void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* 
 QStringList qMRMLSceneModel::preItems(QStandardItem* parent)const
 {
   Q_D(const qMRMLSceneModel);
-  return d->extraItems(parent, "preItems");
+  return d->extraItems(parent, "preItem");
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem* parent)
 {
   Q_D(qMRMLSceneModel);
+
+  if (parent == 0)
+    {
+    return;
+    }
+
   d->removeAllExtraItems(parent, "postItem");
   foreach(QString extraItem, extraItems)
     {
-    QStandardItem* item = new QStandardItem;
-    item->setData(QString("postItem"), qMRMLSceneModel::UIDRole);
-    if (extraItem == "separator")
-      {
-      item->setData("separator", Qt::AccessibleDescriptionRole);
-      }
-    else
-      {
-      item->setText(extraItem);
-      }
-    item->setFlags(Qt::ItemIsEnabled);
-    QList<QStandardItem*> items;
-    items << item;
-    items << new QStandardItem;
-    items[1]->setFlags(0);
-    if (parent)
-      {
-      parent->appendRow(items);
-      }
-    else
-      {
-      this->appendRow(items);
-      }
+    d->insertExtraItem(parent->rowCount(), parent, extraItem, "postItem", Qt::ItemIsEnabled);
     }
 }
 
@@ -669,7 +667,6 @@ void qMRMLSceneModel::updateScene()
     oldScenePreItems = this->preItems(oldSceneItem[0]);
     oldScenePostItems = this->postItems(oldSceneItem[0]);
     }
-
   int oldColumnCount = this->columnCount();
   this->setRowCount(0);
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
@@ -911,9 +908,9 @@ void printStandardItem(QStandardItem* item, const QString& offset)
     {
     return;
     }
-  //qDebug() << offset << item << item->index() << item->text()
-  //         << item->data(qMRMLSceneModel::UIDRole).toString() << item->row()
-  //         << item->column() << item->rowCount() << item->columnCount();
+  qDebug() << offset << item << item->index() << item->text()
+           << item->data(qMRMLSceneModel::UIDRole).toString() << item->row()
+           << item->column() << item->rowCount() << item->columnCount();
   for(int i = 0; i < item->rowCount(); ++i )
     {
     for (int j = 0; j < item->columnCount(); ++j)

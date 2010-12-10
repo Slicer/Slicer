@@ -210,7 +210,10 @@ void qMRMLNodeComboBoxPrivate::updateNoneItem(bool resetRootIndex)
   //QVariant currentNode =
   //  this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRMLSceneModel::UIDRole);
   //qDebug() << "updateNoneItem: " << this->MRMLSceneModel->mrmlSceneItem();
-  this->MRMLSceneModel->setPreItems(noneItem, this->MRMLSceneModel->mrmlSceneItem());
+  if (this->MRMLSceneModel->mrmlSceneItem())
+    {
+    this->MRMLSceneModel->setPreItems(noneItem, this->MRMLSceneModel->mrmlSceneItem());
+    }
 /*  if (resetRootIndex)
     {
     this->ComboBox->setRootModelIndex(q->model()->index(0, 0));
@@ -457,9 +460,8 @@ int qMRMLNodeComboBox::nodeCount()const
     d->MRMLSceneModel->preItems(d->MRMLSceneModel->mrmlSceneItem()).count()
     + d->MRMLSceneModel->postItems(d->MRMLSceneModel->mrmlSceneItem()).count();
   //qDebug() << d->MRMLSceneModel->invisibleRootItem() << d->MRMLSceneModel->mrmlSceneItem() << d->ComboBox->count() <<extraItemsCount;
-  printStandardItem(d->MRMLSceneModel->invisibleRootItem(), "  ");
+  //printStandardItem(d->MRMLSceneModel->invisibleRootItem(), "  ");
   //qDebug() << d->ComboBox->rootModelIndex();
-  Q_ASSERT(!this->mrmlScene() || d->ComboBox->count() >= extraItemsCount);
   return this->mrmlScene() ? d->ComboBox->count() - extraItemsCount : 0;
 }
 
@@ -492,7 +494,7 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   // The Add button is valid only if the scene is non-empty
   //this->setAddEnabled(scene != 0);
   QString oldCurrentNode = d->ComboBox->itemData(d->ComboBox->currentIndex(), qMRMLSceneModel::UIDRole).toString();
-  bool nodeCount = this->nodeCount();
+  bool oldNodeCount = this->nodeCount();
 
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
@@ -512,9 +514,16 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   // set it back. Please consider make it a behavior property if it doesn't fit
   // your need, as this behavior is currently wanted for some cases (
   // vtkMRMLClipModels selector in the Models module)
-  if (nodeCount)
+  if (oldNodeCount)
     {
     this->setCurrentNode(oldCurrentNode);
+    }
+  // if the new nodeCount is 0, then let's make sure to select 'invalid' node
+  // (None(0) or -1). we can't do nothing otherwise the Scene index (rootmodelIndex)
+  // would be selected and "Scene" would be displayed (see vtkMRMLNodeComboboxTest5)
+  else
+    {
+    this->setCurrentNode(this->currentNode());
     }
 
   this->setEnabled(scene != 0);
