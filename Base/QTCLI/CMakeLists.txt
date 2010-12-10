@@ -48,7 +48,7 @@ SET(KIT_MOC_SRCS
 
 # UI files
 SET(KIT_UI_SRCS
-  Resources/UI/qSlicerCLIModule.ui
+  Resources/UI/qSlicerCLIModuleWidget.ui
 )
 
 # Resources

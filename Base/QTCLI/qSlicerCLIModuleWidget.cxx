@@ -66,7 +66,7 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
   Q_Q(qSlicerCLIModuleWidget);
   
-  this->Ui_qSlicerCLIModule::setupUi(widget);
+  this->Ui_qSlicerCLIModuleWidget::setupUi(widget);
 
   this->ModuleCollapsibleButton->setText(this->Title);
 

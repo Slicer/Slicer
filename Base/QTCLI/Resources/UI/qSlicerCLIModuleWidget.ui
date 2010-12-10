@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerCLIModule</class>
- <widget class="qSlicerWidget" name="qSlicerCLIModule">
+ <class>qSlicerCLIModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerCLIModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -31,7 +31,7 @@
         <x>0</x>
         <y>0</y>
         <width>415</width>
-        <height>374</height>
+        <height>376</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -39,12 +39,9 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="ctkCollapsibleButton" name="ModuleCollapsibleButton">
-         <property name="text">
+        <widget class="ctkCollapsibleButton" name="ModuleCollapsibleButton" native="true">
+         <property name="text" stdset="0">
           <string>Module Title</string>
-         </property>
-         <property name="contentsFrameShape">
-          <enum>QFrame::StyledPanel</enum>
          </property>
          <layout class="QVBoxLayout" name="VerticalLayout">
           <item>
@@ -57,13 +54,13 @@
              </widget>
             </item>
             <item>
-             <widget class="qMRMLNodeComboBox" name="MRMLCommandLineModuleNodeSelector">
-              <property name="nodeTypes">
+             <widget class="qMRMLNodeComboBox" name="MRMLCommandLineModuleNodeSelector" native="true">
+              <property name="nodeTypes" stdset="0">
                <stringlist>
                 <string>vtkMRMLCommandLineModuleNode</string>
                </stringlist>
               </property>
-              <property name="showHidden">
+              <property name="showHidden" stdset="0">
                <bool>true</bool>
               </property>
              </widget>
@@ -174,6 +171,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
@@ -184,17 +187,11 @@
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerCLIModule</sender>
+   <sender>qSlicerCLIModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLCommandLineModuleNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

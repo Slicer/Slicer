@@ -30,7 +30,7 @@
 
 // SlicerQt includes
 #include "qSlicerCLIModuleWidget.h"
-#include "ui_qSlicerCLIModule.h"
+#include "ui_qSlicerCLIModuleWidget.h"
 #include "qSlicerCLIModuleWidget.h"
 #include "qSlicerWidget.h"
 
@@ -50,7 +50,7 @@ class qSlicerCLIModuleUIHelper;
 
 //-----------------------------------------------------------------------------
 class qSlicerCLIModuleWidgetPrivate: public QObject,
-                                     public Ui_qSlicerCLIModule
+                                     public Ui_qSlicerCLIModuleWidget
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerCLIModuleWidget);
