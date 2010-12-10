@@ -1,5 +1,6 @@
 
 SET(KIT_PYTHON_SCRIPTS
+    Editor.py
   )
 
 IF(Slicer_USE_NUMPY)
