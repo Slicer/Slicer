@@ -13,8 +13,8 @@
 #include "vtkArchive.h"
 
 // LibArchive includes
-#include <libarchive/archive.h>
-#include <libarchive/archive_entry.h>
+#include <archive.h>
+#include <archive_entry.h>
 
 // Std includes
 #include <cstdio>

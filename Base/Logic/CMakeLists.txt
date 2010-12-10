@@ -32,7 +32,6 @@ ENDFOREACH()
 
 # --------------------------------------------------------------------------
 # Include dirs
-
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -52,8 +51,7 @@ set(include_dirs
   ${FreeSurfer_BINARY_DIR}
   ${RemoteIO_SOURCE_DIR}
   ${RemoteIO_BINARY_DIR}
-  ${libarchive_SOURCE_DIR}
-  ${libarchive_BINARY_DIR}
+  ${LibArchive_INCLUDE_DIR}
   )
 
 IF(Slicer_USE_PYTHONQT)
@@ -170,7 +168,7 @@ SET(libs
   FreeSurfer
   ${VTK_LIBRARIES}
   RemoteIO
-  cmlibarchive
+  ${LibArchive_LIBRARY}
   )
 
 IF(Slicer_USE_PYTHONQT)

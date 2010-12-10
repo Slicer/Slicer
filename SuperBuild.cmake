@@ -102,7 +102,8 @@ set(BatchMake_DEPENDENCIES Insight)
 set(OpenIGTLink_DEPENDENCIES)
 set(teem_DEPENDENCIES VTK)
 set(cmcurl_DEPENDENCIES)
-set(slicer_DEPENDENCIES VTK Insight BatchMake OpenIGTLink teem cmcurl)
+set(libarchive_DEPENDENCIES)
+set(slicer_DEPENDENCIES VTK Insight BatchMake OpenIGTLink teem cmcurl libarchive)
 
 #------------------------------------------------------------------------------
 # Conditionnaly include ExternalProject Target
@@ -150,6 +151,7 @@ include(SuperBuild/External_teem.cmake)
 include(SuperBuild/External_OpenIGTLink.cmake)
 include(SuperBuild/External_BatchMake.cmake)
 include(SuperBuild/External_cmcurl.cmake)
+include(SuperBuild/External_libarchive.cmake)
 
 #-----------------------------------------------------------------------------
 # Update external project dependencies
@@ -281,6 +283,9 @@ ExternalProject_Add(${proj}
     -DSlicer_TCL_DIR:PATH=${tcl_build}
     # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${SLICERLIBCURL_DIR}
+    # libarchive
+    -DLibArchive_INCLUDE_DIR:PATH=${LIBARCHIVE_INCLUDE_DIR}
+    -DLibArchive_LIBRARY:PATH=${LIBARCHIVE_LIBRARY}
     # Python
     -DSlicer_USE_SYSTEM_PYTHON:BOOL=OFF
     -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}

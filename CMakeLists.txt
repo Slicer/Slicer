@@ -492,6 +492,11 @@ FIND_PACKAGE(SLICERLIBCURL REQUIRED)
 INCLUDE(${SLICERLIBCURL_USE_FILE})
 
 #-----------------------------------------------------------------------------
+# LibArchive
+#-----------------------------------------------------------------------------
+FIND_PACKAGE(LibArchive REQUIRED)
+
+#-----------------------------------------------------------------------------
 # BatchMake
 #-----------------------------------------------------------------------------
 IF(Slicer_USE_BatchMake)
@@ -532,18 +537,6 @@ IF(Slicer_USE_OPENCV)
   LINK_DIRECTORIES(${OPENCV_LIBRARY_DIRS})
   #INCLUDE(${OPENCV_USE_FILE})
 ENDIF()
-
-#-----------------------------------------------------------------------------
-# libarchive
-#-----------------------------------------------------------------------------
-SET(HAVE_LIBZ TRUE)
-SET(HAVE_ZLIB_H TRUE)
-SET(ZLIB_INCLUDE_DIR ${VTK_SOURCE_DIR}/Utilities/vtkzLib)
-SET(ZLIB_LIBRARIES ${VTK_ZLIB_LIBRARIES})
-SET(ZLIB_LIBRARY ${VTK_ZLIB_LIBRARIES})
-SET(BUILD_ARCHIVE_WITHIN_CMAKE TRUE)
-ADD_DEFINITIONS(-DLIBARCHIVE_STATIC)
-ADD_SUBDIRECTORY(Utilities/libarchive)
 
 #-----------------------------------------------------------------------------
 # Need some Tcl/Tk info
