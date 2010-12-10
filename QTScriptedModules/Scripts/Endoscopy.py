@@ -48,7 +48,7 @@ class EndoscopyWidget:
     cameraNodeSelector.objectName = 'cameraNodeSelector'
     cameraNodeSelector.toolTip = "Select a camera that will fly along this path."
     cameraNodeSelector.nodeTypes = ['vtkMRMLCameraNode']
-    cameraNodeSelector.noneEnabled = True
+    cameraNodeSelector.noneEnabled = False
     cameraNodeSelector.addEnabled = False
     cameraNodeSelector.removeEnabled = False
     cameraNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
@@ -56,7 +56,6 @@ class EndoscopyWidget:
     pathFormLayout.addRow("Camera:", cameraNodeSelector)
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', 
                         cameraNodeSelector, 'setMRMLScene(vtkMRMLScene*)')
-    self.cameraNodeSelector = cameraNodeSelector
     
     # Input fiducials node selector
     inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
@@ -131,7 +130,7 @@ class EndoscopyWidget:
     self.layout.addStretch(1)
     
     # Set local var as instance attribute
-    self.cameraNodeSelector = inputFiducialsNodeSelector
+    self.cameraNodeSelector = cameraNodeSelector
     self.inputFiducialsNodeSelector = inputFiducialsNodeSelector
     self.createPathButton = createPathButton
     self.flythroughCollapsibleButton = flythroughCollapsibleButton
