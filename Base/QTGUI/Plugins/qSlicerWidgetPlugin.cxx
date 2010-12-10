@@ -18,9 +18,9 @@
 
 ==============================================================================*/
 
+#include "qSlicerStyle.h"
 #include "qSlicerWidgetPlugin.h"
 #include "qSlicerWidget.h"
-#include "qSlicerApplication.h" // For qSlicerApplyPalette function
 
 // --------------------------------------------------------------------------
 qSlicerWidgetPlugin::qSlicerWidgetPlugin()
@@ -34,9 +34,10 @@ QWidget *qSlicerWidgetPlugin::createWidget(QWidget *_parent)
   QPalette slicerPalette = _widget->palette();
 
   // Apply Slicer Palette using the non-member function defined in qSlicerApplication
-  qSlicerApplyPalette(slicerPalette);
+  //qSlicerApplyPalette(slicerPalette);
+  qSlicerStyle style;
 
-  _widget->setPalette(slicerPalette);
+  _widget->setPalette(style.standardPalette());
   _widget->setAutoFillBackground(true);
   return _widget;
 }
