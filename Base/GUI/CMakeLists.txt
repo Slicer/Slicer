@@ -311,3 +311,16 @@ install(
   DESTINATION ${Slicer_INSTALL_LIB_DIR}/${PROJECT_NAME}/Tcl
   )
 
+file(GLOB IMAGEFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/ImageData/*.png")
+foreach(file ${IMAGEFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_INSTALL_LIB_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY
+    )
+endforeach(file)
+
+install(
+  FILES ${IMAGEFILES}
+  DESTINATION ${Slicer_INSTALL_LIB_DIR}/${PROJECT_NAME}/Tcl/ImageData
+  )
