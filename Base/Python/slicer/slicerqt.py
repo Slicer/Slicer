@@ -1,6 +1,7 @@
 import vtk, qt, ctk
 import slicer
 from slicer.util import *
+import slicer.cli
 
 #
 # Internal
