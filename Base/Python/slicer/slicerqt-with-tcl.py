@@ -17,6 +17,11 @@ def tcl(cmd):
     # no tcl yet, so first bring in the adapters, then the actual code
     import tpycl
     _tpycl = tpycl.tpycl()
+
+    packages = ['freesurfer', 'mrml', 'mrmlLogic', 'remoteio', 'teem', 'vtk', 'vtkITK']
+    for p in packages:
+      _tpycl.py_package(p)
+
     _tpycl.tcl_eval("""
         set dir $::env(Slicer_HOME)/lib/Slicer3/SlicerBaseGUI/Tcl
         source $dir/Slicer3Adapters.tcl
