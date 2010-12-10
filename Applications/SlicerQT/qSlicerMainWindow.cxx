@@ -35,6 +35,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerExtensionsWizard.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModulePanel.h"
 #include "qSlicerModuleManager.h"
@@ -333,6 +334,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(EditUndo);
   qSlicerMainWindowCore_connect(EditRedo);
 
+  qSlicerMainWindow_connect(ViewExtensionManager);
   qSlicerMainWindow_connect(ViewApplicationSettings);
   qSlicerMainWindowCore_connect(ViewLayoutConventional);
   qSlicerMainWindowCore_connect(ViewLayoutFourUp);
@@ -376,6 +378,14 @@ void qSlicerMainWindow::setupMenuActions()
           this, SLOT(showModuleSelectorToolBar(bool)));
 }
 #undef qSlicerMainWindowCore_connect
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onViewExtensionManagerActionTriggered()
+{
+  Q_D(qSlicerMainWindow);
+  qSlicerExtensionsWizard extensionsManager(this);
+  extensionsManager.exec();
+}
 
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onViewApplicationSettingsActionTriggered()

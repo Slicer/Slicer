@@ -64,6 +64,7 @@ public slots:
 protected slots:
   void onModuleLoaded(qSlicerAbstractCoreModule* module);
   void onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
+  void onViewExtensionManagerActionTriggered();
   void onViewApplicationSettingsActionTriggered();
 
   void onMRMLSceneModified(vtkObject*);

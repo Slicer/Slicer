@@ -172,7 +172,9 @@ QTreeWidgetItem* qSlicerExtensionsWizardOverviewPagePrivate::categoryItem(const 
 // --------------------------------------------------------------------------
 QTreeWidgetItem* qSlicerExtensionsWizardOverviewPagePrivate::item(const QUrl& url)const
 {
-  foreach(QTreeWidgetItem* item, this->ExtensionsTreeWidget->selectedItems())
+  QList<QTreeWidgetItem*> items =
+    this->ExtensionsTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive);
+  foreach(QTreeWidgetItem* item, items)
     {
     if (item->text(BinaryURLColumn) == url.toString())
       {
@@ -254,16 +256,21 @@ void qSlicerExtensionsWizardOverviewPagePrivate
 ::downloadExtension(QTreeWidgetItem* extensionItem)
 {
   Q_Q(qSlicerExtensionsWizardOverviewPage);
+  Q_ASSERT(extensionItem);
   if (!extensionItem->data(ExtensionColumn, IsExtensionRole).toBool())
     {
     return;
     }
-  QProgressBar* progressBar = new QProgressBar(q);
-  progressBar->setRange(0,0);
-  this->ExtensionsTreeWidget->setItemWidget(extensionItem, ExtensionColumn, progressBar);
 
+  // Set the icon before the progress bar for update issues
   extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
     vtkSlicerExtensionsLogic::StatusDownloading));
+
+  QProgressBar* progressBar = new QProgressBar(q);
+  progressBar->setAutoFillBackground(true);
+  progressBar->setRange(0,0);
+  progressBar->setTextVisible(false);
+  this->ExtensionsTreeWidget->setItemWidget(extensionItem, ExtensionColumn, progressBar);
 
   QUrl manifestURL(extensionItem->text(BinaryURLColumn));
   QNetworkRequest request(manifestURL);
@@ -274,6 +281,7 @@ void qSlicerExtensionsWizardOverviewPagePrivate
 void qSlicerExtensionsWizardOverviewPagePrivate
 ::installExtension(QTreeWidgetItem* extensionItem, const QString& archive)
 {
+  Q_ASSERT(extensionItem);
   if (!extensionItem->data(ExtensionColumn, IsExtensionRole).toBool())
     {
     return;
@@ -307,6 +315,7 @@ void qSlicerExtensionsWizardOverviewPagePrivate
 void qSlicerExtensionsWizardOverviewPagePrivate
 ::uninstallExtension(QTreeWidgetItem* extensionItem)
 {
+  Q_ASSERT(extensionItem);
   if (!extensionItem->data(ExtensionColumn, IsExtensionRole).toBool())
     {
     return;
@@ -420,13 +429,23 @@ void qSlicerExtensionsWizardOverviewPage::initializePage()
     d->UninstallPushButton->setEnabled(false);
     }
   qApp->processEvents();
+  d->ExtensionsTreeWidget->setSortingEnabled(false);
   const std::vector<ManifestEntry*>& modules = d->Logic->GetModules();
   std::vector<ManifestEntry*>::const_iterator it;
   for( it = modules.begin(); it != modules.end(); ++it)
     {
     d->addExtension(*it);
     }
+  d->ExtensionsTreeWidget->setSortingEnabled(true);
   d->ExtensionsTreeWidget->expandAll();
+  d->ExtensionsTreeWidget->sortItems(ExtensionColumn, Qt::AscendingOrder);
+  d->ExtensionsTreeWidget->setMinimumSize(d->ExtensionsTreeWidget->sizeHint());
+  // TODO: find a function in Qt that does it automatically.
+  d->ExtensionsTreeWidget->resize(
+    d->ExtensionsTreeWidget->frameWidth()
+    + d->ExtensionsTreeWidget->header()->length()
+    + d->ExtensionsTreeWidget->frameWidth(),
+    d->ExtensionsTreeWidget->height() );
   progressDialog.close();
 }
 
@@ -486,8 +505,8 @@ void qSlicerExtensionsWizardOverviewPage::downloadFinished(QNetworkReply* reply)
 
   QUrl extensionUrl = reply->url();
   QTreeWidgetItem* item = d->item(extensionUrl);
-
-  if (reply->error())
+  Q_ASSERT(item);
+  if (!item || reply->error())
     {
     qWarning() << "Failed downloading: " << extensionUrl.toString();
     d->ExtensionsTreeWidget->setItemWidget(item, ExtensionColumn,0);
