@@ -42,7 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeWidget : public QTreeView
   Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
   Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
-
+  Q_PROPERTY(bool fitSizeToVisibleIndexes READ fitSizeToVisibleIndexes WRITE setFitSizeToVisibleIndexes)
 public:
   qMRMLTreeWidget(QWidget *parent=0);
   virtual ~qMRMLTreeWidget();
@@ -74,6 +74,13 @@ public:
   qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
   qMRMLSceneModel* sceneModel()const;
 
+  ///
+  /// When true, the tree widget resize itself so that
+  /// it's sizeHint is right for the visible indexes
+  bool fitSizeToVisibleIndexes()const;
+  void setFitSizeToVisibleIndexes(bool);
+
+  virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
@@ -87,6 +94,7 @@ signals:
 
 protected slots:
   virtual void onActivated(const QModelIndex& index);
+  void onNumberOfVisibleIndexChanged();
   
 protected:
   QScopedPointer<qMRMLTreeWidgetPrivate> d_ptr;

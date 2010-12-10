@@ -42,10 +42,12 @@ public:
   qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object);
   void init();
   void setSceneModel(qMRMLSceneModel* newModel);
+  QSize computeSizeHint()const;
 
   qMRMLSceneModel*           SceneModel;
   qMRMLSortFilterProxyModel* SortFilterModel;
   QString                    SceneModelType;
+  bool                       FitSizeToVisibleIndexes;
 };
 
 //------------------------------------------------------------------------------
@@ -54,6 +56,7 @@ qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object)
 {
   this->SceneModel = 0;
   this->SortFilterModel = 0;
+  this->FitSizeToVisibleIndexes = true;
 }
 
 //------------------------------------------------------------------------------
@@ -73,6 +76,15 @@ void qMRMLTreeWidgetPrivate::init()
                    q, SLOT(onActivated(const QModelIndex&)));
 
   q->setUniformRowHeights(true);
+  
+  QObject::connect(q, SIGNAL(collapsed(const QModelIndex&)),
+                   q, SLOT(onNumberOfVisibleIndexChanged()));
+  QObject::connect(q, SIGNAL(expanded(const QModelIndex&)),
+                   q, SLOT(onNumberOfVisibleIndexChanged()));
+  QObject::connect(this->SortFilterModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int, int)),
+                   q, SLOT(onNumberOfVisibleIndexChanged()));
+  QObject::connect(this->SortFilterModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
+                   q, SLOT(onNumberOfVisibleIndexChanged()));
 }
 
 //------------------------------------------------------------------------------
@@ -92,6 +104,28 @@ void qMRMLTreeWidgetPrivate::setSceneModel(qMRMLSceneModel* newModel)
   q->expandToDepth(2);
 }
 
+//------------------------------------------------------------------------------
+QSize qMRMLTreeWidgetPrivate::computeSizeHint()const
+{
+  Q_Q(const qMRMLTreeWidget);
+  int visibleIndexCount = 0;
+  for(QModelIndex index = this->SortFilterModel->mrmlSceneIndex();
+      index.isValid();
+      index = q->indexBelow(index))
+    {
+    ++visibleIndexCount;
+    }
+
+  QSize treeViewSizeHint = q->QTreeView::sizeHint();
+  treeViewSizeHint.setHeight(
+    q->frameWidth()
+    + visibleIndexCount * q->sizeHintForRow(0)
+    + q->frameWidth());
+  return treeViewSizeHint;
+}
+
+//------------------------------------------------------------------------------
+// qMRMLTreeWidget
 //------------------------------------------------------------------------------
 qMRMLTreeWidget::qMRMLTreeWidget(QWidget *_parent)
   :QTreeView(_parent)
@@ -222,31 +256,59 @@ qMRMLSceneModel* qMRMLTreeWidget::sceneModel()const
   return d->SceneModel;
 }
 
+
+//--------------------------------------------------------------------------
+QSize qMRMLTreeWidget::minimumSizeHint()const
+{
+  Q_D(const qMRMLTreeWidget);
+  QSize minSize = this->QTreeView::minimumSizeHint();
+  return minSize.expandedTo(d->computeSizeHint());
+}
+
 //--------------------------------------------------------------------------
 QSize qMRMLTreeWidget::sizeHint()const
 {
   Q_D(const qMRMLTreeWidget);
-  QSize treeViewSizeHint = this->QTreeView::sizeHint();
-  QModelIndex sceneIndex = d->SceneModel->mrmlSceneIndex();
-  if (!sceneIndex.isValid())
-    {
-    return treeViewSizeHint;
-    }
-  sceneIndex = d->SortFilterModel->mapFromSource(sceneIndex);
-  treeViewSizeHint.setHeight(
-    this->frameWidth()
-    + (d->SortFilterModel->rowCount(sceneIndex) + 1)* this->sizeHintForRow(0)
-    + this->frameWidth());
-  return treeViewSizeHint;
+  QSize size = this->QTreeView::minimumSizeHint();
+  return size.expandedTo(d->computeSizeHint());
 }
 
 //--------------------------------------------------------------------------
 void qMRMLTreeWidget::updateGeometries()
 {
   // don't update the geometries if it's not visible on screen
+  // UpdateGeometries is for tree child widgets geometry
   if (!this->isVisible())
     {
     return;
     }
   this->QTreeView::updateGeometries();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeWidget::onNumberOfVisibleIndexChanged()
+{
+  Q_D(qMRMLTreeWidget);
+  if (d->FitSizeToVisibleIndexes)
+    {
+    this->updateGeometry();
+    }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeWidget::setFitSizeToVisibleIndexes(bool enable)
+{
+  Q_D(qMRMLTreeWidget);
+  d->FitSizeToVisibleIndexes = enable;
+  if (d->FitSizeToVisibleIndexes)
+    {
+    this->updateGeometry();
+    }
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLTreeWidget::fitSizeToVisibleIndexes()const
+{
+  Q_D(const qMRMLTreeWidget);
+  return d->FitSizeToVisibleIndexes;
 }
