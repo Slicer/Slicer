@@ -1,6 +1,7 @@
 import slicer
 from __main__ import tcl
 from __main__ import qt
+import EditorLib
 
 #########################################################
 #
