@@ -70,6 +70,17 @@ itcl::body IdentifyIslandsEffect::apply {} {
     return
   }
 
+  if { [info exists o(minSize)] } {
+    # use the GUI if available
+    set minSize [[$o(minSize) GetWidget] GetValueAsInt]
+    set fullyConnected [$o(fullyConnected) GetSelectedState]
+  } else {
+    # get values from node
+    set node [EditorGetParameterNode]
+    set minSize [$node GetParameter "IdentifyIslands,minSize"]
+    set fullyConnected [$node GetParameter "IdentifyIslands,fullyConnected"]
+  }
+
   set castIn [vtkImageCast New]
   $castIn SetOutputScalarTypeToUnsignedLong
   $castIn SetInput [$this getInputLabel]
@@ -82,8 +93,8 @@ itcl::body IdentifyIslandsEffect::apply {} {
   $castOut SetInput [$islands GetOutput]
   $castOut SetOutput [$this getOutputLabel]
 
-  $islands SetMinimumSize [[$o(minSize) GetWidget] GetValueAsInt]
-  $islands SetFullyConnected [$o(fullyConnected) GetSelectedState]
+  $islands SetMinimumSize $minSize
+  $islands SetFullyConnected $fullyConnected
   $this setProgressFilter $islands "Calculating Islands..."
   [$this getOutputLabel] Update
   set islandCount [$islands GetNumberOfIslands]

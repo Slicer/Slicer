@@ -115,6 +115,15 @@ itcl::body RemoveIslandsEffect::apply {} {
 
   set label [EditorGetPaintLabel]
 
+  if { [info exists o(fullyConnected)] } {
+    # use the GUI if available
+    set fullyConnected [$o(fullyConnected) GetSelectedState]
+  } else {
+    # get values from node
+    set node [EditorGetParameterNode]
+    set fullyConnected [$node GetParameter "RemoveIslands,fullyConnected"]
+  }
+
   # first, create an inverse binary version of the image
   # so that islands inside segemented object will be detected, along
   # with a big island of the background
@@ -130,7 +139,7 @@ itcl::body RemoveIslandsEffect::apply {} {
   # and find the pixel that corresponds to the background
   set islands [vtkITKIslandMath New]
   $islands SetInput [$preThresh GetOutput]
-  $islands SetFullyConnected [$o(fullyConnected) GetSelectedState]
+  $islands SetFullyConnected $fullyConnected
   $this setProgressFilter $islands "Calculating Islands..."
   $islands Update
   set bgLabel [$this findNonZeroBorderPixel [$islands GetOutput]]

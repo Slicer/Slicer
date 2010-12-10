@@ -178,6 +178,8 @@ itcl::body HelperBox::select { } {
   EffectSWidget::RotateToVolumePlanes ;# make sure slices are aligned to volumes
   [$o(mergeName) GetWidget] SetText $mergeText
   $this updateStructures
+  # remove all active effects (so that when selected again slice rotation and snap to IJK will happen if needed
+  ::EffectSWidget::RemoveAll
 }
 
 itcl::body HelperBox::rotateSlicesToImage {} {
@@ -537,6 +539,17 @@ itcl::body HelperBox::build {} {
     }
   }
 
+  if { $outHierarchy != "" && [[$o(replaceModels) GetWidget] GetSelectedState] } {
+    # user wants to delete any existing models, so take down hierarchy
+    for {set n [expr $numNodes - 1]} {$n >= 0} {incr n -1} {
+      set node [$::slicer3::MRMLScene GetNthNodeByClass $n "vtkMRMLModelHierarchyNode"]
+      if { [$node GetParentNodeID] == [$outHierarchy GetID] } {
+        $::slicer3::MRMLScene RemoveNode [$node GetModelNode]
+        $::slicer3::MRMLScene RemoveNode $node
+      }
+    }
+  }
+
   if { $outHierarchy == "" } {
     set outHierarchy [vtkMRMLModelHierarchyNode New]
     $outHierarchy SetScene $::slicer3::MRMLScene
@@ -827,6 +840,23 @@ itcl::body HelperBox::create { } {
   $o(mergeAndBuildbutton) SetText "Merge And Build"
   $o(mergeAndBuildbutton) SetBalloonHelpString "Merge all structures into Merge Volume and build models from all structures"
   pack [$o(mergeAndBuildbutton) GetWidgetName] -side left
+
+  # options frame
+
+  set o(optionsFrame) [vtkNew vtkKWFrame]
+  $o(optionsFrame) SetParent $structuresFrame
+  $o(optionsFrame) Create
+  pack [$o(optionsFrame) GetWidgetName] -side bottom -anchor sw -fill x -padx 2 -pady 2
+
+  # replace models button
+
+  set o(replaceModels) [vtkNew vtkKWCheckButtonWithLabel]
+  $o(replaceModels) SetParent $o(optionsFrame)
+  $o(replaceModels) Create
+  $o(replaceModels) SetLabelText "Replace Models"
+  $o(replaceModels) SetBalloonHelpString "Replace any existing models when building"
+  [$o(replaceModels) GetWidget] SetSelectedState 1
+  pack [$o(replaceModels) GetWidgetName] -side left
 
 
   #

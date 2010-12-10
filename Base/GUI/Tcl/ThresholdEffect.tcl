@@ -80,7 +80,9 @@ itcl::body ThresholdEffect::apply {} {
   }
 
   foreach b {apply useForPainting cancel} {
-    $o($b) SetStateToDisabled
+    if { [info exists o($b)] } {
+      $o($b) SetStateToDisabled
+    }
   }
 
   set thresh [vtkImageThreshold New]

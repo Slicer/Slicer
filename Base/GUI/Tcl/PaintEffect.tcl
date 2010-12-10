@@ -82,28 +82,9 @@ itcl::body PaintEffect::constructor {sliceGUI} {
   
   $this processEvent
 
-  set _guiObserverTags ""
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  foreach event {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent EnterEvent LeaveEvent} {
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent"]    }
-  set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent"]
 }
 
 itcl::body PaintEffect::destructor {} {
-
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
 
   if { [info command $_renderer] != "" } {
     foreach a $_actors {
@@ -222,6 +203,11 @@ itcl::body PaintEffect::highlight { } {
 
 itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
 
+  if { ![info exists o(brush)] } {
+    # event triggered before constructor finished
+    return
+  }
+
   # chain to superclass
   chain $caller $event
 
@@ -240,8 +226,6 @@ itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
     [$sliceGUI GetSliceViewer] RequestRender
     return 
   }
-
-  set event [$sliceGUI GetCurrentGUIEvent] 
 
   if { $caller == $sliceGUI } {
     switch $event {
@@ -429,13 +413,17 @@ itcl::body PaintEffect::paintFeedback {} {
 
   set renderer [$_renderWidget GetRenderer]
 
-  foreach a $_feedbackActors {
-    $renderer RemoveActor2D $a
-    $a Delete
+  if { $_paintCoordinates == "" } {
+    foreach a $_feedbackActors {
+      $renderer RemoveActor2D $a
+      $a Delete
+    }
+    set _feedbackActors ""
+    return
   }
-  set _feedbackActors ""
 
-  foreach xy $_paintCoordinates {
+  set numActors [llength $_feedbackActors]
+  foreach xy [lrange $_paintCoordinates $numActors end] {
     set a [vtkActor2D New]
     lappend _feedbackActors $a
     $a SetMapper $o(mapper)
@@ -482,8 +470,6 @@ itcl::body PaintEffect::paintBrush {x y} {
   # - make sure to hit ever pixel in IJK space 
   # - apply the threshold if selected
   #
-
-  $this queryLayers $x $y
 
   if { $_layers(label,node) == "" } {
     # if there's no label, we can't paint

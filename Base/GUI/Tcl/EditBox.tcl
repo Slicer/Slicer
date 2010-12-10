@@ -79,7 +79,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     Draw RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor Paint
-    DefaultTool LevelTracing MakeModel Wand
+    DefaultTool LevelTracing MakeModel Wand GrowCutSegment
   }
 
   # effects that operate from the menu
@@ -91,7 +91,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     LabelVisibilityOff LabelVisibilityOn NextFiducial 
     SnapToGridOff SnapToGridOn
     EraseLabel Threshold PinOpen PreviousFiducial  InterpolateLabels LabelOpacity
-    ToggleLabelOutline Watershed PreviousCheckPoint NextCheckPoint
+    ToggleLabelOutline Watershed PreviousCheckPoint NextCheckPoint GrowCutSegment
   }
 
   # these buttons do not switch you out of the current tool
@@ -256,7 +256,7 @@ itcl::body EditBox::create { } {
   $this createButtonRow $parent {Paint Draw LevelTracing ImplicitRectangle}
   $this createButtonRow $parent {IdentifyIslands ChangeIsland RemoveIslands SaveIsland}
   $this createButtonRow $parent {ErodeLabel DilateLabel Threshold ChangeLabel}
-  $this createButtonRow $parent {MakeModel}
+  $this createButtonRow $parent {MakeModel GrowCutSegment}
   $this createButtonRow $parent {PreviousFiducial NextFiducial}
   if { $frame == "" } {
     $this createButtonRow $parent {PreviousCheckPoint NextCheckPoint GoToEditorModule PinOpen}
@@ -330,7 +330,10 @@ itcl::body EditBox::selectEffect { effect } {
       # create an instance of the effect for each of the active sliceGUIs
       # - have the effect reset the tool label when completed
       #
-
+      if {$effect == "GrowCutSegment"} {
+        EditorGestureCheckPoint
+      } 
+   
       set ret [catch "EffectSWidget::Add $_effects($effect,class)" res]
       if { $ret } {
         puts $::errorInfo

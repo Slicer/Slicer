@@ -61,7 +61,6 @@ itcl::body SaveIslandEffect::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
   if { $caller == $sliceGUI } {

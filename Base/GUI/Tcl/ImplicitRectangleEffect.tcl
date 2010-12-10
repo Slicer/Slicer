@@ -79,28 +79,9 @@ itcl::body ImplicitRectangleEffect::constructor {sliceGUI} {
 
   $this processEvent
 
-  set _guiObserverTags ""
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  foreach event {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent EnterEvent LeaveEvent} {
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent"]    }
-  set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent"]
 }
 
 itcl::body ImplicitRectangleEffect::destructor {} {
-
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
 
   if { [info command $_renderer] != "" } {
     foreach a $_actors {
@@ -182,7 +163,6 @@ itcl::body ImplicitRectangleEffect::processEvent { {caller ""} {event ""} } {
   # chain to superclass
   chain $caller $event
 
-  set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
   if { $caller == $sliceGUI } {

@@ -50,11 +50,6 @@ if { [itcl::find class Labeler] == "" } {
     public variable paintOver 1
     public variable polygonDebugViewer 0
 
-    # keep track of first application of the label since the 
-    # class was instantiated - this is used to decide when to 
-    # make a copy of the label map for the Editor's CheckPoint function
-    variable _appliedSinceConstructed 0
-
     # methods
     method processEvent {{caller ""} {event ""}} {}
     method makeMaskImage {polyData} {}
@@ -77,6 +72,7 @@ if { [itcl::find class Labeler] == "" } {
 itcl::body Labeler::constructor {sliceGUI} {
   set o(painter) [vtkNew vtkImageSlicePaint]
   $this rotateSliceToImage
+  $this setMRMLDefaults
 }
 
 itcl::body Labeler::destructor {} {
@@ -91,7 +87,6 @@ itcl::body Labeler::processEvent { {caller ""} {event ""} } {
   
   # don't chain this method - superclass method is meant 
   # to be overridden and not chained.
-  set event [$sliceGUI GetCurrentGUIEvent] 
   if { $event == "MouseMoveEvent" && [$this getInAnySliceSWidget] } {
       $this requestDelayedAnnotation 
   }
@@ -247,13 +242,9 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   # image
   #
   
-  if { $_appliedSinceConstructed == 0 } {
-    # first application, so save the old label volume
-    # - this means there will only be one checkpoint for each 'instance'
-    #   of the effect (i.e. multiple brush strokes all undone by one click)
-    EditorStoreCheckPoint $_layers(label,node)
-    set _appliedSinceConstructed 1
-  }
+  # store a backup copy of the label map for undo
+  # (this happens in it's own thread, so it is cheap)
+  EditorStoreCheckPoint $_layers(label,node)
 
   #
   # get the brush bounding box in ijk coordinates
@@ -521,6 +512,8 @@ itcl::body Labeler::rotateSliceToImage { } {
   $this queryLayers 0 0
 
   $_sliceNode RotateToVolumePlane $_layers(background,node)
+  # make sure the slice plane does not lie on an index boundary (to avoid rounding issues)
+  [$sliceGUI GetLogic] SnapSliceOffsetToIJK
   $_sliceNode UpdateMatrices
 }
 

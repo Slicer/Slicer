@@ -5,7 +5,7 @@ package require Itcl
 #
 if {0} { ;# comment
 
-  DilateLabelEffect an editor effect
+  ErodeLabelEffect an editor effect
 
 
 # TODO : 
@@ -17,14 +17,14 @@ if {0} { ;# comment
 #
 #########################################################
 # ------------------------------------------------------------------
-#                             DilateLabelEffect
+#                             ErodeLabelEffect
 # ------------------------------------------------------------------
 #
 # The class definition - define if needed (not when re-sourcing)
 #
-if { [itcl::find class DilateLabelEffect] == "" } {
+if { [itcl::find class ErodeLabelEffect] == "" } {
 
-  itcl::class DilateLabelEffect {
+  itcl::class ErodeLabelEffect {
 
     inherit EffectSWidget
 
@@ -44,18 +44,18 @@ if { [itcl::find class DilateLabelEffect] == "" } {
 # ------------------------------------------------------------------
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
-itcl::body DilateLabelEffect::constructor {sliceGUI} {
+itcl::body ErodeLabelEffect::constructor {sliceGUI} {
   set _scopeOptions "all visible"
 }
 
-itcl::body DilateLabelEffect::destructor {} {
+itcl::body ErodeLabelEffect::destructor {} {
 }
 
 # ------------------------------------------------------------------
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body DilateLabelEffect::processEvent { {caller ""} {event ""} } {
+itcl::body ErodeLabelEffect::processEvent { {caller ""} {event ""} } {
 
   if { [$this preProcessEvent $caller $event] } {
     # superclass processed the event, so we don't
@@ -63,11 +63,24 @@ itcl::body DilateLabelEffect::processEvent { {caller ""} {event ""} } {
   }
 }
 
-itcl::body DilateLabelEffect::apply {} {
+itcl::body ErodeLabelEffect::apply {} {
 
   if { [$this getInputLabel] == "" } {
-    $this errorDialog "Label map needed for Dilate"
+    $this errorDialog "Label map needed for Erode"
     return
+  }
+
+  if { [info exists o(fill)] } {
+    # use the GUI if available
+    set fill [[$o(fill) GetWidget] GetValue]
+    set neighborMode [set ::[$o(fourNeighbors) GetVariableName]]
+    set iterations [[$o(iterations) GetWidget] GetValue]
+  } else {
+    # get values from node
+    set node [EditorGetParameterNode]
+    set fill [$node GetParameter "Morphology,fill"]
+    set neighborMode [$node GetParameter "Morphology,neighborMode"]
+    set iterations [$node GetParameter "Morphology,iterations"]
   }
 
 
@@ -75,14 +88,12 @@ itcl::body DilateLabelEffect::apply {} {
   $erode SetInput [$this getInputLabel]
   $erode SetOutput [$this getOutputLabel]
 
-  $erode SetBackground [EditorGetPaintLabel]
-  $erode SetForeground [[$o(fill) GetWidget] GetValue]
-  set neighborhood [set ::[$o(fourNeighbors) GetVariableName]]
-  $erode SetNeighborTo$neighborhood
+  $erode SetForeground [EditorGetPaintLabel]
+  $erode SetBackground $fill
+  $erode SetNeighborTo$neighborMode
 
-  set iterations [[$o(iterations) GetWidget] GetValue]
   for {set i 0} {$i < $iterations} {incr i} {
-    $this setProgressFilter $erode "Dilate ($i)"
+    $this setProgressFilter $erode "Erode ($i)"
     $erode Update
   }
 
@@ -92,7 +103,7 @@ itcl::body DilateLabelEffect::apply {} {
 
 }
 
-itcl::body DilateLabelEffect::buildOptions {} {
+itcl::body ErodeLabelEffect::buildOptions {} {
 
   # call superclass version of buildOptions
   chain
@@ -106,8 +117,8 @@ itcl::body DilateLabelEffect::buildOptions {} {
   $o(fill) Create
   [$o(fill) GetWidget] SetRestrictValueToInteger
   [$o(fill) GetWidget] SetValueAsInt 0
-  $o(fill) SetLabelText "Background Label: "
-  $o(fill) SetBalloonHelpString "Dilated pixels will replace this value."
+  $o(fill) SetLabelText "Fill Label: "
+  $o(fill) SetBalloonHelpString "Eroded pixels will be replaced with this value."
   pack [$o(fill) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
 
   set o(iterations) [vtkKWEntryWithLabel New]
@@ -153,8 +164,8 @@ itcl::body DilateLabelEffect::buildOptions {} {
   set o(erode) [vtkKWRadioButton New]
   $o(erode) SetParent [$this getOptionsFrame]
   $o(erode) Create
-  $o(erode) SetValue "Dilate"
-  $o(erode) SetText "Dilate"
+  $o(erode) SetValue "Erode"
+  $o(erode) SetText "Erode"
   $o(erode) SetBalloonHelpString "Treat diagonally adjacent voxels as neighbors."
   # TODO: support erode and dilate
   #pack [$o(erode) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
@@ -162,8 +173,8 @@ itcl::body DilateLabelEffect::buildOptions {} {
   set o(erodeDilate) [vtkKWRadioButton New]
   $o(erodeDilate) SetParent [$this getOptionsFrame]
   $o(erodeDilate) Create
-  $o(erodeDilate) SetValue "Dilate&Erode"
-  $o(erodeDilate) SetText "Dilate&Erode"
+  $o(erodeDilate) SetValue "ErodeDilate"
+  $o(erodeDilate) SetText "Erode&Dilate"
   $o(erodeDilate) SetBalloonHelpString "Do not treat diagonally adjacent voxels as neighbors."
   # TODO: support erode and dilate
   #pack [$o(erodeDilate) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
@@ -200,7 +211,7 @@ itcl::body DilateLabelEffect::buildOptions {} {
   set o(help) [vtkNew vtkSlicerPopUpHelpWidget]
   $o(help) SetParent [$this getOptionsFrame]
   $o(help) Create
-  $o(help) SetHelpTitle "DilateLabel"
+  $o(help) SetHelpTitle "ErodeLabel"
   $o(help) SetHelpText "Use this tool to remove pixels from the boundary of the current label."
   $o(help) SetBalloonHelpString "Bring up help window."
   pack [$o(help) GetWidgetName] \
@@ -215,14 +226,14 @@ itcl::body DilateLabelEffect::buildOptions {} {
   lappend _observerRecords "$o(cancel) $tag"
 
   if { [$this getOutputLabel] == "" } {
-    $this errorDialog "Label map needed for DilateLabeling"
+    $this errorDialog "Label map needed for ErodeLabeling"
     after idle ::EffectSWidget::RemoveAll
   }
 
   $this updateGUIFromMRML
 }
 
-itcl::body DilateLabelEffect::tearDownOptions { } {
+itcl::body ErodeLabelEffect::tearDownOptions { } {
 
   # call superclass version of tearDownOptions
   chain

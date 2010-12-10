@@ -56,6 +56,9 @@ namespace eval Box {
       if { [catch "eval $instance $args" res] } {
         puts $res
         puts $::errorInfo
+        if { [string match "*bad alloc*" $res] } {
+          ::bgerror $res
+        }
       }
     }
   }

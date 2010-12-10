@@ -63,7 +63,11 @@ if { [itcl::find class EffectSWidget] == "" } {
     method getLayerIJK { layer x y } {}
     method getInputLayer { layer } {}
     method getInputBackground {} {}
+    method getInputForeground {} {}
+    method setInputForeground { im } {}
+    method setInputImageData { im ID } {}
     method getInputLabel {} {}
+    method swapInputForegroundLabel {foregroundID labelID} {}
     method getOutputLabel {} {}
     method getOptionsFrame {} {}
     method buildOptions {} {}
@@ -96,29 +100,22 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 
   $this processEvent
 
-  set tag [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _observerRecords "$sliceGUI $tag"
   set events {
     LeftButtonPressEvent LeftButtonReleaseEvent 
     RightButtonPressEvent RightButtonReleaseEvent 
     MouseMoveEvent KeyPressEvent EnterEvent LeaveEvent
   }
   foreach event $events {
-    set tag [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]
-    lappend _observerRecords "$sliceGUI $tag"
+    $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  set tag [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _observerRecords "$node $tag"
-  set tag [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
-  lappend _observerRecords "$node $tag"
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"
 
   set node [EditorGetParameterNode]
-  set tag [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _observerRecords "$node $tag"
-  set tag [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
-  lappend _observerRecords "$node $tag"
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"
 }
 
 itcl::body EffectSWidget::destructor {} {
@@ -126,14 +123,6 @@ itcl::body EffectSWidget::destructor {} {
   $sliceGUI SetActiveLeftButtonTool ""
   $this animateCursor off
   $this tearDownOptions
-
-  foreach record $_observerRecords {
-    foreach {obj tag} $record {
-      if { [info command $obj] != "" } {
-        $obj RemoveObserver $tag
-      }
-    }
-  }
 
   if { [info command $_renderer] != "" } {
     foreach a $_cursorActors {
@@ -337,17 +326,23 @@ itcl::body EffectSWidget::preProcessEvent { {caller ""} {event ""} } {
     }
   }
 
-  set event [$sliceGUI GetCurrentGUIEvent] 
-
   switch $event {
     "KeyPressEvent" {
       set key [$_interactor GetKeySym]
-      if { [lsearch "Escape" $key] != -1 } {
+      if { [lsearch "Escape z y" $key] != -1 } {
         $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
         $sliceGUI SetGUICommandAbortFlag 1
         switch [$_interactor GetKeySym] {
           "Escape" {
             after idle ::EffectSWidget::RemoveAll
+            return 1
+          }
+          "z" {
+            EditorPerformPreviousCheckPoint
+            return 1
+          }
+          "y" {
+            EditorPerformNextCheckPoint
             return 1
           }
         }
@@ -398,6 +393,98 @@ itcl::body EffectSWidget::getLayerIJK { layer x y } {
 itcl::body EffectSWidget::getInputBackground {} {
   return [$this getInputLayer background]
 }
+
+itcl::body EffectSWidget::getInputForeground {} {
+
+  set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+  set j 0
+  set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+  set foregroundID [$cnode GetForegroundVolumeID]
+  if { $foregroundID != "" } {
+   
+      set numVolNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLScalarVolumeNode"]
+      for { set j 0 } { $j < $numVolNodes } { incr j } {
+    set vnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLScalarVolumeNode"]
+          set vID [$vnode GetID]
+          if { $vID == $foregroundID } {
+        return [$vnode GetImageData]
+          }
+      }   
+  } else {
+   return ""
+  }
+
+  return ""
+ 
+}
+
+
+itcl::body EffectSWidget::swapInputForegroundLabel { foregroundID  labelID} {
+
+  set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+  set j 0
+  set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+  set fID [$cnode GetForegroundVolumeID]
+  set lID [$cnode GetLabelVolumeID]
+  
+  if { $fID != "" && $fID == $foregroundID && $lID == $labelID } {
+     puts "swapping foreground $foregroundID and label $labelID"
+      for { set j 0 } { $j < $numCnodes } { incr j } {
+        set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+        $cnode SetReferenceLabelVolumeID $foregroundID
+        $cnode SetReferenceForegroundVolumeID $labelID
+      }
+   }
+}
+
+
+itcl::body EffectSWidget::setInputImageData { im ID } {
+
+
+   set numVolNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLScalarVolumeNode"]
+   set foundNode 0
+
+    for { set j 0 } { $foundNode == 0 && $j < $numVolNodes } { incr j } {
+       set vnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLScalarVolumeNode"]
+       set vID [$vnode GetID]
+       if { $vID == $ID } {
+            $vnode SetAndObserveImageData $im
+            $vnode Modified
+           #$vnode SetImageData $im
+            set foundNode 1
+        }
+    }
+}
+
+
+
+
+itcl::body EffectSWidget::setInputForeground { im } {
+
+  catch {
+  set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+  for { set k 0 } { $k < $numCnodes } {incr k} {
+     set cnode [$::slicer3::MRMLScene GetNthNodeByClass $k "vtkMRMLSliceCompositeNode"]
+     set foregroundID [$cnode GetForegroundVolumeID]
+     if { $foregroundID != "" } {
+   
+        set numVolNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLScalarVolumeNode"]
+        for { set j 0 } { $j < $numVolNodes } { incr j } {
+      set vnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLScalarVolumeNode"]
+            set vID [$vnode GetID]
+            if { $vID == $foregroundID } {
+          $vnode SetAndObserveImageData $im
+                $vnode Modified
+            }
+         }   
+     }
+  } 
+  } errCopy
+  if {$errCopy != "" } { puts "Error in copying foreground $errCopy"} 
+
+}
+
+
 
 itcl::body EffectSWidget::getInputLabel {} {
 
@@ -549,8 +636,7 @@ itcl::body EffectSWidget::processEvent { {caller ""} {event ""} } {
   $this preProcessEvent
 
   # your event processing can replace the dummy code below...
-
-  set event [$sliceGUI GetCurrentGUIEvent] 
+  #
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
   switch $event {
@@ -592,7 +678,7 @@ itcl::body EffectSWidget::errorDialog { errorText } {
 itcl::body EffectSWidget::setProgressFilter { filter {description ""} } {
 
   foreach event {StartEvent ProgressEvent EndEvent} {
-    $filter AddObserver $event [list $this progressCallback $event $filter "$description"]
+    $::slicer3::Broker AddObservation $filter $event [list $this progressCallback $event $filter "$description"]
   }
 
 }

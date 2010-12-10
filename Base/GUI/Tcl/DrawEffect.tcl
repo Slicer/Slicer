@@ -91,6 +91,9 @@ itcl::body DrawEffect::positionActors { } {
 }
 
 itcl::body DrawEffect::setLineMode {{mode "solid"}} {
+  if { ![info exists o(actor)] } {
+    return
+  }
   set property [$o(actor) GetProperty]
   switch $mode {
     "solid" {
@@ -123,7 +126,6 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
 
   chain $caller $event
 
-  set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
   if { $caller == $sliceGUI } {
@@ -164,10 +166,11 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
       }
       "KeyPressEvent" { 
         set key [$_interactor GetKeySym]
-        if { [lsearch "a x" $key] != -1 } {
+        if { [lsearch "a x Return" $key] != -1 } {
           $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           $sliceGUI SetGUICommandAbortFlag 1
           switch [$_interactor GetKeySym] {
+            "Return" -
             "a" {
               $this apply
               set _actionState ""
@@ -199,12 +202,16 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
     # - if the SliceToRAS has been modified, then we're on a different plane
     #
     set logic [$sliceGUI GetLogic]
+    set lineMode "solid"
     set currentSlice [$logic GetSliceOffset]
-    if { $_activeSlice != $currentSlice } {
-      $this setLineMode "dashed"
-    } else {
-      $this setLineMode "solid"
+    if { [string length $currentSlice] && [string is double $currentSlice] 
+          && [string length $_activeSlice] && [string is double $_activeSlice] } {
+      set offset [expr abs($currentSlice - $_activeSlice)]
+      if { $offset > 0.01 } {
+        set lineMode "dashed"
+      }
     }
+    $this setLineMode $lineMode
   }
 
   $this positionActors

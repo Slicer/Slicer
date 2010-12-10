@@ -162,11 +162,11 @@ proc EditorBuildGUI {this} {
   set ::Editor($this,enableCheckPoint) [vtkKWCheckButton New]
   $::Editor($this,enableCheckPoint) SetParent $::Editor($this,toolsEditFrame)
   $::Editor($this,enableCheckPoint) Create
-  $::Editor($this,enableCheckPoint) SetText "Check Points"
-  $::Editor($this,enableCheckPoint) SetBalloonHelpString "Volume Check Points allow you to move back and forth through recent edits.\n\nNote: for large volumes, you may run out of system memory when this is enabled."
-  $::Editor($this,enableCheckPoint) SetSelectedState 0
+  $::Editor($this,enableCheckPoint) SetText "Undo/Redo"
+  $::Editor($this,enableCheckPoint) SetBalloonHelpString "Volume Check Points allow you to undo and redo recent edits.\n\nNote: for large volumes, you may run out of system memory when this is enabled."
+  set ::Editor(checkPointsEnabled) 1
+  $::Editor($this,enableCheckPoint) SetSelectedState $::Editor(checkPointsEnabled)
   pack [$::Editor($this,enableCheckPoint) GetWidgetName] -side left
-  set ::Editor(checkPointsEnabled) 0
 
 }
 
@@ -252,9 +252,22 @@ proc EditorGetParameterNode {} {
 }
 
 proc EditorSetActiveToolLabel {name} {
-  [$::Editor($::Editor(singleton),toolsActiveTool) GetWidget] SetText $name
-  [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $name
+  if { [info exists ::Editor($::Editor(singleton),toolsActiveTool)] } {
+    [$::Editor($::Editor(singleton),toolsActiveTool) GetWidget] SetText $name
+    [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $name
+  }
+  set node [EditorGetParameterNode]
+  $node SetParameter "tool" $name
 }
+
+proc EditorGetActiveToolLabel {} {
+  set node [EditorGetParameterNode]
+  if { [$node GetParameter "tool"] == "" } {
+    $node SetParameter "tool" "Default"
+  }
+  return [$node GetParameter "tool"]
+}
+
 
 proc EditorGetPaintLabel {} {
   set node [EditorGetParameterNode]
@@ -481,10 +494,9 @@ proc EditorCreateLabelVolume {this} {
     return;
   }
 
-   set name "[$volumeNode GetName]-label"
+  set name "[$volumeNode GetName]-label"
 
   set scene [[$this GetLogic] GetMRMLScene]
-
   set volumesLogic [$::slicer3::VolumesGUI GetLogic]
   set labelNode [$volumesLogic CreateLabelVolume $scene $volumeNode $name]
 
@@ -513,9 +525,11 @@ proc EditorCreateLabelVolume {this} {
 #
 proc EditorFreeVolumes {volumeList} {
   foreach volume $volumeList {
-    foreach {imageData nodeID} $volume {}
-    if { [info command $imageData] != "" } {
-      $imageData Delete
+    array set checkPoint $volume
+    foreach o "imageData stash" {
+      if { [info command $checkPoint($o)] != "" } {
+        $checkPoint($o) Delete
+      }
     }
   }
 }
@@ -524,8 +538,8 @@ proc EditorFreeVolumes {volumeList} {
 proc EditorSetCheckPointEnabled {onoff} {
   if { !$onoff } {
     EditorFreeCheckPointVolumes
-    EditorUpdateCheckPointButtons
   }
+  EditorUpdateCheckPointButtons
   set ::Editor(checkPointsEnabled) $onoff
 }
 
@@ -539,6 +553,8 @@ proc EditorFreeCheckPointVolumes {} {
   }
 }
 
+# enable or disable button state depending on existence of 
+# volumes to restore
 proc EditorUpdateCheckPointButtons {} {
   if { [info exists ::Editor(previousCheckPointImages)] } {
     if { $::Editor(previousCheckPointImages) != "" } {
@@ -559,6 +575,10 @@ proc EditorUpdateCheckPointButtons {} {
 # called by editor effects
 proc EditorStoreCheckPoint {node} {
 
+  if { ![info exists ::Editor(checkPointsEnabled)] } {
+    set ::Editor(checkPointsEnabled) 0
+  }
+
   if { !$::Editor(checkPointsEnabled) } {
     return
   }
@@ -568,7 +588,7 @@ proc EditorStoreCheckPoint {node} {
   # invalidate NextCheckPoint list
   EditorFreeVolumes $::Editor(nextCheckPointImages)
 
-  EditorUpdateCheckPointButtons 
+  EditorUpdateCheckPointButtons
 }
 
 
@@ -584,31 +604,53 @@ proc EditorStoreCheckPointVolume {nodeID listID} {
 
   # trim oldest previousCheckPoint image if needed
   if { [llength $::Editor($listID)] >= $::Editor(numberOfCheckPoints) } {
-    set disposeImage [lindex $::Editor($listID) 0]
-    foreach {imageData nodeID} $disposeImage {}
-    $imageData Delete
+    array set disposeCheckPoint [lindex $::Editor($listID) 0]
+    $disposeCheckPoint(imageData) Delete
+    $disposeCheckPoint(stash) Delete
     set ::Editor($listID) [lrange $::Editor($listID) 1 end]
   }
 
   # add new 
+  set checkPoint(nodeID) $nodeID
   set node [$::slicer3::MRMLScene GetNodeByID $nodeID]
-  set imageData [vtkImageData New]
+  set checkPoint(imageData) [vtkImageData New]
+  set checkPoint(stash) [vtkImageStash New]
   if { $node != "" } {
-    $imageData DeepCopy [$node GetImageData]
+    $checkPoint(imageData) DeepCopy [$node GetImageData]
+    $checkPoint(stash) SetStashImage $checkPoint(imageData)
+    $checkPoint(stash) ThreadedStash
   } else {
     error "no node for $nodeID"
   }
-  set nodeID [$node GetID]
-  lappend ::Editor($listID) "$imageData $nodeID"
+  lappend ::Editor($listID) [array get checkPoint]
 }
 
-proc EditorRestoreData {imageData nodeID} {
+proc EditorRestoreData {restoreCheckPointArray} {
   # restore the volume data
-  set node [$::slicer3::MRMLScene GetNodeByID $nodeID]
+  array set checkPoint $restoreCheckPointArray
+  set node [$::slicer3::MRMLScene GetNodeByID $checkPoint(nodeID)]
+  if { [info command $checkPoint(stash)] == "" } {
+    # check point no longer exists
+    return
+  }
   if { $node != "" } {
-    [$node GetImageData] DeepCopy $imageData
+    set tries 0
+    while { $tries < 10 && [$checkPoint(stash) GetStashing] } {
+      incr tries
+      after 500
+    }
+    if { [$checkPoint(stash) GetStashing] } {
+      EditorErrorDialog "Sorry - Cannot access stored checkpoint!"
+      return
+    }
+    $checkPoint(stash) Unstash
+    [$node GetImageData] DeepCopy $checkPoint(imageData)
+    # now delete the stored checkpoint - it is the current image
+    # label map and will get stashed again if draw on or restored over
+    $checkPoint(stash) Delete
+    $checkPoint(imageData) Delete
   } else {
-    error "no node for $nodeID"
+    EditorErrorDialog "Sorry - no node for $checkPoint(nodeID)"
   }
   $node SetModifiedSinceRead 1
   $node Modified
@@ -621,16 +663,16 @@ proc EditorPerformPreviousCheckPoint {} {
   }
 
   # get the volume to restore
-  set restore [lindex $::Editor(previousCheckPointImages) end]
-  foreach {imageData nodeID} $restore {}
+  set restoreArray [lindex $::Editor(previousCheckPointImages) end]
+  array set restore $restoreArray
 
   # save the current state as a redo point
-  EditorStoreCheckPointVolume $nodeID nextCheckPointImages
+  EditorStoreCheckPointVolume $restore(nodeID) nextCheckPointImages
 
   # now pop the next item on the previousCheckPoint stack
   set ::Editor(previousCheckPointImages) [lrange $::Editor(previousCheckPointImages) 0 end-1]
 
-  EditorRestoreData $imageData $nodeID
+  EditorRestoreData $restoreArray
   EditorUpdateCheckPointButtons 
 }
 
@@ -641,17 +683,200 @@ proc EditorPerformNextCheckPoint {} {
   }
 
   # get the volume to restore
-  set restore [lindex $::Editor(nextCheckPointImages) end]
-  foreach {imageData nodeID} $restore {}
+  set restoreArray [lindex $::Editor(nextCheckPointImages) end]
+  array set restore $restoreArray
 
   # save the current state as an previousCheckPoint Point
-  EditorStoreCheckPointVolume $nodeID previousCheckPointImages
+  EditorStoreCheckPointVolume $restore(nodeID) previousCheckPointImages
 
   # now pop the next item on the redo stack
   set ::Editor(nextCheckPointImages) [lrange $::Editor(nextCheckPointImages) 0 end-1]
-  EditorRestoreData $imageData $nodeID
+  EditorRestoreData $restoreArray
   EditorUpdateCheckPointButtons 
 }
+
+
+
+#
+# helper for grow cut segmentation
+#
+
+
+proc EditorCreateGestureParameterNode {id} {
+
+  set node [vtkMRMLScriptedModuleNode New]
+  $node SetModuleName "Editor"
+
+  #set node defaults
+  #puts "setting parameter $id.."
+  $node SetParameter gestureid $id
+
+  $::slicer3::MRMLScene AddNode $node
+  $node Delete
+
+}
+
+proc EditorGetGestureParameterNode {id} {
+
+
+  set node ""
+ # puts "checking the nodes.. "
+  set nNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLScriptedModuleNode"]
+  for {set i 0} {$i < $nNodes} {incr i} {
+    set n [$::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLScriptedModuleNode"]
+    if { [$n GetModuleName] == "Editor" } {
+   #  puts "got a node matching the module name... "
+      set nodeid [$n GetParameter "gestureid"]
+   #   puts "got a node id : $nodeid"
+      if { $nodeid != "" } {
+   #      puts "found node $n"
+         $n SetParameter gestureid $id
+         set node $n
+         break
+      }
+    }
+  }
+
+  if { $node == "" } {
+  #  puts "creating a new node..."
+    EditorCreateGestureParameterNode $id
+  #  puts "getting the newly created node..."
+    set node [EditorGetGestureParameterNode $id]
+  }
+
+  return $node
+
+}
+
+
+proc EditorGestureCheckPoint {} {
+
+   #
+   # Create a new gesture map for the corresponding label layer 
+   #
+
+   puts "Editor Gesture Check Point"
+
+   catch {
+   set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
+   set layerLogic [$sliceLogic GetLabelLayer]
+   set labelNode [$layerLogic GetVolumeNode]
+
+   #
+   # Check if the size of the label layer image data and the input image data match 
+   #
+
+   set backgroundLogic [$sliceLogic GetBackgroundLayer]
+   set backgroundNode [$backgroundLogic GetVolumeNode]
+  
+   set labelImage [$labelNode GetImageData]
+   set backgroundImage [$backgroundNode GetImageData]
+
+   set labelDim [$labelImage GetDimensions]
+   set backgroundDim [$backgroundImage GetDimensions]
+   
+   set lx [lindex $labelDim 0]
+   set ly [lindex $labelDim 1]
+   set lz [lindex $labelDim 2]
+
+
+   set bx [lindex $backgroundDim 0]
+   set by [lindex $backgroundDim 1]
+   set bz [lindex $backgroundDim 2]
+
+   puts "label Dimensions :  $lx $ly $lz  Background Dimensions : $bx $by $bz "
+
+   if { $lx != $bx || $ly != $by || $lz != $bz } {
+    
+    EditorErrorDialog "Label Image and Intensity Image Dimensions Don't Match. Select another Label Image. All the previous Gestures will be lost."
+   }
+   
+   set labelname [$labelNode GetName]
+   set name "[$labelNode GetName]-growcut"
+
+   set GestureID ""
+
+   #
+   # Check if we have a node corresponding to the label node
+   #
+   #set name "[$labelNode GetID]-gesture"
+   # puts "name : $name"
+   set nodes [$::slicer3::MRMLScene GetNodesByName $name]
+
+   #puts "number of items : [$nodes GetNumberOfItems]"
+
+   if { [$nodes GetNumberOfItems] == 0 } {
+
+      puts "adding a new volume to MRML Scene $name"
+      set volumesLogic [$::slicer3::VolumesGUI GetLogic]
+      set gestureNode [$volumesLogic CreateLabelVolume $::slicer3::MRMLScene $labelNode $name]
+      set ID [$gestureNode GetID]
+      set GestureID [$gestureNode GetID]
+      puts "creating a gesture node $GestureID"
+      
+      catch {
+        set node [EditorGetGestureParameterNode $ID]
+      } check1
+      #if { $check1 != ""} { puts " foo check $check1" }
+
+  } else {
+   
+    #puts "node of $name exists... "
+    set nScriptedNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLScriptedModuleNode"]
+
+    set nNodes [$nodes GetNumberOfItems]
+
+    set foundnode -1
+
+    for {set i 0} {$i < $nNodes} {incr i} {
+
+     set testvol [$nodes GetItemAsObject $i]
+     set testId [$testvol GetID]
+     set testname [$testvol GetName]
+
+     if {$testname == $name } {
+        set foundnode $testId
+        set GestureID [$testvol GetID]
+       # puts "Found node $GestureID"
+        break
+     }
+   }
+
+   if { $foundnode == -1 } {
+
+     set volumesLogic [$::slicer3::VolumesGUI GetLogic]
+     set gestureNode [$volumesLogic CreateLabelVolume $::slicer3::MRMLScene $labelNode $name]
+     set ID [$gestureNode GetID]
+
+     set GestureID [$gestureNode GetID]
+
+     puts "creating a new node for $GestureID" 
+     
+     set node [EditorGetGestureParameterNode $ID]
+    } else {
+ #     puts "setting the volume ids.. "
+      set node [EditorGetGestureParameterNode $foundnode]
+    }
+  }
+
+ } checkstr
+ 
+ if {$checkstr != "" } { puts "error in setting up the gesture image $checkstr " }
+  puts "setting the label map opacities..."
+   set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+   for { set j 0 } { $j < $numCnodes } { incr j } {
+
+       set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+       $cnode SetReferenceLabelVolumeID [$labelNode GetID]
+       $cnode SetLabelOpacity 0.6
+       
+       $cnode SetReferenceForegroundVolumeID $GestureID
+       puts "Setting the foreground volume id to $GestureID"
+       $cnode SetForegroundOpacity 0.4
+   }
+
+}
+
 
 #
 # helper to display error

@@ -64,7 +64,6 @@ itcl::body LevelTracingEffect::processEvent { {caller ""} {event ""} } {
 
   chain $caller $event
 
-  set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
   if { $caller == $sliceGUI } {

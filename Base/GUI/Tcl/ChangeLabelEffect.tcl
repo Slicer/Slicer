@@ -72,8 +72,16 @@ itcl::body ChangeLabelEffect::apply {} {
     return
   }
 
-  set in [[$o(colorIn) GetWidget] GetValue]
-  set out [[$o(colorOut) GetWidget] GetValue]
+  if { [info exists o(colorIn)] } {
+    # use the GUI if available
+    set in [[$o(colorIn) GetWidget] GetValue]
+    set out [[$o(colorOut) GetWidget] GetValue]
+  } else {
+    # get values from node
+    set node [EditorGetParameterNode]
+    set in [$node GetParameter "ChangeLabel,inputColor"]
+    set out [$node GetParameter "ChangeLabel,outputColor"]
+  }
 
   if { ![string is integer $in] || ![string is integer $out] } {
     $this errorDialog "Label values must be integers."

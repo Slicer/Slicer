@@ -271,8 +271,11 @@ namespace eval Slicer3Adapters {
 
   itcl::class SlicerWindow {
     # this is a replacement for a vtkSlicerWindow from slicer3
+    #
+    variable _progressGauge ""
 
     constructor {} {
+      set _progressGauge [namespace current]::[::Slicer3Adapters::ProgressGauge #auto]
     }
 
     destructor {
@@ -281,6 +284,9 @@ namespace eval Slicer3Adapters {
     # methods
     method SetStatusText {arg} {
       #puts "TODO: Status Text $arg"
+    }
+    method GetProgressGauge {} {
+      return $_progressGauge
     }
   }
 
@@ -377,6 +383,49 @@ namespace eval Slicer3Adapters {
       #puts "TODO: SetText $corner $text"
       #puts -nonewline "t";flush stdout
     }
+  }
+
+  itcl::class ProgressGauge {
+    # this is a stand-in for a vtkKWProgressDialog from kwwidgets
+
+    constructor {} {
+    }
+
+    destructor {
+    }
+
+    # parts of the application
+    variable _value 0
+
+    # methods
+    method SetValue {value} {
+      set _value $value
+      puts "Progress: $_value"
+    }
+  }
+
+  itcl::class vtkKWMessageDialog {
+    # this is a stand-in for a vtkKWMessageDialog from kwwidgets
+
+    constructor {} {
+    }
+
+    destructor {
+    }
+
+    # parts of the application
+    variable _value 0
+
+    # methods
+    method SetParent {value} {}
+    method SetMasterWindow {value} {}
+    method SetStyleToMessage {} {}
+    method SetText {value} {
+      puts "Message: $value"
+    }
+    method Create {} {}
+    method Invoke {} {}
+    method Delete {} { itcl::delete $this }
   }
 
   itcl::class VTKWidget {
