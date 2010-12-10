@@ -161,6 +161,12 @@ namespace eval tpycl {
             if { [string match "string*" $type] } {
               set arg "str($arg)"
             }
+            if { [string match "*int*" $type] && ($arg == "" || $arg == "''") } {
+              set arg 0
+            }
+            if { [string match "*float*" $type] && ($arg == "" || $arg == "''") } {
+              set arg 0.
+            }
           }
           if { [string index $pycmd end] != "(" } {
             # if not at start of arg list, add a comma
