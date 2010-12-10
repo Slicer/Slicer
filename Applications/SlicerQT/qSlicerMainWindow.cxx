@@ -382,7 +382,6 @@ void qSlicerMainWindow::setupMenuActions()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onViewExtensionManagerActionTriggered()
 {
-  Q_D(qSlicerMainWindow);
   qSlicerExtensionsWizard extensionsManager(this);
   extensionsManager.exec();
 }
