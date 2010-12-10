@@ -99,6 +99,13 @@ vtkMRMLScene* qMRMLSortFilterProxyModel::mrmlScene()const
 }
 
 //-----------------------------------------------------------------------------
+QModelIndex qMRMLSortFilterProxyModel::mrmlSceneIndex()const
+{
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  return this->mapFromSource(sceneModel->mrmlSceneIndex());
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNode(const QModelIndex& proxyIndex)const
 {
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());

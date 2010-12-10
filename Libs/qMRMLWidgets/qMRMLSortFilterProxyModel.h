@@ -53,7 +53,10 @@ public:
   /// Retrive the associated vtkMRMLNode
   vtkMRMLScene* mrmlScene()const;
 
-  /// Retrive the associated vtkMRMLNode
+  /// Retrieve the mrml scene index
+  QModelIndex mrmlSceneIndex()const;
+
+  /// Retrieve the associated vtkMRMLNode
   vtkMRMLNode* mrmlNode(const QModelIndex& index)const;
 
   ///
