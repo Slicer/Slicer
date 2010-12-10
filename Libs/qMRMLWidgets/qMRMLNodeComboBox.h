@@ -97,9 +97,9 @@ public:
   /// Add node type attribute that filter the nodes to
   /// display. If a node is created via "AddNode", the attributes
   /// will be set to the new node
-  void addAttribute(const QString& nodeType,
-                    const QString& attributeName,
-                    const QVariant& attributeValue);
+  Q_INVOKABLE void addAttribute(const QString& nodeType,
+                                const QString& attributeName,
+                                const QVariant& attributeValue);
 
   ///
   /// BaseName is the name used to generate a node name for all the new created
