@@ -34,6 +34,7 @@
 
 // Logic includes
 #include "vtkSlicerVolumesLogic.h"
+#include "vtkSlicerApplicationLogic.h"
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
