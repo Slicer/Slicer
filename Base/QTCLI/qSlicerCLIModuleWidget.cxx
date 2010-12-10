@@ -306,6 +306,15 @@ void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
     return;
     }
 
+  // Update the selector if this slot was called programmatically
+  Q_ASSERT(d->MRMLCommandLineModuleNodeSelector);
+  if (d->MRMLCommandLineModuleNodeSelector->currentNode()
+      != commandLineModuleNode)
+    {
+    d->MRMLCommandLineModuleNodeSelector->setCurrentNode(commandLineModuleNode);
+    return;
+    }
+
   // Connect node modified event to updateUi that synchronize the values of the
   // nodes with the Ui
   this->qvtkReconnect(d->CommandLineModuleNode, node,
