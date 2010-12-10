@@ -422,6 +422,7 @@ void vtkMRMLViewDisplayableManager::AdditionnalInitializeStep()
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::VisibilityEvent);
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::StereoModeEvent);
   this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::BackgroundColorEvent);
+  this->AddMRMLDisplayableManagerEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -486,6 +487,11 @@ void vtkMRMLViewDisplayableManager::ProcessMRMLEvents(vtkObject * caller,
       {
       vtkDebugMacro(<< "ProcessMRMLEvents - BackgroundColorEvent");
       this->Internal->UpdateBackgroundColor();
+      }
+    else if (event == vtkMRMLViewNode::ResetFocalPointRequestedEvent)
+      {
+      vtkDebugMacro(<< "ProcessMRMLEvents - ResetFocalPointEvent");
+      this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
       }
     }
   // Default MRML Event handler is NOT needed
