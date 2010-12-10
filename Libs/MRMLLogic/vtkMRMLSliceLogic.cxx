@@ -438,9 +438,11 @@ void vtkMRMLSliceLogic::ProcessLogicEvents()
     layer->Delete();
     }
   // Update slice plane geometry
-  if (this->SliceNode != 0 && this->GetSliceModelNode() != 0
-      && this->GetMRMLScene()->GetNodeByID( this->SliceModelNode->GetID() ) != 0 &&
-        this->SliceModelNode->GetPolyData() != 0 )
+  if (this->SliceNode != 0
+      && this->GetSliceModelNode() != 0
+      && this->GetMRMLScene() != 0
+      && this->GetMRMLScene()->GetNodeByID( this->SliceModelNode->GetID() ) != 0
+      && this->SliceModelNode->GetPolyData() != 0 )
     {
 
 
@@ -1185,7 +1187,9 @@ vtkMRMLVolumeNode *vtkMRMLSliceLogic::GetLayerVolumeNode(int layer)
       break;
       }
     }
-  return ( vtkMRMLVolumeNode::SafeDownCast ( this->GetMRMLScene()->GetNodeByID( id )) );
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  return scene ? vtkMRMLVolumeNode::SafeDownCast(
+    scene->GetNodeByID( id )) : 0;
 }
 
 //----------------------------------------------------------------------------
