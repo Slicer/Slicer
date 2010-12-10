@@ -5,6 +5,7 @@ SET(Slicer_PYTHON_SCRIPTS
   slicer/cli
   slicer/logic
   slicer/slicerqt
+  slicer/util
   mrml
   mrmlcli
   mrmlLogic
