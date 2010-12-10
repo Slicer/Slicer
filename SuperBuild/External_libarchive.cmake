@@ -7,7 +7,7 @@ set(libarchive_MD5 83b237a542f27969a8d68ac217dc3796)
 set(proj libarchive)
 
 ExternalProject_Add(${proj}
-  URL http://libarchive.googlecode.com/files/libarchive-2.8.4.tar.gz
+  URL ${libarchive_URL}
   URL_MD5 ${libarchive_MD5}
   SOURCE_DIR libarchive
   BINARY_DIR libarchive-build
