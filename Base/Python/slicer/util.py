@@ -1,6 +1,3 @@
-# This variable should be set externally
-_app = None
-
 def quit():
   exit()
 
@@ -8,7 +5,7 @@ def exit():
   app().quit()
 
 def app():
-  global _app
+  from __main__ import _app
   return _app
 
 def mainWindow():

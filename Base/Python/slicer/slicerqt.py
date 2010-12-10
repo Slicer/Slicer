@@ -1,5 +1,8 @@
 import vtk, qt, ctk
 import slicer
+
+_app = _qSlicerCoreApplicationInstance
+
 from slicer.util import *
 import slicer.cli
 
@@ -8,15 +11,10 @@ import slicer.cli
 #
 
 class _Internal():
-  import slicer.util
 
   def __init__(self):
-    global _qSlicerCoreApplicationInstance
-    app = _qSlicerCoreApplicationInstance
-    slicer.util._app = app
-
     import imp
-    moduleManager = app.moduleManager()
+    moduleManager = _app.moduleManager()
     factoryManager = moduleManager.factoryManager()
     factoryManager.connect('allModulesRegistered()', self.setSlicerModuleNames)
     moduleManager.connect('moduleLoaded(qSlicerAbstractCoreModule*)', self.setSlicerModules)
@@ -30,7 +28,7 @@ class _Internal():
     setattr(slicer, _modules.__name__, _modules)
 
     # Retrieve current instance of the scene and set 'slicer.mrmlScene'
-    setattr(slicer, 'mrmlScene', app.mrmlScene())
+    setattr(slicer, 'mrmlScene', _app.mrmlScene())
 
 
   def setSlicerModuleNames(self):
