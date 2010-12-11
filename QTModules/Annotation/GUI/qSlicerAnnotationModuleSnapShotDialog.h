@@ -56,7 +56,7 @@ private:
 
     /// The ID of the associated snapshot node.
     /// This is NULL if the dialog has no associated snapshot node (== new snapshot mode).
-    const char* m_Id;
+    vtkStdString m_Id;
 
 };
 

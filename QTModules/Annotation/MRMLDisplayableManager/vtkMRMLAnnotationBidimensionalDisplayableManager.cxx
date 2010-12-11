@@ -312,6 +312,8 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
 
     }
 
+  // set a specific format for the measurement text
+  vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetLabelFormat("%.1f");
 
   // finally we add observer for end interaction, what a dirty hack!! if we added it before, it would all be crazy
   vtkAnnotationBidimensionalWidgetCallback *myCallback = vtkAnnotationBidimensionalWidgetCallback::New();

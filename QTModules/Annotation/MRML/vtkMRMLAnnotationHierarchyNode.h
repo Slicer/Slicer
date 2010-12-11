@@ -17,6 +17,8 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationHierarchyNode,vtkMRMLDisplayableHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  virtual const char* GetIcon() {return ":/Icons/Data.png";};
+
   // Description:
   // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);

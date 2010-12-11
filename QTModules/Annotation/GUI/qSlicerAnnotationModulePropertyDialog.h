@@ -6,6 +6,8 @@
 
 #include "qSlicerAbstractModuleWidget.h"
 
+#include "vtkStdString.h"
+
 class vtkSlicerAnnotationModuleLogic;
 class vtkMRMLAnnotationLinesNode;
 class vtkMRMLAnnotationControlPointsNode;
@@ -32,7 +34,7 @@ public:
 
   void updateTextFromTable(QString text);
   void updateValue(QString valueString);
-  void updateCoordinates(double* pos, int id);
+
   void SaveStateForUndo(vtkMRMLNode* node);
   void Undo(vtkMRMLNode* node);
   void SetButtonText(int type);
@@ -64,7 +66,6 @@ protected slots:
     void onLineAmbientChanged(double value);
     void onLineDiffuseChanged(double value);
     void onLineSpecularChanged(double value);
-  void onCollapsibleGroupBoxClicked();
 
   void onTextChanged();
   void onDialogRejected();
@@ -98,12 +99,8 @@ private:
     // approved code starts here
     Ui::qSlicerAnnotationModulePropertyDialog ui;
 
-    const char * m_id;
+    vtkStdString m_id;
     vtkSlicerAnnotationModuleLogic* m_logic;
-
-
-    char* m_nodeId;
-    bool m_isUpdated;
 
     // create the slot and signal connections
     void createConnection();

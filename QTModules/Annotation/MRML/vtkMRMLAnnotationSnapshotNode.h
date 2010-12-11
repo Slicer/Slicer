@@ -29,7 +29,7 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "AnnotationSnapshot";};
 
-
+  virtual const char* GetIcon() {return ":/Icons/ViewCamera.png";};
 
   void SetSnapshotDescription(vtkStdString newDescription) {this->m_Description = newDescription;}
   vtkStdString GetSnapshotDescription() {return this->m_Description;}

@@ -85,6 +85,7 @@ void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardI
     {
     vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
     vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
+    vtkMRMLAnnotationSnapshotNode* snapshotNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
 
     if (annotationNode)
       {
@@ -95,6 +96,11 @@ void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardI
       {
       // if we have a hierarchy node, the name can be changed by editing the textcolumn
       hierarchyNode->SetName(item->text().toLatin1());
+      }
+    else if (snapshotNode)
+      {
+      // if we have a snapshot node, the name can be changed by editing the textcolumn
+      snapshotNode->SetName(item->text().toLatin1());
       }
     }
 
@@ -134,8 +140,10 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
           }
         break;
         }
-      // TODO for hierarchies..
-      item->setData(QPixmap(":/Icons/AnnotationVisibility.png"),Qt::DecorationRole);
+      if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+        {
+        item->setData(QPixmap(":/Icons/AnnotationVisibility.png"),Qt::DecorationRole);
+        }
       break;
     case qMRMLSceneAnnotationModel::LockColumn:
       // the lock/unlock icon
@@ -155,8 +163,10 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
           }
         break;
         }
-      // TODO for hierarchies..
-      item->setData(QPixmap(":/Icons/AnnotationUnlock.png"),Qt::DecorationRole);
+      if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+        {
+        item->setData(QPixmap(":/Icons/AnnotationUnlock.png"),Qt::DecorationRole);
+        }
       break;
     case qMRMLSceneAnnotationModel::EditColumn:
         // the annotation type icon
@@ -175,7 +185,7 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
         item->setText(QString(this->m_Logic->GetAnnotationMeasurement(annotationNode->GetID(),false)));
         break;
         }
-      else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+      else if (node->IsA("vtkMRMLAnnotationHierarchyNode") || node->IsA("vtkMRMLAnnotationSnapshotNode"))
         {
         this->blockSignals(true);
         item->setFlags(item->flags() | Qt::ItemIsSelectable);
@@ -194,6 +204,13 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
         break;
         }
       else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
+        {
+        this->blockSignals(true);
+        item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsSelectable);
+        this->blockSignals(oldBlock);
+        item->setText(QString(node->GetName()));
+        }
+      else if (node->IsA("vtkMRMLAnnotationSnapshotNode"))
         {
         this->blockSignals(true);
         item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsSelectable);
@@ -251,6 +268,7 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)
     {
     // get the displayable hierarchy node associated with this displayable node
     displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
+
     if (displayableHierarchyNode)
       {
       if (displayableHierarchyNode->GetHideFromEditors())

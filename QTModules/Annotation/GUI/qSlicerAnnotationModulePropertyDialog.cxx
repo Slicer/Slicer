@@ -29,7 +29,7 @@ qSlicerAnnotationModulePropertyDialog::~qSlicerAnnotationModulePropertyDialog()
 
 qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(const char * id, vtkSlicerAnnotationModuleLogic* logic)
 {
-  this->m_id = id;
+  this->m_id = vtkStdString(id);
   this->m_logic = logic;
 
   // now build the user interface
@@ -59,31 +59,31 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   ui.typeLabel->setText(*typeLabelText);
 
   // update the typeIcon according to the annotation type
-  QIcon icon = QIcon(this->m_logic->GetAnnotationIcon(this->m_id));
+  QIcon icon = QIcon(this->m_logic->GetAnnotationIcon(this->m_id.c_str()));
   QPixmap pixmap = icon.pixmap(32, 32);
 
   ui.typeIcon->setPixmap(pixmap);
 
   // load the current annotation text
-  vtkStdString text = this->m_logic->GetAnnotationText(this->m_id);
+  vtkStdString text = this->m_logic->GetAnnotationText(this->m_id.c_str());
 
   ui.annotationTextEdit->setText(text.c_str());
 
   // load the current annotation text scale
-  double textScale = this->m_logic->GetAnnotationTextScale(this->m_id);
+  double textScale = this->m_logic->GetAnnotationTextScale(this->m_id.c_str());
 
   ui.textScaleSliderSpinBoxWidget->setMaximum(120);
   ui.textScaleSliderSpinBoxWidget->setValue(textScale);
 
   // load the current measurement
   const char * measurement = this->m_logic->GetAnnotationMeasurement(
-      this->m_id, true);
+      this->m_id.c_str(), true);
 
   ui.measurementLineEdit->setText(measurement);
 
   // load the unselected text color
   double * unselectedColor = this->m_logic->GetAnnotationTextUnselectedColor(
-      this->m_id);
+      this->m_id.c_str());
   QColor unselectedQColor;
   this->TurnColorArrayToQColor(unselectedColor,unselectedQColor);
 
@@ -92,7 +92,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
   // load the selected text color
   double * selectedColor = this->m_logic->GetAnnotationTextSelectedColor(
-      this->m_id);
+      this->m_id.c_str());
   QColor selectedQColor;
   this->TurnColorArrayToQColor(selectedColor,selectedQColor);
 
@@ -100,7 +100,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   ui.textSelectedColorPickerButton->setColor(selectedQColor);
 
   // load the lock/unlock status
-  int locked = this->m_logic->GetAnnotationLockedUnlocked(this->m_id);
+  int locked = this->m_logic->GetAnnotationLockedUnlocked(this->m_id.c_str());
 
   if (!locked)
     {
@@ -116,7 +116,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   this->lockUnlockInterface(locked);
 
   // load the visiblity status
-  int visible = this->m_logic->GetAnnotationVisibility(this->m_id);
+  int visible = this->m_logic->GetAnnotationVisibility(this->m_id.c_str());
 
   if (!visible)
     {
@@ -706,8 +706,8 @@ void qSlicerAnnotationModulePropertyDialog::onTextChanged()
 {
 
   QString text = ui.annotationTextEdit->toPlainText();
-  QByteArray bytes = text.toAscii();
-  this->m_logic->SetAnnotationText(this->m_id, bytes.data());
+  QByteArray bytes = text.toLatin1();
+  this->m_logic->SetAnnotationText(this->m_id.c_str(), bytes.data());
 
 }
 
@@ -728,23 +728,6 @@ void qSlicerAnnotationModulePropertyDialog::updateValue(QString valueString)
 
 }
 
-void qSlicerAnnotationModulePropertyDialog::updateCoordinates(double* pos, int id)
-{
-  Q_UNUSED(id)
-
-  // turn off onCoordinateChanged
-  this->m_isUpdated = true;
-
-  for (int i = 0; i < 3; ++i)
-    {
-    QString posString("");
-    posString.append(QString("%1").arg(QString::number(double(pos[i]), 'f', 2)));
-    //m_lineEditList[i + id * 3]->setText(posString);
-    }
-
-  // turn on onCoordinateChanged
-  this->m_isUpdated = false;
-}
 
 void qSlicerAnnotationModulePropertyDialog::SaveLinesNode(vtkMRMLAnnotationLinesNode* node)
 {
@@ -917,7 +900,7 @@ void qSlicerAnnotationModulePropertyDialog::onTextUnselectedColorChanged(QColor 
   double color[3];
   this->TurnQColorToColorArray(color, qcolor);
 
-  this->m_logic->SetAnnotationTextUnselectedColor(this->m_id,color);
+  this->m_logic->SetAnnotationTextUnselectedColor(this->m_id.c_str(),color);
 
 }
 
@@ -926,7 +909,7 @@ void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qc
   double color[3];
   this->TurnQColorToColorArray(color, qcolor);
 
-  this->m_logic->SetAnnotationTextSelectedColor(this->m_id,color);
+  this->m_logic->SetAnnotationTextSelectedColor(this->m_id.c_str(),color);
 
 
 }
@@ -934,7 +917,7 @@ void qSlicerAnnotationModulePropertyDialog::onTextSelectedColorChanged(QColor qc
 void qSlicerAnnotationModulePropertyDialog::onTextScaleChanged(double value)
 {
 
-  this->m_logic->SetAnnotationTextScale(this->m_id, value);
+  this->m_logic->SetAnnotationTextScale(this->m_id.c_str(), value);
 
 }
 
@@ -942,9 +925,9 @@ void qSlicerAnnotationModulePropertyDialog::onLockUnlockButtonClicked()
 {
 
   // toggle the lock flag
-  this->m_logic->SetAnnotationLockedUnlocked(this->m_id);
+  this->m_logic->SetAnnotationLockedUnlocked(this->m_id.c_str());
 
-  int locked = this->m_logic->GetAnnotationLockedUnlocked(this->m_id);
+  int locked = this->m_logic->GetAnnotationLockedUnlocked(this->m_id.c_str());
 
   if (!locked)
     {
@@ -964,10 +947,10 @@ void qSlicerAnnotationModulePropertyDialog::onLockUnlockButtonClicked()
 void qSlicerAnnotationModulePropertyDialog::onVisibleInvisibleButtonClicked()
 {
 
-  this->m_logic->SetAnnotationVisibility(this->m_id);
+  this->m_logic->SetAnnotationVisibility(this->m_id.c_str());
 
   // load the visiblity status
-  int visible = this->m_logic->GetAnnotationVisibility(this->m_id);
+  int visible = this->m_logic->GetAnnotationVisibility(this->m_id.c_str());
 
   if (!visible)
     {
@@ -1126,25 +1109,6 @@ void qSlicerAnnotationModulePropertyDialog::TurnQColorToColorArray(double* color
   color[2] = qcolor.blue() / 255.0;
 }
 
-void qSlicerAnnotationModulePropertyDialog::onCollapsibleGroupBoxClicked()
-{
-  vtkMRMLNode * node = this->m_logic->GetMRMLScene()->GetNodeByID(
-      this->m_nodeId);
-  if (node->IsA("vtkMRMLAnnotationStickyNode") || node->IsA(
-      "vtkMRMLAnnotationFiducialNode")
-      || node->IsA("vtkMRMLAnnotationTextNode"))
-    {
-    /*    ui.coordinatesLabel->setVisible(
-     false);
-     ui.annotationValueBrowser->setVisible(
-     false);
-     ui.displayPropertiesCTKCollapsibleGroupBox->setEnabled(
-     false);
-     ui.displayPropertiesCTKCollapsibleGroupBox->setVisible(
-     false);*/
-    }
-}
-
 //-----------------------------------------------------------------------------
 // Methods for closing the property dialog
 //-----------------------------------------------------------------------------
@@ -1152,7 +1116,7 @@ void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
 {
 
   // the user clicked cancel, now restore the backuped node
-  this->m_logic->RestoreAnnotationNode(this->m_id);
+  this->m_logic->RestoreAnnotationNode(this->m_id.c_str());
 
   emit dialogRejected();
 

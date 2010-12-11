@@ -26,6 +26,8 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "AnnotationBidimensional";};
 
+  virtual const char* GetIcon() {return ":/Icons/AnnotationBidimensional.png";};
+
   // Description:
   // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);

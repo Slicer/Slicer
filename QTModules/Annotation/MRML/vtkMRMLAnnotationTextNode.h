@@ -31,6 +31,8 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "AnnotationText";};
 
+  virtual const char* GetIcon() {return ":/Icons/AnnotationText.png";};
+
   int SetTextCoordinates(double newCoord[3]) {return this->SetControlPoint(0,newCoord,1,1);}
   double* GetTextCoordinates() {return this->GetControlPointCoordinates(0);}
 

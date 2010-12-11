@@ -135,7 +135,7 @@ public:
   void CreateSnapShot(const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
 
   /// Modify an existing snapShot.
-  void ModifySnapShot(const char* id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
+  void ModifySnapShot(vtkStdString id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
 
   /// Convert a QImage to a vtkImageData
   bool QImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
@@ -199,13 +199,17 @@ private:
 
   vtksys_stl::string m_StringHolder;
 
+  char* m_MeasurementFormat;
+  char* m_CoordinateFormat;
+
   //
   // Private hierarchy functionality.
   //
   /// Return the toplevel Annotation hierarchy node or create one if there is none:
   /// If an optional annotationNode is given, insert the new toplevel hierarchy before it. If not,
   /// just add the new toplevel hierarchy node.
-  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLAnnotationNode* annotationNode=0);
+  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLNode* node=0);
+
 
   /// Add a new annotation hierarchy node for a given annotationNode.
   /// If there is an optional annotationNode, insert the new hierarchy node before it else just add it.

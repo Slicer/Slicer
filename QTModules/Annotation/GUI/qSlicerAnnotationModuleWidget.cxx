@@ -266,8 +266,10 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
+  QByteArray mrmlIdArray = mrmlId.toLatin1();
+
   // special case for snapshots
-  if (d->logic()->IsSnapshotNode(mrmlId.toLatin1()))
+  if (d->logic()->IsSnapshotNode(mrmlIdArray.data()))
     {
 
     // the selected entry is a snapshot node,
@@ -305,8 +307,10 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
     // reset all fields of the dialog
     this->m_SnapShotDialog->reset();
 
+
+
     // now we initialize it with existing values
-    this->m_SnapShotDialog->initialize(mrmlId.toLatin1());
+    this->m_SnapShotDialog->initialize(mrmlIdArray.data());
 
     // bail out, everything below is not for snapshots
     return;
@@ -317,7 +321,7 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 
   // check if there exists an annotationNode with the given ID
   // only then display the property dialog
-  if (d->logic()->IsAnnotationNode(mrmlId.toLatin1()))
+  if (d->logic()->IsAnnotationNode(mrmlIdArray.data()))
     {
 
     if (this->m_PropertyDialog)
@@ -329,13 +333,13 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
       return;
       }
 
-    d->logic()->SetAnnotationSelected(mrmlId.toLatin1(), true);
+    d->logic()->SetAnnotationSelected(mrmlIdArray.data(), true);
 
     // TODO
     //d->setItemEditable(d->tableWidget->selectedItems(), false);
 
     qSlicerAnnotationModulePropertyDialog* propertyDialog =
-        new qSlicerAnnotationModulePropertyDialog(mrmlId.toLatin1(), d->logic());
+        new qSlicerAnnotationModulePropertyDialog(mrmlIdArray.data(), d->logic());
 
     this->m_PropertyDialog = propertyDialog;
 

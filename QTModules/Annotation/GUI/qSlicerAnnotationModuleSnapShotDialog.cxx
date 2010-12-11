@@ -27,7 +27,7 @@ qSlicerAnnotationModuleSnapShotDialog::qSlicerAnnotationModuleSnapShotDialog()
 
   this->m_vtkImageData = 0;
 
-  this->m_Id = 0;
+  this->m_Id = vtkStdString("");
 
   ui.setupUi(this);
 
@@ -56,12 +56,6 @@ qSlicerAnnotationModuleSnapShotDialog::~qSlicerAnnotationModuleSnapShotDialog()
     this->m_vtkImageData = 0;
     }
 
-  if(this->m_Id)
-    {
-    //delete this->m_Id;
-    this->m_Id = 0;
-    }
-
 }
 
 //-----------------------------------------------------------------------------
@@ -86,13 +80,15 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
     return;
     }
 
-  this->m_Id = nodeId;
+  this->m_Id = vtkStdString(nodeId);
 
   // get the name..
-  vtkStdString name = this->m_Logic->GetSnapShotName(this->m_Id);
+  vtkStdString name = this->m_Logic->GetSnapShotName(this->m_Id.c_str());
 
   // ..and set it in the GUI
   this->ui.nameEdit->setText(name.c_str());
+
+  std::cout<<"sdsadsada"<<std::endl;
 
   // get the description..
   vtkStdString description = this->m_Logic->GetSnapShotDescription(this->m_Id);
@@ -193,11 +189,11 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
 
   // name
   QString name = this->ui.nameEdit->text();
-  QByteArray nameBytes = name.toAscii();
+  QByteArray nameBytes = name.toLatin1();
 
   // description
   QString description = this->ui.descriptionTextEdit->toPlainText();
-  QByteArray descriptionBytes = description.toAscii();
+  QByteArray descriptionBytes = description.toLatin1();
 
 
   // we need to know of which type the screenshot is
@@ -224,7 +220,7 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
     screenshotType = 4;
     }
 
-  if (!this->m_Id)
+  if (!strcmp(this->m_Id,""))
     {
     // this is a new snapshot
     this->m_Logic->CreateSnapShot(nameBytes.data(),descriptionBytes.data(),screenshotType,this->m_vtkImageData);
@@ -315,7 +311,7 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
 
 
   // reset the id
-  this->m_Id = 0;
+  this->m_Id = vtkStdString("");
 
 }
 

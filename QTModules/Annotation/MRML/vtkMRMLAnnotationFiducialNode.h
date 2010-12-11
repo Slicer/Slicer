@@ -30,6 +30,8 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "AnnotationFiducials";};
 
+  virtual const char* GetIcon() {return ":/Icons/AnnotationPoint.png";};
+
   int  SetFiducial(const char* label, double newControl[3],int selectedFlag, int visibleFlag);
 
   // Selected and visible are currently always set to 1 and are controlled by selected and visible flag - we can change this later

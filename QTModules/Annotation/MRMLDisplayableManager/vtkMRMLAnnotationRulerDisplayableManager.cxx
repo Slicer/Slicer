@@ -269,6 +269,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
     }
 
+  // set a specific format for the measurement text
+  vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat("%.1f");
 
   // add observer for end interaction
   vtkAnnotationRulerWidgetCallback *myCallback = vtkAnnotationRulerWidgetCallback::New();

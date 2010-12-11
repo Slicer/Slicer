@@ -29,6 +29,8 @@ public:
   // Just prints short summary 
   virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
+  virtual const char* GetIcon() {return "";};
+
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
