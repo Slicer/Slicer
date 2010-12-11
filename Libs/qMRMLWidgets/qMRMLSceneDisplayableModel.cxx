@@ -130,6 +130,13 @@ vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node)
     displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
     if (displayableHierarchyNode)
       {
+      if (displayableHierarchyNode->GetHideFromEditors())
+        {
+        // this is a hidden hierarchy node, so we do not want to display it
+        // instead, we will return the parent of the hidden hierarchy node
+        // to be used as the parent for the displayableNode
+        return displayableHierarchyNode->GetParentNode();
+        }
       return displayableHierarchyNode;
       }
     }
