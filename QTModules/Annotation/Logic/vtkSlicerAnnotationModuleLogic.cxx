@@ -1866,7 +1866,46 @@ void vtkSlicerAnnotationModuleLogic::PlaceFiducial(double r, double a, double s,
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotationNode* annotationNode)
+const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotationHierarchyNode* hierarchyNode, int level)
+{
+  if (!hierarchyNode)
+    {
+    vtkErrorMacro("GetHTMLRepresentation: We need a hierarchy Node here.")
+    return 0;
+    }
+
+  vtkStdString html = vtkStdString("<tr><td valign='middle'>");
+
+  // level
+  for (int i=0; i<level; ++i)
+    {
+    html += "&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+
+  // icon
+  html += "<img src='";
+  html += this->GetAnnotationIcon(hierarchyNode->GetID());
+  html += "'>";
+
+  html += "</td><td valign='middle'>";
+
+  html += "&nbsp;";
+
+  html += "</td><td valign='middle'><b>";
+
+  // text
+  html += hierarchyNode->GetName();
+
+  html += "</b></td></tr>";
+
+  this->m_StringHolder = html;
+
+  return this->m_StringHolder.c_str();
+
+}
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotationNode* annotationNode, int level)
 {
   if (!annotationNode)
     {
@@ -1875,6 +1914,12 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
     }
 
   vtkStdString html = vtkStdString("<tr><td valign='middle'>");
+
+  // level
+  for (int i=0; i<level; ++i)
+    {
+    html += "&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
 
   // icon
   html += "<img src='";

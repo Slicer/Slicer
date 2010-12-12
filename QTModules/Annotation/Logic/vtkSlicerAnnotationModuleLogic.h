@@ -121,6 +121,11 @@ public:
   /// a parent to the new hierarchy node. Return the new hierarchy node.
   vtkMRMLAnnotationHierarchyNode* AddHierarchy();
 
+  /// Return the toplevel Annotation hierarchy node or create one if there is none:
+  /// If an optional annotationNode is given, insert the new toplevel hierarchy before it. If not,
+  /// just add the new toplevel hierarchy node.
+  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLNode* node=0);
+
   /// Set the active hierarchy node which will be used as a parent for new annotations
   void SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode* hierarchyNode);
 
@@ -181,7 +186,9 @@ public:
   // Report functionality
   //
   /// Return HTML markup for a specific annotation node
-  const char* GetHTMLRepresentation(vtkMRMLAnnotationNode* annotationNode);
+  const char* GetHTMLRepresentation(vtkMRMLAnnotationNode* annotationNode, int level);
+  /// Return HTML markup for a specific hierarchy node
+  const char* GetHTMLRepresentation(vtkMRMLAnnotationHierarchyNode* hierarchyNode, int level);
 
 protected:
 
@@ -205,12 +212,6 @@ private:
   //
   // Private hierarchy functionality.
   //
-  /// Return the toplevel Annotation hierarchy node or create one if there is none:
-  /// If an optional annotationNode is given, insert the new toplevel hierarchy before it. If not,
-  /// just add the new toplevel hierarchy node.
-  vtkMRMLAnnotationHierarchyNode* GetTopLevelHierarchyNode(vtkMRMLNode* node=0);
-
-
   /// Add a new annotation hierarchy node for a given annotationNode.
   /// If there is an optional annotationNode, insert the new hierarchy node before it else just add it.
   /// The active hierarchy node will be the parent. If there is no

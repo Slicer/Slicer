@@ -357,6 +357,8 @@ void qMRMLAnnotationTreeWidget::selectedAsCollection(vtkCollection* collection)
     return;
     }
 
+  qSort(selected.begin(),selected.end());
+
   for (int i = 0; i < selected.size(); ++i)
     {
 
@@ -367,10 +369,10 @@ void qMRMLAnnotationTreeWidget::selectedAsCollection(vtkCollection* collection)
 
         vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
 
-        if (node->IsA("vtkMRMLAnnotationNode"))
-          {
-          collection->AddItem(node);
-          }
+        //if (node->IsA("vtkMRMLAnnotationNode"))
+         // {
+        collection->AddItem(node);
+         // }
 
         }
 

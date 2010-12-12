@@ -1,5 +1,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationHierarchyNode* vtkMRMLAnnotationHierarchyNode::New()
@@ -44,4 +45,53 @@ void vtkMRMLAnnotationHierarchyNode::ReadXMLAttributes( const char** atts)
 void vtkMRMLAnnotationHierarchyNode::WriteXML(ostream& of, int indent)
 {
   Superclass::WriteXML(of,indent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationHierarchyNode::GetDirectChildren(vtkCollection *children)
+{
+  if (children == NULL)
+    {
+    return;
+    }
+  vtkMRMLScene *scene = this->GetScene();
+  if (scene == NULL)
+    {
+    vtkErrorMacro("GetChildrenDisplayableNodes: scene is null, cannot find children of this node");
+    return;
+    }
+
+  vtkMRMLAnnotationHierarchyNode *hnode = NULL;
+  int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
+  for (int n=0; n < numNodes; n++)
+    {
+    hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLAnnotationHierarchyNode"));
+    vtkDebugMacro("GetChildrenHierarchyNodes: hierarchy node " << n << " has id " << hnode->GetID());
+
+    // let's check if the found hnode is a direct child of this node
+    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() &&
+        strcmp(hnode->GetID(), this->GetID()) &&
+        !strcmp(hnode->GetParentNodeID(),this->GetID()))
+      {
+      // it is a direct child
+
+      // now let's check if it is a user-created hierarchy
+      if (!hnode->GetHideFromEditors())
+        {
+        // yes it is
+        children->AddItem(hnode);
+        }
+      else
+        {
+        // it must be a 1-1 hierarchy node coming directly with an annotation
+        vtkMRMLAnnotationNode* anode = vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
+        if (anode)
+          {
+          children->AddItem(anode);
+          }
+        } // if user-created check
+
+      } // check if it is a direct child of this
+
+    } // loop through all nodes
 }

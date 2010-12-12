@@ -156,19 +156,11 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
   // now run through the annotations
   this->m_Annotations->InitTraversal();
 
-  for(int i=0; i<this->m_Annotations->GetNumberOfItems(); ++i)
-    {
+  this->m_Html = QString("");
 
-    vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(this->m_Annotations->GetItemAsObject(i));
+  this->generateReportRecursive(0,this->m_Logic->GetTopLevelHierarchyNode(0));
 
-    if (annotationNode)
-      {
-
-      html.append(QString(this->m_Logic->GetHTMLRepresentation(annotationNode)));
-
-      }
-
-    }
+  html.append(this->m_Html);
 
   html.append("</table>\n");
 
@@ -176,6 +168,81 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
   html.append("</html>");
 
   return html;
+
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerAnnotationModuleReportDialog::isAnnotationSelected(const char* mrmlId)
+{
+  this->m_Annotations->InitTraversal();
+
+  for (int i=0; i<this->m_Annotations->GetNumberOfItems(); ++i)
+    {
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(this->m_Annotations->GetItemAsObject(i));
+
+    if (!strcmp(mrmlId,node->GetID()))
+      {
+      // we found it
+      return true;
+      }
+    }
+
+  return false;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAnnotationModuleReportDialog::generateReportRecursive(int level, vtkMRMLAnnotationHierarchyNode* currentHierarchy)
+{
+
+  vtkCollection* children = vtkCollection::New();
+  currentHierarchy->GetDirectChildren(children);
+
+  children->InitTraversal();
+
+  for(int i=0; i<children->GetNumberOfItems(); ++i)
+    {
+    // loop through all children
+
+    vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(children->GetItemAsObject(i));
+
+    if (annotationNode)
+      {
+      // this child is an annotationNode
+
+      // now check if the child was selected
+      if (this->isAnnotationSelected(annotationNode->GetID()))
+        {
+        // the node was selected in the annotation treeView, so add it to the report
+        this->m_Html.append(QString(this->m_Logic->GetHTMLRepresentation(annotationNode,level)));
+
+        }
+
+      continue;
+
+      } // annotationNode
+
+    vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(children->GetItemAsObject(i));
+
+    if (hierarchyNode)
+      {
+      // this child is a user created hierarchyNode
+
+      // now check if the child was selected
+      if (this->isAnnotationSelected(hierarchyNode->GetID()))
+        {
+
+        // the node was selected in the annotation treeView, so add it to the report
+        this->m_Html.append(QString(this->m_Logic->GetHTMLRepresentation(hierarchyNode,level)));
+
+        }
+
+      // anyway, we need to recursively start again at this hierarchy
+      this->generateReportRecursive(level+1,hierarchyNode);
+
+      } // hierarchyNode
+
+
+    } // loop through children
 
 }
 

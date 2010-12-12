@@ -42,11 +42,21 @@ private:
     void createConnection();
 
     QString generateReport();
+    void generateReportRecursive(int level, vtkMRMLAnnotationHierarchyNode* currentHierarchy);
+
+    // check if a mrmlId is part of the selected annotations
+    bool isSelected(const char* mrmlId);
+
     bool saveReport();
 
     vtkSlicerAnnotationModuleLogic* m_Logic;
 
+    // the selected annotations
     vtkCollection* m_Annotations;
+    // check if a mrmlId is part of the selected annotations
+    bool isAnnotationSelected(const char* mrmlId);
+
+    QString m_Html;
 
 };
 

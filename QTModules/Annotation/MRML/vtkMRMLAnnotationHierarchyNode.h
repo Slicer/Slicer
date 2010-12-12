@@ -27,6 +27,10 @@ public:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
+  // Description:
+  // Get all children associated to this node
+  virtual void GetDirectChildren(vtkCollection *children);
+
 protected:
   vtkMRMLAnnotationHierarchyNode();
   ~vtkMRMLAnnotationHierarchyNode();
