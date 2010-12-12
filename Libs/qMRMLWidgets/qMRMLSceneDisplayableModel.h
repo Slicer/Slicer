@@ -36,20 +36,21 @@ public:
   virtual Qt::DropActions supportedDropActions()const;
 
   /// 
-  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node);
-  virtual int          nodeIndex(vtkMRMLNode* node);
+  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
+  virtual int          nodeIndex(vtkMRMLNode* node)const;
   /// fast function that only check the type of the node to know if it can be a child.
-  virtual bool         canBeAChild(vtkMRMLNode* node);
+  virtual bool         canBeAChild(vtkMRMLNode* node)const;
   /// fast function that only check the type of the node to know if it can be a parent.
-  virtual bool         canBeAParent(vtkMRMLNode* node);
+  virtual bool         canBeAParent(vtkMRMLNode* node)const;
   /// if newParent == 0, set the node into the vtkMRMLScene
   virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
   
 protected:
   virtual void populateScene();
-  virtual void insertNode(vtkMRMLNode* node);
+  virtual QStandardItem* insertNode(vtkMRMLNode* node);
   using qMRMLSceneModel::insertNode;
   virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
   virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
 
 private:

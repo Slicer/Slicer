@@ -32,6 +32,8 @@
 // qMRML includes
 #include "qMRMLSceneFactoryWidget.h"
 #include "qMRMLSceneTransformModel.h"
+#include "qMRMLSortFilterProxyModel.h"
+#include "qMRMLTreeWidget.h"
 #include "qMRMLUtils.h"
 
 #include "TestingMacros.h"
@@ -138,6 +140,22 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
   //view->setModel(&m);
   view->show();
   view->resize(500, 800);
+  
+  qMRMLTreeWidget treeWidget;
+  treeWidget.setWindowTitle("qMRMLTreeWidget");
+  treeWidget.setMRMLScene(sceneFactory.mrmlScene());
+  treeWidget.setDragDropMode(QAbstractItemView::InternalMove);
+  treeWidget.setListenNodeModifiedEvent(true);
+  treeWidget.show();
+
+  qMRMLSortFilterProxyModel sortModel;
+  sortModel.setSourceModel(&model);
+  
+  QTreeView view2;
+  view2.setWindowTitle("qMRMLSortFilterProxyModel");
+  view2.setDragDropMode(QAbstractItemView::InternalMove);
+  view2.setModel(&sortModel);
+  view2.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

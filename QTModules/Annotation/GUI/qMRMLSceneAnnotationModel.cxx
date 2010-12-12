@@ -47,6 +47,8 @@ qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
   :qMRMLSceneDisplayableModel(vparent)
 {
   this->setListenNodeModifiedEvent(true);
+  this->setHorizontalHeaderLabels(
+    QStringList() << "" << "Vis" << "Lock" << "Edit" << "Value" << "Text");
 }
 
 //------------------------------------------------------------------------------
@@ -110,10 +112,10 @@ void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardI
 //------------------------------------------------------------------------------
 void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
-
+  item->setFlags(this->nodeFlags(node, column));
+  
   // from qMRMLSceneModel
   bool oldBlock = this->blockSignals(true);
-  item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
   item->setData(QString(node->GetID()), qMRMLSceneModel::UIDRole);
   item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRMLSceneModel::PointerRole);
   this->blockSignals(oldBlock);
@@ -124,9 +126,6 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
     {
     case qMRMLSceneAnnotationModel::VisibilityColumn:
       // the visibility icon
-      this->blockSignals(true);
-      item->setFlags(item->flags() | Qt::ItemIsSelectable);
-      this->blockSignals(oldBlock);
 
       if (annotationNode)
         {
@@ -147,9 +146,6 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
       break;
     case qMRMLSceneAnnotationModel::LockColumn:
       // the lock/unlock icon
-      this->blockSignals(true);
-      item->setFlags(item->flags() | Qt::ItemIsSelectable);
-      this->blockSignals(oldBlock);
 
       if (annotationNode)
         {
@@ -170,26 +166,17 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
       break;
     case qMRMLSceneAnnotationModel::EditColumn:
         // the annotation type icon
-        this->blockSignals(true);
-        item->setFlags(item->flags() | Qt::ItemIsSelectable);
-        this->blockSignals(oldBlock);
         item->setData(QPixmap(this->m_Logic->GetAnnotationIcon(node->GetID())),Qt::DecorationRole);
         break;
     case qMRMLSceneAnnotationModel::ValueColumn:
       if (annotationNode)
         {
         // the annotation measurement
-        this->blockSignals(true);
-        item->setFlags(item->flags() | Qt::ItemIsSelectable);
-        this->blockSignals(oldBlock);
         item->setText(QString(this->m_Logic->GetAnnotationMeasurement(annotationNode->GetID(),false)));
         break;
         }
       else if (node->IsA("vtkMRMLAnnotationHierarchyNode") || node->IsA("vtkMRMLAnnotationSnapshotNode"))
         {
-        this->blockSignals(true);
-        item->setFlags(item->flags() | Qt::ItemIsSelectable);
-        this->blockSignals(oldBlock);
         item->setText(QString(""));
         }
       break;
@@ -197,17 +184,11 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
       if (annotationNode)
         {
         // the annotation text
-        this->blockSignals(true);
-        item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsSelectable);
-        this->blockSignals(oldBlock);
         item->setText(QString(this->m_Logic->GetAnnotationText(annotationNode->GetID())));
         break;
         }
       else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
         {
-        this->blockSignals(true);
-        item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsSelectable);
-        this->blockSignals(oldBlock);
         item->setText(QString(node->GetName()));
         }
       else if (node->IsA("vtkMRMLAnnotationSnapshotNode"))
@@ -220,18 +201,7 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
       break;
     }
 
-
   // from qMRMLSceneDisplayableModel
-  this->blockSignals(true);
-  if (qMRMLSceneDisplayableModel::canBeAChild(node))
-    {
-    item->setFlags(item->flags() | Qt::ItemIsDragEnabled);
-    }
-  if (qMRMLSceneDisplayableModel::canBeAParent(node))
-    {
-    item->setFlags(item->flags() | Qt::ItemIsDropEnabled);
-    }
-  this->blockSignals(oldBlock);
   QStandardItem* parentItem = item->parent();
   QStandardItem* newParentItem = this->itemFromNode(qMRMLSceneAnnotationModel::parentNode(node));
   if (newParentItem == 0)
@@ -248,7 +218,29 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
     int pos = qMin(min + qMRMLSceneDisplayableModel::nodeIndex(node), max);
     newParentItem->insertRow(pos, children);
     }
+}
 
+//------------------------------------------------------------------------------
+QFlags<Qt::ItemFlag> qMRMLSceneAnnotationModel::nodeFlags(vtkMRMLNode* node, int column)const
+{
+  QFlags<Qt::ItemFlag> flags = Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable;
+  switch(column)
+    {
+    case qMRMLSceneAnnotationModel::TextColumn:
+      flags = flags | Qt::ItemIsEditable;
+      break;
+    default:
+      break;
+    }
+  if (qMRMLSceneDisplayableModel::canBeAChild(node))
+    {
+    flags = flags | Qt::ItemIsDragEnabled;
+    }
+  if (qMRMLSceneDisplayableModel::canBeAParent(node))
+    {
+    flags = flags | Qt::ItemIsDropEnabled;
+    }
+  return flags;
 }
 
 //------------------------------------------------------------------------------
@@ -300,32 +292,6 @@ int qMRMLSceneAnnotationModel::columnCount(const QModelIndex &_parent)const
 {
   Q_UNUSED(_parent);
   return 6;
-}
-
-//------------------------------------------------------------------------------
-QVariant qMRMLSceneAnnotationModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role == Qt::DisplayRole)
-    {
-        if (orientation == Qt::Horizontal) {
-            switch (section)
-            {
-            case 0:
-                return QString("");
-            case 1:
-                return QString("Vis");
-            case 2:
-                return QString("Lock");
-            case 3:
-                return QString("Edit");
-            case 4:
-                return QString("Value");
-            case 5:
-                return QString("Text");
-            }
-        }
-    }
-    return QVariant();
 }
 
 //-----------------------------------------------------------------------------

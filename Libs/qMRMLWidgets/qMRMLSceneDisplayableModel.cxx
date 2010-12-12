@@ -112,7 +112,7 @@ vtkMRMLNode* qMRMLSceneDisplayableModel::childNode(vtkMRMLNode* node, int childI
 }
 */
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node)
+vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node)const
 {
   if (node == NULL)
     {
@@ -155,7 +155,7 @@ vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneDisplayableModel::nodeIndex(vtkMRMLNode* node)
+int qMRMLSceneDisplayableModel::nodeIndex(vtkMRMLNode* node)const
 {
   const char* nodeId = node ? node->GetID() : 0;
   if (nodeId == 0)
@@ -186,7 +186,7 @@ int qMRMLSceneDisplayableModel::nodeIndex(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node)
+bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node)const
 {
   if (!node)
     {
@@ -204,7 +204,7 @@ bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneDisplayableModel::canBeAParent(vtkMRMLNode* node)
+bool qMRMLSceneDisplayableModel::canBeAParent(vtkMRMLNode* node)const
 {
   if (!node)
     {
@@ -308,15 +308,21 @@ void qMRMLSceneDisplayableModel::populateScene()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneDisplayableModel::insertNode(vtkMRMLNode* node)
+QStandardItem* qMRMLSceneDisplayableModel::insertNode(vtkMRMLNode* node)
 {
+  QStandardItem* nodeItem = this->itemFromNode(node);
+  if (nodeItem)
+    {
+    return nodeItem;
+    }
   vtkMRMLNode* parentNode = this->parentNode(node);
   //std::cout << "insertNode: parentNode is " << (parentNode == NULL ? "null" : "not null") << ", mrml scene item is " << (this->mrmlSceneItem() == NULL ? "null" : "not null") << std::endl;
   QStandardItem* parentItem =
     parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();
-  if (parentItem == NULL)
+  if (!parentItem)
     {
     //std::cout << "insertNode: parent item is null, node id = " << node->GetID() << ", parent node id is " << (parentNode == NULL ? "null" : parentNode->GetID()) << std::endl;
+    parentItem = this->insertNode(parentNode);
     }
   int min = 0;
   int max = 0;
@@ -326,23 +332,14 @@ void qMRMLSceneDisplayableModel::insertNode(vtkMRMLNode* node)
     min = this->preItems(parentItem).count();
     max = parentItem->rowCount() - this->postItems(parentItem).count();
     }
-  this->insertNode(node, parentItem, qMin(min + this->nodeIndex(node), max));
+  nodeItem = this->insertNode(node, parentItem, qMin(min + this->nodeIndex(node), max));
+  return nodeItem;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneDisplayableModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
   this->qMRMLSceneModel::updateItemFromNode(item, node, column);
-  bool oldBlock = this->blockSignals(true);
-  if (this->canBeAChild(node))
-    {
-    item->setFlags(item->flags() | Qt::ItemIsDragEnabled);
-    }
-  if (this->canBeAParent(node))
-    {
-    item->setFlags(item->flags() | Qt::ItemIsDropEnabled);
-    }
-  this->blockSignals(oldBlock);
   QStandardItem* parentItem = item->parent();
   QStandardItem* newParentItem = this->itemFromNode(this->parentNode(node));
   if (newParentItem == 0)
@@ -360,6 +357,24 @@ void qMRMLSceneDisplayableModel::updateItemFromNode(QStandardItem* item, vtkMRML
     newParentItem->insertRow(pos, children);
     }
 }
+
+//------------------------------------------------------------------------------
+QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, int column)const
+{
+  Q_D(const qMRMLSceneDisplayableModel);
+  Q_UNUSED(column);
+  QFlags<Qt::ItemFlag> flags = this->qMRMLSceneModel::nodeFlags(node, column);
+  if (qMRMLSceneDisplayableModel::canBeAChild(node))
+    {
+    flags = flags | Qt::ItemIsDragEnabled;
+    }
+  if (qMRMLSceneDisplayableModel::canBeAParent(node))
+    {
+    flags = flags | Qt::ItemIsDropEnabled;
+    }
+  return flags;
+}
+
 
 //------------------------------------------------------------------------------
 void qMRMLSceneDisplayableModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)

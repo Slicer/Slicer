@@ -141,8 +141,13 @@ QStandardItem* qMRMLSceneCategoryModel::insertCategory(const QString& category, 
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
+QStandardItem* qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
 {
+  QStandardItem* nodeItem = this->itemFromNode(node);
+  if (nodeItem)
+    {
+    return nodeItem;
+    }
   // WARNING: works only if the nodes are in the scene in the correct order:
   // parents are before children
   QString category = QString(node->GetAttribute("Category"));
@@ -156,7 +161,8 @@ void qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
     }
   //int min = this->preItems(parentItem).count();
   int max = parentItem->rowCount() - this->postItems(parentItem).count();
-  this->insertNode(node, parentItem, max);
+  nodeItem = this->insertNode(node, parentItem, max);
+  return nodeItem;
 }
 
 //------------------------------------------------------------------------------

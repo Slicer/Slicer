@@ -158,31 +158,31 @@ void qMRMLSceneTransformModel::populateScene()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneTransformModel::insertNode(vtkMRMLNode* node)
+QStandardItem* qMRMLSceneTransformModel::insertNode(vtkMRMLNode* node)
 {
+  QStandardItem* nodeItem = this->itemFromNode(node);
+  if (nodeItem)
+    {
+    // the item is already into the scene, don't add it again
+    return nodeItem;
+    }
   vtkMRMLNode* parentNode = qMRMLSceneTransformModel::parentNode(node);
   QStandardItem* parentItem =
     parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();
-  Q_ASSERT(parentItem);
+  if (!parentItem)
+    {
+    Q_ASSERT(parentNode);
+    parentItem = this->insertNode(parentNode);
+    }
   int min = this->preItems(parentItem).count();
   int max = parentItem->rowCount() - this->postItems(parentItem).count();
-  this->insertNode(node, parentItem, qMin(min + qMRMLSceneTransformModel::nodeIndex(node), max));
+  return this->insertNode(node, parentItem, qMin(min + qMRMLSceneTransformModel::nodeIndex(node), max));
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneTransformModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
   this->qMRMLSceneModel::updateItemFromNode(item, node, column);
-  bool oldBlock = this->blockSignals(true);
-  if (qMRMLSceneTransformModel::canBeAChild(node))
-    {
-    item->setFlags(item->flags() | Qt::ItemIsDragEnabled);
-    }
-  if (qMRMLSceneTransformModel::canBeAParent(node))
-    {
-    item->setFlags(item->flags() | Qt::ItemIsDropEnabled);
-    }
-  this->blockSignals(oldBlock);
   QStandardItem* parentItem = item->parent();
   QStandardItem* newParentItem = this->itemFromNode(qMRMLSceneTransformModel::parentNode(node));
   if (newParentItem == 0)
@@ -198,19 +198,52 @@ void qMRMLSceneTransformModel::updateItemFromNode(QStandardItem* item, vtkMRMLNo
     int max = newParentItem->rowCount() - this->postItems(newParentItem).count();
     int pos = qMin(min + qMRMLSceneTransformModel::nodeIndex(node), max);
     newParentItem->insertRow(pos, children);
+    printStandardItem(this->invisibleRootItem(), "  ");
     }
+}
+
+//------------------------------------------------------------------------------
+QFlags<Qt::ItemFlag> qMRMLSceneTransformModel::nodeFlags(vtkMRMLNode* node, int column)const
+{
+  Q_D(const qMRMLSceneTransformModel);
+  Q_UNUSED(column);
+  QFlags<Qt::ItemFlag> flags = this->qMRMLSceneModel::nodeFlags(node, column);
+  if (qMRMLSceneTransformModel::canBeAChild(node))
+    {
+    flags = flags | Qt::ItemIsDragEnabled;
+    }
+  if (qMRMLSceneTransformModel::canBeAParent(node))
+    {
+    flags = flags | Qt::ItemIsDropEnabled;
+    }
+  return flags;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneTransformModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 {
+  Q_D(qMRMLSceneTransformModel);
   this->qMRMLSceneModel::updateNodeFromItem(node, item);
   Q_ASSERT(node != this->mrmlNodeFromItem(item->parent()));
-
-  // Don't do the following if the row is not complete (reparenting an
-  // incomplete row might lead to errors). updateNodeFromItem is typically
-  // called for every item changed, so it should be
+  
   QStandardItem* parentItem = item->parent();
+  
+  // Don't do the following if the row is not complete (reparenting an
+  // incomplete row might lead to errors). (if there is no child yet for a given
+  // column, it will get there next time updateNodeFromItem is called).
+  // updateNodeFromItem() is called for every visible item drag&dropped 
+  // (not called for the items in a hidden column)
+  
+  // warning, it works only if it's 1 line dnd at a time
+  /*
+  foreach(const QModelIndex& draggedIndex, d->LastMimeData)
+    {
+    if (parentItem->child(item->row(), draggedIndex.column()) == 0)
+      {
+      return;
+      }
+    }
+  */
   for (int i = 0; i < parentItem->columnCount(); ++i)
     {
     if (parentItem->child(item->row(), i) == 0)
@@ -218,6 +251,7 @@ void qMRMLSceneTransformModel::updateNodeFromItem(vtkMRMLNode* node, QStandardIt
       return;
       }
     }
+
   vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
   if (qMRMLSceneTransformModel::parentNode(node) != parent)
     {

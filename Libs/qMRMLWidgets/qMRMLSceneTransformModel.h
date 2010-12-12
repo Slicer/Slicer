@@ -47,9 +47,10 @@ public:
 
 protected:
   virtual void populateScene();
-  virtual void insertNode(vtkMRMLNode* node);
+  virtual QStandardItem* insertNode(vtkMRMLNode* node);
   using qMRMLSceneModel::insertNode;
   virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
   virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
 
 private:

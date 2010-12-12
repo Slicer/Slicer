@@ -43,193 +43,6 @@
 // STD includes
 #include <iostream>
 #include <fstream>
-/*
-//------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLFlatSceneItemHelper : public qMRMLAbstractSceneItemHelper
-{
-public:
-  virtual qMRMLAbstractItemHelper* child(int row, int column) const;
-  virtual int childCount() const;
-  virtual bool hasChildren() const;
-  virtual qMRMLAbstractItemHelper* parent()const;
-  
-protected:
-  friend class qMRMLSceneModelItemHelperFactory;
-  qMRMLFlatSceneItemHelper(vtkMRMLScene* scene, int column, const qMRMLAbstractItemHelperFactory* factory, int _row);
-  /// here we know for sure that child is a child of this.
-  virtual int childIndex(const qMRMLAbstractItemHelper* child)const;
-};
-
-//------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLFlatNodeItemHelper : public qMRMLAbstractNodeItemHelper
-{
-public:
-  virtual qMRMLAbstractItemHelper* parent() const;
-protected:
-  friend class qMRMLSceneModelItemHelperFactory;
-  qMRMLFlatNodeItemHelper(vtkMRMLNode* node, int column, const qMRMLAbstractItemHelperFactory* factory, int row);
-};
-
-//------------------------------------------------------------------------------
-class qMRMLSceneModelItemHelperFactoryPrivate
-{
-public:
-  vtkSmartPointer<vtkCollection> PreItems;
-  vtkSmartPointer<vtkCollection> PostItems;
-};
-
-//------------------------------------------------------------------------------
-qMRMLSceneModelItemHelperFactory::qMRMLSceneModelItemHelperFactory()
-  : d_ptr(new qMRMLSceneModelItemHelperFactoryPrivate)
-{
-}
-
-//------------------------------------------------------------------------------
-qMRMLSceneModelItemHelperFactory::~qMRMLSceneModelItemHelperFactory()
-{
-}
-
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLSceneModelItemHelperFactory::createItem(vtkObject* object, int column, int row)const
-{
-  if (!object)
-    {
-    Q_ASSERT(object);
-    return 0;
-    }
-  if (object->IsA("vtkMRMLScene"))
-    {
-    qMRMLAbstractItemHelper* source = new qMRMLFlatSceneItemHelper(vtkMRMLScene::SafeDownCast(object), column, this, 0);
-    return new qMRMLExtraItemsHelper(this->preItems(), this->postItems(), source);
-    }
-  else if (object->IsA("vtkMRMLNode"))
-    {
-    return new qMRMLFlatNodeItemHelper(vtkMRMLNode::SafeDownCast(object), column, this, row);
-    }
-  else if (object->IsA("vtkVariantArray"))
-    {
-    return new qMRMLVariantArrayItemHelper(vtkVariantArray::SafeDownCast(object), column, this, row);
-    }
-  else
-    {
-    qDebug() << object->GetClassName();
-    Q_ASSERT(false);
-    }
-  return 0;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneModelItemHelperFactory::setPostItems(vtkCollection* itemCollection)
-{
-  Q_D(qMRMLSceneModelItemHelperFactory);
-  d->PostItems = itemCollection;
-}
-
-//------------------------------------------------------------------------------
-vtkCollection* qMRMLSceneModelItemHelperFactory::postItems()const
-{
-  Q_D(const qMRMLSceneModelItemHelperFactory);
-  return d->PostItems.GetPointer();
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneModelItemHelperFactory::setPreItems(vtkCollection* itemCollection)
-{
-  Q_D(qMRMLSceneModelItemHelperFactory);
-  d->PreItems = itemCollection;
-}
-
-//------------------------------------------------------------------------------
-vtkCollection* qMRMLSceneModelItemHelperFactory::preItems()const
-{
-  Q_D(const qMRMLSceneModelItemHelperFactory);
-  return d->PreItems.GetPointer();
-}
-
-// qMRMLFlatSceneItemHelper
-
-//------------------------------------------------------------------------------
-qMRMLFlatSceneItemHelper::qMRMLFlatSceneItemHelper(vtkMRMLScene* scene, int _column, 
-                                                   const qMRMLAbstractItemHelperFactory* itemFactory, int _row)
-  :qMRMLAbstractSceneItemHelper(scene, _column, itemFactory, _row)
-{
-}
-
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLFlatSceneItemHelper::child(int _row, int _column) const
-{
-  vtkMRMLNode* childNode = this->mrmlScene()->GetNthNode(_row);
-  return this->factory()->createItem(childNode, _column, _row);
-  //if (childNode == 0)
-  //  {
-  //  return 0;
-  //  }
-  //qMRMLAbstractNodeItemHelper* _child = 
-  //  new qMRMLFlatNodeItemHelper(childNode, _column);
-  //return _child;
-  //return childNode;
-}
-
-//------------------------------------------------------------------------------
-int qMRMLFlatSceneItemHelper::childCount() const
-{ 
-  if (this->column() != 0)
-    {
-    return 0;
-    }
-  return this->mrmlScene() ? this->mrmlScene()->GetNumberOfNodes() : 0;; 
-}
-
-//------------------------------------------------------------------------------
-int qMRMLFlatSceneItemHelper::childIndex(const qMRMLAbstractItemHelper* _child) const
-{
-  const qMRMLAbstractNodeItemHelper* nodeItemHelper = 
-    dynamic_cast<const qMRMLAbstractNodeItemHelper*>(_child);
-  //Q_ASSERT(nodeItemHelper);
-  if (nodeItemHelper == 0)
-    {
-    return -1;
-    }
-  // Check what kind of value IsNodePresent(0) returns. If a node is not found: 0 or -1?
-  // if it's 0, then we should decrease the index as we work in 0-based arrays.
-  Q_ASSERT(!this->mrmlScene() || this->mrmlScene()->IsNodePresent(0) == 0);
-  return this->mrmlScene() ? this->mrmlScene()->IsNodePresent(nodeItemHelper->mrmlNode()) - 1 : -1;
-}
-
-//------------------------------------------------------------------------------
-bool qMRMLFlatSceneItemHelper::hasChildren() const
-{
-  if (this->column() != 0)
-    {
-    return 0;
-    }
-  return this->mrmlScene() ? this->mrmlScene()->GetNumberOfNodes() > 0 : false;
-}
-
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLFlatSceneItemHelper::parent() const
-{
-  return this->factory()->createRootItem(this->mrmlScene());
-}
-
-//------------------------------------------------------------------------------
-// qMRMLFlatNodeItemHelper
-
-//------------------------------------------------------------------------------
-qMRMLFlatNodeItemHelper::qMRMLFlatNodeItemHelper(vtkMRMLNode* node, int _column, 
-                                                 const qMRMLAbstractItemHelperFactory* itemFactory, int _row)
-  :qMRMLAbstractNodeItemHelper(node, _column, itemFactory, _row)
-{
-}
-
-//------------------------------------------------------------------------------
-qMRMLAbstractItemHelper* qMRMLFlatNodeItemHelper::parent() const
-{
-  //return new qMRMLFlatSceneItemHelper(this->mrmlNode()->GetScene(), 0);
-  //return this->mrmlNode()->GetScene();
-  return this->factory()->createItem(this->mrmlNode()->GetScene(), 0);
-}
-*/
 
 //------------------------------------------------------------------------------
 qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
@@ -237,10 +50,7 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
 {
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->ListenNodeModifiedEvent = false;
-  //this->ItemFactory = 0;
   this->MRMLScene = 0;
-  //this->MRMLNodeToBe = 0;
-  //this->MRMLNodeToBeAdded = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -250,19 +60,18 @@ qMRMLSceneModelPrivate::~qMRMLSceneModelPrivate()
     {
     this->MRMLScene->RemoveObserver(this->CallBack);
     }
-  //delete this->ItemFactory;
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModelPrivate::init(/*qMRMLSceneModelItemHelperFactory* factory*/)
+void qMRMLSceneModelPrivate::init()
 {
   Q_Q(qMRMLSceneModel);
   this->CallBack->SetClientData(q);
   this->CallBack->SetCallback(qMRMLSceneModel::onMRMLSceneEvent);
   q->setColumnCount(2);
+  q->setHorizontalHeaderLabels(QStringList() << "Nodes" << "Ids");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
-  //this->ItemFactory = factory;
 }
 /*
 //------------------------------------------------------------------------------
@@ -564,7 +373,9 @@ vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem)const
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column)const
 {
-  return this->itemFromIndex(this->indexFromNode(node, column));
+  QModelIndex nodeIndex = this->indexFromNode(node, column);
+  QStandardItem* nodeItem = this->itemFromIndex(nodeIndex);
+  return nodeItem;
 }
 
 //------------------------------------------------------------------------------
@@ -582,12 +393,15 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
   Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
   if (nodeIndexes.size() == 0)
     {
+    // maybe the node hasn't been added to the scene yet...
+    // (if it's called from populateScene/inserteNode)
     return QModelIndex();
     }
   if (column == 0)
     {
     // QAbstractItemModel::match only search through the first column
     // (because scene is in the first column)
+    Q_ASSERT(nodeIndexes[0].isValid());
     return nodeIndexes[0];
     }
   // Add the QModelIndexes from the other columns
@@ -648,8 +462,37 @@ bool qMRMLSceneModel::listenNodeModifiedEvent()const
 QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
 {
   Q_D(const qMRMLSceneModel);
-  d->LastMimeData = indexes;
-  return this->QStandardItemModel::mimeData(indexes);
+  if (!indexes.size())
+    {
+    return 0;
+    }
+  QModelIndex parent = indexes[0].parent();
+  int row = indexes[0].row();
+  // We want to do drag&drop only on the first item of a line (and not all the
+  // items
+  QModelIndexList allColumnsIndexes;
+  foreach(const QModelIndex& index, indexes)
+    {
+    QModelIndex parent = index.parent();
+    for (int column = 0; column < this->columnCount(parent); ++column)
+      {
+      allColumnsIndexes << this->index(index.row(), column, parent);
+      }
+    }
+  qDebug() <<allColumnsIndexes.size() << allColumnsIndexes[0] << allColumnsIndexes[1];
+  allColumnsIndexes = allColumnsIndexes.toSet().toList();
+  d->LastMimeData = allColumnsIndexes;
+  return this->QStandardItemModel::mimeData(allColumnsIndexes);
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSceneModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
+                                   int row, int column, const QModelIndex &parent)
+{
+  Q_D(qMRMLSceneModel);
+  bool res = this->Superclass::dropMimeData(data, action, row, 0, parent);
+  d->LastMimeData.clear();
+  return res;  
 }
 
 //------------------------------------------------------------------------------
@@ -715,14 +558,14 @@ void qMRMLSceneModel::populateScene()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::insertNode(vtkMRMLNode* node)
+QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
 {
   QStandardItem* parent = this->mrmlSceneItem();
-  this->insertNode(node, parent, parent->rowCount() - this->postItems(parent).count());
+  return this->insertNode(node, parent, parent->rowCount() - this->postItems(parent).count());
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int row)
+QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int row)
 {
   Q_D(qMRMLSceneModel);
   Q_ASSERT(vtkMRMLNode::SafeDownCast(node));
@@ -749,40 +592,37 @@ void qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int r
     qvtkConnect(node, vtkCommand::ModifiedEvent,
                 this, SLOT(onMRMLNodeModified(vtkObject*)));
     }
+  return items[0];
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
-  // Here we set the flags in multiple times (for code clarity), however it has
-  // the drawback of firing some itemChanged signals, we cascade useless and infinite loops
-  // a solution is to prevent ourself from firing any of these signals.
-  // Another solution is to create a virtual method that returns the desired flag and set
-  // it only once.
-  bool oldBlock = this->blockSignals(true);
-  item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-  this->blockSignals(oldBlock);
+  item->setFlags(this->nodeFlags(node, column));
   // set UIDRole and set PointerRole need to be atomic
-  this->blockSignals(true);
   item->setData(QString(node->GetID()), qMRMLSceneModel::UIDRole);
   item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRMLSceneModel::PointerRole);
-  this->blockSignals(oldBlock);
   switch (column)
     {
     case 0:
     default:
-      this->blockSignals(true);
-      item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsSelectable);
-      this->blockSignals(oldBlock);
       item->setText(QString(node->GetName()));
       break;
     case 1:
-      this->blockSignals(true);
-      item->setFlags(item->flags() | Qt::ItemIsSelectable);
-      this->blockSignals(oldBlock);
       item->setText(QString(node->GetID()));
       break;
     }
+}
+
+//------------------------------------------------------------------------------
+QFlags<Qt::ItemFlag> qMRMLSceneModel::nodeFlags(vtkMRMLNode* node, int column)const
+{
+  QFlags<Qt::ItemFlag> flags = Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable;
+  if (column == 0)
+    {
+    flags = flags | Qt::ItemIsEditable;
+    }
+  return flags;
 }
 
 //------------------------------------------------------------------------------
@@ -929,10 +769,13 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
   Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
   QModelIndexList nodeIndexes = this->indexes(modifiedNode);
   //qDebug() << "onMRMLNodeModified" << modifiedNode->GetID() << nodeIndexes;
-  
+  int oo = nodeIndexes.size();
   for (int i = 0; i < nodeIndexes.size(); ++i)
     {
     QModelIndex index = nodeIndexes[i];
+    // The node has been modified because it's part of a drag&drop action
+    // (reparenting). so it means QStandardItemModel has already reparented
+    // the row, no need to update the items again.
     if (d->LastMimeData.contains(index))
       {
       continue;
@@ -948,6 +791,7 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
       {
       int oldSize = nodeIndexes.size();      
       nodeIndexes = this->indexes(modifiedNode);
+      int newSize = nodeIndexes.size();
       //the number of columns shouldn't change
       Q_ASSERT(oldSize == nodeIndexes.size());
       Q_UNUSED(oldSize);

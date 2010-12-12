@@ -114,6 +114,9 @@ public:
 */
   virtual Qt::DropActions supportedDropActions()const;
   virtual QMimeData* mimeData(const QModelIndexList& indexes)const;
+  virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+                            int row, int column, const QModelIndex &parent);
+
 protected slots:
 
   virtual void onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);
@@ -134,16 +137,11 @@ protected slots:
 protected:
 
   qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=0);
-/*  friend class qMRMLSortFilterProxyModel;
-  friend class qMRMLTreeProxyModel;
-  virtual qMRMLAbstractItemHelperFactory* itemFactory()const;
-  virtual qMRMLAbstractItemHelper* itemFromIndex(const QModelIndex &modelIndex)const;
-  virtual qMRMLAbstractItemHelper* itemFromObject(vtkObject* object, int column)const;
-  virtual QModelIndex indexFromItem(const qMRMLAbstractItemHelper* item)const;
-*/
-  virtual void insertNode(vtkMRMLNode* node);
-  virtual void insertNode(vtkMRMLNode* node, QStandardItem* parent, int row = -1);
+
+  virtual QStandardItem* insertNode(vtkMRMLNode* node);
+  virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row = -1);
   virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
   virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
   virtual void updateScene();
   virtual void populateScene();

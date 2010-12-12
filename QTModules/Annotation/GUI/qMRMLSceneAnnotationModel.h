@@ -66,8 +66,8 @@ protected:
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node);
 
   virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
-
-  virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  
+  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
 
   virtual int columnCount(const QModelIndex &parent=QModelIndex())const;
 
