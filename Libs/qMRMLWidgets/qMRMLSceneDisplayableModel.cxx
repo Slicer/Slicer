@@ -154,6 +154,7 @@ vtkMRMLNode* qMRMLSceneDisplayableModel::parentNode(vtkMRMLNode* node)const
   return 0;
 }
 
+/*
 //------------------------------------------------------------------------------
 int qMRMLSceneDisplayableModel::nodeIndex(vtkMRMLNode* node)const
 {
@@ -184,6 +185,7 @@ int qMRMLSceneDisplayableModel::nodeIndex(vtkMRMLNode* node)const
     }
   return -1;
 }
+*/
 
 //------------------------------------------------------------------------------
 bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node)const
@@ -288,120 +290,6 @@ bool qMRMLSceneDisplayableModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newPar
       }
     }
   return false;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneDisplayableModel::populateScene()
-{
-  Q_D(qMRMLSceneDisplayableModel);
-  Q_ASSERT(d->MRMLScene);
-  // Add nodes
-  vtkMRMLNode *node = 0;
-  vtkCollectionSimpleIterator it;
-  for (d->MRMLScene->GetCurrentScene()->InitTraversal(it);
-       (node = static_cast<vtkMRMLNode*>(d->MRMLScene->GetCurrentScene()->GetNextItemAsObject(it))) ;)
-    {
-    // WARNING: works only if the nodes are in the scene in the correct order:
-    // parents are before children
-    this->insertNode(node);
-    }
-}
-
-//------------------------------------------------------------------------------
-QStandardItem* qMRMLSceneDisplayableModel::insertNode(vtkMRMLNode* node)
-{
-  QStandardItem* nodeItem = this->itemFromNode(node);
-  if (nodeItem)
-    {
-    return nodeItem;
-    }
-  vtkMRMLNode* parentNode = this->parentNode(node);
-  //std::cout << "insertNode: parentNode is " << (parentNode == NULL ? "null" : "not null") << ", mrml scene item is " << (this->mrmlSceneItem() == NULL ? "null" : "not null") << std::endl;
-  QStandardItem* parentItem =
-    parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();
-  if (!parentItem)
-    {
-    //std::cout << "insertNode: parent item is null, node id = " << node->GetID() << ", parent node id is " << (parentNode == NULL ? "null" : parentNode->GetID()) << std::endl;
-    parentItem = this->insertNode(parentNode);
-    }
-  int min = 0;
-  int max = 0;
-  if (parentItem)
-    {
-    //Q_ASSERT(parentItem);
-    min = this->preItems(parentItem).count();
-    max = parentItem->rowCount() - this->postItems(parentItem).count();
-    }
-  nodeItem = this->insertNode(node, parentItem, qMin(min + this->nodeIndex(node), max));
-  return nodeItem;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLSceneDisplayableModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
-{
-  this->qMRMLSceneModel::updateItemFromNode(item, node, column);
-  QStandardItem* parentItem = item->parent();
-  QStandardItem* newParentItem = this->itemFromNode(this->parentNode(node));
-  if (newParentItem == 0)
-    {
-    newParentItem = this->mrmlSceneItem();
-    }
-  // if the item has no parent, then it means it hasn't been put into the scene yet.
-  // and it will do it automatically.
-  if (parentItem != 0 && (parentItem != newParentItem || this->nodeIndex(node) != item->row()))
-    {
-    QList<QStandardItem*> children = parentItem->takeRow(item->row());
-    int min = this->preItems(newParentItem).count();
-    int max = newParentItem->rowCount() - this->postItems(newParentItem).count();
-    int pos = qMin(min + this->nodeIndex(node), max);
-    newParentItem->insertRow(pos, children);
-    }
-}
-
-//------------------------------------------------------------------------------
-QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, int column)const
-{
-  Q_D(const qMRMLSceneDisplayableModel);
-  Q_UNUSED(column);
-  QFlags<Qt::ItemFlag> flags = this->qMRMLSceneModel::nodeFlags(node, column);
-  if (qMRMLSceneDisplayableModel::canBeAChild(node))
-    {
-    flags = flags | Qt::ItemIsDragEnabled;
-    }
-  if (qMRMLSceneDisplayableModel::canBeAParent(node))
-    {
-    flags = flags | Qt::ItemIsDropEnabled;
-    }
-  return flags;
-}
-
-
-//------------------------------------------------------------------------------
-void qMRMLSceneDisplayableModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
-{
-  this->qMRMLSceneModel::updateNodeFromItem(node, item);
-  Q_ASSERT(node != this->mrmlNodeFromItem(item->parent()));
-
-  // Don't do the following if the row is not complete (reparenting an
-  // incomplete row might lead to errors). updateNodeFromItem is typically
-  // called for every item changed, so it should be
-  QStandardItem* parentItem = item->parent();
-  for (int i = 0; i < parentItem->columnCount(); ++i)
-    {
-    if (parentItem->child(item->row(), i) == 0)
-      {
-      return;
-      }
-    }
-  vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
-  if (this->parentNode(node) != parent)
-    {
-    this->reparent(node, parent);
-    }
-  else if (this->nodeIndex(node) != item->row())
-    {
-    this->updateItemFromNode(item, node, item->column());
-    }
 }
 
 //------------------------------------------------------------------------------

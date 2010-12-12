@@ -34,24 +34,17 @@ public:
   virtual ~qMRMLSceneTransformModel();
 
   ///
-  static vtkMRMLNode* parentNode(vtkMRMLNode* node);
-  static int          nodeIndex(vtkMRMLNode* node);
+  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
+  //virtual int          nodeIndex(vtkMRMLNode* node)const;
   /// fast function that only check the type of the node to know if it can be a child.
-  static bool         canBeAChild(vtkMRMLNode* node);
+  virtual bool         canBeAChild(vtkMRMLNode* node)const;
   /// fast function that only check the type of the node to know if it can be a parent.
-  static bool         canBeAParent(vtkMRMLNode* node);
+  virtual bool         canBeAParent(vtkMRMLNode* node)const;
   /// if newParent == 0, set the node into the vtkMRMLScene
-  static bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
+  virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
+
 
   virtual Qt::DropActions supportedDropActions()const;
-
-protected:
-  virtual void populateScene();
-  virtual QStandardItem* insertNode(vtkMRMLNode* node);
-  using qMRMLSceneModel::insertNode;
-  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
-  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneTransformModel);

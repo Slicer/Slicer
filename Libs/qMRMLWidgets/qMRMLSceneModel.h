@@ -72,7 +72,7 @@ public:
   QModelIndex indexFromNode(vtkMRMLNode* node, int column = 0)const;
   // Utility function
   QStandardItem* itemFromNode(vtkMRMLNode* node, int column = 0)const;
-  // Return all the QModelIndex (all the columns) for a given node
+  // Return all the QModelIndexes (all the columns) for a given node
   QModelIndexList indexes(vtkMRMLNode* node)const;
 
   /// Option that activates the expensive listening of the vtkMRMLNode Modified
@@ -93,29 +93,25 @@ public:
   /// Warning, setPostItems() resets the model, the currently selected item is lost
   void setPostItems(const QStringList& extraItems, QStandardItem* parent);
   QStringList postItems(QStandardItem* parent)const;
-/*
-  virtual int columnCount(const QModelIndex &parent=QModelIndex())const;
-  virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole)const;
-  //virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
-  virtual Qt::ItemFlags flags(const QModelIndex &index)const;
-  virtual bool hasChildren(const QModelIndex &parent=QModelIndex())const;
-  virtual QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole)const;
-  virtual QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex())const;
-  //virtual bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
-  virtual QMap<int, QVariant> itemData(const QModelIndex &index)const;
-  //virtual QMimeData * mimeData(const QModelIndexList &indexes)const;
-  //virtual QStringList mimeTypes()const;
-  virtual QModelIndex parent(const QModelIndex &index)const;
-  //virtual bool removeColumns(int column, int count, const QModelIndex &parent=QModelIndex());
-  //virtual bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex());
-  virtual int rowCount(const QModelIndex &parent=QModelIndex()) const;
-  virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-  //virtual bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles);
-*/
+
   virtual Qt::DropActions supportedDropActions()const;
   virtual QMimeData* mimeData(const QModelIndexList& indexes)const;
   virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
                             int row, int column, const QModelIndex &parent);
+
+  /// Must be reimplemented in derived classes
+  /// Returns 0 (scene is not a node) in qMRMLSceneModel
+  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
+  /// Must be reimplemented in derived classes
+  virtual int          nodeIndex(vtkMRMLNode* node)const;
+  /// fast function that only check the type of the node to know if it can be a child.
+  virtual bool         canBeAChild(vtkMRMLNode* node)const;
+  /// Must be reimplemented in derived classes
+  /// Returns false in qMRMLSceneModel
+  virtual bool         canBeAParent(vtkMRMLNode* node)const;
+  /// Must be reimplemented in derived classes.
+  /// Doesn't reparent and returns false by qMRMLSceneModel
+  virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
 
 protected slots:
 
@@ -138,13 +134,16 @@ protected:
 
   qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=0);
 
-  virtual QStandardItem* insertNode(vtkMRMLNode* node);
-  virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row = -1);
-  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
-  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
   virtual void updateScene();
   virtual void populateScene();
+  virtual QStandardItem* insertNode(vtkMRMLNode* node);
+  virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row = -1);
+
+  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
+  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
+  virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
                                void* client_data, void* call_data);

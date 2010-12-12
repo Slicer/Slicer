@@ -57,7 +57,7 @@ public:
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   bool ListenNodeModifiedEvent;
   vtkMRMLScene* MRMLScene;
-  mutable QModelIndexList LastMimeData;
+  mutable QList<vtkMRMLNode*>  DraggedNodes;
 };
 
 #endif

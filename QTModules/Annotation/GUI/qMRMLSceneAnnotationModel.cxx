@@ -47,6 +47,7 @@ qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
   :qMRMLSceneDisplayableModel(vparent)
 {
   this->setListenNodeModifiedEvent(true);
+  this->setColumnCount(6);
   this->setHorizontalHeaderLabels(
     QStringList() << "" << "Vis" << "Lock" << "Edit" << "Value" << "Text");
 }
@@ -57,32 +58,8 @@ qMRMLSceneAnnotationModel::~qMRMLSceneAnnotationModel()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
+void qMRMLSceneAnnotationModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
-  // from qMRMLSceneDisplayableModel
-  Q_ASSERT(node != this->mrmlNodeFromItem(item->parent()));
-
-  // Don't do the following if the row is not complete (reparenting an
-  // incomplete row might lead to errors). updateNodeFromItem is typically
-  // called for every item changed, so it should be
-  QStandardItem* parentItem = item->parent();
-  for (int i = 0; i < parentItem->columnCount(); ++i)
-    {
-    if (parentItem->child(item->row(), i) == 0)
-      {
-      return;
-      }
-    }
-  vtkMRMLNode* parent = this->mrmlNodeFromItem(parentItem);
-  if (this->parentNode(node) != parent)
-    {
-    this->reparent(node, parent);
-    }
-  else if (this->nodeIndex(node) != item->row())
-    {
-    this->updateItemFromNode(item, node, item->column());
-    }
-
   if (item->column() == qMRMLSceneAnnotationModel::TextColumn)
     {
     vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
@@ -105,21 +82,12 @@ void qMRMLSceneAnnotationModel::updateNodeFromItem(vtkMRMLNode* node, QStandardI
       snapshotNode->SetName(item->text().toLatin1());
       }
     }
-
-  this->m_Widget->refreshTree();
+  //this->m_Widget->refreshTree();
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
+void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
-  item->setFlags(this->nodeFlags(node, column));
-  
-  // from qMRMLSceneModel
-  bool oldBlock = this->blockSignals(true);
-  item->setData(QString(node->GetID()), qMRMLSceneModel::UIDRole);
-  item->setData(QVariant::fromValue(reinterpret_cast<long long>(node)), qMRMLSceneModel::PointerRole);
-  this->blockSignals(oldBlock);
-
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
 
   switch (column)
@@ -193,37 +161,19 @@ void qMRMLSceneAnnotationModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
         }
       else if (node->IsA("vtkMRMLAnnotationSnapshotNode"))
         {
-        this->blockSignals(true);
-        item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsSelectable);
-        this->blockSignals(oldBlock);
         item->setText(QString(node->GetName()));
         }
       break;
-    }
-
-  // from qMRMLSceneDisplayableModel
-  QStandardItem* parentItem = item->parent();
-  QStandardItem* newParentItem = this->itemFromNode(qMRMLSceneAnnotationModel::parentNode(node));
-  if (newParentItem == 0)
-    {
-    newParentItem = this->mrmlSceneItem();
-    }
-  // if the item has no parent, then it means it hasn't been put into the scene yet.
-  // and it will do it automatically.
-  if (parentItem != 0 && (parentItem != newParentItem || qMRMLSceneDisplayableModel::nodeIndex(node) != item->row()))
-    {
-    QList<QStandardItem*> children = parentItem->takeRow(item->row());
-    int min = this->preItems(newParentItem).count();
-    int max = newParentItem->rowCount() - this->postItems(newParentItem).count();
-    int pos = qMin(min + qMRMLSceneDisplayableModel::nodeIndex(node), max);
-    newParentItem->insertRow(pos, children);
     }
 }
 
 //------------------------------------------------------------------------------
 QFlags<Qt::ItemFlag> qMRMLSceneAnnotationModel::nodeFlags(vtkMRMLNode* node, int column)const
 {
-  QFlags<Qt::ItemFlag> flags = Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable;
+  QFlags<Qt::ItemFlag> flags = this->qMRMLSceneDisplayableModel::nodeFlags(node, column);
+  // remove the ItemIsEditable flag from any possible item (typically at column 0)
+  flags = flags & ~Qt::ItemIsEditable;
+  // and set it to the right column
   switch(column)
     {
     case qMRMLSceneAnnotationModel::TextColumn:
@@ -231,14 +181,6 @@ QFlags<Qt::ItemFlag> qMRMLSceneAnnotationModel::nodeFlags(vtkMRMLNode* node, int
       break;
     default:
       break;
-    }
-  if (qMRMLSceneDisplayableModel::canBeAChild(node))
-    {
-    flags = flags | Qt::ItemIsDragEnabled;
-    }
-  if (qMRMLSceneDisplayableModel::canBeAParent(node))
-    {
-    flags = flags | Qt::ItemIsDropEnabled;
     }
   return flags;
 }
@@ -285,13 +227,6 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)
     return displayableHierarchyNode->GetParentNode();
     }
   return 0;
-}
-
-//------------------------------------------------------------------------------
-int qMRMLSceneAnnotationModel::columnCount(const QModelIndex &_parent)const
-{
-  Q_UNUSED(_parent);
-  return 6;
 }
 
 //-----------------------------------------------------------------------------

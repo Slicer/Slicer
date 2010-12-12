@@ -45,13 +45,6 @@ public:
 
   virtual Qt::DropActions supportedDropActions()const;
   virtual void setMRMLScene(vtkMRMLScene* scene);
-protected:
-  virtual void populateScene();
-  virtual QStandardItem* insertNode(vtkMRMLNode* node);
-  using qMRMLSceneModel::insertNode;
-  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-  virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
-  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneModelHierarchyModel);

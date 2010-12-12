@@ -58,18 +58,15 @@ public:
     TextColumn = 5
   };
 
-  virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
-
+  virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
 
 protected:
 
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node);
 
-  virtual void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item);
+  virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
   
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
-
-  virtual int columnCount(const QModelIndex &parent=QModelIndex())const;
 
 private:
   Q_DISABLE_COPY(qMRMLSceneAnnotationModel);

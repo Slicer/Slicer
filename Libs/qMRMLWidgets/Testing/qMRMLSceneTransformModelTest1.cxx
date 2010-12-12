@@ -114,7 +114,7 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
     vtkMRMLNode* node1 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
     vtkMRMLNode* node2 = sceneFactory.generateNode("vtkMRMLLinearTransformNode");
     std::cout << "start reparenting node" << std::endl;
-    qMRMLSceneTransformModel::reparent(node1, node2);
+    model.reparent(node1, node2);
     std::cout << "end reparenting node" << std::endl;
     }
   catch (const char* error)
