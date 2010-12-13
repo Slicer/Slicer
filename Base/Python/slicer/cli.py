@@ -25,7 +25,7 @@ def setNodeParameters(node, parameters):
     return None
   for key, value in parameters.iteritems():
     if isinstance(value, basestring):
-      node.setParameterAsString(key, value)
+      node.SetParameterAsString(key, value)
     elif isinstance(value, bool):
       node.SetParameterAsBool(key, value)
     elif isinstance(value, int):
