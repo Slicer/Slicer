@@ -251,7 +251,7 @@ class HelperBox(object):
         slicer.mrmlScene.RemoveNodeNoNotify( structureVolume )
     self.updateStructures()
 
-  def merge(self,label="all"):
+  def mergeStructures(self,label="all"):
     """merge the named or all structure labels into the master label"""
 
     merge = self.mergeVolume()
@@ -319,7 +319,7 @@ class HelperBox(object):
     self.statusText( "Finished merging." )
 
   def split(self):
-    """split the merge volume into individual strutures"""
+    """split the merge volume into individual structures"""
 
     self.statusText( "Splitting..." )
     merge = self.mergeVolume()
@@ -476,7 +476,8 @@ class HelperBox(object):
     # reset to a fresh model
     self.brushes = []
     self.items = []
-    self.strutures = qt.QStandardItemModel()
+    self.structures = qt.QStandardItemModel()
+    self.structuresView.setModel(self.structures)
 
     # if no merge volume exists, disable everything - else enable
     merge = self.mergeVolume()
@@ -503,6 +504,7 @@ class HelperBox(object):
       # match something like "CT-lung-label1"
       regexp = "%s-.*-label" % masterName
       if re.match(regexp, vName):
+        print ("adding structure %s"%vName)
         # figure out what name it is
         # - account for the fact that sometimes a number will be added to the end of the name
         start = 1+len(masterName)
@@ -510,24 +512,24 @@ class HelperBox(object):
         structureName = vName[start:end]
         structureIndex = colorNode.GetColorIndexByName( structureName )
         structureColor = lut.GetTableValue(structureIndex)[0:3]
-        
-        # label index
-        item = qt.QStandardItem()
-        item.setText( str(structureIndex) )
-        self.strutures.setItem(self.row,0,item)
-        self.items.append(item)
-        # label color
         brush = qt.QBrush()
         self.brushes.append(brush)
         color = qt.QColor()
         color.setRgb(structureColor[0]*255,structureColor[1]*255,structureColor[2]*255)
         brush.setColor(color)
+        
+        # label index
+        item = qt.QStandardItem()
+        item.setText( str(structureIndex) )
+        self.structures.setItem(self.row,0,item)
+        self.items.append(item)
+        # label color
         item = qt.QStandardItem()
         item.setText("###")
         # TODO: how to set the background color - setBackground doesn't work...
         item.setBackground(brush)
         item.setForeground(brush)
-        self.strutures.setItem(self.row,1,item)
+        self.structures.setItem(self.row,1,item)
         self.items.append(item)
         # structure name
         item = qt.QStandardItem()
@@ -540,18 +542,19 @@ class HelperBox(object):
         self.structures.setItem(self.row,3,item)
         self.items.append(item)
         self.row += 1
+        print ("added structure %s"%vName)
 
       vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
     
-    self.structuresView.setModel(self.strutures)
-    self.structuresView.setColumnWidth(0,75)
+    self.structuresView.setColumnWidth(0,70)
     self.structuresView.setColumnWidth(1,50)
-    self.structuresView.setColumnWidth(2,150)
+    self.structuresView.setColumnWidth(2,60)
     self.structuresView.setColumnWidth(3,300)
     self.structures.setHeaderData(0,1,"Number")
     self.structures.setHeaderData(1,1,"Color")
     self.structures.setHeaderData(2,1,"Name")
     self.structures.setHeaderData(3,1,"Label Volume")
+    self.structuresView.setModel(self.structures)
     
     # show the tools if a structure has been selected
     #TODO: 
@@ -571,10 +574,10 @@ class HelperBox(object):
       self.structuresFrame.hide()
 
   def onStructuresClicked(self, modelIndex):
-    self.edit(modelIndex.row())
+    self.edit(int(self.structures.item(modelIndex.row(),0).text()))
     
   def onMergeAndBuild(self):
-    self.merge()
+    self.mergeStructures()
     self.build()
 
 
@@ -725,7 +728,7 @@ class HelperBox(object):
     self.deleteStructuresButton.connect("clicked()", self.deleteStructures)
     self.structuresToggle.connect("clicked()", self.onAdvanced)
     # selection changed event
-    self.structures.connect("clicked(QModelIndex)", self.onStructuresClicked)
+    self.structuresView.connect("clicked(QModelIndex)", self.onStructuresClicked)
     # invoked event
     self.splitButton.connect("clicked()", self.split)
     self.mergeButton.connect("clicked()", self.merge)
