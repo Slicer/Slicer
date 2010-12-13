@@ -1,7 +1,6 @@
 import os
 from __main__ import tcl
 from __main__ import qt
-from __main__ import app
 from EditOptions import *
 
 
@@ -249,7 +248,7 @@ itcl::body EditBox::setButtonState {effect state} {
   # manage the editor effects
   #
   def selectEffect(self, effect):
-
+    from slicer import app
     #
     # if an effect was added, build an options GUI
     #
@@ -263,7 +262,7 @@ itcl::body EditBox::setButtonState {effect state} {
       print ("No options for %s." % effect)
       pass
 
-    app().restoreOverrideCursor()
+    app.restoreOverrideCursor()
     self.setActiveToolLabel(effect)
     if not self.nonmodal.__contains__(effect):
       tcl('EffectSWidget::RemoveAll')
@@ -304,11 +303,11 @@ itcl::body EditBox::setButtonState {effect state} {
           #pix = qt.QPixmap()
           #pix.load(self.effectIconFiles[effect,""])
           #cursor = qt.QCursor(pix)
-          #app().setOverrideCursor(cursor, 0, 0)
+          #app.setOverrideCursor(cursor, 0, 0)
           cursor = qt.QCursor(1)
-          app().setOverrideCursor(cursor)
+          app.setOverrideCursor(cursor)
         else:
-          app().restoreOverrideCursor()
+          app.restoreOverrideCursor()
 
         #
         # create an instance of the effect for each of the active sliceGUIs

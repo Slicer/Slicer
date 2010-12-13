@@ -2,15 +2,13 @@ def quit():
   exit()
 
 def exit():
-  app().quit()
-
-def app():
-  from __main__ import _app
-  return _app
+  from slicer import app
+  app.quit()
 
 def mainWindow():
+  from slicer import app
   _objectName = 'qSlicerMainWindow'
-  for w in app().topLevelWidgets():
+  for w in app.topLevelWidgets():
     if w.objectName == _objectName: return w
   print "Failed to obtain reference to '%s'" % _objectName
   return None
@@ -20,52 +18,60 @@ def mainWindow():
 #
 
 def loadColorTable(filename):
-  import slicer
+  from slicer import app
+  import slicer.qSlicerIO
   filetype = slicer.qSlicerIO.ColorTableFile
   properties = {}
-  return app().coreIOManager().loadNodes(filetype, properties)
+  return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadDTI(filename):
-  import slicer
+  from slicer import app
+  import slicer.qSlicerIO
   filetype = slicer.qSlicerIO.DTIFile
   properties = {}
-  return app().coreIOManager().loadNodes(filetype, properties)
+  return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadFiducialList(filename):
-  import slicer
+  from slicer import app
+  import slicer.qSlicerIO
   filetype = slicer.qSlicerIO.FiducialListFile
   properties = {'fileName':filename}
-  return app().coreIOManager().loadNodes(filetype, properties)
+  return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadModel(filename):
-  import slicer
+  from slicer import app
+  import slicer.qSlicerIO
   filetype = slicer.qSlicerIO.ModelFile
   properties = {'fileName':filename}
-  return app().coreIOManager().loadNodes(filetype, properties)
+  return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadScalarOverlay(filename):
-  import slicer
+  from slicer import app
+  import slicer.qSlicerIO
   filetype = slicer.qSlicerIO.ScalarOverlayFile
   properties = {'fileName':filename}
-  return app().coreIOManager().loadNodes(filetype, properties)
+  return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadScene(filename, clear = True):
-  import slicer
+  from slicer import app
+  import slicer.qSlicerIO
   filetype = slicer.qSlicerIO.SceneFile
   properties = {'fileName':filename}
-  return app().coreIOManager().loadNodes(filetype, properties)
+  return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadTransform(filename):
-  import slicer
+  from slicer import app
+  import slicer.qSlicerIO
   filetype = slicer.qSlicerIO.TransformFile
   properties = {'fileName':filename}
-  return app().coreIOManager().loadNodes(filetype, properties)
+  return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadVolume(filename):
-  import slicer
+  from slicer import app
+  import slicer.qSlicerIO
   filetype = slicer.qSlicerIO.VolumeFile
   properties = {'fileName':filename}
-  return app().coreIOManager().loadNodes(filetype, properties)
+  return app.coreIOManager().loadNodes(filetype, properties)
 
 #
 # Module
@@ -80,10 +86,12 @@ def selectModule(module):
   w.moduleSelector().selectModule(moduleName)
 
 def moduleNames():
-  return app().moduleManager().factoryManager().moduleNames()
+  from slicer import app
+  return app.moduleManager().factoryManager().moduleNames()
 
 def getModule(moduleName):
-  module = app().moduleManager().module(moduleName);
+  from slicer import app
+  module = app.moduleManager().module(moduleName);
   if not module:
     print "Could not find module with name '%s" % moduleName
     return None
