@@ -37,7 +37,6 @@ public:
   int categoryCount()const;
 
 protected:
-  virtual void populateScene();
   virtual QStandardItem* insertNode(vtkMRMLNode* node);
   using qMRMLSceneModel::insertNode;
   virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);

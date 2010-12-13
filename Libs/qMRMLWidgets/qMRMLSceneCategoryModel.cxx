@@ -108,23 +108,6 @@ int qMRMLSceneCategoryModel::categoryCount()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneCategoryModel::populateScene()
-{
-  Q_D(qMRMLSceneCategoryModel);
-  Q_ASSERT(d->MRMLScene);
-  // Add nodes
-  vtkMRMLNode *node = 0;
-  vtkCollectionSimpleIterator it;
-  for (d->MRMLScene->GetCurrentScene()->InitTraversal(it);
-       (node = (vtkMRMLNode*)d->MRMLScene->GetCurrentScene()->GetNextItemAsObject(it)) ;)
-    {
-    // WARNING: works only if the nodes are in the scene in the correct order:
-    // parents are before children
-    this->insertNode(node);
-    }
-}
-
-//------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneCategoryModel::insertCategory(const QString& category, int row)
 {
   Q_ASSERT(!category.isEmpty());
@@ -168,9 +151,7 @@ QStandardItem* qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
 //------------------------------------------------------------------------------
 void qMRMLSceneCategoryModel::updateItemFromCategory(QStandardItem* item, const QString& category)
 {
-  bool oldBlock = this->blockSignals(true);
   item->setFlags(Qt::ItemIsEnabled);
-  this->blockSignals(oldBlock);
   item->setData(QString("category"), qMRMLSceneModel::UIDRole);
   item->setText(category);
 }
