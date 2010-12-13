@@ -246,8 +246,9 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   vtkMRMLStorageNode* storageNode = d->VolumeNode->GetStorageNode();
   d->FileNameLineEdit->setText(storageNode ? storageNode->GetFileName() : "");
   
+  d->LabelMapCheckBox->setEnabled(d->VolumeNode->IsA("vtkMRMLScalarVolumeNode")
+                               && !d->VolumeNode->IsA("vtkMRMLTensorVolumeNode") );
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( d->VolumeNode );
-  d->LabelMapCheckBox->setVisible(scalarNode != 0);
   d->LabelMapCheckBox->setChecked(scalarNode ? scalarNode->GetLabelMap() : false);
 
   vtkMRMLScalarVolumeDisplayNode *displayNode = 
@@ -368,9 +369,10 @@ void qMRMLVolumeInfoWidget::setScalarType(int index)
 void qMRMLVolumeInfoWidget::setLabelMap(bool enable)
 {
   Q_D(qMRMLVolumeInfoWidget);
-  vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-    d->VolumeNode);
+  vtkMRMLScalarVolumeNode *scalarNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(d->VolumeNode);
   if (scalarNode == 0 ||
+      scalarNode->IsA("vtkMRMLTensorVolume") ||
       static_cast<bool>(scalarNode->GetLabelMap()) == enable)
     {
     return;

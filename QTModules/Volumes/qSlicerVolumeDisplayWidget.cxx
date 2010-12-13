@@ -23,10 +23,15 @@ qSlicerVolumeDisplayWidget::qSlicerVolumeDisplayWidget(QWidget* _parent) : Super
 // --------------------------------------------------------------------------
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
 {
-  if (!volumeNode)
+  qvtkDisconnect(0,vtkCommand::ModifiedEvent,this,SLOT(updateFromMRML(vtkObject*)));
+  qvtkConnect(volumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateFromMRML(vtkObject*)));
+ 
+  if (volumeNode == 0)
     {
-    this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
-    this->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
+    this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(
+      vtkMRMLVolumeNode::SafeDownCast(0));
+    this->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(
+      vtkMRMLVolumeNode::SafeDownCast(0));
     return;
     }
 
@@ -35,14 +40,29 @@ void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
     vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
   if (scalarVolumeNode && !scalarVolumeNode->GetLabelMap())
     {
+    // disable other panels 
+    this->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(
+      vtkMRMLVolumeNode::SafeDownCast(0));
+    
     this->ScalarVolumeDisplayWidget->setMRMLScene(scene);
     this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     this->setCurrentWidget(this->ScalarVolumeDisplayWidget);
     }
   else if (scalarVolumeNode && scalarVolumeNode->GetLabelMap())
     {
+    // disable other panels
+    this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(
+      vtkMRMLVolumeNode::SafeDownCast(0));
+    
     this->LabelMapVolumeDisplayWidget->setMRMLScene(scene);
     this->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     this->setCurrentWidget(this->LabelMapVolumeDisplayWidget);
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeDisplayWidget::updateFromMRML(vtkObject* volume)
+{
+  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(volume);
+  this->setMRMLVolumeNode(volumeNode);
 }

@@ -43,10 +43,6 @@ public:
   qSlicerVolumesModuleWidget(QWidget *parent=0);
   virtual ~qSlicerVolumesModuleWidget();
 
-public slots:
-
-  void setActiveVolumeNode(vtkMRMLNode* node);
-
 protected:
   virtual void setup();
 
