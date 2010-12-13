@@ -1,5 +1,6 @@
 import os
 from __main__ import tcl
+import qt, ctk
 import EditorLib
 
 #
@@ -88,8 +89,8 @@ class EditorWidget:
 
     self.toolsFrame = qt.QFrame(self.tools)
     self.toolsFrame.setLayout(qt.QHBoxLayout())
-    self.tools.layout().addWidget(self.toolsFrame)
     self.tools.layout().addStretch(1)
+    self.tools.layout().addWidget(self.toolsFrame)
 
     self.toolOptionsFrame = qt.QFrame(self.toolsFrame)
     self.toolOptionsFrame.setLayout(qt.QVBoxLayout())

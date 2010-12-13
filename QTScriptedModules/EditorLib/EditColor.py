@@ -1,7 +1,7 @@
 import slicer
 from __main__ import tcl
 from __main__ import qt
-import EditorLib
+import ColorBox
 
 #########################################################
 #
@@ -130,4 +130,4 @@ class EditColor(object):
           
 
   def showColorBox(self):
-    self.colorBox = EditorLib.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.getColorNode())
+    self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.getColorNode())

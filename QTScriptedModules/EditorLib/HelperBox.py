@@ -3,6 +3,7 @@ import re
 from __main__ import tcl
 from __main__ import qt
 from __main__ import slicer
+import ColorBox
 
 #########################################################
 #
@@ -200,7 +201,7 @@ class HelperBox(object):
       self.colorBox.parent.populate()
       self.colorBox.parent.show()
 
-  def addStructure(label=None, options=""):
+  def addStructure(self,label=None, options=""):
     """create the segmentation helper box"""
 
     merge = self.mergeVolume()
@@ -473,9 +474,9 @@ class HelperBox(object):
     self.setMergeButton.setDisabled(not self.master)
 
     # reset to a fresh model
-    self.strutures = qt.QStandardItemModel()
-    self.items = []
     self.brushes = []
+    self.items = []
+    self.strutures = qt.QStandardItemModel()
 
     # if no merge volume exists, disable everything - else enable
     merge = self.mergeVolume()
@@ -496,7 +497,7 @@ class HelperBox(object):
     masterName = self.master.GetName()
     slicer.mrmlScene.InitTraversal()
     vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
-    row = 0
+    self.row = 0
     while vNode:
       vName = vNode.GetName()
       # match something like "CT-lung-label1"
@@ -513,7 +514,8 @@ class HelperBox(object):
         # label index
         item = qt.QStandardItem()
         item.setText( str(structureIndex) )
-        self.strutures.setItem(row,0,item)
+        self.strutures.setItem(self.row,0,item)
+        self.items.append(item)
         # label color
         brush = qt.QBrush()
         self.brushes.append(brush)
@@ -549,7 +551,7 @@ class HelperBox(object):
     self.structures.setHeaderData(0,1,"Number")
     self.structures.setHeaderData(1,1,"Color")
     self.structures.setHeaderData(2,1,"Name")
-    self.structures.setHeaderData(2,1,"Label Volume")
+    self.structures.setHeaderData(3,1,"Label Volume")
     
     # show the tools if a structure has been selected
     #TODO: 
@@ -630,7 +632,7 @@ class HelperBox(object):
     self.mergeName.setToolTip( mergeNameToolTip )
     self.mergeFrame.layout().addWidget(self.mergeName)
 
-    self.setMergeButton = qt.QPushButton("Set", self.mergeFrame)
+    self.setMergeButton = qt.QPushButton("Set...", self.mergeFrame)
     self.setMergeButton.setToolTip( "Set the merge volume to use with this master." )
     self.mergeFrame.layout().addWidget(self.setMergeButton)
 
@@ -858,6 +860,8 @@ class HelperBox(object):
       self.labelDialogCreate.connect("clicked()", self.onLabelDialogCreate)
 
     self.labelPromptLabel.setText( "Select existing label map volume to edit." )
+    p = qt.QCursor().pos()
+    self.labelSelect.setGeometry(p.x(), p.y(), 400, 200)
     self.labelSelect.show()
 
   # labelSelect callbacks (slots)

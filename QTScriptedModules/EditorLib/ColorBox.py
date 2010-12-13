@@ -17,11 +17,13 @@ comment = """
 
 class ColorBox(object):
 
-  def __init__(self, parent=None, parameterNode=None, parameter=None, colorNode=None):
+  def __init__(self, parent=None, parameterNode=None, parameter=None, colorNode=None, selectCommand=None):
     self.colorNode = colorNode
     self.parameterNode = parameterNode
     self.parameter = parameter
+    self.selectCommand = selectCommand
     self.recents = []
+    self.label = None
     if not parent:
       self.parent = qt.QFrame()
       self.parent.setLayout( qt.QVBoxLayout() )
@@ -103,6 +105,9 @@ class ColorBox(object):
     self.model.setHeaderData(2,1,"Name")
 
   def selected(self, modelIndex):
-    label = self.model.item(modelIndex.row(),0).text()
-    self.parameterNode.SetParameter(self.parameter,label)
+    self.label = self.model.item(modelIndex.row(),0).text()
+    if self.parameter:
+      self.parameterNode.SetParameter(self.parameter,self.label)
+    if self.selectCommand:
+      self.selectCommand(int(self.label))
     self.parent.hide()

@@ -2,6 +2,7 @@ import slicer
 from __main__ import tcl
 from __main__ import qt
 from __main__ import ctk
+from __main__ import getNodes
 
 #########################################################
 #
@@ -125,6 +126,23 @@ class EditOptions(object):
   def setMRMLDefaults(self):
     pass
 
+  def getLabelVolume(self):
+    count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
+    for n in xrange(count):
+      compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
+      if compNode.GetLayoutName() == 'Red':
+        labelID = compNode.GetLabelVolumeID()
+        return slicer.mrmlScene.GetNodeByID(labelID)
+
+  def getBackgroundVolume(self):
+    count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
+    for n in xrange(count):
+      compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
+      if compNode.GetLayoutName() == 'Red':
+        backgroundID = compNode.GetBackgroundVolumeID()
+        return slicer.mrmlScene.GetNodeByID(backgroundID)
+
+
 #### Labeler
 class LabelerOptions(EditOptions):
   """ Labeler classes are the ones that implement
@@ -242,10 +260,22 @@ class PaintOptions(LabelerOptions):
 
   def create(self):
     super(PaintOptions,self).create()
-    self.radiusLabel = qt.QLabel("Radius", self.frame)
+
+    self.radiusFrame = qt.QFrame(self.frame)
+    self.radiusFrame.setLayout(qt.QHBoxLayout())
+    self.frame.layout().addWidget(self.radiusFrame)
+    self.widgets.append(self.radiusFrame)
+    self.radiusLabel = qt.QLabel("Radius:", self.radiusFrame)
     self.radiusLabel.setToolTip("Set the radius of the paint brush in millimeters")
-    self.frame.layout().addWidget(self.radiusLabel)
+    self.radiusFrame.layout().addWidget(self.radiusLabel)
     self.widgets.append(self.radiusLabel)
+    self.radiusSpinBox = qt.QSpinBox(self.radiusFrame)
+    self.radiusSpinBox.setToolTip("Set the radius of the paint brush in millimeters")
+    self.radiusSpinBox.minimum = 0.01
+    self.radiusSpinBox.maximum = 100
+    self.radiusFrame.layout().addWidget(self.radiusSpinBox)
+    self.widgets.append(self.radiusSpinBox)
+
     self.radius = ctk.ctkDoubleSlider(self.frame)
     self.radius.minimum = 0.01
     self.radius.maximum = 100
@@ -261,7 +291,8 @@ class PaintOptions(LabelerOptions):
     HelpButton(self.frame, "Use this tool to paint with a round brush of the selected radius")
 
     self.smudge.connect('clicked()', self.updateMRMLFromGUI)
-    self.radius.connect('valueChanged()', self.onRadiusValueChanged)
+    self.radius.connect('valueChanged(double)', self.onRadiusValueChanged)
+    self.radiusSpinBox.connect('valueChanged(QString)', self.onRadiusSpinBoxChanged)
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
@@ -297,6 +328,8 @@ class PaintOptions(LabelerOptions):
     self.parameterNode.SetDisableModifiedEvent(disableState)
 
   def updateGUIFromMRML(self,caller,event):
+    if self.updatingGUI:
+      return
     params = ("radius", "smudge")
     for p in params:
       if self.parameterNode.GetParameter("Paint,"+p) == '':
@@ -306,9 +339,23 @@ class PaintOptions(LabelerOptions):
     super(PaintOptions,self).updateGUIFromMRML(caller,event)
     self.smudge.setChecked( int(self.parameterNode.GetParameter("Paint,smudge")) )
     self.radius.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
+    self.radiusSpinBox.setValue( int(float(self.parameterNode.GetParameter("Paint,radius"))) )
     self.updatingGUI = False
 
   def onRadiusValueChanged(self,value):
+    if self.updatingGUI:
+      return
+    self.updatingGUI = True
+    self.radiusSpinBox.setValue(self.radius.value)
+    self.updatingGUI = False
+    self.updateMRMLFromGUI()
+
+  def onRadiusSpinBoxChanged(self,value):
+    if self.updatingGUI:
+      return
+    self.updatingGUI = True
+    self.radius.setValue(self.radiusSpinBox.value)
+    self.updatingGUI = False
     self.updateMRMLFromGUI()
 
   def updateMRMLFromGUI(self):
@@ -1214,6 +1261,7 @@ class MakeModelOptions(EditOptions):
   """
 
   def __init__(self, parent=0):
+    self.CLINode = None
     super(MakeModelOptions,self).__init__(parent)
 
   def __del__(self):
@@ -1222,10 +1270,123 @@ class MakeModelOptions(EditOptions):
   def create(self):
     super(MakeModelOptions,self).create()
 
-    HelpButton(self.frame, "Make models using the Model Maker module.  TODO: invoke the command line module from here like in slicer3")
+    # TODO: how to switch to a different module?
+    self.goToModelMaker = qt.QPushButton("Go To Model Maker", self.frame)
+    self.goToModelMaker.setToolTip( "The Model Maker interface contains a whole range of options for building sets of models and controlling the parameters." )
+    self.frame.layout().addWidget(self.goToModelMaker)
+    self.widgets.append(self.goToModelMaker)
+
+    self.smooth = qt.QCheckBox("Smooth Model", self.frame)
+    self.smooth.checked = True
+    self.smooth.setToolTip("When smoothed, the model will look better, but some details of the label map will not be visible on the model.  When not smoothed you will see individual voxel boundaries in the model.  Smoothing here corresponds to Decimation of 0.25 and Smooting iterations of 10.")
+    self.frame.layout().addWidget(self.smooth)
+    self.widgets.append(self.smooth)
+
+    #
+    # model name
+    #
+    self.nameFrame = qt.QFrame(self.frame)
+    self.nameFrame.setLayout(qt.QHBoxLayout())
+    self.frame.layout().addWidget(self.nameFrame)
+    self.widgets.append(self.nameFrame)
+
+    self.modelNameLabel = qt.QLabel("Model Name: ", self.nameFrame)
+    self.modelNameLabel.setToolTip( "Select the name for the newly created model." )
+    self.nameFrame.layout().addWidget(self.modelNameLabel)
+    self.widgets.append(self.modelNameLabel)
+
+    self.modelName = qt.QLineEdit(self.nameFrame)
+    # TODO - get the current paint label name
+    #self.modelName = self.getUniqueModelName( tcl('[EditorGetPaintName]') )
+    self.modelName.text = self.getUniqueModelName( "Quick Model" )
+    self.nameFrame.layout().addWidget(self.modelName)
+    self.widgets.append(self.modelName)
+
+    self.apply = qt.QPushButton("Apply", self.frame)
+    self.apply.setToolTip("Build a model for the current label value of the label map being edited in the Red slice window.  Model will be created in the background." )
+    self.frame.layout().addWidget(self.apply)
+    self.widgets.append(self.apply)
+
+    HelpButton(self.frame, "Use this tool build a model.  A subset of model building options is provided here.  Go to the Model Maker module to expose a range of parameters.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
+
+    self.apply.connect('clicked()', self.onApply)
+
+  def onApply(self):
+    #
+    # create a model using the command line module
+    # based on the current editor parameters
+    #
+
+    volumeNode = self.getLabelVolume()
+
+    #
+    # set up the model maker node
+    #
+
+    parameters = {}
+    parameters['Name'] = self.modelName.text
+    parameters["InputVolume"] = volumeNode.GetID()
+    parameters['FilterType'] = "Sinc"
+    parameters['GenerateAll'] = "0"
+    # TODO: 
+    parameters['Labels'] = tcl('EditorGetPaintLabel')
+    parameters["JointSmooth"] = "1"
+    parameters["SplitNormals"] = "1"
+    parameters["PointNormals"] = "1"
+    parameters["SkipUnNamed"] = "1"
+    parameters["Start"] = "-1"
+    parameters["End"] = "-1"
+    if self.smooth.checked:
+      parameters["Decimate"] = "0.25"
+      parameters["Smooth"] = "10"
+    else:
+      parameters["Decimate"] = "0"
+      parameters["Smooth"] = "0"
+
+    #
+    # output 
+    # - make a new hierarchy node if needed
+    #
+    numNodes = slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelHierarchyNode" )
+    outHierarchy = None
+    for n in xrange(numNodes):
+      node = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelHierarchyNode" )
+      if node.GetName() == "Editor Models":
+        outHierarchy = node
+        break
+
+    if not outHierarchy:
+      outHierarchy = slicer.vtkMRMLModelHierarchyNode()
+      outHierarchy.SetScene( slicer.mrmlScene )
+      outHierarchy.SetName( "Editor Models" )
+      slicer.mrmlScene.AddNode( outHierarchy )
+
+    parameters["ModelSceneFile"] = outHierarchy.GetID()
+
+    modelMaker = slicer.modules.modelmaker
+
+    # 
+    # run the task (in the background)
+    # - use the GUI to provide progress feedback
+    # - use the GUI's Logic to invoke the task
+    # - model will show up when the processing is finished
+    #
+    self.CLINode = slicer.cli.run(modelMaker, self.CLINode, parameters)
+
+    # TODO: status text
+    #$this statusText "Model Making Started..."
+
+  def getUniqueModelName(self, baseName):
+      names = getNodes().keys()
+      name = baseName
+      index = 0
+      while names.__contains__(name):
+        index += 1
+        name = "%s %d" % (baseName, index)
+      return name
 
   def destroy(self):
     super(MakeModelOptions,self).destroy()
