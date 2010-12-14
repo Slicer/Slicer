@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerSceneViewsModule</class>
+ <widget class="qSlicerWidget" name="qSlicerSceneViewsModule">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>616</width>
+    <height>705</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SceneViews</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+     <property name="text" stdset="0">
+      <string>SceneViews</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Create and Edit</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="selectedLayout">
+           <item>
+            <widget class="QPushButton" name="screenShot">
+             <property name="toolTip">
+              <string>Create a 3D Slicer SceneView.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerSceneViewsModule.qrc">
+               <normaloff>:/Icons/Camera.png</normaloff>:/Icons/Camera.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="moveUpSelectedButton">
+             <property name="toolTip">
+              <string>Move selected view up.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerSceneViewsModule.qrc">
+               <normaloff>:/Icons/MoveUp.png</normaloff>:/Icons/MoveUp.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="moveDownSelectedButton">
+             <property name="toolTip">
+              <string>Move selected view down.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerSceneViewsModule.qrc">
+               <normaloff>:/Icons/MoveDown.png</normaloff>:/Icons/MoveDown.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="deleteSelectedButton">
+             <property name="toolTip">
+              <string>Delete selected view.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../qSlicerSceneViewsModule.qrc">
+               <normaloff>:/Icons/Delete.png</normaloff>:/Icons/Delete.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="qMRMLSceneViewsTreeWidget" name="hierarchyTreeWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::InternalMove</enum>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="indentation">
+            <number>10</number>
+           </property>
+           <property name="uniformRowHeights">
+            <bool>true</bool>
+           </property>
+           <property name="listenNodeModifiedEvent" stdset="0">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="ctkDynamicSpacer" name="CTKSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
+      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="inactiveSizePolicy" stdset="0">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="active" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
+     <property name="activeSizePolicy" stdset="0">
+      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="inactiveSizePolicy" stdset="0">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="active" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDynamicSpacer</class>
+   <extends>QWidget</extends>
+   <header>ctkDynamicSpacer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSceneViewsTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>GUI/qMRMLSceneViewsTreeWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qSlicerSceneViewsModule.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>CTKCollapsibleButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CTKSpacer</receiver>
+   <slot>setActive(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>220</x>
+     <y>571</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CTKCollapsibleGroupBox_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DynamicSpacer</receiver>
+   <slot>setActive(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

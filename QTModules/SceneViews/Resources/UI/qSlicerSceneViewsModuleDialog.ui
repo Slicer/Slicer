@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerSceneViewsModuleDialog</class>
+ <widget class="QDialog" name="qSlicerSceneViewsModuleDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>607</width>
+    <height>428</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>3D Slicer SceneView</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="nameEdit"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="screenshotLabel">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Thumbnail</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="topRow">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QRadioButton" name="fullLayoutRadio">
+         <property name="text">
+          <string>Full layout</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerSceneViewsModule.qrc">
+           <normaloff>:/Icons/LayoutFull.png</normaloff>:/Icons/LayoutFull.png</iconset>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="threeDViewRadio">
+         <property name="text">
+          <string>3D View</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerSceneViewsModule.qrc">
+           <normaloff>:/Icons/Layout3DView.png</normaloff>:/Icons/Layout3DView.png</iconset>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="redSliceViewRadio">
+         <property name="text">
+          <string>Red Slice View</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerSceneViewsModule.qrc">
+           <normaloff>:/Icons/LayoutRedSliceView.png</normaloff>:/Icons/LayoutRedSliceView.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="yellowSliceViewRadio">
+         <property name="text">
+          <string>Yellow Slice View</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerSceneViewsModule.qrc">
+           <normaloff>:/Icons/LayoutYellowSliceView.png</normaloff>:/Icons/LayoutYellowSliceView.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="greenSliceViewRadio">
+         <property name="text">
+          <string>Green Slice View</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../qSlicerSceneViewsModule.qrc">
+           <normaloff>:/Icons/LayoutGreenSliceView.png</normaloff>:/Icons/LayoutGreenSliceView.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="screenshotPlaceholder">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="descriptionLabel">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Description</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="descriptionTextEdit"/>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../qSlicerSceneViewsModule.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>qSlicerSceneViewsModuleDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>396</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>208</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>qSlicerSceneViewsModuleDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>396</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>208</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

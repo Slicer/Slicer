@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/Restore.png</file>
+        <file>Icons/Camera.png</file>
+        <file>Icons/MoveUp.png</file>
+        <file>Icons/MoveDown.png</file>
+        <file>Icons/LayoutFull.png</file>
+        <file>Icons/LayoutYellowSliceView.png</file>
+        <file>Icons/LayoutRedSliceView.png</file>
+        <file>Icons/LayoutGreenSliceView.png</file>
+        <file>Icons/Layout3DView.png</file>
+        <file>Icons/Delete.png</file>
+        <file>Icons/SelectCameras.png</file>
+    </qresource>
+</RCC>
