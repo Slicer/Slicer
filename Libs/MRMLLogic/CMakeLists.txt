@@ -86,6 +86,7 @@ SET(MRMLLogic_SRCS
   vtkMRMLModelHierarchyLogic.cxx
   vtkMRMLSliceLayerLogic.cxx
   vtkMRMLSliceLogic.cxx
+
   # slicer's vtk extensions (filters)
   vtkImageLabelOutline.cxx
   vtkImageNeighborhoodFilter.cxx

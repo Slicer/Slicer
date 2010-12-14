@@ -20,7 +20,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLSceneSnapshotNode.h"
+#include "vtkMRMLSceneViewNode.h"
 
 class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 {
@@ -54,7 +54,7 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 
   /// 
   /// Add SceneSnapshot node
-  void AddSceneSanpshotNode(vtkMRMLSceneSnapshotNode * node)
+  void AddSceneSanpshotNode(vtkMRMLSceneViewNode * node)
   {
     this->SceneSnapshotNodes->AddItem(node);
   };
@@ -67,9 +67,9 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
   };
   /// 
   /// Get SceneSnapshot node
-  vtkMRMLSceneSnapshotNode* GetSceneSanpshotNode(int index)
+  vtkMRMLSceneViewNode* GetSceneSanpshotNode(int index)
   {
-    return vtkMRMLSceneSnapshotNode::SafeDownCast(this->SceneSnapshotNodes->GetItemAsObject(index));
+    return vtkMRMLSceneViewNode::SafeDownCast(this->SceneSnapshotNodes->GetItemAsObject(index));
   };
 
 protected:

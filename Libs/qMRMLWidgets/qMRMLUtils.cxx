@@ -36,6 +36,7 @@
 #include <vtkTransform.h>
 #include <vtkSmartPointer.h>
 #include <vtkMatrix4x4.h>
+#include <vtkImageData.h>
 
 //------------------------------------------------------------------------------
 void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector)
@@ -136,4 +137,77 @@ QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
   painter.drawRect(0, 0, size - 1, size - 1);
 
   return colorFieldPixmap;
+}
+
+//---------------------------------------------------------------------------
+bool qMRMLUtils::qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage)
+{
+  int height = img.height();
+  int width = img.width();
+  int numcomponents = img.hasAlphaChannel() ? 4 : 3;
+
+  vtkimage->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
+  vtkimage->SetSpacing(1.0, 1.0, 1.0);
+  vtkimage->SetOrigin(0.0, 0.0, 0.0);
+  vtkimage->SetNumberOfScalarComponents(numcomponents);
+  vtkimage->SetScalarType(VTK_UNSIGNED_CHAR);
+  vtkimage->SetExtent(vtkimage->GetWholeExtent());
+  vtkimage->AllocateScalars();
+  for(int i=0; i<height; i++)
+    {
+    unsigned char* row;
+    row = static_cast<unsigned char*>(vtkimage->GetScalarPointer(0, height-i-1, 0));
+    const QRgb* linePixels = reinterpret_cast<const QRgb*>(img.scanLine(i));
+    for(int j=0; j<width; j++)
+      {
+      const QRgb& col = linePixels[j];
+      row[j*numcomponents] = qRed(col);
+      row[j*numcomponents+1] = qGreen(col);
+      row[j*numcomponents+2] = qBlue(col);
+      if(numcomponents == 4)
+        {
+        row[j*numcomponents+3] = qAlpha(col);
+        }
+      }
+    }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool qMRMLUtils::vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img)
+{
+  if (vtkimage->GetScalarType() != VTK_UNSIGNED_CHAR)
+    {
+    return false;
+    }
+
+  int extent[6];
+  vtkimage->GetExtent(extent);
+  int width = extent[1]-extent[0]+1;
+  int height = extent[3]-extent[2]+1;
+  int numcomponents = vtkimage->GetNumberOfScalarComponents();
+  if(!(numcomponents == 3 || numcomponents == 4))
+    {
+    return false;
+    }
+
+  QImage newimg(width, height, QImage::Format_ARGB32);
+
+  for(int i=0; i<height; i++)
+    {
+    QRgb* bits = reinterpret_cast<QRgb*>(newimg.scanLine(i));
+    unsigned char* row;
+    row = static_cast<unsigned char*>(
+      vtkimage->GetScalarPointer(extent[0], extent[2] + height-i-1, extent[4]));
+    for(int j=0; j<width; j++)
+      {
+      unsigned char* data = &row[j*numcomponents];
+      bits[j] = numcomponents == 4 ?
+        qRgba(data[0], data[1], data[2], data[3]) :
+        qRgb(data[0], data[1], data[2]);
+      }
+    }
+
+  img = newimg;
+  return true;
 }

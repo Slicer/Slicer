@@ -10,7 +10,7 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLSceneSnapshotNode.h"
+#include "vtkMRMLSceneViewNode.h"
 
 #include <stdlib.h>
 #include <iostream>
@@ -19,13 +19,13 @@
 
 int vtkMRMLSceneSnapshotNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLSceneSnapshotNode > node1 = vtkSmartPointer< vtkMRMLSceneSnapshotNode >::New();
+  vtkSmartPointer< vtkMRMLSceneViewNode > node1 = vtkSmartPointer< vtkMRMLSceneViewNode >::New();
 
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   node1->UpdateReferences();
 
-  vtkSmartPointer< vtkMRMLSceneSnapshotNode > node2 = vtkSmartPointer< vtkMRMLSceneSnapshotNode >::New();
+  vtkSmartPointer< vtkMRMLSceneViewNode > node2 = vtkSmartPointer< vtkMRMLSceneViewNode >::New();
 
   node2->Copy( node1 );
 

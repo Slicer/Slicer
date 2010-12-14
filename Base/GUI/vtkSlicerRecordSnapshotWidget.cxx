@@ -117,7 +117,7 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents(vtkObject *caller,
       {
       for (unsigned int i=0; i<this->Sanpshots.size(); i++)
         {
-        vtkMRMLSceneSnapshotNode *snapshotNode = this->Sanpshots[i];
+        vtkMRMLSceneViewNode *snapshotNode = this->Sanpshots[i];
         snapshotNode->SetSelectable(0);
         clipNode->AddSceneSanpshotNode(snapshotNode);
         this->MRMLScene->AddNodeNoNotify(snapshotNode);
@@ -146,7 +146,7 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents(vtkObject *caller,
       this->MRMLScene->SaveStateForUndo();
       for (unsigned int i=0; i<this->Sanpshots.size(); i++)
         {
-        vtkMRMLSceneSnapshotNode *snapshotNode = this->Sanpshots[i];
+        vtkMRMLSceneViewNode *snapshotNode = this->Sanpshots[i];
         snapshotNode->RestoreScene();
         // Cause Render
         //this->Script("sleep 2");
@@ -158,7 +158,7 @@ void vtkSlicerRecordSnapshotWidget::ProcessWidgetEvents(vtkObject *caller,
       this->MRMLScene->SaveStateForUndo();
       for ( int i=0; i< clipNode->GetNumberOfSceneSanpshotNodes(); i++)
         {
-        vtkMRMLSceneSnapshotNode *snapshotNode = clipNode->GetSceneSanpshotNode(i);
+        vtkMRMLSceneViewNode *snapshotNode = clipNode->GetSceneSanpshotNode(i);
         snapshotNode->RestoreScene();
         // Cause Render
         //this->Script("sleep 2");
@@ -177,7 +177,7 @@ void vtkSlicerRecordSnapshotWidget::ProcessMRMLEvents(vtkObject *caller,
 {
   if (vtkMRMLNode::SafeDownCast(caller)  && event == vtkCommand::ModifiedEvent )
     {
-    vtkMRMLSceneSnapshotNode *snapshotNode = vtkMRMLSceneSnapshotNode::New();
+    vtkMRMLSceneViewNode *snapshotNode = vtkMRMLSceneViewNode::New();
     snapshotNode->SetScene(this->MRMLScene);
     snapshotNode->StoreScene();
     Sanpshots.push_back(snapshotNode);

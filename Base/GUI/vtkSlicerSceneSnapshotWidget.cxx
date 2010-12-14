@@ -115,8 +115,8 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents(vtkObject *caller,
     }
   else if ( this->DeleteSnapshotButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
-    vtkMRMLSceneSnapshotNode *snapshotNode = 
-      vtkMRMLSceneSnapshotNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
+    vtkMRMLSceneViewNode *snapshotNode = 
+      vtkMRMLSceneViewNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
     if (snapshotNode)
       {
       this->MRMLScene->SaveStateForUndo();
@@ -127,8 +127,8 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents(vtkObject *caller,
     {
     this->SnapshotSelectorWidget->SetSelectedNew("vtkMRMLSceneSnapshotNode");
     this->SnapshotSelectorWidget->ProcessNewNodeCommand("vtkMRMLSceneSnapshotNode", "SceneSnapshot");
-    vtkMRMLSceneSnapshotNode *snapshotNode = 
-      vtkMRMLSceneSnapshotNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
+    vtkMRMLSceneViewNode *snapshotNode = 
+      vtkMRMLSceneViewNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
       
     vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
     entry->GetWidget()->SetValue(snapshotNode->GetName());
@@ -157,8 +157,8 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents(vtkObject *caller,
     }
   else if (this->RestoreSceneButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
-    vtkMRMLSceneSnapshotNode *snapshotNode = 
-      vtkMRMLSceneSnapshotNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
+    vtkMRMLSceneViewNode *snapshotNode = 
+      vtkMRMLSceneViewNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
     if (snapshotNode)
       {
       this->MRMLScene->SaveStateForUndo();
@@ -206,10 +206,10 @@ void vtkSlicerSceneSnapshotWidget::MRMLExtraCallback(vtkObject *caller,
       }
     else if  (eid == vtkMRMLScene::NodeRemovedEvent )
       {
-      //--- count number of vtkMRMLSnapshotNodes in the scene.
+      //--- count number of vtkMRMLSceneViewNodes in the scene.
       //--- if there are none, then make the GUI current
     
-      int num = self->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSnapshotNode");
+      int num = self->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSceneViewNode");
       if ( num <= 0 )
         {
         self->RestoreSceneButton->SetImageToIcon (self->Icons->GetSlicerGoIcon() );
@@ -363,7 +363,7 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
   this->DeleteSnapshotButton->SetImageToIcon ( this->Icons->GetSlicerDeleteIcon() );
   this->DeleteSnapshotButton->SetReliefToFlat();
   this->DeleteSnapshotButton->SetBorderWidth ( 0 );
-  int num = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSnapshotNode");
+  int num = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSceneViewNode");
   if ( num <= 0 )
     {
     this->DeleteSnapshotButton->SetStateToDisabled();
@@ -379,7 +379,7 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
   this->RestoreSceneButton->SetImageToIcon (this->Icons->GetSlicerGoIcon() );
   this->RestoreSceneButton->SetReliefToFlat();
   this->RestoreSceneButton->SetBorderWidth(0);
-  num = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSnapshotNode");
+  num = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSceneViewNode");
   if ( num <= 0 )
     {
     this->RestoreSceneButton->SetStateToDisabled();

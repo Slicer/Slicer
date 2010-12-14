@@ -46,7 +46,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
-#include <vtkMRMLSceneSnapshotNode.h>
+#include <vtkMRMLSceneViewNode.h>
 
 /// VTK includes
 #include <vtkStringArray.h>
@@ -601,7 +601,7 @@ bool qSlicerSaveDataDialogPrivate::prepareForSaving()
   for (int n=0; n<nnodes; n++)
     {
     vtkMRMLNode* node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSceneSnapshotNode");
-    vtkMRMLSceneSnapshotNode *snode = vtkMRMLSceneSnapshotNode::SafeDownCast(node);
+    vtkMRMLSceneViewNode *snode = vtkMRMLSceneViewNode::SafeDownCast(node);
     snode->GetNodes()->SetRootDirectory(this->MRMLScene->GetRootDirectory());
     }
   return true;

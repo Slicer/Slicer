@@ -38,7 +38,7 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
-#include <vtkMRMLSceneSnapshotNode.h>
+#include <vtkMRMLSceneViewNode.h>
 
 
 //--------------------------------------------------------------------------
@@ -327,7 +327,7 @@ struct vtkMRMLSnapshotNodeInitializer : public vtkMRMLNodeInitializer
       MRMLScene(scene), SnapshotBaseName(snapshotBaseName){}
   virtual void operator()(vtkMRMLNode* node)const
     {
-    vtkMRMLSceneSnapshotNode * snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast(node);
+    vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(node);
     Q_ASSERT(snapshotNode);
     Q_ASSERT(!this->SnapshotBaseName.isEmpty());
     Q_ASSERT(this->MRMLScene);
@@ -347,8 +347,8 @@ void qMRMLThreeDViewsControllerWidgetPrivate::createSceneSnaphot()
 
   // Ask user for a name
   bool ok = false;
-  QString snapshotName = QInputDialog::getText(q, tr("Scene Snapshot Name"),
-                                               tr("Snapshot Name:"), QLineEdit::Normal,
+  QString snapshotName = QInputDialog::getText(q, tr("SceneView Name"),
+                                               tr("SceneView Name:"), QLineEdit::Normal,
                                                "View", &ok);
   if (!ok || snapshotName.isEmpty())
     {
@@ -357,9 +357,9 @@ void qMRMLThreeDViewsControllerWidgetPrivate::createSceneSnaphot()
 
   // Create snapshot
   vtkMRMLNode * newNode = qMRMLNodeFactory::createNode(
-      q->mrmlScene(), "vtkMRMLSceneSnapshotNode",
+      q->mrmlScene(), "vtkMRMLSceneViewNode",
       vtkMRMLSnapshotNodeInitializer(q->mrmlScene(), snapshotName));
-  vtkMRMLSceneSnapshotNode * newSnapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast(newNode);
+  vtkMRMLSceneViewNode * newSnapshotNode = vtkMRMLSceneViewNode::SafeDownCast(newNode);
   newSnapshotNode->StoreScene();
 }
 

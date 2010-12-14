@@ -14,11 +14,11 @@
 class vtkStringArray;
 class vtkMRMLStorageNode;
 
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLSceneSnapshotNode
+class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLSceneViewNode
 {
 public:
   static vtkMRMLAnnotationSnapshotNode *New();
-  vtkTypeMacro(vtkMRMLAnnotationSnapshotNode,vtkMRMLSceneSnapshotNode);
+  vtkTypeMacro(vtkMRMLAnnotationSnapshotNode,vtkMRMLSceneViewNode);
 
   //--------------------------------------------------------------------------
   // MRMLNode methods

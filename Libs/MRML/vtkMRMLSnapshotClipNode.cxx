@@ -77,12 +77,12 @@ void vtkMRMLSnapshotClipNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  vtkMRMLSceneSnapshotNode * node = NULL;
+  vtkMRMLSceneViewNode * node = NULL;
   std::stringstream ss;
   int n;
   for (n=0; n < this->SceneSnapshotNodes->GetNumberOfItems(); n++) 
     {
-    node = vtkMRMLSceneSnapshotNode::SafeDownCast(this->SceneSnapshotNodes->GetItemAsObject(n));
+    node = vtkMRMLSceneViewNode::SafeDownCast(this->SceneSnapshotNodes->GetItemAsObject(n));
     ss << node->GetID();
     if (n < this->SceneSnapshotNodes->GetNumberOfItems()-1)
       {
@@ -162,7 +162,7 @@ void vtkMRMLSnapshotClipNode::UpdateScene(vtkMRMLScene *scene)
 
   for (unsigned int n=0; n<this->SceneSnapshotNodeIDs.size(); n++)
     {
-    vtkMRMLSceneSnapshotNode *node = vtkMRMLSceneSnapshotNode::SafeDownCast(scene->GetNodeByID(this->SceneSnapshotNodeIDs[n]));
+    vtkMRMLSceneViewNode *node = vtkMRMLSceneViewNode::SafeDownCast(scene->GetNodeByID(this->SceneSnapshotNodeIDs[n]));
     this->SceneSnapshotNodes->AddItem(node);
     }
 }

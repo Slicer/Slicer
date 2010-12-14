@@ -48,7 +48,7 @@ public:
   typedef QObject Superclass;
   qMRMLSceneSnapshotMenuPrivate(qMRMLSceneSnapshotMenu& object);
 
-  /// \brief Clear and update menu given the list of existing vtkMRMLSceneSnapshotNode
+  /// \brief Clear and update menu given the list of existing vtkMRMLSceneViewNode
   /// associated with the current scene
   void resetMenu();
 

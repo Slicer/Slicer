@@ -75,7 +75,7 @@ protected:
   vtkKWSimpleEntryDialog *NameDialog;
 
   //BTX
-  std::vector <vtkMRMLSceneSnapshotNode *> Sanpshots;
+  std::vector <vtkMRMLSceneViewNode *> Sanpshots;
   //ETX
 private:
 

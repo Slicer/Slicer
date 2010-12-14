@@ -6,27 +6,28 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLSceneSnapshotNode.h,v $
+  Module:    $RCSfile: vtkMRMLSceneViewNode.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLSceneSnapshotNode - abstract class representing a hierarchy member
+///  vtkMRMLSceneViewNode
 
-#ifndef __vtkMRMLSceneSnapshotNode_h
-#define __vtkMRMLSceneSnapshotNode_h
+#ifndef __vtkMRMLSceneViewNode_h
+#define __vtkMRMLSceneViewNode_h
 
 
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLDisplayableNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLDisplayableNode
+#include <vtkImageData.h>
+
+class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
 {
   public:
-  static vtkMRMLSceneSnapshotNode *New();
-  vtkTypeMacro(vtkMRMLSceneSnapshotNode,vtkMRMLDisplayableNode);
+  static vtkMRMLSceneViewNode *New();
+  vtkTypeMacro(vtkMRMLSceneViewNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -76,18 +77,45 @@ class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLDisplayableNode
 
   void SetAbsentStorageFileNames();
 
-  bool CanApplyNonLinearTransforms() {return false;};
-  void ApplyTransform(vtkMatrix4x4* vtkNotUsed(transformMatrix)) {};
-  void ApplyTransform(vtkAbstractTransform* vtkNotUsed(vtkUtransform)) {};
+  ///
+  /// A description of this sceneView
+  void SetSceneViewDescription(vtkStdString newDescription) {this->m_Description = newDescription;}
+  vtkStdString GetSceneViewDescription() {return this->m_Description;}
+
+  ///
+  /// The attached screenshot of this sceneView
+  void SetScreenshot(vtkImageData* screenshot) {this->m_ScreenShot = screenshot;}
+  vtkImageData* GetScreenshot() {return this->m_ScreenShot;}
+
+  ///
+  /// The screenshot type of this sceneView
+  /// 0: 3D View
+  /// 1: Red Slice View
+  /// 2: Yellow Slice View
+  /// 3: Green Slice View
+  /// 4: Full layout
+  // TODO use an enum for the types
+  void SetScreenshotType(int type) {this->m_ScreenShotType = type;}
+  int GetScreenshotType() {return this->m_ScreenShotType;}
+
 
 protected:
-  vtkMRMLSceneSnapshotNode();
-  ~vtkMRMLSceneSnapshotNode();
-  vtkMRMLSceneSnapshotNode(const vtkMRMLSceneSnapshotNode&);
-  void operator=(const vtkMRMLSceneSnapshotNode&);
+  vtkMRMLSceneViewNode();
+  ~vtkMRMLSceneViewNode();
+  vtkMRMLSceneViewNode(const vtkMRMLSceneViewNode&);
+  void operator=(const vtkMRMLSceneViewNode&);
 
 
   vtkMRMLScene* Nodes;
+
+  /// The associated Description
+  vtkStdString m_Description;
+
+  /// The vtkImageData of the screenshot
+  vtkImageData* m_ScreenShot;
+
+  /// The type of the screenshot
+  int m_ScreenShotType;
 
 };
 

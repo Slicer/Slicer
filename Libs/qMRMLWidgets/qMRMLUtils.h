@@ -25,6 +25,7 @@
 #include <QString>
 #include <QVector>
 #include <QIcon>
+#include <QPixmap>
 
 #include "qMRMLWidgetsExport.h"
 
@@ -34,6 +35,7 @@ class vtkMRMLLinearTransformNode;
 class vtkTransform;
 class vtkMatrix4x4;
 class vtkMRMLScene;
+class vtkImageData;
 
 #define compare_double(x, y) (((x-y)<0.000001) && ((x-y)>-0.000001))
 
@@ -58,6 +60,12 @@ public:
 
   /// Create Icon using the given color
   static QPixmap createColorPixmap(QStyle * style, const QColor& color);
+
+  /// Convert vtkImageData to QImage
+  static bool vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img);
+
+  /// Convert QImage to vtkImageData
+  static bool qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
 
 private:
   /// Not implemented

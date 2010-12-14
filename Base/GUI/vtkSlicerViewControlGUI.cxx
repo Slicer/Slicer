@@ -888,7 +888,7 @@ void vtkSlicerViewControlGUI::RestoreSceneSnapshot( const char *nom )
     col->InitTraversal();
 
     //--- get the first one. Name checking should make it unique...
-    vtkMRMLSceneSnapshotNode *node =  vtkMRMLSceneSnapshotNode::SafeDownCast (col->GetNextItemAsObject() );
+    vtkMRMLSceneViewNode *node =  vtkMRMLSceneViewNode::SafeDownCast (col->GetNextItemAsObject() );
     if (node)
       {
       this->MRMLScene->SaveStateForUndo();
@@ -914,7 +914,7 @@ void vtkSlicerViewControlGUI::DeleteSceneSnapshot(const char *nom )
     col->InitTraversal();
 
     //--- get the first one. Name checking should make it unique...
-    vtkMRMLSceneSnapshotNode *node =  vtkMRMLSceneSnapshotNode::SafeDownCast (col->GetNextItemAsObject() );
+    vtkMRMLSceneViewNode *node =  vtkMRMLSceneViewNode::SafeDownCast (col->GetNextItemAsObject() );
     if ( node)
       {
       this->MRMLScene->SaveStateForUndo();
@@ -1175,7 +1175,7 @@ void vtkSlicerViewControlGUI::ResetNavigationCamera()
 
 const char* vtkSlicerViewControlGUI::CreateSceneSnapshotNode( const char *nodeName)
 {
-  vtkMRMLSceneSnapshotNode *node = NULL;
+  vtkMRMLSceneViewNode *node = NULL;
   const char *id;
 
   if (this->MRMLScene == NULL)
@@ -1184,7 +1184,7 @@ const char* vtkSlicerViewControlGUI::CreateSceneSnapshotNode( const char *nodeNa
     return (NULL);
     }
   
-  node = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->CreateNodeByClass( "vtkMRMLSceneSnapshotNode" ));
+  node = vtkMRMLSceneViewNode::SafeDownCast (this->MRMLScene->CreateNodeByClass( "vtkMRMLSceneSnapshotNode" ));
   if (node == NULL)
     {
     return (NULL);
@@ -1676,7 +1676,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         //--- create a new node...
         const char *id =  this->CreateSceneSnapshotNode ( this->MySnapshotName );
-        vtkMRMLSceneSnapshotNode *snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->GetNodeByID( id ));
+        vtkMRMLSceneViewNode *snapshotNode = vtkMRMLSceneViewNode::SafeDownCast (this->MRMLScene->GetNodeByID( id ));
 
         if ( snapshotNode == NULL )
           {

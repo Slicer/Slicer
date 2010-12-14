@@ -41,7 +41,8 @@ ENDIF(NOT Slicer_SOURCE_DIR)
 INCLUDE(${Slicer_CMAKE_DIR}/SlicerMacroBuildQtModule.cmake)
 
 SET(qtmodules
-  Annotation
+  SceneViews
+  #Annotation
   EMSegment
   #Measurements
   Models

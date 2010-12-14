@@ -26,7 +26,7 @@
 #include "qMRMLSceneSnapshotMenu_p.h"
 
 // MRML includes
-#include <vtkMRMLSceneSnapshotNode.h>
+#include <vtkMRMLSceneViewNode.h>
 
 
 //--------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void qMRMLSceneSnapshotMenuPrivate::resetMenu()
   noSnapshotAction->setDisabled(true);
 
   // Loop over snapshot nodes and associated menu entry
-  const char* className = "vtkMRMLSceneSnapshotNode";
+  const char* className = "vtkMRMLSceneViewNode";
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass(className);
   for (int n = 0; n < nnodes; n++)
     {
@@ -65,7 +65,7 @@ void qMRMLSceneSnapshotMenuPrivate::resetMenu()
 void qMRMLSceneSnapshotMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject * mrmlNode)
 {
   Q_UNUSED(mrmlScene);
-  vtkMRMLSceneSnapshotNode * snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast(mrmlNode);
+  vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
   if (!snapshotNode)
     {
     return;
@@ -78,7 +78,7 @@ void qMRMLSceneSnapshotMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObj
 void qMRMLSceneSnapshotMenuPrivate::addMenuItem(vtkMRMLNode * snapshotNode)
 {
   Q_Q(qMRMLSceneSnapshotMenu);
-  vtkMRMLSceneSnapshotNode * node = vtkMRMLSceneSnapshotNode::SafeDownCast(snapshotNode);
+  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(snapshotNode);
   if (!node)
     {
     return;
@@ -110,7 +110,7 @@ void qMRMLSceneSnapshotMenuPrivate::addMenuItem(vtkMRMLNode * snapshotNode)
 void qMRMLSceneSnapshotMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject * mrmlNode)
 {
   Q_UNUSED(mrmlScene);
-  vtkMRMLSceneSnapshotNode * snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast(mrmlNode);
+  vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
   if (!snapshotNode)
     {
     return;
@@ -123,7 +123,7 @@ void qMRMLSceneSnapshotMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkO
 void qMRMLSceneSnapshotMenuPrivate::removeMenuItem(vtkMRMLNode * snapshotNode)
 {
   Q_Q(qMRMLSceneSnapshotMenu);
-  vtkMRMLSceneSnapshotNode * node = vtkMRMLSceneSnapshotNode::SafeDownCast(snapshotNode);
+  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(snapshotNode);
   if (!node)
     {
     return;
@@ -153,7 +153,7 @@ void qMRMLSceneSnapshotMenuPrivate::removeMenuItem(vtkMRMLNode * snapshotNode)
 // --------------------------------------------------------------------------
 void qMRMLSceneSnapshotMenuPrivate::onMRMLSceneSnaphodeNodeModified(vtkObject * snapshotNode)
 {
-  vtkMRMLSceneSnapshotNode * node = vtkMRMLSceneSnapshotNode::SafeDownCast(snapshotNode);
+  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(snapshotNode);
   if (!node)
     {
     return;
@@ -174,7 +174,7 @@ bool qMRMLSceneSnapshotMenuPrivate::hasNoSnapshotItem()const
 // --------------------------------------------------------------------------
 void qMRMLSceneSnapshotMenuPrivate::restoreSnapshot(const QString& snapshotNodeId)
 {
-  vtkMRMLSceneSnapshotNode * snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast(
+  vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(
       this->MRMLScene->GetNodeByID(snapshotNodeId.toLatin1()));
   Q_ASSERT(snapshotNode);
   this->MRMLScene->SaveStateForUndo();
@@ -184,7 +184,7 @@ void qMRMLSceneSnapshotMenuPrivate::restoreSnapshot(const QString& snapshotNodeI
 // --------------------------------------------------------------------------
 void qMRMLSceneSnapshotMenuPrivate::deleteSnapshot(const QString& snapshotNodeId)
 {
-  vtkMRMLSceneSnapshotNode * snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast(
+  vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(
       this->MRMLScene->GetNodeByID(snapshotNodeId.toLatin1()));
   Q_ASSERT(snapshotNode);
   this->MRMLScene->SaveStateForUndo();

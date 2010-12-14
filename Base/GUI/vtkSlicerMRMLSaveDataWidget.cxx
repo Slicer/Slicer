@@ -572,7 +572,7 @@ void vtkSlicerMRMLSaveDataWidget::SetSnapshotsRootDirectory()
   for (int n=0; n<nnodes; n++)
     {
     node = scene->GetNthNodeByClass(n, "vtkMRMLSceneSnapshotNode");
-    vtkMRMLSceneSnapshotNode *snode = vtkMRMLSceneSnapshotNode::SafeDownCast(node);
+    vtkMRMLSceneViewNode *snode = vtkMRMLSceneViewNode::SafeDownCast(node);
     snode->GetNodes()->SetRootDirectory(scene->GetRootDirectory());
     }
 }

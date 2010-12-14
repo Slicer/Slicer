@@ -92,6 +92,7 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerColorLogic.cxx
   vtkSlicerVolumesLogic.cxx
   vtkDataIOManagerLogic.cxx
+  vtkSlicerSceneViewLogic.cxx
   # slicer's vtk extensions (filters)
   vtkSlicerExtensionsLogic.cxx
   vtkArchive.cxx

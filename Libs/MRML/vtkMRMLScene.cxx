@@ -42,7 +42,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLROIListNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLSceneSnapshotNode.h"
+#include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLScriptedModuleNode.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
@@ -321,7 +321,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass ( mhier );
   mhier->Delete();
 
-  vtkMRMLSceneSnapshotNode *sshot = vtkMRMLSceneSnapshotNode::New();
+  vtkMRMLSceneViewNode *sshot = vtkMRMLSceneViewNode::New();
   this->RegisterNodeClass ( sshot );
   sshot->Delete();
 

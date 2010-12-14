@@ -41,7 +41,7 @@ class vtkCallbackCommand;
 class vtkGeneralTransform;
 class vtkURIHandler;
 class vtkMRMLNode;
-class vtkMRMLSceneSnapshotNode;
+class vtkMRMLSceneViewNode;
 
 class VTK_MRML_EXPORT vtkMRMLScene : public vtkCollection
 {
@@ -482,7 +482,7 @@ public:
 
   ///
   /// IsRestoring is True during scene restore
-  /// \sa vtkMRMLSceneSnapshotNode::Restore()
+  /// \sa vtkMRMLSceneViewNode::Restore()
   bool GetIsRestoring();
 
   ///
@@ -593,7 +593,7 @@ private:
   int  IsItemPresent(vtkObject *o) { return this->CurrentScene->vtkCollection::IsItemPresent(o);};
 
   //BTX
-  friend class vtkMRMLSceneSnapshotNode; // For IsRestoring
+  friend class vtkMRMLSceneViewNode; // For IsRestoring
   //ETX
   
   int LoadIntoScene(vtkCollection* scene);
