@@ -191,7 +191,7 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
     )
 
   # PythonQt wrapping
-  IF(MY_WRAP_PYTHONQT)
+  IF(SLICERQTBASELIB_WRAP_PYTHONQT)
     SET(KIT_PYTHONQT_SRCS) # Clear variable
     ctkMacroWrapPythonQt("org.slicer.base" ${PROJECT_NAME}
       KIT_PYTHONQT_SRCS "${KIT_SRCS}" FALSE)
