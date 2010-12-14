@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QHeaderView>
 
 // CTK includes
 //#include "ctkModelTester.h"
@@ -119,6 +120,7 @@ QSize qMRMLTreeWidgetPrivate::computeSizeHint()const
   QSize treeViewSizeHint = q->QTreeView::sizeHint();
   treeViewSizeHint.setHeight(
     q->frameWidth()
+    + (q->isHeaderHidden() ? 0 : q->header()->sizeHint().height())
     + visibleIndexCount * q->sizeHintForRow(0)
     + q->frameWidth());
   return treeViewSizeHint;
