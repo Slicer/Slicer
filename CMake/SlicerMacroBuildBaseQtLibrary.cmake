@@ -19,7 +19,37 @@
 ################################################################################
 
 #
+# SlicerMacroBuildBaseQtLibrary
 #
+
+#
+# Parameters:
+#
+#   NAME .................: Name of the library
+#
+#   EXPORT_DIRECTIVE .....: Export directive that should be used to export symbol
+#
+#   SRCS .................: List of source files
+#
+#   MOC_SRCS .............: Optional list of headers to run through the meta object compiler (moc)
+#                           using QT4_WRAP_CPP CMake macro
+#
+#   UI_SRCS ..............: Optional list of UI file to run through UI compiler (uic) using
+#                           QT4_WRAP_UI CMake macro
+#
+#   INCLUDE_DIRECTORIES ..: Optional list of extra folder that should be included. See implementation
+#                           for the list of folder included by default.
+#
+#   TARGET_LIBRARIES .....: Optional list of target libraries that should be used with TARGET_LINK_LIBRARIES
+#                           CMake macro. See implementation for the list of libraries added by default.
+#
+#   RESOURCES ............: Optional list of files that should be converted into resource header
+#                           using QT4_ADD_RESOURCES
+#
+# Options:
+#
+#   WRAP_PYTHONQT ........: If specified, the sources (SRCS) will be 'PythonQt' wrapped and a static
+#                           library named <NAME>PythonQt will be built.
 #
 
 MACRO(SlicerMacroBuildBaseQtLibrary)
