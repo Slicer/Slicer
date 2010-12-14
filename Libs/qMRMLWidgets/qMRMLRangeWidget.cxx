@@ -109,8 +109,16 @@ void qMRMLRangeWidget::setMaximumHandlePalette(const QPalette& palette)
 // --------------------------------------------------------------------------
 void qMRMLRangeWidget::updateSpinBoxRange(double min, double max)
 {
+  // We must set the values at the same time and update the pipeline
+  // when the MinSpinBox is set but not the MaxSpinBox. This could generate
+  // infinite loop
+  bool minSpinBoxBlocked = this->MinSpinBox->blockSignals(true);
+  bool maxSpinBoxBlocked = this->MaxSpinBox->blockSignals(true);
   this->MinSpinBox->setValue(min);
   this->MaxSpinBox->setValue(max);
+  this->MinSpinBox->blockSignals(minSpinBoxBlocked);
+  this->MaxSpinBox->blockSignals(maxSpinBoxBlocked);
+  this->updateRange();
 }
 
 // --------------------------------------------------------------------------

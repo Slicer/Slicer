@@ -33,6 +33,7 @@ class qMRMLRangeSliderPrivate;
 class QDoubleSpinBox;
 
 /// qMRMLRangeWidget is a wrapper around a ctkRangeWidget
+/// It adds QSpinBoxes (in a menu) for controlling the range of the values
 class QMRML_WIDGETS_EXPORT qMRMLRangeWidget : public ctkRangeWidget
 {
   Q_OBJECT
