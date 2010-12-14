@@ -264,7 +264,9 @@ proc launch_SetEnvironment {} {
       set ::env(BatchMake_LIB_DIR)  $::env(Slicer_HOME)/lib/BatchMake
       set ::env(BatchMake_BIN_DIR)  $::env(Slicer_HOME)/bin
       set ::env(bmModuleDescriptionParser_DIR)        $::env(Slicer_HOME)/lib/bmModuleDescriptionParser
-    
+
+      set ::env(LibArchive_DIR)     $::env(Slicer_HOME)/lib
+      set ::env(LibArchive_LIB_DIR)  $::env(Slicer_HOME)/lib
     
       # Slicer3 Libs
     
@@ -322,6 +324,7 @@ proc launch_SetEnvironment {} {
       set ::OpenIGTLink_BUILD_SUBDIR  ""
       set ::BatchMake_BUILD_SUBDIR  ""
       set ::QtDesignerPlugins_BUILD_SUBDIR  ""
+      set ::LibArchive_BUILD_SUBDIR ""
     
       if {$::env(BUILD) == $::WINDOWS} {
         foreach buildType {"." Debug RelWithDebInfo Release MinSizeRel} {
@@ -355,6 +358,9 @@ proc launch_SetEnvironment {} {
           }
           if { [file exists "@BatchMake_DIR@/bin/$buildType/BatchMake.dll"] } {
             set ::BatchMake_BUILD_SUBDIR $buildType
+          }
+          if { [file exists "@LibArchive_DIR@/bin/$buildType/archive.dll"] } {
+            set ::LibArchive_BUILD_SUBDIR $buildType
           }
         }
       } else {
@@ -457,8 +463,10 @@ proc launch_SetEnvironment {} {
       set ::env(BatchMake_LIB_DIR)  [file normalize "@BatchMake_DIR@/bin/$::BatchMake_BUILD_SUBDIR"]
       set ::env(BatchMake_BIN_DIR)  [file normalize "@BatchMake_DIR@/bin/$::BatchMake_BUILD_SUBDIR"]
       set ::env(bmModuleDescriptionParser_DIR) $::env(BatchMake_BIN_DIR)
-    
-    
+      
+      set ::env(LibArchive_DIR)      [file normalize "@LibArchive_DIR@"]
+      set ::env(LibArchive_LIB_DIR)  [file normalize "@LibArchive_DIR@/bin/$::LibArchive_BUILD_SUBDIR"]
+      
       # Slicer3 Libs
     
       set ::env(FreeSurfer_DIR)     [file normalize "$::Slicer_HOME/lib/$::BUILD_SUBDIR"]
@@ -642,6 +650,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(BatchMake_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(bmModuleDescriptionParser_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(BatchMake_LIB_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@:$::env(LD_LIBRARY_PATH)
@@ -699,6 +708,7 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(BatchMake_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(bmModuleDescriptionParser_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(LibArchive_LIB_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@:$::env(DYLD_LIBRARY_PATH)
@@ -750,6 +760,7 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(OpenIGTLink_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(BatchMake_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(bmModuleDescriptionParser_DIR)\;$::env(Path)
+            set ::env(Path) $::env(LibArchive_LIB_DIR)\;$::env(Path)
             set ::env(Path) $::env(ITK_BIN_DIR)\;$::env(Path)
 
             # TODO: TCL_DIR for super-build is not calculated correctly 

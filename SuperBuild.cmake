@@ -284,6 +284,7 @@ ExternalProject_Add(${proj}
     # cmcurl
     -DSLICERLIBCURL_DIR:PATH=${SLICERLIBCURL_DIR}
     # libarchive
+    -DLibArchive_DIR:PATH=${LIBARCHIVE_DIR}
     -DLibArchive_INCLUDE_DIR:PATH=${LIBARCHIVE_INCLUDE_DIR}
     -DLibArchive_LIBRARY:PATH=${LIBARCHIVE_LIBRARY}
     # Python
