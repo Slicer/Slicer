@@ -75,7 +75,6 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
   QStringList nodeTypes = QStringList();
   nodeTypes.append("vtkMRMLAnnotationNode");
   nodeTypes.append("vtkMRMLAnnotationHierarchyNode");
-  nodeTypes.append("vtkMRMLAnnotationSnapshotNode");
 
   //this->SortFilterModel->setNodeTypes(nodeTypes);
   q->setNodeTypes(nodeTypes);

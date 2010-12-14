@@ -81,30 +81,8 @@ SET(GUI_SRCS
   GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.cxx
   GUI/qSlicerAnnotationModuleReportDialog.h
-  GUI/qSlicerAnnotationModulePushButton.cxx
-  GUI/qSlicerAnnotationModulePushButton.h
   GUI/qSlicerAnnotationModuleSnapShotDialog.cxx
   GUI/qSlicerAnnotationModuleSnapShotDialog.h
-  GUI/qSlicerAnnotationModuleImageUtil.cxx
-  GUI/qSlicerAnnotationModuleImageUtil.h
-  )
-
-#-----------------------------------------------------------------------
-#
-# DEPRECATED CLASSES (do not get compiled)
-#
-#-----------------------------------------------------------------------
-SET(DEPRECATED_SRCS
-  vtkSlicerAnnotationRulerManager.cxx
-  vtkSlicerAnnotationRulerManager.h
-  vtkSlicerAnnotationAngleManager.cxx
-  vtkSlicerAnnotationAngleManager.h
-  vtkSlicerAnnotationROIManager.cxx
-  vtkSlicerAnnotationROIManager.h
-  vtkSlicerAnnotationSplineManager.cxx
-  vtkSlicerAnnotationSplineManager.h
-  vtkSlicerAnnotationBidimensionalManager.cxx
-  vtkSlicerAnnotationBidimensionalManager.h
   )
 
 
@@ -222,7 +200,6 @@ SET(qt_module_MOC_SRCS
   GUI/qSlicerAnnotationModuleWidget.h
   GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.h
-  GUI/qSlicerAnnotationModulePushButton.h
   GUI/qSlicerAnnotationModuleSnapShotDialog.h
   )
 

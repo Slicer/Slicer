@@ -30,7 +30,6 @@
 #include "qMRMLSceneDisplayableModel.h"
 
 // GUI includes
-#include "GUI/qSlicerAnnotationModulePushButton.h"
 #include "GUI/qSlicerAnnotationModuleReportDialog.h"
 #include "GUI/qSlicerAnnotationModulePropertyDialog.h"
 #include "GUI/qSlicerAnnotationModuleImageUtil.h"
@@ -48,10 +47,6 @@ class qSlicerAnnotationModuleWidgetPrivate: public Ui_qSlicerAnnotationModule
 protected:
   qSlicerAnnotationModuleWidget* const q_ptr;
 public:
-  typedef enum
-  {
-    VisibleColumn = 0, LockColumn, TypeColumn, ValueColumn, TextColumn
-  } TableColumnType;
 
   qSlicerAnnotationModuleWidgetPrivate(qSlicerAnnotationModuleWidget& object);
   ~qSlicerAnnotationModuleWidgetPrivate();

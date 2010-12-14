@@ -6,7 +6,7 @@
 #include "qSlicerLayoutManager.h"
 #include "qMRMLSliceWidget.h"
 #include "qMRMLThreeDView.h"
-
+#include "qMRMLUtils.h"
 
 #include "vtkImageData.h"
 
@@ -30,12 +30,6 @@ qSlicerAnnotationModuleSnapShotDialog::qSlicerAnnotationModuleSnapShotDialog()
   this->m_Id = vtkStdString("");
 
   ui.setupUi(this);
-
-  // The restore button has to be configured since it is the reset button in the buttonbox
-  // so we set Icons and Text here
-  QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
-  restoreButton->setText("Restore");
-  restoreButton->setIcon(QIcon(":/Icons/SnapshotRestore.png"));
 
   createConnection();
 
@@ -83,12 +77,10 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
   this->m_Id = vtkStdString(nodeId);
 
   // get the name..
-  vtkStdString name = this->m_Logic->GetSnapShotName(this->m_Id.c_str());
+  vtkStdString name = this->m_Logic->GetAnnotationName(this->m_Id.c_str());
 
   // ..and set it in the GUI
   this->ui.nameEdit->setText(name.c_str());
-
-  std::cout<<"sdsadsada"<<std::endl;
 
   // get the description..
   vtkStdString description = this->m_Logic->GetSnapShotDescription(this->m_Id);
@@ -139,7 +131,7 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
 
   // ..and convert it from vtkImageData to QImage..
   QImage qimage;
-  this->m_Logic->VtkImageDataToQImage(this->m_vtkImageData,qimage);
+  qMRMLUtils::vtkImageDataToQImage(this->m_vtkImageData,qimage);
 
   // ..and then to QPixmap..
   QPixmap screenshot;
@@ -148,10 +140,6 @@ void qSlicerAnnotationModuleSnapShotDialog::initialize(const char* nodeId)
   // ..and set it to the gui..
   ui.screenshotPlaceholder->setPixmap(screenshot.scaled(this->ui.screenshotPlaceholder->width(),this->ui.screenshotPlaceholder->height(),
         Qt::KeepAspectRatio,Qt::SmoothTransformation));
-
-  // now we are able to restore a snapshot, so enable the button
-  QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
-  restoreButton->setVisible(true);
 
 }
 
@@ -168,9 +156,6 @@ void qSlicerAnnotationModuleSnapShotDialog::createConnection()
   this->connect(ui.yellowSliceViewRadio, SIGNAL(clicked()), this, SLOT(onYellowSliceViewRadioClicked()));
   this->connect(ui.greenSliceViewRadio, SIGNAL(clicked()), this, SLOT(onGreenSliceViewRadioClicked()));
   this->connect(ui.fullLayoutRadio, SIGNAL(clicked()), this, SLOT(onFullLayoutRadioClicked()));
-
-  QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
-  this->connect(restoreButton, SIGNAL(clicked()), this, SLOT(onRestoreButtonClicked()));
 
 }
 
@@ -224,19 +209,11 @@ void qSlicerAnnotationModuleSnapShotDialog::onDialogAccepted()
     {
     // this is a new snapshot
     this->m_Logic->CreateSnapShot(nameBytes.data(),descriptionBytes.data(),screenshotType,this->m_vtkImageData);
-
-    QMessageBox::information(this, "Annotation Snap Shot created",
-                               "A new annotation snap shot was created and the current scene was attached.");
-
     }
   else
     {
     // this snapshot already exists
     this->m_Logic->ModifySnapShot(this->m_Id,nameBytes.data(),descriptionBytes.data(),screenshotType,this->m_vtkImageData);
-
-    QMessageBox::information(this, "Annotation Snap Shot updated",
-                                   "The annotation snap shot was updated without changing the attached scene.");
-
     }
 
   // emit an event which gets caught by main GUI window
@@ -275,17 +252,6 @@ void qSlicerAnnotationModuleSnapShotDialog::onFullLayoutRadioClicked()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationModuleSnapShotDialog::onRestoreButtonClicked()
-{
-  this->m_Logic->RestoreSnapShot(this->m_Id);
-
-  QMessageBox::information(this, "Annotation Snap Shot restored.",
-                                 "The annotation snap shot was restored including the attached scene.");
-
-  emit dialogAccepted();
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleSnapShotDialog::reset()
 {
   this->ui.threeDViewRadio->setEnabled(true);
@@ -300,11 +266,8 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   this->grabScreenShot("");
   this->ui.descriptionTextEdit->clear();
 
-  QPushButton* restoreButton = ui.buttonBox->button(QDialogButtonBox::Reset);
-  restoreButton->setVisible(false);
-
   // we want a default name which is easily overwritable by just typing
-  this->ui.nameEdit->setText(this->m_Logic->GetMRMLScene()->GetUniqueNameByString("Snapshot"));
+  this->ui.nameEdit->setText(this->m_Logic->GetMRMLScene()->GetUniqueNameByString("Screenshot"));
   this->ui.nameEdit->setFocus();
   this->ui.nameEdit->selectAll();
 
@@ -358,7 +321,7 @@ void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWin
 
   // convert the screenshot from QPixmap to vtkImageData and store it with this class
   vtkImageData* vtkimage = vtkImageData::New();
-  this->m_Logic->QImageToVtkImageData(screenShot.toImage(),vtkimage);
+  qMRMLUtils::qImageToVtkImageData(screenShot.toImage(),vtkimage);
   this->m_vtkImageData = vtkimage;
 
 }

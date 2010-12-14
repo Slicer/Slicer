@@ -61,6 +61,7 @@ public:
         RulerNode,
         BidimensionalNode,
         ROINode,
+        Screenshot,
       };
 
 protected:

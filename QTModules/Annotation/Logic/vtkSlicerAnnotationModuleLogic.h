@@ -112,6 +112,31 @@ public:
   void RestoreAnnotationView(const char* id);
 
   //
+  // SnapShot functionality
+  //
+  /// Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
+  /// a multiline text description and the creation of a Scene SnapShot.
+  void CreateSnapShot(const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
+
+  /// Modify an existing snapShot.
+  void ModifySnapShot(vtkStdString id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
+
+  /// Return the name of an existing annotation snapShot.
+  vtkStdString GetSnapShotName(const char* id);
+
+  /// Return the description of an existing annotation snapShot.
+  vtkStdString GetSnapShotDescription(const char* id);
+
+  /// Return the screenshotType of an existing annotation snapShot.
+  int GetSnapShotScreenshotType(const char* id);
+
+  /// Return the screenshot of an existing annotation snapShot.
+  vtkImageData* GetSnapShotScreenshot(const char* id);
+
+  /// Check if node id corresponds to a snapShot node
+  bool IsSnapshotNode(const char* id);
+
+  //
   // Hierarchy functionality
   //
   /// Add a new visible annotation hierarchy.
@@ -132,48 +157,6 @@ public:
   /// Set the active hierarchy node which will be used as a parent for new annotations
   void SetActiveHierarchyNodeByID(const char* id);
 
-  //
-  // SnapShot functionality
-  //
-  /// Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
-  /// a multiline text description and the creation of a Scene SnapShot.
-  void CreateSnapShot(const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
-
-  /// Modify an existing snapShot.
-  void ModifySnapShot(vtkStdString id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot);
-
-  /// Convert a QImage to a vtkImageData
-  bool QImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
-
-  /// Convert a vtkImageData to a QImage
-  bool VtkImageDataToQImage(vtkImageData* vtkimage, QImage& img);
-
-  /// Return the name of an existing annotation snapShot.
-  vtkStdString GetSnapShotName(const char* id);
-
-  /// Return the description of an existing annotation snapShot.
-  vtkStdString GetSnapShotDescription(const char* id);
-
-  /// Return the screenshotType of an existing annotation snapShot.
-  int GetSnapShotScreenshotType(const char* id);
-
-  /// Return the screenshot of an existing annotation snapShot.
-  vtkImageData* GetSnapShotScreenshot(const char* id);
-
-  /// Restore an annotation snapShot.
-  void RestoreSnapShot(const char* id);
-
-  /// Callback when an annotation snapShot node was added.
-  void OnMRMLSceneSnapShotNodeAdded(vtkMRMLAnnotationSnapshotNode* snapshotNode);
-
-  /// Callback when an annotation snapShot node was modified.
-  void OnMRMLSceneSnapShotNodeModified(vtkMRMLAnnotationSnapshotNode* snapshotNode);
-
-  /// Callback when an annotation snapShot node was modified.
-  void OnMRMLSceneSnapShotNodeRemoved(vtkMRMLAnnotationSnapshotNode* snapshotNode);
-
-  /// Check if node id corresponds to a snapShot node
-  bool IsSnapshotNode(const char* id);
 
   //
   // Place Annotations programmatically

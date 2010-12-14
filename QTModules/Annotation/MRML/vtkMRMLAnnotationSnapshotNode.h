@@ -8,17 +8,17 @@
 
 #include "qSlicerAnnotationModuleExport.h"
 #include "vtkMRMLAnnotationControlPointsNode.h" 
-#include "vtkMRMLSceneSnapshotNode.h"
+#include "vtkMRMLAnnotationNode.h"
 
 
 class vtkStringArray;
 class vtkMRMLStorageNode;
 
-class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLSceneViewNode
+class  Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
 {
 public:
   static vtkMRMLAnnotationSnapshotNode *New();
-  vtkTypeMacro(vtkMRMLAnnotationSnapshotNode,vtkMRMLSceneViewNode);
+  vtkTypeMacro(vtkMRMLAnnotationSnapshotNode,vtkMRMLAnnotationNode);
 
   //--------------------------------------------------------------------------
   // MRMLNode methods

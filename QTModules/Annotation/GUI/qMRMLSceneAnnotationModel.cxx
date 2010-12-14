@@ -143,7 +143,7 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         item->setText(QString(this->m_Logic->GetAnnotationMeasurement(annotationNode->GetID(),false)));
         break;
         }
-      else if (node->IsA("vtkMRMLAnnotationHierarchyNode") || node->IsA("vtkMRMLAnnotationSnapshotNode"))
+      else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
         {
         item->setText(QString(""));
         }
@@ -156,10 +156,6 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         break;
         }
       else if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
-        {
-        item->setText(QString(node->GetName()));
-        }
-      else if (node->IsA("vtkMRMLAnnotationSnapshotNode"))
         {
         item->setText(QString(node->GetName()));
         }
