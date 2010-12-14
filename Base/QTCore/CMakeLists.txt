@@ -82,15 +82,6 @@ SET(KIT_resources
 # Python wrap
 IF(Slicer_USE_PYTHONQT)
 
-  SET(KIT_PYTHONQT_SRCS) # Clear variable
-  ctkMacroWrapPythonQt("org.slicer.base" ${PROJECT_NAME}
-    KIT_PYTHONQT_SRCS "${KIT_SRCS}" FALSE)
-  ADD_LIBRARY(${PROJECT_NAME}PythonQt STATIC ${KIT_PYTHONQT_SRCS})
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME}PythonQt ${PROJECT_NAME})
-  IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-    SET_TARGET_PROPERTIES(${PROJECT_NAME}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
-  ENDIF()
-
   LIST(APPEND KIT_target_libraries
     CTKCorePythonQt
     CTKScriptingPythonCorePythonQt
@@ -129,6 +120,7 @@ SlicerMacroBuildBaseQtLibrary(
   MOC_SRCS ${KIT_MOC_SRCS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
+  WRAP_PYTHONQT
   )
 
 # Plugins
