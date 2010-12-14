@@ -62,6 +62,7 @@ void qSlicerModelsModuleWidget::setup()
   d->setupUi(this);
   d->ModelHierarchyTreeWidget->setColumnHidden(1, true);
   d->ClipModelsNodeComboBox->setVisible(false);
+  d->ModelHierarchyTreeWidget->sortFilterProxyModel()->setShowHidden(true);
   this->Superclass::setup();
 }
 
