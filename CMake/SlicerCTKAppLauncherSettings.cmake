@@ -18,11 +18,11 @@
 #
 ################################################################################
 
-# Build type
-SET(CTKAPPLAUNCHER_BUILD_TYPE)
-IF(WIN32)
-  SET(CTKAPPLAUNCHER_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-ENDIF()
+#
+# <CMAKE_CFG_INTDIR> is a special string that will be replaced at build time
+# within the script "ctkAppLauncher-configure.cmake". This script is executed 
+# each time the target 'SlicerConfigureLauncher' is built.
+#
  
 #-----------------------------------------------------------------------------
 # Settings specific to the build tree.
@@ -32,17 +32,18 @@ ENDIF()
 # LIBRARY_PATHS
 #
 SET(SLICER_LIBRARY_PATHS_BUILD
-  ${VTK_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ${CTK_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ${CTK_DIR}/CMakeExternals/Build/PythonQt/${CTKAPPLAUNCHER_BUILD_TYPE}
+  ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>
+  ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
+  ${CTK_DIR}/CMakeExternals/Build/PythonQt/<CMAKE_CFG_INTDIR>
   ${QT_LIBRARY_DIR}
-  ${ITK_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ${Teem_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ${LibArchive_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ./bin/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ./${Slicer_INSTALL_PLUGINS_LIB_DIR}/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/${CTKAPPLAUNCHER_BUILD_TYPE}
+  ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
+  ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
+  ${LibArchive_DIR}/bin
+  ./bin/<CMAKE_CFG_INTDIR>
+  ./${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
+  ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
   )
+
 
 IF(Slicer_USE_PYTHONQT_WITH_TCL)
   LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
@@ -58,14 +59,14 @@ ENDIF()
 
 IF(Slicer_USE_BatchMake)
   LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${BatchMake_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
+    ${BatchMake_DIR}/bin/<CMAKE_CFG_INTDIR>
     )
 ENDIF()
 
 IF(Slicer_USE_OPENIGTLINK)
   LIST(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${OpenIGTLink_DIR}
-    ${OpenIGTLink_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
+    ${OpenIGTLink_DIR}/bin/<CMAKE_CFG_INTDIR>
     )
 ENDIF()
 
@@ -78,10 +79,10 @@ ENDIF()
 # PATHS
 #
 SET(SLICER_PATHS_BUILD
-  ./bin/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ./${Slicer_INSTALL_PLUGINS_LIB_DIR}/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/${CTKAPPLAUNCHER_BUILD_TYPE}
-  ${Teem_DIR}/bin/${CTKAPPLAUNCHER_BUILD_TYPE}
+  ./bin/<CMAKE_CFG_INTDIR>
+  ./${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
+  ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
+  ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${QT_BINARY_DIR}
   )
   
