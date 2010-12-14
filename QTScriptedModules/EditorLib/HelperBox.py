@@ -525,10 +525,7 @@ class HelperBox(object):
         self.items.append(item)
         # label color
         item = qt.QStandardItem()
-        item.setText("###")
-        # TODO: how to set the background color - setBackground doesn't work...
-        item.setBackground(brush)
-        item.setForeground(brush)
+        item.setData(color,1)
         self.structures.setItem(self.row,1,item)
         self.items.append(item)
         # structure name
