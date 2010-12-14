@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>314</width>
-    <height>366</height>
+    <height>346</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Scalar Volume Display</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
    <property name="margin">
     <number>0</number>
    </property>
@@ -48,7 +48,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0">
     <widget class="QLabel" name="WindowLevelPresetsLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -78,7 +78,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>120</height>
+       <height>100</height>
       </size>
      </property>
     </widget>
@@ -86,7 +86,7 @@
    <item row="3" column="0" colspan="2">
     <widget class="QWidget" name="PresetsWidget" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -94,9 +94,6 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
        <number>0</number>
-      </property>
-      <property name="sizeConstraint">
-       <enum>QLayout::SetFixedSize</enum>
       </property>
       <property name="margin">
        <number>0</number>
