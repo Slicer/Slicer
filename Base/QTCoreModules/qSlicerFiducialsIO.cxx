@@ -54,9 +54,9 @@ qSlicerIO::IOFileType qSlicerFiducialsIO::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFiducialsIO::extensions()const
+QStringList qSlicerFiducialsIO::extensions()const
 {
-  return "*.fcsv";
+  return QStringList() << "Fiducials (*.fcsv)";
 }
 
 //-----------------------------------------------------------------------------

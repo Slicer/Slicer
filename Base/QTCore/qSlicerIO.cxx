@@ -31,6 +31,9 @@
 /// VTK includes
 #include <vtkWeakPointer.h>
 
+const char *extensionsRegExp =
+  "^(.*)\\(([a-zA-Z0-9_.*? +;#\\-\\[\\]@\\{\\}/!<>\\$%&=^~:\\|]*)\\)$";
+
 //-----------------------------------------------------------------------------
 class qSlicerIOPrivate
 {
@@ -72,9 +75,9 @@ IOFileType qSlicerIO::fileType()const
 */
 
 //----------------------------------------------------------------------------
-QString qSlicerIO::extensions()const
+QStringList qSlicerIO::extensions()const
 {
-  return "*.*";
+  return QStringList() << "*.*";
 }
 
 //----------------------------------------------------------------------------
@@ -87,17 +90,19 @@ bool qSlicerIO::canLoadFile(const QString& fileName)const
     {
     return false;
     }
-  QStringList ext = this->extensions().split(' ');
-  foreach(QString extension, ext)
+  foreach(const QString& filter, this->extensions())
     {
-    QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
-    Q_ASSERT(regExp.isValid());
-    if (regExp.exactMatch(file.absoluteFilePath()))
+    foreach(QString extension, qSlicerIO::extractExtensions(filter))
       {
-      return true;
+      QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
+      Q_ASSERT(regExp.isValid());
+      if (regExp.exactMatch(file.absoluteFilePath()))
+        {
+        return true;
+        }
       }
     }
-    return false;
+  return false;
 }
 
 //----------------------------------------------------------------------------
@@ -162,4 +167,16 @@ QStringList qSlicerIO::savedNodes()const
 {
   Q_D(const qSlicerIO);
   return d->SavedNodes;
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerIO::extractExtensions(const QString &filter)
+{
+  QRegExp regexp(QString::fromLatin1(extensionsRegExp));
+  QString f = filter;
+  if (regexp.indexIn(f) >= 0)
+    {
+    f = regexp.cap(2);
+    }
+  return f.split(QLatin1Char(' '), QString::SkipEmptyParts);
 }

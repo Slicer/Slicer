@@ -35,7 +35,7 @@ public:
   qSlicerFiberBundleIO(QObject* parent = 0);
   virtual QString description()const;
   virtual IOFileType fileType()const;
-  virtual QString extensions()const;
+  virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
 };

@@ -1282,9 +1282,9 @@ qSlicerIO::IOFileType qSlicerXcedeCatalogIO::fileType()const
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerXcedeCatalogIO::extensions()const
+QStringList qSlicerXcedeCatalogIO::extensions()const
 {
-  return "*.xcat";
+  return QStringList() << "*.xcat";
 }
 
 //------------------------------------------------------------------------------

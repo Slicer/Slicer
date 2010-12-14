@@ -41,7 +41,7 @@ public:
 
   ///
   /// Support only .mrml files
-  virtual QString extensions()const;
+  virtual QStringList extensions()const;
 
   ///
   /// the supported properties are:

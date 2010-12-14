@@ -56,9 +56,9 @@ qSlicerIO::IOFileType qSlicerScalarOverlayIO::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerScalarOverlayIO::extensions()const
+QStringList qSlicerScalarOverlayIO::extensions()const
 {
-  return "*.*";
+  return QStringList() << "*.*";
 }
 
 //-----------------------------------------------------------------------------

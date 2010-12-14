@@ -55,10 +55,11 @@ qSlicerIO::IOFileType qSlicerModelsIO::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModelsIO::extensions()const
+QStringList qSlicerModelsIO::extensions()const
 {
-  return "*.vtk *.vtp *.g *.byu *.stl *.orig"
-         "*.inflated *.sphere *.white *.smoothwm *.pial";
+  return QStringList()
+    << "Model (*.vtk *.vtp *.g *.byu *.stl *.orig"
+         "*.inflated *.sphere *.white *.smoothwm *.pial)";
 }
 
 //-----------------------------------------------------------------------------

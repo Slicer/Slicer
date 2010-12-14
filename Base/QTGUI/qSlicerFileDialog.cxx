@@ -61,9 +61,13 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
     qSlicerApplication::application()->ioManager()->ios(fileType);
   foreach(const qSlicerIO* reader, readers)
     {
-    QString nameFilter= reader->description() + " (" + reader->extensions() + ")";
-    filters << nameFilter;
-    extensions << reader->extensions();
+    foreach(const QString& filter, reader->extensions())
+      {
+      QString nameFilter = filter.contains('(') ? filter :
+        reader->description() + " (" + filter + ")";
+      filters << nameFilter;
+      extensions << qSlicerIO::extractExtensions(nameFilter);
+      }
     }
   filters.insert(0, QString("All (") + extensions.join(" ") + QString(")"));
   return filters;

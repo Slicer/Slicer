@@ -43,9 +43,9 @@ qSlicerIO::IOFileType qSlicerSceneIO::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSceneIO::extensions()const 
+QStringList qSlicerSceneIO::extensions()const 
 {
-  return "*.mrml";
+  return QStringList() << "*.mrml";
 }
 
 //-----------------------------------------------------------------------------

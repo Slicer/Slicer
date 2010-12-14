@@ -58,9 +58,9 @@ qSlicerIO::IOFileType qSlicerFiberBundleIO::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFiberBundleIO::extensions()const
+QStringList qSlicerFiberBundleIO::extensions()const
 {
-  return "*.*";
+  return QStringList("*.*");
 }
 
 //-----------------------------------------------------------------------------

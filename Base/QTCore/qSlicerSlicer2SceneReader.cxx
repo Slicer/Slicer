@@ -1294,9 +1294,9 @@ qSlicerIO::IOFileType qSlicerSlicer2SceneReader::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSlicer2SceneReader::extensions()const
+QStringList qSlicerSlicer2SceneReader::extensions()const
 {
-  return "*.xml";
+  return QStringList() << "*.xml";
 }
 
 //-----------------------------------------------------------------------------

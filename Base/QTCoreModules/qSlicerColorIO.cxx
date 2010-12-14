@@ -54,9 +54,9 @@ qSlicerIO::IOFileType qSlicerColorIO::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorIO::extensions()const
+QStringList qSlicerColorIO::extensions()const
 {
-  return "*.txt";
+  return QStringList() << "Color (*.txt)";
 }
 
 //-----------------------------------------------------------------------------

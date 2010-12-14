@@ -66,9 +66,10 @@ public:
 
   virtual QString description()const = 0;
   virtual IOFileType fileType()const = 0;
-  /// Return  a list (separated by " " ) of the supported extensions
-  /// Example: "*.jpg *.png *.tiff"
-  virtual QString extensions()const;
+  /// Return  a list of the supported extensions. Please read
+  /// QFileDialog::nameFilters for the allowed formats
+  /// Example: "Image (*.jpg *.png *.tiff)" "Model (*.vtk)"
+  virtual QStringList extensions()const;
   /// Based on the file extensions, returns true if the file can be read,
   /// false otherwise.
   /// This function is relatively fast as it doesn't try to access the file.
@@ -89,6 +90,7 @@ public:
   QStringList loadedNodes()const;
   QStringList savedNodes()const;
   
+  static QStringList extractExtensions(const QString &filter);
 protected:
   void setLoadedNodes(const QStringList& nodes);
   void setSavedNodes(const QStringList& nodes);

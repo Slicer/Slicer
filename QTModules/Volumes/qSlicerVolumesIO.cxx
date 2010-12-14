@@ -67,11 +67,13 @@ qSlicerIO::IOFileType qSlicerVolumesIO::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesIO::extensions()const
+QStringList qSlicerVolumesIO::extensions()const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
-  return "*.hdr *.nhdr *.nrrd *.mhd *.mha *.vti *.nii *.gz *.mgz *.img *.pic"
-         " *.dcm *.png *.tif *.tiff";
+  return QStringList()
+    << "Volume (*.hdr *.nhdr *.nrrd *.mhd *.mha *.vti *.nii *.gz *.mgz *.img *.pic)"
+    << "Dicom (*.dcm)"
+    << "Images (*.png *.tif *.tiff)";
 }
 
 //-----------------------------------------------------------------------------
