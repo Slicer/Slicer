@@ -313,14 +313,16 @@ int main(int argc, char * argv[])
       std::cout << "useStartEnd = " << useStartEnd << ", numModelsToGenerate = "<< numModelsToGenerate << ", numFilterSteps " << numFilterSteps << endl;
       }
     // check for the input file
-    FILE * infile;
-    infile = fopen(InputVolume.c_str(),"r");
-    if (infile == NULL)
-      {
-      std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;     
-      return EXIT_FAILURE;
-      }
-    fclose(infile);
+    // This check doesn't work if ModelMaker InputVolume is shared with Slicer:
+    // slicer:0xf135d0#vtkMRMLScalarVolumeNode1
+    //FILE * infile;
+    //infile = fopen(InputVolume.c_str(),"r");
+    //if (infile == NULL)
+    //  {
+    //  std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;     
+    //  return EXIT_FAILURE;
+    //  }
+    //fclose(infile);
 
     // Read the file
     reader = vtkSmartPointer< vtkITKArchetypeImageSeriesScalarReader >::New();
