@@ -178,8 +178,9 @@ class LabelerOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
+    self.threshold.minimum, self.threshold.maximum = self.getBackgroundVolume().GetImageData().GetScalarRange()
     self.frame.layout().addWidget(self.threshold)
-    self.widgets.append(self.thresholdLabel)
+    self.widgets.append(self.threshold)
 
     self.paintOver.connect( "clicked()", self.updateMRMLFromGUI )
     self.thresholdPaint.connect( "clicked()", self.updateMRMLFromGUI )
@@ -859,8 +860,9 @@ class ThresholdOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
+    self.threshold.minimum, self.threshold.maximum = self.getBackgroundVolume().GetImageData().GetScalarRange()
     self.frame.layout().addWidget(self.threshold)
-    self.widgets.append(self.thresholdLabel)
+    self.widgets.append(self.threshold)
 
     # TODO: set range based on background volume
 

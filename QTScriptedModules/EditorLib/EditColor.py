@@ -33,7 +33,9 @@ class EditColor(object):
       self.create()
 
   def __del__(self):
-    print ('delete edit color')
+    self.cleanup()
+
+  def cleanup(self, QObject=None):
     if self.parameterNode:
       self.parameterNode.RemoveObserver(self.parameterNodeTag)
     for tagpair in self.observerTags:
@@ -60,6 +62,7 @@ class EditColor(object):
     self.updateParameterNode(slicer.mrmlScene, "ModifiedEvent")
     self.updateGUIFromMRML(self.parameterNode, "ModifiedEvent")
 
+    self.frame.connect( 'destroyed(QObject)', self.cleanup)
     self.colorSpin.connect( 'valueChanged(int)', self.updateMRMLFromGUI)
     self.colorPatch.connect( 'clicked()', self.showColorBox )
 
@@ -79,7 +82,7 @@ class EditColor(object):
     node = slicer.mrmlScene.GetNodeByID(nodeID)
     if node != self.parameterNode:
       if self.parameterNode:
-        node.RemoveObserver(self.parameterNodeTag)
+        self.parameterNode.RemoveObserver(self.parameterNodeTag)
       self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
       self.parameterNode = node
 
