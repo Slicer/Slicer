@@ -30,7 +30,7 @@
 class qSlicerXcedeCatalogIOPrivate;
 
 //-----------------------------------------------------------------------------
-class qSlicerXcedeCatalogIO: public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogIO: public qSlicerIO
 {
   Q_OBJECT
 public: 

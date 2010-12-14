@@ -30,7 +30,7 @@
 class qSlicerSlicer2SceneReaderPrivate;
 
 //-----------------------------------------------------------------------------
-class qSlicerSlicer2SceneReader: public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSlicer2SceneReader: public qSlicerIO
 {
   Q_OBJECT
 public: 

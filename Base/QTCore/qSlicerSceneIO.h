@@ -28,7 +28,7 @@
 /// qSlicerSceneIO is the IO class that handle MRML scene
 /// It internally call vtkMRMLScene::Connect() or vtkMRMLScene::Import() 
 /// depending on the clear flag.
-class qSlicerSceneIO: public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneIO: public qSlicerIO
 {
   Q_OBJECT
 public: 
