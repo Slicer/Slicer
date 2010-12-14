@@ -186,7 +186,7 @@ QFlags<Qt::ItemFlag> qMRMLSceneAnnotationModel::nodeFlags(vtkMRMLNode* node, int
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)
+vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
 {
   if (node == NULL)
     {

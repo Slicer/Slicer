@@ -62,7 +62,7 @@ public:
 
 protected:
 
-  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node);
+  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
 
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
   
