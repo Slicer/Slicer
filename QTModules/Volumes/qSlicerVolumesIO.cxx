@@ -71,9 +71,7 @@ QString qSlicerVolumesIO::extensions()const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
   return "*.hdr *.nhdr *.nrrd *.mhd *.mha *.vti *.nii *.gz *.mgz *.img *.pic"
-         " *.dcm *.png *.tif *.tiff"
-         // will be available when the glyphs are working" *.png"
-         ;
+         " *.dcm *.png *.tif *.tiff";
 }
 
 //-----------------------------------------------------------------------------

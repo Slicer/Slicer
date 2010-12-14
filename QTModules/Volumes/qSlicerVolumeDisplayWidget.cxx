@@ -24,8 +24,7 @@ qSlicerVolumeDisplayWidget::qSlicerVolumeDisplayWidget(QWidget* _parent) : Super
 void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
 {
   qvtkDisconnect(0,vtkCommand::ModifiedEvent,this,SLOT(updateFromMRML(vtkObject*)));
-  qvtkConnect(volumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateFromMRML(vtkObject*)));
- 
+
   if (volumeNode == 0)
     {
     this->ScalarVolumeDisplayWidget->setMRMLVolumeNode(
@@ -33,6 +32,10 @@ void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
     this->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(
       vtkMRMLVolumeNode::SafeDownCast(0));
     return;
+    }
+  else
+    {
+    qvtkConnect(volumeNode, vtkCommand::ModifiedEvent, this, SLOT(updateFromMRML(vtkObject*)));
     }
 
   vtkMRMLScene* scene = volumeNode->GetScene();
