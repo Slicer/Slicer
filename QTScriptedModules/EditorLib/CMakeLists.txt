@@ -4,6 +4,7 @@ SET(EditorLib_PYTHON_SCRIPTS
   EditBox
   EditColor
   EditOptions
+  EditUtil
   HelperBox
   )
 

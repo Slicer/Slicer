@@ -3,6 +3,7 @@ from __main__ import tcl
 from __main__ import qt
 from __main__ import ctk
 from __main__ import getNodes
+import EditUtil
 
 #########################################################
 #
@@ -126,27 +127,10 @@ class EditOptions(object):
   def setMRMLDefaults(self):
     pass
 
-  def getLabelVolume(self):
-    count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
-    for n in xrange(count):
-      compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
-      if compNode.GetLayoutName() == 'Red':
-        labelID = compNode.GetLabelVolumeID()
-        return slicer.mrmlScene.GetNodeByID(labelID)
-
-  def getBackgroundVolume(self):
-    count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
-    for n in xrange(count):
-      compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
-      if compNode.GetLayoutName() == 'Red':
-        backgroundID = compNode.GetBackgroundVolumeID()
-        return slicer.mrmlScene.GetNodeByID(backgroundID)
-
-
   def setRangeWidgetToBackgroundRange(self, rangeWidget):
     if not rangeWidget:
       return
-    backgroundVolume = self.getBackgroundVolume()
+    backgroundVolume = EditUtil.getBackgroundVolume()
     if backgroundVolume:
       backgroundImage = backgroundVolume.GetImageData()
       if backgroundImage:
@@ -1331,7 +1315,7 @@ class MakeModelOptions(EditOptions):
     # based on the current editor parameters
     #
 
-    volumeNode = self.getLabelVolume()
+    volumeNode = EditUtil.getLabelVolume()
     if not volumeNode:
       return
 

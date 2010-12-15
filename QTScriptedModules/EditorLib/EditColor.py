@@ -2,6 +2,7 @@ import slicer
 from __main__ import tcl
 from __main__ import qt
 import ColorBox
+import EditUtil
 
 #########################################################
 #
@@ -118,18 +119,13 @@ class EditColor(object):
   # since we are in the editor)
   #
   def getColorNode(self):
-    count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
-    for n in xrange(count):
-      compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
-      if compNode.GetLayoutName() == 'Red':
-        labelID = compNode.GetLabelVolumeID()
-        labelNode = slicer.mrmlScene.GetNodeByID(labelID)
-        if not labelNode:
-          return None
-        dispNode = labelNode.GetDisplayNode()
-        if not dispNode:
-          return None
-        return ( dispNode.GetColorNode() )
+    labelNode = EditUtil.getLabelVolume()
+    if not labelNode:
+      return None
+    dispNode = labelNode.GetDisplayNode()
+    if not dispNode:
+      return None
+    return ( dispNode.GetColorNode() )
           
 
   def showColorBox(self):

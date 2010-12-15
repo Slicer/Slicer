@@ -2,6 +2,7 @@ import os
 from __main__ import tcl
 from __main__ import qt
 from EditOptions import *
+import EditUtil
 
 
 #########################################################
@@ -304,11 +305,11 @@ itcl::body EditBox::setButtonState {effect state} {
     #
     # If there is no background volume or label map, do nothing
     #
-    if self.currentOption:
-      if not self.currentOption.getBackgroundVolume():
-        return
-      if not self.currentOption.getLabelVolume():
-        return
+    # TODO should do this regardless of whether or not there is an option
+    if not EditUtil.getBackgroundVolume():
+      return
+    if not EditUtil.getLabelVolume():
+      return
 
     app.restoreOverrideCursor()
     self.setActiveToolLabel(effect)

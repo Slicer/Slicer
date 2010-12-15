@@ -2,6 +2,7 @@ import os
 from __main__ import tcl
 import qt, ctk
 import EditorLib
+import EditUtil
 
 #
 # Editor
@@ -65,7 +66,9 @@ class EditorWidget:
     # get the master and merge nodes from the composite node associated
     # with the red slice, but only if showing volumes
     if (self.showVolumesFrame == True):
-      compositeNode = self.getCompositeNode()
+      # get the slice composite node for the Red slice view (we'll assume it exists 
+      # since we are in the editor) to get the current background and label
+      compositeNode = EditUtil.getCompositeNode()
       masterNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetBackgroundVolumeID() )
       mergeNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetLabelVolumeID() )
       self.setMasterNode(masterNode)
@@ -178,17 +181,5 @@ class EditorWidget:
     self.editBoxFrame.setLayout(qt.QVBoxLayout())
     self.effectsToolsFrame.layout().addWidget(self.editBoxFrame)
     self.toolsBox = EditorLib.EditBox(self.editBoxFrame, optionsFrame=self.effectOptionsFrame, embedded=self.embedded, suppliedEffects=self.suppliedEffects)
-    
-  #
-  # get the slice composite node for the Red slice view (we'll assume it exists 
-  # since we are in the editor) to get the current background and label
-  #
-  def getCompositeNode(self):
-    count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
-    for n in xrange(count):
-      compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
-      if compNode.GetLayoutName() == 'Red':
-        return compNode
-    return None
 
   #->> TODO: check to make sure editor module smoothly handles interactive changes to the master and merge nodes
