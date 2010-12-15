@@ -329,6 +329,10 @@ void vtkMRMLCommandLineModuleNode
   if (this->m_Status != status)
     {
     this->m_Status = status;
+    if (this->m_Status == vtkMRMLCommandLineModuleNode::Cancelled)
+      {
+      this->AbortProcess();
+      }
     if (modify)
       {
       this->Modified();
@@ -340,6 +344,12 @@ void vtkMRMLCommandLineModuleNode
 vtkMRMLCommandLineModuleNode::StatusType vtkMRMLCommandLineModuleNode::GetStatus()
 {
   return this->m_Status;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode::AbortProcess()
+{
+  this->GetModuleDescription().GetProcessInformation()->Abort = 1;
 }
 
 //----------------------------------------------------------------------------

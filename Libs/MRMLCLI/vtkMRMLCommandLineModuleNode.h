@@ -139,9 +139,6 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
     return this->GetParameterAsString(stringName).c_str();
   }
   int GetNumberOfRegisteredModules ();
-  void AbortProcess () {
-    this->GetModuleDescription().GetProcessInformation()->Abort = 1;
-  }
   const char* GetRegisteredModuleNameByIndex ( int idx );
   void SetModuleDescription ( const char *name ) { this->SetModuleDescription ( this->GetRegisteredModuleDescription ( name ) ); }
   const char* GetModuleVersion () { return this->GetModuleDescription().GetVersion().c_str(); };
@@ -183,6 +180,8 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
   static void ClearRegisteredModules();
 /// ETX
+protected:
+  void AbortProcess ();
 
 private:
   vtkMRMLCommandLineModuleNode();
