@@ -213,18 +213,17 @@ class EditBox(object):
     #
     # the labels (not shown in embedded format)
     #
-    if (not self.embedded):
-      self.toolsActiveToolFrame = qt.QFrame(self.parent)
-      self.toolsActiveToolFrame.setLayout(qt.QHBoxLayout())
-      self.parent.layout().addWidget(self.toolsActiveToolFrame)
-      self.toolsActiveTool = qt.QLabel(self.toolsActiveToolFrame)
-      self.toolsActiveTool.setText( 'Active Tool:' )
-      self.toolsActiveTool.setStyleSheet("background-color: rgb(232,230,235)")
-      self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveTool)
-      self.toolsActiveToolName = qt.QLabel(self.toolsActiveToolFrame)
-      self.toolsActiveToolName.setText( '' )
-      self.toolsActiveToolName.setStyleSheet("background-color: rgb(232,230,235)")
-      self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveToolName)
+    self.toolsActiveToolFrame = qt.QFrame(self.parent)
+    self.toolsActiveToolFrame.setLayout(qt.QHBoxLayout())
+    self.parent.layout().addWidget(self.toolsActiveToolFrame)
+    self.toolsActiveTool = qt.QLabel(self.toolsActiveToolFrame)
+    self.toolsActiveTool.setText( 'Active Tool:' )
+    self.toolsActiveTool.setStyleSheet("background-color: rgb(232,230,235)")
+    self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveTool)
+    self.toolsActiveToolName = qt.QLabel(self.toolsActiveToolFrame)
+    self.toolsActiveToolName.setText( '' )
+    self.toolsActiveToolName.setStyleSheet("background-color: rgb(232,230,235)")
+    self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveToolName)
     
     #
     # the buttons
