@@ -32,7 +32,6 @@
 // GUI includes
 #include "GUI/qSlicerAnnotationModuleReportDialog.h"
 #include "GUI/qSlicerAnnotationModulePropertyDialog.h"
-#include "GUI/qSlicerAnnotationModuleImageUtil.h"
 #include "GUI/qSlicerAnnotationModuleSnapShotDialog.h"
 
 // Convenient macro
