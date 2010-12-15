@@ -382,6 +382,10 @@ class HelperBox(object):
       self.errorDialog( "Cannot make model: no Model Maker Module found." )
 
     # TODO: still needed?
+
+    # TODO: this model maker may or may not work:
+    # TODO: follow the layout of the model maker in EditOptions:
+    # class MakeModelOptions, function OnApply()
     modelMaker.Enter()
 
     #
