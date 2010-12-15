@@ -275,6 +275,7 @@ itcl::body EditBox::setButtonState {effect state} {
   #
   def selectEffect(self, effect):
     from slicer import app
+    
     #
     # if an effect was added, build an options GUI
     #
@@ -287,6 +288,15 @@ itcl::body EditBox::setButtonState {effect state} {
     except NameError, AttributeError:
       print ("No options for %s." % effect)
       pass
+
+    #
+    # If there is no background volume or label map, do nothing
+    #
+    if self.currentOption:
+      if not self.currentOption.getBackgroundVolume():
+        return
+      if not self.currentOption.getLabelVolume():
+        return
 
     app.restoreOverrideCursor()
     self.setActiveToolLabel(effect)
