@@ -111,6 +111,8 @@ public:
   /// Restore view of an Annotation MRML node
   void RestoreAnnotationView(const char* id);
 
+  void MoveAnnotationUp(const char* id);
+
   //
   // SnapShot functionality
   //

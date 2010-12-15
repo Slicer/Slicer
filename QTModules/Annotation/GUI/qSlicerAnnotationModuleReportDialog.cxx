@@ -1,5 +1,7 @@
 #include "qSlicerAnnotationModuleReportDialog.h"
 
+#include "qSlicerCoreApplication.h"
+
 // QT includes
 #include <QButtonGroup>
 #include <QList>
@@ -140,7 +142,7 @@ QString qSlicerAnnotationModuleReportDialog::generateReport()
   html.append("</title>\n");
   html.append("<style type=\"text/css\">\n");
   html.append("body {font-family: Helvetica, Arial;}\n");
-  html.append(".heading {background-color:lightgrey;}\n");
+  html.append(".heading {background-color:#a3a3a3;}\n");
   html.append("</style>\n");
   html.append("<body>\n");
 
@@ -346,21 +348,50 @@ bool qSlicerAnnotationModuleReportDialog::saveReport()
     QStringList list = imgdir.split("/");
     QString imgshortdir = list[list.size() - 1];
 
-    // replace all QT icon pathes with real filepathes
+    // replace all QT icon and image pathes with real filepathes
+    QString tempPath = qSlicerCoreApplication::application()->temporaryPath();
+
     report.replace(QString(":/Icons/"), imgshortdir.append("/"));
+    report.replace(tempPath, imgshortdir.append("/"));
 
-    // save all icons for annotations
-    QImage img(":/Icons/AnnotationPoint.png");
-    img.save(imgdir+("/AnnotationPoint.png"));
+    this->m_Annotations->InitTraversal();
 
-    QImage img2(":/Icons/AnnotationBidimensional.png");
-    img2.save(imgdir+("/AnnotationBidimensional.png"));
+    // now save all graphics
+    for (int i=0; i<this->m_Annotations->GetNumberOfItems(); ++i)
+      {
+      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(this->m_Annotations->GetItemAsObject(i));
+      vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->m_Annotations->GetItemAsObject(i));
 
-    QImage img3(":/Icons/AnnotationText.png");
-    img3.save(imgdir+("/AnnotationText.png"));
+      if (annotationNode)
+        {
 
-    QImage img4(":/Icons/AnnotationDistance.png");
-    img4.save(imgdir+("/AnnotationDistance.png"));
+        if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
+          {
+          QString tempPath = qSlicerCoreApplication::application()->temporaryPath();
+          tempPath.append(annotationNode->GetID());
+          tempPath.append(".png");
+
+          QFile screenshotHolder(tempPath);
+          QString outPath = imgdir;
+          screenshotHolder.copy(outPath.append("/").append(QString(annotationNode->GetID())).append(QString(".png")));
+
+          }
+
+        // all annotation icons
+        QString iconPath = QString(annotationNode->GetIcon());
+        QImage iconHolder = QImage(iconPath);
+        iconHolder.save(iconPath.replace(QString(":/Icons"), imgdir));
+
+        }
+      else if (hierarchyNode)
+        {
+        QString iconPath = QString(hierarchyNode->GetIcon());
+        QImage iconHolder = QImage(iconPath);
+        iconHolder.save(iconPath.replace(QString(":/Icons"), imgdir));
+        }
+
+      } // for loop through all selected nodes
+
 
     out << report;
     file.close();

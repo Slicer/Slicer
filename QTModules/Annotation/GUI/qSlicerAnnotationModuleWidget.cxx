@@ -216,9 +216,11 @@ void qSlicerAnnotationModuleWidget::moveDownSelected()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::moveUpSelected()
 {
-  //Q_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
-  // TODO
+  d->logic()->MoveAnnotationUp(d->hierarchyTreeWidget->firstSelectedNode());
+
+  d->hierarchyTreeWidget->clearSelection();
 }
 
 //-----------------------------------------------------------------------------
@@ -806,6 +808,7 @@ void qSlicerAnnotationModuleWidget::onStickyNodeButtonClicked()
   QIcon icon = QIcon(":/Icons/AnnotationNote.png");
   QPixmap pixmap = icon.pixmap(32, 32);
   //QString tempdir = QString(std::getenv("TMPDIR"));
+
   QString tempdir = QString("/tmp/");
   tempdir.append("sticky.png");
   pixmap.save(tempdir);
@@ -1018,6 +1021,9 @@ void qSlicerAnnotationModuleWidget::onSnapShotButtonClicked()
         SLOT(snapshotAccepted()));
 
     }
+
+  this->enableAllAnnotationTools();
+  this->resetAllAnnotationTools();
 
   // show the dialog
   this->m_SnapShotDialog->setVisible(true);

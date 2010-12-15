@@ -52,5 +52,6 @@
         <file>Icons/LayoutOneUp3DView.png</file>
         <file>Icons/Data.png</file>
         <file>Icons/AnnotationPrint.png</file>
+        <file>Icons/upennpalmtree.png</file>
     </qresource>
 </RCC>

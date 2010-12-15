@@ -211,6 +211,7 @@ void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
   this->TextList->DeepCopy(node->TextList);
 }
 
+
 //-----------------------------------------------------------
 void vtkMRMLAnnotationNode::UpdateScene(vtkMRMLScene *scene)
 {

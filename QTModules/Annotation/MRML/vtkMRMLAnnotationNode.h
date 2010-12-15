@@ -53,6 +53,7 @@ public:
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
+
   void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
@@ -80,6 +81,7 @@ public:
     TEXT_VISIBLE,
     NUM_TEXT_ATTRIBUTE_TYPES,
      LockModifiedEvent,
+     CancelPlacementEvent,
   };
 
   virtual const char *GetAttributeTypesEnumAsString(int val);

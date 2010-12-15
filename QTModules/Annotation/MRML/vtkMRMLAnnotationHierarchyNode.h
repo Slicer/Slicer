@@ -31,6 +31,11 @@ public:
   // Get all children associated to this node
   virtual void GetDirectChildren(vtkCollection *children);
 
+  // Description:
+  // Delete all children of this node
+  // If a child is another hierarchyNode, the parent of it gets set to this' parent
+  virtual void DeleteDirectChildren();
+
 protected:
   vtkMRMLAnnotationHierarchyNode();
   ~vtkMRMLAnnotationHierarchyNode();

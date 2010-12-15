@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QMouseEvent>
+#include <QMessageBox>
 
 // CTK includes
 #include "ctkModelTester.h"
@@ -282,7 +283,7 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
   // case: delete a hierarchy only, if it is the only selection
   // warning: all directly under this hierarchy laying annotation nodes will be lost
   // if there are other hierarchies underneath the one which gets deleted, they will get reparented
-  if (selected.size()==1)
+  if (selected.count()==6)
     {
     // only one item was selected, is this a hierarchy?
     vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.first()));
@@ -291,8 +292,22 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
       {
       // this is exciting!!
 
-      // TODO
+      // get confirmation to delete
+      QMessageBox msgBox;
+      msgBox.setText("Do you really want to delete the selected hierarchy?");
+      msgBox.setInformativeText("This includes all directly associated annotations.");
+      msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      msgBox.setDefaultButton(QMessageBox::No);
+      int ret = msgBox.exec();
 
+      if (ret == QMessageBox::Yes)
+        {
+
+        hierarchyNode->DeleteDirectChildren();
+
+        this->mrmlScene()->RemoveNode(hierarchyNode);
+
+        }
       // all done, bail out
       return;
       }
@@ -302,8 +317,22 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
   // end hierarchy case
 
 
+  // get confirmation to delete
+  QMessageBox msgBox;
+  msgBox.setText("Do you really want to delete the selected annotations?");
+  msgBox.setInformativeText("This does not include hierarchies.");
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  msgBox.setDefaultButton(QMessageBox::No);
+  int ret = msgBox.exec();
+
+  if (ret == QMessageBox::No)
+    {
+    //bail out
+    return;
+    }
+
   // case:: delete all selected annotationNodes but no hierarchies
-  for (int i = 0; i < selected.size(); ++i)
+  for (int i = 0; i < selected.count(); ++i)
     {
 
     // we need to prevent looping through all columns

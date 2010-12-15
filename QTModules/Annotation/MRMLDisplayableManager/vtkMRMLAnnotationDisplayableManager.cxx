@@ -91,6 +91,7 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNodes()
   VTK_CREATE(vtkIntArray, nodeEvents);
   nodeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::LockModifiedEvent);
+  nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::CancelPlacementEvent);
   nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
 
 
@@ -147,6 +148,9 @@ void vtkMRMLAnnotationDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
       case vtkMRMLAnnotationNode::LockModifiedEvent:
         this->OnMRMLAnnotationNodeLockModifiedEvent(annotationNode);
         break;
+      case vtkMRMLAnnotationNode::CancelPlacementEvent:
+        this->Helper->RemoveSeeds();
+        break;
       }
     }
   else
@@ -190,6 +194,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     {
     // jump out
     vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Not the correct displayableManager, jumping out!")
+    // also delete potential seeds
+    this->m_ClickCounter->Reset();
+    this->Helper->RemoveSeeds();
     return;
     }
 

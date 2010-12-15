@@ -17,6 +17,7 @@
 #include "vtkMRMLAnnotationSnapshotNode.h"
 
 #include "qMRMLTreeWidget.h"
+#include "qSlicerCoreApplication.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -25,6 +26,7 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkPNGWriter.h>
 
 // STD includes
 #include <string>
@@ -317,6 +319,16 @@ void vtkSlicerAnnotationModuleLogic::AddNodeCompleted(vtkMRMLAnnotationHierarchy
 void vtkSlicerAnnotationModuleLogic::StopPlaceMode()
 {
 
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (!selectionNode)
+    {
+    vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
+    return;
+    }
+
+  selectionNode->SetActiveAnnotationID("");
+
   vtkMRMLInteractionNode *interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(
           this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
@@ -345,6 +357,23 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode()
 //---------------------------------------------------------------------------
 void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNode()
 {
+
+  // fire cancel placement event
+  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (!selectionNode)
+    {
+    vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
+    return;
+    }
+
+  selectionNode->SetActiveAnnotationID("CancelPlacement");
+
+  vtkMRMLAnnotationNode* tmpNode = vtkMRMLAnnotationNode::New();
+  tmpNode->SetScene(this->GetMRMLScene());
+  this->GetMRMLScene()->AddNode(tmpNode);
+  this->GetMRMLScene()->RemoveNode(tmpNode);
+  // end of cancel placement event
 
   if (!this->m_LastAddedAnnotationNode)
     {
@@ -1230,6 +1259,107 @@ void vtkSlicerAnnotationModuleLogic::RestoreAnnotationView(const char * id)
 
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
+{
+  if (!id)
+    {
+    return;
+    }
+
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("No scene set.")
+    return;
+    }
+
+  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+
+  if (!annotationNode)
+    {
+    vtkErrorMacro("MoveAnnotationUp: Could not get annotation node!")
+    return;
+    }
+
+  // get the corrsponding hierarchy
+  vtkMRMLAnnotationHierarchyNode* hNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(this->GetMRMLScene(),annotationNode->GetID()));
+
+  if (!hNode)
+    {
+    vtkErrorMacro("MoveAnnotationUp: Could not get hierarchy node!")
+    return;
+    }
+
+  int numberOfHierarchies = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
+
+  // this is the buffer
+  vtkMRMLAnnotationHierarchyNode* bufferNode = 0;
+
+  // this is the current node used during the loop
+  vtkMRMLAnnotationHierarchyNode* cNode = 0;
+
+  for(int i=0; i<numberOfHierarchies; ++i)
+    {
+
+
+    cNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLAnnotationHierarchyNode"));
+
+    // we buffer the previous node
+    bufferNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i-1,"vtkMRMLAnnotationHierarchyNode"));;
+
+    if (!strcmp(cNode->GetID(),hNode->GetID()))
+      {
+      // this is the hierarchy of the selected node
+
+      // jump out of the loop
+      break;
+      }
+
+    }
+
+  if (!bufferNode)
+    {
+    // there is no node before the selected one, so we jump out
+    return;
+    }
+
+  if (!bufferNode->GetHideFromEditors())
+    {
+    // this is a manually created hierarchy, we don't want to move towards this one
+    return;
+    }
+
+
+
+  // now we copy the hierarchy node
+  vtkMRMLAnnotationHierarchyNode* copyHNode = vtkMRMLAnnotationHierarchyNode::New();
+  copyHNode->CopyWithoutModifiedEvent(hNode);
+
+  // now we copy the corresponding annotation node
+  vtkMRMLAnnotationNode* copyANode = vtkMRMLAnnotationNode::New();
+  copyANode->CopyWithoutModifiedEvent(annotationNode);
+
+  const char* oldId = annotationNode->GetID();
+
+  // ..and delete the annotation
+  this->GetMRMLScene()->RemoveNode(annotationNode);
+  // ..and the hierarchy
+  this->GetMRMLScene()->RemoveNode(hNode);
+
+  // ..and now insert the copy of the annotation before the buffer
+  this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
+
+  // ..and now insert the copy of the hierarchyNode before our annotation
+  this->GetMRMLScene()->InsertBeforeNode(copyANode,copyHNode);
+
+  copyHNode->SetDisplayableNodeID(copyANode->GetID());
+  copyANode->Modified();
+
+
+
+}
+
 //---------------------------------------------------------------------------
 //
 //
@@ -1417,20 +1547,6 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
 
   vtkStdString nameString = vtkStdString(name);
 
-
-  // we need to tell the displayablemanagers to not listen for an add event
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-  if (!selectionNode)
-    {
-    vtkErrorMacro("AddAnnotationNode: No selection node in the scene.");
-    return;
-    }
-
-  const char* oldActiveAnnotation = selectionNode->GetActiveAnnotationID();
-
-  selectionNode->SetActiveAnnotationID("vtkMRMLAnnotationSnapshotNode");
-
   vtkMRMLAnnotationSnapshotNode * newSnapshotNode = vtkMRMLAnnotationSnapshotNode::New();
   newSnapshotNode->SetScene(this->GetMRMLScene());
   if (strcmp(nameString,""))
@@ -1449,8 +1565,6 @@ void vtkSlicerAnnotationModuleLogic::CreateSnapShot(const char* name, const char
   newSnapshotNode->HideFromEditorsOff();
   this->GetMRMLScene()->AddNode(newSnapshotNode);
 
-  // now restore the activeAnnotation
-  selectionNode->SetActiveAnnotationID(oldActiveAnnotation);
 }
 
 //---------------------------------------------------------------------------
@@ -1664,7 +1778,7 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
     return 0;
     }
 
-  vtkStdString html = vtkStdString("<tr><td valign='middle'>");
+  vtkStdString html = vtkStdString("<tr bgcolor=#E0E0E0><td valign='middle'>");
 
   // level
   for (int i=0; i<level; ++i)
@@ -1681,12 +1795,12 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
 
   html += "&nbsp;";
 
-  html += "</td><td valign='middle'><b>";
+  html += "</td><td valign='middle'>";
 
   // text
   html += hierarchyNode->GetName();
 
-  html += "</b></td></tr>";
+  html += "</td></tr>";
 
   this->m_StringHolder = html;
 
@@ -1718,12 +1832,46 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
 
   html += "</td><td valign='middle'>";
 
-  html += this->GetAnnotationMeasurement(annotationNode->GetID(),true);
 
+  // if this is a snapshotNode, we want to include the image here
+  if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
+    {
+    vtkImageData* image = this->GetSnapShotScreenshot(annotationNode->GetID());
+
+    if (image)
+      {
+
+      QString tempPath = qSlicerCoreApplication::application()->temporaryPath();
+      tempPath.append(annotationNode->GetID());
+      tempPath.append(".png");
+
+      QByteArray tempPathArray = tempPath.toLatin1();
+
+      VTK_CREATE(vtkPNGWriter,w);
+      w->SetInput(image);
+      w->SetFileName(tempPathArray.data());
+      w->Write();
+
+      html += "<img src='";
+      html += tempPathArray.data();
+      html += "' width='400'>";
+
+      }
+    }
+  else
+    {
+    html += this->GetAnnotationMeasurement(annotationNode->GetID(),true);
+    }
   html += "</td><td valign='middle'>";
 
   // text
   html += this->GetAnnotationText(annotationNode->GetID());
+  // if this is a snapshotNode, we want to include the image here
+  if (annotationNode->IsA("vtkMRMLAnnotationSnapshotNode"))
+    {
+    html += "<br><br>";
+    html += this->GetSnapShotDescription(annotationNode->GetID());
+    }
 
   html += "</td></tr>";
 

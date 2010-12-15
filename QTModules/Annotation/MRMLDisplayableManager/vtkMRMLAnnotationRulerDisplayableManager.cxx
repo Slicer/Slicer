@@ -151,7 +151,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
   if (!rulerNode)
     {
-    vtkErrorMacro("CreateWidget: Could not get spline node!")
+    vtkErrorMacro("CreateWidget: Could not get ruler node!")
     return 0;
     }
 

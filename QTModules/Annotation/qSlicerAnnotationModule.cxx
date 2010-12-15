@@ -112,7 +112,7 @@ QString qSlicerAnnotationModule::helpText() const
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModule::acknowledgementText() const
 {
-  return "This module was developed by Daniel Haehn, Kilian Pohl and Yong Zhang. Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper and Ron Kikinis. The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).";
+  return "<img src=':/Icons/upennpalmtree.png'><br><br>This module was developed by Daniel Haehn, Kilian Pohl and Yong Zhang. Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper and Ron Kikinis. The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).";
 }
 
 //-----------------------------------------------------------------------------
