@@ -32,7 +32,7 @@ if(WIN32)
     SOURCE_DIR python-build
     UPDATE_COMMAND ""
     PATCH_COMMAND ${python_PATCH_COMMAND}
-    CONFIGURE_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /Upgrade
+    CONFIGURE_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln}
     BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project select
     BUILD_IN_SOURCE 1
     INSTALL_COMMAND ""
