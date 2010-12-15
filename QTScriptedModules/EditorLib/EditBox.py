@@ -38,6 +38,7 @@ class EditBox(object):
     self.effects = []
     self.effectMapper = qt.QSignalMapper()
     self.effectMapper.connect('mapped(const QString&)', self.selectEffect)
+    self.editUtil = EditUtil.EditUtil()
 
     # embedded boolean specifies whether or not this edit box is to be embedded
     # into another moduleWidget
@@ -306,9 +307,9 @@ itcl::body EditBox::setButtonState {effect state} {
     # If there is no background volume or label map, do nothing
     #
     # TODO should do this regardless of whether or not there is an option
-    if not EditUtil.getBackgroundVolume():
+    if not self.editUtil.getBackgroundVolume():
       return
-    if not EditUtil.getLabelVolume():
+    if not self.editUtil.getLabelVolume():
       return
 
     app.restoreOverrideCursor()

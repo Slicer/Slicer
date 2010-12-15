@@ -24,6 +24,7 @@ class EditColor(object):
     self.parameterNode = None
     self.parameterNodeTag = None
     self.parameter = parameter
+    self.editUtil = EditUtil.EditUtil()
     if parent == 0:
       self.parent = qt.QFrame()
       self.parent.setLayout( qt.QVBoxLayout() )
@@ -101,9 +102,17 @@ class EditColor(object):
       # parameter does not exist - probably intializing
       return
     label = int(self.parameterNode.GetParameter(self.parameter))
-    self.colorSpin.setValue(label)
+    if self.colorSpin.destroyed:
+      # TODO: why does the python class still exist if the widget is destroyed?
+      # - this only happens when reloading the module.  The owner of the 
+      # instance is gone and the widgets are gone, but this instance still
+      # has observer on the parameter node - this indicates memory leaks
+      # that need to be fixed
+      self.cleanup()
+    else:
+      self.colorSpin.setValue(label)
 
-    colorNode = self.getColorNode()
+    colorNode = self.editUtil.getColorNode()
     if colorNode:
       self.frame.setDisabled(0)
       lut = colorNode.GetLookupTable()
@@ -114,19 +123,6 @@ class EditColor(object):
     else:
       self.frame.setDisabled(1)
 
-  #
-  # get the color node for the Red slice view (we'll assume it exists 
-  # since we are in the editor)
-  #
-  def getColorNode(self):
-    labelNode = EditUtil.getLabelVolume()
-    if not labelNode:
-      return None
-    dispNode = labelNode.GetDisplayNode()
-    if not dispNode:
-      return None
-    return ( dispNode.GetColorNode() )
-          
 
   def showColorBox(self):
-    self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.getColorNode())
+    self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.editUtil.getColorNode())

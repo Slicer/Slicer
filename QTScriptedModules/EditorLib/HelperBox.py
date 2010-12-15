@@ -504,7 +504,6 @@ class HelperBox(object):
       # match something like "CT-lung-label1"
       regexp = "%s-.*-label" % masterName
       if re.match(regexp, vName):
-        print ("adding structure %s"%vName)
         # figure out what name it is
         # - account for the fact that sometimes a number will be added to the end of the name
         start = 1+len(masterName)
@@ -539,7 +538,6 @@ class HelperBox(object):
         self.structures.setItem(self.row,3,item)
         self.items.append(item)
         self.row += 1
-        print ("added structure %s"%vName)
 
       vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
     

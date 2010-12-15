@@ -65,6 +65,7 @@ class EditOptions(object):
     self.widgets = []
     self.parameterNode = None
     self.parameterNodeTag = None
+    self.editUtil = EditUtil.EditUtil()
     if parent == 0:
       self.parent = qt.QFrame()
       self.parent.setLayout( qt.QVBoxLayout() )
@@ -130,11 +131,27 @@ class EditOptions(object):
   def setRangeWidgetToBackgroundRange(self, rangeWidget):
     if not rangeWidget:
       return
-    backgroundVolume = EditUtil.getBackgroundVolume()
+    backgroundVolume = self.editUtil.getBackgroundVolume()
     if backgroundVolume:
       backgroundImage = backgroundVolume.GetImageData()
       if backgroundImage:
         rangeWidget.minimum, rangeWidget.maximum = backgroundImage.GetScalarRange()
+
+  def getPaintLabel(self):
+    """ returns int index of the current paint label """
+    return int(self.parameterNode.GetParameter('label'))
+
+  def getPaintColor(self):
+    """ returns rgba tuple for the current paint color """
+    labelVolume = self.getLabelVolume()
+    if labelVolume:
+      volumeDisplayNode = labelVolume.GetDisplayNode()
+      if volumeDisplayNode != '':
+        colorNode = volumeDisplayNode.GetColorNode()
+        lut = colorNode.GetLookupTable()
+        index = self.getPaintLabel()
+        return lut.GetTableValue(index)
+    return (0,0,0,0)
 
 #### Labeler
 class LabelerOptions(EditOptions):
@@ -243,7 +260,6 @@ class LabelerOptions(EditOptions):
 #### Paint
 class PaintOptions(LabelerOptions):
   """ Paint-specfic gui
-  TODO: there is no text entry or feedback of brush radius
   """
 
   def __init__(self, parent=0):
@@ -853,7 +869,10 @@ class ThresholdOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
-    self.setRangeWidgetToBackgroundRange(self.threshold)
+    lo, hi = self.editUtil.getBackgroundVolume().GetImageData().GetScalarRange()
+    self.threshold.minimum, self.threshold.maximum = lo, hi
+    self.threshold.minimumValue = lo + 0.25 * (hi-lo)
+    self.threshold.maximumValue = hi
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
 
@@ -869,6 +888,12 @@ class ThresholdOptions(EditOptions):
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)
 
+    self.timer = qt.QTimer()
+    self.previewState = 0
+    self.previewStep = 1
+    self.timer.start(200)
+
+    self.timer.connect('timeout()', self.preview)
     self.useForPainting.connect('clicked()', self.onUseForPainting)
     self.threshold.connect('valuesChanged(double,double)', self.onThresholdValuesChanged)
     self.apply.connect('clicked()', self.onApply)
@@ -879,6 +904,7 @@ class ThresholdOptions(EditOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
+    self.timer.stop()
     super(ThresholdOptions,self).destroy()
 
   # note: this method needs to be implemented exactly as-is
@@ -928,8 +954,11 @@ class ThresholdOptions(EditOptions):
         return
     self.updatingGUI = True
     super(ThresholdOptions,self).updateGUIFromMRML(caller,event)
-    self.threshold.setMinimumValue( float(self.parameterNode.GetParameter("Threshold,min")) )
-    self.threshold.setMaximumValue( float(self.parameterNode.GetParameter("Threshold,max")) )
+    min = self.parameterNode.GetParameter("Threshold,min")
+    max = self.parameterNode.GetParameter("Threshold,max")
+    self.threshold.setMinimumValue( int(float(min)) )
+    self.threshold.setMaximumValue( int(float(max)) )
+    tcl('foreach te [itcl::find objects -class ThresholdEffect] { $te configure -range "%s %s" }' % (min, max))
     self.updatingGUI = False
 
   def onApply(self):
@@ -951,6 +980,18 @@ class ThresholdOptions(EditOptions):
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
+
+  def preview(self):
+    opacity = self.previewState / 10.
+    min = self.parameterNode.GetParameter("Threshold,min")
+    max = self.parameterNode.GetParameter("Threshold,max")
+    tcl('foreach te [itcl::find objects -class ThresholdEffect] { $te configure -range "%s %s" }' % (min, max))
+    tcl('foreach te [itcl::find objects -class ThresholdEffect] { $te preview "%g %g %g %g" }' % (self.getPaintColor()[:3] + (opacity,)))
+    self.previewState += self.previewStep
+    if self.previewState >= 10:
+      self.previewStep = -1
+    if self.previewState <= 0:
+      self.previewStep = 1
 
 #### Morphology - intermediate class for erode and dilate
 class MorphologyOptions(EditOptions):
@@ -1315,7 +1356,7 @@ class MakeModelOptions(EditOptions):
     # based on the current editor parameters
     #
 
-    volumeNode = EditUtil.getLabelVolume()
+    volumeNode = self.editUtil.getLabelVolume()
     if not volumeNode:
       return
 
