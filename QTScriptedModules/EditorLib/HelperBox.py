@@ -2,6 +2,7 @@ import os
 import re
 from __main__ import tcl
 from __main__ import qt
+from __main__ import vtk
 from __main__ import slicer
 import ColorBox
 
@@ -286,14 +287,14 @@ class HelperBox(object):
     # find the Image Label Combine
     # - call Enter to be sure GUI has been built
     #
-    combiner = vtk.vtkImageLabelCombine()
+    combiner = slicer.vtkImageLabelCombine()
 
     #
     # iterate through structures merging into merge volume
     #
     for row in xrange(rows):
-      structureName = self.structures.item(row,0).text()
-      structureVolume = self.structureVolume( structureName)
+      structureName = self.structures.item(row,2).text()
+      structureVolume = self.structureVolume( structureName )
 
       if row == 0:
         # first row, just copy into merge volume
@@ -311,7 +312,7 @@ class HelperBox(object):
     for row in xrange(rows):
       structureName = self.structures.item(row,0).text()
       structureVolume = self.structureVolume( structureName )
-      structureVolume.GetImageData(Modified)
+      structureVolume.GetImageData.Modified()
 
     selectionNode = self.ApplicationLogic().GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
@@ -738,7 +739,7 @@ class HelperBox(object):
     self.structuresView.connect("clicked(QModelIndex)", self.onStructuresClicked)
     # invoked event
     self.splitButton.connect("clicked()", self.split)
-    self.mergeButton.connect("clicked()", self.merge)
+    self.mergeButton.connect("clicked()", self.mergeStructures)
     self.mergeAndBuildButton.connect("clicked()", self.onMergeAndBuild)
     self.setMergeButton.connect("clicked()", self.labelSelectDialog)
 
@@ -915,3 +916,7 @@ class HelperBox(object):
     # TODO: cannot call the exec() method from the pythonqt
     #self.dialog.exec()
     return True
+
+  def statusText(self, text):
+    # TODO: need an application level status line (and progress bar)
+    print( text )
