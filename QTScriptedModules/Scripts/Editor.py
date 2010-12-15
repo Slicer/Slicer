@@ -37,8 +37,19 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
 #
 
 class EditorWidget:
-  def __init__(self, parent=None):
+
+  # Lower priorities:
+  #->> additional option for list of allowed labels - texts
+  
+  def __init__(self, parent=None, embedded=False, suppliedEffects=[], showVolumesFrame=True):
     self.observerTags = []
+
+    # set attributes from ctor parameters
+    self.embedded = embedded
+    self.suppliedEffects = suppliedEffects
+    self.showVolumesFrame = showVolumesFrame
+
+    #->> check to make sure it works with a supplied parent
     if not parent:
       self.parent = qt.QFrame()
       self.parent.setLayout( qt.QVBoxLayout() )
@@ -48,73 +59,119 @@ class EditorWidget:
     else:
       self.parent = parent
       self.layout = parent.layout()
+      self.setup()
 
   def enter(self):
-    compositeNode = self.getCompositeNode()
-    masterNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetBackgroundVolumeID() )
-    mergeNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetLabelVolumeID() )
-    self.setMasterNode(masterNode)
-    self.setMergeNode(mergeNode)
-
+    # get the master and merge nodes from the composite node associated
+    # with the red slice, but only if showing volumes
+    if (self.showVolumesFrame == True):
+      compositeNode = self.getCompositeNode()
+      masterNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetBackgroundVolumeID() )
+      mergeNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetLabelVolumeID() )
+      self.setMasterNode(masterNode)
+      self.setMergeNode(mergeNode)
+    # if not showing volumes, the caller is responsible for setting the master and
+    # merge nodes, most likely according to a widget within the caller
+    
   def exit(self):
     pass
 
   # sets the node for the volume to be segmented
   def setMasterNode(self, newMasterNode):
     if newMasterNode and newMasterNode.GetClassName() == "vtkMRMLScalarVolumeNode":
-      self.helper.setMasterVolume(newMasterNode)
-
+      if self.helper:
+        self.helper.setMasterVolume(newMasterNode)
+      
   # sets the node for the label map
   def setMergeNode(self, newMergeNode):
     if newMergeNode:
-      self.helper.setMergeVolume(newMergeNode)
+      if self.helper:
+        self.helper.setMergeVolume(newMergeNode)
 
   # sets up the widget
   def setup(self):
-
     #
     # Editor Volumes
     #
-    self.volumes = ctk.ctkCollapsibleButton(self.parent)
-    self.volumes.setLayout(qt.QVBoxLayout())
-    self.volumes.setText("Create and Select Label Maps")
-    self.layout.addWidget(self.volumes)
-
-
+    # only if showing volumes
+    if (self.showVolumesFrame == True):
+      self.volumes = ctk.ctkCollapsibleButton(self.parent)
+      self.volumes.setLayout(qt.QVBoxLayout())
+      self.volumes.setText("Create and Select Label Maps")
+      self.layout.addWidget(self.volumes)
+    #->> otherwise self.volumes = None (needed below as parent for self.helper)
+    else:
+      self.volumes = None
+    
     # create the helper box - note this isn't a Qt widget
     #  but a helper class that creates Qt widgets in the given parent
-    self.helper = EditorLib.HelperBox(self.volumes)
+    if (self.showVolumesFrame == True):
+      self.helper = EditorLib.HelperBox(self.volumes)
+    else:
+      self.helper = None
 
     #
     # Tool Frame
     #
-    self.tools = ctk.ctkCollapsibleButton(self.parent)
-    self.tools.setLayout(qt.QVBoxLayout())
-    self.tools.setText("Edit Selected Label Map")
-    self.layout.addWidget(self.tools)
 
-    self.toolsColor = EditorLib.EditColor(self.tools)
+    # (we already have self.parent for the parent widget, and self.layout for the layout)
+    # create the frames for the EditColor, toolsOptionsFrame and EditBox
 
-    self.toolsFrame = qt.QFrame(self.tools)
-    self.toolsFrame.setLayout(qt.QHBoxLayout())
-    self.tools.layout().addStretch(1)
-    self.tools.layout().addWidget(self.toolsFrame)
+    # if creating a standard editor widget (i.e. not an embedded widget), create
+    # collapsible button for entire "edit label maps" section
+    if (self.embedded == False):
+      # create collapsible button for entire "edit label maps" section
+      self.editLabelMapsFrame = ctk.ctkCollapsibleButton(self.parent)
+      self.editLabelMapsFrame.setLayout(qt.QVBoxLayout())
+      self.editLabelMapsFrame.setText("Edit Selected Label Map")
+      self.layout.addWidget(self.editLabelMapsFrame)
+    # if creating embedded widget, simply use the parent for the widgets in the
+    # "edit label maps" section
+    else:
+      self.editLabelMapsFrame = self.parent
 
-    self.toolOptionsFrame = qt.QFrame(self.toolsFrame)
-    self.toolOptionsFrame.setLayout(qt.QVBoxLayout())
-    self.toolOptionsFrame.setMinimumWidth(150)
-    #self.toolOptionsFrame.setStyleSheet('border: 2px solid black')
-    self.toolsFrame.layout().addWidget(self.toolOptionsFrame)
+    # create and add EditColor directly to "edit label map" section
+    self.toolsColor = EditorLib.EditColor(self.editLabelMapsFrame)
 
-    self.toolBoxFrame = qt.QFrame(self.toolsFrame)
-    self.toolBoxFrame.setLayout(qt.QVBoxLayout())
-    self.toolsFrame.layout().addWidget(self.toolBoxFrame)
+    # if creating a standard editor widget, create frame holding both the effect
+    # options and edit box:
+    if (self.embedded == False):
+      self.effectsToolsFrame = qt.QFrame(self.editLabelMapsFrame)
+      self.effectsToolsFrame.setLayout(qt.QHBoxLayout())
+      self.editLabelMapsFrame.layout().addStretch(1)
+      self.editLabelMapsFrame.layout().addWidget(self.effectsToolsFrame)
+    # if creating embedded widget, once again use the parent
+    else:
+      self.effectsToolsFrame = self.parent
 
-    self.toolsBox = EditorLib.EditBox(self.toolBoxFrame, optionsFrame=self.toolOptionsFrame)
+    # create and add frame for effect options
+    self.createEffectOptionsFrame()
 
-    # Add vertical spacer
+    # create and add frame for EditBox
+    self.createEditBox()
+
+    # Add spacer to layout
     self.layout.addStretch(1)
 
+  # creates the frame for the effect options
+  # assumes self.effectsToolsFrame and its layout has already been created
+  def createEffectOptionsFrame(self):
+    if (not self.effectsToolsFrame):
+      return
+    self.effectOptionsFrame = qt.QFrame(self.effectsToolsFrame)
+    self.effectOptionsFrame.setLayout(qt.QVBoxLayout())
+    self.effectOptionsFrame.setMinimumWidth(150)
+    #self.effectOptionsFrame.setStyleSheet('border: 2px solid black')
+    self.effectsToolsFrame.layout().addWidget(self.effectOptionsFrame)
+
+  # creates the EditBox and its frame
+  # assumes self.effectsToolsFrame, its layout, and effectOptionsFrame has already been created
+  def createEditBox(self):
+    self.editBoxFrame = qt.QFrame(self.effectsToolsFrame)
+    self.editBoxFrame.setLayout(qt.QVBoxLayout())
+    self.effectsToolsFrame.layout().addWidget(self.editBoxFrame)
+    self.toolsBox = EditorLib.EditBox(self.editBoxFrame, optionsFrame=self.effectOptionsFrame, embedded=self.embedded, suppliedEffects=self.suppliedEffects)
+    
   #
   # get the slice composite node for the Red slice view (we'll assume it exists 
   # since we are in the editor) to get the current background and label
@@ -126,3 +183,5 @@ class EditorWidget:
       if compNode.GetLayoutName() == 'Red':
         return compNode
     return None
+
+  #->> TODO: check to make sure editor module smoothly handles interactive changes to the master and merge nodes

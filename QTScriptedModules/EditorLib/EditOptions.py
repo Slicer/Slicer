@@ -1331,22 +1331,21 @@ class MakeModelOptions(EditOptions):
     parameters = {}
     parameters['Name'] = self.modelName.text
     parameters["InputVolume"] = volumeNode.GetID()
-    parameters['FilterType'] = "Sinc"
-    parameters['GenerateAll'] = "0"
-    # TODO: 
-    parameters['Labels'] = tcl('EditorGetPaintLabel')
-    parameters["JointSmooth"] = "1"
-    parameters["SplitNormals"] = "1"
-    parameters["PointNormals"] = "1"
-    parameters["SkipUnNamed"] = "1"
-    parameters["Start"] = "-1"
-    parameters["End"] = "-1"
+    parameters['FilterType'] = "Sinc" # TODO may or may not work
+    parameters['GenerateAll'] = True
+    #parameters['Labels'] = tcl('EditorGetPaintLabel') # TODO
+    parameters["JointSmooth"] = True
+    parameters["SplitNormals"] = True
+    parameters["PointNormals"] = True
+    parameters["SkipUnNamed"] = True
+    parameters["StartLabel"] = "-1" # TODO - may or may not work
+    parameters["EndLabel"] = "-1" # TODO - may or may not work
     if self.smooth.checked:
-      parameters["Decimate"] = "0.25"
-      parameters["Smooth"] = "10"
+      parameters["Decimate"] = 0.25
+      parameters["Smooth"] = 10
     else:
-      parameters["Decimate"] = "0"
-      parameters["Smooth"] = "0"
+      parameters["Decimate"] = 0
+      parameters["Smooth"] = 0
 
     #
     # output 
