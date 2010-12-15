@@ -26,9 +26,10 @@
 
 // CTK includes
 #include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
+// SlicerCore includes
 #include "vtkSlicerConfigure.h" // For Slicer_USE_KWWIDGETS, Slicer_USE_PYTHONQT
-
 #include "qSlicerBaseQTCoreExport.h"
 
 class QSettings;
@@ -46,7 +47,7 @@ class vtkMRMLScene;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 {
   Q_OBJECT
-
+  QVTK_OBJECT
 public:
 
   typedef QApplication Superclass;
@@ -204,6 +205,10 @@ protected slots:
 
   ///
   virtual void handleCommandLineArguments();
+  void onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long);
+  void processAppLogicModified();
+  void processAppLogicReadData();
+  void processAppLogicWriteData();
 
 signals:
   void mrmlSceneChanged(vtkMRMLScene* mrmlScene);

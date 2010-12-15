@@ -413,6 +413,12 @@ void qSlicerCoreApplication::initialize(bool& exitWhenDone)
   // Create the application Logic object,
   VTK_CREATE(vtkSlicerApplicationLogic, _appLogic);
   d->AppLogic = _appLogic;
+  qvtkConnect(d->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent,
+              this, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
+  qvtkConnect(d->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent,
+              this, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
+  qvtkConnect(d->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent,
+              this, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long)));
 
   // pass through event handling once without observing the scene
   // -- allows any dependent nodes to be created
@@ -834,4 +840,51 @@ QString qSlicerCoreApplication::platform()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->Platform;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication
+::onSlicerApplicationLogicRequest(vtkObject* appLogic, void* delay, unsigned long event)
+{
+  Q_D(qSlicerCoreApplication);
+  Q_ASSERT(d->AppLogic.GetPointer() == vtkSlicerApplicationLogic::SafeDownCast(appLogic));
+  int delayInMs = *reinterpret_cast<int *>(delay);
+  switch(event)
+    {
+    case vtkSlicerApplicationLogic::RequestModifiedEvent:
+      QTimer::singleShot(delayInMs,
+                         this, SLOT(processAppLogicModified()));
+      break;
+    case vtkSlicerApplicationLogic::RequestReadDataEvent:
+      QTimer::singleShot(delayInMs,
+                         this, SLOT(processAppLogicReadData()));
+      break;
+    case vtkSlicerApplicationLogic::RequestWriteDataEvent:
+      QTimer::singleShot(delayInMs,
+                         this, SLOT(processAppLogicWriteData()));
+      break;
+    default:
+      break;
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::processAppLogicModified()
+{
+  Q_D(qSlicerCoreApplication);
+  d->AppLogic->ProcessModified();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::processAppLogicReadData()
+{
+  Q_D(qSlicerCoreApplication);
+  d->AppLogic->ProcessReadData();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::processAppLogicWriteData()
+{
+  Q_D(qSlicerCoreApplication);
+  d->AppLogic->ProcessWriteData();
 }

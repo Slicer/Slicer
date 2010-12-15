@@ -780,14 +780,10 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
     this->WriteDataQueueActive = true;
     this->WriteDataQueueActiveLock->Unlock();
 
-#if defined(Slicer_USE_KWWIDGETS)
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         100, this, "ProcessModified");
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         100, this, "ProcessReadData");
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         100, this, "ProcessWriteData");
-#endif //defined(Slicer_USE_KWWIDGETS)
+    int delay = 1000;
+    this->InvokeEvent(vtkSlicerApplicationLogic::RequestModifiedEvent, &delay);
+    this->InvokeEvent(vtkSlicerApplicationLogic::RequestReadDataEvent, &delay);
+    this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
     }
 }
 
@@ -796,6 +792,7 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 {
   if (this->ProcessingThreadId != -1)
     {
+    std::cout << "vtkSlicerApplicationLogic::TerminateProcessingThread()" << std::endl;
     this->ModifiedQueueActiveLock->Lock();
     this->ModifiedQueueActive = false;
     this->ModifiedQueueActiveLock->Unlock();
@@ -807,7 +804,7 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
     this->WriteDataQueueActiveLock->Lock();
     this->WriteDataQueueActive = false;
     this->WriteDataQueueActiveLock->Unlock();
-    
+
     this->ProcessingThreadActiveLock->Lock();
     this->ProcessingThreadActive = false;
     this->ProcessingThreadActiveLock->Unlock();
@@ -1021,7 +1018,6 @@ int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
 //     std::cout << " [" << (*this->InternalModifiedQueue).size()
 //               << "] " << std::endl;
     this->ModifiedQueueLock->Unlock();
-    
     return true;
     }
 
@@ -1049,7 +1045,6 @@ int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char 
 //     std::cout << " [" << (*this->InternalReadDataQueue).size()
 //               << "] " << std::endl;
     this->ReadDataQueueLock->Unlock();
-    
     return true;
     }
 
@@ -1077,7 +1072,6 @@ int vtkSlicerApplicationLogic::RequestWriteData( const char *refNode, const char
 //     std::cout << " [" << (*this->InternalWriteDataQueue).size()
 //               << "] " << std::endl;
     this->WriteDataQueueLock->Unlock();
-    
     return true;
     }
 
@@ -1111,7 +1105,7 @@ vtkSlicerApplicationLogic
                                                          displayData,
                                                          deleteFile) );
     this->ReadDataQueueLock->Unlock();
-    
+
     return true;
     }
 
@@ -1122,191 +1116,154 @@ vtkSlicerApplicationLogic
 
 void vtkSlicerApplicationLogic::ProcessModified()
 {
-  int active = true;
-  vtkSmartPointer<vtkObject> obj = 0;
-  
   // Check to see if we should be shutting down
   this->ModifiedQueueActiveLock->Lock();
-  active = this->ModifiedQueueActive;
+  int active = this->ModifiedQueueActive;
   this->ModifiedQueueActiveLock->Unlock();
-  
-  if (active)
+
+  if (!active)
     {
+    return;
+    }
 
-    // pull an object off the queue to modify
-    this->ModifiedQueueLock->Lock();
-    if ((*this->InternalModifiedQueue).size() > 0)
-      {
-      obj = (*this->InternalModifiedQueue).front();
-      (*this->InternalModifiedQueue).pop();
-
-      // pop off any extra copies of the same object to save some updates
-      while (!(*this->InternalModifiedQueue).empty() 
-                    && (obj == (*this->InternalModifiedQueue).front()))
-        {
-        (*this->InternalModifiedQueue).pop();
-        obj->Delete(); // decrement ref count
-        }
-      }
-    this->ModifiedQueueLock->Unlock();
-    
-#if defined(Slicer_USE_KWWIDGETS)
-    // if this is a string array, try to evaluate the entries in the interp
-    //  - this allows threads to indirectly access the interpreter
-    vtkStringArray *stringArray = vtkStringArray::SafeDownCast( obj );
-    if ( stringArray != NULL )
-      {
-      Tcl_Interp *interp = vtkKWApplication::GetMainInterp();
-      int numValues = stringArray->GetNumberOfValues();
-      for (int i = 0; i < numValues; i++)
-        {
-        const char *script = stringArray->GetValue( i ).c_str();
-        int returnCode;
-#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION <= 2
-        returnCode = Tcl_GlobalEval(interp, script);
-#else
-        returnCode = Tcl_EvalEx(interp, script, -1, TCL_EVAL_GLOBAL);
-#endif  
-        if ( returnCode != TCL_OK )
-          {
-          vtkErrorMacro ("Error evaluating message from script.\n" << 
-            script << "\n" <<Tcl_GetStringResult (interp) );
-          }
-        }
-      }
-#endif //defined(Slicer_USE_KWWIDGETS)
-
-    // Modify the object
-    //  - decrement reference count that was increased when it was added to the queue
-    if (obj)
-      {
-      obj->Modified();
-      obj->Delete();
-      obj = 0;
-      }
-  }
-
-#if defined(Slicer_USE_KWWIDGETS)
-  // schedule the next timer
+  vtkSmartPointer<vtkObject> obj = 0;
+  // pull an object off the queue to modify
+  this->ModifiedQueueLock->Lock();
   if ((*this->InternalModifiedQueue).size() > 0)
     {
-    // schedule the next timer sooner in case there is stuff in the queue
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         5, this, "ProcessModified");
+    obj = (*this->InternalModifiedQueue).front();
+    (*this->InternalModifiedQueue).pop();
+
+    // pop off any extra copies of the same object to save some updates
+    while (!(*this->InternalModifiedQueue).empty() 
+           && (obj == (*this->InternalModifiedQueue).front()))
+      {
+      (*this->InternalModifiedQueue).pop();
+      obj->Delete(); // decrement ref count
+      }
     }
-  else
+  this->ModifiedQueueLock->Unlock();
+
+#if defined(Slicer_USE_KWWIDGETS)
+  // if this is a string array, try to evaluate the entries in the interp
+  //  - this allows threads to indirectly access the interpreter
+  vtkStringArray *stringArray = vtkStringArray::SafeDownCast( obj->GetPointer() );
+  if ( stringArray != NULL )
     {
-    // schedule the next timer for a while later
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         100, this, "ProcessModified");
+    Tcl_Interp *interp = vtkKWApplication::GetMainInterp();
+    int numValues = stringArray->GetNumberOfValues();
+    for (int i = 0; i < numValues; i++)
+      {
+      const char *script = stringArray->GetValue( i ).c_str();
+      int returnCode;
+#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION <= 2
+      returnCode = Tcl_GlobalEval(interp, script);
+#else
+      returnCode = Tcl_EvalEx(interp, script, -1, TCL_EVAL_GLOBAL);
+#endif
+      if ( returnCode != TCL_OK )
+        {
+        vtkErrorMacro ("Error evaluating message from script.\n" << 
+                       script << "\n" <<Tcl_GetStringResult (interp) );
+        }
+      }
     }
 #endif //defined(Slicer_USE_KWWIDGETS)
+
+  // Modify the object
+  //  - decrement reference count that was increased when it was added to the queue
+  if (obj.GetPointer())
+    {
+    obj->Modified();
+    obj->Delete();
+    obj = 0;
+    }
+
+  // schedule the next timer sooner in case there is stuff in the queue
+  // otherwise for a while later
+  int delay = (*this->InternalModifiedQueue).size() > 0 ? 0: 200;
+  this->InvokeEvent(vtkSlicerApplicationLogic::RequestModifiedEvent, &delay);
 }
 
 void vtkSlicerApplicationLogic::ProcessReadData()
 {
-  int active = true;
-  ReadDataRequest req;
-  
   // Check to see if we should be shutting down
   this->ReadDataQueueActiveLock->Lock();
-  active = this->ReadDataQueueActive;
+  int active = this->ReadDataQueueActive;
   this->ReadDataQueueActiveLock->Unlock();
-  
-  if (active)
+
+  if (!active)
     {
-    // pull an object off the queue 
-    this->ReadDataQueueLock->Lock();
-    if ((*this->InternalReadDataQueue).size() > 0)
-      {
-      req = (*this->InternalReadDataQueue).front();
-      (*this->InternalReadDataQueue).pop();
-
-      }
-    this->ReadDataQueueLock->Unlock();
-
-    if (!req.GetNode().empty())
-      {
-      if (req.GetIsScene())
-        {
-        this->ProcessReadSceneData(req);
-        }
-      else
-        {
-        this->ProcessReadNodeData(req);
-        }
-      }
+    return;
     }
 
-#if defined(Slicer_USE_KWWIDGETS)
-  // schedule the next timer
+  ReadDataRequest req;
+  // pull an object off the queue
+  this->ReadDataQueueLock->Lock();
   if ((*this->InternalReadDataQueue).size() > 0)
     {
-    // schedule the next timer sooner in case there is stuff in the queue
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         5, this, "ProcessReadData");
+    req = (*this->InternalReadDataQueue).front();
+    (*this->InternalReadDataQueue).pop();
     }
-  else
+  this->ReadDataQueueLock->Unlock();
+
+  if (!req.GetNode().empty())
     {
-    // schedule the next timer for a while later
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         100, this, "ProcessReadData");
+    if (req.GetIsScene())
+      {
+      this->ProcessReadSceneData(req);
+      }
+    else
+      {
+      this->ProcessReadNodeData(req);
+      }
     }
-#endif //defined(Slicer_USE_KWWIDGETS)
+
+  int delay = (*this->InternalReadDataQueue).size() > 0 ? 0: 200;
+  // schedule the next timer sooner in case there is stuff in the queue
+  // otherwise for a while later
+  this->InvokeEvent(vtkSlicerApplicationLogic::RequestReadDataEvent, &delay);
 }
 
 void vtkSlicerApplicationLogic::ProcessWriteData()
 {
-  int active = true;
-  WriteDataRequest req;
-  
   // Check to see if we should be shutting down
   this->WriteDataQueueActiveLock->Lock();
-  active = this->WriteDataQueueActive;
+  int active = this->WriteDataQueueActive;
   this->WriteDataQueueActiveLock->Unlock();
-  
-  if (active)
+
+  if (!active)
     {
-    // pull an object off the queue 
-    this->WriteDataQueueLock->Lock();
-    if ((*this->InternalWriteDataQueue).size() > 0)
-      {
-      req = (*this->InternalWriteDataQueue).front();
-      (*this->InternalWriteDataQueue).pop();
-
-      }
-    this->WriteDataQueueLock->Unlock();
-
-    if (!req.GetNode().empty())
-      {
-      if (req.GetIsScene())
-        {
-        this->ProcessWriteSceneData(req);
-        }
-      else
-        {
-        this->ProcessWriteNodeData(req);
-        }
-      }
+    return;
     }
 
-#if defined(Slicer_USE_KWWIDGETS)
-  // schedule the next timer
+  WriteDataRequest req;
+  // pull an object off the queue
+  this->WriteDataQueueLock->Lock();
   if ((*this->InternalWriteDataQueue).size() > 0)
     {
-    // schedule the next timer sooner in case there is stuff in the queue
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         5, this, "ProcessWriteData");
-    }
-  else
-    {
-    // schedule the next timer for a while later
-    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
-                                         100, this, "ProcessWriteData");
-    }
-#endif //defined(Slicer_USE_KWWIDGETS)
-}
+    req = (*this->InternalWriteDataQueue).front();
+    (*this->InternalWriteDataQueue).pop();
 
+    }
+  this->WriteDataQueueLock->Unlock();
+
+  if (!req.GetNode().empty())
+    {
+    if (req.GetIsScene())
+      {
+      this->ProcessWriteSceneData(req);
+      }
+    else
+      {
+      this->ProcessWriteNodeData(req);
+      }
+    }
+  // schedule the next timer sooner in case there is stuff in the queue
+  // otherwise for a while later
+  int delay = (*this->InternalWriteDataQueue).size() > 0 ? 0: 200;
+  this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
+}
 
 void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 {

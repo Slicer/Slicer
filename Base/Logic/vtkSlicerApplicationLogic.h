@@ -149,7 +149,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   /// 
   /// Shutdown the processing thread 
   void TerminateProcessingThread();
-  
+  enum RequestEvents
+    {
+      RequestModifiedEvent = vtkCommand::UserEvent,
+      RequestReadDataEvent,
+      RequestWriteDataEvent
+    };
   /// 
   /// Schedule a task to run in the processing thread. Returns true if
   /// task was successfully scheduled. ScheduleTask() is called from the
