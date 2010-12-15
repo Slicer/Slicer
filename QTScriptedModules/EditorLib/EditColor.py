@@ -50,9 +50,12 @@ class EditColor(object):
     self.parent.layout().addWidget(self.frame)
 
     self.label = qt.QLabel(self.frame)
-    self.label.setLayout(qt.QHBoxLayout())
     self.label.setText("Label: ")
     self.frame.layout().addWidget(self.label)
+
+    self.labelName = qt.QLabel(self.frame)
+    self.labelName.setText("")
+    self.frame.layout().addWidget(self.labelName)
 
     self.colorSpin = qt.QSpinBox(self.frame)
     self.colorSpin.setValue( int(tcl('EditorGetPaintLabel')) )
@@ -116,6 +119,7 @@ class EditColor(object):
     colorNode = self.editUtil.getColorNode()
     if colorNode:
       self.frame.setDisabled(0)
+      self.labelName.setText( colorNode.GetColorName( label ) )
       lut = colorNode.GetLookupTable()
       rgb = lut.GetTableValue( label )
       self.colorPatch.setStyleSheet( 

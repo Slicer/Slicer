@@ -245,7 +245,7 @@ class HelperBox(object):
     slicer.mrmlScene.SaveStateForUndo()
 
     for row in xrange(rows):
-      structureName = self.structures.item(row,0).text()
+      structureName = self.structures.item(row,2).text()
       structureVolume = self.structureVolume(structureName)
       if row == rows - 1:
         slicer.mrmlScene.RemoveNode( structureVolume )
@@ -556,7 +556,7 @@ class HelperBox(object):
     self.structuresView.setColumnWidth(0,70)
     self.structuresView.setColumnWidth(1,50)
     self.structuresView.setColumnWidth(2,60)
-    self.structuresView.setColumnWidth(3,300)
+    self.structuresView.setColumnWidth(3,100)
     self.structures.setHeaderData(0,1,"Number")
     self.structures.setHeaderData(1,1,"Color")
     self.structures.setHeaderData(2,1,"Name")
@@ -612,7 +612,7 @@ class HelperBox(object):
     self.masterSelector = slicer.qMRMLNodeComboBox(self.masterSelectorFrame)
     # TODO
     self.masterSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
-    # self.masterSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", 0 )
+    self.masterSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", 0 )
     self.masterSelector.selectNodeUponCreation = False
     self.masterSelector.addEnabled = False
     self.masterSelector.removeEnabled = False
@@ -836,6 +836,7 @@ class HelperBox(object):
 
       self.labelSelector = slicer.qMRMLNodeComboBox()
       self.labelSelector.nodeTypes = ( "vtkMRMLScalarVolumeNode", "" )
+      self.labelSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", "1" )
       # todo addAttribute
       self.labelSelector.selectNodeUponCreation = False
       self.labelSelector.addEnabled = False
@@ -901,8 +902,16 @@ class HelperBox(object):
     return None
 
   def errorDialog(self, message):
-    """get the first MRML node that has the given name
-    - use a regular expression to match names post-pended with numbers"""
     self.dialog = qt.QErrorMessage()
     self.dialog.setWindowTitle("Editor")
     self.dialog.showMessage(message)
+
+  def confirmDialog(self, message):
+    self.dialog = qt.QMessageBox()
+    self.dialog.setWindowTitle("Editor")
+    self.dialog.setText(message)
+    self.dialogRejectButton = self.addButton("Cancel", 2)
+    self.dialogAcceptButton = self.addButton("Ok", 1)
+    # TODO: cannot call the exec() method from the pythonqt
+    #self.dialog.exec()
+    return True

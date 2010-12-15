@@ -87,7 +87,7 @@ class EditBox(object):
     "LabelVisibilityOff", "LabelVisibilityOn", "NextFiducial", 
     "SnapToGridOff", "SnapToGridOn",
     "EraseLabel", "Threshold", "PinOpen", "PreviousFiducial", "InterpolateLabels", "LabelOpacity",
-    "ToggleLabelOutline", "Watershed", "PreviousCheckPoint", "NextCheckPoint", "GrowCutSegment"
+    "ToggleLabelOutline", "Watershed", "PreviousCheckPoint", "NextCheckPoint",
     )
 
   # these buttons do not switch you out of the current tool
@@ -111,7 +111,7 @@ class EditBox(object):
     "LabelVisibilityOff", "LabelVisibilityOn", 
     "SnapToGridOff", "SnapToGridOn",
     "InterpolateLabels", "LabelOpacity",
-    "ToggleLabelOutline", "Watershed", "Wand"
+    "ToggleLabelOutline", "Watershed", "Wand", "GrowCutSegment",
     )
 
   # calculates the intersection of two flat lists
@@ -244,8 +244,10 @@ class EditBox(object):
       self.createButtonRow( ("Paint", "Draw", "LevelTracing", "ImplicitRectangle") )
       self.createButtonRow( ("IdentifyIslands", "ChangeIsland", "RemoveIslands", "SaveIsland") )
       self.createButtonRow( ("ErodeLabel", "DilateLabel", "Threshold", "ChangeLabel") )
-      self.createButtonRow( ("MakeModel", "GrowCutSegment") )
-      self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
+      # TODO: add back GrowCut and prev/next fiducial
+      #self.createButtonRow( ("MakeModel", "GrowCutSegment") )
+      self.createButtonRow( ("MakeModel", ) )
+      #self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
       self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint") )
     # if using embedded format: create all of the buttons in the effects list in a single row
     else:

@@ -138,8 +138,19 @@ class EditOptions(object):
         rangeWidget.minimum, rangeWidget.maximum = backgroundImage.GetScalarRange()
 
   def getPaintLabel(self):
-    """ returns int index of the current paint label """
-    return int(self.parameterNode.GetParameter('label'))
+    """ returns int index of the current paint label 
+        - look for self's parameter node first, but if
+          this is not set, query the scene for the first
+          valid one (this can happen during startup
+          when self has not yet observed the node)
+    """
+    pNode = self.parameterNode
+    if not pNode:
+      nodeID = tcl('[EditorGetParameterNode] GetID')
+      pNode = slicer.mrmlScene.GetNodeByID(nodeID)
+    if pNode:
+      return int(pNode.GetParameter('label'))
+    return 0
 
   def getPaintColor(self):
     """ returns rgba tuple for the current paint color """
@@ -902,6 +913,7 @@ class ThresholdOptions(EditOptions):
     self.timer = qt.QTimer()
     self.previewState = 0
     self.previewStep = 1
+    self.previewSteps = 5
     self.timer.start(200)
 
     self.timer.connect('timeout()', self.preview)
@@ -994,13 +1006,13 @@ class ThresholdOptions(EditOptions):
       self.parameterNode.InvokePendingModifiedEvent()
 
   def preview(self):
-    opacity = self.previewState / 10.
+    opacity = 0.5 + self.previewState / (2. * self.previewSteps)
     min = self.parameterNode.GetParameter("Threshold,min")
     max = self.parameterNode.GetParameter("Threshold,max")
     tcl('foreach te [itcl::find objects -class ThresholdEffect] { $te configure -range "%s %s" }' % (min, max))
     tcl('foreach te [itcl::find objects -class ThresholdEffect] { $te preview "%g %g %g %g" }' % (self.getPaintColor()[:3] + (opacity,)))
     self.previewState += self.previewStep
-    if self.previewState >= 10:
+    if self.previewState >= self.previewSteps:
       self.previewStep = -1
     if self.previewState <= 0:
       self.previewStep = 1
@@ -1344,8 +1356,7 @@ class MakeModelOptions(EditOptions):
     self.widgets.append(self.modelNameLabel)
 
     self.modelName = qt.QLineEdit(self.nameFrame)
-    # TODO - get the current paint label name
-    self.modelName = self.getUniqueModelName( self.getPaintName() )
+    self.modelName.setText( self.getUniqueModelName( self.getPaintName() ) )
     self.nameFrame.layout().addWidget(self.modelName)
     self.widgets.append(self.modelName)
 
