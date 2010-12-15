@@ -53,15 +53,23 @@ class EditorWidget:
     compositeNode = self.getCompositeNode()
     masterNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetBackgroundVolumeID() )
     mergeNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetLabelVolumeID() )
-    if masterNode and masterNode.GetClassName() == "vtkMRMLScalarVolumeNode":
-      if mergeNode:
-        self.helper.setVolumes(masterNode, mergeNode)
-      else:
-        self.helper.setMasterVolume(masterNode)
+    self.setMasterNode(masterNode)
+    self.setMergeNode(mergeNode)
 
   def exit(self):
     pass
 
+  # sets the node for the volume to be segmented
+  def setMasterNode(self, newMasterNode):
+    if newMasterNode and newMasterNode.GetClassName() == "vtkMRMLScalarVolumeNode":
+      self.helper.setMasterVolume(newMasterNode)
+
+  # sets the node for the label map
+  def setMergeNode(self, newMergeNode):
+    if newMergeNode:
+      self.helper.setMergeVolume(newMergeNode)
+
+  # sets up the widget
   def setup(self):
 
     #
