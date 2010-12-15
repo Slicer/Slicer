@@ -177,6 +177,15 @@ int  vtkMRMLNonlinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNod
 //----------------------------------------------------------------------------
 void vtkMRMLNonlinearTransformNode::SetAndObserveWarpTransformToParent(vtkWarpTransform *warp)
 {
+  if (warp == this->WarpTransformToParent)
+    {
+    // We return for 2 reasons:
+    //   - there is nothing to do
+    //   - the remaining of the function could uninstanciate warp (when calling
+    //     this->SetWarpTransformToParent(NULL)) but try to register it after
+    //     in this->SetWarpTransformToParent. One must use Register carefully
+    return;
+    }
   if (this->WarpTransformToParent != NULL)
     {
     this->WarpTransformToParent->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );

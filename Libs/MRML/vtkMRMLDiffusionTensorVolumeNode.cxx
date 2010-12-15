@@ -64,6 +64,11 @@ void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *di
     vtkDebugMacro("SetAndObserveDisplayNodeID: null display node id");
     return;
     }
+  if (this->GetScene() == NULL)
+    {
+    vtkDebugMacro("SetAndObserveDisplayNodeID: null scene");
+    return;
+    }
   if (vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetScene()->GetNodeByID(displayNodeID))==NULL)
     {
     vtkWarningMacro("SetAndObserveDisplayNodeID: The node to display " << displayNodeID << " can not display diffusion tensors");

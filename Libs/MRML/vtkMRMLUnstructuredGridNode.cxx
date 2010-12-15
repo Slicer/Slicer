@@ -121,16 +121,14 @@ void vtkMRMLUnstructuredGridNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
 
-  vtkMRMLNode *mnode = scene->GetNodeByID(this->GetDisplayNodeID());
-  if (mnode) 
+  vtkMRMLUnstructuredGridDisplayNode *node  =
+      vtkMRMLUnstructuredGridDisplayNode::SafeDownCast(
+        scene ? scene->GetNodeByID(this->GetDisplayNodeID()) : 0);
+  if (node)
     {
-    vtkMRMLUnstructuredGridDisplayNode *node  = dynamic_cast < vtkMRMLUnstructuredGridDisplayNode *>(mnode);
-    if (node)
-      {
-      // set input/output to/from display pipeline
-      node->SetUnstructuredGrid(this->GetUnstructuredGrid());
-      this->SetAndObservePolyData(node->GetPolyData());
-      }
+    // set input/output to/from display pipeline
+    node->SetUnstructuredGrid(this->GetUnstructuredGrid());
+    this->SetAndObservePolyData(node->GetPolyData());
     }
 }
 

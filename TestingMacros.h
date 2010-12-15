@@ -386,23 +386,23 @@
 /// For testing nodes in Libs/MRML that are transformable. Calls the basic
 /// mrml methods macro first.
 #define EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( className, node )    \
-  {                                                                 \
-    EXERCISE_BASIC_MRML_METHODS(className, node);                    \
-    vtkMRMLTransformNode *tnode2 = node->GetParentTransformNode();  \
-    if (tnode2 != NULL)\
-      {\
-      std::cerr << "ERROR: parent transform node is not null" << std::endl;\
-      return EXIT_FAILURE; \
-      }\
-    node1->SetAndObserveTransformNodeID(NULL);\
-    const char *node_tid = node1->GetTransformNodeID();\
-    if (node_tid != NULL)                              \
-      {\
-      std::cerr << "ERROR: with observing transform node id" << std::endl;\
-      return EXIT_FAILURE; \
-      }\
-    bool canApplyNonLinear = node->CanApplyNonLinearTransforms();\
-    std::cout << "Node can apply non linear transforms? " << (canApplyNonLinear == true ? "yes" : "no") << std::endl;\
+  {                                                                     \
+    EXERCISE_BASIC_MRML_METHODS(className, node);                       \
+    vtkMRMLTransformNode *tnode2 = node->GetParentTransformNode();      \
+    if (tnode2 != NULL)                                                 \
+      {                                                                 \
+      std::cerr << "ERROR: parent transform node is not null" << std::endl; \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    node1->SetAndObserveTransformNodeID(NULL);                          \
+    const char *node_tid = node1->GetTransformNodeID();                 \
+    if (node_tid != NULL)                                               \
+      {                                                                 \
+      std::cerr << "ERROR: with observing transform node id" << std::endl; \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    bool canApplyNonLinear = node->CanApplyNonLinearTransforms();       \
+    std::cout << "Node can apply non linear transforms? " << (canApplyNonLinear == true ? "yes" : "no") << std::endl; \
   }
 
 /// For testing nodes in Libs/MRML that are storable. Calls the basic
@@ -454,11 +454,11 @@
 
 /// For testing nodes in Libs/MRML that are displayable. Calls the basic
 /// transformable mrml methods macro first.
-#define EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( className, node )   \
-  {                                                  \
-    EXERCISE_BASIC_STORABLE_MRML_METHODS( className, node ); \
-    if (node->GetNumberOfDisplayNodes() != 0)        \
-      {                                              \
+#define EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( className, node )      \
+  {                                                                     \
+    EXERCISE_BASIC_STORABLE_MRML_METHODS( className, node );            \
+    if (node->GetNumberOfDisplayNodes() != 0)                           \
+      {                                                                 \
       std::cerr << "Error in getting number of display nodes." << std::endl; \
       return EXIT_FAILURE;                                              \
       }                                                                 \
@@ -466,7 +466,7 @@
     node->AddAndObserveDisplayNodeID("badid");                          \
     node->SetAndObserveNthDisplayNodeID(2, "nothing");                  \
     const char *dnodeid = node->GetNthDisplayNodeID(0);                 \
-    if (strcmp(dnodeid, "noid") != 0)                                   \
+    if (dnodeid == NULL ||  strcmp(dnodeid, "noid") != 0)               \
       {                                                                 \
       std::cerr << "ERROR getting 0th display node id, instead of noid got " << (dnodeid  == NULL ? "null" : dnodeid) << std::endl; \
       return EXIT_FAILURE;                                              \
