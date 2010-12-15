@@ -143,7 +143,7 @@ class EditOptions(object):
 
   def getPaintColor(self):
     """ returns rgba tuple for the current paint color """
-    labelVolume = self.getLabelVolume()
+    labelVolume = self.editUtil.getLabelVolume()
     if labelVolume:
       volumeDisplayNode = labelVolume.GetDisplayNode()
       if volumeDisplayNode != '':
@@ -152,6 +152,17 @@ class EditOptions(object):
         index = self.getPaintLabel()
         return lut.GetTableValue(index)
     return (0,0,0,0)
+
+  def getPaintName(self):
+    """ returns the string name of the currently selected index """
+    labelVolume = self.editUtil.getLabelVolume()
+    if labelVolume:
+      volumeDisplayNode = labelVolume.GetDisplayNode()
+      if volumeDisplayNode != '':
+        colorNode = volumeDisplayNode.GetColorNode()
+        index = self.getPaintLabel()
+        return colorNode.GetColorName(index)
+    return ""
 
 #### Labeler
 class LabelerOptions(EditOptions):
@@ -207,7 +218,7 @@ class LabelerOptions(EditOptions):
       ("paintOver", "1"),
       ("paintThreshold", "0"),
       ("paintThresholdMin", "0"),
-      ("paintThresholdMax", "1000")
+      ("paintThresholdMax", "1000"),
     )
     for d in defaults:
       param = "Labeler,"+d[0]
@@ -758,7 +769,7 @@ class RemoveIslandsOptions(EditOptions):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
-      ("fullyConnected", "0")
+      ("fullyConnected", "0"),
     )
     for d in defaults:
       param = "RemoveIslands,"+d[0]
@@ -905,6 +916,7 @@ class ThresholdOptions(EditOptions):
 
   def destroy(self):
     self.timer.stop()
+    tcl('foreach te [itcl::find objects -class ThresholdEffect] { $te preview "0 0 0 0" }')
     super(ThresholdOptions,self).destroy()
 
   # note: this method needs to be implemented exactly as-is
@@ -1031,7 +1043,7 @@ class MorphologyOptions(EditOptions):
     defaults = (
       ("iterations", "1"),
       ("neighborMode", "4"),
-      ("fill", "0")
+      ("fill", "0"),
     )
     for d in defaults:
       param = "Morphology,"+d[0]
@@ -1333,8 +1345,7 @@ class MakeModelOptions(EditOptions):
 
     self.modelName = qt.QLineEdit(self.nameFrame)
     # TODO - get the current paint label name
-    #self.modelName = self.getUniqueModelName( tcl('[EditorGetPaintName]') )
-    self.modelName.text = self.getUniqueModelName( "Quick Model" )
+    self.modelName = self.getUniqueModelName( self.getPaintName() )
     self.nameFrame.layout().addWidget(self.modelName)
     self.widgets.append(self.modelName)
 
@@ -1369,7 +1380,7 @@ class MakeModelOptions(EditOptions):
     parameters["InputVolume"] = volumeNode.GetID()
     parameters['FilterType'] = "Sinc" # TODO may or may not work
     parameters['GenerateAll'] = True
-    #parameters['Labels'] = tcl('EditorGetPaintLabel') # TODO
+    parameters['Labels'] = self.getPaintLabel()
     parameters["JointSmooth"] = True
     parameters["SplitNormals"] = True
     parameters["PointNormals"] = True

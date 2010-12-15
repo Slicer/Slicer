@@ -62,12 +62,11 @@ class HelperBox(object):
     self.label.setText("TODO: controls for multi-structure label map editing (like in slicer3) will be added here eventually")
     self.parent.layout().addWidget(self.label)
 
-  def __del__(self):
-    self.destroy()
+  def cleanup(self):
     for tagpair in self.observerTags:
       tagpair[0].RemoveObserver(tagpair[1])
     if self.colorBox:
-      self.colorBox.destroy()
+      self.colorBox.cleanup()
 
   def newMerge(self):
     """create a merge volume for the current master even if one exists"""
@@ -470,6 +469,14 @@ class HelperBox(object):
     """re-build the Structures frame
     - optional caller and event ignored (for use as vtk observer callback)
     """
+
+    if self.setMergeButton.destroyed():
+      """ TODO: here the python class still exists but the 
+      Qt widgets are gone - need to figure out when to remove observers 
+      and free python code - probably the destroyed() signal.
+      """
+      self.cleanup()
+      return
 
     self.setMergeButton.setDisabled(not self.master)
 
