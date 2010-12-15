@@ -82,6 +82,50 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 
   node2->Modified();
 
+  // Test Copy
+  vtkSmartPointer< vtkMRMLAnnotationRulerNode > cNode = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();
+  cNode->Copy(node2);
+
+  if (cNode->GetPosition1()[0]!=node2->GetPosition1()[0] || cNode->GetPosition1()[1]!=node2->GetPosition1()[1] || cNode->GetPosition1()[2]!=node2->GetPosition1()[2])
+    {
+    std::cerr << "Error in Copy() - position1 was not copied" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (cNode->GetPosition2()[0]!=node2->GetPosition2()[0] || cNode->GetPosition2()[1]!=node2->GetPosition2()[1] || cNode->GetPosition2()[2]!=node2->GetPosition2()[2])
+    {
+    std::cerr << "Error in Copy() - position2 was not copied" << std::endl;
+    return EXIT_FAILURE;
+    }
+  cout << endl << "===== After Copy ====" << endl;
+  cNode->Print( std::cout );
+  cNode->PrintAnnotationInfo(cout,ind);
+  cout << "=========" << endl << endl;
+  cout << "Passed Copy" << endl;
+
+
+  // Test CopyWithoutModifiedEvent
+  vtkSmartPointer< vtkMRMLAnnotationRulerNode > c2Node = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();
+  c2Node->CopyWithoutModifiedEvent(node2);
+
+  if (c2Node->GetPosition1()[0]!=node2->GetPosition1()[0] || c2Node->GetPosition1()[1]!=node2->GetPosition1()[1] || c2Node->GetPosition1()[2]!=node2->GetPosition1()[2])
+    {
+    std::cerr << "Error in CopyWithoutModifiedEvent() - position1 was not copied" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (c2Node->GetPosition2()[0]!=node2->GetPosition2()[0] || c2Node->GetPosition2()[1]!=node2->GetPosition2()[1] || c2Node->GetPosition2()[2]!=node2->GetPosition2()[2])
+    {
+    std::cerr << "Error in CopyWithoutModifiedEvent() - position2 was not copied" << std::endl;
+    return EXIT_FAILURE;
+    }
+  cout << endl << "===== After CopyWithoutModifiedEvent ====" << endl;
+  c2Node->Print( std::cout );
+  c2Node->PrintAnnotationInfo(cout,ind);
+  cout << "=========" << endl << endl;
+
+  cout << "Passed CopyWithoutModifiedEvent" << endl;
+
   // ======================
   // Test WriteXML and ReadXML 
   // ======================
@@ -124,6 +168,8 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
     return EXIT_FAILURE;
   }
   cout << "Passed XML" << endl;
+
+
 
   return EXIT_SUCCESS;
   

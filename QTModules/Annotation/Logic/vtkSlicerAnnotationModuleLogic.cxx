@@ -1337,10 +1337,13 @@ void vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
   copyHNode->CopyWithoutModifiedEvent(hNode);
 
   // now we copy the corresponding annotation node
-  vtkMRMLAnnotationNode* copyANode = vtkMRMLAnnotationNode::New();
-  copyANode->CopyWithoutModifiedEvent(annotationNode);
+  //if (annotationNode->IsA("vtkMRMLAnnotationRulerNode"))
+  vtkMRMLAnnotationRulerNode* copyANode = vtkMRMLAnnotationRulerNode::New();
+  vtkMRMLAnnotationRulerNode* rNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
+  copyANode->CopyWithoutModifiedEvent(rNode);
 
-  const char* oldId = annotationNode->GetID();
+  std::cout << "copyANode: " << copyANode->GetPosition1()[0] << ", " << copyANode->GetPosition1()[1] << ", " << copyANode->GetPosition1()[2] << std::endl;
+  std::cout << "annotationNode: " << rNode->GetPosition1()[0] << ", " << rNode->GetPosition1()[1] << ", " << rNode->GetPosition1()[2] << std::endl;
 
   // ..and delete the annotation
   this->GetMRMLScene()->RemoveNode(annotationNode);

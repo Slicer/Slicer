@@ -327,7 +327,7 @@ void vtkMRMLAnnotationLinesNode::CreatePolyData()
       this->PolyData->SetLines(polyLines);
       polyLines->Delete();
       this->InitializeLinesFlag = 1;     
-    }  
+    }
 }
 
 //---------------------------------------------------------------------------

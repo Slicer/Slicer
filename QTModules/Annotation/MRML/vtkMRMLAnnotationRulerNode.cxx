@@ -195,7 +195,9 @@ void vtkMRMLAnnotationRulerNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   //vtkMRMLAnnotationRulerNode *node = (vtkMRMLAnnotationRulerNode *) anode;
 
-
+  //this->SetPosition1(node->GetPosition1());
+  //this->SetPosition2(node->GetPosition2());
+  //this->SetDistanceMeasurement(node->GetDistanceMeasurement());
   //this->SetResolution(node->GetResolution());
   //this->SetDistanceAnnotationFormat(node->GetDistanceAnnotationFormat());
   //this->SetModelID1(node->GetModelID1());
