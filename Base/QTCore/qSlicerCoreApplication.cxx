@@ -849,6 +849,8 @@ void qSlicerCoreApplication
 {
   Q_D(qSlicerCoreApplication);
   Q_ASSERT(d->AppLogic.GetPointer() == vtkSlicerApplicationLogic::SafeDownCast(appLogic));
+  Q_UNUSED(appLogic);
+  Q_UNUSED(d);
   int delayInMs = *reinterpret_cast<int *>(delay);
   switch(event)
     {
