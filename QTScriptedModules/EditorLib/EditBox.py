@@ -33,10 +33,20 @@ TODO = """
 
 class EditBox(object):
 
-  def __init__(self, parent=0, optionsFrame=None):
+  def __init__(self, parent=0, optionsFrame=None, embedded=False, suppliedEffects=[]):
     self.effects = []
     self.effectMapper = qt.QSignalMapper()
     self.effectMapper.connect('mapped(const QString&)', self.selectEffect)
+
+    # embedded boolean specifies whether or not this edit box is to be embedded
+    # into another moduleWidget
+    # - if it is, all effect buttons will be displayed in a single row
+    self.embedded = embedded
+
+    # save the list of supplied effects that the caller wants to use
+    # (should be a subset of EditBox.availableMouseTools + EditBox.availableOperations)
+    self.suppliedEffects = suppliedEffects
+    
     if parent == 0:
       self.parent = qt.QFrame()
       self.parent.setLayout( qt.QVBoxLayout() )
@@ -45,14 +55,71 @@ class EditBox(object):
     else:
       self.parent = parent
       self.create()
+
+    # frame that holds widgets specific for each effect
     if not optionsFrame:
       self.optionsFrame = qt.QFrame(self.parent)
     else:
       self.optionsFrame = optionsFrame
     self.currentOption = None
 
+  #
+  # Public lists of the available effects provided by the editor
+  #
+  
+  # effects that change the mouse cursor
+  availableMouseTools = (
+    "ChangeIsland", "ChooseColor",
+    "ImplicitCube", "ImplicitEllipse", "ImplicitRectangle",
+    "Draw", "RemoveIslands", "ConnectedComponents",
+    "ThresholdBucket", "ThresholdPaintLabel", "SaveIsland", "SlurpColor", "Paint",
+    "DefaultTool", "LevelTracing", "MakeModel", "Wand", "GrowCutSegment",
+    )
+
+  # effects that operate from the menu
+  availableOperations = (
+    "ErodeLabel", "DilateLabel", "DeleteFiducials", "LabelOpacity",
+    "ChangeLabel", "FiducialVisibilityOff",
+    "FiducialVisibilityOn", "GoToEditorModule", 
+    "IdentifyIslands",
+    "LabelVisibilityOff", "LabelVisibilityOn", "NextFiducial", 
+    "SnapToGridOff", "SnapToGridOn",
+    "EraseLabel", "Threshold", "PinOpen", "PreviousFiducial", "InterpolateLabels", "LabelOpacity",
+    "ToggleLabelOutline", "Watershed", "PreviousCheckPoint", "NextCheckPoint", "GrowCutSegment"
+    )
+
+  # these buttons do not switch you out of the current tool
+  availableNonmodal = (
+    "FiducialVisibilityOn", "LabelVisibilityOff", "LabelVisibilityOn",
+    "NextFiducial", "PreviousFiducial", "DeleteFiducials", "SnapToGridOn", "SnapToGridOff",
+    "EraseLabel", "PreviousCheckPoint", "NextCheckPoint", "ToggleLabelOutline",
+    "SnapToGridOff", "SnapToGridOn", "LabelOpacity"
+    )
+
+  # these buttons start disabled (check points will re-enable when circumstances are right)
+  availableDisabled = (
+    "ChooseColor",
+    "ImplicitCube", "ImplicitEllipse", 
+    "ConnectedComponents", 
+    "SlurpColor", 
+    "ThresholdPaintLabel", "ThresholdBucket",
+    "DeleteFiducials", "LabelOpacity",
+    "FiducialVisibilityOff",
+    "FiducialVisibilityOn", 
+    "LabelVisibilityOff", "LabelVisibilityOn", 
+    "SnapToGridOff", "SnapToGridOn",
+    "InterpolateLabels", "LabelOpacity",
+    "ToggleLabelOutline", "Watershed", "Wand"
+    )
+
+  # calculates the intersection of two flat lists
+  @classmethod
+  def listIntersection(cls, inList1, inList2):
+    outList = [val for val in inList1 if val in inList2]
+    return outList
 
   # fill the _effects array bases on what you find in the interpreter
+  # if a list of effects was supplied, then use that list instead of all of the effects
   def findEffects(self, path=""):
 
     # for now, the built in effects are hard-coded to facilitate
@@ -60,51 +127,20 @@ class EditBox(object):
 
     self.effects = []
 
-    # effects that change the mouse cursor
-    self.mouseTools = (
-      "ChangeIsland", "ChooseColor",
-      "ImplicitCube", "ImplicitEllipse", "ImplicitRectangle",
-      "Draw", "RemoveIslands", "ConnectedComponents",
-      "ThresholdBucket", "ThresholdPaintLabel", "SaveIsland", "SlurpColor", "Paint",
-      "DefaultTool", "LevelTracing", "MakeModel", "Wand", "GrowCutSegment",
-    )
-
-    # effects that operate from the menu
-    self.operations = (
-      "ErodeLabel", "DilateLabel", "DeleteFiducials", "LabelOpacity",
-      "ChangeLabel", "FiducialVisibilityOff",
-      "FiducialVisibilityOn", "GoToEditorModule", 
-      "IdentifyIslands",
-      "LabelVisibilityOff", "LabelVisibilityOn", "NextFiducial", 
-      "SnapToGridOff", "SnapToGridOn",
-      "EraseLabel", "Threshold", "PinOpen", "PreviousFiducial",  "InterpolateLabels", "LabelOpacity",
-      "ToggleLabelOutline", "Watershed", "PreviousCheckPoint", "NextCheckPoint", "GrowCutSegment"
-    )
-
-    # these buttons do not switch you out of the current tool
-    self.nonmodal = (
-      "FiducialVisibilityOn", "LabelVisibilityOff", "LabelVisibilityOn",
-      "NextFiducial", "PreviousFiducial", "DeleteFiducials", "SnapToGridOn", "SnapToGridOff",
-      "EraseLabel", "PreviousCheckPoint", "NextCheckPoint", "ToggleLabelOutline",
-      "SnapToGridOff", "SnapToGridOn", "LabelOpacity"
-    )
-
-    # these buttons start disabled (check points will re-enable when circumstances are right)
-    self.disabled = (
-      "ChooseColor",
-      "ImplicitCube", "ImplicitEllipse", 
-      "ConnectedComponents", 
-      "SlurpColor", 
-      "ThresholdPaintLabel", "ThresholdBucket",
-      "DeleteFiducials", "LabelOpacity",
-      "FiducialVisibilityOff",
-      "FiducialVisibilityOn", 
-      "LabelVisibilityOff", "LabelVisibilityOn", 
-      "SnapToGridOff", "SnapToGridOn",
-      "InterpolateLabels", "LabelOpacity",
-      "ToggleLabelOutline", "Watershed", "Wand"
-    )
-
+    # if a list of effects was supplied, then use that list instead of all of the effects
+    # don't forget to check that the supplied effects are valid: ensure they exist in the lists of available effects
+    
+    if(self.suppliedEffects):
+      self.mouseTools = self.listIntersection(self.suppliedEffects, EditBox.availableMouseTools)
+      self.operations = self.listIntersection(self.suppliedEffects, EditBox.availableOperations)
+      self.nonmodal = self.listIntersection(self.suppliedEffects, EditBox.availableNonmodal)
+      self.disabled = self.listIntersection(self.suppliedEffects, EditBox.availableDisabled)
+    # if a list of effects is not supplied, then provide all effects
+    else:
+      self.mouseTools = EditBox.availableMouseTools
+      self.operations = EditBox.availableOperations
+      self.nonmodal = EditBox.availableNonmodal
+      self.disabled = EditBox.availableDisabled
 
     # combined list of all effects
     self.effects = self.mouseTools + self.operations
@@ -150,41 +186,45 @@ class EditBox(object):
 
     hbox.addStretch(1)
     for effect in effects:
-      i = self.icons[effect] = qt.QIcon(self.effectIconFiles[effect,self.effectModes[effect]])
-      a = self.actions[effect] = qt.QAction(i, '', f)
-      b = self.buttons[effect] = qt.QToolButton()
-      b.setDefaultAction(a)
-      b.setToolTip(effect)
-      hbox.addWidget(b)
-      if self.disabled.__contains__(effect):
-        b.setDisabled(1)
-        
-      # Setup the mapping between button and its associated effect name
-      self.effectMapper.setMapping(self.buttons[effect], effect)
-      # Connect button with signal mapper
-      self.buttons[effect].connect('clicked()', self.effectMapper, 'map()')
+      # check that the effect belongs in our list of effects before including
+      # (handles non-embedded widgets where the caller has supplied a custom list of effects)
+      if (effect in self.effects):
+        i = self.icons[effect] = qt.QIcon(self.effectIconFiles[effect,self.effectModes[effect]])
+        a = self.actions[effect] = qt.QAction(i, '', f)
+        b = self.buttons[effect] = qt.QToolButton()
+        b.setDefaultAction(a)
+        b.setToolTip(effect)
+        hbox.addWidget(b)
+        if self.disabled.__contains__(effect):
+          b.setDisabled(1)
+
+        # Setup the mapping between button and its associated effect name
+        self.effectMapper.setMapping(self.buttons[effect], effect)
+        # Connect button with signal mapper
+        self.buttons[effect].connect('clicked()', self.effectMapper, 'map()')
         
     hbox.addStretch(1)
 
   # create the edit box
   def create(self):
-
+    
     self.findEffects()
 
     #
-    # the labels
+    # the labels (not shown in embedded format)
     #
-    self.toolsActiveToolFrame = qt.QFrame(self.parent)
-    self.toolsActiveToolFrame.setLayout(qt.QHBoxLayout())
-    self.parent.layout().addWidget(self.toolsActiveToolFrame)
-    self.toolsActiveTool = qt.QLabel(self.toolsActiveToolFrame)
-    self.toolsActiveTool.setText( 'Active Tool:' )
-    self.toolsActiveTool.setStyleSheet("background-color: rgb(232,230,235)")
-    self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveTool)
-    self.toolsActiveToolName = qt.QLabel(self.toolsActiveToolFrame)
-    self.toolsActiveToolName.setText( '' )
-    self.toolsActiveToolName.setStyleSheet("background-color: rgb(232,230,235)")
-    self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveToolName)
+    if (not self.embedded):
+      self.toolsActiveToolFrame = qt.QFrame(self.parent)
+      self.toolsActiveToolFrame.setLayout(qt.QHBoxLayout())
+      self.parent.layout().addWidget(self.toolsActiveToolFrame)
+      self.toolsActiveTool = qt.QLabel(self.toolsActiveToolFrame)
+      self.toolsActiveTool.setText( 'Active Tool:' )
+      self.toolsActiveTool.setStyleSheet("background-color: rgb(232,230,235)")
+      self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveTool)
+      self.toolsActiveToolName = qt.QLabel(self.toolsActiveToolFrame)
+      self.toolsActiveToolName.setText( '' )
+      self.toolsActiveToolName.setStyleSheet("background-color: rgb(232,230,235)")
+      self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveToolName)
     
     #
     # the buttons
@@ -194,13 +234,21 @@ class EditBox(object):
     self.buttons = {}
     self.icons = {}
     self.callbacks = {}
-    self.createButtonRow( ("DefaultTool", "EraseLabel") )
-    self.createButtonRow( ("Paint", "Draw", "LevelTracing", "ImplicitRectangle") )
-    self.createButtonRow( ("IdentifyIslands", "ChangeIsland", "RemoveIslands", "SaveIsland") )
-    self.createButtonRow( ("ErodeLabel", "DilateLabel", "Threshold", "ChangeLabel") )
-    self.createButtonRow( ("MakeModel", "GrowCutSegment") )
-    self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
-    self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint") )
+
+    # if not using embedded format: create all of the buttons
+    # createButtonRow() ensures that only effects in self.effects are exposed,
+    # so if the user supplied a list of effects only those in that list will be exposed
+    if (not self.embedded):
+      self.createButtonRow( ("DefaultTool", "EraseLabel") )
+      self.createButtonRow( ("Paint", "Draw", "LevelTracing", "ImplicitRectangle") )
+      self.createButtonRow( ("IdentifyIslands", "ChangeIsland", "RemoveIslands", "SaveIsland") )
+      self.createButtonRow( ("ErodeLabel", "DilateLabel", "Threshold", "ChangeLabel") )
+      self.createButtonRow( ("MakeModel", "GrowCutSegment") )
+      self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
+      self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint") )
+    # if using embedded format: create all of the buttons in the effects list in a single row
+    else:
+      self.createButtonRow(self.effects)
    
   def setActiveToolLabel(self,name):
     self.toolsActiveToolName.setText(name)
@@ -310,3 +358,4 @@ itcl::body EditBox::setButtonState {effect state} {
       $w previewOptions
     }
     """
+    
