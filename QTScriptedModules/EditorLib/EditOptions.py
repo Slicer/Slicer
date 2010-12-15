@@ -143,6 +143,15 @@ class EditOptions(object):
         return slicer.mrmlScene.GetNodeByID(backgroundID)
 
 
+  def setRangeWidgetToBackgroundRange(self, rangeWidget):
+    if not rangeWidget:
+      return
+    backgroundVolume = self.getBackgroundVolume()
+    if backgroundVolume:
+      backgroundImage = backgroundVolume.GetImageData()
+      if backgroundImage:
+        rangeWidget.minimum, rangeWidget.maximum = backgroundImage.GetScalarRange()
+
 #### Labeler
 class LabelerOptions(EditOptions):
   """ Labeler classes are the ones that implement
@@ -178,7 +187,7 @@ class LabelerOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
-    self.threshold.minimum, self.threshold.maximum = self.getBackgroundVolume().GetImageData().GetScalarRange()
+    self.setRangeWidgetToBackgroundRange(self.threshold)
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
 
@@ -860,7 +869,7 @@ class ThresholdOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
-    self.threshold.minimum, self.threshold.maximum = self.getBackgroundVolume().GetImageData().GetScalarRange()
+    self.setRangeWidgetToBackgroundRange(self.threshold)
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
 
@@ -1323,6 +1332,8 @@ class MakeModelOptions(EditOptions):
     #
 
     volumeNode = self.getLabelVolume()
+    if not volumeNode:
+      return
 
     #
     # set up the model maker node
