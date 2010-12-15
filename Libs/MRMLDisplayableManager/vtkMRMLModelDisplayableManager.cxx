@@ -1238,10 +1238,11 @@ void vtkMRMLModelDisplayableManager::RemoveHierarchyObservers(int clearCache)
   std::map<std::string, int>::iterator iter;
 
   for(iter=this->Internal->RegisteredModelHierarchies.begin();
-  iter != this->Internal->RegisteredModelHierarchies.end();
-  iter++)
+      iter != this->Internal->RegisteredModelHierarchies.end();
+      iter++)
     {
-    vtkMRMLModelHierarchyNode *node = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(iter->first));
+    vtkMRMLModelHierarchyNode *node = vtkMRMLModelHierarchyNode::SafeDownCast(
+      this->GetMRMLScene() ? this->GetMRMLScene()->GetNodeByID(iter->first) : 0);
     if (node)
       {
       observations = broker->GetObservations( 
