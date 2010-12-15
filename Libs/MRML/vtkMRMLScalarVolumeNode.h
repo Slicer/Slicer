@@ -96,7 +96,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   virtual void CalculateScalarAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
                                          vtkImageData *imageData = NULL);
-  /// Descriptoin:
+  /// Description:
   /// special case for statistics volumes
   void CalculateStatisticsAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
                                       vtkImageData *imageData = NULL);
