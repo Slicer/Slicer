@@ -1389,15 +1389,21 @@ class MakeModelOptions(EditOptions):
     parameters = {}
     parameters['Name'] = self.modelName.text
     parameters["InputVolume"] = volumeNode.GetID()
-    parameters['FilterType'] = "Sinc" # TODO may or may not work
+    parameters['FilterType'] = "Sinc"
     parameters['GenerateAll'] = True
-    parameters['Labels'] = self.getPaintLabel()
-    parameters["JointSmooth"] = True
+
+    # not needed: setting StartLabel and EndLabel instead
+    #parameters['Labels'] = self.getPaintLabel()
+    
+    parameters["JointSmoothing"] = True
     parameters["SplitNormals"] = True
     parameters["PointNormals"] = True
     parameters["SkipUnNamed"] = True
-    parameters["StartLabel"] = "-1" # TODO - may or may not work
-    parameters["EndLabel"] = "-1" # TODO - may or may not work
+
+    # create models for all labels
+    parameters["StartLabel"] = -1
+    parameters["EndLabel"] = -1
+
     if self.smooth.checked:
       parameters["Decimate"] = 0.25
       parameters["Smooth"] = 10
@@ -1423,7 +1429,7 @@ class MakeModelOptions(EditOptions):
       outHierarchy.SetName( "Editor Models" )
       slicer.mrmlScene.AddNode( outHierarchy )
 
-    parameters["ModelSceneFile"] = outHierarchy.GetID()
+    parameters["ModelSceneFile"] = outHierarchy
 
     modelMaker = slicer.modules.modelmaker
 
