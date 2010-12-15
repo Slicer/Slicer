@@ -17,7 +17,12 @@ def createNode(module, parameters = None):
 
 def setNodeParameters(node, parameters):
   '''Sets parameters for a vtkMRMLCommandLineModuleNode given a dictionary
-  of parameters'''
+  of (parameterName, parameterValue) pairs
+  For vectors: provide a list, tuple or comma-separated string
+  For enumerations, provide the single enumeration value
+  For files and directories, provide a string
+  For images, geometry, points and regions, provide a vtkMRMLNode
+  '''
   import slicer
   if not node:
     return None
@@ -32,8 +37,15 @@ def setNodeParameters(node, parameters):
       node.SetParameterAsInt(key, value)
     elif isinstance(value, float):
       node.SetParameterAsDouble(key, value)
-    elif isinstance(value, slicer.vtkMRMLVolumeNode):
+    elif isinstance(value, slicer.vtkMRMLNode):
       node.SetParameterAsString(key, value.GetID())
+    elif isinstance(value, list) or isinstance(value, tuple):
+      commaSeparatedString = str(value)
+      commaSeparatedString = commaSeparatedString[1:len(commaSeparatedString)-1]
+      node.SetParameterAsString(key, commaSeparatedString)
+    #TODO: file support
+    else:
+      print "parameter ", key, " has unsupported type ", value.__class__.__name__
 
 def run(module, node = None, parameters = None):
   '''Runs a CLI, optionally given a node with optional parameters, returning
