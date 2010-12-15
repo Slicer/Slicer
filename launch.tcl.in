@@ -189,7 +189,7 @@ proc launch_SetEnvironment {} {
       set ext ".exe"
     }
     # if you change something here, please change it in qSlicerCoreApplication too
-    if { [file exists $::env(Slicer_HOME)/bin/vtkEncodeString$ext] } {
+    if { [file exists $::env(Slicer_HOME)/bin/unu$ext] } {
       set installed 1
     }
     
