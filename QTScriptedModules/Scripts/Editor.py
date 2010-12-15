@@ -72,9 +72,16 @@ class EditorWidget:
       self.setMergeNode(mergeNode)
     # if not showing volumes, the caller is responsible for setting the master and
     # merge nodes, most likely according to a widget within the caller
+
+    # resume the current effect, if we left the editor and re-entered
+    if self.toolsBox:
+      self.toolsBox.resumeEffect()
     
   def exit(self):
-    pass
+    if self.toolsBox:
+      self.toolsBox.pauseEffect()
+
+  # TODO need similar functionality as exit() to cancel brushes when widget is destroyed
 
   # sets the node for the volume to be segmented
   def setMasterNode(self, newMasterNode):

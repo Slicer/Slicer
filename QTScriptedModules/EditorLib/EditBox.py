@@ -271,6 +271,18 @@ itcl::body EditBox::setButtonState {effect state} {
 """
 
   #
+  # Pause running the current effect, reverting to the default tool
+  #
+  def pauseEffect(self):
+    self.selectEffect("DefaultTool")
+
+  #
+  # Resume running the effect that was being used before a pause (TODO)
+  #
+  def resumeEffect(self):
+    pass
+
+  #
   # manage the editor effects
   #
   def selectEffect(self, effect):
