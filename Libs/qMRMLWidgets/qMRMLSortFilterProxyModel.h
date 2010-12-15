@@ -43,6 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyMo
   QVTK_OBJECT
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
+  Q_PROPERTY(QStringList showHiddenForTypes READ showHiddenForTypes WRITE setShowHiddenForTypes)
   Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
 public:
@@ -69,8 +70,17 @@ public:
   ///
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
+  /// \sa setShowHiddenForTypes, showHiddenForTypes
   void setShowHidden(bool);
   bool showHidden()const;
+
+  ///
+  /// Give more control over the types of mrml node you want to force
+  /// the display even if their HideFromEditors property is true.
+  /// Don't do anything if the list is empty.
+  /// \sa setShowHiddenForTypes, showHiddenForTypes
+  QStringList showHiddenForTypes()const;
+  void setShowHiddenForTypes(const QStringList& nodeTypes);
 
   ///
   /// Add node type attribute that filter the nodes to
@@ -93,7 +103,7 @@ public:
   void setHideChildNodeTypes(const QStringList& nodeTypes);
   QStringList hideChildNodeTypes()const;
 
-  // TODO Add setMRMLScene()
+  // TODO Add setMRMLScene() to propagate to the scene model
 protected:
   //virtual bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
   virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;

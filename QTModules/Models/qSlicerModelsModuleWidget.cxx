@@ -21,6 +21,9 @@
 // Qt includes
 #include <QDebug>
 
+// qMRMLWidgets
+#include <qMRMLSceneModel.h>
+
 // SlicerQt includes
 #include "qSlicerModelsModuleWidget.h"
 #include "ui_qSlicerModelsModule.h"
@@ -62,7 +65,8 @@ void qSlicerModelsModuleWidget::setup()
   d->setupUi(this);
   d->ModelHierarchyTreeWidget->setColumnHidden(1, true);
   d->ClipModelsNodeComboBox->setVisible(false);
-  d->ModelHierarchyTreeWidget->sortFilterProxyModel()->setShowHidden(true);
+  d->ModelHierarchyTreeWidget->sortFilterProxyModel()->setShowHiddenForTypes(
+    QStringList() << "vtkMRMLModelHierarchyNode");
   this->Superclass::setup();
 }
 

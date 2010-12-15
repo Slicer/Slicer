@@ -48,6 +48,7 @@ public:
 
   QStringList                      NodeTypes;
   bool                             ShowHidden;
+  QStringList                      ShowHiddenForTypes;
   bool                             ShowChildNodeTypes;
   QStringList                      HideChildNodeTypes;
   typedef QPair<QString, QVariant> AttributeType;
@@ -161,10 +162,24 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     {
     return true;
     }
+  // HideFromEditors property
   if (!d->ShowHidden && node->GetHideFromEditors())
     {
-    return false;
+    bool hide = true;
+    foreach(const QString& nodeType, d->ShowHiddenForTypes)
+      {
+      if (node->IsA(nodeType.toLatin1()))
+        {
+        hide = false;
+        break;
+        }
+      }
+    if (hide)
+      {
+      return false;
+      }
     }
+
   // Accept all the nodes if no type has been set
   if (d->NodeTypes.isEmpty())
     {
@@ -266,6 +281,13 @@ void qMRMLSortFilterProxyModel::setShowChildNodeTypes(bool _show)
   invalidateFilter();
 }
 
+//-----------------------------------------------------------------------------
+bool qMRMLSortFilterProxyModel::showChildNodeTypes()const
+{
+  Q_D(const qMRMLSortFilterProxyModel);
+  return d->ShowChildNodeTypes;
+}
+
 // --------------------------------------------------------------------------
 void qMRMLSortFilterProxyModel::setShowHidden(bool enable)
 {
@@ -285,9 +307,21 @@ bool qMRMLSortFilterProxyModel::showHidden()const
   return d->ShowHidden;
 }
 
-//-----------------------------------------------------------------------------
-bool qMRMLSortFilterProxyModel::showChildNodeTypes()const
+// --------------------------------------------------------------------------
+void qMRMLSortFilterProxyModel::setShowHiddenForTypes(const QStringList& types)
+{
+  Q_D(qMRMLSortFilterProxyModel);
+  if (types == d->ShowHiddenForTypes)
+    {
+    return;
+    }
+  d->ShowHiddenForTypes = types;
+  this->invalidateFilter();
+}
+
+// --------------------------------------------------------------------------
+QStringList qMRMLSortFilterProxyModel::showHiddenForTypes()const
 {
   Q_D(const qMRMLSortFilterProxyModel);
-  return d->ShowChildNodeTypes;
+  return d->ShowHiddenForTypes;
 }

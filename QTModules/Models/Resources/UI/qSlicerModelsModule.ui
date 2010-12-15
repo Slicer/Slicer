@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>377</width>
-    <height>623</height>
+    <width>559</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
       <bool>true</bool>
      </property>
      <property name="sceneModelType">
-      <string>Transform</string>
+      <string>ModelHierarchy</string>
      </property>
      <property name="listenNodeModifiedEvent">
       <bool>true</bool>
