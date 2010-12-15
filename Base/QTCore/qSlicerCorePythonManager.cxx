@@ -69,7 +69,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   if (!app->isInstalled())
     {
     paths << qSlicerUtils::searchTargetInIntDir(QLatin1String(VTK_DIR)+"/bin",
-                                                QString("vtk%1").arg(executableExtension));
+                                                QString("vtkWrapPython%1").arg(executableExtension));
     paths << QString("%1/Wrapping/Python").arg(VTK_DIR);
 
     paths << QString("%1/CTK-build/bin/Python").arg(CTK_DIR);
