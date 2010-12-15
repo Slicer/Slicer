@@ -140,6 +140,10 @@ void qMRMLNodeComboBoxPrivate::setModel(QAbstractItemModel* model)
              q, SLOT(emitNodesAdded(const QModelIndex&, int, int)));
   q->connect(model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int,int)),
              q, SLOT(emitNodesAboutToBeRemoved(const QModelIndex&, int, int)));
+  q->connect(model, SIGNAL(rowsRemoved(const QModelIndex&, int,int)),
+             q, SLOT(refreshCurrentItem()));
+  q->connect(model, SIGNAL(modelReset()), q, SLOT(refreshCurrentItem()));
+  q->connect(model, SIGNAL(layoutChanged()), q, SLOT(refreshCurrentItem()));
 }
 
 // --------------------------------------------------------------------------
@@ -754,4 +758,10 @@ void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex & parent, in
       emit nodeAboutToBeRemoved(node);
       }
     }
+}
+
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBox::refreshCurrentItem()
+{
+  this->setCurrentNode(this->currentNode());
 }
