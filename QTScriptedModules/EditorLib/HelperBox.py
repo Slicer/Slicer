@@ -47,6 +47,9 @@ class HelperBox(object):
     self.colorSelect = None
     self.labelSelect = None
     self.labelSelector = None
+    # pseudo signals 
+    # - python callable that gets True or False
+    self.mergeValidCommand = None
 
     if not parent:
       self.parent = qt.QFrame()
@@ -114,7 +117,7 @@ class HelperBox(object):
     else:
       # the master exists, but there is no merge volume yet 
       # bring up dialog to create a merge with a user-selected color node
-      if self.master != "":
+      if self.master:
         self.colorSelectDialog()
 
     tcl('EffectSWidget::RotateToVolumePlanes') # make sure slices are aligned to volumes
@@ -494,9 +497,11 @@ class HelperBox(object):
     self.splitButton.setDisabled(not merge)
     self.mergeAndBuildButton.setDisabled(not merge)
     self.replaceModels.setDisabled(not merge)
+    if self.mergeValidCommand:
+      # will be passed current
+      self.mergeValidCommand(merge)
+
     if not merge:
-      # TODO
-      #EditorShowHideTools "hide"
       return
 
     colorNode = merge.GetDisplayNode().GetColorNode()

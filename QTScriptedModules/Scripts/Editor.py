@@ -59,7 +59,7 @@ class EditorWidget:
     else:
       self.parent = parent
       self.layout = parent.layout()
-      self.setup()
+      #self.setup()
 
   def enter(self):
     # get the master and merge nodes from the composite node associated
@@ -134,6 +134,11 @@ class EditorWidget:
       self.editLabelMapsFrame.setLayout(qt.QVBoxLayout())
       self.editLabelMapsFrame.setText("Edit Selected Label Map")
       self.layout.addWidget(self.editLabelMapsFrame)
+      self.editLabelMapsFrame.collapsed = True
+
+      # add a callback to collapse/open the frame based on the validity of the label volume
+      self.helper.mergeValidCommand = self.updateLabelFrame 
+
     # if creating embedded widget, simply use the parent for the widgets in the
     # "edit label maps" section
     else:
@@ -180,5 +185,8 @@ class EditorWidget:
     self.editBoxFrame.setLayout(qt.QVBoxLayout())
     self.effectsToolsFrame.layout().addWidget(self.editBoxFrame)
     self.toolsBox = EditorLib.EditBox(self.editBoxFrame, optionsFrame=self.effectOptionsFrame, embedded=self.embedded, suppliedEffects=self.suppliedEffects)
+
+  def updateLabelFrame(self, mergeVolume):
+    self.editLabelMapsFrame.collapsed = not mergeVolume
 
   #->> TODO: check to make sure editor module smoothly handles interactive changes to the master and merge nodes
