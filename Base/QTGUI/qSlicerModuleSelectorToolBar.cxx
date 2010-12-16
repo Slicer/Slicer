@@ -88,11 +88,11 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->ModulesButton->setToolTip(QObject::tr("Select a module from the module list"));
   this->ModulesButton->setMenu(this->ModulesMenu);
   QStyleOptionButton opt;
-  this->ModulesButton->setFixedWidth(
+  this->ModulesButton->setMinimumWidth(
     this->ModulesButton->style()->sizeFromContents(
       QStyle::CT_PushButton, &opt,
       this->ModulesButton->fontMetrics().size(
-        Qt::TextShowMnemonic, "XXXXXXXXXXXXXXXXXXXXXXXXXX"),this->ModulesButton).width());
+        Qt::TextShowMnemonic, "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"),this->ModulesButton).width());
   q->addWidget(this->ModulesButton);
 
   // Previous button
