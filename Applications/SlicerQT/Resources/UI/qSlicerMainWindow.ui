@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -168,11 +168,11 @@
       </widget>
      </item>
      <item>
-      <widget class="qSlicerModulePanel" name="ModulePanel" native="true"/>
+      <widget class="qSlicerModulePanel" name="ModulePanel"/>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="SliceControlsCollapsibleWidget" native="true">
-       <property name="text" stdset="0">
+      <widget class="ctkCollapsibleButton" name="SliceControlsCollapsibleWidget">
+       <property name="text">
         <string>Manipulate Slice Views</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -196,13 +196,13 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget" native="true">
-       <property name="text" stdset="0">
+      <widget class="ctkCollapsibleButton" name="View3DControlsCollapsibleWidget">
+       <property name="text">
         <string>Manipulate 3D View</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget" native="true"/>
+         <widget class="qMRMLThreeDViewsControllerWidget" name="MRMLThreeDViewsControllerWidget"/>
         </item>
        </layout>
       </widget>
@@ -861,6 +861,12 @@
    <header>qMRMLSlicesControllerToolBar.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLThreeDViewsControllerWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLThreeDViewsControllerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
@@ -882,12 +888,6 @@
    <class>qSlicerMouseModeToolBar</class>
    <extends>QToolBar</extends>
    <header>qSlicerMouseModeToolBar.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLThreeDViewsControllerWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLThreeDViewsControllerWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
@@ -911,22 +911,6 @@
     <hint type="destinationlabel">
      <x>67</x>
      <y>320</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionWindowToolbarsModules</sender>
-   <signal>triggered(bool)</signal>
-   <receiver>ModuleToolBar</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>447</x>
-     <y>43</y>
     </hint>
    </hints>
   </connection>
@@ -975,6 +959,70 @@
     <hint type="destinationlabel">
      <x>652</x>
      <y>44</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWindowToolbarsLoadSave</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainToolBar</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>42</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWindowToolbarsUndoRedo</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>UndoRedoToolBar</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>140</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWindowToolbarsModules</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>ModuleToolBar</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>91</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWindowToolbarsView</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>ViewToolBar</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>189</x>
+     <y>42</y>
     </hint>
    </hints>
   </connection>
