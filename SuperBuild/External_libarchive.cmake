@@ -1,8 +1,8 @@
 #-----------------------------------------------------------------------------
 # Get and build LIBARCHIVE (libarchive)
 
-set(libarchive_URL http://libarchive.googlecode.com/files/libarchive-2.8.4.tar.gz)
-set(libarchive_MD5 83b237a542f27969a8d68ac217dc3796)
+set(libarchive_URL http://libarchive.googlecode.com/files/libarchive-2.7.1.tar.gz)
+set(libarchive_MD5 f43382413b4457d0e192771b100a66e7)
 
 set(proj libarchive)
 
@@ -18,6 +18,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     -DBUILD_SHARED_LIBS:BOOL=ON
+    -DENABLE_TAR_SHARED:BOOL=ON
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   DEPENDS 
     ${libarchive_DEPENDENCIES}
