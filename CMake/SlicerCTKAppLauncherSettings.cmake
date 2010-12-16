@@ -19,18 +19,54 @@
 ################################################################################
 
 #
-# <CMAKE_CFG_INTDIR> is a special string that will be replaced at build time
-# within the script "ctkAppLauncher-configure.cmake". This script is executed 
-# each time the target 'SlicerConfigureLauncher' is built.
+# ------------------[ Slicer Launcher settings ] ------------------
 #
- 
-#-----------------------------------------------------------------------------
-# Settings specific to the build tree.
+# This file contains variables that can be grouped into two broad categories. 
 #
+# There are the variables that are used to configure the launcher for a BUILD tree and also
+# the ones for an INSTALLED tree.
+#
+# Each one of these categories contain: the PATHS, LIBRARY_PATHS and ENVVARS variables
+#
+# To summarize, you will find the following variables:
+#
+#   SLICER_LIBRARY_PATHS_BUILD
+#   SLICER_PATHS_BUILD
+#   SLICER_ENVVARS_BUILD
+#
+#   SLICER_LIBRARY_PATHS_INSTALLED
+#   SLICER_PATHS_INSTALLED
+#   SLICER_ENVVARS_INSTALLED
+# 
 
 #
-# LIBRARY_PATHS
+# Usually, if you are building on a system handling multiple build configrations 
+# (i.e Visual studio with Debug, Release, ...), the libraries and executables could be built in a
+# subdirectory matching the active configuration. 
+# 
+# In case of a BUILD tree, each time a path containing such a sub directory should be considered, 
+# it's possible to rely on a special string: <CMAKE_CFG_INTDIR>
 #
+# At build time, <CMAKE_CFG_INTDIR> will be replaced by the active configuration name.
+# This happens within the script "ctkAppLauncher-configure.cmake". 
+
+# Note also that script is executed each time the target 'SlicerConfigureLauncher' is built.
+#
+# It means you could manually trigger the reconfiguration of the launcher settings file 
+# by building that target.
+
+
+
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+# Settings specific to the build tree.
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# LIBRARY_PATHS
+#-----------------------------------------------------------------------------
 SET(SLICER_LIBRARY_PATHS_BUILD
   ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
@@ -75,9 +111,9 @@ IF(Slicer_USE_PYTHONQT)
   LIST(APPEND SLICER_LIBRARY_PATHS_BUILD ${SLICER_PYTHON_LIB_DIR})
 ENDIF()
 
-#
+#-----------------------------------------------------------------------------
 # PATHS
-#
+#-----------------------------------------------------------------------------
 SET(SLICER_PATHS_BUILD
   ./bin/<CMAKE_CFG_INTDIR>
   ./${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
@@ -92,9 +128,9 @@ IF(Slicer_USE_PYTHONQT_WITH_TCL)
     )
 ENDIF()
 
-#
+#-----------------------------------------------------------------------------
 # ENVVARS
-#  
+#-----------------------------------------------------------------------------
 SET(SLICER_ENVVARS_BUILD
   "QT_PLUGIN_PATH=./bin<PATHSEP>${CTK_DIR}/CTK-build/bin"
   )
@@ -127,14 +163,16 @@ IF(Slicer_USE_PYTHONQT_WITH_TCL)
     "TCLLIBPATH=${TCLLIBPATH}"
     )
 ENDIF()
-  
+
+#-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 # Settings specific to the install tree.
-#
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 
-#
+#-----------------------------------------------------------------------------
 # LIBRARY_PATHS
-#
+#-----------------------------------------------------------------------------
 SET(SLICER_LIBRARY_PATHS_INSTALLED
   ./${Slicer_INSTALL_BIN_DIR}
   ./${Slicer_INSTALL_LIB_DIR}
@@ -177,9 +215,9 @@ IF(Slicer_USE_PYTHONQT_WITH_TCL)
     )
 ENDIF()
 
-#
+#-----------------------------------------------------------------------------
 # PATHS
-#  
+#-----------------------------------------------------------------------------
 SET(SLICER_PATHS_INSTALLED
   ./${Slicer_INSTALL_BIN_DIR}
   ./${Slicer_INSTALL_PLUGINS_BIN_DIR}
@@ -187,9 +225,9 @@ SET(SLICER_PATHS_INSTALLED
   )
 
 
-#
+#-----------------------------------------------------------------------------
 # ENVVARS
-#  
+#-----------------------------------------------------------------------------
 SET(SLICER_ENVVARS_INSTALLED
   "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}"
   )
