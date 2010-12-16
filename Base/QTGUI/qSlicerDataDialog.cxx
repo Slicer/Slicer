@@ -168,7 +168,7 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
     // widget is visible
     optionsWidget->setMinimumWidth(optionsWidget->sizeHint().width());
     // The optionsWidget can use the filename to initialize some options.
-    optionsWidget->setFileName(file.absolutePath());
+    optionsWidget->setFileName(file.absoluteFilePath());
     this->FileWidget->setCellWidget(row, OptionsColumn, optionsWidget);
     // TODO: connect signal validChanged(bool) with the accept button
     }
@@ -200,8 +200,6 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
     qSlicerIO::IOProperties properties;
     QTableWidgetItem* fileItem = this->FileWidget->item(row, FileColumn);
     QTableWidgetItem* descriptionItem = this->FileWidget->item(row, TypeColumn);
-    qSlicerIOOptionsWidget* optionsItem = dynamic_cast<qSlicerIOOptionsWidget*>(
-      this->FileWidget->cellWidget(row, OptionsColumn));
     Q_ASSERT(fileItem);
     Q_ASSERT(descriptionItem);
     if (fileItem->checkState() != Qt::Checked)
@@ -210,8 +208,11 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
       continue;
       }
     properties["fileType"] = descriptionItem->data(Qt::AccessibleDescriptionRole).toInt();
+    qSlicerIOOptionsWidget* optionsItem = dynamic_cast<qSlicerIOOptionsWidget*>(
+      this->FileWidget->cellWidget(row, OptionsColumn));
     if (optionsItem)
       {
+      // The optionsItem contains all the file properties including "fileName"
       properties.unite(optionsItem->properties());
       }
     else

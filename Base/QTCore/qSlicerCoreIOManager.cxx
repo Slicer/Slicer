@@ -186,12 +186,16 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   foreach (qSlicerIO* reader, readers)
     {
     reader->setMRMLScene(d->currentScene());
-    if (!reader->canLoadFile(parameters["fileName"].toString()) || 
-        !reader->load(parameters))
+    if (!reader->canLoadFile(parameters["fileName"].toString()))
       {
       continue;
       }
-    qDebug() << "Reader has read the file" << parameters["fileName"].toString();
+    if (!reader->load(parameters))
+      {
+      continue;
+      }
+    qDebug() << reader->description() << "Reader has successfully read the file"
+             << parameters["fileName"].toString();
     nodes << reader->loadedNodes();
     success = true;
     break;
