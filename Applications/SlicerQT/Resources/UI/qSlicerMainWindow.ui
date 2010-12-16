@@ -900,7 +900,7 @@
  <connections>
   <connection>
    <sender>actionWindowShowMainPanel</sender>
-   <signal>triggered(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>PanelDockWidget</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
@@ -932,7 +932,7 @@
   </connection>
   <connection>
    <sender>actionWindowToolbarsLayout</sender>
-   <signal>triggered(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>LayoutToolBar</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
@@ -948,7 +948,7 @@
   </connection>
   <connection>
    <sender>actionWindowToolbarsMouseMode</sender>
-   <signal>triggered(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>MouseModeToolBar</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
@@ -964,7 +964,7 @@
   </connection>
   <connection>
    <sender>actionWindowToolbarsLoadSave</sender>
-   <signal>triggered(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>MainToolBar</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
@@ -980,7 +980,7 @@
   </connection>
   <connection>
    <sender>actionWindowToolbarsUndoRedo</sender>
-   <signal>triggered(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>UndoRedoToolBar</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
@@ -996,7 +996,7 @@
   </connection>
   <connection>
    <sender>actionWindowToolbarsModules</sender>
-   <signal>triggered(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>ModuleToolBar</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
@@ -1012,7 +1012,7 @@
   </connection>
   <connection>
    <sender>actionWindowToolbarsView</sender>
-   <signal>triggered(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>ViewToolBar</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
