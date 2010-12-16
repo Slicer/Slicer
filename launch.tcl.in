@@ -465,7 +465,11 @@ proc launch_SetEnvironment {} {
       set ::env(bmModuleDescriptionParser_DIR) $::env(BatchMake_BIN_DIR)
       
       set ::env(LibArchive_DIR)      [file normalize "@LibArchive_DIR@"]
-      set ::env(LibArchive_LIB_DIR)  [file normalize "@LibArchive_DIR@/bin/$::LibArchive_BUILD_SUBDIR"]
+      if {$::env(BUILD) == $::WINDOWS} {
+        set ::env(LibArchive_LIB_DIR)  [file normalize "@LibArchive_DIR@/bin/$::LibArchive_BUILD_SUBDIR"]
+      } else {
+        set ::env(LibArchive_LIB_DIR)  [file normalize "@LibArchive_DIR@/"]
+      }
       
       # Slicer3 Libs
     
