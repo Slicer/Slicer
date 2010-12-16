@@ -54,20 +54,20 @@ public:
   /// is already registered.
   bool IsDisplayableManagerRegistered(const char* vtkClassName);
 
-  ///
   /// Register Displayable Manager identified by \a vtkClassOrScriptName
+  /// Returns True if displayable manager was successfully registered
   /// \a vtkClassOrScriptName should be either:
   /// a VTK class registered using the CMake macro VTK_MAKE_INSTANTIATOR3
   /// a python script having the extension .py
   /// Internally for each registered python script, a scripted displayable manager
   /// will be instanciated.
-  void RegisterDisplayableManager(const char* vtkClassOrScriptName);
+  bool RegisterDisplayableManager(const char* vtkClassOrScriptName);
 
-  ///
-  /// UnRegister Displayable Manager identified by \a vtkClassOrScriptName
+  /// UnRegister Displayable Manager identified by \a vtkClassOrScriptName.
+  /// Returns True if displayable manager was successfully unregistered
   /// \a vtkClassOrScriptName should be either a VTK class registered using the
   /// CMake macro VTK_MAKE_INSTANTIATOR3 or a python script name.
-  void UnRegisterDisplayableManager(const char* vtkClassOrScriptName);
+  bool UnRegisterDisplayableManager(const char* vtkClassOrScriptName);
 
   ///
   /// Return number of registered displayable managers

@@ -116,13 +116,13 @@ bool vtkMRMLDisplayableManagerFactory::IsDisplayableManagerRegistered(const char
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vtkClassOrScriptName)
+bool vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vtkClassOrScriptName)
 {
   // Sanity checks
   if (!vtkClassOrScriptName)
     {
     vtkWarningMacro(<<"RegisterDisplayableManager - vtkClassOrScriptName is NULL");
-    return;
+    return false;
     }
 
   // Check if the DisplayableManager has already been registered
@@ -134,7 +134,7 @@ void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
   if ( it != this->Internal->DisplayableManagerClassNames.end())
     {
     vtkWarningMacro(<<"RegisterDisplayableManager - " << vtkClassOrScriptName << " already registered");
-    return;
+    return false;
     }
 
   // Check if vtkClassOrScriptName is a valid vtk className
@@ -147,10 +147,12 @@ void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
     std::string str(vtkClassOrScriptName);
     if (str.find(".py") == std::string::npos)
       {
-      return;
+      vtkWarningMacro(<<"RegisterDisplayableManager - Failed to register " << vtkClassOrScriptName);
+      return false;
       }
 #else
-    return;
+    vtkWarningMacro(<<"RegisterDisplayableManager - Failed to register " << vtkClassOrScriptName);
+    return false;
 #endif
     }
 
@@ -159,16 +161,18 @@ void vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
 
   this->InvokeEvent(Self::DisplayableManagerFactoryRegisteredEvent,
                     const_cast<char*>(vtkClassOrScriptName));
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* vtkClassOrScriptName)
+bool vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* vtkClassOrScriptName)
 {
   // Sanity checks
   if (!vtkClassOrScriptName)
     {
     vtkWarningMacro(<<"UnRegisterDisplayableManager - vtkClassOrScriptName is NULL");
-    return;
+    return false;
     }
   
   // Check if the DisplayableManager is registered
@@ -180,13 +184,15 @@ void vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* 
   if ( it == this->Internal->DisplayableManagerClassNames.end())
     {
     vtkWarningMacro(<<"UnRegisterDisplayableManager - " << vtkClassOrScriptName << " is NOT registered");
-    return;
+    return false;
     }
 
   this->Internal->DisplayableManagerClassNames.erase(it);
 
   this->InvokeEvent(Self::DisplayableManagerFactoryUnRegisteredEvent,
                     const_cast<char*>(vtkClassOrScriptName));
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
