@@ -318,14 +318,10 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::AddAndObserveDisplayNodeID(const char *displayNodeID)
 {
-  if (!this->GetScene())
-    {
-    vtkWarningMacro(<<"Scene is NULL when observing " << (displayNodeID ? displayNodeID : ""));
-    return;
-    }
   this->AddDisplayNodeID(displayNodeID);
 
-  vtkMRMLDisplayNode *dnode = vtkMRMLDisplayNode::SafeDownCast(this->GetScene()->GetNodeByID(displayNodeID));
+  vtkMRMLDisplayNode *dnode = vtkMRMLDisplayNode::SafeDownCast(
+    this->GetScene() != 0 ? this->GetScene()->GetNodeByID(displayNodeID) : 0);
   this->AddAndObserveDisplayNode(dnode);
   this->Modified(); 
 }

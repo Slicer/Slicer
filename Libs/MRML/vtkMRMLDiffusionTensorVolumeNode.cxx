@@ -55,25 +55,17 @@ vtkMRMLDiffusionTensorVolumeNode::vtkMRMLDiffusionTensorVolumeNode()
 {
   this->Order = 2; //Second order Tensor
 }
-//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
 {
-  if (displayNodeID == NULL)
-    {
-    vtkDebugMacro("SetAndObserveDisplayNodeID: null display node id");
-    return;
-    }
-  if (this->GetScene() == NULL)
-    {
-    vtkDebugMacro("SetAndObserveDisplayNodeID: null scene");
-    return;
-    }
-  if (vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetScene()->GetNodeByID(displayNodeID))==NULL)
+  this->Superclass::SetAndObserveDisplayNodeID(displayNodeID);
+  // Make sure the node added is a DiffusionTensorVolumeDisplayNode
+  vtkMRMLNode* displayNode =  this->GetDisplayNode();
+  if (displayNode && vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode))
     {
     vtkWarningMacro("SetAndObserveDisplayNodeID: The node to display " << displayNodeID << " can not display diffusion tensors");
     }
-    Superclass::SetAndObserveDisplayNodeID(displayNodeID);
 }
 
 //----------------------------------------------------------------------------

@@ -114,30 +114,29 @@ int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )
   if (displayableNode == NULL)
     {
     std::cerr << "Could not instantiate a displayable node\n";
+    return EXIT_FAILURE;
     }
-  else
+  scene->AddNode(displayableNode);
+  node1->SetDisplayableNodeIDReference(displayableNode->GetID());
+  node1->GetChildrenDisplayableNodes(col);
+  numChildren =  col->GetNumberOfItems();
+  std::cout << "Number of children displayble nodes  = " << numChildren << std::endl;
+  if (numChildren != expectedChildren)
     {
-    scene->AddNode(displayableNode);
-    node1->SetDisplayableNodeIDReference(displayableNode->GetID());
-    node1->GetChildrenDisplayableNodes(col);
-    numChildren =  col->GetNumberOfItems();
-    std::cout << "Number of children displayble nodes  = " << numChildren << std::endl;
-    if (numChildren != expectedChildren)
-      {
-      std::cerr << "Expected " << expectedChildren << " children, got " << numChildren << std::endl;
-      return EXIT_FAILURE;
-      }
-    expectedChildren++;
+    std::cerr << "Expected " << expectedChildren << " children, got " << numChildren << std::endl;
+    return EXIT_FAILURE;
     }
 
   // add another hierarchy node below this one
   vtkSmartPointer< vtkMRMLDisplayableHierarchyNode > node2 = vtkSmartPointer< vtkMRMLDisplayableHierarchyNode >::New();
   scene->AddNode(node2);
   node2->SetParentNodeID(node1->GetID());
-  
+  expectedChildren++;
+
   vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
   scene->AddNode(modelNode);
   node2->SetDisplayableNodeIDReference(modelNode->GetID());
+  expectedChildren++;
   node1->GetChildrenDisplayableNodes(col);
   numChildren =  col->GetNumberOfItems();
   std::cout << "Number of children displayble nodes after adding a model one = " << numChildren << std::endl;
@@ -147,8 +146,6 @@ int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  
-  
   vtkSmartPointer<vtkMRMLDisplayableHierarchyNode> hnode3 = node1->GetDisplayableHierarchyNode(scene, "myid");
   std::cout << "Displayable hierarchy node from id myid = " << (hnode3 == NULL ? "NULL" : hnode3->GetID()) << std::endl;
   hnode3 = node1->GetDisplayableHierarchyNode(scene,modelNode->GetID());
