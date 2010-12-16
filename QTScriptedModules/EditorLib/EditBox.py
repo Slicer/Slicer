@@ -36,6 +36,7 @@ class EditBox(object):
 
   def __init__(self, parent=0, optionsFrame=None, embedded=False, suppliedEffects=[]):
     self.effects = []
+    self.effectButtons = {}
     self.effectMapper = qt.QSignalMapper()
     self.effectMapper.connect('mapped(const QString&)', self.selectEffect)
     self.editUtil = EditUtil.EditUtil()
@@ -113,6 +114,11 @@ class EditBox(object):
     "InterpolateLabels", "LabelOpacity",
     "ToggleLabelOutline", "Watershed", "Wand", "GrowCutSegment",
     )
+
+  # allow overriding the developers name of the tool for a more user-friendly label name
+  displayNames = {}
+  displayNames["PreviousCheckPoint"] = "Undo"
+  displayNames["NextCheckPoint"] = "Redo"
 
   # calculates the intersection of two flat lists
   @classmethod
@@ -193,9 +199,11 @@ class EditBox(object):
       if (effect in self.effects):
         i = self.icons[effect] = qt.QIcon(self.effectIconFiles[effect,self.effectModes[effect]])
         a = self.actions[effect] = qt.QAction(i, '', f)
-        b = self.buttons[effect] = qt.QToolButton()
+        self.effectButtons[effect] = b = self.buttons[effect] = qt.QToolButton()
         b.setDefaultAction(a)
         b.setToolTip(effect)
+        if EditBox.displayNames.has_key(effect):
+          b.setToolTip(EditBox.displayNames[effect])
         hbox.addWidget(b)
         if self.disabled.__contains__(effect):
           b.setDisabled(1)
@@ -252,8 +260,12 @@ class EditBox(object):
     # if using embedded format: create all of the buttons in the effects list in a single row
     else:
       self.createButtonRow(self.effects)
+
+    self.updateCheckPointButtons()
    
   def setActiveToolLabel(self,name):
+    if EditBox.displayNames.has_key(name):
+      name = EditBox.displayNames[name]
     self.toolsActiveToolName.setText(name)
 
 # needs to be a valid effect name and state of "", Disabled, or Selected
@@ -383,4 +395,12 @@ itcl::body EditBox::setButtonState {effect state} {
       $w previewOptions
     }
     """
-    
+
+  def updateCheckPointButtons(self):
+    previousImagesExist = nextImagesExist = False
+    if bool(int(tcl('info exists ::Editor(previousCheckPointImages)'))):
+      previousImagesExist = bool(int(tcl('llength $::Editor(previousCheckPointImages)')))
+    if bool(int(tcl('info exists ::Editor(nextCheckPointImages)'))):
+      nextImagesExist = bool(int(tcl('llength $::Editor(nextCheckPointImages)')))
+    self.effectButtons["PreviousCheckPoint"].setDisabled( not previousImagesExist )
+    self.effectButtons["NextCheckPoint"].setDisabled( not nextImagesExist )

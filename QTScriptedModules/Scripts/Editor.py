@@ -1,5 +1,6 @@
 import os
 from __main__ import tcl
+from __main__ import slicer
 import qt, ctk
 import EditorLib
 
@@ -48,6 +49,7 @@ class EditorWidget:
     self.embedded = embedded
     self.suppliedEffects = suppliedEffects
     self.showVolumesFrame = showVolumesFrame
+    self.editUtil = EditorLib.EditUtil()
 
     #->> check to make sure it works with a supplied parent
     if not parent:
@@ -66,10 +68,10 @@ class EditorWidget:
   def enter(self):
     # get the master and merge nodes from the composite node associated
     # with the red slice, but only if showing volumes
-    if (self.showVolumesFrame == True):
+    if self.showVolumesFrame:
       # get the slice composite node for the Red slice view (we'll assume it exists 
       # since we are in the editor) to get the current background and label
-      compositeNode = EditorLib.EditUtil.getCompositeNode()
+      compositeNode = self.editUtil.getCompositeNode()
       masterNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetBackgroundVolumeID() )
       mergeNode = slicer.mrmlScene.GetNodeByID( compositeNode.GetLabelVolumeID() )
       self.setMasterNode(masterNode)
@@ -77,11 +79,22 @@ class EditorWidget:
     # if not showing volumes, the caller is responsible for setting the master and
     # merge nodes, most likely according to a widget within the caller
 
+    # Observe the parameter node in order to make changes to 
+    # button states as needed
+    nodeID = tcl('[EditorGetParameterNode] GetID')
+    self.parameterNode = slicer.mrmlScene.GetNodeByID(nodeID)
+    self.parameterNodeTag = self.parameterNode.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+
     # resume the current effect, if we left the editor and re-entered
     self.resumeEffect()
     
   def exit(self):
+    self.parameterNode.RemoveObserver(self.parameterNodeTag)
     self.pauseEffect()
+
+  def updateGUIFromMRML(self, caller, event):
+    if self.toolsBox:
+      self.toolsBox.updateCheckPointButtons()
 
   def pauseEffect(self):
     if self.toolsBox:
