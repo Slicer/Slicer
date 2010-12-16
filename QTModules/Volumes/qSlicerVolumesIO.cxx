@@ -73,7 +73,7 @@ QStringList qSlicerVolumesIO::extensions()const
   return QStringList()
     << "Volume (*.hdr *.nhdr *.nrrd *.mhd *.mha *.vti *.nii *.gz *.mgz *.img *.pic)"
     << "Dicom (*.dcm)"
-    << "Images (*.png *.tif *.tiff)";
+    << "Image (*.png *.tif *.tiff *.jpg *.jpeg)";
 }
 
 //-----------------------------------------------------------------------------
