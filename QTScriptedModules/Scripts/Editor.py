@@ -60,6 +60,8 @@ class EditorWidget:
       self.parent = parent
       self.layout = parent.layout()
       #self.setup()
+      if self.embedded:
+        self.setup()
 
   def enter(self):
     # get the master and merge nodes from the composite node associated
@@ -187,6 +189,7 @@ class EditorWidget:
     self.toolsBox = EditorLib.EditBox(self.editBoxFrame, optionsFrame=self.effectOptionsFrame, embedded=self.embedded, suppliedEffects=self.suppliedEffects)
 
   def updateLabelFrame(self, mergeVolume):
-    self.editLabelMapsFrame.collapsed = not mergeVolume
+    if not self.embedded:
+      self.editLabelMapsFrame.collapsed = not mergeVolume
 
   #->> TODO: check to make sure editor module smoothly handles interactive changes to the master and merge nodes
