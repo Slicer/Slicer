@@ -138,9 +138,9 @@ bool vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
     }
 
   // Check if vtkClassOrScriptName is a valid vtk className
-  vtkSmartPointer<vtkObject> objectPointer;
-  objectPointer.TakeReference(vtkInstantiator::CreateInstance(vtkClassOrScriptName));
-  if (!objectPointer)
+  vtkSmartPointer<vtkObject> objectSmartPointer;
+  objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(vtkClassOrScriptName));
+  if (!objectSmartPointer || !objectSmartPointer->IsA("vtkMRMLAbstractDisplayableManager"))
     {
 #ifdef MRMLDisplayableManager_USE_PYTHON
     // Check if vtkClassOrScriptName is a python script
@@ -241,8 +241,8 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
       // Object will be unregistered when the SmartPointer will go out-of-scope
       vtkSmartPointer<vtkObject> objectSmartPointer;
       objectSmartPointer.TakeReference(vtkInstantiator::CreateInstance(classOrScriptName));
-      vtkMRMLAbstractThreeDViewDisplayableManager* displayableManager =
-          vtkMRMLAbstractThreeDViewDisplayableManager::SafeDownCast(objectSmartPointer);
+      vtkMRMLAbstractDisplayableManager* displayableManager =
+          vtkMRMLAbstractDisplayableManager::SafeDownCast(objectSmartPointer);
       if (!displayableManager)
         {
         vtkErrorMacro(<<"InstantiateDisplayableManagers - Failed to instantiate " << classOrScriptName);
