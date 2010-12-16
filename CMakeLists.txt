@@ -40,6 +40,7 @@ INCLUDE(CMake/SlicerMacroParseArguments.cmake)
 INCLUDE(CMake/SlicerMacroBuildCLI.cmake)
 INCLUDE(CMake/SlicerMacroEmptyExternalProject.cmake)
 INCLUDE(CMake/SlicerFunctionCheckCompilerFlags.cmake)
+INCLUDE(CMake/SlicerFunctionInstallLibrary.cmake)
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
