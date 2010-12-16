@@ -128,15 +128,25 @@ class EditOptions(object):
   def setMRMLDefaults(self):
     pass
 
-  def setRangeWidgetToBackgroundRange(self, rangeWidget):
-    if not rangeWidget:
-      return
+  def getBackgroundScalarRange(self):
+    success = False
+    lo = -1
+    hi = -1
     backgroundVolume = self.editUtil.getBackgroundVolume()
     if backgroundVolume:
       backgroundImage = backgroundVolume.GetImageData()
       if backgroundImage:
-        rangeWidget.minimum, rangeWidget.maximum = backgroundImage.GetScalarRange()
+        lo, hi = backgroundImage.GetScalarRange()
+        success = True
+    return success, lo, hi    
 
+  def setRangeWidgetToBackgroundRange(self, rangeWidget):
+    if not rangeWidget:
+      return
+    success, lo, hi = self.getBackgroundScalarRange()
+    if success:
+      rangeWidget.minimum, rangeWidget.maximum = lo, hi
+    
   def getPaintLabel(self):
     """ returns int index of the current paint label 
         - look for self's parameter node first, but if
@@ -891,10 +901,11 @@ class ThresholdOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
-    lo, hi = self.editUtil.getBackgroundVolume().GetImageData().GetScalarRange()
-    self.threshold.minimum, self.threshold.maximum = lo, hi
-    self.threshold.minimumValue = lo + 0.25 * (hi-lo)
-    self.threshold.maximumValue = hi
+    success, lo, hi = self.getBackgroundScalarRange()
+    if success:
+      self.threshold.minimum, self.threshold.maximum = lo, hi
+      self.threshold.minimumValue = lo + 0.25 * (hi-lo)
+      self.threshold.maximumValue = hi
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
 
