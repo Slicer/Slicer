@@ -1,6 +1,7 @@
 
 // Qt includes
 #include <QtPlugin>
+#include <QDebug>
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
@@ -40,54 +41,41 @@ qSlicerAnnotationModule::~qSlicerAnnotationModule()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModule::setup()
 {
-
   // 3D
-  /*
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationTextThreeDViewDisplayableManager");
+  QStringList threeDdisplayableManagers;
+  threeDdisplayableManagers
+      //<< "TextThreeDView"
+      //<< "AngleThreeDView"
+      << "Text"
+      << "Fiducial"
+      << "Bidimensional"
+      << "Ruler"
+      //<< "StickyThreeDView"
+      //<< "SplineThreeDView"
+      //<< "RulerThreeDView"
+      //<< "BidimensionalThreeDView"
+      //<< "ROIThreeDView"
+      ;
 
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationAngleThreeDViewDisplayableManager");
-*/
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationTextDisplayableManager");
+  foreach(const QString& name, threeDdisplayableManagers)
+    {
+    vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+        QString("vtkMRMLAnnotation%1DisplayableManager").arg(name).toLatin1());
+    }
 
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationFiducialDisplayableManager");
-
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationBidimensionalDisplayableManager");
-
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationRulerDisplayableManager");
-/*
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationStickyThreeDViewDisplayableManager");
-
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationSplineThreeDViewDisplayableManager");
-
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationRulerThreeDViewDisplayableManager");
-
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationBidimensionalThreeDViewDisplayableManager");
-
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationROIThreeDViewDisplayableManager");
-*/
   // 2D
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationTextDisplayableManager");
+  QStringList slicerViewDisplayableManagers;
+  slicerViewDisplayableManagers
+      << "Text"
+      << "Fiducial"
+      << "Bidimensional"
+      << "Ruler";
 
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationFiducialDisplayableManager");
-
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationBidimensionalDisplayableManager");
-
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
-      "vtkMRMLAnnotationRulerDisplayableManager");
+  foreach(const QString& name, slicerViewDisplayableManagers)
+    {
+    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+        QString("vtkMRMLAnnotation%1DisplayableManager").arg(name).toLatin1());
+    }
 
 }
 
@@ -106,13 +94,17 @@ vtkSlicerLogic* qSlicerAnnotationModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModule::helpText() const
 {
-  return "The Annotation module. Still under heavy development. For feedback please contact the Slicer mailing list (slicer-users@bwh.harvard.edu).";
+  return "The Annotation module. Still under heavy development. "
+      "For feedback please contact the Slicer mailing list (slicer-users@bwh.harvard.edu).";
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModule::acknowledgementText() const
 {
-  return "<img src=':/Icons/upennpalmtree.png'><br><br>This module was developed by Daniel Haehn, Kilian Pohl and Yong Zhang. Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper and Ron Kikinis. The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).";
+  return "<img src=':/Icons/upennpalmtree.png'><br><br>This module was "
+      "developed by Daniel Haehn, Kilian Pohl and Yong Zhang. "
+      "Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper and Ron Kikinis. "
+      "The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).";
 }
 
 //-----------------------------------------------------------------------------
