@@ -220,6 +220,8 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
     return;
     }
 
+  bidimensionalWidget->SetWidgetStateToManipulate();
+  /*
   VTK_CREATE(vtkInteractorEventRecorder, recorder);
   recorder->SetInteractor(this->GetInteractor());
   recorder->ReadFromInputStringOn();
@@ -253,7 +255,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
 
   recorder->SetInputString(o.str().c_str());
   recorder->Play();
-  }
+  }*/
 
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4];
