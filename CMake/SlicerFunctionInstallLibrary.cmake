@@ -48,11 +48,7 @@ FUNCTION(slicerInstallLibrary)
     ${ARGN}
     )
 
-  IF(WIN32)
-    INSTALL(FILES ${_slicerInstallLibrary_FILE}
-      DESTINATION ${_slicerInstallLibrary_DESTINATION} 
-      COMPONENT ${_slicerInstallLibrary_COMPONENT})
-  ELSE()
+  IF(NOT WIN32)
   
     GET_FILENAME_COMPONENT(dir_tmp ${_slicerInstallLibrary_FILE} PATH)
     SET(name_tmp)
