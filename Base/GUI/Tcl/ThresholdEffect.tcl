@@ -36,7 +36,7 @@ if { [itcl::find class ThresholdEffect] == "" } {
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
-    method preview {} {}
+    method preview { {color ""} } {}
     method apply {} {}
     method positionCursor {} {}
     method buildOptions {} {}
@@ -100,7 +100,7 @@ itcl::body ThresholdEffect::apply {} {
 }
 
 
-itcl::body ThresholdEffect::preview {} {
+itcl::body ThresholdEffect::preview { {color ""} } {
 
   if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
     $this errorDialog "Background and Label map needed for Threshold"
@@ -114,7 +114,9 @@ itcl::body ThresholdEffect::preview {} {
   #   (output of the layer logic's vtkImageReslice instance)
   #
 
-  set color [::EditorGetPaintColor $::Editor(singleton)]
+  if { $color == "" } {
+    set color [::EditorGetPaintColor $::Editor(singleton)]
+  }
   if { ![info exists o(lut)] } {
     set o(lut) [vtkNew vtkLookupTable]
   }

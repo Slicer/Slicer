@@ -299,17 +299,19 @@ proc EditorToggleErasePaintLabel {} {
 
 proc EditorGetPaintColor { {this ""} } {
 
-  set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
-  if { $sliceLogic != "" } {
-    set logic [$sliceLogic GetLabelLayer]
-    if { $logic != "" } {
-      set volumeDisplayNode [$logic GetVolumeDisplayNode]
-      if { $volumeDisplayNode != "" } {
-        set node [$volumeDisplayNode GetColorNode]
-        set lut [$node GetLookupTable]
-        set index [EditorGetPaintLabel]
-        set index [expr int($index)]
-        return [$lut GetTableValue $index]
+  if { [info exists ::slicer3::ApplicationLogic] } {
+    set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
+    if { $sliceLogic != "" } {
+      set logic [$sliceLogic GetLabelLayer]
+      if { $logic != "" } {
+        set volumeDisplayNode [$logic GetVolumeDisplayNode]
+        if { $volumeDisplayNode != "" } {
+          set node [$volumeDisplayNode GetColorNode]
+          set lut [$node GetLookupTable]
+          set index [EditorGetPaintLabel]
+          set index [expr int($index)]
+          return [$lut GetTableValue $index]
+        }
       }
     }
   }
