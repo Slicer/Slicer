@@ -68,6 +68,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   QString executableExtension = qSlicerUtils::executableExtension();
   if (!app->isInstalled())
     {
+    // Add here python path specific to the BUILD tree
     paths << qSlicerUtils::searchTargetInIntDir(QLatin1String(VTK_DIR)+"/bin",
                                                 QString("vtkWrapPython%1").arg(executableExtension));
     paths << QString("%1/Wrapping/Python").arg(VTK_DIR);
@@ -76,13 +77,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
     }
   else
     {
-    paths << app->slicerHome() + QString("/lib/vtk-%1.%2").arg(VTK_MAJOR_VERSION).
-                                                           arg(VTK_MINOR_VERSION);
-    // TODO Figure out where the vtk and ctk python package is installed
-    paths << app->slicerHome() + "/lib/MRML";
-    paths << app->slicerHome() + "/lib/vtkTeem";
-    paths << app->slicerHome() + "/lib/FreeSurfer";
-    paths << app->slicerHome() + "/lib/RemoteIO";
+    // Add here python path specific to the INSTALLED tree
     }
   
   return paths; 
