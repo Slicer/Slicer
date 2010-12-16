@@ -1,12 +1,26 @@
 
 #-----------------------------------------------------------------------------
+## The FORCE_BUILD_CHECK macro adds a forecebuild step that will cause the
+## external project build process to be checked for updates each time
+## a dependent project is built.  It MUST be called AFTER the ExternalProject_Add
+## step for the project that you want to force building on.
+macro(FORCE_BUILD_CHECK  proj)
+    ExternalProject_Add_Step(${proj} forcebuild
+      COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BUILD_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build
+      DEPENDEES configure
+      DEPENDERS build
+      ALWAYS 1
+    )
+endmacro()
+
+#-----------------------------------------------------------------------------
 ## empty until ITK is brought into here as an ExternalProject
 macro(PACKAGE_NEEDS_ITK LOCAL_CMAKE_BUILD_OPTIONS gen)
   set(packageToCheck ITK)
   OPTION(OPT_USE_SYSTEM_${packageToCheck} "Use the system's ${packageToCheck} library." OFF)
   #  MARK_AS_ADVANCED(OPT_USE_SYSTEM_${packageToCheck})
   if(OPT_USE_SYSTEM_ITK)
-    find_package(ITK 3.18 REQUIRED)
+    find_package(ITK 3.20 REQUIRED)
     include(${ITK_USE_FILE})
     set(ITK_DEPEND "") ## Set the external depandancy for ITK
   else()
@@ -14,7 +28,7 @@ macro(PACKAGE_NEEDS_ITK LOCAL_CMAKE_BUILD_OPTIONS gen)
     ExternalProject_Add(${proj}
       CVS_REPOSITORY ":pserver:anonymous:insight@public.kitware.com:/cvsroot/Insight"
       CVS_MODULE "Insight"
-      CVS_TAG -r ITK-3-18
+      CVS_TAG -r ITK-3-20
       UPDATE_COMMAND ""
       SOURCE_DIR ${proj}
       BINARY_DIR ${proj}-build
@@ -36,6 +50,7 @@ macro(PACKAGE_NEEDS_ITK LOCAL_CMAKE_BUILD_OPTIONS gen)
         INSTALL_COMMAND ""
         #    INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}
     )
+    FORCE_BUILD_CHECK(${proj})
     set(ITK_DIR ${CMAKE_CURRENT_BINARY_DIR}/Insight-build)
     set (ITK_DEPEND ${proj}) ## Set the internal dependancy for ITK
   endif()
@@ -105,6 +120,7 @@ macro(PACKAGE_NEEDS_VTKWITHQT LOCAL_CMAKE_BUILD_OPTIONS gen)
       INSTALL_COMMAND ""
       #  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
     )
+    FORCE_BUILD_CHECK(${proj})
 
     set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
     set(VTK_DEPEND ${proj})
@@ -168,6 +184,7 @@ macro(PACKAGE_NEEDS_VTK_NOGUI LOCAL_CMAKE_BUILD_OPTIONS gen)
       INSTALL_COMMAND ""
       #  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
     )
+    FORCE_BUILD_CHECK(${proj})
 
     set(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
     set(VTK_DEPEND ${proj})
@@ -206,6 +223,7 @@ macro(PACKAGE_NEEDS_SlicerExecutionModel LOCAL_CMAKE_BUILD_OPTIONS gen)
         INSTALL_COMMAND ""
         # INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}
     )
+    FORCE_BUILD_CHECK(${proj})
     set(GenerateCLP_DIR ${CMAKE_CURRENT_BINARY_DIR}/SlicerExecutionModel-build/GenerateCLP)
     set(GenerateCLP_DEPEND "${proj}")
     set(SlicerExecutionModel_DEPEND "${proj}")
@@ -225,8 +243,10 @@ macro(PACKAGE_NEEDS_BRAINSCommonLib LOCAL_CMAKE_BUILD_OPTIONS gen)
   else()
     set(proj BRAINSCommonLib)
     ExternalProject_Add(${proj}
-      DOWNLOAD_COMMAND ""
-      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${proj}
+      SVN_REPOSITORY "http://www.nitrc.org/svn/brains/BRAINSCommonLib/trunk"
+      SVN_USERNAME "slicerbot"
+      SVN_PASSWORD "slicer"
+      SOURCE_DIR ${proj}
       BINARY_DIR ${proj}-build
       DEPENDS ${ITK_DEPEND}
       CMAKE_GENERATOR ${gen}
@@ -237,6 +257,7 @@ macro(PACKAGE_NEEDS_BRAINSCommonLib LOCAL_CMAKE_BUILD_OPTIONS gen)
         INSTALL_COMMAND ""
         # INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}
     )
+    FORCE_BUILD_CHECK(${proj})
     set(BRAINSCommonLib_DIR ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib-build)
     set(BRAINSCommonLib_DEPEND "${proj}")
   endif()

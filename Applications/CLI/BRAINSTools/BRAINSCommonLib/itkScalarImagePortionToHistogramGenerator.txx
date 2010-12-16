@@ -29,11 +29,7 @@ ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
 {
   m_ImageToListSampleGenerator = ListSampleGeneratorType::New();
   m_HistogramGenerator = GeneratorType::New();
-#ifdef ITK_USE_REVIEW_STATISTICS
   m_HistogramGenerator->SetInput( m_ImageToListSampleGenerator->GetOutput() );
-#else
-  m_HistogramGenerator->SetListSample( m_ImageToListSampleGenerator->GetListSample() );
-#endif
 }
 
 template< class TImageType, class TMaskType >
@@ -58,11 +54,7 @@ const typename ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >::
 ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
 ::GetOutput() const
 {
-#ifdef ITK_USE_REVIEW_STATISTICS
   return m_HistogramGenerator->GetOutput();
-#else
-  return m_Histogram;
-#endif
 }
 
 template< class TImageType, class TMaskType >
@@ -71,14 +63,10 @@ ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
 ::Compute()
 {
   m_ImageToListSampleGenerator->Update();
-#ifdef ITK_USE_REVIEW_STATISTICS
   std::cout << "ListSample TotalFrequency is  " << m_ImageToListSampleGenerator->GetOutput()->GetTotalFrequency()
             << std::endl;
-#endif
   m_HistogramGenerator->Update();
 }
-
-#ifdef ITK_USE_REVIEW_STATISTICS
 
 template< class TImageType, class TMaskType >
 void
@@ -123,32 +111,6 @@ ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
 {
   m_HistogramGenerator->SetMarginalScale(marginalScale);
 }
-
-#else
-
-template< class TImageType, class TMaskType >
-void
-ScalarImagePortionToHistogramGenerator< TImageType, TMaskType >
-::InitializeHistogram(unsigned int numberOfBins, RealPixelType minimumValue, RealPixelType maximumValue)
-{
-  typedef typename HistogramType::MeasurementVectorType MeasurementVectorType;
-  MeasurementVectorType minVector(1);
-
-  minVector[0] = minimumValue;
-  MeasurementVectorType maxVector(1);
-
-  maxVector[0] = maximumValue;
-
-  typedef typename HistogramType::SizeType SizeType;
-  SizeType size;
-  size.SetElement(0, numberOfBins);
-
-  m_Histogram = HistogramType::New();
-  m_Histogram->Initialize(size, minVector, maxVector);
-  m_HistogramGenerator->SetHistogram(m_Histogram);
-}
-
-#endif
 
 template< class TImageType, class TMaskType >
 void

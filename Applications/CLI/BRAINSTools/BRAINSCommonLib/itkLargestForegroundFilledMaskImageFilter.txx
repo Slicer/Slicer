@@ -162,14 +162,12 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >
   threshold->Update();
   // C'mon, guys.  I need to know what's going on.  Leave this output visible
   // for me.  Please?
-#if 1
-  // HACK:  The printout below is not what is really being used to threshold.
-  //  it is really threshold_low_foreground, NumericTraits<typename
+  // NOTE:  The printout below is not what is really being used to threshold.
+  // it is really threshold_low_foreground, NumericTraits<typename
   // OutputImageType::PixelType>::max()
   std::cout << "LowHigh Thresholds: [" << static_cast< int >( threshold_low ) << ","
             << threshold_low_foreground << "," << static_cast< int >( threshold_hi ) << "]"
             << std::endl;
-#endif
 
   typedef ConnectedComponentImageFilter< IntegerImageType,
                                          IntegerImageType > FilterType;
@@ -224,6 +222,13 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >
     for ( unsigned int d = 0; d < 3; d++ )
       {
       const unsigned int ClosingVoxels = vnl_math_ceil( m_ClosingSize / ( relabel->GetOutput()->GetSpacing()[d] ) );
+      if ( ClosingVoxels > 15 )
+        {
+        std::cout << "WARNING:  Attempting to close with a very large number of voxels:  " 
+          << m_ClosingSize << " / " << ( relabel->GetOutput()->GetSpacing()[d] ) << " = " << ClosingVoxels << std::endl;
+        std::cout << "Perhaps there is a mis-match between the voxel spacing and the assumption that  ClosingSize is given in mm"
+          << std::endl;
+        }
       dilateBallSize[d] = ClosingVoxels;
       erodeBallSize[d]  = ClosingVoxels;
       }
@@ -253,7 +258,7 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >
 
   const typename IntegerImageType::SizeType ImageSize =
     ErodeFilter->GetOutput()->GetLargestPossibleRegion().GetSize();
-  // HACK:  The most robust way to do this would be to find the largest
+  // NOTE:  The most robust way to do this would be to find the largest
   // background labeled image, and then choose one of those locations as the
   // seed.
   // For now just choose all the corners as seed points

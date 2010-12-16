@@ -215,18 +215,27 @@ int BRAINSFitPrimary(int argc, char *argv[])
     {
     itk::MultiThreader::SetGlobalMaximumNumberOfThreads(debugNumberOfThreads);
     }
-  std::string localInitializeTransformMode = "Off";
-  if ( ( ( initialTransform.size() >
-           0 ) + ( useCenterOfHeadAlign == true ) + ( useGeometryAlign == true ) + ( useMomentsAlign == true ) ) > 1 )
-    {
-    std::cout
-    <<
-    "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign ]"
-    << std::endl;
+
+  std::string localInitializeTransformMode = initializeTransformMode; //Intially set using the string enumeration
+    { //For backwards compatibility, allow old flags to overwrite setting of the new flag.
+    if ( ( 0
+        + ( initialTransform.size() > 0 )
+        + ( useCenterOfHeadAlign == true )
+        + ( useGeometryAlign == true )
+        + ( useMomentsAlign == true )
+        + ( initializeTransformMode != "Off" ) //This is the default value, so don't count it.
+    ) > 1 )
+      {
+      std::cout
+        <<
+        "ERROR:  Can only specify one of [initialTransform | useCenterOfHeadAlign | useGeometryAlign | useMomentsAlign | initializeTransformMode ]"
+        << std::endl;
+      exit(-1);
+      }
+    if ( useCenterOfHeadAlign == true ) { localInitializeTransformMode = "useCenterOfHeadAlign"; }
+    if ( useGeometryAlign == true )     { localInitializeTransformMode = "useGeometryAlign"; }
+    if ( useMomentsAlign == true )      { localInitializeTransformMode = "useMomentsAlign"; }
     }
-  if ( useCenterOfHeadAlign == true ) { localInitializeTransformMode = "useCenterOfHeadAlign"; }
-  if ( useGeometryAlign == true )     { localInitializeTransformMode = "useGeometryAlign"; }
-  if ( useMomentsAlign == true )      { localInitializeTransformMode = "useMomentsAlign"; }
 
   // std::vector<int> zeroOrigin(3, 0);
 
@@ -261,9 +270,7 @@ int BRAINSFitPrimary(int argc, char *argv[])
     {
     localTransformType = transformType;
     }
-  else if ( ( ( initialTransform.size() >
-                0 )
-              + ( useCenterOfHeadAlign == true ) + ( useGeometryAlign == true ) + ( useMomentsAlign == true ) ) > 0 )
+  else if ( ( ( initialTransform.size() > 0 ) + ( initializeTransformMode != "Off" ) ) > 0 )
     {
     // Only do the initialization phase;
     }
@@ -340,20 +347,20 @@ int BRAINSFitPrimary(int argc, char *argv[])
         }
       }
     }
-  if ( minimumStepSize.size() != localTransformType.size() )
+  if ( minimumStepLength.size() != localTransformType.size() )
     {
-    if ( minimumStepSize.size() != 1 )
+    if ( minimumStepLength.size() != 1 )
       {
-      std::cerr << "The minimumStepSize array must match the localTransformType length" << std::endl;
+      std::cerr << "The minimumStepLength array must match the localTransformType length" << std::endl;
       exit(-1);
       }
     else
       {
       // replicate throughout
-      const double stepSize = minimumStepSize[0];
+      const double stepSize = minimumStepLength[0];
       for ( unsigned int i = 1; i < localTransformType.size(); i++ )
         {
-        minimumStepSize.push_back(stepSize);
+        minimumStepLength.push_back(stepSize);
         }
       }
     }
@@ -452,6 +459,7 @@ int BRAINSFitPrimary(int argc, char *argv[])
         typedef itk::BRAINSROIAutoImageFilter< FixedVolumeType, itk::Image< unsigned char, 3 > > ROIAutoType;
         ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput(extractFixedVolume);
+        ROIFilter->SetClosingSize(ROIAutoClosingSize);
         ROIFilter->SetDilateSize(ROIAutoDilateSize);
         ROIFilter->Update();
         fixedMask = ROIFilter->GetSpatialObjectROI();
@@ -460,6 +468,7 @@ int BRAINSFitPrimary(int argc, char *argv[])
         typedef itk::BRAINSROIAutoImageFilter< MovingVolumeType, itk::Image< unsigned char, 3 > > ROIAutoType;
         ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput(extractMovingVolume);
+        ROIFilter->SetClosingSize(ROIAutoClosingSize);
         ROIFilter->SetDilateSize(ROIAutoDilateSize);
         ROIFilter->Update();
         movingMask = ROIFilter->GetSpatialObjectROI();
@@ -482,24 +491,6 @@ int BRAINSFitPrimary(int argc, char *argv[])
       movingMask = ReadImageMask< SpatialObjectType, Dimension >(
         movingBinaryVolume,
         extractMovingVolume.GetPointer() );
-      }
-      { // Write out some debugging information if requested
-      typedef itk::Image< unsigned char, 3 >                               MaskImageType;
-      typedef itk::ImageMaskSpatialObject< MaskImageType::ImageDimension > ImageMaskSpatialObjectType;
-      if ( ( !fixedMask.IsNull() ) && ( outputFixedVolumeROI != "" ) )
-        {
-        ImageMaskSpatialObjectType::Pointer fixedImageMask(
-          dynamic_cast< ImageMaskSpatialObjectType * >( fixedMask.GetPointer() ) );
-        MaskImageType::Pointer tempOutputFixedVolumeROI = const_cast< MaskImageType * >( fixedImageMask->GetImage() );
-        itkUtil::WriteImage< MaskImageType >(tempOutputFixedVolumeROI, outputFixedVolumeROI);
-        }
-      if ( ( !movingMask.IsNull() ) && ( outputMovingVolumeROI != "" ) )
-        {
-        ImageMaskSpatialObjectType::Pointer movingImageMask(
-          dynamic_cast< ImageMaskSpatialObjectType * >( movingMask.GetPointer() ) );
-        MaskImageType::Pointer tempOutputMovingVolumeROI = const_cast< MaskImageType * >( movingImageMask->GetImage() );
-        itkUtil::WriteImage< MaskImageType >(tempOutputMovingVolumeROI, outputMovingVolumeROI);
-        }
       }
     }
   /* This default fills the background with zeros
@@ -530,12 +521,14 @@ int BRAINSFitPrimary(int argc, char *argv[])
     myHelper->SetNumberOfMatchPoints(numberOfMatchPoints);
     myHelper->SetFixedBinaryVolume(fixedMask);
     myHelper->SetMovingBinaryVolume(movingMask);
+    myHelper->SetOutputFixedVolumeROI(outputFixedVolumeROI);
+    myHelper->SetOutputMovingVolumeROI(outputMovingVolumeROI);
     myHelper->SetPermitParameterVariation(permitParameterVariation);
     myHelper->SetNumberOfSamples(numberOfSamples);
     myHelper->SetNumberOfHistogramBins(numberOfHistogramBins);
     myHelper->SetNumberOfIterations(numberOfIterations);
-    myHelper->SetMaximumStepLength(maximumStepSize);
-    myHelper->SetMinimumStepLength(minimumStepSize);
+    myHelper->SetMaximumStepLength(maximumStepLength);
+    myHelper->SetMinimumStepLength(minimumStepLength);
     myHelper->SetRelaxationFactor(relaxationFactor);
     myHelper->SetTranslationScale(translationScale);
     myHelper->SetReproportionScale(reproportionScale);
@@ -553,6 +546,7 @@ int BRAINSFitPrimary(int argc, char *argv[])
     myHelper->SetDisplayDeformedImage(UseDebugImageViewer);
     myHelper->SetPromptUserAfterDisplay(PromptAfterImageSend);
     myHelper->SetDebugLevel(debugLevel);
+    myHelper->SetCostMetric(costMetric);
     if ( debugLevel > 7 )
       {
       myHelper->PrintCommandLine(true, "BF");
@@ -561,6 +555,23 @@ int BRAINSFitPrimary(int argc, char *argv[])
     currentGenericTransform = myHelper->GetCurrentGenericTransform();
     MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
 
+    if(interpolationMode=="RigidInPlace")
+      {
+      VersorRigid3DTransformType::ConstPointer versor3D=
+        dynamic_cast<const VersorRigid3DTransformType *>(currentGenericTransform.GetPointer());
+      if (versor3D.IsNotNull() )
+        {
+        FixedVolumeType::Pointer tempInPlaceResample=itk::SetRigidTransformInPlace<FixedVolumeType>(versor3D.GetPointer(),extractMovingVolume.GetPointer());
+        resampledImage=itkUtil::TypeCast< FixedVolumeType, MovingVolumeType >(tempInPlaceResample);
+        }
+      else
+        {
+        //This should be an exception thow instead of exit.
+        std::cout << "could not convert to rigid versor type" << std::endl;
+        exit(-1);
+        }
+      }
+    else
       {
       // Remember:  the Data is Moving's, the shape is Fixed's.
       resampledImage = TransformResample< MovingVolumeType, FixedVolumeType >(

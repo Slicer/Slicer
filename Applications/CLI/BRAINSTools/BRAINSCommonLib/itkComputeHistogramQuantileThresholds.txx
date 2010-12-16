@@ -83,14 +83,10 @@ ComputeHistogramQuantileThresholds< TInputImage, TMaskImage >
     }
 
   int NumberOfBins = static_cast< unsigned int >( m_ImageMax - m_ImageMin + 1 );
-#ifdef ITK_USE_REVIEW_STATISTICS
   histogramGenerator->SetNumberOfBins(NumberOfBins);
   histogramGenerator->SetMarginalScale(1.0);
   histogramGenerator->SetHistogramMin(m_ImageMin);
   histogramGenerator->SetHistogramMax(m_ImageMax);
-#else
-  histogramGenerator->InitializeHistogram(NumberOfBins, m_ImageMin, m_ImageMax);
-#endif
 
   histogramGenerator->Compute();
   typedef typename HistogramGeneratorType::HistogramType HistogramType;

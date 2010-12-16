@@ -8,8 +8,8 @@ static const unsigned int  ModuleLogoPixelSize     = 4;
 static const unsigned long ModuleLogoLength         = 2572;
 static const unsigned long image_BRAINSIcon_decoded_length = 6400;
 
-static const unsigned char ModuleLogoImage[] =
-  "eNrtWHm0lVMU//V6hcjQJIXGV2nQ8FJJE9E8aNJE8yulQa/UIw00KLUiJEkRmQsLmZaMWb"
+static const unsigned char ModuleLogoImage[]
+= "eNrtWHm0lVMU//V6hcjQJIXGV2nQ8FJJE9E8aNJE8yulQa/UIw00KLUiJEkRmQsLmZaMWb"
   "FMKSLRi0SWtRQasLK33z7nfvd+972vW9JaslZ/7HXOPfcM+9t7/357n7PvU+jez6D7EiL7"
   "js6YHLX9KPH2aI2xf9T2+z/YLxhL1v9YGEv4IZBjaMx+/7YxIXs2Qvb4Niz5x7gXJdU8ic"
   "87xH5mK+oR7V+2mkv5lvKNE9FtbMOSy7HceD+QxFhCJF8/mJebZ+222Hm5qfGx813okCug"

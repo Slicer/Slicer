@@ -88,13 +88,11 @@ public:
   itkSetMacro(ThresholdCorrectionFactor, double);
   itkGetConstMacro(ThresholdCorrectionFactor, double);
   /** The closing size in mm, this is rounded up to the next closest number of
-    * voxel
-    * by taking Spacing into account */
+    * voxel by taking Spacing into account */
   itkSetMacro(ClosingSize, double);
   itkGetConstMacro(ClosingSize, double);
   /** The dilation size in mm, this is rounded up to the next closest number of
-    * voxel
-    * by taking Spacing into account */
+    * voxel by taking Spacing into account */
   itkSetMacro(DilateSize, double);
   itkGetConstMacro(DilateSize, double);
 

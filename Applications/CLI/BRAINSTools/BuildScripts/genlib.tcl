@@ -1,4 +1,6 @@
 #!/bin/sh
+echo "This script is deprecated, and will probably not work any more."
+exit 1
 # the next line restarts using tclsh \
     exec tclsh "$0" "$@"
 

@@ -57,6 +57,38 @@ typedef itk::ScaleSkewVersor3DTransform< double > ScaleSkewVersor3DTransformType
 namespace itk
 {
 /**
+ * \author Hans J. Johnson
+ * \brief This templated function will duplicate the input image, change the direction and origin to refelect the physical space
+ * tranform that would be equivalent to calling the resample image filter.
+ * InplaceImage=SetRigidTransformInPlace(RigidTransform,InputImage); ResampleImage(InplaceImage,Identity);
+ * should produce the same result as ResampleImage(InputImage,RigidTransform);
+ * \param RigidTransform -- Currently must be a VersorRigid3D
+ * \param InputImage The image to be duplicated and modified to incorporate the rigid transform.
+ * \return an image with the same voxels values as the input, but with differnt physical space representation.
+ */
+  template< class IOImageType >
+    typename IOImageType::Pointer SetRigidTransformInPlace(typename VersorRigid3DTransformType::ConstPointer RigidTransform,typename IOImageType::ConstPointer InputImage)
+      {
+      typename VersorRigid3DTransformType::Pointer InvOfRigidTransform=VersorRigid3DTransformType::New();
+      const typename IOImageType::PointType centerPoint = RigidTransform->GetCenter();
+      InvOfRigidTransform->SetCenter( centerPoint );
+      InvOfRigidTransform->SetIdentity();
+      RigidTransform->GetInverse(InvOfRigidTransform);
+
+      /** Wei: The output image will have exact the same index contents
+        but with modified image info so that the index-to-physical mapping
+        makes the image in the physical space AC-PC aligned */
+      typedef ImageDuplicator< IOImageType > DuplicatorType;
+      typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
+      duplicator->SetInputImage(InputImage);
+      duplicator->Update();
+      typename IOImageType::Pointer OutputAlignedImage = duplicator->GetOutput();
+      //Now change the Origin and Direction to make data aligned.
+      OutputAlignedImage->SetOrigin( InvOfRigidTransform->GetMatrix() * InputImage->GetOrigin() + InvOfRigidTransform->GetTranslation() );
+      OutputAlignedImage->SetDirection( InvOfRigidTransform->GetMatrix() * InputImage->GetDirection() );
+      return OutputAlignedImage;
+      }
+/**
   * \author Hans J. Johnson
   * \brief A utility function to write ITK compliant transforms to disk in a way
   *that is compliant with the ReadTransformFromDisk

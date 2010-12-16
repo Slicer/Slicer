@@ -1,6 +1,7 @@
 #ifndef __ReadMask_h
 #define __ReadMask_h
 
+
 #include "itkBrains2MaskImageIO.h"
 #include "itkBrains2MaskImageIOFactory.h"
 #include "itkIO.h"
@@ -21,6 +22,7 @@ ReadImageMask(const std::string & filename,
   typedef typename itk::Image< MaskPixelType, VDimension > MaskImageType;
   typename MaskImageType::Pointer OrientedMaskImage = NULL;
 
+  //HACK:  Remove support for BRAINS2 masks from the CommonLibrary.  BRAINS3 will not support them.
   if ( itksys::SystemTools::GetFilenameLastExtension(filename) == ".mask" )
     {
     // HACK:  THIS ASSUMES THAT THE MASK IS A BRAINS2 mask with improper

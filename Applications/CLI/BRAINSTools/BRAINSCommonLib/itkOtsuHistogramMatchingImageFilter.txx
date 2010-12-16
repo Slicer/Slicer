@@ -419,10 +419,11 @@ void
 OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasurement >
 ::ConstructHistogram(
   const InputImageType *image,
-  const MaskImageType::Pointer mask, // HACK:  This should really be an
-                                     // itkSpatialObject, it is currently
-                                     // hardcoded to itk::Image<unsigned char,
-                                     // 3>
+  const MaskImageType::Pointer mask,
+  // HACK:  This should really be an
+ // itkSpatialObject, it is currently
+ // hardcoded to itk::Image<unsigned char, 3>
+ // Find similar conversion code in BRAINSFitHelper.cxx
   HistogramType  *histogram,
   const THistogramMeasurement minValue,
   const THistogramMeasurement maxValue)
@@ -433,13 +434,10 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
     typename HistogramType::MeasurementVectorType lowerBound;
     typename HistogramType::MeasurementVectorType upperBound;
 
-#ifdef ITK_USE_REVIEW_STATISTICS
     size.SetSize(1);
     lowerBound.SetSize(1);
     upperBound.SetSize(1);
     histogram->SetMeasurementVectorSize(1);
-#endif
-
     size[0] = m_NumberOfHistogramLevels;
     lowerBound.Fill(minValue);
     upperBound.Fill(maxValue);
@@ -450,10 +448,7 @@ OtsuHistogramMatchingImageFilter< TInputImage, TOutputImage, THistogramMeasureme
     }
 
   typename HistogramType::MeasurementVectorType measurement;
-
-#ifdef ITK_USE_REVIEW_STATISTICS
   measurement.SetSize(1);
-#endif
 
   typedef typename HistogramType::MeasurementType MeasurementType;
   measurement[0] = NumericTraits< MeasurementType >::Zero;

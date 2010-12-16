@@ -1,17 +1,16 @@
-#ifndef  __BRAINSFitHelper_h
-#define  __BRAINSFitHelper_h
+#ifndef  __BRAINSFitHelperTemplate_h
+#define  __BRAINSFitHelperTemplate_h
 
 /**
   * \author Hans J. Johnson
   *
-  * The intension of the BRIANSFitHelper is to provide a simple non-templated
+  * The intension of the BRIANSFitHelperTemplate is to provide a
   * class that can be used in other programs in a way that is very similar to
   * the command line version of the program from the SlicerExecutionModel
   * version of the BRAINSFitPrimary program.
   *
   * Almost all the command line options are available in this version, but
   * there is no need to read or write files to disk in order to use this class.
-  *
   */
 #include <fstream>
 #include <vector>
@@ -48,6 +47,8 @@
 #include <stdio.h>
 #include "ConvertToRigidAffine.h"
 
+#include "genericRegistrationHelper.h"
+
 #include "ReadMask.h"
 #include "BRAINSMacro.h"
 
@@ -68,54 +69,47 @@ BRAINSCommonLib_EXPORT extern void ValidateTransformRankOrdering(const std::vect
 namespace itk
 {
 
-
-
-
-class BRAINSCommonLib_EXPORT BRAINSFitHelper:public Object
+template <class FixedImageType, class MovingImageType>
+class BRAINSCommonLib_EXPORT BRAINSFitHelperTemplate:public Object
 {
 public:
   /** Standard class typedefs. */
-  typedef BRAINSFitHelper            Self;
+  typedef BRAINSFitHelperTemplate            Self;
   typedef ProcessObject              Superclass;
   typedef SmartPointer< Self >       Pointer;
   typedef SmartPointer< const Self > ConstPointer;
 
-  typedef float                         PixelType;
-  typedef itk::Image< PixelType, 3 >    FixedVolumeType;
-  typedef FixedVolumeType::ConstPointer FixedImageConstPointer;
-  typedef FixedVolumeType::Pointer      FixedImagePointer;
+  typedef typename FixedImageType::ConstPointer FixedImageConstPointer;
+  typedef typename FixedImageType::Pointer      FixedImagePointer;
 
-  typedef itk::Image< PixelType, 3 >     MovingVolumeType;
-  typedef MovingVolumeType::ConstPointer MovingImageConstPointer;
-  typedef MovingVolumeType::Pointer      MovingImagePointer;
+  typedef typename MovingImageType::ConstPointer MovingImageConstPointer;
+  typedef typename MovingImageType::Pointer      MovingImagePointer;
+
+  typedef typename itk::ImageToImageMetric<FixedImageType,MovingImageType> MetricType;
 
   /** Constants for the image dimensions */
-  itkStaticConstMacro(FixedImageDimension, unsigned int, FixedVolumeType::ImageDimension);
-  itkStaticConstMacro(MovingImageDimension, unsigned int, MovingVolumeType::ImageDimension);
+  itkStaticConstMacro(FixedImageDimension, unsigned int, FixedImageType::ImageDimension);
+  itkStaticConstMacro(MovingImageDimension, unsigned int, MovingImageType::ImageDimension);
 
   typedef SpatialObject< itkGetStaticConstMacro(FixedImageDimension) >  FixedBinaryVolumeType;
   typedef SpatialObject< itkGetStaticConstMacro(MovingImageDimension) > MovingBinaryVolumeType;
-  typedef FixedBinaryVolumeType::Pointer  FixedBinaryVolumePointer;
-  typedef MovingBinaryVolumeType::Pointer MovingBinaryVolumePointer;
+  typedef typename FixedBinaryVolumeType::Pointer  FixedBinaryVolumePointer;
+  typedef typename MovingBinaryVolumeType::Pointer MovingBinaryVolumePointer;
+
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(BRAINSFitHelper, ProcessObject);
+  itkTypeMacro(BRAINSFitHelperTemplate, ProcessObject);
 
   /** Set/Get the Fixed image. */
-  itkSetObjectMacro(FixedVolume, FixedVolumeType);
-  itkGetConstObjectMacro(FixedVolume, FixedVolumeType);
+  itkSetObjectMacro(FixedVolume, FixedImageType);
+  itkGetConstObjectMacro(FixedVolume, FixedImageType);
 
   /** Set/Get the Moving image. */
-  itkSetObjectMacro(MovingVolume, MovingVolumeType)
-  itkGetConstObjectMacro(MovingVolume, MovingVolumeType);
-
-  /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the
-    *  algorithm.*/
-  itkGetObjectMacro(PreprocessedMovingVolume, MovingVolumeType);
-
+  itkSetObjectMacro(MovingVolume, MovingImageType)
+  itkGetConstObjectMacro(MovingVolume, MovingImageType);
 
   itkSetObjectMacro (FixedBinaryVolume, FixedBinaryVolumeType);
   itkGetConstObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
@@ -126,6 +120,9 @@ public:
   itkGetConstMacro(OutputFixedVolumeROI,  std::string);
   itkSetMacro     (OutputMovingVolumeROI, std::string);
   itkGetConstMacro(OutputMovingVolumeROI, std::string);
+
+  itkSetObjectMacro(CostMetricObject,MetricType);
+  itkGetObjectMacro(CostMetricObject,MetricType);
 
   //TODO:  This should be converted to use the
   //       interpolation mechanisms from GenericTransform
@@ -152,10 +149,6 @@ public:
   itkGetConstMacro(ReproportionScale,             double);
   itkSetMacro(SkewScale,                     double);
   itkGetConstMacro(SkewScale,                     double);
-  itkSetMacro(UseExplicitPDFDerivativesMode, std::string);
-  itkGetConstMacro(UseExplicitPDFDerivativesMode, std::string);
-  itkSetMacro(UseCachingOfBSplineWeightsMode, std::string);
-  itkGetConstMacro(UseCachingOfBSplineWeightsMode, std::string);
   itkSetMacro(CostFunctionConvergenceFactor, double);
   itkGetConstMacro(CostFunctionConvergenceFactor, double);
   itkSetMacro(ProjectedGradientTolerance,    double);
@@ -167,6 +160,8 @@ public:
   VECTORitkSetMacro(TransformType, std::vector< std::string > );
   itkSetMacro(InitializeTransformMode, std::string);
   itkGetConstMacro(InitializeTransformMode, std::string);
+  itkSetMacro(UseExplicitPDFDerivativesMode, std::string);
+  itkGetConstMacro(UseExplicitPDFDerivativesMode, std::string);
   itkSetMacro(MaskInferiorCutOffFromCenter, double);
   itkGetConstMacro(MaskInferiorCutOffFromCenter, double);
   itkSetMacro(CurrentGenericTransform,  GenericTransformType::Pointer);
@@ -205,17 +200,12 @@ public:
   itkSetMacro(HistogramMatch, bool);
   itkGetConstMacro(HistogramMatch, bool);
 
-  itkSetMacro(CostMetric, std::string);
-  itkGetConstMacro(CostMetric, std::string);
-
   /** Method that initiates the registration. */
   void StartRegistration(void);
 
-  void PrintCommandLine(const bool dumpTempVolumes, const std::string suffix) const;
-
 protected:
-  BRAINSFitHelper();
-  virtual ~BRAINSFitHelper() {}
+  BRAINSFitHelperTemplate();
+  virtual ~BRAINSFitHelperTemplate() {}
 
   void PrintSelf(std::ostream & os, Indent indent) const;
 
@@ -225,12 +215,11 @@ protected:
 
 private:
 
-  BRAINSFitHelper(const Self &); // purposely not implemented
+  BRAINSFitHelperTemplate(const Self &); // purposely not implemented
   void operator=(const Self &);  // purposely not implemented
 
   FixedImagePointer  m_FixedVolume;
   MovingImagePointer m_MovingVolume;
-  MovingImagePointer m_PreprocessedMovingVolume;
 
   FixedBinaryVolumePointer  m_FixedBinaryVolume;
   MovingBinaryVolumePointer m_MovingBinaryVolume;
@@ -250,11 +239,10 @@ private:
   double                     m_TranslationScale;
   double                     m_ReproportionScale;
   double                     m_SkewScale;
-  std::string                m_UseExplicitPDFDerivativesMode;
-  std::string                m_UseCachingOfBSplineWeightsMode;
   double                     m_BackgroundFillValue;
   std::vector< std::string > m_TransformType;
   std::string                m_InitializeTransformMode;
+  std::string                m_UseExplicitPDFDerivativesMode;
   double                     m_MaskInferiorCutOffFromCenter;
   std::vector< int >         m_SplineGridSize;
   double                     m_CostFunctionConvergenceFactor;
@@ -270,8 +258,10 @@ private:
   bool                                         m_PromptUserAfterDisplay;
   double                                       m_FinalMetricValue;
   bool                                         m_ObserveIterations;
-  std::string                                  m_CostMetric;
-};  // end BRAINSFitHelper class
+  typename MetricType::Pointer                 m_CostMetricObject;
+};  // end BRAINSFitHelperTemplate class
 }   // end namespace itk
+
+#include "BRAINSFitHelperTemplate.txx"
 
 #endif  // __BRAINSFITHELPER__

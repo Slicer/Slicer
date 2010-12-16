@@ -185,14 +185,10 @@ void CreateField< TImage,
     {
     m_FixedImage->SetMetaDataDictionary( m_ImageTwo->GetMetaDataDictionary() );
     m_MovingImage->SetMetaDataDictionary( m_ImageOne->GetMetaDataDictionary() );
-    // HACK:  Need to fixe DirectionType != operator to be const correct
-    // if(m_FixedImage->GetDirection() != m_MovingImage->GetDirection()
-    typename TImage::DirectionType temp = m_FixedImage->GetDirection();
-    if ( temp != m_MovingImage->GetDirection()
-         ||
-         ( itk::SpatialOrientationAdapter().FromDirectionCosines( m_FixedImage
-                                                                  ->GetDirection() ) !=
-           itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP )
+    if ( ( m_FixedImage->GetDirection() != m_MovingImage->GetDirection() )
+         //TODO:  Remove dependance on RIP from 
+         ( itk::SpatialOrientationAdapter().FromDirectionCosines( m_FixedImage->GetDirection() )
+           != itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP )
          )
       {
       std::cout

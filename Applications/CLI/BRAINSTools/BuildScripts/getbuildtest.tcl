@@ -1,4 +1,8 @@
 #!/bin/sh
+echo "This script is deprecated, and will probably not work any more."
+echo 'See http://www.nitrc.org/plugins/mwiki/index.php/brains:Building#Building_BRAINS'
+echo "for instructions on how to use the new build system"
+exit 1
 # the next line restarts using tclsh \
     exec tclsh "$0" "$@"
 

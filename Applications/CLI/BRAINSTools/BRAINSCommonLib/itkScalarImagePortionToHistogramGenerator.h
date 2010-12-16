@@ -17,17 +17,8 @@
 #ifndef __itkScalarImagePortionToHistogramGenerator_h
 #define __itkScalarImagePortionToHistogramGenerator_h
 
-#ifdef ITK_USE_REVIEW_STATISTICS
-
-#  include "itkImageToListSampleFilter.h"
-#  include "itkSampleToHistogramFilter.h"
-
-#else
-
-#  include "itkImageToListGenerator.h"
-#  include "itkListSampleToHistogramFilter.h"
-
-#endif
+#include "itkImageToListSampleFilter.h"
+#include "itkSampleToHistogramFilter.h"
 
 #include "itkHistogram.h"
 #include "itkObject.h"
@@ -64,21 +55,12 @@ public:
   typedef typename HistogramType::Pointer      HistogramPointer;
   typedef typename HistogramType::ConstPointer HistogramConstPointer;
 
-#ifdef ITK_USE_REVIEW_STATISTICS
   typedef itk::Statistics::ImageToListSampleFilter< ImageType, TMaskType > ListSampleGeneratorType;
   typedef typename ListSampleGeneratorType::Pointer                        ListSampleGeneratorPointer;
   typedef typename ListSampleGeneratorType::ListSampleType                 ListSampleType;
 
   typedef itk::Statistics::SampleToHistogramFilter< ListSampleType, HistogramType > GeneratorType;
   typedef typename GeneratorType::Pointer                                           GeneratorPointer;
-#else
-  typedef itk::Statistics::ImageToListGenerator< ImageType, TMaskType > ListSampleGeneratorType;
-  typedef typename ListSampleGeneratorType::Pointer                     ListSampleGeneratorPointer;
-  typedef typename ListSampleGeneratorType::ListSampleType              ListSampleType;
-
-  typedef itk::Statistics::ListSampleToHistogramFilter< ListSampleType, HistogramType > GeneratorType;
-  typedef typename GeneratorType::Pointer                                               GeneratorPointer;
-#endif
 public:
 
   /** Triggers the Computation of the histogram */
@@ -98,8 +80,6 @@ public:
     * \sa Compute */
   const HistogramType * GetOutput() const;
 
-#ifdef ITK_USE_REVIEW_STATISTICS
-
   /** Set number of histogram bins */
   void SetNumberOfBins(unsigned int numberOfBins);
 
@@ -112,11 +92,6 @@ public:
   /** Set the maximum value from which the bins will be computed */
   void SetHistogramMax(RealPixelType maximumValue);
 
-#else
-
-  void InitializeHistogram(unsigned int numberOfBins, RealPixelType minimumValue, RealPixelType maximumValue);
-
-#endif
 protected:
   ScalarImagePortionToHistogramGenerator();
   virtual ~ScalarImagePortionToHistogramGenerator() {}

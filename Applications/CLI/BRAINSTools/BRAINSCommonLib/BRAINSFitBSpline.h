@@ -1,7 +1,8 @@
 #ifndef __BRAINSFitBSpline_h
 #define __BRAINSFitBSpline_h
 
-#include <itkMattesMutualInformationImageToImageMetric.h>
+#include <itkImageToImageMetric.h>
+
 #include <itkBSplineDeformableTransform.h>
 #include "itkBSplineDeformableTransformInitializer.h"
 #include <itkLBFGSBOptimizer.h>
@@ -10,7 +11,7 @@
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkResampleImageFilter.h>
 
-#include "itkMultiModal3DMutualRegistrationHelper.h"
+#include "genericRegistrationHelper.h"
 
 /**
   * This class is the BSpline component of the BRAINSFit program developed at
@@ -27,8 +28,8 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
           typename ImageMaskSpatialObjectType::Pointer m_FixedMask,
           typename ImageMaskSpatialObjectType::Pointer m_MovingMask,
           const int m_NumberOfSamples,
-          const bool m_UseCachingOfBSplineWeights,
-          const bool m_UseExplicitPDFDerivatives,
+          typename itk::ImageToImageMetric<
+                 RegisterImageType, RegisterImageType >::Pointer CostMetricObject,
           const double m_MaxBSplineDisplacement,
           const float m_CostFunctionConvergenceFactor,
           const float m_ProjectedGradientTolerance,
@@ -59,9 +60,8 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
 
   typedef typename itk::LBFGSBOptimizer OptimizerType;
 
-  typedef typename itk::MattesMutualInformationImageToImageMetric<
-    RegisterImageType,
-    RegisterImageType >          MetricType;
+  typedef typename itk::ImageToImageMetric<
+    RegisterImageType, RegisterImageType >  MetricType;
 
   typedef typename itk::LinearInterpolateImageFunction<
     RegisterImageType,
@@ -88,29 +88,13 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
 
   // TODO:  Expose these to the command line for consistancy.
   const int m_MaximumNumberOfIterations = 1500;
-  const int m_BSplineHistogramBins = 50;
 
   const int m_MaximumNumberOfEvaluations = 900;
   const int m_MaximumNumberOfCorrections = 12;
 
-  MetricTypePointer       metric        = MetricType::New();
   OptimizerTypePointer    optimizer     = OptimizerType::New();
   InterpolatorTypePointer interpolator  = InterpolatorType::New();
   RegistrationTypePointer registration  = RegistrationType::New();
-
-  // set the masks on the metric
-  if ( m_FixedMask.IsNotNull() )
-    {
-    metric->SetFixedImageMask(m_FixedMask);
-    }
-
-  if ( m_MovingMask.IsNotNull() )
-    {
-    metric->SetMovingImageMask(m_MovingMask);
-    }
-
-  metric->SetUseCachingOfBSplineWeights(m_UseCachingOfBSplineWeights);
-  metric->SetUseExplicitPDFDerivatives(m_UseExplicitPDFDerivatives);
 
   typename BSplineTransformType::Pointer m_OutputBSplineTransform = BSplineTransformType::New();
   m_OutputBSplineTransform->SetIdentity();
@@ -119,7 +103,7 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   m_OutputBSplineTransform->SetParametersByValue( InitializerBsplineTransform->GetParameters() );
 
   /** Set up the Registration */
-  registration->SetMetric(metric);
+  registration->SetMetric(CostMetricObject);
   registration->SetOptimizer(optimizer);
   registration->SetInterpolator(interpolator);
   registration->SetTransform(m_OutputBSplineTransform);
@@ -170,10 +154,6 @@ DoBSpline(typename BSplineTransformType::Pointer InitializerBsplineTransform,
   optimizer->SetMaximumNumberOfEvaluations(m_MaximumNumberOfEvaluations);
   optimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
 
-  metric->SetNumberOfHistogramBins(m_BSplineHistogramBins);
-
-  metric->SetNumberOfSpatialSamples(m_NumberOfSamples);
-  metric->ReinitializeSeed(76926294);
 
   // Create the Command observer and register it with the optimizer.
   // TODO:  make this output optional.

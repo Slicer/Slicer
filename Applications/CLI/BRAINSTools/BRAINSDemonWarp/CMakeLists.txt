@@ -6,6 +6,7 @@ cmake_policy(VERSION 2.8)
 enable_testing()
 include(Dart)
 include(CPack)
+include(${BRAINS_CMAKE_HELPER_DIR}/PreventInSourceBuilds.cmake)
 include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBuildMacros.cmake)
 
 ###

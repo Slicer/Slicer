@@ -7,6 +7,7 @@ enable_testing()
 include(Dart)
 include(CPack)
 include(${BRAINS_CMAKE_HELPER_DIR}/CMakeBuildMacros.cmake)
+include(${BRAINS_CMAKE_HELPER_DIR}/PreventInSourceBuilds.cmake)
 
 ###
 SETIFEMPTY(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)

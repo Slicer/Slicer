@@ -76,28 +76,16 @@ ValidationInputParser< TImage >
     */
   if ( this->m_ForceCoronalZeroOrigin == true )
     {
-#ifdef FORCE_ZERO_ORIENT_BRAINS2_IMAGE  // NOTE:  IN THE AUTOSEGMENTATION CODE,
-                                        // DO NOT CHANGE THIS FROM 1.  WE
-    if ( this->GetOutDebug() )
-      {
-      std::cout << "---Forcing Brains2 Orientation " << std::endl;
-      }
-    m_TheFixedImage = itkUtil::ReadBrains2Image< TImage >(
-      m_TheFixedImageFilename);
-    m_TheMovingImage = itkUtil::ReadBrains2Image< TImage >(
-      m_TheMovingImageFilename);
-#else
     std::cout << "---Forcing Brains2 Orientation not yet implemented"
               << std::endl;
     exit (-1);
-#endif
     }
   else
     {
     m_TheFixedImage = itkUtil::ReadImage< TImage >(m_TheFixedImageFilename);
     m_TheMovingImage = itkUtil::ReadImage< TImage >(m_TheMovingImageFilename);
     }
-  // HACK:  TODO:  Need to ensure that the fixed and moving images have the same
+  // TODO:  Need to ensure that the fixed and moving images have the same
   // orientations.
 
   // TODO:  Need to figure out how to read in the initial deformation field.
