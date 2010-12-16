@@ -185,6 +185,10 @@ class EditOptions(object):
         return colorNode.GetColorName(index)
     return ""
 
+  def statusText(self,text):
+    # TODO: update on an application level status line
+    print( text )
+
 #### Labeler
 class LabelerOptions(EditOptions):
   """ Labeler classes are the ones that implement
@@ -1452,8 +1456,7 @@ class MakeModelOptions(EditOptions):
     #
     self.CLINode = slicer.cli.run(modelMaker, self.CLINode, parameters)
 
-    # TODO: status text
-    #$this statusText "Model Making Started..."
+    self.statusText( "Model Making Started..." )
 
   def getUniqueModelName(self, baseName):
       names = getNodes().keys()

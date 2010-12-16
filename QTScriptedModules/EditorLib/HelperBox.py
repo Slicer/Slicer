@@ -51,6 +51,8 @@ class HelperBox(object):
     # pseudo signals 
     # - python callable that gets True or False
     self.mergeValidCommand = None
+    # mrml node for invoking command line modules
+    self.CLINode = None
 
     if not parent:
       self.parent = qt.QFrame()
@@ -251,7 +253,11 @@ class HelperBox(object):
       if row == rows - 1:
         slicer.mrmlScene.RemoveNode( structureVolume )
       else:
-        slicer.mrmlScene.RemoveNodeNoNotify( structureVolume )
+        # TODO: use NoNotify method to reduce the number of updates
+        # in other code - for now Qt models need to be informed
+        # of every incremental change
+        # slicer.mrmlScene.RemoveNodeNoNotify( structureVolume )
+        slicer.mrmlScene.RemoveNode( structureVolume )
     self.updateStructures()
 
   def mergeStructures(self,label="all"):
@@ -266,17 +272,21 @@ class HelperBox(object):
     # check that structures are all the same size as the merge volume
     dims = merge.GetImageData().GetDimensions()
     for row in xrange(rows):
-      structureName = self.structures.item(row,0).text()
+      structureName = self.structures.item(row,2).text()
       structureVolume = self.structureVolume( structureName )
+      if not structureVolume:
+        mergeName = merge.GetName()
+        self.errorDialog( "Merge Aborted: No image data for volume node %s."%(structureName) )
+        return
       if structureVolume.GetImageData().GetDimensions() != dims:
         mergeName = merge.GetName()
-        self.errorDialog( "Merge Aborted: Volume %s does not have the same dimensions as the target merge volume.  Use the Resample Scalar/Vector/DWI module to resample.  Use %s as the Reference Volume and select Nearest Neighbor (nn) Interpolation Type."%(structureVolume,mergeName) )
+        self.errorDialog( "Merge Aborted: Volume %s does not have the same dimensions as the target merge volume.  Use the Resample Scalar/Vector/DWI module to resample.  Use %s as the Reference Volume and select Nearest Neighbor (nn) Interpolation Type."%(structureName,mergeName) )
         return
 
     # check that user really wants to merge
     rows = self.structures.rowCount()
     for row in xrange(rows):
-      structureName = self.structures.item(row,0).text()
+      structureName = self.structures.item(row,2).text()
       structureVolume = self.structureVolume( structureName)
       if structureVolume.GetImageData().GetMTime() < merge.GetImageData().GetMTime():
         mergeName = merge.GetName()
@@ -310,11 +320,11 @@ class HelperBox(object):
     # mark all volumes as modified so we will be able to tell if the 
     # merged volume gets edited after these
     for row in xrange(rows):
-      structureName = self.structures.item(row,0).text()
+      structureName = self.structures.item(row,2).text()
       structureVolume = self.structureVolume( structureName )
-      structureVolume.GetImageData.Modified()
+      structureVolume.GetImageData().Modified()
 
-    selectionNode = self.ApplicationLogic().GetSelectionNode()
+    selectionNode = self.ApplicationLogic.GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
     selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
     self.ApplicationLogic.PropagateVolumeSelection()
@@ -372,42 +382,29 @@ class HelperBox(object):
       return
 
     #
-    # find the Model Maker
-    # - call Enter to be sure GUI has been built
+    # create a model using the command line module
+    # based on the current editor parameters
     #
-    # TODO: how to run the module?
-    modelMaker = getModule('modelmaker')
 
-    if not modelMaker:
-      self.errorDialog( "Cannot make model: no Model Maker Module found." )
+    parameters = {}
+    parameters["InputVolume"] = merge.GetID()
+    parameters['FilterType'] = "Sinc"
+    parameters['GenerateAll'] = True
 
-    # TODO: still needed?
+    # not needed: setting StartLabel and EndLabel instead
+    #parameters['Labels'] = self.getPaintLabel()
+    
+    parameters["JointSmoothing"] = True
+    parameters["SplitNormals"] = True
+    parameters["PointNormals"] = True
+    parameters["SkipUnNamed"] = True
 
-    # TODO: this model maker may or may not work:
-    # TODO: follow the layout of the model maker in EditOptions:
-    # class MakeModelOptions, function OnApply()
-    modelMaker.Enter()
+    # create models for all labels
+    parameters["StartLabel"] = -1
+    parameters["EndLabel"] = -1
 
-    #
-    # set up the model maker node
-    #
-    moduleNode = slicer.vtkMRMLCommandLineModuleNode()
-    slicer.mrmlScene.AddNode(moduleNode)
-    moduleNode.SetName( "Editor Make Model" )
-    moduleNode.SetModuleDescription( "Model Maker" )
-
-    moduleNode.SetParameterAsString( "FilterType", "Sinc" )
-    moduleNode.SetParameterAsBool( "GenerateAll", "1" )
-    moduleNode.SetParameterAsBool( "JointSmoothing", 1 )
-    moduleNode.SetParameterAsBool( "SplitNormals", 1 )
-    moduleNode.SetParameterAsBool( "PointNormals", 1 )
-    moduleNode.SetParameterAsBool( "SkipUnNamed", 1 )
-    moduleNode.SetParameterAsInt( "Start", -1 )
-    moduleNode.SetParameterAsInt( "End", -1 )
-    moduleNode.SetParameterAsDouble( "Decimate", 0.25 )
-    moduleNode.SetParameterAsDouble( "Smooth", 10 )
-
-    moduleNode.SetParameterAsString( "InputVolume", merge.GetID() )
+    parameters["Decimate"] = 0.25
+    parameters["Smooth"] = 10
 
     #
     # output 
@@ -419,10 +416,13 @@ class HelperBox(object):
       node = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelHierarchyNode" )
       if node.GetName() == "Editor Models":
         outHierarchy = node
+        break
 
-    if outHierarchy and self.replaceModels.checked:
-      # user wants to delete any existing models, so take down hierarchy
-      rr = range(numNodes).reverse()
+    if outHierarchy and self.replaceModels.checked and numNodes > 0:
+      # user wants to delete any existing models, so take down hierarchy and
+      # delete the model nodes
+      rr = range(numNodes)
+      rr.reverse()
       for n in rr:
         node = slicer.mrmlScene.GetNthNodeByClass( n, "vtkMRMLModelHierarchyNode" )
         if node.GetParentNodeID() == outHierarchy.GetID():
@@ -430,13 +430,14 @@ class HelperBox(object):
           slicer.mrmlScene.RemoveNode( node )
 
     if not outHierarchy:
-      outHierarchy = vtk.vtkMRMLModelHierarchyNode()
+      outHierarchy = slicer.vtkMRMLModelHierarchyNode()
       outHierarchy.SetScene( slicer.mrmlScene )
       outHierarchy.SetName( "Editor Models" )
       slicer.mrmlScene.AddNode( outHierarchy )
 
-    moduleNode.SetParameterAsString( "ModelSceneFile", outHierarchy.GetID() )
+    parameters["ModelSceneFile"] = outHierarchy
 
+    modelMaker = slicer.modules.modelmaker
 
     # 
     # run the task (in the background)
@@ -444,13 +445,8 @@ class HelperBox(object):
     # - use the GUI's Logic to invoke the task
     # - model will show up when the processing is finished
     #
-    modelMaker.SetCommandLineModuleNode( moduleNode )
-    modelMaker.GetLogic().SetCommandLineModuleNode( moduleNode )
-    modelMaker.SetCommandLineModuleNode( moduleNode )
-    modelMaker.GetLogic().Apply( moduleNode )
-
+    self.CLINode = slicer.cli.run(modelMaker, self.CLINode, parameters)
     self.statusText( "Model Making Started..." )
-
 
   def edit(self,label):
     """select the picked label for editing"""
