@@ -78,12 +78,18 @@ class EditorWidget:
     # merge nodes, most likely according to a widget within the caller
 
     # resume the current effect, if we left the editor and re-entered
-    if self.toolsBox:
-      self.toolsBox.resumeEffect()
+    self.resumeEffect()
     
   def exit(self):
+    self.pauseEffect()
+
+  def pauseEffect(self):
     if self.toolsBox:
       self.toolsBox.pauseEffect()
+
+  def resumeEffect(self):
+    if self.toolsBox:
+      self.toolsBox.resumeEffect()
 
   # TODO need similar functionality as exit() to cancel brushes when widget is destroyed
 
