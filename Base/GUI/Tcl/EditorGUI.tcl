@@ -572,6 +572,10 @@ proc EditorUpdateCheckPointButtons {} {
       EditBox::SetButtonState NextCheckPoint Disabled
     }
   }
+  # issue a modified event on the parameter node so that any
+  # code that is observing it will have a change to update the
+  # enabled/disabled state of these buttons (slicer4)
+  [EditorGetParameterNode] Modified
 }
 
 # called by editor effects
