@@ -416,10 +416,21 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
   Q_ASSERT(action->data().toString() == module->name());
   Q_ASSERT(action->text() == module->title());
 
-  // Add action to ToolBar
-  if (d->ModuleToolBarList.contains(module->title()))
+  // Add action to ToolBar if it's an "allowed" action
+  int index = d->ModuleToolBarList.indexOf(module->title());
+  if (index > 0)
     {
-    d->ModuleToolBar->addAction(action);
+    // find the location of where to add the action. ModelToolBarList is sorted
+    QAction* beforeAction = 0;
+    foreach(QAction* toolBarAction, d->ModuleToolBar->actions())
+      {
+      Q_ASSERT(d->ModuleToolBarList.contains(toolBarAction->text()));
+      if (d->ModuleToolBarList.indexOf(toolBarAction->text()) > index)
+        {
+        beforeAction = toolBarAction;
+        }
+      }
+    d->ModuleToolBar->insertAction(beforeAction, action);
     }
 }
 
