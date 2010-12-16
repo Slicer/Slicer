@@ -29,7 +29,6 @@ IF (Slicer_USE_PYTHONQT_WITH_TCL)
       USE_SOURCE_PERMISSIONS
       REGEX "man/" EXCLUDE
       REGEX "include/" EXCLUDE
-      REGEX "bin/" EXCLUDE
       REGEX "demos/" EXCLUDE
       PATTERN "*.sh" EXCLUDE
       PATTERN "*.c" EXCLUDE
