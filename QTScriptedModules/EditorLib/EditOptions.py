@@ -1380,7 +1380,7 @@ class MakeModelOptions(EditOptions):
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)
 
-    HelpButton(self.frame, "Use this tool build a model.  A subset of model building options is provided here.  Go to the Model Maker module to expose a range of parameters.")
+    HelpButton(self.frame, "Use this tool build a model.  A subset of model building options is provided here.  Go to the Model Maker module to expose a range of parameters.  Use Merge and Build button in the Advanced... tab to quickly make a model of all defined structures in the merge label map.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
@@ -1405,19 +1405,17 @@ class MakeModelOptions(EditOptions):
     parameters['Name'] = self.modelName.text
     parameters["InputVolume"] = volumeNode.GetID()
     parameters['FilterType'] = "Sinc"
-    parameters['GenerateAll'] = True
 
-    # not needed: setting StartLabel and EndLabel instead
-    #parameters['Labels'] = self.getPaintLabel()
+    # build only the currently selected model.
+    parameters['Labels'] = self.getPaintLabel()
+    parameters["StartLabel"] = -1
+    parameters["EndLabel"] = -1
     
-    parameters["JointSmoothing"] = True
+    parameters['GenerateAll'] = False
+    parameters["JointSmoothing"] = False
     parameters["SplitNormals"] = True
     parameters["PointNormals"] = True
     parameters["SkipUnNamed"] = True
-
-    # create models for all labels
-    parameters["StartLabel"] = -1
-    parameters["EndLabel"] = -1
 
     if self.smooth.checked:
       parameters["Decimate"] = 0.25
