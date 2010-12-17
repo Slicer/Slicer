@@ -17,7 +17,6 @@
 #include <QFontMetrics>
 #include <QDebug>
 #include <QMessageBox>
-#include <QColorDialog>
 #include <QFileDialog>
 
 //-----------------------------------------------------------------------------

@@ -26,7 +26,10 @@
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLColorPickerWidgetPrivate;
+class vtkMRMLNode;
 
+/// Given a mrml scene, qMRMLColorPickerWidget allows the selection of
+/// a color/label from all the vtkMRMLColorNode in the scene.
 class QMRML_WIDGETS_EXPORT qMRMLColorPickerWidget : public qMRMLWidget
 {
   Q_OBJECT
@@ -35,7 +38,14 @@ public:
   virtual ~qMRMLColorPickerWidget();
 
 signals:
-  void colorSelected(int index);
+  /// Fired wen the current color table node is selected
+  void currentColorNodeChanged(vtkMRMLNode* node);
+
+  /// Fired when the user selects a color in the list. index is the selected
+  /// color node entry.
+  void colorEntrySelected(int index);
+
+  /// Fired when the user selects a color in the list
   void colorSelected(const QColor& color);
 
 protected:

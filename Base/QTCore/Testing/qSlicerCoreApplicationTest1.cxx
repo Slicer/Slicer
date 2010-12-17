@@ -191,18 +191,6 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer< vtkMRMLScene > scene = vtkSmartPointer< vtkMRMLScene >::New();
-
-  app.setMRMLScene( scene );
-
-  vtkMRMLScene * scene2 = app.mrmlScene();
-
-  if( scene2 != scene )
-    {
-    std::cerr << "Error in setMRMLScene()/mrmlScene() " << std::endl;
-    return EXIT_FAILURE;
-    }
-
   std::cout << "TEST PASSED !" << std::endl;
 
   return EXIT_SUCCESS;

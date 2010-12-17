@@ -50,8 +50,10 @@ void qMRMLColorPickerWidgetPrivate::init()
 {
   Q_Q(qMRMLColorPickerWidget);
   this->setupUi(q);
+  QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q, SIGNAL(currentColorNodeChanged(vtkMRMLNode*)));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(int)),
-                   q, SIGNAL(colorSelected(int)));
+                   q, SIGNAL(colorEntrySelected(int)));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(const QColor&)),
                    q, SIGNAL(colorSelected(const QColor&)));
 }

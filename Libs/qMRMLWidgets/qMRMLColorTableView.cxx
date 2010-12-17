@@ -19,11 +19,13 @@
 ==============================================================================*/
 
 // QT includes
-#include <QColorDialog>
 #include <QDebug>
 #include <QDoubleSpinBox>
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
+
+// CTK includes
+#include <ctkColorDialog.h>
 
 // qMRML includes
 #include "qMRMLColorTableView.h"
@@ -210,7 +212,7 @@ void qMRMLColorTableView::onDoubleClicked(const QModelIndex& index)
     return;
     }
   QColor color = this->sortFilterProxyModel()->data(index, qMRMLColorModel::ColorRole).value<QColor>();
-  QColor newColor = QColorDialog::getColor(color, this, "Select a new color", QColorDialog::DontUseNativeDialog );
+  QColor newColor = ctkColorDialog::getColor(color, this, "Select a new color");
   if (!newColor.isValid())
     {
     return;

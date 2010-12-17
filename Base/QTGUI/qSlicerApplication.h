@@ -98,16 +98,15 @@ public:
   ///
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
-protected slots:
-
-  ///
-  virtual void handleCommandLineArguments();
 
 protected:
-  QSettings* newSettings(const QString& fileName = QString());
-
-
   QScopedPointer<qSlicerApplicationPrivate> d_ptr;
+
+  ///
+  /// Reimplemented from qSlicerCoreApplication
+  virtual QSettings* newSettings(const QString& fileName = QString());
+  virtual void setMRMLScene(vtkMRMLScene* newMRMLScene);
+  virtual void handleCommandLineArguments();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerApplication);

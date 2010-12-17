@@ -7,7 +7,6 @@
 #include <QFontMetrics>
 #include <QDebug>
 #include <QMessageBox>
-#include <QColorDialog>
 
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 #include "vtkMRMLAnnotationNode.h"

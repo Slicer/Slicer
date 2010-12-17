@@ -33,6 +33,7 @@
 #include <QWidget>
 
 // CTK includes
+#include <ctkColorDialog.h>
 #include <ctkIconEnginePlugin.h>
 #include <ctkLogger.h>
 #include <ctkSettings.h>
@@ -48,6 +49,9 @@
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif
+
+// qMRMLWidget includes
+#include "qMRMLColorPickerWidget.h"
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -77,6 +81,7 @@ public:
   Qt::WindowFlags                     DefaultWindowFlags;
   qSlicerLayoutManager*               LayoutManager;
   ctkToolTipTrapper*                  ToolTipTrapper;
+  qMRMLColorPickerWidget*             ColorDialogPickerWidget;
 };
 
 
@@ -89,6 +94,7 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(qSlicerApplication& object)
 {
   this->LayoutManager = 0;
   this->ToolTipTrapper = 0;
+  this->ColorDialogPickerWidget = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -110,6 +116,10 @@ void qSlicerApplicationPrivate::init()
 
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
   this->ToolTipTrapper->setEnabled(false);
+
+  this->ColorDialogPickerWidget = new qMRMLColorPickerWidget(0);
+  ctkColorDialog::addDefaultTab(this->ColorDialogPickerWidget,
+                                "Labels", SIGNAL(colorSelected(const QColor&)));
 }
 /*
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
@@ -171,6 +181,7 @@ void qSlicerApplication::initialize(bool& exitWhenDone)
   this->setCoreCommandOptions(new qSlicerCommandOptions(this->settings()));
 
   // Proceed to initialization of the Core
+  // It mainly instanciates the vtkMRMLScene
   this->Superclass::initialize(exitWhenDone);
 }
 
@@ -301,4 +312,15 @@ void qSlicerApplication::setToolTipsEnabled(bool enable)
 {
   Q_D(qSlicerApplication);
   d->ToolTipTrapper->setEnabled(!enable);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
+{
+  Q_D(qSlicerApplication);
+  // we do it now because Superclass::setMRMLScene() emits the signal
+  // mrmlSceneChanged and we don't want the set the scene after the signal
+  // is sent.
+  d->ColorDialogPickerWidget->setMRMLScene(newMRMLScene);
+  this->Superclass::setMRMLScene(newMRMLScene);
 }

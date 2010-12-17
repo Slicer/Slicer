@@ -74,12 +74,6 @@ public:
   /// Get MRML Scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
-  ///
-  /// Set MRML Scene
-  /// DEPRECATED: This method was used by the KWWidgests GUI only and it will be
-  /// moved as a protected member.
-  void setMRMLScene(vtkMRMLScene * scene);
-
 #ifdef Slicer_USE_KWWIDGETS
 
   ///
@@ -200,6 +194,10 @@ protected:
   /// otherwise it uses the default QSettings constructor.
   /// \sa QSettings::QSettings(QObject* parent)
   virtual QSettings* newSettings(const QString& fileName = QString());
+
+  ///
+  /// Set MRML Scene
+  virtual void setMRMLScene(vtkMRMLScene * scene);
 
 protected slots:
 

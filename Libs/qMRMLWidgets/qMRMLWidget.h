@@ -32,6 +32,7 @@
 class vtkMRMLScene;
 class qMRMLWidgetPrivate;
 
+/// Base class for any widget that requires a MRML Scene.
 class QMRML_WIDGETS_EXPORT qMRMLWidget : public QWidget
 {
   Q_OBJECT
@@ -42,17 +43,21 @@ public:
   explicit qMRMLWidget(QWidget *parent=0, Qt::WindowFlags f=0);
   virtual ~qMRMLWidget();
 
-  /// 
+  ///
   /// Return a pointer on the current MRML scene
   vtkMRMLScene* mrmlScene() const;
 
 public slots:
 
-  /// 
+  ///
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);
 
 signals:
+  ///
+  /// When designing custom qMRMLWidget in the designer, you can connect the
+  /// mrmlSceneChanged signal directly to the aggregated MRML widgets that
+  /// have a setMRMLScene slot.
   void mrmlSceneChanged(vtkMRMLScene*);
 
 protected:

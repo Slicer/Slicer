@@ -76,12 +76,18 @@
          <property name="text">
           <string>Unselected Color</string>
          </property>
+         <property name="dialogOptions">
+          <set>ctkColorPickerButton::UseCTKColorDialog</set>
+         </property>
         </widget>
        </item>
        <item row="1" column="2">
         <widget class="ctkColorPickerButton" name="textSelectedColorPickerButton">
          <property name="text">
           <string>Selected Color</string>
+         </property>
+         <property name="dialogOptions">
+          <set>ctkColorPickerButton::UseCTKColorDialog</set>
          </property>
         </widget>
        </item>
@@ -124,14 +130,14 @@
           </widget>
          </item>
          <item>
-          <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget" native="true">
+          <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="maximum" stdset="0">
+           <property name="maximum">
             <double>40.000000000000000</double>
            </property>
           </widget>
@@ -231,6 +237,9 @@
          <property name="text">
           <string>Unselected Color</string>
          </property>
+         <property name="dialogOptions">
+          <set>ctkColorPickerButton::UseCTKColorDialog</set>
+         </property>
         </widget>
        </item>
        <item row="2" column="2">
@@ -271,34 +280,34 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="ctkSliderWidget" name="pointOpacitySliderSpinBoxWidget" native="true">
-           <property name="maximum" stdset="0">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep" stdset="0">
+          <widget class="ctkSliderWidget" name="pointOpacitySliderSpinBoxWidget">
+           <property name="singleStep">
             <double>0.100000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget" native="true">
-           <property name="maximum" stdset="0">
+          <widget class="ctkSliderWidget" name="pointAmbientSliderSpinBoxWidget">
+           <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget" native="true">
-           <property name="maximum" stdset="0">
+          <widget class="ctkSliderWidget" name="pointDiffuseSliderSpinBoxWidget">
+           <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget" native="true"/>
+          <widget class="ctkSliderWidget" name="pointSpecularSliderSpinBoxWidget"/>
          </item>
          <item row="0" column="1">
-          <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget" native="true"/>
+          <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget"/>
          </item>
         </layout>
        </item>
@@ -312,6 +321,9 @@
          </property>
          <property name="text">
           <string>Selected Color</string>
+         </property>
+         <property name="dialogOptions">
+          <set>ctkColorPickerButton::UseCTKColorDialog</set>
          </property>
         </widget>
        </item>
@@ -390,12 +402,18 @@
          <property name="text">
           <string>Unselected Color</string>
          </property>
+         <property name="dialogOptions">
+          <set>ctkColorPickerButton::UseCTKColorDialog</set>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="ctkColorPickerButton" name="lineSelectedColorPickerButton">
          <property name="text">
           <string>Selected Color</string>
+         </property>
+         <property name="dialogOptions">
+          <set>ctkColorPickerButton::UseCTKColorDialog</set>
          </property>
         </widget>
        </item>
@@ -409,8 +427,8 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="ctkSliderWidget" name="lineWidthSliderSpinBoxWidget_2" native="true">
-           <property name="singleStep" stdset="0">
+          <widget class="ctkSliderWidget" name="lineWidthSliderSpinBoxWidget_2">
+           <property name="singleStep">
             <double>0.100000000000000</double>
            </property>
           </widget>
@@ -423,12 +441,12 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="ctkSliderWidget" name="lineOpacitySliderSpinBoxWidget_2" native="true">
-           <property name="maximum" stdset="0">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep" stdset="0">
+          <widget class="ctkSliderWidget" name="lineOpacitySliderSpinBoxWidget_2">
+           <property name="singleStep">
             <double>0.100000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -440,8 +458,8 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="ctkSliderWidget" name="lineAmbientSliderSpinBoxWidget_2" native="true">
-           <property name="maximum" stdset="0">
+          <widget class="ctkSliderWidget" name="lineAmbientSliderSpinBoxWidget_2">
+           <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
@@ -454,8 +472,8 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="ctkSliderWidget" name="lineDiffuseSliderSpinBoxWidget_2" native="true">
-           <property name="maximum" stdset="0">
+          <widget class="ctkSliderWidget" name="lineDiffuseSliderSpinBoxWidget_2">
+           <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
@@ -468,8 +486,8 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="ctkSliderWidget" name="lineSpecularSliderSpinBoxWidget_2" native="true">
-           <property name="maximum" stdset="0">
+          <widget class="ctkSliderWidget" name="lineSpecularSliderSpinBoxWidget_2">
+           <property name="maximum">
             <double>10.000000000000000</double>
            </property>
           </widget>
