@@ -98,7 +98,7 @@ function(midas_add_test)
       file(READ "${MIDAS_KEY_DIR}/${keyFile}" checksum)
 
       # Write the test script file for downloading
-      file(WRITE "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/download_${checksum}.cmake"
+      file(WRITE "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/fetch_${checksum}_${base_filename}.cmake"
   "message(STATUS \"Data is here: ${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg}\")
 if(NOT EXISTS \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${checksum}\")
   file(DOWNLOAD ${MIDAS_REST_URL}/midas.bitstream.by.hash?hash=${checksum}&algorithm=${hash_alg} \"${MIDAS_DATA_DIR}/MIDAS_Hashes/${testName}_${checksum}\" ${MIDAS_DOWNLOAD_TIMEOUT_STR} STATUS status)
@@ -133,7 +133,7 @@ else(WIN32)
 endif(WIN32)
 ")
 
-      list(APPEND downloadScripts "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/download_${checksum}.cmake")
+      list(APPEND downloadScripts "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/fetch_${checksum}_${base_filename}.cmake")
       string(REGEX REPLACE ${toReplace} "${MIDAS_DATA_DIR}/${base_file}" newArg "${arg}")
       list(APPEND testArgs ${newArg})
     else(arg MATCHES "MIDAS{[^}]*}")
