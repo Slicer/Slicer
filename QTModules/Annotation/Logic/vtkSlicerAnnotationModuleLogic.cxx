@@ -1324,6 +1324,12 @@ void vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
     return;
     }
 
+  if (!bufferNode->GetParentNode())
+    {
+    // this is the toplevel hierarchy node, therefore, we cannot move up
+    return;
+    }
+
   if (!bufferNode->GetHideFromEditors())
     {
     // this is a manually created hierarchy, we don't want to move towards this one
@@ -1333,34 +1339,81 @@ void vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
 
 
   // now we copy the hierarchy node
-  vtkMRMLAnnotationHierarchyNode* copyHNode = vtkMRMLAnnotationHierarchyNode::New();
+  VTK_CREATE(vtkMRMLAnnotationHierarchyNode, copyHNode);
   copyHNode->CopyWithoutModifiedEvent(hNode);
+  copyHNode->HideFromEditorsOn();
 
   // now we copy the corresponding annotation node
   //if (annotationNode->IsA("vtkMRMLAnnotationRulerNode"))
-  vtkMRMLAnnotationRulerNode* copyANode = vtkMRMLAnnotationRulerNode::New();
-  vtkMRMLAnnotationRulerNode* rNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
-  copyANode->CopyWithoutModifiedEvent(rNode);
 
-  std::cout << "copyANode: " << copyANode->GetPosition1()[0] << ", " << copyANode->GetPosition1()[1] << ", " << copyANode->GetPosition1()[2] << std::endl;
-  std::cout << "annotationNode: " << rNode->GetPosition1()[0] << ", " << rNode->GetPosition1()[1] << ", " << rNode->GetPosition1()[2] << std::endl;
+  //vtkMRMLAnnotationNode* copyANode = vtkMRMLAnnotationNode::New();
 
-  // ..and delete the annotation
-  this->GetMRMLScene()->RemoveNode(annotationNode);
-  // ..and the hierarchy
-  this->GetMRMLScene()->RemoveNode(hNode);
 
-  // ..and now insert the copy of the annotation before the buffer
-  this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
+  if (annotationNode->IsA("vtkMRMLAnnotationRulerNode"))
+    {
+    VTK_CREATE(vtkMRMLAnnotationRulerNode, copyANode);
+    vtkMRMLAnnotationRulerNode* rNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
+    copyANode->CopyWithoutModifiedEvent(rNode);
+
+    // ..and delete the annotation
+    this->GetMRMLScene()->RemoveNode(annotationNode);
+    // ..and delete the hierarchy
+    this->GetMRMLScene()->RemoveNode(hNode);
+
+    // ..and now insert the copy of the annotation before the buffer
+    this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
+
+    }
+  else if (annotationNode->IsA("vtkMRMLAnnotationBidimensionalNode"))
+    {
+    VTK_CREATE(vtkMRMLAnnotationBidimensionalNode, copyANode);
+    vtkMRMLAnnotationBidimensionalNode* bNode = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(annotationNode);
+    copyANode->CopyWithoutModifiedEvent(bNode);
+
+    // ..and delete the annotation
+    this->GetMRMLScene()->RemoveNode(annotationNode);
+    // ..and delete the hierarchy
+    this->GetMRMLScene()->RemoveNode(hNode);
+
+    // ..and now insert the copy of the annotation before the buffer
+    this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
+
+    }
+  else if (annotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
+    {
+    VTK_CREATE(vtkMRMLAnnotationFiducialNode, copyANode);
+    vtkMRMLAnnotationFiducialNode* fNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(annotationNode);
+    copyANode->CopyWithoutModifiedEvent(fNode);
+
+    // ..and delete the annotation
+    this->GetMRMLScene()->RemoveNode(annotationNode);
+    // ..and delete the hierarchy
+    this->GetMRMLScene()->RemoveNode(hNode);
+
+    // ..and now insert the copy of the annotation before the buffer
+    this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
+
+    }
+  else if (annotationNode->IsA("vtkMRMLAnnotationTextNode"))
+    {
+    VTK_CREATE(vtkMRMLAnnotationTextNode, copyANode);
+    vtkMRMLAnnotationTextNode* tNode = vtkMRMLAnnotationTextNode::SafeDownCast(annotationNode);
+    copyANode->CopyWithoutModifiedEvent(tNode);
+
+    // ..and delete the annotation
+    this->GetMRMLScene()->RemoveNode(annotationNode);
+    // ..and delete the hierarchy
+    this->GetMRMLScene()->RemoveNode(hNode);
+
+    // ..and now insert the copy of the annotation before the buffer
+    this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
+
+    }
+
+
 
   // ..and now insert the copy of the hierarchyNode before our annotation
-  this->GetMRMLScene()->InsertBeforeNode(copyANode,copyHNode);
-
-  copyHNode->SetDisplayableNodeID(copyANode->GetID());
-  copyANode->Modified();
-
-
-
+  //this->GetMRMLScene()->InsertBeforeNode(copyANode,copyHNode);
 }
 
 //---------------------------------------------------------------------------

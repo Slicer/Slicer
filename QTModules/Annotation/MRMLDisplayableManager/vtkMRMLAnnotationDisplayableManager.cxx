@@ -190,7 +190,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
 
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
 
-  if (!this->IsCorrectDisplayableManager())
+  if (!node->IsA(this->m_Focus))
     {
     // jump out
     vtkDebugMacro("OnMRMLSceneNodeAddedEvent: Not the correct displayableManager, jumping out!")

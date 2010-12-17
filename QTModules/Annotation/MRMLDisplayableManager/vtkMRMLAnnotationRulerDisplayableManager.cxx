@@ -203,6 +203,9 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     return;
     }
 
+  //rulerWidget->SetWidgetStateToManipulate();
+
+
   VTK_CREATE(vtkInteractorEventRecorder, recorder);
   recorder->SetInteractor(this->GetInteractor());
   recorder->ReadFromInputStringOn();

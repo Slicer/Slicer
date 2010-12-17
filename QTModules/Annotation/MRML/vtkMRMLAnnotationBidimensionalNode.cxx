@@ -158,6 +158,9 @@ void vtkMRMLAnnotationBidimensionalNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLAnnotationBidimensionalNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
+  vtkMRMLAnnotationBidimensionalNode *node = (vtkMRMLAnnotationBidimensionalNode *) anode;
+
+  this->SetBidimensionalMeasurement(node->GetBidimensionalMeasurement()[0],node->GetBidimensionalMeasurement()[1]);
 }
 
 //-----------------------------------------------------------
