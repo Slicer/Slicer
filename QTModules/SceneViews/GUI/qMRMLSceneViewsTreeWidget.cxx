@@ -81,6 +81,7 @@ void qMRMLSceneViewsTreeWidgetPrivate::init()
   //this->SortFilterModel->setNodeTypes(nodeTypes);
   q->setNodeTypes(nodeTypes);
   this->SortFilterModel = q->sortFilterProxyModel();
+  this->SortFilterModel->setShowHidden(true);
 
   //this->SortFilterModel->setSourceModel(this->SceneModel);
   //q->qMRMLTreeWidget::setModel(this->SortFilterModel);

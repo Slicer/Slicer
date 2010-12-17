@@ -142,6 +142,11 @@ QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
 //---------------------------------------------------------------------------
 bool qMRMLUtils::qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage)
 {
+  if (vtkimage == 0)
+    {
+    return false;
+    }
+
   int height = img.height();
   int width = img.width();
   int numcomponents = img.hasAlphaChannel() ? 4 : 3;
@@ -176,7 +181,8 @@ bool qMRMLUtils::qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage)
 //---------------------------------------------------------------------------
 bool qMRMLUtils::vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img)
 {
-  if (vtkimage->GetScalarType() != VTK_UNSIGNED_CHAR)
+  if (!vtkimage ||
+      vtkimage->GetScalarType() != VTK_UNSIGNED_CHAR)
     {
     return false;
     }

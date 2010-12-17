@@ -96,7 +96,7 @@ void vtkSlicerSceneViewLogic::CreateSceneView(const char* name, const char* desc
   newSceneViewNode->SetScreenshotType(screenshotType);
   newSceneViewNode->SetScreenshot(screenshot);
   newSceneViewNode->StoreScene();
-  newSceneViewNode->HideFromEditorsOff();
+  //newSceneViewNode->HideFromEditorsOff();
   this->GetMRMLScene()->AddNode(newSceneViewNode);
 
 }
