@@ -1,6 +1,6 @@
 #include "Widgets/vtkAnnotationRulerWidget.h"
 #include "Widgets/vtkAnnotationRulerRepresentation.h"
-
+#include "Widgets/vtkAnnotationRulerRepresentation3D.h"
 
 // VTK includes
 #include <vtkObject.h>
@@ -43,3 +43,12 @@ void vtkAnnotationRulerWidget::CreateDefaultRepresentation()
   reinterpret_cast<vtkAnnotationRulerRepresentation*>(this->WidgetRep)->InstantiateHandleRepresentation();
 }
 
+//----------------------------------------------------------------------
+void vtkAnnotationRulerWidget::CreateDefaultRepresentation3D()
+{
+  if ( ! this->WidgetRep )
+    {
+    this->WidgetRep = vtkAnnotationRulerRepresentation3D::New();
+    }
+  reinterpret_cast<vtkAnnotationRulerRepresentation3D*>(this->WidgetRep)->InstantiateHandleRepresentation();
+}

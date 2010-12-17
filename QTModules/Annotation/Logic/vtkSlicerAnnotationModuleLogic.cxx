@@ -499,6 +499,11 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   this->GetMRMLScene()->RegisterNodeClass(annotationRulerNode);
   annotationRulerNode->Delete();
 
+  vtkMRMLAnnotationRulerStorageNode* annotationRulerStorageNode = vtkMRMLAnnotationRulerStorageNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationRulerStorageNode);
+  annotationRulerStorageNode->Delete();
+
+
   // Bidimensional annotation
   vtkMRMLAnnotationBidimensionalNode* annotationBidimensionalNode = vtkMRMLAnnotationBidimensionalNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationBidimensionalNode);

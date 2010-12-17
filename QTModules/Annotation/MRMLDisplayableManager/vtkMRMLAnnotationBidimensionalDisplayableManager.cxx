@@ -221,41 +221,6 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
     }
 
   bidimensionalWidget->SetWidgetStateToManipulate();
-  /*
-  VTK_CREATE(vtkInteractorEventRecorder, recorder);
-  recorder->SetInteractor(this->GetInteractor());
-  recorder->ReadFromInputStringOn();
-
-  {
-  std::ostringstream o;
-
-  double position1[4];
-  double position2[4];
-  double position3[4];
-  double position4[4];
-
-  this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(0),position1);
-  this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(1),position2);
-  this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(2),position3);
-  this->GetWorldToDisplayCoordinates(bidimensionalNode->GetControlPointCoordinates(3),position4);
-
-  o << "EnterEvent 2 184 0 0 0 0 0\n";
-  o << "MouseMoveEvent " << position1[0] << " " << position1[1] << " 0 0 0 0\n";
-  o << "LeftButtonPressEvent " << position1[0] << " " << position1[1] << " 0 0 0 0\n";
-  o << "RenderEvent " << position1[0] << " " << position1[1] << " 0 0 0 0\n";
-  o << "LeftButtonReleaseEvent " << position1[0] << " " << position1[1] << " 0 0 0 0 t\n";
-  o << "MouseMoveEvent " << position2[0] << " " << position2[1] << " 0 0 0 0\n";
-  o << "LeftButtonPressEvent " << position2[0] << " " << position2[1] << " 0 0 0 0\n";
-  o << "RenderEvent " << position2[0] << " " << position2[1] << " 0 0 0 0\n";
-  o << "LeftButtonReleaseEvent " << position2[0] << " " << position2[1] << " 0 0 0 0 t\n";
-  o << "LeftButtonPressEvent " << position4[0] << " " << position4[1] << " 0 0 0 0\n";
-  o << "RenderEvent " << position4[0] << " " << position4[1] << " 0 0 0 0\n";
-  o << "LeftButtonReleaseEvent " << position4[0] << " " << position4[1] << " 0 0 0 0 t\n";
-  o << "ExitEvent " << position4[0] << " " << position4[1] << " 0 0 113 1 q\n";
-
-  recorder->SetInputString(o.str().c_str());
-  recorder->Play();
-  }*/
 
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4];

@@ -57,6 +57,8 @@ SET(Widget_SRCS
   Widgets/vtkAnnotationRulerWidget.h
   Widgets/vtkAnnotationRulerRepresentation.cxx
   Widgets/vtkAnnotationRulerRepresentation.h
+  Widgets/vtkAnnotationRulerRepresentation3D.cxx
+  Widgets/vtkAnnotationRulerRepresentation3D.h  
   
   # our own bidimensional
   Widgets/vtkAnnotationBidimensionalWidget.cxx

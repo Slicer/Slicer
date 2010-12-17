@@ -10,19 +10,24 @@
 // Annotation widget includes
 #include "Widgets/vtkAnnotationRulerWidget.h"
 #include "Widgets/vtkAnnotationRulerRepresentation.h"
+#include "Widgets/vtkAnnotationRulerRepresentation3D.h"
 
 // VTK includes
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkProperty.h>
+#include <vtkProperty2D.h>
 #include <vtkMath.h>
 #include <vtkRenderer.h>
+#include <vtkAxisActor2D.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkInteractorEventRecorder.h>
 #include <vtkAbstractWidget.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderWindow.h>
+#include <vtkPointHandleRepresentation2D.h>
+#include <vtkPointHandleRepresentation3D.h>
 
 // std includes
 #include <string>
@@ -160,8 +165,41 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
   rulerWidget->SetInteractor(this->GetInteractor());
   rulerWidget->SetCurrentRenderer(this->GetRenderer());
 
-  rulerWidget->CreateDefaultRepresentation();
+  if (this->GetSliceNode())
+    {
 
+    // this is a 2D displayableManager
+    VTK_CREATE(vtkPointHandleRepresentation2D, handle);
+    handle->GetProperty()->SetColor(1,0,0);
+
+    VTK_CREATE(vtkAnnotationRulerRepresentation, dRep);
+    dRep->SetHandleRepresentation(handle);
+    dRep->InstantiateHandleRepresentation();
+    dRep->GetAxis()->SetNumberOfMinorTicks(4);
+    dRep->GetAxis()->SetTickLength(9);
+    dRep->GetAxis()->SetTitlePosition(0.2);
+    dRep->RulerModeOn();
+    dRep->SetRulerDistance(0.25);
+
+    rulerWidget->SetRepresentation(dRep);
+
+    }
+  else
+    {
+    // this is a 3D displayableManager
+    VTK_CREATE(vtkPointHandleRepresentation3D, handle2);
+    handle2->GetProperty()->SetColor(1,1,0);
+
+    VTK_CREATE(vtkAnnotationRulerRepresentation3D, dRep2);
+    dRep2->SetHandleRepresentation(handle2);
+    dRep2->InstantiateHandleRepresentation();
+    dRep2->RulerModeOn();
+    dRep2->SetRulerDistance(0.25);
+
+    rulerWidget->SetRepresentation(dRep2);
+    }
+
+  rulerWidget->SetWidgetStateToManipulate();
   rulerWidget->On();
 
   vtkDebugMacro("CreateWidget: Widget was set up")
@@ -203,36 +241,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     return;
     }
 
-  //rulerWidget->SetWidgetStateToManipulate();
 
 
-  VTK_CREATE(vtkInteractorEventRecorder, recorder);
-  recorder->SetInteractor(this->GetInteractor());
-  recorder->ReadFromInputStringOn();
-
-  {
-  std::stringstream o;
-
-  double position1[4];
-  double position2[4];
-
-  this->GetWorldToDisplayCoordinates(rulerNode->GetControlPointCoordinates(0),position1);
-  this->GetWorldToDisplayCoordinates(rulerNode->GetControlPointCoordinates(1),position2);
-
-  o << "EnterEvent 2 184 0 0 0 0 0\n";
-  o << "MouseMoveEvent " << position1[0] << " " << position1[1] << " 0 0 0 0\n";
-  o << "LeftButtonPressEvent " << position1[0] << " " << position1[1] << " 0 0 0 0\n";
-  o << "RenderEvent " << position1[0] << " " << position1[1] << " 0 0 0 0\n";
-  o << "LeftButtonReleaseEvent " << position1[0] << " " << position1[1] << " 0 0 0 0 t\n";
-  o << "MouseMoveEvent " << position2[0] << " " << position2[1] << " 0 0 0 0\n";
-  o << "LeftButtonPressEvent " << position2[0] << " " << position2[1] << " 0 0 0 0\n";
-  o << "RenderEvent " << position2[0] << " " << position2[1] << " 0 0 0 0\n";
-  o << "LeftButtonReleaseEvent " << position2[0] << " " << position2[1] << " 0 0 0 0 t\n";
-  o << "ExitEvent 192 173 0 0 113 1 q\n";
-
-  recorder->SetInputString(o.str().c_str());
-  recorder->Play();
-  }
 
   // widget thinks the interaction ended, now we can place the points from MRML
   double worldCoordinates1[4];
@@ -252,8 +262,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   //vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPositionsForDistanceCalculation(worldCoordinates1, worldCoordinates2);
 
-  vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
-
   if (this->GetSliceNode())
     {
 
@@ -263,17 +271,26 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1DisplayPosition(displayCoordinates1);
     vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2DisplayPosition(displayCoordinates2);
 
+    // set a specific format for the measurement text
+    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat("%.1f");
+
+    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+
     }
   else
     {
 
-    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1WorldPosition(worldCoordinates1);
-    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
+    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1WorldPosition(worldCoordinates1);
+    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
+
+    // set a specific format for the measurement text
+    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat("%.1f");
+
+    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
     }
 
-  // set a specific format for the measurement text
-  vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat("%.1f");
+
 
   // add observer for end interaction
   vtkAnnotationRulerWidgetCallback *myCallback = vtkAnnotationRulerWidgetCallback::New();
@@ -330,8 +347,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   this->m_Updating = 1;
 
 
-  // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-  vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
 
   double worldCoordinates1[4];
   worldCoordinates1[0] = rulerNode->GetControlPointCoordinates(0)[0];
@@ -350,12 +365,16 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   double displayCoordinatesBuffer1[4];
   double displayCoordinatesBuffer2[4];
 
-  // update the distance measurement
-  rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
-
   // update the location
   if (this->GetSliceNode())
     {
+
+    // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+    vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
+
+    // update the distance measurement
+    rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+
     // change the 2D location
     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
     this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
@@ -373,15 +392,24 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       rep->SetPoint2DisplayPosition(displayCoordinates2);
       }
 
+    rep->NeedToRenderOn();
     }
   else
     {
+    // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+    vtkAnnotationRulerRepresentation3D * rep = vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
+
+    // update the distance measurement
+    rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+
+
     // change the 3D location
     rep->SetPoint1WorldPosition(worldCoordinates1);
     rep->SetPoint2WorldPosition(worldCoordinates2);
+    rep->NeedToRenderOn();
     }
 
-  rep->NeedToRenderOn();
+
   rulerWidget->Modified();
 
   // enable processing of modified events
@@ -428,17 +456,20 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
   this->m_Updating = 1;
   rulerNode->DisableModifiedEventOn();
 
-  // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
-  vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
-
   double worldCoordinates1[4];
   double worldCoordinates2[4];
 
   bool allowMovement = true;
 
+  double distance;
+
   if (this->GetSliceNode())
     {
     // 2D widget was changed
+
+    // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
+    vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
+
 
     double displayCoordinates1[4];
     double displayCoordinates2[4];
@@ -468,11 +499,23 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
       allowMovement = false;
       }
 
+    // save distance to MRML
+    distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+    rep->SetDistance(distance);
+
     }
   else
     {
+    // now get the widget properties (coordinates, measurement etc.) and save it to the mrml node
+    vtkAnnotationRulerRepresentation3D * rep = vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
+
     rep->GetPoint1WorldPosition(worldCoordinates1);
     rep->GetPoint2WorldPosition(worldCoordinates2);
+
+    // get distance
+    distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+    rep->SetDistance(distance);
+
     }
 
   // if movement is not allowed, jump out
@@ -485,9 +528,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
   rulerNode->SetPosition1(worldCoordinates1);
   rulerNode->SetPosition2(worldCoordinates2);
 
-  // save distance to MRML
-  double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
-  rep->SetDistance(distance);
+  // save distance to mrml
   rulerNode->SetDistanceMeasurement(distance);
 
   // save the current view

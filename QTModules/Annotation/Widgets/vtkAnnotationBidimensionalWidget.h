@@ -34,6 +34,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   void CreateDefaultRepresentation();
+  void CreateDefaultRepresentation3D();
 
 protected:
 

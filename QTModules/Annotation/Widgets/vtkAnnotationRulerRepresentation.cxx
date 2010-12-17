@@ -64,6 +64,12 @@ void vtkAnnotationRulerRepresentation::BuildRepresentation()
       this->Distance = sqrt(vtkMath::Distance2BetweenPoints(p1,p2));
       }
 
+    this->AxisActor->GetPoint1Coordinate()->SetValue(p1);
+    this->AxisActor->GetPoint2Coordinate()->SetValue(p2);
+    this->AxisActor->SetRulerMode(this->RulerMode);
+    this->AxisActor->SetRulerDistance(this->RulerDistance);
+    this->AxisActor->SetNumberOfLabels(this->NumberOfRulerTicks);
+
     char string[512];
     sprintf(string, this->LabelFormat, this->Distance);
     this->AxisActor->SetTitle(string);
