@@ -21,7 +21,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   #TestAnnotationWidgetsStandalone.cxx
   #vtkMRMLAnnotationTextNodeAndWidgetTest1.cxx
   #vtkMRMLAnnotationTextDisplayableManagerTest1.cxx
-  vtkMRMLAnnotationRulerDisplayableManagerTest1.cxx
+  #vtkMRMLAnnotationRulerDisplayableManagerTest1.cxx
   #vtkMRMLAnnotationTextNodeAndWidgetTest1.cxx
   #vtkSlicerAnnotationModuleLogicTest1.cxx
   #qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
