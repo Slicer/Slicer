@@ -3,6 +3,7 @@
 
 // Annotation/MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationAngleStorageNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
