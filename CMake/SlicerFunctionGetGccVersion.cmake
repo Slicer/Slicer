@@ -25,6 +25,8 @@ FUNCTION(slicerFunctionGetGccVersion path_to_gcc output_var)
       RESULT_VARIABLE result
       OUTPUT_VARIABLE output
       ERROR_VARIABLE error
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_STRIP_TRAILING_WHITESPACE
       )
     IF(result)
       MESSAGE(FATAL_ERROR "Failed to obtain compiler version running [${path_to_gcc} -dumpversion]: ${error}")
