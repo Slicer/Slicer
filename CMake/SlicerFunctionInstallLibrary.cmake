@@ -54,14 +54,10 @@ FUNCTION(slicerInstallLibrary)
     SET(name_tmp)
     # libs symlinks are always named lib.*.dylib on mac
     # libs symlinks are always named lib.so.* on linux
-    IF (APPLE)
-      GET_FILENAME_COMPONENT(name_tmp ${_slicerInstallLibrary_FILE} NAME_WE)
-      FILE(GLOB lib_list "${dir_tmp}/${name_tmp}*")
-    ELSE()
-      GET_FILENAME_COMPONENT(dir_tmp ${_slicerInstallLibrary_FILE} PATH)
-      GET_FILENAME_COMPONENT(name_tmp ${_slicerInstallLibrary_FILE} NAME)
-      FILE(GLOB lib_list RELATIVE "${dir_tmp}" "${_slicerInstallLibrary_FILE}*")
-    ENDIF()
+
+    GET_FILENAME_COMPONENT(dir_tmp ${_slicerInstallLibrary_FILE} PATH)
+    GET_FILENAME_COMPONENT(name_tmp ${_slicerInstallLibrary_FILE} NAME)
+    FILE(GLOB lib_list RELATIVE "${dir_tmp}" "${_slicerInstallLibrary_FILE}*")
     
     INSTALL(CODE "
           MESSAGE(STATUS \"Installing ${name_tmp}\")
