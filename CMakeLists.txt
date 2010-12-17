@@ -360,7 +360,11 @@ IF(BUILD_TESTING)
   ENABLE_TESTING()
   
   INCLUDE(CTest)
-  
+  INCLUDE(MIDAS)
+  SET(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
+  SET(MIDAS_KEY_DIR "${Slicer_SOURCE_DIR}/Testing/Data")
+  SET(MIDAS_DATA_DIR "${Slicer_BINARY_DIR}/MIDAS_Data")
+
   SET(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
     

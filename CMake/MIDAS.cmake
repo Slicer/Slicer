@@ -46,7 +46,15 @@
 # See the License for more information.
 #=============================================================================
 
-function(midas_add_test testName)
+function(midas_add_test)
+  # Determine the test name.
+  list(GET ARGN 0 firstArg)
+  if(firstArg STREQUAL "NAME")
+    list(GET ARGN 1 testName)
+  else(firstArg STREQUAL "NAME")
+    list(GET ARGN 0 testName)
+  endif(firstArg STREQUAL "NAME")
+
   if(NOT DEFINED MIDAS_REST_URL)
     message(FATAL_ERROR "You must set MIDAS_REST_URL to the URL of the MIDAS REST API.")
   endif(NOT DEFINED MIDAS_REST_URL)
@@ -69,8 +77,9 @@ function(midas_add_test testName)
 
   # Substitute the downloaded file argument(s)
   foreach(arg ${ARGN})
-    if(arg MATCHES "^MIDAS{[^}]*}$")
-      string(REGEX REPLACE "^MIDAS{([^}]*)}$" "\\1" keyFile "${arg}")
+    if(arg MATCHES "MIDAS{[^}]*}")
+      string(REGEX MATCH "MIDAS{([^}]*)}" toReplace "${arg}")
+      string(REGEX REPLACE "MIDAS{([^}]*)}" "\\1" keyFile "${toReplace}")
       # Split up the checksum extension from the real filename
       string(REGEX MATCH "\\.[^\\.]*$" hash_alg "${keyFile}")
       string(REGEX REPLACE "\\.[^\\.]*$" "" base_file "${keyFile}")
@@ -125,14 +134,16 @@ endif(WIN32)
 ")
 
       list(APPEND downloadScripts "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/download_${checksum}.cmake")
-      list(APPEND testArgs "${MIDAS_DATA_DIR}/${base_file}")
-    else(arg MATCHES "^MIDAS{[^}]*}$")
+      string(REGEX REPLACE ${toReplace} "${MIDAS_DATA_DIR}/${base_file}" newArg "${arg}")
+      list(APPEND testArgs ${newArg})
+    else(arg MATCHES "MIDAS{[^}]*}")
       list(APPEND testArgs ${arg})
-    endif(arg MATCHES "^MIDAS{[^}]*}$")
+    endif(arg MATCHES "MIDAS{[^}]*}")
   endforeach(arg)
 
   file(WRITE "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/${testName}_fetchData.cmake"
        "#This is an auto generated file -- do not edit\n\n")
+  list(REMOVE_DUPLICATES downloadScripts)
   foreach(downloadScript ${downloadScripts})
     file(APPEND "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/${testName}_fetchData.cmake" "include(\"${downloadScript}\")\n")
   endforeach(downloadScript)
@@ -140,6 +151,6 @@ endif(WIN32)
   add_test(${testName}_fetchData "${CMAKE_COMMAND}" -P "${MIDAS_DATA_DIR}/MIDAS_FetchScripts/${testName}_fetchData.cmake")
   set_tests_properties(${testName}_fetchData PROPERTIES FAIL_REGULAR_EXPRESSION "(Error downloading)|(Error: Computed checksum)")
   # Finally, create the test
-  add_test(${testName} ${testArgs})
+  add_test(${testArgs})
   set_tests_properties(${testName} PROPERTIES DEPENDS ${testName}_fetchData)
 endfunction(midas_add_test)

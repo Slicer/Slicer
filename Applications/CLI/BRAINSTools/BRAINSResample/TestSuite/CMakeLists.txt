@@ -16,126 +16,128 @@ add_dependencies(BRAINSResampleTest BRAINSResample)
 
 set(BRAINSResample_TESTS ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTest>)
 
+include(MIDAS)
+set(MIDAS_KEY_DIR "${BRAINSCommonLib_DATA_DIRS}")
 
 ## Should provide exactly the same result as BRAINSFitTest_AffineRotationMasks
-add_test(NAME ValidateBRAINSResampleTest4_nii COMMAND ${BRAINSResample_TESTS}
+midas_add_test(NAME ValidateBRAINSResampleTest4_nii COMMAND ${BRAINSResample_TESTS}
  --compare
-     ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_AffineRotationMasks.result.nii.gz
+     MIDAS{BRAINSFitTest_AffineRotationMasks.result.nii.gz.md5}
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
      --compareIntensityTolerance 13
      --compareRadiusTolerance 1
      --compareNumberOfPixelsTolerance 1
    BRAINSResampleTest
-    --inputVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.test.nii.gz
-    --referenceVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
+    --inputVolume MIDAS{rotation.test.nii.gz.md5}
+    --referenceVolume MIDAS{test.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
     --pixelType uchar
-    --warpTransform ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_AffineRotationMasks.mat
+    --warpTransform MIDAS{BRAINSFitTest_AffineRotationMasks.mat.md5}
 )
 
 ## Should provide exactly the same result as BRAINSFit BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks test
-add_test(NAME ValidateBRAINSResampleTest5_nii COMMAND ${BRAINSResample_TESTS}
+midas_add_test(NAME ValidateBRAINSResampleTest5_nii COMMAND ${BRAINSResample_TESTS}
  --compare
-     ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.result.nii.gz
+     MIDAS{BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.result.nii.gz.md5}
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test5.nii.gz
      --compareIntensityTolerance 13
      --compareRadiusTolerance 1
      --compareNumberOfPixelsTolerance 80
    BRAINSResampleTest
-    --inputVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.rescale.rigid.nii.gz
-    --referenceVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
+    --inputVolume MIDAS{rotation.rescale.rigid.nii.gz.md5}
+    --referenceVolume MIDAS{test.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test5.nii.gz
     --pixelType short
-    --warpTransform ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat
+    --warpTransform MIDAS{BRAINSFitTest_BSplineAnteScaleRotationRescaleHeadMasks.mat.md5}
 )
 
-add_test(NAME ValidateBRAINSResampleTest6_nii COMMAND ${BRAINSResample_TESTS}
+midas_add_test(NAME ValidateBRAINSResampleTest6_nii COMMAND ${BRAINSResample_TESTS}
  --compare
-     ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationNoMasks.result.nii.gz
+     MIDAS{BRAINSFitTest_RigidRotationNoMasks.result.nii.gz.md5}
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
      --compareIntensityTolerance 13
      --compareRadiusTolerance 1
      --compareNumberOfPixelsTolerance 1
    BRAINSResampleTest
-    --inputVolume ${BRAINSCommonLib_DATA_DIRS}/rotation.test.nii.gz
-    --referenceVolume ${BRAINSCommonLib_DATA_DIRS}/test.nii.gz
+    --inputVolume MIDAS{rotation.test.nii.gz.md5}
+    --referenceVolume MIDAS{test.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test6.nii.gz
     --pixelType uchar
     --interpolationMode WindowedSinc
-    --warpTransform ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationNoMasks.mat
+    --warpTransform MIDAS{BRAINSFitTest_RigidRotationNoMasks.mat.md5}
 )
 
-add_test(NAME ValidateBRAINSResampleTest7_nii COMMAND ${BRAINSResample_TESTS}
+midas_add_test(NAME ValidateBRAINSResampleTest7_nii COMMAND ${BRAINSResample_TESTS}
  --compare
-     ${BRAINSCommonLib_DATA_DIRS}/ValidateBRAINSResampleTest7.result.nii.gz
+     MIDAS{ValidateBRAINSResampleTest7.result.nii.gz.md5}
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test7.nii.gz
      --compareIntensityTolerance 0
      --compareRadiusTolerance 0
      --compareNumberOfPixelsTolerance 0
    BRAINSResampleTest
-    --inputVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    --referenceVolume ${BRAINSCommonLib_DATA_DIRS}/ValidateBRAINSResampleTest7.result.nii.gz
+    --inputVolume MIDAS{SUBJ_B_small/SUBJ_B_small_T1.nii.gz.md5}
+    --referenceVolume MIDAS{ValidateBRAINSResampleTest7.result.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test7.nii.gz
     --interpolationMode Linear
     --pixelType uchar
-    --warpTransform ${BRAINSCommonLib_DATA_DIRS}/applyWarp_BSpline.mat
+    --warpTransform MIDAS{applyWarp_BSpline.mat.md5}
 )
 
-add_test(NAME ValidateBRAINSResampleTest1_nii COMMAND ${BRAINSResample_TESTS}
+midas_add_test(NAME ValidateBRAINSResampleTest1_nii COMMAND ${BRAINSResample_TESTS}
  --compare
-     ${BRAINSCommonLib_DATA_DIRS}/applyWarp1.nii.gz
+     MIDAS{applyWarp1.nii.gz.md5}
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test1.nii.gz
      --compareNumberOfPixelsTolerance 45
      --compareIntensityTolerance 25
    BRAINSResampleTest
-    --inputVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz
-    --referenceVolume ${BRAINSCommonLib_DATA_DIRS}/applyWarp1.nii.gz
+    --inputVolume MIDAS{SUBJ_B_small/SUBJ_B_small_T1.nii.gz.md5}
+    --referenceVolume MIDAS{applyWarp1.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test1.nii.gz
-    --deformationVolume ${BRAINSCommonLib_DATA_DIRS}/OutDefField.nii.gz
+    --deformationVolume MIDAS{OutDefField.nii.gz.md5}
     --pixelType short --interpolationMode NearestNeighbor
 )
-add_test(NAME ValidateBRAINSResampleTest2_nii COMMAND ${BRAINSResample_TESTS}
+midas_add_test(NAME ValidateBRAINSResampleTest2_nii COMMAND ${BRAINSResample_TESTS}
  --compare
-     ${BRAINSCommonLib_DATA_DIRS}/applyWarp2.nii.gz
+     MIDAS{applyWarp2.nii.gz.md5}
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test2.nii.gz
      --compareNumberOfPixelsTolerance 20
      --compareIntensityTolerance 25
    BRAINSResampleTest
-    --inputVolume ${BRAINSCommonLib_DATA_DIRS}/SUBJ_B_small/SUBJ_B_small_T1.nii.gz 
-    --referenceVolume ${BRAINSCommonLib_DATA_DIRS}/applyWarp2.nii.gz
+    --inputVolume MIDAS{SUBJ_B_small/SUBJ_B_small_T1.nii.gz .md5}
+    --referenceVolume MIDAS{applyWarp2.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test2.nii.gz
-    --deformationVolume ${BRAINSCommonLib_DATA_DIRS}/OutDefField.nii.gz
+    --deformationVolume MIDAS{OutDefField.nii.gz.md5}
     --interpolationMode BSpline --pixelType float
 )
 
-add_test(NAME ValidateBRAINSResampleTest3_nii COMMAND ${BRAINSResample_TESTS}
+midas_add_test(NAME ValidateBRAINSResampleTest3_nii COMMAND ${BRAINSResample_TESTS}
  --compare
-     ${BRAINSCommonLib_DATA_DIRS}/orientedImagesDemons_test.nii.gz
+     MIDAS{orientedImagesDemons_test.nii.gz.md5}
      ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test3.nii.gz
      --compareNumberOfPixelsTolerance 20
      --compareIntensityTolerance 25
    BRAINSResampleTest
-    --inputVolume ${BRAINSCommonLib_DATA_DIRS}/ANON0006_20_T1_sag_twisted.nii.gz
-    --referenceVolume ${BRAINSCommonLib_DATA_DIRS}/orientedImagesDemons_test.nii.gz
+    --inputVolume MIDAS{ANON0006_20_T1_sag_twisted.nii.gz.md5}
+    --referenceVolume MIDAS{orientedImagesDemons_test.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test3.nii.gz
-    --deformationVolume ${BRAINSCommonLib_DATA_DIRS}/OutDefField_orientedImage.nii.gz
+    --deformationVolume MIDAS{OutDefField_orientedImage.nii.gz.md5}
 )
 
 if(0) ##This functionality does not work yet
-add_test(NAME ValidateBRAINSResampleInvertTest COMMAND ${BRAINSResample_TESTS}
+midas_add_test(NAME ValidateBRAINSResampleInvertTest COMMAND ${BRAINSResample_TESTS}
  --compare
-     ${BRAINSCommonLib_DATA_DIRS}/BRAINSResampleTest_Invert.output.nii.gz
+     MIDAS{BRAINSResampleTest_Invert.output.nii.gz.md5}
      ${CMAKE_CURRENT_BINARY_DIR}/InvertTransform_Test.nii.gz
      --compareIntensityTolerance 0
      --compareRadiusTolerance 0
      --compareNumberOfPixelsTolerance 0
    BRAINSResampleTest
    --invertTransform
-    --inputVolume ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationMasks.output.nii.gz
-    --referenceVolume ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_rotation.input.nii.gz
+    --inputVolume MIDAS{BRAINSFitTest_RigidRotationMasks.output.nii.gz.md5}
+    --referenceVolume MIDAS{BRAINSFitTest_rotation.input.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test4.nii.gz
     --pixelType short
-    --warpTransform ${BRAINSCommonLib_DATA_DIRS}/BRAINSFitTest_RigidRotationMasks.mat
+    --warpTransform MIDAS{BRAINSFitTest_RigidRotationMasks.mat.md5}
 )
 endif(0)
 
