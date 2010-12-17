@@ -207,9 +207,11 @@ void qSlicerAnnotationModuleWidget::setup()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::moveDownSelected()
 {
-  //Q_D(qSlicerAnnotationModuleWidget);
+  Q_D(qSlicerAnnotationModuleWidget);
 
-  // TODO
+  vtkStdString mrmlId = d->logic()->MoveAnnotationDown(d->hierarchyTreeWidget->firstSelectedNode());
+
+  d->hierarchyTreeWidget->clearSelection();
 }
 
 //-----------------------------------------------------------------------------
@@ -217,7 +219,7 @@ void qSlicerAnnotationModuleWidget::moveUpSelected()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  d->logic()->MoveAnnotationUp(d->hierarchyTreeWidget->firstSelectedNode());
+  vtkStdString mrmlId = d->logic()->MoveAnnotationUp(d->hierarchyTreeWidget->firstSelectedNode());
 
   d->hierarchyTreeWidget->clearSelection();
 }
