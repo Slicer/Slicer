@@ -243,7 +243,7 @@ IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
     LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development)
 
-ENDIF(Slicer_USE_PYTHONQT AND BUILD_SHARED_LIBS)
+ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
