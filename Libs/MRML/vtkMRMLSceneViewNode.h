@@ -21,7 +21,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
-#include <vtkImageData.h>
+class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLNode
 {

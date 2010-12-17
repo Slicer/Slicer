@@ -12,21 +12,25 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
+// MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLSceneViewNode.h"
+#include "vtkMRMLStorageNode.h"
 
+// VTKsys includes
 #include <vtksys/stl/string>
 #include <vtksys/SystemTools.hxx>
 
-#include "vtkObjectFactory.h"
+// VTK includes
 #include "vtkCallbackCommand.h"
 #include "vtkCollection.h"
+#include <vtkImageData.h>
+#include "vtkObjectFactory.h"
 
-#include "vtkMRMLSceneViewNode.h"
-
-#include "vtkMRMLScene.h"
-#include "vtkMRMLStorageNode.h"
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLSceneViewNode* vtkMRMLSceneViewNode::New()
@@ -61,7 +65,7 @@ vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()
   this->HideFromEditors = 1;
 
   this->Nodes = NULL;
-
+  this->m_ScreenShot = NULL;
 }
 
 //----------------------------------------------------------------------------
