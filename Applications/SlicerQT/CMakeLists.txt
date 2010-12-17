@@ -8,18 +8,6 @@ PROJECT(SlicerQT)
 # get_filename_component(INCR_TCL_LIBRARY_PATH "${INCR_TCL_LIBRARY}" PATH)
 # get_filename_component(INCR_TK_LIBRARY_PATH "${INCR_TK_LIBRARY}" PATH)
 
-# Some people use Mesa instead of the default system OpenGL.
-# Try to incorporate that in the launcher, but NOT for installation.
-
-# if(NOT WIN32)
-#   foreach(dependency ${vtkftgl_LIB_DEPENDS})
-#     get_filename_component(dependency_lib "${dependency}" NAME_WE)
-#     if(dependency_lib STREQUAL "libGL")
-#       get_filename_component(OPENGL_gl_LIBRARY_PATH "${dependency}" PATH)
-#     endif(dependency_lib STREQUAL "libGL")
-#   endforeach(dependency)
-# endif(NOT WIN32)
-
 SET(SlicerQT_EXE_SUFFIX)
 SET(SlicerQT_EXE_INSTALL ${Slicer_INSTALL_BIN_DIR})
 IF(BUILD_SHARED_LIBS)
@@ -181,7 +169,8 @@ ENDIF(SlicerQT_NEED_SHARED_FORWARD)
 
 # --------------------------------------------------------------------------
 # Sources
-#
+# --------------------------------------------------------------------------
+
 SET(SlicerQT_SRCS
   qSlicerAboutDialog.cxx
   qSlicerAboutDialog.h
@@ -220,182 +209,24 @@ QT4_WRAP_UI(SlicerQT_UI_CXX ${SlicerQT_UI_SRCS})
 QT4_ADD_RESOURCES(SlicerQT_QRC_SRCS ${qt_module_resources})
 
 # --------------------------------------------------------------------------
-# Find SLICERLIBCURL (slicercurl)
-#
-# find_package(SLICERLIBCURL REQUIRED)
-# include(${SLICERLIBCURL_USE_FILE})
-
-# --------------------------------------------------------------------------
 # Include dirs
-#
+# --------------------------------------------------------------------------
+
 set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   #${Slicer_Libs_INCLUDE_DIRS}
   ${Slicer_Base_INCLUDE_DIRS}
-  #${NAVITRACK_INC}
-  #${IGSTK_INCLUDE_DIRS}
-#   ${Volumes_SOURCE_DIR}
-#   ${Volumes_BINARY_DIR}
-#   ${Volumes_Init_SOURCE_DIR}
-#   ${Volumes_Init_BINARY_DIR}
-#   ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}
-#   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
-#   ${GradientAnisotropicDiffusionFilter_Init_SOURCE_DIR}
-#   ${GradientAnisotropicDiffusionFilter_Init_BINARY_DIR}
-#   ${SlicerTractographyDisplay_SOURCE_DIR}
-#   ${SlicerTractographyDisplay_BINARY_DIR}
-#   ${SlicerTractographyDisplay_Init_SOURCE_DIR}
-#   ${SlicerTractographyDisplay_Init_BINARY_DIR}
-#   ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
-#   ${SlicerTractographyFiducialSeeding_BINARY_DIR}
-#   ${SlicerTractographyFiducialSeeding_Init_SOURCE_DIR}
-#   ${SlicerTractographyFiducialSeeding_Init_BINARY_DIR}
-#   ${EMSegment_SOURCE_DIR}
-#   ${EMSegment_BINARY_DIR}
-#   ${EMSegment_Init_SOURCE_DIR}
-#   ${EMSegment_Init_BINARY_DIR}
-#   ${RealTimeImaging_SOURCE_DIR}
-#   ${RealTimeImaging_BINARY_DIR}
-#   ${RealTimeImaging_Init_SOURCE_DIR}
-#   ${RealTimeImaging_Init_BINARY_DIR}
-#   ${MRAblation_SOURCE_DIR}
-#   ${MRAblation_BINARY_DIR}
-#   ${MRAblation_Init_SOURCE_DIR}
-#   ${MRAblation_Init_BINARY_DIR}
-#   ${LabelStatistics_SOURCE_DIR}       
-#   ${LabelStatistics_BINARY_DIR}
-#   ${LabelStatistics_Init_SOURCE_DIR}
-#   ${LabelStatistics_Init_BINARY_DIR}
-#   ${WFEngineModule_SOURCE_DIR}
-#   ${WFEngineModule_BINARY_DIR}
-#   ${WFEngineModule_Init_SOURCE_DIR}
-#   ${WFEngineModule_Init_BINARY_DIR}
-#   ${CommandLineModule_SOURCE_DIR}
-#   ${CommandLineModule_BINARY_DIR}
-#   ${CommandLineModule_Init_SOURCE_DIR}
-#   ${CommandLineModule_Init_BINARY_DIR}
-#   ${ScriptedModule_SOURCE_DIR}
-#   ${ScriptedModule_BINARY_DIR}
-#   ${SlicerDaemon_SOURCE_DIR}
-#   ${SlicerDaemon_BINARY_DIR}
-#   ${SlicerDaemon_Init_SOURCE_DIR}
-#   ${SlicerDaemon_Init_BINARY_DIR}
   )
-
-# if(Slicer_BUILD_MODULES)
-#   add_definitions(-DSlicer_BUILD_MODULES)
-# endif(Slicer_BUILD_MODULES)
-# 
-# if(Slicer_BUILD_CLI)
-#   add_definitions(-DSlicer_BUILD_CLI)
-# endif(Slicer_BUILD_CLI)
-
-# if(Slicer_USE_PYTHON AND PYTHON_INCLUDE_PATH)
-#   set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
-#   if(WIN32)
-#     set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH}/../PC)
-#   endif(WIN32)
-# endif(Slicer_USE_PYTHON AND PYTHON_INCLUDE_PATH)
 
 INCLUDE_DIRECTORIES(${include_dirs})
 
-# --------------------------------------------------------------------------
-# with the WIN32_CONSOLE you can see diagnostic output on in a DOS-style
-# cmd window
-#
-# option(Slicer_BUILD_WIN32_CONSOLE 
-#   "Build Slicer3 executable as a console app on windows (allows debug output)" 
-#   OFF
-#   )
-# 
-# if(Slicer_BUILD_WIN32_CONSOLE)
-#   add_executable(Slicer3${Slicer_EXE_SUFFIX} 
-#     ${SRC} 
-#     ${RC_FILENAME}
-#     )
-# else(Slicer_BUILD_WIN32_CONSOLE)
-#   add_executable(
-#     Slicer3${Slicer_EXE_SUFFIX} WIN32 
-#     ${SRC} 
-#     ${RC_FILENAME}
-#     )
-# endif(Slicer_BUILD_WIN32_CONSOLE)
 
-# --------------------------------------------------------------------------
-# Options
-#
-# if(WFENGINEMODULE)
-#   set(WFENGINE_LINK_LIB ${WFENGINE_LINK_LIB} WFEngineModule)
-# else(WFENGINEMODULE)
-#   add_definitions(-DWFENGINE_DEBUG)
-# endif(WFENGINEMODULE)
-
-# if(LABELSTATISTICS)
-#   set(LABELSTATISTICS_LINK_LIB LabelStatistics)
-# else(LABELSTATISTICS)
-#   add_definitions(-DLABELSTATISTICS_DEBUG)
-# endif(LABELSTATISTICS)
-
-# --------------------------------------------------------------------------
-# Link
-# Important: remove RemoteIO when using CMake 2.6. Couldn't be part of 
-# Slicer_LIBRARIES right now because of the Curl lib RemoteIO is using is
-# STATIC, but that's fixed in 2.6.
-#
-#target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
-#  ${Slicer_Libs_LIBRARIES}
-#  ${Slicer_Base_LIBRARIES}
-#   RemoteIO
-#   ${KWWidgets_LIBRARIES}
-#  ${SLICERLIBCURL_LIBRARIES}
-#  )
-
-# if(Slicer_BUILD_MODULES)
-#   target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
-#     Volumes
-#     CommandLineModule
-#     ScriptedModule
-#     SlicerDaemon
-#     SlicerTractographyDisplay
-#     SlicerTractographyFiducialSeeding
-#     )
-# else(Slicer_BUILD_MODULES)
-#   # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
-#   # so that we can have CLI, without all the other modules
-#   if(Slicer_BUILD_CLI)
-#     target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
-#       CommandLineModule
-#       )
-#   endif(Slicer_BUILD_CLI)
-# endif(Slicer_BUILD_MODULES)
-
-# if(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
-#   target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} SlicerBaseGUIPython)
-#   if(WIN32 AND PYTHON_DEBUG_LIBRARIES)
-#     target_link_libraries(Slicer3${Slicer_EXE_SUFFIX}
-#       debug ${PYTHON_DEBUG_LIBRARIES}
-#       optimized ${PYTHON_LIBRARIES})
-#   else(WIN32 AND PYTHON_DEBUG_LIBRARIES)
-#     target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} ${PYTHON_LIBRARIES})
-#   endif(WIN32 AND PYTHON_DEBUG_LIBRARIES)
-#   if(NOT WIN32)
-#     # Linux/Unix requires util library, but mac doesn't
-#     if(APPLE OR UNIX)
-#       target_link_libraries(Slicer3${Slicer_EXE_SUFFIX})
-#     else(APPLE OR UNIX)
-#       target_link_libraries(Slicer3${Slicer_EXE_SUFFIX} util)
-#     endif(APPLE OR UNIX)
-#   endif(NOT WIN32)
-# endif(Slicer_USE_PYTHON AND PYTHON_LIBRARIES)
-    
 # --------------------------------------------------------------------------
 # Build the library
+# --------------------------------------------------------------------------
 
 SET(lib_name "qSlicerQT")
-
-#slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
-#slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} ${lib_name})
 
 ADD_LIBRARY(${lib_name}
   ${SlicerQT_SRCS}
@@ -437,6 +268,7 @@ install(TARGETS ${lib_name}
 
 # --------------------------------------------------------------------------
 # Build the executable
+# --------------------------------------------------------------------------
 
 ADD_EXECUTABLE(SlicerQT${SlicerQT_EXE_SUFFIX}
   Main.cxx)
@@ -447,7 +279,8 @@ TARGET_LINK_LIBRARIES(SlicerQT${SlicerQT_EXE_SUFFIX}
 
 #-----------------------------------------------------------------------------
 # Configure
-#
+# --------------------------------------------------------------------------
+
 SET(MY_LIBRARY_EXPORT_DIRECTIVE "Q_SLICERQT_EXPORT")
 SET(MY_EXPORT_HEADER_PREFIX ${lib_name})
 SET(MY_LIBNAME ${lib_name})
@@ -461,14 +294,15 @@ SET(dynamicHeaders
     
 # --------------------------------------------------------------------------
 # Install
-#
+# --------------------------------------------------------------------------
+
 INSTALL(TARGETS SlicerQT${SlicerQT_EXE_SUFFIX}
   DESTINATION ${Slicer_INSTALL_BIN_DIR}
   COMPONENT Runtime)
 
 # --------------------------------------------------------------------------
 # Configure Slicer Launcher
-#
+# --------------------------------------------------------------------------
 
 IF(Slicer_USE_CTKAPPLAUNCHER)
   INCLUDE(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
@@ -502,33 +336,6 @@ IF(Slicer_USE_CTKAPPLAUNCHER)
     RENAME SlicerLauncherSettings.ini
     )
 ENDIF()
-
-# Install headers
-#FILE(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-#INSTALL(FILES
-#  ${headers}
-#  ${dynamicHeaders}
-#  DESTINATION ${Slicer_INSTALL_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
-#  )
-    
-# --------------------------------------------------------------------------
-# If needed, copy the Tcl/Tk support files required at run-time 
-# to initialize Tcl/Tk. This is only triggered if VTK was built
-# against a Tcl/Tk static library.
-
-# include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
-# kwwidgets_copy_tcl_tk_support_files("${Slicer_BINARY_DIR}/lib")
-# kwwidgets_install_tcl_tk_support_files("/lib")
-
-# --------------------------------------------------------------------------
-# Use the command line utilities
-#
-# find_package(GenerateCLP REQUIRED)
-# if(GenerateCLP_FOUND)
-#   include(${GenerateCLP_USE_FILE})
-# endif(GenerateCLP_FOUND)
-# 
-# generateclp(${SRC} Slicer3.xml)
 
 # --------------------------------------------------------------------------
 # Command line parsing tests
