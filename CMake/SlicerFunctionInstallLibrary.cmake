@@ -19,11 +19,6 @@
 ################################################################################
 
 #
-# Based on a similar function available within Paraview source. (Paraview/CMake/ParaViewMacros.cmake)
-# See http://paraview.org/gitweb?p=ParaView.git;a=blob_plain;f=CMake/ParaViewMacros.cmake;hb=HEAD
-#
-
-#
 # slicerInstallLibrary
 #
 
@@ -55,15 +50,11 @@ FUNCTION(slicerInstallLibrary)
     # libs symlinks are always named lib.*.dylib on mac
     # libs symlinks are always named lib.so.* on linux
 
-    GET_FILENAME_COMPONENT(dir_tmp ${_slicerInstallLibrary_FILE} PATH)
-    GET_FILENAME_COMPONENT(name_tmp ${_slicerInstallLibrary_FILE} NAME)
-    FILE(GLOB lib_list RELATIVE "${dir_tmp}" "${_slicerInstallLibrary_FILE}*")
-    
-    INSTALL(CODE "
-          MESSAGE(STATUS \"Installing ${name_tmp}\")
-          EXECUTE_PROCESS (WORKING_DIRECTORY ${dir_tmp}
-               COMMAND tar c ${lib_list}
-               COMMAND tar -xC \${CMAKE_INSTALL_PREFIX}/${_slicerInstallLibrary_DESTINATION})
-               " COMPONENT ${_slicerInstallLibrary_COMPONENT})
+    GET_FILENAME_COMPONENT(lib_dir ${_slicerInstallLibrary_FILE} PATH)
+    GET_FILENAME_COMPONENT(lib_name ${_slicerInstallLibrary_FILE} NAME_WE)
+    INSTALL(DIRECTORY ${lib_dir}/ 
+      DESTINATION ${_slicerInstallLibrary_DESTINATION} COMPONENT ${_slicerInstallLibrary_COMPONENT}
+      FILES_MATCHING PATTERN "${lib_name}*"
+      PATTERN "${lib_name}*.a" EXCLUDE)
   ENDIF()
 ENDFUNCTION()
