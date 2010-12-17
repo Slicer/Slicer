@@ -124,8 +124,13 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setMRMLScene(vtkMRMLScene*)));
 
   // Hide the Layout toolbar by default
-  this->actionWindowToolbarsUndoRedo->setChecked(false);
-  this->actionWindowToolbarsLayout->setChecked(false);
+  // The setVisibility slot of the toolbar is connected QAction::triggered signal
+  // It's done for a long list of reasons. If you change this behavior, make sure
+  // minimizing the application and restore it doesn't hide the module panel. check
+  // also the geometry and the state of the menu qactions are correctly restored when
+  // loading slicer.
+  this->actionWindowToolbarsUndoRedo->trigger();
+  this->actionWindowToolbarsLayout->trigger();
 
   // Instanciate and assign the layout manager to the slicer application
   qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(this->CentralWidget);
@@ -371,7 +376,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(FeedbackCommunitySlicerVisualBlog);
 
   //connect ToolBars actions
-  connect(d->actionWindowToolbarsModuleSelector, SIGNAL(toggled(bool)),
+  connect(d->actionWindowToolbarsModuleSelector, SIGNAL(triggered(bool)),
           d->ModuleSelectorToolBar, SLOT(setVisible(bool)));
 }
 #undef qSlicerMainWindowCore_connect
