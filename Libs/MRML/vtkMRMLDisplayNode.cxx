@@ -519,7 +519,7 @@ void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const std::string& colorNodeID
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* newColorNode)
+void vtkMRMLDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* vtkNotUsed(newColorNode))
 {
 }
 

@@ -212,7 +212,7 @@ void qMRMLColorTableView::onDoubleClicked(const QModelIndex& index)
     return;
     }
   QColor color = this->sortFilterProxyModel()->data(index, qMRMLColorModel::ColorRole).value<QColor>();
-  QColor newColor = ctkColorDialog::getColor(color, this, "Select a new color");
+  QColor newColor = ctkColorDialog::getColor(color, this, "Select a new color", 0);
   if (!newColor.isValid())
     {
     return;
