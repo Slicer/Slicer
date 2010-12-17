@@ -21,7 +21,7 @@ class qSlicerScalarVolumeDisplayWidgetPrivate;
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerScalarVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT
-
+  QVTK_OBJECT
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
