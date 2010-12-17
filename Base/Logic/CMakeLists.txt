@@ -209,10 +209,10 @@ install(TARGETS ${lib_name}
   )
   
 # --------------------------------------------------------------------------
-# Create Python wrappers if Slicer_USE_PYTHONQT is ON and if VTK is wrapped in Python
+# Create Python wrappers if VTK is wrapped in Python
 #
 
-IF(Slicer_USE_PYTHONQT AND BUILD_SHARED_LIBS)
+IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
   SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
 
@@ -239,8 +239,8 @@ IF(Slicer_USE_PYTHONQT AND BUILD_SHARED_LIBS)
   ENDIF(WIN32 AND NOT CYGWIN)
 
   INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
-    RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT Runtime
-    LIBRARY DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT Runtime
+    RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development)
 
 ENDIF(Slicer_USE_PYTHONQT AND BUILD_SHARED_LIBS)
