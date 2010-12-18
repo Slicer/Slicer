@@ -103,7 +103,7 @@ midas_add_test(NAME ValidateBRAINSResampleTest2_nii COMMAND ${BRAINSResample_TES
      --compareNumberOfPixelsTolerance 20
      --compareIntensityTolerance 25
    BRAINSResampleTest
-    --inputVolume MIDAS{SUBJ_B_small/SUBJ_B_small_T1.nii.gz .md5}
+    --inputVolume MIDAS{SUBJ_B_small/SUBJ_B_small_T1.nii.gz.md5}
     --referenceVolume MIDAS{applyWarp2.nii.gz.md5}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test2.nii.gz
     --deformationVolume MIDAS{OutDefField.nii.gz.md5}

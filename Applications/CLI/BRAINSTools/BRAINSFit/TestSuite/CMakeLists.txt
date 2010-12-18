@@ -133,7 +133,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineTranslationMasks)
-add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
+midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTest>
   --compare MIDAS{${BRAINSFitTestName}.result.nii.gz.md5}
             ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
   --compareIntensityTolerance 7
@@ -260,7 +260,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --minimumStepLength 0.005
   --outputVolumePixelType short
   --maskProcessingMode ROIAUTO
-  --initialTransform MIDAS{Initializer_BRAINSFitTest_BSplineOnlyRescaleHeadMasks.mat
+  --initialTransform MIDAS{Initializer_BRAINSFitTest_BSplineOnlyRescaleHeadMasks.mat.md5}
   --transformType BSpline
   --fixedVolume MIDAS{test.nii.gz.md5}
   --movingVolume MIDAS{rotation.rescale.rigid.nii.gz.md5}
@@ -437,7 +437,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --minimumStepLength 0.001
   --outputVolumePixelType uchar
   --transformType Rigid
-  --initialTransform MIDAS{Initializer_0.05_${BRAINSFitTestName}.mat
+  --initialTransform MIDAS{Initializer_0.05_${BRAINSFitTestName}.mat.md5}
   --maskProcessingMode ROIAUTO
   --fixedVolume MIDAS{test.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
@@ -514,7 +514,7 @@ midas_add_test(NAME ${BRAINSFitTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRA
   --outputVolumePixelType uchar
   --transformType Rigid
   --interpolationMode RigidInPlace
-  --initialTransform MIDAS{Initializer_0.05_${BRAINSFitTestName}.mat
+  --initialTransform MIDAS{Initializer_0.05_${BRAINSFitTestName}.mat.md5}
   --fixedVolume MIDAS{test.nii.gz.md5}
   --movingVolume MIDAS{rotation.test.nii.gz.md5}
   --outputVolume ${BRAINSFit_BINARY_DIR}/Testing/${BRAINSFitTestName}.test.nii.gz
