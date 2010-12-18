@@ -29,13 +29,20 @@
 
 // qMRML includes
 #include "qMRMLSceneModel.h"
+#include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLUtils.h"
 
-#include "qMRMLSortFilterProxyModel.h"
+// CTK includes
+#include <ctkLogger.h>
 
 // VTK includes
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
+
+// STD includes
+#include <typeinfo>
+
+static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSortFilterProxyModel");
 
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterProxyModelPrivate
@@ -190,6 +197,8 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     // filter by node type
     if (!node->IsA(nodeType.toAscii().data()))
       {
+      //std::cout << "Reject node: " << node->GetName() << "(" << node->GetID()
+      //          << ") type: " << typeid(*node).name() <<std::endl;
       continue;
       }
     // filter by excluded child node types
