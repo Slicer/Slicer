@@ -25,7 +25,6 @@
 #include <QWidget>
 
 // CTK includes
-#include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
 // SlicerQt includes
@@ -41,7 +40,7 @@ class qSlicerLabelMapVolumeDisplayWidgetPrivate;
 class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerLabelMapVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT
-
+  QVTK_OBJECT
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
