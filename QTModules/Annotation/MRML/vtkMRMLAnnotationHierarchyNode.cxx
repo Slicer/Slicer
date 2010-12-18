@@ -36,6 +36,11 @@ void vtkMRMLAnnotationHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+const char* vtkMRMLAnnotationHierarchyNode::GetNodeTagName()
+{
+  return "AnnotationHierarchyNode";
+}
+//----------------------------------------------------------------------------
 void vtkMRMLAnnotationHierarchyNode::ReadXMLAttributes( const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);

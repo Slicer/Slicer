@@ -28,6 +28,10 @@ public:
   virtual void WriteXML(ostream& of, int indent);
 
   // Description:
+  // Get node XML tag name (like Volume, Annotation)
+  virtual const char* GetNodeTagName();
+
+  // Description:
   // Get all children associated to this node
   virtual void GetDirectChildren(vtkCollection *children);
 
