@@ -2,6 +2,7 @@
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 // Annotation/MRML includes
+#include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMRMLAnnotationAngleNode.h"
