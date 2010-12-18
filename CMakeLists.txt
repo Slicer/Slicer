@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.8.2)
+cmake_minimum_required(VERSION 2.8)
 #-----------------------------------------------------------------------------
 
 PROJECT(Slicer)
@@ -205,7 +205,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
   # is introduced. If gcc is smaller than 4.4.0 and the build type is Release let's not include the flag.
   # Doing so should allow to build package made for distribution using older linux distro.
-  IF(${GCC_VERSION} VERSION_GREATER "4.4.0" OR (DEFINED CMAKE_BUILD_TYPE AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND ${GCC_VERSION} VERSION_LESS "4.4.0"))
+  IF(GCC_VERSION VERSION_LESS "4.4.0" AND DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "Release")
     SlicerFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
   ENDIF()
   IF(MINGW)
