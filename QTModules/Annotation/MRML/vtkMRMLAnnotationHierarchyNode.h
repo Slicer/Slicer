@@ -17,6 +17,8 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationHierarchyNode,vtkMRMLDisplayableHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  virtual vtkMRMLNode* CreateNodeInstance();
+
   virtual const char* GetIcon() {return ":/Icons/Data.png";};
 
   // Description:
