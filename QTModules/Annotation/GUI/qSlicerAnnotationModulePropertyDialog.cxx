@@ -1115,7 +1115,7 @@ void qSlicerAnnotationModulePropertyDialog::onDialogRejected()
 {
 
   // the user clicked cancel, now restore the backuped node
-  this->m_logic->RestoreAnnotationNode(this->m_id.c_str());
+  //this->m_logic->RestoreAnnotationNode(this->m_id.c_str());
 
   emit dialogRejected();
 
