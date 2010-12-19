@@ -39,8 +39,12 @@ public:
   qSlicerTractographyDisplayModule(QObject *_parent = 0);
 
   ///
+  /// Category of the module
+  virtual QString category() const;
+
+  ///
   /// Display name for the module
-  virtual QString title()const {return "FiberBundles";}
+  virtual QString title()const;
 
   ///
   /// Help text of the module

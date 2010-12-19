@@ -19,6 +19,8 @@ class vtkMRMLTractographyFiducialSeedingNode;
 class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyFiducialSeedingModuleWidget :  public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
+
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent=0);

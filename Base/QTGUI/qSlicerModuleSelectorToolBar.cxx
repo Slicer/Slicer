@@ -159,9 +159,9 @@ void qSlicerModuleSelectorToolBarPrivate::addDefaultCategories()
   this->ModulesMenu->addMenu("Segmentation");
   this->ModulesMenu->addMenu("Quantification");
   this->ModulesMenu->addMenu("Diffusion");
-  this->ModulesMenu->addMenu("Tractography");
+  //this->ModulesMenu->addMenu("Tractography");
   this->ModulesMenu->addMenu("IGT");
-  this->ModulesMenu->addMenu("Time Series");
+  //this->ModulesMenu->addMenu("Time Series");
   this->ModulesMenu->addMenu("Filtering");
   this->ModulesMenu->addMenu("Surface Models");
   this->ModulesMenu->addMenu("Converters");

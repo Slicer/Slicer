@@ -51,6 +51,18 @@ void qSlicerTractographyDisplayModule::setup()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerTractographyDisplayModule::category() const
+{
+  return "Diffusion.Tractography";
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerTractographyDisplayModule::title()const
+{
+  return "Fiber Bundles";
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerTractographyDisplayModule::createWidgetRepresentation()
 {
   return 0;
@@ -67,6 +79,7 @@ vtkSlicerLogic* qSlicerTractographyDisplayModule::createLogic()
 QString qSlicerTractographyDisplayModule::helpText()const
 {
   QString help =
+    "<b>************** Not implemented yet **************</b>"
     "Load, save and adjust display parameters of fiber bundles. \n"
     "<a>http://wiki.slicer.org/slicerWiki/index.php/Modules:DTIDisplay-Documentation-3.6</a>";
   return help.arg(this->slicerWikiUrl());
