@@ -68,6 +68,7 @@ protected:
   qSlicerApplication* const q_ptr;
 public:
   qSlicerApplicationPrivate(qSlicerApplication& object);
+  ~qSlicerApplicationPrivate();
 
   ///
   /// Convenient method regrouping all initialization code
@@ -81,7 +82,7 @@ public:
   Qt::WindowFlags                     DefaultWindowFlags;
   qSlicerLayoutManager*               LayoutManager;
   ctkToolTipTrapper*                  ToolTipTrapper;
-  qMRMLColorPickerWidget*             ColorDialogPickerWidget;
+  QSharedPointer<qMRMLColorPickerWidget> ColorDialogPickerWidget;
 };
 
 
@@ -94,7 +95,11 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(qSlicerApplication& object)
 {
   this->LayoutManager = 0;
   this->ToolTipTrapper = 0;
-  this->ColorDialogPickerWidget = 0;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -117,8 +122,9 @@ void qSlicerApplicationPrivate::init()
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
   this->ToolTipTrapper->setEnabled(false);
 
-  this->ColorDialogPickerWidget = new qMRMLColorPickerWidget(0);
-  ctkColorDialog::addDefaultTab(this->ColorDialogPickerWidget,
+  this->ColorDialogPickerWidget =
+    QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));
+  ctkColorDialog::addDefaultTab(this->ColorDialogPickerWidget.data(),
                                 "Labels", SIGNAL(colorSelected(const QColor&)));
 }
 /*
