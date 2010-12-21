@@ -102,6 +102,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
    (this->LabelVolumeID ? this->LabelVolumeID : "") << "\"";
 
   of << indent << " compositing=\"" << this->Compositing << "\"";
+  of << indent << " foregroundOpacity=\"" << this->ForegroundOpacity << "\"";
   of << indent << " labelOpacity=\"" << this->LabelOpacity << "\"";
   of << indent << " linkedControl=\"" << this->LinkedControl << "\"";
   of << indent << " foregroundGrid=\"" << this->ForegroundGrid << "\"";
