@@ -49,13 +49,13 @@ if(WIN32)
       )
   endif()
   
-  # Convenient helper function
-  function(build_python_target target depend)
+  # Convenient helper macro
+  macro(build_python_target target depend)
     ExternalProject_Add_Step(${proj} Build_${target}
       COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project ${target}
       DEPENDEES ${depend}
       )
-  endfunction(build_python_target)
+  endmacro(build_python_target)
 
   build_python_target(make_versioninfo build)
   build_python_target(make_buildinfo Build_make_versioninfo)
@@ -68,7 +68,7 @@ if(WIN32)
     build_python_target(_tkinter Build__socket)
     build_python_target(_testcapi Build__tkinter)
   else()
-    build_python_target(_testcapi Build__pythoncore)
+    build_python_target(_testcapi Build__socket)
   endif()
 
   build_python_target(_msi Build__testcapi)
