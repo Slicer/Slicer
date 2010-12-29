@@ -45,7 +45,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include <itkOrientImageFilter.h>
 #include <itkMetaDataDictionary.h>
 #include <itkMetaDataObject.h>
-#include <itkBrains2MaskImageIOFactory.h>
 #include <itkMeshSpatialObject.h>
 #include <itkSpatialObjectWriter.h>
 #include <itkSpatialObjectReader.h>

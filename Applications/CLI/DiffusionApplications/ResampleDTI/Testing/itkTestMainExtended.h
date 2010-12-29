@@ -438,7 +438,7 @@ int RegressionTestImage (const char *testImageFilename,
     std::cout << status;
     std::cout <<  "</DartMeasurement>" << std::endl;
 
-    ::itk::OStringStream diffName;
+    ::std::ostringstream diffName;
       diffName << testImageFilename << ".diff.png";
     try
       {
@@ -500,7 +500,7 @@ int RegressionTestImage (const char *testImageFilename,
        baselineFA = baselineFAfilter->GetOutput() ;
     }
     
-    ::itk::OStringStream baseName;
+    ::std::ostringstream baseName;
     if( !diffusion )
     {
       baseName << testImageFilename << ".base.png";
@@ -549,7 +549,7 @@ int RegressionTestImage (const char *testImageFilename,
     std::cout << baseName.str();
     std::cout << "</DartMeasurementFile>" << std::endl;
 
-    ::itk::OStringStream testName;
+    ::std::ostringstream testName;
     if( !diffusion )
     {
       testName << testImageFilename << ".test.png";
@@ -627,7 +627,7 @@ std::map<std::string,int> RegressionTestBaselines (char *baselineFilename)
     }
   while (++x)
     {
-    ::itk::OStringStream filename;
+    ::std::ostringstream filename;
     filename << originalBaseline << "." << x << suffix;
     std::ifstream filestream(filename.str().c_str());
     if (!filestream)

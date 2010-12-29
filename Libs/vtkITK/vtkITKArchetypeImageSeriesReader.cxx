@@ -27,7 +27,7 @@
 #undef itkExceptionMacro  
 #define itkExceptionMacro(x) \
   { \
-  ::itk::OStringStream message; \
+  ::std::ostringstream message; \
   message << "itk::ERROR: " << this->GetNameOfClass() \
           << "(" << this << "): " x; \
   std::cout << message.str().c_str() << std::endl; \
@@ -36,7 +36,7 @@
 #undef itkGenericExceptionMacro  
 #define itkGenericExceptionMacro(x) \
   { \
-  ::itk::OStringStream message; \
+  ::std::ostringstream message; \
   message << "itk::ERROR: " x; \
   std::cout << message.str().c_str() << std::endl; \
   }
@@ -75,8 +75,6 @@
 #include "itkMetaImageIO.h"
 #include "itkNrrdImageIO.h"
 #include "itkGE5ImageIO.h"
-#include "itkBrains2MaskImageIOFactory.h"
-#include "itkBrains2MaskImageIO.h"
 #include "itkNiftiImageIO.h"
 #include "itkVTKImageIO.h"
 #include "itkTIFFImageIO.h"
@@ -158,7 +156,6 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
   itk::MutexLockHolder<itk::SimpleMutexLock> mutexHolder( mutex );
   if( firstTime )
     {
-    itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
     itk::ObjectFactoryBase::RegisterFactory( itk::GE5ImageIOFactory::New() );
     firstTime = false;
     }

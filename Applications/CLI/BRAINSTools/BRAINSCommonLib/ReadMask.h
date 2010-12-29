@@ -2,16 +2,8 @@
 #define __ReadMask_h
 
 
-#include "itkBrains2MaskImageIO.h"
-#include "itkBrains2MaskImageIOFactory.h"
 #include "itkIO.h"
 #include "itkImageMaskSpatialObject.h"
-
-inline
-void RegisterBrains2MaskFactory()
-{
-  itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
-}
 
 template< class MaskType, unsigned VDimension >
 typename MaskType::Pointer

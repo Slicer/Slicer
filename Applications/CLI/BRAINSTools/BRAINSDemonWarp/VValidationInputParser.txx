@@ -10,9 +10,6 @@
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkIO.h"
 
-// The following was just copied out of iccdefWarpImage.cc.  Sorry.
-#include "itkBrains2MaskImageIO.h"
-#include "itkBrains2MaskImageIOFactory.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"

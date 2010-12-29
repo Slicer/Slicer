@@ -19,7 +19,7 @@
     {                                                                   \
     if ( this->GetDebug() && ::itk::Object::GetGlobalWarningDisplay() ) \
       {                                                                 \
-      ::itk::OStringStream itkmsg;                                      \
+      ::std::ostringstream itkmsg;                                      \
       itkmsg << "Debug: In " __FILE__ ", line " << __LINE__ << "\n"     \
              << this->GetNameOfClass() << " (" << this << "):" << s;    \
       for ( type::const_iterator it = x.begin(); it != x.end(); it++ )  \

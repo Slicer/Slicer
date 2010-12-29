@@ -10,7 +10,6 @@
 #include "itkIndex.h"
 #include "itkSize.h"
 #include "itkExceptionObject.h"
-// #include "itkBrains2MaskImageIOFactory.h"
 #include "BRAINSDemonWarpCommonLibWin32Header.h"
 #include "GenericTransformImage.h"
 #include "VBRAINSDemonWarp.h"
@@ -170,8 +169,6 @@ void ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
   // If optional landmark files given, will use landmark registration to
   // generate
   // a deformation field to prime the thirion demons registration.
-  // Need to explicitly register the B2MaskIOFactory
-  itk::Brains2MaskImageIOFactory::RegisterOneFactory ();
 
   typedef typename itk::BRAINSDemonWarp
   < ImageType,
@@ -726,8 +723,6 @@ void VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
   // If optional landmark files given, will use landmark registration to
   // generate
   // a deformation field to prime the thirion demons registration.
-  // Need to explicitly register the B2MaskIOFactory
-  itk::Brains2MaskImageIOFactory::RegisterOneFactory ();
 
   typedef typename itk::VBRAINSDemonWarp
   < ImageType,

@@ -34,7 +34,7 @@
 #undef itkExceptionMacro  
 #define itkExceptionMacro(x) \
   { \
-  ::itk::OStringStream message; \
+  ::std::ostringstream message; \
   message << "itk::ERROR: " << this->GetNameOfClass() \
           << "(" << this << "): "; \
   std::cout << message.str().c_str() << std::endl; \
@@ -43,7 +43,7 @@
 #undef itkGenericExceptionMacro  
 #define itkGenericExceptionMacro(x) \
   { \
-  ::itk::OStringStream message; \
+  ::std::ostringstream message; \
   message << "itk::ERROR: " x; \
   std::cout << message.str() << std::endl; \
   }

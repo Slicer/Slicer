@@ -42,8 +42,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkMetaDataDictionary.h"
 #include "itkMetaDataObject.h"
 #include "itkImageToHexahedronMeshSource.h"
-#include <itkBrains2MaskImageIO.h>
-#include <itkBrains2MaskImageIOFactory.h>
 #include <itkMeshSpatialObject.h>
 #include "itkSpatialObjectWriter.h"
 #include "itkSpatialObjectReader.h"
@@ -52,8 +50,6 @@ PURPOSE.  See the above copyright notices for more information.
 
 int main( int argc, char * argv[] )
 {
-   itk::Brains2MaskImageIOFactory::RegisterOneFactory();
-
    if( argc < 4 ) 
    { 
                 std::cerr << "Usage: " << std::endl;

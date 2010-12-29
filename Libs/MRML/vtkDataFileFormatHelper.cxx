@@ -28,7 +28,6 @@ ITKImageFileFormat FileFormatTable[] =
   {"BMPImageIO", "Uncompressed pixel data in binary with text header", "BMP", ".bmp"},
   {"BMPImageIO", "Uncompressed pixel data in binary with text header", "BMP", ".BMP"},
   {"BioRadImageIO", "Binary header followed by pixel data in binary", "BioRad", ".pic"},
-  {"Brains2MaskImageIO", "Binary Mask Octree-encoded", "Brains2", ".mask"},
  // {"DICOMImageIO2", "Deprecated", "DICOM", "---"},
 
 

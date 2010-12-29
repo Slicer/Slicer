@@ -201,8 +201,6 @@ int BRAINSFitPrimary(int argc, char *argv[])
   itk::TransformFactory< AffineTransformType >::RegisterTransform();
   itk::TransformFactory< BSplineTransformType >::RegisterTransform();
 
-  RegisterBrains2MaskFactory();
-
 #ifdef USE_DEBUG_IMAGE_VIEWER
   if ( UseDebugImageViewer )
     {

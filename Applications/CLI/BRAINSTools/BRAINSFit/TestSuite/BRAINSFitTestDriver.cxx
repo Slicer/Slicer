@@ -221,7 +221,6 @@ Scale(const double xScale, const double yScale, const double zScale)
 
 int BRAINSFitTestDriver(int argc, char **argv)
 {
-  RegisterBrains2MaskFactory();
   if ( argc != 6 && argc != 7 )
     {
     std::cerr << "BRAINSFitTest "

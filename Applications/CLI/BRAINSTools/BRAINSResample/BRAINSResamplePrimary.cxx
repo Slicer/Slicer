@@ -18,8 +18,6 @@
 #include "itkWindowedSincInterpolateImageFunction.h"
 #include "BRAINSResamplePrimaryCLP.h"
 
-#include "itkBrains2MaskImageIO.h"
-#include "itkBrains2MaskImageIOFactory.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkStatisticsImageFilter.h"
@@ -324,11 +322,6 @@ static int ResampleTransformOrDeformationField(int argc, char *argv[])
 
 int BRAINSResamplePrimary(int argc, char *argv[])
 {
-  // HACK:  BRAINS2 Masks are currently broken
-  // The direction cosines are and the direction labels are not consistently
-  // being set.
-  itk::Brains2MaskImageIOFactory::RegisterOneFactory();
-
   // Apparently when you register one transform, you need to register all your
   // transforms.
   itk::AddExtraTransformRegister();
