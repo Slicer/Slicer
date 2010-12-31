@@ -23,14 +23,14 @@
 
 // Qt includes
 #include <QDialog>
+#include <QScopedPointer>
 
 // SlicerQt includes
-#include "ui_qSlicerActionsDialog.h"
 #include "qSlicerBaseQTGUIExport.h"
+class qSlicerActionsDialogPrivate;
 
 //------------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerActionsDialog
-  : public QDialog, protected Ui_qSlicerActionsDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerActionsDialog: public QDialog
 {
   Q_OBJECT
 public:
@@ -44,6 +44,13 @@ public:
 
   void setActionsWithNoShortcutVisible(bool visible);
   void setMenuActionsVisible(bool visible);
+
+protected:
+  QScopedPointer<qSlicerActionsDialogPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerActionsDialog);
+  Q_DISABLE_COPY(qSlicerActionsDialog);
 };
 
 #endif

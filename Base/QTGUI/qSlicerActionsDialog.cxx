@@ -18,13 +18,44 @@
 
 ==============================================================================*/
 
+// SlicerQt includes
 #include "qSlicerActionsDialog.h"
+#include "ui_qSlicerActionsDialog.h"
+
+//-----------------------------------------------------------------------------
+class qSlicerActionsDialogPrivate: public Ui_qSlicerActionsDialog
+{
+  Q_DECLARE_PUBLIC(qSlicerActionsDialog);
+protected:
+  qSlicerActionsDialog* const q_ptr;
+
+public:
+  qSlicerActionsDialogPrivate(qSlicerActionsDialog& object);
+  void init();
+
+};
+
+// --------------------------------------------------------------------------
+qSlicerActionsDialogPrivate::qSlicerActionsDialogPrivate(qSlicerActionsDialog& object)
+  :q_ptr(&object)
+{
+}
+
+// --------------------------------------------------------------------------
+void qSlicerActionsDialogPrivate::init()
+{
+  Q_Q(qSlicerActionsDialog);
+
+  this->setupUi(q);
+}
 
 //------------------------------------------------------------------------------
 qSlicerActionsDialog::qSlicerActionsDialog(QWidget* parentWidget)
-  :QDialog(parentWidget)
+  : QDialog(parentWidget)
+  , d_ptr(new qSlicerActionsDialogPrivate(*this))
 {
-  this->setupUi(this);
+  Q_D(qSlicerActionsDialog);
+  d->init();
 }
 
 //------------------------------------------------------------------------------
@@ -35,30 +66,35 @@ qSlicerActionsDialog::~qSlicerActionsDialog()
 //------------------------------------------------------------------------------
 void qSlicerActionsDialog::addAction(QAction* action, const QString& group)
 {
-  this->ActionsWidget->addAction(action, group);
+  Q_D(qSlicerActionsDialog);
+  d->ActionsWidget->addAction(action, group);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerActionsDialog::addActions(const QList<QAction*>& actions,
                                       const QString& group)
 {
-  this->ActionsWidget->addActions(actions, group);
+  Q_D(qSlicerActionsDialog);
+  d->ActionsWidget->addActions(actions, group);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerActionsDialog::clear()
 {
-  this->ActionsWidget->clear();
+  Q_D(qSlicerActionsDialog);
+  d->ActionsWidget->clear();
 }
 
 //------------------------------------------------------------------------------
 void qSlicerActionsDialog::setActionsWithNoShortcutVisible(bool visible)
 {
-  this->ActionsWidget->setActionsWithNoShortcutVisible(visible);
+  Q_D(qSlicerActionsDialog);
+  d->ActionsWidget->setActionsWithNoShortcutVisible(visible);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerActionsDialog::setMenuActionsVisible(bool visible)
 {
-  this->ActionsWidget->setMenuActionsVisible(visible);
+  Q_D(qSlicerActionsDialog);
+  d->ActionsWidget->setMenuActionsVisible(visible);
 }
