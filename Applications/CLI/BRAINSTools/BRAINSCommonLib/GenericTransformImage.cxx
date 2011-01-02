@@ -395,7 +395,7 @@ void WriteTransformToDisk(GenericTransformType const *const MyTransform, const s
     if ( !itksys::SystemTools::FileExists( TransformFilename.c_str() ) )
       {
       itk::ExceptionObject e(__FILE__, __LINE__, "Failed to write file", "WriteTransformToDisk");
-      OStringStream        msg;
+      std::ostringstream        msg;
       msg << "The file was not successfully created. "
           << std::endl << "Filename = " << TransformFilename
           << std::endl;

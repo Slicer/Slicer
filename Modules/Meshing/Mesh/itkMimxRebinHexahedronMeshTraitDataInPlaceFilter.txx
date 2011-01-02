@@ -159,7 +159,7 @@ RebinHexahedronMeshTraitDataInPlaceFilter<TInputMesh, TOutputMesh>
     {
     // build an exception
     ExceptionObject e(__FILE__, __LINE__);
-    OStringStream msg;
+    std::ostringstream msg;
     msg << static_cast<const char *>(this->GetNameOfClass());
     msg << "::ComputeHistogramBins( )";
     e.SetLocation( msg.str().c_str() );
@@ -174,7 +174,7 @@ RebinHexahedronMeshTraitDataInPlaceFilter<TInputMesh, TOutputMesh>
     {
     // build an exception
     ExceptionObject e(__FILE__, __LINE__);
-    OStringStream msg;
+    std::ostringstream msg;
     msg << static_cast<const char *>(this->GetNameOfClass());
     msg << "::ComputeHistogramBins()";
     e.SetLocation( msg.str().c_str() );

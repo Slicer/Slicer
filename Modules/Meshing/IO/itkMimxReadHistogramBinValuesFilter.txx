@@ -96,7 +96,7 @@ ReadHistogramBinValuesFilter<TTraitType>
     if ( ! inFile )
       {
       ExceptionObject e(__FILE__, __LINE__);
-      OStringStream msg;
+      std::ostringstream msg;
       msg << static_cast<const char *>( this->GetNameOfClass( ) );
       msg << "::Update( )";
       e.SetLocation( msg.str().c_str() );
@@ -139,7 +139,7 @@ ReadHistogramBinValuesFilter<TTraitType>
           {
           // build an exception
           ExceptionObject e(__FILE__, __LINE__);
-          OStringStream msg;
+          std::ostringstream msg;
           msg << static_cast<const char *>( this->GetNameOfClass( ) );
           msg << "::Update( )";
           e.SetLocation( msg.str().c_str() );
