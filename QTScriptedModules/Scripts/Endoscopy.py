@@ -1,4 +1,4 @@
-
+from __main__ import vtk, qt, ctk, slicer
 #
 # Endoscopy
 #
@@ -21,9 +21,13 @@ class Endoscopy:
 #
 
 class EndoscopyWidget:
-  def __init__(self, parent):
-    self.parent = parent
-    self.layout = parent.layout()
+  def __init__(self, parent=None):
+    if not parent:
+      self.parent=qt.QFrame()
+      self.parent.setLayout( qt.QVBoxLayout() )
+    else:
+      self.parent = parent
+    self.layout = self.parent.layout()
     self.cameraNode = None
     # Flythough variables
     self.transform = None
@@ -33,6 +37,11 @@ class EndoscopyWidget:
     self.timer = qt.QTimer()
     self.timer.setInterval(20)
     self.timer.connect('timeout()', self.flyToNext)
+    if not parent:
+      self.setup()
+      self.cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
+      self.inputFiducialsNodeSelector.setMRMLScene(slicer.mrmlScene)
+      self.parent.show()
     
   def setup(self):
     # Path collapsible button
@@ -411,7 +420,7 @@ class EndoscopyPathModel:
     # Camera cursor
     sphere = vtk.vtkSphereSource()
     sphere.Update()
-    
+     
     # Create model node
     cursor = slicer.vtkMRMLModelNode()
     cursor.SetScene(scene)
