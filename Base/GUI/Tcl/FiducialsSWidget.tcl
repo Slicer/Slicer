@@ -368,18 +368,18 @@ itcl::body FiducialsSWidget::seedMovingCallback {seed fidListNode fidIndex} {
 proc FiducialsSWidget::AddFiducial { r a s {selected 0} } {
 
   # get the selected list
-  set fList [FiducialsSWidget::GetSelectedList]
+  set fidListNode [FiducialsSWidget::GetSelectedList]
 
   # there wasn't one, so add it
-  if { $fList == "" } {
+  if { $fidListNode == "" } {
     FiducialsSWidget::AddListSelected
-    set fList [FiducialsSWidget::GetSelectedList]
+    set fidListNode [FiducialsSWidget::GetSelectedList]
   }
 
   # add a fiducial to the selected list
-  $::slicer3::MRMLScene SaveStateForUndo $fList
-  $fList AddFiducialWithXYZ $r $a $s $selected
-  $fList Delete
+  $::slicer3::MRMLScene SaveStateForUndo $fidListNode
+  $fidListNode AddFiducialWithXYZ $r $a $s $selected
+  $fidListNode Delete
 }
 
 # TODO: this is a workaround until the migration to Annotations
@@ -389,49 +389,49 @@ proc FiducialsSWidget::AddFiducial { r a s {selected 0} } {
 # vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::GetSelectedList()
 #
 proc FiducialsSWidget::GetSelectedList {} {
-  set fList ""
+  set fidListNode ""
   set selnode [$::slicer3::MRMLScene GetNthNodeByClass 0  "vtkMRMLSelectionNode"]
   if { $selnode != "" } {
     set id [$selnode GetActiveFiducialListID]
     if { $id != "" } {
       # get the selected fiducial list
-      set fList [$::slicer3::MRMLScene GetNodeByID $id]
+      set fidListNode [$::slicer3::MRMLScene GetNodeByID $id]
     }
   }
-  return $fList
+  return $fidListNode
 }
 
 # conversion of
 # void vtkSlicerFiducialsLogic::AddFiducialListSelected()
 proc FiducialsSWidget::AddListSelected {} {
-  set fList [FiducialsSWidget::AddList]
+  set fidListNode [FiducialsSWidget::AddList]
   # make it active
   set selnode [$::slicer3::MRMLScene GetNthNodeByClass 0  "vtkMRMLSelectionNode"]
-  if { $selnode != "" && $fList != ""} {
+  if { $selnode != "" && $fidListNode != ""} {
     $::slicer3::MRMLScene SaveStateForUndo $selnode
-    $selnode SetReferenceActiveFiducialListID [$fList GetID]
+    $selnode SetReferenceActiveFiducialListID [$fidListNode GetID]
   }
-  $fList Delete
+  $fidListNode Delete
 }
 
 # conversion of
 # vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
 proc FiducialsSWidget::AddList { {namePrefix "L"} } {
-  set fList [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLFiducialListNode"]
+  set fidListNode [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLFiducialListNode"]
   
   # set up a storage node
-  if { $fList != "" } {
-    set snode [$node CreateDefaultStorageNode]
-    if { $snode != "" } {
-      $::slicer3::MRMLScene AddNode $snode
-      $fList SetAndObserveStorageNodeID [$snode GetID]
-      $fList ModifiedSinceReadOn
-      $snode Delete
+  if { $fidListNode != "" } {
+    set storageNode [$fidListNode CreateDefaultStorageNode]
+    if { $storageNode != "" } {
+      $::slicer3::MRMLScene AddNode $storageNode
+      $fidListNode SetAndObserveStorageNodeID [$storageNode GetID]
+      $fidListNode ModifiedSinceReadOn
+      $storageNode Delete
     }
   }
-  $fList SetName [$::slicer3::MRMLScene GetUniqueNameByString $namePrefix]
-  $::slicer3::MRMLScene AddNode $fList
-  return $node
+  $fidListNode SetName [$::slicer3::MRMLScene GetUniqueNameByString $namePrefix]
+  $::slicer3::MRMLScene AddNode $fidListNode
+  return $fidListNode
 }
 
 #
