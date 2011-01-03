@@ -195,9 +195,9 @@ public:
   /// 
   /// Convenient method allowing to retrieve the node type associated
   /// with the parameter type
-  static QString nodeTypeFromMap(const QString& defaultValue,
-                                 const QHash<QString, QString>& map,
-                                 const QString& attribute);
+  static QString nodeTypeFromMap(const QHash<QString, QString>& map,
+                                 const QString& attribute,
+                                 const QString& defaultValue = QString());
 
   /// 
   /// Initiliaze the maps containing the mapping
@@ -239,8 +239,8 @@ qSlicerCLIModuleUIHelperPrivate::
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModuleUIHelperPrivate::nodeTypeFromMap(const QString& defaultValue,
-  const QHash<QString, QString>& map, const QString& attribute)
+QString qSlicerCLIModuleUIHelperPrivate::nodeTypeFromMap(
+  const QHash<QString, QString>& map, const QString& attribute, const QString& defaultValue)
 {
   QHash<QString, QString>::const_iterator i = map.constFind(attribute);
 
@@ -248,10 +248,7 @@ QString qSlicerCLIModuleUIHelperPrivate::nodeTypeFromMap(const QString& defaultV
     {
     return defaultValue; 
     }
-  else
-    {
-    return i.value();
-    }
+  return i.value();
 }
 
 //-----------------------------------------------------------------------------
@@ -512,6 +509,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
   //TODO - tparameter->SetNewNodeName((title+" output").c_str());
 
+  widget->setRenameEnabled(true);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -533,6 +531,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   //TODO - tparameter->SetNoneEnabled(noneEnabled);
   
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
+  widget->setRenameEnabled(true);
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -545,8 +544,9 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
 QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = Self::nodeTypeFromMap("vtkMRMLScalarVolumeNode",
-                                           Self::GeometryTypeAttributeToNodeType, type);
+  QString nodeType = Self::nodeTypeFromMap(Self::ImageTypeAttributeToNodeType,
+                                           type,
+                                           "vtkMRMLScalarVolumeNode");
   
   QString channel = QString::fromStdString(moduleParameter.GetChannel());
   if (channel == "input")
@@ -577,21 +577,30 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   // TODO - tparameter->SetNoneEnabled(noneEnabled);
   // TODO - title + " Volume"
 
-  QString _label = QString::fromStdString(moduleParameter.GetLabel());
-  QString _name = QString::fromStdString(moduleParameter.GetName());
+  QString imageIndex = QString::fromStdString(moduleParameter.GetIndex());
+  QString imageLabel = QString::fromStdString(moduleParameter.GetLabel());
+  QString imageName = QString::fromStdString(moduleParameter.GetName());
+
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
+  // If an index is given, then it means the parameter is required (not optional)
+  widget->setNoneEnabled(imageIndex.isEmpty());
+  // Being able to create an image for the input is meaningless as the created
+  // volume would be empty (useless as an input).
+  // However, if it's an output, the result would be saved into the newly
+  // created node.
+  widget->setAddEnabled(channel != "input");
+  widget->setRenameEnabled(true);
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
-  widget->setAddEnabled(channel != "input");
   // Specify factory attributes
   if (type == "label")
     {
     widget->addAttribute(nodeType, "LabelMap",QString("1"));
     }
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Image, _name, _label, widget);
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Image, imageName, imageLabel, widget);
   
   return widget;
 }
@@ -600,8 +609,9 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
 QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = Self::nodeTypeFromMap("vtkMRMLModelNode",
-                                           Self::GeometryTypeAttributeToNodeType, type);
+  QString nodeType = Self::nodeTypeFromMap(Self::GeometryTypeAttributeToNodeType,
+                                           type,
+                                           "vtkMRMLModelNode");
                                            
   bool multiple = (moduleParameter.GetMultiple() == "true");
   bool aggregate = (moduleParameter.GetAggregate() == "true");
@@ -628,6 +638,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
   widget->setShowHidden(showHidden);
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
+  widget->setRenameEnabled(true);
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -640,7 +651,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
 QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = Self::nodeTypeFromMap("", Self::TableTypeAttributeToNodeType, type);
+  QString nodeType = Self::nodeTypeFromMap(Self::TableTypeAttributeToNodeType, type);
   if (nodeType.isEmpty())
     {
     qWarning() << "TableTag - Unknown type:" << type;
@@ -662,6 +673,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
+  widget->setRenameEnabled(true);
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -674,8 +686,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
 QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = Self::nodeTypeFromMap("vtkMRMLTransformNode",
-                                           Self::TransformTypeAttributeToNodeType, type);
+  QString nodeType = Self::nodeTypeFromMap(Self::TransformTypeAttributeToNodeType,
+                                           type, "vtkMRMLTransformNode");
 
   QString channel = QString::fromStdString(moduleParameter.GetChannel());
   if (channel != "input" && channel != "output")
@@ -690,7 +702,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNoneEnabled(index.isEmpty());
-  widget->setAddEnabled(nodeType != "vtkMRMLTransformNode");
+  widget->setAddEnabled(nodeType != "vtkMRMLTransformNode" && channel != "input");
+  widget->setRenameEnabled(true);
   widget->setNodeTypes(QStringList(nodeType));
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
