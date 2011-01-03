@@ -46,6 +46,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
   Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
   Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
   Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
+  Q_PROPERTY(bool renameEnabled READ renameEnabled WRITE setRenameEnabled)
   Q_PROPERTY(QString baseName READ baseName WRITE setBaseName)
   Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false)
 
@@ -156,9 +157,13 @@ public:
 
   /// TODO
   /// Allow the user to modify the properties of the currently selected.
-  /// Basic properties like the node name can be changed.
   bool editEnabled()const;
   void setEditEnabled(bool enable);
+
+  ///
+  /// Allow the user to rename the node.
+  bool renameEnabled()const;
+  void setRenameEnabled(bool enable);
 
   ///
   /// Internal model associated to the combobox
@@ -196,6 +201,10 @@ public slots:
   ///
   /// Edit the currently selected node.
   virtual void editCurrentNode();
+  
+  ///
+  /// Rename the currently selected node.
+  virtual void renameCurrentNode();
 
 signals:
   ///

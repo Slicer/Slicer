@@ -25,6 +25,7 @@
 #include <QAction>
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QInputDialog>
 #include <QKeyEvent>
 #include <QListView>
 #include <QStandardItemModel>
@@ -66,6 +67,7 @@ public:
   bool              AddEnabled;
   bool              RemoveEnabled;
   bool              EditEnabled;
+  bool              RenameEnabled;
 private:
   void setModel(QAbstractItemModel* model);
 };
@@ -82,6 +84,7 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   this->AddEnabled = true;
   this->RemoveEnabled = true;
   this->EditEnabled = false;
+  this->RenameEnabled = false;
 }
 
 // -----------------------------------------------------------------------------
@@ -240,9 +243,17 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
   QStringList extraItems;
   if (q->mrmlScene())
     {
-    if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled)
+    if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled || this->RenameEnabled)
       {
       extraItems.append("separator");
+      }
+    if (this->RenameEnabled)
+      {
+      extraItems.append(QObject::tr("Rename current ")  + this->nodeTypeLabel());
+      }
+    if (this->EditEnabled)
+      {
+      extraItems.append(QObject::tr("Edit current ")  + this->nodeTypeLabel());
       }
     if (this->AddEnabled)
       {
@@ -251,10 +262,6 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
     if (this->RemoveEnabled)
       {
       extraItems.append(QObject::tr("Delete current ")  + this->nodeTypeLabel());
-      }
-    if (this->EditEnabled)
-      {
-      extraItems.append(QObject::tr("Edit current ")  + this->nodeTypeLabel());
       }
     }
   this->MRMLSceneModel->setPostItems(extraItems, this->MRMLSceneModel->mrmlSceneItem());
@@ -340,6 +347,11 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
     d->ComboBox->hidePopup();
     this->editCurrentNode();
     }
+  else if (data.startsWith(QObject::tr("Rename current ")))
+    {
+    d->ComboBox->hidePopup();
+    this->renameCurrentNode();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -414,6 +426,26 @@ void qMRMLNodeComboBox::editCurrentNode()
 {
   //Q_D(const qMRMLNodeComboBox);
   //FIXME
+}
+
+// --------------------------------------------------------------------------
+void qMRMLNodeComboBox::renameCurrentNode()
+{
+  Q_D(qMRMLNodeComboBox);
+  vtkMRMLNode* node = this->currentNode();
+  if (!node)
+    {
+    return;
+    }
+  bool ok = false;
+  QString newName = QInputDialog::getText(
+    this, "Rename " + d->nodeTypeLabel(), "New name:",
+    QLineEdit::Normal, node->GetName(), &ok);
+  if (!ok)
+    {
+    return;
+    }
+  node->SetName(newName.toLatin1());
 }
 
 // --------------------------------------------------------------------------
@@ -679,6 +711,25 @@ bool qMRMLNodeComboBox::editEnabled()const
 {
   Q_D(const qMRMLNodeComboBox);
   return d->EditEnabled;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBox::setRenameEnabled(bool enable)
+{
+  Q_D(qMRMLNodeComboBox);
+  if (d->RenameEnabled == enable)
+    {
+    return;
+    }
+  d->RenameEnabled = enable;
+  d->updateActionItems();
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLNodeComboBox::renameEnabled()const
+{
+  Q_D(const qMRMLNodeComboBox);
+  return d->RenameEnabled;
 }
 
 //--------------------------------------------------------------------------
