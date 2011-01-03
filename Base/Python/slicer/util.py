@@ -112,14 +112,34 @@ def getModuleGui(module):
 # MRML
 #
 
-def getNodes():
+def getNodes(pattern=""):
+    """ return a dictionary of nodes where the name or id matches the pattern 
+        - empty string matches all
+    """
     import slicer
     nodes = {}
     scene = slicer.mrmlScene
     count = scene.GetNumberOfNodes()
     for idx in range(count):
         node = scene.GetNthNode(idx)
-        nodes[node.GetName()] = node
+        name = node.GetName()
+        id = node.GetID()
+        if name.find(pattern) >= 0 or id.find(pattern) >= 0:
+          nodes[node.GetName()] = node
     return nodes
 
+def getNode(pattern=""):
+    """ return the first node where name or id matches pattern
+        - empty string matches any
+    """
+    import slicer
+    nodes = {}
+    scene = slicer.mrmlScene
+    count = scene.GetNumberOfNodes()
+    for idx in range(count):
+        node = scene.GetNthNode(idx)
+        name = node.GetName()
+        id = node.GetID()
+        if name.find(pattern) >= 0 or id.find(pattern) >= 0:
+          return node
 
