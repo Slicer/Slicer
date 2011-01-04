@@ -9,7 +9,7 @@ if(UNIX)
 
   EXECUTE_PROCESS(
     COMMAND make
-    WORKING_DIRECTORY "@@CMAKE_CURRENT_BINARY_DIR@/@proj@-build"
+    WORKING_DIRECTORY "@CMAKE_CURRENT_BINARY_DIR@/@proj@-build"
     )
 
 endif()
