@@ -25,17 +25,28 @@
 #include "qMRMLWidget.h"
 #include "qMRMLWidgetsExport.h"
 
+// CTK includes
+#include <ctkVTKObject.h>
+
 class qMRMLColorPickerWidgetPrivate;
 class vtkMRMLNode;
+class vtkMRMLColorNode;
 
 /// Given a mrml scene, qMRMLColorPickerWidget allows the selection of
 /// a color/label from all the vtkMRMLColorNode in the scene.
 class QMRML_WIDGETS_EXPORT qMRMLColorPickerWidget : public qMRMLWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
 public:
   qMRMLColorPickerWidget(QWidget *parent=0);
   virtual ~qMRMLColorPickerWidget();
+  
+  vtkMRMLColorNode* currentColorNode()const;
+  virtual void setMRMLScene(vtkMRMLScene* scene);
+public slots:
+  void setCurrentColorNode(vtkMRMLNode* node);
+  void setCurrentColorNodeToDefault();
 
 signals:
   /// Fired wen the current color table node is selected
@@ -47,6 +58,8 @@ signals:
 
   /// Fired when the user selects a color in the list
   void colorSelected(const QColor& color);
+protected slots:
+  void onNodeAdded(vtkObject*, vtkObject*);
 
 protected:
   QScopedPointer<qMRMLColorPickerWidgetPrivate> d_ptr;

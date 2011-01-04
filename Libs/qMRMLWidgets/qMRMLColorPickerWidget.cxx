@@ -26,6 +26,15 @@
 #include "qMRMLColorModel.h"
 #include "ui_qMRMLColorPickerWidget.h"
 
+// MRMLLogic includes
+#include <vtkMRMLColorLogic.h>
+
+// MRML includes
+#include <vtkMRMLColorNode.h>
+
+// VTK includes
+#include <vtkSmartPointer.h>
+
 //------------------------------------------------------------------------------
 class qMRMLColorPickerWidgetPrivate: public Ui_qMRMLColorPickerWidget
 {
@@ -70,4 +79,68 @@ qMRMLColorPickerWidget::qMRMLColorPickerWidget(QWidget *_parent)
 //------------------------------------------------------------------------------
 qMRMLColorPickerWidget::~qMRMLColorPickerWidget()
 {
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLColorNode* qMRMLColorPickerWidget::currentColorNode()const
+{
+  Q_D(const qMRMLColorPickerWidget);
+  return vtkMRMLColorNode::SafeDownCast(d->ColorTableComboBox->currentNode());
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorPickerWidget::setCurrentColorNode(vtkMRMLNode* node)
+{
+  Q_D(qMRMLColorPickerWidget);
+  d->ColorTableComboBox->setCurrentNode(node);
+  this->qvtkDisconnect(this->mrmlScene(), vtkMRMLScene::NodeAddedEvent,
+                       this, SLOT(onNodeAdded(vtkObject*, vtkObject*)));
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
+{
+  Q_D(qMRMLColorPickerWidget);
+  if (!this->mrmlScene())
+    {
+    return;
+    }
+  // TODO: Retrieve a unique instance of color logic from the MRML Application logic
+  vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
+    vtkSmartPointer<vtkMRMLColorLogic>::New();
+  vtkMRMLNode* defaultColorNode =
+    this->mrmlScene()->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID());
+  if (defaultColorNode)
+    {
+    this->setCurrentColorNode(defaultColorNode);
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorPickerWidget::onNodeAdded(vtkObject* scene, vtkObject* nodeObject)
+{
+  Q_UNUSED(scene);
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
+  // TODO: Retrieve a unique instance of color logic from the MRML Application logic
+  vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
+    vtkSmartPointer<vtkMRMLColorLogic>::New();
+  if (node &&
+      QString(node->GetID()) == colorLogic->GetDefaultLabelMapColorNodeID())
+    {
+    this->setCurrentColorNode(node);
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorPickerWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  Q_D(qMRMLColorPickerWidget);
+  this->setCurrentColorNode(0); // eventually disconnect NodeAddedEvent
+  this->qMRMLWidget::setMRMLScene(scene);
+  if (scene && !d->ColorTableComboBox->currentNode())
+    {
+    this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent,
+                      this, SLOT(onNodeAdded(vtkObject*, vtkObject*)));
+    this->setCurrentColorNodeToDefault();
+   }
 }

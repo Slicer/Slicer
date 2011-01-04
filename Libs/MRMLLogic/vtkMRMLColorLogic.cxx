@@ -33,15 +33,6 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
-/*
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <dirent.h>
-#include <errno.h>
-#endif
-*/
-
 vtkCxxRevisionMacro(vtkMRMLColorLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLColorLogic);
 
@@ -49,9 +40,6 @@ vtkStandardNewMacro(vtkMRMLColorLogic);
 vtkMRMLColorLogic::vtkMRMLColorLogic()
 {
   this->UserColorFilePaths = NULL;
-
-  // find the color files
-  this->FindColorFiles();
 }
 
 //----------------------------------------------------------------------------
