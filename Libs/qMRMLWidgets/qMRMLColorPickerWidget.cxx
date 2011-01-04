@@ -100,7 +100,6 @@ void qMRMLColorPickerWidget::setCurrentColorNode(vtkMRMLNode* node)
 //------------------------------------------------------------------------------
 void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
 {
-  Q_D(qMRMLColorPickerWidget);
   if (!this->mrmlScene())
     {
     return;
