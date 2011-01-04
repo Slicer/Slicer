@@ -30,6 +30,9 @@
 // qMRMLWidget includes
 #include "qMRMLThreeDView.h"
 
+// Slicer logic includes
+#include <vtkSlicerColorLogic.h>
+
 // MRML includes
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLColorTableNode.h>
@@ -46,13 +49,22 @@
 //-----------------------------------------------------------------------------
 class qSlicerColorsModuleWidgetPrivate: public Ui_qSlicerColorsModule
 {
+  Q_DECLARE_PUBLIC(qSlicerColorsModuleWidget);
+protected:
+  qSlicerColorsModuleWidget* const q_ptr;
+
 public:
-  qSlicerColorsModuleWidgetPrivate();
+  qSlicerColorsModuleWidgetPrivate(qSlicerColorsModuleWidget& obj);
   virtual ~qSlicerColorsModuleWidgetPrivate();
+  vtkSlicerColorLogic* colorLogic()const;
+  void setDefaultColorNode();
+
   vtkScalarBarWidget* ScalarBarWidget;
 };
 
-qSlicerColorsModuleWidgetPrivate::qSlicerColorsModuleWidgetPrivate()
+//-----------------------------------------------------------------------------
+qSlicerColorsModuleWidgetPrivate::qSlicerColorsModuleWidgetPrivate(qSlicerColorsModuleWidget& object)
+  : q_ptr(&object)
 {
   this->ScalarBarWidget = vtkScalarBarWidget::New();
   this->ScalarBarWidget->GetScalarBarActor()->SetOrientationToVertical();
@@ -77,9 +89,32 @@ qSlicerColorsModuleWidgetPrivate::~qSlicerColorsModuleWidgetPrivate()
 }
 
 //-----------------------------------------------------------------------------
+vtkSlicerColorLogic* qSlicerColorsModuleWidgetPrivate::colorLogic()const
+{
+  Q_Q(const qSlicerColorsModuleWidget);
+  return vtkSlicerColorLogic::SafeDownCast(q->logic()); 
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerColorsModuleWidgetPrivate::setDefaultColorNode()
+{
+  Q_Q(qSlicerColorsModuleWidget);
+  if (!q->mrmlScene() ||
+      !this->ColorTableComboBox ||
+      this->ColorTableComboBox->currentNode() != 0)
+    {
+    return;
+    }
+  const char *defaultID = this->colorLogic()->GetDefaultLabelMapColorNodeID();
+  vtkMRMLColorNode *defaultNode = vtkMRMLColorNode::SafeDownCast(
+    q->mrmlScene()->GetNodeByID(defaultID));
+  this->ColorTableComboBox->setCurrentNode(defaultNode);
+}
+
+//-----------------------------------------------------------------------------
 qSlicerColorsModuleWidget::qSlicerColorsModuleWidget(QWidget* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerColorsModuleWidgetPrivate)
+  , d_ptr(new qSlicerColorsModuleWidgetPrivate(*this))
 {
 }
 
@@ -92,9 +127,12 @@ qSlicerColorsModuleWidget::~qSlicerColorsModuleWidget()
 void qSlicerColorsModuleWidget::setup()
 {
   Q_D(qSlicerColorsModuleWidget);
+
   d->setupUi(this);
+
   QIcon copyIcon = this->style()->standardIcon(QStyle::SP_FileDialogNewFolder);
   d->CopyColorNodeButton->setIcon(copyIcon);
+
   qMRMLThreeDView* threeDView = qSlicerApplication::application()->layoutManager()->threeDView(0);
   vtkRenderer* activeRenderer = qSlicerApplication::application()->layoutManager()->activeThreeDRenderer();
   if (activeRenderer)
@@ -102,6 +140,7 @@ void qSlicerColorsModuleWidget::setup()
     d->ScalarBarWidget->SetInteractor(activeRenderer->GetRenderWindow()->GetInteractor());
     }
   d->VTKScalarBar->setScalarBarWidget(d->ScalarBarWidget);
+
   connect(d->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onMRMLColorNodeChanged(vtkMRMLNode*)));
   connect(d->NumberOfColorsSpinBox, SIGNAL(valueChanged(int)),
@@ -111,6 +150,17 @@ void qSlicerColorsModuleWidget::setup()
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
           this, SLOT(copyCurrentColorNode()));
   connect(d->VTKScalarBar, SIGNAL(modified()), threeDView, SLOT(scheduleRender()));
+  
+  // Select the default color node
+  d->setDefaultColorNode();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerColorsModuleWidget::setMRMLScene(vtkMRMLScene *scene)
+{
+  Q_D(qSlicerColorsModuleWidget);
+  this->qSlicerAbstractModuleWidget::setMRMLScene(scene);
+  d->setDefaultColorNode();
 }
 
 //-----------------------------------------------------------------------------

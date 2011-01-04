@@ -51,6 +51,7 @@ protected slots:
 
 protected:
   virtual void setup();
+  virtual void setMRMLScene(vtkMRMLScene *scene);
 
 protected:
   QScopedPointer<qSlicerColorsModuleWidgetPrivate> d_ptr;
