@@ -317,10 +317,11 @@ class PaintOptions(LabelerOptions):
     self.radiusLabel.setToolTip("Set the radius of the paint brush in millimeters")
     self.radiusFrame.layout().addWidget(self.radiusLabel)
     self.widgets.append(self.radiusLabel)
-    self.radiusSpinBox = qt.QSpinBox(self.radiusFrame)
+    self.radiusSpinBox = qt.QDoubleSpinBox(self.radiusFrame)
     self.radiusSpinBox.setToolTip("Set the radius of the paint brush in millimeters")
     self.radiusSpinBox.minimum = 0.01
     self.radiusSpinBox.maximum = 100
+    self.radiusSpinBox.suffix = "mm"
     self.radiusFrame.layout().addWidget(self.radiusSpinBox)
     self.widgets.append(self.radiusSpinBox)
 
@@ -328,6 +329,7 @@ class PaintOptions(LabelerOptions):
     self.radius.minimum = 0.01
     self.radius.maximum = 100
     self.radius.orientation = 1
+    self.radius.singleStep = 0.01
     self.frame.layout().addWidget(self.radius)
     self.widgets.append(self.radius)
 
@@ -340,7 +342,7 @@ class PaintOptions(LabelerOptions):
 
     self.smudge.connect('clicked()', self.updateMRMLFromGUI)
     self.radius.connect('valueChanged(double)', self.onRadiusValueChanged)
-    self.radiusSpinBox.connect('valueChanged(QString)', self.onRadiusSpinBoxChanged)
+    self.radiusSpinBox.connect('valueChanged(double)', self.onRadiusSpinBoxChanged)
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
@@ -387,7 +389,7 @@ class PaintOptions(LabelerOptions):
     super(PaintOptions,self).updateGUIFromMRML(caller,event)
     self.smudge.setChecked( int(self.parameterNode.GetParameter("Paint,smudge")) )
     self.radius.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
-    self.radiusSpinBox.setValue( int(float(self.parameterNode.GetParameter("Paint,radius"))) )
+    self.radiusSpinBox.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
     self.updatingGUI = False
 
   def onRadiusValueChanged(self,value):
