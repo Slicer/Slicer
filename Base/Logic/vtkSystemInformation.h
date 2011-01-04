@@ -1,13 +1,14 @@
 #ifndef __vtkSystemInformation_h
 #define __vtkSystemInformation_h
 
-#include "vtkObject.h"
-#include "vtkSmartPointer.h"
-#include "vtkSlicerLogic.h"
+// SlicerLogic includes
+#include "vtkSlicerBaseLogic.h"
+
+// VTK includes
+#include <vtkObject.h>
 
 #include <vtksys/SystemInformation.hxx>
 #include <vtksys/stl/string>
-
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSystemInformation : public vtkObject
 {

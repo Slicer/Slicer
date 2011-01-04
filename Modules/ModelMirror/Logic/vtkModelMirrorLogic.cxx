@@ -144,7 +144,7 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
   //---
   //--- NULL pointer checking
   //---
-  if ( this->MRMLScene == NULL )
+  if ( this->GetMRMLScene() == NULL )
     {
     vtkErrorMacro ( "CreateMirrorModel: got NULL MRMLScene." );
     return;
@@ -197,7 +197,7 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
   //--- Filename and model name wrangling for new model (derived from input model)
   //---
   int useURI = 0;
-  if ( this->MRMLScene->GetCacheManager() != NULL )
+  if ( this->GetMRMLScene()->GetCacheManager() != NULL )
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference (inputStorageNode->GetFileName() );
     }
@@ -421,15 +421,15 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
   //---
   vtkMRMLLinearTransformNode *mirrorTransformNode = vtkMRMLLinearTransformNode::New();
   vtkMRMLTransformStorageNode *storageNode = vtkMRMLTransformStorageNode::New();
-  mirrorTransformNode->SetScene ( this->MRMLScene);
-  storageNode->SetScene ( this->MRMLScene);
+  mirrorTransformNode->SetScene ( this->GetMRMLScene());
+  storageNode->SetScene ( this->GetMRMLScene());
 
   //---
   //--- Configure the node and storage node.
   //---
   mirrorTransformNode->SetName ( "mirror");
-  this->MRMLScene->AddNodeNoNotify ( storageNode );
-  this->MRMLScene->AddNode(mirrorTransformNode );
+  this->GetMRMLScene()->AddNodeNoNotify ( storageNode );
+  this->GetMRMLScene()->AddNode(mirrorTransformNode );
   this->SetMirrorTransformNode ( mirrorTransformNode );
   mirrorTransformNode->SetAndObserveStorageNodeID ( storageNode->GetID() );
 
@@ -501,7 +501,7 @@ int vtkModelMirrorLogic::HardenTransform()
   //--- Harden the mirror transform
   //---
   const char *id = this->ModelMirrorNode->GetOutputModel()->GetID();
-  vtkMRMLTransformableNode *tbnode = vtkMRMLTransformableNode::SafeDownCast ( this->MRMLScene->GetNodeByID(id));
+  vtkMRMLTransformableNode *tbnode = vtkMRMLTransformableNode::SafeDownCast ( this->GetMRMLScene()->GetNodeByID(id));
   if ( tbnode == NULL )
     {
     vtkErrorMacro ( << "Output model doesn't appear to be correctly constructed. Mirroring output may be incorrect." );

@@ -21,20 +21,22 @@
 #ifndef __vtkMRMLSceneViewLogic_h
 #define __vtkMRMLSceneViewLogic_h
 
+// SlicerLogic includes
+#include "vtkSlicerBaseLogic.h"
 
-#include "vtkSlicerLogic.h"
+// MRMLLogic includes
+#include "vtkMRMLAbstractLogic.h"
 
-// MRML includes
-#include <vtkMRML.h>
-#include <vtkMRMLSceneViewNode.h>
+// VTK includes
+class vtkImageData;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSceneViewLogic :
-  public vtkSlicerLogic
+  public vtkMRMLAbstractLogic
 {
 public:
 
   static vtkSlicerSceneViewLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerSceneViewLogic,vtkSlicerLogic);
+  vtkTypeRevisionMacro(vtkSlicerSceneViewLogic,vtkMRMLAbstractLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   // MRML events
@@ -69,8 +71,6 @@ public:
 
   /// Move sceneView up
   void MoveSceneViewDown(const char* id);
-
-
 
 protected:
 

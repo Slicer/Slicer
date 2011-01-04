@@ -83,6 +83,7 @@ INSTALL(FILES
 SET(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.cxx
   vtkMRMLApplicationLogic.cxx
+  vtkMRMLColorLogic.cxx
   vtkMRMLModelHierarchyLogic.cxx
   vtkMRMLSliceLayerLogic.cxx
   vtkMRMLSliceLogic.cxx

@@ -73,7 +73,7 @@ protected:
                                          const std::string& type,
                                          const std::string& name,
                                      const std::vector<std::string>& extensions,
-                                     CommandLineModuleType commandType) const;
+                                     CommandLineModuleType commandType);
   std::string ConstructTemporarySceneFileName(vtkMRMLScene *scene);
   std::string FindHiddenNodeID(const ModuleDescription& d,
                                const ModuleParameter& p);

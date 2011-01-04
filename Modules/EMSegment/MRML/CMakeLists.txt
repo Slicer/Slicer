@@ -52,6 +52,8 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${MRMLLogic_SOURCE_DIR}
+  ${MRMLLogic_BINARY_DIR}
   ${ITK_INCLUDE_DIRS}
   # For vtkEMSegmentMRMLManager
   ${EMSegmentAlgorithm_SOURCE_DIR}

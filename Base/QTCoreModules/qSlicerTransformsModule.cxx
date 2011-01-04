@@ -55,7 +55,7 @@ qSlicerAbstractModuleRepresentation* qSlicerTransformsModule::createWidgetRepres
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerTransformsModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerTransformsModule::createLogic()
 {
   return vtkSlicerTransformLogic::New();
 }

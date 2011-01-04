@@ -31,7 +31,7 @@
 #include "qSlicerBaseQTCoreExport.h"
 
 class qSlicerAbstractModuleRepresentation;
-class vtkSlicerLogic;
+class vtkMRMLAbstractLogic;
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
 class QAction;
@@ -121,7 +121,7 @@ public:
   /// This method allows to get a pointer to the ModuleLogic.
   /// If no moduleLogic already exists, one will be created calling
   /// 'createLogic' method.
-  vtkSlicerLogic* logic();
+  vtkMRMLAbstractLogic* logic();
 
   ///
   /// Return a pointer on the MRML scene
@@ -154,7 +154,7 @@ protected:
   ///
   /// Create and return the module logic
   /// Note: Only one instance of the logic will exist per module
-  virtual vtkSlicerLogic* createLogic() = 0;
+  virtual vtkMRMLAbstractLogic* createLogic() = 0;
 
 
 protected:

@@ -70,7 +70,7 @@ qSlicerAbstractModuleRepresentation* qSlicerTractographyDisplayModule::createWid
 
 //-----------------------------------------------------------------------------
 //
-vtkSlicerLogic* qSlicerTractographyDisplayModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerTractographyDisplayModule::createLogic()
 {
   return vtkSlicerFiberBundleLogic::New();
 }

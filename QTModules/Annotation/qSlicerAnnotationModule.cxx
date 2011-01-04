@@ -86,7 +86,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAnnotationModule::createWidgetRepres
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerAnnotationModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerAnnotationModule::createLogic()
 {
   return vtkSlicerAnnotationModuleLogic::New();
 }

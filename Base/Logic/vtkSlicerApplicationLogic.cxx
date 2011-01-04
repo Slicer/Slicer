@@ -403,7 +403,7 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
   //
   vtkMRMLSelectionNode *node;
   node = vtkMRMLSelectionNode::SafeDownCast (
-          this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
 
   // selection node
   if ( node == NULL )
@@ -416,17 +416,17 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
     {
       this->SetSelectionNode (node);
     }
-  if (this->MRMLScene->GetNodeByID(this->SelectionNode->GetID()) == NULL)
+  if (this->GetMRMLScene()->GetNodeByID(this->SelectionNode->GetID()) == NULL)
     {
     this->SetMRMLScene(this->GetMRMLScene());
-    this->SetSelectionNode ( vtkMRMLSelectionNode::SafeDownCast(this->MRMLScene->AddNode(this->SelectionNode)) );
+    this->SetSelectionNode ( vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->AddNode(this->SelectionNode)) );
     this->SetAndObserveMRMLScene(this->GetMRMLScene());
     }
 
 
   vtkMRMLInteractionNode *inode;
   inode = vtkMRMLInteractionNode::SafeDownCast (
-          this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));                                                
+          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));                                                
 
   // interaction node
   if ( inode == NULL )
@@ -439,10 +439,10 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
     {
     this->SetInteractionNode (inode );
     }
-  if (this->MRMLScene->GetNodeByID(this->InteractionNode->GetID()) == NULL)
+  if (this->GetMRMLScene()->GetNodeByID(this->InteractionNode->GetID()) == NULL)
     {
     this->SetMRMLScene(this->GetMRMLScene());
-    this->SetInteractionNode ( vtkMRMLInteractionNode::SafeDownCast(this->MRMLScene->AddNode(this->InteractionNode)) );
+    this->SetInteractionNode ( vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->AddNode(this->InteractionNode)) );
     this->SetAndObserveMRMLScene(this->GetMRMLScene());
     }
   
@@ -451,12 +451,12 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
 {
-  if ( !this->SelectionNode || !this->MRMLScene )
+  if ( !this->SelectionNode || !this->GetMRMLScene() )
     {
     return;
     }
 
-  int i, nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
+  int i, nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
   char *ID = this->SelectionNode->GetActiveVolumeID();
   char *secondID = this->SelectionNode->GetSecondaryVolumeID();
   char *labelID = this->SelectionNode->GetActiveLabelVolumeID();
@@ -465,7 +465,7 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
   for (i = 0; i < nnodes; i++)
     {
     cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-            this->MRMLScene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+            this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
     if(!cnode->GetDoPropagateVolumeSelection())
       {
       continue;
@@ -494,7 +494,7 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::PropagateFiducialListSelection()
 {
-  if ( !this->SelectionNode || !this->MRMLScene )
+  if ( !this->SelectionNode || !this->GetMRMLScene() )
     {
     return;
     }
@@ -519,10 +519,10 @@ void vtkSlicerApplicationLogic::Connect (const char *URL)
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Connect is deprecated");
 #endif
 
-  if (this->MRMLScene)
+  if (this->GetMRMLScene())
     {
-    this->MRMLScene->SetURL(URL);
-    this->MRMLScene->Connect();
+    this->GetMRMLScene()->SetURL(URL);
+    this->GetMRMLScene()->Connect();
     }
 }
 
@@ -532,9 +532,9 @@ int vtkSlicerApplicationLogic::Commit()
 #ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Commit is deprecated");
 #endif
-  if (this->MRMLScene)
+  if (this->GetMRMLScene())
     {
-    return (this->MRMLScene->Commit());
+    return (this->GetMRMLScene()->Commit());
     }
   return 0;
 };
@@ -545,9 +545,9 @@ int vtkSlicerApplicationLogic::Commit(const char *URL)
 #ifdef Slicer_USE_QT
   vtkWarningMacro(<< "SlicerQt - vtkSlicerApplicationLogic::Commit is deprecated");
 #endif
-  if (this->MRMLScene)
+  if (this->GetMRMLScene())
     {
-    return (this->MRMLScene->Commit(URL));
+    return (this->GetMRMLScene()->Commit(URL));
     }
   return (0);
 };
@@ -1283,7 +1283,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLDoubleArrayNode *dand = 0;
   vtkMRMLCommandLineModuleNode *clp = 0;
   
-  nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
+  nd = this->GetMRMLScene()->GetNodeByID( req.GetNode().c_str() );
 
   vtkDebugMacro("ProcessReadNodeData: read data request node id = " << nd->GetID());
 
@@ -1477,7 +1477,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
              !storageNodeExists)
           {
           vtkDebugMacro("ProcessReadNodeData: found a storable node's storage node, it didn't exist already, adding the storage node " << storageNode->GetID());
-          this->MRMLScene->AddNode( storageNode );
+          this->GetMRMLScene()->AddNode( storageNode );
           storableNode1->SetAndObserveStorageNodeID( storageNode->GetID() );
           }
         vtkDebugMacro("ProcessReadNodeData: about to call read data, storage node's read state is " << storageNode->GetReadStateAsString());
@@ -1641,7 +1641,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   //
   if (disp)
     {
-    vtkMRMLNode *dnode = this->MRMLScene->AddNode( disp );
+    vtkMRMLNode *dnode = this->GetMRMLScene()->AddNode( disp );
     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
     disp->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
     colorLogic->Delete();
@@ -1752,8 +1752,8 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     // sizes. Just import the scene. (This is where we would put to
     // the code to load into a node heirarchy (with a corresponding
     // change in the conditional above)).
-    this->MRMLScene->SetURL( req.GetFilename().c_str() );
-    this->MRMLScene->Import();
+    this->GetMRMLScene()->SetURL( req.GetFilename().c_str() );
+    this->GetMRMLScene()->Import();
 
     // Delete the file if requested
     if (req.GetDeleteFile())
@@ -1790,7 +1790,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     vtkMRMLNode *target;
 
     source = miniscene->GetNodeByID( (*sit).c_str() );
-    target = this->MRMLScene->GetNodeByID( (*tit).c_str() );
+    target = this->GetMRMLScene()->GetNodeByID( (*tit).c_str() );
 
     if (source && target)
       {
@@ -1833,21 +1833,21 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
           // get display node BEFORE we add nodes to the target scene
           vtkMRMLDisplayNode *sdnd1 = smnd->GetDisplayNode();
           
-          vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd);
+          vtkMRMLNode *tmodel = this->GetMRMLScene()->CopyNode(smnd);
           vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
           vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast( tmodel );
           tmhnd->SetModelNodeID( mnd->GetID() );
 
           if (sdnd1)
             {
-            vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd1);
+            vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd1);
             mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
             }
           }
         
         if (sdnd)
           {
-          vtkMRMLNode *dnd = this->MRMLScene->CopyNode(sdnd);
+          vtkMRMLNode *dnd = this->GetMRMLScene()->CopyNode(sdnd);
           tmhnd->SetAndObserveDisplayNodeID( dnd->GetID() );
           }
         
@@ -1878,7 +1878,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                 vtkMRMLModelNode *smnd1 = mhnd->GetModelNode();
                 vtkMRMLDisplayNode *sdnd1 = mhnd->GetDisplayNode();
                 
-                vtkMRMLNode *tchild = this->MRMLScene->CopyNode(mhnd);
+                vtkMRMLNode *tchild = this->GetMRMLScene()->CopyNode(mhnd);
                 vtkMRMLModelHierarchyNode *tcmhd
                   = vtkMRMLModelHierarchyNode::SafeDownCast( tchild );
                 tcmhd->SetParentNodeID( tmhnd->GetID() );
@@ -1890,21 +1890,21 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                   // get display node BEFORE we add nodes to the target scene
                   vtkMRMLDisplayNode *sdnd2 = smnd1->GetDisplayNode();
 
-                  vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd1);
+                  vtkMRMLNode *tmodel = this->GetMRMLScene()->CopyNode(smnd1);
                   vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
                   vtkMRMLModelNode *mnd =vtkMRMLModelNode::SafeDownCast(tmodel);
                   tcmhd->SetModelNodeID( mnd->GetID() );
 
                   if (sdnd2)
                     {
-                    vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd2);
+                    vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd2);
                     mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                     }
                   }
                 
                 if (sdnd1)
                   {
-                  vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd);
+                  vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd);
                   tcmhd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                   }
                 }
@@ -1955,8 +1955,8 @@ void vtkSlicerApplicationLogic::ProcessWriteSceneData(WriteDataRequest& req)
     // sizes. Just commit the scene. (This is where we would put to
     // the code to load into a node heirarchy (with a corresponding
     // change in the conditional above)).
-    this->MRMLScene->SetURL( req.GetFilename().c_str() );
-    this->MRMLScene->Commit();
+    this->GetMRMLScene()->SetURL( req.GetFilename().c_str() );
+    this->GetMRMLScene()->Commit();
 
     // Delete the file if requested
     if (req.GetDeleteFile())

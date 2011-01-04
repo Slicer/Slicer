@@ -59,7 +59,7 @@ qSlicerAbstractModuleRepresentation * qSlicerCamerasModule::createWidgetRepresen
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerCamerasModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerCamerasModule::createLogic()
 {
   return 0;
 }

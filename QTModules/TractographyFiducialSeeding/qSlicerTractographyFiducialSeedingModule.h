@@ -38,7 +38,7 @@ public:
 protected:
   /// Create and return a widget representation of the object
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
-  virtual vtkSlicerLogic* createLogic();
+  virtual vtkMRMLAbstractLogic* createLogic();
 
 private:
   //  Q_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModule);

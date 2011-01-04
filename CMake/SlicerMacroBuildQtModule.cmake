@@ -65,6 +65,8 @@ MACRO(slicerMacroBuildQtModule)
     ${CMAKE_CURRENT_BINARY_DIR}
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}
+    ${MRMLLogic_SOURCE_DIR}
+    ${MRMLLogic_BINARY_DIR}
     ${QTMODULE_INCLUDE_DIRECTORIES}
     )
 

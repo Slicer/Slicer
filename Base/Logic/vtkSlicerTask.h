@@ -3,8 +3,8 @@
 
 #include "vtkObject.h"
 #include "vtkSmartPointer.h"
-#include "vtkSlicerLogic.h"
-
+#include "vtkMRMLAbstractLogic.h"
+#include "vtkSlicerBaseLogic.h"
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTask : public vtkObject
 {
@@ -14,12 +14,12 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   //BTX
-  typedef vtkSlicerLogic::TaskFunctionPointer TaskFunctionPointer;
+  typedef vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunctionPointer;
   //ETX
   
   /// 
   /// Set the function and object to call for the task.
-  void SetTaskFunction(vtkSlicerLogic*, TaskFunctionPointer, void *clientdata);
+  void SetTaskFunction(vtkMRMLAbstractLogic*, TaskFunctionPointer, void *clientdata);
   
   /// 
   /// Execute the task.
@@ -60,8 +60,8 @@ protected:
 
 private:
   //BTX
-  vtkSmartPointer<vtkSlicerLogic> TaskObject;
-  vtkSlicerLogic::TaskFunctionPointer TaskFunction;
+  vtkSmartPointer<vtkMRMLAbstractLogic> TaskObject;
+  vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunction;
   void *TaskClientData;
   //ETX
   

@@ -13,30 +13,30 @@
 =========================================================================auto=*/
 
 ///  vtkSlicerTransformLogic - slicer logic class for volumes manipulation
-/// 
+///
 /// This class manages the logic associated with reading, saving,
 /// and changing propertied of the volumes
-
 
 #ifndef __vtkSlicerTransformLogic_h
 #define __vtkSlicerTransformLogic_h
 
-#include <stdlib.h>
+// SlicerLogic includes
+#include "vtkSlicerBaseLogic.h"
 
-#include "vtkSlicerLogic.h"
+// MRMLLogic includes
+#include <vtkMRMLAbstractLogic.h>
 
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLTransformNode.h"
+// MRML includes
+class vtkMRMLScene;
+class vtkMRMLTransformNode;
 
-
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstractLogic
 {
   public:
   
   /// The Usual vtk class functions
   static vtkSlicerTransformLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerTransformLogic,vtkSlicerLogic);
+  vtkTypeRevisionMacro(vtkSlicerTransformLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) { Superclass::PrintSelf(os, indent); };
 
   /// 

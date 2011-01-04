@@ -28,7 +28,7 @@
 
 // SlicerLogic includes
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkSlicerLogic.h"
+#include "vtkMRMLAbstractLogic.h"
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
@@ -49,7 +49,7 @@ public:
   qSlicerAbstractModuleRepresentation*       WidgetRepresentation;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
-  vtkSmartPointer<vtkSlicerLogic>            Logic;
+  vtkSmartPointer<vtkMRMLAbstractLogic>      Logic;
 };
 
 //-----------------------------------------------------------------------------
@@ -189,7 +189,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
   // sure the 'logic()' method call is consistent and won't create a
   // diffent logic object
 #ifndef QT_NO_DEBUG // Required to avoid undefined variable warning
-  vtkSlicerLogic* currentLogic = d->Logic;
+  vtkMRMLAbstractLogic* currentLogic = d->Logic;
   Q_ASSERT(currentLogic == this->logic());
 #endif
 
@@ -213,7 +213,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerAbstractCoreModule::logic()
+vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
 {
   Q_D(qSlicerAbstractCoreModule);
 

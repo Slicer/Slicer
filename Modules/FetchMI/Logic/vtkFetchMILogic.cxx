@@ -230,7 +230,7 @@ void vtkFetchMILogic::Enter()
   vtkIntArray *logicEvents = this->NewObservableEvents();
   if ( logicEvents != NULL )
     {
-    this->SetAndObserveMRMLSceneEvents ( this->MRMLScene, logicEvents );
+    this->SetAndObserveMRMLSceneEvents ( this->GetMRMLScene(), logicEvents );
     logicEvents->Delete();
     }
 
@@ -274,7 +274,7 @@ void vtkFetchMILogic::InitializeInformatics ( )
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::SetHandlersOnServers ( )
 {
-  if ( this->MRMLScene == NULL )
+  if ( this->GetMRMLScene() == NULL )
     {
     vtkErrorMacro ( "SetHandlersOnServers got NULL MRMLScene.");
     return;
@@ -939,7 +939,7 @@ int vtkFetchMILogic::RequestSceneUpload ( )
     //---
     //--- explicitly write the scene to cache (uri already points to cache)
     //---
-    this->MRMLScene->Commit();
+    this->GetMRMLScene()->Commit();
 
 
     //---
@@ -1059,10 +1059,10 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
   this->SelectedStorableNodeIDs.clear();      
   vtkMRMLNode *node = NULL;
   //---Volumes
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLVolumeNode");
+  int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLVolumeNode");
   for (int n=0; n<nnodes; n++ )
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
     if ( node->GetHideFromEditors() )
       {
       continue;
@@ -1078,10 +1078,10 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
       }
     }
   //---Fiducials
-  nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode");
+  nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLFiducialListNode");
   for (int n=0; n<nnodes; n++ )
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLFiducialListNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiducialListNode");
     if ( node->GetHideFromEditors() )
       {
       continue;
@@ -1098,10 +1098,10 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
     }
   
   //---ColorTables
-  nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLColorTableNode");
+  nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLColorTableNode");
   for (int n=0; n<nnodes; n++ )
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLColorTableNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLColorTableNode");
     if ( node->GetHideFromEditors() )
       {
       continue;
@@ -1118,10 +1118,10 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
     }
 
   //---Models
-  nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLModelNode");
+  nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLModelNode");
   for (int n=0; n<nnodes; n++ )
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLModelNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLModelNode");
     if ( node->GetHideFromEditors() )
       {
       continue;
@@ -1137,10 +1137,10 @@ void vtkFetchMILogic::SaveResourceSelectionState ( )
       }
     }
   //--- UnstructuredGrids
-  nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLUnstructuredGridNode");
+  nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLUnstructuredGridNode");
   for (int n=0; n<nnodes; n++ )
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLUnstructuredGridNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLUnstructuredGridNode");
     if ( node->GetHideFromEditors() )
       {
       continue;
@@ -1198,7 +1198,7 @@ int vtkFetchMILogic::WriteMetadataForUpload (const char *nodeID )
     vtkErrorMacro ( "WriteMetadataForUpload: FetchMINode is NULL.");
     return 0;
     }
-  if (this->MRMLScene == NULL )
+  if (this->GetMRMLScene() == NULL )
     {
     vtkErrorMacro ( "WriteMetadataForUpload has null MRMLScene." );
     return 0;        
@@ -1274,7 +1274,7 @@ void vtkFetchMILogic::ProcessMRMLEvents(vtkObject *caller,
     }
 
   vtkMRMLScene *scene = vtkMRMLScene::SafeDownCast ( caller );
-  if ( scene == this->MRMLScene && event == vtkMRMLScene::NodeAddedEvent )
+  if ( scene == this->GetMRMLScene() && event == vtkMRMLScene::NodeAddedEvent )
     {
     this->ApplySlicerDataTypeTag();
     }
@@ -1430,7 +1430,7 @@ void vtkFetchMILogic::ApplySlicerDataTypeTag()
   //--- FiducialList 
   //--- ColorTable 
   //---
-  this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( "SlicerDataType", "MRML", 0);
+  this->GetMRMLScene()->GetUserTagTable()->AddOrUpdateTag ( "SlicerDataType", "MRML", 0);
   this->SetSlicerDataTypeOnVolumeNodes();
   // do model tagging first -- and refine fiberbundles afterward.
   this->SetSlicerDataTypeOnModelNodes();
@@ -1450,7 +1450,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
     {
     return;
     }
-  if (this->MRMLScene == NULL )
+  if (this->GetMRMLScene() == NULL )
     {
     return;
     }
@@ -1460,11 +1460,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
   vtkTagTable *t=NULL;
   
   int n;
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
+  int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   const char *dtype = NULL;
   for (n=0; n<nnodes; n++)
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLVolumeNode");
     if (node->GetHideFromEditors()) 
       {
       continue;
@@ -1498,7 +1498,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
       snode = vnode->GetStorageNode();
       }
 
-    std::string dir = this->MRMLScene->GetRootDirectory();
+    std::string dir = this->GetMRMLScene()->GetRootDirectory();
     if (dir[dir.size()-1] != '/')
       {
       dir += std::string("/");
@@ -1513,9 +1513,9 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
 
     // get absolute filename
     std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+    if (this->GetMRMLScene()->IsFilePathRelative(snode->GetFileName()))
       {
-      name = this->MRMLScene->GetRootDirectory();
+      name = this->GetMRMLScene()->GetRootDirectory();
       if (name[name.size()-1] != '/')
         {
         name = name + std::string("/");
@@ -1580,7 +1580,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
     {
     return;
     }
-  if (this->MRMLScene == NULL )
+  if (this->GetMRMLScene() == NULL )
     {
     return;
     }
@@ -1590,12 +1590,12 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
   vtkTagTable *t = NULL;
   
   int n;
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLModelNode");
+  int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
   
 
   for (n=0; n<nnodes; n++)
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLModelNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLModelNode");
     vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
     vtkMRMLStorageNode* snode = mnode->GetStorageNode();
 
@@ -1614,7 +1614,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
       }
 
     //-- assign a default filename if none is there.
-    std::string dir = this->MRMLScene->GetRootDirectory();
+    std::string dir = this->GetMRMLScene()->GetRootDirectory();
     if (dir[dir.size()-1] != '/')
       {
       dir += std::string("/");
@@ -1629,9 +1629,9 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
 
     // get absolute filename
     std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+    if (this->GetMRMLScene()->IsFilePathRelative(snode->GetFileName()))
       {
-      name = this->MRMLScene->GetRootDirectory();
+      name = this->GetMRMLScene()->GetRootDirectory();
       if (name[name.size()-1] != '/')
         {
         name = name + std::string("/");
@@ -1736,7 +1736,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
     {
     return;
     }
-  if (this->MRMLScene == NULL )
+  if (this->GetMRMLScene() == NULL )
     {
     return;
     }
@@ -1744,11 +1744,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
   vtkMRMLNode *node = NULL;
   
   int n;
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
+  int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
   
   for (n=0; n<nnodes; n++)
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode");
     vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
 
     //--- if its tag is set (but not set to generic VTKModel), we're done.
@@ -1766,7 +1766,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
       }
 
     //--- make sure we have a filename
-    std::string dir = this->MRMLScene->GetRootDirectory();
+    std::string dir = this->GetMRMLScene()->GetRootDirectory();
     if (dir[dir.size()-1] != '/')
       {
       dir += std::string("/");
@@ -1809,7 +1809,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
     {
     return;
     }
-  if (this->MRMLScene == NULL )
+  if (this->GetMRMLScene() == NULL )
     {
     return;
     }
@@ -1817,11 +1817,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
   int n;
   vtkMRMLNode *node;
   vtkMRMLStorableNode *stnode;
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLUnstructuredGridNode");
+  int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLUnstructuredGridNode");
   
   for (n=0; n<nnodes; n++)
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLUnstructuredGridNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLUnstructuredGridNode");
     if (node->GetHideFromEditors()) 
       {
       continue;
@@ -1848,7 +1848,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
       snode = storageNode;
       }
 
-    std::string dir = this->MRMLScene->GetRootDirectory();
+    std::string dir = this->GetMRMLScene()->GetRootDirectory();
     if (dir[dir.size()-1] != '/')
       {
       dir += std::string("/");
@@ -1863,9 +1863,9 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
 
     // get absolute filename
     std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+    if (this->GetMRMLScene()->IsFilePathRelative(snode->GetFileName()))
       {
-      name = this->MRMLScene->GetRootDirectory();
+      name = this->GetMRMLScene()->GetRootDirectory();
       if (name[name.size()-1] != '/')
         {
         name = name + std::string("/");
@@ -1904,7 +1904,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
     {
     return;
     }
-  if (this->MRMLScene == NULL )
+  if (this->GetMRMLScene() == NULL )
     {
     return;
     }
@@ -1914,12 +1914,12 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
   vtkTagTable *t = NULL;
   
   int n;
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
+  int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLFiducialListNode");
   
   //--- sniff thru the scene; get each vtkMRMLFiducialListNode and tag it.
   for (n=0; n<nnodes; n++)
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLFiducialListNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiducialListNode");
     if (node->GetHideFromEditors()) 
       {
       continue;
@@ -1955,7 +1955,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
       snode = flnode->GetStorageNode();
       }
 
-    std::string dir = this->MRMLScene->GetRootDirectory();
+    std::string dir = this->GetMRMLScene()->GetRootDirectory();
     if (dir[dir.size()-1] != '/')
       {
       dir += std::string("/");
@@ -1970,9 +1970,9 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
 
     // get absolute filename
     std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+    if (this->GetMRMLScene()->IsFilePathRelative(snode->GetFileName()))
       {
-      name = this->MRMLScene->GetRootDirectory();
+      name = this->GetMRMLScene()->GetRootDirectory();
       if (name[name.size()-1] != '/')
         {
         name = name + std::string("/");
@@ -2015,7 +2015,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
     {
     return;
     }
-  if (this->MRMLScene == NULL )
+  if (this->GetMRMLScene() == NULL )
     {
     return;
     }
@@ -2025,12 +2025,12 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
   vtkTagTable *t = NULL;
   
   int n;
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLColorTableNode");
+  int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLColorTableNode");
   
   //--- sniff thru the scene; get each vtkMRMLColorTableNode and tag it.
   for (n=0; n<nnodes; n++)
     {
-    node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLColorTableNode");
+    node = this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLColorTableNode");
     if (node->GetHideFromEditors()) 
       {
       continue;
@@ -2056,7 +2056,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
       snode = cnode->GetStorageNode();
       }
 
-    std::string dir = this->MRMLScene->GetRootDirectory();
+    std::string dir = this->GetMRMLScene()->GetRootDirectory();
     if (dir[dir.size()-1] != '/')
       {
       dir += std::string("/");
@@ -2071,9 +2071,9 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
 
     // get absolute filename
     std::string name;
-    if (this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+    if (this->GetMRMLScene()->IsFilePathRelative(snode->GetFileName()))
       {
-      name = this->MRMLScene->GetRootDirectory();
+      name = this->GetMRMLScene()->GetRootDirectory();
       if (name[name.size()-1] != '/')
         {
         name = name + std::string("/");
@@ -3750,9 +3750,9 @@ void vtkFetchMILogic::RequestSceneDownload ( const char *uri )
   // now override the mrml scene's url to point to file on disk
   this->GetMRMLScene()->SetURL(localURL.c_str());
   //--- load the remote scene
-  this->MRMLScene->Connect();
+  this->GetMRMLScene()->Connect();
 
-  if (  this->MRMLScene->GetErrorCode() != 0 ) 
+  if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
     {
     vtkErrorMacro ("RequestSceneDownload: Null or empty server name." );
     std::string msg = this->GetMRMLScene()->GetErrorMessage();
@@ -3993,7 +3993,7 @@ void vtkFetchMILogic::SaveOldURIsOnSelectedResources()
   this->OldAndNewURIs.clear();
   std::string tmp = "none";
   std::string uri;
-  std::string sceneFileName = this->MRMLScene->GetURL();
+  std::string sceneFileName = this->GetMRMLScene()->GetURL();
   
   this->OldAndNewURIs.insert ( std::make_pair (sceneFileName, tmp ) );
 
@@ -4697,17 +4697,17 @@ int  vtkFetchMILogic::PostStorableNodes()
   // Get all selected storable nodes from this->SelectedStorableNodeIDs;
   // FOR EACH FILENAME & FILELISTMEMBER IN EACH SELECTED NODE with valid uri:
 
-  if ( this->MRMLScene == NULL )
+  if ( this->GetMRMLScene() == NULL )
     {
     vtkErrorMacro ( "PostStorableNodes: got NULL mrml Scene." );
     return 0;
     }
-  if ( this->MRMLScene->GetCacheManager() == NULL )
+  if ( this->GetMRMLScene()->GetCacheManager() == NULL )
     {
     vtkErrorMacro ( "PostStorableNodes: Got NULL cachemanager." );
     return 0;
     }
-  if ( this->MRMLScene->GetCacheManager()->GetRemoteCacheDirectory() == NULL )
+  if ( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory() == NULL )
     {
     vtkErrorMacro ( "PostStorableNodes: RemoteCacheDirectory not set!" );
     return 0;

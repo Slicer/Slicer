@@ -4,9 +4,10 @@
 #include <vtksys/SystemTools.hxx> 
 
 #include "vtkSlicerROILogic.h"
- 
-#include "vtkMRMLROINode.h"
-#include "vtkMRMLSelectionNode.h"
+
+#include <vtkMRMLROIListNode.h>
+#include <vtkMRMLROINode.h>
+#include <vtkMRMLSelectionNode.h>
 
 vtkCxxRevisionMacro(vtkSlicerROILogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerROILogic);
@@ -42,16 +43,16 @@ vtkMRMLROIListNode *vtkSlicerROILogic::AddROIList()
 {
   //this->GetMRMLScene()->SaveStateForUndo();
 
-  vtkMRMLNode *node = 
+  vtkMRMLNode *node =
     this->GetMRMLScene()->CreateNodeByClass("vtkMRMLROIListNode");
   if (node == NULL)
     {
     return NULL;
     }
   const char *name;
-  name = this->MRMLScene->GetTagByClassName("vtkMRMLROIListNode");
-  //  node->SetName(this->MRMLScene->GetUniqueNameByString(name));
-  node->SetName(this->MRMLScene->GetUniqueNameByString("R"));
+  name = this->GetMRMLScene()->GetTagByClassName("vtkMRMLROIListNode");
+  //  node->SetName(this->GetMRMLScene()->GetUniqueNameByString(name));
+  node->SetName(this->GetMRMLScene()->GetUniqueNameByString("R"));
   this->GetMRMLScene()->AddNode(node);
   return vtkMRMLROIListNode::SafeDownCast(node);
 }

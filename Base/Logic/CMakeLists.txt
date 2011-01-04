@@ -82,7 +82,6 @@ install(FILES
 
 set(SlicerBaseLogic_SRCS
   # Logic classes (data management and calculation)
-  vtkSlicerLogic.cxx 
   vtkSlicerApplicationLogic.cxx
   vtkSlicerModuleLogic.cxx 
   vtkSlicerTask.cxx
@@ -90,7 +89,6 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerModelHierarchyLogic.cxx
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
-  vtkSlicerVolumesLogic.cxx
   vtkDataIOManagerLogic.cxx
   vtkSlicerSceneViewLogic.cxx
   # slicer's vtk extensions (filters)

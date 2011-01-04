@@ -17,9 +17,9 @@
 #include <itksys/SystemTools.hxx>
 #include <itksys/Directory.hxx>
 
-
 #include "vtkSlicerTransformLogic.h"
 
+#include "vtkMRMLScene.h"
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"

@@ -127,7 +127,7 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );  
   //BTX
-  using vtkSlicerLogic::ProcessLogicEvents; 
+  using vtkMRMLAbstractLogic::ProcessLogicEvents; 
   //ETX
   
   // Description:

@@ -32,7 +32,7 @@ public:
     return 0;
   }
 
-  virtual vtkSlicerLogic* createLogic()
+  virtual vtkMRMLAbstractLogic* createLogic()
   {
     return 0;
   }

@@ -69,7 +69,7 @@ protected:
 
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
 
-  virtual vtkSlicerLogic* createLogic();
+  virtual vtkMRMLAbstractLogic* createLogic();
 
 protected:
   QScopedPointer<qSlicerScriptedLoadableModulePrivate> d_ptr;

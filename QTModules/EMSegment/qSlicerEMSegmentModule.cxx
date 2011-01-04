@@ -83,7 +83,7 @@ qSlicerAbstractModuleRepresentation * qSlicerEMSegmentModule::createWidgetRepres
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerEMSegmentModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerEMSegmentModule::createLogic()
 {
   return vtkSlicerEMSegmentLogic::New();
 }

@@ -116,10 +116,11 @@ void vtkSlicerFiberBundleDisplayLogic::AddTemporaryModelNodeToScene ( vtkMRMLMod
 
   // check that the model and display node exist, and that the model
   // is not already in the scene.
-  if (modelNode != NULL && displayNode != NULL && this->MRMLScene->GetNodeByID( modelNode->GetID() ) == NULL )
+  if (modelNode != NULL && displayNode != NULL &&
+      this->GetMRMLScene()->GetNodeByID( modelNode->GetID() ) == NULL )
     {
-    this->MRMLScene->AddNode(displayNode);
-    this->MRMLScene->AddNode(modelNode);
+    this->GetMRMLScene()->AddNode(displayNode);
+    this->GetMRMLScene()->AddNode(modelNode);
     modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     }
 
@@ -250,14 +251,14 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
   // TO DO: don't pass tensors through, just any requested scalars?
 
   // if we have no MRML scene yet 
-  if (this->MRMLScene == NULL)
+  if (this->GetMRMLScene() == NULL)
     {
     vtkErrorMacro("Cannot create line model, no MRMLScene set yet.");
     return;
     }
 
   // if the modelNode exists and is not in the scene, delete it (and then redo it)
-  if (this->LineModelNode != NULL && this->MRMLScene->GetNodeByID( this->LineModelNode->GetID() ) == NULL )
+  if (this->LineModelNode != NULL && this->GetMRMLScene()->GetNodeByID( this->LineModelNode->GetID() ) == NULL )
     {
     this->DeleteLineModelNodes();
     }
@@ -340,14 +341,14 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModelNodes ( )
 void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
 {
   // if we have no MRML scene yet 
-  if (this->MRMLScene == NULL)
+  if (this->GetMRMLScene() == NULL)
     {
     vtkErrorMacro("Cannot create line model, no MRMLScene set yet.");
     return;
     }
 
   // if the modelNode exists and is not in the scene, delete it and then redo it
-  if (this->TubeModelNode != NULL && this->MRMLScene->GetNodeByID( this->TubeModelNode->GetID() ) == NULL )
+  if (this->TubeModelNode != NULL && this->GetMRMLScene()->GetNodeByID( this->TubeModelNode->GetID() ) == NULL )
     {
     this->DeleteTubeModelNodes();
     }
@@ -402,10 +403,10 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
 
 
   // if the modelNode exists but is not in the scene, put it there
-  if (this->TubeModelNode != NULL && this->MRMLScene->GetNodeByID( this->TubeModelNode->GetID() ) == NULL )
+  if (this->TubeModelNode != NULL && this->GetMRMLScene()->GetNodeByID( this->TubeModelNode->GetID() ) == NULL )
     {
-    this->MRMLScene->AddNode(this->TubeModelDisplayNode);
-    this->MRMLScene->AddNode(this->TubeModelNode);
+    this->GetMRMLScene()->AddNode(this->TubeModelDisplayNode);
+    this->GetMRMLScene()->AddNode(this->TubeModelNode);
     this->TubeModelNode->SetAndObserveDisplayNodeID(this->TubeModelDisplayNode->GetID());
     }
 
@@ -443,14 +444,14 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 {
 
   // if we have no MRML scene yet 
-  if (this->MRMLScene == NULL)
+  if (this->GetMRMLScene() == NULL)
     {
     vtkErrorMacro("Cannot create glyph model, no MRMLScene set yet.");
     return;
     }
 
   // if the modelNode exists and is not in the scene, delete it and then redo it
-  if (this->GlyphModelNode != NULL && this->MRMLScene->GetNodeByID( this->GlyphModelNode->GetID() ) == NULL )
+  if (this->GlyphModelNode != NULL && this->GetMRMLScene()->GetNodeByID( this->GlyphModelNode->GetID() ) == NULL )
     {
     this->DeleteGlyphModelNodes();
     }
@@ -615,10 +616,10 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 
 
   // if the modelNode exists but is not in the scene, put it there
-  if (this->GlyphModelNode != NULL && this->MRMLScene->GetNodeByID( this->GlyphModelNode->GetID() ) == NULL )
+  if (this->GlyphModelNode != NULL && this->GetMRMLScene()->GetNodeByID( this->GlyphModelNode->GetID() ) == NULL )
     {
-    this->MRMLScene->AddNode(this->GlyphModelDisplayNode);
-    this->MRMLScene->AddNode(this->GlyphModelNode);
+    this->GetMRMLScene()->AddNode(this->GlyphModelDisplayNode);
+    this->GetMRMLScene()->AddNode(this->GlyphModelNode);
     this->GlyphModelNode->SetAndObserveDisplayNodeID(this->GlyphModelDisplayNode->GetID());
     }
 
@@ -630,10 +631,8 @@ void vtkSlicerFiberBundleDisplayLogic::ProcessMRMLEvents(vtkObject * caller,
                                                          unsigned long event, 
                                                          void * vtkNotUsed(callData))
 {
-
-
-  // if we have no MRML scene yet 
-  if (this->MRMLScene == NULL)
+  // if we have no MRML scene yet
+  if (this->GetMRMLScene() == NULL)
     {
     vtkErrorMacro("Cannot process MRML Events, no MRMLScene set yet.");
     return;

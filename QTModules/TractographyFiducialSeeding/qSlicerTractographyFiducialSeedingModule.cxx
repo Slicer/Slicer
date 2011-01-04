@@ -24,7 +24,7 @@ qSlicerAbstractModuleRepresentation* qSlicerTractographyFiducialSeedingModule::c
 }
 //-----------------------------------------------------------------------------
 //
-vtkSlicerLogic* qSlicerTractographyFiducialSeedingModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerTractographyFiducialSeedingModule::createLogic()
 {
   return vtkSlicerTractographyFiducialSeedingLogic::New();
 }

@@ -46,7 +46,7 @@ qSlicerAbstractModuleRepresentation* qSlicerSceneViewsModule::createWidgetRepres
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerSceneViewsModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerSceneViewsModule::createLogic()
 {
 
   return vtkSlicerSceneViewLogic::New();

@@ -1,7 +1,9 @@
+// SlicerLogic includes
 #include "vtkSlicerSceneViewLogic.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSceneViewNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

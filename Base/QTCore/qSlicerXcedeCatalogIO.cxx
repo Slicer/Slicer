@@ -700,13 +700,14 @@ void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
   //      //$volumeDisplayNode SetAutoThreshold 0
   else if (node["uri"].startsWith("aseg"))
     {
-    //vtkSlicerColorLogic* colorLogic = this->colorLogic();
+    vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
     // if (colorLogic) {
     //volumeDisplayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
     // }else {
     // volumeDisplayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeGrey");}
     volumeDisplayNode->SetAndObserveColorNodeID(
-      vtkSlicerColorLogic::GetDefaultFreeSurferLabelMapColorNodeID());
+      colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
+    colorLogic->Delete();
     }
         
     // } else {

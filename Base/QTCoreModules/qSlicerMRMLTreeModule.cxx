@@ -47,7 +47,7 @@ qSlicerAbstractModuleRepresentation * qSlicerMRMLTreeModule::createWidgetReprese
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerMRMLTreeModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerMRMLTreeModule::createLogic()
 {
   return 0;
 }

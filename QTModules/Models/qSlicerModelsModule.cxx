@@ -116,7 +116,7 @@ qSlicerAbstractModuleRepresentation * qSlicerModelsModule::createWidgetRepresent
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerModelsModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerModelsModule::createLogic()
 {
   return vtkSlicerModelsLogic::New();
 }

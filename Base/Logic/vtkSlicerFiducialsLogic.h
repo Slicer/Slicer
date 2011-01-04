@@ -21,22 +21,23 @@
 #ifndef __vtkSlicerFiducialsLogic_h
 #define __vtkSlicerFiducialsLogic_h
 
-#include <stdlib.h>
-
+// SlicerLogic includes
 #include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
 
-#include "vtkMRML.h"
-#include "vtkMRMLFiducial.h"
-#include "vtkMRMLFiducialListNode.h"
+// MRMLLogic includes
+#include "vtkMRMLAbstractLogic.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLogic 
+// MRML includes
+class vtkMRMLFiducial;
+class vtkMRMLFiducialListNode;
+
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkMRMLAbstractLogic
 {
   public:
   
   /// The Usual vtk class functions
   static vtkSlicerFiducialsLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerFiducialsLogic,vtkObject);
+  vtkTypeRevisionMacro(vtkSlicerFiducialsLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///
@@ -78,7 +79,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   /// Update logic state when MRML scene changes
   void ProcessMRMLEvents();
   //BTX
-  using vtkSlicerLogic::ProcessMRMLEvents;
+  using vtkMRMLAbstractLogic::ProcessMRMLEvents;
   //ETX
     
 protected:

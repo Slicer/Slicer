@@ -46,7 +46,7 @@ void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * caller,
                                                   void * vtkNotUsed(callData))
 {
 
-  if (this->MRMLScene == NULL)
+  if (this->GetMRMLScene() == NULL)
     {
     vtkErrorMacro("Can't process MRML events, no MRMLScene set.");
     return;
@@ -64,7 +64,7 @@ void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * caller,
     // Loop through all of the fiberBundleNodes.
     // If the node does not have a display logic node yet, then make one for it.
     vtkMRMLFiberBundleNode *node= NULL;
-    int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
+    int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
     if (nnodes > 0)
       {
       vtkDebugMacro("New scene event, processing " << nnodes << " fibre bundles");
@@ -73,7 +73,7 @@ void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * caller,
       {
       node = 
         vtkMRMLFiberBundleNode::
-        SafeDownCast (this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode"));
+        SafeDownCast (this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLFiberBundleNode"));
 
       if (node == NULL)
         {
@@ -190,7 +190,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     {
     const itksys_stl::string fname(filename);
     itksys_stl::string name = itksys::SystemTools::GetFilenameName(fname);
-    std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+    std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
     fiberBundleNode->SetName(uname.c_str());
     
     fiberBundleNode->SetScene(this->GetMRMLScene());

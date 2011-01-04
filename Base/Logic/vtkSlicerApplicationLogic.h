@@ -29,11 +29,13 @@
 #include "itkMutexLock.h"
 
 // VTK includes
-#include "vtkCollection.h"
+#include <vtkCollection.h>
 
-// Slice includes
+// Slicer includes
 #include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
+
+// MRMLLogic includes
+#include <vtkMRMLAbstractLogic.h>
 
 //BTX
 class vtkMRMLSliceLogic;
@@ -52,13 +54,13 @@ class vtkSlicerTask;
 class SliceLogicMap;
 //ETX
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkMRMLAbstractLogic 
 {
   public:
   
   /// The Usual vtk class functions
   static vtkSlicerApplicationLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerApplicationLogic,vtkSlicerLogic);
+  vtkTypeRevisionMacro(vtkSlicerApplicationLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
     
   /// 
@@ -142,7 +144,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   void CreateProcessingThread();
 
   /// 
-  /// Create the default number (three for red, yellow, and green slice viewers) of vtkSlicerLogic objects
+  /// Create the default number (three for red, yellow, and green slice viewers) of vtkMRMLAbstractLogic objects
   void CreateSliceLogics();
   void DeleteSliceLogics();
 

@@ -93,7 +93,7 @@ qSlicerAbstractModuleRepresentation * qSlicerCLIModule::createWidgetRepresentati
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerCLIModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 {
   return vtkSlicerCLIModuleLogic::New();
 }

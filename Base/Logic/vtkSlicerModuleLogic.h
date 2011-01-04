@@ -24,16 +24,16 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 
-#include "vtkSlicerLogic.h"
+#include <vtkMRMLAbstractLogic.h>
 #include "vtkSlicerApplicationLogic.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkMRMLAbstractLogic
 {
   public:
   
   /// The Usual vtk class functions
   static vtkSlicerModuleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerModuleLogic,vtkSlicerLogic);
+  vtkTypeRevisionMacro(vtkSlicerModuleLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 

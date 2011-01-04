@@ -83,13 +83,20 @@
 
 //ETX
 
-class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject 
+class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject
 {
 public:
-  
+  /// Typedef for member functions of MRMLLogic that can be used as
+  /// scheduled tasks.
+  //BTX
+  typedef void (vtkMRMLAbstractLogic::*TaskFunctionPointer)(void *clientdata);
+  //ETX
+
   static vtkMRMLAbstractLogic *New();
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractLogic, vtkObject);
+
+
 
   ///
   /// Return a reference to the current MRML scene

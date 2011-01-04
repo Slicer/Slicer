@@ -60,7 +60,7 @@ protected:
 
   ///
   /// Create and return the logic associated to this module
-  virtual vtkSlicerLogic* createLogic();
+  virtual vtkMRMLAbstractLogic* createLogic();
 
   QScopedPointer<qSlicerMRMLTreeModulePrivate> d_ptr;
 private:

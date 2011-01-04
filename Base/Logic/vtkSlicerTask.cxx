@@ -31,8 +31,8 @@ vtkSlicerTask
 
 void
 vtkSlicerTask
-::SetTaskFunction(vtkSlicerLogic *object,
-                  vtkSlicerLogic::TaskFunctionPointer function,
+::SetTaskFunction(vtkMRMLAbstractLogic *object,
+                  vtkMRMLAbstractLogic::TaskFunctionPointer function,
                   void *clientdata)
 {
   this->TaskObject = object;

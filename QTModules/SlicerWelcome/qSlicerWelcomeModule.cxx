@@ -69,7 +69,7 @@ qSlicerAbstractModuleRepresentation* qSlicerWelcomeModule::createWidgetRepresent
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerWelcomeModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerWelcomeModule::createLogic()
 {
   return 0;
 }

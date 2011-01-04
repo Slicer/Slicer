@@ -49,7 +49,6 @@ Version:   $Revision$
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
-#include "vtkSlicerColorLogic.h"
 #include "vtkDebugLeaks.h"
 
 #include <fstream>

@@ -190,7 +190,7 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerScriptedLoadableModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerScriptedLoadableModule::createLogic()
 {
 //  Q_D(qSlicerScriptedLoadableModule);
   

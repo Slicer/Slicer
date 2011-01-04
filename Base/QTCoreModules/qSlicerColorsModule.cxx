@@ -78,7 +78,7 @@ qSlicerAbstractModuleRepresentation * qSlicerColorsModule::createWidgetRepresent
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerColorsModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerColorsModule::createLogic()
 {
   return vtkSlicerColorLogic::New();
 }

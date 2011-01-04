@@ -30,7 +30,7 @@
 #include "qSlicerBaseQTCoreExport.h"
 
 /// class vtkSlicerApplicationLogic;
-class vtkSlicerLogic;
+class vtkMRMLAbstractLogic;
 class qSlicerAbstractCoreModule;
 class QAction;
 class qSlicerAbstractModuleRepresentationPrivate;
@@ -58,7 +58,7 @@ protected:
   virtual void setup() = 0;
 
   /// Return the logic of the module
-  vtkSlicerLogic* logic() const;
+  vtkMRMLAbstractLogic* logic() const;
 
   const qSlicerAbstractCoreModule* module()const;
 

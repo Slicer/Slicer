@@ -14,8 +14,8 @@
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModuleRepresentation.h"
 
-// Slicer includes
-#include "vtkSlicerLogic.h"
+// MRMLLogic includes
+#include "vtkMRMLAbstractLogic.h"
 
 // VTK includes
 #include <vtkWeakPointer.h>
@@ -25,8 +25,8 @@ class qSlicerAbstractModuleRepresentationPrivate
 {
 public:
   qSlicerAbstractModuleRepresentationPrivate();
-  vtkWeakPointer<vtkSlicerLogic>      Logic;
-  qSlicerAbstractCoreModule*          Module;
+  vtkWeakPointer<vtkMRMLAbstractLogic> Logic;
+  qSlicerAbstractCoreModule*           Module;
 };
 
 //-----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ QString qSlicerAbstractModuleRepresentation::moduleName()const
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerAbstractModuleRepresentation::logic()const
+vtkMRMLAbstractLogic* qSlicerAbstractModuleRepresentation::logic()const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Logic.GetPointer();

@@ -2,25 +2,24 @@
 /// 
 /// This class manages the logic associated ROI
 
-
 #ifndef __vtkSlicerROILogic_h
 #define __vtkSlicerROILogic_h
 
-#include <stdlib.h>
-
+// SlicerLogic includes
 #include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
 
-#include "vtkMRML.h"
-#include "vtkMRMLROINode.h" 
-#include "vtkMRMLROIListNode.h"
+// MRMLLogic includes
+#include "vtkMRMLAbstractLogic.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerROILogic : public vtkSlicerLogic 
+// VTK includes
+class vtkMRMLROIListNode;
+
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerROILogic : public vtkMRMLAbstractLogic 
 {
 public:
   /// The Usual vtk class functions
   static vtkSlicerROILogic *New();
-  vtkTypeRevisionMacro(vtkSlicerROILogic,vtkSlicerLogic);
+  vtkTypeRevisionMacro(vtkSlicerROILogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 

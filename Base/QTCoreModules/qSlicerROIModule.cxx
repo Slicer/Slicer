@@ -47,7 +47,7 @@ qSlicerAbstractModuleRepresentation * qSlicerROIModule::createWidgetRepresentati
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerROIModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerROIModule::createLogic()
 {
   return 0;
 }

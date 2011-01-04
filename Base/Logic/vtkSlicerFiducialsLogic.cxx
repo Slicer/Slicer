@@ -66,14 +66,14 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::GetSelectedList()
   vtkMRMLSelectionNode *selnode = NULL;
 
   selnode = vtkMRMLSelectionNode::SafeDownCast (
-            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+            this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
 
   if (selnode != NULL)
     {
     if (selnode->GetActiveFiducialListID() != NULL)
       {
       // get the selected fiducial list
-      fList = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(selnode->GetActiveFiducialListID()));
+      fList = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(selnode->GetActiveFiducialListID()));
       }
     else
       {
@@ -95,7 +95,7 @@ void vtkSlicerFiducialsLogic::AddFiducialListSelected()
   // make it active
   vtkMRMLSelectionNode *selnode;
   selnode = vtkMRMLSelectionNode::SafeDownCast (
-            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+            this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
   if (selnode && node)
     {
     this->GetMRMLScene()->SaveStateForUndo(selnode);
@@ -133,7 +133,7 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
       snode->Delete();
       }
     }
-  node->SetName(this->MRMLScene->GetUniqueNameByString("L"));
+  node->SetName(this->GetMRMLScene()->GetUniqueNameByString("L"));
   this->GetMRMLScene()->AddNode(node); 
   node->Delete();
   return vtkMRMLFiducialListNode::SafeDownCast(node);
@@ -169,7 +169,7 @@ int vtkSlicerFiducialsLogic::AddFiducialSelected (float x, float y, float z, int
     }
   
   // add a fiducial to the selected list
-  this->MRMLScene->SaveStateForUndo(flist);
+  this->GetMRMLScene()->SaveStateForUndo(flist);
   vtkDebugMacro("AddFiducialSelected: calling add fiducial on list " << flist->GetName());
   index = flist->AddFiducialWithXYZ(x, y, z, selected);
   if (index < 0)
@@ -235,7 +235,7 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::LoadFiducialList(const char* p
 
   // the name is set before adding to the scene so that node selectors will be updated
   std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(path);
-  std::string uname( this->MRMLScene->GetUniqueNameByString(name.c_str()));
+  std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
   node->SetName(uname.c_str());
 
   this->GetMRMLScene()->AddNode(node);

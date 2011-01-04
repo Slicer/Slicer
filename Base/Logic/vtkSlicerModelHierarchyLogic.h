@@ -24,14 +24,14 @@
 #include <stdlib.h>
 
 #include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
+#include "vtkMRMLAbstractLogic.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkMRMLAbstractLogic 
 {
   public:
   

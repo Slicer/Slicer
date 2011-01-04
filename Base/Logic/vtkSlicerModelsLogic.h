@@ -21,23 +21,21 @@
 #ifndef __vtkSlicerModelsLogic_h
 #define __vtkSlicerModelsLogic_h
 
-#include <stdlib.h>
-
 #include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
+#include "vtkMRMLAbstractLogic.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLModelNode.h"
 
 class vtkMRMLStorageNode;
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkSlicerLogic 
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelsLogic : public vtkMRMLAbstractLogic 
 {
   public:
   
   /// The Usual vtk class functions
   static vtkSlicerModelsLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerModelsLogic,vtkSlicerLogic);
+  vtkTypeRevisionMacro(vtkSlicerModelsLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// 

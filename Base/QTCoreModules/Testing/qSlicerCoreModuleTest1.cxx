@@ -34,7 +34,7 @@ public:
   {
     return 0;
   }
-  vtkSlicerLogic* createLogic()
+  vtkMRMLAbstractLogic* createLogic()
   {
     return 0;
   }

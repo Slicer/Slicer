@@ -175,7 +175,7 @@ vtkSlicerCLIModuleLogic
                              const std::string& vtkNotUsed(type),
                              const std::string& name,
                              const std::vector<std::string>& extensions,
-                             CommandLineModuleType commandType) const
+                             CommandLineModuleType commandType)
 {
   std::string fname = name;
   std::string pid;
@@ -260,7 +260,7 @@ vtkSlicerCLIModuleLogic
       // representation of the scene pointer and the MRML node ID. 
       char *tname = new char[name.size() + 100];
       
-      sprintf(tname, "slicer:%p#%s", this->MRMLScene, name.c_str());
+      sprintf(tname, "slicer:%p#%s", this->GetMRMLScene(), name.c_str());
       
       fname = tname;
 
@@ -565,7 +565,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
         
         // only keep track of objects associated with real nodes
-        if (!this->MRMLScene->GetNodeByID(id.c_str()) || id == "None")
+        if (!this->GetMRMLScene()->GetNodeByID(id.c_str()) || id == "None")
           {
           continue;
           }
@@ -602,7 +602,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
        ++id2fn0)
     {
     vtkMRMLNode *nd
-      = this->MRMLScene->GetNodeByID( (*id2fn0).first.c_str() );
+      = this->GetMRMLScene()->GetNodeByID( (*id2fn0).first.c_str() );
     
     vtkMRMLDiffusionTensorVolumeNode *dtvnd = NULL;
     vtkMRMLDiffusionWeightedVolumeNode *dwvnd = NULL;
@@ -736,7 +736,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     // if the file is to be written, then write it
     if (out)
       {
-      out->SetScene(this->MRMLScene);
+      out->SetScene(this->GetMRMLScene());
       out->SetFileName( (*id2fn0).second.c_str() );
       if (!out->WriteData( nd ))
         {
@@ -754,7 +754,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
        ++id2fn0)
     {
     vtkMRMLNode *nd
-      = this->MRMLScene->GetNodeByID( (*id2fn0).first.c_str() );
+      = this->GetMRMLScene()->GetNodeByID( (*id2fn0).first.c_str() );
     
     vtkMRMLTransformNode *tnd
       = vtkMRMLTransformNode::SafeDownCast(nd);
@@ -1008,7 +1008,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           {
           // get the fiducial list node
           vtkMRMLNode *node
-            = this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str());
+            = this->GetMRMLScene()->GetNodeByID((*pit).GetDefault().c_str());
           vtkMRMLFiducialListNode *fiducials
             = vtkMRMLFiducialListNode::SafeDownCast(node);
           vtkMRMLDisplayableHierarchyNode *points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
@@ -1081,7 +1081,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           {
           // get the region node
           vtkMRMLNode *node
-            = this->MRMLScene->GetNodeByID((*pit).GetDefault().c_str());
+            = this->GetMRMLScene()->GetNodeByID((*pit).GetDefault().c_str());
           vtkMRMLROIListNode *regions = vtkMRMLROIListNode::SafeDownCast(node);
 
           if (regions)
@@ -1845,7 +1845,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             if (reference.size() > 0)
               {
               vtkMRMLTransformableNode *t
-                = vtkMRMLTransformableNode::SafeDownCast(this->MRMLScene
+                = vtkMRMLTransformableNode::SafeDownCast(this->GetMRMLScene()
                            ->GetNodeByID(reference.c_str()));
               if (t)
                 {
@@ -1972,7 +1972,7 @@ vtkSlicerCLIModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
             // go to the display node for the reference parameter and
             // get its color node 
             vtkMRMLDisplayableNode *rn
-              = vtkMRMLDisplayableNode::SafeDownCast(this->MRMLScene
+              = vtkMRMLDisplayableNode::SafeDownCast(this->GetMRMLScene()
                                             ->GetNodeByID(reference.c_str()));
             if (rn)
               {
