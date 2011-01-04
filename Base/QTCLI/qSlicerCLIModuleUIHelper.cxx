@@ -685,16 +685,24 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleParameter& moduleParameter)
 {
-  QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = Self::nodeTypeFromMap(Self::TransformTypeAttributeToNodeType,
-                                           type, "vtkMRMLTransformNode");
-
   QString channel = QString::fromStdString(moduleParameter.GetChannel());
   if (channel != "input" && channel != "output")
     {
     qWarning() << "TransformTag - Unknown channel:" << channel;
     return 0; 
     }
+
+  QString type = QString::fromStdString(moduleParameter.GetType());
+
+  // Note: TransformNode is abstract making it inappropriate for
+  // an output type since the node selector must be able to make
+  // an instance of the class.  For now, revert to LinearTransformNode.
+
+  QString defaultNodeType =
+    (channel == "input" ? "vtkMRMLTransformNode" : "vtkMRMLLinearTransformNode");
+  QString nodeType = Self::nodeTypeFromMap(Self::TransformTypeAttributeToNodeType,
+                                           type, defaultNodeType);
+
   QString index = QString::fromStdString(moduleParameter.GetIndex());
   // TODO - title + " Transform"
 

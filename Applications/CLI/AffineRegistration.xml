@@ -121,7 +121,7 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       <index>1</index>
       <description>Moving image</description>
     </image>
-    <transform fileExtensions=".txt" reference="MovingImageFileName">
+    <transform fileExtensions=".txt" reference="MovingImageFileName" type="linear">
       <name>OutputTransform</name>
       <longflag>outputtransform</longflag>
       <description>Transform calculated that aligns the fixed and moving image. Maps positions in the fixed coordinate frame to the moving coordinate frame. Optional (specify an output transform or an output volume or both).</description>
