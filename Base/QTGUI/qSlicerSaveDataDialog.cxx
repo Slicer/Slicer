@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QLineEdit>
 #include <QList>
 #include <QMessageBox>
 #include <QUrl>
@@ -128,7 +129,7 @@ void qSlicerSaveDataDialogPrivate::populateItems()
     }
 
   // sorting the table while doing insertions is dangerous
-  bool sortingEnabled = this->FileWidget->isSortingEnabled();
+  // Moreover, we want to have the MRML scene to be the first item.
   this->FileWidget->setSortingEnabled(false);
 
   this->DirectoryButton->setDirectory(this->MRMLScene->GetRootDirectory());
@@ -143,8 +144,11 @@ void qSlicerSaveDataDialogPrivate::populateItems()
     Q_ASSERT(node);
     this->populateNode(node);
     }
-  // restore the sorting flag because the insertions are over
-  this->FileWidget->setSortingEnabled(sortingEnabled);
+
+  // Here we could have restore the sorting property but we want to keep the
+  // MRML scene the first item of the list so we don't do restore the sorting.
+  // this->FileWidget->setSortingEnabled(oldSortingEnabled);
+
   // let's try to resize the columns according to their new contents
   this->FileWidget->resizeColumnsToContents();
   // let's try to show the whole table on screen
@@ -317,6 +321,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeTypeItem(vtkMRMLStorab
 {
   QTableWidgetItem* nodeTypeItem = new QTableWidgetItem(node->GetNodeTagName());
   nodeTypeItem->setFlags( nodeTypeItem->flags() & ~Qt::ItemIsEditable);
+  // TODO: add icon based on the type
   return nodeTypeItem;
 }
 
@@ -382,7 +387,12 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   fileFormats->setCurrentIndex(currentFormat);
   if (currentFormat == -1)
     {
-    fileFormats->setEditText("Pick format for saving");
+    // In order to set a custom text (different than the combobox items),
+    // we need to make the combobox editable, but we don't want the user to
+    // edit the combobox line.
+    fileFormats->setEditable(true);
+    fileFormats->lineEdit()->setReadOnly(true);
+    fileFormats->setEditText("Select a format");
     }
 
   // TODO: use QSignalMapper
@@ -679,6 +689,10 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
       }
     }
   Q_ASSERT(row < rowCount);
+
+  // In case the combobox was editable (hack to display custom text), we now
+  // don't need this property anymore.
+  formatComboBox->setEditable(false);
 
   // Set the new selected extension to the file name
   QString extension = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
