@@ -1,0 +1,15 @@
+
+if(UNIX)
+
+  if(APPLE)
+    set(ENV{DYLD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+  else(APPLE)
+    set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+  endif(APPLE)
+
+  EXECUTE_PROCESS(
+    COMMAND make
+    WORKING_DIRECTORY "@@CMAKE_CURRENT_BINARY_DIR@/@proj@-build"
+    )
+
+endif()
