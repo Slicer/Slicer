@@ -55,11 +55,14 @@ public slots:
   void setShowOnlyNamedColors(bool);
 
 signals:
+  ///
+  /// Colors are selected when there is a new current item
+  /// (not fired on the activated signal).
   void colorSelected(int index);
   void colorSelected(const QColor& color);
 
 protected slots:
-  void onItemActivated(const QModelIndex&);
+  virtual void currentChanged(const QModelIndex&, const QModelIndex&);
 
 protected:
   QScopedPointer<qMRMLColorListViewPrivate> d_ptr;

@@ -63,8 +63,8 @@ void qMRMLColorListViewPrivate::init()
   //q->setFlow(QListView::TopToBottom);
   //q->setRootIndex(sortFilterModel->mapFromSource(colorModel->mrmlColorNodeIndex()));
   
-  QObject::connect(q, SIGNAL(activated(const QModelIndex &)),
-                   q, SLOT(onItemActivated(const QModelIndex &)));
+  //QObject::connect(q, SIGNAL(activated(const QModelIndex &)),
+  //                 q, SLOT(onItemActivated(const QModelIndex &)));
 }
 
 //------------------------------------------------------------------------------
@@ -136,11 +136,15 @@ bool qMRMLColorListView::showOnlyNamedColors()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLColorListView::onItemActivated(const QModelIndex& index)
+void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModelIndex &previous)
 {
-  QModelIndex colorIndex = this->sortFilterProxyModel()->mapToSource(index);
-  int colorEntry = this->colorModel()->colorFromIndex(colorIndex);
-  emit this->colorSelected(colorEntry);
-  QColor color = this->colorModel()->qcolorFromColor(colorEntry);
-  emit this->colorSelected(color);
+  if (current != previous)
+    {
+    QModelIndex colorIndex = this->sortFilterProxyModel()->mapToSource(current);
+    int colorEntry = this->colorModel()->colorFromIndex(colorIndex);
+    emit this->colorSelected(colorEntry);
+    QColor color = this->colorModel()->qcolorFromColor(colorEntry);
+    emit this->colorSelected(color);
+    }
+  this->QListView::currentChanged(current, previous);
 }
