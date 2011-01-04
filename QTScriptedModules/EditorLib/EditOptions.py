@@ -905,11 +905,10 @@ class ThresholdOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
+    # set min/max based on current range
     success, lo, hi = self.getBackgroundScalarRange()
     if success:
       self.threshold.minimum, self.threshold.maximum = lo, hi
-      self.threshold.minimumValue = lo + 0.25 * (hi-lo)
-      self.threshold.maximumValue = hi
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
 
@@ -971,6 +970,11 @@ class ThresholdOptions(EditOptions):
       pvalue = self.parameterNode.GetParameter(param)
       if pvalue == '':
         self.parameterNode.SetParameter(param, d[1])
+    # override default min/max settings based on current background
+    success, lo, hi = self.getBackgroundScalarRange()
+    if success:
+      self.parameterNode.SetParameter("Threshold,min", str(lo + 0.25 * (hi-lo)))
+      self.parameterNode.SetParameter("Threshold,max", str(hi))
     self.parameterNode.SetDisableModifiedEvent(disableState)
 
   def onThresholdValuesChanged(self,min,max):
