@@ -225,6 +225,7 @@ class LabelerOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
+    self.threshold.spinBoxAlignment = 0xff # put enties on top
     self.setRangeWidgetToBackgroundRange(self.threshold)
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
@@ -906,6 +907,7 @@ class ThresholdOptions(EditOptions):
     self.frame.layout().addWidget(self.thresholdLabel)
     self.widgets.append(self.thresholdLabel)
     self.threshold = ctk.ctkRangeWidget(self.frame)
+    self.threshold.spinBoxAlignment = 0xff # put enties on top
     # set min/max based on current range
     success, lo, hi = self.getBackgroundScalarRange()
     if success:
