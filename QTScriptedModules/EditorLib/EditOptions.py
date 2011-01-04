@@ -104,6 +104,7 @@ class EditOptions(object):
   def destroy(self):
     for w in self.widgets:
       self.parent.layout().removeWidget(w)
+      w.deleteLater()
       w.setParent(None)
     self.widgets = []
 

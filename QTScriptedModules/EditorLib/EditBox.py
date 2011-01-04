@@ -308,7 +308,7 @@ itcl::body EditBox::setButtonState {effect state} {
     # if an effect was added, build an options GUI
     #
     if self.currentOption:
-      self.currentOption.destroy()
+      self.currentOption.__del__()
       self.currentOption = None
     try:
       options = eval("%sOptions" % effect)
