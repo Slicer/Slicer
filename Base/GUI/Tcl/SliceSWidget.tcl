@@ -635,7 +635,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         }
         if { $modeString == "Place" } {
           # AND PLACE FIDUCIAL.
-          FiducialsSWidget::AddFiducial $r $a $s
+          # don't place a fiducial in slicer4 - let this mode by handled by the Annotations module
+          # FiducialsSWidget::AddFiducial $r $a $s
         } else {
           if { [$_interactor GetShiftKey] || [$_interactor GetControlKey] } {
             # shift-left-button is alias for middle mouse button to support 
