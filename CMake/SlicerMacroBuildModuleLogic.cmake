@@ -197,7 +197,7 @@ MACRO(SlicerMacroBuildModuleLogic)
       ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
       )
 
-  file(GLOB PYFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.py")
+  file(GLOB PYFILES "${CMAKE_CURRENT_SOURCE_DIR}/Python/*.py")
   if ( PYFILES )
     ctkMacroCompilePythonScript(
       TARGET_NAME ${lib_name}
