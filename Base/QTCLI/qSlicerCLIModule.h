@@ -47,6 +47,10 @@ public:
   virtual QString category()const;
   virtual QString contributor()const;
 
+  ///
+  /// Optionally set in the module XML description
+  virtual int index()const;
+
   /// 
   /// Return help/acknowledgement text
   virtual QString helpText()const;

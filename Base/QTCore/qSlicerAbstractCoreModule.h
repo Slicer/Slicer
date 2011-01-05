@@ -34,7 +34,6 @@ class qSlicerAbstractModuleRepresentation;
 class vtkMRMLAbstractLogic;
 class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
-class QAction;
 class qSlicerAbstractCoreModulePrivate;
 
 
@@ -63,6 +62,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   Q_PROPERTY(QString title READ title)
   Q_PROPERTY(QString category READ category)
   Q_PROPERTY(QString contributor READ contributor)
+  Q_PROPERTY(int index READ index)
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
 
 public:
@@ -98,6 +98,10 @@ public:
   virtual QString title()const = 0;
   virtual QString category()const;
   virtual QString contributor()const;
+
+  ///
+  /// Index used to sort modules in the modules menu
+  virtual int index()const;
 
   ///
   /// Return help/acknowledgement text

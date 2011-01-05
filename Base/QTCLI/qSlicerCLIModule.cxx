@@ -43,7 +43,8 @@ public:
   QString           Help;
   QString           Category;
   QString           Contributor;
-  QString           TempDirectory; 
+  int               Index;
+  QString           TempDirectory;
 
   ModuleDescription                 Desc;
   ModuleProcessInformation*         ProcessInformation;
@@ -56,6 +57,7 @@ public:
 qSlicerCLIModulePrivate::qSlicerCLIModulePrivate()
 {
   this->ProcessInformation = 0;
+  this->Index = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -102,6 +104,7 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 CTK_GET_CPP(qSlicerCLIModule, QString, title, Title);
 CTK_GET_CPP(qSlicerCLIModule, QString, category, Category);
 CTK_GET_CPP(qSlicerCLIModule, QString, contributor, Contributor);
+CTK_GET_CPP(qSlicerCLIModule, int, index, Index);
 CTK_GET_CPP(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
 CTK_GET_CPP(qSlicerCLIModule, QString, helpText, Help);
 CTK_SET_CPP(qSlicerCLIModule, const QString&, setTempDirectory, TempDirectory);
@@ -126,6 +129,12 @@ void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
   d->Title = QString::fromStdString(desc.GetTitle());
   d->Acknowledgement = QString::fromStdString(desc.GetAcknowledgements());
   d->Contributor = QString::fromStdString(desc.GetContributor());
+  bool ok = false;
+  d->Index = QString::fromStdString(desc.GetIndex()).toInt(&ok);
+  if (!ok)
+    {
+    d->Index = -1;
+    }
   d->Category = QString::fromStdString(desc.GetCategory());
 
   d->ProcessInformation = desc.GetProcessInformation();

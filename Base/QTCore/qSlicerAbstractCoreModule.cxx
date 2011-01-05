@@ -123,6 +123,12 @@ QString qSlicerAbstractCoreModule::contributor()const
 }
 
 //-----------------------------------------------------------------------------
+int qSlicerAbstractCoreModule::index()const
+{
+  return -1;
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerAbstractCoreModule::helpText()const
 {
   return QString();

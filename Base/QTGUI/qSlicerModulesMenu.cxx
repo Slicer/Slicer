@@ -42,7 +42,7 @@ public:
   void init();
   void addDefaultCategories();
 
-  void addModuleAction(QMenu* menu, QAction* moduleAction);
+  void addModuleAction(QMenu* menu, QAction* moduleAction, bool useIndex = true);
   QMenu* menu(QMenu* parentMenu, QStringList subCategories);
 
   QAction* action(const QVariant& actionData, const QMenu* parentMenu)const;
@@ -134,7 +134,7 @@ QAction* qSlicerModulesMenuPrivate::action(const QString& text, const QMenu* par
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleAction)
+void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleAction, bool useIndex)
 {
   Q_Q(qSlicerModulesMenu);
   QList<QAction*> actions = menu->actions();
@@ -145,19 +145,34 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
     actions.removeFirst(); // remove AllModules
     actions.removeFirst(); // remove first separator
     }
-  // The actions are before submenus and inserted alphabetically
+  // The actions are before submenus and inserted based on their index ot alphabetically
+  bool ok = false;
+  int index = moduleAction->property("index").toInt(&ok);
+  if (!ok || index == -1 || !useIndex)
+    {
+    index = 65535; // big enough
+    }
   foreach(QAction* action, actions)
     {
     Q_ASSERT(action);
+    int actionIndex = action->property("index").toInt(&ok);
+    if (!ok || actionIndex == -1 || !useIndex)
+      {
+      actionIndex = 65535;
+      }
     if (!moduleAction->menu() && (action->menu() ||
                                   action->isSeparator() ||
-                                  action->text() > moduleAction->text()))
+                                  actionIndex > index ||
+                                  (actionIndex == index &&
+                                   action->text() > moduleAction->text())))
       {
       menu->insertAction(action, moduleAction);
       return;
       }
     else if (moduleAction->menu() && action->menu() &&
-             action->text() > moduleAction->text())
+             (actionIndex > index ||
+              (actionIndex == index &&
+               action->text() > moduleAction->text())))
       {
       menu->insertAction(action, moduleAction);
       return;
@@ -270,7 +285,7 @@ void qSlicerModulesMenu::addModule(const QString& moduleName)
   QMenu* menu = d->menu(this, module->category().split('.'));
   d->addModuleAction(menu, moduleAction);
   // Add in "All Modules" as well
-  d->addModuleAction(d->AllModulesMenu, moduleAction);
+  d->addModuleAction(d->AllModulesMenu, moduleAction, false);
 }
 
 //---------------------------------------------------------------------------
