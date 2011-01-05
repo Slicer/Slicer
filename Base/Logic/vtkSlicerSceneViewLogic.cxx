@@ -251,17 +251,22 @@ void vtkSlicerSceneViewLogic::RestoreSceneView(const char* id)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewLogic::MoveSceneViewUp(const char* id)
+const char* vtkSlicerSceneViewLogic::MoveSceneViewUp(const char* id)
 {
+  // reset stringHolder
+  this->m_StringHolder = "";
+
   if (!id)
     {
-    return;
+    return this->m_StringHolder.c_str();
     }
+
+  this->m_StringHolder = id;
 
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("No scene set.")
-    return;
+    return this->m_StringHolder.c_str();
     }
 
   vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
@@ -269,7 +274,7 @@ void vtkSlicerSceneViewLogic::MoveSceneViewUp(const char* id)
   if (!viewNode)
     {
     vtkErrorMacro("GetSceneViewScreenshot: Could not get sceneView node!")
-    return;
+    return this->m_StringHolder.c_str();
     }
 
   int numberOfSceneViews = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
@@ -301,7 +306,7 @@ void vtkSlicerSceneViewLogic::MoveSceneViewUp(const char* id)
   if (!bufferNode)
     {
     // there is no node before the selected one, so we jump out
-    return;
+    return this->m_StringHolder.c_str();
     }
 
   // now we copy the current node
@@ -314,20 +319,30 @@ void vtkSlicerSceneViewLogic::MoveSceneViewUp(const char* id)
   // ..and insert the copy before our bufferNode
   this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyNode);
 
+  this->m_StringHolder = copyNode->GetID();
+
+  return this->m_StringHolder.c_str();
+
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewLogic::MoveSceneViewDown(const char* id)
+const char* vtkSlicerSceneViewLogic::MoveSceneViewDown(const char* id)
 {
+  // reset stringHolder
+  this->m_StringHolder = "";
+
   if (!id)
     {
-    return;
+    return this->m_StringHolder.c_str();
     }
+
+  this->m_StringHolder = id;
+
 
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("No scene set.")
-    return;
+    return this->m_StringHolder.c_str();
     }
 
   vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
@@ -335,7 +350,7 @@ void vtkSlicerSceneViewLogic::MoveSceneViewDown(const char* id)
   if (!viewNode)
     {
     vtkErrorMacro("GetSceneViewScreenshot: Could not get sceneView node!")
-    return;
+    return this->m_StringHolder.c_str();
     }
 
   int numberOfSceneViews = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
@@ -368,7 +383,7 @@ void vtkSlicerSceneViewLogic::MoveSceneViewDown(const char* id)
   if (!bufferNode)
     {
     // there is no node after the selected one, so we jump out
-    return;
+    return this->m_StringHolder.c_str();
     }
 
   // now we copy the current node
@@ -380,5 +395,9 @@ void vtkSlicerSceneViewLogic::MoveSceneViewDown(const char* id)
 
   // ..and insert the copy before our current node
   this->GetMRMLScene()->InsertBeforeNode(vNode,copyNode);
+
+  this->m_StringHolder = vNode->GetID();
+
+  return this->m_StringHolder.c_str();
 
 }

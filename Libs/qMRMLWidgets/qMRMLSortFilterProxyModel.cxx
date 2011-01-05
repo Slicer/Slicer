@@ -121,10 +121,17 @@ QModelIndex qMRMLSortFilterProxyModel::mrmlSceneIndex()const
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNode(const QModelIndex& proxyIndex)const
+vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNodeFromIndex(const QModelIndex& proxyIndex)const
 {
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   return sceneModel->mrmlNodeFromIndex(this->mapToSource(proxyIndex));
+}
+
+//-----------------------------------------------------------------------------
+QModelIndex qMRMLSortFilterProxyModel::indexFromMRMLNode(vtkMRMLNode* node, int column)const
+{
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+  return this->mapFromSource(sceneModel->indexFromNode(node, column));
 }
 
 //-----------------------------------------------------------------------------

@@ -58,7 +58,10 @@ public:
   QModelIndex mrmlSceneIndex()const;
 
   /// Retrieve the associated vtkMRMLNode
-  vtkMRMLNode* mrmlNode(const QModelIndex& index)const;
+  vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
+
+  /// Retrieve an index for a given vtkMRMLNode
+  QModelIndex indexFromMRMLNode(vtkMRMLNode* node, int column = 0)const;
 
   ///
   /// Set/Get node types to display in the list

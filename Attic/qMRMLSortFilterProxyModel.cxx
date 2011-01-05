@@ -93,7 +93,7 @@ vtkMRMLScene* qMRMLSortFilterProxyModel::mrmlScene()const
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNode(const QModelIndex& proxyIndex)const
+vtkMRMLNode* qMRMLSortFilterProxyModel::mrmlNodeFromIndex(const QModelIndex& proxyIndex)const
 {
   QSharedPointer<qMRMLAbstractItemHelper> item =
     QSharedPointer<qMRMLAbstractItemHelper>(

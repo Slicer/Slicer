@@ -150,9 +150,10 @@ void qSlicerSceneViewsModuleWidget::moveDownSelected()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  d->logic()->MoveSceneViewDown(d->hierarchyTreeWidget->firstSelectedNode());
+  const char* id = d->logic()->MoveSceneViewDown(d->hierarchyTreeWidget->firstSelectedNode());
 
   d->hierarchyTreeWidget->clearSelection();
+  d->hierarchyTreeWidget->setSelectedNode(id);
 
 }
 
@@ -161,9 +162,10 @@ void qSlicerSceneViewsModuleWidget::moveUpSelected()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  d->logic()->MoveSceneViewUp(d->hierarchyTreeWidget->firstSelectedNode());
+  const char* id = d->logic()->MoveSceneViewUp(d->hierarchyTreeWidget->firstSelectedNode());
 
   d->hierarchyTreeWidget->clearSelection();
+  d->hierarchyTreeWidget->setSelectedNode(id);
 
 }
 

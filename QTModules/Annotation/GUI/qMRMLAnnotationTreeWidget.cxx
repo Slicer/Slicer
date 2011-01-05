@@ -133,7 +133,7 @@ void qMRMLAnnotationTreeWidget::onActivated(const QModelIndex& index)
   //Q_D(qMRMLAnnotationTreeWidget);
   //Q_ASSERT(d->SortFilterModel);
   this->qMRMLTreeWidget::onActivated(index);
-  //emit currentNodeChanged(d->SortFilterModel->mrmlNode(index));
+  //emit currentNodeChanged(d->SortFilterModel->mrmlNodeFromIndex(index));
 }
 
 
@@ -153,26 +153,26 @@ void qMRMLAnnotationTreeWidget::onClicked(const QModelIndex& index)
   // this means, new annotations or new user-created hierarchies will be created
   // as childs of this one
 
-  if(d->SortFilterModel->mrmlNode(index)->IsA("vtkMRMLAnnotationHierarchyNode"))
+  if(d->SortFilterModel->mrmlNodeFromIndex(index)->IsA("vtkMRMLAnnotationHierarchyNode"))
     {
-    this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNode(index)));
+    this->m_Logic->SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(index)));
     }
 
   // check if user clicked on icon, this can happen even after we marked a hierarchy as active
   if (index.column() == qMRMLSceneAnnotationModel::VisibilityColumn)
     {
     // user wants to toggle the visibility of the annotation
-    this->onVisibilityColumnClicked(d->SortFilterModel->mrmlNode(index));
+    this->onVisibilityColumnClicked(d->SortFilterModel->mrmlNodeFromIndex(index));
     }
   else if (index.column() == qMRMLSceneAnnotationModel::LockColumn)
     {
     // user wants to toggle the un-/lock of the annotation
-    this->onLockColumnClicked(d->SortFilterModel->mrmlNode(index));
+    this->onLockColumnClicked(d->SortFilterModel->mrmlNodeFromIndex(index));
     }
   else if (index.column() == qMRMLSceneAnnotationModel::EditColumn)
     {
     // user wants to edit the properties of this annotation
-    this->m_Widget->propertyEditButtonClicked(QString(d->SortFilterModel->mrmlNode(index)->GetID()));
+    this->m_Widget->propertyEditButtonClicked(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
 
 }
@@ -193,12 +193,12 @@ const char* qMRMLAnnotationTreeWidget::firstSelectedNode()
   QModelIndex index = selected.first();
 
   // check if it is a valid node
-  if (!d->SortFilterModel->mrmlNode(index))
+  if (!d->SortFilterModel->mrmlNodeFromIndex(index))
     {
     return 0;
     }
 
-  return d->SortFilterModel->mrmlNode(index)->GetID();
+  return d->SortFilterModel->mrmlNodeFromIndex(index)->GetID();
 }
 
 //------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ void qMRMLAnnotationTreeWidget::toggleLockForSelected()
     if (selected.at(i).column() == qMRMLSceneAnnotationModel::LockColumn)
       {
 
-      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
+      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.at(i)));
 
       if (annotationNode)
         {
@@ -253,7 +253,7 @@ void qMRMLAnnotationTreeWidget::toggleVisibilityForSelected()
     if (selected.at(i).column() == qMRMLSceneAnnotationModel::VisibilityColumn)
       {
 
-      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
+      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.at(i)));
 
       if (annotationNode)
         {
@@ -286,7 +286,7 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
   if (selected.count()==6)
     {
     // only one item was selected, is this a hierarchy?
-    vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.first()));
+    vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.first()));
 
     if (hierarchyNode)
       {
@@ -340,7 +340,7 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
     if (selected.at(i).column() == qMRMLSceneAnnotationModel::VisibilityColumn)
       {
 
-      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
+      vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.at(i)));
 
       if (annotationNode)
         {
@@ -395,7 +395,7 @@ void qMRMLAnnotationTreeWidget::selectedAsCollection(vtkCollection* collection)
       if (selected.at(i).column() == qMRMLSceneAnnotationModel::VisibilityColumn)
         {
 
-        vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(d->SortFilterModel->mrmlNode(selected.at(i)));
+        vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.at(i)));
 
         //if (node->IsA("vtkMRMLAnnotationNode"))
          // {

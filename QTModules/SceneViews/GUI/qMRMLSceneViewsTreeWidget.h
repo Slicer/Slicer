@@ -55,6 +55,8 @@ public:
 
   void hideScene();
 
+  void setSelectedNode(const char* id);
+
   const char* firstSelectedNode();
 
   // Register the widget

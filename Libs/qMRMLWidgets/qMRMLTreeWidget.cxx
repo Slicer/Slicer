@@ -211,7 +211,7 @@ void qMRMLTreeWidget::onActivated(const QModelIndex& index)
 {
   Q_D(qMRMLTreeWidget);
   Q_ASSERT(d->SortFilterModel);
-  emit currentNodeChanged(d->SortFilterModel->mrmlNode(index));
+  emit currentNodeChanged(d->SortFilterModel->mrmlNodeFromIndex(index));
 }
 
 //------------------------------------------------------------------------------

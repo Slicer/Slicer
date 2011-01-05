@@ -67,10 +67,10 @@ public:
   void RestoreSceneView(const char* id);
 
   /// Move sceneView up
-  void MoveSceneViewUp(const char* id);
+  const char* MoveSceneViewUp(const char* id);
 
   /// Move sceneView up
-  void MoveSceneViewDown(const char* id);
+  const char* MoveSceneViewDown(const char* id);
 
 protected:
 
@@ -79,6 +79,8 @@ protected:
   virtual ~vtkSlicerSceneViewLogic();
 
 private:
+
+  vtksys_stl::string m_StringHolder;
 
 };
 

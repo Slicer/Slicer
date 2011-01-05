@@ -155,12 +155,12 @@ void qMRMLSceneViewsTreeWidget::onClicked(const QModelIndex& index)
   if (index.column() == qMRMLSceneViewsModel::RestoreColumn)
     {
     // user wants to toggle the un-/lock of the annotation
-    this->m_Widget->restoreButtonClicked(QString(d->SortFilterModel->mrmlNode(index)->GetID()));
+    this->m_Widget->restoreButtonClicked(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
   else if (index.column() == qMRMLSceneViewsModel::ThumbnailColumn)
     {
     // user wants to edit the properties of this annotation
-    this->m_Widget->propertyEditButtonClicked(QString(d->SortFilterModel->mrmlNode(index)->GetID()));
+    this->m_Widget->propertyEditButtonClicked(QString(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID()));
     }
 
 }
@@ -181,12 +181,12 @@ const char* qMRMLSceneViewsTreeWidget::firstSelectedNode()
   QModelIndex index = selected.first();
 
   // check if it is a valid node
-  if (!d->SortFilterModel->mrmlNode(index))
+  if (!d->SortFilterModel->mrmlNodeFromIndex(index))
     {
     return 0;
     }
 
-  return d->SortFilterModel->mrmlNode(index)->GetID();
+  return d->SortFilterModel->mrmlNodeFromIndex(index)->GetID();
 }
 
 //------------------------------------------------------------------------------
@@ -212,7 +212,7 @@ void qMRMLSceneViewsTreeWidget::deleteSelected()
   if (ret == QMessageBox::Yes)
     {
     // delete
-    this->mrmlScene()->RemoveNode(d->SortFilterModel->mrmlNode(selected.at(0)));
+    this->mrmlScene()->RemoveNode(d->SortFilterModel->mrmlNodeFromIndex(selected.at(0)));
 
     }
 
@@ -271,6 +271,21 @@ void qMRMLSceneViewsTreeWidget::mouseMoveEvent(QMouseEvent* e)
 // Layout and behavior customization
 //
 //------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void qMRMLSceneViewsTreeWidget::setSelectedNode(const char* id)
+{
+  Q_D(qMRMLSceneViewsTreeWidget);
+
+  vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
+
+  if (node)
+    {
+
+    this->setCurrentIndex(d->SortFilterModel->indexFromMRMLNode(node));
+
+    }
+}
 
 //------------------------------------------------------------------------------
 void qMRMLSceneViewsTreeWidget::hideScene()

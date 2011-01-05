@@ -52,7 +52,7 @@ public:
   vtkMRMLScene* mrmlScene()const;
 
   /// Retrive the associated vtkMRMLNode
-  vtkMRMLNode* mrmlNode(const QModelIndex& index)const;
+  vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
 
   /// 
   /// Set/Get node types to display in the list
