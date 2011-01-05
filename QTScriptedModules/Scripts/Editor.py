@@ -26,8 +26,10 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
     if tcl('info exists ::Editor(singleton)') != '':
-      dialog = qt.QErrorMessage()
-      dialog.showMessage("Error: editor singleton already created - Editor initialized twice.")
+      # TODO: cannot call dialog.exec from pythonqt... This is just a warning anyway
+      #dialog = qt.QErrorMessage()
+      #dialog.showMessage("Error: editor singleton already created - Editor initialized twice.")
+      pass
     tcl('set ::Editor(singleton) this')
     tcl('set ::Editor(checkPointsEnabled) 1')
     
