@@ -1,3 +1,22 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) 2010 Kitware Inc.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Julien Finet, Kitware Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
 
 // Qt includes
 #include <QCompleter>
@@ -19,6 +38,7 @@
 
 // SlicerQt includes
 #include "qSlicerModuleSelectorToolBar.h"
+#include "qSlicerModulesMenu.h"
 
 class qSlicerModuleSelectorToolBarPrivate
 {
@@ -28,20 +48,12 @@ protected:
 public:
   qSlicerModuleSelectorToolBarPrivate(qSlicerModuleSelectorToolBar& object);
   void init();
-  void addDefaultCategories();
-
-  void addModuleAction(QMenu* menu, QAction* moduleAction);
-  QMenu* menu(QMenu* parentMenu, QStringList subCategories);
-
-  QAction* action(const QVariant& actionData, QMenu* parentMenu)const;
-  QAction* action(const QString& text, QMenu* parentMenu)const;
-  QAction* lastSelectedAction()const;
-  QMenu*   actionMenu(QAction* action, QMenu* parentMenu)const;
 
   void insertActionOnTop(QAction* action, QMenu* menu);
+  QAction* lastSelectedAction()const;
 
-  QMenu*       AllModulesMenu;
-  QMenu*       ModulesMenu;
+  qSlicerModulesMenu* ModulesMenu;
+
   QPushButton* ModulesButton;
   QMenu*       HistoryMenu;
   QToolButton* HistoryButton;
@@ -58,7 +70,6 @@ public:
 qSlicerModuleSelectorToolBarPrivate::qSlicerModuleSelectorToolBarPrivate(qSlicerModuleSelectorToolBar& object)
   : q_ptr(&object)
 {
-  this->AllModulesMenu = 0;
   this->ModulesMenu = 0;
   this->ModulesButton = 0;
   this->HistoryMenu = 0;
@@ -79,11 +90,15 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QIcon nextIcon = q->style()->standardIcon(QStyle::SP_ArrowRight);
   QIcon historyIcon(":Icons/ModuleHistory.png");
 
+  // Modules menu
+  this->ModulesMenu = new qSlicerModulesMenu(QObject::tr("Modules"),q);
+  QObject::connect(this->ModulesMenu, SIGNAL(moduleSelected(const QString&)),
+                   q, SLOT(onModuleSelected(const QString&)));
+
   // Modules Label
   q->addWidget(new QLabel(QObject::tr("Modules:"), q));
 
   // Modules pushbutton
-  this->ModulesMenu = new QMenu(QObject::tr("Modules"),q);
   this->ModulesButton = new QPushButton(q);
   this->ModulesButton->setToolTip(QObject::tr("Select a module from the module list"));
   this->ModulesButton->setMenu(this->ModulesMenu);
@@ -142,169 +157,8 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QObject::connect(this->ModuleSearchLineEdit, SIGNAL(textChanged(const QString&)),
                    q, SLOT(selectModuleByTitle(const QString&)));
   q->addWidget(this->ModuleSearchLineEdit);
-
-  this->addDefaultCategories();
 }
 
-//---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBarPrivate::addDefaultCategories()
-{
-  this->AllModulesMenu = this->ModulesMenu->addMenu(QObject::tr("All Modules"));
-  this->ModulesMenu->addSeparator();
-  // between the 2 separators goes the top level modules (with no category)
-  this->ModulesMenu->addSeparator();
-  this->ModulesMenu->addMenu("Wizards");
-  this->ModulesMenu->addMenu("Informatics");
-  this->ModulesMenu->addMenu("Registration");
-  this->ModulesMenu->addMenu("Segmentation");
-  this->ModulesMenu->addMenu("Quantification");
-  this->ModulesMenu->addMenu("Diffusion");
-  //this->ModulesMenu->addMenu("Tractography");
-  this->ModulesMenu->addMenu("IGT");
-  //this->ModulesMenu->addMenu("Time Series");
-  this->ModulesMenu->addMenu("Filtering");
-  this->ModulesMenu->addMenu("Surface Models");
-  this->ModulesMenu->addMenu("Converters");
-  this->ModulesMenu->addMenu("Endoscopy");
-  this->ModulesMenu->addMenu("Developer Tools");
-  this->ModulesMenu->addSeparator();
-  // after the separator goes custom modules
-}
-
-//---------------------------------------------------------------------------
-QAction* qSlicerModuleSelectorToolBarPrivate::action(const QVariant& actionData, QMenu* parentMenu)const
-{
-  foreach(QAction* action, parentMenu->actions())
-    {
-    if (action->data() == actionData)
-      {
-      return action;
-      }
-    if (action->menu())
-      {
-      QAction* subAction = this->action(actionData, action->menu());
-      if (subAction)
-        {
-        return subAction;
-        }
-      }
-    }
-  return 0;
-}
-
-//---------------------------------------------------------------------------
-QAction* qSlicerModuleSelectorToolBarPrivate::action(const QString& text, QMenu* parentMenu)const
-{
-  foreach(QAction* action, parentMenu->actions())
-    {
-    if (action->text() == text)
-      {
-      return action;
-      }
-    if (action->menu())
-      {
-      QAction* subAction = this->action(text, action->menu());
-      if (subAction)
-        {
-        return subAction;
-        }
-      }
-    }
-  return 0;
-}
-
-//---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBarPrivate::addModuleAction(QMenu* menu, QAction* moduleAction)
-{
-  QList<QAction*> actions = menu->actions();
-  if (menu == this->ModulesMenu)
-    {
-    // special ordering at the top level, the actions need to be added
-    // between the submenu AllModules and the other submenus
-    actions.removeFirst(); // remove AllModules
-    actions.removeFirst(); // remove first separator
-    }
-  // The actions are before submenus and inserted alphabetically
-  foreach(QAction* action, actions)
-    {
-    Q_ASSERT(action);
-    if (!moduleAction->menu() && (action->menu() ||
-                                  action->isSeparator() ||
-                                  action->text() > moduleAction->text()))
-      {
-      menu->insertAction(action, moduleAction);
-      return;
-      }
-    else if (moduleAction->menu() && action->menu() &&
-             action->text() > moduleAction->text())
-      {
-      menu->insertAction(action, moduleAction);
-      return;
-      }
-    }
-  menu->addAction(moduleAction);
-}
-
-//---------------------------------------------------------------------------
-QMenu* qSlicerModuleSelectorToolBarPrivate::menu(QMenu* menu, QStringList subCategories)
-{
-  Q_Q(qSlicerModuleSelectorToolBar);
-  if (subCategories.isEmpty())
-    {
-    return menu;
-    }
-  QString category = subCategories.takeFirst();
-  if (category.isEmpty())
-    {
-    return menu;
-    }
-  // The action are inserted alphabetically
-  foreach(QAction* action, menu->actions())
-    {
-    if (action->text() == category)
-      {
-      return this->menu(action->menu(), subCategories);
-      }
-    }
-  // if we are here that means the category has not been found, create it.
-  QMenu* subMenu = new QMenu(category, q);
-  this->addModuleAction(menu, subMenu->menuAction());
-  return this->menu(subMenu, subCategories);
-}
-
-//---------------------------------------------------------------------------
-QAction* qSlicerModuleSelectorToolBarPrivate::lastSelectedAction()const
-{
-  QList<QAction*> actions = this->HistoryMenu->actions();
-  return actions.size() ? actions[0] : 0;
-}
-
-//---------------------------------------------------------------------------
-QMenu* qSlicerModuleSelectorToolBarPrivate::actionMenu(QAction* action, QMenu* parentMenu)const
-{
-  QList<QAction*> actions = parentMenu->actions();
-  int index = actions.indexOf(action);
-  if (index >= 0)
-    {
-    return parentMenu;
-    }
-  if (parentMenu == this->ModulesMenu)
-    {
-    actions.removeFirst();//remove All Modules menu
-    }
-  foreach(QAction* subAction, actions)
-    {
-    if (subAction->menu())
-      {
-      QMenu* menu = this->actionMenu(action, subAction->menu());
-      if (menu)
-        {
-        return menu;
-        }
-      }
-    }
-  return 0;
-}
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBarPrivate::insertActionOnTop(QAction* action, QMenu* menu)
 {
@@ -319,9 +173,16 @@ void qSlicerModuleSelectorToolBarPrivate::insertActionOnTop(QAction* action, QMe
 }
 
 //---------------------------------------------------------------------------
+QAction* qSlicerModuleSelectorToolBarPrivate::lastSelectedAction()const
+{
+  QList<QAction*> actions = this->HistoryMenu->actions();
+  return actions.size() ? actions[0] : 0;
+}
+
+//---------------------------------------------------------------------------
 qSlicerModuleSelectorToolBar::qSlicerModuleSelectorToolBar(const QString& title,
                                                            QWidget* parentWidget)
-  :Superclass(title, parentWidget)
+  : Superclass(title, parentWidget)
   , d_ptr(new qSlicerModuleSelectorToolBarPrivate(*this))
 {
   Q_D(qSlicerModuleSelectorToolBar);
@@ -330,7 +191,7 @@ qSlicerModuleSelectorToolBar::qSlicerModuleSelectorToolBar(const QString& title,
 
 //---------------------------------------------------------------------------
 qSlicerModuleSelectorToolBar::qSlicerModuleSelectorToolBar(QWidget* parentWidget)
- :Superclass(parentWidget)
+  : Superclass(parentWidget)
   , d_ptr(new qSlicerModuleSelectorToolBarPrivate(*this))
 {
   Q_D(qSlicerModuleSelectorToolBar);
@@ -352,15 +213,7 @@ void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
     {
     return;
     }
-  QAction* moduleAction = module->action();
-  Q_ASSERT(moduleAction);
-  QObject::connect(moduleAction, SIGNAL(triggered(bool)),
-                   this, SLOT(onActionTriggered()));
-
-  QMenu* menu = d->menu(d->ModulesMenu, module->category().split('.'));
-  d->addModuleAction(menu, moduleAction);
-  // Add in "All Modules" as well
-  d->addModuleAction(d->AllModulesMenu, moduleAction);
+  d->ModulesMenu->addModule(moduleName);
 
   // here we assume the completion model is not automatically sorted
   int actionCount = d->ModuleSearchCompleter->model()->rowCount();
@@ -373,12 +226,10 @@ void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
 void qSlicerModuleSelectorToolBar::removeModule(const QString& moduleName)
 {
   Q_D(qSlicerModuleSelectorToolBar);
+  QAction* moduleAction = d->ModulesMenu->moduleAction(moduleName);
+  d->ModulesMenu->removeModule(moduleName);
   // removing a module consists in retrieving the unique action of the module
   // and removing it from all the possible menus
-  QAction* moduleAction = d->action(QVariant(moduleName), d->ModulesMenu);
-  QMenu* menu = d->actionMenu(moduleAction, d->ModulesMenu);
-  menu->removeAction(moduleAction);
-  d->AllModulesMenu->removeAction(moduleAction);
   d->HistoryMenu->removeAction(moduleAction);
   d->PreviousHistoryMenu->removeAction(moduleAction);
   d->NextHistoryMenu->removeAction(moduleAction);
@@ -389,35 +240,21 @@ void qSlicerModuleSelectorToolBar::removeModule(const QString& moduleName)
 void qSlicerModuleSelectorToolBar::selectModule(const QString& moduleName)
 {
   Q_D(qSlicerModuleSelectorToolBar);
-  // It's faster to look for the action in the AllModulesMenu (no need to
-  // do a recursive search
-  QAction* moduleAction = d->action(QVariant(moduleName), d->AllModulesMenu);
-  if (moduleAction)
-    {
-    // triggering the action will eventually call actionSelected();
-    moduleAction->trigger();
-    }
+  d->ModulesMenu->selectModule(moduleName);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBar::selectModuleByTitle(const QString& title)
 {
   Q_D(qSlicerModuleSelectorToolBar);
-  // it's faster to look for the action in the AllModulesMenu (no need to
-  // do a recursive search
-  QAction* moduleAction = d->action(title, d->AllModulesMenu);
-  if (moduleAction)
-    {
-    // triggering the action will eventually call actionSelected();
-    moduleAction->trigger();
-    }
+  d->ModulesMenu->selectModuleByTitle(title);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::onActionTriggered()
+void qSlicerModuleSelectorToolBar::onModuleSelected(const QString& name)
 {
-  // we know for sure that the sender is the triggered QAction
-  this->actionSelected(qobject_cast<QAction*>(this->sender()));
+  Q_D(qSlicerModuleSelectorToolBar);
+  this->actionSelected(d->ModulesMenu->moduleAction(name));
 }
 
 //---------------------------------------------------------------------------
