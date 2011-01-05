@@ -19,10 +19,11 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QSplashScreen>
-#include <QTimer>
 #include <QDebug>
 #include <QMessageBox>
+#include <QSettings>
+#include <QSplashScreen>
+#include <QTimer>
 
 // CTK includes
 #include <ctkLogger.h>
@@ -155,7 +156,10 @@ int main(int argc, char* argv[])
     }
 
   // TODO: load home module (check in Settings)
-  window.moduleSelector()->selectModuleByTitle("SlicerWelcome");
+  //QSettings settings;
+  //QString defaultModule = settings.value("Modules/HomeModule").toString();
+  //window.moduleSelector()->selectModule(defaultModule);
+  window.setHomeModuleCurrent();
 
   // Show main window
   window.show();

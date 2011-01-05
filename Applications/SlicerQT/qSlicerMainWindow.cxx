@@ -77,7 +77,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
 {
   this->Core = 0;
   this->ModuleSelectorToolBar = 0;
-  this->ModuleToolBarList << "Data"  << "Volumes" << "Models" << "Transforms"
+  this->ModuleToolBarList << "Home" << "Data"  << "Volumes" << "Models" << "Transforms"
                           << "Fiducials" << "Editor" << "Measurements"
                           << "Colors";
   //this->ModuleToolBarMapper = 0;
@@ -87,7 +87,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
 void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 {
   Q_Q(qSlicerMainWindow);
-  
+
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
   // Update the list of modules when they are loaded
@@ -110,6 +110,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ModuleSelectorToolBar = new qSlicerModuleSelectorToolBar("Module Selector",q);
   this->ModuleSelectorToolBar->setObjectName(QString::fromUtf8("ModuleSelectorToolBar"));
   this->ModuleSelectorToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
+  this->ModuleSelectorToolBar->setModuleManager(moduleManager);
   q->insertToolBar(this->ModuleToolBar, this->ModuleSelectorToolBar);
 
   // Connect the selector with the module panel
@@ -378,6 +379,11 @@ void qSlicerMainWindow::setupMenuActions()
   //connect ToolBars actions
   connect(d->actionWindowToolbarsModuleSelector, SIGNAL(triggered(bool)),
           d->ModuleSelectorToolBar, SLOT(setVisible(bool)));
+
+  // Module ToolBar actions
+  connect(d->actionModuleHome, SIGNAL(triggered()),
+          this, SLOT(setHomeModuleCurrent()));
+
 }
 #undef qSlicerMainWindowCore_connect
 
@@ -404,9 +410,6 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
     {
     return;
     }
-
-  // Module Selector ToolBar
-  d->ModuleSelectorToolBar->addModule(module->name());
 
   // Module ToolBar
   QAction * action = module->action();
@@ -450,7 +453,6 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* mod
     if (action->data().toString() == module->name())
       {
       d->ModuleToolBar->removeAction(action);
-      d->ModuleSelectorToolBar->removeModule(module->name());
       //d->ModuleToolBarMapper->removeMappings(action);
       return;
       }
@@ -469,4 +471,13 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
     }
   d->actionEditUndo->setEnabled(scene && scene->GetNumberOfUndoLevels());
   d->actionEditRedo->setEnabled(scene && scene->GetNumberOfRedoLevels());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::setHomeModuleCurrent()
+{
+  Q_D(qSlicerMainWindow);
+  QSettings settings;
+  QString homeModule = settings.value("Modules/HomeModule").toString();
+  d->ModuleSelectorToolBar->selectModule(homeModule);
 }

@@ -49,14 +49,19 @@ public:
   QAction* action(const QString& text, const QMenu* parentMenu)const;
   QMenu*   actionMenu(QAction* action, QMenu* parentMenu)const;
 
-  QMenu*       AllModulesMenu;
+  qSlicerModuleManager* ModuleManager;
+  QMenu*                AllModulesMenu;
+  QString               CurrentModule;
+  bool                  DuplicateActions;
 };
 
 //---------------------------------------------------------------------------
 qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
   : q_ptr(&object)
 {
+  this->ModuleManager = 0;
   this->AllModulesMenu = 0;
+  this->DuplicateActions = false;
 }
 
 //---------------------------------------------------------------------------
@@ -261,6 +266,67 @@ qSlicerModulesMenu::~qSlicerModulesMenu()
 }
 
 //---------------------------------------------------------------------------
+void qSlicerModulesMenu::setDuplicateActions(bool duplicate)
+{
+  Q_D(qSlicerModulesMenu);
+  d->DuplicateActions = duplicate;
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModulesMenu::duplicateActions()const
+{
+  Q_D(const qSlicerModulesMenu);
+  return d->DuplicateActions;
+}
+
+//---------------------------------------------------------------------------
+QString qSlicerModulesMenu::currentModule()const
+{
+  Q_D(const qSlicerModulesMenu);
+  return d->CurrentModule;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulesMenu::setModuleManager(qSlicerModuleManager* moduleManager)
+{
+  Q_D(qSlicerModulesMenu);
+  if (d->ModuleManager)
+    {
+    QObject::disconnect(d->ModuleManager,
+                        SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
+                        this, SLOT(addModule(qSlicerAbstractCoreModule*)));
+    QObject::disconnect(d->ModuleManager,
+                        SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
+                        this, SLOT(removeModule(qSlicerAbstractCoreModule*)));
+    }
+
+  this->clear();
+  d->addDefaultCategories();
+
+  d->ModuleManager = moduleManager;
+
+  if (!d->ModuleManager)
+    {
+    return;
+    }
+
+  QObject::connect(d->ModuleManager,
+                   SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
+                   this, SLOT(addModule(qSlicerAbstractCoreModule*)));
+  QObject::connect(d->ModuleManager,
+                   SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
+                   this, SLOT(removeModule(qSlicerAbstractCoreModule*)));
+  this->addModules(d->ModuleManager->loadedModules());
+}
+
+//---------------------------------------------------------------------------
+qSlicerModuleManager* qSlicerModulesMenu::moduleManager()const
+{
+  Q_D(const qSlicerModulesMenu);
+  return d->ModuleManager;
+}
+
+//---------------------------------------------------------------------------
 QAction* qSlicerModulesMenu::moduleAction(const QString& moduleName)const
 {
   Q_D(const qSlicerModulesMenu);
@@ -271,14 +337,29 @@ QAction* qSlicerModulesMenu::moduleAction(const QString& moduleName)const
 void qSlicerModulesMenu::addModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesMenu);
-  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(
-    qSlicerApplication::application()->moduleManager()->module(moduleName));
+  this->addModule(d->ModuleManager ? d->ModuleManager->module(moduleName) : 0);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
+{
+  Q_D(qSlicerModulesMenu);
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleToAdd);
   if (!module)
     {
+    qWarning() << "A module needs a QAction to be handled by qSlicerModulesMenu";
     return;
     }
   QAction* moduleAction = module->action();
   Q_ASSERT(moduleAction);
+  if (d->DuplicateActions)
+    {
+    QAction* duplicateAction = new QAction(moduleAction->icon(), moduleAction->text(), this);
+    duplicateAction->setData(moduleAction->data());
+    duplicateAction->setIconVisibleInMenu(moduleAction->isIconVisibleInMenu());
+    duplicateAction->setProperty("index", moduleAction->property("index"));
+    moduleAction = duplicateAction;
+    }
   QObject::connect(moduleAction, SIGNAL(triggered(bool)),
                    this, SLOT(onActionTriggered()));
 
@@ -286,15 +367,32 @@ void qSlicerModulesMenu::addModule(const QString& moduleName)
   d->addModuleAction(menu, moduleAction);
   // Add in "All Modules" as well
   d->addModuleAction(d->AllModulesMenu, moduleAction, false);
+
+  // Maybe the module was set current before it was added into the menu
+  if (d->CurrentModule == moduleAction->data().toString())
+    {
+    emit currentModuleChanged(d->CurrentModule);
+    }
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModulesMenu::removeModule(const QString& moduleName)
 {
+   Q_D(qSlicerModulesMenu);
+  this->removeModule(d->ModuleManager ? d->ModuleManager->module(moduleName) : 0);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulesMenu::removeModule(qSlicerAbstractCoreModule* moduleToRemove)
+{
   Q_D(qSlicerModulesMenu);
-  // removing a module consists in retrieving the unique action of the module
-  // and removing it from all the possible menus
-  QAction* moduleAction = d->action(QVariant(moduleName), this);
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleToRemove);
+  if (!module)
+    {
+    qWarning() << "A module needs a QAction to be handled by qSlicerModulesMenu";
+    return;
+    }
+  QAction* moduleAction = d->action(module->action()->data(), d->AllModulesMenu);
   QMenu* menu = d->actionMenu(moduleAction, this);
   menu->removeAction(moduleAction);
   d->AllModulesMenu->removeAction(moduleAction);
@@ -302,21 +400,24 @@ void qSlicerModulesMenu::removeModule(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulesMenu::selectModule(const QString& moduleName)
+void qSlicerModulesMenu::setCurrentModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesMenu);
   // It's faster to look for the action in the AllModulesMenu (no need to
   // do a recursive search
   QAction* moduleAction = d->action(QVariant(moduleName), d->AllModulesMenu);
-  if (moduleAction)
+  if (!moduleAction)
     {
-    // triggering the action will eventually call actionSelected();
-    moduleAction->trigger();
+    // maybe the module hasn't been added yet.
+    d->CurrentModule = moduleName;
+    return;
     }
+  // triggering the action will eventually call actionSelected();
+  moduleAction->trigger();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulesMenu::selectModuleByTitle(const QString& title)
+void qSlicerModulesMenu::setCurrentModuleByTitle(const QString& title)
 {
   Q_D(qSlicerModulesMenu);
   // it's faster to look for the action in the AllModulesMenu (no need to
@@ -339,5 +440,12 @@ void qSlicerModulesMenu::onActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerModulesMenu::actionSelected(QAction* action)
 {
-  emit moduleSelected(action->data().toString());
+  Q_D(qSlicerModulesMenu);
+  QString newCurrentModule = action ? action->data().toString() : QString();
+  if (newCurrentModule == d->CurrentModule)
+    {
+    return;
+    }
+  d->CurrentModule = newCurrentModule;
+  emit currentModuleChanged(d->CurrentModule);
 }

@@ -48,6 +48,7 @@ public:
   virtual ~qSlicerSettingsModulesPanel();
 
 protected slots:
+  void onHomeModuleChanged(const QString& moduleName);
   void onExensionsPathChanged(const QString& path);
   void onTemporaryPathChanged(const QString& path);
 

@@ -52,6 +52,9 @@ public:
   /// Return the module selector
   Q_INVOKABLE qSlicerModuleSelectorToolBar* moduleSelector()const;
 
+public slots:
+  void setHomeModuleCurrent();
+
 protected slots:
   void onModuleLoaded(qSlicerAbstractCoreModule* module);
   void onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);

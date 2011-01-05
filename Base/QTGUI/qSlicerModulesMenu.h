@@ -27,7 +27,9 @@
 // CTK includes
 #include "qSlicerBaseQTGUIExport.h"
 
+class qSlicerAbstractCoreModule;
 class qSlicerModulesMenuPrivate;
+class qSlicerModuleManager;
 
 ///
 /// qSlicerModulesMenu supports a tree hierarchy of modules (based on
@@ -35,6 +37,15 @@ class qSlicerModulesMenuPrivate;
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesMenu: public QMenu
 {
   Q_OBJECT
+  Q_PROPERTY(QString currentModule READ currentModule WRITE setCurrentModule NOTIFY currentModuleChanged)
+  /// By default (duplicateActions = false), multiple instances of
+  /// qSlicerModulesMenu share the same QActions. When a module QAction is
+  /// fired from a menu, all the qSlicerModulesMenu would make it the current
+  /// module. When duplicateActions is true, the QActions populating the menu are
+  /// duplicates from the original module QAction. That way the qSlicerModulesMenu
+  /// behaves independently from the other qSlicerModulesMenus.
+  Q_PROPERTY(bool duplicateActions READ duplicateActions WRITE setDuplicateActions)
+
 public:
   typedef QMenu Superclass;
 
@@ -61,20 +72,39 @@ public:
   /// Remove the module from the list of available module
   void removeModule(const QString& moduleName);
 
+  ///
+  /// Add a list of module available for selection
+  inline void removeModules(const QStringList& moduleNames);
+
+  ///
+  /// Return the last selected module name
+  QString currentModule()const;
+
+  ///
+  /// Set the module manager to retrieve the modules from
+  void setModuleManager(qSlicerModuleManager* moduleManager);
+  qSlicerModuleManager* moduleManager()const;
+
+  void setDuplicateActions(bool duplicate);
+  bool duplicateActions()const;
+
 public slots:
+  void addModule(qSlicerAbstractCoreModule*);
+  void removeModule(qSlicerAbstractCoreModule*);
+
   ///
   /// Select a module by title. It looks for the module action and triggers it
-  void selectModuleByTitle(const QString& title);
+  void setCurrentModuleByTitle(const QString& title);
 
   ///
   /// Select a module by name. It looks for the module action and triggers it
-  void selectModule(const QString& moduleName);
+  void setCurrentModule(const QString& moduleName);
 
 signals:
   ///
   /// The signal is fired every time a module is selected. The QAction of the
   /// module is triggered.
-  void moduleSelected(const QString& name);
+  void currentModuleChanged(const QString& name);
 
 protected slots:
   void onActionTriggered();
@@ -94,6 +124,15 @@ void qSlicerModulesMenu::addModules(const QStringList& moduleNames)
   foreach(const QString& moduleName, moduleNames)
     {
     this->addModule(moduleName);
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulesMenu::removeModules(const QStringList& moduleNames)
+{
+  foreach(const QString& moduleName, moduleNames)
+    {
+    this->removeModule(moduleName);
     }
 }
 

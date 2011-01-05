@@ -42,6 +42,11 @@
     <file>Icons/Large/SlicerAddVolume.png</file>
     <file>Icons/XLarge/SlicerAddVolume.png</file>
 
+    <file>Icons/Small/SlicerHome.png</file>
+    <file>Icons/Medium/SlicerHome.png</file>
+    <file>Icons/Large/SlicerHome.png</file>
+    <file>Icons/XLarge/SlicerHome.png</file>
+
     <file>Icons/Medium/SlicerLoadDICOM.png</file>
 
     <file>Icons/Small/SlicerLoadScene.png</file>

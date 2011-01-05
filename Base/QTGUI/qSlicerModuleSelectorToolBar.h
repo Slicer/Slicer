@@ -29,6 +29,8 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerModuleSelectorToolBarPrivate;
+class qSlicerModuleManager;
+class qSlicerAbstractCoreModule;
 
 ///
 /// qSlicerModuleSelectorToolBar is a toolbar that can be added in your
@@ -50,18 +52,8 @@ public:
   virtual ~qSlicerModuleSelectorToolBar();
 
   ///
-  /// Add a module by name. The module action will be inserted
-  /// based on its category.
-  void addModule(const QString& moduleName);
-
-  ///
-  /// Add a list of module available for selection
-  inline void addModules(const QStringList& moduleNames);
-
-  ///
-  /// Remove the module from the list of available module
-  void removeModule(const QString& moduleName);
-
+  /// Module manager contains all the loaded modules
+  void setModuleManager(qSlicerModuleManager* moduleManager);
 public slots:
   ///
   /// Select a module by title. It looks for the module action and triggers it
@@ -82,25 +74,20 @@ signals:
   void moduleSelected(const QString& name);
 
 protected slots:
+  void moduleAdded(qSlicerAbstractCoreModule* );
+  void moduleRemoved(qSlicerAbstractCoreModule* );
+
   void onModuleSelected(const QString& name);
   void actionSelected(QAction* action);
   void searchModule();
 
 protected:
   QScopedPointer<qSlicerModuleSelectorToolBarPrivate> d_ptr;
+  void modulesAdded(const QStringList& moduleNames);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleSelectorToolBar);
   Q_DISABLE_COPY(qSlicerModuleSelectorToolBar);
 };
-
-//---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::addModules(const QStringList& moduleNames)
-{
-  foreach(const QString& moduleName, moduleNames)
-    {
-    this->addModule(moduleName);
-    }
-}
 
 #endif

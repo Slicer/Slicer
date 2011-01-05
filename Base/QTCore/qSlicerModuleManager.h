@@ -68,8 +68,11 @@ public:
   /// \deprecated
   QString moduleName(const QString& title) const;
 
-  /// Return the list of all the loaded modules
+  /// Return the list of all the registered modules
   QStringList moduleList()const;
+
+  /// Return the list of all the loaded modules
+  QStringList loadedModules()const;
 
 signals:
   void moduleLoaded(qSlicerAbstractCoreModule* module);

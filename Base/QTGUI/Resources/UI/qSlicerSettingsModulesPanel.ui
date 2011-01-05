@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
-    <height>116</height>
+    <width>658</width>
+    <height>167</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,25 +45,39 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="ExtensionInstallDirectoryLabel">
      <property name="text">
       <string>Extension install path:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="ctkDirectoryButton" name="ExtensionInstallDirectoryButton"/>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="TemporaryDirectoryLabel">
      <property name="text">
       <string>Temporary directory:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="ctkDirectoryButton" name="TemporaryDirectoryButton"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Home module:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QPushButton" name="HomeModuleButton">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QAction>
 #include <QDebug>
 
 // CTK includes
@@ -26,6 +27,7 @@
 
 // QtGUI includes
 #include "qSlicerCoreApplication.h"
+#include "qSlicerModulesMenu.h"
 #include "qSlicerSettingsModulesPanel.h"
 #include "ui_qSlicerSettingsModulesPanel.h"
 
@@ -45,12 +47,14 @@ public:
   qSlicerSettingsModulesPanelPrivate(qSlicerSettingsModulesPanel& object);
   void init();
 
+  qSlicerModulesMenu* ModulesMenu;
 };
 
 // --------------------------------------------------------------------------
 qSlicerSettingsModulesPanelPrivate::qSlicerSettingsModulesPanelPrivate(qSlicerSettingsModulesPanel& object)
   :q_ptr(&object)
 {
+  this->ModulesMenu = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -60,23 +64,35 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   this->setupUi(q);
 
+  this->ModulesMenu = new qSlicerModulesMenu(q);
+  this->ModulesMenu->setDuplicateActions(true);
+  this->HomeModuleButton->setMenu(this->ModulesMenu);
+  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(const QString&)),
+                   q, SLOT(onHomeModuleChanged(const QString&)));
+  this->ModulesMenu->setModuleManager(qSlicerCoreApplication::application()->moduleManager());
+
+  // default values
+  this->ModulesMenu->setCurrentModule("welcome");
   this->ExtensionInstallDirectoryButton->setDirectory( qSlicerCoreApplication::application()->extensionsPath());
   this->TemporaryDirectoryButton->setDirectory( qSlicerCoreApplication::application()->temporaryPath());
 
+  // register settings
   q->registerProperty("disable-loadable-module", this->LoadModulesCheckBox, "checked",
                       SIGNAL(toggled(bool)));
   q->registerProperty("disable-cli-module", this->LoadCommandLineModulesCheckBox, "checked",
                       SIGNAL(toggled(bool)));
+  q->registerProperty("Modules/HomeModule", this->ModulesMenu, "currentModule",
+                      SIGNAL(currentModuleChanged(const QString&)));
   q->registerProperty("Modules/ExtensionsInstallDirectory", this->ExtensionInstallDirectoryButton, "directory",
                       SIGNAL(directoryChanged(const QString&)));
   q->registerProperty("Modules/TemporaryDirectory", this->TemporaryDirectoryButton, "directory",
                       SIGNAL(directoryChanged(const QString&)));
 
+  // Actions to propagate to the application when settings are changed
   QObject::connect(this->ExtensionInstallDirectoryButton, SIGNAL(directoryChanged(const QString&)),
                    q, SLOT(onExensionsPathChanged(const QString&)));
   QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(const QString&)),
                    q, SLOT(onTemporaryPathChanged(const QString&)));
-
 }
 
 // --------------------------------------------------------------------------
@@ -91,6 +107,16 @@ qSlicerSettingsModulesPanel::qSlicerSettingsModulesPanel(QWidget* _parent)
 // --------------------------------------------------------------------------
 qSlicerSettingsModulesPanel::~qSlicerSettingsModulesPanel()
 {
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::onHomeModuleChanged(const QString& moduleName)
+{
+  Q_D(qSlicerSettingsModulesPanel);
+  QAction* moduleAction = d->ModulesMenu->moduleAction(moduleName);
+  Q_ASSERT(moduleAction);
+  d->HomeModuleButton->setText(moduleAction->text());
+  d->HomeModuleButton->setIcon(moduleAction->icon());
 }
 
 // --------------------------------------------------------------------------

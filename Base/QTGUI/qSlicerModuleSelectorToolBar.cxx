@@ -92,7 +92,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
 
   // Modules menu
   this->ModulesMenu = new qSlicerModulesMenu(QObject::tr("Modules"),q);
-  QObject::connect(this->ModulesMenu, SIGNAL(moduleSelected(const QString&)),
+  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(const QString&)),
                    q, SLOT(onModuleSelected(const QString&)));
 
   // Modules Label
@@ -204,17 +204,42 @@ qSlicerModuleSelectorToolBar::~qSlicerModuleSelectorToolBar()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
+void qSlicerModuleSelectorToolBar::setModuleManager(qSlicerModuleManager* moduleManager)
 {
   Q_D(qSlicerModuleSelectorToolBar);
-  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(
-    qSlicerApplication::application()->moduleManager()->module(moduleName));
+
+  if (d->ModulesMenu->moduleManager())
+    {
+    QObject::disconnect(d->ModulesMenu->moduleManager(),
+                        SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
+                        this, SLOT(moduleAdded(qSlicerAbstractCoreModule*)));
+    QObject::disconnect(d->ModulesMenu->moduleManager(),
+                        SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
+                        this, SLOT(moduleRemoved(qSlicerAbstractCoreModule*)));
+    }
+  d->ModulesMenu->setModuleManager(moduleManager);
+
+  if (moduleManager)
+    {
+    QObject::connect(moduleManager,
+                     SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
+                     this, SLOT(moduleAdded(qSlicerAbstractCoreModule*)));
+    QObject::connect(moduleManager,
+                     SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
+                     this, SLOT(moduleRemoved(qSlicerAbstractCoreModule*)));
+    //this->modulesAdded(moduleManager->moduleList());
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBar::moduleAdded(qSlicerAbstractCoreModule* moduleAdded)
+{
+  Q_D(qSlicerModuleSelectorToolBar);
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleAdded);
   if (!module)
     {
     return;
     }
-  d->ModulesMenu->addModule(moduleName);
-
   // here we assume the completion model is not automatically sorted
   int actionCount = d->ModuleSearchCompleter->model()->rowCount();
   d->ModuleSearchCompleter->model()->insertRow(actionCount);
@@ -223,11 +248,25 @@ void qSlicerModuleSelectorToolBar::addModule(const QString& moduleName)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::removeModule(const QString& moduleName)
+void qSlicerModuleSelectorToolBar::modulesAdded(const QStringList& moduleNames)
 {
   Q_D(qSlicerModuleSelectorToolBar);
-  QAction* moduleAction = d->ModulesMenu->moduleAction(moduleName);
-  d->ModulesMenu->removeModule(moduleName);
+  foreach(const QString& moduleName, moduleNames)
+    {
+    this->moduleAdded(d->ModulesMenu->moduleManager()->module(moduleName));
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleSelectorToolBar::moduleRemoved(qSlicerAbstractCoreModule* moduleRemoved)
+{
+  Q_D(qSlicerModuleSelectorToolBar);
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleRemoved);
+  if (!module)
+    {
+    return;
+    }
+  QAction* moduleAction = module->action();
   // removing a module consists in retrieving the unique action of the module
   // and removing it from all the possible menus
   d->HistoryMenu->removeAction(moduleAction);
@@ -240,14 +279,14 @@ void qSlicerModuleSelectorToolBar::removeModule(const QString& moduleName)
 void qSlicerModuleSelectorToolBar::selectModule(const QString& moduleName)
 {
   Q_D(qSlicerModuleSelectorToolBar);
-  d->ModulesMenu->selectModule(moduleName);
+  d->ModulesMenu->setCurrentModule(moduleName);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBar::selectModuleByTitle(const QString& title)
 {
   Q_D(qSlicerModuleSelectorToolBar);
-  d->ModulesMenu->selectModuleByTitle(title);
+  d->ModulesMenu->setCurrentModuleByTitle(title);
 }
 
 //---------------------------------------------------------------------------

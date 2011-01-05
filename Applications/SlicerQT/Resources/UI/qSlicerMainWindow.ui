@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1011</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1011</width>
      <height>23</height>
     </rect>
    </property>
@@ -233,6 +233,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionModuleHome"/>
   </widget>
   <widget class="QToolBar" name="UndoRedoToolBar">
    <property name="windowTitle">
@@ -392,17 +393,6 @@
    </property>
    <property name="toolTip">
     <string>Exit Slicer</string>
-   </property>
-  </action>
-  <action name="actionEditSetHome">
-   <property name="text">
-    <string>Set Home</string>
-   </property>
-   <property name="toolTip">
-    <string>Set a user's 'home module', which is the module displayed by default each time the Slicer application is started. The home module is saved in the Application Registry.</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+H</string>
    </property>
   </action>
   <action name="actionEditUndo">
@@ -845,6 +835,24 @@
    </property>
    <property name="toolTip">
     <string>Show or Hide the &quot;View&quot; toolbar</string>
+   </property>
+  </action>
+  <action name="actionModuleHome">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Medium/SlicerHome.png</normaloff>:/Icons/Medium/SlicerHome.png</iconset>
+   </property>
+   <property name="text">
+    <string>Home</string>
+   </property>
+   <property name="toolTip">
+    <string>Favorite module for easy access</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
  </widget>

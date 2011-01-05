@@ -240,3 +240,10 @@ QStringList qSlicerModuleManager::moduleList() const
   Q_D(const qSlicerModuleManager);
   return d->ModuleFactoryManager.moduleNames();
 }
+
+//---------------------------------------------------------------------------
+QStringList qSlicerModuleManager::loadedModules() const
+{
+  Q_D(const qSlicerModuleManager);
+  return d->ModuleList.keys();
+}
