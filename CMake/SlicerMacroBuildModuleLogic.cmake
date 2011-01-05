@@ -113,6 +113,7 @@ MACRO(SlicerMacroBuildModuleLogic)
     "${CMAKE_BINARY_DIR}/${Slicer_INSTALL_MODULES_LIB_DIR}"
     )
 
+  # TODO: fix this
   # HACK Since we don't depend on qSlicerBaseQT{Base, Core, CLI, CoreModules, GUI},
   # let's remove them from the list
   SET(Slicer_ModuleLogic_Base_LIBRARIES ${Slicer_Base_LIBRARIES})
@@ -151,5 +152,62 @@ MACRO(SlicerMacroBuildModuleLogic)
     ${dynamicHeaders}
     DESTINATION ${Slicer_INSTALL_MODULES_INCLUDE_DIR}/${MODULELOGIC_NAME} COMPONENT Development
     )
+
+  IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+
+    # TODO: Slicer's Use file should export this list automatically
+    # (currently the wrapped and non-wrapped libs are mixed together)
+    # See "HACK" above
+    set (Slicer_Wrapped_LIBRARIES 
+      vtkTeem vtkITK FreeSurfer MRML MRMLCLI MRMLLogic MRMLDisplayableManager
+      RemoteIO SlicerBaseLogic 
+    )
+
+    INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+    VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${MODULELOGIC_SRCS}")
+    ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
+    ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
+    
+    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
+    
+    FOREACH(c ${Slicer_Wrapped_LIBRARIES})
+      TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD ${c})
+    ENDFOREACH(c)
+
+    TARGET_LINK_LIBRARIES(${lib_name}Python ${lib_name}PythonD ${lib_name})
+
+    ## Python modules on Windows must have the extension ".pyd"
+    IF(WIN32 AND NOT CYGWIN)
+      SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES SUFFIX ".pyd")
+    ENDIF(WIN32 AND NOT CYGWIN)
+
+    # Apply user-defined properties to the library target.
+    IF(Slicer_LIBRARY_PROPERTIES)
+      SET_TARGET_PROPERTIES(${lib_name}Python PROPERTIES
+         ${Slicer_LIBRARY_PROPERTIES}
+      )
+      SET_TARGET_PROPERTIES(${lib_name}PythonD PROPERTIES
+         ${Slicer_LIBRARY_PROPERTIES}
+      )
+    ENDIF(Slicer_LIBRARY_PROPERTIES)
+
+    INSTALL(TARGETS ${lib_name}PythonD ${lib_name}Python
+      RUNTIME DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
+      )
+
+  file(GLOB PYFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.py")
+  if ( PYFILES )
+    ctkMacroCompilePythonScript(
+      TARGET_NAME ${lib_name}
+      SCRIPTS "${PYFILES}"
+      RESOURCES ""
+      DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python
+      INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}
+      )
+  endif()
+
+  ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
     
 ENDMACRO(SlicerMacroBuildModuleLogic)
