@@ -108,11 +108,15 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
   // Description:
   // Create a label map volume to match the given volume node and add it to
   // the scene
-  // If a labelNode is not provided, it will be created.
-  // If a labelNode is provided, a display node will be added to it if the label
-  // node doesn't already have one, and the image data associated with the label
-  // node will be allocated according to the template volumeNode.
-  vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name, vtkMRMLScalarVolumeNode *labelNode = NULL);
+  vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name);
+
+  // Description:
+  // Fill in a label map volume to match the given template volume node, under
+  // the assumption that the given label map node is already added to the scene.
+  // A display node will be added to it if the label node doesn't already have
+  // one, and the image data associated with the label node will be allocated
+  // according to the template volumeNode.
+  vtkMRMLScalarVolumeNode *FillLabelVolumeFromTemplate(vtkMRMLScene *scene, vtkMRMLScalarVolumeNode *labelNode, vtkMRMLVolumeNode *templateNode);
 
   // Description:
   // Create a deep copy of a volume and add it to the scene
