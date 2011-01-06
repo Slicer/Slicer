@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
-    <height>157</height>
+    <width>395</width>
+    <height>148</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,7 +52,7 @@
    <item row="4" column="1">
     <widget class="ctkFontButton" name="FontButton"/>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="QCheckBox" name="RestoreUICheckBox">
      <property name="text">
       <string/>
@@ -62,27 +62,41 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="RestoreUILabel">
      <property name="text">
       <string>Save user interface size and position on exit:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="ConfirmExitLabel">
      <property name="text">
       <string>Confirm on exit:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <widget class="QCheckBox" name="ConfirmExitCheckBox">
      <property name="text">
       <string/>
      </property>
      <property name="checked">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="ShowToolButtonTextLabel">
+     <property name="text">
+      <string>Show text under icons in toolbar buttons:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="ShowToolButtonTextCheckBox">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

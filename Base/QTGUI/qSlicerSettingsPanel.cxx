@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QMainWindow>
 
 // CTK includes
 #include "ctkLogger.h"
@@ -60,6 +61,8 @@ void qSlicerSettingsPanelPrivate::init()
                    q, SLOT(onFontChanged(const QFont&)));
   QObject::connect(this->ShowToolTipsCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onShowToolTipsToggled(bool)));
+  QObject::connect(this->ShowToolButtonTextCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onShowToolButtonTextToggled(bool)));
 
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
                       SIGNAL(toggled(bool)));
@@ -67,6 +70,8 @@ void qSlicerSettingsPanelPrivate::init()
                       SIGNAL(toggled(bool)));
   q->registerProperty("font", this->FontButton, "currentFont",
                       SIGNAL(currentFontChanged(const QFont&)));
+  q->registerProperty("MainWindow/ShowToolButtonText", this->ShowToolButtonTextCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
   q->registerProperty("MainWindow/RestoreGeometry", this->RestoreUICheckBox, "checked",
                       SIGNAL(toggled(bool)));
   q->registerProperty("MainWindow/ConfirmExit", this->ConfirmExitCheckBox, "checked",
@@ -97,4 +102,17 @@ void qSlicerSettingsPanel::onFontChanged(const QFont& font)
 void qSlicerSettingsPanel::onShowToolTipsToggled(bool disable)
 {
   qSlicerApplication::application()->setToolTipsEnabled(!disable);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsPanel::onShowToolButtonTextToggled(bool enable)
+{
+  foreach(QWidget* widget, qSlicerApplication::application()->topLevelWidgets())
+    {
+    QMainWindow* mainWindow = qobject_cast<QMainWindow*>(widget);
+    if (mainWindow)
+      {
+      mainWindow->setToolButtonStyle(enable ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
+      }
+    }
 }

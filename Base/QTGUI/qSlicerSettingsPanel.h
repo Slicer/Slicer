@@ -50,6 +50,7 @@ public:
 protected slots:
   void onFontChanged(const QFont& font);
   void onShowToolTipsToggled(bool);
+  void onShowToolButtonTextToggled(bool enable);
 
 protected:
   QScopedPointer<qSlicerSettingsPanelPrivate> d_ptr;
