@@ -74,7 +74,6 @@ public:
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   /// \sa setShowHiddenForTypes, showHiddenForTypes
-  void setShowHidden(bool);
   bool showHidden()const;
 
   ///
@@ -105,6 +104,8 @@ public:
   /// mother class of ExcludedChildNodeType)
   void setHideChildNodeTypes(const QStringList& nodeTypes);
   QStringList hideChildNodeTypes()const;
+public slots:
+   void setShowHidden(bool);
 
   // TODO Add setMRMLScene() to propagate to the scene model
 protected:

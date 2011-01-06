@@ -28,6 +28,9 @@
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 
+// qMRMLWidgets includes
+#include <qMRMLSortFilterProxyModel.h>
+
 // MRML includes
 #include "vtkMRMLNode.h"
 
@@ -70,6 +73,8 @@ void qSlicerDataModuleWidget::setup()
           
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setMRMLIDsVisible(bool)));
+  connect(d->ShowHiddenCheckBox, SIGNAL(toggled(bool)),
+          d->MRMLTreeWidget->sortFilterProxyModel(), SLOT(setShowHidden(bool)));
   // hide the IDs by default
   d->DisplayMRMLIDsCheckBox->setChecked(false);
 

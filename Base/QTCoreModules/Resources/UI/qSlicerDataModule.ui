@@ -75,6 +75,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="ShowHiddenCheckBox">
+        <property name="text">
+         <string>Show Hidden nodes</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="ctkCollapsibleGroupBox" name="MRMLNodeInspectorGroupBox">
         <property name="title">
          <string>MRML Node Inspector</string>
@@ -170,12 +177,12 @@
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this option to close the existing scene and load a new MRML scene from a Slicer3.x file with extension &amp;quot;.mrml&amp;quot;, or a Slicer2.x file with extension &amp;quot;.xml&amp;quot;. Data collections in XNAT Catalog format (&amp;quot;.xcat&amp;quot;) or XNAT Archive format (&amp;quot;.xar&amp;quot;) may also be loaded.                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this option to close the existing scene and load a new MRML scene from a Slicer3.x file with extension &amp;quot;.mrml&amp;quot;, or a Slicer2.x file with extension &amp;quot;.xml&amp;quot;. Data collections in XNAT Catalog format (&amp;quot;.xcat&amp;quot;) or XNAT Archive format (&amp;quot;.xar&amp;quot;) may also be loaded.                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -216,12 +223,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this option to add a new scene to the existing scene. Supported file formats include Slicer3.x MRML files (&amp;quot;.mrml&amp;quot;), Slicer2.x MRML files (.xml&amp;quot;), data collections in XNAT Catalog format (&amp;quot;.xcat&amp;quot;) or XNAT Archive format (&amp;quot;.xar&amp;quot;).                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this option to add a new scene to the existing scene. Supported file formats include Slicer3.x MRML files (&amp;quot;.mrml&amp;quot;), Slicer2.x MRML files (.xml&amp;quot;), data collections in XNAT Catalog format (&amp;quot;.xcat&amp;quot;) or XNAT Archive format (&amp;quot;.xar&amp;quot;).                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -256,12 +263,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this general load option to add all files in a selected directory to the existing scene, or an individual data set of any supported type.                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this general load option to add all files in a selected directory to the existing scene, or an individual data set of any supported type.                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -296,12 +303,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this volume loading option to browse DICOM information, and to add volume image data in a variety of formats to the existing scene.                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this volume loading option to browse DICOM information, and to add volume image data in a variety of formats to the existing scene.                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -336,12 +343,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this model loading option to raise a dialog with options to add models to the current scene.                      &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this model loading option to raise a dialog with options to add models to the current scene.                      &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -376,12 +383,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this option to add a (FreeSurfer) scalar overlay to an existing model in the scene.                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this option to add a (FreeSurfer) scalar overlay to an existing model in the scene.                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -416,12 +423,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this transform loading option to add a new transform initialized with an Identity matrix to the current scene. Then, use the MRML tree widget in the panel above to position the transform in the data hierarchy.                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this transform loading option to add a new transform initialized with an Identity matrix to the current scene. Then, use the MRML tree widget in the panel above to position the transform in the data hierarchy.                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -456,12 +463,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this option to add a fiducial list from a file with extension (&amp;quot;.fcsv&amp;quot;) to the current scene.                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this option to add a fiducial list from a file with extension (&amp;quot;.fcsv&amp;quot;) to the current scene.                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -496,12 +503,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this option to add new &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Color lookup-up tables&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; to the scene (files with extension &amp;quot;.txt&amp;quot;). Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Add color table&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; button, and select a color LUT file (with extension .txt) from the File Browser.                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this option to add new &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Color lookup-up tables&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; to the scene (files with extension &amp;quot;.txt&amp;quot;). Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Add color table&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; button, and select a color LUT file (with extension .txt) from the File Browser.                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -536,12 +543,12 @@ p, li { white-space: pre-wrap; }
               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
 &lt;tr&gt;
 &lt;td style=&quot;border: none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Use this option to add new &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Tractography Fiber Bundles&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; to the scene. Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Add fiber bundle&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; button, and select a fiber bundle file from the File Browser.                     &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;Use this option to add new &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Tractography Fiber Bundles&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; to the scene. Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Add fiber bundle&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; button, and select a fiber bundle file from the File Browser.                     &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt;(Click the &lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:600;&quot;&gt;Close&lt;/span&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; (X) icon to hide this message.)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -618,12 +625,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>105</x>
-     <y>356</y>
+     <x>108</x>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -634,12 +641,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
      <x>108</x>
-     <y>356</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -650,12 +657,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
      <x>108</x>
-     <y>356</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -666,12 +673,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
      <x>108</x>
-     <y>356</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -682,12 +689,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>107</x>
-     <y>356</y>
+     <x>108</x>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -698,12 +705,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
      <x>108</x>
-     <y>356</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -714,12 +721,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
-     <x>105</x>
-     <y>356</y>
+     <x>108</x>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -730,12 +737,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
      <x>108</x>
-     <y>356</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -746,12 +753,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
      <x>108</x>
-     <y>356</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -762,12 +769,12 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>356</y>
+     <x>66</x>
+     <y>274</y>
     </hint>
     <hint type="destinationlabel">
      <x>108</x>
-     <y>356</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -782,8 +789,8 @@ p, li { white-space: pre-wrap; }
      <y>25</y>
     </hint>
     <hint type="destinationlabel">
-     <x>329</x>
-     <y>110</y>
+     <x>314</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
@@ -798,8 +805,8 @@ p, li { white-space: pre-wrap; }
      <y>152</y>
     </hint>
     <hint type="destinationlabel">
-     <x>247</x>
-     <y>365</y>
+     <x>256</x>
+     <y>283</y>
     </hint>
    </hints>
   </connection>
@@ -810,12 +817,12 @@ p, li { white-space: pre-wrap; }
    <slot>setSceneModelType(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>211</x>
-     <y>245</y>
+     <x>313</x>
+     <y>154</y>
     </hint>
     <hint type="destinationlabel">
-     <x>209</x>
-     <y>193</y>
+     <x>227</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
