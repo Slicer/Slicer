@@ -230,7 +230,7 @@ void vtkSlicerAnnotationModuleLogic::InitializeEventListeners()
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
-  this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
+  this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), events);
   events->Delete();
 }
 
@@ -1695,7 +1695,7 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNode
     {
     // this is a user created hierarchy!
 
-    // we want to see that!
+    // we want to se`e that!
     hierarchyNode->HideFromEditorsOff();
 
     hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("List"));
