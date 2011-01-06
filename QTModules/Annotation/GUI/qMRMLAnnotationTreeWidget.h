@@ -88,6 +88,7 @@ protected:
     void mouseMoveEvent(QMouseEvent* e);
     bool viewportEvent(QEvent* e);
   #endif
+  virtual void mousePressEvent(QMouseEvent* event);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLAnnotationTreeWidget);

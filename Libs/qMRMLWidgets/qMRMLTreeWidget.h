@@ -95,12 +95,14 @@ signals:
 protected slots:
   virtual void onActivated(const QModelIndex& index);
   void onNumberOfVisibleIndexChanged();
+  void deleteCurrentNode();
   
 protected:
   QScopedPointer<qMRMLTreeWidgetPrivate> d_ptr;
 
   // reimplemented for performance issues
   virtual void updateGeometries();
+  virtual void mousePressEvent(QMouseEvent* event);
 private:
   Q_DECLARE_PRIVATE(qMRMLTreeWidget);
   Q_DISABLE_COPY(qMRMLTreeWidget);

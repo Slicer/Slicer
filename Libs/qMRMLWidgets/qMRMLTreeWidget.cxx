@@ -19,8 +19,11 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QAction>
 #include <QDebug>
 #include <QHeaderView>
+#include <QMenu>
+#include <QMouseEvent>
 #include <QScrollBar>
 
 // CTK includes
@@ -33,6 +36,9 @@
 #include "qMRMLSceneTransformModel.h"
 #include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLTreeWidget.h"
+
+// MRML includes
+#include <vtkMRMLScene.h>
 
 //------------------------------------------------------------------------------
 class qMRMLTreeWidgetPrivate
@@ -50,6 +56,9 @@ public:
   qMRMLSortFilterProxyModel* SortFilterModel;
   QString                    SceneModelType;
   bool                       FitSizeToVisibleIndexes;
+  
+  QMenu*                     NodeMenu;
+  vtkMRMLNode*               CurrentNode;
 };
 
 //------------------------------------------------------------------------------
@@ -59,6 +68,8 @@ qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object)
   this->SceneModel = 0;
   this->SortFilterModel = 0;
   this->FitSizeToVisibleIndexes = true;
+  this->NodeMenu = 0;
+  this->CurrentNode = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +80,7 @@ void qMRMLTreeWidgetPrivate::init()
   this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
   q->setSceneModelType("Transform");
   q->QTreeView::setModel(this->SortFilterModel);
-
+  
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
   QObject::connect(q, SIGNAL(activated(const QModelIndex&)),
@@ -87,6 +98,12 @@ void qMRMLTreeWidgetPrivate::init()
                    q, SLOT(onNumberOfVisibleIndexChanged()));
   QObject::connect(this->SortFilterModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
                    q, SLOT(onNumberOfVisibleIndexChanged()));
+
+  this->NodeMenu = new QMenu(q);
+  QAction* deleteAction = new QAction("Delete",this->NodeMenu);
+  this->NodeMenu->addAction(deleteAction);
+  QObject::connect(deleteAction, SIGNAL(triggered()),
+                   q, SLOT(deleteCurrentNode()));
 }
 
 //------------------------------------------------------------------------------
@@ -315,4 +332,50 @@ bool qMRMLTreeWidget::fitSizeToVisibleIndexes()const
 {
   Q_D(const qMRMLTreeWidget);
   return d->FitSizeToVisibleIndexes;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeWidget::mousePressEvent(QMouseEvent* e)
+{
+  Q_D(qMRMLTreeWidget);
+  this->QTreeView::mousePressEvent(e);
+  
+  if (e->button() != Qt::RightButton)
+    {
+    return;
+    }
+  // get the index of the current column
+  QModelIndex index = this->indexAt(e->pos());
+  
+  vtkMRMLNode* node = d->SortFilterModel->mrmlNodeFromIndex(index);
+  
+  if (!node)
+    {
+    return;
+    }
+  
+  // Don't support annotation deletion yet
+  if (node->IsA("vtkMRMLAnnotationHierarchyNode") || 
+      node->IsA("vtkMRMLAnnotationNode") ||
+      node->IsA("vtkMRMLAnnotationDisplayNode"))
+    {
+    return;
+    }
+
+  d->CurrentNode = node;
+  d->NodeMenu->exec(e->globalPos());
+  d->CurrentNode = 0;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeWidget::deleteCurrentNode()
+{
+  Q_D(qMRMLTreeWidget);
+  if (!d->CurrentNode)
+    {
+    qWarning() << "No node to delete";
+    return;
+    }
+  this->mrmlScene()->RemoveNode(d->CurrentNode);
+  d->CurrentNode = 0;
 }

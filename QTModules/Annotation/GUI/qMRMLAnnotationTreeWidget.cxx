@@ -601,6 +601,13 @@ void qMRMLAnnotationTreeWidget::onLockColumnClicked(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLAnnotationTreeWidget::mousePressEvent(QMouseEvent* event)
+{
+  // skip qMRMLTreeWidget
+  this->QTreeView::mousePressEvent(event);
+}
+
+//------------------------------------------------------------------------------
 //
 // Connections to other classes
 //
