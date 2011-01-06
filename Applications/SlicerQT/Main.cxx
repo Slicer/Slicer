@@ -170,13 +170,13 @@ int main(int argc, char* argv[])
 
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
-
-  QMessageBox::information(&window, "3D Slicer",
-                           "Thank you for trying 3D Slicer version 4 alpha!\n\n"
-                           "Please be aware that this software is under active "
-                           "development and has not been tested for accuracy. "
-                           "Many important features are still missing.\n\n"
-                           "This software is not intended for clinical use.");
+  QString message = QString("Thank you for trying %1!\n\n"
+                            "Please be aware that this software is under active "
+                            "development and has not been tested for accuracy. "
+                            "Many important features are still missing.\n\n"
+                            "This software is not intended for clinical use.")
+    .arg(QString("3D Slicer ") + Slicer_VERSION_FULL);
+  QMessageBox::information(&window, "3D Slicer", message);
 //  qMRMLEventLoggerWidget logger;
 //  logger.setConsoleOutputEnabled(false);
 //  logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());
