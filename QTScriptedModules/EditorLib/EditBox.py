@@ -402,5 +402,6 @@ itcl::body EditBox::setButtonState {effect state} {
       previousImagesExist = bool(int(tcl('llength $::Editor(previousCheckPointImages)')))
     if bool(int(tcl('info exists ::Editor(nextCheckPointImages)'))):
       nextImagesExist = bool(int(tcl('llength $::Editor(nextCheckPointImages)')))
-    self.effectButtons["PreviousCheckPoint"].setDisabled( not previousImagesExist )
-    self.effectButtons["NextCheckPoint"].setDisabled( not nextImagesExist )
+    if not self.embedded:
+      self.effectButtons["PreviousCheckPoint"].setDisabled( not previousImagesExist )
+      self.effectButtons["NextCheckPoint"].setDisabled( not nextImagesExist )
