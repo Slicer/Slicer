@@ -261,7 +261,7 @@ IF(NOT Slicer_VERSION_PATCH)
   SET(Slicer_VERSION_PATCH "beta")
   IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
     Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} Slicer)
-    SET(Slicer_VERSION_PATCH "beta-r${Slicer_WC_REVISION}")
+    SET(Slicer_VERSION_PATCH "beta-2-r${Slicer_WC_REVISION}")
   ENDIF()
 ENDIF()
 
