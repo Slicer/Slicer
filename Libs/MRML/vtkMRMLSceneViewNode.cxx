@@ -360,8 +360,8 @@ void vtkMRMLSceneViewNode::StoreScene()
     if (node && !node->IsA("vtkMRMLSceneViewNode") && !node->IsA("vtkMRMLSnapshotClipNode")  && node->GetSaveWithScene() )
       {
       vtkMRMLNode *newNode = node->CreateNodeInstance();
-      newNode->CopyWithoutModifiedEvent(node);
       newNode->SetScene(this->Nodes);
+      newNode->CopyWithoutModifiedEvent(node);
       newNode->SetAddToSceneNoModify(0);
       newNode->CopyID(node);
 
