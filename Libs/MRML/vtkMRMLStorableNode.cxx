@@ -432,15 +432,14 @@ void vtkMRMLStorableNode::SetAndObserveNthStorageNodeID(int n, const char *stora
 //----------------------------------------------------------------------------
 void vtkMRMLStorableNode::AddAndObserveStorageNodeID(const char *storageNodeID)
 {
+  this->AddStorageNodeID(storageNodeID);
+
   if (this->GetScene())
     {
-
-    this->AddStorageNodeID(storageNodeID);
-
     vtkMRMLStorageNode *dnode = vtkMRMLStorageNode::SafeDownCast(this->GetScene()->GetNodeByID(storageNodeID));
     this->AddAndObserveStorageNode(dnode);
-    this->Modified();
     }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
