@@ -12,7 +12,9 @@ __kits_to_load = [
 # slicer base libs
 'logic',
 'PythonQt.qSlicerBaseQTCore',
-'PythonQt.qSlicerBaseQTGUI'
+'PythonQt.qSlicerBaseQTGUI',
+# slicer module logic
+'modulelogic'
 ]
 
 for kit in __kits_to_load:

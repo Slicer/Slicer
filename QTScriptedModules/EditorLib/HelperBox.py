@@ -4,7 +4,6 @@ from __main__ import tcl
 from __main__ import qt
 from __main__ import vtk
 from __main__ import slicer
-import volumesLogic
 import ColorBox
 
 #########################################################
@@ -37,7 +36,7 @@ class HelperBox(object):
     # slicer helper class
     self.ApplicationLogic = slicer.vtkMRMLApplicationLogic()
     self.ApplicationLogic.SetMRMLScene(slicer.mrmlScene)
-    self.volumesLogic = volumesLogic.vtkSlicerVolumesLogic()
+    self.volumesLogic = slicer.modules.volumes.logic()
     self.volumesLogic.SetMRMLScene(slicer.mrmlScene)
     self.colorLogic = slicer.vtkSlicerColorLogic()
     self.colorLogic.SetMRMLScene(slicer.mrmlScene)

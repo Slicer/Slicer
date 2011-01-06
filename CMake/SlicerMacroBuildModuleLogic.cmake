@@ -197,16 +197,35 @@ MACRO(SlicerMacroBuildModuleLogic)
       ARCHIVE DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR} COMPONENT Development
       )
 
-  file(GLOB PYFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.py")
-  if ( PYFILES )
-    ctkMacroCompilePythonScript(
-      TARGET_NAME ${lib_name}
-      SCRIPTS "${PYFILES}"
-      RESOURCES ""
-      DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python
-      INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}
-      )
-  endif()
+    # Generate "Python/<lib_name>.py" file
+    FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Python/slicer/modulelogic/${lib_name}.py "
+\"\"\" This module loads all the classes from the ${lib_name} library into its
+namespace.\"\"\"
+
+import os
+
+if os.name == 'posix':
+  from lib${lib_name}Python import *
+else:
+  from ${lib_name}Python import *
+
+# Removing things the user shouldn't have to see.
+del os
+")
+
+    FILE(GLOB PYFILES
+      RELATIVE "${CMAKE_CURRENT_BINARY_DIR}/Python"
+      "${CMAKE_CURRENT_BINARY_DIR}/Python/slicer/modulelogic/*.py")
+    if ( PYFILES )
+      ctkMacroCompilePythonScript(
+        TARGET_NAME ${lib_name}
+        SCRIPTS "${PYFILES}"
+        RESOURCES ""
+        SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/Python
+        DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python
+        INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}
+        )
+    ENDIF()
 
   ENDIF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
     
