@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QHeaderView>
+#include <QScrollBar>
 
 // CTK includes
 //#include "ctkModelTester.h"
@@ -122,6 +123,7 @@ QSize qMRMLTreeWidgetPrivate::computeSizeHint()const
     q->frameWidth()
     + (q->isHeaderHidden() ? 0 : q->header()->sizeHint().height())
     + visibleIndexCount * q->sizeHintForRow(0)
+    + (q->horizontalScrollBar()->isVisibleTo(const_cast<qMRMLTreeWidget*>(q)) ? q->horizontalScrollBar()->height() : 0)
     + q->frameWidth());
   return treeViewSizeHint;
 }
