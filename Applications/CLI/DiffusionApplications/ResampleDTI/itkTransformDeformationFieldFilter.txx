@@ -59,7 +59,7 @@ template< class TInput , class TOutput , int NDimensions >
 void
 TransformDeformationFieldFilter< TInput , TOutput , NDimensions >
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                                                              int threadId )
+                                                              int itkNotUsed(threadId) )
 {
   OutputDeformationFieldPointerType outputImagePtr = this->GetOutput( 0 ) ;
   InputIteratorType it( this->GetInput( 0 ) , outputRegionForThread ) ;
