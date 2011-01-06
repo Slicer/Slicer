@@ -83,7 +83,7 @@ QString qSlicerVolumesModule::acknowledgementText()const
 //-----------------------------------------------------------------------------
 QIcon qSlicerVolumesModule::icon()const
 {
-  return QIcon(":/Icons/Volumes.png");
+  return QIcon(":/Icons/Medium/SlicerVolumes.png");
 }
 
 //-----------------------------------------------------------------------------
