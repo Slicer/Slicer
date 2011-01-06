@@ -98,7 +98,6 @@ void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
                                              const QString& extraType,
                                              const Qt::ItemFlags& flags)
 {
-  Q_Q(const qMRMLSceneModel);
   Q_ASSERT(parent);
 
   QStandardItem* item = new QStandardItem;
@@ -123,7 +122,6 @@ void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
 //------------------------------------------------------------------------------
 QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QString extraType)const
 {
-  Q_Q(const qMRMLSceneModel);
   QStringList res;
   if (parent == 0)
     {
@@ -499,7 +497,6 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
     return 0;
     }
   QModelIndex parent = indexes[0].parent();
-  int row = indexes[0].row();
   // We want to do drag&drop only on the first item of a line (and not all the
   // items
   QModelIndexList allColumnsIndexes;
@@ -512,7 +509,7 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
       }
     d->DraggedNodes << this->mrmlNodeFromIndex(index);
     }
-  qDebug() <<allColumnsIndexes.size() << allColumnsIndexes[0] << allColumnsIndexes[1];
+  //qDebug() <<allColumnsIndexes.size() << allColumnsIndexes[0] << allColumnsIndexes[1];
   allColumnsIndexes = allColumnsIndexes.toSet().toList();
   return this->QStandardItemModel::mimeData(allColumnsIndexes);
 }
@@ -522,9 +519,10 @@ bool qMRMLSceneModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
                                    int row, int column, const QModelIndex &parent)
 {
   Q_D(qMRMLSceneModel);
+  Q_UNUSED(column);
   bool res = this->Superclass::dropMimeData(data, action, row, 0, parent);
   d->DraggedNodes.clear();
-  return res;  
+  return res;
 }
 
 //------------------------------------------------------------------------------
@@ -903,7 +901,6 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
   //Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
   QModelIndexList nodeIndexes = this->indexes(modifiedNode);
   //qDebug() << "onMRMLNodeModified" << modifiedNode->GetID() << nodeIndexes;
-  int oo = nodeIndexes.size();
   for (int i = 0; i < nodeIndexes.size(); ++i)
     {
     QModelIndex index = nodeIndexes[i];
@@ -923,12 +920,13 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
     // indexes again as may are wrong.
     if (item->row() != oldRow || item->parent() != oldParent)
       {
-      int oldSize = nodeIndexes.size();      
+      int oldSize = nodeIndexes.size();
       nodeIndexes = this->indexes(modifiedNode);
       int newSize = nodeIndexes.size();
       //the number of columns shouldn't change
-      Q_ASSERT(oldSize == nodeIndexes.size());
+      Q_ASSERT(oldSize == newSize);
       Q_UNUSED(oldSize);
+      Q_UNUSED(newSize);
       }
     }
 }
