@@ -95,6 +95,8 @@ int main(int argc, char* argv[])
   QPixmap pixmap(":Images/SlicerSplashScreen.png");
   QSplashScreen splash(pixmap/*, Qt::WindowStaysOnTopHint*/);
   bool enableSplash = !app.commandOptions()->noSplash(); 
+  bool enableMain = !app.commandOptions()->noMainWindow(); 
+  enableSplash = enableSplash && enableMain;
   if (enableSplash)
     {
     splash.show();
@@ -162,8 +164,11 @@ int main(int argc, char* argv[])
   window.setHomeModuleCurrent();
 
   // Show main window
-  window.show();
-  if (!app.commandOptions()->noSplash())
+  if (enableMain)
+    {
+    window.show();
+    }
+  if (enableSplash)
     {
     splash.finish(&window);
     }
@@ -176,7 +181,11 @@ int main(int argc, char* argv[])
                             "Many important features are still missing.\n\n"
                             "This software is not intended for clinical use.")
     .arg(QString("3D Slicer ") + Slicer_VERSION_FULL);
-  QMessageBox::information(&window, "3D Slicer", message);
+  if (enableMain)
+    {
+    QMessageBox::information(&window, "3D Slicer", message);
+    }
+
 //  qMRMLEventLoggerWidget logger;
 //  logger.setConsoleOutputEnabled(false);
 //  logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());

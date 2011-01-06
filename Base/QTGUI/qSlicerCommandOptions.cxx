@@ -41,6 +41,12 @@ bool qSlicerCommandOptions::noSplash() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCommandOptions::noMainWindow() const
+{
+  return this->parsedArgs().value("no-main-window").toBool();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCommandOptions::addArguments()
 {
   this->Superclass::addArguments();
@@ -50,4 +56,7 @@ void qSlicerCommandOptions::addArguments()
 
   this->addArgument("no-splash", "", QVariant::Bool,
                     "Disables the startup splash screen.");
+
+  this->addArgument("no-main-window", "", QVariant::Bool,
+                    "Disables display of the main slicer window.  Use with --python-script for alternate interface");
 }

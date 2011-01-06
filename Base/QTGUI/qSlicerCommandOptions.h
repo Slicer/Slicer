@@ -40,6 +40,8 @@ public:
 
   bool disableToolTips()const;
 
+  bool noMainWindow()const;
+
 protected:
   virtual void addArguments();
 
