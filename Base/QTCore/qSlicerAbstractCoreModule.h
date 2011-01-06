@@ -125,7 +125,7 @@ public:
   /// This method allows to get a pointer to the ModuleLogic.
   /// If no moduleLogic already exists, one will be created calling
   /// 'createLogic' method.
-  vtkMRMLAbstractLogic* logic();
+  Q_INVOKABLE vtkMRMLAbstractLogic* logic();
 
   ///
   /// Return a pointer on the MRML scene
