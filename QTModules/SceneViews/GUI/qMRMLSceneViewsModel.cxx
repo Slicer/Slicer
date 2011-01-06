@@ -104,6 +104,7 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
           QPixmap screenshot;
           screenshot = QPixmap::fromImage(qimage, Qt::AutoColor);
           item->setData(screenshot.scaled(80,80,Qt::KeepAspectRatio,Qt::SmoothTransformation),Qt::DecorationRole);
+          item->setData(QSize(80,80),Qt::SizeHintRole);
           }
         }
       break;
@@ -120,6 +121,7 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
       if (viewNode)
         {
         item->setText(QString(viewNode->GetSceneViewDescription()));
+        item->setData(QSize(80,80),Qt::SizeHintRole);
         }
       break;
     }

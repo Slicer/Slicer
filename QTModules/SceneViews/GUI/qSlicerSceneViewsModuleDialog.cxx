@@ -223,8 +223,8 @@ void qSlicerSceneViewsModuleDialog::onDialogAccepted()
     // this is a new SceneView
     this->m_Logic->CreateSceneView(nameBytes.data(),descriptionBytes.data(),screenshotType,this->m_vtkImageData);
 
-    QMessageBox::information(this, "3D Slicer SceneView created",
-                               "A new SceneView was created and the current scene was attached.");
+    //QMessageBox::information(this, "3D Slicer SceneView created",
+    //                           "A new SceneView was created and the current scene was attached.");
 
     }
   else
@@ -232,8 +232,8 @@ void qSlicerSceneViewsModuleDialog::onDialogAccepted()
     // this SceneView already exists
     this->m_Logic->ModifySceneView(this->m_Id,nameBytes.data(),descriptionBytes.data(),screenshotType,this->m_vtkImageData);
 
-    QMessageBox::information(this, "3D Slicer SceneView updated",
-                                   "The SceneView was updated without changing the attached scene.");
+    //QMessageBox::information(this, "3D Slicer SceneView updated",
+    //                               "The SceneView was updated without changing the attached scene.");
 
     }
 
@@ -277,8 +277,8 @@ void qSlicerSceneViewsModuleDialog::onRestoreButtonClicked()
 {
   this->m_Logic->RestoreSceneView(this->m_Id);
 
-  QMessageBox::information(this, "3D Slicer SceneView updated",
-                                 "The SceneView was restored including the attached scene.");
+  //QMessageBox::information(this, "3D Slicer SceneView updated",
+  //                               "The SceneView was restored including the attached scene.");
 
   emit dialogAccepted();
 }
@@ -290,6 +290,7 @@ void qSlicerSceneViewsModuleDialog::reset()
   this->ui.redSliceViewRadio->setEnabled(true);
   this->ui.yellowSliceViewRadio->setEnabled(true);
   this->ui.greenSliceViewRadio->setEnabled(true);
+  this->ui.fullLayoutRadio->setEnabled(true);
   this->ui.threeDViewRadio->setChecked(false);
   this->ui.redSliceViewRadio->setChecked(false);
   this->ui.yellowSliceViewRadio->setChecked(false);

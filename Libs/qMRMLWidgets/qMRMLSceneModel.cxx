@@ -900,7 +900,7 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
   Q_D(qMRMLSceneModel);
   vtkMRMLNode* modifiedNode = vtkMRMLNode::SafeDownCast(node);
   Q_ASSERT(modifiedNode && modifiedNode->GetScene());
-  Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
+  //Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
   QModelIndexList nodeIndexes = this->indexes(modifiedNode);
   //qDebug() << "onMRMLNodeModified" << modifiedNode->GetID() << nodeIndexes;
   int oo = nodeIndexes.size();

@@ -98,7 +98,7 @@ void qMRMLSceneViewsTreeWidgetPrivate::init()
                    q, SLOT(onClicked(const QModelIndex&)));
 
 
-  q->setUniformRowHeights(false);
+  q->setUniformRowHeights(true);
 }
 
 //------------------------------------------------------------------------------
