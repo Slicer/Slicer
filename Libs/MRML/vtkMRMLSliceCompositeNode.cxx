@@ -12,15 +12,18 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
+#include "vtkObjectFactory.h"
 #include "vtkMatrix4x4.h"
+
+// STD includes
+#include <string>
+#include <iostream>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode* vtkMRMLSliceCompositeNode::New()
