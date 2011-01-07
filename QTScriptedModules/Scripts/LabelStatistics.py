@@ -196,7 +196,7 @@ class LabelStatisticsLogic:
     lo = int(stataccum.GetMin()[0])
     hi = int(stataccum.GetMax()[0])
 
-    for i in xrange(lo,hi):
+    for i in xrange(lo,hi+1):
 
       # this->SetProgress((float)i/hi);
       # std::string event_message = "Label "; std::stringstream s; s << i; event_message.append(s.str());
