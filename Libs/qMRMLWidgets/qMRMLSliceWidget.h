@@ -45,6 +45,7 @@ class vtkMRMLSliceCompositeNode;
 
 class vtkImageData;
 class vtkInteractorObserver;
+class vtkCornerAnnotation;
 
 class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
 {
@@ -94,6 +95,9 @@ public:
 
   /// Returns the interactor style of the view
   vtkInteractorObserver* interactorStyle()const;
+
+  /// Return the overlay corner annotation of the view
+  vtkCornerAnnotation* overlayCornerAnnotation()const;
 
   /// propagates the logics to the qMRMLSliceControllerWidget
   void setSliceLogics(vtkCollection* logics);

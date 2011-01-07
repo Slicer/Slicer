@@ -44,6 +44,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkCornerAnnotation.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceWidget");
@@ -323,6 +324,12 @@ vtkImageData* qMRMLSliceWidget::imageData() const
 vtkInteractorObserver* qMRMLSliceWidget::interactorStyle()const
 {
   return this->sliceView()->interactorStyle();
+}
+
+//---------------------------------------------------------------------------
+vtkCornerAnnotation* qMRMLSliceWidget::overlayCornerAnnotation()const
+{
+  return this->sliceView()->overlayCornerAnnotation();
 }
 
 //---------------------------------------------------------------------------
