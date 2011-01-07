@@ -28,17 +28,6 @@ public:
   qSlicerIOManager(QObject* parent = 0);
   virtual ~qSlicerIOManager();
 
-  bool openLoadSceneDialog();
-  bool openAddSceneDialog();
-  inline bool openAddDataDialog();
-  inline bool openAddVolumeDialog();
-  inline bool openAddModelDialog();
-  inline bool openAddScalarOverlayDialog();
-  inline bool openAddTransformDialog();
-  inline bool openAddColorTableDialog();
-  inline bool openAddFiducialDialog();
-  inline bool openAddDTIDialog();
-  inline bool openSaveDataDialog();
 
   bool openDialog(qSlicerIO::IOFileType fileType,
                   qSlicerFileDialog::IOAction action,
@@ -59,6 +48,17 @@ public:
 public slots:
 
   void openScreenshotDialog();
+  bool openLoadSceneDialog();
+  bool openAddSceneDialog();
+  inline bool openAddDataDialog();
+  inline bool openAddVolumeDialog();
+  inline bool openAddModelDialog();
+  inline bool openAddScalarOverlayDialog();
+  inline bool openAddTransformDialog();
+  inline bool openAddColorTableDialog();
+  inline bool openAddFiducialDialog();
+  inline bool openAddDTIDialog();
+  inline bool openSaveDataDialog();
 
 protected:
   friend class qSlicerFileDialog;
