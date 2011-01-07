@@ -1,6 +1,7 @@
 
 SET(KIT_PYTHON_SCRIPTS
     Editor.py
+    LabelStatistics.py
   )
 
 IF(Slicer_USE_NUMPY)
