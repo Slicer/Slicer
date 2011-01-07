@@ -131,6 +131,10 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " annotationSpace=\"" << "RAS" << "\"";
     }
+  else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::IJKAndRAS)
+    {
+    of << indent << " annotationSpace=\"" << "IJKAndRAS" << "\"";
+    }
 
   if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::NoAnnotation )
     {
@@ -296,6 +300,10 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       else if (!strcmp (attValue, "RAS"))
         {
         this->SetAnnotationSpace  (vtkMRMLSliceCompositeNode::RAS);
+        }
+      else if (!strcmp (attValue, "IJKAndRAS"))
+        {
+        this->SetAnnotationSpace  (vtkMRMLSliceCompositeNode::IJKAndRAS);
         }
       }
     else if(!strcmp (attName, "annotationMode" ))
