@@ -256,7 +256,7 @@ void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection *models)
           models->AddItem(mnode);
           break;
           }
-          hnode = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetParentNode());
+          hnode = vtkMRMLModelHierarchyNode::SafeDownCast(hnode->GetParentNode());
         }// end while
       }// end if
     }// end for
