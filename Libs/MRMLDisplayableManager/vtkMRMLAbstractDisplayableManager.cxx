@@ -481,6 +481,7 @@ void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneAboutToBeClosedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneClosedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneAboutToBeImportedEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::SceneRestoredEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::SceneImportedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
