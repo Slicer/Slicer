@@ -70,29 +70,43 @@ void qSlicerMouseModeToolBarPrivate::init()
 {
   Q_Q(qSlicerMouseModeToolBar);
 
-  this->SinglePickModeAction = new QAction(QIcon(":/Icons/MouseSinglePickMode.png"),
-      "Use mouse to Pick-and-Manipulate one time.", q);
+  this->SinglePickModeAction = new QAction(q);
+  this->SinglePickModeAction->setIcon(QIcon(":/Icons/MouseSinglePickMode.png"));
+  this->SinglePickModeAction->setText("&Pick && Move(1)");
+  this->SinglePickModeAction->setIconText("Move(1)");
+  this->SinglePickModeAction->setToolTip("Use mouse to Pick-and-Manipulate one time.");
   connect(this->SinglePickModeAction, SIGNAL(triggered()),
           q, SLOT(switchToSinglePickMode()));
 
-  this->PersistentPickModeAction = new QAction(QIcon(":/Icons/MousePickMode.png"),
-      "Use mouse to Pick-and-Manipulate persistently.", q);
+  this->PersistentPickModeAction = new QAction(q);
+  this->PersistentPickModeAction->setIcon(QIcon(":/Icons/MousePickMode.png"));
+  this->PersistentPickModeAction->setText("Pick && &Move");
+  this->PersistentPickModeAction->setIconText("Move");
+  this->PersistentPickModeAction->setToolTip("Use mouse to Pick-and-Manipulate persistently.");
   connect(this->PersistentPickModeAction, SIGNAL(triggered()),
           q, SLOT(switchToPersistentPickMode()));
 
-  this->SinglePlaceModeAction = new QAction(QIcon(":/Icons/MouseSinglePlaceMode.png"),
-      "Use mouse to Create-and-Place one time.", q);
+  this->SinglePlaceModeAction = new QAction(q);
+  this->SinglePlaceModeAction->setIcon(QIcon(":/Icons/MouseSinglePlaceMode.png"));
+  this->SinglePlaceModeAction->setText("&Create && Place(1)");
+  this->SinglePlaceModeAction->setIconText("Place(1)");
+  this->SinglePlaceModeAction->setToolTip("Use mouse to Create-and-Place one time.");
   connect(this->SinglePlaceModeAction, SIGNAL(triggered()),
           q, SLOT(switchToSinglePlaceMode()));
 
-  this->PersistentPlaceModeAction = new QAction(QIcon(":/Icons/MousePlaceMode.png"),
-      "Use mouse to Create-and-Place persistently.", q);
+  this->PersistentPlaceModeAction = new QAction(q);
+  this->PersistentPlaceModeAction->setIcon(QIcon(":/Icons/MousePlaceMode.png"));
+  this->PersistentPlaceModeAction->setText("Create && &Place");
+  this->PersistentPlaceModeAction->setIconText("Place");
+  this->PersistentPlaceModeAction->setToolTip("Use mouse to Create-and-Place persistently.");
   connect(this->PersistentPlaceModeAction, SIGNAL(triggered()),
           q, SLOT(switchToPersistentPlaceMode()));
 
   // RotateMode action
-  this->ViewTransformModeAction = new QAction(QIcon(":/Icons/MouseRotateMode.png"),
-                                       "Set the 3DViewer mouse mode to transform view", q);
+  this->ViewTransformModeAction = new QAction(q);
+  this->ViewTransformModeAction->setIcon(QIcon(":/Icons/MouseRotateMode.png"));
+  this->ViewTransformModeAction->setText("&Rotate"); 
+  this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view");
   connect(this->ViewTransformModeAction, SIGNAL(triggered()),
           q, SLOT(switchToViewTransformMode()));
 
