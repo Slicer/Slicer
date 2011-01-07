@@ -34,6 +34,7 @@
 #include "qMRMLSceneDisplayableModel.h"
 #include "qMRMLSceneModelHierarchyModel.h"
 #include "qMRMLSceneTransformModel.h"
+#include "qMRMLSortFilterModelHierarchyProxyModel.h"
 #include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLTreeWidget.h"
 
@@ -50,6 +51,7 @@ public:
   qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object);
   void init();
   void setSceneModel(qMRMLSceneModel* newModel);
+  void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
   QSize computeSizeHint()const;
 
   qMRMLSceneModel*           SceneModel;
@@ -76,10 +78,8 @@ qMRMLTreeWidgetPrivate::qMRMLTreeWidgetPrivate(qMRMLTreeWidget& object)
 void qMRMLTreeWidgetPrivate::init()
 {
   Q_Q(qMRMLTreeWidget);
-  this->SceneModel = new qMRMLSceneTransformModel(q);
-  this->SortFilterModel = new qMRMLSortFilterProxyModel(q);
+  this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
   q->setSceneModelType("Transform");
-  q->QTreeView::setModel(this->SortFilterModel);
   
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
@@ -94,11 +94,7 @@ void qMRMLTreeWidgetPrivate::init()
                    q, SLOT(onNumberOfVisibleIndexChanged()));
   QObject::connect(q, SIGNAL(expanded(const QModelIndex&)),
                    q, SLOT(onNumberOfVisibleIndexChanged()));
-  QObject::connect(this->SortFilterModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int, int)),
-                   q, SLOT(onNumberOfVisibleIndexChanged()));
-  QObject::connect(this->SortFilterModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
-                   q, SLOT(onNumberOfVisibleIndexChanged()));
-
+  
   this->NodeMenu = new QMenu(q);
   QAction* deleteAction = new QAction("Delete",this->NodeMenu);
   this->NodeMenu->addAction(deleteAction);
@@ -121,6 +117,40 @@ void qMRMLTreeWidgetPrivate::setSceneModel(qMRMLSceneModel* newModel)
   this->SortFilterModel->setSourceModel(this->SceneModel);
 
   q->expandToDepth(2);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeWidgetPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel)
+{
+  Q_Q(qMRMLTreeWidget);
+  if (newSortModel == this->SortFilterModel)
+    {
+    return;
+    }
+  
+  // delete the previous filter
+  delete this->SortFilterModel;
+  this->SortFilterModel = newSortModel;
+  if (!this->SortFilterModel)
+    {
+    // no filter is given then let's show the scene model directly
+    q->QTreeView::setModel(this->SceneModel);
+    return;
+    }
+  this->SortFilterModel->setParent(q);
+  // Set the input of the filter
+  this->SortFilterModel->setSourceModel(this->SceneModel);
+  // Set the input of the view
+  q->QTreeView::setModel(this->SortFilterModel);
+
+  // resize the view if new rows are added/removed
+  QObject::connect(this->SortFilterModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int, int)),
+                   q, SLOT(onNumberOfVisibleIndexChanged()));
+  QObject::connect(this->SortFilterModel, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
+                   q, SLOT(onNumberOfVisibleIndexChanged()));
+
+  q->expandToDepth(2);
+  q->onNumberOfVisibleIndexChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -184,6 +214,7 @@ void qMRMLTreeWidget::setSceneModelType(const QString& modelName)
   Q_D(qMRMLTreeWidget);
 
   qMRMLSceneModel* newModel = 0;
+  qMRMLSortFilterProxyModel* newFilterModel = d->SortFilterModel;
   // switch on the incoming model name
   if (modelName == QString("Transform"))
     {
@@ -196,13 +227,20 @@ void qMRMLTreeWidget::setSceneModelType(const QString& modelName)
   else if (modelName == QString("ModelHierarchy"))
     {
     newModel = new qMRMLSceneModelHierarchyModel(this);
+    newFilterModel = new qMRMLSortFilterModelHierarchyProxyModel(this);
     }
-  if (newModel) 
+  if (newModel)
     {
     d->SceneModelType = modelName;
     newModel->setListenNodeModifiedEvent(this->listenNodeModifiedEvent());
     }
+  if (newFilterModel)
+    {
+    newFilterModel->setNodeTypes(this->nodeTypes());
+    }
   d->setSceneModel(newModel);
+  // typically a no op except for ModelHierarchy
+  d->setSortFilterProxyModel(newFilterModel);
 }
 
 //------------------------------------------------------------------------------
@@ -251,8 +289,7 @@ bool qMRMLTreeWidget::listenNodeModifiedEvent()const
 // --------------------------------------------------------------------------
 QStringList qMRMLTreeWidget::nodeTypes()const
 {
-  Q_D(const qMRMLTreeWidget);
-  return d->SortFilterModel->nodeTypes();
+  return this->sortFilterProxyModel()->nodeTypes();
 }
 
 // --------------------------------------------------------------------------
@@ -347,7 +384,7 @@ void qMRMLTreeWidget::mousePressEvent(QMouseEvent* e)
   // get the index of the current column
   QModelIndex index = this->indexAt(e->pos());
   
-  vtkMRMLNode* node = d->SortFilterModel->mrmlNodeFromIndex(index);
+  vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   
   if (!node)
     {

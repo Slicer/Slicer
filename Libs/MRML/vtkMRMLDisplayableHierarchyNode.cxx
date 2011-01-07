@@ -368,17 +368,15 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetDisplayable
     return NULL;
     }
 
-  int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLDisplayableHierarchyNode");
-  for (int i=0; i<nnodes; i++)
+  vtkMRMLDisplayableHierarchyNode *node = NULL;
+  for (scene->InitTraversal();
+        (node = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
+          scene->GetNextNodeByClass("vtkMRMLDisplayableHierarchyNode")));)
     {
-    vtkMRMLDisplayableHierarchyNode *node =  vtkMRMLDisplayableHierarchyNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLDisplayableHierarchyNode"));
-    if (node)
+    vtkMRMLDisplayableNode *mnode = node->GetDisplayableNode();
+    if (mnode && !strcmp(mnode->GetID(), displayableNodeID))
       {
-      vtkMRMLDisplayableNode *mnode = node->GetDisplayableNode();
-      if (mnode && !strcmp(mnode->GetID(), displayableNodeID))
-        {
-        return node;
-        }
+      return node;
       }
     }
   return NULL;
