@@ -114,13 +114,18 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   PyObject * main_module = PyImport_AddModule("__main__");
   PyObject * global_dict = PyModule_GetDict(main_module);
 
+
   // Load class definition if needed
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.toLatin1());
   if (!classToInstantiate)
     {
+    PyDict_SetItemString(global_dict, "__name__", PyString_FromString(className.toLatin1()));
     PyRun_File(pyfile, newPythonSource.toLatin1(), Py_file_input, global_dict, global_dict);
     classToInstantiate = PyDict_GetItemString(global_dict, className.toLatin1());
+    PyDict_SetItemString(global_dict, "__name__", PyString_FromString("__main__"));
     }
+
+  fclose(pyfile);
 
   if (!classToInstantiate)
     {
