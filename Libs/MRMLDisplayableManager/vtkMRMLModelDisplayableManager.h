@@ -174,6 +174,7 @@ protected:
   void SetModelDisplayProperty(vtkMRMLDisplayableNode *model);
   int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
 
+  /// Returns not null if modified
   int UpdateClipSlicesFromMRML();
   vtkClipPolyData* CreateTransformedClipper(vtkMRMLDisplayableNode *model);
 

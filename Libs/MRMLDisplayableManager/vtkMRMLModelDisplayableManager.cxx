@@ -456,7 +456,6 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
   bool isUpdating = this->GetMRMLScene()->GetIsUpdating();
   if (vtkMRMLDisplayableNode::SafeDownCast(caller))
     {
-    if (isUpdating) { return; }
     switch (event)
       {
       case vtkCommand::ModifiedEvent:
@@ -466,38 +465,47 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLEvents(vtkObject *caller,
         break;
       default:
         this->SetUpdateFromMRMLRequested(1);
-        this->RequestRender();
         break;
+      }
+    if (!isUpdating)
+      {
+      this->RequestRender();
       }
     }
   else if (vtkMRMLClipModelsNode::SafeDownCast(caller))
     {
-    if (isUpdating) { return; }
     if (event == vtkCommand::ModifiedEvent)
       {
-      this->SetUpdateFromMRMLRequested(1);
+      this->SetUpdateFromMRMLRequested(1);  
+      }
+    if (!isUpdating)
+      {
       this->RequestRender();
       }
     }
   else if (vtkMRMLSliceNode::SafeDownCast(caller))
     {
-    if (isUpdating) { return; }
     if (event == vtkCommand::ModifiedEvent)
       {
       if (this->UpdateClipSlicesFromMRML() || this->Internal->ClippingOn)
         {
         this->SetUpdateFromMRMLRequested(1);
-        this->RequestRender();
         }
+      }
+    if (!isUpdating)
+      {
+      this->RequestRender();
       }
     }
   else if (vtkMRMLModelHierarchyNode::SafeDownCast(caller))
     {
-    if (isUpdating) { return; }
     if (event == vtkCommand::ModifiedEvent)
       {
       this->UpdateModelHierarchies();
       this->SetUpdateFromMRMLRequested(1);
+      }
+    if (!isUpdating)
+      {
       this->RequestRender();
       }
     }
@@ -529,14 +537,22 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneClosedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnMRMLSceneImportedEvent()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  // UpdateFromMRML will be executed only if there has been some actions
+  // during the import that requested it (don't call
+  // SetUpdateFromMRMLRequested(1) here, it should be done somewhere else
+  // maybe in OnMRMLSceneNodeAddedEvent, OnMRMLSceneNodeRemovedEvent or
+  // OnMRMLDisplayableModelNodeModifiedEvent).
   this->RequestRender();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnMRMLSceneRestoredEvent()
 {
-  this->SetUpdateFromMRMLRequested(1);
+  // UpdateFromMRML will be executed only if there has been some actions
+  // during the restoration that requested it (don't call
+  // SetUpdateFromMRMLRequested(1) here, it should be done somewhere else
+  // maybe in OnMRMLSceneNodeAddedEvent, OnMRMLSceneNodeRemovedEvent or
+  // OnMRMLDisplayableModelNodeModifiedEvent).
   this->RequestRender();
 }
 
@@ -636,12 +652,11 @@ void vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     {
     this->UpdateClipSlicesFromMRML();
     this->UpdateModifiedModel(modelNode);
-    this->RequestRender();
+    this->SetUpdateFromMRMLRequested(1);
     }
   if (updateMRML)
     {
     this->SetUpdateFromMRMLRequested(1);
-    this->RequestRender();
     }
 }
 

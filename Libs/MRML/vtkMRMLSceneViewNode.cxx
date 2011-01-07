@@ -466,7 +466,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
         {
         addedNodes.push_back(node);
         node->SetAddToSceneNoModify(1);
-        this->Scene->AddNodeNoNotify(node);
+        this->Scene->AddNode(node);
         // to prevent reading data on UpdateScene()
         // but new nodes should read their data
         //node->SetAddToSceneNoModify(0);
