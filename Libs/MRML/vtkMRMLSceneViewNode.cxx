@@ -259,6 +259,7 @@ void vtkMRMLSceneViewNode::Copy(vtkMRMLNode *anode)
       node = (vtkMRMLNode*)snode->Nodes->GetCurrentScene()->GetItemAsObject(n);
       if (node)
         {
+        node->SetScene(this->Nodes);
         this->Nodes->GetCurrentScene()->vtkCollection::AddItem((vtkObject *)node);
         }
       }
@@ -466,7 +467,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
         {
         addedNodes.push_back(node);
         node->SetAddToSceneNoModify(1);
-        this->Scene->AddNode(node);
+        this->Scene->AddNodeNoNotify(node);
         // to prevent reading data on UpdateScene()
         // but new nodes should read their data
         //node->SetAddToSceneNoModify(0);
