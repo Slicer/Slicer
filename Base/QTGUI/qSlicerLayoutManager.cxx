@@ -51,6 +51,7 @@
 
 // VTK includes
 #include <vtkInteractorObserver.h>
+#include <vtkCornerAnnotation.h>
 
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.base.qtgui.qSlicerLayoutManager");
@@ -102,10 +103,9 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
       pythonInstanceName.arg(sliceLayoutName, "interactorStyle"),
       sliceWidget->interactorStyle());
 
-    // TODO: need to access the corner annotation
-    //py->addVTKObjectToPythonMain(
-      //instName.arg(sliceLayoutName, "cornerAnnotation"),
-      //sliceWidget->cornerAnnotation());
+    py->addVTKObjectToPythonMain(
+      pythonInstanceName.arg(sliceLayoutName, "cornerAnnotation"),
+      sliceWidget->overlayCornerAnnotation());
 
     py->executeString(QString("registerScriptedDisplayableManagers('%1')").arg(sliceLayoutName));
 
