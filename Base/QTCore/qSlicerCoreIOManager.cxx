@@ -82,7 +82,8 @@ vtkMRMLScene* qSlicerCoreIOManagerPrivate::currentScene()const
 //-----------------------------------------------------------------------------
 qSlicerIO* qSlicerCoreIOManagerPrivate::reader(const QString& fileName)const
 {
-  QStringList genericExtensions("*.*");
+  QStringList genericExtensions;
+  genericExtensions << "*.*" << "(*)";
   QList<qSlicerIO*> genericReaders;
   foreach(qSlicerIO* reader, this->Readers)
     {
@@ -90,9 +91,20 @@ qSlicerIO* qSlicerCoreIOManagerPrivate::reader(const QString& fileName)const
       {
       continue;
       }
-    if (reader->extensions() == genericExtensions)
+    bool generic = false;
+    foreach(QString extension, reader->extensions())
       {
-      genericReaders << reader;
+      foreach(QString genericExtension, genericExtensions)
+        {
+        if (extension.contains(genericExtension))
+          {
+          genericReaders << reader;
+          generic = true;
+          }
+        }
+      }
+    if (generic)
+      {
       continue;
       }
     return reader;
