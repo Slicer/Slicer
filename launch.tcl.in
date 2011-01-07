@@ -550,7 +550,7 @@ proc launch_ParseArgs {argv} {
   #
   #  --detach - Run the command without monitoring the stdio
   #
-  # and obey --no-splash, but don't swallow it (pass it on to slicer)
+  # and obey --no-splash and --no-main-window, but don't swallow them (pass on to slicer)
   #
 
   set argv0 [lindex $::argv 0]
@@ -591,6 +591,8 @@ proc launch_ParseArgs {argv} {
     switch -- $arg {
       "--help" -
       "-h" -
+      "--no-main-window" -
+      "--no_main_window" -
       "--no_splash" -
       "--no-splash" {
           set ::LAUNCH(showSplash) 0
