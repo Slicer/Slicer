@@ -126,11 +126,20 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkGetMacro (SliceIntersectionVisibility, int );
   vtkSetMacro (SliceIntersectionVisibility, int );  
 
-  /// 
-  /// configures the annotations
+  /// Get annotation space.
   vtkGetMacro ( AnnotationSpace, int );
+
+  /// Set annotation space.
+  /// Space could be either XYZ, IJK or RAS
+  /// \sa GetAnnotationSpace, AnnotationSpace
   vtkSetMacro ( AnnotationSpace, int );
+
+  /// Get annotation mode
   vtkGetMacro ( AnnotationMode, int );
+
+  /// Set annotation mode
+  /// Mode could be either NoAnnotation, All, LabelValuesOnly or LabelAndVoxelValuesOnly
+  /// \sa GetAnnotationMode, AnnotationMode
   vtkSetMacro ( AnnotationMode, int );
   
   /// 
@@ -149,21 +158,24 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
-  /// Modes for annotation space and mode
-  enum
+  /// Annotation space
+  enum AnnotationSpace
     {
       XYZ = 0,
       IJK,
       RAS,
       IJKAndRAS
     };
-  enum
+
+  /// Annotation mode
+  enum AnnotationMode
     {
       NoAnnotation = 0,
       All,
       LabelValuesOnly,
       LabelAndVoxelValuesOnly
     };
+
   /// Modes for compositing
   enum
     {
