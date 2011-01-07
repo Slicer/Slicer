@@ -529,12 +529,14 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneClosedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnMRMLSceneImportedEvent()
 {
+  this->SetUpdateFromMRMLRequested(1);
   this->RequestRender();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnMRMLSceneRestoredEvent()
 {
+  this->SetUpdateFromMRMLRequested(1);
   this->RequestRender();
 }
 
