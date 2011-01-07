@@ -113,7 +113,7 @@ public:
   ///
   /// load in a color file, creating a storage node. Returns 1 on success,
   /// 0 on failure.
-  int LoadColorFile(const char *fileName, const char *nodeName = NULL);
+  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = NULL);
 
   ///
   /// Get/Set the user defined paths where to look for extra colour files

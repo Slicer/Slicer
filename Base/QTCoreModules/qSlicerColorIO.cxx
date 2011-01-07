@@ -56,7 +56,7 @@ qSlicerIO::IOFileType qSlicerColorIO::fileType()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerColorIO::extensions()const
 {
-  return QStringList() << "Color (*.txt)";
+  return QStringList() << "Color (*.txt *.ctbl)";
 }
 
 //-----------------------------------------------------------------------------
@@ -65,18 +65,16 @@ bool qSlicerColorIO::load(const IOProperties& properties)
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  // TODO:can be done when the module Color is ported to QT
-  //vtkSlicerColorLogic* colorLogic =
-  //  vtkSlicerColorLogic::SafeDownCast(
-  //    qSlicerCoreApplication::application()->moduleManager()
-  //    ->module("Color")->logic());
-  // Q_ASSERT(colorLogic && colorLogic->GetMRMLScene() == this->mrmlScene());
-  vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
-  Q_ASSERT(colorLogic);
-  colorLogic->SetMRMLScene(this->mrmlScene());
-  vtkMRMLColorNode* node = 0;
-  // TODO change return value of LoadColorFile into vtkMRMLColorNode*
-  colorLogic->LoadColorFile(fileName.toLatin1().data());
+  // TODO: Set the logic to qSlicerColorIO directly
+  vtkSlicerColorLogic* colorLogic =
+    vtkSlicerColorLogic::SafeDownCast(
+      qSlicerCoreApplication::application()->moduleManager()
+        ->module("colors")->logic());
+  Q_ASSERT(colorLogic && colorLogic->GetMRMLScene() == this->mrmlScene());
+  //vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
+  //Q_ASSERT(colorLogic);
+  //colorLogic->SetMRMLScene(this->mrmlScene());
+  vtkMRMLColorNode* node = colorLogic->LoadColorFile(fileName.toLatin1());
   if (node)
     {
     this->setLoadedNodes(QStringList(QString(node->GetID())));
@@ -85,7 +83,6 @@ bool qSlicerColorIO::load(const IOProperties& properties)
     {
     this->setLoadedNodes(QStringList());
     }
-  colorLogic->Delete();
   return node != 0;
 }
 

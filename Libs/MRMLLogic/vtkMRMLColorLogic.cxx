@@ -759,7 +759,7 @@ void vtkMRMLColorLogic::AddColorFile(const char *fileName, std::vector<std::stri
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
+vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
 {
   vtkSmartPointer<vtkMRMLColorTableNode> node = vtkSmartPointer<vtkMRMLColorTableNode>::New();
   
@@ -804,7 +804,11 @@ int vtkMRMLColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
       // don't add the name to the list of files, otherwise it will get loaded
       //again with the default ones
       //this->AddColorFile(fileName);
-      return 1;
+      return node;
+      }
+    else
+      {
+      vtkDebugMacro("LoadColorFile: File already exists: " <<  fileName);
       }
     }
   else
@@ -817,7 +821,7 @@ int vtkMRMLColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
       this->GetMRMLScene()->RemoveNode(colorStorageNode);
       }
     }
-  vtkDebugMacro("LoadColorFile: failed to reaad color file " << fileName << ", returning null");
+  vtkDebugMacro("LoadColorFile: failed to read color file " << fileName << ", returning null");
   return 0;
 }
 
