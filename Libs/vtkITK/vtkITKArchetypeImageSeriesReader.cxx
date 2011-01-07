@@ -258,6 +258,11 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 
 int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* vtkNotUsed(filename))
 {
+  if (this->Archetype == NULL)
+    {
+    return false;
+    }
+
   std::string fileNameCollapsed = itksys::SystemTools::CollapseFullPath( this->Archetype);
 
   // First see if the archetype exists
