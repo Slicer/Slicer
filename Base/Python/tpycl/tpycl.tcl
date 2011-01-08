@@ -186,6 +186,9 @@ namespace eval tpycl {
       }
     }
 
+    # escape any new lines
+    regsub -all "\n" $pycmd "\\n" pycmd
+
     # execute the command
     set pyresult [py_eval $pycmd]
     if { $pyresult == "None" } {
