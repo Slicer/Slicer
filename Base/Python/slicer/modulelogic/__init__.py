@@ -9,7 +9,12 @@ for fname in glob.glob(__path__[0] + "/vtkSlicer*ModuleLogic.py"):
   module_logic_name = os.path.splitext(os.path.basename(fname))[0]
   
   # Import logic library
-  exec "import %s" % (module_logic_name)
+  try:
+    exec "import %s" % (module_logic_name)
+  except ImportError:
+    # TODO: this message should go in the application error log (how?)
+    print( "ImportError: could not import %s" % (module_logic_name))
+    continue
   
   # ... and obtain a reference to the associated module
   module_logic = eval(module_logic_name)
