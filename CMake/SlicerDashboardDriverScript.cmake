@@ -130,6 +130,8 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
     ctest_submit(PARTS Build)
     
+    # Inner build directory
+    set(slicer_build_dir "${CTEST_BINARY_DIRECTORY}/Slicer-build")
     message("----------- [ Test ${CTEST_PROJECT_NAME} ] -----------")
     ctest_test(
       BUILD "${CTEST_BINARY_DIRECTORY}/Slicer-build" 
@@ -138,6 +140,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
       EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
     # runs only tests that have a LABELS property matching "${label}"
     ctest_submit(PARTS Test)
+    
+    # HACK Unfortunately ctest_coverage ignores the BUILD argument, try to force it...
+    file(READ ${slicer_build_dir}/CMakeFiles/TargetDirectories.txt slicer_build_coverage_dirs)
+    file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${slicer_build_coverage_dirs}")
     
     # Global coverage ... 
     if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
