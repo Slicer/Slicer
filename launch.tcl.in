@@ -859,7 +859,6 @@ proc launch_SetPaths {} {
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/Slicer3$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/Slicer3/QTScriptedModules$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/Slicer3/QTLoadableModules$SEP$::env(PYTHONPATH)"
-      set ::env(PYTHONPATH) "$::env(Slicer_HOME)/bin/Python/slicer/modulelogic$SEP$::env(PYTHONPATH)"
       
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/lib-tk$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/site-packages$SEP$::env(PYTHONPATH)"
