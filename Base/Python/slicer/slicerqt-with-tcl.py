@@ -55,9 +55,9 @@ def registerScriptedDisplayableManagers(sliceWidget):
   # create procs for the elements and set them in the adapter
   #    leave out interactor and renderWindow,
   #    since you can get these from the InteractorStyle
-  # TODO ('cornerAnnotation', 'SetCornerAnnotation'),
   for key,method in (
       ('sliceLogic', 'SetLogic'),
+      ('cornerAnnotation', 'SetCornerAnnotation'),
       ('interactorStyle', 'SetInteractorStyle')):
     instName = 'slicer.sliceWidget%s_%s' % (sliceWidget, key)
     evalString = '%s.GetClassName()' % instName
