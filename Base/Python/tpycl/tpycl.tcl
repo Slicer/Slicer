@@ -32,21 +32,33 @@ if { [info command ::tpycl::tcl_after] == "" } {
 }
 
 set ::after_warning ""
-proc ::after {args} {
+set ::after_serial 0
+array set ::after_scripts {}
+proc ::after {option args} {
   # special purpose version of the after command to use 
   # an alternate event queue (probably Qt)
   if { $::after_warning == "" } {
-    puts "TODO: need to handle after events"
-    puts "TODO: not handling: \"$args\""
+    puts "TODO: need to handle after events correctly with timers"
     set ::after_warning "done"
   }
-  set option [lindex $args 0]
-  set args [lrange $args 1 end]
-  if { $option == "idle" } {
-    eval $args
-  } else {
-    return 'after0'
+  # for now, just evaluate the 
+  # code as it is passed in, but issue a warning
+  switch $option {
+    "cancel" {
+      #puts "todo: cancel $args"
+    }
+    "idle" {
+      eval $args
+    }
+    default {
+      if { ![string is integer $option] } {
+        error "expected integer but got $option"
+      }
+      #puts "in $option ms do $args"
+      eval $args
+    }
   }
+  return 'after0'
 }
 
 namespace eval tpycl {

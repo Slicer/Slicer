@@ -418,7 +418,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     $this resizeSliceNode
   }
 
-  if { $calculateAnnotations } {
+  if { $calculateAnnotations && $_actionState == "" } {
 
     # TODO: the annotations seem to be very time consuming to calculate
     # but most of the time they will not be displayed - instead we should
@@ -450,6 +450,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
         $this updateAnnotation $r $a $s
         set annotationsUpdated true
     }
+  } else {
+    $_renderWidget CornerAnnotationVisibilityOff
   }
 
   #
@@ -1357,6 +1359,7 @@ itcl::body SliceSWidget::moveSlice { delta } {
         $logic SetSliceOffset [expr $offset + $delta]
         [$logic GetSliceCompositeNode] SetLinkedControl $tlink
     }
+    $_renderWidget CornerAnnotationVisibilityOff
 }
 
 itcl::body SliceSWidget::jumpSlice { r a s } {
