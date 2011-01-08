@@ -11,9 +11,9 @@ for fname in glob.glob(__path__[0] + "/vtkSlicer*ModuleLogic.py"):
   # Import logic library
   try:
     exec "import %s" % (module_logic_name)
-  except ImportError:
+  except ImportError as detail:
     # TODO: this message should go in the application error log (how?)
-    print( "ImportError: could not import %s" % (module_logic_name))
+    print detail
     continue
   
   # ... and obtain a reference to the associated module
