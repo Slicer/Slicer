@@ -499,7 +499,7 @@ void vtkSlicerGlyphSource2D::CreateHookedArrow(vtkPoints *pts, vtkCellArray *lin
 void vtkSlicerGlyphSource2D::CreateStarBurst(vtkPoints *pts, vtkCellArray *lines,
                                              vtkCellArray *vtkNotUsed(polys),
                                              vtkUnsignedCharArray *colors,
-                                             double scale)
+                                             double vtkNotUsed(scale))
 {
   // make a star shaped array of lines around the center, from SeedSWidget.tcl
   float PI =  3.1415926;

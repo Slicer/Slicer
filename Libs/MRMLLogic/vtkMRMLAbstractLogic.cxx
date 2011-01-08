@@ -303,6 +303,9 @@ int vtkMRMLAbstractLogic::GetInMRMLCallbackFlag()
 void vtkMRMLAbstractLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
 {
   assert(vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene());
+#ifndef _DEBUG
+  (void)caller;
+#endif
 
   vtkMRMLNode * node = 0;
 

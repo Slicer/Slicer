@@ -62,7 +62,7 @@ std::string trim(const std::string& str)
 
 //----------------------------------------------------------------------------
 bool UnzipPackage(const std::string& zipfile, 
-                  const std::string& target,
+                  const std::string& vtkNotUsed(target),
                   const std::string& vtkNotUsed(tmpdir))
 {
   return extract_tar(zipfile.c_str(), true, true);
@@ -96,7 +96,7 @@ const std::vector<ManifestEntry*>& vtkSlicerExtensionsLogic::GetModules()const
   return this->Modules;
 }
 
-//----------------------------------------------------------------------------
+//--------------------vtkNotUsed(--------------------------------------------------------
 bool vtkSlicerExtensionsLogic
 ::UpdateModulesFromRepository(const std::string& manifestFile)
 {
@@ -379,7 +379,7 @@ bool vtkSlicerExtensionsLogic::DownloadParseS3ext(const std::string& s3ext,
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerExtensionsLogic::DownloadExtension(const std::string& ExtensionName,
+bool vtkSlicerExtensionsLogic::DownloadExtension(const std::string& vtkNotUsed(ExtensionName),
                                                  const std::string& ExtensionBinaryURL)
 {
   vtkSmartPointer<vtkHTTPHandler> handler = vtkSmartPointer<vtkHTTPHandler>::New();

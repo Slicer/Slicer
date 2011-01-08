@@ -174,6 +174,9 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::DoDeleteCallback(vtkObject*
       vtkMRMLAbstractDisplayableManager::SafeDownCast(vtk_obj);
   assert(self);
   assert(event == vtkCommand::DeleteEvent);
+#ifndef _DEBUG
+  (void)event;
+#endif
 
   self->RemoveMRMLObservers();
 }
@@ -184,6 +187,9 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::DoRenderWindowInteractorCal
 {
   // ModifiedEvent is expected
   assert(event == vtkCommand::ModifiedEvent);
+#ifndef _DEBUG
+  (void)event;
+#endif
 
   // vtkRenderWindowInteractor is expected to be source of the ModifiedEvent
   vtkRenderWindowInteractor * rwi = vtkRenderWindowInteractor::SafeDownCast(vtk_obj);
@@ -234,9 +240,15 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::DoMRMLInteractionNodeCallba
 
   // ModifiedEvent is expected
   assert(event == vtkMRMLInteractionNode::InteractionModeChangedEvent);
+#ifndef _DEBUG
+  (void)event;
+#endif
 
   // vtkMRMLInteractionNode is expected to be source of the ModifiedEvent
   assert(vtkMRMLInteractionNode::SafeDownCast(vtk_obj));
+#ifndef _DEBUG
+  (void)vtk_obj;
+#endif
 
   vtkMRMLAbstractDisplayableManager* self =
       reinterpret_cast<vtkMRMLAbstractDisplayableManager*>(client_data);
@@ -281,6 +293,9 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::DoInteractorStyleCallback(
 {
   // vtkInteractorStyle is expected to be source of the event
   assert(vtkInteractorStyle::SafeDownCast(vtk_obj));
+#ifndef _DEBUG
+  (void)vtk_obj;
+#endif
 
   vtkMRMLAbstractDisplayableManager* self =
       reinterpret_cast<vtkMRMLAbstractDisplayableManager*>(client_data);

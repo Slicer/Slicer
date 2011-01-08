@@ -359,7 +359,8 @@ static void vtkImageGraphGetMinMax(Tin *Ptr, int ext[6], int incY, int incZ, vtk
 // Draw line including first, but not second end point
 // Discrete , bc this line only makes sense if you have discrete data => '_|' instead of '/'
 static void DrawDiscreteLine(int xx1, int yy1, int xx2, int yy2, unsigned char color[3],
-                             unsigned char *outPtr, int NumXScalar, int Xlength, int radius)
+                             unsigned char *outPtr, int NumXScalar, 
+                             int vtkNotUsed(Xlength), int radius)
 {
     unsigned char *ptr;
     int r, dx, dy, dy2, dx2, dydx2;

@@ -67,7 +67,7 @@ qMRMLSortFilterModelHierarchyProxyModel::~qMRMLSortFilterModelHierarchyProxyMode
 bool qMRMLSortFilterModelHierarchyProxyModel
 ::filterAcceptsRow(int source_row, const QModelIndex &source_parent)const
 {
-  Q_D(const qMRMLSortFilterModelHierarchyProxyModel);
+  //Q_D(const qMRMLSortFilterModelHierarchyProxyModel);
   bool res = this->Superclass::filterAcceptsRow(source_row, source_parent);
   if (!res)
     {

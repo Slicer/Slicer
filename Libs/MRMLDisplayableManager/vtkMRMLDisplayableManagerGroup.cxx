@@ -335,6 +335,9 @@ void vtkMRMLDisplayableManagerGroup::DoCallback(vtkObject* vtk_obj, unsigned lon
   char* displayableManagerName = reinterpret_cast<char*>(call_data);
   assert(self);
   assert(reinterpret_cast<vtkMRMLDisplayableManagerFactory*>(vtk_obj));
+#ifndef _DEBUG
+  (void)vtk_obj;
+#endif
   assert(displayableManagerName);
 
   switch(event)

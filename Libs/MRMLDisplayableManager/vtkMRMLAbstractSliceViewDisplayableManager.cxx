@@ -58,6 +58,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::OnMRMLDisplayableNodeModifiedEv
     vtkObject* caller)
 {
   assert(vtkMRMLSliceNode::SafeDownCast(caller));
+#ifndef _DEBUG
+  (void)caller;
+#endif
   this->OnMRMLSliceNodeModifiedEvent();
 }
 
