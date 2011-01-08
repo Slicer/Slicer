@@ -132,9 +132,10 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     
     # Inner build directory
     set(slicer_build_dir "${CTEST_BINARY_DIRECTORY}/Slicer-build")
+    
     message("----------- [ Test ${CTEST_PROJECT_NAME} ] -----------")
     ctest_test(
-      BUILD "${CTEST_BINARY_DIRECTORY}/Slicer-build" 
+      BUILD "${slicer_build_dir}" 
       #INCLUDE_LABEL ${label}
       PARALLEL_LEVEL 8
       EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
@@ -148,14 +149,14 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     # Global coverage ... 
     if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
       message("----------- [ Global coverage ] -----------")
-      ctest_coverage(BUILD "${CTEST_BINARY_DIRECTORY}/Slicer-build")
+      ctest_coverage(BUILD "${slicer_build_dir}")
       ctest_submit(PARTS Coverage)
     endif ()
     
     # Global dynamic analysis ...
     if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
         message("----------- [ Global memcheck ] -----------")
-        ctest_memcheck(BUILD "${CTEST_BINARY_DIRECTORY}/Slicer-build")
+        ctest_memcheck(BUILD "${slicer_build_dir}")
         ctest_submit(PARTS MemCheck)
       endif ()
     
