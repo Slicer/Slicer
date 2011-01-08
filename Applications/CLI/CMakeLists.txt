@@ -163,9 +163,12 @@ slicerMacroBuildCLI(
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES ITKIO ITKBasicFilters
   )
+
+if( "${ITK_VERSION}" LESS 4.0 )
 #-----------------------------------------------------------------------------
 add_subdirectory(DicomToNrrdConverter)
 #-----------------------------------------------------------------------------
+endif( "${ITK_VERSION}" LESS 4.0 )
 # set (CLP DWIDicomLoad)
 
 # set ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -371,7 +374,10 @@ ENDFOREACH(cli_module)
 
 option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" ON)
 if(BUILD_BRAINSTOOLS)
+  if( "${ITK_VERSION}" LESS 4.0 )
   add_subdirectory(BRAINSTools)
+  endif( "${ITK_VERSION}" LESS 4.0 )
+
 endif()
 
 if(BUILD_TESTING)
