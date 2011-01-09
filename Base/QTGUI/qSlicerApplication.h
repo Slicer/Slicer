@@ -99,10 +99,6 @@ public:
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
 
-#ifdef Slicer_USE_PYTHONQT
-signals:
-  void mainWindowInstantiated();
-#endif
 protected:
   QScopedPointer<qSlicerApplicationPrivate> d_ptr;
 
