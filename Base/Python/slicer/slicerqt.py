@@ -33,10 +33,6 @@ class _Internal():
     # Retrieve current instance of the scene and set 'slicer.mrmlScene'
     setattr(slicer, 'mrmlScene', slicer.app.mrmlScene())
 
-    # Give the user a chance to customize the interpreter and interface
-    self.loadUserRCFile()
-
-
   def setSlicerModuleNames(self):
     """Add module names as attributes of module slicer.moduleNames"""
     for name in moduleNames():
@@ -45,14 +41,6 @@ class _Internal():
   def setSlicerModules(self, module):
     """Add modules as attributes of module slicer.modules"""
     setattr(slicer.modules, module.name, module)
-
-  def loadUserRCFile(self):
-    """If user has defined a startup script, run it"""
-    import os.path
-    rcfile = os.path.expanduser('~/.slicerrc.py')
-    if os.path.isfile(rcfile):
-      execfile(rcfile)
-
 
 
 _internalInstance = _Internal()

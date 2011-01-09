@@ -17,6 +17,14 @@ def mainWindow():
 # IO
 #
 
+def loadSlicerRCFile():
+  """If it exists, execute slicer resource script '~/.slicerrc.py'"""
+  import os.path
+  rcfile = os.path.expanduser('~/.slicerrc.py')
+  if os.path.isfile(rcfile):
+    print 'Loading Slicer RC file [%s]' % (rcfile)
+    execfile(rcfile)
+
 def loadColorTable(filename):
   from slicer import app
   import slicer.qSlicerIO
