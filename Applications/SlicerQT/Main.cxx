@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
   Q_ASSERT(qSlicerApplication::application()->pythonManager());
   ctkPythonShell pythonShell(qSlicerApplication::application()->pythonManager());
   pythonShell.setObjectName("PythonShell");
-  pythonShell.setAttribute(Qt::WA_QuitOnClose, false);
+  //pythonShell.setAttribute(Qt::WA_QuitOnClose, false);
   pythonShell.resize(600, 280);
 #endif
 
