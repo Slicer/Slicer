@@ -20,6 +20,9 @@
 
 #include "qSlicerCommandOptions.h"
 
+// Slicer includes
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
+
 //-----------------------------------------------------------------------------
 // qSlicerCommandOptions methods
 
@@ -66,6 +69,8 @@ void qSlicerCommandOptions::addArguments()
   this->addArgument("no-main-window", "", QVariant::Bool,
                     "Disables display of the main slicer window.  Use with --python-script for alternate interface");
 
+#ifdef Slicer_USE_PYTHONQT
   this->addArgument("show-python-interactor", "", QVariant::Bool,
                     "Show Python interactor at startup.");
+#endif
 }
