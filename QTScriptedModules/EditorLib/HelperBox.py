@@ -34,8 +34,7 @@ class HelperBox(object):
     # instance of a ColorBox
     self.colorBox = None
     # slicer helper class
-    self.ApplicationLogic = slicer.vtkMRMLApplicationLogic()
-    self.ApplicationLogic.SetMRMLScene(slicer.mrmlScene)
+    self.ApplicationLogic = slicer.app.mrmlApplicationLogic()
     self.volumesLogic = slicer.modules.volumes.logic()
     self.colorLogic = slicer.modules.colors.logic()
     # qt model/view classes to track per-structure volumes
