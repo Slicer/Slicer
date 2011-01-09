@@ -67,8 +67,9 @@ class EditOptions(object):
     self.parameterNodeTag = None
     self.editUtil = EditUtil.EditUtil()
     if parent == 0:
-      self.parent = qt.QFrame()
-      self.parent.setLayout( qt.QVBoxLayout() )
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(qt.QVBoxLayout())
+      self.parent.setMRMLScene(slicer.mrmlScene)
       self.create()
       self.parent.show()
     else:

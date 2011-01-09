@@ -26,8 +26,9 @@ class ColorBox(object):
     self.recents = []
     self.label = None
     if not parent:
-      self.parent = qt.QFrame()
-      self.parent.setLayout( qt.QVBoxLayout() )
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(qt.QVBoxLayout())
+      self.parent.setMRMLScene(slicer.mrmlScene)
       self.create()
       p = qt.QCursor().pos()
       self.parent.setGeometry(p.x(), p.y(), 300, 700)

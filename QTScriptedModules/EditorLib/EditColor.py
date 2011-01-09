@@ -27,8 +27,9 @@ class EditColor(object):
     self.editUtil = EditUtil.EditUtil()
     self.colorBox = None
     if parent == 0:
-      self.parent = qt.QFrame()
-      self.parent.setLayout( qt.QVBoxLayout() )
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(qt.QVBoxLayout())
+      self.parent.setMRMLScene(slicer.mrmlScene)
       self.create()
       self.parent.show()
     else:

@@ -23,8 +23,9 @@ class Endoscopy:
 class EndoscopyWidget:
   def __init__(self, parent=None):
     if not parent:
-      self.parent=qt.QFrame()
-      self.parent.setLayout( qt.QVBoxLayout() )
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(qt.QVBoxLayout())
+      self.parent.setMRMLScene(slicer.mrmlScene)
     else:
       self.parent = parent
     self.layout = self.parent.layout()

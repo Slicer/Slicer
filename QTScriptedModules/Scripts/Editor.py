@@ -55,8 +55,9 @@ class EditorWidget:
 
     #->> check to make sure it works with a supplied parent
     if not parent:
-      self.parent = qt.QFrame()
-      self.parent.setLayout( qt.QVBoxLayout() )
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(qt.QVBoxLayout())
+      self.parent.setMRMLScene(slicer.mrmlScene)
       self.layout = self.parent.layout()
       self.setup()
       self.parent.show()

@@ -55,8 +55,9 @@ class HelperBox(object):
     self.CLINode = None
 
     if not parent:
-      self.parent = qt.QFrame()
-      self.parent.setLayout( qt.QVBoxLayout() )
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(qt.QVBoxLayout())
+      self.parent.setMRMLScene(slicer.mrmlScene)
       self.create()
       self.parent.show()
     else:
