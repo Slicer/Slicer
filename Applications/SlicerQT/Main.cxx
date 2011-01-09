@@ -137,9 +137,13 @@ int main(int argc, char* argv[])
   moduleFactoryManager->instantiateAllModules();
 
   // Create main window
-  qSlicerMainWindow window;
-  window.setWindowTitle(window.windowTitle()+ " " + Slicer_VERSION_FULL);
-  
+  QScopedPointer<qSlicerMainWindow> window;
+  if (enableMainWindow)
+    {
+    window.reset(new qSlicerMainWindow);
+    window->setWindowTitle(window->windowTitle()+ " " + Slicer_VERSION_FULL);
+    }
+
   // Load all available modules
   QStringList moduleNames = moduleManager->factoryManager()->moduleNames();
   foreach(const QString& name, moduleNames)
@@ -157,39 +161,40 @@ int main(int argc, char* argv[])
     splash.clearMessage();
     }
 
-  // TODO: load home module (check in Settings)
-  //QSettings settings;
-  //QString defaultModule = settings.value("Modules/HomeModule").toString();
-  //window.moduleSelector()->selectModule(defaultModule);
-  window.setHomeModuleCurrent();
+  if (window)
+    {
+    window->setHomeModuleCurrent();
 
-  // Show main window
-  if (enableMainWindow)
-    {
-    window.show();
+    // Show main window
+    window->show();
     }
-  if (enableSplash)
+
+  if (enableSplash && window)
     {
-    splash.finish(&window);
+    splash.finish(window.data());
     }
 
 #ifdef Slicer_USE_PYTHONQT
   // It could useful from python (especially slicerrc.py) to know when the mainwindow
   // is ready so that for example keyboard shortcuts could be installed.
-  app.metaObject()->invokeMethod(&app, "mainWindowInstantiated");
+  if (window)
+    {
+    app.metaObject()->invokeMethod(&app, "mainWindowInstantiated");
+    }
 #endif
 
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
-  QString message = QString("Thank you for trying %1!\n\n"
-                            "Please be aware that this software is under active "
-                            "development and has not been tested for accuracy. "
-                            "Many important features are still missing.\n\n"
-                            "This software is not intended for clinical use.")
-    .arg(QString("3D Slicer ") + Slicer_VERSION_FULL);
-  if (enableMainWindow)
+
+  if (window)
     {
-    QMessageBox::information(&window, "3D Slicer", message);
+    QString message = QString("Thank you for trying %1!\n\n"
+                              "Please be aware that this software is under active "
+                              "development and has not been tested for accuracy. "
+                              "Many important features are still missing.\n\n"
+                              "This software is not intended for clinical use.")
+      .arg(QString("3D Slicer ") + Slicer_VERSION_FULL);
+    QMessageBox::information(window.data(), "3D Slicer", message);
     }
 
 //  qMRMLEventLoggerWidget logger;
