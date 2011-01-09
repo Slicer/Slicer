@@ -22,7 +22,6 @@
 #define __qSlicerCoreCommandOptions_h
 
 // CTK includes
-#include <ctkPimpl.h>
 #include <ctkCommandLineParser.h>
 
 #include "qSlicerBaseQTCoreExport.h"
@@ -55,8 +54,11 @@ public:
   /// Return path of the python script to execute after slicer is loaded
   QString pythonScript()const;
 
-  /// Set python script to be executed after slicer is loaded
-  void setPythonScript(const QString& newPythonScript);
+  /// Return extra python script
+  QString extraPythonScript()const;
+
+  /// Set extra python script to be executed after slicer is loaded
+  void setExtraPythonScript(const QString& newExtraPythonScript);
 
   /// Return python code snippet to execute after slicer is loaded
   QString pythonCode()const;

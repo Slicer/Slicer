@@ -98,10 +98,24 @@ int main(int argc, char* argv[])
     return EXIT_SUCCESS;
     }
 
+  // If first unparsed argument is python script, enable 'shebang' mode
+  QStringList unparsedArguments =
+      qSlicerApplication::application()->commandOptions()->unparsedArguments();
+  if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
+    {
+    if(!app.commandOptions()->pythonScript().isEmpty())
+      {
+      qWarning() << "Ignore script specified using '--python-script'";
+      }
+    app.commandOptions()->setExtraPythonScript(unparsedArguments.at(0));
+    }
+
+  bool enableMainWindow = !app.commandOptions()->noMainWindow();
+  enableMainWindow = enableMainWindow;
+
   QPixmap pixmap(":Images/SlicerSplashScreen.png");
   QSplashScreen splash(pixmap/*, Qt::WindowStaysOnTopHint*/);
-  bool enableSplash = !app.commandOptions()->noSplash(); 
-  bool enableMainWindow = !app.commandOptions()->noMainWindow();
+  bool enableSplash = !app.commandOptions()->noSplash();
   enableSplash = enableSplash && enableMainWindow;
   if (enableSplash)
     {
@@ -188,18 +202,6 @@ int main(int argc, char* argv[])
     {
     splash.finish(window.data());
     }
-
-  // Is first unparsed argument a python script ?
-  QStringList unparsedArguments =
-        qSlicerApplication::application()->commandOptions()->unparsedArguments();
-    if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
-      {
-      if(!app.commandOptions()->pythonScript().isEmpty())
-        {
-        qWarning() << "Ignore script specified using '--python-script'";
-        }
-      app.commandOptions()->setPythonScript(unparsedArguments.at(0));
-      }
 
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));

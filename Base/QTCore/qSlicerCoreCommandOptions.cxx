@@ -23,6 +23,9 @@
 #include <QDir>
 #include <QDebug>
 
+// CTK includes
+#include <ctkPimpl.h>
+
 // SlicerQt includes
 #include "qSlicerCoreCommandOptions.h"
 #include "qSlicerCoreApplication.h" // For disableCurrentSettings()
@@ -34,7 +37,8 @@ public:
   qSlicerCoreCommandOptionsPrivate();
 
   QHash<QString, QVariant> ParsedArgs;
-  QSettings * Settings;
+  QSettings *              Settings;
+  QString                  ExtraPythonScript;
 };
 
 //-----------------------------------------------------------------------------
@@ -131,11 +135,8 @@ QString qSlicerCoreCommandOptions::pythonScript() const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreCommandOptions::setPythonScript(const QString& newPythonScript)
-{
-  Q_D(qSlicerCoreCommandOptions);
-  d->ParsedArgs.insert("python-script", newPythonScript);
-}
+CTK_GET_CPP(qSlicerCoreCommandOptions, QString, extraPythonScript, ExtraPythonScript);
+CTK_SET_CPP(qSlicerCoreCommandOptions, const QString&, setExtraPythonScript, ExtraPythonScript);
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreCommandOptions::pythonCode() const

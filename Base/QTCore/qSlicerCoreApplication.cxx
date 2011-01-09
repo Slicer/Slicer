@@ -531,6 +531,11 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 
 #ifdef Slicer_USE_PYTHONQT
   QString pythonScript = options->pythonScript();
+  QString extraPythonScript = options->extraPythonScript();
+  if(!extraPythonScript.isEmpty())
+    {
+    pythonScript = extraPythonScript;
+    }
   if(!pythonScript.isEmpty())
     {
     if (QFile::exists(pythonScript))
