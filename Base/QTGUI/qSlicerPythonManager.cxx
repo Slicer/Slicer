@@ -97,9 +97,6 @@ void qSlicerPythonManager::executeInitializationScripts()
   vtkEventBroker::GetInstance()->SetEventModeToSynchronous();
   this->addVTKObjectToPythonMain("slicer.broker", vtkEventBroker::GetInstance());
 #endif
-
-  // Attempt to load Slicer RC file
-  this->executeString("loadSlicerRCFile()");
 }
 
 //-----------------------------------------------------------------------------
