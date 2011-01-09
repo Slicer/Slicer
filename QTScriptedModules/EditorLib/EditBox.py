@@ -387,15 +387,6 @@ itcl::body EditBox::setButtonState {effect state} {
         else:
           tcl('EffectSWidget::ConfigureAll %s -exitCommand "EditorSetActiveToolLabel DefaultTool"' % self.effectClasses[effect])
 
-    TODO = """
-    # need to have the per-effect guis
-    set w [lindex [itcl::find objects -class $_effects($effect,class)] 0]
-    if { $w != "" } {
-      $w buildOptions
-      $w previewOptions
-    }
-    """
-
   def updateCheckPointButtons(self):
     previousImagesExist = nextImagesExist = False
     if bool(int(tcl('info exists ::Editor(previousCheckPointImages)'))):
