@@ -124,6 +124,13 @@ QString qSlicerCoreCommandOptions::pythonScript() const
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreCommandOptions::setPythonScript(const QString& newPythonScript)
+{
+  Q_D(qSlicerCoreCommandOptions);
+  d->ParsedArgs.insert("python-script", newPythonScript);
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreCommandOptions::pythonCode() const
 {
   Q_D(const qSlicerCoreCommandOptions);

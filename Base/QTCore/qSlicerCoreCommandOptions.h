@@ -52,6 +52,9 @@ public:
   /// Return path of the python script to execute after slicer is loaded
   QString pythonScript()const;
 
+  /// Set python script to be executed after slicer is loaded
+  void setPythonScript(const QString& newPythonScript);
+
   /// Return python code snippet to execute after slicer is loaded
   QString pythonCode()const;
 

@@ -189,6 +189,18 @@ int main(int argc, char* argv[])
     splash.finish(window.data());
     }
 
+  // Is first unparsed argument a python script ?
+  QStringList unparsedArguments =
+        qSlicerApplication::application()->commandOptions()->unparsedArguments();
+    if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
+      {
+      if(!app.commandOptions()->pythonScript().isEmpty())
+        {
+        qWarning() << "Ignore script specified using '--python-script'";
+        }
+      app.commandOptions()->setPythonScript(unparsedArguments.at(0));
+      }
+
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
 
