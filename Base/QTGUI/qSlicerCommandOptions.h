@@ -42,6 +42,8 @@ public:
 
   bool noMainWindow()const;
 
+  bool showPythonInteractor()const;
+
 protected:
   virtual void addArguments();
 

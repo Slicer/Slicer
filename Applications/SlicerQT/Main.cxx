@@ -212,6 +212,16 @@ int main(int argc, char* argv[])
     QMessageBox::information(window.data(), "3D Slicer", message);
     }
 
+#ifdef Slicer_USE_PYTHONQT
+  // Show PythonShell if required
+  if(app.commandOptions()->showPythonInteractor())
+    {
+    pythonShell.show();
+    pythonShell.activateWindow();
+    pythonShell.raise();
+    }
+#endif
+
 //  qMRMLEventLoggerWidget logger;
 //  logger.setConsoleOutputEnabled(false);
 //  logger.setMRMLScene(qSlicerApplication::application()->mrmlScene());

@@ -47,6 +47,12 @@ bool qSlicerCommandOptions::noMainWindow() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCommandOptions::showPythonInteractor() const
+{
+  return this->parsedArgs().value("show-python-interactor").toBool();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCommandOptions::addArguments()
 {
   this->Superclass::addArguments();
@@ -59,4 +65,7 @@ void qSlicerCommandOptions::addArguments()
 
   this->addArgument("no-main-window", "", QVariant::Bool,
                     "Disables display of the main slicer window.  Use with --python-script for alternate interface");
+
+  this->addArgument("show-python-interactor", "", QVariant::Bool,
+                    "Show Python interactor at startup.");
 }
