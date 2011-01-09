@@ -4,14 +4,19 @@ def quit():
 def exit():
   from slicer import app
   app.quit()
-
-def mainWindow():
+  
+def lookupTopLevelWidget(objectName, verbose = True):
+  """Loop over all top level widget associated with 'slicer.app' and 
+  return the one matching 'objectName'"""
   from slicer import app
-  _objectName = 'qSlicerMainWindow'
   for w in app.topLevelWidgets():
-    if w.objectName == _objectName: return w
-  print "Failed to obtain reference to '%s'" % _objectName
+    if w.objectName == objectName: return w
+  if verbose:
+    print "Failed to obtain reference to '%s'" % objectName
   return None
+
+def mainWindow(verbose = True):
+  return lookupTopLevelWidget('qSlicerMainWindow', verbose)
 
 #
 # IO
