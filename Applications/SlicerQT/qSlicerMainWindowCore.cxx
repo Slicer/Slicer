@@ -64,12 +64,6 @@ qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
 //---------------------------------------------------------------------------
 qSlicerMainWindowCorePrivate::~qSlicerMainWindowCorePrivate()
 {
-#ifdef Slicer_USE_PYTHONQT
-  if (this->PythonShell)
-    {
-    delete this->PythonShell;
-    }
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -172,12 +166,19 @@ void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
 {
 #ifdef Slicer_USE_PYTHONQT
   Q_D(qSlicerMainWindowCore);
+
+
   if (!d->PythonShell)
     {
-    Q_ASSERT(qSlicerApplication::application()->pythonManager());
-    d->PythonShell = new ctkPythonShell(qSlicerApplication::application()->pythonManager());
-    d->PythonShell->setAttribute(Qt::WA_QuitOnClose, false);
-    d->PythonShell->resize(600, 280);
+    // Lookup reference of 'PythonShell' widget
+    foreach(QWidget * widget, qApp->topLevelWidgets())
+      {
+      if(widget->objectName().compare(QLatin1String("PythonShell")) == 0)
+        {
+        d->PythonShell = qobject_cast<ctkPythonShell*>(widget);
+        break;
+        }
+      }
     }
   Q_ASSERT(d->PythonShell);
   d->PythonShell->show();

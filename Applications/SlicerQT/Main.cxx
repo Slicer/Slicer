@@ -25,8 +25,14 @@
 #include <QSplashScreen>
 #include <QTimer>
 
+// Slicer includes
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
+
 // CTK includes
 #include <ctkLogger.h>
+#ifdef Slicer_USE_PYTHONQT
+# include <ctkPythonShell.h>
+#endif
 
 // qMRMLWidgets includes
 #include <qMRMLEventLoggerWidget.h>
@@ -135,6 +141,15 @@ int main(int argc, char* argv[])
   // Register and instanciate modules
   moduleFactoryManager->registerAllModules();
   moduleFactoryManager->instantiateAllModules();
+
+#ifdef Slicer_USE_PYTHONQT
+  // Create python shell
+  Q_ASSERT(qSlicerApplication::application()->pythonManager());
+  ctkPythonShell pythonShell(qSlicerApplication::application()->pythonManager());
+  pythonShell.setObjectName("PythonShell");
+  pythonShell.setAttribute(Qt::WA_QuitOnClose, false);
+  pythonShell.resize(600, 280);
+#endif
 
   // Create main window
   QScopedPointer<qSlicerMainWindow> window;
