@@ -102,7 +102,7 @@ public:
   vtkSlicerApplicationLogic* appLogic() const;
 
   /// Get MRML ApplicationLogic
-  vtkMRMLApplicationLogic* mrmlApplicationLogic() const;
+  Q_INVOKABLE vtkMRMLApplicationLogic* mrmlApplicationLogic() const;
 
   ///
   /// Get slicer home directory
