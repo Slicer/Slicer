@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     }
 
   bool enableMainWindow = !app.commandOptions()->noMainWindow();
-  enableMainWindow = enableMainWindow;
+  enableMainWindow = enableMainWindow && app.commandOptions()->extraPythonScript().isEmpty();
 
   QPixmap pixmap(":Images/SlicerSplashScreen.png");
   QSplashScreen splash(pixmap/*, Qt::WindowStaysOnTopHint*/);
