@@ -305,7 +305,8 @@ void qSlicerApplication::handleCommandLineArguments()
   if (!(this->commandOptions()->displayHelpAndExit() ||
       this->commandOptions()->displayHomePathAndExit() ||
       this->commandOptions()->displaySettingsPathAndExit() ||
-      this->commandOptions()->displayVersionAndExit()))
+      this->commandOptions()->displayVersionAndExit() ||
+      this->commandOptions()->ignoreSlicerRC()))
     {
     this->pythonManager()->executeString("loadSlicerRCFile()");
     }

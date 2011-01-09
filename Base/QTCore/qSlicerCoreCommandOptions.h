@@ -49,6 +49,9 @@ public:
   /// Return True if the loading of Command Line Modules should be disabled
   bool disableCLIModule()const;
 
+  /// Return True if the loading of SlicerRC should be skipped
+  bool ignoreSlicerRC()const;
+
   /// Return path of the python script to execute after slicer is loaded
   QString pythonScript()const;
 

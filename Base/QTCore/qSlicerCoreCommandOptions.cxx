@@ -110,6 +110,13 @@ bool qSlicerCoreCommandOptions::disableCLIModule() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::ignoreSlicerRC()const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("ignore-slicerrc").toBool();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::disableLoadableModule() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -209,6 +216,9 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("python-code", "", QVariant::String,
                     "Python code to execute after slicer loads.");
+
+  this->addArgument("ignore-slicerrc", "", QVariant::Bool,
+                    "Do not load the Slicer resource file (~/.slicerrc.py).");
 #endif
 
   this->addArgument("disable-cli-module", "", QVariant::Bool,
