@@ -173,6 +173,12 @@ int main(int argc, char* argv[])
     splash.finish(&window);
     }
 
+#ifdef Slicer_USE_PYTHONQT
+  // It could useful from python (especially slicerrc.py) to know when the mainwindow
+  // is ready so that for example keyboard shortcuts could be installed.
+  app.metaObject()->invokeMethod(&app, "mainWindowInstantiated");
+#endif
+
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
   QString message = QString("Thank you for trying %1!\n\n"
