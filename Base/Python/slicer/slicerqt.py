@@ -1,9 +1,22 @@
 import vtk, qt, ctk
 import slicer
 
-from slicer.util import *
+from slicer.util import *  
 import slicer.cli
 
+#
+# loadSlicerRCFile - Let's not add this function to 'slicer.util' so that 
+# the global dictionary of the main context is passed to execfile().
+#
+
+def loadSlicerRCFile():
+  """If it exists, execute slicer resource script '~/.slicerrc.py'"""
+  import os.path
+  rcfile = os.path.expanduser('~/.slicerrc.py')
+  if os.path.isfile(rcfile):
+    print 'Loading Slicer RC file [%s]' % (rcfile)
+    execfile(rcfile)
+    
 #
 # Internal
 #
