@@ -454,6 +454,10 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     $_renderWidget CornerAnnotationVisibilityOff
   }
 
+  if { $forceAnnotationsOff } {
+    $_renderWidget CornerAnnotationVisibilityOff
+  }
+
   #
   # if another widget has the grab, let this go unless
   # it is a focus event, in which case we want to update

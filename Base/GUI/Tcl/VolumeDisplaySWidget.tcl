@@ -127,6 +127,9 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
           $displayNode SetAutoWindowLevel 0
           $::slicer3::MRMLScene SaveStateForUndo $displayNode
           $this statusText "Drag to adjust Window/Level for [$_layers(background,node) GetName]"
+
+          # don't update annotations while effect is active
+          $this configure -forceAnnotationsOff 1
         } else {
           set _actionState ""
         }
@@ -169,6 +172,8 @@ itcl::body VolumeDisplaySWidget::processEvent { {caller ""} {event ""} } {
           [$::slicer3::VolumesGUI GetVolumeDisplayWidget] UpdateWidgetFromMRML
         }
       }
+      # don't update annotations while effect is active
+      $this configure -forceAnnotationsOff 1
       set _actionState ""
       $sliceGUI SetGrabID ""
       set _description ""

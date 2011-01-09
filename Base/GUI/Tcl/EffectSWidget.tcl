@@ -92,6 +92,9 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
   $sliceGUI SetActiveLeftButtonTool $this
+
+  # don't update annotations while effect is active
+  $this configure -forceAnnotationsOff 1
  
   $this createCursor
 
