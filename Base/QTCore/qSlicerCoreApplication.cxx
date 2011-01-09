@@ -530,6 +530,16 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   bool success = true;
 
 #ifdef Slicer_USE_PYTHONQT
+  // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
+  if (!(options->displayHelpAndExit() ||
+      options->displayHomePathAndExit() ||
+      options->displaySettingsPathAndExit() ||
+      options->displayVersionAndExit() ||
+      options->ignoreSlicerRC()))
+    {
+    this->corePythonManager()->executeString("loadSlicerRCFile()");
+    }
+
   QString pythonScript = options->pythonScript();
   QString extraPythonScript = options->extraPythonScript();
   if(!extraPythonScript.isEmpty())

@@ -300,16 +300,6 @@ void qSlicerApplication::handleCommandLineArguments()
   Q_ASSERT(options);
 
   this->setToolTipsEnabled(!options->disableToolTips());
-
-  // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
-  if (!(this->commandOptions()->displayHelpAndExit() ||
-      this->commandOptions()->displayHomePathAndExit() ||
-      this->commandOptions()->displaySettingsPathAndExit() ||
-      this->commandOptions()->displayVersionAndExit() ||
-      this->commandOptions()->ignoreSlicerRC()))
-    {
-    this->pythonManager()->executeString("loadSlicerRCFile()");
-    }
 }
 
 //-----------------------------------------------------------------------------
