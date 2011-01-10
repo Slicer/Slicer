@@ -54,7 +54,7 @@ protected:
   typedef typename Superclass::InputCovariantVectorType  InputCovariantVectorType;
   typedef typename Superclass::OutputCovariantVectorType OutputCovariantVectorType;
 
-  void SetParameters(const ParametersType & parameters)
+  void SetParameters(const ParametersType & itkNotUsed(parameters))
   {
     itkExceptionMacro ("SetParameters(const ParametersType &) is not implemented for WarpTransfrom3D");
   }
