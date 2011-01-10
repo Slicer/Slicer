@@ -269,12 +269,12 @@ class LabelStatisticsLogic:
 
       
 
-class SlicerModlet(object):
+class Slicelet(object):
   """A slicer modlet is a module widget that comes up in stand alone mode
   implemented as a python class.
   This class provides common wrapper functionality used by all slicer modlets.
   """
-  # TODO: put this in a SlicerModletLib 
+  # TODO: put this in a SliceletLib 
   # TODO: parse command line arge
 
 
@@ -296,16 +296,16 @@ class SlicerModlet(object):
     slicer.app.ioManager().openAddDataDialog()
 
 
-class LabelStatisticsModlet(SlicerModlet):
+class LabelStatisticsSlicelet(Slicelet):
   """ Creates the interface when module is run as a stand alone gui app.
   """
 
   def __init__(self):
-    super(LabelStatisticsModlet,self).__init__(LabelStatisticsWidget)
+    super(LabelStatisticsSlicelet,self).__init__(LabelStatisticsWidget)
 
 
 if __name__ == "__main__":
   # TODO: need a way to access and parse command line arguments
   # TODO: ideally command line args should handle --xml
 
-  modlet = LabelStatisticsModlet()
+  modlet = LabelStatisticsSlicelet()
