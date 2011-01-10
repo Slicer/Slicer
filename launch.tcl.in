@@ -754,7 +754,7 @@ proc launch_SetPaths {} {
             set ::env(PATH) "$::env(Slicer_MODULES_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(Slicer_QTLOADABLEMODULES_DIR):$::env(PATH)"
             set ::env(PATH) "$::env(QT_BINARY_DIR):$::env(PATH)"
-            set ::env(QTDESIGNER_EXE) "Designer.app"
+            set ::env(QTDESIGNER_EXE) "Designer.app/Contents/MacOS/Designer"
             set ::env(QT_PLUGIN_PATH) "$::env(CTK_QT_PLUGIN_PATH):$::env(Slicer_QT_PLUGIN_PATH)"
         } elseif {$::env(BUILD) == $::WINDOWS} {
             # add vtk, slicer, and tcl bins
