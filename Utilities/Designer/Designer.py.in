@@ -14,7 +14,7 @@ def startDesigner(open_command, argv):
   "Start QT Designer"
 
   addEnvVariable('QT_PLUGIN_PATH', toCygwinPath('@CTK_QTDESIGNERPLUGINS_DIR@'))
-  addEnvVariable('QT_PLUGIN_PATH', toCygwinPath('@LIBRARY_OUTPUT_DIRECTORY@'))
+  addEnvVariable('QT_PLUGIN_PATH', toCygwinPath('@CMAKE_LIBRARY_OUTPUT_DIRECTORY@'))
   openCmd = open_command+'@QT_BINARY_DIR@'+os.sep+argv[0]
   print openCmd
   os.system(openCmd + " " + argv[1])

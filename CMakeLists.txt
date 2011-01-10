@@ -883,12 +883,7 @@ INSTALL(DIRECTORY
 # let's build the launcher for Kww, KwwAndQt and also QtOnly slicer ...
 ADD_SUBDIRECTORY(Utilities/Launcher)
 
-# Compute Slicer_QT_PLUGIN_PATH used to configure launch.tcl.in
-SET(Slicer_QT_PLUGIN_PATH "")
 IF(Slicer_USE_QT)
-  SET(designer_launcher_project_name SlicerQT)
-  GET_TARGET_PROPERTY(output_directory ${designer_launcher_project_name} LIBRARY_OUTPUT_DIRECTORY)
-  SET(Slicer_QT_PLUGIN_PATH ${output_directory})
 
   # on Mac we need to include the path of each Qt Framework in DYLD_LIBRARY_PATH in the launcher.
   IF(APPLE)
