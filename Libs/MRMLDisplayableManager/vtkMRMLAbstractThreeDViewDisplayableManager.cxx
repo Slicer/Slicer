@@ -58,6 +58,9 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedE
     vtkObject* caller)
 {
   assert(vtkMRMLViewNode::SafeDownCast(caller));
+#ifndef _DEBUG
+  (void)caller;
+#endif
   this->OnMRMLViewNodeModifiedEvent();
 }
 
