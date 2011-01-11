@@ -125,7 +125,7 @@ void Debug_Display_Path_Vals( vtkIntArray* activeContourVertIdx,
 
 void Debug_Display_Path_Vals2( vtkIntArray* activeContourVertIdx,  
                         const std::vector< std::vector<int> > &neigh_idx,
-                        const std::vector< int > &seedIdx ) 
+                        const std::vector< int > & vtkNotUsed(seedIdx) ) 
 {
   int numVerts = neigh_idx.size();
 //  int numInit  = neigh_idx[0].size();
@@ -172,8 +172,9 @@ void Debug_Display_L_Vals( vtkIntArray* activeContourVertIdx,
 }
 
 void Debug_Display_L_Blob( vtkIntArray* activeContourVertIdx, 
-                          const std::vector<double>& Lstar, const std::vector<int>& seedIdx,
-                          const std::vector<int>& seedIdxPrv) 
+                          const std::vector<double>& Lstar, 
+                          const std::vector<int>& vtkNotUsed(seedIdx),
+                          const std::vector<int>& vtkNotUsed(seedIdxPrv))
 {
       ::size_t numVerts = Lstar.size();
       double sum = 0.0;

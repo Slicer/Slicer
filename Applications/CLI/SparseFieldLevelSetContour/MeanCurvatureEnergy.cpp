@@ -13,7 +13,7 @@
 ==========================================================================*/
 #include "MeanCurvatureEnergy.h"
 
-double MeanCurvatureEnergy::eval_energy(const std::vector<int> &C)
+double MeanCurvatureEnergy::eval_energy(const std::vector<int> &vtkNotUsed(C))
 {
   double E = 0.0;
 
@@ -21,7 +21,8 @@ double MeanCurvatureEnergy::eval_energy(const std::vector<int> &C)
 }
 
 std::valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C_, 
-                                                const std::list<int>& L_p1, const std::list<int>& L_n1,
+                                                const std::list<int>& vtkNotUsed(L_p1), 
+                                                const std::list<int>& vtkNotUsed(L_n1),
                                                 const std::vector<double>& phi)
 {
 
@@ -61,7 +62,7 @@ std::valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C_,
     }
 }
 
-std::valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& C)
+std::valarray<double> MeanCurvatureEnergy::getforce( const std::list<int>& vtkNotUsed(C))
 {
   std::cout<<"Err!\n";
   return std::valarray<double>(0);
