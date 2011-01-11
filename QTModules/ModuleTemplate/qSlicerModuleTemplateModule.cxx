@@ -73,7 +73,7 @@ qSlicerAbstractModuleRepresentation * qSlicerModuleTemplateModule::createWidgetR
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerLogic* qSlicerModuleTemplateModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerModuleTemplateModule::createLogic()
 {
   return vtkSlicerModuleTemplateLogic::New();
 }
