@@ -111,7 +111,7 @@ public:
   virtual void ProcessLogicEvents(vtkObject * caller, unsigned long event, void * callData);  
   
   //BTX
-  using vtkSlicerLogic::ProcessLogicEvents; 
+  using vtkMRMLAbstractLogic::ProcessLogicEvents; 
   //ETX
   
   ///
