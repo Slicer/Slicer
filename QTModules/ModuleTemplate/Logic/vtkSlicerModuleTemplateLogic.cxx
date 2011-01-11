@@ -143,7 +143,7 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddHeaderVolume (const char* fi
   
   storageNode->SetFileName(filename);
   storageNode->SetCenterImage(centerImage);
-  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
 
  if (storageNode->ReadData(scalarNode))
     {
@@ -166,7 +166,7 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddHeaderVolume (const char* fi
     volumeNode = vectorNode;
     }
 
-  storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+  storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
 
   if (volumeNode != 0)
     {
@@ -174,12 +174,12 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddHeaderVolume (const char* fi
       {
       const vtksys_stl::string fname(filename);
       vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
-      name = this->MRMLScene->GetUniqueNameByString(name.c_str());
+      name = this->GetMRMLScene()->GetUniqueNameByString(name.c_str());
       volumeNode->SetName(name.c_str());
       }
     else
       {
-      std::string name = this->MRMLScene->GetUniqueNameByString(volname);
+      std::string name = this->GetMRMLScene()->GetUniqueNameByString(volname);
       volumeNode->SetName(name.c_str());
       }
 
@@ -322,18 +322,18 @@ vtkMRMLScalarVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeScalarVolume 
   storageNode->SetCenterImage(centerImage);
   storageNode->SetSingleFile(singleFile);
   storageNode->SetUseOrientationFromFile(useOrientationFromFile);
-  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
 
   if (volname == 0)
     {
     const vtksys_stl::string fname(filename);
     vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
-    name = this->MRMLScene->GetUniqueNameByString(name.c_str());
+    name = this->GetMRMLScene()->GetUniqueNameByString(name.c_str());
     scalarNode->SetName(name.c_str());
     }
   else
     {
-    std::string name = this->MRMLScene->GetUniqueNameByString(volname);
+    std::string name = this->GetMRMLScene()->GetUniqueNameByString(volname);
     scalarNode->SetName(name.c_str());
     }
   vtkDebugMacro("LoadArchetypeScalarVolume: set scalar node name: " << scalarNode->GetName());
@@ -383,7 +383,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeScalarVolume 
   storageNode->ReadData(scalarNode);
   vtkDebugMacro("AddArchetypeScalarVolume: finished reading data into scalarNode");
 
-  storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+  storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
  
   if (storageNode->GetReadState() == vtkMRMLStorageNode::TransferDone ||
       storageNode->GetReadState() == vtkMRMLStorageNode::Idle)
@@ -491,7 +491,7 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
     volumeName = vtksys::SystemTools::GetFilenameName(fname);
     }
   // now set all the volume names, before add the volumes to the scene
-  volumeName = this->MRMLScene->GetUniqueNameByString(volumeName.c_str());
+  volumeName = this->GetMRMLScene()->GetUniqueNameByString(volumeName.c_str());
 
   scalarNode->SetName(volumeName.c_str());
   vectorNode->SetName(volumeName.c_str());
@@ -550,13 +550,13 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
       }
     }
   storageNode1->SetCenterImage(centerImage);
-  storageNode1->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+  storageNode1->AddObserver(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
 
   
   storageNode2->SetCenterImage(centerImage);
   storageNode2->SetSingleFile(singleFile);
   storageNode2->SetUseOrientationFromFile(useOrientationFromFile);
-  storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+  storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
 
   this->GetMRMLScene()->SaveStateForUndo();
    
@@ -668,8 +668,8 @@ vtkMRMLVolumeNode* vtkSlicerModuleTemplateLogic::AddArchetypeVolume (const char*
       }
     }
 
-  storageNode1->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
-  storageNode2->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+  storageNode1->RemoveObservers(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
+  storageNode2->RemoveObservers(vtkCommand::ProgressEvent,  this->GetLogicCallbackCommand());
   
   if (nodeSetUsed != 1)
     {
@@ -877,7 +877,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerModuleTemplateLogic::CreateLabelVolume (vtkMRM
   // set the display node to have a label map lookup table
   vtkSmartPointer<vtkSlicerColorLogic> colorLogic = vtkSmartPointer<vtkSlicerColorLogic>::New();
   labelDisplayNode->SetAndObserveColorNodeID (colorLogic->GetDefaultLabelMapColorNodeID());
-  std::string uname = this->MRMLScene->GetUniqueNameByString(name);
+  std::string uname = this->GetMRMLScene()->GetUniqueNameByString(name);
 
   labelNode->SetName(uname.c_str());
   labelNode->SetAndObserveDisplayNodeID( labelDisplayNode->GetID() );
@@ -934,7 +934,7 @@ CloneVolume (vtkMRMLScene *scene,
   vtkMRMLScalarVolumeNode *clonedVolumeNode = vtkMRMLScalarVolumeNode::New();
   clonedVolumeNode->CopyWithScene(volumeNode);
   clonedVolumeNode->SetAndObserveStorageNodeID(0);
-  std::string uname = this->MRMLScene->GetUniqueNameByString(name);
+  std::string uname = this->GetMRMLScene()->GetUniqueNameByString(name);
   clonedVolumeNode->SetName(uname.c_str());
   clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
 
