@@ -867,12 +867,8 @@ void qSlicerAnnotationModuleWidget::onSnapShotButtonClicked()
   this->resetAllAnnotationTools();
 
   // show the dialog
-  this->m_SnapShotDialog->setVisible(true);
-  this->m_SnapShotDialog->raise();
-  this->m_SnapShotDialog->activateWindow();
   this->m_SnapShotDialog->reset();
-
-
+  this->m_SnapShotDialog->open();
 
 }
 
