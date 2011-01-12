@@ -164,11 +164,11 @@ slicerMacroBuildCLI(
   TARGET_LIBRARIES ITKIO ITKBasicFilters
   )
 
-if( "${ITK_VERSION}" LESS 4.0 )
+if( "${ITK_VERSION_MAJOR}" LESS 4 )
 #-----------------------------------------------------------------------------
 add_subdirectory(DicomToNrrdConverter)
 #-----------------------------------------------------------------------------
-endif( "${ITK_VERSION}" LESS 4.0 )
+endif( "${ITK_VERSION_MAJOR}" LESS 4 )
 # set (CLP DWIDicomLoad)
 
 # set ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -374,9 +374,9 @@ ENDFOREACH(cli_module)
 
 option(BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools" ON)
 if(BUILD_BRAINSTOOLS)
-  if( "${ITK_VERSION}" LESS 4.0 )
+  if( "${ITK_VERSION_MAJOR}" LESS 4 )
   add_subdirectory(BRAINSTools)
-  endif( "${ITK_VERSION}" LESS 4.0 )
+  endif( "${ITK_VERSION_MAJOR}" LESS 4 )
 
 endif()
 
