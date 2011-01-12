@@ -90,7 +90,9 @@ protected:
   // number of subdivisions on the line
   int Resolution;
   char* AnnotationFormat;
-  std::vector<double> biMeasurement;
+
+  double measurement1;
+  double measurement2;
  
 };
 

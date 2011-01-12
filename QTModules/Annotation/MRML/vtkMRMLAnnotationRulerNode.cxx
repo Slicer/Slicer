@@ -142,6 +142,10 @@ void vtkMRMLAnnotationRulerNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " modelID2=\"" << this->ModelID2 << "\"";
     }
+  if (this->distanceMeasurement)
+    {
+    of << indent << " distanceMeasurement=\"" << this->distanceMeasurement << "\"";
+    }
 
 }
 
@@ -173,16 +177,22 @@ void vtkMRMLAnnotationRulerNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "rulerDistanceAnnotationFormat"))
       {
-    this->SetDistanceAnnotationFormat(attValue.c_str());
+      this->SetDistanceAnnotationFormat(attValue.c_str());
       }
 
     else if (!strcmp(attName, "modelID1"))
       {
-    this->SetModelID1(attValue.c_str());
+      this->SetModelID1(attValue.c_str());
       }
     else if (!strcmp(attName, "modelID2"))
       {
-    this->SetModelID2(attValue.c_str());
+      this->SetModelID2(attValue.c_str());
+      }
+    else if (!strcmp(attName, "distanceMeasurement"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->distanceMeasurement;
       }
     }
   this->EndModify(disabledModify);

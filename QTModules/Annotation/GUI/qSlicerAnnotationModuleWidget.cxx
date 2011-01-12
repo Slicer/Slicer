@@ -301,16 +301,14 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
 
       }
 
-    // in any case, show the dialog
-    this->m_SnapShotDialog->setVisible(true);
-
     // reset all fields of the dialog
     this->m_SnapShotDialog->reset();
 
-
-
     // now we initialize it with existing values
     this->m_SnapShotDialog->initialize(mrmlIdArray.data());
+
+    // in any case, show the dialog
+    this->m_SnapShotDialog->open();
 
     // bail out, everything below is not for snapshots
     return;

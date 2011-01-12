@@ -37,6 +37,9 @@ public:
   void SetScreenshot(vtkImageData* screenshot) {this->m_ScreenShot = screenshot;}
   vtkImageData* GetScreenshot() {return this->m_ScreenShot;}
 
+  void WriteXML(ostream& of, int nIndent);
+  void ReadXMLAttributes(const char** atts);
+
   void SetScreenshotType(int type) {this->m_ScreenShotType = type;}
   int GetScreenshotType() {return this->m_ScreenShotType;}
 

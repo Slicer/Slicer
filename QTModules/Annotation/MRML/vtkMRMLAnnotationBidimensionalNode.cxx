@@ -116,7 +116,14 @@ void vtkMRMLAnnotationBidimensionalNode::WriteXML(ostream& of, int nIndent)
     }
   of << indent << "Resolution=\""<< this->Resolution << "\"";
 
-
+  if (this->measurement1)
+    {
+    of << indent << "measurement1=\"" << this->measurement1 << "\"";
+    }
+  if (this->measurement2)
+    {
+    of << indent << "measurement2=\"" << this->measurement2 << "\"";
+    }
 }
 
 
@@ -147,8 +154,29 @@ void vtkMRMLAnnotationBidimensionalNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "AnnotationFormat"))
       {
-    this->SetAnnotationFormat(attValue.c_str());
+      this->SetAnnotationFormat(attValue.c_str());
       }
+    else if (!strcmp(attName, "measurement1"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      double biM1;
+      ss >> biM1;
+
+      this->measurement1 = biM1;
+
+      }
+    else if (!strcmp(attName, "measurement2"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      double biM2;
+      ss >> biM2;
+
+      this->measurement2 = biM2;
+
+      }
+
 
     }
   this->EndModify(disabledModify);
@@ -209,16 +237,23 @@ void vtkMRMLAnnotationBidimensionalNode::PrintAnnotationInfo(ostream& os, vtkInd
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationBidimensionalNode::SetBidimensionalMeasurement(double val1, double val2)
 {
-  this->biMeasurement.clear();
-  this->biMeasurement.push_back(val1);
-  this->biMeasurement.push_back(val2);
+  this->measurement1 = val1;
+  this->measurement2 = val2;
+
   this->InvokeEvent(vtkMRMLAnnotationBidimensionalNode::ValueModifiedEvent);
 }
 
 //---------------------------------------------------------------------------
 std::vector<double> vtkMRMLAnnotationBidimensionalNode::GetBidimensionalMeasurement()
 {
-  return this->biMeasurement;
+
+  std::vector<double> measurements;
+
+  measurements.clear();
+  measurements.push_back(this->measurement1);
+  measurements.push_back(this->measurement2);
+
+  return measurements;
 }
 
 //---------------------------------------------------------------------------
