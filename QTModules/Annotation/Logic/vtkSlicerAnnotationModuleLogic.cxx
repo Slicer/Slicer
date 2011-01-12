@@ -56,7 +56,7 @@ vtkSlicerAnnotationModuleLogic::vtkSlicerAnnotationModuleLogic()
   sprintf(this->m_MeasurementFormat,"%s","%.1f");
 
   this->m_CoordinateFormat = new char[8];
-  sprintf(this->m_CoordinateFormat,"%s","%.1f");
+  sprintf(this->m_CoordinateFormat,"%s","%.0f");
 
 }
 
@@ -209,6 +209,7 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneClosedEvent()
     {
     this->m_ActiveHierarchy = 0;
     }
+  this->m_Widget->refreshTree();
 }
 
 //---------------------------------------------------------------------------
@@ -877,7 +878,7 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
     char string3[512];
     sprintf(string3, this->m_CoordinateFormat, coordinates[2]);
 
-    ss << "[" << string << ", " << string2 << ", " << string3 << "]";
+    ss << string << ", " << string2 << ", " << string3;
 
     this->m_StringHolder = ss.str();
     }
@@ -1279,6 +1280,8 @@ const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
     return this->m_StringHolder.c_str();
     }
 
+  this->m_StringHolder = id;
+
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("No scene set.")
@@ -1387,6 +1390,8 @@ const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
     // ..and now insert the copy of the annotation before the buffer
     this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
 
+    this->m_StringHolder = copyANode->GetID();
+
     return this->m_StringHolder.c_str();
 
     }
@@ -1404,6 +1409,8 @@ const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
     // ..and now insert the copy of the annotation before the buffer
     this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
 
+    this->m_StringHolder = copyANode->GetID();
+
     return this->m_StringHolder.c_str();
 
     }
@@ -1420,6 +1427,8 @@ const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
 
     // ..and now insert the copy of the annotation before the buffer
     this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
+
+    this->m_StringHolder = copyANode->GetID();
 
     return this->m_StringHolder.c_str();
 
@@ -1441,6 +1450,8 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
     {
     return this->m_StringHolder.c_str();
     }
+
+  this->m_StringHolder = id;
 
   if (!this->GetMRMLScene())
     {
@@ -1541,7 +1552,7 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
     // ..and now insert the copy of the bufferNodeChilde before the selected hierarchy node
     this->GetMRMLScene()->InsertBeforeNode(hNode,copyANode);
 
-    this->m_StringHolder = copyANode->GetID();
+    this->m_StringHolder = annotationNode->GetID();
 
     return this->m_StringHolder.c_str();
 
@@ -1561,7 +1572,7 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
     // ..and now insert the copy of the bufferNodeChilde before the selected hierarchy node
     this->GetMRMLScene()->InsertBeforeNode(hNode,copyANode);
 
-    this->m_StringHolder = copyANode->GetID();
+    this->m_StringHolder = annotationNode->GetID();
 
     return this->m_StringHolder.c_str();
 
@@ -1581,7 +1592,7 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
     // ..and now insert the copy of the bufferNodeChilde before the selected hierarchy node
     this->GetMRMLScene()->InsertBeforeNode(hNode,copyANode);
 
-    this->m_StringHolder = copyANode->GetID();
+    this->m_StringHolder = annotationNode->GetID();
 
     return this->m_StringHolder.c_str();
 
@@ -1601,7 +1612,7 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
     // ..and now insert the copy of the bufferNodeChilde before the selected hierarchy node
     this->GetMRMLScene()->InsertBeforeNode(hNode,copyANode);
 
-    this->m_StringHolder = copyANode->GetID();
+    this->m_StringHolder = annotationNode->GetID();
 
     return this->m_StringHolder.c_str();
 
@@ -1739,14 +1750,6 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchy()
 // Set the active hierarchy node which will be used as a parent for new annotations
 void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNode(vtkMRMLAnnotationHierarchyNode* hierarchyNode)
 {
-  this->m_ActiveHierarchy = hierarchyNode;
-}
-
-//---------------------------------------------------------------------------
-// Set the active hierarchy node which will be used as a parent for new annotations
-void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeByID(const char* id)
-{
-  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
 
   if (!hierarchyNode)
     {
@@ -1766,6 +1769,15 @@ void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeByID(const char* id)
     }
 
   this->m_ActiveHierarchy = hierarchyNode;
+}
+
+//---------------------------------------------------------------------------
+// Set the active hierarchy node which will be used as a parent for new annotations
+void vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeByID(const char* id)
+{
+  vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+
+  this->SetActiveHierarchyNode(hierarchyNode);
 }
 
 

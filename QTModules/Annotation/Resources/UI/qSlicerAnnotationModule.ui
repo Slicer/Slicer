@@ -223,8 +223,7 @@
              </property>
              <property name="icon">
               <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationVisibility.png</normaloff>
-               <normalon>:/Icons/AnnotationInvisible.png</normalon>:/Icons/AnnotationVisibility.png</iconset>
+               <normaloff>:/Icons/SlicerVisibleInvisible.png</normaloff>:/Icons/SlicerVisibleInvisible.png</iconset>
              </property>
             </widget>
            </item>
@@ -238,7 +237,7 @@
              </property>
              <property name="icon">
               <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/AnnotationLock.png</normaloff>:/Icons/AnnotationLock.png</iconset>
+               <normaloff>:/Icons/SlicerLockUnlock.png</normaloff>:/Icons/SlicerLockUnlock.png</iconset>
              </property>
             </widget>
            </item>
@@ -286,12 +285,15 @@
            </item>
            <item>
             <widget class="QPushButton" name="addHierarchyButton">
+             <property name="toolTip">
+              <string>Create a new hierarchy. If a hierarchy is currently selected, the new one will be a sub-hierarchy.</string>
+             </property>
              <property name="text">
               <string/>
              </property>
              <property name="icon">
               <iconset resource="../qSlicerAnnotationModule.qrc">
-               <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
+               <normaloff>:/Icons/SlicerAddHierarchy.png</normaloff>:/Icons/SlicerAddHierarchy.png</iconset>
              </property>
             </widget>
            </item>

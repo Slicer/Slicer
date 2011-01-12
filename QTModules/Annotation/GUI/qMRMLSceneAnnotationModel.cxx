@@ -99,17 +99,17 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         {
         if (annotationNode->GetVisible())
           {
-          item->setData(QPixmap(":/Icons/AnnotationVisibility.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/SlicerVisible.png"),Qt::DecorationRole);
           }
         else
           {
-          item->setData(QPixmap(":/Icons/AnnotationInvisible.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/SlicerInvisible.png"),Qt::DecorationRole);
           }
         break;
         }
       if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
         {
-        item->setData(QPixmap(":/Icons/AnnotationVisibility.png"),Qt::DecorationRole);
+        item->setData(QPixmap(":/Icons/SlicerVisibleInvisible.png"),Qt::DecorationRole);
         }
       break;
     case qMRMLSceneAnnotationModel::LockColumn:
@@ -119,17 +119,17 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
         {
         if (annotationNode->GetLocked())
           {
-          item->setData(QPixmap(":/Icons/AnnotationLock.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/SlicerLock.png"),Qt::DecorationRole);
           }
         else
           {
-          item->setData(QPixmap(":/Icons/AnnotationUnlock.png"),Qt::DecorationRole);
+          item->setData(QPixmap(":/Icons/SlicerUnlock.png"),Qt::DecorationRole);
           }
         break;
         }
       if (node->IsA("vtkMRMLAnnotationHierarchyNode"))
         {
-        item->setData(QPixmap(":/Icons/AnnotationUnlock.png"),Qt::DecorationRole);
+        item->setData(QPixmap(":/Icons/SlicerLockUnlock.png"),Qt::DecorationRole);
         }
       break;
     case qMRMLSceneAnnotationModel::EditColumn:

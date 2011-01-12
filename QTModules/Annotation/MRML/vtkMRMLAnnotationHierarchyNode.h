@@ -19,7 +19,7 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  virtual const char* GetIcon() {return ":/Icons/Data.png";};
+  virtual const char* GetIcon() {return ":/Icons/SlicerHierarchy.png";};
 
   // Description:
   // Read node attributes from XML file

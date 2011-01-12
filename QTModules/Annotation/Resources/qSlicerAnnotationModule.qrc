@@ -53,5 +53,13 @@
         <file>Icons/Data.png</file>
         <file>Icons/AnnotationPrint.png</file>
         <file>Icons/upennpalmtree.png</file>
+        <file>Icons/SlicerVisibleInvisible.png</file>
+        <file>Icons/SlicerLockUnlock.png</file>
+        <file>Icons/SlicerLock.png</file>
+        <file>Icons/SlicerInvisible.png</file>
+        <file>Icons/SlicerHierarchy.png</file>
+        <file>Icons/SlicerAddHierarchy.png</file>
+        <file>Icons/SlicerVisible.png</file>
+        <file>Icons/SlicerUnlock.png</file>
     </qresource>
 </RCC>

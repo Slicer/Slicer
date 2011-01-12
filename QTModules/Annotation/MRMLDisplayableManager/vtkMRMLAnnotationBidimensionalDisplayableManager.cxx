@@ -540,10 +540,16 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     return;
     }
 
+  if (!this->GetSliceNode())
+    {
+    // we only support bidimensional measurement creation in 2D viewers
+    return;
+    }
+
   // place the seed where the user clicked
   this->PlaceSeed(x,y);
 
-  if (this->m_ClickCounter->HasEnoughClicks(4))
+  if (this->m_ClickCounter->HasEnoughClicks(3))
     {
 
     // switch to updating state to avoid events mess
@@ -552,12 +558,80 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     vtkHandleWidget *h1 = this->GetSeed(0);
     vtkHandleWidget *h2 = this->GetSeed(1);
     vtkHandleWidget *h3 = this->GetSeed(2);
-    vtkHandleWidget *h4 = this->GetSeed(3);
+    //vtkHandleWidget *h4 = this->GetSeed(3);
 
     double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
     double* displayCoordinates2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
     double* displayCoordinates3 = vtkHandleRepresentation::SafeDownCast(h3->GetRepresentation())->GetDisplayPosition();
-    double* displayCoordinates4 = vtkHandleRepresentation::SafeDownCast(h4->GetRepresentation())->GetDisplayPosition();
+    //double* displayCoordinates4 = vtkHandleRepresentation::SafeDownCast(h4->GetRepresentation())->GetDisplayPosition();
+
+    //
+    // calculate fourth point
+    //
+
+    // find equation for line between displayCoordinate1 and displayCoordinate2
+    double x1 = displayCoordinates1[0];
+    double y1 = displayCoordinates1[1];
+    //std::cout << "X1: " << x1 << " Y1: " << y1 << std::endl;
+    double x2 = displayCoordinates2[0];
+    double y2 = displayCoordinates2[1];
+    //std::cout << "X2: " << x2 << " Y2: " << y2 << std::endl;
+    double x3 = displayCoordinates3[0];
+    double y3 = displayCoordinates3[1];
+    //std::cout << "X3: " << x3 << " Y3: " << y3 << std::endl;
+
+    // special cases: x2==1 || x1==0
+    if (x2==1)
+      {
+      x2=1.001;
+      }
+    else if (x1==0)
+      {
+      x1=0.001;
+      }
+
+    //error double b1 = (y2*x1 - y1)/(-1+x1);
+    //error2 double b1 = (x2*y1 - y2*x1)/(x2-1);
+    double b1 = (y2*x1 - y1*x2)/(x1-x2);
+    //std::cout << "B1: " << b1 << std::endl;
+    //double m1 = (y1/x1)-((y2*x1-y1)/(x1-x1*x1));
+    double m1 = (y1-b1)/x1;
+    //std::cout << "M1: " << m1 << std::endl;
+
+    // avoid unlikely case of m1==0
+    if (m1==0)
+      {
+      m1 = 0.00001;
+      }
+
+    double m2 = -1*(1/m1);
+    //std::cout << "M2: " << m2 << std::endl;
+
+    // avoid unlikely case of m1=m2
+    if (m1==m2)
+      {
+      m2=m2+0.001;
+      }
+
+    // get the crosssection (xS,yS) between orthogonal lines
+    double xS = (y3-m2*x3-b1)/(m1-m2);
+    double yS = m1*xS+b1;
+    //std::cout << "xS: " << xS << std::endl;
+    //std::cout << "yS: " << yS << std::endl;
+
+    // now we can get the fourth coordinate (TAAAAAADAAAAAAA)
+    double displayCoordinates4[2];
+    displayCoordinates4[0] = 2*xS-x3;
+    displayCoordinates4[1] = 2*yS-y3;
+    //std::cout << "X4: " << displayCoordinates4[0] << std::endl;
+    //std::cout << "Y4: " << displayCoordinates4[1] << std::endl;
+
+    //
+    // end of calculation of fourth point
+    //
+
+
+
 
     double worldCoordinates1[4];
     double worldCoordinates2[4];
@@ -575,10 +649,49 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
     vtkMRMLAnnotationBidimensionalNode *bidimensionalNode = vtkMRMLAnnotationBidimensionalNode::New();
 
     // save the world coordinates of the points to MRML
-    bidimensionalNode->SetControlPoint(worldCoordinates1,0);
-    bidimensionalNode->SetControlPoint(worldCoordinates2,1);
-    bidimensionalNode->SetControlPoint(worldCoordinates3,2);
-    bidimensionalNode->SetControlPoint(worldCoordinates4,3);
+    // but check the order first
+    if (y1 > y2)
+      {
+      // top to bottom
+      bidimensionalNode->SetControlPoint(worldCoordinates1,0);
+      bidimensionalNode->SetControlPoint(worldCoordinates2,1);
+
+      if (x3 > x2 || x3 > x1)
+        {
+        // right side
+        bidimensionalNode->SetControlPoint(worldCoordinates3,2);
+        bidimensionalNode->SetControlPoint(worldCoordinates4,3);
+        }
+      else
+        {
+        // left side
+        bidimensionalNode->SetControlPoint(worldCoordinates3,3);
+        bidimensionalNode->SetControlPoint(worldCoordinates4,2);
+        }
+
+      }
+    else
+      {
+      // bottom to top
+      bidimensionalNode->SetControlPoint(worldCoordinates2,0);
+      bidimensionalNode->SetControlPoint(worldCoordinates1,1);
+
+      if (x3 > x2 || x3 > x1)
+        {
+        // right side
+        bidimensionalNode->SetControlPoint(worldCoordinates3,3);
+        bidimensionalNode->SetControlPoint(worldCoordinates4,2);
+        }
+      else
+        {
+        // left side
+        bidimensionalNode->SetControlPoint(worldCoordinates3,2);
+        bidimensionalNode->SetControlPoint(worldCoordinates4,3);
+        }
+
+      }
+
+
     bidimensionalNode->SetBidimensionalMeasurement(distance1,distance2);
 
     bidimensionalNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("AnnotationBidimensional"));

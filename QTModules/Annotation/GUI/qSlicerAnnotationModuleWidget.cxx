@@ -209,9 +209,10 @@ void qSlicerAnnotationModuleWidget::moveDownSelected()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  vtkStdString mrmlId = d->logic()->MoveAnnotationDown(d->hierarchyTreeWidget->firstSelectedNode());
+  const char* mrmlId = d->logic()->MoveAnnotationDown(d->hierarchyTreeWidget->firstSelectedNode());
 
   d->hierarchyTreeWidget->clearSelection();
+  d->hierarchyTreeWidget->setSelectedNode(mrmlId);
 }
 
 //-----------------------------------------------------------------------------
@@ -219,9 +220,10 @@ void qSlicerAnnotationModuleWidget::moveUpSelected()
 {
   Q_D(qSlicerAnnotationModuleWidget);
 
-  vtkStdString mrmlId = d->logic()->MoveAnnotationUp(d->hierarchyTreeWidget->firstSelectedNode());
+  const char* mrmlId = d->logic()->MoveAnnotationUp(d->hierarchyTreeWidget->firstSelectedNode());
 
   d->hierarchyTreeWidget->clearSelection();
+  d->hierarchyTreeWidget->setSelectedNode(mrmlId);
 }
 
 //-----------------------------------------------------------------------------
@@ -229,8 +231,7 @@ void qSlicerAnnotationModuleWidget::onSaveMRMLSceneButtonClicked()
 {
   //Q_D(qSlicerAnnotationModuleWidget);
 
-  // TODO
-  //d->logic()->SaveMRMLScene();
+
 }
 
 //-----------------------------------------------------------------------------
@@ -239,6 +240,7 @@ void qSlicerAnnotationModuleWidget::selectAllButtonClicked()
   Q_D(qSlicerAnnotationModuleWidget);
 
   d->hierarchyTreeWidget->selectAll();
+  d->logic()->SetActiveHierarchyNode(0);
 
 }
 
@@ -413,168 +415,6 @@ void qSlicerAnnotationModuleWidget::onSaveAnnotationButtonClicked()
     */
 
 }
-
-
-//-----------------------------------------------------------------------------
-//bool qSlicerAnnotationModuleWidget::saveAnnotationReport()
-//{
-
-  /*
-  QString filename = m_ReportDialog->getFileName();
-
-  if ((!filename.endsWith(".html")) && (!filename.endsWith(".HTML")))
-    {
-    filename.append(".html");
-    }
-
-  QString imgdir(filename);
-  imgdir.remove(imgdir.size() - 5, 5);
-  imgdir.append("_files");
-  QDir currentdir = QDir::current();
-
-  if (currentdir.exists())
-    {
-    if (!currentdir.mkdir(imgdir))
-      {
-      std::cerr << "Error: cannot make directory" << std::endl;
-      }
-    }
-
-  QStringList list = imgdir.split("/");
-  QString imgshortdir = list[list.size() - 1];
-
-  QFile file(filename);
-  if (!file.open(QFile::WriteOnly | QFile::Text))
-    {
-    std::cerr << "Error: Cannot save file " << qPrintable(filename) << ": "
-        << qPrintable(file.errorString()) << std::endl;
-    return false;
-    }
-  QTextStream out(&file);
-
-  if (m_report.contains("<img src=':/Icons/AnnotationPoint.png'>"))
-    {
-    QString oldstring("<img src=':/Icons/AnnotationPoint.png'>");
-    QString newstring("");
-    newstring.append("<img src=\"").append(imgshortdir).append(
-        "/AnnotationPoint.png\"").append(">");
-    m_report.replace(oldstring, newstring);
-
-    // save the image
-    QImage img(":/Icons/AnnotationPoint.png");
-    QString imgname(imgdir);
-    imgname.append("/AnnotationPoint.png");
-
-    QFile imgfile(imgname);
-    if (!imgfile.open(QFile::WriteOnly))
-      {
-      std::cerr << "Error: Cannot save file " << qPrintable(imgname) << ": "
-          << qPrintable(file.errorString()) << std::endl;
-      return false;
-      }
-    QImageWriter writer(&imgfile, "PNG");
-    writer.write(img);
-    imgfile.close();
-
-    }
-
-  if (m_report.contains("<img src=':/Icons/AnnotationAngle.png'>"))
-    {
-    QString oldstring("<img src=':/Icons/AnnotationAngle.png'>");
-    QString newstring("");
-    newstring.append("<img src=\"").append(imgshortdir).append(
-        "/AnnotationAngle.png\"").append(">");
-    m_report.replace(oldstring, newstring);
-
-    // save the image
-    QImage img(":/Icons/AnnotationAngle.png");
-    QString imgname(imgdir);
-    imgname.append("/AnnotationAngle.png");
-
-    QFile imgfile(imgname);
-    if (!imgfile.open(QFile::WriteOnly))
-      {
-      std::cerr << "Error: Cannot save file " << qPrintable(imgname) << ": "
-          << qPrintable(file.errorString()) << std::endl;
-      return false;
-      }
-    QImageWriter writer(&imgfile, "PNG");
-    writer.write(img);
-    imgfile.close();
-
-    }
-
-  if (m_report.contains("<img src=':/Icons/AnnotationDistance.png'>"))
-    {
-    QString oldstring("<img src=':/Icons/AnnotationDistance.png'>");
-    QString newstring("");
-    newstring.append("<img src=\"").append(imgshortdir).append(
-        "/AnnotationDistance.png\"").append(">");
-    m_report.replace(oldstring, newstring);
-
-    // save the image
-    QImage img(":/Icons/AnnotationDistance.png");
-    QString imgname(imgdir);
-    imgname.append("/AnnotationDistance.png");
-
-    QFile imgfile(imgname);
-    if (!imgfile.open(QFile::WriteOnly))
-      {
-      std::cerr << "Error: Cannot save file " << qPrintable(imgname) << ": "
-          << qPrintable(file.errorString()) << std::endl;
-      return false;
-      }
-    QImageWriter writer(&imgfile, "PNG");
-    writer.write(img);
-    imgfile.close();
-
-    }
-
-  if (!m_screenshotList.isEmpty())
-    {
-    foreach(QString filename, m_screenshotList )
-        {
-        QStringList names;
-        names = filename.split("/");
-        QString shortname = names[names.size() - 1];
-        QString oldstring = filename;
-        QString newstring("");
-        newstring.append(imgshortdir).append("/").append(shortname);
-        m_report.replace(oldstring, newstring);
-
-        // save the image
-        QImage img(filename);
-        QString imgname(imgdir);
-        imgname.append("/").append(shortname);
-
-        QFile imgfile(imgname);
-        if (!imgfile.open(QFile::WriteOnly))
-          {
-          std::cerr << "Error: Cannot save file " << qPrintable(imgname)
-              << ": " << qPrintable(file.errorString()) << std::endl;
-          return false;
-          }
-        QImageWriter writer(&imgfile, "PNG");
-        writer.write(img);
-        imgfile.close();
-
-        }
-    }
-
-  out << m_report;
-  file.close();
-
-  m_ReportDialog->close();
-
-  return true;
-
-  */
-
-  // TODO
-
-
-  //return false;
-//}
 
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModuleWidget::visibleSelectedButtonClicked()
@@ -775,8 +615,8 @@ void qSlicerAnnotationModuleWidget::onAddHierarchyButtonClicked()
   Q_D(qSlicerAnnotationModuleWidget);
 
   d->logic()->SetActiveHierarchyNodeByID(d->hierarchyTreeWidget->firstSelectedNode());
-  d->logic()->AddHierarchy();
   this->refreshTree();
+  d->hierarchyTreeWidget->setSelectedNode(d->logic()->AddHierarchy()->GetID());
 }
 
 //-----------------------------------------------------------------------------

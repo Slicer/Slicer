@@ -14,6 +14,9 @@
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
 
+#include "vtkMRMLModelDisplayableManager.h"
+#include "vtkMRMLDisplayableManagerGroup.h"
+
 // VTK includes
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
@@ -497,9 +500,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         extendedP1[2] = p1[2];
         extendedP1[3] = 1;
 
-        double transformedP1[4];
+        double transformedP1[4] = {0,0,0,0};
 
-        double displayP1[4];
+        double displayP1[4] = {0,0,0,0};
 
         double extendedP2[4];
         extendedP2[0] = p2[0];
@@ -507,9 +510,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         extendedP2[2] = p2[2];
         extendedP2[3] = 1;
 
-        double transformedP2[4];
+        double transformedP2[4] = {0,0,0,0};
 
-        double displayP2[4];
+        double displayP2[4] = {0,0,0,0};
 
 
         // now multiply with the transformMatrix
@@ -527,8 +530,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
         //std::cout << this->m_SliceNode->GetName() << " display1: " << displayP1[0] << "," << displayP1[1] << "," << displayP1[2] << std::endl;
         //std::cout << this->m_SliceNode->GetName() << " display2: " << displayP2[0] << "," << displayP2[1] << "," << displayP2[2] << std::endl;
-
-
 
         // get line between p1 and p2
         // g(x) = p1 + r*(p2-p1)
@@ -592,6 +593,16 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
         // remove all old markers associated with this node
         marker->DeleteSeed(0);
+
+        // the third component of the displayCoordinates is the distance to the slice
+        // now make sure that they have different signs
+        if ((displayP1[2] > 0 && displayP2[2] > 0) ||
+            (displayP1[2] < 0 && displayP2[2] < 0))
+          {
+          // jump out because they do not have different signs
+          ++it;
+          continue;
+          }
 
         // .. and create a new one at the intersection location
         VTK_CREATE(vtkHandleWidget, newhandle);
@@ -844,7 +855,31 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x,
     }
   else
     {
-    vtkInteractorObserver::ComputeDisplayToWorld(this->GetRenderer(),x,y,0,worldCoordinates);
+
+    // for 3D, we want to convert the coordinates using the pick function
+
+    // ModelDisplayableManager is expected to be instantiated !
+    vtkMRMLModelDisplayableManager * modelDisplayableManager = vtkMRMLModelDisplayableManager::SafeDownCast(
+             this->GetDisplayableManagerGroup()->GetDisplayableManagerByClassName("vtkMRMLModelDisplayableManager"));
+    assert(modelDisplayableManager);
+
+    double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
+
+    double yNew = windowHeight - y - 1;
+
+    if (modelDisplayableManager->Pick(x,yNew))
+      {
+      double* pickedWorldCoordinates = modelDisplayableManager->GetPickedRAS();
+      worldCoordinates[0] = pickedWorldCoordinates[0];
+      worldCoordinates[1] = pickedWorldCoordinates[1];
+      worldCoordinates[2] = pickedWorldCoordinates[2];
+      worldCoordinates[3] = 1;
+      }
+    else
+      {
+      // we could not pick so just convert to world coordinates
+      vtkInteractorObserver::ComputeDisplayToWorld(this->GetRenderer(),x,y,0,worldCoordinates);
+      }
     }
 }
 

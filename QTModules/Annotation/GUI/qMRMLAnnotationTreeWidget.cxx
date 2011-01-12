@@ -95,6 +95,11 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
   QObject::connect(q, SIGNAL(clicked(const QModelIndex& )),
                    q, SLOT(onClicked(const QModelIndex&)));
 
+  QObject::connect( q->selectionModel(),
+        SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
+        q,
+        SLOT( onSelectionChanged( const QItemSelection &, const QItemSelection & ) ),
+        Qt::DirectConnection );
 
   q->setUniformRowHeights(true);
 }
@@ -142,6 +147,24 @@ void qMRMLAnnotationTreeWidget::onActivated(const QModelIndex& index)
 // Click and selected event handling
 //
 //------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+void qMRMLAnnotationTreeWidget::onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex)
+{
+
+  Q_UNUSED(index)
+  Q_UNUSED(beforeIndex)
+
+  if (index.size() == 0)
+    {
+
+    // the user clicked in empty space of the treeView
+    // so we set the active hierarchy to the top level one
+    this->m_Logic->SetActiveHierarchyNode(0);
+
+    }
+}
 
 //------------------------------------------------------------------------------
 void qMRMLAnnotationTreeWidget::onClicked(const QModelIndex& index)
@@ -363,6 +386,8 @@ void qMRMLAnnotationTreeWidget::deleteSelected()
 
     }
 
+  this->m_Logic->SetActiveHierarchyNode(0);
+
 }
 
 //------------------------------------------------------------------------------
@@ -460,6 +485,21 @@ void qMRMLAnnotationTreeWidget::mouseMoveEvent(QMouseEvent* e)
 // Layout and behavior customization
 //
 //------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void qMRMLAnnotationTreeWidget::setSelectedNode(const char* id)
+{
+  Q_D(qMRMLAnnotationTreeWidget);
+
+  vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
+
+  if (node)
+    {
+
+    this->setCurrentIndex(d->SortFilterModel->indexFromMRMLNode(node));
+
+    }
+}
 
 //------------------------------------------------------------------------------
 void qMRMLAnnotationTreeWidget::hideScene()

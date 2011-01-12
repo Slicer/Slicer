@@ -176,10 +176,10 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     dRep->SetHandleRepresentation(handle);
     dRep->InstantiateHandleRepresentation();
     dRep->GetAxis()->SetNumberOfMinorTicks(4);
-    dRep->GetAxis()->SetTickLength(9);
+    dRep->GetAxis()->SetTickLength(25);
     dRep->GetAxis()->SetTitlePosition(0.2);
     dRep->RulerModeOn();
-    dRep->SetRulerDistance(0.25);
+    dRep->SetRulerDistance(25);
 
     rulerWidget->SetRepresentation(dRep);
 
@@ -194,7 +194,7 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     dRep2->SetHandleRepresentation(handle2);
     dRep2->InstantiateHandleRepresentation();
     dRep2->RulerModeOn();
-    dRep2->SetRulerDistance(0.25);
+    dRep2->SetRulerDistance(25);
 
     rulerWidget->SetRepresentation(dRep2);
     }
@@ -571,8 +571,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     double* displayCoordinates1 = vtkHandleRepresentation::SafeDownCast(h1->GetRepresentation())->GetDisplayPosition();
     double* displayCoordinates2 = vtkHandleRepresentation::SafeDownCast(h2->GetRepresentation())->GetDisplayPosition();
 
-    double worldCoordinates1[4];
-    double worldCoordinates2[4];
+    double worldCoordinates1[4] = {0,0,0,0};
+    double worldCoordinates2[4] = {0,0,0,0};
 
     this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
     this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);

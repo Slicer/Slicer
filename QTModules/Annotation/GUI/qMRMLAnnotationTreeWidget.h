@@ -72,8 +72,11 @@ public:
 
   void selectedAsCollection(vtkCollection* collection);
 
+  void setSelectedNode(const char* id);
+
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
+  void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
