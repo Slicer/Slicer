@@ -28,7 +28,8 @@ public:
   typedef SmartPointer<const Self> ConstPointer;
   typedef ConstNeighborhoodIterator<DeformationImageType> ConstNeighborhoodIteratorType;
   typedef typename ConstNeighborhoodIteratorType::RadiusType RadiusType;  
-
+  typedef typename Superclass::ParametersType  ParametersType;
+  
   itkNewMacro( Self ) ;
   itkTypeMacro( WarpTransform3D, Transform ) ;
   OutputPointType TransformPoint( const InputPointType & inputPoint ) const ;
@@ -38,6 +39,10 @@ protected:
   /** Get/Set the neighborhood radius used for gradient computation */
   itkGetConstReferenceMacro( NeighborhoodRadius, RadiusType ) ;
   itkSetMacro( NeighborhoodRadius, RadiusType ) ;
+  /**This is a dummy function. This class does not allow to set the transform parameters through this function. Use SetDeformationField() to set the transform */
+  virtual void  SetParameters (const ParametersType &){};
+  /**This is a dummy function. This class does not allow to set the transform fixed parameters through this function. Use SetDeformationField() to set the transform */
+  virtual void  SetFixedParameters (const ParametersType &){};
   WarpTransform3D() ;
   void operator=(const Self&); //purposely not implemented
   RadiusType m_NeighborhoodRadius ;
@@ -45,36 +50,6 @@ protected:
   DeformationImagePointerType m_DeformationField ;
 //  Vector< double , 3 > m_OutputSpacing ;
   Size< 3 > m_SizeForJacobian ;
-
-  typedef typename Superclass::ParametersType            ParametersType;
-  typedef typename Superclass::InputVectorType           InputVectorType;
-  typedef typename Superclass::OutputVectorType          OutputVectorType;
-  typedef typename Superclass::InputVnlVectorType        InputVnlVectorType;
-  typedef typename Superclass::OutputVnlVectorType       OutputVnlVectorType;
-  typedef typename Superclass::InputCovariantVectorType  InputCovariantVectorType;
-  typedef typename Superclass::OutputCovariantVectorType OutputCovariantVectorType;
-
-  void SetParameters(const ParametersType & itkNotUsed(parameters))
-  {
-    itkExceptionMacro ("SetParameters(const ParametersType &) is not implemented for WarpTransfrom3D");
-  }
-  virtual void SetFixedParameters(const ParametersType &){}
-
-  /**  Method to transform a vector. */
-  virtual OutputVectorType    TransformVector(const InputVectorType &) const
-  {
-    itkExceptionMacro ("TransformVector(const InputVectorType &) is not implemented for WarpTransfrom3D");
-  }
-  /**  Method to transform a vnl_vector. */
-  virtual OutputVnlVectorType TransformVector(const InputVnlVectorType &) const
-  {
-    itkExceptionMacro ("TransformVector(const InputVnlVectorType &) is not implemented for WarpTransfrom3D");
-  }
-  /**  Method to transform a CovariantVector. */
-  virtual OutputCovariantVectorType TransformCovariantVector(const InputCovariantVectorType &) const\
-  {
-    itkExceptionMacro ("TransformCovariantVector(const InputCovariantVectorType & is not implemented for WarpTransfrom3D");
-  }
 };
 
 }//end namespace itk
