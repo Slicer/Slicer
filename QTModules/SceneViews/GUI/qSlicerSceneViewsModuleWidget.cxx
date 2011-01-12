@@ -212,14 +212,14 @@ void qSlicerSceneViewsModuleWidget::propertyEditButtonClicked(QString mrmlId)
 
     }
 
-  // in any case, show the dialog
-  this->m_SnapShotDialog->setVisible(true);
-
   // reset all fields of the dialog
   this->m_SnapShotDialog->reset();
 
   // now we initialize it with existing values
   this->m_SnapShotDialog->initialize(mrmlIdArray.data());
+
+  // in any case, show the dialog
+  this->m_SnapShotDialog->open();
 
 }
 
@@ -292,10 +292,8 @@ void qSlicerSceneViewsModuleWidget::onSnapShotButtonClicked()
     }
 
   // show the dialog
-  this->m_SnapShotDialog->setVisible(true);
-  this->m_SnapShotDialog->raise();
-  this->m_SnapShotDialog->activateWindow();
   this->m_SnapShotDialog->reset();
+  this->m_SnapShotDialog->open();
 
 
 
