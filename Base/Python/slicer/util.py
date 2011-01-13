@@ -4,7 +4,11 @@ def quit():
 def exit():
   from slicer import app
   app.quit()
-  
+
+#
+# UI
+#
+
 def lookupTopLevelWidget(objectName, verbose = True):
   """Loop over all top level widget associated with 'slicer.app' and 
   return the one matching 'objectName'"""
