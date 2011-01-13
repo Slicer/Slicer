@@ -55,8 +55,12 @@
 # It means you could manually trigger the reconfiguration of the launcher settings file 
 # by building that target.
 
-
-
+# Convenient variable set to the subdirectory containing the libraries.
+# Set to 'lib' on Linux and Darwin, set to 'bin' on Windows
+SET(LIB_SUBDIR lib)
+IF(WIN32)
+  SET(LIB_SUBDIR bin)
+ENDIF()
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
@@ -74,7 +78,7 @@ SET(SLICER_LIBRARY_PATHS_BUILD
   ${QT_LIBRARY_DIR}
   ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
-  ${LibArchive_DIR}/bin
+  ${LibArchive_DIR}/${LIB_SUBDIR}
   ./bin/<CMAKE_CFG_INTDIR>
   ./${Slicer_INSTALL_PLUGINS_LIB_DIR}/<CMAKE_CFG_INTDIR>
   ./${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>
