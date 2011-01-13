@@ -41,7 +41,7 @@ public:
   virtual ~qSlicerColorsModule();
 
   virtual QIcon icon()const;
-  qSlicerGetTitleMacro("Color");
+  virtual QString title()const;
 
   /// Return help/acknowledgement text
   virtual QString helpText()const;

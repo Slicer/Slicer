@@ -54,6 +54,12 @@ QIcon qSlicerColorsModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerColorsModule::title()const
+{
+  return "Colors";
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerColorsModule::setup()
 {
   QStringList paths = qSlicerApplication::application()->settings()
