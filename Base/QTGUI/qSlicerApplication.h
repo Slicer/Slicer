@@ -58,9 +58,8 @@ public:
   ///
   void initialize(bool& exitWhenDone);
 
-  ///
   /// Get commandOptions
-  qSlicerCommandOptions* commandOptions();
+  Q_INVOKABLE qSlicerCommandOptions* commandOptions();
 
   /// Get IO Manager
   Q_INVOKABLE qSlicerIOManager* ioManager();
