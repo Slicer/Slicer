@@ -82,7 +82,6 @@ signals:
   void currentNodeChanged(vtkMRMLNode* node);
 
 protected slots:
-  void onActivated(const QModelIndex& index);
   void onClicked(const QModelIndex& index);
 
 protected:

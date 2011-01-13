@@ -25,6 +25,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <QMessageBox>
 
 // CTK includes
 //#include "ctkModelTester.h"
@@ -83,10 +84,10 @@ void qMRMLTreeWidgetPrivate::init()
   
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
-  QObject::connect(q, SIGNAL(activated(const QModelIndex&)),
-                   q, SLOT(onActivated(const QModelIndex&)));
-  QObject::connect(q, SIGNAL(clicked(const QModelIndex&)),
-                   q, SLOT(onActivated(const QModelIndex&)));
+  //QObject::connect(q, SIGNAL(activated(const QModelIndex&)),
+  //                 q, SLOT(onActivated(const QModelIndex&)));
+  //QObject::connect(q, SIGNAL(clicked(const QModelIndex&)),
+  //                 q, SLOT(onActivated(const QModelIndex&)));
 
   q->setUniformRowHeights(true);
   
@@ -131,17 +132,21 @@ void qMRMLTreeWidgetPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* 
   // delete the previous filter
   delete this->SortFilterModel;
   this->SortFilterModel = newSortModel;
+  // Set the input of the view
+  // if no filter is given then let's show the scene model directly
+  q->QTreeView::setModel(this->SortFilterModel
+    ? static_cast<QAbstractItemModel*>(this->SortFilterModel)
+    : static_cast<QAbstractItemModel*>(this->SceneModel));
+  // Setting a new model to the view resets the selection model
+  QObject::connect(q->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex&, const QModelIndex&)),
+                   q, SLOT(onCurrentRowChanged(const QModelIndex&)));
   if (!this->SortFilterModel)
     {
-    // no filter is given then let's show the scene model directly
-    q->QTreeView::setModel(this->SceneModel);
     return;
     }
   this->SortFilterModel->setParent(q);
   // Set the input of the filter
   this->SortFilterModel->setSourceModel(this->SceneModel);
-  // Set the input of the view
-  q->QTreeView::setModel(this->SortFilterModel);
 
   // resize the view if new rows are added/removed
   QObject::connect(this->SortFilterModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex&, int, int)),
@@ -264,7 +269,7 @@ vtkMRMLScene* qMRMLTreeWidget::mrmlScene()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeWidget::onActivated(const QModelIndex& index)
+void qMRMLTreeWidget::onCurrentRowChanged(const QModelIndex& index)
 {
   Q_D(qMRMLTreeWidget);
   Q_ASSERT(d->SortFilterModel);
@@ -313,7 +318,6 @@ qMRMLSceneModel* qMRMLTreeWidget::sceneModel()const
   Q_ASSERT(d->SceneModel);
   return d->SceneModel;
 }
-
 
 //--------------------------------------------------------------------------
 QSize qMRMLTreeWidget::minimumSizeHint()const

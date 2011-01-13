@@ -86,11 +86,6 @@ void qMRMLAnnotationTreeWidgetPrivate::init()
 
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
-  //QObject::connect(q, SIGNAL(activated(const QModelIndex&)),
-  //                 q, SLOT(onActivated(const QModelIndex&)));
-  //QObject::connect(q, SIGNAL(clicked(const QModelIndex&)),
-  //                 q, SLOT(onActivated(const QModelIndex&)));
-
 
   QObject::connect(q, SIGNAL(clicked(const QModelIndex& )),
                    q, SLOT(onClicked(const QModelIndex&)));
@@ -131,16 +126,6 @@ void qMRMLAnnotationTreeWidget::setMRMLScene(vtkMRMLScene* scene)
 
   this->expandAll();
 }
-
-//------------------------------------------------------------------------------
-void qMRMLAnnotationTreeWidget::onActivated(const QModelIndex& index)
-{
-  //Q_D(qMRMLAnnotationTreeWidget);
-  //Q_ASSERT(d->SortFilterModel);
-  this->qMRMLTreeWidget::onActivated(index);
-  //emit currentNodeChanged(d->SortFilterModel->mrmlNodeFromIndex(index));
-}
-
 
 //------------------------------------------------------------------------------
 //
