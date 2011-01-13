@@ -20,14 +20,11 @@
 #include <ctkAbstractPythonManager.h>
 
 // SlicerQt includes
-#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 #include "qSlicerAbstractModuleRepresentation.h"
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerLayoutManager.h"
-#ifdef Slicer_USE_PYTHONQT
-# include "qSlicerPythonManager.h"
-#endif
+#include "qSlicerPythonManager.h"
 
 #include "qSlicerBaseQTGUIExport.h"
 
@@ -50,9 +47,7 @@ public:
     Q_ASSERT(pythonManager);
     pythonManager->registerClassForPythonQt(&qSlicerAbstractModuleWidget::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerLayoutManager::staticMetaObject);
-#ifdef Slicer_USE_PYTHONQT
     pythonManager->registerClassForPythonQt(&qSlicerPythonManager::staticMetaObject);
-#endif
     }
 
 public slots:
