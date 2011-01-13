@@ -1,5 +1,5 @@
 PROJECT( DiffusionFiltering )
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.2)
 
 INCLUDE_DIRECTORIES(${DiffusionFiltering_SOURCE_DIR}/DiffusionApplicationsCommon)
 
