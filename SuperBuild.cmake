@@ -98,12 +98,17 @@ if(Slicer_USE_PYTHONQT)
 endif()
 set(KWWidgets_DEPENDENCIES VTK)
 set(Insight_DEPENDENCIES)
-set(BatchMake_DEPENDENCIES Insight)
+
+if(Slicer_USE_BatchMake)
+  set(BatchMake_DEPENDENCIES Insight)
+  list(APPEND slicer_DEPENDENCIES BatchMake)
+endif()
+
 set(OpenIGTLink_DEPENDENCIES)
 set(teem_DEPENDENCIES VTK)
 set(cmcurl_DEPENDENCIES)
 set(libarchive_DEPENDENCIES)
-set(slicer_DEPENDENCIES VTK Insight BatchMake OpenIGTLink teem cmcurl libarchive)
+set(slicer_DEPENDENCIES VTK Insight OpenIGTLink teem cmcurl libarchive)
 
 #------------------------------------------------------------------------------
 # Conditionnaly include ExternalProject Target
@@ -149,7 +154,11 @@ endif()
 include(SuperBuild/External_Insight.cmake)
 include(SuperBuild/External_teem.cmake)
 include(SuperBuild/External_OpenIGTLink.cmake)
-include(SuperBuild/External_BatchMake.cmake)
+
+if(Slicer_USE_BatchMake)
+  include(SuperBuild/External_BatchMake.cmake)
+endif()
+
 include(SuperBuild/External_cmcurl.cmake)
 include(SuperBuild/External_libarchive.cmake)
 
