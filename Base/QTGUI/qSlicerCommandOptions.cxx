@@ -61,7 +61,7 @@ void qSlicerCommandOptions::addArguments()
   this->Superclass::addArguments();
 
   this->addArgument("disable-tooltips", "", QVariant::Bool,
-                    "Disable toolstips in the user interface.");
+                    "Disables toolstips in the user interface.");
 
   this->addArgument("no-splash", "", QVariant::Bool,
                     "Disables the startup splash screen.");
