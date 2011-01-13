@@ -65,6 +65,7 @@ public:
   vtkMRMLSliceLogic* compositeNodeLogic(vtkMRMLSliceCompositeNode* node);
   vtkMRMLSliceLogic* sliceNodeLogic(vtkMRMLSliceNode* node);
 
+  void fitSliceToBackground(vtkMRMLSliceLogic* sliceLogic);
   void setForegroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
   void setBackgroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
 public slots:
