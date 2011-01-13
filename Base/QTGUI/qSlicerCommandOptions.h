@@ -31,6 +31,10 @@ class qSlicerCommandOptionsPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreCommandOptions
 {
+  Q_OBJECT
+  Q_PROPERTY(bool noSplash READ noSplash)
+  Q_PROPERTY(bool disableToolTips READ disableToolTips)
+  Q_PROPERTY(bool showPythonInteractor READ showPythonInteractor)
 public:
   typedef qSlicerCoreCommandOptions Superclass;
   qSlicerCommandOptions(QSettings* _settings);

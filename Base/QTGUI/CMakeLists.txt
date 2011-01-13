@@ -109,6 +109,7 @@ SET(KIT_MOC_SRCS
   qSlicerAbstractModuleWidget.h
   qSlicerActionsDialog.h
   qSlicerApplication.h
+  qSlicerCommandOptions.h
   qSlicerDataDialog.h
   qSlicerDataDialog_p.h
   qSlicerExtensionsWizard.h

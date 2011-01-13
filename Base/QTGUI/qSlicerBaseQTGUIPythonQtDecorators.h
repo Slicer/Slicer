@@ -25,6 +25,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerPythonManager.h"
+#include "qSlicerCommandOptions.h"
 
 #include "qSlicerBaseQTGUIExport.h"
 
@@ -48,6 +49,7 @@ public:
     pythonManager->registerClassForPythonQt(&qSlicerAbstractModuleWidget::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerLayoutManager::staticMetaObject);
     pythonManager->registerClassForPythonQt(&qSlicerPythonManager::staticMetaObject);
+    pythonManager->registerClassForPythonQt(&qSlicerCommandOptions::staticMetaObject);
     }
 
 public slots:

@@ -31,6 +31,21 @@ class qSlicerCoreCommandOptionsPrivate;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandLineParser
 {
+  Q_OBJECT
+  Q_PROPERTY(bool displayHelpAndExit READ displayHelpAndExit)
+  Q_PROPERTY(bool disableCLIModule READ disableCLIModule)
+  Q_PROPERTY(bool ignoreSlicerRC READ ignoreSlicerRC)
+  Q_PROPERTY(QString pythonScript READ pythonScript)
+  Q_PROPERTY(QString extraPythonScript READ extraPythonScript)
+  Q_PROPERTY(QString pythonCode READ pythonCode)
+  Q_PROPERTY(bool exitAppWhenTestsDone READ exitAppWhenTestsDone)
+  Q_PROPERTY(bool disableLoadableModule READ disableLoadableModule)
+  Q_PROPERTY(bool displayVersionAndExit READ displayVersionAndExit)
+  Q_PROPERTY(bool displayProgramPathAndExit READ displayProgramPathAndExit)
+  Q_PROPERTY(bool displayHomePathAndExit READ displayHomePathAndExit)
+  Q_PROPERTY(bool displaySettingsPathAndExit READ displaySettingsPathAndExit)
+  Q_PROPERTY(bool verboseModuleDiscovery READ verboseModuleDiscovery)
+  Q_PROPERTY(QString tempDirectory READ tempDirectory)
 public:
   typedef ctkCommandLineParser Superclass;
   qSlicerCoreCommandOptions(QSettings* _settings);
