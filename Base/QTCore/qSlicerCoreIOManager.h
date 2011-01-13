@@ -33,7 +33,7 @@
 #include "qSlicerBaseQTCoreExport.h"
 
 class vtkMRMLNode;
-class vtkMRMLScene; 
+class vtkMRMLScene;
 class vtkCollection;
 class qSlicerCoreIOManagerPrivate;
 
@@ -46,12 +46,16 @@ public:
 
   /// Return the file type associated with a \a file
   Q_INVOKABLE qSlicerIO::IOFileType fileType(const QString& file)const;
+  Q_INVOKABLE QList<qSlicerIO::IOFileType> fileTypes(const QString& file)const;
 
   /// Return the file description associated with a \a file
   /// Usually the description is a short text of one or two words
   QString fileDescription(const QString& file)const;
+  QStringList fileDescriptions(const QString& file)const;
+  QString fileDescription(const qSlicerIO::IOFileType& fileType)const;
 
   /// Return the file option associated with a \a file
+  /// Convenient function to retrieve the first matching reader option
   inline qSlicerIOOptions* fileOptions(const QString& file)const;
 
   /// Return the file option associated with a \a file type

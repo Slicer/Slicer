@@ -26,6 +26,7 @@
 
 // CTK includes
 #include <ctkFileDialog.h>
+#include <ctkUtils.h>
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
@@ -66,7 +67,7 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
       QString nameFilter = filter.contains('(') ? filter :
         reader->description() + " (" + filter + ")";
       filters << nameFilter;
-      extensions << qSlicerIO::extractExtensions(nameFilter);
+      extensions << ctk::nameFilterToExtensions(nameFilter);
       }
     }
   filters.insert(0, QString("All (") + extensions.join(" ") + QString(")"));

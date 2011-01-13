@@ -57,6 +57,7 @@ public:
   vtkMRMLScene* currentScene()const;
   
   qSlicerIO* reader(const QString& fileName)const;
+  QList<qSlicerIO*> readers(const QString& fileName)const;
 
   QSettings*        ExtensionFileType;
   QList<qSlicerIO*> Readers;
@@ -82,38 +83,48 @@ vtkMRMLScene* qSlicerCoreIOManagerPrivate::currentScene()const
 //-----------------------------------------------------------------------------
 qSlicerIO* qSlicerCoreIOManagerPrivate::reader(const QString& fileName)const
 {
-  QStringList genericExtensions;
-  genericExtensions << "*.*" << "(*)";
+  QList<qSlicerIO*> matchingReaders = this->readers(fileName);
+  return matchingReaders.count() ? matchingReaders[0] : 0;
+}
+
+//-----------------------------------------------------------------------------
+QList<qSlicerIO*> qSlicerCoreIOManagerPrivate::readers(const QString& fileName)const
+{
+  QList<qSlicerIO*> matchingReaders;
+  // Some readers ("DICOM (*)" or "Scalar Overlay (*.*))" can support any file,
+  // they are called generic readers. They might not be the best choice to read
+  // the file as it might exist a more specific reader to read it.
+  // So let's add generic readers at the end of the reader list.
   QList<qSlicerIO*> genericReaders;
   foreach(qSlicerIO* reader, this->Readers)
     {
-    if (!reader->canLoadFile(fileName))
+    QStringList matchingNameFilters = reader->supportedNameFilters(fileName);
+    if (matchingNameFilters.count() == 0)
       {
       continue;
       }
-    bool generic = false;
-    foreach(QString extension, reader->extensions())
+    // Generic readers must be added to the end
+    foreach(const QString& nameFilter, matchingNameFilters)
       {
-      foreach(QString genericExtension, genericExtensions)
+      if (nameFilter.contains( "*.*" ) || nameFilter.contains("(*)"))
         {
-        if (extension.contains(genericExtension))
-          {
-          genericReaders << reader;
-          generic = true;
-          }
+        genericReaders << reader;
+        continue;
+        }
+      if (!matchingReaders.contains(reader))
+        {
+        matchingReaders << reader;
         }
       }
-    if (generic)
-      {
-      continue;
-      }
-    return reader;
     }
   foreach(qSlicerIO* reader, genericReaders)
     {
-    return reader;
+    if (!matchingReaders.contains(reader))
+      {
+      matchingReaders << reader;
+      }
     }
-  return 0;
+  return matchingReaders;
 }
 
 //-----------------------------------------------------------------------------
@@ -136,25 +147,53 @@ qSlicerCoreIOManager::~qSlicerCoreIOManager()
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerCoreIOManager::fileType(const QString& fileName)const
 {
+  QList<qSlicerIO::IOFileType> matchingFileTypes = this->fileTypes(fileName);
+  return matchingFileTypes.count() ? matchingFileTypes[0] : qSlicerIO::NoFile;
+}
+
+//-----------------------------------------------------------------------------
+QList<qSlicerIO::IOFileType> qSlicerCoreIOManager::fileTypes(const QString& fileName)const
+{
   Q_D(const qSlicerCoreIOManager);
-  qSlicerIO* reader = d->reader(fileName);
-  if (!reader)
+  QList<qSlicerIO::IOFileType> matchingFileTypes;
+  foreach (const qSlicerIO* matchingReader, d->readers(fileName))
     {
-    return  qSlicerIO::NoFile;
+    matchingFileTypes << matchingReader->fileType();
     }
-  return reader->fileType();
+  return matchingFileTypes;
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreIOManager::fileDescription(const QString& fileName)const
 {
   Q_D(const qSlicerCoreIOManager);
-  qSlicerIO* reader = d->reader(fileName);
-  if (!reader)
+  QStringList matchingDescriptions = this->fileDescriptions(fileName);
+  return matchingDescriptions.count() ? matchingDescriptions[0] : tr("Unknown");
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName)const
+{
+  Q_D(const qSlicerCoreIOManager);
+  QStringList matchingDescriptions;
+  foreach(qSlicerIO* reader, d->readers(fileName))
+    {
+    matchingDescriptions << reader->description();
+    }
+  return matchingDescriptions;
+}
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::fileDescription(const qSlicerIO::IOFileType& fileType)const
+{
+  Q_D(const qSlicerCoreIOManager);
+  QList<qSlicerIO*> readers = this->ios(fileType);
+  if (readers.isEmpty())
     {
     return tr("Unknown");
     }
-  return reader->description();
+  // not sure to know what it means to have more reader per type
+  Q_ASSERT(readers.count() == 1);
+  return readers[0]->description();
 }
 
 //-----------------------------------------------------------------------------

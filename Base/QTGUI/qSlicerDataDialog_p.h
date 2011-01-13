@@ -28,8 +28,11 @@ public slots:
   void addDirectory();
   void addFiles();
   void reset();
+  void showOptions(bool);
 
 protected slots:
+  void onFileTypeChanged();
+
 //  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);
 //  void updateCheckBoxHeader(int row, int column);
 
@@ -41,7 +44,10 @@ protected:
     OptionsColumn = 2
   };
   void addDirectory(const QDir& directory);
+  // addFile doesn't resize the columns to contents (as it might be a bit too
+  // time consuming if you do it for every file added).
   void addFile(const QFileInfo& file);
+  void setFileOptions(int row, const QString& filePath, const qSlicerIO::IOFileType& fileType);
 };
 
 

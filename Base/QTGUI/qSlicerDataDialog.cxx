@@ -21,6 +21,7 @@
 /// Qt includes
 #include <QDebug>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QFileDialog>
 #include <QList>
 #include <QUrl>
@@ -62,6 +63,10 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
   connect(this->FileWidget, SIGNAL(cellChanged(int,int)),
           this, SLOT(updateCheckBoxHeader(int,int)));
   */
+  connect(this->ShowOptionsCheckBox, SIGNAL(toggled(bool)),
+          this, SLOT(showOptions(bool)));
+  // hide the options by default;
+  this->showOptions(false);
 
   connect(this->AddDirectoryButton, SIGNAL(clicked()), this, SLOT(addDirectory()));
   connect(this->AddFilesButton, SIGNAL(clicked()), this, SLOT(addFiles()));
@@ -96,6 +101,7 @@ void qSlicerDataDialogPrivate::addFiles()
     {
     this->addFile(file);
     }
+  this->FileWidget->resizeColumnsToContents();
 }
 
 //-----------------------------------------------------------------------------
@@ -115,6 +121,7 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
       this->addDirectory(entry.absoluteFilePath());
       }
     }
+  this->FileWidget->resizeColumnsToContents();
 }
 
 //-----------------------------------------------------------------------------
@@ -130,13 +137,11 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
     qDebug() <<"already exists";
     return;
     }
-  qSlicerIO::IOFileType fileType =
-    qSlicerCoreApplication::application()->coreIOManager()->fileType(
-       file.absoluteFilePath());
-  QString fileDescription =
-    qSlicerCoreApplication::application()->coreIOManager()->fileDescription(
-      file.absoluteFilePath());
-  if (fileDescription == tr("Unknown"))
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  QList<qSlicerIO::IOFileType> fileTypes =
+    coreIOManager->fileTypes(file.absoluteFilePath());
+  if (fileTypes.isEmpty())
     {
     return;
     }
@@ -151,43 +156,35 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
   fileItem->setCheckState(Qt::Checked);
   this->FileWidget->setItem(row, FileColumn, fileItem);
   // Description
-  QTableWidgetItem *descriptionItem = new QTableWidgetItem();
-  descriptionItem->setFlags(descriptionItem->flags() & ~Qt::ItemIsEditable);
-  descriptionItem->setText(fileDescription);
-  descriptionItem->setData(Qt::AccessibleDescriptionRole, fileType);
-  this->FileWidget->setItem(row, TypeColumn, descriptionItem);
-  // Options
-  qSlicerIOOptions* options =
-    qSlicerCoreApplication::application()->coreIOManager()->fileOptions(
-      file.absoluteFilePath());
-  qSlicerIOOptionsWidget* optionsWidget =
-    dynamic_cast<qSlicerIOOptionsWidget*>(options);
-  if (optionsWidget)
+  QComboBox* descriptionComboBox = new QComboBox(this->FileWidget);
+  foreach(const qSlicerIO::IOFileType fileType, fileTypes)
     {
-    // TODO: support uneven rows. Until that day, we want to make sure the whole
-    // widget is visible
-    optionsWidget->setMinimumWidth(optionsWidget->sizeHint().width());
-    // The optionsWidget can use the filename to initialize some options.
-    optionsWidget->setFileName(file.absoluteFilePath());
-    this->FileWidget->setCellWidget(row, OptionsColumn, optionsWidget);
-    // TODO: connect signal validChanged(bool) with the accept button
+    descriptionComboBox->addItem(coreIOManager->fileDescription(fileType),
+                                 fileType);
     }
-  else
-    {
-    delete options;
-    }
-  this->FileWidget->setSortingEnabled(sortingEnabled);
-  // update columns the first time
-  if(this->FileWidget->rowCount() == 1)
-    {
-    this->FileWidget->resizeColumnsToContents();
-    }
+  // adding items to the combobox automatically selects the first item
+  // let's select none, connect the signal and then selecting the first will
+  // automatically create the option widget
+  descriptionComboBox->setCurrentIndex(-1);
+  QObject::connect(descriptionComboBox, SIGNAL(currentIndexChanged(int)),
+                   this, SLOT(onFileTypeChanged()));
+  this->FileWidget->setCellWidget(row, TypeColumn, descriptionComboBox);
+  descriptionComboBox->setCurrentIndex(0);
+    this->FileWidget->setSortingEnabled(sortingEnabled);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::reset()
 {
   this->FileWidget->setRowCount(0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::showOptions(bool show)
+{
+  this->ShowOptionsCheckBox->setChecked(show);
+  this->FileWidget->setColumnHidden(OptionsColumn, !show);
+  this->FileWidget->resizeColumnsToContents();
 }
 
 //-----------------------------------------------------------------------------
@@ -199,15 +196,17 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
     logger.trace(QString("selectedFiles - row: %1").arg(row));
     qSlicerIO::IOProperties properties;
     QTableWidgetItem* fileItem = this->FileWidget->item(row, FileColumn);
-    QTableWidgetItem* descriptionItem = this->FileWidget->item(row, TypeColumn);
+    QComboBox* descriptionComboBox = 
+      qobject_cast<QComboBox*>(this->FileWidget->cellWidget(row, TypeColumn));
     Q_ASSERT(fileItem);
-    Q_ASSERT(descriptionItem);
+    Q_ASSERT(descriptionComboBox);
     if (fileItem->checkState() != Qt::Checked)
       {
       logger.trace(QString("selectedFiles - row: %1 - UnChecked").arg(row));
       continue;
       }
-    properties["fileType"] = descriptionItem->data(Qt::AccessibleDescriptionRole).toInt();
+    properties["fileType"] = descriptionComboBox->itemData(
+      descriptionComboBox->currentIndex()).toInt();
     qSlicerIOOptionsWidget* optionsItem = dynamic_cast<qSlicerIOOptionsWidget*>(
       this->FileWidget->cellWidget(row, OptionsColumn));
     if (optionsItem)
@@ -222,6 +221,63 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
     files << properties;
     }
   return files;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::onFileTypeChanged()
+{
+  QComboBox* comboBox = qobject_cast<QComboBox*>(this->sender());
+  if (!comboBox)
+    {
+    qCritical() << "qSlicerDataDialogPrivate::onFileTypeChanged must be called"
+                << "by a QComboBox signal";
+    return;
+    }
+  int row = -1;
+  for (int i = 0; i < this->FileWidget->rowCount(); ++i)
+    {
+    if (this->FileWidget->cellWidget(i, TypeColumn) == comboBox)
+      {
+      row = i;
+      break;
+      }
+    }
+  if (row < 0)
+    {
+    qCritical() << "Can't find the item to update";
+    return;
+    }
+  QString fileName = this->FileWidget->item(row, FileColumn)->text();
+  qSlicerIO::IOFileType fileType =
+    static_cast<qSlicerIO::IOFileType>(
+      comboBox->itemData(comboBox->currentIndex()).toInt());
+  this->setFileOptions(row, fileName, fileType);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::setFileOptions(
+  int row, const QString& fileName, const qSlicerIO::IOFileType& fileType)
+{
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  // Options
+  qSlicerIOOptions* options = coreIOManager->fileOptions(fileType);
+  qSlicerIOOptionsWidget* optionsWidget =
+    dynamic_cast<qSlicerIOOptionsWidget*>(options);
+  if (optionsWidget)
+    {
+    // TODO: support uneven rows. Until that day, we want to make sure the whole
+    // widget is visible
+    optionsWidget->setMinimumWidth(optionsWidget->sizeHint().width());
+    // The optionsWidget can use the filename to initialize some options.
+    optionsWidget->setFileName(fileName);
+    // TODO: connect signal validChanged(bool) with the accept button
+    }
+  else
+    {
+    delete options;
+    }
+  this->FileWidget->setCellWidget(row, OptionsColumn, optionsWidget);
 }
 /*
 //-----------------------------------------------------------------------------
@@ -308,8 +364,8 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
     {
     properties.unite(readerProperties);
     res = qSlicerCoreApplication::application()->coreIOManager()
-      ->loadNodes(properties["fileType"].toInt(),
-                  properties) || res;
+      ->loadNodes(static_cast<qSlicerIO::IOFileType>(
+        properties["fileType"].toInt()), properties) || res;
     }
   d->reset();
   return res;

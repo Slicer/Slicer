@@ -41,14 +41,14 @@ class qSlicerIOPrivate;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIO : public QObject
 {
   Q_OBJECT
-  Q_ENUMS(IOFileTypes)
+  //Q_ENUMS(IOFileType)
 public:
   explicit qSlicerIO(QObject* parent = 0);
   virtual ~qSlicerIO();
 
-  typedef int IOFileType;
+  //typedef int IOFileType;
 
-  enum IOFileTypes
+  enum IOFileType
   {
     NoFile = 0,
     SceneFile = 1, 
@@ -68,12 +68,19 @@ public:
   virtual IOFileType fileType()const = 0;
   /// Return  a list of the supported extensions. Please read
   /// QFileDialog::nameFilters for the allowed formats
-  /// Example: "Image (*.jpg *.png *.tiff)" "Model (*.vtk)"
+  /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
   virtual QStringList extensions()const;
   /// Based on the file extensions, returns true if the file can be read,
   /// false otherwise.
   /// This function is relatively fast as it doesn't try to access the file.
   bool canLoadFile(const QString& file)const;
+
+  /// Return the matching name filters -> if the fileName is "myimage.nrrd"
+  /// and the supported extensions are "Volumes (*.mha *.nrrd *.raw)",
+  /// "Images (*.png" *.jpg")", "DICOM (*)" then it returns
+  /// "Volumes (*.mha *.nrrd *.raw), DICOM (*)"
+  QStringList supportedNameFilters(const QString& fileName)const;
+
   /// Returns a list of options for the reader. qSlicerIOOptions can be
   /// derived and have a UI associated to it (i.e. qSlicerIOOptionsWidget).
   /// Warning: you are responsible for freeing the memory of the returned
@@ -90,7 +97,6 @@ public:
   QStringList loadedNodes()const;
   QStringList savedNodes()const;
   
-  static QStringList extractExtensions(const QString &filter);
 protected:
   void setLoadedNodes(const QStringList& nodes);
   void setSavedNodes(const QStringList& nodes);

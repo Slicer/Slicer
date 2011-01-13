@@ -22,6 +22,9 @@
 #include <QFileInfo>
 #include <QRegExp>
 
+// CTK includes
+#include <ctkUtils.h>
+
 /// QtCore includes
 #include "qSlicerIO.h"
 
@@ -30,9 +33,6 @@
 
 /// VTK includes
 #include <vtkWeakPointer.h>
-
-const char *extensionsRegExp =
-  "^(.*)\\(([a-zA-Z0-9_.*? +;#\\-\\[\\]@\\{\\}/!<>\\$%&=^~:\\|]*)\\)$";
 
 //-----------------------------------------------------------------------------
 class qSlicerIOPrivate
@@ -83,26 +83,35 @@ QStringList qSlicerIO::extensions()const
 //----------------------------------------------------------------------------
 bool qSlicerIO::canLoadFile(const QString& fileName)const
 {
+  QStringList res = this->supportedNameFilters(fileName);
+  return res.count() > 0;
+}
+
+//----------------------------------------------------------------------------
+QStringList qSlicerIO::supportedNameFilters(const QString& fileName)const
+{
+  QStringList matchingNameFilters;
   QFileInfo file(fileName);
   if (!file.isFile() || 
       !file.isReadable() || 
-      file.suffix().contains('~'))
+      file.suffix().contains('~')) //temporary file
     {
-    return false;
+    return matchingNameFilters;
     }
-  foreach(const QString& filter, this->extensions())
+  foreach(const QString& nameFilter, this->extensions())
     {
-    foreach(QString extension, qSlicerIO::extractExtensions(filter))
+    foreach(const QString& extension, ctk::nameFilterToExtensions(nameFilter))
       {
       QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
       Q_ASSERT(regExp.isValid());
       if (regExp.exactMatch(file.absoluteFilePath()))
         {
-        return true;
+        matchingNameFilters << nameFilter;
         }
       }
     }
-  return false;
+  matchingNameFilters.removeDuplicates();
+  return matchingNameFilters;
 }
 
 //----------------------------------------------------------------------------
@@ -167,16 +176,4 @@ QStringList qSlicerIO::savedNodes()const
 {
   Q_D(const qSlicerIO);
   return d->SavedNodes;
-}
-
-//-----------------------------------------------------------------------------
-QStringList qSlicerIO::extractExtensions(const QString &filter)
-{
-  QRegExp regexp(QString::fromLatin1(extensionsRegExp));
-  QString f = filter;
-  if (regexp.indexIn(f) >= 0)
-    {
-    f = regexp.cap(2);
-    }
-  return f.split(QLatin1Char(' '), QString::SkipEmptyParts);
 }
