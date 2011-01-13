@@ -26,58 +26,50 @@ def pythonShell(verbose = True):
 #
 
 def loadColorTable(filename):
-  from slicer import app
-  import slicer.qSlicerIO
-  filetype = slicer.qSlicerIO.ColorTableFile
+  from slicer import app, qSlicerIO
+  filetype = qSlicerIO.ColorTableFile
   properties = {}
   return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadDTI(filename):
-  from slicer import app
-  import slicer.qSlicerIO
-  filetype = slicer.qSlicerIO.DTIFile
+  from slicer import app, qSlicerIO
+  filetype = qSlicerIO.DTIFile
   properties = {}
   return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadFiducialList(filename):
-  from slicer import app
-  import slicer.qSlicerIO
-  filetype = slicer.qSlicerIO.FiducialListFile
+  from slicer import app, qSlicerIO
+  filetype = qSlicerIO.FiducialListFile
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadModel(filename):
-  from slicer import app
-  import slicer.qSlicerIO
-  filetype = slicer.qSlicerIO.ModelFile
+  from slicer import app, qSlicerIO
+  filetype = qSlicerIO.ModelFile
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadScalarOverlay(filename):
-  from slicer import app
-  import slicer.qSlicerIO
-  filetype = slicer.qSlicerIO.ScalarOverlayFile
+  from slicer import app, qSlicerIO
+  filetype = qSlicerIO.ScalarOverlayFile
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadScene(filename, clear = True):
-  from slicer import app
-  import slicer.qSlicerIO
-  filetype = slicer.qSlicerIO.SceneFile
+  from slicer import app, qSlicerIO
+  filetype = qSlicerIO.SceneFile
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadTransform(filename):
-  from slicer import app
-  import slicer.qSlicerIO
-  filetype = slicer.qSlicerIO.TransformFile
+  from slicer import app, qSlicerIO
+  filetype = qSlicerIO.TransformFile
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
 def loadVolume(filename):
-  from slicer import app
-  import slicer.qSlicerIO
-  filetype = slicer.qSlicerIO.VolumeFile
+  from slicer import app, qSlicerIO
+  filetype = qSlicerIO.VolumeFile
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
