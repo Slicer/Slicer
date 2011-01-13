@@ -41,19 +41,21 @@ class vtkRenderer;
 class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public QObject
 {
   Q_OBJECT
+  // The following properties are exposed so that they are available within python
   Q_PROPERTY(int layout READ layout WRITE setLayout DESIGNABLE false)
+  Q_PROPERTY(int threeDViewCount READ threeDViewCount DESIGNABLE false)
 public:
   /// Superclass typedef
   typedef QObject Superclass;
 
   /// Constructors
-  explicit qMRMLLayoutManager(QWidget* widget);
+  explicit qMRMLLayoutManager(QWidget* widget = 0);
   virtual ~qMRMLLayoutManager();
 
-  void setViewport(QWidget* widget);
-  QWidget* viewport()const;
+  Q_INVOKABLE void setViewport(QWidget* widget);
+  Q_INVOKABLE QWidget* viewport()const;
 
-  vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
   /// Get SliceViewWidget identified by \a name
   qMRMLSliceWidget* sliceWidget(const QString& name)const;

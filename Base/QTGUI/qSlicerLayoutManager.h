@@ -34,7 +34,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLayoutManager : public qMRMLLayoutManage
   Q_OBJECT
 public:
   /// Constructors
-  explicit qSlicerLayoutManager(QWidget* widget);
+  explicit qSlicerLayoutManager(QWidget* widget = 0);
 
   /// Set the directory from which build-in scripted
   /// displayableManagers should be sourced from.
