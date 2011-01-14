@@ -31,6 +31,13 @@ FOREACH(policy ${project_policies})
 ENDFOREACH()
 
 #-----------------------------------------------------------------------------
+# Set the header template which defines custom export/import macros
+# for shared libraries
+#-----------------------------------------------------------------------------
+SET(Slicer_EXPORT_HEADER_TEMPLATE "${Slicer_SOURCE_DIR}/qSlicerExport.h.in")
+SET(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
+
+#-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
 #-----------------------------------------------------------------------------
 
@@ -935,7 +942,7 @@ ADD_SUBDIRECTORY(CMake)
 
 #-----------------------------------------------------------------------------
 # Set up for building against a Slicer build tree and a Slicer installation 
-#
+#-----------------------------------------------------------------------------
 INCLUDE(${Slicer_SOURCE_DIR}/GenerateSlicerConfig.cmake)
 
 CONFIGURE_FILE(${Slicer_SOURCE_DIR}/UseSlicer.cmake.in

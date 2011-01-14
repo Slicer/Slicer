@@ -27,6 +27,10 @@ ENDIF(Slicer_USE_QT)
 # Whether Slicer was built with shared libraries.
 set(Slicer_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 
+# Export header for BuildModuleLogic and BuildQTModule
+SET(Slicer_EXPORT_HEADER_TEMPLATE "@Slicer_EXPORT_HEADER_TEMPLATE@")
+SET(Slicer_LOGOS_RESOURCE "@Slicer_LOGOS_RESOURCE@")
+
 # Slicer options
 set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
 set(Slicer_USE_MIDAS "@Slicer_USE_MIDAS@")
@@ -83,6 +87,9 @@ set(Slicer_INSTALL_MODULES_BIN_DIR "@Slicer_INSTALL_MODULES_BIN_DIR@")
 set(Slicer_INSTALL_MODULES_LIB_DIR "@Slicer_INSTALL_MODULES_LIB_DIR@")
 set(Slicer_INSTALL_MODULES_INCLUDE_DIR "@Slicer_INSTALL_MODULES_INCLUDE_DIR@")
 set(Slicer_INSTALL_MODULES_SHARE_DIR "@Slicer_INSTALL_MODULES_SHARE_DIR@")
+
+set(Slicer_USE_QT "@Slicer_USE_QT@")
+set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
 
 IF(Slicer_USE_QT AND Slicer_BUILD_QTLOADABLEMODULES)
   set(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "@Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR@")

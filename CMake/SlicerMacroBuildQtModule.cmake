@@ -21,6 +21,7 @@
 #
 #
 #
+INCLUDE(SlicerMacroParseArguments)
 
 MACRO(slicerMacroBuildQtModule)
   SLICER_PARSE_ARGUMENTS(QTMODULE
@@ -49,10 +50,10 @@ MACRO(slicerMacroBuildQtModule)
   ADD_DEFINITIONS(-DQTMODULE_TITLE="${QTMODULE_TITLE}")
 
   # --------------------------------------------------------------------------
-  # Find Slicer3
+  # Find Slicer
 
   IF(NOT Slicer_SOURCE_DIR)
-    FIND_PACKAGE(Slicer3 REQUIRED)
+    FIND_PACKAGE(Slicer REQUIRED)
     INCLUDE(${Slicer_USE_FILE})
     slicer3_set_default_install_prefix_for_external_projects()
   ENDIF()
@@ -74,8 +75,11 @@ MACRO(slicerMacroBuildQtModule)
   SET(MY_EXPORT_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
   SET(MY_LIBNAME ${lib_name})
 
+  IF (NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
+    MESSAGE("Warning, Slicer_EXPORT_HEADER_TEMPLATE doesn't exist: ${Slicer_EXPORT_HEADER_TEMPLATE}")
+  ENDIF(NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
   CONFIGURE_FILE(
-    ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
+    ${Slicer_EXPORT_HEADER_TEMPLATE}
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   SET(dynamicHeaders
@@ -98,7 +102,10 @@ MACRO(slicerMacroBuildQtModule)
     QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${QTMODULE_RESOURCES})
   ENDIF()
 
-  QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc)
+  IF (NOT EXISTS ${Slicer_LOGOS_RESOURCE})
+    MESSAGE("Warning, Slicer_LOGOS_RESOURCE doesn't exist: ${Slicer_LOGOS_RESOURCE}")
+  ENDIF(NOT EXISTS ${Slicer_LOGOS_RESOURCE})
+  QT4_ADD_RESOURCES(QTMODULE_QRC_SRCS ${Slicer_LOGOS_RESOURCE})
   
   SET_SOURCE_FILES_PROPERTIES(
     ${QTMODULE_UI_CXX}
@@ -108,7 +115,7 @@ MACRO(slicerMacroBuildQtModule)
 
   SOURCE_GROUP("Resources" FILES
     ${QTMODULE_UI_SRCS}
-    ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc
+    ${Slicer_LOGOS_RESOURCE}
     ${QTMODULE_RESOURCES}
     )
 

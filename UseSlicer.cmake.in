@@ -91,7 +91,11 @@ endif(NOT WIN32)
 
 # Add cmake module path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Slicer_CMAKE_DIR}")
-include("${Slicer_CMAKE_DIR}/Slicer3Macros.cmake")
-include("${Slicer_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
-include("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
-include("${Slicer_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
+include(Slicer3Macros)
+include(Slicer3PersistenceMacros)
+include(Slicer3ModulesMacros)
+include(Slicer3PluginsMacros)
+include(SlicerMacroParseArguments)
+include(SlicerMacroBuildModuleLogic)
+include(SlicerMacroBuildQtModule)
+

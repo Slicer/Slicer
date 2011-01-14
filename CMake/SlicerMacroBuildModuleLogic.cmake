@@ -45,7 +45,7 @@ MACRO(SlicerMacroBuildModuleLogic)
   # Find Slicer3
 
   IF(NOT Slicer_SOURCE_DIR)
-    FIND_PACKAGE(Slicer3 REQUIRED)
+    FIND_PACKAGE(Slicer REQUIRED)
     INCLUDE(${Slicer_USE_FILE})
     slicer3_set_default_install_prefix_for_external_projects()
   ENDIF(NOT Slicer_SOURCE_DIR)
@@ -66,9 +66,12 @@ MACRO(SlicerMacroBuildModuleLogic)
   SET(MY_LIBRARY_EXPORT_DIRECTIVE ${MODULELOGIC_EXPORT_DIRECTIVE})
   SET(MY_EXPORT_HEADER_PREFIX ${MODULELOGIC_NAME})
   SET(MY_LIBNAME ${lib_name})
-
+  
+  IF (NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
+    MESSAGE("Warning, Slicer_EXPORT_HEADER_TEMPLATE doesn't exist: ${Slicer_EXPORT_HEADER_TEMPLATE}")
+  ENDIF(NOT EXISTS ${Slicer_EXPORT_HEADER_TEMPLATE})
   CONFIGURE_FILE(
-    ${Slicer_SOURCE_DIR}/qSlicerExport.h.in
+    ${Slicer_EXPORT_HEADER_TEMPLATE}
     ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
     )
   SET(dynamicHeaders
