@@ -197,8 +197,6 @@ class LabelerOptions(EditOptions):
   draw and paint like functionality - common options
   include the threshold paint functionality
 
-  TODO: the threshold values do not automatically adjust to the
-  scalar range of the background
   TODO: there is no dialog when the scalar type of the labelmap 
   is changed to unsigned short
   """
@@ -894,7 +892,6 @@ class SaveIslandOptions(EditOptions):
 #### Threshold
 class ThresholdOptions(EditOptions):
   """ Threshold-specfic gui
-  TODO: there is no live preview of the threshold like there was in slicer3
   """
 
   def __init__(self, parent=0):
@@ -917,8 +914,6 @@ class ThresholdOptions(EditOptions):
       self.threshold.minimum, self.threshold.maximum = lo, hi
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
-
-    # TODO: set range based on background volume
 
     self.useForPainting = qt.QPushButton("Use For Paint", self.frame)
     self.useForPainting.setToolTip("Transfer the current threshold settings to be used for labeling operations such as Paint and Draw.")
@@ -1559,5 +1554,4 @@ class GrowCutOptions(EditOptions):
       self.parameterNode.InvokePendingModifiedEvent()
 
 
-# TODO: Dialog on enter, EditHelper
 # TODO: Speed up paintApply
