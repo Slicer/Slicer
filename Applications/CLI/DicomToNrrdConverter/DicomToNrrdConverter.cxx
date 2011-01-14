@@ -307,6 +307,11 @@ int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
+  bool violated=false;
+  if (inputDicomDirectory.size() == 0) { violated = true; std::cout << "  --inputDicomDirectory Required! "  << std::endl; }
+  if (outputVolume.size() == 0) { violated = true; std::cout << "  --outputVolume Required! "  << std::endl; }
+  if (violated) exit(1);
+
 #if 0 //Defined in gdcm dicomV3.dic
   gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(Supplement49DictDiffusionDirection);
   gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(Supplement49DictDiffusionGradientDirectionSequence);
