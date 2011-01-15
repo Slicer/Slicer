@@ -178,10 +178,6 @@ int main(int argc, char** argv){
 
   if(bsplineOrder)
     correcter->SetSplineOrder(bsplineOrder);
-  if(alpha)
-    correcter->SetSigmoidNormalizedAlpha( alpha );
-  if(beta)
-    correcter->SetSigmoidNormalizedBeta( beta );
 
   CorrecterType::ArrayType numberOfControlPoints;
   if(splineDistance){
