@@ -22,7 +22,13 @@ public:
   typedef Transform< FieldDataType  , 3 , 3 > Superclass ;
   typedef typename Superclass::JacobianType JacobianType ;
   typedef typename Superclass::InputPointType InputPointType ;
+  typedef typename Superclass::InputVectorType InputVectorType ;
+  typedef typename Superclass::InputVnlVectorType InputVnlVectorType ;
+  typedef typename Superclass::InputCovariantVectorType InputCovariantVectorType ;
   typedef typename Superclass::OutputPointType OutputPointType ;
+  typedef typename Superclass::OutputVectorType OutputVectorType ;
+  typedef typename Superclass::OutputVnlVectorType OutputVnlVectorType ;
+  typedef typename Superclass::OutputCovariantVectorType OutputCovariantVectorType ;
   typedef DeformationImageType::Pointer DeformationImagePointerType ;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
@@ -43,6 +49,22 @@ protected:
   virtual void  SetParameters (const ParametersType &){};
   /**This is a dummy function. This class does not allow to set the transform fixed parameters through this function. Use SetDeformationField() to set the transform */
   virtual void  SetFixedParameters (const ParametersType &){};
+/**  Method to transform a vector. */
+  virtual OutputVectorType    TransformVector(const InputVectorType &) const
+  {
+    itkExceptionMacro ("TransformVector(const InputVectorType &) is not implemented for WarpTransform3D");
+  }
+  /**  Method to transform a vnl_vector. */
+  virtual OutputVnlVectorType TransformVector(const InputVnlVectorType &) const
+  {
+    itkExceptionMacro ("TransformVector(const InputVnlVectorType &) is not implemented for WarpTransform3D");
+  }
+  /**  Method to transform a CovariantVector. */
+  virtual OutputCovariantVectorType TransformCovariantVector(const InputCovariantVectorType &) const \
+  {
+    itkExceptionMacro ("TransformCovariantVector(const InputCovariantVectorType & is not implemented for WarpTransform3D");
+  }
+
   WarpTransform3D() ;
   void operator=(const Self&); //purposely not implemented
   RadiusType m_NeighborhoodRadius ;
