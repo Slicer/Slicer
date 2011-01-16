@@ -54,7 +54,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
   --compare
     ${ReferenceImageRotationAndAffine}
     ${TransformedImage2}
-  --compareIntensityTolerance 0
+  --compareIntensityTolerance 1
   ModuleEntryPoint
     -f ${RotationAndAffineFile}
     -T FS
@@ -75,7 +75,7 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}${ResampleTest}
   --compare
     ${ReferenceImageBSplineWS}
     ${TransformedImage3}
-  --compareIntensityTolerance 0
+  --compareIntensityTolerance 1
   ModuleEntryPoint
     -f ${BSplineFile}
     --interpolation ws
