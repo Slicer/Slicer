@@ -1214,10 +1214,6 @@ template< class PixelType > int Rotate( parameters &list )
    }
    resample->SetTransform( transform ) ;
    resample->SetInterpolator( interpol ) ;
-   if(list.numberOfThread)
-   {
-      resample->SetNumberOfThreads( list.numberOfThread ) ;
-   }
    std::vector< typename ImageType::Pointer > vectorOutputImage ;
    //Resample all the images separately
    for( ::size_t idx = 0 ; idx < vectorOfImage.size() ; idx++ )
