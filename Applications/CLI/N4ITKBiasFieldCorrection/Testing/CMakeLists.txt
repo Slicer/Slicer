@@ -35,7 +35,7 @@ set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 
 set(testname ${CLP}Test)
 add_test(${testname} ${Slicer_EXE} --launch N4ITKBiasFieldCorrectionTest
-  --compare ${BASELINE}/he3corrected.nii.gz ${TEMP}/he3corrected.nii.gz
+  --compare ${BASELINE}/he3corrected.nii ${TEMP}/he3corrected.nii.gz
   ModuleEntryPoint
   --inputimage ${TEST_DATA}/he3volume.nii.gz --maskimage ${TEST_DATA}/he3mask.nii.gz 
   --outputimage ${TEMP}/he3corrected.nii.gz --outputbiasfield ${TEMP}/he3biasfield.nii.gz
