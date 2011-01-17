@@ -233,7 +233,7 @@ set_source_files_properties(
   ABSTRACT
 )
 
-STRING(REGEX REPLACE "cxx$" "h" MRML_SRCS_HEADERS ${MRML_SRCS})
+STRING(REGEX REPLACE "\\.cxx" ".h" MRML_SRCS_HEADERS "${MRML_SRCS}")
 SOURCE_GROUP("Header Files" FILES ${MRML_SRCS_HEADERS})
 
 #-----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ ENDIF (VTK_WRAP_TCL)
 # --------------------------------------------------------------------------
 # Build and install the library
 
-SET(srcs ${MRML_SRCS})
+SET(srcs ${MRML_SRCS} ${MRML_SRCS_HEADERS})
 
 IF (VTK_WRAP_TCL)
   SET(srcs ${srcs} ${MRML_TCL_SRCS})
