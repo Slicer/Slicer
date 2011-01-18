@@ -89,8 +89,9 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   
   // Set selector attributes
   this->LabelMapSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
-  this->BackgroundLayerNodeSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "0");
-  this->ForegroundLayerNodeSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "0");
+  // Background and Foreground volume selectors can display LabelMap volumes.
+  //this->BackgroundLayerNodeSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "0");
+  //this->ForegroundLayerNodeSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "0");
 
   // Populate Advanced menu
   this->setupMoreOptionsMenu();
