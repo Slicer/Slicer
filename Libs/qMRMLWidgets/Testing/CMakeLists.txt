@@ -46,6 +46,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLVolumeThresholdWidgetTest1.cxx
   qMRMLVolumeThresholdWidgetTest2.cxx
   qMRMLWidgetsExportTest1.cxx
+  qMRMLWindowLevelWidgetTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -119,4 +120,4 @@ SIMPLE_TEST( qMRMLVolumeInfoWidgetTest1 )
 SCENE_TEST( qMRMLVolumeThresholdWidgetTest1 vol_and_cube.mrml)
 SCENE_TEST( qMRMLVolumeThresholdWidgetTest2 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLWidgetsExportTest1 )
-
+SCENE_TEST( qMRMLWindowLevelWidgetTest1 vol_and_cube.mrml)
