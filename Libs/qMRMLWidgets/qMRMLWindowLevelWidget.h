@@ -29,7 +29,7 @@ class QMRML_WIDGETS_EXPORT qMRMLWindowLevelWidget : public QWidget
 public:
   /// Constructors
   typedef QWidget Superclass;
-  explicit qMRMLWindowLevelWidget(QWidget* parent);
+  explicit qMRMLWindowLevelWidget(QWidget* parent = 0);
   virtual ~qMRMLWindowLevelWidget();
 
   enum ControlMode
