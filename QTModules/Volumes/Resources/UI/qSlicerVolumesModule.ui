@@ -14,7 +14,7 @@
    <string>Volumes</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../qSlicerVolumesModule.qrc">
+   <iconset>
     <normaloff>:/Icons/Volumes.png</normaloff>:/Icons/Volumes.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -37,6 +37,9 @@
      </property>
      <property name="addEnabled">
       <bool>false</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

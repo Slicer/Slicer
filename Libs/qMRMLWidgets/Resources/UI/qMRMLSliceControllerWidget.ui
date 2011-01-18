@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Slice Controller</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -167,6 +167,9 @@
         <property name="removeEnabled">
          <bool>false</bool>
         </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -217,6 +220,9 @@
         <property name="removeEnabled">
          <bool>false</bool>
         </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="1" column="2">
@@ -266,6 +272,9 @@
         </property>
         <property name="removeEnabled">
          <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
