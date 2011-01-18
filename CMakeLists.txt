@@ -158,7 +158,7 @@ SET(Slicer_VTK_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "reposito
 MARK_AS_ADVANCED(Slicer_VTK_GIT_REPOSITORY)
 SET(Slicer_VTK_GIT_TAG "origin/slicer-4.0" CACHE STRING "VTK git tag to use")
 MARK_AS_ADVANCED(Slicer_VTK_GIT_TAG)
-SET(Slicer_ITK_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "repository from which to get ITK")
+SET(Slicer_ITK_GIT_REPOSITORY "github.com/Slicer/ITK.git" CACHE STRING "repository from which to get ITK")
 MARK_AS_ADVANCED(Slicer_ITK_GIT_REPOSITORY)
 SET(Slicer_ITK_GIT_TAG "origin/slicer-4.0" CACHE STRING "ITK git tag to use")
 MARK_AS_ADVANCED(Slicer_ITK_GIT_TAG)
