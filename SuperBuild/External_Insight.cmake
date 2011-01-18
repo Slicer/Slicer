@@ -12,8 +12,8 @@ set(proj Insight)
 if(NOT DEFINED ITK_DIR)
 #  message(STATUS "Adding project:${proj}")
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/ITK.git"
-    GIT_TAG "origin/slicer-4.0"
+    GIT_REPOSITORY "${git_protocol}://${Slicer_ITK_GIT_REPOSITORY}"
+    GIT_TAG ${Slicer_ITK_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
