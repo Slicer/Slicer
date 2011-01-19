@@ -224,6 +224,8 @@ void qMRMLTransformSliders::onMinimumChanged(double min)
   d->LRSlider->setMinimum(min);
   d->PASlider->setMinimum(min);
   d->ISSlider->setMinimum(min);
+
+  emit this->minimumChanged(min);
 }
 
 // --------------------------------------------------------------------------
@@ -234,6 +236,8 @@ void qMRMLTransformSliders::onMaximumChanged(double max)
   d->LRSlider->setMaximum(max);
   d->PASlider->setMaximum(max);
   d->ISSlider->setMaximum(max);
+
+  emit this->maximumChanged(max);
 }
 
 // --------------------------------------------------------------------------

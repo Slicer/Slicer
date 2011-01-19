@@ -55,6 +55,8 @@ protected slots:
   void onIdentityButtonPressed();
   void onInvertButtonPressed();
   void onNodeSelected(vtkMRMLNode* node);
+  void onTranslationMaximumChanged(double newMax);
+  void onTranslationMinimumChanged(double newMin);
 
   /// 
   /// Triggered upon MRML transform node updates

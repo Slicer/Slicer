@@ -121,6 +121,14 @@ signals:
   /// Signal sent if at least one of the slider's value is updated
   void valuesChanged();
 
+  ///
+  /// Signal sent if the minimum slider's value is updated
+  void minimumChanged(double newMinimum);
+
+  ///
+  /// Signal sent if the maximum slider's value is updated
+  void maximumChanged(double newMaximum);
+
 public slots:
   /// 
   /// Set the MRML node of interest
