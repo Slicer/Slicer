@@ -41,7 +41,7 @@ class qSlicerIOPrivate;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIO : public QObject
 {
   Q_OBJECT
-  //Q_ENUMS(IOFileType)
+  Q_ENUMS(IOFileType)
 public:
   explicit qSlicerIO(QObject* parent = 0);
   virtual ~qSlicerIO();
