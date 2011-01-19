@@ -36,20 +36,37 @@ public:
   typedef typename ConstNeighborhoodIteratorType::RadiusType RadiusType;  
   typedef typename Superclass::ParametersType  ParametersType;
   
-  itkNewMacro( Self ) ;
+  /** New method for creation through the object factory.
+   * NOTE: itkNewMacro is not used because we need to provide a
+   * CreateAnother method for this class */
+  static Pointer New(void);
+
+  /** CreateAnother method will clone the existing instance of this type,
+   * including its internal member variables. */
+  virtual::itk::LightObject::Pointer CreateAnother(void) const;
+
   itkTypeMacro( WarpTransform3D, Transform ) ;
   OutputPointType TransformPoint( const InputPointType & inputPoint ) const ;
   const JacobianType & GetJacobian( const InputPointType &inputPoint ) const ;
   void SetDeformationField( DeformationImagePointerType deformationField ) ;
+  const DeformationImagePointerType GetDeformationField() const
+  {
+    return m_DeformationField;
+  }
 protected:
   /** Get/Set the neighborhood radius used for gradient computation */
   itkGetConstReferenceMacro( NeighborhoodRadius, RadiusType ) ;
   itkSetMacro( NeighborhoodRadius, RadiusType ) ;
-  /**This is a dummy function. This class does not allow to set the transform parameters through this function. Use SetDeformationField() to set the transform */
+
+  /**This is a dummy function. This class does not allow to set the
+   * transform parameters through this function. Use
+   * SetDeformationField() to set the transform.*/
   virtual void  SetParameters (const ParametersType &){};
-  /**This is a dummy function. This class does not allow to set the transform fixed parameters through this function. Use SetDeformationField() to set the transform */
+  /**This is a dummy function. This class does not allow to set the
+   * transform fixed parameters through this function. Use
+   * SetDeformationField() to set the transform */
   virtual void  SetFixedParameters (const ParametersType &){};
-/**  Method to transform a vector. */
+  /**  Method to transform a vector. */
   virtual OutputVectorType    TransformVector(const InputVectorType &) const
   {
     itkExceptionMacro ("TransformVector(const InputVectorType &) is not implemented for WarpTransform3D");

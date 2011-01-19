@@ -4,9 +4,45 @@ namespace itk
 {
 
 
+// Explicit New() method, used here because we need to split the itkNewMacro()
+// in order to overload the CreateAnother() method.
+// Explicit New() method, used here because we need to split the itkNewMacro()
+// in order to overload the CreateAnother() method.
+template< class FieldData >
+typename WarpTransform3D< FieldData >::Pointer
+WarpTransform3D< FieldData >
+::New(void)
+{
+  Pointer smartPtr = ::itk::ObjectFactory< Self >::Create();
+
+  if ( smartPtr.IsNull() )
+    {
+    smartPtr = static_cast< Pointer >( new Self );
+    }
+  smartPtr->UnRegister();
+  return smartPtr;
+}
+
+// Explicit New() method, used here because we need to split the itkNewMacro()
+// in order to overload the CreateAnother() method.
+template< class FieldData >
+::itk::LightObject::Pointer
+WarpTransform3D< FieldData >
+::CreateAnother(void) const
+{
+  ::itk::LightObject::Pointer smartPtr;
+  Pointer copyPtr = Self::New().GetPointer();
+
+  copyPtr->SetDeformationField(this->GetDeformationField());
+
+  smartPtr = static_cast< Pointer >( copyPtr );
+
+  return smartPtr;
+}
+
 template< class FieldData >
 WarpTransform3D< FieldData >
-::WarpTransform3D():Superclass( 3 , 0 )
+::WarpTransform3D():Superclass( 3 , 1 )
 {
   m_DeformationField = 0 ;
 //  m_OutputSpacing.Fill( 1 ) ;
