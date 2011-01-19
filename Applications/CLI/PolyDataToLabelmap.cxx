@@ -35,6 +35,7 @@
 #include "itkFloodFilledImageFunctionConditionalIterator.h"
 
 #include "vtkXMLPolyDataReader.h"
+#include "vtkPolyDataReader.h"
 #include "vtkPolyDataPointSampler.h"
 #include "vtkDebugLeaks.h"
 
@@ -127,10 +128,38 @@ template<class T> int DoIt( int argc, char * argv[], T )
   label->FillBuffer( 0 );
 
   // read the poly data
-  vtkXMLPolyDataReader *pdReader = vtkXMLPolyDataReader::New();
-  pdReader->SetFileName(surface.c_str());
-  pdReader->Update();
-  vtkPolyData *polyData = pdReader->GetOutput();
+  vtkPolyData *polyData = NULL;
+  vtkPolyDataReader *pdReader = NULL;
+  vtkXMLPolyDataReader *pdxReader = NULL;
+
+  // do we have vtk or vtp models?
+  std::string::size_type loc = surface.find_last_of(".");
+  if( loc == std::string::npos )
+    {
+    std::cerr << "Failed to find an extension for " << surface << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::string extension = surface.substr(loc);
+
+  if( extension == std::string(".vtk") )
+    {
+    pdReader = vtkPolyDataReader::New();
+    pdReader->SetFileName(surface.c_str());
+    pdReader->Update();
+    polyData = pdReader->GetOutput();
+    }
+  else if( extension == std::string(".vtp") )
+    {
+    pdxReader = vtkXMLPolyDataReader::New();
+    pdxReader->SetFileName(surface.c_str());
+    pdxReader->Update();
+    polyData = pdxReader->GetOutput();
+    }
+  if( polyData == NULL )
+    {
+    std::cerr << "Failed to read surface " << surface << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // LPS vs RAS
 
@@ -230,7 +259,14 @@ template<class T> int DoIt( int argc, char * argv[], T )
   writer->SetUseCompression(1);
   writer->Update();
 
-  pdReader->Delete();
+  if( pdReader )
+    {
+    pdReader->Delete();
+    }
+  if( pdxReader )
+    {
+    pdxReader->Delete();
+    }
   sampler->Delete();
 
   return EXIT_SUCCESS;
