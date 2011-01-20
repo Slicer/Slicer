@@ -166,7 +166,6 @@ QList<qSlicerIO::IOFileType> qSlicerCoreIOManager::fileTypes(const QString& file
 //-----------------------------------------------------------------------------
 QString qSlicerCoreIOManager::fileDescription(const QString& fileName)const
 {
-  Q_D(const qSlicerCoreIOManager);
   QStringList matchingDescriptions = this->fileDescriptions(fileName);
   return matchingDescriptions.count() ? matchingDescriptions[0] : tr("Unknown");
 }
@@ -185,7 +184,6 @@ QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName)const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreIOManager::fileDescription(const qSlicerIO::IOFileType& fileType)const
 {
-  Q_D(const qSlicerCoreIOManager);
   QList<qSlicerIO*> readers = this->ios(fileType);
   if (readers.isEmpty())
     {
