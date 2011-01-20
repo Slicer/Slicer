@@ -176,16 +176,17 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     dRep->SetHandleRepresentation(handle);
     dRep->InstantiateHandleRepresentation();
     dRep->GetAxis()->SetNumberOfMinorTicks(4);
-    dRep->GetAxis()->SetTickLength(25);
+    dRep->GetAxis()->SetTickLength(5);
     dRep->GetAxis()->SetTitlePosition(0.2);
     dRep->RulerModeOn();
-    dRep->SetRulerDistance(25);
+    dRep->SetRulerDistance(20);
 
     rulerWidget->SetRepresentation(dRep);
 
     }
   else
     {
+
     // this is a 3D displayableManager
     VTK_CREATE(vtkPointHandleRepresentation3D, handle2);
     handle2->GetProperty()->SetColor(1,1,0);
@@ -194,9 +195,10 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     dRep2->SetHandleRepresentation(handle2);
     dRep2->InstantiateHandleRepresentation();
     dRep2->RulerModeOn();
-    dRep2->SetRulerDistance(25);
+    dRep2->SetRulerDistance(10);
 
     rulerWidget->SetRepresentation(dRep2);
+
     }
 
   rulerWidget->SetWidgetStateToManipulate();

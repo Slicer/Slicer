@@ -158,6 +158,8 @@ void qSlicerAnnotationModuleWidget::setup()
       SLOT(onBidimensionalNodeButtonClicked()));
   this->connect(d->rulerTypeButton, SIGNAL(clicked()), this,
       SLOT(onRulerNodeButtonClicked()));
+  this->connect(d->roiTypeButton, SIGNAL(clicked()), this,
+        SLOT(onROINodeButtonClicked()));
 
   // mouse modes
   this->connect(d->pauseButton, SIGNAL(clicked()), this,
@@ -564,7 +566,7 @@ void qSlicerAnnotationModuleWidget::resetAllAnnotationTools()
 
   d->textTypeButton->setChecked(false);
   //d->angleTypeButton->setChecked(false);
-  //d->roiTypeButton->setChecked(false);
+  d->roiTypeButton->setChecked(false);
   d->fiducialTypeButton->setChecked(false);
   //d->splineTypeButton->setChecked(false);
   //d->stickyTypeButton->setChecked(false);
@@ -584,7 +586,7 @@ void qSlicerAnnotationModuleWidget::disableAllAnnotationTools()
 
   d->textTypeButton->setEnabled(false);
   //d->angleTypeButton->setEnabled(false);
-  //d->roiTypeButton->setEnabled(false);
+  d->roiTypeButton->setEnabled(false);
   d->fiducialTypeButton->setEnabled(false);
   //d->splineTypeButton->setEnabled(false);
   //d->stickyTypeButton->setEnabled(false);
@@ -599,7 +601,7 @@ void qSlicerAnnotationModuleWidget::enableAllAnnotationTools()
 
   d->textTypeButton->setEnabled(true);
   //d->angleTypeButton->setEnabled(true);
-  //d->roiTypeButton->setEnabled(true);
+  d->roiTypeButton->setEnabled(true);
   d->fiducialTypeButton->setEnabled(true);
   //d->splineTypeButton->setEnabled(true);
   //d->stickyTypeButton->setEnabled(true);
@@ -795,7 +797,7 @@ void qSlicerAnnotationModuleWidget::onROINodeButtonClicked()
 
   this->disableAllAnnotationTools();
 
-  //d->roiTypeButton->setChecked(true);
+  d->roiTypeButton->setChecked(true);
   d->resumeButton->setChecked(true);
 }
 

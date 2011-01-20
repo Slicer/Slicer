@@ -158,40 +158,55 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
       startPos = endPos +1;
       endPos =attValue.find("|",startPos);
     }
-    this->AddText(attValue.substr(startPos,endPos).c_str(),1,1);
+      this->AddText(attValue.substr(startPos,endPos).c_str(),1,1);
       }  
     else if (!strcmp(attName, "referenceNodeID"))
       {
-    this->SetReferenceNodeID(attValue.c_str());
+      this->SetReferenceNodeID(attValue.c_str());
       }
     else if (!strcmp(attName, "visible"))
       {
-    this->SetVisible(atof(attValue.c_str()));
+      this->SetVisible(atof(attValue.c_str()));
       }
+    // for backwards compatibility
+    else if (!strcmp(attName, "visibility"))
+      {
+      if (!strcmp(attValue.c_str(),"true"))
+        {
+        // visiblity = true
+        this->SetVisible(1);
+        }
+      else
+        {
+        // visibility = false
+        this->SetVisible(0);
+        }
+      }
+    // end of backwards compatibility
     else if (!strcmp(attName, "locked"))
       {
-    this->SetLocked(atof(attValue.c_str()));
+      this->SetLocked(atof(attValue.c_str()));
       }
     else 
       {
-    int j = 0;
-    while (j < NUM_TEXT_ATTRIBUTE_TYPES) 
-      {     
-        if (!strcmp(attName, this->GetAttributeTypesEnumAsString(j))) 
-          {
-        std::stringstream ss;
-        ss << attValue;
-        double value;
-        vtkIdType id = 0;
-        while (ss >> value)
-          {
-            this->SetAnnotationAttribute(id,j, value);
-            id ++;
-          }
-        j = NUM_TEXT_ATTRIBUTE_TYPES;
-          }
-        j++;
-      }
+      int j = 0;
+      while (j < NUM_TEXT_ATTRIBUTE_TYPES)
+        {
+          if (!strcmp(attName, this->GetAttributeTypesEnumAsString(j)))
+            {
+          std::stringstream ss;
+          ss << attValue;
+          double value;
+          vtkIdType id = 0;
+          while (ss >> value)
+            {
+              this->SetAnnotationAttribute(id,j, value);
+              id ++;
+            }
+          j = NUM_TEXT_ATTRIBUTE_TYPES;
+            }
+          j++;
+        }
       }
     }
   this->EndModify(disabledModify);

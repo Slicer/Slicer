@@ -263,7 +263,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
 
   // Seed widget exists here, just add a new handle at the position x,y
 
-  double p[3];
+  double p[3] = {0,0,0};
   p[0]=x;
   p[1]=y;
   p[2]=0;

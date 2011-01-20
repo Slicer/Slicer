@@ -506,6 +506,15 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   this->GetMRMLScene()->RegisterNodeClass(annotationRulerStorageNode);
   annotationRulerStorageNode->Delete();
 
+  // ROI annotation
+  vtkMRMLAnnotationROINode* annotationROINode = vtkMRMLAnnotationROINode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationROINode);
+  annotationROINode->Delete();
+
+  // ROI annotation backwards compatibility
+  vtkMRMLAnnotationROINode* oldAnnotationROINode = vtkMRMLAnnotationROINode::New();
+  this->GetMRMLScene()->RegisterNodeClass(oldAnnotationROINode,"MRMLROINode");
+  oldAnnotationROINode->Delete();
 
   // Bidimensional annotation
   vtkMRMLAnnotationBidimensionalNode* annotationBidimensionalNode = vtkMRMLAnnotationBidimensionalNode::New();

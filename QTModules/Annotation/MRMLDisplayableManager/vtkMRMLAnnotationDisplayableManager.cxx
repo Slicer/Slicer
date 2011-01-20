@@ -175,6 +175,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneClosedEvent()
   for (unsigned int i=0; i<this->Helper->AnnotationNodeList.size(); i++) {
     this->Helper->RemoveWidgetAndNode(this->Helper->AnnotationNodeList[i]);
   }
+
+  this->SetUpdateFromMRMLRequested(1);
+  this->RequestRender();
+
 }
 
 //---------------------------------------------------------------------------
@@ -185,6 +189,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneAboutToBeImportedEvent()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneImportedEvent()
 {
+  this->RequestRender();
 }
 
 //---------------------------------------------------------------------------
@@ -262,6 +267,12 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAddedEvent(vtkMRMLNode*
     {
     // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
     this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
+    vtkDebugMacro("The node was added to a 2D displayableManager.")
+    }
+  else
+    {
+    //std::cout << "3D!" << annotationNode << std::endl;
+    vtkDebugMacro("The node was added to a 3D displayableManager.")
     }
 
   // and render again after seeds were removed
@@ -1055,6 +1066,21 @@ bool vtkMRMLAnnotationDisplayableManager::GetDisplayCoordinatesChanged(double * 
   bool changed = false;
 
   if (fabs(displayCoordinates1[0]-displayCoordinates2[0])>0.1 || fabs(displayCoordinates1[1]-displayCoordinates2[1])>0.1) {
+    changed = true;
+  }
+
+  return changed;
+}
+
+//---------------------------------------------------------------------------
+/// Check if there are real changes between two sets of displayCoordinates
+bool vtkMRMLAnnotationDisplayableManager::GetWorldCoordinatesChanged(double * worldCoordinates1, double * worldCoordinates2)
+{
+  bool changed = false;
+
+  if (fabs(worldCoordinates1[0]-worldCoordinates2[0])>0.1 ||
+      fabs(worldCoordinates1[1]-worldCoordinates2[1])>0.1 ||
+      fabs(worldCoordinates1[2]-worldCoordinates2[2])>0.1) {
     changed = true;
   }
 

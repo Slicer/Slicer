@@ -50,11 +50,11 @@ void qSlicerAnnotationModule::setup()
       << "Fiducial"
       << "Bidimensional"
       << "Ruler"
+      << "ROI"
       //<< "StickyThreeDView"
       //<< "SplineThreeDView"
       //<< "RulerThreeDView"
       //<< "BidimensionalThreeDView"
-      //<< "ROIThreeDView"
       ;
 
   foreach(const QString& name, threeDdisplayableManagers)
@@ -101,9 +101,9 @@ QString qSlicerAnnotationModule::helpText() const
 //-----------------------------------------------------------------------------
 QString qSlicerAnnotationModule::acknowledgementText() const
 {
-  return "<img src=':/Icons/upennpalmtree.png'><br><br>This module was "
+  return "<img src=':/Icons/UPenn_logo.png'><br><br>This module was "
       "developed by Daniel Haehn, Kilian Pohl and Yong Zhang. "
-      "Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper and Ron Kikinis. "
+      "Thank you to Nicole Aucoin, Wendy Plesniak, Steve Pieper, Ron Kikinis and Kitware. "
       "The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).";
 }
 

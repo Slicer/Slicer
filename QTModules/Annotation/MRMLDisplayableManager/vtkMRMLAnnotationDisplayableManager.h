@@ -61,6 +61,10 @@ public:
   /// Check if there are real changes between two sets of displayCoordinates
   bool GetDisplayCoordinatesChanged(double * displayCoordinates1, double * displayCoordinates2);
 
+  /// Check if there are real changes between two sets of worldCoordinates
+  bool GetWorldCoordinatesChanged(double * worldCoordinates1, double * worldCoordinates2);
+
+
 protected:
 
   vtkMRMLAnnotationDisplayableManager();

@@ -33,7 +33,7 @@ SET(DisplayableManager_SRCS
   #MRMLDisplayableManager/vtkMRMLAnnotationSplineDisplayableManager.cxx  
   MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.cxx   
   MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
-  #MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx     
+  MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx     
   )
   
 #-----------------------------------------------------------------------

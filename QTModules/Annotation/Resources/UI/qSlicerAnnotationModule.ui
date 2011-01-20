@@ -43,7 +43,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="4">
+         <item row="2" column="0" colspan="5">
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <widget class="QPushButton" name="resumeButton">
@@ -156,6 +156,23 @@
           </widget>
          </item>
          <item row="0" column="3">
+          <widget class="QPushButton" name="roiTypeButton">
+           <property name="toolTip">
+            <string>Region of Interest. This is a 3D only annotation.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../qSlicerAnnotationModule.qrc">
+             <normaloff>:/Icons/AnnotationROI.png</normaloff>:/Icons/AnnotationROI.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
           <widget class="QPushButton" name="bidimensionalTypeButton">
            <property name="enabled">
             <bool>true</bool>

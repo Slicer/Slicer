@@ -51,9 +51,12 @@ void vtkAnnotationRulerRepresentation::BuildRepresentation()
 
     // Okay, compute the distance and set the label
     double p1[3], p2[3];
+    double displayP1[3],displayP2[3];
 
     this->Point1Representation->GetWorldPosition(p1);
     this->Point2Representation->GetWorldPosition(p2);
+    this->Point1Representation->GetDisplayPosition(displayP1);
+    this->Point2Representation->GetDisplayPosition(displayP2);
 
     if (this->m_Distance > 0)
       {
@@ -64,8 +67,11 @@ void vtkAnnotationRulerRepresentation::BuildRepresentation()
       this->Distance = sqrt(vtkMath::Distance2BetweenPoints(p1,p2));
       }
 
-    this->AxisActor->GetPoint1Coordinate()->SetValue(p1);
-    this->AxisActor->GetPoint2Coordinate()->SetValue(p2);
+    this->AxisActor->GetPoint1Coordinate()->SetCoordinateSystemToDisplay();
+    this->AxisActor->GetPoint2Coordinate()->SetCoordinateSystemToDisplay();
+
+    this->AxisActor->GetPoint1Coordinate()->SetValue(displayP1);
+    this->AxisActor->GetPoint2Coordinate()->SetValue(displayP2);
     this->AxisActor->SetRulerMode(this->RulerMode);
     this->AxisActor->SetRulerDistance(this->RulerDistance);
     this->AxisActor->SetNumberOfLabels(this->NumberOfRulerTicks);

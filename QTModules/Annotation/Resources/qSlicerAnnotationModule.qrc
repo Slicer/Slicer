@@ -52,7 +52,6 @@
         <file>Icons/LayoutOneUp3DView.png</file>
         <file>Icons/Data.png</file>
         <file>Icons/AnnotationPrint.png</file>
-        <file>Icons/upennpalmtree.png</file>
         <file>Icons/SlicerVisibleInvisible.png</file>
         <file>Icons/SlicerLockUnlock.png</file>
         <file>Icons/SlicerLock.png</file>
@@ -61,5 +60,6 @@
         <file>Icons/SlicerAddHierarchy.png</file>
         <file>Icons/SlicerVisible.png</file>
         <file>Icons/SlicerUnlock.png</file>
+        <file>Icons/UPenn_logo.png</file>
     </qresource>
 </RCC>
