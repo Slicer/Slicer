@@ -15,6 +15,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <ctkWidgetsPythonQtDecorators.h>
 
 // SlicerQt includes
 #include "qSlicerPythonManager.h"
@@ -71,6 +72,7 @@ void qSlicerPythonManager::preInitialization()
   PythonQt_init_org_slicer_libs_qMRMLWidgets(0);
 
   // Register decorators
+  this->registerPythonQtDecorator(new ctkWidgetsPythonQtDecorators());
   this->registerPythonQtDecorator(new qSlicerBaseQTGUIPythonQtDecorators(this));
 }
 

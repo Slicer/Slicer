@@ -20,6 +20,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <ctkCorePythonQtDecorators.h>
 
 // PythonQt includes
 #include <PythonQt.h>
@@ -94,6 +95,7 @@ void qSlicerCorePythonManager::preInitialization()
   PythonQt_init_org_commontk_CTKVisualizationVTKCore(0);
 
   // Register decorators
+  this->registerPythonQtDecorator(new ctkCorePythonQtDecorators());
   this->registerPythonQtDecorator(new qSlicerBaseQTBasePythonQtDecorators(this));
 
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
