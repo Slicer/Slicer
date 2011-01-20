@@ -196,9 +196,11 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(fidlsn);
   fidlsn->Delete();
 
-  vtkMRMLROINode *roin = vtkMRMLROINode::New(); 
-  this->RegisterNodeClass( roin );
-  roin->Delete();
+  // the vtkMRMLROINode is deprecated
+  // use vtkMRMLAnnotationROINode instead
+  //vtkMRMLROINode *roin = vtkMRMLROINode::New();
+  //this->RegisterNodeClass( roin );
+  //roin->Delete();
 
   vtkMRMLROIListNode *roiln = vtkMRMLROIListNode::New(); 
   this->RegisterNodeClass( roiln );
@@ -654,9 +656,15 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node) 
 {
+  this->RegisterNodeClass(node, node->GetNodeTagName());
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
+{
   node->Register(this);
   this->RegisteredNodeClasses.push_back(node);
-  this->RegisteredNodeTags.push_back(std::string(node->GetNodeTagName()));
+  this->RegisteredNodeTags.push_back(std::string(tagName));
 }
 
 //------------------------------------------------------------------------------

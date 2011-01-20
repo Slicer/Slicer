@@ -104,6 +104,13 @@ public:
   /// -- this maintains a registered pointer to the node, so users should Delete()
   ///    the node after calling this.  The node is Deleted when the scene is destroyed.
   void RegisterNodeClass(vtkMRMLNode* node);
+  ///
+  /// Register node class with the Scene so that it can create it from
+  /// a class name
+  /// tagName can be a custom tagName
+  /// -- this maintains a registered pointer to the node, so users should Delete()
+  ///    the node after calling this.  The node is Deleted when the scene is destroyed.
+  void RegisterNodeClass(vtkMRMLNode* node, const char* tagName);
   
   /// 
   /// Add a path to the list.
