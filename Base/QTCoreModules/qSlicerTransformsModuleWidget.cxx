@@ -122,16 +122,12 @@ void qSlicerTransformsModuleWidget::setup()
 
   // Connect minimum and maximum from the translation sliders to the matrix
   this->connect(d->TranslationSliders,
-               SIGNAL(maximumChanged(double)),
-               SLOT(onTranslationMaximumChanged(double)));
-
-  this->connect(d->TranslationSliders,
-                SIGNAL(minimumChanged(double)),
-                SLOT(onTranslationMinimumChanged(double)));
+               SIGNAL(rangeChanged(double, double)),
+               SLOT(onTranslationRangeChanged(double, double)));
 
   // Notify the matrix of the current translation min/max values
-  this->onTranslationMaximumChanged(d->TranslationSliders->maximum());
-  this->onTranslationMinimumChanged(d->TranslationSliders->minimum());
+  this->onTranslationRangeChanged(d->TranslationSliders->minimum(),
+                                  d->TranslationSliders->maximum());
 
   QIcon openIcon =
     QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
@@ -240,17 +236,11 @@ void qSlicerTransformsModuleWidget::extractMinMaxTranslationValue(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onTranslationMaximumChanged(double newMax)
+void qSlicerTransformsModuleWidget::onTranslationRangeChanged(double newMin,
+                                                              double newMax)
 {
   Q_D(qSlicerTransformsModuleWidget);
-  d->MatrixWidget->setMaximum(newMax);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onTranslationMinimumChanged(double newMin)
-{
-  Q_D(qSlicerTransformsModuleWidget);
-  d->MatrixWidget->setMinimum(newMin);
+  d->MatrixWidget->setRange(newMin, newMax);
 }
 
 //-----------------------------------------------------------------------------
