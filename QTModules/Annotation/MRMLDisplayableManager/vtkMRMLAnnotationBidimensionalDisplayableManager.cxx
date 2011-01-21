@@ -520,13 +520,13 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
   bidimensionalNode->SaveView();
 
   // enable processing of modified events
-  this->m_Updating = 0;
   bidimensionalNode->DisableModifiedEventOff();
 
   bidimensionalNode->Modified();
   bidimensionalNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, bidimensionalNode);
 
-
+  // This displayableManager should now consider ModifiedEvent again
+  this->m_Updating = 0;
 }
 
 //---------------------------------------------------------------------------

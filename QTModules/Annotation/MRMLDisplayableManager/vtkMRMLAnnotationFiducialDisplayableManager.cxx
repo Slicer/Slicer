@@ -375,12 +375,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
   seedWidget->CompleteInteraction();
 
   // enable processing of modified events
-  this->m_Updating = 0;
   fiducialNode->DisableModifiedEventOff();
 
   fiducialNode->Modified();
   fiducialNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, fiducialNode);
 
+  // This displayableManager should now consider ModifiedEvent again
+  this->m_Updating = 0;
 }
 
 //---------------------------------------------------------------------------

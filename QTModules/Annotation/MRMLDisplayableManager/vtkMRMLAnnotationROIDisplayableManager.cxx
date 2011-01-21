@@ -403,13 +403,13 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
   roiNode->SaveView();
 
   // enable processing of modified events
-  this->m_Updating = 0;
   roiNode->DisableModifiedEventOff();
 
   roiNode->Modified();
   roiNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, roiNode);
 
-
+  // This displayableManager should now consider ModifiedEvent again
+  this->m_Updating = 0;
 }
 
 //---------------------------------------------------------------------------

@@ -335,9 +335,8 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   angleNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, angleNode);
 
-  // enable processing of modified events
+  // This displayableManager should now consider ModifiedEvent again
   this->m_Updating = 0;
-
 }
 
 //---------------------------------------------------------------------------

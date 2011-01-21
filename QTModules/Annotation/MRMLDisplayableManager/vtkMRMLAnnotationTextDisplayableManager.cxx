@@ -452,12 +452,13 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
   textNode->SaveView();
 
   // enable processing of modified events
-  this->m_Updating = 0;
   textNode->DisableModifiedEventOff();
 
   textNode->Modified();
   textNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, textNode);
 
+  // This displayableManager should now consider ModifiedEvent again
+  this->m_Updating = 0;
 }
 
 //---------------------------------------------------------------------------

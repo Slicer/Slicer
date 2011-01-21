@@ -316,9 +316,8 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
   stickyNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, stickyNode);
 
-  // enable processing of modified events
+  // This displayableManager should now consider ModifiedEvent again
   this->m_Updating = 0;
-
 }
 
 //---------------------------------------------------------------------------

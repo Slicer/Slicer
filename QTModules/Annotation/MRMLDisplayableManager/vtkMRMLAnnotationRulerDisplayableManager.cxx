@@ -537,12 +537,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
   rulerNode->SaveView();
 
   // enable processing of modified events
-  this->m_Updating = 0;
   rulerNode->DisableModifiedEventOff();
 
   rulerNode->Modified();
   rulerNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, rulerNode);
 
+  // This displayableManager should now consider ModifiedEvent again
+  this->m_Updating = 0;
 }
 
 //---------------------------------------------------------------------------
