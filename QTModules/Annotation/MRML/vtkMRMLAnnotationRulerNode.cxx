@@ -510,3 +510,27 @@ double vtkMRMLAnnotationRulerNode::GetDistanceMeasurement()
 {
     return this->distanceMeasurement;
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationRulerNode::GetPosition1(double position[3])
+{
+  double * tmp = this->GetControlPointCoordinates(0);
+  if (!tmp)
+    {
+    vtkErrorMacro("AnnotationRuler - Failed to get first control point");
+    return;
+    }
+  for(int i=0; i < 3; ++i){ position[i] = tmp[i]; }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationRulerNode::GetPosition2(double position[3])
+{
+  double * tmp = this->GetControlPointCoordinates(1);
+  if (!tmp)
+    {
+    vtkErrorMacro("AnnotationRuler - Failed to get second control point");
+    return;
+    }
+  for(int i=0; i < 3; ++i){ position[i] = tmp[i]; }
+}

@@ -50,6 +50,10 @@ public:
                                    void * /*callData*/ );
 
 
+
+  // Get position of the first point
+  void GetPosition1(double position[3]);
+
   // Legacy code
   // Description:
   // get/set the first point position
@@ -61,6 +65,9 @@ public:
     return this->SetPosition1(newControl) ; 
   }
 
+
+  // Get position of the first point
+  void GetPosition2(double position[3]);
 
   double* GetPosition2() {return this->GetControlPointCoordinates(1);}
   int SetPosition2(double newControl[3]) { return this->SetControlPoint(1, newControl);}
