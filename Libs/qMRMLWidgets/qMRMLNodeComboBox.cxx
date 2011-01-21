@@ -816,3 +816,17 @@ void qMRMLNodeComboBox::refreshCurrentItem()
 {
   this->setCurrentNode(this->currentNode());
 }
+
+//--------------------------------------------------------------------------
+QComboBox::SizeAdjustPolicy qMRMLNodeComboBox::sizeAdjustPolicy()const
+{
+  Q_D(const qMRMLNodeComboBox);
+  return d->ComboBox->sizeAdjustPolicy();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBox::setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy)
+{
+  Q_D(qMRMLNodeComboBox);
+  d->ComboBox->setSizeAdjustPolicy(policy);
+}

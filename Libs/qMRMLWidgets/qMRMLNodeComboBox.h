@@ -49,6 +49,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
   Q_PROPERTY(bool renameEnabled READ renameEnabled WRITE setRenameEnabled)
   Q_PROPERTY(QString baseName READ baseName WRITE setBaseName)
   Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false)
+  Q_PROPERTY(QComboBox::SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
 
 public:
   /// Superclass typedef
@@ -169,6 +170,11 @@ public:
   /// Internal model associated to the combobox
   QAbstractItemModel* model()const;
 
+  ///
+  /// \sa QComboBox::sizeAdjustPolicy
+  QComboBox::SizeAdjustPolicy sizeAdjustPolicy()const;
+  void setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy);
+
 public slots:
   ///
   /// Set the scene the combobox listens to. The scene is observed and when new
@@ -201,7 +207,7 @@ public slots:
   ///
   /// Edit the currently selected node.
   virtual void editCurrentNode();
-  
+
   ///
   /// Rename the currently selected node.
   virtual void renameCurrentNode();
