@@ -84,6 +84,7 @@ protected slots:
 protected:
   QScopedPointer<qSlicerModuleSelectorToolBarPrivate> d_ptr;
   void modulesAdded(const QStringList& moduleNames);
+  bool eventFilter( QObject*, QEvent* ); 
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleSelectorToolBar);

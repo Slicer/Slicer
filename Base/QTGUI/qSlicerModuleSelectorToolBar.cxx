@@ -151,6 +151,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   this->ModuleSearchLineEdit = new QLineEdit(q);
   // TODO clear the search text when the line edit gets the focus
   this->ModuleSearchLineEdit->setText(QObject::tr("Search a module"));
+  this->ModuleSearchLineEdit->installEventFilter(q);
   this->ModuleSearchCompleter = new QCompleter(QStringList());
   this->ModuleSearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
   this->ModuleSearchLineEdit->setCompleter(this->ModuleSearchCompleter);
@@ -178,6 +179,21 @@ QAction* qSlicerModuleSelectorToolBarPrivate::lastSelectedAction()const
   QList<QAction*> actions = this->HistoryMenu->actions();
   return actions.size() ? actions[0] : 0;
 }
+
+//---------------------------------------------------------------------------
+bool qSlicerModuleSelectorToolBar::eventFilter( QObject *obj, QEvent *event )
+{
+  QLineEdit* ed = qobject_cast<QLineEdit*>(obj);
+  if ( ed && event->type() == QEvent::FocusIn )
+  { 
+    ed->clear();
+  } 
+  else if ( ed && event->type() == QEvent::FocusOut )
+  {
+    ed->setText(QObject::tr("Search a module"));
+  } 
+  return obj->eventFilter( obj, event );
+}   
 
 //---------------------------------------------------------------------------
 qSlicerModuleSelectorToolBar::qSlicerModuleSelectorToolBar(const QString& title,
