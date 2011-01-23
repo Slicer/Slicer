@@ -4,6 +4,7 @@
 
 // VolumeRendering Logic includes
 #include <vtkSlicerVolumeRenderingLogic.h>
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 
 // VolumeRendering includes
 #include "qSlicerVolumeRenderingModule.h"
@@ -64,6 +65,8 @@ QIcon qSlicerVolumeRenderingModule::icon()const
 void qSlicerVolumeRenderingModule::setup()
 {
   this->Superclass::setup();
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->
+    RegisterDisplayableManager("vtkMRMLVolumeRendererDisplayableManager");
 }
 
 //-----------------------------------------------------------------------------
