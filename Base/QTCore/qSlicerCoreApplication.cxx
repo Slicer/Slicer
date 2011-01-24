@@ -86,31 +86,29 @@ public:
   
   typedef qSlicerCoreApplicationPrivate Self;
   
-  ///
   /// Instanciate settings object
   QSettings* instantiateSettings(const QString& suffix, bool useTmp);
 
-  ///
   /// Given the program name, should return Slicer Home Directory
   void discoverSlicerHomeDirectory();
 
-  ///
-  /// Given the program name, attempt to return the corresponding binary directory
+  /// If it successfully obtains 'applicationDirPath()', sets the variable 'SlicerBin'
+  /// \sa QCoreApplication::applicationDirPath
   void discoverSlicerBinDirectory();
 
+  /// Set 'ITKFactoriesDir' variable using 'ITK_AUTOLOAD_PATH' environment variable
   void discoverITKFactoriesDirectory();
 
+  /// Set variable 'Repository{Url, Revision, Url}' and Platform extracting information
+  /// from SlicerVersion.txt
   void discoverRepository();
 
-  ///
   /// Parse arguments
   bool parseArguments();
 
-  ///
   /// Set the ExitWhenDone flag to True
   void terminate();
 
-  ///
   /// MRMLScene and AppLogic pointers
   vtkSmartPointer< vtkMRMLScene >               MRMLScene;
   vtkSmartPointer< vtkSlicerApplicationLogic >  AppLogic;
@@ -129,6 +127,8 @@ public:
   /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   QString                                       IntDir;
   
+  /// Variable set extracting information from SlicerVersion.txt
+  /// \sa discoverRepository
   QString                                       RepositoryUrl;
   QString                                       RepositoryBranch;
   QString                                       RepositoryRevision;
@@ -136,15 +136,12 @@ public:
   
   QSettings*                                    Settings;
 
-  ///
   /// ModuleManager - It should exist only one instance of the factory
   QSharedPointer<qSlicerModuleManager>       ModuleManager;
 
-  ///
   /// CoreIOManager - It should exist only one instance of the IOManager
   QSharedPointer<qSlicerCoreIOManager>       CoreIOManager;
 
-  ///
   /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
   QSharedPointer<qSlicerCoreCommandOptions>  CoreCommandOptions;
 
@@ -155,7 +152,6 @@ public:
   bool               Initialized;
 
 #ifdef Slicer_USE_PYTHONQT
-  ///
   /// CorePythonManager - It should exist only one instance of the CorePythonManager
   QSharedPointer<qSlicerCorePythonManager> CorePythonManager;
 #endif

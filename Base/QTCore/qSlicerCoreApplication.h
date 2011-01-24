@@ -54,11 +54,9 @@ public:
   qSlicerCoreApplication(int &argc, char **argv);
   virtual ~qSlicerCoreApplication();
 
-  ///
   /// Return a reference to the application singleton
   static qSlicerCoreApplication* application();
 
-  ///
   /// Instantiate MRMLScene and Application logic.
   ///  - Configure scene
   ///  - AppLogic is set as a scene observer.
@@ -66,7 +64,6 @@ public:
   /// If exitWhenDone is True, it's your responsability to exit the application
   void initialize(bool& exitWhenDone);
 
-  ///
   /// Return true if the application has been initialized
   /// Note: initialize() should be called only one time.
   bool initialized() const;
@@ -76,20 +73,17 @@ public:
 
 #ifdef Slicer_USE_KWWIDGETS
 
-  ///
   /// Convenient method allowing to set the initialized flag
   /// DEPRECATED: This method was used by the KWWidgests GUI only and it will be
   /// removed once the QT GUI is functional. Only vtkSlicerApplication should use
   /// that method. Improper use of that function may lead to unstable state
   void setInitialized(bool initialized);
 
-  ///
   /// Set application logic
   /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
   /// removed once the QT GUI is functional.
   void setAppLogic(vtkSlicerApplicationLogic* appLogic);
 
-  ///
   /// Set the module manager
   /// Note that qSlicerCoreApplication takes ownership of the object
   /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
@@ -104,38 +98,30 @@ public:
   /// Get MRML ApplicationLogic
   Q_INVOKABLE vtkMRMLApplicationLogic* mrmlApplicationLogic() const;
 
-  ///
   /// Get slicer home directory
   /// Valid only if qSlicerCoreApplication is initialized. 
   QString slicerHome() const;
 
-  ///
   /// Get slicer temporary directory
   QString temporaryPath() const;
 
-  ///
   /// Set slicer temporary directory
   void setTemporaryPath(const QString& path);
   
-  ///
   /// Get slicer temporary directory
   QString extensionsPath() const;
 
-  ///
   /// Set slicer temporary directory
   void setExtensionsPath(const QString& path);
 
-  ///
   /// If any, this method return the build intermediate directory
   /// See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx
   QString intDir()const;
 
-  ///
   /// Return true is this instance of Slicer is running from an installed directory
   bool isInstalled()const;
 
 #ifdef Slicer_USE_PYTHONQT
-  ///
   /// Get python manager
   qSlicerCorePythonManager* corePythonManager()const;
   
@@ -155,7 +141,6 @@ public:
   /// Note that qSlicerCoreApplication takes ownership of the object
   void setCoreIOManager(qSlicerCoreIOManager* ioManager);
 
-  ///
   /// Get coreCommandOptions
   qSlicerCoreCommandOptions* coreCommandOptions()const;
 
@@ -163,12 +148,10 @@ public:
   /// Note that qSlicerCoreApplication takes ownership of the object
   void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
 
-  ///
   /// Get application settings
   /// Note that his method will also instanciate a QSettings object if required.
   QSettings* settings()const;
 
-  ///
   /// Disable application settings
   /// Instanciate a new empty ctkSettings object and associate it with this instance.
   /// Note that the original settings won't deleted.
@@ -195,7 +178,6 @@ protected:
   /// \sa QSettings::QSettings(QObject* parent)
   virtual QSettings* newSettings(const QString& fileName = QString());
 
-  ///
   /// Set MRML Scene
   virtual void setMRMLScene(vtkMRMLScene * scene);
 
