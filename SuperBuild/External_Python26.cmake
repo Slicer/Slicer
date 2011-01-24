@@ -26,11 +26,17 @@ if(WIN32)
       ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=tcltk\" -Dreplace=tcl-build\" -P ${script})
   endif()
 
+  set(python_SOURCE_DIR ${python_build})
+  configure_file(SuperBuild/python_patch_step_pythonrun.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step_pythonrun.cmake
+    @ONLY)
+  set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step_pythonrun.cmake)
+
   ExternalProject_Add(${proj}
     URL ${python_URL}
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SOURCE_DIR python-build
-    UPDATE_COMMAND ""
+    UPDATE_COMMAND ${python_CONFIGURE_COMMAND}
     PATCH_COMMAND ${python_PATCH_COMMAND}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} /build Release /project select

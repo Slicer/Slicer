@@ -98,7 +98,11 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   Q_ASSERT(newPythonSource.endsWith(".py"));
 
   // Open the file
+#ifdef _WIN32
+  FILE* pyfile = PyRun_OpenFile(newPythonSource.toLatin1());
+#else
   FILE* pyfile = fopen(newPythonSource.toLatin1(), "r");
+#endif
   if (!pyfile)
     {
     qCritical() << "SetPythonSource - File" << newPythonSource << "doesn't exist !";
@@ -124,8 +128,11 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     classToInstantiate = PyDict_GetItemString(global_dict, className.toLatin1());
     PyDict_SetItemString(global_dict, "__name__", PyString_FromString("__main__"));
     }
-
+#ifdef _WIN32
+  PyRun_CloseFile(pyfile);
+#else
   fclose(pyfile);
+#endif
 
   if (!classToInstantiate)
     {
