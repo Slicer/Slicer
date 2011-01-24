@@ -61,6 +61,7 @@ public:
   QMenu*       PreviousHistoryMenu;
   QToolButton* NextButton;
   QMenu*       NextHistoryMenu;
+  QString      ModuleSearchText;
   QLineEdit*   ModuleSearchLineEdit;
   QCompleter*  ModuleSearchCompleter;
 };
@@ -148,9 +149,9 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   q->addWidget(this->HistoryButton);
 
   // Search
+  this->ModuleSearchText = QObject::tr("Search a module");
   this->ModuleSearchLineEdit = new QLineEdit(q);
-  // TODO clear the search text when the line edit gets the focus
-  this->ModuleSearchLineEdit->setText(QObject::tr("Search a module"));
+  this->ModuleSearchLineEdit->setText(this->ModuleSearchText);
   this->ModuleSearchLineEdit->installEventFilter(q);
   this->ModuleSearchCompleter = new QCompleter(QStringList());
   this->ModuleSearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
@@ -183,15 +184,16 @@ QAction* qSlicerModuleSelectorToolBarPrivate::lastSelectedAction()const
 //---------------------------------------------------------------------------
 bool qSlicerModuleSelectorToolBar::eventFilter( QObject *obj, QEvent *event )
 {
+  Q_D(qSlicerModuleSelectorToolBar);
   QLineEdit* ed = qobject_cast<QLineEdit*>(obj);
   if ( ed && event->type() == QEvent::FocusIn )
-  { 
+    { 
     ed->clear();
-  } 
+    } 
   else if ( ed && event->type() == QEvent::FocusOut )
-  {
-    ed->setText(QObject::tr("Search a module"));
-  } 
+    {
+    ed->setText(d->ModuleSearchText);
+    } 
   return obj->eventFilter( obj, event );
 }   
 
@@ -377,7 +379,7 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
     {
     d->insertActionOnTop(action, d->HistoryMenu);
     }
-  d->ModuleSearchLineEdit->setText("Search a module");
+  d->ModuleSearchLineEdit->setText(d->ModuleSearchText);
   emit moduleSelected(action->data().toString());
 }
 
