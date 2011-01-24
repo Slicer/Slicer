@@ -263,10 +263,15 @@ void vtkImageCurveRegion::ExecuteInformation()
       index ++;
     }
     // Check How many rows there are
-    fgets(line, MaxLength, f); 
+    if (NULL == fgets(line, MaxLength, f)) {
+      vtkErrorMacro(<< "fgets problem");
+    }
     while(!feof(f)) {
       Extent[1] ++;
-      fgets(line, MaxLength, f);
+      if (NULL == fgets(line, MaxLength, f)) {
+        //exit the loop when done
+        break;
+      }
     }
     fclose(f);
     delete[] line;
@@ -461,7 +466,9 @@ void vtkImageCurveRegion::ExecuteDataReadFile(vtkDataObject *output) {
   while ((index < Lines) && (!feof(f))) {
     ReadNumber = 0;   
     while  (ReadNumber < Numbers) {
-      fscanf(f, "%f", outPtr++);
+      if (EOF == fscanf(f, "%f", outPtr++)) {
+        std::cout << "reached EOF" << std::endl;
+      }
       ReadNumber ++;
     }
     index ++;
