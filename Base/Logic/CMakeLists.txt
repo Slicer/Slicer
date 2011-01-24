@@ -117,6 +117,7 @@ ENDIF()
 
 SET_SOURCE_FILES_PROPERTIES(
   vtkPichonFastMarchingPDF.cxx
+  vtkArchive.cxx
   WRAP_EXCLUDE
 )
 
