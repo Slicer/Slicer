@@ -1,0 +1,4 @@
+<MRML>
+<Camera
+  id="vtkMRMLCameraNode1"  name="Default Scene Camera"  hideFromEditors="false"  selectable="true"  selected="false"  position="0 500 0"  focalPoint="0 0 0"  viewUp="0 0 1"  parallelProjection="false"  parallelScale="1"  activetag="vtkMRMLViewNode1"  appliedTransform="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1" ></Camera>
+</MRML>

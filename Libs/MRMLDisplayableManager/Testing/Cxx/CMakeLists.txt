@@ -4,14 +4,36 @@ SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLCameraDisplayableManagerTest1.cxx
   vtkMRMLThreeDViewDisplayableManagerFactoryTest1.cxx
+  vtkMRMLDisplayableManagerFactoriesTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
 )
 
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CxxTests.cxx)
 
+INCLUDE_DIRECTORIES(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+SET(DisplayableManagerTest_SRCS
+  vtkMRMLTestThreeDViewDisplayableManager.cxx
+  vtkMRMLTestSliceViewDisplayableManager.cxx
+  )
+
+# Create the instantiator for DisplayableManager classes.
+SET(VTK_USE_INSTANTIATOR_NEW 1)
+VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}TestInstantiator"
+  DisplayableManagerInstantiatorTest_SRCS
+  "${DisplayableManagerTest_SRCS}"
+  ""
+  ${PROJECT_BINARY_DIR}
+  "")
+
 SET(LIBRARY_NAME ${PROJECT_NAME})
-ADD_EXECUTABLE(${KIT}CxxTests ${Tests})
+ADD_EXECUTABLE(${KIT}CxxTests
+  ${Tests}
+  ${DisplayableManagerTest_SRCS}
+  ${DisplayableManagerInstantiatorTest_SRCS})
 TARGET_LINK_LIBRARIES(${KIT}CxxTests ${lib_name})
 
 #MACRO(SIMPLE_TEST  TESTNAME)
