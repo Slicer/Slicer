@@ -186,37 +186,51 @@ public slots:
   void setCurrentNode(vtkMRMLNode* node);
 
   ///
-  /// Select the node to be current
+  /// Select the node to be current. If \nodeId is invalid (or can't be found
+  /// in the scene), the current node becomes 0. 
   void setCurrentNode(const QString& nodeID);
 
   ///
   /// Select the current node by index. The index refers to the order of the nodes
-  /// into the list. If index is 0, the first node will be selected (even if
+  /// into the list. If \a index is 0, the first node will be selected (even if
   /// "NoneEnabled" is true).
   /// \sa nodeCount, setCurrentNode(vtkMRMLNode* ), setCurrentNode(const QString&)
   void setCurrentNode(int index);
 
   ///
-  /// Create a node of the same type than on the "node types" properties
+  /// Creates a node of the same type than on the "node types" properties.
+  /// It's name is generated using \a basename.
   virtual vtkMRMLNode* addNode();
 
   ///
-  /// Remove the current node from the scene
+  /// Removes the current node from the scene. The node reference count gets
+  /// decremented which might lead to deletion (if it reaches 0).
   virtual void removeCurrentNode();
 
   ///
-  /// Edit the currently selected node.
+  /// Edits the currently selected node.
   virtual void editCurrentNode();
 
   ///
-  /// Rename the currently selected node.
+  /// Renames the currently selected node.
+  /// It shows an input dialog box with the current name of the node
+  /// \sa vtkMRMLNode::GetName(), vtkMRMLNode::SetName()
   virtual void renameCurrentNode();
 
 signals:
   ///
-  /// emit the current displayed node. NULL if
-  /// the list is empty.
+  /// This signal is sent anytime the current node is changed. NULL if
+  /// no node is current or the current item is "None".
   void currentNodeChanged(vtkMRMLNode* node);
+  
+  ///
+  /// Advanced function.
+  /// This signal is sent when the user chooses a node in the combobox.
+  /// The item's node is passed. Note that this signal is sent even when the 
+  /// choice is not changed. If you need to know when the choice actually
+  /// changes, use signal currentNodeChanged().
+  /// \sa QComboBox::activated.
+  void nodeActivated(vtkMRMLNode* node);
 
   ///
   /// Signal emitted just after currentNodeChanged(vtkMRMLNode*) is.
@@ -258,6 +272,7 @@ protected:
 protected slots:
   void activateExtraItem(const QModelIndex& index);
   void emitCurrentNodeChanged(int index);
+  void emitNodeActivated(int currentIndex);
   void emitNodesAdded(const QModelIndex & parent, int start, int end);
   void emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end);
   void refreshCurrentItem();

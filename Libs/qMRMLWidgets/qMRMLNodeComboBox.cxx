@@ -130,6 +130,8 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 
   q->connect(this->ComboBox, SIGNAL(currentIndexChanged(int)),
              q, SLOT(emitCurrentNodeChanged(int)));
+  q->connect(this->ComboBox, SIGNAL(activated(int)),
+             q, SLOT(emitNodeActivated(int)));
 
   q->setEnabled(q->mrmlScene() != 0);
 }
@@ -453,23 +455,6 @@ void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
 {
   Q_D(qMRMLNodeComboBox);
   vtkMRMLNode*  node = d->mrmlNode(currentIndex);
-  /*
-  if (qobject_cast<QListView*>(d->ComboBox->view()))
-    {
-    node = d->mrmlNode(currentIndex);
-    }
-  else
-    {// special case where the view can handle a tree... currentIndex could be
-    // from any parent, not only a top level..
-    QModelIndex currentViewIndex = d->ComboBox->view()->currentIndex();
-    if (currentViewIndex.row() != currentIndex)
-      {
-      currentViewIndex = d->ComboBox->model()->index(
-        currentIndex, d->ComboBox->modelColumn(), currentViewIndex.parent());
-      }
-    node = d->mrmlNodeFromIndex(currentViewIndex);
-    }
-  */
   if (!node && ((!d->NoneEnabled &&currentIndex != -1) || (d->NoneEnabled && currentIndex != 0)) )
     {
     this->setCurrentNode(this->nodeFromIndex(this->nodeCount()-1));
@@ -481,6 +466,18 @@ void qMRMLNodeComboBox::emitCurrentNodeChanged(int currentIndex)
     }
 }
 
+// --------------------------------------------------------------------------
+void qMRMLNodeComboBox::emitNodeActivated(int currentIndex)
+{
+  Q_D(qMRMLNodeComboBox);
+  vtkMRMLNode*  node = d->mrmlNode(currentIndex);
+  // Fire only if the user clicked on a node or "None", don't fire the signal
+  // if the user clicked on an "action" (post item) like "Add Node".
+  if (node || (d->NoneEnabled && currentIndex == 0))
+    {
+    emit nodeActivated(node);
+    }
+}
 // --------------------------------------------------------------------------
 vtkMRMLScene* qMRMLNodeComboBox::mrmlScene()const
 {
@@ -596,9 +593,15 @@ void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
     }
   //d->ComboBox->setRootModelIndex(indexes[0].parent());
   //d->ComboBox->setCurrentIndex(indexes[0].row());
-  d->ComboBox->view()->setCurrentIndex(indexes[0]);
-  QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
-  QApplication::sendEvent(d->ComboBox->view(), &event);
+  QModelIndex oldIndex = d->ComboBox->view()->currentIndex();
+  if (oldIndex != indexes[0])
+    {
+    d->ComboBox->view()->setCurrentIndex(indexes[0]);
+    QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
+    // here we conditionally send the event, otherwise, nodeActivated would be
+    // fired even if the user didn't manually select the node.
+    QApplication::sendEvent(d->ComboBox->view(), &event);
+    }
 }
 
 // --------------------------------------------------------------------------
