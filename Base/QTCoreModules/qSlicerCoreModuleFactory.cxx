@@ -26,7 +26,7 @@
 #include "qSlicerDataModule.h"
 #include "qSlicerFiducialsIO.h"
 #include "qSlicerMRMLTreeModule.h"
-#include "qSlicerROIModule.h"
+//#include "qSlicerROIModule.h"
 #include "qSlicerTransformsIO.h"
 #include "qSlicerTransformsModule.h"
 // FIXME:Move the following to the Models module (when it will be ready in Qt.)
@@ -101,7 +101,9 @@ void qSlicerCoreModuleFactory::registerItems()
   d->registerCoreModule<qSlicerColorsModule>();
   d->registerCoreModule<qSlicerDataModule>();
   //d->registerCoreModule<qSlicerMRMLTreeModule>();
-  d->registerCoreModule<qSlicerROIModule>();
+  // vtkMRMLROINode are obsolete, one should use the Annotation module to
+  // interact with nodes.
+  //d->registerCoreModule<qSlicerROIModule>();
   d->registerCoreModule<qSlicerSliceControllerModule>();
   d->registerCoreModule<qSlicerTransformsModule>();
   
