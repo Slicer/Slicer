@@ -115,13 +115,25 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   // Connect Foreground layer selector
   this->connect(this->ForegroundLayerNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 SLOT(onForegroundLayerNodeSelected(vtkMRMLNode*)));
+  // when the user select an entry already selected, we want to synchronize with the linked
+  // slice logics as they mighy not have the same entry selected
+  this->connect(this->ForegroundLayerNodeSelector, SIGNAL(nodeActivated(vtkMRMLNode*)),
+                SLOT(onForegroundLayerNodeSelected(vtkMRMLNode*)));
 
   // Connect Background layer selector
   this->connect(this->BackgroundLayerNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 SLOT(onBackgroundLayerNodeSelected(vtkMRMLNode*)));
+  // when the user select an entry already selected, we want to synchronize with the linked
+  // slice logics as they mighy not have the same entry selected
+  this->connect(this->BackgroundLayerNodeSelector, SIGNAL(nodeActivated(vtkMRMLNode*)),
+                SLOT(onBackgroundLayerNodeSelected(vtkMRMLNode*)));
 
   // Connect Label map selector
   this->connect(this->LabelMapSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
+  // when the user select an entry already selected, we want to synchronize with the linked
+  // slice logics as they mighy not have the same entry selected
+  this->connect(this->LabelMapSelector, SIGNAL(nodeActivated(vtkMRMLNode*)),
                 SLOT(onLabelMapNodeSelected(vtkMRMLNode*)));
 
   // Connect Slice offset slider
@@ -426,17 +438,13 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
     {
     this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
     }
-  // ideally should be a reconnect but we might not be sure of what was the previous node
-  qvtkDisconnect(0, 0, this, SLOT(onForegroundDisplayNodeChanged(vtkObject*)));
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      volumeNode ? volumeNode->GetVolumeDisplayNode(): 0);
-  if (displayNode)
-    {
-    qvtkConnect(displayNode, vtkCommand::ModifiedEvent, this, SLOT(onForegroundDisplayNodeChanged(vtkObject*)));
-    this->onForegroundDisplayNodeChanged(displayNode);
-    }
+      volumeNode ? volumeNode->GetVolumeDisplayNode() : 0);
+  this->qvtkReconnect(displayNode, vtkCommand::ModifiedEvent,
+                      this, SLOT(updateFromForegroundDisplayNode(vtkObject*)));
+  this->updateFromForegroundDisplayNode(displayNode);
 }
 
 // --------------------------------------------------------------------------
@@ -464,18 +472,13 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
     {
     this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
     }
-  // ideally should be a reconnect but we might not be sure of what was the previous node
-  qvtkDisconnect(0, 0, this, SLOT(onBackgroundDisplayNodeChanged(vtkObject*)));
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
       volumeNode ? volumeNode->GetVolumeDisplayNode(): 0);
-  if (displayNode)
-    {
-    qvtkConnect(displayNode, vtkCommand::ModifiedEvent,
-                this, SLOT(onBackgroundDisplayNodeChanged(vtkObject*)));
-    this->onBackgroundDisplayNodeChanged(displayNode);
-    }
+  this->qvtkReconnect(displayNode, vtkCommand::ModifiedEvent,
+                      this, SLOT(updateFromBackgroundDisplayNode(vtkObject*)));
+  this->updateFromBackgroundDisplayNode(displayNode);
 }
 
 // --------------------------------------------------------------------------
@@ -543,25 +546,27 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::onForegroundDisplayNodeChanged(vtkObject* node)
+void qMRMLSliceControllerWidgetPrivate::updateFromForegroundDisplayNode(vtkObject* node)
 {
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node);
-  if (displayNode)
+  if (!displayNode)
     {
-    this->actionForegroundInterpolation->setChecked(displayNode->GetInterpolate());
+    return;
     }
+  this->actionForegroundInterpolation->setChecked(displayNode->GetInterpolate());
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::onBackgroundDisplayNodeChanged(vtkObject* node)
+void qMRMLSliceControllerWidgetPrivate::updateFromBackgroundDisplayNode(vtkObject* node)
 {
   vtkMRMLScalarVolumeDisplayNode* displayNode =
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(node);
-  if (displayNode)
+  if (!displayNode)
     {
-    this->actionBackgroundInterpolation->setChecked(displayNode->GetInterpolate());
+    return;
     }
+  this->actionBackgroundInterpolation->setChecked(displayNode->GetInterpolate());
 }
 
 //---------------------------------------------------------------------------

@@ -93,8 +93,8 @@ public slots:
   /// Called after the ImageData associated with the SliceLogic is modified
   void onImageDataModifiedEvent();
 
-  void onForegroundDisplayNodeChanged(vtkObject* displayNode);
-  void onBackgroundDisplayNodeChanged(vtkObject* displayNode);
+  void updateFromForegroundDisplayNode(vtkObject* displayNode);
+  void updateFromBackgroundDisplayNode(vtkObject* displayNode);
 
   void toggleControllerWidgetGroupVisibility();
 
