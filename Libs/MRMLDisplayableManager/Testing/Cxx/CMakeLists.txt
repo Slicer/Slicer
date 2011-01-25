@@ -18,6 +18,7 @@ INCLUDE_DIRECTORIES(
 SET(DisplayableManagerTest_SRCS
   vtkMRMLTestThreeDViewDisplayableManager.cxx
   vtkMRMLTestSliceViewDisplayableManager.cxx
+  vtkMRMLTestCustomDisplayableManager.cxx
   )
 
 # Create the instantiator for DisplayableManager classes.

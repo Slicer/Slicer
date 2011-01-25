@@ -6,6 +6,7 @@
 #include <vtkThreeDViewInteractorStyle.h>
 #include <vtkMRMLTestThreeDViewDisplayableManager.h>
 #include <vtkMRMLTestSliceViewDisplayableManager.h>
+#include <vtkMRMLTestCustomDisplayableManager.h>
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
@@ -62,7 +63,10 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char** argv)
 
   // Register displayable manager
   threeDViewFactory->RegisterDisplayableManager("vtkMRMLTestThreeDViewDisplayableManager");
+  threeDViewFactory->RegisterDisplayableManager("vtkMRMLTestCustomDisplayableManager");
+
   slicerViewFactory->RegisterDisplayableManager("vtkMRMLTestSliceViewDisplayableManager");
+  slicerViewFactory->RegisterDisplayableManager("vtkMRMLTestCustomDisplayableManager");
 
   // Renderer, RenderWindow and Interactor
   VTK_CREATE(vtkRenderer, rr);
@@ -88,6 +92,16 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char** argv)
     return EXIT_FAILURE;
     }
 
+  int currentCount = threeDViewGroup->GetDisplayableManagerCount();
+  if (currentCount != 2)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with threeDViewGroup->GetDisplayableManagerCount() method"
+        << std::endl;
+    std::cerr << "\tcurrentCount:" << currentCount << " - expected: 2" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   // ThreeD - Instantiate and add node to the scene
   VTK_CREATE(vtkMRMLViewNode, viewNode);
   vtkMRMLNode * nodeAdded = scene->AddNode(viewNode);
@@ -108,6 +122,16 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char** argv)
         << " - Problem with sliceViewFactory->InstantiateDisplayableManagers() method"
         << std::endl;
     std::cerr << "\tgroup should NOT be NULL" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  currentCount = sliceViewGroup->GetDisplayableManagerCount();
+  if (currentCount != 2)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with sliceViewGroup->GetDisplayableManagerCount() method"
+        << std::endl;
+    std::cerr << "\tcurrentCount:" << currentCount << " - expected: 2" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -150,10 +174,32 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char** argv)
               << "- expected: 1"<< std::endl;
     return EXIT_FAILURE;
     }
+  if (vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView != 1)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAddedEvent method"
+        << std::endl;
+    std::cerr << "\tNodeAddedCount - current:" <<
+              vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView
+              << "- expected: 1"<< std::endl;
+    return EXIT_FAILURE;
+    }
+  if (vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView != 1)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAddedEvent method"
+        << std::endl;
+    std::cerr << "\tNodeAddedCount - current:" <<
+              vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView
+              << "- expected: 1"<< std::endl;
+    return EXIT_FAILURE;
+    }
 
   // Reset
   vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount = 0;
   vtkMRMLTestSliceViewDisplayableManager::NodeAddedCount = 0;
+  vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView = 0;
+  vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView = 0;
 
 
   // Load scene
@@ -199,6 +245,26 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char** argv)
               << "- expected: 1"<< std::endl;
     return EXIT_FAILURE;
     }
+  if (vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView != 1)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAddedEvent method"
+        << std::endl;
+    std::cerr << "\tNodeAddedCount - current:" <<
+              vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView
+              << "- expected: 1"<< std::endl;
+    return EXIT_FAILURE;
+    }
+  if (vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView != 1)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAddedEvent method"
+        << std::endl;
+    std::cerr << "\tNodeAddedCount - current:" <<
+              vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView
+              << "- expected: 1"<< std::endl;
+    return EXIT_FAILURE;
+    }
 
 
   // Import scene
@@ -241,6 +307,26 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char** argv)
         << std::endl;
     std::cerr << "\tNodeAddedCount - current:" <<
               vtkMRMLTestSliceViewDisplayableManager::NodeAddedCount
+              << "- expected: 2"<< std::endl;
+    return EXIT_FAILURE;
+    }
+  if (vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView != 2)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAddedEvent method"
+        << std::endl;
+    std::cerr << "\tNodeAddedCount - current:" <<
+              vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView
+              << "- expected: 2"<< std::endl;
+    return EXIT_FAILURE;
+    }
+  if (vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView != 2)
+    {
+    std::cerr << "Line " << __LINE__
+        << " - Problem with vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAddedEvent method"
+        << std::endl;
+    std::cerr << "\tNodeAddedCount - current:" <<
+              vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView
               << "- expected: 2"<< std::endl;
     return EXIT_FAILURE;
     }
