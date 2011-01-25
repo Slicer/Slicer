@@ -196,11 +196,9 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(fidlsn);
   fidlsn->Delete();
 
-  // the vtkMRMLROINode is deprecated
-  // use vtkMRMLAnnotationROINode instead
-  //vtkMRMLROINode *roin = vtkMRMLROINode::New();
-  //this->RegisterNodeClass( roin );
-  //roin->Delete();
+  vtkMRMLROINode *roin = vtkMRMLROINode::New();
+  this->RegisterNodeClass( roin );
+  roin->Delete();
 
   vtkMRMLROIListNode *roiln = vtkMRMLROIListNode::New(); 
   this->RegisterNodeClass( roiln );
@@ -662,9 +660,34 @@ void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
 {
+  std::string xmlTag(tagName);
+  // Replace the previously registered node if any.
+  // By doing so we make sure there is no more than 1 node matching a given
+  // XML tag. It allows plugins to MRML to overide default behavior when
+  // instanciating nodes via XML tags.
+  for (unsigned int i = 0; i < this->RegisteredNodeTags.size(); ++i)
+    {
+    if (this->RegisteredNodeTags[i] == xmlTag)
+      {
+      vtkDebugMacro(<<"Tag has already been registered, unregister previous node");
+      // As the node was previously Registered to the scene, we need to
+      // unregister it here. It should destruct the pointer as well (only 1
+      // reference on the node).
+      this->RegisteredNodeClasses[i]->Delete();
+      // Remove the outdated reference to the tag, it will then be added later
+      // (after the for loop).
+      // we could have replace the entry with the new node also.
+      this->RegisteredNodeClasses.erase(this->RegisteredNodeClasses.begin() + i);
+      this->RegisteredNodeTags.erase(this->RegisteredNodeTags.begin() + i);
+      // we found a matching tag, there is maximum one in the list, no need to
+      // search any further
+      break;
+      }
+    }
+
   node->Register(this);
   this->RegisteredNodeClasses.push_back(node);
-  this->RegisteredNodeTags.push_back(std::string(tagName));
+  this->RegisteredNodeTags.push_back(xmlTag);
 }
 
 //------------------------------------------------------------------------------
