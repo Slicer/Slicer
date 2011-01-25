@@ -10,7 +10,7 @@
   Date:      $Date: 2006/04/13 19:29:02 $
   Version:   $Revision: 1.13 $
 
-=========================================================================auto=*/
+  =========================================================================auto=*/
 #include "vtkImageCurveRegion.h"
 
 #include "vtkObjectFactory.h"
@@ -51,52 +51,54 @@
 //      and check for potenital underflow
 
 // Does no conditional branching on alpha or sparc :Jun  7, 1995
+/*
+  inline float qnexp2(float x)
+  {
+  unsigned result_bits;
+  unsigned bits = COERCE(x, unsigned int);
+  int exponent = ((EMSEGMENT_EXPMASK & bits) >> EMSEGMENT_MANTSIZE) - (EMSEGMENT_EXPBIAS);
+  int neg_mant =  ((EMSEGMENT_MENTMASK & bits) | EMSEGMENT_PHANTOM_BIT);
+  neg_mant = -neg_mant;
 
-inline float qnexp2(float x)
-{
-    unsigned result_bits;
-    unsigned bits = COERCE(x, unsigned int);
-    int exponent = ((EMSEGMENT_EXPMASK & bits) >> EMSEGMENT_MANTSIZE) - (EMSEGMENT_EXPBIAS);
-    int neg_mant =  ((EMSEGMENT_MENTMASK & bits) | EMSEGMENT_PHANTOM_BIT);
-    neg_mant = -neg_mant;
+  unsigned r1 = (neg_mant << exponent);
+  unsigned r2 = (neg_mant >> (- exponent));
 
-    unsigned r1 = (neg_mant << exponent);
-    unsigned r2 = (neg_mant >> (- exponent));
-
-    result_bits = (exponent < 0) ? r2 : r1;
-    result_bits = (exponent > 5) ? EMSEGMENT_SHIFTED_BIAS_COMP  : result_bits;
+  result_bits = (exponent < 0) ? r2 : r1;
+  result_bits = (exponent > 5) ? EMSEGMENT_SHIFTED_BIAS_COMP  : result_bits;
     
-    result_bits += EMSEGMENT_SHIFTED_BIAS;
+  result_bits += EMSEGMENT_SHIFTED_BIAS;
 
-#ifdef DEBUG
-    {
-    float result;
-    result = COERCE(result_bits, float);
-    fprintf(stderr, "x %g, b %x, e %d, m %x, R %g =?",
-           x,     bits, exponent,  neg_mant, pow(2.0, x));
-    fflush(stderr);
-    fprintf(stderr, " %g\n", result);
-    }
-#endif
-    return(COERCE(result_bits, float));
-}
+  #ifdef DEBUG
+  {
+  float result;
+  result = COERCE(result_bits, float);
+  fprintf(stderr, "x %g, b %x, e %d, m %x, R %g =?",
+  x,     bits, exponent,  neg_mant, pow(2.0, x));
+  fflush(stderr);
+  fprintf(stderr, " %g\n", result);
+  }
+  #endif
+  return(COERCE(result_bits, float));
+  }
 
-// Kilian : Copied from vtkImageEMGeneral.h - later when versions are merged should be integrated
-// An approximation to the Gaussian function.
-// The error seems to be a six percent ripple.
-inline float FastGauss(float inverse_sigma, float x) {
-    float tmp = float(inverse_sigma * x);
-    return EMSEGMENT_ONE_OVER_ROOT_2_PI * inverse_sigma 
-    * qnexp2(EMSEGMENT_MINUS_ONE_OVER_2_LOG_2 * tmp * tmp);
-}
-// Same as FastGauss - just for 2 Dimensional multi dimensional input 
-inline float FastGauss2(float inverse_sqrt_det_covariance, float *x ,float *mu, float **inv_cov) {
+  // Kilian : Copied from vtkImageEMGeneral.h - later when versions are merged should be integrated
+  // An approximation to the Gaussian function.
+  // The error seems to be a six percent ripple.
+  inline float FastGauss(float inverse_sigma, float x) {
+  float tmp = float(inverse_sigma * x);
+  return EMSEGMENT_ONE_OVER_ROOT_2_PI * inverse_sigma 
+  * qnexp2(EMSEGMENT_MINUS_ONE_OVER_2_LOG_2 * tmp * tmp);
+  }
+  // Same as FastGauss - just for 2 Dimensional multi dimensional input 
+  inline float FastGauss2(float inverse_sqrt_det_covariance, float *x ,float *mu, float **inv_cov) {
   float term1 = x[0] - mu[0],
-         term2 = x[1] - mu[1];
+  term2 = x[1] - mu[1];
   // Kilian: can be done faster: term1*(inv_cov[0][0]*term1 + 2.0*inv_cov[0][1]*term2) + term2*term2*inv_cov[1][1];
   term2 = term1*(inv_cov[0][0]*term1 + inv_cov[0][1]*term2) + term2*(inv_cov[1][0]*term1 + inv_cov[1][1]*term2);
   return EMSEGMENT_ONE_OVER_2_PI * inverse_sqrt_det_covariance  * qnexp2(EMSEGMENT_MINUS_ONE_OVER_2_LOG_2 * float(term2));
-}
+  }
+*/
+
 
 // copied from vtkImageEMGeneral
 // Calculated the determinant for a dim dimensional matrix -> the value is returned 
@@ -115,8 +117,8 @@ inline float determinant(float **mat,int dim) {
   for (j = 0 ; j < dim ; j ++) {
     if (j < 1) {
       for (k=1 ; k < dim; k++) {
-    for (i=1; i < dim; i++)
-      submat[k-1][i-1] = mat[k][i];  
+        for (i=1; i < dim; i++)
+          submat[k-1][i-1] = mat[k][i];  
       }
     } else {
       for (i=1; i < dim; i++) submat[j-1][i-1] = mat[j-1][i];
@@ -146,7 +148,7 @@ inline float GeneralGauss(float term,float InvSigma) {
 inline float GeneralGauss(float *x,float *mu,float **inv_cov, float inv_sqrt_det_cov,int n) {
   float *x_m = new float[n];
   float term1, 
-        term  = 0.0;
+    term  = 0.0;
 
   int i,j; 
 
@@ -187,7 +189,7 @@ vtkImageCurveRegion* vtkImageCurveRegion::New()
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkImageCurveRegion");
   if(ret)
     {
-    return (vtkImageCurveRegion*)ret;
+      return (vtkImageCurveRegion*)ret;
     }
   // If the factory was unable to create the object, then create it here.
   return new vtkImageCurveRegion;
@@ -257,8 +259,8 @@ void vtkImageCurveRegion::ExecuteInformation()
     while(line[index] != '\n') {
       if (line[index] == ' ' ) flag = true;
       else if (flag) { 
-    ScalarComp++;
-    flag = false;
+        ScalarComp++;
+        flag = false;
       } 
       index ++;
     }
@@ -279,14 +281,14 @@ void vtkImageCurveRegion::ExecuteInformation()
     float dist;
     ScalarComp = 1;
     if ((this->Xunit <= 0.0) && (this->Xlength <= 0)) {
-    vtkErrorMacro(<< "Value for Xunit or Xlength has to be greater 0 !");
-    return;
+      vtkErrorMacro(<< "Value for Xunit or Xlength has to be greater 0 !");
+      return;
     }
     if (this->Xlength > 0) {
       dist = this->Xmax - this->Xmin;
       if (dist) {
-    this->Xunit = dist / float(this->Xlength);
-    while (dist/this->Xunit <  float(this->Xlength))  this->Xunit *= 0.999;
+        this->Xunit = dist / float(this->Xlength);
+        while (dist/this->Xunit <  float(this->Xlength))  this->Xunit *= 0.999;
       } else this->Xunit = 1.0;
     } else {
       this->Xlength = int((this->Xmax - this->Xmin)/this->Xunit);
@@ -295,17 +297,17 @@ void vtkImageCurveRegion::ExecuteInformation()
     
     if (this->Dimension == 2) {
       if ((this->Yunit <= 0.0) && (this->Ylength <= 0)) {
-    vtkErrorMacro(<< "Value for Yunit or Ylength has to be greater 0 !");
-    return;
+        vtkErrorMacro(<< "Value for Yunit or Ylength has to be greater 0 !");
+        return;
       }
       if (this->Ylength > 0) {
-    dist = this->Ymax - this->Ymin;
-    if (dist) {
-      this->Yunit = dist / float(this->Ylength);
-      while (dist/this->Yunit <  float(this->Ylength))  this->Yunit *= 0.999;
-    } else this->Yunit = 1.0;
+        dist = this->Ymax - this->Ymin;
+        if (dist) {
+          this->Yunit = dist / float(this->Ylength);
+          while (dist/this->Yunit <  float(this->Ylength))  this->Yunit *= 0.999;
+        } else this->Yunit = 1.0;
       } else {
-    this->Ylength = int((this->Ymax - this->Ymin)/this->Yunit);
+        this->Ylength = int((this->Ymax - this->Ymin)/this->Yunit);
       }
       Extent[3] = this->Ylength - 1;
     } else {Extent[3] = 0;}
@@ -400,22 +402,27 @@ void vtkImageCurveRegion::ExecuteDataGauss(vtkDataObject *output) {
         // Pixel operation
         if (this->Dimension > 1) {
           switch (this->Function) {
-            case 1:  *outPtr = Probability*FastGauss2(InvSqrtDetCov,value,this->Mean, InvCov);
-                 break;
+          case 1:
+            //*outPtr = Probability * FastGauss2(InvSqrtDetCov,value,this->Mean, InvCov);
+            *outPtr = Probability * GeneralGauss(value,this->Mean,InvCov, InvSqrtDetCov,2);
+            break;
 
-                case 2:  LogValue[0] = log (value[0] +1.0); 
-                    *outPtr = Probability*FastGauss2(InvSqrtDetCov,LogValue,this->Mean, InvCov);
-              // *outPtr = Probability * GeneralGauss(LogValue,this->Mean,InvCov, InvSqrtDetCov,2);  
-                 break;
+          case 2:
+            LogValue[0] = log (value[0] +1.0); 
+            //*outPtr = Probability * FastGauss2(InvSqrtDetCov,LogValue,this->Mean, InvCov);
+            *outPtr = Probability * GeneralGauss(LogValue,this->Mean,InvCov, InvSqrtDetCov,2);  
+            break;
           }
         } else {
-              switch (this->Function) {
-                  case 1:  *outPtr = Probability*FastGauss(InvSqrtDetCov,value[0] - this->Mean[0]);
-                  // *outPtr = Probability* GeneralGauss(value[0] - this->Mean[0],InvSqrtDetCov);
-                  break;
-                  case 2:  *outPtr = Probability*FastGauss(InvSqrtDetCov,log(value[0] +1.0) - this->Mean[0]);
-                  // *outPtr = Probability* GeneralGauss(log(value[0] + 1.0) - this->Mean[0],InvSqrtDetCov);
-                  break;
+          switch (this->Function) {
+          case 1:
+            //*outPtr = Probability * FastGauss(InvSqrtDetCov,value[0] - this->Mean[0]);
+            *outPtr = Probability * GeneralGauss(value[0] - this->Mean[0],InvSqrtDetCov);
+            break;
+          case 2:
+            // *outPtr = Probability * FastGauss(InvSqrtDetCov,log(value[0] + 1.0) - this->Mean[0]);
+            *outPtr = Probability * GeneralGauss(log(value[0] + 1.0) - this->Mean[0],InvSqrtDetCov);
+            break;
           }
         }
         // Define Maximum and Minimum value of the function 
@@ -431,9 +438,9 @@ void vtkImageCurveRegion::ExecuteDataGauss(vtkDataObject *output) {
         value[0] += this->Xunit;
       }
       if (this->Dimension >1) 
-      { value[1] += this->Yunit;
-        if (this->Function == 2) LogValue[1] = log(value[1] + 1.0);
-      }
+        { value[1] += this->Yunit;
+          if (this->Function == 2) LogValue[1] = log(value[1] + 1.0);
+        }
       outPtr += outIncY;
     }
     outPtr += outIncZ;
@@ -479,10 +486,10 @@ void vtkImageCurveRegion::ExecuteDataReadFile(vtkDataObject *output) {
 //----------------------------------------------------------------------------
 void vtkImageCurveRegion::ExecuteData(vtkDataObject *output) {
   switch (this->Function) {
-    case 1: 
-    case 2: this->ExecuteDataGauss(output); break;
-    case 3: this->ExecuteDataReadFile(output); break;
-    default:   cerr << "vtkImageCurveRegion::ExecuteData:Error: Function " << this->Function << "not available !" << endl;   
+  case 1: 
+  case 2: this->ExecuteDataGauss(output); break;
+  case 3: this->ExecuteDataReadFile(output); break;
+  default:   cerr << "vtkImageCurveRegion::ExecuteData:Error: Function " << this->Function << "not available !" << endl;   
   }
 }
 
@@ -508,5 +515,3 @@ void vtkImageCurveRegion::PrintSelf(ostream& os, vtkIndent indent)
   }
   os << endl;
 }
-
-
