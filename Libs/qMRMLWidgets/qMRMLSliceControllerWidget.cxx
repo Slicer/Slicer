@@ -88,13 +88,16 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->Ui_qMRMLSliceControllerWidget::setupUi(widget);
   
   // Set selector attributes
-  this->LabelMapSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
   // Background and Foreground volume selectors can display LabelMap volumes. No
   // need to add the LabelMap attribute for them.
-  int volumeSelectorMinWidth = this->LabelMapSelector->fontMetrics().width("XXXXXXXXXXXX") + 20;
-  this->LabelMapSelector->setMinimumWidth(volumeSelectorMinWidth);
-  this->BackgroundLayerNodeSelector->setMinimumWidth(volumeSelectorMinWidth);
-  this->ForegroundLayerNodeSelector->setMinimumWidth(volumeSelectorMinWidth);
+  this->LabelMapSelector->addAttribute("vtkMRMLVolumeNode", "LabelMap", "1");
+  // Note: the min width is currently set in the UI file directly
+  //// Set the slice controller widgets a min width.
+  //int volumeSelectorMinWidth = this->LabelMapSelector->fontMetrics().width("Xxxxxxxx") + 20;
+  //this->SliceOrientationSelector->setMinimumWidth(volumeSelectorMinWidth);
+  //this->LabelMapSelector->setMinimumWidth(volumeSelectorMinWidth);
+  //this->BackgroundLayerNodeSelector->setMinimumWidth(volumeSelectorMinWidth);
+  //this->ForegroundLayerNodeSelector->setMinimumWidth(volumeSelectorMinWidth);
 
   // Populate Advanced menu
   this->setupMoreOptionsMenu();

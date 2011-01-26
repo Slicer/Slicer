@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>304</width>
+    <width>174</width>
     <height>107</height>
    </rect>
   </property>
@@ -87,15 +87,27 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="SliceOrientationSelector">
+       <widget class="ctkComboBox" name="SliceOrientationSelector">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>1</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Slice orientation (Axial, Sagittal, Coronal, Reformat).</string>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+        </property>
+        <property name="elideMode">
+         <enum>Qt::ElideMiddle</enum>
         </property>
         <item>
          <property name="text">
@@ -149,6 +161,12 @@
           <horstretch>1</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>0</height>
+         </size>
         </property>
         <property name="toolTip">
          <string>Select the foreground</string>
@@ -206,6 +224,12 @@
           <verstretch>1</verstretch>
          </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Select the label map</string>
         </property>
@@ -261,6 +285,12 @@
           <horstretch>1</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>0</height>
+         </size>
         </property>
         <property name="toolTip">
          <string>Select the background</string>
@@ -617,6 +647,11 @@ Use this display to cross-reference to filmed images or other displays.</string>
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
