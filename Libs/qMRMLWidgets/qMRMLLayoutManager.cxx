@@ -683,6 +683,7 @@ void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
 
     switch(layout)
       {
+      case vtkMRMLLayoutNode::SlicerLayoutInitialView:
       case vtkMRMLLayoutNode::SlicerLayoutConventionalView:
         this->setConventionalView();
         break;

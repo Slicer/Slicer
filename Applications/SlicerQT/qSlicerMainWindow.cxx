@@ -65,6 +65,7 @@ public:
   qSlicerMainWindowCore*        Core;
   qSlicerModuleSelectorToolBar* ModuleSelectorToolBar;
   QStringList                   ModuleToolBarList;
+  qSlicerLayoutManager*         LayoutManager;
   //QSignalMapper*                ModuleToolBarMapper;
   ctkSettingsDialog*            SettingsDialog;
 };
@@ -81,6 +82,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
   this->ModuleToolBarList << "Home" << "Data"  << "Volumes" << "Models" << "Transforms"
                           << "Annotation" << "Editor" << "Measurements"
                           << "Colors";
+  this->LayoutManager = 0;
   //this->ModuleToolBarMapper = 0;
 }
 
@@ -135,16 +137,15 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionWindowToolbarsLayout->trigger();
 
   // Instanciate and assign the layout manager to the slicer application
-  qSlicerLayoutManager* layoutManager = new qSlicerLayoutManager(this->CentralWidget);
-  layoutManager->setScriptedDisplayableManagerDirectory(
+  this->LayoutManager = new qSlicerLayoutManager(this->CentralWidget);
+  this->LayoutManager->setScriptedDisplayableManagerDirectory(
       qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
-  qSlicerApplication::application()->setLayoutManager(layoutManager);
-
+  qSlicerApplication::application()->setLayoutManager(this->LayoutManager);
   // Layout manager should also listen the MRML scene
-  layoutManager->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  this->LayoutManager->setMRMLScene(qSlicerApplication::application()->mrmlScene());
   QObject::connect(qSlicerApplication::application(),
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   layoutManager,
+                   this->LayoutManager,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
   // Slices controller toolbar listens to the MRML scene
   this->MRMLSlicesControllerToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
@@ -152,7 +153,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->MRMLSlicesControllerToolBar,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
-  this->MRMLSlicesControllerToolBar->setMRMLSliceLogics(layoutManager->mrmlSliceLogics());
+  this->MRMLSlicesControllerToolBar->setMRMLSliceLogics(
+    this->LayoutManager->mrmlSliceLogics());
 
   // ThreeDViews controller toolbar listens to LayoutManager
   // TODO The current active view could be a property of the layoutNode ?
@@ -162,17 +164,19 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SLOT(setMRMLScene(vtkMRMLScene*)));
   this->MRMLThreeDViewsControllerWidget->setMRMLScene(
       qSlicerApplication::application()->mrmlScene());
-  QObject::connect(layoutManager, SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
+  QObject::connect(this->LayoutManager,
+                   SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
                    this->MRMLThreeDViewsControllerWidget,
                    SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
   this->MRMLThreeDViewsControllerWidget->setActiveMRMLThreeDViewNode(
-      layoutManager->activeMRMLThreeDViewNode());
-  QObject::connect(layoutManager, SIGNAL(activeThreeDRendererChanged(vtkRenderer*)),
+      this->LayoutManager->activeMRMLThreeDViewNode());
+  QObject::connect(this->LayoutManager,
+                   SIGNAL(activeThreeDRendererChanged(vtkRenderer*)),
                    this->MRMLThreeDViewsControllerWidget,
                    SLOT(setActiveThreeDRenderer(vtkRenderer*)));
   this->MRMLThreeDViewsControllerWidget->setActiveThreeDRenderer(
-      layoutManager->activeThreeDRenderer());
-  
+      this->LayoutManager->activeThreeDRenderer());
+
   QObject::connect(this->MRMLThreeDViewsControllerWidget,
                    SIGNAL(screenshotButtonClicked()),
                    qSlicerApplication::application()->ioManager(),
@@ -226,6 +230,7 @@ void qSlicerMainWindowPrivate::readSettings()
     {
     q->restoreGeometry(settings.value("geometry").toByteArray());
     q->restoreState(settings.value("windowState").toByteArray());
+    this->LayoutManager->setLayout(settings.value("layout").toInt());
     }
   settings.endGroup();
 }
@@ -241,6 +246,7 @@ void qSlicerMainWindowPrivate::writeSettings()
     {
     settings.setValue("geometry", q->saveGeometry());
     settings.setValue("windowState", q->saveState());
+    settings.setValue("layout", this->LayoutManager->layout());
     }
   settings.endGroup();
 }
