@@ -89,7 +89,8 @@ public:
   inline bool initialized() { return this->Initialized; }
 
   ///
-  /// Set/Get the name of the module (must be unique)
+  /// Set/Get the name of the module. The name is used to uniquely describe
+  /// a module: Name must be unique.
   virtual QString name()const;
   virtual void setName(const QString& name);
 
@@ -100,7 +101,11 @@ public:
   virtual QString contributor()const;
 
   ///
-  /// Index used to sort modules in the modules menu
+  /// Index used to sort modules in the module selector's menu in the
+  /// module's category. An index of 0 significates that the module should
+  /// be first, a value of 1 if the module should be second and so on.
+  /// -1 means that the module should be added at the end. In case modules
+  /// indexes have the same index, the alphabetical order will be used.
   virtual int index()const;
 
   ///

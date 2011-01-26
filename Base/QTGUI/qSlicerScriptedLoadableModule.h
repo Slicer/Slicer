@@ -36,7 +36,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModule : public qSlicerL
   Q_PROPERTY(QString contributor READ contributor WRITE setContributor)
   Q_PROPERTY(QString helpText READ helpText WRITE setHelpText)
   Q_PROPERTY(QString acknowledgementText READ acknowledgementText WRITE setAcknowledgementText)
-  
+  Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
 public:
 
   typedef qSlicerLoadableModule Superclass;
@@ -62,6 +62,9 @@ public:
   
   virtual QString acknowledgementText()const;
   void setAcknowledgementText(const QString& newAcknowledgementText);
+  
+  virtual QIcon icon()const;
+  void setIcon(const QIcon& newIcon);
 
 protected:
 

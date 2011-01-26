@@ -51,6 +51,7 @@ public:
   QString Contributor;
   QString HelpText;
   QString AcknowledgementText;
+  QIcon   Icon;
   
   PyObject * PythonSelf;
   QString    PythonSource;
@@ -238,4 +239,6 @@ CTK_GET_CPP(qSlicerScriptedLoadableModule, QString, helpText, HelpText)
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QString&, setAcknowledgementText, AcknowledgementText)
 CTK_GET_CPP(qSlicerScriptedLoadableModule, QString, acknowledgementText, AcknowledgementText)
 
-
+//-----------------------------------------------------------------------------
+CTK_SET_CPP(qSlicerScriptedLoadableModule, const QIcon&, setIcon, Icon)
+CTK_GET_CPP(qSlicerScriptedLoadableModule, QIcon, icon, Icon)

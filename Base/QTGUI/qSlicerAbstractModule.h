@@ -34,21 +34,34 @@
 class QAction;
 class qSlicerAbstractModulePrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule : public qSlicerAbstractCoreModule
+/// Overrides qSlicerAbstractCoreModule and adds an icon property to the
+/// module and associates a QAction to it.
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule
+  : public qSlicerAbstractCoreModule
 {
   Q_OBJECT
-
+  /// This property holds the module's icon.
+  /// It is also the icon of the module QAction (see \a action()).
+  Q_PROPERTY(QIcon icon READ icon)
 public:
 
   typedef qSlicerAbstractCoreModule Superclass;
   qSlicerAbstractModule(QObject *parent=0);
   virtual ~qSlicerAbstractModule();
 
+  /// Icon of the module. Anytime a graphical representation of the module
+  /// is needed, the icon is used. It's the icon shown in the module selector
+  /// as well as in the frequently used module toolbar (if any).
   virtual QIcon icon()const;
 
-  ///
-  /// Returns a QAction if the module would like to be added in a toolbar.
-  /// By default, returns no QAction.
+  /// Returns then associated QAction of the module. It contains all the
+  /// informations relative to the module. The text (QAction::text()) and icon
+  /// (QAction::icon()) are the module title and icon; the name of the module
+  ///  is saved in the QAction's data (QAction::data().toString()) and the
+  /// module index is the QAction property "index"
+  /// (QAction::property("index").toInt()).
+  /// It is typically used in the module selector menu;
+  /// triggering the QAction will make the module current.
   QAction * action();
 protected:
   QScopedPointer<qSlicerAbstractModulePrivate> d_ptr;
