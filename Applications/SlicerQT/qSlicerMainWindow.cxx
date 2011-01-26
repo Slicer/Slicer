@@ -30,8 +30,8 @@
 #include <ctkSettingsDialog.h>
 
 // SlicerQt includes
-#include "qSlicerMainWindow.h" 
-#include "ui_qSlicerMainWindow.h" 
+#include "qSlicerMainWindow.h"
+#include "ui_qSlicerMainWindow.h"
 #include "qSlicerApplication.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
@@ -57,7 +57,7 @@ protected:
 public:
   qSlicerMainWindowPrivate(qSlicerMainWindow& object);
   void setupUi(QMainWindow * mainWindow);
-  
+
   void readSettings();
   void writeSettings();
   bool confirmClose();
@@ -66,7 +66,6 @@ public:
   qSlicerModuleSelectorToolBar* ModuleSelectorToolBar;
   QStringList                   ModuleToolBarList;
   qSlicerLayoutManager*         LayoutManager;
-  //QSignalMapper*                ModuleToolBarMapper;
   ctkSettingsDialog*            SettingsDialog;
 };
 
@@ -83,7 +82,7 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
                           << "Annotation" << "Editor" << "Measurements"
                           << "Colors";
   this->LayoutManager = 0;
-  //this->ModuleToolBarMapper = 0;
+  this->SettingsDialog = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -93,8 +92,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
+  //----------------------------------------------------------------------------
+  // ModuleManager
+  //----------------------------------------------------------------------------
   // Update the list of modules when they are loaded
-  //this->ModuleToolBarMapper = new QSignalMapper(p);
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   Q_ASSERT(moduleManager);
 
@@ -106,9 +107,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
                    q, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule*)));
 
-  //QObject::connect(this->ModuleToolBarMapper, SIGNAL(mapped(const QString&)),
-  //                 this->ModulePanel, SLOT(setModule(const QString&)));
-
+  //----------------------------------------------------------------------------
+  // ModuleSelector ToolBar
+  //----------------------------------------------------------------------------
   // Create a Module selector
   this->ModuleSelectorToolBar = new qSlicerModuleSelectorToolBar("Module Selector",q);
   this->ModuleSelectorToolBar->setObjectName(QString::fromUtf8("ModuleSelectorToolBar"));
@@ -120,6 +121,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(const QString&)),
                    this->ModulePanel, SLOT(setModule(const QString&)));
 
+  //----------------------------------------------------------------------------
+  // MouseMode ToolBar
+  //----------------------------------------------------------------------------
   // MouseMode toolBar should listen the MRML scene
   this->MouseModeToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
   QObject::connect(qSlicerApplication::application(),
@@ -127,6 +131,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    this->MouseModeToolBar,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
 
+  //----------------------------------------------------------------------------
+  // Hide toolbars by default
+  //----------------------------------------------------------------------------
   // Hide the Layout toolbar by default
   // The setVisibility slot of the toolbar is connected QAction::triggered signal
   // It's done for a long list of reasons. If you change this behavior, make sure
@@ -136,6 +143,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionWindowToolbarsUndoRedo->trigger();
   this->actionWindowToolbarsLayout->trigger();
 
+  //----------------------------------------------------------------------------
+  // Layout Manager
+  //----------------------------------------------------------------------------
   // Instanciate and assign the layout manager to the slicer application
   this->LayoutManager = new qSlicerLayoutManager(this->CentralWidget);
   this->LayoutManager->setScriptedDisplayableManagerDirectory(
@@ -147,8 +157,13 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->LayoutManager,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  //----------------------------------------------------------------------------
+  // Slices Controller Toolbar
+  //----------------------------------------------------------------------------
   // Slices controller toolbar listens to the MRML scene
-  this->MRMLSlicesControllerToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  this->MRMLSlicesControllerToolBar->setMRMLScene(
+    qSlicerApplication::application()->mrmlScene());
   QObject::connect(qSlicerApplication::application(),
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->MRMLSlicesControllerToolBar,
@@ -156,6 +171,9 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->MRMLSlicesControllerToolBar->setMRMLSliceLogics(
     this->LayoutManager->mrmlSliceLogics());
 
+  //----------------------------------------------------------------------------
+  // 3D Views Controller Toolbar
+  //----------------------------------------------------------------------------
   // ThreeDViews controller toolbar listens to LayoutManager
   // TODO The current active view could be a property of the layoutNode ?
   QObject::connect(qSlicerApplication::application(),
@@ -182,7 +200,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    qSlicerApplication::application()->ioManager(),
                    SLOT(openScreenshotDialog()));
 
-  // Populate the View ToolBar
+  //----------------------------------------------------------------------------
+  // View Toolbar
+  //----------------------------------------------------------------------------
+  // Populate the View ToolBar with all the layouts of the layout manager
   QToolButton* layoutButton = new QToolButton(q);
   layoutButton->setMenu(this->MenuLayout);
   layoutButton->setPopupMode(QToolButton::InstantPopup);
@@ -191,12 +212,19 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    layoutButton, SLOT(setDefaultAction(QAction*)));
   this->ViewToolBar->addWidget(layoutButton);
 
-  // Listen to the scene
+  //----------------------------------------------------------------------------
+  // Undo/Redo Toolbar
+  //----------------------------------------------------------------------------
+  // Listen to the scene to enable/disable the undo/redo toolbuttons
   q->qvtkConnect(qSlicerApplication::application()->mrmlScene(), vtkCommand::ModifiedEvent,
                  q, SLOT(onMRMLSceneModified(vtkObject*)));
   q->onMRMLSceneModified(qSlicerApplication::application()->mrmlScene());
 
+  //----------------------------------------------------------------------------
+  // Icons in the menu
+  //----------------------------------------------------------------------------
   // Customize QAction icons with standard pixmaps
+  // TODO: all these icons are a little bit too much.
   QIcon networkIcon = q->style()->standardIcon(QStyle::SP_DriveNetIcon);
   QIcon informationIcon = q->style()->standardIcon(QStyle::SP_MessageBoxInformation);
   QIcon criticalIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
@@ -211,7 +239,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionFeedbackReportUsabilityIssue->setIcon(warningIcon);
   this->actionFeedbackMakeFeatureRequest->setIcon(questionIcon);
   this->actionFeedbackCommunitySlicerVisualBlog->setIcon(networkIcon);
-  
+
+  //----------------------------------------------------------------------------
+  // Settings Dialog
+  //----------------------------------------------------------------------------
   // Initialize the Settings widget
   this->SettingsDialog = new ctkSettingsDialog(q);
   this->SettingsDialog->addPanel("Application settings", new qSlicerSettingsPanel);
@@ -342,7 +373,7 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
 void qSlicerMainWindow::setupMenuActions()
 {
   Q_D(qSlicerMainWindow);
-  
+
   qSlicerMainWindowCore_connect(FileAddData);
   qSlicerMainWindowCore_connect(FileImportScene);
   qSlicerMainWindowCore_connect(FileLoadScene);
@@ -369,7 +400,7 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(ViewLayoutTabbedSlice);
   qSlicerMainWindowCore_connect(ViewLayoutCompare);
   qSlicerMainWindowCore_connect(ViewLayoutSideBySideLightbox);
-  
+
   qSlicerMainWindowCore_connect(WindowPythonInteractor);
 
   qSlicerMainWindowCore_connect(HelpKeyboardShortcuts);
@@ -460,7 +491,6 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* mod
     if (action->data().toString() == module->name())
       {
       d->ModuleToolBar->removeAction(action);
-      //d->ModuleToolBarMapper->removeMappings(action);
       return;
       }
     }
