@@ -31,8 +31,6 @@
 #include <cmath>
 
 // Copied from vtkImageGeneral.h
-// Abuse the type system.
-#define COERCE(x, type) (*((type *)(&(x))))
 // Some constants having to do with the way single
 // floats are represented on alphas and sparcs
 #define MANTSIZE (23)
@@ -47,53 +45,16 @@
 #define ONE_OVER_ROOT_2_PI sqrt(ONE_OVER_2_PI)
 #define MINUS_ONE_OVER_2_LOG_2 -.72134752
 
-// A piecewise linear approximation to 2**x for negative arugments
-// Provides exact results when the argument is a power of two,
-// and some other times as well.
-// The strategy is rougly as follows:
-//    coerce the single float argument to unsigned int
-//    extract the exponent as a signed integer
-//    construct the mantissa, including the phantom high bit, and negate it
-//    construct the result bit pattern by leftshifting the signed mantissa
-//      this is done for both cases of the exponent sign
-//      and check for potenital underflow
 
-// Does no conditional branching on alpha or sparc :Jun  7, 1995
 
-inline float qnexp2(float x)
-{
-  unsigned result_bits;
-  unsigned bits = COERCE(x, unsigned int);
-  int exponent = ((EXPMASK & bits) >> MANTSIZE) - (EXPBIAS);
-  int neg_mant =  ((MENTMASK & bits) | PHANTOM_BIT);
-  neg_mant = -neg_mant;
-
-  unsigned r1 = (neg_mant << exponent);
-  unsigned r2 = (neg_mant >> (- exponent));
-
-  result_bits = (exponent < 0) ? r2 : r1;
-  result_bits = (exponent > 5) ? SHIFTED_BIAS_COMP  : result_bits;
-
-  result_bits += SHIFTED_BIAS;
-
-#ifdef DEBUG
-    {
-    float result;
-    result = COERCE(result_bits, float);
-    fprintf(stderr, "x %g, b %x, e %d, m %x, R %g =?",
-            x,     bits, exponent,  neg_mant, pow(2.0, x));
-    fflush(stderr);
-    fprintf(stderr, " %g\n", result);
-    }
-#endif
-    return(COERCE(result_bits, float));
+// ---------------------------------
+// Normal Gauss Function
+// --------------------------------
+inline float GeneralGauss(float inverse_sigma, float x) {
+  x *= inverse_sigma;
+  return (ONE_OVER_ROOT_2_PI* inverse_sigma * exp(-0.5 * x * x));
 }
 
-inline float FastGauss(float inverse_sigma, float x) {
-  float tmp = inverse_sigma * x;
-  return ONE_OVER_ROOT_2_PI * inverse_sigma
-    * qnexp2(MINUS_ONE_OVER_2_LOG_2 * tmp * tmp);
-}
 
 //-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkPlotGaussian);
@@ -147,7 +108,7 @@ void vtkPlotGaussian::Update()
     this->Bounds[0] = this->Log ? exp(this->Mean - bumpFullWidth / 2.f) : this->Mean - bumpFullWidth / 2.f;
     this->Bounds[1] = this->Log ? exp(this->Mean + bumpFullWidth / 2.f) : this->Mean + bumpFullWidth / 2.f;
     this->Bounds[2] = 0.;
-    this->Bounds[3] = this->Probability * FastGauss(sqrt(1.f / this->Covariance), 0.);
+    this->Bounds[3] = this->Probability * GeneralGauss(sqrt(1.f / this->Covariance), 0.);
     this->Extent[0] = 0.;
     this->Extent[1] = -1.;
     this->Extent[2] = 0.;
@@ -243,11 +204,11 @@ void vtkPlotGaussian::ComputeGaussian()
     float y;
     if (!this->Log)
       {
-      y = this->Probability * FastGauss(invSqrtDetCovariance, x - this->Mean);
+      y = this->Probability * GeneralGauss(invSqrtDetCovariance, x - this->Mean);
       }
     else
       {
-      y = this->Probability * FastGauss(invSqrtDetCovariance, log(x + 1.f) - this->Mean);
+      y = this->Probability * GeneralGauss(invSqrtDetCovariance, log(x + 1.f) - this->Mean);
       }
     yArray->SetValue(i, y);
     x += step;
