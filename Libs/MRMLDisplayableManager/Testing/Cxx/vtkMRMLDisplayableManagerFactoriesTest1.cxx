@@ -31,7 +31,7 @@
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char** argv)
+int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
 {
   VTK_CREATE(vtkTesting, testHelper);
   testHelper->AddArguments(argc, const_cast<const char **>(argv));
