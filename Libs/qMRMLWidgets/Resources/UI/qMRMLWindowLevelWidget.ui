@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>60</height>
+    <height>45</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,32 +19,18 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0">
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="WindowLevelLabel">
-     <property name="text">
-      <string>Window/Level: </string>
+   <item row="1" column="0" colspan="6">
+    <widget class="ctkDoubleRangeSlider" name="WindowLevelRangeSlider">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="0" column="2" colspan="3">
-    <widget class="QComboBox" name="AutoManualComboBox">
-     <item>
-      <property name="text">
-       <string>Manual</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Auto</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="0" column="0">
     <widget class="QDoubleSpinBox" name="WindowSpinBox">
      <property name="prefix">
       <string>W: </string>
@@ -52,19 +38,9 @@
      <property name="decimals">
       <number>1</number>
      </property>
-     <property name="maximum">
-      <double>10.000000000000000</double>
-     </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="ctkDoubleRangeSlider" name="WindowLevelRangeSlider">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
+   <item row="0" column="4">
     <widget class="QDoubleSpinBox" name="LevelSpinBox">
      <property name="prefix">
       <string>L: </string>
@@ -72,16 +48,44 @@
      <property name="decimals">
       <number>1</number>
      </property>
-     <property name="maximum">
-      <double>10.000000000000000</double>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QComboBox" name="AutoManualComboBox">
+     <item>
+      <property name="text">
+       <string>Auto W/L</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Manual W/L</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Manual Min/Max</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QDoubleSpinBox" name="MinSpinBox">
+     <property name="prefix">
+      <string>Min:</string>
+     </property>
+     <property name="decimals">
+      <number>1</number>
      </property>
     </widget>
    </item>
-   <item row="2" column="4">
-    <widget class="QToolButton" name="MoreOptionsButton">
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
+   <item row="0" column="3">
+    <widget class="QDoubleSpinBox" name="MaxSpinBox">
+     <property name="prefix">
+      <string>Max:</string>
+     </property>
+     <property name="decimals">
+      <number>1</number>
      </property>
     </widget>
    </item>

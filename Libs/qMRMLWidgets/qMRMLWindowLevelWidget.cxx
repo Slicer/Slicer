@@ -3,7 +3,12 @@
 #include <QDebug>
 #include <QMenu>
 #include <QStack>
+#include <QPropertyAnimation>
+#include <QTimer>
 #include <QWidgetAction>
+
+// CTK includes
+#include <ctkRangeWidget.h>
 
 // qMRML includes
 #include "qMRMLUtils.h"
@@ -21,51 +26,133 @@
 //-----------------------------------------------------------------------------
 class qMRMLWindowLevelWidgetPrivate: public Ui_qMRMLWindowLevelWidget
 {
+  Q_DECLARE_PUBLIC(qMRMLWindowLevelWidget);
+protected:
+  qMRMLWindowLevelWidget* const q_ptr;
+
 public:
-  qMRMLWindowLevelWidgetPrivate();
+  qMRMLWindowLevelWidgetPrivate(qMRMLWindowLevelWidget& object);
+  virtual ~qMRMLWindowLevelWidgetPrivate();
   void init();
- 
-  vtkMRMLScalarVolumeNode* VolumeNode;
+  void openRangeWidget();
+  void closeRangeWidget();
+  
+  vtkMRMLScalarVolumeNode*        VolumeNode;
   vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
-  QDoubleSpinBox* MinSpinBox;
-  QDoubleSpinBox* MaxSpinBox;
+  ctkRangeWidget*                 RangeWidget;
+  QPropertyAnimation*             RangeWidgetAnimation;
 };
 
 // --------------------------------------------------------------------------
-qMRMLWindowLevelWidgetPrivate::qMRMLWindowLevelWidgetPrivate()
+qMRMLWindowLevelWidgetPrivate::qMRMLWindowLevelWidgetPrivate(
+  qMRMLWindowLevelWidget& object)
+  : q_ptr(&object)
 {
   this->VolumeNode = 0;
   this->VolumeDisplayNode = 0;
-  this->MinSpinBox = 0;
-  this->MaxSpinBox = 0;
+  this->RangeWidget = 0;
+}
+
+// --------------------------------------------------------------------------
+qMRMLWindowLevelWidgetPrivate::~qMRMLWindowLevelWidgetPrivate()
+{
+  delete this->RangeWidget;
+  this->RangeWidget = 0;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidgetPrivate::init()
+{
+  Q_Q(qMRMLWindowLevelWidget);
+
+  this->setupUi(q);
+
+  q->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
+
+  QObject::connect(this->WindowLevelRangeSlider, SIGNAL(valuesChanged(double, double)),
+                   q, SLOT(setMinMaxRangeValue(double, double)));
+
+  QObject::connect(this->WindowSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setWindow(double)));
+  QObject::connect(this->LevelSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setLevel(double)));
+
+  QObject::connect(this->MinSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setMinimumValue(double)));
+  QObject::connect(this->MaxSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setMaximumValue(double)));
+  this->MinSpinBox->setVisible(false);
+  this->MaxSpinBox->setVisible(false);
+
+  QObject::connect(this->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
+                   q, SLOT(setAutoWindowLevel(int)));
+
+  // disable as there is not MRML Node associated with the widget
+  q->setEnabled(this->VolumeDisplayNode != 0);
+
+  this->RangeWidget = new ctkRangeWidget(0);
+  //this->RangeWidget->setAttribute(Qt::WA_ShowWithoutActivating);
+  //this->RangeWidget->setWindowFlags(Qt::Popup);
+  this->RangeWidget->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+  this->RangeWidget->setSpinBoxAlignment(Qt::AlignBottom);
+  this->RangeWidget->setRange(-1000000., 1000000.);
+  //this->RangeWidget->resize(this->RangeWidget->sizeHint());
+  this->RangeWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  //this->RangeWidget->setVisible(false);
+  this->RangeWidget->installEventFilter(q);
+  QObject::connect(this->RangeWidget, SIGNAL(valuesChanged(double, double)),
+                   q, SLOT(setRange(double, double)));
+  
+  this->RangeWidgetAnimation = new QPropertyAnimation(this->RangeWidget, "geometry");
+  this->RangeWidgetAnimation->setDuration(100);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidgetPrivate::openRangeWidget()
+{
+  Q_Q(qMRMLWindowLevelWidget);
+  if (this->RangeWidget->isVisible() ||
+      !q->underMouse())
+    {
+    return;
+    }
+  QPoint bottomLeft = QPoint(q->geometry().x(), q->geometry().bottom());
+  QPoint pos = q->parentWidget() ? q->parentWidget()->mapToGlobal(bottomLeft) : bottomLeft;
+  qDebug() << "open: pos2: " << pos << QPoint(q->geometry().x(), q->geometry().bottom());
+  this->RangeWidgetAnimation->setStartValue(
+    QRect(pos, QSize(q->width(), 0)));
+  this->RangeWidgetAnimation->setEndValue(
+    QRect(pos, QSize(q->width(), this->RangeWidget->sizeHint().height())));
+  this->RangeWidget->setVisible(true);
+  this->RangeWidgetAnimation->start();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidgetPrivate::closeRangeWidget()
+{
+  Q_Q(qMRMLWindowLevelWidget);
+  if (!this->RangeWidget->isVisible())
+    {
+    return;
+    }
+  QPoint bottomLeft = QPoint(q->geometry().x(), q->geometry().bottom());
+  QPoint pos = q->parentWidget() ? q->parentWidget()->mapToGlobal(bottomLeft) : bottomLeft;
+  this->RangeWidgetAnimation->setStartValue(
+    QRect(pos, QSize(q->width(), this->RangeWidget->sizeHint().height())));
+  this->RangeWidgetAnimation->setEndValue(
+    QRect(pos, QSize(q->width(), 0)));
+
+  this->RangeWidgetAnimation->start();
+  QTimer::singleShot(this->RangeWidgetAnimation->duration(),
+                     this->RangeWidget, SLOT(hide()));
 }
 
 // --------------------------------------------------------------------------
 qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_parent)
-  , d_ptr(new qMRMLWindowLevelWidgetPrivate)
+  , d_ptr(new qMRMLWindowLevelWidgetPrivate(*this))
 {
   Q_D(qMRMLWindowLevelWidget);
-  
-  d->setupUi(this);
-  this->setupMoreOptions();
-
-  this->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
-
-  this->connect(d->WindowLevelRangeSlider, SIGNAL(minimumValueChanged(double)),
-                this, SLOT(setMinimumValue(double)));
-  this->connect(d->WindowLevelRangeSlider, SIGNAL(maximumValueChanged(double)),
-                this, SLOT(setMaximumValue(double)));
-
-  this->connect(d->WindowSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(setWindow(double)));
-  this->connect(d->LevelSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(setLevel(double)));
-
-  this->connect(d->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
-                SLOT(setAutoWindowLevel(int)));
-
-  // disable as there is not MRML Node associated with the widget
-  this->setEnabled(d->VolumeDisplayNode != 0);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -74,64 +161,54 @@ qMRMLWindowLevelWidget::~qMRMLWindowLevelWidget()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::setupMoreOptions()
-{
-  Q_D(qMRMLWindowLevelWidget);
-  QWidget* rangeWidget = new QWidget;
-  d->MinSpinBox = new QDoubleSpinBox;
-  d->MaxSpinBox = new QDoubleSpinBox;
-  d->MinSpinBox->setPrefix("Min: ");
-  d->MinSpinBox->setRange(-1000000., 1000000.);
-  d->MinSpinBox->setValue(d->WindowLevelRangeSlider->minimum());
-  d->MaxSpinBox->setPrefix("Max: ");
-  d->MaxSpinBox->setRange(-1000000., 1000000.);
-  d->MaxSpinBox->setValue(d->WindowLevelRangeSlider->maximum());
-  connect(d->MinSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(updateRange()));
-  connect(d->MaxSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(updateRange()));
-  connect(d->WindowLevelRangeSlider, SIGNAL(rangeChanged(double, double)),
-          this, SLOT(updateSpinBoxRange(double, double)));
-  QHBoxLayout* rangeLayout = new QHBoxLayout;
-  rangeLayout->addWidget(d->MinSpinBox);
-  rangeLayout->addWidget(d->MaxSpinBox);
-  rangeLayout->setContentsMargins(0,0,0,0);
-  rangeWidget->setLayout(rangeLayout);
-  
-  QWidgetAction* rangeAction = new QWidgetAction(0);
-  rangeAction->setDefaultWidget(rangeWidget);
-  
-  QAction* symmetricAction = new QAction(tr("Symmetric handles"),0);
-  symmetricAction->setCheckable(true);
-  connect(symmetricAction, SIGNAL(toggled(bool)),
-          this, SLOT(updateSymmetricMoves(bool)));
-  symmetricAction->setChecked(true);
-  
-  QMenu* optionsMenu = new QMenu;
-  optionsMenu->addAction(rangeAction);
-  optionsMenu->addAction(symmetricAction);
-  
-  d->MoreOptionsButton->setMenu(optionsMenu);
-  d->MoreOptionsButton->setPopupMode(QToolButton::InstantPopup);
-}
-
-// --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
 {
   Q_D(qMRMLWindowLevelWidget);
 
-  if (d->VolumeDisplayNode)
+  if (!d->VolumeDisplayNode)
     {
-    int oldAuto = d->VolumeDisplayNode->GetAutoWindowLevel();
+    return;
+    }
+  int oldAuto = d->VolumeDisplayNode->GetAutoWindowLevel();
 
-    //int disabledModify = this->VolumeDisplayNode->StartModify();
-    d->VolumeDisplayNode->SetAutoWindowLevel(autoWindowLevel);
-    //this->VolumeDisplayNode->EndModify(disabledModify);
+  //int disabledModify = this->VolumeDisplayNode->StartModify();
+  d->VolumeDisplayNode->SetAutoWindowLevel(
+    autoWindowLevel == qMRMLWindowLevelWidget::Auto ? 1 : 0);
+  //this->VolumeDisplayNode->EndModify(disabledModify);
 
-    if (autoWindowLevel != oldAuto)
-      {
-       emit this->autoWindowLevelValueChanged(autoWindowLevel);
-      }
+  switch (autoWindowLevel)
+    {
+    case qMRMLWindowLevelWidget::ManualMinMax:
+      d->WindowLevelRangeSlider->setSymmetricMoves(false);
+      d->WindowSpinBox->setVisible(false);
+      d->LevelSpinBox->setVisible(false);
+      d->MinSpinBox->setVisible(true);
+      d->MaxSpinBox->setVisible(true);
+      break;
+    default:
+    case qMRMLWindowLevelWidget::Auto:
+    case qMRMLWindowLevelWidget::Manual:
+      d->WindowLevelRangeSlider->setSymmetricMoves(true);
+      d->MinSpinBox->setVisible(false);
+      d->MaxSpinBox->setVisible(false);
+      d->WindowSpinBox->setVisible(true);
+      d->LevelSpinBox->setVisible(true);
+      break;
+    }
+  if (autoWindowLevel != qMRMLWindowLevelWidget::Auto)
+    {
+    d->openRangeWidget();
+    }
+  else
+    {
+    d->closeRangeWidget();
+    }
+  
+  if (autoWindowLevel != oldAuto)
+    {
+    emit this->autoWindowLevelValueChanged(
+      autoWindowLevel == qMRMLWindowLevelWidget::Auto ? 
+        qMRMLWindowLevelWidget::Auto : qMRMLWindowLevelWidget::Manual);
     }
 }
 
@@ -140,11 +217,14 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
 {
   switch(autoWindowLevel)
     {
+    case qMRMLWindowLevelWidget::Auto:
+      this->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
+      break;
     case qMRMLWindowLevelWidget::Manual:
       this->setAutoWindowLevel(qMRMLWindowLevelWidget::Manual);
       break;
-    case qMRMLWindowLevelWidget::Auto:
-      this->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
+    case qMRMLWindowLevelWidget::ManualMinMax:
+      this->setAutoWindowLevel(qMRMLWindowLevelWidget::ManualMinMax);
       break;
     default:
       break;
@@ -155,37 +235,45 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
 qMRMLWindowLevelWidget::ControlMode qMRMLWindowLevelWidget::autoWindowLevel() const
 {
   Q_D(const qMRMLWindowLevelWidget);
-#ifndef _NDEBUG
-  if (d->VolumeDisplayNode)
+  switch (d->AutoManualComboBox->currentIndex())
     {
-    Q_ASSERT(d->VolumeDisplayNode->GetAutoWindowLevel() ==
-             d->AutoManualComboBox->currentIndex());
+    case qMRMLWindowLevelWidget::Auto:
+      return qMRMLWindowLevelWidget::Auto;
+      break;
+    case qMRMLWindowLevelWidget::Manual:
+      return qMRMLWindowLevelWidget::Manual;
+      break;
+    case qMRMLWindowLevelWidget::ManualMinMax:
+      return qMRMLWindowLevelWidget::ManualMinMax;
+      break;
     }
-#endif
-  return d->AutoManualComboBox->currentIndex() == 0 ?
-    qMRMLWindowLevelWidget::Manual : qMRMLWindowLevelWidget::Auto;
+  return qMRMLWindowLevelWidget::Manual;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
 {
   Q_D(const qMRMLWindowLevelWidget);
-  if (d->VolumeDisplayNode)
+  if (!d->VolumeDisplayNode)
     {
-    double oldWindow = d->VolumeDisplayNode->GetWindow();
-    double oldLevel  = d->VolumeDisplayNode->GetLevel();
+    return;
+    }
+  double oldWindow = d->VolumeDisplayNode->GetWindow();
+  double oldLevel  = d->VolumeDisplayNode->GetLevel();
 
-    int disabledModify = d->VolumeDisplayNode->StartModify();
-    d->VolumeDisplayNode->SetWindow(window);
-    d->VolumeDisplayNode->SetLevel(level);
-    if (oldWindow != d->VolumeDisplayNode->GetWindow() ||
-        oldLevel  != d->VolumeDisplayNode->GetLevel())
+  int disabledModify = d->VolumeDisplayNode->StartModify();
+  d->VolumeDisplayNode->SetWindow(window);
+  d->VolumeDisplayNode->SetLevel(level);
+  if (oldWindow != d->VolumeDisplayNode->GetWindow() ||
+      oldLevel  != d->VolumeDisplayNode->GetLevel())
+    {
+    if (this->autoWindowLevel() == qMRMLWindowLevelWidget::Auto)
       {
       this->setAutoWindowLevel(qMRMLWindowLevelWidget::Manual);
-      emit this->windowLevelValuesChanged(window, level);
       }
-    d->VolumeDisplayNode->EndModify(disabledModify);
-  }
+    emit this->windowLevelValuesChanged(window, level);
+    }
+  d->VolumeDisplayNode->EndModify(disabledModify);
 }
 
 // --------------------------------------------------------------------------
@@ -356,8 +444,14 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
     {
     return;
     }
-  d->AutoManualComboBox->setCurrentIndex(
-    d->VolumeDisplayNode->GetAutoWindowLevel());
+
+  if (d->VolumeNode && d->VolumeNode->GetImageData())
+    {
+    double range[2];
+    d->VolumeNode->GetImageData()->GetScalarRange(range);
+    d->RangeWidget->setRange(range[0] - qAbs(range[1] - range[0]),
+                             range[1] + qAbs(range[1] - range[0]));
+    }
   double window = d->VolumeDisplayNode->GetWindow();
   double level = d->VolumeDisplayNode->GetLevel();
   d->WindowSpinBox->setValue(window);
@@ -365,22 +459,20 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRML()
   double min = level - 0.5 * window;
   double max = level + 0.5 * window;
   d->WindowLevelRangeSlider->setValues(min, max );
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::updateSpinBoxRange(double min, double max)
-{
-  Q_D(qMRMLWindowLevelWidget);
   d->MinSpinBox->setValue(min);
   d->MaxSpinBox->setValue(max);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::updateRange()
-{
-  Q_D(qMRMLWindowLevelWidget);
-  d->WindowLevelRangeSlider->setRange(d->MinSpinBox->value(),
-                                      d->MaxSpinBox->value());
+  switch (d->VolumeDisplayNode->GetAutoWindowLevel())
+    {
+    case 1:
+      d->AutoManualComboBox->setCurrentIndex(qMRMLWindowLevelWidget::Auto);
+      break;
+    case 0:
+      if (d->AutoManualComboBox->currentIndex() == qMRMLWindowLevelWidget::Auto)
+        {
+        d->AutoManualComboBox->setCurrentIndex(qMRMLWindowLevelWidget::Manual);
+        }
+      break;
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -390,11 +482,47 @@ void qMRMLWindowLevelWidget::setRange(double min, double max)
   d->WindowLevelRangeSlider->setRange(min, max);
   d->WindowSpinBox->setRange(0, max - min);
   d->LevelSpinBox->setRange(min, max);
+  d->MinSpinBox->setRange(min, max);
+  d->MaxSpinBox->setRange(min, max);
+  d->RangeWidget->setValues(min, max);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::updateSymmetricMoves(bool symmetric)
+bool qMRMLWindowLevelWidget::eventFilter(QObject* obj, QEvent* event)
+{
+  if (event->type() == QEvent::Leave)
+    {
+    QTimer::singleShot(10, this, SLOT(hideRangeWidget()));
+    }
+  return this->QObject::eventFilter(obj, event);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::enterEvent(QEvent* event)
 {
   Q_D(qMRMLWindowLevelWidget);
-  d->WindowLevelRangeSlider->setSymmetricMoves(symmetric);
+  if (this->autoWindowLevel() != Auto)
+    {
+    d->openRangeWidget();
+    }
+  this->QWidget::enterEvent(event);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::leaveEvent(QEvent* event)
+{
+  QTimer::singleShot(10, this, SLOT(hideRangeWidget()));
+  this->QWidget::leaveEvent(event);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidget::hideRangeWidget()
+{
+  Q_D(qMRMLWindowLevelWidget);
+  if (d->RangeWidget->underMouse() ||
+      this->underMouse())
+    {
+    return;
+    }
+  d->closeRangeWidget();
 }

@@ -29,13 +29,14 @@ class QMRML_WIDGETS_EXPORT qMRMLWindowLevelWidget : public QWidget
 public:
   /// Constructors
   typedef QWidget Superclass;
-  explicit qMRMLWindowLevelWidget(QWidget* parent = 0);
+  explicit qMRMLWindowLevelWidget(QWidget* parentWidget = 0);
   virtual ~qMRMLWindowLevelWidget();
 
   enum ControlMode
   {
-    Manual = 0,
-    Auto
+    Auto = 0,
+    Manual = 1,
+    ManualMinMax =2
   };
 
   ///
@@ -62,10 +63,7 @@ public:
   /// 
   /// Return the current MRML node of interest
   vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
-  
-  ///
-  /// Set the range of the slider
-  void setRange(double min, double max);
+
 
 signals:
   /// 
@@ -103,7 +101,7 @@ public slots:
   void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* displayNode);
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
-
+  void setRange(double min, double max);
 protected slots:
   /// the volume node has been modified, maybe its displayNode has been
   /// changed
@@ -111,10 +109,7 @@ protected slots:
 
   /// update widget GUI from MRML node
   void updateWidgetFromMRML();
-
-  void updateSpinBoxRange(double min, double max);
-  void updateRange();
-  void updateSymmetricMoves(bool symmetric);
+  void hideRangeWidget();
 
 protected:
   /// 
@@ -124,11 +119,13 @@ protected:
   /// 
   /// Set current MRML display node
   void setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* displayNode);
-
-  void setupMoreOptions();
+  virtual bool eventFilter(QObject* obj, QEvent* event);
 
 protected:
   QScopedPointer<qMRMLWindowLevelWidgetPrivate> d_ptr;
+
+  virtual void enterEvent(QEvent* event);
+  virtual void leaveEvent(QEvent* event);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLWindowLevelWidget);

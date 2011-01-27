@@ -20,6 +20,7 @@
 
 // QT includes
 #include <QApplication>
+#include <QHBoxLayout>
 #include <QTimer>
 
 // qMRML includes
@@ -69,6 +70,13 @@ int qMRMLWindowLevelWidgetTest1(int argc, char * argv [] )
   windowLevel.setMRMLVolumeNode(volumeNode);
   
   windowLevel.show();
+
+  QWidget topLevel;
+  qMRMLWindowLevelWidget windowLevel2(&topLevel);
+  windowLevel2.setMRMLVolumeNode(volumeNode);
+  QHBoxLayout* l = new QHBoxLayout(&topLevel);
+  l->addWidget(&windowLevel2);
+  topLevel.show();
   
   if (argc < 3 || QString(argv[2]) != "-I" )
     {
