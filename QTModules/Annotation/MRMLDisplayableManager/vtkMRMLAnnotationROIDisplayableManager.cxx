@@ -155,16 +155,27 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
   // we need to save the origin here in the matrix
   //double origin[3];
   double* origin = roiNode->GetXYZ();
-  matrix->SetElement(0,3,origin[0]);
-  matrix->SetElement(1,3,origin[1]);
-  matrix->SetElement(2,3,origin[2]);
-
-  // we need to save the radius here in the matrix
-  //double radius[3];
-  double* radius = roiNode->GetRadiusXYZ();
-  matrix->SetElement(0,0,radius[0]*2.0);
-  matrix->SetElement(1,1,radius[1]*2.0);
-  matrix->SetElement(2,2,radius[2]*2.0);
+  double* radius = NULL;
+  if(origin)
+    {
+    matrix->SetElement(0,3,origin[0]);
+    matrix->SetElement(1,3,origin[1]);
+    matrix->SetElement(2,3,origin[2]);
+    // we need to save the radius here in the matrix
+    //double radius[3];
+    radius = roiNode->GetRadiusXYZ();
+    if(radius)
+      {
+      matrix->SetElement(0,0,radius[0]*2.0);
+      matrix->SetElement(1,1,radius[1]*2.0);
+      matrix->SetElement(2,2,radius[2]*2.0);
+      }
+    }
+  else 
+    {
+      vtkErrorMacro("CreateWidget: Failed to initialize a new ROI node!");
+      return NULL;
+    }
 
   //matrix->DeepCopy(newMatrix);
 
