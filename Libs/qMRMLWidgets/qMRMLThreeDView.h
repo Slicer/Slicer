@@ -47,15 +47,17 @@ public:
   /// scripted DisplayableManager should be sourced from.
   void registerDisplayableManagers(const QString& scriptedDisplayableManagerDirectory);
 
+  /// Get the 3D View node observed by view.
+  vtkMRMLViewNode* mrmlViewNode()const;
+
 public slots:
 
   /// Set the MRML \a scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* newScene);
 
-  /// Set/Get \a viewNode
+  /// Set the current \a viewNode to observe
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
-  vtkMRMLViewNode* mrmlViewNode()const;
-  
+
 protected:
   QScopedPointer<qMRMLThreeDViewPrivate> d_ptr;
 

@@ -204,6 +204,86 @@ void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
   this->Modified();
 }
 
+//----------------------------------------------------------------------------
+vtkCollection* vtkMRMLLayoutNode::GetVisibleSliceViewNodes()
+{
+  vtkCollection* sliceViewNodes =
+    this->GetScene() ? this->GetScene()->GetNodesByClass("vtkMRMLSliceNode") : 0;
+  if (!sliceViewNodes)
+    {
+    return vtkCollection::New();
+    }
+  vtkCollectionSimpleIterator it;
+  sliceViewNodes->InitTraversal(it);
+  vtkMRMLNode* node, *next;
+  for (node = static_cast<vtkMRMLNode*>(sliceViewNodes->GetNextItemAsObject(it));
+       node; node = next)
+    {
+    next = static_cast<vtkMRMLNode*>(sliceViewNodes->GetNextItemAsObject(it));
+    const char* attribute = node->GetAttribute("MappedInLayout");
+    if (!attribute || !strcmp(attribute, "0"))
+      {
+      sliceViewNodes->RemoveItem(node);
+      }
+    }
+  return sliceViewNodes;
+}
+
+//----------------------------------------------------------------------------
+vtkCollection* vtkMRMLLayoutNode::GetVisibleThreeDViewNodes()
+{
+  vtkCollection* sliceViewNodes =
+    this->GetScene() ? this->GetScene()->GetNodesByClass("vtkMRMLViewNode") : 0;
+  if (!sliceViewNodes)
+    {
+    return vtkCollection::New();
+    }
+  vtkCollectionSimpleIterator it;
+  sliceViewNodes->InitTraversal(it);
+  vtkMRMLNode* node, *next;
+  for (node = static_cast<vtkMRMLNode*>(sliceViewNodes->GetNextItemAsObject(it));
+       node; node = next)
+    {
+    next = static_cast<vtkMRMLNode*>(sliceViewNodes->GetNextItemAsObject(it));
+    const char* attribute = node->GetAttribute("MappedInLayout");
+    if (!attribute || !strcmp(attribute, "0"))
+      {
+      sliceViewNodes->RemoveItem(node);
+      }
+    }
+  return sliceViewNodes;
+}
+
+//----------------------------------------------------------------------------
+vtkCollection* vtkMRMLLayoutNode::GetVisibleViewNodes()
+{
+  vtkCollection* visibleViewNodes = vtkCollection::New();
+  if (!this->GetScene())
+    {
+    return visibleViewNodes;
+    }
+  vtkCollection* currentScene = this->GetScene()->GetCurrentScene();
+  if (!currentScene)
+    {
+    return visibleViewNodes;
+    }
+  vtkCollectionSimpleIterator it;
+  currentScene->InitTraversal(it);
+  vtkMRMLNode* node, *next;
+  for (node = static_cast<vtkMRMLNode*>(currentScene->GetNextItemAsObject(it));
+       node; node = next)
+    {
+    next = static_cast<vtkMRMLNode*>(currentScene->GetNextItemAsObject(it));
+    const char* attribute = node->GetAttribute("MappedInLayout");
+    if (attribute && !strcmp(attribute, "1") &&
+        (node->IsA("vtkMRMLSliceNode") ||
+         node->IsA("vtkMRMLViewNode")))
+      {
+      visibleViewNodes->AddItem(node);
+      }
+    }
+  return visibleViewNodes;
+}
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.

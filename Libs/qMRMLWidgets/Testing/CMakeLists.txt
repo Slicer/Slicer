@@ -13,6 +13,7 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   qMRMLDisplayNodeWidgetTest1.cxx
   qMRMLLayoutManagerTest1.cxx
   qMRMLLayoutManagerTest2.cxx
+  qMRMLLayoutManagerTest3.cxx
   qMRMLLinearTransformSliderTest1.cxx
   qMRMLListWidgetTest1.cxx
   qMRMLMatrixWidgetTest1.cxx
@@ -88,6 +89,7 @@ SIMPLE_TEST( qMRMLColorTableViewTest1 )
 SIMPLE_TEST( qMRMLDisplayNodeWidgetTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest2 )
+SIMPLE_TEST( qMRMLLayoutManagerTest3 )
 SIMPLE_TEST( qMRMLLinearTransformSliderTest1 )
 SIMPLE_TEST( qMRMLListWidgetTest1 )
 SIMPLE_TEST( qMRMLMatrixWidgetTest1 )

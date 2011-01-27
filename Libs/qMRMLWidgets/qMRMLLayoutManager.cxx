@@ -164,6 +164,20 @@ qMRMLSliceWidget* qMRMLLayoutManagerPrivate::sliceWidget(const QString& name)con
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLLayoutManagerPrivate::viewNode(QWidget* widget)const
+{
+  if (qobject_cast<qMRMLSliceWidget*>(widget))
+    {
+    return qobject_cast<qMRMLSliceWidget*>(widget)->mrmlSliceNode();
+    }
+  if (qobject_cast<qMRMLThreeDView*>(widget))
+    {
+    return qobject_cast<qMRMLThreeDView*>(widget)->mrmlViewNode();
+    }
+  return 0;
+}
+
+//------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::setMRMLScene(vtkMRMLScene* scene)
 {
   if (this->MRMLScene == scene)
@@ -663,6 +677,11 @@ void qMRMLLayoutManagerPrivate::clearLayout(QLayout* layout)
     if (layoutItem->widget())
       {
       layoutItem->widget()->setVisible(false);
+      vtkMRMLNode* node = this->viewNode(layoutItem->widget());
+      if (node)
+        {
+        node->SetAttribute("MappedInLayout", "0");
+        }
       layout->removeWidget(layoutItem->widget());
       }
     else if (layoutItem->layout())
@@ -748,22 +767,22 @@ void qMRMLLayoutManagerPrivate::setConventionalView()
   // First render view
   qMRMLThreeDView * renderView = this->threeDViewCreateIfNeeded(0);
   this->GridLayout->addWidget(renderView, 0, 0, 1, -1); // fromRow, fromColumn, rowSpan, columnSpan
-  renderView->setVisible(true);
+  this->showWidget(renderView);
 
   // Red Slice Viewer
   qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
   this->GridLayout->addWidget(redSliceView, 1, 0);
-  redSliceView->setVisible(true);
+  this->showWidget(redSliceView);
 
   // Yellow Slice Viewer
   qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
   this->GridLayout->addWidget(yellowSliceView, 1, 1);
-  yellowSliceView->setVisible(true);
+  this->showWidget(yellowSliceView);
 
   // Green Slice Viewer
   qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
   this->GridLayout->addWidget(greenSliceView, 1, 2);
-  greenSliceView->setVisible(true);
+  this->showWidget(greenSliceView);
 }
 
 //------------------------------------------------------------------------------
@@ -773,7 +792,7 @@ void qMRMLLayoutManagerPrivate::setOneUp3DView()
   // First render view
   qMRMLThreeDView * renderView = this->threeDViewCreateIfNeeded(0);
   this->GridLayout->addWidget(renderView, 0, 0, 1, -1); // fromRow, fromColumn, rowSpan, columnSpan
-  renderView->setVisible(true);
+  this->showWidget(renderView);
 }
 
 //------------------------------------------------------------------------------
@@ -791,6 +810,7 @@ void qMRMLLayoutManagerPrivate::setOneUpSliceView(const QString& sliceLayoutName
   qMRMLSliceWidget* sliceWidget = this->sliceWidget(sliceLayoutName);
   sliceWidget->setVisible(true);
   this->GridLayout->addWidget(sliceWidget, 1, 0);
+  this->showWidget(sliceWidget);
 }
 
 //------------------------------------------------------------------------------
@@ -800,22 +820,22 @@ void qMRMLLayoutManagerPrivate::setFourUpView()
   // First render view
   qMRMLThreeDView * renderView = this->threeDViewCreateIfNeeded(0);
   this->GridLayout->addWidget(renderView, 0, 1); // fromRow, fromColumn, rowSpan, columnSpan
-  renderView->setVisible(true);
+  this->showWidget(renderView);
 
   // Red Slice Viewer
   qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
   this->GridLayout->addWidget(redSliceView, 0, 0);
-  redSliceView->setVisible(true);
+  this->showWidget(redSliceView);
 
   // Yellow Slice Viewer
   qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
   this->GridLayout->addWidget(yellowSliceView, 1, 0);
-  yellowSliceView->setVisible(true);
+  this->showWidget(yellowSliceView);
 
   // Green Slice Viewer
   qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
   this->GridLayout->addWidget(greenSliceView, 1, 1);
-  greenSliceView->setVisible(true);
+  this->showWidget(greenSliceView);
 }
 
 //------------------------------------------------------------------------------
@@ -865,12 +885,12 @@ void qMRMLLayoutManagerPrivate::setDual3DView()
   // First render view
   qMRMLThreeDView * renderView = this->threeDViewCreateIfNeeded(0);
   this->GridLayout->addWidget(renderView, 0, 0); // fromRow, fromColumn, rowSpan, columnSpan
-  renderView->setVisible(true);
+  this->showWidget(renderView);
 
   // Second render view
   qMRMLThreeDView * renderView2 = this->threeDViewCreateIfNeeded(1);
   this->GridLayout->addWidget(renderView2, 0, 1);
-  renderView2->setVisible(true);
+  this->showWidget(renderView2);
 
   // Add an horizontal layout to group the 3 sliceWidgets
   QHBoxLayout * sliceWidgetLayout = new QHBoxLayout();
@@ -879,17 +899,17 @@ void qMRMLLayoutManagerPrivate::setDual3DView()
   // Red Slice Viewer
   qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
   sliceWidgetLayout->addWidget(redSliceView);
-  redSliceView->setVisible(true);
+  this->showWidget(redSliceView);
 
   // Yellow Slice Viewer
   qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
   sliceWidgetLayout->addWidget(yellowSliceView);
-  yellowSliceView->setVisible(true);
+  this->showWidget(yellowSliceView);
 
   // Green Slice Viewer
   qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
   sliceWidgetLayout->addWidget(greenSliceView);
-  greenSliceView->setVisible(true);
+  this->showWidget(greenSliceView);
 }
 
 //------------------------------------------------------------------------------
@@ -897,6 +917,16 @@ void qMRMLLayoutManagerPrivate::setNone()
 {
   logger.trace(QString("switch to None"));
 }
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManagerPrivate::showWidget(QWidget* widget)
+{
+  Q_ASSERT(widget);
+  Q_ASSERT(this->viewNode(widget));
+  this->viewNode(widget)->SetAttribute("MappedInLayout", "1");
+  widget->setVisible(true);
+}
+
 
 //------------------------------------------------------------------------------
 // qMRMLLayoutManager methods

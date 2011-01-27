@@ -111,6 +111,7 @@ public:
   /// identified by \a sliceViewName
   qMRMLSliceWidget* sliceWidget(const QString& sliceLayoutName)const;
   qMRMLSliceWidget* sliceWidget(vtkMRMLSliceNode* node)const;
+  vtkMRMLNode* viewNode(QWidget* )const;
 
 public slots:
   /// Handle MRML scene event
@@ -137,6 +138,8 @@ public:
 
   QList<qMRMLThreeDView*>           ThreeDViewList;
   QList<qMRMLSliceWidget*>          SliceWidgetList;
+protected:
+  void showWidget(QWidget* widget);
 };
 
 #endif
