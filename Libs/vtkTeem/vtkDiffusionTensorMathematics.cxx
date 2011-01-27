@@ -142,8 +142,20 @@ int vtkDiffusionTensorMathematics::FillInputPortInformation(
 }
 
 
-
-
+int vtkDiffusionTensorMathematics
+::RequestData(vtkInformation* request, vtkInformationVector** inputVector,
+              vtkInformationVector* outputVector)
+{
+  int res = this->Superclass::RequestData(request, inputVector, outputVector);
+  for (int i = 0; i < this->GetNumberOfOutputPorts(); ++i)
+    {
+    vtkInformation* info = outputVector->GetInformationObject(i);
+    vtkImageData *outData = static_cast<vtkImageData *>(
+      info->Get(vtkDataObject::DATA_OBJECT()));
+    outData->GetPointData()->SetTensors(NULL);
+    }
+  return res;
+}
 
 //----------------------------------------------------------------------------
 // This templated function executes the filter for any type of data.
@@ -762,7 +774,6 @@ void vtkDiffusionTensorMathematics::ThreadedRequestData(
       }
     break;
   }
-  outData[0]->GetPointData()->SetTensors(NULL);
 }
 
 

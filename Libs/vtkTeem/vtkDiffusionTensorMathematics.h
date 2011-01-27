@@ -276,7 +276,10 @@ protected:
 
   int FillInputPortInformation(int port, vtkInformation* info);
 
-
+  // Reimplemented to delete the tensor array of the output.
+  virtual int RequestData(vtkInformation* request,
+                          vtkInformationVector** inputVector,
+                          vtkInformationVector* outputVector);
 private:
   vtkDiffusionTensorMathematics(const vtkDiffusionTensorMathematics&);
   void operator=(const vtkDiffusionTensorMathematics&);
