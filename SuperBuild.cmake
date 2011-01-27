@@ -275,6 +275,7 @@ ExternalProject_Add(${proj}
     -DSlicer_SUPERBUILD:BOOL=OFF
     -DSlicer_C_FLAGS:STRING=${Slicer_C_FLAGS}
     -DSlicer_CXX_FLAGS:STRING=${Slicer_CXX_FLAGS}
+    -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE}
     # ITK
     -DITK_DIR:PATH=${ITK_DIR}
     # Teem
