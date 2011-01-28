@@ -572,6 +572,12 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
     return QFileInfo(QString(this->MRMLScene->GetURL()));
     }
 
+  QTableWidgetItem* nodeNameItem = this->FileWidget->item(found[0].row(), NodeNameColumn);
+  if (nodeNameItem->checkState() != Qt::Checked)
+    {
+    return QFileInfo();
+    }
+
   QTableWidgetItem* fileNameItem = this->FileWidget->item(found[0].row(), FileNameColumn);
   ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
     this->FileWidget->cellWidget(found[0].row(), FileDirectoryColumn));
@@ -604,15 +610,18 @@ bool qSlicerSaveDataDialogPrivate::prepareForSaving()
       return false;
       }
     }
-  this->MRMLScene->SetRootDirectory(file.absoluteDir().absolutePath().toLatin1().data());
-
-  // update the root directory of scene snapshot nodes (not sure why)
-  const int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSceneSnapshotNode");
-  for (int n=0; n<nnodes; n++)
+  if (file != QFileInfo())
     {
-    vtkMRMLNode* node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSceneSnapshotNode");
-    vtkMRMLSceneViewNode *snode = vtkMRMLSceneViewNode::SafeDownCast(node);
-    snode->GetNodes()->SetRootDirectory(this->MRMLScene->GetRootDirectory());
+    this->MRMLScene->SetRootDirectory(file.absoluteDir().absolutePath().toLatin1().data());
+
+    // update the root directory of scene snapshot nodes (not sure why)
+    const int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSceneSnapshotNode");
+    for (int n=0; n<nnodes; n++)
+      {
+      vtkMRMLNode* node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSceneSnapshotNode");
+      vtkMRMLSceneViewNode *snode = vtkMRMLSceneViewNode::SafeDownCast(node);
+      snode->GetNodes()->SetRootDirectory(this->MRMLScene->GetRootDirectory());
+      }
     }
   return true;
 }
@@ -621,18 +630,25 @@ bool qSlicerSaveDataDialogPrivate::prepareForSaving()
 bool qSlicerSaveDataDialogPrivate::saveScene()
 {
   QFileInfo file = this->sceneFile();
-  // remove unreferenced nodes
-  vtkMRMLLogic *mrmlLogic = vtkMRMLLogic::New();
-  mrmlLogic->SetScene(this->MRMLScene);
-  mrmlLogic->RemoveUnreferencedDisplayNodes();
-  mrmlLogic->RemoveUnreferencedStorageNodes();
-  mrmlLogic->Delete();
+  if (file != QFileInfo())
+    {
+    // remove unreferenced nodes
+    vtkMRMLLogic *mrmlLogic = vtkMRMLLogic::New();
+    mrmlLogic->SetScene(this->MRMLScene);
+    mrmlLogic->RemoveUnreferencedDisplayNodes();
+    mrmlLogic->RemoveUnreferencedStorageNodes();
+    mrmlLogic->Delete();
 
-  this->MRMLScene->SetURL(file.absoluteFilePath().toLatin1().data());
-  // TODO
-  this->MRMLScene->SetVersion("Slicer4");
-  bool res = this->MRMLScene->Commit();
-  return res;
+    this->MRMLScene->SetURL(file.absoluteFilePath().toLatin1().data());
+    // TODO
+    this->MRMLScene->SetVersion("Slicer4");
+    bool res = this->MRMLScene->Commit();
+    return res;
+    }
+  else
+    {
+    return true;
+    }
 }
 
 //-----------------------------------------------------------------------------
