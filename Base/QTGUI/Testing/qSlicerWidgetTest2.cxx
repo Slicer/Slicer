@@ -161,17 +161,6 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   webView.setUrl(QUrl("http://pyjs.org/examples"));
   vbox.addWidget(&webView);
 
-
-  QRect parentGeometry(10,10,WINDOW_WIDTH,WINDOW_HEIGHT);
-  widget->setParentGeometry( parentGeometry.x(), parentGeometry.y(), 
-    parentGeometry.width(), parentGeometry.height());
-
-  if (parentWidget.geometry() != parentGeometry)
-    {
-    std::cerr << "parent geometry incorrectly set." << std::endl;
-    return EXIT_FAILURE;
-    }
-
   vtkMRMLScene* scene = vtkMRMLScene::New();
   widget->setMRMLScene(scene);
   parentWidget.show();
