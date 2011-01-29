@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSettingsPanel_h
-#define __qSlicerSettingsPanel_h
+#ifndef __qSlicerSettingsGeneralPanel_h
+#define __qSlicerSettingsGeneralPanel_h
 
 // Qt includes
 #include <QWidget>
@@ -31,9 +31,9 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 class QSettings;
-class qSlicerSettingsPanelPrivate;
+class qSlicerSettingsGeneralPanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsPanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsGeneralPanel
   : public ctkSettingsPanel
 {
   Q_OBJECT
@@ -42,10 +42,10 @@ public:
   typedef ctkSettingsPanel Superclass;
 
   /// Constructor
-  explicit qSlicerSettingsPanel(QWidget* parent = 0);
+  explicit qSlicerSettingsGeneralPanel(QWidget* parent = 0);
 
   /// Destructor
-  virtual ~qSlicerSettingsPanel();
+  virtual ~qSlicerSettingsGeneralPanel();
 
 protected slots:
   void onFontChanged(const QFont& font);
@@ -53,11 +53,11 @@ protected slots:
   void onShowToolButtonTextToggled(bool enable);
 
 protected:
-  QScopedPointer<qSlicerSettingsPanelPrivate> d_ptr;
+  QScopedPointer<qSlicerSettingsGeneralPanelPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSettingsPanel);
-  Q_DISABLE_COPY(qSlicerSettingsPanel);
+  Q_DECLARE_PRIVATE(qSlicerSettingsGeneralPanel);
+  Q_DISABLE_COPY(qSlicerSettingsGeneralPanel);
 };
 
 #endif

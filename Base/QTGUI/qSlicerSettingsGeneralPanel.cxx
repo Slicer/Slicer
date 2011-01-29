@@ -27,34 +27,34 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
-#include "qSlicerSettingsPanel.h"
-#include "ui_qSlicerSettingsPanel.h"
+#include "qSlicerSettingsGeneralPanel.h"
+#include "ui_qSlicerSettingsGeneralPanel.h"
 
-static ctkLogger logger("org.commontk.libs.widgets.qSlicerSettingsPanel");
+static ctkLogger logger("org.commontk.libs.widgets.qSlicerSettingsGeneralPanel");
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsPanelPrivate: public Ui_qSlicerSettingsPanel
+class qSlicerSettingsGeneralPanelPrivate: public Ui_qSlicerSettingsGeneralPanel
 {
-  Q_DECLARE_PUBLIC(qSlicerSettingsPanel);
+  Q_DECLARE_PUBLIC(qSlicerSettingsGeneralPanel);
 protected:
-  qSlicerSettingsPanel* const q_ptr;
+  qSlicerSettingsGeneralPanel* const q_ptr;
 
 public:
-  qSlicerSettingsPanelPrivate(qSlicerSettingsPanel& object);
+  qSlicerSettingsGeneralPanelPrivate(qSlicerSettingsGeneralPanel& object);
   void init();
 
 };
 
 // --------------------------------------------------------------------------
-qSlicerSettingsPanelPrivate::qSlicerSettingsPanelPrivate(qSlicerSettingsPanel& object)
+qSlicerSettingsGeneralPanelPrivate::qSlicerSettingsGeneralPanelPrivate(qSlicerSettingsGeneralPanel& object)
   :q_ptr(&object)
 {
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsPanelPrivate::init()
+void qSlicerSettingsGeneralPanelPrivate::init()
 {
-  Q_Q(qSlicerSettingsPanel);
+  Q_Q(qSlicerSettingsGeneralPanel);
 
   this->setupUi(q);
   QObject::connect(this->FontButton, SIGNAL(currentFontChanged(const QFont&)),
@@ -79,33 +79,33 @@ void qSlicerSettingsPanelPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-qSlicerSettingsPanel::qSlicerSettingsPanel(QWidget* _parent)
+qSlicerSettingsGeneralPanel::qSlicerSettingsGeneralPanel(QWidget* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerSettingsPanelPrivate(*this))
+  , d_ptr(new qSlicerSettingsGeneralPanelPrivate(*this))
 {
-  Q_D(qSlicerSettingsPanel);
+  Q_D(qSlicerSettingsGeneralPanel);
   d->init();
 }
 
 // --------------------------------------------------------------------------
-qSlicerSettingsPanel::~qSlicerSettingsPanel()
+qSlicerSettingsGeneralPanel::~qSlicerSettingsGeneralPanel()
 {
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsPanel::onFontChanged(const QFont& font)
+void qSlicerSettingsGeneralPanel::onFontChanged(const QFont& font)
 {
   qApp->setFont(font);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsPanel::onShowToolTipsToggled(bool disable)
+void qSlicerSettingsGeneralPanel::onShowToolTipsToggled(bool disable)
 {
   qSlicerApplication::application()->setToolTipsEnabled(!disable);
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsPanel::onShowToolButtonTextToggled(bool enable)
+void qSlicerSettingsGeneralPanel::onShowToolButtonTextToggled(bool enable)
 {
   foreach(QWidget* widget, qSlicerApplication::application()->topLevelWidgets())
     {
