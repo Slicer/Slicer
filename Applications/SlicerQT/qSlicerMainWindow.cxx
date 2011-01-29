@@ -44,6 +44,7 @@
 #include "qSlicerIOManager.h"
 #include "qSlicerSettingsModulesPanel.h"
 #include "qSlicerSettingsGeneralPanel.h"
+#include "qSlicerSettingsPythonPanel.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -247,7 +248,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->SettingsDialog = new ctkSettingsDialog(q);
   this->SettingsDialog->addPanel("General settings", new qSlicerSettingsGeneralPanel);
   this->SettingsDialog->addPanel("Modules settings", new qSlicerSettingsModulesPanel);
-  this->SettingsDialog->setSettings(qSlicerCoreApplication::application()->settings());
+  this->SettingsDialog->addPanel("Python settings", new qSlicerSettingsPythonPanel);
 }
 
 //-----------------------------------------------------------------------------

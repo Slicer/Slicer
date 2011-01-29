@@ -74,6 +74,8 @@ SET(KIT_SRCS
   qSlicerSettingsModulesPanel.h
   qSlicerSettingsGeneralPanel.cxx
   qSlicerSettingsGeneralPanel.h
+  qSlicerSettingsPythonPanel.cxx
+  qSlicerSettingsPythonPanel.h
   qSlicerStyle.cxx
   qSlicerStyle.h
   qSlicerWidget.cxx
@@ -134,6 +136,7 @@ SET(KIT_MOC_SRCS
   qSlicerSaveDataDialog_p.h
   qSlicerSettingsModulesPanel.h
   qSlicerSettingsGeneralPanel.h
+  qSlicerSettingsPythonPanel.h
   qSlicerWidget.h
   )
   
@@ -158,6 +161,7 @@ SET(KIT_UI_SRCS
   Resources/UI/qSlicerSaveDataDialog.ui
   Resources/UI/qSlicerSettingsModulesPanel.ui
   Resources/UI/qSlicerSettingsGeneralPanel.ui
+  Resources/UI/qSlicerSettingsPythonPanel.ui
 )
 
 # Additional Target libraries (QT libs already included)
