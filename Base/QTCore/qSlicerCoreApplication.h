@@ -65,7 +65,8 @@ public:
   void initialize(bool& exitWhenDone);
 
   /// Return true if the application has been initialized
-  /// Note: initialize() should be called only one time.
+  /// \note initialize() should be called only one time.
+  /// \sa initialize()
   bool initialized() const;
 
   /// Get MRML Scene
@@ -126,9 +127,8 @@ public:
   qSlicerCorePythonManager* corePythonManager()const;
   
   /// Set the IO manager
-  /// Note that qSlicerCoreApplication takes ownership of the object
+  /// \note qSlicerCoreApplication takes ownership of the object
   void setCorePythonManager(qSlicerCorePythonManager* pythonManager);
-
 #endif
 
   /// Get the module manager
@@ -138,23 +138,23 @@ public:
   Q_INVOKABLE qSlicerCoreIOManager* coreIOManager()const;
 
   /// Set the IO manager
-  /// Note that qSlicerCoreApplication takes ownership of the object
+  /// \note qSlicerCoreApplication takes ownership of the object
   void setCoreIOManager(qSlicerCoreIOManager* ioManager);
 
   /// Get coreCommandOptions
   qSlicerCoreCommandOptions* coreCommandOptions()const;
 
   /// Set coreCommandOptions
-  /// Note that qSlicerCoreApplication takes ownership of the object
+  /// \note qSlicerCoreApplication takes ownership of the object
   void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
 
   /// Get application settings
-  /// Note that his method will also instanciate a QSettings object if required.
+  /// \note It will also instanciate a QSettings object if required.
   QSettings* settings()const;
 
   /// Disable application settings
   /// Instanciate a new empty ctkSettings object and associate it with this instance.
-  /// Note that the original settings won't deleted.
+  /// \note The original settings won't deleted.
   void disableSettings();
 
   /// Clear application settings
@@ -163,11 +163,20 @@ public:
   /// Return the copyrights of Slicer
   virtual QString copyrights()const;
 
-  ///
+  /// Return the source repository URL associated to this build
+  /// \sa discoverRepository
   QString repositoryUrl()const;
-  /// Extracted from the url
+
+  /// Return the source repository Branch associated to this build
+  /// \sa discoverRepository
   QString repositoryBranch()const;
+
+  /// Return the source repository Revision associated to this build
+  /// \sa discoverRepository
   QString repositoryRevision()const;
+
+  /// Return the source repository Platform associated to this build
+  /// \sa discoverRepository
   QString platform()const;
 
 protected:
