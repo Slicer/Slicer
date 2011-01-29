@@ -23,7 +23,7 @@ def mainWindow(verbose = True):
   return lookupTopLevelWidget('qSlicerMainWindow', verbose)
 
 def pythonShell(verbose = True):
-  return lookupTopLevelWidget('PythonShell', verbose)
+  return lookupTopLevelWidget('pythonConsole', verbose)
 
 #
 # IO

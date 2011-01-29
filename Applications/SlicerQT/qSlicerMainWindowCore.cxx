@@ -28,7 +28,7 @@
 
 // CTK includes
 #ifdef Slicer_USE_PYTHONQT
-#include <ctkPythonShell.h>
+#include <ctkPythonConsole.h>
 #endif
 
 // SlicerQt includes
@@ -57,7 +57,7 @@
 qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
   {
 #ifdef Slicer_USE_PYTHONQT
-  this->PythonShell = 0; 
+  this->PythonConsole = 0;
 #endif
   }
 
@@ -168,22 +168,22 @@ void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()
   Q_D(qSlicerMainWindowCore);
 
 
-  if (!d->PythonShell)
+  if (!d->PythonConsole)
     {
-    // Lookup reference of 'PythonShell' widget
+    // Lookup reference of 'PythonConsole' widget
     foreach(QWidget * widget, qApp->topLevelWidgets())
       {
-      if(widget->objectName().compare(QLatin1String("PythonShell")) == 0)
+      if(widget->objectName().compare(QLatin1String("pythonConsole")) == 0)
         {
-        d->PythonShell = qobject_cast<ctkPythonShell*>(widget);
+        d->PythonConsole = qobject_cast<ctkPythonConsole*>(widget);
         break;
         }
       }
     }
-  Q_ASSERT(d->PythonShell);
-  d->PythonShell->show();
-  d->PythonShell->activateWindow();
-  d->PythonShell->raise();
+  Q_ASSERT(d->PythonConsole);
+  d->PythonConsole->show();
+  d->PythonConsole->activateWindow();
+  d->PythonConsole->raise();
 #endif
 }
 

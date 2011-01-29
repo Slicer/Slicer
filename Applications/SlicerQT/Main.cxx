@@ -31,7 +31,7 @@
 // CTK includes
 #include <ctkLogger.h>
 #ifdef Slicer_USE_PYTHONQT
-# include <ctkPythonShell.h>
+# include <ctkPythonConsole.h>
 #endif
 
 // qMRMLWidgets includes
@@ -157,12 +157,13 @@ int main(int argc, char* argv[])
   moduleFactoryManager->instantiateAllModules();
 
 #ifdef Slicer_USE_PYTHONQT
-  // Create python shell
+  // Create python console
   Q_ASSERT(qSlicerApplication::application()->pythonManager());
-  ctkPythonShell pythonShell(qSlicerApplication::application()->pythonManager());
-  pythonShell.setObjectName("PythonShell");
-  //pythonShell.setAttribute(Qt::WA_QuitOnClose, false);
-  pythonShell.resize(600, 280);
+  ctkPythonConsole pythonConsole;
+  pythonConsole.initialize(qSlicerApplication::application()->pythonManager());
+
+  //pythonConsole.setAttribute(Qt::WA_QuitOnClose, false);
+  pythonConsole.resize(600, 280);
 #endif
 
   // Create main window
@@ -218,12 +219,12 @@ int main(int argc, char* argv[])
     }
 
 #ifdef Slicer_USE_PYTHONQT
-  // Show PythonShell if required
+  // Show pythonConsole if required
   if(app.commandOptions()->showPythonInteractor())
     {
-    pythonShell.show();
-    pythonShell.activateWindow();
-    pythonShell.raise();
+    pythonConsole.show();
+    pythonConsole.activateWindow();
+    pythonConsole.raise();
     }
 #endif
 

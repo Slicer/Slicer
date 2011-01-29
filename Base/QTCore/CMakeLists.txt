@@ -85,7 +85,6 @@ IF(Slicer_USE_PYTHONQT)
 
   LIST(APPEND KIT_target_libraries
     CTKCorePythonQt
-    CTKScriptingPythonCorePythonQt
     CTKVisualizationVTKCorePythonQt
     CTKScriptingPythonCore
     vtkCommonPythonD # For vtkPythonUtils

@@ -38,7 +38,6 @@
 
 // PythonQt wrapper initialization methods
 void PythonQt_init_org_commontk_CTKCore(PyObject*);
-void PythonQt_init_org_commontk_CTKScriptingPythonCore(PyObject*);
 void PythonQt_init_org_commontk_CTKVisualizationVTKCore(PyObject*);
 
 //--------------------------------------------------------------------------
@@ -91,7 +90,6 @@ void qSlicerCorePythonManager::preInitialization()
 
   // Initialize wrappers
   PythonQt_init_org_commontk_CTKCore(0);
-  PythonQt_init_org_commontk_CTKScriptingPythonCore(0);
   PythonQt_init_org_commontk_CTKVisualizationVTKCore(0);
 
   // Register decorators

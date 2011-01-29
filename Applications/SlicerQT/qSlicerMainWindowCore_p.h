@@ -33,7 +33,7 @@
 #include "qSlicerMainWindow.h"
 
 class qSlicerAbstractModule;
-class ctkPythonShell;
+class ctkPythonConsole;
 
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowCorePrivate: public QObject
@@ -46,7 +46,7 @@ public:
 
 public:
   QPointer<qSlicerMainWindow> ParentWidget;
-  ctkPythonShell*             PythonShell;
+  ctkPythonConsole*             PythonConsole;
 };
 
 #endif
