@@ -347,9 +347,11 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
 {
   Q_D(qSlicerCoreApplication);
 
-  this->setOrganizationName("NAMIC");
-  this->setApplicationName("3D Slicer");
-  this->setApplicationVersion(Slicer_VERSION_FULL);
+  QCoreApplication::setOrganizationDomain("www.na-mic.org");
+  QCoreApplication::setOrganizationName("NA-MIC");
+  QCoreApplication::setApplicationName("Slicer");
+  QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
+
   QSettings::setDefaultFormat(QSettings::IniFormat);
 
   // Note: qSlicerCoreApplication class takes ownership of the ioManager and
