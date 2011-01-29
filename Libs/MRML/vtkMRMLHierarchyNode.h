@@ -21,6 +21,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 
+
 class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 {
   public:
@@ -73,6 +74,16 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
     this->SetParentNodeID(ref);
   };
 
+//BTX
+  /// 
+  /// Given this hierarchy node returns all it's children recursively. 
+  void GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode *> &childrenNodes);
+  /// 
+  /// Given this hierarchy node returns all it's 1st level children (not recursive). 
+  /// Note: Most compilers don't make a copy of the list if you call the function like that:
+  /// std::vector< vtkMRMLModelHierarchyNode > children = this->GetHierarchyChildrenNodes(parent);
+  std::vector< vtkMRMLHierarchyNode *> GetChildrenNodes();
+//ETX
 
 protected:
   vtkMRMLHierarchyNode();
@@ -82,6 +93,17 @@ protected:
 
 
   char *ParentNodeID;
+
+
+  //BTX
+  typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
+
+  static std::map< vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
+  static std::map< vtkMRMLScene*, unsigned long> SceneHierarchyChildrenNodesMTime;
+  //ETX
+  
+
+  void UpdateChildrenMap();
 
 };
 

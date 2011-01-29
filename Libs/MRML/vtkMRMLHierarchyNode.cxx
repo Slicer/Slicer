@@ -25,6 +25,10 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 
+typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
+
+std::map< vtkMRMLScene*, HierarchyChildrenNodesType> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodes = std::map< vtkMRMLScene*, HierarchyChildrenNodesType>();
+std::map< vtkMRMLScene*, unsigned long> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodesMTime = std::map< vtkMRMLScene*, unsigned long>();
 
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode::vtkMRMLHierarchyNode()
@@ -141,4 +145,131 @@ void vtkMRMLHierarchyNode::UpdateReferences()
     this->SetParentNodeID(NULL);
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLHierarchyNode::GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode *> &childrenNodes)
+{
+  if (this->GetScene() == NULL)
+    {
+    return;
+    }
+  
+  this->UpdateChildrenMap();
+
+  std::map< vtkMRMLScene*, HierarchyChildrenNodesType>::iterator siter = 
+        SceneHierarchyChildrenNodes.find(this->GetScene());
+  
+  HierarchyChildrenNodesType::iterator iter = 
+    siter->second.find(std::string(this->GetID()));
+  if (iter == siter->second.end()) 
+    {
+    return;
+    }
+  for (unsigned int i=0; i<iter->second.size(); i++)
+    {
+    childrenNodes.push_back(iter->second[i]);
+    iter->second[i]->GetAllChildrenNodes(childrenNodes);
+    }
+}
+
+//----------------------------------------------------------------------------
+std::vector< vtkMRMLHierarchyNode *> vtkMRMLHierarchyNode::GetChildrenNodes()
+{
+  std::vector< vtkMRMLHierarchyNode *> childrenNodes;
+  if (this->GetScene() == NULL)
+    {
+    return childrenNodes;
+    }
+  
+  this->UpdateChildrenMap();
+
+  std::map< vtkMRMLScene*, HierarchyChildrenNodesType>::iterator siter = 
+        SceneHierarchyChildrenNodes.find(this->GetScene());
+
+  HierarchyChildrenNodesType::iterator iter =
+    siter->second.find(std::string(this->GetID()));
+  if (iter == siter->second.end()) 
+    {
+    return childrenNodes;
+    }
+  for (unsigned int i=0; i<iter->second.size(); i++)
+    {
+    childrenNodes.push_back(iter->second[i]);
+    }
+  return childrenNodes;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLHierarchyNode::UpdateChildrenMap()
+{
+  if (this->GetScene() == NULL)
+    {
+    return;
+    }
+
+  std::map< vtkMRMLScene*, HierarchyChildrenNodesType>::iterator siter = 
+        SceneHierarchyChildrenNodes.find(this->GetScene());
+  if (siter == SceneHierarchyChildrenNodes.end())
+    {
+    HierarchyChildrenNodesType h;
+    SceneHierarchyChildrenNodes[this->GetScene()] = h;
+    siter = SceneHierarchyChildrenNodes.find(this->GetScene());
+    SceneHierarchyChildrenNodesMTime[this->GetScene()] = 0;
+    }
+
+  std::map< vtkMRMLScene*, unsigned long>::iterator titer = 
+        SceneHierarchyChildrenNodesMTime.find(this->GetScene());
+
+  std::map<std::string, std::vector< vtkMRMLHierarchyNode *> >::iterator iter;
+  if (this->GetScene() == 0)
+    {
+    for (iter  = siter->second.begin();
+         iter != siter->second.end();
+         iter++)
+      {
+      iter->second.clear();
+      }
+    siter->second.clear();
+    }
+    
+  if (this->GetScene()->GetSceneModifiedTime() > titer->second)
+  {
+    for (iter  = siter->second.begin();
+         iter != siter->second.end();
+         iter++)
+      {
+      iter->second.clear();
+      }
+    siter->second.clear();
+    
+    std::vector<vtkMRMLNode *> nodes;
+    int nnodes = this->GetScene()->GetNodesByClass("vtkMRMLHierarchyNode", nodes);
+  
+    for (int i=0; i<nnodes; i++)
+      {
+      vtkMRMLHierarchyNode *node =  vtkMRMLHierarchyNode::SafeDownCast(nodes[i]);
+      if (node)
+        {
+        vtkMRMLHierarchyNode *pnode = vtkMRMLHierarchyNode::SafeDownCast(node->GetParentNode());
+        if (pnode)
+          {
+          iter = siter->second.find(std::string(pnode->GetID()));
+          if (iter == siter->second.end())
+            {
+            std::vector< vtkMRMLHierarchyNode *> children;
+            children.push_back(node);
+            siter->second[std::string(pnode->GetID())] = children;
+            }
+          else
+            {
+            iter->second.push_back(node);
+            }
+          }
+        }
+      }
+    titer->second = this->GetScene()->GetSceneModifiedTime();
+  }
+}
+
 // End
