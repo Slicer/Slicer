@@ -96,10 +96,7 @@ void qSlicerExtensionsWizardRestartPage::initializePage()
 // --------------------------------------------------------------------------
 void qSlicerExtensionsWizardRestartPage::restart()
 {
-  //QProcess::startDetached(qSlicerCoreApplication::application()->slicerHome() + "/Slicer3");
-  //QProcess::startDetached("E:/work/Slicer/Slicer4/Slicer4-Superbuild-Debug/Slicer-build/Slicer3.exe");
   QStringList args = qSlicerCoreApplication::instance()->arguments();
-  //qDebug() << "get rid of : " << args.takeFirst();
   QProcess::startDetached(qSlicerCoreApplication::instance()->applicationFilePath(), args);
   qSlicerCoreApplication::instance()->quit();
 }
