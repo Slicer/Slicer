@@ -45,9 +45,6 @@ public:
 
   virtual void initializePage();
 
-public slots:
-  void restart();
-
 protected:
   QScopedPointer<qSlicerExtensionsWizardRestartPagePrivate> d_ptr;
 

@@ -34,8 +34,8 @@
 
 static ctkLogger logger("org.commontk.libs.widgets.qSlicerExtensionsWizardRestartPage");
 
+// --------------------------------------------------------------------------
 // qSlicerExtensionsWizardRestartPagePrivate
-
 
 //-----------------------------------------------------------------------------
 class qSlicerExtensionsWizardRestartPagePrivate
@@ -62,11 +62,12 @@ void qSlicerExtensionsWizardRestartPagePrivate::init()
 {
   Q_Q(qSlicerExtensionsWizardRestartPage);
   this->setupUi(q);
-  
-  QObject::connect( this->RestartNowPushButton, SIGNAL(clicked()),
-                    q, SLOT(restart()));
+
+  QObject::connect(this->RestartNowPushButton, SIGNAL(clicked()),
+                   qSlicerCoreApplication::instance(), SLOT(restart()));
 }
 
+// --------------------------------------------------------------------------
 // qSlicerExtensionsWizardRestartPage
 
 // --------------------------------------------------------------------------
@@ -93,10 +94,3 @@ void qSlicerExtensionsWizardRestartPage::initializePage()
   settings.setValue("Modules/Extensions", extensions);
 }
 
-// --------------------------------------------------------------------------
-void qSlicerExtensionsWizardRestartPage::restart()
-{
-  QStringList args = qSlicerCoreApplication::instance()->arguments();
-  QProcess::startDetached(qSlicerCoreApplication::instance()->applicationFilePath(), args);
-  qSlicerCoreApplication::instance()->quit();
-}

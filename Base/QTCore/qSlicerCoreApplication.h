@@ -179,6 +179,12 @@ public:
   /// \sa discoverRepository
   QString platform()const;
 
+public slots:
+
+  /// Restart the application with the arguments passed at startup time
+  /// \sa QCoreApplication::arguments()
+  static void restart();
+
 protected:
   ///
   virtual void handlePreApplicationCommandLineArguments();

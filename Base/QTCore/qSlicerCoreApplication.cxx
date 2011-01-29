@@ -881,6 +881,14 @@ QString qSlicerCoreApplication::platform()const
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreApplication::restart()
+{
+  QStringList args = qSlicerCoreApplication::instance()->arguments();
+  QProcess::startDetached(qSlicerCoreApplication::instance()->applicationFilePath(), args);
+  QCoreApplication::quit();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication
 ::onSlicerApplicationLogicRequest(vtkObject* appLogic, void* delay, unsigned long event)
 {
