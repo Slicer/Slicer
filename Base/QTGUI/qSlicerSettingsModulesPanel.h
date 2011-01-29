@@ -25,7 +25,7 @@
 #include <QWidget>
 
 // CTK includes
-#include "ctkSettingsPanel.h"
+#include <ctkSettingsPanel.h>
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"

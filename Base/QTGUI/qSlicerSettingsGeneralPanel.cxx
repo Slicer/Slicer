@@ -23,7 +23,7 @@
 #include <QMainWindow>
 
 // CTK includes
-#include "ctkLogger.h"
+#include <ctkLogger.h>
 
 // QtGUI includes
 #include "qSlicerApplication.h"
@@ -31,6 +31,9 @@
 #include "ui_qSlicerSettingsGeneralPanel.h"
 
 static ctkLogger logger("org.commontk.libs.widgets.qSlicerSettingsGeneralPanel");
+
+// --------------------------------------------------------------------------
+// qSlicerSettingsGeneralPanelPrivate
 
 //-----------------------------------------------------------------------------
 class qSlicerSettingsGeneralPanelPrivate: public Ui_qSlicerSettingsGeneralPanel
@@ -44,6 +47,9 @@ public:
   void init();
 
 };
+
+// --------------------------------------------------------------------------
+// qSlicerSettingsGeneralPanelPrivate methods
 
 // --------------------------------------------------------------------------
 qSlicerSettingsGeneralPanelPrivate::qSlicerSettingsGeneralPanelPrivate(qSlicerSettingsGeneralPanel& object)
@@ -77,6 +83,9 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   q->registerProperty("MainWindow/ConfirmExit", this->ConfirmExitCheckBox, "checked",
                       SIGNAL(toggled(bool)));
 }
+
+// --------------------------------------------------------------------------
+// qSlicerSettingsGeneralPanel methods
 
 // --------------------------------------------------------------------------
 qSlicerSettingsGeneralPanel::qSlicerSettingsGeneralPanel(QWidget* _parent)

@@ -23,7 +23,7 @@
 #include <QDebug>
 
 // CTK includes
-#include "ctkLogger.h"
+#include <ctkLogger.h>
 
 // QtGUI includes
 #include "qSlicerCoreApplication.h"
@@ -35,6 +35,9 @@
 #include <vtkSlicerConfigure.h>
 
 static ctkLogger logger("org.commontk.libs.widgets.qSlicerSettingsModulesPanel");
+
+// --------------------------------------------------------------------------
+// qSlicerSettingsModulesPanelPrivate
 
 //-----------------------------------------------------------------------------
 class qSlicerSettingsModulesPanelPrivate: public Ui_qSlicerSettingsModulesPanel
@@ -49,6 +52,9 @@ public:
 
   qSlicerModulesMenu* ModulesMenu;
 };
+
+// --------------------------------------------------------------------------
+// qSlicerSettingsModulesPanelPrivate methods
 
 // --------------------------------------------------------------------------
 qSlicerSettingsModulesPanelPrivate::qSlicerSettingsModulesPanelPrivate(qSlicerSettingsModulesPanel& object)
@@ -94,6 +100,9 @@ void qSlicerSettingsModulesPanelPrivate::init()
   QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(const QString&)),
                    q, SLOT(onTemporaryPathChanged(const QString&)));
 }
+
+// --------------------------------------------------------------------------
+// qSlicerSettingsModulesPanel methods
 
 // --------------------------------------------------------------------------
 qSlicerSettingsModulesPanel::qSlicerSettingsModulesPanel(QWidget* _parent)
