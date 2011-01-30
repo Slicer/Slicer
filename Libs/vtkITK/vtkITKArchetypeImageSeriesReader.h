@@ -404,6 +404,11 @@ public:
     return this->ImageOrientationPatient.size();
     };
 
+  unsigned int GetNumberOfImagePositionPatient()
+    {
+    return this->ImagePositionPatient.size();
+    }
+
   /// check the existance of given discriminator
   int ExistSeriesInstanceUID( const char* SeriesInstanceUID )
     {
@@ -526,6 +531,32 @@ public:
       return -1;
     }
   
+  int ExistImagePositionPatient( float* ipp )
+    {
+      float a = 0;
+      for (int n = 0; n < 3; n++)
+        {
+        a += ipp[n]*ipp[n];
+        }
+
+      for (unsigned int k = 0; k < GetNumberOfImagePositionPatient(); k++)
+        {
+        float b = 0;
+        float c = 0;
+        for (int n = 0; n < 3; n++)
+          {
+          b += this->ImagePositionPatient[k][n] * this->ImagePositionPatient[k][n];
+          c += this->ImagePositionPatient[k][n] * ipp[n];
+          }
+        c = fabs(c)/sqrt(a*b);
+        if ( c > 0.99999 )
+          {
+          return k;
+          }
+        }
+      return -1;
+    }
+    
   /// methods to get N-th discriminator
   const char* GetNthSeriesInstanceUID( unsigned int n )
     {
@@ -593,11 +624,25 @@ public:
         return NULL;
         } 
       float *dgo = new float [6];
-      for (int k = 0; k <3; k++)
+      for (int k = 0; k <6; k++)
         {
         dgo[k] = this->ImageOrientationPatient[n][k];
         }
       return dgo;
+    }
+
+  float* GetNthImagePositionPatient( unsigned int n )
+    {
+      if (n >= this->GetNumberOfImagePositionPatient() )
+        {
+        return NULL;
+        }
+      float *ipp = new float [3];
+      for (int k = 0; k <3; k++)
+        {
+        ipp[k] = this->ImagePositionPatient[n][k];
+        }
+      return ipp;
     }
 
   /// insert unique item into array. Duplicate code for TCL wrapping. 
@@ -704,6 +749,20 @@ public:
       return (this->ImageOrientationPatient.size()-1);
     }
 
+  int InsertImagePositionPatient ( float *a )
+    {
+      int k = ExistImagePositionPatient( a );
+      if ( k >= 0 )
+        {
+        return k;
+        }
+      
+      std::vector< float > aVector(3);
+      for ( unsigned int i = 0; i < 3; i++ ) aVector[i] = a[i]; 
+      this->ImagePositionPatient.push_back( aVector );
+      return (this->ImagePositionPatient.size()-1);
+    }
+
   void AnalyzeDicomHeaders( );
 
   void AssembleNthVolume( int n );
@@ -741,6 +800,8 @@ protected:
 
   double DefaultDataSpacing[3];
   double DefaultDataOrigin[3];
+  float ScanAxis[3];
+  float ScanOrigin[3];
 
   int FileNameSliceOffset;
   int FileNameSliceSpacing;
@@ -765,6 +826,7 @@ protected:
 
   //BTX
   std::vector<std::string> FileNames;
+  std::vector<std::pair <double, int> > FileNameSliceKey;
   CoordinateOrientationCode DesiredCoordinateOrientation;
   //ETX
   virtual void ExecuteInformation();
@@ -787,6 +849,7 @@ protected:
   /// DiffusionGradientOrientation   0018,9089 
   /// SliceLocation                  0020,1041
   /// ImageOrientationPatient        0020,0037
+  /// ImagePositionPatient           0020,0032
 
   //BTX
   std::vector<std::string> AllFileNames;
@@ -800,6 +863,7 @@ protected:
   std::vector< std::vector<float> > DiffusionGradientOrientation;
   std::vector<float> SliceLocation;
   std::vector< std::vector<float> > ImageOrientationPatient;
+  std::vector< std::vector<float> > ImagePositionPatient;
 
   /// index of each dicom file into the above arrays
   std::vector<long int> IndexSeriesInstanceUIDs;
@@ -809,6 +873,7 @@ protected:
   std::vector<long int> IndexDiffusionGradientOrientation;
   std::vector<long int> IndexSliceLocation;
   std::vector<long int> IndexImageOrientationPatient;
+  std::vector<long int> IndexImagePositionPatient;
   //ETX
 
 private:

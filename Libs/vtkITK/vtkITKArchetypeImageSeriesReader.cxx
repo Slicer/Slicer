@@ -75,6 +75,8 @@
 #include "itkMetaImageIO.h"
 #include "itkNrrdImageIO.h"
 #include "itkGE5ImageIO.h"
+#include "itkBrains2MaskImageIOFactory.h"
+#include "itkBrains2MaskImageIO.h"
 #include "itkNiftiImageIO.h"
 #include "itkVTKImageIO.h"
 #include "itkTIFFImageIO.h"
@@ -156,6 +158,7 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
   itk::MutexLockHolder<itk::SimpleMutexLock> mutexHolder( mutex );
   if( firstTime )
     {
+    itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
     itk::ObjectFactoryBase::RegisterFactory( itk::GE5ImageIOFactory::New() );
     firstTime = false;
     }
@@ -856,6 +859,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   this->IndexDiffusionGradientOrientation.resize( nFiles );
   this->IndexSliceLocation.resize( nFiles );
   this->IndexImageOrientationPatient.resize( nFiles );
+  this->IndexImagePositionPatient.resize( nFiles );
 
   this->SeriesInstanceUIDs.resize( 0 );
   this->ContentTime.resize( 0 );
@@ -864,6 +868,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   this->DiffusionGradientOrientation.resize( 0 );
   this->SliceLocation.resize( 0 );
   this->ImageOrientationPatient.resize( 0 );
+  this->ImagePositionPatient.resize( 0 );
 
 
   itk::GDCMImageIO::Pointer gdcmIO = itk::GDCMImageIO::New();
@@ -1016,6 +1021,19 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     {
       this->IndexImageOrientationPatient[f] = -1;
     }
+    // image position patient
+    tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0020|0032", tagValue );
+    if( tagValue.length() > 0 )
+    {
+        float a[3];
+        sscanf( tagValue.c_str(), "%f\\%f\\%f", a, a+1, a+2 );
+        int idx = InsertImagePositionPatient( a );
+        this->IndexImagePositionPatient[f] = idx;
+    }
+    else
+    {
+      this->IndexImagePositionPatient[f] = -1;
+    }
   }
 
   AnalyzeTime.Stop();
@@ -1125,10 +1143,22 @@ unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( const char* filename
 void vtkITKArchetypeImageSeriesReader::ResetFileNames( )
 {
   this->FileNames.resize( 0 );
+  this->AllFileNames.resize( 0 );
+  this->SeriesInstanceUIDs.resize( 0 );
+  this->ContentTime.resize( 0 );
+  this->TriggerTime.resize( 0 );
+  this->EchoNumbers.resize( 0 );
+  this->DiffusionGradientOrientation.resize( 0 );
+  this->SliceLocation.resize( 0 );
+  this->ImageOrientationPatient.resize( 0 );
 }
 
 int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
 {
+  // we will set FileNames to have only volumes that match the archetype
+  // and we will return the size of the list.
+  // - if the files have ImagePositionPatient tags, we will sort
+  //   the files based on this information
   this->FileNames.resize(0);
 
   // Note: Since IndexArchetype is unsigned int, it's always postive 
@@ -1137,18 +1167,23 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
       || this->IndexArchetype >= this->IndexDiffusionGradientOrientation.size()
       || this->IndexArchetype >= this->IndexImageOrientationPatient.size())
     {
-      vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype " << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
+      vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype " 
+        << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
       return 0;
     }
       
 
   long int iArchetypeSeriesUID = this->IndexSeriesInstanceUIDs[this->IndexArchetype];
-  //long int iArchetypeContentTime =
-  //this->IndexContentTime[this->IndexArchetype];
   long int iArchetypeEchoNumbers = this->IndexEchoNumbers[this->IndexArchetype];
   long int iArchetypeDiffusion = this->IndexDiffusionGradientOrientation[this->IndexArchetype];
   long int iArchetypeOrientation =  this->IndexImageOrientationPatient[this->IndexArchetype];
 
+  // keep track of the locations for the selected files
+  std::vector<std::pair <double, int> > fileNameSortKey;
+  bool originSet = false;
+
+  // Sort good files based on distance from Origin to ImagePositionPatient along ScanAxis
+  // Follows logic originally in LoadVolume.tcl
   for (unsigned int k = 0; k < this->AllFileNames.size(); k++)
   {
   if ( (this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID &&
@@ -1159,13 +1194,66 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
       (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion  && this->IndexDiffusionGradientOrientation[k] >= 0 && iArchetypeDiffusion >= 0) ||
       (this->IndexImageOrientationPatient[k] != iArchetypeOrientation && this->IndexImageOrientationPatient[k] >= 0 && iArchetypeOrientation >= 0) )
     {
+    if (  (this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID &&
+          this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0) 
+         ||
+          (this->IndexEchoNumbers[k] != iArchetypeEchoNumbers && 
+           this->IndexEchoNumbers[k] >= 0 && iArchetypeEchoNumbers >= 0) 
+         ||
+          (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion  && 
+           this->IndexDiffusionGradientOrientation[k] >= 0 && iArchetypeDiffusion >= 0) 
+         ||
+          (this->IndexImageOrientationPatient[k] != iArchetypeOrientation && 
+           this->IndexImageOrientationPatient[k] >= 0 && iArchetypeOrientation >= 0) )
+      {
+      // file doesn't match our criteria
       continue;
-    }
+      }
     else
-    {
-      this->FileNames.push_back( this->AllFileNames[k] );
+      {
+      // find the position and orientation corresponding to this
+      // file - it could be that all files in the set have the same index
+      // (1) or that there is no position information
+      if ( ImagePositionPatient.size() != 0 )
+        {
+        unsigned int kth_orientation = this->IndexImageOrientationPatient[k];
+        unsigned int kth_position = this->IndexImagePositionPatient[k];
+        if (!originSet)
+          {
+          std::vector<float> iopv = this->ImageOrientationPatient[kth_orientation];
+          float iopf1[] = {iopv[0], iopv[1], iopv[2]};
+          float iopf2[] = {iopv[3], iopv[4], iopv[5]};
+
+          vtkMath::Cross( iopf1, iopf2, this->ScanAxis );
+          this->ScanOrigin[0] = ImagePositionPatient[kth_position][0];
+          this->ScanOrigin[1] = ImagePositionPatient[kth_position][1];
+          this->ScanOrigin[2] = ImagePositionPatient[kth_position][2];
+          originSet = true;
+          }
+        float tempiop[3], diff[3];
+        tempiop[0] = ImagePositionPatient[kth_position][0];
+        tempiop[1] = ImagePositionPatient[kth_position][1];
+        tempiop[2] = ImagePositionPatient[kth_position][2];
+
+        vtkMath::Subtract( tempiop, this->ScanOrigin, diff );
+        float dist = vtkMath::Dot( diff, ScanAxis );
+
+        fileNameSortKey.push_back( std::make_pair(dist, k) );
+        }
+      else
+        {
+        // no position info, so use the file index
+        fileNameSortKey.push_back( std::make_pair(k, k) );
+        }
+      }
     }
-  }
+
+  std::sort(fileNameSortKey.begin(), fileNameSortKey.end());
+  std::vector<std::pair <double, int> >::iterator keyiter;
+  for (keyiter = fileNameSortKey.begin(); keyiter != fileNameSortKey.end(); ++keyiter)
+    {
+    FileNames.push_back(AllFileNames[keyiter->second]);
+    }
 
   return this->FileNames.size();
 }
