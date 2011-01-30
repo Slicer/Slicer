@@ -24,12 +24,10 @@
 #cmakedefine Slicer_USE_MIDAS
 #cmakedefine Slicer_USE_NAVITRACK
 #cmakedefine Slicer_USE_NUMPY
-#cmakedefine Slicer_USE_PYTHON
 #cmakedefine Slicer_USE_PYTHONQT
 #cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
 #cmakedefine Slicer_USE_OPENTRACKER
 #cmakedefine Slicer_USE_QT
-#cmakedefine Slicer_USE_KWWIDGETS
 
 #define VTKSLICER_CONFIGURATION_TYPES "@CMAKE_CONFIGURATION_TYPES@"
 
@@ -75,14 +73,6 @@
 #define Slicer_TCL_TK_MINOR_VERSION "@TCL_TK_MINOR_VERSION@"
 #define Slicer_INCR_TCL_MAJOR_VERSION "@INCR_TCL_MAJOR_VERSION@"
 #define Slicer_INCR_TCL_MINOR_VERSION "@INCR_TCL_MINOR_VERSION@"
-
-// Convenient macro to print info provided as argument
-// Note: No-op is Slicer_USE_QT OFF
-#ifdef Slicer_USE_QT
-#define SlicerQDebug(_arg) {qDebug() << _arg;}
-#else
-#define SlicerQDebug(_arg)
-#endif
 
 // Library sub-directory
 #define VTK_DIR "@VTK_DIR@"

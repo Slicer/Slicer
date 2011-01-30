@@ -161,10 +161,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   
   # CTK Documentation warning
   "CMake Warning at Documentation/CMakeLists.txt:62"
-
-  # KWWidgets
-  "(KWW|kww)idgets.[Uu]tilities.tkdnd"
-  "(KWW|kww)idgets.vtk(KW|kw)"
   
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"

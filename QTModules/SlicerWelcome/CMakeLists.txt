@@ -37,11 +37,6 @@ SET(qt_module_resources
 
 # Additional Target libraries
 SET(qt_module_target_libraries
-  #${KWWidgets_LIBRARIES}
-  #${ITK_LIBRARIES}
-  #CommandLineModule
-  #SlicerTractographyDisplay
-  #SlicerTractographyFiducialSeeding
   )
 
 

@@ -229,10 +229,6 @@ proc launch_SetEnvironment {} {
       # TODO: where will PythonQt be in the install tree?
       set ::env(PYTHONQT_DIR)       $::env(Slicer_HOME)/lib/PythonQt
       set ::env(PYTHONQT_BIN_DIR)   $::env(Slicer_HOME)/bin
-      
-      set ::env(KWWidgets_DIR)      $::env(Slicer_HOME)/lib/KWWidgets
-      set ::env(KWWidgets_LIB_DIR)  $::env(Slicer_HOME)/lib/KWWidgets
-      set ::env(KWWidgets_BIN_DIR)  $::env(Slicer_HOME)/bin
     
       # TODO -- where will Qt be in the install tree?
       set ::env(QT_LIB_DIR)         $::env(Slicer_HOME)/lib/Qt
@@ -318,7 +314,6 @@ proc launch_SetEnvironment {} {
       set ::BUILD_SUBDIR  ""
       set ::VTK_BUILD_SUBDIR  ""
       set ::CTK_BUILD_SUBDIR  ""
-      set ::KWWidgets_BUILD_SUBDIR  ""
       set ::ITK_BUILD_SUBDIR  ""
       set ::Teem_BUILD_SUBDIR  ""
       set ::OpenIGTLink_BUILD_SUBDIR  ""
@@ -342,9 +337,6 @@ proc launch_SetEnvironment {} {
           }
           if { [file exists "@CTK_DIR@/CTK-build/bin/$buildType/CTKCore.dll"] } {
             set ::CTK_BUILD_SUBDIR $buildType
-          }
-          if { [file exists "@KWWidgets_DIR@/bin/$buildType/KWWidgets.dll"] } {
-            set ::KWWidgets_BUILD_SUBDIR $buildType
           }
           if { [file exists "@ITK_DIR@/bin/$buildType/ITKCommon.dll"] } {
             set ::ITK_BUILD_SUBDIR $buildType
@@ -404,17 +396,6 @@ proc launch_SetEnvironment {} {
       set ::env(CTK_BIN_DIR)        [file normalize "@CTK_DIR@/CTK-build/bin/$::CTK_BUILD_SUBDIR"]
       set ::env(PYTHONQT_DIR)       [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
       set ::env(PYTHONQT_BIN_DIR)        [file normalize "@CTK_DIR@/CMakeExternals/Build/PythonQt/$::CTK_BUILD_SUBDIR"]
-    
-      if { "@KWWidgets_DIR@" != "" } {
-        set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
-        set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
-        set ::env(KWWidgets_BIN_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
-      } else {
-        set ::env(KWWidgets_DIR)      $::env(Slicer_HOME)/lib/KWWidgets
-        set ::env(KWWidgets_LIB_DIR)  $::env(Slicer_HOME)/lib/KWWidgets
-        set ::env(KWWidgets_BIN_DIR)  $::env(Slicer_HOME)/bin
-      }
-      
     
       if { "@QT_LIBRARY_DIR@" != "" } {
         set ::env(QT_LIB_DIR)         [file normalize "@QT_LIBRARY_DIR@"]
@@ -651,7 +632,6 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(CTK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(PYTHONQT_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(PYTHONQT_BIN_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(QT_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(BatchMake_LIB_DIR):$::env(LD_LIBRARY_PATH)
@@ -708,7 +688,6 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(CTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(PYTHONQT_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(PYTHONQT_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(KWWidgets_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(QT_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(QT_FRAMEWORK_DIRS)$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(OpenIGTLink_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -761,7 +740,6 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(CTK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(PYTHONQT_BIN_DIR)\;$::env(Path)
-            set ::env(Path) $::env(KWWidgets_BIN_DIR)\;$::env(Path)              
             set ::env(Path) $::env(QT_LIB_DIR)\;$::env(Path)
             set ::env(Path) $::env(OpenIGTLink_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(BatchMake_BIN_DIR)\;$::env(Path)
@@ -824,7 +802,6 @@ proc launch_SetPaths {} {
     # add the default search locations for tcl packages
     #
     set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
-    set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     if { [info exists ::env(OpenIGTLink_DIR] } {
       set ::env(TCLLIBPATH) "$::env(OpenIGTLink_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     }

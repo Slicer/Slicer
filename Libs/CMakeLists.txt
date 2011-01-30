@@ -9,10 +9,6 @@ SET(dirs
 # FileWatcher
   )
 
-IF(Slicer_USE_KWWIDGETS)
-  LIST(APPEND dirs LoadableModule)
-ENDIF()
-
 IF(Teem_FOUND)
   LIST(APPEND dirs vtkTeem)
 ENDIF()
@@ -68,8 +64,8 @@ ENDIF()
 # Set library properties
 #-----------------------------------------------------------------------------
 
-SET(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHON})
-SET(LoadableModule_USE_PYTHON ${Slicer_USE_PYTHON})
+SET(ModuleDescriptionParser_USE_PYTHON ${Slicer_USE_PYTHONQT})
+SET(LoadableModule_USE_PYTHON ${Slicer_USE_PYTHONQT})
 
 SET(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
 SET(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
@@ -97,10 +93,7 @@ ENDFOREACH()
 # let's tweak the list of generated library names
 
 STRING(REPLACE ITKCommandIO CommandIO libs "${libs}")
-IF(Slicer_USE_KWWIDGETS)
   STRING(REPLACE SlicerIO slicerio libs "${libs}")
-  LIST(REMOVE_ITEM libs GenerateLM slicerio) # Those are not libs
-ENDIF()
 STRING(REPLACE MGHImageIO MGHIO libs "${libs}")
 STRING(REPLACE MRMLIDImageIO MRMLIDIO libs "${libs}")
 LIST(REMOVE_ITEM libs SlicerExecutionModel) # Not a library

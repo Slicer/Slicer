@@ -29,7 +29,7 @@
 #include <ctkVTKObject.h>
 
 // SlicerCore includes
-#include "vtkSlicerConfigure.h" // For Slicer_USE_KWWIDGETS, Slicer_USE_PYTHONQT
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 #include "qSlicerBaseQTCoreExport.h"
 
 class QSettings;
@@ -71,27 +71,6 @@ public:
 
   /// Get MRML Scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
-
-#ifdef Slicer_USE_KWWIDGETS
-
-  /// Convenient method allowing to set the initialized flag
-  /// DEPRECATED: This method was used by the KWWidgests GUI only and it will be
-  /// removed once the QT GUI is functional. Only vtkSlicerApplication should use
-  /// that method. Improper use of that function may lead to unstable state
-  void setInitialized(bool initialized);
-
-  /// Set application logic
-  /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
-  /// removed once the QT GUI is functional.
-  void setAppLogic(vtkSlicerApplicationLogic* appLogic);
-
-  /// Set the module manager
-  /// Note that qSlicerCoreApplication takes ownership of the object
-  /// DEPRECATED: This method was used by the KWWidgets GUI only and it will be
-  /// removed once the QT GUI is functional.
-  void setModuleManager(qSlicerModuleManager* moduleManager);
-
-#endif //Slicer_USE_KWWIDGETS
 
   /// Get application logic
   vtkSlicerApplicationLogic* appLogic() const;

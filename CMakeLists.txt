@@ -166,16 +166,6 @@ MARK_AS_ADVANCED(Slicer_ITK_GIT_TAG)
 # Slicer implicitly uses Qt
 SET(Slicer_USE_QT ON CACHE INTERNAL "Build Slicer with Qt")
 
-# The following options are deprecated and will be removed 
-# when the port is complete
-OPTION(Slicer_USE_KWWIDGETS "Deprecated - Build Slicer with KWWidgets" OFF)
-MARK_AS_ADVANCED(Slicer_USE_KWWIDGETS)
-if(Slicer_USE_KWWIDGETS)
-  OPTION(Slicer_USE_PYTHON "Deprecated - Integrate a python interpreter into Slicer." OFF)
-  OPTION(Slicer_BUILD_MODULES "Deprecated - Build Slicer Modules" ON)
-  MARK_AS_ADVANCED(Slicer_USE_PYTHON Slicer_BUILD_MODULES)
-endif()
-
 #-----------------------------------------------------------------------------
 # CTestCustom
 #-----------------------------------------------------------------------------
@@ -402,21 +392,16 @@ ENDIF()
 
 #-----------------------------------------------------------------------------
 # Since modules are KWWidgets based, unset there variables
-IF(NOT Slicer_USE_KWWIDGETS)
-  # Since the module Logic is shared between QTModules and regular Modules,
-  # the associated BIN, LIB and INCLUDE directory shouldn't be unset
-  #UNSET(Slicer_INSTALL_MODULES_BIN_DIR)
-  #UNSET(Slicer_INSTALL_MODULES_LIB_DIR)
-  #UNSET(Slicer_INSTALL_MODULES_INCLUDE_DIR)
-  UNSET(Slicer_INSTALL_MODULES_SHARE_DIR)
-ENDIF()
+# Since the module Logic is shared between QTModules and regular Modules,
+# the associated BIN, LIB and INCLUDE directory shouldn't be unset
+#UNSET(Slicer_INSTALL_MODULES_BIN_DIR)
+#UNSET(Slicer_INSTALL_MODULES_LIB_DIR)
+#UNSET(Slicer_INSTALL_MODULES_INCLUDE_DIR)
+UNSET(Slicer_INSTALL_MODULES_SHARE_DIR)
 
 # Relax some constraints related to the build settings file. This was
 # preventing people from using the same compiler but with a different generator,
 # or just the same compiler installed in a non-standard location.
-IF(Slicer_USE_KWWIDGETS)
-  SET(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
-ENDIF()
 SET(SKIP_VTK_BUILD_SETTINGS_FILE 1)
 SET(SKIP_ITK_BUILD_SETTINGS_FILE 1)
 SET(SKIP_Teem_BUILD_SETTINGS_FILE 1)
@@ -425,7 +410,7 @@ SET(SKIP_Teem_BUILD_SETTINGS_FILE 1)
 # Python
 #-----------------------------------------------------------------------------
 
-IF(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
+IF(Slicer_USE_PYTHONQT)
   FIND_PACKAGE(PythonLibs REQUIRED)
   FIND_PACKAGE(PythonInterp REQUIRED)
 ENDIF()
@@ -436,24 +421,14 @@ ENDIF()
 FIND_PACKAGE(ITK REQUIRED)
 INCLUDE(${ITK_USE_FILE})
 
-IF(Slicer_USE_KWWIDGETS)
-#-----------------------------------------------------------------------------
-# Deprecated - KWWidgets 
-#-----------------------------------------------------------------------------
-  FIND_PACKAGE(KWWidgets REQUIRED)
-  INCLUDE(${KWWidgets_USE_FILE})
-  
-ELSE()
 #-----------------------------------------------------------------------------
 # VTK
 #-----------------------------------------------------------------------------
-  FIND_PACKAGE(VTK REQUIRED)
-  IF(NOT VTK_USE_QVTK)
-    MESSAGE(FATAL_ERROR "error: VTK was not configured to use QT, you probably need to recompile it with VTK_USE_GUISUPPORT ON, VTK_USE_QVTK ON, DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. Note that Qt >= ${minimum_required_qt_version} is *required*")
-  ENDIF()
-  INCLUDE(${VTK_USE_FILE})
-  
+FIND_PACKAGE(VTK REQUIRED)
+IF(NOT VTK_USE_QVTK)
+  MESSAGE(FATAL_ERROR "error: VTK was not configured to use QT, you probably need to recompile it with VTK_USE_GUISUPPORT ON, VTK_USE_QVTK ON, DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. Note that Qt >= ${minimum_required_qt_version} is *required*")
 ENDIF()
+INCLUDE(${VTK_USE_FILE})
 
 #-----------------------------------------------------------------------------
 # Qt 
@@ -577,89 +552,15 @@ ENDIF()
 #-----------------------------------------------------------------------------
 # Need some Tcl/Tk info
 #-----------------------------------------------------------------------------
-IF(VTK_WRAP_TCL)
-  INCLUDE("${VTK_CMAKE_DIR}/vtkTclTkMacros.cmake")
-  VTK_GET_TCL_TK_VERSION(TCL_TK_MAJOR_VERSION TCL_TK_MINOR_VERSION)
-  SET(TCL_TK_VERSION_DOT "${TCL_TK_MAJOR_VERSION}.${TCL_TK_MINOR_VERSION}")
-  SET(TCL_TK_VERSION "${TCL_TK_MAJOR_VERSION}${TCL_TK_MINOR_VERSION}")
-  IF(Slicer_USE_KWWIDGETS)
-    INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
-    incr_tcl_get_version(INCR_TCL_MAJOR_VERSION INCR_TCL_MINOR_VERSION)
-    SET(INCR_TCL_VERSION_DOT "${INCR_TCL_MAJOR_VERSION}.${INCR_TCL_MINOR_VERSION}")
-    SET(INCR_TCL_VERSION "${INCR_TCL_MAJOR_VERSION}${INCR_TCL_MINOR_VERSION}")
-  ENDIF()
-ELSE()
-  # TODO: these should be passed in by SuperBuild
-  # For now, use 3.2 as a fallback - we haven't changed versions in years and probably 
-  # never will, so this is always likely to work.
-  # This is needed so the launcher can set the paths to the correct subdirectories
-  # for incrTcl and incrTk
-  SET(TCL_TK_VERSION_DOT "8.4")
-  SET(TCL_TK_VERSION "84")
-  SET(INCR_TCL_VERSION_DOT "3.2")
-  SET(INCR_TCL_VERSION "32")
-ENDIF()
-
-#-----------------------------------------------------------------------------
-# DEPRECATED - Remove the following section when port to Qt is completed
-#-----------------------------------------------------------------------------
-# Generate the default setup paths scripts.
-# Generate some useful scripts that can be used to setup various environment 
-# variables and launch the executable properly against external packages.
-#-----------------------------------------------------------------------------
-IF(Slicer_USE_KWWIDGETS)
-  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
-  SET(extra_dirs
-    "${Teem_DIR}/bin"
-    "${BatchMake_DIR}/bin"
-    "${OpenIGTLink_DIR}/bin"
-    "${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_BIN_DIR}"
-    "${Slicer_HOME}/${Slicer_INSTALL_PLUGINS_LIB_DIR}"
-    "${Slicer_HOME}/${Slicer_INSTALL_MODULES_BIN_DIR}"
-    "${Slicer_HOME}/${Slicer_INSTALL_MODULES_LIB_DIR}"
-    )
-  kwwidgets_generate_setup_paths_scripts(
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" "Slicer3SetupPaths"
-    "${extra_dirs}"
-  )
-ENDIF()
-
-#-----------------------------------------------------------------------------
-# DEPRECATED - Remove the following section when port to Qt is completed
-#-----------------------------------------------------------------------------
-# VTK 5.0 does not have VTK_CMAKE_DIR
-# Alternatively you could use KWWidget's wrapping, which encapsulate
-# the differences between various VTK versions:
-#  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
-#  KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
-#-----------------------------------------------------------------------------
-IF(Slicer_USE_KWWIDGETS)
-  IF(NOT VTK_CMAKE_DIR)
-    SET(VTK_CMAKE_DIR "${VTK_SOURCE_DIR}/CMake")
-  ENDIF()
-  INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-ENDIF()
-
-
-#-----------------------------------------------------------------------------
-# DEPRECATED - Remove the following section when port to Qt is completed
-#-----------------------------------------------------------------------------
-# Check versions of VTK to track CVS HEAD
-#-----------------------------------------------------------------------------
-IF(Slicer_USE_KWWIDGETS)
-  FIND_PACKAGE(VTK REQUIRED)
-  IF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
-    INCLUDE(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
-  else()
-    #MESSAGE("Using local version of VTKVersionMacros for compatibility.")
-    INCLUDE(${Slicer_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
-  ENDIF()
-
-  vtk_get_source_revision_and_date(VTKsource_revision VTKsource_date)
-  IF(VTKsource_revision LESS 1.2196)
-    message(FATAL_ERROR "Sorry, your VTK library was last updated on ${VTKsource_date}. Its source revision, according to vtkKWWidgetsVersion.h, is ${VTKsource_revision}. Please update to a newer revision.")
-  ENDIF()
-ENDIF()
+# TODO: these should be passed in by SuperBuild
+# For now, use 3.2 as a fallback - we haven't changed versions in years and probably 
+# never will, so this is always likely to work.
+# This is needed so the launcher can set the paths to the correct subdirectories
+# for incrTcl and incrTk
+SET(TCL_TK_VERSION_DOT "8.4")
+SET(TCL_TK_VERSION "84")
+SET(INCR_TCL_VERSION_DOT "3.2")
+SET(INCR_TCL_VERSION "32")
 
 #-----------------------------------------------------------------------------
 # Set Slicer buildin libraries *_DIR variables
@@ -794,44 +695,22 @@ slicer3_get_persistent_property(Slicer_Base_INCLUDE_DIRS Slicer_Base_INCLUDE_DIR
 
 INCLUDE("${Slicer_CMAKE_DIR}/SlicerMacroBuildModuleLogic.cmake")
 
-IF(NOT Slicer_USE_KWWIDGETS)
-  # KWWidgets and Qt modules share the same logics typically located in the
-  # kwwdigets modules. When KWWidgets is not build, the logic are missing for Qt
-  # we need to manually add them:
-  # Loop through Modules subdirectory and try to include Logic subdirectory if it exists
-  FILE(GLOB modules_subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Modules/*)
-  FOREACH(subdir ${modules_subdirs})
-    IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/Logic)
-      ADD_SUBDIRECTORY(${subdir}/Logic)
+# KWWidgets and Qt modules share the same logics typically located in the
+# kwwdigets modules. When KWWidgets is not build, the logic are missing for Qt
+# we need to manually add them:
+# Loop through Modules subdirectory and try to include Logic subdirectory if it exists
+FILE(GLOB modules_subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Modules/*)
+FOREACH(subdir ${modules_subdirs})
+  IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/Logic)
+    ADD_SUBDIRECTORY(${subdir}/Logic)
+  ENDIF()
+  FILE(GLOB subsubdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${subdir}/*)
+  FOREACH(subsubdir ${subsubdirs})
+    IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subsubdir}/Logic)
+      ADD_SUBDIRECTORY(${subsubdir}/Logic)
     ENDIF()
-    FILE(GLOB subsubdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${subdir}/*)
-    FOREACH(subsubdir ${subsubdirs})
-      IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${subsubdir}/Logic)
-        ADD_SUBDIRECTORY(${subsubdir}/Logic)
-      ENDIF()
-    ENDFOREACH()
   ENDFOREACH()
-ENDIF()
-
-
-#-----------------------------------------------------------------------------
-# DEPRECATED - Remove the following section when port to Qt is completed
-#-----------------------------------------------------------------------------
-# Modules and CLI
-#-----------------------------------------------------------------------------
-IF(Slicer_USE_KWWIDGETS)
-  INCLUDE("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
-  
-  IF(Slicer_BUILD_MODULES)
-    ADD_SUBDIRECTORY(Modules)
-  else(Slicer_BUILD_MODULES)
-    # if Slicer_BUILD_CLI is ON, we still need at least the CommandLineModule
-    # so that we can have CLI, without all the other modules
-    IF(Slicer_BUILD_CLI)
-      ADD_SUBDIRECTORY(Modules/CommandLineModule)
-    ENDIF(Slicer_BUILD_CLI)
-  ENDIF(Slicer_BUILD_MODULES)
-ENDIF()
+ENDFOREACH()
 
 #-----------------------------------------------------------------------------
 # Module EMSegment libraries
@@ -839,21 +718,12 @@ ENDIF()
 # The EMSegment{Registration,Graph,Algorithm,MRML} libraries are built from the top-level
 # CMakeLists.txt. Doing so allow to build these libraries also if Slicer_USE_KWWIDGETS is OFF
 
-IF(Slicer_BUILD_MODULES OR Slicer_BUILD_QTLOADABLEMODULES)
+IF(Slicer_BUILD_QTLOADABLEMODULES)
   INCLUDE("${Slicer_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
   ADD_SUBDIRECTORY(Modules/EMSegment/Algorithm)
   ADD_SUBDIRECTORY(Modules/EMSegment/MRML)
   ADD_SUBDIRECTORY(Modules/EMSegment/Registration)
   ADD_SUBDIRECTORY(Modules/EMSegment/Graph)
-ENDIF()
-
-# Since EMSegment module expects Volume module and its associated library to be
-# built beforehand,let's enfore that by building EMSegment here.
-# Note that EMSegment has been commented in Modules/CMakeLists.txt
-IF(Slicer_USE_KWWIDGETS)
-  IF(Slicer_BUILD_MODULES)
-    ADD_SUBDIRECTORY(Modules/EMSegment)
-  ENDIF()
 ENDIF()
 
 #-----------------------------------------------------------------------------

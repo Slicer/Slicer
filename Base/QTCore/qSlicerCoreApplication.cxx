@@ -652,23 +652,6 @@ bool qSlicerCoreApplication::isInstalled()const
 #endif
 }
 
-#ifdef Slicer_USE_KWWIDGETS
-
-//-----------------------------------------------------------------------------
-CTK_SET_CPP(qSlicerCoreApplication, bool, setInitialized, Initialized);
-
-//-----------------------------------------------------------------------------
-CTK_SET_CPP(qSlicerCoreApplication, vtkSlicerApplicationLogic*, setAppLogic, AppLogic);
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplication::setModuleManager(qSlicerModuleManager* manager)
-{
-  Q_D(qSlicerCoreApplication);
-  d->ModuleManager = QSharedPointer<qSlicerModuleManager>(manager);
-}
-
-#endif //Slicer_USE_KWWIDGETS
-
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 {
@@ -841,13 +824,12 @@ QString qSlicerCoreApplication::copyrights()const
     "See http://www.na-mic.org/Wiki/index.php/Slicer3:Acknowledgements\n\n"
     "VTK http://www.vtk.org/copyright.php\n\n"
     "ITK http://www.itk.org/HTML/Copyright.htm\n\n"
-    "KWWidgets http://www.kitware.com/Copyright.htm\n\n"
     "Tcl/Tk http://www.tcl.tk\n\n"
     "Teem:  http://teem.sf.ne\n\nt"
     "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community.\n\n"
     "Special thanks to the NIH and our other supporters.\n\n"
     "This work is part of the National Alliance for Medical Image Computing "
-    "(NAMIC), funded by the National Institutes of Health through the NIH "
+    "(NA-MIC), funded by the National Institutes of Health through the NIH "
     "Roadmap for Medical Research, Grant U54 EB005149. Information on the "
     "National Centers for Biomedical Computing can be obtained from "
     "http://nihroadmap.nih.gov/bioinformatics.\n\n");

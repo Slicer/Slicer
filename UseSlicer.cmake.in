@@ -8,7 +8,6 @@
 # preventing people from using the same compiler but with a different generator,
 # or just the same compiler installed in a non-standard location.
 
-set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
 set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
 set(SKIP_ITK_BUILD_SETTINGS_FILE 1)
 set(SKIP_Teem_BUILD_SETTINGS_FILE 1)
@@ -17,19 +16,6 @@ find_package(GenerateCLP REQUIRED)
 if(GenerateCLP_FOUND)
   include(${GenerateCLP_USE_FILE})
 endif(GenerateCLP_FOUND)
-
-
-if(Slicer_USE_KWWIDGETS)
-  find_package(GenerateLM REQUIRED)
-  if(GenerateLM_FOUND)
-    include(${GenerateLM_USE_FILE})
-  endif(GenerateLM_FOUND)
-
-  find_package(KWWidgets REQUIRED)
-  if(KWWidgets_FOUND)
-    include(${KWWidgets_USE_FILE})
-  endif(KWWidgets_FOUND)
-endif(Slicer_USE_KWWIDGETS)
 
 find_package(Teem REQUIRED)
 if(Teem_FOUND)

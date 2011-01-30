@@ -19,32 +19,19 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   set(VTK_WRAP_TCL OFF)
   set(VTK_WRAP_PYTHON OFF)
 
-  if(Slicer_USE_KWWIDGETS)
-    list(APPEND VTK_DEPENDENCIES tcl)
-    if (NOT WIN32)
-      list(APPEND VTK_DEPENDENCIES tk)
-    endif(NOT WIN32)
-    set(VTK_WRAP_TCL ON)
-  endif()
-
   if (Slicer_USE_PYTHONQT)
     set(VTK_WRAP_PYTHON ON)
     list(APPEND VTK_DEPENDENCIES python)
   endif()
 
   set(VTK_PYTHON_ARGS)
-  if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
+  if(Slicer_USE_PYTHONQT)
     set(VTK_PYTHON_ARGS
       -DPYTHON_EXECUTABLE:PATH=${slicer_PYTHON_EXECUTABLE}
       -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
       -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
       )
   endif()
-
-  # On Mac, since:
-  #    - Qt can't be build with X11 support
-  #    - KWWidgets only support X11
-  # the case where both Slicer_USE_QT and Slicer_USE_KWWIDGETS are ON is *NOT* supported
 
   set(VTK_QT_ARGS)
   if(NOT APPLE)
@@ -58,34 +45,17 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
         )
     endif()
   else()
-    if(Slicer_USE_KWWIDGETS AND NOT Slicer_USE_QT)
-      set(VTK_QT_ARGS
-        -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
-        -DCMAKE_EXE_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
-        -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include
-        -DVTK_USE_CARBON:BOOL=OFF
-        -DVTK_USE_COCOA:BOOL=OFF
-        -DVTK_USE_X:BOOL=ON
-        -DVTK_USE_RPATH:BOOL=ON
-        -DVTK_USE_GUISUPPORT:BOOL=OFF
-        -DVTK_USE_QVTK_QTOPENGL:BOOL=OFF
-        -DVTK_USE_QT:BOOL=OFF
-        )
-    elseif(NOT Slicer_USE_KWWIDGETS AND Slicer_USE_QT)
-      set(VTK_QT_ARGS
-        -DVTK_USE_CARBON:BOOL=OFF
-        -DVTK_USE_COCOA:BOOL=ON # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
-        -DVTK_USE_X:BOOL=OFF
-        -DVTK_USE_RPATH:BOOL=ON
-        -DDESIRED_QT_VERSION:STRING=4
-        -DVTK_USE_GUISUPPORT:BOOL=ON
-        -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
-        -DVTK_USE_QT:BOOL=ON
-        -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-        )
-    elseif(Slicer_USE_KWWIDGETS AND Slicer_USE_QT)
-      MESSAGE(FATAL_ERROR "Case where Slicer_USE_QT and Slicer_USE_KWWIDGETS are ON is not supported on MAC")
-    endif()
+    set(VTK_QT_ARGS
+      -DVTK_USE_CARBON:BOOL=OFF
+      -DVTK_USE_COCOA:BOOL=ON # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
+      -DVTK_USE_X:BOOL=OFF
+      -DVTK_USE_RPATH:BOOL=ON
+      -DDESIRED_QT_VERSION:STRING=4
+      -DVTK_USE_GUISUPPORT:BOOL=ON
+      -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
+      -DVTK_USE_QT:BOOL=ON
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      )
   endif()
 
   # Disable Tk when Python wrapping is enabled

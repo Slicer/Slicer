@@ -14,7 +14,7 @@ if(WIN32)
 
   # point the tkinter build file to the slicer tcl-build
   set(python_PATCH_COMMAND)
-  if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
     set(python_tkinter ${python_base}/pyproject.vsprops)
     string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
 
@@ -46,7 +46,7 @@ if(WIN32)
       ${python_DEPENDENCIES}
   )
 
-  if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
     # this must match the version of tcl we are building for slicer.
     ExternalProject_Add_Step(${proj} Patch_tcltk_version
       COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
@@ -70,7 +70,7 @@ if(WIN32)
   build_python_target(pythoncore Build_w9xpopen)
   build_python_target(_socket Build_pythoncore)
 
-  if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
     build_python_target(_tkinter Build__socket)
     build_python_target(_testcapi Build__tkinter)
   else()
@@ -115,7 +115,7 @@ if(WIN32)
     DEPENDEES install
     )
 
-  if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
     ExternalProject_Add_Step(${proj} Copy_tkinterPyd
       COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/python-build/PCbuild/_tkinter.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_tkinter.pyd
       DEPENDEES install

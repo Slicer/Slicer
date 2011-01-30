@@ -77,23 +77,10 @@ MACRO(SlicerMacroBuildModuleLogic)
   SET(dynamicHeaders
     "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h")
 
-
-  # --------------------------------------------------------------------------
-  # TCL Wrapping
-  
-  SET(MODULELOGIC_TCL_SRCS "")
-  IF (VTK_WRAP_TCL)
-    INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-    vtk_wrap_tcl3(${lib_name} 
-                  MODULELOGIC_TCL_SRCS
-                  "${MODULELOGIC_SRCS}" "")
-  ENDIF(VTK_WRAP_TCL)
-
   #-----------------------------------------------------------------------------
   # Source group(s)
   
   SOURCE_GROUP("Generated" FILES
-    ${MODULELOGIC_TCL_SRCS}
     ${dynamicHeaders}
     )
 
@@ -102,7 +89,6 @@ MACRO(SlicerMacroBuildModuleLogic)
 
   ADD_LIBRARY(${lib_name}
     ${MODULELOGIC_SRCS}
-    ${MODULELOGIC_TCL_SRCS}
     )
 
   # Set loadable modules output path

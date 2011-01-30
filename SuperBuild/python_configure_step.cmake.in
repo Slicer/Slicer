@@ -5,10 +5,9 @@ if(UNIX)
   
   set(with_tcl_param)
   
-  set(Slicer_USE_KWWIDGETS "@Slicer_USE_KWWIDGETS@")
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   
-  if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
     set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:$ENV{LD_LIBRARY_PATH}")
     set(ENV{LDFLAGS} "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
     set(ENV{CPPFLAGS} "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")

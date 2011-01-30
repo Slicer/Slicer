@@ -122,12 +122,6 @@ SET_SOURCE_FILES_PROPERTIES(
 )
 
 # --------------------------------------------------------------------------
-# TCL Wrapping
-IF (VTK_WRAP_TCL)
-  VTK_WRAP_TCL3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
-ENDIF (VTK_WRAP_TCL)
-
-# --------------------------------------------------------------------------
 ## Create an instantiator for these classes
 # SET(VTK_USE_INSTANTIATOR_NEW 1)
 # VTK_MAKE_INSTANTIATOR3("${lib_name}Instantiator"
@@ -144,10 +138,6 @@ set(lib_name SlicerBaseLogic)
 
 #SET(srcs ${SlicerBaseLogic_SRCS} ${Instantiator_SRCS})
 SET(srcs ${SlicerBaseLogic_SRCS})
-
-IF (VTK_WRAP_TCL)
-  SET(srcs ${srcs} ${SlicerBaseLogic_TCL_SRCS})
-ENDIF (VTK_WRAP_TCL)
 
 ADD_LIBRARY(${lib_name} ${srcs})
 
@@ -180,16 +170,6 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(${lib_name} ${libs})
 SET_TARGET_PROPERTIES(${lib_name} PROPERTIES LABELS ${lib_name})
-
-IF(Slicer_USE_KWWIDGETS)
-  TARGET_LINK_LIBRARIES(${lib_name} ${KWWidgets_LIBRARIES})
-ENDIF()
-
-IF (VTK_WRAP_TCL)
-  FOREACH(c ${VTK_LIBRARIES})
-    TARGET_LINK_LIBRARIES(${lib_name} ${c}TCL)
-  ENDFOREACH(c)
-ENDIF()
 
 slicer3_get_persistent_property(Slicer_Base_LIBRARIES tmp)
 slicer3_set_persistent_property(Slicer_Base_LIBRARIES ${tmp} ${lib_name})

@@ -78,7 +78,7 @@ set(incrTcl_DEPENDENCIES tcl tk)
 set(iwidgets_DEPENDENCIES tcl itcl)
 set(blt_DEPENDENCIES tcl tk)
 set(python_DEPENDENCIES)
-if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
     set(python_DEPENDENCIES tcl)
   else()
@@ -96,7 +96,6 @@ set(CTK_DEPENDENCIES VTK)
 if(Slicer_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
 endif()
-set(KWWidgets_DEPENDENCIES VTK)
 set(Insight_DEPENDENCIES)
 
 if(Slicer_USE_BatchMake)
@@ -114,17 +113,13 @@ set(slicer_DEPENDENCIES VTK Insight OpenIGTLink teem cmcurl libarchive)
 # Conditionnaly include ExternalProject Target
 #------------------------------------------------------------------------------
 
-if(Slicer_USE_KWWIDGETS OR Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_PYTHONQT_WITH_TCL)
   include(SuperBuild/External_Tcl.cmake)
   include(SuperBuild/External_Tk.cmake)
   include(SuperBuild/External_incrTcl.cmake)
 endif()
-if(Slicer_USE_KWWIDGETS)
-  include(SuperBuild/External_iwidgets.cmake)
-  include(SuperBuild/External_blt.cmake)
-endif()
 
-if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
   include(SuperBuild/External_Python26.cmake)
   if(Slicer_USE_NUMPY)
     include(SuperBuild/External_CLAPACK.cmake)
@@ -147,10 +142,6 @@ if(Slicer_USE_QT)
   endif()
 endif()
 
-if(Slicer_USE_KWWIDGETS)
-  include(SuperBuild/External_KWWidgets.cmake)
-endif()
-
 include(SuperBuild/External_Insight.cmake)
 include(SuperBuild/External_teem.cmake)
 include(SuperBuild/External_OpenIGTLink.cmake)
@@ -166,15 +157,6 @@ include(SuperBuild/External_libarchive.cmake)
 # Update external project dependencies
 #------------------------------------------------------------------------------
 
-# For now, tk and itcl are used only when Slicer_USE_KWWIDGETS is ON
-if(Slicer_USE_KWWIDGETS)
-  if(WIN32)
-    list(APPEND slicer_DEPENDENCIES tcl KWWidgets)
-  else()
-    list(APPEND slicer_DEPENDENCIES tcl tk blt iwidgets itcl KWWidgets)
-  endif()
-endif()
-
 if (Slicer_USE_PYTHONQT_WITH_TCL)
   if(UNIX)
     list(APPEND slicer_DEPENDENCIES itcl)
@@ -188,7 +170,7 @@ if(Slicer_USE_QT)
   endif()
 endif()
 
-if(Slicer_USE_PYTHON OR Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT)
   list(APPEND slicer_DEPENDENCIES python)
   if(Slicer_USE_NUMPY)
     list(APPEND slicer_DEPENDENCIES NUMPY)
@@ -202,7 +184,7 @@ endif()
 # List of external projects
 #------------------------------------------------------------------------------  
 
-#set(external_project_list tk tcl incrTcl iwidgets blt python weave CLAPACK NUMPY scipy VTK CTK KWWidgets Insight BatchMake OpenIGTLink teem cmcurl slicer)
+#set(external_project_list tk tcl incrTcl iwidgets blt python weave CLAPACK NUMPY scipy VTK CTK  Insight BatchMake OpenIGTLink teem cmcurl slicer)
 
 #-----------------------------------------------------------------------------
 # Dump external project dependencies
@@ -237,10 +219,6 @@ SET(slicer_cmake_boolean_args
   Slicer_WITH_LIBRARY_VERSION
   Slicer_USE_NUMPY
   #Slicer_USE_WEAVE
-  # Deprecated
-  Slicer_USE_PYTHON
-  Slicer_USE_KWWIDGETS
-  Slicer_BUILD_MODULES
   )
   
 SET(slicer_superbuild_boolean_args)
@@ -308,7 +286,5 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # CTKAppLauncher
     -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR}
-    # Deprecated - KWWidgets
-    -DKWWidgets_DIR:PATH=${KWWidgets_DIR}
   INSTALL_COMMAND ""
   )
