@@ -37,6 +37,7 @@
 
 // MRMLLogic includes
 #include <vtkMRMLSliceLayerLogic.h>
+
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
@@ -59,11 +60,7 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLSliceControllerWidget
 qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object)
   : q_ptr(&object)
 {
-  this->SliceLogic = vtkSmartPointer<vtkMRMLSliceLogic>::New();
-  
-  this->qvtkConnect(this->SliceLogic, vtkCommand::ModifiedEvent,
-                    this, SLOT(onSliceLogicModifiedEvent()));
-  
+  this->SliceLogic = 0;
   this->MRMLSliceNode = 0;
   this->MRMLSliceCompositeNode = 0;
   this->SliceLogics = 0;
@@ -90,7 +87,11 @@ void qMRMLSliceControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   Q_Q(qMRMLSliceControllerWidget);
 
   this->Ui_qMRMLSliceControllerWidget::setupUi(widget);
-  
+
+  vtkSmartPointer<vtkMRMLSliceLogic> defaultLogic =
+    vtkSmartPointer<vtkMRMLSliceLogic>::New();
+  q->setSliceLogic(defaultLogic);
+
   // Set selector attributes
   // Background and Foreground volume selectors can display LabelMap volumes. No
   // need to add the LabelMap attribute for them.
@@ -306,6 +307,47 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   this->SliceMoreOptionButton->setMenu(advancedMenu);
 }
 
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setMRMLSliceNodeInternal(vtkMRMLSliceNode* newSliceNode)
+{
+  Q_Q(qMRMLSliceControllerWidget);
+
+  if (newSliceNode == this->MRMLSliceNode)
+    {
+    return;
+    }
+
+  this->qvtkReconnect(this->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
+                      this, SLOT(updateWidgetFromMRMLSliceNode()));
+
+  this->MRMLSliceNode = newSliceNode;
+
+  // Update widget state given the new slice node
+  this->updateWidgetFromMRMLSliceNode();
+
+  // Enable/disable widget
+  q->setDisabled(newSliceNode == 0);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite)
+{
+  if (this->MRMLSliceCompositeNode == sliceComposite)
+    {
+    return;
+    }
+  this->qvtkReconnect(this->MRMLSliceCompositeNode,
+                      sliceComposite,
+                      vtkCommand::ModifiedEvent,
+                      this, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
+  this->MRMLSliceCompositeNode = sliceComposite;
+
+  if (this->MRMLSliceCompositeNode)
+    {
+    this->updateWidgetFromMRMLSliceCompositeNode();
+    }
+}
+
 // --------------------------------------------------------------------------
 vtkSmartPointer<vtkCollection> qMRMLSliceControllerWidgetPrivate::saveNodesForUndo(const QString& nodeTypes)
 {
@@ -326,7 +368,10 @@ vtkSmartPointer<vtkCollection> qMRMLSliceControllerWidgetPrivate::saveNodesForUn
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
-  Q_ASSERT(this->MRMLSliceNode);
+  if (!this->MRMLSliceNode)
+    {
+    return;
+    }
 
   logger.trace("updateWidgetFromMRMLSliceNode");
 
@@ -518,34 +563,31 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 {
   Q_Q(qMRMLSliceControllerWidget);
 
-  if (this->MRMLSliceCompositeNode != this->SliceLogic->GetSliceCompositeNode())
-    {
-    this->qvtkReconnect(this->MRMLSliceCompositeNode,
-                        this->SliceLogic->GetSliceCompositeNode(),
-                        vtkCommand::ModifiedEvent,
-                        this, SLOT(updateWidgetFromMRMLSliceCompositeNode()));
-    this->MRMLSliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
-
-    if (this->MRMLSliceCompositeNode)
-      {
-      this->updateWidgetFromMRMLSliceCompositeNode();
-      }
-    }
+  this->setMRMLSliceNodeInternal(
+    this->SliceLogic ? this->SliceLogic->GetSliceNode() : 0);
+  this->setMRMLSliceCompositeNodeInternal(
+    this->SliceLogic ? this->SliceLogic->GetSliceCompositeNode() : 0);
 
   // no op if they are the same
-  q->setImageData(this->SliceLogic->GetImageData());
+  // The imagedata of SliceLogic can change !?!?! it should probably not
+  q->setImageData(this->SliceLogic ? this->SliceLogic->GetImageData() : 0);
+
+  if (!this->SliceLogic)
+    {
+    return;
+    }
 
   // Set the scale increments to match the z spacing (rotated into slice space)
-  const double * sliceSpacing = 0;
-  sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
+  const double * sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
   Q_ASSERT(sliceSpacing);
-  double offsetResolution = sliceSpacing[2];
+  double offsetResolution = sliceSpacing ? sliceSpacing[2] : 0;
   q->setSliceOffsetResolution(offsetResolution);
 
   // Set slice offset range to match the field of view
   // Calculate the number of slices in the current range
-  double sliceBounds[6] = {0, 0, 0, 0, 0, 0};
+  double sliceBounds[6] = {0, -1, 0, -1, 0, -1};
   this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds);
+  Q_ASSERT(sliceBounds[4] <= sliceBounds[5]);
   q->setSliceOffsetRange(sliceBounds[4], sliceBounds[5]);
 
   // Update slider position
@@ -755,56 +797,12 @@ void qMRMLSliceControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
   Q_D(qMRMLSliceControllerWidget);
-
-  if (this->mrmlScene() == 0)
+  // eventually calls vtkMRMLSliceLogic::ModifiedEvent which
+  // eventually calls onSliceLogicModified.
+  d->SliceLogic->SetSliceNode(newSliceNode);
+  if (newSliceNode && newSliceNode->GetScene())
     {
-    logger.error("Failed to setMRMLSliceNode - MRMLScene is NULL");
-    return;
-    }
-
-  if (newSliceNode == d->MRMLSliceNode)
-    {
-    return;
-    }
-
-  // Enable/disable widget
-  this->setDisabled(newSliceNode == 0);
-
-  // Initialize logic
-  if (!d->SliceLogic->IsInitialized())
-    {
-    d->SliceLogic->Initialize(newSliceNode);
-    }
-  else
-    {
-#ifndef QT_NO_DEBUG
-    if (this->mrmlScene())
-      {
-      Q_ASSERT(d->SliceLogic->GetMRMLScene() == this->mrmlScene());
-      }
-#endif
-    this->setMRMLScene(d->SliceLogic->GetMRMLScene());
-    }
-
-  d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
-                   d, SLOT(updateWidgetFromMRMLSliceNode()));
-
-  d->MRMLSliceNode = newSliceNode;
-
-  if (d->MRMLSliceNode)
-    {
-    Q_ASSERT(this->mrmlScene());
-
-    // Please note that the order of the following statements matters !
-
-    // Update widget state using Logic
-    d->onSliceLogicModifiedEvent();
-
-    // Update widget state given the new slice node
-    d->updateWidgetFromMRMLSliceNode();
-
-    // Update widget state given the new slice composite node
-    d->updateWidgetFromMRMLSliceCompositeNode();
+    this->setMRMLScene(newSliceNode->GetScene());
     }
 }
 
@@ -825,10 +823,12 @@ void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic
 
   d->SliceLogic = newSliceLogic;
 
-  if (d->SliceLogic)
+  if (d->SliceLogic && d->SliceLogic->GetMRMLScene())
     {
-    this->setMRMLSliceNode(d->SliceLogic->GetSliceNode());
+    this->setMRMLScene(d->SliceLogic->GetMRMLScene());
     }
+
+  d->onSliceLogicModifiedEvent();
 }
 
 //---------------------------------------------------------------------------

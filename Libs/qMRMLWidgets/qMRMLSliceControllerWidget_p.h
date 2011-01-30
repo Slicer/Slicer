@@ -101,6 +101,9 @@ public slots:
   void toggleLabelOpacity(bool toggle);
 
   void applyCustomLightbox();
+protected:
+  void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
+  void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
 
 public:
   vtkMRMLSliceNode*                   MRMLSliceNode;
