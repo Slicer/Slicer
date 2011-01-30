@@ -69,18 +69,18 @@ SET(modules
   CommandLineModule
   Editor
   Endoscopy
-  GradientAnisotropicDiffusionFilter
+#  GradientAnisotropicDiffusionFilter <- Moved into Attic
   Meshing
   Python
-# PythonGADScriptedModule
-  QueryAtlas
+# PythonGADScriptedModule <- Moved into Attic
+#  QueryAtlas <- Moved into Attic
   FetchMI
   SlicerWelcome
   DiffusionWelcome
   RegistrationWelcome
   SegmentationWelcome
-  ScriptedModule
-  ScriptedModuleExample
+#  ScriptedModule <- Moved into Attic
+#  ScriptedModuleExample <- Moved into Attic
   SlicerDaemon
   Statistics
   Tractography
@@ -88,20 +88,20 @@ SET(modules
   Volumes
   ChangeTracker # AF: refactoring TumorGrowth...
   VolumeRendering
-#  VolumeRendering1 <- merged into VolumeRendering
+#  VolumeRendering1 <- merged into VolumeRendering <- Moved into Attic
 # WFEngineModule  <- can't work with 2.6 and Win32??
   ModelMirror
   ModelTransform
   # EMSegment # EMSegment is build from the top-level cmake
   # DistanceTransformModel <- culled from slicer 3.6
   ClipModel
-  Measurements
+#  Measurements <- Moved into Attic
   ModelIntoLabelVolume
 # ExtractSubvolume <- replaced by ExtractSubvolumeROI
   FastMarchingSegmentation
   FourDImage
 #  FourDAnalysis
-#  ExtractSubvolumeROI <- renamed to CropVolume
+#  ExtractSubvolumeROI <- renamed to CropVolume <- Moved into Attic
   CropVolume
   CollectFiducials
   PETCTFusion
