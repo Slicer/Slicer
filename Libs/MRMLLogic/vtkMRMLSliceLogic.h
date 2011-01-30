@@ -25,37 +25,29 @@
 /// composite image or it can be used as a texture map in a vtkSlicerView.
 /// This class can also be used for resampling volumes for further computation.
 
-
 #ifndef __vtkMRMLSliceLogic_h
 #define __vtkMRMLSliceLogic_h
 
-
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
-#include "vtkMRMLSliceLayerLogic.h"
-
-// MRML includes
-#include <vtkMRML.h>
-#include <vtkMRMLSliceNode.h>
-#include <vtkMRMLSliceCompositeNode.h>
-#include <vtkMRMLModelNode.h>
-
-// VTK includes
-#include <vtkImageBlend.h>
-#include <vtkCollection.h>
-#include <vtkPolyDataCollection.h>
 
 // STD includes
-#include <cstdlib>
+#include <vector>
 
-#include "vtkMRMLLogicWin32Header.h"
-
-class vtkImageData;
-class vtkMRMLModelDisplayNode;
+class vtkMRMLDisplayNode;
 class vtkMRMLLinearTransformNode;
+class vtkMRMLModelDisplayNode;
+class vtkMRMLModelNode;
+class vtkMRMLSliceCompositeNode;
+class vtkMRMLSliceLayerLogic;
+class vtkMRMLSliceNode;
+class vtkMRMLVolumeNode;
+
+class vtkCollection;
+class vtkImageBlend;
+class vtkImageData;
 class vtkImageReslice;
 class vtkPolyDataCollection;
-class vtkCollection;
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic 
 {

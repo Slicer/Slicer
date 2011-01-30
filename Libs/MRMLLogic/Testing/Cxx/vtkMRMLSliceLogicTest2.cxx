@@ -19,22 +19,27 @@
 ==============================================================================*/
 // MRMLLogic includes
 #include <vtkMRMLSliceLogic.h>
+#include <vtkMRMLSliceLayerLogic.h>
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLVolumeArchetypeStorageNode.h>
+#include <vtkMRMLScalarVolumeNode.h>
+#include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
-//#include <vtkMRMLVolumeNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkImageResliceMask.h>
+#include <vtkImageViewer2.h>
 #include <vtkMultiThreader.h>
-#include <vtkRenderer.h>
+#include <vtkPointData.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkImageViewer2.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkPointData.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <cstdlib>

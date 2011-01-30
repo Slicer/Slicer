@@ -14,26 +14,32 @@
 
 // MRMLLogic includes
 #include "vtkMRMLSliceLogic.h"
+#include "vtkMRMLSliceLayerLogic.h"
 
 // MRML includes
 #include <vtkMRMLCrosshairNode.h>
-#include <vtkMRMLModelDisplayNode.h>
-#include <vtkMRMLTransformNode.h>
-#include <vtkMRMLLinearTransformNode.h>
-#include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
+#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLTransformNode.h>
+#include <vtkMRMLVolumeNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkMath.h>
-#include <vtkObjectFactory.h>
 #include <vtkCallbackCommand.h>
-#include <vtkPlaneSource.h>
-#include <vtkPoints.h>
 #include <vtkImageBlend.h>
 #include <vtkImageMathematics.h>
+#include <vtkImageReslice.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkPlaneSource.h>
+#include <vtkPoints.h>
+#include <vtkPolyDataCollection.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <sstream>

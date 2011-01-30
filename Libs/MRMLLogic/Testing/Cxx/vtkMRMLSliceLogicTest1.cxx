@@ -10,8 +10,19 @@
 
 =========================================================================auto=*/
 
+// MRMLLogic includes
 #include "vtkMRMLSliceLogic.h"
-#include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLSliceLayerLogic.h"
+
+// MRML includes
+#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceNode.h>
+
+// VTK includes
+#include <vtkImageBlend.h>
+
 #include <stdlib.h>
 #include <iostream>
 

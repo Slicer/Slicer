@@ -35,11 +35,15 @@
 #include "qMRMLSliceControllerWidget.h"
 #include "qMRMLSliceControllerWidget_p.h"
 
+// MRMLLogic includes
+#include <vtkMRMLSliceLayerLogic.h>
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLVolumeNode.h>
 
 // VTK includes
 #include <vtkImageData.h>
