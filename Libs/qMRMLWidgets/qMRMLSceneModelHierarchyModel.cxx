@@ -91,8 +91,7 @@ vtkMRMLNode* qMRMLSceneModelHierarchyModel::parentNode(vtkMRMLNode* node)const
   vtkMRMLHierarchyNode* modelHierarchyNode = 0;
   if (modelNode)
     {
-    modelHierarchyNode =
-      d->ModelLogic->GetModelHierarchyNode(node->GetID());
+    modelHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(node->GetScene(), node->GetID());
     //Q_ASSERT(modelHierarchyNode);
     }
   else
@@ -139,12 +138,14 @@ int qMRMLSceneModelHierarchyModel::nodeIndex(vtkMRMLNode* node)const
     {
     vtkMRMLModelNode* mnode = vtkMRMLModelNode::SafeDownCast(node);
     vtkMRMLModelHierarchyNode* hnode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
-    vtkMRMLModelHierarchyNodeList children = d->ModelLogic->GetHierarchyChildrenNodes(parent);
+    //vtkMRMLModelHierarchyNodeList children = d->ModelLogic->GetHierarchyChildrenNodes(parent);
+    std::vector< vtkMRMLHierarchyNode *> children = parent->GetChildrenNodes();
 
-    for(vtkMRMLModelHierarchyNodeList::const_iterator it = children.begin();
+
+    for(std::vector< vtkMRMLHierarchyNode *>::const_iterator it = children.begin();
       it !=children.end(); ++it)
       {
-      vtkMRMLModelHierarchyNode* hierarchy = *it;
+        vtkMRMLModelHierarchyNode* hierarchy = vtkMRMLModelHierarchyNode::SafeDownCast(*it);
       if (mnode)
         {
         const char* nId = hierarchy->GetModelNodeID();
@@ -204,7 +205,7 @@ bool qMRMLSceneModelHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* new
   vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
   vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
   
-  d->ModelLogic->HierarchyIsModified();
+  hnode->HierarchyIsModified();
   
   if (hnode)
     {
@@ -217,7 +218,9 @@ bool qMRMLSceneModelHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* new
     return true;
     }
   Q_ASSERT(mnode);
-  vtkMRMLModelHierarchyNode* hierarchyNode = d->ModelLogic->GetModelHierarchyNode(node->GetID());
+
+  vtkMRMLModelHierarchyNode* hierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(
+    vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(node->GetScene(), node->GetID()));
   if (newModelParent == 0)
     {
     if (hierarchyNode)
@@ -241,8 +244,8 @@ bool qMRMLSceneModelHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* new
       hierarchyNode->SetHideFromEditors(1);
       hierarchyNode->SetModelNodeID(mnode->GetID());
       this->mrmlScene()->AddNode(hierarchyNode);
+      hierarchyNode->HierarchyIsModified();
       hierarchyNode->Delete();
-      d->ModelLogic->HierarchyIsModified();
       }
     //vtkMRMLModelHierarchyNode *oldParentNode = vtkMRMLModelHierarchyNode::SafeDownCast(modelParent->GetParentNode());
     //if (oldParentNode)

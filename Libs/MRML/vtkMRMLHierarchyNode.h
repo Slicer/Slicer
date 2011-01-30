@@ -69,6 +69,10 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   /// Associated prent MRML node
   vtkMRMLHierarchyNode* GetParentNode();
 
+  /// 
+  /// Get the top parent node in the hierarchy
+  vtkMRMLHierarchyNode* GetTopParentNode();
+
   /// Need this for tcl wrapping to call ReferenceStringMacro methods
   void SetParentNodeIDReference(const char* ref) {
     this->SetParentNodeID(ref);
@@ -78,12 +82,16 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   /// 
   /// Given this hierarchy node returns all it's children recursively. 
   void GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode *> &childrenNodes);
+
   /// 
   /// Given this hierarchy node returns all it's 1st level children (not recursive). 
   /// Note: Most compilers don't make a copy of the list if you call the function like that:
   /// std::vector< vtkMRMLModelHierarchyNode > children = this->GetHierarchyChildrenNodes(parent);
   std::vector< vtkMRMLHierarchyNode *> GetChildrenNodes();
 //ETX
+
+  /// Mark hierarchy as modified when you
+  void HierarchyIsModified();
 
 protected:
   vtkMRMLHierarchyNode();

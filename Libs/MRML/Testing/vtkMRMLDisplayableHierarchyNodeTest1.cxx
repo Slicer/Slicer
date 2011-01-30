@@ -74,9 +74,6 @@ int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )
   vtkSmartPointer<vtkMRMLDisplayableHierarchyNode> pnode1 = node1->GetUnExpandedParentNode();
   std::cout << "GetUnexpandedParentNode = " << (pnode1 == NULL ? "NULL" : "not null") << std::endl;
 
-  vtkSmartPointer<vtkMRMLDisplayableHierarchyNode> pnode2 = node1->GetTopParentNode();
-  std::cout << "GetTopParentNode  = " << (pnode2 == NULL ? "NULL" : "not null") << std::endl;
-
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   vtkSmartPointer<vtkMRMLDisplayNode> dnode =  vtkSmartPointer<vtkMRMLDisplayNode>::New();
   if (dnode == NULL)

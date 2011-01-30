@@ -71,8 +71,15 @@ public:
 
   /// 
   /// String ID of the model MRML node
-  vtkSetReferenceStringMacro(ModelNodeID);
-  vtkGetStringMacro(ModelNodeID);
+  void SetModelNodeID(const char* id)
+  {
+    this->SetDisplayableNodeID(id);
+  }
+
+  char *GetModelNodeID()
+  {
+    return this->GetDisplayableNodeID();
+  }
 
   /// Need this for tcl wrapping to call ReferenceStringMacro methods
   void SetModelNodeIDReference(const char* ref) {
@@ -94,17 +101,8 @@ public:
   vtkMRMLModelHierarchyNode* GetUnExpandedParentNode();
   
   /// 
-  /// Get the top parent node in the hierarchy
-  vtkMRMLModelHierarchyNode* GetTopParentNode();
-
-  /// 
   /// Find all child model nodes in the hierarchy
   void GetChildrenModelNodes(vtkCollection *models);
-
-  /// 
-  /// Get Hierarchy node for a given Model node
-  static vtkMRMLModelHierarchyNode* GetModelHierarchyNode(vtkMRMLScene *scene,
-                                                          const char *modelNodeID);
 
   /// 
   /// alternative method to propagate events generated in Display nodes
@@ -121,8 +119,6 @@ protected:
 
 
   /// Data
-
-  char *ModelNodeID;
 
   vtkMRMLModelDisplayNode *ModelDisplayNode;
 

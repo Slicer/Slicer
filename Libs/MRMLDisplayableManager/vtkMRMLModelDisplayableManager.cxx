@@ -1019,7 +1019,8 @@ void vtkMRMLModelDisplayableManager::UpdateModelHierarchyDisplay(vtkMRMLDisplaya
 {
   if (model && this->Internal->ModelHierarchyLogic)
     {
-    vtkMRMLModelHierarchyNode* mhnode = this->Internal->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
+    vtkMRMLModelHierarchyNode* mhnode = vtkMRMLModelHierarchyNode::SafeDownCast(
+        vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(this->GetMRMLScene(), model->GetID()));
 
     if (mhnode) 
       {
@@ -1079,7 +1080,9 @@ vtkMRMLDisplayNode*  vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtk
     {
     vtkMRMLModelHierarchyNode* mhnode = 0;
     vtkMRMLModelHierarchyNode* phnode = 0;
-    mhnode = this->Internal->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
+
+    mhnode = vtkMRMLModelHierarchyNode::SafeDownCast(
+        vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(this->GetMRMLScene(), model->GetID()));
     if (mhnode) 
       {
       phnode = mhnode->GetUnExpandedParentNode();

@@ -63,7 +63,7 @@ public:
   virtual void UpdateReferences();
 
   /// 
-  /// Finds the model node and read the data
+  /// Finds the Displayable node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   /// 
@@ -107,17 +107,13 @@ public:
   vtkMRMLDisplayableHierarchyNode* GetUnExpandedParentNode();
   
   /// 
-  /// Get the top parent node in the hierarchy
-  vtkMRMLDisplayableHierarchyNode* GetTopParentNode();
-
-  /// 
   /// Find all child displayable nodes in the hierarchy
   void GetChildrenDisplayableNodes(vtkCollection *children);
 
   /// 
   /// Get Hierarchy node for a given displayable node
   static vtkMRMLDisplayableHierarchyNode* GetDisplayableHierarchyNode(vtkMRMLScene *scene,
-                                                          const char *displayableNodeID);
+                                                                      const char *displayableNodeID);
 
   /// 
   /// alternative method to propagate events generated in Display nodes
@@ -130,6 +126,9 @@ public:
     {
       DisplayModifiedEvent = 17000
     };
+
+  /// Mark hierarchy as modified when you
+  void DispalyableHierarchyIsModified();
 
 protected:
   vtkMRMLDisplayableHierarchyNode();
@@ -147,6 +146,20 @@ protected:
   vtkMRMLDisplayNode *DisplayNode;
 
   int Expanded;
+
+  /// 
+  /// Create Displayable to hierarchy map, 
+  /// return number of Displayable hierarchy nodes
+  static int UpdateDisplayableToHierarchyMap(vtkMRMLScene *scene);
+  
+  //BTX
+  typedef std::map<std::string, vtkMRMLDisplayableHierarchyNode *> DisplayableHierarchyNodesType;
+
+  static std::map< vtkMRMLScene*, DisplayableHierarchyNodesType> SceneDisplayableHierarchyNodes;
+
+  static std::map< vtkMRMLScene*, unsigned long> SceneDisplayableHierarchyNodesMTime;
+  //ETX
+
 };
 
 #endif

@@ -147,6 +147,22 @@ void vtkMRMLHierarchyNode::UpdateReferences()
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetTopParentNode()
+{
+  vtkMRMLHierarchyNode *node = NULL;
+  vtkMRMLHierarchyNode *parent = vtkMRMLHierarchyNode::SafeDownCast(this->GetParentNode());
+  if (parent == NULL) 
+    {
+    node = this;
+    }
+  else 
+    {
+    node =  parent->GetTopParentNode();
+    }
+  return node;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode *> &childrenNodes)
 {
   if (this->GetScene() == NULL)
@@ -205,6 +221,8 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
 {
   if (this->GetScene() == NULL)
     {
+    this->SceneHierarchyChildrenNodes.clear();
+    this->SceneHierarchyChildrenNodesMTime.clear();
     return;
     }
 
@@ -270,6 +288,16 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
       }
     titer->second = this->GetScene()->GetSceneModifiedTime();
   }
+}
+
+void vtkMRMLHierarchyNode::HierarchyIsModified()
+{
+  if (this->GetScene() == NULL)
+    {
+    return;
+    }
+
+  SceneHierarchyChildrenNodesMTime[this->GetScene()] = 0;
 }
 
 // End
