@@ -4,6 +4,7 @@ SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLSliceLogicTest1.cxx
   vtkMRMLSliceLogicTest2.cxx
+  vtkMRMLSliceLogicTest3.cxx
   EXTRA_INCLUDE TestingMacros.h
 )
 
@@ -27,3 +28,4 @@ ENDMACRO()
 
 SIMPLE_TEST( vtkMRMLSliceLogicTest1 )
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest2 fixed.nrrd)
+SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest3 fixed.nrrd)

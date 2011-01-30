@@ -133,12 +133,14 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
 }
 
 //----------------------------------------------------------------------------
+// TODO: Remove from API
 bool vtkMRMLSliceLogic::IsInitialized()
 {
   return this->Initialized;
 }
 
 //----------------------------------------------------------------------------
+// TODO: Remove from API
 void vtkMRMLSliceLogic::Initialize(vtkMRMLSliceNode* newSliceNode)
 {
   if (this->Initialized)
@@ -670,6 +672,8 @@ vtkImageData * vtkMRMLSliceLogic::GetImageData()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdateImageData ()
 {
+  // It seems very strange that the imagedata can be null.
+  // It should probably be always a valid imagedata with invalid bounds if needed
   if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageData() != 0) ||
        (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageData() != 0) ||
        (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageData() != 0) )
