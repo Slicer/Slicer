@@ -27,9 +27,17 @@ class qMRMLNodeObject : public QObject
 public:
   qMRMLNodeObject(vtkMRMLNode* node, QObject* parent = 0); 
 
+  void setProcessEvents(bool process);
+  bool processEvents()const;
+
+  void setMessage(const QString& message);
+  QString message()const;
+
 public slots:
   void modify();
 
 protected:
   vtkMRMLNode* Node;
+  bool         ProcessEvents;
+  QString      Message;
 };

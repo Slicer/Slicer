@@ -33,7 +33,9 @@ qMRMLNodeObject::qMRMLNodeObject(vtkMRMLNode* node, QObject* parent)
   : QObject(parent)
 {
   this->Node = node;
-} 
+  this->ProcessEvents = true;
+  this->Message = QString(node ? node->GetName() : "");
+}
 
 //-----------------------------------------------------------------------------
 void qMRMLNodeObject::modify()
@@ -41,8 +43,35 @@ void qMRMLNodeObject::modify()
   vtkTimerLog* timer = vtkTimerLog::New();
   timer->StartTimer();
   this->Node->Modified();
-  //QApplication::processEvents();
+  if (this->ProcessEvents)
+    {
+    QApplication::processEvents();
+    }
   timer->StopTimer();
-  qDebug() << "modify: " << timer->GetElapsedTime() << "seconds. FPS:" << 1. / timer->GetElapsedTime();
+  qDebug() << this->Message << " modified: " << timer->GetElapsedTime() << "seconds. FPS:" << 1. / timer->GetElapsedTime();
   timer->Delete();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeObject::setProcessEvents(bool process)
+{
+  this->ProcessEvents = process;
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLNodeObject::processEvents()const
+{
+  return this->ProcessEvents;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLNodeObject::setMessage(const QString& message)
+{
+  this->Message = message;
+}
+
+//-----------------------------------------------------------------------------
+QString qMRMLNodeObject::message()const
+{
+  return this->Message;
 }
