@@ -349,8 +349,6 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
 
   QCoreApplication::setOrganizationDomain("www.na-mic.org");
   QCoreApplication::setOrganizationName("NA-MIC");
-  QCoreApplication::setApplicationName("Slicer");
-  QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
 
   QSettings::setDefaultFormat(QSettings::IniFormat);
 
