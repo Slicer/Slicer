@@ -128,7 +128,7 @@ public:
     };
 
   /// Mark hierarchy as modified when you
-  void DispalyableHierarchyIsModified();
+  static void DispalyableHierarchyIsModified(vtkMRMLScene *scene);
 
 protected:
   vtkMRMLDisplayableHierarchyNode();

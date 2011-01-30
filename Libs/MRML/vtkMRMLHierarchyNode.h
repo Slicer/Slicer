@@ -91,7 +91,7 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 //ETX
 
   /// Mark hierarchy as modified when you
-  void HierarchyIsModified();
+  static void HierarchyIsModified(vtkMRMLScene *scene);
 
 protected:
   vtkMRMLHierarchyNode();

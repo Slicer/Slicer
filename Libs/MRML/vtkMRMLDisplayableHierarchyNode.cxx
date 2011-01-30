@@ -434,13 +434,13 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetDisplayable
   
 }
 
-void vtkMRMLDisplayableHierarchyNode::DispalyableHierarchyIsModified()
+void vtkMRMLDisplayableHierarchyNode::DispalyableHierarchyIsModified(vtkMRMLScene *scene)
 {
-  if (this->GetScene() == NULL)
+  if (scene == NULL)
     {
     return;
     }
 
-  SceneDisplayableHierarchyNodesMTime[this->GetScene()] = 0;
+  SceneDisplayableHierarchyNodesMTime[scene] = 0;
 }
 

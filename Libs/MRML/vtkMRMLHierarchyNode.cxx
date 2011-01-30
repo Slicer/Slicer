@@ -290,14 +290,14 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
   }
 }
 
-void vtkMRMLHierarchyNode::HierarchyIsModified()
+void vtkMRMLHierarchyNode::HierarchyIsModified(vtkMRMLScene *scene)
 {
-  if (this->GetScene() == NULL)
+  if (scene == NULL)
     {
     return;
     }
 
-  SceneHierarchyChildrenNodesMTime[this->GetScene()] = 0;
+  SceneHierarchyChildrenNodesMTime[scene] = 0;
 }
 
 // End
