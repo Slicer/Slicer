@@ -102,9 +102,11 @@ public:
   /// propagates the logics to the qMRMLSliceControllerWidget
   void setSliceLogics(vtkCollection* logics);
 
-  /// Returns the renderer as a QT widget
-  ctkVTKSliceView* getSliceView();
-
+  /// Get a reference to the underlying Slice View
+  /// A const ctkVTKSliceView pointer is returned as you shouldn't
+  /// mess too much with it. If you do, be aware that you are probably
+  /// unsynchronizing the view from the nodes/logics.
+  const ctkVTKSliceView* sliceView()const;
 public slots:
 
   void setMRMLScene(vtkMRMLScene * newScene);
@@ -123,11 +125,6 @@ public slots:
 
   /// Fit slices to background
   void fitSliceToBackground();
-
-protected:
-
-  /// Get a reference to the underlying Slice View
-  ctkVTKSliceView * sliceView()const;
 
 protected:
   QScopedPointer<qMRMLSliceWidgetPrivate> d_ptr;

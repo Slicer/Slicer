@@ -354,7 +354,7 @@ void qMRMLSliceWidget::fitSliceToBackground()
 }
 
 // --------------------------------------------------------------------------
-ctkVTKSliceView* qMRMLSliceWidget::sliceView()const
+const ctkVTKSliceView* qMRMLSliceWidget::sliceView()const
 {
   Q_D(const qMRMLSliceWidget);
   return d->VTKSliceView;
@@ -372,12 +372,4 @@ void qMRMLSliceWidget::setSliceLogics(vtkCollection* logics)
 {
   Q_D(qMRMLSliceWidget);
   d->SliceController->setSliceLogics(logics);
-}
-
-// --------------------------------------------------------------------------
-ctkVTKSliceView* qMRMLSliceWidget::getSliceView()
-{
-
-  return this->sliceView();
-
 }

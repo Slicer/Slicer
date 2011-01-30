@@ -291,18 +291,18 @@ void qSlicerAnnotationModuleSnapShotDialog::grabScreenShot(QString screenshotWin
     if (screenshotWindow=="ThreeD")
       {
       // create a screenShot of the first 3DView
-      widget = static_cast<QWidget*>(qSlicerApplication::application()->layoutManager()->threeDView(0));
+      widget = qSlicerApplication::application()->layoutManager()->threeDView(0);
       }
     else
       {
       // create a screenShot of a specific sliceView
-      widget = static_cast<QWidget*>(qSlicerApplication::application()->layoutManager()->sliceWidget(screenshotWindow)->getSliceView());
+      widget = const_cast<ctkVTKSliceView*>(qSlicerApplication::application()->layoutManager()->sliceWidget(screenshotWindow)->sliceView());
       }
     }
   else
     {
     // create a screenShot of the full layout
-    widget = static_cast<QWidget*>(qSlicerApplication::application()->layoutManager()->viewport());
+    widget = qSlicerApplication::application()->layoutManager()->viewport();
     }
 
   // this is a hack right now for platforms other than mac
