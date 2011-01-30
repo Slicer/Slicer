@@ -17,6 +17,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
+#include "vtkMath.h"
 
 #include "itkExceptionObject.h"
 #include "itkTimeProbe.h"
@@ -1185,14 +1186,6 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
   // Sort good files based on distance from Origin to ImagePositionPatient along ScanAxis
   // Follows logic originally in LoadVolume.tcl
   for (unsigned int k = 0; k < this->AllFileNames.size(); k++)
-  {
-  if ( (this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID &&
-        this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0) ||
-      //(this->IndexContentTime[k] != iArchetypeContentTime && this->IndexContentTime[k] >= 0 && iArchetypeContentTime >= 0) ||
-      //(this->IndexTriggerTime[k] != iArchetypeTriggerTime && this->IndexTriggerTime[k] >= 0 && iArchetypeTriggerTime >= 0) ||
-      (this->IndexEchoNumbers[k] != iArchetypeEchoNumbers && this->IndexEchoNumbers[k] >= 0 && iArchetypeEchoNumbers >= 0) ||
-      (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion  && this->IndexDiffusionGradientOrientation[k] >= 0 && iArchetypeDiffusion >= 0) ||
-      (this->IndexImageOrientationPatient[k] != iArchetypeOrientation && this->IndexImageOrientationPatient[k] >= 0 && iArchetypeOrientation >= 0) )
     {
     if (  (this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID &&
           this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0) 
