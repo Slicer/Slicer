@@ -142,6 +142,13 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <default>true</default>
    </boolean>
    <boolean>
+     <name>Pad</name>
+     <label>Pad</label>
+     <longflag>--pad</longflag>
+     <description>Pad the input volume with zero value voxels on all 6 faces in order to ensure the production of closed surfaces.</description>
+     <default>false</default>
+   </boolean>
+   <boolean>
      <name>SaveIntermediateModels</name>
      <label>Save Intermediate Models</label>
      <longflag>saveIntermediateModels</longflag>

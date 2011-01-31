@@ -993,6 +993,17 @@ add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
+set(testname ${CLP}GenerateAllThreeLabelsPadTest)
+add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
+  ModelMakerTest
+    --generateAll
+    --modelSceneFile ${TEMP}/ModelMakerTest.mrml\#vtkMRMLModelHierarchyNode1
+    --pad
+    ${MRML_TEST_DATA}/helixMask3Labels.nrrd
+  )
+SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
+
+
 set(testname ${CLP}StartEndTest)
 add_test(${testname} ${Launcher_Command} ${TestLocation}ModelMakerTest
   ModelMakerTest
