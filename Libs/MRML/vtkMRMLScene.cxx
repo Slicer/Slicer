@@ -1353,8 +1353,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
                   << n->GetName() << "[" << n << "]" << " already removed");
     }
   // As callbacks may want to look for the removed node, the nodeID list should
-  // be up to date. It's not vtkMRMLScene::RemoveNode responsability to be up to
-  // date though.
+  // be up to date.
   if (this->GetNodeByID(n->GetID()) == NULL)
     {
     vtkErrorMacro("RemoveNode: class: " << n->GetClassName() << " name:"
@@ -1373,6 +1372,10 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     n->SetScene(0);
     }
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
+  
+  this->NodeIDs.erase(n->GetID());
+  this->NodeIDsMTime = this->CurrentScene->GetMTime();
+  
   this->InvokeEvent(this->NodeRemovedEvent, n);
   n->UnRegister(this);
 
