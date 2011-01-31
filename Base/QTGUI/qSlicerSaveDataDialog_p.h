@@ -44,7 +44,7 @@ protected slots:
   void formatChanged();
   bool saveScene();
   bool saveNodes();
-  QFileInfo sceneFile()const ;
+  QFileInfo sceneFile()const;
 
 protected:
   enum ColumnType
@@ -67,6 +67,7 @@ protected:
   QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
   QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo);
   QWidget*          createFileDirectoryWidget(const QFileInfo& fileInfo);
+  bool              mustSceneBeSaved()const;
 
   vtkMRMLScene* MRMLScene;
 };
