@@ -1406,7 +1406,10 @@ void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n)
   this->RemoveReferencesToNode(n);
 
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
-  
+
+  this->NodeIDs.erase(n->GetID());
+  this->NodeIDsMTime = this->CurrentScene->GetMTime();
+
   n->UnRegister(this);
 
   if (!this->GetIsUpdating())
@@ -2839,6 +2842,14 @@ void vtkMRMLScene::UpdateNodeIDs()
     }
   else if (this->CurrentScene->GetMTime() > this->NodeIDsMTime)
     {
+    if (this->NodeIDsMTime > 0)
+      {
+      // TODO: we should get rid of NodeIDsMTime: the map should always be up
+      // to date.
+      vtkWarningMacro("There is a danger here. What if AddNode or RemoveNode"
+                      " were called prior, the NodeIDsMTime would be in sync"
+                      " without having the map in sync.");
+      }
     this->NodeIDs.clear();
     vtkMRMLNode *node;
     vtkCollectionSimpleIterator it;
