@@ -63,8 +63,7 @@ CTK_SET_CPP(qMRMLNodeFactory, vtkMRMLScene*, setMRMLScene, MRMLScene);
 CTK_GET_CPP(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
-                                          const vtkMRMLNodeInitializer & initializer)
+vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 {
   Q_D(qMRMLNodeFactory);
   
@@ -79,13 +78,18 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
 
   Q_ASSERT_X(node, "createNode",
              QString("Failed to create node of type [%1]").arg(className).toLatin1());
-             
+
   if (node == 0)
     {
     return 0;
     }
   
-  node->SetScene( d->MRMLScene );
+  emit this->nodeInstanciated(node);
+  // Optionally adding the node into a scene must be done only in
+  // signal nodeInitialized. It's a bit arbitrary and feel free to remove
+  // the restriction.
+  Q_ASSERT(node->GetScene() == 0);
+  
   QString baseName;
   if (d->BaseNames.contains(className) &&
       !d->BaseNames[className].isEmpty())
@@ -104,10 +108,6 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
                 "Can't add a node with a SingletonTag and an empty ID";
     return 0;
     }
-
-  // Extra initialization steps
-  initializer(node);
-
   // Set node attributes
   // Attributes must be set before adding the node into the scene as the node
   // combobox filter might hide the node if the attributes are not set yet.
@@ -120,15 +120,22 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className,
                        d->Attributes[attributeName].toLatin1());
     }
 
-  vtkMRMLNode * nodeCreated = d->MRMLScene->AddNode(node);
-  Q_ASSERT(nodeCreated);
+  emit this->nodeInitialized(node);
+  // maybe the node has been added into the scene by slots connected
+  // to nodeInitialized.
+  if (!node->GetScene())
+    {
+    vtkMRMLNode* nodeAdded = d->MRMLScene->AddNode(node);
+    Q_ASSERT(nodeAdded == node);
+    Q_UNUSED(nodeAdded);
+    }
+  emit this->nodeAdded(node);
 
-  return nodeCreated; 
+  return node; 
 }
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& className,
-                                          const vtkMRMLNodeInitializer & initializer,
                                           const QHash<QString,QString>& attributes)
 {
   Q_ASSERT(scene);
@@ -140,7 +147,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
     factory->addAttribute(key, attributes.value(key));
     }
   // Instanciate and return the requested node
-  return factory->createNode(className, initializer);
+  return factory->createNode(className);
 }
 
 //------------------------------------------------------------------------------

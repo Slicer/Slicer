@@ -757,6 +757,13 @@ QAbstractItemModel* qMRMLNodeComboBox::rootModel()const
 }
 
 //--------------------------------------------------------------------------
+qMRMLNodeFactory* qMRMLNodeComboBox::nodeFactory()const
+{
+  Q_D(const qMRMLNodeComboBox);
+  return d->MRMLNodeFactory;
+}
+
+//--------------------------------------------------------------------------
 void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 {
   Q_D(qMRMLNodeComboBox);

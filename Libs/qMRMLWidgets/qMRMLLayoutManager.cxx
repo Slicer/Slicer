@@ -503,39 +503,33 @@ void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* layoutNode)
   q->setLayout(mrmlLayoutNode->GetViewArrangement());
 }
 
-namespace
-{
 //------------------------------------------------------------------------------
-struct vtkMRMLSliceNodeInitializer : public vtkMRMLNodeInitializer
+void qMRMLLayoutManagerPrivate::initializeNode(vtkMRMLNode* node)
 {
-  vtkMRMLSliceNodeInitializer(const QString& sliceLogicName):SliceLogicName(sliceLogicName){}
-  virtual void operator()(vtkMRMLNode* node)const
+  Q_ASSERT(this->sender());
+  QString sliceLogicName = this->sender()->property("SliceLogicName").toString();
+  vtkMRMLSliceNode * sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+  Q_ASSERT(sliceNode);
+  // Note that SingletonTag and LayoutName are the same
+  sliceNode->SetLayoutName(sliceLogicName.toLatin1()); 
+  if (sliceLogicName == "Red")
     {
-    vtkMRMLSliceNode * sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
-    Q_ASSERT(sliceNode);
-    // Note that SingletonTag and LayoutName are the same
-    sliceNode->SetLayoutName(this->SliceLogicName.toLatin1()); 
-    if (this->SliceLogicName == "Red")
-      {
-      sliceNode->SetOrientationToAxial();
-      }
-    else if(this->SliceLogicName == "Yellow")
-      {
-      sliceNode->SetOrientationToSagittal();
-      }
-    else if(this->SliceLogicName == "Green")
-      {
-      sliceNode->SetOrientationToCoronal();
-      }
-    else
-      {
-      sliceNode->SetOrientationToReformat();
-      }
-    sliceNode->SetName(this->SliceLogicName.toLower().append(
-        sliceNode->GetOrientationString()).toLatin1());
+    sliceNode->SetOrientationToAxial();
     }
-  QString SliceLogicName;
-};
+  else if(sliceLogicName == "Yellow")
+    {
+    sliceNode->SetOrientationToSagittal();
+    }
+  else if(sliceLogicName == "Green")
+    {
+    sliceNode->SetOrientationToCoronal();
+    }
+  else
+    {
+    sliceNode->SetOrientationToReformat();
+    }
+  sliceNode->SetName(sliceLogicName.toLower().append(
+      sliceNode->GetOrientationString()).toLatin1());
 }
 
 //------------------------------------------------------------------------------
@@ -587,11 +581,14 @@ void qMRMLLayoutManagerPrivate::initialize()
     {
     QStringList sliceLogicNames;
     sliceLogicNames << "Red" << "Yellow" << "Green";
+    qMRMLNodeFactory nodeFactory;
+    nodeFactory.setMRMLScene(this->MRMLScene);
+    connect(&nodeFactory, SIGNAL(nodeInitialized(vtkMRMLNode*)),
+            this, SLOT(initializeNode(vtkMRMLNode*)));
     foreach(const QString& sliceLogicName, sliceLogicNames)
       {
-      vtkMRMLSliceNodeInitializer sliceNodeInitializer(sliceLogicName);
-      vtkMRMLNode * node = qMRMLNodeFactory::createNode(this->MRMLScene,
-                                                        "vtkMRMLSliceNode", sliceNodeInitializer);
+      nodeFactory.setProperty("SliceLogicName", sliceLogicName);
+      vtkMRMLNode * node = nodeFactory.createNode("vtkMRMLSliceNode");
       Q_ASSERT(node);
       Q_UNUSED(node);
       }

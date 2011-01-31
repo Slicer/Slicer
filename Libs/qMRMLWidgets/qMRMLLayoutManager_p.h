@@ -123,7 +123,8 @@ public slots:
 
   /// Handle Layout node event
   void onLayoutNodeModifiedEvent(vtkObject* layoutNode);
-
+protected slots:
+  void initializeNode(vtkMRMLNode*);
 public:
   QString            ScriptedDisplayableManagerDirectory;
   vtkMRMLScene*      MRMLScene;

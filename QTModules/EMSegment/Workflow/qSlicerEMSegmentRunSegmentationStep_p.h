@@ -59,6 +59,7 @@ public:
 private slots:
 
   void display2DVOI(bool show);
+  void initializeNode(vtkMRMLNode* node);
 
 };
 

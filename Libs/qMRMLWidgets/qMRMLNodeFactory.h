@@ -34,21 +34,9 @@ class vtkMRMLNode;
 class vtkMRMLScene;
 class qMRMLNodeFactoryPrivate;
 
-///
-/// vtkMRMLNodeInitializer is a default functor that should be dervied
-/// in case specific node initialization steps are required
-struct QMRML_WIDGETS_EXPORT vtkMRMLNodeInitializer
-{
-  virtual ~vtkMRMLNodeInitializer(){}
-  virtual void operator()(vtkMRMLNode* node)const
-    {
-    Q_UNUSED(node);
-    }
-};
-
 /// Node factory that can be used by qMRML widgets to easily create nodes
 /// If you want more control over the node creation, you can add attributes,
-/// specify a base node name or reimplement a vtkMRMLNodeInitializer
+/// specify a base node name or connect to signals to customize the node
 class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 {
   Q_OBJECT
@@ -62,21 +50,26 @@ public:
   explicit qMRMLNodeFactory(QObject* parent = 0);
   virtual ~qMRMLNodeFactory();
   
-  /// 
+  ///
   /// Set/Get MRML scene
   vtkMRMLScene* mrmlScene()const;
 
   /// 
-  /// Create and add a node given its \a className to the scene associated with the factory
-  /// The attributes will be applied to the node after being initialized
-  /// Note: The scene takes the ownership of the node and is responsible to delete it.
-  vtkMRMLNode* createNode(const QString& className,
-                          const vtkMRMLNodeInitializer & initializer = vtkMRMLNodeInitializer());
+  /// Create and add a node given its \a className to the scene associated
+  /// with the factory. The function will fire the signals:
+  /// \a nodeInstanced(vtkMRMLNode*),
+  /// \a nodeInitialized(vtkMRMLNode*),
+  /// \a nodeAdded(vtkMRMLNode*)
+  /// on that order. It allows the user to add custom steps by connecting slots
+  /// to the emitted signals.
+  /// Note: The attributes will be applied to the node before being added into
+  /// the scene. The scene takes the ownership of the node and is responsible 
+  /// to delete it
+  vtkMRMLNode* createNode(const QString& className);
 
   /// 
   /// Convenient method allowing to create a new node and add it to the \a scene
   static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className,
-    const vtkMRMLNodeInitializer & initializer = vtkMRMLNodeInitializer(),
     const AttributeType& attributes = AttributeType());
 
   /// 
@@ -95,7 +88,23 @@ public slots:
   /// 
   /// Set/Get MRML scene
   void setMRMLScene(vtkMRMLScene* mrmlScene);
-  
+
+signals:
+  /// Fired right after the instanciation of the node
+  /// (before any initialization)
+  /// Connecting to the following signal allows a custom node creation
+  void nodeInstanciated(vtkMRMLNode* node);
+  /// Eventually fired by the function createNode
+  /// You can add the node into the scene directly here.
+  /// If no slot adds the node into the scene(node->GetScene() == 0), then the
+  /// node factory takes care of adding the node into the scene (default
+  /// behavior).
+  void nodeInitialized(vtkMRMLNode* node);
+  /// Fired at the end when the node is added into the scene. It is emitted
+  /// even if the node has been added to the scene by a custom slot connected
+  /// to \a nodeInitialized(vtkMRMLNode*)
+  void nodeAdded(vtkMRMLNode* node);
+
 protected:
   QScopedPointer<qMRMLNodeFactoryPrivate> d_ptr;
 

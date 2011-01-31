@@ -169,6 +169,16 @@ public:
   ///
   /// Internal model associated to the combobox
   QAbstractItemModel* model()const;
+  
+  ///
+  /// Return the node factory used to create nodes when "Add Node"
+  /// is selected (property \a AddEnabled should be true).
+  /// A typical use would be to connect the node factory signal
+  /// nodeInitialized(vtkMRMLNode*) with your own initialization routine
+  /// slot:
+  /// connect(nodeComboBox->nodeFactory(), SIGNAL(nodeInitialized(vtkMRMLNode*)),
+  ///         this, SLOT(initializeNode(vtkMRMLNode*)));
+  qMRMLNodeFactory* nodeFactory()const;
 
   ///
   /// \sa QComboBox::sizeAdjustPolicy

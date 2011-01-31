@@ -318,28 +318,6 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setBackgroundColor(double newBackg
   this->ActiveMRMLThreeDViewNode->SetBackgroundColor(newBackgroundColor);
 }
 
-namespace
-{
-// --------------------------------------------------------------------------
-struct vtkMRMLSnapshotNodeInitializer : public vtkMRMLNodeInitializer
-{
-  vtkMRMLSnapshotNodeInitializer(vtkMRMLScene * scene, const QString& snapshotBaseName):
-      MRMLScene(scene), SnapshotBaseName(snapshotBaseName){}
-  virtual void operator()(vtkMRMLNode* node)const
-    {
-    vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(node);
-    Q_ASSERT(snapshotNode);
-    Q_ASSERT(!this->SnapshotBaseName.isEmpty());
-    Q_ASSERT(this->MRMLScene);
-
-    snapshotNode->SetName(
-        this->MRMLScene->GetUniqueNameByString(this->SnapshotBaseName.toLatin1()));
-    }
-  vtkMRMLScene * MRMLScene;
-  QString        SnapshotBaseName;
-};
-}
-
 // --------------------------------------------------------------------------
 void qMRMLThreeDViewsControllerWidgetPrivate::createSceneSnaphot()
 {
@@ -356,9 +334,10 @@ void qMRMLThreeDViewsControllerWidgetPrivate::createSceneSnaphot()
     }
 
   // Create snapshot
-  vtkMRMLNode * newNode = qMRMLNodeFactory::createNode(
-      q->mrmlScene(), "vtkMRMLSceneViewNode",
-      vtkMRMLSnapshotNodeInitializer(q->mrmlScene(), snapshotName));
+  qMRMLNodeFactory nodeFactory;
+  nodeFactory.setMRMLScene(q->mrmlScene());
+  nodeFactory.setBaseName("vtkMRMLSceneViewNode", snapshotName);
+  vtkMRMLNode * newNode = nodeFactory.createNode("vtkMRMLSceneViewNode");
   vtkMRMLSceneViewNode * newSnapshotNode = vtkMRMLSceneViewNode::SafeDownCast(newNode);
   newSnapshotNode->StoreScene();
 }

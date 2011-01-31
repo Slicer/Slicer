@@ -154,7 +154,7 @@ void qSlicerEMSegmentRunSegmentationStepPrivate::updateWidgetFromMRML()
     qMRMLNodeFactory::AttributeType attributes;
     attributes.insert("LabelMap", "1");
     qMRMLNodeFactory::createNode(
-        q->mrmlScene(), "vtkMRMLScalarVolumeNode", vtkMRMLNodeInitializer(), attributes);
+        q->mrmlScene(), "vtkMRMLScalarVolumeNode", attributes);
     }
 
   this->OutputLabelMapComboBox->setCurrentNode(q->mrmlManager()->GetOutputVolumeMRMLID());
@@ -193,21 +193,15 @@ void qSlicerEMSegmentRunSegmentationStepPrivate::display2DVOI(bool show)
   Q_UNUSED(show);
 }
 
-namespace
+//-----------------------------------------------------------------------------
+void qSlicerEMSegmentRunSegmentationStepPrivate::initializeNode(vtkMRMLNode* node)
 {
-//------------------------------------------------------------------------------
-struct vtkMRMLROINodeInitializer : public vtkMRMLNodeInitializer
-{
-  vtkMRMLROINodeInitializer(const QString& nodeName):NodeName(nodeName){}
-  virtual void operator()(vtkMRMLNode* node)const
-    {
-    vtkMRMLROINode * roiNode = vtkMRMLROINode::SafeDownCast(node);
-    Q_ASSERT(roiNode);
-    roiNode->SetName(this->NodeName.toLatin1());
-    roiNode->SetVisibility(0);
-    }
-  QString NodeName;
-};
+  Q_ASSERT(this->sender());
+  QString nodeName = this->sender()->property("NodeName").toString();
+  vtkMRMLROINode * roiNode = vtkMRMLROINode::SafeDownCast(node);
+  Q_ASSERT(roiNode);
+  roiNode->SetName(nodeName.toLatin1());
+  roiNode->SetVisibility(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -232,8 +226,12 @@ vtkMRMLROINode* qSlicerEMSegmentRunSegmentationStepPrivate::createROINode()
     }
 
   // Create a new ROI
-  return vtkMRMLROINode::SafeDownCast(qMRMLNodeFactory::createNode(
-      scene, "vtkMRMLROINode", vtkMRMLROINodeInitializer(roiNodeName)));
+  qMRMLNodeFactory nodeFactory;
+  nodeFactory.setMRMLScene(scene);
+  nodeFactory.setProperty("NodeName", roiNodeName);
+  connect(&nodeFactory, SIGNAL(nodeInitialized(vtkMRMLNode*)),
+         this, SLOT(initializeNode(vtkMRMLNode*)));
+  return vtkMRMLROINode::SafeDownCast(nodeFactory.createNode("vtkMRMLROINode"));
 }
 
 //-----------------------------------------------------------------------------
