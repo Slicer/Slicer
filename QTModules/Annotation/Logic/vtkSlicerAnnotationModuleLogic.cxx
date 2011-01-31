@@ -409,7 +409,7 @@ void vtkSlicerAnnotationModuleLogic::RemoveAnnotationNode(vtkMRMLAnnotationNode*
   if (displayableHierarchyNode)
     {
     // there is a parent
-    this->GetMRMLScene()->RemoveNodeNoNotify(displayableHierarchyNode);
+    this->GetMRMLScene()->RemoveNode(displayableHierarchyNode);
 
     }
 

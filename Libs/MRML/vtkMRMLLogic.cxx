@@ -82,7 +82,7 @@ void vtkMRMLLogic::RemoveUnreferencedStorageNodes()
     iter = referencedNodes.find(storageNode);
     if (iter == referencedNodes.end())
       {
-      this->Scene->RemoveNodeNoNotify(storageNode);
+      this->Scene->RemoveNode(storageNode);
       }
     }
 }
@@ -140,7 +140,7 @@ void vtkMRMLLogic::RemoveUnreferencedDisplayNodes()
     iter = referencedNodes.find(displayNode);
     if (iter == referencedNodes.end())
       {
-      this->Scene->RemoveNodeNoNotify(displayNode);
+      this->Scene->RemoveNode(displayNode);
       }
     }
 }

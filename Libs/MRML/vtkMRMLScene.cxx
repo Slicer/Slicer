@@ -1396,39 +1396,6 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n) 
-{
-  if (n == NULL)
-    {
-    vtkErrorMacro("RemoveNodeNoNotify: unable to remove null node");
-    return;
-    }
-  n->Register(this);
-  
-  this->RemoveNodeReferences(n);
-  this->RemoveReferencesToNode(n);
-
-  this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
-
-  this->NodeIDs.erase(n->GetID());
-  this->NodeIDsMTime = this->CurrentScene->GetMTime();
-
-  n->UnRegister(this);
-
-  if (!this->GetIsUpdating())
-    {
-    vtkMRMLNode *node = NULL;
-    for (int i=0; i < this->CurrentScene->GetNumberOfItems(); i++) 
-      {
-      node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(i);
-      node->UpdateReferences();
-      }
-    }
-  this->RemoveUnusedNodeReferences();
-
-}
-
-//------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode) 
 {
   if (id == NULL || refrencingNode == NULL)
