@@ -112,13 +112,13 @@ itcl::body PaintEffect::createGlyph { {polyData ""} } {
   #
   $o(rasToXY) DeepCopy [$_sliceNode GetXYToRAS]
   $o(rasToXY) Invert
-  set xyRadius "10 10"
+  set xyRadius "10 0 0"
   if { $radius != "" } {
-    set xyRadius [$o(rasToXY) MultiplyPoint $radius $radius $radius 0]
+    set xyRadius [$o(rasToXY) MultiplyPoint $radius 0 0 0]
   }
-  foreach {xRadius yRadius} $xyRadius {}
-  set xRadius [expr abs([lindex $xyRadius 0])]
-  set yRadius [expr abs([lindex $xyRadius 1])]
+  puts $xyRadius
+  foreach {xRadius yRadius zRadius zero} $xyRadius {}
+  set xyRadius [expr sqrt( $xRadius * $xRadius + $yRadius * $yRadius + $zRadius * $zRadius )]
 
   # make a circle paint brush
   if { $polyData == "" } {
@@ -130,14 +130,12 @@ itcl::body PaintEffect::createGlyph { {polyData ""} } {
   $polyData SetLines $lines
   set PI 3.1415926
   set TWOPI [expr $PI * 2]
-  set PIoverFOUR [expr $PI / 4]
-  set PIoverEIGHT [expr $PI / 8]
   set PIoverSIXTEEN [expr $PI / 16]
   set prevPoint ""
   set firstPoint ""
   for { set angle 0 } { $angle <= $TWOPI } { set angle [expr $angle + $PIoverSIXTEEN] } {
-    set x [expr $xRadius * cos($angle)]
-    set y [expr $yRadius * sin($angle)]
+    set x [expr $xyRadius * cos($angle)]
+    set y [expr $xyRadius * sin($angle)]
     set p [$points InsertNextPoint $x $y 0]
     if { $prevPoint != "" } {
       set idList [vtkIdList New]
