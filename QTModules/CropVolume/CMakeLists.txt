@@ -13,6 +13,8 @@ SET(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
+  ${Slicer_SOURCE_DIR}/QTModules/Annotation/MRML
+  ${Slicer_BINARY_DIR}/QTModules/Annotation
   )
 
 # Source files
