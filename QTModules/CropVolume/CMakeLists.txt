@@ -39,6 +39,7 @@ SET(qt_module_UI_SRCS
 # Additional Target libraries
 SET(qt_module_target_libraries
   vtkSlicerCropVolumeModuleLogic
+  qSlicerAnnotationModule
   )
 
 # Resources

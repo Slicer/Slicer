@@ -5,7 +5,7 @@
 #include "qSlicerCropVolumeModuleWidget.h"
 #include "qMRMLNodeFactory.h"
 #include "ui_qSlicerCropVolumeModule.h"
-#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationROINode.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerCropVolumeModuleWidgetPrivate: public Ui_qSlicerCropVolumeModule
@@ -53,5 +53,5 @@ void qSlicerCropVolumeModuleWidget::initializeNode(vtkMRMLNode *n)
 {
   std::cerr << "Initializing the node in crop volume" << std::endl;
   vtkMRMLScene* scene = qobject_cast<qMRMLNodeFactory*>(this->sender())->mrmlScene();
-  vtkMRMLAnnotationNode::SafeDownCast(n)->Initialize(scene);
+  vtkMRMLAnnotationROINode::SafeDownCast(n)->Initialize(scene);
 }

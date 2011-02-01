@@ -21,6 +21,7 @@ vtkMRMLAnnotationROINode* vtkMRMLAnnotationROINode::New()
     {
     return (vtkMRMLAnnotationROINode*)ret;
     }
+  
   // If the factory was unable to create the object, then create it here.
   return new vtkMRMLAnnotationROINode;
 }
@@ -46,11 +47,16 @@ vtkMRMLAnnotationROINode::vtkMRMLAnnotationROINode()
   this->SetLabelText("");
   this->VolumeNodeID = NULL;
   this->HideFromEditors = false;
+  
+  // default placement of the widget as in Slicer3
+  this->SetXYZ(0,0,0);
+  this->SetRadiusXYZ(10,10,10);
 }
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::Initialize(vtkMRMLScene* mrmlScene)
 {
   Superclass::Initialize(mrmlScene);
+
 }
 //    if (!mrmlScene)
 //    {
