@@ -240,7 +240,8 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
 {
   vtkDebugMacro("Reading Annotation data");
   // test whether refNode is a valid node to hold a text list
-  if ( !( refNode->IsA("vtkMRMLAnnotationNode"))
+  if ( !refNode ||
+       !( refNode->IsA("vtkMRMLAnnotationNode"))
      ) 
     {
     vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationNode");
@@ -316,7 +317,7 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
       size_t  endPos =attValue.find("|",startPos);
       int columnNumber = 1;
       while (startPos != std::string::npos && (columnNumber < numColumns)) 
-    {
+        {
       if (startPos != endPos) 
         {
           const char* ptr;
@@ -348,9 +349,9 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
     }
 
       if (refNode->AddText(annotation.c_str(), sel, vis) < 0 ) 
-    {
+        {
       vtkErrorMacro("Error adding text to list, annotation = " << annotation);
-    }
+        }
     }
 }
 //----------------------------------------------------------------------------
@@ -358,6 +359,10 @@ void vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode 
 int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotationNode *refNode, char line[1024], int &typeColumn, 
                                int& annotationColumn, int& selColumn, int& visColumn, int& numColumns)
 {
+  if (!refNode)
+    {
+    return 0;
+    }
   if (line[0] != '#' || line[1] != ' ') 
     {
       return 0;
@@ -484,7 +489,8 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotati
 int vtkMRMLAnnotationStorageNode::ReadData(vtkMRMLNode *refNode)
 {
   // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+  if ( !refNode ||
+       !this->GetAddToScene() || !refNode->GetAddToScene() )
     {
       return 1;
     }
@@ -575,6 +581,10 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtk
 //--------------------------------------------------------------------------
 void vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnotationNode *refNode)
 {
+  if (!refNode)
+    {
+    return;
+    }
   // if change the ones being included, make sure to update the parsing in ReadData
   for (int i = 0; i < refNode->GetNumberOfTexts(); i++)
     {
@@ -619,7 +629,8 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode, fstream &of)
 {
   // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLAnnotationNode") ) )
+  if ( !refNode ||
+       !( refNode->IsA("vtkMRMLAnnotationNode") ) )
     {
     vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationNode");
     return 0;         
@@ -641,7 +652,11 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode, fstream &of)
 }
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode)
-{  
+{
+  if (!refNode)
+    {
+    return 0;
+    }
   // open the file for writing
   fstream of;
   if (!this->OpenFileToWrite(of)) 
