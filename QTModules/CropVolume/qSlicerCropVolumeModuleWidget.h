@@ -28,11 +28,13 @@ protected:
   
   virtual void setup();
 
+protected slots:
+  void initializeNode(vtkMRMLNode*);
+
 private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModuleWidget);
   Q_DISABLE_COPY(qSlicerCropVolumeModuleWidget);
 
-  void initializeNode(vtkMRMLNode*);
 };
 
 #endif
