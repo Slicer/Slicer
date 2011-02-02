@@ -145,8 +145,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <name>Pad</name>
      <label>Pad</label>
      <longflag>--pad</longflag>
-     <description>Pad the input volume with zero value voxels on all 6 faces in order to ensure the production of closed surfaces.</description>
-     <default>false</default>
+     <description>Pad the input volume with zero value voxels on all 6 faces in order to ensure the production of closed surfaces. Sets the origin translation and extent translation so that the models still line up with the unpadded input volume.</description>
+     <default>true</default>
    </boolean>
    <boolean>
      <name>SaveIntermediateModels</name>
