@@ -57,7 +57,7 @@ public:
   /// 
   /// Create and add a node given its \a className to the scene associated
   /// with the factory. The function will fire the signals:
-  /// \a nodeInstanced(vtkMRMLNode*),
+  /// \a nodeInstantiated(vtkMRMLNode*),
   /// \a nodeInitialized(vtkMRMLNode*),
   /// \a nodeAdded(vtkMRMLNode*)
   /// on that order. It allows the user to add custom steps by connecting slots
@@ -93,7 +93,7 @@ signals:
   /// Fired right after the instanciation of the node
   /// (before any initialization)
   /// Connecting to the following signal allows a custom node creation
-  void nodeInstanciated(vtkMRMLNode* node);
+  void nodeInstantiated(vtkMRMLNode* node);
   /// Eventually fired by the function createNode
   /// You can add the node into the scene directly here.
   /// If no slot adds the node into the scene(node->GetScene() == 0), then the

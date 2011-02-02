@@ -84,7 +84,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     return 0;
     }
   
-  emit this->nodeInstanciated(node);
+  emit this->nodeInstantiated(node);
   // Optionally adding the node into a scene must be done only in
   // signal nodeInitialized. It's a bit arbitrary and feel free to remove
   // the restriction.
