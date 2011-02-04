@@ -74,7 +74,10 @@ qSlicerIOOptions* qSlicerScalarOverlayIO::options()const
 bool qSlicerScalarOverlayIO::load(const IOProperties& properties)
 {
   Q_ASSERT(properties.contains("fileName"));
-  Q_ASSERT(properties.contains("modelNodeId"));
+  if (!properties.contains("modelNodeId"))
+    {
+    return false;
+    }
   QString fileName = properties["fileName"].toString();
   QString modelNodeId = properties["modelNodeId"].toString();
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
