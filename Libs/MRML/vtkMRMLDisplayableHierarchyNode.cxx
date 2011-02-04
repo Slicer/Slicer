@@ -59,7 +59,7 @@ vtkMRMLNode* vtkMRMLDisplayableHierarchyNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode::vtkMRMLDisplayableHierarchyNode()
 {
-  this->DisplayableNodeID = NULL;
+  this->DisplayableNodeIDReference = NULL;
   this->DisplayNodeID = NULL;
   this->DisplayNode = NULL;
   this->HideFromEditors = 1;
@@ -69,10 +69,10 @@ vtkMRMLDisplayableHierarchyNode::vtkMRMLDisplayableHierarchyNode()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableHierarchyNode::~vtkMRMLDisplayableHierarchyNode()
 {
-  if (this->DisplayableNodeID) 
+  if (this->DisplayableNodeIDReference) 
     {
-    delete [] this->DisplayableNodeID;
-    this->DisplayableNodeID = NULL;
+    delete [] this->DisplayableNodeIDReference;
+    this->DisplayableNodeIDReference = NULL;
     }
   this->SetAndObserveDisplayNodeID( NULL);
 }
@@ -86,9 +86,9 @@ void vtkMRMLDisplayableHierarchyNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-   if (this->DisplayableNodeID != NULL) 
+   if (this->DisplayableNodeIDReference != NULL) 
     {
-    of << indent << " displayableNodeID=\"" << this->DisplayableNodeID << "\"";
+    of << indent << " displayableNodeID=\"" << this->DisplayableNodeIDReference << "\"";
     }
   if (this->DisplayNodeID != NULL) 
     {
@@ -102,7 +102,7 @@ void vtkMRMLDisplayableHierarchyNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLDisplayableHierarchyNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   Superclass::UpdateReferenceID(oldID, newID);
-  if (this->DisplayableNodeID == NULL || !strcmp(oldID, this->DisplayableNodeID))
+  if (this->DisplayableNodeIDReference == NULL || !strcmp(oldID, this->DisplayableNodeIDReference))
     {
     this->SetDisplayableNodeID(newID);
     }
@@ -128,7 +128,7 @@ void vtkMRMLDisplayableHierarchyNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "displayableNodeID")) 
       {
       this->SetDisplayableNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->DisplayableNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->DisplayableNodeIDReference, this);
       }
     else if (!strcmp(attName, "displayNodeRef") ||
              !strcmp(attName, "displayNodeID")) 
@@ -163,7 +163,7 @@ void vtkMRMLDisplayableHierarchyNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLDisplayableHierarchyNode *node = (vtkMRMLDisplayableHierarchyNode *) anode;
 
-  this->SetDisplayableNodeID(node->DisplayableNodeID);
+  this->SetDisplayableNodeID(node->DisplayableNodeIDReference);
   this->SetDisplayNodeID(node->DisplayNodeID);
   this->SetExpanded(node->Expanded);
   this->EndModify(disabledModify);
@@ -177,7 +177,7 @@ void vtkMRMLDisplayableHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   os << indent << "DisplayableNodeID: " <<
-    (this->DisplayableNodeID ? this->DisplayableNodeID : "(none)") << "\n";
+    (this->DisplayableNodeIDReference ? this->DisplayableNodeIDReference : "(none)") << "\n";
 
   os << indent << "DisplayNodeID: " <<
     (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
@@ -218,7 +218,7 @@ void vtkMRMLDisplayableHierarchyNode::UpdateReferences()
     {
     this->SetAndObserveDisplayNodeID(NULL);
     }
-  if (this->DisplayableNodeID != NULL && this->Scene->GetNodeByID(this->DisplayableNodeID) == NULL)
+  if (this->DisplayableNodeIDReference != NULL && this->Scene->GetNodeByID(this->DisplayableNodeIDReference) == NULL)
     {
     this->SetDisplayableNodeID(NULL);
     }
@@ -230,7 +230,7 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayableHierarchyNode::GetDisplayableNode()
   vtkMRMLDisplayableNode* node = NULL;
   if (this->GetScene() && this->GetDisplayableNodeID() )
     {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayableNodeID);
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayableNodeIDReference);
     node = vtkMRMLDisplayableNode::SafeDownCast(snode);
     }
   return node;

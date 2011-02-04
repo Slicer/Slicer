@@ -58,7 +58,7 @@ int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )
 
   TEST_SET_GET_STRING(node1, DisplayableNodeID);
 
-  node1->SetDisplayableNodeIDReference("testingDisplayableNodeID");
+  node1->SetDisplayableNodeID("testingDisplayableNodeID");
 
   node1->SetAndObserveDisplayNodeID("testingDisplayNodeID");
   std::cout << "DisplayNodeID = " << ( node1->GetDisplayNodeID() == NULL ? "NULL" : node1->GetDisplayNodeID()) << std::endl;
@@ -114,7 +114,7 @@ int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   scene->AddNode(displayableNode);
-  node1->SetDisplayableNodeIDReference(displayableNode->GetID());
+  node1->SetDisplayableNodeID(displayableNode->GetID());
   node1->GetChildrenDisplayableNodes(col);
   numChildren =  col->GetNumberOfItems();
   std::cout << "Number of children displayble nodes  = " << numChildren << std::endl;
@@ -132,7 +132,7 @@ int vtkMRMLDisplayableHierarchyNodeTest1(int , char * [] )
 
   vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
   scene->AddNode(modelNode);
-  node2->SetDisplayableNodeIDReference(modelNode->GetID());
+  node2->SetDisplayableNodeID(modelNode->GetID());
   expectedChildren++;
   node1->GetChildrenDisplayableNodes(col);
   numChildren =  col->GetNumberOfItems();

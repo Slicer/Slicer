@@ -61,11 +61,6 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   /// 
-  /// String ID of the parent hierarchy MRML node
-  vtkSetReferenceStringMacro(ParentNodeID);
-  vtkGetStringMacro(ParentNodeID);
-
-  /// 
   /// Associated prent MRML node
   vtkMRMLHierarchyNode* GetParentNode();
 
@@ -73,9 +68,16 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   /// Get the top parent node in the hierarchy
   vtkMRMLHierarchyNode* GetTopParentNode();
 
-  /// Need this for tcl wrapping to call ReferenceStringMacro methods
-  void SetParentNodeIDReference(const char* ref) {
-    this->SetParentNodeID(ref);
+  /// 
+  /// String ID of the parent hierarchy MRML node
+  virtual char* GetParentNodeID()
+  {
+    return GetParentNodeIDReference();
+  }
+
+  virtual void SetParentNodeID(const char* ref) {
+    this->SetParentNodeIDReference(ref);
+    this->HierarchyIsModified(this->GetScene());
   };
 
 //BTX
@@ -90,8 +92,6 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   std::vector< vtkMRMLHierarchyNode *> GetChildrenNodes();
 //ETX
 
-  /// Mark hierarchy as modified when you
-  static void HierarchyIsModified(vtkMRMLScene *scene);
 
 protected:
   vtkMRMLHierarchyNode();
@@ -99,9 +99,15 @@ protected:
   vtkMRMLHierarchyNode(const vtkMRMLHierarchyNode&);
   void operator=(const vtkMRMLHierarchyNode&);
 
+  /// 
+  /// String ID of the parent hierarchy MRML node
+  vtkSetReferenceStringMacro(ParentNodeIDReference);
+  vtkGetStringMacro(ParentNodeIDReference);
 
-  char *ParentNodeID;
+  char *ParentNodeIDReference;
 
+  /// Mark hierarchy as modified when you
+  static void HierarchyIsModified(vtkMRMLScene *scene);
 
   //BTX
   typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;

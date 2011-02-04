@@ -132,7 +132,7 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
     modelHierarchyNodes[m]->SetName(nameString.c_str());
     scene->AddNode(modelHierarchyNodes[m]);
     modelHierarchyNodes[m]->SetParentNodeID(hnode2->GetID());
-    modelHierarchyNodes[m]->SetDisplayableNodeIDReference(modelNodes[m]->GetID());
+    modelHierarchyNodes[m]->SetDisplayableNodeID(modelNodes[m]->GetID());
     }
 
   std::cout << "Model nodes size = " << modelNodes.size() << std::endl;

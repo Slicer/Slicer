@@ -133,7 +133,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
     
     scene->AddNode(modelHierarchyNodes[m]);
 
-    modelHierarchyNodes[m]->SetDisplayableNodeIDReference(modelNodes[m]->GetID());
+    modelHierarchyNodes[m]->SetDisplayableNodeID(modelNodes[m]->GetID());
     }
 
   std::cout << "Model nodes size = " << modelNodes.size() << std::endl;
@@ -251,7 +251,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   if (m6 && m6->GetID() && mh6 && md6 && md6->GetID())
     {
     m6->SetAndObserveDisplayNodeID(md6->GetID());
-    mh6->SetDisplayableNodeIDReference(m6->GetID());
+    mh6->SetDisplayableNodeID(m6->GetID());
     //hnode2->InsertNodeAt(3, mh6);
     mh6->SetParentNodeID(hnode2->GetID());
     }

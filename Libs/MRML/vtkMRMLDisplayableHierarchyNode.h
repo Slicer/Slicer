@@ -72,17 +72,16 @@ public:
 
   /// 
   /// String ID of the displayable MRML node
-  vtkSetReferenceStringMacro(DisplayableNodeID);
-  vtkGetStringMacro(DisplayableNodeID);
+  virtual char* GetDisplayableNodeID()
+  {
+    return GetDisplayableNodeIDReference();
+  }
 
-  /// Need this for tcl wrapping to call ReferenceStringMacro methods
-  void SetDisplayableNodeIDReference(const char* ref) {
-    this->SetDisplayableNodeID(ref);
+  virtual void SetDisplayableNodeID(const char* ref) {
+    this->SetDisplayableNodeIDReference(ref);
+    this->DispalyableHierarchyIsModified(this->GetScene());
   };
 
-
-  /// 
-  /// String ID of the displayable MRML node
   void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
 
@@ -127,8 +126,6 @@ public:
       DisplayModifiedEvent = 17000
     };
 
-  /// Mark hierarchy as modified when you
-  static void DispalyableHierarchyIsModified(vtkMRMLScene *scene);
 
 protected:
   vtkMRMLDisplayableHierarchyNode();
@@ -138,9 +135,17 @@ protected:
 
   vtkSetReferenceStringMacro(DisplayNodeID);
 
+  /// Mark hierarchy as modified when you
+  static void DispalyableHierarchyIsModified(vtkMRMLScene *scene);
 
   /// Data
-  char *DisplayableNodeID;
+  char *DisplayableNodeIDReference;
+
+  /// 
+  /// String ID of the displayable MRML node
+  vtkSetReferenceStringMacro(DisplayableNodeIDReference);
+  vtkGetStringMacro(DisplayableNodeIDReference);
+
   char *DisplayNodeID;
 
   vtkMRMLDisplayNode *DisplayNode;

@@ -51,7 +51,7 @@ int vtkMRMLHierarchyNodeTest1(int , char * [] )
   vtkSmartPointer<vtkMRMLHierarchyNode> pnode = node1->GetParentNode();
   std::cout << "GetParentNode returned " << (pnode == NULL ? "null" : "not null") << std::endl;
 
-  node1->SetParentNodeIDReference("testingID");
+  node1->SetParentNodeID("testingID");
   pnode = node1->GetParentNode();
   std::cout << "GetParentNode returned " << (pnode == NULL ? "null" : "not null") << std::endl;
   

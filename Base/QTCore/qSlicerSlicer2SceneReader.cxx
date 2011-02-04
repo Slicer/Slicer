@@ -1054,7 +1054,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
   //}
   if (!this->ParentID.isEmpty())
     {
-    hnode->SetParentNodeIDReference(this->ParentID.toLatin1().data());
+    hnode->SetParentNodeID(this->ParentID.toLatin1().data());
     }
 
   //$hnode SetAndObserveDisplayNodeID [$dnode GetID]
@@ -1102,7 +1102,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelRefNode(NodeType& node)
   //}
   if (!this->ParentID.isEmpty())
     {
-    hnode->SetParentNodeIDReference(this->ParentID.toLatin1().data());
+    hnode->SetParentNodeID(this->ParentID.toLatin1().data());
     }
   //$hnode SetModelNodeIDReference $id3
   hnode->SetModelNodeIDReference(id3.toLatin1().data());

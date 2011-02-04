@@ -35,17 +35,17 @@ vtkMRMLHierarchyNode::vtkMRMLHierarchyNode()
 {
   this->HideFromEditors = 0;
 
-  this->ParentNodeID = NULL;
+  this->ParentNodeIDReference = NULL;
 
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode::~vtkMRMLHierarchyNode()
 {
-  if (this->ParentNodeID) 
+  if (this->ParentNodeIDReference) 
     {
-    delete [] this->ParentNodeID;
-    this->ParentNodeID = NULL;
+    delete [] this->ParentNodeIDReference;
+    this->ParentNodeIDReference = NULL;
     }
 }
 
@@ -56,9 +56,9 @@ void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->ParentNodeID != NULL) 
+  if (this->ParentNodeIDReference != NULL) 
     {
-    of << indent << " parentNodeRef=\"" << this->ParentNodeID << "\"";
+    of << indent << " parentNodeRef=\"" << this->ParentNodeIDReference << "\"";
     }
 }
 
@@ -66,9 +66,9 @@ void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLHierarchyNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   Superclass::UpdateReferenceID(oldID, newID);
-  if (this->ParentNodeID && !strcmp(oldID, this->ParentNodeID))
+  if (this->ParentNodeIDReference && !strcmp(oldID, this->ParentNodeIDReference))
     {
-    this->SetParentNodeID(ParentNodeID);
+    this->SetParentNodeID(newID);
     }
 }
 //----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "parentNodeRef")) 
       {
       this->SetParentNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->ParentNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->ParentNodeIDReference, this);
       }
     }
 
@@ -104,7 +104,7 @@ void vtkMRMLHierarchyNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
   vtkMRMLHierarchyNode *node = (vtkMRMLHierarchyNode *) anode;
-  this->SetParentNodeID(node->ParentNodeID);
+  this->SetParentNodeID(node->ParentNodeIDReference);
 
   this->EndModify(disabledModify);
 }
@@ -114,16 +114,16 @@ void vtkMRMLHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
   os << indent << "ParentNodeID: " <<
-    (this->ParentNodeID ? this->ParentNodeID : "(none)") << "\n";
+    (this->ParentNodeIDReference ? this->ParentNodeIDReference : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetParentNode()
 {
   vtkMRMLHierarchyNode* node = NULL;
-  if (this->GetScene() && this->ParentNodeID != NULL )
+  if (this->GetScene() && this->ParentNodeIDReference != NULL )
     {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ParentNodeID);
+    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ParentNodeIDReference);
     node = vtkMRMLHierarchyNode::SafeDownCast(snode);
     }
   return node;
@@ -140,7 +140,7 @@ void vtkMRMLHierarchyNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
   
-  if (this->ParentNodeID != NULL && this->Scene->GetNodeByID(this->ParentNodeID) == NULL)
+  if (this->ParentNodeIDReference != NULL && this->Scene->GetNodeByID(this->ParentNodeIDReference) == NULL)
     {
     this->SetParentNodeID(NULL);
     }

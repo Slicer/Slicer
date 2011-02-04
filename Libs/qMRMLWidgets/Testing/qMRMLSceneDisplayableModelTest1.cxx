@@ -121,11 +121,11 @@ int qMRMLSceneDisplayableModelTest1(int argc, char * argv [])
     if (node1 && node1->GetID() && h1)
       {
       std::cout << "Adding node1 to a hierarchy node" << std::endl;
-      h1->SetDisplayableNodeIDReference(node1->GetID());
+      h1->SetDisplayableNodeID(node1->GetID());
       if (node2 && node2->GetID() && h2)
         {
         std::cout << "Adding node2 to a hierarchy node" << std::endl;
-        h2->SetDisplayableNodeIDReference(node2->GetID());
+        h2->SetDisplayableNodeID(node2->GetID());
         }
       if (h2 && h2->GetID())
         {

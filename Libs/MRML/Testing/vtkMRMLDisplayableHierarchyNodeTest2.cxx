@@ -113,9 +113,9 @@ int vtkMRMLDisplayableHierarchyNodeTest2(int , char * [] )
     }
   
   // now set up a hierarchy
-  hnode2->SetDisplayableNodeIDReference(vnode1->GetID());
+  hnode2->SetDisplayableNodeID(vnode1->GetID());
   hnode2->SetParentNodeID(hnode1->GetID());
-  hnode1->SetDisplayableNodeIDReference(mnode1->GetID());
+  hnode1->SetDisplayableNodeID(mnode1->GetID());
   
 
   return EXIT_SUCCESS;
