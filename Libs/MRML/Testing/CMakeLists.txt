@@ -36,8 +36,10 @@ CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
   vtkMRMLGlyphVolumeDisplayPropertiesNodeTest1.cxx
   vtkMRMLGridTransformNodeTest1.cxx
   vtkMRMLHierarchyNodeTest1.cxx
+  vtkMRMLHierarchyNodeTest3.cxx
   vtkMRMLDisplayableHierarchyNodeTest1.cxx
   vtkMRMLDisplayableHierarchyNodeTest2.cxx
+  vtkMRMLDisplayableHierarchyNodeTest3.cxx
   vtkMRMLInteractionNodeTest1.cxx
   vtkMRMLLabelMapVolumeDisplayNodeTest1.cxx
   vtkMRMLLayoutNodeTest1.cxx
