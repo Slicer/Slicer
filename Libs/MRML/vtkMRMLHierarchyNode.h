@@ -75,15 +75,7 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
     return GetParentNodeIDReference();
   }
 
-  virtual void SetParentNodeID(const char* ref) 
-  {
-    if ((this->ParentNodeIDReference && ref && strcmp(ref, this->ParentNodeIDReference)) ||
-        (this->ParentNodeIDReference != ref))
-      {
-        this->SetParentNodeIDReference(ref);
-        this->HierarchyIsModified(this->GetScene());
-      }
-  };
+  virtual void SetParentNodeID(const char* ref);
 
 //BTX
   /// 
@@ -97,6 +89,16 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   std::vector< vtkMRMLHierarchyNode *> GetChildrenNodes();
 //ETX
 
+  /// Get n-th child node sorted in the order of their SortingValue
+  vtkMRMLHierarchyNode *GetNthChildNode(unsigned int index);
+
+  /// Get index of this node in it's parent based on the value of their SortingValue
+  int GetIndexInParent();
+
+  /// 
+  /// Node's Sorting Value
+  vtkSetMacro(SortingValue, double);
+  vtkGetMacro(SortingValue, double);
 
 protected:
   vtkMRMLHierarchyNode();
@@ -121,6 +123,9 @@ protected:
   static std::map< vtkMRMLScene*, unsigned long> SceneHierarchyChildrenNodesMTime;
   //ETX
   
+  double SortingValue;
+
+  static double MaximumSortingValue;
 
   void UpdateChildrenMap();
 

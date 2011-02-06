@@ -15,6 +15,7 @@ Version:   $Revision: 1.14 $
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
@@ -30,12 +31,23 @@ typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyCh
 std::map< vtkMRMLScene*, HierarchyChildrenNodesType> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodes = std::map< vtkMRMLScene*, HierarchyChildrenNodesType>();
 std::map< vtkMRMLScene*, unsigned long> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodesMTime = std::map< vtkMRMLScene*, unsigned long>();
 
+double vtkMRMLHierarchyNode::MaximumSortingValue = 0;
+
+typedef vtkMRMLHierarchyNode*  vtkMRMLHierarchyNodePointer; 
+bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer& d1, vtkMRMLHierarchyNodePointer& d2);
+bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer& d1, vtkMRMLHierarchyNodePointer& d2)
+{
+  return d1->GetSortingValue() < d2->GetSortingValue();
+}
+
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode::vtkMRMLHierarchyNode()
 {
   this->HideFromEditors = 0;
 
   this->ParentNodeIDReference = NULL;
+
+  this->SortingValue = 0;
 
 }
 
@@ -60,6 +72,8 @@ void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " parentNodeRef=\"" << this->ParentNodeIDReference << "\"";
     }
+  of << indent << " sortingValue=\"" << this->SortingValue << "\"";
+
 }
 
 //----------------------------------------------------------------------------
@@ -86,10 +100,19 @@ void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "parentNodeRef")) 
       {
+      // dont reset SortingValue
+      double soringValue = this->GetSortingValue();
       this->SetParentNodeID(attValue);
+      this->SetSortingValue(soringValue);
       //this->Scene->AddReferencedNodeID(this->ParentNodeIDReference, this);
       }
-    }
+    else if (!strcmp(attName, "sortingValue")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> SortingValue;
+      }
+  }
 
   this->EndModify(disabledModify);
 
@@ -105,6 +128,7 @@ void vtkMRMLHierarchyNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLHierarchyNode *node = (vtkMRMLHierarchyNode *) anode;
   this->SetParentNodeID(node->ParentNodeIDReference);
+  this->SetSortingValue(node->SortingValue);
 
   this->EndModify(disabledModify);
 }
@@ -115,6 +139,8 @@ void vtkMRMLHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
   os << indent << "ParentNodeID: " <<
     (this->ParentNodeIDReference ? this->ParentNodeIDReference : "(none)") << "\n";
+  os << indent << "SortingValue:     " << this->SortingValue << "\n";
+
 }
 
 //----------------------------------------------------------------------------
@@ -143,6 +169,18 @@ void vtkMRMLHierarchyNode::UpdateReferences()
   if (this->ParentNodeIDReference != NULL && this->Scene->GetNodeByID(this->ParentNodeIDReference) == NULL)
     {
     this->SetParentNodeID(NULL);
+    }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref) 
+{
+  if ((this->ParentNodeIDReference && ref && strcmp(ref, this->ParentNodeIDReference)) ||
+      (this->ParentNodeIDReference != ref))
+    {
+    this->SetSortingValue(MaximumSortingValue+1);
+    this->SetParentNodeIDReference(ref);
+    this->HierarchyIsModified(this->GetScene());
     }
 }
 
@@ -212,9 +250,49 @@ std::vector< vtkMRMLHierarchyNode *> vtkMRMLHierarchyNode::GetChildrenNodes()
     {
     childrenNodes.push_back(iter->second[i]);
     }
+
+  // Sort the vector using predicate and std::sort
+  std::sort(childrenNodes.begin(), childrenNodes.end(), vtkMRMLHierarchyNodeSortPredicate);
+
   return childrenNodes;
 }
 
+//----------------------------------------------------------------------------
+vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetNthChildNode(unsigned int index)
+{
+  std::vector< vtkMRMLHierarchyNode *> childrenNodes = this->GetChildrenNodes();
+  if (index < 0 || index > childrenNodes.size()-1)
+    {
+    vtkErrorMacro("vtkMRMLHierarchyNode::GetNthChildNode() index outside the range");
+    return NULL;
+    }
+  else
+    {
+    return childrenNodes[index];
+    }
+}
+
+int vtkMRMLHierarchyNode::GetIndexInParent()
+{
+  vtkMRMLHierarchyNode *pnode = this->GetParentNode();
+  if (pnode == NULL)
+    {
+    vtkErrorMacro("vtkMRMLHierarchyNode::GetIndexInParent() no parent");
+    return -1;
+    }
+  else
+    {
+    std::vector< vtkMRMLHierarchyNode *> childrenNodes = pnode->GetChildrenNodes();
+    for (unsigned int i=0; i<childrenNodes.size(); i++)
+      {
+      if (childrenNodes[i] == this)
+        {
+        return i;
+        }
+      }
+    return -1;
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::UpdateChildrenMap()
@@ -250,6 +328,7 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
       }
     siter->second.clear();
     }
+
     
   if (this->GetScene()->GetSceneModifiedTime() > titer->second)
   {
@@ -263,7 +342,9 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
     
     std::vector<vtkMRMLNode *> nodes;
     int nnodes = this->GetScene()->GetNodesByClass("vtkMRMLHierarchyNode", nodes);
-  
+
+    double maxSortingValue = this->MaximumSortingValue;
+
     for (int i=0; i<nnodes; i++)
       {
       vtkMRMLHierarchyNode *node =  vtkMRMLHierarchyNode::SafeDownCast(nodes[i]);
@@ -272,6 +353,10 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
         vtkMRMLHierarchyNode *pnode = vtkMRMLHierarchyNode::SafeDownCast(node->GetParentNode());
         if (pnode)
           {
+          if (pnode->GetSortingValue() > maxSortingValue)
+            {
+            maxSortingValue = pnode->GetSortingValue();
+            }
           iter = siter->second.find(std::string(pnode->GetID()));
           if (iter == siter->second.end())
             {
@@ -287,6 +372,7 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
         }
       }
     titer->second = this->GetScene()->GetSceneModifiedTime();
+    this->MaximumSortingValue = maxSortingValue;
   }
 }
 
