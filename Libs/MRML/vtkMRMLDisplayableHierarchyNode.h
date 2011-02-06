@@ -77,9 +77,14 @@ public:
     return GetDisplayableNodeIDReference();
   }
 
-  virtual void SetDisplayableNodeID(const char* ref) {
-    this->SetDisplayableNodeIDReference(ref);
-    this->DispalyableHierarchyIsModified(this->GetScene());
+  virtual void SetDisplayableNodeID(const char* ref) 
+  {
+    if ((this->DisplayableNodeIDReference && !strcmp(ref, this->DisplayableNodeIDReference)) ||
+      (this->DisplayableNodeIDReference == NULL && ref != NULL))
+      {
+      this->SetDisplayableNodeIDReference(ref);
+      this->DispalyableHierarchyIsModified(this->GetScene());
+      }
   };
 
   void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
