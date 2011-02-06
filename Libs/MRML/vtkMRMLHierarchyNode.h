@@ -77,8 +77,8 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 
   virtual void SetParentNodeID(const char* ref) 
   {
-    if ((this->ParentNodeIDReference && !strcmp(ref, this->ParentNodeIDReference)) ||
-        (this->ParentNodeIDReference == NULL && ref != NULL))
+    if ((this->ParentNodeIDReference && ref && strcmp(ref, this->ParentNodeIDReference)) ||
+        (this->ParentNodeIDReference != ref))
       {
         this->SetParentNodeIDReference(ref);
         this->HierarchyIsModified(this->GetScene());

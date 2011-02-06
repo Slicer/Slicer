@@ -313,7 +313,7 @@ void vtkMRMLDisplayableHierarchyNode::GetChildrenDisplayableNodes(vtkCollection 
   vtkMRMLScene *scene = this->GetScene();
   if (scene == NULL)
     {
-    vtkErrorMacro("GetChildrenDisplayableNodes: scene is null, cannot find children of this node");
+    //vtkErrorMacro("GetChildrenDisplayableNodes: scene is null, cannot find children of this node");
     return;
     }
   vtkMRMLNode *mnode = NULL;
