@@ -22,7 +22,6 @@ public:
 
 public slots:
 
-
 protected:
   QScopedPointer<qSlicerCropVolumeModuleWidgetPrivate> d_ptr;
   
@@ -30,6 +29,7 @@ protected:
 
 protected slots:
   void initializeNode(vtkMRMLNode*);
+  void onApply();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModuleWidget);
