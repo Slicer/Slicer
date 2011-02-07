@@ -33,9 +33,9 @@ std::map< vtkMRMLScene*, unsigned long> vtkMRMLHierarchyNode::SceneHierarchyChil
 
 double vtkMRMLHierarchyNode::MaximumSortingValue = 0;
 
-typedef vtkMRMLHierarchyNode*  vtkMRMLHierarchyNodePointer; 
-bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer& d1, vtkMRMLHierarchyNodePointer& d2);
-bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer& d1, vtkMRMLHierarchyNodePointer& d2)
+typedef vtkMRMLHierarchyNode* const vtkMRMLHierarchyNodePointer; 
+bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer d1, vtkMRMLHierarchyNodePointer d2);
+bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer d1, vtkMRMLHierarchyNodePointer d2)
 {
   return d1->GetSortingValue() < d2->GetSortingValue();
 }
