@@ -1442,6 +1442,7 @@ set(testname ${CLP}Test)
 add_test(${testname} ${Launcher_Command} ${TestLocation}PolyDataToLabelmapTest
   --compare ${BASELINE}/OAS10001.mha
             ${TEMP}/PolyDataToLabelmapTestOutput.mha
+  --compareNumberOfPixelsTolerance 20
   ModuleEntryPoint
     ${TEST_DATA}/PolyDataToLabelmap/OAS10001.hdr 
     ${TEST_DATA}/PolyDataToLabelmap/OAS10001.vtp 
