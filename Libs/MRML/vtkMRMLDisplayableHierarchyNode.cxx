@@ -434,6 +434,73 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetDisplayable
   
 }
 
+
+//----------------------------------------------------------------------------
+
+void vtkMRMLDisplayableHierarchyNode::RemoveChildrenNodes()
+{
+  if (this->GetScene() == NULL)
+    {
+    return;
+    }
+
+  std::vector< vtkMRMLHierarchyNode *> children = this->GetChildrenNodes();
+  for (unsigned int i=0; i<children.size(); i++)
+    {
+    vtkMRMLDisplayableHierarchyNode *child = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
+    if (child)
+      {
+      std::vector< vtkMRMLHierarchyNode *> childChildern = child->GetChildrenNodes();
+      vtkMRMLDisplayableNode *dnode = child->GetDisplayableNode();
+      if (dnode)
+        {
+        this->GetScene()->RemoveNode(dnode);
+        }
+      vtkMRMLDisplayNode *disnode = child->GetDisplayNode();
+      if (disnode)
+        {
+        this->GetScene()->RemoveNode(disnode);
+        }
+      }
+    }
+  this->RemoveHierarchyChildrenNodes();
+
+}
+
+//----------------------------------------------------------------------------
+
+void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
+{
+  if (this->GetScene() == NULL)
+    {
+    return;
+    }
+
+  std::vector< vtkMRMLHierarchyNode *> children = this->GetChildrenNodes();
+  for (unsigned int i=0; i<children.size(); i++)
+    {
+    vtkMRMLDisplayableHierarchyNode *child = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
+    if (child)
+      {
+      child->RemoveAllChildrenNodes();
+
+      std::vector< vtkMRMLHierarchyNode *> childChildern = child->GetChildrenNodes();
+      vtkMRMLDisplayableNode *dnode = child->GetDisplayableNode();
+      if (dnode)
+        {
+        this->GetScene()->RemoveNode(dnode);
+        }
+      vtkMRMLDisplayNode *disnode = child->GetDisplayNode();
+      if (disnode)
+        {
+        this->GetScene()->RemoveNode(disnode);
+        }
+      }
+    }
+  this->RemoveAllHierarchyChildrenNodes();
+
+}
+
 void vtkMRMLDisplayableHierarchyNode::DispalyableHierarchyIsModified(vtkMRMLScene *scene)
 {
   if (scene == NULL)

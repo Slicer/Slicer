@@ -89,11 +89,26 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   std::vector< vtkMRMLHierarchyNode *> GetChildrenNodes();
 //ETX
 
+  /// Returns the number of immediate children in the hierarchy
+  int GetNumberOfChildrenNodes()
+  {
+    return this->GetChildrenNodes().size();
+  }
+
   /// Get n-th child node sorted in the order of their SortingValue
-  vtkMRMLHierarchyNode *GetNthChildNode(unsigned int index);
+  vtkMRMLHierarchyNode *GetNthChildNode(int index);
 
   /// Get index of this node in it's parent based on the value of their SortingValue
   int GetIndexInParent();
+
+  /// Set index of this node in it's parent based on the value of their SortingValue
+  void SetIndexInParent(int index);
+
+  /// Removes immediate children nodes, their children are reparented to this parent node.
+  void RemoveHierarchyChildrenNodes();
+
+  /// Removes all children hierarchy nodes including children of childern, etc.
+  void RemoveAllHierarchyChildrenNodes();
 
   /// 
   /// Node's Sorting Value

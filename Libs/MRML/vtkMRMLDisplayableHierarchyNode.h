@@ -71,7 +71,7 @@ public:
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   /// 
-  /// String ID of the displayable MRML node
+  /// String ID of the corresponding displayable MRML node
   virtual char* GetDisplayableNodeID()
   {
     return GetDisplayableNodeIDReference();
@@ -118,6 +118,16 @@ public:
   /// Get Hierarchy node for a given displayable node
   static vtkMRMLDisplayableHierarchyNode* GetDisplayableHierarchyNode(vtkMRMLScene *scene,
                                                                       const char *displayableNodeID);
+
+
+  /// Removes immediate children nodes, both hierarchy and corresponding displayable/display nodes
+  /// their children are reparented to this parent node.
+  void RemoveChildrenNodes();
+
+  /// Removes all children hierarchy nodes both hierarchy and corresponding displayable/display nodes,
+  /// including children of childern, etc.
+  void RemoveAllChildrenNodes();
+
 
   /// 
   /// alternative method to propagate events generated in Display nodes
