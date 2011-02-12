@@ -34,6 +34,9 @@ set(expected_variables
 if(WITH_DOCUMENTATION)
   list(APPEND expected_variables DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
 endif()
+if(NOT DEFINED CTEST_PARALLEL_LEVEL)
+  set(CTEST_PARALLEL_LEVEL 8)
+endif()
 
 foreach(var ${expected_variables})
   if(NOT DEFINED ${var})
@@ -137,7 +140,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     ctest_test(
       BUILD "${slicer_build_dir}" 
       #INCLUDE_LABEL ${label}
-      PARALLEL_LEVEL 8
+      PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL}
       EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
     # runs only tests that have a LABELS property matching "${label}"
     ctest_submit(PARTS Test)
