@@ -263,7 +263,7 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetNthChildNode(int index)
   std::vector< vtkMRMLHierarchyNode *> childrenNodes = this->GetChildrenNodes();
   if (index < 0 || index > (int)(childrenNodes.size()-1))
     {
-    vtkErrorMacro("vtkMRMLHierarchyNode::GetNthChildNode() index outside the range");
+    vtkErrorMacro("vtkMRMLHierarchyNode::GetNthChildNode() index " << index << " outside the range 0-" << childrenNodes.size()-1 );
     return NULL;
     }
   else
@@ -311,7 +311,7 @@ void vtkMRMLHierarchyNode::SetIndexInParent(int index)
     std::vector< vtkMRMLHierarchyNode *> childrenNodes = pnode->GetChildrenNodes();
     if (index < 0 || index >= (int)childrenNodes.size())
       {
-      vtkErrorMacro("vtkMRMLHierarchyNode::SetIndexInParent() index outside the range");
+      vtkErrorMacro("vtkMRMLHierarchyNode::SetIndexInParent() index " << index << ", outside the range 0-" << childrenNodes.size()-1);
       return;
       }
     double sortValue = childrenNodes[index]->GetSortingValue();
