@@ -178,7 +178,7 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
   if ((this->ParentNodeIDReference && ref && strcmp(ref, this->ParentNodeIDReference)) ||
       (this->ParentNodeIDReference != ref))
     {
-    this->SetSortingValue(MaximumSortingValue+1);
+    this->SetSortingValue(++MaximumSortingValue);
     this->SetParentNodeIDReference(ref);
     this->HierarchyIsModified(this->GetScene());
     }
@@ -319,11 +319,17 @@ void vtkMRMLHierarchyNode::SetIndexInParent(int index)
       {
       sortValue -= 1;
       }
+    else if (index == (int)childrenNodes.size()-1)
+      {
+      sortValue += 1;
+      }
     else
       {
       sortValue = 0.5*(sortValue + childrenNodes[index-1]->GetSortingValue());
       }
+    this->SetSortingValue(sortValue);
     }
+
   return;
 }
 
