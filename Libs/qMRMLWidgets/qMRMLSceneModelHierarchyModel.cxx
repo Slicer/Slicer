@@ -91,7 +91,15 @@ vtkMRMLNode* qMRMLSceneModelHierarchyModel::parentNode(vtkMRMLNode* node)const
   vtkMRMLHierarchyNode* modelHierarchyNode = 0;
   if (modelNode)
     {
-    modelHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(node->GetScene(), node->GetID());
+    vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(node->GetScene(), node->GetID());
+    if (displayableHierarchyNode)
+      {
+      modelHierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(displayableHierarchyNode);
+      if (modelHierarchyNode)
+        {
+        //std::cout << "qMRMLSceneModelHierarchyModel::parentNode: node " << (node->GetName() != NULL ? node->GetName() : node->GetID()) << " is a model node and it has a model hierarchy node " << (modelHierarchyNode->GetName() ? modelHierarchyNode->GetName() : modelHierarchyNode->GetID()) << std::endl;
+        }
+      }
     //Q_ASSERT(modelHierarchyNode);
     }
   else
