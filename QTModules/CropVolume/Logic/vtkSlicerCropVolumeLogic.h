@@ -37,6 +37,7 @@ class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
 class vtkStringArray;
+class vtkMRMLCropVolumeParametersNode;
 
 class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic :
   public vtkSlicerModuleLogic
@@ -141,7 +142,9 @@ protected:
 private:
 
   vtkSlicerCropVolumeLogic(const vtkSlicerCropVolumeLogic&); // Not implemented
-  void operator=(const vtkSlicerCropVolumeLogic&);               // Not implemented
+  void operator=(const vtkSlicerCropVolumeLogic&);               // Not implementedo
+
+  vtkMRMLCropVolumeParametersNode* ParametersNode;
 };
 
 #endif

@@ -1,7 +1,4 @@
 
-# Add subdirectories
-ADD_SUBDIRECTORY(Logic)
-
 # Module name (usually identique to the directory name)
 SET(qt_module_name "CropVolume")
 
@@ -13,6 +10,9 @@ SET(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML
+  ${CMAKE_CURRENT_BINARY_DIR}/MRML
+  ${CMAKE_CURRENT_BINARY_DIR}
   ${Slicer_SOURCE_DIR}/QTModules/Annotation/MRML
   ${Slicer_BINARY_DIR}/QTModules/Annotation
   )
@@ -23,6 +23,8 @@ SET(qt_module_SRCS
   qSlicerCropVolumeModule.h
   qSlicerCropVolumeModuleWidget.cxx
   qSlicerCropVolumeModuleWidget.h
+  MRML/vtkMRMLCropVolumeParametersNode.cxx
+  MRML/vtkMRMLCropVolumeParametersNode.h
   )
 
 # Headers that should run through moc
@@ -46,6 +48,10 @@ SET(qt_module_target_libraries
 SET(qt_module_resources
   Resources/qSlicerCropVolumeModule.qrc
 )
+
+# Add subdirectories
+ADD_SUBDIRECTORY(Logic)
+
 
 slicerMacroBuildQtModule(
   NAME ${qt_module_name}

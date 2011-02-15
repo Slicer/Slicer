@@ -47,6 +47,8 @@
 #include <vtkAssignAttribute.h>
 #include <vtkStringArray.h>
 
+#include <vtkMRMLCropVolumeParametersNode.h>
+
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerCropVolumeLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerCropVolumeLogic);
@@ -55,6 +57,7 @@ vtkStandardNewMacro(vtkSlicerCropVolumeLogic);
 vtkSlicerCropVolumeLogic::vtkSlicerCropVolumeLogic()
 {
   this->ActiveVolumeNode = 0;
+  this->ParametersNode = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -64,6 +67,12 @@ vtkSlicerCropVolumeLogic::~vtkSlicerCropVolumeLogic()
     {
     this->ActiveVolumeNode->Delete();
     this->ActiveVolumeNode = 0;
+    }
+
+  if (this->ParametersNode != 0)
+    {
+    this->ParametersNode->Delete();
+    this->ParametersNode = NULL;
     }
 }
 

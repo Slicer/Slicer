@@ -11,7 +11,11 @@ SET(module_logic_export_directive "VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT")
 
 # Additional directories to include
 SET(module_logic_include_directories
+  ${qt_module_include_directories}
   )
+
+
+MESSAGE("Include dirs: ${qt_module_include_directories}")
 
 # Source files
 SET(module_logic_SRCS
@@ -23,6 +27,7 @@ SET(module_logic_target_libraries
   ${ITK_LIBRARIES}
   )
 
+MESSAGE("Including ${module_logic_include_directories}")
 
 SlicerMacroBuildModuleLogic(
   NAME ${module_logic_name}
