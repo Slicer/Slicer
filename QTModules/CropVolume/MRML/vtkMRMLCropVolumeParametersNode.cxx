@@ -227,6 +227,19 @@ void vtkMRMLCropVolumeParametersNode::SetAndObserveOutputVolumeNodeID(const char
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLCropVolumeParametersNode::SetAndObserveROINodeID(const char *ROINodeID)
+{
+  vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
+
+  if (ROINodeID != NULL)
+  {
+    this->SetROINodeID(ROINodeID);
+    vtkMRMLAnnotationROINode *node = this->GetROINode();
+    vtkSetAndObserveMRMLObjectMacro(this->ROINode, node);
+  }
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkMRMLCropVolumeParametersNode::GetInputVolumeNode()
 {
   if (this->InputVolumeNodeID == NULL)
