@@ -426,7 +426,7 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderPolygons( vtkRenderer *ren,
   else
     {
     // Get the camera position
-    double camPos[4];
+    double camPos[4] = {0., 0., 0., 0.};
     vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
     if (cam)
       {
@@ -1478,8 +1478,8 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::GetLightInformation(
   
   int lightIndex = 0;
   
-  double cameraPosition[3];
-  double cameraFocalPoint[3];
+  double cameraPosition[3] = {0., 0., 0.};
+  double cameraFocalPoint[3] = {0., 0., 0.};
   
   vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
   if (cam)
@@ -1609,8 +1609,8 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::SetupProgramLocalsForShadingFP(
   
   int lightIndex = 0;
   
-  double cameraPosition[3];
-  double cameraFocalPoint[3];
+  double cameraPosition[3] = {0., 0., 0.};
+  double cameraFocalPoint[3] = {0., 0., 0.};
   
   vtkCamera *cam = ren->IsActiveCameraCreated() ? ren->GetActiveCamera() : NULL;
   if (cam)
@@ -1769,7 +1769,7 @@ int  vtkSlicerOpenGLVolumeTextureMapper3D::IsRenderSupported(
     }
   
   if ( this->GetInput()->GetNumberOfScalarComponents() > 1 &&
-       property->GetIndependentComponents() )
+       (!property ||property->GetIndependentComponents()) )
     {
     return 0;
     }

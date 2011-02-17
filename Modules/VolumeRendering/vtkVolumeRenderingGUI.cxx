@@ -742,15 +742,18 @@ void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long ev
   else if(callerObjectNS == this->NS_VolumeProperty && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
   {
     vtkMRMLVolumeRenderingParametersNode* vspNode = this->GetCurrentParametersNode();
+    vtkMRMLNode* newVolumePropertyNode = this->NS_VolumeProperty->GetSelected();
 
     if(vspNode->GetVolumePropertyNodeID() != NULL &&
-          strcmp(this->NS_VolumeProperty->GetSelected()->GetID(), vspNode->GetVolumePropertyNodeID()) == 0)
+       newVolumePropertyNode != NULL &&
+       strcmp(newVolumePropertyNode->GetID(), vspNode->GetVolumePropertyNodeID()) == 0)
     {
       this->ProcessingGUIEvents = 0;
       return;//return if same node
     }
 
-    vspNode->SetAndObserveVolumePropertyNodeID(this->NS_VolumeProperty->GetSelected()->GetID());
+    vspNode->SetAndObserveVolumePropertyNodeID(
+      newVolumePropertyNode ? newVolumePropertyNode->GetID() : "");
 
     if (this->NewVolumePropertyAddedFlag)
     {

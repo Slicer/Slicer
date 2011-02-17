@@ -1523,7 +1523,8 @@ void vtkSlicerVolumeRenderingHelper::SetupGUIFromParametersNode(vtkMRMLVolumeRen
   this->SVP_VolumePropertyWidget->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
 
   this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSet());
-  this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+  this->SVP_VolumePropertyWidget->SetVolumeProperty(
+    vspNode->GetVolumePropertyNode()->GetVolumeProperty() ? vspNode->GetVolumePropertyNode()->GetVolumeProperty() : NULL);
   this->SVP_VolumePropertyWidget->Update();
 
   this->SC_ThresholdOpacity->GetWidget()->SetRange(0, 1);
@@ -1753,13 +1754,14 @@ void vtkSlicerVolumeRenderingHelper::ProcessThreshold(double, double)
     return;
 
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
+  vtkMRMLVolumePropertyNode* vpNode = vspNode ? vspNode->GetVolumePropertyNode() : NULL;
   if (!vspNode->GetUseThreshold())
     return;
 
   vtkImageData *iData = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData();
 
   //Delete all old Mapping Points
-  vtkPiecewiseFunction *opacity = vspNode->GetVolumePropertyNode()->GetVolumeProperty()->GetScalarOpacity();
+  vtkPiecewiseFunction *opacity = vpNode ? vpNode->GetVolumeProperty()->GetScalarOpacity() : NULL;
   opacity->RemoveAllPoints();
 
   double step = (iData->GetScalarRange()[1] - iData->GetScalarRange()[0]) * 0.001;
@@ -1866,9 +1868,10 @@ void vtkSlicerVolumeRenderingHelper::UpdateROI()
 void vtkSlicerVolumeRenderingHelper::UpdateVolumeProperty()
 {
   vtkMRMLVolumeRenderingParametersNode* vspNode = this->Gui->GetCurrentParametersNode();
-
+  vtkMRMLVolumePropertyNode* vpNode = vspNode ? vspNode->GetVolumePropertyNode() : NULL;
+  vtkVolumeProperty* vProperty = vpNode ? vpNode->GetVolumeProperty() : NULL;
   this->SVP_VolumePropertyWidget->SetHistogramSet(this->Gui->GetLogic()->GetHistogramSet());
-  this->SVP_VolumePropertyWidget->SetVolumeProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+  this->SVP_VolumePropertyWidget->SetVolumeProperty(vProperty);
   this->SVP_VolumePropertyWidget->Update();
 }
 
