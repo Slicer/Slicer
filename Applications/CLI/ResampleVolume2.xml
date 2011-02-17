@@ -200,7 +200,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <longflag>--number_of_thread</longflag>
       <description>Number of thread used to compute the output image</description>
       <label>Number Of Thread</label>
-      <default>1</default>
+      <default>0</default>
     </integer>
     <double>
       <name>defaultPixelValue</name>
