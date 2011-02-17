@@ -1264,11 +1264,62 @@ void vtkSlicerFixedPointVolumeRayCastMapper::PerSubVolumeInitialization( vtkRend
 // This is the render method for the subvolume
 void vtkSlicerFixedPointVolumeRayCastMapper::RenderSubVolume()
 {
-    // Set the number of threads to use for ray casting,
-    // then set the execution method and do it.
-    this->Threader->SetSingleMethod( SlicerFixedPointVolumeRayCastMapper_CastRays,
-        (void *)this);
-    this->Threader->SingleMethodExecute();
+  // Make sure the right helper are setup
+  this->InitMapperHelpers();
+  // Set the number of threads to use for ray casting,
+  // then set the execution method and do it.
+  this->Threader->SetSingleMethod( SlicerFixedPointVolumeRayCastMapper_CastRays,
+                                   (void *)this);
+  this->Threader->SingleMethodExecute();
+}
+
+// This makes sure the correct helpers exist
+void vtkSlicerFixedPointVolumeRayCastMapper::InitMapperHelpers()
+{
+  if (this->GetBlendMode() == vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND )
+    {
+    if  (this->GetMIPHelper() == NULL)
+      {
+      this->MIPHelper = vtkSlicerFixedPointVolumeRayCastMIPHelper::New();
+      }
+    }
+  else
+    {
+    if ( this->GetShadingRequired() == 0 )
+      {
+      if ( this->GetGradientOpacityRequired() == 0 )
+        {
+        if (this->GetCompositeHelper() == NULL)
+          {
+          this->CompositeHelper = vtkSlicerFixedPointVolumeRayCastCompositeHelper::New();
+          }
+        }
+      else
+        {
+        if (this->GetCompositeGOHelper() == NULL)
+          {
+          this->CompositeGOHelper = vtkSlicerFixedPointVolumeRayCastCompositeGOHelper::New();
+          }
+        }
+      }
+    else
+      {
+      if ( this->GetGradientOpacityRequired() == 0 )
+        {
+        if (this->GetCompositeShadeHelper() == NULL)
+          {
+          this->CompositeShadeHelper = vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper::New();
+          }
+        }
+      else
+        {
+        if (this->GetCompositeGOShadeHelper() == NULL)
+          {
+          this->CompositeGOShadeHelper = vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper::New();
+          }
+        }
+      }
+    }
 }
 
 // This method displays the image that has been created
@@ -1432,38 +1483,26 @@ VTK_THREAD_RETURN_TYPE SlicerFixedPointVolumeRayCastMapper_CastRays( void *arg )
     vtkSlicerFixedPointVolumeRayCastMapper *me = (vtkSlicerFixedPointVolumeRayCastMapper *)(((vtkMultiThreader::ThreadInfo *)arg)->UserData);
 
     if ( !me )
-    {
-        vtkGenericWarningMacro("Irrecoverable error: no mapper specified");
-        return VTK_THREAD_RETURN_VALUE;
-    }
+      {
+      vtkGenericWarningMacro("Irrecoverable error: no mapper specified");
+      return VTK_THREAD_RETURN_VALUE;
+      }
 
     vtkVolume *vol = me->GetVolume();
     if ( me->GetBlendMode() == vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND )
       {
-      if  (me->GetMIPHelper() == NULL)
-        {
-        me->MIPHelper = vtkSlicerFixedPointVolumeRayCastMIPHelper::New();
-        }
-        me->GetMIPHelper()->GenerateImage( threadID, threadCount, vol, me );
-    }
+      me->GetMIPHelper()->GenerateImage( threadID, threadCount, vol, me );
+      }
     else
-    {
-        if ( me->GetShadingRequired() == 0 )
+      {
+      if ( me->GetShadingRequired() == 0 )
           {
           if ( me->GetGradientOpacityRequired() == 0 )
             {
-            if (me->GetCompositeHelper() == NULL)
-              {
-              me->CompositeHelper = vtkSlicerFixedPointVolumeRayCastCompositeHelper::New();
-              }
             me->GetCompositeHelper()->GenerateImage( threadID, threadCount, vol, me );
             }
           else
             {
-            if (me->GetCompositeGOHelper() == NULL)
-              {
-              me->CompositeGOHelper = vtkSlicerFixedPointVolumeRayCastCompositeGOHelper::New();
-              }
             me->GetCompositeGOHelper()->GenerateImage( threadID, threadCount, vol, me );
             }
         }
@@ -1471,18 +1510,10 @@ VTK_THREAD_RETURN_TYPE SlicerFixedPointVolumeRayCastMapper_CastRays( void *arg )
           {
           if ( me->GetGradientOpacityRequired() == 0 )
             {
-            if (me->GetCompositeShadeHelper() == NULL)
-              {
-              me->CompositeShadeHelper = vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper::New();
-              }
             me->GetCompositeShadeHelper()->GenerateImage( threadID, threadCount, vol, me );
             }
           else
             {
-            if (me->GetCompositeGOShadeHelper() == NULL)
-              {
-              me->CompositeGOShadeHelper = vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper::New();
-              }
             me->GetCompositeGOShadeHelper()->GenerateImage( threadID, threadCount, vol, me );
             }
         }

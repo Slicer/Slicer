@@ -441,6 +441,7 @@ protected:
   void            UpdateMinMaxVolume( vtkVolume *vol );
   void            FillInMaxGradientMagnitudes( int fullDim[3],
                                                int smallDim[3] );
+  void            InitMapperHelpers();
 
 private:
   vtkSlicerFixedPointVolumeRayCastMapper(const vtkSlicerFixedPointVolumeRayCastMapper&);  // Not implemented.
