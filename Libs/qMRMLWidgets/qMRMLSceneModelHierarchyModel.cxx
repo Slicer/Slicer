@@ -86,7 +86,6 @@ Qt::DropActions qMRMLSceneModelHierarchyModel::supportedDropActions()const
 //------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneModelHierarchyModel::parentNode(vtkMRMLNode* node)const
 {
-  Q_D(const qMRMLSceneModelHierarchyModel);
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
   vtkMRMLHierarchyNode* modelHierarchyNode = 0;
   if (modelNode)
@@ -112,7 +111,6 @@ vtkMRMLNode* qMRMLSceneModelHierarchyModel::parentNode(vtkMRMLNode* node)const
 //------------------------------------------------------------------------------
 int qMRMLSceneModelHierarchyModel::nodeIndex(vtkMRMLNode* node)const
 {
-  Q_D(const qMRMLSceneModelHierarchyModel);
   const char* nodeId = node ? node->GetID() : 0;
   if (nodeId == 0)
     {
