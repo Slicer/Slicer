@@ -26,7 +26,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_LOGIC_EXPORT vtkMRMLVolumeRenderingDisp
 {
 public:
   static vtkMRMLVolumeRenderingDisplayableManager *New();
-  vtkTypeMacro(vtkMRMLVolumeRenderingDisplayableManager,vtkSlicerModuleLogic);
+  vtkTypeRevisionMacro(vtkMRMLVolumeRenderingDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // TODO: do we need to observe MRML here?

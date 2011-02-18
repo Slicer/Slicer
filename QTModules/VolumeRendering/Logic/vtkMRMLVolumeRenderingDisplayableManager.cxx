@@ -40,10 +40,19 @@
 
 #include <cmath>
 
+// Convenient macro
+#define VTK_CREATE(type, name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
+//---------------------------------------------------------------------------
+vtkStandardNewMacro (vtkMRMLVolumeRenderingDisplayableManager);
+vtkCxxRevisionMacro (vtkMRMLVolumeRenderingDisplayableManager, "$Revision: 1.0 $");
+
+
 bool vtkMRMLVolumeRenderingDisplayableManager::First = true;
 
 
-vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager(void)
+vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager()
 {
   //create instances of mappers
   this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
@@ -67,7 +76,7 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
   //this->VolumePropertyGPURaycast3 = NULL;
 }
 
-vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableManager(void)
+vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableManager()
 {
   //delete instances
   if (this->MapperTexture)
@@ -132,18 +141,6 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
   //  this->VolumePropertyGPURaycast3->Delete();
   //  this->VolumePropertyGPURaycast3 = NULL;
   //}
-}
-
-vtkMRMLVolumeRenderingDisplayableManager* vtkMRMLVolumeRenderingDisplayableManager::New()
-{
- // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingDisplayableManager");
-  if(ret)
-    {
-      return (vtkMRMLVolumeRenderingDisplayableManager*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeRenderingDisplayableManager;
 }
 
 void vtkMRMLVolumeRenderingDisplayableManager::PrintSelf(std::ostream &os, vtkIndent indent)

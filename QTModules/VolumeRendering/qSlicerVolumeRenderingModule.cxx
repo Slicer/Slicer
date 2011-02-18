@@ -66,7 +66,7 @@ void qSlicerVolumeRenderingModule::setup()
 {
   this->Superclass::setup();
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->
-    RegisterDisplayableManager("vtkMRMLVolumeRendererDisplayableManager");
+    RegisterDisplayableManager("vtkMRMLVolumeRenderingDisplayableManager");
 }
 
 //-----------------------------------------------------------------------------
