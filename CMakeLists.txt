@@ -205,6 +205,7 @@ SET(Slicer_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL
 IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
   SlicerFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
+  SlicerFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
   
   slicerFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
   # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
