@@ -35,12 +35,16 @@ public:
 
   ///
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
+
   virtual int          nodeIndex(vtkMRMLNode* node)const;
-  /// fast function that only check the type of the node to know if it can be a child.
+
+  /// Fast function that only check the type of the node to know if it can be a child.
   virtual bool         canBeAChild(vtkMRMLNode* node)const;
-  /// fast function that only check the type of the node to know if it can be a parent.
+  
+  /// Fast function that only check the type of the node to know if it can be a parent.
   virtual bool         canBeAParent(vtkMRMLNode* node)const;
-  /// if newParent == 0, set the node into the vtkMRMLScene
+
+  /// If newParent == 0, set the node into the vtkMRMLScene
   virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
 
   virtual Qt::DropActions supportedDropActions()const;
