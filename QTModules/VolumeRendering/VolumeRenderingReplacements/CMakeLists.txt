@@ -66,6 +66,7 @@ SET(module_replacements_SRCS
 
 # Additional Target libraries
 SET(module_replacements_target_libraries
+  vtkVolumeRendering
   ${VTK_LIBRARIES}
   )
 

@@ -21,14 +21,14 @@ SET(module_logic_include_directories
 SET(module_logic_SRCS
   vtkSlicerVolumeRenderingLogic.cxx
   vtkMRMLVolumeRenderingDisplayableManager.cxx
+  vtkSlicerVolumeRenderingLogic.h
+  vtkMRMLVolumeRenderingDisplayableManager.h
   )
 
 # Additional Target libraries
 SET(module_logic_target_libraries
   VolumeRenderingMRML
   VolumeRenderingReplacements
-  vtkSlicerVolumeRenderingLogic.h
-  vtkMRMLVolumeRenderingDisplayableManager.h
   )
 
 

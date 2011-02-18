@@ -41,8 +41,8 @@ SET(qt_module_UI_SRCS
 # Additional Target libraries
 SET(qt_module_target_libraries
   VolumeRenderingLogic
-  VolumRenderingMRML
-  VolumRenderingReplacements
+  VolumeRenderingMRML
+  VolumeRenderingReplacements
   )
 
 # Resources
