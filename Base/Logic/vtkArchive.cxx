@@ -209,7 +209,7 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract)
       }
     else if(!extract)
       {
-      printf( archive_entry_pathname(entry));
+      printf("a: %s", archive_entry_pathname(entry));
       }
     if(extract)
       {
