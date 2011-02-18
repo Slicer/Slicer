@@ -221,15 +221,14 @@ INSTALL(TARGETS ${lib_name}
 
 IF(MRMLDisplayableManager_USE_PYTHON AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
-  SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES})
+  SET(KIT_PYTHON_LIBRARIES ${VTK_LIBRARIES} MRMLLogic)
 
   INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
   VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${KIT_SRCS}")
   ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
   ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
   
-  TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
-  TARGET_LINK_LIBRARIES(${lib_name}PythonD MRMLLogicPythonD)
+  TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name} ${PYTHON_LIBRARIES})
   
   FOREACH(c ${KIT_PYTHON_LIBRARIES})
     TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD)
