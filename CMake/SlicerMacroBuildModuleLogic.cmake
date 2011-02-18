@@ -144,13 +144,21 @@ MACRO(SlicerMacroBuildModuleLogic)
 
   IF(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
+    # TODO: A parameter named 'WRAPPED_TARGET_LIBRARIES'
+    # should be added to the macro.
+    # VTK wrapped libraries
+    SET(VTK_WRAPPED_LIBRARIES
+      vtkVolumeRendering
+      )
+
     # TODO: Slicer's Use file should export this list automatically
     # (currently the wrapped and non-wrapped libs are mixed together)
     # See "HACK" above
-    set (Slicer_Wrapped_LIBRARIES 
+    SET(Slicer_Wrapped_LIBRARIES
       vtkTeem vtkITK FreeSurfer MRML MRMLCLI MRMLLogic MRMLDisplayableManager
-      RemoteIO SlicerBaseLogic 
-    )
+      RemoteIO SlicerBaseLogic
+      )
+    LIST(APPEND Slicer_Wrapped_LIBRARIES ${VTK_WRAPPED_LIBRARIES})
 
     INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
     VTK_WRAP_PYTHON3(${lib_name}Python PYTHON_SRCS "${MODULELOGIC_SRCS}")
