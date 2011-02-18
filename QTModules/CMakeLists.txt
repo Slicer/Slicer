@@ -45,7 +45,7 @@ SET(qtmodules
   EMSegment
   #Measurements
   Models
-  FiberBundles
+  #FiberBundles
   SceneViews  
   SlicerWelcome
   TractographyDisplay
