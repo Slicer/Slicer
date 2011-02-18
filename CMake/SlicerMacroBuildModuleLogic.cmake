@@ -157,7 +157,7 @@ MACRO(SlicerMacroBuildModuleLogic)
     ADD_LIBRARY(${lib_name}PythonD ${PYTHON_SRCS})
     ADD_LIBRARY(${lib_name}Python MODULE ${lib_name}PythonInit.cxx)
     
-    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name})
+    TARGET_LINK_LIBRARIES(${lib_name}PythonD ${lib_name} ${PYTHON_LIBRARIES})
     
     FOREACH(c ${Slicer_Wrapped_LIBRARIES})
       TARGET_LINK_LIBRARIES(${lib_name}PythonD ${c}PythonD ${c})
