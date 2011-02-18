@@ -18,11 +18,27 @@ SET(module_logic_include_directories
   )
 
 # Source files
-SET(module_logic_SRCS
-  vtkSlicerVolumeRenderingLogic.cxx
+SET(module_displayable_manager_SRCS
   vtkMRMLVolumeRenderingDisplayableManager.cxx
-  vtkSlicerVolumeRenderingLogic.h
   vtkMRMLVolumeRenderingDisplayableManager.h
+  )
+
+# Create the instantiator for DisplayableManager classes.
+SET(VTK_USE_INSTANTIATOR_NEW 1)
+VTK_MAKE_INSTANTIATOR3("${module_logic_name}Instantiator"
+  module_displayable_manager_instantiator_SRCS
+  "${module_displayable_manager_SRCS}"
+  "${module_logic_export_directive}"
+  ${CMAKE_CURRENT_BINARY_DIR}
+  "VolumeRenderingLogicExport.h"
+  )
+
+# Source files
+SET(module_logic_SRCS
+  ${module_displayable_manager_SRCS}
+  ${module_displayable_manager_instantiator_SRCS}
+  vtkSlicerVolumeRenderingLogic.cxx
+  vtkSlicerVolumeRenderingLogic.h
   )
 
 # Additional Target libraries
