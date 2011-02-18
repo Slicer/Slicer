@@ -64,12 +64,14 @@ SET(module_replacements_SRCS
 
   )
 
-# Additional Target libraries
-SET(module_replacements_target_libraries
+SET(VTK_LIBRARIES
   vtkVolumeRendering
-  ${VTK_LIBRARIES}
   )
 
+# Additional Target libraries
+SET(module_replacements_target_libraries
+  ${VTK_LIBRARIES}
+  )
 
 SlicerMacroBuildModuleLogic(
   NAME ${module_replacements_name}
