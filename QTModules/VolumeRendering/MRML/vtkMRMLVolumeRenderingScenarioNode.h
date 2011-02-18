@@ -24,15 +24,14 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLROINode.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
 #include "vtkMRMLVolumePropertyNode.h"
 
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingMRMLExport.h"
 
 
 #include "vtkMatrix4x4.h"
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingScenarioNode : public vtkMRMLNode
+class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingScenarioNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLVolumeRenderingScenarioNode *New();

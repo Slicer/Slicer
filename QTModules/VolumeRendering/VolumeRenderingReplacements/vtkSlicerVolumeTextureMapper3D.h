@@ -68,7 +68,7 @@
 #define __vtkSlicerVolumeTextureMapper3D_h
 
 #include "vtkVolumeMapper.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingReplacementsExport.h"
 
 
 class vtkImageData;
@@ -77,7 +77,7 @@ class vtkPiecewiseFunction;
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerVolumeTextureMapper3D : public vtkVolumeMapper
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerVolumeTextureMapper3D : public vtkVolumeMapper
 {
 public:
   vtkTypeRevisionMacro(vtkSlicerVolumeTextureMapper3D,vtkVolumeMapper);

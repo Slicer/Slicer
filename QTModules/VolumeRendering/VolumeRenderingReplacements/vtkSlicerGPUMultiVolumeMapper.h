@@ -39,7 +39,7 @@
 #define __vtkSlicerGPUMultiVolumeMapper_h
 
 #include "vtkVolumeMapper.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingReplacementsExport.h"
 
 
 class vtkMultiThreader;
@@ -56,7 +56,7 @@ typedef struct{
     unsigned char *volume;
 }GPUGradientsArgsType;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerGPUMultiVolumeMapper : public vtkVolumeMapper
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPUMultiVolumeMapper : public vtkVolumeMapper
 {
 public:
   vtkTypeRevisionMacro(vtkSlicerGPUMultiVolumeMapper,vtkVolumeMapper);

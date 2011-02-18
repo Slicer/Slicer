@@ -28,7 +28,7 @@
 #define __vtkSlicerGPURayCastMultiVolumeMapper_h
 
 #include "vtkSlicerGPUMultiVolumeMapper.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingReplacementsExport.h"
 
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
@@ -39,7 +39,7 @@ class vtkMatrix4x4;
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerGPURayCastMultiVolumeMapper : public vtkSlicerGPUMultiVolumeMapper
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPURayCastMultiVolumeMapper : public vtkSlicerGPUMultiVolumeMapper
 {
 public:
   vtkTypeRevisionMacro(vtkSlicerGPURayCastMultiVolumeMapper,vtkSlicerGPUMultiVolumeMapper);

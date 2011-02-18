@@ -47,8 +47,8 @@
 #include <vtkAssignAttribute.h>
 #include <vtkStringArray.h>
 
-#include "MRML/vtkMRMLVolumeRenderingScenarioNode.h"
-#include "MRML/vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingScenarioNode.h"
+#include "vtkMRMLVolumeRenderingParametersNode.h"
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerVolumeRenderingLogic, "$Revision: 1.9.12.1 $");

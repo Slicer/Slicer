@@ -25,7 +25,7 @@
 #define __vtkSlicerOpenGLVolumeTextureMapper3D_h
 
 #include "vtkSlicerVolumeTextureMapper3D.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingReplacementsExport.h"
 
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
@@ -36,7 +36,7 @@
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerOpenGLVolumeTextureMapper3D : public vtkSlicerVolumeTextureMapper3D
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerOpenGLVolumeTextureMapper3D : public vtkSlicerVolumeTextureMapper3D
 {
 public:
   vtkTypeRevisionMacro(vtkSlicerOpenGLVolumeTextureMapper3D,vtkSlicerVolumeTextureMapper3D);

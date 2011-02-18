@@ -19,10 +19,10 @@
 #define __vtkSlicerVolumeRenderingFactory_h
 
 #include "vtkObject.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingReplacementsExport.h"
 
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerVolumeRenderingFactory : public vtkObject
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerVolumeRenderingFactory : public vtkObject
 {
 public:
   static vtkSlicerVolumeRenderingFactory *New();

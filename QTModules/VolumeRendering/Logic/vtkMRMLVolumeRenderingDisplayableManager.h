@@ -2,14 +2,14 @@
 #define __vtkMRMLVolumeRenderingDisplayableManager_h
 
 #include "vtkSlicerModuleLogic.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingLogicExport.h"
 #include "vtkVolumeMapper.h"
 #include "vtkVolume.h"
 
 #include <vtkMRMLAbstractDisplayableManager.h>
 
-#include "MRML/vtkMRMLVolumeRenderingParametersNode.h"
-#include "MRML/vtkMRMLVolumeRenderingScenarioNode.h"
+#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingScenarioNode.h"
 
 class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerFixedPointVolumeRayCastMapper;
@@ -21,7 +21,7 @@ class vtkTimerLog;
 class vtkMatrix4x4;
 class vtkPlanes;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingDisplayableManager  :
+class Q_SLICER_QTMODULES_VOLUMERENDERING_LOGIC_EXPORT vtkMRMLVolumeRenderingDisplayableManager  :
   public vtkMRMLAbstractDisplayableManager
 {
 public:

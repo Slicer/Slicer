@@ -54,7 +54,7 @@
 #define __vtkSlicerFixedPointVolumeRayCastMapper_h
 
 #include "vtkVolumeMapper.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingReplacementsExport.h"
 
 
 #define VTKKW_FP_SHIFT       15
@@ -86,7 +86,7 @@ class vtkSlicerFixedPointRayCastImage;
 // Forward declaration needed for use by friend declaration below.
 VTK_THREAD_RETURN_TYPE SlicerFixedPointVolumeRayCastMapper_CastRays( void *arg );
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerFixedPointVolumeRayCastMapper : public vtkVolumeMapper
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerFixedPointVolumeRayCastMapper : public vtkVolumeMapper
 {
 public:
   //SLICERADD

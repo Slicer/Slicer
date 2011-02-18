@@ -1,4 +1,4 @@
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingLogicExport.h"
 
 #include "vtkObjectFactory.h"
 #include "vtkObject.h"
@@ -17,8 +17,8 @@
 #include <itksys/SystemTools.hxx> 
 #include <itksys/Directory.hxx> 
 
-#include "MRML/vtkMRMLVolumeRenderingParametersNode.h"
-#include "MRML/vtkMRMLVolumeRenderingScenarioNode.h"
+#include "vtkMRMLVolumeRenderingParametersNode.h"
+#include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLVolumePropertyNode.h"
@@ -28,10 +28,10 @@
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 
 // Slicer includes
-#include "VolumeRenderingReplacements/vtkSlicerVolumeTextureMapper3D.h"
-#include "VolumeRenderingReplacements/vtkSlicerFixedPointVolumeRayCastMapper.h"
-#include "VolumeRenderingReplacements/vtkSlicerGPURayCastVolumeMapper.h"
-#include "VolumeRenderingReplacements/vtkSlicerGPURayCastMultiVolumeMapper.h"
+#include "vtkSlicerVolumeTextureMapper3D.h"
+#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
+#include "vtkSlicerGPURayCastVolumeMapper.h"
+#include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 #include "vtkImageGradientMagnitude.h"
 
 #include "vtkMRMLSliceLogic.h"

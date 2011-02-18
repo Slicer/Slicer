@@ -1,4 +1,4 @@
-project(vtkSlicerVolumeRenderingModuleLogic)
+project(VolumeRenderingLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
@@ -7,20 +7,28 @@ project(vtkSlicerVolumeRenderingModuleLogic)
 SET(module_logic_name "${PROJECT_NAME}")
 
 # The header '${PROJECT_NAME}Export.h' will be automatically configured.
-SET(module_logic_export_directive "VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC_EXPORT")
+SET(module_logic_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_LOGIC_EXPORT")
 
 # Additional directories to include
 SET(module_logic_include_directories
+  ${VolumeRenderingMRML_SOURCE_DIR}
+  ${VolumeRenderingMRML_BINARY_DIR}
+  ${VolumeRenderingReplacements_SOURCE_DIR}
+  ${VolumeRenderingReplacements_BINARY_DIR}
   )
 
 # Source files
 SET(module_logic_SRCS
   vtkSlicerVolumeRenderingLogic.cxx
+  vtkMRMLVolumeRenderingDisplayableManager.cxx
   )
 
 # Additional Target libraries
 SET(module_logic_target_libraries
-  ${ITK_LIBRARIES}
+  VolumeRenderingMRML
+  VolumeRenderingReplacements
+  vtkSlicerVolumeRenderingLogic.h
+  vtkMRMLVolumeRenderingDisplayableManager.h
   )
 
 

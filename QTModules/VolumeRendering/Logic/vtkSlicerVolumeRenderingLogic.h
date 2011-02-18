@@ -31,14 +31,14 @@
 // STD includes
 #include <cstdlib>
 
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingLogicExport.h"
 
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
 class vtkStringArray;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerVolumeRenderingLogic :
+class Q_SLICER_QTMODULES_VOLUMERENDERING_LOGIC_EXPORT vtkSlicerVolumeRenderingLogic :
   public vtkSlicerModuleLogic
 {
 public:

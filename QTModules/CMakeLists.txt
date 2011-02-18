@@ -45,12 +45,14 @@ SET(qtmodules
   EMSegment
   #Measurements
   Models
+  FiberBundles
   SceneViews  
   SlicerWelcome
   TractographyDisplay
   TractographyFiducialSeeding
   Volumes
   CropVolume
+  VolumeRendering
   )
 
 FOREACH(module ${qtmodules})

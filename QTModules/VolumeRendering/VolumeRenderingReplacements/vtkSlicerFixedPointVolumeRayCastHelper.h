@@ -1289,13 +1289,13 @@
 //ETX
 
 #include "vtkObject.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "VolumeRenderingReplacementsExport.h"
 
 
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkVolume;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkSlicerFixedPointVolumeRayCastHelper : public vtkObject
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerFixedPointVolumeRayCastHelper : public vtkObject
 {
 public:
   static vtkSlicerFixedPointVolumeRayCastHelper *New();
