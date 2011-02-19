@@ -70,7 +70,11 @@ class BSplineImageRegistrationViewer
   
       if(++m_Iteration % m_UpdateInterval == 0)
         {
+#if ITK_VERSION_MAJOR < 4
         RealTimeClock::TimeStampType t = m_Clock->GetTimeStamp();
+#else
+        RealTimeClock::TimeStampType t = m_Clock->GetTimeInSeconds();
+#endif
         if(!m_DontShowParameters)
           {
           std::cout << "   " << m_Iteration << " : " 
@@ -107,7 +111,11 @@ class BSplineImageRegistrationViewer
     BSplineImageRegistrationViewer() 
       { 
       m_Clock = RealTimeClock::New();
+#if ITK_VERSION_MAJOR < 4
       m_LastTime = m_Clock->GetTimeStamp();
+#else
+      m_LastTime = m_Clock->GetTimeInSeconds();
+#endif
       m_Iteration = 0;
       m_UpdateInterval = 1;
       m_DontShowParameters = false; 

@@ -699,12 +699,21 @@ RegisterImagesInternal3()
     itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
     std::cerr << "   Iteration         Image Match" 
               << std::endl;
+#if ITK_VERSION_MAJOR < 4
     double timeStart = clock->GetTimeStamp();
+#else
+    itk::RealTimeClock::TimeStampType timeStart = clock->GetTimeInSeconds();
+#endif    
 
     multiResRegistration->StartRegistration();
     
+#if ITK_VERSION_MAJOR < 4
     double timeStop = clock->GetTimeStamp();
     double timeLength = (timeStop - timeStart);
+#else
+    itk::RealTimeClock::TimeStampType timeStop = clock->GetTimeInSeconds();
+    itk::RealTimeClock::TimeStampType timeLength = (timeStop - timeStart);
+#endif
     std::cerr << "  DONE, time = " << timeLength << std::endl;
     }
   catch( itk::ExceptionObject & err )
