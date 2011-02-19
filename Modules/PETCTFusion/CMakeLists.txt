@@ -104,7 +104,7 @@ target_link_libraries(${lib_name}
   ${Slicer_Libs_LIBRARIES}
   ${Slicer_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
-  ITKIO
+  ${ITK_LIBRARIES}
   )
 
 slicer3_install_modules(${lib_name})
