@@ -10,7 +10,7 @@ endif (WIN32)
 ### All test have been pushed to this sub-directory to keep the primary build clean.
 
 add_executable( BRAINSResampleTest  ${BRAINSResample_SOURCE_DIR}/BRAINSResamplePrimary.cxx BRAINSResampleTest.cxx  )
-target_link_libraries(BRAINSResampleTest BRAINSCommonLib ITKAlgorithms ITKIO)
+target_link_libraries(BRAINSResampleTest BRAINSCommonLib ${ITK_LIBRARIES})
 set_target_properties(BRAINSResampleTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_dependencies(BRAINSResampleTest BRAINSResample)
 

@@ -11,7 +11,7 @@ set(CLP SFLSRobustStat3DTest)
 slicerMacroBuildCLI(
   NAME ${CLP}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKCommon ITKBasicFilters ITKIO itkvnl
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   ADDITIONAL_SRCS
     SFLSRobustStat3DTest.cxx
     SFLSRobustStat3DTestConsole.cxx 
@@ -30,7 +30,7 @@ slicerMacroBuildCLI(
 if(BUILD_TESTING)
 
   add_executable( SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
-  target_link_libraries( SFLSRobustStat3DTestConsole ITKCommon ITKBasicFilters ITKIO itkvnl)
+  target_link_libraries( SFLSRobustStat3DTestConsole ${ITK_LIBRARIES})
   SET_TARGET_PROPERTIES(SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP})
   
   set(Slicer_EXE ${Slicer_BINARY_DIR}/Slicer3 )

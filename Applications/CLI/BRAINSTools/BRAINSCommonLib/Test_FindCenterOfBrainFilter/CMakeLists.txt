@@ -26,16 +26,12 @@ generateclp(FindCenterOfBrain_SRC FindCenterOfBrain.xml)
 
 ADD_EXECUTABLE(FindCenterOfBrain ${FindCenterOfBrain_SRC})
 TARGET_LINK_LIBRARIES(FindCenterOfBrain
-  ITKAlgorithms
-  ITKStatistics
-  ITKIO
-  ITKBasicFilters
-  ITKCommon
-  ITKNumerics)
+  ${ITK_LIBRARIES}
+)
 
 IF(NOT BRAINS_BUILD)
   ADD_EXECUTABLE(ImageCompare ImageCompare.cxx)
-  TARGET_LINK_LIBRARIES(ImageCompare  ITKIO ITKNumerics ITKStatistics)
+  TARGET_LINK_LIBRARIES(ImageCompare  ${ITK_LIBRARIES})
 ENDIF(NOT BRAINS_BUILD)
 
 set(FINDCENTER_PROG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/FindCenterOfBrain)

@@ -52,10 +52,7 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   vtkIOTCL
   vtkWidgets
   vtkRendering
-  ITKCommon
-  ITKBasicFilters
-  ITKIO
-  ITKAlgorithms
+  ${ITK_LIBRARIES}
   )
 
 # Apply user-defined properties to the library target.

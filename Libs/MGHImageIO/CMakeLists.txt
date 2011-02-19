@@ -82,7 +82,7 @@ add_library(${lib_name}
   )
 
 target_link_libraries(${lib_name} 
-  ITKIO 
+  ${ITK_LIBRARIES}
 )
 
 IF(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)

@@ -170,10 +170,7 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   mimxFilter
   mimxCommon
   mimxMeshIO
-  ITKCommon
-  ITKBasicFilters
-  ITKIO
-  ITKAlgorithms
+  ${ITK_LIBRARIES}
   )
 
 if(CMAKE_SYSTEM MATCHES "SunOS.*")

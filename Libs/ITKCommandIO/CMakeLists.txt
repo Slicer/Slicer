@@ -93,7 +93,7 @@ add_library(${lib_name}
   ${ITKCOMMANDIO_SRCS}
   )
 target_link_libraries(${lib_name} 
-  ITKIO
+  ${ITK_LIBRARIES}
   )
 
 install(TARGETS ${lib_name}  
@@ -126,12 +126,7 @@ set_target_properties(CommandIOPlugin
   )
 target_link_libraries(CommandIOPlugin 
   ${lib_name}  
-  ITKAlgorithms
-  ITKNumerics 
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
+  ${ITK_LIBRARIES}
   slicerio 
   ITKNrrdIO
 )

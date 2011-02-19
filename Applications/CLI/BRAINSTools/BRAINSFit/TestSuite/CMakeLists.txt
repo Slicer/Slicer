@@ -6,7 +6,7 @@ endif (WIN32)
 configure_file(${BRAINSFit_SOURCE_DIR}/CTestCustom.ctest ${BRAINSFit_BINARY_DIR}/CTestCustom.ctest COPYONLY)
 
 add_executable(BRAINSFitTest BRAINSFitTest.cxx ${BRAINSFit_SOURCE_DIR}/BRAINSFitPrimary.cxx)
-target_link_libraries(BRAINSFitTest BRAINSCommonLib ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+target_link_libraries(BRAINSFitTest BRAINSCommonLib ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 set_target_properties(BRAINSFitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
 add_dependencies(BRAINSFitTest BRAINSFit)
 
@@ -15,13 +15,13 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
   # from test.nii.gz
   if(MakeMakeXfrmImage)
     add_executable(makexfrmedImage makexfrmedImage.cxx)
-    target_link_libraries(makexfrmedImage ITKIO)
+    target_link_libraries(makexfrmedImage ${ITK_LIBRARIES})
   endif(MakeMakeXfrmImage)
 
   if(BRAINSFitTestDriver)
     # The test driver is only needed to help generate new testcases
     add_executable(BRAINSFitTestDriver BRAINSFitTestDriver.cxx)
-    target_link_libraries(BRAINSFitTestDriver ITKAlgorithms ITKIO ITKBasicFilters ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
+    target_link_libraries(BRAINSFitTestDriver ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES} )
     set_target_properties(BRAINSFitTestDriver PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSFit_BINARY_DIR})
   endif()
 endif(COMPILE_TEST_GENERATION_PROGRAMS)

@@ -29,13 +29,13 @@ endif()
 slicerMacroBuildCLI(
   NAME DiffusionTensorTest
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKStatistics ITKIO
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 #slicerMacroBuildCLI(
 #  NAME DiffusionWeightedTest
 #  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-#  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters)
+#  TARGET_LIBRARIES ${ITK_LIBRARIES})
 #  )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
@@ -71,67 +71,67 @@ slicerMacroBuildCLI(
 slicerMacroBuildCLI(
   NAME OrientImage
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME LinearRegistration
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME RigidRegistration
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME AffineRegistration
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME BSplineDeformableRegistration
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME TestGridTransformRegistration
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKStatistics ITKIO ITKBasicFilters ITKNumerics
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME CheckerBoard
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME ResampleVolume
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME PolyDataToLabelmap
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKIO vtkIO vtkGraphics ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES} vtkIO vtkGraphics ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME GaussianBlurImageFilter
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES} ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME ConfidenceConnected
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
@@ -143,25 +143,25 @@ slicerMacroBuildCLI(
 slicerMacroBuildCLI(
   NAME ImageReadDicomWrite
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME CurvatureAnisotropicDiffusion
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME GradientAnisotropicDiffusion
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME MedianImageFilter
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 
 if( "${ITK_VERSION_MAJOR}" LESS 4 )
@@ -175,72 +175,72 @@ endif( "${ITK_VERSION_MAJOR}" LESS 4 )
 # generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h)
 # add_executable(${CLP} ${${CLP}_SOURCE})
 # slicer3_set_plugins_output_path(${CLP})
-# target_link_libraries (${CLP} ITKIO ITKBasicFilters)
+# target_link_libraries (${CLP} ${ITK_LIBRARIES})
 
 # add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 # slicer3_set_plugins_output_path(${CLP}Lib)
 # set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-# target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+# target_link_libraries (${CLP}Lib ${ITK_LIBRARIES})
 
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME HistogramMatching
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters ITKStatistics
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME OtsuThresholdImageFilter
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME OtsuThresholdSegmentation
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME Subtract
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME Multiply
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME Add
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME Threshold
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME Mask
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME Cast
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME VotingBinaryHoleFillingImageFilter
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 # TODO: Remove SlicerBaseLogic once pass in color node information
@@ -284,25 +284,25 @@ slicerMacroBuildCLI(
 slicerMacroBuildCLI(
   NAME GrayscaleFillHoleImageFilter
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME GrayscaleGrindPeakImageFilter
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME LabelMapSmoothing
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKAlgorithms ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
   NAME ImageLabelCombine
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
@@ -320,7 +320,7 @@ slicerMacroBuildCLI(
 slicerMacroBuildCLI(
   NAME ResampleVolume2
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKIO ITKBasicFilters ITKAlgorithms
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   ADDITIONAL_SRCS
     DiffusionApplications/ResampleDTI/itkWarpTransform3D.h
     DiffusionApplications/ResampleDTI/itkWarpTransform3D.txx
@@ -337,14 +337,14 @@ slicerMacroBuildCLI(
 #slicerMacroBuildCLI(
 #  NAME ZeroCrossingBasedEdgeDetectionImageFilter
 #  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-#  TARGET_LIBRARIES ITKIO ITKBasicFilters
+#  TARGET_LIBRARIES ${ITK_LIBRARIES}
 #  )
 #-----------------------------------------------------------------------------
 # culled from Slicer 3.6 release
 #slicerMacroBuildCLI(
 #  NAME FreesurferSurfaceSectionExtraction
 #  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-#  TARGET_LIBRARIES ITKIO ITKBasicFilters
+#  TARGET_LIBRARIES ${ITK_LIBRARIES}
 #  )
 ###################
 

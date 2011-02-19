@@ -30,7 +30,7 @@ endif (WIN32)
 slicerMacroBuildCLI(
   NAME ${PROJECT_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/MIT_NAMIC_Logo.h
-  TARGET_LIBRARIES ITKIO ITKNumerics ITKStatistics ITKBasicFilters vtkIO vtkImaging
+  TARGET_LIBRARIES ${ITK_LIBRARIES} vtkIO vtkImaging
   )
 
 #-----------------------------------------------------------------------------
@@ -46,9 +46,7 @@ if (BUILD_TESTING)
   
   #add_executable(ImageCompare ImageCompare.cxx) 
   #target_link_libraries(ImageCompare
-  #  ITKIO
-  #  ITKNumerics
-  #  ITKStatistics
+  #  ${ITK_LIBRARIES}
   #  )
   #SET_TARGET_PROPERTIES(ImageCompare PROPERTIES LABELS ${CLP})
 

@@ -33,14 +33,14 @@ include_directories( ${MimxMeshing_SOURCE_DIR}/Filter
 #  add_executable(vtkRebinMaterialPropertyTest vtkRebinMaterialPropertyTest.cxx)
 #  target_link_libraries(vtkRebinMaterialPropertyTest mimxFilter
 #    vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon 
-#    ITKIO ITKBasicFilters ITKCommon itkvnl_algo itkvnl)
+#    ${ITK_LIBRARIES})
 #  add_test(vtkRebinMaterialPropertyTest ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/vtkRebinMaterialPropertyTest)
 
 
   add_executable(itkImageToVtkUnstructuredGridTest itkImageToVtkUnstructuredGridTest.cxx)
   target_link_libraries(itkImageToVtkUnstructuredGridTest mimxFilter 
     vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon 
-    ITKIO ITKBasicFilters ITKCommon itkvnl_algo itkvnl)
+    ${ITK_LIBRARIES})
   add_test(MimxitkImageToVtkUnstructuredGridTest ${Slicer_EXE} ${WRAPPED_EXE_PREFIX}/itkImageToVtkUnstructuredGridTest)
 
 

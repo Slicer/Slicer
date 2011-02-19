@@ -268,12 +268,7 @@ SET(VTK_LIBRARIES
 
 SET(libs
   vtkITK
-  ITKAlgorithms
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
+  ${ITK_LIBRARIES}
   FreeSurfer
   )
   

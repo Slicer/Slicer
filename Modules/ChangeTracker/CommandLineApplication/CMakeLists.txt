@@ -70,8 +70,7 @@ add_executable(${CLP_MODULE} ${${CLP_MODULE}_SOURCE})
 target_link_libraries(
   ${CLP_MODULE}
   ChangeTracker
-  ITKIO 
-  ITKCommon 
+  ${ITK_LIBRARIES}
   vtkCommon
   vtkTeem
   )
@@ -87,8 +86,7 @@ set_target_properties (${CLP_MODULE}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleE
 target_link_libraries(
   ${CLP_MODULE}Lib
   ChangeTracker
-  ITKIO 
-  ITKCommon 
+  ${ITK_LIBRARIES}
   vtkCommon
   vtkTeem
   )

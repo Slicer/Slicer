@@ -147,12 +147,7 @@ add_library(${lib_name}
   )
   
 SET(libs
-  ITKAlgorithms
-  ITKNumerics 
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
+  ${ITK_LIBRARIES}
   )
 IF (VTK_WRAP_TCL)
   SET(libs

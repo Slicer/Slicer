@@ -9,7 +9,7 @@
 if(WIN32)
   set(BRAINSWARP_ITK_LIBS "")
 else(WIN32)
-  set(BRAINSWARP_ITK_LIBS ITKAlgorithms ITKIO)
+  set(BRAINSWARP_ITK_LIBS ITKAlgorithms ${ITK_LIBRARIES})
 endif(WIN32)
 
 add_executable( BRAINSDemonWarpCLPTests BRAINSDemonWarpCLPTests.cxx ${BRAINSDemonWarp_SOURCE_DIR}/BRAINSDemonWarpPrimary.cxx)

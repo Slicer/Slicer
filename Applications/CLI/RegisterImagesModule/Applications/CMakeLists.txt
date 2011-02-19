@@ -87,19 +87,19 @@ PROJECT( RegisterImagesModuleApplications )
                         RegisterImages_EXE )
 
     ADD_EXECUTABLE( InitialImageToImageRegistrationMethod InitialImageToImageRegistrationMethod.cxx )
-    TARGET_LINK_LIBRARIES( InitialImageToImageRegistrationMethod ITKStatistics ITKIO ITKNumerics )
+    TARGET_LINK_LIBRARIES( InitialImageToImageRegistrationMethod ${ITK_LIBRARIES} )
     SET_TARGET_PROPERTIES(InitialImageToImageRegistrationMethod PROPERTIES LABELS ${CLP})
  
     ADD_EXECUTABLE( RigidImageToImageRegistrationMethod RigidImageToImageRegistrationMethod.cxx )
-    TARGET_LINK_LIBRARIES( RigidImageToImageRegistrationMethod ITKStatistics ITKIO ITKNumerics )
+    TARGET_LINK_LIBRARIES( RigidImageToImageRegistrationMethod ${ITK_LIBRARIES} )
     SET_TARGET_PROPERTIES(RigidImageToImageRegistrationMethod PROPERTIES LABELS ${CLP})
   
     ADD_EXECUTABLE( AffineImageToImageRegistrationMethod AffineImageToImageRegistrationMethod.cxx )
-    TARGET_LINK_LIBRARIES( AffineImageToImageRegistrationMethod ITKStatistics ITKIO ITKNumerics )
+    TARGET_LINK_LIBRARIES( AffineImageToImageRegistrationMethod ${ITK_LIBRARIES} )
     SET_TARGET_PROPERTIES(AffineImageToImageRegistrationMethod PROPERTIES LABELS ${CLP})
   
     ADD_EXECUTABLE( BSplineImageToImageRegistrationMethod BSplineImageToImageRegistrationMethod.cxx )
-    TARGET_LINK_LIBRARIES( BSplineImageToImageRegistrationMethod ITKStatistics ITKIO ITKNumerics )
+    TARGET_LINK_LIBRARIES( BSplineImageToImageRegistrationMethod ${ITK_LIBRARIES} )
     SET_TARGET_PROPERTIES(BSplineImageToImageRegistrationMethod PROPERTIES LABELS ${CLP})
     
     MOVE_TO_TOP_BINARY( InitialImageToImageRegistrationMethod
@@ -114,7 +114,7 @@ PROJECT( RegisterImagesModuleApplications )
     ADD_LIBRARY( RegisterImagesModuleLogic RegisterImagesModuleLogic.cxx )
     TARGET_LINK_LIBRARIES( RegisterImagesModuleLogic
                            MaverickModule ${ITK_LIBRARIES} SlicerBaseLogic
-                           ITKIO ITKCommon ITKStatistics ITKNumerics )
+                           ${ITK_LIBRARIES} )
     SET_TARGET_PROPERTIES(RegisterImagesModuleLogic PROPERTIES LABELS ${CLP})
     MOVE_TO_TOP_BINARY( RegisterImagesModuleLogic
                         RegisterImagesModuleLogic_LIB )
@@ -138,7 +138,7 @@ PROJECT( RegisterImagesModuleApplications )
       SET( UNC_TEST_BASELINE_DIR "${REGISTER_IMAGES_TEST_DATA_ROOT}/UNCHealthyBrainMRI-RegisterImagesModule" )
   
       ADD_EXECUTABLE( GenerateRegisterImagesTestData GenerateRegisterImagesTestData.cxx )
-      TARGET_LINK_LIBRARIES( GenerateRegisterImagesTestData ITKStatistics ITKIO ITKNumerics )
+      TARGET_LINK_LIBRARIES( GenerateRegisterImagesTestData ${ITK_LIBRARIES} )
       SET_TARGET_PROPERTIES(GenerateRegisterImagesTestData PROPERTIES LABELS ${CLP})
   
       ADD_TEST(GenerateFixedImageTestData

@@ -4,7 +4,7 @@ SET(CLP N4ITKBiasFieldCorrection)
 slicerMacroBuildCLI(
   NAME ${CLP}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ITKIO ITKStatistics ITKNumerics
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
 
 IF(BUILD_TESTING)

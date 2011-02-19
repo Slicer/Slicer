@@ -434,7 +434,7 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 if(SLICER_BRAINWEB_DATA_ROOT)
 
   add_executable(BSplineWarping3DTest BSplineWarping3DTest.cxx)
-  target_link_libraries(BSplineWarping3DTest ITKIO ITKNumerics)
+  target_link_libraries(BSplineWarping3DTest ${ITK_LIBRARIES})
   
   set(testname BSplineWarping3DTest00)
   add_test(${testname} 
@@ -730,7 +730,7 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 # add_executable(${CLP}Test ${CLP}Test.cxx)
 # add_dependencies(${CLP}Test ${CLP})
-# target_link_libraries(${CLP}Test ITKIO)
+# target_link_libraries(${CLP}Test ${ITK_LIBRARIES})
 # SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
@@ -772,7 +772,7 @@ SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 #add_executable(${CLP}Test ${CLP}Test.cxx)
 #add_dependencies(${CLP}Test ${CLP})
-#target_link_libraries(${CLP}Test ITKIO)
+#target_link_libraries(${CLP}Test ${ITK_LIBRARIES})
 #SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
@@ -858,7 +858,7 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
   vtkITK
-  ITKIO
+  ${ITK_LIBRARIES}
   ModuleDescriptionParser
   SlicerBaseCLI
   vtkHybrid
@@ -900,7 +900,7 @@ SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test ITKIO ITKBasicFilters)
+target_link_libraries(${CLP}Test ${ITK_LIBRARIES})
 SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
@@ -1547,7 +1547,7 @@ add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
   vtkIO
-  ITKIO
+  ${ITK_LIBRARIES}
   vtkGraphics
   )
 SET_TARGET_PROPERTIES(${CLP}Test PROPERTIES LABELS ${CLP})

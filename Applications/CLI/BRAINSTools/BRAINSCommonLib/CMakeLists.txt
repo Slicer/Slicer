@@ -52,7 +52,7 @@ include_directories(
 set(BRAINSCommonLib_SRCS GenericTransformImage.cxx BRAINSFitHelper.cxx Slicer3LandmarkIO.cxx)
 
 add_library(BRAINSCommonLib ${BRAINSCommonLib_SRCS})
-target_link_libraries(BRAINSCommonLib ITKAlgorithms ITKIO)
+target_link_libraries(BRAINSCommonLib ${ITK_LIBRARIES})
 
 
 if (Slicer_SOURCE_DIR)

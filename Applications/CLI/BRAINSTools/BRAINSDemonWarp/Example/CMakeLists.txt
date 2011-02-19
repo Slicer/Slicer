@@ -13,11 +13,11 @@ if(BUILD_SHARED_LIBS)
 # CREATE A loadable module for Slicer
 add_library(BRAINSDemonWarpSlicerModule SHARED ${BRAINSDemonWarp_SOURCE})
 set_target_properties(BRAINSDemonWarpSlicerModule PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-target_link_libraries(BRAINSDemonWarpSlicerModule ITKAlgorithms ITKIO ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+target_link_libraries(BRAINSDemonWarpSlicerModule ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 endif(BUILD_SHARED_LIBS)
 
 add_library(BRAINSDemonWarpLIB itkSimpleDiffeomorphicRegistration.cxx)
-target_link_libraries(BRAINSDemonWarpLIB ITKAlgorithms ITKIO ${OPTIONAL_DEBUG_LINK_LIBRARIES})
+target_link_libraries(BRAINSDemonWarpLIB ${ITK_LIBRARIES} ${OPTIONAL_DEBUG_LINK_LIBRARIES})
 install(TARGETS BRAINSDemonWarpLIB
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib

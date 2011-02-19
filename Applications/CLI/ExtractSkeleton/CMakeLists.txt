@@ -16,5 +16,5 @@ slicerMacroBuildCLI(
     coordTypes.h
     misc.h
     misc.cxx
-  TARGET_LIBRARIES ITKIO
+  TARGET_LIBRARIES ${ITK_LIBRARIES}
   )

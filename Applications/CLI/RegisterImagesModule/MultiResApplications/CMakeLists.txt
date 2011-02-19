@@ -37,7 +37,7 @@ PROJECT( RegisterImagesMultiResApplications )
                ${RegisterImagesMultiRes_SOURCE} )
   SET_TARGET_PROPERTIES( RegisterImagesMultiResModule
                          PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
-  TARGET_LINK_LIBRARIES( RegisterImagesMultiResModule ITKAlgorithms ITKIO )
+  TARGET_LINK_LIBRARIES( RegisterImagesMultiResModule ${ITK_LIBRARIES} )
   SET_TARGET_PROPERTIES(${CLP}Module PROPERTIES LABELS ${CLP})
   
   # Build the command line 
