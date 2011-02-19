@@ -44,7 +44,11 @@ public :
   
     if(++m_Iteration % m_UpdateInterval == 0)
       {
+#if ITK_VERSION_MAJOR < 4
       itk::RealTimeClock::TimeStampType t = m_Clock->GetTimeStamp();
+#else
+      itk::RealTimeClock::TimeStampType t = m_Clock->GetTimeInSeconds();
+#endif    
       if(!m_DontShowParameters)
         {
         std::cout << "   " << m_Iteration << " : " 
@@ -71,7 +75,11 @@ public :
 
   void Reset()
   {
-    this->m_LastTime = m_Clock->GetTimeStamp();
+#if ITK_VERSION_MAJOR < 4
+      m_LastTime = m_Clock->GetTimeStamp();
+#else
+      m_LastTime = m_Clock->GetTimeInSeconds();
+#endif
     this->m_Iteration = 0;
     this->m_UpdateInterval = 1;
     this->m_DontShowParameters = false;
@@ -90,7 +98,11 @@ protected:
   ImageRegistrationViewer() 
   { 
     m_Clock = itk::RealTimeClock::New();
-    m_LastTime = m_Clock->GetTimeStamp();
+#if ITK_VERSION_MAJOR < 4
+      m_LastTime = m_Clock->GetTimeStamp();
+#else
+      m_LastTime = m_Clock->GetTimeInSeconds();
+#endif
     m_Iteration = 0;
     m_UpdateInterval = 1;
     m_DontShowParameters = false; 
