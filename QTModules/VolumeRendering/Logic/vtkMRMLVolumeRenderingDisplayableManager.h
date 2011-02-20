@@ -38,15 +38,51 @@ public:
 
   void SetGUICallbackCommand(vtkCommand* callback);
 
+  // Description:
+  // Get, Set and Observe VolumeRenderingParametersNode
+  vtkGetObjectMacro (VolumeRenderingParametersNode, vtkMRMLVolumeRenderingParametersNode);
+  void SetAndObserveVolumeRenderingParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+  // Description:
+  // Get, Set and Observe VolumeNode
+  vtkGetObjectMacro (VolumeNode, vtkMRMLVolumeNode);
+  void SetAndObserveVolumeNode(vtkMRMLVolumeNode* vspNode);
+
+  // Description:
+  // Get, Set and Observe FgVolumeNode
+  vtkGetObjectMacro (FgVolumeNode, vtkMRMLVolumeNode);
+  void SetAndObserveFgVolumeNode(vtkMRMLVolumeNode* vspNode);
+
+  // Description:
+  // Get, Set and Observe VolumePropertyNode
+  vtkGetObjectMacro (VolumePropertyNode, vtkMRMLVolumePropertyNode);
+  void SetAndObserveVolumePropertyNode(vtkMRMLVolumePropertyNode* vspNode);
+
+  // Description:
+  // Get, Set and Observe FgVolumePropertyNode
+  vtkGetObjectMacro (FgVolumePropertyNode, vtkMRMLVolumePropertyNode);
+  void SetAndObserveFgVolumePropertyNode(vtkMRMLVolumePropertyNode* vspNode);
+
+  // Description:
+  // Get, Set and Observe ROINode
+  vtkGetObjectMacro (ROINode, vtkMRMLROINode);
+  void SetAndObserveROINode(vtkMRMLROINode* vspNode);
+
+  // Description:
+  // Create VolumeRenderingParametersNode
   vtkMRMLVolumeRenderingParametersNode* CreateParametersNode();
+
+  // Description:
+  // Create VolumeRenderingScenarioNode
   vtkMRMLVolumeRenderingScenarioNode* CreateScenarioNode();
 
-   /* setup mapper based on current parameters node
-    * return values:
-    * -1: requested mapper not supported
-    *  0: invalid input parameter
-    *  1: success
-    */
+
+  // Description:
+  // setup mapper based on current parameters node
+  // return values:
+  // -1: requested mapper not supported
+  //  0: invalid input parameter
+  //  1: success
   int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
 
   // prepare volume property based on bg input volume
@@ -60,6 +96,8 @@ public:
                                   unsigned long /*event*/,
                                   void * /*callData*/ );
 
+  // Description:
+  // Get Volume Actor
   vtkVolume* GetVolumeActor(){return this->Volume;}
 
   void SetupHistograms(vtkMRMLVolumeRenderingParametersNode* vspNode);
@@ -105,6 +143,7 @@ public:
    * 1: mapper supported
    */
   int IsCurrentMapperSupported(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
   
 protected:
   vtkMRMLVolumeRenderingDisplayableManager();
@@ -152,11 +191,20 @@ protected:
 
   //vtkVolumeProperty *VolumePropertyGPURaycast3;
 
+  vtkMRMLVolumeRenderingParametersNode* VolumeRenderingParametersNode;
+
+  vtkMRMLVolumeNode*          VolumeNode;
+  vtkMRMLVolumePropertyNode*  VolumePropertyNode;
+  vtkMRMLVolumeNode*          FgVolumeNode;
+  vtkMRMLVolumePropertyNode*  FgVolumePropertyNode;
+  vtkMRMLROINode*             ROINode;
 
 protected:
   void ComputeInternalVolumeSize(int index);
   void CalculateMatrix(vtkMRMLVolumeRenderingParametersNode *vspNode, vtkMatrix4x4 *output);
   void EstimateSampleDistance(vtkMRMLVolumeRenderingParametersNode* vspNode);
+
+
 };
 
 #endif

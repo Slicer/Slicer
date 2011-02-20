@@ -74,10 +74,25 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManag
 
   this->VolumePropertyGPURaycastII = NULL;
   //this->VolumePropertyGPURaycast3 = NULL;
+
+  this->VolumeRenderingParametersNode = NULL;
+  this->VolumeNode = NULL;
+  this->VolumePropertyNode = NULL;
+  this->FgVolumeNode = NULL;
+  this->FgVolumePropertyNode = NULL;
+  this->ROINode = NULL;
+
 }
 
 vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableManager()
 {
+  vtkSetAndObserveMRMLNodeMacro(this->VolumeRenderingParametersNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->VolumeNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->VolumePropertyNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->FgVolumeNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->FgVolumePropertyNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->ROINode, NULL);
+
   //delete instances
   if (this->MapperTexture)
   {
@@ -267,6 +282,7 @@ vtkMRMLVolumeRenderingParametersNode* vtkMRMLVolumeRenderingDisplayableManager::
   if (this->GetMRMLScene())
   {
     node = vtkMRMLVolumeRenderingParametersNode::New();
+    node->SetCurrentVolumeMapper(0);
     this->GetMRMLScene()->AddNode(node);
     node->Delete();
   }
@@ -1348,10 +1364,69 @@ void vtkMRMLVolumeRenderingDisplayableManager::CreateVolumePropertyGPURaycast3(v
 */
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::SetAndObserveVolumeRenderingParametersNode(vtkMRMLVolumeRenderingParametersNode* node)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->VolumeRenderingParametersNode, node);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::SetAndObserveVolumeNode(vtkMRMLVolumeNode* node)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->VolumeNode, node);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::SetAndObserveFgVolumeNode(vtkMRMLVolumeNode* node)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->FgVolumeNode, node);
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::SetAndObserveVolumePropertyNode(vtkMRMLVolumePropertyNode* node)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->VolumePropertyNode, node);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::SetAndObserveFgVolumePropertyNode(vtkMRMLVolumePropertyNode* node)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->FgVolumePropertyNode, node);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::SetAndObserveROINode(vtkMRMLROINode* node)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->ROINode, node);
+}
+
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLEvents(vtkObject *vtkNotUsed(caller),
                                                 unsigned long vtkNotUsed(event),
                                                 void *vtkNotUsed(callData))
 {
+
+  if (this->VolumeRenderingParametersNode == NULL || this->GetMRMLScene() == NULL)
+    {
+    return;
+    }
+
+  // prepare volume property based on bg input volume
+
+  if (this->VolumeRenderingParametersNode->GetVolumeNode())
+    {
+    this->SetupMapperFromParametersNode(this->VolumeRenderingParametersNode);
+      if (this->VolumeRenderingParametersNode->GetVolumePropertyNode())
+      {
+      this->SetupVolumePropertyFromImageData(this->VolumeRenderingParametersNode);
+      }
+    }
+  if (this->VolumeRenderingParametersNode->GetFgVolumeNode())
+    {
+    this->SetupFgVolumePropertyFromImageData(this->VolumeRenderingParametersNode);
+    }
+
 }
 
 

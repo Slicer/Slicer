@@ -8,6 +8,7 @@
 
 class qSlicerVolumeRenderingModuleWidgetPrivate;
 class vtkMRMLNode;
+class vtkMRMLVolumeRenderingDisplayableManager;
 
 class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModuleWidget :
   public qSlicerAbstractModuleWidget
@@ -20,13 +21,20 @@ public:
   qSlicerVolumeRenderingModuleWidget(QWidget *parent=0);
   virtual ~qSlicerVolumeRenderingModuleWidget();
 
+  vtkMRMLVolumeRenderingDisplayableManager* getVolumeRenderingDisplayableManager();
+
 public slots:
 
+  /// 
+  /// Set the MRML node of interest
+  void setMRMLVolumeNode(vtkMRMLNode* node);
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
   
   virtual void setup();
+
+  vtkMRMLVolumeRenderingDisplayableManager* volumeRenderingDisplayableManager;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerVolumeRenderingModuleWidget);
