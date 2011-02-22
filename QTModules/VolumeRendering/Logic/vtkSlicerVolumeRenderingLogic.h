@@ -45,7 +45,7 @@ public:
   
   static vtkSlicerVolumeRenderingLogic *New();
   vtkTypeRevisionMacro(vtkSlicerVolumeRenderingLogic,vtkSlicerModuleLogic);
-  void PrintSelf(ostream& os, vtkIndent indent){};
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   // Register local MRML nodes
   virtual void RegisterNodes();

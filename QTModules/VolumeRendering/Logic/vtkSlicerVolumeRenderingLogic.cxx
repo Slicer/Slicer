@@ -82,6 +82,7 @@ void vtkSlicerVolumeRenderingLogic::ProcessLogicEvents(vtkObject *vtkNotUsed(cal
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::RegisterNodes()
 {
   if (this->GetMRMLScene())
@@ -95,4 +96,10 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
     this->GetMRMLScene()->RegisterNodeClass(vrpNode);
     vrpNode->Delete();
   }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os,indent);
 }
