@@ -1,8 +1,8 @@
 
 # Add subdirectories
 ADD_SUBDIRECTORY(MRML)
-ADD_SUBDIRECTORY(Logic)
 ADD_SUBDIRECTORY(VolumeRenderingReplacements)
+ADD_SUBDIRECTORY(Logic)
 
 # Module name (usually identique to the directory name)
 SET(qt_module_name "VolumeRendering")
