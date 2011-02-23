@@ -22,14 +22,12 @@
 #include <QButtonGroup>
 #include <QDebug>
 #include <QFileInfo>
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QTabWidget>
 #include <QVariant>
 #include <QWidget>
 
 // CTK includes
 #include <ctkLogger.h>
+#include <ctkLayoutManager_p.h>
 
 // qMRMLWidgets includes
 #include <qMRMLThreeDView.h>
@@ -85,8 +83,6 @@ qMRMLLayoutManagerPrivate::qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object)
   this->ActiveMRMLThreeDViewNode = 0;
   this->MRMLSliceLogics = vtkCollection::New();
   this->SliceControllerButtonGroup = 0;
-  this->GridLayout = 0;
-  this->TargetWidget = 0;
   this->SavedCurrentViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
 }
 
@@ -100,6 +96,14 @@ qMRMLLayoutManagerPrivate::~qMRMLLayoutManagerPrivate()
     }
   this->MRMLLayoutLogic->Delete();
   this->MRMLLayoutLogic = 0;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManagerPrivate::init()
+{
+  Q_Q(qMRMLLayoutManager);
+  this->SliceControllerButtonGroup = new QButtonGroup(q);
+  this->SliceControllerButtonGroup->setExclusive(false);
 }
 
 //------------------------------------------------------------------------------
@@ -274,7 +278,8 @@ void qMRMLLayoutManagerPrivate::setActiveMRMLThreeDViewNode(vtkMRMLViewNode * no
 // --------------------------------------------------------------------------
 QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNode)
 {
-  if (!this->TargetWidget || !sliceNode || !this->MRMLScene)
+  Q_Q(qMRMLLayoutManager);
+  if (!q->viewport() || !sliceNode || !this->MRMLScene)
     {// can't create a slice widget if there is no parent widget
     Q_ASSERT(this->MRMLScene);
     Q_ASSERT(sliceNode);
@@ -284,7 +289,7 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
   // there is a unique slice widget per node
   Q_ASSERT(!this->sliceWidget(sliceNode));
 
-  qMRMLSliceWidget * sliceWidget =  new qMRMLSliceWidget(this->TargetWidget);
+  qMRMLSliceWidget * sliceWidget =  new qMRMLSliceWidget(q->viewport());
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   QString sliceLayoutName(sliceNode->GetLayoutName());
   sliceWidget->setSliceViewName(sliceLayoutName);
@@ -317,7 +322,8 @@ qMRMLThreeDView* qMRMLLayoutManagerPrivate::createThreeDView()
 // --------------------------------------------------------------------------
 qMRMLThreeDView* qMRMLLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* viewNode)
 {
-  if (!this->TargetWidget || !this->MRMLScene || !viewNode)
+  Q_Q(qMRMLLayoutManager);
+  if (!q->viewport() || !this->MRMLScene || !viewNode)
     {
     Q_ASSERT(this->MRMLScene);
     Q_ASSERT(viewNode);
@@ -330,7 +336,7 @@ qMRMLThreeDView* qMRMLLayoutManagerPrivate::createThreeDView(vtkMRMLViewNode* vi
   qMRMLThreeDView* threeDView = 0;
 
   logger.trace("createThreeDView - instantiated new qMRMLThreeDView");
-  threeDView = new qMRMLThreeDView(this->TargetWidget);
+  threeDView = new qMRMLThreeDView(q->viewport());
   threeDView->registerDisplayableManagers(this->ScriptedDisplayableManagerDirectory);
   threeDView->setMRMLScene(this->MRMLScene);
   threeDView->setMRMLViewNode(viewNode);
@@ -455,9 +461,10 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::onSceneAboutToBeClosedEvent()
 {
+  Q_Q(qMRMLLayoutManager);
   logger.trace("onSceneAboutToBeClosedEvent");
 
-  this->clearLayout(this->TargetWidget->layout());
+  q->clearLayout();
   if (this->MRMLLayoutNode)
     {
     this->SavedCurrentViewArrangement = this->MRMLLayoutNode->GetViewArrangement();
@@ -676,393 +683,81 @@ void qMRMLLayoutManagerPrivate::initialize()
 //------------------------------------------------------------------------------
 bool qMRMLLayoutManagerPrivate::startUpdateLayout()
 {
-  if (!this->TargetWidget)
+  Q_Q(qMRMLLayoutManager);
+  if (!q->viewport())
     {
     return false;
     }
-  bool updatesEnabled = this->TargetWidget->updatesEnabled();
-  this->TargetWidget->setUpdatesEnabled(false);
+  bool updatesEnabled = q->viewport()->updatesEnabled();
+  q->viewport()->setUpdatesEnabled(false);
   return updatesEnabled;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::endUpdateLayout(bool updatesEnabled)
 {
-  if (!this->TargetWidget)
+  Q_Q(qMRMLLayoutManager);
+  if (!q->viewport())
     {
     return;
     }
-  this->TargetWidget->setUpdatesEnabled(updatesEnabled);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::clearLayout(QLayout* layout)
-{
-  if (!layout)
-    {
-    return;
-    }
-  QLayoutItem * layoutItem = 0;
-  while ((layoutItem = layout->takeAt(0)) != 0)
-    {
-    if (layoutItem->widget())
-      {
-      layoutItem->widget()->setVisible(false);
-      vtkMRMLNode* node = this->viewNode(layoutItem->widget());
-      if (node)
-        {
-        node->SetAttribute("MappedInLayout", "0");
-        }
-      layout->removeWidget(layoutItem->widget());
-      }
-    else if (layoutItem->layout())
-      {
-      this->clearLayout(layoutItem->layout());
-      }
-    }
-  if (layout->parentWidget() && layout->parentWidget()->layout() == layout)
-    {
-    delete layout;
-    }
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setupLayout()
-{
-  if (!this->TargetWidget || !this->MRMLLayoutNode->GetLayoutRootElement())
-    {
-    return;
-    }
-  logger.trace(QString("switch to current layout"));
-  QLayout* layout = this->addLayoutElement(this->MRMLLayoutNode->GetLayoutRootElement());
-  this->TargetWidget->setLayout(layout);
-}
-
-//------------------------------------------------------------------------------
-QLayout* qMRMLLayoutManagerPrivate::addLayoutElement(vtkXMLDataElement* element)
-{
-  if (!element)
-    {
-    return 0;
-    }
-  Q_ASSERT(QString(element->GetName()) == "layout");
-  QLayout* layout = 0;
-  QObject* itemsParent = 0;
-  QString layoutType = element->GetAttribute("type");
-  if (layoutType == "grid")
-    {
-    QGridLayout* gridLayout = new QGridLayout();
-    layout = gridLayout;
-    itemsParent = layout;
-    }
-  else if (layoutType == "vertical")
-    {
-    layout = new QVBoxLayout();
-    itemsParent = layout;
-    }
-  else if (layoutType == "horizontal")
-    {
-    layout = new QHBoxLayout();
-    itemsParent = layout;
-    }
-  else if (layoutType == "tab")
-    {
-    layout = new QHBoxLayout();
-    QTabWidget* tabWidget = new QTabWidget();
-    layout->addWidget(tabWidget);
-    itemsParent = tabWidget;
-    }
-  layout->setContentsMargins(0,0,0,0);
-  layout->setSpacing(0);
-  for (int i = 0; i < element->GetNumberOfNestedElements(); ++i)
-    {
-    this->addItemElement(element->GetNestedElement(i), itemsParent);
-    }
-  return layout;
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::addItemElement(vtkXMLDataElement* element, QObject* layout)
-{
-  Q_ASSERT(QString(element->GetName()) == "item");
-  Q_ASSERT(element->GetNumberOfNestedElements() == 1);
-  vtkXMLDataElement* childElement = element->GetNestedElement(0);
-  QLayout* childLayout = 0;
-  QWidget* childWidget = 0;
-  if (QString(childElement->GetName()) == "layout")
-    {
-    childLayout = this->addLayoutElement(childElement);
-    }
-  else if (QString(childElement->GetName()) == "view")
-    {
-    childWidget = this->addViewElement(childElement);
-    }
-  QGridLayout* gridLayout = qobject_cast<QGridLayout*>(layout);
-  QLayout* genericLayout = qobject_cast<QLayout*>(layout);
-  QTabWidget* tabWidget = qobject_cast<QTabWidget*>(layout);
-  if (gridLayout)
-    {
-    int row = 0;
-    int col = 0;
-    int rowspan = 1;
-    int colspan = 1;
-    element->GetScalarAttribute("row", row);
-    element->GetScalarAttribute("column", col);
-    element->GetScalarAttribute("rowspan", rowspan);
-    element->GetScalarAttribute("colspan", colspan);
-    Q_ASSERT(gridLayout);
-    if (childLayout)
-      {
-      gridLayout->addLayout(childLayout, row, col, rowspan, colspan);
-      }
-    else if (childWidget)
-      {
-      gridLayout->addWidget(childWidget, row, col, rowspan, colspan);
-      }
-    }
-  else if (genericLayout)
-    {
-    if (childLayout)
-      {
-      genericLayout->addItem(childLayout);
-      }
-    else if (childWidget)
-      {
-      genericLayout->addWidget(childWidget);
-      }
-    }
-  else if (tabWidget)
-    {
-    if (childLayout)
-      {
-      childWidget = new QWidget();
-      childWidget->setLayout(childLayout);
-      }
-    if (childWidget)
-      {
-      QString pageName = element->GetAttribute("name");
-      tabWidget->addTab(childWidget, pageName);
-      }
-    }
-}
-
-//------------------------------------------------------------------------------
-QWidget* qMRMLLayoutManagerPrivate::addViewElement(vtkXMLDataElement* element)
-{
-  Q_ASSERT(QString(element->GetName()) == "view");
-  vtkMRMLNode* viewNode = this->MRMLLayoutLogic->GetViewFromElement(element);
-  Q_ASSERT(viewNode);
-  QWidget* widget = this->viewWidget(viewNode);
-  this->showWidget(widget);
-  return widget;
+  q->viewport()->setUpdatesEnabled(updatesEnabled);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
 {
-  bool updatesEnabled = this->startUpdateLayout();
-  this->clearLayout(this->TargetWidget ? this->TargetWidget->layout() : 0);
-
+  Q_Q(qMRMLLayoutManager);
   // Update LayoutNode
   if (this->MRMLLayoutNode)
     {
     this->MRMLLayoutNode->SetViewArrangement(layout);
     }
   this->SavedCurrentViewArrangement = layout;
-  this->setupLayout();
-
-  this->endUpdateLayout(updatesEnabled);
+  // TBD: modify the dom doc manually, don't create a new one
+  QDomDocument newLayout;
+  newLayout.setContent(QString(
+    this->MRMLLayoutNode ?
+    this->MRMLLayoutNode->GetCurrentViewArrangement() : ""));
+  q->setLayout(newLayout);
+  /*
   // TODO: find a way to remove that hack (only needed for the tests)
-  if (this->TargetWidget)
+  if (q->viewport())
     {
-    this->TargetWidget->repaint();
+    this->Viewport->repaint();
     }
+  */
 }
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setConventionalView()
-{
-  logger.trace(QString("switch to ConventionalView"));
-  // First render view
-  qMRMLThreeDView * renderView = this->threeDViewCreateIfNeeded(0);
-  this->GridLayout->addWidget(renderView, 0, 0, 1, -1); // fromRow, fromColumn, rowSpan, columnSpan
-  this->showWidget(renderView);
-
-  // Red Slice Viewer
-  qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
-  this->GridLayout->addWidget(redSliceView, 1, 0);
-  this->showWidget(redSliceView);
-
-  // Yellow Slice Viewer
-  qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
-  this->GridLayout->addWidget(yellowSliceView, 1, 1);
-  this->showWidget(yellowSliceView);
-
-  // Green Slice Viewer
-  qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
-  this->GridLayout->addWidget(greenSliceView, 1, 2);
-  this->showWidget(greenSliceView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setOneUp3DView()
-{
-  logger.trace(QString("switch to OneUp3DView"));
-  // First render view
-  qMRMLThreeDView * renderView = this->threeDViewCreateIfNeeded(0);
-  this->GridLayout->addWidget(renderView, 0, 0, 1, -1); // fromRow, fromColumn, rowSpan, columnSpan
-  this->showWidget(renderView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setOneUpSliceView(const QString& sliceLayoutName)
-{
-  logger.trace(QString("switch to OneUpSlice%1").arg(sliceLayoutName));
-  // Sanity checks
-  Q_ASSERT(sliceLayoutName == "Red" || sliceLayoutName == "Yellow" || sliceLayoutName == "Green");
-  if (sliceLayoutName != "Red" && sliceLayoutName != "Yellow" && sliceLayoutName != "Green")
-    {
-    qWarning() << "Slicer viewer name" << sliceLayoutName << "invalid !";
-    return;
-    }
-  // Slice viewer
-  qMRMLSliceWidget* sliceWidget = this->sliceWidget(sliceLayoutName);
-  sliceWidget->setVisible(true);
-  this->GridLayout->addWidget(sliceWidget, 1, 0);
-  this->showWidget(sliceWidget);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setFourUpView()
-{
-  logger.trace(QString("switch to FourUpView"));
-  // First render view
-  qMRMLThreeDView * renderView = this->threeDViewCreateIfNeeded(0);
-  this->GridLayout->addWidget(renderView, 0, 1); // fromRow, fromColumn, rowSpan, columnSpan
-  this->showWidget(renderView);
-
-  // Red Slice Viewer
-  qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
-  this->GridLayout->addWidget(redSliceView, 0, 0);
-  this->showWidget(redSliceView);
-
-  // Yellow Slice Viewer
-  qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
-  this->GridLayout->addWidget(yellowSliceView, 1, 0);
-  this->showWidget(yellowSliceView);
-
-  // Green Slice Viewer
-  qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
-  this->GridLayout->addWidget(greenSliceView, 1, 1);
-  this->showWidget(greenSliceView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setTabbed3DView()
-{
-  logger.trace(QString("switch to Tabbed3DView"));
-  qDebug() << "qMRMLLayoutManager::setTabbed3DView  not implemented";
-  logger.debug("setTabbed3DView - Not Implemented");
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setTabbedSliceView()
-{
-  logger.trace(QString("switch to TabbedSliceView"));
-  qDebug() << "qMRMLLayoutManager::setTabbedSliceView  not implemented";
-  logger.debug("setTabbedSliceView - Not Implemented");
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setLightboxView()
-{
-  logger.trace(QString("switch to LightboxView"));
-  qDebug() << "qMRMLLayoutManager::setLightboxView  not implemented";
-  logger.debug("setLightboxView - Not Implemented");
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setCompareView()
-{
-  logger.trace(QString("switch to CompareView"));
-  qDebug() << "qMRMLLayoutManager::setCompareView not implemented";
-  logger.debug("setCompareView - Not Implemented");
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setSideBySideLightboxView()
-{
-  logger.trace(QString("switch to SideBySideLightboxView"));
-  qDebug() << "qMRMLLayoutManager::setSideBySideLightboxView";
-  logger.debug("setSideBySideLightboxView - Not Implemented");
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setDual3DView()
-{
-  logger.trace(QString("switch to Dual3DView"));
-  // First render view
-  qMRMLThreeDView * renderView = this->threeDViewCreateIfNeeded(0);
-  this->GridLayout->addWidget(renderView, 0, 0); // fromRow, fromColumn, rowSpan, columnSpan
-  this->showWidget(renderView);
-
-  // Second render view
-  qMRMLThreeDView * renderView2 = this->threeDViewCreateIfNeeded(1);
-  this->GridLayout->addWidget(renderView2, 0, 1);
-  this->showWidget(renderView2);
-
-  // Add an horizontal layout to group the 3 sliceWidgets
-  QHBoxLayout * sliceWidgetLayout = new QHBoxLayout();
-  this->GridLayout->addLayout(sliceWidgetLayout, 1, 0, 1, 2); // fromRow, fromColumn, rowSpan, columnSpan
-
-  // Red Slice Viewer
-  qMRMLSliceWidget* redSliceView = this->sliceWidget("Red");
-  sliceWidgetLayout->addWidget(redSliceView);
-  this->showWidget(redSliceView);
-
-  // Yellow Slice Viewer
-  qMRMLSliceWidget* yellowSliceView = this->sliceWidget("Yellow");
-  sliceWidgetLayout->addWidget(yellowSliceView);
-  this->showWidget(yellowSliceView);
-
-  // Green Slice Viewer
-  qMRMLSliceWidget* greenSliceView = this->sliceWidget("Green");
-  sliceWidgetLayout->addWidget(greenSliceView);
-  this->showWidget(greenSliceView);
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setNone()
-{
-  logger.trace(QString("switch to None"));
-}
-
-//------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::showWidget(QWidget* widget)
-{
-  Q_ASSERT(widget);
-  Q_ASSERT(this->viewNode(widget));
-  this->viewNode(widget)->SetAttribute("MappedInLayout", "1");
-  widget->setVisible(true);
-}
-
 
 //------------------------------------------------------------------------------
 // qMRMLLayoutManager methods
 
 // --------------------------------------------------------------------------
-qMRMLLayoutManager::qMRMLLayoutManager(QWidget* widget) : Superclass(widget)
+qMRMLLayoutManager::qMRMLLayoutManager(QObject* parentObject)
+  : Superclass(0, parentObject)
   , d_ptr(new qMRMLLayoutManagerPrivate(*this))
 {
-  this->setViewport(widget);
+  Q_D(qMRMLLayoutManager);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
-qMRMLLayoutManager::qMRMLLayoutManager(qMRMLLayoutManagerPrivate* pimpl, QWidget* widget)
-  : Superclass(widget)
+qMRMLLayoutManager::qMRMLLayoutManager(QWidget* viewport, QObject* parentObject)
+  : Superclass(viewport, parentObject)
+  , d_ptr(new qMRMLLayoutManagerPrivate(*this))
+{
+  Q_D(qMRMLLayoutManager);
+  d->init();
+}
+
+// --------------------------------------------------------------------------
+qMRMLLayoutManager::qMRMLLayoutManager(qMRMLLayoutManagerPrivate* pimpl,
+                                       QWidget* viewport, QObject* parentObject)
+  : Superclass(viewport, parentObject)
   , d_ptr(pimpl)
 {
-  this->setViewport(widget);
+  Q_D(qMRMLLayoutManager);
+  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -1071,82 +766,12 @@ qMRMLLayoutManager::~qMRMLLayoutManager()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLLayoutManager::setViewport(QWidget* widget)
+void qMRMLLayoutManager::onViewportChanged()
 {
   Q_D(qMRMLLayoutManager);
-  if (widget == d->TargetWidget)
-    {
-    return;
-    }
-
-  QButtonGroup* buttonGroup = 0;
-  //QGridLayout* gridLayout = 0;
-  if (widget)
-    {
-    if (!d->SliceControllerButtonGroup)
-      {
-      buttonGroup = new QButtonGroup(widget);
-      buttonGroup->setExclusive(false);
-      //gridLayout = new QGridLayout(widget);
-      //gridLayout->setContentsMargins(0, 0, 0, 0);
-      //gridLayout->setSpacing(0);
-      }
-    else
-      {
-      buttonGroup = d->SliceControllerButtonGroup;
-      //gridLayout = d->GridLayout;
-      }
-    }
-  foreach (qMRMLSliceWidget* sliceWidget, d->SliceWidgetList)
-    {
-    sliceWidget->sliceController()->setControllerButtonGroup(buttonGroup);
-    }
-  if (widget)
-    {
-    //widget->setLayout(gridLayout);
-    }
-
-  if (buttonGroup != d->SliceControllerButtonGroup)
-    {
-    delete d->SliceControllerButtonGroup;
-    d->SliceControllerButtonGroup= buttonGroup;
-    // deleting the layout removes it from the old viewport
-    //delete d->GridLayout;
-    //d->GridLayout = gridLayout;
-    }
-
-  if (d->TargetWidget)
-    {// clear the previous layout
-    d->clearLayout(d->TargetWidget->layout());
-    }
-
-  // set to new widget
-  d->TargetWidget = widget;
-  this->setParent(widget);
-
-  // reparent the widgets
-  foreach (qMRMLSliceWidget* sliceWidget, d->SliceWidgetList)
-    {
-    sliceWidget->setParent(d->TargetWidget);
-    // reparenting looses the visibility attribute and we want them hidden
-    sliceWidget->setVisible(false);
-    }
-  foreach (qMRMLThreeDView* viewWidget, d->ThreeDViewList)
-    {
-    viewWidget->setParent(d->TargetWidget);
-    // reparenting looses the visibility attribute and we want them hidden
-    viewWidget->setVisible(false);
-    }
-
   // create necessary views if needed
   d->initialize();
-}
-
-// --------------------------------------------------------------------------
-QWidget* qMRMLLayoutManager::viewport()const
-{
-  Q_D(const qMRMLLayoutManager);
-  return d->TargetWidget;
+  this->ctkLayoutManager::onViewportChanged();
 }
 
 //------------------------------------------------------------------------------
@@ -1179,6 +804,13 @@ vtkCollection* qMRMLLayoutManager::mrmlSliceLogics()const
 {
   Q_D(const qMRMLLayoutManager);
   return d->MRMLSliceLogics;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLLayoutLogic* qMRMLLayoutManager::layoutLogic()const
+{
+  Q_D(const qMRMLLayoutManager);
+  return d->MRMLLayoutLogic;
 }
 
 //------------------------------------------------------------------------------
@@ -1246,4 +878,35 @@ void qMRMLLayoutManager::switchToOneUpSliceView(const QString& sliceLayoutName)
     {
     logger.warn(QString("Unknown view : %1").arg(sliceLayoutName));
     }
+}
+
+//------------------------------------------------------------------------------
+QWidget* qMRMLLayoutManager::viewFromXML(QDomElement layoutElement)
+{
+  Q_D(qMRMLLayoutManager);
+  // convert Qt xml element into vtkMRMLLayoutLogic attributes
+  vtkMRMLLayoutLogic::ViewAttributes attributes;
+  QDomNamedNodeMap elementAttributes = layoutElement.attributes();
+  const int attributeCount = elementAttributes.count();
+  for (int i = 0; i < attributeCount; ++i)
+    {
+    QDomNode attribute = elementAttributes.item(i);
+    attributes[attribute.nodeName().toStdString()] =
+      layoutElement.attribute(attribute.nodeName()).toStdString();
+    }
+  vtkMRMLNode* viewNode = d->MRMLLayoutLogic->GetViewFromAttributes(attributes);
+  Q_ASSERT(viewNode);
+  return d->viewWidget(viewNode);
+}
+
+//------------------------------------------------------------------------------
+QWidget* qMRMLLayoutManager::processViewElement(QDomElement viewElement)
+{
+  Q_D(qMRMLLayoutManager);
+  QWidget* res = this->ctkLayoutManager::processViewElement(viewElement);
+  if (res)
+    {
+    d->viewNode(res)->SetAttribute("MappedInLayout", "1");
+    }
+  return res;
 }

@@ -61,7 +61,7 @@ static ctkLogger logger("org.slicer.base.qtgui.qSlicerLayoutManager");
 class qSlicerLayoutManagerPrivate: public qMRMLLayoutManagerPrivate
 {
 public:
-  qSlicerLayoutManagerPrivate(qMRMLLayoutManager& object);
+  qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object);
   /// Instantiate a slice viewer corresponding to \a sliceViewName
   virtual QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
 
@@ -70,8 +70,8 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate(qMRMLLayoutManager& object)
-  :qMRMLLayoutManagerPrivate(object)
+qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object)
+  : qMRMLLayoutManagerPrivate(object)
 {
 }
 
@@ -121,8 +121,7 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
 
 // -----------------------------------------------------------------------------
 qSlicerLayoutManager::qSlicerLayoutManager(QWidget* widget)
-  : qMRMLLayoutManager(new qSlicerLayoutManagerPrivate(
-                        *static_cast<qMRMLLayoutManager*>(this)), widget)
+  : qMRMLLayoutManager(new qSlicerLayoutManagerPrivate(*this), widget, widget)
 {
 }
 

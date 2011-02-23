@@ -64,6 +64,8 @@ public:
   /// attributes in the element. The attributes should be precise enough to
   /// match a unique node in the scene. Returns 0 if no node can be found.
   vtkMRMLNode*   GetViewFromElement(vtkXMLDataElement* element);
+  /// This returns the best view node that matches the attributes
+  vtkMRMLNode*   GetViewFromAttributes(const ViewAttributes& attributes);
 
   /// Returns the up-to-date list of all the nodes that are mapped in the current
   /// layout.
@@ -102,8 +104,6 @@ protected:
   /// As we pass the root element of the entire layout, it returns a list of
   /// all the nodes that are found in the layout.
   vtkCollection*     GetViewsFromLayout(vtkXMLDataElement* root);
-  /// This returns the best view node that matches the attributes
-  vtkMRMLNode*       GetViewFromAttributes(const ViewAttributes& attributes);
 
   /// Utility functions to browse XML data elements
   vtkXMLDataElement* GetNextViewElement(vtkXMLDataElement* viewElement);

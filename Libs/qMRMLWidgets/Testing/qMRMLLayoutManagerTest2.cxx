@@ -45,7 +45,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   QApplication app(argc, argv);
   QWidget w;
   w.show();
-  qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w);
+  qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w, &w);
 
   vtkMRMLScene* scene = vtkMRMLScene::New();
   layoutManager->setMRMLScene(scene);

@@ -28,7 +28,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLLayoutLogic.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -45,7 +45,7 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
   QApplication app(argc, argv);
   QWidget w;
   w.show();
-  qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w);
+  qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w, &w);
 
   vtkMRMLScene* scene = vtkMRMLScene::New();
 
@@ -66,62 +66,39 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  vtkCollection* sliceNodes = layoutNode->GetVisibleSliceViewNodes();
-  vtkCollection* threeDViewNodes = layoutNode->GetVisibleThreeDViewNodes();
-  vtkCollection* viewNodes = layoutNode->GetVisibleViewNodes();
-  if (sliceNodes->GetNumberOfItems() != 1 ||
-      threeDViewNodes->GetNumberOfItems() != 0 ||
-      viewNodes->GetNumberOfItems() != 1)
+  vtkMRMLLayoutLogic* layoutLogic = layoutManager->layoutLogic();
+  vtkCollection* viewNodes = layoutLogic->GetViewNodes();
+  if (viewNodes->GetNumberOfItems() != 1)
     {
-    std::cerr << __LINE__ << " vtkMRMLLayoutNode::GetVisibleSliceViewNodes failed. "
-              << "It found " << sliceNodes->GetNumberOfItems() << " nodes instead of 1"
+    std::cerr << __LINE__ << " vtkMRMLLayoutLogic::GetViewNodes failed. "
+              << "It found " << viewNodes->GetNumberOfItems() << " nodes instead of 1"
               << std::endl;
     return EXIT_FAILURE;
     }
-
-  sliceNodes->Delete();
-  threeDViewNodes->Delete();
-  viewNodes->Delete();
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
 
-  sliceNodes = layoutNode->GetVisibleSliceViewNodes();
-  threeDViewNodes = layoutNode->GetVisibleThreeDViewNodes();
-  viewNodes = layoutNode->GetVisibleViewNodes();
+  viewNodes = layoutLogic->GetViewNodes();
 
-  if (sliceNodes->GetNumberOfItems() != 1 ||
-      threeDViewNodes->GetNumberOfItems() != 0 ||
-      viewNodes->GetNumberOfItems() != 1)
+  if (viewNodes->GetNumberOfItems() != 1)
     {
-    std::cerr << __LINE__ << " vtkMRMLLayoutNode::GetVisibleSliceViewNodes failed. "
-              << "It found " << sliceNodes->GetNumberOfItems() << " nodes instead of 1"
+    std::cerr << __LINE__ << " vtkMRMLLayoutLogic::GetViewNodes failed. "
+              << "It found " << viewNodes->GetNumberOfItems() << " nodes instead of 1"
               << std::endl;
     return EXIT_FAILURE;
     }
-
-  sliceNodes->Delete();
-  threeDViewNodes->Delete();
-  viewNodes->Delete();
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
 
-  sliceNodes = layoutNode->GetVisibleSliceViewNodes();
-  threeDViewNodes = layoutNode->GetVisibleThreeDViewNodes();
-  viewNodes = layoutNode->GetVisibleViewNodes();
+  viewNodes = layoutLogic->GetViewNodes();
 
-  if (sliceNodes->GetNumberOfItems() != 3 ||
-      threeDViewNodes->GetNumberOfItems() != 1 ||
-      viewNodes->GetNumberOfItems() != 4)
+  if (viewNodes->GetNumberOfItems() != 4)
     {
-    std::cerr << __LINE__ << " vtkMRMLLayoutNode::GetVisibleSliceViewNodes failed. "
-              << "It found " << sliceNodes->GetNumberOfItems() << " nodes instead of 3"
+    std::cerr << __LINE__ << " vtkMRMLLayoutLogic::GetViewNodes failed. "
+              << "It found " << viewNodes->GetNumberOfItems() << " nodes instead of 4"
               << std::endl;
     return EXIT_FAILURE;
     }
-
-  sliceNodes->Delete();
-  threeDViewNodes->Delete();
-  viewNodes->Delete();
 
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")

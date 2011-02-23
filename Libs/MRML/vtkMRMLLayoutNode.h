@@ -103,20 +103,6 @@ public:
       SlicerLayoutUserView = 100
     };
 
-  /// Return all the vtkMRMLSliceNodes that are used by the current layout
-  /// An empty collection is returned if no slice view nodes are mapped.
-  /// You are responsible for Deleting the collection
-  vtkCollection* GetVisibleSliceViewNodes();
-  /// Return all the vtkMRMLViewNodes that are used by the current layout
-  /// An empty collection is returned if no 3D view nodes are mapped.
-  /// You are responsible for Deleting the collection
-  vtkCollection* GetVisibleThreeDViewNodes();
-  /// Return all the nodes (vtkMRMLSliceNodes and vtkMRMLViewNodes)
-  /// that are used by the current layout
-  /// An empty collection is returned if no view nodes are mapped.
-  /// You are responsible for Deleting the collection
-  vtkCollection* GetVisibleViewNodes();
-
   void AddLayoutDescription(int layout, const char* layoutDescription);
   std::string GetLayoutDescription(int layout);
   vtkGetStringMacro(CurrentViewArrangement);

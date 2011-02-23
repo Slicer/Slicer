@@ -27,6 +27,7 @@
 
 /// CTK includes
 #include <ctkVTKObject.h>
+#include <ctkLayoutManager_p.h>
 
 // qMRML includes
 #include "qMRMLLayoutManager.h"
@@ -48,16 +49,20 @@ class vtkMRMLSliceNode;
 class vtkXMLDataElement;
 
 //-----------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLLayoutManagerPrivate: public QObject
+class QMRML_WIDGETS_EXPORT qMRMLLayoutManagerPrivate
+  : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLLayoutManager);
 protected:
   qMRMLLayoutManager* const q_ptr;
+
 public:
   qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object);
-  ~qMRMLLayoutManagerPrivate();
+  virtual ~qMRMLLayoutManagerPrivate();
+
+  virtual void init();
 
   void setMRMLScene(vtkMRMLScene* scene);
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
@@ -86,14 +91,6 @@ public:
 
   /// Actually set the layout type to the node
   void updateLayoutNode(int layout);
-
-  /// Hide and remove all widgets from the current layout
-  void clearLayout(QLayout* layout);
-  void setupLayout();
-
-  QLayout* addLayoutElement(vtkXMLDataElement* );
-  void     addItemElement(vtkXMLDataElement*, QObject*);
-  QWidget* addViewElement(vtkXMLDataElement*);
 
   void setLayoutInternal(int layout);
   void setConventionalView();

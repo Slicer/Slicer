@@ -21,8 +21,8 @@
 #ifndef __qMRMLLayoutManager_h
 #define __qMRMLLayoutManager_h
 
-// Qt includes
-#include <QObject>
+// CTK includes
+#include <ctkLayoutManager.h>
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
@@ -34,11 +34,12 @@ class qMRMLThreeDView;
 class qMRMLSliceWidget;
 class qMRMLLayoutManagerPrivate;
 class vtkCollection;
+class vtkMRMLLayoutLogic;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
 class vtkRenderer;
 
-class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public QObject
+class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public ctkLayoutManager
 {
   Q_OBJECT
   // The following properties are exposed so that they are available within python
@@ -46,14 +47,12 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public QObject
   Q_PROPERTY(int threeDViewCount READ threeDViewCount DESIGNABLE false)
 public:
   /// Superclass typedef
-  typedef QObject Superclass;
+  typedef ctkLayoutManager Superclass;
 
   /// Constructors
-  explicit qMRMLLayoutManager(QWidget* widget = 0);
+  explicit qMRMLLayoutManager(QObject* parent=0);
+  explicit qMRMLLayoutManager(QWidget* viewport, QObject* parent);
   virtual ~qMRMLLayoutManager();
-
-  Q_INVOKABLE void setViewport(QWidget* widget);
-  Q_INVOKABLE QWidget* viewport()const;
 
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
@@ -77,6 +76,7 @@ public:
   vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
   vtkRenderer* activeThreeDRenderer()const;
 
+  vtkMRMLLayoutLogic* layoutLogic()const;
 public slots:
 
   ///
@@ -108,10 +108,14 @@ signals:
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);
 
 protected:
-  qMRMLLayoutManager(qMRMLLayoutManagerPrivate* obj, QWidget* widget);
-
   QScopedPointer<qMRMLLayoutManagerPrivate> d_ptr;
+  qMRMLLayoutManager(qMRMLLayoutManagerPrivate* obj, QWidget* viewport, QObject* parent);
 
+  virtual void onViewportChanged();
+  virtual QWidget* processViewElement(QDomElement viewElement);
+  virtual QWidget* viewFromXML(QDomElement layoutElement);
+
+  using ctkLayoutManager::setLayout;
 private:
   Q_DECLARE_PRIVATE(qMRMLLayoutManager);
   Q_DISABLE_COPY(qMRMLLayoutManager);

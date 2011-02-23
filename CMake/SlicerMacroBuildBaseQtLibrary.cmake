@@ -79,6 +79,7 @@ MACRO(SlicerMacroBuildBaseQtLibrary)
     ${QT_QTWEBKIT_INCLUDE_DIR}
     ${QT_QTGUI_INCLUDE_DIR}
     ${QT_QTCORE_INCLUDE_DIR}
+    ${QT_QTXML_INCLUDE_DIR}
     )
 
   SET(include_dirs
