@@ -74,18 +74,12 @@ vtkMRMLDisplayableManagerFactory::vtkInternal::vtkInternal()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerFactory::vtkMRMLDisplayableManagerFactory()
 {
-  this->DisplayableManagerGroup = NULL;
   this->Internal = new vtkInternal;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerFactory::~vtkMRMLDisplayableManagerFactory()
 {
-  if (this->DisplayableManagerGroup)
-    {
-    this->DisplayableManagerGroup->Delete();
-    }
-
   delete this->Internal;
 }
 
@@ -218,16 +212,11 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
     return 0;
     }
 
-  if (this->DisplayableManagerGroup)
-    {
-    this->DisplayableManagerGroup->Delete();
-    }
-
-  this->DisplayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
+  vtkMRMLDisplayableManagerGroup * displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
 
   // A Group observes the factory and eventually instantiates new DisplayableManager
   // when they are registered in the factory
-  this->DisplayableManagerGroup->SetAndObserveDisplayableManagerFactory(this);
+  displayableManagerGroup->SetAndObserveDisplayableManagerFactory(this);
 
   for(std::size_t i=0; i < this->Internal->DisplayableManagerClassNames.size(); ++i)
     {
@@ -244,7 +233,7 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
       scriptedDisplayableManager->SetPythonSource(classOrScriptName);
 
       // Note that DisplayableManagerGroup will take ownership of the object
-      this->DisplayableManagerGroup->AddAndInitialize(scriptedDisplayableManager);
+      displayableManagerGroup->AddAndInitialize(scriptedDisplayableManager);
       }
     else
       {
@@ -261,16 +250,16 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
         }
 
       // Note that DisplayableManagerGroup will take ownership of the object
-      this->DisplayableManagerGroup->AddAndInitialize(displayableManager);
+      displayableManagerGroup->AddAndInitialize(displayableManager);
 #ifdef MRMLDisplayableManager_USE_PYTHON
       }
 #endif
 
     }
 
-  this->DisplayableManagerGroup->Initialize(newRenderer);
+  displayableManagerGroup->Initialize(newRenderer);
 
-  return this->DisplayableManagerGroup;
+  return displayableManagerGroup;
 }
 
 

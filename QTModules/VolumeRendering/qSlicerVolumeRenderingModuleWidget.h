@@ -21,7 +21,7 @@ public:
   qSlicerVolumeRenderingModuleWidget(QWidget *parent=0);
   virtual ~qSlicerVolumeRenderingModuleWidget();
 
-  vtkMRMLVolumeRenderingDisplayableManager* getVolumeRenderingDisplayableManager();
+//   vtkMRMLVolumeRenderingDisplayableManager* getVolumeRenderingDisplayableManager();
 
 public slots:
 
@@ -34,7 +34,8 @@ protected:
   
   virtual void setup();
 
-  vtkMRMLVolumeRenderingDisplayableManager* volumeRenderingDisplayableManager;
+  // Note: Member should start with an upper-case later and should be added to the Pimpl
+  // vtkMRMLVolumeRenderingDisplayableManager* volumeRenderingDisplayableManager;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerVolumeRenderingModuleWidget);

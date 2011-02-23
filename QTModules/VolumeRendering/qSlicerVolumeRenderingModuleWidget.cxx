@@ -4,13 +4,15 @@
 // SlicerQt includes
 #include "qSlicerVolumeRenderingModuleWidget.h"
 #include "ui_qSlicerVolumeRenderingModule.h"
-#include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
-#include "vtkMRMLVolumeRenderingDisplayableManager.h"
-#include "vtkMRMLDisplayableManagerGroup.h"
+
+// #include "vtkMRMLThreeDViewDisplayableManagerFactory.h"
+// #include "vtkMRMLVolumeRenderingDisplayableManager.h"
+// #include "vtkMRMLDisplayableManagerGroup.h"
 
 #include <QtGui/QLabel>
 #include "qMRMLNodeComboBox.h"
 
+#include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
@@ -42,7 +44,7 @@ qSlicerVolumeRenderingModuleWidget::qSlicerVolumeRenderingModuleWidget(QWidget* 
   : Superclass( _parent )
   , d_ptr( new qSlicerVolumeRenderingModuleWidgetPrivate )
 {
-  this->volumeRenderingDisplayableManager = NULL;
+  // this->volumeRenderingDisplayableManager = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,7 +96,9 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNo
     vtkMRMLVolumeRenderingParametersNode* volumeRenderingParametersNode = NULL;
     // TODO: set parameters node to vtkMRMLVolumeRenderingDisplayableManager
 
-    vtkMRMLVolumeRenderingDisplayableManager* volumeRenderingDisplayableManager = this->getVolumeRenderingDisplayableManager();
+    // Note: A different apporach should be considered. Displayable Manager shouldn't be 
+    // accessed from within the widget.
+    //vtkMRMLVolumeRenderingDisplayableManager* volumeRenderingDisplayableManager = this->getVolumeRenderingDisplayableManager();
 
     volumeRenderingParametersNode = vtkMRMLVolumeRenderingParametersNode::SafeDownCast(
       scene->GetNthNodeByClass(0, "vtkMRMLVolumeRenderingParametersNode"));
@@ -121,16 +125,16 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNo
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayableManager* qSlicerVolumeRenderingModuleWidget::getVolumeRenderingDisplayableManager()
-{
-  if (this->volumeRenderingDisplayableManager == NULL)
-  {
-    this->volumeRenderingDisplayableManager = vtkMRMLVolumeRenderingDisplayableManager::SafeDownCast(
-      vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->GetDisplayableManagerGroup()->
-                                   GetDisplayableManagerByClassName("vtkMRMLVolumeRenderingDisplayableManager"));
-  }
-  return this->volumeRenderingDisplayableManager;
-
-}
+//vtkMRMLVolumeRenderingDisplayableManager* qSlicerVolumeRenderingModuleWidget::getVolumeRenderingDisplayableManager()
+//{
+//  if (this->volumeRenderingDisplayableManager == NULL)
+//  {
+//    this->volumeRenderingDisplayableManager = vtkMRMLVolumeRenderingDisplayableManager::SafeDownCast(
+//      vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->GetDisplayableManagerGroup()->
+//                                   GetDisplayableManagerByClassName("vtkMRMLVolumeRenderingDisplayableManager"));
+//  }
+//  return this->volumeRenderingDisplayableManager;
+//
+//}
 
 

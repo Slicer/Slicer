@@ -229,7 +229,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
     }
 
   // Delete the group
-  //group->Delete();
+  group->Delete();
 
   // Try to instantiate again the DisplayableManagerGroup
   group = factory->InstantiateDisplayableManagers(rr);
@@ -331,7 +331,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
     return EXIT_FAILURE;
     }
 
-  //group->Delete();
+  group->Delete();
 
   return EXIT_SUCCESS;
 }

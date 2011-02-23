@@ -79,9 +79,6 @@ public:
   /// of each group.
   vtkMRMLDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer * newRenderer);
 
-  vtkGetObjectMacro (DisplayableManagerGroup, vtkMRMLDisplayableManagerGroup);
-
-
 protected:
 
   vtkMRMLDisplayableManagerFactory();
@@ -95,8 +92,6 @@ protected:
   //BTX
   typedef vtkMRMLDisplayableManagerFactory Self;
   //ETX
-
-  vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
 
 private:
   
