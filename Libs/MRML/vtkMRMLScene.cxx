@@ -918,7 +918,7 @@ int vtkMRMLScene::Import()
 
   this->SetUndoFlag(undoFlag);
   
-  this->SetIsImporting(false);
+  this->SetIsImporting(false); // Takes care of sending SceneImportedEvent
 
   int returnCode = 1;
   if (this->GetErrorCode() == 0) 

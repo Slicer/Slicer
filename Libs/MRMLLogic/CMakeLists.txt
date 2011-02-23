@@ -84,6 +84,7 @@ SET(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.cxx
   vtkMRMLApplicationLogic.cxx
   vtkMRMLColorLogic.cxx
+  vtkMRMLLayoutLogic.cxx
   vtkMRMLModelHierarchyLogic.cxx
   vtkMRMLSliceLayerLogic.cxx
   vtkMRMLSliceLogic.cxx

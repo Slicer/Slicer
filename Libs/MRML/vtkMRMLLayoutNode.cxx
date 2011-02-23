@@ -1,13 +1,18 @@
+// STL includes
 #include <string>
 #include <iostream>
 #include <sstream>
 
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
+// VTK includes
+#include <vtkObject.h>
+#include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
+#include <vtkXMLDataElement.h>
+#include <vtkXMLDataParser.h>
 
+// MRML includes
 #include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLScene.h"
-
 
 //------------------------------------------------------------------------------
 vtkMRMLLayoutNode* vtkMRMLLayoutNode::New()
@@ -53,8 +58,13 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->MainPanelSize = 400;
   this->SecondaryPanelSize = 400;
   this->SelectedModule = NULL;
-  return;
 
+  this->CurrentViewArrangement = NULL;
+  this->LayoutRootElement = NULL;
+
+  // Synchronize the view description with the layout
+  this->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutNone, "");
+  this->UpdateLayoutDescription();
 }
 
 //----------------------------------------------------------------------------
@@ -65,7 +75,11 @@ vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
     delete [] this->SelectedModule;
     this->SelectedModule = NULL;
     }
-
+  if (this->LayoutRootElement)
+    {
+    this->LayoutRootElement->Delete();
+    this->LayoutRootElement = NULL;
+    }
 }
 
 
@@ -93,6 +107,7 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " selectedModule=\"" << (this->SelectedModule != NULL ? this->SelectedModule : "") << "\"";
     }
+  //of << indent << " layout=\"" << this->CurrentViewArrangement << "\"";
 }
 
 
@@ -184,13 +199,15 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       {
       this->SetSelectedModule(attValue);
       }
+    else if ( !strcmp(attName, "layout"))
+      {
+      //this->SetLayoutDescription(attValue);
+      }
     }
 
   this->EndModify(disabledModify);
 
 }
-    
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
@@ -199,8 +216,16 @@ void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
     {
     return;
     }
-
   this->ViewArrangement = arrNew;
+#ifndef _NDEBUG
+  if (this->GetLayoutDescription(this->ViewArrangement).empty())
+    {
+    vtkWarningMacro(<< "View arrangement " << this->ViewArrangement
+                    << " is not recognized, register it with "
+                    << "AddLayoutDescription()");
+    }
+#endif
+  this->UpdateLayoutDescription();
   this->Modified();
 }
 
@@ -283,6 +308,80 @@ vtkCollection* vtkMRMLLayoutNode::GetVisibleViewNodes()
       }
     }
   return visibleViewNodes;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutNode::AddLayoutDescription(int layout, const char* layoutDescription)
+{
+  if (this->Layouts.find(layout) != this->Layouts.end())
+    {
+    vtkDebugMacro( << "Layout " << layout << " has already been registered");
+    return;
+    }
+  this->Layouts[layout] = std::string(layoutDescription);
+  this->UpdateLayoutDescription();
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLLayoutNode::GetLayoutDescription(int layout)
+{
+  std::map<int, std::string>::const_iterator it = this->Layouts.find(layout);
+  if (it == this->Layouts.end())
+    {
+    vtkWarningMacro("Can't find layout:" << layout);
+    return std::string();
+    }
+  return it->second;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutNode::UpdateLayoutDescription()
+{
+  if (this->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCustomView)
+    {
+    return;
+    }
+  std::string description = this->GetLayoutDescription(this->ViewArrangement);
+  if (this->GetCurrentViewArrangement() &&
+      description == this->GetCurrentViewArrangement())
+    {
+    return;
+    }
+  this->SetLayoutDescription(description.c_str());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutNode::SetLayoutDescription(const char* description)
+{
+  // Be carefull that it matches the ViewArrangement value
+  if (this->LayoutRootElement)
+    {
+    this->LayoutRootElement->Delete();
+    }
+  this->LayoutRootElement = this->ParseLayout(description);
+  this->SetCurrentViewArrangement(description);
+}
+
+//----------------------------------------------------------------------------
+vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
+{
+  if (!description || strlen(description) <= 0)
+    {
+    return NULL;
+    }
+
+  std::istringstream iss(description, std::istringstream::in);
+  vtkSmartPointer<vtkXMLDataParser> parser =
+    vtkSmartPointer<vtkXMLDataParser>::New();
+  parser->SetStream(&iss);
+  parser->Parse();
+
+  vtkXMLDataElement* root = parser->GetRootElement();
+  // if we don't register, then the root element will be destroyed when the
+  // parser gets out of scope
+  root->Register(this);
+  return root;
 }
 
 //----------------------------------------------------------------------------

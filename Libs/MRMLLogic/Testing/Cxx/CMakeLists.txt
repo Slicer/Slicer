@@ -2,6 +2,8 @@ SET(KIT MRMLLogic)
 
 SET(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 CREATE_TEST_SOURCELIST(Tests ${KIT}CxxTests.cxx
+  vtkMRMLLayoutLogicTest1.cxx
+  vtkMRMLLayoutLogicTest2.cxx
   vtkMRMLSliceLogicTest1.cxx
   vtkMRMLSliceLogicTest2.cxx
   vtkMRMLSliceLogicTest3.cxx
@@ -26,6 +28,8 @@ MACRO(SIMPLE_FILE_TEST TESTNAME FILE)
     )
 ENDMACRO()
 
+SIMPLE_TEST( vtkMRMLLayoutLogicTest1 )
+SIMPLE_TEST( vtkMRMLLayoutLogicTest2 )
 SIMPLE_TEST( vtkMRMLSliceLogicTest1 )
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest2 fixed.nrrd)
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest3 fixed.nrrd)

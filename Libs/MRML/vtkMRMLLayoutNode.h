@@ -1,11 +1,10 @@
 #ifndef __vtkMRMLLayoutNode_h
 #define __vtkMRMLLayoutNode_h
 
-
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
+// MRML includes
 #include "vtkMRMLNode.h"
-#include "vtkObject.h"
+
+class vtkXMLDataElement;
 
 class VTK_MRML_EXPORT vtkMRMLLayoutNode : public vtkMRMLNode
 {
@@ -79,7 +78,7 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Layout";};
 
-  enum
+  enum SlicerLayout
     {
       SlicerLayoutInitialView = 0,
       SlicerLayoutDefaultView,
@@ -99,7 +98,9 @@ public:
       SlicerLayout3DPlusLightboxView,
       SlicerLayoutTriple3DEndoscopyView,
       SlicerLayoutNone,
-      SlicerLayoutDual3DView
+      SlicerLayoutDual3DView,
+      SlicerLayoutCustomView,
+      SlicerLayoutUserView = 100
     };
 
   /// Return all the vtkMRMLSliceNodes that are used by the current layout
@@ -115,6 +116,18 @@ public:
   /// An empty collection is returned if no view nodes are mapped.
   /// You are responsible for Deleting the collection
   vtkCollection* GetVisibleViewNodes();
+
+  void AddLayoutDescription(int layout, const char* layoutDescription);
+  std::string GetLayoutDescription(int layout);
+  vtkGetStringMacro(CurrentViewArrangement);
+  vtkGetObjectMacro(LayoutRootElement, vtkXMLDataElement);
+
+protected:
+  void UpdateLayoutDescription();
+  void SetLayoutDescription(const char* description);
+  vtkSetStringMacro(CurrentViewArrangement);
+  // You are responsible to delete the reutrned dataElement.
+  vtkXMLDataElement* ParseLayout(const char* description);
 
 protected:
   vtkMRMLLayoutNode();
@@ -136,6 +149,10 @@ protected:
 
   int MainPanelSize;
   int SecondaryPanelSize;
+
+  std::map<int, std::string> Layouts;
+  char*                      CurrentViewArrangement;
+  vtkXMLDataElement*         LayoutRootElement;
 };
 
 #endif

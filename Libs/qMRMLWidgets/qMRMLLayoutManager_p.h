@@ -41,9 +41,11 @@ class qMRMLSliceWidget;
 class qMRMLThreeDView;
 class vtkCollection;
 class vtkObject;
+class vtkMRMLLayoutLogic;
 class vtkMRMLLayoutNode;
 class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
+class vtkXMLDataElement;
 
 //-----------------------------------------------------------------------------
 class QMRML_WIDGETS_EXPORT qMRMLLayoutManagerPrivate: public QObject
@@ -87,6 +89,11 @@ public:
 
   /// Hide and remove all widgets from the current layout
   void clearLayout(QLayout* layout);
+  void setupLayout();
+
+  QLayout* addLayoutElement(vtkXMLDataElement* );
+  void     addItemElement(vtkXMLDataElement*, QObject*);
+  QWidget* addViewElement(vtkXMLDataElement*);
 
   void setLayoutInternal(int layout);
   void setConventionalView();
@@ -111,7 +118,9 @@ public:
   /// identified by \a sliceViewName
   qMRMLSliceWidget* sliceWidget(const QString& sliceLayoutName)const;
   qMRMLSliceWidget* sliceWidget(vtkMRMLSliceNode* node)const;
+
   vtkMRMLNode* viewNode(QWidget* )const;
+  QWidget* viewWidget(vtkMRMLNode* )const;
 
 public slots:
   /// Handle MRML scene event
@@ -129,8 +138,8 @@ public:
   QString            ScriptedDisplayableManagerDirectory;
   vtkMRMLScene*      MRMLScene;
   vtkMRMLLayoutNode* MRMLLayoutNode;
+  vtkMRMLLayoutLogic*MRMLLayoutLogic;
   vtkMRMLViewNode*   ActiveMRMLThreeDViewNode;
-  int                CurrentViewArrangement;
   int                SavedCurrentViewArrangement;
   QGridLayout*       GridLayout;
   QWidget*           TargetWidget;
