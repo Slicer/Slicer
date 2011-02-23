@@ -173,10 +173,11 @@ void qMRMLSliceControllerWidgetPrivate::onImageDataModifiedEvent()
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::toggleControllerWidgetGroupVisibility()
 {
-  this->ControllerWidgetGroup->setVisible(
-    !this->ControllerWidgetGroup->isVisible());
+  bool visible = !this->ControllerWidgetGroup->isVisibleTo(
+    this->ControllerWidgetGroup->parentWidget());
+  this->ControllerWidgetGroup->setVisible(visible);
   this->SliceCollapsibleButton->setArrowType(
-    this->ControllerWidgetGroup->isVisible() ? Qt::UpArrow : Qt::DownArrow);
+    visible ? Qt::UpArrow : Qt::DownArrow);
 }
 
 // --------------------------------------------------------------------------
