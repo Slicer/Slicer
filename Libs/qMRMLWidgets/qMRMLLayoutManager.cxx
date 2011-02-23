@@ -227,6 +227,11 @@ void qMRMLLayoutManagerPrivate::setMRMLScene(vtkMRMLScene* scene)
 
   this->qvtkReconnect(
     this->MRMLScene, scene,
+    vtkMRMLScene::SceneRestoredEvent, this,
+    SLOT(onSceneImportedEvent()));
+
+  this->qvtkReconnect(
+    this->MRMLScene, scene,
     vtkMRMLScene::SceneAboutToBeClosedEvent, this,
     SLOT(onSceneAboutToBeClosedEvent()));
 

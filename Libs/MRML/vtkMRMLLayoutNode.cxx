@@ -217,7 +217,7 @@ void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
     return;
     }
   this->ViewArrangement = arrNew;
-#ifndef _NDEBUG
+#if 1
   if (this->GetLayoutDescription(this->ViewArrangement).empty())
     {
     vtkWarningMacro(<< "View arrangement " << this->ViewArrangement
@@ -312,6 +312,13 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
 
 //  vtkObject::Copy(anode);
   vtkMRMLLayoutNode *node = (vtkMRMLLayoutNode *) anode;
+  // Try to copy the registered layout descriptions. However, if the node
+  // currently has layout descriptions (more than the default None description)
+  // then we don't want to copy them (it would overwrite the descriptions)
+  if (node->Layouts.size() > 1 && this->Layouts.size() == 1)
+    {
+    this->Layouts = node->Layouts;
+    }
   this->SetViewArrangement (node->GetViewArrangement() );
   this->SetGUIPanelVisibility(node->GetGUIPanelVisibility()) ;
   this->SetBottomPanelVisibility (node->GetBottomPanelVisibility());
