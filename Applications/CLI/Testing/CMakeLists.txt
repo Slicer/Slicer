@@ -1474,20 +1474,15 @@ set (CLP SparseFieldLevelSetContour1)
 # the test code doesn't link on windows
 if (NOT WIN32 AND NOT APPLE)
 set(testname ${CLP}Test)
-add_test(${testname} ${Launcher_Command}  ${CMAKE_COMMAND}
-  -Dtest_cmd=SparseFieldLevelSetContour1Test
-  -Dtest_name=SparseFieldLevelSetContour1Test
-  -Dinput_scene=${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
-  -Dc1=132.059,-3.68759,-378.683
-  -Dc2=127.652,-16.0285,-381.549
-  -Dc3=120.15,-27.4267,-382.79
-  -Dc4=117.438,-26.4077,-394.14
-  -Dc5=128.782,-14.2639,-389.404
-  -Dc6=134.297,1.63338,-387.623
-  -Doutput_model=${TEMP}/SparseFieldLevelSetContourTest.vtp
-  -Doutput_baseline=${BASELINE}/SparseFieldLevelSetContourTest.vtp
-  -Doutput_test=${TEMP}/SparseFieldLevelSetContourTest.vtp
-  -P ${Slicer_SOURCE_DIR}/Applications/CLI/Testing/run_SparseFieldLevelSetContourTest.cmake
+add_test(${testname} ${Launcher_Command}  ${TestLocation}SparseFieldLevelSetContour1Test ${testname}
+  --inputScene ${TEST_DATA}/SparseFieldLevelSetContourTest.vtp
+  --contourpoints 132.059,-3.68759,-378.683
+  --contourpoints 127.652,-16.0285,-381.549
+  --contourpoints 120.15,-27.4267,-382.79
+  --contourpoints 117.438,-26.4077,-394.14
+  --contourpoints 128.782,-14.2639,-389.404
+  --contourpoints 134.297,1.63338,-387.623
+  --outputModel ${TEMP}/SparseFieldLevelSetContourTest.vtp
   )
 SET_PROPERTY(TEST ${testname} PROPERTY LABELS ${CLP})
 
