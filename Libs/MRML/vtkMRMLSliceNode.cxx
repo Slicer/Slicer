@@ -360,16 +360,21 @@ void vtkMRMLSliceNode::UpdateMatrices()
 
     // the mapping from XY output slice pixels to Slice Plane coordinate
     xyToSlice->Identity();
-    for (i = 0; i < 3; i++)
+    if (this->Dimensions[0] > 0 &&
+        this->Dimensions[1] > 0 &&
+        this->Dimensions[2] > 0)
       {
-      spacing[i] = this->FieldOfView[i] / this->Dimensions[i];
-      xyToSlice->SetElement(i, i, spacing[i]);
-      xyToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2.);
-      }
-    //vtkWarningMacro( << "FieldOfView[2] = " << this->FieldOfView[2] << ", Dimensions[2] = " << this->Dimensions[2] );
-    //xyToSlice->SetElement(2, 2, 1.);
+      for (i = 0; i < 3; i++)
+        {
+        spacing[i] = this->FieldOfView[i] / this->Dimensions[i];
+        xyToSlice->SetElement(i, i, spacing[i]);
+        xyToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2.);
+        }
+      //vtkWarningMacro( << "FieldOfView[2] = " << this->FieldOfView[2] << ", Dimensions[2] = " << this->Dimensions[2] );
+      //xyToSlice->SetElement(2, 2, 1.);
 
-    xyToSlice->SetElement(2, 3, 0.);
+      xyToSlice->SetElement(2, 3, 0.);
+      }
 
     // the mapping from slice plane coordinates to RAS 
     // (the Orienation as in Axial, Sagittal, Coronal)

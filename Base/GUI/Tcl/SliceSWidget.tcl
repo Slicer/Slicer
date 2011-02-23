@@ -268,7 +268,9 @@ itcl::body SliceSWidget::resizeSliceNode {} {
     set nodefovz 1.0
   }
 
-  if { $windoww == "10" && $windowh == "10" } {
+  if { $windoww < 1 || $windowh < 1 ||
+       $w < 1 || $h < 1 || $nodeW < 1 || $nodeH < 1 ||
+       $nodefovx == 0. || $nodefovx == 0.} {
     #puts "ignoring bogus resize"
   } else {
     set scaling0 [expr $w / (1. * $nodeW)]
@@ -397,7 +399,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   if { $y < 0 } { 
     set y 0
   }
-
   # We should really use the pokedrenderer's size for these calculations.
   # However, viewports in the LightBox can differ in size by a pixel.  So 
   # set the image size based on the size of renderer zero.

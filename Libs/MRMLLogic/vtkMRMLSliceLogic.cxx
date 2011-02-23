@@ -1663,8 +1663,8 @@ void vtkMRMLSliceLogic::ResizeSliceNode(double newWidth, double newHeight)
   double oldFOV[3];
   this->SliceNode->GetFieldOfView(oldFOV);
 
-  double scalingX = (oldDimensions[0] != 0 ? newWidth / oldDimensions[0] : 1.);
-  double scalingY = (oldDimensions[1] != 0 ? newHeight / oldDimensions[1] : 1.);
+  double scalingX = (newWidth != 0 && oldDimensions[0] != 0 ? newWidth / oldDimensions[0] : 1.);
+  double scalingY = (newHeight != 0 && oldDimensions[1] != 0 ? newHeight / oldDimensions[1] : 1.);
 
   double magnitudeX = (scalingX >= 1. ? scalingX : 1. / scalingX);
   double magnitudeY = (scalingY >= 1. ? scalingY : 1. / scalingY);
