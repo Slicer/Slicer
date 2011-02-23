@@ -109,7 +109,7 @@ void vtkMRMLModelHierarchyNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLModelHierarchyNode *node = (vtkMRMLModelHierarchyNode *) anode;
+//  vtkMRMLModelHierarchyNode *node = (vtkMRMLModelHierarchyNode *) anode;
 
   this->EndModify(disabledModify);
 
