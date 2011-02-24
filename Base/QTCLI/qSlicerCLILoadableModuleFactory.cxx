@@ -24,7 +24,7 @@
 
 // SlicerQT includes
 #include "qSlicerCLILoadableModuleFactory.h"
-#include "qSlicerCLILoadableModule.h"
+#include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleFactoryHelper.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreCommandOptions.h"
@@ -61,8 +61,9 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
     }
 
   // Resolves symbol
-  qSlicerCLILoadableModule::ModuleEntryPointType moduleEntryPoint =
-    reinterpret_cast<qSlicerCLILoadableModule::ModuleEntryPointType>(
+  typedef int (*ModuleEntryPointType)(int argc, char* argv[]);
+  ModuleEntryPointType moduleEntryPoint =
+    reinterpret_cast<ModuleEntryPointType>(
       this->symbolAddress("ModuleEntryPoint"));
 
   if (!moduleEntryPoint)
