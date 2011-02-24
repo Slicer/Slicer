@@ -16,18 +16,22 @@
 #include <sstream>
 
 const char* conventionalView =
-  "<layout type=\"grid\">"
-  " <item row=\"0\" column=\"0\" colspan=\"3\">"
+  "<layout type=\"vertical\" split=\"true\" >"
+  " <item>"
   "  <view class=\"vtkMRMLViewNode\"/>"
   " </item>"
-  " <item row=\"1\" column=\"0\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
-  " </item>"
-  " <item row=\"1\" column=\"1\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
-  " </item>"
-  " <item row=\"1\" column=\"2\">"
-  "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "   </item>"
+  "  </layout>"
   " </item>"
   "</layout>";
 
