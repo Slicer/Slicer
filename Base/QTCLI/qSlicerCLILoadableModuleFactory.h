@@ -36,9 +36,8 @@ class qSlicerCLILoadableModuleFactoryItem : public ctkFactoryLibraryItem<qSlicer
 public:
   // Convenient typedef
   typedef ctkFactoryLibraryItem<qSlicerAbstractCoreModule> Superclass;
-  
-  explicit qSlicerCLILoadableModuleFactoryItem(const QString& itemPath);
-  virtual ~qSlicerCLILoadableModuleFactoryItem(){}
+
+  explicit qSlicerCLILoadableModuleFactoryItem(const QString& path);
 
 protected:
   /// Convenient typedef

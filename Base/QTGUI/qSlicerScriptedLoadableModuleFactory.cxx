@@ -137,86 +137,20 @@ qSlicerScriptedLoadableModuleFactory::~qSlicerScriptedLoadableModuleFactory()
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerScriptedLoadableModuleFactory::registerScript(const QString& key, const QFileInfo& file)
+ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerScriptedLoadableModuleFactory
+::createFactoryFileBasedItem(const QFileInfo& file)
 {
-  // Check if already registered
-  if (this->item(key))
+  // Skip if current file isn't a python file
+  if (file.suffix().compare("py", Qt::CaseInsensitive) != 0)
     {
-    return false;
+    return 0;
     }
-  QSharedPointer<ctkFactoryScriptedItem> _item =
-    QSharedPointer<ctkFactoryScriptedItem>(new ctkFactoryScriptedItem(file.filePath()));
-  if (_item.isNull())
-    {
-    return false;
-    }
-
-  _item->setVerbose(this->verbose());
-  return this->registerItem(key, _item);
+  return new ctkFactoryScriptedItem(file.filePath());
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerScriptedLoadableModuleFactory::registerItems()
 {
   Q_D(qSlicerScriptedLoadableModuleFactory);
-
-  QStringList modulePaths = d->modulePaths();
-  
-  if (modulePaths.isEmpty())
-    {
-    qWarning() << "No scripted module paths provided";
-    return;
-    }
-
-  // Process one path at a time
-  foreach (QString path, modulePaths)
-    {
-    QDirIterator it(path);
-    while (it.hasNext())
-      {
-      it.next();
-      QFileInfo fileInfo = it.fileInfo();
-      //qDebug() << "Verifying scripted loadable module:" << fileInfo.fileName();
-      
-      // Skip if item isn't a file
-      if (!fileInfo.isFile()) { continue; }
-      
-      if (fileInfo.isSymLink())
-        {
-        // symLinkTarget() handles links pointing to symlinks.
-        // How about a symlink pointing to a symlink ?
-        fileInfo = QFileInfo(fileInfo.symLinkTarget());
-        }
-      // Skip if current file isn't a python file
-      if (fileInfo.suffix().compare("py", Qt::CaseInsensitive) != 0) { continue; }
-
-      if (this->verbose())
-        {
-        qDebug() << "Attempt to register loadable module:" << fileInfo.fileName();
-        }
-
-      QString moduleName = this->fileNameToKey(fileInfo.fileName());
-      if (!this->registerScript(moduleName, fileInfo))
-        {
-        if (this->verbose())
-          {
-          qDebug() << "Failed to register module: " << moduleName;
-          }
-        continue;
-        }
-      }
-    }
+  this->registerAllFileItems(d->modulePaths());
 }
-
-//-----------------------------------------------------------------------------
-QString qSlicerScriptedLoadableModuleFactory::fileNameToKey(const QString& fileName)
-{
-  return qSlicerScriptedLoadableModuleFactory::extractModuleName(fileName);
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerScriptedLoadableModuleFactory::extractModuleName(const QString& fileName)
-{
-  return QFileInfo(fileName).baseName().toLower();
-}
-

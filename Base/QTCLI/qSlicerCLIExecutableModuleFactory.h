@@ -30,62 +30,43 @@
 #include <ctkAbstractPluginFactory.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIExecutableModuleFactoryItem : public ctkAbstractFactoryItem<qSlicerAbstractCoreModule>
+class qSlicerCLIExecutableModuleFactoryItem
+  : public ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule>
 {
 public:
-  typedef ctkAbstractFactoryItem<qSlicerAbstractCoreModule> Superclass;
-  explicit qSlicerCLIExecutableModuleFactoryItem(const QString& itemPath);
-  virtual ~qSlicerCLIExecutableModuleFactoryItem(){}
+  typedef ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule> Superclass;
+  explicit qSlicerCLIExecutableModuleFactoryItem(const QString& path);
 
-  ///
   virtual bool load();
-
-  ///
-  /// Return path associated with the executable module
-  QString path()const;
-
 protected:
   virtual qSlicerAbstractCoreModule* instanciator();
-
-private:
-  QString          Path;
 };
-
-
-//-----------------------------------------------------------------------------
-class qSlicerCLIExecutableModuleFactoryPrivate;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory :
-  public ctkAbstractPluginFactory<qSlicerAbstractCoreModule>
+  public ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>
 {
 public:
 
   typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
-  
+
   qSlicerCLIExecutableModuleFactory();
-  virtual ~qSlicerCLIExecutableModuleFactory();
 
   ///
   virtual void registerItems();
-
-  ///
-  ///   virtual QString fileNameToKey(const QString& fileName);
-
-  /// Extract module name given \a executableName
-  /// For example: 
+/// Extract module name given \a executableName
+  /// For example:
   ///  Threshold.exe -> threshold
   ///  Threshold -> threshold
   static QString extractModuleName(const QString& executableName);
 
 protected:
-  virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* createFactoryPluginItem(
-    const QFileInfo& plugin);
-
-  QScopedPointer<qSlicerCLIExecutableModuleFactoryPrivate> d_ptr;
+  virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
+    createFactoryFileBasedItem(const QFileInfo& file);
+  ///
+  virtual QString fileNameToKey(const QString& fileName)const;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerCLIExecutableModuleFactory);
   Q_DISABLE_COPY(qSlicerCLIExecutableModuleFactory);
 };
 

@@ -19,86 +19,101 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
+#include <QProcess>
 #include <QStringList>
 
 // SlicerQt includes
 #include "qSlicerCLIExecutableModuleFactory.h"
 #include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleFactoryHelper.h"
+#include "qSlicerCoreApplication.h"
+#include "qSlicerCoreCommandOptions.h"
+#include "qSlicerUtils.h"
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
-  const QString& itemPath):Superclass(),Path(itemPath)
+  const QString& path):Superclass(path)
 {
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCLIExecutableModuleFactoryItem::load()
 {
-  return false;
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerCLIExecutableModuleFactoryItem::path()const
-{
-  return this->Path;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 {
-  qDebug() << "CmdLineExecutableModuleItem::instantiate - name:" << this->path();
-  return 0;
-}
+  // Using a scoped pointer ensures the memory will be cleaned if instanciator
+  // fails before returning the module. See QScopedPointer::take()
+  QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
+  module->setModuleType("CommandLineModule");
+  module->setEntryPoint(this->path());
 
-//-----------------------------------------------------------------------------
-class qSlicerCLIExecutableModuleFactoryPrivate
-{
-public:
-};
+  QProcess cli;
+  cli.start(this->path(), QStringList(QString("--xml")));
+  bool res = cli.waitForFinished(5000);
+  if (!res)
+    {
+    return 0;
+    }
+  QString xmlDescription = cli.readAllStandardOutput();
+  if (xmlDescription.isEmpty())
+    {
+    if (this->verbose())
+      {
+      qWarning() << "Failed to retrieve Xml Description - Path:" << this->path();
+      }
+    return 0;
+    }
+  if (!xmlDescription.startsWith("<?xml"))
+    {
+    qWarning() << "For command line executable: " << this->path();
+    qWarning() << "XML description doesn't start right away."
+               << "There is extra output before the XML is print.";
+    xmlDescription.remove(0, xmlDescription.indexOf("<?xml"));
+    }
+
+  module->setXmlModuleDescription(xmlDescription.toLatin1());
+  module->setTempDirectory(
+    qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());
+
+  return module.take();
+}
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory()
-  : Superclass()
-  , d_ptr(new qSlicerCLIExecutableModuleFactoryPrivate)
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerCLIExecutableModuleFactory::~qSlicerCLIExecutableModuleFactory()
 {
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIExecutableModuleFactory::registerItems()
 {
-  
+  this->registerAllFileItems(qSlicerCLIModuleFactoryHelper::modulePaths());
 }
 
 //-----------------------------------------------------------------------------
 ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLIExecutableModuleFactory
-::createFactoryPluginItem(const QFileInfo& plugin)
+::createFactoryFileBasedItem(const QFileInfo& file)
 {
-  return new qSlicerCLIExecutableModuleFactoryItem(plugin.filePath());
+  if (!file.isExecutable() ||
+      !qSlicerUtils::isCLIExecutable(file.absoluteFilePath()))
+    {
+    return 0;
+    }
+  return new qSlicerCLIExecutableModuleFactoryItem(file.filePath());
 }
 
 //-----------------------------------------------------------------------------
-// QString qSlicerCLIExecutableModuleFactory::objectNameToKey(const QString& objectName)
-// {
-//   return Self::extractModuleName(objectName);
-// }
+QString qSlicerCLIExecutableModuleFactory::fileNameToKey(const QString& objectName)const
+{
+  return qSlicerCLIExecutableModuleFactory::extractModuleName(objectName);
+}
 
 //-----------------------------------------------------------------------------
 QString qSlicerCLIExecutableModuleFactory::extractModuleName(const QString& executableName)
 {
-  QString moduleName = executableName;
-
-  // Remove extension if needed
-  int index = moduleName.indexOf(".");
-  if (index > 0)
-    {
-    moduleName.truncate(index);
-    }
-
-  return moduleName.toLower();
+  return qSlicerUtils::extractModuleNameFromLibraryName(executableName);
 }

@@ -24,8 +24,6 @@ SET(KIT_include_directories
 SET(KIT_SRCS
   qSlicerCLIExecutableModuleFactory.cxx
   qSlicerCLIExecutableModuleFactory.h
-  qSlicerCLILoadableModule.cxx
-  qSlicerCLILoadableModule.h
   qSlicerCLILoadableModuleFactory.cxx
   qSlicerCLILoadableModuleFactory.h
   qSlicerCLIModule.cxx
@@ -43,6 +41,7 @@ SET(KIT_SRCS
 
 # Headers that should run through moc
 SET(KIT_MOC_SRCS
+  qSlicerCLIModule.h
   qSlicerCLIModuleWidget.h
   qSlicerCLIModuleWidget_p.h
   qSlicerCLIModuleUIHelper.h

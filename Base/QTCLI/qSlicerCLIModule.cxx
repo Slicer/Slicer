@@ -44,6 +44,9 @@ public:
   QString           Category;
   QString           Contributor;
   int               Index;
+
+  QString           EntryPoint;
+  QString           ModuleType;
   QString           TempDirectory;
 
   ModuleDescription                 Desc;
@@ -108,9 +111,14 @@ CTK_GET_CPP(qSlicerCLIModule, int, index, Index);
 CTK_GET_CPP(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
 CTK_GET_CPP(qSlicerCLIModule, QString, helpText, Help);
 CTK_SET_CPP(qSlicerCLIModule, const QString&, setTempDirectory, TempDirectory);
+CTK_GET_CPP(qSlicerCLIModule, QString, tempDirectory, TempDirectory);
+CTK_SET_CPP(qSlicerCLIModule, const QString&, setEntryPoint, EntryPoint);
+CTK_GET_CPP(qSlicerCLIModule, QString, entryPoint, EntryPoint);
+CTK_SET_CPP(qSlicerCLIModule, const QString&, setModuleType, ModuleType);
+CTK_GET_CPP(qSlicerCLIModule, QString, moduleType, ModuleType);
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
+void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescription)
 {
   Q_D(qSlicerCLIModule);
   //qDebug() << "xmlModuleDescription:" << xmlModuleDescription;
@@ -119,7 +127,7 @@ void qSlicerCLIModule::setXmlModuleDescription(const char* xmlModuleDescription)
   // Parse module description
   ModuleDescription desc;
   ModuleDescriptionParser parser;
-  if (parser.Parse(std::string(xmlModuleDescription), desc) != 0)
+  if (parser.Parse(xmlModuleDescription.toStdString(), desc) != 0)
     {
     qWarning() << "Failed to parse xml module description";
     return;

@@ -58,14 +58,11 @@ public:
   ///
   virtual void registerItems();
 
-  ///
-  virtual QString fileNameToKey(const QString& fileName);
-
-  /// Extract module name given \a fileName
-  static QString extractModuleName(const QString& fileName);
-
 protected:
   QScopedPointer<qSlicerScriptedLoadableModuleFactoryPrivate> d_ptr;
+
+  virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
+    createFactoryFileBasedItem(const QFileInfo& file);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerScriptedLoadableModuleFactory);

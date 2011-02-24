@@ -42,11 +42,11 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 {
   // Using a scoped pointer ensures the memory will be cleaned if instanciator
   // fails before returning the module. See QScopedPointer::take()
-  QScopedPointer<qSlicerCLILoadableModule> module(new qSlicerCLILoadableModule());
+  QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
 
   // Resolves symbol
-  char* xmlDescription = reinterpret_cast<char*>(
-    this->symbolAddress("XMLModuleDescription"));
+  const char* xmlDescription = const_cast<const char *>(reinterpret_cast<char*>(
+    this->symbolAddress("XMLModuleDescription")));
 
   // Retrieve
   //if (!xmlDescription) { xmlDescription = xmlFunction ? (*xmlFunction)() : 0; }
@@ -73,9 +73,15 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
       }
     return 0;
     }
-  module->setEntryPoint(moduleEntryPoint);
-  
-  module->setXmlModuleDescription(xmlDescription);
+
+  char buffer[256];
+  // The entry point address must be encoded the same way it is decoded. As it
+  // is decoded using  sscanf, it must be encoded using sprintf
+  sprintf(buffer, "slicer:%p", moduleEntryPoint);
+  module->setEntryPoint(QString(buffer));
+  module->setModuleType("SharedObjectModule");
+
+  module->setXmlModuleDescription(QString(xmlDescription));
 
   module->setTempDirectory(
     qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory());

@@ -156,7 +156,7 @@ void qSlicerLoadableModuleFactory::registerItems()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModuleFactory::fileNameToKey(const QString& fileName)
+QString qSlicerLoadableModuleFactory::fileNameToKey(const QString& fileName)const
 {
   return qSlicerLoadableModuleFactory::extractModuleName(fileName);
 }

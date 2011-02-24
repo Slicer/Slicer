@@ -38,6 +38,10 @@ public:
   static bool isExecutableName(const QString& name);
 
   ///
+  /// Returns true if the name matches the CLI executable file name requirements
+  static bool isCLIExecutable(const QString& name);
+
+  ///
   /// Look for target file in build intermediate directory.
   /// On windows, the intermediate directory includes: . Debug RelWithDebInfo Release MinSizeRel
   /// And it return the first matched directory

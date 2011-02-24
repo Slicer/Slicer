@@ -45,7 +45,7 @@ public:
   virtual void registerItems();
 
   ///
-  virtual QString fileNameToKey(const QString& fileName);
+  virtual QString fileNameToKey(const QString& fileName)const;
 
   /// Extract module name given \a libraryName
   /// \sa qSlicerUtils::extractModuleNameFromLibraryName
