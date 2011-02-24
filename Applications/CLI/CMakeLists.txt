@@ -48,12 +48,13 @@ slicerMacroBuildCLI(
     ${SlicerBaseLogic_SOURCE_DIR} 
     ${SlicerBaseLogic_BINARY_DIR}
   INCLUDE_DIRECTORIES 
-    ${vtkITK_SOURCE_DIR} 
+    ${vtkITK_SOURCE_DIR}
     ${vtkITK_BINARY_DIR} 
     ${MRML_SOURCE_DIR} 
     ${MRML_BINARY_DIR}
     ${vtkTeem_SOURCE_DIR} 
     ${vtkTeem_BINARY_DIR}
+  EXECUTABLE_ONLY
   )
 #-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
