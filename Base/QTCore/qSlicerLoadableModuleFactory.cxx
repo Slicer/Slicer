@@ -107,52 +107,7 @@ void qSlicerLoadableModuleFactory::registerItems()
 {
   Q_D(qSlicerLoadableModuleFactory);
 
-  QStringList modulePaths = d->modulePaths();
-  
-  if (modulePaths.isEmpty())
-    {
-    qWarning() << "No loadable module paths provided";
-    return;
-    }
-
-  // Process one path at a time
-  foreach (QString path, modulePaths)
-    {
-    QDirIterator it(path);
-    while (it.hasNext())
-      {
-      it.next();
-      QFileInfo fileInfo = it.fileInfo();
-      //qDebug() << "Verifying loadable module:" << fileInfo.fileName();
-      
-      // Skip if item isn't a file
-      if (!fileInfo.isFile()) { continue; }
-      
-      if (fileInfo.isSymLink())
-        {
-        // symLinkTarget() handles links pointing to symlinks.
-        // How about a symlink pointing to a symlink ?
-        fileInfo = QFileInfo(fileInfo.symLinkTarget());
-        }
-      // Skip if current file isn't a library
-      if (!QLibrary::isLibrary(fileInfo.fileName())) { continue; }
-
-      if (this->verbose())
-        {
-        qDebug() << "Attempt to register loadable module:" << fileInfo.fileName();
-        }
-
-      QString libraryName = this->fileNameToKey(fileInfo.fileName());
-      if (!this->registerLibrary(libraryName, fileInfo))
-        {
-        if (this->verbose())
-          {
-          qDebug() << "Failed to register module: " << libraryName;
-          }
-        continue;
-        }
-      }
-    }
+  this->registerAllFileItems(d->modulePaths());
 }
 
 //-----------------------------------------------------------------------------

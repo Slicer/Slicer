@@ -37,12 +37,12 @@ int qSlicerCLIExecutableModuleFactoryTest1(int, char * [] )
   executableNames << "Threshold.exe"
                   << "threshold.exe"
                   << "Threshold";
-             
-  QString expectedModuleName = "threshold";
 
+  QString expectedModuleName = "threshold";
+  qSlicerCLIExecutableModuleFactory factory;
   foreach (const QString& executableName, executableNames)
     {
-    QString moduleName = qSlicerCLIExecutableModuleFactory::extractModuleName(executableName);
+    QString moduleName = factory.fileNameToKey(executableName);
     if (moduleName != expectedModuleName)
       {
       std::cerr << __LINE__ << " - Error in  extractModuleName()" << std::endl

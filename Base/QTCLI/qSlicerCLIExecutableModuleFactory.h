@@ -34,9 +34,6 @@ class qSlicerCLIExecutableModuleFactoryItem
   : public ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule>
 {
 public:
-  typedef ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule> Superclass;
-  explicit qSlicerCLIExecutableModuleFactoryItem(const QString& path);
-
   virtual bool load();
 protected:
   virtual qSlicerAbstractCoreModule* instanciator();
@@ -47,27 +44,20 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory :
   public ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>
 {
 public:
-
-  typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
-
-  qSlicerCLIExecutableModuleFactory();
-
   ///
   virtual void registerItems();
-/// Extract module name given \a executableName
+
+  ///
+  /// Extract module name given \a executableName
   /// For example:
   ///  Threshold.exe -> threshold
   ///  Threshold -> threshold
-  static QString extractModuleName(const QString& executableName);
-
-protected:
-  virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
-    createFactoryFileBasedItem(const QFileInfo& file);
-  ///
   virtual QString fileNameToKey(const QString& fileName)const;
+protected:
+  virtual bool isValidFile(const QFileInfo& file)const;
 
-private:
-  Q_DISABLE_COPY(qSlicerCLIExecutableModuleFactory);
+  virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
+    createFactoryFileBasedItem();
 };
 
 #endif

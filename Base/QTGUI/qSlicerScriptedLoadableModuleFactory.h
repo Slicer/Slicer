@@ -36,8 +36,6 @@ class qSlicerScriptedLoadableModuleFactoryPrivate;
 class ctkFactoryScriptedItem : public ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule>
 {
 public:
-  explicit ctkFactoryScriptedItem(const QString& path);
-
   virtual bool load();
 protected:
   virtual qSlicerAbstractCoreModule* instanciator();
@@ -61,8 +59,9 @@ public:
 protected:
   QScopedPointer<qSlicerScriptedLoadableModuleFactoryPrivate> d_ptr;
 
+  virtual bool isValidFile(const QFileInfo& file)const;
   virtual ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
-    createFactoryFileBasedItem(const QFileInfo& file);
+    createFactoryFileBasedItem();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerScriptedLoadableModuleFactory);

@@ -32,12 +32,6 @@
 #include "qSlicerUtils.h"
 
 //-----------------------------------------------------------------------------
-qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
-  const QString& path):Superclass(path)
-{
-}
-
-//-----------------------------------------------------------------------------
 bool qSlicerCLIExecutableModuleFactoryItem::load()
 {
   return true;
@@ -84,10 +78,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory()
-{
-}
-
+// qSlicerCLIExecutableModuleFactory
 //-----------------------------------------------------------------------------
 void qSlicerCLIExecutableModuleFactory::registerItems()
 {
@@ -95,25 +86,22 @@ void qSlicerCLIExecutableModuleFactory::registerItems()
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file)const
+{
+  return ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>::isValidFile(file) &&
+    file.isExecutable() &&
+    qSlicerUtils::isCLIExecutable(file.absoluteFilePath());
+}
+
+//-----------------------------------------------------------------------------
 ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLIExecutableModuleFactory
-::createFactoryFileBasedItem(const QFileInfo& file)
+::createFactoryFileBasedItem()
 {
-  if (!file.isExecutable() ||
-      !qSlicerUtils::isCLIExecutable(file.absoluteFilePath()))
-    {
-    return 0;
-    }
-  return new qSlicerCLIExecutableModuleFactoryItem(file.filePath());
+  return new qSlicerCLIExecutableModuleFactoryItem();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIExecutableModuleFactory::fileNameToKey(const QString& objectName)const
-{
-  return qSlicerCLIExecutableModuleFactory::extractModuleName(objectName);
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerCLIExecutableModuleFactory::extractModuleName(const QString& executableName)
+QString qSlicerCLIExecutableModuleFactory::fileNameToKey(const QString& executableName)const
 {
   return qSlicerUtils::extractModuleNameFromLibraryName(executableName);
 }

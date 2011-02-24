@@ -31,13 +31,6 @@
 #include "qSlicerUtils.h"
 
 //-----------------------------------------------------------------------------
-qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(
-  const QString& itemPath)
-  :Superclass(itemPath)
-{
-}
-
-//-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 {
   // Using a scoped pointer ensures the memory will be cleaned if instanciator
@@ -91,7 +84,9 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory():Superclass()
+// qSlicerCLILoadableModuleFactory
+//-----------------------------------------------------------------------------
+qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory()
 {
   // Set the list of required symbols for CmdLineLoadableModule,
   // if one of these symbols can't be resolved, the library won't be registered.
@@ -105,69 +100,18 @@ qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory():Superclass()
 void qSlicerCLILoadableModuleFactory::registerItems()
 {
   QStringList modulePaths = qSlicerCLIModuleFactoryHelper::modulePaths();
-  
-  if (modulePaths.isEmpty())
-    {
-    qWarning() << "No loadable command line module paths provided";
-    return;
-    }
-
-  // Process one path at a time
-  foreach (QString path, modulePaths)
-    {
-    QDirIterator it(path);
-    while (it.hasNext())
-      {
-      it.next();
-      QFileInfo fileInfo = it.fileInfo();
-      // Skip if item isn't a file
-      if (!fileInfo.isFile()) { continue; }
-      
-      if (fileInfo.isSymLink())
-        {
-        // symLinkTarget() handles links pointing to symlinks.
-        // How about a symlink pointing to a symlink ?
-        fileInfo = QFileInfo(fileInfo.symLinkTarget());
-        }
-      // Skip if current file isn't a library
-      if (!QLibrary::isLibrary(fileInfo.fileName()))
-        {
-        continue;
-        }
-
-      if (this->verbose())
-        {
-        qDebug() << "Attempt to register command line module:" << fileInfo.fileName();
-        }
-
-      QString key = this->fileNameToKey(fileInfo.filePath());
-      if (!this->registerLibrary(key, fileInfo))
-        {
-        if (this->verbose())
-          {
-          qWarning() << "Failed to register module: " << key;
-          }
-        continue;
-        }
-      }
-    }
+  this->registerAllFileItems(modulePaths);
 }
 
 //-----------------------------------------------------------------------------
-ctkFactoryLibraryItem<qSlicerAbstractCoreModule>* qSlicerCLILoadableModuleFactory::
-createFactoryLibraryItem(const QFileInfo& libraryFile)const
+ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLILoadableModuleFactory::
+createFactoryFileBasedItem()
 {
-  return new qSlicerCLILoadableModuleFactoryItem(libraryFile.filePath());
+  return new qSlicerCLILoadableModuleFactoryItem();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& objectName)const
+QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& fileName)const
 {
-  return qSlicerCLILoadableModuleFactory::extractModuleName(objectName);
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerCLILoadableModuleFactory::extractModuleName(const QString& libraryName)
-{
-  return qSlicerUtils::extractModuleNameFromLibraryName(libraryName);
+  return qSlicerUtils::extractModuleNameFromLibraryName(fileName);
 }

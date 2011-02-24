@@ -35,13 +35,6 @@
 // ctkFactoryScriptedItem methods
 
 //----------------------------------------------------------------------------
-ctkFactoryScriptedItem::ctkFactoryScriptedItem(const QString& path):
-    ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule>(path)
-{
-
-}
-
-//----------------------------------------------------------------------------
 bool ctkFactoryScriptedItem::load()
 {
   return true;
@@ -136,16 +129,19 @@ qSlicerScriptedLoadableModuleFactory::~qSlicerScriptedLoadableModuleFactory()
 {
 }
 
-//----------------------------------------------------------------------------
-ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerScriptedLoadableModuleFactory
-::createFactoryFileBasedItem(const QFileInfo& file)
+//-----------------------------------------------------------------------------
+bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file)const
 {
   // Skip if current file isn't a python file
-  if (file.suffix().compare("py", Qt::CaseInsensitive) != 0)
-    {
-    return 0;
-    }
-  return new ctkFactoryScriptedItem(file.filePath());
+  return ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>::isValidFile(file) &&
+    file.suffix().compare("py", Qt::CaseInsensitive) == 0;
+}
+
+//----------------------------------------------------------------------------
+ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerScriptedLoadableModuleFactory
+::createFactoryFileBasedItem()
+{
+  return new ctkFactoryScriptedItem();
 }
 
 //-----------------------------------------------------------------------------
