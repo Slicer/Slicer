@@ -131,26 +131,36 @@ int main(int argc, char* argv[])
   qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
 
   // Register module factories
-  moduleFactoryManager->registerFactory("qSlicerCoreModuleFactory",
-                                        new qSlicerCoreModuleFactory());
+  qSlicerCoreModuleFactory* coreModuleFactory = new qSlicerCoreModuleFactory();
+  moduleFactoryManager->registerFactory("qSlicerCoreModuleFactory", coreModuleFactory);
 
   if (!app.commandOptions()->disableLoadableModule())
     {
-    moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory",
-                                          new qSlicerLoadableModuleFactory());
+    qSlicerLoadableModuleFactory* loadableModuleFactory = new qSlicerLoadableModuleFactory();
+    loadableModuleFactory->setRegisteredItems(coreModuleFactory->registeredItems());
+    moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory", loadableModuleFactory);
 
 #ifdef Slicer_USE_PYTHONQT
+    qSlicerScriptedLoadableModuleFactory* scriptedLoadableModuleFactory =
+      new qSlicerScriptedLoadableModuleFactory();
+    scriptedLoadableModuleFactory->setRegisteredItems(coreModuleFactory->registeredItems());
     moduleFactoryManager->registerFactory("qSlicerScriptedLoadableModuleFactory",
-                                          new qSlicerScriptedLoadableModuleFactory());
+                                          scriptedLoadableModuleFactory);
 #endif
     }
 
   if (!app.commandOptions()->disableCLIModule())
     {
+    qSlicerCLILoadableModuleFactory* cliLoadableModuleFactory =
+      new qSlicerCLILoadableModuleFactory();
+    cliLoadableModuleFactory->setRegisteredItems(coreModuleFactory->registeredItems());
     moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
-                                          new qSlicerCLILoadableModuleFactory());
+                                          cliLoadableModuleFactory);
+    qSlicerCLIExecutableModuleFactory* cliExecutableModuleFactory =
+      new qSlicerCLIExecutableModuleFactory();
+    cliExecutableModuleFactory->setRegisteredItems(coreModuleFactory->registeredItems());
     moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
-                                          new qSlicerCLIExecutableModuleFactory());
+                                          cliExecutableModuleFactory);
     }
 
   moduleFactoryManager->setVerboseModuleDiscovery(app.commandOptions()->verboseModuleDiscovery());
