@@ -50,8 +50,8 @@
 */
 
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <fstream>
 #include "expat.h"
 #include <string>
@@ -243,10 +243,10 @@ void GeneratePre(std::ofstream &sout, ModuleDescription &, int argc, char *argv[
     }
   sout << std::endl;
   sout << "//" << std::endl;
-  sout << "#include <stdio.h>" << std::endl;
-  sout << "#include <stdlib.h>" << std::endl;
+  sout << "#include <cstdio>" << std::endl;
+  sout << "#include <cstdlib>" << std::endl;
   sout << "#include <iostream>" << std::endl;
-  sout << "#include <string.h>" << std::endl;
+  sout << "#include <string>" << std::endl;
   sout << "#include <vector>" << std::endl;
   sout << "#include <map>" << std::endl;
   sout << std::endl;
