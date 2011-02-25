@@ -22,37 +22,37 @@
 #include <QDebug>
 
 // qMRML includes
-#include "qMRMLSceneSnapshotMenu.h"
-#include "qMRMLSceneSnapshotMenu_p.h"
+#include "qMRMLSceneViewMenu.h"
+#include "qMRMLSceneViewMenu_p.h"
 
 // MRML includes
 #include <vtkMRMLSceneViewNode.h>
 
 
 //--------------------------------------------------------------------------
-// qMRMLSceneSnapshotMenuPrivate methods
+// qMRMLSceneViewMenuPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLSceneSnapshotMenuPrivate::qMRMLSceneSnapshotMenuPrivate(qMRMLSceneSnapshotMenu& object)
+qMRMLSceneViewMenuPrivate::qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object)
   : Superclass(&object), q_ptr(&object)
 {
-  connect(&this->RestoreActionMapper, SIGNAL(mapped(QString)), SLOT(restoreSnapshot(QString)));
-  connect(&this->DeleteActionMapper, SIGNAL(mapped(QString)), SLOT(deleteSnapshot(QString)));
+  connect(&this->RestoreActionMapper, SIGNAL(mapped(QString)), SLOT(restoreSceneView(QString)));
+  connect(&this->DeleteActionMapper, SIGNAL(mapped(QString)), SLOT(deleteSceneView(QString)));
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenuPrivate::resetMenu()
+void qMRMLSceneViewMenuPrivate::resetMenu()
 {
-  Q_Q(qMRMLSceneSnapshotMenu);
+  Q_Q(qMRMLSceneViewMenu);
   Q_ASSERT(this->MRMLScene);
 
   // Clear menu
   q->clear();
 
-  QAction * noSnapshotAction = q->addAction(this->NoSnapshotText);
-  noSnapshotAction->setDisabled(true);
+  QAction * noSceneViewAction = q->addAction(this->NoSceneViewText);
+  noSceneViewAction->setDisabled(true);
 
-  // Loop over snapshot nodes and associated menu entry
+  // Loop over sceneView nodes and associated menu entry
   const char* className = "vtkMRMLSceneViewNode";
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass(className);
   for (int n = 0; n < nnodes; n++)
@@ -62,76 +62,76 @@ void qMRMLSceneSnapshotMenuPrivate::resetMenu()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject * mrmlNode)
+void qMRMLSceneViewMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject * mrmlNode)
 {
   Q_UNUSED(mrmlScene);
-  vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
-  if (!snapshotNode)
+  vtkMRMLSceneViewNode * sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
+  if (!sceneViewNode)
     {
     return;
     }
 
-  this->addMenuItem(snapshotNode);
+  this->addMenuItem(sceneViewNode);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenuPrivate::addMenuItem(vtkMRMLNode * snapshotNode)
+void qMRMLSceneViewMenuPrivate::addMenuItem(vtkMRMLNode * sceneViewNode)
 {
-  Q_Q(qMRMLSceneSnapshotMenu);
-  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(snapshotNode);
+  Q_Q(qMRMLSceneViewMenu);
+  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(sceneViewNode);
   if (!node)
     {
     return;
     }
 
-  // Reload the menu each time a snapshot node is modified, if there
-  // are performance issues, the relation between menu item and snapshot should
+  // Reload the menu each time a sceneView node is modified, if there
+  // are performance issues, the relation between menu item and sceneView should
   // be tracked either using a QModel or a QHash
-  this->qvtkReconnect(snapshotNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(onMRMLSceneSnaphodeNodeModified(vtkObject*)));
+  this->qvtkReconnect(sceneViewNode, vtkCommand::ModifiedEvent,
+                      this, SLOT(onMRMLSceneViewNodeModified(vtkObject*)));
 
-  if (this->hasNoSnapshotItem())
+  if (this->hasNoSceneViewItem())
     {
     q->clear();
     }
 
-  QMenu* snapshotMenu = q->addMenu(QLatin1String(node->GetName()));
+  QMenu* sceneViewMenu = q->addMenu(QLatin1String(node->GetName()));
 
-  QAction* restoreAction = snapshotMenu->addAction(QIcon(":/Icons/SnapshotRestore.png"), "Restore",
+  QAction* restoreAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotRestore.png"), "Restore",
                                                    &this->RestoreActionMapper, SLOT(map()));
   this->RestoreActionMapper.setMapping(restoreAction, QLatin1String(node->GetID()));
 
-  QAction* deleteAction = snapshotMenu->addAction(QIcon(":/Icons/SnapshotDelete.png"), "Delete",
+  QAction* deleteAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotDelete.png"), "Delete",
                                                   &this->DeleteActionMapper, SLOT(map()));
   this->DeleteActionMapper.setMapping(deleteAction, QLatin1String(node->GetID()));
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject * mrmlNode)
+void qMRMLSceneViewMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject * mrmlNode)
 {
   Q_UNUSED(mrmlScene);
-  vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
-  if (!snapshotNode)
+  vtkMRMLSceneViewNode * sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
+  if (!sceneViewNode)
     {
     return;
     }
 
-  this->removeMenuItem(snapshotNode);
+  this->removeMenuItem(sceneViewNode);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenuPrivate::removeMenuItem(vtkMRMLNode * snapshotNode)
+void qMRMLSceneViewMenuPrivate::removeMenuItem(vtkMRMLNode * sceneViewNode)
 {
-  Q_Q(qMRMLSceneSnapshotMenu);
-  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(snapshotNode);
+  Q_Q(qMRMLSceneViewMenu);
+  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(sceneViewNode);
   if (!node)
     {
     return;
     }
 
   // Do not listen for ModifiedEvent anymore
-  this->qvtkDisconnect(snapshotNode, vtkCommand::ModifiedEvent,
-                       this, SLOT(onMRMLSceneSnaphodeNodeModified(vtkObject*)));
+  this->qvtkDisconnect(sceneViewNode, vtkCommand::ModifiedEvent,
+                       this, SLOT(onMRMLSceneViewNodeModified(vtkObject*)));
 
   QList<QAction*> actions = q->actions();
   foreach(QAction * action, actions)
@@ -145,15 +145,15 @@ void qMRMLSceneSnapshotMenuPrivate::removeMenuItem(vtkMRMLNode * snapshotNode)
 
   if (q->actions().isEmpty())
     {
-    QAction * noSnapshotAction = q->addAction(this->NoSnapshotText);
-    noSnapshotAction->setDisabled(true);
+    QAction * noSceneViewAction = q->addAction(this->NoSceneViewText);
+    noSceneViewAction->setDisabled(true);
     }
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenuPrivate::onMRMLSceneSnaphodeNodeModified(vtkObject * snapshotNode)
+void qMRMLSceneViewMenuPrivate::onMRMLSceneViewNodeModified(vtkObject * sceneViewNode)
 {
-  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(snapshotNode);
+  vtkMRMLSceneViewNode * node = vtkMRMLSceneViewNode::SafeDownCast(sceneViewNode);
   if (!node)
     {
     return;
@@ -163,54 +163,54 @@ void qMRMLSceneSnapshotMenuPrivate::onMRMLSceneSnaphodeNodeModified(vtkObject * 
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLSceneSnapshotMenuPrivate::hasNoSnapshotItem()const
+bool qMRMLSceneViewMenuPrivate::hasNoSceneViewItem()const
 {
-  Q_Q(const qMRMLSceneSnapshotMenu);
+  Q_Q(const qMRMLSceneViewMenu);
   QList<QAction*> actions = q->actions();
   Q_ASSERT(actions.count() > 0); // At least one item is expected
-  return (actions.at(0)->text().compare(this->NoSnapshotText) == 0);
+  return (actions.at(0)->text().compare(this->NoSceneViewText) == 0);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenuPrivate::restoreSnapshot(const QString& snapshotNodeId)
+void qMRMLSceneViewMenuPrivate::restoreSceneView(const QString& sceneViewNodeId)
 {
-  vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID(snapshotNodeId.toLatin1()));
-  Q_ASSERT(snapshotNode);
+  vtkMRMLSceneViewNode * sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
+      this->MRMLScene->GetNodeByID(sceneViewNodeId.toLatin1()));
+  Q_ASSERT(sceneViewNode);
   this->MRMLScene->SaveStateForUndo();
-  snapshotNode->RestoreScene();
+  sceneViewNode->RestoreScene();
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenuPrivate::deleteSnapshot(const QString& snapshotNodeId)
+void qMRMLSceneViewMenuPrivate::deleteSceneView(const QString& sceneViewNodeId)
 {
-  vtkMRMLSceneViewNode * snapshotNode = vtkMRMLSceneViewNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID(snapshotNodeId.toLatin1()));
-  Q_ASSERT(snapshotNode);
+  vtkMRMLSceneViewNode * sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
+      this->MRMLScene->GetNodeByID(sceneViewNodeId.toLatin1()));
+  Q_ASSERT(sceneViewNode);
   this->MRMLScene->SaveStateForUndo();
-  this->MRMLScene->RemoveNode(snapshotNode);
+  this->MRMLScene->RemoveNode(sceneViewNode);
 }
 
 // --------------------------------------------------------------------------
-// qMRMLSceneSnapshotMenu methods
+// qMRMLSceneViewMenu methods
 
 // --------------------------------------------------------------------------
-qMRMLSceneSnapshotMenu::qMRMLSceneSnapshotMenu(QWidget* newParent) : Superclass(newParent)
-  , d_ptr(new qMRMLSceneSnapshotMenuPrivate(*this))
+qMRMLSceneViewMenu::qMRMLSceneViewMenu(QWidget* newParent) : Superclass(newParent)
+  , d_ptr(new qMRMLSceneViewMenuPrivate(*this))
 {
-  Q_D(qMRMLSceneSnapshotMenu);
-  d->NoSnapshotText = tr("No snapshots");
+  Q_D(qMRMLSceneViewMenu);
+  d->NoSceneViewText = tr("No scene views");
 }
 
 // --------------------------------------------------------------------------
-qMRMLSceneSnapshotMenu::~qMRMLSceneSnapshotMenu()
+qMRMLSceneViewMenu::~qMRMLSceneViewMenu()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenu::setMRMLScene(vtkMRMLScene* scene)
+void qMRMLSceneViewMenu::setMRMLScene(vtkMRMLScene* scene)
 {
-  Q_D(qMRMLSceneSnapshotMenu);
+  Q_D(qMRMLSceneViewMenu);
   if (scene == d->MRMLScene)
     {
     return ;
@@ -232,22 +232,22 @@ void qMRMLSceneSnapshotMenu::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSceneSnapshotMenu::mrmlScene() const
+vtkMRMLScene* qMRMLSceneViewMenu::mrmlScene() const
 {
-  Q_D(const qMRMLSceneSnapshotMenu);
+  Q_D(const qMRMLSceneViewMenu);
   return d->MRMLScene;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSceneSnapshotMenu::noSnapshotText()const
+QString qMRMLSceneViewMenu::noSceneViewText()const
 {
-  Q_D(const qMRMLSceneSnapshotMenu);
-  return d->NoSnapshotText;
+  Q_D(const qMRMLSceneViewMenu);
+  return d->NoSceneViewText;
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSceneSnapshotMenu::setNoSnapshotText(const QString& newText)
+void qMRMLSceneViewMenu::setNoSceneViewText(const QString& newText)
 {
-  Q_D(qMRMLSceneSnapshotMenu);
-  d->NoSnapshotText = newText;
+  Q_D(qMRMLSceneViewMenu);
+  d->NoSceneViewText = newText;
 }

@@ -33,7 +33,7 @@
 #include "qMRMLThreeDViewsControllerWidget_p.h"
 #include "qMRMLActionSignalMapper.h"
 #include "qMRMLNodeFactory.h"
-#include "qMRMLSceneSnapshotMenu.h"
+#include "qMRMLSceneViewMenu.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -53,7 +53,7 @@ qMRMLThreeDViewsControllerWidgetPrivate::qMRMLThreeDViewsControllerWidgetPrivate
   : q_ptr(&object)
 {
   this->ActiveMRMLThreeDViewNode = 0;
-  this->SceneSnapshotMenu = 0;
+  this->SceneViewMenu = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -149,12 +149,12 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setupUi(qMRMLWidget* widget)
   connect(this->actionSetWhiteBackground, SIGNAL(triggered()), SLOT(setWhiteBackground()));
   connect(this->actionSetBlackBackground, SIGNAL(triggered()), SLOT(setBlackBackground()));
 
-  // Snapshot buttons
-  connect(this->SceneSnapshotButton, SIGNAL(clicked()), SLOT(createSceneSnaphot()));
-  this->SceneSnapshotMenu = new qMRMLSceneSnapshotMenu(widget);
+  // Scene View buttons
+  connect(this->SceneViewButton, SIGNAL(clicked()), SLOT(createSceneView()));
+  this->SceneViewMenu = new qMRMLSceneViewMenu(widget);
   connect(widget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-          this->SceneSnapshotMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
-  this->SelectSceneSnapshotMenuButton->setMenu(this->SceneSnapshotMenu);
+          this->SceneViewMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
+  this->SelectSceneViewMenuButton->setMenu(this->SceneViewMenu);
 
   // SpinView, RockView buttons
   this->AnimateViewButtonGroup = new ctkButtonGroup(widget);
@@ -319,27 +319,30 @@ void qMRMLThreeDViewsControllerWidgetPrivate::setBackgroundColor(double newBackg
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDViewsControllerWidgetPrivate::createSceneSnaphot()
+void qMRMLThreeDViewsControllerWidgetPrivate::createSceneView()
 {
   Q_Q(qMRMLThreeDViewsControllerWidget);
 
+  // try to pop up the scene view module dialogue
+  //qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
+
   // Ask user for a name
   bool ok = false;
-  QString snapshotName = QInputDialog::getText(q, tr("SceneView Name"),
+  QString sceneViewName = QInputDialog::getText(q, tr("SceneView Name"),
                                                tr("SceneView Name:"), QLineEdit::Normal,
                                                "View", &ok);
-  if (!ok || snapshotName.isEmpty())
+  if (!ok || sceneViewName.isEmpty())
     {
     return;
     }
 
-  // Create snapshot
+  // Create scene view
   qMRMLNodeFactory nodeFactory;
   nodeFactory.setMRMLScene(q->mrmlScene());
-  nodeFactory.setBaseName("vtkMRMLSceneViewNode", snapshotName);
+  nodeFactory.setBaseName("vtkMRMLSceneViewNode", sceneViewName);
   vtkMRMLNode * newNode = nodeFactory.createNode("vtkMRMLSceneViewNode");
-  vtkMRMLSceneViewNode * newSnapshotNode = vtkMRMLSceneViewNode::SafeDownCast(newNode);
-  newSnapshotNode->StoreScene();
+  vtkMRMLSceneViewNode * newSceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(newNode);
+  newSceneViewNode->StoreScene();
 }
 
 // --------------------------------------------------------------------------
@@ -387,7 +390,7 @@ void qMRMLThreeDViewsControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   this->Superclass::setMRMLScene(newScene);
 
-  d->SceneSnapshotMenu->setMRMLScene(newScene);
+  d->SceneViewMenu->setMRMLScene(newScene);
 }
 
 // --------------------------------------------------------------------------
@@ -415,7 +418,7 @@ void qMRMLThreeDViewsControllerWidget::setActiveMRMLThreeDViewNode(
   widgets << d->AxesWidget
       << d->PitchButton << d->RollButton << d->YawButton
       << d->CenterButton << d->OrthoButton << d->VisibilityButton
-      << d->ScreenshotButton /*<< d->SceneSnapshotButton << d->SelectSceneSnapshotMenuButton*/
+      << d->ScreenshotButton /*<< d->SceneViewButton << d->SelectSceneViewMenuButton*/
       << d->ZoomInButton << d->ZoomOutButton << d->StereoButton
       << d->RockButton << d->SpinButton;
   foreach(QWidget* w, widgets)

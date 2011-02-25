@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSceneSnapshotMenu_h
-#define __qMRMLSceneSnapshotMenu_h
+#ifndef __qMRMLSceneViewMenu_h
+#define __qMRMLSceneViewMenu_h
 
 // Qt includes
 #include <QMenu>
@@ -29,29 +29,29 @@
 
 #include "qMRMLWidgetsExport.h"
 
-class qMRMLSceneSnapshotMenuPrivate;
+class qMRMLSceneViewMenuPrivate;
 class vtkMRMLScene;
 class vtkMRMLNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLSceneSnapshotMenu : public QMenu
+class QMRML_WIDGETS_EXPORT qMRMLSceneViewMenu : public QMenu
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(QString NoSnapshotText READ noSnapshotText WRITE setNoSnapshotText)
+  Q_PROPERTY(QString NoSceneViewText READ noSceneViewText WRITE setNoSceneViewText)
 public:
   /// Superclass typedef
   typedef QMenu Superclass;
   
   /// Constructors
-  explicit qMRMLSceneSnapshotMenu(QWidget* newParent = 0);
-  virtual ~qMRMLSceneSnapshotMenu();
+  explicit qMRMLSceneViewMenu(QWidget* newParent = 0);
+  virtual ~qMRMLSceneViewMenu();
 
   /// Return a pointer on the current MRML scene
   vtkMRMLScene* mrmlScene() const;
 
-  /// This property holds the menu's text displayed when there is no snapshots.
-  QString noSnapshotText()const;
-  void setNoSnapshotText(const QString& newText);
+  /// This property holds the menu's text displayed when there are no scene views
+  QString noSceneViewText()const;
+  void setNoSceneViewText(const QString& newText);
   
 public slots:
 
@@ -62,11 +62,11 @@ signals:
   void mrmlSceneChanged(vtkMRMLScene*);
 
 protected:
-  QScopedPointer<qMRMLSceneSnapshotMenuPrivate> d_ptr;
+  QScopedPointer<qMRMLSceneViewMenuPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLSceneSnapshotMenu);
-  Q_DISABLE_COPY(qMRMLSceneSnapshotMenu);
+  Q_DECLARE_PRIVATE(qMRMLSceneViewMenu);
+  Q_DISABLE_COPY(qMRMLSceneViewMenu);
 
 };
 

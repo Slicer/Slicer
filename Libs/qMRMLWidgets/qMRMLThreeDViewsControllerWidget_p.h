@@ -35,7 +35,7 @@
 class QAction;
 class ctkButtonGroup;
 class qMRMLActionSignalMapper;
-class qMRMLSceneSnapshotMenu;
+class qMRMLSceneViewMenu;
 class vtkMRMLViewNode;
 
 //-----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ public slots:
   void setWhiteBackground();
   void setBackgroundColor(double newBackgroundColor[3]);
 
-  void createSceneSnaphot();
+  void createSceneView();
 
   void onSpinViewButtonToggled(bool enabled);
   void onRockViewButtonToggled(bool enabled);
@@ -92,7 +92,7 @@ public:
   vtkWeakPointer<vtkMRMLViewNode>  ActiveMRMLThreeDViewNode;
 
   qMRMLActionSignalMapper*         StereoTypesMapper;
-  qMRMLSceneSnapshotMenu*          SceneSnapshotMenu;
+  qMRMLSceneViewMenu*              SceneViewMenu;
   ctkButtonGroup*                  AnimateViewButtonGroup;
   
 };

@@ -18,14 +18,14 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSceneSnapshotMenu_p_h
-#define __qMRMLSceneSnapshotMenu_p_h
+#ifndef __qMRMLSceneViewMenu_p_h
+#define __qMRMLSceneViewMenu_p_h
 
 // Qt includes
 #include<QSignalMapper>
 
 // qMRML includes
-#include "qMRMLSceneSnapshotMenu.h"
+#include "qMRMLSceneViewMenu.h"
 
 // CTK includes
 #include <ctkVTKObject.h>
@@ -37,16 +37,16 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qMRMLSceneSnapshotMenuPrivate : public QObject
+class qMRMLSceneViewMenuPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_DECLARE_PUBLIC(qMRMLSceneSnapshotMenu);
+  Q_DECLARE_PUBLIC(qMRMLSceneViewMenu);
 protected:
-  qMRMLSceneSnapshotMenu* const q_ptr;
+  qMRMLSceneViewMenu* const q_ptr;
 public:
   typedef QObject Superclass;
-  qMRMLSceneSnapshotMenuPrivate(qMRMLSceneSnapshotMenu& object);
+  qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object);
 
   /// \brief Clear and update menu given the list of existing vtkMRMLSceneViewNode
   /// associated with the current scene
@@ -56,26 +56,26 @@ public slots:
 
   void onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject * mrmlNode);
 
-  /// Add menu entry corresponding to \a snapshotNode
-  void addMenuItem(vtkMRMLNode * snapshotNode);
+  /// Add menu entry corresponding to \a sceneViewNode
+  void addMenuItem(vtkMRMLNode * sceneViewNode);
 
   void onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject * mrmlNode);
 
-  /// Remove menu entry corresponding to \a snapshotNode
-  void removeMenuItem(vtkMRMLNode * snapshotNode);
+  /// Remove menu entry corresponding to \a sceneViewNode
+  void removeMenuItem(vtkMRMLNode * sceneViewNode);
 
-  void onMRMLSceneSnaphodeNodeModified(vtkObject * mrmlNode);
+  void onMRMLSceneViewNodeModified(vtkObject * mrmlNode);
 
-  bool hasNoSnapshotItem()const;
+  bool hasNoSceneViewItem()const;
 
-  void restoreSnapshot(const QString& snapshotNodeId);
-  void deleteSnapshot(const QString& snapshotNodeId);
+  void restoreSceneView(const QString& sceneViewNodeId);
+  void deleteSceneView(const QString& sceneViewNodeId);
 
 public:
   vtkSmartPointer<vtkMRMLScene>         MRMLScene;
   QSignalMapper                         RestoreActionMapper;
   QSignalMapper                         DeleteActionMapper;
-  QString                               NoSnapshotText;
+  QString                               NoSceneViewText;
 
 };
 

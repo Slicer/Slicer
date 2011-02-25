@@ -106,9 +106,9 @@ SET(qMRMLWidgets_SRCS
   qMRMLSceneModel.h
   qMRMLSceneModelHierarchyModel.cxx
   qMRMLSceneModelHierarchyModel.h
-  qMRMLSceneSnapshotMenu.cxx
-  qMRMLSceneSnapshotMenu.h
-  qMRMLSceneSnapshotMenu_p.h
+  qMRMLSceneViewMenu.cxx
+  qMRMLSceneViewMenu.h
+  qMRMLSceneViewMenu_p.h
   qMRMLSceneTransformModel.cxx
   qMRMLSceneTransformModel.h
   qMRMLSceneDisplayableModel.cxx
@@ -181,8 +181,8 @@ SET(qMRMLWidgets_MOC_SRCS
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
   qMRMLSceneModelHierarchyModel.h
-  qMRMLSceneSnapshotMenu.h
-  qMRMLSceneSnapshotMenu_p.h
+  qMRMLSceneViewMenu.h
+  qMRMLSceneViewMenu_p.h
   qMRMLSceneTransformModel.h
   qMRMLSceneDisplayableModel.h
   qMRMLSliceControllerWidget.h
