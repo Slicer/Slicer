@@ -108,15 +108,15 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
   sliceWidget.show();
 
-  qMRMLNodeObject nodeObject(scalarNode, &sliceWidget);
+  qMRMLNodeObject nodeObject(scalarNode->GetDisplayNode(), &sliceWidget);
   nodeObject.setProcessEvents(false);
-  nodeObject.setMessage("vtkMRMLScalarVolumeNode");
+  nodeObject.setMessage("vtkMRMLDisplayNode");
   for (int i = 0; i < 30; ++i)
     {
     nodeObject.modify();
     }
   nodeObject.setProcessEvents(true);
-  nodeObject.setMessage("vtkMRMLScalarVolumeNode + render");
+  nodeObject.setMessage("vtkMRMLDisplayNode + render");
   for (int i = 0; i < 30; ++i)
     {
     nodeObject.modify();
