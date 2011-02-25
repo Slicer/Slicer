@@ -110,16 +110,51 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   /// Removes all children hierarchy nodes including children of childern, etc.
   void RemoveAllHierarchyChildrenNodes();
 
+
+  //// Assocailted node methods ////////////////
+
+  /// 
+  /// String ID of the corresponding displayable MRML node
+  virtual char* GetAssociatedNodeID()
+  {
+    return GetAssociatedNodeIDReference();
+  }
+
+  virtual void SetAssociatedNodeID(const char* ref) 
+  {
+    if ((this->AssociatedNodeIDReference && ref && strcmp(ref, this->AssociatedNodeIDReference)) ||
+        (this->AssociatedNodeIDReference != ref))
+      {
+      this->SetAssociatedNodeIDReference(ref);
+      this->AssociatedHierarchyIsModified(this->GetScene());
+      }
+  };
+
+
+  /// Get node associated with this hierarchy node
+  vtkMRMLNode* GetAssociatedNode();
+
+
+  /// Find all associated children nodes of a specified class in the hierarchy
+  /// if childClass is NULL returns all associated children nodes.
+  void GetAssociateChildrendNodes(vtkCollection *children, const char* childClass=NULL);
+
+  /// 
+  /// Get Hierarchy node for a given associated node
+  static vtkMRMLHierarchyNode* GetAssociatedHierarchyNode(vtkMRMLScene *scene,
+                                                          const char *associatedNodeID);
   /// 
   /// Node's Sorting Value
   vtkSetMacro(SortingValue, double);
   vtkGetMacro(SortingValue, double);
+
 
 protected:
   vtkMRMLHierarchyNode();
   ~vtkMRMLHierarchyNode();
   vtkMRMLHierarchyNode(const vtkMRMLHierarchyNode&);
   void operator=(const vtkMRMLHierarchyNode&);
+
 
   /// 
   /// String ID of the parent hierarchy MRML node
@@ -131,6 +166,18 @@ protected:
   /// Mark hierarchy as modified when you
   static void HierarchyIsModified(vtkMRMLScene *scene);
 
+
+  ///////////////////////
+
+  /// Mark hierarchy as modified
+  static void AssociatedHierarchyIsModified(vtkMRMLScene *scene);
+  /// 
+  /// String ID of the associated MRML node
+  char *AssociatedNodeIDReference;
+
+  vtkSetReferenceStringMacro(AssociatedNodeIDReference);
+  vtkGetStringMacro(AssociatedNodeIDReference);
+
   //BTX
   typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
 
@@ -138,6 +185,20 @@ protected:
   static std::map< vtkMRMLScene*, unsigned long> SceneHierarchyChildrenNodesMTime;
   //ETX
   
+  ////////////////////////////
+  /// 
+  /// Create Associated to hierarchy map, 
+  /// return number of Associated hierarchy nodes
+  static int UpdateAssociatedToHierarchyMap(vtkMRMLScene *scene);
+  
+  //BTX
+  typedef std::map<std::string, vtkMRMLHierarchyNode *> AssociatedHierarchyNodesType;
+
+  static std::map< vtkMRMLScene*, AssociatedHierarchyNodesType> SceneAssociatedHierarchyNodes;
+
+  static std::map< vtkMRMLScene*, unsigned long> SceneAssociatedHierarchyNodesMTime;
+  //ETX
+
   double SortingValue;
 
   static double MaximumSortingValue;

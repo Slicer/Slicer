@@ -74,18 +74,13 @@ public:
   /// String ID of the corresponding displayable MRML node
   virtual char* GetDisplayableNodeID()
   {
-    return GetDisplayableNodeIDReference();
+    return this->GetAssociatedNodeID();
   }
 
   virtual void SetDisplayableNodeID(const char* ref) 
   {
-    if ((this->DisplayableNodeIDReference && ref && strcmp(ref, this->DisplayableNodeIDReference)) ||
-        (this->DisplayableNodeIDReference != ref))
-      {
-      this->SetDisplayableNodeIDReference(ref);
-      this->DispalyableHierarchyIsModified(this->GetScene());
-      }
-  };
+    this->SetAssociatedNodeID(ref);
+  }
 
   void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
@@ -150,35 +145,12 @@ protected:
 
   vtkSetReferenceStringMacro(DisplayNodeID);
 
-  /// Mark hierarchy as modified when you
-  static void DispalyableHierarchyIsModified(vtkMRMLScene *scene);
-
-  /// Data
-  char *DisplayableNodeIDReference;
-
-  /// 
-  /// String ID of the displayable MRML node
-  vtkSetReferenceStringMacro(DisplayableNodeIDReference);
-  vtkGetStringMacro(DisplayableNodeIDReference);
-
   char *DisplayNodeID;
 
   vtkMRMLDisplayNode *DisplayNode;
 
   int Expanded;
 
-  /// 
-  /// Create Displayable to hierarchy map, 
-  /// return number of Displayable hierarchy nodes
-  static int UpdateDisplayableToHierarchyMap(vtkMRMLScene *scene);
-  
-  //BTX
-  typedef std::map<std::string, vtkMRMLDisplayableHierarchyNode *> DisplayableHierarchyNodesType;
-
-  static std::map< vtkMRMLScene*, DisplayableHierarchyNodesType> SceneDisplayableHierarchyNodes;
-
-  static std::map< vtkMRMLScene*, unsigned long> SceneDisplayableHierarchyNodesMTime;
-  //ETX
 
 };
 

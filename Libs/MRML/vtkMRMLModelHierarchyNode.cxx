@@ -143,12 +143,8 @@ void vtkMRMLModelHierarchyNode::UpdateReferences()
 
 vtkMRMLModelNode* vtkMRMLModelHierarchyNode::GetModelNode()
 {
-  vtkMRMLModelNode* node = NULL;
-  if (this->GetScene() && this->GetModelNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayableNodeIDReference);
-    node = vtkMRMLModelNode::SafeDownCast(snode);
-    }
+  vtkMRMLModelNode* node = vtkMRMLModelNode::SafeDownCast(
+    this->GetAssociatedNode());
   return node;
 }
 
