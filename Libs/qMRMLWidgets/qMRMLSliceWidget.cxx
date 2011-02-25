@@ -134,7 +134,7 @@ qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
   // Highligh first RenderWindowItem
   d->VTKSliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);
 
-  connect(d->VTKSliceView, SIGNAL(resized(const QSize&,const QSize&)),
+  connect(d->VTKSliceView, SIGNAL(resized(const QSize&)),
           d->SliceController, SLOT(setSliceViewSize(const QSize&)));
 
   connect(d->SliceController,

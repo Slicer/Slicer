@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>396</width>
-    <height>80</height>
+    <width>352</width>
+    <height>74</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,6 +35,9 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item row="0" column="0">
       <widget class="QToolButton" name="PitchButton">
        <property name="enabled">
@@ -289,7 +292,14 @@
     </layout>
    </item>
    <item>
-    <widget class="qMRMLNavigationView" name="NavigationView"/>
+    <widget class="qMRMLNavigationView" name="NavigationView">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
   </layout>
   <action name="actionNoStereo">
@@ -409,14 +419,9 @@
    <header>ctkAxesWidget.h</header>
   </customwidget>
   <customwidget>
-    <class>ctkVTKThumbnailView</class>
-    <extends>ctkVTKRenderView</extends>
-    <header>ctkVTKThumbnailView.h</header>
-  </customwidget>
-  <customwidget>
-    <class>qMRMLNavigationView</class>
-    <extends>ctkVTKThumbnailView</extends>
-    <header>qMRMLNavigationView.h</header>
+   <class>qMRMLNavigationView</class>
+   <extends>ctkVTKRenderView</extends>
+   <header>qMRMLNavigationView.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
