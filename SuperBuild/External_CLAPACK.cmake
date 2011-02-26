@@ -30,6 +30,7 @@ ExternalProject_Add(CLAPACK
   SOURCE_DIR ${CLAPACK_source}
   BINARY_DIR ${CLAPACK_binary}
   URL ${CLAPACK_file}
+  URL_MD5 4fd18eb33f3ff8c5d65a7d43913d661b
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_args}
