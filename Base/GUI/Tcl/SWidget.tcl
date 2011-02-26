@@ -226,6 +226,11 @@ itcl::body SWidget::dcToXYZ { wx wy } {
   set numRows [$_sliceNode GetLayoutGridRows]
   set numCols [$_sliceNode GetLayoutGridColumns]
 
+  if { $windoww == 0 || $windowh == 0 } {
+    # degenerate case, return gracefully
+    return "0 0 0"
+  }
+
   set tx [expr $wx / double($windoww)]
   set ty [expr ($windowh - $wy) / double($windowh)]
 
