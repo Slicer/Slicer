@@ -855,6 +855,7 @@ proc launch_SetPaths {} {
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/MRMLLogic$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/RemoteIO$SEP$::env(PYTHONPATH)"
       set ::env(PYTHONPATH) "$::env(Slicer_HOME)/lib/vtkTeem$SEP$::env(PYTHONPATH)"
+      set ::env(PYTHONPATH) "$::env(Slicer_HOME)/bin$SEP$::env(PYTHONPATH)"
     }
 }
 
