@@ -8,6 +8,7 @@
 
 class qSlicerCropVolumeModuleWidgetPrivate;
 class vtkMRMLNode;
+class vtkMRMLCropVolumeParametersNode;
 
 class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModuleWidget :
   public qSlicerAbstractModuleWidget
@@ -29,12 +30,19 @@ protected:
 
 protected slots:
   void initializeNode(vtkMRMLNode*);
+  void onInputVolumeChanged();
+  void onInputROIChanged();
+  void onOutputVolumeChanged();
+  void onROIVisibilityChanged();
+  void onInterpolationModeChanged();
   void onApply();
+  void updateWidget();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModuleWidget);
   Q_DISABLE_COPY(qSlicerCropVolumeModuleWidget);
 
+  vtkMRMLCropVolumeParametersNode *parametersNode;
 };
 
 #endif

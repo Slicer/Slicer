@@ -16,6 +16,8 @@ Version:   $Revision: 1.2 $
 #include <iostream>
 #include <sstream>
 
+#include <QDebug>
+
 #include "vtkObjectFactory.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLCropVolumeParametersNode.h"
@@ -91,6 +93,7 @@ vtkMRMLCropVolumeParametersNode::~vtkMRMLCropVolumeParametersNode()
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
 {
+  qDebug() << "Reading CropVolume param node!";
   Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
