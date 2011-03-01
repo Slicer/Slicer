@@ -1305,7 +1305,7 @@ const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
     return this->m_StringHolder.c_str();
     }
 
-  // get the corrsponding hierarchy
+  // get the corresponding hierarchy
   vtkMRMLAnnotationHierarchyNode* hNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(this->GetMRMLScene(),annotationNode->GetID()));
 
   if (!hNode)
@@ -1314,137 +1314,15 @@ const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
     return this->m_StringHolder.c_str();
     }
 
-  int numberOfHierarchies = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
-
-  // this is the buffer
-  vtkMRMLAnnotationHierarchyNode* bufferNode = 0;
-
-  // this is the current node used during the loop
-  vtkMRMLAnnotationHierarchyNode* cNode = 0;
-
-  for(int i=0; i<numberOfHierarchies; ++i)
-    {
-
-
-    cNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLAnnotationHierarchyNode"));
-
-    // we buffer the previous node
-    bufferNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i-1,"vtkMRMLAnnotationHierarchyNode"));;
-
-    if (!strcmp(cNode->GetID(),hNode->GetID()))
-      {
-      // this is the hierarchy of the selected node
-
-      // jump out of the loop
-      break;
-      }
-
-    }
-
-  if (!bufferNode)
-    {
-    // there is no node before the selected one, so we jump out
-    return this->m_StringHolder.c_str();
-    }
-
-  if (!bufferNode->GetParentNode())
-    {
-    // this is the toplevel hierarchy node, therefore, we cannot move up
-    return this->m_StringHolder.c_str();
-    }
-
-  if (!bufferNode->GetHideFromEditors())
-    {
-    // this is a manually created hierarchy, we don't want to move towards this one
-    return this->m_StringHolder.c_str();
-    }
-
-
-  // now we copy the corresponding annotation node
-  //if (annotationNode->IsA("vtkMRMLAnnotationRulerNode"))
-
-  //vtkMRMLAnnotationNode* copyANode = vtkMRMLAnnotationNode::New();
-
-
-  if (annotationNode->IsA("vtkMRMLAnnotationRulerNode"))
-    {
-    VTK_CREATE(vtkMRMLAnnotationRulerNode, copyANode);
-    vtkMRMLAnnotationRulerNode* rNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
-    copyANode->CopyWithoutModifiedEvent(rNode);
-
-    // ..and delete the annotation
-    this->GetMRMLScene()->RemoveNode(annotationNode);
-    // ..and delete the hierarchy
-    this->GetMRMLScene()->RemoveNode(hNode);
-
-    // ..and now insert the copy of the annotation before the buffer
-    this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
-
-    this->m_StringHolder = copyANode->GetID();
-
-    return this->m_StringHolder.c_str();
-
-    }
-  else if (annotationNode->IsA("vtkMRMLAnnotationBidimensionalNode"))
-    {
-    VTK_CREATE(vtkMRMLAnnotationBidimensionalNode, copyANode);
-    vtkMRMLAnnotationBidimensionalNode* bNode = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(annotationNode);
-    copyANode->CopyWithoutModifiedEvent(bNode);
-
-    // ..and delete the annotation
-    this->GetMRMLScene()->RemoveNode(annotationNode);
-    // ..and delete the hierarchy
-    this->GetMRMLScene()->RemoveNode(hNode);
-
-    // ..and now insert the copy of the annotation before the buffer
-    this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
-
-    this->m_StringHolder = copyANode->GetID();
-
-    return this->m_StringHolder.c_str();
-
-    }
-  else if (annotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    VTK_CREATE(vtkMRMLAnnotationFiducialNode, copyANode);
-    vtkMRMLAnnotationFiducialNode* fNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(annotationNode);
-    copyANode->CopyWithoutModifiedEvent(fNode);
-
-    // ..and delete the annotation
-    this->GetMRMLScene()->RemoveNode(annotationNode);
-    // ..and delete the hierarchy
-    this->GetMRMLScene()->RemoveNode(hNode);
-
-    // ..and now insert the copy of the annotation before the buffer
-    this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
-
-    this->m_StringHolder = copyANode->GetID();
-
-    return this->m_StringHolder.c_str();
-
-    }
-  else if (annotationNode->IsA("vtkMRMLAnnotationTextNode"))
-    {
-    VTK_CREATE(vtkMRMLAnnotationTextNode, copyANode);
-    vtkMRMLAnnotationTextNode* tNode = vtkMRMLAnnotationTextNode::SafeDownCast(annotationNode);
-    copyANode->CopyWithoutModifiedEvent(tNode);
-
-    // ..and delete the annotation
-    this->GetMRMLScene()->RemoveNode(annotationNode);
-    // ..and delete the hierarchy
-    this->GetMRMLScene()->RemoveNode(hNode);
-
-    // ..and now insert the copy of the annotation before the buffer
-    this->GetMRMLScene()->InsertBeforeNode(bufferNode,copyANode);
-
-    this->m_StringHolder = copyANode->GetID();
-
-    return this->m_StringHolder.c_str();
-
-    }
-
+  // where is it in the parent's list?
+  int currentIndex = hNode->GetIndexInParent();
+  vtkDebugMacro("MoveAnnotationUp: currentIndex = " << currentIndex);
+  // now move it up one
+  hNode->SetIndexInParent(currentIndex - 1);
+  vtkDebugMacro("MoveAnnotationUp: after moving to " << currentIndex - 1 << ", current index is " << hNode->GetIndexInParent());
+  // the id should be the same now
+  this->m_StringHolder = annotationNode->GetID();
   return this->m_StringHolder.c_str();
-
 }
 
 
@@ -1485,149 +1363,14 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
     return this->m_StringHolder.c_str();
     }
 
-  int numberOfHierarchies = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
-
-  // this is the buffer
-  vtkMRMLAnnotationHierarchyNode* bufferNode = 0;
-
-  // this is the current node used during the loop
-  vtkMRMLAnnotationHierarchyNode* cNode = 0;
-
-  for(int i=0; i<numberOfHierarchies; ++i)
-    {
-
-
-    cNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLAnnotationHierarchyNode"));
-
-    // we buffer the previous node
-    bufferNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i+1,"vtkMRMLAnnotationHierarchyNode"));;
-
-    if (!strcmp(cNode->GetID(),hNode->GetID()))
-      {
-      // this is the hierarchy of the selected node
-
-      // jump out of the loop
-      break;
-      }
-
-    }
-
-  if (!bufferNode)
-    {
-    // there is no node after the selected one, so we jump out
-    return this->m_StringHolder.c_str();
-    }
-
-  /*if (!bufferNode->GetParentNode())
-    {
-    // this is the toplevel hierarchy node, therefore, we cannot move up
-    return;
-    }*/
-
-  if (!bufferNode->GetHideFromEditors())
-    {
-    // this is a manually created hierarchy, we don't want to move towards this one
-    return this->m_StringHolder.c_str();
-    }
-
-  // we get the first child of the bufferNode, which is the annotation after the selected node
-
-
-
-  vtkMRMLAnnotationNode* bufferNodeChild = vtkMRMLAnnotationNode::SafeDownCast(bufferNode->GetDisplayableNode());
-
-  if (!bufferNodeChild)
-    {
-    // there was no child of bufferNode
-    return this->m_StringHolder.c_str();
-    }
-
-
-  // we want to remove the bufferNodeChild incl. its hierarchy
-  // and insert it before our selected node
-
-  if (bufferNodeChild->IsA("vtkMRMLAnnotationRulerNode"))
-    {
-    // we copy the bufferNodeChild
-    VTK_CREATE(vtkMRMLAnnotationRulerNode, copyANode);
-    vtkMRMLAnnotationRulerNode* rNode = vtkMRMLAnnotationRulerNode::SafeDownCast(bufferNodeChild);
-    copyANode->CopyWithoutModifiedEvent(rNode);
-
-    // ..and delete the bufferNodeChild
-    this->GetMRMLScene()->RemoveNode(bufferNodeChild);
-    // ..and delete its hierarchy
-    this->GetMRMLScene()->RemoveNode(bufferNode);
-
-    // ..and now insert the copy of the bufferNodeChilde before the selected hierarchy node
-    this->GetMRMLScene()->InsertBeforeNode(hNode,copyANode);
-
-    this->m_StringHolder = annotationNode->GetID();
-
-    return this->m_StringHolder.c_str();
-
-    }
-  else if (bufferNodeChild->IsA("vtkMRMLAnnotationBidimensionalNode"))
-    {
-    // we copy the bufferNodeChild
-    VTK_CREATE(vtkMRMLAnnotationBidimensionalNode, copyANode);
-    vtkMRMLAnnotationBidimensionalNode* rNode = vtkMRMLAnnotationBidimensionalNode::SafeDownCast(bufferNodeChild);
-    copyANode->CopyWithoutModifiedEvent(rNode);
-
-    // ..and delete the bufferNodeChild
-    this->GetMRMLScene()->RemoveNode(bufferNodeChild);
-    // ..and delete its hierarchy
-    this->GetMRMLScene()->RemoveNode(bufferNode);
-
-    // ..and now insert the copy of the bufferNodeChilde before the selected hierarchy node
-    this->GetMRMLScene()->InsertBeforeNode(hNode,copyANode);
-
-    this->m_StringHolder = annotationNode->GetID();
-
-    return this->m_StringHolder.c_str();
-
-    }
-  else if (bufferNodeChild->IsA("vtkMRMLAnnotationFiducialNode"))
-    {
-    // we copy the bufferNodeChild
-    VTK_CREATE(vtkMRMLAnnotationFiducialNode, copyANode);
-    vtkMRMLAnnotationFiducialNode* rNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(bufferNodeChild);
-    copyANode->CopyWithoutModifiedEvent(rNode);
-
-    // ..and delete the bufferNodeChild
-    this->GetMRMLScene()->RemoveNode(bufferNodeChild);
-    // ..and delete its hierarchy
-    this->GetMRMLScene()->RemoveNode(bufferNode);
-
-    // ..and now insert the copy of the bufferNodeChilde before the selected hierarchy node
-    this->GetMRMLScene()->InsertBeforeNode(hNode,copyANode);
-
-    this->m_StringHolder = annotationNode->GetID();
-
-    return this->m_StringHolder.c_str();
-
-    }
-  else if (bufferNodeChild->IsA("vtkMRMLAnnotationTextNode"))
-    {
-    // we copy the bufferNodeChild
-    VTK_CREATE(vtkMRMLAnnotationTextNode, copyANode);
-    vtkMRMLAnnotationTextNode* rNode = vtkMRMLAnnotationTextNode::SafeDownCast(bufferNodeChild);
-    copyANode->CopyWithoutModifiedEvent(rNode);
-
-    // ..and delete the bufferNodeChild
-    this->GetMRMLScene()->RemoveNode(bufferNodeChild);
-    // ..and delete its hierarchy
-    this->GetMRMLScene()->RemoveNode(bufferNode);
-
-    // ..and now insert the copy of the bufferNodeChilde before the selected hierarchy node
-    this->GetMRMLScene()->InsertBeforeNode(hNode,copyANode);
-
-    this->m_StringHolder = annotationNode->GetID();
-
-    return this->m_StringHolder.c_str();
-
-    }
-
+  // where is it in the parent's list?
+  int currentIndex = hNode->GetIndexInParent();
+  // now move it down one
+  hNode->SetIndexInParent(currentIndex + 1);
+  // the id should be the same now
+  this->m_StringHolder = annotationNode->GetID();
   return this->m_StringHolder.c_str();
+  
 
 }
 
