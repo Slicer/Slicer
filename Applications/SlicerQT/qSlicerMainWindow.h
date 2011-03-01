@@ -62,6 +62,8 @@ protected slots:
   void onViewApplicationSettingsActionTriggered();
 
   void onMRMLSceneModified(vtkObject*);
+  void onLayoutActionTriggered(QAction* action);
+  void onLayoutChanged(int);
 protected:
 
   // Description:

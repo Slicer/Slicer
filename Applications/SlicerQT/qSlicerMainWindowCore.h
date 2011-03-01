@@ -52,18 +52,8 @@ public slots:
   void onFileSaveSceneActionTriggered();
   void onFileCloseSceneActionTriggered();
   void onEditUndoActionTriggered();
-  void onEditRedoActionTriggered();  
-  void onViewLayoutConventionalActionTriggered();
-  void onViewLayoutFourUpActionTriggered();
-  void onViewLayoutDual3DActionTriggered();
-  void onViewLayoutOneUp3DActionTriggered();
-  void onViewLayoutOneUpRedSliceActionTriggered();
-  void onViewLayoutOneUpYellowSliceActionTriggered();
-  void onViewLayoutOneUpGreenSliceActionTriggered();
-  void onViewLayoutTabbed3DActionTriggered();
-  void onViewLayoutTabbedSliceActionTriggered();
-  void onViewLayoutCompareActionTriggered();
-  void onViewLayoutSideBySideLightboxActionTriggered();
+  void onEditRedoActionTriggered();
+  void setLayout(int);
   void onWindowPythonInteractorActionTriggered();
 
   void onHelpKeyboardShortcutsActionTriggered();

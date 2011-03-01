@@ -141,25 +141,10 @@ void qSlicerMainWindowCore::onEditRedoActionTriggered()
 }
 
 //---------------------------------------------------------------------------
-#define qSlicerMainWindowCore_onViewLayout_implementation(_NAME)                  \
-  void qSlicerMainWindowCore::onViewLayout##_NAME##ActionTriggered()              \
-  {                                                                               \
-    qSlicerApplication::application()->layoutManager()->switchTo##_NAME##View();  \
-  }
-  
-qSlicerMainWindowCore_onViewLayout_implementation(Conventional);
-qSlicerMainWindowCore_onViewLayout_implementation(FourUp);
-qSlicerMainWindowCore_onViewLayout_implementation(Dual3D);
-qSlicerMainWindowCore_onViewLayout_implementation(OneUp3D);
-qSlicerMainWindowCore_onViewLayout_implementation(OneUpRedSlice);
-qSlicerMainWindowCore_onViewLayout_implementation(OneUpYellowSlice);
-qSlicerMainWindowCore_onViewLayout_implementation(OneUpGreenSlice);
-qSlicerMainWindowCore_onViewLayout_implementation(Tabbed3D);
-qSlicerMainWindowCore_onViewLayout_implementation(TabbedSlice);
-qSlicerMainWindowCore_onViewLayout_implementation(Compare);
-qSlicerMainWindowCore_onViewLayout_implementation(SideBySideLightbox);
-
-#undef qSlicerMainWindowCore_onViewLayout_implementation
+void qSlicerMainWindowCore::setLayout(int layout)
+{
+  qSlicerApplication::application()->layoutManager()->setLayout(layout);
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered()

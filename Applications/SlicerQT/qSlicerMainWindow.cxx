@@ -158,6 +158,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->LayoutManager,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)),
+                   q, SLOT(onLayoutChanged(int)));
 
   //----------------------------------------------------------------------------
   // Slices Controller Toolbar
@@ -211,6 +213,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   layoutButton->setDefaultAction(this->actionViewLayoutConventional);
   QObject::connect(this->MenuLayout, SIGNAL(triggered(QAction*)),
                    layoutButton, SLOT(setDefaultAction(QAction*)));
+  QObject::connect(this->MenuLayout, SIGNAL(triggered(QAction*)),
+                   q, SLOT(onLayoutActionTriggered(QAction*)));
   this->ViewToolBar->addWidget(layoutButton);
 
   //----------------------------------------------------------------------------
@@ -390,17 +394,18 @@ void qSlicerMainWindow::setupMenuActions()
 
   qSlicerMainWindow_connect(ViewExtensionManager);
   qSlicerMainWindow_connect(ViewApplicationSettings);
-  qSlicerMainWindowCore_connect(ViewLayoutConventional);
-  qSlicerMainWindowCore_connect(ViewLayoutFourUp);
-  qSlicerMainWindowCore_connect(ViewLayoutDual3D);
-  qSlicerMainWindowCore_connect(ViewLayoutOneUp3D);
-  qSlicerMainWindowCore_connect(ViewLayoutOneUpRedSlice);
-  qSlicerMainWindowCore_connect(ViewLayoutOneUpYellowSlice);
-  qSlicerMainWindowCore_connect(ViewLayoutOneUpGreenSlice);
-  qSlicerMainWindowCore_connect(ViewLayoutTabbed3D);
-  qSlicerMainWindowCore_connect(ViewLayoutTabbedSlice);
-  qSlicerMainWindowCore_connect(ViewLayoutCompare);
-  qSlicerMainWindowCore_connect(ViewLayoutSideBySideLightbox);
+
+  d->actionViewLayoutConventional->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
+  d->actionViewLayoutFourUp->setData(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+  d->actionViewLayoutDual3D->setData(vtkMRMLLayoutNode::SlicerLayoutDual3DView);
+  d->actionViewLayoutOneUp3D->setData(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
+  d->actionViewLayoutOneUpRedSlice->setData(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
+  d->actionViewLayoutOneUpYellowSlice->setData(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
+  d->actionViewLayoutOneUpGreenSlice->setData(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
+  d->actionViewLayoutTabbed3D->setData(vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
+  d->actionViewLayoutTabbedSlice->setData(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
+  d->actionViewLayoutCompare->setData(vtkMRMLLayoutNode::SlicerLayoutCompareView);
+  d->actionViewLayoutSideBySideLightbox->setData(vtkMRMLLayoutNode::SlicerLayoutSideBySideLightboxView);
 
   qSlicerMainWindowCore_connect(WindowPythonInteractor);
 
@@ -509,6 +514,25 @@ void qSlicerMainWindow::onMRMLSceneModified(vtkObject* sender)
     }
   d->actionEditUndo->setEnabled(scene && scene->GetNumberOfUndoLevels());
   d->actionEditRedo->setEnabled(scene && scene->GetNumberOfRedoLevels());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
+{
+  this->core()->setLayout(action->data().toInt());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::onLayoutChanged(int layout)
+{
+  Q_D(qSlicerMainWindow);
+  foreach(QAction* action, d->MenuLayout->actions())
+    {
+    if (action->data().toInt() == layout)
+      {
+      action->trigger();
+      }
+    }
 }
 
 //---------------------------------------------------------------------------

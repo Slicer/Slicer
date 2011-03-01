@@ -732,6 +732,7 @@ void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
     this->Viewport->repaint();
     }
   */
+  emit q->layoutChanged(layout);
 }
 
 //------------------------------------------------------------------------------

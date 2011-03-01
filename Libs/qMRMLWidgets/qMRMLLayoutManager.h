@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public ctkLayoutManager
 {
   Q_OBJECT
   // The following properties are exposed so that they are available within python
-  Q_PROPERTY(int layout READ layout WRITE setLayout DESIGNABLE false)
+  Q_PROPERTY(int layout READ layout WRITE setLayout NOTIFY layoutChanged DESIGNABLE false)
   Q_PROPERTY(int threeDViewCount READ threeDViewCount DESIGNABLE false)
 public:
   /// Superclass typedef
@@ -106,6 +106,7 @@ public slots:
 signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);
+  void layoutChanged(int);
 
 protected:
   QScopedPointer<qMRMLLayoutManagerPrivate> d_ptr;
