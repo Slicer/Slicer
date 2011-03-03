@@ -84,6 +84,13 @@ const char* oneUpGreenView =
   " </item>"
   "</layout>";
 
+const char* tabbed3DView =
+  "<layout type=\"tab\">"
+  " <item multiple=\"true\" name=\"$NodeID\">"
+  "  <view class=\"vtkMRMLViewNode\"/>"
+  " </item>"
+  "</layout>";
+
 const char* tabbedSliceView =
   "<layout type=\"tab\">"
   " <item name=\"Red slice\">"
@@ -94,6 +101,70 @@ const char* tabbedSliceView =
   " </item>"
   " <item name=\"Green slice\">"
   "  <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  " </item>"
+  "</layout>";
+
+const char* dual3DView =
+  "<layout type=\"vertical\" split=\"true\" >"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLViewNode\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLViewNode\" attributes=\"secondary\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
+const char* conventionalWidescreenView =
+  "<layout type=\"horizontal\" split=\"true\" >"
+  " <item>"
+  "  <view class=\"vtkMRMLViewNode\"/>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"vertical\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\"/>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
+const char* triple3DEndoscopyView =
+  "<layout type=\"vertical\" split=\"true\" >"
+  " <item>"
+  "  <view class=\"vtkMRMLViewNode\"/>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLViewNode\" attributes=\"secondary\"/>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLViewNode\" attributes=\"endoscopy\"/>"
+  "   </item>"
+  "  </layout>"
   " </item>"
   "</layout>";
 
@@ -306,8 +377,16 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          oneUpYellowView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView,
                                          oneUpGreenView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTabbed3DView,
+                                         tabbed3DView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView,
                                          tabbedSliceView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDual3DView,
+                                         dual3DView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutConventionalWidescreenView,
+                                         conventionalWidescreenView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTriple3DEndoscopyView,
+                                         triple3DEndoscopyView);
 }
 
 //----------------------------------------------------------------------------

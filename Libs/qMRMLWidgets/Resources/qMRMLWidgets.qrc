@@ -10,6 +10,7 @@
     <file>Icons/LayoutChooseView.png</file>
     <file>Icons/LayoutCompareView.png</file>
     <file>Icons/LayoutConventionalView.png</file>
+    <file>Icons/LayoutConventionalWidescreenView.png</file>
     <file>Icons/LayoutDual3DView.png</file>
     <file>Icons/LayoutFourUpView.png</file>
     <file>Icons/LayoutLightboxView.png</file>
@@ -20,6 +21,7 @@
     <file>Icons/LayoutSideBySideCompareView.png</file>
     <file>Icons/LayoutTabbed3DView.png</file>
     <file>Icons/LayoutTabbedSliceView.png</file>
+    <file>Icons/LayoutTriple3DView.png</file>
 
     <file>Icons/SliceMoreOptions.png</file>
     <file>Icons/SliceViewerBG.png</file>

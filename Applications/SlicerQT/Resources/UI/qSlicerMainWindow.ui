@@ -61,8 +61,10 @@
        <normaloff>:/Icons/LayoutChooseView.png</normaloff>:/Icons/LayoutChooseView.png</iconset>
      </property>
      <addaction name="actionViewLayoutConventional"/>
+     <addaction name="actionViewLayoutConventionalWidescreen"/>
      <addaction name="actionViewLayoutFourUp"/>
      <addaction name="actionViewLayoutDual3D"/>
+     <addaction name="actionViewLayoutTriple3D"/>
      <addaction name="actionViewLayoutOneUp3D"/>
      <addaction name="actionViewLayoutOneUpRedSlice"/>
      <addaction name="actionViewLayoutOneUpYellowSlice"/>
@@ -270,8 +272,10 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionViewLayoutConventional"/>
+   <addaction name="actionViewLayoutConventionalWidescreen"/>
    <addaction name="actionViewLayoutFourUp"/>
    <addaction name="actionViewLayoutDual3D"/>
+   <addaction name="actionViewLayoutTriple3D"/>
    <addaction name="actionViewLayoutOneUp3D"/>
    <addaction name="actionViewLayoutOneUpRedSlice"/>
    <addaction name="actionViewLayoutOneUpYellowSlice"/>
@@ -853,6 +857,24 @@
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionViewLayoutConventionalWidescreen">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutConventionalWidescreenView.png</normaloff>:/Icons/LayoutConventionalWidescreenView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Conventional Widescreen</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutTriple3D">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutTriple3DView.png</normaloff>:/Icons/LayoutTriple3DView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Triple 3D</string>
    </property>
   </action>
  </widget>

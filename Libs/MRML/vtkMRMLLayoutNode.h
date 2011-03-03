@@ -93,13 +93,15 @@ public:
       SlicerLayoutTabbedSliceView,
       SlicerLayoutLightboxView,
       SlicerLayoutCompareView,
-      SlicerLayoutSingleLightboxView,
       SlicerLayoutSideBySideLightboxView,
-      SlicerLayout3DPlusLightboxView,
-      SlicerLayoutTriple3DEndoscopyView,
       SlicerLayoutNone,
       SlicerLayoutDual3DView,
-      SlicerLayoutCustomView,
+      SlicerLayoutConventionalWidescreenView,
+      SlicerLayoutCompareWidescreenView,
+      SlicerLayoutSingleLightboxView,
+      SlicerLayoutTriple3DEndoscopyView, // Up to here, all layouts are Slicer 3 compatible
+      SlicerLayout3DPlusLightboxView, // really used ?
+      SlicerLayoutCustomView = 99,
       SlicerLayoutUserView = 100
     };
 
