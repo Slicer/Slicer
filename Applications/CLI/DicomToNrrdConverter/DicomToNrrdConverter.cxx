@@ -307,11 +307,11 @@ int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
+
   bool violated=false;
   if (inputDicomDirectory.size() == 0) { violated = true; std::cout << "  --inputDicomDirectory Required! "  << std::endl; }
   if (outputVolume.size() == 0) { violated = true; std::cout << "  --outputVolume Required! "  << std::endl; }
-  if (violated) exit(1);
-
+  if (violated) return EXIT_FAILURE;
 #if 0 //Defined in gdcm dicomV3.dic
   gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(Supplement49DictDiffusionDirection);
   gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(Supplement49DictDiffusionGradientDirectionSequence);
@@ -383,6 +383,12 @@ int main(int argc, char* argv[])
 
   const ReaderType::FileNamesContainer & filenamesInSeries =
     inputNames->GetInputFileNames();
+
+  if ( filenamesInSeries.size() < 1 ) 
+    {
+    std::cout << "Error: no DICOM files found in inputDirectory: " << inputDicomDirectory << std::endl;
+    return EXIT_FAILURE;
+    }
 
   //HACK:  This is not true.  The Philips scanner has the ability to write a multi-frame single file for DTI data.
   //
@@ -1258,14 +1264,17 @@ int main(int argc, char* argv[])
             }
           DiffusionVectors.push_back(vect3d);
           }
-        valueArray.resize(0);
-        ExtractSiemensDiffusionInformation(tag, "B_value", valueArray);
-        bValues.push_back( valueArray[0] );
+        else
+          {
+          valueArray.resize(0);
+          ExtractSiemensDiffusionInformation(tag, "B_value", valueArray);
+          bValues.push_back( valueArray[0] );
+          }
         }
 
-      if (bValues[k] > max_bValue)
+      if (bValues[k/nStride] > max_bValue)
         {
-        max_bValue = bValues[k];
+        max_bValue = bValues[k/nStride];
         }
       }
 
