@@ -75,6 +75,21 @@ vtkMRMLHierarchyNode::~vtkMRMLHierarchyNode()
     }
 }
 
+//-----------------------------------------------------------------------------
+
+vtkMRMLNode* vtkMRMLHierarchyNode::CreateNodeInstance()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLHierarchyNode");
+  if(ret)
+    {
+    return (vtkMRMLHierarchyNode*)ret;
+    }
+  // If the factory was unable to create the object, then create it here.
+  return new vtkMRMLHierarchyNode;
+}
+
+
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
 {

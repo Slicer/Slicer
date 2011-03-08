@@ -29,7 +29,7 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
   vtkTypeMacro(vtkMRMLHierarchyNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual vtkMRMLNode* CreateNodeInstance() = 0;
+  virtual vtkMRMLNode* CreateNodeInstance();
 
   /// 
   /// Read node attributes from XML file
@@ -45,7 +45,7 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 
   /// 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() = 0;
+  virtual const char* GetNodeTagName() {return "Hierarchy";};
 
   /// 
   /// Updates this node if it depends on other nodes 
