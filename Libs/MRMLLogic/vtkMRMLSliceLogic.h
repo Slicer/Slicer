@@ -45,6 +45,7 @@ class vtkMRMLVolumeNode;
 
 class vtkCollection;
 class vtkImageBlend;
+class vtkTransform;
 class vtkImageData;
 class vtkImageReslice;
 class vtkPolyDataCollection;
@@ -126,6 +127,10 @@ public:
   /// The compositing filter
   /// TODO: this will eventually be generalized to a per-layer compositing function
   vtkGetObjectMacro(Blend, vtkImageBlend);
+
+  /// 
+  /// The offset to the correct slice for lightbox mode
+  vtkGetObjectMacro(ActiveSliceTransform, vtkTransform);
 
   /// 
   /// All the PolyData objects to render
@@ -331,6 +336,7 @@ protected:
 
   vtkImageBlend *   Blend;
   vtkImageData *    ImageData;
+  vtkTransform *    ActiveSliceTransform;
   vtkImageReslice * ExtractModelTexture;
 
   vtkPolyDataCollection * PolyDataCollection;

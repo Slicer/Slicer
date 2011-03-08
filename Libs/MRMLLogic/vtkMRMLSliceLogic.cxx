@@ -90,6 +90,7 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->SetName("");
   this->SliceModelDisplayNode = 0;
   this->ImageData = 0;
+  this->ActiveSliceTransform = 0;
   this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
 }
 
@@ -102,6 +103,10 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
   if (this->ImageData)
     {
     this->ImageData->Delete();
+    }
+  if (this->ActiveSliceTransform)
+    {
+    this->ActiveSliceTransform->Delete();
     }
 
   if (this->Blend)
@@ -678,24 +683,17 @@ void vtkMRMLSliceLogic::UpdateImageData ()
        (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageData() != 0) ||
        (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageData() != 0) )
     {
-    if ( this->Blend->GetInput(0) != 0 )
+    if ( this->ImageData == 0 )
       {
-      this->Blend->Update();
+      this->ImageData = this->Blend->GetOutput();
+      this->ImageData->Register(this);
       }
-    //this->ImageData = this->Blend->GetOutput();
-    if (this->ImageData== 0 || this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
+    if (this->ActiveSliceTransform == 0)
       {
-      if (this->ImageData== 0)
-        {
-        this->ImageData = vtkImageData::New();
-        }
-      this->ImageData->DeepCopy( this->Blend->GetOutput());
-      this->ExtractModelTexture->SetInput( this->ImageData );
-      vtkTransform *activeSliceTransform = vtkTransform::New();
-      activeSliceTransform->Identity();
-      activeSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
-      this->ExtractModelTexture->SetResliceTransform( activeSliceTransform );
-      activeSliceTransform->Delete();
+      this->ActiveSliceTransform = vtkTransform::New();
+      this->ActiveSliceTransform->Identity();
+      this->ActiveSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
+      this->ExtractModelTexture->SetResliceTransform( this->ActiveSliceTransform );
       }
     }
   else
@@ -705,8 +703,8 @@ void vtkMRMLSliceLogic::UpdateImageData ()
       this->ImageData->Delete();
       }
     this->ImageData=0;
-    this->ExtractModelTexture->SetInput( this->ImageData );
     }
+  this->ExtractModelTexture->SetInput( this->ImageData );
 }
 
 //----------------------------------------------------------------------------
