@@ -1320,6 +1320,8 @@ const char * vtkSlicerAnnotationModuleLogic::MoveAnnotationUp(const char* id)
   // now move it up one
   hNode->SetIndexInParent(currentIndex - 1);
   vtkDebugMacro("MoveAnnotationUp: after moving to " << currentIndex - 1 << ", current index is " << hNode->GetIndexInParent());
+  // trigger an update on the q widget
+  annotationNode->Modified();
   // the id should be the same now
   this->m_StringHolder = annotationNode->GetID();
   return this->m_StringHolder.c_str();
@@ -1342,7 +1344,7 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
 
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("No scene set.")
+    vtkErrorMacro("MoveAnnotationDown: No scene set.")
     return this->m_StringHolder.c_str();
     }
 
@@ -1350,7 +1352,7 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
 
   if (!annotationNode)
     {
-    vtkErrorMacro("MoveAnnotationUp: Could not get annotation node!")
+    vtkErrorMacro("MoveAnnotationDown: Could not get annotation node!")
     return this->m_StringHolder.c_str();
     }
 
@@ -1359,7 +1361,7 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
 
   if (!hNode)
     {
-    vtkErrorMacro("MoveAnnotationUp: Could not get hierarchy node!")
+    vtkErrorMacro("MoveAnnotationDown: Could not get hierarchy node!")
     return this->m_StringHolder.c_str();
     }
 
@@ -1367,6 +1369,8 @@ const char* vtkSlicerAnnotationModuleLogic::MoveAnnotationDown(const char* id)
   int currentIndex = hNode->GetIndexInParent();
   // now move it down one
   hNode->SetIndexInParent(currentIndex + 1);
+  // trigger an update on the q widget
+  annotationNode->Modified();
   // the id should be the same now
   this->m_StringHolder = annotationNode->GetID();
   return this->m_StringHolder.c_str();
@@ -1458,7 +1462,7 @@ vtkMRMLAnnotationHierarchyNode* vtkSlicerAnnotationModuleLogic::AddHierarchyNode
     {
     // this is a user created hierarchy!
 
-    // we want to se`e that!
+    // we want to see that!
     hierarchyNode->HideFromEditorsOff();
 
     hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("List"));
