@@ -34,6 +34,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLHierarchyNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -427,6 +428,35 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
   const char* nId = 0;
   int index = -1;
   vtkMRMLNode* parent = this->parentNode(node);
+
+  // if it's part of a hierarchy, use the GetIndexInParent call
+  if (parent)
+    {
+    vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
+    if (hnode)
+      {
+      // for each hierarchy node, the iterated index is 2*the index in the parent
+      int adjustedIndexFromParent = 2*(hnode->GetIndexInParent());
+      //std::cout << "nodeIndex: found a hierarchy parent for node " << node->GetID() << ", parent is " << parent->GetID() << ", index in parent is " << hnode->GetIndexInParent() << ", iterated index of " << index << ", returning adjusted index from parent = " <<  adjustedIndexFromParent << std::endl;
+      return adjustedIndexFromParent;
+      }
+    
+    else
+      {
+      // is there a hierarchy node associated with this node?
+      vtkMRMLHierarchyNode *assocHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(d->MRMLScene, node->GetID());
+      if (assocHierarchyNode)
+        {
+        // in this case, the current node is at an index one greater than
+        // it's associated hierarchy node via the index from the parent
+        int adjustedIndexFromParent = 2*(assocHierarchyNode->GetIndexInParent()) + 1;
+        //std::cout << "nodeIndex: found an associated hierarchy node for node " << node->GetID() << ", with an ID of " << assocHierarchyNode->GetID() << ". It's index in it's parent is " << assocHierarchyNode->GetIndexInParent() << ", iterated index = " << index << ". Returning adjusted index from parent of " << adjustedIndexFromParent << std::endl;
+        return adjustedIndexFromParent;
+        }
+      }
+    }
+
+  // otherwise, iterate through the scene
   vtkCollection* sceneCollection = d->MRMLScene->GetCurrentScene();
   vtkMRMLNode* n = 0;
   vtkCollectionSimpleIterator it;
@@ -440,6 +470,7 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
       nId = n->GetID();
       if (nId && !strcmp(nodeId, nId))
         {
+//      std::cout << "nodeIndex:  no parent for node " << node->GetID() << " index = " << index << std::endl;
         return index;
         }
       }
