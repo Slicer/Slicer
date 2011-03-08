@@ -345,6 +345,5 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetImageData()
     {
     return NULL;
     }
-  this->AppendComponents->Update();
   return this->AppendComponents->GetOutput();
 };
