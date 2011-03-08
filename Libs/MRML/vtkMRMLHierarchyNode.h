@@ -25,7 +25,7 @@
 class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 {
   public:
-  static vtkMRMLHierarchyNode *New(){return NULL;};
+  static vtkMRMLHierarchyNode *New();
   vtkTypeMacro(vtkMRMLHierarchyNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 

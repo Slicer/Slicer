@@ -47,6 +47,19 @@ bool vtkMRMLHierarchyNodeSortPredicate(vtkMRMLHierarchyNodePointer d1, vtkMRMLHi
   return d1->GetSortingValue() < d2->GetSortingValue();
 }
 
+//------------------------------------------------------------------------------
+vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::New()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLHierarchyNode");
+  if(ret)
+    {
+    return (vtkMRMLHierarchyNode*)ret;
+    }
+  // If the factory was unable to create the object, then create it here.
+  return new vtkMRMLHierarchyNode;
+}
+
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode::vtkMRMLHierarchyNode()
 {
@@ -568,10 +581,12 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(vtkMRMLSc
 {
   if (associatedNodeID == 0)
     {
+    std::cerr << "GetAssociatedHierarchyNode: associated node id is null" << std::endl;
     return NULL;
     }
   if (scene == 0)
     {
+    std::cerr << "GetAssociatedHierarchyNode: scene is null" << std::endl;
     return NULL;
     }
 
@@ -581,6 +596,7 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(vtkMRMLSc
         SceneAssociatedHierarchyNodes.find(scene);
   if (siter == SceneAssociatedHierarchyNodes.end())
     {
+    std::cerr << "GetAssociatedHierarchyNode: didn't find an associated hierarchy node type associated with the scene" << std::endl;
     return NULL;
     }
 
