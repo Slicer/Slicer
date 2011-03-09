@@ -40,11 +40,19 @@ public:
 
 int vtkMRMLHierarchyNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 >::New();
 
+//  vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 >::New();
+
+  vtkSmartPointer< vtkMRMLHierarchyNode > node1 = vtkSmartPointer< vtkMRMLHierarchyNode >::New();
+  std::cout << "node1 is " << (node1 == NULL ? "null" : "not null") << std::endl;
+  if (node1 == NULL)
+    {
+    return EXIT_FAILURE;
+    }
+  
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLHierarchyNodeTestHelper1, node1);
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLHierarchyNode, node1);
 
   TEST_SET_GET_STRING(node1, ParentNodeID);
 
@@ -54,6 +62,8 @@ int vtkMRMLHierarchyNodeTest1(int , char * [] )
   node1->SetParentNodeID("testingID");
   pnode = node1->GetParentNode();
   std::cout << "GetParentNode returned " << (pnode == NULL ? "null" : "not null") << std::endl;
-  
+
+
+
   return EXIT_SUCCESS;
 }

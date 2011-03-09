@@ -147,7 +147,7 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
   if (allChildren.size() != 1 + numModels)
     {
     std::cerr << "ERROR: Top level hiearchy returned  " << allChildren.size() << " total children instead of " << 1 + numModels << std::endl;
-    // return EXIT_FAILURE;
+    return EXIT_FAILURE;
     }
   else
     {
@@ -161,7 +161,7 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
   if (immediateChildren.size() != 1)
     {
     std::cerr << "ERROR: Top level hierarchy returned  " << immediateChildren.size() << " total children instead of " << 1 << std::endl;
-    // return EXIT_FAILURE;
+    return EXIT_FAILURE;
     }
   else
     {
@@ -176,7 +176,7 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
   if (allChildren2.size() != numModels)
     {
     std::cerr << "ERROR: Second level hierarchy has " << allChildren2.size() << " total children insted of " << numModels << std::endl;
-    // return EXIT_FAILURE;
+    return EXIT_FAILURE;
     }
   else
     {
@@ -190,14 +190,35 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
   if (immediateChildren2.size() != numModels)
     {
     std::cerr<< "ERROR: Second level hierarachy has " << immediateChildren2.size() << " immediate children instead of " << numModels << std::endl;
-    // return EXIT_FAILURE;
+    return EXIT_FAILURE;
     }
   else
     {
     std::cout << "Second level hiearachy has " << immediateChildren2.size() << " immediate children" << std::endl;
     }
-  
+
   // now check that the children are in the order they were added
+  for (unsigned int i = 0; i < numModels; i++)
+    {
+    int indexInParent = modelHierarchyNodes[i]->GetIndexInParent();
+    std::cout << "Model hierarchy node " << i << " is at index " << indexInParent << std::endl;
+    if (indexInParent != (int)i)
+      {
+      std::cerr << "Index mismatch!" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  
+  // move the first node down in the hierarchy
+  int oldIndexInParent =  modelHierarchyNodes[0]->GetIndexInParent();
+  int newIndexInParent = oldIndexInParent + 1;
+  modelHierarchyNodes[0]->SetIndexInParent(newIndexInParent);
+  int currentIndexInParent =  modelHierarchyNodes[0]->GetIndexInParent();
+  if (currentIndexInParent != newIndexInParent)
+    {
+    std::cerr << "Error moving first hierarchy node in list from index " << oldIndexInParent << " to " << newIndexInParent << ", current index in parent is " << currentIndexInParent << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // now add some nodes out of order
   
