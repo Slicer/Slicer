@@ -220,7 +220,7 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  // move the last one up in the hieararchy
+  // move the last one up in the hierarchy
   oldIndexInParent = modelHierarchyNodes[numModels-1]->GetIndexInParent();
   newIndexInParent = oldIndexInParent - 1;
   modelHierarchyNodes[numModels-1]->SetIndexInParent(newIndexInParent);
@@ -230,9 +230,34 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
     std::cerr << "Error moving last hierarchy node in list from index " << oldIndexInParent << " to " << newIndexInParent << ", current index in parent is " << currentIndexInParent << std::endl;
     return EXIT_FAILURE;
     }
-  
-  // now add some nodes out of order
-  
+
+  // get the second hierarchy child and move it to be the first
+  vtkMRMLHierarchyNode *node1 = hnode2->GetNthChildNode(1);
+  if (node1)
+    {
+    oldIndexInParent = node1->GetIndexInParent();
+    node1->SetIndexInParent(0);
+    currentIndexInParent = node1->GetIndexInParent();
+    if (currentIndexInParent != 0)
+      {
+      std::cerr << "Error moving second hierarchy child to be the first. Started at index " << oldIndexInParent << ", moved it to 0, now at " << currentIndexInParent << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  // get the second last and move it to be the last
+  node1 = hnode2->GetNthChildNode(numModels-2);
+  if (node1)
+    {
+    oldIndexInParent = node1->GetIndexInParent();
+    node1->SetIndexInParent(numModels-1);
+    currentIndexInParent = node1->GetIndexInParent();
+    if (currentIndexInParent != (int)numModels-1)
+      {
+      std::cerr << "Error moving second last hierarchy child to be the last. Started at index " << oldIndexInParent << ", moved it to " << numModels-1 << ", now at " << currentIndexInParent << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
   return EXIT_SUCCESS;
 }
 
