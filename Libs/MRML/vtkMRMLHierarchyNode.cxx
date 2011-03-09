@@ -376,6 +376,7 @@ void vtkMRMLHierarchyNode::SetIndexInParent(int index)
       return;
       }
     double sortValue = childrenNodes[index]->GetSortingValue();
+    int oldIndex = this->GetIndexInParent();
     if (index == 0) 
       {
       sortValue -= 1;
@@ -384,9 +385,13 @@ void vtkMRMLHierarchyNode::SetIndexInParent(int index)
       {
       sortValue += 1;
       }
-    else
+    else if (index >= oldIndex)
       {
       sortValue = 0.5*(sortValue + childrenNodes[index+1]->GetSortingValue());
+      }
+    else
+      {
+      sortValue = 0.5*(sortValue + childrenNodes[index-1]->GetSortingValue());
       }
     this->SetSortingValue(sortValue);
     }
