@@ -80,6 +80,7 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->Blend = vtkImageBlend::New();
   this->ExtractModelTexture = vtkImageReslice::New();
   this->ExtractModelTexture->SetOutputDimensionality (2);
+  this->ActiveSliceTransform = vtkTransform::New();
   this->PolyDataCollection = vtkPolyDataCollection::New();
   this->LookupTableCollection = vtkCollection::New();
   this->SetForegroundOpacity(this->ForegroundOpacity);
@@ -90,7 +91,6 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->SetName("");
   this->SliceModelDisplayNode = 0;
   this->ImageData = 0;
-  this->ActiveSliceTransform = 0;
   this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
 }
 
@@ -104,10 +104,6 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
     {
     this->ImageData->Delete();
     }
-  if (this->ActiveSliceTransform)
-    {
-    this->ActiveSliceTransform->Delete();
-    }
 
   if (this->Blend)
     {
@@ -118,6 +114,11 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
     {
     this->ExtractModelTexture->Delete();
     this->ExtractModelTexture = 0;
+    }
+  if (this->ActiveSliceTransform)
+    {
+    this->ActiveSliceTransform->Delete();
+    this->ActiveSliceTransform = 0;
     }
   this->PolyDataCollection->Delete();
   this->LookupTableCollection->Delete();
@@ -130,8 +131,6 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
     {
     vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, 0);
     }
-
-  this->SetName(0);
 
   this->DeleteSliceModel();
 
@@ -683,14 +682,19 @@ void vtkMRMLSliceLogic::UpdateImageData ()
        (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageData() != 0) ||
        (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageData() != 0) )
     {
-    if ( this->ImageData == 0 )
+    if ( this->Blend->GetInput(0) != 0 )
       {
-      this->ImageData = this->Blend->GetOutput();
-      this->ImageData->Register(this);
+      this->Blend->Update();
       }
-    if (this->ActiveSliceTransform == 0)
+    //this->ImageData = this->Blend->GetOutput();
+    if (this->ImageData== 0 || this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
       {
-      this->ActiveSliceTransform = vtkTransform::New();
+      if (this->ImageData== 0)
+        {
+        this->ImageData = vtkImageData::New();
+        }
+      this->ImageData->DeepCopy( this->Blend->GetOutput());
+      this->ExtractModelTexture->SetInput( this->ImageData );
       this->ActiveSliceTransform->Identity();
       this->ActiveSliceTransform->Translate(0, 0, this->SliceNode->GetActiveSlice() );
       this->ExtractModelTexture->SetResliceTransform( this->ActiveSliceTransform );
@@ -703,8 +707,8 @@ void vtkMRMLSliceLogic::UpdateImageData ()
       this->ImageData->Delete();
       }
     this->ImageData=0;
+    this->ExtractModelTexture->SetInput( this->ImageData );
     }
-  this->ExtractModelTexture->SetInput( this->ImageData );
 }
 
 //----------------------------------------------------------------------------
