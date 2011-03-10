@@ -385,11 +385,11 @@ void vtkMRMLHierarchyNode::SetIndexInParent(int index)
       {
       sortValue += 1;
       }
-    else if (index >= oldIndex)
+    else if (index > oldIndex)
       {
       sortValue = 0.5*(sortValue + childrenNodes[index+1]->GetSortingValue());
       }
-    else
+    else if (index < oldIndex)
       {
       sortValue = 0.5*(sortValue + childrenNodes[index-1]->GetSortingValue());
       }
