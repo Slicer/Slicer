@@ -33,6 +33,8 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     tcl('set ::Editor(singleton) this')
     tcl('set ::Editor(checkPointsEnabled) 1')
     
+    iconDir = os.environ['Slicer_HOME'] + '/lib/Slicer3/SlicerBaseGUI/Tcl/ImageData/'
+    parent.icon = qt.QIcon("%s/ToolbarEditorToolbox.png" % iconDir)
 
 
 #
