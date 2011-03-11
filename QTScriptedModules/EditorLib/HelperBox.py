@@ -127,6 +127,14 @@ class HelperBox(object):
     # remove all active effects (so that when selected again slice rotation and snap to IJK will happen if needed
     tcl('::EffectSWidget::RemoveAll')
 
+    # trigger a modified event on the parameter node so that other parts of the GUI
+    # (such as the EditColor) will know to update and enable themselves
+    nodeID = tcl('[EditorGetParameterNode] GetID')
+    pNode = slicer.mrmlScene.GetNodeByID(nodeID)
+    if pNode:
+      pNode.Modified()
+
+
 
 
   def setVolumes(self,masterVolume,mergeVolume):
