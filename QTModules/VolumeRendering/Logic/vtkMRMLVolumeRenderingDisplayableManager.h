@@ -6,7 +6,7 @@
 #include "vtkVolumeMapper.h"
 #include "vtkVolume.h"
 
-#include <vtkMRMLAbstractDisplayableManager.h>
+#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 #include "vtkMRMLVolumeRenderingParametersNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
@@ -22,11 +22,11 @@ class vtkMatrix4x4;
 class vtkPlanes;
 
 class Q_SLICER_QTMODULES_VOLUMERENDERING_LOGIC_EXPORT vtkMRMLVolumeRenderingDisplayableManager  :
-  public vtkMRMLAbstractDisplayableManager
+  public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
   static vtkMRMLVolumeRenderingDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLVolumeRenderingDisplayableManager, vtkMRMLAbstractDisplayableManager);
+  vtkTypeRevisionMacro(vtkMRMLVolumeRenderingDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // TODO: do we need to observe MRML here?
@@ -151,6 +151,10 @@ protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&);
   void operator=(const vtkMRMLVolumeRenderingDisplayableManager&);
 
+  //virtual void OnMRMLSceneNodeAddedEvent(vtkMRMLNode* node);
+
+  //virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* node);
+
   static bool First;
 
   // Description:
@@ -192,6 +196,7 @@ protected:
   //vtkVolumeProperty *VolumePropertyGPURaycast3;
 
   vtkMRMLVolumeRenderingParametersNode* VolumeRenderingParametersNode;
+  vtkMRMLVolumeRenderingScenarioNode* ScenarioNode;
 
   vtkMRMLVolumeNode*          VolumeNode;
   vtkMRMLVolumePropertyNode*  VolumePropertyNode;
@@ -199,11 +204,23 @@ protected:
   vtkMRMLVolumePropertyNode*  FgVolumePropertyNode;
   vtkMRMLROINode*             ROINode;
 
+  int NewParametersNodeForNewInputFlag;
+  int NewParametersNodeFromSceneLoadingFlag;
+
 protected:
   void ComputeInternalVolumeSize(int index);
   void CalculateMatrix(vtkMRMLVolumeRenderingParametersNode *vspNode, vtkMatrix4x4 *output);
   void EstimateSampleDistance(vtkMRMLVolumeRenderingParametersNode* vspNode);
-
+  vtkMRMLVolumeRenderingParametersNode* GetCurrentParametersNode();
+  void RemoveVolumeFromViewers();
+  void AddVolumeToViewers();
+  void InitializePipelineFromParametersNode();
+  int ValidateParametersNode(vtkMRMLVolumeRenderingParametersNode* vspNode);
+  void UpdatePipelineByROI();
+  void UpdatePipelineByDisplayNode();
+  void UpdatePipelineByVolumeProperty();
+  void UpdatePipelineByFgVolumeProperty();
+  void UpdatePipelineByParameterNode();
 
 };
 

@@ -26,6 +26,8 @@ public slots:
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
+  void setMRMLParameterNode(vtkMRMLNode* node);
+
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
   

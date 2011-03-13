@@ -23,6 +23,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLROINode.h"
 #include "VolumeRenderingMRMLExport.h"
 #include "vtkMRMLVolumePropertyNode.h"
@@ -30,11 +31,11 @@
 
 #include "vtkMatrix4x4.h"
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingParametersNode : public vtkMRMLNode
+class Q_SLICER_QTMODULES_VOLUMERENDERING_MRML_EXPORT vtkMRMLVolumeRenderingParametersNode : public vtkMRMLDisplayNode
 {
   public:
   static vtkMRMLVolumeRenderingParametersNode *New();
-  vtkTypeMacro(vtkMRMLVolumeRenderingParametersNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLVolumeRenderingParametersNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
