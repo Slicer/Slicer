@@ -219,9 +219,38 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   /// set the active scalar field name, and update the color table if necessary
   void SetActiveScalarName(const char *scalarName);
     
+  /// Add View Node ID for the view to display this node in.
+  void AddViewNodeID(char* viewNodeID)
+  {
+    ViewNodeIDs.push_back(viewNodeID);
+  }
+
+  /// Get number of View Node ID's for the view to display this node in.
+  /// If 0, display in all views
+  int GetNumberOfViewNodeIDs()
+  {
+    return ViewNodeIDs.size();
+  }
+
+  /// Get View Node ID's for the view to display this node in.
+  /// If NULL, display in all views
+  const char* GetNthViewNodeID(unsigned int index)
+  {
+    if (index >= ViewNodeIDs.size())
+      {
+      vtkErrorMacro("vtkMRMLDisplayNode::GetNthViewNodeID() index " << index << " outside the range 0-" << ViewNodeIDs.size()-1 );
+      return NULL;
+      }
+    return ViewNodeIDs[index].c_str();
+  }
   
-  
-  
+  /// Get all View Node ID's for the view to display this node in.
+  /// If empty, display in all views
+  std::vector< std::string > GetViewNodeIDs()
+  {
+    return ViewNodeIDs;
+  }
+
 protected:
   vtkMRMLDisplayNode() ;
   ~vtkMRMLDisplayNode();
@@ -263,6 +292,10 @@ protected:
   double ScalarRange[2];
   double Color[3];
   double SelectedColor[3];
+
+  /// View node ID's
+  std::vector< std::string > ViewNodeIDs;
+
 private:
   vtkSetReferenceStringMacro(ColorNodeID);
 };
